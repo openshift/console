@@ -36,7 +36,7 @@ const BindableNode: FC<BindableNodeProps> = ({
   const iconRadius = Math.min(width, height) * 0.25;
   const [dndDropProps, dndDropRef] = useDndDrop(spec, { element: nodeElement, ...rest });
   const resourceObj = getTopologyResourceObject(element.getData());
-  const resourceModel = modelFor(referenceFor(resourceObj));
+  const resourceModel = resourceObj ? modelFor(referenceFor(resourceObj)) : undefined;
   const iconData = element.getData()?.data?.icon || openshiftImg;
   const kind = resourceModel && referenceForModel(resourceModel);
 

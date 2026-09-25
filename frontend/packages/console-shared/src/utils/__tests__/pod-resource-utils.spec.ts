@@ -162,7 +162,7 @@ describe('getPodsFor...', () => {
     expect(podRCDataArray[1].pods).toHaveLength(0);
   });
 
-  it('should return pods for a given Deployment', () => {
+  it('should return pods for given Deployments', () => {
     let podRCDataArray = getPodsForDeployments(sampleDeployments.data, mockResources);
     expect(podRCDataArray).toHaveLength(3);
     expect(podRCDataArray[0].pods).toHaveLength(3);

@@ -37,7 +37,6 @@ export const useProjectAccessRoles = (): { data: Roles; loaded: boolean } => {
   const mappedRoles = availableClusterRoles.reduce((acc, role) => {
     const clusterRole = clusterRoles[role];
     if (clusterRole?.loadError?.response?.status === 404) {
-      // eslint-disable-next-line no-console
       console.warn(
         `ClusterRole ${role} could not be found and will not be shown in project access options.`,
       );

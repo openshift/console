@@ -13,7 +13,7 @@ describe('getAddGroups', () => {
     expect(getAddGroups(undefined, addActionGroup).length).toEqual(0);
   });
 
-  it('should return empty array if addActions is not defined', () => {
+  it('should return empty array if addActionGroup is not defined', () => {
     expect(getAddGroups(addActionExtensions, undefined).length).toEqual(0);
   });
 

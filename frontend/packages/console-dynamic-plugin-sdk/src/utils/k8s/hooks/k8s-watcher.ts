@@ -47,36 +47,33 @@ export const makeQuery: MakeQuery = (namespace, labelSelector, fieldSelector, na
   return query;
 };
 
-const INTERNAL_REDUX_IMMUTABLE_TOARRAY_CACHE_SYMBOL = Symbol('_cachedToArrayResult');
-const INTERNAL_REDUX_IMMUTABLE_TOJSON_CACHE_SYMBOL = Symbol('_cachedToJSONResult');
+// Cache the array derived from a keyed list object so repeated calls with the
+// same stored reference return a stable array reference. This preserves
+// referential stability, avoiding unnecessary consumer re-renders.
+const reduxListDataCache = new WeakMap<object, unknown[]>();
 
-export const getReduxData = (immutableData, resource: WatchK8sResource) => {
-  if (!immutableData) {
+export const getReduxData = (data, resource: WatchK8sResource) => {
+  if (data == null) {
     return null;
   }
-  if (resource.isList && immutableData.toArray) {
-    if (!immutableData[INTERNAL_REDUX_IMMUTABLE_TOARRAY_CACHE_SYMBOL]) {
-      immutableData[INTERNAL_REDUX_IMMUTABLE_TOARRAY_CACHE_SYMBOL] = immutableData
-        .toArray()
-        .map((a) => {
-          if (a.toJSON) {
-            if (!a[INTERNAL_REDUX_IMMUTABLE_TOJSON_CACHE_SYMBOL]) {
-              a[INTERNAL_REDUX_IMMUTABLE_TOJSON_CACHE_SYMBOL] = a.toJSON();
-            }
-            return a[INTERNAL_REDUX_IMMUTABLE_TOJSON_CACHE_SYMBOL];
-          }
-          return a;
-        });
+  if (resource.isList) {
+    if (Array.isArray(data) || typeof data !== 'object') {
+      return data;
     }
-    return immutableData[INTERNAL_REDUX_IMMUTABLE_TOARRAY_CACHE_SYMBOL];
-  }
-  if (immutableData.toJSON) {
-    if (!immutableData[INTERNAL_REDUX_IMMUTABLE_TOJSON_CACHE_SYMBOL]) {
-      immutableData[INTERNAL_REDUX_IMMUTABLE_TOJSON_CACHE_SYMBOL] = immutableData.toJSON();
+    let list = reduxListDataCache.get(data);
+    if (!list) {
+      list = Object.values(data);
+      reduxListDataCache.set(data, list);
     }
-    return immutableData[INTERNAL_REDUX_IMMUTABLE_TOJSON_CACHE_SYMBOL];
+    return list;
   }
-  return null;
+  // Before the watched object has loaded, the reducer stores an empty
+  // placeholder object. Surface that as null rather than an empty object, matching
+  // the previous behavior where only fully loaded objects produced data.
+  if (typeof data === 'object' && !Array.isArray(data) && Object.keys(data).length === 0) {
+    return null;
+  }
+  return data;
 };
 
 export const getIDAndDispatch: GetIDAndDispatch<SDKStoreState> = (resource, k8sModel) => {

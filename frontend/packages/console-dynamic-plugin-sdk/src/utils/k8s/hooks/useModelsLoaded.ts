@@ -1,6 +1,5 @@
 import { useRef } from 'react';
 import { useSelector } from 'react-redux';
-import type { K8sModel } from '../../../api/common-types';
 import type { OpenShiftReduxRootState } from './k8s-watch-types';
 
 /**
@@ -11,11 +10,9 @@ import type { OpenShiftReduxRootState } from './k8s-watch-types';
  */
 export const useModelsLoaded = (): boolean => {
   const ref = useRef(false);
-  const loaded = useSelector<OpenShiftReduxRootState, K8sModel>(({ k8s }) =>
-    k8s.getIn(['RESOURCES', 'loaded']),
-  );
-  const inFlight = useSelector<OpenShiftReduxRootState, K8sModel>(({ k8s }) =>
-    k8s.getIn(['RESOURCES', 'inFlight']),
+  const loaded = useSelector<OpenShiftReduxRootState, boolean>(({ k8s }) => k8s.RESOURCES?.loaded);
+  const inFlight = useSelector<OpenShiftReduxRootState, boolean>(
+    ({ k8s }) => k8s.RESOURCES?.inFlight,
   );
 
   if (!ref.current && loaded && !inFlight) {

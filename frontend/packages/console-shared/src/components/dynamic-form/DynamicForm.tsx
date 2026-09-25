@@ -49,7 +49,6 @@ export const DynamicForm: FC<DynamicFormProps> = ({
   const schemaErrors = getSchemaErrors(schema);
   // IF the top level schema is unsupported, don't render a form at all.
   if (schemaErrors.length) {
-    // eslint-disable-next-line no-console
     console.warn('A form could not be generated for this resource.', schemaErrors);
     return (
       <Alert

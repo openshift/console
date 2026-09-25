@@ -18,10 +18,9 @@ describe('cloud-shell-setup-utils', () => {
         image: '',
       },
     };
-    await cloudShellSetupValidationSchema()
-      .resolve({ value: mockData })
-      .isValid(mockData)
-      .then((valid) => expect(valid).toEqual(true));
+    await expect(
+      cloudShellSetupValidationSchema().resolve({ value: mockData }).isValid(mockData),
+    ).resolves.toBe(true);
   });
 
   it('should throw an error for required fields if empty', async () => {
@@ -36,17 +35,12 @@ describe('cloud-shell-setup-utils', () => {
         image: '',
       },
     };
-    await cloudShellSetupValidationSchema()
-      .resolve({ value: mockData })
-      .isValid(mockData)
-      .then((valid) => expect(valid).toEqual(false));
-    await cloudShellSetupValidationSchema()
-      .validate(mockData)
-      .catch((err) => {
-        expect(err.message).toBe(
-          "Name must consist of lower case alphanumeric characters or '-' and must start and end with an alphanumeric character.",
-        );
-      });
+    await expect(
+      cloudShellSetupValidationSchema().resolve({ value: mockData }).isValid(mockData),
+    ).resolves.toBe(false);
+    await expect(cloudShellSetupValidationSchema().validate(mockData)).rejects.toThrow(
+      "Name must consist of lower case alphanumeric characters or '-' and must start and end with an alphanumeric character.",
+    );
   });
 
   it('getCloudShellTimeout should return proper time', () => {

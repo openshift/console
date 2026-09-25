@@ -109,22 +109,17 @@ test.describe('Project Dashboard', { tag: ['@admin'] }, () => {
 
     test('is displayed when ConsoleLink CR exists', async ({ k8sClient, cleanup }) => {
       await test.step('Create ConsoleLink', async () => {
-        await k8sClient.createClusterCustomResource(
-          'console.openshift.io',
-          'v1',
-          'consolelinks',
-          {
-            apiVersion: 'console.openshift.io/v1',
-            kind: 'ConsoleLink',
-            metadata: { name: consoleLinkName },
-            spec: {
-              href: 'https://www.example.com/',
-              location: 'NamespaceDashboard',
-              namespaceDashboard: { namespaces: [namespace] },
-              text: 'Namespace Dashboard Link',
-            },
+        await k8sClient.createClusterCustomResource('console.openshift.io', 'v1', 'consolelinks', {
+          apiVersion: 'console.openshift.io/v1',
+          kind: 'ConsoleLink',
+          metadata: { name: consoleLinkName },
+          spec: {
+            href: 'https://www.example.com/',
+            location: 'NamespaceDashboard',
+            namespaceDashboard: { namespaces: [namespace] },
+            text: 'Namespace Dashboard Link',
           },
-        );
+        });
         cleanup.trackClusterCustomResource(
           consoleLinkName,
           'console.openshift.io',

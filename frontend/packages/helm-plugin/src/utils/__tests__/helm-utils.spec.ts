@@ -1,5 +1,5 @@
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
-import { t } from '../../../../../__mocks__/i18next';
+import { t } from '@console/shared/src/test-utils/i18n-test-utils';
 import {
   mockHelmReleases,
   mockHelmChartData,
@@ -30,7 +30,7 @@ import {
   mergeHelmValuesOnChartVersionChange,
 } from '../helm-utils';
 
-describe('Helm Releases Utils', () => {
+describe('Helm releases Utils', () => {
   it('should return deployed or failed status for a helm release', () => {
     const release = mockHelmReleases[0];
     expect(releaseStatusReducer(release)).toEqual(HelmReleaseStatus.Deployed);

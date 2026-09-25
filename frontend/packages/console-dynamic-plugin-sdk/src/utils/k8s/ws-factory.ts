@@ -130,7 +130,6 @@ export class WSFactory {
       this.connect();
       delay = Math.round(Math.min(1.5 * delay, 60000));
       this.connectionAttempt = setTimeout(attempt, delay);
-      // eslint-disable-next-line no-console
       console.log(`attempting reconnect in ${delay / 1000} seconds...`);
     };
 
@@ -146,14 +145,12 @@ export class WSFactory {
     try {
       this.ws = new WebSocket(url, this.options.subprotocols);
     } catch (e) {
-      // eslint-disable-next-line no-console
       console.error('Error creating websocket:', e);
       this.reconnect();
       return;
     }
 
     this.ws.onopen = function () {
-      // eslint-disable-next-line no-console
       console.log(`websocket open: ${that.id}`);
       that.state = 'open';
       that.triggerEvent('open', undefined);
@@ -163,14 +160,12 @@ export class WSFactory {
       }
     };
     this.ws.onclose = function (evt: CloseEvent) {
-      // eslint-disable-next-line no-console
       console.log(`websocket closed: ${that.id}`, evt);
       that.state = 'closed';
       that.triggerEvent('close', evt);
       that.reconnect();
     };
     this.ws.onerror = function (evt: Event) {
-      // eslint-disable-next-line no-console
       console.log(`websocket error: ${that.id}`);
       that.state = 'error';
       that.triggerEvent('error', evt);
@@ -204,7 +199,6 @@ export class WSFactory {
       try {
         h(data);
       } catch (e) {
-        // eslint-disable-next-line no-console
         console.error('WS handling failed:', e);
       }
     });
@@ -305,7 +299,6 @@ export class WSFactory {
   }
 
   destroy(eventData?: unknown) {
-    // eslint-disable-next-line no-console
     console.log(`destroying websocket: ${this.id}`);
     if (this.state === 'destroyed') {
       return;
@@ -316,7 +309,6 @@ export class WSFactory {
         this.ws.close();
       }
     } catch (e) {
-      // eslint-disable-next-line no-console
       console.error('Error while close WS socket', e);
     }
 
@@ -334,7 +326,6 @@ export class WSFactory {
     try {
       this.triggerEvent('destroy', eventData);
     } catch (e) {
-      // eslint-disable-next-line no-console
       console.error('Error while trigger destroy event for WS socket', e);
     }
 

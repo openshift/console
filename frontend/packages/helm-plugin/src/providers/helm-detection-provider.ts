@@ -40,7 +40,6 @@ export const useDetectHelmChartRepositories = (setFeatureFlag: SetFeatureFlag) =
         }
       })
       .catch((err) => {
-        // eslint-disable-next-line no-console
         console.log('failed to fetch helm chart repositories', err);
       });
   }, [namespace, setFeatureFlag]);

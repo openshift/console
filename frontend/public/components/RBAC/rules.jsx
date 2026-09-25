@@ -78,63 +78,61 @@ const Groups = ({ apiGroups }) => {
   return <div>{groups}</div>;
 };
 
-const Resources = connect(({ k8s }) => ({ allModels: k8s.getIn(['RESOURCES', 'models']) }))(({
-  resources,
-  nonResourceURLs,
-  allModels,
-}) => {
-  const { t } = useTranslation('public');
+const Resources = connect(({ k8s }) => ({ allModels: Object.values(k8s.RESOURCES?.models ?? {}) }))(
+  ({ resources, nonResourceURLs, allModels }) => {
+    const { t } = useTranslation('public');
 
-  let allResources = [];
-  if (resources) {
-    _.each([...new Set(resources)].sort(), (r) => {
-      if (r === '') {
-        return false;
-      }
-      if (r === '*') {
-        allResources = [
+    let allResources = [];
+    if (resources) {
+      _.each([...new Set(resources)].toSorted(), (r) => {
+        if (r === '') {
+          return false;
+        }
+        if (r === '*') {
+          allResources = [
+            <span key={r} className="rbac-rule-resource rbac-rule-row">
+              {t('All Resources')}
+            </span>,
+          ];
+          return false;
+        }
+        const base = r.split('/')[0];
+        const kind = allModels.find((model) => model.plural === base);
+
+        allResources.push(
           <span key={r} className="rbac-rule-resource rbac-rule-row">
-            {t('All Resources')}
+            <ResourceIcon kind={kind ? kind.kind : r} />{' '}
+            <span className="rbac-rule-resource__label">{r}</span>
           </span>,
-        ];
-        return false;
-      }
-      const base = r.split('/')[0];
-      const kind = allModels.find((model) => model.plural === base);
-
-      allResources.push(
-        <span key={r} className="rbac-rule-resource rbac-rule-row">
-          <ResourceIcon kind={kind ? kind.kind : r} />{' '}
-          <span className="rbac-rule-resource__label">{r}</span>
-        </span>,
-      );
-    });
-  }
-
-  if (nonResourceURLs && nonResourceURLs.length) {
-    if (allResources.length) {
-      allResources.push(<Divider key="hr" className="co-divider resource-separator" />);
+        );
+      });
     }
-    let URLs = [];
-    _.each(nonResourceURLs.sort(), (r) => {
-      if (r === '*') {
-        URLs = [
-          <div className="rbac-rule-row" key={r}>
-            {t('All Non-resource URLs')}
-          </div>,
-        ];
-        return false;
+
+    if (nonResourceURLs && nonResourceURLs.length) {
+      if (allResources.length) {
+        allResources.push(<Divider key="hr" className="co-divider resource-separator" />);
       }
-      URLs.push(
-        <div className="rbac-rule-row" key={r}>
-          {r}
-        </div>,
-      );
-    });
-    allResources.push(...URLs);
-  }
-  return <div className="rbac-rule-resources">{allResources}</div>;
-});
+      let URLs = [];
+      _.each(nonResourceURLs.sort(), (r) => {
+        if (r === '*') {
+          URLs = [
+            <div className="rbac-rule-row" key={r}>
+              {t('All Non-resource URLs')}
+            </div>,
+          ];
+          return false;
+        }
+        URLs.push(
+          <div className="rbac-rule-row" key={r}>
+            {r}
+          </div>,
+        );
+      });
+      allResources.push(...URLs);
+    }
+    return <div className="rbac-rule-resources">{allResources}</div>;
+  },
+);
 
 const ResourceNames = ({ resourceNames }) => {
   if (!resourceNames || resourceNames.length === 0) {

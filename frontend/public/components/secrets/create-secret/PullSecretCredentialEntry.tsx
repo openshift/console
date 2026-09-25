@@ -48,7 +48,11 @@ export const PullSecretCredentialEntry: FC<PullSecretCredentialEntryProps> = ({
   );
 
   return (
-    <FormFieldGroup data-test-id="create-image-secret-form" className="pf-v6-u-display-block">
+    <FormFieldGroup
+      data-test="create-image-secret-form"
+      data-test-id="create-image-secret-form"
+      className="pf-v6-u-display-block"
+    >
       {showRemoveButton && (
         <ActionGroup className="pf-v6-u-m-0 pf-v6-u-ml-auto">
           <Button

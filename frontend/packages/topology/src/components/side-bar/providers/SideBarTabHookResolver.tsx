@@ -52,7 +52,6 @@ const TabBarTabHookResolver: FC<TabBarTabHookResolverProps> = ({
       } else if (section) {
         if (!blamedDeprecatedPlugins[rest.id]) {
           blamedDeprecatedPlugins[rest.id] = true;
-          // eslint-disable-next-line no-console
           console.warn(
             `TabSectionExtension "${rest.id}" should be updated from section to provider (hook)`,
           );

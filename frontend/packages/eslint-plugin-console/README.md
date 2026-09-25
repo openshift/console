@@ -30,55 +30,11 @@ Alternatively, use one of the pre-composed configurations representing common co
 
 ## Examples
 
-By default, ESLint will look for configuration files in all parent folders up to the root directory.
-When using the configurations from this plugin, it's recommended too specify `"root": true` to stop this behavior.
+These configs are authored in the legacy (eslintrc) format, but are consumed
+from a flat config (`eslint.config.ts`) via `FlatCompat`.
 
-#### Standard TypeScript React Web Development
+The pre-composed presets are consumed using the `compat.extends()` helper, e.g.
+`compat.extends('plugin:console/react-typescript-prettier')`.
 
-```json
-{
-  "root": true,
-  "extends": [
-    "plugin:console/react",
-    "plugin:console/typescript",
-    "plugin:console/jest",
-    "plugin:console/prettier"
-  ]
-}
-```
-
-#### Standard Node Scripting
-
-```json
-{
-  "root": true,
-  "extends": [
-    "plugin:console/base",
-    "plugin:console/node",
-    "plugin:console/prettier"
-  ]
-}
-```
-
-#### Simple React with Jest
-
-```json
-{
-  "root": true,
-  "extends": [
-    "plugin:console/react",
-    "plugin:console/jest"
-  ]
-}
-```
-
-#### Simple JavaScript
-
-```json
-{
-  "root": true,
-  "extends": [
-    "plugin:console/base"
-  ]
-}
-```
+See this repo's [`eslint.config.ts`](../../eslint.config.ts) for a complete
+multi-scope example.

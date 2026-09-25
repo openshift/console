@@ -1,19 +1,19 @@
 import { renderHook } from '@testing-library/react';
+import { t } from 'i18next';
 import * as _ from 'lodash';
 import { DeploymentConfigModel, PodModel } from '@console/internal/models';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { RevisionModel } from '@console/knative-plugin/src/models';
-import { t } from '../../../../../__mocks__/i18next';
 import type { ExtPodKind } from '../../types/pod';
+import { usePodScalingAccessStatus, podRingLabel, getFailedPods } from '../pod-ring-utils';
+import * as utils from '../pod-utils';
 import {
   deployment,
   deploymentConfig,
   statefulSets,
   daemonSet,
   mockPod,
-} from '../__mocks__/pod-utils-test-data';
-import { usePodScalingAccessStatus, podRingLabel, getFailedPods } from '../pod-ring-utils';
-import * as utils from '../pod-utils';
+} from './data/pod-utils-test-data';
 
 jest.mock('../pod-utils', () => ({
   ...jest.requireActual('../pod-utils'),

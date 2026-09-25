@@ -45,7 +45,10 @@ test.describe(
             .getByTestId('storage-class-description')
             .fill('Storage class to be used for E2E tests only.');
           await page.getByTestId('storage-class-provisioner-dropdown').click();
-          await page.getByTestId('console-select-search-input').locator('input').fill(provisionerName);
+          await page
+            .getByTestId('console-select-search-input')
+            .locator('input')
+            .fill(provisionerName);
           await page.getByRole('option', { name: provisionerName }).click();
         });
 
@@ -75,7 +78,10 @@ test.describe(
   },
 );
 
-async function fillParameter(page: import('@playwright/test').Page, parameter: Parameter): Promise<void> {
+async function fillParameter(
+  page: import('@playwright/test').Page,
+  parameter: Parameter,
+): Promise<void> {
   const testId = getParameterTestId(parameter.name);
   const paramType = getParameterType(parameter);
 

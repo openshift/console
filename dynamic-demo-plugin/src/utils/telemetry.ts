@@ -64,7 +64,6 @@ const initSegment = () => {
 initSegment();
 
 export const eventListener = async (eventType: string, properties?: any) => {
-  // eslint-disable-next-line no-console
   console.log('Demo Plugin received telemetry event: ', eventType, properties);
   const anonymousIP = {
     context: {

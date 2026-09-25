@@ -35,10 +35,10 @@ module.exports = {
   'consistent-return': 'off',
 
   // Require consistent use of this alias
-  'consistent-this': ['warn', 'that'],
+  'consistent-this': ['error', 'that'],
 
   // Enforce a maximum depth that callbacks can be nested
-  'max-nested-callbacks': ['warn', 4],
+  'max-nested-callbacks': ['error', 4],
 
   // Disallow use of alert
   'no-alert': 'error',
@@ -46,8 +46,8 @@ module.exports = {
   // Disallow use of constant expressions in conditions
   'no-constant-condition': 'error',
 
-  // Disallow console statements
-  'no-console': 'error',
+  // Devtools console is used across the codebase for debugging in production.
+  'no-console': 'off',
 
   // Sort imports into groups
   'import/order': [
@@ -74,9 +74,6 @@ module.exports = {
       'newlines-between': 'never',
     },
   ],
-
-  // Only allow relative imports from the __mocks__ directory (no tsconfig alias set for frontend/__mocks__)
-  'import/no-relative-packages': ['error', { ignore: ['__mocks__'] }],
 
   // Legitimate use cases for require() exist, such as in the eslint config and in core-api.ts
   'global-require': 'off',

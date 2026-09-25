@@ -13,25 +13,25 @@ const createHelmChartRepositoryValidationSchema = (t: TFunction) =>
       .string()
       .matches(nameRegex, {
         message: t(
-          'helm-plugin~Name must consist of lower-case letters, numbers and hyphens. It must start with a letter and end with a letter or number.',
+          'helm-plugin~Name must consist of lowercase letters, numbers, and hyphens. It must start with a letter and end with a letter or number.',
         ),
         excludeEmptyString: true,
       })
-      .max(100, t('helm-plugin~The repository name cannot exceed than 100 characters.'))
+      .max(100, t('helm-plugin~The repository name cannot exceed 100 characters.'))
       .required(t('helm-plugin~Required')),
     repoDescription: yup
       .string()
-      .max(2048, t('helm-plugin~The repository name cannot exceed than 2048 characters.')),
+      .max(2048, t('helm-plugin~The repository name cannot exceed 2048 characters.')),
     repoUrl: yup
       .string()
       .matches(urlRegex, {
-        message: t('helm-plugin~Invalid Repo URL.'),
+        message: t('helm-plugin~Invalid repository URL. Enter a valid HTTP or HTTPS URL.'),
       })
-      .max(2048, t('helm-plugin~Please enter a URL that is less then 2048 characters.'))
+      .max(2048, t('helm-plugin~Enter a URL that is no more than 2048 characters.'))
       .required(t('helm-plugin~Required'))
       .test(
         'https-with-basic-auth',
-        t('helm-plugin~Basic authentication requires HTTPS'),
+        t('helm-plugin~Basic authentication requires HTTPS.'),
         function (value) {
           const { basicAuthConfig } = this.parent;
           return !basicAuthConfig || !value || value.startsWith('https://');

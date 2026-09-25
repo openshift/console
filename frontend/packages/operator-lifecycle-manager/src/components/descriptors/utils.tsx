@@ -151,7 +151,6 @@ function getValidCapabilitiesForDataType<CapabilityType extends string = SpecCap
       );
 
       if (isDeprecated) {
-        // eslint-disable-next-line no-console
         console.warn(
           `[Deprecated x-descriptor] "${capability}" is deprecated and support will be removed in a future release.`,
           descriptor,
@@ -159,7 +158,6 @@ function getValidCapabilitiesForDataType<CapabilityType extends string = SpecCap
       }
 
       if (!isCompatible) {
-        // eslint-disable-next-line no-console
         console.warn(
           `[Invalid x-descriptor] "${capability}" is incompatible with ${type} values and will have no effect`,
           descriptor,

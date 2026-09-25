@@ -4,8 +4,8 @@ import { CodeEditor } from '@patternfly/react-code-editor';
 import { css } from '@patternfly/react-styles';
 import * as monaco from 'monaco-editor';
 import { useTranslation } from 'react-i18next';
+import { useTheme } from '@console/app/src/providers/theme/ThemeProvider';
 import type { BasicCodeEditorProps } from '@console/dynamic-plugin-sdk';
-import { useTheme } from '@console/internal/components/ThemeProvider';
 import { ErrorBoundaryInline } from '@console/shared/src/components/error/fallbacks/ErrorBoundaryInline';
 import './BasicCodeEditor.scss';
 

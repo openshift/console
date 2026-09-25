@@ -56,7 +56,7 @@ export const useStorageClassActions = (
                     ]
                   : []),
                 {
-                  op: 'replace',
+                  op: 'add',
                   path: `/metadata/annotations/${defaultClassAnnotation.replace('/', '~1')}`,
                   value: 'true',
                 },

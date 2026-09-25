@@ -5,7 +5,7 @@ import {
   THEME_DARK,
   THEME_LIGHT,
   darkThemeMq,
-} from '@console/internal/components/ThemeProvider';
+} from '@console/app/src/providers/theme/ThemeProvider';
 import okdLogoImg from '../../imgs/okd-logo.svg';
 import dedicatedLogoImg from '../../imgs/openshift-dedicated-logo.svg';
 import openshiftLogoImg from '../../imgs/openshift-logo.svg';
@@ -105,7 +105,6 @@ export const useCustomLogoURL = (type: CustomLogo): { logoUrl: string; loading: 
       }
     };
     fetchData().catch((err) => {
-      // eslint-disable-next-line no-console
       console.warn(`Error while fetching ${type} logo: ${err}`);
     });
   }, [theme, type]);

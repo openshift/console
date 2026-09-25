@@ -97,34 +97,27 @@ export const SecurityBreakdownPopup: FC<SecurityBreakdownPopupProps> = ({
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <div style={{ width: '66%', marginRight: '24px' }}>
-                {vulnPriority
-                  .map((priority) =>
-                    !_.isEmpty(vulnsFor(priority.value)) ? (
-                      <div className="co-status-popup__row" key={priority.value}>
-                        <div>
-                          <RhUiWarningFillIcon
-                            color={priority.color.value}
-                            title={priority.title}
-                          />
-                          &nbsp;
-                          {vulnsFor(priority.value).length} {priority.title}
-                        </div>
+                {Object.values(vulnPriority).map((priority) =>
+                  !_.isEmpty(vulnsFor(priority.value)) ? (
+                    <div className="co-status-popup__row" key={priority.value}>
+                      <div>
+                        <RhUiWarningFillIcon color={priority.color.value} title={priority.title} />
+                        &nbsp;
+                        {vulnsFor(priority.value).length} {priority.title}
                       </div>
-                    ) : null,
-                  )
-                  .toArray()}
+                    </div>
+                  ) : null,
+                )}
               </div>
               <div>
                 <Link to={baseVulnListUrl} aria-label={t('View all')}>
                   <ChartDonut
-                    colorScale={vulnPriority.map((priority) => priority.color.value).toArray()}
-                    data={vulnPriority
-                      .map((priority) => ({
-                        label: priority.title,
-                        x: priority.value,
-                        y: vulnsFor(priority.value).length,
-                      }))
-                      .toArray()}
+                    colorScale={Object.values(vulnPriority).map((priority) => priority.color.value)}
+                    data={Object.values(vulnPriority).map((priority) => ({
+                      label: priority.title,
+                      x: priority.value,
+                      y: vulnsFor(priority.value).length,
+                    }))}
                     title={t('{{vulnImageCount, number}} total', {
                       vulnImageCount: resource.length,
                     })}

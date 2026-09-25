@@ -1,4 +1,3 @@
-import { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash';
 import type { K8sResourceKindReference, ModelMetadata } from '@console/dynamic-plugin-sdk';
 import { isModelMetadata } from '@console/dynamic-plugin-sdk';
@@ -20,16 +19,19 @@ import { referenceForModel, referenceForGroupVersionKind } from './k8s-ref';
 const modelKey = (model: K8sKind): string =>
   // TODO: Use `referenceForModel` even for known API objects
   model.crd ? referenceForModel(model) : model.kind;
-export const modelsToMap = (models: K8sKind[]): ImmutableMap<K8sResourceKindReference, K8sKind> =>
-  ImmutableMap<K8sResourceKindReference, K8sKind>().withMutations((map) => {
-    models.forEach((model) => map.set(modelKey(model), model));
+export const modelsToMap = (models: K8sKind[]): Record<K8sResourceKindReference, K8sKind> => {
+  const map: Record<string, K8sKind> = {};
+  models.forEach((model) => {
+    map[modelKey(model)] = model;
   });
+  return map;
+};
 
 /**
  * Contains static resource definitions for Kubernetes objects.
  * Keys are of type `group:version:Kind`, but TypeScript doesn't support regex types (https://github.com/Microsoft/TypeScript/issues/6579).
  */
-let k8sModels;
+let k8sModels: Record<string, K8sKind>;
 
 const getK8sModels = () => {
   if (!k8sModels) {
@@ -47,25 +49,35 @@ export const modelFor = (ref: K8sResourceKindReference): K8sModel => {
     .getExtensions()
     .filter(isModelMetadata) as LoadedExtension<ModelMetadata>[];
 
-  let m = getK8sModels().get(ref);
+  let m = getK8sModels()[ref];
   if (m) {
-    const metadata = getModelExtensionMetadata(metadataExtensions, m?.group, m?.version, m?.kind);
-    return _.merge(m, metadata);
+    const metadata = getModelExtensionMetadata(
+      metadataExtensions,
+      m?.apiGroup,
+      m?.apiVersion,
+      m?.kind,
+    );
+    return _.merge({}, m, metadata);
   }
 
   // FIXME: Remove synchronous `store.getState()` call here, should be using `connectToModels` instead, only here for backwards-compatibility
-  m = store.getState().k8s.getIn(['RESOURCES', 'models']).get(ref);
+  m = store.getState().k8s.RESOURCES?.models?.[ref];
   if (m) {
     return m;
   }
 
-  m = getK8sModels().get(kindForReference(ref));
+  m = getK8sModels()[kindForReference(ref)];
   if (m) {
-    const metadata = getModelExtensionMetadata(metadataExtensions, m?.group, m?.version, m?.kind);
-    return _.merge(m, metadata);
+    const metadata = getModelExtensionMetadata(
+      metadataExtensions,
+      m?.apiGroup,
+      m?.apiVersion,
+      m?.kind,
+    );
+    return _.merge({}, m, metadata);
   }
 
-  m = store.getState().k8s.getIn(['RESOURCES', 'models']).get(kindForReference(ref));
+  m = store.getState().k8s.RESOURCES?.models?.[kindForReference(ref)];
   if (m) {
     return m;
   }
@@ -76,26 +88,23 @@ export const modelFor = (ref: K8sResourceKindReference): K8sModel => {
  * NOTE: This will not work for CRDs defined at runtime, use `connectToModels` instead.
  */
 export const modelForGroupKind = (group: string, kind: string): K8sKind => {
-  const models: ImmutableMap<string, K8sKind> = store.getState().k8s.getIn(['RESOURCES', 'models']);
-  const groupVersionMap: DiscoveryResources['groupVersionMap'] = store
-    .getState()
-    .k8s.getIn(['RESOURCES', 'groupToVersionMap']);
+  const models: Record<string, K8sKind> = store.getState().k8s.RESOURCES?.models ?? {};
+  const groupVersionMap: DiscoveryResources['groupVersionMap'] =
+    store.getState().k8s.RESOURCES?.groupToVersionMap;
 
   const { preferredVersion, versions } = groupVersionMap?.[group] || {};
   if (preferredVersion) {
-    // Find a model for the CRD that uses this preferred version
     const ref = referenceForGroupVersionKind(group)(preferredVersion)(kind);
-    const model = models.get(ref);
+    const model = models[ref];
     if (model) {
       return model;
     }
   }
-  // In case the preferred version does not have the CRD
   if (versions) {
-    const sortedVersions: string[] = versions.sort(apiVersionCompare);
+    const sortedVersions: string[] = [...versions].sort(apiVersionCompare);
     for (const version of sortedVersions) {
       const ref = referenceForGroupVersionKind(group)(version)(kind);
-      const model = models.get(ref);
+      const model = models[ref];
       if (model) {
         return model;
       }
@@ -117,16 +126,14 @@ export const useModelFinder = () => {
   const referenceForGroupVersionPlural = (group: string) => (version: string) => (plural: string) =>
     [group || 'core', version, plural].join('~');
 
-  const models = useConsoleSelector<ImmutableMap<string, K8sModel>>(({ k8s }) =>
-    k8s.getIn(['RESOURCES', 'models']),
-  );
-  const pluralsToModelMap = models.reduce((acc, curr) => {
+  const models = useConsoleSelector<Record<string, K8sModel>>(({ k8s }) => k8s.RESOURCES?.models);
+  const pluralsToModelMap = Object.values(models ?? {}).reduce((acc, curr) => {
     const ref = referenceForGroupVersionPlural(curr.apiGroup)(curr.apiVersion)(curr.plural);
     acc[ref] = curr;
     return acc;
   }, {});
-  const groupVersionMap = useConsoleSelector<DiscoveryResources['groupVersionMap']>(({ k8s }) =>
-    k8s.getIn(['RESOURCES', 'groupToVersionMap']),
+  const groupVersionMap = useConsoleSelector<DiscoveryResources['groupVersionMap']>(
+    ({ k8s }) => k8s.RESOURCES?.groupToVersionMap,
   );
 
   const findModel = (group: string, resource: string) => {
@@ -139,16 +146,14 @@ export const useModelFinder = () => {
     }
     const { preferredVersion, versions } = groupVersionMap?.[group] || {};
     if (preferredVersion) {
-      // Find a model for the CRD that uses this preferred version
       const ref = referenceForGroupVersionPlural(group)(preferredVersion)(resource);
       const model = pluralsToModelMap[ref];
       if (model) {
         return model;
       }
     }
-    // In case the preferred version does not have the CRD
     if (versions) {
-      const sortedVersions: string[] = versions.sort(apiVersionCompare);
+      const sortedVersions: string[] = [...versions].sort(apiVersionCompare);
       for (const version of sortedVersions) {
         const ref = referenceForGroupVersionPlural(group)(version)(resource);
         const model = pluralsToModelMap[ref];

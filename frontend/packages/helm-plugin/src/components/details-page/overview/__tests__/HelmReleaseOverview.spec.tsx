@@ -34,7 +34,7 @@ describe('HelmReleaseOverview', () => {
   it('should render the Section Heading for the Overview page', () => {
     spyUseAccessReview.mockReturnValue([true]);
     renderWithProviders(<HelmReleaseOverview {...helmReleaseOverviewProps} />);
-    expect(screen.getByText('Helm Release details')).toBeInTheDocument();
+    expect(screen.getByText('Helm release details')).toBeInTheDocument();
   });
 
   it('should render the ResourceSummary component', () => {

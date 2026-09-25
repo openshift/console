@@ -10,13 +10,10 @@ import {
 } from '@console/internal/models';
 import * as k8sInternalResourceModule from '@console/internal/module/k8s/resource';
 import { getSuggestedName } from '../../../utils/imagestream-utils';
-import {
-  mockDeployImageFormData,
-  mockImageStreamData,
-} from '../__mocks__/deployImage-validation-mock';
 import * as submitUtils from '../deployImage-submit-utils';
 import type { DeployImageFormData } from '../import-types';
 import { Resources } from '../import-types';
+import { mockDeployImageFormData, mockImageStreamData } from './data/deployImage-validation-mock';
 import {
   dataWithoutPorts,
   dataWithPorts,
@@ -60,7 +57,7 @@ describe('DeployImage Submit Utils', () => {
       expect(values.registry).toEqual(DEFAULT_REGISTRY);
     });
 
-    it('expect to get a suggested name from the docker path ', () => {
+    it('expect to get a suggested name from the docker path', () => {
       const suggestedName: string = getSuggestedName(dataWithoutPorts.isi.name);
       expect(suggestedName).toEqual('helloworld-go');
     });
@@ -184,21 +181,15 @@ describe('DeployImage Submit Utils', () => {
       jest.clearAllMocks();
     });
 
-    it('should choose image from dockerImageReference when creating Deployment using internal imagestream', (done) => {
-      createOrUpdateDeployment(internalImageData, false)
-        .then((returnValue) => {
-          expect(_.get(returnValue, 'model.kind')).toEqual(DeploymentModel.kind);
-          expect(_.get(returnValue, 'data.spec.template.spec.containers[0].image')).toEqual(
-            'image-registry.openshift-image-registry.svc:5000/gijohn/react-web-app@sha256:22319276ebe1b647149d5d95e1bef4252c274238e5634d54b7ce7bd17bcbcf14',
-          );
-          done();
-        })
-        .catch(() => {
-          done();
-        });
+    it('should choose image from dockerImageReference when creating Deployment using internal imagestream', async () => {
+      const returnValue = await createOrUpdateDeployment(internalImageData, false);
+      expect(_.get(returnValue, 'model.kind')).toEqual(DeploymentModel.kind);
+      expect(_.get(returnValue, 'data.spec.template.spec.containers[0].image')).toEqual(
+        'image-registry.openshift-image-registry.svc:5000/gijohn/react-web-app@sha256:22319276ebe1b647149d5d95e1bef4252c274238e5634d54b7ce7bd17bcbcf14',
+      );
     });
 
-    it('should create deployment with the internal imagestream labels instead of creating new imagestream name', (done) => {
+    it('should create deployment with the internal imagestream labels instead of creating new imagestream name', async () => {
       const internalImageStreamData = _.merge(_.cloneDeep(internalImageData), {
         isi: {
           image: {
@@ -213,36 +204,24 @@ describe('DeployImage Submit Utils', () => {
         },
       });
 
-      createOrUpdateDeployment(internalImageStreamData, false)
-        .then((returnValue) => {
-          const { data: Deployment } = returnValue;
-          expect(Deployment.metadata.labels.app).toEqual('react-web-app');
-          expect(Deployment.metadata.labels['app.kubernetes.io/name']).toEqual('nodejs');
-          expect(Deployment.metadata.labels['app.kubernetes.io/runtime']).toEqual('nodejs');
-          expect(Deployment.metadata.labels['app.kubernetes.io/runtime-version']).toEqual('10-SCL');
-          done();
-        })
-        .catch(() => {
-          done();
-        });
+      const returnValue = await createOrUpdateDeployment(internalImageStreamData, false);
+      const { data: Deployment } = returnValue;
+      expect(Deployment.metadata.labels.app).toEqual('react-web-app');
+      expect(Deployment.metadata.labels['app.kubernetes.io/name']).toEqual('nodejs');
+      expect(Deployment.metadata.labels['app.openshift.io/runtime']).toEqual('nodejs');
+      expect(Deployment.metadata.labels['app.openshift.io/runtime-version']).toEqual('10-SCL');
     });
 
-    it('should not have the internal imagestream labels', (done) => {
-      createOrUpdateDeployment(internalImageData, false)
-        .then((returnValue) => {
-          const { data: Deployment } = returnValue;
-          expect(Deployment.metadata.labels.app).toEqual('react-web-app');
-          expect(Deployment.metadata.labels['app.kubernetes.io/name']).toBeUndefined();
-          expect(Deployment.metadata.labels['app.kubernetes.io/runtime']).toBeUndefined();
-          expect(Deployment.metadata.labels['app.kubernetes.io/runtime-version']).toBeUndefined();
-          done();
-        })
-        .catch(() => {
-          done();
-        });
+    it('should not have the internal imagestream labels', async () => {
+      const returnValue = await createOrUpdateDeployment(internalImageData, false);
+      const { data: Deployment } = returnValue;
+      expect(Deployment.metadata.labels.app).toEqual('react-web-app');
+      expect(Deployment.metadata.labels['app.kubernetes.io/name']).toEqual('react-web-app');
+      expect(Deployment.metadata.labels['app.kubernetes.io/runtime']).toBeUndefined();
+      expect(Deployment.metadata.labels['app.kubernetes.io/runtime-version']).toBeUndefined();
     });
 
-    it('should assign limits on creating Deployment', (done) => {
+    it('should assign limits on creating Deployment', async () => {
       const data = _.cloneDeep(defaultData);
       data.limits = {
         cpu: {
@@ -263,17 +242,11 @@ describe('DeployImage Submit Utils', () => {
         },
       };
 
-      createOrUpdateDeployment(data, false)
-        .then((returnValue) => {
-          expect(_.get(returnValue, 'data.spec.template.spec.containers[0].resources')).toEqual({
-            limits: { cpu: '10m', memory: '200Mi' },
-            requests: { cpu: '5m', memory: '100Mi' },
-          });
-          done();
-        })
-        .catch(() => {
-          done();
-        });
+      const returnValue = await createOrUpdateDeployment(data, false);
+      expect(_.get(returnValue, 'data.spec.template.spec.containers[0].resources')).toEqual({
+        limits: { cpu: '10m', memory: '200Mi' },
+        requests: { cpu: '5m', memory: '100Mi' },
+      });
     });
   });
 
@@ -288,35 +261,23 @@ describe('DeployImage Submit Utils', () => {
       jest.clearAllMocks();
     });
 
-    it('should call createImageStream when creating Resources using external image', (done) => {
-      createOrUpdateDeployImageResources(defaultData, false)
-        .then((returnValue) => {
-          expect(returnValue).toHaveLength(4);
-          const models = returnValue.map((data) => _.get(data, 'model.kind'));
-          expect(models).toEqual([
-            ImageStreamModel.kind,
-            DeploymentConfigModel.kind,
-            ServiceModel.kind,
-            RouteModel.kind,
-          ]);
-          done();
-        })
-        .catch(() => {
-          done();
-        });
+    it('should call createImageStream when creating Resources using external image', async () => {
+      const returnValue = await createOrUpdateDeployImageResources(defaultData, false);
+      expect(k8sCreateMock).toHaveBeenCalledWith(
+        ImageStreamModel,
+        expect.objectContaining({ kind: 'ImageStream' }),
+        {},
+      );
+      expect(returnValue).toHaveLength(3);
+      const models = returnValue.map((data) => _.get(data, 'model.kind'));
+      expect(models).toEqual([DeploymentConfigModel.kind, ServiceModel.kind, RouteModel.kind]);
     });
 
-    it('should not call createImageStream when creating Resources using internal imagestream', (done) => {
-      createOrUpdateDeployImageResources(internalImageData, false)
-        .then((returnValue) => {
-          expect(returnValue).toHaveLength(3);
-          const models = returnValue.map((data) => _.get(data, 'model.kind'));
-          expect(models).toEqual([DeploymentModel.kind, ServiceModel.kind, RouteModel.kind]);
-          done();
-        })
-        .catch(() => {
-          done();
-        });
+    it('should not call createImageStream when creating Resources using internal imagestream', async () => {
+      const returnValue = await createOrUpdateDeployImageResources(internalImageData, false);
+      expect(returnValue).toHaveLength(3);
+      const models = returnValue.map((data) => _.get(data, 'model.kind'));
+      expect(models).toEqual([DeploymentModel.kind, ServiceModel.kind, RouteModel.kind]);
     });
 
     it('should call KNative when creating Resources when resource is KNative', async () => {

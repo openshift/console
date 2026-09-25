@@ -33,7 +33,7 @@ export class OdcBaseNode extends BaseNode implements OdcBaseNodeInterface {
   }
 
   getResourceKind(): K8sResourceKindReference | undefined {
-    return this.resourceKind || referenceFor(this.resource);
+    return this.resourceKind || (this.resource ? referenceFor(this.resource) : undefined);
   }
 
   setResourceKind(kind: K8sResourceKindReference | undefined): void {

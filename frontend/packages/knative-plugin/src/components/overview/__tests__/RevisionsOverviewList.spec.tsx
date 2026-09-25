@@ -9,7 +9,7 @@ import { MockKnativeResources } from '../../../topology/__tests__/topology-knati
 import {
   mockRevisions,
   mockTrafficData,
-} from '../../../utils/__mocks__/traffic-splitting-utils-mock';
+} from '../../../utils/__tests__/data/traffic-splitting-utils-mock';
 import * as TrafficSplittingController from '../../traffic-splitting/TrafficSplittingController';
 import RevisionsOverviewList from '../RevisionsOverviewList';
 

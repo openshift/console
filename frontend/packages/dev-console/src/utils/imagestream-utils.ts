@@ -66,7 +66,6 @@ const portsFromSpec = (portSpec: object): ContainerPort[] =>
           protocol: parts[1].toUpperCase(),
         });
       } else {
-        // eslint-disable-next-line no-console
         console.warn('Unrecognized image port format', key);
       }
 

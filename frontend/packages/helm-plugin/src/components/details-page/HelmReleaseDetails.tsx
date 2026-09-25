@@ -109,10 +109,10 @@ export const LoadedHelmReleaseDetails: FC<LoadedHelmReleaseDetailsProps> = ({
       customData={helmRelease.data}
       breadcrumbsFor={() => [
         {
-          name: t('Helm Releases'),
+          name: t('Helm releases'),
           path: `/helm/ns/${namespace}`,
         },
-        { name: t('Helm Release details'), path: `${location.pathname}` },
+        { name: t('Helm release details'), path: `${location.pathname}` },
       ]}
       title={title}
       kind={SecretReference}
@@ -176,7 +176,6 @@ const HelmReleaseDetails: FC<HelmReleaseDetailsProps> = () => {
           setHelmReleaseData(helmRelease);
         }
       } catch (err) {
-        // eslint-disable-next-line no-console
         console.log('Error while loading helm release', err);
         setHelmReleaseError(err);
       }

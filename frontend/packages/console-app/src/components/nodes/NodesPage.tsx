@@ -697,7 +697,7 @@ const NodeList: FC<NodeListProps> = ({
 }) => {
   const { t } = useTranslation('console-app');
   const { columns, resetAllColumnWidths } = useNodesColumns(vmsEnabled, isOpenShift5);
-  const nodeMetrics = useConsoleSelector<NodeMetrics>(({ UI }) => UI.getIn(['metrics', 'node']));
+  const nodeMetrics = useConsoleSelector<NodeMetrics>(({ UI }) => UI.metrics?.node);
   const columnManagementID = referenceForModel(NodeModel);
   const statusExtensions = useNodeStatusExtensions();
 
@@ -1105,7 +1105,6 @@ export const NodesPage: FC<NodesPageProps> = ({ selector }) => {
         const metrics = await fetchNodeMetrics(nodes);
         dispatch(setNodeMetrics(metrics));
       } catch (e) {
-        // eslint-disable-next-line no-console
         console.error('Error fetching node metrics: ', e);
       }
     };

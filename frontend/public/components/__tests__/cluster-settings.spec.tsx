@@ -1,7 +1,7 @@
 import { screen } from '@testing-library/react';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
-import { clusterVersionUpgradeableFalseProps } from '../../../__mocks__/clusterVersionMock';
 import { ClusterNotUpgradeableAlert } from '../cluster-settings/cluster-settings-utils';
+import { clusterVersionUpgradeableFalseProps } from './data/clusterVersionMock';
 
 jest.mock('react-i18next', () => ({
   ...jest.requireActual('react-i18next'),

@@ -1,11 +1,12 @@
 import chalk from 'chalk';
 import * as fs from 'fs-extra';
 import * as _ from 'lodash';
-import * as readPkg from 'read-pkg';
+import type { PackageJson } from 'read-pkg';
+import { readPackageSync } from 'read-pkg';
 import { getCorePackage, getInternalPackage, getWebpackPackage } from './package-definitions';
 import { resolvePath, relativePath } from './utils/path';
 
-const writePackageManifest = (manifest: readPkg.PackageJson, outDir: string) => {
+const writePackageManifest = (manifest: PackageJson, outDir: string) => {
   const outPath = resolvePath(`${outDir}/package.json`);
   fs.writeFileSync(outPath, JSON.stringify(manifest, null, 2));
   console.log(chalk.green(relativePath(outPath)));
@@ -18,8 +19,8 @@ const copyFiles = (files: Record<string, string>) => {
   });
 };
 
-const sdkPackage = readPkg.sync({ normalize: false });
-const rootPackage = readPkg.sync({ cwd: resolvePath('../..'), normalize: false });
+const sdkPackage = readPackageSync({ normalize: false });
+const rootPackage = readPackageSync({ cwd: resolvePath('../..'), normalize: false });
 
 const missingDepNames = new Set<string>();
 const missingDepCallback = (name: string) => missingDepNames.add(name);

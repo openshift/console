@@ -148,7 +148,6 @@ export const watchK8sList =
         const resourceVersion = await incrementallyLoad();
         // ensure this watch should still exist because pollAndWatch is recursiveish
         if (!REF_COUNTS[id]) {
-          // eslint-disable-next-line no-console
           console.log(`stopped watching ${id} before finishing incremental loading.`);
           // call cleanup function out of abundance of caution...
           dispatch(stopK8sWatch(id));
@@ -156,13 +155,11 @@ export const watchK8sList =
         }
 
         if (WS[id]) {
-          // eslint-disable-next-line no-console
           console.warn(`Attempted to create multiple websockets for ${id}.`);
           return;
         }
 
         if (!_.get(k8skind, 'verbs', ['watch']).includes('watch')) {
-          // eslint-disable-next-line no-console
           console.warn(
             `${getReferenceForModel(k8skind)} does not support watching, falling back to polling.`,
           );
@@ -180,7 +177,6 @@ export const watchK8sList =
         );
       } catch (e) {
         if (!REF_COUNTS[id]) {
-          // eslint-disable-next-line no-console
           console.log(
             `stopped watching ${id} before finishing incremental loading with error ${e}!`,
           );
@@ -203,7 +199,6 @@ export const watchK8sList =
           if (event.code !== 1006) {
             return;
           }
-          // eslint-disable-next-line no-console
           console.log('WS closed abnormally');
           const ws = WS[id];
           const timedOut = true;
@@ -216,7 +211,6 @@ export const watchK8sList =
           // If the WS is unsuccessful for timeout duration, assume it is less work
           // to update the entire list and then start the WS again
 
-          // eslint-disable-next-line no-console
           console.log(`WS ${id} timed out - restarting polling`);
           delete WS[id];
 
@@ -263,7 +257,6 @@ export const watchK8sObject =
           (e) => dispatch(errored(id, e)),
         )
         .catch((err) => {
-          // eslint-disable-next-line no-console
           console.log(err);
         });
     };
@@ -271,7 +264,6 @@ export const watchK8sObject =
     poller();
 
     if (!_.get(k8sModel, 'verbs', ['watch']).includes('watch')) {
-      // eslint-disable-next-line no-console
       console.warn(`${getReferenceForModel(k8sModel)} does not support watching`);
       return _.noop;
     }
@@ -279,7 +271,6 @@ export const watchK8sObject =
     // Validate that a namespace is provided when watching a singular namespaced object. Must happen
     // on frontend since we use field selectors against the list endpoint to watch singular resources.
     if (k8sModel.namespaced && query.name && !query.ns) {
-      // eslint-disable-next-line no-console
       console.error('Namespace required to watch namespaced resource: ', k8sModel.kind, query.name);
       return _.noop;
     }

@@ -2,8 +2,8 @@ import type { ComponentProps, ReactNode } from 'react';
 import { render, screen } from '@testing-library/react';
 import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';
 import { CamelKameletBindingModel } from '../../../models';
-import { mockKameletSink } from '../__mocks__/Kamelet-data';
 import EventSinkForm from '../EventSinkForm';
+import { mockKameletSink } from './data/Kamelet-data';
 
 jest.mock('@console/shared/src/components/form-utils/FormFooter', () => {
   const { createKnativeTextStub: createTextStub } = jest.requireActual(

@@ -24,7 +24,6 @@ export const useCopyLoginCommands = (): [string, string] => {
           }
         })
         .catch((err) => {
-          // eslint-disable-next-line no-console
           console.warn(`GET ${COPY_LOGIN_COMMANDS_ENDPOINT} failed: ${err}`);
           setRequestTokenURL('');
           setExternalLoginCommand('');

@@ -5,9 +5,9 @@ import useCatalogItems from './useCatalogItems';
 
 type UseCatalogCategories = () => [CatalogCategory[], boolean, string];
 const useCatalogCategories: UseCatalogCategories = () => {
-  const [items, loading, error] = useCatalogItems();
+  const [items, loaded, error] = useCatalogItems();
   const categories = useMemo(() => {
-    if (loading || error) {
+    if (!loaded || error) {
       return [];
     }
     return _.uniq(
@@ -23,9 +23,9 @@ const useCatalogCategories: UseCatalogCategories = () => {
           tags: [id, label],
         };
       });
-  }, [error, items, loading]);
+  }, [error, items, loaded]);
 
-  return [categories, loading, error];
+  return [categories, loaded, error];
 };
 
 export default useCatalogCategories;

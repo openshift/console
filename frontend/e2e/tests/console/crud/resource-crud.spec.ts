@@ -47,37 +47,212 @@ const RESOURCES_WITH_SYNCED_EDITOR = new Set([
 ]);
 
 const k8sResources: ResourceDefinition[] = [
-  { resource: 'pods', kind: 'Pod', namespaced: true, humanizeKind: true, skipYamlReloadTest: false, skipYamlSaveTest: false },
-  { resource: 'serviceaccounts', kind: 'ServiceAccount', namespaced: true, humanizeKind: false, skipYamlReloadTest: false, skipYamlSaveTest: false },
-  { resource: 'secrets', kind: 'Secret', namespaced: true, humanizeKind: true, skipYamlReloadTest: true, skipYamlSaveTest: false },
-  { resource: 'persistentvolumes', kind: 'PersistentVolume', namespaced: false, humanizeKind: false, skipYamlReloadTest: false, skipYamlSaveTest: false },
-  { resource: 'storageclasses', kind: 'StorageClass', namespaced: false, humanizeKind: false, skipYamlReloadTest: false, skipYamlSaveTest: false },
-  { resource: 'cronjobs', kind: 'CronJob', namespaced: true, humanizeKind: false, skipYamlReloadTest: false, skipYamlSaveTest: false },
-  { resource: 'jobs', kind: 'Job', namespaced: true, humanizeKind: true, skipYamlReloadTest: false, skipYamlSaveTest: false },
-  { resource: 'daemonsets', kind: 'DaemonSet', namespaced: true, humanizeKind: false, skipYamlReloadTest: false, skipYamlSaveTest: false },
-  { resource: 'deployments', kind: 'Deployment', namespaced: true, humanizeKind: true, skipYamlReloadTest: true, skipYamlSaveTest: true },
-  { resource: 'replicasets', kind: 'ReplicaSet', namespaced: true, humanizeKind: false, skipYamlReloadTest: false, skipYamlSaveTest: false },
-  { resource: 'replicationcontrollers', kind: 'ReplicationController', namespaced: true, humanizeKind: false, skipYamlReloadTest: false, skipYamlSaveTest: false },
-  { resource: 'persistentvolumeclaims', kind: 'PersistentVolumeClaim', namespaced: true, humanizeKind: false, skipYamlReloadTest: false, skipYamlSaveTest: false },
-  { resource: 'statefulsets', kind: 'StatefulSet', namespaced: true, humanizeKind: false, skipYamlReloadTest: false, skipYamlSaveTest: false },
-  { resource: 'resourcequotas', kind: 'ResourceQuota', namespaced: true, humanizeKind: false, skipYamlReloadTest: false, skipYamlSaveTest: false },
-  { resource: 'limitranges', kind: 'LimitRange', namespaced: true, humanizeKind: false, skipYamlReloadTest: false, skipYamlSaveTest: false },
-  { resource: 'horizontalpodautoscalers', kind: 'HorizontalPodAutoscaler', namespaced: true, humanizeKind: false, skipYamlReloadTest: false, skipYamlSaveTest: false },
-  { resource: 'roles', kind: 'Role', namespaced: true, humanizeKind: true, skipYamlReloadTest: false, skipYamlSaveTest: false },
+  {
+    resource: 'pods',
+    kind: 'Pod',
+    namespaced: true,
+    humanizeKind: true,
+    skipYamlReloadTest: false,
+    skipYamlSaveTest: false,
+  },
+  {
+    resource: 'serviceaccounts',
+    kind: 'ServiceAccount',
+    namespaced: true,
+    humanizeKind: false,
+    skipYamlReloadTest: false,
+    skipYamlSaveTest: false,
+  },
+  {
+    resource: 'secrets',
+    kind: 'Secret',
+    namespaced: true,
+    humanizeKind: true,
+    skipYamlReloadTest: true,
+    skipYamlSaveTest: false,
+  },
+  {
+    resource: 'persistentvolumes',
+    kind: 'PersistentVolume',
+    namespaced: false,
+    humanizeKind: false,
+    skipYamlReloadTest: false,
+    skipYamlSaveTest: false,
+  },
+  {
+    resource: 'storageclasses',
+    kind: 'StorageClass',
+    namespaced: false,
+    humanizeKind: false,
+    skipYamlReloadTest: false,
+    skipYamlSaveTest: false,
+  },
+  {
+    resource: 'cronjobs',
+    kind: 'CronJob',
+    namespaced: true,
+    humanizeKind: false,
+    skipYamlReloadTest: false,
+    skipYamlSaveTest: false,
+  },
+  {
+    resource: 'jobs',
+    kind: 'Job',
+    namespaced: true,
+    humanizeKind: true,
+    skipYamlReloadTest: false,
+    skipYamlSaveTest: false,
+  },
+  {
+    resource: 'daemonsets',
+    kind: 'DaemonSet',
+    namespaced: true,
+    humanizeKind: false,
+    skipYamlReloadTest: false,
+    skipYamlSaveTest: false,
+  },
+  {
+    resource: 'deployments',
+    kind: 'Deployment',
+    namespaced: true,
+    humanizeKind: true,
+    skipYamlReloadTest: true,
+    skipYamlSaveTest: true,
+  },
+  {
+    resource: 'replicasets',
+    kind: 'ReplicaSet',
+    namespaced: true,
+    humanizeKind: false,
+    skipYamlReloadTest: false,
+    skipYamlSaveTest: false,
+  },
+  {
+    resource: 'replicationcontrollers',
+    kind: 'ReplicationController',
+    namespaced: true,
+    humanizeKind: false,
+    skipYamlReloadTest: false,
+    skipYamlSaveTest: false,
+  },
+  {
+    resource: 'persistentvolumeclaims',
+    kind: 'PersistentVolumeClaim',
+    namespaced: true,
+    humanizeKind: false,
+    skipYamlReloadTest: false,
+    skipYamlSaveTest: false,
+  },
+  {
+    resource: 'statefulsets',
+    kind: 'StatefulSet',
+    namespaced: true,
+    humanizeKind: false,
+    skipYamlReloadTest: false,
+    skipYamlSaveTest: false,
+  },
+  {
+    resource: 'resourcequotas',
+    kind: 'ResourceQuota',
+    namespaced: true,
+    humanizeKind: false,
+    skipYamlReloadTest: false,
+    skipYamlSaveTest: false,
+  },
+  {
+    resource: 'limitranges',
+    kind: 'LimitRange',
+    namespaced: true,
+    humanizeKind: false,
+    skipYamlReloadTest: false,
+    skipYamlSaveTest: false,
+  },
+  {
+    resource: 'horizontalpodautoscalers',
+    kind: 'HorizontalPodAutoscaler',
+    namespaced: true,
+    humanizeKind: false,
+    skipYamlReloadTest: false,
+    skipYamlSaveTest: false,
+  },
+  {
+    resource: 'roles',
+    kind: 'Role',
+    namespaced: true,
+    humanizeKind: true,
+    skipYamlReloadTest: false,
+    skipYamlSaveTest: false,
+  },
 ];
 
 const openshiftResources: ResourceDefinition[] = [
-  { resource: 'deploymentconfigs', kind: 'DeploymentConfig', namespaced: true, humanizeKind: false, skipYamlReloadTest: true, skipYamlSaveTest: true },
-  { resource: 'buildconfigs', kind: 'BuildConfig', namespaced: true, humanizeKind: false, skipYamlReloadTest: true, skipYamlSaveTest: true },
-  { resource: 'imagestreams', kind: 'ImageStream', namespaced: true, humanizeKind: false, skipYamlReloadTest: false, skipYamlSaveTest: false },
-  { resource: 'user.openshift.io~v1~Group', kind: 'user.openshift.io~v1~Group', namespaced: false, humanizeKind: true, skipYamlReloadTest: false, skipYamlSaveTest: false },
+  {
+    resource: 'deploymentconfigs',
+    kind: 'DeploymentConfig',
+    namespaced: true,
+    humanizeKind: false,
+    skipYamlReloadTest: true,
+    skipYamlSaveTest: true,
+  },
+  {
+    resource: 'buildconfigs',
+    kind: 'BuildConfig',
+    namespaced: true,
+    humanizeKind: false,
+    skipYamlReloadTest: true,
+    skipYamlSaveTest: true,
+  },
+  {
+    resource: 'imagestreams',
+    kind: 'ImageStream',
+    namespaced: true,
+    humanizeKind: false,
+    skipYamlReloadTest: false,
+    skipYamlSaveTest: false,
+  },
+  {
+    resource: 'user.openshift.io~v1~Group',
+    kind: 'user.openshift.io~v1~Group',
+    namespaced: false,
+    humanizeKind: true,
+    skipYamlReloadTest: false,
+    skipYamlSaveTest: false,
+  },
 ];
 
 const snapshotResources: ResourceDefinition[] = [
-  { resource: 'snapshot.storage.k8s.io~v1~VolumeSnapshot', kind: 'snapshot.storage.k8s.io~v1~VolumeSnapshot', namespaced: true, humanizeKind: true, skipYamlReloadTest: false, skipYamlSaveTest: false },
-  { resource: 'snapshot.storage.k8s.io~v1~VolumeSnapshotClass', kind: 'snapshot.storage.k8s.io~v1~VolumeSnapshotClass', namespaced: false, humanizeKind: true, skipYamlReloadTest: false, skipYamlSaveTest: false },
-  { resource: 'snapshot.storage.k8s.io~v1~VolumeSnapshotContent', kind: 'snapshot.storage.k8s.io~v1~VolumeSnapshotContent', namespaced: false, humanizeKind: true, skipYamlReloadTest: false, skipYamlSaveTest: false },
-  { resource: 'storage.k8s.io~v1~VolumeAttributesClass', kind: 'storage.k8s.io~v1~VolumeAttributesClass', namespaced: false, humanizeKind: true, skipYamlReloadTest: false, skipYamlSaveTest: false },
+  {
+    resource: 'snapshot.storage.k8s.io~v1~VolumeSnapshot',
+    kind: 'snapshot.storage.k8s.io~v1~VolumeSnapshot',
+    namespaced: true,
+    humanizeKind: true,
+    skipYamlReloadTest: false,
+    skipYamlSaveTest: false,
+  },
+  {
+    resource: 'snapshot.storage.k8s.io~v1~VolumeSnapshotClass',
+    kind: 'snapshot.storage.k8s.io~v1~VolumeSnapshotClass',
+    namespaced: false,
+    humanizeKind: true,
+    skipYamlReloadTest: false,
+    skipYamlSaveTest: false,
+  },
+  {
+    resource: 'snapshot.storage.k8s.io~v1~VolumeSnapshotContent',
+    kind: 'snapshot.storage.k8s.io~v1~VolumeSnapshotContent',
+    namespaced: false,
+    humanizeKind: true,
+    skipYamlReloadTest: false,
+    skipYamlSaveTest: false,
+  },
+  {
+    resource: 'storage.k8s.io~v1~VolumeAttributesClass',
+    kind: 'storage.k8s.io~v1~VolumeAttributesClass',
+    namespaced: false,
+    humanizeKind: true,
+    skipYamlReloadTest: false,
+    skipYamlSaveTest: false,
+  },
 ];
 
 function buildResourceList(): ResourceDefinition[] {
@@ -188,14 +363,8 @@ test.describe('Kubernetes resource CRUD operations', { tag: ['@admin'] }, () => 
   const allResources = buildResourceList();
 
   for (const resourceDef of allResources) {
-    const {
-      resource,
-      kind,
-      namespaced,
-      humanizeKind,
-      skipYamlReloadTest,
-      skipYamlSaveTest,
-    } = resourceDef;
+    const { resource, kind, namespaced, humanizeKind, skipYamlReloadTest, skipYamlSaveTest } =
+      resourceDef;
 
     test(`${kind} CRUD lifecycle`, async ({ page, k8sClient, cleanup }) => {
       const testName = generateTestName();
@@ -256,11 +425,7 @@ test.describe('Kubernetes resource CRUD operations', { tag: ['@admin'] }, () => 
         await page.goto(`${basePath}/${resource}/${name}`);
         await expect(detailsPage.getPageHeading()).toContainText(name);
         await testA11y(page, `Details page for ${kind}: ${name}`);
-        await testI18n(page, [
-          '.pf-v6-c-tabs__item',
-          '[data-test-section-heading]',
-          'dt',
-        ]);
+        await testI18n(page, ['.pf-v6-c-tabs__item', '[data-test-section-heading]', 'dt']);
       });
 
       await test.step('View list page', async () => {

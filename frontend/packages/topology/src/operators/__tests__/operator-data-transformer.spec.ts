@@ -39,7 +39,7 @@ const getNodeById = (id: string, graphData: Model): NodeModel =>
 const getNodeByName = (name: string, graphData: Model): NodeModel =>
   graphData.nodes.find((n) => n.label === name);
 
-describe('operator data transformer ', () => {
+describe('operator data transformer', () => {
   let mockResources: TopologyDataResources;
   let filters;
 

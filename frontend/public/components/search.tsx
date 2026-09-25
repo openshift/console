@@ -61,10 +61,9 @@ const ResourceList = memo<ResourceListProps>(({ kind, mock, namespace, selector,
     return <LoadingBox />;
   }
 
-  const componentLoader = getResourceListPages(resourceListPageExtensions).get(
-    referenceForModel(kindObj),
-    () => Promise.resolve(DefaultPage),
-  );
+  const componentLoader =
+    getResourceListPages(resourceListPageExtensions).get(referenceForModel(kindObj)) ??
+    (() => Promise.resolve(DefaultPage));
   const ns = kindObj.namespaced ? namespace : undefined;
 
   return (

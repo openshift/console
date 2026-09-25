@@ -46,7 +46,7 @@ const HelmReleaseHistory: FC<HelmReleaseHistoryProps> = ({
       .catch((err) => {
         if (!destroyed) {
           setRevisionsLoaded(true);
-          setLoadError(err.message || t('Unable to load Helm Release history'));
+          setLoadError(err.message || t('Unable to load Helm release history'));
         }
       });
     return () => {
@@ -76,7 +76,7 @@ const HelmReleaseHistory: FC<HelmReleaseHistoryProps> = ({
   );
 
   if (loadError) {
-    return <StatusBox loaded loadError={loadError} label={t('Helm Release history')} />;
+    return <StatusBox loaded loadError={loadError} label={t('Helm release history')} />;
   }
 
   return (

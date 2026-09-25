@@ -2,7 +2,6 @@ import * as path from 'path';
 import { defineConfig, globalIgnores } from 'eslint/config';
 import { FlatCompat } from '@eslint/eslintrc';
 import * as js from '@eslint/js';
-import * as globals from 'globals';
 // TODO: change moduleResolution to "bundler"
 // @ts-expect-error types not resolvable under moduleResolution "node"
 import * as tsParser from '@typescript-eslint/parser';
@@ -19,21 +18,12 @@ const SDK_NODE_DIRS = [
   'packages/console-plugin-sdk/src/webpack',
   'packages/console-dynamic-plugin-sdk/scripts',
   'packages/console-dynamic-plugin-sdk/src/webpack',
-] as const;
+];
 
 const PACKAGES_EXCLUDE = [
   'packages/eslint-plugin-console/**',
   ...SDK_NODE_DIRS.map((d) => `${d}/**`),
 ];
-
-const CYPRESS_INTEGRATION_DIRS = [
-  'packages/integration-tests',
-  'packages/dev-console/integration-tests',
-  'packages/knative-plugin/integration-tests',
-  'packages/helm-plugin/integration-tests',
-];
-
-const CYPRESS_FILES = CYPRESS_INTEGRATION_DIRS.map((d) => `${d}/**/*.{js,jsx,ts,tsx}`);
 
 const config = defineConfig([
   globalIgnores([
@@ -120,7 +110,6 @@ const config = defineConfig([
       parser: tsParser,
     },
   },
-
   // Rules that are broken or not relevant in non-typed JavaScript
   {
     files: ['public/**/*.{js,jsx}'],
@@ -131,53 +120,11 @@ const config = defineConfig([
   },
 
   // ------------------------------------------------
-  // Scope: Cypress integration tests (overlay on packages config)
-  // ------------------------------------------------
-  {
-    files: CYPRESS_FILES,
-    extends: compat.extends('plugin:cypress/recommended'),
-    languageOptions: {
-      globals: {
-        ...globals.node,
-      },
-    },
-    rules: {
-      'no-console': 'off',
-      '@typescript-eslint/no-namespace': 'off',
-      'no-redeclare': 'off',
-      'promise/catch-or-return': 'off',
-      'promise/no-nesting': 'off',
-      'cypress/unsafe-to-chain-command': 'off',
-      'max-nested-callbacks': 'off',
-      'cypress/no-unnecessary-waiting': 'off',
-    },
-    settings: {
-      'import/resolver': {
-        node: {
-          extensions: ['.js', '.jsx', '.ts', '.tsx'],
-          moduleDirectory: ['node_modules', 'integration-tests/'],
-        },
-      },
-    },
-  },
-
-  // ------------------------------------------------
   // Scope: SDK Node.js directories (node-typescript-prettier)
   // ------------------------------------------------
   {
     files: SDK_NODE_DIRS.map((dir) => `${dir}/**/*.{js,jsx,ts,tsx,json}`),
     extends: compat.extends('plugin:console/node-typescript-prettier'),
-  },
-  {
-    files: [
-      'packages/console-plugin-sdk/src/codegen/**/*.{js,ts}',
-      'packages/console-plugin-sdk/src/webpack/**/*.{js,ts}',
-    ],
-    rules: { 'no-underscore-dangle': 'off' },
-  },
-  {
-    files: ['packages/console-dynamic-plugin-sdk/scripts/**/*.{js,ts}'],
-    rules: { 'no-console': 'off' },
   },
 
   // ------------------------------------------------
@@ -199,11 +146,7 @@ const config = defineConfig([
   {
     files: ['i18n-scripts/**/*.{js,jsx,ts,tsx,json}'],
     extends: compat.extends('plugin:console/node-typescript-prettier'),
-  },
-  {
-    files: ['i18n-scripts/**/*.{js,ts}'],
     rules: {
-      'no-console': 'off',
       'n/no-unsupported-features/node-builtins': 'off',
     },
   },
@@ -214,7 +157,10 @@ const config = defineConfig([
   {
     files: ['e2e/**/*.{js,jsx,ts,tsx,json}'],
     ignores: ['e2e/**/testData/**'],
-    extends: compat.extends('plugin:console/playwright'),
+    extends: compat.extends(
+      'plugin:console/prettier',
+      'plugin:console/playwright'
+    ),
     languageOptions: {
       parser: tsParser,
       parserOptions: {

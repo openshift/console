@@ -63,7 +63,6 @@ export const useDevfileServer = (
       try {
         devfileData = await devfileDataPromise;
       } catch (e) {
-        // eslint-disable-next-line no-console
         console.warn('Could not fetch devfile resource:', e);
         setError(e.message || t('Could not fetch devfile resources.'));
         return;

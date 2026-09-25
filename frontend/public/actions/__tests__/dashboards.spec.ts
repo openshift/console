@@ -1,4 +1,3 @@
-import { Map as ImmutableMap } from 'immutable';
 import { MIN_POLL_DELAY } from '../../components/utils/adaptive-polling';
 import { RESULTS_TYPE } from '../../reducers/dashboard-results';
 import { defaults } from '../../reducers/dashboards';
@@ -9,6 +8,13 @@ import {
   stopWatchPrometheusQuery,
   watchPrometheusQuery,
 } from '../dashboards';
+
+// Build a dashboards state with a single active watch, matching the plain-object
+// shape the reducer and selectors now use.
+const withActiveWatch = (type: RESULTS_TYPE, key: string, active: number) => ({
+  ...defaults,
+  [type]: { ...defaults[type], [key]: { active } },
+});
 
 const testStopWatch = (stopAction, type: RESULTS_TYPE, key: string) => {
   expect(stopAction(key)).toEqual({
@@ -23,8 +29,8 @@ const testStopWatch = (stopAction, type: RESULTS_TYPE, key: string) => {
 const testStartWatch = (watchAction, type: RESULTS_TYPE, key: string) => {
   const getState = jest
     .fn()
-    .mockReturnValueOnce({ dashboards: ImmutableMap(defaults) })
-    .mockReturnValueOnce({ dashboards: ImmutableMap(defaults).setIn([type, key, 'active'], 1) });
+    .mockReturnValueOnce({ dashboards: defaults })
+    .mockReturnValueOnce({ dashboards: withActiveWatch(type, key, 1) });
   const dispatch = jest.fn();
 
   watchAction(key)(dispatch, getState);
@@ -47,9 +53,7 @@ const testStartWatch = (watchAction, type: RESULTS_TYPE, key: string) => {
 };
 
 const testIncrementActiveWatch = (watchAction, type, key) => {
-  const getState = jest
-    .fn()
-    .mockReturnValue({ dashboards: ImmutableMap(defaults).setIn([type, key, 'active'], 1) });
+  const getState = jest.fn().mockReturnValue({ dashboards: withActiveWatch(type, key, 1) });
   const dispatch = jest.fn();
 
   watchAction(key)(dispatch, getState);
@@ -76,7 +80,7 @@ describe('dashboards-actions', () => {
   });
 
   it('watchPrometheusQuery sets error if base url is not available', () => {
-    const getState = jest.fn().mockReturnValue({ dashboards: ImmutableMap(defaults) });
+    const getState = jest.fn().mockReturnValue({ dashboards: defaults });
     const dispatch = jest.fn();
 
     watchPrometheusQuery('fooQuery')(dispatch, getState);
@@ -118,10 +122,10 @@ describe('dashboards-actions', () => {
     const flushPromises = () => new Promise(process.nextTick);
 
     const setupWatchURL = (fetchMock: jest.Mock) => {
-      const activeState = ImmutableMap(defaults).setIn([RESULTS_TYPE.URL, 'testURL', 'active'], 1);
+      const activeState = withActiveWatch(RESULTS_TYPE.URL, 'testURL', 1);
       const getState = jest
         .fn()
-        .mockReturnValueOnce({ dashboards: ImmutableMap(defaults) })
+        .mockReturnValueOnce({ dashboards: defaults })
         .mockReturnValue({ dashboards: activeState });
       const dispatch = jest.fn();
 

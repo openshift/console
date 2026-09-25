@@ -7,6 +7,9 @@ import BasePage from './base-page';
 export class CatalogPage extends BasePage {
   private readonly pageHeading: Locator = this.page.getByTestId('page-heading');
   private readonly filterInput: Locator = this.page.getByPlaceholder('Filter by keyword');
+  private readonly searchCatalogInput = this.page.getByTestId('search-catalog').locator('input');
+  private readonly operatorTab = this.page.getByTestId('tab operator');
+  private readonly clearFiltersButton = this.page.getByTestId('catalog-clear-filters');
 
   async navigateToCatalog(namespace?: string): Promise<void> {
     const url = namespace ? `/catalog/ns/${namespace}` : '/catalog/all-namespaces';
@@ -23,8 +26,108 @@ export class CatalogPage extends BasePage {
     await expect(this.pageHeading).toBeVisible({ timeout: 60_000 });
   }
 
+  async navigateToSoftwareCatalog(namespace: string): Promise<void> {
+    await this.goTo(`/catalog/ns/${namespace}`);
+    await expect(this.pageHeading).toBeVisible({ timeout: 60_000 });
+  }
+
+  async navigateToOperatorCatalog(namespace: string): Promise<void> {
+    await this.goTo(`/catalog/ns/${namespace}?catalogType=operator`);
+    await expect(this.pageHeading).toBeVisible({ timeout: 60_000 });
+  }
+
+  async navigateToPath(url: string): Promise<void> {
+    await this.goTo(url);
+  }
+
   async filterByKeyword(keyword: string): Promise<void> {
     await this.filterInput.fill(keyword);
+  }
+
+  async searchOperators(operatorName: string): Promise<void> {
+    await this.searchCatalogInput.fill(operatorName);
+  }
+
+  async clearSearchFilter(): Promise<void> {
+    await this.searchCatalogInput.fill('');
+  }
+
+  async clickOperatorTab(): Promise<void> {
+    await this.robustClick(this.operatorTab);
+  }
+
+  async clickClearAllFilters(): Promise<void> {
+    await this.robustClick(this.clearFiltersButton);
+  }
+
+  async toggleSourceFilter(filterType: string): Promise<void> {
+    const filterCheckbox = this.page.getByTestId(`source-${filterType}`);
+    await this.robustClick(filterCheckbox);
+  }
+
+  async toggleSourceFilterByLabel(label: string): Promise<void> {
+    await this.robustClick(this.page.getByRole('checkbox', { name: label }), {
+      timeout: 60_000,
+    });
+  }
+
+  getOperatorCard(operatorName: string): Locator {
+    return this.page
+      .getByTestId(`operator-${operatorName}`)
+      .filter({ hasNotText: 'testing deprecation' });
+  }
+
+  async clickOperatorCard(operatorName: string): Promise<void> {
+    await this.robustClick(this.getOperatorCard(operatorName), { timeout: 60_000 });
+  }
+
+  getDeprecatedWarningBadge(): Locator {
+    return this.page.getByTestId('deprecated-operator-warning-badge');
+  }
+
+  // Software Catalog tiles and the catalog details drawer render deprecation via the generic
+  // CatalogBadges component, which derives data-test from the badge text (`${text}-badge`) —
+  // not the OLM-specific `deprecated-operator-warning-badge` used on CSV/installed-operator pages.
+  // Scoped to the details dialog since the background tile grid renders the same badge testid.
+  getCatalogDeprecatedBadge(): Locator {
+    return this.page.getByRole('dialog').getByTestId('Deprecated-badge');
+  }
+
+  getDeprecatedWarning(testId: string): Locator {
+    return this.page.getByTestId(testId);
+  }
+
+  async clickCategoryFilter(categoryId: string): Promise<void> {
+    const categoryTab = this.page.getByTestId(`tab ${categoryId}`);
+    await this.robustClick(categoryTab);
+  }
+
+  getCatalogTiles(): Locator {
+    return this.page.locator('.co-catalog-tile');
+  }
+
+  getFirstCatalogTile(): Locator {
+    return this.getCatalogTiles().first();
+  }
+
+  getFirstCatalogTileTitle(): Locator {
+    return this.getFirstCatalogTile().locator('.catalog-tile-pf-title');
+  }
+
+  async getFirstCatalogTileTitleText(): Promise<string> {
+    return this.getFirstCatalogTileTitle().innerText();
+  }
+
+  getClearFiltersButton(): Locator {
+    return this.clearFiltersButton;
+  }
+
+  getPageHeading(): Locator {
+    return this.pageHeading;
+  }
+
+  getSearchInput(): Locator {
+    return this.searchCatalogInput;
   }
 
   catalogItem(testId: string): Locator {
@@ -83,10 +186,6 @@ export class CatalogPage extends BasePage {
     await this.robustClick(this.page.getByRole('link', { name: /create application/i }));
   }
 
-  getPageHeading(): Locator {
-    return this.pageHeading;
-  }
-
   getFilterInput(): Locator {
     return this.filterInput;
   }
@@ -95,16 +194,19 @@ export class CatalogPage extends BasePage {
     return this.page.getByText(text);
   }
 
-  getCatalogTiles(): Locator {
-    // co-catalog-tile: Console's catalog tile class from CatalogTile.tsx
-    return this.page.locator('.co-catalog-tile');
-  }
-
   getFormSubmitButton(): Locator {
     return this.page.getByRole('button', { name: 'Create', exact: true });
   }
 
   getProjectSelectionMessage(): Locator {
     return this.page.getByText('Select a Project to view the software catalog');
+  }
+
+  async verifyTileContainsText(expectedText: string): Promise<void> {
+    await expect(this.getFirstCatalogTileTitle()).toContainText(expectedText);
+  }
+
+  async verifyTileTextChanged(originalText: string): Promise<void> {
+    await expect(this.getFirstCatalogTileTitle()).not.toHaveText(originalText);
   }
 }

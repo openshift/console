@@ -27,7 +27,6 @@ export const subscribeOverviewMetrics = (
       })
       .catch((res) => {
         const status = res?.response?.status;
-        // eslint-disable-next-line no-console
         console.error('Could not fetch metrics, status:', status);
         // Don't retry on some status codes unless a previous request succeeded.
         if (_.includes(METRICS_FAILURE_CODES, status) && _.isEmpty(metrics)) {
@@ -38,7 +37,7 @@ export const subscribeOverviewMetrics = (
         metricsInterval = setTimeout(fetchMetrics, interval);
       })
       .catch((e) => {
-        console.error('Failed to fetch metrics', e); // eslint-disable-line no-console
+        console.error('Failed to fetch metrics', e);
       });
   };
 

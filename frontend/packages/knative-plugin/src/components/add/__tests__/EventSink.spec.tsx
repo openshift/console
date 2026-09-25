@@ -1,12 +1,8 @@
 import { screen } from '@testing-library/react';
 import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
-import {
-  mockKameletSink,
-  mockNormalizedKafkaSink,
-  mockNormalizedSink,
-} from '../__mocks__/Kamelet-data';
 import EventSink from '../EventSink';
+import { mockKameletSink, mockNormalizedKafkaSink, mockNormalizedSink } from './data/Kamelet-data';
 
 const useSelectorMock = useConsoleSelector as jest.Mock;
 

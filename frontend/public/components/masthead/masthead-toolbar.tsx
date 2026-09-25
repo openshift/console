@@ -28,6 +28,7 @@ import { shallowEqual } from 'react-redux';
 import { useNavigate } from 'react-router';
 import { action as reduxAction } from 'typesafe-actions';
 import { TourContext, TourActions } from '@console/app/src/components/tour';
+import { useTheme, THEME_DARK } from '@console/app/src/providers/theme/ThemeProvider';
 import { getImpersonate, useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { ExternalLinkButton } from '@console/shared/src/components/links/ExternalLinkButton';
 import { LinkTo } from '@console/shared/src/components/links/LinkTo';
@@ -57,7 +58,6 @@ import { flagPending, featureReducerName } from '../../reducers/features';
 import { AboutModal } from '../about-modal';
 import { ImpersonateUserModal } from '../modals/impersonate-user-modal';
 import QuickCreate, { QuickCreateImportFromGit, QuickCreateContainerImages } from '../QuickCreate';
-import { useTheme, THEME_DARK } from '../ThemeProvider';
 import { openshiftHelpBase } from '../utils/documentation';
 import '@patternfly/react-user-feedback/dist/esm/Feedback/Feedback.css';
 import { useK8sWatchResource } from '../utils/k8s-watch-hook';
@@ -177,9 +177,9 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
   );
   const { clusterID, alertCount, canAccessNS, impersonate } = useConsoleSelector(
     (state) => ({
-      clusterID: state.UI.get('clusterID'),
-      alertCount: state.observe.getIn(['alertCount']),
-      canAccessNS: !!state[featureReducerName].get(FLAGS.CAN_GET_NS),
+      clusterID: state.UI.clusterID,
+      alertCount: state.observe.alertCount,
+      canAccessNS: !!state[featureReducerName][FLAGS.CAN_GET_NS],
       impersonate: getImpersonate(state),
     }),
     shallowEqual,
@@ -187,7 +187,11 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
 
   // Use centralized user hook for user data
   const { displayName, username } = useUser();
-  const { unreadCount: toastUnreadCount, hasUnreadDangerNotifications } = useNotificationHistory();
+  const {
+    notifications: toastNotifications,
+    unreadCount: toastUnreadCount,
+    hasUnreadDangerNotifications,
+  } = useNotificationHistory();
   const notificationCount = (alertCount || 0) + toastUnreadCount;
   const notificationBadgeVariant = getNotificationsVariant(
     toastUnreadCount,
@@ -708,7 +712,6 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
       })
         .then((response) => response.json())
         .then((newstatusPageData) => setstatusPageData(newstatusPageData))
-        // eslint-disable-next-line no-console
         .catch((e) => console.error('Error fetching status page data', e));
     }
   }, [setstatusPageData]);
@@ -750,7 +753,7 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
 
   const launchActions = getLaunchActions();
   const alertAccess = canAccessNS && !!window.SERVER_FLAGS.prometheusBaseURL;
-  const showNotificationBadge = alertAccess || toastUnreadCount > 0;
+  const showNotificationBadge = alertAccess || toastNotifications.length > 0;
   return (
     <>
       <Toolbar isFullHeight isStatic>
@@ -838,12 +841,12 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
             visibility={{ default: isMastheadStacked ? 'visible' : 'hidden' }}
           >
             <SystemStatusButton statusPageData={statusPageData} />
-            {showNotificationBadge && notificationCount > 0 && (
+            {showNotificationBadge && (
               <NotificationBadge
                 aria-label={t('Notification drawer')}
                 onClick={drawerToggle}
                 variant={notificationBadgeVariant}
-                count={notificationCount}
+                count={notificationCount || 0}
                 icon={<RhUiNotificationIcon />}
                 data-quickstart-id="qs-masthead-notifications"
               />
@@ -863,11 +866,13 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
       <ImpersonateUserModal
         isOpen={isImpersonateModalOpen}
         onClose={() => setIsImpersonateModalOpen(false)}
-        onImpersonate={(userName: string, groups: string[]) => {
-          if (groups && groups.length > 0) {
+        onImpersonate={(userName: string, groups: string[], kind: 'User' | 'ServiceAccount') => {
+          if (kind === 'ServiceAccount') {
+            dispatch(UIActions.startImpersonate(kind, userName, groups));
+          } else if (groups && groups.length > 0) {
             dispatch(UIActions.startImpersonate('UserWithGroups', userName, groups));
           } else {
-            dispatch(UIActions.startImpersonate('User', userName));
+            dispatch(UIActions.startImpersonate(kind, userName));
           }
           setIsImpersonateModalOpen(false);
           // Redirect to projects page to prevent RBAC issues for impersonated users

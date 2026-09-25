@@ -24,7 +24,8 @@ const deploymentResource = {
 };
 
 // Helper to get the last argument passed to the mock
-const getLastMockCallArg = () => useK8sWatchResourcesMock.mock.calls.at(-1)?.[0];
+const getLastMockCallArg = () =>
+  useK8sWatchResourcesMock.mock.calls[useK8sWatchResourcesMock.mock.calls.length - 1][0];
 
 describe('useDynamicK8sWatchResources', () => {
   beforeEach(() => {
@@ -113,7 +114,6 @@ describe('useDynamicK8sWatchResources', () => {
       result.current.watchResource('', podResource);
     });
 
-    // eslint-disable-next-line no-console
     expect(console.warn).toHaveBeenCalledWith(
       '[useDynamicK8sWatchResources] watchResource called without key - resource will not be watched',
     );
@@ -126,7 +126,6 @@ describe('useDynamicK8sWatchResources', () => {
       result.current.stopWatchResource('');
     });
 
-    // eslint-disable-next-line no-console
     expect(console.warn).toHaveBeenCalledWith(
       '[useDynamicK8sWatchResources] stopWatchResource called without key - no action taken',
     );

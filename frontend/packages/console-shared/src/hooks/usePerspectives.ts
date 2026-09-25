@@ -33,7 +33,6 @@ export const hasReviewAccess = async (accessReview: PerspectiveAccessReview) => 
         hasAccess = hasAccess && values.every((val) => val?.status.allowed);
       })
       .catch((e) => {
-        // eslint-disable-next-line no-console
         console.warn('AccessReview check failed', e);
         hasAccess = false;
       }));
@@ -46,7 +45,6 @@ export const hasReviewAccess = async (accessReview: PerspectiveAccessReview) => 
       })
       .catch((e) => {
         // no update when a missing check fails
-        // eslint-disable-next-line no-console
         console.warn('AccessReview check failed', e);
       }));
 
@@ -127,7 +125,6 @@ export const usePerspectives = (): LoadedExtension<PerspectiveExtension>[] => {
             })
             .catch((e) => {
               handleResults(perspectiveExtension.properties.id, true);
-              // eslint-disable-next-line no-console
               console.warn('Could not check access', e);
             });
         }

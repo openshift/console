@@ -24,6 +24,17 @@ func (i *testItem) isContextCancelled() bool {
 }
 
 func TestAsyncCache(t *testing.T) {
+	// Override initialization settings before any NewAsyncCache call
+	// so they take effect for the error case test.
+	origRetryInterval := initializationRetryInterval
+	origTimeout := initializationTimeout
+	initializationRetryInterval = 5 * time.Millisecond
+	initializationTimeout = 10 * time.Millisecond
+	t.Cleanup(func() {
+		initializationRetryInterval = origRetryInterval
+		initializationTimeout = origTimeout
+	})
+
 	cacheTime := func(ctx context.Context) (*testItem, error) {
 		return &testItem{ctx: ctx, t: time.Now()}, nil
 	}
@@ -31,35 +42,33 @@ func TestAsyncCache(t *testing.T) {
 	c, err := NewAsyncCache(context.Background(), 2*time.Second, cacheTime)
 	require.NoError(t, err)
 
-	initializationRetryInterval = 5 * time.Millisecond
-	initializationTimeout = 10 * time.Millisecond
 	// test that initialization was successful
 	item := c.GetItem()
-	if item.t.IsZero() {
-		t.Error("expected non-zero time")
-	}
-
-	time.Sleep(1 * time.Second)
-	if item.isContextCancelled() {
-		t.Error("expected usable context")
-	}
+	require.False(t, item.t.IsZero(), "expected non-zero time")
+	require.False(t, item.isContextCancelled(), "expected usable context")
 
 	timedCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	c.Run(timedCtx)
 
-	// wait.UntilWithContext fires runCache immediately, so wait briefly
-	// for the first refresh to complete before capturing the baseline.
-	time.Sleep(100 * time.Millisecond)
+	// wait.UntilWithContext fires runCache immediately; wait for the
+	// first refresh before capturing the baseline.
+	require.Eventually(t, func() bool {
+		return c.GetItem() != item
+	}, 5*time.Second, 10*time.Millisecond, "expected item to be refreshed after Run()")
+
+	// Re-grab the reference after the immediate reload
 	item = c.GetItem()
 
-	// within the 2s refresh interval the pointer should stay the same
+	// Within the 2s refresh interval the cached item should stay the same
 	time.Sleep(500 * time.Millisecond)
 	require.Equal(t, item, c.GetItem(), "item should not change within refresh interval")
 
-	// after the refresh interval the item should be replaced
-	time.Sleep(2 * time.Second)
-	require.NotEqual(t, item, c.GetItem(), "item should change after refresh interval")
+	// After the refresh interval the item should be replaced
+	require.Eventually(t, func() bool {
+		return c.GetItem() != item
+	}, 5*time.Second, 100*time.Millisecond, "item should change after refresh interval")
+
 	cancel()
 
 	// test that the cache returns error properly

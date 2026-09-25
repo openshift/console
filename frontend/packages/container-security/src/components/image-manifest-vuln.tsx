@@ -41,7 +41,7 @@ import { EmptyStateResourceBadge } from '@console/shared/src/components/badges/E
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { GreenCheckCircleIcon } from '@console/shared/src/components/status/icons';
-import { vulnPriority, totalFor, priorityFor } from '../const';
+import { totalFor, priorityFor } from '../const';
 import { ImageManifestVulnModel } from '../models';
 import type { ImageManifestVuln } from '../types';
 import ImageVulnerabilitiesList from './ImageVulnerabilitiesList';
@@ -382,9 +382,7 @@ const ContainerVulnerabilities: FC<ContainerVulnerabilitiesProps> = (props) => {
                         name={vuln.metadata.name}
                         namespace={props.pod.metadata.namespace}
                         displayName={`${totalFor(
-                          vulnPriority.findKey(
-                            ({ title }) => _.get(vuln.status, 'highestSeverity') === title,
-                          ),
+                          priorityFor(_.get(vuln.status, 'highestSeverity')).value,
                         )(vuln)} ${vuln.status.highestSeverity}`}
                         hideIcon
                       />

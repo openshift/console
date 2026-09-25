@@ -94,7 +94,7 @@ const formValues: HelmInstallUpgradeFormData = {
 
 const helmConfig = {
   type: HelmActionType.Create,
-  title: 'Create Helm Release',
+  title: 'Create Helm release',
   subTitle: {
     form: 'Mock form help text',
     yaml: 'Mock yaml help text',
@@ -125,7 +125,7 @@ describe('HelmInstallUpgradeForm', () => {
     mockUseEditorType.mockReturnValue([EditorType.Form, jest.fn(), true]);
     mockUseField.mockReturnValue([{ value: EditorType.Form }, {}]);
     renderWithProviders(<HelmInstallUpgradeForm {...props} />);
-    expect(screen.getByText(/Create Helm Release/)).toBeTruthy();
+    expect(screen.getByText(/Create Helm release/)).toBeTruthy();
   });
 
   it('should render FormHeader with correct title for the form', () => {

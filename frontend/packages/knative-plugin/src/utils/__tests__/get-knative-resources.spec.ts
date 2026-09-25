@@ -160,7 +160,7 @@ describe('Get knative resources', () => {
     });
   });
 
-  describe('knative Serving Resources', () => {
+  describe('knative Serving Resource Watchers', () => {
     const SAMPLE_NAMESPACE = 'mynamespace';
     it('expect knativeServingResource to return service with proper namespace', () => {
       const serviceServingResource: WatchK8sResourceWithProp[] =

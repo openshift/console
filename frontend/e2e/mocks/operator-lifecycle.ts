@@ -20,8 +20,16 @@ const activePhases = (): { name: string; startDate: string; endDate: string }[] 
   extendedStart.setDate(extendedStart.getDate() + 1);
   const extendedEnd = new Date(now.getFullYear() + 3, 11, 31);
   return [
-    { name: 'Maintenance support', startDate: toDateStr(maintenanceStart), endDate: toDateStr(maintenanceEnd) },
-    { name: 'Extended life cycle support', startDate: toDateStr(extendedStart), endDate: toDateStr(extendedEnd) },
+    {
+      name: 'Maintenance support',
+      startDate: toDateStr(maintenanceStart),
+      endDate: toDateStr(maintenanceEnd),
+    },
+    {
+      name: 'Extended life cycle support',
+      startDate: toDateStr(extendedStart),
+      endDate: toDateStr(extendedEnd),
+    },
   ];
 };
 
@@ -33,8 +41,16 @@ const expiredPhases = (): { name: string; startDate: string; endDate: string }[]
   extendedStart.setDate(extendedStart.getDate() + 1);
   const extendedEnd = new Date(now.getFullYear() - 1, 11, 31);
   return [
-    { name: 'Maintenance support', startDate: toDateStr(maintenanceStart), endDate: toDateStr(maintenanceEnd) },
-    { name: 'Extended life cycle support', startDate: toDateStr(extendedStart), endDate: toDateStr(extendedEnd) },
+    {
+      name: 'Maintenance support',
+      startDate: toDateStr(maintenanceStart),
+      endDate: toDateStr(maintenanceEnd),
+    },
+    {
+      name: 'Extended life cycle support',
+      startDate: toDateStr(extendedStart),
+      endDate: toDateStr(extendedEnd),
+    },
   ];
 };
 
@@ -70,10 +86,7 @@ export const makeLifecycleSelfSupport = (
   ],
 });
 
-export const makeLifecycleIncompatible = (
-  packageName: string,
-  version: string,
-): LifecycleData => ({
+export const makeLifecycleIncompatible = (packageName: string, version: string): LifecycleData => ({
   package: packageName,
   schema: LIFECYCLE_SCHEMA,
   versions: [

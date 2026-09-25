@@ -7,7 +7,7 @@ import type {
 import { DynamicRemotePlugin } from '@openshift/dynamic-plugin-sdk-webpack';
 import * as glob from 'glob';
 import * as _ from 'lodash';
-import * as readPkg from 'read-pkg';
+import { type PackageJson, readPackageSync } from 'read-pkg';
 import * as semver from 'semver';
 import type { Compiler, WebpackPluginInstance } from 'webpack';
 import type { ConsolePluginBuildMetadata, ConsolePluginPackageJSON } from '../build-types';
@@ -34,7 +34,7 @@ const loadVendorPackageJSON = (moduleName: string) =>
     require.resolve(`${moduleName}/package.json`, {
       paths: [process.cwd()],
     }),
-  ) as readPkg.PackageJson;
+  ) as PackageJson;
 
 const getVendorPackageVersion = (moduleName: string) => {
   try {
@@ -44,12 +44,12 @@ const getVendorPackageVersion = (moduleName: string) => {
   }
 };
 
-const getPackageDependencies = (pkg: readPkg.PackageJson) => ({
+const getPackageDependencies = (pkg: PackageJson) => ({
   ...pkg.devDependencies,
   ...pkg.dependencies,
 });
 
-const hasPackageDependency = (pkg: readPkg.PackageJson, depName: string) =>
+const hasPackageDependency = (pkg: PackageJson, depName: string) =>
   Object.keys(getPackageDependencies(pkg)).includes(depName);
 
 const getPluginSDKPackagePeerDependencies = () =>
@@ -377,7 +377,7 @@ export class ConsoleRemotePlugin implements WebpackPluginInstance {
       throw new Error(`baseDir must be an absolute path: ${baseDir}`);
     }
 
-    this.pkg = readPkg.sync({ cwd: baseDir, normalize: false });
+    this.pkg = readPackageSync({ cwd: baseDir, normalize: false });
 
     this.adaptedOptions = {
       baseDir,

@@ -35,9 +35,9 @@ export const useDashboardResources: UseDashboardResources = ({
     };
   }, [dispatch, prometheusQueries, urls]);
 
-  const urlResults = useConsoleSelector((state) => state.dashboards.get(RESULTS_TYPE.URL));
-  const prometheusResults = useConsoleSelector((state) =>
-    state.dashboards.get(RESULTS_TYPE.PROMETHEUS),
+  const urlResults = useConsoleSelector((state) => state.dashboards[RESULTS_TYPE.URL]);
+  const prometheusResults = useConsoleSelector(
+    (state) => state.dashboards[RESULTS_TYPE.PROMETHEUS],
   );
 
   return {

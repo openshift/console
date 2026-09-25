@@ -322,10 +322,12 @@ func (c *completedOptions) getAuthenticator(
 		ErrorURL:   authLoginErrorEndpoint,
 		SuccessURL: authLoginSuccessEndpoint,
 
-		CookiePath:              cookiePath,
-		SecureCookies:           useSecureCookies,
-		CookieEncryptionKey:     sessionConfig.CookieEncryptionKey,
-		CookieAuthenticationKey: sessionConfig.CookieAuthenticationKey,
+		CookiePath:                      cookiePath,
+		SecureCookies:                   useSecureCookies,
+		CookieEncryptionKey:             sessionConfig.CookieEncryptionKey,
+		CookieAuthenticationKey:         sessionConfig.CookieAuthenticationKey,
+		PreviousCookieEncryptionKey:     sessionConfig.PreviousCookieEncryptionKey,
+		PreviousCookieAuthenticationKey: sessionConfig.PreviousCookieAuthenticationKey,
 
 		K8sConfig:            k8sClientConfig,
 		Metrics:              authMetrics,

@@ -1,3 +1,4 @@
+import { createHash } from 'crypto';
 import * as fs from 'fs';
 import * as https from 'https';
 import * as net from 'net';
@@ -21,6 +22,18 @@ export function isNotFound(err: unknown): boolean {
     }
     const msg = err instanceof Error ? err.message : String(err);
     return msg.includes('404') || msg.includes('not found');
+  }
+  return false;
+}
+
+export function isAlreadyExists(err: unknown): boolean {
+  if (typeof err === 'object' && err !== null) {
+    const statusCode = (err as any).statusCode ?? (err as any).response?.statusCode;
+    if (statusCode === 409) {
+      return true;
+    }
+    const msg = err instanceof Error ? err.message : String(err);
+    return msg.includes('409') || msg.includes('already exists');
   }
   return false;
 }
@@ -284,7 +297,19 @@ export default class KubernetesClient {
     return true;
   }
 
-  async createNamespace(name: string, labels?: Record<string, string>): Promise<void> {
+  /**
+   * @param options.runLevelZero Label the namespace `openshift.io/run-level: 0`
+   *   (the default, for backwards compatibility). That label turns SCC
+   *   admission off for the namespace, so pods are never mutated to carry the
+   *   `seccompProfile` that the enforced `restricted` Pod Security level then
+   *   demands, and the API server rejects them. Pass `false` for namespaces
+   *   that have to run an ordinary workload.
+   */
+  async createNamespace(
+    name: string,
+    labels?: Record<string, string>,
+    { runLevelZero = true }: { runLevelZero?: boolean } = {},
+  ): Promise<void> {
     try {
       const { status } = await this.k8sApi.readNamespace({ name });
       if (status?.phase === 'Terminating') {
@@ -299,7 +324,10 @@ export default class KubernetesClient {
     }
     await this.k8sApi.createNamespace({
       body: {
-        metadata: { name, labels: { ...labels, 'openshift.io/run-level': '0' } },
+        metadata: {
+          name,
+          labels: { ...labels, ...(runLevelZero ? { 'openshift.io/run-level': '0' } : {}) },
+        },
       },
     });
   }
@@ -309,6 +337,39 @@ export default class KubernetesClient {
       await this.k8sApi.deleteNamespace({ name });
     } catch (err) {
       if (!isNotFound(err)) {
+        throw err;
+      }
+    }
+  }
+
+  /**
+   * Bind a ClusterRole to a user inside a namespace, so that a non-admin
+   * persona can see and use a namespace created by the (cluster-admin) test
+   * client. Without this the namespace exists but never appears in the user's
+   * project list. Deleting the namespace removes the RoleBinding with it.
+   */
+  async grantNamespaceAccess(
+    namespace: string,
+    username: string,
+    clusterRole = 'admin',
+  ): Promise<void> {
+    const body = {
+      apiVersion: 'rbac.authorization.k8s.io/v1',
+      kind: 'RoleBinding',
+      metadata: { name: `e2e-${clusterRole}-${username}`, namespace },
+      roleRef: { apiGroup: 'rbac.authorization.k8s.io', kind: 'ClusterRole', name: clusterRole },
+      subjects: [{ apiGroup: 'rbac.authorization.k8s.io', kind: 'User', name: username }],
+    };
+    try {
+      await this.coApi.createNamespacedCustomObject({
+        body,
+        group: 'rbac.authorization.k8s.io',
+        namespace,
+        plural: 'rolebindings',
+        version: 'v1',
+      });
+    } catch (err) {
+      if (!isAlreadyExists(err)) {
         throw err;
       }
     }
@@ -347,9 +408,49 @@ export default class KubernetesClient {
     );
   }
 
+  /**
+   * Name of the ConfigMap backing a user's console preferences. kubeadmin is
+   * stored under its own name; every other user is keyed by the SHA-256 of the
+   * username (see the console's user-settings backend).
+   */
+  static userSettingsConfigMapName(username: string): string {
+    return username === 'kubeadmin'
+      ? 'user-settings-kubeadmin'
+      : `user-settings-${createHash('sha256').update(username).digest('hex')}`;
+  }
+
+  /**
+   * Drop console preferences for a user. Preferences are cluster-side state
+   * that outlives a single spec, so a test that records a preference pointing
+   * at one of its own namespaces leaves later tests pointing at a namespace
+   * that no longer exists.
+   */
+  async clearUserSettings(username: string, keys: string[]): Promise<void> {
+    const namespace = 'openshift-console-user-settings';
+    const name = KubernetesClient.userSettingsConfigMapName(username);
+    try {
+      const existing = await this.k8sApi.readNamespacedConfigMap({ name, namespace });
+      const data = { ...((existing as any)?.data || {}) };
+      if (!keys.some((key) => key in data)) {
+        return;
+      }
+      keys.forEach((key) => delete data[key]);
+      // Replace rather than merge-patch: a merge patch cannot remove keys.
+      await this.k8sApi.replaceNamespacedConfigMap({
+        name,
+        namespace,
+        body: { ...(existing as any), data },
+      });
+    } catch (err) {
+      if (!isNotFound(err)) {
+        throw err;
+      }
+    }
+  }
+
   async setupConsoleUserSettings(username = 'kubeadmin', defaultNamespace?: string): Promise<void> {
     const namespace = 'openshift-console-user-settings';
-    const configMapName = `user-settings-${username}`;
+    const configMapName = KubernetesClient.userSettingsConfigMapName(username);
     const patchData: Record<string, string> = {
       'console.guidedTour': JSON.stringify({
         admin: { completed: true },
@@ -375,10 +476,9 @@ export default class KubernetesClient {
     const existing = await this.k8sApi.readNamespacedConfigMap({ name, namespace });
     const existingData = (existing as any)?.data || {};
     const mergedData = { ...existingData, ...patchData };
-    await this.mergePatchResource(
-      `/api/v1/namespaces/${namespace}/configmaps/${name}`,
-      { data: mergedData },
-    );
+    await this.mergePatchResource(`/api/v1/namespaces/${namespace}/configmaps/${name}`, {
+      data: mergedData,
+    });
   }
 
   async createConfigMap(
@@ -455,10 +555,9 @@ export default class KubernetesClient {
     namespace: string,
     annotations: Record<string, string | null>,
   ): Promise<void> {
-    await this.mergePatchResource(
-      `/api/v1/namespaces/${namespace}/configmaps/${name}`,
-      { metadata: { annotations } },
-    );
+    await this.mergePatchResource(`/api/v1/namespaces/${namespace}/configmaps/${name}`, {
+      metadata: { annotations },
+    });
   }
 
   async labelConfigMap(
@@ -466,10 +565,9 @@ export default class KubernetesClient {
     namespace: string,
     labels: Record<string, string | null>,
   ): Promise<void> {
-    await this.mergePatchResource(
-      `/api/v1/namespaces/${namespace}/configmaps/${name}`,
-      { metadata: { labels } },
-    );
+    await this.mergePatchResource(`/api/v1/namespaces/${namespace}/configmaps/${name}`, {
+      metadata: { labels },
+    });
   }
 
   async deleteConfigMap(name: string, namespace: string): Promise<void> {
@@ -569,6 +667,28 @@ export default class KubernetesClient {
     }
   }
 
+  async patchClusterCustomResource(
+    group: string,
+    version: string,
+    plural: string,
+    name: string,
+    patch: object | object[],
+  ): Promise<void> {
+    if (Array.isArray(patch)) {
+      await this.coApi.patchClusterCustomObject({
+        group,
+        name,
+        plural,
+        version,
+        body: patch,
+        contentType: k8s.PatchStrategy.JsonPatch,
+      } as any);
+      return;
+    }
+
+    await this.mergePatchResource(`/apis/${group}/${version}/${plural}/${name}`, patch);
+  }
+
   async getCustomResource(
     group: string,
     version: string,
@@ -584,32 +704,6 @@ export default class KubernetesClient {
       version,
     });
     return response;
-  }
-
-  async getClusterCustomResource(
-    group: string,
-    version: string,
-    plural: string,
-    name: string,
-  ): Promise<unknown> {
-    return this.coApi.getClusterCustomObject({ group, name, plural, version });
-  }
-
-  async patchClusterCustomResource(
-    group: string,
-    version: string,
-    plural: string,
-    name: string,
-    patch: object,
-  ): Promise<unknown> {
-    return this.coApi.patchClusterCustomObject({
-      body: patch,
-      group,
-      name,
-      plural,
-      version,
-      contentType: k8s.PatchStrategy.MergePatch,
-    } as any);
   }
 
   async createPVC(namespace: string, body: k8s.V1PersistentVolumeClaim): Promise<unknown> {
@@ -640,17 +734,33 @@ export default class KubernetesClient {
     }
   }
 
-  async patchDeployment(
-    name: string,
-    namespace: string,
-    patch: object,
-  ): Promise<unknown> {
+  async patchDeployment(name: string, namespace: string, patch: object): Promise<unknown> {
     return this.appsApi.patchNamespacedDeployment({
       name,
       namespace,
       body: patch,
       contentType: k8s.PatchStrategy.JsonPatch,
     } as any);
+  }
+
+  async patchCustomResource(
+    group: string,
+    version: string,
+    namespace: string,
+    plural: string,
+    name: string,
+    patch: object[],
+  ): Promise<unknown> {
+    const response = await this.coApi.patchNamespacedCustomObject({
+      body: patch,
+      group,
+      name,
+      namespace,
+      plural,
+      version,
+      contentType: k8s.PatchStrategy.JsonPatch,
+    } as any);
+    return response;
   }
 
   async listCustomResources(
@@ -672,6 +782,32 @@ export default class KubernetesClient {
     }
   }
 
+  async listClusterCustomResources(
+    group: string,
+    version: string,
+    plural: string,
+  ): Promise<unknown[]> {
+    try {
+      const response = await this.coApi.listClusterCustomObject({
+        group,
+        plural,
+        version,
+      });
+      return (response as any)?.items || [];
+    } catch {
+      return [];
+    }
+  }
+
+  async listNamespaces(): Promise<unknown[]> {
+    try {
+      const response = await this.k8sApi.listNamespace();
+      return response?.items || [];
+    } catch {
+      return [];
+    }
+  }
+
   async getPods(namespace: string): Promise<k8s.V1Pod[]> {
     const response = await this.k8sApi.listNamespacedPod({ namespace });
     return response.items || [];
@@ -687,7 +823,6 @@ export default class KubernetesClient {
     });
   }
 
-
   async waitForDeploymentReady(
     name: string,
     namespace: string,
@@ -702,9 +837,7 @@ export default class KubernetesClient {
           return (
             status?.availableReplicas === desired &&
             status?.updatedReplicas === desired &&
-            (status?.conditions ?? []).some(
-              (c) => c.type === 'Available' && c.status === 'True',
-            )
+            (status?.conditions ?? []).some((c) => c.type === 'Available' && c.status === 'True')
           );
         } catch {
           return false;
@@ -748,9 +881,11 @@ export default class KubernetesClient {
           const state = cs.state?.waiting
             ? `Waiting: ${cs.state.waiting.reason} - ${cs.state.waiting.message ?? ''}`
             : cs.state?.terminated
-            ? `Terminated: ${cs.state.terminated.reason}`
-            : 'Running';
-          lines.push(`  container ${cs.name}: ready=${cs.ready}, restarts=${cs.restartCount}, ${state}`);
+              ? `Terminated: ${cs.state.terminated.reason}`
+              : 'Running';
+          lines.push(
+            `  container ${cs.name}: ready=${cs.ready}, restarts=${cs.restartCount}, ${state}`,
+          );
         }
         try {
           const events = await this.k8sApi.listNamespacedEvent({
@@ -760,8 +895,7 @@ export default class KubernetesClient {
           const recent = events.items
             .sort(
               (a, b) =>
-                new Date(b.lastTimestamp ?? 0).getTime() -
-                new Date(a.lastTimestamp ?? 0).getTime(),
+                new Date(b.lastTimestamp ?? 0).getTime() - new Date(a.lastTimestamp ?? 0).getTime(),
             )
             .slice(0, 10);
           for (const ev of recent) {

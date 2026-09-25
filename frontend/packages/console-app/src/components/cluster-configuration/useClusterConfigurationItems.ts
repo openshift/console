@@ -38,7 +38,6 @@ const useClusterConfigurationItems = (): [
             updateCanRead((x) => ({ ...x, [item.id]: allowed }));
           })
           .catch((error) => {
-            // eslint-disable-next-line no-console
             console.warn(`readAccessReview check failed for "${item.id}"`, error);
           });
       }
@@ -50,7 +49,6 @@ const useClusterConfigurationItems = (): [
             updateCanWrite((x) => ({ ...x, [item.id]: allowed }));
           })
           .catch((error) => {
-            // eslint-disable-next-line no-console
             console.warn(`writeAccessReview check failed for "${item.id}"`, error);
           });
       }

@@ -12,6 +12,7 @@ import { useTranslation, Trans } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/lib-core';
+import { getNamespace } from '@console/internal/components/utils/link';
 import type { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { k8sKill } from '@console/internal/module/k8s';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
@@ -19,13 +20,10 @@ import {
   ALL_NAMESPACES_KEY,
   LAST_NAMESPACE_NAME_USER_PREFERENCE_KEY,
 } from '@console/shared/src/constants/common';
-import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
-import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import type { ModalComponentProps } from '@console/shared/src/types/modal';
-import { setActiveNamespace, formatNamespaceRoute } from '../../actions/ui';
-import { getActiveNamespace } from '../../reducers/ui';
+import { formatNamespaceRoute } from '../../actions/ui';
 
 const DeleteNamespaceModal: OverlayComponent<DeleteNamespaceModalProps> = ({
   kind,
@@ -37,18 +35,13 @@ const DeleteNamespaceModal: OverlayComponent<DeleteNamespaceModalProps> = ({
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
   const [confirmed, setConfirmed] = useState(false);
 
-  /**
-   * This is a workaround because modal launcher renders all modals outside of main app context.
-   * This leads to namespace context not being available in modal so we access the redux store and use settings directly as a workaround.
-   *  */
-  const dispatch = useConsoleDispatch();
-  const activeNamespace = useConsoleSelector((state) => getActiveNamespace(state));
   const [, setLastNamespace] = useUserPreference<string>(LAST_NAMESPACE_NAME_USER_PREFERENCE_KEY);
 
   const onSubmit = (event) => {
     event.preventDefault();
     handlePromise(k8sKill(kind, resource))
       .then(() => {
+        const activeNamespace = getNamespace(window.location.pathname);
         if (resource.metadata.name === activeNamespace) {
           if (ALL_NAMESPACES_KEY !== activeNamespace) {
             const oldPath = window.location.pathname;
@@ -57,7 +50,6 @@ const DeleteNamespaceModal: OverlayComponent<DeleteNamespaceModalProps> = ({
               navigate(newPath);
             }
           }
-          dispatch(setActiveNamespace(ALL_NAMESPACES_KEY));
           setLastNamespace(ALL_NAMESPACES_KEY);
         }
         closeOverlay();

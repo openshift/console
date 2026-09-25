@@ -865,6 +865,7 @@ export enum ClusterVersionConditionType {
   Invalid = 'Invalid',
   Upgradeable = 'Upgradeable',
   ReleaseAccepted = 'ReleaseAccepted',
+  ImplicitlyEnabledCapabilities = 'ImplicitlyEnabledCapabilities',
 }
 
 export type ClusterVersionCondition = {

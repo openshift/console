@@ -214,7 +214,6 @@ const getAnnotatedTriggers = (obj: K8sResourceKind) => {
   try {
     return JSON.parse(triggersJSON);
   } catch (e) {
-    /* eslint-disable-next-line no-console */
     console.error('Error parsing triggers annotation', e);
     return [];
   }

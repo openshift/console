@@ -52,7 +52,10 @@ const HelmURLChartForm: FC<FormikProps<HelmURLChartFormData> & HelmURLChartFormP
     try {
       url = new URL(values.chartURL);
     } catch {
-      setFieldError('chartURL', t('Invalid chart URL format.'));
+      setFieldError(
+        'chartURL',
+        t('Invalid chart URL. Enter an OCI URL (oci://...) or an HTTPS .tar file URL.'),
+      );
       return;
     }
     const scheme = url.protocol;
@@ -92,9 +95,9 @@ const HelmURLChartForm: FC<FormikProps<HelmURLChartFormData> & HelmURLChartFormP
     >
       <FormBody flexLayout>
         <FormHeader
-          title={t('Install Helm chart from URL')}
+          title={t('Install Helm Chart from URL')}
           helpText={t(
-            'To install a Helm chart, enter the chart URL - Open Container Initiative (OCI) URL or HTTP/HTTPS tar file and version.',
+            'Enter an OCI registry URL or an HTTP/HTTPS .tar file URL and version to install the Helm Chart.',
           )}
           marginBottom="lg"
         />
@@ -106,7 +109,7 @@ const HelmURLChartForm: FC<FormikProps<HelmURLChartFormData> & HelmURLChartFormP
                 name="chartURL"
                 label={t('Chart URL')}
                 helpText={t(
-                  'The OCI URL or HTTP/HTTPS tar file for the Helm chart; for example - oci://registry.example.com/charts/mychart or https://example.com/chart-1.0.0.tgz.',
+                  'OCI URL or HTTP/HTTPS .tar file for the Helm Chart; for example, oci://registry.example.com/charts/mychart or https://example.com/chart-1.0.0.tgz.',
                 )}
                 placeholder="oci://registry.example.com/charts/mychart or https://example.com/chart-1.0.0.tgz"
                 required
@@ -141,7 +144,7 @@ const HelmURLChartForm: FC<FormikProps<HelmURLChartFormData> & HelmURLChartFormP
                 resources={secretResources}
                 dataSelector={['metadata', 'name']}
                 fullWidth
-                placeholder={t('Select a secret')}
+                placeholder={t('Select Secret')}
                 showBadge
                 autocompleteFilter={autocompleteFilter}
                 actionItems={[

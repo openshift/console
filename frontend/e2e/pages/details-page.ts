@@ -50,6 +50,27 @@ export class DetailsPage extends BasePage {
     await this.navigateToTab(this.tab(name));
   }
 
+  async clickDebugContainerFromLogs(): Promise<void> {
+    await this.robustClick(this.page.getByTestId('debug-container-link'));
+  }
+
+  async clickStatusButton(): Promise<void> {
+    await this.robustClick(this.page.getByTestId('popover-status-button'), {
+      timeout: 30_000,
+      force: true,
+    });
+  }
+
+  async clickDebugContainerLink(containerName: string): Promise<void> {
+    await this.robustClick(this.page.getByTestId(`popup-debug-container-link-${containerName}`), {
+      timeout: 30_000,
+    });
+  }
+
+  async waitForTerminalReady(timeout = 120_000): Promise<void> {
+    await expect(this.xtermViewport).toBeVisible({ timeout });
+  }
+
   async clickKebabAction(actionId: string): Promise<void> {
     await this.robustClick(this.page.getByTestId(actionId));
   }
@@ -87,8 +108,18 @@ export class DetailsPage extends BasePage {
   }
 
   async confirmDelete(): Promise<void> {
-    await this.robustClick(
-      this.page.getByRole('button', { name: 'Delete', exact: true }),
-    );
+    await this.robustClick(this.page.getByRole('button', { name: 'Delete', exact: true }));
+  }
+  getSectionHeader(text: string): Locator {
+    return this.page.getByTestId(`section-heading-${text}`);
+  }
+
+  getEmptyState(): Locator {
+    return this.page.getByTestId('console-empty-state');
+  }
+
+  async navigateToDetailsUrl(url: string): Promise<void> {
+    await this.goTo(url);
+    await this.waitForPageLoad();
   }
 }

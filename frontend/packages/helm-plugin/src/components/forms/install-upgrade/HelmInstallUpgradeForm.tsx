@@ -127,7 +127,7 @@ const HelmInstallUpgradeForm: FC<
   const yamlEditor = chartHasValues && (
     <CodeEditorField
       name="yamlData"
-      label={t('Helm Release')}
+      label={t('Helm release')}
       schema={formSchema}
       showSamples={false}
       onSave={handleSubmit}
@@ -176,7 +176,7 @@ const HelmInstallUpgradeForm: FC<
                 type={TextInputTypes.text}
                 name="releaseName"
                 label={t('Release name')}
-                helpText={t('A unique name for the Helm Release.')}
+                helpText={t('A unique name for the Helm release.')}
                 required
                 isDisabled={!!chartError || helmAction === HelmActionType.Upgrade}
                 data-test="release-name"
@@ -203,7 +203,7 @@ const HelmInstallUpgradeForm: FC<
                   dataSelector={['metadata', 'name']}
                   fullWidth
                   placeholder={
-                    helmAction === HelmActionType.Upgrade ? t('None') : t('Select a secret')
+                    helmAction === HelmActionType.Upgrade ? t('None') : t('Select Secret')
                   }
                   showBadge
                   autocompleteFilter={autocompleteFilter}
@@ -229,7 +229,7 @@ const HelmInstallUpgradeForm: FC<
                     isInline
                     isPlain
                     title={t(
-                      'Secret "{{secretName}}" was not found in this namespace. Select an existing secret or create a new one.',
+                      'Secret "{{secretName}}" was not found in this namespace. Select an existing Secret or create one.',
                       { secretName: values.basicAuthSecretName },
                     )}
                   />

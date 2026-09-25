@@ -1,13 +1,13 @@
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Formik } from 'formik';
+import { t } from 'i18next';
 import type { ObjectSchema } from 'yup';
 import * as yup from 'yup';
 import { limitsValidationSchema } from '@console/dev-console/src/components/import/validation-schema';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { getLimitsDataFromResource } from '@console/shared/src/utils/resource-utils';
-import { t } from '../../../../../../../__mocks__/i18next';
 import ResourceLimitsModal from '../ResourceLimitsModal';
 
 jest.mock('@patternfly/react-topology', () => ({}));
