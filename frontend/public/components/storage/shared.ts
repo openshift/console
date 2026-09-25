@@ -121,6 +121,10 @@ export const provisionerAccessModeMapping: ProvisionerAccessModeMapping = Object
     Filesystem: ['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany', 'ReadWriteOncePod'],
     Block: ['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany', 'ReadWriteOncePod'],
   },
+  'nfs.csi.ceph.com': {
+    Filesystem: ['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany', 'ReadWriteOncePod'],
+    partialMatch: true,
+  },
 });
 
 export const getAccessModeOptions = () => [
