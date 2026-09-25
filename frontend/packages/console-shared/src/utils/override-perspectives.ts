@@ -34,7 +34,7 @@ const getOverridePerspectives = (): Perspective[] | undefined => {
       const value = JSON.parse(window.SERVER_FLAGS.perspectives);
 
       if (!Array.isArray(value)) {
-        throw new Error('Parsed value must be an array', value);
+        throw new Error(`Parsed value must be an array: ${JSON.stringify(value)}`);
       }
 
       return value as Perspective[];

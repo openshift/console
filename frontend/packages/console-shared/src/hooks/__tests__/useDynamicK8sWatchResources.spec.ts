@@ -24,7 +24,8 @@ const deploymentResource = {
 };
 
 // Helper to get the last argument passed to the mock
-const getLastMockCallArg = () => useK8sWatchResourcesMock.mock.calls.at(-1)?.[0];
+const getLastMockCallArg = () =>
+  useK8sWatchResourcesMock.mock.calls[useK8sWatchResourcesMock.mock.calls.length - 1][0];
 
 describe('useDynamicK8sWatchResources', () => {
   beforeEach(() => {

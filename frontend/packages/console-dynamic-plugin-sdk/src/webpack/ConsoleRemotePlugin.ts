@@ -7,7 +7,7 @@ import type {
 import { DynamicRemotePlugin } from '@openshift/dynamic-plugin-sdk-webpack';
 import * as glob from 'glob';
 import * as _ from 'lodash';
-import * as readPkg from 'read-pkg';
+import { type PackageJson, readPackageSync } from 'read-pkg';
 import * as semver from 'semver';
 import type { Compiler, WebpackPluginInstance } from 'webpack';
 import type { ConsolePluginBuildMetadata, ConsolePluginPackageJSON } from '../build-types';
@@ -25,7 +25,8 @@ import { ValidationResult } from '../validation/ValidationResult';
 import type { DynamicModulePackageSpecs } from './DynamicModuleImportPlugin';
 import { DynamicModuleImportPlugin, resolveDynamicModuleMaps } from './DynamicModuleImportPlugin';
 
-const loadPluginPackageJSON = () => readPkg.sync({ normalize: false }) as ConsolePluginPackageJSON;
+const loadPluginPackageJSON = () =>
+  readPackageSync({ normalize: false }) as ConsolePluginPackageJSON;
 
 // Resolve from cwd, not this file's real path, so symlinked SDK installations work
 const loadVendorPackageJSON = (moduleName: string) =>
@@ -34,7 +35,7 @@ const loadVendorPackageJSON = (moduleName: string) =>
     require.resolve(`${moduleName}/package.json`, {
       paths: [process.cwd()],
     }),
-  ) as readPkg.PackageJson;
+  ) as PackageJson;
 
 const getVendorPackageVersion = (moduleName: string) => {
   try {
@@ -44,12 +45,12 @@ const getVendorPackageVersion = (moduleName: string) => {
   }
 };
 
-const getPackageDependencies = (pkg: readPkg.PackageJson) => ({
+const getPackageDependencies = (pkg: PackageJson) => ({
   ...pkg.devDependencies,
   ...pkg.dependencies,
 });
 
-const hasPackageDependency = (pkg: readPkg.PackageJson, depName: string) =>
+const hasPackageDependency = (pkg: PackageJson, depName: string) =>
   Object.keys(getPackageDependencies(pkg)).includes(depName);
 
 const getPluginSDKPackagePeerDependencies = () =>
