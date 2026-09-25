@@ -141,7 +141,6 @@ export const VSphereConnectionForm = () => {
             }
           />
         }
-        isRequired
         fieldId="connection-folder"
       >
         <TextField name="folder" />
