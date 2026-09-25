@@ -1,6 +1,7 @@
 import type { FC } from 'react';
 import { Fragment, useContext, useState, useRef, useCallback, useEffect } from 'react';
 import {
+  AlertVariant,
   Dropdown,
   Divider,
   DropdownGroup,
@@ -35,6 +36,7 @@ import { LinkTo } from '@console/shared/src/components/links/LinkTo';
 import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
 import { getNotificationsVariant } from '@console/shared/src/components/toast/toastNotificationUtils';
 import { useNotificationHistory } from '@console/shared/src/components/toast/useNotificationHistory';
+import { useToast } from '@console/shared/src/components/toast/useToast';
 import { ACM_LINK_ID, FLAGS } from '@console/shared/src/constants/common';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
@@ -59,6 +61,7 @@ import { AboutModal } from '../about-modal';
 import { ImpersonateUserModal } from '../modals/impersonate-user-modal';
 import QuickCreate, { QuickCreateImportFromGit, QuickCreateContainerImages } from '../QuickCreate';
 import { openshiftHelpBase } from '../utils/documentation';
+import { downloadKubeconfig } from '../utils/download-kubeconfig';
 import '@patternfly/react-user-feedback/dist/esm/Feedback/Feedback.css';
 import { useK8sWatchResource } from '../utils/k8s-watch-hook';
 import { useFeedbackLocal } from './feedback-local';
@@ -161,6 +164,7 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
 }) => {
   const { t } = useTranslation('public');
   const navigate = useNavigate();
+  const toast = useToast();
   const fireTelemetryEvent = useTelemetry();
   const { tourDispatch, tour } = useContext(TourContext);
   const authEnabledFlag = useFlag(FLAGS.AUTH_ENABLED);
@@ -540,68 +544,126 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
     }
 
     const actions = [];
-    const userActions: MastheadAction[] = [
-      {
-        label: t('User preferences'),
-        component: LinkTo('/user-preferences'),
-      },
-    ];
 
-    // Add impersonate option if user is currently impersonating
-    if (impersonate) {
-      userActions.unshift({
-        label: t('Stop impersonating'),
-        callback: () => {
-          dispatch(UIActions.stopImpersonate());
-          // Use full page reload when stopping to ensure clean state
-          setTimeout(() => {
-            window.location.href = window.SERVER_FLAGS.basePath || '/';
-          }, 0);
-        },
-        dataTest: 'stop-impersonate',
-      });
-    }
-
-    // Add impersonate option if not currently impersonating
-    if (!impersonate) {
-      userActions.unshift({
-        label: t('Impersonate user'),
-        callback: () => setIsImpersonateModalOpen(true),
-        dataTest: 'impersonate-user',
-      });
-    }
-
+    // Section 1 (auth-gated): cluster access actions — Copy login command,
+    // Download kubeconfig. Only added when authentication is enabled so the
+    // section is never empty.
     if (authEnabledFlag) {
       const logout = (e) => {
         e.preventDefault();
         authSvc.logout('', isKubeAdmin);
       };
+
+      const clusterAccessActions: MastheadAction[] = [];
+
       if (requestTokenURL) {
-        userActions.unshift({
+        clusterAccessActions.push({
           label: t('Copy login command'),
           href: requestTokenURL,
           externalLink: true,
           dataTest: 'copy-login-command',
         });
       } else if (externalLoginCommand) {
-        userActions.unshift({
+        clusterAccessActions.push({
           callback: launchCopyLoginCommandModal,
           dataTest: 'copy-login-command',
           label: t('Copy login command'),
         });
       }
 
-      userActions.push({
-        label: t('Log out'),
-        callback: logout,
-        dataTest: 'log-out',
+      clusterAccessActions.push({
+        label: t('Download kubeconfig'),
+        callback: () => {
+          downloadKubeconfig('User').catch((e) => {
+            toast.addToast({
+              variant: AlertVariant.danger,
+              title: t('Failed to download kubeconfig'),
+              content: e.message,
+            });
+          });
+        },
+        dataTest: 'download-kubeconfig',
+      });
+
+      actions.push({
+        isSection: true,
+        actions: clusterAccessActions,
+      });
+
+      // Section 2: user management — Impersonate / Stop impersonating, User
+      // preferences, Log out. Log out is placed here (auth-gated) so it stays
+      // in the same group as preferences and impersonation.
+      const managementActions: MastheadAction[] = [];
+
+      if (impersonate) {
+        managementActions.push({
+          label: t('Stop impersonating'),
+          callback: () => {
+            dispatch(UIActions.stopImpersonate());
+            // Use full page reload when stopping to ensure clean state
+            setTimeout(() => {
+              window.location.href = window.SERVER_FLAGS.basePath || '/';
+            }, 0);
+          },
+          dataTest: 'stop-impersonate',
+        });
+      } else {
+        managementActions.push({
+          label: t('Impersonate user'),
+          callback: () => setIsImpersonateModalOpen(true),
+          dataTest: 'impersonate-user',
+        });
+      }
+
+      managementActions.push(
+        {
+          label: t('User preferences'),
+          component: LinkTo('/user-preferences'),
+        },
+        {
+          label: t('Log out'),
+          callback: logout,
+          dataTest: 'log-out',
+        },
+      );
+
+      actions.push({
+        isSection: true,
+        actions: managementActions,
+      });
+    } else {
+      // Auth disabled: single section with just impersonate and preferences.
+      const managementActions: MastheadAction[] = [];
+
+      if (impersonate) {
+        managementActions.push({
+          label: t('Stop impersonating'),
+          callback: () => {
+            dispatch(UIActions.stopImpersonate());
+            setTimeout(() => {
+              window.location.href = window.SERVER_FLAGS.basePath || '/';
+            }, 0);
+          },
+          dataTest: 'stop-impersonate',
+        });
+      } else {
+        managementActions.push({
+          label: t('Impersonate user'),
+          callback: () => setIsImpersonateModalOpen(true),
+          dataTest: 'impersonate-user',
+        });
+      }
+
+      managementActions.push({
+        label: t('User preferences'),
+        component: LinkTo('/user-preferences'),
+      });
+
+      actions.push({
+        isSection: true,
+        actions: managementActions,
       });
     }
-
-    actions.push({
-      isSection: true,
-      actions: userActions,
-    });
 
     if (!_.isEmpty(additionalUserActions.actions)) {
       actions.unshift(additionalUserActions);
