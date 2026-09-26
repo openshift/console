@@ -3,8 +3,10 @@ package config
 import (
 	"archive/tar"
 	"archive/zip"
+	"compress/gzip"
 	"fmt"
 	"io"
+	"io/fs"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -13,8 +15,7 @@ import (
 	"text/template"
 
 	"gopkg.in/yaml.v3"
-
-	klog "k8s.io/klog/v2"
+	"k8s.io/klog/v2"
 )
 
 // HtmlPageData holds data passed to the HTML template
@@ -54,7 +55,6 @@ type ArtifactSpec struct {
 
 // ArtifactsConfig holds the configuration for the artifacts server
 type DownloadsServerConfig struct {
-	Port         string
 	Spec         []ArtifactSpec
 	TempDir      string
 	TemplateHTML *template.Template
@@ -80,7 +80,7 @@ const templateStringHTML = `<!DOCTYPE html>
 	<ul>
 		{{ range .Items }}
             {{ if eq .Type "binary" }}
-                <li><a href="{{ .URL }}">oc ({{ .Name }})</a> (<a href="{{ .TarURL }}">tar</a> <a href="{{ .ZipURL }}">zip</a>)</li>
+                <li><a href="{{ .URL }}">oc ({{ .Name }})</a> (<a href="{{ .TarURL }}">tar.gz</a> <a href="{{ .ZipURL }}">zip</a>)</li>
             {{ else if eq .Type "license" }}
                 <li><a href="{{ .URL }}">license</a></li>
             {{ end }}
@@ -91,16 +91,11 @@ const templateStringHTML = `<!DOCTYPE html>
 </html>`
 
 // load artifacts to be served from given path
-func loadArtifactsSpec(path string) ([]ArtifactSpec, error) {
+func loadArtifactsSpec(dlConfigBytes []byte) ([]ArtifactSpec, error) {
 	specs := ArtifactsConfig{}
-	// open the JSON spec config file
-	fileBytes, err := os.ReadFile(path)
-	if err != nil {
-		return nil, err
-	}
 
 	// unmarshal the YAML file into the ArtifactsConfig object
-	err = yaml.Unmarshal(fileBytes, &specs)
+	err := yaml.Unmarshal(dlConfigBytes, &specs)
 	if err != nil {
 		return nil, err
 	}
@@ -114,7 +109,7 @@ func loadArtifactsSpec(path string) ([]ArtifactSpec, error) {
 }
 
 // NewDownloadsServerConfig creates a new ArtifactsConfig object
-func NewDownloadsServerConfig(port int, specsFilePath string) (*DownloadsServerConfig, error) {
+func NewDownloadsServerConfig(dlConfigBytes []byte) (*DownloadsServerConfig, error) {
 	tempDir := defaultArtifactsDir
 	matches, _ := filepath.Glob("/tmp/artifacts*")
 	for _, match := range matches {
@@ -124,7 +119,7 @@ func NewDownloadsServerConfig(port int, specsFilePath string) (*DownloadsServerC
 		return nil, fmt.Errorf("failed to create artifacts directory: %w", err)
 	}
 	klog.Info("Created artifacts directory (cleaned up any stale data from previous runs)")
-	specs, err := loadArtifactsSpec(specsFilePath)
+	specs, err := loadArtifactsSpec(dlConfigBytes)
 	if err != nil {
 		return nil, err
 	}
@@ -136,7 +131,6 @@ func NewDownloadsServerConfig(port int, specsFilePath string) (*DownloadsServerC
 	}
 
 	artifactsConfig := DownloadsServerConfig{
-		Port:         fmt.Sprintf("%d", port),
 		Spec:         specs,
 		TempDir:      tempDir,
 		TemplateHTML: templateHTML,
@@ -150,20 +144,7 @@ func NewDownloadsServerConfig(port int, specsFilePath string) (*DownloadsServerC
 	return &artifactsConfig, nil
 }
 
-func addFileToTar(tw *tar.Writer, filename string) error {
-	// Open the archive
-	file, err := os.Open(filename)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-
-	// Get file information
-	info, err := file.Stat()
-	if err != nil {
-		return err
-	}
-
+func addFileToTar(tw *tar.Writer, file io.Reader, info fs.FileInfo) error {
 	// Create a tar Header from the FileInfo data
 	header, err := tar.FileInfoHeader(info, info.Name())
 	if err != nil {
@@ -185,25 +166,14 @@ func addFileToTar(tw *tar.Writer, filename string) error {
 	return nil
 }
 
-func addFileToZip(zw *zip.Writer, filename string) error {
-	// Open the archive
-	file, err := os.Open(filename)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-
-	// Get file information
-	info, err := file.Stat()
-	if err != nil {
-		return err
-	}
-
+func addFileToZip(zw *zip.Writer, file io.Reader, fileInfo fs.FileInfo) error {
 	// Create a zip header based on the file's information
-	header, err := zip.FileInfoHeader(info)
+	header, err := zip.FileInfoHeader(fileInfo)
 	if err != nil {
 		return err
 	}
+
+	header.Method = zip.Deflate
 
 	// Create a new writer for the file in the zip archive
 	writer, err := zw.CreateHeader(header)
@@ -242,6 +212,17 @@ func configureArchivePath(pathToTargetFile string) string {
 
 // create archive for the target binary
 func createArchive(pathToTargetFile string, format string) error {
+	targetFileInfo, err := os.Stat(pathToTargetFile)
+	if err != nil {
+		return err
+	}
+
+	targetFile, err := os.Open(pathToTargetFile)
+	if err != nil {
+		return err
+	}
+	defer targetFile.Close()
+
 	// create archive in the same directory as the target binary
 	pathToArchive := configureArchivePath(pathToTargetFile) + format
 
@@ -251,14 +232,24 @@ func createArchive(pathToTargetFile string, format string) error {
 	}
 
 	defer file.Close()
-	if format == ".tar" {
-		archiveWriter := tar.NewWriter(file)
-		addFileToTar(archiveWriter, pathToTargetFile)
+	if format == ".tar.gz" {
+		compressWriter := gzip.NewWriter(file)
+		defer compressWriter.Close()
+		archiveWriter := tar.NewWriter(compressWriter)
 		defer archiveWriter.Close()
+
+		err = addFileToTar(archiveWriter, targetFile, targetFileInfo)
+		if err != nil {
+			return fmt.Errorf("could not create archive for %s: %w", pathToTargetFile, err)
+		}
 	} else if format == ".zip" {
 		archiveWriter := zip.NewWriter(file)
-		addFileToZip(archiveWriter, pathToTargetFile)
 		defer archiveWriter.Close()
+		err = addFileToZip(archiveWriter, targetFile, targetFileInfo)
+
+		if err != nil {
+			return fmt.Errorf("could not create archive for %s: %w", pathToTargetFile, err)
+		}
 	} else {
 		return fmt.Errorf("unsupported archive type")
 	}
@@ -351,7 +342,7 @@ func (downloadsConfig *DownloadsServerConfig) generateDirFileContents() ([]ListI
 			Type:   Binary,
 			URL:    relPath,
 			Name:   displayName(spec.Arch, spec.OperatingSystem, basename),
-			TarURL: fmt.Sprintf("%s.tar", relArchivePath),
+			TarURL: fmt.Sprintf("%s.tar.gz", relArchivePath),
 			ZipURL: fmt.Sprintf("%s.zip", relArchivePath),
 		})
 	}
@@ -373,7 +364,7 @@ func (c *DownloadsServerConfig) CreateArchivesInBackground() {
 		wg.Add(2)
 		go func(p string) {
 			defer wg.Done()
-			if err := createArchive(p, ".tar"); err != nil {
+			if err := createArchive(p, ".tar.gz"); err != nil {
 				klog.Errorf("Failed to create tar archive for %s: %v", p, err)
 			}
 		}(artifactPath)
@@ -397,9 +388,21 @@ func (c *DownloadsServerConfig) CreateArchivesInBackground() {
 func (c *DownloadsServerConfig) Handler() http.Handler {
 	fs := http.FileServer(http.Dir(c.TempDir))
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ext := filepath.Ext(r.URL.Path)
-		if ext == ".tar" || ext == ".zip" {
-			<-c.archivesReady
+		// temporary workaround for the CLI download configuration done in the console operator.
+		// can be dropped when the CLI download configuration is fixed to use "tar.gz" rather than
+		// "tar"
+		if strings.HasSuffix(r.URL.Path, ".tar") {
+			r.URL.Path += ".gz"
+		}
+
+		if strings.HasSuffix(r.URL.Path, ".zip") || strings.HasSuffix(r.URL.Path, ".tar.gz") {
+			select {
+			case <-r.Context().Done():
+				w.Header().Set("Retry-After", "3")
+				http.Error(w, http.StatusText(http.StatusServiceUnavailable), http.StatusServiceUnavailable)
+				return
+			case <-c.archivesReady:
+			}
 		}
 		fs.ServeHTTP(w, r)
 	})
@@ -408,7 +411,10 @@ func (c *DownloadsServerConfig) Handler() http.Handler {
 // setupArtifactsDirectory creates the root HTML file and directories, files and archives for artifacts
 func (artifactsConfig *DownloadsServerConfig) setupArtifactsDirectory() error {
 	// symlink file in the temporary directory that points to the openshift license
-	os.Symlink(pathToOCLicense, filepath.Join(artifactsConfig.TempDir, ocLicenseFile))
+	err := os.Symlink(pathToOCLicense, filepath.Join(artifactsConfig.TempDir, ocLicenseFile))
+	if err != nil {
+		klog.Errorf("can't create symlink to the LICENSE file in %s: %v", artifactsConfig.TempDir, err)
+	}
 
 	// generates content of the root html file and creates directories, files and archives for artifacts
 	content, err := artifactsConfig.generateDirFileContents()
