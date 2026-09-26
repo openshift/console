@@ -120,7 +120,7 @@ test.describe('Testing uninstall of Data Grid Operator', { tag: ['@admin'] }, ()
     });
 
     await test.step('Test uninstall with "Cannot load Operands" error', async () => {
-      // Set up route interception to return error for operand list API (matching Cypress pattern)
+      // Set up route interception to return an error for the operand list API.
       await page.route('**/api/olm/list-operands**', (route) => {
         route.fulfill({
           status: 400,

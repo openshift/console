@@ -63,7 +63,7 @@ setup('install OpenShift Serverless operator if not present', async ({}) => {
     // Namespace may not exist yet — proceed with installation
   }
 
-  // Install using oc apply — same approach as the Cypress tests.
+  // Install using oc apply, matching the legacy E2E setup.
   // Using oc apply ensures OLM creates deployments with proper seccompProfile
   // which is required on OCP 5.0 clusters with PodSecurity "restricted".
   // eslint-disable-next-line no-console

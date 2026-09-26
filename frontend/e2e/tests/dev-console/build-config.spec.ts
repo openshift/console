@@ -154,7 +154,7 @@ test.describe('Edit Build Config', { tag: ['@dev-console'] }, () => {
 
   // eslint-disable-next-line playwright/expect-expect
   test('EBC-01-TC03: Switch from Form to YAML view for editing BuildConfig', async () => {
-    test.skip(true, 'Original Cypress scenario tagged @manual: YAML/form toggle workflow deferred');
+    test.skip(true, 'Original manual scenario: YAML/form toggle workflow deferred');
   });
 
   test('EBC-01-TC04: Edit environment variables', async ({ page, k8sClient, cleanup }) => {
@@ -167,7 +167,7 @@ test.describe('Edit Build Config', { tag: ['@dev-console'] }, () => {
       'v1',
       ns,
       'buildconfigs',
-      // The Cypress source used python:3.8; 5.1 clusters expose the current python:3.9-ubi9 tag.
+      // The source scenario used python:3.8; 5.1 clusters expose the current python:3.9-ubi9 tag.
       createBuildConfigBody(ns, BUILDCONFIG_NAME, 'python:3.9-ubi9'),
     );
     await buildConfigPage.navigateToEditForm(ns, BUILDCONFIG_NAME);
