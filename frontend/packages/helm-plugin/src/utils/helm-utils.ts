@@ -92,7 +92,7 @@ export const getChartURL = (
   const chartData: HelmChartMetaData = helmChartData.find(
     (obj) => obj.version === chartVersion && obj.repoName === chartRepoName,
   );
-  return chartData?.urls[0];
+  return chartData?.urls?.[0];
 };
 
 export const getChartRepositoryTitle = (
@@ -184,6 +184,9 @@ export const getChartVersions = (chartEntries: HelmChartMetaData[], t: TFunction
   const chartVersions = _.reduce(
     chartEntries,
     (obj, chart) => {
+      if (!chart.urls?.length) {
+        return obj;
+      }
       obj[`${chart.version}--${chart.repoName}`] = concatVersions(
         chart.version,
         chart.appVersion,
