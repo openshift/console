@@ -50,21 +50,26 @@ export const Terminal = forwardRef<ImperativeTerminalType, TerminalProps>(
         return;
       }
 
-      const pageRect = document.getElementsByClassName('pf-v6-c-page')[0]?.getBoundingClientRect();
-      const bodyRect = document.body.getBoundingClientRect();
       const nodeRect = node.getBoundingClientRect();
+      // Use the visible viewport. pf-v6-c-page / document.body can be shorter
+      // or taller than the window, which desyncs xterm rows from the black box.
+      const viewportHeight = document.documentElement.clientHeight;
+      const viewportWidth = document.documentElement.clientWidth;
 
-      if (!pageRect) {
+      const height = Math.floor(
+        viewportHeight - (isFullscreen ? 0 : nodeRect.top) - padding,
+      );
+      const width = Math.floor(
+        viewportWidth - (isFullscreen ? 0 : nodeRect.left) - (isFullscreen ? 10 : padding),
+      );
+
+      if (width <= 0 || height <= 0) {
         return;
       }
 
-      const height = Math.floor(pageRect.bottom - (isFullscreen ? 0 : nodeRect.top) - padding);
-      const width = Math.floor(
-        bodyRect.width - (isFullscreen ? 0 : nodeRect.left) - (isFullscreen ? 10 : padding),
-      );
-
       setDimensions({ width: `${width}px`, height: `${height}px` });
     }, [isFullscreen, padding]);
+
 
     useEffect(() => {
       const term = new XTerminal({ ...options });
