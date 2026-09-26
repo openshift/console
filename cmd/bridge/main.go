@@ -414,6 +414,10 @@ func main() {
 		k8sCertPEM []byte
 	)
 
+	if *fK8sModeOffClusterSkipVerifyTLS && *fK8sMode != "off-cluster" {
+		flags.FatalIfFailed(flags.NewInvalidFlagError("k8s-mode-off-cluster-skip-verify-tls", "can only be set when -k8s-mode=off-cluster"))
+	}
+
 	var k8sEndpoint *url.URL
 	switch *fK8sMode {
 	case "in-cluster":
@@ -459,11 +463,7 @@ func main() {
 				RootCAs: serviceProxyRootCAs,
 			})
 
-			srv.ServiceClient = &http.Client{
-				Transport: &http.Transport{
-					TLSClientConfig: serviceProxyTLSConfig,
-				},
-			}
+			srv.ServiceClient = newServiceHTTPClient(serviceProxyTLSConfig)
 
 			srv.CatalogdProxyConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
@@ -516,19 +516,13 @@ func main() {
 		k8sEndpoint, err = flags.ValidateFlagIsURL("k8s-mode-off-cluster-endpoint", *fK8sModeOffClusterEndpoint, false)
 		flags.FatalIfFailed(err)
 
-		serviceProxyTLSConfig := oscrypto.SecureTLSConfig(&tls.Config{
-			InsecureSkipVerify: *fK8sModeOffClusterSkipVerifyTLS,
-		})
+		k8sProxyTLSConfig, serviceProxyTLSConfig := offClusterProxyTLSConfigs(*fCAFile, *fServiceCAFile, *fK8sModeOffClusterSkipVerifyTLS)
 
-		srv.ServiceClient = &http.Client{
-			Transport: &http.Transport{
-				TLSClientConfig: serviceProxyTLSConfig,
-			},
-		}
+		srv.ServiceClient = newServiceHTTPClient(serviceProxyTLSConfig)
 
 		srv.InternalProxiedK8SClientConfig = &rest.Config{
 			Host:      k8sEndpoint.String(),
-			Transport: &http.Transport{TLSClientConfig: serviceProxyTLSConfig},
+			Transport: &http.Transport{TLSClientConfig: k8sProxyTLSConfig},
 		}
 
 		if *fK8sModeOffClusterServiceAccountBearerTokenFile != "" {
@@ -536,7 +530,7 @@ func main() {
 		}
 
 		srv.K8sProxyConfig = &proxy.Config{
-			TLSClientConfig:         serviceProxyTLSConfig,
+			TLSClientConfig:         k8sProxyTLSConfig,
 			HeaderBlacklist:         srv.ProxyHeaderDenyList,
 			Endpoint:                k8sEndpoint,
 			UseProxyFromEnvironment: true,
@@ -719,7 +713,7 @@ func main() {
 		knative.ChannelFilter,
 	)
 
-	srv.AnonymousInternalProxiedK8SRT, err = rest.TransportFor(rest.AnonymousClientConfig(srv.InternalProxiedK8SClientConfig))
+	srv.AnonymousInternalProxiedK8SRT, err = rest.TransportFor(anonymousK8SClientConfig(srv.InternalProxiedK8SClientConfig, *fCAFile, *fK8sModeOffClusterSkipVerifyTLS))
 	if err != nil {
 		klog.Fatalf("Failed to create anonymous k8s HTTP client: %v", err)
 	}
@@ -804,6 +798,87 @@ func main() {
 	}
 
 	httpsrv.Serve(listener)
+}
+
+// anonymousK8SClientConfig derives the anonymous variant of the off-cluster
+// proxied k8s client config. rest.AnonymousClientConfig drops the source
+// config's Transport (which carries the off-cluster proxy's RootCAs and
+// InsecureSkipVerify setting), so when -ca-file is set we re-supply trust via
+// CAFile and re-apply insecure skip-verify. This lets rest.TransportFor build
+// a CA-aware transport; without it the anonymous transport falls back to the
+// system trust store and can't verify an API server signed by a private CA --
+// which breaks the consumers of this transport (the user-settings handler and
+// the login-role metrics). caFile is only applied when the source config
+// doesn't already carry a CAFile, so in-cluster mode's service-account CA is
+// left untouched. Insecure is set first, and CAFile only when the result
+// isn't already insecure: rest.TransportFor rejects a config that carries
+// both a CA and Insecure, and -k8s-mode-off-cluster-skip-verify-tls=true is
+// commonly paired with -ca-file (e.g. examples/run-bridge.sh), which would
+// otherwise crash the bridge on startup.
+func anonymousK8SClientConfig(config *rest.Config, caFile string, insecureSkipVerify bool) *rest.Config {
+	anonymous := rest.AnonymousClientConfig(config)
+	anonymous.Insecure = anonymous.Insecure || insecureSkipVerify
+	if caFile != "" && anonymous.CAFile == "" && !anonymous.Insecure {
+		anonymous.CAFile = caFile
+	}
+	return anonymous
+}
+
+// mustLoadCAPool reads a PEM CA bundle file and returns a cert pool, exiting
+// fatally on any read/parse error.
+func mustLoadCAPool(caFile string) *x509.CertPool {
+	caPEM, err := os.ReadFile(caFile)
+	if err != nil {
+		klog.Fatalf("Failed to read ca file %q: %v", caFile, err)
+	}
+	pool := x509.NewCertPool()
+	if !pool.AppendCertsFromPEM(caPEM) {
+		klog.Fatalf("No CA found in ca file %q", caFile)
+	}
+	return pool
+}
+
+// newServiceHTTPClient builds the client used for direct (non-reverse-proxy)
+// calls to OpenShift services -- currently just the catalogd client's own
+// requests to a catalog's baseURL (pkg/olm.CatalogdClient). It needs the same
+// environment-proxy support as proxy.NewProxy (pkg/proxy/proxy.go), which
+// every proxy.Config-based service proxy already gets: in a HyperShift
+// control-plane-side deployment, guest-cluster services are only reachable
+// through the konnectivity socks5 proxy exposed via HTTP(S)_PROXY, and
+// without this, catalogd requests fail outright instead of tunneling.
+func newServiceHTTPClient(tlsConfig *tls.Config) *http.Client {
+	return &http.Client{
+		Transport: &http.Transport{
+			Proxy:           http.ProxyFromEnvironment,
+			TLSClientConfig: tlsConfig,
+		},
+	}
+}
+
+// offClusterProxyTLSConfigs builds the two TLS trust domains needed by
+// off-cluster mode: the guest KAS is signed by the CA at caFile, while
+// OpenShift services (Thanos, Alertmanager, terminal, plugins, catalogd,
+// gitops) present service-serving certs signed by a different CA
+// (service-ca). serviceCAFile supplies that second trust, mirroring the
+// in-cluster branch; when it's empty the service config falls back to the
+// KAS config so existing off-cluster callers that only pass -ca-file are
+// unaffected.
+func offClusterProxyTLSConfigs(caFile, serviceCAFile string, insecureSkipVerify bool) (k8sProxyTLSConfig, serviceProxyTLSConfig *tls.Config) {
+	k8sProxyTLSConfig = oscrypto.SecureTLSConfig(&tls.Config{
+		InsecureSkipVerify: insecureSkipVerify,
+	})
+	if caFile != "" {
+		k8sProxyTLSConfig.RootCAs = mustLoadCAPool(caFile)
+	}
+
+	if serviceCAFile == "" {
+		return k8sProxyTLSConfig, k8sProxyTLSConfig
+	}
+	serviceProxyTLSConfig = oscrypto.SecureTLSConfig(&tls.Config{
+		InsecureSkipVerify: insecureSkipVerify,
+		RootCAs:            mustLoadCAPool(serviceCAFile),
+	})
+	return k8sProxyTLSConfig, serviceProxyTLSConfig
 }
 
 func listen(scheme, host, certFile, keyFile, minTLSVersion string, cipherSuites []string) (net.Listener, error) {

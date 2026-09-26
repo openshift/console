@@ -1,6 +1,8 @@
 package terminal
 
 import (
+	"net/http"
+
 	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
@@ -30,21 +32,15 @@ func (p *Proxy) createTypedClient(token string) (*kubernetes.Clientset, error) {
 }
 
 func (p *Proxy) getConfig(token string) (*rest.Config, error) {
-	var tlsClientConfig rest.TLSClientConfig
-	if p.TLSClientConfig.InsecureSkipVerify {
-		// off-cluster mode
-		tlsClientConfig.Insecure = true
-	} else {
-		inCluster, err := rest.InClusterConfig()
-		if err != nil {
-			return nil, err
-		}
-		tlsClientConfig = inCluster.TLSClientConfig
-	}
-
+	// p.TLSClientConfig already carries the correct trust for the current
+	// mode (in-cluster service-account CA, or the off-cluster -ca-file /
+	// -k8s-mode-off-cluster-skip-verify-tls setting). Passing it via
+	// Transport, rather than re-deriving TLSClientConfig from
+	// rest.InClusterConfig(), keeps that trust instead of discarding it
+	// (rest.InClusterConfig() also fails outright when running off-cluster).
 	return &rest.Config{
-		Host:            p.ClusterEndpoint.Host,
-		TLSClientConfig: tlsClientConfig,
-		BearerToken:     token,
+		Host:        p.ClusterEndpoint.Host,
+		Transport:   &http.Transport{TLSClientConfig: p.TLSClientConfig},
+		BearerToken: token,
 	}, nil
 }

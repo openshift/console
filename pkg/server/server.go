@@ -527,8 +527,16 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 		&http.Client{
 			// 120 seconds matches the webpack require timeout.
 			// Plugins are loaded asynchronously, so this doesn't block page load.
-			Timeout:   120 * time.Second,
-			Transport: &http.Transport{TLSClientConfig: s.PluginsProxyTLSConfig},
+			Timeout: 120 * time.Second,
+			Transport: &http.Transport{
+				TLSClientConfig: s.PluginsProxyTLSConfig,
+				// Honor HTTP(S)_PROXY/NO_PROXY so plugin asset (and i18n) requests
+				// can be tunneled to guest cluster services. Off-cluster
+				// (HyperShift control-plane-side bridge) this routes plugin
+				// backends through the konnectivity socks5 proxy; in-cluster it is
+				// inert (no proxy env) or bypassed for *.svc via NO_PROXY.
+				Proxy: http.ProxyFromEnvironment,
+			},
 		},
 		s.EnabledPlugins,
 		s.PublicDir,
