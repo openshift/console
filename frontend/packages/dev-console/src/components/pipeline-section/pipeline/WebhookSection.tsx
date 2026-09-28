@@ -73,8 +73,8 @@ const WebhookHelpText: FC<WebhookHelpTextProps> = ({ gitProvider, testId }): Rea
         <Trans t={t} ns="devconsole">
           Use your Gitlab Personal access token. Use this{' '}
           <ExternalLink href={AccessTokenDocLinks[GitProvider.GITLAB]}>link</ExternalLink> to create
-          a token with <b>api</b> scope. Select the role as <b>Maintainer/Owner</b>. Give your
-          token an expiration i.e 30d.
+          a token with <b>api</b> scope. Select the role as <b>Maintainer/Owner</b>. Give your token
+          an expiration i.e 30d.
         </Trans>
       );
       break;
