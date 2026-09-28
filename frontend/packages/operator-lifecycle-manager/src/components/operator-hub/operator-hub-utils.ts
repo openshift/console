@@ -45,7 +45,7 @@ export const isAWSSTSCluster = (
 ): boolean =>
   cloudcreds?.spec?.credentialsMode === 'Manual' &&
   infra?.status?.platform === 'AWS' &&
-  auth?.spec?.serviceAccountIssuer !== '';
+  !!auth?.spec?.serviceAccountIssuer;
 
 export const isAzureWIFCluster = (
   cloudcreds: CloudCredentialKind,
@@ -54,7 +54,7 @@ export const isAzureWIFCluster = (
 ): boolean =>
   cloudcreds?.spec?.credentialsMode === 'Manual' &&
   infra?.status?.platform === 'Azure' &&
-  auth?.spec?.serviceAccountIssuer !== '';
+  !!auth?.spec?.serviceAccountIssuer;
 
 export const isGCPWIFCluster = (
   cloudcreds: CloudCredentialKind,
@@ -63,7 +63,7 @@ export const isGCPWIFCluster = (
 ): boolean =>
   cloudcreds?.spec?.credentialsMode === 'Manual' &&
   infra?.status?.platform === 'GCP' &&
-  auth?.spec?.serviceAccountIssuer !== '';
+  !!auth?.spec?.serviceAccountIssuer;
 
 export const infrastructureFeatureMap = {
   disconnected: InfrastructureFeature.Disconnected,
