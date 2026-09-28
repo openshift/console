@@ -2,15 +2,16 @@ import type { ComponentProps, FC } from 'react';
 import { useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { RowFilter } from '@console/dynamic-plugin-sdk';
-import { MultiListPage } from '@console/internal/components/factory';
+import { MultiListPage } from '@console/internal/components/factory/list-page';
 import type { K8sResourceCommon } from '@console/internal/module/k8s';
-import { referenceFor, referenceForModel } from '@console/internal/module/k8s';
+import { referenceFor } from '@console/internal/module/k8s/k8s';
+import { referenceForModel } from '@console/internal/module/k8s/k8s-ref';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import {
   getDynamicChannelModel,
   useChannelModels,
 } from '../../../utils/fetch-dynamic-eventsources-utils';
-import ChannelList from './ChannelList';
+import { ChannelList } from './ChannelList';
 
 const ChannelListPage: FC<ComponentProps<typeof MultiListPage>> = (props) => {
   const { t } = useTranslation('knative-plugin');
@@ -66,6 +67,7 @@ const ChannelListPage: FC<ComponentProps<typeof MultiListPage>> = (props) => {
         resources={resources}
         rowFilters={channelRowFilter}
         ListComponent={ChannelList}
+        omitFilterToolbar
       />
     </>
   );

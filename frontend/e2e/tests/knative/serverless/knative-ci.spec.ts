@@ -200,6 +200,15 @@ test.describe('Knative CI smoke tests', { tag: ['@smoke', '@regression'] }, () =
       const topologyPage = new TopologyKnativePage(page);
       await topologyPage.verifyWorkloadVisible('channel');
     });
+
+    await test.step('Verify channel type filtering and saved column widths', async () => {
+      const listPage = new ListPage(page);
+      await listPage.navigateToListPage(`/eventing/ns/${namespace}/channels`);
+      await listPage.filterByCheckbox('Type', 'channel');
+      await expect(listPage.cell('channel')).toBeVisible();
+      await expect(listPage.table).not.toContainText('InMemoryChannel');
+      await listPage.verifyColumnResizing('name');
+    });
   });
 
   test('KE-05-TC01: Create Broker using Form view', async ({ page }) => {
