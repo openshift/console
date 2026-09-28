@@ -178,6 +178,14 @@ test.describe('Knative CI smoke tests', { tag: ['@smoke', '@regression'] }, () =
       const topologyPage = new TopologyKnativePage(page);
       await topologyPage.verifyWorkloadVisible('ping-source');
     });
+
+    await test.step('Verify event source type filtering and saved column widths', async () => {
+      const listPage = new ListPage(page);
+      await listPage.navigateToListPage(`/eventing/ns/${namespace}`);
+      await listPage.filterByCheckbox('Type', 'pingsource');
+      await expect(listPage.cell('ping-source')).toBeVisible();
+      await listPage.verifyColumnResizing('name');
+    });
   });
 
   test('KA-01-TC02: Create new Channel via default channel type', async ({ page }) => {
