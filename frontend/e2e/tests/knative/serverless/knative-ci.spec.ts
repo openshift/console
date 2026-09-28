@@ -290,6 +290,14 @@ test.describe('Knative CI smoke tests', { tag: ['@smoke', '@regression'] }, () =
       await expect(topologyPage.getSidePane()).toContainText(SERVICE_NAME);
       await topologyPage.closeSidePane();
     });
+
+    await test.step('Verify subscription filtering and saved column widths', async () => {
+      const listPage = new ListPage(page);
+      await listPage.navigateToListPage(`/eventing/ns/${namespace}/subscriptions`);
+      await listPage.filterByNameInput('channel-subscrip');
+      await expect(listPage.cell('channel-subscrip')).toBeVisible();
+      await listPage.verifyColumnResizing('name');
+    });
   });
 
   test('KN-02-TC08: Update service to new application group', async ({ page }) => {
