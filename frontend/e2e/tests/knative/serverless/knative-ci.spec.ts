@@ -86,6 +86,15 @@ test.describe('Knative CI smoke tests', { tag: ['@smoke', '@regression'] }, () =
       await expect(listPage.cell(SERVICE_NAME)).toBeVisible();
       await listPage.verifyColumnResizing('name');
     });
+
+    await test.step('Verify the generated route and saved column widths', async () => {
+      const listPage = new ListPage(page);
+      await listPage.navigateToListPage(`/serving/ns/${namespace}/routes`);
+      await expect(listPage.cell(SERVICE_NAME)).toBeVisible();
+      await listPage.filterByNameInput(SERVICE_NAME);
+      await expect(listPage.cell(SERVICE_NAME)).toBeVisible();
+      await listPage.verifyColumnResizing('name');
+    });
   });
 
   test('KN-02-TC02: Edit labels modal details', async ({ page }) => {
