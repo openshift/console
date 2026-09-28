@@ -1,49 +1,71 @@
-import { sortable } from '@patternfly/react-table';
-import type { TFunction } from 'i18next';
-import { tableColumnClasses } from './revision-table';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import {
+  cellIsStickyProps,
+  getNameColumnProps,
+} from '@console/app/src/components/data-view/ConsoleDataView';
+import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
+import type { ConsoleDataViewColumn } from '@console/dynamic-plugin-sdk/src/api/internal-types';
+import { RevisionModel } from '../../models';
+import type { RevisionKind } from '../../types';
 
-const RevisionHeader = (t: TFunction) => () => [
-  {
-    title: t('knative-plugin~Name'),
-    sortField: 'metadata.name',
-    transforms: [sortable],
-    props: { className: tableColumnClasses[0] },
-  },
-  {
-    id: 'namespace',
-    title: t('knative-plugin~Namespace'),
-    sortField: 'metadata.namespace',
-    transforms: [sortable],
-    props: { className: tableColumnClasses[1] },
-  },
-  {
-    title: t('knative-plugin~Service'),
-    sortField: 'metadata.labels["serving.knative.dev/service"]',
-    transforms: [sortable],
-    props: { className: tableColumnClasses[2] },
-  },
-  {
-    title: t('knative-plugin~Created'),
-    sortField: 'metadata.creationTimestamp',
-    transforms: [sortable],
-    props: { className: tableColumnClasses[3] },
-  },
-  {
-    title: t('knative-plugin~Conditions'),
-    props: { className: tableColumnClasses[4] },
-  },
-  {
-    title: t('knative-plugin~Ready'),
-    props: { className: tableColumnClasses[5] },
-  },
-  {
-    title: t('knative-plugin~Reason'),
-    props: { className: tableColumnClasses[6] },
-  },
-  {
-    title: '',
-    props: { className: tableColumnClasses[7] },
-  },
-];
-
-export default RevisionHeader;
+export const useRevisionColumns = (): {
+  columns: ConsoleDataViewColumn<RevisionKind>[];
+  resetAllColumnWidths: () => void;
+} => {
+  const { t } = useTranslation('knative-plugin');
+  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(RevisionModel);
+  const columns = useMemo(
+    () => [
+      {
+        id: 'name',
+        resizableProps: getResizableProps('name'),
+        title: t('Name'),
+        sort: 'metadata.name',
+        props: getNameColumnProps(),
+      },
+      {
+        id: 'namespace',
+        resizableProps: getResizableProps('namespace'),
+        title: t('Namespace'),
+        sort: 'metadata.namespace',
+        props: { modifier: 'nowrap' as const },
+      },
+      {
+        id: 'service',
+        resizableProps: getResizableProps('service'),
+        title: t('Service'),
+        sort: 'metadata.labels["serving.knative.dev/service"]',
+        props: { modifier: 'nowrap' as const },
+      },
+      {
+        id: 'created',
+        resizableProps: getResizableProps('created'),
+        title: t('Created'),
+        sort: 'metadata.creationTimestamp',
+        props: { modifier: 'nowrap' as const },
+      },
+      {
+        id: 'conditions',
+        resizableProps: getResizableProps('conditions'),
+        title: t('Conditions'),
+        props: { modifier: 'nowrap' as const },
+      },
+      {
+        id: 'ready',
+        resizableProps: getResizableProps('ready'),
+        title: t('Ready'),
+        props: { modifier: 'nowrap' as const },
+      },
+      {
+        id: 'reason',
+        resizableProps: getResizableProps('reason'),
+        title: t('Reason'),
+        props: { modifier: 'nowrap' as const },
+      },
+      { id: 'actions', title: '', props: cellIsStickyProps },
+    ],
+    [t, getResizableProps],
+  );
+  return { columns, resetAllColumnWidths };
+};

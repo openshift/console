@@ -1,10 +1,12 @@
-import type { FC } from 'react';
-import { css } from '@patternfly/react-styles';
 import * as _ from 'lodash';
-import type { RowFunctionArgs } from '@console/internal/components/factory';
-import { TableData } from '@console/internal/components/factory';
-import { ResourceLink } from '@console/internal/components/utils';
-import { referenceFor, referenceForModel } from '@console/internal/module/k8s';
+import {
+  actionsCellProps,
+  getNameCellProps,
+} from '@console/app/src/components/data-view/ConsoleDataView';
+import type { GetDataViewRows } from '@console/dynamic-plugin-sdk/src/api/internal-types';
+import { ResourceLink } from '@console/internal/components/utils/resource-link';
+import { referenceFor } from '@console/internal/module/k8s/k8s';
+import { referenceForModel } from '@console/internal/module/k8s/k8s-ref';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ClampedText } from '@console/shared/src/components/text/ClampedText';
@@ -12,60 +14,51 @@ import { RevisionModel, ServiceModel } from '../../models';
 import type { RevisionKind } from '../../types';
 import { ConditionTypes } from '../../types';
 import { getConditionString, getCondition } from '../../utils/condition-utils';
-import { tableColumnClasses } from './revision-table';
 
 const revisionReference = referenceForModel(RevisionModel);
 const serviceReference = referenceForModel(ServiceModel);
 
-const RevisionRow: FC<RowFunctionArgs<RevisionKind>> = ({ obj }) => {
-  const readyCondition = obj.status
-    ? getCondition(obj.status.conditions, ConditionTypes.Ready)
-    : null;
-  const service = _.get(obj.metadata, `labels["serving.knative.dev/service"]`);
-  const objReference = referenceFor(obj);
-  const context = { [objReference]: obj };
-  return (
-    <>
-      <TableData className={tableColumnClasses[0]}>
-        <ResourceLink
-          kind={revisionReference}
-          name={obj.metadata.name}
-          namespace={obj.metadata.namespace}
-        />
-      </TableData>
-      <TableData className={css(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
-        <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
-      </TableData>
-      <TableData className={css(tableColumnClasses[2], 'co-break-word')}>
-        {service && (
+export const getRevisionDataViewRows: GetDataViewRows<RevisionKind> = (data, columns) =>
+  data.map(({ obj }) => {
+    const readyCondition = obj.status
+      ? getCondition(obj.status.conditions, ConditionTypes.Ready)
+      : null;
+    const service = _.get(obj.metadata, `labels["serving.knative.dev/service"]`);
+    const objReference = referenceFor(obj);
+    const context = { [objReference]: obj };
+    const rowCells = {
+      name: {
+        cell: (
+          <ResourceLink
+            kind={revisionReference}
+            name={obj.metadata.name}
+            namespace={obj.metadata.namespace}
+          />
+        ),
+        props: getNameCellProps(obj.metadata.name),
+      },
+      namespace: { cell: <ResourceLink kind="Namespace" name={obj.metadata.namespace} /> },
+      service: {
+        cell: service && (
           <ResourceLink
             kind={serviceReference}
             name={service}
             namespace={obj.metadata.namespace}
             title={service}
           />
-        )}
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>
-        <Timestamp timestamp={obj.metadata.creationTimestamp} />
-      </TableData>
-      <TableData className={tableColumnClasses[4]}>
-        {obj.status ? getConditionString(obj.status.conditions) : '-'}
-      </TableData>
-      <TableData className={tableColumnClasses[5]}>
-        {(readyCondition && readyCondition.status) || '-'}
-      </TableData>
-      <TableData className={tableColumnClasses[6]}>
-        {(readyCondition?.message && (
-          <ClampedText lineClamp={5}>{readyCondition?.message}</ClampedText>
-        )) ||
-          '-'}
-      </TableData>
-      <TableData className={tableColumnClasses[7]}>
-        <LazyActionMenu context={context} />
-      </TableData>
-    </>
-  );
-};
-
-export default RevisionRow;
+        ),
+      },
+      created: { cell: <Timestamp timestamp={obj.metadata.creationTimestamp} /> },
+      conditions: { cell: obj.status ? getConditionString(obj.status.conditions) : '-' },
+      ready: { cell: (readyCondition && readyCondition.status) || '-' },
+      reason: {
+        cell:
+          (readyCondition?.message && (
+            <ClampedText lineClamp={5}>{readyCondition?.message}</ClampedText>
+          )) ||
+          '-',
+      },
+      actions: { cell: <LazyActionMenu context={context} />, props: actionsCellProps },
+    };
+    return columns.map(({ id }) => ({ id, ...rowCells[id] }));
+  });

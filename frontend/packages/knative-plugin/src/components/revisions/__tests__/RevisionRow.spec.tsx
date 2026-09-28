@@ -1,108 +1,102 @@
-import type { ReactNode } from 'react';
 import { render, screen } from '@testing-library/react';
-import * as _ from 'lodash';
-import type { RowFunctionArgs } from '@console/internal/components/factory';
-import { revisionObj } from '../../../topology/__tests__/topology-knative-test-data';
+import type { ConsoleDataViewColumn } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import type { RevisionKind } from '../../../types';
-import RevisionRow from '../RevisionRow';
-
-jest.mock('@console/internal/components/factory', () => ({
-  TableData: ({ children, className }: { children?: ReactNode; className?: string }) => (
-    <td data-test="mock-TableData" className={className}>
-      {children}
-    </td>
-  ),
-}));
-
-jest.mock('@console/internal/components/utils', () => ({
-  ResourceLink: jest.requireActual('@console/knative-plugin/src/__tests__/rtl-stub-components')
-    .knativeInternalUtilsStubs.ResourceLink,
-  Kebab: {
-    columnClass: 'pf-c-table__action',
-  },
-}));
+import { getRevisionDataViewRows } from '../RevisionRow';
 
 jest.mock('@console/internal/module/k8s', () => ({
+  K8sResourceConditionStatus: { True: 'True', False: 'False', Unknown: 'Unknown' },
+}));
+jest.mock('@console/internal/module/k8s/k8s', () => ({
   referenceFor: jest.fn(() => 'serving.knative.dev~v1~Revision'),
-  referenceForModel: jest.fn(() => 'serving.knative.dev~v1~Service'),
-  K8sResourceConditionStatus: {
-    True: 'True',
-    False: 'False',
-    Unknown: 'Unknown',
-  },
 }));
-
-jest.mock('@console/shared/src/components/text/ClampedText', () => ({
-  ClampedText: 'ClampedText',
+jest.mock('@console/app/src/components/data-view/ConsoleDataView', () => ({
+  actionsCellProps: {},
+  getNameCellProps: jest.fn(() => ({})),
 }));
-
+jest.mock('@console/internal/components/utils/resource-link', () => ({
+  ResourceLink: ({ name }) => name,
+}));
 jest.mock('@console/shared/src/components/actions/LazyActionMenu', () => ({
-  LazyActionMenu: 'LazyActionMenu',
+  LazyActionMenu: () => null,
 }));
-
 jest.mock('@console/shared/src/components/datetime/Timestamp', () => ({
-  Timestamp: 'Timestamp',
+  Timestamp: ({ timestamp }) => timestamp,
+}));
+jest.mock('@console/shared/src/components/text/ClampedText', () => ({
+  ClampedText: ({ children }) => children,
 }));
 
-jest.mock('../../../utils/condition-utils', () => ({
-  getConditionString: jest.fn(() => '3 OK / 4'),
-  getCondition: jest.fn(() => ({ status: 'True' })),
-}));
+const resource: RevisionKind = {
+  apiVersion: 'serving.knative.dev/v1',
+  kind: 'Revision',
+  metadata: {
+    name: 'sample',
+    namespace: 'test-project',
+    generation: 3,
+    creationTimestamp: '2026-01-01T00:00:00Z',
+    labels: { 'serving.knative.dev/service': 'parent-service' },
+  },
+  status: {
+    conditions: [{ type: 'Ready', status: 'False', message: 'Waiting for deployment' }],
+  },
+};
 
-let revData: RowFunctionArgs<RevisionKind>;
+const renderRow = (obj: RevisionKind, ids: string[]) => {
+  const columns: ConsoleDataViewColumn<RevisionKind>[] = ids.map((id) => ({ id, title: id }));
+  const [cells] = getRevisionDataViewRows(
+    [{ obj, activeColumnIDs: new Set(ids), rowData: undefined, index: 0 }],
+    columns,
+  );
+  return render(
+    <table>
+      <tbody>
+        <tr>
+          {cells.map(({ id, cell }) => (
+            <td key={id}>{cell}</td>
+          ))}
+        </tr>
+      </tbody>
+    </table>,
+  );
+};
 
 describe('RevisionRow', () => {
-  beforeEach(() => {
-    revData = {
-      obj: revisionObj,
-      columns: [],
-    } as any;
+  it('should display the resource name and namespace', () => {
+    renderRow(resource, ['name', 'namespace']);
+    expect(screen.getByRole('cell', { name: 'sample' })).toBeVisible();
+    expect(screen.getByRole('cell', { name: 'test-project' })).toBeVisible();
+  });
+  it('should preserve the selected column order and omit hidden columns', () => {
+    renderRow(resource, ['created', 'name']);
+    expect(screen.getAllByRole('cell').map((cell) => cell.textContent)).toEqual([
+      '2026-01-01T00:00:00Z',
+      'sample',
+    ]);
+    expect(screen.queryByText('test-project')).not.toBeInTheDocument();
   });
 
-  it('should render the revision row with all TableData elements', () => {
-    render(<RevisionRow {...revData} />);
-    expect(screen.getAllByTestId('mock-TableData')).toHaveLength(8);
+  it('should display the parent service', () => {
+    renderRow(resource, ['service']);
+    expect(screen.getByRole('cell', { name: 'parent-service' })).toBeVisible();
   });
-
-  it('should show ResourceLink for associated service when service exists in labels', () => {
-    render(<RevisionRow {...revData} />);
-    expect(screen.getAllByTestId('mock-ResourceLink').length).toBeGreaterThan(0);
+  it('should display conditions, readiness, and reason', () => {
+    renderRow(resource, ['conditions', 'ready', 'reason']);
+    expect(screen.getByRole('cell', { name: '0 OK / 1' })).toBeVisible();
+    expect(screen.getByRole('cell', { name: 'False' })).toBeVisible();
+    expect(screen.getByRole('cell', { name: 'Waiting for deployment' })).toBeVisible();
   });
-
-  it('should handle case when service is not found in labels', () => {
-    const modifiedRevData = {
-      ...revData,
-      obj: {
-        ...revData.obj,
-        metadata: {
-          ...revData.obj.metadata,
-          labels: {
-            'serving.knative.dev/configuration': 'overlayimage',
-            'serving.knative.dev/configurationGeneration': '2',
-          },
-        },
-      },
-    };
-    render(<RevisionRow {...modifiedRevData} />);
-    expect(screen.getAllByTestId('mock-TableData')).toHaveLength(8);
-  });
-
-  it('should render conditions when status is present', () => {
-    render(<RevisionRow {...revData} />);
-    expect(screen.getAllByTestId('mock-TableData')[0]).toBeVisible();
-  });
-
-  it('should handle case when status is not present', () => {
-    const noStatusRevData = {
-      ...revData,
-      obj: _.omit(revData.obj, 'status'),
-    };
-    render(<RevisionRow {...noStatusRevData} />);
-    expect(screen.getAllByTestId('mock-TableData')).toHaveLength(8);
-  });
-
-  it('should render ready status properly', () => {
-    render(<RevisionRow {...revData} />);
-    expect(screen.getAllByTestId('mock-TableData')[0]).toBeVisible();
+  it('should handle missing status and parent service', () => {
+    renderRow({ ...resource, metadata: { ...resource.metadata, labels: {} }, status: undefined }, [
+      'service',
+      'conditions',
+      'ready',
+      'reason',
+    ]);
+    expect(screen.getAllByRole('cell').map((cell) => cell.textContent)).toEqual([
+      '',
+      '-',
+      '-',
+      '-',
+    ]);
   });
 });

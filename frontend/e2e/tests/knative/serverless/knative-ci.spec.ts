@@ -332,6 +332,14 @@ test.describe('Knative CI smoke tests', { tag: ['@smoke', '@regression'] }, () =
         expect(revisions.items?.length).toBe(2);
       }).toPass({ timeout: 60_000, intervals: [5_000] });
     });
+
+    await test.step('Verify revisions filtering and saved column widths', async () => {
+      const listPage = new ListPage(page);
+      await listPage.navigateToListPage(`/serving/ns/${namespace}/revisions`);
+      await listPage.filterByNameInput(SERVICE_NAME);
+      await expect(listPage.table).toContainText(SERVICE_NAME);
+      await listPage.verifyColumnResizing('name');
+    });
   });
 
   test('KN-02-TC10: Set traffic distribution >100%', async ({ page }) => {
