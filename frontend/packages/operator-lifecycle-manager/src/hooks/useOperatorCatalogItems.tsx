@@ -63,6 +63,8 @@ const onValidSubscriptionAnnotationError = (error: Error, pkg: PackageManifestKi
     error,
   );
 
+const isSettled = (loaded: boolean, loadError: any) => loaded || !!loadError;
+
 const useOperatorCatalogItems: ExtensionHook<CatalogItem[], CatalogExtensionHookOptions> = (
   options,
 ) => {
@@ -79,11 +81,18 @@ const useOperatorCatalogItems: ExtensionHook<CatalogItem[], CatalogExtensionHook
   const [clusterServiceVersions, clusterServiceVersionsLoaded, clusterServiceVersionsLoadError] =
     useClusterServiceVersions(targetNamespace);
   // cloudCredentials are optional
-  const [cloudCredentials] = useClusterCloudCredentialConfig();
+  const [cloudCredentials, cloudCredentialsLoaded, cloudCredentialsLoadError] =
+    useClusterCloudCredentialConfig();
   const [infrastructure, infrastructureLoaded, infrastructureLoadError] =
     useClusterInfrastructureConfig();
   const [authentication, authenticationLoaded, authenticationLoadError] =
     useClusterAuthenticationConfig();
+  // Forbidden for namespace-scoped users, so these are settled rather than required: a 403
+  // must not fail the catalog, but tokenized auth stays accurate when they are readable.
+  const clusterConfigSettled =
+    isSettled(cloudCredentialsLoaded, cloudCredentialsLoadError) &&
+    isSettled(infrastructureLoaded, infrastructureLoadError) &&
+    isSettled(authenticationLoaded, authenticationLoadError);
 
   const [updateChannel, setUpdateChannel] = useState('');
   const [updateVersion, setUpdateVersion] = useState('');
@@ -94,12 +103,10 @@ const useOperatorCatalogItems: ExtensionHook<CatalogItem[], CatalogExtensionHook
       operatorHubPackageManifestsLoaded &&
       subscriptionsLoaded &&
       clusterServiceVersionsLoaded &&
-      infrastructureLoaded &&
-      authenticationLoaded,
+      clusterConfigSettled,
     [
-      authenticationLoaded,
+      clusterConfigSettled,
       clusterServiceVersionsLoaded,
-      infrastructureLoaded,
       operatorGroupsLoaded,
       operatorHubPackageManifestsLoaded,
       subscriptionsLoaded,
@@ -113,13 +120,9 @@ const useOperatorCatalogItems: ExtensionHook<CatalogItem[], CatalogExtensionHook
         operatorHubPackageManifestsLoadError,
         subscriptionsLoadError,
         clusterServiceVersionsLoadError,
-        infrastructureLoadError,
-        authenticationLoadError,
       ),
     [
-      authenticationLoadError,
       clusterServiceVersionsLoadError,
-      infrastructureLoadError,
       operatorHubPackageManifestsLoadError,
       operatorGroupsLoadError,
       subscriptionsLoadError,
