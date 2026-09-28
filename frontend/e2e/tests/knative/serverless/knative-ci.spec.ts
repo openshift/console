@@ -5,6 +5,7 @@ import { warmupSPA } from '../../../pages/base-page';
 import { AddFlowPage } from '../../../pages/knative/add-flow-page';
 import { AdminEventingPage } from '../../../pages/knative/admin-eventing-page';
 import { TopologyKnativePage } from '../../../pages/knative/topology-knative-page';
+import { ListPage } from '../../../pages/list-page';
 import KubernetesClient from '../../../clients/kubernetes-client';
 
 const SERVICE_NAME = 'kn-service';
@@ -73,6 +74,17 @@ test.describe('Knative CI smoke tests', { tag: ['@smoke', '@regression'] }, () =
 
     await test.step('Verify workload visible in topology', async () => {
       await topologyPage.verifyWorkloadVisible(SERVICE_NAME);
+    });
+
+    await test.step('Verify service filtering and saved column widths', async () => {
+      const listPage = new ListPage(page);
+      await listPage.navigateToListPage(`/serving/ns/${namespace}`);
+      await expect(listPage.cell(SERVICE_NAME)).toBeVisible();
+      await listPage.filterByNameInput('no-matching-service');
+      await expect(listPage.cell(SERVICE_NAME)).toHaveCount(0);
+      await listPage.filterByNameInput(SERVICE_NAME);
+      await expect(listPage.cell(SERVICE_NAME)).toBeVisible();
+      await listPage.verifyColumnResizing('name');
     });
   });
 
