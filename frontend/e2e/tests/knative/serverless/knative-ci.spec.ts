@@ -222,6 +222,14 @@ test.describe('Knative CI smoke tests', { tag: ['@smoke', '@regression'] }, () =
       const topologyPage = new TopologyKnativePage(page);
       await topologyPage.verifyWorkloadVisible('default-broker');
     });
+
+    await test.step('Verify broker filtering and saved column widths', async () => {
+      const listPage = new ListPage(page);
+      await listPage.navigateToListPage(`/eventing/ns/${namespace}/brokers`);
+      await listPage.filterByNameInput('default-broker');
+      await expect(listPage.cell('default-broker')).toBeVisible();
+      await listPage.verifyColumnResizing('name');
+    });
   });
 
   // TODO: The Add Subscription UI modal has a broken Subscriber dropdown on OCP 5

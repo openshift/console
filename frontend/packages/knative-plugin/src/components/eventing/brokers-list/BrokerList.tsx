@@ -1,21 +1,25 @@
 import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { TableProps } from '@console/internal/components/factory';
-import { Table } from '@console/internal/components/factory';
-import BrokerHeaders from './BrokerHeaders';
-import BrokerRow from './BrokerRow';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
+import type { TableProps } from '@console/internal/components/factory/table';
+import type { EventBrokerKind } from '../../../types';
+import { useBrokerColumns } from './BrokerHeaders';
+import { getBrokerDataViewRows } from './BrokerRow';
 
-const BrokerList: FC<TableProps> = (props) => {
+export const BrokerList: FC<TableProps> = (props) => {
   const { t } = useTranslation('knative-plugin');
+  const { columns, resetAllColumnWidths } = useBrokerColumns();
   return (
-    <Table
+    <ConsoleDataView<EventBrokerKind>
       {...props}
-      aria-label={t('Brokers')}
-      Header={BrokerHeaders(t)}
-      Row={BrokerRow}
-      virtualize
+      label={t('Brokers')}
+      data={props.data}
+      loaded={props.loaded}
+      columns={columns}
+      getDataViewRows={getBrokerDataViewRows}
+      hideColumnManagement
+      isResizable
+      resetAllColumnWidths={resetAllColumnWidths}
     />
   );
 };
-
-export default BrokerList;
