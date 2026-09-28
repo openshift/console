@@ -1,12 +1,16 @@
-import { WebpackSharedConfig, WebpackSharedObject } from '@openshift/dynamic-plugin-sdk-webpack';
 import {
-  Configuration,
+  type Configuration,
   CopyRspackPlugin,
   CssExtractRspackPlugin,
   LightningCssMinimizerRspackPlugin,
   NormalModule,
   NormalModuleReplacementPlugin,
   ProgressPlugin,
+  type Provides,
+  type ProvidesObject,
+  type Shared,
+  type SharedConfig,
+  type SharedObject,
   sharing,
   SwcJsMinimizerRspackPlugin,
 } from '@rspack/core';
@@ -72,50 +76,50 @@ const dynamicModuleMaps = resolveDynamicModuleMaps(dynamicModulePackageSpecs, [
 /**
  * Get webpack shared module configuration to use by Console application.
  *
- * This includes Console provided {@link sharedPluginModules} and shared dynamic modules
- * resolved from {@link dynamicModulePackageSpecs}.
+ * This includes Console provided {@link sharedPluginModules} only. Shared dynamic modules
+ * resolved from {@link dynamicModulePackageSpecs} are provided separately, see
+ * {@link getProvidedDynamicModules} for why they are not consumed by Console itself.
  *
  * Note: shared modules contributed by Console application should be marked with `eager: true`
  * to ensure these modules are part of the initial chunk.
  *
  * @see https://webpack.js.org/plugins/module-federation-plugin/#sharing-hints
  */
-const getWebpackSharedModules = () => {
-  const consoleProvidedSharedModules = sharedPluginModules.reduce<WebpackSharedObject>(
-    (acc, moduleName) => {
-      const { singleton } = getSharedModuleMetadata(moduleName);
-      const moduleConfig: WebpackSharedConfig = { singleton, eager: true };
+const getWebpackSharedModules = (): Shared =>
+  sharedPluginModules.reduce<SharedObject>((acc, moduleName) => {
+    const { singleton } = getSharedModuleMetadata(moduleName);
+    const moduleConfig: SharedConfig = { singleton, eager: true };
 
-      moduleConfig.import = getSharedModuleImport(moduleName);
+    moduleConfig.import = getSharedModuleImport(moduleName);
 
-      acc[moduleName] = moduleConfig;
-      return acc;
-    },
-    {},
-  );
+    acc[moduleName] = moduleConfig;
+    return acc;
+  }, {});
 
-  const sharedDynamicModules = Object.entries(dynamicModuleMaps).reduce<WebpackSharedObject>(
+/**
+ * Get PatternFly dynamic module configuration to provide to Console plugins, without Console
+ * itself consuming them.
+ *
+ * Unlike {@link getWebpackSharedModules}, this uses `sharing.ProvideSharedPlugin` directly so
+ * Console's own imports of these components are not rewritten into shared-scope lookups and
+ * cannot fail from a PatternFly version mismatch with a plugin.
+ */
+const getProvidedDynamicModules = (): Provides<false> =>
+  Object.entries(dynamicModuleMaps).reduce<ProvidesObject<false>>(
     (acc, [moduleName, dynamicModuleMap]) => {
-      const moduleConfig: WebpackSharedConfig = { eager: true };
-
       // eslint-disable-next-line @typescript-eslint/no-require-imports
       const moduleVersion = require(`${moduleName}/package.json`).version;
-
-      if (semver.valid(moduleVersion)) {
-        moduleConfig.version = moduleVersion;
-      }
+      const version = semver.valid(moduleVersion) ? moduleVersion : undefined;
 
       Object.values(dynamicModuleMap).forEach((request) => {
-        acc[`${moduleName}/${request}`] = moduleConfig;
+        const shareKey = `${moduleName}/${request}`;
+        acc[shareKey] = { shareKey, eager: true, version };
       });
 
       return acc;
     },
     {},
   );
-
-  return { ...consoleProvidedSharedModules, ...sharedDynamicModules };
-};
 
 const config: Configuration = {
   entry: {
@@ -285,6 +289,10 @@ const config: Configuration = {
     new sharing.SharePlugin({
       shared: getWebpackSharedModules(),
       enhanced: false // retains webpack 5 SharePlugin behavior as opposed to MF 2.0
+    }),
+    new sharing.ProvideSharedPlugin({
+      provides: getProvidedDynamicModules(),
+      enhanced: false,
     }),
     new NormalModuleReplacementPlugin(/^lodash$/, 'lodash-es'),
     new TsCheckerRspackPlugin({
