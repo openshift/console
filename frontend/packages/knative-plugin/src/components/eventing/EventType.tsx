@@ -1,36 +1,40 @@
 import type { FC } from 'react';
+import { useMemo } from 'react';
 import { Content, ContentVariants } from '@patternfly/react-core';
-import { SortByDirection } from '@patternfly/react-table';
-import type { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
-import type { RowFunctionArgs } from '@console/internal/components/factory';
-import { Table, TableData } from '@console/internal/components/factory';
-import type { K8sResourceKind } from '@console/internal/module/k8s';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
+import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
+import type {
+  ConsoleDataViewColumn,
+  GetDataViewRows,
+} from '@console/dynamic-plugin-sdk/src/api/internal-types';
+import type { K8sResourceKind } from '@console/internal/module/k8s/types';
+import { EventingEventTypeModel } from '../../models';
 
-const EventTypeHeaders = (t: TFunction) => () => [
-  {
-    id: 'attributes',
-    title: t('knative-plugin~Attributes'),
-  },
-  {
-    id: 'values',
-    title: t('knative-plugin~Values'),
-  },
-];
+type EventAttribute = { key: string; value: string };
 
-const EventTypeRow: FC<RowFunctionArgs<{ key: string; value: string }>> = ({ obj }) => (
-  <>
-    <TableData columnID="attributes">{obj.key}</TableData>
-    <TableData columnID="values">{obj.value}</TableData>
-  </>
-);
+const getDataViewRows: GetDataViewRows<EventAttribute> = (data, columns) =>
+  data.map(({ obj }) =>
+    columns.map(({ id }) => ({ id, cell: id === 'attributes' ? obj.key : obj.value })),
+  );
+
+const getObjectMetadata = ({ key }: EventAttribute) => ({ name: key });
 
 interface EventTypeProps {
   eventType: K8sResourceKind;
 }
 
-const EventType: FC<EventTypeProps> = ({ eventType }) => {
+export const EventType: FC<EventTypeProps> = ({ eventType }) => {
   const { t } = useTranslation('knative-plugin');
+  const { getResizableProps, resetAllColumnWidths } =
+    useColumnWidthSettings(EventingEventTypeModel);
+  const columns = useMemo<ConsoleDataViewColumn<EventAttribute>[]>(
+    () => [
+      { id: 'attributes', resizableProps: getResizableProps('attributes'), title: t('Attributes') },
+      { id: 'values', resizableProps: getResizableProps('values'), title: t('Values') },
+    ],
+    [t, getResizableProps],
+  );
 
   const specAttributes = ['type', 'source', 'schema'];
 
@@ -44,18 +48,18 @@ const EventType: FC<EventTypeProps> = ({ eventType }) => {
       <div style={{ marginTop: 'var(--pf-t--global--spacer--md)' }}>
         <Content component={ContentVariants.h3}>{t('Event details')}</Content>
       </div>
-      <Table
+      <ConsoleDataView<EventAttribute>
         data={rows}
-        defaultSortField="attributes"
-        defaultSortOrder={SortByDirection.asc}
-        aria-label={t('Event')}
-        Header={EventTypeHeaders(t)}
-        Row={EventTypeRow}
+        label={t('Event')}
+        columns={columns}
+        getDataViewRows={getDataViewRows}
+        getObjectMetadata={getObjectMetadata}
         loaded
-        virtualize
+        hideNameLabelFilters
+        hideColumnManagement
+        isResizable
+        resetAllColumnWidths={resetAllColumnWidths}
       />
     </>
   );
 };
-
-export default EventType;
