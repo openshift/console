@@ -1,6 +1,5 @@
 import type { FC, ReactNode } from 'react';
 import { useCallback, useMemo, useState, useEffect } from 'react';
-import './ConsoleDataView.scss';
 import {
   ResponsiveAction,
   ResponsiveActions,
@@ -25,11 +24,11 @@ import { RhUiColumnsIcon, RhUiUndoIcon } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
 import { InnerScrollContainer, Tbody, Td, Tr } from '@patternfly/react-table';
 import { Trans, useTranslation } from 'react-i18next';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import type {
   ResourceFilters,
   ConsoleDataViewProps,
-} from '@console/dynamic-plugin-sdk/src/api/internal-types';
-import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { LazyColumnManagementModalOverlay } from '@console/internal/components/modals/lazy-column-management-modal';
 import { EmptyBox } from '@console/shared/src/components/empty-state/EmptyBox';
 import { StatusBox } from '@console/shared/src/components/status/StatusBox';
@@ -37,6 +36,8 @@ import { DataViewLabelFilter } from './DataViewLabelFilter';
 import { DataViewTextFilter } from './DataViewTextFilter';
 import { useConsoleDataViewData } from './useConsoleDataViewData';
 import { useConsoleDataViewFilters } from './useConsoleDataViewFilters';
+
+import './ConsoleDataView.scss';
 
 export const initialFiltersDefault: ResourceFilters = { name: '', label: '' };
 

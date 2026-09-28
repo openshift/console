@@ -2,11 +2,39 @@
 
 | API kind | Exposed APIs |
 | -------- | ------------ |
-| Variable (83) | [ActionServiceProvider](#actionserviceprovider), [BlueInfoCircleIcon](#blueinfocircleicon), [CamelCaseWrap](#camelcasewrap), [checkAccess](#checkaccess), [CodeEditor](#codeeditor), [consoleFetch](#consolefetch), [consoleFetchJSON](#consolefetchjson), [consoleFetchText](#consolefetchtext), [DocumentTitle](#documenttitle), [ErrorBoundaryFallbackPage](#errorboundaryfallbackpage), [ErrorStatus](#errorstatus), [GenericStatus](#genericstatus), [getAPIVersionForModel](#getapiversionformodel), [getGroupVersionKindForModel](#getgroupversionkindformodel), [getGroupVersionKindForResource](#getgroupversionkindforresource), [GreenCheckCircleIcon](#greencheckcircleicon), [HorizontalNav](#horizontalnav), [InfoStatus](#infostatus), [InventoryItem](#inventoryitem), [InventoryItemBody](#inventoryitembody), [InventoryItemLoading](#inventoryitemloading), [InventoryItemStatus](#inventoryitemstatus), [InventoryItemTitle](#inventoryitemtitle), [isAllNamespacesKey](#isallnamespaceskey), [k8sCreate](#k8screate), [k8sDelete](#k8sdelete), [k8sGet](#k8sget), [k8sList](#k8slist), [k8sListItems](#k8slistitems), [k8sPatch](#k8spatch), [k8sUpdate](#k8supdate), [ListPageBody](#listpagebody), [ListPageCreate](#listpagecreate), [ListPageCreateButton](#listpagecreatebutton), [ListPageCreateDropdown](#listpagecreatedropdown), [ListPageCreateLink](#listpagecreatelink), [ListPageHeader](#listpageheader), [NamespaceBar](#namespacebar), [Overview](#overview), [OverviewGrid](#overviewgrid), [PopoverStatus](#popoverstatus), [ProgressStatus](#progressstatus), [QueryBrowser](#querybrowser), [RedExclamationCircleIcon](#redexclamationcircleicon), [ResourceEventStream](#resourceeventstream), [ResourceIcon](#resourceicon), [ResourceLink](#resourcelink), [ResourceStatus](#resourcestatus), [ResourceYAMLEditor](#resourceyamleditor), [StatusComponent](#statuscomponent), [StatusIconAndText](#statusiconandtext), [StatusPopupItem](#statuspopupitem), [StatusPopupSection](#statuspopupsection), [SuccessStatus](#successstatus), [TableData](#tabledata), [Timestamp](#timestamp), [useAccessReview](#useaccessreview), [useActiveColumns](#useactivecolumns), [useActiveNamespace](#useactivenamespace), [useActivePerspective](#useactiveperspective), [useAnnotationsModal](#useannotationsmodal), [useDeleteModal](#usedeletemodal), [useFlag](#useflag), [useK8sModel](#usek8smodel), [useK8sModels](#usek8smodels), [useK8sWatchResource](#usek8swatchresource), [useK8sWatchResources](#usek8swatchresources), [useLabelsModal](#uselabelsmodal), [useOverlay](#useoverlay), [usePrometheusPoll](#useprometheuspoll), [useQuickStartContext](#usequickstartcontext), [useResolvedExtensions](#useresolvedextensions), [useToast](#usetoast), [useUserPreference](#useuserpreference), [YellowExclamationTriangleIcon](#yellowexclamationtriangleicon), [ListPageFilter](#listpagefilter), [PerspectiveContext](#perspectivecontext), [useAccessReviewAllowed](#useaccessreviewallowed), [useListPageFilter](#uselistpagefilter), [useModal](#usemodal), [useUserSettings](#useusersettings), [VirtualizedTable](#virtualizedtable), [YAMLEditor](#yamleditor) |
+| Variable (90) | [actionsCellProps](#actionscellprops), [ActionServiceProvider](#actionserviceprovider), [BlueInfoCircleIcon](#blueinfocircleicon), [CamelCaseWrap](#camelcasewrap), [cellIsStickyProps](#cellisstickyprops), [checkAccess](#checkaccess), [CodeEditor](#codeeditor), [ConsoleDataView](#consoledataview), [consoleFetch](#consolefetch), [consoleFetchJSON](#consolefetchjson), [consoleFetchText](#consolefetchtext), [definitionFor](#definitionfor), [DocumentTitle](#documenttitle), [ErrorBoundaryFallbackPage](#errorboundaryfallbackpage), [ErrorStatus](#errorstatus), [GenericStatus](#genericstatus), [getAPIVersionForModel](#getapiversionformodel), [getGroupVersionKindForModel](#getgroupversionkindformodel), [getGroupVersionKindForResource](#getgroupversionkindforresource), [getNameCellProps](#getnamecellprops), [getNameColumnProps](#getnamecolumnprops), [GreenCheckCircleIcon](#greencheckcircleicon), [HorizontalNav](#horizontalnav), [InfoStatus](#infostatus), [initialFiltersDefault](#initialfiltersdefault), [InventoryItem](#inventoryitem), [InventoryItemBody](#inventoryitembody), [InventoryItemLoading](#inventoryitemloading), [InventoryItemStatus](#inventoryitemstatus), [InventoryItemTitle](#inventoryitemtitle), [isAllNamespacesKey](#isallnamespaceskey), [k8sCreate](#k8screate), [k8sDelete](#k8sdelete), [k8sGet](#k8sget), [k8sList](#k8slist), [k8sListItems](#k8slistitems), [k8sPatch](#k8spatch), [k8sUpdate](#k8supdate), [ListPageBody](#listpagebody), [ListPageCreate](#listpagecreate), [ListPageCreateButton](#listpagecreatebutton), [ListPageCreateDropdown](#listpagecreatedropdown), [ListPageCreateLink](#listpagecreatelink), [ListPageHeader](#listpageheader), [NamespaceBar](#namespacebar), [Overview](#overview), [OverviewGrid](#overviewgrid), [PopoverStatus](#popoverstatus), [ProgressStatus](#progressstatus), [QueryBrowser](#querybrowser), [RedExclamationCircleIcon](#redexclamationcircleicon), [ResourceEventStream](#resourceeventstream), [ResourceIcon](#resourceicon), [ResourceLink](#resourcelink), [ResourceStatus](#resourcestatus), [ResourceYAMLEditor](#resourceyamleditor), [StatusComponent](#statuscomponent), [StatusIconAndText](#statusiconandtext), [StatusPopupItem](#statuspopupitem), [StatusPopupSection](#statuspopupsection), [SuccessStatus](#successstatus), [TableData](#tabledata), [Timestamp](#timestamp), [useAccessReview](#useaccessreview), [useActiveColumns](#useactivecolumns), [useActiveNamespace](#useactivenamespace), [useActivePerspective](#useactiveperspective), [useAnnotationsModal](#useannotationsmodal), [useDeleteModal](#usedeletemodal), [useFlag](#useflag), [useK8sModel](#usek8smodel), [useK8sModels](#usek8smodels), [useK8sWatchResource](#usek8swatchresource), [useK8sWatchResources](#usek8swatchresources), [useLabelsModal](#uselabelsmodal), [useOverlay](#useoverlay), [usePrometheusPoll](#useprometheuspoll), [useQuickStartContext](#usequickstartcontext), [useResolvedExtensions](#useresolvedextensions), [useToast](#usetoast), [useUserPreference](#useuserpreference), [YellowExclamationTriangleIcon](#yellowexclamationtriangleicon), [ListPageFilter](#listpagefilter), [PerspectiveContext](#perspectivecontext), [useAccessReviewAllowed](#useaccessreviewallowed), [useListPageFilter](#uselistpagefilter), [useModal](#usemodal), [useUserSettings](#useusersettings), [VirtualizedTable](#virtualizedtable), [YAMLEditor](#yamleditor) |
 | TypeAlias (27) | [Alert](#alert), [Alerts](#alerts), [ColoredIconProps](#colorediconprops), [DiscoveryResources](#discoveryresources), [ExtensionHook](#extensionhook), [ExtensionHookResult](#extensionhookresult), [ExtensionK8sGroupKindModel](#extensionk8sgroupkindmodel), [ExtensionK8sGroupModel](#extensionk8sgroupmodel), [ExtensionK8sKindVersionModel](#extensionk8skindversionmodel), [ExtensionK8sModel](#extensionk8smodel), [K8sModel](#k8smodel), [K8sVerb](#k8sverb), [MatchExpression](#matchexpression), [MatchLabels](#matchlabels), [ModalComponent](#modalcomponent), [OverlayComponent](#overlaycomponent), [PerspectiveContextType](#perspectivecontexttype), [PrometheusAlert](#prometheusalert), [PrometheusLabels](#prometheuslabels), [PrometheusRule](#prometheusrule), [PrometheusRulesResponse](#prometheusrulesresponse), [PrometheusValue](#prometheusvalue), [ResolvedExtension](#resolvedextension), [Rule](#rule), [Selector](#selector), [Silence](#silence), [K8sKind](#k8skind) |
 | Interface (0) |  |
 | Enum (6) | [AlertSeverity](#alertseverity), [AlertStates](#alertstates), [Operator](#operator), [PrometheusEndpoint](#prometheusendpoint), [RuleStates](#rulestates), [SilenceStates](#silencestates) |
 | Class (1) | [HttpError](#httperror) |
+
+---
+
+## `actionsCellProps`
+
+### Summary 
+
+Props for a sticky actions ("kebab menu") cell, fixed at the trailing edge of a<br/>`ConsoleDataView` row. Spread onto the actions column's/cell's `props`.
+
+
+### Example
+
+```tsx
+{
+  id: 'actions',
+  cell: <LazyActionMenu context={context} />,
+  props: actionsCellProps,
+}
+```
+
+
+
+
+
+
+### Source
+
+[`frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts)
 
 ---
 
@@ -172,6 +200,30 @@ Documentation is not available, please refer to the implementation.
 
 ---
 
+## `cellIsStickyProps`
+
+### Summary 
+
+Props that mark a `ConsoleDataView` column header or cell as sticky, keeping it fixed at the<br/>edge of the table while the rest of the table scrolls horizontally. Used as, or spread into,<br/>a column's `props` or a row cell's `props`.
+
+
+### Example
+
+```tsx
+const columns = [{ id: 'name', title: t('Name'), props: cellIsStickyProps }];
+```
+
+
+
+
+
+
+### Source
+
+[`frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts)
+
+---
+
 ## `checkAccess`
 
 ### Summary 
@@ -259,6 +311,81 @@ Documentation is not available, please refer to the implementation.
 ### Source
 
 [`frontend/packages/console-dynamic-plugin-sdk/src/app/components/status/icons.tsx`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/app/components/status/icons.tsx)
+
+---
+
+## `ConsoleDataView`
+
+### Summary 
+
+A table component for displaying, filtering, sorting, and paginating a list of resources,<br/>based on PatternFly's [Data view](https://www.patternfly.org/extensions/data-view/overview).<br/>Includes built-in name and label filters, column management, and optional row selection.
+
+
+### Example
+
+```tsx
+const getDataViewRows: GetDataViewRows<PodDisruptionBudgetKind> = (data, columns) =>
+  data.map(({ obj: pdb }) => {
+    const resourceKind = referenceForModel(PodDisruptionBudgetModel);
+    return columns.map(({ id }) => ({
+      id,
+      cell:
+        id === 'name' ? (
+          <ResourceLink kind={resourceKind} name={pdb.metadata.name} namespace={pdb.metadata.namespace} />
+        ) : (
+          DASH
+        ),
+    }));
+  });
+
+const PDBList: React.FC<Props> = ({ data, loaded }) => (
+  <ConsoleDataView<PodDisruptionBudgetKind>
+    label="PodDisruptionBudgets"
+    data={data}
+    loaded={loaded}
+    columns={columns}
+    getDataViewRows={getDataViewRows}
+  />
+);
+```
+
+
+
+### Parameters
+
+| Parameter Name | Description |
+| -------------- | ----------- |
+| `label` | (optional) A label describing the type of resource displayed. Used in empty state messages and the table's `aria-label`. |
+| `data` | The array of data items to display in the table. |
+| `loaded` | Flag indicating whether `data` has finished loading. |
+| `loadError` | (optional) An error encountered while loading `data`. |
+| `columns` | The column definitions for the table. |
+| `getDataViewRows` | Transforms the filtered, sorted, and paginated data into table rows. |
+| `columnLayout` | (optional) The persisted column layout, used for column management. |
+| `columnManagementID` | (optional) A unique id used to persist column management selections to and from user settings. |
+| `initialFilters` | (optional) Initial values for the built-in name and label filters. |
+| `additionalFilterNodes` | (optional) Additional filter elements to render alongside the built-in name and label filters. |
+| `getObjectMetadata` | (optional) Extracts the name and labels used by the built-in filters from a data item. |
+| `matchesAdditionalFilters` | (optional) Determines whether a data item matches any custom filters. |
+| `customRowData` | (optional) Additional data made available to each row. |
+| `showNamespaceOverride` | (optional) If true, a column with id `'namespace'` is kept active regardless of column management selections or the active namespace. |
+| `hideNameLabelFilters` | (optional) Hides both the name and label filters. |
+| `hideLabelFilter` | (optional) Hides only the label filter, keeping the name filter. |
+| `hideColumnManagement` | (optional) Hides the column management action in the toolbar. |
+| `mock` | (optional) Renders an empty placeholder instead of the table. |
+| `isResizable` | (optional) Enables column resizing. |
+| `resetAllColumnWidths` | (optional) When provided and `isResizable` is true, a toolbar action is shown to reset all column widths. |
+| `additionalActions` | (optional) Additional actions to display in the toolbar, alongside the built-in column management and reset-column-widths actions. |
+| `customActions` | (optional) Custom actions to display in the toolbar outside of the responsive actions group. |
+| `selection` | (optional) Selection configuration for enabling row selection via checkboxes. `ConsoleDataView` does not add the checkbox column itself. It must be included in `columns`/rows separately, for example with `createSelectionColumn`/`createSelectionCell`. |
+| `actionsBreakpoint` | (optional) Breakpoint at which toolbar actions switch between horizontal and dropdown layout. Default is 'md'. |
+
+
+
+
+### Source
+
+[`frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts)
 
 ---
 
@@ -350,6 +477,41 @@ A promise that resolves to the response as text or JSON object.
 ### Source
 
 [`frontend/packages/console-dynamic-plugin-sdk/src/api/console-fetch.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/console-fetch.ts)
+
+---
+
+## `definitionFor`
+
+### Summary 
+
+Looks up the OpenAPI (Swagger) schema definition for a given Kubernetes model.<br/><br/>Results are memoized per model and never invalidated, so a call made before the OpenAPI<br/>schema has finished loading permanently caches a `null`/empty result for that model, even<br/>after the schema becomes available.
+
+
+### Example
+
+```ts
+const definition = definitionFor(PodModel);
+const specDescription = definition?.properties?.spec?.description;
+```
+
+
+
+### Parameters
+
+| Parameter Name | Description |
+| -------------- | ----------- |
+| `model` | The Kubernetes model to look up. |
+
+
+
+### Returns
+
+The `SwaggerDefinition` for the model, with its `definitions` property populated<br/>with every definition in the document so that `$ref` values can be resolved. Returns `null`<br/>if the OpenAPI schema has not been fetched yet, or an object with a populated `definitions`<br/>property but no other fields if the model's definition could not be found.
+
+
+### Source
+
+[`frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts)
 
 ---
 
@@ -706,6 +868,72 @@ The group, version, kind for the provided resource.<br/>If the resource does not
 
 ---
 
+## `getNameCellProps`
+
+### Summary 
+
+Returns name cell props with the appropriate sticky offset based on whether bulk select is<br/>enabled, including a `data-test` attribute derived from the resource name. Use this for row<br/>cell definitions returned from `getDataViewRows`.
+
+
+### Example
+
+```tsx
+{
+  id: 'name',
+  cell: <ResourceLink kind={resourceKind} name={name} namespace={namespace} />,
+  props: getNameCellProps(name),
+}
+```
+
+
+
+### Parameters
+
+| Parameter Name | Description |
+| -------------- | ----------- |
+| `name` | The resource name, used to build the `data-test` attribute. |
+| `withBulkSelect` | (optional) Whether the table has bulk selection enabled. |
+
+
+
+
+### Source
+
+[`frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts)
+
+---
+
+## `getNameColumnProps`
+
+### Summary 
+
+Returns name column header props with the appropriate sticky offset based on whether bulk<br/>select is enabled. Use this for `ConsoleDataViewColumn` definitions; for row cells, use<br/>`getNameCellProps` instead.
+
+
+### Example
+
+```tsx
+const columns = [{ id: 'name', title: t('Name'), props: getNameColumnProps() }];
+```
+
+
+
+### Parameters
+
+| Parameter Name | Description |
+| -------------- | ----------- |
+| `hasRightBorder` | (optional) Whether to include a right border on the column. |
+| `withBulkSelect` | (optional) Whether the table has bulk selection enabled. |
+
+
+
+
+### Source
+
+[`frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts)
+
+---
+
 ## `GreenCheckCircleIcon`
 
 ### Summary 
@@ -847,6 +1075,30 @@ Component for displaying an information status popover.
 ### Source
 
 [`frontend/packages/console-dynamic-plugin-sdk/src/app/components/status/statuses.tsx`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/app/components/status/statuses.tsx)
+
+---
+
+## `initialFiltersDefault`
+
+### Summary 
+
+The default value of `ConsoleDataViewProps['initialFilters']`: empty name and label filters.
+
+
+### Example
+
+```ts
+const initialFilters = { ...initialFiltersDefault, status: 'Running' };
+```
+
+
+
+
+
+
+### Source
+
+[`frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts)
 
 ---
 
@@ -3541,7 +3793,7 @@ const AppPage: React.FC = () => {
 
 ### Summary [DEPRECATED]
 
-@deprecated Use PatternFly's [Data view](https://www.patternfly.org/extensions/data-view/overview) instead.<br/>A component for making virtualized tables
+@deprecated Use PatternFly's [Data view](https://www.patternfly.org/extensions/data-view/overview) or ConsoleDataView instead.<br/>A component for making virtualized tables
 
 
 ### Example
