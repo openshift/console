@@ -127,7 +127,9 @@ export class InstalledOperatorsPage extends BasePage {
     });
 
     await this.filterByName(operatorName);
-    await expect(this.getOperatorRow(operatorName)).not.toBeAttached();
+    // CSV/subscription deletion is not immediate: the row can linger past the
+    // default 5s expect timeout while OLM finishes garbage collection.
+    await expect(this.getOperatorRow(operatorName)).not.toBeAttached({ timeout: 60_000 });
   }
 
   /**
@@ -203,12 +205,20 @@ export class InstalledOperatorsPage extends BasePage {
     // Filter the namespace list to make the target namespace visible
     await textFilter.fill(namespace);
 
-    // Select the dropdown menu item that exactly matches our namespace text
+    // Select the dropdown menu item that exactly matches our namespace text.
+    // Match against the dedicated name span, not the whole menu item: system
+    // namespaces render a "Default" label alongside the name, which would break
+    // an exact-text match against the menu item's full text content.
     const escapedNamespace = escapeRegExp(namespace);
+    const namespaceItemText = this.page
+      .getByTestId('namespace-dropdown-item-text')
+      .filter({ hasText: new RegExp(`^${escapedNamespace}$`) });
     const namespaceOption = this.page
       .getByTestId('dropdown-menu-item-link')
-      .filter({ hasText: new RegExp(`^${escapedNamespace}$`) });
-    await this.robustClick(namespaceOption);
+      .filter({ has: namespaceItemText });
+    // A namespace created moments earlier (e.g. via the operator install form) can take
+    // longer than robustClick's default 30s budget to reach the watched project list.
+    await this.robustClick(namespaceOption, { timeout: 60_000 });
 
     const normalizedNamespace = escapedNamespace.replace(/\s+/g, '\\s+');
     await expect(namespaceDropdownButton).toHaveText(
