@@ -216,7 +216,9 @@ export class InstalledOperatorsPage extends BasePage {
     const namespaceOption = this.page
       .getByTestId('dropdown-menu-item-link')
       .filter({ has: namespaceItemText });
-    await this.robustClick(namespaceOption);
+    // A namespace created moments earlier (e.g. via the operator install form) can take
+    // longer than robustClick's default 30s budget to reach the watched project list.
+    await this.robustClick(namespaceOption, { timeout: 60_000 });
 
     const normalizedNamespace = escapedNamespace.replace(/\s+/g, '\\s+');
     await expect(namespaceDropdownButton).toHaveText(
