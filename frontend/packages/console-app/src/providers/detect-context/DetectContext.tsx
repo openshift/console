@@ -1,5 +1,5 @@
 import type { FC, Provider as ProviderComponent, ReactNode } from 'react';
-import { createContext, Suspense, useContext, useEffect } from 'react';
+import { createContext, memo, Suspense, useContext, useEffect } from 'react';
 import type { LoadedAndResolvedExtension } from '@openshift/dynamic-plugin-sdk';
 import {
   Button,
@@ -77,13 +77,13 @@ const SlowLoadingMessage: FC<{ message: string }> = ({ message }) => {
  * Empty PatternFly Page shell shown while DetectContext is initializing. Intended to
  * only be rendered once at the start of page load
  */
-const PageSkeleton: FC<{ blame: string }> = ({ blame }) => {
+const PageSkeleton: FC<{ blame: string }> = memo(({ blame }) => {
   const { t } = useTranslation('console-app');
 
   return (
     <>
       <div className="co-page-skeleton__auth-pending">
-        <LoadingBox blame={blame}>
+        <LoadingBox blame={`${blame} (auth-pending)`}>
           <SlowLoadingMessage
             message={t(
               'Unable to connect to the server. This could be due to network or server issues.',
@@ -109,14 +109,14 @@ const PageSkeleton: FC<{ blame: string }> = ({ blame }) => {
         }
       >
         <PageSection isFilled hasBodyWrapper={false}>
-          <LoadingBox blame={blame}>
+          <LoadingBox blame={`${blame} (authenticated)`}>
             <SlowLoadingMessage message={t('The console is taking longer than usual to load.')} />
           </LoadingBox>
         </PageSection>
       </Page>
     </>
   );
-};
+});
 
 /** Wraps children in plugin-provided context providers resolved by DetectContext. */
 export const ContextProviderExtensionWrapper: FC<{ children: ReactNode }> = ({ children }) => {
