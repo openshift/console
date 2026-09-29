@@ -7,7 +7,7 @@ import { useColumnWidthSettings } from '@console/app/src/components/data-view/us
 import type {
   ConsoleDataViewColumn,
   GetDataViewRows,
-} from '@console/dynamic-plugin-sdk/src/api/internal-types';
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import type { K8sResourceKind } from '@console/internal/module/k8s/types';
 import { EventingEventTypeModel } from '../../models';
 

@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import type { ConsoleDataViewColumn } from '@console/dynamic-plugin-sdk/src/api/internal-types';
+import type { ConsoleDataViewColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import type { RevisionKind } from '../../../types';
 import { getRevisionDataViewRows } from '../RevisionRow';
 

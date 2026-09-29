@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from 'react';
 import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
 import { initialFiltersDefault } from '@console/app/src/components/data-view/ConsoleDataView';
-import type { ResourceFilters } from '@console/dynamic-plugin-sdk/src/api/internal-types';
+import type { ResourceFilters } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import type { RowFilter } from '@console/internal/components/filter-toolbar';
 
 type KnativeFilters = ResourceFilters & Record<string, string | string[]>;

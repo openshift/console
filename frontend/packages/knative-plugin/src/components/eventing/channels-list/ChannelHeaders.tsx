@@ -5,7 +5,7 @@ import {
   getNameColumnProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-import type { ConsoleDataViewColumn } from '@console/dynamic-plugin-sdk/src/api/internal-types';
+import type { ConsoleDataViewColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import type { EventChannelKind } from '../../../types';
 
 /** Console-only model for column width preferences across all channel kinds. */

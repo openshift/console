@@ -2,7 +2,7 @@ import {
   actionsCellProps,
   getNameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import type { GetDataViewRows } from '@console/dynamic-plugin-sdk/src/api/internal-types';
+import type { GetDataViewRows } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { ResourceLink } from '@console/internal/components/utils/resource-link';
 import { referenceFor } from '@console/internal/module/k8s/k8s';
 import { referenceForModel } from '@console/internal/module/k8s/k8s-ref';
