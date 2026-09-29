@@ -1,5 +1,12 @@
-import { IconStatus, Status } from '@patternfly/react-component-groups/dist/dynamic/Status';
-import { Alert, AlertVariant, Content, Label, PageSection, Tooltip } from '@patternfly/react-core';
+import {
+  Alert,
+  AlertVariant,
+  Content,
+  Icon,
+  Label,
+  PageSection,
+  Tooltip,
+} from '@patternfly/react-core';
 import { RhUiWarningFillIcon } from '@patternfly/react-icons';
 import { Trans, useTranslation } from 'react-i18next';
 import {
@@ -85,17 +92,25 @@ export const DefaultNamespaceDeploymentWarning: React.FC<NamespacedWarningProps>
     return null;
   }
 
-  const warningMessage = isProject
-    ? t(
-        'The target project bypasses Security Context Constraints (SCCs). Deploying workloads here significantly reduces security protections.',
-      )
-    : t(
-        'The target namespace bypasses Security Context Constraints (SCCs). Deploying workloads here significantly reduces security protections.',
-      );
+  const warningMessage = isProject ? (
+    <Trans t={t} ns="console-shared">
+      The target project bypasses Security Context Constraints (<abbr>SCCs</abbr>). Deploying
+      workloads here significantly reduces security protections.
+    </Trans>
+  ) : (
+    <Trans t={t} ns="console-shared">
+      The target namespace bypasses Security Context Constraints (<abbr>SCCs</abbr>). Deploying
+      workloads here significantly reduces security protections.
+    </Trans>
+  );
 
   return (
     <div className="pf-v6-u-mt-sm" data-test="default-namespace-deployment-warning">
-      <Status label={warningMessage} status={IconStatus.warning} icon={<RhUiWarningFillIcon />} />
+      <Icon status="warning">
+        <RhUiWarningFillIcon />
+      </Icon>
+      &nbsp;
+      {warningMessage}
     </div>
   );
 };
