@@ -1,3 +1,5 @@
+import * as fs from 'fs';
+
 import { test, expect } from '../../../fixtures';
 import { ClusterDashboardPage } from '../../../pages/cluster-dashboard-page';
 
@@ -97,6 +99,53 @@ test.describe('Cluster Dashboard', { tag: ['@admin', '@smoke'] }, () => {
 
     test('has duration dropdown defaulting to 1 hour', async () => {
       await expect(dashboard.getDurationSelect()).toContainText('1 hour');
+    });
+  });
+
+  test('records critical rendering path blame timings across repeated loads', async ({
+    page,
+  }, testInfo) => {
+    const runs: { name: string; duration: number }[][] = [];
+
+    for (let i = 0; i < 3; i++) {
+      await page.goto('/dashboards?crp-blame', { timeout: 90_000 });
+      await expect(dashboard.getDetailsCard()).toBeVisible();
+      await dashboard.waitForStatusCardLoaded();
+
+      const measures = await page.evaluate(() =>
+        performance
+          .getEntriesByType('measure')
+          .filter((entry) => entry.name.startsWith('LoadingBox:'))
+          .map((entry) => ({ name: entry.name, duration: entry.duration })),
+      );
+
+      // React assigns each LoadingBox mount its own useId, so the same blame
+      // label can appear more than once with an identical duration when it
+      // renders concurrently (e.g. under StrictMode). Only collapse entries
+      // that match on both blame label and duration. Keep entries that share
+      // a blame label but have different durations, since those are distinct
+      // loading phases (e.g. an initial fallback and a later one).
+      const dedupedByBlameAndDuration = new Map<string, { name: string; duration: number }>();
+      for (const measure of measures) {
+        const blame = measure.name.split('::')[0];
+        const key = `${blame}\u0000${measure.duration}`;
+        if (!dedupedByBlameAndDuration.has(key)) {
+          dedupedByBlameAndDuration.set(key, { name: blame, duration: measure.duration });
+        }
+      }
+      const entries = Array.from(dedupedByBlameAndDuration.values());
+      const sum = entries.reduce((total, entry) => total + entry.duration, 0);
+      entries.push({ name: 'sum', duration: sum });
+      runs.push(entries);
+      await page.evaluate(() => performance.clearMarks());
+      await page.evaluate(() => performance.clearMeasures());
+    }
+
+    const outputFile = testInfo.outputPath('crp-blame-timings.json');
+    await fs.promises.writeFile(outputFile, JSON.stringify(runs, null, 2));
+    await testInfo.attach('crp-blame-timings', {
+      path: outputFile,
+      contentType: 'application/json',
     });
   });
 });
