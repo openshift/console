@@ -10,6 +10,7 @@ const isRunningWebpack = bundler === 'webpack';
 const isRunningRspack = bundler === 'rspack';
 
 const CopyWebpackPlugin = isRunningWebpack ? require('copy-webpack-plugin') : CopyRspackPlugin;
+const MiniCssExtractPlugin = isRunningWebpack ? require('mini-css-extract-plugin') : null;
 
 if (!isRunningWebpack && !isRunningRspack) {
   throw new Error('Unknown bundler');
@@ -59,7 +60,9 @@ const config: Configuration = {
       },
       {
         test: /\.css$/,
-        use: isRunningWebpack ? ['style-loader', 'css-loader'] : 'builtin:lightningcss-loader',
+        use: isRunningWebpack
+          ? [MiniCssExtractPlugin.loader, 'css-loader']
+          : 'builtin:lightningcss-loader',
         ...(isRunningRspack && { type: 'css' }), // breaks webpack as it tries to use builtin css parser
       },
       {
@@ -73,6 +76,7 @@ const config: Configuration = {
   },
   plugins: [
     new ConsoleRemotePlugin(),
+    ...(isRunningWebpack ? [new MiniCssExtractPlugin()] : []),
     new CopyWebpackPlugin({
       patterns: [{ from: path.resolve(__dirname, 'locales'), to: 'locales' }],
     }),
