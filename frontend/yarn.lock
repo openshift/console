@@ -12701,7 +12701,6 @@ __metadata:
     sass: "npm:^1.42.1"
     sass-loader: "npm:^10.1.1"
     semver: "npm:^7.8.5"
-    style-loader: "npm:^4.0.0"
     ts-checker-rspack-plugin: "npm:^1.6.1"
     ts-node: "npm:10.9.2"
     typesafe-actions: "npm:^5.1.0"
@@ -15190,15 +15189,6 @@ __metadata:
   version: 3.1.1
   resolution: "strip-json-comments@npm:3.1.1"
   checksum: 10c0/9681a6257b925a7fa0f285851c0e613cc934a50661fa7bb41ca9cbbff89686bb4a0ee366e6ecedc4daafd01e83eee0720111ab294366fe7c185e935475ebcecd
-  languageName: node
-  linkType: hard
-
-"style-loader@npm:^4.0.0":
-  version: 4.0.0
-  resolution: "style-loader@npm:4.0.0"
-  peerDependencies:
-    webpack: ^5.27.0
-  checksum: 10c0/214bc0f3b018f8c374f79b9fa16da43df78c7fef2261e9a99e36c2f8387601fad10ac75a171aa8edba75903db214bc46952ae08b94a1f8544bd146c2c8d07d27
   languageName: node
   linkType: hard
 

@@ -174,7 +174,6 @@
     "resolve-url-loader": "^5.0.0",
     "sass": "^1.42.1",
     "sass-loader": "^10.1.1",
-    "style-loader": "^4.0.0",
     "ts-checker-rspack-plugin": "^1.6.1",
     "ts-node": "10.9.2",
     "typescript": "5.9.3",
