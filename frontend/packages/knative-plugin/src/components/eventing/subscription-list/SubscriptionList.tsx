@@ -1,26 +1,34 @@
 import type { FC } from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { TableProps } from '@console/internal/components/factory';
-import { Table } from '@console/internal/components/factory';
-import getSubscriptionHeaders from './SubscriptionHeaders';
-import SubscriptionRow from './SubscriptionRow';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
+import type { TableProps } from '@console/internal/components/factory/table';
+import type { EventSubscriptionKind } from '../../../types';
+import { useSubscriptionColumns } from './SubscriptionHeaders';
+import { getSubscriptionDataViewRows } from './SubscriptionRow';
 
-const SubscriptionList: FC<TableProps> = (props) => {
+export const SubscriptionList: FC<TableProps> = (props) => {
   const { t } = useTranslation('knative-plugin');
-  const subscriptionData = props.customData?.channel
-    ? props.data.filter((obj) => obj.spec.channel.name === props.customData.channel)
-    : props.data;
-
+  const channel = props.customData?.channel;
+  const data = useMemo(
+    () =>
+      channel
+        ? props.data?.filter((obj: EventSubscriptionKind) => obj.spec.channel.name === channel)
+        : props.data,
+    [props.data, channel],
+  );
+  const { columns, resetAllColumnWidths } = useSubscriptionColumns(!channel);
   return (
-    <Table
+    <ConsoleDataView<EventSubscriptionKind>
       {...props}
-      aria-label={t('Subscriptions')}
-      data={subscriptionData}
-      Header={getSubscriptionHeaders(t, !props.customData?.channel)}
-      Row={SubscriptionRow}
-      virtualize
+      label={t('Subscriptions')}
+      data={data}
+      loaded={props.loaded}
+      columns={columns}
+      getDataViewRows={getSubscriptionDataViewRows}
+      hideColumnManagement
+      isResizable
+      resetAllColumnWidths={resetAllColumnWidths}
     />
   );
 };
-
-export default SubscriptionList;

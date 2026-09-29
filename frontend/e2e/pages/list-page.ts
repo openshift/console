@@ -64,7 +64,32 @@ export class ListPage extends BasePage {
   }
 
   async filterByNameInput(name: string): Promise<void> {
-    await this.nameFilter.fill(name);
+    await this.nameFilter.or(this.nameFilterInput).fill(name);
+  }
+
+  async verifyColumnResizing(columnId: string): Promise<void> {
+    const resizeButton = this.page.getByRole('button', {
+      name: `Resize ${columnId} column`,
+      exact: true,
+    });
+    const header = this.dataViewTable.getByRole('columnheader').filter({ has: resizeButton });
+    const getWidth = () =>
+      header.evaluate((element: HTMLElement) => parseFloat(element.style.minWidth));
+
+    await this.robustClick(this.page.getByTestId('reset-column-widths'));
+    const initialWidth = await getWidth();
+
+    for (let step = 0; step < 8; step++) {
+      await resizeButton.press('Shift+ArrowRight');
+    }
+    await expect.poll(getWidth).toBeGreaterThan(initialWidth);
+    const resizedWidth = await getWidth();
+    await this.page.reload();
+    await this.waitForRows();
+    await expect.poll(getWidth).toBeCloseTo(resizedWidth, 0);
+
+    await this.robustClick(this.page.getByTestId('reset-column-widths'));
+    await expect.poll(getWidth).toBeCloseTo(initialWidth, 0);
   }
 
   getCell(resourceName: string, cellName = 'name'): Locator {

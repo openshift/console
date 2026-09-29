@@ -5,6 +5,7 @@ import { warmupSPA } from '../../../pages/base-page';
 import { AddFlowPage } from '../../../pages/knative/add-flow-page';
 import { AdminEventingPage } from '../../../pages/knative/admin-eventing-page';
 import { TopologyKnativePage } from '../../../pages/knative/topology-knative-page';
+import { ListPage } from '../../../pages/list-page';
 import KubernetesClient from '../../../clients/kubernetes-client';
 
 const SERVICE_NAME = 'kn-service';
@@ -73,6 +74,26 @@ test.describe('Knative CI smoke tests', { tag: ['@smoke', '@regression'] }, () =
 
     await test.step('Verify workload visible in topology', async () => {
       await topologyPage.verifyWorkloadVisible(SERVICE_NAME);
+    });
+
+    await test.step('Verify service filtering and saved column widths', async () => {
+      const listPage = new ListPage(page);
+      await listPage.navigateToListPage(`/serving/ns/${namespace}`);
+      await expect(listPage.cell(SERVICE_NAME)).toBeVisible();
+      await listPage.filterByNameInput('no-matching-service');
+      await expect(listPage.cell(SERVICE_NAME)).toHaveCount(0);
+      await listPage.filterByNameInput(SERVICE_NAME);
+      await expect(listPage.cell(SERVICE_NAME)).toBeVisible();
+      await listPage.verifyColumnResizing('name');
+    });
+
+    await test.step('Verify the generated route and saved column widths', async () => {
+      const listPage = new ListPage(page);
+      await listPage.navigateToListPage(`/serving/ns/${namespace}/routes`);
+      await expect(listPage.cell(SERVICE_NAME)).toBeVisible();
+      await listPage.filterByNameInput(SERVICE_NAME);
+      await expect(listPage.cell(SERVICE_NAME)).toBeVisible();
+      await listPage.verifyColumnResizing('name');
     });
   });
 
@@ -157,6 +178,14 @@ test.describe('Knative CI smoke tests', { tag: ['@smoke', '@regression'] }, () =
       const topologyPage = new TopologyKnativePage(page);
       await topologyPage.verifyWorkloadVisible('ping-source');
     });
+
+    await test.step('Verify event source type filtering and saved column widths', async () => {
+      const listPage = new ListPage(page);
+      await listPage.navigateToListPage(`/eventing/ns/${namespace}`);
+      await listPage.filterByCheckbox('Type', 'pingsource');
+      await expect(listPage.cell('ping-source')).toBeVisible();
+      await listPage.verifyColumnResizing('name');
+    });
   });
 
   test('KA-01-TC02: Create new Channel via default channel type', async ({ page }) => {
@@ -179,6 +208,15 @@ test.describe('Knative CI smoke tests', { tag: ['@smoke', '@regression'] }, () =
       const topologyPage = new TopologyKnativePage(page);
       await topologyPage.verifyWorkloadVisible('channel');
     });
+
+    await test.step('Verify channel type filtering and saved column widths', async () => {
+      const listPage = new ListPage(page);
+      await listPage.navigateToListPage(`/eventing/ns/${namespace}/channels`);
+      await listPage.filterByCheckbox('Type', 'channel');
+      await expect(listPage.cell('channel')).toBeVisible();
+      await expect(listPage.table).not.toContainText('InMemoryChannel');
+      await listPage.verifyColumnResizing('name');
+    });
   });
 
   test('KE-05-TC01: Create Broker using Form view', async ({ page }) => {
@@ -200,6 +238,14 @@ test.describe('Knative CI smoke tests', { tag: ['@smoke', '@regression'] }, () =
       await expect(page).toHaveURL(/topology/, { timeout: 30_000 });
       const topologyPage = new TopologyKnativePage(page);
       await topologyPage.verifyWorkloadVisible('default-broker');
+    });
+
+    await test.step('Verify broker filtering and saved column widths', async () => {
+      const listPage = new ListPage(page);
+      await listPage.navigateToListPage(`/eventing/ns/${namespace}/brokers`);
+      await listPage.filterByNameInput('default-broker');
+      await expect(listPage.cell('default-broker')).toBeVisible();
+      await listPage.verifyColumnResizing('name');
     });
   });
 
@@ -243,6 +289,14 @@ test.describe('Knative CI smoke tests', { tag: ['@smoke', '@regression'] }, () =
       await topologyPage.verifySidePaneOpen();
       await expect(topologyPage.getSidePane()).toContainText(SERVICE_NAME);
       await topologyPage.closeSidePane();
+    });
+
+    await test.step('Verify subscription filtering and saved column widths', async () => {
+      const listPage = new ListPage(page);
+      await listPage.navigateToListPage(`/eventing/ns/${namespace}/subscriptions`);
+      await listPage.filterByNameInput('channel-subscrip');
+      await expect(listPage.cell('channel-subscrip')).toBeVisible();
+      await listPage.verifyColumnResizing('name');
     });
   });
 
@@ -310,6 +364,14 @@ test.describe('Knative CI smoke tests', { tag: ['@smoke', '@regression'] }, () =
         })) as { items?: Array<unknown> };
         expect(revisions.items?.length).toBe(2);
       }).toPass({ timeout: 60_000, intervals: [5_000] });
+    });
+
+    await test.step('Verify revisions filtering and saved column widths', async () => {
+      const listPage = new ListPage(page);
+      await listPage.navigateToListPage(`/serving/ns/${namespace}/revisions`);
+      await listPage.filterByNameInput(SERVICE_NAME);
+      await expect(listPage.table).toContainText(SERVICE_NAME);
+      await listPage.verifyColumnResizing('name');
     });
   });
 

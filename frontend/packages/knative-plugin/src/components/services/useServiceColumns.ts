@@ -6,27 +6,15 @@ import {
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import type { ConsoleDataViewColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import type { EventChannelKind } from '../../../types';
+import { ServiceModel } from '../../models';
+import type { ServiceKind } from '../../types';
 
-/** Console-only model for column width preferences across all channel kinds. */
-const KnativeChannelsCombinedListModel = {
-  apiGroup: 'console.ui',
-  apiVersion: 'v1',
-  kind: 'KnativeChannelsCombinedList',
-  plural: 'knativechannelscombinedlists',
-  label: 'Channel',
-  labelPlural: 'Channels',
-  abbr: 'C',
-};
-
-export const useChannelColumns = (): {
-  columns: ConsoleDataViewColumn<EventChannelKind>[];
+export const useServiceColumns = (): {
+  columns: ConsoleDataViewColumn<ServiceKind>[];
   resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation('knative-plugin');
-  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(
-    KnativeChannelsCombinedListModel,
-  );
+  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(ServiceModel);
   const columns = useMemo(
     () => [
       {
@@ -44,22 +32,35 @@ export const useChannelColumns = (): {
         props: { modifier: 'nowrap' as const },
       },
       {
+        id: 'url',
+        resizableProps: getResizableProps('url'),
+        title: t('URL'),
+        sort: 'status.url',
+        props: { modifier: 'nowrap' as const },
+      },
+      {
+        id: 'conditions',
+        resizableProps: getResizableProps('conditions'),
+        title: t('Conditions'),
+        props: { modifier: 'nowrap' as const },
+      },
+      {
         id: 'ready',
         resizableProps: getResizableProps('ready'),
         title: t('Ready'),
         props: { modifier: 'nowrap' as const },
       },
       {
-        id: 'condition',
-        resizableProps: getResizableProps('condition'),
-        title: t('Conditions'),
+        id: 'reason',
+        resizableProps: getResizableProps('reason'),
+        title: t('Reason'),
         props: { modifier: 'nowrap' as const },
       },
       {
-        id: 'type',
-        resizableProps: getResizableProps('type'),
-        title: t('Type'),
-        sort: 'kind',
+        id: 'revision',
+        resizableProps: getResizableProps('revision'),
+        title: t('Revision'),
+        sort: 'metadata.generation',
         props: { modifier: 'nowrap' as const },
       },
       {

@@ -1,21 +1,25 @@
 import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { TableProps } from '@console/internal/components/factory';
-import { Table } from '@console/internal/components/factory';
-import RevisionHeader from './RevisionHeader';
-import RevisionRow from './RevisionRow';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
+import type { TableProps } from '@console/internal/components/factory/table';
+import type { RevisionKind } from '../../types';
+import { useRevisionColumns } from './RevisionHeader';
+import { getRevisionDataViewRows } from './RevisionRow';
 
-const RevisionList: FC<TableProps> = (props) => {
+export const RevisionList: FC<TableProps> = (props) => {
   const { t } = useTranslation('knative-plugin');
+  const { columns, resetAllColumnWidths } = useRevisionColumns();
   return (
-    <Table
+    <ConsoleDataView<RevisionKind>
       {...props}
-      aria-label={t('Revisions')}
-      Header={RevisionHeader(t)}
-      Row={RevisionRow}
-      virtualize
+      label={t('Revisions')}
+      data={props.data}
+      loaded={props.loaded}
+      columns={columns}
+      getDataViewRows={getRevisionDataViewRows}
+      hideColumnManagement
+      isResizable
+      resetAllColumnWidths={resetAllColumnWidths}
     />
   );
 };
-
-export default RevisionList;
