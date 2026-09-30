@@ -83,7 +83,7 @@ const KnativeServiceGroup: FC<KnativeServiceGroupProps> = ({
   onShowCreateConnector,
   createConnectorDrag,
 }) => {
-  const ref = useRef();
+  const ref = useRef(undefined);
   const { t } = useTranslation('knative-plugin');
   const [hoverChange, setHoverChange] = useState<boolean>(false);
   const [hover, hoverRef] = useHover(200, 200, [hoverChange]);

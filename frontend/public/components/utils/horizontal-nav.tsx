@@ -1,4 +1,4 @@
-import type { ComponentType, FC, ReactNode } from 'react';
+import type { ComponentType, FC, ReactNode, JSX } from 'react';
 import { PureComponent, useContext, memo, useMemo, Suspense } from 'react';
 import { Tabs, Tab, TabTitleText } from '@patternfly/react-core';
 import type { TFunction } from 'i18next';

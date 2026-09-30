@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { ReactNode, JSX } from 'react';
 import { isValidElement, memo } from 'react';
 import { Card, SimpleList, Title } from '@patternfly/react-core';
 import type { ResolvedExtension, AddAction } from '@console/dynamic-plugin-sdk';

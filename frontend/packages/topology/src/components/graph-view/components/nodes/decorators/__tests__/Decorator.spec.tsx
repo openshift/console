@@ -4,7 +4,7 @@ import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-ut
 import { Decorator } from '../Decorator';
 
 describe('Decorator', () => {
-  const renderInSvg = (ui: React.ReactElement) =>
+  const renderInSvg = (ui: React.ReactElement<any>) =>
     renderWithProviders(
       <svg>
         <SVGDefsProvider>{ui}</SVGDefsProvider>

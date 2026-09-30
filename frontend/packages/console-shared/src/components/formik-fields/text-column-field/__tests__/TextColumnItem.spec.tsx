@@ -22,7 +22,7 @@ const mockArrayHelper = {
   pop: jest.fn(),
 };
 
-const renderInFormik = (component: React.ReactElement) =>
+const renderInFormik = (component: React.ReactElement<any>) =>
   renderWithProviders(
     <Formik initialValues={{ fieldName: [''] }} onSubmit={jest.fn()}>
       {component}

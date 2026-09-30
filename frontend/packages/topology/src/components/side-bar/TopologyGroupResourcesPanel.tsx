@@ -7,7 +7,7 @@ import TopologyGroupResourceList from './TopologyGroupResourceList';
 type TopologyGroupResourcesPanelProps = {
   manifestResources: K8sResourceKind[];
   releaseNamespace: string;
-  linkForResource?: (obj: K8sResourceKind) => ReactElement;
+  linkForResource?: (obj: K8sResourceKind) => ReactElement<any>;
 };
 
 const TopologyGroupResourcesPanel: FC<TopologyGroupResourcesPanelProps> = ({

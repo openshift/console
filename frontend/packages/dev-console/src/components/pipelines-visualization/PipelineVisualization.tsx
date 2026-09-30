@@ -20,7 +20,7 @@ const PipelineVisualization: FC<PipelineTopologyVisualizationProps> = ({
   taskRuns,
 }) => {
   const { t } = useTranslation('devconsole');
-  let content: ReactElement;
+  let content: ReactElement<any>;
   const model = getGraphDataModel(pipeline, pipelineRun, taskRuns || []);
 
   if (!model || (model.nodes.length === 0 && model.edges.length === 0)) {

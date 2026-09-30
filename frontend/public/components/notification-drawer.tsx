@@ -361,7 +361,7 @@ export const NotificationDrawer: FC<NotificationDrawerProps> = ({
     );
   };
 
-  const criticalAlertCategory: ReactElement = (
+  const criticalAlertCategory: ReactElement<any> = (
     <NotificationDrawerGroup
       key="critical-alerts"
       isExpanded={isAlertExpanded}
@@ -416,7 +416,7 @@ export const NotificationDrawer: FC<NotificationDrawerProps> = ({
       </NotificationDrawerList>
     </NotificationDrawerGroup>
   );
-  const nonCriticalAlertCategory: ReactElement =
+  const nonCriticalAlertCategory: ReactElement<any> =
     hasNonCriticalAlerts || hasOtherAlertsToastNotifications ? (
       <NotificationDrawerGroup
         key="other-alerts"
@@ -477,45 +477,50 @@ export const NotificationDrawer: FC<NotificationDrawerProps> = ({
       </NotificationDrawerGroup>
     ) : null;
 
-  const toastNotificationCategories: ReactElement[] = customToastDrawerGroups.map((groupName) => {
-    const groupNotifications = getToastNotificationsForGroup(groupedToastNotifications, groupName);
-    const groupTitle = getToastDrawerGroupTitle(groupName, t);
-    const isExpanded = expandedToastGroups[groupName] ?? true;
+  const toastNotificationCategories: ReactElement<any>[] = customToastDrawerGroups.map(
+    (groupName) => {
+      const groupNotifications = getToastNotificationsForGroup(
+        groupedToastNotifications,
+        groupName,
+      );
+      const groupTitle = getToastDrawerGroupTitle(groupName, t);
+      const isExpanded = expandedToastGroups[groupName] ?? true;
 
-    return (
-      <NotificationDrawerGroup
-        key={`toast-group-${groupName}`}
-        isExpanded={isExpanded}
-        title={groupTitle}
-        count={groupNotifications.length}
-        onExpand={() => {
-          setExpandedToastGroups((state) => ({
-            ...state,
-            [groupName]: !isExpanded,
-          }));
-        }}
-      >
-        <NotificationDrawerList
-          isHidden={!isExpanded}
-          aria-label={t('Notifications in the {{groupName}} group', { groupName: groupTitle })}
+      return (
+        <NotificationDrawerGroup
+          key={`toast-group-${groupName}`}
+          isExpanded={isExpanded}
+          title={groupTitle}
+          count={groupNotifications.length}
+          onExpand={() => {
+            setExpandedToastGroups((state) => ({
+              ...state,
+              [groupName]: !isExpanded,
+            }));
+          }}
         >
-          <ToastNotificationDrawerItems
-            notifications={groupNotifications}
-            onClear={clearNotification}
-            onMarkRead={markNotificationRead}
-            onMarkUnread={markNotificationUnread}
-          />
-        </NotificationDrawerList>
-      </NotificationDrawerGroup>
-    );
-  });
+          <NotificationDrawerList
+            isHidden={!isExpanded}
+            aria-label={t('Notifications in the {{groupName}} group', { groupName: groupTitle })}
+          >
+            <ToastNotificationDrawerItems
+              notifications={groupNotifications}
+              onClear={clearNotification}
+              onMarkRead={markNotificationRead}
+              onMarkUnread={markNotificationUnread}
+            />
+          </NotificationDrawerList>
+        </NotificationDrawerGroup>
+      );
+    },
+  );
 
   if (showServiceLevelNotification) {
     updateList.push(
       <ServiceLevelNotification key="service-level-notification" clusterID={clusterID} />,
     );
   }
-  const recommendationsCategory: ReactElement = !_.isEmpty(updateList) ? (
+  const recommendationsCategory: ReactElement<any> = !_.isEmpty(updateList) ? (
     <NotificationDrawerGroup
       key="recommendations"
       isExpanded={isClusterUpdateExpanded}

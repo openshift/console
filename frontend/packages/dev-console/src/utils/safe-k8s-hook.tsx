@@ -4,7 +4,7 @@ import { k8sGet } from '@console/internal/module/k8s';
 import type { K8sResourceKind, K8sKind } from '@console/internal/module/k8s/types';
 
 export const useSafeK8s = () => {
-  const controller = useRef<AbortController>();
+  const controller = useRef<AbortController>(undefined);
   const mounted = useRef(true);
 
   useEffect(() => {

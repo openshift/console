@@ -12,7 +12,7 @@ export const routeDecoratorIcon = (
   t: TFunction,
   cheEnabled?: boolean,
   cheIconURL?: string,
-): ReactElement => {
+): ReactElement<any> => {
   if (cheEnabled && routeURL) {
     return cheIconURL ? (
       <image xlinkHref={cheIconURL} width={radius} height={radius} />

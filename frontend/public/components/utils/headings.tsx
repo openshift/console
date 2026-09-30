@@ -1,4 +1,4 @@
-import type { FC, ReactNode, ComponentType } from 'react';
+import type { FC, ReactNode, ComponentType, JSX } from 'react';
 import { useCallback } from 'react';
 import { ActionListItem, Button, Title } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';

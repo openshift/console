@@ -1,4 +1,4 @@
-import { isValidElement, memo } from 'react';
+import { isValidElement, memo, type JSX } from 'react';
 import { SimpleListItem, Title, Content } from '@patternfly/react-core';
 import { useNavigate } from 'react-router';
 import type { ResolvedExtension, AddAction } from '@console/dynamic-plugin-sdk';

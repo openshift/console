@@ -33,7 +33,7 @@ type OperatorResourcesProps = {
     [kind: string]: { data: K8sResourceKind[]; loaded: boolean; loadError?: unknown };
   };
   flatten: (resources: { [kind: string]: { data: K8sResourceKind[] } }) => K8sResourceKind[];
-  linkForResource?: (obj: K8sResourceKind) => ReactElement;
+  linkForResource?: (obj: K8sResourceKind) => ReactElement<any>;
 };
 
 const OperatorResources: FC<OperatorResourcesProps> = ({

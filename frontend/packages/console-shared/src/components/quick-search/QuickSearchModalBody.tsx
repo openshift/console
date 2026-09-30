@@ -42,7 +42,7 @@ const QuickSearchModalBody: FC<QuickSearchModalBodyProps> = ({
   const [selectedItem, setSelectedItem] = useState<CatalogItem>(null);
   const [viewAll, setViewAll] = useState<CatalogLinkData[]>(null);
   const [items, setItems] = useState<number>(limitItemCount);
-  const ref = useRef<HTMLInputElement>();
+  const ref = useRef<HTMLInputElement>(undefined);
   const fireTelemetryEvent = useTelemetry();
   const listCatalogItems = limitItemCount > 0 ? catalogItems?.slice(0, items) : catalogItems;
 

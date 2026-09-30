@@ -1,4 +1,4 @@
-import type { FC, ComponentType } from 'react';
+import type { FC, ComponentType, JSX } from 'react';
 import { useCallback } from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';

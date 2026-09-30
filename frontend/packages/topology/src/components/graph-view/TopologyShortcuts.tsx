@@ -10,7 +10,7 @@ export type Options = {
   viewType: TopologyViewType;
   allImportAccess: boolean;
 };
-export const getTopologyShortcuts = (t: TFunction, options: Options): ReactElement => {
+export const getTopologyShortcuts = (t: TFunction, options: Options): ReactElement<any> => {
   const { supportedFileTypes, isEmptyModel, viewType, allImportAccess } = options;
   const isGraphView = !isEmptyModel && viewType === TopologyViewType.graph;
 

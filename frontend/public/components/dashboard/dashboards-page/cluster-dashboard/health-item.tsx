@@ -1,4 +1,4 @@
-import type { ComponentType, FC } from 'react';
+import type { ComponentType, FC, JSX } from 'react';
 import { useEffect, useContext, useMemo } from 'react';
 import { Stack, StackItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';

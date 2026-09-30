@@ -48,7 +48,7 @@ const EventingPubSubNode: FC<EventingPubSubNodeProps> = ({
   useAnchor(RectAnchor, AnchorEnd.target, TYPE_AGGREGATE_EDGE);
   useAnchor(EventSinkSourceAnchor, AnchorEnd.source, TYPE_EVENT_SINK_LINK);
 
-  const ref = useRef();
+  const ref = useRef(undefined);
   const { t } = useTranslation('knative-plugin');
   const { data } = element.getData();
   const { width } = element.getBounds();

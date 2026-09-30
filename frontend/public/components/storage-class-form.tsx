@@ -86,7 +86,7 @@ const StorageClassFormInner: FC<StorageClassFormProps> = (props) => {
 
   const [needValidate, setNeedValidate] = useState(false);
 
-  const resources = useRef<{ [k: string]: any }>();
+  const resources = useRef<{ [k: string]: any }>(undefined);
   const previousName = useRef('');
 
   const defaultProvisionerObj: ProvisionerDetails = {

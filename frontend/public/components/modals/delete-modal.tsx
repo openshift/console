@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { ReactNode, JSX } from 'react';
 import { useState, useCallback, useEffect } from 'react';
 import {
   Alert,

@@ -1,4 +1,4 @@
-import type { FC } from 'react';
+import type { FC, JSX } from 'react';
 import { useRef, useMemo, memo } from 'react';
 import { Tooltip } from '@patternfly/react-core';
 import { RhUiQuestionMarkCircleFillIcon } from '@patternfly/react-icons';
@@ -58,8 +58,8 @@ const CustomTaskComponent: FC<CustomTaskProps> = ({
   const { t } = useTranslation('devconsole');
   const showStatusState: boolean = !!pipelineRunName;
   const visualName = name || _.get(task, ['metadata', 'name'], '');
-  const nameRef = useRef();
-  const pillRef = useRef();
+  const nameRef = useRef(undefined);
+  const pillRef = useRef(undefined);
 
   const path = `${resourcePathFromModel(
     CustomRunModelV1Beta1,

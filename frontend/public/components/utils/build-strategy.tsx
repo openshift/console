@@ -1,4 +1,4 @@
-import type { FC } from 'react';
+import type { FC, JSX } from 'react';
 import { CodeBlock, CodeBlockCode, DescriptionList } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
