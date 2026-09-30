@@ -60,7 +60,7 @@ const EventSourceSection: FC<EventSourceSectionProps> = ({
       />
     </>
   );
-  let EventSource: ReactElement<any>;
+  let EventSource: ReactElement;
   const sectionTitle = values.formData.data?.itemData?.title ?? values.formData.type;
   switch (values.formData.type) {
     case EventSources.SinkBinding:

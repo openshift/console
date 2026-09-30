@@ -70,7 +70,7 @@ const routes = [
   },
 ];
 
-const renderInSvg = (element: ReactElement<any>) =>
+const renderInSvg = (element: ReactElement) =>
   render(
     <svg>
       <SVGDefsProvider>{element}</SVGDefsProvider>

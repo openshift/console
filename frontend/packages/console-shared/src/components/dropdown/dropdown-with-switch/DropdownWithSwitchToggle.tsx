@@ -72,7 +72,7 @@ type DropdownWithSwitchToggleProps = {
   isFullWidth?: boolean;
   isOpen: boolean;
   label: string;
-  menu: ReactElement<any>;
+  menu: ReactElement;
   menuRef: RefObject<HTMLElement | null>;
   onToggle: (state: boolean) => void;
 };

@@ -21,7 +21,7 @@ type ResolvedTabSections = {
 
 type TabBarTabHookResolverProps = {
   element: GraphElement;
-  children: (tabs: Tab[], loaded: boolean) => ReactElement<any>;
+  children: (tabs: Tab[], loaded: boolean) => ReactElement;
   tabSectionExtensions: ResolvedExtension<DetailsTabSection>['properties'][];
   tabExtensions: DetailsTab['properties'][];
 };

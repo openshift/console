@@ -8,7 +8,7 @@ export enum BadgeType {
   TECH = 'Tech Preview',
 }
 
-export const getBadgeFromType = (badge: ModelBadge | BadgeType): ReactElement<any> => {
+export const getBadgeFromType = (badge: ModelBadge | BadgeType): ReactElement => {
   switch (badge) {
     case ModelBadge.DEV:
     case BadgeType.DEV:

@@ -55,7 +55,7 @@ type ConsoleEmptyStateProps = Partial<EmptyStateProps> & {
   variant?: EmptyStateProps['variant'];
   'data-test'?: string;
   Icon?: EmptyStateProps['icon'];
-  primaryActions?: ReactElement<any>[];
-  secondaryActions?: ReactElement<any>[];
+  primaryActions?: ReactElement[];
+  secondaryActions?: ReactElement[];
   title?: EmptyStateProps['title'];
 };

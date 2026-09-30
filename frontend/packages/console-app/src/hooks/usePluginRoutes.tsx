@@ -150,4 +150,4 @@ type RoutePageProps = {
   setActivePerspective: SetActivePerspective;
 };
 
-type UsePluginRoutes = () => [ReactElement<any>[], ReactElement<any>[]];
+type UsePluginRoutes = () => [ReactElement[], ReactElement[]];

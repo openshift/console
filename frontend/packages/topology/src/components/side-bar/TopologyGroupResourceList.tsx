@@ -6,7 +6,7 @@ import TopologyGroupResourceItem from './TopologyGroupResourceItem';
 type TopologyGroupResourceListProps = {
   resources: K8sResourceKind[];
   releaseNamespace: string;
-  linkForResource?: (obj: K8sResourceKind) => ReactElement<any>;
+  linkForResource?: (obj: K8sResourceKind) => ReactElement;
 };
 
 const TopologyGroupResourceList: FC<TopologyGroupResourceListProps> = ({

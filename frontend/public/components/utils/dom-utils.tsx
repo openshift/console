@@ -3,7 +3,7 @@ import { useState, useCallback } from 'react';
 import { getParentScrollableElement } from '@console/shared/src/hooks/useScrollContainer';
 
 type WithScrollContainerProps = {
-  children: (scrollContainer: HTMLElement) => ReactElement<any> | null;
+  children: (scrollContainer: HTMLElement) => ReactElement | null;
 };
 
 export const WithScrollContainer: FC<WithScrollContainerProps> = ({ children }) => {

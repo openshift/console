@@ -5,7 +5,7 @@ import { css } from '@patternfly/react-styles';
 
 export type Tab = {
   name: string;
-  component: FC | ReactElement<any>;
+  component: FC | ReactElement;
 };
 
 type SimpleTabNavProps = {

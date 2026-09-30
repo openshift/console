@@ -5,7 +5,7 @@ type GiteaIconProps = {
   topology?: boolean;
 };
 
-const GiteaIcon: FC<GiteaIconProps> = ({ style, topology }): ReactElement<any> => (
+const GiteaIcon: FC<GiteaIconProps> = ({ style, topology }): ReactElement => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox={topology ? '0 20 650 587' : '0 20 650 450'}

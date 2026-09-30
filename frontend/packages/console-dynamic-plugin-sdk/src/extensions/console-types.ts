@@ -687,7 +687,7 @@ export type ConsoleDataViewFC = <
   TFilters extends ResourceFilters = ResourceFilters,
 >(
   props: ConsoleDataViewProps<TData, TCustomRowData, TFilters>,
-) => ReactElement<any>;
+) => ReactElement;
 
 // Swagger types
 // Note: These types are duplicated from @console/internal/module/k8s/swagger

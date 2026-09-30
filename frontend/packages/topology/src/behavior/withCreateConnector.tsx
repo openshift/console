@@ -66,7 +66,7 @@ interface ConnectorComponentProps {
 
 type CreateConnectorRenderer = ComponentType<ConnectorComponentProps>;
 
-type OnCreateResult = ConnectorChoice[] | void | undefined | null | ReactElement<any>[];
+type OnCreateResult = ConnectorChoice[] | void | undefined | null | ReactElement[];
 
 type CreateConnectorWidgetProps = {
   element: Node;
@@ -92,12 +92,12 @@ interface PromptData {
   element: Node;
   target: Node | Graph;
   event: DragEvent;
-  choices: ConnectorChoice[] | ReactElement<any>[];
+  choices: ConnectorChoice[] | ReactElement[];
 }
 
 const isReactElementArray = (
-  choices: ConnectorChoice[] | ReactElement<any>[],
-): choices is ReactElement<any>[] => isValidElement(choices[0]);
+  choices: ConnectorChoice[] | ReactElement[],
+): choices is ReactElement[] => isValidElement(choices[0]);
 
 const DEFAULT_HANDLE_ANGLE = Math.PI / 180;
 const DEFAULT_HANDLE_ANGLE_TOP = 1.5 * Math.PI;
