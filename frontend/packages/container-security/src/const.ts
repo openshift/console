@@ -148,14 +148,20 @@ export const totalVulnFor =
     }
   };
 
-const vulnPriorityByTitle: Record<string, VulnPriorityDescription> = Object.values(
+/**
+ * Keyed by both the display title and the `Priority` value, because the scanner reports
+ * `Defcon1` while its title is `Defcon 1`. Keying on the title alone left the most urgent
+ * severity unresolvable, so it fell back to Unknown. The two are identical for every other
+ * priority.
+ */
+const vulnPriorityByName: Record<string, VulnPriorityDescription> = Object.values(
   vulnPriority,
 ).reduce(
-  (acc, desc) => ({ ...acc, [desc.title]: desc }),
+  (acc, desc) => ({ ...acc, [desc.title]: desc, [desc.value]: desc }),
   {} as Record<string, VulnPriorityDescription>,
 );
 
-export const priorityFor = (severityTitle: string) =>
-  Object.prototype.hasOwnProperty.call(vulnPriorityByTitle, severityTitle)
-    ? vulnPriorityByTitle[severityTitle]
+export const priorityFor = (severityName: string) =>
+  Object.prototype.hasOwnProperty.call(vulnPriorityByName, severityName)
+    ? vulnPriorityByName[severityName]
     : vulnPriority[Priority.Unknown];
