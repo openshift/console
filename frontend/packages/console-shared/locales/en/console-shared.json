@@ -44,7 +44,7 @@
   "{{count}} resource": "{{count}} resource",
   "{{count}} resource_plural": "{{count}} resources",
   "{{count}} resource reached quota": "{{count}} resource reached quota",
-  "{{count}} resource reached quota_plural": "{{count}} resources reached quota",
+  "{{count}} resource reached quota_plural": "{{count}} resource reached quotas",
   "none are at quota": "none are at quota",
   "No ResourceQuotas": "No ResourceQuotas",
   "Go to documentation": "Go to documentation",
@@ -296,5 +296,13 @@
   "An eviction is allowed if at least 25% of pods selected by \"selector\" will still be available after the eviction.": "An eviction is allowed if at least 25% of pods selected by \"selector\" will still be available after the eviction.",
   "Name must consist of lower-case letters, numbers and hyphens. It must start with a letter and end with a letter or number.": "Name must consist of lower-case letters, numbers and hyphens. It must start with a letter and end with a letter or number.",
   "Cannot be longer than {{characterCount}} characters.": "Cannot be longer than {{characterCount}} characters.",
-  "Required": "Required"
+  "Required": "Required",
+  "{{count}} resource_one": "{{count}} resource_one",
+  "{{count}} resource_other": "{{count}} resource_other",
+  "{{count}} resource reached quota_one": "{{count}} resource reached quota_one",
+  "{{count}} resource reached quota_other": "{{count}} resource reached quota_other",
+  "{{count}} item_one": "{{count}} item_one",
+  "{{count}} item_other": "{{count}} item_other",
+  "to {{count}} Pod_one": "to {{count}} Pod_one",
+  "to {{count}} Pod_other": "to {{count}} Pod_other"
 }

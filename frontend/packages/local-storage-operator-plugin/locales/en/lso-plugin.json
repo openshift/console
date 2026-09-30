@@ -51,5 +51,9 @@
   "{{nodeCount, number}} node_plural": "{{nodeCount, number}} nodes",
   "selected": "selected",
   "SSD / NVMe": "SSD / NVMe",
-  "HDD": "HDD"
+  "HDD": "HDD",
+  "{{nodes, number}} node_one": "{{nodes, number}} node_one",
+  "{{nodes, number}} node_other": "{{nodes, number}} node_other",
+  "{{nodeCount, number}} node_one": "{{nodeCount, number}} node_one",
+  "{{nodeCount, number}} node_other": "{{nodeCount, number}} node_other"
 }

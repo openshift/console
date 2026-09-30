@@ -421,5 +421,11 @@
   "Cancelling": "Cancelling",
   "Pending": "Pending",
   "PipelineRun not started yet": "PipelineRun not started yet",
-  "Other": "Other"
+  "Other": "Other",
+  "{{count}} hour_one": "{{count}} hour_one",
+  "{{count}} hour_other": "{{count}} hour_other",
+  "{{count}} minute_one": "{{count}} minute_one",
+  "{{count}} minute_other": "{{count}} minute_other",
+  "{{count}} second_one": "{{count}} second_one",
+  "{{count}} second_other": "{{count}} second_other"
 }

@@ -169,5 +169,9 @@
   "Delete Connector?": "Delete Connector?",
   "Delete": "Delete",
   "Unable to update application, invalid resource type: {{kind}}": "Unable to update application, invalid resource type: {{kind}}",
-  "Can not create a connection from a node to itself.": "Can not create a connection from a node to itself."
+  "Can not create a connection from a node to itself.": "Can not create a connection from a node to itself.",
+  "{{ready, number}} of {{count, number}} Pod_one": "{{ready, number}} of {{count, number}} Pod_one",
+  "{{ready, number}} of {{count, number}} Pod_other": "{{ready, number}} of {{count, number}} Pod_other",
+  "second_one": "second_one",
+  "second_other": "second_other"
 }
