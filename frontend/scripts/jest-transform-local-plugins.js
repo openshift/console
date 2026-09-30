@@ -3,7 +3,7 @@
 // Register ts-node to handle TypeScript imports before Jest's module system is active
 require('ts-node').register({
   transpileOnly: true,
-  compilerOptions: { module: 'commonjs' },
+  compilerOptions: { moduleResolution: 'node', module: 'commonjs', customConditions: undefined },
 });
 
 const { getLocalPluginsModuleData } = require('@console/plugin-sdk/src/codegen/local-plugins');
