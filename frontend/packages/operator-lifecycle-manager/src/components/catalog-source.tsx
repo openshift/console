@@ -1,20 +1,20 @@
 import type { ReactNode, FC } from 'react';
 import { useState, useCallback } from 'react';
 import { Button, DescriptionList, Grid, GridItem } from '@patternfly/react-core';
-import { css } from '@patternfly/react-styles';
-import { sortable } from '@patternfly/react-table';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useParams, useLocation } from 'react-router';
+import {
+  ConsoleDataView,
+  actionsCellProps,
+  getNameCellProps,
+} from '@console/app/src/components/data-view/ConsoleDataView';
 import type { K8sResourceKind, WatchK8sResultsObject } from '@console/dynamic-plugin-sdk';
 import { PopoverStatus, StatusIconAndText, useAccessReview } from '@console/dynamic-plugin-sdk';
+import type { GetDataViewRows } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { CreateYAML } from '@console/internal/components/create-yaml';
-import type {
-  TableProps,
-  MultiListPageProps,
-  RowFunctionArgs,
-} from '@console/internal/components/factory';
-import { DetailsPage, Table, TableData, MultiListPage } from '@console/internal/components/factory';
+import type { TableProps, MultiListPageProps } from '@console/internal/components/factory';
+import { DetailsPage, MultiListPage } from '@console/internal/components/factory';
 import {
   LoadingBox,
   ConsoleEmptyState,
@@ -30,10 +30,7 @@ import i18n from '@console/internal/i18n';
 import { ConfigMapModel } from '@console/internal/models';
 import type { K8sKind, K8sModel } from '@console/internal/module/k8s';
 import { referenceForModel, k8sPatch } from '@console/internal/module/k8s';
-import {
-  LazyActionMenu,
-  KEBAB_COLUMN_CLASS,
-} from '@console/shared/src/components/actions/LazyActionMenu';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
 import { withFallback } from '@console/shared/src/components/error/fallbacks/withFallback';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
@@ -50,6 +47,8 @@ import { requireOperatorGroup } from './operator-group';
 import type { OperatorHubKind } from './operator-hub';
 import { PackageManifestsPage } from './package-manifest';
 import { RegistryPollIntervalDetailItem } from './registry-poll-interval-details';
+import type { CatalogSourceTableRowObj } from './useCatalogSourceColumns';
+import { useCatalogSourceColumns } from './useCatalogSourceColumns';
 
 const catalogSourceModelReference = referenceForModel(CatalogSourceModel);
 
@@ -271,124 +270,89 @@ export const CreateSubscriptionYAML: FC = () => {
   );
 };
 
-const tableColumnClasses = [
-  '',
-  css('pf-m-hidden', 'pf-m-visible-on-sm'),
-  '',
-  css('pf-m-hidden', 'pf-m-visible-on-lg'),
-  css('pf-m-hidden', 'pf-m-visible-on-xl'),
-  css('pf-m-hidden', 'pf-m-visible-on-xl'),
-  css('pf-m-hidden', 'pf-m-visible-on-lg'),
-  KEBAB_COLUMN_CLASS,
-];
+/**
+ * A disabled default source is dimmed. ConsoleDataView rows carry per-cell props rather than row
+ * props, so the styling is applied to every cell of the row.
+ */
+const disabledCellProps = {
+  className: 'pf-v6-u-background-color-disabled pf-v6-u-text-color-on-disabled',
+};
 
-const getRowProps = (obj) => ({
-  className: obj?.disabled
-    ? 'pf-v6-u-background-color-disabled pf-v6-u-text-color-on-disabled'
-    : undefined,
-});
+const getCatalogSourceMetadata = (obj: CatalogSourceTableRowObj) => ({ name: obj.name });
 
-const CatalogSourceTableRow: FC<RowFunctionArgs<CatalogSourceTableRowObj>> = ({
-  obj: {
-    availability = '-',
-    endpoint = '-',
-    name,
-    operatorCount = 0,
-    publisher = '-',
-    registryPollInterval = '-',
-    status = '',
-    source,
-  },
-}) => (
-  <>
-    <TableData className={tableColumnClasses[0]}>
-      {source ? (
-        <ResourceLink
-          kind={catalogSourceModelReference}
-          name={source.metadata.name}
-          namespace={source.metadata.namespace}
-        />
-      ) : (
-        name
-      )}
-    </TableData>
-    <TableData className={tableColumnClasses[1]} data-test={`${source?.metadata.name}-status`}>
-      {status}
-    </TableData>
-    <TableData className={tableColumnClasses[2]}>{publisher}</TableData>
-    <TableData className={tableColumnClasses[3]}>{availability}</TableData>
-    <TableData className={tableColumnClasses[4]}>{endpoint}</TableData>
-    <TableData className={tableColumnClasses[5]}>{registryPollInterval}</TableData>
-    <TableData className={tableColumnClasses[6]}>{operatorCount || '-'}</TableData>
-    <TableData className={tableColumnClasses[7]}>
-      {source && (
-        <LazyActionMenu
-          context={{
-            [referenceForModel(CatalogSourceModel)]: source,
-          }}
-        />
-      )}
-    </TableData>
-  </>
-);
+export const getCatalogSourceDataViewRows: GetDataViewRows<CatalogSourceTableRowObj> = (
+  data,
+  columns,
+) =>
+  data.map(({ obj }) => {
+    const {
+      availability = '-',
+      disabled,
+      endpoint = '-',
+      name,
+      operatorCount = 0,
+      publisher = '-',
+      registryPollInterval = '-',
+      status = '',
+      source,
+    } = obj;
+    const rowCells = {
+      name: {
+        cell: source ? (
+          <ResourceLink
+            kind={catalogSourceModelReference}
+            name={source.metadata.name}
+            namespace={source.metadata.namespace}
+          />
+        ) : (
+          name
+        ),
+        props: getNameCellProps(name),
+      },
+      status: {
+        cell: status,
+        // A disabled default source has no CatalogSource, so there is no name to key a test id on.
+        props: source ? { 'data-test': `${source.metadata.name}-status` } : undefined,
+      },
+      publisher: { cell: publisher },
+      availability: { cell: availability },
+      endpoint: { cell: endpoint },
+      registryPollInterval: { cell: registryPollInterval },
+      operatorCount: { cell: operatorCount || '-' },
+      actions: {
+        // A disabled default source has no CatalogSource to act on.
+        cell: source && (
+          <LazyActionMenu context={{ [referenceForModel(CatalogSourceModel)]: source }} />
+        ),
+        props: actionsCellProps,
+      },
+    };
+    return columns.map(({ id }) => {
+      const { props, ...rest } = rowCells[id];
+      return {
+        id,
+        ...rest,
+        props: disabled ? { ...props, ...disabledCellProps } : props,
+      };
+    });
+  });
 
 const CatalogSourceList: FC<TableProps> = (props) => {
   const { t } = useTranslation('olm');
-  const CatalogSourceHeader = () => [
-    {
-      title: t('Name'),
-      sortField: 'name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[0] },
-    },
-    {
-      title: t('Status'),
-      sortField: 'status',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[1] },
-    },
-    {
-      title: t('Publisher'),
-      sortField: 'publisher',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[2] },
-    },
-    {
-      title: t('Availability'),
-      sortField: 'availabilitySort',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[3] },
-    },
-    {
-      title: t('Endpoint'),
-      sortField: 'endpoint',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[4] },
-    },
-    {
-      title: t('Registry poll interval'),
-      sortField: 'registryPollInterval',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[5] },
-    },
-    {
-      title: t('# of Operators'),
-      sortField: 'operatorCount',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[6] },
-    },
-    {
-      title: '',
-      props: { className: tableColumnClasses[7] },
-    },
-  ];
+  const { columns, resetAllColumnWidths } = useCatalogSourceColumns();
   return (
-    <Table
+    <ConsoleDataView<CatalogSourceTableRowObj>
       {...props}
-      aria-label={`${CatalogSourceModel.labelPlural}`}
-      Header={CatalogSourceHeader}
-      Row={CatalogSourceTableRow}
-      getRowProps={getRowProps}
+      label={t('CatalogSources')}
+      data={props.data || []}
+      loaded={props.loaded}
+      columns={columns}
+      getDataViewRows={getCatalogSourceDataViewRows}
+      getObjectMetadata={getCatalogSourceMetadata}
+      hideColumnManagement
+      hideLabelFilter
+      isResizable
+      resetAllColumnWidths={resetAllColumnWidths}
     />
   );
 };
@@ -504,8 +468,7 @@ export const CatalogSourceListPage: FC<CatalogSourceListPageProps> = (props) => 
       createProps={{ to: `/k8s/cluster/${referenceForModel(CatalogSourceModel)}/~new` }}
       flatten={(data) => flatten({ operatorHub: props.obj, ...data })}
       ListComponent={CatalogSourceList}
-      textFilter="catalog-source-name"
-      hideLabelFilter
+      omitFilterToolbar
       resources={[
         {
           isList: true,
@@ -520,21 +483,6 @@ export const CatalogSourceListPage: FC<CatalogSourceListPageProps> = (props) => 
       ]}
     />
   );
-};
-
-type CatalogSourceTableRowObj = {
-  availability: ReactNode;
-  disabled?: boolean;
-  endpoint?: ReactNode;
-  isDefault?: boolean;
-  name: string;
-  namespace: string;
-  operatorCount?: number;
-  operatorHub: OperatorHubKind;
-  publisher?: string;
-  registryPollInterval?: string;
-  status?: string;
-  source?: CatalogSourceKind;
 };
 
 type DisabledPopoverProps = {

@@ -7,7 +7,10 @@ import {
   useK8sWatchResources,
 } from '@console/internal/components/utils/k8s-watch-hook';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
+import {
+  renderHookWithProviders,
+  renderWithProviders,
+} from '@console/shared/src/test-utils/unit-test-utils';
 import { testCatalogSource, testPackageManifest, dummyPackageManifest } from '../../../mocks';
 import { DEFAULT_SOURCE_NAMESPACE } from '../../const';
 import { CatalogSourceModel, PackageManifestModel } from '../../models';
@@ -15,7 +18,10 @@ import {
   CatalogSourceDetails,
   CatalogSourceDetailsPage,
   CreateSubscriptionYAML,
+  getCatalogSourceDataViewRows,
 } from '../catalog-source';
+import type { CatalogSourceTableRowObj } from '../useCatalogSourceColumns';
+import { useCatalogSourceColumns } from '../useCatalogSourceColumns';
 
 jest.mock('@patternfly/react-topology', () => ({}));
 
@@ -32,8 +38,6 @@ jest.mock('react-router', () => ({
 
 jest.mock('@console/internal/components/factory', () => ({
   DetailsPage: jest.fn(() => null),
-  Table: jest.fn(() => null),
-  TableData: jest.fn(({ children }) => children),
   MultiListPage: jest.fn(() => null),
 }));
 
@@ -244,5 +248,136 @@ describe('CreateSubscriptionYAML', () => {
 
     renderWithProviders(<CreateSubscriptionYAML />);
     expect(screen.getByText(/channel:\s*beta/)).toBeVisible();
+  });
+});
+
+const catalogSourceRowCells = (obj: CatalogSourceTableRowObj, ids: string[]) => {
+  const columns = ids.map((id) => ({ id, title: id }));
+  const [cells] = getCatalogSourceDataViewRows(
+    [{ obj, activeColumnIDs: new Set(ids), rowData: undefined, index: 0 }],
+    columns,
+  );
+  renderWithProviders(
+    <table>
+      <tbody>
+        <tr>
+          {cells.map(({ id, cell, props }) => (
+            <td key={id} {...props}>
+              {cell}
+            </td>
+          ))}
+        </tr>
+      </tbody>
+    </table>,
+  );
+  return cells;
+};
+
+const enabledSourceRow = {
+  availability: 'Cluster wide',
+  endpoint: 'https://example.com/registry',
+  name: testCatalogSource.metadata.name,
+  namespace: DEFAULT_SOURCE_NAMESPACE,
+  operatorCount: 7,
+  operatorHub: null,
+  publisher: 'Red Hat',
+  registryPollInterval: '45m',
+  status: 'READY',
+  source: testCatalogSource,
+} as CatalogSourceTableRowObj;
+
+describe('useCatalogSourceColumns', () => {
+  it('returns the expected column titles', () => {
+    const { result } = renderHookWithProviders(() => useCatalogSourceColumns());
+    expect(result.current.columns.map(({ title }) => title)).toEqual([
+      'Name',
+      'Status',
+      'Publisher',
+      'Availability',
+      'Endpoint',
+      'Registry poll interval',
+      '# of Operators',
+      '',
+    ]);
+  });
+
+  it('sorts Availability by the parallel string field, not the rendered node', () => {
+    const { result } = renderHookWithProviders(() => useCatalogSourceColumns());
+    const availability = result.current.columns.find(({ id }) => id === 'availability');
+    expect(availability.sort).toEqual('availabilitySort');
+  });
+});
+
+describe('getCatalogSourceDataViewRows', () => {
+  it('renders source details for an enabled source', () => {
+    catalogSourceRowCells(enabledSourceRow, [
+      'status',
+      'publisher',
+      'availability',
+      'endpoint',
+      'registryPollInterval',
+      'operatorCount',
+    ]);
+    expect(screen.getAllByRole('cell').map((cell) => cell.textContent)).toEqual([
+      'READY',
+      'Red Hat',
+      'Cluster wide',
+      'https://example.com/registry',
+      '45m',
+      '7',
+    ]);
+  });
+
+  it('falls back to placeholders when a source reports nothing', () => {
+    catalogSourceRowCells({ name: 'partial', namespace: 'ns', availability: undefined } as any, [
+      'status',
+      'publisher',
+      'availability',
+      'endpoint',
+      'registryPollInterval',
+      'operatorCount',
+    ]);
+    expect(screen.getAllByRole('cell').map((cell) => cell.textContent)).toEqual([
+      '',
+      '-',
+      '-',
+      '-',
+      '-',
+      '-',
+    ]);
+  });
+
+  it('renders the plain name and no action menu for a disabled default source', () => {
+    const cells = catalogSourceRowCells(
+      {
+        availability: 'Disabled',
+        disabled: true,
+        isDefault: true,
+        name: 'disabled-source',
+        namespace: DEFAULT_SOURCE_NAMESPACE,
+        operatorHub: null,
+      } as CatalogSourceTableRowObj,
+      ['name', 'actions'],
+    );
+    expect(screen.getByRole('cell', { name: 'disabled-source' })).toBeVisible();
+    expect(cells.find(({ id }) => id === 'actions').cell).toBeFalsy();
+  });
+
+  it('dims every cell of a disabled row', () => {
+    const cells = catalogSourceRowCells({ ...enabledSourceRow, disabled: true }, [
+      'name',
+      'status',
+      'actions',
+    ]);
+    cells.forEach(({ props }) => {
+      expect(props.className).toContain('pf-v6-u-background-color-disabled');
+    });
+  });
+
+  it('does not dim an enabled row', () => {
+    const cells = catalogSourceRowCells(enabledSourceRow, ['name', 'status']);
+    cells.forEach(({ props }) => {
+      expect(props?.className ?? '').not.toContain('pf-v6-u-background-color-disabled');
+    });
   });
 });

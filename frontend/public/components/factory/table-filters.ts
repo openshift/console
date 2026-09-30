@@ -38,7 +38,6 @@ export const tableFilters = (isExactSearch: boolean): FilterMap => {
   return {
     name: (filter, obj) => matchFn(filter.selected?.[0], obj.metadata.name),
 
-    'catalog-source-name': (filter, obj) => matchFn(filter.selected?.[0], obj.name),
     requester: requesterFilter,
 
     'resource-list-text': (filter, resource: Rule | Alert) => {
