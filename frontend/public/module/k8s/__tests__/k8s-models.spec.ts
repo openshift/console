@@ -1,4 +1,5 @@
 import {
+  allModels,
   apiVersionCompare,
   getLatestVersionForCRD,
   referenceFor,
@@ -16,6 +17,7 @@ import {
 import {
   PodModel,
   DeploymentModel,
+  ClusterExtensionModel,
   ClusterResourceQuotaModel,
   PrometheusModel,
 } from '../../../models';
@@ -100,6 +102,15 @@ describe('modelsToMap', () => {
       [referenceForModel(ClusterResourceQuotaModel)]: ClusterResourceQuotaModel,
       [referenceForModel(PrometheusModel)]: PrometheusModel,
     });
+  });
+});
+
+describe('allModels', () => {
+  it('resolves the ClusterExtension model with its propagation policy', () => {
+    const model = allModels()['olm.operatorframework.io~v1~ClusterExtension'];
+
+    expect(model).toBe(ClusterExtensionModel);
+    expect(model.propagationPolicy).toEqual('Background');
   });
 });
 

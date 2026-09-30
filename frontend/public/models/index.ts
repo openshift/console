@@ -1254,6 +1254,27 @@ export const AuthenticationModel: K8sKind = {
   abbr: 'AU',
 };
 
+// Declared here rather than in the OLMv1 package because only models exported from this file reach
+// the Redux store, and `propagationPolicy` must be on the stored model for the delete modal to
+// render its dependent objects checkbox.
+export const ClusterExtensionModel: K8sKind = {
+  kind: 'ClusterExtension',
+  label: 'ClusterExtension',
+  // t('olm-v1~ClusterExtension')
+  labelKey: 'olm-v1~ClusterExtension',
+  labelPlural: 'ClusterExtensions',
+  // t('olm-v1~ClusterExtensions')
+  labelPluralKey: 'olm-v1~ClusterExtensions',
+  apiGroup: 'olm.operatorframework.io',
+  apiVersion: 'v1',
+  abbr: 'CE',
+  namespaced: false,
+  crd: true,
+  plural: 'clusterextensions',
+  id: 'clusterextension',
+  propagationPolicy: 'Background',
+};
+
 // Export models which have legacy plural URLs that need to be maintained.
 // This is imported by `../module/k8s/k8s-models.ts` and thus `connectToPlural`.
 /** @public - needed for legacy plural URLs */
