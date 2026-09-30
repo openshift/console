@@ -1,5 +1,6 @@
 import type { FC, ChangeEvent, FormEvent } from 'react';
 import { useState, useCallback } from 'react';
+import type { ServiceAccountKind } from '@openshift/api-types/dist/kubernetes/core/v1/ServiceAccount';
 import {
   Alert,
   Button,
@@ -61,35 +62,26 @@ const generateSecretData = (formData: FormData): string => {
 interface ConfigureNamespacePullSecretProps extends ModalComponentProps {
   namespace: K8sResourceKind;
   pullSecret?: K8sResourceKind;
-  onSubmitSuccess?: (pullSecretName: string) => void;
 }
-
-type ServiceAccountKind = K8sResourceKind & {
-  imagePullSecrets?: { name: string }[];
-};
 
 const getDefaultServiceAccountPatch = (
   pullSecretName: string,
   defaultServiceAccount: ServiceAccountKind,
-) =>
-  Array.isArray(defaultServiceAccount.imagePullSecrets)
-    ? [
-        {
-          op: 'add' as const,
-          path: '/imagePullSecrets/-',
-          value: { name: pullSecretName },
-        },
-      ]
-    : [
-        {
-          op: 'add' as const,
-          path: '/imagePullSecrets',
-          value: [{ name: pullSecretName }],
-        },
-      ];
+) => {
+  const hasImagePullSecrets = Array.isArray(defaultServiceAccount.imagePullSecrets);
+  const secretReference = { name: pullSecretName };
+
+  return [
+    {
+      op: 'add' as const,
+      path: `/imagePullSecrets${hasImagePullSecrets ? '/-' : ''}`,
+      value: hasImagePullSecrets ? secretReference : [secretReference],
+    },
+  ];
+};
 
 const ConfigureNamespacePullSecret: FC<ConfigureNamespacePullSecretProps> = (props) => {
-  const { namespace, cancel, close, onSubmitSuccess } = props;
+  const { namespace, cancel, close } = props;
   const { t } = useTranslation('public');
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
 
@@ -168,11 +160,10 @@ const ConfigureNamespacePullSecret: FC<ConfigureNamespacePullSecretProps> = (pro
           ),
         );
       return handlePromise(promise).then(() => {
-        onSubmitSuccess?.(pullSecretName);
         close();
       });
     },
-    [method, fileData, namespace, onSubmitSuccess, handlePromise, close],
+    [method, fileData, namespace, handlePromise, close],
   );
 
   return (

@@ -1,15 +1,13 @@
-import { act, screen, waitFor } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
-import * as k8sResourceModule from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
-import { ServiceAccountModel } from '../../models';
 import { PullSecret, ProjectLink } from '../namespace';
 import { testNamespace } from './data/k8sResourcesMocks';
 
-jest.mock('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource', () => ({
-  ...jest.requireActual('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource'),
-  k8sGet: jest.fn(),
+jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
+  useK8sWatchResource: jest.fn(),
 }));
 
 const mockSetActiveNamespace = jest.fn();
@@ -22,7 +20,7 @@ jest.mock('@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay', () => 
   useOverlay: jest.fn(),
 }));
 
-const k8sGetMock = k8sResourceModule.k8sGet as jest.Mock;
+const useK8sWatchResourceMock = useK8sWatchResource as jest.Mock;
 const launchModalMock = jest.fn();
 const useOverlayMock = useOverlay as jest.Mock;
 
@@ -35,56 +33,60 @@ describe('PullSecret', () => {
     jest.clearAllMocks();
   });
 
-  it('verifies loading state initially, then shows configuration button after data loads', async () => {
-    k8sGetMock.mockResolvedValue({ imagePullSecrets: [] });
-
-    renderWithProviders(<PullSecret namespace={testNamespace} />);
+  it('shows loading until the service account is available', () => {
+    useK8sWatchResourceMock.mockReturnValue([undefined, false, undefined]);
+    const { rerender } = renderWithProviders(<PullSecret namespace={testNamespace} />);
 
     expect(screen.getByRole('progressbar', { name: /contents/i })).toBeVisible();
 
-    const button = await screen.findByRole('button', { name: /not configured/i });
-    expect(button).toBeVisible();
+    useK8sWatchResourceMock.mockReturnValue([{ imagePullSecrets: [] }, true, undefined]);
+    rerender(<PullSecret namespace={testNamespace} />);
 
-    // Verify API was called correctly
-    expect(k8sGetMock).toHaveBeenCalledWith(
-      ServiceAccountModel,
-      'default',
-      testNamespace.metadata.name,
-      {},
-    );
-
+    expect(screen.getByRole('button', { name: 'Not configured' })).toBeVisible();
     expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
   });
 
-  it('handles service account loading and displays the pull secret management interface', async () => {
-    k8sGetMock.mockResolvedValue({
-      imagePullSecrets: [],
-    });
-
+  it('opens configuration when the service account has no pull secrets', async () => {
+    useK8sWatchResourceMock.mockReturnValue([{}, true, undefined]);
+    const user = userEvent.setup();
     renderWithProviders(<PullSecret namespace={testNamespace} />);
 
-    const button = await screen.findByRole('button', { name: 'Not configured' });
-    expect(button).toBeVisible();
+    await user.click(screen.getByRole('button', { name: 'Not configured' }));
+
+    expect(launchModalMock).toHaveBeenCalledTimes(1);
   });
 
-  it('shows a newly configured default pull secret without reloading the page', async () => {
-    k8sGetMock.mockResolvedValue({});
-    const user = userEvent.setup();
+  it('keeps displayed pull secrets in sync with service account updates', () => {
+    useK8sWatchResourceMock.mockReturnValue([{}, true, undefined]);
+    const { rerender } = renderWithProviders(
+      <PullSecret namespace={testNamespace} canViewSecrets />,
+    );
 
-    renderWithProviders(<PullSecret namespace={testNamespace} canViewSecrets />);
+    expect(screen.getByRole('button', { name: 'Not configured' })).toBeVisible();
 
-    const button = await screen.findByRole('button', { name: 'Not configured' });
-    await user.click(button);
+    useK8sWatchResourceMock.mockReturnValue([
+      { imagePullSecrets: [{ name: 'registry-secret' }] },
+      true,
+      undefined,
+    ]);
+    rerender(<PullSecret namespace={testNamespace} canViewSecrets />);
 
-    await waitFor(() => expect(launchModalMock).toHaveBeenCalled());
+    expect(screen.getByRole('link', { name: 'registry-secret' })).toBeVisible();
+    expect(screen.queryByRole('button', { name: 'Not configured' })).not.toBeInTheDocument();
 
-    const [, modalProps] = launchModalMock.mock.calls[0];
+    useK8sWatchResourceMock.mockReturnValue([{ imagePullSecrets: [] }, true, undefined]);
+    rerender(<PullSecret namespace={testNamespace} canViewSecrets />);
 
-    act(() => {
-      modalProps.onSubmitSuccess('aaaa');
-    });
+    expect(screen.queryByRole('link', { name: 'registry-secret' })).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Not configured' })).toBeVisible();
+  });
 
-    expect(screen.getByRole('link', { name: 'aaaa' })).toBeVisible();
+  it('shows an error when the service account watch fails', () => {
+    useK8sWatchResourceMock.mockReturnValue([undefined, false, new Error('Forbidden')]);
+    renderWithProviders(<PullSecret namespace={testNamespace} />);
+
+    expect(screen.getByText('Error loading default pull Secrets')).toBeVisible();
+    expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Not configured' })).not.toBeInTheDocument();
   });
 });
