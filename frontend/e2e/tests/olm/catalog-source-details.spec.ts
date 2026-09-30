@@ -1,5 +1,6 @@
 import { test, expect } from '../../fixtures';
 import { CatalogSourcePage } from '../../pages/catalog-source-page';
+import { ListPage } from '../../pages/list-page';
 
 const managedCatalogSource = {
   name: 'redhat-operators',
@@ -70,6 +71,16 @@ test.describe('CatalogSource details page', { tag: ['@admin'] }, () => {
     await test.step('Verify PackageManifest table on Operators tab', async () => {
       await catalogSourcePage.selectOperatorsTab();
       await expect(catalogSourcePage.getPackageManifestTable()).toBeAttached();
+    });
+
+    await test.step('Verify PackageManifest filtering and saved column widths', async () => {
+      const listPage = new ListPage(page);
+      await listPage.waitForRows();
+      await listPage.filterByNameInput('no-matching-package');
+      await expect(listPage.cells).toHaveCount(0);
+      await listPage.filterByNameInput('');
+      await expect(listPage.cells.first()).toBeVisible();
+      await listPage.verifyColumnResizing('name');
     });
   });
 

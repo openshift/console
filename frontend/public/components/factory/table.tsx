@@ -23,8 +23,6 @@ import type {
   RowFilter as RowFilterExt,
   K8sResourceKindReference,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import { defaultChannelFor } from '@console/operator-lifecycle-manager/src/components';
-import type { PackageManifestKind } from '@console/operator-lifecycle-manager/src/types';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
@@ -98,10 +96,6 @@ export const sorts = {
   volumeSnapshotSource: (snapshot: VolumeSnapshotKind): string => snapshotSource(snapshot),
   snapshotLastRestore: (snapshot: K8sResourceKind, { restores }) =>
     restores[getName(snapshot)]?.status?.restoreTime,
-  sortPackageManifestByDefaultChannelName: (packageManifest: PackageManifestKind): string => {
-    const channel = defaultChannelFor(packageManifest);
-    return channel?.currentCSVDesc?.displayName;
-  },
   buildDuration: (buildConfig) =>
     displayDurationInWords(
       buildConfig?.latestBuild?.status?.startTimestamp,
