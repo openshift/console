@@ -1,115 +1,132 @@
 import type { FC } from 'react';
-import { useMemo } from 'react';
-import { sortable, SortByDirection } from '@patternfly/react-table';
-import i18next from 'i18next';
+import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import {
+  ConsoleDataView,
+  actionsCellProps,
+  getNameCellProps,
+  getNameColumnProps,
+} from '@console/app/src/components/data-view/ConsoleDataView';
+import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
+import type {
+  ConsoleDataViewColumn,
+  GetDataViewRows,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { useFlag } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sWatchResource';
-import type { TableProps, RowFunctionArgs } from '@console/internal/components/factory';
-import { Table, TableData } from '@console/internal/components/factory';
-import { ResourceLink } from '@console/internal/components/utils';
+import type { TableProps } from '@console/internal/components/factory/table';
+import { sortResourceByValue } from '@console/internal/components/factory/Table/sort';
+import { ResourceLink } from '@console/internal/components/utils/resource-link';
 import { referenceFor, referenceForModel } from '@console/internal/module/k8s';
-import {
-  LazyActionMenu,
-  KEBAB_COLUMN_CLASS,
-} from '@console/shared/src/components/actions/LazyActionMenu';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { BUILDRUN_TO_BUILD_REFERENCE_LABEL } from '../../const';
-import { BuildRunModel, BuildRunModelV1Alpha1 } from '../../models';
+import { BuildModel, BuildRunModel, BuildRunModelV1Alpha1 } from '../../models';
 import type { Build, BuildRun } from '../../types';
 import { isBuildRunNewerThen, isV1Alpha1Resource } from '../../utils';
 import BuildRunDuration, { getBuildRunDuration } from '../buildrun-duration/BuildRunDuration';
 import BuildRunStatus, { getBuildRunStatus } from '../buildrun-status/BuildRunStatus';
+import type { BuildRunStatusFilters } from '../useBuildRunStatusFilter';
+import { useBuildRunStatusFilter } from '../useBuildRunStatusFilter';
 import BuildOutput from './BuildOutput';
 
-const columnClassNames = [
-  '', // name
-  '', // namespace
-  '', // output
-  'pf-m-hidden pf-m-visible-on-lg', // last run
-  'pf-m-hidden pf-m-visible-on-lg', // last run status
-  'pf-m-hidden pf-m-visible-on-lg', // last run time
-  'pf-m-hidden pf-m-visible-on-lg', // last run duration
-  KEBAB_COLUMN_CLASS,
-];
-
-const BuildHeader = () => {
-  // This function is NOT called as component, so we can not use useTranslation here.
-  const t = i18next.t.bind(i18next);
-
-  return [
-    {
-      title: t('shipwright-plugin~Name'),
-      sortField: 'metadata.name',
-      transforms: [sortable],
-      props: { className: columnClassNames[0] },
-    },
-    {
-      id: 'namespace',
-      title: t('shipwright-plugin~Namespace'),
-      sortField: 'metadata.namespace',
-      transforms: [sortable],
-      props: { className: columnClassNames[1] },
-    },
-    {
-      title: t('shipwright-plugin~Output'),
-      props: { className: columnClassNames[2] },
-    },
-    {
-      title: t('shipwright-plugin~Last run'),
-      transforms: [sortable],
-      sortField: 'latestBuild.metadata.name',
-      props: { className: columnClassNames[3] },
-    },
-    {
-      title: t('shipwright-plugin~Last run status'),
-      transforms: [sortable],
-      sortFunc: 'latestBuildStatus',
-      props: { className: columnClassNames[4] },
-    },
-    {
-      title: t('shipwright-plugin~Last run time'),
-      transforms: [sortable],
-      sortField: 'latestBuild.status.completionTime',
-      props: { className: columnClassNames[5] },
-    },
-    {
-      title: t('shipwright-plugin~Last run duration'),
-      transforms: [sortable],
-      sortFunc: 'latestRunDuration',
-      props: { className: columnClassNames[6] },
-    },
-    {
-      title: '',
-      props: { className: columnClassNames[7] },
-    },
-  ];
+const useBuildColumns = (): {
+  columns: ConsoleDataViewColumn<Build>[];
+  resetAllColumnWidths: () => void;
+} => {
+  const { t } = useTranslation('shipwright-plugin');
+  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(BuildModel);
+  const columns = useMemo(
+    () => [
+      {
+        id: 'name',
+        resizableProps: getResizableProps('name'),
+        title: t('Name'),
+        sort: 'metadata.name',
+        props: { ...getNameColumnProps(), modifier: 'nowrap' as const },
+      },
+      {
+        id: 'namespace',
+        resizableProps: getResizableProps('namespace'),
+        title: t('Namespace'),
+        sort: 'metadata.namespace',
+        props: { modifier: 'nowrap' as const },
+      },
+      {
+        id: 'output',
+        resizableProps: getResizableProps('output'),
+        title: t('Output'),
+        props: { modifier: 'nowrap' as const },
+      },
+      {
+        id: 'lastRun',
+        resizableProps: getResizableProps('lastRun'),
+        title: t('Last run'),
+        sort: 'latestBuild.metadata.name',
+        props: { modifier: 'nowrap' as const },
+      },
+      {
+        id: 'lastRunStatus',
+        resizableProps: getResizableProps('lastRunStatus'),
+        title: t('Last run status'),
+        sort: (data, direction) =>
+          data.sort(
+            sortResourceByValue(direction, (obj: Build) => getBuildRunStatus(obj.latestBuild)),
+          ),
+        props: { modifier: 'nowrap' as const },
+      },
+      {
+        id: 'lastRunTime',
+        resizableProps: getResizableProps('lastRunTime'),
+        title: t('Last run time'),
+        // Sorts on the timestamp the cell renders. Sorting on status.completionTime ordered the
+        // column by a value that is not shown, and that a still-running BuildRun does not have.
+        sort: 'latestBuild.metadata.creationTimestamp',
+        props: { modifier: 'nowrap' as const },
+      },
+      {
+        id: 'lastRunDuration',
+        resizableProps: getResizableProps('lastRunDuration'),
+        title: t('Last run duration'),
+        sort: (data, direction) =>
+          data.sort(
+            sortResourceByValue(direction, (obj: Build) => getBuildRunDuration(obj.latestBuild)),
+          ),
+        props: { modifier: 'nowrap' as const },
+      },
+      { id: 'actions', title: '', props: actionsCellProps },
+    ],
+    [t, getResizableProps],
+  );
+  return { columns, resetAllColumnWidths };
 };
 
-const BuildRow: FC<RowFunctionArgs<Build>> = ({ obj: build }) => {
-  const kindReference = referenceFor(build);
-  const context = { [kindReference]: build };
-  const buildRunKindReference = isV1Alpha1Resource(build)
-    ? referenceForModel(BuildRunModelV1Alpha1)
-    : referenceForModel(BuildRunModel);
-
-  return (
-    <>
-      <TableData className={columnClassNames[0]}>
-        <ResourceLink
-          kind={kindReference}
-          name={build.metadata.name}
-          namespace={build.metadata.namespace}
-        />
-      </TableData>
-      <TableData className={columnClassNames[1]} columnID="namespace">
-        <ResourceLink kind="Namespace" name={build.metadata.namespace} />
-      </TableData>
-      <TableData className={columnClassNames[2]}>
-        <BuildOutput buildSpec={build.spec} />
-      </TableData>
-      <TableData className={columnClassNames[3]}>
-        {build.latestBuild ? (
+export const getBuildDataViewRows: GetDataViewRows<Build> = (data, columns) =>
+  data.map(({ obj: build }) => {
+    const kindReference = referenceFor(build);
+    const buildRunKindReference = isV1Alpha1Resource(build)
+      ? referenceForModel(BuildRunModelV1Alpha1)
+      : referenceForModel(BuildRunModel);
+    const rowCells = {
+      name: {
+        cell: (
+          <ResourceLink
+            kind={kindReference}
+            name={build.metadata.name}
+            namespace={build.metadata.namespace}
+          />
+        ),
+        props: getNameCellProps(build.metadata.name),
+      },
+      namespace: { cell: <ResourceLink kind="Namespace" name={build.metadata.namespace} /> },
+      output: {
+        cell: <BuildOutput buildSpec={build.spec} />,
+        // Both of these render a ResourceLink. Without nowrap on the cell itself the resource
+        // name breaks one character per line whenever the column is narrow.
+        props: { modifier: 'nowrap' as const },
+      },
+      lastRun: {
+        cell: build.latestBuild ? (
           <ResourceLink
             kind={buildRunKindReference}
             name={build.latestBuild.metadata?.name}
@@ -117,91 +134,85 @@ const BuildRow: FC<RowFunctionArgs<Build>> = ({ obj: build }) => {
           />
         ) : (
           '-'
-        )}
-      </TableData>
-      <TableData className={columnClassNames[4]}>
-        {build.latestBuild ? <BuildRunStatus buildRun={build.latestBuild} /> : '-'}
-      </TableData>
-      <TableData className={columnClassNames[5]}>
-        {build.latestBuild ? (
-          <Timestamp timestamp={build?.latestBuild.metadata?.creationTimestamp} />
+        ),
+        props: { modifier: 'nowrap' as const },
+      },
+      lastRunStatus: {
+        cell: build.latestBuild ? <BuildRunStatus buildRun={build.latestBuild} /> : '-',
+      },
+      lastRunTime: {
+        cell: build.latestBuild ? (
+          <Timestamp timestamp={build.latestBuild.metadata?.creationTimestamp} />
         ) : (
           '-'
-        )}
-      </TableData>
-      <TableData className={columnClassNames[6]}>
-        {build?.latestBuild ? <BuildRunDuration buildRun={build.latestBuild} /> : '-'}
-      </TableData>
-      <TableData className={columnClassNames[7]}>
-        <LazyActionMenu context={context} />
-      </TableData>
-    </>
-  );
-};
-
-type CustomData = {
-  buildRuns: {
-    latestByBuildName: Record<string, BuildRun>;
-    loaded: boolean;
-    error: Error | undefined;
-  };
-};
+        ),
+      },
+      lastRunDuration: {
+        cell: build.latestBuild ? <BuildRunDuration buildRun={build.latestBuild} /> : '-',
+      },
+      actions: {
+        cell: <LazyActionMenu context={{ [kindReference]: build }} />,
+        props: actionsCellProps,
+      },
+    };
+    return columns.map(({ id }) => ({ id, ...rowCells[id] }));
+  });
 
 type BuildTableProps = TableProps & {
   namespace: string;
+  data: Build[];
 };
 
 export const BuildTable: FC<BuildTableProps> = (props) => {
   const { t } = useTranslation('shipwright-plugin');
+  const { columns, resetAllColumnWidths } = useBuildColumns();
   const buildRunModel = useFlag('SHIPWRIGHT_BUILDRUN')
     ? referenceForModel(BuildRunModel)
     : referenceForModel(BuildRunModelV1Alpha1);
 
-  const [buildRuns, buildRunsLoaded, buildRunsLoadError] = useK8sWatchResource<BuildRun[]>({
+  const [buildRuns] = useK8sWatchResource<BuildRun[]>({
     kind: buildRunModel,
     namespace: props.namespace,
     isList: true,
   });
 
-  const data = useMemo<CustomData>(
-    () => ({
-      buildRuns: {
-        latestByBuildName: buildRuns.reduce<Record<string, BuildRun>>((acc, buildRun) => {
-          const name = buildRun.metadata.labels?.[BUILDRUN_TO_BUILD_REFERENCE_LABEL];
-          if (
-            !acc[`${name}-${buildRun.metadata.namespace}`] ||
-            isBuildRunNewerThen(buildRun, acc[`${name}-${buildRun.metadata.namespace}`])
-          ) {
-            acc[`${name}-${buildRun.metadata.namespace}`] = buildRun;
-          }
-          return acc;
-        }, {}),
-        loaded: buildRunsLoaded,
-        error: buildRunsLoadError,
-      },
-    }),
-    [buildRuns, buildRunsLoaded, buildRunsLoadError],
+  const latestByBuildName = useMemo(
+    () =>
+      buildRuns.reduce<Record<string, BuildRun>>((acc, buildRun) => {
+        const name = buildRun.metadata.labels?.[BUILDRUN_TO_BUILD_REFERENCE_LABEL];
+        const key = `${name}-${buildRun.metadata.namespace}`;
+        if (!acc[key] || isBuildRunNewerThen(buildRun, acc[key])) {
+          acc[key] = buildRun;
+        }
+        return acc;
+      }, {}),
+    [buildRuns],
   );
-  const buildResource = props.data?.map((sBuild) => {
-    sBuild.latestBuild =
-      data.buildRuns.latestByBuildName[`${sBuild.metadata.name}-${sBuild.metadata.namespace}`];
-    return sBuild;
-  });
+
+  const data = useMemo(
+    () =>
+      props.data?.map((build) => ({
+        ...build,
+        latestBuild: latestByBuildName[`${build.metadata.name}-${build.metadata.namespace}`],
+      })),
+    [props.data, latestByBuildName],
+  );
+
+  const getStatus = useCallback((build: Build) => getBuildRunStatus(build.latestBuild), []);
+  const statusFilter = useBuildRunStatusFilter<Build>(t('BuildRun status'), getStatus);
 
   return (
-    <Table
+    <ConsoleDataView<Build, unknown, BuildRunStatusFilters>
       {...props}
-      data={buildResource}
-      aria-label={t('Builds')}
-      Header={BuildHeader}
-      Row={BuildRow}
-      defaultSortField="metadata.name"
-      defaultSortOrder={SortByDirection.asc}
-      customSorts={{
-        latestBuildStatus: (obj) => getBuildRunStatus(obj.latestBuild),
-        latestRunDuration: (obj) => getBuildRunDuration(obj.latestBuild),
-      }}
-      virtualize
+      {...statusFilter}
+      label={t('Builds')}
+      data={data}
+      loaded={props.loaded}
+      columns={columns}
+      getDataViewRows={getBuildDataViewRows}
+      hideColumnManagement
+      isResizable
+      resetAllColumnWidths={resetAllColumnWidths}
     />
   );
 };
