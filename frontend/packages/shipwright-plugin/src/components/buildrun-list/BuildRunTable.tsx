@@ -1,5 +1,6 @@
 import type { FC } from 'react';
 import { useMemo } from 'react';
+import { SortByDirection } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import {
   ConsoleDataView,
@@ -118,6 +119,8 @@ export const BuildRunTable: FC<TableProps> = (props) => {
       loaded={props.loaded}
       columns={columns}
       getDataViewRows={getBuildRunDataViewRows}
+      defaultSortColumnId="started"
+      defaultSortDirection={SortByDirection.desc}
       hideColumnManagement
       isResizable
       resetAllColumnWidths={resetAllColumnWidths}

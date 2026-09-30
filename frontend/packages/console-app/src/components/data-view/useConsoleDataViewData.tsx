@@ -27,6 +27,8 @@ export const useConsoleDataViewData = <
   filteredData,
   filters,
   getDataViewRows,
+  defaultSortColumnId,
+  defaultSortDirection,
   showNamespaceOverride,
   columnManagementID,
   customRowData,
@@ -37,6 +39,8 @@ export const useConsoleDataViewData = <
   filteredData: TData[];
   filters: TFilters;
   getDataViewRows: GetDataViewRows<TData, TCustomRowData>;
+  defaultSortColumnId?: string;
+  defaultSortDirection?: SortByDirection;
   showNamespaceOverride?: boolean;
   columnManagementID?: string;
   customRowData?: TCustomRowData;
@@ -139,8 +143,17 @@ export const useConsoleDataViewData = <
     });
   }, [activeColumns, t, isResizable, selection, filteredData]);
 
+  // Resolved from the column id rather than taken as an index, so that hiding or reordering
+  // columns cannot silently point the default sort at a different column.
+  const defaultSortColumnIndex = useMemo(() => {
+    const index = dataViewColumns.findIndex(({ id }) => id === defaultSortColumnId);
+    return index === -1 ? undefined : index;
+  }, [dataViewColumns, defaultSortColumnId]);
+
   const { sortBy, onSort } = useConsoleDataViewSort<TData>({
     columns: dataViewColumns,
+    sortColumnIndex: defaultSortColumnIndex,
+    sortDirection: defaultSortDirection,
   });
 
   const sortedData = useMemo(() => {

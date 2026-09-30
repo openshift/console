@@ -632,6 +632,10 @@ export interface ConsoleDataViewProps<
   getDataViewRows: GetDataViewRows<TData, TCustomRowData>;
   /** (optional) Additional data made available to each row via `RowProps.rowData`. */
   customRowData?: TCustomRowData;
+  /** (optional) The `id` of the column to sort by before the user picks one. Defaults to the first column, and is ignored if no column has this id. A `sortBy` URL parameter takes precedence; note that `sortBy` names its column by translated title, not by id. */
+  defaultSortColumnId?: string;
+  /** (optional) The direction to sort by before the user picks one. Defaults to ascending. An `orderBy` URL parameter takes precedence. */
+  defaultSortDirection?: SortByDirection;
   /** (optional) If true, a column with id `'namespace'` is kept active regardless of column management selections or the active namespace, instead of being hidden. Has no effect unless such a column is included in `columns`. */
   showNamespaceOverride?: boolean;
   /** (optional) Hides both the name and label filters. */
@@ -792,7 +796,7 @@ export interface SwaggerDefinitions {
  * const specDescription = definition?.properties?.spec?.description;
  * ```
  */
-export type DefinitionFor = (model: K8sModel) => SwaggerDefinition;
+export type DefinitionFor = (model: K8sModel) => SwaggerDefinition | null;
 
 export type ListPageHeaderProps = {
   /** A badge that is displayed next to the title of the heading */

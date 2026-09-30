@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
 import type { K8sKind } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import type {
+  DefinitionFor,
   SwaggerDefinition,
   SwaggerDefinitions,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
@@ -53,19 +54,22 @@ export const fetchSwagger = async (): Promise<SwaggerDefinitions> => {
   }
 };
 
-export const definitionFor = _.memoize((model: K8sKind): SwaggerDefinition => {
-  if (!swaggerDefinitions) {
-    return null;
-  }
-  const key = getDefinitionKey(model, swaggerDefinitions);
-  // Some schemas might use $ref to reference an external schmema. In order for $ref to resolve,
-  // the referenced schema must be defined in the `definitions` property of the
-  // referencing schema.
-  return {
-    definitions: swaggerDefinitions,
-    ...(swaggerDefinitions?.[key] ?? {}),
-  };
-}, referenceForModel);
+export const definitionFor: DefinitionFor = _.memoize(
+  (model: K8sKind): SwaggerDefinition | null => {
+    if (!swaggerDefinitions) {
+      return null;
+    }
+    const key = getDefinitionKey(model, swaggerDefinitions);
+    // Some schemas might use $ref to reference an external schmema. In order for $ref to resolve,
+    // the referenced schema must be defined in the `definitions` property of the
+    // referencing schema.
+    return {
+      definitions: swaggerDefinitions,
+      ...(swaggerDefinitions?.[key] ?? {}),
+    };
+  },
+  referenceForModel,
+);
 
 const getRef = (definition: SwaggerDefinition): string => {
   const ref = definition.$ref || _.get(definition, 'items.$ref');

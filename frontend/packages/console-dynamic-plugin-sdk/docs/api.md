@@ -368,6 +368,8 @@ const PDBList: React.FC<Props> = ({ data, loaded }) => (
 | `getObjectMetadata` | (optional) Extracts the name and labels used by the built-in filters from a data item. |
 | `matchesAdditionalFilters` | (optional) Determines whether a data item matches any custom filters. |
 | `customRowData` | (optional) Additional data made available to each row. |
+| `defaultSortColumnId` | (optional) The `id` of the column to sort by before the user picks one. Defaults to the first column, and is ignored if no column has this id. A `sortBy` URL parameter takes precedence; note that `sortBy` names its column by translated title, not by id. |
+| `defaultSortDirection` | (optional) The direction to sort by before the user picks one. Defaults to ascending. An `orderBy` URL parameter takes precedence. |
 | `showNamespaceOverride` | (optional) If true, a column with id `'namespace'` is kept active regardless of column management selections or the active namespace. |
 | `hideNameLabelFilters` | (optional) Hides both the name and label filters. |
 | `hideLabelFilter` | (optional) Hides only the label filter, keeping the name filter. |

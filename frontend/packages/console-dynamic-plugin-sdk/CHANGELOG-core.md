@@ -14,6 +14,7 @@ table in [Console dynamic plugins README](./README.md).
 
 - Removed `immutable` dependency from the redux store and from the package ([CONSOLE-5001], [#17024])
 - Added `ConsoleDataView` component, related utilities for `ConsoleDataView`, and `definitionFor` ([CONSOLE-5131], [#17307])
+- Added optional `defaultSortColumnId` and `defaultSortDirection` props to `ConsoleDataView`, so a table can open sorted by a column other than the first ([CONSOLE-5131], [#17340])
 
 ## 4.23.0-prerelease.6 - TBD
 
@@ -364,3 +365,4 @@ table in [Console dynamic plugins README](./README.md).
 [#16941]: https://github.com/openshift/console/pull/16941
 [#17024]: https://github.com/openshift/console/pull/17024
 [#17307]: https://github.com/openshift/console/pull/17307
+[#17340]: https://github.com/openshift/console/pull/17340

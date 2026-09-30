@@ -219,6 +219,7 @@ const ImageVulnerabilitiesTable: FC<ImageVulnerabilitiesTableProps> = (props) =>
       columns={columns}
       getDataViewRows={getImageVulnerabilityDataViewRows}
       getObjectMetadata={getObjectMetadata}
+      defaultSortColumnId="severity"
       initialFilters={initialFilters}
       additionalFilterNodes={additionalFilterNodes}
       matchesAdditionalFilters={matchesAdditionalFilters}
