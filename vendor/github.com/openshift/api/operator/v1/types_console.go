@@ -338,6 +338,20 @@ type ConsoleCustomization struct {
 	// +listMapKey=id
 	// +optional
 	Perspectives []Perspective `json:"perspectives"`
+	// customLoginServerURL is an optional field that, when set, overrides the server
+	// address displayed in the 'oc login' command shown in the console. Use this
+	// to advertise an alternative API endpoint (for example, a Proxy
+	// or any other front-end that accepts oc login traffic) without changing
+	// how the console itself communicates with the Kubernetes API server.
+	// When omitted, the console falls back to the standard cluster API server URL.
+	// The value must be either empty or an absolute HTTPS URL (i.e. starting with
+	// 'https://') and must not exceed 1024 characters.
+	// +openshift:enable:FeatureGate=ConsoleCustomLoginServerURL
+	// +optional
+	// +kubebuilder:validation:XValidation:rule="size(self) == 0 || isURL(self)",message="custom login server url must be a valid absolute URL"
+	// +kubebuilder:validation:XValidation:rule="size(self) == 0 || url(self).getScheme() == 'https'",message="custom login server url scheme must be https"
+	// +kubebuilder:validation:MaxLength=1024
+	CustomLoginServerURL string `json:"customLoginServerURL,omitempty"`
 }
 
 // ProjectAccess contains options for project access roles
