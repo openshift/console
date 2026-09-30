@@ -105,7 +105,7 @@
       "id": "console.olmv1.enabled",
       "label": "%olm-v1~OLMv1 Catalog%",
       "groupId": "olmv1-catalog",
-      "description": "%olm-v1~Enable the OLMv1 catalog experience. OLMv1 is a technology preview feature that provides an updated operator catalog interface.%",
+      "description": "%olm-v1~Enable the OLMv1 catalog experience. OLMv1 is a Technology Preview feature that provides an updated Operator catalog interface.%",
       "field": {
         "type": "checkbox",
         "userSettingsKey": "console.olmv1.enabled",
@@ -143,7 +143,9 @@
         "version": "v1",
         "kind": "ClusterExtension"
       },
-      "provider": { "$codeRef": "defaultActionsProvider.useDefaultActionsProvider" }
+      "provider": {
+        "$codeRef": "clusterExtensionActionsProvider.useClusterExtensionActionsProvider"
+      }
     },
     "flags": {
       "required": ["CLUSTER_EXTENSION_API"]
@@ -154,7 +156,7 @@
     "properties": {
       "id": "installed-software",
       "section": "ecosystem",
-      "name": "%olm-v1~Installed Software%",
+      "name": "%olm-v1~Installed software%",
       "insertAfter": "developer-catalog",
       "href": "/installed-software",
       "namespaced": true,

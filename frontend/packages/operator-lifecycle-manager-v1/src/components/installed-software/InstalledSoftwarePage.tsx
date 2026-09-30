@@ -55,7 +55,7 @@ const InstalledSoftwarePage: FC = () => {
   return (
     <>
       <NamespaceBar />
-      <MultiTabListPage title={t('Installed Software')} pages={pages} />
+      <MultiTabListPage title={t('Installed software')} pages={pages} />
     </>
   );
 };

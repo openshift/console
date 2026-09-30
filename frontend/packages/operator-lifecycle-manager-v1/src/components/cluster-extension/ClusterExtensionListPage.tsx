@@ -15,11 +15,11 @@ import type {
 import Status from '@console/dynamic-plugin-sdk/src/app/components/status/Status';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ResourceLink } from '@console/internal/components/utils/resource-link';
+import { ClusterExtensionModel } from '@console/internal/models';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DASH } from '@console/shared/src/constants/ui';
-import { ClusterExtensionModel } from '../../models';
 import type { ClusterExtensionKind } from '../../types';
 
 const tableColumnInfo = [
