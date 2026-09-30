@@ -9,7 +9,10 @@ import {
   ConsoleDataView,
   nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import type {
+  ConsoleDataViewColumn,
+  GetDataViewRows,
+} from '@console/app/src/components/data-view/types';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
@@ -18,7 +21,7 @@ import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { LoadingBox } from '@console/shared/src/components/loading/LoadingBox';
 import { DASH } from '@console/shared/src/constants/ui';
 import { ConfigMapModel } from '../models/index';
-import type { ConfigMapKind, TableColumn } from '../module/k8s';
+import type { ConfigMapKind } from '../module/k8s';
 import { referenceForModel } from '../module/k8s';
 import { ConfigMapData, ConfigMapBinaryData } from './configmap-and-secret-data';
 import { DetailsPage } from './factory/details';
@@ -39,8 +42,8 @@ const tableColumnInfo = [
   { id: 'actions' },
 ];
 
-const getDataViewRows: GetDataViewRows<ConfigMapKind> = (data, columns) => {
-  return data.map(({ obj: configMap }) => {
+const getDataViewRows: GetDataViewRows<ConfigMapKind> = (data, columns) =>
+  data.map(({ obj: configMap }) => {
     const { name, namespace } = configMap.metadata;
 
     const rowCells = {
@@ -78,16 +81,15 @@ const getDataViewRows: GetDataViewRows<ConfigMapKind> = (data, columns) => {
       };
     });
   });
-};
 
 const useConfigMapsColumns = (): {
-  columns: TableColumn<ConfigMapKind>[];
+  columns: ConsoleDataViewColumn<ConfigMapKind>[];
   resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation('public');
   const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(ConfigMapModel);
 
-  const columns = useMemo(
+  const columns = useMemo<ConsoleDataViewColumn<ConfigMapKind>[]>(
     () => [
       {
         title: t('Name'),
@@ -96,7 +98,7 @@ const useConfigMapsColumns = (): {
         resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: {
           ...nameCellProps,
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -105,7 +107,7 @@ const useConfigMapsColumns = (): {
         sort: 'metadata.namespace',
         resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -114,7 +116,7 @@ const useConfigMapsColumns = (): {
         sort: (data, direction) => data.sort(sortResourceByValue(direction, sorts.dataSize)),
         resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -123,7 +125,7 @@ const useConfigMapsColumns = (): {
         sort: 'metadata.creationTimestamp',
         resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -178,28 +180,26 @@ export const ConfigMapsPage: FC<ConfigMapsPageProps> = (props) => {
 
 export const ConfigMapsDetailsPage: FC = (props) => {
   const { t } = useTranslation('public');
-  const ConfigMapDetails = ({ obj: configMap }: { obj: ConfigMapKind }) => {
-    return (
-      <>
-        <PaneBody>
-          <SectionHeading text={t('ConfigMap details')} />
-          <Grid hasGutter>
-            <GridItem md={6}>
-              <ResourceSummary resource={configMap} />
-            </GridItem>
-          </Grid>
-        </PaneBody>
-        <PaneBody>
-          <SectionHeading text={t('Data')} />
-          <ConfigMapData data={configMap.data} label={t('Data')} />
-        </PaneBody>
-        <PaneBody>
-          <SectionHeading text={t('Binary data')} />
-          <ConfigMapBinaryData data={configMap.binaryData} />
-        </PaneBody>
-      </>
-    );
-  };
+  const ConfigMapDetails = ({ obj: configMap }: { obj: ConfigMapKind }) => (
+    <>
+      <PaneBody>
+        <SectionHeading text={t('ConfigMap details')} />
+        <Grid hasGutter>
+          <GridItem md={6}>
+            <ResourceSummary resource={configMap} />
+          </GridItem>
+        </Grid>
+      </PaneBody>
+      <PaneBody>
+        <SectionHeading text={t('Data')} />
+        <ConfigMapData data={configMap.data} label={t('Data')} />
+      </PaneBody>
+      <PaneBody>
+        <SectionHeading text={t('Binary data')} />
+        <ConfigMapBinaryData data={configMap.binaryData} />
+      </PaneBody>
+    </>
+  );
 
   return (
     <DetailsPage

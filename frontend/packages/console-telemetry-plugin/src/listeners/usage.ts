@@ -5,22 +5,19 @@ import { consoleFetch } from '@console/dynamic-plugin-sdk/src/lib-core';
  * Fire and forget implementation to send usage data to the backend.
  * See pkg/usage/ for more information.
  */
-const trackUsage = (data: { event: string; perspective: string }) => {
-  return consoleFetch('/api/metrics/usage', {
+const trackUsage = (data: { event: string; perspective: string }) =>
+  consoleFetch('/api/metrics/usage', {
     method: 'POST',
     body: JSON.stringify(data),
   })
     .then((response) => {
       if (!response.ok) {
-        // eslint-disable-next-line no-console
         console.error('console-telemetry-plugin: unable to track usage:', response.statusText);
       }
     })
     .catch((error) => {
-      // eslint-disable-next-line no-console
       console.error('console-telemetry-plugin: unable to track usage:', error);
     });
-};
 
 export const eventListener: TelemetryEventListener = async (
   eventType: string,

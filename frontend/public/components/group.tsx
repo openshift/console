@@ -10,16 +10,20 @@ import {
   actionsCellProps,
   nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import type {
+  ConsoleDataViewColumn,
+  GetDataViewRows,
+} from '@console/app/src/components/data-view/types';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import { k8sPatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DASH } from '@console/shared/src/constants/ui';
 import { useWarningModal } from '@console/shared/src/hooks/useWarningModal';
 import { GroupModel, UserModel } from '../models';
-import type { GroupKind, TableColumn, K8sResourceKind } from '../module/k8s';
+import type { GroupKind, K8sResourceKind } from '../module/k8s';
 import { referenceForModel } from '../module/k8s';
 import { DetailsPage } from './factory/details';
 import { ListPage } from './factory/list-page';
@@ -35,8 +39,8 @@ import { EmptyBox, LoadingBox } from './utils/status-box';
 
 const tableColumnInfo = [{ id: 'name' }, { id: 'users' }, { id: 'created' }, { id: 'actions' }];
 
-const getDataViewRows: GetDataViewRows<GroupKind> = (data, columns) => {
-  return data.map(({ obj }) => {
+const getDataViewRows: GetDataViewRows<GroupKind> = (data, columns) =>
+  data.map(({ obj }) => {
     const { metadata } = obj;
     const resourceKind = referenceForModel(GroupModel);
     const context = { [resourceKind]: obj };
@@ -74,16 +78,15 @@ const getDataViewRows: GetDataViewRows<GroupKind> = (data, columns) => {
       };
     });
   });
-};
 
 const useGroupColumns = (): {
-  columns: TableColumn<GroupKind>[];
+  columns: ConsoleDataViewColumn<GroupKind>[];
   resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation('public');
   const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(GroupModel);
 
-  const columns: TableColumn<GroupKind>[] = useMemo(
+  const columns: ConsoleDataViewColumn<GroupKind>[] = useMemo(
     () => [
       {
         title: t('Name'),
@@ -92,7 +95,7 @@ const useGroupColumns = (): {
         resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: {
           ...nameCellProps,
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -101,7 +104,7 @@ const useGroupColumns = (): {
         sort: 'users.length',
         resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -110,7 +113,7 @@ const useGroupColumns = (): {
         sort: 'metadata.creationTimestamp',
         resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -251,22 +254,23 @@ const RoleBindingsTab: FC<RoleBindingsTabProps> = ({ obj }) => (
   />
 );
 
-export const GroupDetailsPage: FC = (props) => {
-  return (
-    <DetailsPage
-      {...props}
-      kind={referenceForModel(GroupModel)}
-      customActionMenu={(_kindObj, data: K8sResourceKind) => (
-        <LazyActionMenu context={{ [referenceForModel(GroupModel)]: data }} />
-      )}
-      pages={[
-        navFactory.details(GroupDetails),
-        navFactory.editYaml(),
-        navFactory.roles(RoleBindingsTab),
-      ]}
-    />
-  );
-};
+export const GroupDetailsPage: FC = (props) => (
+  <DetailsPage
+    {...props}
+    kind={referenceForModel(GroupModel)}
+    customActionMenu={(_kindObj, data: K8sResourceKind) => (
+      <LazyActionMenu
+        context={{ [referenceForModel(GroupModel)]: data }}
+        variant={ActionMenuVariant.DROPDOWN}
+      />
+    )}
+    pages={[
+      navFactory.details(GroupDetails),
+      navFactory.editYaml(),
+      navFactory.roles(RoleBindingsTab),
+    ]}
+  />
+);
 
 type UserKebabProps = {
   group: GroupKind;

@@ -36,20 +36,18 @@ export const OpaqueSecretForm: FC<SecretSubFormProps> = ({ onChange, base64Strin
 
   return (
     <>
-      {opaqueDataEntries.map((entry, index) => {
-        return (
-          <>
-            <OpaqueSecretFormEntry
-              key={entry.uid}
-              index={index}
-              entry={entry}
-              onChange={updateEntry}
-              removeEntry={removeEntry}
-              showRemoveButton={opaqueDataEntries.length > 1}
-            />
-          </>
-        );
-      })}
+      {opaqueDataEntries.map((entry, index) => (
+        <>
+          <OpaqueSecretFormEntry
+            key={entry.uid}
+            index={index}
+            entry={entry}
+            onChange={updateEntry}
+            removeEntry={removeEntry}
+            showRemoveButton={opaqueDataEntries.length > 1}
+          />
+        </>
+      ))}
       <ActionGroup className="pf-v6-u-m-0">
         <Button
           onClick={() => addEntry()}

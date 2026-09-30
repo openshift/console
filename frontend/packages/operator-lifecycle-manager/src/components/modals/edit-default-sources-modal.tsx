@@ -71,6 +71,7 @@ const EditDefaultSourcesModal: FC<EditDefaultSourcesModalProps> = ({
     <>
       <ModalHeader
         title={t('Edit default sources')}
+        data-test="modal-title"
         data-test-id="modal-title"
         labelId="edit-default-sources-modal-title"
       />
@@ -119,7 +120,12 @@ const EditDefaultSourcesModal: FC<EditDefaultSourcesModalProps> = ({
         >
           {t('Save')}
         </Button>
-        <Button variant="link" onClick={cancel} data-test-id="modal-cancel-action">
+        <Button
+          variant="link"
+          onClick={cancel}
+          data-test="modal-cancel-action"
+          data-test-id="modal-cancel-action"
+        >
           {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>
@@ -129,18 +135,16 @@ const EditDefaultSourcesModal: FC<EditDefaultSourcesModalProps> = ({
 
 export const EditDefaultSourcesModalOverlay: OverlayComponent<EditDefaultSourcesModalProps> = (
   props,
-) => {
-  return (
-    <Modal
-      variant={ModalVariant.small}
-      isOpen
-      onClose={props.closeOverlay}
-      aria-labelledby="edit-default-sources-modal-title"
-    >
-      <EditDefaultSourcesModal {...props} close={props.closeOverlay} cancel={props.closeOverlay} />
-    </Modal>
-  );
-};
+) => (
+  <Modal
+    variant={ModalVariant.small}
+    isOpen
+    onClose={props.closeOverlay}
+    aria-labelledby="edit-default-sources-modal-title"
+  >
+    <EditDefaultSourcesModal {...props} close={props.closeOverlay} cancel={props.closeOverlay} />
+  </Modal>
+);
 
 type EditDefaultSourcesModalProps = {
   operatorHub: OperatorHubKind;

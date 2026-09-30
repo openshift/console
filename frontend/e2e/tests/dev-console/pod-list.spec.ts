@@ -27,38 +27,46 @@ async function createTestPod(k8sClient: KubernetesClient, ns: string): Promise<v
   });
 }
 
-test.describe('Pod list - Receiving Traffic column', { tag: ['@dev-console', '@regression'] }, () => {
-  test('shows Receiving Traffic column for a project', async ({ page, k8sClient, cleanup }) => {
-    const ns = `aut-pods-project-${Date.now()}`;
-    const podList = new PodListPage(page);
+test.describe(
+  'Pod list - Receiving Traffic column',
+  { tag: ['@dev-console', '@regression'] },
+  () => {
+    test('shows Receiving Traffic column for a project', async ({ page, k8sClient, cleanup }) => {
+      const ns = `aut-pods-project-${Date.now()}`;
+      const podList = new PodListPage(page);
 
-    await test.step('Set up namespace with a pod', async () => {
-      await k8sClient.createNamespace(ns);
-      cleanup.trackNamespace(ns);
-      await createTestPod(k8sClient, ns);
+      await test.step('Set up namespace with a pod', async () => {
+        await k8sClient.createNamespace(ns);
+        cleanup.trackNamespace(ns);
+        await createTestPod(k8sClient, ns);
+      });
+
+      await test.step('Enable Receiving Traffic column and verify', async () => {
+        await podList.navigateToPods(ns);
+        await podList.showReceivingTrafficColumn();
+        await expect(podList.getColumnHeader('Receiving Traffic')).toBeVisible();
+      });
     });
 
-    await test.step('Enable Receiving Traffic column and verify', async () => {
-      await podList.navigateToPods(ns);
-      await podList.showReceivingTrafficColumn();
-      await expect(podList.getColumnHeader('Receiving Traffic')).toBeVisible();
-    });
-  });
+    test('shows Receiving Traffic column for all projects', async ({
+      page,
+      k8sClient,
+      cleanup,
+    }) => {
+      const ns = `aut-pods-all-${Date.now()}`;
+      const podList = new PodListPage(page);
 
-  test('shows Receiving Traffic column for all projects', async ({ page, k8sClient, cleanup }) => {
-    const ns = `aut-pods-all-${Date.now()}`;
-    const podList = new PodListPage(page);
+      await test.step('Set up namespace with a pod', async () => {
+        await k8sClient.createNamespace(ns);
+        cleanup.trackNamespace(ns);
+        await createTestPod(k8sClient, ns);
+      });
 
-    await test.step('Set up namespace with a pod', async () => {
-      await k8sClient.createNamespace(ns);
-      cleanup.trackNamespace(ns);
-      await createTestPod(k8sClient, ns);
+      await test.step('Enable Receiving Traffic column and verify', async () => {
+        await podList.navigateToPodsAllProjects();
+        await podList.showReceivingTrafficColumn();
+        await expect(podList.getColumnHeader('Receiving Traffic')).toBeVisible();
+      });
     });
-
-    await test.step('Enable Receiving Traffic column and verify', async () => {
-      await podList.navigateToPodsAllProjects();
-      await podList.showReceivingTrafficColumn();
-      await expect(podList.getColumnHeader('Receiving Traffic')).toBeVisible();
-    });
-  });
-});
+  },
+);

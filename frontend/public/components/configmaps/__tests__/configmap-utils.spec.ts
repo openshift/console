@@ -70,12 +70,12 @@ describe('configmap-utils', () => {
   });
 
   describe('getConfigMapKeyValues', () => {
-    it('should return empty array for invalid values ', () => {
+    it('should return empty array for invalid values', () => {
       expect(getConfigMapKeyValues(null, '')).toEqual([]);
       expect(getConfigMapKeyValues(undefined, '')).toEqual([]);
     });
 
-    it('should return empty array for configmap without data or binaryData fields ', () => {
+    it('should return empty array for configmap without data or binaryData fields', () => {
       expect(
         getConfigMapKeyValues(
           {

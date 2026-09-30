@@ -94,14 +94,12 @@ const TelemetryUserPreferenceDropdown: FC = () => {
   const { t } = useTranslation('console-telemetry-plugin');
   const fireTelemetryEvent = useTelemetry();
 
-  const [
-    currentUserPreferenceTelemetryValue,
-    setCurrentUserPreferenceTelemetryValue,
-  ] = useUserPreference<USER_TELEMETRY_ANALYTICS>(
-    PREFERRED_TELEMETRY_USER_PREFERENCE_KEY,
-    null,
-    true,
-  );
+  const [currentUserPreferenceTelemetryValue, setCurrentUserPreferenceTelemetryValue] =
+    useUserPreference<USER_TELEMETRY_ANALYTICS>(
+      PREFERRED_TELEMETRY_USER_PREFERENCE_KEY,
+      null,
+      true,
+    );
 
   const onChange = (selectedOption: TelemetryAnalyticsSelectOptions) => {
     fireTelemetryEvent('Telemetry user preference changes', {

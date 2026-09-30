@@ -118,23 +118,18 @@ const nodeDragSourceSpec = (
   canEdit: boolean = false,
 ): NodeDragSourceSpecType => ({
   item: { type: NODE_DRAG_TYPE },
-  operation: (monitor, props) => {
-    return (canEdit || props.canEdit) &&
-      allowRegroup &&
-      isWorkloadRegroupable(props.element as Node)
+  operation: (monitor, props) =>
+    (canEdit || props.canEdit) && allowRegroup && isWorkloadRegroupable(props.element as Node)
       ? {
           [Modifiers.SHIFT]: { type: REGROUP_OPERATION, edit: true },
         }
-      : undefined;
-  },
+      : undefined,
   canCancel: (monitor) => monitor.getOperation()?.type === REGROUP_OPERATION,
-  begin: (monitor, props): DragNodeObject => {
-    return {
-      element: props.element,
-      allowRegroup:
-        (canEdit || props.canEdit) && allowRegroup && isWorkloadRegroupable(props.element as Node),
-    };
-  },
+  begin: (monitor, props): DragNodeObject => ({
+    element: props.element,
+    allowRegroup:
+      (canEdit || props.canEdit) && allowRegroup && isWorkloadRegroupable(props.element as Node),
+  }),
   end: async (dropResult, monitor, props) => {
     if (!monitor.isCancelled() && monitor.getOperation()?.type === REGROUP_OPERATION) {
       if (monitor.didDrop() && dropResult && props && props.element.getParent() !== dropResult) {
@@ -224,16 +219,13 @@ const graphDropTargetSpec: DropTargetSpec<
 > = {
   accept: [NODE_DRAG_TYPE, EDGE_DRAG_TYPE, CREATE_CONNECTOR_DROP_TYPE],
   hitTest: () => true,
-  canDrop: (item, monitor, props) => {
-    return (
-      monitor.isOver({ shallow: monitor.getItemType() === CREATE_CONNECTOR_DROP_TYPE }) &&
-      ((monitor.getOperation()?.type === REGROUP_OPERATION &&
-        // FIXME: the hasParent check is necessary due to model updates during async actions
-        item.element.hasParent() &&
-        item.element.getParent() !== props.element) ||
-        monitor.getItemType() === CREATE_CONNECTOR_DROP_TYPE)
-    );
-  },
+  canDrop: (item, monitor, props) =>
+    monitor.isOver({ shallow: monitor.getItemType() === CREATE_CONNECTOR_DROP_TYPE }) &&
+    ((monitor.getOperation()?.type === REGROUP_OPERATION &&
+      // FIXME: the hasParent check is necessary due to model updates during async actions
+      item.element.hasParent() &&
+      item.element.getParent() !== props.element) ||
+      monitor.getItemType() === CREATE_CONNECTOR_DROP_TYPE),
   collect: (monitor) => {
     const operation = monitor.getOperation() as EditableDragOperationType;
     const dragInProgress = monitor.isDragging();
@@ -264,17 +256,15 @@ const applicationGroupDropTargetSpec: DropTargetSpec<
     monitor.isOver({ shallow: monitor.getItemType() === CREATE_CONNECTOR_DROP_TYPE }) &&
     (monitor.getOperation()?.type === REGROUP_OPERATION ||
       monitor.getItemType() === CREATE_CONNECTOR_DROP_TYPE),
-  collect: (monitor) => {
-    return {
-      droppable: monitor.isDragging() && monitor.getOperation()?.type === REGROUP_OPERATION,
-      dropTarget: monitor.isOver({ shallow: monitor.getItemType() === CREATE_CONNECTOR_DROP_TYPE }),
-      canDrop:
-        monitor.isDragging() &&
-        (monitor.getOperation()?.type === REGROUP_OPERATION ||
-          monitor.getItemType() === CREATE_CONNECTOR_DROP_TYPE),
-      dragRegroupable: monitor.isDragging() && monitor.getItem()?.allowRegroup,
-    };
-  },
+  collect: (monitor) => ({
+    droppable: monitor.isDragging() && monitor.getOperation()?.type === REGROUP_OPERATION,
+    dropTarget: monitor.isOver({ shallow: monitor.getItemType() === CREATE_CONNECTOR_DROP_TYPE }),
+    canDrop:
+      monitor.isDragging() &&
+      (monitor.getOperation()?.type === REGROUP_OPERATION ||
+        monitor.getItemType() === CREATE_CONNECTOR_DROP_TYPE),
+    dragRegroupable: monitor.isDragging() && monitor.getItem()?.allowRegroup,
+  }),
   dropHint: 'create',
 };
 
@@ -325,22 +315,17 @@ const edgeDragSourceSpec = (
 
 const noDropTargetSpec: DropTargetSpec<GraphElement, any, {}, { element: GraphElement }> = {
   accept: [NODE_DRAG_TYPE, EDGE_DRAG_TYPE, CREATE_CONNECTOR_DROP_TYPE],
-  canDrop: () => {
-    return false;
-  },
+  canDrop: () => false,
 };
 
-const withNoDrop = () => {
-  return withDndDrop<any, any, {}, NodeComponentProps>(noDropTargetSpec);
-};
+const withNoDrop = () => withDndDrop<any, any, {}, NodeComponentProps>(noDropTargetSpec);
 
-const withContextMenu = <E extends GraphElement>(actions: (element: E) => ActionContext) => {
-  return withTopologyContextMenu(
+const withContextMenu = <E extends GraphElement>(actions: (element: E) => ActionContext) =>
+  withTopologyContextMenu(
     actions,
     document.getElementById('popper-container'),
     'odc-topology-context-menu',
   );
-};
 
 const createVisualConnector = (source: Node, target: Node | Graph): ReactElement[] | null => {
   if (isGraph(target)) {
@@ -360,31 +345,33 @@ const createVisualConnector = (source: Node, target: Node | Graph): ReactElement
   return null;
 };
 
-const createConnectorCallback = () => (
-  source: Node,
-  target: Node | Graph,
-  event: DragEvent,
-  dropHints: string[] | undefined,
-): Promise<ReactElement[] | null> => {
-  if (source === target) {
-    return null;
-  }
-  const relationshipProviders = target.getGraph()?.getData()?.relationshipProviderExtensions;
-  const curRelProvider = relationshipProviders?.find(({ uid }) => dropHints.includes(uid));
-  if (curRelProvider) {
-    return curRelProvider.properties.create(source, target);
-  }
+const createConnectorCallback =
+  () =>
+  (
+    source: Node,
+    target: Node | Graph,
+    event: DragEvent,
+    dropHints: string[] | undefined,
+  ): Promise<ReactElement[] | null> => {
+    if (source === target) {
+      return null;
+    }
+    const relationshipProviders = target.getGraph()?.getData()?.relationshipProviderExtensions;
+    const curRelProvider = relationshipProviders?.find(({ uid }) => dropHints.includes(uid));
+    if (curRelProvider) {
+      return curRelProvider.properties.create(source, target);
+    }
 
-  const createConnectors = target.getGraph()?.getData()?.createConnectorExtensions;
-  if (isGraph(target) || !createConnectors) {
+    const createConnectors = target.getGraph()?.getData()?.createConnectorExtensions;
+    if (isGraph(target) || !createConnectors) {
+      return Promise.resolve(createVisualConnector(source, target));
+    }
+    const creator = createConnectors.find((getter) => !!getter(dropHints, source, target));
+    if (creator) {
+      return creator(dropHints, source, target)(source, target);
+    }
     return Promise.resolve(createVisualConnector(source, target));
-  }
-  const creator = createConnectors.find((getter) => !!getter(dropHints, source, target));
-  if (creator) {
-    return creator(dropHints, source, target)(source, target);
-  }
-  return Promise.resolve(createVisualConnector(source, target));
-};
+  };
 
 export {
   NodeComponentProps,

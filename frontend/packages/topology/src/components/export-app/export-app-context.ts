@@ -20,25 +20,27 @@ export const useExportAppFormToast = () => {
   const toast = useToast();
   const { t } = useTranslation('topology');
   const [currentToasts, setCurrentToasts] = useState<{ [key: string]: { toastId: string } }>({});
-  const [exportAppToast, setExportAppToast, exportAppToastLoaded] = useUserPreference<
-    ExportAppUserSettings
-  >(`${USER_PREFERENCE_PREFIX}.exportApp`, {}, true);
+  const [exportAppToast, setExportAppToast, exportAppToastLoaded] =
+    useUserPreference<ExportAppUserSettings>(`${USER_PREFERENCE_PREFIX}.exportApp`, {}, true);
 
   const exportAppWatchResources = useMemo<Record<string, WatchK8sResource>>(() => {
     if (!exportAppToastLoaded || _.isEmpty(exportAppToast)) return {};
     const keys = Object.keys(exportAppToast);
-    const watchRes = keys.reduce((acc, k) => {
-      const { groupVersionKind, name, namespace: resNamespace } = exportAppToast[k];
-      acc[k] = {
-        groupVersionKind: groupVersionKind || getGroupVersionKindForModel(ExportModel),
-        name,
-        namespace: resNamespace,
-        namespaced: true,
-        isList: false,
-        optional: true,
-      };
-      return acc;
-    }, {} as Record<string, WatchK8sResource>);
+    const watchRes = keys.reduce(
+      (acc, k) => {
+        const { groupVersionKind, name, namespace: resNamespace } = exportAppToast[k];
+        acc[k] = {
+          groupVersionKind: groupVersionKind || getGroupVersionKindForModel(ExportModel),
+          name,
+          namespace: resNamespace,
+          namespaced: true,
+          isList: false,
+          optional: true,
+        };
+        return acc;
+      },
+      {} as Record<string, WatchK8sResource>,
+    );
     return watchRes;
   }, [exportAppToast, exportAppToastLoaded]);
 

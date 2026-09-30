@@ -7,12 +7,12 @@ import type { Humanize, TopConsumerPopoverProps } from '@console/dynamic-plugin-
 import { LIMIT_STATE } from '@console/dynamic-plugin-sdk';
 import type { UtilizationItemProps } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import type { ColoredIconProps } from '@console/dynamic-plugin-sdk/src/app/components/status/icons';
-import type { DataPoint } from '@console/internal/components/graphs';
 import {
   AreaChart,
   AreaChartStatus,
   chartStatusColors,
 } from '@console/internal/components/graphs/area';
+import type { DataPoint } from '@console/internal/components/graphs/types';
 import { mapLimitsRequests } from '@console/internal/components/graphs/utils';
 import type { ByteDataTypes } from '../../../graph-helper/data-utils';
 import { useUtilizationDuration } from '../../../hooks/useUtilizationDuration';
@@ -70,23 +70,26 @@ export const MultilineUtilizationItem = memo<MultilineUtilizationItemProps>(
     }, [maxDate, updateEndDate]);
 
     const mapTranslatedData = (originalData: DataPoint[][]) => {
-      if (!originalData || originalData.length === 0 || originalData[0].length === 0)
-        return originalData;
+      if (!originalData || originalData.length === 0) return originalData;
       const translatedData = [];
 
       for (const query of originalData) {
-        const currData = [];
-        const desc = query[0].description;
-        for (const item of query) {
-          if (desc === 'in') {
-            currData.push({ ...item, description: t('in') });
-          } else if (desc === 'out') {
-            currData.push({ ...item, description: t('out') });
-          } else {
-            currData.push(item);
+        if (!query || query.length === 0) {
+          translatedData.push(query);
+        } else {
+          const currData = [];
+          const desc = query[0].description;
+          for (const item of query) {
+            if (desc === 'in') {
+              currData.push({ ...item, description: t('in') });
+            } else if (desc === 'out') {
+              currData.push({ ...item, description: t('out') });
+            } else {
+              currData.push(item);
+            }
           }
+          translatedData.push(currData);
         }
-        translatedData.push(currData);
       }
       return translatedData;
     };

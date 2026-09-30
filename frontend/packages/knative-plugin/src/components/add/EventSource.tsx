@@ -80,8 +80,8 @@ export const EventSource: FC<Props> = ({
     selApiVersion = selDataModel
       ? `${selDataModel?.apiGroup}/${selDataModel?.apiVersion}`
       : kameletSource
-      ? `${CamelKameletBindingModel.apiGroup}/${CamelKameletBindingModel.apiVersion}`
-      : `${KNATIVE_EVENT_SOURCE_APIGROUP}/v1alpha2`;
+        ? `${CamelKameletBindingModel.apiGroup}/${CamelKameletBindingModel.apiVersion}`
+        : `${KNATIVE_EVENT_SOURCE_APIGROUP}/v1alpha2`;
     sourceData = isKnownEventSource(sourceKind)
       ? kameletSource
         ? { [sourceKind]: getKameletSourceData(kameletSource) }

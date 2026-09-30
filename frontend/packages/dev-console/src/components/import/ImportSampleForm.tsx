@@ -41,6 +41,7 @@ const ImportSampleForm: FC<Props> = ({
               'A unique name given to the component that will be used to name associated resources.',
             )}
             data-test-id="application-form-app-name"
+            data-test="application-form-app-name"
             required
           />
           <BuilderImageTagSelector
@@ -64,6 +65,7 @@ const ImportSampleForm: FC<Props> = ({
         disableSubmit={!_.isEmpty(errors) || isSubmitting}
         resetLabel={t('Cancel')}
         sticky
+        namespace={values?.project?.name}
       />
     </form>
   );

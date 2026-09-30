@@ -1,5 +1,5 @@
 import type { FC, ReactNode } from 'react';
-import { useState, useMemo, useEffect, useRef } from 'react';
+import { useState, useMemo, useEffect, useLayoutEffect, useRef } from 'react';
 import { Alert } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -40,9 +40,8 @@ const getDebugPod = (debugPodName: string, podToDebug: PodKind, containerName: s
   delete debugPod.metadata.labels;
   debugPod.metadata.annotations = pickWorkloadAnnotations(debugPod.metadata.annotations);
   debugPod.metadata.annotations['debug.openshift.io/source-container'] = containerName;
-  debugPod.metadata.annotations[
-    'debug.openshift.io/source-resource'
-  ] = `/v1, Resource=pods/${podToDebug?.metadata?.name}`;
+  debugPod.metadata.annotations['debug.openshift.io/source-resource'] =
+    `/v1, Resource=pods/${podToDebug?.metadata?.name}`;
   debugPod.metadata.generateName = debugPodName;
   debugPod.spec.restartPolicy = 'Never';
 
@@ -62,15 +61,13 @@ const getDebugPod = (debugPodName: string, podToDebug: PodKind, containerName: s
   return debugPod;
 };
 
-const DebugTerminalError: FC<DebugTerminalErrorProps> = ({ error, description }) => {
-  return (
-    <PaneBody>
-      <Alert variant="danger" isInline title={error}>
-        <p>{description}</p>
-      </Alert>
-    </PaneBody>
-  );
-};
+const DebugTerminalError: FC<DebugTerminalErrorProps> = ({ error, description }) => (
+  <PaneBody>
+    <Alert variant="danger" isInline title={error}>
+      <p>{description}</p>
+    </Alert>
+  </PaneBody>
+);
 
 const DebugTerminalInner: FC<DebugTerminalInnerProps> = ({
   debugPod,
@@ -126,21 +123,23 @@ const DebugTerminal: FC<DebugTerminalProps> = ({ podData, containerName }) => {
   const { t } = useTranslation('public');
   const detachedSessions = useConsoleSelector(getDetachedSessions);
   const detachedSessionsRef = useRef(detachedSessions);
-  detachedSessionsRef.current = detachedSessions;
+  useLayoutEffect(() => {
+    detachedSessionsRef.current = detachedSessions;
+  });
   const podNamespace = podData?.metadata.namespace;
   const podContainerName = containerName || podData?.spec.containers[0].name;
   const debugPodName = `${podData?.metadata?.name?.replace(/\./g, '-')}-debug-`;
-  const podToCreate = useMemo(() => {
-    return getDebugPod(debugPodName, podData, podContainerName);
+  const podToCreate = useMemo(
+    () => getDebugPod(debugPodName, podData, podContainerName),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debugPodName, podContainerName]);
+    [debugPodName, podContainerName],
+  );
 
   useEffect(() => {
     const deleteDebugPod = async (podToDelete) => {
       try {
         await k8sKillByName(PodModel, podToDelete, podNamespace);
       } catch (e) {
-        // eslint-disable-next-line no-console
         console.warn('Could not delete container terminal debug pod.', e);
       }
     };

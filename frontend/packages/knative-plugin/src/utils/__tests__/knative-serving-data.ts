@@ -435,57 +435,55 @@ export const getDefaultEventingData = (typeEventSource: string): EventSourceSync
   return defaultEventingData;
 };
 
-export const getEventSourceDeploymentData = (EventSourceModel: K8sKind): K8sResourceKind => {
-  return {
-    kind: 'Deployment',
-    apiVersion: 'apps/v1',
-    metadata: {
-      name: 'overlayimage',
-      uid: '64b34874-debd-11e9-8cdf-0a0700ae5e38',
-      namespace: 'testproject3',
-      ownerReferences: [
-        {
-          apiVersion: `${EventSourceModel.apiGroup}/${EventSourceModel.apiVersion}`,
-          kind: EventSourceModel.kind,
-          name: 'overlayimage-fdqsffg',
-          uid: '1317f615-9636-11e9-b134-06a61d886b689_1',
-          controller: true,
-          blockOwnerDeletion: true,
-        },
-      ],
-    },
-    spec: {
-      replicas: 1,
-      template: {
-        metadata: { creationTimestamp: null, labels: { app: 'hello-openshift' } },
-        spec: {
-          containers: [
-            {
-              name: 'hello-openshift',
-              image: 'quay.io/openshift-knative/showcase',
-              ports: [{ containerPort: 8080, protocol: 'TCP' }],
-              resources: {},
-              terminationMessagePath: '/dev/termination-log',
-              terminationMessagePolicy: 'File',
-              imagePullPolicy: 'Always',
-            },
-          ],
-          restartPolicy: 'Always',
-          terminationGracePeriodSeconds: 30,
-          dnsPolicy: 'ClusterFirst',
-          securityContext: {},
-          schedulerName: 'default-scheduler',
-        },
+export const getEventSourceDeploymentData = (EventSourceModel: K8sKind): K8sResourceKind => ({
+  kind: 'Deployment',
+  apiVersion: 'apps/v1',
+  metadata: {
+    name: 'overlayimage',
+    uid: '64b34874-debd-11e9-8cdf-0a0700ae5e38',
+    namespace: 'testproject3',
+    ownerReferences: [
+      {
+        apiVersion: `${EventSourceModel.apiGroup}/${EventSourceModel.apiVersion}`,
+        kind: EventSourceModel.kind,
+        name: 'overlayimage-fdqsffg',
+        uid: '1317f615-9636-11e9-b134-06a61d886b689_1',
+        controller: true,
+        blockOwnerDeletion: true,
       },
-      strategy: {
-        type: 'RollingUpdate',
-        rollingUpdate: { maxUnavailable: '25%', maxSurge: '25%' },
+    ],
+  },
+  spec: {
+    replicas: 1,
+    template: {
+      metadata: { creationTimestamp: null, labels: { app: 'hello-openshift' } },
+      spec: {
+        containers: [
+          {
+            name: 'hello-openshift',
+            image: 'quay.io/openshift-knative/showcase',
+            ports: [{ containerPort: 8080, protocol: 'TCP' }],
+            resources: {},
+            terminationMessagePath: '/dev/termination-log',
+            terminationMessagePolicy: 'File',
+            imagePullPolicy: 'Always',
+          },
+        ],
+        restartPolicy: 'Always',
+        terminationGracePeriodSeconds: 30,
+        dnsPolicy: 'ClusterFirst',
+        securityContext: {},
+        schedulerName: 'default-scheduler',
       },
-      revisionHistoryLimit: 10,
-      progressDeadlineSeconds: 600,
     },
-  };
-};
+    strategy: {
+      type: 'RollingUpdate',
+      rollingUpdate: { maxUnavailable: '25%', maxSurge: '25%' },
+    },
+    revisionHistoryLimit: 10,
+    progressDeadlineSeconds: 600,
+  },
+});
 
 export const Kafkas: K8sResourceKind[] = [
   {

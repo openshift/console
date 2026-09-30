@@ -18,7 +18,7 @@ type OLMCatalogItemData = {
 type UseCatalogItems = () => [CatalogItem<OLMCatalogItemData>[], boolean, string];
 const useCatalogItems: UseCatalogItems = () => {
   const [olmCatalogItems, setOLMCatalogItems] = useState<OLMCatalogItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState('');
   const [lastModified, setLastModified] = useState('');
   const abortControllerRef = useRef<AbortController>();
@@ -54,26 +54,27 @@ const useCatalogItems: UseCatalogItems = () => {
         if (olmItems !== null) {
           setOLMCatalogItems(olmItems);
         }
-        setLoading(false);
+        setLoaded(true);
       })
       .catch((err) => {
         if (err.name === 'AbortError') return;
         setError(err.toString());
-        setLoading(false);
+        setLoaded(true);
       });
   }, [headers]);
 
-  useEffect(() => {
-    return () => {
+  useEffect(
+    () => () => {
       abortControllerRef.current?.abort();
-    };
-  }, []);
+    },
+    [],
+  );
 
   usePoll(fetchItems, 30 * ONE_SECOND);
 
   const items = useMemo(() => olmCatalogItems.map(normalizeCatalogItem), [olmCatalogItems]);
 
-  return [items, loading, error];
+  return [items, loaded, error];
 };
 
 export default useCatalogItems;

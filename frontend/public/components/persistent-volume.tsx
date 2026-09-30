@@ -18,9 +18,11 @@ import {
   nameCellProps,
   getLabelsColumnWidthStyleProp,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import type {
+  ConsoleDataViewColumn,
+  GetDataViewRows,
+} from '@console/app/src/components/data-view/types';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-import type { TableColumn } from '@console/dynamic-plugin-sdk/src/lib-core';
 import type { PersistentVolumeKind } from '@console/internal/module/k8s';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
@@ -57,101 +59,97 @@ const PVStatus = ({ pv }: { pv: PersistentVolumeKind }) => (
   <Status status={pv.metadata.deletionTimestamp ? 'Terminating' : pv.status.phase} />
 );
 
-const getDataViewRowsCreator: (t: TFunction) => GetDataViewRows<PersistentVolumeKind> = (t) => (
-  data,
-  columns,
-) => {
-  return data.map(({ obj }) => {
-    const name = obj.metadata?.name || '';
-    const namespace = obj.metadata?.namespace || '';
-    const labels = obj.metadata?.labels || {};
-    const creationTimestamp = obj.metadata?.creationTimestamp || '';
+const getDataViewRowsCreator: (t: TFunction) => GetDataViewRows<PersistentVolumeKind> =
+  (t) => (data, columns) =>
+    data.map(({ obj }) => {
+      const name = obj.metadata?.name || '';
+      const namespace = obj.metadata?.namespace || '';
+      const labels = obj.metadata?.labels || {};
+      const creationTimestamp = obj.metadata?.creationTimestamp || '';
 
-    const rowCells = {
-      [tableColumnInfo[0].id]: {
-        cell: <ResourceLink kind={kind} name={name} namespace={namespace} />,
-        props: getNameCellProps(name),
-      },
-      [tableColumnInfo[1].id]: {
-        cell: <PVStatus pv={obj} />,
-      },
-      [tableColumnInfo[2].id]: {
-        cell: obj.spec?.claimRef?.name ? (
-          <ResourceLink
-            kind="PersistentVolumeClaim"
-            name={obj.spec.claimRef.name}
-            namespace={obj.spec.claimRef.namespace}
-            title={obj.spec.claimRef.name}
-          />
-        ) : (
-          <div className="pf-v6-u-text-color-subtle">{t('No claim')}</div>
-        ),
-      },
-      [tableColumnInfo[3].id]: {
-        cell: _.get(obj, 'spec.capacity.storage', DASH),
-      },
-      [tableColumnInfo[4].id]: {
-        cell: <LabelList kind={kind} labels={labels} />,
-      },
-      [tableColumnInfo[5].id]: {
-        cell: <Timestamp timestamp={creationTimestamp} />,
-      },
-      [tableColumnInfo[6].id]: {
-        cell: <LazyActionMenu context={{ [persistentVolumeReference]: obj }} />,
-        props: actionsCellProps,
-      },
-    };
-
-    return columns.map(({ id }) => {
-      const cell = rowCells[id]?.cell || DASH;
-      const props = rowCells[id]?.props || undefined;
-      return {
-        id,
-        props,
-        cell,
+      const rowCells = {
+        [tableColumnInfo[0].id]: {
+          cell: <ResourceLink kind={kind} name={name} namespace={namespace} />,
+          props: getNameCellProps(name),
+        },
+        [tableColumnInfo[1].id]: {
+          cell: <PVStatus pv={obj} />,
+        },
+        [tableColumnInfo[2].id]: {
+          cell: obj.spec?.claimRef?.name ? (
+            <ResourceLink
+              kind="PersistentVolumeClaim"
+              name={obj.spec.claimRef.name}
+              namespace={obj.spec.claimRef.namespace}
+              title={obj.spec.claimRef.name}
+            />
+          ) : (
+            <div className="pf-v6-u-text-color-subtle">{t('No claim')}</div>
+          ),
+        },
+        [tableColumnInfo[3].id]: {
+          cell: _.get(obj, 'spec.capacity.storage', DASH),
+        },
+        [tableColumnInfo[4].id]: {
+          cell: <LabelList kind={kind} labels={labels} />,
+        },
+        [tableColumnInfo[5].id]: {
+          cell: <Timestamp timestamp={creationTimestamp} />,
+        },
+        [tableColumnInfo[6].id]: {
+          cell: <LazyActionMenu context={{ [persistentVolumeReference]: obj }} />,
+          props: actionsCellProps,
+        },
       };
+
+      return columns.map(({ id }) => {
+        const cell = rowCells[id]?.cell || DASH;
+        const props = rowCells[id]?.props || undefined;
+        return {
+          id,
+          props,
+          cell,
+        };
+      });
     });
-  });
-};
 
 const usePersistentVolumeColumns = (): {
-  columns: TableColumn<PersistentVolumeKind>[];
+  columns: ConsoleDataViewColumn<PersistentVolumeKind>[];
   resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation('public');
-  const { getResizableProps, getWidth, resetAllColumnWidths } = useColumnWidthSettings(
-    PersistentVolumeModel,
-  );
+  const { getResizableProps, getWidth, resetAllColumnWidths } =
+    useColumnWidthSettings(PersistentVolumeModel);
 
-  const columns: TableColumn<PersistentVolumeKind>[] = useMemo(
+  const columns: ConsoleDataViewColumn<PersistentVolumeKind>[] = useMemo(
     () => [
       {
         title: t('Name'),
         sort: 'metadata.name',
         id: tableColumnInfo[0].id,
         resizableProps: getResizableProps(tableColumnInfo[0].id),
-        props: { ...nameCellProps, modifier: 'nowrap' },
+        props: { ...nameCellProps, modifier: 'nowrap' as const },
       },
       {
         title: t('Status'),
         sort: 'status.phase',
         id: tableColumnInfo[1].id,
         resizableProps: getResizableProps(tableColumnInfo[1].id),
-        props: { modifier: 'nowrap' },
+        props: { modifier: 'nowrap' as const },
       },
       {
         title: t('Claim'),
         sort: 'spec.claimRef.name',
         id: tableColumnInfo[2].id,
         resizableProps: getResizableProps(tableColumnInfo[2].id),
-        props: { modifier: 'nowrap' },
+        props: { modifier: 'nowrap' as const },
       },
       {
         title: t('Capacity'),
         sort: 'pvStorage',
         id: tableColumnInfo[3].id,
         resizableProps: getResizableProps(tableColumnInfo[3].id),
-        props: { modifier: 'nowrap' },
+        props: { modifier: 'nowrap' as const },
       },
       {
         title: t('Labels'),
@@ -159,7 +157,7 @@ const usePersistentVolumeColumns = (): {
         id: tableColumnInfo[4].id,
         resizableProps: getResizableProps(tableColumnInfo[4].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
           ...getLabelsColumnWidthStyleProp(getWidth(tableColumnInfo[4].id)),
         },
       },
@@ -168,7 +166,7 @@ const usePersistentVolumeColumns = (): {
         sort: 'metadata.creationTimestamp',
         id: tableColumnInfo[5].id,
         resizableProps: getResizableProps(tableColumnInfo[5].id),
-        props: { modifier: 'nowrap' },
+        props: { modifier: 'nowrap' as const },
       },
       {
         title: '',

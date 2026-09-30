@@ -10,9 +10,11 @@ import {
   ConsoleDataView,
   nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import type {
+  ConsoleDataViewColumn,
+  GetDataViewRows,
+} from '@console/app/src/components/data-view/types';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-import type { TableColumn } from '@console/dynamic-plugin-sdk';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
@@ -34,8 +36,8 @@ const machineHealthCheckReference = referenceForModel(MachineHealthCheckModel);
 
 const tableColumnInfo = [{ id: 'name' }, { id: 'namespace' }, { id: 'created' }, { id: '' }];
 
-const getDataViewRows: GetDataViewRows<MachineHealthCheckKind> = (data, columns) => {
-  return data.map(({ obj }) => {
+const getDataViewRows: GetDataViewRows<MachineHealthCheckKind> = (data, columns) =>
+  data.map(({ obj }) => {
     const { name, namespace } = obj.metadata;
 
     const rowCells = {
@@ -64,19 +66,17 @@ const getDataViewRows: GetDataViewRows<MachineHealthCheckKind> = (data, columns)
       };
     });
   });
-};
 
 const useMachineHealthCheckColumns = (): {
-  columns: TableColumn<MachineHealthCheckKind>[];
+  columns: ConsoleDataViewColumn<MachineHealthCheckKind>[];
   resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation('public');
-  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(
-    MachineHealthCheckModel,
-  );
+  const { getResizableProps, resetAllColumnWidths } =
+    useColumnWidthSettings(MachineHealthCheckModel);
 
-  const columns: TableColumn<MachineHealthCheckKind>[] = useMemo(() => {
-    return [
+  const columns: ConsoleDataViewColumn<MachineHealthCheckKind>[] = useMemo(
+    () => [
       {
         title: t('Name'),
         id: tableColumnInfo[0].id,
@@ -84,7 +84,7 @@ const useMachineHealthCheckColumns = (): {
         resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: {
           ...nameCellProps,
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -93,7 +93,7 @@ const useMachineHealthCheckColumns = (): {
         sort: 'metadata.namespace',
         resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -102,7 +102,7 @@ const useMachineHealthCheckColumns = (): {
         sort: 'metadata.creationTimestamp',
         resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -112,8 +112,9 @@ const useMachineHealthCheckColumns = (): {
           ...actionsCellProps,
         },
       },
-    ];
-  }, [t, getResizableProps]);
+    ],
+    [t, getResizableProps],
+  );
 
   return { columns, resetAllColumnWidths };
 };

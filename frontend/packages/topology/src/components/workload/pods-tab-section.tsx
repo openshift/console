@@ -55,9 +55,8 @@ const PodsTabSection: FC<{
 };
 
 export const usePodsSideBarTabSection: DetailsTabSectionExtensionHook = (element: GraphElement) => {
-  const [podAdapterExtension, podAdapterExtensionResolved] = useResolvedExtensions<PodAdapter>(
-    isPodAdapter,
-  );
+  const [podAdapterExtension, podAdapterExtensionResolved] =
+    useResolvedExtensions<PodAdapter>(isPodAdapter);
   const podAdapter = useMemo(
     () =>
       getDataFromAdapter<AdapterDataType<PodsAdapterDataType<PodKind>>, PodAdapter>(element, [

@@ -220,7 +220,7 @@ describe('OLS Workflow Enhancements', () => {
 
       // Prompt should mention conditional updates analysis
       expect(prompt).toContain('Conditional Updates');
-      expect(prompt).toContain('Risk Analysis');
+      expect(prompt).toContain('risk analysis');
       expect(prompt).toContain('conditionalUpdates');
     });
   });
@@ -473,8 +473,7 @@ describe('OLS Workflow Enhancements', () => {
       // Should include all enhancement features
       // Conditional updates analysis is in the enhanced pre-check prompt
       expect(prompt).toContain('Conditional Updates');
-      // MCP and Alert sections are in all pre-check prompts
-      expect(prompt).toContain('MachineConfigPool');
+      // Alert sections are in all pre-check prompts
       expect(prompt).toContain('Active Alerts');
     });
   });

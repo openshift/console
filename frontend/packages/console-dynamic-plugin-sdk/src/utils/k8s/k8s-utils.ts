@@ -1,4 +1,3 @@
-import { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash';
 import type { K8sModel, MatchExpression, MatchLabels, Selector } from '../../api/common-types';
 import type { Options } from '../../api/internal-types';
@@ -37,9 +36,7 @@ export const getK8sResourcePath = (model: K8sModel, options: Options): string =>
     u += `/${options.path}`;
   }
   if (!_.isEmpty(options.queryParams)) {
-    const q = _.map(options.queryParams, (v, k) => {
-      return `${k}=${v}`;
-    });
+    const q = _.map(options.queryParams, (v, k) => `${k}=${v}`);
     u += `?${q.join('&')}`;
   }
 
@@ -172,15 +169,15 @@ export const k8sWatch = (
   return new WSFactory(path, wsOptionsUpdated as WSOptions);
 };
 
-const modelKey = (model: K8sModel): string => {
+const modelKey = (model: K8sModel): string =>
   // TODO: Use `referenceForModel` even for known API objects
-  return model.crd ? getReferenceForModel(model) : model.kind;
-};
-
-const modelsToMap = (models: K8sModel[]): ImmutableMap<K8sResourceKindReference, K8sModel> => {
-  return ImmutableMap<K8sResourceKindReference, K8sModel>().withMutations((map) => {
-    models.forEach((model) => map.set(modelKey(model), model));
+  model.crd ? getReferenceForModel(model) : model.kind;
+const modelsToMap = (models: K8sModel[]): Record<K8sResourceKindReference, K8sModel> => {
+  const map: Record<string, K8sModel> = {};
+  models.forEach((model) => {
+    map[modelKey(model)] = model;
   });
+  return map;
 };
 
 /**
@@ -209,7 +206,7 @@ export const allModels = getK8sModels;
 export const getNamespacedResources = () => {
   if (!namespacedResources) {
     namespacedResources = new Set();
-    allModels().forEach((v, k) => {
+    Object.entries(allModels()).forEach(([k, v]: [string, K8sModel]) => {
       if (!v.namespaced) {
         return;
       }

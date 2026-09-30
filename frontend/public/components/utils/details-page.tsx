@@ -35,16 +35,13 @@ export const pluralize = (
   return includeCount ? `${i || 0} ${pluralized}` : pluralized;
 };
 
-export const detailsPage = <T extends {}>(Component: ComponentType<T>) =>
-  function DetailsPage(props: T) {
-    return <Component {...props} />;
-  };
+export const detailsPage =
+  <T extends {}>(Component: ComponentType<T>) =>
+  (props: T) => <Component {...props} />;
 
-const getTolerationsPath = (obj: K8sResourceKind): string => {
+const getTolerationsPath = (obj: K8sResourceKind): string =>
   // FIXME: Is this correct for all types (jobs, cron jobs)? It would be better for the embedding page to pass in the path.
-  return obj.kind === 'Pod' ? 'spec.tolerations' : 'spec.template.spec.tolerations';
-};
-
+  obj.kind === 'Pod' ? 'spec.tolerations' : 'spec.template.spec.tolerations';
 export const ResourceSummary: FC<ResourceSummaryProps> = ({
   children,
   resource,
@@ -79,7 +76,7 @@ export const ResourceSummary: FC<ResourceSummaryProps> = ({
   ]);
 
   return (
-    <DescriptionList data-test-id="resource-summary">
+    <DescriptionList data-test="resource-summary" data-test-id="resource-summary">
       <DetailsItem label={t('Name')} obj={resource} path={customPathName || 'metadata.name'} />
       {metadata.namespace && (
         <DetailsItem label={t('Namespace')} obj={resource} path="metadata.namespace">

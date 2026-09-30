@@ -116,6 +116,7 @@ const BaseLabelsModal: FC<BaseLabelsModalProps> = ({
               })
             : t('Edit labels')
         }
+        data-test="modal-title"
         data-test-id="modal-title"
         labelId="labels-modal-title"
       />

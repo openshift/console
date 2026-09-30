@@ -47,13 +47,15 @@ const tableColumnClasses = [
   'pf-m-hidden pf-m-visible-on-sm',
 ];
 
-const ResourceTableRow: FC<RowFunctionArgs<
-  K8sResourceKind,
-  {
-    linkFor: (obj: K8sResourceKind, providedAPI: ProvidedAPI) => JSX.Element;
-    providedAPI: ProvidedAPI;
-  }
->> = ({ obj, customData: { linkFor, providedAPI } }) => (
+const ResourceTableRow: FC<
+  RowFunctionArgs<
+    K8sResourceKind,
+    {
+      linkFor: (obj: K8sResourceKind, providedAPI: ProvidedAPI) => JSX.Element;
+      providedAPI: ProvidedAPI;
+    }
+  >
+> = ({ obj, customData: { linkFor, providedAPI } }) => (
   <>
     <TableData className={tableColumnClasses[0]}>{linkFor(obj, providedAPI)}</TableData>
     <TableData className={tableColumnClasses[1]}>{obj.kind}</TableData>
@@ -111,21 +113,24 @@ const ResourceTable: FC<ResourceTableProps> = (props) => {
   );
 };
 
-export const flattenCsvResources = (
-  parentObj: K8sResourceCommon,
-): Flatten<{ [key: string]: K8sResourceCommon[] }, K8sResourceCommon[]> => (resources) => {
-  return _.flatMap(resources, (resource, kind: string) =>
-    _.map(resource.data, (item) => ({ ...item, kind })),
-  ).reduce((owned, resource) => {
-    return (resource.metadata.ownerReferences || []).some(
-      (ref) =>
-        ref.uid === parentObj.metadata.uid ||
-        owned.some(({ metadata }) => metadata.uid === ref.uid),
-    )
-      ? owned.concat([resource])
-      : owned;
-  }, []);
-};
+export const flattenCsvResources =
+  (
+    parentObj: K8sResourceCommon,
+  ): Flatten<{ [key: string]: K8sResourceCommon[] }, K8sResourceCommon[]> =>
+  (resources) =>
+    _.flatMap(resources, (resource, kind: string) =>
+      _.map(resource.data, (item) => ({ ...item, kind })),
+    ).reduce(
+      (owned, resource) =>
+        (resource.metadata.ownerReferences || []).some(
+          (ref) =>
+            ref.uid === parentObj.metadata.uid ||
+            owned.some(({ metadata }) => metadata.uid === ref.uid),
+        )
+          ? owned.concat([resource])
+          : owned,
+      [],
+    );
 
 // NOTE: This is us building the `ownerReferences` graph client-side
 // FIXME: Comparing `kind` is not enough to determine if an object is a custom resource

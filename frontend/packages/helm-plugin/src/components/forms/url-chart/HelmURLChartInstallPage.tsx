@@ -33,9 +33,9 @@ import { WizardStep } from './types';
 
 // Only OCI refs use tag (chart:version); HTTP/HTTPS chart URLs (.tgz) must not have :version appended
 const getFullChartURL = (chartURL: string, chartVersion: string): string => {
-  if (!chartVersion) return chartURL;
-  const isOCI = chartURL.startsWith('oci://');
-  return isOCI ? `${chartURL}:${chartVersion}` : chartURL;
+  if (!chartVersion || !/^oci:\/\//i.test(chartURL)) return chartURL;
+  const base = chartURL.replace(/:[^/]+$/, '');
+  return `${base}:${chartVersion}`;
 };
 
 const HelmURLChartInstallPage: FunctionComponent = () => {
@@ -182,7 +182,7 @@ const HelmURLChartInstallPage: FunctionComponent = () => {
       try {
         helmRelease = await fetchHelmRelease(namespace, releaseName);
       } catch (err) {
-        console.error('Could not fetch Helm release.', err); // eslint-disable-line no-console
+        console.error('Could not fetch Helm release.', err);
       }
 
       const resources = helmRelease ? loadHelmManifestResources(helmRelease) : [];
@@ -229,7 +229,7 @@ const HelmURLChartInstallPage: FunctionComponent = () => {
 
   const chartMetaDescription = chartData ? <HelmChartMetaDescription chart={chartData} /> : null;
 
-  const pageTitle = t('Install Helm chart from Helm registry.');
+  const pageTitle = t('Install Helm Chart from Helm registry.');
 
   return (
     <NamespacedPage

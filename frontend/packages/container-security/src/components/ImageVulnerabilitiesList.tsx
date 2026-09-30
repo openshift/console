@@ -75,16 +75,16 @@ const ImageVulnerabilitiesList: FC<ImageVulnerabilitiesListProps> = (props) => {
         },
       ]}
       title={t('Vulnerabilities')}
-      flatten={(resources: WatchK8sResults<{ imageVulnerabilities: ImageManifestVuln }>) => {
-        return _.sortBy(
+      flatten={(resources: WatchK8sResults<{ imageVulnerabilities: ImageManifestVuln }>) =>
+        _.sortBy(
           _.flatten(
             (resources?.imageVulnerabilities?.data?.spec?.features ?? []).map((feature) =>
               (feature?.vulnerabilities ?? []).map((vulnerability) => ({ feature, vulnerability })),
             ),
           ),
           (v: ImageVuln) => priorityFor(v?.vulnerability?.severity).index,
-        );
-      }}
+        )
+      }
       namespace={namespace}
       canCreate={false}
       showTitle

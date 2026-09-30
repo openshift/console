@@ -17,6 +17,5 @@ export const getLandingPageURL: ResolvedExtension<Perspective>['properties']['la
     : '/k8s/cluster/projects';
 };
 
-export const getImportRedirectURL: ResolvedExtension<
-  Perspective
->['properties']['importRedirectURL'] = (namespace) => `/topology/ns/${namespace}`;
+export const getImportRedirectURL: ResolvedExtension<Perspective>['properties']['importRedirectURL'] =
+  (namespace) => `/topology/ns/${namespace}`;

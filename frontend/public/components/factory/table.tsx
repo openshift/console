@@ -26,6 +26,7 @@ import type {
 import { defaultChannelFor } from '@console/operator-lifecycle-manager/src/components';
 import type { PackageManifestKind } from '@console/operator-lifecycle-manager/src/types';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
 import { useDeepCompareMemoize } from '@console/shared/src/hooks/useDeepCompareMemoize';
 import { getName } from '@console/shared/src/selectors/common';
@@ -110,22 +111,20 @@ export const sorts = {
 
 // Common table row/columns helper SFCs for implementing accessible data grid
 export const TableRow = forwardRef<HTMLTableRowElement, TableRowProps>(
-  ({ id, index, trKey, style, className, ...props }, ref) => {
-    return (
-      <Tr
-        {...props}
-        ref={ref}
-        data-id={id}
-        data-index={index}
-        data-test="resource-row"
-        data-test-rows="resource-row"
-        data-key={trKey}
-        style={style}
-        className={css('pf-v6-c-table__tr', className)}
-        role="row"
-      />
-    );
-  },
+  ({ id, index, trKey, style, className, ...props }, ref) => (
+    <Tr
+      {...props}
+      ref={ref}
+      data-id={id}
+      data-index={index}
+      data-test="resource-row"
+      data-test-rows="resource-row"
+      data-key={trKey}
+      style={style}
+      className={css('pf-v6-c-table__tr', className)}
+      role="row"
+    />
+  ),
 );
 TableRow.displayName = 'TableRow';
 
@@ -154,12 +153,11 @@ const isColumnVisible = (
   widthInPixels: number,
   columnID: string,
   columns: Set<string> = new Set(),
-  showNamespaceOverride,
+  showNamespaceOverride = undefined,
+  activeNamespace: string = '',
 ) => {
   const showNamespace =
-    columnID !== 'namespace' ||
-    UIActions.getActiveNamespace() === ALL_NAMESPACES_KEY ||
-    showNamespaceOverride;
+    columnID !== 'namespace' || activeNamespace === ALL_NAMESPACES_KEY || showNamespaceOverride;
   if (_.isEmpty(columns) && showNamespace) {
     return true;
   }
@@ -193,7 +191,14 @@ export const TableData: FC<TableDataProps> = ({
   showNamespaceOverride,
   children,
 }) => {
-  return isColumnVisible(window.innerWidth, columnID, columns, showNamespaceOverride) ? (
+  const [activeNamespace] = useActiveNamespace();
+  return isColumnVisible(
+    window.innerWidth,
+    columnID,
+    columns,
+    showNamespaceOverride,
+    activeNamespace,
+  ) ? (
     <Td data-label={columnID} className={className} role="gridcell" data-test={dataTest}>
       {children}
     </Td>
@@ -230,6 +235,7 @@ const VirtualBody: FC<VirtualBodyProps> = (props) => {
   } = props;
 
   const dataRef = useRef(data);
+  // eslint-disable-next-line react-hooks/refs -- keyMapper reads dataRef synchronously during render for cache key resolution; must be current before measurement
   dataRef.current = data;
 
   const cellMeasurementCache = useRef(
@@ -325,6 +331,7 @@ const getActiveColumns = (
   activeColumns: Set<string>,
   columnManagementID: string,
   showNamespaceOverride: boolean,
+  activeNamespace: string,
 ): TableColumn[] => {
   let columns = Header(componentProps);
   let resolvedActiveColumns = activeColumns;
@@ -341,15 +348,19 @@ const getActiveColumns = (
   if (columnManagementID) {
     columns = columns?.filter(
       (col) =>
-        isColumnVisible(windowWidth, col.id, resolvedActiveColumns, showNamespaceOverride) ||
-        col.title === '',
+        isColumnVisible(
+          windowWidth,
+          col.id,
+          resolvedActiveColumns,
+          showNamespaceOverride,
+          activeNamespace,
+        ) || col.title === '',
     );
   } else {
     columns = columns?.filter((col) => resolvedActiveColumns.has(col.id) || col.title === '');
   }
 
-  const showNamespace =
-    UIActions.getActiveNamespace() === ALL_NAMESPACES_KEY || showNamespaceOverride;
+  const showNamespace = activeNamespace === ALL_NAMESPACES_KEY || showNamespaceOverride;
   if (!showNamespace) {
     columns = columns.filter((column) => column.id !== 'namespace');
   }
@@ -437,29 +448,27 @@ const StandardTable: FC<StandardTableProps> = ({
     <PfTable gridBreakPoint={gridBreakPoint}>
       <TableHeader onSort={onSort} sortBy={sortBy} columns={columns} onSelect={onSelect} />
       <Tbody>
-        {rows.map((row, rowIndex) => {
-          return (
-            // eslint-disable-next-line react/no-array-index-key
-            <Tr key={`row-${rowIndex}`}>
-              {onSelect && (
-                <Td
-                  select={{
-                    rowIndex,
-                    onSelect,
-                    isSelected: row.selected ?? false,
-                    isDisabled: row.disableSelection ?? false,
-                  }}
-                />
-              )}
-              {(Array.isArray(row) ? row : row.cells).map(({ props, title }, colIndex) => (
-                // eslint-disable-next-line react/no-array-index-key
-                <Td key={`col-${colIndex}`} {...(props ?? {})}>
-                  {title}
-                </Td>
-              ))}
-            </Tr>
-          );
-        })}
+        {rows.map((row, rowIndex) => (
+          // eslint-disable-next-line react/no-array-index-key
+          <Tr key={`row-${rowIndex}`}>
+            {onSelect && (
+              <Td
+                select={{
+                  rowIndex,
+                  onSelect,
+                  isSelected: row.selected ?? false,
+                  isDisabled: row.disableSelection ?? false,
+                }}
+              />
+            )}
+            {(Array.isArray(row) ? row : row.cells).map(({ props, title }, colIndex) => (
+              // eslint-disable-next-line react/no-array-index-key
+              <Td key={`col-${colIndex}`} {...(props ?? {})}>
+                {title}
+              </Td>
+            ))}
+          </Tr>
+        ))}
       </Tbody>
     </PfTable>
   );
@@ -505,6 +514,7 @@ export const Table: FC<TableProps> = ({
 }) => {
   const dispatch = useConsoleDispatch();
   const navigate = useNavigate();
+  const [activeNamespace] = useActiveNamespace();
   const filters = useDeepCompareMemoize(initFilters);
   const Header = useDeepCompareMemoize(initHeader);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
@@ -537,6 +547,7 @@ export const Table: FC<TableProps> = ({
         activeColumns,
         columnManagementID,
         showNamespaceOverride,
+        activeNamespace,
       ),
     [
       windowWidth,
@@ -548,6 +559,7 @@ export const Table: FC<TableProps> = ({
       activeColumns,
       columnManagementID,
       showNamespaceOverride,
+      activeNamespace,
     ],
   );
 

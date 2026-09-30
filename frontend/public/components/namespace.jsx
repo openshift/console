@@ -80,7 +80,7 @@ import { DetailsPage, ListPage, sorts } from './factory';
 import { sortResourceByValue } from './factory/Table/sort';
 import { Area } from './graphs/area';
 import { Bar } from './graphs/bar';
-import { PROMETHEUS_BASE_PATH } from './graphs/consts';
+import { PROMETHEUS_BASE_PATH, PROMETHEUS_TENANCY_BASE_PATH } from './graphs/consts';
 import { LazyConfigureNamespacePullSecretModalOverlay } from './modals';
 import { OverviewListPage } from './overview';
 import { RoleBindingsPage } from './RBAC';
@@ -143,19 +143,60 @@ const fetchNamespaceMetrics = () => {
   ];
   const promises = metrics.map(({ key, query }) => {
     const url = `${PROMETHEUS_BASE_PATH}/api/v1/query?&query=${query}`;
-    return coFetchJSON(url).then(({ data: { result } }) => {
-      return result.reduce((acc, data) => {
+    return coFetchJSON(url).then(({ data: { result } }) =>
+      result.reduce((acc, data) => {
         const value = Number(data.value[1]);
         return _.set(acc, [key, data.metric.namespace], value);
-      }, {});
-    });
+      }, {}),
+    );
   });
-  return (
-    Promise.all(promises)
-      .then((data) => _.assign({}, ...data))
-      // eslint-disable-next-line no-console
-      .catch(console.error)
+  return Promise.all(promises)
+    .then((data) => _.assign({}, ...data))
+    .catch(console.error);
+};
+
+const DNS_LABEL_RE = /^[a-z]([a-z0-9-]{0,61}[a-z0-9])?$/;
+
+const fetchNamespaceTenancyMetrics = async (namespaces) => {
+  if (!PROMETHEUS_TENANCY_BASE_PATH || namespaces.length === 0) {
+    return {};
+  }
+  const sanitizedNamespaces = namespaces.filter((ns) => DNS_LABEL_RE.test(ns));
+  if (sanitizedNamespaces.length === 0) {
+    return {};
+  }
+  const results = await Promise.all(
+    sanitizedNamespaces.map(async (ns) => {
+      const metrics = [
+        {
+          key: 'memory',
+          query: `sum(container_memory_working_set_bytes{namespace='${ns}',container='',pod!=''}) BY (namespace)`,
+        },
+        {
+          key: 'cpu',
+          query: `namespace:container_cpu_usage:sum{namespace='${ns}'}`,
+        },
+      ];
+      const metricResults = await Promise.all(
+        metrics.map(async ({ key, query }) => {
+          const url = `${PROMETHEUS_TENANCY_BASE_PATH}/api/v1/query?namespace=${ns}&query=${encodeURIComponent(query)}`;
+          try {
+            const {
+              data: { result },
+            } = await coFetchJSON(url);
+            if (result.length === 0) {
+              return {};
+            }
+            return { [key]: { [ns]: Number(result[0].value[1]) } };
+          } catch {
+            return {};
+          }
+        }),
+      );
+      return _.merge({}, ...metricResults);
+    }),
   );
+  return _.merge({}, ...results);
 };
 
 const namespaceColumnInfo = [
@@ -173,9 +214,8 @@ const namespaceColumnInfo = [
 
 const useNamespacesColumns = () => {
   const { t } = useTranslation('public');
-  const { getResizableProps, getWidth, resetAllColumnWidths } = useColumnWidthSettings(
-    NamespaceModel,
-  );
+  const { getResizableProps, getWidth, resetAllColumnWidths } =
+    useColumnWidthSettings(NamespaceModel);
 
   const columns = useMemo(
     () => [
@@ -280,8 +320,8 @@ const useNamespacesColumns = () => {
 
 const NamespacesColumnManagementID = referenceForModel(NamespaceModel);
 
-const getNamespaceDataViewRows = (rowData, tableColumns, namespaceMetrics, t) => {
-  return rowData.map(({ obj: ns }) => {
+const getNamespaceDataViewRows = (rowData, tableColumns, namespaceMetrics, t) =>
+  rowData.map(({ obj: ns }) => {
     const name = getName(ns);
     const requester = getRequester(ns);
     const bytes = namespaceMetrics?.memory?.[name];
@@ -351,7 +391,6 @@ const getNamespaceDataViewRows = (rowData, tableColumns, namespaceMetrics, t) =>
       };
     });
   });
-};
 
 const NamespacesList = (props) => {
   const { t } = useTranslation('public');
@@ -362,7 +401,7 @@ const NamespacesList = (props) => {
     undefined,
     true,
   );
-  const namespaceMetrics = useConsoleSelector(({ UI }) => UI.getIn(['metrics', 'namespace']));
+  const namespaceMetrics = useConsoleSelector(({ UI }) => UI.metrics?.namespace);
 
   // TODO Utilize usePoll hook
   useEffect(() => {
@@ -477,9 +516,8 @@ const projectColumnInfo = namespaceColumnInfo;
 
 const useProjectsColumns = ({ showMetrics, showActions }) => {
   const { t } = useTranslation('public');
-  const { getResizableProps, getWidth, resetAllColumnWidths } = useColumnWidthSettings(
-    ProjectModel,
-  );
+  const { getResizableProps, getWidth, resetAllColumnWidths } =
+    useColumnWidthSettings(ProjectModel);
 
   const columns = useMemo(() => {
     const cols = [
@@ -602,8 +640,8 @@ const getProjectDataViewRows = (
   showMetrics,
   ProjectLinkComponent,
   t,
-) => {
-  return rowData.map(({ obj: project }) => {
+) =>
+  rowData.map(({ obj: project }) => {
     const name = getName(project);
     const requester = getRequester(project);
     const bytes = namespaceMetrics?.memory?.[name];
@@ -677,7 +715,6 @@ const getProjectDataViewRows = (
       };
     });
   });
-};
 
 export const ProjectLink = ({ project }) => {
   const dispatch = useConsoleDispatch();
@@ -743,21 +780,47 @@ const ProjectList = (props) => {
     true,
   );
   const isPrometheusAvailable = usePrometheusGate();
-  const showMetrics = isPrometheusAvailable && canGetNS;
+  const showMetrics = isPrometheusAvailable;
   const showActions = true;
   const { columns, resetAllColumnWidths } = useProjectsColumns({ showMetrics, showActions });
-  const namespaceMetrics = useConsoleSelector(({ UI }) => UI.getIn(['metrics', 'namespace']));
+  const namespaceMetrics = useConsoleSelector(({ UI }) => UI.metrics?.namespace);
+
+  const namespaces = useMemo(
+    () => (props.data || []).map((project) => project.metadata?.name).filter(Boolean),
+    [props.data],
+  );
 
   // TODO Utilize usePoll hook
   useEffect(() => {
-    if (showMetrics) {
-      const updateMetrics = () =>
-        fetchNamespaceMetrics().then((result) => dispatch(UIActions.setNamespaceMetrics(result)));
-      updateMetrics();
-      const id = setInterval(updateMetrics, 30 * 1000);
-      return () => clearInterval(id);
+    if (!showMetrics || flagPending(canGetNS)) {
+      return;
     }
-  }, [dispatch, showMetrics]);
+    let active = true;
+    const updateMetrics = async () => {
+      try {
+        const result = canGetNS
+          ? await fetchNamespaceMetrics()
+          : await fetchNamespaceTenancyMetrics(namespaces);
+        if (active) {
+          dispatch(UIActions.setNamespaceMetrics(result));
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    };
+    let id;
+    const poll = async () => {
+      await updateMetrics();
+      if (active) {
+        id = setTimeout(poll, 30 * 1000);
+      }
+    };
+    poll();
+    return () => {
+      active = false;
+      clearTimeout(id);
+    };
+  }, [dispatch, showMetrics, canGetNS, namespaces]);
 
   const columnLayout = useMemo(
     () => ({
@@ -887,7 +950,6 @@ export const PullSecret = (props) => {
         setIsLoading(false);
         setData([]);
         setError(true);
-        // eslint-disable-next-line no-console
         console.error('Error getting default ServiceAccount', err);
       });
   }, [namespace.metadata.name]);
@@ -1095,13 +1157,11 @@ export const NamespaceDetails = ({ obj: ns, customData }) => {
         <PaneBody>
           <SectionHeading text={t('Launcher')} />
           <ul className="pf-v6-c-list pf-m-plain">
-            {_.map(_.sortBy(links, 'spec.text'), (link) => {
-              return (
-                <li key={link.metadata.uid}>
-                  <ExternalLink href={link.spec.href} text={link.spec.text} />
-                </li>
-              );
-            })}
+            {_.map(_.sortBy(links, 'spec.text'), (link) => (
+              <li key={link.metadata.uid}>
+                <ExternalLink href={link.spec.href} text={link.spec.text} />
+              </li>
+            ))}
           </ul>
         </PaneBody>
       )}
@@ -1109,15 +1169,13 @@ export const NamespaceDetails = ({ obj: ns, customData }) => {
   );
 };
 
-const RolesPage = ({ obj: { metadata } }) => {
-  return (
-    <RoleBindingsPage
-      createPath={`/k8s/ns/${metadata.name}/rolebindings/~new`}
-      namespace={metadata.name}
-      showTitle={false}
-    />
-  );
-};
+const RolesPage = ({ obj: { metadata } }) => (
+  <RoleBindingsPage
+    createPath={`/k8s/ns/${metadata.name}/rolebindings/~new`}
+    namespace={metadata.name}
+    showTitle={false}
+  />
+);
 
 export const NamespacesDetailsPage = (props) => (
   <DetailsPage
@@ -1137,34 +1195,32 @@ export const NamespacesDetailsPage = (props) => (
   />
 );
 
-export const ProjectsDetailsPage = (props) => {
-  return (
-    <DetailsPage
-      {...props}
-      kind={referenceForModel(ProjectModel)}
-      customActionMenu={(k8sObj, obj) => (
-        <LazyActionMenu
-          context={{ [referenceForModel(ProjectModel)]: obj }}
-          variant={ActionMenuVariant.DROPDOWN}
-        />
-      )}
-      pages={[
-        {
-          href: '',
-          // t('public~Overview')
-          nameKey: 'public~Overview',
-          component: ProjectDashboard,
-        },
-        {
-          href: 'details',
-          // t('public~Details')
-          nameKey: 'public~Details',
-          component: NamespaceDetails,
-        },
-        navFactory.editYaml(),
-        navFactory.workloads(OverviewListPage),
-        navFactory.roles(RolesPage),
-      ]}
-    />
-  );
-};
+export const ProjectsDetailsPage = (props) => (
+  <DetailsPage
+    {...props}
+    kind={referenceForModel(ProjectModel)}
+    customActionMenu={(k8sObj, obj) => (
+      <LazyActionMenu
+        context={{ [referenceForModel(ProjectModel)]: obj }}
+        variant={ActionMenuVariant.DROPDOWN}
+      />
+    )}
+    pages={[
+      {
+        href: '',
+        // t('public~Overview')
+        nameKey: 'public~Overview',
+        component: ProjectDashboard,
+      },
+      {
+        href: 'details',
+        // t('public~Details')
+        nameKey: 'public~Details',
+        component: NamespaceDetails,
+      },
+      navFactory.editYaml(),
+      navFactory.workloads(OverviewListPage),
+      navFactory.roles(RolesPage),
+    ]}
+  />
+);

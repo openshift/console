@@ -75,9 +75,12 @@ const RestorePVCModal: FC<RestorePVCModalProps> = ({ close, cancel, resource }) 
   const namespace = getNamespace(resource);
   const snapshotName = getName(resource);
 
-  const [pvcResource, pvcResourceLoaded, pvcResourceLoadError] = useK8sGet<
-    PersistentVolumeClaimKind
-  >(PersistentVolumeClaimModel, resource?.spec?.source?.persistentVolumeClaimName, namespace);
+  const [pvcResource, pvcResourceLoaded, pvcResourceLoadError] =
+    useK8sGet<PersistentVolumeClaimKind>(
+      PersistentVolumeClaimModel,
+      resource?.spec?.source?.persistentVolumeClaimName,
+      namespace,
+    );
 
   const pvcStorageClassName = pvcResource?.spec?.storageClassName;
   const pvcNotFound = pvcResourceLoaded && !pvcResource;
@@ -271,12 +274,19 @@ const RestorePVCModal: FC<RestorePVCModalProps> = ({ close, cancel, resource }) 
           type="submit"
           variant="primary"
           form="restore-pvc-form"
+          data-test="confirm-action"
+          id="confirm-action"
           isLoading={inProgress}
           isDisabled={!pvcSC || !validSize || inProgress}
         >
           {t('Restore')}
         </Button>
-        <Button variant="link" onClick={cancel} data-test-id="modal-cancel-action">
+        <Button
+          variant="link"
+          onClick={cancel}
+          data-test="modal-cancel-action"
+          data-test-id="modal-cancel-action"
+        >
           {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>

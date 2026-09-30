@@ -116,33 +116,26 @@ export type SupportedTopologyDetailsExtensions =
 
 // Type guards
 
-export const isDetailsTab = (e: Extension): e is DetailsTab => {
-  return e.type === 'console.topology/details/tab';
-};
+export const isDetailsTab = (e: Extension): e is DetailsTab =>
+  e.type === 'console.topology/details/tab';
 
-export const isDetailsTabSection = (e: Extension): e is DetailsTabSection => {
-  return e.type === 'console.topology/details/tab-section';
-};
+export const isDetailsTabSection = (e: Extension): e is DetailsTabSection =>
+  e.type === 'console.topology/details/tab-section';
 
-export const isDetailsResourceLink = (e: Extension): e is DetailsResourceLink => {
-  return e.type === 'console.topology/details/resource-link';
-};
+export const isDetailsResourceLink = (e: Extension): e is DetailsResourceLink =>
+  e.type === 'console.topology/details/resource-link';
 
-export const isDetailsResourceAlert = (e: Extension): e is DetailsResourceAlert => {
-  return e.type === 'console.topology/details/resource-alert';
-};
+export const isDetailsResourceAlert = (e: Extension): e is DetailsResourceAlert =>
+  e.type === 'console.topology/details/resource-alert';
 
-export const isPodAdapter = (e: Extension): e is PodAdapter => {
-  return e.type === 'console.topology/adapter/pod';
-};
+export const isPodAdapter = (e: Extension): e is PodAdapter =>
+  e.type === 'console.topology/adapter/pod';
 
-export const isBuildAdapter = (e: Extension): e is BuildAdapter => {
-  return e.type === 'console.topology/adapter/build';
-};
+export const isBuildAdapter = (e: Extension): e is BuildAdapter =>
+  e.type === 'console.topology/adapter/build';
 
-export const isNetworkAdapter = (e: Extension): e is NetworkAdapter => {
-  return e.type === 'console.topology/adapter/network';
-};
+export const isNetworkAdapter = (e: Extension): e is NetworkAdapter =>
+  e.type === 'console.topology/adapter/network';
 
 export type DetailsResourceAlertContent = {
   /** The title of the alert */

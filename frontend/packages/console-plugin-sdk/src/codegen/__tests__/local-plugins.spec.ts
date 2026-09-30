@@ -16,8 +16,11 @@ jest.mock('@console/dynamic-plugin-sdk/src/utils/jsonc', () => ({
 }));
 
 jest.mock('@console/dynamic-plugin-sdk/src/webpack/ConsoleRemotePlugin', () => ({
-  ...jest.requireActual('@console/dynamic-plugin-sdk/src/webpack/ConsoleRemotePlugin'),
   validateConsoleExtensionsFileSchema: jest.fn(),
+}));
+
+jest.mock('read-pkg', () => ({
+  readPackageSync: jest.fn(),
 }));
 
 jest.mock('fs', () => ({
@@ -27,13 +30,11 @@ jest.mock('fs', () => ({
 
 const parseJSONC = jsoncModule.parseJSONC as jest.Mock;
 const fsExistsSyncMock = fs.existsSync as jest.Mock;
-const validateConsoleExtensionsFileSchema = remotePluginModule.validateConsoleExtensionsFileSchema as jest.Mock;
+const validateConsoleExtensionsFileSchema =
+  remotePluginModule.validateConsoleExtensionsFileSchema as jest.Mock;
 
-const {
-  getLocalPluginsModule,
-  getExecutableCodeRefSource,
-  getDynamicExtensions,
-} = localPluginsModule;
+const { getLocalPluginsModule, getExecutableCodeRefSource, getDynamicExtensions } =
+  localPluginsModule;
 
 beforeEach(() => {
   [parseJSONC, validateConsoleExtensionsFileSchema, fsExistsSyncMock].forEach((mock) =>

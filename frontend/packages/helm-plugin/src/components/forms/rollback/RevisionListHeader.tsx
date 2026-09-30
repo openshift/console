@@ -31,7 +31,7 @@ export const useRevisionListColumns = (
       {
         cell: <span className="pf-v6-u-screen-reader">{t('Select')}</span>,
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
           isStickyColumn: true,
           stickyMinWidth: '50px',
         } as ThProps,
@@ -39,7 +39,7 @@ export const useRevisionListColumns = (
       {
         cell: t('Revision'),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
           sort: {
             columnIndex: 1,
             sortBy,
@@ -50,7 +50,7 @@ export const useRevisionListColumns = (
       {
         cell: t('Updated'),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
           sort: {
             columnIndex: 2,
             sortBy,
@@ -61,7 +61,7 @@ export const useRevisionListColumns = (
       {
         cell: t('Status'),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
           sort: {
             columnIndex: 3,
             sortBy,
@@ -72,7 +72,7 @@ export const useRevisionListColumns = (
       {
         cell: t('Chart name'),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
           sort: {
             columnIndex: 4,
             sortBy,
@@ -83,7 +83,7 @@ export const useRevisionListColumns = (
       {
         cell: t('Chart version'),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
           sort: {
             columnIndex: 5,
             sortBy,
@@ -94,7 +94,7 @@ export const useRevisionListColumns = (
       {
         cell: t('App version'),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
           sort: {
             columnIndex: 6,
             sortBy,
@@ -105,7 +105,7 @@ export const useRevisionListColumns = (
       {
         cell: t('Description'),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         } as ThProps,
       },
     ],

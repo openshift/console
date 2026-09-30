@@ -37,7 +37,7 @@ describe('DisruptionsAllowed', () => {
         desiredHealthy: 2,
         expectedPods: 3,
       },
-    } as PodDisruptionBudgetKind);
+    }) as PodDisruptionBudgetKind;
 
   beforeEach(() => {
     jest.clearAllMocks();

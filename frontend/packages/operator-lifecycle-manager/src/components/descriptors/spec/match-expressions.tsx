@@ -5,10 +5,11 @@ import { css } from '@patternfly/react-styles';
 import { Table, Thead, Tr, Th, Td, Tbody } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
-import { MatchExpression, Operator } from '@console/internal/module/k8s';
+import type { MatchExpression as MatchExpressionType } from '@console/internal/module/k8s';
+import { Operator } from '@console/internal/module/k8s';
 
 const UNARY_OPERATORS = [Operator.Exists, Operator.DoesNotExist];
-const ALL_OPERATORS: MatchExpression['operator'][] = [
+const ALL_OPERATORS: MatchExpressionType['operator'][] = [
   Operator.DoesNotExist,
   Operator.Equals,
   Operator.Exists,
@@ -87,7 +88,7 @@ export const MatchExpressions: FC<MatchExpressionsProps> = ({
 }) => {
   const { t } = useTranslation('olm');
 
-  const updateExpression = (index: number, newExpression: MatchExpression): void =>
+  const updateExpression = (index: number, newExpression: MatchExpressionType): void =>
     onChange(matchExpressions.map((exp, i) => (i === index ? newExpression : exp)));
 
   const removeExpression = (index: number): void =>
@@ -136,17 +137,17 @@ export const MatchExpressions: FC<MatchExpressionsProps> = ({
 };
 
 export type MatchExpressionsProps = {
-  matchExpressions: MatchExpression[];
-  onChange?: (matchExpressions: MatchExpression[]) => void;
-  allowedOperators?: MatchExpression['operator'][];
+  matchExpressions: MatchExpressionType[];
+  onChange?: (matchExpressions: MatchExpressionType[]) => void;
+  allowedOperators?: MatchExpressionType['operator'][];
   uid?: string;
 };
 
 type MatchExpressionProps = {
-  expression: MatchExpression;
-  onChange?: (expression: MatchExpression) => void;
+  expression: MatchExpressionType;
+  onChange?: (expression: MatchExpressionType) => void;
   onClickRemove?: () => void;
-  allowedOperators?: MatchExpression['operator'][];
+  allowedOperators?: MatchExpressionType['operator'][];
 };
 
 MatchExpressions.displayName = 'MatchExpressions';

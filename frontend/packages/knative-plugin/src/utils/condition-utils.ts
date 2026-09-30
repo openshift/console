@@ -10,12 +10,10 @@ export const getConditionString = (conditions: K8sResourceCondition[]): string =
 
 export const getConditionStats = (
   conditions: K8sResourceCondition[],
-): { OKcount: number; conditionsSize: number } => {
-  return {
-    OKcount: getConditionOKCount(conditions),
-    conditionsSize: _.size(conditions),
-  };
-};
+): { OKcount: number; conditionsSize: number } => ({
+  OKcount: getConditionOKCount(conditions),
+  conditionsSize: _.size(conditions),
+});
 
 export const getCondition = (
   conditions: K8sResourceCondition[],

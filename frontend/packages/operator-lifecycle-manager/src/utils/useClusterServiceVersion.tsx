@@ -17,26 +17,24 @@ export const useClusterServiceVersion = (
   name: string,
   namespace: string,
 ): [ClusterServiceVersionKind, boolean, any] => {
-  const [namespacedCSV, namespacedCSVLoaded, namespacedCSVLoadError] = useK8sWatchResource<
-    ClusterServiceVersionKind
-  >({
-    groupVersionKind,
-    name,
-    namespace,
-    optional: copiedCSVsDisabled,
-  });
-  const [globalCSV, globalCSVLoaded, globalCSVLoadError] = useK8sWatchResource<
-    ClusterServiceVersionKind
-  >(
-    copiedCSVsDisabled
-      ? {
-          groupVersionKind,
-          name,
-          namespace: GLOBAL_COPIED_CSV_NAMESPACE,
-          optional: copiedCSVsDisabled,
-        }
-      : null,
-  );
+  const [namespacedCSV, namespacedCSVLoaded, namespacedCSVLoadError] =
+    useK8sWatchResource<ClusterServiceVersionKind>({
+      groupVersionKind,
+      name,
+      namespace,
+      optional: copiedCSVsDisabled,
+    });
+  const [globalCSV, globalCSVLoaded, globalCSVLoadError] =
+    useK8sWatchResource<ClusterServiceVersionKind>(
+      copiedCSVsDisabled
+        ? {
+            groupVersionKind,
+            name,
+            namespace: GLOBAL_COPIED_CSV_NAMESPACE,
+            optional: copiedCSVsDisabled,
+          }
+        : null,
+    );
 
   return useMemo(() => {
     if (copiedCSVsDisabled && Boolean(namespacedCSVLoadError)) {

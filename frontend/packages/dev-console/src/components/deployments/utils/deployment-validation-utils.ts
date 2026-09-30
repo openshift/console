@@ -29,8 +29,8 @@ const lchValidationSchema = (lch: LifecycleHookFormData) =>
     }),
   });
 
-const lchImageStreamDataSchema = (action: string) => {
-  return action === LifecycleAction.tagImages
+const lchImageStreamDataSchema = (action: string) =>
+  action === LifecycleAction.tagImages
     ? yup.object().shape({
         containerName: yup.string().required(i18n.t('devconsole~Required')),
         imageStream: yup.object({
@@ -40,7 +40,6 @@ const lchImageStreamDataSchema = (action: string) => {
         }),
       })
     : null;
-};
 
 const deploymentStrategySchema = (strategy: DeploymentStrategy) => {
   switch (strategy.type) {

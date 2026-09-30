@@ -9,7 +9,7 @@ import { MockKnativeResources } from '../../../topology/__tests__/topology-knati
 import {
   mockRevisions,
   mockTrafficData,
-} from '../../../utils/__mocks__/traffic-splitting-utils-mock';
+} from '../../../utils/__tests__/data/traffic-splitting-utils-mock';
 import * as TrafficSplittingController from '../../traffic-splitting/TrafficSplittingController';
 import RevisionsOverviewList from '../RevisionsOverviewList';
 
@@ -67,7 +67,8 @@ jest.mock('../RevisionsOverviewListItem', () => ({
 
 jest.mock('react-i18next');
 
-const useTrafficSplittingModalLauncherMock = TrafficSplittingController.useTrafficSplittingModalLauncher as jest.Mock;
+const useTrafficSplittingModalLauncherMock =
+  TrafficSplittingController.useTrafficSplittingModalLauncher as jest.Mock;
 
 describe('RevisionsOverviewList', () => {
   const mockUseAccessReview = useAccessReview as any;

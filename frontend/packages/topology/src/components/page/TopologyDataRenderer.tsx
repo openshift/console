@@ -13,9 +13,7 @@ interface TopologyDataRendererProps {
   viewType: TopologyViewType;
 }
 
-const TopologyDataRenderer: FC<TopologyDataRendererProps> = observer(function TopologyDataRenderer({
-  viewType,
-}) {
+const TopologyDataRenderer: FC<TopologyDataRendererProps> = observer(({ viewType }) => {
   const { t } = useTranslation('topology');
   const { namespace, model, loaded, loadError } = useContext<ExtensibleModel>(ModelContext);
 

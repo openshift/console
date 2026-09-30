@@ -55,8 +55,8 @@ export const useBindingActions = (
     confirmButtonVariant: ButtonVariant.danger,
     confirmButtonLabel: t('Delete'),
     cancelButtonLabel: t('Cancel'),
-    onConfirm: () => {
-      return k8sPatchResource({
+    onConfirm: () =>
+      k8sPatchResource({
         model,
         resource: obj,
         data: [
@@ -65,8 +65,7 @@ export const useBindingActions = (
             path: `/subjects/${subjectIndex}`,
           },
         ],
-      });
-    },
+      }),
     ouiaId: 'WebTerminalCloseConfirmation',
   });
 

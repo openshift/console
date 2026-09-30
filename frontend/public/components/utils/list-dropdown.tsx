@@ -22,9 +22,7 @@ import { flagPending } from '../../reducers/features';
 import { ResourceName } from './resource-icon';
 import { LoadingInline } from './status-box';
 
-const getKey = (key, keyKind) => {
-  return keyKind ? `${key}-${keyKind}` : key;
-};
+const getKey = (key, keyKind) => (keyKind ? `${key}-${keyKind}` : key);
 
 interface ListDropdownResource extends Partial<WatchK8sResource & { prop?: string }> {
   data?: K8sResourceCommon[];
@@ -46,6 +44,7 @@ export interface ListDropdownProps {
   ) => void;
   id?: string;
   disabled?: boolean;
+  showDefaultWarning?: boolean;
 
   dataTest?: string;
   actionItems?: ActionItem[];
@@ -137,7 +136,11 @@ const InnerListDropdown: FC<ListDropdownInternalProps> = ({
 
     setTitle(
       selectedItem ? (
-        <ResourceName kind={selectedItem.kindLabel} name={selectedItem.name} />
+        <ResourceName
+          kind={selectedItem.kindLabel}
+          name={selectedItem.name}
+          showDefaultWarning={props.showDefaultWarning}
+        />
       ) : (
         placeholder
       ),
@@ -149,6 +152,7 @@ const InnerListDropdown: FC<ListDropdownInternalProps> = ({
     dataFilter,
     props.selectedKey,
     props.selectedKeyKind,
+    props.showDefaultWarning,
     placeholder,
     desc,
     t,
@@ -159,10 +163,16 @@ const InnerListDropdown: FC<ListDropdownInternalProps> = ({
     const result = {};
     _.keys(items).forEach((key) => {
       const item = items[key];
-      result[key] = <ResourceName kind={item.kindLabel} name={item.name} />;
+      result[key] = (
+        <ResourceName
+          kind={item.kindLabel}
+          name={item.name}
+          showDefaultWarning={props.showDefaultWarning}
+        />
+      );
     });
     return result;
-  }, [items]);
+  }, [items, props.showDefaultWarning]);
 
   return (
     <div>
@@ -204,36 +214,41 @@ export const ListDropdown: FC<ListDropdownProps> = (props) => {
     if (!props.resources || props.resources.length === 0) {
       return {};
     }
-    return props.resources.reduce((acc, resource) => {
-      // Use prop as key if provided, otherwise fallback to kind
-      const key = resource.prop || resource.kind;
-      acc[key] = {
-        kind: resource.kind,
-        isList: true,
-        namespace: resource.namespace,
-        selector: resource.selector,
-        fieldSelector: resource.fieldSelector,
-        limit: resource.limit,
-        namespaced: resource.namespaced,
-        optional: resource.optional,
-      };
-      return acc;
-    }, {} as Record<string, WatchK8sResource>);
+    return props.resources.reduce(
+      (acc, resource) => {
+        // Use prop as key if provided, otherwise fallback to kind
+        const key = resource.prop || resource.kind;
+        acc[key] = {
+          kind: resource.kind,
+          isList: true,
+          namespace: resource.namespace,
+          selector: resource.selector,
+          fieldSelector: resource.fieldSelector,
+          limit: resource.limit,
+          namespaced: resource.namespaced,
+          optional: resource.optional,
+        };
+        return acc;
+      },
+      {} as Record<string, WatchK8sResource>,
+    );
   }, [props.resources]);
 
-  const watchedResources = useK8sWatchResources<Record<string, K8sResourceCommon[]>>(
-    watchResources,
+  const watchedResources =
+    useK8sWatchResources<Record<string, K8sResourceCommon[]>>(watchResources);
+
+  const loaded = useMemo(
+    () =>
+      Object.values(watchedResources)
+        .filter((r) => !r.loadError)
+        .every((r) => r.loaded),
+    [watchedResources],
   );
 
-  const loaded = useMemo(() => {
-    return Object.values(watchedResources)
-      .filter((r) => !r.loadError)
-      .every((r) => r.loaded);
-  }, [watchedResources]);
-
-  const loadError = useMemo(() => {
-    return Object.values(watchedResources).some((r) => r.loadError);
-  }, [watchedResources]);
+  const loadError = useMemo(
+    () => Object.values(watchedResources).some((r) => r.loadError),
+    [watchedResources],
+  );
 
   return (
     <InnerListDropdown

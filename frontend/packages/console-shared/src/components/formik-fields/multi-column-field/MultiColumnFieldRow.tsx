@@ -51,7 +51,7 @@ const DEFAULT_ROW_RENDERER = ({
         })}
       </Grid>
       {!isReadOnly && (
-        <div className={'odc-multi-column-field__col--button'}>
+        <div className="odc-multi-column-field__col--button">
           <Tooltip content={tooltipDeleteRow || t('Remove')}>
             <Button
               icon={<RhUiMinusCircleIcon />}

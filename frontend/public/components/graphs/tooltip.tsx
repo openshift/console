@@ -24,7 +24,7 @@ import {
 } from '@patternfly/react-charts/victory';
 import { defaults } from 'lodash';
 import { Helpers } from 'victory';
-import type { DataPoint } from '.';
+import type { DataPoint } from './types';
 
 const ChartLegendTooltipContent: FC<
   ChartLegendTooltipContentProps & {

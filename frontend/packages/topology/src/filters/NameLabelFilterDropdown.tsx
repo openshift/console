@@ -82,7 +82,7 @@ const NameLabelFilterDropdown: FC<NameLabelFilterDropdownProps> = (props) => {
           placeholder={t('Find by label...')}
           data={data}
           color="purple"
-          labelPath={'metadata.labels'}
+          labelPath="metadata.labels"
         />
       ) : (
         <TextFilter

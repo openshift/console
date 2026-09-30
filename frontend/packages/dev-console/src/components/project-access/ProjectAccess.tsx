@@ -55,9 +55,10 @@ const ProjectAccess: FC<ProjectAccessProps> = ({
     [roleBindings, roles.data, namespace],
   );
 
-  const memoizedRoleBindings = useMemo(() => ({ projectAccess: userRoleBindings }), [
-    userRoleBindings,
-  ]);
+  const memoizedRoleBindings = useMemo(
+    () => ({ projectAccess: userRoleBindings }),
+    [userRoleBindings],
+  );
 
   const rbacURL = getDocumentationURL(documentationURLs.usingRBAC);
 

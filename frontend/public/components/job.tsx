@@ -17,7 +17,10 @@ import {
   nameCellProps,
   getLabelsColumnWidthStyleProp,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import type {
+  ConsoleDataViewColumn,
+  GetDataViewRows,
+} from '@console/app/src/components/data-view/types';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
@@ -30,7 +33,7 @@ import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { Status } from '@console/shared/src/components/status/Status';
 import { DASH } from '@console/shared/src/constants/ui';
 import { JobModel } from '../models';
-import type { JobKind, K8sResourceKind, TableColumn } from '../module/k8s';
+import type { JobKind, K8sResourceKind } from '../module/k8s';
 import { getJobTypeAndCompletions, referenceFor, referenceForModel } from '../module/k8s';
 import { Conditions } from './conditions';
 import { ResourceEventStream } from './events';
@@ -71,8 +74,8 @@ const Completions: FC<CompletionsCellProps> = ({ obj, completions }) => {
   );
 };
 
-const getDataViewRows: GetDataViewRows<JobKind> = (data, columns) => {
-  return data.map(({ obj }) => {
+const getDataViewRows: GetDataViewRows<JobKind> = (data, columns) =>
+  data.map(({ obj }) => {
     const { name, namespace } = obj.metadata;
     const { type, completions } = getJobTypeAndCompletions(obj);
     const context = { [referenceFor(obj)]: obj };
@@ -118,7 +121,6 @@ const getDataViewRows: GetDataViewRows<JobKind> = (data, columns) => {
       };
     });
   });
-};
 
 const JobDetails: FC<JobsDetailsProps> = ({ obj: job }) => {
   const { t } = useTranslation('public');
@@ -226,14 +228,14 @@ const JobsDetailsPage: FC = (props) => {
   );
 };
 const useJobsColumns = (): {
-  columns: TableColumn<JobKind>[];
+  columns: ConsoleDataViewColumn<JobKind>[];
   resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation('public');
   const { getResizableProps, getWidth, resetAllColumnWidths } = useColumnWidthSettings(JobModel);
 
-  const columns = useMemo(() => {
-    return [
+  const columns = useMemo<ConsoleDataViewColumn<JobKind>[]>(
+    () => [
       {
         title: t('Name'),
         id: tableColumnInfo[0].id,
@@ -241,7 +243,7 @@ const useJobsColumns = (): {
         resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: {
           ...nameCellProps,
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -250,7 +252,7 @@ const useJobsColumns = (): {
         sort: 'metadata.namespace',
         resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -259,7 +261,7 @@ const useJobsColumns = (): {
         sort: 'metadata.labels',
         resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
           ...getLabelsColumnWidthStyleProp(getWidth(tableColumnInfo[2].id)),
         },
       },
@@ -270,7 +272,7 @@ const useJobsColumns = (): {
           data.sort(sortResourceByValue<JobKind>(direction, sorts.jobCompletionsSucceeded)),
         resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -280,7 +282,7 @@ const useJobsColumns = (): {
           data.sort(sortResourceByValue<JobKind>(direction, sorts.jobType)),
         resizableProps: getResizableProps(tableColumnInfo[4].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -289,7 +291,7 @@ const useJobsColumns = (): {
         sort: 'metadata.creationTimestamp',
         resizableProps: getResizableProps(tableColumnInfo[5].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -299,8 +301,9 @@ const useJobsColumns = (): {
           ...actionsCellProps,
         },
       },
-    ];
-  }, [t, getResizableProps, getWidth]);
+    ],
+    [t, getResizableProps, getWidth],
+  );
 
   return { columns, resetAllColumnWidths };
 };

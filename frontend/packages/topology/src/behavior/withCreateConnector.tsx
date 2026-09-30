@@ -176,9 +176,10 @@ const CreateConnectorWidget: FC<CreateConnectorWidgetProps> = observer((props) =
     return null;
   }
 
+  // eslint-disable-next-line react-hooks/refs -- Hints must be captured synchronously during drag render to avoid stale references in drop handler
   if (dragging) {
     // store the latest hints
-    hintsRef.current = hints;
+    hintsRef.current = hints; // eslint-disable-line react-hooks/refs -- captures hints synchronously during drag render
   }
 
   const dragEvent = prompt ? prompt.event : event;
@@ -220,7 +221,7 @@ const CreateConnectorWidget: FC<CreateConnectorWidgetProps> = observer((props) =
         startPoint={startPoint}
         endPoint={endPoint}
         dragging={dragging}
-        hints={hintsRef.current || []}
+        hints={hintsRef.current || []} // eslint-disable-line react-hooks/refs -- reads synchronously captured hints for drop handler
         hover={hover}
       />
       <path
@@ -267,54 +268,56 @@ const CreateConnectorWidget: FC<CreateConnectorWidgetProps> = observer((props) =
   );
 });
 
-export const withCreateConnector = <P extends WithCreateConnectorProps & ElementProps>(
-  onCreate: ComponentProps<typeof CreateConnectorWidget>['onCreate'],
-  ConnectorComponent: CreateConnectorRenderer = DefaultCreateConnector,
-  contextMenuClass?: string,
-  options?: CreateConnectorOptions,
-) => (WrappedComponent: ComponentType<Partial<P>>) => {
-  const Component: FC<Omit<P, keyof WithCreateConnectorProps> & { children?: ReactNode }> = ({
-    children,
-    ...props
-  }) => {
-    const [show, setShow] = useState(false);
-    const [alive, setKeepAlive] = useState(false);
-    const onShowCreateConnector = useCallback(() => setShow(true), []);
-    const onHideCreateConnector = useCallback(() => setShow(false), []);
-    const onKeepAlive = useCallback(
-      (isAlive: boolean) => {
-        setKeepAlive((prev) => {
-          if (prev && !isAlive) {
-            onHideCreateConnector();
-          }
-          return isAlive;
-        });
-      },
-      [onHideCreateConnector],
-    );
-    return (
-      <WrappedComponent
-        {...(props as any)}
-        onShowCreateConnector={onShowCreateConnector}
-        onHideCreateConnector={onHideCreateConnector}
-        createConnectorDrag={alive}
-      >
-        {children}
-        {(show || alive) && (
-          <CreateConnectorWidget
-            {...options}
-            element={props.element}
-            onCreate={onCreate}
-            onKeepAlive={onKeepAlive}
-            ConnectorComponent={ConnectorComponent}
-            contextMenuClass={contextMenuClass}
-          />
-        )}
-      </WrappedComponent>
-    );
+export const withCreateConnector =
+  <P extends WithCreateConnectorProps & ElementProps>(
+    onCreate: ComponentProps<typeof CreateConnectorWidget>['onCreate'],
+    ConnectorComponent: CreateConnectorRenderer = DefaultCreateConnector,
+    contextMenuClass?: string,
+    options?: CreateConnectorOptions,
+  ) =>
+  (WrappedComponent: ComponentType<Partial<P>>) => {
+    const Component: FC<Omit<P, keyof WithCreateConnectorProps> & { children?: ReactNode }> = ({
+      children,
+      ...props
+    }) => {
+      const [show, setShow] = useState(false);
+      const [alive, setKeepAlive] = useState(false);
+      const onShowCreateConnector = useCallback(() => setShow(true), []);
+      const onHideCreateConnector = useCallback(() => setShow(false), []);
+      const onKeepAlive = useCallback(
+        (isAlive: boolean) => {
+          setKeepAlive((prev) => {
+            if (prev && !isAlive) {
+              onHideCreateConnector();
+            }
+            return isAlive;
+          });
+        },
+        [onHideCreateConnector],
+      );
+      return (
+        <WrappedComponent
+          {...(props as any)}
+          onShowCreateConnector={onShowCreateConnector}
+          onHideCreateConnector={onHideCreateConnector}
+          createConnectorDrag={alive}
+        >
+          {children}
+          {(show || alive) && (
+            <CreateConnectorWidget
+              {...options}
+              element={props.element}
+              onCreate={onCreate}
+              onKeepAlive={onKeepAlive}
+              ConnectorComponent={ConnectorComponent}
+              contextMenuClass={contextMenuClass}
+            />
+          )}
+        </WrappedComponent>
+      );
+    };
+    Component.displayName = `withCreateConnector(${
+      WrappedComponent.displayName || WrappedComponent.name
+    })`;
+    return observer(Component);
   };
-  Component.displayName = `withCreateConnector(${
-    WrappedComponent.displayName || WrappedComponent.name
-  })`;
-  return observer(Component);
-};

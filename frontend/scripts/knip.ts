@@ -241,13 +241,12 @@ const config: KnipConfig = {
   // Not shipped in production so we don't mind being loosey-goosey
   ignoreWorkspaces: [
     'packages/eslint-plugin-console',
-    'packages/integration-tests',
-    'packages/*/integration-tests',
   ],
 
   ignoreDependencies: [
     '@console/.*', // cross-references via yarn workspaces
     'lodash', // remapped to lodash-es by NormalModuleReplacementPlugin
+    'lodash-es', // remapped to lodash by NormalModuleReplacementPlugin
     '@patternfly/patternfly', // imported via SCSS, which knip cannot trace
   ],
 

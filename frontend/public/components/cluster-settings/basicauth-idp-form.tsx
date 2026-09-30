@@ -56,9 +56,7 @@ export const AddBasicAuthPage: FC = () => {
     );
   };
 
-  const getOAuthResource = () => {
-    return handlePromise(getOAuth());
-  };
+  const getOAuthResource = () => handlePromise(getOAuth());
 
   const createTLSSecret = () => {
     if (!certFileContent) {

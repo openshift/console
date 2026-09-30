@@ -45,7 +45,7 @@ describe('ApplicationSelector', () => {
       return [fieldProps, metaProps, {}];
     });
 
-    mockUseFormikContext.mockReturnValue(({
+    mockUseFormikContext.mockReturnValue({
       setFieldValue,
       setFieldTouched,
       values: {
@@ -60,7 +60,7 @@ describe('ApplicationSelector', () => {
       isSubmitting: false,
       isValidating: false,
       submitCount: 0,
-    } as unknown) as ReturnType<typeof formik.useFormikContext>);
+    } as unknown as ReturnType<typeof formik.useFormikContext>);
     jest.clearAllMocks();
   });
 

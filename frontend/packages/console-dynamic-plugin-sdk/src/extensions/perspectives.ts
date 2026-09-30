@@ -28,6 +28,4 @@ export type Perspective = Extension<
   }
 >;
 
-export const isPerspective = (e: Extension): e is Perspective => {
-  return e.type === 'console.perspective';
-};
+export const isPerspective = (e: Extension): e is Perspective => e.type === 'console.perspective';

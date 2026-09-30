@@ -61,19 +61,17 @@ export const getContainerImportSample = () => {
   };
 };
 
-export const hasSampleQueryParameter = () => {
-  return !!new URLSearchParams(window.location.search).get('sample');
-};
+export const hasSampleQueryParameter = () =>
+  !!new URLSearchParams(window.location.search).get('sample');
 
-export const groupConsoleSamplesByName = (samples: ConsoleSample[]) => {
-  return samples.reduce<Record<string, ConsoleSample[]>>((grouped, consoleSample) => {
+export const groupConsoleSamplesByName = (samples: ConsoleSample[]) =>
+  samples.reduce<Record<string, ConsoleSample[]>>((grouped, consoleSample) => {
     const name =
       consoleSample.metadata.labels?.[LOCALIZATION_NAME_LABEL] || consoleSample.metadata.name;
     if (!grouped[name]) grouped[name] = [];
     grouped[name].push(consoleSample);
     return grouped;
   }, {});
-};
 
 /**
  * Returns the samples with the best localization match, for the given
@@ -142,12 +140,11 @@ export const getBestMatch = (samples: ConsoleSample[], language: string): Consol
   );
 };
 
-export const useSamples = () => {
-  return useK8sWatchResource<ConsoleSample[]>({
+export const useSamples = () =>
+  useK8sWatchResource<ConsoleSample[]>({
     isList: true,
     groupVersionKind: getGroupVersionKindForModel(ConsoleSampleModel),
   });
-};
 
 export const getSample = (name: string): Promise<ConsoleSample> =>
   k8sGetResource({ model: ConsoleSampleModel, name });

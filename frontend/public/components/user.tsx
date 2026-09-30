@@ -45,8 +45,8 @@ const tableColumnInfo = [
   { id: 'actions' },
 ];
 
-const getDataViewRows: GetDataViewRows<UserKind> = (data, columns) => {
-  return data.map(({ obj: user }) => {
+const getDataViewRows: GetDataViewRows<UserKind> = (data, columns) =>
+  data.map(({ obj: user }) => {
     const rowCells = {
       [tableColumnInfo[0].id]: {
         cell: <ResourceLink kind={referenceForModel(UserModel)} name={user.metadata.name} />,
@@ -74,7 +74,6 @@ const getDataViewRows: GetDataViewRows<UserKind> = (data, columns) => {
       };
     });
   });
-};
 
 const UsersHelpText = () => {
   const { t } = useTranslation('public');
@@ -142,7 +141,7 @@ const useUsersColumns = (): {
         resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: {
           ...nameCellProps,
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -151,7 +150,7 @@ const useUsersColumns = (): {
         sort: 'fullName',
         resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -160,7 +159,7 @@ const useUsersColumns = (): {
         sort: 'identities[0]',
         resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -251,25 +250,23 @@ const UserDetails: FC<UserDetailsProps> = ({ obj }) => {
   );
 };
 
-export const UserDetailsPage: FC = (props) => {
-  return (
-    <DetailsPage
-      {...props}
-      kind={referenceForModel(UserModel)}
-      customActionMenu={(k8sObj: K8sModel, obj: UserKind) => (
-        <LazyActionMenu
-          context={{ [referenceForModel(UserModel)]: obj }}
-          variant={ActionMenuVariant.DROPDOWN}
-        />
-      )}
-      pages={[
-        navFactory.details(UserDetails),
-        navFactory.editYaml(),
-        navFactory.roles(RoleBindingsTab),
-      ]}
-    />
-  );
-};
+export const UserDetailsPage: FC = (props) => (
+  <DetailsPage
+    {...props}
+    kind={referenceForModel(UserModel)}
+    customActionMenu={(k8sObj: K8sModel, obj: UserKind) => (
+      <LazyActionMenu
+        context={{ [referenceForModel(UserModel)]: obj }}
+        variant={ActionMenuVariant.DROPDOWN}
+      />
+    )}
+    pages={[
+      navFactory.details(UserDetails),
+      navFactory.editYaml(),
+      navFactory.roles(RoleBindingsTab),
+    ]}
+  />
+);
 
 type UserPageProps = {
   autoFocus?: boolean;

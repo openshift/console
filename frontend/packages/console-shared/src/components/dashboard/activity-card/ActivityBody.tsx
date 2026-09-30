@@ -64,12 +64,7 @@ const RecentEventsBodyContent: FC<RecentEventsBodyContentProps> = ({
     },
     [expanded, setPaused],
   );
-  const isExpanded = useCallback(
-    (uid: string) => {
-      return expanded.includes(uid);
-    },
-    [expanded],
-  );
+  const isExpanded = useCallback((uid: string) => expanded.includes(uid), [expanded]);
 
   if (eventsLoadError) {
     return <ErrorLoadingEvents />;

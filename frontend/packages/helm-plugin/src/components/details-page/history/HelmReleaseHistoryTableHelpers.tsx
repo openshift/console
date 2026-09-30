@@ -68,7 +68,7 @@ export const useHelmReleaseHistoryColumns = (
       {
         cell: t('Revision'),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
           sort: {
             columnIndex: 0,
             sortBy: { index: sortBy.index, direction: sortBy.direction },
@@ -79,7 +79,7 @@ export const useHelmReleaseHistoryColumns = (
       {
         cell: t('Updated'),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
           sort: {
             columnIndex: 1,
             sortBy: { index: sortBy.index, direction: sortBy.direction },
@@ -90,7 +90,7 @@ export const useHelmReleaseHistoryColumns = (
       {
         cell: t('Status'),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
           sort: {
             columnIndex: 2,
             sortBy: { index: sortBy.index, direction: sortBy.direction },
@@ -101,7 +101,7 @@ export const useHelmReleaseHistoryColumns = (
       {
         cell: t('Chart name'),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
           sort: {
             columnIndex: 3,
             sortBy: { index: sortBy.index, direction: sortBy.direction },
@@ -112,7 +112,7 @@ export const useHelmReleaseHistoryColumns = (
       {
         cell: t('Chart version'),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
           sort: {
             columnIndex: 4,
             sortBy: { index: sortBy.index, direction: sortBy.direction },
@@ -123,7 +123,7 @@ export const useHelmReleaseHistoryColumns = (
       {
         cell: t('App version'),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
           sort: {
             columnIndex: 5,
             sortBy: { index: sortBy.index, direction: sortBy.direction },
@@ -134,7 +134,7 @@ export const useHelmReleaseHistoryColumns = (
       {
         cell: t('Description'),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         } as ThProps,
       },
       {
@@ -150,44 +150,41 @@ export const getHelmReleaseHistoryRows = (
   releaseHistory: HelmRelease[],
   totalRevisions: number,
   latestHelmReleaseVersion: number | string,
-): DataViewTd[][] => {
-  return releaseHistory.map((revision) => {
-    return [
-      {
-        cell: revision.version,
-      },
-      {
-        cell: <Timestamp timestamp={revision.info.last_deployed} />,
-      },
-      {
-        cell: (
-          <Status
-            status={releaseStatus(revision.info.status)}
-            title={HelmReleaseStatusLabels[revision.info.status]}
-          />
-        ),
-      },
-      {
-        cell: revision.chart.metadata.name,
-      },
-      {
-        cell: revision.chart.metadata.version,
-      },
-      {
-        cell: revision.chart.metadata.appVersion || DASH,
-      },
-      {
-        cell: revision.info.description,
-      },
-      {
-        cell:
-          totalRevisions > 1 && latestHelmReleaseVersion !== revision.version ? (
-            <HelmReleaseHistoryKebab obj={revision} />
-          ) : null,
-      },
-    ];
-  });
-};
+): DataViewTd[][] =>
+  releaseHistory.map((revision) => [
+    {
+      cell: revision.version,
+    },
+    {
+      cell: <Timestamp timestamp={revision.info.last_deployed} />,
+    },
+    {
+      cell: (
+        <Status
+          status={releaseStatus(revision.info.status)}
+          title={HelmReleaseStatusLabels[revision.info.status]}
+        />
+      ),
+    },
+    {
+      cell: revision.chart.metadata.name,
+    },
+    {
+      cell: revision.chart.metadata.version,
+    },
+    {
+      cell: revision.chart.metadata.appVersion || DASH,
+    },
+    {
+      cell: revision.info.description,
+    },
+    {
+      cell:
+        totalRevisions > 1 && latestHelmReleaseVersion !== revision.version ? (
+          <HelmReleaseHistoryKebab obj={revision} />
+        ) : null,
+    },
+  ]);
 
 // Helper function to get column index by ID (matching the history table structure)
 export const getHistoryColumnIndexById = (columnId: string): number => {

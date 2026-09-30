@@ -15,11 +15,8 @@ export const useResourceType = (): [string, Dispatch<SetStateAction<string>>] =>
   const isKnSvcEnabled = useFlag(FLAG_KNATIVE_SERVING_SERVICE);
   const defaultResourceType = isKnSvcEnabled ? Resources.KnativeService : Resources.Kubernetes;
 
-  const [
-    preferredResourceType,
-    setPreferredResourceType,
-    preferredResourceTypeLoaded,
-  ] = useUserPreference<string>(PREFERRED_RESOURCE_TYPE_USER_PREFERENCE_KEY, defaultResourceType);
+  const [preferredResourceType, setPreferredResourceType, preferredResourceTypeLoaded] =
+    useUserPreference<string>(PREFERRED_RESOURCE_TYPE_USER_PREFERENCE_KEY, defaultResourceType);
 
   const [resourceType, setResourceType, resourceTypeLoaded] = useUserPreference<string>(
     LAST_RESOURCE_TYPE_USER_PREFERENCE_KEY,

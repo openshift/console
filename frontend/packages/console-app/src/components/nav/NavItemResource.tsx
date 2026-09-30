@@ -29,11 +29,10 @@ export const NavItemResource: FC<NavItemResourceProps> = ({
   const lastNamespace = sessionStorage.getItem(LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY);
   const resourceReference = referenceForExtensionModel(model);
   const [k8sModel] = useK8sModel(resourceReference);
-  const isActive = useMemo(() => navItemResourceIsActive(location, k8sModel, startsWith), [
-    k8sModel,
-    location,
-    startsWith,
-  ]);
+  const isActive = useMemo(
+    () => navItemResourceIsActive(location, k8sModel, startsWith),
+    [k8sModel, location, startsWith],
+  );
   const to = useCallback(
     () =>
       namespaced

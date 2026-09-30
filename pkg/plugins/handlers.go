@@ -8,7 +8,10 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"os"
 	"path"
+	"regexp"
+	"slices"
 	"strings"
 
 	"k8s.io/klog/v2"
@@ -18,6 +21,14 @@ import (
 	"github.com/openshift/console/pkg/serverutils"
 	oscrypto "github.com/openshift/library-go/pkg/crypto"
 )
+
+// i18nResourceNameRegexp restricts the user-supplied 'lng' and 'ns' query
+// parameters to simple identifiers. Legitimate values are locale codes (e.g.
+// "en", "zh-CN") and namespace names (e.g. "public", "plugin__helm"), none of
+// which contain path separators or "." segments. Rejecting anything else
+// prevents path traversal both when serving local translation files and when
+// building the request path proxied to a plugin service.
+var i18nResourceNameRegexp = regexp.MustCompile(`^[A-Za-z0-9_-]+$`)
 
 type PluginsHandler struct {
 	Client             *http.Client
@@ -111,8 +122,44 @@ func (p *PluginsHandler) HandleI18nResources(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
+	// Reject values containing path separators or "." segments before they are
+	// used to build a filesystem path or a plugin-service request path. Without
+	// this, "lng" or "ns" values such as "../../.." allow reading arbitrary
+	// *.json files from the pod or traversing against a plugin backend.
+	if !i18nResourceNameRegexp.MatchString(lang) || !i18nResourceNameRegexp.MatchString(namespace) {
+		errMsg := fmt.Sprintf("GET request %q has an invalid 'lng' or 'ns' query parameter", r.URL.String())
+		klog.Error(errMsg)
+		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: errMsg})
+		return
+	}
+
 	if !strings.HasPrefix(namespace, "plugin__") {
-		http.ServeFile(w, r, path.Join(p.PublicDir, "locales", lang, fmt.Sprintf("%s.json", namespace)))
+		// Serve the translation file confined to PublicDir/locales via os.Root so
+		// that, even if the validation above is ever loosened, the open cannot
+		// escape the locales directory. See https://go.dev/blog/osroot.
+		localesRoot, err := os.OpenRoot(path.Join(p.PublicDir, "locales"))
+		if err != nil {
+			klog.Errorf("failed to open locales directory: %v", err)
+			serverutils.SendResponse(w, http.StatusNotFound, serverutils.ApiError{Err: "locale resource not found"})
+			return
+		}
+		defer localesRoot.Close()
+
+		file, err := localesRoot.Open(path.Join(lang, fmt.Sprintf("%s.json", namespace)))
+		if err != nil {
+			klog.Errorf("failed to open locale resource %q/%q: %v", lang, namespace, err)
+			serverutils.SendResponse(w, http.StatusNotFound, serverutils.ApiError{Err: "locale resource not found"})
+			return
+		}
+		defer file.Close()
+
+		stat, err := file.Stat()
+		if err != nil || stat.IsDir() {
+			serverutils.SendResponse(w, http.StatusNotFound, serverutils.ApiError{Err: "locale resource not found"})
+			return
+		}
+
+		http.ServeContent(w, r, stat.Name(), stat.ModTime(), file)
 		return
 	}
 	// In case of dynamic-plugin we need to trim the "plugin__" prefix, since we are using the ConsolePlugin CR's name
@@ -138,6 +185,19 @@ func (p *PluginsHandler) HandlePluginAssets(w http.ResponseWriter, r *http.Reque
 		return
 	}
 	pluginName, pluginAssetPath := parsePluginNameAndAssetPath(r.URL.Path)
+
+	// Reject asset paths containing ".." segments before they are joined into
+	// the plugin-service request path. path.Join cleans "..", so a value such as
+	// "console-demo-plugin/../../foo" would otherwise resolve above the plugin's
+	// asset root and let an authenticated user traverse against the plugin
+	// backend. Mirrors the confinement applied to i18n resource requests.
+	if !isSafeAssetPath(pluginAssetPath) {
+		errMsg := fmt.Sprintf("GET request %q has an invalid asset path", r.URL.String())
+		klog.Error(errMsg)
+		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: errMsg})
+		return
+	}
+
 	pluginServiceRequestURL, err := p.getServiceRequestURL(pluginName)
 	if err != nil {
 		errMsg := err.Error()
@@ -148,6 +208,21 @@ func (p *PluginsHandler) HandlePluginAssets(w http.ResponseWriter, r *http.Reque
 	pluginServiceRequestURL.Path = path.Join(pluginServiceRequestURL.Path, pluginAssetPath)
 
 	p.proxyPluginRequest(pluginServiceRequestURL, pluginName, w, r)
+}
+
+// isSafeAssetPath reports whether an asset path is safe to append to a plugin
+// service URL. It rejects absolute paths and any path containing a ".." segment,
+// which would otherwise allow traversal above the plugin's asset root after
+// path.Join cleans the result. An empty path is allowed (it addresses the
+// plugin service root).
+func isSafeAssetPath(assetPath string) bool {
+	if assetPath == "" {
+		return true
+	}
+	if strings.HasPrefix(assetPath, "/") {
+		return false
+	}
+	return !slices.Contains(strings.Split(assetPath, "/"), "..")
 }
 
 func (p *PluginsHandler) proxyPluginRequest(requestURL *url.URL, pluginName string, w http.ResponseWriter, originalRequest *http.Request) {

@@ -18,7 +18,10 @@ import {
   ConsoleDataView,
   nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import type {
+  ConsoleDataViewColumn,
+  GetDataViewRows,
+} from '@console/app/src/components/data-view/types';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import Status from '@console/dynamic-plugin-sdk/src/app/components/status/Status';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
@@ -32,12 +35,7 @@ import { ONE_HOUR, ONE_MINUTE } from '@console/shared/src/constants/time';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import { usePrometheusGate } from '@console/shared/src/hooks/usePrometheusGate';
 import { BuildConfigModel, BuildModel } from '../models';
-import type {
-  K8sResourceKindReference,
-  K8sResourceKind,
-  K8sModel,
-  TableColumn,
-} from '../module/k8s';
+import type { K8sResourceKindReference, K8sResourceKind, K8sModel } from '../module/k8s';
 import { referenceFor, referenceForModel } from '../module/k8s';
 import { getBuildNumber } from '../module/k8s/builds';
 import { BuildLogs } from './build-logs';
@@ -349,8 +347,8 @@ const tableColumnInfo = [
   { id: 'actions' },
 ];
 
-const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) => {
-  return data.map(({ obj }) => {
+const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) =>
+  data.map(({ obj }) => {
     const { name, namespace } = obj.metadata;
     const kindReference = referenceFor(obj);
     const context = { [kindReference]: obj };
@@ -387,17 +385,16 @@ const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) => {
       };
     });
   });
-};
 
 const useBuildsColumns = (): {
-  columns: TableColumn<K8sResourceKind>[];
+  columns: ConsoleDataViewColumn<K8sResourceKind>[];
   resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation('public');
   const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(BuildModel);
 
-  const columns = useMemo(() => {
-    return [
+  const columns = useMemo<ConsoleDataViewColumn<K8sResourceKind>[]>(
+    () => [
       {
         title: t('Name'),
         id: tableColumnInfo[0].id,
@@ -405,7 +402,7 @@ const useBuildsColumns = (): {
         resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: {
           ...nameCellProps,
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -414,7 +411,7 @@ const useBuildsColumns = (): {
         sort: 'metadata.namespace',
         resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -423,7 +420,7 @@ const useBuildsColumns = (): {
         sort: 'status.phase',
         resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -432,7 +429,7 @@ const useBuildsColumns = (): {
         sort: 'status.startTimestamp',
         resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -441,7 +438,7 @@ const useBuildsColumns = (): {
         sort: 'status.duration',
         resizableProps: getResizableProps(tableColumnInfo[4].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -451,8 +448,9 @@ const useBuildsColumns = (): {
           ...actionsCellProps,
         },
       },
-    ];
-  }, [t, getResizableProps]);
+    ],
+    [t, getResizableProps],
+  );
 
   return { columns, resetAllColumnWidths };
 };

@@ -11,7 +11,10 @@ import {
   ConsoleDataView,
   getLabelsColumnWidthStyleProp,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import type {
+  ConsoleDataViewColumn,
+  GetDataViewRows,
+} from '@console/app/src/components/data-view/types';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
@@ -19,11 +22,7 @@ import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DASH } from '@console/shared/src/constants/ui';
 import { HorizontalPodAutoscalerModel } from '../models';
-import type {
-  K8sResourceKindReference,
-  HorizontalPodAutoscalerKind,
-  TableColumn,
-} from '../module/k8s';
+import type { K8sResourceKindReference, HorizontalPodAutoscalerKind } from '../module/k8s';
 import { referenceForModel } from '../module/k8s';
 import { Conditions } from './conditions';
 import { ResourceEventStream } from './events';
@@ -102,13 +101,10 @@ const MetricsTable: FC<MetricsTableProps> = ({ obj: hpa }) => {
     return <MetricsRow key={key} type={type} current={currentValue} target={targetValue} />;
   };
 
-  const resourceRow = (metric, current, key) => {
-    return resourceRowFn(metric, current, key, 'resource');
-  };
+  const resourceRow = (metric, current, key) => resourceRowFn(metric, current, key, 'resource');
 
-  const containerResourceRow = (metric, current, key) => {
-    return resourceRowFn(metric, current, key, 'containerResource');
-  };
+  const containerResourceRow = (metric, current, key) =>
+    resourceRowFn(metric, current, key, 'containerResource');
 
   const podRow = (metric, current, key) => {
     const { pods } = metric;
@@ -255,8 +251,8 @@ const tableColumnInfo = [
   { id: '' },
 ];
 
-const getDataViewRows: GetDataViewRows<HorizontalPodAutoscalerKind> = (data, columns) => {
-  return data.map(({ obj }) => {
+const getDataViewRows: GetDataViewRows<HorizontalPodAutoscalerKind> = (data, columns) =>
+  data.map(({ obj }) => {
     const { name, namespace } = obj.metadata;
 
     const rowCells = {
@@ -309,10 +305,9 @@ const getDataViewRows: GetDataViewRows<HorizontalPodAutoscalerKind> = (data, col
       };
     });
   });
-};
 
 const useHorizontalPodAutoscalersColumns = (): {
-  columns: TableColumn<HorizontalPodAutoscalerKind>[];
+  columns: ConsoleDataViewColumn<HorizontalPodAutoscalerKind>[];
   resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation('public');
@@ -320,8 +315,8 @@ const useHorizontalPodAutoscalersColumns = (): {
     HorizontalPodAutoscalerModel,
   );
 
-  const columns: TableColumn<HorizontalPodAutoscalerKind>[] = useMemo(() => {
-    return [
+  const columns: ConsoleDataViewColumn<HorizontalPodAutoscalerKind>[] = useMemo(
+    () => [
       {
         title: t('Name'),
         id: tableColumnInfo[0].id,
@@ -329,7 +324,7 @@ const useHorizontalPodAutoscalersColumns = (): {
         resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: {
           ...nameCellProps,
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -338,7 +333,7 @@ const useHorizontalPodAutoscalersColumns = (): {
         sort: 'metadata.namespace',
         resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -347,7 +342,7 @@ const useHorizontalPodAutoscalersColumns = (): {
         sort: 'metadata.labels',
         resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
           ...getLabelsColumnWidthStyleProp(getWidth(tableColumnInfo[2].id)),
         },
       },
@@ -357,7 +352,7 @@ const useHorizontalPodAutoscalersColumns = (): {
         sort: 'spec.scaleTargetRef.name',
         resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -366,7 +361,7 @@ const useHorizontalPodAutoscalersColumns = (): {
         sort: 'spec.minReplicas',
         resizableProps: getResizableProps(tableColumnInfo[4].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -375,7 +370,7 @@ const useHorizontalPodAutoscalersColumns = (): {
         sort: 'spec.maxReplicas',
         resizableProps: getResizableProps(tableColumnInfo[5].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -385,8 +380,9 @@ const useHorizontalPodAutoscalersColumns = (): {
           ...actionsCellProps,
         },
       },
-    ];
-  }, [t, getResizableProps, getWidth]);
+    ],
+    [t, getResizableProps, getWidth],
+  );
 
   return { columns, resetAllColumnWidths };
 };

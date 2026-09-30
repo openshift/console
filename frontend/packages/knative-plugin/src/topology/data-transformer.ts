@@ -176,9 +176,8 @@ export const getKnativeKameletsTopologyDataModel = (
   resources: TopologyDataResources,
 ): Promise<Model> => {
   const knativeKameletsTopologyGraphModel: Model = { nodes: [], edges: [] };
-  const { camelSinkKameletBindings, camelSourceKameletBindings } = getKameletSinkAndSourceBindings(
-    resources,
-  );
+  const { camelSinkKameletBindings, camelSourceKameletBindings } =
+    getKameletSinkAndSourceBindings(resources);
   const addTopologyData = (KnResources: K8sResourceKind[], type?: string) => {
     addKnativeTopologyData(knativeKameletsTopologyGraphModel, KnResources, type, resources);
   };

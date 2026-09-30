@@ -49,9 +49,10 @@ const ConfigureUnschedulableModal: FC<ConfigureUnschedulableModalProps> = ({
   }, [resource, nodes]);
 
   // Filter nodes that will actually be affected (not already unschedulable)
-  const nodesToMark = useMemo(() => targetNodes.filter((node) => !isNodeUnschedulable(node)), [
-    targetNodes,
-  ]);
+  const nodesToMark = useMemo(
+    () => targetNodes.filter((node) => !isNodeUnschedulable(node)),
+    [targetNodes],
+  );
 
   const isBulk = targetNodes.length > 1;
 
@@ -107,9 +108,9 @@ const ConfigureUnschedulableModal: FC<ConfigureUnschedulableModalProps> = ({
   );
 };
 
-export const ConfigureUnschedulableModalOverlay: OverlayComponent<ConfigureUnschedulableModalProps> = (
-  props,
-) => {
+export const ConfigureUnschedulableModalOverlay: OverlayComponent<
+  ConfigureUnschedulableModalProps
+> = (props) => {
   const [isOpen, setIsOpen] = useState(true);
 
   const handleClose = () => {

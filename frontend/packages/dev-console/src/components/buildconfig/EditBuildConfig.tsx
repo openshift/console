@@ -91,16 +91,14 @@ const EditBuildConfig: FC<EditBuildConfigProps> = ({
       validationSchema={validationSchema()}
       enableReinitialize
     >
-      {(formikProps) => {
-        return (
-          <BuildConfigForm
-            {...formikProps}
-            heading={heading}
-            buildConfig={watchedBuildConfig}
-            handleCancel={handleCancel}
-          />
-        );
-      }}
+      {(formikProps) => (
+        <BuildConfigForm
+          {...formikProps}
+          heading={heading}
+          buildConfig={watchedBuildConfig}
+          handleCancel={handleCancel}
+        />
+      )}
     </Formik>
   );
 };

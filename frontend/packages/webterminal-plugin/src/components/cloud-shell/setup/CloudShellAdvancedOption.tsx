@@ -43,14 +43,12 @@ const List: FC = () => {
   );
 };
 
-const CloudShellAdvancedSection: FC = () => {
-  return (
-    <FormSection style={{ marginTop: 'var(--pf-t--global--spacer--md)' }}>
-      <div>
-        <List />
-      </div>
-    </FormSection>
-  );
-};
+const CloudShellAdvancedSection: FC = () => (
+  <FormSection style={{ marginTop: 'var(--pf-t--global--spacer--md)' }}>
+    <div>
+      <List />
+    </div>
+  </FormSection>
+);
 
 export default CloudShellAdvancedSection;

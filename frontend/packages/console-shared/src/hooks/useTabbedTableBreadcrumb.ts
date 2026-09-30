@@ -4,8 +4,7 @@ import type { Location } from 'react-router';
 import { createPath } from 'react-router';
 import { getBreadcrumbPath } from '@console/internal/components/utils/breadcrumbs';
 import type { K8sKind } from '@console/internal/module/k8s';
-import { getActiveNamespace } from '@console/internal/reducers/ui';
-import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { ALL_NAMESPACES_KEY } from '../constants/common';
 
 export const useTabbedTableBreadcrumbsFor = (
@@ -20,7 +19,7 @@ export const useTabbedTableBreadcrumbsFor = (
 ) => {
   const { t } = useTranslation('console-shared');
   const { label, labelKey, labelPlural, labelPluralKey } = kindObj;
-  const currentNamespace = useConsoleSelector((state) => getActiveNamespace(state));
+  const [currentNamespace] = useActiveNamespace();
   const nsURL =
     ALL_NAMESPACES_KEY === currentNamespace ? 'all-namespaces' : `ns/${currentNamespace}`;
   return useMemo(

@@ -303,8 +303,8 @@ const TemplateForm: FC<TemplateFormProps> = (props) => {
     setInProgress(true);
 
     createTemplateSecret()
-      .then((secret: K8sResourceKind) => {
-        return createTemplateInstance(secret).then(async (templateInstance: K8sResourceKind) => {
+      .then((secret: K8sResourceKind) =>
+        createTemplateInstance(secret).then(async (templateInstance: K8sResourceKind) => {
           await updatesecretOwnerRef(secret, templateInstance);
           const activeExtension = perspectiveExtensions.find(
             (p) => p.properties.id === activePerspective,
@@ -312,8 +312,8 @@ const TemplateForm: FC<TemplateFormProps> = (props) => {
           const url = (await activeExtension.properties.importRedirectURL())(namespace);
           // Navigate before clearing inProgress
           navigate(url);
-        });
-      })
+        }),
+      )
       .catch((err) => {
         setInProgress(false);
         setError(err.message);

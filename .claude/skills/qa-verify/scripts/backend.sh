@@ -37,8 +37,20 @@ case "$ACTION" in
     mkdir -p "$RUN_DIR"
 
     cd "$REPO_ROOT"
-    nohup bash -c "source ./contrib/oc-environment.sh && ./bin/bridge -branding openshift" \
-      > "${RUN_DIR}/server.log" 2>&1 &
+    # Source in this shell (not a `bash -c "source X && cmd"` subshell) so `nohup ./bin/bridge
+    # ... &` backgrounds bridge directly — nohup execs into it rather than forking, so $! is
+    # bridge's real PID. Sourcing inside a subshell wrapper would instead give $! the wrapper
+    # bash's PID, leaving bridge orphaned (and still bound to port 9000) once the wrapper is
+    # killed on --stop.
+    #
+    # oc-environment.sh has unguarded `oc get` calls for optional operators (e.g. openshift-
+    # gitops) that legitimately aren't installed on every cluster — they redirect stderr but
+    # still exit nonzero, which the old subshell wrapper silently absorbed. Relax -e around the
+    # source so an optional lookup failing here doesn't abort the whole script.
+    set +e
+    source ./contrib/oc-environment.sh
+    set -e
+    nohup ./bin/bridge -branding openshift > "${RUN_DIR}/server.log" 2>&1 &
     echo $! > "${RUN_DIR}/server.pid"
 
     echo "Waiting for server on port 9000..."

@@ -11,7 +11,6 @@ import (
 	"github.com/openshift/api/helm/v1beta1"
 	"helm.sh/helm/v4/pkg/action"
 	"helm.sh/helm/v4/pkg/chart/v2/loader"
-	"helm.sh/helm/v4/pkg/cli"
 	releasev1 "helm.sh/helm/v4/pkg/release/v1"
 	releaseutil "helm.sh/helm/v4/pkg/release/v1/util"
 	"k8s.io/client-go/dynamic"
@@ -61,11 +60,14 @@ func RenderManifests(name string, url string, vals map[string]interface{}, conf 
 	}
 	client.ReleaseName = name
 	if len(tlsFiles) == 0 {
+		if err := validateChartURL(url); err != nil {
+			return emptyResponse, err
+		}
 		chartLocation = url
 	} else {
 		chartLocation = chartInfo.Name
 	}
-	cp, err := client.ChartPathOptions.LocateChart(chartLocation, cli.New())
+	cp, err := client.ChartPathOptions.LocateChart(chartLocation, settings)
 	if err != nil {
 		return emptyResponse, err
 	}

@@ -24,13 +24,11 @@ const isOwnedByCSV = (csv: ClusterServiceVersionKind, owner: OwnerReference) => 
 };
 
 // Find an Operator CSV that either is the owner or owns the owner
-export const matchOwnerAndCSV = (owner: OwnerReference, csvs: ClusterServiceVersionKind[] = []) => {
-  return csvs.find((csv) => isOwnedByOperator(csv, owner) || isOwnedByCSV(csv, owner));
-};
+export const matchOwnerAndCSV = (owner: OwnerReference, csvs: ClusterServiceVersionKind[] = []) =>
+  csvs.find((csv) => isOwnedByOperator(csv, owner) || isOwnedByCSV(csv, owner));
 
 // Find onwerReference that is either a CSV or is an Operand managed by a CSV.
-export const findOwner = (obj: K8sResourceCommon, csvs: ClusterServiceVersionKind[]) => {
-  return obj?.metadata?.ownerReferences?.find((o) =>
+export const findOwner = (obj: K8sResourceCommon, csvs: ClusterServiceVersionKind[]) =>
+  obj?.metadata?.ownerReferences?.find((o) =>
     csvs?.some((csv) => isOwnedByOperator(csv, o) || isOwnedByCSV(csv, o)),
   );
-};

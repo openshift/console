@@ -23,6 +23,7 @@ export const useEventSourceDetailPageBreadcrumbs = (kindObj: K8sKind) => {
   );
 };
 
-export const getEventSourceModelsForBreadcrumbs = () => {
-  return [...getEventSourceModels(), CamelKameletBindingModel];
-};
+export const getEventSourceModelsForBreadcrumbs = () => [
+  ...getEventSourceModels(),
+  CamelKameletBindingModel,
+];

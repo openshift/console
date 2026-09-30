@@ -4,9 +4,7 @@ import { CreateYAML } from '@console/internal/components/create-yaml';
 export const ClusterExtensionYAMLEditor: FC<ClusterExtensionYAMLEditorProps> = ({
   initialYAML = '',
   onChange,
-}) => {
-  return <CreateYAML hideHeader onChange={onChange} template={initialYAML} />;
-};
+}) => <CreateYAML hideHeader onChange={onChange} template={initialYAML} />;
 
 export type ClusterExtensionYAMLEditorProps = {
   initialYAML?: string;

@@ -46,13 +46,13 @@ jest.mock('../Logs', () => {
   const ReactMock = (jest as any).requireActual('react');
   return {
     __esModule: true,
-    default: jest.fn(({ container }: { container: { name: string } }) => {
-      return ReactMock.createElement(
+    default: jest.fn(({ container }: { container: { name: string } }) =>
+      ReactMock.createElement(
         'div',
         { className: 'odc-logs', 'data-test': `logs-${container.name}` },
         container.name,
-      );
-    }),
+      ),
+    ),
   };
 });
 

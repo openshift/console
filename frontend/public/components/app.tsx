@@ -21,7 +21,7 @@ import { BrowserRouter, useParams, useLocation, Routes, Route } from 'react-rout
 import {
   ContextProviderExtensionWrapper,
   DetectContext,
-} from '@console/app/src/components/detect-context/DetectContext';
+} from '@console/app/src/providers/detect-context/DetectContext';
 import { FeatureFlagExtensionLoader } from '@console/app/src/components/flags/FeatureFlagExtensionLoader';
 import Lightspeed from '@console/app/src/components/lightspeed/Lightspeed';
 import { Navigation } from '@console/app/src/components/nav';
@@ -58,8 +58,8 @@ import { ConsoleNotifier } from './console-notifier';
 import { AuthenticationErrorPage } from './error';
 import { Masthead } from './masthead/masthead';
 import { NotificationDrawer } from './notification-drawer';
-import { ThemeProvider } from './ThemeProvider';
-import { ConnectedToastProvider } from './toast/ConnectedToastProvider';
+import { ThemeProvider } from '@console/app/src/providers/theme/ThemeProvider';
+import { ToastProvider } from '@console/app/src/providers/toast/ToastProvider';
 import { AsyncComponent } from './utils/async';
 import { getBrandingDetails } from './utils/branding';
 // cloud shell imports must come later than features
@@ -70,6 +70,7 @@ import { PollConsoleUpdates } from './poll-console-updates';
 import { withoutSensitiveInformations, getTelemetryTitle } from './utils/telemetry';
 import { AdmissionWebhookWarningNotifications } from '@console/app/src/components/admission-webhook-warnings/AdmissionWebhookWarningNotifications';
 import { usePackageManifestCheck } from '@console/shared/src/hooks/usePackageManifestCheck';
+import { UserPreferenceProvider } from '@console/app/src/providers/user-preferences/UserPreferenceContext';
 import { useCSPViolationDetector } from '@console/app/src/hooks/useCSPViolationDetector';
 import { useNotificationPoller } from '@console/app/src/hooks/useNotificationPoller';
 import { useImpersonateRefreshFeatures } from './useImpersonateRefreshFeatures';
@@ -78,7 +79,7 @@ const PF_BREAKPOINT_MD = 768;
 const PF_BREAKPOINT_XL = 1200;
 const NOTIFICATION_DRAWER_BREAKPOINT = 1800;
 
-const root = createRoot(document.getElementById('app')!); // eslint-disable-line @typescript-eslint/no-non-null-assertion
+const root = createRoot(document.getElementById('app')!); // eslint-disable-line @typescript-eslint/no-non-null-assertion -- we know the dom
 root.render(<LoadingBox blame="Init" />);
 
 // Trigger an early authenticated fetch so unauthenticated users are redirected
@@ -100,17 +101,11 @@ const App: FC = () => {
   const location = useLocation();
   const params = useParams();
 
-  const isLargeLayout = () => {
-    return window.innerWidth >= NOTIFICATION_DRAWER_BREAKPOINT;
-  };
+  const isLargeLayout = () => window.innerWidth >= NOTIFICATION_DRAWER_BREAKPOINT;
 
-  const isDesktop = () => {
-    return window.innerWidth >= PF_BREAKPOINT_XL;
-  };
+  const isDesktop = () => window.innerWidth >= PF_BREAKPOINT_XL;
 
-  const isMobile = () => {
-    return window.innerWidth < PF_BREAKPOINT_MD;
-  };
+  const isMobile = () => window.innerWidth < PF_BREAKPOINT_MD;
 
   const [prevLocation, setPrevLocation] = useState(location);
   const [prevParams, setPrevParams] = useState(params);
@@ -400,16 +395,17 @@ let updateSwaggerInterval;
  */
 const updateSwaggerDefinitionContinual = () => {
   fetchSwagger().catch((e) => {
-    // eslint-disable-next-line no-console
     console.error('Could not fetch OpenAPI after application start:', e);
   });
   clearInterval(updateSwaggerInterval);
-  updateSwaggerInterval = setInterval(() => {
-    fetchSwagger().catch((e) => {
-      // eslint-disable-next-line no-console
-      console.error('Could not fetch OpenAPI to stay up to date:', e);
-    });
-  }, 5 * 60 * 1000);
+  updateSwaggerInterval = setInterval(
+    () => {
+      fetchSwagger().catch((e) => {
+        console.error('Could not fetch OpenAPI to stay up to date:', e);
+      });
+    },
+    5 * 60 * 1000,
+  );
 };
 
 // Load cached API resources from localStorage to speed up page load.
@@ -441,14 +437,12 @@ window.onerror = (message, source, lineno, colno, error) => {
   const formattedStack = error?.stack?.replace(/\\n/g, '\n');
   const formattedMessage = `unhandled error: ${message} ${formattedStack || ''}`;
   addTestError(formattedMessage);
-  // eslint-disable-next-line no-console
   console.error(formattedMessage, error || message);
 };
 window.onunhandledrejection = (promiseRejectionEvent) => {
   const { reason } = promiseRejectionEvent;
   const formattedMessage = `unhandled promise rejection: ${reason}`;
   addTestError(formattedMessage);
-  // eslint-disable-next-line no-console
   console.error(formattedMessage, reason);
 };
 
@@ -458,11 +452,13 @@ if ('serviceWorker' in navigator) {
       .register(`${window.SERVER_FLAGS.basePath}load-test.sw.js`)
       .then(
         () =>
-          new Promise<void>((r) =>
-            navigator.serviceWorker.controller
-              ? r()
-              : navigator.serviceWorker.addEventListener('controllerchange', () => r()),
-          ),
+          new Promise<void>((r) => {
+            if (navigator.serviceWorker.controller) {
+              r();
+            } else {
+              navigator.serviceWorker.addEventListener('controllerchange', () => r());
+            }
+          }),
       )
       .then(() =>
         navigator.serviceWorker.controller.postMessage({
@@ -471,14 +467,12 @@ if ('serviceWorker' in navigator) {
         }),
       )
       .catch((e) => {
-        // eslint-disable-next-line no-console
         console.warn('Error registering load test service worker', e);
       });
   } else {
     navigator.serviceWorker
       .getRegistrations()
       .then((registrations) => registrations.forEach((reg) => reg.unregister()))
-      // eslint-disable-next-line no-console
       .catch((e) => console.warn('Error unregistering service workers', e));
   }
 }
@@ -487,16 +481,18 @@ root.render(
   <Suspense fallback={<LoadingBox blame="Root suspense" />}>
     <Provider store={store}>
       <PluginStoreProvider store={pluginStore}>
-        <ThemeProvider>
-          <HelmetProvider>
-            <Helmet titleTemplate={`%s · ${productName}`} defaultTitle={productName} />
-            <ConnectedToastProvider>
-              <PollConsoleUpdates />
-              <AdmissionWebhookWarningNotifications />
-              <AppRouter />
-            </ConnectedToastProvider>
-          </HelmetProvider>
-        </ThemeProvider>
+        <UserPreferenceProvider>
+          <ThemeProvider>
+            <HelmetProvider>
+              <Helmet titleTemplate={`%s · ${productName}`} defaultTitle={productName} />
+              <ToastProvider>
+                <PollConsoleUpdates />
+                <AdmissionWebhookWarningNotifications />
+                <AppRouter />
+              </ToastProvider>
+            </HelmetProvider>
+          </ThemeProvider>
+        </UserPreferenceProvider>
       </PluginStoreProvider>
     </Provider>
   </Suspense>,

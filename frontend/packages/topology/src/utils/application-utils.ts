@@ -187,11 +187,9 @@ const safeLoadList = async (
   } catch (error) {
     // Ignore when resource is not found
     if (error?.response?.status === 404) {
-      // eslint-disable-next-line no-console
       console.warn(`Ignore that model ${model.plural} was not found:`, error);
       return [];
     }
-    // eslint-disable-next-line no-console
     console.warn(`Error while loading model ${model.plural}:`, error);
     throw error;
   }
@@ -206,7 +204,6 @@ const safeKill = async (model: K8sModel, obj: K8sResourceKind) => {
     namespace: obj.metadata.namespace,
   });
   if (!resp.status.allowed) {
-    // eslint-disable-next-line no-console
     console.warn(`User is not allowed to delete resource ${model.plural} ${obj.metadata.name}.`);
     return null;
   }
@@ -215,14 +212,12 @@ const safeKill = async (model: K8sModel, obj: K8sResourceKind) => {
   } catch (error) {
     // Ignore when resource is not found
     if (error?.response?.status === 404) {
-      // eslint-disable-next-line no-console
       console.warn(
         `Resource ${model.plural} ${obj.metadata.name} was not found. Ignore this error.`,
         error,
       );
       return null;
     }
-    // eslint-disable-next-line no-console
     console.warn(`Error while deleting resource ${model.plural} ${obj.metadata.name}:`, error);
     throw error;
   }

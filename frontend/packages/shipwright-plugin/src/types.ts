@@ -32,8 +32,7 @@ export type ClusterBuildStrategyKind =
   | (IClusterBuildStrategyV1Beta1 & K8sResourceCommon);
 
 export type BuildStrategyKind =
-  | (IBuildStrategyV1Alpha1 & K8sResourceCommon)
-  | (IBuildStrategyV1Beta1 & K8sResourceCommon);
+  (IBuildStrategyV1Alpha1 & K8sResourceCommon) | (IBuildStrategyV1Beta1 & K8sResourceCommon);
 
 // Make status.conditions compatible with @console/internal/components/conditions props
 // and ensure K8sResourceCommon compatibility

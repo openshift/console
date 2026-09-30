@@ -35,14 +35,11 @@ interface PodStatusProps {
 
 const { podStatusInnerRadius, podStatusOuterRadius } = calculateRadius(130); // default value of size is 130
 
-const podStatusIsNumeric = (podStatusValue: string) => {
-  return (
-    podStatusValue !== AllPodStatus.ScaledTo0 &&
-    podStatusValue !== AllPodStatus.AutoScaledTo0 &&
-    podStatusValue !== AllPodStatus.Idle &&
-    podStatusValue !== AllPodStatus.ScalingUp
-  );
-};
+const podStatusIsNumeric = (podStatusValue: string) =>
+  podStatusValue !== AllPodStatus.ScaledTo0 &&
+  podStatusValue !== AllPodStatus.AutoScaledTo0 &&
+  podStatusValue !== AllPodStatus.Idle &&
+  podStatusValue !== AllPodStatus.ScalingUp;
 
 const PodStatusBase: FC<PodStatusProps> = ({
   innerRadius = podStatusInnerRadius,
@@ -92,8 +89,8 @@ const PodStatusBase: FC<PodStatusProps> = ({
   const truncSubTitle = subTitle
     ? _.truncate(subTitle, { length: MAX_POD_TITLE_LENGTH })
     : undefined;
-  const chartDonut = useMemo(() => {
-    return (
+  const chartDonut = useMemo(
+    () => (
       <ChartDonut
         ariaTitle={`${title}${subTitle && ` ${subTitle}`}`}
         animate={{
@@ -123,24 +120,25 @@ const PodStatusBase: FC<PodStatusProps> = ({
           },
         }}
       />
-    );
-  }, [
-    forceUpdate,
-    innerRadius,
-    outerRadius,
-    size,
-    standalone,
-    subTitle,
-    title,
-    truncSubTitle,
-    subTitleComponent,
-    truncTitle,
-    titleComponent,
-    updateOnEnd,
-    vData,
-    x,
-    y,
-  ]);
+    ),
+    [
+      forceUpdate,
+      innerRadius,
+      outerRadius,
+      size,
+      standalone,
+      subTitle,
+      title,
+      truncSubTitle,
+      subTitleComponent,
+      truncTitle,
+      titleComponent,
+      updateOnEnd,
+      vData,
+      x,
+      y,
+    ],
+  );
 
   if (!vData) {
     return null;
@@ -149,8 +147,8 @@ const PodStatusBase: FC<PodStatusProps> = ({
   if (showTooltip) {
     const tipContent = (
       <div className="odc-pod-status-tooltip">
-        {vData.map((d) => {
-          return d.y > 0 ? (
+        {vData.map((d) =>
+          d.y > 0 ? (
             <div key={d.x} className="odc-pod-status-tooltip__content">
               <span
                 className="odc-pod-status-tooltip__status-box"
@@ -163,8 +161,8 @@ const PodStatusBase: FC<PodStatusProps> = ({
               )}
               {d.x}
             </div>
-          ) : null;
-        })}
+          ) : null,
+        )}
       </div>
     );
     return (

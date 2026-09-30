@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { isModalOpen } from '@console/internal/components/modals';
+import { isModalOpen } from '@console/internal/components/modals/is-modal-open';
 import { KEYBOARD_SHORTCUTS } from '../constants/common';
 
 /**

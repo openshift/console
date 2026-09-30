@@ -34,7 +34,7 @@ export const FunctionsDocsGettingStartedCard: FC = () => {
       id="serverless-features"
       icon={<RhUiFlagIcon color="var(--co-global--palette--orange-400)" aria-hidden="true" />}
       title={t('Explore serverless functions')}
-      titleColor={'var(--co-global--palette--orange-400)'}
+      titleColor="var(--co-global--palette--orange-400)"
       description={t('Explore new features and resources within the serverless functions.')}
       links={links}
     />

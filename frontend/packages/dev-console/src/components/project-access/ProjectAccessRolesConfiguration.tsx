@@ -70,9 +70,8 @@ const ProjectAccessRolesConfiguration: FC<{ readonly: boolean }> = ({ readonly }
   }, [allClusterRoles]);
 
   // Current configuration
-  const [consoleConfig, consoleConfigLoaded, consoleConfigError] = useConsoleOperatorConfig<
-    SoftwareCatalogClusterRolesConfig
-  >();
+  const [consoleConfig, consoleConfigLoaded, consoleConfigError] =
+    useConsoleOperatorConfig<SoftwareCatalogClusterRolesConfig>();
   const [selectedClusterRoles, setSelectedClusterRoles] = useState<string[]>();
   useEffect(() => {
     if (consoleConfig && consoleConfigLoaded && !selectedClusterRoles) {

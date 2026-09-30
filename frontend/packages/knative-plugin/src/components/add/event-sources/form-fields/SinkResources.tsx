@@ -38,9 +38,8 @@ export interface SinkResourcesProps {
 const SinkResources: FC<SinkResourcesProps> = ({ namespace, isMoveSink }) => {
   const { t } = useTranslation('knative-plugin');
   const [resourceAlert, setResourceAlert] = useState(false);
-  const { setFieldValue, setFieldTouched, validateForm, initialValues } = useFormikContext<
-    FormikValues
-  >();
+  const { setFieldValue, setFieldTouched, validateForm, initialValues } =
+    useFormikContext<FormikValues>();
   const [, { touched: sinkTypeTouched }] = useField('formData.sinkType');
   const autocompleteFilter = (strText: string, item: ReactElement): boolean =>
     fuzzy(strText, item?.props?.name);
@@ -201,7 +200,7 @@ const SinkResources: FC<SinkResourcesProps> = ({ namespace, isMoveSink }) => {
         </>
       )}
       <ResourceDropdownField
-        menuClassName={'max-height-menu'}
+        menuClassName="max-height-menu"
         data-test="sinkable-resources"
         name="formData.sink.key"
         resources={resourcesData}

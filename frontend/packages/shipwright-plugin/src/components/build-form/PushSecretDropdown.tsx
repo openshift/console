@@ -7,11 +7,10 @@ import type { SecretKind } from '@console/internal/module/k8s';
 import type { ResourceDropdownProps } from '@console/shared/src/components/dropdown/ResourceDropdown';
 import { ResourceDropdown } from '@console/shared/src/components/dropdown/ResourceDropdown';
 
-interface PushSecretDropdownProps
-  extends Omit<
-    ResourceDropdownProps,
-    'dataSelector' | 'placeholder' | 'autocompleteFilter' | 'resourceFilter' | 'showBadge'
-  > {
+interface PushSecretDropdownProps extends Omit<
+  ResourceDropdownProps,
+  'dataSelector' | 'placeholder' | 'autocompleteFilter' | 'resourceFilter' | 'showBadge'
+> {
   namespace?: string;
   onChange?: (key: string) => void;
   title?: ReactNode;
@@ -21,11 +20,8 @@ interface PushSecretDropdownProps
 const PushSecretDropdown: FC<PushSecretDropdownProps> = (props) => {
   const { t } = useTranslation('shipwright-plugin');
   const autocompleteFilter = (strText, item): boolean => fuzzy(strText, item?.props?.name);
-  const filterData = (item) => {
-    return (
-      item.type === 'kubernetes.io/dockercfg' || item.type === 'kubernetes.io/dockerconfigjson'
-    );
-  };
+  const filterData = (item) =>
+    item.type === 'kubernetes.io/dockercfg' || item.type === 'kubernetes.io/dockerconfigjson';
   const [secrets, loaded, loadError] = useK8sWatchResource<SecretKind[]>({
     isList: true,
     kind: SecretModel.kind,

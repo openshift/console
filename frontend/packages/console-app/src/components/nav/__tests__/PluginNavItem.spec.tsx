@@ -58,7 +58,7 @@ const createNavSectionExtension = (id: string, name: string): LoadedExtension<Na
       id,
       name,
     },
-  } as LoadedExtension<NavSectionType>);
+  }) as LoadedExtension<NavSectionType>;
 
 const createHrefExtension = (id: string, name: string): LoadedExtension<HrefNavItem> =>
   ({
@@ -69,7 +69,7 @@ const createHrefExtension = (id: string, name: string): LoadedExtension<HrefNavI
       name,
       href: `/${id}`,
     },
-  } as LoadedExtension<HrefNavItem>);
+  }) as LoadedExtension<HrefNavItem>;
 
 const createResourceExtension = (id: string, name: string): LoadedExtension<ResourceNSNavItem> =>
   ({
@@ -80,7 +80,7 @@ const createResourceExtension = (id: string, name: string): LoadedExtension<Reso
       name,
       model: { group: '', version: 'v1', kind: 'Pod' },
     },
-  } as LoadedExtension<ResourceNSNavItem>);
+  }) as LoadedExtension<ResourceNSNavItem>;
 
 const createSeparatorExtension = (id: string): LoadedExtension<Separator> =>
   ({
@@ -89,21 +89,21 @@ const createSeparatorExtension = (id: string): LoadedExtension<Separator> =>
     properties: {
       id,
     },
-  } as LoadedExtension<Separator>);
+  }) as LoadedExtension<Separator>;
 
 describe('PluginNavItem', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    ((isNavSection as unknown) as jest.Mock).mockReturnValue(false);
-    ((isSeparator as unknown) as jest.Mock).mockReturnValue(false);
-    ((isHrefNavItem as unknown) as jest.Mock).mockReturnValue(false);
-    ((isResourceNavItem as unknown) as jest.Mock).mockReturnValue(false);
-    ((isResourceNSNavItem as unknown) as jest.Mock).mockReturnValue(false);
+    (isNavSection as unknown as jest.Mock).mockReturnValue(false);
+    (isSeparator as unknown as jest.Mock).mockReturnValue(false);
+    (isHrefNavItem as unknown as jest.Mock).mockReturnValue(false);
+    (isResourceNavItem as unknown as jest.Mock).mockReturnValue(false);
+    (isResourceNSNavItem as unknown as jest.Mock).mockReturnValue(false);
   });
 
   it('should render NavSection for section extension', () => {
     const sectionExtension = createNavSectionExtension('workloads', 'Workloads');
-    ((isNavSection as unknown) as jest.Mock).mockReturnValue(true);
+    (isNavSection as unknown as jest.Mock).mockReturnValue(true);
 
     renderWithPerspective(<PluginNavItem extension={sectionExtension} />);
 
@@ -112,7 +112,7 @@ describe('PluginNavItem', () => {
 
   it('should render FavoriteNavItems for home section in admin perspective', () => {
     const homeSection = createNavSectionExtension('home', 'Home');
-    ((isNavSection as unknown) as jest.Mock).mockReturnValue(true);
+    (isNavSection as unknown as jest.Mock).mockReturnValue(true);
 
     renderWithPerspective(<PluginNavItem extension={homeSection} />, 'admin');
 
@@ -121,7 +121,7 @@ describe('PluginNavItem', () => {
 
   it('should not render FavoriteNavItems for home section in non-admin perspective', () => {
     const homeSection = createNavSectionExtension('home', 'Home');
-    ((isNavSection as unknown) as jest.Mock).mockReturnValue(true);
+    (isNavSection as unknown as jest.Mock).mockReturnValue(true);
 
     renderWithPerspective(<PluginNavItem extension={homeSection} />, 'dev');
 
@@ -130,7 +130,7 @@ describe('PluginNavItem', () => {
 
   it('should render separator with presentation role', () => {
     const separatorExtension = createSeparatorExtension('sep-1');
-    ((isSeparator as unknown) as jest.Mock).mockReturnValue(true);
+    (isSeparator as unknown as jest.Mock).mockReturnValue(true);
 
     renderWithPerspective(<PluginNavItem extension={separatorExtension} />);
 
@@ -139,7 +139,7 @@ describe('PluginNavItem', () => {
 
   it('should render NavItemHref for href extension', () => {
     const hrefExtension = createHrefExtension('dashboard', 'Dashboard');
-    ((isHrefNavItem as unknown) as jest.Mock).mockReturnValue(true);
+    (isHrefNavItem as unknown as jest.Mock).mockReturnValue(true);
 
     renderWithPerspective(<PluginNavItem extension={hrefExtension} />);
 
@@ -149,8 +149,8 @@ describe('PluginNavItem', () => {
 
   it('should render NavItemResource for resource extension', () => {
     const resourceExtension = createResourceExtension('pods', 'Pods');
-    ((isResourceNavItem as unknown) as jest.Mock).mockReturnValue(true);
-    ((isResourceNSNavItem as unknown) as jest.Mock).mockReturnValue(true);
+    (isResourceNavItem as unknown as jest.Mock).mockReturnValue(true);
+    (isResourceNSNavItem as unknown as jest.Mock).mockReturnValue(true);
 
     renderWithPerspective(<PluginNavItem extension={resourceExtension} />);
 
@@ -160,11 +160,11 @@ describe('PluginNavItem', () => {
 
   it('should return null and warn for unrecognized extension', () => {
     const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
-    const unknownExtension = ({
+    const unknownExtension = {
       type: 'console.navigation/unknown',
       uid: 'uid-unknown',
       properties: { id: 'unknown' },
-    } as unknown) as LoadedExtension<NavSectionType>;
+    } as unknown as LoadedExtension<NavSectionType>;
 
     renderWithPerspective(<PluginNavItem extension={unknownExtension} />);
 
@@ -181,7 +181,7 @@ describe('PluginNavItem', () => {
 
   it('should not render FavoriteNavItems for non-home sections', () => {
     const workloadsSection = createNavSectionExtension('workloads', 'Workloads');
-    ((isNavSection as unknown) as jest.Mock).mockReturnValue(true);
+    (isNavSection as unknown as jest.Mock).mockReturnValue(true);
 
     renderWithPerspective(<PluginNavItem extension={workloadsSection} />);
 

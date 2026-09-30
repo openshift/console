@@ -48,14 +48,18 @@ const usePodsAdapterForKnative = (resource: K8sResourceCommon): PodsAdapterDataT
   }, [revisionLoaded, revisionErrorLoad, rev, resource.kind, resource.metadata]);
 
   const { pods } = usePodsForRevisions(revisionIds, resource.metadata.namespace);
-  const servicePods = useMemo(() => {
-    return pods.reduce((acc, pod) => {
-      if (pod.pods) {
-        acc.push(...pod.pods.filter((p) => podPhase(p as PodKind) !== AllPodStatus.AutoScaledTo0));
-      }
-      return acc;
-    }, []);
-  }, [pods]);
+  const servicePods = useMemo(
+    () =>
+      pods.reduce((acc, pod) => {
+        if (pod.pods) {
+          acc.push(
+            ...pod.pods.filter((p) => podPhase(p as PodKind) !== AllPodStatus.AutoScaledTo0),
+          );
+        }
+        return acc;
+      }, []),
+    [pods],
+  );
 
   const linkUrl = `/search/ns/${resource.metadata.namespace}?kind=${
     PodModel.kind

@@ -104,21 +104,14 @@ export const useTableData = ({
   const sortSelector = useMemo(
     () =>
       tableSelectorCreator(
-        (state: RootState) => state.UI.getIn(['listSorts', listId]),
-        (sortsState: any) => [
-          sortsState?.get('field'),
-          sortsState?.get('func'),
-          sortsState?.get('orderBy'),
-        ],
+        (state: RootState) => state.UI.listSorts?.[listId],
+        (sortsState: any) => [sortsState?.field, sortsState?.func, sortsState?.orderBy],
       ),
     [tableSelectorCreator, listId],
   );
 
-  const [
-    currentSortField,
-    currentSortFunc,
-    currentSortOrder = defaultSortOrder,
-  ] = useConsoleSelector(sortSelector);
+  const [currentSortField, currentSortFunc, currentSortOrder = defaultSortOrder] =
+    useConsoleSelector(sortSelector);
 
   return useMemo(() => {
     const allFilters = staticFilters ? Object.assign({}, filters, ...staticFilters) : filters;

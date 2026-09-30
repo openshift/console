@@ -3,8 +3,8 @@ import type { ActionType as Action } from 'typesafe-actions';
 import { action } from 'typesafe-actions';
 import type { Fetch, RequestMap } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
-import type { PrometheusResponse } from '../components/graphs';
 import { getPrometheusURL, PrometheusEndpoint } from '../components/graphs/helpers';
+import type { PrometheusResponse } from '../components/graphs/types';
 import {
   computeAdaptiveDelay,
   emaToDelay,
@@ -31,8 +31,11 @@ export const setData = (type: RESULTS_TYPE, key: string, data) =>
   action(ActionType.SetData, { type, key, data });
 export const activateWatch = (type: RESULTS_TYPE, key: string) =>
   action(ActionType.ActivateWatch, { type, key });
-export const updateWatchTimeout = (type: RESULTS_TYPE, key: string, timeout: NodeJS.Timer) =>
-  action(ActionType.UpdateWatchTimeout, { type, key, timeout });
+export const updateWatchTimeout = (
+  type: RESULTS_TYPE,
+  key: string,
+  timeout: ReturnType<typeof setTimeout>,
+) => action(ActionType.UpdateWatchTimeout, { type, key, timeout });
 export const updateWatchInFlight = (type: RESULTS_TYPE, key: string, inFlight: boolean) =>
   action(ActionType.UpdateWatchInFlight, { type, key, inFlight });
 const setError = (type: RESULTS_TYPE, key: string, error) =>
@@ -57,9 +60,8 @@ export const getPrometheusQueryResponse = (
   timespan?: number,
 ): [PrometheusResponse, any] => {
   const queryKey = getQueryKey(query, timespan);
-  const data = prometheusResults.getIn([queryKey, 'data']);
-  const loadError = prometheusResults.getIn([queryKey, 'loadError']);
-  return [data, loadError];
+  const entry = prometheusResults?.[queryKey];
+  return [entry?.data, entry?.loadError];
 };
 
 const fetchPeriodically: FetchPeriodically = async (
@@ -100,42 +102,42 @@ const fetchPeriodically: FetchPeriodically = async (
   }
 };
 
-export const watchPrometheusQuery: WatchPrometheusQueryAction = (query, namespace, timespan) => (
-  dispatch,
-  getState,
-) => {
-  const queryKey = getQueryKey(query, timespan);
-  const isActive = isWatchActive(getState().dashboards, RESULTS_TYPE.PROMETHEUS, queryKey);
-  dispatch(activateWatch(RESULTS_TYPE.PROMETHEUS, queryKey));
-  if (!isActive) {
-    const prometheusBaseURL = namespace
-      ? window.SERVER_FLAGS.prometheusTenancyBaseURL
-      : window.SERVER_FLAGS.prometheusBaseURL;
-    if (!prometheusBaseURL) {
-      dispatch(
-        setError(RESULTS_TYPE.PROMETHEUS, queryKey, new Error('Prometheus URL is not available')),
-      );
-    } else {
-      const url = () =>
-        getPrometheusURL({
-          endpoint: timespan ? PrometheusEndpoint.QUERY_RANGE : PrometheusEndpoint.QUERY,
-          namespace,
-          query,
-          timespan,
-        });
-      fetchPeriodically(dispatch, RESULTS_TYPE.PROMETHEUS, queryKey, url, getState, coFetchJSON);
+export const watchPrometheusQuery: WatchPrometheusQueryAction =
+  (query, namespace, timespan) => (dispatch, getState) => {
+    const queryKey = getQueryKey(query, timespan);
+    const isActive = isWatchActive(getState().dashboards, RESULTS_TYPE.PROMETHEUS, queryKey);
+    dispatch(activateWatch(RESULTS_TYPE.PROMETHEUS, queryKey));
+    if (!isActive) {
+      const prometheusBaseURL = namespace
+        ? window.SERVER_FLAGS.prometheusTenancyBaseURL
+        : window.SERVER_FLAGS.prometheusBaseURL;
+      if (!prometheusBaseURL) {
+        dispatch(
+          setError(RESULTS_TYPE.PROMETHEUS, queryKey, new Error('Prometheus URL is not available')),
+        );
+      } else {
+        const url = () =>
+          getPrometheusURL({
+            endpoint: timespan ? PrometheusEndpoint.QUERY_RANGE : PrometheusEndpoint.QUERY,
+            namespace,
+            query,
+            timespan,
+          });
+        fetchPeriodically(dispatch, RESULTS_TYPE.PROMETHEUS, queryKey, url, getState, coFetchJSON);
+      }
     }
-  }
-};
+  };
 
-export const watchURL: WatchURLAction = (url, fetch = coFetchJSON) => (dispatch, getState) => {
-  const isActive = isWatchActive(getState().dashboards, RESULTS_TYPE.URL, url);
-  dispatch(activateWatch(RESULTS_TYPE.URL, url));
-  if (!isActive) {
-    const k8sURL = () => `${k8sBasePath}/${url}`;
-    fetchPeriodically(dispatch, RESULTS_TYPE.URL, url, k8sURL, getState, fetch);
-  }
-};
+export const watchURL: WatchURLAction =
+  (url, fetch = coFetchJSON) =>
+  (dispatch, getState) => {
+    const isActive = isWatchActive(getState().dashboards, RESULTS_TYPE.URL, url);
+    dispatch(activateWatch(RESULTS_TYPE.URL, url));
+    if (!isActive) {
+      const k8sURL = () => `${k8sBasePath}/${url}`;
+      fetchPeriodically(dispatch, RESULTS_TYPE.URL, url, k8sURL, getState, fetch);
+    }
+  };
 
 export const stopWatchPrometheusQuery: StopWatchPrometheusAction = (query, timespan) =>
   stopWatch(RESULTS_TYPE.PROMETHEUS, getQueryKey(query, timespan));

@@ -26,8 +26,8 @@ const DisabledCell: FC<{ disabled?: boolean }> = ({ disabled }) => {
   return <>{disabled ? t('True') : t('False')}</>;
 };
 
-export const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) => {
-  return data.map(({ obj }) => {
+export const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) =>
+  data.map(({ obj }) => {
     const objReference = referenceFor(obj);
     const context = { [objReference]: obj };
 
@@ -80,4 +80,3 @@ export const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns)
       };
     });
   });
-};

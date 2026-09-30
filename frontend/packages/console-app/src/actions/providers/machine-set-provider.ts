@@ -13,10 +13,10 @@ export const useMachineSetActionsProvider = (
   const machineSetSpecificActions = useMachineSetActions(resource);
   const commonActions = useCommonResourceActions(kindObj, resource);
 
-  const actions = useMemo<Action[]>(() => [...machineSetSpecificActions, ...commonActions], [
-    machineSetSpecificActions,
-    commonActions,
-  ]);
+  const actions = useMemo<Action[]>(
+    () => [...machineSetSpecificActions, ...commonActions],
+    [machineSetSpecificActions, commonActions],
+  );
 
   return [actions, !inFlight, false];
 };

@@ -1,4 +1,3 @@
-.cache-loader
 .yarn
 node_modules
 public/dist

@@ -47,10 +47,10 @@ const InstalledSoftwarePage: FC = () => {
     [ns, t],
   );
 
-  const pages = useMemo<Page[]>(() => [clusterExtensionsPage, clusterServiceVersionsPage], [
-    clusterExtensionsPage,
-    clusterServiceVersionsPage,
-  ]);
+  const pages = useMemo<Page[]>(
+    () => [clusterExtensionsPage, clusterServiceVersionsPage],
+    [clusterExtensionsPage, clusterServiceVersionsPage],
+  );
 
   return (
     <>

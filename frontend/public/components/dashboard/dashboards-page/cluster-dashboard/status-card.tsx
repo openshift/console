@@ -1,7 +1,6 @@
 import type { FC, ReactNode } from 'react';
 import { useMemo } from 'react';
 import { Gallery, GalleryItem, Card, CardHeader, CardTitle } from '@patternfly/react-core';
-import type { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
@@ -53,22 +52,21 @@ import {
 
 const filterSubsystems = (
   subsystems: (
-    | DashboardsOverviewHealthSubsystem
-    | ResolvedExtension<DashboardsOverviewHealthSubsystem>
+    DashboardsOverviewHealthSubsystem | ResolvedExtension<DashboardsOverviewHealthSubsystem>
   )[],
-  k8sModels: ImmutableMap<string, K8sKind>,
+  k8sModels: Record<string, K8sKind>,
 ) =>
   subsystems.filter((s) => {
     if (
       isDashboardsOverviewHealthURLSubsystem(s) ||
       isDashboardsOverviewHealthPrometheusSubsystem(s)
     ) {
-      const subsystem = (s as unknown) as
+      const subsystem = s as unknown as
         | ResolvedExtension<DashboardsOverviewHealthPrometheusSubsystem>
         | ResolvedExtension<DashboardsOverviewHealthURLSubsystem>;
       return subsystem.properties.additionalResource &&
         !subsystem.properties.additionalResource.optional
-        ? !!k8sModels.get(subsystem.properties.additionalResource.kind)
+        ? !!k8sModels?.[subsystem.properties.additionalResource.kind]
         : true;
     }
     return true;
@@ -123,7 +121,7 @@ export const DashboardNamespacedAlerts: FC<DashboardNamespacedAlertsProps> = ({ 
 };
 
 const mapStateToProps = (state: RootState) => ({
-  k8sModels: state.k8s.getIn(['RESOURCES', 'models']),
+  k8sModels: state.k8s.RESOURCES?.models,
 });
 export const StatusCard = connect<StatusCardProps>(mapStateToProps)(({ k8sModels }) => {
   const [subsystemExtensions] = useResolvedExtensions<DashboardsOverviewHealthSubsystem>(
@@ -131,9 +129,10 @@ export const StatusCard = connect<StatusCardProps>(mapStateToProps)(({ k8sModels
   );
   const [, setActiveNamespace] = useActiveNamespace();
 
-  const subsystems = useMemo(() => {
-    return filterSubsystems([...subsystemExtensions], k8sModels);
-  }, [subsystemExtensions, k8sModels]);
+  const subsystems = useMemo(
+    () => filterSubsystems([...subsystemExtensions], k8sModels),
+    [subsystemExtensions, k8sModels],
+  );
 
   const operatorSubsystemIndex = useMemo(
     () => subsystems.findIndex((e) => isResolvedDashboardsOverviewHealthOperator(e)),
@@ -168,9 +167,8 @@ export const StatusCard = connect<StatusCardProps>(mapStateToProps)(({ k8sModels
   });
 
   if (operatorSubsystemIndex !== -1) {
-    const operatorSubsystems: ResolvedExtension<
-      DashboardsOverviewHealthOperator
-    >['properties'][] = [];
+    const operatorSubsystems: ResolvedExtension<DashboardsOverviewHealthOperator>['properties'][] =
+      [];
     subsystems.forEach((e) => {
       if (isResolvedDashboardsOverviewHealthOperator(e)) {
         operatorSubsystems.push(e.properties);
@@ -208,13 +206,11 @@ export const StatusCard = connect<StatusCardProps>(mapStateToProps)(({ k8sModels
       </CardHeader>
       <HealthBody>
         <Gallery className="co-overview-status__health" hasGutter>
-          {healthItems.map((item) => {
-            return (
-              <GalleryItem key={item.title} data-test={item.title}>
-                {item.Component}
-              </GalleryItem>
-            );
-          })}
+          {healthItems.map((item) => (
+            <GalleryItem key={item.title} data-test={item.title}>
+              {item.Component}
+            </GalleryItem>
+          ))}
         </Gallery>
       </HealthBody>
       <DashboardAlerts />
@@ -223,7 +219,7 @@ export const StatusCard = connect<StatusCardProps>(mapStateToProps)(({ k8sModels
 });
 
 type StatusCardProps = {
-  k8sModels: ImmutableMap<string, K8sKind>;
+  k8sModels: Record<string, K8sKind>;
 };
 
 type DashboardAlertsProps = {

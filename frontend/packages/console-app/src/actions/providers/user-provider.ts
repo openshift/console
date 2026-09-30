@@ -44,10 +44,10 @@ export const useUserActionsProvider = (resource: UserKind) => {
   const impersonateAction = useImpersonateAction(resource);
   const commonActions = useCommonResourceActions(kindObj, resource);
 
-  const actions = useMemo(() => [...impersonateAction, ...commonActions], [
-    commonActions,
-    impersonateAction,
-  ]);
+  const actions = useMemo(
+    () => [...impersonateAction, ...commonActions],
+    [commonActions, impersonateAction],
+  );
 
   return [actions, !inFlight, false];
 };

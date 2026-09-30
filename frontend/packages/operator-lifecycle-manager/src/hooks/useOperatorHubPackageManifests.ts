@@ -9,22 +9,21 @@ import { usePackageManifests } from './usePackageManifests';
 export const useOperatorHubPackageManifests = (
   namespace: string,
 ): WatchK8sResult<PackageManifestKind[]> => {
-  const [packageManifests, packageManifestsLoaded, packageManifestsErr] = usePackageManifests(
-    namespace,
-  );
+  const [packageManifests, packageManifestsLoaded, packageManifestsErr] =
+    usePackageManifests(namespace);
   const [
     marketplacePackageManifests,
     marketplacePackageManifestsLoaded,
     marketplacePackageManifestsErr,
   ] = useMarketplacePackageManifests(namespace);
-  const loaded = useMemo(() => packageManifestsLoaded && marketplacePackageManifestsLoaded, [
-    packageManifestsLoaded,
-    marketplacePackageManifestsLoaded,
-  ]);
-  const loadError = useMemo(() => strConcat(packageManifestsErr, marketplacePackageManifestsErr), [
-    packageManifestsErr,
-    marketplacePackageManifestsErr,
-  ]);
+  const loaded = useMemo(
+    () => packageManifestsLoaded && marketplacePackageManifestsLoaded,
+    [packageManifestsLoaded, marketplacePackageManifestsLoaded],
+  );
+  const loadError = useMemo(
+    () => strConcat(packageManifestsErr, marketplacePackageManifestsErr),
+    [packageManifestsErr, marketplacePackageManifestsErr],
+  );
 
   const operatorHubPackageManifests = useMemo(() => {
     if (!loaded || loadError) {

@@ -67,28 +67,20 @@ export type ActionFilter = Extension<
 >;
 
 export type SupportedActionExtensions =
-  | ActionProvider
-  | ResourceActionProvider
-  | ActionGroup
-  | ActionFilter;
+  ActionProvider | ResourceActionProvider | ActionGroup | ActionFilter;
 
 // Type Guards
 
-export const isActionProvider = (e: Extension): e is ActionProvider => {
-  return e.type === 'console.action/provider';
-};
+export const isActionProvider = (e: Extension): e is ActionProvider =>
+  e.type === 'console.action/provider';
 
-export const isResourceActionProvider = (e: Extension): e is ResourceActionProvider => {
-  return e.type === 'console.action/resource-provider';
-};
+export const isResourceActionProvider = (e: Extension): e is ResourceActionProvider =>
+  e.type === 'console.action/resource-provider';
 
-export const isActionGroup = (e: Extension): e is ActionGroup => {
-  return e.type === 'console.action/group';
-};
+export const isActionGroup = (e: Extension): e is ActionGroup => e.type === 'console.action/group';
 
-export const isActionFilter = (e: Extension): e is ActionFilter => {
-  return e.type === 'console.action/filter';
-};
+export const isActionFilter = (e: Extension): e is ActionFilter =>
+  e.type === 'console.action/filter';
 
 // Support types
 

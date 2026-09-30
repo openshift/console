@@ -126,15 +126,13 @@ export type SubscriptionChannelModalProps = {
 
 export const SubscriptionChannelModalOverlay: OverlayComponent<SubscriptionChannelModalProps> = (
   props,
-) => {
-  return (
-    <Modal
-      variant={ModalVariant.small}
-      isOpen
-      onClose={props.closeOverlay}
-      aria-labelledby="subscription-channel-modal-title"
-    >
-      <SubscriptionChannelModal {...props} close={props.closeOverlay} cancel={props.closeOverlay} />
-    </Modal>
-  );
-};
+) => (
+  <Modal
+    variant={ModalVariant.small}
+    isOpen
+    onClose={props.closeOverlay}
+    aria-labelledby="subscription-channel-modal-title"
+  >
+    <SubscriptionChannelModal {...props} close={props.closeOverlay} cancel={props.closeOverlay} />
+  </Modal>
+);

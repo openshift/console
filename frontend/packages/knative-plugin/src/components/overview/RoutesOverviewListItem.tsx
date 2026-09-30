@@ -5,11 +5,11 @@ import { useTranslation } from 'react-i18next';
 import { ResourceLink } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { RouteModel } from '../../models';
-import { RoutesOverviewListItem } from '../../types';
+import type { RoutesOverviewListItem as RoutesOverviewListItemType } from '../../types';
 import RoutesUrlLink from './RoutesUrlLink';
 
 type RoutesOverviewListItemProps = {
-  routeLink: RoutesOverviewListItem;
+  routeLink: RoutesOverviewListItemType;
   uniqueRoutes?: string[];
   totalPercent?: string;
 };

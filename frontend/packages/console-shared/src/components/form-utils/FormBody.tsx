@@ -27,7 +27,7 @@ export const FormBody: FC<FormBodyProps & HTMLProps<HTMLDivElement>> = ({
     style={
       flexLayout
         ? { display: 'flex', flex: 1, flexDirection: 'column', ...(style ?? {}) }
-        : style ?? {}
+        : (style ?? {})
     }
   >
     {children}

@@ -1,4 +1,5 @@
 import type { Locator } from '@playwright/test';
+import { expect } from '@playwright/test';
 
 import BasePage from '../base-page';
 
@@ -24,6 +25,7 @@ export class SearchPage extends BasePage {
 
   async openResourcesFilter(): Promise<void> {
     await this.resourceFilterInput.click();
+    await expect(this.resourceDropdownList).toBeVisible();
   }
 
   async clearHistory(): Promise<void> {

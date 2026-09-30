@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { parseSyml } from '@yarnpkg/parsers';
 import { readFileSync } from 'fs';
 import { basename } from 'path';

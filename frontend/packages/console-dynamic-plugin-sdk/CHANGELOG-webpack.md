@@ -10,13 +10,20 @@ For current development version of Console, use `4.x.0-prerelease.n` packages.
 For older 1.x plugin SDK packages, refer to "OpenShift Console Versions vs SDK Versions" compatibility
 table in [Console dynamic plugins README](./README.md).
 
-## 4.23.0-prerelease.5 - TBD
+## 5.1.0-prerelease.1 - TBD
+
+- Add `ConsoleRemotePlugin` option `baseDir` to support multi-plugin builds ([OCPBUGS-111520], [#17002])
+- Dependency bumps for `read-pkg` ([CONSOLE-5065], [#17259])
+- Minimum compatible version of `@rspack/core` peer dependency increased to `2.1.10` ([OCPBUGS-109592], [#16978])
+
+## 4.23.0-prerelease.5 - 2026-08-04
 
 - Dependency bumps for `semver` and `glob` ([CONSOLE-5065], [#16115])
 
 ## 4.23.0-prerelease.4 - 2026-07-14
 
-- Add support for building with `rspack`. Both `webpack` and `rspack` are optional peer dependencies, but one of them must be installed ([CONSOLE-5423], [#16752])
+- Add support for building plugins with rspack ([CONSOLE-5423], [#16752])
+- `webpack` and `rspack` peer dependencies are now optional, but one of them must be installed ([CONSOLE-5423], [#16752])
 
 ## 4.23.0-prerelease.3 - 2026-07-07
 
@@ -163,6 +170,8 @@ table in [Console dynamic plugins README](./README.md).
 [OCPBUGS-83823]: https://issues.redhat.com/browse/OCPBUGS-83823
 [OCPBUGS-84338]: https://issues.redhat.com/browse/OCPBUGS-84338
 [OCPBUGS-88319]: https://issues.redhat.com/browse/OCPBUGS-88319
+[OCPBUGS-109592]: https://issues.redhat.com/browse/OCPBUGS-109592
+[OCPBUGS-111520]: https://issues.redhat.com/browse/OCPBUGS-111520
 [#13188]: https://github.com/openshift/console/pull/13188
 [#13388]: https://github.com/openshift/console/pull/13388
 [#13521]: https://github.com/openshift/console/pull/13521
@@ -193,3 +202,6 @@ table in [Console dynamic plugins README](./README.md).
 [#16585]: https://github.com/openshift/console/pull/16585
 [#16752]: https://github.com/openshift/console/pull/16752
 [#16115]: https://github.com/openshift/console/pull/16115
+[#16978]: https://github.com/openshift/console/pull/16978
+[#17002]: https://github.com/openshift/console/pull/17002
+[#17259]: https://github.com/openshift/console/pull/17259

@@ -35,13 +35,12 @@ const ImageStreamDropdown: FC<{
     }
     imgCollection.current[namespace][resource.metadata.name] = resource;
   };
-  const getTitle = () => {
-    return loading && !isStreamsAvailable
+  const getTitle = () =>
+    loading && !isStreamsAvailable
       ? ''
       : !isStreamsAvailable
-      ? t('No Image Stream')
-      : t('Select Image Stream');
-  };
+        ? t('No Image Stream')
+        : t('Select Image Stream');
 
   const onDropdownChange = useCallback(
     (img: string) => {

@@ -10,8 +10,8 @@ import type { ConsoleFetch, ConsoleFetchJSON, ConsoleFetchText } from '../extens
  * @returns A promise that resolves to the response.
  * @throws {@link HttpError} when the response status code indicates an error
  */
-export const consoleFetch: ConsoleFetch = require('@console/shared/src/utils/console-fetch')
-  .coFetch;
+export const consoleFetch: ConsoleFetch =
+  require('@console/shared/src/utils/console-fetch').coFetch;
 
 /**
  * A custom wrapper around `fetch` that adds console-specific headers and allows for retries and timeouts.
@@ -25,8 +25,8 @@ export const consoleFetch: ConsoleFetch = require('@console/shared/src/utils/con
  * @returns A promise that resolves to the response as text or JSON object.
  * @throws {@link HttpError} when the response status code indicates an error
  */
-export const consoleFetchJSON: ConsoleFetchJSON = require('@console/shared/src/utils/console-fetch')
-  .coFetchJSON;
+export const consoleFetchJSON: ConsoleFetchJSON =
+  require('@console/shared/src/utils/console-fetch').coFetchJSON;
 
 /**
  * A custom wrapper around `fetch` that adds console-specific headers and allows for retries and timeouts.
@@ -39,5 +39,5 @@ export const consoleFetchJSON: ConsoleFetchJSON = require('@console/shared/src/u
  * @returns A promise that resolves to the response as text or JSON object.
  * @throws {@link HttpError} when the response status code indicates an error
  */
-export const consoleFetchText: ConsoleFetchText = require('@console/shared/src/utils/console-fetch')
-  .coFetchText;
+export const consoleFetchText: ConsoleFetchText =
+  require('@console/shared/src/utils/console-fetch').coFetchText;

@@ -10,11 +10,15 @@ import type { CatalogItemAttribute } from '@console/dynamic-plugin-sdk';
 import type { ResolvedCodeRefProperties } from '@console/dynamic-plugin-sdk/src/types';
 import { FieldLevelHelp } from '@console/internal/components/utils/field-level-help';
 import { alphanumericCompare } from '@console/shared/src/utils/utils';
-import type { CatalogFilter, CatalogFilterCounts, CatalogFilterItem } from '../utils/types';
-import { CatalogFilters } from '../utils/types';
+import type {
+  CatalogFilter,
+  CatalogFilterCounts,
+  CatalogFilterItem,
+  CatalogFilters as CatalogFiltersType,
+} from '../utils/types';
 
 type CatalogFiltersProps = {
-  activeFilters: CatalogFilters;
+  activeFilters: CatalogFiltersType;
   filterGroupCounts: CatalogFilterCounts;
   filterGroupMap: { [key: string]: ResolvedCodeRefProperties<CatalogItemAttribute> };
   filterGroupsShowAll: { [key: string]: boolean };
@@ -35,11 +39,11 @@ const CatalogFilters: FC<CatalogFiltersProps> = ({
   const sortedActiveFilters = sortFilterGroups
     ? Object.keys(activeFilters)
         .sort()
-        .reduce<CatalogFilters>((acc, groupName) => {
+        .reduce<CatalogFiltersType>((acc, groupName) => {
           acc[groupName] = activeFilters[groupName];
           return acc;
         }, {})
-    : Object.keys(activeFilters).reduce<CatalogFilters>((acc, groupName) => {
+    : Object.keys(activeFilters).reduce<CatalogFiltersType>((acc, groupName) => {
         acc[groupName] = activeFilters[groupName];
         return acc;
       }, {});

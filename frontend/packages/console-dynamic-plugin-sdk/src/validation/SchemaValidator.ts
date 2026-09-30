@@ -2,7 +2,10 @@ import * as Ajv from 'ajv';
 import { BaseValidator } from './BaseValidator';
 
 export class SchemaValidator extends BaseValidator {
-  constructor(description: string, private readonly ajv = new Ajv({ allErrors: true })) {
+  constructor(
+    description: string,
+    private readonly ajv = new Ajv({ allErrors: true }),
+  ) {
     super(description);
   }
 

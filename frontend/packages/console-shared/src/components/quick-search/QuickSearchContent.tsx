@@ -37,37 +37,35 @@ const QuickSearchContent: FC<QuickSearchContentProps> = ({
   limitItemCount,
   detailsRenderer,
   onListChange,
-}) => {
-  return (
-    <Split className="ocs-quick-search-content" tabIndex={-1}>
-      <SplitItem
-        className={css('ocs-quick-search-content__list pf-v6-u-pt-xs', {
-          'ocs-quick-search-content__list--overflow': catalogItems.length >= limitItemCount,
-        })}
-      >
-        <QuickSearchList
-          listItems={catalogItems}
-          limitItemCount={limitItemCount}
-          catalogItemTypes={catalogItemTypes}
-          viewAll={viewAll}
-          selectedItemId={selectedItemId}
-          searchTerm={searchTerm}
-          namespace={namespace}
-          onSelectListItem={(_event, itemId) => onSelect(itemId)}
-          closeModal={closeModal}
-          onListChange={onListChange}
-        />
-      </SplitItem>
-      <Divider component="div" orientation={{ default: 'vertical' }} tabIndex={-1} />
-      <SplitItem className="ocs-quick-search-content__details pf-v6-u-pt-xs">
-        <QuickSearchDetails
-          detailsRenderer={detailsRenderer}
-          selectedItem={selectedItem}
-          closeModal={closeModal}
-        />
-      </SplitItem>
-    </Split>
-  );
-};
+}) => (
+  <Split className="ocs-quick-search-content" tabIndex={-1}>
+    <SplitItem
+      className={css('ocs-quick-search-content__list pf-v6-u-pt-xs', {
+        'ocs-quick-search-content__list--overflow': catalogItems.length >= limitItemCount,
+      })}
+    >
+      <QuickSearchList
+        listItems={catalogItems}
+        limitItemCount={limitItemCount}
+        catalogItemTypes={catalogItemTypes}
+        viewAll={viewAll}
+        selectedItemId={selectedItemId}
+        searchTerm={searchTerm}
+        namespace={namespace}
+        onSelectListItem={(_event, itemId) => onSelect(itemId)}
+        closeModal={closeModal}
+        onListChange={onListChange}
+      />
+    </SplitItem>
+    <Divider component="div" orientation={{ default: 'vertical' }} tabIndex={-1} />
+    <SplitItem className="ocs-quick-search-content__details pf-v6-u-pt-xs">
+      <QuickSearchDetails
+        detailsRenderer={detailsRenderer}
+        selectedItem={selectedItem}
+        closeModal={closeModal}
+      />
+    </SplitItem>
+  </Split>
+);
 
 export default QuickSearchContent;

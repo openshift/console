@@ -52,6 +52,6 @@ export const getEventSourceIcon = (
   return isValidUrl(objAnnotations?.[EVENT_SOURCE_ICON])
     ? objAnnotations?.[EVENT_SOURCE_ICON]
     : isValidUrl(objAnnotations?.[CAMEL_KAMELET_ICON])
-    ? objAnnotations?.[CAMEL_KAMELET_ICON]
-    : getEventSourceIconFromKind(kind, nodeType);
+      ? objAnnotations?.[CAMEL_KAMELET_ICON]
+      : getEventSourceIconFromKind(kind, nodeType);
 };

@@ -28,7 +28,7 @@ describe('NodeUptime', () => {
           },
         ],
       },
-    } as NodeKind);
+    }) as NodeKind;
 
   beforeEach(() => {
     jest.clearAllMocks();

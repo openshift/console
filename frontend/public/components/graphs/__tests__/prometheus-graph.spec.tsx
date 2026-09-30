@@ -1,7 +1,6 @@
 import { act, screen } from '@testing-library/react';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { setFlag } from '@console/internal/actions/flags';
-import * as UIActions from '@console/internal/actions/ui';
 import {
   PrometheusGraph,
   PrometheusGraphLink,
@@ -11,6 +10,10 @@ import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-ut
 
 jest.mock('@console/dynamic-plugin-sdk/src/perspective/useActivePerspective', () => ({
   default: jest.fn(),
+}));
+
+jest.mock('@console/shared/src/hooks/useActiveNamespace', () => ({
+  useActiveNamespace: jest.fn(() => ['default', jest.fn()]),
 }));
 
 const useActivePerspectiveMock = useActivePerspective as jest.Mock;
@@ -62,7 +65,6 @@ describe('PrometheusGraphLink', () => {
     );
     act(() => {
       store.dispatch(setFlag(FLAGS.CAN_GET_NS, false));
-      store.dispatch(UIActions.setActiveNamespace('default'));
     });
 
     expect(screen.getByText('Test content')).toBeVisible();
@@ -94,7 +96,6 @@ describe('PrometheusGraphLink', () => {
         );
         act(() => {
           store.dispatch(setFlag(FLAGS.CAN_GET_NS, true));
-          store.dispatch(UIActions.setActiveNamespace('default'));
         });
 
         expect(screen.getByText(MOCK_CONTENT_TEXT)).toBeVisible();
@@ -113,7 +114,6 @@ describe('PrometheusGraphLink', () => {
         </PrometheusGraphLink>,
       );
       act(() => {
-        store.dispatch(UIActions.setActiveNamespace('default'));
         store.dispatch(setFlag(FLAGS.CAN_GET_NS, true));
       });
 
@@ -131,7 +131,6 @@ describe('PrometheusGraphLink', () => {
       </PrometheusGraphLink>,
     );
     act(() => {
-      store.dispatch(UIActions.setActiveNamespace('default'));
       store.dispatch(setFlag(FLAGS.CAN_GET_NS, false));
     });
 
@@ -152,7 +151,6 @@ describe('PrometheusGraphLink', () => {
       </PrometheusGraphLink>,
     );
     act(() => {
-      store.dispatch(UIActions.setActiveNamespace('default'));
       store.dispatch(setFlag(FLAGS.CAN_GET_NS, false));
     });
 

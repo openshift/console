@@ -56,6 +56,7 @@ const DeployImageForm: FC<FormikProps<FormikValues> & DeployImageFormProps> = ({
         sticky
         disableSubmit={!dirty || !_.isEmpty(errors) || isSubmitting}
         resetLabel={t('Cancel')}
+        namespace={values?.project?.name}
       />
     </FlexForm>
   );

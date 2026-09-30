@@ -62,28 +62,26 @@ export const PipelineVisualizationStepList: FC<PipelineVisualizationStepListProp
       {isFinallyTask && (
         <div className="odc-pipeline-visualization-step-list__task-type">{t('Finally task')}</div>
       )}
-      {steps.map(({ duration, name, status }) => {
-        return (
-          <div
-            className={css('odc-pipeline-visualization-step-list__step', {
-              'odc-pipeline-visualization-step-list__step--task-run': !isSpecOverview,
-            })}
-            key={name}
-          >
-            {!isSpecOverview ? (
-              <div className="odc-pipeline-visualization-step-list__icon">
-                <TooltipColoredStatusIcon status={status} />
-              </div>
-            ) : (
-              <span className="odc-pipeline-visualization-step-list__bullet">&bull;</span>
-            )}
-            <div className="odc-pipeline-visualization-step-list__name">{name}</div>
-            {!isSpecOverview && (
-              <div className="odc-pipeline-visualization-step-list__duration">{duration}</div>
-            )}
-          </div>
-        );
-      })}
+      {steps.map(({ duration, name, status }) => (
+        <div
+          className={css('odc-pipeline-visualization-step-list__step', {
+            'odc-pipeline-visualization-step-list__step--task-run': !isSpecOverview,
+          })}
+          key={name}
+        >
+          {!isSpecOverview ? (
+            <div className="odc-pipeline-visualization-step-list__icon">
+              <TooltipColoredStatusIcon status={status} />
+            </div>
+          ) : (
+            <span className="odc-pipeline-visualization-step-list__bullet">&bull;</span>
+          )}
+          <div className="odc-pipeline-visualization-step-list__name">{name}</div>
+          {!isSpecOverview && (
+            <div className="odc-pipeline-visualization-step-list__duration">{duration}</div>
+          )}
+        </div>
+      ))}
     </div>
   );
 };

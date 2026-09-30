@@ -12,9 +12,7 @@ import SideBarTabLoader from '../providers/SideBarTabLoader';
 
 const SimpleTabNavWrapper: FC<{ tabs: Tab[] }> = ({ tabs }) => {
   const { t } = useTranslation('topology');
-  const selectedTab = useConsoleSelector<string>(({ UI }) =>
-    UI.getIn(['overview', 'selectedDetailsTab']),
-  );
+  const selectedTab = useConsoleSelector<string>(({ UI }) => UI.overview?.selectedDetailsTab);
   const dispatch = useConsoleDispatch();
   const queryParams = useQueryParams();
   const selectTabParam = queryParams.get('selectTab');

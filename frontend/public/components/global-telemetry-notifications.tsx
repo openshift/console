@@ -11,14 +11,12 @@ import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 export const TelemetryNotifier = () => {
   const { t } = useTranslation('public');
 
-  const [
-    currentUserPreferenceTelemetryValue,
-    setCurrentUserPreferenceTelemetryValue,
-  ] = useUserPreference<USER_TELEMETRY_ANALYTICS>(
-    PREFERRED_TELEMETRY_USER_PREFERENCE_KEY,
-    null,
-    true,
-  );
+  const [currentUserPreferenceTelemetryValue, setCurrentUserPreferenceTelemetryValue] =
+    useUserPreference<USER_TELEMETRY_ANALYTICS>(
+      PREFERRED_TELEMETRY_USER_PREFERENCE_KEY,
+      null,
+      true,
+    );
 
   const userResponse = (value: USER_TELEMETRY_ANALYTICS) => {
     setCurrentUserPreferenceTelemetryValue(value);

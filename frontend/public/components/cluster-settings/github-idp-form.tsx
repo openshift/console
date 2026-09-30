@@ -50,9 +50,7 @@ export const AddGitHubPage = () => {
     );
   };
 
-  const getOAuthResource = () => {
-    return handlePromise(getOAuth());
-  };
+  const getOAuthResource = () => handlePromise(getOAuth());
 
   const createClientSecret = () => {
     const secret = {

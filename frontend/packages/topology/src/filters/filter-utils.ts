@@ -17,12 +17,12 @@ export enum NameLabelFilterValues {
 
 export const getSupportedTopologyFilters = (state: RootState): string[] => {
   const topology = state?.plugins?.devconsole?.topology;
-  return topology ? topology.get('supportedFilters') : DEFAULT_TOPOLOGY_FILTERS.map((f) => f.id);
+  return topology ? topology.supportedFilters : DEFAULT_TOPOLOGY_FILTERS.map((f) => f.id);
 };
 
 export const getSupportedTopologyKinds = (state: RootState): { [key: string]: number } => {
   const topology = state?.plugins?.devconsole?.topology;
-  return topology ? topology.get('supportedKinds') : {};
+  return topology ? topology.supportedKinds : {};
 };
 
 export const getTopologySearchQuery = () =>

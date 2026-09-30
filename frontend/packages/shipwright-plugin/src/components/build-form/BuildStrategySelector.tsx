@@ -92,13 +92,11 @@ const BuildStrategySelector: FC<BuildStrategySelectorProps> = ({ namespace, form
     setFieldValue('formData.volumes', volumes || []);
 
     if (selectedBuildStrategy?.spec) {
-      const params = (selectedBuildStrategy?.spec?.parameters || []).map((param) => {
-        return {
-          ...param,
-          ...(param.type ? { type: param.type } : { type: param.defaults ? 'array' : 'string' }),
-          value: param.default || param.defaults, // setup the default if it exists
-        };
-      });
+      const params = (selectedBuildStrategy?.spec?.parameters || []).map((param) => ({
+        ...param,
+        ...(param.type ? { type: param.type } : { type: param.defaults ? 'array' : 'string' }),
+        value: param.default || param.defaults, // setup the default if it exists
+      }));
       setFieldValue('formData.parameters', params);
     }
   };

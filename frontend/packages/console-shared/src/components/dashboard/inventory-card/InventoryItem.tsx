@@ -235,11 +235,10 @@ export const ResourceInventoryItem: FC<ResourceInventoryItemProps> = ({
     isDashboardsInventoryItemGroup,
   );
 
-  const groups = useMemo(() => (mapper ? mapper(resources, additionalResources) : {}), [
-    mapper,
-    resources,
-    additionalResources,
-  ]);
+  const groups = useMemo(
+    () => (mapper ? mapper(resources, additionalResources) : {}),
+    [mapper, resources, additionalResources],
+  );
 
   const top3Groups = useMemo(() => {
     const extensions = groupExtensions.map((e) => e.properties);
@@ -303,7 +302,7 @@ type StatusGroup = {
 
 export type StatusGroupMapper<
   T extends K8sResourceCommon = K8sResourceCommon,
-  R extends { [key: string]: K8sResourceCommon[] } = { [key: string]: K8sResourceCommon[] }
+  R extends { [key: string]: K8sResourceCommon[] } = { [key: string]: K8sResourceCommon[] },
 > = (resources: T[], additionalResources?: R) => StatusGroup;
 
 type InventoryItemProps = {

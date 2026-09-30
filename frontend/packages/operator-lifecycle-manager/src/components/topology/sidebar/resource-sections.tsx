@@ -17,16 +17,17 @@ const ResourceSection: FC<{ item: TopologyDataObject<OperatorGroupData> }> = ({ 
   const { namespace } = resource.metadata;
   const { csvName } = data;
 
-  const resourcesList = useMemo(() => {
-    return {
+  const resourcesList = useMemo(
+    () => ({
       csv: {
         kind: referenceForModel(ClusterServiceVersionModel),
         name: csvName,
         namespace,
         isList: false,
       },
-    };
-  }, [csvName, namespace]);
+    }),
+    [csvName, namespace],
+  );
 
   const resources = useK8sWatchResources(resourcesList);
 

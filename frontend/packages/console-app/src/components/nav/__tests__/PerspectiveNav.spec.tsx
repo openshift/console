@@ -42,13 +42,12 @@ describe('Perspective Nav', () => {
     (usePinnedResources as jest.Mock).mockReturnValue([resources, jest.fn(), true]);
   };
 
-  const renderPerspectiveNav = () => {
-    return renderWithProviders(
+  const renderPerspectiveNav = () =>
+    renderWithProviders(
       <Nav>
         <PerspectiveNav />
       </Nav>,
     );
-  };
 
   beforeEach(() => {
     jest.clearAllMocks();

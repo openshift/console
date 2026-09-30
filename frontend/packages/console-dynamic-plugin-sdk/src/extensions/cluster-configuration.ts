@@ -114,10 +114,8 @@ export type ClusterConfigurationItem = Extension<
 
 // Type guards
 
-export const isClusterConfigurationGroup = (e: Extension): e is ClusterConfigurationGroup => {
-  return e.type === 'console.cluster-configuration/group';
-};
+export const isClusterConfigurationGroup = (e: Extension): e is ClusterConfigurationGroup =>
+  e.type === 'console.cluster-configuration/group';
 
-export const isClusterConfigurationItem = (e: Extension): e is ClusterConfigurationItem => {
-  return e.type === 'console.cluster-configuration/item';
-};
+export const isClusterConfigurationItem = (e: Extension): e is ClusterConfigurationItem =>
+  e.type === 'console.cluster-configuration/item';

@@ -159,41 +159,38 @@ export const SecretFormWrapper: FC<BaseEditSecretProps> = (props) => {
       .catch(() => {});
   };
 
-  const renderBody = () => {
+  const renderBody = () => (
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
 
-    return (
-      <Form>
-        <FormGroup label={t('Secret name')} isRequired fieldId="secret-name">
-          <TextInput
-            type="text"
-            onChange={onNameChanged}
-            value={secret?.metadata?.name || ''}
-            id="secret-name"
-            data-test="secret-name"
-            isRequired
-            isDisabled={!isCreate}
-          />
-          <FormHelperText>
-            <HelperText>
-              <HelperTextItem>{t('Unique name of the new secret.')}</HelperTextItem>
-            </HelperText>
-          </FormHelperText>
-        </FormGroup>
-        <SecretSubForm
-          formType={formType}
-          onChange={onDataChanged}
-          onError={onError}
-          onFormDisable={(disable) => setDisableForm(disable)}
-          stringData={stringData}
-          secretType={secret.type}
-          isCreate={isCreate}
-          base64StringData={base64StringData}
+    <Form>
+      <FormGroup label={t('Secret name')} isRequired fieldId="secret-name">
+        <TextInput
+          type="text"
+          onChange={onNameChanged}
+          value={secret?.metadata?.name || ''}
+          id="secret-name"
+          data-test="secret-name"
+          isRequired
+          isDisabled={!isCreate}
         />
-      </Form>
-    );
-  };
-
+        <FormHelperText>
+          <HelperText>
+            <HelperTextItem>{t('Unique name of the new secret.')}</HelperTextItem>
+          </HelperText>
+        </FormHelperText>
+      </FormGroup>
+      <SecretSubForm
+        formType={formType}
+        onChange={onDataChanged}
+        onError={onError}
+        onFormDisable={(disable) => setDisableForm(disable)}
+        stringData={stringData}
+        secretType={secret.type}
+        isCreate={isCreate}
+        base64StringData={base64StringData}
+      />
+    </Form>
+  );
   return modal ? (
     <Modal isOpen onClose={onCancel || cancel} title={title} variant={ModalVariant.medium}>
       <ModalHeader title={title} />

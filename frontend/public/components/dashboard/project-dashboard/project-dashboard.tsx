@@ -27,8 +27,8 @@ const rightCards = [{ Card: ActivityCard }];
 export const getNamespaceDashboardConsoleLinks = (
   ns: K8sResourceKind,
   consoleLinks: K8sResourceKind[],
-): K8sResourceKind[] => {
-  return _.filter(consoleLinks, (link: K8sResourceKind): boolean => {
+): K8sResourceKind[] =>
+  _.filter(consoleLinks, (link: K8sResourceKind): boolean => {
     if (link.spec.location !== 'NamespaceDashboard') {
       return false;
     }
@@ -48,7 +48,6 @@ export const getNamespaceDashboardConsoleLinks = (
 
     return !_.isEmpty(selector) && new LabelSelector(selector).matches(ns);
   });
-};
 
 export const ProjectDashboard = memo<ProjectDashboardProps>(({ obj }) => {
   const { t } = useTranslation('public');
@@ -58,10 +57,10 @@ export const ProjectDashboard = memo<ProjectDashboardProps>(({ obj }) => {
     kind: referenceForModel(ConsoleLinkModel),
     optional: true,
   });
-  const namespaceLinks = useMemo(() => getNamespaceDashboardConsoleLinks(obj, consoleLinks), [
-    obj,
-    consoleLinks,
-  ]);
+  const namespaceLinks = useMemo(
+    () => getNamespaceDashboardConsoleLinks(obj, consoleLinks),
+    [obj, consoleLinks],
+  );
   const context = useMemo(() => ({ obj, namespaceLinks }), [obj, namespaceLinks]);
 
   const hasNamespaceLinks = !!namespaceLinks.length;

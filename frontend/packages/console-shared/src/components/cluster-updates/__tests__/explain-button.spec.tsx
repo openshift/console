@@ -272,4 +272,52 @@ describe('UpdateWorkflowOLSButton', () => {
       await expect(user.click(button)).resolves.not.toThrow();
     });
   });
+
+  describe('prompt size validation', () => {
+    it('should pass full prompt to openOLS when under limit', async () => {
+      const user = userEvent.setup();
+      const shortPrompt = 'A normal-sized prompt';
+      mockGenerateUpdatePrompt.mockReturnValue(shortPrompt);
+
+      renderWithProviders(<UpdateWorkflowOLSButton phase="status" cv={mockClusterVersion} />);
+      await user.click(screen.getByRole('button'));
+
+      expect(mockOpenOLS).toHaveBeenCalledWith(shortPrompt, [], true, true);
+      expect(mockFireTelemetryEvent).not.toHaveBeenCalledWith(
+        'OLS Prompt Truncated',
+        expect.anything(),
+      );
+    });
+
+    it('should truncate prompt and fire telemetry when over limit', async () => {
+      const user = userEvent.setup();
+      const oversizedPrompt = 'X'.repeat(100_001);
+      mockGenerateUpdatePrompt.mockReturnValue(oversizedPrompt);
+
+      renderWithProviders(<UpdateWorkflowOLSButton phase="status" cv={mockClusterVersion} />);
+      await user.click(screen.getByRole('button'));
+
+      expect(mockOpenOLS).toHaveBeenCalledWith('X'.repeat(100_000), [], true, true);
+      expect(mockFireTelemetryEvent).toHaveBeenCalledWith('OLS Prompt Truncated', {
+        originalSize: 100_001,
+        maxSize: 100_000,
+        workflowPhase: 'status',
+      });
+    });
+
+    it('should pass prompt at exactly the limit without truncation', async () => {
+      const user = userEvent.setup();
+      const exactLimitPrompt = 'X'.repeat(100_000);
+      mockGenerateUpdatePrompt.mockReturnValue(exactLimitPrompt);
+
+      renderWithProviders(<UpdateWorkflowOLSButton phase="status" cv={mockClusterVersion} />);
+      await user.click(screen.getByRole('button'));
+
+      expect(mockOpenOLS).toHaveBeenCalledWith(exactLimitPrompt, [], true, true);
+      expect(mockFireTelemetryEvent).not.toHaveBeenCalledWith(
+        'OLS Prompt Truncated',
+        expect.anything(),
+      );
+    });
+  });
 });

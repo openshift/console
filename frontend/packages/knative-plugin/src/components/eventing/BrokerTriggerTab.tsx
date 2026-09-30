@@ -1,10 +1,10 @@
 import type { FC } from 'react';
 import { useMemo } from 'react';
-import { ListPage } from '@console/internal/components/factory';
-import { referenceForModel } from '@console/internal/module/k8s';
+import { ListPage } from '@console/internal/components/factory/list-page';
+import { referenceForModel } from '@console/internal/module/k8s/k8s-ref';
 import { EventingTriggerModel } from '../../models';
 import type { EventBrokerKind } from '../../types';
-import TriggerList from './triggers-list/TriggerList';
+import { TriggerList } from './triggers-list/TriggerList';
 
 type BrokerTriggerTabProps = {
   obj: EventBrokerKind;
@@ -23,6 +23,7 @@ const BrokerTriggerTab: FC<BrokerTriggerTabProps> = ({ obj }) => {
       showTitle={false}
       kind={referenceForModel(EventingTriggerModel)}
       ListComponent={TriggerList}
+      omitFilterToolbar
       namespace={obj.metadata.namespace}
       customData={customData}
     />

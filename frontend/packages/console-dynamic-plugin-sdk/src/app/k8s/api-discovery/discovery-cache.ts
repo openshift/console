@@ -4,7 +4,6 @@ export const cacheResources = (resources) => {
   try {
     localStorage.setItem(SDK_API_DISCOVERY_RESOURCES_LOCAL_STORAGE_KEY, JSON.stringify(resources));
   } catch (e) {
-    // eslint-disable-next-line no-console
     console.error('Error caching API resources in localStorage', e);
     throw new Error(e);
   }
@@ -25,7 +24,6 @@ export const getCachedResources = async () => {
   localStorage.removeItem(SDK_API_DISCOVERY_RESOURCES_LOCAL_STORAGE_KEY);
 
   const resources = JSON.parse(resourcesJSON);
-  // eslint-disable-next-line no-console
   console.log('Loaded cached API resources from localStorage');
   return resources;
 };

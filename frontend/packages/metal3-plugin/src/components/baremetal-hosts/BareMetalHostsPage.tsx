@@ -49,30 +49,28 @@ const flattenResources = (resources: Resources) => {
     const nodesByMachineName = createLookup(nodes, getNodeMachineName);
     const machineSetByUID = createLookup(machineSets);
 
-    return hostsData.map(
-      (host): BareMetalHostBundle => {
-        // TODO(jtomasek): replace this with createLookup once there is metal3.io/BareMetalHost annotation
-        // on machines
-        const machine = getHostMachine(host, machinesData);
-        const node = nodesByMachineName[getName(machine)];
-        const nodeMaintenance = maintenancesByNodeName[getName(node)];
-        const machineOwner = getMachineMachineSetOwner(machine);
-        const machineSet = machineOwner && machineSetByUID[machineOwner.uid];
+    return hostsData.map((host): BareMetalHostBundle => {
+      // TODO(jtomasek): replace this with createLookup once there is metal3.io/BareMetalHost annotation
+      // on machines
+      const machine = getHostMachine(host, machinesData);
+      const node = nodesByMachineName[getName(machine)];
+      const nodeMaintenance = maintenancesByNodeName[getName(node)];
+      const machineOwner = getMachineMachineSetOwner(machine);
+      const machineSet = machineOwner && machineSetByUID[machineOwner.uid];
 
-        const status = getHostStatus({ host, machine, node, nodeMaintenance });
-        // TODO(jtomasek): metadata.name is needed to make 'name' textFilter work.
-        // Remove it when it is possible to pass custom textFilter as a function
-        return {
-          metadata: { name: getName(host) },
-          host,
-          machine,
-          node,
-          nodeMaintenance,
-          machineSet,
-          status,
-        };
-      },
-    );
+      const status = getHostStatus({ host, machine, node, nodeMaintenance });
+      // TODO(jtomasek): metadata.name is needed to make 'name' textFilter work.
+      // Remove it when it is possible to pass custom textFilter as a function
+      return {
+        metadata: { name: getName(host) },
+        host,
+        machine,
+        node,
+        nodeMaintenance,
+        machineSet,
+        status,
+      };
+    });
   }
   return [];
 };

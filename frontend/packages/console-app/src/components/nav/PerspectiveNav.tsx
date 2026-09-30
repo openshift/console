@@ -35,21 +35,23 @@ const PerspectiveNav: FC<{}> = () => {
     return getSortedNavExtensions(topLevelNavExtensions);
   }, [allNavExtensions]);
 
-  const draggableItems = useMemo<DraggableObject[]>(() => {
-    return validPinnedResources.map((res, idx) => ({
-      id: res,
-      props: { dragButtonAriaLabel: t('Drag to reorder'), className: 'co-pinned-resource-item' },
-      content: (
-        <PinnedResource
-          key={`${res}_${idx.toString()}`}
-          idx={idx}
-          resourceRef={res}
-          onChange={setPinnedResources}
-          navResources={validPinnedResources}
-        />
-      ),
-    }));
-  }, [validPinnedResources, setPinnedResources, t]);
+  const draggableItems = useMemo<DraggableObject[]>(
+    () =>
+      validPinnedResources.map((res, idx) => ({
+        id: res,
+        props: { dragButtonAriaLabel: t('Drag to reorder'), className: 'co-pinned-resource-item' },
+        content: (
+          <PinnedResource
+            key={`${res}_${idx.toString()}`}
+            idx={idx}
+            resourceRef={res}
+            onChange={setPinnedResources}
+            navResources={validPinnedResources}
+          />
+        ),
+      })),
+    [validPinnedResources, setPinnedResources, t],
+  );
 
   const onDrop = useCallback<DragDropSortProps['onDrop']>(
     (_, newItems) => {

@@ -19,9 +19,11 @@ import {
   ConsoleDataView,
   nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import type {
+  ConsoleDataViewColumn,
+  GetDataViewRows,
+} from '@console/app/src/components/data-view/types';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-import type { TableColumn } from '@console/dynamic-plugin-sdk';
 import type { Action } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
@@ -123,7 +125,7 @@ const MachineConfigPoolCharacteristics: FC<MachineConfigPoolCharacteristicsProps
                 : '-'}
             </DescriptionListDescription>
           </DescriptionListGroup>
-          <DetailsItem label={t('Paused')} obj={obj} path={'spec.paused'}>
+          <DetailsItem label={t('Paused')} obj={obj} path="spec.paused">
             {obj.spec?.paused ? t('True') : t('False')}
           </DetailsItem>
         </>
@@ -275,21 +277,19 @@ const MachineConfigPoolUpdateStatus: FC<MachineConfigPoolUpdateStatusProps> = ({
   }
 };
 
-export const MachineConfigPoolDetailsPage: FC<any> = (props) => {
-  return (
-    <DetailsPage
-      {...props}
-      kind={machineConfigPoolReference}
-      customActionMenu={(k8sObj: K8sModel, obj: MachineConfigPoolKind) => (
-        <LazyActionMenu
-          context={{ [machineConfigPoolReference]: obj }}
-          variant={ActionMenuVariant.DROPDOWN}
-        />
-      )}
-      pages={pages}
-    />
-  );
-};
+export const MachineConfigPoolDetailsPage: FC<any> = (props) => (
+  <DetailsPage
+    {...props}
+    kind={machineConfigPoolReference}
+    customActionMenu={(k8sObj: K8sModel, obj: MachineConfigPoolKind) => (
+      <LazyActionMenu
+        context={{ [machineConfigPoolReference]: obj }}
+        variant={ActionMenuVariant.DROPDOWN}
+      />
+    )}
+    pages={pages}
+  />
+);
 
 const tableColumnInfo = [
   { id: 'name' },
@@ -300,16 +300,15 @@ const tableColumnInfo = [
 ];
 
 const useMachineConfigPoolColumns = (): {
-  columns: TableColumn<MachineConfigPoolKind>[];
+  columns: ConsoleDataViewColumn<MachineConfigPoolKind>[];
   resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation('public');
-  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(
-    MachineConfigPoolModel,
-  );
+  const { getResizableProps, resetAllColumnWidths } =
+    useColumnWidthSettings(MachineConfigPoolModel);
 
-  const columns: TableColumn<MachineConfigPoolKind>[] = useMemo(() => {
-    return [
+  const columns: ConsoleDataViewColumn<MachineConfigPoolKind>[] = useMemo(
+    () => [
       {
         title: t('Name'),
         id: tableColumnInfo[0].id,
@@ -317,7 +316,7 @@ const useMachineConfigPoolColumns = (): {
         resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: {
           ...nameCellProps,
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -326,7 +325,7 @@ const useMachineConfigPoolColumns = (): {
         sort: 'status.configuration.name',
         resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -334,7 +333,7 @@ const useMachineConfigPoolColumns = (): {
         id: tableColumnInfo[2].id,
         resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -342,7 +341,7 @@ const useMachineConfigPoolColumns = (): {
         id: tableColumnInfo[3].id,
         resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -352,14 +351,15 @@ const useMachineConfigPoolColumns = (): {
           ...actionsCellProps,
         },
       },
-    ];
-  }, [t, getResizableProps]);
+    ],
+    [t, getResizableProps],
+  );
 
   return { columns, resetAllColumnWidths };
 };
 
-const getDataViewRows: GetDataViewRows<MachineConfigPoolKind, Action[]> = (data, columns) => {
-  return data.map(({ obj }) => {
+const getDataViewRows: GetDataViewRows<MachineConfigPoolKind, Action[]> = (data, columns) =>
+  data.map(({ obj }) => {
     const { name } = obj.metadata;
 
     const rowCells = {
@@ -399,7 +399,6 @@ const getDataViewRows: GetDataViewRows<MachineConfigPoolKind, Action[]> = (data,
       };
     });
   });
-};
 
 const MachineConfigPoolList: FC<MachineConfigPoolListProps> = ({
   data,

@@ -242,11 +242,10 @@ export const tableFilters = (isExactSearch: boolean): FilterMap => {
     },
   };
 };
-const rowFiltersToFilterFuncs = (rowFilters: AnyRowFilter[]): FilterMap => {
-  return (rowFilters || [])
+const rowFiltersToFilterFuncs = (rowFilters: AnyRowFilter[]): FilterMap =>
+  (rowFilters || [])
     .filter((f) => f.type && _.isFunction(f.filter))
     .reduce((acc, f) => ({ ...acc, [f.type]: f.filter }), {} as FilterMap);
-};
 
 export const getAllTableFilters = (
   rowFilters: AnyRowFilter[],

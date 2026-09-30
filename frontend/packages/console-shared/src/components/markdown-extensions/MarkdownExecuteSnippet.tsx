@@ -19,9 +19,11 @@ const ExecuteSnippet: FC<ExecuteSnippetProps> = ({ element, rootSelector, docCon
   const [showRunning, setShowRunning] = useState<boolean>(false);
   const textToExecute = useMemo(() => {
     const executeTextId = element.getAttribute(MARKDOWN_EXECUTE_BUTTON_ID);
-    return (docContext.querySelector(
-      `${rootSelector} [${MARKDOWN_SNIPPET_ID}="${executeTextId}"]`,
-    ) as HTMLElement).innerText;
+    return (
+      docContext.querySelector(
+        `${rootSelector} [${MARKDOWN_SNIPPET_ID}="${executeTextId}"]`,
+      ) as HTMLElement
+    ).innerText;
   }, [element, rootSelector, docContext]);
 
   useEventListener(

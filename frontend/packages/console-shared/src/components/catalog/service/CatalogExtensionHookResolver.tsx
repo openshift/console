@@ -10,13 +10,13 @@ type CatalogExtensionHookResolverProps<T> = {
   onValueError?: (error: any, id: string) => void;
 };
 
-export const CatalogExtensionHookResolver = function <T>({
+export const CatalogExtensionHookResolver = <T,>({
   id,
   useValue,
   options,
   onValueResolved,
   onValueError,
-}: CatalogExtensionHookResolverProps<T>) {
+}: CatalogExtensionHookResolverProps<T>) => {
   const [value, loaded, loadError] = useValue(options);
 
   useEffect(() => {

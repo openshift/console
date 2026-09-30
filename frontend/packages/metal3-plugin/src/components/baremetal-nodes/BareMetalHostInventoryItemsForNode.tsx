@@ -110,13 +110,12 @@ const BareMetalHostInventoryItems: FC<BareMetalHostInventoryItemsProps> = ({
 };
 
 const BareMetalHostInventoryItemsForNode: FC<{ obj: NodeKind }> = ({ obj }) => {
-  const [bareMetalHosts, bareMetalHostsLoaded, bareMetalHostsLoadError] = useAccessibleResources<
-    BareMetalHostKind
-  >({
-    groupVersionKind: getGroupVersionKindForModel(BareMetalHostModel),
-    isList: true,
-    namespaced: true,
-  });
+  const [bareMetalHosts, bareMetalHostsLoaded, bareMetalHostsLoadError] =
+    useAccessibleResources<BareMetalHostKind>({
+      groupVersionKind: getGroupVersionKindForModel(BareMetalHostModel),
+      isList: true,
+      namespaced: true,
+    });
 
   const [machines, machinesLoaded, machinesLoadError] = useAccessibleResources<MachineKind>({
     groupVersionKind: {

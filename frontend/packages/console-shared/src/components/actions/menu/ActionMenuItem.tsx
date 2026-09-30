@@ -82,13 +82,13 @@ const ActionItem: FC<ActionMenuItemProps & { isAllowed: boolean }> = ({
   );
 };
 
-const AccessReviewActionItem = connect(impersonateStateToProps)(
-  (props: ActionMenuItemProps & { impersonate: ImpersonateKind }) => {
-    const { action, impersonate } = props;
-    const isAllowed = useAccessReview(action.accessReview, impersonate);
-    return <ActionItem {...props} isAllowed={isAllowed} />;
-  },
-);
+const AccessReviewActionItem = connect(impersonateStateToProps)((
+  props: ActionMenuItemProps & { impersonate: ImpersonateKind },
+) => {
+  const { action, impersonate } = props;
+  const isAllowed = useAccessReview(action.accessReview, impersonate);
+  return <ActionItem {...props} isAllowed={isAllowed} />;
+});
 
 const ActionMenuItem: FC<ActionMenuItemProps> = (props) => {
   const { action } = props;

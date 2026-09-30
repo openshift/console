@@ -26,10 +26,7 @@ import type {
   ConsoleDataViewColumn,
   ConsoleDataViewRow,
 } from '@console/app/src/components/data-view/types';
-import type {
-  RowProps,
-  TableColumn,
-} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import type { RowProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import {
   GreenCheckCircleIcon,
@@ -69,16 +66,15 @@ import RelatedObjectsPage from './related-objects';
 
 const clusterOperatorReference: K8sResourceKindReference = referenceForModel(ClusterOperatorModel);
 
-const getIcon = (status: OperatorStatus) => {
-  return {
+const getIcon = (status: OperatorStatus) =>
+  ({
     [OperatorStatus.Available]: <GreenCheckCircleIcon />,
     [OperatorStatus.Progressing]: <RhUiSyncIcon />,
     [OperatorStatus.Degraded]: <YellowExclamationTriangleIcon />,
     [OperatorStatus.CannotUpdate]: <YellowExclamationTriangleIcon />,
     [OperatorStatus.Unavailable]: <RedExclamationCircleIcon />,
     [OperatorStatus.Unknown]: <RhUiUnknownIcon />,
-  }[status];
-};
+  })[status];
 
 const OperatorStatusIconAndLabel: FC<OperatorStatusIconAndLabelProps> = ({ status }) => {
   const icon = getIcon(status);
@@ -94,8 +90,8 @@ const tableColumnInfo = [{ id: 'name' }, { id: 'status' }, { id: 'version' }, { 
 const getClusterOperatorDataViewRows = (
   rowData: RowProps<ClusterOperator, ClusterOperatorRowData>[],
   tableColumns: ConsoleDataViewColumn<ClusterOperator>[],
-): ConsoleDataViewRow[] => {
-  return rowData.map(({ obj }) => {
+): ConsoleDataViewRow[] =>
+  rowData.map(({ obj }) => {
     const { name, namespace } = obj.metadata;
     const { status, message } = getStatusAndMessage(obj);
     const operatorVersion = getClusterOperatorVersion(obj);
@@ -129,19 +125,18 @@ const getClusterOperatorDataViewRows = (
       };
     });
   });
-};
 
-const useClusterOperatorColumns = (): TableColumn<ClusterOperator>[] => {
+const useClusterOperatorColumns = (): ConsoleDataViewColumn<ClusterOperator>[] => {
   const { t } = useTranslation('public');
-  const columns = useMemo(() => {
-    return [
+  const columns = useMemo<ConsoleDataViewColumn<ClusterOperator>[]>(
+    () => [
       {
         title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
         props: {
           ...cellIsStickyProps,
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
           width: 20,
         },
       },
@@ -153,7 +148,7 @@ const useClusterOperatorColumns = (): TableColumn<ClusterOperator>[] => {
             sortResourceByValue<ClusterOperator>(direction, sorts.getClusterOperatorStatus),
           ),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
           width: 20,
         },
       },
@@ -165,18 +160,19 @@ const useClusterOperatorColumns = (): TableColumn<ClusterOperator>[] => {
             sortResourceByValue<ClusterOperator>(direction, sorts.getClusterOperatorVersion),
           ),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
         title: t('Message'),
         id: tableColumnInfo[3].id,
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
-    ];
-  }, [t]);
+    ],
+    [t],
+  );
   return columns;
 };
 
@@ -184,8 +180,8 @@ const ClusterOperatorList: FC<ClusterOperatorListProps> = ({ data, loaded, ...pr
   const { t } = useTranslation('public');
   const columns = useClusterOperatorColumns();
 
-  const clusterOperatorStatusFilterOptions = useMemo<DataViewFilterOption[]>(() => {
-    return [
+  const clusterOperatorStatusFilterOptions = useMemo<DataViewFilterOption[]>(
+    () => [
       {
         value: 'Available',
         label: t('Available'),
@@ -210,8 +206,9 @@ const ClusterOperatorList: FC<ClusterOperatorListProps> = ({ data, loaded, ...pr
         value: 'Unknown',
         label: t('Unknown'),
       },
-    ];
-  }, [t]);
+    ],
+    [t],
+  );
 
   const initialFilters = useMemo(() => ({ ...initialFiltersDefault, status: [] }), []);
 
@@ -276,21 +273,19 @@ const UpdateInProgressAlert: FC<UpdateInProgressAlertProps> = ({ cv }) => {
   );
 };
 
-export const ClusterOperatorPage: FC<ClusterOperatorPageProps> = (props) => {
-  return (
-    <>
-      <UpdateInProgressAlert cv={props.cv} />
-      <ListPage
-        {...props}
-        title={ClusterOperatorModel.labelPlural}
-        kind={clusterOperatorReference}
-        ListComponent={ClusterOperatorList}
-        canCreate={false}
-        omitFilterToolbar
-      />
-    </>
-  );
-};
+export const ClusterOperatorPage: FC<ClusterOperatorPageProps> = (props) => (
+  <>
+    <UpdateInProgressAlert cv={props.cv} />
+    <ListPage
+      {...props}
+      title={ClusterOperatorModel.labelPlural}
+      kind={clusterOperatorReference}
+      ListComponent={ClusterOperatorList}
+      canCreate={false}
+      omitFilterToolbar
+    />
+  </>
+);
 
 const OperandVersions: FC<OperandVersionsProps> = ({ versions }) => {
   const { t } = useTranslation('public');

@@ -1,8 +1,13 @@
 import { test, expect } from '../../fixtures';
-import { warmupSPA } from '../../pages/base-page';
+import { ensureDeveloperPerspective, warmupSPA } from '../../pages/base-page';
 import { SearchPage } from '../../pages/dev-console/search-page';
 
 test.describe('Search page - Recently used', { tag: ['@dev-console', '@smoke'] }, () => {
+  test.beforeEach(async ({ page, k8sClient }) => {
+    await warmupSPA(page);
+    await ensureDeveloperPerspective(page, k8sClient);
+  });
+
   test('shows recently searched resource in dropdown', async ({ page, k8sClient, cleanup }) => {
     const ns = `aut-search-recent-${Date.now()}`;
     const searchPage = new SearchPage(page);
@@ -13,7 +18,6 @@ test.describe('Search page - Recently used', { tag: ['@dev-console', '@smoke'] }
     });
 
     await test.step('Search for AlertingRule and navigate away', async () => {
-      await warmupSPA(page);
       await searchPage.switchPerspective('Developer');
       await searchPage.navigateToSearch(ns);
       await searchPage.searchAndSelectResource('AlertingRule');
@@ -44,7 +48,6 @@ test.describe('Search page - Recently used', { tag: ['@dev-console', '@smoke'] }
     });
 
     await test.step('Search for 5 resources', async () => {
-      await warmupSPA(page);
       await searchPage.switchPerspective('Developer');
       for (const resource of resources) {
         await searchPage.navigateToSearch(ns);
@@ -72,7 +75,6 @@ test.describe('Search page - Recently used', { tag: ['@dev-console', '@smoke'] }
     });
 
     await test.step('Search and clear history', async () => {
-      await warmupSPA(page);
       await searchPage.switchPerspective('Developer');
       await searchPage.navigateToSearch(ns);
       await searchPage.searchAndSelectResource('AlertingRule');

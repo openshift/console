@@ -21,7 +21,8 @@ import { usePluginInfo as usePluginInfoSDK } from '@openshift/dynamic-plugin-sdk
 export const usePluginInfo: typeof usePluginInfoSDK = () => {
   const infoEntries = usePluginInfoSDK();
 
-  return useMemo(() => infoEntries.filter((p) => p.manifest.registrationMethod !== 'local'), [
-    infoEntries,
-  ]);
+  return useMemo(
+    () => infoEntries.filter((p) => p.manifest.registrationMethod !== 'local'),
+    [infoEntries],
+  );
 };

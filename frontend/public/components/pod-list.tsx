@@ -24,7 +24,6 @@ import { ListPageBody } from '@console/dynamic-plugin-sdk';
 import type {
   ColumnLayout,
   RowProps,
-  TableColumn,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
@@ -81,19 +80,17 @@ const fetchPodMetrics = (namespace: string): Promise<UIActions.PodMetrics> => {
         : 'pod:container_cpu_usage:sum',
     },
   ];
-  const promises = metrics.map(
-    ({ key, query }): Promise<UIActions.PodMetrics> => {
-      const url = namespace
-        ? `${PROMETHEUS_TENANCY_BASE_PATH}/api/v1/query?namespace=${namespace}&query=${query}`
-        : `${PROMETHEUS_BASE_PATH}/api/v1/query?query=${query}`;
-      return coFetchJSON(url).then(({ data: { result } }) => {
-        return result.reduce((acc, data) => {
-          const value = Number(data.value[1]);
-          return _.set(acc, [key, data.metric.namespace, data.metric.pod], value);
-        }, {});
-      });
-    },
-  );
+  const promises = metrics.map(({ key, query }): Promise<UIActions.PodMetrics> => {
+    const url = namespace
+      ? `${PROMETHEUS_TENANCY_BASE_PATH}/api/v1/query?namespace=${namespace}&query=${query}`
+      : `${PROMETHEUS_BASE_PATH}/api/v1/query?query=${query}`;
+    return coFetchJSON(url).then(({ data: { result } }) =>
+      result.reduce((acc, data) => {
+        const value = Number(data.value[1]);
+        return _.set(acc, [key, data.metric.namespace, data.metric.pod], value);
+      }, {}),
+    );
+  });
   return Promise.all(promises).then((data: unknown[]) => _.assign({}, ...data));
 };
 
@@ -116,12 +113,12 @@ const tableColumnInfo = [
 
 const usePodsColumns = (
   showNodes: boolean,
-): { columns: TableColumn<PodKind>[]; resetAllColumnWidths: () => void } => {
+): { columns: ConsoleDataViewColumn<PodKind>[]; resetAllColumnWidths: () => void } => {
   const { t } = useTranslation('public');
   const { getResizableProps, getWidth, resetAllColumnWidths } = useColumnWidthSettings(PodModel);
 
-  const columns = useMemo(() => {
-    return [
+  const columns = useMemo<ConsoleDataViewColumn<PodKind>[]>(
+    () => [
       {
         title: t('Name'),
         id: tableColumnInfo[0].id,
@@ -129,7 +126,7 @@ const usePodsColumns = (
         sort: 'metadata.name',
         props: {
           ...nameCellProps,
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -138,7 +135,7 @@ const usePodsColumns = (
         sort: 'metadata.namespace',
         resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -147,7 +144,7 @@ const usePodsColumns = (
         sort: (data, direction) => data.sort(sortResourceByValue(direction, podPhase)),
         resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -157,7 +154,7 @@ const usePodsColumns = (
           data.sort(sortResourceByValue(direction, (obj) => podReadiness(obj).readyCount)),
         resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -166,7 +163,7 @@ const usePodsColumns = (
         sort: (data, direction) => data.sort(sortResourceByValue(direction, podRestarts)),
         resizableProps: getResizableProps(tableColumnInfo[4].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -175,7 +172,7 @@ const usePodsColumns = (
         sort: showNodes ? 'spec.nodeName' : 'metadata.ownerReferences[0].name',
         resizableProps: getResizableProps(tableColumnInfo[5].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -185,7 +182,7 @@ const usePodsColumns = (
           data.sort(sortResourceByValue(direction, (obj) => UIActions.getPodMetric(obj, 'memory'))),
         resizableProps: getResizableProps(tableColumnInfo[6].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -195,7 +192,7 @@ const usePodsColumns = (
           data.sort(sortResourceByValue(direction, (obj) => UIActions.getPodMetric(obj, 'cpu'))),
         resizableProps: getResizableProps(tableColumnInfo[7].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -204,7 +201,7 @@ const usePodsColumns = (
         sort: 'metadata.creationTimestamp',
         resizableProps: getResizableProps(tableColumnInfo[8].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -213,7 +210,7 @@ const usePodsColumns = (
         sort: 'spec.nodeName',
         resizableProps: getResizableProps(tableColumnInfo[9].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
         additional: true,
       },
@@ -223,7 +220,7 @@ const usePodsColumns = (
         sort: 'metadata.labels',
         resizableProps: getResizableProps(tableColumnInfo[10].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
           ...getLabelsColumnWidthStyleProp(getWidth(tableColumnInfo[3].id)),
         },
         additional: true,
@@ -234,7 +231,7 @@ const usePodsColumns = (
         sort: 'status.podIP',
         resizableProps: getResizableProps(tableColumnInfo[11].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
         additional: true,
       },
@@ -243,7 +240,7 @@ const usePodsColumns = (
         id: tableColumnInfo[12].id,
         resizableProps: getResizableProps(tableColumnInfo[12].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
         additional: true,
       },
@@ -254,8 +251,9 @@ const usePodsColumns = (
           ...actionsCellProps,
         },
       },
-    ];
-  }, [t, showNodes, getResizableProps, getWidth]);
+    ],
+    [t, showNodes, getResizableProps, getWidth],
+  );
   return { columns, resetAllColumnWidths };
 };
 
@@ -269,15 +267,13 @@ const PodStatusPopover: FC<PodStatusPopoverProps> = ({
   headerContent,
   footerContent,
   status,
-}) => {
-  return (
-    <Popover headerContent={headerContent} bodyContent={bodyContent} footerContent={footerContent}>
-      <Button variant="link" isInline data-test="popover-status-button">
-        <Status status={status} />
-      </Button>
-    </Popover>
-  );
-};
+}) => (
+  <Popover headerContent={headerContent} bodyContent={bodyContent} footerContent={footerContent}>
+    <Button variant="link" isInline data-test="popover-status-button">
+      <Status status={status} />
+    </Button>
+  </Popover>
+);
 
 export const PodStatus: FC<PodStatusProps> = ({ pod }) => {
   const status = podPhase(pod);
@@ -394,8 +390,8 @@ const getPodDataViewRows = (
   tableColumns: ConsoleDataViewColumn<PodKind>[],
   showNodes: boolean,
   podMetrics: UIActions.PodMetrics,
-): ConsoleDataViewRow[] => {
-  return rowData.map(({ obj }) => {
+): ConsoleDataViewRow[] =>
+  rowData.map(({ obj }) => {
     const { name, namespace, creationTimestamp, labels } = obj.metadata;
     const { readyCount, totalContainers } = podReadiness(obj);
     const phase = podPhase(obj);
@@ -471,7 +467,6 @@ const getPodDataViewRows = (
       };
     });
   });
-};
 
 export const PodList: FC<PodListProps> = ({
   showNamespaceOverride,
@@ -489,9 +484,7 @@ export const PodList: FC<PodListProps> = ({
   const { t } = useTranslation('public');
   const { columns, resetAllColumnWidths } = usePodsColumns(showNodes);
 
-  const podMetrics = useConsoleSelector<UIActions.PodMetrics>(({ UI }) => {
-    return UI.getIn(['metrics', 'pod']);
-  });
+  const podMetrics = useConsoleSelector<UIActions.PodMetrics>(({ UI }) => UI.metrics?.pod);
 
   const columnManagementID = referenceForModel(PodModel);
 
@@ -592,6 +585,7 @@ export const PodList: FC<PodListProps> = ({
         columns={columns}
         columnLayout={columnLayout}
         columnManagementID={columnManagementID}
+        showNamespaceOverride={showNamespaceOverride}
         initialFilters={initialFilters}
         additionalFilterNodes={additionalFilterNodes}
         matchesAdditionalFilters={matchesAdditionalFilters}
@@ -640,7 +634,6 @@ export const PodsPage: FC<PodPageProps> = ({
             // than helpful. It should be obvious there are no metrics in the list, and
             // if monitoring is broken, it'll be really apparent since none of the
             // graphs and dashboards will load in the UI.
-            // eslint-disable-next-line no-console
             console.error('Unable to fetch pod metrics', e);
           });
       updateMetrics();

@@ -23,7 +23,7 @@ export const OpenShiftGettingStarted: FC<OpenShiftGettingStartedProps> = () => {
   const canCreateNamespace = useFlag(FLAGS.CAN_CREATE_NS);
   const canCreateProject = useFlag(FLAGS.CAN_CREATE_PROJECT);
   const canCreate = canCreateNamespace || canCreateProject;
-  const createProjectMessage = useConsoleSelector(({ UI }) => UI.get('createProjectMessage'));
+  const createProjectMessage = useConsoleSelector(({ UI }) => UI.createProjectMessage);
   const createNamespaceOrProjectModal = useCreateNamespaceOrProjectModal();
   const onClickCreate = () =>
     createNamespaceOrProjectModal({

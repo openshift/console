@@ -79,7 +79,6 @@ const DeleteModal = (props: DeleteModalProps) => {
         resourceOwner && setOwner(resourceOwner);
       })
       .catch((e) => {
-        // eslint-disable-next-line no-console
         console.error('Could not fetch CSVs', e);
       });
   });

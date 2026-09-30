@@ -2,10 +2,6 @@
 
 import { lazy } from 'react';
 
-// Helper to detect if a modal is open. This is used to disable autofocus in elements under a modal.
-// TODO: Improve focus and keybinding handling, see https://issues.redhat.com/browse/ODC-3554
-export const isModalOpen = () => document.body.classList.contains('ReactModal__Body--open');
-
 // Lazy-loaded OverlayComponent for Configure Namespace Pull Secret Modal
 export const LazyConfigureNamespacePullSecretModalOverlay = lazy(() =>
   import(
@@ -103,13 +99,6 @@ export const LazyExpandPVCModalOverlay = lazy(() =>
   })),
 );
 
-// Lazy-loaded OverlayComponent for Clone PVC Modal
-export const LazyClonePVCModalOverlay = lazy(() =>
-  import(
-    '@console/app/src/components/modals/clone/clone-pvc-modal' /* webpackChunkName: "clone-pvc-modal" */
-  ).then((m) => ({ default: m.ClonePVCModalOverlay })),
-);
-
 // Lazy-loaded OverlayComponent for Configure Cluster Upstream Modal
 export const LazyConfigureClusterUpstreamModalOverlay = lazy(() =>
   import(
@@ -124,22 +113,6 @@ export const LazyAlertRoutingModalOverlay = lazy(() =>
   import('./alert-routing-modal' /* webpackChunkName: "alert-routing-modal" */).then((m) => ({
     default: m.AlertRoutingModalOverlay,
   })),
-);
-
-// Lazy-loaded OverlayComponent for Column Management Modal
-export const LazyColumnManagementModalOverlay = lazy(() =>
-  import('./column-management-modal' /* webpackChunkName: "column-management-modal" */).then(
-    (m) => ({
-      default: m.ColumnManagementModalOverlay,
-    }),
-  ),
-);
-
-// Lazy-loaded OverlayComponent for Restore PVC Modal
-export const LazyRestorePVCModalOverlay = lazy(() =>
-  import(
-    '@console/app/src/components/modals/restore-pvc/restore-pvc-modal' /* webpackChunkName: "restore-pvc-modal" */
-  ).then((m) => ({ default: m.RestorePVCModalOverlay })),
 );
 
 // Lazy-loaded OverlayComponent for Managed Resource Save Modal

@@ -7,11 +7,14 @@ import {
   actionsCellProps,
   cellIsStickyProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import type {
+  ConsoleDataViewColumn,
+  GetDataViewRows,
+} from '@console/app/src/components/data-view/types';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { DASH } from '@console/shared/src/constants/ui';
 import { PrometheusModel } from '../models';
-import type { K8sResourceKind, TableColumn } from '../module/k8s';
+import type { K8sResourceKind } from '../module/k8s';
 import { referenceForModel, referenceFor } from '../module/k8s';
 import { ListPage } from './factory/list-page';
 import type { ListPageProps } from './factory/list-page';
@@ -29,8 +32,8 @@ const tableColumnInfo = [
   { id: 'actions' },
 ];
 
-const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) => {
-  return data.map(({ obj }) => {
+const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) =>
+  data.map(({ obj }) => {
     const { metadata, spec } = obj;
     const resourceKind = referenceFor(obj);
     const context = { [resourceKind]: obj };
@@ -83,9 +86,8 @@ const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) => {
       };
     });
   });
-};
 
-const usePrometheusColumns = (): TableColumn<K8sResourceKind>[] => {
+const usePrometheusColumns = (): ConsoleDataViewColumn<K8sResourceKind>[] => {
   const { t } = useTranslation('public');
   return useMemo(
     () => [
@@ -95,7 +97,7 @@ const usePrometheusColumns = (): TableColumn<K8sResourceKind>[] => {
         sort: 'metadata.name',
         props: {
           ...cellIsStickyProps,
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -103,7 +105,7 @@ const usePrometheusColumns = (): TableColumn<K8sResourceKind>[] => {
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -111,7 +113,7 @@ const usePrometheusColumns = (): TableColumn<K8sResourceKind>[] => {
         id: tableColumnInfo[2].id,
         sort: 'metadata.labels',
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
           width: 20,
         },
       },
@@ -120,7 +122,7 @@ const usePrometheusColumns = (): TableColumn<K8sResourceKind>[] => {
         id: tableColumnInfo[3].id,
         sort: 'spec.version',
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -128,7 +130,7 @@ const usePrometheusColumns = (): TableColumn<K8sResourceKind>[] => {
         id: tableColumnInfo[4].id,
         sort: 'spec.serviceMonitorSelector',
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
           width: 20,
         },
       },

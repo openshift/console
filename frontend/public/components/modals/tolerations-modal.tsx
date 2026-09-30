@@ -98,17 +98,20 @@ const TolerationsModal = (props: TolerationsModalProps) => {
     setTolerations(tmpTolerations);
   };
 
-  const newToleration = (): TolerationModalItem => {
-    return { key: '', operator: 'Exists', value: '', effect: '', isNew: true };
-  };
+  const newToleration = (): TolerationModalItem => ({
+    key: '',
+    operator: 'Exists',
+    value: '',
+    effect: '',
+    isNew: true,
+  });
 
   const addRow = () => {
     setTolerations([...tolerations, newToleration()]);
   };
 
-  const isEditable = (toleration: TolerationModalItem) => {
-    return props.resourceKind.kind !== 'Pod' || toleration.isNew;
-  };
+  const isEditable = (toleration: TolerationModalItem) =>
+    props.resourceKind.kind !== 'Pod' || toleration.isNew;
 
   return (
     <>
@@ -259,19 +262,17 @@ const TolerationsModal = (props: TolerationsModalProps) => {
   );
 };
 
-export const TolerationsModalOverlay: OverlayComponent<TolerationsModalProps> = (props) => {
-  return (
-    <Modal
-      isOpen
-      onClose={props.closeOverlay}
-      variant={ModalVariant.large}
-      aria-labelledby="tolerations-modal-title"
-      className={props.modalClassName}
-    >
-      <TolerationsModal {...props} close={props.closeOverlay} />
-    </Modal>
-  );
-};
+export const TolerationsModalOverlay: OverlayComponent<TolerationsModalProps> = (props) => (
+  <Modal
+    isOpen
+    onClose={props.closeOverlay}
+    variant={ModalVariant.large}
+    aria-labelledby="tolerations-modal-title"
+    className={props.modalClassName}
+  >
+    <TolerationsModal {...props} close={props.closeOverlay} />
+  </Modal>
+);
 
 type TolerationModalItem = {
   // isNew is used internally in the dialog to track existing vs new

@@ -2,9 +2,11 @@ import type { ComponentProps, FC } from 'react';
 import { useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { RowFilter } from '@console/dynamic-plugin-sdk';
-import { MultiListPage } from '@console/internal/components/factory';
+import { MultiListPage } from '@console/internal/components/factory/list-page';
 import type { K8sResourceCommon } from '@console/internal/module/k8s';
-import { modelFor, referenceFor, referenceForModel } from '@console/internal/module/k8s';
+import { referenceFor } from '@console/internal/module/k8s/k8s';
+import { modelFor } from '@console/internal/module/k8s/k8s-models';
+import { referenceForModel } from '@console/internal/module/k8s/k8s-ref';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { FLAG_CAMEL_KAMELETS } from '../../../const';
@@ -13,7 +15,7 @@ import {
   getDynamicEventSourceModel,
   useEventSourceModels,
 } from '../../../utils/fetch-dynamic-eventsources-utils';
-import EventSourceList from './EventSourceList';
+import { EventSourceList } from './EventSourceList';
 
 const EventSourceListPage: FC<ComponentProps<typeof MultiListPage>> = (props) => {
   const { t } = useTranslation('knative-plugin');
@@ -73,6 +75,7 @@ const EventSourceListPage: FC<ComponentProps<typeof MultiListPage>> = (props) =>
         flatten={flatten}
         resources={resources}
         ListComponent={EventSourceList}
+        omitFilterToolbar
       />
     </>
   );

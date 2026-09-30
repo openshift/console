@@ -59,12 +59,9 @@ const isTagVersionLatest = (
   comparedTag: string,
   comparedTagPosition: number,
   orderedTagArray: TagMeta[],
-) => {
-  return (
-    comparedTagPosition ===
-    _.findIndex(orderedTagArray, (orderedTag: TagMeta) => orderedTag.tag === comparedTag)
-  );
-};
+) =>
+  comparedTagPosition ===
+  _.findIndex(orderedTagArray, (orderedTag: TagMeta) => orderedTag.tag === comparedTag);
 
 export const ImageStreamTimeline: FC<ImageStreamTimelineProps> = ({
   imageStreamTags,
@@ -76,26 +73,24 @@ export const ImageStreamTimeline: FC<ImageStreamTimelineProps> = ({
     return <EmptyBox label={t('Images')} />;
   }
   const tagsArray: TagMeta[] = _.flatten(
-    _.map(imageStreamTags, ({ tag, items }) => {
-      return _.map(items, ({ created, dockerImageReference }) => ({
+    _.map(imageStreamTags, ({ tag, items }) =>
+      _.map(items, ({ created, dockerImageReference }) => ({
         tag,
         created,
         dockerImageReference,
-      }));
-    }),
+      })),
+    ),
   );
   const orderedTagArray = _.orderBy(tagsArray, ['created'], ['desc']);
-  const timeline = _.map(orderedTagArray, (tag: TagMeta, i: number) => {
-    return (
-      <ImageStreamTimelineItem
-        key={tag.dockerImageReference}
-        tag={tag}
-        imageStreamName={imageStreamName}
-        imageStreamNamespace={imageStreamNamespace}
-        linkToTag={isTagVersionLatest(tag.tag, i, orderedTagArray)}
-      />
-    );
-  });
+  const timeline = _.map(orderedTagArray, (tag: TagMeta, i: number) => (
+    <ImageStreamTimelineItem
+      key={tag.dockerImageReference}
+      tag={tag}
+      imageStreamName={imageStreamName}
+      imageStreamNamespace={imageStreamNamespace}
+      linkToTag={isTagVersionLatest(tag.tag, i, orderedTagArray)}
+    />
+  ));
 
   return (
     <>

@@ -5,7 +5,6 @@ export enum ActionType {
   SelectOverviewDetailsTab = 'selectOverviewDetailsTab',
   SelectOverviewItem = 'selectOverviewItem',
   SetActiveApplication = 'setActiveApplication',
-  SetActiveNamespace = 'setActiveNamespace',
   SetCreateProjectMessage = 'setCreateProjectMessage',
   SetCurrentLocation = 'setCurrentLocation',
   SetServiceLevel = 'setServiceLevel',

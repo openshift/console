@@ -6,7 +6,8 @@ import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 
 export const useResourceDetailsPages = () => {
   const resourceDetailsPageExtensions = useExtensions<ResourceDetailsPage>(isResourceDetailsPage);
-  return useMemo(() => getResourceDetailsPages(resourceDetailsPageExtensions), [
-    resourceDetailsPageExtensions,
-  ]);
+  return useMemo(
+    () => getResourceDetailsPages(resourceDetailsPageExtensions),
+    [resourceDetailsPageExtensions],
+  );
 };

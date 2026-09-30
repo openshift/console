@@ -21,6 +21,5 @@ export const getLandingPageURL: ResolvedExtension<Perspective>['properties']['la
   isFirstVisit,
 ) => (!flags[FLAGS.OPENSHIFT] || isFirstVisit ? '/add' : '/topology');
 
-export const getImportRedirectURL: ResolvedExtension<
-  Perspective
->['properties']['importRedirectURL'] = (namespace) => `/topology/ns/${namespace}`;
+export const getImportRedirectURL: ResolvedExtension<Perspective>['properties']['importRedirectURL'] =
+  (namespace) => `/topology/ns/${namespace}`;

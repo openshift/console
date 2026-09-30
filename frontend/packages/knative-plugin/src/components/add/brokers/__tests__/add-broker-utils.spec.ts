@@ -3,7 +3,7 @@ import { EventingBrokerModel } from '../../../../models';
 import { LABEL_PART_OF, EVENT_BROKER_APP } from '../../const';
 import { convertFormToBrokerYaml, addBrokerInitialValues } from '../add-broker-utils';
 
-describe('broker-utils: ', () => {
+describe('broker-utils:', () => {
   describe('convertFormToBrokerYaml', () => {
     it('should contain all the top level keys for broker', () => {
       const { formData } = addBrokerInitialValues('test-ns', '');

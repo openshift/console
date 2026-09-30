@@ -153,7 +153,6 @@ const useLoadServiceLevel = (): [boolean, boolean, (clusterID: string) => void] 
           // Error getting pull secret (this is expected if the user doesn't have access)
           setLoadingSecret(false);
         } else {
-          // eslint-disable-next-line no-console
           console.error('API call to get support level has failed', err);
         }
         dispatch(UIActions.setServiceLevel(null, null, clusterID, null, hasSecretAccess));
@@ -175,13 +174,9 @@ const useGetServiceLevel = (
   loadingSecret: boolean;
   loadingServiceLevel: boolean;
 } => {
-  const {
-    level,
-    daysRemaining,
-    clusterID,
-    trialDateEnd,
-    hasSecretAccess,
-  } = useConsoleSelector(({ UI }) => UI.get('serviceLevel'));
+  const { level, daysRemaining, clusterID, trialDateEnd, hasSecretAccess } = useConsoleSelector(
+    ({ UI }) => UI.serviceLevel,
+  );
   const [loadingSecret, loadingServiceLevel, loadServiceLevel] = useLoadServiceLevel();
 
   useEffect(() => {

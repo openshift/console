@@ -2,7 +2,8 @@ import type { FC, ReactElement, ComponentType } from 'react';
 import { useMemo, lazy, useEffect, Suspense } from 'react';
 import type { RouteProps } from 'react-router';
 import { createPath, Route, useLocation } from 'react-router';
-import { RoutePage, isRoutePage } from '@console/dynamic-plugin-sdk/src/extensions/pages';
+import type { RoutePage as RoutePageType } from '@console/dynamic-plugin-sdk/src/extensions/pages';
+import { isRoutePage } from '@console/dynamic-plugin-sdk/src/extensions/pages';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk/src/perspective';
 import type { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
 import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
@@ -23,7 +24,8 @@ const LazyRoutePage: FC<LazyRoutePageProps> = ({ extension }) => {
         uid,
         lazy(async () => {
           const Component = await component();
-          if (typeof Component !== 'function') {
+          // Check falsy to determine if the component wasn't loaded
+          if (!Component) {
             throw new Error(
               `Plugin "${pluginName}" route component resolved to ${typeof Component} (extension ${uid})`,
             );
@@ -89,7 +91,7 @@ export const mapExtensionToRoutes = (data: {
 };
 
 export const usePluginRoutes: UsePluginRoutes = () => {
-  const routePages = useExtensions<RoutePage>(isRoutePage);
+  const routePages = useExtensions<RoutePageType>(isRoutePage);
   const [activePerspective, setActivePerspective] = useActivePerspective();
 
   return useMemo(
@@ -120,7 +122,7 @@ export const usePluginRoutes: UsePluginRoutes = () => {
   );
 };
 
-type LoadedRoutePageExtension = LoadedExtension<RoutePage>;
+type LoadedRoutePageExtension = LoadedExtension<RoutePageType>;
 
 type SetActivePerspective = (perspective: string, next: string) => void;
 

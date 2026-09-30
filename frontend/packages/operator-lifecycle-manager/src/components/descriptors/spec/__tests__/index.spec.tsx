@@ -37,8 +37,8 @@ const OBJ = {
 describe('Spec descriptors', () => {
   let descriptor: Descriptor;
 
-  const renderDescriptor = (props: Partial<DescriptorDetailsItemProps> = {}) => {
-    return renderWithProviders(
+  const renderDescriptor = (props: Partial<DescriptorDetailsItemProps> = {}) =>
+    renderWithProviders(
       <DescriptorDetailsItem
         descriptor={descriptor}
         model={testModel}
@@ -48,7 +48,6 @@ describe('Spec descriptors', () => {
         {...props}
       />,
     );
-  };
 
   beforeEach(() => {
     descriptor = {

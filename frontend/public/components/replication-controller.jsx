@@ -166,8 +166,8 @@ const tableColumnInfo = [
   { id: '' },
 ];
 
-const getDataViewRows = (data, columns) => {
-  return data.map(({ obj }) => {
+const getDataViewRows = (data, columns) =>
+  data.map(({ obj }) => {
     const { name, namespace } = obj.metadata;
     const phase = obj?.metadata?.annotations?.['openshift.io/deployment.phase'];
     const context = { [referenceForModel(ReplicationControllerModel)]: obj };
@@ -213,7 +213,6 @@ const getDataViewRows = (data, columns) => {
       };
     });
   });
-};
 
 const useReplicationControllersColumns = () => {
   const { t } = useTranslation('public');
@@ -221,8 +220,8 @@ const useReplicationControllersColumns = () => {
     ReplicationControllerModel,
   );
 
-  const columns = useMemo(() => {
-    return [
+  const columns = useMemo(
+    () => [
       {
         title: t('Name'),
         id: tableColumnInfo[0].id,
@@ -285,8 +284,9 @@ const useReplicationControllersColumns = () => {
           ...actionsCellProps,
         },
       },
-    ];
-  }, [t, getResizableProps]);
+    ],
+    [t, getResizableProps],
+  );
 
   return { columns, resetAllColumnWidths };
 };

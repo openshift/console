@@ -67,10 +67,6 @@
       "url": "./packages/console-dynamic-plugin-sdk/dist/webpack/schema/console-extensions.json"
     }
   ],
-  "cucumberautocomplete.steps": [
-    "./packages/*/integration-tests/support/step-definitions/*/*.ts"
-  ],
-  "cucumberautocomplete.strictGherkinCompletion": true,
   "editor.quickSuggestions": {
     "comments": "on",
     "strings": "on",

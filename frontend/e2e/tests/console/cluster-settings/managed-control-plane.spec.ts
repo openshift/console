@@ -31,29 +31,26 @@ test.describe('Cluster Settings when control plane is managed', { tag: ['@admin'
       });
     });
 
-    await test.step(
-      'Verify Details tab shows hosted alert and hides/disables update controls',
-      async () => {
-        await clusterSettings.navigateToDetails();
+    await test.step('Verify Details tab shows hosted alert and hides/disables update controls', async () => {
+      await clusterSettings.navigateToDetails();
 
-        // Hosted cluster alert should be visible
-        await expect(clusterSettings.getHostedAlert()).toBeVisible();
+      // Hosted cluster alert should be visible
+      await expect(clusterSettings.getHostedAlert()).toBeVisible();
 
-        // Update-related controls should be hidden or disabled
-        // Some are removed from DOM, others are disabled - check both states
-        await expect(clusterSettings.getCurrentChannelLink()).not.toBeAttached();
-        await expect(clusterSettings.getUpdateButton()).not.toBeAttached();
-        // Upstream server URL button is disabled but still in DOM
-        await expect(clusterSettings.getUpstreamServerUrl()).toBeDisabled();
-        await expect(clusterSettings.getAutoscalerLink()).not.toBeAttached();
+      // Update-related controls should be hidden or disabled
+      // Some are removed from DOM, others are disabled - check both states
+      await expect(clusterSettings.getCurrentChannelLink()).not.toBeAttached();
+      await expect(clusterSettings.getUpdateButton()).not.toBeAttached();
+      // Upstream server URL button is disabled but still in DOM
+      await expect(clusterSettings.getUpstreamServerUrl()).toBeDisabled();
+      await expect(clusterSettings.getAutoscalerLink()).not.toBeAttached();
 
-        // Temporary admin user messages should not exist
-        const tempAdminMessage = page.getByText(/logged in as a temporary administrative user/i);
-        await expect(tempAdminMessage).toBeHidden();
-        const allowOthersMessage = page.getByText(/allow others to log in/i);
-        await expect(allowOthersMessage).toBeHidden();
-      },
-    );
+      // Temporary admin user messages should not exist
+      const tempAdminMessage = page.getByText(/logged in as a temporary administrative user/i);
+      await expect(tempAdminMessage).toBeHidden();
+      const allowOthersMessage = page.getByText(/allow others to log in/i);
+      await expect(allowOthersMessage).toBeHidden();
+    });
 
     await test.step('Verify Configuration tab hides cluster-level config resources', async () => {
       await clusterSettings.navigateToConfigurationTab();

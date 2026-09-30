@@ -5,14 +5,16 @@ import { PodModel } from '@console/internal/models';
 import { referenceForModel } from '@console/internal/module/k8s';
 import './MaintenancePopoverPodList.scss';
 
-const podRowRenderer = (pods) => ({ key, index, style }) => {
-  const pod = pods[index];
-  return (
-    <div key={key} style={style} className="maintenance-popover-pod-list__list-item">
-      <ResourceLink kind={referenceForModel(PodModel)} name={pod} title={pod} />
-    </div>
-  );
-};
+const podRowRenderer =
+  (pods) =>
+  ({ key, index, style }) => {
+    const pod = pods[index];
+    return (
+      <div key={key} style={style} className="maintenance-popover-pod-list__list-item">
+        <ResourceLink kind={referenceForModel(PodModel)} name={pod} title={pod} />
+      </div>
+    );
+  };
 
 type MaintenancePopoverPodListProps = {
   pods: string[];

@@ -119,6 +119,7 @@ const BuildConfigForm: FC<
           values.editorType === EditorType.YAML && (() => downloadYaml(values.yamlData))
         }
         sticky
+        namespace={namespace}
       />
     </FlexForm>
   );

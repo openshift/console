@@ -58,9 +58,12 @@ type RegistryClientSetter interface {
 	SetRegistryClient(rc *registry.Client)
 }
 
-// IsValidChartURL validates chart URLs using RFC-compliant hostname labels.
-// Accepts oci://<registry>/<path> and http(s)://<host>/<path>.tgz|tar.gz URLs.
-func IsValidChartURL(raw string) bool {
+// IsChartURLWellFormed reports whether a chart URL is syntactically well-formed:
+// an oci://<registry>/<path> reference or an http(s)://<host>/<path>.tgz|tar.gz
+// archive URL, using RFC-compliant hostname labels. It is a format check only;
+// SSRF policy (allowed schemes, non-internal hosts, non-private IPs) is enforced
+// separately by validateChartURL.
+func IsChartURLWellFormed(raw string) bool {
 	return ociURLRe.MatchString(raw) || httpURLRe.MatchString(raw)
 }
 
@@ -122,6 +125,12 @@ func InstallChart(ns, name, url string, vals map[string]interface{}, conf *actio
 		}
 	} else {
 		chartInfo = getChartInfoFromIndexEntry(indexEntry, ns, url)
+	}
+
+	// Validate the URL before setting up authentication so a rejected URL
+	// returns before any temporary TLS files are created.
+	if err := validateChartURL(url); err != nil {
+		return nil, err
 	}
 
 	connectionConfig, isClusterScoped, err := getRepositoryConnectionConfig(chartInfo.RepositoryName, ns, client)
@@ -207,6 +216,12 @@ func InstallChartAsync(ns, name, url string, vals map[string]interface{}, conf *
 		}
 	} else {
 		chartInfo = getChartInfoFromIndexEntry(indexEntry, ns, url)
+	}
+
+	// Validate the URL before setting up authentication so a rejected URL
+	// returns before any temporary TLS files are created.
+	if err := validateChartURL(url); err != nil {
+		return nil, err
 	}
 
 	connectionConfig, isClusterScoped, err := getRepositoryConnectionConfig(chartInfo.RepositoryName, ns, client)
@@ -324,8 +339,11 @@ func addAuthSecretAnnotation(ch *chart.Chart, secretName string) {
 // basicAuthSecretName names a Secret in ns containing username and password keys for registry auth.
 func InstallChartFromURL(ns, name, url string, vals map[string]interface{}, conf *action.Configuration, coreClient corev1client.CoreV1Interface, version, basicAuthSecretName string) (*kv1.Secret, error) {
 
-	if !IsValidChartURL(url) {
+	if !IsChartURLWellFormed(url) {
 		return nil, fmt.Errorf("invalid chart URL: %s, must be oci:// URL or http(s)://*.tgz", url)
+	}
+	if err := validateChartURL(url); err != nil {
+		return nil, err
 	}
 
 	cmd := action.NewInstall(conf)

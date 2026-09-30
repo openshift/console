@@ -59,54 +59,52 @@ const KeyValueFileInputField: FC<KeyValueEntryFormProps & FieldProps> = ({
       name={name}
       render={(arrayHelpers) => (
         <FormGroup fieldId={fieldId} label={label}>
-          {fieldValues?.map((v, idx) => {
-            return (
-              <Flex
-                className="key-value--wrapper"
-                data-test={'key-value-pair'}
-                key={`${idx.toString()}-${uniqId}`}
-                direction={{ default: 'column' }}
-              >
-                {!disableRemoveAction && (
-                  <FlexItem className="key-value--remove-button">
-                    <Button
-                      icon={<RhUiMinusCircleIcon className="co-icon-space-r" />}
-                      type="button"
-                      data-test="remove-key-value-button"
-                      onClick={() => {
-                        setUniqId(uniqueId());
-                        arrayHelpers.remove(idx);
-                      }}
-                      variant="link"
-                    >
-                      {t('Remove key/value')}
-                    </Button>
-                  </FlexItem>
-                )}
-
-                <FlexItem>
-                  <InputField
-                    data-test={`key-${idx.toString()}`}
-                    type={TextInputTypes.text}
-                    name={`${name}.${idx.toString()}.key`}
-                    label={t('Key')}
-                    required
-                  />
-                </FlexItem>
-                <FlexItem>
-                  <DroppableFileInputField
-                    data-test={`value-${idx.toString()}`}
-                    name={`${name}.${idx.toString()}.value`}
-                    label={t('Value')}
-                    helpText={t('Drag and drop file with your value here or browse to upload it.')}
-                    onChange={(fileData: string) => {
-                      onChange && onChange(fileData, `${name}.${idx.toString()}`);
+          {fieldValues?.map((v, idx) => (
+            <Flex
+              className="key-value--wrapper"
+              data-test="key-value-pair"
+              key={`${idx.toString()}-${uniqId}`}
+              direction={{ default: 'column' }}
+            >
+              {!disableRemoveAction && (
+                <FlexItem className="key-value--remove-button">
+                  <Button
+                    icon={<RhUiMinusCircleIcon className="co-icon-space-r" />}
+                    type="button"
+                    data-test="remove-key-value-button"
+                    onClick={() => {
+                      setUniqId(uniqueId());
+                      arrayHelpers.remove(idx);
                     }}
-                  />
+                    variant="link"
+                  >
+                    {t('Remove key/value')}
+                  </Button>
                 </FlexItem>
-              </Flex>
-            );
-          })}
+              )}
+
+              <FlexItem>
+                <InputField
+                  data-test={`key-${idx.toString()}`}
+                  type={TextInputTypes.text}
+                  name={`${name}.${idx.toString()}.key`}
+                  label={t('Key')}
+                  required
+                />
+              </FlexItem>
+              <FlexItem>
+                <DroppableFileInputField
+                  data-test={`value-${idx.toString()}`}
+                  name={`${name}.${idx.toString()}.value`}
+                  label={t('Value')}
+                  helpText={t('Drag and drop file with your value here or browse to upload it.')}
+                  onChange={(fileData: string) => {
+                    onChange && onChange(fileData, `${name}.${idx.toString()}`);
+                  }}
+                />
+              </FlexItem>
+            </Flex>
+          ))}
           <Button
             icon={<RhUiAddCircleFillIcon className="co-icon-space-r" />}
             className="pf-m-link--align-left"

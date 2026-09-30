@@ -245,9 +245,9 @@ const ConfigureUpdateStrategyModal: FC<ConfigureUpdateStrategyModalProps> = ({
   );
 };
 
-export const ConfigureUpdateStrategyModalOverlay: OverlayComponent<ConfigureUpdateStrategyModalProps> = (
-  props,
-) => {
+export const ConfigureUpdateStrategyModalOverlay: OverlayComponent<
+  ConfigureUpdateStrategyModalProps
+> = (props) => {
   const [isOpen, setIsOpen] = useState(true);
   const handleClose = () => {
     setIsOpen(false);

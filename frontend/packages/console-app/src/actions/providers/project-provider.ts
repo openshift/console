@@ -36,14 +36,14 @@ export const useProjectActionsProvider = (resource: K8sResourceKind) => {
     CommonActionCreator.Edit,
   ] as const);
   const deleteAction = useDeleteAction(kindObj, resource);
-  const projectActions = useMemo(() => (isReady ? Object.values(editAction) : []), [
-    editAction,
-    isReady,
-  ]);
-  const actions = useMemo(() => [...projectActions, ...deleteAction], [
-    projectActions,
-    deleteAction,
-  ]);
+  const projectActions = useMemo(
+    () => (isReady ? Object.values(editAction) : []),
+    [editAction, isReady],
+  );
+  const actions = useMemo(
+    () => [...projectActions, ...deleteAction],
+    [projectActions, deleteAction],
+  );
   return [actions, !inFlight, false];
 };
 
@@ -55,13 +55,13 @@ export const useNamespaceActionsProvider = (resource: K8sResourceKind) => {
     CommonActionCreator.Edit,
   ] as const);
   const deleteAction = useDeleteAction(kindObj, resource);
-  const namespaceActions = useMemo(() => (isReady ? Object.values(commonActions) : []), [
-    commonActions,
-    isReady,
-  ]);
-  const actions = useMemo(() => [...namespaceActions, ...deleteAction], [
-    namespaceActions,
-    deleteAction,
-  ]);
+  const namespaceActions = useMemo(
+    () => (isReady ? Object.values(commonActions) : []),
+    [commonActions, isReady],
+  );
+  const actions = useMemo(
+    () => [...namespaceActions, ...deleteAction],
+    [namespaceActions, deleteAction],
+  );
   return [actions, !inFlight, false];
 };

@@ -16,7 +16,6 @@ import {
 } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
 import { sortable, Table as PFTable, Thead, Tr, Th, Tbody, Td } from '@patternfly/react-table';
-import { Map as ImmutableMap, Set as ImmutableSet, fromJS } from 'immutable';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useParams, Link, useNavigate } from 'react-router';
@@ -83,15 +82,13 @@ const componentsTableColumnClasses = [
   css('pf-m-hidden', 'pf-m-visible-on-lg', 'pf-v6-c-table__td'),
 ];
 
-const InstallPlanHint: FC<InstallPlanHintProps> = ({ title, body, footer }) => {
-  return (
-    <Hint>
-      <HintTitle className="pf-v6-u-font-size-md">{title}</HintTitle>
-      <HintBody>{body}</HintBody>
-      <HintFooter>{footer}</HintFooter>
-    </Hint>
-  );
-};
+const InstallPlanHint: FC<InstallPlanHintProps> = ({ title, body, footer }) => (
+  <Hint>
+    <HintTitle className="pf-v6-u-font-size-md">{title}</HintTitle>
+    <HintBody>{body}</HintBody>
+    <HintFooter>{footer}</HintFooter>
+  </Hint>
+);
 
 export const InstallPlanTableRow: FC<RowFunctionArgs> = ({ obj }) => {
   const { t } = useTranslation('olm');
@@ -177,40 +174,38 @@ const EmptyMsg: FC = () => {
 
 export const InstallPlansList = requireOperatorGroup((props: InstallPlansListProps) => {
   const { t } = useTranslation('olm');
-  const InstallPlanTableHeader = () => {
-    return [
-      {
-        title: t('Name'),
-        sortField: 'metadata.name',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[0] },
-      },
-      {
-        title: t('Namespace'),
-        sortField: 'metadata.namespace',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[1] },
-      },
-      {
-        title: t('Status'),
-        sortField: 'status.phase',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[2] },
-      },
-      {
-        title: t('Components'),
-        props: { className: tableColumnClasses[3] },
-      },
-      {
-        title: t('Subscriptions'),
-        props: { className: tableColumnClasses[4] },
-      },
-      {
-        title: '',
-        props: { className: tableColumnClasses[5] },
-      },
-    ];
-  };
+  const InstallPlanTableHeader = () => [
+    {
+      title: t('Name'),
+      sortField: 'metadata.name',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[0] },
+    },
+    {
+      title: t('Namespace'),
+      sortField: 'metadata.namespace',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[1] },
+    },
+    {
+      title: t('Status'),
+      sortField: 'status.phase',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[2] },
+    },
+    {
+      title: t('Components'),
+      props: { className: tableColumnClasses[3] },
+    },
+    {
+      title: t('Subscriptions'),
+      props: { className: tableColumnClasses[4] },
+    },
+    {
+      title: '',
+      props: { className: tableColumnClasses[5] },
+    },
+  ];
 
   return (
     <Table
@@ -225,13 +220,18 @@ export const InstallPlansList = requireOperatorGroup((props: InstallPlansListPro
 
 const getCatalogSources = (
   installPlan: InstallPlanKind,
-): { sourceName: string; sourceNamespace: string }[] =>
-  _.reduce(
-    installPlan?.status?.plan || [],
-    (accumulator, { resource: { sourceName, sourceNamespace } }) =>
-      accumulator.add(fromJS({ sourceName, sourceNamespace })),
-    ImmutableSet(),
-  ).toJS();
+): { sourceName: string; sourceNamespace: string }[] => {
+  const seen = new Set<string>();
+  const result: { sourceName: string; sourceNamespace: string }[] = [];
+  (installPlan?.status?.plan || []).forEach(({ resource: { sourceName, sourceNamespace } }) => {
+    const key = `${sourceNamespace}/${sourceName}`;
+    if (!seen.has(key)) {
+      seen.add(key);
+      result.push({ sourceName, sourceNamespace });
+    }
+  });
+  return result;
+};
 
 export const InstallPlansPage: FC<InstallPlansPageProps> = (props) => {
   const { t } = useTranslation('olm');
@@ -420,12 +420,7 @@ export const InstallPlanPreview: FC<InstallPlanPreviewProps> = ({ obj, hideAppro
   );
 
   const plan = obj?.status?.plan || [];
-  const stepsByCSV = plan
-    .reduce(
-      (acc, step) => acc.update(step.resolving, [], (steps) => steps.concat([step])),
-      ImmutableMap<string, Step[]>(),
-    )
-    .toArray();
+  const stepsByCSV = Object.values(_.groupBy(plan, 'resolving')) as Step[][];
 
   const approve = () =>
     k8sPatch(InstallPlanModel, obj, [{ op: 'replace', path: '/spec/approved', value: true }])

@@ -45,8 +45,8 @@ import { RulesList } from './rules';
 
 const tableColumnInfo = [{ id: 'name' }, { id: 'namespace-always-show' }, { id: 'actions' }];
 
-const getDataViewRows = (data, columns) => {
-  return data.map(({ obj: role }) => {
+const getDataViewRows = (data, columns) =>
+  data.map(({ obj: role }) => {
     const rowCells = {
       [tableColumnInfo[0].id]: {
         cell: (
@@ -81,7 +81,6 @@ const getDataViewRows = (data, columns) => {
       };
     });
   });
-};
 
 class Details extends Component {
   constructor(props) {
@@ -165,8 +164,8 @@ const bindingsTableColumnInfo = [
   { id: 'namespace-always-show' },
 ];
 
-const getBindingsDataViewRows = (data, columns) => {
-  return data.map(({ obj: binding }) => {
+const getBindingsDataViewRows = (data, columns) =>
+  data.map(({ obj: binding }) => {
     const rowCells = {
       [bindingsTableColumnInfo[0].id]: {
         cell: <BindingName binding={binding} />,
@@ -197,7 +196,6 @@ const getBindingsDataViewRows = (data, columns) => {
       };
     });
   });
-};
 
 const useBindingsColumns = () => {
   const { t } = useTranslation('public');
@@ -258,8 +256,8 @@ const BindingsListComponent = (props) => {
     // Convert staticFilters to array format if it's an object
     const filtersArray = Array.isArray(staticFilters) ? staticFilters : [staticFilters];
 
-    return data.filter((binding) => {
-      return filtersArray.every((filter) => {
+    return data.filter((binding) =>
+      filtersArray.every((filter) => {
         const filterKey = Object.keys(filter)[0];
         const filterValue = filter[filterKey];
 
@@ -268,8 +266,8 @@ const BindingsListComponent = (props) => {
           return filtersMap[filterKey](filterValue, binding);
         }
         return true;
-      });
-    });
+      }),
+    );
   }, [data, staticFilters]);
 
   return (
@@ -428,8 +426,8 @@ const useRolesColumns = () => {
 
 const useRoleFilterOptions = () => {
   const { t } = useTranslation('public');
-  return useMemo(() => {
-    return [
+  return useMemo(
+    () => [
       {
         value: 'cluster',
         label: t('Cluster-wide Roles'),
@@ -442,8 +440,9 @@ const useRoleFilterOptions = () => {
         value: 'system',
         label: t('System Roles'),
       },
-    ];
-  }, [t]);
+    ],
+    [t],
+  );
 };
 
 const RolesList = (props) => {

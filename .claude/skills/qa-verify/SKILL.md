@@ -181,6 +181,59 @@ CANDIDATE_BRANCH_EXISTED=$(git rev-parse --verify "${PR_BRANCH_LOCAL}" >/dev/nul
 TIMESTAMP=$(date +%Y%m%d-%H%M%S)
 ARTIFACTS="${REPO_ROOT}/.artifacts/qa-verify/${TIMESTAMP}"
 mkdir -p "${ARTIFACTS}/baseline/screenshots" "${ARTIFACTS}/candidate/screenshots"
+
+# Evidence is posted via gh's native `--attach`. Check viability now, before doing any of the
+# expensive build/capture work, and stop immediately if evidence could never be posted.
+#
+# --attach needs write (push) access to the repo being commented on, which most contributors
+# won't have on an org repo like openshift/console. If so, fall back to STAGING: upload once
+# to a personal fork (which gh's --attach *can* push to) via a PR comment or scratch issue,
+# then reference the resulting hosted URLs in a plain (non-attach) comment on the target repo.
+# See stage-attachments.sh for why PRs are preferred over issues there.
+REPO=$(gh repo view --json nameWithOwner -q '.nameWithOwner' 2>/dev/null || echo "")
+USE_ATTACH="no"
+STAGING_REPO=""
+if [ -n "$REPO" ]; then
+  CAN_PUSH=$(gh api "repos/${REPO}" --jq '.permissions.push' 2>/dev/null || echo "false")
+  if [ "$CAN_PUSH" = "true" ]; then
+    USE_ATTACH="yes"
+  else
+    # A user's fork is not guaranteed to share the upstream repo's name (e.g. a fork of
+    # openshift/console named "john" instead of "console"), search the user's own repos
+    # for one whose *parent* matches. /user/repos returns the simple representation (parent
+    # is always null there), so each fork candidate needs its own fetch to check .parent.full_name.
+    while IFS= read -r fork_candidate; do
+      [ -z "$fork_candidate" ] && continue
+      INFO=$(gh api "repos/${fork_candidate}" --jq '(.parent.full_name // "") + "\t" + (.permissions.push|tostring)' 2>/dev/null || echo "")
+      PARENT="${INFO%%$'\t'*}"
+      CAN_PUSH_FORK="${INFO##*$'\t'}"
+      if [ "$PARENT" = "$REPO" ] && [ "$CAN_PUSH_FORK" = "true" ]; then
+        STAGING_REPO="$fork_candidate"
+        break
+      fi
+    done < <(gh api user/repos --paginate --jq '.[] | select(.fork==true) | .full_name' 2>/dev/null || true)
+
+    if [ -n "$STAGING_REPO" ]; then
+      # Staging also needs an existing PR or Issues enabled on the fork — see
+      # stage-attachments.sh's own check for the authoritative, up-to-date version of this.
+      HAS_PR=$(gh pr list --repo "$STAGING_REPO" --state all --limit 1 --json number -q '.[0].number' 2>/dev/null || true)
+      HAS_ISSUES=$(gh api "repos/${STAGING_REPO}" --jq '.has_issues' 2>/dev/null || echo "false")
+      if [ -z "$HAS_PR" ] && [ "$HAS_ISSUES" != "true" ]; then
+        echo "STOP: found fork ${STAGING_REPO} to stage uploads through, but it has no" >&2
+        echo "existing pull request and Issues are disabled. Fix one of these, then retry:" >&2
+        echo "  gh api --method PATCH repos/${STAGING_REPO} -f has_issues=true" >&2
+        echo "  # or open any PR on ${STAGING_REPO}" >&2
+        exit 1
+      fi
+    fi
+  fi
+fi
+
+if [ "$USE_ATTACH" = "no" ] && [ -z "$STAGING_REPO" ]; then
+  echo "STOP: no write access to ${REPO:-<unknown repo>}, and no personal fork of it found to" >&2
+  echo "stage uploads through. Fork the repo, then retry. No PR comment will be posted." >&2
+  exit 1
+fi
 ```
 
 Use `PR_BRANCH` (the PR's actual head ref name) in metadata, not `ORIGINAL_BRANCH` (which is
@@ -289,30 +342,10 @@ bash "${ARTIFACTS}/scripts/backend.sh" --stop <LANE>
 
 ## Phase 4: Compile Evidence
 
-### Convert session videos
-
-If session videos were recorded, convert them to GIF when it reduces file size:
-
-```bash
-for lane in baseline candidate; do
-  if [ -f "${ARTIFACTS}/${lane}/session.webm" ]; then
-    bash "${ARTIFACTS}/scripts/convert-video.sh" \
-      "${ARTIFACTS}/${lane}/session.webm" "${ARTIFACTS}/${lane}"
-  fi
-done
-```
-
-The script keeps whichever format (webm or GIF) is smaller. GIFs render inline in GitHub
-comments; webm files are uploaded as links.
-
-### Create screenshot GIFs (if ffmpeg available)
-
-```bash
-bash "${ARTIFACTS}/scripts/screenshots-to-gif.sh" \
-  "${ARTIFACTS}/baseline/screenshots" "${ARTIFACTS}/baseline/evidence.gif"
-bash "${ARTIFACTS}/scripts/screenshots-to-gif.sh" \
-  "${ARTIFACTS}/candidate/screenshots" "${ARTIFACTS}/candidate/evidence.gif"
-```
+Session recordings need no conversion — `session.webm` (if captured per lane in step 3.5)
+attaches directly and GitHub renders it as a native video player, which is better than a GIF
+(scrubbable, no lossy palette reduction) and doesn't need ffmpeg. `build-comment-attach.sh`
+picks up `${ARTIFACTS}/<lane>/session.webm` automatically if present.
 
 Write metadata and verification steps for the comment builder:
 
@@ -326,6 +359,7 @@ Then write metadata:
 cat > "${ARTIFACTS}/metadata.json" << METAEOF
 {
   "branch": "${PR_BRANCH}",
+  "base_branch": "${BASE_BRANCH}",
   "baseline_sha": "$(git rev-parse --short ${BASE_BRANCH})",
   "candidate_sha": "${CANDIDATE_SHA}",
   "pr_number": "${PR_NUMBER}",
@@ -351,52 +385,78 @@ The description column provides a human-readable label for each step (e.g., "Das
 
 ## Phase 5: Publish and Comment
 
-### Upload evidence
+`USE_ATTACH` and `STAGING_REPO` were already resolved in Phase 3's setup, which stops the whole
+run early if evidence could never be posted — this phase never needs its own fallback-or-fail
+branch, only "direct" vs "staged".
+
+### Build the comment, discovering which files it references
 
 ```bash
-bash "${ARTIFACTS}/scripts/upload-evidence.sh" "${ARTIFACTS}" "${ARTIFACTS}/evidence-map.txt"
+bash "${ARTIFACTS}/scripts/build-comment-attach.sh" \
+  "${ARTIFACTS}/baseline/screenshots" "${ARTIFACTS}/candidate/screenshots" \
+  "${ARTIFACTS}/metadata.json" "${ARTIFACTS}/steps.tsv" \
+  /tmp/qa-verify-comment.md /tmp/qa-verify-attach-list.txt
 ```
 
-The script tries the `gh-image` extension first (native GitHub CDN URLs, works with SSH remotes
-via `--repo` flag). If `gh-image` is not installed, the output includes `MISSING_GH_IMAGE=true` —
-use `AskUserQuestion` to offer installing it (`gh extension install drogers0/gh-image`). Mention
-that it is a **third-party community extension**. If the user declines or it fails, the script
-falls back to base64 data URIs with progressive downsizing to fit the 65KB comment limit.
+This writes a comment body referencing every matched screenshot (plus `session.webm` per lane,
+if captured) by local path, and the exact list of those paths, in order, to
+`/tmp/qa-verify-attach-list.txt`.
 
-### Build and post comment
+### If staged (`STAGING_REPO` is set): upload to the fork first, then rebuild with hosted URLs
 
 ```bash
-bash "${ARTIFACTS}/scripts/build-comment.sh" \
-  "${ARTIFACTS}/evidence-map.txt" \
-  "${ARTIFACTS}/metadata.json" \
-  "${ARTIFACTS}/steps.tsv" \
-  /tmp/qa-verify-comment.md
-```
+if [ -n "$STAGING_REPO" ]; then
+  FILES_TO_STAGE=()
+  while IFS= read -r f; do [ -n "$f" ] && FILES_TO_STAGE+=("$f"); done < /tmp/qa-verify-attach-list.txt
 
-The script builds the comment markdown from the evidence map, metadata, and steps. If the base64
-payload exceeds 65KB, it automatically splits into `/tmp/qa-verify-comment.md` (main comment)
-and `.part2`, `.part3` etc. (reply comments with the images).
+  bash "${ARTIFACTS}/scripts/stage-attachments.sh" "$STAGING_REPO" \
+    /tmp/qa-verify-url-map.txt "${FILES_TO_STAGE[@]}"
+
+  # Rebuild the comment body so its image references point at the hosted URLs instead of
+  # local paths — the final post below is then a plain comment, no --attach involved.
+  bash "${ARTIFACTS}/scripts/build-comment-attach.sh" \
+    "${ARTIFACTS}/baseline/screenshots" "${ARTIFACTS}/candidate/screenshots" \
+    "${ARTIFACTS}/metadata.json" "${ARTIFACTS}/steps.tsv" \
+    /tmp/qa-verify-comment.md /tmp/qa-verify-attach-list.txt \
+    /tmp/qa-verify-url-map.txt
+fi
+```
 
 ### Upsert PR comment
 
+Attachments can't be added to an existing comment through the plain REST API, so "upsert" here
+means post-then-delete-old (never delete-then-post, so evidence is never briefly missing if the
+new post fails):
+
 ```bash
 REPO=$(gh repo view --json nameWithOwner -q '.nameWithOwner')
+EXISTING_IDS=$(gh api "repos/${REPO}/issues/${PR_NUMBER}/comments" --paginate \
+  -q '.[] | select(.body | contains("<!-- qa-verify-evidence -->")) | .id' 2>/dev/null || true)
 
-EXISTING_ID=$(gh api "repos/${REPO}/issues/${PR_NUMBER}/comments" --paginate \
-  -q '.[] | select(.body | contains("<!-- qa-verify-evidence -->")) | .id' 2>/dev/null | tail -1)
-
-if [ -n "$EXISTING_ID" ]; then
-  gh api --method PATCH "repos/${REPO}/issues/comments/${EXISTING_ID}" \
-    -F body=@/tmp/qa-verify-comment.md
+if [ -n "$STAGING_REPO" ]; then
+  # Images are already hosted on the fork — plain comment, no --attach.
+  POST_OUTPUT=$(gh pr comment "${PR_NUMBER}" --body-file /tmp/qa-verify-comment.md 2>&1)
 else
-  gh pr comment "${PR_NUMBER}" --body-file /tmp/qa-verify-comment.md
+  ATTACH_ARGS=()
+  while IFS= read -r f; do [ -n "$f" ] && ATTACH_ARGS+=(--attach "$f"); done < /tmp/qa-verify-attach-list.txt
+  POST_OUTPUT=$(gh pr comment "${PR_NUMBER}" --body-file /tmp/qa-verify-comment.md "${ATTACH_ARGS[@]}" 2>&1)
 fi
+POST_EXIT=$?
 
-# Post split parts as replies if they exist
-for part in /tmp/qa-verify-comment.md.part*; do
-  [ -f "$part" ] && gh pr comment "${PR_NUMBER}" --body-file "$part"
-done
+if [ $POST_EXIT -eq 0 ]; then
+  echo "$POST_OUTPUT"
+  for id in $EXISTING_IDS; do
+    gh api --method DELETE "repos/${REPO}/issues/comments/${id}" 2>/dev/null || true
+  done
+else
+  echo "ERROR: failed to post evidence comment: $POST_OUTPUT" >&2
+  echo "Evidence remains at ${ARTIFACTS}/baseline/screenshots/ and ${ARTIFACTS}/candidate/screenshots/" >&2
+fi
 ```
+
+If `POST_EXIT` is nonzero even though Phase 3's setup predicted success (e.g. permissions
+changed mid-run), do not silently retry with a different method — report the exact error to the
+user along with the local artifact paths.
 
 After posting, summarize the results for the user:
 1. List artifact paths (`${ARTIFACTS}/baseline/screenshots/`, `${ARTIFACTS}/candidate/screenshots/`)
@@ -464,7 +524,10 @@ manually with the required flags.
 - Console runs on `http://localhost:9000`
 - Auth is disabled via `contrib/oc-environment.sh` — no login needed
 - `.artifacts/` and `.playwright-mcp/` are gitignored
-- Evidence images are uploaded via `gh-image` (if installed) or embedded as base64 data URIs
+- Evidence is uploaded via gh's native `--attach`, directly if the user has push
+  access to the repo, otherwise staged through a personal fork (see Phase 3 setup and
+  `stage-attachments.sh`). If neither path is viable, the skill stops before doing any capture
+  work and evidence is never posted, only kept local
 - If no PR exists, save evidence locally and skip comment posting
 - Fork PRs are handled via `gh pr checkout` which creates a local tracking branch
 - **Scope**: This skill captures visual evidence and performs regression verification. It does

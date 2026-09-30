@@ -202,9 +202,7 @@ const GroupsEditorModal: OverlayComponent<ModalComponentProps> = ({ closeOverlay
         resource: node,
         data,
       })
-        .then(() => {
-          return undefined;
-        })
+        .then(() => undefined)
         .catch((error) => {
           patchErrors.push({
             title: t('Error updating {{nodeName}}', {

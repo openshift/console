@@ -7,8 +7,7 @@ const DEFAULT_LAYOUT = COLA_LAYOUT;
 
 const SUPPORTED_LAYOUTS = [COLA_LAYOUT];
 
-const layoutFactory: LayoutFactory = (type: string, graph: Graph): Layout | undefined => {
-  return type === COLA_LAYOUT ? new TopologyColaLayout(graph, { layoutOnDrag: false }) : undefined;
-};
+const layoutFactory: LayoutFactory = (type: string, graph: Graph): Layout | undefined =>
+  type === COLA_LAYOUT ? new TopologyColaLayout(graph, { layoutOnDrag: false }) : undefined;
 
 export { DEFAULT_LAYOUT, SUPPORTED_LAYOUTS, layoutFactory };

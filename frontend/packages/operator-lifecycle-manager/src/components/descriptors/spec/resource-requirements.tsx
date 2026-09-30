@@ -159,17 +159,11 @@ export const ResourceRequirementsModal = (props: ResourceRequirementsModalProps)
 
 const ResourceRequirementsModalOverlay: OverlayComponent<ResourceRequirementsModalOverlayProps> = (
   props,
-) => {
-  return (
-    <Modal variant={ModalVariant.small} isOpen onClose={props.closeOverlay}>
-      <ResourceRequirementsModal
-        {...props}
-        close={props.closeOverlay}
-        cancel={props.closeOverlay}
-      />
-    </Modal>
-  );
-};
+) => (
+  <Modal variant={ModalVariant.small} isOpen onClose={props.closeOverlay}>
+    <ResourceRequirementsModal {...props} close={props.closeOverlay} cancel={props.closeOverlay} />
+  </Modal>
+);
 
 export const ResourceRequirementsModalLink: FC<ResourceRequirementsModalLinkProps> = (props) => {
   const { obj, type, path } = props;

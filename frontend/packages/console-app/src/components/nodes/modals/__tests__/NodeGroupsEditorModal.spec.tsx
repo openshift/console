@@ -47,7 +47,7 @@ const createMockNode = (name: string, groups?: string): NodeKind =>
     },
     spec: {},
     status: {},
-  } as NodeKind);
+  }) as NodeKind;
 
 describe('NodeGroupsEditorModal', () => {
   let user: ReturnType<typeof userEvent.setup>;
@@ -409,7 +409,10 @@ describe('NodeGroupsEditorModal', () => {
 
     it('disables Save button during submission', async () => {
       (k8sPatchResource as jest.Mock).mockImplementation(
-        () => new Promise((resolve) => setTimeout(resolve, 100)),
+        () =>
+          new Promise((resolve) => {
+            setTimeout(resolve, 100);
+          }),
       );
 
       renderWithProviders(

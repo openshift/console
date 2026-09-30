@@ -121,14 +121,13 @@ export const checkIfTriggerExists = (
   triggers: { [key: string]: any }[],
   type: string,
   resourceKind?: string,
-) => {
-  return !!_.find(triggers, (trigger) => {
+) =>
+  !!_.find(triggers, (trigger) => {
     if (resourceKind === DeploymentConfigModel.kind && type === 'ImageChange') {
       return trigger.type === type && trigger.imageChangeParams?.automatic;
     }
     return trigger.type === type;
   });
-};
 
 const getGitDataFromBuildConfig = (buildConfig: K8sResourceKind) => {
   const url = buildConfig?.spec?.source?.git?.uri ?? '';
@@ -187,18 +186,16 @@ export const getKsvcRouteData = (resource: K8sResourceKind) => {
   return routeData;
 };
 
-const getDefaultLabels = () => {
-  return [
-    'app',
-    'app.kubernetes.io/instance',
-    'app.openshift.io/runtime',
-    'app.openshift.io/runtime-icon',
-    'app.kubernetes.io/part-of',
-    'app.openshift.io/runtime-version',
-    'app.openshift.io/runtime-namespace',
-    'networking.knative.dev/visibility',
-  ];
-};
+const getDefaultLabels = () => [
+  'app',
+  'app.kubernetes.io/instance',
+  'app.openshift.io/runtime',
+  'app.openshift.io/runtime-icon',
+  'app.kubernetes.io/part-of',
+  'app.openshift.io/runtime-version',
+  'app.openshift.io/runtime-namespace',
+  'networking.knative.dev/visibility',
+];
 
 export const getRouteLabels = (
   route: K8sResourceKind,
@@ -344,9 +341,8 @@ export const getServerlessData = (resource: K8sResourceKind): ServerlessData => 
     } = resource;
     const annotations = metadata?.annotations;
     const autoscalewindowAnnotation = annotations?.[KNATIVE_AUTOSCALEWINDOW_ANNOTATION] || '';
-    const { autoscalewindow, autoscalewindowUnit, defaultAutoscalewindowUnit } = getAutoscaleWindow(
-      autoscalewindowAnnotation,
-    );
+    const { autoscalewindow, autoscalewindowUnit, defaultAutoscalewindowUnit } =
+      getAutoscaleWindow(autoscalewindowAnnotation);
     serverlessData = {
       scaling: {
         minpods: annotations?.[KNATIVE_MINSCALE_ANNOTATION] || '',
@@ -484,8 +480,8 @@ export const getIconInitialValues = (
   const isKnative =
     overrideKnative ?? getResourcesType(editAppResource) === Resources.KnativeService;
   const customIcon = isKnative
-    ? editAppResource?.spec?.template?.metadata?.annotations?.[CUSTOM_ICON_ANNOTATION] ?? null
-    : editAppResource?.metadata?.annotations?.[CUSTOM_ICON_ANNOTATION] ?? null;
+    ? (editAppResource?.spec?.template?.metadata?.annotations?.[CUSTOM_ICON_ANNOTATION] ?? null)
+    : (editAppResource?.metadata?.annotations?.[CUSTOM_ICON_ANNOTATION] ?? null);
 
   return {
     runtimeIcon,
@@ -506,8 +502,8 @@ const getGitAndDockerfileInitialValues = (
   const git = !_.isEmpty(buildConfig)
     ? getGitDataFromBuildConfig(buildConfig)
     : !_.isEmpty(shipwrightBuild)
-    ? getGitDataFromShipwrightBuild(shipwrightBuild)
-    : getGitDataFromPipeline(pipeline);
+      ? getGitDataFromShipwrightBuild(shipwrightBuild)
+      : getGitDataFromPipeline(pipeline);
   const initialValues = {
     git,
     docker: {

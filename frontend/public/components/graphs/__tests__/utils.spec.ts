@@ -1,4 +1,4 @@
-import type { PrometheusResponse } from '@console/internal/components/graphs';
+import type { PrometheusResponse } from '@console/internal/components/graphs/types';
 import {
   getRangeVectorStats,
   getInstantVectorStats,

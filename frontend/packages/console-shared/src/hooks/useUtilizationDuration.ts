@@ -10,14 +10,13 @@ export const useUtilizationDuration: UseUtilizationDuration = (
 ) => {
   const dispatch = useConsoleDispatch();
   const duration =
-    useConsoleSelector<number>(({ UI }) => UI.getIn(['utilizationDuration', 'duration'])) ??
-    DEFAULT_DURATION;
-  const storeEndDate = useConsoleSelector<Date | undefined>(({ UI }) =>
-    UI.getIn(['utilizationDuration', 'endDate']),
+    useConsoleSelector<number>(({ UI }) => UI.utilizationDuration?.duration) ?? DEFAULT_DURATION;
+  const storeEndDate = useConsoleSelector<Date | undefined>(
+    ({ UI }) => UI.utilizationDuration?.endTime,
   );
   const endDate = useMemo(() => storeEndDate ?? new Date(), [storeEndDate]);
   const selectedKey =
-    useConsoleSelector<string>(({ UI }) => UI.getIn(['utilizationDuration', 'selectedKey'])) ??
+    useConsoleSelector<string>(({ UI }) => UI.utilizationDuration?.selectedKey) ??
     DEFAULT_DURATION_KEY;
   const startDate = new Date(endDate.getTime() - duration);
   const updateEndDate = useCallback(

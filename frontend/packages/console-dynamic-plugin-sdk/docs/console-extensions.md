@@ -822,7 +822,7 @@ Use this extension to add custom sub-tabs to the Node details page.<br/><br/>Not
 
 ### Summary 
 
-Adds a new resource details page to Console router.
+Adds a new resource details page to Console router.<br/><br/>The page component replaces the Console default resource details view for instances of the given<br/>model.<br/><br/>The page component should use the `namespace` prop passed by Console instead of parsing the<br/>namespace from the URL, since Console renders the page on several different routes.
 
 ### Properties
 
@@ -837,7 +837,7 @@ Adds a new resource details page to Console router.
 
 ### Summary 
 
-Adds a new resource list page to Console router.
+Adds a new resource list page to Console router.<br/><br/>The page component replaces the Console default resource list view for instances of the given<br/>model.<br/><br/>The page component must therefore provide a way to display _all_ instances of the resource.<br/><br/>If your plugin needs a curated view that displays only some instances of the given resource,<br/>add it as a separate page via the `console.page/route` extension.<br/><br/>The page component should use the `namespace` prop passed by Console instead of parsing the<br/>namespace from the URL, since Console renders the page on several different routes.
 
 ### Properties
 
@@ -852,7 +852,7 @@ Adds a new resource list page to Console router.
 
 ### Summary 
 
-Adds a new page to the Console router.<br/><br/>Console application uses [React Router v7](https://reactrouter.com/).<br/><br/>Note that React Router v7 no longer supports passing a string array to the Route `path` prop.<br/>Console retains this functionality by rendering multiple Route instances. To ensure the route<br/>matches the correct paths, consider using `exact: true` and sorting your Route path values<br/>from most specific to least specific.<br/><br/>Also note that React Router v7 no longer supports Route `exact` prop, i.e. paths are matched<br/>as `exact: true` by default. Console retains the original behavior for backwards compatibility.<br/>Use `exact: true` unless you want to match more of the URL.<br/><br/>Do not use this extension for resource list and details pages. To add a list or details page<br/>for a resource, use the `console.navigation/resource-ns` extension instead.
+Adds a new page to the Console router.<br/><br/>Console application uses [React Router v7](https://reactrouter.com/).<br/><br/>Note that React Router v7 no longer supports passing a string array to the Route `path` prop.<br/>Console retains this functionality by rendering multiple Route instances. To ensure the route<br/>matches the correct paths, consider using `exact: true` and sorting your Route path values<br/>from most specific to least specific.<br/><br/>Also note that React Router v7 no longer supports Route `exact` prop, i.e. paths are matched<br/>as `exact: true` by default. Console retains the original behavior for backwards compatibility.<br/>Use `exact: true` unless you want to match more of the URL.<br/><br/>Do not use this extension to replace the Console resource list and details pages. To add a list<br/>or details page for a resource, use the `console.navigation/resource-ns` extension instead.<br/><br/>Use this extension for pages that are not resource list or details pages, such as a curated<br/>view that displays only some instances of a resource related to the plugin and its operator.
 
 ### Properties
 

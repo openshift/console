@@ -1,6 +1,6 @@
 import type { SetStateAction, Dispatch } from 'react';
 import { useRef, useEffect, useState, useCallback } from 'react';
-import { deserializeData, seralizeData } from '../utils/user-settings';
+import { deserializeData, serializeData } from '../utils/user-settings';
 
 export const useUserPreferenceLocalStorage = <T>(
   key: string,
@@ -11,25 +11,26 @@ export const useUserPreferenceLocalStorage = <T>(
 ): [T, Dispatch<SetStateAction<T>>] => {
   // Mount status for safety state updates
   const mounted = useRef(true);
-  useEffect(() => {
-    return () => {
+  useEffect(
+    () => () => {
       mounted.current = false;
-    };
-  }, []);
+    },
+    [],
+  );
 
   const storage = session ? sessionStorage : localStorage;
   const keyRef = useRef(key);
-  const defaultValueRef = useRef(defaultValue);
   const [data, setData] = useState(() => {
     const valueInStorage =
       storage.getItem(storageKey) !== null && deserializeData(storage.getItem(storageKey));
-    return valueInStorage?.hasOwnProperty(keyRef.current) &&
-      valueInStorage[keyRef.current] !== undefined
-      ? valueInStorage[keyRef.current]
-      : defaultValueRef.current;
+    return valueInStorage?.hasOwnProperty(key) && valueInStorage[key] !== undefined
+      ? valueInStorage[key]
+      : defaultValue;
   });
   const dataRef = useRef<T>(data);
-  dataRef.current = data;
+  useEffect(() => {
+    dataRef.current = data;
+  });
 
   const storageUpdated = useCallback(
     (event: StorageEvent) => {
@@ -37,7 +38,7 @@ export const useUserPreferenceLocalStorage = <T>(
         const configMapData = deserializeData(event.newValue);
         const newData = configMapData?.[keyRef.current];
 
-        if (newData !== undefined && seralizeData(newData) !== seralizeData(dataRef.current)) {
+        if (newData !== undefined && serializeData(newData) !== serializeData(dataRef.current)) {
           setData(newData);
         }
       }
@@ -64,7 +65,7 @@ export const useUserPreferenceLocalStorage = <T>(
       const configMapData = deserializeData(storage.getItem(storageKey)) ?? {};
       if (
         newState !== undefined &&
-        seralizeData(newState) !== seralizeData(configMapData?.[keyRef.current])
+        serializeData(newState) !== serializeData(configMapData?.[keyRef.current])
       ) {
         if (mounted.current) {
           setData(newState);
@@ -77,7 +78,7 @@ export const useUserPreferenceLocalStorage = <T>(
             [keyRef.current]: newState,
           },
         };
-        const newValue = seralizeData(dataToUpdate);
+        const newValue = serializeData(dataToUpdate);
 
         // create a storage event to dispatch locally since browser windows do not fire the
         // storage event if the change originated from the current window
@@ -93,7 +94,6 @@ export const useUserPreferenceLocalStorage = <T>(
           // update storage
           storage.setItem(storageKey, newValue);
         } catch (err) {
-          // eslint-disable-next-line no-console
           console.error(`Error while updating local storage for key ${storageKey}`, err);
         }
 

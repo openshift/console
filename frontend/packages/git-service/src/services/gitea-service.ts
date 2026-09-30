@@ -57,9 +57,14 @@ export class GiteaService extends BaseService {
   };
 
   getRepoMetadata = (): RepoMetadata => {
-    const { name, owner, resource, protocols, port, full_name: fullName } = GitUrlParse(
-      this.gitsource.url,
-    );
+    const {
+      name,
+      owner,
+      resource,
+      protocols,
+      port,
+      full_name: fullName,
+    } = GitUrlParse(this.gitsource.url);
     const contextDir = this.gitsource.contextDir?.replace(/\/$/, '') || '';
     const rawProtocol = protocols?.[0];
     const isHttpProtocol = rawProtocol === 'http' || rawProtocol === 'https';
@@ -170,7 +175,6 @@ export class GiteaService extends BaseService {
       const data = await this.fetchJson(url);
       return data as string;
     } catch (e) {
-      // eslint-disable-next-line no-console
       console.warn('Error fetching file content', e);
       return null;
     }

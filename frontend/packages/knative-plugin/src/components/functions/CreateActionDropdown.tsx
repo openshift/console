@@ -16,14 +16,14 @@ export const CreateActionDropdown: FC<CreateActionDropdownProps> = ({ namespace 
       value: 'importFromGit',
       content: t('Import from Git'),
       component: LinkTo(`/serverless-function/ns/${namespace || 'default'}`),
-      // @ts-expect-error non-prop attribute is used for cypress
+      // @ts-expect-error non-prop attribute is used for E2E tests
       'data-test-dropdown-menu': 'importFromGit',
     },
     {
       value: 'functionsUsingSamples',
       content: t('Samples'),
       component: LinkTo(`/samples/ns/${namespace || 'default'}?sampleType=Serverless function`),
-      // @ts-expect-error non-prop attribute is used for cypress
+      // @ts-expect-error non-prop attribute is used for E2E tests
       'data-test-dropdown-menu': 'functionsUsingSamples',
     },
   ];
@@ -32,7 +32,7 @@ export const CreateActionDropdown: FC<CreateActionDropdownProps> = ({ namespace 
     <SimpleDropdown
       toggleProps={{
         variant: 'primary',
-        // @ts-expect-error non-prop attribute is used for cypress
+        // @ts-expect-error non-prop attribute is used for E2E tests
         'data-test': 'create-action-dropdown',
       }}
       toggleContent={t('Create function')}

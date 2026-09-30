@@ -31,8 +31,9 @@ const MAX_RETRIES = 25;
  * If the loader fails, it will retry up to {@link MAX_RETRIES} times with
  * increasing delays.
  */
-const withRetry = <C extends ComponentType>(loader: LazyLoader<C>): LazyLoader<C> => {
-  return async () => {
+const withRetry =
+  <C extends ComponentType>(loader: LazyLoader<C>): LazyLoader<C> =>
+  async () => {
     let lastError: unknown;
 
     for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
@@ -46,13 +47,14 @@ const withRetry = <C extends ComponentType>(loader: LazyLoader<C>): LazyLoader<C
         if (attempt < MAX_RETRIES) {
           const delay = Math.min(100 * 2 ** attempt, 30000);
           // eslint-disable-next-line no-await-in-loop
-          await new Promise((resolve) => setTimeout(resolve, delay));
+          await new Promise((resolve) => {
+            setTimeout(resolve, delay);
+          });
         }
       }
     }
     throw lastError;
   };
-};
 
 /**
  * Load a component asynchronously with a loading state.
@@ -74,14 +76,16 @@ export const AsyncComponent = <C extends ComponentType>({
   const loaderRef = useRef<LazyLoader<C> | null>(null);
   const lazyComponentRef = useRef<ReturnType<typeof lazy> | null>(null);
 
+  // eslint-disable-next-line react-hooks/refs -- Synchronous lazy component initialization requires render-time ref access for custom loader comparison
   if (!sameLoader(loaderRef.current, loader)) {
-    loaderRef.current = loader;
+    loaderRef.current = loader; // eslint-disable-line react-hooks/refs -- tracks current loader for comparison on next render
     lazyComponentRef.current = lazy(() =>
+      // eslint-disable-line react-hooks/refs -- creates lazy component synchronously when loader changes
       withRetry(loader)().then((module) => ({ default: module })),
     );
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion, react-hooks/refs -- reads synchronously initialized lazy component
   const LazyComponent = lazyComponentRef.current!;
 
   /*

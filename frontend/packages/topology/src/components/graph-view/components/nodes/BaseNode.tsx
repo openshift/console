@@ -50,14 +50,14 @@ const BaseNodeComponent: FC<BaseNodeProps> = ({
   const cx = width / 2;
   const cy = height / 2;
   const resourceObj = getTopologyResourceObject(element.getData());
-  const resourceModel = modelFor(referenceFor(resourceObj));
+  const resourceModel = resourceObj ? modelFor(referenceFor(resourceObj)) : undefined;
   const iconRadius = innerRadius * 0.9;
   const editAccess = useAccessReview({
     group: resourceModel?.apiGroup,
     verb: createConnectorAccessVerb,
     resource: resourceModel?.plural,
-    name: resourceObj.metadata.name,
-    namespace: resourceObj.metadata.namespace,
+    name: resourceObj?.metadata?.name,
+    namespace: resourceObj?.metadata?.namespace,
   });
   const [filtered] = useSearchFilter(element.getLabel(), resourceObj?.metadata?.labels);
   const showLabel = useShowLabel(isHovering);

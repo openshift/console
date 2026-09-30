@@ -29,14 +29,13 @@ export const k8sListPartialMetadata = (
   kind: K8sKind,
   params: { [key: string]: any } = {},
   raw = false,
-) => {
-  return k8sList(kind, params, raw, {
+) =>
+  k8sList(kind, params, raw, {
     headers: {
       Accept:
         'application/json;as=PartialObjectMetadataList;v=v1beta1;g=meta.k8s.io,application/json',
     },
   });
-};
 
 /**
  * Use k8sWatch to wait for a resource to get into an expected condition.

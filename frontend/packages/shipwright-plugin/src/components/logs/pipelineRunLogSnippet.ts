@@ -34,11 +34,9 @@ export const getPLRLogSnippet = (
       (condition) => condition.type === 'Succeeded' && condition.status === 'False',
     ),
   );
-  const isKnownReason = (reason: string): boolean => {
+  const isKnownReason = (reason: string): boolean =>
     // known reasons https://tekton.dev/vault/pipelines-v0.21.0/pipelineruns/#monitoring-execution-status
-    return ['StoppedRunFinally', 'CancelledRunFinally', 'PipelineRunTimeout'].includes(reason);
-  };
-
+    ['StoppedRunFinally', 'CancelledRunFinally', 'PipelineRunTimeout'].includes(reason);
   // We're intentionally looking at the first failure because we have to start somewhere - they have the YAML still
   const failedTaskRun = failedTaskRuns[0];
 

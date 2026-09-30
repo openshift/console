@@ -54,7 +54,7 @@ export const DeveloperFeaturesGettingStartedCard: FC = () => {
       id="developer-features"
       icon={<RhUiFlagIcon color="var(--co-global--palette--orange-400)" aria-hidden="true" />}
       title={t('Explore new developer features')}
-      titleColor={'var(--co-global--palette--orange-400)'}
+      titleColor="var(--co-global--palette--orange-400)"
       description={t('Explore new features and resources within the developer perspective.')}
       links={links}
       moreLink={moreLink}

@@ -4,11 +4,9 @@ import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-ut
 import { sendActivityTick } from '../cloud-shell-utils';
 import { MultiTabbedTerminal } from '../MultiTabbedTerminal';
 
-jest.mock('../cloud-shell-utils', () => {
-  return {
-    sendActivityTick: jest.fn(),
-  };
-});
+jest.mock('../cloud-shell-utils', () => ({
+  sendActivityTick: jest.fn(),
+}));
 
 jest.mock('@console/webterminal-plugin/src/components/cloud-shell/CloudShellTerminal', () => ({
   default: () => 'Terminal content',

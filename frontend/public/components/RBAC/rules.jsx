@@ -78,13 +78,13 @@ const Groups = ({ apiGroups }) => {
   return <div>{groups}</div>;
 };
 
-const Resources = connect(({ k8s }) => ({ allModels: k8s.getIn(['RESOURCES', 'models']) }))(
+const Resources = connect(({ k8s }) => ({ allModels: Object.values(k8s.RESOURCES?.models ?? {}) }))(
   ({ resources, nonResourceURLs, allModels }) => {
     const { t } = useTranslation('public');
 
     let allResources = [];
     if (resources) {
-      _.each([...new Set(resources)].sort(), (r) => {
+      _.each([...new Set(resources)].toSorted(), (r) => {
         if (r === '') {
           return false;
         }

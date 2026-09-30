@@ -28,8 +28,8 @@ export const tableColumnInfo = [
 export const getDataViewRows: GetDataViewRows<HelmRelease, { obj: HelmRelease }> = (
   data,
   columns,
-) => {
-  return data.map(({ obj: release }) => {
+) =>
+  data.map(({ obj: release }) => {
     const actionsScope = {
       release,
       actionOrigin: HelmActionOrigins.list,
@@ -39,7 +39,7 @@ export const getDataViewRows: GetDataViewRows<HelmRelease, { obj: HelmRelease }>
       [tableColumnInfo[0].id]: {
         cell: (
           <>
-            <ResourceIcon kind="Helm Release" />
+            <ResourceIcon kind="Helm release" />
             <Link
               to={`/helm-releases/ns/${release.namespace}/release/${release.name}`}
               title={release.name}
@@ -92,4 +92,3 @@ export const getDataViewRows: GetDataViewRows<HelmRelease, { obj: HelmRelease }>
       };
     });
   });
-};

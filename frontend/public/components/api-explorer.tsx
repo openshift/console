@@ -20,7 +20,6 @@ import { RhUiFilterIcon } from '@patternfly/react-icons';
 import { InnerScrollContainer, Tbody, Tr, Td } from '@patternfly/react-table';
 import * as fuzzy from 'fuzzysearch';
 import i18next from 'i18next';
-import type { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
@@ -40,6 +39,7 @@ import { PageHeading } from '@console/shared/src/components/heading/PageHeading'
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
 import { ALL_NAMESPACES_KEY, FLAGS } from '@console/shared/src/constants/common';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
 import type { APIError } from '@console/shared/src/types/resource';
@@ -59,12 +59,11 @@ import {
   referenceForModel,
 } from '../module/k8s';
 import { connectToFlags } from '../reducers/connectToFlags';
-import type { RootState } from '../redux';
 import { DefaultPage } from './default-resource';
 import { ErrorPage404 } from './error';
 import { exactMatch, fuzzyCaseInsensitive } from './factory/table-filters';
 import { TextFilter } from './factory/text-filter';
-import { getResourceListPages } from './resource-pages';
+import { getResourceListPages } from './list-pages';
 import { RowFilter } from './row-filter';
 import { ExploreType } from './sidebars/explore-type-sidebar';
 import { AsyncComponent } from './utils/async';
@@ -72,12 +71,6 @@ import { LinkifyExternal } from './utils/link';
 import { ResourceIcon } from './utils/resource-icon';
 import { ScrollToTopOnMount } from './utils/scroll-to-top-on-mount';
 import { LoadError, LoadingBox } from './utils/status-box';
-
-const mapStateToProps = (state: RootState): APIResourceLinkStateProps => {
-  return {
-    activeNamespace: state.UI.get('activeNamespace'),
-  };
-};
 
 const getAPIResourceLink = (activeNamespace: string, model: K8sKind) => {
   const ref = referenceForModel(model);
@@ -92,11 +85,9 @@ const getAPIResourceLink = (activeNamespace: string, model: K8sKind) => {
   return `/api-resource/ns/${activeNamespace}/${ref}`;
 };
 
-const InnerAPIResourceLink: FC<APIResourceLinkStateProps & APIResourceLinkOwnProps> = ({
-  activeNamespace,
-  model,
-}) => {
+const InnerAPIResourceLink: FC<APIResourceLinkOwnProps> = ({ model }) => {
   const { t } = useTranslation('public');
+  const [activeNamespace] = useActiveNamespace();
   const to = getAPIResourceLink(activeNamespace, model);
   return (
     <span className="co-resource-item">
@@ -109,9 +100,7 @@ const InnerAPIResourceLink: FC<APIResourceLinkStateProps & APIResourceLinkOwnPro
     </span>
   );
 };
-const APIResourceLink = connect<APIResourceLinkStateProps, {}, APIResourceLinkOwnProps>(
-  mapStateToProps,
-)(InnerAPIResourceLink);
+const APIResourceLink = InnerAPIResourceLink;
 
 const Group: FC<{ value: string }> = ({ value }) => {
   if (!value) {
@@ -144,8 +133,8 @@ const BodyEmpty: FC<{ label: string; colSpan: number }> = ({ label, colSpan }) =
 const APIResourcesList: FC = () => {
   const { setQueryArgument, removeQueryArgument } = useQueryParamsMutator();
   const location = useLocation();
-  const models: ImmutableMap<K8sResourceKindReference, K8sKind> = useConsoleSelector((state) =>
-    state.k8s.getIn(['RESOURCES', 'models']),
+  const models: Record<K8sResourceKindReference, K8sKind> = useConsoleSelector(
+    (state) => state.k8s.RESOURCES?.models,
   );
   const ALL = '#all#';
   const GROUP_PARAM = 'g';
@@ -205,9 +194,11 @@ const APIResourcesList: FC = () => {
 
   const navigate = useNavigate();
   // group options
-  const groups: Set<string> = models.reduce((result: Set<string>, { apiGroup }) => {
-    return apiGroup ? result.add(apiGroup) : result;
-  }, new Set<string>());
+  const modelValues = Object.values(models ?? {});
+  const groups: Set<string> = modelValues.reduce(
+    (result: Set<string>, { apiGroup }) => (apiGroup ? result.add(apiGroup) : result),
+    new Set<string>(),
+  );
   const sortedGroups: string[] = [...groups].sort();
   const groupOptions = sortedGroups.reduce(
     (result, group: string) => {
@@ -232,9 +223,10 @@ const APIResourcesList: FC = () => {
   };
 
   // version options
-  const versions: Set<string> = models.reduce((result: Set<string>, { apiVersion }) => {
-    return result.add(apiVersion);
-  }, new Set<string>());
+  const versions: Set<string> = modelValues.reduce(
+    (result: Set<string>, { apiVersion }) => result.add(apiVersion),
+    new Set<string>(),
+  );
   const sortedVersions: string[] = [...versions].sort();
   const versionOptions = sortedVersions.reduce(
     (result, version: string) => {
@@ -257,7 +249,7 @@ const APIResourcesList: FC = () => {
   const scopeSpacer = new Set<string>(['cluster']);
 
   // filter by group, version, or text
-  const filteredResources = models.filter(({ kind, apiGroup, apiVersion, namespaced }) => {
+  const filteredResources = modelValues.filter(({ kind, apiGroup, apiVersion, namespaced }) => {
     if (groupFilter !== ALL && (apiGroup || '') !== groupFilter) {
       return false;
     }
@@ -300,7 +292,7 @@ const APIResourcesList: FC = () => {
   };
 
   const sortedResources = useMemo(() => {
-    const sorted = [...filteredResources.toArray()];
+    const sorted = [...filteredResources];
 
     // Check if user has manually sorted (sortBy params exist in URL)
     const hasUserSort = sortByParam !== '0' || orderByParam !== 'asc';
@@ -338,12 +330,14 @@ const APIResourcesList: FC = () => {
     return sorted;
   }, [filteredResources, sortBy, sortByParam, orderByParam]);
 
-  const paginatedResources = useMemo(() => {
-    return sortedResources.slice(
-      (pagination.page - 1) * pagination.perPage,
-      (pagination.page - 1) * pagination.perPage + pagination.perPage,
-    );
-  }, [sortedResources, pagination.page, pagination.perPage]);
+  const paginatedResources = useMemo(
+    () =>
+      sortedResources.slice(
+        (pagination.page - 1) * pagination.perPage,
+        (pagination.page - 1) * pagination.perPage + pagination.perPage,
+      ),
+    [sortedResources, pagination.page, pagination.perPage],
+  );
 
   const onSort = (_event: MouseEvent, index: number, direction: 'asc' | 'desc') => {
     setQueryArgument(SORT_BY_PARAM, String(index));
@@ -438,7 +432,13 @@ const APIResourcesList: FC = () => {
         </ToolbarContent>
       </Toolbar>
       <DataView
-        activeState={!models.size ? 'loading' : sortedResources.length === 0 ? 'empty' : undefined}
+        activeState={
+          !Object.keys(models ?? {}).length
+            ? 'loading'
+            : sortedResources.length === 0
+              ? 'empty'
+              : undefined
+        }
       >
         <InnerScrollContainer>
           <DataViewTable
@@ -447,7 +447,7 @@ const APIResourcesList: FC = () => {
               {
                 cell: t('Kind'),
                 props: {
-                  modifier: 'nowrap',
+                  modifier: 'nowrap' as const,
                   width: 20,
                   sort: {
                     sortBy,
@@ -459,7 +459,7 @@ const APIResourcesList: FC = () => {
               {
                 cell: t('Group'),
                 props: {
-                  modifier: 'nowrap',
+                  modifier: 'nowrap' as const,
                   width: 15,
                   sort: {
                     sortBy,
@@ -471,7 +471,7 @@ const APIResourcesList: FC = () => {
               {
                 cell: t('Version'),
                 props: {
-                  modifier: 'nowrap',
+                  modifier: 'nowrap' as const,
                   sort: {
                     sortBy,
                     onSort,
@@ -482,7 +482,7 @@ const APIResourcesList: FC = () => {
               {
                 cell: t('Namespaced'),
                 props: {
-                  modifier: 'nowrap',
+                  modifier: 'nowrap' as const,
                   sort: {
                     sortBy,
                     onSort,
@@ -490,7 +490,7 @@ const APIResourcesList: FC = () => {
                   },
                 },
               },
-              { cell: t('Description'), props: { modifier: 'nowrap' } },
+              { cell: t('Description'), props: { modifier: 'nowrap' as const } },
             ]}
             rows={paginatedResources.map((model: K8sKind) => [
               <APIResourceLink key={model.kind} model={model} />,
@@ -582,20 +582,17 @@ const APIResourceDetails: FC<APIResourceTabProps> = ({ customData: { kindObj } }
 };
 
 const scrollTop = () => (document.getElementById('content-scrollable').scrollTop = 0);
-const APIResourceSchema: FC<APIResourceTabProps> = ({ customData: { kindObj } }) => {
-  return (
-    <PaneBody>
-      <ExploreType kindObj={kindObj} scrollTop={scrollTop} />
-    </PaneBody>
-  );
-};
+const APIResourceSchema: FC<APIResourceTabProps> = ({ customData: { kindObj } }) => (
+  <PaneBody>
+    <ExploreType kindObj={kindObj} scrollTop={scrollTop} />
+  </PaneBody>
+);
 
 const APIResourceInstances: FC<APIResourceTabProps> = ({ customData: { kindObj, namespace } }) => {
   const resourceListPageExtensions = useExtensions<ResourceListPage>(isResourceListPage);
-  const componentLoader = getResourceListPages(resourceListPageExtensions).get(
-    referenceForModel(kindObj),
-    () => Promise.resolve(DefaultPage),
-  );
+  const componentLoader =
+    getResourceListPages(resourceListPageExtensions).get(referenceForModel(kindObj)) ??
+    (() => Promise.resolve(DefaultPage));
   const ns = kindObj.namespaced ? namespace : undefined;
 
   return (
@@ -908,7 +905,7 @@ const APIResourceAccessReview: FC<APIResourceTabProps> = ({
                 {
                   cell: t('Subject'),
                   props: {
-                    modifier: 'nowrap',
+                    modifier: 'nowrap' as const,
                     sort: {
                       sortBy,
                       onSort,
@@ -919,7 +916,7 @@ const APIResourceAccessReview: FC<APIResourceTabProps> = ({
                 {
                   cell: t('Type'),
                   props: {
-                    modifier: 'nowrap',
+                    modifier: 'nowrap' as const,
                     sort: {
                       sortBy,
                       onSort,
@@ -950,7 +947,7 @@ const InnerAPIResourcePage = (props) => {
 
   const kind: string = props.kind || params?.plural;
   const kindObj = getK8sModel(props.k8s, kind);
-  const kindsInFlight = props.k8s.getIn(['RESOURCES', 'inFlight']);
+  const kindsInFlight = props.k8s.RESOURCES?.inFlight;
 
   const namespace = kindObj?.namespaced ? params.ns : undefined;
   const { t } = useTranslation('public');
@@ -1044,10 +1041,6 @@ const k8StateToProps = ({ k8s }) => ({
 export const APIResourcePage = connect(k8StateToProps)(
   connectToFlags(FLAGS.OPENSHIFT)(InnerAPIResourcePage),
 );
-
-type APIResourceLinkStateProps = {
-  activeNamespace: string;
-};
 
 type APIResourceLinkOwnProps = {
   model: K8sKind;

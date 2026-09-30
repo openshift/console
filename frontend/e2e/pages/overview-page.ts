@@ -59,6 +59,7 @@ export class OverviewPage extends BasePage {
       await expect(this.listView).toBeVisible({ timeout: 15_000 });
     } catch {
       await this.retryOnError();
+      await expect(this.listView).toBeVisible({ timeout: 30_000 });
     }
   }
 

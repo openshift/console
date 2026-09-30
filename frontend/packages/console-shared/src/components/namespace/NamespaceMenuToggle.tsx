@@ -86,7 +86,7 @@ const NamespaceMenuToggle = (props: {
         popper={menu}
         direction="down"
         position="left"
-        appendTo={containerRef.current}
+        appendTo={() => containerRef.current}
         isVisible={isOpen}
         enableFlip={false}
       />

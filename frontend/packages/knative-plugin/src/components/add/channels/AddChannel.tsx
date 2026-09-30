@@ -85,15 +85,14 @@ const AddChannel: FC<Props> = ({ namespace, channels, activeApplication }) => {
     return Promise.reject(new Error(errMessage));
   };
 
-  const handleSubmit = (values, actions) => {
-    return createResources(values)
+  const handleSubmit = (values, actions) =>
+    createResources(values)
       .then(() => {
         handleRedirect(values.formData.namespace, perspective, perspectiveExtension, navigate);
       })
       .catch((err) => {
         actions.setStatus({ submitError: err.message });
       });
-  };
 
   return (
     <Formik

@@ -5,7 +5,7 @@ import type { RootState } from '../redux';
 import type { FeatureState, FlagsObject } from './features';
 
 export const stateToFlagsObject = (state: FeatureState, desiredFlags: string[]): FlagsObject =>
-  desiredFlags.reduce((allFlags, f) => ({ ...allFlags, [f]: state.get(f) }), {} as FlagsObject);
+  desiredFlags.reduce((allFlags, f) => ({ ...allFlags, [f]: state[f] }), {} as FlagsObject);
 
 const stateToProps = (state: FeatureState, desiredFlags: string[]): WithFlagsProps => ({
   flags: stateToFlagsObject(state, desiredFlags),

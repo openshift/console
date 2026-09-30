@@ -216,39 +216,29 @@ const logos = new Map<string, any>()
   .set('icon-xamarin', xamarinImg)
   .set('icon-zend', zendImg);
 
-export const getIcons = (): { label: string; url: string }[] => {
-  return Array.from(logos.entries()).map(([iconClass, url]) => ({
+export const getIcons = (): { label: string; url: string }[] =>
+  Array.from(logos.entries()).map(([iconClass, url]) => ({
     label: iconClass.replace(/^icon-/, ''),
     url,
   }));
-};
 
 export const getIcon = (iconName: string) => {
   const url = logos.get(`icon-${iconName}`);
   return url ? { label: iconName, url } : null;
 };
 
-export const hasIcon = (iconName: string) => {
-  return logos.has(`icon-${iconName}`);
-};
+export const hasIcon = (iconName: string) => logos.has(`icon-${iconName}`);
 
-export const normalizeIconClass = (iconClass: string): string => {
-  return _.startsWith(iconClass, 'icon-') ? `font-icon ${iconClass}` : iconClass;
-};
+export const normalizeIconClass = (iconClass: string): string =>
+  _.startsWith(iconClass, 'icon-') ? `font-icon ${iconClass}` : iconClass;
 
-export const getImageForIconClass = (iconClass: string): string => {
-  return logos.get(iconClass);
-};
+export const getImageForIconClass = (iconClass: string): string => logos.get(iconClass);
 
-export const getImageStreamIcon = (tag: string): string => {
-  return _.get(tag, 'annotations.iconClass');
-};
+export const getImageStreamIcon = (tag: string): string => _.get(tag, 'annotations.iconClass');
 
 export const getTemplateIconClass = (
   template: TemplateKind | PartialObjectMetadata,
-): string | null => {
-  return _.get(template, 'metadata.annotations.iconClass') ?? null;
-};
+): string | null => _.get(template, 'metadata.annotations.iconClass') ?? null;
 
 export const getTemplateIcon = (template: TemplateKind | PartialObjectMetadata): string => {
   const iconClass = getTemplateIconClass(template);

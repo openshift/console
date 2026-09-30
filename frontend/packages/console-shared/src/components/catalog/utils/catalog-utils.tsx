@@ -37,7 +37,6 @@ const getSoftwareCatalogTypes = (): SoftwareCatalogTypesConfig | undefined => {
   try {
     return JSON.parse(window.SERVER_FLAGS.developerCatalogTypes) as SoftwareCatalogTypesConfig;
   } catch (e) {
-    // eslint-disable-next-line no-console
     console.error('Failed to parse developerCatalogTypes:', e);
     return undefined;
   }
@@ -151,7 +150,6 @@ export const getRedHatPriority = (item: CatalogItem): number => {
 
 // Enhanced keyword comparison with relevance scoring and Red Hat prioritization
 export const keywordCompare = (filterString: string, items: CatalogItem[]): CatalogItem[] => {
-  // eslint-disable-next-line no-console
   console.log('🔍 Enhanced keywordCompare called:', {
     filterString,
     itemCount: items.length,
@@ -175,7 +173,6 @@ export const keywordCompare = (filterString: string, items: CatalogItem[]): Cata
 
     // Reduced logging - detailed logging now happens in CatalogView after all filtering
     if (sortedItems.length > 0 && sortedItems[0]?.type === 'operator') {
-      // eslint-disable-next-line no-console
       console.log(
         `📂 keywordCompare (No Search) - Red Hat Priority Sorting (${sortedItems.length} items)`,
       );
@@ -222,7 +219,6 @@ export const keywordCompare = (filterString: string, items: CatalogItem[]): Cata
 
   // Reduced logging - detailed logging now happens in CatalogView after all filtering
   if (sortedItems.length > 0 && sortedItems[0]?.type === 'operator') {
-    // eslint-disable-next-line no-console
     console.log(
       `🔍 keywordCompare (Search: "${filterString}") - Relevance Scoring (${sortedItems.length} matches)`,
     );
@@ -267,15 +263,15 @@ export const sortCatalogItems = (
 
     case CatalogSortOrder.ASC:
       // Sort alphabetically A-Z (pure alphabetical, no Red Hat prioritization)
-      return [...filteredItems].sort((a, b) => {
-        return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
-      });
+      return [...filteredItems].sort((a, b) =>
+        a.name.toLowerCase().localeCompare(b.name.toLowerCase()),
+      );
 
     case CatalogSortOrder.DESC:
       // Sort alphabetically Z-A (pure alphabetical, no Red Hat prioritization)
-      return [...filteredItems].sort((a, b) => {
-        return b.name.toLowerCase().localeCompare(a.name.toLowerCase());
-      });
+      return [...filteredItems].sort((a, b) =>
+        b.name.toLowerCase().localeCompare(a.name.toLowerCase()),
+      );
 
     default:
       // Fallback to relevance sorting
@@ -359,9 +355,7 @@ export const getCatalogTypeCounts = (
 export const customPropertyPresent = (
   catalogItemDetails: CatalogItemDetails,
   proppertyName: string,
-): boolean => {
-  return catalogItemDetails?.properties?.some((property) => property.label === proppertyName);
-};
+): boolean => catalogItemDetails?.properties?.some((property) => property.label === proppertyName);
 
 export const applyCatalogItemMetadata = (
   catalogItems: CatalogItem[],
@@ -398,15 +392,22 @@ export const applyCatalogItemMetadata = (
 export const isCatalogTypeEnabled = (catalogType: string): boolean => {
   const softwareCatalogTypes = getSoftwareCatalogTypes();
   if (softwareCatalogTypes) {
+    // Normalize catalog type to lowercase for case-insensitive comparison
+    const normalizedCatalogType = catalogType?.toLowerCase();
+
     if (
       softwareCatalogTypes?.state === CatalogVisibilityState.Enabled &&
       softwareCatalogTypes?.enabled?.length > 0
     ) {
-      return softwareCatalogTypes?.enabled.includes(catalogType);
+      return softwareCatalogTypes?.enabled.some(
+        (type) => type.toLowerCase() === normalizedCatalogType,
+      );
     }
     if (softwareCatalogTypes?.state === CatalogVisibilityState.Disabled) {
       if (softwareCatalogTypes?.disabled?.length > 0) {
-        return !softwareCatalogTypes?.disabled.includes(catalogType);
+        return !softwareCatalogTypes?.disabled.some(
+          (type) => type.toLowerCase() === normalizedCatalogType,
+        );
       }
       return false;
     }
@@ -427,7 +428,8 @@ export const useGetAllDisabledSubCatalogs = () => {
         softwareCatalogTypes?.enabled?.length > 0
       ) {
         const disabledSubCatalogs = catalogTypeExtensions.filter(
-          (val) => !softwareCatalogTypes?.enabled.includes(val),
+          (val) =>
+            !softwareCatalogTypes?.enabled.some((type) => type.toLowerCase() === val.toLowerCase()),
         );
         return [disabledSubCatalogs];
       }
@@ -445,9 +447,7 @@ export const useGetAllDisabledSubCatalogs = () => {
 export const useIsSoftwareCatalogEnabled = (): boolean => {
   const [disabledSubCatalogs] = useGetAllDisabledSubCatalogs();
   const catalogExtensionsArray = useExtensions<CatalogItemType>(isCatalogItemType);
-  const catalogTypeExtensions = catalogExtensionsArray.map((type) => {
-    return type.properties.type;
-  });
+  const catalogTypeExtensions = catalogExtensionsArray.map((type) => type.properties.type);
   if (disabledSubCatalogs?.length === catalogTypeExtensions?.length) {
     return (
       JSON.stringify(disabledSubCatalogs.sort()) !== JSON.stringify(catalogTypeExtensions.sort())

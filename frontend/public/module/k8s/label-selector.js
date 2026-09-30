@@ -188,7 +188,7 @@ export class LabelSelector {
       // label selector as covering any other label selector
       return false;
     }
-    return _.every(this._conjuncts, function (conjunct) {
+    return _.every(this._conjuncts, (conjunct) => {
       // Return true immediately if we find an exact match for operator/key/values
       if (selector.hasConjunct(conjunct)) {
         return true;
@@ -210,23 +210,24 @@ export class LabelSelector {
           if (_.isEmpty(inConjuncts)) {
             return false;
           }
-          return _.every(inConjuncts, function (inConjunct) {
-            return (
-              inConjunct.values.length === _.intersection(inConjunct.values, conjunct.values).length
-            );
-          });
+          return _.every(
+            inConjuncts,
+            (inConjunct) =>
+              inConjunct.values.length ===
+              _.intersection(inConjunct.values, conjunct.values).length,
+          );
         case 'not in':
           // NotIn (A,B) covers NotIn (A,B,C) AND NotIn (A,B,D)
           const notInConjuncts = selector.findConjunctsMatching('not in', conjunct.key);
           if (_.isEmpty(notInConjuncts)) {
             return false;
           }
-          return _.every(notInConjuncts, function (notInConjunct) {
-            return (
+          return _.every(
+            notInConjuncts,
+            (notInConjunct) =>
               conjunct.values.length ===
-              _.intersection(notInConjunct.values, conjunct.values).length
-            );
-          });
+              _.intersection(notInConjunct.values, conjunct.values).length,
+          );
       }
       return true;
     });

@@ -7,7 +7,8 @@ jest.mock('../../utils/useQuickStartPermission', () => ({
   useQuickStartPermission: jest.fn(),
 }));
 
-const mockUseQuickStartPermission = useQuickStartPermissionModule.useQuickStartPermission as jest.Mock;
+const mockUseQuickStartPermission =
+  useQuickStartPermissionModule.useQuickStartPermission as jest.Mock;
 
 describe('QuickStartPermissionChecker', () => {
   const createMockQuickStart = (name: string): QuickStart => ({

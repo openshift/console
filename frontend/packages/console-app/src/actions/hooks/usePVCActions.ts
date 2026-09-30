@@ -5,10 +5,10 @@ import type { Action } from '@console/dynamic-plugin-sdk';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { useDeepCompareMemoize } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useDeepCompareMemoize';
 import {
-  LazyClonePVCModalOverlay,
   LazyDeletePVCModalOverlay,
   LazyExpandPVCModalOverlay,
 } from '@console/internal/components/modals';
+import { LazyClonePVCModalOverlay } from '@console/internal/components/modals/lazy-clone-pvc-modal';
 import { asAccessReview } from '@console/internal/components/utils/rbac';
 import { VolumeSnapshotModel, PersistentVolumeClaimModel } from '@console/internal/models';
 import type { PersistentVolumeClaimKind } from '@console/internal/module/k8s';

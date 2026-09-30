@@ -52,7 +52,7 @@ const createHrefExtension = (id: string, name: string): LoadedExtension<HrefNavI
       href: `/${id}`,
       section: 'workloads',
     },
-  } as LoadedExtension<HrefNavItem>);
+  }) as LoadedExtension<HrefNavItem>;
 
 const createResourceExtension = (id: string, name: string): LoadedExtension<ResourceNSNavItem> =>
   ({
@@ -64,7 +64,7 @@ const createResourceExtension = (id: string, name: string): LoadedExtension<Reso
       model: { group: '', version: 'v1', kind: 'Pod' },
       section: 'workloads',
     },
-  } as LoadedExtension<ResourceNSNavItem>);
+  }) as LoadedExtension<ResourceNSNavItem>;
 
 const createSeparatorExtension = (id: string): LoadedExtension<Separator> =>
   ({
@@ -74,7 +74,7 @@ const createSeparatorExtension = (id: string): LoadedExtension<Separator> =>
       id,
       section: 'workloads',
     },
-  } as LoadedExtension<Separator>);
+  }) as LoadedExtension<Separator>;
 
 describe('NavSection', () => {
   beforeEach(() => {
@@ -82,10 +82,10 @@ describe('NavSection', () => {
     (useK8sModels as jest.Mock).mockReturnValue([{}]);
     (useLocation as jest.Mock).mockReturnValue('/other/path');
     (useNavExtensionsForSection as jest.Mock).mockReturnValue([]);
-    ((isHrefNavItem as unknown) as jest.Mock).mockReturnValue(false);
-    ((isResourceNavItem as unknown) as jest.Mock).mockReturnValue(false);
-    ((isSeparator as unknown) as jest.Mock).mockReturnValue(false);
-    ((isResourceNSNavItem as unknown) as jest.Mock).mockReturnValue(false);
+    (isHrefNavItem as unknown as jest.Mock).mockReturnValue(false);
+    (isResourceNavItem as unknown as jest.Mock).mockReturnValue(false);
+    (isSeparator as unknown as jest.Mock).mockReturnValue(false);
+    (isResourceNSNavItem as unknown as jest.Mock).mockReturnValue(false);
   });
 
   it('should return null when section has no children', () => {
@@ -100,7 +100,7 @@ describe('NavSection', () => {
   it('should render expandable section with name', () => {
     const hrefExtension = createHrefExtension('dashboard', 'Dashboard');
     (useNavExtensionsForSection as jest.Mock).mockReturnValue([hrefExtension]);
-    ((isHrefNavItem as unknown) as jest.Mock).mockReturnValue(true);
+    (isHrefNavItem as unknown as jest.Mock).mockReturnValue(true);
 
     renderWithProviders(<NavSection id="workloads" name="Workloads" />);
 
@@ -110,7 +110,7 @@ describe('NavSection', () => {
   it('should render NavGroup without title when name is empty', () => {
     const hrefExtension = createHrefExtension('home', 'Home');
     (useNavExtensionsForSection as jest.Mock).mockReturnValue([hrefExtension]);
-    ((isHrefNavItem as unknown) as jest.Mock).mockReturnValue(true);
+    (isHrefNavItem as unknown as jest.Mock).mockReturnValue(true);
 
     renderWithProviders(<NavSection id="home" name="" />);
 
@@ -123,7 +123,7 @@ describe('NavSection', () => {
     const user = userEvent.setup();
     const hrefExtension = createHrefExtension('dashboard', 'Dashboard');
     (useNavExtensionsForSection as jest.Mock).mockReturnValue([hrefExtension]);
-    ((isHrefNavItem as unknown) as jest.Mock).mockImplementation((ext) => ext === hrefExtension);
+    (isHrefNavItem as unknown as jest.Mock).mockImplementation((ext) => ext === hrefExtension);
 
     renderWithProviders(<NavSection id="workloads" name="Workloads" />);
 
@@ -136,7 +136,7 @@ describe('NavSection', () => {
     const user = userEvent.setup();
     const resourceExtension = createResourceExtension('pods', 'Pods');
     (useNavExtensionsForSection as jest.Mock).mockReturnValue([resourceExtension]);
-    ((isResourceNavItem as unknown) as jest.Mock).mockImplementation(
+    (isResourceNavItem as unknown as jest.Mock).mockImplementation(
       (ext) => ext === resourceExtension,
     );
 
@@ -150,7 +150,7 @@ describe('NavSection', () => {
   it('should render separators between items', () => {
     const separatorExtension = createSeparatorExtension('separator-1');
     (useNavExtensionsForSection as jest.Mock).mockReturnValue([separatorExtension]);
-    ((isSeparator as unknown) as jest.Mock).mockImplementation((ext) => ext === separatorExtension);
+    (isSeparator as unknown as jest.Mock).mockImplementation((ext) => ext === separatorExtension);
 
     renderWithProviders(<NavSection id="workloads" name="Workloads" />);
 
@@ -161,7 +161,7 @@ describe('NavSection', () => {
     const user = userEvent.setup();
     const hrefExtension = createHrefExtension('dashboard', 'Dashboard');
     (useNavExtensionsForSection as jest.Mock).mockReturnValue([hrefExtension]);
-    ((isHrefNavItem as unknown) as jest.Mock).mockReturnValue(true);
+    (isHrefNavItem as unknown as jest.Mock).mockReturnValue(true);
 
     renderWithProviders(<NavSection id="workloads" name="Workloads" />);
 

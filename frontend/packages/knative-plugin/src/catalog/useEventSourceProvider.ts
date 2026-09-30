@@ -54,9 +54,8 @@ export const useEventSourceProvider: ExtensionHook<CatalogItem[]> = ({
   namespace,
 }): [CatalogItem[], boolean, any] => {
   const { t } = useTranslation('knative-plugin');
-  const { loaded, eventSourceModelsList: eventSourceModels } = useEventSourceModelsWithAccess(
-    namespace,
-  );
+  const { loaded, eventSourceModelsList: eventSourceModels } =
+    useEventSourceModelsWithAccess(namespace);
   const normalizedSources = useMemo(
     () => (loaded ? normalizeEventSources(eventSourceModels, namespace, t) : []),
 

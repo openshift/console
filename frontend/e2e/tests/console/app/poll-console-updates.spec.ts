@@ -78,23 +78,26 @@ async function navigateAndWaitForInit(page: Page) {
 }
 
 test.describe('PollConsoleUpdates', { tag: ['@admin'] }, () => {
+  // Each test needs multiple 15s polling cycles (init + change detection + endpoint readiness).
+  // The default 120s is too tight for CI where auth redirects add overhead.
+  test.setTimeout(300_000);
+
   test('triggers the console update toast when consoleCommit changes', async ({ page }) => {
-    const updates = createMutableHandler((route) =>
-      route.fulfill({ json: UPDATES_DEFAULT }),
-    );
+    const updates = createMutableHandler((route) => route.fulfill({ json: UPDATES_DEFAULT }));
     await page.route(CHECK_UPDATES_URL, updates.handler);
 
     await navigateAndWaitForInit(page);
 
     updates.setHandler((route) => route.fulfill({ json: UPDATES_NEW_COMMIT }));
+    await page.waitForResponse((resp) => resp.url().includes('/api/check-updates'), {
+      timeout: 30_000,
+    });
 
     await expect(page.getByTestId('refresh-web-console')).toBeVisible({ timeout: 60_000 });
   });
 
   test('triggers the console update toast when a plugin is added', async ({ page }) => {
-    const updates = createMutableHandler((route) =>
-      route.fulfill({ json: UPDATES_DEFAULT }),
-    );
+    const updates = createMutableHandler((route) => route.fulfill({ json: UPDATES_DEFAULT }));
     const manifest = createMutableHandler((route) => route.abort());
     await page.route(CHECK_UPDATES_URL, updates.handler);
     await page.route(PLUGIN_MANIFEST_URL, manifest.handler);
@@ -102,6 +105,9 @@ test.describe('PollConsoleUpdates', { tag: ['@admin'] }, () => {
     await navigateAndWaitForInit(page);
 
     updates.setHandler((route) => route.fulfill({ json: UPDATES_NEW_PLUGIN }));
+    await page.waitForResponse((resp) => resp.url().includes('/api/check-updates'), {
+      timeout: 30_000,
+    });
 
     await expect(page.getByTestId('refresh-web-console')).not.toBeAttached({
       timeout: 30_000,
@@ -115,9 +121,7 @@ test.describe('PollConsoleUpdates', { tag: ['@admin'] }, () => {
   test('triggers the console update toast when a plugin is added and a different plugin endpoint is erroring', async ({
     page,
   }) => {
-    const updates = createMutableHandler((route) =>
-      route.fulfill({ json: UPDATES_NEW_PLUGIN }),
-    );
+    const updates = createMutableHandler((route) => route.fulfill({ json: UPDATES_NEW_PLUGIN }));
     const manifest1 = createMutableHandler((route) => route.abort());
     const manifest2 = createMutableHandler((route) => route.abort());
     await page.route(PLUGIN_MANIFEST_URL, manifest1.handler);
@@ -132,7 +136,10 @@ test.describe('PollConsoleUpdates', { tag: ['@admin'] }, () => {
 
     updates.setHandler((route) => route.fulfill({ json: UPDATES_NEW_PLUGIN2 }));
 
-    await page.waitForResponse((resp) => resp.url().includes('/api/check-updates'));
+    await page.waitForResponse(
+      (resp) => resp.url().includes('/api/check-updates') && resp.status() === 200,
+      { timeout: 30_000 },
+    );
 
     await expect(page.getByTestId('refresh-web-console')).not.toBeAttached({
       timeout: 30_000,
@@ -144,9 +151,7 @@ test.describe('PollConsoleUpdates', { tag: ['@admin'] }, () => {
   });
 
   test('triggers the console update toast when a plugin is removed', async ({ page }) => {
-    const updates = createMutableHandler((route) =>
-      route.fulfill({ json: UPDATES_NEW_PLUGIN }),
-    );
+    const updates = createMutableHandler((route) => route.fulfill({ json: UPDATES_NEW_PLUGIN }));
     await page.route(CHECK_UPDATES_URL, updates.handler);
     await page.route(PLUGIN_MANIFEST_URL, (route) =>
       route.fulfill({ json: PLUGIN_MANIFEST_DEFAULT }),
@@ -163,9 +168,7 @@ test.describe('PollConsoleUpdates', { tag: ['@admin'] }, () => {
     const manifest = createMutableHandler((route) =>
       route.fulfill({ json: PLUGIN_MANIFEST_DEFAULT }),
     );
-    await page.route(CHECK_UPDATES_URL, (route) =>
-      route.fulfill({ json: UPDATES_NEW_PLUGIN }),
-    );
+    await page.route(CHECK_UPDATES_URL, (route) => route.fulfill({ json: UPDATES_NEW_PLUGIN }));
     await page.route(PLUGIN_MANIFEST_URL, manifest.handler);
 
     await navigateAndWaitForInit(page);

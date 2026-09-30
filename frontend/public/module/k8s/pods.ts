@@ -97,20 +97,39 @@ const VolumeSource = {
       'public~A projected volume maps several existing volume sources into the same directory.',
     ),
   },
+  downwardAPI: {
+    id: 'downwardAPI',
+    label: i18next.t('public~DownwardAPI'),
+    description: i18next.t(
+      'public~Exposes pod and container fields to a running container as files.',
+    ),
+  },
+  csi: {
+    id: 'csi',
+    label: i18next.t('public~CSI'),
+    description: i18next.t(
+      'public~Volume provided by an external Container Storage Interface driver.',
+    ),
+  },
+  ephemeral: {
+    id: 'ephemeral',
+    label: i18next.t('public~Ephemeral'),
+    description: i18next.t(
+      'public~Volume that is handled by a cluster storage driver and follows the lifecycle of the pod.',
+    ),
+  },
 };
 
 export const getVolumeType = (volume: Volume) => {
   if (!volume) {
     return null;
   }
-  return _.find(VolumeSource, function (v) {
-    return !!volume[v.id];
-  });
+  return _.find(VolumeSource, (v) => !!volume[v.id]);
 };
 
 const genericFormatter = (volInfo) => {
   const keys = Object.keys(volInfo).sort();
-  const parts = keys.map(function (key) {
+  const parts = keys.map((key) => {
     if (key === 'readOnly') {
       return '';
     }
@@ -138,6 +157,9 @@ export const getVolumeLocation = (volume: Volume) => {
     case VolumeSource.emptyDir.id:
     case VolumeSource.secret.id:
     case VolumeSource.projected.id:
+    case VolumeSource.downwardAPI.id:
+    case VolumeSource.csi.id:
+    case VolumeSource.ephemeral.id:
       return null;
     // Defaults to space separated sorted keys.
     default:
@@ -152,9 +174,9 @@ export const podRestarts = (pod: PodKind): number => {
     return 0;
   }
   const { initContainerStatuses = [], containerStatuses = [] } = pod.status;
-  const isInitializing = initContainerStatuses.some(({ state }) => {
-    return !state.terminated || state.terminated.exitCode !== 0;
-  });
+  const isInitializing = initContainerStatuses.some(
+    ({ state }) => !state.terminated || state.terminated.exitCode !== 0,
+  );
   const toCheck = isInitializing ? initContainerStatuses : containerStatuses;
   return toCheck.reduce(
     (restartCount, status: ContainerStatus) => restartCount + status.restartCount,
@@ -277,9 +299,8 @@ export const podPhaseFilterReducer = (pod: PodKind): PodPhase => {
   return _.get(pod, 'status.phase', 'Unknown');
 };
 
-export const isWindowsPod = (pod: PodKind): boolean => {
-  return pod?.spec?.tolerations?.some((t) => t.key === 'os' && t.value === 'Windows');
-};
+export const isWindowsPod = (pod: PodKind): boolean =>
+  pod?.spec?.tolerations?.some((t) => t.key === 'os' && t.value === 'Windows');
 
 export const isContainerCrashLoopBackOff = (pod: PodKind, containerName: string): boolean => {
   const containerStatus = pod?.status?.containerStatuses?.find((c) => c.name === containerName);

@@ -185,10 +185,7 @@ export const NavBar: FC<NavBarProps> = ({ pages }) => {
 
   const sliced = location.pathname.split('/');
   const lastElement = decodeURIComponent(sliced.pop());
-  const defaultPage =
-    pages.filter((p) => {
-      return p.href === lastElement;
-    }).length === 0;
+  const defaultPage = pages.filter((p) => p.href === lastElement).length === 0;
   const baseURL = defaultPage ? location.pathname : sliced.join('/');
 
   // the div wrapper prevents the tabs from collapsing in a flexbox
@@ -219,9 +216,7 @@ export const NavBar: FC<NavBarProps> = ({ pages }) => {
     </div>
   );
 
-  const activePage = pages.find(({ href }) => {
-    return defaultPage ? href === '' : lastElement === href;
-  });
+  const activePage = pages.find(({ href }) => (defaultPage ? href === '' : lastElement === href));
 
   const labelId = activePage?.nameKey?.split('~')[1] || activePage?.name || 'Details';
   return (
@@ -338,26 +333,24 @@ export const HorizontalNav = memo<HorizontalNavProps>((props) => {
   const basePages = props.pages || (props.obj?.loaded ? props.pagesFor(props.obj.data) : []);
   const pages: Page[] = [...basePages, ...pluginPages];
 
-  const routes = pages.map((p) => {
-    return (
-      <Route
-        path={p.path || encodeURIComponent(p.href)}
-        key={p.nameKey || p.name}
-        element={
-          <ErrorBoundaryPage>
-            <p.component
-              {...params}
-              {...componentProps}
-              {...extraResources}
-              {...p.pageData}
-              customData={props.customData}
-              params={params}
-            />
-          </ErrorBoundaryPage>
-        }
-      />
-    );
-  });
+  const routes = pages.map((p) => (
+    <Route
+      path={p.path || encodeURIComponent(p.href)}
+      key={p.nameKey || p.name}
+      element={
+        <ErrorBoundaryPage>
+          <p.component
+            {...params}
+            {...componentProps}
+            {...extraResources}
+            {...p.pageData}
+            customData={props.customData}
+            params={params}
+          />
+        </ErrorBoundaryPage>
+      }
+    />
+  ));
 
   // Handle cases where matching Routes do not exist and show the details page instead of a blank page
   if (props.createRedirect && routes.length >= 1) {

@@ -16,11 +16,14 @@ import {
   getNameCellProps,
   ConsoleDataView,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import type {
+  ConsoleDataViewColumn,
+  GetDataViewRows,
+} from '@console/app/src/components/data-view/types';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DASH } from '@console/shared/src/constants/ui';
 import { AlertmanagerModel } from '../models';
-import type { K8sResourceKind, TableColumn } from '../module/k8s';
+import type { K8sResourceKind } from '../module/k8s';
 import { referenceForModel } from '../module/k8s';
 import { DetailsPage } from './factory/details';
 import { ListPage } from './factory/list-page';
@@ -125,8 +128,8 @@ const tableColumnInfo = [
   { id: 'nodeSelector' },
 ];
 
-const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) => {
-  return data.map(({ obj: alertManager }) => {
+const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) =>
+  data.map(({ obj: alertManager }) => {
     const { metadata, spec } = alertManager;
 
     const rowCells = {
@@ -166,19 +169,18 @@ const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) => {
       };
     });
   });
-};
 
-const useAlertManagerColumns = (): TableColumn<K8sResourceKind>[] => {
+const useAlertManagerColumns = (): ConsoleDataViewColumn<K8sResourceKind>[] => {
   const { t } = useTranslation('public');
-  const columns = useMemo(() => {
-    return [
+  const columns = useMemo<ConsoleDataViewColumn<K8sResourceKind>[]>(
+    () => [
       {
         title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
         props: {
           ...cellIsStickyProps,
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -186,7 +188,7 @@ const useAlertManagerColumns = (): TableColumn<K8sResourceKind>[] => {
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -194,7 +196,7 @@ const useAlertManagerColumns = (): TableColumn<K8sResourceKind>[] => {
         id: tableColumnInfo[2].id,
         sort: 'metadata.labels',
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
           width: 20,
         },
       },
@@ -203,7 +205,7 @@ const useAlertManagerColumns = (): TableColumn<K8sResourceKind>[] => {
         id: tableColumnInfo[3].id,
         sort: 'spec.version',
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
           width: 20,
         },
       },
@@ -212,11 +214,12 @@ const useAlertManagerColumns = (): TableColumn<K8sResourceKind>[] => {
         id: tableColumnInfo[4].id,
         sort: 'spec.nodeSelector',
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
-    ];
-  }, [t]);
+    ],
+    [t],
+  );
   return columns;
 };
 

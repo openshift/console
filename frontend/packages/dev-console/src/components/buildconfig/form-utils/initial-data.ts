@@ -3,139 +3,137 @@ import { EditorType } from '@console/shared/src/components/synced-editor/editor-
 import type { BuildConfigFormikValues } from './types';
 import { BuildStrategyType } from './types';
 
-export const getInitialBuildConfigFormikValues = (): BuildConfigFormikValues => {
-  return {
-    editorType: EditorType.Form,
-    formData: {
-      name: '',
+export const getInitialBuildConfigFormikValues = (): BuildConfigFormikValues => ({
+  editorType: EditorType.Form,
+  formData: {
+    name: '',
 
-      source: {
-        type: 'none',
+    source: {
+      type: 'none',
+      git: {
+        formType: 'edit',
+        name: '',
         git: {
-          formType: 'edit',
+          url: '',
+          type: GitProvider.INVALID,
+          ref: '',
+          dir: '/',
+          showGitType: false,
+          secret: '',
+          isUrlValidating: false,
+        },
+        image: {
+          selectedKey: '',
+          selected: '',
+          recommended: '',
+          tagObj: '',
+          couldNotRecommend: false,
+        },
+        application: {
+          selected: '',
+          selectedKey: '',
           name: '',
-          git: {
-            url: '',
-            type: GitProvider.INVALID,
-            ref: '',
-            dir: '/',
-            showGitType: false,
-            secret: '',
-            isUrlValidating: false,
-          },
-          image: {
-            selectedKey: '',
-            selected: '',
-            recommended: '',
-            tagObj: '',
-            couldNotRecommend: false,
-          },
-          application: {
-            selected: '',
-            selectedKey: '',
-            name: '',
-            isInContext: null,
-          },
-          build: {
-            strategy: BuildStrategyType.Source,
+          isInContext: null,
+        },
+        build: {
+          strategy: BuildStrategyType.Source,
+        },
+        project: {
+          name: undefined,
+        },
+      },
+      dockerfile: '',
+    },
+
+    images: {
+      buildFrom: {
+        type: 'none',
+        imageStreamTag: {
+          fromImageStreamTag: false,
+          isSearchingForImage: false,
+          imageStream: {
+            namespace: '',
+            image: '',
+            tag: '',
           },
           project: {
-            name: undefined,
+            name: '',
+          },
+          isi: {
+            name: '',
+            image: {},
+            tag: '',
+            status: { metadata: {}, status: '' },
+            ports: [],
+          },
+          image: {
+            name: '',
+            image: {},
+            tag: '',
+            status: { metadata: {}, status: '' },
+            ports: [],
           },
         },
-        dockerfile: '',
+        imageStreamImage: '',
+        dockerImage: '',
       },
-
-      images: {
-        buildFrom: {
-          type: 'none',
-          imageStreamTag: {
-            fromImageStreamTag: false,
-            isSearchingForImage: false,
-            imageStream: {
-              namespace: '',
-              image: '',
-              tag: '',
-            },
-            project: {
-              name: '',
-            },
-            isi: {
-              name: '',
-              image: {},
-              tag: '',
-              status: { metadata: {}, status: '' },
-              ports: [],
-            },
-            image: {
-              name: '',
-              image: {},
-              tag: '',
-              status: { metadata: {}, status: '' },
-              ports: [],
-            },
+      pushTo: {
+        type: 'none',
+        imageStreamTag: {
+          fromImageStreamTag: false,
+          isSearchingForImage: false,
+          imageStream: {
+            namespace: '',
+            image: '',
+            tag: '',
           },
-          imageStreamImage: '',
-          dockerImage: '',
-        },
-        pushTo: {
-          type: 'none',
-          imageStreamTag: {
-            fromImageStreamTag: false,
-            isSearchingForImage: false,
-            imageStream: {
-              namespace: '',
-              image: '',
-              tag: '',
-            },
-            project: {
-              name: '',
-            },
-            isi: {
-              name: '',
-              image: {},
-              tag: '',
-              status: { metadata: {}, status: '' },
-              ports: [],
-            },
-            image: {
-              name: '',
-              image: {},
-              tag: '',
-              status: { metadata: {}, status: '' },
-              ports: [],
-            },
+          project: {
+            name: '',
           },
-          imageStreamImage: '',
-          dockerImage: '',
+          isi: {
+            name: '',
+            image: {},
+            tag: '',
+            status: { metadata: {}, status: '' },
+            ports: [],
+          },
+          image: {
+            name: '',
+            image: {},
+            tag: '',
+            status: { metadata: {}, status: '' },
+            ports: [],
+          },
         },
-      },
-
-      environmentVariables: [],
-
-      triggers: {
-        configChange: false,
-        imageChange: false,
-        otherTriggers: [],
-      },
-
-      secrets: [],
-
-      policy: {
-        runPolicy: null,
-      },
-
-      hooks: {
-        enabled: false,
-        type: 'command',
-        commands: [''],
-        shell: '',
-        arguments: [],
+        imageStreamImage: '',
+        dockerImage: '',
       },
     },
 
-    yamlData: '',
+    environmentVariables: [],
 
-    resourceVersion: undefined,
-  };
-};
+    triggers: {
+      configChange: false,
+      imageChange: false,
+      otherTriggers: [],
+    },
+
+    secrets: [],
+
+    policy: {
+      runPolicy: null,
+    },
+
+    hooks: {
+      enabled: false,
+      type: 'command',
+      commands: [''],
+      shell: '',
+      arguments: [],
+    },
+  },
+
+  yamlData: '',
+
+  resourceVersion: undefined,
+});

@@ -15,7 +15,7 @@ describe('NodeRoles', () => {
       apiVersion: 'v1',
       kind: 'Node',
       metadata: { name: 'test-node' },
-    } as NodeKind);
+    }) as NodeKind;
 
   beforeEach(() => {
     jest.clearAllMocks();

@@ -87,18 +87,16 @@ export const hasReleaseAcceptanceFailure = (cv: ClusterVersionKind): boolean => 
  * @param cv - ClusterVersion resource
  * @returns true if availableUpdates array has entries
  */
-export const hasRecommendedUpdates = (cv: ClusterVersionKind): boolean => {
-  return (cv.status?.availableUpdates?.length || 0) > 0;
-};
+export const hasRecommendedUpdates = (cv: ClusterVersionKind): boolean =>
+  (cv.status?.availableUpdates?.length || 0) > 0;
 
 /**
  * Check if cluster has conditional updates (with risks/warnings)
  * @param cv - ClusterVersion resource
  * @returns true if conditionalUpdates array has entries
  */
-export const hasConditionalUpdates = (cv: ClusterVersionKind): boolean => {
-  return (cv.status?.conditionalUpdates?.length || 0) > 0;
-};
+export const hasConditionalUpdates = (cv: ClusterVersionKind): boolean =>
+  (cv.status?.conditionalUpdates?.length || 0) > 0;
 
 /**
  * Check if a specific operator is degraded
@@ -131,9 +129,8 @@ export const isOperatorUnavailable = (operator: ClusterOperator): boolean => {
  * @param operator - ClusterOperator resource
  * @returns true if operator is degraded or unavailable
  */
-export const hasOperatorIssues = (operator: ClusterOperator): boolean => {
-  return isOperatorDegraded(operator) || isOperatorUnavailable(operator);
-};
+export const hasOperatorIssues = (operator: ClusterOperator): boolean =>
+  isOperatorDegraded(operator) || isOperatorUnavailable(operator);
 
 /**
  * Check if any operators in the cluster have issues
@@ -170,15 +167,12 @@ export const getOperatorsWithIssues = (operators?: ClusterOperator[]): ClusterOp
 export const hasBlockingConditions = (
   cv: ClusterVersionKind,
   operators?: ClusterOperator[],
-): boolean => {
-  return (
-    isClusterFailing(cv) ||
-    isClusterInvalid(cv) ||
-    hasUpdateRetrievalFailure(cv) ||
-    hasReleaseAcceptanceFailure(cv) ||
-    hasAnyOperatorIssues(operators)
-  );
-};
+): boolean =>
+  isClusterFailing(cv) ||
+  isClusterInvalid(cv) ||
+  hasUpdateRetrievalFailure(cv) ||
+  hasReleaseAcceptanceFailure(cv) ||
+  hasAnyOperatorIssues(operators);
 
 /**
  * Check if cluster is available
@@ -213,9 +207,8 @@ export const isClusterUpgradeable = (cv: ClusterVersionKind): boolean => {
  * @returns true if either availableUpdates or conditionalUpdates are present
  * @public
  */
-export const hasAnyUpdates = (cv: ClusterVersionKind): boolean => {
-  return hasRecommendedUpdates(cv) || hasConditionalUpdates(cv);
-};
+export const hasAnyUpdates = (cv: ClusterVersionKind): boolean =>
+  hasRecommendedUpdates(cv) || hasConditionalUpdates(cv);
 
 /**
  * Check if cluster is ready to update
@@ -228,15 +221,12 @@ export const hasAnyUpdates = (cv: ClusterVersionKind): boolean => {
 export const isClusterReadyToUpdate = (
   cv: ClusterVersionKind,
   operators?: ClusterOperator[],
-): boolean => {
-  return (
-    !isClusterFailing(cv) &&
-    !isClusterProgressing(cv) &&
-    !isClusterInvalid(cv) &&
-    isClusterUpgradeable(cv) &&
-    !hasAnyOperatorIssues(operators)
-  );
-};
+): boolean =>
+  !isClusterFailing(cv) &&
+  !isClusterProgressing(cv) &&
+  !isClusterInvalid(cv) &&
+  isClusterUpgradeable(cv) &&
+  !hasAnyOperatorIssues(operators);
 
 /**
  * Check if an operator is upgradeable

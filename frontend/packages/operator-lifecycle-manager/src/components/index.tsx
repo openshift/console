@@ -95,6 +95,7 @@ export const iconFor = (pkg: PackageManifestKind) => {
       resourceVersion: [pkg.metadata.name, defaultChannel.name, defaultChannel.currentCSV].join(
         '.',
       ),
+      catalog: pkg?.status?.catalogSource,
     },
   });
 };
@@ -120,7 +121,6 @@ export const parseALMExamples = (
     }
     return JSON.parse(csv?.metadata?.annotations?.['alm-examples'] ?? '[]');
   } catch (e) {
-    // eslint-disable-next-line no-console
     console.warn('Unable to parse ALM expamples\n', e);
     return [];
   }
@@ -145,13 +145,12 @@ export const exampleForModel = (csv: ClusterServiceVersionKind, model: K8sKind) 
 export const getManualSubscriptionsInNamespace = (
   subscriptions: SubscriptionKind[],
   namespace: string,
-) => {
-  return subscriptions?.filter(
+) =>
+  subscriptions?.filter(
     (subscription) =>
       subscription.metadata.namespace === namespace &&
       subscription.spec.installPlanApproval === InstallPlanApproval.Manual,
   );
-};
 
 export const OperatorsWithManualApproval: FC<OperatorsWithManualApprovalProps> = ({
   subscriptions,

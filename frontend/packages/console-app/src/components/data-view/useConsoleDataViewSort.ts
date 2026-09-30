@@ -66,10 +66,10 @@ export const useConsoleDataViewSort = <TData>({
   useEffect(() => {
     const newSortState = getInitialSortState();
 
-    setSortBy((prevSortState) => {
+    setSortBy((prevSortState) =>
       // Only update if the state actually changed
-      return _.isEqual(prevSortState, newSortState) ? prevSortState : newSortState;
-    });
+      _.isEqual(prevSortState, newSortState) ? prevSortState : newSortState,
+    );
   }, [getInitialSortState]);
 
   const onSort = useCallback(

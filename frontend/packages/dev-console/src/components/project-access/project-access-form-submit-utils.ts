@@ -48,12 +48,10 @@ const getRolesWithSubjectChange = (
   return rolesWithSubjectChange;
 };
 
-export const getRolesToUpdate = (newRoles: UserRoleBinding[], removeRoles: UserRoleBinding[]) => {
-  return [
-    ...getRolesWithSubjectChange(newRoles, removeRoles),
-    ...getRolesWithNameChange(newRoles, removeRoles),
-  ];
-};
+export const getRolesToUpdate = (newRoles: UserRoleBinding[], removeRoles: UserRoleBinding[]) => [
+  ...getRolesWithSubjectChange(newRoles, removeRoles),
+  ...getRolesWithNameChange(newRoles, removeRoles),
+];
 
 const sendK8sRequest = (verb: string, roleBinding: RoleBinding): Promise<K8sResourceKind> => {
   switch (verb) {
@@ -72,9 +70,8 @@ const sendK8sRequest = (verb: string, roleBinding: RoleBinding): Promise<K8sReso
   }
 };
 
-const generateRoleBindingName = (username: string, role: string): string => {
-  return `${username}-${role}-${generateSecret()}`;
-};
+const generateRoleBindingName = (username: string, role: string): string =>
+  `${username}-${role}-${generateSecret()}`;
 
 export const getNewRoles = (
   initialRoles: UserRoleBinding[],
@@ -116,8 +113,8 @@ export const getRemovedRoles = (
   return removeRoles;
 };
 
-const getUpdatedSubjects = (subjects: SubjectType[]) => {
-  return subjects.map((sub) => {
+const getUpdatedSubjects = (subjects: SubjectType[]) =>
+  subjects.map((sub) => {
     if (sub.kind === 'ServiceAccount') {
       delete sub.apiGroup;
       return sub;
@@ -126,7 +123,6 @@ const getUpdatedSubjects = (subjects: SubjectType[]) => {
     delete sub.namespace;
     return sub;
   });
-};
 
 export const sendRoleBindingRequest = (
   verb: string,
@@ -154,10 +150,10 @@ export const sendRoleBindingRequest = (
             },
           ]
         : removeRoleSubjectFlag === 1 && user.subjects.length > 0
-        ? getUpdatedSubjects(user.subjects)
-        : user.subjects.length > 1
-        ? getUpdatedSubjects(user.subjects)
-        : getUpdatedSubjects([user.subject]);
+          ? getUpdatedSubjects(user.subjects)
+          : user.subjects.length > 1
+            ? getUpdatedSubjects(user.subjects)
+            : getUpdatedSubjects([user.subject]);
     const roleBinding: RoleBinding = {
       apiVersion: 'rbac.authorization.k8s.io/v1',
       kind: 'RoleBinding',

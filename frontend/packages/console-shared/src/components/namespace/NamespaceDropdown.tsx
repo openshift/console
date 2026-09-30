@@ -31,6 +31,7 @@ import {
 import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import { alphanumericCompare } from '@console/shared/src/utils/utils';
+import { DefaultNamespaceLabel } from './DefaultNamespaceWarning';
 import { isSystemNamespace } from './filters';
 import NamespaceMenuToggle from './NamespaceMenuToggle';
 import './NamespaceDropdown.scss';
@@ -141,19 +142,18 @@ export const NamespaceGroup: FC<{
       <Divider />
       <MenuGroup label={label}>
         <MenuList>
-          {options.map((option) => {
-            return (
-              <MenuItem
-                key={option.key}
-                itemId={option.key}
-                isFavorited={canFavorite ? !!favorites?.[option.key] : undefined}
-                isSelected={selectedKey === option.key}
-                data-test="dropdown-menu-item-link"
-              >
-                {option.title}
-              </MenuItem>
-            );
-          })}
+          {options.map((option) => (
+            <MenuItem
+              key={option.key}
+              itemId={option.key}
+              isFavorited={canFavorite ? !!favorites?.[option.key] : undefined}
+              isSelected={selectedKey === option.key}
+              data-test="dropdown-menu-item-link"
+            >
+              <span data-test="namespace-dropdown-item-text">{option.title}</span>
+              <DefaultNamespaceLabel isProject={isProjects} namespace={option.key} />
+            </MenuItem>
+          ))}
         </MenuList>
       </MenuGroup>
     </>
@@ -173,18 +173,17 @@ export const Footer: FC<{
     <>
       {canCreateNew ? (
         <MenuFooter className="co-namespace-dropdown__footer">
-          {
-            <Button
-              variant="secondary"
-              onClick={() => {
-                setOpen(false);
-                onCreateNew();
-              }}
-              data-test-dropdown-menu="#CREATE_RESOURCE_ACTION#"
-            >
-              {isProject ? t('Create Project') : t('Create Namespace')}
-            </Button>
-          }
+          <Button
+            variant="secondary"
+            onClick={() => {
+              setOpen(false);
+              onCreateNew();
+            }}
+            data-test="#CREATE_RESOURCE_ACTION#"
+            data-test-dropdown-menu="#CREATE_RESOURCE_ACTION#"
+          >
+            {isProject ? t('Create Project') : t('Create Namespace')}
+          </Button>
         </MenuFooter>
       ) : null}
     </>

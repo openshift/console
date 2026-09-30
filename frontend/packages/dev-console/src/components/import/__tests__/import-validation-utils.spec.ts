@@ -1,23 +1,24 @@
+import { t } from 'i18next';
 import { cloneDeep } from 'lodash';
 import { GitProvider } from '@console/git-service/src/types/git';
 import { CREATE_APPLICATION_KEY, UNASSIGNED_KEY } from '@console/topology/src/const';
-import { t } from '../../../../../../__mocks__/i18next';
-import { mockFormData } from '../__mocks__/import-validation-mock';
 import {
   validationSchema,
   detectGitType,
   detectGitRepoName,
   createComponentName,
 } from '../import-validation-utils';
-import { serverlessCommonTests } from './serverless-common-tests';
+import { serverlessCommonTests } from '../test-utils/serverless-common-tests';
+import { mockFormData } from './data/import-validation-mock';
 
+jest.mock('i18next');
 describe('ValidationUtils', () => {
   describe('Detect Git Type', () => {
     it('should return the invalid enum key for invalid git url', () => {
       const gitType = detectGitType('test');
       expect(gitType).toEqual(GitProvider.INVALID);
     });
-    it('should return the unsure enum key for valid but unknown git url ', () => {
+    it('should return the unsure enum key for valid but unknown git url', () => {
       const gitType = detectGitType('https://svnsource.test.com');
       expect(gitType).toEqual(GitProvider.UNSURE);
 
@@ -74,72 +75,50 @@ describe('ValidationUtils', () => {
   describe('Validation Schema', () => {
     it('should validate the form data', async () => {
       const mockData = cloneDeep(mockFormData);
-      await validationSchema(t)
-        .isValid(mockData)
-        .then((valid) => expect(valid).toEqual(true));
+      expect(await validationSchema(t).isValid(mockData)).toEqual(true);
     });
 
     it('should throw an error if url is invalid', async () => {
       const mockData = cloneDeep(mockFormData);
       mockData.git.url = 'something.com';
-      await validationSchema(t)
-        .isValid(mockData)
-        .then((valid) => expect(valid).toEqual(false));
-      await validationSchema(t)
-        .validate(mockData)
-        .catch((err) => expect(err.message).toBe('Invalid Git URL.'));
+      expect(await validationSchema(t).isValid(mockData)).toEqual(false);
+      await expect(validationSchema(t).validate(mockData)).rejects.toThrow('Invalid Git URL.');
     });
 
     it('should throw an error if url is valid but git type is not valid', async () => {
       const mockData = cloneDeep(mockFormData);
       mockData.git.url = 'https://something.com/test/repo';
       mockData.git.type = GitProvider.INVALID;
-      await validationSchema(t)
-        .isValid(mockData)
-        .then((valid) => expect(valid).toEqual(true));
+      expect(await validationSchema(t).isValid(mockData)).toEqual(true);
       mockData.git.showGitType = true;
-      await validationSchema(t)
-        .validate(mockData)
-        .catch((err) => {
-          expect(err.message).toBe('We failed to detect the Git type. Please choose a Git type.');
-        });
+      await expect(validationSchema(t).validate(mockData)).rejects.toThrow(
+        'We failed to detect the Git type. Please choose a Git type.',
+      );
     });
 
     it('should throw an error if project name is invalid', async () => {
       const mockData = cloneDeep(mockFormData);
       mockData.project.name = 'project-!';
-      await validationSchema(t)
-        .isValid(mockData)
-        .then((valid) => expect(valid).toEqual(false));
-      await validationSchema(t)
-        .validate(mockData)
-        .catch((err) =>
-          expect(err.message).toBe(
-            "Name must consist of lower case alphanumeric characters or '-' and must start and end with an alphanumeric character.",
-          ),
-        );
+      expect(await validationSchema(t).isValid(mockData)).toEqual(false);
+      await expect(validationSchema(t).validate(mockData)).rejects.toThrow(
+        "Name must consist of lower case alphanumeric characters or '-' and must start and end with an alphanumeric character.",
+      );
     });
 
     it('should throw an error for required fields if empty', async () => {
       const mockData = cloneDeep(mockFormData);
       mockData.name = '';
-      await validationSchema(t)
-        .isValid(mockData)
-        .then((valid) => expect(valid).toEqual(false));
-      await validationSchema(t)
-        .validate(mockData)
-        .catch((err) => {
-          expect(err.message).toBe('Required');
-          expect(err.type).toBe('required');
-        });
+      expect(await validationSchema(t).isValid(mockData)).toEqual(false);
+      await expect(validationSchema(t).validate(mockData)).rejects.toMatchObject({
+        message: 'Required',
+        type: 'required',
+      });
     });
 
     it('should convert the detected name to lower case', async () => {
       const mockData = cloneDeep(mockFormData);
       mockData.git.url = 'https://github.com/openshift-evangelists/Wild-West-Frontend';
-      await validationSchema(t)
-        .isValid(mockData)
-        .then((valid) => expect(valid).toEqual(true));
+      expect(await validationSchema(t).isValid(mockData)).toEqual(true);
       const name = detectGitRepoName(mockData.git.url);
       expect(name).toEqual('wild-west-frontend');
     });
@@ -168,76 +147,50 @@ describe('ValidationUtils', () => {
     it('should throw an error if name is invalid', async () => {
       const mockData = cloneDeep(mockFormData);
       mockData.name = 'app_name';
-      await validationSchema(t)
-        .isValid(mockData)
-        .then((valid) => expect(valid).toEqual(false));
-      await validationSchema(t)
-        .validate(mockData)
-        .catch((err) => {
-          expect(err.message).toBe(
-            'Name must consist of lower-case letters, numbers and hyphens. It must start with a letter and end with a letter or number.',
-          );
-        });
+      expect(await validationSchema(t).isValid(mockData)).toEqual(false);
+      await expect(validationSchema(t).validate(mockData)).rejects.toThrow(
+        'Name must consist of lower-case letters, numbers and hyphens. It must start with a letter and end with a letter or number.',
+      );
     });
 
     it('should throw an error when no application name given for create application option', async () => {
       const mockData = cloneDeep(mockFormData);
       mockData.application.selectedKey = CREATE_APPLICATION_KEY;
       mockData.application.name = '';
-      await validationSchema(t)
-        .isValid(mockData)
-        .then((valid) => expect(valid).toEqual(false));
-      await validationSchema(t)
-        .validate(mockData)
-        .catch((err) => {
-          expect(err.message).toBe('Required');
-        });
+      expect(await validationSchema(t).isValid(mockData)).toEqual(false);
+      await expect(validationSchema(t).validate(mockData)).rejects.toThrow('Required');
     });
 
     it('should not throw an error when no application group is chosen', async () => {
       const mockData = cloneDeep(mockFormData);
       mockData.application.selectedKey = UNASSIGNED_KEY;
       mockData.application.name = '';
-      await validationSchema(t)
-        .isValid(mockData)
-        .then((valid) => expect(valid).toEqual(true));
+      expect(await validationSchema(t).isValid(mockData)).toEqual(true);
     });
 
     it('should not throw an error when allowing either create or remove application', async () => {
       const mockData = cloneDeep(mockFormData);
       mockData.application.selectedKey = '';
       mockData.application.name = '';
-      await validationSchema(t)
-        .isValid(mockData)
-        .then((valid) => expect(valid).toEqual(true));
+      expect(await validationSchema(t).isValid(mockData)).toEqual(true);
     });
 
     it('should throw an error if path is invalid', async () => {
       const mockData = cloneDeep(mockFormData);
       mockData.route.path = 'path';
-      await validationSchema(t)
-        .isValid(mockData)
-        .then((valid) => expect(valid).toEqual(false));
-      await validationSchema(t)
-        .validate(mockData)
-        .catch((err) => {
-          expect(err.message).toBe('Path must start with /.');
-        });
+      expect(await validationSchema(t).isValid(mockData)).toEqual(false);
+      await expect(validationSchema(t).validate(mockData)).rejects.toThrow(
+        'Path must start with /.',
+      );
     });
 
     it('should throw an error if hostname is invalid', async () => {
       const mockData = cloneDeep(mockFormData);
       mockData.route.hostname = 'host_name';
-      await validationSchema(t)
-        .isValid(mockData)
-        .then((valid) => expect(valid).toEqual(false));
-      await validationSchema(t)
-        .validate(mockData)
-        .catch((err) => {
-          expect(err.message).toBe(
-            'Hostname must consist of lower-case letters, numbers, periods, and hyphens. It must start and end with a letter or number.',
-          );
-        });
+      expect(await validationSchema(t).isValid(mockData)).toEqual(false);
+      await expect(validationSchema(t).validate(mockData)).rejects.toThrow(
+        'Hostname must consist of lower-case letters, numbers, periods, and hyphens. It must start and end with a letter or number.',
+      );
     });
 
     it('should throw an error if request is greater than limit', async () => {
@@ -246,14 +199,10 @@ describe('ValidationUtils', () => {
       mockData.limits.cpu.requestUnit = 'm';
       mockData.limits.cpu.limit = 2;
       mockData.limits.cpu.limitUnit = 'm';
-      await validationSchema(t)
-        .isValid(mockData)
-        .then((valid) => expect(valid).toEqual(false));
-      await validationSchema(t)
-        .validate(mockData)
-        .catch((err) => {
-          expect(err.message).toBe('CPU limit must be greater than or equal to request.');
-        });
+      expect(await validationSchema(t).isValid(mockData)).toEqual(false);
+      await expect(validationSchema(t).validate(mockData)).rejects.toThrow(
+        'CPU limit must be greater than or equal to request.',
+      );
     });
 
     it('should throw an error if memory request is greater than limit', async () => {
@@ -262,55 +211,37 @@ describe('ValidationUtils', () => {
       mockData.limits.memory.requestUnit = 'Gi';
       mockData.limits.memory.limit = 3;
       mockData.limits.memory.limitUnit = 'Mi';
-      await validationSchema(t)
-        .isValid(mockData)
-        .then((valid) => expect(valid).toEqual(false));
-      await validationSchema(t)
-        .validate(mockData)
-        .catch((err) => {
-          expect(err.message).toBe('Memory limit must be greater than or equal to request.');
-        });
+      expect(await validationSchema(t).isValid(mockData)).toEqual(false);
+      await expect(validationSchema(t).validate(mockData)).rejects.toThrow(
+        'Memory limit must be greater than or equal to request.',
+      );
     });
 
     it('request should entered individual without validation of limit field', async () => {
       const mockData = cloneDeep(mockFormData);
       mockData.limits.cpu.request = 3;
       mockData.limits.cpu.requestUnit = 'm';
-      await validationSchema(t)
-        .isValid(mockData)
-        .then((valid) => expect(valid).toEqual(true));
-      await validationSchema(t)
-        .validate(mockData)
-        .catch((err) => {
-          expect(err.message).toBe('');
-        });
+      expect(await validationSchema(t).isValid(mockData)).toEqual(true);
+      await expect(validationSchema(t).validate(mockData)).resolves.toBeDefined();
     });
 
     it('should throw an error if containerPort is not an integer', async () => {
       const mockData = cloneDeep(mockFormData);
       mockData.build.strategy = 'Docker';
       mockData.route.unknownTargetPort = '808.5';
-      await validationSchema(t)
-        .isValid(mockData)
-        .then((valid) => expect(valid).toEqual(false));
-      await validationSchema(t)
-        .validate(mockData)
-        .catch((err) => {
-          expect(err.message).toBe('Port must be an integer.');
-        });
+      expect(await validationSchema(t).isValid(mockData)).toEqual(false);
+      await expect(validationSchema(t).validate(mockData)).rejects.toThrow(
+        'Port must be an integer.',
+      );
     });
 
     it('should not disable create button when buildStrategy is docker and no builderImage is available', async () => {
       const mockData = cloneDeep(mockFormData);
       mockData.image.selected = '';
       mockData.build.strategy = 'Docker';
-      await validationSchema(t)
-        .isValid(mockData)
-        .then((valid) => expect(valid).toEqual(true));
+      expect(await validationSchema(t).isValid(mockData)).toEqual(true);
       mockData.build.strategy = 'Source';
-      await validationSchema(t)
-        .isValid(mockData)
-        .then((valid) => expect(valid).toEqual(false));
+      expect(await validationSchema(t).isValid(mockData)).toEqual(false);
     });
 
     serverlessCommonTests(mockFormData, validationSchema(t));

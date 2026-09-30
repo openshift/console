@@ -11,10 +11,10 @@ import {
   CLUSTER_PIPELINE_NS,
 } from '@console/dev-console/src/const';
 import type { NormalizedBuilderImages } from '@console/dev-console/src/utils/imagestream-utils';
-import { getActiveNamespace } from '@console/internal/actions/ui';
 import { useAccessReview } from '@console/internal/components/utils';
 import { connectToFlags } from '@console/internal/reducers/connectToFlags';
 import type { FlagsObject } from '@console/internal/reducers/features';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { PipelineModel } from '../../../models/pipelines';
 import type { PipelineKind } from '../../../types/pipeline';
 import PipelineTemplate from './PipelineTemplate';
@@ -28,6 +28,7 @@ type PipelineSectionProps = {
 };
 
 const usePipelineAccessReview = (): boolean => {
+  const [activeNamespace] = useActiveNamespace();
   const canListPipelines = useAccessReview({
     group: PipelineModel.apiGroup,
     resource: PipelineModel.plural,
@@ -38,7 +39,7 @@ const usePipelineAccessReview = (): boolean => {
   const canCreatePipelines = useAccessReview({
     group: PipelineModel.apiGroup,
     resource: PipelineModel.plural,
-    namespace: getActiveNamespace(),
+    namespace: activeNamespace,
     verb: 'create',
   });
 

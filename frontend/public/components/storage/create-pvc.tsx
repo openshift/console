@@ -54,9 +54,7 @@ export const CreatePVCForm: FC<CreatePVCFormProps> = (props) => {
 
       const matchLabels = _.reduce(
         nameValuePairs,
-        (acc, [key, value]) => {
-          return key ? { ...acc, [key]: value } : acc;
-        },
+        (acc, [key, value]) => (key ? { ...acc, [key]: value } : acc),
         {},
       );
 

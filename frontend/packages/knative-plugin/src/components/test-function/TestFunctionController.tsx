@@ -37,18 +37,16 @@ const TestFunctionController: FC<TestFunctionControllerProps> = (props) => {
 
 type Props = TestFunctionControllerProps & ModalComponentProps;
 
-const TestFunctionModalProvider: OverlayComponent<Props> = (props) => {
-  return (
-    <Modal
-      isOpen
-      onClose={props.closeOverlay}
-      variant="small"
-      aria-labelledby="test-function-modal-title"
-    >
-      <TestFunctionController cancel={props.closeOverlay} close={props.closeOverlay} {...props} />
-    </Modal>
-  );
-};
+const TestFunctionModalProvider: OverlayComponent<Props> = (props) => (
+  <Modal
+    isOpen
+    onClose={props.closeOverlay}
+    variant="small"
+    aria-labelledby="test-function-modal-title"
+  >
+    <TestFunctionController cancel={props.closeOverlay} close={props.closeOverlay} {...props} />
+  </Modal>
+);
 
 export const useTestFunctionModalLauncher = (props: Props) => {
   const launcher = useOverlay();

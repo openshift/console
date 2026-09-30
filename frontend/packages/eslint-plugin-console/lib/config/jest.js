@@ -1,15 +1,24 @@
 const merge = require('merge');
 
 module.exports = {
-  env: {
-    'jest/globals': true,
-  },
+  overrides: [
+    {
+      files: ['**/__tests__/**/*.{tsx,ts,js}', '**/*.spec.{tsx,ts,js}'],
+      excludedFiles: ['**/*.cy.{ts,tsx,js}'],
 
-  plugins: ['jest'],
+      env: {
+        'jest/globals': true,
+      },
 
-  parserOptions: {
-    ecmaVersion: 2018,
-  },
+      plugins: ['testing-library', 'jest'],
 
-  rules: merge(require('./rules/jest')),
+      extends: ['plugin:testing-library/react', 'plugin:jest/recommended'],
+
+      parserOptions: {
+        ecmaVersion: 2021,
+      },
+
+      rules: merge(require('./rules/jest')),
+    },
+  ],
 };

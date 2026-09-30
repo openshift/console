@@ -15,8 +15,7 @@ FROM registry.ci.openshift.org/ocp/builder:rhel-9-base-nodejs-openshift-5.0 AS n
 ADD . .
 USER 0
 
-ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 \
-    CYPRESS_INSTALL_BINARY=0
+ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
 
 RUN container-entrypoint ./build-frontend.sh
 

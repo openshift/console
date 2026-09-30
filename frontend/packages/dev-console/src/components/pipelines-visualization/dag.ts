@@ -139,7 +139,6 @@ export class DAG {
       v.data.stage = this.names.length - t.length;
       orderedNodes.push(v.name);
     });
-    // eslint-disable-next-line no-console
     console.log(orderedNodes.join(' --> '));
     return orderedNodes.join(' --> ');
   }

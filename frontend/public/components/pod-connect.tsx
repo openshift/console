@@ -164,7 +164,6 @@ export const PodConnect: FC<PodConnectProps> = ({
         terminalRef.current?.onConnectionClosed(errorMsg);
         wsRef.current.destroy();
       })
-      // eslint-disable-next-line no-console
       .onerror((evt: any) => console.error(`WS error?! ${evt}`));
   }, [podName, namespace, isWindows, attach, activeContainer, t, isOpenShift]);
 
@@ -210,7 +209,6 @@ export const PodConnect: FC<PodConnectProps> = ({
     (container: string) => {
       const name = containers?.[container]?.name;
       if (!name) {
-        // eslint-disable-next-line no-console
         console.warn(`no name, how did that happen? ${container}`);
         return;
       }

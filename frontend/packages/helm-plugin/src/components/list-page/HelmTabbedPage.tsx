@@ -60,7 +60,7 @@ const HelmPage: FC<{ mock?: boolean; namespace: string | undefined }> = ({ mock,
 
   const menuActions: MenuActions = {
     helmRelease: {
-      label: isHelmVisible ? t('Helm Release') : undefined,
+      label: isHelmVisible ? t('Helm release') : undefined,
       onSelection: () => `/catalog/ns/${namespace || 'default'}?catalogType=HelmChart`,
     },
     projectHelmChartRepository: {
@@ -69,7 +69,7 @@ const HelmPage: FC<{ mock?: boolean; namespace: string | undefined }> = ({ mock,
     },
     helmChartInstallation: {
       label:
-        projectHelmChartCreateAccess || helmChartCreateAccess ? t('Helm chart URL') : undefined,
+        projectHelmChartCreateAccess || helmChartCreateAccess ? t('Helm Chart URL') : undefined,
       onSelection: () => `/helm/ns/${namespace || 'default'}/url-chart`,
     },
   };
@@ -77,8 +77,8 @@ const HelmPage: FC<{ mock?: boolean; namespace: string | undefined }> = ({ mock,
   const pages: Page[] = [
     {
       href: '',
-      // t('helm-plugin~Helm Releases')
-      nameKey: 'helm-plugin~Helm Releases',
+      // t('helm-plugin~Helm releases')
+      nameKey: 'helm-plugin~Helm releases',
       component: HelmReleaseList,
       pageData: {
         mock,
@@ -143,12 +143,10 @@ const PageContents: FC<{ noProjectsAvailable?: boolean }> = ({ noProjectsAvailab
 
 const PageContentsWithStartGuide = withStartGuide(PageContents);
 
-const HelmTabbedPage: FC = (props) => {
-  return (
-    <NamespacedPage variant={NamespacedPageVariants.light} hideApplications>
-      <PageContentsWithStartGuide {...props} />
-    </NamespacedPage>
-  );
-};
+const HelmTabbedPage: FC = (props) => (
+  <NamespacedPage variant={NamespacedPageVariants.light} hideApplications>
+    <PageContentsWithStartGuide {...props} />
+  </NamespacedPage>
+);
 
 export default HelmTabbedPage;

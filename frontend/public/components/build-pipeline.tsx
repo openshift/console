@@ -131,26 +131,22 @@ const BuildStageTimestamp: FC<BuildStageTimestampProps> = ({ timestamp }) => (
   </div>
 );
 
-const BuildStageName: FC<BuildStageNameProps> = ({ name }) => {
-  return (
-    <div title={name} className="build-pipeline__stage-name">
-      {name}
-    </div>
-  );
-};
+const BuildStageName: FC<BuildStageNameProps> = ({ name }) => (
+  <div title={name} className="build-pipeline__stage-name">
+    {name}
+  </div>
+);
 
-const BuildStage: FC<BuildStageProps> = ({ obj, stage }) => {
-  return (
-    <div className="build-pipeline__stage">
-      <div className="build-pipeline__stage-column">
-        <BuildStageName name={stage.name} />
-        <BuildAnimation status={stage.status} />
-        <JenkinsInputUrl obj={obj} stage={stage} />
-        <BuildStageTimestamp timestamp={stage.startTimeMillis.toString()} />
-      </div>
+const BuildStage: FC<BuildStageProps> = ({ obj, stage }) => (
+  <div className="build-pipeline__stage">
+    <div className="build-pipeline__stage-column">
+      <BuildStageName name={stage.name} />
+      <BuildAnimation status={stage.status} />
+      <JenkinsInputUrl obj={obj} stage={stage} />
+      <BuildStageTimestamp timestamp={stage.startTimeMillis.toString()} />
     </div>
-  );
-};
+  </div>
+);
 
 export const BuildPipeline: FC<BuildPipelineProps> = ({ obj }) => {
   const jenkinsStatus: any = getJenkinsStatus(obj);

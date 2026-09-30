@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import type { CatalogCategory } from '@console/dynamic-plugin-sdk/src';
 import type { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions';
-import { isModalOpen } from '@console/internal/components/modals';
+import { isModalOpen } from '@console/internal/components/modals/is-modal-open';
 import { useQueryParams } from '../../../hooks/useQueryParams';
 import PaneBody from '../../layout/PaneBody';
 import { setURLParams, updateURLParams, getCatalogTypeCounts } from '../utils/catalog-utils';
@@ -87,7 +87,6 @@ export const CatalogView: FC<CatalogViewProps> = ({
       try {
         _.set(attributeFilters, filterGroup, JSON.parse(attributeFilterParam));
       } catch (e) {
-        // eslint-disable-next-line no-console
         console.warn('could not update filters from url params: could not parse search params', e);
       }
     });
@@ -121,8 +120,11 @@ export const CatalogView: FC<CatalogViewProps> = ({
 
   const handleFilterChange = useCallback(
     (filterType, id, value) => {
-      const updatedFilters = _.set(activeFilters, [filterType, id, 'active'], value);
-      updateURLParams(filterType, getFilterSearchParam(updatedFilters[filterType]), navigate);
+      const updatedFilterGroup = {
+        ...activeFilters[filterType],
+        [id]: { ...activeFilters[filterType]?.[id], active: value },
+      };
+      updateURLParams(filterType, getFilterSearchParam(updatedFilterGroup), navigate);
     },
     [activeFilters, navigate],
   );
@@ -150,13 +152,15 @@ export const CatalogView: FC<CatalogViewProps> = ({
     [navigate],
   );
 
-  const handleShowAllToggle = useCallback((groupName) => {
-    setFilterGroupsShowAll((showAll) => {
-      const updatedShowAll = _.clone(showAll);
-      _.set(updatedShowAll, groupName, !(showAll[groupName] ?? false));
-      return updatedShowAll;
-    });
-  }, []);
+  const handleShowAllToggle = useCallback(
+    (groupName) => {
+      setFilterGroupsShowAll((showAll) => ({
+        ...showAll,
+        [groupName]: !(showAll[groupName] ?? false),
+      }));
+    },
+    [setFilterGroupsShowAll],
+  );
 
   const catalogCategories = useMemo<CatalogCategory[]>(() => {
     const allCategory = { id: ALL_CATEGORY, label: t('All items') };
@@ -167,10 +171,10 @@ export const CatalogView: FC<CatalogViewProps> = ({
     return [allCategory, ...sortedCategories, otherCategory];
   }, [categories, t]);
 
-  const categorizedIds = useMemo(() => categorize(items, catalogCategories), [
-    catalogCategories,
-    items,
-  ]);
+  const categorizedIds = useMemo(
+    () => categorize(items, catalogCategories),
+    [catalogCategories, items],
+  );
 
   const activeCategory = useMemo(
     () =>

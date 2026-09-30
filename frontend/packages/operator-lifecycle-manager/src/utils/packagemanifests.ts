@@ -19,9 +19,8 @@ const ArchitectureLabelSelectors = architectures.map(
     new LabelSelector({ matchLabels: { [`operatorframework.io/arch.${arch}`]: 'supported' } }),
 );
 
-const hasLabelWithPrefix = (obj: K8sResourceCommon, prefix: string) => {
-  return Object.keys(obj.metadata.labels || {}).some((label) => label.startsWith(prefix));
-};
+const hasLabelWithPrefix = (obj: K8sResourceCommon, prefix: string) =>
+  Object.keys(obj.metadata.labels || {}).some((label) => label.startsWith(prefix));
 
 const isOperatingSystemSupported = (pkg: PackageManifestKind) =>
   !hasLabelWithPrefix(pkg, OperatingSystemLabelPrefix) ||
@@ -46,7 +45,6 @@ const isStandaloneOperator = (pkg: PackageManifestKind) => {
   const { channels, defaultChannel } = pkg.status ?? {};
   // if a package does not have status.defaultChannel, exclude it so the app doesn't fail
   if (!defaultChannel) {
-    // eslint-disable-next-line no-console
     console.warn(
       `PackageManifest ${pkg.metadata.name} has no status.defaultChannel and has been excluded`,
     );

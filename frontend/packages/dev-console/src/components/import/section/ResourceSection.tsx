@@ -6,7 +6,6 @@ import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import { ImportStrategy } from '@console/git-service/src/types/git';
-import { getActiveNamespace } from '@console/internal/actions/ui';
 import { useAccessReview } from '@console/internal/components/utils';
 import { DeploymentModel, DeploymentConfigModel } from '@console/internal/models';
 import { connectToFlags } from '@console/internal/reducers/connectToFlags';
@@ -15,6 +14,7 @@ import { FLAG_KNATIVE_SERVING_SERVICE } from '@console/knative-plugin/src/const'
 import { ServiceModel } from '@console/knative-plugin/src/models';
 import type { SelectInputOption } from '@console/shared/src/components/formik-fields/field-types';
 import { SingleDropdownField } from '@console/shared/src/components/formik-fields/SingleDropdownField';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { FLAG_OPENSHIFT_DEPLOYMENTCONFIG } from '../../../const';
 import { Resources, ReadableResourcesNames } from '../import-types';
 import FormSection from './FormSection';
@@ -39,10 +39,11 @@ const ResourceSection: FC<ResourceSectionProps> = ({ flags }) => {
       setFieldValue('resources', resourceType);
   }, [resourceType, setFieldValue, values.formType]);
 
+  const [activeNamespace] = useActiveNamespace();
   const knativeServiceAccess = useAccessReview({
     group: ServiceModel.apiGroup,
     resource: ServiceModel.plural,
-    namespace: getActiveNamespace(),
+    namespace: activeNamespace,
     verb: 'create',
   });
   const canIncludeKnative =

@@ -14,11 +14,13 @@ const PodRingSet: FC<PodRingSetProps> = ({ obj, path }) => {
   const { podData, loadError, loaded } = usePodsWatcher(obj);
   const resourceKind = modelFor(obj?.kind);
 
-  const deploymentData = useMemo(() => {
-    return loaded && !loadError
-      ? getPodData({ ...podData, obj })
-      : { inProgressDeploymentData: null, completedDeploymentData: null };
-  }, [loadError, loaded, podData, obj]);
+  const deploymentData = useMemo(
+    () =>
+      loaded && !loadError
+        ? getPodData({ ...podData, obj })
+        : { inProgressDeploymentData: null, completedDeploymentData: null },
+    [loadError, loaded, podData, obj],
+  );
 
   const current = podData?.current && podData?.current.obj;
   const previous = podData?.previous && podData?.previous.obj;

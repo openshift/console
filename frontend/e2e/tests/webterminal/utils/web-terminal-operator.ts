@@ -1,4 +1,10 @@
-import KubernetesClient from '../../../clients/kubernetes-client';
+import KubernetesClient, { isAlreadyExists } from '../../../clients/kubernetes-client';
+
+/**
+ * User-preference key the console writes with the namespace a terminal last ran
+ * in (CLOUD_SHELL_NAMESPACE_CONFIG_USER_PREFERENCE_KEY in webterminal-plugin).
+ */
+export const TERMINAL_NAMESPACE_PREFERENCE = 'console.terminal.namespace';
 
 const SUBSCRIPTION_GROUP = 'operators.coreos.com';
 const SUBSCRIPTION_VERSION = 'v1alpha1';
@@ -21,9 +27,17 @@ const webTerminalSubscription = {
   },
 };
 
+/**
+ * Idempotent: several web terminal suites, in more than one Playwright project,
+ * call this against the same cluster. It always waits for the controller to be
+ * ready — an existing Subscription does not mean the operator is usable yet,
+ * and until it is the console renders "Restricted access" instead of the
+ * terminal.
+ */
 export async function ensureWebTerminalOperatorInstalled(
   k8sClient: KubernetesClient,
 ): Promise<void> {
+  let subscriptionExists = false;
   try {
     await k8sClient.getCustomResource(
       SUBSCRIPTION_GROUP,
@@ -32,18 +46,28 @@ export async function ensureWebTerminalOperatorInstalled(
       SUBSCRIPTION_PLURAL,
       'web-terminal',
     );
-    return;
+    subscriptionExists = true;
   } catch {
-    // Subscription doesn't exist — create it
+    // Subscription doesn't exist — create it below.
   }
 
-  await k8sClient.createCustomResource(
-    SUBSCRIPTION_GROUP,
-    SUBSCRIPTION_VERSION,
-    OPERATOR_NAMESPACE,
-    SUBSCRIPTION_PLURAL,
-    webTerminalSubscription,
-  );
+  if (!subscriptionExists) {
+    try {
+      await k8sClient.createCustomResource(
+        SUBSCRIPTION_GROUP,
+        SUBSCRIPTION_VERSION,
+        OPERATOR_NAMESPACE,
+        SUBSCRIPTION_PLURAL,
+        webTerminalSubscription,
+      );
+    } catch (err) {
+      // Another suite can create the Subscription between the read above and
+      // this write, so treat "already exists" as success.
+      if (!isAlreadyExists(err)) {
+        throw err;
+      }
+    }
+  }
 
   const maxWaitMs = 300_000;
   const pollIntervalMs = 10_000;
@@ -64,41 +88,4 @@ export async function ensureWebTerminalOperatorInstalled(
   }
 
   throw new Error('Web Terminal operator controller pod not ready within 5 minutes');
-}
-
-const CSV_PLURAL = 'clusterserviceversions';
-
-export async function uninstallWebTerminalOperator(
-  k8sClient: KubernetesClient,
-): Promise<void> {
-  try {
-    await k8sClient.deleteCustomResource(
-      SUBSCRIPTION_GROUP,
-      SUBSCRIPTION_VERSION,
-      OPERATOR_NAMESPACE,
-      SUBSCRIPTION_PLURAL,
-      'web-terminal',
-    );
-
-    const csvs = await k8sClient.listCustomResources(
-      SUBSCRIPTION_GROUP,
-      SUBSCRIPTION_VERSION,
-      OPERATOR_NAMESPACE,
-      CSV_PLURAL,
-    );
-    const webTerminalCsv = csvs.find(
-      (csv) => (csv as any).metadata?.name?.startsWith('web-terminal'),
-    );
-    if (webTerminalCsv) {
-      await k8sClient.deleteCustomResource(
-        SUBSCRIPTION_GROUP,
-        SUBSCRIPTION_VERSION,
-        OPERATOR_NAMESPACE,
-        CSV_PLURAL,
-        (webTerminalCsv as any).metadata.name,
-      );
-    }
-  } catch (err) {
-    console.warn('[Cleanup] Failed to uninstall Web Terminal operator:', err);
-  }
 }

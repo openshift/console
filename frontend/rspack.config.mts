@@ -1,16 +1,19 @@
-import { WebpackSharedConfig, WebpackSharedObject } from '@openshift/dynamic-plugin-sdk-webpack';
 import {
+  type Configuration,
   CopyRspackPlugin,
   CssExtractRspackPlugin,
   LightningCssMinimizerRspackPlugin,
-  SwcJsMinimizerRspackPlugin,
-  NormalModuleReplacementPlugin,
-  Configuration,
   NormalModule,
+  NormalModuleReplacementPlugin,
   ProgressPlugin,
+  type Provides,
+  type ProvidesObject,
+  type Shared,
+  type SharedConfig,
+  type SharedObject,
   sharing,
+  SwcJsMinimizerRspackPlugin,
 } from '@rspack/core';
-import { RsdoctorRspackPlugin } from '@rsdoctor/rspack-plugin';
 import { TsCheckerRspackPlugin } from 'ts-checker-rspack-plugin';
 import { ReactRefreshRspackPlugin } from '@rspack/plugin-react-refresh';
 import * as _ from 'lodash';
@@ -73,50 +76,50 @@ const dynamicModuleMaps = resolveDynamicModuleMaps(dynamicModulePackageSpecs, [
 /**
  * Get webpack shared module configuration to use by Console application.
  *
- * This includes Console provided {@link sharedPluginModules} and shared dynamic modules
- * resolved from {@link dynamicModulePackageSpecs}.
+ * This includes Console provided {@link sharedPluginModules} only. Shared dynamic modules
+ * resolved from {@link dynamicModulePackageSpecs} are provided separately, see
+ * {@link getProvidedDynamicModules} for why they are not consumed by Console itself.
  *
  * Note: shared modules contributed by Console application should be marked with `eager: true`
  * to ensure these modules are part of the initial chunk.
  *
  * @see https://webpack.js.org/plugins/module-federation-plugin/#sharing-hints
  */
-const getWebpackSharedModules = () => {
-  const consoleProvidedSharedModules = sharedPluginModules.reduce<WebpackSharedObject>(
-    (acc, moduleName) => {
-      const { singleton } = getSharedModuleMetadata(moduleName);
-      const moduleConfig: WebpackSharedConfig = { singleton, eager: true };
+const getWebpackSharedModules = (): Shared =>
+  sharedPluginModules.reduce<SharedObject>((acc, moduleName) => {
+    const { singleton } = getSharedModuleMetadata(moduleName);
+    const moduleConfig: SharedConfig = { singleton, eager: true };
 
-      moduleConfig.import = getSharedModuleImport(moduleName);
+    moduleConfig.import = getSharedModuleImport(moduleName);
 
-      acc[moduleName] = moduleConfig;
-      return acc;
-    },
-    {},
-  );
+    acc[moduleName] = moduleConfig;
+    return acc;
+  }, {});
 
-  const sharedDynamicModules = Object.entries(dynamicModuleMaps).reduce<WebpackSharedObject>(
+/**
+ * Get PatternFly dynamic module configuration to provide to Console plugins, without Console
+ * itself consuming them.
+ *
+ * Unlike {@link getWebpackSharedModules}, this uses `sharing.ProvideSharedPlugin` directly so
+ * Console's own imports of these components are not rewritten into shared-scope lookups and
+ * cannot fail from a PatternFly version mismatch with a plugin.
+ */
+const getProvidedDynamicModules = (): Provides<false> =>
+  Object.entries(dynamicModuleMaps).reduce<ProvidesObject<false>>(
     (acc, [moduleName, dynamicModuleMap]) => {
-      const moduleConfig: WebpackSharedConfig = { eager: true };
-
       // eslint-disable-next-line @typescript-eslint/no-require-imports
       const moduleVersion = require(`${moduleName}/package.json`).version;
-
-      if (semver.valid(moduleVersion)) {
-        moduleConfig.version = moduleVersion;
-      }
+      const version = semver.valid(moduleVersion) ? moduleVersion : undefined;
 
       Object.values(dynamicModuleMap).forEach((request) => {
-        acc[`${moduleName}/${request}`] = moduleConfig;
+        const shareKey = `${moduleName}/${request}`;
+        acc[shareKey] = { shareKey, eager: true, version };
       });
 
       return acc;
     },
     {},
   );
-
-  return { ...consoleProvidedSharedModules, ...sharedDynamicModules };
-};
 
 const config: Configuration = {
   entry: {
@@ -130,8 +133,8 @@ const config: Configuration = {
   },
   performance: {
     // The maximum size in MiB of the entrypoint and generated files permitted by analyze.sh
-    maxEntrypointSize: 8.6 * 1048576,
-    maxAssetSize: 3.8 * 1048576, // the size of the monaco-editor chunk
+    maxEntrypointSize: 8.3 * 1048576,
+    maxAssetSize: 3.71 * 1048576, // the size of the monaco-editor chunk
   },
   devServer: {
     hot: HOT_RELOAD !== 'false',
@@ -287,6 +290,10 @@ const config: Configuration = {
       shared: getWebpackSharedModules(),
       enhanced: false // retains webpack 5 SharePlugin behavior as opposed to MF 2.0
     }),
+    new sharing.ProvideSharedPlugin({
+      provides: getProvidedDynamicModules(),
+      enhanced: false,
+    }),
     new NormalModuleReplacementPlugin(/^lodash$/, 'lodash-es'),
     new TsCheckerRspackPlugin({
       typescript: {
@@ -368,25 +375,34 @@ if (CHECK_CYCLES === 'true') {
 }
 
 if (ANALYZE_BUNDLE === 'true') {
-  config.plugins.push(
-    new RsdoctorRspackPlugin({
-      features: {
-        loader: false // doesn't work: "Load data failed, please try again"
-      },
-      output: {
-        mode: 'brief',
-        options: {
-          type: ['html'],
-          htmlOptions: {
-            writeDataJson: false,
-            reportHtmlName: 'report.html',
+  // lazy imported to avoid @rspack/resolver causing issues on unsupported architectures (ppc64/s390x)
+  try {
+    const { RsdoctorRspackPlugin } = require('@rsdoctor/rspack-plugin');
+    config.plugins.push(
+      new RsdoctorRspackPlugin({
+        features: {
+          loader: false // doesn't work: "Load data failed, please try again"
+        },
+        output: {
+          mode: 'brief',
+          options: {
+            type: ['html'],
+            htmlOptions: {
+              writeDataJson: false,
+              reportHtmlName: 'report.html',
+            },
           },
         },
-      },
-      // Don't open report in default browser automatically
-      disableClientServer: true,
-    }),
-  );
+        // Don't open report in default browser automatically
+        disableClientServer: true,
+      }),
+    );
+    } catch (err) {
+    console.warn(
+        'Failed to load @rsdoctor/rspack-plugin. Bundle analysis will not be available.',
+        err,
+      );
+    }
 
   // Only fail the build due to excess bundle size if running analyze.sh
   // This way, the other tests (frontend, e2e) can still provide feedback in CI
@@ -400,8 +416,6 @@ if (NODE_ENV === 'production') {
   config.devtool = 'source-map';
   config.output.filename = '[name]-bundle-[chunkhash].min.js';
   config.output.chunkFilename = '[name]-chunk-[chunkhash].min.js';
-  // Causes error in --mode=production due to scope hoisting
-  config.optimization.concatenateModules = false;
   config.stats = 'normal';
 }
 

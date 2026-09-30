@@ -34,9 +34,8 @@ export const useUser = () => {
   const userResource = useConsoleSelector(getUserResource);
 
   // Fetch user resource from k8s API
-  const [userResourceData, userResourceLoaded, userResourceError] = useK8sWatchResource<UserKind>(
-    userWatchResource,
-  );
+  const [userResourceData, userResourceLoaded, userResourceError] =
+    useK8sWatchResource<UserKind>(userWatchResource);
 
   // Update Redux when user resource is loaded
   useEffect(() => {

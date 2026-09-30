@@ -10,10 +10,20 @@ For current development version of Console, use `4.x.0-prerelease.n` packages.
 For older 1.x plugin SDK packages, refer to "OpenShift Console Versions vs SDK Versions" compatibility
 table in [Console dynamic plugins README](./README.md).
 
-## 4.23.0-prerelease.5 - TBD
+## 5.1.0-prerelease.1 - TBD
+
+- Removed `immutable` dependency from the redux store and from the package ([CONSOLE-5001], [#17024])
+- Added `ConsoleDataView` component, related utilities for `ConsoleDataView`, and `definitionFor` ([CONSOLE-5131], [#17307])
+
+## 4.23.0-prerelease.6 - TBD
+
+- Add an `onCancel` prop to `ResourceYAMLEditor` to allow overriding the default cancel behavior ([CONSOLE-5438], [#16941])
+
+## 4.23.0-prerelease.5 - 2026-08-04
 
 - **Deprecated**: The use of multiple predicates in the `useResolvedExtensions` hook is deprecated ([#16115], [CONSOLE-5065])
 - **Type breaking**: Replace `ExtensionTypeGuard` with `ExtensionPredicate` from `@openshift/dynamic-plugin-sdk` ([#16115], [CONSOLE-5065])
+- Add minimize action for toast notifications via new `ToastOptions.minimizable`, `ToastOptions.actions[].minimize`, and `ToastContextValues.minimizeToast` ([CONSOLE-5424], [#16762])
 
 ## 4.23.0-prerelease.4 - 2026-07-14
 
@@ -240,18 +250,22 @@ table in [Console dynamic plugins README](./README.md).
 [CONSOLE-4951]: https://issues.redhat.com/browse/CONSOLE-4951
 [CONSOLE-4954]: https://issues.redhat.com/browse/CONSOLE-4954
 [CONSOLE-4990]: https://issues.redhat.com/browse/CONSOLE-4990
+[CONSOLE-5001]: https://issues.redhat.com/browse/CONSOLE-5001
 [CONSOLE-5039]: https://issues.redhat.com/browse/CONSOLE-5039
 [CONSOLE-5050]: https://issues.redhat.com/browse/CONSOLE-5050
 [CONSOLE-5063]: https://issues.redhat.com/browse/CONSOLE-5063
 [CONSOLE-5065]: https://issues.redhat.com/browse/CONSOLE-5065
 [CONSOLE-5093]: https://issues.redhat.com/browse/CONSOLE-5093
 [CONSOLE-5108]: https://issues.redhat.com/browse/CONSOLE-5108
+[CONSOLE-5131]: https://issues.redhat.com/browse/CONSOLE-5131
 [CONSOLE-5273]: https://issues.redhat.com/browse/CONSOLE-5273
 [CONSOLE-5315]: https://issues.redhat.com/browse/CONSOLE-5315
 [CONSOLE-5355]: https://issues.redhat.com/browse/CONSOLE-5355
 [CONSOLE-5356]: https://issues.redhat.com/browse/CONSOLE-5356
 [CONSOLE-5361]: https://issues.redhat.com/browse/CONSOLE-5361
 [CONSOLE-5415]: https://issues.redhat.com/browse/CONSOLE-5415
+[CONSOLE-5424]: https://issues.redhat.com/browse/CONSOLE-5424
+[CONSOLE-5438]: https://issues.redhat.com/browse/CONSOLE-5438
 [OCPBUGS-19048]: https://issues.redhat.com/browse/OCPBUGS-19048
 [OCPBUGS-30077]: https://issues.redhat.com/browse/OCPBUGS-30077
 [OCPBUGS-31355]: https://issues.redhat.com/browse/OCPBUGS-31355
@@ -346,3 +360,7 @@ table in [Console dynamic plugins README](./README.md).
 [#16636]: https://github.com/openshift/console/pull/16636
 [#16726]: https://github.com/openshift/console/pull/16726
 [#16750]: https://github.com/openshift/console/pull/16750
+[#16762]: https://github.com/openshift/console/pull/16762
+[#16941]: https://github.com/openshift/console/pull/16941
+[#17024]: https://github.com/openshift/console/pull/17024
+[#17307]: https://github.com/openshift/console/pull/17307

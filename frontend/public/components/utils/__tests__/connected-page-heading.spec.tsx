@@ -1,6 +1,6 @@
 import { screen, waitFor } from '@testing-library/react';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
-import { testResourceInstance } from '../../../../__mocks__/k8sResourcesMocks';
+import { testResourceInstance } from '../../__tests__/data/k8sResourcesMocks';
 import { ConnectedPageHeading } from '../headings';
 
 describe('ConnectedPageHeading', () => {

@@ -38,20 +38,20 @@ const useK8sWatchResourceMock = useK8sWatchResource as jest.Mock;
 const isMachineConfigPoolListWatch = (resource: unknown): boolean =>
   Boolean(
     resource &&
-      typeof resource === 'object' &&
-      'isList' in resource &&
-      (resource as { isList?: boolean }).isList &&
-      (resource as { groupVersionKind?: { kind?: string } }).groupVersionKind?.kind ===
-        MachineConfigPoolModel.kind,
+    typeof resource === 'object' &&
+    'isList' in resource &&
+    (resource as { isList?: boolean }).isList &&
+    (resource as { groupVersionKind?: { kind?: string } }).groupVersionKind?.kind ===
+      MachineConfigPoolModel.kind,
   );
 
 const isMachineWatch = (resource: unknown): boolean =>
   Boolean(
     resource &&
-      typeof resource === 'object' &&
-      !('isList' in resource && (resource as { isList?: boolean }).isList) &&
-      (resource as { groupVersionKind?: { kind?: string } }).groupVersionKind?.kind ===
-        MachineModel.kind,
+    typeof resource === 'object' &&
+    !('isList' in resource && (resource as { isList?: boolean }).isList) &&
+    (resource as { groupVersionKind?: { kind?: string } }).groupVersionKind?.kind ===
+      MachineModel.kind,
   );
 
 describe('NodeMachine', () => {

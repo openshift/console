@@ -1,7 +1,7 @@
 import { healthChecksProbeInitialData } from '../../health-checks/health-checks-probe-utils';
-import { serverlessInitialValues } from '../__mocks__/serverless-mock';
 import type { DeployImageFormData } from '../import-types';
 import { Resources } from '../import-types';
+import { serverlessInitialValues } from './data/serverless-mock';
 
 export const defaultData: DeployImageFormData = {
   project: {
@@ -633,8 +633,7 @@ export const internalImageData: DeployImageFormData = {
             name: 'rhoar-nodejs/nodejs-10-webapp',
             release: '1',
             summary: 'Platform for building Modern Web Applications that use Node.js',
-            url:
-              'https://access.redhat.com/containers/#/registry.access.redhat.com/rhoar-nodejs/nodejs-10-webapp/images/10.16.3-1',
+            url: 'https://access.redhat.com/containers/#/registry.access.redhat.com/rhoar-nodejs/nodejs-10-webapp/images/10.16.3-1',
             usage: 's2i build . rhoar-nodejs/nodejs-10 myapp',
             'vcs-ref': '78097b3d9251ae23fd9d381fcfd9e9ed30db34dd',
             'vcs-type': 'git',
@@ -689,8 +688,7 @@ export const internalImageData: DeployImageFormData = {
             name: 'rhoar-nodejs/nodejs-10-webapp',
             release: '1',
             summary: 'Platform for building Modern Web Applications that use Node.js',
-            url:
-              'https://access.redhat.com/containers/#/registry.access.redhat.com/rhoar-nodejs/nodejs-10-webapp/images/10.16.3-1',
+            url: 'https://access.redhat.com/containers/#/registry.access.redhat.com/rhoar-nodejs/nodejs-10-webapp/images/10.16.3-1',
             usage: 's2i build . rhoar-nodejs/nodejs-10 myapp',
             'vcs-ref': '78097b3d9251ae23fd9d381fcfd9e9ed30db34dd',
             'vcs-type': 'git',

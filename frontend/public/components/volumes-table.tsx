@@ -32,22 +32,18 @@ const removeVolume = (
   removeVolumeModal: ModalCallback,
   kind: K8sKind,
   obj: K8sResourceKind,
-): KebabOption => {
-  return {
-    // t('public~Remove volume')
-    labelKey: 'public~Remove volume',
-    callback: () => removeVolumeModal(),
-    accessReview: asAccessReview(kind, obj, 'patch'),
-  };
-};
+): KebabOption => ({
+  // t('public~Remove volume')
+  labelKey: 'public~Remove volume',
+  callback: () => removeVolumeModal(),
+  accessReview: asAccessReview(kind, obj, 'patch'),
+});
 
-const getPodTemplate = (resource: K8sResourceKind): PodTemplate => {
-  return resource.kind === 'Pod' ? (resource as PodKind) : resource.spec.template;
-};
+const getPodTemplate = (resource: K8sResourceKind): PodTemplate =>
+  resource.kind === 'Pod' ? (resource as PodKind) : resource.spec.template;
 
-const anyContainerWithVolumeMounts = (containers: ContainerSpec[]) => {
-  return !!_.findKey(containers, 'volumeMounts');
-};
+const anyContainerWithVolumeMounts = (containers: ContainerSpec[]) =>
+  !!_.findKey(containers, 'volumeMounts');
 
 const getRowVolumeData = (resource: K8sResourceKind): RowVolumeData[] => {
   const pod: PodTemplate = getPodTemplate(resource);
@@ -97,8 +93,8 @@ const volumeRowColumnClasses = [
   KEBAB_COLUMN_CLASS,
 ];
 
-const VolumesTableRows = ({ componentProps: { data } }) => {
-  return _.map(data, (volume: RowVolumeData) => {
+const VolumesTableRows = ({ componentProps: { data } }) =>
+  _.map(data, (volume: RowVolumeData) => {
     const { container, mountPath, name, readOnly, resource, subPath, volumeDetail } = volume;
     const pod = getPodTemplate(resource);
     const podVolume = pod.spec?.volumes?.find((v) => name === v.name);
@@ -164,7 +160,6 @@ const VolumesTableRows = ({ componentProps: { data } }) => {
       },
     ];
   });
-};
 
 export const VolumesTable = (props) => {
   const { t } = useTranslation('public');

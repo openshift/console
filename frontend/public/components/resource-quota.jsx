@@ -56,7 +56,7 @@ import { useAccessReview } from './utils/rbac';
 import { ResourceLink } from './utils/resource-link';
 import { Selector } from './utils/selector';
 import { LoadingBox } from './utils/status-box';
-import { convertToBaseValue } from './utils/units';
+import { convertToBaseValue, humanizeBinaryBytes } from './utils/units';
 
 const isClusterQuota = (quota) => !quota.metadata.namespace;
 
@@ -79,6 +79,22 @@ const getQuotaResourceTypes = (quota) => {
     ? _.get(quota, 'spec.quota.hard')
     : _.get(quota, 'spec.hard');
   return _.keys(specHard).sort();
+};
+
+const isBinaryResourceType = (resourceType) =>
+  resourceType.includes('memory') ||
+  resourceType.includes('storage') ||
+  resourceType.includes('ephemeral-storage');
+
+const formatResourceValue = (value, resourceType) => {
+  if (value === null || value === undefined) {
+    return DASH;
+  }
+  if (isBinaryResourceType(resourceType)) {
+    const numericValue = convertToBaseValue(value) ?? 0;
+    return humanizeBinaryBytes(numericValue).string;
+  }
+  return value;
 };
 
 export const getACRQResourceUsage = (quota, resourceType, namespace) => {
@@ -189,9 +205,9 @@ export const ResourceUsageRow = ({ quota, resourceType, namespace = undefined })
         <Td visibility={['hidden', 'visibleOnMd']} className="co-resource-quota-icon">
           <UsageIcon percent={percent.namespace} />
         </Td>
-        <Td>{used.namespace}</Td>
-        <Td>{totalUsed}</Td>
-        <Td>{max}</Td>
+        <Td>{formatResourceValue(used.namespace, resourceType)}</Td>
+        <Td>{formatResourceValue(totalUsed, resourceType)}</Td>
+        <Td>{formatResourceValue(max, resourceType)}</Td>
       </Tr>
     );
   }
@@ -203,15 +219,13 @@ export const ResourceUsageRow = ({ quota, resourceType, namespace = undefined })
       <Td visibility={['hidden', 'visibleOnMd']} className="co-resource-quota-icon">
         <UsageIcon percent={percent} />
       </Td>
-      <Td>{used}</Td>
-      <Td>{max}</Td>
+      <Td>{formatResourceValue(used, resourceType)}</Td>
+      <Td>{formatResourceValue(max, resourceType)}</Td>
     </Tr>
   );
 };
 
-export const QuotaScopesInline = ({ scopes }) => {
-  return <span>({scopes.join(', ')})</span>;
-};
+export const QuotaScopesInline = ({ scopes }) => <span>({scopes.join(', ')})</span>;
 
 const QuotaScopesList = ({ scopes }) => {
   const { t } = useTranslation('public');
@@ -368,8 +382,8 @@ const Details = ({ obj: rq }) => {
   );
 };
 
-const getResourceQuotaDataViewRows = (data, columns, namespace) => {
-  return data.map(({ obj }) => {
+const getResourceQuotaDataViewRows = (data, columns, namespace) =>
+  data.map(({ obj }) => {
     const { metadata, spec } = obj;
     const resourceKind = referenceFor(obj);
 
@@ -451,10 +465,9 @@ const getResourceQuotaDataViewRows = (data, columns, namespace) => {
       };
     });
   });
-};
 
-const getAppliedClusterResourceQuotaDataViewRows = (data, columns, namespace) => {
-  return data.map(({ obj }) => {
+const getAppliedClusterResourceQuotaDataViewRows = (data, columns, namespace) =>
+  data.map(({ obj }) => {
     const { metadata, spec } = obj;
 
     // Calculate resources at quota
@@ -510,7 +523,6 @@ const getAppliedClusterResourceQuotaDataViewRows = (data, columns, namespace) =>
       };
     });
   });
-};
 
 const useResourceQuotaColumns = () => {
   const { t } = useTranslation('public');
@@ -701,106 +713,108 @@ const quotaType = (quota) => {
 // Split each resource quota into one row per subject
 const flatten = (resources) => _.flatMap(resources, (resource) => _.compact(resource.data));
 
-export const ResourceQuotasPage = connectToFlags(FLAGS.OPENSHIFT)(
-  ({ namespace, flags, mock, showTitle }) => {
-    const { t } = useTranslation('public');
-    const isKubevirtPluginActive = useIsKubevirtPluginActive();
-    const quotasFeature = useFlag('KUBEVIRT_QUOTAS');
+export const ResourceQuotasPage = connectToFlags(FLAGS.OPENSHIFT)(({
+  namespace,
+  flags,
+  mock,
+  showTitle,
+}) => {
+  const { t } = useTranslation('public');
+  const isKubevirtPluginActive = useIsKubevirtPluginActive();
+  const quotasFeature = useFlag('KUBEVIRT_QUOTAS');
 
-    const resources = [{ kind: 'ResourceQuota', namespaced: true }];
-    let rowFilters = null;
+  const resources = [{ kind: 'ResourceQuota', namespaced: true }];
+  let rowFilters = null;
 
-    if (flagPending(flags[FLAGS.OPENSHIFT])) {
-      return <LoadingBox />;
+  if (flagPending(flags[FLAGS.OPENSHIFT])) {
+    return <LoadingBox />;
+  }
+  if (flags[FLAGS.OPENSHIFT]) {
+    if (!namespace) {
+      resources.push({
+        kind: referenceForModel(ClusterResourceQuotaModel),
+        namespaced: false,
+        optional: true,
+      });
+    } else {
+      resources.push({
+        kind: referenceForModel(AppliedClusterResourceQuotaModel),
+        namespaced: true,
+        namespace,
+        optional: true,
+      });
     }
-    if (flags[FLAGS.OPENSHIFT]) {
-      if (!namespace) {
-        resources.push({
-          kind: referenceForModel(ClusterResourceQuotaModel),
-          namespaced: false,
-          optional: true,
-        });
-      } else {
-        resources.push({
-          kind: referenceForModel(AppliedClusterResourceQuotaModel),
-          namespaced: true,
-          namespace,
-          optional: true,
-        });
+
+    rowFilters = [
+      {
+        filterGroupName: t('Role'),
+        type: 'role-kind',
+        reducer: quotaType,
+        items: [
+          {
+            id: 'cluster',
+            title: t('Cluster-wide {{resource}}', {
+              resource: t(ResourceQuotaModel.labelPluralKey),
+            }),
+          },
+          {
+            id: 'namespace',
+            title: t('Namespace {{resource}}', {
+              resource: t(ResourceQuotaModel.labelPluralKey),
+            }),
+          },
+        ],
+      },
+    ];
+  }
+  const createNS = namespace || 'default';
+  const accessReview = {
+    model: ResourceQuotaModel,
+    namespace: createNS,
+  };
+  return (
+    <MultiListPage
+      canCreate
+      createAccessReview={accessReview}
+      createButtonText={t('Create ResourceQuota')}
+      createProps={{ to: `/k8s/ns/${createNS}/resourcequotas/~new` }}
+      ListComponent={ResourceQuotasList}
+      resources={resources}
+      label={t(ResourceQuotaModel.labelPluralKey)}
+      namespace={namespace}
+      flatten={flatten}
+      title={t(ResourceQuotaModel.labelPluralKey)}
+      helpText={
+        <div className="pf-v6-u-text-color-subtle pf-v6-u-mt-sm">
+          {t(
+            'Manage project capacity by limiting the number of objects and total compute resources available.',
+          )}
+          {isKubevirtPluginActive && (
+            <Trans t={t} ns="public">
+              {' '}
+              Use standard quotas for general container workloads. If you are running OpenShift
+              Virtualization, it is recommended to use{' '}
+              <Link
+                to={
+                  quotasFeature
+                    ? '/k8s/all-namespaces/quotas'
+                    : '/k8s/all-namespaces/virtualization-overview/settings/cluster'
+                }
+              >
+                Application-Aware Quota
+              </Link>{' '}
+              to handle VM infrastructure overhead and live migrations without service interruption.
+            </Trans>
+          )}
+        </div>
       }
-
-      rowFilters = [
-        {
-          filterGroupName: t('Role'),
-          type: 'role-kind',
-          reducer: quotaType,
-          items: [
-            {
-              id: 'cluster',
-              title: t('Cluster-wide {{resource}}', {
-                resource: t(ResourceQuotaModel.labelPluralKey),
-              }),
-            },
-            {
-              id: 'namespace',
-              title: t('Namespace {{resource}}', {
-                resource: t(ResourceQuotaModel.labelPluralKey),
-              }),
-            },
-          ],
-        },
-      ];
-    }
-    const createNS = namespace || 'default';
-    const accessReview = {
-      model: ResourceQuotaModel,
-      namespace: createNS,
-    };
-    return (
-      <MultiListPage
-        canCreate
-        createAccessReview={accessReview}
-        createButtonText={t('Create ResourceQuota')}
-        createProps={{ to: `/k8s/ns/${createNS}/resourcequotas/~new` }}
-        ListComponent={ResourceQuotasList}
-        resources={resources}
-        label={t(ResourceQuotaModel.labelPluralKey)}
-        namespace={namespace}
-        flatten={flatten}
-        title={t(ResourceQuotaModel.labelPluralKey)}
-        helpText={
-          <div className="pf-v6-u-text-color-subtle pf-v6-u-mt-sm">
-            {t(
-              'Manage project capacity by limiting the number of objects and total compute resources available.',
-            )}
-            {isKubevirtPluginActive && (
-              <Trans t={t} ns="public">
-                {' '}
-                Use standard quotas for general container workloads. If you are running OpenShift
-                Virtualization, it is recommended to use{' '}
-                <Link
-                  to={
-                    quotasFeature
-                      ? '/k8s/all-namespaces/quotas'
-                      : '/k8s/all-namespaces/virtualization-overview/settings/cluster'
-                  }
-                >
-                  Application-Aware Quota
-                </Link>{' '}
-                to handle VM infrastructure overhead and live migrations without service
-                interruption.
-              </Trans>
-            )}
-          </div>
-        }
-        rowFilters={rowFilters}
-        mock={mock}
-        showTitle={showTitle}
-        omitFilterToolbar
-      />
-    );
-  },
-);
+      rowFilters={rowFilters}
+      mock={mock}
+      showTitle={showTitle}
+      omitFilterToolbar
+    />
+  );
+});
 
 export const AppliedClusterResourceQuotasPage = ({ namespace, mock, showTitle }) => {
   const { t } = useTranslation('public');
@@ -828,16 +842,14 @@ export const AppliedClusterResourceQuotasPage = ({ namespace, mock, showTitle })
   );
 };
 
-export const ResourceQuotasDetailsPage = (props) => {
-  return <DetailsPage {...props} pages={[navFactory.details(Details), navFactory.editYaml()]} />;
-};
+export const ResourceQuotasDetailsPage = (props) => (
+  <DetailsPage {...props} pages={[navFactory.details(Details), navFactory.editYaml()]} />
+);
 
-export const AppliedClusterResourceQuotasDetailsPage = (props) => {
-  return (
-    <DetailsPage
-      {...props}
-      kind={appliedClusterQuotaReference}
-      pages={[navFactory.details(Details), navFactory.editYaml()]}
-    />
-  );
-};
+export const AppliedClusterResourceQuotasDetailsPage = (props) => (
+  <DetailsPage
+    {...props}
+    kind={appliedClusterQuotaReference}
+    pages={[navFactory.details(Details), navFactory.editYaml()]}
+  />
+);

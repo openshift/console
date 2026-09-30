@@ -5,10 +5,8 @@ import { useShowOperandsInAllNamespaces } from './useShowOperandsInAllNamespaces
 
 export const ShowOperandsInAllNamespacesRadioGroup: FC = () => {
   const { t } = useTranslation('olm');
-  const [
-    showOperandsInAllNamespaces,
-    setShowOperandsInAllNamespaces,
-  ] = useShowOperandsInAllNamespaces();
+  const [showOperandsInAllNamespaces, setShowOperandsInAllNamespaces] =
+    useShowOperandsInAllNamespaces();
   return (
     <Form isHorizontal>
       <FormGroup

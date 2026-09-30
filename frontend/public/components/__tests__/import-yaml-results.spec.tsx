@@ -7,8 +7,8 @@ import {
 } from '../import-yaml-results';
 
 describe('ImportYAMLResults: test component layout', () => {
-  const renderImportYAMLResults = () => {
-    return renderWithProviders(
+  const renderImportYAMLResults = () =>
+    renderWithProviders(
       <ImportYAMLResults
         createResources={() => Promise.resolve([])}
         displayResults={() => {}}
@@ -16,7 +16,6 @@ describe('ImportYAMLResults: test component layout', () => {
         retryFailed={() => {}}
       />,
     );
-  };
 
   it('should display the Import YAML Results page', async () => {
     renderImportYAMLResults();

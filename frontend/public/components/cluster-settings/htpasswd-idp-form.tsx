@@ -51,9 +51,7 @@ export const AddHTPasswdPage = () => {
     );
   };
 
-  const getOAuthResource = () => {
-    return handlePromise(getOAuth());
-  };
+  const getOAuthResource = () => handlePromise(getOAuth());
 
   const createHTPasswdSecret = () => {
     const secret = {

@@ -20,11 +20,10 @@ const CopyCodeModal: CopyCodeModalComponent = ({ title, snippet, closeOverlay })
 
 export const useCopyCodeModal: UseCopyCodeModal = (title, snippet) => {
   const launchModal = useOverlay();
-  return useCallback(() => (snippet ? launchModal(CopyCodeModal, { title, snippet }) : null), [
-    launchModal,
-    snippet,
-    title,
-  ]);
+  return useCallback(
+    () => (snippet ? launchModal(CopyCodeModal, { title, snippet }) : null),
+    [launchModal, snippet, title],
+  );
 };
 
 type CopyCodeModalProps = { title: string; snippet: string };

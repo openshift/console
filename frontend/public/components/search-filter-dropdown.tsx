@@ -62,19 +62,17 @@ export const SearchFilterDropdown: FC<SearchFilterDropdownProps> = ({
           selected={selected}
           onSelect={onSelect}
           onOpenChange={(lala) => setOpen(lala)}
-          toggle={(toggleRef: Ref<MenuToggleElement>) => {
-            return (
-              <MenuToggle
-                ref={toggleRef}
-                isExpanded={isOpen}
-                onClick={onToggle}
-                icon={<RhUiFilterIcon />}
-                id="search-filter-toggle"
-              >
-                {t(selected)}
-              </MenuToggle>
-            );
-          }}
+          toggle={(toggleRef: Ref<MenuToggleElement>) => (
+            <MenuToggle
+              ref={toggleRef}
+              isExpanded={isOpen}
+              onClick={onToggle}
+              icon={<RhUiFilterIcon />}
+              id="search-filter-toggle"
+            >
+              {t(selected)}
+            </MenuToggle>
+          )}
           shouldFocusToggleOnSelect
         >
           <SelectList>{selectItems}</SelectList>

@@ -74,14 +74,12 @@ const useQueryParametersIfDefined = (handleSearch: (image: string) => void) => {
             }
             handleSearch(containerImport.image);
           } else {
-            // eslint-disable-next-line no-console
             console.error(
               `Unsupported ConsoleSample "${sampleName}" source type ${sample.spec?.source?.type}`,
             );
           }
         })
         .catch((error) => {
-          // eslint-disable-next-line no-console
           console.error(`Error while loading ConsoleSample "${sampleName}":`, error);
         });
     }
@@ -225,7 +223,9 @@ const ImageSearch: FC = () => {
   // handleSearch changes on every render where its deps (touched, values.name,
   // etc.) change, which happens on every keystroke via resetFields().
   const handleSearchRef = useRef(handleSearch);
-  handleSearchRef.current = handleSearch;
+  useEffect(() => {
+    handleSearchRef.current = handleSearch;
+  });
 
   useEffect(() => {
     !dirty && values.searchTerm && handleSearchRef.current(values.searchTerm);

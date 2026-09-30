@@ -41,7 +41,7 @@ export const useGroupActions = (obj: GroupKind): Action[] => {
       }),
       impersonate: (): Action => ({
         id: 'impersonate-group',
-        label: t('Impersonate Group {{name}}', { name: obj?.metadata?.name }),
+        label: t('Impersonate group {{name}}', { name: obj?.metadata?.name }),
         cta: () => {
           startImpersonate('Group', obj?.metadata?.name);
           navigate(window.SERVER_FLAGS.basePath);
@@ -50,7 +50,7 @@ export const useGroupActions = (obj: GroupKind): Action[] => {
       }),
       addUsers: (): Action => ({
         id: 'add-users',
-        label: t('Add Users'),
+        label: t('Add users'),
         cta: () => launchOverlay(AddGroupUsersModal, { group: obj }),
         accessReview: asAccessReview(GroupModel, obj, 'patch'),
       }),

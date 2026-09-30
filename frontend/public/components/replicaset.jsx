@@ -149,8 +149,8 @@ const tableColumnInfo = [
   { id: '' },
 ];
 
-const getDataViewRows = (data, columns) => {
-  return data.map(({ obj }) => {
+const getDataViewRows = (data, columns) =>
+  data.map(({ obj }) => {
     const { name, namespace } = obj.metadata;
     const kind = referenceForModel(ReplicaSetModel);
     const resourceKind = referenceFor(obj);
@@ -197,16 +197,14 @@ const getDataViewRows = (data, columns) => {
       };
     });
   });
-};
 
 const useReplicaSetsColumns = () => {
   const { t } = useTranslation('public');
-  const { getResizableProps, getWidth, resetAllColumnWidths } = useColumnWidthSettings(
-    ReplicaSetModel,
-  );
+  const { getResizableProps, getWidth, resetAllColumnWidths } =
+    useColumnWidthSettings(ReplicaSetModel);
 
-  const columns = useMemo(() => {
-    return [
+  const columns = useMemo(
+    () => [
       {
         title: t('Name'),
         id: tableColumnInfo[0].id,
@@ -270,8 +268,9 @@ const useReplicaSetsColumns = () => {
           ...actionsCellProps,
         },
       },
-    ];
-  }, [t, getResizableProps, getWidth]);
+    ],
+    [t, getResizableProps, getWidth],
+  );
 
   return { columns, resetAllColumnWidths };
 };

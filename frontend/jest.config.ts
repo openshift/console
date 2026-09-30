@@ -29,8 +29,6 @@ export default defineConfig({
           type: 'commonjs',
           noInterop: true,
         },
-      // prettier too old to support satisfies operator
-      // eslint-disable-next-line prettier/prettier
       } satisfies SwcOptions,
     ],
   },
@@ -40,12 +38,10 @@ export default defineConfig({
   testPathIgnorePatterns: [
     '<rootDir>/node_modules/',
     '<rootDir>/public/dist',
-    '<rootDir>/.*/integration-tests',
     '<rootDir>/e2e',
   ],
   modulePathIgnorePatterns: [
     '<rootDir>/public/dist',
-    '<rootDir>/.*/integration-tests',
     '<rootDir>/e2e',
   ],
   testRegex: '.*\\.spec\\.(ts|tsx|js|jsx)$',

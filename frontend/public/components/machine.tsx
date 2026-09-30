@@ -15,9 +15,9 @@ import {
   ConsoleDataView,
   nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
+import type { ConsoleDataViewColumn } from '@console/app/src/components/data-view/types';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import NodeIPList from '@console/app/src/components/nodes/NodeIPList';
-import type { TableColumn } from '@console/dynamic-plugin-sdk';
 import { ListPageBody } from '@console/dynamic-plugin-sdk';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
@@ -65,8 +65,11 @@ const tableColumnInfo = [
 const getMachineProviderState = (obj: MachineKind): string =>
   obj?.status?.providerStatus?.instanceState;
 
-const getDataViewRows = (data: { obj: MachineKind }[], columns: TableColumn<MachineKind>[]) => {
-  return data.map(({ obj }: { obj: MachineKind }) => {
+const getDataViewRows = (
+  data: { obj: MachineKind }[],
+  columns: ConsoleDataViewColumn<MachineKind>[],
+) =>
+  data.map(({ obj }: { obj: MachineKind }) => {
     const { name, namespace } = obj.metadata;
     const nodeName = getMachineNodeName(obj);
     const region = getMachineRegion(obj);
@@ -111,7 +114,6 @@ const getDataViewRows = (data: { obj: MachineKind }[], columns: TableColumn<Mach
       };
     });
   });
-};
 
 const MachineDetails: FC<MachineDetailsProps> = ({ obj }: { obj: MachineKind }) => {
   const nodeName = getMachineNodeName(obj);
@@ -201,14 +203,14 @@ type MachineListProps = {
 };
 
 const useMachineColumns = (): {
-  columns: TableColumn<MachineKind>[];
+  columns: ConsoleDataViewColumn<MachineKind>[];
   resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation('public');
   const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(MachineModel);
 
-  const columns: TableColumn<MachineKind>[] = useMemo(() => {
-    return [
+  const columns: ConsoleDataViewColumn<MachineKind>[] = useMemo(
+    () => [
       {
         title: t('Name'),
         id: tableColumnInfo[0].id,
@@ -216,7 +218,7 @@ const useMachineColumns = (): {
         resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: {
           ...nameCellProps,
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -225,7 +227,7 @@ const useMachineColumns = (): {
         sort: 'metadata.namespace',
         resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -234,7 +236,7 @@ const useMachineColumns = (): {
         sort: 'status.nodeRef.name',
         resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -243,7 +245,7 @@ const useMachineColumns = (): {
         sort: (data, direction) => data.sort(sortResourceByValue(direction, getMachinePhase)),
         resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -252,7 +254,7 @@ const useMachineColumns = (): {
         sort: 'status.providerStatus.instanceState',
         resizableProps: getResizableProps(tableColumnInfo[4].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -261,7 +263,7 @@ const useMachineColumns = (): {
         sort: "metadata.labels['machine.openshift.io/region']",
         resizableProps: getResizableProps(tableColumnInfo[5].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -270,7 +272,7 @@ const useMachineColumns = (): {
         sort: "metadata.labels['machine.openshift.io/zone']",
         resizableProps: getResizableProps(tableColumnInfo[6].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -280,8 +282,9 @@ const useMachineColumns = (): {
           ...actionsCellProps,
         },
       },
-    ];
-  }, [t, getResizableProps]);
+    ],
+    [t, getResizableProps],
+  );
 
   return { columns, resetAllColumnWidths };
 };

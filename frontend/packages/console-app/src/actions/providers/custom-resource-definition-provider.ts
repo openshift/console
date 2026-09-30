@@ -38,9 +38,9 @@ export const useCustomResourceDefinitionActionsProvider = (
   const [kindObj, inFlight] = useK8sModel(referenceFor(resource));
   const commonActions = useCommonResourceActions(kindObj, resource);
   const viewInstancesAction = useViewInstancesCRDAction(resource);
-  const actions = useMemo<Action[]>(() => [...viewInstancesAction, ...commonActions], [
-    commonActions,
-    viewInstancesAction,
-  ]);
+  const actions = useMemo<Action[]>(
+    () => [...viewInstancesAction, ...commonActions],
+    [commonActions, viewInstancesAction],
+  );
   return [actions, !inFlight, false];
 };

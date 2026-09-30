@@ -19,9 +19,7 @@ jest.mock('../usePreferredNamespace', () => ({
   usePreferredNamespace: jest.fn(),
 }));
 
-jest.mock('fuzzysearch', () => {
-  return { default: jest.fn() };
-});
+jest.mock('fuzzysearch', () => ({ default: jest.fn() }));
 
 jest.mock('@console/shared/src/hooks/useTelemetry', () => ({
   useTelemetry: () => {},

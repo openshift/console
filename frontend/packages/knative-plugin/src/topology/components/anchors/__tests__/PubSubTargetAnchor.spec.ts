@@ -3,9 +3,9 @@ import { Point, Rect } from '@patternfly/react-topology';
 import PubSubTargetAnchor from '../PubSubTargetAnchor';
 
 function createMockNode(bounds: Rect): Node {
-  return ({
+  return {
     getBounds: () => bounds,
-  } as any) as Node;
+  } as any as Node;
 }
 
 describe('PubSubTargetAnchor', () => {

@@ -55,13 +55,11 @@ const obsDropTargetSpec = (
     }
     return !nodeElement.getTargetEdges().find((e) => e.getSource() === item);
   },
-  collect: (monitor, props) => {
-    return {
-      canDrop: serviceBinding && highlightNode(monitor, props.element as Node),
-      dropTarget: monitor.isOver({ shallow: true }),
-      edgeDragging: nodesEdgeIsDragging(monitor, props),
-    };
-  },
+  collect: (monitor, props) => ({
+    canDrop: serviceBinding && highlightNode(monitor, props.element as Node),
+    dropTarget: monitor.isOver({ shallow: true }),
+    edgeDragging: nodesEdgeIsDragging(monitor, props),
+  }),
   dropHint: 'createServiceBinding',
 });
 
@@ -129,10 +127,8 @@ const OperatorBackedService: FC<OperatorBackedServiceProps> = ({
   );
 };
 
-const mapStateToProps = (): StateProps => {
-  return {
-    serviceBinding: null,
-  };
-};
+const mapStateToProps = (): StateProps => ({
+  serviceBinding: null,
+});
 
 export default connect(mapStateToProps)(observer(OperatorBackedService));

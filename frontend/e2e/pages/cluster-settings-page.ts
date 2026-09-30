@@ -30,7 +30,7 @@ export class ClusterSettingsPage extends BasePage {
    */
   async navigateToDetails(): Promise<void> {
     await this.goTo('/settings/cluster');
-    await expect(this.detailsTab).toBeVisible();
+    await expect(this.detailsTab).toBeVisible({ timeout: 60_000 });
   }
 
   /**

@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import type { PrometheusResponse } from '@console/internal/components/graphs';
+import type { PrometheusResponse } from '@console/internal/components/graphs/types';
 import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
 import ControlPlanePopup from '../ControlPlaneStatus';
 import { getControlPlaneComponentHealth } from '../status';

@@ -35,8 +35,8 @@ import { detect } from 'chardet';
 import { Base64 } from 'js-base64';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
+import { useTheme } from '@console/app/src/providers/theme/ThemeProvider';
 import { getImpersonate } from '@console/dynamic-plugin-sdk';
-import { useTheme } from '@console/internal/components/ThemeProvider';
 import { ConsoleExternalLogLinkModel, ProjectModel } from '@console/internal/models';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { ExternalLinkButton } from '@console/shared/src/components/links/ExternalLinkButton';
@@ -88,8 +88,8 @@ const streamStatusMessages = {
   [STREAM_ACTIVE]: 'Log streaming...',
 };
 
-const replaceVariables = (template: string, values: any): string => {
-  return _.reduce(
+const replaceVariables = (template: string, values: any): string =>
+  _.reduce(
     values,
     (result, value, name) => {
       // Replace all occurrences of template expressions like "${name}" with the URL-encoded value.
@@ -99,7 +99,6 @@ const replaceVariables = (template: string, values: any): string => {
     },
     template,
   );
-};
 
 // Build a log API url for a given resource
 const getResourceLogURL = (
@@ -295,7 +294,6 @@ const LogControls: FC<LogControlsProps> = ({
             return null;
           }
         } catch (e) {
-          // eslint-disable-next-line no-console
           console.warn('invalid log link regex', namespaceFilter, e);
           return null;
         }

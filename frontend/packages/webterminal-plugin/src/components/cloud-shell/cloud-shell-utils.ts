@@ -193,16 +193,12 @@ export const initTerminal = (
 export const sendActivityTick = (workspaceName: string, namespace: string): void => {
   coFetch(`/api/terminal/proxy/${namespace}/${workspaceName}/activity/tick`, {
     method: 'POST',
-  }).catch((e) =>
-    // eslint-disable-next-line no-console
-    console.error(e),
-  );
+  }).catch((e) => console.error(e));
 };
 
 export const checkTerminalAvailable = () => coFetch('/api/terminal/available', { priority: 'low' });
 
-export const getCloudShellCR = (workspaceModel: K8sKind, name: string, ns: string) => {
-  return k8sGet(workspaceModel, name, ns);
-};
+export const getCloudShellCR = (workspaceModel: K8sKind, name: string, ns: string) =>
+  k8sGet(workspaceModel, name, ns);
 
 export const getTerminalInstalledNamespace = () => coFetch('/api/terminal/installedNamespace');

@@ -17,10 +17,7 @@ import type {
 } from '@console/app/src/components/data-view/types';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import type { K8sModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
-import type {
-  RowProps,
-  TableColumn,
-} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import type { RowProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import {
   LazyActionMenu,
@@ -42,45 +39,43 @@ const tableColumnClasses = [
   KEBAB_COLUMN_CLASS,
 ];
 
-export const WorkloadTableHeader = () => {
-  return [
-    {
-      title: i18next.t('public~Name'),
-      sortField: 'metadata.name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[0] },
-    },
-    {
-      title: i18next.t('public~Namespace'),
-      sortField: 'metadata.namespace',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[1] },
-      id: 'namespace',
-    },
-    {
-      title: i18next.t('public~Status'),
-      sortFunc: 'numReplicas',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[2] },
-    },
-    {
-      title: i18next.t('public~Labels'),
-      sortField: 'metadata.labels',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[3] },
-    },
-    {
-      title: i18next.t('public~Pod selector'),
-      sortField: 'spec.selector',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[4] },
-    },
-    {
-      title: '',
-      props: { className: tableColumnClasses[5] },
-    },
-  ];
-};
+export const WorkloadTableHeader = () => [
+  {
+    title: i18next.t('public~Name'),
+    sortField: 'metadata.name',
+    transforms: [sortable],
+    props: { className: tableColumnClasses[0] },
+  },
+  {
+    title: i18next.t('public~Namespace'),
+    sortField: 'metadata.namespace',
+    transforms: [sortable],
+    props: { className: tableColumnClasses[1] },
+    id: 'namespace',
+  },
+  {
+    title: i18next.t('public~Status'),
+    sortFunc: 'numReplicas',
+    transforms: [sortable],
+    props: { className: tableColumnClasses[2] },
+  },
+  {
+    title: i18next.t('public~Labels'),
+    sortField: 'metadata.labels',
+    transforms: [sortable],
+    props: { className: tableColumnClasses[3] },
+  },
+  {
+    title: i18next.t('public~Pod selector'),
+    sortField: 'spec.selector',
+    transforms: [sortable],
+    props: { className: tableColumnClasses[4] },
+  },
+  {
+    title: '',
+    props: { className: tableColumnClasses[5] },
+  },
+];
 WorkloadTableHeader.displayName = 'WorkloadTableHeader';
 
 const tableColumnInfo = [
@@ -98,11 +93,11 @@ export const ReplicasCount: FC<ReplicasCountProps> = ({ obj, kind }) => {
   // DaemonSets use different status fields than Deployments
   const isDaemonSet = kind?.includes('DaemonSet');
   const statusReplicas = isDaemonSet
-    ? obj.status?.currentNumberScheduled ?? 0
-    : obj.status?.replicas ?? 0;
+    ? (obj.status?.currentNumberScheduled ?? 0)
+    : (obj.status?.replicas ?? 0);
   const specReplicas = isDaemonSet
-    ? obj.status?.desiredNumberScheduled ?? 0
-    : obj.spec?.replicas ?? 0;
+    ? (obj.status?.desiredNumberScheduled ?? 0)
+    : (obj.spec?.replicas ?? 0);
 
   return (
     <Link to={`${resourcePath(kind, obj.metadata.name, obj.metadata.namespace)}/pods`} title="pods">
@@ -118,8 +113,8 @@ export const getWorkloadDataViewRows = <T extends K8sResourceKind>(
   data: RowProps<T, any>[],
   columns: ConsoleDataViewColumn<T>[],
   model: K8sModel,
-): ConsoleDataViewRow[] => {
-  return data.map(({ obj }) => {
+): ConsoleDataViewRow[] =>
+  data.map(({ obj }) => {
     const { name, namespace } = obj.metadata;
     const resourceKind = referenceForModel(model);
     const context = { [resourceKind]: obj };
@@ -164,16 +159,15 @@ export const getWorkloadDataViewRows = <T extends K8sResourceKind>(
       };
     });
   });
-};
 
 export const useWorkloadColumns = <T extends K8sResourceKind>(
   model: K8sModel,
-): { columns: TableColumn<T>[]; resetAllColumnWidths: () => void } => {
+): { columns: ConsoleDataViewColumn<T>[]; resetAllColumnWidths: () => void } => {
   const { t } = useTranslation('public');
   const { getResizableProps, getWidth, resetAllColumnWidths } = useColumnWidthSettings(model);
 
-  const columns = useMemo(() => {
-    return [
+  const columns = useMemo<ConsoleDataViewColumn<T>[]>(
+    () => [
       {
         title: t('Name'),
         id: tableColumnInfo[0].id,
@@ -181,7 +175,7 @@ export const useWorkloadColumns = <T extends K8sResourceKind>(
         resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: {
           ...nameCellProps,
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -190,7 +184,7 @@ export const useWorkloadColumns = <T extends K8sResourceKind>(
         sort: 'metadata.namespace',
         resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -199,7 +193,7 @@ export const useWorkloadColumns = <T extends K8sResourceKind>(
         sort: 'status.replicas',
         resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -208,7 +202,7 @@ export const useWorkloadColumns = <T extends K8sResourceKind>(
         sort: 'metadata.labels',
         resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
           ...getLabelsColumnWidthStyleProp(getWidth(tableColumnInfo[3].id)),
         },
       },
@@ -218,7 +212,7 @@ export const useWorkloadColumns = <T extends K8sResourceKind>(
         sort: 'spec.selector',
         resizableProps: getResizableProps(tableColumnInfo[4].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -228,8 +222,9 @@ export const useWorkloadColumns = <T extends K8sResourceKind>(
           ...actionsCellProps,
         },
       },
-    ];
-  }, [t, getResizableProps, getWidth]);
+    ],
+    [t, getResizableProps, getWidth],
+  );
 
   return { columns, resetAllColumnWidths };
 };

@@ -19,68 +19,64 @@ const IntroductionModalFooter = ({
   secondaryButton,
   primaryButtonCallback,
   secondaryButtonCallback,
-}) => {
-  return (
-    <FlexItem>
-      <Flex spaceItems={{ default: 'spaceItemsMd' }}>
-        <FlexItem>
-          <Button
-            variant={ButtonVariant.primary}
-            id="tour-step-footer-primary"
-            data-test="tour-step-footer-primary"
-            onClick={primaryButtonCallback}
-          >
-            {primaryButton}
-          </Button>
-        </FlexItem>
-        <FlexItem>
-          <Button
-            variant={ButtonVariant.link}
-            id="tour-step-footer-secondary"
-            data-test="tour-step-footer-secondary"
-            onClick={secondaryButtonCallback}
-          >
-            {secondaryButton}
-          </Button>
-        </FlexItem>
-      </Flex>
-    </FlexItem>
-  );
-};
+}) => (
+  <FlexItem>
+    <Flex spaceItems={{ default: 'spaceItemsMd' }}>
+      <FlexItem>
+        <Button
+          variant={ButtonVariant.primary}
+          id="tour-step-footer-primary"
+          data-test="tour-step-footer-primary"
+          onClick={primaryButtonCallback}
+        >
+          {primaryButton}
+        </Button>
+      </FlexItem>
+      <FlexItem>
+        <Button
+          variant={ButtonVariant.link}
+          id="tour-step-footer-secondary"
+          data-test="tour-step-footer-secondary"
+          onClick={secondaryButtonCallback}
+        >
+          {secondaryButton}
+        </Button>
+      </FlexItem>
+    </Flex>
+  </FlexItem>
+);
 
 const PopoverFooter = ({
   primaryButton,
   secondaryButton,
   primaryButtonCallback,
   secondaryButtonCallback,
-}) => {
-  return (
-    <FlexItem>
-      <Flex spaceItems={{ default: 'spaceItemsMd' }}>
-        <FlexItem>
-          <Button
-            variant={ButtonVariant.secondary}
-            id="tour-step-footer-secondary"
-            data-test="tour-step-footer-secondary"
-            onClick={secondaryButtonCallback}
-          >
-            {secondaryButton}
-          </Button>
-        </FlexItem>
-        <FlexItem>
-          <Button
-            variant={ButtonVariant.primary}
-            id="tour-step-footer-primary"
-            data-test="tour-step-footer-primary"
-            onClick={primaryButtonCallback}
-          >
-            {primaryButton}
-          </Button>
-        </FlexItem>
-      </Flex>
-    </FlexItem>
-  );
-};
+}) => (
+  <FlexItem>
+    <Flex spaceItems={{ default: 'spaceItemsMd' }}>
+      <FlexItem>
+        <Button
+          variant={ButtonVariant.secondary}
+          id="tour-step-footer-secondary"
+          data-test="tour-step-footer-secondary"
+          onClick={secondaryButtonCallback}
+        >
+          {secondaryButton}
+        </Button>
+      </FlexItem>
+      <FlexItem>
+        <Button
+          variant={ButtonVariant.primary}
+          id="tour-step-footer-primary"
+          data-test="tour-step-footer-primary"
+          onClick={primaryButtonCallback}
+        >
+          {primaryButton}
+        </Button>
+      </FlexItem>
+    </Flex>
+  </FlexItem>
+);
 
 const StepFooter: FC<StepFooterProps> = ({
   children,

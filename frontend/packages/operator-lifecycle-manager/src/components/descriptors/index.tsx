@@ -17,12 +17,12 @@ import { groupDescriptorDetails, useCalculatedDescriptorProperties } from './uti
 
 export const DescriptorDetailsItem = withFallback<DescriptorDetailsItemProps>(
   ({ className, descriptor, model, obj, onError, schema, type }) => {
-    const { displayName: label, description, value, fullPath } = useCalculatedDescriptorProperties(
-      type,
-      descriptor,
-      schema,
-      obj,
-    );
+    const {
+      displayName: label,
+      description,
+      value,
+      fullPath,
+    } = useCalculatedDescriptorProperties(type, descriptor, schema, obj);
     const descriptorProps = {
       className,
       description,

@@ -19,7 +19,7 @@ const ResolveResourceAlerts: FC<{
   id?: string;
   useResourceAlertsContent?: (element: GraphElement) => DetailsResourceAlertContent;
   element: GraphElement;
-}> = observer(function ResolveResourceAlerts({ id, useResourceAlertsContent, element }) {
+}> = observer(({ id, useResourceAlertsContent, element }) => {
   const [cfData, cfLoaded, cfLoadError] = useGetUserSettingConfigMap();
   const [showAlert, setShowAlert] = useUserPreferenceLocalStorage(
     `${element.getId()}`,
@@ -63,9 +63,8 @@ const ResolveResourceAlerts: FC<{
 });
 
 const SideBarAlerts: FC<{ element: GraphElement }> = ({ element }) => {
-  const [resourceAlertsExtension, resolved] = useResolvedExtensions<DetailsResourceAlert>(
-    isDetailsResourceAlert,
-  );
+  const [resourceAlertsExtension, resolved] =
+    useResolvedExtensions<DetailsResourceAlert>(isDetailsResourceAlert);
   return resolved ? (
     <>
       {resourceAlertsExtension.map(({ uid, properties: { contentProvider, ...props } }) => {

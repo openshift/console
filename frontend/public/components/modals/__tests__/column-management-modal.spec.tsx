@@ -5,6 +5,10 @@ import { ColumnManagementModal } from '@console/internal/components/modals/colum
 import { PodModel } from '@console/internal/models';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 
+jest.mock('@console/shared/src/hooks/useUserPreference', () => ({
+  useUserPreference: () => [{}, jest.fn(), true],
+}));
+
 const columnManagementID = transformGroupVersionKindToReference(
   getGroupVersionKindForModel(PodModel),
 );
@@ -126,8 +130,8 @@ const columnLayoutNamespaceDisabled = [
 ];
 
 describe('ColumnManagementModal component', () => {
-  const renderColumnManagementModal = (columns = columnLayout) => {
-    return renderWithProviders(
+  const renderColumnManagementModal = (columns = columnLayout) =>
+    renderWithProviders(
       <ColumnManagementModal
         columnLayout={{
           columns,
@@ -143,11 +147,8 @@ describe('ColumnManagementModal component', () => {
           type: columnManagementType,
           showNamespaceOverride: true,
         }}
-        userSettingState={null}
-        setUserSettingState={jest.fn()}
       />,
     );
-  };
 
   describe('basic rendering', () => {
     it('renders title and subtitle', () => {
@@ -181,8 +182,6 @@ describe('ColumnManagementModal component', () => {
             type: columnManagementType,
             showNamespaceOverride: false,
           }}
-          userSettingState={null}
-          setUserSettingState={jest.fn()}
         />,
       );
       expect(
@@ -235,8 +234,6 @@ describe('ColumnManagementModal component', () => {
             type: columnManagementType,
             showNamespaceOverride: true,
           }}
-          userSettingState={null}
-          setUserSettingState={jest.fn()}
         />,
       );
 

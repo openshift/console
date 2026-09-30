@@ -10,6 +10,16 @@ import {
   modelsToMap,
 } from '..';
 import {
+  testNamespace,
+  testOwnedResourceInstance,
+} from '../../../components/__tests__/data/k8sResourcesMocks';
+import {
+  PodModel,
+  DeploymentModel,
+  ClusterResourceQuotaModel,
+  PrometheusModel,
+} from '../../../models';
+import {
   testCRD,
   testCRDInvalidVersion,
   testCRDInvalidVersionTwo,
@@ -22,14 +32,7 @@ import {
   testCRDVersionV1,
   testForValidVersionsCRD,
   testForUnservedVersionsCRD,
-} from '../../../../__mocks__/crds';
-import { testNamespace, testOwnedResourceInstance } from '../../../../__mocks__/k8sResourcesMocks';
-import {
-  PodModel,
-  DeploymentModel,
-  ClusterResourceQuotaModel,
-  PrometheusModel,
-} from '../../../models';
+} from './data/crds';
 
 describe('referenceFor', () => {
   it('returns a reference for objects without an API group', () => {
@@ -86,14 +89,14 @@ describe('versionForReference', () => {
 
 describe('modelsToMap', () => {
   it('returns a map with keys based on model.kind for models with crd:false', () => {
-    expect(modelsToMap([PodModel, DeploymentModel]).toObject()).toEqual({
+    expect(modelsToMap([PodModel, DeploymentModel])).toEqual({
       [PodModel.kind]: PodModel,
       [DeploymentModel.kind]: DeploymentModel,
     });
   });
 
   it('returns a map with keys based on referenceForModel for models with crd:true', () => {
-    expect(modelsToMap([ClusterResourceQuotaModel, PrometheusModel]).toObject()).toEqual({
+    expect(modelsToMap([ClusterResourceQuotaModel, PrometheusModel])).toEqual({
       [referenceForModel(ClusterResourceQuotaModel)]: ClusterResourceQuotaModel,
       [referenceForModel(PrometheusModel)]: PrometheusModel,
     });

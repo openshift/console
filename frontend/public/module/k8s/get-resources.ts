@@ -44,7 +44,6 @@ export const cacheResources = (resources) =>
       );
       resolve();
     } catch (e) {
-      // eslint-disable-next-line no-console
       console.error('Error caching API resources in localStorage', e);
       reject(e);
     }
@@ -66,20 +65,17 @@ export const getCachedResources = () =>
         const { consoleVersion: currentVersion } = window.SERVER_FLAGS;
         const { consoleVersion: cachedVersion } = resources;
         if (cachedVersion !== currentVersion) {
-          // eslint-disable-next-line no-console
           console.log(
             `Invalidating API discovery cache from earlier console version (current: ${currentVersion}, cached: ${cachedVersion})`,
           );
           resolve(null);
           return;
         }
-        // eslint-disable-next-line no-console
         console.log('Loaded cached API resources from localStorage');
         resolve(resources);
         return;
       }
     } catch (e) {
-      // eslint-disable-next-line no-console
       console.error('Error reading API resources from localStorage', e);
       reject(e);
     }
@@ -180,24 +176,22 @@ export const getResources = (): Promise<DiscoveryResources> =>
       const apiVersion = groupVersionParts.length > 1 ? groupVersionParts[1] : list.groupVersion;
       return list.resources
         .filter(({ name }) => !name.includes('/'))
-        .map(({ name, singularName, namespaced, kind, verbs, shortNames }) => {
-          return {
-            kind,
-            namespaced,
-            verbs,
-            shortNames,
-            label: kind,
-            plural: name,
-            apiVersion,
-            abbr: kindToAbbr(kind),
-            ...(apiGroup ? { apiGroup } : {}),
-            labelPlural: pluralizeKind(kind),
-            path: name,
-            id: singularName,
-            crd: true,
-            ...getModelExtensionMetadata(metadataExtensions, apiGroup, apiVersion, kind),
-          };
-        });
+        .map(({ name, singularName, namespaced, kind, verbs, shortNames }) => ({
+          kind,
+          namespaced,
+          verbs,
+          shortNames,
+          label: kind,
+          plural: name,
+          apiVersion,
+          abbr: kindToAbbr(kind),
+          ...(apiGroup ? { apiGroup } : {}),
+          labelPlural: pluralizeKind(kind),
+          path: name,
+          id: singularName,
+          crd: true,
+          ...getModelExtensionMetadata(metadataExtensions, apiGroup, apiVersion, kind),
+        }));
     };
 
     const models = _.flatten(data.filter((d) => d.resources).map(defineModels));

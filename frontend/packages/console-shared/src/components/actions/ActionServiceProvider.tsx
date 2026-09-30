@@ -34,10 +34,10 @@ export const ActionServiceProvider: FC<ActionServiceProviderProps> = ({ context,
 
   const groupExtensions = useExtensions<ActionGroup>(isActionGroup);
 
-  const options: MenuOption[] = useMemo(() => createMenuOptions(actions, groupExtensions), [
-    actions,
-    groupExtensions,
-  ]);
+  const options: MenuOption[] = useMemo(
+    () => createMenuOptions(actions, groupExtensions),
+    [actions, groupExtensions],
+  );
 
   const actionsLoaded = Object.keys(contextMap).every((contextId) => actionsMap[contextId]);
 

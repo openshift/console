@@ -147,18 +147,16 @@ export class SelectorInput extends Component {
       ...(this.props.inputProps || {}),
     };
 
-    const renderTag = ({ tag, key, onRemove, getTagDisplayValue }) => {
-      return (
-        <PfLabel
-          className={css('co-label tag-item-content', this.props.labelClassName)}
-          key={key}
-          onClose={() => onRemove(key)}
-          data-test={`label=${key}`}
-        >
-          {getTagDisplayValue(tag)}
-        </PfLabel>
-      );
-    };
+    const renderTag = ({ tag, key, onRemove, getTagDisplayValue }) => (
+      <PfLabel
+        className={css('co-label tag-item-content', this.props.labelClassName)}
+        key={key}
+        onClose={() => onRemove(key)}
+        data-test={`label=${key}`}
+      >
+        {getTagDisplayValue(tag)}
+      </PfLabel>
+    );
 
     return (
       <div className="pf-v6-c-form-control">

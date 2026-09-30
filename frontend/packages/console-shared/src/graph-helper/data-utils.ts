@@ -1,14 +1,12 @@
 /* eslint-disable no-barrel-files/no-barrel-files */
 import * as _ from 'lodash';
 import { ByteDataTypes } from '@console/dynamic-plugin-sdk/src/api/internal-types';
-import type { DataPoint } from '@console/internal/components/graphs';
+import type { DataPoint } from '@console/internal/components/graphs/types';
 import { getType } from '@console/internal/components/utils/units';
 
 export { ByteDataTypes };
 
-const log = (x: number, y: number) => {
-  return Math.log(y) / Math.log(x);
-};
+const log = (x: number, y: number) => Math.log(y) / Math.log(x);
 
 // Get the larget unit seen in the dataframe within the supported range
 const bestUnit = (dataPoints: DataPoint[][], type) => {

@@ -1,5 +1,5 @@
 /* eslint-disable */
-import type { FC, ReactElement } from 'react';
+import type { FC } from 'react';
 import {
   ActivityItemProps,
   ActivityBodyProps,
@@ -19,12 +19,6 @@ import {
   QuickStartsLoaderProps,
   UseURLPoll,
   UseLastNamespace,
-  ConsoleDataViewProps,
-  DefinitionFor,
-  ResourceFilters,
-  CellIsStickyProps,
-  GetNameCellProps,
-  ActionsCellProps,
   GetCSRFToken,
 } from './internal-types';
 
@@ -85,37 +79,8 @@ export const useDashboardResources: UseDashboardResources = require('@console/sh
 export const useURLPoll: UseURLPoll = require('@console/internal/components/utils/url-poll-hook')
   .useURLPoll;
 
-export const useLastNamespace: UseLastNamespace = require('@console/app/src/components/detect-context/useLastNamespace')
+export const useLastNamespace: UseLastNamespace = require('@console/app/src/providers/detect-context/useLastNamespace')
   .useLastNamespace;
-
-export const ConsoleDataView: <
-  TData,
-  TCustomRowData = any,
-  TFilters extends ResourceFilters = ResourceFilters
->(
-  props: ConsoleDataViewProps<TData, TCustomRowData, TFilters>,
-) => ReactElement = require('@console/app/src/components/data-view/ConsoleDataView').ConsoleDataView;
-
-export const cellIsStickyProps: CellIsStickyProps = require('@console/app/src/components/data-view/ConsoleDataView')
-  .cellIsStickyProps;
-
-export const getNameColumnProps: (
-  hasRightBorder?: boolean,
-  withBulkSelect?: boolean,
-) => CellIsStickyProps = require('@console/app/src/components/data-view/ConsoleDataView')
-  .getNameColumnProps;
-
-export const getNameCellProps: GetNameCellProps = require('@console/app/src/components/data-view/ConsoleDataView')
-  .getNameCellProps;
-
-export const actionsCellProps: ActionsCellProps = require('@console/app/src/components/data-view/ConsoleDataView')
-  .actionsCellProps;
-
-export const initialFiltersDefault: ResourceFilters = require('@console/app/src/components/data-view/ConsoleDataView')
-  .initialFiltersDefault;
-
-export const definitionFor: DefinitionFor = require('@console/internal/module/k8s/swagger')
-  .definitionFor;
 
 export const getCSRFToken: GetCSRFToken = require('@console/shared/src/utils/console-fetch-utils')
   .getCSRFToken;

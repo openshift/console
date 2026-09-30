@@ -2,9 +2,7 @@ import type { SyntheticEvent } from 'react';
 import type { CatalogItem } from '@console/dynamic-plugin-sdk';
 import { keywordCompare } from '../../catalog/utils/catalog-utils';
 
-export const quickSearch = (items: CatalogItem[], query: string) => {
-  return keywordCompare(query, items);
-};
+export const quickSearch = (items: CatalogItem[], query: string) => keywordCompare(query, items);
 
 export const handleCta = async (
   e: SyntheticEvent,

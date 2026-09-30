@@ -121,7 +121,7 @@ const CustomTaskComponent: FC<CustomTaskProps> = ({
               color: customTaskColor.value,
             }}
           >
-            {<RhUiQuestionMarkCircleFillIcon />}
+            <RhUiQuestionMarkCircleFillIcon />
           </svg>
         </>
       )}
@@ -158,9 +158,8 @@ const CustomTaskNode: FC<CustomTaskNodeProps> = ({ element, disableTooltip }) =>
     },
   };
 
-  const resourcesData: WatchK8sResults<WatchResource> = useK8sWatchResources<WatchResource>(
-    watchedResources,
-  );
+  const resourcesData: WatchK8sResults<WatchResource> =
+    useK8sWatchResources<WatchResource>(watchedResources);
 
   const taskComponent: JSX.Element = (
     <CustomTaskComponent

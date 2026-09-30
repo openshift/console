@@ -1,6 +1,5 @@
 import type { FC, ReactNode } from 'react';
 import { useCallback, useMemo, useState, useEffect } from 'react';
-import './ConsoleDataView.scss';
 import {
   ResponsiveAction,
   ResponsiveActions,
@@ -25,12 +24,12 @@ import { RhUiColumnsIcon, RhUiUndoIcon } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
 import { InnerScrollContainer, Tbody, Td, Tr } from '@patternfly/react-table';
 import { Trans, useTranslation } from 'react-i18next';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import type {
   ResourceFilters,
   ConsoleDataViewProps,
-} from '@console/dynamic-plugin-sdk/src/api/internal-types';
-import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
-import { LazyColumnManagementModalOverlay } from '@console/internal/components/modals';
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { LazyColumnManagementModalOverlay } from '@console/internal/components/modals/lazy-column-management-modal';
 import { EmptyBox } from '@console/shared/src/components/empty-state/EmptyBox';
 import { StatusBox } from '@console/shared/src/components/status/StatusBox';
 import { DataViewLabelFilter } from './DataViewLabelFilter';
@@ -38,11 +37,13 @@ import { DataViewTextFilter } from './DataViewTextFilter';
 import { useConsoleDataViewData } from './useConsoleDataViewData';
 import { useConsoleDataViewFilters } from './useConsoleDataViewFilters';
 
+import './ConsoleDataView.scss';
+
 export const initialFiltersDefault: ResourceFilters = { name: '', label: '' };
 
-const BodyLoading: FC<{ columns: number }> = ({ columns }) => {
-  return <SkeletonTableBody rowsCount={5} columnsCount={columns} />;
-};
+const BodyLoading: FC<{ columns: number }> = ({ columns }) => (
+  <SkeletonTableBody rowsCount={5} columnsCount={columns} />
+);
 
 const BodyEmpty: FC<{ label: string; colSpan: number }> = ({ label, colSpan }) => {
   const { t } = useTranslation('console-app');
@@ -63,7 +64,7 @@ const BodyEmpty: FC<{ label: string; colSpan: number }> = ({ label, colSpan }) =
 export const ConsoleDataView = <
   TData,
   TCustomRowData = any,
-  TFilters extends ResourceFilters = ResourceFilters
+  TFilters extends ResourceFilters = ResourceFilters,
 >({
   label,
   data,
@@ -141,14 +142,15 @@ export const ConsoleDataView = <
     selection,
   });
 
-  const bodyLoading = useMemo(() => <BodyLoading columns={dataViewColumns.length} />, [
-    dataViewColumns.length,
-  ]);
+  const bodyLoading = useMemo(
+    () => <BodyLoading columns={dataViewColumns.length} />,
+    [dataViewColumns.length],
+  );
 
-  const bodyEmpty = useMemo(() => <BodyEmpty label={label} colSpan={dataViewColumns.length} />, [
-    dataViewColumns.length,
-    label,
-  ]);
+  const bodyEmpty = useMemo(
+    () => <BodyEmpty label={label} colSpan={dataViewColumns.length} />,
+    [dataViewColumns.length, label],
+  );
 
   const activeState = useMemo(() => {
     if (!loaded) {
@@ -253,7 +255,11 @@ export const ConsoleDataView = <
         <DataViewToolbar
           filters={
             dataViewFilterNodes.length > 0 && (
-              <DataViewFilters values={filters} onChange={(_e, values) => onSetFilters(values)}>
+              <DataViewFilters
+                data-test="data-view-filters"
+                values={filters}
+                onChange={(_e, values) => onSetFilters(values)}
+              >
                 {dataViewFilterNodes}
               </DataViewFilters>
             )
@@ -313,8 +319,8 @@ export const ConsoleDataView = <
             className="pf-v6-u-mb-md"
             screenReaderText={
               bannerState.allSelected
-                ? t('You selected all {{count}} {{label}}.', {
-                    count: filteredData.length,
+                ? t('You selected all {{numberOf}} {{label}}.', {
+                    numberOf: filteredData.length,
                     label: label || t('items'),
                   })
                 : t('You selected all {{label}} on this page.', {
@@ -324,8 +330,8 @@ export const ConsoleDataView = <
           >
             {bannerState.allSelected ? (
               <>
-                <Trans ns="console-app" i18nKey="You selected all <1>{{count}}</1> {{label}}.">
-                  You selected all <strong>{{ count: filteredData.length }}</strong>{' '}
+                <Trans ns="console-app" i18nKey="You selected all <1>{{numberOf}}</1> {{label}}.">
+                  You selected all <strong>{{ numberOf: filteredData.length }}</strong>{' '}
                   {{ label: label || t('items') }}.
                 </Trans>{' '}
                 <Button variant="link" isInline onClick={handleUnselectAll}>
@@ -338,8 +344,8 @@ export const ConsoleDataView = <
                   You selected all {{ label: label || t('items') }} on this page.
                 </Trans>{' '}
                 <Button variant="link" isInline onClick={handleSelectAllMatching}>
-                  <Trans ns="console-app" i18nKey="Select all <1>{{count}}</1> {{label}}.">
-                    Select all <strong>{{ count: filteredData.length }}</strong>{' '}
+                  <Trans ns="console-app" i18nKey="Select all <1>{{numberOf}}</1> {{label}}.">
+                    Select all <strong>{{ numberOf: filteredData.length }}</strong>{' '}
                     {{ label: label || t('items') }}.
                   </Trans>
                 </Button>
@@ -351,7 +357,6 @@ export const ConsoleDataView = <
           <DataViewTable
             key={tableKey}
             aria-label={t(`public~{{label}} table`, { label })}
-            // @ts-expect-error - TODO(react18): CONSOLE-5040: Remove ConsoleDataViewColumn bodge
             columns={dataViewColumns}
             rows={dataViewRows}
             bodyStates={{ empty: bodyEmpty, loading: bodyLoading }}
@@ -383,6 +388,8 @@ export const cellIsStickyProps = {
 export const selectionColumnProps = {
   ...cellIsStickyProps,
   stickyLeftOffset: '0',
+  stickyMinWidth: SELECTION_COLUMN_WIDTH,
+  style: { maxWidth: SELECTION_COLUMN_WIDTH },
 };
 
 export const nameCellProps = {

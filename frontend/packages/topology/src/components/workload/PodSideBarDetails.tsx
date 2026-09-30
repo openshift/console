@@ -11,21 +11,19 @@ type PodSideBarDetailsProps = {
   pod: PodKind;
 };
 
-const PodSideBarDetails: FC<PodSideBarDetailsProps> = ({ pod }) => {
-  return (
-    <div className="overview__sidebar-pane-body resource-overview__body">
-      <div className="resource-overview__pod-counts">
-        <PodRingSet key={pod.metadata.uid} obj={pod} path="" />
-      </div>
-      <div className="resource-overview__summary">
-        <PodResourceSummary pod={pod} />
-      </div>
-      <div className="resource-overview__details">
-        <PodDetailsList pod={pod} />
-      </div>
+const PodSideBarDetails: FC<PodSideBarDetailsProps> = ({ pod }) => (
+  <div className="overview__sidebar-pane-body resource-overview__body">
+    <div className="resource-overview__pod-counts">
+      <PodRingSet key={pod.metadata.uid} obj={pod} path="" />
     </div>
-  );
-};
+    <div className="resource-overview__summary">
+      <PodResourceSummary pod={pod} />
+    </div>
+    <div className="resource-overview__details">
+      <PodDetailsList pod={pod} />
+    </div>
+  </div>
+);
 
 export const usePodSideBarDetails: DetailsTabSectionExtensionHook = (element: GraphElement) => {
   const resource = getResource<PodKind>(element);

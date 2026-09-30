@@ -41,16 +41,17 @@ const CatalogTypesConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
   const fireTelemetryEvent = useTelemetry();
 
   // Available catalog types
-  const [catalogTypesExtensions, catalogTypesExtensionsLoaded] = useResolvedExtensions<
-    CatalogItemType
-  >(isCatalogItemType);
-  const sortedCatalogTypeExtensions = useMemo(() => {
-    return [...catalogTypesExtensions].sort((catalogTypeExtensionA, catalogTypeExtensionB) => {
-      const titleA = catalogTypeExtensionA.properties.title;
-      const titleB = catalogTypeExtensionB.properties.title;
-      return titleA.localeCompare(titleB);
-    });
-  }, [catalogTypesExtensions]);
+  const [catalogTypesExtensions, catalogTypesExtensionsLoaded] =
+    useResolvedExtensions<CatalogItemType>(isCatalogItemType);
+  const sortedCatalogTypeExtensions = useMemo(
+    () =>
+      [...catalogTypesExtensions].sort((catalogTypeExtensionA, catalogTypeExtensionB) => {
+        const titleA = catalogTypeExtensionA.properties.title;
+        const titleB = catalogTypeExtensionB.properties.title;
+        return titleA.localeCompare(titleB);
+      }),
+    [catalogTypesExtensions],
+  );
   const catalogTypesByType = useMemo<Record<string, CatalogItemType>>(
     () =>
       catalogTypesExtensions.reduce((acc, catalogItemType) => {
@@ -61,9 +62,8 @@ const CatalogTypesConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
   );
 
   // Current configuration
-  const [consoleConfig, consoleConfigLoaded, consoleConfigError] = useConsoleOperatorConfig<
-    SoftwareCatalogTypesConsoleConfig
-  >();
+  const [consoleConfig, consoleConfigLoaded, consoleConfigError] =
+    useConsoleOperatorConfig<SoftwareCatalogTypesConsoleConfig>();
   const [types, setTypes] = useState<Types>();
   useEffect(() => {
     if (consoleConfig && consoleConfigLoaded && !types) {
@@ -171,8 +171,8 @@ const CatalogTypesConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
         types?.state === 'Enabled'
           ? types.enabled || []
           : types?.state === 'Disabled'
-          ? types.disabled || []
-          : null,
+            ? types.disabled || []
+            : null,
     });
     setSaveStatus({ status: 'in-progress' });
 
@@ -235,9 +235,8 @@ const CatalogTypesConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
     save();
   };
 
-  const filterOption = (option: ReactElement<ItemProps>, input: string): boolean => {
-    return fuzzy(input.toLocaleLowerCase(), option.props.title.toLocaleLowerCase());
-  };
+  const filterOption = (option: ReactElement<ItemProps>, input: string): boolean =>
+    fuzzy(input.toLocaleLowerCase(), option.props.title.toLocaleLowerCase());
 
   return (
     <FormSection title={t('Software Catalog')} data-test="catalog-types form-section">
@@ -246,18 +245,24 @@ const CatalogTypesConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
           'Another option to customize and standardize your development process. As an admin, you can disable the complete Software Catalog, or individual sub-catalogs (available as Types in the Software Catalog). Also here the "Search" and "Topology" will still show such resources.',
         )}
       </FormHelperText>
-      <DualListSelector
-        availableOptionsTitle={t('Enabled types')}
-        chosenOptionsTitle={t('Disabled types')}
-        isSearchable
-        availableOptions={enabledOptions}
-        chosenOptions={disabledOptions}
-        onListChange={onListChange}
-        filterOption={filterOption}
-        isDisabled={
-          readonly || !catalogTypesExtensionsLoaded || !consoleConfigLoaded || !!consoleConfigError
-        }
-      />
+      <div data-test="catalog-types-selector">
+        <DualListSelector
+          id="catalog-types-selector-list"
+          availableOptionsTitle={t('Enabled types')}
+          chosenOptionsTitle={t('Disabled types')}
+          isSearchable
+          availableOptions={enabledOptions}
+          chosenOptions={disabledOptions}
+          onListChange={onListChange}
+          filterOption={filterOption}
+          isDisabled={
+            readonly ||
+            !catalogTypesExtensionsLoaded ||
+            !consoleConfigLoaded ||
+            !!consoleConfigError
+          }
+        />
+      </div>
 
       <LoadError error={consoleConfigError} />
       <SaveStatus {...saveStatus} />

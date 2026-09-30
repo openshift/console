@@ -1,6 +1,6 @@
-import { fakeVulnFor } from '../../../integration-tests/bad-pods';
 import { Priority } from '../../const';
 import { totalCount } from '../image-manifest-vuln';
+import { fakeVulnFor } from './bad-pods';
 
 describe('totalCount', () => {
   it('should return 0 if vuln status not present', () => {

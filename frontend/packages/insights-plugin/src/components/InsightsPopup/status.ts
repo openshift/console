@@ -1,7 +1,7 @@
 import i18next from 'i18next';
 import * as _ from 'lodash';
 import type { PrometheusHealthHandler, SubsystemHealth } from '@console/dynamic-plugin-sdk';
-import type { PrometheusResponse } from '@console/internal/components/graphs';
+import type { PrometheusResponse } from '@console/internal/components/graphs/types';
 import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
 import { mapMetrics, isError, isWaiting, mapConditions, errorUpload } from './mappers';
 

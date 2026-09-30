@@ -40,9 +40,7 @@ export type ExtensionTypeInfo = {
 type ConsoleTypeResolver = {
   getDeclarations: () => ConsoleTypeDeclarations;
 
-  getConsoleExtensions: (
-    exitOnErrors?: boolean,
-  ) => {
+  getConsoleExtensions: (exitOnErrors?: boolean) => {
     result: ExtensionTypeInfo[];
     diagnostics: { errors: string[]; warnings: string[] };
   };

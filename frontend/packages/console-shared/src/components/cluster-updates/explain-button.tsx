@@ -16,6 +16,7 @@ import {
   OLS_SUBMIT_IMMEDIATELY,
   OLS_HIDE_PROMPT,
   OLS_NO_ATTACHMENTS,
+  OLS_MAX_PROMPT_LENGTH,
 } from './constants';
 import type { UpdateWorkflowPhase, MachineConfigPool } from './types';
 import { generateUpdatePrompt, getUpdateButtonText } from './workflow-utils';
@@ -54,14 +55,7 @@ interface UpdateWorkflowOLSButtonProps {
   className?: string;
   onClick?: () => void;
   variant?:
-    | 'primary'
-    | 'secondary'
-    | 'tertiary'
-    | 'danger'
-    | 'warning'
-    | 'link'
-    | 'plain'
-    | 'control';
+    'primary' | 'secondary' | 'tertiary' | 'danger' | 'warning' | 'link' | 'plain' | 'control';
   size?: 'sm' | 'lg';
   'data-test'?: string;
 }
@@ -104,7 +98,7 @@ const OLSButtonInner: FC<UpdateWorkflowOLSButtonProps & OLSButtonInnerProps> = (
 
     // Generate prompt - MCP tools will fetch real-time cluster data
     // Pass machineConfigPools and alerts when available for enhanced context
-    const prompt = generateUpdatePrompt(
+    let prompt = generateUpdatePrompt(
       phase,
       cv,
       t,
@@ -113,6 +107,18 @@ const OLSButtonInner: FC<UpdateWorkflowOLSButtonProps & OLSButtonInnerProps> = (
       alerts,
       targetVersion,
     );
+
+    if (prompt.length > OLS_MAX_PROMPT_LENGTH) {
+      console.warn(
+        `[OLS] Prompt size (${prompt.length} chars) exceeds maximum (${OLS_MAX_PROMPT_LENGTH}). Truncating.`,
+      );
+      fireTelemetryEvent('OLS Prompt Truncated', {
+        originalSize: prompt.length,
+        maxSize: OLS_MAX_PROMPT_LENGTH,
+        workflowPhase: phase,
+      });
+      prompt = prompt.slice(0, OLS_MAX_PROMPT_LENGTH);
+    }
 
     // Open OLS with prompt - MCP uses tools to fetch live cluster data
     openOLS(prompt, OLS_NO_ATTACHMENTS, OLS_SUBMIT_IMMEDIATELY, OLS_HIDE_PROMPT);

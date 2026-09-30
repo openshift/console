@@ -8,7 +8,7 @@
   " Once the Operator is installed the required custom resource will be available for creation.": " Once the Operator is installed the required custom resource will be available for creation.",
   " Ready for use.": " Ready for use.",
   "(default)": "(default)",
-  "{{count}} Namespaces_one": "{{count}} Namespaces",
+  "{{count}} Namespaces_one": "{{count}} Namespace",
   "{{count}} Namespaces_other": "{{count}} Namespaces",
   "{{initializationResourceKind}} required": "{{initializationResourceKind}} required",
   "{{item}} can't be installed": "{{item}} can't be installed",

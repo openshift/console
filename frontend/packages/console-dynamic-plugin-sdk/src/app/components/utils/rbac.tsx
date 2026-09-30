@@ -134,7 +134,6 @@ export const useAccessReview = (
         setLoading(false);
       })
       .catch((e) => {
-        // eslint-disable-next-line no-console
         console.warn('SelfSubjectAccessReview failed', e);
         // Default to enabling the action if the access review fails so that we
         // don't incorrectly block users from actions they can perform. The server
@@ -168,6 +167,4 @@ export const useAccessReview = (
 export const useAccessReviewAllowed = (
   resourceAttributes: AccessReviewResourceAttributes,
   impersonate?: ImpersonateKind,
-): boolean => {
-  return useAccessReview(resourceAttributes, impersonate)[0];
-};
+): boolean => useAccessReview(resourceAttributes, impersonate)[0];

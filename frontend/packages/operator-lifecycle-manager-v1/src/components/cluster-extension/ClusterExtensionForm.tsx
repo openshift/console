@@ -53,9 +53,10 @@ const ClusterExtensionForm: FC<ClusterExtensionFormProps> = ({ formData = {}, on
   const namespace = formData?.spec?.namespace || '';
   const serviceAccountName = formData?.spec?.serviceAccount?.name || '';
   const version = formData?.spec?.source?.catalog?.version || '';
-  const channels = useMemo(() => formData?.spec?.source?.catalog?.channels || [], [
-    formData?.spec?.source?.catalog?.channels,
-  ]);
+  const channels = useMemo(
+    () => formData?.spec?.source?.catalog?.channels || [],
+    [formData?.spec?.source?.catalog?.channels],
+  );
 
   // Extract catalogs from selector
   const catalogs = useMemo(() => {

@@ -1,7 +1,7 @@
 module.exports = {
   // Require i18n namespace argument for useTranslation()
   'no-restricted-syntax': [
-    'warn',
+    'error',
     {
       selector: "CallExpression[callee.name='useTranslation'][arguments.length=0]",
       message:
@@ -40,6 +40,12 @@ module.exports = {
           group: ['@patternfly/*/dist/js/**', '@patternfly/*/dist/cjs/**'],
           message: 'Import from the package index instead of the CJS dist path.',
         },
+        {
+          group: ['use-sync-external-store', 'use-sync-external-store/shim'],
+          importNames: ['useSyncExternalStore'],
+          message:
+            "Use the useSyncExternalStore shim from 'react' instead of importing the polyfill.",
+        },
       ],
     },
   ],
@@ -72,32 +78,15 @@ module.exports = {
   // Enforce that a label tag has a text label and an associated control.
   'jsx-a11y/label-has-associated-control': ['error', { assert: 'either' }],
 
-  /* ------------------------ New Rules as of eslint-plugin-react v7.17.0 --------------------------
-
-    TODO The following rules are disabled since they are new and cause failures. Need follow up.
-
-  ------------------------------------------------------------------------------------------------*/
-
-  //  Enforces where React component static properties should be positioned.
-  'react/static-property-placement': 'off',
-
-  // Enforce the state initialization style to be either in a constructor or with a class property
-  'react/state-in-constructor': 'off',
-
-  // Enforce curly braces or disallow unnecessary curly braces in JSX
-  'react/jsx-curly-brace-presence': 'off',
-
-  // Enforce component methods order (fixable)
+  // Conflicts with sort-class-members/sort-class-members
   'react/sort-comp': 'off',
 
   // Disable prop-types related rules (TypeScript handles this)
   'react/no-unused-prop-types': 'off',
   'react/forbid-prop-types': 'off',
 
-  /* ---- Rules new/changed in eslint-config-airbnb v19 / eslint-plugin-react v7.37 ---- */
-
   // Disallow usage of string refs
-  'react/no-string-refs': 'warn',
+  'react/no-string-refs': 'error',
 
   // Enforce self-closing for components but not HTML elements
   'react/self-closing-comp': ['error', { component: true, html: false }],
@@ -105,10 +94,13 @@ module.exports = {
   // Disallow unescaped entities in JSX
   'react/no-unescaped-entities': 'off',
 
-  // Enforce function component definition style (new in airbnb v19)
-  'react/function-component-definition': 'off',
+  // Enforce consistent function component definitions (arrow functions)
+  'react/function-component-definition': [
+    'error',
+    { namedComponents: 'arrow-function', unnamedComponents: 'arrow-function' },
+  ],
 
-  // Require defaultProps for non-required props (TypeScript handles this)
+  // Require defaultProps for non-required props (deprecated in React 17)
   'react/require-default-props': 'off',
 
   // Disallow useless JSX fragments (new in airbnb v19)

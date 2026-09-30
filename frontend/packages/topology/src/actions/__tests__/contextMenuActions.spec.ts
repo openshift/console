@@ -39,7 +39,7 @@ describe('context menu actions', () => {
       },
     };
     mockOperatorBackedServiceNode.setModel(OperatorBackedServiceModel);
-    const { csvName } = mockOperatorBackedServiceNode.getData()?.data;
+    const { csvName } = mockOperatorBackedServiceNode.getData()?.data ?? {};
     const resource = mockOperatorBackedServiceNode.getResource();
     const expectedContext = {
       'topology-actions': mockOperatorBackedServiceNode,

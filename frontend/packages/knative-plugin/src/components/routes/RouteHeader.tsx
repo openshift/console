@@ -1,47 +1,65 @@
-import { sortable } from '@patternfly/react-table';
-import type { TFunction } from 'i18next';
-import { tableColumnClasses } from './route-table';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import {
+  cellIsStickyProps,
+  getNameColumnProps,
+} from '@console/app/src/components/data-view/ConsoleDataView';
+import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
+import type { ConsoleDataViewColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { RouteModel } from '../../models';
+import type { RouteKind } from '../../types';
 
-const RouteHeader = (t: TFunction) => () => {
-  return [
-    {
-      title: t('knative-plugin~Name'),
-      sortField: 'metadata.name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[0] },
-    },
-    {
-      id: 'namespace',
-      title: t('knative-plugin~Namespace'),
-      sortField: 'metadata.namespace',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[1] },
-    },
-    {
-      title: t('knative-plugin~URL'),
-      sortField: 'status.url',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[2] },
-    },
-    {
-      title: t('knative-plugin~Created'),
-      sortField: 'metadata.creationTimestamp',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[3] },
-    },
-    {
-      title: t('knative-plugin~Conditions'),
-      props: { className: tableColumnClasses[4] },
-    },
-    {
-      title: t('knative-plugin~Traffic'),
-      props: { className: tableColumnClasses[5] },
-    },
-    {
-      title: '',
-      props: { className: tableColumnClasses[6] },
-    },
-  ];
+export const useRouteColumns = (): {
+  columns: ConsoleDataViewColumn<RouteKind>[];
+  resetAllColumnWidths: () => void;
+} => {
+  const { t } = useTranslation('knative-plugin');
+  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(RouteModel);
+  const columns = useMemo(
+    () => [
+      {
+        id: 'name',
+        resizableProps: getResizableProps('name'),
+        title: t('Name'),
+        sort: 'metadata.name',
+        props: getNameColumnProps(),
+      },
+      {
+        id: 'namespace',
+        resizableProps: getResizableProps('namespace'),
+        title: t('Namespace'),
+        sort: 'metadata.namespace',
+        props: { modifier: 'nowrap' as const },
+      },
+      {
+        id: 'url',
+        resizableProps: getResizableProps('url'),
+        title: t('URL'),
+        sort: 'status.url',
+        props: { modifier: 'nowrap' as const },
+      },
+      {
+        id: 'created',
+        resizableProps: getResizableProps('created'),
+        title: t('Created'),
+        sort: 'metadata.creationTimestamp',
+        props: { modifier: 'nowrap' as const },
+      },
+      {
+        id: 'conditions',
+        resizableProps: getResizableProps('conditions'),
+        title: t('Conditions'),
+        props: { modifier: 'nowrap' as const },
+      },
+      {
+        id: 'traffic',
+        resizableProps: getResizableProps('traffic'),
+        title: t('Traffic'),
+        props: { modifier: 'nowrap' as const },
+      },
+      { id: 'actions', title: '', props: cellIsStickyProps },
+    ],
+    [t, getResizableProps],
+  );
+  return { columns, resetAllColumnWidths };
 };
-
-export default RouteHeader;

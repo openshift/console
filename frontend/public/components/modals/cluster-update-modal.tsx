@@ -44,7 +44,7 @@ import {
 import {
   ClusterNotUpgradeableAlert,
   UpdateBlockedLabel,
-} from '../cluster-settings/cluster-settings';
+} from '../cluster-settings/cluster-settings-utils';
 import { MachineConfigPoolsSelector } from '../machine-config-pools-selector';
 import { FieldLevelHelp } from '../utils/field-level-help';
 import { LinkifyExternal } from '../utils/link';
@@ -189,12 +189,10 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
       ),
     };
   };
-  const recommendedOptions = availableSortedUpdates.map(({ version }) => {
-    return dropdownItem(version);
-  });
-  const notRecommendedOptions = notRecommendedSortedUpdates.map(({ release: { version } }) => {
-    return dropdownItem(version);
-  });
+  const recommendedOptions = availableSortedUpdates.map(({ version }) => dropdownItem(version));
+  const notRecommendedOptions = notRecommendedSortedUpdates.map(({ release: { version } }) =>
+    dropdownItem(version),
+  );
   const options = [
     {
       items: recommendedOptions,
@@ -382,11 +380,11 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
             variant="warning"
             isInline
             isPlain
-            title={t(
-              'Cluster updates are irreversible. After an update begins, it cannot be rolled back to the previous version. Verify your cluster is ready before you proceed.',
-            )}
+            title={t('Cluster updates are irreversible')}
             data-test="update-cluster-modal-irreversibility-notice"
-          />
+          >
+            {t('After an update begins, you cannot roll back to the previous version.')}
+          </Alert>
         </Form>
       </ModalBody>
       <ModalFooterWithAlerts errorMessage={errorMessage || error}>
@@ -418,19 +416,17 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
   );
 };
 
-export const ClusterUpdateModalOverlay: OverlayComponent<ClusterUpdateModalProps> = (props) => {
-  return (
-    <Modal
-      isOpen
-      onClose={props.closeOverlay}
-      variant={ModalVariant.small}
-      aria-labelledby="cluster-update-modal-title"
-      data-test="update-cluster-modal"
-    >
-      <ClusterUpdateModal {...props} close={props.closeOverlay} cancel={props.closeOverlay} />
-    </Modal>
-  );
-};
+export const ClusterUpdateModalOverlay: OverlayComponent<ClusterUpdateModalProps> = (props) => (
+  <Modal
+    isOpen
+    onClose={props.closeOverlay}
+    variant={ModalVariant.small}
+    aria-labelledby="cluster-update-modal-title"
+    data-test="update-cluster-modal"
+  >
+    <ClusterUpdateModal {...props} close={props.closeOverlay} cancel={props.closeOverlay} />
+  </Modal>
+);
 
 type ClusterUpdateModalProps = {
   cv: ClusterVersionKind;

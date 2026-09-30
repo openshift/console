@@ -46,20 +46,14 @@ const Form: FC<FormProps> = ({ formValues, dispatchFormChange }) => {
   );
 };
 
-const getInitialValues = (globals, receiverConfig) => {
-  return {
-    webhookUrl: receiverConfig?.url || '',
-    webhookSendResolved: _.get(receiverConfig, 'send_resolved', globals?.webhook_send_resolved),
-  };
-};
+const getInitialValues = (globals, receiverConfig) => ({
+  webhookUrl: receiverConfig?.url || '',
+  webhookSendResolved: _.get(receiverConfig, 'send_resolved', globals?.webhook_send_resolved),
+});
 
-const isFormInvalid = (formValues) => {
-  return !formValues.webhookUrl;
-};
+const isFormInvalid = (formValues) => !formValues.webhookUrl;
 
-const updateGlobals = () => {
-  return {};
-};
+const updateGlobals = () => ({});
 
 const createReceiverConfig = (globals, formValues, receiverConfig) => {
   _.set(receiverConfig, 'url', formValues.webhookUrl);

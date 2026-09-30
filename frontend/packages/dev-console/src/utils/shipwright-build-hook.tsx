@@ -7,9 +7,7 @@ import { ClusterBuildStrategyModel } from '@console/shipwright-plugin/src/models
 import { ClusterBuildStrategy } from '@console/shipwright-plugin/src/types';
 
 /** NOTE: ClusterBuildStrategies are needed to be installed to use Shipwright Builds */
-export const useShipwrightBuilds = (): boolean => {
-  return useFlag('SHIPWRIGHT_BUILD');
-};
+export const useShipwrightBuilds = (): boolean => useFlag('SHIPWRIGHT_BUILD');
 
 export interface AvailableBuildStrategies {
   s2i: boolean;

@@ -29,11 +29,10 @@ export const ClusterDashboard = memo(() => {
     FLAGS.CONSOLE_CAPABILITY_GETTINGSTARTEDBANNER_IS_ENABLED,
   );
 
-  const context = useMemo(() => ({ infrastructure, infrastructureLoaded, infrastructureError }), [
-    infrastructure,
-    infrastructureLoaded,
-    infrastructureError,
-  ]);
+  const context = useMemo(
+    () => ({ infrastructure, infrastructureLoaded, infrastructureError }),
+    [infrastructure, infrastructureLoaded, infrastructureError],
+  );
 
   return (
     <ClusterDashboardContext.Provider value={context}>

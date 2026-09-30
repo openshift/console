@@ -61,8 +61,8 @@ export const useBuildsActions = (
       confirmButtonVariant: ButtonVariant.danger,
       confirmButtonLabel: t('Yes, cancel'),
       cancelButtonLabel: t("No, don't cancel"),
-      onConfirm: () => {
-        return k8sPatchResource({
+      onConfirm: () =>
+        k8sPatchResource({
           model: kindObj,
           resource: obj,
           data: [
@@ -72,8 +72,7 @@ export const useBuildsActions = (
               value: true,
             },
           ],
-        });
-      },
+        }),
     }),
     [t, obj, kindObj],
   );

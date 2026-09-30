@@ -18,8 +18,8 @@ export const safeYAMLToJS = (yaml: string, fallback: any = {}, options: any = {}
   }
 };
 
-export const asyncYAMLToJS = (yaml: string, options: any = {}): Promise<any> => {
-  return new Promise((resolve, reject) => {
+export const asyncYAMLToJS = (yaml: string, options: any = {}): Promise<any> =>
+  new Promise((resolve, reject) => {
     try {
       const js = safeLoad(yaml, options);
       resolve(js);
@@ -27,4 +27,3 @@ export const asyncYAMLToJS = (yaml: string, options: any = {}): Promise<any> => 
       reject(e);
     }
   });
-};

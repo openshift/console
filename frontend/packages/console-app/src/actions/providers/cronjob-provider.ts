@@ -12,11 +12,10 @@ export const useCronJobActionsProvider = (resource: CronJobKind) => {
   const cronJobActions = useCronJobActions(resource);
   const commonActions = useCommonResourceActions(kindObj, resource);
 
-  const actions = useMemo(() => [...cronJobActions, ...pdbActions, ...commonActions], [
-    cronJobActions,
-    pdbActions,
-    commonActions,
-  ]);
+  const actions = useMemo(
+    () => [...cronJobActions, ...pdbActions, ...commonActions],
+    [cronJobActions, pdbActions, commonActions],
+  );
 
   return [actions, !inFlight, undefined];
 };

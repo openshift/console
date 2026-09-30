@@ -10,7 +10,7 @@ import { useRefWidth } from '../utils/ref-width-hook';
 import type { Humanize } from '../utils/types';
 import { humanizePercentage } from '../utils/units';
 import { PrometheusGraph, PrometheusGraphLink } from './prometheus-graph';
-import type { DataPoint } from '.';
+import type { DataPoint } from './types';
 
 const DEFAULT_THRESHOLDS = [{ value: 67 }, { value: 92 }];
 

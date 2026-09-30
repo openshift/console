@@ -7,9 +7,11 @@ import {
   ConsoleDataView,
   nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import type {
+  ConsoleDataViewColumn,
+  GetDataViewRows,
+} from '@console/app/src/components/data-view/types';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-import type { TableColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { ResourceLink } from '@console/internal/components/utils/resource-link';
 import { Selector } from '@console/internal/components/utils/selector';
 import { LoadingBox } from '@console/internal/components/utils/status-box';
@@ -32,8 +34,8 @@ const tableColumnInfo = [
   { id: '' },
 ];
 
-const getDataViewRows: GetDataViewRows<PodDisruptionBudgetKind> = (data, columns) => {
-  return data.map(({ obj: pdb }) => {
+const getDataViewRows: GetDataViewRows<PodDisruptionBudgetKind> = (data, columns) =>
+  data.map(({ obj: pdb }) => {
     const { name, namespace } = pdb.metadata;
     const resourceKind = referenceForModel(PodDisruptionBudgetModel);
     const context = { [resourceKind]: pdb };
@@ -73,19 +75,17 @@ const getDataViewRows: GetDataViewRows<PodDisruptionBudgetKind> = (data, columns
       };
     });
   });
-};
 
 const usePDBColumns = (): {
-  columns: TableColumn<PodDisruptionBudgetKind>[];
+  columns: ConsoleDataViewColumn<PodDisruptionBudgetKind>[];
   resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation('console-app');
-  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(
-    PodDisruptionBudgetModel,
-  );
+  const { getResizableProps, resetAllColumnWidths } =
+    useColumnWidthSettings(PodDisruptionBudgetModel);
 
-  const columns = useMemo(() => {
-    return [
+  const columns = useMemo<ConsoleDataViewColumn<PodDisruptionBudgetKind>[]>(
+    () => [
       {
         title: t('Name'),
         id: tableColumnInfo[0].id,
@@ -93,7 +93,7 @@ const usePDBColumns = (): {
         resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: {
           ...nameCellProps,
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -102,7 +102,7 @@ const usePDBColumns = (): {
         sort: 'metadata.namespace',
         resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -111,7 +111,7 @@ const usePDBColumns = (): {
         sort: 'spec.selector',
         resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -120,7 +120,7 @@ const usePDBColumns = (): {
         sort: 'spec.minAvailable',
         resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -129,7 +129,7 @@ const usePDBColumns = (): {
         sort: 'status.disruptionsAllowed',
         resizableProps: getResizableProps(tableColumnInfo[4].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -138,7 +138,7 @@ const usePDBColumns = (): {
         sort: 'metadata.creationTimestamp',
         resizableProps: getResizableProps(tableColumnInfo[5].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -148,8 +148,9 @@ const usePDBColumns = (): {
           ...actionsCellProps,
         },
       },
-    ];
-  }, [t, getResizableProps]);
+    ],
+    [t, getResizableProps],
+  );
 
   return { columns, resetAllColumnWidths };
 };

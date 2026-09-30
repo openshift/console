@@ -14,15 +14,17 @@ export const useConfigureUpdateStrategyModal = ({
 }: ConfigureUpdateStrategyModalProps) => {
   const launchModal = useOverlay();
 
-  return useCallback(() => {
-    return launchModal(LazyUpdateStrategyModalOverlay, {
-      resourceKind: kindObj,
-      resource,
-      defaultValue: specValue,
-      title: i18n.t('olm~Edit {{item}}', { item: specDescriptor.displayName }),
-      path: `/spec/${getPatchPathFromDescriptor(specDescriptor)}`,
-    });
-  }, [launchModal, kindObj, resource, specValue, specDescriptor]);
+  return useCallback(
+    () =>
+      launchModal(LazyUpdateStrategyModalOverlay, {
+        resourceKind: kindObj,
+        resource,
+        defaultValue: specValue,
+        title: i18n.t('olm~Edit {{item}}', { item: specDescriptor.displayName }),
+        path: `/spec/${getPatchPathFromDescriptor(specDescriptor)}`,
+      }),
+    [launchModal, kindObj, resource, specValue, specDescriptor],
+  );
 };
 
 type ConfigureUpdateStrategyModalProps = {

@@ -202,7 +202,6 @@ export const createRemoteWebhook = async (
   } else {
     authToken = method === 'token' ? token : Base64.decode(secretObj?.data?.['provider.token']);
   }
-
   const webhookCreationStatus = await gitService.createRepoWebhook(
     authToken,
     webhookURL,

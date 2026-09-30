@@ -27,7 +27,10 @@ import {
   ConsoleDataView,
   nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import type {
+  ConsoleDataViewColumn,
+  GetDataViewRows,
+} from '@console/app/src/components/data-view/types';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import type { ResourceListPage } from '@console/dynamic-plugin-sdk/src/extensions/pages';
 import { isResourceListPage } from '@console/dynamic-plugin-sdk/src/extensions/pages';
@@ -39,12 +42,7 @@ import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { GreenCheckCircleIcon } from '@console/shared/src/components/status/icons';
 import { DASH } from '@console/shared/src/constants/ui';
 import { CustomResourceDefinitionModel } from '../models';
-import type {
-  CRDVersion,
-  CustomResourceDefinitionKind,
-  K8sModel,
-  TableColumn,
-} from '../module/k8s';
+import type { CRDVersion, CustomResourceDefinitionKind, K8sModel } from '../module/k8s';
 import {
   apiVersionCompare,
   getLatestVersionForCRD,
@@ -56,7 +54,8 @@ import { DefaultPage } from './default-resource';
 import { DetailsPage } from './factory/details';
 import { ListPage } from './factory/list-page';
 import { sortResourceByValue } from './factory/Table/sort';
-import { getResourceListPages } from './resource-pages';
+// eslint-disable-next-line import/no-cycle -- import to this module is dynamic
+import { getResourceListPages } from './list-pages';
 import { AsyncComponent } from './utils/async';
 import { DetailsItem } from './utils/details-item';
 import { ResourceSummary } from './utils/details-page';
@@ -192,9 +191,9 @@ const Details: FC<{ obj: CustomResourceDefinitionKind }> = ({ obj: crd }) => {
 const Instances: FC<InstancesProps> = ({ obj, namespace }) => {
   const resourceListPageExtensions = useExtensions<ResourceListPage>(isResourceListPage);
   const crdKind = referenceForCRD(obj);
-  const componentLoader = getResourceListPages(resourceListPageExtensions).get(crdKind, () =>
-    Promise.resolve(DefaultPage),
-  );
+  const componentLoader =
+    getResourceListPages(resourceListPageExtensions).get(crdKind) ??
+    (() => Promise.resolve(DefaultPage));
   return (
     <AsyncComponent
       loader={componentLoader}
@@ -216,7 +215,7 @@ const tableColumnInfo = [
 ];
 
 const useCustomResourceDefinitionsColumns = (): {
-  columns: TableColumn<CustomResourceDefinitionKind>[];
+  columns: ConsoleDataViewColumn<CustomResourceDefinitionKind>[];
   resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation('public');
@@ -224,7 +223,7 @@ const useCustomResourceDefinitionsColumns = (): {
     CustomResourceDefinitionModel,
   );
 
-  const columns: TableColumn<CustomResourceDefinitionKind>[] = useMemo(
+  const columns: ConsoleDataViewColumn<CustomResourceDefinitionKind>[] = useMemo(
     () => [
       {
         title: t('Name'),
@@ -233,7 +232,7 @@ const useCustomResourceDefinitionsColumns = (): {
         resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: {
           ...nameCellProps,
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -242,7 +241,7 @@ const useCustomResourceDefinitionsColumns = (): {
         sort: 'spec.group',
         resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -254,7 +253,7 @@ const useCustomResourceDefinitionsColumns = (): {
           ),
         resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -263,7 +262,7 @@ const useCustomResourceDefinitionsColumns = (): {
         sort: 'spec.scope',
         resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -271,7 +270,7 @@ const useCustomResourceDefinitionsColumns = (): {
         id: tableColumnInfo[4].id,
         resizableProps: getResizableProps(tableColumnInfo[4].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -293,8 +292,8 @@ const IsNamespaced: FC<{ obj: CustomResourceDefinitionKind }> = ({ obj }) => {
   return <>{namespaced(obj) ? t('Yes') : t('No')}</>;
 };
 
-const getDataViewRows: GetDataViewRows<CustomResourceDefinitionKind> = (data, columns) => {
-  return data.map(({ obj }) => {
+const getDataViewRows: GetDataViewRows<CustomResourceDefinitionKind> = (data, columns) =>
+  data.map(({ obj }) => {
     const { name, namespace } = obj.metadata;
     const displayName = _.get(obj, 'spec.names.kind');
 
@@ -341,7 +340,6 @@ const getDataViewRows: GetDataViewRows<CustomResourceDefinitionKind> = (data, co
       };
     });
   });
-};
 
 const CustomResourceDefinitionsList: FC<CustomResourceDefinitionsListProps> = ({
   data,
@@ -377,30 +375,28 @@ export const CustomResourceDefinitionsPage: FC = (props) => (
   />
 );
 
-export const CustomResourceDefinitionsDetailsPage: FC = (props) => {
-  return (
-    <DetailsPage
-      {...props}
-      kind={referenceForModel(CustomResourceDefinitionModel)}
-      customActionMenu={(k8sObj: K8sModel, obj: CustomResourceDefinitionKind) => (
-        <LazyActionMenu
-          context={{ [referenceForModel(CustomResourceDefinitionModel)]: obj }}
-          variant={ActionMenuVariant.DROPDOWN}
-        />
-      )}
-      pages={[
-        navFactory.details(Details),
-        navFactory.editYaml(),
-        {
-          // t('public~Instances')
-          nameKey: 'public~Instances',
-          href: 'instances',
-          component: Instances,
-        },
-      ]}
-    />
-  );
-};
+export const CustomResourceDefinitionsDetailsPage: FC = (props) => (
+  <DetailsPage
+    {...props}
+    kind={referenceForModel(CustomResourceDefinitionModel)}
+    customActionMenu={(k8sObj: K8sModel, obj: CustomResourceDefinitionKind) => (
+      <LazyActionMenu
+        context={{ [referenceForModel(CustomResourceDefinitionModel)]: obj }}
+        variant={ActionMenuVariant.DROPDOWN}
+      />
+    )}
+    pages={[
+      navFactory.details(Details),
+      navFactory.editYaml(),
+      {
+        // t('public~Instances')
+        nameKey: 'public~Instances',
+        href: 'instances',
+        component: Instances,
+      },
+    ]}
+  />
+);
 
 type CustomResourceDefinitionsListProps = {
   data: CustomResourceDefinitionKind[];

@@ -9,7 +9,7 @@ import { useQueryParams } from './useQueryParams';
  * connect a newly created resource to an existing one in the topology view
  */
 export const useResourceConnectionHandler = <
-  R extends K8sResourceCommon[] | K8sResourceCommon = K8sResourceCommon[]
+  R extends K8sResourceCommon[] | K8sResourceCommon = K8sResourceCommon[],
 >(
   key: string = 'action',
 ): ((arg: R) => Promise<R>) => {

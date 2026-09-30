@@ -26,6 +26,7 @@ import {
   getDefaultResource,
   convertToForm,
   convertToHelmChartRepository,
+  tryHttpsUpgrade,
 } from './helmchartrepository-create-utils';
 import { validationSchema } from './helmchartrepository-validation-utils';
 
@@ -110,6 +111,12 @@ const CreateHelmChartRepository: FC<CreateHelmChartRepositoryProps> = ({
       HelmChartRepositoryRes = convertToHelmChartRepository(values.formData, namespace);
     }
 
+    const currentUrl = HelmChartRepositoryRes.spec?.connectionConfig?.url;
+    const upgradedUrl = await tryHttpsUpgrade(currentUrl);
+    if (upgradedUrl) {
+      HelmChartRepositoryRes.spec.connectionConfig.url = upgradedUrl;
+    }
+
     const resourceCall = isEditForm
       ? k8sUpdateResource({
           model: modelFor(referenceFor(HelmChartRepositoryRes)),
@@ -127,12 +134,12 @@ const CreateHelmChartRepository: FC<CreateHelmChartRepositoryProps> = ({
             HelmChartRepositoryRes.metadata.namespace ?? namespace
           }?catalogType=HelmChart`
         : HelmChartRepositoryRes.kind === ProjectHelmChartRepositoryModel.kind
-        ? `/k8s/ns/${HelmChartRepositoryRes.metadata.namespace}/${referenceFor(
-            HelmChartRepositoryRes,
-          )}/${HelmChartRepositoryRes.metadata.name}`
-        : `/k8s/cluster/${referenceFor(HelmChartRepositoryRes)}/${
-            HelmChartRepositoryRes.metadata.name
-          }`;
+          ? `/k8s/ns/${HelmChartRepositoryRes.metadata.namespace}/${referenceFor(
+              HelmChartRepositoryRes,
+            )}/${HelmChartRepositoryRes.metadata.name}`
+          : `/k8s/cluster/${referenceFor(HelmChartRepositoryRes)}/${
+              HelmChartRepositoryRes.metadata.name
+            }`;
 
     return resourceCall
       .then(() => {
@@ -177,17 +184,15 @@ const CreateHelmChartRepository: FC<CreateHelmChartRepositoryProps> = ({
         onSubmit={handleSubmit}
         enableReinitialize
       >
-        {(formikProps) => {
-          return (
-            <CreateHelmChartRepositoryForm
-              {...formikProps}
-              namespace={namespace}
-              handleCancel={handleCancel}
-              showScopeType={showScopeType}
-              existingRepo={existingRepoName && hcr}
-            />
-          );
-        }}
+        {(formikProps) => (
+          <CreateHelmChartRepositoryForm
+            {...formikProps}
+            namespace={namespace}
+            handleCancel={handleCancel}
+            showScopeType={showScopeType}
+            existingRepo={existingRepoName && hcr}
+          />
+        )}
       </Formik>
     </StatusBox>
   );

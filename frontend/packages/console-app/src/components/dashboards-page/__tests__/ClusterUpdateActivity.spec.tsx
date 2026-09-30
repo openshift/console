@@ -24,7 +24,7 @@ describe('ClusterUpdateActivity', () => {
           },
         ],
       },
-    } as ClusterVersionKind);
+    }) as ClusterVersionKind;
 
   it('should render update message with version number', () => {
     const resource = createMockClusterVersion('4.15.0');

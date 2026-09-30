@@ -20,6 +20,5 @@ export const snapshotSource = (snapshot: VolumeSnapshotKind): string =>
   snapshot.spec?.source?.persistentVolumeClaimName ??
   snapshot.spec?.source?.volumeSnapshotContentName;
 
-export const snapshotContentSize = (snapshot: VolumeSnapshotContentKind): number => {
-  return snapshot?.status?.restoreSize ?? 0;
-};
+export const snapshotContentSize = (snapshot: VolumeSnapshotContentKind): number =>
+  snapshot?.status?.restoreSize ?? 0;

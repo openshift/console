@@ -7,7 +7,7 @@ import type {
 import { DynamicRemotePlugin } from '@openshift/dynamic-plugin-sdk-webpack';
 import * as glob from 'glob';
 import * as _ from 'lodash';
-import * as readPkg from 'read-pkg';
+import { type PackageJson, readPackageSync } from 'read-pkg';
 import * as semver from 'semver';
 import type { Compiler, WebpackPluginInstance } from 'webpack';
 import type { ConsolePluginBuildMetadata, ConsolePluginPackageJSON } from '../build-types';
@@ -25,14 +25,16 @@ import { ValidationResult } from '../validation/ValidationResult';
 import type { DynamicModulePackageSpecs } from './DynamicModuleImportPlugin';
 import { DynamicModuleImportPlugin, resolveDynamicModuleMaps } from './DynamicModuleImportPlugin';
 
-const loadPluginPackageJSON = () => readPkg.sync({ normalize: false }) as ConsolePluginPackageJSON;
-
-// Resolve from cwd, not this file's real path, so symlinked SDK installations work
+// Resolve from process.cwd(), not this file's real path, so symlinked SDK installations work.
+// It should not be necessary to customize the process.cwd() resolution base path since module
+// bundlers typically use a hoisted top-level node_modules hierarchy.
 const loadVendorPackageJSON = (moduleName: string) =>
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-  require(require.resolve(`${moduleName}/package.json`, {
-    paths: [process.cwd()],
-  })) as readPkg.PackageJson;
+  require(
+    require.resolve(`${moduleName}/package.json`, {
+      paths: [process.cwd()],
+    }),
+  ) as PackageJson;
 
 const getVendorPackageVersion = (moduleName: string) => {
   try {
@@ -42,12 +44,12 @@ const getVendorPackageVersion = (moduleName: string) => {
   }
 };
 
-const getPackageDependencies = (pkg: readPkg.PackageJson) => ({
+const getPackageDependencies = (pkg: PackageJson) => ({
   ...pkg.devDependencies,
   ...pkg.dependencies,
 });
 
-const hasPackageDependency = (pkg: readPkg.PackageJson, depName: string) =>
+const hasPackageDependency = (pkg: PackageJson, depName: string) =>
   Object.keys(getPackageDependencies(pkg)).includes(depName);
 
 const getPluginSDKPackagePeerDependencies = () =>
@@ -199,9 +201,11 @@ const dynamicModulePatternFlyPackages = [
 /**
  * Default shared dynamic module package definitions.
  */
-export const dynamicModulePackageSpecs = dynamicModulePatternFlyPackages.reduce<
-  DynamicModulePackageSpecs
->((acc, moduleName) => ({ ...acc, [moduleName]: {} }), {});
+export const dynamicModulePackageSpecs =
+  dynamicModulePatternFlyPackages.reduce<DynamicModulePackageSpecs>(
+    (acc, moduleName) => ({ ...acc, [moduleName]: {} }),
+    {},
+  );
 
 export const dynamicModuleImportTransformFilter = (moduleRequest: string) => {
   const isCode = /\.(jsx?|tsx?)$/.test(moduleRequest);
@@ -211,6 +215,15 @@ export const dynamicModuleImportTransformFilter = (moduleRequest: string) => {
 };
 
 export type ConsoleRemotePluginOptions = Partial<{
+  /**
+   * Base directory for resolving relative paths when processing plugin assets.
+   *
+   * Must be an absolute path.
+   *
+   * If not specified, `process.cwd()` will be used as the base directory.
+   */
+  baseDir: string;
+
   /**
    * Console dynamic plugin metadata.
    *
@@ -312,7 +325,7 @@ export type ConsoleRemotePluginOptions = Partial<{
      *
      * If not specified, the list will contain a single entry:
      * ```ts
-     * path.resolve(process.cwd(), 'node_modules')
+     * path.resolve(baseDir, 'node_modules')
      * ```
      */
     modulePaths: string[];
@@ -348,25 +361,28 @@ export type ConsoleRemotePluginOptions = Partial<{
 /**
  * Generates Console dynamic plugin remote container and related assets.
  *
- * Refer to `console-dynamic-plugin-sdk/src/shared-modules.ts` for details on Console provided
- * shared modules and their configuration.
- *
- * @see {@link sharedPluginModules}
- * @see {@link getSharedModuleMetadata}
+ * Refer to {@link sharedPluginModules} for details on Console provided shared modules and their configuration.
  */
 export class ConsoleRemotePlugin implements WebpackPluginInstance {
   private readonly adaptedOptions: Required<ConsoleRemotePluginOptions>;
 
-  private readonly baseDir = process.cwd();
-
-  private readonly pkg = loadPluginPackageJSON();
+  private readonly pkg: ConsolePluginPackageJSON;
 
   private readonly dynamicModuleMaps: Record<string, DynamicModuleMap>;
 
   constructor(options: ConsoleRemotePluginOptions = {}) {
+    const baseDir = options.baseDir ?? process.cwd();
+
+    if (!path.isAbsolute(baseDir)) {
+      throw new Error(`baseDir must be an absolute path: ${baseDir}`);
+    }
+
+    this.pkg = readPackageSync({ cwd: baseDir, normalize: false });
+
     this.adaptedOptions = {
+      baseDir,
       pluginMetadata: options.pluginMetadata ?? this.pkg.consolePlugin,
-      extensions: options.extensions ?? parseJSONC(path.resolve(this.baseDir, extensionsFile)),
+      extensions: options.extensions ?? parseJSONC(path.resolve(baseDir, extensionsFile)),
       validateExtensionSchema: options.validateExtensionSchema ?? true,
       validateExtensionIntegrity: options.validateExtensionIntegrity ?? true,
       validateSharedModules: options.validateSharedModules ?? true,
@@ -397,7 +413,7 @@ export class ConsoleRemotePlugin implements WebpackPluginInstance {
     }
 
     const resolvedModulePaths = this.adaptedOptions.sharedDynamicModuleSettings.modulePaths ?? [
-      path.resolve(process.cwd(), 'node_modules'),
+      path.resolve(baseDir, 'node_modules'),
     ];
 
     this.dynamicModuleMaps = resolveDynamicModuleMaps(
@@ -409,6 +425,7 @@ export class ConsoleRemotePlugin implements WebpackPluginInstance {
 
   apply(compiler: Compiler) {
     const {
+      baseDir,
       pluginMetadata,
       extensions,
       validateExtensionIntegrity,
@@ -442,7 +459,7 @@ export class ConsoleRemotePlugin implements WebpackPluginInstance {
     compiler.options.resolve.alias = compiler.options.resolve.alias ?? {};
 
     // Prevent PatternFly styles from being included in the compilation
-    getPatternFlyStyles(this.baseDir).forEach((cssFile) => {
+    getPatternFlyStyles(baseDir).forEach((cssFile) => {
       if (Array.isArray(compiler.options.resolve.alias)) {
         compiler.options.resolve.alias.push({ name: cssFile, alias: false });
       } else {
@@ -487,7 +504,7 @@ export class ConsoleRemotePlugin implements WebpackPluginInstance {
           compilation,
           extensions,
           exposedModules ?? {},
-          path.dirname(path.resolve(this.baseDir, extensionsFile)),
+          path.dirname(path.resolve(baseDir, extensionsFile)),
         );
 
         if (result.hasErrors()) {

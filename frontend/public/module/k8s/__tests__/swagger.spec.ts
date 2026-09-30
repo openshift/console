@@ -1,4 +1,5 @@
-import type { SwaggerAPISpec, SwaggerDefinitions } from '../swagger';
+import type { SwaggerDefinitions } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import type { SwaggerAPISpec } from '../swagger';
 
 const mockCoFetch = jest.fn();
 jest.mock('@console/shared/src/utils/console-fetch', () => ({
@@ -16,7 +17,7 @@ const mockDefinitions: SwaggerDefinitions = {
 };
 
 const createMockResponse = (definitions: SwaggerDefinitions, etag?: string): Response =>
-  (({
+  ({
     status: 200,
     ok: true,
     headers: new Headers(etag ? { ETag: etag } : {}),
@@ -26,15 +27,15 @@ const createMockResponse = (definitions: SwaggerDefinitions, etag?: string): Res
       paths: {},
       definitions,
     } as SwaggerAPISpec),
-  } as unknown) as Response);
+  }) as unknown as Response;
 
 const create304Response = (): Response =>
-  (({
+  ({
     status: 304,
     ok: true,
     headers: new Headers(),
     json: jest.fn(),
-  } as unknown) as Response);
+  }) as unknown as Response;
 
 describe('fetchSwagger', () => {
   let fetchSwagger: () => Promise<SwaggerDefinitions>;
@@ -127,12 +128,12 @@ describe('fetchSwagger', () => {
   });
 
   it('should return null when definitions are missing from response', async () => {
-    const response = ({
+    const response = {
       status: 200,
       ok: true,
       headers: new Headers(),
       json: jest.fn().mockResolvedValue({ swagger: '2.0', paths: {} }),
-    } as unknown) as Response;
+    } as unknown as Response;
     mockCoFetch.mockResolvedValue(response);
 
     const result = await fetchSwagger();

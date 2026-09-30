@@ -100,23 +100,21 @@ export const editKnativeServiceResource = (
   kind: K8sKind,
   obj: K8sResourceKind,
   serviceTypeValue: ServiceTypeValue,
-): Action => {
-  return {
-    id: 'edit-service',
-    label:
+): Action => ({
+  id: 'edit-service',
+  label:
+    serviceTypeValue === ServiceTypeValue.Function
+      ? i18next.t('knative-plugin~Edit Function')
+      : i18next.t('knative-plugin~Edit Service'),
+  cta: {
+    href:
       serviceTypeValue === ServiceTypeValue.Function
-        ? i18next.t('knative-plugin~Edit Function')
-        : i18next.t('knative-plugin~Edit Service'),
-    cta: {
-      href:
-        serviceTypeValue === ServiceTypeValue.Function
-          ? `/functions/ns/${obj.metadata.namespace}/${obj.metadata.name}/yaml`
-          : `${resourceObjPath(obj, kind.crd ? referenceForModel(kind) : kind.kind)}/yaml`,
-    },
-    insertAfter: 'edit-annotations',
-    accessReview: asAccessReview(kind, obj, 'update'),
-  };
-};
+        ? `/functions/ns/${obj.metadata.namespace}/${obj.metadata.name}/yaml`
+        : `${resourceObjPath(obj, kind.crd ? referenceForModel(kind) : kind.kind)}/yaml`,
+  },
+  insertAfter: 'edit-annotations',
+  accessReview: asAccessReview(kind, obj, 'update'),
+});
 
 export const useDeleteKnativeServiceResource = (
   kind: K8sKind | undefined,
@@ -157,14 +155,12 @@ export const moveSinkSource = (
   model: K8sKind,
   source: K8sResourceKind,
   sinkSourceModalLauncher: () => void,
-): Action => {
-  return {
-    id: 'move-sink-source',
-    label: i18next.t('knative-plugin~Move sink'),
-    cta: sinkSourceModalLauncher,
-    accessReview: asAccessReview(model, source, 'update'),
-  };
-};
+): Action => ({
+  id: 'move-sink-source',
+  label: i18next.t('knative-plugin~Move sink'),
+  cta: sinkSourceModalLauncher,
+  accessReview: asAccessReview(model, source, 'update'),
+});
 
 export const useDeleteRevisionAction = (model: K8sKind, revision: K8sResourceKind): Action => {
   const deleteRevisionModalLauncher = useDeleteRevisionModalLauncher({ revision });

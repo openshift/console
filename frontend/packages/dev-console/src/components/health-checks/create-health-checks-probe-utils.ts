@@ -46,27 +46,25 @@ export const getRequestType = (data: HealthCheckProbeData) => {
 
 export const convertResourceDataToFormData = (
   resourceData: HealthCheckProbeData,
-): HealthCheckFormProbeData => {
-  return {
-    ...resourceData,
-    requestType: getRequestType(resourceData),
-    failureThreshold: resourceData.failureThreshold?.toString() || '',
-    successThreshold: resourceData.successThreshold?.toString() || '',
-    initialDelaySeconds: resourceData.initialDelaySeconds?.toString() || '',
-    periodSeconds: resourceData.periodSeconds?.toString() || '',
-    timeoutSeconds: resourceData.timeoutSeconds?.toString() || '',
-    ...(resourceData.httpGet && {
-      httpGet: {
-        ...resourceData.httpGet,
-        port: resourceData.httpGet.port?.toString() || '',
-        scheme: resourceData.httpGet.scheme === 'HTTP' ? undefined : ['HTTPS'],
-      },
-    }),
-    ...(resourceData.tcpSocket && {
-      tcpSocket: { port: resourceData.tcpSocket.port?.toString() || '' },
-    }),
-  };
-};
+): HealthCheckFormProbeData => ({
+  ...resourceData,
+  requestType: getRequestType(resourceData),
+  failureThreshold: resourceData.failureThreshold?.toString() || '',
+  successThreshold: resourceData.successThreshold?.toString() || '',
+  initialDelaySeconds: resourceData.initialDelaySeconds?.toString() || '',
+  periodSeconds: resourceData.periodSeconds?.toString() || '',
+  timeoutSeconds: resourceData.timeoutSeconds?.toString() || '',
+  ...(resourceData.httpGet && {
+    httpGet: {
+      ...resourceData.httpGet,
+      port: resourceData.httpGet.port?.toString() || '',
+      scheme: resourceData.httpGet.scheme === 'HTTP' ? undefined : ['HTTPS'],
+    },
+  }),
+  ...(resourceData.tcpSocket && {
+    tcpSocket: { port: resourceData.tcpSocket.port?.toString() || '' },
+  }),
+});
 
 export const getHealthChecksData = (
   resource: K8sResourceKind,

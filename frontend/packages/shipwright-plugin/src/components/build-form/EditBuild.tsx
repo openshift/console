@@ -89,16 +89,14 @@ const EditBuild: FC<EditBuildProps> = ({ heading, build: watchedBuild, namespace
       onSubmit={handleSubmit}
       enableReinitialize
     >
-      {(formikProps) => {
-        return (
-          <BuildForm
-            {...formikProps}
-            heading={heading}
-            build={watchedBuild}
-            handleCancel={handleCancel}
-          />
-        );
-      }}
+      {(formikProps) => (
+        <BuildForm
+          {...formikProps}
+          heading={heading}
+          build={watchedBuild}
+          handleCancel={handleCancel}
+        />
+      )}
     </Formik>
   );
 };

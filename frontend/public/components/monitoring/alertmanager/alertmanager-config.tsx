@@ -34,10 +34,7 @@ import type {
   ResourceMetadata,
 } from '@console/app/src/components/data-view/types';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
-import type {
-  RowProps,
-  TableColumn,
-} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import type { RowProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { NavBar } from '@console/internal/components/utils/horizontal-nav';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
@@ -123,7 +120,7 @@ const AlertRouting: FC<AlertRoutingProps> = ({ secret, config }) => {
   );
 };
 
-const getIntegrationTypes = (receiver: AlertmanagerReceiver): string[] => {
+const getIntegrationTypes = (receiver: AlertmanagerReceiver): string[] =>
   /* Given receiver = {
        "name": "team-X-pager",
        "email_configs": [...],
@@ -131,9 +128,7 @@ const getIntegrationTypes = (receiver: AlertmanagerReceiver): string[] => {
      };
      returns ['email_configs', 'pagerduty_configs']
   */
-  return _.filter(_.keys(receiver), (v) => _.endsWith(v, '_configs'));
-};
-
+  _.filter(_.keys(receiver), (v) => _.endsWith(v, '_configs'));
 /**
  * Recursive function which transverses routes and sub-routes to get labels and/or matchers for each receiver.
  * Each entry is a set of labels and/or matchers used to route alerts to a receiver
@@ -184,9 +179,8 @@ const hasSimpleRoute = (
 ): boolean => {
   const routes = _.get(config, ['route', 'routes']);
   return (
-    _.filter(routes, (route) => {
-      return route.receiver === receiver.name && _.isUndefined(route.routes);
-    }).length > 0 || _.isEmpty(receiverRoutingLabels)
+    _.filter(routes, (route) => route.receiver === receiver.name && _.isUndefined(route.routes))
+      .length > 0 || _.isEmpty(receiverRoutingLabels)
   );
 };
 
@@ -299,8 +293,8 @@ const tableColumnInfo = [
 const getReceiverDataViewRows = (
   rowData: RowProps<AlertmanagerReceiver, ReceiverRowData>[],
   tableColumns: ConsoleDataViewColumn<AlertmanagerReceiver>[],
-): ConsoleDataViewRow[] => {
-  return rowData.map(({ obj: receiver, rowData: customData }) => {
+): ConsoleDataViewRow[] =>
+  rowData.map(({ obj: receiver, rowData: customData }) => {
     const {
       secret,
       config,
@@ -388,9 +382,7 @@ const getReceiverDataViewRows = (
       [tableColumnInfo[2].id]: {
         cell: isDefaultReceiver
           ? t('All (default receiver)')
-          : _.map(receiverRoutingLabels, (rte, i) => {
-              return <RoutingLabels data={rte} key={i} />;
-            }),
+          : _.map(receiverRoutingLabels, (rte, i) => <RoutingLabels data={rte} key={i} />),
         props: {
           'data-test': `data-view-cell-${receiver.name}-routing-labels`,
         },
@@ -410,33 +402,32 @@ const getReceiverDataViewRows = (
       };
     });
   });
-};
 
-const useReceiverColumns = (): TableColumn<AlertmanagerReceiver>[] => {
+const useReceiverColumns = (): ConsoleDataViewColumn<AlertmanagerReceiver>[] => {
   const { t } = useTranslation('public');
-  const columns = useMemo(() => {
-    return [
+  const columns = useMemo<ConsoleDataViewColumn<AlertmanagerReceiver>[]>(
+    () => [
       {
         title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'name',
         props: {
           ...cellIsStickyProps,
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
         title: t('Integration type'),
         id: tableColumnInfo[1].id,
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
         title: t('Routing labels'),
         id: tableColumnInfo[2].id,
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -444,17 +435,18 @@ const useReceiverColumns = (): TableColumn<AlertmanagerReceiver>[] => {
         id: tableColumnInfo[3].id,
         props: {
           ...cellIsStickyProps,
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
-    ];
-  }, [t]);
+    ],
+    [t],
+  );
   return columns;
 };
 
-const getObjectMetadata = (receiver: AlertmanagerReceiver): ResourceMetadata => {
-  return { name: receiver.name };
-};
+const getObjectMetadata = (receiver: AlertmanagerReceiver): ResourceMetadata => ({
+  name: receiver.name,
+});
 
 const ReceiversTable: FC<ReceiversTableProps> = (props) => {
   const { secret, config, data } = props;

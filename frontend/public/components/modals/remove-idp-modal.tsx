@@ -74,18 +74,16 @@ const RemoveIdentityProviderModalContent: OverlayComponent<RemoveIdentityProvide
   );
 };
 
-export const RemoveIdentityProviderModal: OverlayComponent<RemoveIdentityProvider> = (props) => {
-  return (
-    <Modal
-      variant={ModalVariant.small}
-      isOpen
-      onClose={props.closeOverlay}
-      aria-labelledby="remove-idp-modal-title"
-    >
-      <RemoveIdentityProviderModalContent {...props} />
-    </Modal>
-  );
-};
+export const RemoveIdentityProviderModal: OverlayComponent<RemoveIdentityProvider> = (props) => (
+  <Modal
+    variant={ModalVariant.small}
+    isOpen
+    onClose={props.closeOverlay}
+    aria-labelledby="remove-idp-modal-title"
+  >
+    <RemoveIdentityProviderModalContent {...props} />
+  </Modal>
+);
 
 export type RemoveIdentityProvider = {
   obj: OAuthKind;

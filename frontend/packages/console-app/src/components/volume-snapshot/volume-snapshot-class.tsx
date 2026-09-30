@@ -8,9 +8,11 @@ import {
   ConsoleDataView,
   nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import type {
+  ConsoleDataViewColumn,
+  GetDataViewRows,
+} from '@console/app/src/components/data-view/types';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-import type { TableColumn } from '@console/dynamic-plugin-sdk/src/lib-core';
 import {
   ListPageBody,
   ListPageCreate,
@@ -37,83 +39,79 @@ const isDefaultSnapshotClass = (volumeSnapshotClass: VolumeSnapshotClassKind) =>
     defaultSnapshotClassAnnotation
   ] === 'true';
 
-const getDataViewRowsCreator: (t: TFunction) => GetDataViewRows<VolumeSnapshotClassKind> = (t) => (
-  data,
-  columns,
-) => {
-  return data.map(({ obj }) => {
-    const name = obj.metadata?.name || '';
-    const { deletionPolicy, driver } = obj;
-    const context = { [referenceFor(obj)]: obj };
+const getDataViewRowsCreator: (t: TFunction) => GetDataViewRows<VolumeSnapshotClassKind> =
+  (t) => (data, columns) =>
+    data.map(({ obj }) => {
+      const name = obj.metadata?.name || '';
+      const { deletionPolicy, driver } = obj;
+      const context = { [referenceFor(obj)]: obj };
 
-    const rowCells = {
-      [tableColumnInfo[0].id]: {
-        cell: (
-          <ResourceLink name={name} kind={kind}>
-            {isDefaultSnapshotClass(obj) && (
-              <span className="pf-v6-u-font-size-xs pf-v6-u-text-color-subtle co-resource-item__help-text">
-                &ndash; {t('console-app~Default')}
-              </span>
-            )}
-          </ResourceLink>
-        ),
-        props: getNameCellProps(name),
-      },
-      [tableColumnInfo[1].id]: {
-        cell: driver,
-      },
-      [tableColumnInfo[2].id]: {
-        cell: deletionPolicy,
-      },
-      [tableColumnInfo[3].id]: {
-        cell: <LazyActionMenu context={context} />,
-        props: actionsCellProps,
-      },
-    };
-
-    return columns.map(({ id }) => {
-      const cell = rowCells[id]?.cell || DASH;
-      const props = rowCells[id]?.props || undefined;
-      return {
-        id,
-        props,
-        cell,
+      const rowCells = {
+        [tableColumnInfo[0].id]: {
+          cell: (
+            <ResourceLink name={name} kind={kind}>
+              {isDefaultSnapshotClass(obj) && (
+                <span className="pf-v6-u-font-size-xs pf-v6-u-text-color-subtle co-resource-item__help-text">
+                  &ndash; {t('console-app~Default')}
+                </span>
+              )}
+            </ResourceLink>
+          ),
+          props: getNameCellProps(name),
+        },
+        [tableColumnInfo[1].id]: {
+          cell: driver,
+        },
+        [tableColumnInfo[2].id]: {
+          cell: deletionPolicy,
+        },
+        [tableColumnInfo[3].id]: {
+          cell: <LazyActionMenu context={context} />,
+          props: actionsCellProps,
+        },
       };
+
+      return columns.map(({ id }) => {
+        const cell = rowCells[id]?.cell || DASH;
+        const props = rowCells[id]?.props || undefined;
+        return {
+          id,
+          props,
+          cell,
+        };
+      });
     });
-  });
-};
 
 const useVolumeSnapshotClassColumns = (): {
-  columns: TableColumn<VolumeSnapshotClassKind>[];
+  columns: ConsoleDataViewColumn<VolumeSnapshotClassKind>[];
   resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation('console-app');
-  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(
-    VolumeSnapshotClassModel,
-  );
+  const { getResizableProps, resetAllColumnWidths } =
+    useColumnWidthSettings(VolumeSnapshotClassModel);
 
-  const columns: TableColumn<VolumeSnapshotClassKind>[] = useMemo(
+  const columns: ConsoleDataViewColumn<VolumeSnapshotClassKind>[] = useMemo(
     () => [
       {
         title: t('Name'),
         sort: 'metadata.name',
         id: tableColumnInfo[0].id,
         resizableProps: getResizableProps(tableColumnInfo[0].id),
-        props: { ...nameCellProps, modifier: 'nowrap' },
+        props: { ...nameCellProps, modifier: 'nowrap' as const },
       },
       {
         title: t('Driver'),
         sort: 'driver',
         id: tableColumnInfo[1].id,
         resizableProps: getResizableProps(tableColumnInfo[1].id),
-        props: { modifier: 'nowrap' },
+        props: { modifier: 'nowrap' as const },
       },
       {
         title: t('Deletion policy'),
         sort: 'deletionPolicy',
         id: tableColumnInfo[2].id,
         resizableProps: getResizableProps(tableColumnInfo[2].id),
-        props: { modifier: 'nowrap' },
+        props: { modifier: 'nowrap' as const },
       },
       {
         title: '',

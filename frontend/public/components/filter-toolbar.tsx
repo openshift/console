@@ -37,7 +37,7 @@ import { useDeepCompareMemoize } from '@console/shared/src/hooks/useDeepCompareM
 import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
 import AutocompleteInput from './autocomplete';
 import { TextFilter } from './factory/text-filter';
-import { LazyColumnManagementModalOverlay } from './modals';
+import { LazyColumnManagementModalOverlay } from './modals/lazy-column-management-modal';
 import { storagePrefix } from './row-filter';
 import useLabelSelectionFix from './useLabelSelectionFix';
 import useRowFilterFix from './useRowFilterFix';
@@ -153,7 +153,7 @@ export const FilterToolbar: FC<FilterToolbarProps> = ({
         ...item,
         count: (rowFilter as RowMatchFilter).isMatch
           ? _.filter(data, (d) => (rowFilter as RowMatchFilter).isMatch(d, item.id)).length
-          : _.countBy(data, (rowFilter as RowReducerFilter).reducer)?.[item.id] ?? '0',
+          : (_.countBy(data, (rowFilter as RowReducerFilter).reducer)?.[item.id] ?? '0'),
       })),
     })),
   );
@@ -371,12 +371,10 @@ export const FilterToolbar: FC<FilterToolbarProps> = ({
                   (acc, key) => (
                     <ToolbarFilter
                       key={key}
-                      labels={_.intersection(selectedRowFilters, filters[key]).map((item) => {
-                        return {
-                          key: item,
-                          node: filtersNameMap[item],
-                        };
-                      })}
+                      labels={_.intersection(selectedRowFilters, filters[key]).map((item) => ({
+                        key: item,
+                        node: filtersNameMap[item],
+                      }))}
                       deleteLabel={(_filter, chip: ToolbarLabel) =>
                         updateRowFilterSelected([chip.key])
                       }

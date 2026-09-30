@@ -115,6 +115,7 @@ export const GitImportForm: FC<
         sticky
         disableSubmit={!dirty || !_.isEmpty(errors) || isSubmitting}
         resetLabel={t('Cancel')}
+        namespace={values?.project?.name}
       />
     </FlexForm>
   );

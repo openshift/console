@@ -349,9 +349,9 @@ const ConfigureNamespacePullSecret: FC<ConfigureNamespacePullSecretProps> = (pro
   );
 };
 
-export const ConfigureNamespacePullSecretModalOverlay: OverlayComponent<ConfigureNamespacePullSecretProps> = (
-  props,
-) => {
+export const ConfigureNamespacePullSecretModalOverlay: OverlayComponent<
+  ConfigureNamespacePullSecretProps
+> = (props) => {
   const [isOpen, setIsOpen] = useState(true);
   const handleClose = () => {
     setIsOpen(false);

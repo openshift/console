@@ -38,23 +38,21 @@ const PropertyPath: FC<{ kind: string; path: string | string[] }> = ({ kind, pat
   );
 };
 
-const EditButton: FC<EditButtonProps> = (props) => {
-  return (
-    <Button
-      icon={<RhUiEditIcon />}
-      iconPosition="end"
-      type="button"
-      variant="link"
-      isInline
-      onClick={props.onClick}
-      data-test={
-        props.testId ? `${props.testId}-details-item__edit-button` : 'details-item__edit-button'
-      }
-    >
-      {props.children}
-    </Button>
-  );
-};
+const EditButton: FC<EditButtonProps> = (props) => (
+  <Button
+    icon={<RhUiEditIcon />}
+    iconPosition="end"
+    type="button"
+    variant="link"
+    isInline
+    onClick={props.onClick}
+    data-test={
+      props.testId ? `${props.testId}-details-item__edit-button` : 'details-item__edit-button'
+    }
+  >
+    {props.children}
+  </Button>
+);
 
 /**
  * A wrapper around PatternFly's `DescriptionListGroup`. This component
@@ -77,7 +75,8 @@ export const DetailsItem: FC<DetailsItemProps> = ({
   const { t } = useTranslation('public');
   const [model] = useK8sModel(obj ? referenceFor(obj) : '');
   const hide = hideEmpty && _.isEmpty(_.get(obj, path));
-  const popoverContent: string = description ?? getPropertyDescription(model, path);
+  const popoverContent: string | null =
+    description ?? (model ? getPropertyDescription(model, path) : null);
   const value: ReactNode = children || _.get(obj, path, defaultValue);
   const editable = onEdit && canEdit;
   return hide ? null : (

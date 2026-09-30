@@ -1,5 +1,4 @@
 import type { UiSchema } from '@rjsf/core';
-import * as Immutable from 'immutable';
 import type { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
 import i18n from '@console/internal/i18n';
@@ -22,8 +21,8 @@ import { HIDDEN_UI_SCHEMA } from './const';
 
 // Applies a hidden widget and label configuration to every property of the given schema.
 // This is useful for whitelisting only a few schema properties when all properties are not known.
-const hideAllExistingProperties = (schema: JSONSchema7) => {
-  return _.reduce(
+const hideAllExistingProperties = (schema: JSONSchema7) =>
+  _.reduce(
     schema?.properties,
     (acc, _unused, propertyName) => ({
       ...acc,
@@ -31,7 +30,6 @@ const hideAllExistingProperties = (schema: JSONSchema7) => {
     }),
     {},
   );
-};
 
 const k8sResourceCapabilityToUISchema = (capability: SpecCapability): UiSchema => {
   const [, groupVersionKindToken, selector] = capability.match(REGEXP_K8S_RESOURCE_SUFFIX) ?? [];
@@ -103,17 +101,13 @@ export const capabilitiesToUISchema = (capabilities: SpecCapability[] = []) => {
 
   const field = _.reduce(
     capabilities,
-    (fieldAccumulator, capability) => {
-      return fieldAccumulator ?? capabilityFieldMap.get(capability);
-    },
+    (fieldAccumulator, capability) => fieldAccumulator ?? capabilityFieldMap[capability],
     undefined,
   );
 
   const widget = _.reduce(
     capabilities,
-    (widgetAccumulator, capability) => {
-      return widgetAccumulator ?? capabilityWidgetMap.get(capability);
-    },
+    (widgetAccumulator, capability) => widgetAccumulator ?? capabilityWidgetMap[capability],
     undefined,
   );
 
@@ -128,76 +122,70 @@ export const descriptorsToUISchema = (
   descriptors: Descriptor<SpecCapability>[],
   jsonSchema: JSONSchema7,
 ) => {
-  const uiSchemaFromDescriptors = _.reduce(
-    descriptors,
-    (uiSchemaAccumulator, descriptor, index) => {
-      const schemaForDescriptor = getSchemaAtPath(jsonSchema, descriptor.path);
-      if (!schemaForDescriptor) {
-        // eslint-disable-next-line no-console
-        console.warn(
-          '[OperandForm] SpecDescriptor path references a non-existent schema property:',
-          descriptor.path,
-        );
-        return uiSchemaAccumulator;
-      }
-      const capabilities = getValidCapabilitiesForSchema<SpecCapability>(
-        descriptor,
-        schemaForDescriptor,
+  const uiSchemaFromDescriptors = (descriptors ?? []).reduce((acc: UiSchema, descriptor, index) => {
+    const schemaForDescriptor = getSchemaAtPath(jsonSchema, descriptor.path);
+    if (!schemaForDescriptor) {
+      console.warn(
+        '[OperandForm] SpecDescriptor path references a non-existent schema property:',
+        descriptor.path,
       );
-      const uiSchemaPath = stringPathToUISchemaPath(descriptor.path);
-      const isAdvanced = capabilities.includes(SpecCapability.advanced);
-      const dependency = capabilities.find((capability) =>
-        capability.startsWith(SpecCapability.fieldDependency),
-      );
-      return uiSchemaAccumulator.withMutations((mutable) => {
-        if (isAdvanced) {
-          const advancedPropertyName = _.last(uiSchemaPath);
-          const pathToAdvanced = [...uiSchemaPath.slice(0, -1), 'ui:advanced'];
-          const currentAdvanced = mutable.getIn(pathToAdvanced) ?? Immutable.List();
-          mutable.setIn(pathToAdvanced, currentAdvanced.push(advancedPropertyName));
-        }
+      return acc;
+    }
+    const capabilities = getValidCapabilitiesForSchema<SpecCapability>(
+      descriptor,
+      schemaForDescriptor,
+    );
+    const uiSchemaPath = stringPathToUISchemaPath(descriptor.path);
+    const isAdvanced = capabilities.includes(SpecCapability.advanced);
+    const dependency = capabilities.find((capability) =>
+      capability.startsWith(SpecCapability.fieldDependency),
+    );
 
-        mutable.mergeDeepIn(
-          uiSchemaPath,
-          Immutable.Map({
-            ...(descriptor.description && { 'ui:description': descriptor.description }),
-            ...(descriptor.displayName && { 'ui:title': descriptor.displayName }),
-            ...(dependency && fieldDependencyCapabilityToUISchema(dependency)),
-            ...capabilitiesToUISchema(capabilities),
-            'ui:sortOrder': index + 1,
-          }),
-        );
-      });
-    },
-    Immutable.Map(),
-  ).toJS();
+    if (isAdvanced) {
+      const advancedPropertyName = _.last(uiSchemaPath);
+      const pathToAdvanced = [...uiSchemaPath.slice(0, -1), 'ui:advanced'];
+      const currentAdvanced: string[] = _.get(acc, pathToAdvanced, []);
+      _.set(acc, pathToAdvanced, [...currentAdvanced, advancedPropertyName]);
+    }
+
+    const descriptorUISchema = {
+      ...(descriptor.description && { 'ui:description': descriptor.description }),
+      ...(descriptor.displayName && { 'ui:title': descriptor.displayName }),
+      ...(dependency && fieldDependencyCapabilityToUISchema(dependency)),
+      ...capabilitiesToUISchema(capabilities),
+      'ui:sortOrder': index + 1,
+    };
+
+    const existing = _.get(acc, uiSchemaPath, {});
+    _.set(acc, uiSchemaPath, _.merge(existing, descriptorUISchema));
+
+    return acc;
+  }, {});
   return _.merge(uiSchemaFromDescriptors, getJSONSchemaOrder(jsonSchema, uiSchemaFromDescriptors));
 };
 
 // Use jsonSchema, descriptors, and some defaults to generate a uiSchema
-export const getUISchema = (jsonSchema, providedAPI) => {
-  return {
-    metadata: {
-      ...hideAllExistingProperties(jsonSchema?.properties?.metadata as JSONSchema7),
-      name: {
-        'ui:title': i18n.t('public~Name'),
-        'ui:widget': 'TextWidget',
-      },
-      labels: {
-        'ui:title': i18n.t('public~Labels'),
-        'ui:field': 'LabelsField',
-      },
-      'ui:options': {
-        label: false,
-      },
-      'ui:order': ['name', 'labels', '*'],
+export const getUISchema = (jsonSchema, providedAPI) => ({
+  metadata: {
+    ...hideAllExistingProperties(jsonSchema?.properties?.metadata as JSONSchema7),
+    name: {
+      'ui:title': i18n.t('public~Name'),
+      'ui:widget': 'TextWidget',
     },
-    spec: {
-      ...descriptorsToUISchema(providedAPI?.specDescriptors, jsonSchema?.properties?.spec),
-      'ui:options': {
-        label: false,
-      },
+    labels: {
+      'ui:title': i18n.t('public~Labels'),
+      'ui:field': 'LabelsField',
     },
-    'ui:order': ['metadata', 'spec', '*'],
-  };
-};
+    'ui:options': {
+      label: false,
+    },
+    'ui:order': ['name', 'labels', '*'],
+  },
+  spec: {
+    ...descriptorsToUISchema(providedAPI?.specDescriptors, jsonSchema?.properties?.spec),
+    'ui:options': {
+      label: false,
+    },
+  },
+  'ui:order': ['metadata', 'spec', '*'],
+});

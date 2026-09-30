@@ -37,8 +37,8 @@ export const FormSelectField: FC<FormSelectFieldProps> = ({
   const safeValue: string = hasSelectedOption
     ? field.value
     : placeholderOption
-    ? placeholderOption.value
-    : field.value;
+      ? placeholderOption.value
+      : field.value;
 
   return (
     <FormGroup fieldId={fieldId} label={label} isRequired={required}>

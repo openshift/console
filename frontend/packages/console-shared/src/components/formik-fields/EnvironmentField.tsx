@@ -29,9 +29,10 @@ export const EnvironmentField: FC<EnvironmentFieldProps> = ({
   const { t } = useTranslation('console-shared');
   const launchModal = useOverlay();
   const fieldId = getFieldId(props.name, 'env-input');
-  const environmentVariables = useMemo(() => {
-    return _.isEmpty(envs) ? [['', '']] : envs.map((env) => _.values(env));
-  }, [envs]);
+  const environmentVariables = useMemo(
+    () => (_.isEmpty(envs) ? [['', '']] : envs.map((env) => _.values(env))),
+    [envs],
+  );
   const [nameValue, setNameValue] = useState(environmentVariables);
   const [configMaps, setConfigMaps] = useState({});
   const [secrets, setSecrets] = useState({});

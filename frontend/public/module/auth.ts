@@ -1,15 +1,10 @@
 import * as _ from 'lodash';
 import { coFetch } from '@console/shared/src/utils/console-fetch';
+import { setAuthHandlerProvider } from '@console/shared/src/utils/validate-status';
 import { stripBasePath } from '../components/utils/link';
 
-const {
-  kubeAdminLogoutURL,
-  loginErrorURL,
-  loginSuccessURL,
-  loginURL,
-  logoutRedirect,
-  logoutURL,
-} = window.SERVER_FLAGS;
+const { kubeAdminLogoutURL, loginErrorURL, loginSuccessURL, loginURL, logoutRedirect, logoutURL } =
+  window.SERVER_FLAGS;
 
 export const LOGIN_ERROR_PATH = loginErrorURL
   ? new URL(loginErrorURL, window.location.href).pathname
@@ -39,7 +34,6 @@ const setNext = (next: string) => {
     // Don't redirect the user back to the error page after logging in.
     localStorage.setItem('next', isLoginErrorPath(next) ? '/' : stripBasePath(next));
   } catch (e) {
-    // eslint-disable-next-line no-console
     console.error('Failed to next URL in localStorage', e);
   }
 };
@@ -49,7 +43,6 @@ const clearLocalStorage = (keys: string[]) => {
     try {
       localStorage.removeItem(key);
     } catch (e) {
-      // eslint-disable-next-line no-console
       console.error('Failed to clear localStorage', e);
     }
   });
@@ -61,7 +54,6 @@ const getAuthRedirectCount = () => {
     const count = sessionStorage.getItem(AUTH_REDIRECT_COUNT_KEY);
     return count ? parseInt(count, 10) : 0;
   } catch (e) {
-    // eslint-disable-next-line no-console
     console.error('Failed to get auth redirect count from sessionStorage', e);
     return 0;
   }
@@ -73,7 +65,6 @@ const incrementAuthRedirectCount = () => {
     sessionStorage.setItem(AUTH_REDIRECT_COUNT_KEY, count.toString());
     return count;
   } catch (e) {
-    // eslint-disable-next-line no-console
     console.error('Failed to increment auth redirect count in sessionStorage', e);
     return 0;
   }
@@ -83,7 +74,6 @@ const resetAuthRedirectCount = () => {
   try {
     sessionStorage.removeItem(AUTH_REDIRECT_COUNT_KEY);
   } catch (e) {
-    // eslint-disable-next-line no-console
     console.error('Failed to reset auth redirect count in sessionStorage', e);
   }
 };
@@ -94,7 +84,6 @@ export const authSvc = {
     try {
       return id && atob(id);
     } catch (e) {
-      // eslint-disable-next-line no-console
       console.error('error decoding userID', id, ':', e);
     }
     return id;
@@ -184,7 +173,6 @@ export const authSvc = {
 
     // If we've exceeded the max redirects, redirect to the error page
     if (redirectCount > MAX_AUTH_REDIRECTS) {
-      // eslint-disable-next-line no-console
       console.error(
         `Authentication redirect loop detected (${redirectCount} consecutive 401 responses). Redirecting to error page.`,
       );
@@ -211,3 +199,5 @@ export const authSvc = {
     resetAuthRedirectCount();
   },
 };
+
+setAuthHandlerProvider(() => Promise.resolve(authSvc));

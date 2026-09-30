@@ -8,7 +8,7 @@ import type { GitSource } from '../types/git';
 import { SecretType } from '../types/git';
 import type { RepoMetadata, BranchList, RepoLanguageList, RepoFileList } from '../types/repo';
 import { RepoStatus } from '../types/repo';
-import { BaseService } from './base-service';
+import { BaseService, headersToRecord } from './base-service';
 
 type GitlabRepo = {
   id: number;
@@ -24,7 +24,7 @@ type GLWebhookBody = {
 };
 
 type GitlabWebhookRequest = {
-  headers: Headers;
+  headers: Record<string, string[]>;
   hostName: string;
   projectID: string;
   body: GLWebhookBody;
@@ -73,9 +73,14 @@ export class GitlabService extends BaseService {
   };
 
   getRepoMetadata(): RepoMetadata {
-    const { name, owner, protocols, port, resource, full_name: fullName } = GitUrlParse(
-      this.gitsource.url,
-    );
+    const {
+      name,
+      owner,
+      protocols,
+      port,
+      resource,
+      full_name: fullName,
+    } = GitUrlParse(this.gitsource.url);
     const contextDir = removeLeadingSlash(this.gitsource.contextDir);
     const rawProtocol = protocols?.[0];
     const isHttpProtocol = rawProtocol === 'http' || rawProtocol === 'https';
@@ -203,7 +208,7 @@ export class GitlabService extends BaseService {
     };
 
     const webhookRequestBody: GitlabWebhookRequest = {
-      headers,
+      headers: headersToRecord(headers),
       hostName: this.metadata.host,
       projectID: projectID.toString(),
       body,
@@ -241,9 +246,8 @@ export class GitlabService extends BaseService {
     }
   };
 
-  filePath = (file: string): string => {
-    return this.metadata.contextDir ? `${this.metadata.contextDir}/${file}` : file;
-  };
+  filePath = (file: string): string =>
+    this.metadata.contextDir ? `${this.metadata.contextDir}/${file}` : file;
 
   isDockerfilePresent = () => this.isFilePresent(this.filePath(`${this.metadata.dockerfilePath}`));
 

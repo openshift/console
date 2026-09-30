@@ -24,9 +24,7 @@ const useStartBuildAction = (obj: BuildConfig): Action[] => {
         label: t('Start build'),
         cta: () =>
           startBuild(buildConfig)
-            .then((build) => {
-              return redirect(resourceObjPath(build, referenceFor(build)));
-            })
+            .then((build) => redirect(resourceObjPath(build, referenceFor(build))))
             .catch((err) => {
               const error = err.message;
               launchModal(ErrorModal, { error });
@@ -36,10 +34,10 @@ const useStartBuildAction = (obj: BuildConfig): Action[] => {
     }),
     [launchModal, t],
   );
-  const actions = useMemo<Action[]>(() => [factory[BuildConfigActionCreator.StartBuild](obj)], [
-    factory,
-    obj,
-  ]);
+  const actions = useMemo<Action[]>(
+    () => [factory[BuildConfigActionCreator.StartBuild](obj)],
+    [factory, obj],
+  );
   return actions;
 };
 
@@ -57,9 +55,7 @@ const useStartLastBuildAction = (
         label: t('Start last run'),
         cta: () =>
           cloneBuild(latestBuild)
-            .then((clone) => {
-              return redirect(resourceObjPath(clone, referenceFor(clone)));
-            })
+            .then((clone) => redirect(resourceObjPath(clone, referenceFor(clone))))
             .catch((err) => {
               const error = err.message;
               launchModal(ErrorModal, { error });

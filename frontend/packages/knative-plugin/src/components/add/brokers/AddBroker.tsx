@@ -58,15 +58,14 @@ const AddBroker: FC<AddBrokerProps> = ({ namespace, selectedApplication }) => {
   const handleSubmit = (
     values: AddBrokerFormYamlValues,
     actions: FormikHelpers<AddBrokerFormYamlValues>,
-  ) => {
-    return createResources(values, actions)
+  ) =>
+    createResources(values, actions)
       .then(() => {
         handleRedirect(values.formData.project.name, perspective, perspectiveExtension, navigate);
       })
       .catch((err) => {
         actions.setStatus({ submitError: err.message });
       });
-  };
 
   return (
     <Formik

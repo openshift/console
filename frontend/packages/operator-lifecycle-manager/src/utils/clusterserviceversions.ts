@@ -18,12 +18,12 @@ export const isStandaloneCSV = (obj: K8sResourceKind): boolean =>
   (obj.metadata.annotations?.[OLMAnnotation.OperatorType] !== NON_STANDALONE_ANNOTATION_VALUE ||
     obj.status?.phase === ClusterServiceVersionPhase.CSVPhaseFailed);
 
-export const clusterServiceVersionFor = (clusterServiceVersions: ClusterServiceVersionKind[]) => (
-  subscription: SubscriptionKind,
-): ClusterServiceVersionKind =>
-  clusterServiceVersions?.find(
-    (csv) =>
-      csv?.metadata?.name &&
-      subscription?.status?.installedCSV &&
-      csv.metadata.name === subscription.status.installedCSV,
-  );
+export const clusterServiceVersionFor =
+  (clusterServiceVersions: ClusterServiceVersionKind[]) =>
+  (subscription: SubscriptionKind): ClusterServiceVersionKind =>
+    clusterServiceVersions?.find(
+      (csv) =>
+        csv?.metadata?.name &&
+        subscription?.status?.installedCSV &&
+        csv.metadata.name === subscription.status.installedCSV,
+    );

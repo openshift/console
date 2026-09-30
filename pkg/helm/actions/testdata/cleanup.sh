@@ -13,3 +13,4 @@ rm -rf ./$GOOS-$GOARCH
 rm -rf ./chartmuseum.tar.gz
 rm -rf ./helm.tar.gz
 rm -rf ./zot-storage-*
+rm -f ./chartmuseum-tls.pid ./chartmuseum-no-tls.pid ./chartmuseum-basicauth.pid

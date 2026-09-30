@@ -30,9 +30,7 @@ type ColumnResizeOnResize = (
 export const useColumnWidthSettings = (
   model: K8sModel,
 ): {
-  getResizableProps: (
-    columnId: string,
-  ) => {
+  getResizableProps: (columnId: string) => {
     isResizable: true;
     width?: number;
     onResize: ColumnResizeOnResize;
@@ -74,10 +72,10 @@ export const useColumnWidthSettings = (
     });
   }, [resolvedTableId, setColumnWidths]);
 
-  const getWidth = useCallback((columnId: string) => columnWidths?.[resolvedTableId]?.[columnId], [
-    columnWidths,
-    resolvedTableId,
-  ]);
+  const getWidth = useCallback(
+    (columnId: string) => columnWidths?.[resolvedTableId]?.[columnId],
+    [columnWidths, resolvedTableId],
+  );
 
   const getResizableProps = useCallback(
     (columnId: string) => {

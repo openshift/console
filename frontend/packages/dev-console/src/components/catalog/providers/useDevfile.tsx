@@ -85,10 +85,10 @@ const useDevfile: ExtensionHook<CatalogItem[]> = (): [CatalogItem[], boolean, an
     };
   }, []);
 
-  const normalizedDevfileSamples = useMemo(() => normalizeDevfile(devfileSamples || [], t), [
-    devfileSamples,
-    t,
-  ]);
+  const normalizedDevfileSamples = useMemo(
+    () => normalizeDevfile(devfileSamples || [], t),
+    [devfileSamples, t],
+  );
 
   const loaded = !!devfileSamples;
 

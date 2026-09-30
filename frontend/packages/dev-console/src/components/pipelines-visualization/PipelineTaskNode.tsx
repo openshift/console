@@ -148,7 +148,7 @@ const PipelineTaskNode: FC<PipelineTaskNodeProps> = ({
     />
   ) : null;
 
-  const { name: plrName, namespace } = pipelineRun?.metadata;
+  const { name: plrName, namespace } = pipelineRun?.metadata ?? {};
   const path = plrName
     ? `${resourcePathFromModel(
         PipelineRunModel,

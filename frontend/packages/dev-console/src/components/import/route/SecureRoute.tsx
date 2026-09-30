@@ -17,8 +17,11 @@ import {
 const SecureRoute: FC = () => {
   const { t } = useTranslation('devconsole');
   const [preferredRoutingOptions, , preferredRoutingOptionsLoaded] = usePreferredRoutingOptions();
-  const { secure: secureRoute, tlsTermination, insecureTraffic } =
-    preferredRoutingOptionsLoaded && preferredRoutingOptions;
+  const {
+    secure: secureRoute,
+    tlsTermination,
+    insecureTraffic,
+  } = preferredRoutingOptionsLoaded && preferredRoutingOptions;
   const {
     values: {
       formType,

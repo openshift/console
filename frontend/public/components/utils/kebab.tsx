@@ -69,8 +69,8 @@ const KebabItemBase: FC<KebabItemProps & { isAllowed: boolean }> = ({
         option.labelKey
           ? t(option.labelKey, option.labelKind)
           : typeof option.label === 'string'
-          ? option.label
-          : undefined
+            ? option.label
+            : undefined
       }
       data-test-action={option.labelKey ? t(option.labelKey, option.labelKind) : option.label}
       icon={option.icon}
@@ -89,11 +89,9 @@ export const KebabItemAccessReviewBase = (
 
 const KebabItemAccessReview = connect(impersonateStateToProps)(KebabItemAccessReviewBase);
 
-const isKebabSubMenu = (option: KebabMenuOption): option is KebabSubMenuOption => {
+const isKebabSubMenu = (option: KebabMenuOption): option is KebabSubMenuOption =>
   // only a sub menu has children
-  return Array.isArray((option as KebabSubMenuOption).children);
-};
-
+  Array.isArray((option as KebabSubMenuOption).children);
 export const KebabItem: FC<KebabItemProps> = (props) => {
   const { option } = props;
   let item;
@@ -130,6 +128,7 @@ const KebabMenuItems: FC<KebabMenuItemsProps> = ({ options, onClick, focusItem }
         isKebabSubMenu(o) ? (
           <ContextSubMenuItem
             data-test-action={o.labelKey || o.label}
+            data-test={o.labelKey || o.label}
             label={o.labelKey ? t(o.labelKey) : o.label}
           >
             <KebabMenuItems options={o.children} onClick={onClick} focusItem={o.children[0]} />
@@ -184,7 +183,6 @@ export const Kebab: KebabComponent = (props) => {
     _.each(options, (option: KebabOption) => {
       if (option.accessReview) {
         checkAccess(option.accessReview).catch((e) => {
-          // eslint-disable-next-line no-console
           console.warn('Error while check action menu access review', e);
         });
       }

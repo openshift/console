@@ -55,12 +55,12 @@ export const listInstanceResources = (
       k8sList(modelFor(kind), {
         ns: namespace,
         labelSelector: instanceLabelSelector,
-      }).then((values) => {
-        return _.map(values, (value) => {
+      }).then((values) =>
+        _.map(values, (value) => {
           value.kind = kind;
           return value;
-        });
-      }),
+        }),
+      ),
     );
   });
 
@@ -270,7 +270,7 @@ const getSourceAndTargetForBinding = async (
 };
 
 export const doConnectsToBinding = async <
-  R extends K8sResourceKind[] | K8sResourceKind = K8sResourceKind[]
+  R extends K8sResourceKind[] | K8sResourceKind = K8sResourceKind[],
 >(
   resources: R,
   contextualSource: string,

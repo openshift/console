@@ -37,18 +37,15 @@ const SkeletonDetails: FC = () => (
 const NodeMachine: ComponentType<PageComponentProps<NodeKind>> = ({ obj }) => {
   const { t } = useTranslation('console-app');
 
-  const [
-    machineConfigPools,
-    machineConfigPoolsLoaded,
-    machineConfigPoolsLoadError,
-  ] = useK8sWatchResource<MachineConfigPoolKind[]>({
-    groupVersionKind: {
-      kind: MachineConfigPoolModel.kind,
-      group: MachineConfigPoolModel.apiGroup,
-      version: MachineConfigPoolModel.apiVersion,
-    },
-    isList: true,
-  });
+  const [machineConfigPools, machineConfigPoolsLoaded, machineConfigPoolsLoadError] =
+    useK8sWatchResource<MachineConfigPoolKind[]>({
+      groupVersionKind: {
+        kind: MachineConfigPoolModel.kind,
+        group: MachineConfigPoolModel.apiGroup,
+        version: MachineConfigPoolModel.apiVersion,
+      },
+      isList: true,
+    });
 
   const machineConfigPool = useMemo(() => {
     if (!machineConfigPoolsLoaded || !machineConfigPools?.length) {

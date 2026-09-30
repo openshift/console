@@ -34,14 +34,14 @@ export const MultiTabbedTerminal: FC<MultiTabbedTerminalProps> = ({ onClose }) =
   const detachedSessions = useDetachedSessions();
   const prevDetachedCountRef = useRef(detachedSessions.length);
 
-  const tick = useCallback(() => {
-    return (
+  const tick = useCallback(
+    () =>
       typeof activeTabKey === 'number' &&
       tickNamespace &&
       tickWorkspace &&
-      sendActivityTick(tickWorkspace, tickNamespace)
-    );
-  }, [activeTabKey, tickWorkspace, tickNamespace]);
+      sendActivityTick(tickWorkspace, tickNamespace),
+    [activeTabKey, tickWorkspace, tickNamespace],
+  );
 
   useEffect(() => {
     let startTime;

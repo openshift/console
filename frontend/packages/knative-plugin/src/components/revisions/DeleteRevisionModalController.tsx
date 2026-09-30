@@ -73,9 +73,9 @@ const DeleteRevisionModalController: FC<DeleteRevisionModalControllerProps> = ({
     return null;
   }
 
-  const service = resources.services.data.find((s: K8sResourceKind) => {
-    return revision.metadata.labels[KNATIVE_SERVING_LABEL] === s.metadata.name;
-  });
+  const service = resources.services.data.find(
+    (s: K8sResourceKind) => revision.metadata.labels[KNATIVE_SERVING_LABEL] === s.metadata.name,
+  );
 
   const revisions = getKnativeRevisionsData(service, resources).filter(
     (r) => revision.metadata.uid !== r.metadata.uid,
@@ -145,8 +145,8 @@ const DeleteRevisionModalController: FC<DeleteRevisionModalControllerProps> = ({
     });
   }
 
-  const deleteRevisionAction = (action: FormikHelpers<FormikValues>) => {
-    return k8sKill(RevisionModel, revision)
+  const deleteRevisionAction = (action: FormikHelpers<FormikValues>) =>
+    k8sKill(RevisionModel, revision)
       .then(() => {
         close();
         // If we are currently on the deleted revision's page, redirect to the list page
@@ -159,7 +159,6 @@ const DeleteRevisionModalController: FC<DeleteRevisionModalControllerProps> = ({
         const errMessage = err.message || t('An error occurred. Please try again');
         action.setStatus({ error: errMessage });
       });
-  };
 
   const handleSubmit = (values: FormikValues, action: FormikHelpers<FormikValues>) => {
     const ksvcPatch = trafficDataForPatch(values.trafficSplitting, service);
@@ -168,9 +167,7 @@ const DeleteRevisionModalController: FC<DeleteRevisionModalControllerProps> = ({
     }
 
     return k8sPatch(ServiceModel, service, ksvcPatch)
-      .then(() => {
-        return deleteRevisionAction(action);
-      })
+      .then(() => deleteRevisionAction(action))
       .catch((err) => {
         const errMessage = err.message || t('An error occurred. Please try again');
         action.setStatus({ error: errMessage });
@@ -199,22 +196,20 @@ const DeleteRevisionModalController: FC<DeleteRevisionModalControllerProps> = ({
 
 type Props = DeleteRevisionModalControllerProps & ModalComponentProps;
 
-const DeleteRevisionModalProvider: OverlayComponent<Props> = (props) => {
-  return (
-    <Modal
-      isOpen
-      onClose={props.closeOverlay}
-      variant="small"
-      aria-labelledby="delete-revision-modal-title"
-    >
-      <DeleteRevisionModalController
-        cancel={props.closeOverlay}
-        close={props.closeOverlay}
-        {...props}
-      />
-    </Modal>
-  );
-};
+const DeleteRevisionModalProvider: OverlayComponent<Props> = (props) => (
+  <Modal
+    isOpen
+    onClose={props.closeOverlay}
+    variant="small"
+    aria-labelledby="delete-revision-modal-title"
+  >
+    <DeleteRevisionModalController
+      cancel={props.closeOverlay}
+      close={props.closeOverlay}
+      {...props}
+    />
+  </Modal>
+);
 
 export const useDeleteRevisionModalLauncher = (props: Props) => {
   const launcher = useOverlay();

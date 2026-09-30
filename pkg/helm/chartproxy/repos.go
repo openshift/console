@@ -4,8 +4,10 @@ import (
 	"context"
 	"crypto/tls"
 	"crypto/x509"
+	"errors"
 	"fmt"
 	"io"
+	"net"
 	"net/http"
 	"net/url"
 	"strings"
@@ -22,6 +24,8 @@ import (
 	"k8s.io/klog/v2"
 
 	"github.com/openshift/library-go/pkg/crypto"
+
+	"github.com/openshift/console/pkg/utils"
 )
 
 var (
@@ -38,8 +42,11 @@ var (
 )
 
 const (
-	configNamespace = "openshift-config"
-	warning         = "console-warning"
+	configNamespace  = "openshift-config"
+	warning          = "console-warning"
+	ErrorMessage     = "The following repositories seem to be invalid or unreachable: "
+	maxIndexFileSize = 10 << 20 // 10 MB
+	maxRedirects     = 10
 )
 
 type InvalidRepo struct {
@@ -55,13 +62,77 @@ type helmRepo struct {
 	httpClient func() (*http.Client, error)
 }
 
-func httpClient(tlsConfig *tls.Config) (*http.Client, error) {
+func validateRepoURL(u *url.URL, isClusterScoped bool) error {
+	switch u.Scheme {
+	case "http", "https":
+	default:
+		return fmt.Errorf("unsupported URL scheme %q: only http and https are allowed", u.Scheme)
+	}
+
+	if !isClusterScoped {
+		host := u.Hostname()
+		if ip := net.ParseIP(host); ip != nil {
+			if utils.IsPrivateOrReservedIP(ip) {
+				return fmt.Errorf("repository URL %q resolves to a private or reserved address", u.Redacted())
+			}
+			return nil
+		}
+		addrs, err := net.LookupHost(host)
+		if err != nil {
+			return fmt.Errorf("failed to resolve repository host %q: %v", host, err)
+		}
+		for _, addr := range addrs {
+			if utils.IsPrivateOrReservedAddr(addr) {
+				return fmt.Errorf("repository URL %q resolves to a private or reserved address", u.Redacted())
+			}
+		}
+	}
+	return nil
+}
+
+func ssrfSafeDialContext(base *net.Dialer) func(ctx context.Context, network, addr string) (net.Conn, error) {
+	return func(ctx context.Context, network, addr string) (net.Conn, error) {
+		host, port, err := net.SplitHostPort(addr)
+		if err != nil {
+			return nil, err
+		}
+		addrs, err := net.DefaultResolver.LookupHost(ctx, host)
+		if err != nil {
+			return nil, err
+		}
+		for _, a := range addrs {
+			if utils.IsPrivateOrReservedAddr(a) {
+				return nil, fmt.Errorf("connection to private or reserved address %s is not allowed", a)
+			}
+		}
+		return base.DialContext(ctx, network, net.JoinHostPort(addrs[0], port))
+	}
+}
+
+func httpClient(tlsConfig *tls.Config, blockPrivateIPs bool) (*http.Client, error) {
 	tr := &http.Transport{
 		TLSClientConfig: tlsConfig,
 		Proxy:           http.ProxyFromEnvironment,
 	}
+	if blockPrivateIPs {
+		tr.DialContext = ssrfSafeDialContext(&net.Dialer{Timeout: 5 * time.Second})
+	}
 
-	client := &http.Client{Transport: tr}
+	client := &http.Client{
+		Transport: tr,
+		CheckRedirect: func(req *http.Request, via []*http.Request) error {
+			if len(via) >= maxRedirects {
+				return fmt.Errorf("stopped after %d redirects", maxRedirects)
+			}
+			if len(via) > 0 && via[0].URL.Scheme == "https" && req.URL.Scheme == "http" {
+				return errors.New("redirect from https to http is not allowed")
+			}
+			if len(via) > 0 && req.URL.Host != via[0].URL.Host {
+				req.Header.Del("Authorization")
+			}
+			return nil
+		},
+	}
 	return client, nil
 }
 
@@ -94,7 +165,7 @@ func (hr helmRepo) IndexFile() (*repo.IndexFile, error) {
 	if resp.StatusCode != 200 {
 		return nil, fmt.Errorf("failed to fetch index (HTTP %d)", resp.StatusCode)
 	}
-	body, err := io.ReadAll(resp.Body)
+	body, err := io.ReadAll(io.LimitReader(resp.Body, maxIndexFileSize))
 	if err != nil {
 		return nil, err
 	}
@@ -121,8 +192,9 @@ type HelmRepoGetter interface {
 }
 
 type helmRepoGetter struct {
-	Client     dynamic.Interface
-	CoreClient corev1.CoreV1Interface
+	Client      dynamic.Interface
+	CoreClient  corev1.CoreV1Interface
+	validateURL func(u *url.URL, isClusterScoped bool) error
 }
 
 func (b helmRepoGetter) unmarshallConfig(repo unstructured.Unstructured, namespace string, isClusterScoped bool) (*helmRepo, error) {
@@ -141,6 +213,10 @@ func (b helmRepoGetter) unmarshallConfig(repo unstructured.Unstructured, namespa
 
 	h.URL, err = url.Parse(urlValue)
 	if err != nil {
+		return nil, err
+	}
+
+	if err := b.validateURL(h.URL, isClusterScoped); err != nil {
 		return nil, err
 	}
 
@@ -256,7 +332,7 @@ func (b helmRepoGetter) unmarshallConfig(repo unstructured.Unstructured, namespa
 	}
 
 	h.httpClient = func() (*http.Client, error) {
-		return httpClient(tlsClientConfig)
+		return httpClient(tlsClientConfig, !isClusterScoped)
 	}
 	return h, nil
 }
@@ -309,7 +385,8 @@ func (b *helmRepoGetter) List(namespace string) ([]*helmRepo, []InvalidRepo, err
 
 func NewRepoGetter(client dynamic.Interface, corev1Client corev1.CoreV1Interface) HelmRepoGetter {
 	return &helmRepoGetter{
-		Client:     client,
-		CoreClient: corev1Client,
+		Client:      client,
+		CoreClient:  corev1Client,
+		validateURL: validateRepoURL,
 	}
 }

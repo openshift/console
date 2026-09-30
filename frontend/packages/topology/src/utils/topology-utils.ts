@@ -100,9 +100,7 @@ export const filterBasedOnActiveApplication = (
   if (!application) {
     return data;
   }
-  return data.filter((dc) => {
-    return _.get(dc, ['metadata', 'labels', PART_OF]) === application;
-  });
+  return data.filter((dc) => _.get(dc, ['metadata', 'labels', PART_OF]) === application);
 };
 
 /**
@@ -127,10 +125,12 @@ export const getResource: GetResource = <T = K8sResourceKind>(node: GraphElement
   return (resource as T) || (getTopologyResourceObject(node?.getData()) as T);
 };
 
-export const getResourceKind = (node: Node): K8sResourceKindReference => {
-  return node instanceof OdcBaseNode
-    ? (node as OdcBaseNode).getResourceKind()
-    : referenceFor(getTopologyResourceObject(node?.getData()));
+export const getResourceKind = (node: Node): K8sResourceKindReference | undefined => {
+  if (node instanceof OdcBaseNode) {
+    return (node as OdcBaseNode).getResourceKind();
+  }
+  const resource = getTopologyResourceObject(node?.getData());
+  return resource ? referenceFor(resource) : undefined;
 };
 
 export const updateTopologyResourceApplication = (

@@ -50,7 +50,7 @@ import {
 } from '@console/shared/src/promql/cluster-dashboard';
 import { getPrometheusQueryResponse } from '../../../../actions/dashboards';
 import { MachineConfigPoolModel } from '../../../../models';
-import type { DataPoint, PrometheusResponse } from '../../../graphs';
+import type { DataPoint, PrometheusResponse } from '../../../graphs/types';
 import { getRangeVectorStats, getInstantVectorStats } from '../../../graphs/utils';
 import {
   humanizeBinaryBytes,
@@ -280,9 +280,10 @@ export const UtilizationCard = memo(() => {
   const [dynamicItemExtensions] = useResolvedExtensions<ClusterOverviewUtilizationItem>(
     isClusterOverviewUtilizationItem,
   );
-  const [dynamicMultilineItemExtensions] = useResolvedExtensions<
-    ClusterOverviewMultilineUtilizationItem
-  >(isClusterOverviewMultilineUtilizationItem);
+  const [dynamicMultilineItemExtensions] =
+    useResolvedExtensions<ClusterOverviewMultilineUtilizationItem>(
+      isClusterOverviewMultilineUtilizationItem,
+    );
 
   // TODO: add `useUserPreference` to store selectedNodes
   const onNodeSelect = (event: MouseEvent, selection: string) => {

@@ -1,8 +1,9 @@
 import { BitbucketIcon, GitAltIcon, GithubIcon, GitlabIcon } from '@patternfly/react-icons';
-import { t } from '../../../../../../__mocks__/i18next';
+import { t } from 'i18next';
 import CheIcon from '../CheIcon';
 import { routeDecoratorIcon } from '../render-utils';
 
+jest.mock('i18next');
 describe('Ensure render utils works', () => {
   describe('Ensure we do not get route decorator icons for invalid urls', () => {
     it('expect route decoration icon to give nothing for bad urls', () => {

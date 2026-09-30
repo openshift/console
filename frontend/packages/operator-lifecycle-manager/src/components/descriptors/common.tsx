@@ -10,17 +10,15 @@ import { YellowExclamationTriangleIcon } from '@console/shared/src/components/st
 import { REGEXP_K8S_RESOURCE_SUFFIX } from './const';
 import type { CapabilityProps, SpecCapability, StatusCapability } from './types';
 
-export const Invalid: FC<{ path: string }> = ({ path }) => {
-  return (
-    <span className="pf-v6-u-text-color-subtle pf-v6-u-display-inline-block pf-v6-u-mb-xl">
-      <YellowExclamationTriangleIcon />
-      &nbsp;&nbsp;
-      <Trans ns="olm">
-        The field <code className="co-code">{{ path }}</code> is invalid.
-      </Trans>
-    </span>
-  );
-};
+export const Invalid: FC<{ path: string }> = ({ path }) => (
+  <span className="pf-v6-u-text-color-subtle pf-v6-u-display-inline-block pf-v6-u-mb-xl">
+    <YellowExclamationTriangleIcon />
+    &nbsp;&nbsp;
+    <Trans ns="olm">
+      The field <code className="co-code">{{ path }}</code> is invalid.
+    </Trans>
+  </span>
+);
 
 export const DefaultCapability: FC<CommonCapabilityProps<string | number | boolean>> = ({
   description,
@@ -62,7 +60,6 @@ export const K8sResourceLinkCapability: FC<CommonCapabilityProps<string>> = ({
     const [, suffix] = capability.match(REGEXP_K8S_RESOURCE_SUFFIX) ?? [];
     const gvk = suffix?.replace(/:/g, '~');
     if (!_.isString(value)) {
-      // eslint-disable-next-line no-console
       console.warn(
         `[Invalid descriptor] descriptor is incompatible with property ${descriptor.path} and will have no effect`,
         descriptor,

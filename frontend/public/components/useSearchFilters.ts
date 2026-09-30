@@ -16,10 +16,13 @@ const useSearchFilters = (searchFilters: RowSearchFilter[], uniqueFilterName: st
 
   const searchFiltersObject = useMemo(
     () =>
-      (searchFilters || []).reduce((acc, filter) => {
-        acc[filter?.type] = filter;
-        return acc;
-      }, {} as { [key: string]: RowSearchFilter }),
+      (searchFilters || []).reduce(
+        (acc, filter) => {
+          acc[filter?.type] = filter;
+          return acc;
+        },
+        {} as { [key: string]: RowSearchFilter },
+      ),
     [searchFilters],
   );
 

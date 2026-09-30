@@ -82,11 +82,7 @@ export type NavSection = Extension<
 export type ResourceNavItem = ResourceClusterNavItem | ResourceNSNavItem;
 
 export type NavExtension =
-  | NavSection
-  | Separator
-  | HrefNavItem
-  | ResourceNSNavItem
-  | ResourceClusterNavItem;
+  NavSection | Separator | HrefNavItem | ResourceNSNavItem | ResourceClusterNavItem;
 
 // Type guards
 

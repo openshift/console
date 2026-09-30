@@ -39,9 +39,10 @@ const alignNodeConnector = (
     )
     .sort((l1: ColaLink, l2: ColaLink) => nodeSorter(l1.source, l2.source));
   if (connectorLinks.length) {
-    const height = connectorLinks.reduce((current: number, nextLink: ColaLink) => {
-      return current + nextLink.source.height;
-    }, 0);
+    const height = connectorLinks.reduce(
+      (current: number, nextLink: ColaLink) => current + nextLink.source.height,
+      0,
+    );
     const serviceDistance =
       g instanceof ColaGroup
         ? (filteredNode as ColaNode).radius + getGroupPadding(g.element)

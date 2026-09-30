@@ -21,15 +21,12 @@ const CURRENT_OPENSHIFT_VERSION = semver(window.SERVER_FLAGS.releaseVersion) ?? 
 const localPluginNames = localPlugins.map((p) => p.name);
 
 /** Checks if a plugin name is allowed to be loaded in Console. */
-const isAllowedPluginName = (name: string) => {
-  return localPluginNames.includes(name) || dynamicPluginNames.includes(name);
-};
+const isAllowedPluginName = (name: string) =>
+  localPluginNames.includes(name) || dynamicPluginNames.includes(name);
 
 if (process.env.NODE_ENV !== 'test') {
-  /* eslint-disable no-console */
   console.info(`Static plugins: [${localPluginNames.join(', ') || '(empty)'}]`);
   console.info(`Dynamic plugins: [${dynamicPluginNames.join(', ') || '(empty)'}]`);
-  /* eslint-enable no-console */
 }
 
 /**
@@ -120,7 +117,7 @@ export const featureFlagMiddleware: Middleware<{}, RootState> = (s) => {
 
     if (nextFlags !== prevFlags) {
       prevFlags = nextFlags;
-      pluginStore.setFeatureFlags(nextFlags.toObject());
+      pluginStore.setFeatureFlags({ ...nextFlags });
     }
 
     return result;
@@ -133,6 +130,5 @@ Promise.allSettled(localPlugins.map((plugin) => pluginStore.loadPlugin(plugin)))
     initConsolePlugins(pluginStore);
   })
   .catch((err) => {
-    // eslint-disable-next-line no-console
     console.error('Failed to load Console plugins', err);
   });

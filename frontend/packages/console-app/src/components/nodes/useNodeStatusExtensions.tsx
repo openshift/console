@@ -14,9 +14,7 @@ type PopoverContent = {
   uid: string;
 };
 
-export type GetNodeStatusExtensions = (
-  node: NodeKind,
-) => {
+export type GetNodeStatusExtensions = (node: NodeKind) => {
   popoverContent: PopoverContent[];
   secondaryStatuses: string[];
 };
@@ -60,7 +58,6 @@ export const useNodeStatusExtensions = () => {
               statuses.push(title);
             }
           } catch (err) {
-            // eslint-disable-next-line no-console
             console.error(`Extension ${uid}, ${type} failed:`, err);
           }
         },

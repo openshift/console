@@ -37,9 +37,11 @@ const StepComponent: FC<StepComponentProps> = ({
 }) => {
   const fireTelemetryEvent = useTelemetry();
   const [activePerspective] = useActivePerspective();
-  const { tourDispatch, totalSteps, tourState: { stepNumber: step } = {} } = useContext(
-    TourContext,
-  );
+  const {
+    tourDispatch,
+    totalSteps,
+    tourState: { stepNumber: step } = {},
+  } = useContext(TourContext);
   return (
     <TourStepComponent
       key={step}

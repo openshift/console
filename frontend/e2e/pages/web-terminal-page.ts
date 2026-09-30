@@ -20,6 +20,9 @@ export class WebTerminalPage extends BasePage {
   private readonly incrementButton = this.page.getByTestId('Increment');
   private readonly timeoutInput = this.page.getByLabel('Input');
   private readonly startButton = this.page.getByTestId('save-changes');
+  // FormGroup wrapper around the terminal setup form's Project ResourceDropdownField
+  // (webterminal-plugin NamespaceSection); the toggle itself carries no data-test.
+  private readonly projectDropdown = this.page.getByTestId('webterminal-namespace-dropdown');
   private readonly resourceTitle = this.page.getByTestId('resource-title');
   private readonly monacoEditor = this.page.locator('div.lines-content.monaco-editor-background');
   private readonly openInNewTabLink = this.page.locator("a[href='/terminal']");
@@ -127,27 +130,25 @@ export class WebTerminalPage extends BasePage {
   }
 
   async clickProjectDropdown(): Promise<void> {
-    const dropdown = this.page.getByTestId('namespace-bar-dropdown').getByRole('button');
+    const dropdown = this.projectDropdown.getByRole('button');
     await this.robustClick(dropdown);
   }
 
   async selectCreateProject(): Promise<void> {
-    const createBtn = this.page.locator('[data-test-dropdown-menu="#CREATE_RESOURCE_ACTION#"]');
+    const createBtn = this.page.locator('[data-test-dropdown-menu="#CREATE_NAMESPACE_KEY#"]');
     await this.robustClick(createBtn);
   }
 
   async typeProjectName(name: string): Promise<void> {
-    await this.page.getByTestId('input-name').fill(name);
-  }
-
-  async confirmProjectCreation(): Promise<void> {
-    await this.robustClick(this.page.getByTestId('confirm-action'));
+    // NamespaceSection wraps the "Project name" InputField in this div; the
+    // input itself only carries the generated form-input-<name>-field id.
+    await this.page.getByTestId('input-field-newNamespace').locator('input').fill(name);
   }
 
   async selectProjectFromDropdown(name: string): Promise<void> {
-    const filterInput = this.page.getByTestId('dropdown-text-filter');
+    const filterInput = this.page.getByTestId('console-select-search-input').locator('input');
     await filterInput.fill(name);
-    const item = this.page.getByTestId('console-select-item').filter({ hasText: name });
+    const item = this.page.locator(`[data-test-dropdown-menu="${name}"]`);
     await this.robustClick(item);
   }
 
@@ -160,5 +161,4 @@ export class WebTerminalPage extends BasePage {
     await this.goTo(`/k8s/ns/${namespace}/workspace.devfile.io~v1alpha2~DevWorkspace/${name}/yaml`);
     await this.waitForLoadingComplete(30_000);
   }
-
 }

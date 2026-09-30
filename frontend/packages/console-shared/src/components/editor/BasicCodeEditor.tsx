@@ -4,8 +4,8 @@ import { CodeEditor } from '@patternfly/react-code-editor';
 import { css } from '@patternfly/react-styles';
 import * as monaco from 'monaco-editor';
 import { useTranslation } from 'react-i18next';
+import { useTheme } from '@console/app/src/providers/theme/ThemeProvider';
 import type { BasicCodeEditorProps } from '@console/dynamic-plugin-sdk';
-import { useTheme } from '@console/internal/components/ThemeProvider';
 import { ErrorBoundaryInline } from '@console/shared/src/components/error/fallbacks/ErrorBoundaryInline';
 import './BasicCodeEditor.scss';
 
@@ -39,6 +39,7 @@ export const BasicCodeEditor: FC<BasicCodeEditorProps> = (props) => {
         emptyStateLink={t('Start from scratch')}
         emptyStateTitle={t('Start editing')}
         isDarkTheme={theme === 'dark'}
+        isHighContrastTheme={contrast === 'contrast'}
         {...props}
         className={css('co-code-editor', props.className)}
         editorProps={{
@@ -46,7 +47,6 @@ export const BasicCodeEditor: FC<BasicCodeEditorProps> = (props) => {
             window.monaco = monacoInstance; // for e2e tests
             props?.editorProps?.beforeMount?.(monacoInstance);
           },
-          ...(contrast === 'contrast' ? { theme: theme === 'dark' ? 'hc-black' : 'hc-light' } : {}),
         }}
         options={{
           fontFamily: 'var(--pf-t--global--font--family--mono)',

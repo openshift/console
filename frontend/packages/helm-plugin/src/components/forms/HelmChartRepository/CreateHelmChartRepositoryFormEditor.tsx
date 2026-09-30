@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { useMemo } from 'react';
-import { TextInputTypes } from '@patternfly/react-core';
+import { TextInputTypes, Alert } from '@patternfly/react-core';
 import type { FormikValues } from 'formik';
 import { useFormikContext } from 'formik';
 import * as fuzzy from 'fuzzysearch';
@@ -118,22 +118,26 @@ const CreateHelmChartRepositoryFormEditor: FC<CreateHelmChartRepositoryFormEdito
         helpText={!existingRepo ? t('A unique name for the Helm Chart repository.') : null}
         isDisabled={!!existingRepo}
         required
+        data-test="repo-name"
       />
       <InputField
         type={TextInputTypes.text}
         name="formData.repoDisplayName"
         label={t('Display name')}
         helpText={t('A display name for the Helm Chart repository.')}
+        data-test="repo-display-name"
       />
       <InputField
         type={TextInputTypes.text}
         name="formData.repoDescription"
         label={t('Description')}
         helpText={t('A description for the Helm Chart repository.')}
+        data-test="repo-description"
       />
       <CheckboxField
         name="formData.disabled"
         label={t('Disable usage of the repo in the Software Catalog.')}
+        data-test="repo-disabled"
       />
       <InputField
         type={TextInputTypes.text}
@@ -141,7 +145,20 @@ const CreateHelmChartRepositoryFormEditor: FC<CreateHelmChartRepositoryFormEdito
         label={t('URL')}
         helpText={t('Helm Chart repository URL.')}
         required
+        data-test="repo-url"
       />
+      {formData.repoUrl?.startsWith('http://') && (
+        <>
+          <Alert
+            variant="warning"
+            isInline
+            isPlain
+            title={t(
+              'HTTP is unencrypted, so your credentials and any downloaded content might be exposed or tampered with in transit. Use HTTPS whenever possible.',
+            )}
+          />
+        </>
+      )}
       <ExpandCollapse
         textExpanded={t('Hide advanced options')}
         textCollapsed={t('Show advanced options')}
@@ -149,7 +166,7 @@ const CreateHelmChartRepositoryFormEditor: FC<CreateHelmChartRepositoryFormEdito
         <FormSection>
           <p className="pf-v6-c-form__helper-text">
             {t(
-              'Add credentials and custom certificate authority (CA) certificates to connect to private helm chart repository.',
+              'Add credentials and custom certificate authority (CA) certificates to connect to a private Helm Chart repository.',
             )}
           </p>
           <ResourceDropdownField

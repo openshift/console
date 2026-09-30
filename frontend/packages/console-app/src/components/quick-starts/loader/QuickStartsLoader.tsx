@@ -28,15 +28,13 @@ export const QuickStartsLoader: FC<QuickStartsLoaderProps> = ({ children }) => {
 
   return (
     <>
-      {quickStarts.map((quickstart) => {
-        return (
-          <QuickStartPermissionChecker
-            key={quickstart.metadata.name}
-            quickStart={quickstart}
-            onPermissionCheck={handlePermissionCheck}
-          />
-        );
-      })}
+      {quickStarts.map((quickstart) => (
+        <QuickStartPermissionChecker
+          key={quickstart.metadata.name}
+          quickStart={quickstart}
+          onPermissionCheck={handlePermissionCheck}
+        />
+      ))}
       {children(
         allowedQuickStarts,
         quickStartsLoaded && (quickStarts.length === 0 || permissionsLoaded),

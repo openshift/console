@@ -35,10 +35,10 @@ module.exports = {
   'consistent-return': 'off',
 
   // Require consistent use of this alias
-  'consistent-this': ['warn', 'that'],
+  'consistent-this': ['error', 'that'],
 
   // Enforce a maximum depth that callbacks can be nested
-  'max-nested-callbacks': ['warn', 4],
+  'max-nested-callbacks': ['error', 4],
 
   // Disallow use of alert
   'no-alert': 'error',
@@ -46,8 +46,8 @@ module.exports = {
   // Disallow use of constant expressions in conditions
   'no-constant-condition': 'error',
 
-  // Disallow console statements
-  'no-console': 'error',
+  // Devtools console is used across the codebase for debugging in production.
+  'no-console': 'off',
 
   // Sort imports into groups
   'import/order': [
@@ -74,6 +74,9 @@ module.exports = {
       'newlines-between': 'never',
     },
   ],
+
+  // Legitimate use cases for require() exist, such as in the eslint config and in core-api.ts
+  'global-require': 'off',
 
   /* ------------------------ New Rules as of eslint-config-airbnb-base v14.0.0 -------------------------
 
@@ -107,40 +110,4 @@ module.exports = {
 
   // Disallow assignments that can lead to race conditions due to usage of `await` or `yield`
   'require-atomic-updates': 'off',
-
-  /* ---- Rules new/changed in eslint-config-airbnb-base v15 / ESLint v8 ---- */
-
-  // Default parameters should be last (new in airbnb v15)
-  'default-param-last': 'off',
-
-  // Disallow relative package imports (new in airbnb v15)
-  'import/no-relative-packages': 'off',
-
-  // Disallow cyclical imports (new in airbnb v15)
-  'import/no-cycle': 'off',
-
-  // Disallow named default exports (noisy with TypeScript re-exports)
-  'import/no-named-as-default-member': 'off',
-
-  // Prefer arrow functions as callbacks (new in airbnb v15)
-  'prefer-arrow-callback': 'off',
-
-  // Disallow returning values from Promise executor (new in eslint:recommended v8)
-  'no-promise-executor-return': 'off',
-
-  // Require arrow function bodies to use braces (new in airbnb v15)
-  'arrow-body-style': 'off',
-
-  // Ensure named imports match exported names (too many false positives with TypeScript)
-  'import/named': 'off',
-
-  // global-require was removed from ESLint core in v7 but airbnb still references it
-  'global-require': 'off',
-
-  // New rules from eslint:recommended v8 - disabled for now, enable in follow-up PRs
-  'no-unsafe-optional-chaining': 'off',
-  'no-import-assign': 'off',
-  'no-constructor-return': 'off',
-  'prefer-regex-literals': 'off',
-  'no-restricted-exports': 'off',
 };

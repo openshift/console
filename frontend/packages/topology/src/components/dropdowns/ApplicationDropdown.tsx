@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { ResourceDropdown } from '@console/shared/src/components/dropdown/ResourceDropdown';
-import type { ResourceDropdownProps } from '../../../../console-shared/src/components/dropdown/ResourceDropdown';
+import type { ResourceDropdownProps } from '@console/shared/src/components/dropdown/ResourceDropdown';
 import { getBaseWatchedResources } from '../../data-transforms/transform-utils';
 
 type ApplicationDropdownProps = Omit<ResourceDropdownProps, 'dataSelector' | 'placeholder'> & {

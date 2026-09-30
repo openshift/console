@@ -19,31 +19,29 @@ const MonitoringOverviewEvents: FC<MonitoringOverviewEventsProps> = ({ events })
   return (
     <div className="odc-monitoring-events">
       {!_.isEmpty(events) ? (
-        _.map(events, (e: EventKind) => {
-          return (
-            <div className="odc-monitoring-events__event-item" key={e.metadata.uid}>
-              <Flex alignSelf={{ default: 'alignSelfBaseline' }}>
-                <FlexItem title={e.lastTimestamp} className="pf-v6-u-text-color-subtle">
-                  {timeFormatter.format(new Date(getLastTime(e)))}
-                </FlexItem>
-                {e.type === 'Warning' && (
-                  <FlexItem>
-                    <YellowExclamationTriangleIcon className="odc-monitoring-events__warning-icon" />
-                  </FlexItem>
-                )}
+        _.map(events, (e: EventKind) => (
+          <div className="odc-monitoring-events__event-item" key={e.metadata.uid}>
+            <Flex alignSelf={{ default: 'alignSelfBaseline' }}>
+              <FlexItem title={e.lastTimestamp} className="pf-v6-u-text-color-subtle">
+                {timeFormatter.format(new Date(getLastTime(e)))}
+              </FlexItem>
+              {e.type === 'Warning' && (
                 <FlexItem>
-                  <ResourceLink
-                    kind={referenceFor(e.involvedObject)}
-                    namespace={e.involvedObject.namespace}
-                    name={e.involvedObject.name}
-                    title={e.involvedObject.uid}
-                  />
+                  <YellowExclamationTriangleIcon className="odc-monitoring-events__warning-icon" />
                 </FlexItem>
-              </Flex>
-              <div className="odc-monitoring-events__event-message">{e.message}</div>
-            </div>
-          );
-        })
+              )}
+              <FlexItem>
+                <ResourceLink
+                  kind={referenceFor(e.involvedObject)}
+                  namespace={e.involvedObject.namespace}
+                  name={e.involvedObject.name}
+                  title={e.involvedObject.uid}
+                />
+              </FlexItem>
+            </Flex>
+            <div className="odc-monitoring-events__event-message">{e.message}</div>
+          </div>
+        ))
       ) : (
         <div className="pf-v6-u-text-color-subtle">{t('There are no recent events.')}</div>
       )}

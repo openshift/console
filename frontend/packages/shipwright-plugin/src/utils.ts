@@ -108,9 +108,8 @@ export const isV1Alpha1Resource = (
 ): resource is
   | (IBuildV1Alpha1 & K8sResourceCommon)
   | (IBuildRunV1Alpha1 &
-      K8sResourceCommon & { status?: { conditions?: K8sResourceCondition[] } }) => {
-  return resource.apiVersion === 'shipwright.io/v1alpha1';
-};
+      K8sResourceCommon & { status?: { conditions?: K8sResourceCondition[] } }) =>
+  resource.apiVersion === 'shipwright.io/v1alpha1';
 
 export const getBuildNameFromBuildRun = (buildRun: BuildRun) => {
   if (isV1Alpha1Resource(buildRun)) {

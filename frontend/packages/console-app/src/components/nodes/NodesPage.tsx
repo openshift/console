@@ -35,12 +35,11 @@ import type {
   NodeCertificateSigningRequestKind,
   OwnerReference,
   RowProps,
-  TableColumn,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import type { NodeMetrics } from '@console/internal/actions/ui';
 import { setNodeMetrics } from '@console/internal/actions/ui';
 import ListPageHeader from '@console/internal/components/factory/ListPage/ListPageHeader';
-import { PROMETHEUS_BASE_PATH } from '@console/internal/components/graphs';
+import { PROMETHEUS_BASE_PATH } from '@console/internal/components/graphs/consts';
 import { getPrometheusURL, PrometheusEndpoint } from '@console/internal/components/graphs/helpers';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { LabelList } from '@console/internal/components/utils/label-list';
@@ -177,13 +176,13 @@ const kind = 'Node';
 const useNodesColumns = (
   vmsEnabled: boolean,
   isOpenShift5: boolean,
-): { columns: TableColumn<NodeRowItem>[]; resetAllColumnWidths: () => void } => {
+): { columns: ConsoleDataViewColumn<NodeRowItem>[]; resetAllColumnWidths: () => void } => {
   const { t } = useTranslation('console-app');
   const { getResizableProps, getWidth, resetAllColumnWidths } = useColumnWidthSettings(NodeModel);
   const isAdmin = useFlag(FLAGS.CAN_LIST_NS);
 
-  const columns = useMemo(() => {
-    return [
+  const columns = useMemo<ConsoleDataViewColumn<NodeRowItem>[]>(
+    () => [
       createSelectionColumn<NodeRowItem>(),
       {
         title: t('Name'),
@@ -192,7 +191,7 @@ const useNodesColumns = (
         resizableProps: getResizableProps(nodeColumnInfo.name.id),
         props: {
           ...getNameColumnProps(true, true),
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -201,7 +200,7 @@ const useNodesColumns = (
         sort: sortWithCSRResource(nodeReadiness, 'False'),
         resizableProps: getResizableProps(nodeColumnInfo.status.id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       ...(isOpenShift5
@@ -212,7 +211,7 @@ const useNodesColumns = (
               sort: 'groups',
               resizableProps: getResizableProps(nodeColumnInfo.groups.id),
               props: {
-                modifier: 'nowrap',
+                modifier: 'nowrap' as const,
               },
             },
           ]
@@ -223,7 +222,7 @@ const useNodesColumns = (
         sort: 'machineOwner.name',
         resizableProps: getResizableProps(nodeColumnInfo.machineOwner.id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       ...(vmsEnabled
@@ -236,7 +235,7 @@ const useNodesColumns = (
               props: isAdmin
                 ? undefined
                 : {
-                    modifier: 'nowrap',
+                    modifier: 'nowrap' as const,
                     info: {
                       tooltip: t(
                         'This count is based on your access permissions and might not include all virtual machines. Contact your administrator for full access.',
@@ -255,7 +254,7 @@ const useNodesColumns = (
         sort: sortWithCSRResource(nodePods, 0),
         resizableProps: getResizableProps(nodeColumnInfo.pods.id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -264,7 +263,7 @@ const useNodesColumns = (
         sort: sortWithCSRResource(nodeMemory, 0),
         resizableProps: getResizableProps(nodeColumnInfo.memory.id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -273,7 +272,7 @@ const useNodesColumns = (
         sort: sortWithCSRResource(nodeCPU, 0),
         resizableProps: getResizableProps(nodeColumnInfo.cpu.id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -282,7 +281,7 @@ const useNodesColumns = (
         sort: sortWithCSRResource(nodeRolesSort, ''),
         resizableProps: getResizableProps(nodeColumnInfo.role.id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
         additional: true,
       },
@@ -292,7 +291,7 @@ const useNodesColumns = (
         sort: sortWithCSRResource(nodeArch, ''),
         resizableProps: getResizableProps(nodeColumnInfo.architecture.id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
         additional: true,
       },
@@ -302,7 +301,7 @@ const useNodesColumns = (
         sort: sortWithCSRResource(nodeFS, 0),
         resizableProps: getResizableProps(nodeColumnInfo.filesystem.id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
         additional: true,
       },
@@ -312,7 +311,7 @@ const useNodesColumns = (
         sort: 'metadata.creationTimestamp',
         resizableProps: getResizableProps(nodeColumnInfo.created.id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
         additional: true,
       },
@@ -322,7 +321,7 @@ const useNodesColumns = (
         sort: sortWithCSRResource(nodeInstanceType, ''),
         resizableProps: getResizableProps(nodeColumnInfo.instanceType.id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
         additional: true,
       },
@@ -332,7 +331,7 @@ const useNodesColumns = (
         sort: sortWithCSRResource(nodeMachine, ''),
         resizableProps: getResizableProps(nodeColumnInfo.machine.id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
         additional: true,
       },
@@ -342,7 +341,7 @@ const useNodesColumns = (
         sort: 'machineConfigPool.metadata.name',
         resizableProps: getResizableProps(nodeColumnInfo.machineConfigPool.id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
         additional: true,
       },
@@ -352,7 +351,7 @@ const useNodesColumns = (
         sort: 'metadata.labels',
         resizableProps: getResizableProps(nodeColumnInfo.labels.id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
           ...getLabelsColumnWidthStyleProp(getWidth(nodeColumnInfo.labels.id)),
         },
         additional: true,
@@ -363,7 +362,7 @@ const useNodesColumns = (
         sort: sortWithCSRResource(nodeZone, ''),
         resizableProps: getResizableProps(nodeColumnInfo.zone.id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
         additional: true,
       },
@@ -373,7 +372,7 @@ const useNodesColumns = (
         sort: sortWithCSRResource(nodeUptime, ''),
         resizableProps: getResizableProps(nodeColumnInfo.uptime.id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
         additional: true,
       },
@@ -384,8 +383,9 @@ const useNodesColumns = (
           ...actionsCellProps,
         },
       },
-    ];
-  }, [t, getResizableProps, isOpenShift5, vmsEnabled, isAdmin, getWidth]);
+    ],
+    [t, getResizableProps, isOpenShift5, vmsEnabled, isAdmin, getWidth],
+  );
 
   return { columns, resetAllColumnWidths };
 };
@@ -413,8 +413,8 @@ const getNodeDataViewRows = (
     selectedItems: Set<string>;
     onSelect: (itemId: string, isSelecting: boolean) => void;
   },
-): ConsoleDataViewRow[] => {
-  return rowData.map(({ obj }, rowIndex) => {
+): ConsoleDataViewRow[] =>
+  rowData.map(({ obj }, rowIndex) => {
     const isCSR = isCSRResource(obj);
     const node = isCSR ? null : (obj as NodeKind);
     const csr = isCSR ? (obj as NodeCertificateSigningRequestKind) : null;
@@ -576,7 +576,7 @@ const getNodeDataViewRows = (
         };
       }
       // For select column, don't default to DASH - checkbox is rendered via props
-      const cellContent = id === 'select' ? rowCell.cell ?? '' : rowCell.cell ?? DASH;
+      const cellContent = id === 'select' ? (rowCell.cell ?? '') : (rowCell.cell ?? DASH);
       return {
         id,
         props: rowCell.props,
@@ -584,7 +584,6 @@ const getNodeDataViewRows = (
       };
     });
   });
-};
 
 export const buildIPToHostnameMap = (nodes: NodeKind[]): Map<string, string> => {
   const ipToHostname = new Map<string, string>();
@@ -651,16 +650,16 @@ const fetchNodeMetrics = (nodes: NodeKind[]): Promise<NodeMetrics> => {
   ];
   const promises = metrics.map(({ key, query }) => {
     const url = getPrometheusURL({ endpoint: PrometheusEndpoint.QUERY, query });
-    return coFetchJSON(url).then(({ data: { result } }) => {
-      return result.reduce((acc, data) => {
+    return coFetchJSON(url).then(({ data: { result } }) =>
+      result.reduce((acc, data) => {
         const value = Number(data.value[1]);
         const instance = resolveInstanceLabel(
           data.metric.instance || data.metric.node,
           ipToHostname,
         );
         return _.set(acc, [key, instance], value);
-      }, {});
-    });
+      }, {}),
+    );
   });
   return Promise.all(promises).then((data: any[]) => _.assign({}, ...data));
 };
@@ -698,7 +697,7 @@ const NodeList: FC<NodeListProps> = ({
 }) => {
   const { t } = useTranslation('console-app');
   const { columns, resetAllColumnWidths } = useNodesColumns(vmsEnabled, isOpenShift5);
-  const nodeMetrics = useConsoleSelector<NodeMetrics>(({ UI }) => UI.getIn(['metrics', 'node']));
+  const nodeMetrics = useConsoleSelector<NodeMetrics>(({ UI }) => UI.metrics?.node);
   const columnManagementID = referenceForModel(NodeModel);
   const statusExtensions = useNodeStatusExtensions();
 
@@ -801,12 +800,14 @@ const NodeList: FC<NodeListProps> = ({
 
   const groupNames = getExistingGroups(data as NodeKind[]);
 
-  const nodeGroupFilterOptions = useMemo<DataViewFilterOption[]>(() => {
-    return groupNames.map((groupName) => ({
-      value: groupName,
-      label: groupName,
-    }));
-  }, [groupNames]);
+  const nodeGroupFilterOptions = useMemo<DataViewFilterOption[]>(
+    () =>
+      groupNames.map((groupName) => ({
+        value: groupName,
+        label: groupName,
+      })),
+    [groupNames],
+  );
 
   const machineSetFilterOptions = useMemo<DataViewFilterOption[]>(
     () =>
@@ -1066,17 +1067,15 @@ export const NodesPage: FC<NodesPageProps> = ({ selector }) => {
     [machines],
   );
 
-  const [machineSets, machineSetsLoaded] = useWatchResourcesIfAllowed<MachineSetKind[]>(
-    MachineSetModel,
-  );
+  const [machineSets, machineSetsLoaded] =
+    useWatchResourcesIfAllowed<MachineSetKind[]>(MachineSetModel);
 
   const [controlPlaneMachineSets, controlPlaneMachineSetsLoaded] = useWatchResourcesIfAllowed<
     ControlPlaneMachineSetKind[]
   >(ControlPlaneMachineSetModel);
 
-  const [machineConfigPools, machineConfigPoolsLoaded] = useWatchResourcesIfAllowed<
-    MachineConfigPoolKind[]
-  >(MachineConfigPoolModel);
+  const [machineConfigPools, machineConfigPoolsLoaded] =
+    useWatchResourcesIfAllowed<MachineConfigPoolKind[]>(MachineConfigPoolModel);
 
   const [csrs, csrsLoaded, csrsLoadError] = useWatchResourcesIfAllowed<
     CertificateSigningRequestKind[]
@@ -1106,7 +1105,6 @@ export const NodesPage: FC<NodesPageProps> = ({ selector }) => {
         const metrics = await fetchNodeMetrics(nodes);
         dispatch(setNodeMetrics(metrics));
       } catch (e) {
-        // eslint-disable-next-line no-console
         console.error('Error fetching node metrics: ', e);
       }
     };

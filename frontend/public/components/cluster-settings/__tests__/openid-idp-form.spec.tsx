@@ -99,7 +99,7 @@ describe('Add Identity Provider: OpenID Connect', () => {
     });
   });
 
-  it('should render the Name label, input element, and help text', async () => {
+  it('should render the Name claim label, input element, and help text', async () => {
     renderPage();
     await verifyIDPListInputFields({
       inputLabel: 'Name',

@@ -2,7 +2,7 @@
 name: debug-test
 description: Debug and fix failing Playwright e2e tests with MCP-assisted diagnosis. Use when user says "playwright test failing", "fix e2e test", "debug spec", or provides a failing .spec.ts file, e2e directory, or Playwright tag.
 argument-hint: "<path/to/file.spec.ts | directory/ | @tag>"
-allowed-tools: Read, Write, Edit, Bash(find *), Bash(grep *), Bash(ls *), Bash(npx tsc *), Bash(npx playwright *), Bash(git diff *), Bash(git status), mcp__plugin_playwright_playwright__browser_navigate, mcp__plugin_playwright_playwright__browser_snapshot, mcp__plugin_playwright_playwright__browser_click, mcp__plugin_playwright_playwright__browser_console_messages, mcp__plugin_playwright_playwright__browser_take_screenshot, mcp__plugin_playwright_playwright__browser_resize, mcp__plugin_playwright_playwright__browser_run_code_unsafe, mcp__plugin_playwright_playwright__browser_evaluate, mcp__plugin_playwright_playwright__browser_close, mcp__plugin_playwright_playwright__browser_type, mcp__plugin_playwright_playwright__browser_wait_for, mcp__plugin_playwright_playwright__browser_network_requests, AskUserQuestion
+allowed-tools: Read, Write, Edit, Agent, Bash(find *), Bash(grep *), Bash(ls *), Bash(npx tsc *), Bash(npx playwright *), Bash(git diff *), Bash(git status), mcp__plugin_playwright_playwright__browser_navigate, mcp__plugin_playwright_playwright__browser_snapshot, mcp__plugin_playwright_playwright__browser_click, mcp__plugin_playwright_playwright__browser_console_messages, mcp__plugin_playwright_playwright__browser_take_screenshot, mcp__plugin_playwright_playwright__browser_resize, mcp__plugin_playwright_playwright__browser_run_code_unsafe, mcp__plugin_playwright_playwright__browser_evaluate, mcp__plugin_playwright_playwright__browser_close, mcp__plugin_playwright_playwright__browser_type, mcp__plugin_playwright_playwright__browser_wait_for, mcp__plugin_playwright_playwright__browser_network_requests, AskUserQuestion
 ---
 
 # Debug Test
@@ -12,7 +12,7 @@ Debug and fix failing Playwright tests using MCP as the primary diagnostic tool.
 ## Before Starting
 
 1. Check that `frontend/e2e/.env` exists. If missing, copy `frontend/e2e/.env.example` to `frontend/e2e/.env` and tell the user to fill in their cluster values before continuing.
-2. Read `.claude/migration-context.md` for the Console architecture, selector mappings, and migration rules. That file is the single source of truth for how Playwright tests should be structured.
+2. Read `.claude/e2e-context.md` for project conventions, patterns, and rules — page objects, selectors, fixtures, cleanup, waits, and things to never do. That file is the single source of truth for how Playwright tests should be structured.
 
 ## Input
 
@@ -86,6 +86,34 @@ Debug Summary: <target>
   Tests skipped:
     - <file>: <reason>
 ```
+
+### Phase 5: What We Learned
+
+After the fix is validated (Phase 4 passes), evaluate whether the root cause reveals a gap in the shared knowledge files. Most failures are one-off test bugs (wrong selector, missing await) and don't need documentation changes. Only flag patterns that would prevent future tests from hitting the same class of problem.
+
+1. **Classify the root cause.** Ask: "Would reading e2e-context.md, migration-context.md, or the skill instructions have prevented this failure?" If yes, there's a gap.
+
+2. **Check for pattern, not incident.** A gap is worth documenting when:
+   - The fix relies on behavior not mentioned anywhere (e.g., PF component wrapping, API propagation delays, fixture lifecycle quirks)
+   - The existing guidance actively led the agent astray (e.g., "use getByTestId" without warning about wrapper divs)
+   - The same class of failure is likely to recur in other tests
+
+   Skip if: the fix was a typo, a missing import, a stale selector, or a test-specific logic error.
+
+3. **Propose the change.** If a gap exists, present:
+   ```text
+   Documentation improvement:
+     File: .claude/e2e-context.md (or migration-context.md, or skill SKILL.md)
+     Section: <existing section name>
+     What to add: <1-3 sentence description of the pattern>
+     Why: <what went wrong and how this prevents it>
+   ```
+
+4. **Ask the user.** Do not apply changes without approval. Present the proposal and wait for confirmation.
+
+5. **Apply if approved.** Spawn a subagent (haiku) with specific edit instructions: the target file, the section, and the exact content to add. The subagent must only edit the approved file and section. After the subagent returns, verify the change matches the proposal. If it edited files outside the approved target, revert.
+
+**Skip this phase entirely** if no tests were fixed (all passed on first run or all were skipped).
 
 ## Troubleshooting
 

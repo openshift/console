@@ -212,14 +212,11 @@ export const DeploymentsDetailsPage: FC = (props) => {
 };
 DeploymentsDetailsPage.displayName = 'DeploymentsDetailsPage';
 
-const DeploymentTableHeader = () => {
-  return WorkloadTableHeader();
-};
+const DeploymentTableHeader = () => WorkloadTableHeader();
 DeploymentTableHeader.displayName = 'DeploymentTableHeader';
 
-const getDataViewRows: GetDataViewRows<DeploymentKind> = (data, columns) => {
-  return getWorkloadDataViewRows(data, columns, DeploymentModel);
-};
+const getDataViewRows: GetDataViewRows<DeploymentKind> = (data, columns) =>
+  getWorkloadDataViewRows(data, columns, DeploymentModel);
 
 const DeploymentsList: FC<DeploymentsListProps> = ({ data, loaded, ...props }) => {
   const { columns, resetAllColumnWidths } = useWorkloadColumns<DeploymentKind>(DeploymentModel);

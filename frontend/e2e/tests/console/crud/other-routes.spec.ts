@@ -1,10 +1,12 @@
 import type { Page } from '@playwright/test';
 import { test, expect } from '../../../fixtures';
+import { ensureDeveloperPerspective, warmupSPA } from '../../../pages/base-page';
 import { testA11y } from '../../../utils/a11y';
 
 type RouteConfig = {
   path: string;
   assertLoaded?: (page: Page) => Promise<void>;
+  streaming?: boolean;
 };
 
 async function assertLoadedListPage(page: Page): Promise<void> {
@@ -13,11 +15,15 @@ async function assertLoadedListPage(page: Page): Promise<void> {
   ).toBeVisible();
 }
 
+async function assertLoadingComplete(page: Page): Promise<void> {
+  await expect(page.getByTestId('loading-indicator')).toHaveCount(0);
+}
+
 const routes: RouteConfig[] = [
   {
     path: '/',
     assertLoaded: async (page) => {
-      await expect(page.getByTestId('page-heading').locator('h1')).toBeAttached();
+      await expect(page.getByTestId('page-heading').locator('h1')).toBeVisible();
       for (const skeleton of await page.getByTestId('skeleton-chart').all()) {
         await expect(skeleton).toBeHidden();
       }
@@ -26,7 +32,7 @@ const routes: RouteConfig[] = [
   {
     path: '/k8s/cluster/clusterroles/view',
     assertLoaded: async (page) => {
-      await expect(page.getByTestId('page-heading').locator('h1')).toBeAttached();
+      await expect(page.getByTestId('page-heading').locator('h1')).toBeVisible();
     },
   },
   {
@@ -35,6 +41,7 @@ const routes: RouteConfig[] = [
   },
   {
     path: '/k8s/all-namespaces/events',
+    streaming: true,
     assertLoaded: async (page) => {
       await expect(page.getByTestId('event-totals')).toBeVisible();
     },
@@ -60,7 +67,7 @@ const routes: RouteConfig[] = [
   {
     path: '/api-resource/ns/default/core~v1~Pod/schema',
     assertLoaded: async (page) => {
-      await expect(page.getByTestId('resource-sidebar-item').first()).toBeAttached();
+      await expect(page.getByTestId('resource-sidebar-item').first()).toBeVisible();
     },
   },
   {
@@ -72,9 +79,7 @@ const routes: RouteConfig[] = [
   {
     path: '/api-resource/ns/default/core~v1~Pod/access',
     assertLoaded: async (page) => {
-      await expect(
-        page.locator('[data-ouia-component-type$="TableRow"]').first(),
-      ).toBeVisible();
+      await expect(page.locator('[data-ouia-component-type$="TableRow"]').first()).toBeVisible();
     },
   },
   {
@@ -123,7 +128,7 @@ const routes: RouteConfig[] = [
   {
     path: '/settings/cluster',
     assertLoaded: async (page) => {
-      await expect(page.getByTestId('cluster-version')).toBeAttached();
+      await expect(page.getByTestId('cluster-version')).toBeVisible();
     },
   },
   {
@@ -138,8 +143,11 @@ test.describe('Visiting other routes', { tag: ['@admin', '@smoke'] }, () => {
       page,
     }) => {
       await page.goto(route.path, { timeout: 90_000 });
-      await expect(page).toHaveURL(new RegExp(route.path.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
-      await expect(page.getByTestId('loading-indicator')).toHaveCount(0);
+      const expectedPath = route.path.split('?')[0];
+      await expect(page).toHaveURL((url) => url.pathname === expectedPath);
+      if (!route.streaming) {
+        await assertLoadingComplete(page);
+      }
       await expect(page.getByTestId('error-page')).not.toBeAttached();
 
       if (route.assertLoaded) {
@@ -152,37 +160,31 @@ test.describe('Visiting other routes', { tag: ['@admin', '@smoke'] }, () => {
 });
 
 test.describe('Perspective query parameters', { tag: ['@admin'] }, () => {
+  let patchedPerspectives = false;
+
+  test.afterAll(async ({ k8sClient }) => {
+    if (patchedPerspectives) {
+      await k8sClient.customObjectsApi
+        .patchClusterCustomObject({
+          group: 'operator.openshift.io',
+          version: 'v1',
+          plural: 'consoles',
+          name: 'cluster',
+          body: [{ op: 'remove', path: '/spec/customization/perspectives' }],
+        })
+        .catch(() => {});
+    }
+  });
+
   test('Developer query parameter switches to Developer perspective', async ({
     page,
     k8sClient,
   }) => {
     await test.step('Ensure Developer perspective is available', async () => {
-      await page.goto('/k8s/cluster/projects');
-
-      const toggle = page.getByTestId('perspective-switcher-toggle');
-      await expect(toggle).toBeVisible();
-
-      const isSinglePerspective =
-        (await toggle.getAttribute('id')) === 'only-one-perspective';
-      if (isSinglePerspective) {
-        await k8sClient.customObjectsApi.patchClusterCustomObject({
-          group: 'operator.openshift.io',
-          version: 'v1',
-          plural: 'consoles',
-          name: 'cluster',
-          body: [
-            {
-              op: 'add',
-              path: '/spec/customization/perspectives',
-              value: [{ id: 'dev', visibility: { state: 'Enabled' } }],
-            },
-          ],
-        });
+      await warmupSPA(page);
+      if (await ensureDeveloperPerspective(page, k8sClient)) {
+        patchedPerspectives = true;
       }
-      await expect(async () => {
-        await page.reload();
-        await expect(toggle).not.toHaveAttribute('id', 'only-one-perspective');
-      }).toPass({ timeout: 60_000 });
     });
 
     await test.step('Navigate with perspective=dev and verify', async () => {
@@ -195,19 +197,18 @@ test.describe('Perspective query parameters', { tag: ['@admin'] }, () => {
 
   test('Administrator query parameter switches to Administrator perspective', async ({
     page,
+    k8sClient,
   }) => {
     await test.step('Switch to Developer perspective first', async () => {
-      await page.goto('/k8s/cluster/projects');
+      await warmupSPA(page);
+      if (await ensureDeveloperPerspective(page, k8sClient)) {
+        patchedPerspectives = true;
+      }
 
-      const toggle = page.getByTestId('perspective-switcher-toggle');
-      await toggle.click();
-
-      const devOption = page
-        .getByTestId('perspective-switcher-menu-option')
-        .filter({ hasText: 'Developer' });
-      await devOption.click();
-
-      await expect(toggle).toContainText('Developer');
+      await page.goto('/topology/all-namespaces?view=graph&perspective=dev');
+      await expect(page.getByTestId('perspective-switcher-toggle')).toContainText('Developer', {
+        timeout: 30_000,
+      });
     });
 
     await test.step('Navigate with perspective=admin and verify', async () => {

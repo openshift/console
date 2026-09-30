@@ -10,18 +10,16 @@ install-state.gz
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+
 !/vendor/**
 !.vscode/settings.json
 .DS_Store
-cypress-a11y-report.json
 /bin
 /gopath
 /Godeps/_workspace/src/github.com/openshift/console
-/frontend/.cache-loader
 /frontend/.puppeteer
 /frontend/.webpack-cycles
 /frontend/__coverage__
-/frontend/__chrome_browser__
 /frontend/**/node_modules
 /frontend/**/npm-debug.log
 /frontend/**/yarn-error.log
@@ -31,7 +29,6 @@ cypress-a11y-report.json
 /frontend/e2e/.test-config.json
 /frontend/test-results/
 /frontend/playwright-report/
-/frontend/gui_test_screenshots
 /frontend/package-lock.json
 /frontend/po-files
 /dynamic-demo-plugin/**/node_modules
