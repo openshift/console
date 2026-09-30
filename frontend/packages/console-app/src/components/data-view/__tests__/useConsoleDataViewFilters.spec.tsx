@@ -1,6 +1,6 @@
 import type { FC, ReactNode } from 'react';
-import { render, renderHook, act } from '@testing-library/react';
-import { MemoryRouter, useNavigate } from 'react-router';
+import { render, renderHook, act, waitFor } from '@testing-library/react';
+import { MemoryRouter, useLocation, useNavigate } from 'react-router';
 import type { K8sResourceCommon } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import type { ResourceFilters } from '../types';
 import { useConsoleDataViewFilters } from '../useConsoleDataViewFilters';
@@ -352,5 +352,77 @@ describe('useConsoleDataViewFilters', () => {
     });
 
     expect(result.current.filteredData).toHaveLength(0);
+  });
+
+  describe('legacy rowFilter- URL parameters', () => {
+    type StatusFilters = ResourceFilters & { status: string[] };
+    const statusInitialFilters: StatusFilters = { name: '', label: '', status: [] };
+
+    let search = '';
+    const locationSearch = () => search;
+
+    const renderWithUrl = (url: string, filtersArg: any = statusInitialFilters) => {
+      search = url.slice(url.indexOf('?'));
+      return renderHook(
+        () => {
+          search = useLocation().search;
+          return useConsoleDataViewFilters<K8sResourceCommon, any>({
+            data: mockData,
+            initialFilters: filtersArg,
+          });
+        },
+        { wrapper: createWrapper([url]) },
+      );
+    };
+
+    // The rewrite is deferred past the pagination hook's own URL write, so these await it.
+    it('should adopt a legacy single-value rowFilter parameter', async () => {
+      const { result } = renderWithUrl('/?rowFilter-status=Failed&page=1&perPage=50');
+      await waitFor(() => expect(result.current.filters.status).toEqual(['Failed']));
+    });
+
+    it('should split a legacy comma-separated rowFilter parameter into separate values', async () => {
+      const { result } = renderWithUrl('/?rowFilter-status=Failed,Succeeded');
+      await waitFor(() => expect(result.current.filters.status).toEqual(['Failed', 'Succeeded']));
+    });
+
+    it('should prefer a canonical parameter over the legacy one', () => {
+      const { result } = renderWithUrl('/?status=Running&rowFilter-status=Failed');
+      expect(result.current.filters.status).toEqual(['Running']);
+    });
+
+    it('should ignore a legacy parameter for a filter the table does not declare', () => {
+      const { result } = renderWithUrl('/?rowFilter-status=Failed', initialFilters);
+      expect(result.current.filters).toEqual({ name: '', label: '' });
+    });
+
+    it('should drop the legacy parameter when a canonical one is already present', async () => {
+      const { result } = renderWithUrl('/?status=Running&rowFilter-status=Failed');
+
+      await waitFor(() => expect(locationSearch()).not.toContain('rowFilter-status'));
+      expect(result.current.filters.status).toEqual(['Running']);
+    });
+
+    it('should not restore the legacy value after the canonical filter is cleared', async () => {
+      const { result } = renderWithUrl('/?status=Running&rowFilter-status=Failed');
+
+      // The stale legacy parameter has to be gone before clearing, or clearing would make it
+      // adoptable again and silently re-apply the filter the user just removed.
+      await waitFor(() => expect(locationSearch()).not.toContain('rowFilter-status'));
+
+      act(() => {
+        result.current.onSetFilters({ status: [] } as any);
+      });
+
+      await waitFor(() => expect(result.current.filters.status).toEqual([]));
+      // Give the deferred rewrite a chance to run before asserting it stayed cleared.
+      await act(async () => {
+        await new Promise((resolve) => {
+          setTimeout(resolve, 0);
+        });
+      });
+      expect(result.current.filters.status).toEqual([]);
+      expect(locationSearch()).not.toContain('Failed');
+    });
   });
 });

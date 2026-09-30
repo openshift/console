@@ -5,7 +5,7 @@ import { initialFiltersDefault } from '@console/app/src/components/data-view/Con
 import type { ResourceFilters } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { ComputedBuildRunStatus } from '../types';
 
-/** Matches the `type` of the legacy row filter so the filter round-trips through the URL. */
+/** Matches the `type` of the legacy row filter, which `useConsoleDataViewFilters` rewrites from old URLs. */
 const STATUS_FILTER_ID = 'status';
 
 export type BuildRunStatusFilters = ResourceFilters & { [STATUS_FILTER_ID]: string[] };
