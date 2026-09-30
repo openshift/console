@@ -1,4 +1,4 @@
-import type { ComponentType, FC, ReactNode, JSX } from 'react';
+import type { ComponentType, FC, ReactNode } from 'react';
 import { PureComponent, useContext, memo, useMemo, Suspense } from 'react';
 import { Tabs, Tab, TabTitleText } from '@patternfly/react-core';
 import type { TFunction } from 'i18next';
@@ -237,7 +237,7 @@ NavBar.displayName = 'NavBar';
 export const HorizontalNav = memo<HorizontalNavProps>((props) => {
   const params = useDeepCompareMemoize(useParams());
 
-  const renderContent = (routes: JSX.Element[]) => {
+  const renderContent = (routes: ReactNode[]) => {
     const { noStatusBox, obj, EmptyMsg, label } = props;
     const content = (
       <Suspense fallback={<LoadingBox blame="HorizontalNav" />}>

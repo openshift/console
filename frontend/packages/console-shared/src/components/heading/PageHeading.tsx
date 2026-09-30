@@ -1,4 +1,4 @@
-import type { FC, ReactNode, JSX } from 'react';
+import type { FC, ReactNode } from 'react';
 import type { PageHeaderLinkProps } from '@patternfly/react-component-groups';
 import { PageHeader } from '@patternfly/react-component-groups';
 import { ActionList, ActionListGroup, ActionListItem } from '@patternfly/react-core';
@@ -34,7 +34,7 @@ export type PageHeadingProps = {
    */
   hideFavoriteButton?: boolean;
   /** A title for the page. */
-  title?: string | JSX.Element;
+  title?: string | ReactNode;
   /** A primary action that is always rendered. */
   primaryAction?: ReactNode;
   /** Optional link below subtitle */

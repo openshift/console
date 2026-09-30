@@ -1,4 +1,4 @@
-import type { FC, ComponentType, JSX } from 'react';
+import type { FC, ComponentType, ReactNode } from 'react';
 import { useCallback } from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -85,7 +85,7 @@ type OperatorsSectionProps = {
   linkTo: string;
   Row: ComponentType<
     OperatorRowProps & {
-      LoadingComponent: () => JSX.Element;
+      LoadingComponent: () => ReactNode;
       Component: ComponentType<OperatorRowProps> | LazyLoader<ComponentType<OperatorRowProps>>;
       key: string;
       isResolved: boolean;

@@ -1,4 +1,4 @@
-import type { FC } from 'react';
+import type { FC, ReactNode } from 'react';
 import { useMemo } from 'react';
 import { Alert, DescriptionList, Grid, GridItem, Tooltip } from '@patternfly/react-core';
 import { RhUiWarningFillIcon } from '@patternfly/react-icons';
@@ -311,8 +311,8 @@ const ContainerVulnerabilities: FC<ContainerVulnerabilitiesProps> = (props) => {
 
   const withVuln = (
     vuln: ImageManifestVuln,
-    exists: (vuln: ImageManifestVuln) => JSX.Element,
-    absent: () => JSX.Element,
+    exists: (vuln: ImageManifestVuln) => ReactNode,
+    absent: () => ReactNode,
   ) => (vuln !== undefined ? exists(vuln) : absent());
 
   if (loadError) {

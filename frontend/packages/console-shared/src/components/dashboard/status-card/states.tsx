@@ -1,5 +1,6 @@
 /* eslint-disable no-barrel-files/no-barrel-files */
 import type { ReactElement } from 'react';
+import type { IconSize } from '@patternfly/react-core';
 import { RhUiInProgressIcon } from '@patternfly/react-icons';
 import type { TFunction } from 'i18next';
 import { HealthState } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
@@ -88,7 +89,7 @@ export const healthStateMapping: { [key in HealthState]: HealthStateMappingValue
 };
 
 export type HealthStateMappingValues = {
-  icon: ReactElement<any>;
+  icon: ReactElement<{ size?: IconSize }>;
   priority: number;
   health: HealthState;
 };

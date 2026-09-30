@@ -1,4 +1,4 @@
-import type { ReactNode, JSX } from 'react';
+import type { ReactNode } from 'react';
 import { useState, useCallback, useEffect } from 'react';
 import {
   Alert,
@@ -207,7 +207,7 @@ export type DeleteModalProps = {
   kind: K8sModel;
   resource: K8sResourceKind;
   redirectTo?: To;
-  message?: JSX.Element;
+  message?: ReactNode;
   btnText?: ReactNode;
   deleteAllResources?: () => Promise<K8sResourceKind[]>;
 } & ModalComponentProps;

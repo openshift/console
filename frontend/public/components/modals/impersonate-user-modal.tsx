@@ -1,4 +1,4 @@
-import type { FC, KeyboardEvent, Ref, MouseEvent, JSX } from 'react';
+import type { FC, KeyboardEvent, ReactNode, Ref, MouseEvent } from 'react';
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import type { MenuToggleElement } from '@patternfly/react-core';
 import {
@@ -378,7 +378,7 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
 
   // Build the dropdown options list
   const renderSelectOptions = () => {
-    const options: JSX.Element[] = [];
+    const options: ReactNode[] = [];
 
     // Show "Select all" only when API groups are available and there are filtered results
     if (filteredGroups.length > 0) {

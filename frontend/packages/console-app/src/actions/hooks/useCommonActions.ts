@@ -1,4 +1,5 @@
-import { useMemo, type JSX } from 'react';
+import { useMemo } from 'react';
+import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { Action } from '@console/dynamic-plugin-sdk';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
@@ -41,7 +42,7 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
   kind: K8sModel | undefined,
   resource: K8sResourceKind | undefined,
   filterActions?: T,
-  message?: JSX.Element,
+  message?: ReactNode,
   editPath?: string,
 ): [ActionObject<T>, boolean] => {
   const { t } = useTranslation('console-app');

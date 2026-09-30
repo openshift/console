@@ -1,4 +1,4 @@
-import type { FC, JSX } from 'react';
+import type { FC, ReactNode } from 'react';
 import { CodeBlock, CodeBlockCode, DescriptionList } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -144,7 +144,7 @@ export const BuildStrategy: FC<BuildStrategyProps> = ({ resource, children }) =>
 
 export type BuildStrategyProps = {
   resource: K8sResourceKind;
-  children?: JSX.Element[];
+  children?: ReactNode[];
 };
 
 BuildStrategy.displayName = 'BuildStrategy';
