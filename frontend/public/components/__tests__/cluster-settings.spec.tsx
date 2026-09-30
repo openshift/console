@@ -29,7 +29,32 @@ jest.mock('../utils/resource-link', () => ({
   ResourceLink: jest.fn(() => null),
 }));
 
+const clusterVersionUpdatingProps = {
+  ...clusterVersionUpgradeableFalseProps,
+  status: {
+    ...clusterVersionUpgradeableFalseProps.status,
+    conditions: clusterVersionUpgradeableFalseProps.status.conditions.map((c) =>
+      c.type === 'Upgradeable'
+        ? {
+            ...c,
+            reason: 'ClusterVersionUpdating',
+            message:
+              'An update is already in progress and the details are in the Progressing condition.',
+          }
+        : c,
+    ),
+  },
+};
+
 describe('ClusterNotUpgradeableAlert', () => {
+  it('does not render when Upgradeable is False because an update is already in progress', () => {
+    const { container } = renderWithProviders(
+      <ClusterNotUpgradeableAlert cv={clusterVersionUpdatingProps} />,
+    );
+
+    expect(container).toBeEmptyDOMElement();
+  });
+
   it('renders the alert body text from the ClusterVersion condition message', () => {
     renderWithProviders(<ClusterNotUpgradeableAlert cv={clusterVersionUpgradeableFalseProps} />);
 
