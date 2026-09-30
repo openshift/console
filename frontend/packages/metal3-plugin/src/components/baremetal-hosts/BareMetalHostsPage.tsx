@@ -150,6 +150,7 @@ const BareMetalHostsPage: FC<BareMetalHostsPageProps> = (props) => {
       resources={resources}
       flatten={flattenResources}
       ListComponent={BareMetalHostsTable}
+      omitFilterToolbar
       title={t('Bare Metal Hosts')}
     />
   );

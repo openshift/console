@@ -1,16 +1,26 @@
-import type { FC, ComponentProps } from 'react';
-import { sortable } from '@patternfly/react-table';
-import type { TFunction } from 'i18next';
+import type { FC } from 'react';
+import { useCallback, useMemo } from 'react';
+import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
 import { useTranslation } from 'react-i18next';
-import { DASH } from '@console/dynamic-plugin-sdk/src/app/constants';
-import type { RowFunctionArgs } from '@console/internal/components/factory';
-import { TableData, Table } from '@console/internal/components/factory';
-import { ResourceLink } from '@console/internal/components/utils';
-import { referenceForModel } from '@console/internal/module/k8s';
 import {
-  LazyActionMenu,
-  KEBAB_COLUMN_CLASS,
-} from '@console/shared/src/components/actions/LazyActionMenu';
+  ConsoleDataView,
+  actionsCellProps,
+  getNameCellProps,
+  getNameColumnProps,
+  initialFiltersDefault,
+} from '@console/app/src/components/data-view/ConsoleDataView';
+import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
+import { DASH } from '@console/dynamic-plugin-sdk/src/app/constants';
+import type {
+  ConsoleDataViewColumn,
+  GetDataViewRows,
+  ResourceFilters,
+  ResourceMetadata,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import type { TableProps } from '@console/internal/components/factory/table';
+import { ResourceLink } from '@console/internal/components/utils/resource-link';
+import { referenceForModel } from '@console/internal/module/k8s/k8s-ref';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { getName, getNamespace } from '@console/shared/src/selectors/common';
 import { BMO_ENABLED_FLAG } from '../../features';
@@ -22,126 +32,188 @@ import BareMetalHostRole from './BareMetalHostRole';
 import BareMetalHostSecondaryStatus from './BareMetalHostSecondaryStatus';
 import BareMetalHostStatus from './BareMetalHostStatus';
 import NodeLink from './NodeLink';
+import { getHostFilterStatus, hostStatusFilter } from './table-filters';
 
-const tableColumnClasses = {
-  name: '',
-  status: 'pf-m-hidden pf-m-visible-on-sm',
-  node: 'pf-m-hidden pf-m-visible-on-md',
-  role: 'pf-m-hidden pf-m-visible-on-lg',
-  address: 'pf-m-hidden pf-m-visible-on-lg',
-  serialNumber: 'pf-m-hidden pf-m-visible-on-lg',
-  kebab: KEBAB_COLUMN_CLASS,
+const hostReference = referenceForModel(BareMetalHostModel);
+
+/** Matches the `type` of {@link hostStatusFilter} so the filter round-trips through the URL. */
+const HOST_STATUS_FILTER_ID = 'host-status';
+
+type BareMetalHostFilters = ResourceFilters & { [HOST_STATUS_FILTER_ID]: string[] };
+
+type BareMetalHostRowData = {
+  bmoEnabled: boolean;
+  maintenanceModel: ReturnType<typeof useMaintenanceCapability>[0];
 };
 
-const HostsTableHeader = (t: TFunction) => () => [
-  {
-    title: t('metal3-plugin~Name'),
-    sortField: 'host.metadata.name',
-    transforms: [sortable],
-    props: { className: tableColumnClasses.name },
-  },
-  {
-    title: t('metal3-plugin~Status'),
-    sortField: 'status.status',
-    transforms: [sortable],
-    props: { className: tableColumnClasses.status },
-  },
-  {
-    title: t('metal3-plugin~Node'),
-    sortField: 'node.metadata.name',
-    transforms: [sortable],
-    props: { className: tableColumnClasses.node },
-  },
-  {
-    title: t('metal3-plugin~Role'),
-    sortField: 'machine.metadata.labels["machine.openshift.io/cluster-api-machine-role"]',
-    transforms: [sortable],
-    props: { className: tableColumnClasses.role },
-  },
-  {
-    title: t('metal3-plugin~Management Address'),
-    sortField: 'host.spec.bmc.address',
-    transforms: [sortable],
-    props: { className: tableColumnClasses.address },
-  },
-  {
-    title: t('metal3-plugin~Serial Number'),
-    sortField: 'host.status.hardware.systemVendor.serialNumber',
-    transforms: [sortable],
-    props: { className: tableColumnClasses.serialNumber },
-  },
-  {
-    title: '',
-    props: { className: tableColumnClasses.kebab },
-  },
-];
-
-const HostsTableRow: FC<RowFunctionArgs<BareMetalHostBundle>> = ({
-  obj: { host, node, nodeMaintenance, machine, machineSet, status },
-}) => {
-  const [maintenanceModel] = useMaintenanceCapability();
-  const bmoEnabled = useFlag(BMO_ENABLED_FLAG);
-  const name = getName(host);
-  const namespace = getNamespace(host);
-  const address = getHostBMCAddress(host);
-  const nodeName = getName(node);
-  const { serialNumber } = getHostVendorInfo(host);
-
-  return (
-    <>
-      <TableData className={tableColumnClasses.name}>
-        <ResourceLink
-          kind={referenceForModel(BareMetalHostModel)}
-          name={name}
-          namespace={namespace}
-        />
-      </TableData>
-      <TableData className={tableColumnClasses.status}>
-        <BareMetalHostStatus {...status} nodeMaintenance={nodeMaintenance} host={host} />
-        <BareMetalHostSecondaryStatus host={host} />
-      </TableData>
-      <TableData className={tableColumnClasses.node}>
-        <NodeLink nodeName={nodeName} />
-      </TableData>
-      <TableData className={tableColumnClasses.role}>
-        <BareMetalHostRole machine={machine} node={node} />
-      </TableData>
-      <TableData className={tableColumnClasses.address}>{address || DASH}</TableData>
-      <TableData className={tableColumnClasses.serialNumber}>{serialNumber || DASH}</TableData>
-      <TableData className={tableColumnClasses.kebab}>
-        <LazyActionMenu
-          context={{
-            [referenceForModel(BareMetalHostModel)]: {
-              host,
-              machineSet,
-              machine,
-              bmoEnabled,
-              nodeName,
-              status,
-              maintenanceModel,
-              nodeMaintenance,
-            },
-          }}
-        />
-      </TableData>
-    </>
+const useBareMetalHostColumns = (): {
+  columns: ConsoleDataViewColumn<BareMetalHostBundle>[];
+  resetAllColumnWidths: () => void;
+} => {
+  const { t } = useTranslation('metal3-plugin');
+  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(BareMetalHostModel);
+  const columns = useMemo(
+    () => [
+      {
+        id: 'name',
+        resizableProps: getResizableProps('name'),
+        title: t('Name'),
+        sort: 'host.metadata.name',
+        props: { ...getNameColumnProps(), modifier: 'nowrap' as const },
+      },
+      {
+        id: 'status',
+        resizableProps: getResizableProps('status'),
+        title: t('Status'),
+        sort: 'status.status',
+        props: { modifier: 'nowrap' as const },
+      },
+      {
+        id: 'node',
+        resizableProps: getResizableProps('node'),
+        title: t('Node'),
+        sort: 'node.metadata.name',
+        props: { modifier: 'nowrap' as const },
+      },
+      {
+        id: 'role',
+        resizableProps: getResizableProps('role'),
+        title: t('Role'),
+        sort: 'machine.metadata.labels["machine.openshift.io/cluster-api-machine-role"]',
+        props: { modifier: 'nowrap' as const },
+      },
+      {
+        id: 'address',
+        resizableProps: getResizableProps('address'),
+        title: t('Management Address'),
+        sort: 'host.spec.bmc.address',
+        props: { modifier: 'nowrap' as const },
+      },
+      {
+        id: 'serialNumber',
+        resizableProps: getResizableProps('serialNumber'),
+        title: t('Serial Number'),
+        sort: 'host.status.hardware.systemVendor.serialNumber',
+        props: { modifier: 'nowrap' as const },
+      },
+      { id: 'actions', title: '', props: actionsCellProps },
+    ],
+    [t, getResizableProps],
   );
+  return { columns, resetAllColumnWidths };
 };
 
-type BareMetalHostsTableProps = ComponentProps<typeof Table> & {
+export const getBareMetalHostDataViewRows: GetDataViewRows<
+  BareMetalHostBundle,
+  BareMetalHostRowData
+> = (data, columns) =>
+  data.map(({ obj: { host, node, nodeMaintenance, machine, machineSet, status }, rowData }) => {
+    const name = getName(host);
+    const nodeName = getName(node);
+    const { serialNumber } = getHostVendorInfo(host);
+    const rowCells = {
+      name: {
+        cell: <ResourceLink kind={hostReference} name={name} namespace={getNamespace(host)} />,
+        props: getNameCellProps(name),
+      },
+      status: {
+        cell: (
+          <>
+            <BareMetalHostStatus {...status} nodeMaintenance={nodeMaintenance} host={host} />
+            <BareMetalHostSecondaryStatus host={host} />
+          </>
+        ),
+      },
+      node: { cell: <NodeLink nodeName={nodeName} /> },
+      role: { cell: <BareMetalHostRole machine={machine} node={node} /> },
+      address: { cell: getHostBMCAddress(host) || DASH },
+      serialNumber: { cell: serialNumber || DASH },
+      actions: {
+        cell: (
+          <LazyActionMenu
+            context={{
+              [hostReference]: {
+                host,
+                machineSet,
+                machine,
+                bmoEnabled: rowData?.bmoEnabled,
+                nodeName,
+                status,
+                maintenanceModel: rowData?.maintenanceModel,
+                nodeMaintenance,
+              },
+            }}
+          />
+        ),
+        props: actionsCellProps,
+      },
+    };
+    return columns.map(({ id }) => ({ id, ...rowCells[id] }));
+  });
+
+const getObjectMetadata = (bundle: BareMetalHostBundle): ResourceMetadata => ({
+  name: getName(bundle.host),
+  labels: bundle.host?.metadata?.labels,
+});
+
+type BareMetalHostsTableProps = TableProps & {
   data: BareMetalHostBundle[];
 };
 
 const BareMetalHostsTable: FC<BareMetalHostsTableProps> = (props) => {
   const { t } = useTranslation('metal3-plugin');
+  const { columns, resetAllColumnWidths } = useBareMetalHostColumns();
+  const [maintenanceModel] = useMaintenanceCapability();
+  const bmoEnabled = useFlag(BMO_ENABLED_FLAG);
+
+  const statusFilterOptions = useMemo(
+    () => hostStatusFilter(t).items.map(({ id, title }) => ({ value: id, label: title })),
+    [t],
+  );
+  const initialFilters = useMemo<BareMetalHostFilters>(
+    () => ({ ...initialFiltersDefault, [HOST_STATUS_FILTER_ID]: [] }),
+    [],
+  );
+  const additionalFilterNodes = useMemo(
+    () => [
+      <DataViewCheckboxFilter
+        key={HOST_STATUS_FILTER_ID}
+        filterId={HOST_STATUS_FILTER_ID}
+        title={t('Status')}
+        placeholder={t('Filter by status')}
+        options={statusFilterOptions}
+      />,
+    ],
+    [statusFilterOptions, t],
+  );
+  const matchesAdditionalFilters = useCallback(
+    (bundle: BareMetalHostBundle, filters: BareMetalHostFilters) =>
+      filters[HOST_STATUS_FILTER_ID].length === 0 ||
+      filters[HOST_STATUS_FILTER_ID].includes(getHostFilterStatus(bundle)),
+    [],
+  );
+
+  const customRowData = useMemo<BareMetalHostRowData>(
+    () => ({ bmoEnabled, maintenanceModel }),
+    [bmoEnabled, maintenanceModel],
+  );
+
   return (
-    <Table
+    <ConsoleDataView<BareMetalHostBundle, BareMetalHostRowData, BareMetalHostFilters>
       {...props}
-      defaultSortField="host.metadata.name"
-      aria-label={t('Bare Metal Hosts')}
-      Header={HostsTableHeader(t)}
-      Row={HostsTableRow}
-      virtualize
+      label={t('Bare Metal Hosts')}
+      data={props.data}
+      loaded={props.loaded}
+      columns={columns}
+      getDataViewRows={getBareMetalHostDataViewRows}
+      getObjectMetadata={getObjectMetadata}
+      customRowData={customRowData}
+      initialFilters={initialFilters}
+      additionalFilterNodes={additionalFilterNodes}
+      matchesAdditionalFilters={matchesAdditionalFilters}
+      hideColumnManagement
+      isResizable
+      resetAllColumnWidths={resetAllColumnWidths}
     />
   );
 };
