@@ -4,6 +4,7 @@ import { useFormikContext, FormikValues, getIn } from 'formik';
 import * as fuzzy from 'fuzzysearch';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import type { K8sResourceCondition } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { ImageStreamTagModel } from '@console/internal/models';
 import { k8sGet, K8sResourceKind, ContainerPort } from '@console/internal/module/k8s';
 import { DropdownField } from '@console/shared';
@@ -56,7 +57,37 @@ const ImageStreamTagDropdown: React.FC<{
           formContextField && setFieldValue(`${fieldPrefix}imageStreamTag`, imageStreamImport);
           const imgStreamLabels = _.pick(labels, imageStreamLabels);
           const name = imageStream.image;
-          const isi = { name, image, tag, status };
+
+          // Check for error conditions in the ImageStreamTag status
+          // ImageStreamTag may have conditions array with ImportSuccess failures
+          const failureCondition = _.find(status?.conditions, {
+            type: 'ImportSuccess',
+            status: 'False',
+          }) as K8sResourceCondition | undefined;
+
+          if (failureCondition) {
+            // Handle import failure - set error state similar to catch block
+            setFieldValue(`${fieldPrefix}isi`, {});
+            setFieldValue(`${fieldPrefix}isi.status`, {
+              metadata: {},
+              status: '',
+              message: failureCondition.message || t('devconsole~Failed to import image'),
+            });
+            setFieldValue(`${fieldPrefix}isSearchingForImage`, false);
+            setValidated(ValidatedOptions.error);
+            return;
+          }
+
+          // Ensure status has the required structure for validation (isi.status.status must be a string)
+          // ImageStreamTag status may not have the nested status.status property, so we normalize it
+          const normalizedStatus = status?.status
+            ? status
+            : {
+                ...(status || {}),
+                status: 'Success',
+                metadata: status?.metadata || {},
+              };
+          const isi = { name, image, tag, status: normalizedStatus };
           const ports = getPorts(isi);
           setFieldValue(`${fieldPrefix}isSearchingForImage`, false);
           setFieldValue(`${fieldPrefix}isi.name`, name);
@@ -108,6 +139,7 @@ const ImageStreamTagDropdown: React.FC<{
       initialRoute,
       touched,
       setValidated,
+      t,
     ],
   );
 
