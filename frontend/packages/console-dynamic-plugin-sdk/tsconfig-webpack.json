@@ -1,7 +1,6 @@
 {
   "extends": "./tsconfig-base.json",
   "compilerOptions": {
-    "module": "commonjs",
     "outDir": "dist/webpack/lib"
   },
   "files": ["src/lib-webpack.ts", "src/webpack/loaders/dynamic-module-import-loader.ts"]

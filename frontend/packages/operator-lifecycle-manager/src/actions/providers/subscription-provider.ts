@@ -1,4 +1,4 @@
-import type { SubscriptionKind } from 'packages/operator-lifecycle-manager/src/types';
+import type { SubscriptionKind } from '@console/operator-lifecycle-manager/src/types';
 import { useSubscriptionActions } from '../hooks/useSubscriptionActions';
 
 export const useSubscriptionActionsProvider = (resource: SubscriptionKind) => {
