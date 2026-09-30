@@ -5,7 +5,6 @@ import type {
   Dispatch,
   ElementType,
   ReactElement,
-  JSX,
 } from 'react';
 import type { K8sResourceCommon, ObjectMetadata } from '@openshift/api-types';
 import type {
@@ -454,7 +453,7 @@ export type VirtualizedTableProps<D, R extends any = {}> = {
  */
 export type VirtualizedTableFC = <D, R extends any = {}>(
   props: VirtualizedTableProps<D, R>,
-) => JSX.Element;
+) => ReactNode;
 
 /**
  * @deprecated Used only by the deprecated `TableData` component, for rendering cells within the deprecated
@@ -1291,7 +1290,7 @@ export type UseAnnotationsModal = (resource: K8sResourceCommon) => () => void;
 export type UseDeleteModal = (
   resource: K8sResourceCommon,
   redirectTo?: To,
-  message?: JSX.Element,
+  message?: ReactNode,
   btnText?: ReactNode,
   deleteAllResources?: () => Promise<K8sResourceKind[]>,
 ) => () => void;

@@ -1,4 +1,4 @@
-import type { ReactNode, JSX } from 'react';
+import type { ReactNode } from 'react';
 import { isValidElement, memo } from 'react';
 import { Card, SimpleList, Title } from '@patternfly/react-core';
 import type { ResolvedExtension, AddAction } from '@console/dynamic-plugin-sdk';
@@ -18,7 +18,7 @@ interface AddCardProps {
 
 const AddCard = memo<AddCardProps>(({ id, title, items, namespace, icon }) => {
   const isTitleFromItem: boolean = items?.length === 1 && items[0].properties.label === title;
-  const actionIcon = (): JSX.Element => {
+  const actionIcon = (): ReactNode => {
     if (typeof icon === 'string') {
       return (
         <img

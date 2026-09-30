@@ -1,4 +1,4 @@
-import type { FC, FormEvent, KeyboardEvent, Ref, JSX } from 'react';
+import type { FC, FormEvent, KeyboardEvent, ReactNode, Ref } from 'react';
 import { useState, useRef, useEffect, useMemo, Fragment } from 'react';
 import { CloseButton } from '@patternfly/react-component-groups';
 import type { MenuToggleElement, SelectOptionProps } from '@patternfly/react-core';
@@ -199,7 +199,7 @@ export const InnerResourceListDropdown: FC<ResourceListDropdownProps> = (props) 
     );
   });
 
-  const recentSearches: JSX.Element[] =
+  const recentSearches: ReactNode[] =
     !_.isEmpty(recentSelectedList(recentSelected)) &&
     recentSelectedList(recentSelected)
       .slice(0, RECENT_SEARCH_ITEMS)
@@ -246,7 +246,7 @@ export const InnerResourceListDropdown: FC<ResourceListDropdownProps> = (props) 
   const NO_RESULTS = 'no results';
 
   const renderedOptions = () => {
-    const options: JSX.Element[] = [];
+    const options: ReactNode[] = [];
     if (!_.isEmpty(recentSelectedList(recentSelected)) && !!recentList) {
       options.push(
         <Tooltip position="right" content={t('Clear history')} key="clear-history">

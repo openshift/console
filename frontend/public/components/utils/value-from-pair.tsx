@@ -153,7 +153,7 @@ const NameKeyDropdownPair: FC<NameKeyDropdownPairProps> = ({
   const cmItems: Record<string, ReactNode> = {};
   const secretItems: Record<string, ReactNode> = {};
   const saItems: Record<string, ReactNode> = {};
-  const nameAutocompleteFilter = (text: string, item: ReactElement<any>) =>
+  const nameAutocompleteFilter = (text: string, item: ReactElement<{ name: string }>) =>
     fuzzy(text, item.props.name);
   const keyAutocompleteFilter = (text: string, item: string) => fuzzy(text, item);
   const keyTitle = _.isEmpty(pairKey) ? t('Select a key') : pairKey;

@@ -18,7 +18,7 @@ export const ProgressiveList: FC<ProgressiveListProps> = ({
 }) => {
   const items: string[] = [];
   const validChildren: ReactNode[] = Children.toArray(children).filter(
-    (child: ReactElement<any>) => {
+    (child: ReactElement<{ name: string }>) => {
       const { name } = child.props;
       const validChild = child.type === ProgressiveListItem;
       const isNameInVisibleItems = visibleItems.includes(name);
@@ -30,7 +30,7 @@ export const ProgressiveList: FC<ProgressiveListProps> = ({
     <>
       {visibleItems.map((item: string) => (
         <Fragment key={item}>
-          {validChildren.find(({ props }: ReactElement<any>) => item === props.name)}
+          {validChildren.find(({ props }: ReactElement<{ name: string }>) => item === props.name)}
         </Fragment>
       ))}
       <ProgressiveListFooter Footer={Footer} items={items} onShowItem={onVisibleItemChange} />

@@ -36,19 +36,22 @@ const DEFAULT_ROW_RENDERER = ({
   return (
     <div className="odc-multi-column-field__row" data-test={`row ${fieldName}`}>
       <Grid>
-        {Children.map(children, (child: ReactElement<any>, i) => {
-          let newProps = child.props;
-          if (complexFields[i]) {
-            newProps = { ...newProps, namePrefix: fieldName };
-          } else {
-            newProps = { ...newProps, name: `${fieldName}.${child.props.name}` };
-          }
-          return (
-            <GridItem span={spans[i]} key={fieldName}>
-              <div className="odc-multi-column-field__col">{cloneElement(child, newProps)}</div>
-            </GridItem>
-          );
-        })}
+        {Children.map(
+          children,
+          (child: ReactElement<{ name?: string; namePrefix?: string }>, i) => {
+            let newProps: { name?: string; namePrefix?: string } = child.props;
+            if (complexFields[i]) {
+              newProps = { ...newProps, namePrefix: fieldName };
+            } else {
+              newProps = { ...newProps, name: `${fieldName}.${child.props.name}` };
+            }
+            return (
+              <GridItem span={spans[i]} key={fieldName}>
+                <div className="odc-multi-column-field__col">{cloneElement(child, newProps)}</div>
+              </GridItem>
+            );
+          },
+        )}
       </Grid>
       {!isReadOnly && (
         <div className="odc-multi-column-field__col--button">

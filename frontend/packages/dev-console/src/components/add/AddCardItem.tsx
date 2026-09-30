@@ -1,4 +1,5 @@
-import { isValidElement, memo, type JSX } from 'react';
+import type { ReactNode } from 'react';
+import { isValidElement, memo } from 'react';
 import { SimpleListItem, Title, Content } from '@patternfly/react-core';
 import { useNavigate } from 'react-router';
 import type { ResolvedExtension, AddAction } from '@console/dynamic-plugin-sdk';
@@ -27,7 +28,7 @@ const AddCardItem = memo<AddCardItemProps>(
     const toast = useToast();
     const launchModal = useOverlay();
 
-    const actionIcon = (): JSX.Element => {
+    const actionIcon = (): ReactNode => {
       if (typeof icon === 'string') {
         return (
           <img

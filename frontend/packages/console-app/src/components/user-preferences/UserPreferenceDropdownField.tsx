@@ -1,4 +1,4 @@
-import type { FC, Ref, JSX } from 'react';
+import type { FC, ReactNode, Ref } from 'react';
 import { useState, useMemo } from 'react';
 import type { MenuToggleElement } from '@patternfly/react-core';
 import { MenuToggle, Skeleton, Select, SelectList, SelectOption } from '@patternfly/react-core';
@@ -28,7 +28,7 @@ const UserPreferenceDropdownField: FC<UserPreferenceDropdownFieldProps> = ({
     currentUserPreferenceValueLoaded,
   ] = useUserPreference<string>(userSettingsKey);
   const [isOpen, setIsOpen] = useState(false);
-  const selectOptions: JSX.Element[] = useMemo(
+  const selectOptions: ReactNode[] = useMemo(
     () =>
       options.map((dropdownOption, index) => {
         const key = `${dropdownOption.label}${index}`;

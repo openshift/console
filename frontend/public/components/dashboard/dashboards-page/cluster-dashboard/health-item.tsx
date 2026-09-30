@@ -1,4 +1,4 @@
-import type { ComponentType, FC, JSX } from 'react';
+import type { ComponentType, FC, ReactNode } from 'react';
 import { useEffect, useContext, useMemo } from 'react';
 import { Stack, StackItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
@@ -37,7 +37,7 @@ import { uniqueResource } from './utils';
 
 const OperatorRow: FC<
   OperatorRowProps & {
-    LoadingComponent: () => JSX.Element;
+    LoadingComponent: () => ReactNode;
     Component: ComponentType<OperatorRowProps> | LazyLoader<ComponentType<OperatorRowProps>>;
     key: string;
     isResolved: boolean;
