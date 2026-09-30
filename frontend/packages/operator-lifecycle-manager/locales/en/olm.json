@@ -256,6 +256,7 @@
   "OpenShift lifecycle ({{version}})": "OpenShift lifecycle ({{version}})",
   "OpenShift Operator lifecycle": "OpenShift Operator lifecycle",
   "Operand instances": "Operand instances",
+  "Operands": "Operands",
   "Operands are declarative components used to define the behavior of the application.": "Operands are declarative components used to define the behavior of the application.",
   "Operands in this Namespace are managed by the Operator.": "Operands in this Namespace are managed by the Operator.",
   "Operator": "Operator",
