@@ -29,6 +29,7 @@ import (
 	"github.com/openshift/console/pkg/devfile"
 	helmhandlerspkg "github.com/openshift/console/pkg/helm/handlers"
 	"github.com/openshift/console/pkg/knative"
+	"github.com/openshift/console/pkg/kubeconfig"
 	"github.com/openshift/console/pkg/middleware"
 	"github.com/openshift/console/pkg/olm"
 	"github.com/openshift/console/pkg/plugins"
@@ -66,6 +67,7 @@ const (
 	helmChartRepoProxyEndpoint            = "/api/helm/charts/"
 	indexPageTemplateName                 = "index.html"
 	k8sProxyEndpoint                      = "/api/kubernetes/"
+	kubeconfigEndpoint                    = "/api/kubeconfig"
 	knativeProxyEndpoint                  = "/api/console/knative/"
 	devConsoleEndpoint                    = "/api/dev-console/"
 	localesEndpoint                       = "/locales/resource.json"
@@ -187,6 +189,7 @@ type Server struct {
 	KnativeChannelCRDLister             ResourceLister
 	KnativeEventSourceCRDLister         ResourceLister
 	KubeAPIServerURL                    string // JS global only. Not used for proxying.
+	K8sCertPEM                          []byte // PEM-encoded CA bundle embedded into downloaded kubeconfig files.
 	KubeVersion                         string
 	LoadTestFactor                      int
 	MonitoringDashboardConfigMapLister  ResourceLister
@@ -501,6 +504,11 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 	userSettingHandler := usersettings.NewUserSettingsHandler(internalProxiedK8SClient, s.AnonymousInternalProxiedK8SRT, k8sProxyURL)
 
 	handle("/api/console/user-settings", authHandlerWithUser(userSettingHandler.HandleUserSettings))
+
+	// Kubeconfig download for ServiceAccounts and the current user
+	kubeConfigHandler := kubeconfig.NewKubeConfigHandler(s.AnonymousInternalProxiedK8SRT, k8sProxyURL, s.KubeAPIServerURL, s.K8sCertPEM)
+
+	handle(kubeconfigEndpoint, authHandlerWithUser(kubeConfigHandler.Handle))
 
 	// Helm
 	helmHandlers := helmhandlerspkg.New(k8sProxyURL, internalProxiedK8SRT, s)

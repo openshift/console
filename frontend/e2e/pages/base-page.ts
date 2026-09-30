@@ -133,6 +133,36 @@ export default abstract class BasePage {
     await this.waitForLoadingComplete();
   }
 
+  // Waits until the URL has stopped changing for stableForMs, polling every
+  // pollIntervalMs. Some flows (e.g. impersonating a user with almost no
+  // cluster access) trigger an app-level redirect (restoring the "last
+  // visited resource") some time after the page itself looks settled;
+  // proceeding too early — e.g. reading browser history to compute a
+  // relative navigation — races that redirect, which then fires later and
+  // silently steals focus away from wherever the caller has since navigated.
+  protected async waitForUrlStable(
+    timeoutMs = 10_000,
+    stableForMs = 1_500,
+    pollIntervalMs = 250,
+  ): Promise<void> {
+    const deadline = Date.now() + timeoutMs;
+    let lastUrl = this.page.url();
+    let stableSince = Date.now();
+    while (Date.now() < deadline) {
+      // eslint-disable-next-line playwright/no-wait-for-timeout
+      await this.page.waitForTimeout(pollIntervalMs);
+      const currentUrl = this.page.url();
+      if (currentUrl !== lastUrl) {
+        lastUrl = currentUrl;
+        stableSince = Date.now();
+        continue;
+      }
+      if (Date.now() - stableSince >= stableForMs) {
+        return;
+      }
+    }
+  }
+
   protected async waitForDetailsActions(actionsButton: Locator, timeoutMs = 60_000): Promise<void> {
     // Navigating right after impersonation teardown can race the SPA reload and
     // abort API discovery, leaving the resource watch stuck on "Model does not
