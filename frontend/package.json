@@ -122,7 +122,7 @@
     "@axe-core/playwright": "^4.11.3",
     "@babel/core": "^7.29.7",
     "@kubernetes/client-node": "^1.4.0",
-    "@playwright/test": "^1.59.1",
+    "@playwright/test": "^1.63.0",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.6.3",
     "@rsdoctor/rspack-plugin": "^1.6.4",
     "@rspack/cli": "^2.1.10",
