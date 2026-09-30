@@ -1254,6 +1254,24 @@ export const AuthenticationModel: K8sKind = {
   abbr: 'AU',
 };
 
+export const ClusterExtensionModel: K8sKind = {
+  kind: 'ClusterExtension',
+  label: 'ClusterExtension',
+  // t('olm-v1~ClusterExtension')
+  labelKey: 'olm-v1~ClusterExtension',
+  labelPlural: 'ClusterExtensions',
+  // t('olm-v1~ClusterExtensions')
+  labelPluralKey: 'olm-v1~ClusterExtensions',
+  apiGroup: 'olm.operatorframework.io',
+  apiVersion: 'v1',
+  abbr: 'CE',
+  namespaced: false,
+  crd: true,
+  plural: 'clusterextensions',
+  id: 'clusterextension',
+  propagationPolicy: 'Background',
+};
+
 // Export models which have legacy plural URLs that need to be maintained.
 // This is imported by `../module/k8s/k8s-models.ts` and thus `connectToPlural`.
 /** @public - needed for legacy plural URLs */
