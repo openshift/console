@@ -7,7 +7,7 @@ import './MasonryLayout.scss';
 
 type MasonryLayoutProps = {
   columnWidth: number;
-  children: ReactElement<any>[];
+  children: ReactElement[];
   loading?: boolean;
   LoadingComponent?: ComponentType<any>;
   /**
@@ -67,7 +67,7 @@ export const MasonryLayout: FC<MasonryLayoutProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const columns: ReactElement<any>[] =
+  const columns: ReactElement[] =
     loading && LoadingComponent
       ? Array.from({ length: columnCount || 1 }, (_, i) => <LoadingComponent key={i.toString()} />)
       : children;

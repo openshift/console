@@ -5,7 +5,7 @@ import { css } from '@patternfly/react-styles';
 
 const NamespaceMenuToggle = (props: {
   disabled: boolean;
-  menu: ReactElement<any>;
+  menu: ReactElement;
   menuRef: RefObject<HTMLElement | null>;
   isOpen: boolean;
   shortCut?: string;

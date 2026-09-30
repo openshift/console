@@ -23,7 +23,7 @@ import './pod-ring-text.scss';
 type PodRingLabelType = {
   subTitle: string;
   title: string;
-  titleComponent: ReactElement<any>;
+  titleComponent: ReactElement;
 };
 
 type PodRingLabelData = {

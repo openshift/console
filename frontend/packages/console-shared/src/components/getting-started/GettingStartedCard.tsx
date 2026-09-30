@@ -23,7 +23,7 @@ export interface GettingStartedLink {
   id: string;
   loading?: boolean;
 
-  title?: string | ReactElement<any>;
+  title?: string | ReactElement;
   description?: string;
 
   external?: boolean;
@@ -35,7 +35,7 @@ export interface GettingStartedLink {
 
 export interface GettingStartedCardProps {
   id: string;
-  icon?: ReactElement<any>;
+  icon?: ReactElement;
   title: string;
   titleColor?: string;
   description?: string;

@@ -40,7 +40,7 @@ const IconDropdown: FC<IconDropdownProps> = ({
 }) => {
   const { t } = useTranslation('devconsole');
 
-  const title = useMemo<React.ReactElement<any>>(() => {
+  const title = useMemo<React.ReactElement>(() => {
     if (customIcon) {
       return <Icon label={t('Custom icon')} url={customIcon} />;
     }
@@ -53,8 +53,8 @@ const IconDropdown: FC<IconDropdownProps> = ({
     );
   }, [customIcon, runtimeIcon, t]);
 
-  const items = useMemo<Record<string, React.ReactElement<any>>>(() => {
-    const options: Record<string, ReactElement<any>> = {};
+  const items = useMemo<Record<string, React.ReactElement>>(() => {
+    const options: Record<string, ReactElement> = {};
 
     getIcons().forEach(({ label, url }) => {
       options[label] = <Icon label={label} url={url} />;

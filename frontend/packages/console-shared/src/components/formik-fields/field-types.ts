@@ -174,7 +174,7 @@ export interface RadioButtonFieldProps extends FieldProps {
 
 export interface RadioGroupFieldProps extends FieldProps {
   isInline?: boolean;
-  labelIcon?: ReactElement<any>;
+  labelIcon?: ReactElement;
   options: RadioGroupOption[];
   onChange?: (value: string) => void;
   label?: ReactNode;
@@ -187,7 +187,7 @@ interface RadioGroupOption {
   isDisabled?: boolean;
   isChecked?: boolean;
   children?: ReactNode;
-  activeChildren?: ReactElement<any>;
+  activeChildren?: ReactElement;
 }
 
 export interface SelectInputOption {

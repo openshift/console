@@ -6,7 +6,7 @@ const getAjvMocks = (): [Ajv, jest.Mock<any>] => {
   const validate = jest.fn();
 
   const ajv = {} as Ajv;
-  ajv.validate = validate as any;
+  ajv.validate = validate as unknown as Ajv['validate'];
 
   return [ajv, validate];
 };

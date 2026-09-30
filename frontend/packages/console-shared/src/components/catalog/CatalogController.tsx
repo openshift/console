@@ -38,7 +38,7 @@ type CatalogControllerProps = CatalogService & {
   enableDetailsPanel?: boolean;
   hideSidebar?: boolean;
   title: string;
-  description: string | ReactElement<any>;
+  description: string | ReactElement;
   categories?: CatalogCategory[];
 };
 

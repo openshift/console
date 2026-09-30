@@ -692,7 +692,7 @@ export type ConsoleDataViewFC = <
   TFilters extends ResourceFilters = ResourceFilters,
 >(
   props: ConsoleDataViewProps<TData, TCustomRowData, TFilters>,
-) => ReactElement<any>;
+) => ReactElement;
 
 // ConsoleDataView helper types
 

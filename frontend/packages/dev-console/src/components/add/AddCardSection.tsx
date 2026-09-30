@@ -29,7 +29,7 @@ const AddCardSection: FC<AddCardSectionProps> = ({
   loadingFailed,
   accessCheckFailed,
 }) => {
-  const addCards = useMemo((): ReactElement<any>[] => {
+  const addCards = useMemo((): ReactElement[] => {
     if (!extensionsLoaded) {
       return [];
     }

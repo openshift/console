@@ -153,7 +153,7 @@ export type DashboardsInventoryItemGroup = Extension<
     /** The id of the status group. */
     id: string;
     /** React component representing the status group icon. */
-    icon: CodeRef<React.ReactElement<any>>;
+    icon: CodeRef<React.ReactElement>;
   }
 >;
 

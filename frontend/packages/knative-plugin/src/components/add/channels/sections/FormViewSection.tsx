@@ -8,7 +8,7 @@ type FormViewSectionProps = {
   kind: string;
 };
 
-const getChannelSection = (kind: string): ReactElement<any> | null => {
+const getChannelSection = (kind: string): ReactElement | null => {
   if (kind === EVENTING_KAFKA_CHANNEL_KIND) {
     return <KafkaChannelSection />;
   }
