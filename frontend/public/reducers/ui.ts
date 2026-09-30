@@ -66,18 +66,6 @@ export default (state: UIState, action: UIAction): UIState => {
         },
       };
 
-    case ActionType.SortList:
-      return {
-        ...state,
-        listSorts: {
-          ...state.listSorts,
-          [action.payload.listId]: {
-            ...state.listSorts?.[action.payload.listId],
-            ..._.pick(action.payload, ['field', 'func', 'orderBy']),
-          },
-        },
-      };
-
     case ActionType.SetCreateProjectMessage:
       return { ...state, createProjectMessage: action.payload.message };
 

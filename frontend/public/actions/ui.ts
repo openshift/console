@@ -204,14 +204,7 @@ export const stopImpersonate = () => (dispatch) => {
   dispatch(clearSSARFlags());
   dispatch(detectFeatures());
 };
-export const sortList = (listId: string, field: string, func: string, orderBy: string) =>
-  // const url = new URL(window.location.href);
-  // const sp = new URLSearchParams(window.location.search);
-  // sp.set('orderBy', orderBy);
-  // sp.set('sortBy', column);
-  // history.replace(`${url.pathname}?${sp.toString()}${url.hash}`);
 
-  action(ActionType.SortList, { listId, field, func, orderBy });
 const selectOverviewItem = (uid: string) => action(ActionType.SelectOverviewItem, { uid });
 export const selectOverviewDetailsTab = (tab: string) =>
   action(ActionType.SelectOverviewDetailsTab, { tab });
@@ -260,7 +253,6 @@ const uiActions = {
   setCurrentLocation,
   setShowOperandsInAllNamespaces,
   setActiveApplication,
-  sortList,
   setCreateProjectMessage,
   setClusterID,
   selectOverviewItem,

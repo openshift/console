@@ -10,7 +10,6 @@ export enum ActionType {
   SetServiceLevel = 'setServiceLevel',
   NotificationDrawerToggleExpanded = 'notificationDrawerExpanded',
   SetClusterID = 'setClusterID',
-  SortList = 'sortList',
   UpdateOverviewMetrics = 'updateOverviewMetrics',
   UpdateOverviewResources = 'updateOverviewResources',
   UpdateOverviewSelectedGroup = 'updateOverviewSelectedGroup',
