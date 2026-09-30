@@ -6,30 +6,30 @@ export const displayDurationInWords = (start: string, stop: string): string => {
   }
   const startTime = new Date(start).getTime();
   const stopTime = stop ? new Date(stop).getTime() : new Date().getTime();
-  let duration = Math.round((stopTime - startTime) / 1000);
-  const time = [];
-  let durationInWords = '';
-  while (duration >= 60) {
-    time.push(duration % 60);
-    duration = Math.floor(duration / 60);
+  const duration = Math.max(0, Math.round((stopTime - startTime) / 1000));
+  if (!Number.isFinite(duration)) {
+    return '-';
   }
-  time.push(duration);
-  if (time[2]) {
-    durationInWords += `${time[2]} ${
-      time[2] > 1 ? i18next.t('public~hours') : i18next.t('public~hour')
-    } `;
+  const seconds = duration % 60;
+  const minutes = Math.floor(duration / 60) % 60;
+  const hours = Math.floor(duration / 3600);
+  const durationInWords = [];
+  if (hours) {
+    durationInWords.push(
+      `${hours} ${hours > 1 ? i18next.t('public~hours') : i18next.t('public~hour')}`,
+    );
   }
-  if (time[1]) {
-    durationInWords += `${time[1]} ${
-      time[1] > 1 ? i18next.t('public~minutes') : i18next.t('public~minute')
-    } `;
+  if (minutes) {
+    durationInWords.push(
+      `${minutes} ${minutes > 1 ? i18next.t('public~minutes') : i18next.t('public~minute')}`,
+    );
   }
-  if (time[0]) {
-    durationInWords += `${time[0]} ${
-      time[0] > 1 ? i18next.t('public~seconds') : i18next.t('public~second')
-    } `;
+  if (seconds || !durationInWords.length) {
+    durationInWords.push(
+      `${seconds} ${seconds === 1 ? i18next.t('public~second') : i18next.t('public~seconds')}`,
+    );
   }
-  return durationInWords.trim();
+  return durationInWords.join(' ');
 };
 
 export enum BuildStrategyType {
