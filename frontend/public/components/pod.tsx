@@ -571,8 +571,8 @@ export type PodDetailsListProps = {
 
 type PodConnectLoaderProps = {
   obj: PodKind;
-  message?: ReactElement;
-  infoMessage?: ReactElement;
+  message?: ReactElement<any>;
+  infoMessage?: ReactElement<any>;
   initialContainer?: string;
   attach?: boolean;
   cleanupOnDetach?: { type: 'namespace' | 'pod'; name: string; namespace?: string };

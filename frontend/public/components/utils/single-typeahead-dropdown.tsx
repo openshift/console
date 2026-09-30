@@ -97,7 +97,7 @@ export const SingleTypeaheadDropdown: FC<SingleTypeaheadDropdownProps> = ({
   const [filteredSelectOptions, setFilteredSelectOptions] = useState<SelectOptionProps[]>(items);
   const [focusedItemIndex, setFocusedItemIndex] = useState<number | null>(null);
   const [activeItemId, setActiveItemId] = useState<string | null>(null);
-  const textInputRef = useRef<HTMLInputElement>();
+  const textInputRef = useRef<HTMLInputElement>(undefined);
 
   const ID_PREFIX = _.uniqueId('select-typeahead-'); // for aria to work, ids have to be unique
   const NO_RESULTS = 'typeahead-dropdown__no-results';

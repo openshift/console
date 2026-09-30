@@ -1,6 +1,6 @@
 import type { HTMLProps, FC, ReactElement } from 'react';
 
-const CheIcon: FC<HTMLProps<SVGElement>> = ({ style }): ReactElement => (
+const CheIcon: FC<HTMLProps<SVGElement>> = ({ style }): ReactElement<any> => (
   <svg height="1em" width="1em" version="1.1" viewBox="0 0 47 57" style={style}>
     <g fillRule="evenodd" stroke="none" strokeWidth="1" fill="none">
       <path

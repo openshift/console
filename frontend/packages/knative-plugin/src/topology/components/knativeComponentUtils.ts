@@ -289,7 +289,7 @@ export const kafkaSourceCreateConnectorCallback = (
   target: Node | Graph,
   _event: DragEvent,
   dropHints: string[] | undefined,
-): Promise<React.ReactElement[] | null> => {
+): Promise<React.ReactElement<any>[] | null> => {
   const createConnectors = target.getGraph()?.getData()?.createConnectorExtensions;
   if (source === target || isGraph(target) || !createConnectors) {
     return null;

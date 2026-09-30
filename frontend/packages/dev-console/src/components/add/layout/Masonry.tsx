@@ -5,11 +5,11 @@ import './MasonryLayout.scss';
 
 interface MasonryProps {
   columnCount: number;
-  children: ReactElement[];
+  children: ReactElement<any>[];
 }
 
 interface MeasuredItemProps {
-  item: ReactElement;
+  item: ReactElement<any>;
   itemKey: string;
   onHeightMeasured: (key: string, height: number) => void;
   currentHeight?: number;
@@ -70,12 +70,12 @@ export const Masonry: FC<MasonryProps> = ({ columnCount, children }) => {
   const groupedColumns = Array.from({ length: columns }, (_, idx) => ({
     id: `masonry-column-${idx.toString()}`,
     height: 0,
-    items: [] as ReactElement[],
+    items: [] as ReactElement<any>[],
   }));
 
   let added = false;
   let allRendered = true;
-  Children.forEach(children, (item: ReactElement, itemIndex) => {
+  Children.forEach(children, (item: ReactElement<any>, itemIndex) => {
     const itemKey = (item.key as string) ?? itemIndex.toString();
     const measuredItem = (
       <MeasuredItem

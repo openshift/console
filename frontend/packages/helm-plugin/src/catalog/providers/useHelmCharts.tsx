@@ -24,7 +24,7 @@ const useHelmCharts: ExtensionHook<CatalogItem[]> = ({
   const toast = useToast();
   const [helmCharts, setHelmCharts] = useState<HelmChartEntries>();
   const [loadedError, setLoadedError] = useState<APIError>();
-  const shownWarningRef = useRef<string>();
+  const shownWarningRef = useRef<string>(undefined);
 
   const resourceSelector = useMemo(
     () => ({

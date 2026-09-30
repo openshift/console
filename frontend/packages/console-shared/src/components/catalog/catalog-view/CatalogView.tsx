@@ -98,7 +98,7 @@ export const CatalogView: FC<CatalogViewProps> = ({
 
   const isGrouped = _.has(groupings, activeGrouping);
 
-  const catalogToolbarRef = useRef<HTMLInputElement>();
+  const catalogToolbarRef = useRef<HTMLInputElement>(undefined);
 
   const clearFilters = useCallback(() => {
     const params = new URLSearchParams();

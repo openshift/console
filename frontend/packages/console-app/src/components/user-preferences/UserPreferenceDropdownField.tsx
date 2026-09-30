@@ -1,4 +1,4 @@
-import type { FC, Ref } from 'react';
+import type { FC, Ref, JSX } from 'react';
 import { useState, useMemo } from 'react';
 import type { MenuToggleElement } from '@patternfly/react-core';
 import { MenuToggle, Skeleton, Select, SelectList, SelectOption } from '@patternfly/react-core';

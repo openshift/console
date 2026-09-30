@@ -211,7 +211,7 @@ const LifecycleDatesFooter: FC = () => {
 
 const LifecycleDatesPopover: FC<{
   phases: LifecyclePhase[];
-  children: React.ReactElement;
+  children: React.ReactElement<any>;
 }> = ({ phases, children }) => {
   const { t } = useTranslation('olm');
   const sorted = [...phases].sort(

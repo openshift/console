@@ -74,7 +74,7 @@ export type TopologyDataModelReconciler = (model: Model, resources: TopologyData
 export type CreateConnection = (
   source: Node,
   target: Node | Graph,
-) => Promise<ReactElement[] | null>;
+) => Promise<ReactElement<any>[] | null>;
 
 export type CreateConnectionGetter = (
   createHints: string[],
@@ -119,7 +119,7 @@ export type TopologyDecoratorGetter = (
   radius: number,
   centerX: number,
   centerY: number,
-) => ReactElement;
+) => ReactElement<any>;
 
 export type TopologyDecorator = {
   id: string;
@@ -405,7 +405,7 @@ interface ConnectorComponentProps {
 
 type CreateConnectorRenderer = ComponentType<ConnectorComponentProps>;
 
-type OnCreateResult = ConnectorChoice[] | void | undefined | null | ReactElement[];
+type OnCreateResult = ConnectorChoice[] | void | undefined | null | ReactElement<any>[];
 
 type CreateConnectorWidgetProps = {
   element: Node;

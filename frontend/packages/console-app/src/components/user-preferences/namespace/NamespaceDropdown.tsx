@@ -1,4 +1,4 @@
-import type { FC } from 'react';
+import type { FC, JSX } from 'react';
 import { useState, useRef, useMemo, useCallback } from 'react';
 import {
   Skeleton,

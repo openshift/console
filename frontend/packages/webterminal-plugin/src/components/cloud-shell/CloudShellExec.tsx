@@ -75,8 +75,8 @@ const CloudShellExec: FC<CloudShellExecProps> = ({
   const [wsError, setWsError] = useState<string>();
   const [wsReopening, setWsReopening] = useState<boolean>(false);
   const [customResource, setCustomResource] = useState<CloudShellResource>();
-  const ws = useRef<WSFactory>();
-  const terminal = useRef<ImperativeTerminalType>();
+  const ws = useRef<WSFactory>(undefined);
+  const terminal = useRef<ImperativeTerminalType>(undefined);
   const { t } = useTranslation('webterminal-plugin');
 
   const onData = (data: string): void => {

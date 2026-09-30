@@ -168,4 +168,7 @@ export type NetworkAdapterType = {
   resource: K8sResourceCommon;
 };
 
-export type DetailsTabSectionExtensionHook = ExtensionHook<ReactElement | undefined, GraphElement>;
+export type DetailsTabSectionExtensionHook = ExtensionHook<
+  ReactElement<any> | undefined,
+  GraphElement
+>;

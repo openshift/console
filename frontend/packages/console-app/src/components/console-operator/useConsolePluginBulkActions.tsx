@@ -1,4 +1,4 @@
-import { useMemo, useCallback } from 'react';
+import { useMemo, useCallback, type JSX } from 'react';
 import { AlertVariant, DropdownItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { ConsoleOperatorConfigModel } from '@console/internal/models';

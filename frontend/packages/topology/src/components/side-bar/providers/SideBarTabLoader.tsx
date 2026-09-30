@@ -7,7 +7,7 @@ import { useDetailsTabSection } from './useDetailsTabSection';
 
 type SideBarTabLoaderProps = {
   element: GraphElement;
-  children: (tabs: Tab[], loaded: boolean) => ReactElement;
+  children: (tabs: Tab[], loaded: boolean) => ReactElement<any>;
 };
 
 const SideBarTabLoader: FC<SideBarTabLoaderProps> = ({ element, children }) => {

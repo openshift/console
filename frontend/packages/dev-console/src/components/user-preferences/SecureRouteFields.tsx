@@ -1,4 +1,4 @@
-import type { FC, FormEvent, Ref, CSSProperties } from 'react';
+import type { FC, FormEvent, Ref, CSSProperties, JSX } from 'react';
 import { useState, useMemo, useCallback } from 'react';
 import type { MenuToggleElement } from '@patternfly/react-core';
 import {

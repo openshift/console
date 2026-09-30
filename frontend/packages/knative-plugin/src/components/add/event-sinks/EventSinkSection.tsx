@@ -56,7 +56,7 @@ const EventSinkSection: FC<EventSinkSectionProps> = ({
       />
     </>
   );
-  let EventSink: ReactElement = null;
+  let EventSink: ReactElement<any> = null;
   if (kameletSink && values.formData.type === EventSources.KameletBinding) {
     EventSink = (
       <>

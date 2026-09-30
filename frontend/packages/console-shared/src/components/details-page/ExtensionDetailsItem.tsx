@@ -37,4 +37,4 @@ type ExtensionDetailsItemProps = {
   obj: K8sResourceCommon;
   extension: ResolvedExtension<DetailsItemExtension>;
 };
-type ExtensionDetailsItemComponent = (props: ExtensionDetailsItemProps) => ReactElement;
+type ExtensionDetailsItemComponent = (props: ExtensionDetailsItemProps) => ReactElement<any>;

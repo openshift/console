@@ -5,7 +5,7 @@ import type { ExtendedRenderOptions } from '@console/shared/src/test-utils/unit-
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 
 export const renderWithPerspective = (
-  ui: ReactElement,
+  ui: ReactElement<any>,
   activePerspective: PerspectiveType = 'admin',
   setActivePerspective: jest.Mock = jest.fn(),
   options?: ExtendedRenderOptions,

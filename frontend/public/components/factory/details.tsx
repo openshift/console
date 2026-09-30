@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { ReactNode, JSX } from 'react';
 import { useMemo, useState, useCallback } from 'react';
 import * as _ from 'lodash';
 import { useLocation, useParams } from 'react-router';

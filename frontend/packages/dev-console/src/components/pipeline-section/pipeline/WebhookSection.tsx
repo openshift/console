@@ -115,7 +115,7 @@ const WebhookSection: FC<WebhoookSectionProps> = ({ pac, formContextField }) => 
     }
   };
 
-  const HelpText = (): ReactElement => {
+  const HelpText = (): ReactElement<any> => {
     let helpText: ReactNode;
     switch (gitProvider) {
       case GitProvider.GITHUB:

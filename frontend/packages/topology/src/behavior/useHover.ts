@@ -31,7 +31,7 @@ export const useHover = <T extends Element>(
   }, dependencies);
 
   // The unset handle needs to be referred by listeners in different closures.
-  const unsetHandle = useRef<number>();
+  const unsetHandle = useRef<number>(undefined);
 
   const callbackRef = useCallbackRef(
     useCallback(

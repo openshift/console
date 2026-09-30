@@ -1,4 +1,4 @@
-import type { ComponentType, FC, ReactNode, ReactText } from 'react';
+import type { ComponentType, FC, ReactNode } from 'react';
 import { forwardRef } from 'react';
 import { css } from '@patternfly/react-styles';
 import type { IRow, OnSelect, SortByDirection, TableGridBreakpoint } from '@patternfly/react-table';
@@ -98,7 +98,7 @@ export const TableRow = forwardRef<HTMLTableRowElement, TableRowProps>(
 TableRow.displayName = 'TableRow';
 
 export type TableRowProps = {
-  id: ReactText;
+  id: number | string;
   index: number;
   title?: string;
   trKey: string;

@@ -1,6 +1,6 @@
 // THIS COMPONENT IS DEPRECATED AND WILL BE REMOVED IN v4.6.
 
-import type { FC, ReactNode } from 'react';
+import type { FC, ReactNode, JSX } from 'react';
 import { useState, useMemo, Fragment } from 'react';
 import {
   Alert,

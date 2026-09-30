@@ -13,7 +13,7 @@ const getExtensionDecoratorForQuadrant = (
   decoratorRadius: number,
   nodeWidth: number,
   nodeHeight: number,
-): ReactElement => {
+): ReactElement<any> => {
   let x: number;
   let y: number;
   const deltaX = nodeRadius > 0 ? nodeRadius : nodeWidth / 2;

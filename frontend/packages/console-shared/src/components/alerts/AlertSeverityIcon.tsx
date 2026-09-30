@@ -10,7 +10,7 @@ interface AlertSeverityIconProps {
 export const AlertSeverityIcon: FC<AlertSeverityIconProps> = ({
   severityAlertType,
   fontSize,
-}): ReactElement => {
+}): ReactElement<any> => {
   switch (severityAlertType) {
     case AlertSeverity.Critical:
       return (

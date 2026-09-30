@@ -66,7 +66,7 @@ interface ConnectorComponentProps {
 
 type CreateConnectorRenderer = ComponentType<ConnectorComponentProps>;
 
-type OnCreateResult = ConnectorChoice[] | void | undefined | null | ReactElement[];
+type OnCreateResult = ConnectorChoice[] | void | undefined | null | ReactElement<any>[];
 
 type CreateConnectorWidgetProps = {
   element: Node;
@@ -92,12 +92,12 @@ interface PromptData {
   element: Node;
   target: Node | Graph;
   event: DragEvent;
-  choices: ConnectorChoice[] | ReactElement[];
+  choices: ConnectorChoice[] | ReactElement<any>[];
 }
 
 const isReactElementArray = (
-  choices: ConnectorChoice[] | ReactElement[],
-): choices is ReactElement[] => isValidElement(choices[0]);
+  choices: ConnectorChoice[] | ReactElement<any>[],
+): choices is ReactElement<any>[] => isValidElement(choices[0]);
 
 const DEFAULT_HANDLE_ANGLE = Math.PI / 180;
 const DEFAULT_HANDLE_ANGLE_TOP = 1.5 * Math.PI;
@@ -119,7 +119,7 @@ const CreateConnectorWidget: FC<CreateConnectorWidgetProps> = observer((props) =
   } = props;
   const [prompt, setPrompt] = useState<PromptData | null>(null);
   const [active, setActive] = useState(false);
-  const hintsRef = useRef<string[] | undefined>();
+  const hintsRef = useRef<string[] | undefined>(undefined);
 
   const spec = useMemo(() => {
     const dragSourceSpec: DragSourceSpec<

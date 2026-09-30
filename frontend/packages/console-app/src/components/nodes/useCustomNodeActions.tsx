@@ -1,4 +1,4 @@
-import { useMemo, useCallback } from 'react';
+import { useMemo, useCallback, type JSX } from 'react';
 import { DropdownItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';

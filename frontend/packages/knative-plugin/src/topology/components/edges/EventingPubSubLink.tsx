@@ -1,4 +1,4 @@
-import type { ReactNode, FC } from 'react';
+import type { ReactNode, FC, JSX } from 'react';
 import type {
   Edge,
   WithContextMenuProps,

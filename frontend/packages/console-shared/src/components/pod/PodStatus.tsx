@@ -28,9 +28,9 @@ interface PodStatusProps {
   data: ExtPodKind[];
   showTooltip?: boolean;
   title?: string;
-  titleComponent?: ReactElement;
+  titleComponent?: ReactElement<any>;
   subTitle?: string;
-  subTitleComponent?: ReactElement;
+  subTitleComponent?: ReactElement<any>;
 }
 
 const { podStatusInnerRadius, podStatusOuterRadius } = calculateRadius(130); // default value of size is 130
@@ -55,7 +55,7 @@ const PodStatusBase: FC<PodStatusProps> = ({
   subTitleComponent,
   data,
 }) => {
-  const ref = useRef();
+  const ref = useRef(undefined);
   const [updateOnEnd, setUpdateOnEnd] = useState<boolean>(false);
   const forceUpdate = useForceUpdate();
   const prevVData = useRef<PodData[]>(null);

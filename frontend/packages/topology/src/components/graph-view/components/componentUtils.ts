@@ -327,7 +327,7 @@ const withContextMenu = <E extends GraphElement>(actions: (element: E) => Action
     'odc-topology-context-menu',
   );
 
-const createVisualConnector = (source: Node, target: Node | Graph): ReactElement[] | null => {
+const createVisualConnector = (source: Node, target: Node | Graph): ReactElement<any>[] | null => {
   if (isGraph(target)) {
     return graphContextMenu(target, source);
   }
@@ -352,7 +352,7 @@ const createConnectorCallback =
     target: Node | Graph,
     event: DragEvent,
     dropHints: string[] | undefined,
-  ): Promise<ReactElement[] | null> => {
+  ): Promise<ReactElement<any>[] | null> => {
     if (source === target) {
       return null;
     }

@@ -36,7 +36,7 @@ const DEFAULT_ROW_RENDERER = ({
   return (
     <div className="odc-multi-column-field__row" data-test={`row ${fieldName}`}>
       <Grid>
-        {Children.map(children, (child: ReactElement, i) => {
+        {Children.map(children, (child: ReactElement<any>, i) => {
           let newProps = child.props;
           if (complexFields[i]) {
             newProps = { ...newProps, namePrefix: fieldName };

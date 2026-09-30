@@ -7,7 +7,7 @@ import { referenceFor, modelFor } from '@console/internal/module/k8s';
 type TopologyGroupResourceItemProps = {
   item: K8sResourceKind;
   releaseNamespace: string;
-  linkForResource?: (obj: K8sResourceKind) => ReactElement;
+  linkForResource?: (obj: K8sResourceKind) => ReactElement<any>;
 };
 
 const TopologyGroupResourceItem: FC<TopologyGroupResourceItemProps> = ({

@@ -1,3 +1,4 @@
+import type { JSX } from 'react';
 import type { Action } from '@console/dynamic-plugin-sdk';
 import type { K8sModel, K8sResourceKind } from '@console/internal/module/k8s';
 

@@ -88,7 +88,7 @@ export const healthStateMapping: { [key in HealthState]: HealthStateMappingValue
 };
 
 export type HealthStateMappingValues = {
-  icon: ReactElement;
+  icon: ReactElement<any>;
   priority: number;
   health: HealthState;
 };

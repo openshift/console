@@ -1,4 +1,4 @@
-import type { FC, ReactNode } from 'react';
+import type { FC, ReactNode, JSX } from 'react';
 import type { PageHeaderLinkProps } from '@patternfly/react-component-groups';
 import { PageHeader } from '@patternfly/react-component-groups';
 import { ActionList, ActionListGroup, ActionListItem } from '@patternfly/react-core';

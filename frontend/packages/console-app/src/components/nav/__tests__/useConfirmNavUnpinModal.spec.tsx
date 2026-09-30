@@ -39,7 +39,7 @@ describe('useConfirmNavUnpinModal', () => {
     const { children, onConfirm } = mockConfirmModalLauncher.mock.calls[0][0];
     expect(typeof onConfirm).toBe('function');
     expect(isValidElement(children)).toBe(true);
-    expect((children as ReactElement).type).toBe('span');
+    expect((children as ReactElement<any>).type).toBe('span');
   });
 
   it('should remove resource from pinned list when confirmed', async () => {

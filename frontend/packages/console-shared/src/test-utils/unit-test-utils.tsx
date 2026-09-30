@@ -110,7 +110,7 @@ const createWrapper =
  * @param options - Extended render options including initialState and store
  */
 export const renderWithProviders = (
-  ui: React.ReactElement,
+  ui: React.ReactElement<any>,
   {
     initialState = {},
     // Create a store instance if no custom store was passed in
@@ -160,7 +160,7 @@ interface FormikWrapperProps {
 }
 
 export const mockFormikRenderer = (
-  element: ReactElement,
+  element: ReactElement<any>,
   initialValues?: FormikValues,
   options?: Omit<RenderOptions, 'wrapper'>,
 ) => {
