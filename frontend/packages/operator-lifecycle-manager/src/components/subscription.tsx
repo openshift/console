@@ -17,17 +17,21 @@ import {
 } from '@patternfly/react-core';
 import { RhUiInProgressIcon, RhUiEditIcon } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
-import { sortable } from '@patternfly/react-table';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router';
+import {
+  ConsoleDataView,
+  actionsCellProps,
+  getNameCellProps,
+} from '@console/app/src/components/data-view/ConsoleDataView';
 import { ResourceStatus, StatusIconAndText, useAccessReview } from '@console/dynamic-plugin-sdk';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
+import type { GetDataViewRows } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import type { K8sResourceKind } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { Conditions } from '@console/internal/components/conditions';
-import type { RowFunctionArgs } from '@console/internal/components/factory';
-import { DetailsPage, MultiListPage, Table, TableData } from '@console/internal/components/factory';
+import { DetailsPage, MultiListPage } from '@console/internal/components/factory';
 import {
   LoadingInline,
   ConsoleEmptyState,
@@ -39,10 +43,7 @@ import {
 } from '@console/internal/components/utils';
 import type { K8sKind, K8sModel, K8sResourceCommon } from '@console/internal/module/k8s';
 import { k8sUpdate, referenceFor, referenceForModel } from '@console/internal/module/k8s';
-import {
-  KEBAB_COLUMN_CLASS,
-  LazyActionMenu,
-} from '@console/shared/src/components/actions/LazyActionMenu';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
 import { DescriptionListTermHelp } from '@console/shared/src/components/description-list/DescriptionListTermHelp';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
@@ -83,6 +84,7 @@ import {
 import { LazyInstallPlanApprovalModalOverlay, LazySubscriptionChannelModalOverlay } from './modals';
 import { useUninstallOperatorModal } from './modals/uninstall-operator-modal';
 import { requireOperatorGroup } from './operator-group';
+import { useSubscriptionColumns } from './useSubscriptionColumns';
 import { getManualSubscriptionsInNamespace, NamespaceIncludesManualApproval } from './index';
 
 export const catalogSourceForSubscription = (
@@ -139,15 +141,6 @@ const SourceUnhealthyStatus: FC = () => {
   );
 };
 
-const tableColumnClasses = [
-  '',
-  '',
-  'pf-m-hidden pf-m-visible-on-md',
-  'pf-m-hidden pf-m-visible-on-lg',
-  'pf-m-hidden pf-m-visible-on-xl',
-  KEBAB_COLUMN_CLASS,
-];
-
 export const UpgradeApprovalLink: FC<{ subscription: SubscriptionKind }> = ({ subscription }) => {
   const { t } = useTranslation('olm');
   const to = resourcePathFromModel(
@@ -196,86 +189,71 @@ export const SubscriptionStatus: FC<{ subscription: SubscriptionKind }> = ({ sub
   }
 };
 
-export const SubscriptionTableRow: FC<RowFunctionArgs> = ({ obj }) => {
+/** The default update approval strategy when a Subscription does not set one. */
+const SubscriptionApproval: FC<{ subscription: SubscriptionKind }> = ({ subscription }) => {
+  const { t } = useTranslation('olm');
+  return <>{subscription.spec.installPlanApproval || t('Automatic')}</>;
+};
+
+export const getSubscriptionDataViewRows: GetDataViewRows<SubscriptionKind> = (data, columns) =>
+  data.map(({ obj }) => {
+    const rowCells = {
+      name: {
+        cell: (
+          <ResourceLink
+            kind={referenceForModel(SubscriptionModel)}
+            name={obj.metadata.name}
+            namespace={obj.metadata.namespace}
+          />
+        ),
+        props: getNameCellProps(obj.metadata.name),
+      },
+      namespace: { cell: <ResourceLink kind="Namespace" name={obj.metadata.namespace} /> },
+      status: { cell: <SubscriptionStatus subscription={obj} /> },
+      channel: {
+        cell: obj.spec.channel || 'default',
+        // co-select-to-copy is a deliberate copy affordance for the channel name.
+        props: { className: css('co-truncate', 'co-select-to-copy') },
+      },
+      approval: { cell: <SubscriptionApproval subscription={obj} /> },
+      actions: {
+        cell: <LazyActionMenu context={{ [referenceFor(obj)]: obj }} />,
+        props: actionsCellProps,
+      },
+    };
+    return columns.map(({ id }) => ({ id, ...rowCells[id] }));
+  });
+
+const SubscriptionsEmptyMsg: FC = () => {
   const { t } = useTranslation('olm');
   return (
-    <>
-      <TableData className={tableColumnClasses[0]}>
-        <ResourceLink
-          kind={referenceForModel(SubscriptionModel)}
-          name={obj.metadata.name}
-          namespace={obj.metadata.namespace}
-        />
-      </TableData>
-      <TableData className={tableColumnClasses[1]}>
-        <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>
-        <SubscriptionStatus subscription={obj} />
-      </TableData>
-      <TableData className={css(tableColumnClasses[3], 'co-truncate', 'co-select-to-copy')}>
-        {obj.spec.channel || 'default'}
-      </TableData>
-      <TableData className={tableColumnClasses[4]}>
-        {obj.spec.installPlanApproval || t('Automatic')}
-      </TableData>
-      <TableData className={tableColumnClasses[5]}>
-        <LazyActionMenu
-          context={{
-            [referenceFor(obj)]: obj,
-          }}
-        />
-      </TableData>
-    </>
+    <ConsoleEmptyState title={t('No Subscriptions found')}>
+      {t('Each Namespace can subscribe to a single channel of a package for automatic updates.')}
+    </ConsoleEmptyState>
   );
 };
 
 export const SubscriptionsList = requireOperatorGroup((props: SubscriptionsListProps) => {
   const { t } = useTranslation('olm');
-  const SubscriptionTableHeader = () => [
-    {
-      title: t('Name'),
-      sortField: 'metadata.name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[0] },
-    },
-    {
-      title: t('Namespace'),
-      sortField: 'metadata.namespace',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[1] },
-    },
-    {
-      title: t('Status'),
-      props: { className: tableColumnClasses[2] },
-    },
-    {
-      title: t('Update channel'),
-      props: { className: tableColumnClasses[3] },
-    },
-    {
-      title: t('Update approval'),
-      props: { className: tableColumnClasses[4] },
-    },
-    {
-      title: '',
-      props: { className: tableColumnClasses[5] },
-    },
-  ];
+  const { columns, resetAllColumnWidths } = useSubscriptionColumns();
+
+  // ConsoleDataView has a generic empty body state, so keep the Subscription-specific wording by
+  // short-circuiting when nothing loaded at all. Filtering down to zero rows still uses the table.
+  if (props.loaded && !props.loadError && props.data?.length === 0) {
+    return <SubscriptionsEmptyMsg />;
+  }
+
   return (
-    <Table
+    <ConsoleDataView<SubscriptionKind>
       {...props}
-      aria-label={t('Operator Subscriptions')}
-      Header={SubscriptionTableHeader}
-      Row={SubscriptionTableRow}
-      EmptyMsg={() => (
-        <ConsoleEmptyState title={t('No Subscriptions found')}>
-          {t(
-            'Each Namespace can subscribe to a single channel of a package for automatic updates.',
-          )}
-        </ConsoleEmptyState>
-      )}
-      virtualize
+      label={t('Subscriptions')}
+      data={props.data || []}
+      loaded={props.loaded}
+      columns={columns}
+      getDataViewRows={getSubscriptionDataViewRows}
+      hideColumnManagement
+      isResizable
+      resetAllColumnWidths={resetAllColumnWidths}
     />
   );
 });
@@ -305,7 +283,7 @@ export const SubscriptionsPage: FC<SubscriptionsPageProps> = (props) => {
       createProps={{ to: '/catalog?catalogType=operator' }}
       createButtonText={t('Create Subscription')}
       ListComponent={SubscriptionsList}
-      filterLabel={t('Subscriptions by package')}
+      omitFilterToolbar
     />
   );
 };
