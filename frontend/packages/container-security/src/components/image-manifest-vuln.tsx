@@ -1,30 +1,26 @@
 import type { FC } from 'react';
-import {
-  Alert,
-  DescriptionList,
-  EmptyState,
-  EmptyStateVariant,
-  Grid,
-  GridItem,
-  Tooltip,
-} from '@patternfly/react-core';
+import { useMemo } from 'react';
+import { Alert, DescriptionList, Grid, GridItem, Tooltip } from '@patternfly/react-core';
 import { RhUiWarningFillIcon } from '@patternfly/react-icons';
-import { css } from '@patternfly/react-styles';
-import { sortable, Table as PfTable, Thead, Th, Tbody, Td, Tr } from '@patternfly/react-table';
-import type { TFunction } from 'i18next';
+import { Table as PfTable, Thead, Th, Tbody, Td, Tr } from '@patternfly/react-table';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
-import { DASH } from '@console/dynamic-plugin-sdk/src/app/constants';
-import { DefaultList } from '@console/internal/components/default-resource';
-import type { RowFunctionArgs } from '@console/internal/components/factory';
 import {
-  MultiListPage,
-  Table,
-  TableData,
-  DetailsPage,
-  ListPage,
-} from '@console/internal/components/factory';
+  ConsoleDataView,
+  getNameCellProps,
+  getNameColumnProps,
+} from '@console/app/src/components/data-view/ConsoleDataView';
+import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
+import { DASH } from '@console/dynamic-plugin-sdk/src/app/constants';
+import type {
+  ConsoleDataViewColumn,
+  GetDataViewRows,
+  ResourceMetadata,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { DefaultList } from '@console/internal/components/default-resource';
+import { MultiListPage, DetailsPage, ListPage } from '@console/internal/components/factory';
+import { sortResourceByValue } from '@console/internal/components/factory/Table/sort';
 import { ContainerLink } from '@console/internal/components/pod';
 import {
   ResourceLink,
@@ -37,7 +33,6 @@ import {
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import type { PodKind, ContainerStatus } from '@console/internal/module/k8s';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { EmptyStateResourceBadge } from '@console/shared/src/components/badges/EmptyStateResourceBadge';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { GreenCheckCircleIcon } from '@console/shared/src/components/status/icons';
@@ -146,130 +141,139 @@ export const ImageManifestVulnDetailsPage: FC = () => {
   );
 };
 
-const tableColumnClasses = [
-  '',
-  css('pf-m-hidden', 'pf-m-visible-on-md', 'co-break-word'),
-  '',
-  css('pf-m-hidden', 'pf-m-visible-on-md'),
-  css('pf-m-hidden', 'pf-m-visible-on-lg'),
-  css('pf-m-hidden', 'pf-m-visible-on-xl'),
-  css('pf-m-hidden', 'pf-m-visible-on-xl'),
-];
+const useImageManifestVulnColumns = (): {
+  columns: ConsoleDataViewColumn<ImageManifestVuln>[];
+  resetAllColumnWidths: () => void;
+} => {
+  const { t } = useTranslation('container-security');
+  const { getResizableProps, resetAllColumnWidths } =
+    useColumnWidthSettings(ImageManifestVulnModel);
+  const columns = useMemo(
+    () => [
+      {
+        id: 'name',
+        resizableProps: getResizableProps('name'),
+        title: t('Image name'),
+        sort: 'spec.image',
+        props: { ...getNameColumnProps(), modifier: 'nowrap' as const },
+      },
+      {
+        id: 'namespace',
+        resizableProps: getResizableProps('namespace'),
+        title: t('Namespace'),
+        sort: 'metadata.namespace',
+        props: { modifier: 'nowrap' as const },
+      },
+      {
+        id: 'highestSeverity',
+        resizableProps: getResizableProps('highestSeverity'),
+        title: t('Highest severity'),
+        // Order by how urgent the severity is rather than alphabetically.
+        sort: (data, direction) => data.sort(sortResourceByValue(direction, highestSeverityIndex)),
+        props: { modifier: 'nowrap' as const },
+      },
+      {
+        id: 'affectedPods',
+        resizableProps: getResizableProps('affectedPods'),
+        title: t('Affected Pods'),
+        sort: (data, direction) => data.sort(sortResourceByValue(direction, affectedPodsCount)),
+        props: { modifier: 'nowrap' as const },
+      },
+      {
+        id: 'fixable',
+        resizableProps: getResizableProps('fixable'),
+        title: t('Fixable'),
+        sort: 'status.fixableCount',
+        props: { modifier: 'nowrap' as const },
+      },
+      {
+        id: 'total',
+        resizableProps: getResizableProps('total'),
+        title: t('Total'),
+        sort: (data, direction) => data.sort(sortResourceByValue(direction, totalCount)),
+        props: { modifier: 'nowrap' as const },
+      },
+      {
+        id: 'manifest',
+        resizableProps: getResizableProps('manifest'),
+        title: t('Manifest'),
+        sort: 'spec.manifest',
+        props: { modifier: 'nowrap' as const },
+      },
+    ],
+    [t, getResizableProps],
+  );
+  return { columns, resetAllColumnWidths };
+};
 
-const ImageManifestVulnTableRow: FC<RowFunctionArgs<ImageManifestVuln>> = ({ obj }) => {
-  const { name, namespace } = obj.metadata;
-  const queryURL = quayURLFor(obj);
-  return (
-    <>
-      <TableData className={tableColumnClasses[0]}>
-        <ResourceLink
-          kind={referenceForModel(ImageManifestVulnModel)}
-          name={name}
-          namespace={namespace}
-          displayName={shortenImage(obj.spec.image)}
-        />
-      </TableData>
-      <TableData className={tableColumnClasses[1]} columnID="namespace">
-        <ResourceLink kind="Namespace" name={namespace} />
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>
-        {obj.status?.highestSeverity ? (
+export const getImageManifestVulnDataViewRows: GetDataViewRows<ImageManifestVuln> = (
+  data,
+  columns,
+) =>
+  data.map(({ obj }) => {
+    const { name, namespace } = obj.metadata;
+    const queryURL = quayURLFor(obj);
+    const rowCells = {
+      name: {
+        cell: (
+          <ResourceLink
+            kind={referenceForModel(ImageManifestVulnModel)}
+            name={name}
+            namespace={namespace}
+            displayName={shortenImage(obj.spec.image)}
+          />
+        ),
+        props: getNameCellProps(name),
+      },
+      namespace: { cell: <ResourceLink kind="Namespace" name={namespace} /> },
+      highestSeverity: {
+        cell: obj.status?.highestSeverity ? (
           <>
             <RhUiWarningFillIcon color={priorityFor(obj.status.highestSeverity).color.value} />
             &nbsp;{obj.status.highestSeverity}
           </>
         ) : (
           DASH
-        )}
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>{affectedPodsCount(obj)}</TableData>
-      <TableData className={tableColumnClasses[4]}>{obj.status?.fixableCount || 0}</TableData>
-      <TableData className={tableColumnClasses[5]}>{totalCount(obj)}</TableData>
-      <TableData className={tableColumnClasses[6]}>
-        {queryURL ? (
+        ),
+      },
+      affectedPods: { cell: affectedPodsCount(obj) },
+      fixable: { cell: obj.status?.fixableCount || 0 },
+      total: { cell: totalCount(obj) },
+      manifest: {
+        cell: queryURL ? (
           <ExternalLink text={shortenHash(obj.spec.manifest)} href={queryURL} />
         ) : (
           <span className="pf-v6-u-font-size-xs pf-v6-u-text-color-subtle">-</span>
-        )}
-      </TableData>
-    </>
-  );
-};
+        ),
+      },
+    };
+    return columns.map(({ id }) => ({ id, ...rowCells[id] }));
+  });
 
-const ImageManifestVulnTableHeader = (t: TFunction) => () => [
-  {
-    title: t('Image name'),
-    sortField: 'spec.image',
-    transforms: [sortable],
-    props: { className: tableColumnClasses[0] },
-  },
-  {
-    title: t('Namespace'),
-    sortField: 'metadata.namespace',
-    transforms: [sortable],
-    props: { className: tableColumnClasses[1] },
-    id: 'namespace',
-  },
-  {
-    title: t('Highest severity'),
-    sortFunc: 'highestSeverityOrder',
-    transforms: [sortable],
-    props: { className: tableColumnClasses[2] },
-  },
-  {
-    title: t('Affected Pods'),
-    props: { className: tableColumnClasses[3] },
-    transforms: [sortable],
-    sortFunc: 'affectedPodsOrder',
-  },
-  {
-    title: t('Fixable'),
-    sortField: 'status.fixableCount',
-    transforms: [sortable],
-    props: { className: tableColumnClasses[4] },
-  },
-  {
-    title: t('Total'),
-    sortFunc: 'totalOrder',
-    transforms: [sortable],
-    props: { className: tableColumnClasses[5] },
-  },
-  {
-    title: t('Manifest'),
-    props: { className: tableColumnClasses[6] },
-    transforms: [sortable],
-    sortField: 'spec.manifest',
-  },
-];
+/** The resource name is a digest, so match the name filter against the image it refers to. */
+const getObjectMetadata = (imageManifestVuln: ImageManifestVuln): ResourceMetadata => ({
+  name: imageManifestVuln.spec.image,
+  labels: imageManifestVuln.metadata.labels,
+});
 
 const ImageManifestVulnList: FC<ImageManifestVulnListProps> = (props) => {
   const { t } = useTranslation('container-security');
-  const EmptyMsg = () => (
-    <EmptyState
-      headingLevel="h4"
-      titleText={
-        <>
-          <EmptyStateResourceBadge model={ImageManifestVulnModel} />
-          {t('No Image vulnerabilities found')}
-        </>
-      }
-      variant={EmptyStateVariant.lg}
-    />
-  );
+  const { columns, resetAllColumnWidths } = useImageManifestVulnColumns();
 
   return (
-    <Table
+    <ConsoleDataView<ImageManifestVuln>
       {...props}
-      customSorts={{
-        totalOrder: totalCount,
-        affectedPodsOrder: affectedPodsCount,
-        highestSeverityOrder: highestSeverityIndex,
-      }}
-      aria-label={t('Image Manifest Vulnerabilities')}
-      Header={ImageManifestVulnTableHeader(t)}
-      Row={ImageManifestVulnTableRow}
-      EmptyMsg={EmptyMsg}
-      virtualize
+      label={t('Image Manifest Vulnerabilities')}
+      data={props.data}
+      loaded={props.loaded}
+      columns={columns}
+      getDataViewRows={getImageManifestVulnDataViewRows}
+      getObjectMetadata={getObjectMetadata}
+      showNamespaceOverride={props.showNamespaceOverride}
+      hideNameLabelFilters={props.hideNameLabelFilters}
+      hideColumnManagement
+      isResizable
+      resetAllColumnWidths={resetAllColumnWidths}
     />
   );
 };
@@ -299,6 +303,7 @@ export const ImageManifestVulnPage: FC<ImageManifestVulnPageProps> = (props) => 
       nameFilterPlaceholder={t('Search by image name...')}
       hideNameLabelFilters={hideNameLabelFilters}
       ListComponent={ImageManifestVulnList}
+      omitFilterToolbar
     />
   );
 };
@@ -440,6 +445,9 @@ export type ImageManifestVulnPageProps = {
 
 type ImageManifestVulnListProps = {
   data: ImageManifestVuln[];
+  loaded?: boolean;
+  showNamespaceOverride?: boolean;
+  hideNameLabelFilters?: boolean;
 };
 
 type ImageManifestVulnDetailsProps = {
