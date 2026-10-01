@@ -25,6 +25,7 @@ export class MastheadPage extends BasePage {
   private readonly copyLoginCommandLink: Locator = this.page
     .getByTestId('copy-login-command')
     .locator('a');
+  private readonly downloadKubeconfigItem: Locator = this.page.getByTestId('download-kubeconfig');
   private readonly logOutItem: Locator = this.page.getByTestId('log-out');
   readonly pageHeading: Locator = this.page.getByTestId('page-heading').locator('h1');
 
@@ -129,6 +130,10 @@ export class MastheadPage extends BasePage {
       el.removeAttribute('target'),
     );
     await this.copyLoginCommandLink.click();
+  }
+
+  async clickDownloadKubeconfig(): Promise<void> {
+    await this.robustClick(this.downloadKubeconfigItem);
   }
 
   async clickLogOut(): Promise<void> {

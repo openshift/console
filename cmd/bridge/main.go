@@ -661,6 +661,10 @@ func main() {
 		apiServerEndpoint = srv.K8sProxyConfig.Endpoint.String()
 	}
 	srv.KubeAPIServerURL = apiServerEndpoint
+	// Embedded into kubeconfig files downloaded via /api/kubeconfig so clients
+	// can verify the API server's serving certificate. Empty in off-cluster mode,
+	// in which case downloaded kubeconfigs fall back to insecure-skip-tls-verify.
+	srv.K8sCertPEM = k8sCertPEM
 
 	clusterManagementURL, err := url.Parse(clusterManagementURL)
 	if err != nil {
