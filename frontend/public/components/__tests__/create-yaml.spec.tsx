@@ -148,7 +148,7 @@ describe('CreateYAMLInner', () => {
       expect(editorText).not.toContain('"namespace":"project-a"');
     });
 
-    it('remounts YAML editor when namespace changes', async () => {
+    it('reloads YAML editor when namespace changes', async () => {
       mockUseActiveNamespace.mockReturnValue(['project-a', jest.fn()]);
 
       const { rerender } = renderWithProviders(
