@@ -50,8 +50,9 @@ export const useCatalogExtensions = (
       (e): e is CatalogItemType =>
         isCatalogItemType(e) &&
         isEnabledType(e) &&
+        (!e.properties.catalogId || _.castArray(e.properties.catalogId).includes(catalogId)) &&
         (!catalogType || e.properties.type === catalogType),
-      [catalogType, isEnabledType],
+      [catalogId, catalogType, isEnabledType],
     ),
   );
 
@@ -94,10 +95,8 @@ export const useCatalogExtensions = (
         (e): e is CatalogCategoriesProvider =>
           isCatalogCategoriesProvider(e) &&
           isEnabledType(e) &&
-          (!e.properties.catalogId ||
-            e.properties.catalogId === catalogId ||
-            !e.properties.type ||
-            e.properties.type === catalogType),
+          (!e.properties.catalogId || e.properties.catalogId === catalogId) &&
+          (!catalogType || !e.properties.type || e.properties.type === catalogType),
         [catalogId, catalogType, isEnabledType],
       ),
     );

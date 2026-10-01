@@ -644,6 +644,8 @@ export interface ConsoleDataViewProps<
   hideLabelFilter?: boolean;
   /** (optional) Hides the column management action in the toolbar. */
   hideColumnManagement?: boolean;
+  /** (optional) Rendered in place of the table when `data` is empty, letting a consumer explain what is missing and how to create the first resource. Defaults to a generic "No {{label}} found" message. Note that this does not apply when the data is non-empty but the active filters match nothing; that case always renders the built-in in-table empty message. */
+  EmptyMsg?: ComponentType;
   /** (optional) Renders an empty placeholder instead of the table. */
   mock?: boolean;
   /** (optional) Enables column resizing. Pair with `resetAllColumnWidths` so users can reset persisted column widths. */

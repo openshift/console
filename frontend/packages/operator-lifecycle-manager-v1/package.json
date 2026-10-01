@@ -6,11 +6,12 @@
   "consolePlugin": {
     "exposedModules": {
       "useCatalogItems": "src/hooks/useCatalogItems.ts",
+      "useInstalledOperatorsFlagProvider": "src/hooks/useInstalledOperatorsFlagProvider.ts",
       "useCatalogCategories": "src/hooks/useCatalogCategories.ts",
-      "useOLMv1FlagProvider": "src/hooks/useOLMv1FlagProvider.ts",
       "CreateClusterExtension": "src/components/cluster-extension/CreateClusterExtension.tsx",
       "defaultActionsProvider": "src/actions/providers/default-actions-provider.ts",
-      "installedSoftwarePage": "src/components/installed-software/InstalledSoftwarePage.tsx"
+      "installedSoftwareRedirect": "src/components/installed-software-redirect.tsx",
+      "installedOperatorsTabbedPage": "src/components/InstalledOperatorsTabbedPage.tsx"
     }
   }
 }

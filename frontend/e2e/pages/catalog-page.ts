@@ -8,7 +8,6 @@ export class CatalogPage extends BasePage {
   private readonly pageHeading: Locator = this.page.getByTestId('page-heading');
   private readonly filterInput: Locator = this.page.getByPlaceholder('Filter by keyword');
   private readonly searchCatalogInput = this.page.getByTestId('search-catalog').locator('input');
-  private readonly operatorTab = this.page.getByTestId('tab operator');
   private readonly clearFiltersButton = this.page.getByTestId('catalog-clear-filters');
 
   async navigateToCatalog(namespace?: string): Promise<void> {
@@ -31,8 +30,9 @@ export class CatalogPage extends BasePage {
     await expect(this.pageHeading).toBeVisible({ timeout: 60_000 });
   }
 
+  /** Classic (OLMv0) Operators are one of two selectable Operator types in the Software Catalog. */
   async navigateToOperatorCatalog(namespace: string): Promise<void> {
-    await this.goTo(`/catalog/ns/${namespace}?catalogType=operator`);
+    await this.goTo(`/catalog/ns/${namespace}?catalogType=operator-olmv0`);
     await expect(this.pageHeading).toBeVisible({ timeout: 60_000 });
   }
 
@@ -52,10 +52,6 @@ export class CatalogPage extends BasePage {
     await this.searchCatalogInput.fill('');
   }
 
-  async clickOperatorTab(): Promise<void> {
-    await this.robustClick(this.operatorTab);
-  }
-
   async clickClearAllFilters(): Promise<void> {
     await this.robustClick(this.clearFiltersButton);
   }
@@ -73,7 +69,7 @@ export class CatalogPage extends BasePage {
 
   getOperatorCard(operatorName: string): Locator {
     return this.page
-      .getByTestId(`operator-${operatorName}`)
+      .getByTestId(`operator-olmv0-${operatorName}`)
       .filter({ hasNotText: 'testing deprecation' });
   }
 

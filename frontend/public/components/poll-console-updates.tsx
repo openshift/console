@@ -5,6 +5,7 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { settleAllPromises } from '@console/dynamic-plugin-sdk/src/utils/promise';
 import { URL_POLL_DEFAULT_DELAY } from '@console/internal/components/utils/url-poll-hook';
+import { CLASSIC_CATALOG_PATH } from '@console/operator-lifecycle-manager/src/const';
 import { useToast } from '@console/shared/src/components/toast/useToast';
 import { usePoll } from '@console/shared/src/hooks/usePoll';
 import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
@@ -176,7 +177,7 @@ export const PollConsoleUpdates = memo(() => {
           label: t('Refresh web console'),
           callback: () => {
             if (window.location.pathname.includes('/operatorhub/subscribe')) {
-              window.location.href = '/catalog?catalogType=operator';
+              window.location.href = CLASSIC_CATALOG_PATH;
             } else {
               window.location.reload();
             }

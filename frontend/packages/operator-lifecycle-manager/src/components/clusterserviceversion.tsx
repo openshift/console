@@ -1,4 +1,4 @@
-import type { FC } from 'react';
+import type { FC, ReactNode } from 'react';
 import { useMemo, useCallback } from 'react';
 import {
   Alert,
@@ -20,6 +20,7 @@ import { RhUiAddCircleIcon, RhUiEditIcon } from '@patternfly/react-icons';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { useParams, useLocation, Link } from 'react-router';
+import { FLAG_TECH_PREVIEW } from '@console/app/src/consts';
 import {
   ConsoleDataView,
   actionsCellProps,
@@ -87,7 +88,12 @@ import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import { getNamespace } from '@console/shared/src/selectors/common';
 import { isPluginEnabled } from '@console/shared/src/utils/console-plugin';
-import { Flags, GLOBAL_OPERATOR_NAMESPACES, GLOBAL_COPIED_CSV_NAMESPACE } from '../const';
+import {
+  CLASSIC_CATALOG_PATH,
+  Flags,
+  GLOBAL_OPERATOR_NAMESPACES,
+  GLOBAL_COPIED_CSV_NAMESPACE,
+} from '../const';
 import {
   useOperatorLifecycle,
   getLifecycleInfoFromSubscription,
@@ -113,8 +119,10 @@ import type {
 import { ClusterServiceVersionPhase, CSVConditionReason } from '../types';
 import { isCatalogSourceTrusted, upgradeRequiresApproval } from '../utils';
 import { isCopiedCSV, isStandaloneCSV } from '../utils/clusterserviceversions';
+import { mergeInstalledOperators } from '../utils/installed-operators';
 import { useClusterServiceVersion } from '../utils/useClusterServiceVersion';
 import { useClusterServiceVersionPath } from '../utils/useClusterServiceVersionPath';
+import { ClassicOperatorMigrationAlert } from './classic-operators/ClassicOperatorMigrationAlert';
 import {
   ClusterServiceVersionHeaderIcon,
   ClusterServiceVersionHeaderTitle,
@@ -593,6 +601,7 @@ export const getInstalledOperatorDataViewRows: GetDataViewRows<
 const CSVListNoDataEmptyMsg = () => {
   const { t } = useTranslation('olm');
   const [project] = useActiveNamespace();
+  const techPreview = useFlag(FLAG_TECH_PREVIEW);
   const noOperatorsInSingleNamespaceMessage = t(
     'No Operators are available for project {{project}}.',
     { project },
@@ -622,10 +631,18 @@ const CSVListNoDataEmptyMsg = () => {
       </div>
       {hasOperatorHubAccess && (
         <div>
-          <Trans ns="olm">
-            Discover and install Operators from the{' '}
-            <Link to="/catalog?catalogType=operator">Software Catalog</Link>.
-          </Trans>
+          {/* Outside Tech Preview there is only one operator catalog, so it keeps its generic name. */}
+          {techPreview ? (
+            <Trans ns="olm">
+              Discover and install Operators from the{' '}
+              <Link to={CLASSIC_CATALOG_PATH}>Classic Operators catalog</Link>.
+            </Trans>
+          ) : (
+            <Trans ns="olm">
+              Discover and install Operators from the{' '}
+              <Link to={CLASSIC_CATALOG_PATH}>Software Catalog</Link>.
+            </Trans>
+          )}
         </div>
       )}
     </>
@@ -764,22 +781,11 @@ export const ClusterServiceVersionsPage: FC<ClusterServiceVersionsPageProps> = (
     clusterServiceVersions: ClusterServiceVersionKind[];
     subscriptions: SubscriptionKind[];
   }> = ({ globalClusterServiceVersions, clusterServiceVersions, subscriptions }) =>
-    [
-      ...(globalClusterServiceVersions?.data ?? []),
-      ...(clusterServiceVersions?.data ?? []),
-      ...(subscriptions?.data ?? []).filter(
-        (sub) =>
-          ['', sub.metadata.namespace].includes(props.namespace || '') &&
-          _.isNil(_.get(sub, 'status.installedCSV')),
-      ),
-    ].filter(
-      (obj, _i, all) =>
-        isCSV(obj) ||
-        _.isUndefined(
-          all.find(({ metadata }) =>
-            [obj?.status?.currentCSV, obj?.spec?.startingCSV].includes(metadata?.name),
-          ),
-        ),
+    mergeInstalledOperators(
+      globalClusterServiceVersions?.data ?? [],
+      clusterServiceVersions?.data ?? [],
+      subscriptions?.data ?? [],
+      props.namespace || '',
     );
 
   const showTitle = props.showTitle !== false;
@@ -1300,6 +1306,7 @@ export const ClusterServiceVersionDetailsPage: FC = (props) => {
   return (
     <DetailsPage
       {...props}
+      helpAlert={<ClassicOperatorMigrationAlert />}
       obj={{ data: csv, loaded: csvLoaded, loadError: csvLoadError }}
       customData={{ subscriptions, subscription, subscriptionsLoaded, subscriptionsLoadError }}
       breadcrumbsFor={() => [
@@ -1354,6 +1361,8 @@ export type ClusterServiceVersionsPageProps = {
   kind?: string;
   resourceDescriptions?: CRDDescription[];
   showTitle?: boolean;
+  /** Alert rendered in the page heading, below the title. */
+  helpAlert?: ReactNode;
 };
 
 type ClusterServiceVersionListProps = {

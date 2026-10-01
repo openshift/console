@@ -58,6 +58,7 @@ import {
 import { WarningStatus } from '@console/shared/src/components/status/statuses';
 import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
 import { getName, getNamespace } from '@console/shared/src/selectors/common';
+import { CLASSIC_CATALOG_PATH } from '../const';
 import {
   SubscriptionModel,
   ClusterServiceVersionModel,
@@ -76,6 +77,7 @@ import type {
 } from '../types';
 import { SubscriptionState, InstallPlanApproval, InstallPlanPhase } from '../types';
 import { upgradeRequiresApproval } from '../utils';
+import { ClassicOperatorMigrationAlert } from './classic-operators/ClassicOperatorMigrationAlert';
 import {
   DeprecatedOperatorWarningAlert,
   DeprecatedOperatorWarningIcon,
@@ -263,6 +265,7 @@ export const SubscriptionsPage: FC<SubscriptionsPageProps> = (props) => {
   return (
     <MultiListPage
       {...props}
+      helpAlert={<ClassicOperatorMigrationAlert />}
       resources={[
         {
           kind: referenceForModel(SubscriptionModel),
@@ -280,7 +283,7 @@ export const SubscriptionsPage: FC<SubscriptionsPageProps> = (props) => {
       flatten={(resources) => _.get(resources.subscription, 'data', [])}
       title={t('Subscriptions')}
       canCreate
-      createProps={{ to: '/catalog?catalogType=operator' }}
+      createProps={{ to: CLASSIC_CATALOG_PATH }}
       createButtonText={t('Create Subscription')}
       ListComponent={SubscriptionsList}
       omitFilterToolbar
@@ -720,6 +723,7 @@ export const SubscriptionDetailsPage: FC<SubscriptionDetailsPageProps> = (props)
   return (
     <DetailsPage
       {...props}
+      helpAlert={<ClassicOperatorMigrationAlert />}
       namespace={params.ns}
       kind={referenceForModel(SubscriptionModel)}
       name={params.name}

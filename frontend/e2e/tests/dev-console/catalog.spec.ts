@@ -173,7 +173,9 @@ test.describe('Software Catalog Page details', { tag: ['@dev-console', '@regress
   });
 });
 
-test.describe('Software Catalog operators', { tag: ['@dev-console', '@regression'] }, () => {
+// Titled "Classic Operators" under Tech Preview and plain "Operators" elsewhere, but the catalog
+// type id and tile test ids are the same on every cluster.
+test.describe('OLMv0 Operators catalog', { tag: ['@dev-console', '@regression'] }, () => {
   let catalogPage: CatalogPage;
 
   test.beforeEach(async ({ page }) => {
@@ -183,11 +185,11 @@ test.describe('Software Catalog operators', { tag: ['@dev-console', '@regression
 
   test('displays operator tiles in catalog', async ({ page }) => {
     await test.step('Navigate to operator catalog', async () => {
-      await page.goto('/catalog/ns/default?catalogType=operator');
+      await page.goto('/catalog/ns/default?catalogType=operator-olmv0');
     });
 
     await test.step('Verify operator tiles are rendered', async () => {
-      await expect(page.locator('[data-test^="operator-"]').first()).toBeVisible({
+      await expect(page.locator('[data-test^="operator-olmv0-"]').first()).toBeVisible({
         timeout: 30_000,
       });
     });
@@ -195,7 +197,7 @@ test.describe('Software Catalog operators', { tag: ['@dev-console', '@regression
 
   test('filters operator tiles by keyword', async ({ page }) => {
     await test.step('Navigate to operator catalog', async () => {
-      await page.goto('/catalog/ns/default?catalogType=operator');
+      await page.goto('/catalog/ns/default?catalogType=operator-olmv0');
     });
 
     await test.step('Wait for tiles to render', async () => {

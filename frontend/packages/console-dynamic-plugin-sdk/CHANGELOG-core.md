@@ -15,6 +15,9 @@ table in [Console dynamic plugins README](./README.md).
 - Removed `immutable` dependency from the redux store and from the package ([CONSOLE-5001], [#17024])
 - Added `ConsoleDataView` component, related utilities for `ConsoleDataView`, and `definitionFor` ([CONSOLE-5131], [#17307])
 - Added optional `defaultSortColumnId` and `defaultSortDirection` props to `ConsoleDataView`, so a table can open sorted by a column other than the first ([CONSOLE-5131], [#17340])
+- Added optional `catalogId` and `sortWeight` properties to extension `console.catalog/item-type`, so a type can be scoped to specific catalogs and ordered within the catalog's type list ([CONSOLE-5527])
+- Added optional `EmptyMsg` prop to `ConsoleDataView`, restoring the custom no-data empty state supported by the deprecated `VirtualizedTable` ([CONSOLE-5527])
+- Added optional `placement` property to `CatalogItemBadge`, so a badge can render in the catalog item header below the catalog type label instead of the default footer ([CONSOLE-5527])
 
 ## 4.23.0-prerelease.6 - TBD
 
@@ -267,6 +270,7 @@ table in [Console dynamic plugins README](./README.md).
 [CONSOLE-5415]: https://issues.redhat.com/browse/CONSOLE-5415
 [CONSOLE-5424]: https://issues.redhat.com/browse/CONSOLE-5424
 [CONSOLE-5438]: https://issues.redhat.com/browse/CONSOLE-5438
+[CONSOLE-5527]: https://issues.redhat.com/browse/CONSOLE-5527
 [OCPBUGS-19048]: https://issues.redhat.com/browse/OCPBUGS-19048
 [OCPBUGS-30077]: https://issues.redhat.com/browse/OCPBUGS-30077
 [OCPBUGS-31355]: https://issues.redhat.com/browse/OCPBUGS-31355
