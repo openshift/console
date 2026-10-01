@@ -19,9 +19,8 @@ import {
   nameCellProps,
   ConsoleDataView,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import type { ConsoleDataViewColumn } from '@console/app/src/components/data-view/types';
-import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import { ListPageBody } from '@console/dynamic-plugin-sdk';
+import type { ConsoleDataViewColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import type { ConfigureCountModalProps } from '@console/internal/components/modals/configure-count-modal';
 import { useConfigureCountModal } from '@console/internal/components/modals/configure-count-modal';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -276,11 +275,9 @@ const MachineSetDetails: FC<MachineSetDetailsProps> = ({ obj }) => {
 
 const useMachineSetColumns = (): {
   columns: ConsoleDataViewColumn<MachineSetKind>[];
-  resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation('public');
   const context = useContext(CapacityResolverContext);
-  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(MachineSetModel);
 
   const columns: ConsoleDataViewColumn<MachineSetKind>[] = useMemo(
     () => [
@@ -288,7 +285,6 @@ const useMachineSetColumns = (): {
         title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
-        resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: {
           ...nameCellProps,
           modifier: 'nowrap' as const,
@@ -298,7 +294,6 @@ const useMachineSetColumns = (): {
         title: t('Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',
-        resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
           modifier: 'nowrap' as const,
         },
@@ -307,7 +302,6 @@ const useMachineSetColumns = (): {
         title: t('Machines'),
         id: tableColumnInfo[2].id,
         sort: 'status.readyReplicas',
-        resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
           modifier: 'nowrap' as const,
         },
@@ -317,7 +311,6 @@ const useMachineSetColumns = (): {
         id: tableColumnInfo[3].id,
         sort: (data, direction) =>
           data.sort(sortResourceByValue(direction, getMachineSetInstanceType)),
-        resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
           modifier: 'nowrap' as const,
         },
@@ -329,7 +322,6 @@ const useMachineSetColumns = (): {
           ? (data, direction) =>
               data.sort(sortResourceByValue(direction, (obj) => context.capacityResolver(obj).cpu))
           : undefined,
-        resizableProps: getResizableProps(tableColumnInfo[4].id),
         props: {
           modifier: 'nowrap' as const,
         },
@@ -343,7 +335,6 @@ const useMachineSetColumns = (): {
                 sortResourceByValue(direction, (obj) => context.capacityResolver(obj).memory),
               )
           : undefined,
-        resizableProps: getResizableProps(tableColumnInfo[5].id),
         props: {
           modifier: 'nowrap' as const,
         },
@@ -356,10 +347,10 @@ const useMachineSetColumns = (): {
         },
       },
     ],
-    [t, context, getResizableProps],
+    [t, context],
   );
 
-  return { columns, resetAllColumnWidths };
+  return { columns };
 };
 
 const getDataViewRows = (
@@ -415,21 +406,19 @@ const getDataViewRows = (
   });
 
 const MachineSetListContent: FC<MachineSetListProps> = ({ data, loaded, loadError, ...props }) => {
-  const { columns, resetAllColumnWidths } = useMachineSetColumns();
+  const { columns } = useMachineSetColumns();
 
   return (
     <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<MachineSetKind>
         {...props}
+        id={MachineSetModel}
         label={MachineSetModel.labelPlural}
         data={data}
         loaded={loaded}
         loadError={loadError}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement
-        isResizable
-        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );

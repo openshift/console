@@ -12,8 +12,7 @@ import {
 import type {
   ConsoleDataViewColumn,
   GetDataViewRows,
-} from '@console/app/src/components/data-view/types';
-import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
@@ -84,10 +83,8 @@ const getDataViewRows: GetDataViewRows<ConfigMapKind> = (data, columns) =>
 
 const useConfigMapsColumns = (): {
   columns: ConsoleDataViewColumn<ConfigMapKind>[];
-  resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation('public');
-  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(ConfigMapModel);
 
   const columns = useMemo<ConsoleDataViewColumn<ConfigMapKind>[]>(
     () => [
@@ -95,7 +92,6 @@ const useConfigMapsColumns = (): {
         title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
-        resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: {
           ...nameCellProps,
           modifier: 'nowrap' as const,
@@ -105,7 +101,6 @@ const useConfigMapsColumns = (): {
         title: t('Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',
-        resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
           modifier: 'nowrap' as const,
         },
@@ -114,7 +109,6 @@ const useConfigMapsColumns = (): {
         title: t('Size'),
         id: tableColumnInfo[2].id,
         sort: (data, direction) => data.sort(sortResourceByValue(direction, sorts.dataSize)),
-        resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
           modifier: 'nowrap' as const,
         },
@@ -123,7 +117,6 @@ const useConfigMapsColumns = (): {
         title: t('Created'),
         id: tableColumnInfo[3].id,
         sort: 'metadata.creationTimestamp',
-        resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
           modifier: 'nowrap' as const,
         },
@@ -136,27 +129,25 @@ const useConfigMapsColumns = (): {
         },
       },
     ],
-    [t, getResizableProps],
+    [t],
   );
 
-  return { columns, resetAllColumnWidths };
+  return { columns };
 };
 
 const ConfigMaps: FC<ConfigMapsProps> = ({ data, loaded, ...props }) => {
-  const { columns, resetAllColumnWidths } = useConfigMapsColumns();
+  const { columns } = useConfigMapsColumns();
 
   return (
     <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<ConfigMapKind>
         {...props}
+        id={ConfigMapModel}
         label={ConfigMapModel.labelPlural}
         data={data}
         loaded={loaded}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement
-        isResizable
-        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );

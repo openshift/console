@@ -33,21 +33,6 @@ jest.mock('../RepositoriesRow', () => ({
   getDataViewRows: jest.fn(),
 }));
 
-jest.mock('../../../models/helm', () => ({
-  HelmRepositoriesCombinedListModel: {
-    apiGroup: 'console.ui',
-    apiVersion: 'v1',
-    kind: 'HelmRepositoriesCombinedList',
-    id: 'helmrepositoriescombinedlist',
-    plural: 'helmrepositoriescombinedlists',
-    label: 'Helm Chart Repositories',
-    labelPlural: 'Helm Chart Repositories',
-    abbr: 'HCRL',
-    namespaced: false,
-    crd: true,
-  },
-}));
-
 const mockData: K8sResourceKind[] = [
   {
     apiVersion: 'helm.openshift.io/v1beta1',

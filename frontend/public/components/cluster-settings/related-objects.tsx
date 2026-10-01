@@ -11,8 +11,8 @@ import type {
   ConsoleDataViewColumn,
   ConsoleDataViewRow,
   ResourceMetadata,
-} from '@console/app/src/components/data-view/types';
-import type { RowProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+  RowProps,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DASH } from '@console/shared/src/constants/ui';
 import { referenceForModel, useModelFinder } from '../../module/k8s';
@@ -132,6 +132,8 @@ const RelatedObjects: FC<RelatedObjectsProps> = ({ data }) => {
   return (
     <Suspense fallback={<div className="loading-skeleton--table" />}>
       <ConsoleDataView<ClusterOperatorObjectReference, RelatedObjectsRowData, RelatedObjectsFilters>
+        isResizable={false}
+        id="console.ui~v1~ClusterOperatorRelatedObjects"
         label={t('Related objects')}
         data={data}
         loaded
@@ -139,7 +141,6 @@ const RelatedObjects: FC<RelatedObjectsProps> = ({ data }) => {
         getObjectMetadata={getObjectMetadata}
         getDataViewRows={getRelatedObjectsDataViewRows}
         customRowData={customRowData}
-        hideColumnManagement
         hideNameLabelFilters={false}
         hideLabelFilter
       />

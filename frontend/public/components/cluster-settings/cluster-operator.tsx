@@ -25,8 +25,8 @@ import type {
   ResourceFilters,
   ConsoleDataViewColumn,
   ConsoleDataViewRow,
-} from '@console/app/src/components/data-view/types';
-import type { RowProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+  RowProps,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import {
   GreenCheckCircleIcon,
@@ -235,6 +235,8 @@ const ClusterOperatorList: FC<ClusterOperatorListProps> = ({ data, loaded, ...pr
     <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<ClusterOperator, ClusterOperatorRowData, ClusterOperatorFilters>
         {...props}
+        isResizable={false}
+        id={ClusterOperatorModel}
         label={ClusterOperatorModel.labelPlural}
         data={data}
         loaded={loaded}
@@ -243,7 +245,6 @@ const ClusterOperatorList: FC<ClusterOperatorListProps> = ({ data, loaded, ...pr
         additionalFilterNodes={additionalFilterNodes}
         matchesAdditionalFilters={matchesAdditionalFilters}
         getDataViewRows={getClusterOperatorDataViewRows}
-        hideColumnManagement
       />
     </Suspense>
   );

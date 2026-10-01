@@ -10,7 +10,7 @@ import {
 import type {
   ConsoleDataViewColumn,
   GetDataViewRows,
-} from '@console/app/src/components/data-view/types';
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { DASH } from '@console/shared/src/constants/ui';
 import { PrometheusModel } from '../models';
@@ -154,12 +154,13 @@ const PrometheusInstancesList: FC<{ data: K8sResourceKind[]; loaded: boolean }> 
     <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<K8sResourceKind>
         {...props}
+        isResizable={false}
+        id={PrometheusModel}
         data={data}
         loaded={loaded}
         label={PrometheusModel.labelPlural}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement
       />
     </Suspense>
   );

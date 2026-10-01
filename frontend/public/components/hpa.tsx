@@ -14,8 +14,7 @@ import {
 import type {
   ConsoleDataViewColumn,
   GetDataViewRows,
-} from '@console/app/src/components/data-view/types';
-import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
@@ -308,12 +307,8 @@ const getDataViewRows: GetDataViewRows<HorizontalPodAutoscalerKind> = (data, col
 
 const useHorizontalPodAutoscalersColumns = (): {
   columns: ConsoleDataViewColumn<HorizontalPodAutoscalerKind>[];
-  resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation('public');
-  const { getResizableProps, getWidth, resetAllColumnWidths } = useColumnWidthSettings(
-    HorizontalPodAutoscalerModel,
-  );
 
   const columns: ConsoleDataViewColumn<HorizontalPodAutoscalerKind>[] = useMemo(
     () => [
@@ -321,7 +316,6 @@ const useHorizontalPodAutoscalersColumns = (): {
         title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
-        resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: {
           ...nameCellProps,
           modifier: 'nowrap' as const,
@@ -331,7 +325,6 @@ const useHorizontalPodAutoscalersColumns = (): {
         title: t('Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',
-        resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
           modifier: 'nowrap' as const,
         },
@@ -340,17 +333,15 @@ const useHorizontalPodAutoscalersColumns = (): {
         title: t('Labels'),
         id: tableColumnInfo[2].id,
         sort: 'metadata.labels',
-        resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
           modifier: 'nowrap' as const,
-          ...getLabelsColumnWidthStyleProp(getWidth(tableColumnInfo[2].id)),
+          ...getLabelsColumnWidthStyleProp(),
         },
       },
       {
         title: t('Scale target'),
         id: tableColumnInfo[3].id,
         sort: 'spec.scaleTargetRef.name',
-        resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
           modifier: 'nowrap' as const,
         },
@@ -359,7 +350,6 @@ const useHorizontalPodAutoscalersColumns = (): {
         title: t('Min pods'),
         id: tableColumnInfo[4].id,
         sort: 'spec.minReplicas',
-        resizableProps: getResizableProps(tableColumnInfo[4].id),
         props: {
           modifier: 'nowrap' as const,
         },
@@ -368,7 +358,6 @@ const useHorizontalPodAutoscalersColumns = (): {
         title: t('Max pods'),
         id: tableColumnInfo[5].id,
         sort: 'spec.maxReplicas',
-        resizableProps: getResizableProps(tableColumnInfo[5].id),
         props: {
           modifier: 'nowrap' as const,
         },
@@ -381,10 +370,10 @@ const useHorizontalPodAutoscalersColumns = (): {
         },
       },
     ],
-    [t, getResizableProps, getWidth],
+    [t],
   );
 
-  return { columns, resetAllColumnWidths };
+  return { columns };
 };
 
 const HorizontalPodAutoscalersList: FC<HorizontalPodAutoscalersListProps> = ({
@@ -392,20 +381,18 @@ const HorizontalPodAutoscalersList: FC<HorizontalPodAutoscalersListProps> = ({
   loaded,
   ...props
 }) => {
-  const { columns, resetAllColumnWidths } = useHorizontalPodAutoscalersColumns();
+  const { columns } = useHorizontalPodAutoscalersColumns();
 
   return (
     <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<HorizontalPodAutoscalerKind>
         {...props}
+        id={HorizontalPodAutoscalerModel}
         label={HorizontalPodAutoscalerModel.labelPlural}
         data={data}
         loaded={loaded}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement
-        isResizable
-        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );

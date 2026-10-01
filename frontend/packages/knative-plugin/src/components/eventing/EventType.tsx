@@ -3,7 +3,6 @@ import { useMemo } from 'react';
 import { Content, ContentVariants } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
-import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import type {
   ConsoleDataViewColumn,
   GetDataViewRows,
@@ -26,14 +25,12 @@ interface EventTypeProps {
 
 export const EventType: FC<EventTypeProps> = ({ eventType }) => {
   const { t } = useTranslation('knative-plugin');
-  const { getResizableProps, resetAllColumnWidths } =
-    useColumnWidthSettings(EventingEventTypeModel);
   const columns = useMemo<ConsoleDataViewColumn<EventAttribute>[]>(
     () => [
-      { id: 'attributes', resizableProps: getResizableProps('attributes'), title: t('Attributes') },
-      { id: 'values', resizableProps: getResizableProps('values'), title: t('Values') },
+      { id: 'attributes', title: t('Attributes') },
+      { id: 'values', title: t('Values') },
     ],
-    [t, getResizableProps],
+    [t],
   );
 
   const specAttributes = ['type', 'source', 'schema'];
@@ -49,6 +46,7 @@ export const EventType: FC<EventTypeProps> = ({ eventType }) => {
         <Content component={ContentVariants.h3}>{t('Event details')}</Content>
       </div>
       <ConsoleDataView<EventAttribute>
+        id={EventingEventTypeModel}
         data={rows}
         label={t('Event')}
         columns={columns}
@@ -56,9 +54,6 @@ export const EventType: FC<EventTypeProps> = ({ eventType }) => {
         getObjectMetadata={getObjectMetadata}
         loaded
         hideNameLabelFilters
-        hideColumnManagement
-        isResizable
-        resetAllColumnWidths={resetAllColumnWidths}
       />
     </>
   );

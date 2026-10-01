@@ -10,9 +10,9 @@ import {
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
-import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
 import { VerticalPodAutoscalerRecommendations } from '@console/app/src/components/vpa/VerticalPodAutoscalerRecommendations';
+import type { GetDataViewRows } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { ActionServiceProvider } from '@console/shared/src/components/actions/ActionServiceProvider';
 import { ActionMenu } from '@console/shared/src/components/actions/menu/ActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
@@ -219,19 +219,18 @@ const getDataViewRows: GetDataViewRows<DeploymentKind> = (data, columns) =>
   getWorkloadDataViewRows(data, columns, DeploymentModel);
 
 const DeploymentsList: FC<DeploymentsListProps> = ({ data, loaded, ...props }) => {
-  const { columns, resetAllColumnWidths } = useWorkloadColumns<DeploymentKind>(DeploymentModel);
+  const { columns } = useWorkloadColumns<DeploymentKind>();
 
   return (
     <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView
         {...props}
+        id={DeploymentModel}
         label={DeploymentModel.labelPlural}
         data={data}
         loaded={loaded}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        isResizable
-        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );

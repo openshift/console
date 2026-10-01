@@ -86,7 +86,10 @@ export class ListPage extends BasePage {
     const resizedWidth = await getWidth();
     await this.page.reload();
     await this.waitForRows();
-    await expect.poll(getWidth).toBeCloseTo(resizedWidth, 0);
+    // The persisted width depends on user settings (ConfigMap-backed on a real
+    // cluster), a separate async load from the table becoming visible, so this
+    // needs a longer timeout than the default 5s to avoid racing it in CI.
+    await expect.poll(getWidth, { timeout: 30_000 }).toBeCloseTo(resizedWidth, 0);
 
     await this.robustClick(this.page.getByTestId('reset-column-widths'));
     await expect.poll(getWidth).toBeCloseTo(initialWidth, 0);

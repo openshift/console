@@ -4,7 +4,7 @@ import type { ISortBy } from '@patternfly/react-table';
 import { SortByDirection } from '@patternfly/react-table';
 import * as _ from 'lodash';
 import { useSearchParams } from 'react-router';
-import type { ConsoleDataViewColumn } from './types';
+import type { ConsoleDataViewColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 
 export const getSortByDirection = (value: string): SortByDirection =>
   value === SortByDirection.desc.valueOf() ? SortByDirection.desc : SortByDirection.asc;

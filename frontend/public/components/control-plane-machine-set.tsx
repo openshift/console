@@ -22,8 +22,7 @@ import {
 import type {
   ConsoleDataViewColumn,
   GetDataViewRows,
-} from '@console/app/src/components/data-view/types';
-import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import PaneBodyGroup from '@console/shared/src/components/layout/PaneBodyGroup';
@@ -199,12 +198,8 @@ const tableColumnInfo = [
 
 const useControlPlaneMachineSetColumns = (): {
   columns: ConsoleDataViewColumn<ControlPlaneMachineSetKind>[];
-  resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation('public');
-  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(
-    ControlPlaneMachineSetModel,
-  );
 
   const columns: ConsoleDataViewColumn<ControlPlaneMachineSetKind>[] = useMemo(
     () => [
@@ -212,7 +207,6 @@ const useControlPlaneMachineSetColumns = (): {
         title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
-        resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: {
           ...nameCellProps,
           modifier: 'nowrap' as const,
@@ -222,7 +216,6 @@ const useControlPlaneMachineSetColumns = (): {
         title: t('Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',
-        resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
           modifier: 'nowrap' as const,
         },
@@ -231,7 +224,6 @@ const useControlPlaneMachineSetColumns = (): {
         title: t('Machines'),
         id: tableColumnInfo[2].id,
         sort: 'status.readyReplicas',
-        resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
           modifier: 'nowrap' as const,
         },
@@ -240,7 +232,6 @@ const useControlPlaneMachineSetColumns = (): {
         title: t('Strategy'),
         id: tableColumnInfo[3].id,
         sort: 'spec.strategy.type',
-        resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
           modifier: 'nowrap' as const,
         },
@@ -249,7 +240,6 @@ const useControlPlaneMachineSetColumns = (): {
         title: t('State'),
         id: tableColumnInfo[4].id,
         sort: 'spec.state',
-        resizableProps: getResizableProps(tableColumnInfo[4].id),
         props: {
           modifier: 'nowrap' as const,
         },
@@ -262,10 +252,10 @@ const useControlPlaneMachineSetColumns = (): {
         },
       },
     ],
-    [t, getResizableProps],
+    [t],
   );
 
-  return { columns, resetAllColumnWidths };
+  return { columns };
 };
 
 export const MachinesCell: FC<MachinesCellProps> = ({ desiredReplicas, readyReplicas, path }) => {
@@ -333,21 +323,19 @@ const ControlPlaneMachineSetList: FC<ControlPlaneMachineSetListProps> = ({
   loadError,
   ...props
 }) => {
-  const { columns, resetAllColumnWidths } = useControlPlaneMachineSetColumns();
+  const { columns } = useControlPlaneMachineSetColumns();
 
   return (
     <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<ControlPlaneMachineSetKind>
         {...props}
+        id={ControlPlaneMachineSetModel}
         label={ControlPlaneMachineSetModel.labelPlural}
         data={data}
         loaded={loaded}
         loadError={loadError}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement
-        isResizable
-        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );

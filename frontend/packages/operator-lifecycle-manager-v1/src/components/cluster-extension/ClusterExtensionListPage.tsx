@@ -8,11 +8,11 @@ import {
   getNameCellProps,
   ConsoleDataView,
 } from '@console/app/src/components/data-view/ConsoleDataView';
+import Status from '@console/dynamic-plugin-sdk/src/app/components/status/Status';
 import type {
   ConsoleDataViewColumn,
   GetDataViewRows,
-} from '@console/app/src/components/data-view/types';
-import Status from '@console/dynamic-plugin-sdk/src/app/components/status/Status';
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ResourceLink } from '@console/internal/components/utils/resource-link';
 import { referenceForModel } from '@console/internal/module/k8s';
@@ -165,13 +165,14 @@ const ClusterExtensionListPage: FC = () => {
   return (
     <PaneBody>
       <ConsoleDataView<ClusterExtensionKind>
+        isResizable={false}
+        id={ClusterExtensionModel}
         label={t('ClusterExtensions')}
         data={clusterExtensions ?? []}
         loaded={loaded}
         loadError={loadError}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement
         showNamespaceOverride
       />
     </PaneBody>

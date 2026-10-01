@@ -7,11 +7,15 @@ import { SortByDirection } from '@patternfly/react-table';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router';
-import type { RowProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import type {
+  RowProps,
+  ConsoleDataViewColumn,
+  GetDataViewRows,
+  ResourceFilters,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { useActiveColumns } from '@console/internal/components/factory/Table/active-columns-hook';
 import { sortResourceByValue } from '@console/internal/components/factory/Table/sort';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
-import type { ConsoleDataViewColumn, GetDataViewRows, ResourceFilters } from './types';
 import { useConsoleDataViewSort, getSortByDirection } from './useConsoleDataViewSort';
 
 const isDataViewConfigurableColumn = <TData,>(

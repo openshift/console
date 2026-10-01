@@ -26,7 +26,6 @@ import {
   getNameCellProps,
   getNameColumnProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import { getUser, GreenCheckCircleIcon } from '@console/dynamic-plugin-sdk';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import type {
@@ -116,29 +115,24 @@ const InstallPlanSubscriptions: FC<{ obj: InstallPlanKind }> = ({ obj }) => {
 
 export const useInstallPlanColumns = (): {
   columns: ConsoleDataViewColumn<InstallPlanKind>[];
-  resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation('olm');
-  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(InstallPlanModel);
   const columns = useMemo(
     () => [
       {
         id: 'name',
-        resizableProps: getResizableProps('name'),
         title: t('Name'),
         sort: 'metadata.name',
         props: getNameColumnProps(),
       },
       {
         id: 'namespace',
-        resizableProps: getResizableProps('namespace'),
         title: t('Namespace'),
         sort: 'metadata.namespace',
         props: { modifier: 'nowrap' as const },
       },
       {
         id: 'status',
-        resizableProps: getResizableProps('status'),
         title: t('Status'),
         sort: sortByOptionalPath<InstallPlanKind>('status.phase'),
         props: { modifier: 'nowrap' as const },
@@ -146,19 +140,17 @@ export const useInstallPlanColumns = (): {
       // Components and Subscriptions render multi-item lists, so they must be allowed to wrap.
       {
         id: 'components',
-        resizableProps: getResizableProps('components'),
         title: t('Components'),
       },
       {
         id: 'subscriptions',
-        resizableProps: getResizableProps('subscriptions'),
         title: t('Subscriptions'),
       },
       { id: 'actions', title: '', props: cellIsStickyProps },
     ],
-    [t, getResizableProps],
+    [t],
   );
-  return { columns, resetAllColumnWidths };
+  return { columns };
 };
 
 export const getInstallPlanDataViewRows: GetDataViewRows<InstallPlanKind> = (data, columns) =>
@@ -219,7 +211,7 @@ const EmptyMsg: FC = () => {
 
 export const InstallPlansList = requireOperatorGroup((props: InstallPlansListProps) => {
   const { t } = useTranslation('olm');
-  const { columns, resetAllColumnWidths } = useInstallPlanColumns();
+  const { columns } = useInstallPlanColumns();
 
   // ConsoleDataView has a generic empty body state, so keep the InstallPlan-specific wording by
   // short-circuiting when nothing loaded at all. Filtering down to zero rows still uses the table.
@@ -230,14 +222,12 @@ export const InstallPlansList = requireOperatorGroup((props: InstallPlansListPro
   return (
     <ConsoleDataView<InstallPlanKind>
       {...props}
+      id={InstallPlanModel}
       label={t('InstallPlans')}
       data={props.data || []}
       loaded={props.loaded}
       columns={columns}
       getDataViewRows={getInstallPlanDataViewRows}
-      hideColumnManagement
-      isResizable
-      resetAllColumnWidths={resetAllColumnWidths}
     />
   );
 });

@@ -17,7 +17,10 @@ import type {
 import type { QuickStartContextValues } from '@patternfly/quickstarts';
 import type { CodeEditorProps as PfCodeEditorProps } from '@patternfly/react-code-editor';
 import type { OverflowMenuProps, AlertVariant, ButtonProps } from '@patternfly/react-core';
-import type { DataViewTh } from '@patternfly/react-data-view/dist/esm/DataViewTable/DataViewTable';
+import type {
+  DataViewTd,
+  DataViewTh,
+} from '@patternfly/react-data-view/dist/esm/DataViewTable/DataViewTable';
 import type {
   ICell,
   OnSelect,
@@ -547,7 +550,7 @@ export interface ConsoleDataViewColumn<TData> extends ConsoleDataViewTh {
   sort?: string | ((filteredData: TData[], sortDirection: SortByDirection) => TData[]);
   /** (optional) Marks the column as additional, hiding it by default until selected in column management. */
   additional?: boolean;
-  /** (optional) Props enabling column resizing. See PatternFly's `DataViewTh` `resizableProps`. */
+  /** (optional) Override resizing for this column. With `ConsoleDataViewProps.isResizable`, columns with a title are resizable by default; set `isResizable: false` to disable one. Custom `onResize` callbacks take over width persistence. See PatternFly's `DataViewTh` `resizableProps`. */
   resizableProps?: Extract<DataViewTh, { cell: ReactNode }>['resizableProps'];
 }
 
@@ -593,6 +596,7 @@ export type GetDataViewRows<TData, TCustomRowData = unknown> = (
  * @example
  * ```tsx
  * <ConsoleDataView<PodDisruptionBudgetKind>
+ *   id={PodDisruptionBudgetModel}
  *   label={PodDisruptionBudgetModel.labelPlural}
  *   data={data}
  *   loaded={loaded}
@@ -616,10 +620,10 @@ export interface ConsoleDataViewProps<
   loadError?: unknown;
   /** The column definitions for the table. */
   columns: ConsoleDataViewColumn<TData>[];
-  /** (optional) The persisted column layout, used for column management (showing/hiding columns). */
-  columnLayout?: ColumnLayout;
-  /** (optional) A unique id used to persist and retrieve column management selections to and from user settings. Usually a `group~version~kind` string for a resource. */
-  columnManagementID?: string;
+  /** (optional) The persisted column layout, used for column management (showing/hiding columns). Supply this to show the column management action. The layout ID is derived from `id`. */
+  columnLayout?: Omit<ColumnLayout, 'id'> & { id?: string };
+  /** A model, group/version/kind, or string ID used for column management, matching `console.dataview/table-column` extensions, and saving resizable column widths. Models and GVKs resolve to `group~version~kind`. */
+  id: K8sModel | K8sGroupVersionKind | string;
   /** (optional) Initial values for the built-in name and label filters (and any custom fields added via `TFilters`). Defaults to empty name and label filters. */
   initialFilters?: TFilters;
   /** (optional) Additional filter elements to render alongside the built-in name and label filters. */
@@ -642,14 +646,10 @@ export interface ConsoleDataViewProps<
   hideNameLabelFilters?: boolean;
   /** (optional) Hides only the label filter, keeping the name filter. The label filter is also omitted while `loaded` is `false`. */
   hideLabelFilter?: boolean;
-  /** (optional) Hides the column management action in the toolbar. */
-  hideColumnManagement?: boolean;
   /** (optional) Renders an empty placeholder instead of the table. */
   mock?: boolean;
-  /** (optional) Enables column resizing. Pair with `resetAllColumnWidths` so users can reset persisted column widths. */
+  /** (optional) Enables resizing and saved widths for columns with a title, and shows a reset action. Defaults to `true`. Use `resizableProps` to customize or disable resizing on individual columns. */
   isResizable?: boolean;
-  /** When provided and isResizable is true, a toolbar action is shown to reset all column widths. */
-  resetAllColumnWidths?: () => void;
   /** Additional actions to display in the toolbar (inside ResponsiveActions), alongside the built-in column management and reset-column-widths actions. */
   additionalActions?: ReactNode;
   /** Custom actions to display in the toolbar outside ResponsiveActions (for actions that should not be responsive via ResponsiveActions). */
@@ -697,6 +697,28 @@ export type ConsoleDataViewFC = <
 ) => ReactElement;
 
 // ConsoleDataView helper types
+
+/** Creates the checkbox column used with `ConsoleDataViewProps.selection`. */
+export type CreateSelectionColumn = <TData>() => ConsoleDataViewColumn<TData>;
+
+/** Options for creating a selectable row cell with `createSelectionCell`. */
+export type CreateSelectionCellOptions = {
+  /** Index of the row. */
+  rowIndex: number;
+  /** Unique ID of the row item. */
+  itemId: string;
+  /** Whether the row item is selected. */
+  isSelected: boolean;
+  /** Called when the row's checkbox is selected or cleared. */
+  onSelect: (itemId: string, isSelecting: boolean) => void;
+  /** Whether the row's checkbox is disabled. */
+  disabled?: boolean;
+};
+
+/** Creates a checkbox cell for a row in a `ConsoleDataView` with selection enabled. */
+export type CreateSelectionCell = (
+  options: CreateSelectionCellOptions,
+) => Extract<DataViewTd, { cell: ReactNode }>;
 
 /**
  * Props that mark a `ConsoleDataView` column header or cell as sticky, keeping it fixed at the

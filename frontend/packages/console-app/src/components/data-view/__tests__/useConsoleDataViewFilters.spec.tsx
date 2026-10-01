@@ -1,8 +1,10 @@
 import type { FC, ReactNode } from 'react';
 import { render, renderHook, act, waitFor } from '@testing-library/react';
 import { MemoryRouter, useLocation, useNavigate } from 'react-router';
-import type { K8sResourceCommon } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import type { ResourceFilters } from '../types';
+import type {
+  K8sResourceCommon,
+  ResourceFilters,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { useConsoleDataViewFilters } from '../useConsoleDataViewFilters';
 
 jest.mock('@console/internal/components/factory/table-filters', () => ({

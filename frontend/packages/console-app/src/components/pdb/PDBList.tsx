@@ -10,8 +10,7 @@ import {
 import type {
   ConsoleDataViewColumn,
   GetDataViewRows,
-} from '@console/app/src/components/data-view/types';
-import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { ResourceLink } from '@console/internal/components/utils/resource-link';
 import { Selector } from '@console/internal/components/utils/selector';
 import { LoadingBox } from '@console/internal/components/utils/status-box';
@@ -78,11 +77,8 @@ const getDataViewRows: GetDataViewRows<PodDisruptionBudgetKind> = (data, columns
 
 const usePDBColumns = (): {
   columns: ConsoleDataViewColumn<PodDisruptionBudgetKind>[];
-  resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation('console-app');
-  const { getResizableProps, resetAllColumnWidths } =
-    useColumnWidthSettings(PodDisruptionBudgetModel);
 
   const columns = useMemo<ConsoleDataViewColumn<PodDisruptionBudgetKind>[]>(
     () => [
@@ -90,7 +86,6 @@ const usePDBColumns = (): {
         title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
-        resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: {
           ...nameCellProps,
           modifier: 'nowrap' as const,
@@ -100,7 +95,6 @@ const usePDBColumns = (): {
         title: t('Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',
-        resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
           modifier: 'nowrap' as const,
         },
@@ -109,7 +103,6 @@ const usePDBColumns = (): {
         title: t('Selector'),
         id: tableColumnInfo[2].id,
         sort: 'spec.selector',
-        resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
           modifier: 'nowrap' as const,
         },
@@ -118,7 +111,6 @@ const usePDBColumns = (): {
         title: t('Availability'),
         id: tableColumnInfo[3].id,
         sort: 'spec.minAvailable',
-        resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
           modifier: 'nowrap' as const,
         },
@@ -127,7 +119,6 @@ const usePDBColumns = (): {
         title: t('Allowed disruptions'),
         id: tableColumnInfo[4].id,
         sort: 'status.disruptionsAllowed',
-        resizableProps: getResizableProps(tableColumnInfo[4].id),
         props: {
           modifier: 'nowrap' as const,
         },
@@ -136,7 +127,6 @@ const usePDBColumns = (): {
         title: t('Created'),
         id: tableColumnInfo[5].id,
         sort: 'metadata.creationTimestamp',
-        resizableProps: getResizableProps(tableColumnInfo[5].id),
         props: {
           modifier: 'nowrap' as const,
         },
@@ -149,27 +139,25 @@ const usePDBColumns = (): {
         },
       },
     ],
-    [t, getResizableProps],
+    [t],
   );
 
-  return { columns, resetAllColumnWidths };
+  return { columns };
 };
 
 const PodDisruptionBudgetList: FC<PodDisruptionBudgetsListProps> = ({ data, loaded, ...props }) => {
-  const { columns, resetAllColumnWidths } = usePDBColumns();
+  const { columns } = usePDBColumns();
 
   return (
     <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<PodDisruptionBudgetKind>
         {...props}
+        id={PodDisruptionBudgetModel}
         label={PodDisruptionBudgetModel.labelPlural}
         data={data}
         loaded={loaded}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement
-        isResizable
-        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );

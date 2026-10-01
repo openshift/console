@@ -21,8 +21,7 @@ import {
 import type {
   ConsoleDataViewColumn,
   GetDataViewRows,
-} from '@console/app/src/components/data-view/types';
-import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import type { PersistentVolumeKind } from '@console/internal/module/k8s';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
@@ -115,11 +114,8 @@ const getDataViewRowsCreator: (t: TFunction) => GetDataViewRows<PersistentVolume
 
 const usePersistentVolumeColumns = (): {
   columns: ConsoleDataViewColumn<PersistentVolumeKind>[];
-  resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation('public');
-  const { getResizableProps, getWidth, resetAllColumnWidths } =
-    useColumnWidthSettings(PersistentVolumeModel);
 
   const columns: ConsoleDataViewColumn<PersistentVolumeKind>[] = useMemo(
     () => [
@@ -127,45 +123,39 @@ const usePersistentVolumeColumns = (): {
         title: t('Name'),
         sort: 'metadata.name',
         id: tableColumnInfo[0].id,
-        resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: { ...nameCellProps, modifier: 'nowrap' as const },
       },
       {
         title: t('Status'),
         sort: 'status.phase',
         id: tableColumnInfo[1].id,
-        resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: { modifier: 'nowrap' as const },
       },
       {
         title: t('Claim'),
         sort: 'spec.claimRef.name',
         id: tableColumnInfo[2].id,
-        resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: { modifier: 'nowrap' as const },
       },
       {
         title: t('Capacity'),
         sort: 'pvStorage',
         id: tableColumnInfo[3].id,
-        resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: { modifier: 'nowrap' as const },
       },
       {
         title: t('Labels'),
         sort: 'metadata.labels',
         id: tableColumnInfo[4].id,
-        resizableProps: getResizableProps(tableColumnInfo[4].id),
         props: {
           modifier: 'nowrap' as const,
-          ...getLabelsColumnWidthStyleProp(getWidth(tableColumnInfo[4].id)),
+          ...getLabelsColumnWidthStyleProp(),
         },
       },
       {
         title: t('Created'),
         sort: 'metadata.creationTimestamp',
         id: tableColumnInfo[5].id,
-        resizableProps: getResizableProps(tableColumnInfo[5].id),
         props: { modifier: 'nowrap' as const },
       },
       {
@@ -174,10 +164,10 @@ const usePersistentVolumeColumns = (): {
         props: { ...actionsCellProps },
       },
     ],
-    [t, getResizableProps, getWidth],
+    [t],
   );
 
-  return { columns, resetAllColumnWidths };
+  return { columns };
 };
 
 const PVDetails = ({ obj: pv }: { obj: PersistentVolumeKind }) => {
@@ -262,21 +252,19 @@ const PVDetails = ({ obj: pv }: { obj: PersistentVolumeKind }) => {
 
 const PersistentVolumeList: FC<PersistentVolumeListProps> = ({ data, loaded, ...props }) => {
   const { t } = useTranslation('public');
-  const { columns, resetAllColumnWidths } = usePersistentVolumeColumns();
+  const { columns } = usePersistentVolumeColumns();
   const getDataViewRows = useMemo(() => getDataViewRowsCreator(t), [t]);
 
   return (
     <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<PersistentVolumeKind>
         {...props}
+        id={PersistentVolumeModel}
         label={PersistentVolumeModel.labelPlural}
         data={data}
         loaded={loaded}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement
-        isResizable
-        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );

@@ -153,12 +153,13 @@ const ServiceMonitorsList = (props) => {
     <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView
         {...props}
+        isResizable={false}
+        id={ServiceMonitorModel}
         data={data}
         loaded={loaded}
         label={ServiceMonitorModel.labelPlural}
         columns={columns}
         getDataViewRows={getServiceMonitorDataViewRows}
-        hideColumnManagement
       />
     </Suspense>
   );

@@ -17,14 +17,11 @@ import {
   createSelectionCell,
   createSelectionColumn,
 } from '@console/app/src/components/data-view/dataViewSelectionHelpers';
+import { useDataViewSelection } from '@console/app/src/components/data-view/useDataViewSelection';
 import type {
   ConsoleDataViewColumn,
   ConsoleDataViewRow,
   ResourceFilters,
-} from '@console/app/src/components/data-view/types';
-import { useDataViewSelection } from '@console/app/src/components/data-view/useDataViewSelection';
-import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-import type {
   RowProps,
   TableColumn,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
@@ -85,10 +82,8 @@ const usePluginColumns = (
   canBulkEdit: boolean,
 ): {
   columns: TableColumn<ConsolePluginTableRow>[];
-  resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation('console-app');
-  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(ConsolePluginModel);
 
   const columns = useMemo(
     () => [
@@ -97,24 +92,20 @@ const usePluginColumns = (
         title: t('Name'),
         id: pluginColumnInfo.name.id,
         sort: 'name',
-        resizableProps: getResizableProps(pluginColumnInfo.name.id),
         props: getNameColumnProps(true, canBulkEdit),
       },
       {
         title: t('Version'),
         id: pluginColumnInfo.version.id,
-        resizableProps: getResizableProps(pluginColumnInfo.version.id),
       },
       {
         title: t('Description'),
         id: pluginColumnInfo.description.id,
-        resizableProps: getResizableProps(pluginColumnInfo.description.id),
       },
       {
         title: t('Status'),
         id: pluginColumnInfo.status.id,
         sort: 'status',
-        resizableProps: getResizableProps(pluginColumnInfo.status.id),
       },
       {
         title: t('Enabled'),
@@ -124,18 +115,16 @@ const usePluginColumns = (
             const result = Number(a.enabled) - Number(b.enabled);
             return direction === SortByDirection.desc ? -result : result;
           }),
-        resizableProps: getResizableProps(pluginColumnInfo.enabled.id),
       },
       {
         title: t('CSP violations'),
         id: pluginColumnInfo.cspViolations.id,
-        resizableProps: getResizableProps(pluginColumnInfo.cspViolations.id),
       },
     ],
-    [t, getResizableProps, canBulkEdit],
+    [t, canBulkEdit],
   );
 
-  return { columns, resetAllColumnWidths };
+  return { columns };
 };
 
 const getPluginDataViewRows = (
@@ -247,7 +236,7 @@ const ConsolePluginsTable: FC<ConsolePluginsTableProps> = ({
   const { t } = useTranslation('console-app');
   const { canPatchConsoleOperatorConfig } = useConsoleOperatorConfigData();
   const canBulkEdit = !developmentMode && canPatchConsoleOperatorConfig;
-  const { columns, resetAllColumnWidths } = usePluginColumns(canBulkEdit);
+  const { columns } = usePluginColumns(canBulkEdit);
 
   const { selectedIds, onSelectItem, onSelectAll, clearSelection } = useDataViewSelection({
     data: rows,
@@ -388,6 +377,7 @@ const ConsolePluginsTable: FC<ConsolePluginsTableProps> = ({
           />
         )}
         <ConsoleDataView<ConsolePluginTableRow, undefined, PluginFilters>
+          id={ConsolePluginModel}
           label={t('Console plugins')}
           data={rows}
           loaded={loaded}
@@ -398,9 +388,6 @@ const ConsolePluginsTable: FC<ConsolePluginsTableProps> = ({
           additionalFilterNodes={additionalFilterNodes}
           matchesAdditionalFilters={matchesAdditionalFilters}
           hideLabelFilter
-          hideColumnManagement
-          isResizable
-          resetAllColumnWidths={resetAllColumnWidths}
           selection={selectionProps}
           customActions={customActions}
         />
