@@ -7,13 +7,8 @@ import {
   getConsoleRequestHeaders,
   normalizeConsoleHeaders,
 } from '@console/shared/src/utils/console-fetch-utils';
-import type { OLMCatalogItem } from '../types';
+import type { OLMCatalogItem, OLMCatalogItemData } from '../types';
 import { normalizeCatalogItem } from '../utils/catalog-item';
-
-type OLMCatalogItemData = {
-  categories: string[];
-  latestVersion: string;
-};
 
 type UseCatalogItems = () => [CatalogItem<OLMCatalogItemData>[], boolean, string];
 const useCatalogItems: UseCatalogItems = () => {

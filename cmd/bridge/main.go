@@ -640,7 +640,7 @@ func main() {
 		}
 
 		cache := cache.New(defaultCacheDuration, defaultCacheCleanup)
-		catalogService := olm.NewCatalogService(srv.ServiceClient, srv.CatalogdProxyConfig, cache)
+		catalogService := olm.NewCatalogService(srv.ServiceClient, srv.CatalogdProxyConfig, cache, srv.ReleaseVersion)
 		srv.CatalogService = catalogService
 
 		if err = controllers.NewClusterCatalogReconciler(mgr, catalogService).SetupWithManager(mgr); err != nil {

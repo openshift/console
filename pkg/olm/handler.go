@@ -110,7 +110,8 @@ func (o *OLMHandler) catalogItemHandler(w http.ResponseWriter, r *http.Request) 
 
 	item, err := o.catalogService.GetCatalogItem(catalogName, packageName)
 	if err != nil {
-		serverutils.SendResponse(w, http.StatusInternalServerError, err.Error())
+		klog.Errorf("failed to get catalog item %s/%s: %v", catalogName, packageName, err)
+		serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: "failed to get catalog item"})
 		return
 	}
 
@@ -121,7 +122,7 @@ func (o *OLMHandler) catalogItemHandler(w http.ResponseWriter, r *http.Request) 
 
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(item); err != nil {
-		serverutils.SendResponse(w, http.StatusInternalServerError, err.Error())
+		klog.Errorf("failed to encode catalog item %s/%s: %v", catalogName, packageName, err)
 		return
 	}
 }
