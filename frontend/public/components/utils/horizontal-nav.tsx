@@ -177,21 +177,24 @@ export const navFactory: NavFactory = {
   }),
 };
 
-export const NavBar: FC<NavBarProps> = ({ pages }) => {
+const TabBadgeFallback: FC = () => null;
+
+export const NavBar: FC<NavBarProps> = ({ pages, activeTab, basePath }) => {
   const { t } = useTranslation('public');
   const { telemetryPrefix, titlePrefix } = useContext(PageTitleContext);
   const location = useLocation();
   const navigate = useNavigate();
 
-  const sliced = location.pathname.split('/');
-  const lastElement = decodeURIComponent(sliced.pop());
-  const defaultPage = pages.filter((p) => p.href === lastElement).length === 0;
-  const baseURL = defaultPage ? location.pathname : sliced.join('/');
+  const pathSegments = location.pathname.split('/');
+  const lastElement = decodeURIComponent(pathSegments.pop());
+  const selectedTab = activeTab ?? lastElement;
+  const defaultPage = pages.filter((p) => p.href === selectedTab).length === 0;
+  const baseURL = basePath ?? (defaultPage ? location.pathname : pathSegments.join('/'));
 
   // the div wrapper prevents the tabs from collapsing in a flexbox
   const tabs = (
     <div>
-      <Tabs activeKey={defaultPage ? '' : lastElement} component="nav" usePageInsets>
+      <Tabs activeKey={defaultPage ? '' : selectedTab} component="nav" usePageInsets>
         {pages.map(({ name, nameKey, href, badge }) => {
           const to = `${baseURL.replace(/\/$/, '')}/${encodeURIComponent(href)}`;
 
@@ -216,7 +219,7 @@ export const NavBar: FC<NavBarProps> = ({ pages }) => {
     </div>
   );
 
-  const activePage = pages.find(({ href }) => (defaultPage ? href === '' : lastElement === href));
+  const activePage = pages.find(({ href }) => (defaultPage ? href === '' : selectedTab === href));
 
   const labelId = activePage?.nameKey?.split('~')[1] || activePage?.name || 'Details';
   return (
@@ -237,13 +240,9 @@ NavBar.displayName = 'NavBar';
 export const HorizontalNav = memo<HorizontalNavProps>((props) => {
   const params = useDeepCompareMemoize(useParams());
 
-  const renderContent = (routes: ReactNode[]) => {
+  const renderContent = (children: ReactNode) => {
     const { noStatusBox, obj, EmptyMsg, label } = props;
-    const content = (
-      <Suspense fallback={<LoadingBox blame="HorizontalNav" />}>
-        <Routes>{routes}</Routes>
-      </Suspense>
-    );
+    const content = <Suspense fallback={<LoadingBox blame="HorizontalNav" />}>{children}</Suspense>;
 
     const skeletonDetails = (
       <div data-test="skeleton-detail-view" className="skeleton-detail-view">
@@ -297,7 +296,7 @@ export const HorizontalNav = memo<HorizontalNavProps>((props) => {
   );
 
   const objReference = props.obj?.data ? referenceFor(props.obj.data) : '';
-  const { contextId } = props;
+  const { activeTab, basePath, contextId } = props;
   const horizontalTabExtensions = useExtensions<HorizontalNavTab>(isHorizontalNavTab);
   const navTabExtensions = useExtensions<NavTab>(isTab);
 
@@ -320,35 +319,41 @@ export const HorizontalNav = memo<HorizontalNavProps>((props) => {
       .map((tab) => ({
         name: tab.properties.name,
         href: tab.properties.href,
+        badge: tab.properties.badge ? (
+          <AsyncComponent loader={tab.properties.badge} LoadingComponent={TabBadgeFallback} />
+        ) : undefined,
         component: (pageProps: PageComponentProps) => (
           <AsyncComponent {...pageProps} loader={tab.properties.component} />
         ),
       }));
 
-    return [...resolvedResourceNavTab, ...resolvedNavTab].sort((a, b) =>
-      a.name.localeCompare(b.name),
-    );
+    return [...resolvedResourceNavTab, ...resolvedNavTab].sort((a, b) => {
+      const defaultTabOrder = Number(a.href !== '') - Number(b.href !== '');
+      return defaultTabOrder || a.name.localeCompare(b.name);
+    });
   }, [horizontalTabExtensions, navTabExtensions, objReference, contextId]);
 
   const basePages = props.pages || (props.obj?.loaded ? props.pagesFor(props.obj.data) : []);
   const pages: Page[] = [...basePages, ...pluginPages];
 
+  const renderPage = (p: Page) => (
+    <ErrorBoundaryPage>
+      <p.component
+        {...params}
+        {...componentProps}
+        {...extraResources}
+        {...p.pageData}
+        customData={props.customData}
+        params={params}
+      />
+    </ErrorBoundaryPage>
+  );
+
   const routes = pages.map((p) => (
     <Route
       path={p.path || encodeURIComponent(p.href)}
       key={p.nameKey || p.name}
-      element={
-        <ErrorBoundaryPage>
-          <p.component
-            {...params}
-            {...componentProps}
-            {...extraResources}
-            {...p.pageData}
-            customData={props.customData}
-            params={params}
-          />
-        </ErrorBoundaryPage>
-      }
+      element={renderPage(p)}
     />
   ));
 
@@ -359,10 +364,15 @@ export const HorizontalNav = memo<HorizontalNavProps>((props) => {
     );
   }
 
+  // Alias routes select content independently of the URL, just like the tab bar.
+  const activePage = activeTab === undefined ? undefined : pages.find((p) => p.href === activeTab);
+
   return (
     <PageBody className={props.className}>
-      {!props.hideNav && <NavBar pages={pages} />}
-      {renderContent(routes)}
+      {!props.hideNav && <NavBar pages={pages} activeTab={activeTab} basePath={basePath} />}
+      {renderContent(
+        activeTab === undefined ? <Routes>{routes}</Routes> : activePage && renderPage(activePage),
+      )}
     </PageBody>
   );
 }, _.isEqual);
@@ -416,6 +426,8 @@ export type Page<D = any> = Partial<Omit<NavPage, 'component'>> & {
 
 export type NavBarProps = {
   pages: Page[];
+  activeTab?: string;
+  basePath?: string;
 };
 
 export type HorizontalNavProps = Omit<HorizontalNavFacadeProps, 'pages' | 'resource'> & {
@@ -432,6 +444,8 @@ export type HorizontalNavProps = Omit<HorizontalNavFacadeProps, 'pages' | 'resou
   EmptyMsg?: ComponentType<any>;
   customData?: any;
   noStatusBox?: boolean;
+  activeTab?: string;
+  basePath?: string;
 };
 
 HorizontalNav.displayName = 'HorizontalNav';
