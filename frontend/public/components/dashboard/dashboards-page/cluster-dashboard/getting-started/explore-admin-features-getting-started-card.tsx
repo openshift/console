@@ -4,6 +4,7 @@ import { RhUiFlagIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import * as semver from 'semver';
 import { lightspeedOperatorURL } from '@console/app/src/components/lightspeed/Lightspeed';
+import { OPERATOR_OLMV0_TYPE } from '@console/operator-lifecycle-manager/src/const';
 import type { GettingStartedLink } from '@console/shared/src/components/getting-started/GettingStartedCard';
 import { GettingStartedCard } from '@console/shared/src/components/getting-started/GettingStartedCard';
 import { FLAGS } from '@console/shared/src/constants/common';
@@ -27,7 +28,7 @@ export const ExploreAdminFeaturesGettingStartedCard: FC = () => {
         id: 'openshift-ai',
         title: t('OpenShift AI'),
         description: t('Build, deploy, and manage AI-enabled applications.'),
-        href: '/catalog?catalogType=operator&keyword=openshift+ai&selectedId=rhods-operator-redhat-operators-openshift-marketplace',
+        href: `/catalog/all-namespaces?catalogType=${OPERATOR_OLMV0_TYPE}&keyword=openshift+ai&selectedId=rhods-operator-redhat-operators-openshift-marketplace`,
       },
       {
         id: 'trusted-software-supply-chain',

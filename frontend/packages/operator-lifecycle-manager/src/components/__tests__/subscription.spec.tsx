@@ -56,6 +56,11 @@ jest.mock('@console/internal/components/utils/details-page', () => ({
   ResourceSummary: jest.fn(() => null),
 }));
 
+// The Classic migration alert self-gates on TECH_PREVIEW.
+jest.mock('@console/shared/src/hooks/useFlag', () => ({
+  useFlag: () => true,
+}));
+
 jest.mock('@console/internal/components/conditions', () => ({
   Conditions: jest.fn(() => null),
 }));
@@ -242,7 +247,7 @@ describe('SubscriptionsPage', () => {
     expect(multiListPageProps.title).toEqual('Subscriptions');
     expect(multiListPageProps.canCreate).toBe(true);
     expect(multiListPageProps.createProps).toEqual({
-      to: '/catalog?catalogType=operator',
+      to: '/catalog/all-namespaces?catalogType=operator-olmv0',
     });
     expect(multiListPageProps.createButtonText).toEqual('Create Subscription');
     expect(multiListPageProps.omitFilterToolbar).toBe(true);
@@ -260,6 +265,16 @@ describe('SubscriptionsPage', () => {
         prop: 'operatorGroup',
       },
     ]);
+  });
+
+  // The alert self-gates on TECH_PREVIEW; assert the Tech Preview behaviour here.
+  it('should warn that Classic Operators are being replaced from within the page heading', () => {
+    renderWithProviders(<SubscriptionsPage namespace="default" />);
+
+    const [multiListPageProps] = mockMultiListPage.mock.calls[0];
+    renderWithProviders(multiListPageProps.helpAlert);
+
+    expect(screen.getByTestId('classic-operator-migration-alert')).toBeInTheDocument();
   });
 });
 

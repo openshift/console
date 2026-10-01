@@ -7,4 +7,15 @@
     margin: var(--pf-t--global--spacer--xs) var(--pf-t--global--spacer--xs)
       var(--pf-t--global--spacer--xs) 0;
   }
+
+  &--vertical {
+    align-items: flex-end;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    margin-top: 0;
+  }
+
+  &--vertical &__label {
+    margin: 0 0 var(--pf-t--global--spacer--xs) 0;
+  }
 }

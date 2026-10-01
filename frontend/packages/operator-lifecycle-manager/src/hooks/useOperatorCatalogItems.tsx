@@ -3,6 +3,7 @@ import { Spinner } from '@patternfly/react-core';
 import { RhUiCheckCircleFillIcon, RhUiErrorFillIcon } from '@patternfly/react-icons';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { FLAG_TECH_PREVIEW } from '@console/app/src/consts';
 import type {
   CatalogItem,
   CatalogItemBadge,
@@ -10,8 +11,10 @@ import type {
   ExtensionHook,
 } from '@console/dynamic-plugin-sdk';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { parseList, strConcat } from '@console/shared/src/utils/utils';
 import { iconFor } from '../components';
+import { ClassicOperatorMigrationAlert } from '../components/classic-operators/ClassicOperatorMigrationAlert';
 import { subscriptionFor } from '../components/operator-group';
 import type { CSVAnnotations, TokenizedAuthProvider } from '../components/operator-hub/index';
 import {
@@ -39,6 +42,7 @@ import { OperatorInfrastructureFeatures } from '../components/operator-hub/opera
 import { OperatorRepository } from '../components/operator-hub/operator-repository';
 import { OperatorSupport } from '../components/operator-hub/operator-support';
 import { OperatorValidSubscriptions } from '../components/operator-hub/operator-valid-subscriptions';
+import { OPERATOR_OLMV0_TYPE } from '../const';
 import { PackageManifestModel, SubscriptionModel } from '../models';
 import type { PackageManifestKind } from '../types';
 import { clusterServiceVersionFor } from '../utils/clusterserviceversions';
@@ -67,6 +71,7 @@ const useOperatorCatalogItems: ExtensionHook<CatalogItem[], CatalogExtensionHook
   options,
 ) => {
   const { t } = useTranslation('olm');
+  const techPreview = useFlag(FLAG_TECH_PREVIEW);
   const namespace = options?.namespace || '';
   const targetNamespace = namespace === ALL_NAMESPACES_KEY ? '' : namespace;
   const [operatorGroups, operatorGroupsLoaded, operatorGroupsLoadError] = useOperatorGroups();
@@ -196,7 +201,7 @@ const useOperatorCatalogItems: ExtensionHook<CatalogItem[], CatalogExtensionHook
         .map((c) => c.trim())
         .filter(Boolean);
       const imgUrl = iconFor(pkg);
-      const type = 'operator';
+      const type = OPERATOR_OLMV0_TYPE;
 
       // Compute tokenizedAuth per operator based on its infrastructureFeatures
       // Only set tokenizedAuth if both the cluster supports it AND the operator supports it
@@ -247,6 +252,17 @@ const useOperatorCatalogItems: ExtensionHook<CatalogItem[], CatalogExtensionHook
             };
 
       const badges = [
+        // Outside Tech Preview there is no Next-Gen catalog to tell these apart from.
+        ...(techPreview
+          ? [
+              {
+                text: t('Classic Operator'),
+                color: 'grey',
+                variant: 'filled',
+                placement: 'header',
+              } as CatalogItemBadge,
+            ]
+          : []),
         ...(installed && !isInstalling
           ? [
               {
@@ -267,12 +283,17 @@ const useOperatorCatalogItems: ExtensionHook<CatalogItem[], CatalogExtensionHook
               } as CatalogItemBadge,
             ]
           : []),
-        ...(pkg?.status?.deprecation
+        ...(techPreview || pkg?.status?.deprecation
           ? [
               {
                 text: t('Deprecated'),
                 color: 'orange',
-                tooltip: pkg.status.deprecation.message,
+                tooltip: techPreview
+                  ? t(
+                      'olm~Classic operators are deprecated. Migrate to Next-Gen operators for continued support.',
+                    ) +
+                    (pkg.status.deprecation?.message ? `\n${pkg.status.deprecation?.message}` : '')
+                  : pkg.status.deprecation.message,
                 variant: 'outline',
                 icon: <RhUiErrorFillIcon />,
               } as CatalogItemBadge,
@@ -395,6 +416,7 @@ const useOperatorCatalogItems: ExtensionHook<CatalogItem[], CatalogExtensionHook
             },
           ],
           descriptions: [
+            ...(techPreview ? [{ value: <ClassicOperatorMigrationAlert /> }] : []),
             {
               value: (
                 <OperatorDescription
@@ -448,6 +470,7 @@ const useOperatorCatalogItems: ExtensionHook<CatalogItem[], CatalogExtensionHook
     operatorHubPackageManifests,
     subscriptions,
     t,
+    techPreview,
     updateChannel,
     updateVersion,
   ]);

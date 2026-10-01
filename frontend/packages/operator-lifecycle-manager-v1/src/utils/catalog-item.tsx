@@ -1,3 +1,4 @@
+import i18next from 'i18next';
 import type { CatalogItem } from '@console/dynamic-plugin-sdk';
 import { CapabilityLevel } from '@console/operator-lifecycle-manager/src/components/operator-hub/operator-hub-item-details';
 import {
@@ -58,6 +59,14 @@ export const normalizeCatalogItem: NormalizeExtensionCatalogItem = (item) => {
       capabilities,
       validSubscription: validSubscriptionFilters,
     },
+    badges: [
+      {
+        text: i18next.t('olm-v1~Next-Gen Operator'),
+        color: 'blue',
+        variant: 'filled',
+        placement: 'header',
+      },
+    ],
     creationTimestamp: createdAt,
     cta: {
       label: 'Install',
@@ -108,7 +117,7 @@ export const normalizeCatalogItem: NormalizeExtensionCatalogItem = (item) => {
     supportUrl: support,
     provider,
     tags,
-    type: 'operator',
+    type: 'operator-olmv1',
     typeLabel: source,
     uid: id,
   };
