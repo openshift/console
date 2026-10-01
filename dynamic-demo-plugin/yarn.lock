@@ -154,7 +154,7 @@ __metadata:
     chalk: "npm:2.4.x"
     comment-json: "npm:4.x"
     find-up: "npm:4.x"
-    lodash: "npm:^4.17.23"
+    lodash: "npm:^4.18.1"
     read-pkg: "npm:5.x"
     semver: "npm:6.x"
     webpack: "npm:^5.73.0"
@@ -169,8 +169,8 @@ __metadata:
     "@patternfly/react-core": "npm:4.239.0"
     "@patternfly/react-table": "npm:4.108.0"
     classnames: "npm:2.x"
-    immutable: "npm:3.x"
-    lodash: "npm:^4.17.23"
+    immutable: "npm:^3.8.3"
+    lodash: "npm:^4.18.1"
     react: "npm:^17.0.1"
     react-helmet: "npm:^6.1.0"
     react-i18next: "npm:^11.7.3"
@@ -253,30 +253,20 @@ __metadata:
   linkType: hard
 
 "@patternfly/react-core@npm:^4.135.15":
-  version: 4.221.3
-  resolution: "@patternfly/react-core@npm:4.221.3"
+  version: 4.278.1
+  resolution: "@patternfly/react-core@npm:4.278.1"
   dependencies:
-    "@patternfly/react-icons": "npm:^4.72.3"
-    "@patternfly/react-styles": "npm:^4.71.3"
-    "@patternfly/react-tokens": "npm:^4.73.3"
+    "@patternfly/react-icons": "npm:^4.93.7"
+    "@patternfly/react-styles": "npm:^4.92.8"
+    "@patternfly/react-tokens": "npm:^4.94.7"
     focus-trap: "npm:6.9.2"
     react-dropzone: "npm:9.0.0"
     tippy.js: "npm:5.1.2"
     tslib: "npm:^2.0.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0
-    react-dom: ^16.8.0 || ^17.0.0
-  checksum: 10c0/a8bd1a41a064e64a97f538adb35980d24efd01703a5a6d78de7a6190f9afda1f6d586234e4947c9f41a35836d371f38d603fee1867a783021dc743537f8fb551
-  languageName: node
-  linkType: hard
-
-"@patternfly/react-icons@npm:^4.72.3":
-  version: 4.72.3
-  resolution: "@patternfly/react-icons@npm:4.72.3"
-  peerDependencies:
-    react: ^16.8.0 || ^17.0.0
-    react-dom: ^16.8.0 || ^17.0.0
-  checksum: 10c0/5fe915c5fffea8ed4cc44adab7bba46ae1ca246db4a1c5b4142762564bc95435f848c564a136d155ac836235ac45c5feb70469580d88ef44e4928e5eadbcc34b
+    react: ^16.8 || ^17 || ^18
+    react-dom: ^16.8 || ^17 || ^18
+  checksum: 10c0/71984ac2c11aea295f348d2d4ee4291b2f3d495a76fd6f2817681cef89a64962793631020963777d08e19768198e5ddc90e2c10f6b81aeb5cb4676fcde5224e4
   languageName: node
   linkType: hard
 
@@ -290,10 +280,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@patternfly/react-styles@npm:^4.11.4, @patternfly/react-styles@npm:^4.71.3":
-  version: 4.71.3
-  resolution: "@patternfly/react-styles@npm:4.71.3"
-  checksum: 10c0/a5ebb7f4dc1dd5bdada83e37a8838addcac0bd9b338a276aad9c23de058670df3903585530dd7de8c4c5893511f6e7ea15f057ee28a8efb089ba2273303b5d98
+"@patternfly/react-icons@npm:^4.93.7":
+  version: 4.93.7
+  resolution: "@patternfly/react-icons@npm:4.93.7"
+  peerDependencies:
+    react: ^16.8 || ^17 || ^18
+    react-dom: ^16.8 || ^17 || ^18
+  checksum: 10c0/24d5ffd40e18c8bb7c62299b7b5721793b770459607ffb4fefcc6e485a106f6d09f62a44f17685be9eb68463ea674962c1e18c7b739d2dc10fabfbb828ebccf4
+  languageName: node
+  linkType: hard
+
+"@patternfly/react-styles@npm:^4.11.4, @patternfly/react-styles@npm:^4.92.8":
+  version: 4.92.8
+  resolution: "@patternfly/react-styles@npm:4.92.8"
+  checksum: 10c0/01b492920e6e0603b9cd5898dac451baa0a2d764a79d36a725bab81211f99d6663baaa56840631f1ce2fb62da287804d2861328ff54c2701c71ea4f3d8490f2c
   languageName: node
   linkType: hard
 
@@ -321,17 +321,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@patternfly/react-tokens@npm:^4.73.3":
-  version: 4.73.3
-  resolution: "@patternfly/react-tokens@npm:4.73.3"
-  checksum: 10c0/9fa3b5bf86255b36ca96f9ce519a1ec227fe0394be49b589cbbc39a3b9c4d9cf9b14b6043f8e1eb523b63a30626ecce8949663c4437eb43d9560e6bb7e067424
-  languageName: node
-  linkType: hard
-
 "@patternfly/react-tokens@npm:^4.91.0":
   version: 4.91.0
   resolution: "@patternfly/react-tokens@npm:4.91.0"
   checksum: 10c0/2542ca7d11a61b79c8c765c4286677d5b331c5b35567147deda1287a47b74ada7b9c59e2c6ecf86bd6e2f556d041f45a0134de64e2019f1c0bd3e0f245531d45
+  languageName: node
+  linkType: hard
+
+"@patternfly/react-tokens@npm:^4.94.7":
+  version: 4.94.7
+  resolution: "@patternfly/react-tokens@npm:4.94.7"
+  checksum: 10c0/b1883647a2f4e24d44d75ba29b199833dce8f47f03c0939b4d5910bad4dd936db3ed1124799f8e6d28283aac646c2a87ac5b11dc05baf3c803e937fa3ed7f8a7
   languageName: node
   linkType: hard
 
@@ -1173,9 +1173,9 @@ __metadata:
   linkType: hard
 
 "classnames@npm:2.x, classnames@npm:^2.2.5":
-  version: 2.3.1
-  resolution: "classnames@npm:2.3.1"
-  checksum: 10c0/e3b832219042802464e648c41c2e8be96c2c64d2522cfa22fbb5ec088418406c61ab351a682c077c07f691c8b00c9f0ee7939b20fabc6c23da69063252a4ab89
+  version: 2.5.1
+  resolution: "classnames@npm:2.5.1"
+  checksum: 10c0/afff4f77e62cea2d79c39962980bf316bacb0d7c49e13a21adaadb9221e1c6b9d3cdb829d8bb1b23c406f4e740507f37e1dcf506f7e3b7113d17c5bab787aa69
   languageName: node
   linkType: hard
 
@@ -1713,9 +1713,9 @@ __metadata:
   linkType: hard
 
 "dompurify@npm:^2.2.6":
-  version: 2.3.8
-  resolution: "dompurify@npm:2.3.8"
-  checksum: 10c0/973969bb347218f377627817b12ed69f988574619dbbe43ccd81bc25cb67c7106fd78e245d8933fce370c04bf6f9d11666b2bc6bdd34982f1e5c59a2c26c830e
+  version: 2.5.9
+  resolution: "dompurify@npm:2.5.9"
+  checksum: 10c0/91cf3fd8ad07f969a740813a2101d573547954fd87925d729e8cfc592fa93c51fc3f7b298d336bd90c1a5eae1ad65d1ca06254b938fd84af84ef081c9c4b75ee
   languageName: node
   linkType: hard
 
@@ -2597,10 +2597,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"immutable@npm:3.x":
-  version: 3.8.2
-  resolution: "immutable@npm:3.8.2"
-  checksum: 10c0/fb6a2999ad3bda9e51741721e42547076dd492635ee4df9241224055fe953ec843583a700088cc4915f23dc326e5084f4e17f1bbd7388c3e872ef5a242e0ac5e
+"immutable@npm:^3.8.3":
+  version: 3.8.4
+  resolution: "immutable@npm:3.8.4"
+  checksum: 10c0/fffbd0bf4ecf6cfed6b3444d2da740f171dd7c228d913d2cc81fc2782c10df0f6f7d822c926d38dd5fb5d91fcfce5c5482a8027817f07a5ed870b057271a3b8a
   languageName: node
   linkType: hard
 
@@ -3123,10 +3123,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash@npm:^4.17.23":
-  version: 4.17.23
-  resolution: "lodash@npm:4.17.23"
-  checksum: 10c0/1264a90469f5bb95d4739c43eb6277d15b6d9e186df4ac68c3620443160fc669e2f14c11e7d8b2ccf078b81d06147c01a8ccced9aab9f9f63d50dcf8cace6bf6
+"lodash@npm:^4.18.1":
+  version: 4.18.1
+  resolution: "lodash@npm:4.18.1"
+  checksum: 10c0/757228fc68805c59789e82185135cf85f05d0b2d3d54631d680ca79ec21944ec8314d4533639a14b8bcfbd97a517e78960933041a5af17ecb693ec6eecb99a27
   languageName: node
   linkType: hard
 
@@ -3288,12 +3288,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"minimatch@npm:^3.0.2, minimatch@npm:^3.0.4":
-  version: 3.0.4
-  resolution: "minimatch@npm:3.0.4"
+"minimatch@npm:^3.1.3":
+  version: 3.1.5
+  resolution: "minimatch@npm:3.1.5"
   dependencies:
     brace-expansion: "npm:^1.1.7"
-  checksum: 10c0/d0a2bcd93ebec08a9eef3ca83ba33c9fb6feb93932e0b4dc6aa46c5f37a9404bea7ad9ff7cafe23ce6634f1fe3b206f5315ecbb05812da6e692c21d8ecfd3dae
+  checksum: 10c0/2ecbdc0d33f07bddb0315a8b5afbcb761307a8778b48f0b312418ccbced99f104a2d17d8aca7573433c70e8ccd1c56823a441897a45e384ea76ef401a26ace70
   languageName: node
   linkType: hard
 
