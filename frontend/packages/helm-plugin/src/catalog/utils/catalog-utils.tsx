@@ -37,6 +37,10 @@ export const normalizeHelmCharts = (
       const chartRepositoryTitle = getChartRepositoryTitle(chartRepositories, chartRepoName);
 
       charts.forEach((chart: HelmChartMetaData) => {
+        if (!chart.urls?.length) {
+          return;
+        }
+
         const { name, created, version, appVersion, description, keywords, annotations } = chart;
 
         const annotatedName = annotations?.[CHART_NAME_ANNOTATION] ?? '';
