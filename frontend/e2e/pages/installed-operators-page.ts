@@ -5,6 +5,13 @@ import { escapeRegExp } from '../utils/selector-utils';
 
 import BasePage from './base-page';
 
+/**
+ * Installed Classic (OLMv0) Operators.
+ *
+ * Navigation goes through the ClusterServiceVersion list URL, which works on every cluster: on a
+ * standard cluster it is the Installed Operators page, and under Tech Preview it redirects to the
+ * Classic tab of the tabbed Installed Operators page. Either way the same list renders.
+ */
 export class InstalledOperatorsPage extends BasePage {
   private readonly pageHeading = this.page.getByTestId('page-heading');
   // ConsoleDataView renders its own name filter rather than ListPageFilter's, so accept either.
@@ -13,7 +20,7 @@ export class InstalledOperatorsPage extends BasePage {
     .or(this.page.getByRole('textbox', { name: 'Filter by name' }));
 
   /**
-   * Navigate to Installed Operators page
+   * Navigate to the Installed Operators list
    */
   async navigateTo(namespace?: string): Promise<void> {
     const path = namespace
@@ -23,7 +30,7 @@ export class InstalledOperatorsPage extends BasePage {
   }
 
   /**
-   * Navigate to Installed Operators page
+   * Navigate to the Installed Operators list
    */
   async navigateToInstalledOperators(): Promise<void> {
     await this.goTo('/k8s/all-namespaces/operators.coreos.com~v1alpha1~ClusterServiceVersion');

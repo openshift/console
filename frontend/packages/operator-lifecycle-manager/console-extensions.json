@@ -430,21 +430,58 @@
     "properties": {
       "title": "%olm~Operators%",
       "catalogId": "dev-catalog",
-      "type": "operator",
+      "type": "operator-olmv0",
       "provider": { "$codeRef": "useOperatorCatalogItems" }
     },
     "flags": {
-      "disallowed": ["OLMV1_ENABLED"]
+      "required": ["OPERATOR_LIFECYCLE_MANAGER"],
+      "disallowed": ["TECH_PREVIEW"]
+    }
+  },
+  {
+    "type": "console.catalog/item-provider",
+    "properties": {
+      "title": "%olm~Classic Operators%",
+      "catalogId": "dev-catalog",
+      "type": "operator-olmv0",
+      "provider": { "$codeRef": "useOperatorCatalogItems" }
+    },
+    "flags": {
+      "required": ["OPERATOR_LIFECYCLE_MANAGER", "TECH_PREVIEW"]
     }
   },
   {
     "type": "console.catalog/item-type",
     "properties": {
-      "type": "operator",
+      "type": "operator-olmv0",
       "title": "%olm~Operators%",
       "catalogDescription": "%olm~Browse for Operators provided by Operator Lifecycle Manager.%",
       "typeDescription": "%olm~**Operators** are software extensions to OpenShift that make use of custom resources to manage applications and their components. They are managed by Operator Lifecycle Manager.%",
+      "sortFilterGroups": false
+    },
+    "flags": {
+      "required": ["OPERATOR_LIFECYCLE_MANAGER"],
+      "disallowed": ["TECH_PREVIEW"]
+    }
+  },
+  {
+    "type": "console.catalog/item-type",
+    "properties": {
+      "type": "operator-olmv0",
+      "title": "%olm~Classic Operators%",
+      "catalogDescription": "%olm~Browse for Operators managed by Classic Operator Lifecycle Manager (OLMv0).%",
+      "typeDescription": "%olm~**Operators** are software extensions to OpenShift that make use of custom resources to manage applications and their components. They are managed by Operator Lifecycle Manager.%",
       "sortFilterGroups": false,
+      "sortWeight": 1
+    },
+    "flags": {
+      "required": ["OPERATOR_LIFECYCLE_MANAGER", "TECH_PREVIEW"]
+    }
+  },
+  {
+    "type": "console.catalog/item-type-metadata",
+    "properties": {
+      "type": "operator-olmv0",
       "filters": [
         {
           "label": "%olm~Source%",
@@ -488,17 +525,32 @@
       ]
     },
     "flags": {
-      "disallowed": ["OLMV1_ENABLED"]
+      "required": ["OPERATOR_LIFECYCLE_MANAGER"]
     }
   },
   {
     "type": "console.catalog/categories-provider",
     "properties": {
       "catalogId": "dev-catalog",
+      "type": "operator-olmv0",
       "provider": { "$codeRef": "useOperatorCatalogCategories" }
     },
     "flags": {
-      "disallowed": ["OLMV1_ENABLED"]
+      "required": ["OPERATOR_LIFECYCLE_MANAGER"]
+    }
+  },
+  {
+    "type": "console.tab",
+    "properties": {
+      "contextId": "installed-operators",
+      "name": "%olm~Classic Operators%",
+      "href": "classic",
+      "component": {
+        "$codeRef": "classicInstalledOperatorsPage"
+      }
+    },
+    "flags": {
+      "required": ["OPERATOR_LIFECYCLE_MANAGER"]
     }
   },
   {
