@@ -1,6 +1,7 @@
 import { screen } from '@testing-library/react';
 import { safeDump } from 'js-yaml';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { PodModel, ConfigMapModel } from '../../models';
 import { CreateYAMLInner } from '../create-yaml';
@@ -24,14 +25,20 @@ jest.mock('@console/dynamic-plugin-sdk/src/api/useResolvedExtensions', () => ({
   useResolvedExtensions: jest.fn(),
 }));
 
+jest.mock('@console/shared/src/hooks/useActiveNamespace', () => ({
+  useActiveNamespace: jest.fn(() => ['default', jest.fn()]),
+}));
+
 describe('CreateYAMLInner', () => {
   const defaultParams = { ns: 'default', plural: 'pods' };
 
   const mockUseResolvedExtensions = useResolvedExtensions as jest.Mock;
+  const mockUseActiveNamespace = useActiveNamespace as jest.Mock;
 
   beforeEach(() => {
     jest.clearAllMocks();
     mockUseResolvedExtensions.mockReturnValue([[], true]);
+    mockUseActiveNamespace.mockReturnValue(['default', jest.fn()]);
   });
 
   describe('Loading States', () => {
@@ -123,6 +130,47 @@ describe('CreateYAMLInner', () => {
       expect(editorText).toContain('"namespace":"default"');
       expect(editorText).toContain('"apiVersion":"v1"');
       expect(editorText).toContain('"kind":"Pod"');
+    });
+
+    it('uses active namespace for initial resource when project changes', async () => {
+      mockUseActiveNamespace.mockReturnValue(['project-b', jest.fn()]);
+
+      renderWithProviders(
+        <CreateYAMLInner
+          params={{ ns: 'project-a', plural: 'pods' }}
+          kindsInFlight={false}
+          kindObj={PodModel}
+        />,
+      );
+
+      const editorText = screen.getByText(/Resource:/).textContent;
+      expect(editorText).toContain('"namespace":"project-b"');
+      expect(editorText).not.toContain('"namespace":"project-a"');
+    });
+
+    it('remounts YAML editor when namespace changes', async () => {
+      mockUseActiveNamespace.mockReturnValue(['project-a', jest.fn()]);
+
+      const { rerender } = renderWithProviders(
+        <CreateYAMLInner
+          params={{ ns: 'project-a', plural: 'pods' }}
+          kindsInFlight={false}
+          kindObj={PodModel}
+        />,
+      );
+
+      expect(screen.getByText(/Resource:/).textContent).toContain('"namespace":"project-a"');
+
+      mockUseActiveNamespace.mockReturnValue(['project-b', jest.fn()]);
+      rerender(
+        <CreateYAMLInner
+          params={{ ns: 'project-b', plural: 'pods' }}
+          kindsInFlight={false}
+          kindObj={PodModel}
+        />,
+      );
+
+      expect(screen.getByText(/Resource:/).textContent).toContain('"namespace":"project-b"');
     });
 
     it('verifies the creation of sample object using default YAML template for model when no template provided', async () => {
