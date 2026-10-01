@@ -6,6 +6,7 @@ import type { CatalogItemType } from '@console/dynamic-plugin-sdk';
 import { isCatalogItemType } from '@console/dynamic-plugin-sdk';
 import type {
   CatalogItem,
+  CatalogItemBadge,
   CatalogItemDetails,
   CatalogItemMetadataProviderFunction,
 } from '@console/dynamic-plugin-sdk/src/extensions';
@@ -443,6 +444,17 @@ export const useGetAllDisabledSubCatalogs = () => {
     return [[]];
   }, [catalogExtensionsArray, softwareCatalogTypes]);
 };
+
+/**
+ * Splits catalog item badges into the ones that render in the item header and the ones that render
+ * in the footer. Badges default to the footer when `placement` is not set.
+ */
+export const partitionBadgesByPlacement = (
+  badges: CatalogItemBadge[] = [],
+): [CatalogItemBadge[], CatalogItemBadge[]] => [
+  badges.filter((badge) => badge.placement === 'header'),
+  badges.filter((badge) => badge.placement !== 'header'),
+];
 
 export const useIsSoftwareCatalogEnabled = (): boolean => {
   const [disabledSubCatalogs] = useGetAllDisabledSubCatalogs();

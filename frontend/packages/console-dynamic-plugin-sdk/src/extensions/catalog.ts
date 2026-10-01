@@ -9,6 +9,9 @@ export type CatalogItemType = Extension<
   {
     /** Type for the catalog item. */
     type: string;
+    /** The unique identifier(s) for the catalog(s) this type belongs to. If not specified,
+        the type is available in all catalogs. */
+    catalogId?: string | string[];
     /** Title for the catalog item. */
     title: string;
     /** Description for the type specific catalog. */
@@ -17,6 +20,10 @@ export type CatalogItemType = Extension<
     typeDescription?: string;
     /** Determine if filter groups should be sorted alphabetically. Defaults to true. */
     sortFilterGroups?: boolean;
+    /** Ordering weight for this type in the catalog's type list. Types are sorted by weight
+        ascending and then alphabetically by title, so a higher weight sinks the type towards
+        the bottom of the list. Defaults to 0. */
+    sortWeight?: number;
     /** Custom filters specific to the catalog item.  */
     filters?: CatalogItemAttribute[];
     /** Custom groupings specific to the catalog item. */
@@ -217,6 +224,12 @@ export type CatalogItemBadge = {
   color?: 'blue' | 'teal' | 'green' | 'orange' | 'purple' | 'red' | 'grey';
   icon?: ReactNode;
   variant?: 'outline' | 'filled';
+  /**
+   * Where the badge renders on a catalog tile and in the catalog item details.
+   * `footer` (default) places it alongside the other badges below the description.
+   * `header` stacks it vertically under the catalog type label.
+   */
+  placement?: 'header' | 'footer';
 };
 
 export type CatalogItemMetadataProviderFunction = (item: CatalogItem) =>

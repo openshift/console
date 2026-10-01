@@ -15,6 +15,7 @@ import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DASH } from '@console/shared/src/constants/ui';
 import { ClusterExtensionModel } from '../../models';
 import type { ClusterExtensionKind } from '../../types';
+import { ClusterExtensionEmptyState } from './ClusterExtensionEmptyState';
 
 const tableColumnInfo = [
   { id: 'name' },
@@ -151,12 +152,13 @@ const ClusterExtensionListPage: FC = () => {
       <ConsoleDataView<ClusterExtensionKind>
         isResizable={false}
         id={ClusterExtensionModel}
-        label={t('ClusterExtensions')}
+        label={t('Next-Gen Operators')}
         data={clusterExtensions ?? []}
         loaded={loaded}
         loadError={loadError}
         columns={columns}
         getDataViewRows={getDataViewRows}
+        EmptyMsg={ClusterExtensionEmptyState}
         showNamespaceOverride
       />
     </PaneBody>

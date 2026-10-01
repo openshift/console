@@ -47,7 +47,7 @@ describe('ExploreAdminFeaturesGettingStartedCard', () => {
 
     expect(screen.getByTestId('item openshift-ai')).toHaveAttribute(
       'href',
-      '/catalog?catalogType=operator&keyword=openshift+ai&selectedId=rhods-operator-redhat-operators-openshift-marketplace',
+      '/catalog/all-namespaces?catalogType=operator-olmv0&keyword=openshift+ai&selectedId=rhods-operator-redhat-operators-openshift-marketplace',
     );
 
     expect(screen.getByTestId('item trusted-software-supply-chain')).toHaveAttribute(

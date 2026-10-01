@@ -1,9 +1,8 @@
-import type { ReactElement, FC } from 'react';
+import type { ReactElement, ReactNode, FC } from 'react';
 import { useMemo, useCallback } from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router';
-import { FLAG_TECH_PREVIEW } from '@console/app/src/consts';
 import type {
   ResolvedExtension,
   CatalogItemType,
@@ -12,12 +11,9 @@ import type {
 import type { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions';
 import { skeletonCatalog } from '@console/internal/components/utils/skeleton-catalog';
 import { StatusBox } from '@console/internal/components/utils/status-box';
-import OLMv1Alert from '@console/operator-lifecycle-manager-v1/src/components/OLMv1Alert';
-import { FLAG_OLMV1_ENABLED } from '@console/operator-lifecycle-manager-v1/src/const';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
-import { useFlag } from '../../hooks/useFlag';
 import { useQueryParams } from '../../hooks/useQueryParams';
 import PageBody from '../layout/PageBody';
 import { CatalogView } from './catalog-view/CatalogView';
@@ -40,6 +36,7 @@ type CatalogControllerProps = CatalogService & {
   title: string;
   description: string | ReactElement;
   categories?: CatalogCategory[];
+  helpAlert?: ReactNode;
 };
 
 export const CatalogController: FC<CatalogControllerProps> = ({
@@ -54,17 +51,13 @@ export const CatalogController: FC<CatalogControllerProps> = ({
   description: defaultDescription,
   hideSidebar,
   categories,
+  helpAlert,
 }) => {
   const { setQueryArgument, removeQueryArgument } = useQueryParamsMutator();
   const { t } = useTranslation('console-shared');
   const { pathname } = useLocation();
   const queryParams = useQueryParams();
   const [disabledSubCatalogs] = useGetAllDisabledSubCatalogs();
-  const techPreviewEnabled = useFlag(FLAG_TECH_PREVIEW);
-  const olmv1Enabled = useFlag(FLAG_OLMV1_ENABLED);
-
-  // TODO(CONSOLE-4823): Remove this hard-coded alert when OLMv1 GAs
-  const showOLMv1Alert = techPreviewEnabled && olmv1Enabled && type === 'operator';
 
   const typeExtension: ResolvedExtension<CatalogItemType> = useMemo(
     () => catalogExtensions?.find((extension) => extension.properties.type === type),
@@ -144,10 +137,14 @@ export const CatalogController: FC<CatalogControllerProps> = ({
         label: extension.properties.title,
         value: extension.properties.type,
         description: extension.properties.typeDescription,
+        sortWeight: extension.properties.sortWeight,
       }))
       .filter((extension) => !disabledSubCatalogs?.includes(extension.value));
 
-    return _.sortBy(types, ({ label }) => label.toLowerCase());
+    return _.sortBy(types, [
+      ({ sortWeight }) => sortWeight ?? 0,
+      ({ label }) => label.toLowerCase(),
+    ]);
   }, [catalogExtensions, disabledSubCatalogs]);
 
   const catalogItems = useMemo(() => (type ? itemsMap[type] : items), [items, itemsMap, type]);
@@ -198,13 +195,8 @@ export const CatalogController: FC<CatalogControllerProps> = ({
           title={title}
           breadcrumbs={type ? breadcrumbs : null}
           helpText={getCatalogTypeDescription()}
+          helpAlert={helpAlert}
         />
-        {/* TODO(CONSOLE-4823): Remove this hard-coded alert when OLMv1 GAs */}
-        {showOLMv1Alert && (
-          <div className="pf-v6-u-mx-md">
-            <OLMv1Alert />
-          </div>
-        )}
         <StatusBox
           skeleton={skeletonCatalog}
           data={items}
@@ -225,7 +217,11 @@ export const CatalogController: FC<CatalogControllerProps> = ({
             hideSidebar={hideSidebar}
             sortFilterGroups={sortFilterGroups}
           />
-          <CatalogDetailsModal item={selectedItem} onClose={closeDetailsPanel} />
+          <CatalogDetailsModal
+            item={selectedItem}
+            catalogTypes={catalogTypes}
+            onClose={closeDetailsPanel}
+          />
         </StatusBox>
       </PageBody>
     </>
