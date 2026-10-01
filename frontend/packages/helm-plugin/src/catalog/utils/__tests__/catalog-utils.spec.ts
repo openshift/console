@@ -1,4 +1,4 @@
-import { t } from '@console/shared/src/test-utils/i18n-test-utils';
+import { t } from '../../../../../../__mocks__/i18next';
 import type { HelmChartEntries } from '../../../types/helm-types';
 import { normalizeHelmCharts } from '../catalog-utils';
 
