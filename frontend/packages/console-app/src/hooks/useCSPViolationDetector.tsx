@@ -25,10 +25,17 @@ const getPluginNameFromResourceURL = (url: string): string =>
     ? url.substring(pluginAssetBaseURL.length).split('/')[0]
     : null;
 
-const sameHostname = (a: string, b: string): boolean => {
-  const urlA = new URL(a);
-  const urlB = new URL(b);
-  return urlA.hostname === urlB.hostname;
+// Export for testing
+export const sameHostname = (a: string, b: string): boolean => {
+  // SecurityPolicyViolationEvent URIs can be tokens such as "inline" or
+  // "eval", not necessarily absolute URLs.
+  try {
+    const urlA = new URL(a);
+    const urlB = new URL(b);
+    return urlA.hostname === urlB.hostname;
+  } catch {
+    return false;
+  }
 };
 
 const pluginCSPViolationsAreEqual = (
