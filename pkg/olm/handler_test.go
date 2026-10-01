@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -21,11 +22,15 @@ func TestNewOLMHandler(t *testing.T) {
 
 func TestOLMHandler_catalogItemsHandler(t *testing.T) {
 	t.Run("should return catalog items", func(t *testing.T) {
-		items := []ConsoleCatalogItem{{Name: "test-item"}}
+		items := []ConsoleCatalogItem{{
+			Name:                 "test-item",
+			AvailableVersions:    []string{"2.0.0", "1.0.0"},
+			ClusterCompatibility: ClusterCompatibilityUnknown,
+		}}
 		lastModified := time.Now()
 		c := cache.New(5*time.Minute, 10*time.Minute)
-		c.Set("olm:catalog:test-catalog:items", items, cache.NoExpiration)
-		service := NewCatalogService(&http.Client{}, nil, c)
+		c.Set(getCatalogItemsKey("test-catalog"), newCachedCatalog(items), cache.NoExpiration)
+		service := NewCatalogService(&http.Client{}, nil, c, "")
 		service.LastModified = lastModified.UTC().Format(http.TimeFormat)
 		service.index["test-catalog"] = struct{}{}
 
@@ -46,7 +51,7 @@ func TestOLMHandler_catalogItemsHandler(t *testing.T) {
 	t.Run("should return 304 if cache is not modified", func(t *testing.T) {
 		lastModified := time.Now()
 		c := cache.New(5*time.Minute, 10*time.Minute)
-		service := NewCatalogService(&http.Client{}, nil, c)
+		service := NewCatalogService(&http.Client{}, nil, c, "")
 		service.LastModified = lastModified.UTC().Format(http.TimeFormat)
 		handler := NewOLMHandler("", nil, service)
 
@@ -61,12 +66,17 @@ func TestOLMHandler_catalogItemsHandler(t *testing.T) {
 }
 
 func TestOLMHandler_catalogItemHandler(t *testing.T) {
-	items := []ConsoleCatalogItem{{Name: "test-item", Catalog: "test-catalog"}}
+	items := []ConsoleCatalogItem{{
+		Name:                 "test-item",
+		Catalog:              "test-catalog",
+		AvailableVersions:    []string{"2.0.0", "1.0.0"},
+		ClusterCompatibility: ClusterCompatibilityUnknown,
+	}}
 	tests := []struct {
 		name        string
 		method      string
 		packageName string
-		cachedItems []ConsoleCatalogItem
+		cachedItems interface{}
 		wantStatus  int
 		wantItem    *ConsoleCatalogItem
 	}{
@@ -74,7 +84,7 @@ func TestOLMHandler_catalogItemHandler(t *testing.T) {
 			name:        "returns a single catalog item",
 			method:      http.MethodGet,
 			packageName: "test-item",
-			cachedItems: items,
+			cachedItems: newCachedCatalog(items),
 			wantStatus:  http.StatusOK,
 			wantItem:    &items[0],
 		},
@@ -82,15 +92,22 @@ func TestOLMHandler_catalogItemHandler(t *testing.T) {
 			name:        "returns not found when the item is missing",
 			method:      http.MethodGet,
 			packageName: "missing-item",
-			cachedItems: []ConsoleCatalogItem{},
+			cachedItems: newCachedCatalog([]ConsoleCatalogItem{}),
 			wantStatus:  http.StatusNotFound,
 		},
 		{
 			name:        "rejects unsupported methods",
 			method:      http.MethodPost,
 			packageName: "test-item",
-			cachedItems: items,
+			cachedItems: newCachedCatalog(items),
 			wantStatus:  http.StatusMethodNotAllowed,
+		},
+		{
+			name:        "returns a generic error for malformed cache content",
+			method:      http.MethodGet,
+			packageName: "test-item",
+			cachedItems: "malformed cache content",
+			wantStatus:  http.StatusInternalServerError,
 		},
 	}
 
@@ -98,7 +115,7 @@ func TestOLMHandler_catalogItemHandler(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			c := cache.New(5*time.Minute, 10*time.Minute)
 			c.Set(getCatalogItemsKey("test-catalog"), tt.cachedItems, cache.NoExpiration)
-			service := NewCatalogService(&http.Client{}, nil, c)
+			service := NewCatalogService(&http.Client{}, nil, c, "")
 			handler := NewOLMHandler("", nil, service)
 
 			path := "/api/olm/catalog-items/test-catalog/" + tt.packageName
@@ -107,14 +124,69 @@ func TestOLMHandler_catalogItemHandler(t *testing.T) {
 			handler.ServeHTTP(rr, req)
 
 			assert.Equal(t, tt.wantStatus, rr.Code)
+			if tt.wantStatus == http.StatusInternalServerError {
+				assert.JSONEq(t, `{"error":"failed to get catalog item"}`, rr.Body.String())
+			}
 			if tt.wantItem != nil {
 				var returnedItem ConsoleCatalogItem
 				err := json.Unmarshal(rr.Body.Bytes(), &returnedItem)
 				require.NoError(t, err)
 				assert.Equal(t, *tt.wantItem, returnedItem)
+				var body map[string]json.RawMessage
+				require.NoError(t, json.Unmarshal(rr.Body.Bytes(), &body))
+				assert.Contains(t, body, "availableVersions")
+				assert.Contains(t, body, "clusterCompatibility")
+				assert.NotContains(t, body, "metadata")
 			}
 		})
 	}
+}
+
+func TestOLMHandler_catalogItemHandlerMissingParameters(t *testing.T) {
+	tests := []struct {
+		name        string
+		catalogName string
+		packageName string
+	}{
+		{name: "missing catalog", packageName: "test-package"},
+		{name: "missing package", catalogName: "test-catalog"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			handler := &OLMHandler{}
+			req := httptest.NewRequest(http.MethodGet, "/", nil)
+			req.SetPathValue("catalogName", tt.catalogName)
+			req.SetPathValue("packageName", tt.packageName)
+			rr := httptest.NewRecorder()
+			handler.catalogItemHandler(rr, req)
+			assert.Equal(t, http.StatusBadRequest, rr.Code)
+			assert.JSONEq(t, `{"error":"catalog name and package name are required"}`, rr.Body.String())
+		})
+	}
+}
+
+type failingResponseWriter struct {
+	*httptest.ResponseRecorder
+	writes int
+}
+
+func (w *failingResponseWriter) Write([]byte) (int, error) {
+	w.writes++
+	return 0, io.ErrClosedPipe
+}
+
+func TestOLMHandler_catalogItemHandlerEncodingFailure(t *testing.T) {
+	c := cache.New(cache.NoExpiration, 0)
+	c.Set(getCatalogItemsKey("test-catalog"), newCachedCatalog([]ConsoleCatalogItem{{Name: "test-package"}}), cache.NoExpiration)
+	handler := NewOLMHandler("", nil, NewCatalogService(&http.Client{}, nil, c, ""))
+	req := httptest.NewRequest(http.MethodGet, "/api/olm/catalog-items/test-catalog/test-package", nil)
+	w := &failingResponseWriter{ResponseRecorder: httptest.NewRecorder()}
+
+	handler.ServeHTTP(w, req)
+
+	assert.Equal(t, 1, w.writes, "an encoding failure must not trigger another response write")
+	assert.Equal(t, http.StatusOK, w.Code, "the handler must not attempt a new error response after writing begins")
+	assert.Equal(t, "application/json", w.Header().Get("Content-Type"))
 }
 
 func TestOLMHandler_catalogdMetasHandler(t *testing.T) {
@@ -131,7 +203,7 @@ func TestOLMHandler_catalogdMetasHandler(t *testing.T) {
 		c := cache.New(5*time.Minute, 10*time.Minute)
 		c.Set(getCatalogBaseURLKey("test-catalog"), catalogdServer.URL, cache.NoExpiration)
 
-		service := NewCatalogService(&http.Client{}, nil, c)
+		service := NewCatalogService(&http.Client{}, nil, c, "")
 		handler := NewOLMHandler("", nil, service)
 
 		req := httptest.NewRequest("GET", "/api/olm/catalogd/metas/test-catalog", nil)
@@ -146,7 +218,7 @@ func TestOLMHandler_catalogdMetasHandler(t *testing.T) {
 
 	t.Run("should return 404 when catalog name is missing from URL", func(t *testing.T) {
 		c := cache.New(5*time.Minute, 10*time.Minute)
-		service := NewCatalogService(&http.Client{}, nil, c)
+		service := NewCatalogService(&http.Client{}, nil, c, "")
 		handler := NewOLMHandler("", nil, service)
 
 		req := httptest.NewRequest("GET", "/api/olm/catalogd/metas/", nil)
@@ -161,7 +233,7 @@ func TestOLMHandler_catalogdMetasHandler(t *testing.T) {
 	t.Run("should return 500 when service returns error", func(t *testing.T) {
 		c := cache.New(5*time.Minute, 10*time.Minute)
 		// Don't set base URL in cache, which will cause an error
-		service := NewCatalogService(&http.Client{}, nil, c)
+		service := NewCatalogService(&http.Client{}, nil, c, "")
 		handler := NewOLMHandler("", nil, service)
 
 		req := httptest.NewRequest("GET", "/api/olm/catalogd/metas/test-catalog", nil)
@@ -177,7 +249,7 @@ func TestOLMHandler_catalogdMetasHandler(t *testing.T) {
 func TestOLMHandler_lifecycleHandler(t *testing.T) {
 	t.Run("should reject invalid catalogNamespace", func(t *testing.T) {
 		c := cache.New(5*time.Minute, 10*time.Minute)
-		service := NewCatalogService(&http.Client{}, nil, c)
+		service := NewCatalogService(&http.Client{}, nil, c, "")
 		handler := NewOLMHandler("", nil, service)
 
 		req := httptest.NewRequest("GET", "/api/olm/lifecycle/evil.attacker.com/redhat-operators/test-operator", nil)
@@ -190,7 +262,7 @@ func TestOLMHandler_lifecycleHandler(t *testing.T) {
 
 	t.Run("should reject catalogNamespace with dots", func(t *testing.T) {
 		c := cache.New(5*time.Minute, 10*time.Minute)
-		service := NewCatalogService(&http.Client{}, nil, c)
+		service := NewCatalogService(&http.Client{}, nil, c, "")
 		handler := NewOLMHandler("", nil, service)
 
 		req := httptest.NewRequest("GET", "/api/olm/lifecycle/my.namespace/redhat-operators/test-operator", nil)
@@ -202,7 +274,7 @@ func TestOLMHandler_lifecycleHandler(t *testing.T) {
 
 	t.Run("should reject invalid catalogName with uppercase", func(t *testing.T) {
 		c := cache.New(5*time.Minute, 10*time.Minute)
-		service := NewCatalogService(&http.Client{}, nil, c)
+		service := NewCatalogService(&http.Client{}, nil, c, "")
 		handler := NewOLMHandler("", nil, service)
 
 		req := httptest.NewRequest("GET", "/api/olm/lifecycle/openshift-marketplace/HAS-CAPS/test-operator", nil)
@@ -214,7 +286,7 @@ func TestOLMHandler_lifecycleHandler(t *testing.T) {
 
 	t.Run("should reject non-GET methods", func(t *testing.T) {
 		c := cache.New(5*time.Minute, 10*time.Minute)
-		service := NewCatalogService(&http.Client{}, nil, c)
+		service := NewCatalogService(&http.Client{}, nil, c, "")
 		handler := NewOLMHandler("", nil, service)
 
 		req := httptest.NewRequest("POST", "/api/olm/lifecycle/openshift-marketplace/redhat-operators/test-operator", nil)
@@ -226,7 +298,7 @@ func TestOLMHandler_lifecycleHandler(t *testing.T) {
 
 	t.Run("should return 404 when URL does not match pattern", func(t *testing.T) {
 		c := cache.New(5*time.Minute, 10*time.Minute)
-		service := NewCatalogService(&http.Client{}, nil, c)
+		service := NewCatalogService(&http.Client{}, nil, c, "")
 		handler := NewOLMHandler("", nil, service)
 
 		req := httptest.NewRequest("GET", "/api/olm/lifecycle/openshift-marketplace/redhat-operators", nil)
@@ -248,7 +320,7 @@ func TestOLMHandler_catalogIconHandler(t *testing.T) {
 		}
 		c.Set(getCatalogIconKey("test-catalog", "test-package"), icon, cache.NoExpiration)
 
-		service := NewCatalogService(&http.Client{}, nil, c)
+		service := NewCatalogService(&http.Client{}, nil, c, "")
 		handler := NewOLMHandler("", nil, service)
 
 		req := httptest.NewRequest("GET", "/api/olm/catalog-icons/test-catalog/test-package", nil)
@@ -275,7 +347,7 @@ func TestOLMHandler_catalogIconHandler(t *testing.T) {
 		c := cache.New(5*time.Minute, 10*time.Minute)
 		c.Set(getCatalogBaseURLKey("test-catalog"), catalogdServer.URL, cache.NoExpiration)
 
-		service := NewCatalogService(&http.Client{}, nil, c)
+		service := NewCatalogService(&http.Client{}, nil, c, "")
 		handler := NewOLMHandler("", nil, service)
 
 		req := httptest.NewRequest("GET", "/api/olm/catalog-icons/test-catalog/test-package", nil)
@@ -298,7 +370,7 @@ func TestOLMHandler_catalogIconHandler(t *testing.T) {
 		}
 		c.Set(getCatalogIconKey("test-catalog", "test-package"), icon, cache.NoExpiration)
 
-		service := NewCatalogService(&http.Client{}, nil, c)
+		service := NewCatalogService(&http.Client{}, nil, c, "")
 		handler := NewOLMHandler("", nil, service)
 
 		req := httptest.NewRequest("GET", "/api/olm/catalog-icons/test-catalog/test-package", nil)
@@ -323,7 +395,7 @@ func TestOLMHandler_catalogIconHandler(t *testing.T) {
 		}
 		c.Set(getCatalogIconKey("test-catalog", "test-package"), icon, cache.NoExpiration)
 
-		service := NewCatalogService(&http.Client{}, nil, c)
+		service := NewCatalogService(&http.Client{}, nil, c, "")
 		handler := NewOLMHandler("", nil, service)
 
 		req := httptest.NewRequest("GET", "/api/olm/catalog-icons/test-catalog/test-package", nil)
@@ -359,7 +431,7 @@ func TestOLMHandler_catalogIconHandler(t *testing.T) {
 		c := cache.New(5*time.Minute, 10*time.Minute)
 		c.Set(getCatalogBaseURLKey("test-catalog"), catalogdServer.URL, cache.NoExpiration)
 
-		service := NewCatalogService(&http.Client{}, nil, c)
+		service := NewCatalogService(&http.Client{}, nil, c, "")
 		handler := NewOLMHandler("", nil, service)
 
 		req := httptest.NewRequest("GET", "/api/olm/catalog-icons/test-catalog/test-package", nil)
@@ -378,7 +450,7 @@ func TestOLMHandler_catalogIconHandler(t *testing.T) {
 
 	t.Run("should return 404 when URL does not match pattern", func(t *testing.T) {
 		c := cache.New(5*time.Minute, 10*time.Minute)
-		service := NewCatalogService(&http.Client{}, nil, c)
+		service := NewCatalogService(&http.Client{}, nil, c, "")
 		handler := NewOLMHandler("", nil, service)
 
 		// URL with missing package name doesn't match the route pattern

@@ -6,9 +6,9 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/blang/semver/v4"
 	"github.com/operator-framework/operator-registry/alpha/declcfg"
 	"github.com/operator-framework/operator-registry/alpha/property"
-
 	"k8s.io/klog/v2"
 )
 
@@ -41,7 +41,20 @@ type ConsoleCatalogItem struct {
 	Support                string   `json:"support,omitempty"`
 	ValidSubscription      []string `json:"validSubscription,omitempty"`
 	Version                string   `json:"version,omitempty"`
+	// AvailableVersions lists the distinct bundle versions found for the package.
+	AvailableVersions []string `json:"availableVersions"`
+	// ClusterCompatibility is incompatible only when every bundle is known incompatible.
+	ClusterCompatibility ClusterCompatibility `json:"clusterCompatibility"`
 }
+
+// ClusterCompatibility describes package compatibility with the current cluster.
+type ClusterCompatibility string
+
+const (
+	ClusterCompatibilityCompatible   ClusterCompatibility = "compatible"
+	ClusterCompatibilityIncompatible ClusterCompatibility = "incompatible"
+	ClusterCompatibilityUnknown      ClusterCompatibility = "unknown"
+)
 
 // TransformCatalog transforms the raw catalog data into a list of CatalogItems.
 func CreateConsoleCatalog(catalogName string, packages []*declcfg.Package, bundles []*declcfg.Bundle) []ConsoleCatalogItem {
@@ -317,4 +330,112 @@ func withVersion(item *ConsoleCatalogItem, bundle *declcfg.Bundle) {
 	}
 
 	item.Version = version
+}
+
+// getAvailableVersions validates, deduplicates, and sorts bundle versions by semantic precedence.
+func getAvailableVersions(bundles []*declcfg.Bundle) ([]string, error) {
+	parsedVersions := make(map[string]semver.Version, len(bundles))
+	versions := make([]string, 0, len(bundles))
+	for _, bundle := range bundles {
+		version, err := getBundleVersion(bundle)
+		if err != nil {
+			return nil, err
+		}
+		parsed, err := semver.Parse(version)
+		if err != nil {
+			return nil, fmt.Errorf("invalid version %q for bundle %q: %w", version, bundle.Name, err)
+		}
+		if _, found := parsedVersions[version]; !found {
+			versions = append(versions, version)
+			parsedVersions[version] = parsed
+		}
+	}
+	sort.SliceStable(versions, func(i, j int) bool {
+		return parsedVersions[versions[i]].GT(parsedVersions[versions[j]])
+	})
+	return versions, nil
+}
+
+// getPackageCompatibility rules out a package only when every offered bundle is incompatible.
+func getPackageCompatibility(clusterVersion string, bundles []*declcfg.Bundle) ClusterCompatibility {
+	if len(bundles) == 0 {
+		return ClusterCompatibilityUnknown
+	}
+	for _, bundle := range bundles {
+		if getClusterCompatibility(clusterVersion, bundle) != ClusterCompatibilityIncompatible {
+			return ClusterCompatibilityUnknown
+		}
+	}
+	return ClusterCompatibilityIncompatible
+}
+
+// getMaxOpenShiftVersion reads the catalog property first, falling back to the
+// CSV's olm.properties annotation when the catalog has not extracted it.
+func getMaxOpenShiftVersion(bundle *declcfg.Bundle) (string, error) {
+	readProperty := func(properties []property.Property) (string, bool, error) {
+		for _, p := range properties {
+			if p.Type == "olm.maxOpenShiftVersion" {
+				var version string
+				err := json.Unmarshal(p.Value, &version)
+				return version, true, err
+			}
+		}
+		return "", false, nil
+	}
+	if version, found, err := readProperty(bundle.Properties); found {
+		return version, err
+	}
+
+	csvMetadata, err := getCSVMetadata(bundle)
+	if err != nil || csvMetadata == nil {
+		return "", err
+	}
+	encodedProperties := csvMetadata.Annotations["olm.properties"]
+	if encodedProperties == "" {
+		return "", nil
+	}
+	var properties []property.Property
+	if err := json.Unmarshal([]byte(encodedProperties), &properties); err != nil {
+		return "", err
+	}
+	version, _, err := readProperty(properties)
+	return version, err
+}
+
+func getClusterCompatibility(clusterVersion string, bundle *declcfg.Bundle) ClusterCompatibility {
+	if clusterVersion == "" || bundle == nil {
+		return ClusterCompatibilityUnknown
+	}
+
+	maxVersion, err := getMaxOpenShiftVersion(bundle)
+	if err != nil || maxVersion == "" {
+		return ClusterCompatibilityUnknown
+	}
+	compatible, valid := isOpenShiftVersionAtMost(clusterVersion, maxVersion)
+	if valid && !compatible {
+		return ClusterCompatibilityIncompatible
+	}
+
+	// A maximum can rule out compatibility, but does not establish support.
+	// The bundle distribution range is not exposed by catalogd's metas endpoint.
+	return ClusterCompatibilityUnknown
+}
+
+// isOpenShiftVersionAtMost compares major and minor versions, ignoring patch and prerelease.
+func isOpenShiftVersionAtMost(clusterVersion, maxVersion string) (bool, bool) {
+	cluster, err := semver.Parse(clusterVersion)
+	if err != nil {
+		return false, false
+	}
+	// The maximum annotation supports the documented major.minor notation.
+	if len(strings.Split(maxVersion, ".")) == 2 {
+		maxVersion += ".0"
+	}
+	maximum, err := semver.Parse(maxVersion)
+	if err != nil {
+		return false, false
+	}
+	clusterMinor := semver.Version{Major: cluster.Major, Minor: cluster.Minor}
+	maximumMinor := semver.Version{Major: maximum.Major, Minor: maximum.Minor}
+	return clusterMinor.LTE(maximumMinor), true
 }
