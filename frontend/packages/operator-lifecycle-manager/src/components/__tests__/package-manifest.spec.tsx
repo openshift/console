@@ -1,78 +1,89 @@
 import { screen } from '@testing-library/react';
-import { ResourceLink } from '@console/internal/components/utils';
-import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
-import { testPackageManifest, testCatalogSource } from '../../../mocks';
-import { ClusterServiceVersionLogo } from '../cluster-service-version-logo';
+import type { ConsoleDataViewColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import {
-  PackageManifestTableRow,
-  PackageManifestTableHeader,
-  PackageManifestTableHeaderWithCatalogSource,
-} from '../package-manifest';
+  renderHookWithProviders,
+  renderWithProviders,
+} from '@console/shared/src/test-utils/unit-test-utils';
+import { testPackageManifest } from '../../../mocks';
+import type { PackageManifestKind } from '../../types';
+import { ClusterServiceVersionLogo } from '../cluster-service-version-logo';
+import { getPackageManifestDataViewRows, usePackageManifestColumns } from '../package-manifest';
 
 jest.mock('../cluster-service-version-logo', () => ({
   ClusterServiceVersionLogo: jest.fn(() => null),
 }));
 
 jest.mock('@console/shared/src/components/datetime/Timestamp', () => ({
-  Timestamp: jest.fn(() => null),
+  Timestamp: ({ timestamp }) => timestamp,
 }));
 
-jest.mock('@console/internal/components/utils', () => ({
-  ...jest.requireActual('@console/internal/components/utils'),
-  ResourceLink: jest.fn(() => null),
+jest.mock('@console/internal/components/utils/resource-link', () => ({
+  ...jest.requireActual('@console/internal/components/utils/resource-link'),
+  ResourceLink: ({ name }) => name,
 }));
 
 const mockClusterServiceVersionLogo = ClusterServiceVersionLogo as jest.Mock;
-const mockTimestamp = Timestamp as jest.Mock;
-const mockResourceLink = ResourceLink as jest.Mock;
 
-describe('PackageManifestTableHeader', () => {
-  it('renders column header for package name', () => {
-    const headers = PackageManifestTableHeader();
-    expect(headers[0].title).toEqual('Name');
+const renderRow = (obj: PackageManifestKind, ids: string[]) => {
+  const columns: ConsoleDataViewColumn<PackageManifestKind>[] = ids.map((id) => ({
+    id,
+    title: id,
+  }));
+  const [cells] = getPackageManifestDataViewRows(
+    [{ obj, activeColumnIDs: new Set(ids), rowData: undefined, index: 0 }],
+    columns,
+  );
+  return renderWithProviders(
+    <table>
+      <tbody>
+        <tr>
+          {cells.map(({ id, cell }) => (
+            <td key={id}>{cell}</td>
+          ))}
+        </tr>
+      </tbody>
+    </table>,
+  );
+};
+
+describe('usePackageManifestColumns', () => {
+  it('should omit the CatalogSource column when the list is scoped to one CatalogSource', () => {
+    const { result } = renderHookWithProviders(() => usePackageManifestColumns(true));
+    expect(result.current.columns.map(({ id }) => id)).toEqual([
+      'name',
+      'latestVersion',
+      'created',
+    ]);
   });
 
-  it('renders column header for latest CSV version for package in catalog', () => {
-    const headers = PackageManifestTableHeader();
-    expect(headers[1].title).toEqual('Latest version');
+  it('should append the CatalogSource column when the list is not scoped to one CatalogSource', () => {
+    const { result } = renderHookWithProviders(() => usePackageManifestColumns(false));
+    expect(result.current.columns.map(({ id }) => id)).toEqual([
+      'name',
+      'latestVersion',
+      'created',
+      'catalogsource',
+    ]);
   });
 
-  it('renders column header for creation timestamp', () => {
-    const headers = PackageManifestTableHeader();
-    expect(headers[2].title).toEqual('Created');
+  it('should title the columns', () => {
+    const { result } = renderHookWithProviders(() => usePackageManifestColumns(false));
+    expect(result.current.columns.map(({ title }) => title)).toEqual([
+      'Name',
+      'Latest version',
+      'Created',
+      'CatalogSource',
+    ]);
   });
 });
 
-describe('PackageManifestTableHeaderWithCatalogSource', () => {
-  it('renders column header for catalog source', () => {
-    const headers = PackageManifestTableHeaderWithCatalogSource();
-    expect(headers[3].title).toEqual('CatalogSource');
-  });
-});
-
-describe('PackageManifestTableRow', () => {
+describe('getPackageManifestDataViewRows', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  it('renders column for package name and logo', () => {
-    const columns: any[] = [];
-
-    renderWithProviders(
-      <table>
-        <tbody>
-          <tr>
-            <PackageManifestTableRow
-              obj={testPackageManifest}
-              customData={{ catalogSource: testCatalogSource }}
-              columns={columns}
-            />
-          </tr>
-        </tbody>
-      </table>,
-    );
-
+  it('should render the package logo with the default channel display name', () => {
+    renderRow(testPackageManifest, ['name']);
     expect(mockClusterServiceVersionLogo).toHaveBeenCalledTimes(1);
     const [logoProps] = mockClusterServiceVersionLogo.mock.calls[0];
     expect(logoProps.displayName).toEqual(
@@ -80,73 +91,46 @@ describe('PackageManifestTableRow', () => {
     );
   });
 
-  it('renders column for latest CSV version for package in catalog', () => {
-    const columns: any[] = [];
+  it('should render the latest CSV version and its channel', () => {
     const {
       name,
       currentCSVDesc: { version },
     } = testPackageManifest.status.channels[0];
-
-    renderWithProviders(
-      <table>
-        <tbody>
-          <tr>
-            <PackageManifestTableRow
-              obj={testPackageManifest}
-              customData={{ catalogSource: testCatalogSource }}
-              columns={columns}
-            />
-          </tr>
-        </tbody>
-      </table>,
-    );
-
-    expect(screen.getByText(`${version} (${name})`)).toBeVisible();
+    renderRow(testPackageManifest, ['latestVersion']);
+    expect(screen.getByRole('cell', { name: `${version} (${name})` })).toBeVisible();
   });
 
-  it('renders column for creation timestamp', () => {
-    const columns: any[] = [];
-    const pkgManifestCreationTimestamp = testPackageManifest.metadata.creationTimestamp;
-
-    renderWithProviders(
-      <table>
-        <tbody>
-          <tr>
-            <PackageManifestTableRow
-              obj={testPackageManifest}
-              customData={{ catalogSource: testCatalogSource }}
-              columns={columns}
-            />
-          </tr>
-        </tbody>
-      </table>,
-    );
-
-    expect(mockTimestamp).toHaveBeenCalledTimes(1);
-    const [timestampProps] = mockTimestamp.mock.calls[0];
-    expect(timestampProps.timestamp).toEqual(pkgManifestCreationTimestamp);
+  it('should render the creation timestamp', () => {
+    renderRow(testPackageManifest, ['created']);
+    expect(
+      screen.getByRole('cell', { name: testPackageManifest.metadata.creationTimestamp }),
+    ).toBeVisible();
   });
 
-  it('renders column for catalog source for a package when no catalog source is defined', () => {
-    const catalogSourceName = testPackageManifest.status.catalogSource;
-    const columns: any[] = [];
+  it('should render the CatalogSource', () => {
+    renderRow(testPackageManifest, ['catalogsource']);
+    expect(
+      screen.getByRole('cell', { name: testPackageManifest.status.catalogSource }),
+    ).toBeVisible();
+  });
 
-    renderWithProviders(
-      <table>
-        <tbody>
-          <tr>
-            <PackageManifestTableRow
-              obj={testPackageManifest}
-              customData={{ catalogSource: null }}
-              columns={columns}
-            />
-          </tr>
-        </tbody>
-      </table>,
+  it('should preserve the requested column order and omit columns that are not active', () => {
+    renderRow(testPackageManifest, ['created', 'catalogsource']);
+    expect(screen.getAllByRole('cell').map((cell) => cell.textContent)).toEqual([
+      testPackageManifest.metadata.creationTimestamp,
+      testPackageManifest.status.catalogSource,
+    ]);
+  });
+
+  it('should not throw when the package has no channels', () => {
+    const noChannels = {
+      ...testPackageManifest,
+      status: { ...testPackageManifest.status, defaultChannel: '', channels: [] },
+    } as PackageManifestKind;
+    expect(() => renderRow(noChannels, ['name', 'latestVersion'])).not.toThrow();
+    expect(mockClusterServiceVersionLogo).toHaveBeenCalledWith(
+      expect.objectContaining({ displayName: undefined, provider: undefined }),
+      expect.anything(),
     );
-
-    expect(mockResourceLink).toHaveBeenCalledTimes(1);
-    const [resourceLinkProps] = mockResourceLink.mock.calls[0];
-    expect(resourceLinkProps.name).toEqual(catalogSourceName);
   });
 });

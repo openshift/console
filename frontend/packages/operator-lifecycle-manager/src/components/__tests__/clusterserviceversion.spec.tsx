@@ -1,7 +1,11 @@
 import { screen } from '@testing-library/react';
 import * as _ from 'lodash';
+import type { ConsoleDataViewColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import operatorLogo from '@console/internal/imgs/operator.svg';
-import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
+import {
+  renderHookWithProviders,
+  renderWithProviders,
+} from '@console/shared/src/test-utils/unit-test-utils';
 import {
   testClusterServiceVersion,
   testSubscription,
@@ -12,12 +16,13 @@ import {
 } from '../../../mocks';
 import { ClusterServiceVersionPhase } from '../../types';
 import { ClusterServiceVersionLogo } from '../cluster-service-version-logo';
-import type {
-  ClusterServiceVersionTableRowProps,
-  CRDCardProps,
-  CSVSubscriptionProps,
+import type { CRDCardProps, CSVSubscriptionProps } from '../clusterserviceversion';
+import {
+  getInstalledOperatorDataViewRows,
+  CRDCard,
+  CSVSubscription,
 } from '../clusterserviceversion';
-import { ClusterServiceVersionTableRow, CRDCard, CSVSubscription } from '../clusterserviceversion';
+import { useClusterServiceVersionColumns } from '../useClusterServiceVersionColumns';
 
 // Mock hooks
 jest.mock('@console/shared/src/hooks/useK8sModel', () => ({
@@ -77,59 +82,105 @@ jest.mock('../subscription', () => ({
   catalogSourceForSubscription: jest.fn(),
 }));
 
-describe('ClusterServiceVersionTableRow', () => {
-  let clusterServiceVersionTableRowProps: ClusterServiceVersionTableRowProps;
+const ALL_IDS = [
+  'name',
+  'namespace',
+  'managedNamespaces',
+  'status',
+  'providedAPIs',
+  'lastUpdated',
+  'actions',
+];
 
+const renderInstalledOperatorRow = (obj, ids: string[] = ALL_IDS, rowData?: any) => {
+  const columns: ConsoleDataViewColumn<any>[] = ids.map((id) => ({ id, title: id }));
+  const [cells] = getInstalledOperatorDataViewRows(
+    [
+      {
+        obj,
+        activeColumnIDs: new Set(ids),
+        rowData: rowData ?? { catalogSources: [], subscriptions: testSubscriptions },
+        index: 0,
+      },
+    ],
+    columns,
+  );
+  return renderWithProviders(
+    <table>
+      <tbody>
+        <tr>
+          {cells.map(({ id, cell }) => (
+            <td key={id}>{cell}</td>
+          ))}
+        </tr>
+      </tbody>
+    </table>,
+  );
+};
+
+describe('useClusterServiceVersionColumns', () => {
+  it('includes the Namespace column only when all projects are selected', () => {
+    const { result: allNs } = renderHookWithProviders(() =>
+      useClusterServiceVersionColumns(true, false),
+    );
+    expect(allNs.current.columns.map(({ id }) => id)).toContain('namespace');
+
+    const { result: singleNs } = renderHookWithProviders(() =>
+      useClusterServiceVersionColumns(false, false),
+    );
+    expect(singleNs.current.columns.map(({ id }) => id)).not.toContain('namespace');
+  });
+
+  it('includes the lifecycle columns only when the lifecycle flag is on', () => {
+    const { result: off } = renderHookWithProviders(() =>
+      useClusterServiceVersionColumns(true, false),
+    );
+    expect(off.current.columns.map(({ id }) => id)).not.toContain('clusterCompatibility');
+
+    const { result: on } = renderHookWithProviders(() =>
+      useClusterServiceVersionColumns(true, true),
+    );
+    expect(on.current.columns.map(({ id }) => id)).toEqual([
+      'name',
+      'namespace',
+      'managedNamespaces',
+      'status',
+      'providedAPIs',
+      'clusterCompatibility',
+      'supportPhase',
+      'lastUpdated',
+      'actions',
+    ]);
+  });
+
+  it('makes every column except actions resizable', () => {
+    const { result } = renderHookWithProviders(() => useClusterServiceVersionColumns(true, true));
+    const actions = result.current.columns.find(({ id }) => id === 'actions');
+    expect(actions.resizableProps).toBeUndefined();
+    expect(
+      result.current.columns.filter(({ id }) => id !== 'actions').every((c) => !!c.resizableProps),
+    ).toBe(true);
+  });
+});
+
+describe('getInstalledOperatorDataViewRows', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     window.SERVER_FLAGS.copiedCSVsDisabled = false;
-
-    clusterServiceVersionTableRowProps = {
-      catalogSourceMissing: false,
-      obj: testClusterServiceVersion,
-      subscription: testSubscription,
-    };
   });
 
-  it('renders component wrapped in ErrorBoundary', () => {
-    renderWithProviders(
-      <table>
-        <tbody>
-          <tr>
-            <ClusterServiceVersionTableRow {...clusterServiceVersionTableRowProps} />
-          </tr>
-        </tbody>
-      </table>,
-    );
-
+  it('renders the CSV display name', () => {
+    renderInstalledOperatorRow(testClusterServiceVersion);
     expect(screen.getByText(testClusterServiceVersion.spec.displayName)).toBeVisible();
   });
 
   it('renders LazyActionMenu with correct context and variant', () => {
-    renderWithProviders(
-      <table>
-        <tbody>
-          <tr>
-            <ClusterServiceVersionTableRow {...clusterServiceVersionTableRowProps} />
-          </tr>
-        </tbody>
-      </table>,
-    );
-
+    renderInstalledOperatorRow(testClusterServiceVersion);
     expect(screen.getByRole('button', { name: 'Actions' })).toBeVisible();
   });
 
   it('renders clickable link with CSV logo and display name', () => {
-    renderWithProviders(
-      <table>
-        <tbody>
-          <tr>
-            <ClusterServiceVersionTableRow {...clusterServiceVersionTableRowProps} />
-          </tr>
-        </tbody>
-      </table>,
-    );
-
+    renderInstalledOperatorRow(testClusterServiceVersion);
     const link = screen.getByRole('link', {
       name: new RegExp(testClusterServiceVersion.spec.displayName),
     });
@@ -137,44 +188,22 @@ describe('ClusterServiceVersionTableRow', () => {
   });
 
   it('renders managed namespace', () => {
-    renderWithProviders(
-      <table>
-        <tbody>
-          <tr>
-            <ClusterServiceVersionTableRow {...clusterServiceVersionTableRowProps} />
-          </tr>
-        </tbody>
-      </table>,
-    );
+    renderInstalledOperatorRow(testClusterServiceVersion, ['managedNamespaces']);
+    expect(screen.getByRole('link', { name: 'openshift-operators' })).toBeVisible();
+  });
 
+  it('renders the operator namespace in its own column when all projects are selected', () => {
+    renderInstalledOperatorRow(testClusterServiceVersion, ['namespace']);
     expect(screen.getByRole('link', { name: 'openshift-operators' })).toBeVisible();
   });
 
   it('renders last updated timestamp', () => {
-    renderWithProviders(
-      <table>
-        <tbody>
-          <tr>
-            <ClusterServiceVersionTableRow {...clusterServiceVersionTableRowProps} />
-          </tr>
-        </tbody>
-      </table>,
-    );
-
+    renderInstalledOperatorRow(testClusterServiceVersion);
     expect(screen.getByTestId('timestamp')).toBeVisible();
   });
 
   it('renders status showing Succeeded phase', () => {
-    renderWithProviders(
-      <table>
-        <tbody>
-          <tr>
-            <ClusterServiceVersionTableRow {...clusterServiceVersionTableRowProps} />
-          </tr>
-        </tbody>
-      </table>,
-    );
-
+    renderInstalledOperatorRow(testClusterServiceVersion);
     expect(screen.getByText(ClusterServiceVersionPhase.CSVPhaseSucceeded)).toBeVisible();
   });
 
@@ -182,38 +211,34 @@ describe('ClusterServiceVersionTableRow', () => {
     const deletingCSV = _.cloneDeepWith(testClusterServiceVersion, (v, k) =>
       k === 'metadata' ? { ...v, deletionTimestamp: Date.now() } : undefined,
     );
-
-    renderWithProviders(
-      <table>
-        <tbody>
-          <tr>
-            <ClusterServiceVersionTableRow
-              {...clusterServiceVersionTableRowProps}
-              obj={deletingCSV}
-            />
-          </tr>
-        </tbody>
-      </table>,
-    );
-
+    renderInstalledOperatorRow(deletingCSV);
     expect(screen.getByText('Deleting')).toBeVisible();
   });
 
   it('renders links for each CRD provided by the Operator', () => {
-    renderWithProviders(
-      <table>
-        <tbody>
-          <tr>
-            <ClusterServiceVersionTableRow {...clusterServiceVersionTableRowProps} />
-          </tr>
-        </tbody>
-      </table>,
-    );
-
+    renderInstalledOperatorRow(testClusterServiceVersion);
     testClusterServiceVersion.spec.customresourcedefinitions.owned.forEach((desc) => {
       const crdLink = screen.getByRole('link', { name: new RegExp(desc.displayName || desc.kind) });
       expect(crdLink).toBeVisible();
     });
+  });
+
+  it('renders an orphan Subscription row with None placeholders', () => {
+    renderInstalledOperatorRow(testSubscription, [
+      'name',
+      'managedNamespaces',
+      'providedAPIs',
+      'actions',
+    ]);
+    expect(screen.getAllByText('None')).toHaveLength(2);
+    expect(
+      screen.getByRole('link', { name: new RegExp(testSubscription.spec.name) }),
+    ).toBeVisible();
+  });
+
+  it('preserves the requested column order and omits inactive columns', () => {
+    renderInstalledOperatorRow(testClusterServiceVersion, ['managedNamespaces', 'name']);
+    expect(screen.getAllByRole('cell')).toHaveLength(2);
   });
 });
 

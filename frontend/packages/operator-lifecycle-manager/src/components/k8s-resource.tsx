@@ -1,12 +1,22 @@
-import type { FC } from 'react';
+import type { FC, ReactNode } from 'react';
 import { useMemo } from 'react';
-import { sortable } from '@patternfly/react-table';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
-import type { WatchK8sResourceWithProp } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import type { Flatten, RowFunctionArgs } from '@console/internal/components/factory';
-import { MultiListPage, Table, TableData } from '@console/internal/components/factory';
+import {
+  ConsoleDataView,
+  getNameCellProps,
+  getNameColumnProps,
+} from '@console/app/src/components/data-view/ConsoleDataView';
+import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
+import type {
+  ConsoleDataViewColumn,
+  GetDataViewRows,
+  WatchK8sResourceWithProp,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import type { Flatten } from '@console/internal/components/factory';
+import { MultiListPage } from '@console/internal/components/factory';
+import type { RowFilter } from '@console/internal/components/filter-toolbar';
 import { ResourceLink, ConsoleEmptyState } from '@console/internal/components/utils';
 import {
   ConfigMapModel,
@@ -27,7 +37,9 @@ import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { Status } from '@console/shared/src/components/status/Status';
 import type { RouteParams } from '@console/shared/src/types/route-params';
 import type { CRDDescription, ProvidedAPI } from '../types';
+import { sortByOptionalPath } from './dataViewSortHelpers';
 import { OperandLink } from './operand/operand-link';
+import { useOlmDataViewFilters } from './useOlmDataViewFilters';
 import { providedAPIForReference } from './index';
 
 const DEFAULT_RESOURCES: CRDDescription['resources'] = [
@@ -40,75 +52,113 @@ const DEFAULT_RESOURCES: CRDDescription['resources'] = [
   { kind: JobModel.kind, version: JobModel.apiVersion },
 ];
 
-const tableColumnClasses = [
-  '',
-  'pf-v6-u-w-16-on-md',
-  'pf-m-hidden pf-m-visible-on-lg pf-v6-u-w-16-on-lg',
-  'pf-m-hidden pf-m-visible-on-sm',
-];
+/**
+ * Console-only model for column width preferences. This table lists whatever kinds an operand
+ * owns, so the widths cannot be keyed by any single resource model.
+ */
+const OperandResourcesListModel = {
+  apiGroup: 'console.ui',
+  apiVersion: 'v1',
+  kind: 'OperandResourcesList',
+  plural: 'operandresourceslists',
+  label: 'Resource',
+  labelPlural: 'Resources',
+  abbr: 'R',
+};
 
-const ResourceTableRow: FC<
-  RowFunctionArgs<
-    K8sResourceKind,
-    {
-      linkFor: (obj: K8sResourceKind, providedAPI: ProvidedAPI) => JSX.Element;
-      providedAPI: ProvidedAPI;
-    }
-  >
-> = ({ obj, customData: { linkFor, providedAPI } }) => (
-  <>
-    <TableData className={tableColumnClasses[0]}>{linkFor(obj, providedAPI)}</TableData>
-    <TableData className={tableColumnClasses[1]}>{obj.kind}</TableData>
-    <TableData className={tableColumnClasses[2]}>
-      <Status status={obj?.status?.phase ?? 'Created'} />
-    </TableData>
-    <TableData className={tableColumnClasses[3]}>
-      <Timestamp timestamp={obj.metadata.creationTimestamp} />
-    </TableData>
-  </>
-);
+export const useOperandResourceColumns = (): {
+  columns: ConsoleDataViewColumn<K8sResourceKind>[];
+  resetAllColumnWidths: () => void;
+} => {
+  const { t } = useTranslation('olm');
+  const { getResizableProps, resetAllColumnWidths } =
+    useColumnWidthSettings(OperandResourcesListModel);
+  const columns = useMemo(
+    () => [
+      {
+        id: 'name',
+        resizableProps: getResizableProps('name'),
+        title: t('Name'),
+        sort: 'metadata.name',
+        props: getNameColumnProps(),
+      },
+      {
+        id: 'kind',
+        resizableProps: getResizableProps('kind'),
+        title: t('Kind'),
+        sort: 'kind',
+        props: { modifier: 'nowrap' as const },
+      },
+      {
+        id: 'status',
+        resizableProps: getResizableProps('status'),
+        title: t('Status'),
+        sort: sortByOptionalPath<K8sResourceKind>('status.phase'),
+        props: { modifier: 'nowrap' as const },
+      },
+      {
+        id: 'created',
+        resizableProps: getResizableProps('created'),
+        title: t('Created'),
+        sort: 'metadata.creationTimestamp',
+        props: { modifier: 'nowrap' as const },
+      },
+    ],
+    [t, getResizableProps],
+  );
+  return { columns, resetAllColumnWidths };
+};
+
+export const getOperandResourceDataViewRows: GetDataViewRows<
+  K8sResourceKind,
+  ResourceTableCustomData
+> = (data, columns) =>
+  data.map(({ obj, rowData: { linkFor, providedAPI } }) => {
+    const rowCells = {
+      name: {
+        cell: linkFor(obj, providedAPI),
+        props: getNameCellProps(obj.metadata.name),
+      },
+      kind: { cell: obj.kind },
+      status: { cell: <Status status={obj?.status?.phase ?? 'Created'} /> },
+      created: { cell: <Timestamp timestamp={obj.metadata.creationTimestamp} /> },
+    };
+    return columns.map(({ id }) => ({ id, ...rowCells[id] }));
+  });
+
+const ResourceTableEmptyMsg: FC = () => {
+  const { t } = useTranslation('olm');
+  return (
+    <ConsoleEmptyState title={t('No resources found')}>
+      {t('There are no Kubernetes resources used by this operand.')}
+    </ConsoleEmptyState>
+  );
+};
 
 const ResourceTable: FC<ResourceTableProps> = (props) => {
   const { t } = useTranslation('olm');
-  const ResourceTableHeader = () => [
-    {
-      title: t('Name'),
-      sortField: 'metadata.name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[0] },
-    },
-    {
-      title: t('Kind'),
-      sortField: 'kind',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[1] },
-    },
-    {
-      title: t('Status'),
-      sortField: 'status.phase',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[2] },
-    },
-    {
-      title: t('Created'),
-      sortField: 'metadata.creationTimestamp',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[3] },
-    },
-  ];
+  const { columns, resetAllColumnWidths } = useOperandResourceColumns();
+  const dataViewFilters = useOlmDataViewFilters<K8sResourceKind>(props.rowFilters);
+
+  // ConsoleDataView has a generic empty body state, so keep the operand-specific wording by
+  // short-circuiting when nothing loaded at all. Filtering down to zero rows still uses the table.
+  if (props.loaded && !props.loadError && props.data?.length === 0) {
+    return <ResourceTableEmptyMsg />;
+  }
 
   return (
-    <Table
+    <ConsoleDataView<K8sResourceKind, ResourceTableCustomData>
       {...props}
-      aria-label={t('Operand Resources')}
-      Header={ResourceTableHeader}
-      Row={ResourceTableRow}
-      EmptyMsg={() => (
-        <ConsoleEmptyState title={t('No resources found')}>
-          {t('There are no Kubernetes resources used by this operand.')}
-        </ConsoleEmptyState>
-      )}
-      virtualize
+      {...dataViewFilters}
+      label={t('Resources')}
+      data={props.data || []}
+      loaded={props.loaded}
+      columns={columns}
+      getDataViewRows={getOperandResourceDataViewRows}
+      customRowData={props.customData}
+      hideColumnManagement
+      isResizable
+      resetAllColumnWidths={resetAllColumnWidths}
     />
   );
 };
@@ -153,17 +203,38 @@ export const Resources: FC<ResourcesProps> = (props) => {
   const { plural } = useParams<ResourcesPageRouteParams>();
   const providedAPI = providedAPIForReference(props.customData, plural);
 
-  const watchResources = (providedAPI?.resources ?? DEFAULT_RESOURCES).map(
-    ({ name, kind, version }): WatchK8sResourceWithProp => {
-      const group = name ? name.substring(name.indexOf('.') + 1) : '';
-      const reference = group ? referenceForGroupVersionKind(group)(version)(kind) : kind;
-      const model = modelFor(reference);
-      return {
-        kind: model && !model.crd ? kind : reference,
-        namespaced: model ? model.namespaced : true,
-        prop: kind,
-      };
-    },
+  // Memoized because ConsoleDataView derives its filter state from `rowFilters`; a new array
+  // every render would rebuild that state and defeat the filtered-data memo.
+  const watchResources = useMemo(
+    () =>
+      (providedAPI?.resources ?? DEFAULT_RESOURCES).map(
+        ({ name, kind, version }): WatchK8sResourceWithProp => {
+          const group = name ? name.substring(name.indexOf('.') + 1) : '';
+          const reference = group ? referenceForGroupVersionKind(group)(version)(kind) : kind;
+          const model = modelFor(reference);
+          return {
+            kind: model && !model.crd ? kind : reference,
+            namespaced: model ? model.namespaced : true,
+            prop: kind,
+          };
+        },
+      ),
+    [providedAPI],
+  );
+
+  const rowFilters = useMemo(
+    () => [
+      {
+        type: 'clusterserviceversion-resource-kind',
+        filterGroupName: t('Kind'),
+        reducer: ({ kind }) => kindForReference(kind),
+        items: watchResources.map(({ kind }) => ({
+          id: kindForReference(kind),
+          title: kindForReference(kind),
+        })),
+      },
+    ],
+    [t, watchResources],
   );
 
   const customData = useMemo(
@@ -176,19 +247,9 @@ export const Resources: FC<ResourcesProps> = (props) => {
 
   return (
     <MultiListPage
-      filterLabel={t('Resources by name')}
       resources={watchResources}
-      rowFilters={[
-        {
-          type: 'clusterserviceversion-resource-kind',
-          filterGroupName: t('Kind'),
-          reducer: ({ kind }) => kindForReference(kind),
-          items: watchResources.map(({ kind }) => ({
-            id: kindForReference(kind),
-            title: kindForReference(kind),
-          })),
-        },
-      ]}
+      rowFilters={rowFilters}
+      omitFilterToolbar
       flatten={flattenCsvResources(props.obj)}
       namespace={props.obj.metadata.namespace}
       ListComponent={ResourceTable}
@@ -197,18 +258,23 @@ export const Resources: FC<ResourcesProps> = (props) => {
   );
 };
 
-export type ResourcesProps = {
+export interface ResourcesProps {
   obj: K8sResourceKind;
   customData: any;
-};
+}
 
-type ResourceTableProps = {
+interface ResourceTableCustomData {
+  linkFor: (obj: K8sResourceKind, providedAPI: ProvidedAPI) => ReactNode;
+  providedAPI: ProvidedAPI;
+}
+
+interface ResourceTableProps {
   loaded: boolean;
   loadError?: string;
   data: K8sResourceKind[];
-  linkFor: (obj: K8sResourceKind, providedAPI: ProvidedAPI) => JSX.Element;
-  providedAPI: ProvidedAPI;
-};
+  customData: ResourceTableCustomData;
+  rowFilters?: RowFilter<K8sResourceKind>[];
+}
 
 ResourceTable.displayName = 'ResourceTable';
 Resources.displayName = 'Resources';

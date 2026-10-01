@@ -1,7 +1,7 @@
 import { test, expect } from '../../fixtures';
-import { OperatorInstallPage } from '../../pages/operator-install-page';
 import { InstalledOperatorsPage } from '../../pages/installed-operators-page';
-import { OperatorDetailsPage, TestOperandProps } from '../../pages/operator-details-page';
+import { OperatorDetailsPage, type TestOperandProps } from '../../pages/operator-details-page';
+import { OperatorInstallPage } from '../../pages/operator-install-page';
 import { generateTestNamespace } from '../../test-utils/test-namespace';
 import { OLM_CLUSTER_STATE_LOCK } from '../../utils/locks';
 
@@ -21,15 +21,14 @@ const testOperand: TestOperandProps = {
 };
 
 const operatorPackageName = 'datagrid';
-const globalNamespace = 'openshift-operators';
 
 test.describe(
-  `Single Namespace Operator Installation - ${testOperator.name}`,
+  'Testing uninstall of Data Grid Operator',
   { tag: ['@admin'], lock: OLM_CLUSTER_STATE_LOCK },
   () => {
     test.describe.configure({ timeout: 300_000 });
 
-    test(`Installs ${testOperator.name} operator in test namespace and manages ${testOperand.name} operand instance`, async ({
+    test(`Installs ${testOperator.name} Operator and ${testOperand.name} Instance, tests uninstall scenarios, then successfully uninstalls`, async ({
       page,
       k8sClient,
       cleanup,
@@ -56,13 +55,13 @@ test.describe(
           await k8sClient.getCustomResource(
             'operators.coreos.com',
             'v1alpha1',
-            globalNamespace,
+            'openshift-operators',
             'subscriptions',
             operatorPackageName,
           );
           test.skip(
             true,
-            `${operatorPackageName} is globally installed in ${globalNamespace}; cannot install as single-namespace in parallel`,
+            `${operatorPackageName} is globally installed; cannot install in parallel`,
           );
         } catch (error) {
           const message = error instanceof Error ? error.message : String(error);
@@ -80,63 +79,27 @@ test.describe(
             testNamespace,
           );
         } catch (error) {
-          if (error.message?.includes('operator-Data Grid')) {
+          if (error?.message?.includes('operator-Data Grid')) {
             test.skip(true, 'Data Grid operator not available in this cluster environment');
           }
           throw error;
         }
       });
 
-      await test.step('Verify operator installation succeeded in test namespace', async () => {
+      await test.step('Verify operator installation and create operand', async () => {
+        // Verify operator installation succeeded (with shorter timeout for faster feedback)
         await installedOperatorsPage.verifyOperatorInstallationSucceeded(
           testOperator.name,
           testNamespace,
         );
-      });
 
-      await test.step('Navigate to operator details page and verify sections', async () => {
+        // Navigate to operator details page
         await installedOperatorsPage.navigateToOperatorDetails(
           testOperator.name,
           testOperator.urlName,
           testNamespace,
         );
-        await operatorDetailsPage.verifyDetailsPageSections();
-      });
 
-      await test.step('Verify operator is NOT installed globally (isolation test)', async () => {
-        // This is a key verification that distinguishes single namespace from global installation
-        await installedOperatorsPage.navigateToInstalledOperators();
-
-        // Switch to global namespace and verify this specific operator is not there
-        await installedOperatorsPage.verifyOperatorNotInstalledInNamespace(
-          testOperator.name,
-          globalNamespace,
-        );
-      });
-
-      await test.step('Navigate to operator details', async () => {
-        await installedOperatorsPage.navigateToInstalledOperators();
-        await installedOperatorsPage.selectNamespace(testNamespace);
-
-        // Wait for loading to complete after namespace switch
-        await expect(page.locator('.loading-skeleton--table')).not.toBeAttached({
-          timeout: 30_000,
-        });
-
-        // Wait for operator to appear in the new namespace
-        await expect(installedOperatorsPage.getOperatorRow(testOperator.name)).toBeVisible({
-          timeout: 60_000,
-        });
-
-        await installedOperatorsPage.navigateToOperatorDetails(
-          testOperator.name,
-          testOperator.urlName,
-          testNamespace,
-        );
-        await operatorDetailsPage.verifyDetailsPageSections();
-      });
-
-      await test.step('Create operand', async () => {
         // Track the operand that will be created
         cleanup.trackCustomResource(
           testOperand.exampleName,
@@ -146,33 +109,84 @@ test.describe(
           'infinispans',
         );
 
+        // Create operand (this will navigate to the correct tab automatically)
         await operatorDetailsPage.createOperand(testOperand, false);
         await expect(page.getByTestId(testOperand.exampleName)).toBeVisible();
       });
 
-      await test.step('Navigate to operand details', async () => {
-        await operatorDetailsPage.clickOperandLink(testOperand.exampleName);
-        await expect(page).toHaveURL((url) => url.pathname.endsWith(`/${testOperand.exampleName}`));
-      });
-
-      await test.step('Delete operand instance', async () => {
-        await operatorDetailsPage.deleteOperand(testOperand, false);
-      });
-
-      await test.step('Navigate back to operand instances and verify deletion', async () => {
+      await test.step('Verify details page sections', async () => {
+        // Navigate back to operator details page
         await installedOperatorsPage.navigateToOperatorDetails(
           testOperator.name,
           testOperator.urlName,
           testNamespace,
         );
-        await operatorDetailsPage.navigateToOperandTab(testOperand.name, false);
-        await operatorDetailsPage.verifyOperandNotExistsOnCurrentTab(testOperand.exampleName);
+
+        // Verify operator details page sections exist
+        await operatorDetailsPage.verifyDetailsPageSections();
       });
 
-      await test.step('Uninstall operator from namespace', async () => {
-        await operatorDetailsPage.uninstallOperator();
+      await test.step('Test uninstall with "Cannot load Operands" error', async () => {
+        // Set up route interception to return an error for the operand list API.
+        await page.route('**/api/olm/list-operands**', (route) => {
+          route.fulfill({
+            status: 400,
+            contentType: 'application/json',
+            body: JSON.stringify({ error: 'Failed to list operands' }),
+          });
+        });
+
+        // Open uninstall modal without submitting
+        await operatorDetailsPage.uninstallOperator(false);
+
+        // Verify error alert appears
+        await operatorDetailsPage.verifyUninstallAlert('Cannot load Operands');
+
+        // Cancel the modal
+        await operatorDetailsPage.cancelUninstall();
+
+        // Clear the route interception for next step
+        await page.unroute('**/api/olm/list-operands**');
+      });
+
+      await test.step('Successfully uninstall operator (with operands)', async () => {
+        // Navigate back to operator details page to ensure clean state
+        await installedOperatorsPage.navigateToOperatorDetails(
+          testOperator.name,
+          testOperator.urlName,
+          testNamespace,
+        );
+
+        // Uninstall operator and delete the operand that was created
+        await operatorDetailsPage.uninstallOperatorWithOperands(true);
+
+        // Verify operator no longer exists
         await installedOperatorsPage.verifyOperatorNotExists(testOperator.name);
       });
+
+      await test.step('Verify operand instance is deleted', async () => {
+        await expect(async () => {
+          try {
+            await k8sClient.getCustomResource(
+              testOperand.group,
+              testOperand.version,
+              testNamespace,
+              'infinispans',
+              testOperand.exampleName,
+            );
+            throw new Error('Operand still exists');
+          } catch (error) {
+            if (error.message?.includes('404') || error.message?.includes('not found')) {
+              return; // Success - operand is deleted
+            }
+            throw error;
+          }
+        }).toPass({ timeout: 120_000, intervals: [5_000] });
+      });
+    });
+
+    test.fixme('tracks missing "Error Deleting Operands" uninstall parity case', async () => {
+      expect(true).toBe(true);
     });
   },
 );

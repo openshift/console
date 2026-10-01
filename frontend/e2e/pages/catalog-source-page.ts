@@ -7,7 +7,8 @@ export class CatalogSourcePage extends BasePage {
   private readonly sourcesTab = this.page.getByTestId('horizontal-link-Sources');
   private readonly operatorsTab = this.page.getByTestId('horizontal-link-Operators');
 
-  private readonly packageManifestTable = this.page.getByTestId('PackageManifestTable');
+  // ConsoleDataView renders its own table and does not forward a custom data-test.
+  private readonly packageManifestTable = this.page.getByTestId('data-view-table');
 
   private readonly registryPollIntervalDropdown = this.page.getByTestId(
     'registry-poll-interval-dropdown',
@@ -26,9 +27,8 @@ export class CatalogSourcePage extends BasePage {
     await this.navigateToTab(this.sourcesTab);
   }
 
-  // The OperatorHub "Sources" tab list is scoped to the currently active project, which is
-  // unreliable for a CatalogSource created in a one-off test namespace. Navigate to its details
-  // page directly instead of locating it via that tab.
+  // Navigate to the CatalogSource details page directly rather than locating the row in the
+  // OperatorHub "Sources" tab, which paginates and would need filtering first.
   async navigateToDetails(namespace: string, name: string): Promise<void> {
     await this.goTo(`/k8s/ns/${namespace}/operators.coreos.com~v1alpha1~CatalogSource/${name}`);
   }

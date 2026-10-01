@@ -8,6 +8,7 @@ import { DetailsPage } from '../../pages/details-page';
 import { InstalledOperatorsPage } from '../../pages/installed-operators-page';
 import { OperatorInstallPage } from '../../pages/operator-install-page';
 import { generateTestNamespace } from '../../test-utils/test-namespace';
+import { OLM_CLUSTER_STATE_LOCK } from '../../utils/locks';
 
 const BASE_URL = process.env.WEB_CONSOLE_URL || 'http://localhost:9000';
 const ADMIN_STORAGE_STATE = path.resolve(
@@ -117,218 +118,236 @@ async function expectDeprecatedWarning(
   await expect(catalogPage.getDeprecatedWarning(testId)).toContainText(text, { timeout: 60_000 });
 }
 
-test.describe('Deprecated operator warnings', { tag: ['@admin'] }, () => {
-  test.describe.configure({ timeout: SETUP_TIMEOUT });
+test.describe(
+  'Deprecated operator warnings',
+  { tag: ['@admin'], lock: OLM_CLUSTER_STATE_LOCK },
+  () => {
+    test.describe.configure({ timeout: SETUP_TIMEOUT });
 
-  test.beforeAll(async ({ browser, k8sClient }) => {
-    test.setTimeout(SETUP_TIMEOUT);
-
-    isTechPreview = await detectTechPreview(browser);
-    if (isTechPreview) {
-      return;
-    }
-
-    await k8sClient.createCustomResource(
-      'operators.coreos.com',
-      'v1alpha1',
-      CATALOG_SOURCE_NAMESPACE,
-      'catalogsources',
-      buildDeprecatedCatalogSource(),
-    );
-
-    await expect(async () => {
-      const catalogSource = (await k8sClient.getCustomResource(
-        'operators.coreos.com',
-        'v1alpha1',
-        CATALOG_SOURCE_NAMESPACE,
-        'catalogsources',
-        catalogSourceName,
-      )) as { status?: { connectionState?: { lastObservedState?: string } } };
-
-      expect(catalogSource.status?.connectionState?.lastObservedState).toBe('READY');
-    }).toPass({ timeout: 300_000, intervals: [5_000] });
-
-    await expect(async () => {
-      const manifests = (await k8sClient.listCustomResources(
-        'packages.operators.coreos.com',
-        'v1',
-        OPERATOR_DETAILS_NAMESPACE,
-        'packagemanifests',
-      )) as Array<{ status?: { catalogSource?: string } }>;
-      expect(
-        manifests.some((manifest) => manifest.status?.catalogSource === catalogSourceName),
-      ).toBe(true);
-    }).toPass({ timeout: 180_000, intervals: [5_000] });
-  });
-
-  test.afterAll(async ({ k8sClient }) => {
-    if (isTechPreview) {
-      return;
-    }
-
-    try {
-      const [subscriptionCleanup, namespaceCleanup] = await Promise.allSettled([
-        k8sClient.deleteCustomResource(
-          'operators.coreos.com',
-          'v1alpha1',
-          subscriptionNamespace,
-          'subscriptions',
-          subscriptionName,
-        ),
-        k8sClient.deleteNamespace(subscriptionNamespace),
-      ]);
-
-      if (namespaceCleanup.status === 'rejected') {
-        throw namespaceCleanup.reason;
-      }
-
-      if (subscriptionCleanup.status === 'rejected') {
-        throw subscriptionCleanup.reason;
-      }
-    } finally {
-      await k8sClient.deleteCustomResource(
-        'operators.coreos.com',
-        'v1alpha1',
-        CATALOG_SOURCE_NAMESPACE,
-        'catalogsources',
-        catalogSourceName,
-      );
-    }
-  });
-
-  test('displays deprecated badge on operator tile in catalog', async ({ page }) => {
-    test.skip(isTechPreview, TECH_PREVIEW_SKIP_REASON);
-
-    const catalogPage = new CatalogPage(page);
-
-    await catalogPage.navigateToSoftwareCatalog(OPERATOR_DETAILS_NAMESPACE);
-    await catalogPage.clickOperatorTab();
-    await expect(catalogPage.getCatalogTiles().first()).toBeVisible({ timeout: 60_000 });
-
-    await catalogPage.toggleSourceFilterByLabel(CATALOG_SOURCE_DISPLAY_NAME);
-
-    await catalogPage.searchOperators('kiali');
-    const firstTile = catalogPage.getCatalogTiles().first();
-    await expect(firstTile).toBeVisible({ timeout: 60_000 });
-    await expect(firstTile).toContainText(/kiali/i);
-    await expect(firstTile.getByTestId('Deprecated-badge')).toContainText(DEPRECATED_BADGE);
-  });
-
-  test('displays package deprecation warnings in operator details', async ({ page }) => {
-    test.skip(isTechPreview, TECH_PREVIEW_SKIP_REASON);
-
-    const catalogPage = new CatalogPage(page);
-    await catalogPage.navigateToPath(getOperatorDetailsUrl());
-    await expect(catalogPage.getCatalogDeprecatedBadge()).toContainText(DEPRECATED_BADGE, {
-      timeout: 60_000,
-    });
-    await expectDeprecatedWarning(
-      catalogPage,
-      'deprecated-operator-warning-package',
-      DEPRECATED_PACKAGE_MESSAGE,
-    );
-  });
-
-  test('displays channel deprecation warnings when selecting channel', async ({ page }) => {
-    test.skip(isTechPreview, TECH_PREVIEW_SKIP_REASON);
-
-    const catalogPage = new CatalogPage(page);
-    const installPage = new OperatorInstallPage(page);
-    await catalogPage.navigateToPath(getOperatorDetailsUrl());
-
-    await installPage.openChannelSelect();
-    await expect(installPage.getDeprecatedWarningIcon('channel')).toBeVisible({
-      timeout: 30_000,
-    });
-    await installPage.selectChannelOption('alpha');
-
-    await expectDeprecatedWarning(
-      catalogPage,
-      'deprecated-operator-warning-channel',
-      DEPRECATED_CHANNEL_MESSAGE,
-    );
-  });
-
-  test('displays version deprecation warnings when selecting version', async ({ page }) => {
-    test.skip(isTechPreview, TECH_PREVIEW_SKIP_REASON);
-
-    const catalogPage = new CatalogPage(page);
-    const installPage = new OperatorInstallPage(page);
-    await catalogPage.navigateToPath(getOperatorDetailsUrl());
-
-    await installPage.openVersionSelect();
-    await expect(installPage.getDeprecatedWarningIcon('version')).toBeVisible({
-      timeout: 30_000,
-    });
-    await installPage.selectVersionOption(DEPRECATED_VERSION);
-
-    await expectDeprecatedWarning(
-      catalogPage,
-      'deprecated-operator-warning-version',
-      DEPRECATED_VERSION_MESSAGE,
-    );
-  });
-
-  test('displays all deprecation warnings on install page', async ({ page }) => {
-    test.skip(isTechPreview, TECH_PREVIEW_SKIP_REASON);
-
-    const catalogPage = new CatalogPage(page);
-    await catalogPage.navigateToPath(getInstallPageUrl());
-    // The install/subscribe page shows the deprecation Alert (checked below) but does not
-    // render a "Deprecated" CatalogBadges badge — that only appears on the catalog tile and
-    // the catalog details drawer.
-    await expect(catalogPage.getPageHeading()).toContainText('Install Operator', {
-      timeout: 60_000,
-    });
-    await expectDeprecatedWarning(
-      catalogPage,
-      'deprecated-operator-warning-package',
-      DEPRECATED_PACKAGE_MESSAGE,
-    );
-    await expectDeprecatedWarning(
-      catalogPage,
-      'deprecated-operator-warning-channel',
-      DEPRECATED_CHANNEL_MESSAGE,
-    );
-    await expectDeprecatedWarning(
-      catalogPage,
-      'deprecated-operator-warning-version',
-      DEPRECATED_VERSION_MESSAGE,
-    );
-  });
-
-  test.describe('Installed Operator deprecation warnings', () => {
-    test.beforeAll(async ({ k8sClient }) => {
+    test.beforeAll(async ({ browser, k8sClient }) => {
       test.setTimeout(SETUP_TIMEOUT);
 
+      isTechPreview = await detectTechPreview(browser);
       if (isTechPreview) {
         return;
       }
 
-      await k8sClient.createNamespace(subscriptionNamespace);
-      await k8sClient.waitForNamespaceReady(subscriptionNamespace);
-      // OLM ignores subscriptions in namespaces without an OperatorGroup — no InstallPlan is created.
-      await k8sClient.createCustomResource(
-        'operators.coreos.com',
-        'v1',
-        subscriptionNamespace,
-        'operatorgroups',
-        {
-          apiVersion: 'operators.coreos.com/v1',
-          kind: 'OperatorGroup',
-          metadata: { name: subscriptionNamespace, namespace: subscriptionNamespace },
-          spec: { targetNamespaces: [subscriptionNamespace] },
-        },
-      );
       await k8sClient.createCustomResource(
         'operators.coreos.com',
         'v1alpha1',
-        subscriptionNamespace,
-        'subscriptions',
-        buildDeprecatedSubscription(),
+        CATALOG_SOURCE_NAMESPACE,
+        'catalogsources',
+        buildDeprecatedCatalogSource(),
       );
 
       await expect(async () => {
+        const catalogSource = (await k8sClient.getCustomResource(
+          'operators.coreos.com',
+          'v1alpha1',
+          CATALOG_SOURCE_NAMESPACE,
+          'catalogsources',
+          catalogSourceName,
+        )) as { status?: { connectionState?: { lastObservedState?: string } } };
+
+        expect(catalogSource.status?.connectionState?.lastObservedState).toBe('READY');
+      }).toPass({ timeout: 300_000, intervals: [5_000] });
+
+      await expect(async () => {
+        const manifests = (await k8sClient.listCustomResources(
+          'packages.operators.coreos.com',
+          'v1',
+          OPERATOR_DETAILS_NAMESPACE,
+          'packagemanifests',
+        )) as Array<{ status?: { catalogSource?: string } }>;
+        expect(
+          manifests.some((manifest) => manifest.status?.catalogSource === catalogSourceName),
+        ).toBe(true);
+      }).toPass({ timeout: 180_000, intervals: [5_000] });
+    });
+
+    test.afterAll(async ({ k8sClient }) => {
+      if (isTechPreview) {
+        return;
+      }
+
+      try {
+        const [subscriptionCleanup, namespaceCleanup] = await Promise.allSettled([
+          k8sClient.deleteCustomResource(
+            'operators.coreos.com',
+            'v1alpha1',
+            subscriptionNamespace,
+            'subscriptions',
+            subscriptionName,
+          ),
+          k8sClient.deleteNamespace(subscriptionNamespace),
+        ]);
+
+        if (namespaceCleanup.status === 'rejected') {
+          throw namespaceCleanup.reason;
+        }
+
+        if (subscriptionCleanup.status === 'rejected') {
+          throw subscriptionCleanup.reason;
+        }
+      } finally {
+        await k8sClient.deleteCustomResource(
+          'operators.coreos.com',
+          'v1alpha1',
+          CATALOG_SOURCE_NAMESPACE,
+          'catalogsources',
+          catalogSourceName,
+        );
+      }
+    });
+
+    test('displays deprecated badge on operator tile in catalog', async ({ page }) => {
+      test.skip(isTechPreview, TECH_PREVIEW_SKIP_REASON);
+
+      const catalogPage = new CatalogPage(page);
+
+      await catalogPage.navigateToSoftwareCatalog(OPERATOR_DETAILS_NAMESPACE);
+      await catalogPage.clickOperatorTab();
+      await expect(catalogPage.getCatalogTiles().first()).toBeVisible({ timeout: 60_000 });
+
+      await catalogPage.toggleSourceFilterByLabel(CATALOG_SOURCE_DISPLAY_NAME);
+
+      await catalogPage.searchOperators('kiali');
+      const firstTile = catalogPage.getCatalogTiles().first();
+      await expect(firstTile).toBeVisible({ timeout: 60_000 });
+      await expect(firstTile).toContainText(/kiali/i);
+      await expect(firstTile.getByTestId('Deprecated-badge')).toContainText(DEPRECATED_BADGE);
+    });
+
+    test('displays package deprecation warnings in operator details', async ({ page }) => {
+      test.skip(isTechPreview, TECH_PREVIEW_SKIP_REASON);
+
+      const catalogPage = new CatalogPage(page);
+      await catalogPage.navigateToPath(getOperatorDetailsUrl());
+      await expect(catalogPage.getCatalogDeprecatedBadge()).toContainText(DEPRECATED_BADGE, {
+        timeout: 60_000,
+      });
+      await expectDeprecatedWarning(
+        catalogPage,
+        'deprecated-operator-warning-package',
+        DEPRECATED_PACKAGE_MESSAGE,
+      );
+    });
+
+    test('displays channel deprecation warnings when selecting channel', async ({ page }) => {
+      test.skip(isTechPreview, TECH_PREVIEW_SKIP_REASON);
+
+      const catalogPage = new CatalogPage(page);
+      const installPage = new OperatorInstallPage(page);
+      await catalogPage.navigateToPath(getOperatorDetailsUrl());
+
+      await installPage.openChannelSelect();
+      await expect(installPage.getDeprecatedWarningIcon('channel')).toBeVisible({
+        timeout: 30_000,
+      });
+      await installPage.selectChannelOption('alpha');
+
+      await expectDeprecatedWarning(
+        catalogPage,
+        'deprecated-operator-warning-channel',
+        DEPRECATED_CHANNEL_MESSAGE,
+      );
+    });
+
+    test('displays version deprecation warnings when selecting version', async ({ page }) => {
+      test.skip(isTechPreview, TECH_PREVIEW_SKIP_REASON);
+
+      const catalogPage = new CatalogPage(page);
+      const installPage = new OperatorInstallPage(page);
+      await catalogPage.navigateToPath(getOperatorDetailsUrl());
+
+      await installPage.openVersionSelect();
+      await expect(installPage.getDeprecatedWarningIcon('version')).toBeVisible({
+        timeout: 30_000,
+      });
+      await installPage.selectVersionOption(DEPRECATED_VERSION);
+
+      await expectDeprecatedWarning(
+        catalogPage,
+        'deprecated-operator-warning-version',
+        DEPRECATED_VERSION_MESSAGE,
+      );
+    });
+
+    test('displays all deprecation warnings on install page', async ({ page }) => {
+      test.skip(isTechPreview, TECH_PREVIEW_SKIP_REASON);
+
+      const catalogPage = new CatalogPage(page);
+      await catalogPage.navigateToPath(getInstallPageUrl());
+      // The install/subscribe page shows the deprecation Alert (checked below) but does not
+      // render a "Deprecated" CatalogBadges badge — that only appears on the catalog tile and
+      // the catalog details drawer.
+      await expect(catalogPage.getPageHeading()).toContainText('Install Operator', {
+        timeout: 60_000,
+      });
+      await expectDeprecatedWarning(
+        catalogPage,
+        'deprecated-operator-warning-package',
+        DEPRECATED_PACKAGE_MESSAGE,
+      );
+      await expectDeprecatedWarning(
+        catalogPage,
+        'deprecated-operator-warning-channel',
+        DEPRECATED_CHANNEL_MESSAGE,
+      );
+      await expectDeprecatedWarning(
+        catalogPage,
+        'deprecated-operator-warning-version',
+        DEPRECATED_VERSION_MESSAGE,
+      );
+    });
+
+    test.describe('Installed Operator deprecation warnings', () => {
+      test.beforeAll(async ({ k8sClient }) => {
+        test.setTimeout(SETUP_TIMEOUT);
+
+        if (isTechPreview) {
+          return;
+        }
+
+        await k8sClient.createNamespace(subscriptionNamespace);
+        await k8sClient.waitForNamespaceReady(subscriptionNamespace);
+        // OLM ignores subscriptions in namespaces without an OperatorGroup — no InstallPlan is created.
+        await k8sClient.createCustomResource(
+          'operators.coreos.com',
+          'v1',
+          subscriptionNamespace,
+          'operatorgroups',
+          {
+            apiVersion: 'operators.coreos.com/v1',
+            kind: 'OperatorGroup',
+            metadata: { name: subscriptionNamespace, namespace: subscriptionNamespace },
+            spec: { targetNamespaces: [subscriptionNamespace] },
+          },
+        );
+        await k8sClient.createCustomResource(
+          'operators.coreos.com',
+          'v1alpha1',
+          subscriptionNamespace,
+          'subscriptions',
+          buildDeprecatedSubscription(),
+        );
+
+        await expect(async () => {
+          const subscription = (await k8sClient.getCustomResource(
+            'operators.coreos.com',
+            'v1alpha1',
+            subscriptionNamespace,
+            'subscriptions',
+            subscriptionName,
+          )) as {
+            status?: {
+              installPlanRef?: { name?: string };
+            };
+          };
+
+          expect(subscription.status?.installPlanRef?.name).toBeTruthy();
+        }).toPass({ timeout: 300_000, intervals: [5_000] });
+
         const subscription = (await k8sClient.getCustomResource(
           'operators.coreos.com',
           'v1alpha1',
@@ -338,42 +357,42 @@ test.describe('Deprecated operator warnings', { tag: ['@admin'] }, () => {
         )) as {
           status?: {
             installPlanRef?: { name?: string };
+            installedCSV?: string;
           };
         };
 
-        expect(subscription.status?.installPlanRef?.name).toBeTruthy();
-      }).toPass({ timeout: 300_000, intervals: [5_000] });
+        const installPlanName = subscription.status?.installPlanRef?.name;
 
-      const subscription = (await k8sClient.getCustomResource(
-        'operators.coreos.com',
-        'v1alpha1',
-        subscriptionNamespace,
-        'subscriptions',
-        subscriptionName,
-      )) as {
-        status?: {
-          installPlanRef?: { name?: string };
-          installedCSV?: string;
-        };
-      };
+        if (!installPlanName) {
+          throw new Error(`InstallPlan ref not found for subscription ${subscriptionName}`);
+        }
 
-      const installPlanName = subscription.status?.installPlanRef?.name;
+        await k8sClient.patchCustomResource(
+          'operators.coreos.com',
+          'v1alpha1',
+          subscriptionNamespace,
+          'installplans',
+          installPlanName,
+          [{ op: 'replace', path: '/spec/approved', value: true }],
+        );
 
-      if (!installPlanName) {
-        throw new Error(`InstallPlan ref not found for subscription ${subscriptionName}`);
-      }
+        await expect(async () => {
+          const approvedSubscription = (await k8sClient.getCustomResource(
+            'operators.coreos.com',
+            'v1alpha1',
+            subscriptionNamespace,
+            'subscriptions',
+            subscriptionName,
+          )) as {
+            status?: {
+              installedCSV?: string;
+            };
+          };
 
-      await k8sClient.patchCustomResource(
-        'operators.coreos.com',
-        'v1alpha1',
-        subscriptionNamespace,
-        'installplans',
-        installPlanName,
-        [{ op: 'replace', path: '/spec/approved', value: true }],
-      );
+          expect(approvedSubscription.status?.installedCSV).toBeTruthy();
+        }).toPass({ timeout: 180_000, intervals: [5_000] });
 
-      await expect(async () => {
-        const approvedSubscription = (await k8sClient.getCustomResource(
+        const installedSubscription = (await k8sClient.getCustomResource(
           'operators.coreos.com',
           'v1alpha1',
           subscriptionNamespace,
@@ -385,144 +404,130 @@ test.describe('Deprecated operator warnings', { tag: ['@admin'] }, () => {
           };
         };
 
-        expect(approvedSubscription.status?.installedCSV).toBeTruthy();
-      }).toPass({ timeout: 180_000, intervals: [5_000] });
+        const nextInstalledCsvName = installedSubscription.status?.installedCSV;
+        if (!nextInstalledCsvName) {
+          throw new Error(`Installed CSV not found for subscription ${subscriptionName}`);
+        }
+        installedCsvName = nextInstalledCsvName;
 
-      const installedSubscription = (await k8sClient.getCustomResource(
-        'operators.coreos.com',
-        'v1alpha1',
-        subscriptionNamespace,
-        'subscriptions',
-        subscriptionName,
-      )) as {
-        status?: {
-          installedCSV?: string;
-        };
-      };
+        await expect(async () => {
+          const csv = (await k8sClient.getCustomResource(
+            'operators.coreos.com',
+            'v1alpha1',
+            subscriptionNamespace,
+            'clusterserviceversions',
+            installedCsvName,
+          )) as { status?: { phase?: string } };
+          // Accept terminal phase — kiali needs Service Mesh; OLM sets PackageDeprecated regardless.
+          const phase = csv.status?.phase;
+          expect(phase === 'Succeeded' || phase === 'Failed').toBe(true);
+        }).toPass({ timeout: 300_000, intervals: [5_000] });
 
-      const nextInstalledCsvName = installedSubscription.status?.installedCSV;
-      if (!nextInstalledCsvName) {
-        throw new Error(`Installed CSV not found for subscription ${subscriptionName}`);
-      }
-      installedCsvName = nextInstalledCsvName;
-
-      await expect(async () => {
-        const csv = (await k8sClient.getCustomResource(
-          'operators.coreos.com',
-          'v1alpha1',
-          subscriptionNamespace,
-          'clusterserviceversions',
-          installedCsvName,
-        )) as { status?: { phase?: string } };
-        // Accept terminal phase — kiali needs Service Mesh; OLM sets PackageDeprecated regardless.
-        const phase = csv.status?.phase;
-        expect(phase === 'Succeeded' || phase === 'Failed').toBe(true);
-      }).toPass({ timeout: 300_000, intervals: [5_000] });
-
-      await expect(async () => {
-        const currentSubscription = (await k8sClient.getCustomResource(
-          'operators.coreos.com',
-          'v1alpha1',
-          subscriptionNamespace,
-          'subscriptions',
-          subscriptionName,
-        )) as {
-          status?: {
-            conditions?: Array<{ type?: string }>;
+        await expect(async () => {
+          const currentSubscription = (await k8sClient.getCustomResource(
+            'operators.coreos.com',
+            'v1alpha1',
+            subscriptionNamespace,
+            'subscriptions',
+            subscriptionName,
+          )) as {
+            status?: {
+              conditions?: Array<{ type?: string }>;
+            };
           };
-        };
 
-        const hasDeprecatedCondition = currentSubscription.status?.conditions?.some(
-          (condition) => condition.type === 'PackageDeprecated',
+          const hasDeprecatedCondition = currentSubscription.status?.conditions?.some(
+            (condition) => condition.type === 'PackageDeprecated',
+          );
+          expect(hasDeprecatedCondition).toBe(true);
+        }).toPass({ timeout: 180_000, intervals: [5_000] });
+      });
+
+      test('displays deprecated badge on installed operators list', async ({ page }) => {
+        test.skip(isTechPreview, TECH_PREVIEW_SKIP_REASON);
+
+        const installedOperatorsPage = new InstalledOperatorsPage(page);
+        await installedOperatorsPage.navigateTo(subscriptionNamespace);
+        await installedOperatorsPage.filterByName(INSTALLED_OPERATOR_NAME);
+
+        const operatorRow = installedOperatorsPage.getOperatorRow(INSTALLED_OPERATOR_NAME);
+        await expect(operatorRow).toBeVisible({ timeout: 60_000 });
+        await expect(operatorRow.getByTestId('deprecated-operator-warning-badge')).toContainText(
+          DEPRECATED_BADGE,
         );
-        expect(hasDeprecatedCondition).toBe(true);
-      }).toPass({ timeout: 180_000, intervals: [5_000] });
-    });
-
-    test('displays deprecated badge on installed operators list', async ({ page }) => {
-      test.skip(isTechPreview, TECH_PREVIEW_SKIP_REASON);
-
-      const installedOperatorsPage = new InstalledOperatorsPage(page);
-      await installedOperatorsPage.navigateTo(subscriptionNamespace);
-      await installedOperatorsPage.filterByName(INSTALLED_OPERATOR_NAME);
-
-      const operatorRow = installedOperatorsPage.getOperatorRow(INSTALLED_OPERATOR_NAME);
-      await expect(operatorRow).toBeVisible({ timeout: 60_000 });
-      await expect(operatorRow.getByTestId('deprecated-operator-warning-badge')).toContainText(
-        DEPRECATED_BADGE,
-      );
-    });
-
-    test('displays deprecation warnings on CSV details page', async ({ page }) => {
-      test.skip(isTechPreview, TECH_PREVIEW_SKIP_REASON);
-
-      const catalogPage = new CatalogPage(page);
-      const detailsPage = new DetailsPage(page);
-      await detailsPage.navigateToDetailsPage(
-        `/k8s/ns/${subscriptionNamespace}/operators.coreos.com~v1alpha1~ClusterServiceVersion/${installedCsvName}`,
-      );
-
-      await expect(detailsPage.tab('Details')).toBeVisible({ timeout: 60_000 });
-      await expect(catalogPage.getDeprecatedWarningBadge()).toContainText(DEPRECATED_BADGE, {
-        timeout: 60_000,
-      });
-      await expectDeprecatedWarning(
-        catalogPage,
-        'deprecated-operator-warning-package',
-        DEPRECATED_PACKAGE_MESSAGE,
-      );
-      await expectDeprecatedWarning(
-        catalogPage,
-        'deprecated-operator-warning-channel',
-        DEPRECATED_CHANNEL_MESSAGE,
-      );
-      await expectDeprecatedWarning(
-        catalogPage,
-        'deprecated-operator-warning-version',
-        DEPRECATED_VERSION_MESSAGE,
-      );
-    });
-
-    test('displays deprecation warnings on CSV subscription tab', async ({ page }) => {
-      test.skip(isTechPreview, TECH_PREVIEW_SKIP_REASON);
-
-      const catalogPage = new CatalogPage(page);
-      const detailsPage = new DetailsPage(page);
-      await detailsPage.navigateToDetailsPage(
-        `/k8s/ns/${subscriptionNamespace}/operators.coreos.com~v1alpha1~ClusterServiceVersion/${installedCsvName}/subscription`,
-      );
-
-      await expect(detailsPage.tab('Subscription')).toBeVisible({
-        timeout: 60_000,
-      });
-      await expectDeprecatedWarning(
-        catalogPage,
-        'deprecated-operator-warning-package',
-        DEPRECATED_PACKAGE_MESSAGE,
-      );
-      await expectDeprecatedWarning(
-        catalogPage,
-        'deprecated-operator-warning-channel',
-        DEPRECATED_CHANNEL_MESSAGE,
-      );
-      await expectDeprecatedWarning(
-        catalogPage,
-        'deprecated-operator-warning-version',
-        DEPRECATED_VERSION_MESSAGE,
-      );
-      await expect(
-        catalogPage.getDeprecatedWarning('deprecated-operator-warning-subscription-update-icon'),
-      ).toBeVisible({
-        timeout: 30_000,
       });
 
-      const updateButton = page.getByTestId('subscription-channel-update-button');
-      await expect(updateButton).toBeEnabled({ timeout: 30_000 });
-      await updateButton.click();
-      await expect(page.getByRole('dialog')).toBeVisible({ timeout: 30_000 });
-      await expect(page.getByRole('dialog').getByTestId(LATEST_VERSION_OPTION).first()).toBeVisible(
-        { timeout: 30_000 },
-      );
+      test('displays deprecation warnings on CSV details page', async ({ page }) => {
+        test.skip(isTechPreview, TECH_PREVIEW_SKIP_REASON);
+
+        const catalogPage = new CatalogPage(page);
+        const detailsPage = new DetailsPage(page);
+        await detailsPage.navigateToDetailsPage(
+          `/k8s/ns/${subscriptionNamespace}/operators.coreos.com~v1alpha1~ClusterServiceVersion/${installedCsvName}`,
+        );
+
+        await expect(detailsPage.tab('Details')).toBeVisible({ timeout: 60_000 });
+        await expect(catalogPage.getDeprecatedWarningBadge()).toContainText(DEPRECATED_BADGE, {
+          timeout: 60_000,
+        });
+        await expectDeprecatedWarning(
+          catalogPage,
+          'deprecated-operator-warning-package',
+          DEPRECATED_PACKAGE_MESSAGE,
+        );
+        await expectDeprecatedWarning(
+          catalogPage,
+          'deprecated-operator-warning-channel',
+          DEPRECATED_CHANNEL_MESSAGE,
+        );
+        await expectDeprecatedWarning(
+          catalogPage,
+          'deprecated-operator-warning-version',
+          DEPRECATED_VERSION_MESSAGE,
+        );
+      });
+
+      test('displays deprecation warnings on CSV subscription tab', async ({ page }) => {
+        test.skip(isTechPreview, TECH_PREVIEW_SKIP_REASON);
+
+        const catalogPage = new CatalogPage(page);
+        const detailsPage = new DetailsPage(page);
+        await detailsPage.navigateToDetailsPage(
+          `/k8s/ns/${subscriptionNamespace}/operators.coreos.com~v1alpha1~ClusterServiceVersion/${installedCsvName}/subscription`,
+        );
+
+        await expect(detailsPage.tab('Subscription')).toBeVisible({
+          timeout: 60_000,
+        });
+        await expectDeprecatedWarning(
+          catalogPage,
+          'deprecated-operator-warning-package',
+          DEPRECATED_PACKAGE_MESSAGE,
+        );
+        await expectDeprecatedWarning(
+          catalogPage,
+          'deprecated-operator-warning-channel',
+          DEPRECATED_CHANNEL_MESSAGE,
+        );
+        await expectDeprecatedWarning(
+          catalogPage,
+          'deprecated-operator-warning-version',
+          DEPRECATED_VERSION_MESSAGE,
+        );
+        await expect(
+          catalogPage.getDeprecatedWarning('deprecated-operator-warning-subscription-update-icon'),
+        ).toBeVisible({
+          timeout: 30_000,
+        });
+
+        const updateButton = page.getByTestId('subscription-channel-update-button');
+        await expect(updateButton).toBeEnabled({ timeout: 30_000 });
+        await updateButton.click();
+        await expect(page.getByRole('dialog')).toBeVisible({ timeout: 30_000 });
+        await expect(
+          page.getByRole('dialog').getByTestId(LATEST_VERSION_OPTION).first(),
+        ).toBeVisible({ timeout: 30_000 });
+      });
     });
-  });
-});
+  },
+);

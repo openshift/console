@@ -7,7 +7,10 @@ import BasePage from './base-page';
 
 export class InstalledOperatorsPage extends BasePage {
   private readonly pageHeading = this.page.getByTestId('page-heading');
-  private readonly nameFilterInput = this.page.getByTestId('name-filter-input');
+  // ConsoleDataView renders its own name filter rather than ListPageFilter's, so accept either.
+  private readonly nameFilterInput = this.page
+    .getByTestId('name-filter-input')
+    .or(this.page.getByRole('textbox', { name: 'Filter by name' }));
 
   /**
    * Navigate to Installed Operators page

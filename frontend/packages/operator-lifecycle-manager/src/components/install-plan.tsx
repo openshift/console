@@ -1,5 +1,5 @@
 import type { FC, ReactNode } from 'react';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   Alert,
   Button,
@@ -15,15 +15,26 @@ import {
   GridItem,
 } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
-import { sortable, Table as PFTable, Thead, Tr, Th, Tbody, Td } from '@patternfly/react-table';
+import { Table as PFTable, Thead, Tr, Th, Tbody, Td } from '@patternfly/react-table';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useParams, Link, useNavigate } from 'react-router';
+import {
+  ConsoleDataView,
+  actionsCellProps,
+  cellIsStickyProps,
+  getNameCellProps,
+  getNameColumnProps,
+} from '@console/app/src/components/data-view/ConsoleDataView';
+import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import { getUser, GreenCheckCircleIcon } from '@console/dynamic-plugin-sdk';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
+import type {
+  ConsoleDataViewColumn,
+  GetDataViewRows,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { Conditions } from '@console/internal/components/conditions';
-import type { RowFunctionArgs } from '@console/internal/components/factory';
-import { MultiListPage, DetailsPage, Table, TableData } from '@console/internal/components/factory';
+import { MultiListPage, DetailsPage } from '@console/internal/components/factory';
 import { ErrorModal } from '@console/internal/components/modals/error-modal';
 import {
   SectionHeading,
@@ -44,10 +55,7 @@ import {
   k8sPatch,
   apiVersionForReference,
 } from '@console/internal/module/k8s';
-import {
-  LazyActionMenu,
-  KEBAB_COLUMN_CLASS,
-} from '@console/shared/src/components/actions/LazyActionMenu';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { Status } from '@console/shared/src/components/status/Status';
 import { FLAGS } from '@console/shared/src/constants/common';
@@ -60,20 +68,12 @@ import {
   OperatorGroupModel,
   CatalogSourceModel,
 } from '../models';
-import type { InstallPlanKind, Step } from '../types';
+import type { InstallPlanKind, OperatorGroupKind, Step } from '../types';
 import { InstallPlanApproval } from '../types';
+import { sortByOptionalPath } from './dataViewSortHelpers';
 import { LazyInstallPlanPreviewModalOverlay } from './modals';
 import { requireOperatorGroup } from './operator-group';
 import { InstallPlanReview, referenceForStepResource } from './index';
-
-const tableColumnClasses = [
-  'pf-v6-c-table__td',
-  'pf-v6-c-table__td',
-  css('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-v6-u-w-16-on-lg', 'pf-v6-c-table__td'),
-  css('pf-m-hidden', 'pf-m-visible-on-lg', 'pf-v6-c-table__td'),
-  css('pf-m-hidden', 'pf-m-visible-on-xl', 'pf-v6-c-table__td'),
-  KEBAB_COLUMN_CLASS,
-];
 
 const componentsTableColumnClasses = [
   'pf-v6-c-table__td',
@@ -90,78 +90,123 @@ const InstallPlanHint: FC<InstallPlanHintProps> = ({ title, body, footer }) => (
   </Hint>
 );
 
-export const InstallPlanTableRow: FC<RowFunctionArgs> = ({ obj }) => {
+/** Subscriptions that own an InstallPlan, or a "None" placeholder when it has none. */
+const InstallPlanSubscriptions: FC<{ obj: InstallPlanKind }> = ({ obj }) => {
   const { t } = useTranslation('olm');
-  const phaseFor = (phase: InstallPlanKind['status']['phase']) => <Status status={phase} />;
-  return (
-    <>
-      {/* Name */}
-      <TableData className={tableColumnClasses[0]}>
-        <ResourceLink
-          kind={referenceForModel(InstallPlanModel)}
-          namespace={obj.metadata.namespace}
-          name={obj.metadata.name}
-        />
-      </TableData>
-
-      {/* Namespace */}
-      <TableData className={tableColumnClasses[1]}>
-        <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
-      </TableData>
-
-      {/* Status */}
-      <TableData className={tableColumnClasses[2]}>
-        {phaseFor(obj.status?.phase ?? 'Unknown')}
-      </TableData>
-
-      {/* Components */}
-      <TableData className={tableColumnClasses[3]}>
-        <ul className="pf-v6-c-list pf-m-plain">
-          {obj.spec.clusterServiceVersionNames.map((csvName) => (
-            <li key={csvName}>
-              {obj.status?.phase === 'Complete' ? (
-                <ResourceLink
-                  kind={referenceForModel(ClusterServiceVersionModel)}
-                  name={csvName}
-                  namespace={obj.metadata.namespace}
-                  title={csvName}
-                />
-              ) : (
-                <>
-                  <ResourceIcon kind={referenceForModel(ClusterServiceVersionModel)} />
-                  {csvName}
-                </>
-              )}
-            </li>
-          ))}
-        </ul>
-      </TableData>
-
-      {/* Subscriptions */}
-      <TableData className={tableColumnClasses[4]}>
-        {(obj.metadata.ownerReferences || [])
-          .filter((ref) => referenceForOwnerRef(ref) === referenceForModel(SubscriptionModel))
-          .map((ref) => (
-            <ul key={ref.uid} className="pf-v6-c-list pf-m-plain">
-              <li>
-                <ResourceLink
-                  kind={referenceForModel(SubscriptionModel)}
-                  name={ref.name}
-                  namespace={obj.metadata.namespace}
-                  title={ref.uid}
-                />
-              </li>
-            </ul>
-          )) || <span className="pf-v6-u-text-color-subtle">{t('None')}</span>}
-      </TableData>
-
-      {/* Kebab */}
-      <TableData className={tableColumnClasses[5]}>
-        <LazyActionMenu context={{ [referenceForModel(InstallPlanModel)]: obj }} />
-      </TableData>
-    </>
+  const subscriptionRefs = (obj.metadata.ownerReferences || []).filter(
+    (ref) => referenceForOwnerRef(ref) === referenceForModel(SubscriptionModel),
+  );
+  return subscriptionRefs.length ? (
+    <ul className="pf-v6-c-list pf-m-plain">
+      {subscriptionRefs.map((ref) => (
+        <li key={ref.uid}>
+          <ResourceLink
+            kind={referenceForModel(SubscriptionModel)}
+            name={ref.name}
+            namespace={obj.metadata.namespace}
+            title={ref.uid}
+          />
+        </li>
+      ))}
+    </ul>
+  ) : (
+    <span className="pf-v6-u-text-color-subtle">{t('None')}</span>
   );
 };
+
+export const useInstallPlanColumns = (): {
+  columns: ConsoleDataViewColumn<InstallPlanKind>[];
+  resetAllColumnWidths: () => void;
+} => {
+  const { t } = useTranslation('olm');
+  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(InstallPlanModel);
+  const columns = useMemo(
+    () => [
+      {
+        id: 'name',
+        resizableProps: getResizableProps('name'),
+        title: t('Name'),
+        sort: 'metadata.name',
+        props: getNameColumnProps(),
+      },
+      {
+        id: 'namespace',
+        resizableProps: getResizableProps('namespace'),
+        title: t('Namespace'),
+        sort: 'metadata.namespace',
+        props: { modifier: 'nowrap' as const },
+      },
+      {
+        id: 'status',
+        resizableProps: getResizableProps('status'),
+        title: t('Status'),
+        sort: sortByOptionalPath<InstallPlanKind>('status.phase'),
+        props: { modifier: 'nowrap' as const },
+      },
+      // Components and Subscriptions render multi-item lists, so they must be allowed to wrap.
+      {
+        id: 'components',
+        resizableProps: getResizableProps('components'),
+        title: t('Components'),
+      },
+      {
+        id: 'subscriptions',
+        resizableProps: getResizableProps('subscriptions'),
+        title: t('Subscriptions'),
+      },
+      { id: 'actions', title: '', props: cellIsStickyProps },
+    ],
+    [t, getResizableProps],
+  );
+  return { columns, resetAllColumnWidths };
+};
+
+export const getInstallPlanDataViewRows: GetDataViewRows<InstallPlanKind> = (data, columns) =>
+  data.map(({ obj }) => {
+    const rowCells = {
+      name: {
+        cell: (
+          <ResourceLink
+            kind={referenceForModel(InstallPlanModel)}
+            namespace={obj.metadata.namespace}
+            name={obj.metadata.name}
+          />
+        ),
+        props: getNameCellProps(obj.metadata.name),
+      },
+      namespace: { cell: <ResourceLink kind="Namespace" name={obj.metadata.namespace} /> },
+      status: { cell: <Status status={obj.status?.phase ?? 'Unknown'} /> },
+      components: {
+        cell: (
+          <ul className="pf-v6-c-list pf-m-plain">
+            {obj.spec.clusterServiceVersionNames.map((csvName) => (
+              <li key={csvName}>
+                {obj.status?.phase === 'Complete' ? (
+                  <ResourceLink
+                    kind={referenceForModel(ClusterServiceVersionModel)}
+                    name={csvName}
+                    namespace={obj.metadata.namespace}
+                    title={csvName}
+                  />
+                ) : (
+                  <>
+                    <ResourceIcon kind={referenceForModel(ClusterServiceVersionModel)} />
+                    {csvName}
+                  </>
+                )}
+              </li>
+            ))}
+          </ul>
+        ),
+      },
+      subscriptions: { cell: <InstallPlanSubscriptions obj={obj} /> },
+      actions: {
+        cell: <LazyActionMenu context={{ [referenceForModel(InstallPlanModel)]: obj }} />,
+        props: actionsCellProps,
+      },
+    };
+    return columns.map(({ id }) => ({ id, ...rowCells[id] }));
+  });
 
 const EmptyMsg: FC = () => {
   const { t } = useTranslation('olm');
@@ -174,46 +219,25 @@ const EmptyMsg: FC = () => {
 
 export const InstallPlansList = requireOperatorGroup((props: InstallPlansListProps) => {
   const { t } = useTranslation('olm');
-  const InstallPlanTableHeader = () => [
-    {
-      title: t('Name'),
-      sortField: 'metadata.name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[0] },
-    },
-    {
-      title: t('Namespace'),
-      sortField: 'metadata.namespace',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[1] },
-    },
-    {
-      title: t('Status'),
-      sortField: 'status.phase',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[2] },
-    },
-    {
-      title: t('Components'),
-      props: { className: tableColumnClasses[3] },
-    },
-    {
-      title: t('Subscriptions'),
-      props: { className: tableColumnClasses[4] },
-    },
-    {
-      title: '',
-      props: { className: tableColumnClasses[5] },
-    },
-  ];
+  const { columns, resetAllColumnWidths } = useInstallPlanColumns();
+
+  // ConsoleDataView has a generic empty body state, so keep the InstallPlan-specific wording by
+  // short-circuiting when nothing loaded at all. Filtering down to zero rows still uses the table.
+  if (props.loaded && !props.loadError && props.data?.length === 0) {
+    return <EmptyMsg />;
+  }
 
   return (
-    <Table
+    <ConsoleDataView<InstallPlanKind>
       {...props}
-      aria-label={t('InstallPlans')}
-      Header={InstallPlanTableHeader}
-      Row={InstallPlanTableRow}
-      EmptyMsg={EmptyMsg}
+      label={t('InstallPlans')}
+      data={props.data || []}
+      loaded={props.loaded}
+      columns={columns}
+      getDataViewRows={getInstallPlanDataViewRows}
+      hideColumnManagement
+      isResizable
+      resetAllColumnWidths={resetAllColumnWidths}
     />
   );
 });
@@ -258,6 +282,7 @@ export const InstallPlansPage: FC<InstallPlansPageProps> = (props) => {
       flatten={(resources) => _.get(resources.installPlan, 'data', [])}
       title={t('InstallPlans')}
       showTitle={false}
+      omitFilterToolbar
       ListComponent={InstallPlansList}
     />
   );
@@ -560,7 +585,12 @@ type InstallPlanHintProps = {
   footer?: ReactNode;
 };
 
-export type InstallPlansListProps = {};
+export type InstallPlansListProps = {
+  operatorGroup: { loaded: boolean; data?: OperatorGroupKind[] };
+  data?: InstallPlanKind[];
+  loaded?: boolean;
+  loadError?: unknown;
+};
 
 export type InstallPlansPageProps = {
   namespace?: string;
