@@ -25,8 +25,7 @@ import {
 import type {
   ConsoleDataViewColumn,
   GetDataViewRows,
-} from '@console/app/src/components/data-view/types';
-import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
@@ -374,11 +373,8 @@ const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) =>
 
 const useImageStreamColumns = (): {
   columns: ConsoleDataViewColumn<K8sResourceKind>[];
-  resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation('public');
-  const { getResizableProps, getWidth, resetAllColumnWidths } =
-    useColumnWidthSettings(ImageStreamModel);
 
   const columns: ConsoleDataViewColumn<K8sResourceKind>[] = useMemo(() => {
     const labelsColumnId = tableColumnInfo[2].id;
@@ -387,7 +383,6 @@ const useImageStreamColumns = (): {
         title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
-        resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: {
           ...nameCellProps,
           modifier: 'nowrap' as const,
@@ -397,7 +392,6 @@ const useImageStreamColumns = (): {
         title: t('Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',
-        resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
           modifier: 'nowrap' as const,
         },
@@ -406,17 +400,15 @@ const useImageStreamColumns = (): {
         title: t('Labels'),
         id: labelsColumnId,
         sort: 'metadata.labels',
-        resizableProps: getResizableProps(labelsColumnId),
         props: {
           modifier: 'nowrap' as const,
-          ...getLabelsColumnWidthStyleProp(getWidth(labelsColumnId)),
+          ...getLabelsColumnWidthStyleProp(),
         },
       },
       {
         title: t('Created'),
         id: tableColumnInfo[3].id,
         sort: 'metadata.creationTimestamp',
-        resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
           modifier: 'nowrap' as const,
         },
@@ -429,26 +421,24 @@ const useImageStreamColumns = (): {
         },
       },
     ];
-  }, [t, getResizableProps, getWidth]);
+  }, [t]);
 
-  return { columns, resetAllColumnWidths };
+  return { columns };
 };
 
 const ImageStreamsList: FC<ImageStreamsListProps> = ({ data, loaded, ...props }) => {
-  const { columns, resetAllColumnWidths } = useImageStreamColumns();
+  const { columns } = useImageStreamColumns();
 
   return (
     <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<K8sResourceKind>
         {...props}
+        id={ImageStreamModel}
         label={ImageStreamModel.labelPlural}
         data={data}
         loaded={loaded}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement
-        isResizable
-        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );

@@ -148,13 +148,12 @@ import {
   UpgradeApprovalLink,
   catalogSourceForSubscription,
 } from './subscription';
-import {
-  csvColumnManagementID,
-  useClusterServiceVersionColumns,
-} from './useClusterServiceVersionColumns';
+import { useClusterServiceVersionColumns } from './useClusterServiceVersionColumns';
 import { referenceForProvidedAPI, providedAPIsForCSV } from './index';
 
 import './clusterserviceversion.scss';
+
+const csvColumnManagementID = referenceForModel(ClusterServiceVersionModel);
 
 const isSubscription = (obj) => referenceFor(obj) === referenceForModel(SubscriptionModel);
 const isCSV = (obj): obj is ClusterServiceVersionKind =>
@@ -644,10 +643,7 @@ const ClusterServiceVersionList: FC<ClusterServiceVersionListProps> = ({
   const [activeNamespace] = useActiveNamespace();
   const lifecycleEnabled = useFlag(Flags.OPERATOR_LIFECYCLE_METADATA);
   const allNamespaceActive = activeNamespace === ALL_NAMESPACES_KEY;
-  const { columns, resetAllColumnWidths } = useClusterServiceVersionColumns(
-    allNamespaceActive,
-    lifecycleEnabled,
-  );
+  const { columns } = useClusterServiceVersionColumns(allNamespaceActive, lifecycleEnabled);
 
   const filteredOperators = useMemo(
     () =>
@@ -694,9 +690,7 @@ const ClusterServiceVersionList: FC<ClusterServiceVersionListProps> = ({
         getDataViewRows={getInstalledOperatorDataViewRows}
         getObjectMetadata={getInstalledOperatorMetadata}
         customRowData={customRowData}
-        columnManagementID={csvColumnManagementID}
-        isResizable
-        resetAllColumnWidths={resetAllColumnWidths}
+        id={csvColumnManagementID}
       />
     </div>
   );

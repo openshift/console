@@ -18,12 +18,11 @@ import {
   ConsoleDataView,
   nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
+import Status from '@console/dynamic-plugin-sdk/src/app/components/status/Status';
 import type {
   ConsoleDataViewColumn,
   GetDataViewRows,
-} from '@console/app/src/components/data-view/types';
-import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-import Status from '@console/dynamic-plugin-sdk/src/app/components/status/Status';
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
@@ -388,10 +387,8 @@ const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) =>
 
 const useBuildsColumns = (): {
   columns: ConsoleDataViewColumn<K8sResourceKind>[];
-  resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation('public');
-  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(BuildModel);
 
   const columns = useMemo<ConsoleDataViewColumn<K8sResourceKind>[]>(
     () => [
@@ -399,7 +396,6 @@ const useBuildsColumns = (): {
         title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
-        resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: {
           ...nameCellProps,
           modifier: 'nowrap' as const,
@@ -409,7 +405,6 @@ const useBuildsColumns = (): {
         title: t('Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',
-        resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
           modifier: 'nowrap' as const,
         },
@@ -418,7 +413,6 @@ const useBuildsColumns = (): {
         title: t('Status'),
         id: tableColumnInfo[2].id,
         sort: 'status.phase',
-        resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
           modifier: 'nowrap' as const,
         },
@@ -427,7 +421,6 @@ const useBuildsColumns = (): {
         title: t('Start time'),
         id: tableColumnInfo[3].id,
         sort: 'status.startTimestamp',
-        resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
           modifier: 'nowrap' as const,
         },
@@ -436,7 +429,6 @@ const useBuildsColumns = (): {
         title: t('Duration'),
         id: tableColumnInfo[4].id,
         sort: 'status.duration',
-        resizableProps: getResizableProps(tableColumnInfo[4].id),
         props: {
           modifier: 'nowrap' as const,
         },
@@ -449,27 +441,25 @@ const useBuildsColumns = (): {
         },
       },
     ],
-    [t, getResizableProps],
+    [t],
   );
 
-  return { columns, resetAllColumnWidths };
+  return { columns };
 };
 
 const BuildsList: FC<BuildsListProps> = ({ data, loaded, ...props }) => {
-  const { columns, resetAllColumnWidths } = useBuildsColumns();
+  const { columns } = useBuildsColumns();
 
   return (
     <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView
         {...props}
+        id={BuildModel}
         label={BuildModel.labelPlural}
         data={data}
         loaded={loaded}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement
-        isResizable
-        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );

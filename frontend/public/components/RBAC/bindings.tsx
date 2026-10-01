@@ -21,13 +21,12 @@ import {
   actionsCellProps,
   nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
+import { ListPageBody } from '@console/dynamic-plugin-sdk';
 import type {
   ConsoleDataViewColumn,
   GetDataViewRows,
   ResourceFilters,
-} from '@console/app/src/components/data-view/types';
-import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-import { ListPageBody } from '@console/dynamic-plugin-sdk';
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
@@ -95,10 +94,8 @@ const tableColumnInfo = [
 
 const useRoleBindingsColumns = (): {
   columns: ConsoleDataViewColumn<BindingKind>[];
-  resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation('public');
-  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(RoleBindingModel);
 
   const columns: ConsoleDataViewColumn<BindingKind>[] = useMemo(
     () => [
@@ -106,7 +103,6 @@ const useRoleBindingsColumns = (): {
         title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
-        resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: {
           ...nameCellProps,
           modifier: 'nowrap' as const,
@@ -116,7 +112,6 @@ const useRoleBindingsColumns = (): {
         title: t('Role ref'),
         id: tableColumnInfo[1].id,
         sort: 'roleRef.name',
-        resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
           modifier: 'nowrap' as const,
         },
@@ -125,7 +120,6 @@ const useRoleBindingsColumns = (): {
         title: t('Subject kind'),
         id: tableColumnInfo[2].id,
         sort: 'subject.kind',
-        resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
           modifier: 'nowrap' as const,
         },
@@ -134,7 +128,6 @@ const useRoleBindingsColumns = (): {
         title: t('Subject name'),
         id: tableColumnInfo[3].id,
         sort: 'subject.name',
-        resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
           modifier: 'nowrap' as const,
         },
@@ -143,7 +136,6 @@ const useRoleBindingsColumns = (): {
         title: t('Namespace'),
         id: tableColumnInfo[4].id,
         sort: 'metadata.namespace',
-        resizableProps: getResizableProps(tableColumnInfo[4].id),
         props: {
           modifier: 'nowrap' as const,
         },
@@ -156,10 +148,10 @@ const useRoleBindingsColumns = (): {
         },
       },
     ],
-    [t, getResizableProps],
+    [t],
   );
 
-  return { columns, resetAllColumnWidths };
+  return { columns };
 };
 
 export const BindingName: FC<BindingProps> = ({ binding }) => (
@@ -242,7 +234,7 @@ const getDataViewRows: GetDataViewRows<BindingKind> = (data, columns) =>
 
 const BindingsList: FC<BindingsListTableProps> = (props) => {
   const { t } = useTranslation('public');
-  const { columns, resetAllColumnWidths } = useRoleBindingsColumns();
+  const { columns } = useRoleBindingsColumns();
 
   const hasCRBindings = props.data.some((binding) => !binding.metadata.namespace);
 
@@ -329,6 +321,7 @@ const BindingsList: FC<BindingsListTableProps> = (props) => {
     <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<BindingKind, undefined, BindingFilters>
         {...props}
+        id={RoleBindingModel}
         data={filteredData}
         loaded={loaded}
         label={t('RoleBindings')}
@@ -337,9 +330,6 @@ const BindingsList: FC<BindingsListTableProps> = (props) => {
         additionalFilterNodes={additionalFilterNodes}
         matchesAdditionalFilters={matchesAdditionalFilters}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement
-        isResizable
-        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );

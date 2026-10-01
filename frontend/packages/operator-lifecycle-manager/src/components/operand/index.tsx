@@ -137,7 +137,7 @@ const OperandListEmptyMsg: FC<{ noAPIsFound?: boolean }> = ({ noAPIsFound }) => 
 const OperandList: FC<OperandListProps> = (props) => {
   const { t } = useTranslation('olm');
   const { noAPIsFound, showNamespace } = props;
-  const { columns, resetAllColumnWidths } = useOperandColumns(showNamespace);
+  const { columns } = useOperandColumns(showNamespace);
   const dataViewFilters = useOlmDataViewFilters<K8sResourceKind>(props.rowFilters);
 
   // ConsoleDataView has a generic empty body state, so keep the operand-specific wording by
@@ -150,6 +150,7 @@ const OperandList: FC<OperandListProps> = (props) => {
     <ConsoleDataView<K8sResourceKind>
       {...props}
       {...dataViewFilters}
+      id="console.ui~v1~OperandsList"
       label={t('Operands')}
       data={props.data || []}
       loaded={props.loaded}
@@ -159,9 +160,6 @@ const OperandList: FC<OperandListProps> = (props) => {
       // so the Namespace column has to be kept explicitly or the single-namespace auto-hide
       // strips it right back out.
       showNamespaceOverride={showNamespace}
-      hideColumnManagement
-      isResizable
-      resetAllColumnWidths={resetAllColumnWidths}
     />
   );
 };

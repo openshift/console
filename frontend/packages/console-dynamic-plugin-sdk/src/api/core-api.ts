@@ -42,6 +42,8 @@ import {
   UseToast,
   ConsoleDataViewFC,
   CellIsStickyProps,
+  CreateSelectionCell,
+  CreateSelectionColumn,
   GetNameCellProps,
   ActionsCellProps,
   ResourceFilters,
@@ -118,8 +120,8 @@ export const HorizontalNav: FC<HorizontalNavProps> = require('@console/internal/
  * @param {*} [loadError] - (optional) An error encountered while loading `data`.
  * @param {ConsoleDataViewColumn[]} columns - The column definitions for the table.
  * @param {function} getDataViewRows - Transforms the filtered, sorted, and paginated data into table rows.
- * @param {object} [columnLayout] - (optional) The persisted column layout, used for column management.
- * @param {string} [columnManagementID] - (optional) A unique id used to persist column management selections to and from user settings.
+ * @param {object} [columnLayout] - (optional) The persisted column layout. Supply this to show the column management action. Its ID is derived from `id`.
+ * @param {K8sModel|K8sGroupVersionKind|string} id - A model, group/version/kind, or string ID used for column management, matching `console.dataview/table-column` extensions, and persisting resizable column widths. Models and GVKs resolve to `group~version~kind`.
  * @param {object} [initialFilters] - (optional) Initial values for the built-in name and label filters.
  * @param {ReactNode[]} [additionalFilterNodes] - (optional) Additional filter elements to render alongside the built-in name and label filters.
  * @param {function} [getObjectMetadata] - (optional) Extracts the name and labels used by the built-in filters from a data item.
@@ -130,10 +132,8 @@ export const HorizontalNav: FC<HorizontalNavProps> = require('@console/internal/
  * @param {boolean} [showNamespaceOverride] - (optional) If true, a column with id `'namespace'` is kept active regardless of column management selections or the active namespace.
  * @param {boolean} [hideNameLabelFilters] - (optional) Hides both the name and label filters.
  * @param {boolean} [hideLabelFilter] - (optional) Hides only the label filter, keeping the name filter.
- * @param {boolean} [hideColumnManagement] - (optional) Hides the column management action in the toolbar.
  * @param {boolean} [mock] - (optional) Renders an empty placeholder instead of the table.
- * @param {boolean} [isResizable] - (optional) Enables column resizing.
- * @param {function} [resetAllColumnWidths] - (optional) When provided and `isResizable` is true, a toolbar action is shown to reset all column widths.
+ * @param {boolean} [isResizable] - (optional) Enables resizing and saved widths for columns with a title, and shows a reset action. Defaults to `true`. Use `resizableProps` to customize or disable resizing on individual columns.
  * @param {ReactNode} [additionalActions] - (optional) Additional actions to display in the toolbar, alongside the built-in column management and reset-column-widths actions.
  * @param {ReactNode} [customActions] - (optional) Custom actions to display in the toolbar outside of the responsive actions group.
  * @param {object} [selection] - (optional) Selection configuration for enabling row selection via checkboxes. `ConsoleDataView` does not add the checkbox column itself. It must be included in `columns`/rows separately, for example with `createSelectionColumn`/`createSelectionCell`.
@@ -156,6 +156,7 @@ export const HorizontalNav: FC<HorizontalNavProps> = require('@console/internal/
  *
  * const PDBList: React.FC<Props> = ({ data, loaded }) => (
  *   <ConsoleDataView<PodDisruptionBudgetKind>
+ *     id={PodDisruptionBudgetModel}
  *     label="PodDisruptionBudgets"
  *     data={data}
  *     loaded={loaded}
@@ -166,6 +167,43 @@ export const HorizontalNav: FC<HorizontalNavProps> = require('@console/internal/
  * ```
  */
 export const ConsoleDataView: ConsoleDataViewFC = require('@console/app/src/components/data-view/ConsoleDataView').ConsoleDataView;
+
+/**
+ * Creates the sticky checkbox column for a `ConsoleDataView` with row selection enabled. Add
+ * the returned column to `columns`. Provide `selection.onSelectAll` to `ConsoleDataView` to
+ * enable the select-all header checkbox.
+ * @returns A column with id `select`.
+ * @example
+ * ```tsx
+ * const columns: ConsoleDataViewColumn<Pod>[] = [
+ *   createSelectionColumn<Pod>(),
+ *   { id: 'name', title: 'Name' },
+ * ];
+ * ```
+ */
+export const createSelectionColumn: CreateSelectionColumn =
+  require('@console/app/src/components/data-view/dataViewSelectionHelpers').createSelectionColumn;
+
+/**
+ * Creates a checkbox cell for a row in a `ConsoleDataView` with selection enabled. Use the
+ * returned cell for the `select` column in `getDataViewRows`.
+ * @param options - Row index, item ID, selection state, selection callback, and optional disabled state.
+ * @returns A cell with checkbox props for the selected row.
+ * @example
+ * ```tsx
+ * {
+ *   id: 'select',
+ *   ...createSelectionCell({
+ *     rowIndex: index,
+ *     itemId: getItemId(pod),
+ *     isSelected: selectedIds.has(getItemId(pod)),
+ *     onSelect: onSelectItem,
+ *   }),
+ * }
+ * ```
+ */
+export const createSelectionCell: CreateSelectionCell =
+  require('@console/app/src/components/data-view/dataViewSelectionHelpers').createSelectionCell;
 
 /**
  * Props that mark a `ConsoleDataView` column header or cell as sticky, keeping it fixed at the

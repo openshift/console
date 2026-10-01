@@ -13,8 +13,7 @@ import {
 import type {
   ConsoleDataViewColumn,
   GetDataViewRows,
-} from '@console/app/src/components/data-view/types';
-import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { k8sPatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
@@ -81,10 +80,8 @@ const getDataViewRows: GetDataViewRows<GroupKind> = (data, columns) =>
 
 const useGroupColumns = (): {
   columns: ConsoleDataViewColumn<GroupKind>[];
-  resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation('public');
-  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(GroupModel);
 
   const columns: ConsoleDataViewColumn<GroupKind>[] = useMemo(
     () => [
@@ -92,7 +89,6 @@ const useGroupColumns = (): {
         title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
-        resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: {
           ...nameCellProps,
           modifier: 'nowrap' as const,
@@ -102,7 +98,6 @@ const useGroupColumns = (): {
         title: t('Users'),
         id: tableColumnInfo[1].id,
         sort: 'users.length',
-        resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
           modifier: 'nowrap' as const,
         },
@@ -111,7 +106,6 @@ const useGroupColumns = (): {
         title: t('Created'),
         id: tableColumnInfo[2].id,
         sort: 'metadata.creationTimestamp',
-        resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
           modifier: 'nowrap' as const,
         },
@@ -124,29 +118,27 @@ const useGroupColumns = (): {
         },
       },
     ],
-    [t, getResizableProps],
+    [t],
   );
 
-  return { columns, resetAllColumnWidths };
+  return { columns };
 };
 
 const GroupList: FC<{ data: GroupKind[]; loaded: boolean }> = (props) => {
   const { data, loaded } = props;
   const { t } = useTranslation('public');
-  const { columns, resetAllColumnWidths } = useGroupColumns();
+  const { columns } = useGroupColumns();
 
   return (
     <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<GroupKind>
         {...props}
+        id={GroupModel}
         data={data}
         loaded={loaded}
         label={t('Groups')}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement
-        isResizable
-        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );

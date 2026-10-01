@@ -235,7 +235,7 @@ const SubscriptionsEmptyMsg: FC = () => {
 
 export const SubscriptionsList = requireOperatorGroup((props: SubscriptionsListProps) => {
   const { t } = useTranslation('olm');
-  const { columns, resetAllColumnWidths } = useSubscriptionColumns();
+  const { columns } = useSubscriptionColumns();
 
   // ConsoleDataView has a generic empty body state, so keep the Subscription-specific wording by
   // short-circuiting when nothing loaded at all. Filtering down to zero rows still uses the table.
@@ -246,14 +246,12 @@ export const SubscriptionsList = requireOperatorGroup((props: SubscriptionsListP
   return (
     <ConsoleDataView<SubscriptionKind>
       {...props}
+      id={SubscriptionModel}
       label={t('Subscriptions')}
       data={props.data || []}
       loaded={props.loaded}
       columns={columns}
       getDataViewRows={getSubscriptionDataViewRows}
-      hideColumnManagement
-      isResizable
-      resetAllColumnWidths={resetAllColumnWidths}
     />
   );
 });

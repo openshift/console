@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import type { TableProps } from '@console/internal/components/factory/table';
+import { EventingSubscriptionModel } from '../../../models';
 import type { EventSubscriptionKind } from '../../../types';
 import { useSubscriptionColumns } from './SubscriptionHeaders';
 import { getSubscriptionDataViewRows } from './SubscriptionRow';
@@ -17,18 +18,16 @@ export const SubscriptionList: FC<TableProps> = (props) => {
         : props.data,
     [props.data, channel],
   );
-  const { columns, resetAllColumnWidths } = useSubscriptionColumns(!channel);
+  const { columns } = useSubscriptionColumns(!channel);
   return (
     <ConsoleDataView<EventSubscriptionKind>
       {...props}
+      id={EventingSubscriptionModel}
       label={t('Subscriptions')}
       data={data}
       loaded={props.loaded}
       columns={columns}
       getDataViewRows={getSubscriptionDataViewRows}
-      hideColumnManagement
-      isResizable
-      resetAllColumnWidths={resetAllColumnWidths}
     />
   );
 };

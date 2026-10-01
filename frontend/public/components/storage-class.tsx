@@ -17,12 +17,11 @@ import {
   ConsoleDataView,
   nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
+import { useIsKubevirtPluginActive } from '@console/app/src/utils/kubevirt';
 import type {
   ConsoleDataViewColumn,
   GetDataViewRows,
-} from '@console/app/src/components/data-view/types';
-import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-import { useIsKubevirtPluginActive } from '@console/app/src/utils/kubevirt';
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { StorageClassModel } from '@console/internal/models';
 import { ActionServiceProvider } from '@console/shared/src/components/actions/ActionServiceProvider';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
@@ -119,10 +118,8 @@ const getDataViewRowsCreator: (
 
 const useStorageClassColumns = (): {
   columns: ConsoleDataViewColumn<StorageClassResourceKind>[];
-  resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation('public');
-  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(StorageClassModel);
 
   const columns: ConsoleDataViewColumn<StorageClassResourceKind>[] = useMemo(
     () => [
@@ -130,21 +127,18 @@ const useStorageClassColumns = (): {
         title: t('Name'),
         sort: 'metadata.name',
         id: tableColumnInfo[0].id,
-        resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: { ...nameCellProps, modifier: 'nowrap' as const },
       },
       {
         title: t('Provisioner'),
         sort: 'provisioner',
         id: tableColumnInfo[1].id,
-        resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: { modifier: 'nowrap' as const },
       },
       {
         title: t('Reclaim policy'),
         sort: 'reclaimPolicy',
         id: tableColumnInfo[2].id,
-        resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: { modifier: 'nowrap' as const },
       },
       {
@@ -153,15 +147,15 @@ const useStorageClassColumns = (): {
         props: { ...actionsCellProps },
       },
     ],
-    [t, getResizableProps],
+    [t],
   );
 
-  return { columns, resetAllColumnWidths };
+  return { columns };
 };
 
 const StorageClassList: FC<StorageClassListProps> = ({ data, loaded, ...props }) => {
   const { t } = useTranslation('public');
-  const { columns, resetAllColumnWidths } = useStorageClassColumns();
+  const { columns } = useStorageClassColumns();
   const isKubevirtPluginActive = useIsKubevirtPluginActive();
   const getDataViewRows = useMemo(
     () => getDataViewRowsCreator(t, isKubevirtPluginActive),
@@ -172,14 +166,12 @@ const StorageClassList: FC<StorageClassListProps> = ({ data, loaded, ...props })
     <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<StorageClassResourceKind>
         {...props}
+        id={StorageClassModel}
         label={StorageClassModel.labelPlural}
         data={data}
         loaded={loaded}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement
-        isResizable
-        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );

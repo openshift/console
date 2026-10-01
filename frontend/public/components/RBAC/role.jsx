@@ -20,7 +20,6 @@ import {
   nameCellProps,
   initialFiltersDefault,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
@@ -274,12 +273,13 @@ const BindingsListComponent = (props) => {
     <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView
         {...props}
+        isResizable={false}
+        id="console.ui~v1~RoleBindingsForRole"
         data={filteredData}
         loaded={loaded}
         label={t('RoleBindings')}
         columns={columns}
         getDataViewRows={getBindingsDataViewRows}
-        hideColumnManagement
       />
     </Suspense>
   );
@@ -387,7 +387,6 @@ export const ClusterRoleBindingsDetailsPage = (props) => {
 
 const useRolesColumns = () => {
   const { t } = useTranslation('public');
-  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(RoleModel);
 
   const columns = useMemo(
     () => [
@@ -395,7 +394,6 @@ const useRolesColumns = () => {
         title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
-        resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: {
           ...nameCellProps,
           modifier: 'nowrap',
@@ -405,7 +403,6 @@ const useRolesColumns = () => {
         title: t('Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',
-        resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
           modifier: 'nowrap',
         },
@@ -418,10 +415,10 @@ const useRolesColumns = () => {
         },
       },
     ],
-    [t, getResizableProps],
+    [t],
   );
 
-  return { columns, resetAllColumnWidths };
+  return { columns };
 };
 
 const useRoleFilterOptions = () => {
@@ -448,7 +445,7 @@ const useRoleFilterOptions = () => {
 const RolesList = (props) => {
   const { t } = useTranslation('public');
   const { data, loaded } = props;
-  const { columns, resetAllColumnWidths } = useRolesColumns();
+  const { columns } = useRolesColumns();
   const roleFilterOptions = useRoleFilterOptions();
 
   const initialFilters = useMemo(() => ({ ...initialFiltersDefault, 'role-kind': [] }), []);
@@ -476,6 +473,7 @@ const RolesList = (props) => {
     <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView
         {...props}
+        id={RoleModel}
         data={data}
         loaded={loaded}
         label={t('Roles')}
@@ -484,9 +482,6 @@ const RolesList = (props) => {
         initialFilters={initialFilters}
         additionalFilterNodes={additionalFilterNodes}
         matchesAdditionalFilters={matchesAdditionalFilters}
-        hideColumnManagement
-        isResizable
-        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );

@@ -17,12 +17,11 @@ import {
   nameCellProps,
   getLabelsColumnWidthStyleProp,
 } from '@console/app/src/components/data-view/ConsoleDataView';
+import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
 import type {
   ConsoleDataViewColumn,
   GetDataViewRows,
-} from '@console/app/src/components/data-view/types';
-import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { ActionServiceProvider } from '@console/shared/src/components/actions/ActionServiceProvider';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
@@ -229,10 +228,8 @@ const JobsDetailsPage: FC = (props) => {
 };
 const useJobsColumns = (): {
   columns: ConsoleDataViewColumn<JobKind>[];
-  resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation('public');
-  const { getResizableProps, getWidth, resetAllColumnWidths } = useColumnWidthSettings(JobModel);
 
   const columns = useMemo<ConsoleDataViewColumn<JobKind>[]>(
     () => [
@@ -240,7 +237,6 @@ const useJobsColumns = (): {
         title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
-        resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: {
           ...nameCellProps,
           modifier: 'nowrap' as const,
@@ -250,7 +246,6 @@ const useJobsColumns = (): {
         title: t('Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',
-        resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
           modifier: 'nowrap' as const,
         },
@@ -259,10 +254,9 @@ const useJobsColumns = (): {
         title: t('Labels'),
         id: tableColumnInfo[2].id,
         sort: 'metadata.labels',
-        resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
           modifier: 'nowrap' as const,
-          ...getLabelsColumnWidthStyleProp(getWidth(tableColumnInfo[2].id)),
+          ...getLabelsColumnWidthStyleProp(),
         },
       },
       {
@@ -270,7 +264,6 @@ const useJobsColumns = (): {
         id: tableColumnInfo[3].id,
         sort: (data, direction) =>
           data.sort(sortResourceByValue<JobKind>(direction, sorts.jobCompletionsSucceeded)),
-        resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
           modifier: 'nowrap' as const,
         },
@@ -280,7 +273,6 @@ const useJobsColumns = (): {
         id: tableColumnInfo[4].id,
         sort: (data, direction) =>
           data.sort(sortResourceByValue<JobKind>(direction, sorts.jobType)),
-        resizableProps: getResizableProps(tableColumnInfo[4].id),
         props: {
           modifier: 'nowrap' as const,
         },
@@ -289,7 +281,6 @@ const useJobsColumns = (): {
         title: t('Created'),
         id: tableColumnInfo[5].id,
         sort: 'metadata.creationTimestamp',
-        resizableProps: getResizableProps(tableColumnInfo[5].id),
         props: {
           modifier: 'nowrap' as const,
         },
@@ -302,27 +293,25 @@ const useJobsColumns = (): {
         },
       },
     ],
-    [t, getResizableProps, getWidth],
+    [t],
   );
 
-  return { columns, resetAllColumnWidths };
+  return { columns };
 };
 
 const JobsList: FC<JobsListProps> = ({ data, loaded, ...props }) => {
-  const { columns, resetAllColumnWidths } = useJobsColumns();
+  const { columns } = useJobsColumns();
 
   return (
     <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<JobKind>
         {...props}
+        id={JobModel}
         label={JobModel.labelPlural}
         data={data}
         loaded={loaded}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement
-        isResizable
-        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );

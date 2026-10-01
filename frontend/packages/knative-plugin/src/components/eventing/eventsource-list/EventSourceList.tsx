@@ -9,20 +9,18 @@ import { getEventSourceDataViewRows } from './EventSourceRow';
 
 export const EventSourceList: FC<TableProps> = (props) => {
   const { t } = useTranslation('knative-plugin');
-  const { columns, resetAllColumnWidths } = useEventSourceColumns();
+  const { columns } = useEventSourceColumns();
   const dataViewFilters = useKnativeDataViewFilters<EventSourceKind>(props.rowFilters);
   return (
     <ConsoleDataView<EventSourceKind>
       {...props}
       {...dataViewFilters}
+      id="console.ui~v1~KnativeEventSourcesCombinedList"
       label={t('Event Sources')}
       data={props.data}
       loaded={props.loaded}
       columns={columns}
       getDataViewRows={getEventSourceDataViewRows}
-      hideColumnManagement
-      isResizable
-      resetAllColumnWidths={resetAllColumnWidths}
     />
   );
 };

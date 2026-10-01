@@ -339,20 +339,18 @@ export const getCatalogSourceDataViewRows: GetDataViewRows<CatalogSourceTableRow
 
 const CatalogSourceList: FC<TableProps> = (props) => {
   const { t } = useTranslation('olm');
-  const { columns, resetAllColumnWidths } = useCatalogSourceColumns();
+  const { columns } = useCatalogSourceColumns();
   return (
     <ConsoleDataView<CatalogSourceTableRowObj>
       {...props}
+      id="console.ui~v1~OperatorHubSourcesList"
       label={t('CatalogSources')}
       data={props.data || []}
       loaded={props.loaded}
       columns={columns}
       getDataViewRows={getCatalogSourceDataViewRows}
       getObjectMetadata={getCatalogSourceMetadata}
-      hideColumnManagement
       hideLabelFilter
-      isResizable
-      resetAllColumnWidths={resetAllColumnWidths}
     />
   );
 };

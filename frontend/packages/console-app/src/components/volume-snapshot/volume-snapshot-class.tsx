@@ -11,8 +11,7 @@ import {
 import type {
   ConsoleDataViewColumn,
   GetDataViewRows,
-} from '@console/app/src/components/data-view/types';
-import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import {
   ListPageBody,
   ListPageCreate,
@@ -84,11 +83,8 @@ const getDataViewRowsCreator: (t: TFunction) => GetDataViewRows<VolumeSnapshotCl
 
 const useVolumeSnapshotClassColumns = (): {
   columns: ConsoleDataViewColumn<VolumeSnapshotClassKind>[];
-  resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation('console-app');
-  const { getResizableProps, resetAllColumnWidths } =
-    useColumnWidthSettings(VolumeSnapshotClassModel);
 
   const columns: ConsoleDataViewColumn<VolumeSnapshotClassKind>[] = useMemo(
     () => [
@@ -96,21 +92,18 @@ const useVolumeSnapshotClassColumns = (): {
         title: t('Name'),
         sort: 'metadata.name',
         id: tableColumnInfo[0].id,
-        resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: { ...nameCellProps, modifier: 'nowrap' as const },
       },
       {
         title: t('Driver'),
         sort: 'driver',
         id: tableColumnInfo[1].id,
-        resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: { modifier: 'nowrap' as const },
       },
       {
         title: t('Deletion policy'),
         sort: 'deletionPolicy',
         id: tableColumnInfo[2].id,
-        resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: { modifier: 'nowrap' as const },
       },
       {
@@ -119,10 +112,10 @@ const useVolumeSnapshotClassColumns = (): {
         props: { ...actionsCellProps },
       },
     ],
-    [t, getResizableProps],
+    [t],
   );
 
-  return { columns, resetAllColumnWidths };
+  return { columns };
 };
 
 const VolumeSnapshotClassTable: FC<VolumeSnapshotClassTableProps> = ({
@@ -131,21 +124,19 @@ const VolumeSnapshotClassTable: FC<VolumeSnapshotClassTableProps> = ({
   ...props
 }) => {
   const { t } = useTranslation('console-app');
-  const { columns, resetAllColumnWidths } = useVolumeSnapshotClassColumns();
+  const { columns } = useVolumeSnapshotClassColumns();
   const getDataViewRows = useMemo(() => getDataViewRowsCreator(t), [t]);
 
   return (
     <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<VolumeSnapshotClassKind>
         {...props}
+        id={VolumeSnapshotClassModel}
         label={VolumeSnapshotClassModel.labelPlural}
         data={data}
         loaded={loaded}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement
-        isResizable
-        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );

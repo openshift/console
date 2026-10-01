@@ -11,7 +11,6 @@ import {
   getNameCellProps,
   getNameColumnProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import { DASH } from '@console/dynamic-plugin-sdk/src/app/constants';
 import type {
   ConsoleDataViewColumn,
@@ -143,30 +142,24 @@ export const ImageManifestVulnDetailsPage: FC = () => {
 
 const useImageManifestVulnColumns = (): {
   columns: ConsoleDataViewColumn<ImageManifestVuln>[];
-  resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation('container-security');
-  const { getResizableProps, resetAllColumnWidths } =
-    useColumnWidthSettings(ImageManifestVulnModel);
   const columns = useMemo(
     () => [
       {
         id: 'name',
-        resizableProps: getResizableProps('name'),
         title: t('Image name'),
         sort: 'spec.image',
         props: { ...getNameColumnProps(), modifier: 'nowrap' as const },
       },
       {
         id: 'namespace',
-        resizableProps: getResizableProps('namespace'),
         title: t('Namespace'),
         sort: 'metadata.namespace',
         props: { modifier: 'nowrap' as const },
       },
       {
         id: 'highestSeverity',
-        resizableProps: getResizableProps('highestSeverity'),
         title: t('Highest severity'),
         // Order by how urgent the severity is rather than alphabetically.
         sort: (data, direction) => data.sort(sortResourceByValue(direction, highestSeverityIndex)),
@@ -174,36 +167,32 @@ const useImageManifestVulnColumns = (): {
       },
       {
         id: 'affectedPods',
-        resizableProps: getResizableProps('affectedPods'),
         title: t('Affected Pods'),
         sort: (data, direction) => data.sort(sortResourceByValue(direction, affectedPodsCount)),
         props: { modifier: 'nowrap' as const },
       },
       {
         id: 'fixable',
-        resizableProps: getResizableProps('fixable'),
         title: t('Fixable'),
         sort: 'status.fixableCount',
         props: { modifier: 'nowrap' as const },
       },
       {
         id: 'total',
-        resizableProps: getResizableProps('total'),
         title: t('Total'),
         sort: (data, direction) => data.sort(sortResourceByValue(direction, totalCount)),
         props: { modifier: 'nowrap' as const },
       },
       {
         id: 'manifest',
-        resizableProps: getResizableProps('manifest'),
         title: t('Manifest'),
         sort: 'spec.manifest',
         props: { modifier: 'nowrap' as const },
       },
     ],
-    [t, getResizableProps],
+    [t],
   );
-  return { columns, resetAllColumnWidths };
+  return { columns };
 };
 
 export const getImageManifestVulnDataViewRows: GetDataViewRows<ImageManifestVuln> = (
@@ -258,11 +247,12 @@ const getObjectMetadata = (imageManifestVuln: ImageManifestVuln): ResourceMetada
 
 const ImageManifestVulnList: FC<ImageManifestVulnListProps> = (props) => {
   const { t } = useTranslation('container-security');
-  const { columns, resetAllColumnWidths } = useImageManifestVulnColumns();
+  const { columns } = useImageManifestVulnColumns();
 
   return (
     <ConsoleDataView<ImageManifestVuln>
       {...props}
+      id={ImageManifestVulnModel}
       label={t('Image Manifest Vulnerabilities')}
       data={props.data}
       loaded={props.loaded}
@@ -271,9 +261,6 @@ const ImageManifestVulnList: FC<ImageManifestVulnListProps> = (props) => {
       getObjectMetadata={getObjectMetadata}
       showNamespaceOverride={props.showNamespaceOverride}
       hideNameLabelFilters={props.hideNameLabelFilters}
-      hideColumnManagement
-      isResizable
-      resetAllColumnWidths={resetAllColumnWidths}
     />
   );
 };

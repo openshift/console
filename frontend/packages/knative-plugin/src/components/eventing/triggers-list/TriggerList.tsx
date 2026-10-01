@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import type { TableProps } from '@console/internal/components/factory/table';
+import { EventingTriggerModel } from '../../../models';
 import type { EventTriggerKind } from '../../../types';
 import { useTriggerColumns } from './TriggerHeaders';
 import { getTriggerDataViewRows } from './TriggerRow';
@@ -17,18 +18,16 @@ export const TriggerList: FC<TableProps> = (props) => {
         : props.data,
     [props.data, broker],
   );
-  const { columns, resetAllColumnWidths } = useTriggerColumns(!broker);
+  const { columns } = useTriggerColumns(!broker);
   return (
     <ConsoleDataView<EventTriggerKind>
       {...props}
+      id={EventingTriggerModel}
       label={t('Triggers')}
       data={data}
       loaded={props.loaded}
       columns={columns}
       getDataViewRows={getTriggerDataViewRows}
-      hideColumnManagement
-      isResizable
-      resetAllColumnWidths={resetAllColumnWidths}
     />
   );
 };

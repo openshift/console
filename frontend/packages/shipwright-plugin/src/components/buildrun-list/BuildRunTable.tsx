@@ -8,7 +8,6 @@ import {
   getNameCellProps,
   getNameColumnProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import type {
   ConsoleDataViewColumn,
   GetDataViewRows,
@@ -30,43 +29,36 @@ import { useBuildRunStatusFilter } from '../useBuildRunStatusFilter';
 
 const useBuildRunColumns = (): {
   columns: ConsoleDataViewColumn<BuildRun>[];
-  resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation('shipwright-plugin');
-  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(BuildRunModel);
   const columns = useMemo(
     () => [
       {
         id: 'name',
-        resizableProps: getResizableProps('name'),
         title: t('Name'),
         sort: 'metadata.name',
         props: { ...getNameColumnProps(), modifier: 'nowrap' as const },
       },
       {
         id: 'namespace',
-        resizableProps: getResizableProps('namespace'),
         title: t('Namespace'),
         sort: 'metadata.namespace',
         props: { modifier: 'nowrap' as const },
       },
       {
         id: 'status',
-        resizableProps: getResizableProps('status'),
         title: t('Status'),
         sort: (data, direction) => data.sort(sortResourceByValue(direction, getBuildRunStatus)),
         props: { modifier: 'nowrap' as const },
       },
       {
         id: 'started',
-        resizableProps: getResizableProps('started'),
         title: t('Started'),
         sort: 'metadata.creationTimestamp',
         props: { modifier: 'nowrap' as const },
       },
       {
         id: 'duration',
-        resizableProps: getResizableProps('duration'),
         title: t('Duration'),
         sort: (data, direction) =>
           data.sort(sortResourceByValue(direction, getBuildRunDurationInSeconds)),
@@ -74,9 +66,9 @@ const useBuildRunColumns = (): {
       },
       { id: 'actions', title: '', props: actionsCellProps },
     ],
-    [t, getResizableProps],
+    [t],
   );
-  return { columns, resetAllColumnWidths };
+  return { columns };
 };
 
 export const getBuildRunDataViewRows: GetDataViewRows<BuildRun> = (data, columns) =>
@@ -107,13 +99,14 @@ export const getBuildRunDataViewRows: GetDataViewRows<BuildRun> = (data, columns
 
 export const BuildRunTable: FC<TableProps> = (props) => {
   const { t } = useTranslation('shipwright-plugin');
-  const { columns, resetAllColumnWidths } = useBuildRunColumns();
+  const { columns } = useBuildRunColumns();
   const statusFilter = useBuildRunStatusFilter<BuildRun>(t('Status'), getBuildRunStatus);
 
   return (
     <ConsoleDataView<BuildRun, unknown, BuildRunStatusFilters>
       {...props}
       {...statusFilter}
+      id={BuildRunModel}
       label={t('BuildRuns')}
       data={props.data}
       loaded={props.loaded}
@@ -121,9 +114,6 @@ export const BuildRunTable: FC<TableProps> = (props) => {
       getDataViewRows={getBuildRunDataViewRows}
       defaultSortColumnId="started"
       defaultSortDirection={SortByDirection.desc}
-      hideColumnManagement
-      isResizable
-      resetAllColumnWidths={resetAllColumnWidths}
     />
   );
 };

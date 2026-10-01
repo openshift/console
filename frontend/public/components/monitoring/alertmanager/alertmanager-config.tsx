@@ -27,14 +27,14 @@ import {
   getNameCellProps,
   ConsoleDataView,
 } from '@console/app/src/components/data-view/ConsoleDataView';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import type {
   ResourceFilters,
   ConsoleDataViewColumn,
   ConsoleDataViewRow,
   ResourceMetadata,
-} from '@console/app/src/components/data-view/types';
-import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
-import type { RowProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+  RowProps,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { NavBar } from '@console/internal/components/utils/horizontal-nav';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
@@ -475,6 +475,8 @@ const ReceiversTable: FC<ReceiversTableProps> = (props) => {
   return (
     <Suspense fallback={<div className="loading-skeleton--table" />}>
       <ConsoleDataView<AlertmanagerReceiver, ReceiverRowData, ReceiverFilters>
+        isResizable={false}
+        id="console.ui~v1~AlertmanagerReceivers"
         label={t('Receivers')}
         data={data}
         loaded
@@ -482,7 +484,6 @@ const ReceiversTable: FC<ReceiversTableProps> = (props) => {
         getObjectMetadata={getObjectMetadata}
         getDataViewRows={getReceiverDataViewRows}
         customRowData={customRowData}
-        hideColumnManagement
         hideNameLabelFilters={false}
         hideLabelFilter
       />

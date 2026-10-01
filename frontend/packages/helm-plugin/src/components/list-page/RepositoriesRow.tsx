@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getNameCellProps } from '@console/app/src/components/data-view/ConsoleDataView';
-import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import type { GetDataViewRows } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { LazyActionMenu } from '@console/dynamic-plugin-sdk/src/lib-internal';
 import { ResourceLink } from '@console/internal/components/utils';
 import type { K8sResourceKind } from '@console/internal/module/k8s';

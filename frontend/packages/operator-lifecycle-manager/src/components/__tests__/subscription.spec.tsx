@@ -233,7 +233,6 @@ describe('SubscriptionsList', () => {
     ]);
     expect(dataViewProps.isResizable).toBe(true);
     expect(dataViewProps.resetAllColumnWidths).toEqual(expect.any(Function));
-    expect(dataViewProps.hideColumnManagement).toBe(true);
   });
 
   it('renders the custom empty message instead of the table when no Subscriptions exist', () => {

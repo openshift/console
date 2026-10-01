@@ -34,6 +34,8 @@ import { EmptyBox } from '@console/shared/src/components/empty-state/EmptyBox';
 import { StatusBox } from '@console/shared/src/components/status/StatusBox';
 import { DataViewLabelFilter } from './DataViewLabelFilter';
 import { DataViewTextFilter } from './DataViewTextFilter';
+import { getConsoleDataViewID } from './getConsoleDataViewID';
+import { useConsoleDataViewColumns } from './useConsoleDataViewColumns';
 import { useConsoleDataViewData } from './useConsoleDataViewData';
 import { useConsoleDataViewFilters } from './useConsoleDataViewFilters';
 
@@ -72,7 +74,7 @@ export const ConsoleDataView = <
   loadError,
   columns,
   columnLayout,
-  columnManagementID,
+  id,
   initialFilters = initialFiltersDefault as TFilters,
   additionalFilterNodes,
   getObjectMetadata,
@@ -84,10 +86,8 @@ export const ConsoleDataView = <
   showNamespaceOverride,
   hideNameLabelFilters,
   hideLabelFilter,
-  hideColumnManagement,
   mock,
-  isResizable,
-  resetAllColumnWidths,
+  isResizable = true,
   additionalActions,
   customActions,
   selection,
@@ -96,11 +96,24 @@ export const ConsoleDataView = <
   const { t } = useTranslation('console-app');
   const launchModal = useOverlay();
   const [tableKey, setTableKey] = useState(0);
+  const resolvedID = getConsoleDataViewID(id);
+  const managedColumnLayout = useMemo(
+    () => (columnLayout && resolvedID ? { ...columnLayout, id: resolvedID } : undefined),
+    [columnLayout, resolvedID],
+  );
+  const preparedTable = useConsoleDataViewColumns(
+    columns,
+    managedColumnLayout,
+    resolvedID,
+    getDataViewRows,
+    isResizable,
+  );
+  const { resetColumnWidths } = preparedTable;
 
   const handleResetColumnWidths = useCallback(() => {
-    resetAllColumnWidths?.();
+    resetColumnWidths();
     setTableKey((k) => k + 1);
-  }, [resetAllColumnWidths]);
+  }, [resetColumnWidths]);
 
   const { filters, onSetFilters, clearAllFilters, filteredData } = useConsoleDataViewFilters<
     TData,
@@ -133,14 +146,14 @@ export const ConsoleDataView = <
     TCustomRowData,
     TFilters
   >({
-    columns,
+    columns: preparedTable.columns,
     filteredData,
     filters,
-    getDataViewRows,
+    getDataViewRows: preparedTable.getDataViewRows,
     defaultSortColumnId,
     defaultSortDirection,
     showNamespaceOverride,
-    columnManagementID,
+    columnManagementID: resolvedID,
     customRowData,
     isResizable,
     selection,
@@ -255,6 +268,7 @@ export const ConsoleDataView = <
       <DataView
         activeState={activeState}
         className={css(dataViewFilterNodes.length === 1 && 'co-console-data-view-single-filter')}
+        data-test={`console-data-view-${resolvedID}`}
       >
         <DataViewToolbar
           filters={
@@ -272,13 +286,13 @@ export const ConsoleDataView = <
           actions={
             <>
               <ResponsiveActions breakpoint={actionsBreakpoint}>
-                {!hideColumnManagement && (
+                {resolvedID && preparedTable.columnLayout && (
                   <ResponsiveAction
                     isPersistent
                     variant="plain"
                     onClick={() =>
                       launchModal(LazyColumnManagementModalOverlay, {
-                        columnLayout,
+                        columnLayout: preparedTable.columnLayout,
                         noLimit: true,
                       })
                     }
@@ -290,7 +304,7 @@ export const ConsoleDataView = <
                     </Tooltip>
                   </ResponsiveAction>
                 )}
-                {isResizable && resetAllColumnWidths && (
+                {isResizable && resolvedID && (
                   <ResponsiveAction
                     isPersistent
                     variant="plain"
@@ -432,11 +446,11 @@ export const actionsCellProps = {
 
 /**
  * Returns the style prop for a Labels column so it can be shared across tables.
- * @param width - Persisted or current width in pixels (e.g. from getWidth(columnId))
+ * @param width - (optional) Width in pixels; defaults to `defaultWidth`.
  * @param defaultWidth - Default width when no width is provided (default 200)
  * @returns Style object for the column's props.style
  */
-export const getLabelsColumnWidthStyleProp = (width: number | undefined, defaultWidth = 200) => ({
+export const getLabelsColumnWidthStyleProp = (width?: number, defaultWidth = 200) => ({
   style: {
     width: `${width ?? defaultWidth}px`,
   },

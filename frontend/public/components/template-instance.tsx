@@ -24,8 +24,8 @@ import type {
   ResourceFilters,
   ConsoleDataViewColumn,
   ConsoleDataViewRow,
-} from '@console/app/src/components/data-view/types';
-import type { RowProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+  RowProps,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
@@ -182,6 +182,8 @@ const TemplateInstanceList: FC<TemplateInstanceListProps> = ({ data, loaded, ...
     <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<TemplateInstanceKind, TemplateInstanceRowData, TemplateInstanceFilters>
         {...props}
+        isResizable={false}
+        id={TemplateInstanceModel}
         label={TemplateInstanceModel.labelPlural}
         data={data}
         loaded={loaded}
@@ -190,7 +192,6 @@ const TemplateInstanceList: FC<TemplateInstanceListProps> = ({ data, loaded, ...
         additionalFilterNodes={additionalFilterNodes}
         matchesAdditionalFilters={matchesAdditionalFilters}
         getDataViewRows={getTemplateInstanceDataViewRows}
-        hideColumnManagement
       />
     </Suspense>
   );

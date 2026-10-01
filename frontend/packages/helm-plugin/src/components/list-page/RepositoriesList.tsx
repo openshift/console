@@ -5,29 +5,24 @@ import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDa
 import type { TableProps } from '@console/internal/components/factory';
 import { LoadingBox } from '@console/internal/components/utils';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import { HelmRepositoriesCombinedListModel } from '../../models/helm';
 import { useRepositoriesColumns } from './RepositoriesHeader';
 import { getDataViewRows } from './RepositoriesRow';
 
 const RepositoriesList: FC<TableProps> = (props) => {
   const { t } = useTranslation('helm-plugin');
-  const { columns, resetAllColumnWidths } = useRepositoriesColumns(
-    HelmRepositoriesCombinedListModel,
-  );
+  const { columns } = useRepositoriesColumns();
 
   return (
     <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<K8sResourceKind>
         {...props}
+        id="console.ui~v1~HelmRepositoriesCombinedList"
         data={props.data}
         loaded={props.loaded}
         label={t('HelmChartRepositories')}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement
         data-test="repositories-list"
-        isResizable
-        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );

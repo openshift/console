@@ -11,13 +11,13 @@ import {
   getNameCellProps,
   ConsoleDataView,
 } from '@console/app/src/components/data-view/ConsoleDataView';
+import type { ResourceActionProvider, ResolvedExtension } from '@console/dynamic-plugin-sdk';
+import { isResourceActionProvider, useResolvedExtensions } from '@console/dynamic-plugin-sdk';
 import type {
   ConsoleDataViewColumn,
   ConsoleDataViewRow,
-} from '@console/app/src/components/data-view/types';
-import type { ResourceActionProvider, ResolvedExtension } from '@console/dynamic-plugin-sdk';
-import { isResourceActionProvider, useResolvedExtensions } from '@console/dynamic-plugin-sdk';
-import type { RowProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+  RowProps,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import type { PageComponentProps } from '@console/dynamic-plugin-sdk/src/extensions/horizontal-nav-tabs';
 import { useK8sModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sModel';
 import { getGroupVersionKindForResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
@@ -339,6 +339,8 @@ export const DefaultList: FC<TableProps & { kinds: string[] }> = (props) => {
       ) : (
         <ConsoleDataView<K8sResourceKind>
           {...props}
+          isResizable={false}
+          id={model ?? kinds[0]}
           label={getAriaLabel()}
           data={data}
           loaded={loaded}
@@ -353,7 +355,6 @@ export const DefaultList: FC<TableProps & { kinds: string[] }> = (props) => {
               resourceProviderExtensionsResolved,
             )
           }
-          hideColumnManagement
         />
       )}
     </>

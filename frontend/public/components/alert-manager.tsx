@@ -19,7 +19,7 @@ import {
 import type {
   ConsoleDataViewColumn,
   GetDataViewRows,
-} from '@console/app/src/components/data-view/types';
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DASH } from '@console/shared/src/constants/ui';
 import { AlertmanagerModel } from '../models';
@@ -230,12 +230,13 @@ const AlertManagersList: FC<AlertManagersListProps> = ({ data, loaded, ...props 
     <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView
         {...props}
+        isResizable={false}
+        id={AlertmanagerModel}
         label={AlertmanagerModel.labelPlural}
         data={data}
         loaded={loaded}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement
       />
     </Suspense>
   );

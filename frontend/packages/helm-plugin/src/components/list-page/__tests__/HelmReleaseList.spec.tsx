@@ -31,13 +31,6 @@ jest.mock('@console/app/src/components/data-view/ConsoleDataView', () => ({
   nameCellProps: {},
 }));
 
-jest.mock('@console/app/src/components/data-view/useResizableColumnProps', () => ({
-  useColumnWidthSettings: jest.fn(() => ({
-    getResizableProps: jest.fn(() => ({})),
-    resetAllColumnWidths: jest.fn(),
-  })),
-}));
-
 jest.mock('@console/internal/components/utils', () => ({
   LoadingBox: () => <div data-test="loading-box">Loading...</div>,
 }));
