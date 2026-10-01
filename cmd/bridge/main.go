@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	stdlog "log"
 	"net"
 	"os/signal"
 	"runtime"
@@ -78,6 +79,20 @@ const (
 	defaultCacheDuration = 5 * time.Minute
 	defaultCacheCleanup  = 30 * time.Minute
 )
+
+// klogWriter is an io.Writer that forwards messages to klog at verbosity
+// level 4. It is used as the ErrorLog writer for the HTTP server so that
+// low-level TLS handshake errors (e.g. from health-check probes that open
+// a plain TCP connection against the HTTPS port) are suppressed under
+// normal operation and only surface when verbose logging is enabled.
+type klogWriter struct{}
+
+func (klogWriter) Write(p []byte) (int, error) {
+	if klog.V(4).Enabled() {
+		klog.V(4).InfoDepth(1, string(p))
+	}
+	return len(p), nil
+}
 
 func main() {
 	// Initialize controller-runtime logger, needed for the OLM handler
@@ -762,7 +777,10 @@ func main() {
 		klog.Fatalf("failed to set up HTTP handler: %v", err)
 	}
 
-	httpsrv := &http.Server{Handler: handler}
+	httpsrv := &http.Server{
+		Handler:  handler,
+		ErrorLog: stdlog.New(klogWriter{}, "", 0),
+	}
 
 	if listenURL.Scheme == "https" {
 		if err := http2.ConfigureServer(httpsrv, &http2.Server{}); err != nil {
