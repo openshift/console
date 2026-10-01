@@ -98,10 +98,10 @@ export const formatNamespaceRoute = (
     return originalPath;
   }
 
+  const isNewResource = parts.includes('~new');
   if (
-    (previousNS !== activeNamespace &&
-      (parts[1] !== 'new' || activeNamespace !== ALL_NAMESPACES_KEY)) ||
-    (activeNamespace === ALL_NAMESPACES_KEY && parts[1] === 'new') ||
+    (previousNS !== activeNamespace && !isNewResource) ||
+    (activeNamespace === ALL_NAMESPACES_KEY && isNewResource) ||
     forceList
   ) {
     // a given resource will not exist when we switch namespaces, so pop off the tail end
