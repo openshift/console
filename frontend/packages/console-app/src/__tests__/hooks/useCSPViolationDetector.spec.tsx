@@ -2,6 +2,7 @@ import { act, fireEvent } from '@testing-library/react';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import {
   newPluginCSPViolationEvent,
+  sameHostname,
   useCSPViolationDetector,
 } from '../../hooks/useCSPViolationDetector';
 
@@ -123,5 +124,30 @@ describe('useCSPViolationDetector', () => {
     });
     expect(mockCacheEvent).toHaveBeenCalledWith(expected);
     expect(mockFireTelemetry).toHaveBeenCalledWith('CSPViolation', expected);
+  });
+});
+
+describe('sameHostname', () => {
+  // SecurityPolicyViolationEvent.blockedURI (and sourceFile) are not always absolute
+  // URLs; they can be tokens like "inline", "eval", or an empty string. Regression
+  // coverage for a crash where `new URL()` threw "Failed to construct 'URL': Invalid
+  // URL" uncaught, breaking the entire app (e.g. when comparing Helm plugin CSP
+  // violations whose blockedURI was "inline").
+  it('returns true when hostnames match', () => {
+    expect(sameHostname('http://example.com/a', 'http://example.com/b')).toBe(true);
+  });
+
+  it('returns false when hostnames differ', () => {
+    expect(sameHostname('http://example.com', 'http://other.com')).toBe(false);
+  });
+
+  it.each([
+    ['inline', 'inline'],
+    ['eval', 'http://example.com'],
+    ['', 'http://example.com'],
+    ['inline', ''],
+  ])('does not throw and returns false for non-URL tokens (%s, %s)', (a, b) => {
+    expect(() => sameHostname(a, b)).not.toThrow();
+    expect(sameHostname(a, b)).toBe(false);
   });
 });
