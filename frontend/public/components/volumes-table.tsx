@@ -1,11 +1,23 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import type { FC } from 'react';
-import { sortable } from '@patternfly/react-table';
+import { useMemo } from 'react';
 import i18next from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
-import { KEBAB_COLUMN_CLASS } from '@console/shared/src/components/actions/LazyActionMenu';
+import {
+  ConsoleDataView,
+  actionsCellProps,
+  getNameCellProps,
+  getNameColumnProps,
+} from '@console/app/src/components/data-view/ConsoleDataView';
+import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
+import type { K8sModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
+import type {
+  ConsoleDataViewColumn,
+  GetDataViewRows,
+  ResourceMetadata,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { connectToModel } from '../kinds';
 import type {
   ContainerSpec,
@@ -17,7 +29,6 @@ import type {
   Volume,
   VolumeMount,
 } from '../module/k8s';
-import { Table } from './factory/table';
 import { useRemoveModalLauncher } from './modals/remove-volume-modal';
 import type { ModalCallback } from './modals/types';
 import { SectionHeading } from './utils/headings';
@@ -27,6 +38,18 @@ import { asAccessReview } from './utils/rbac';
 import { ResourceIcon } from './utils/resource-icon';
 import { EmptyBox } from './utils/status-box';
 import { VolumeType } from './utils/volume-type';
+
+/** Console-only model for column width preferences; not a cluster API resource. */
+const VolumeTableModel: K8sModel = {
+  apiGroup: 'console.ui',
+  apiVersion: 'v1',
+  kind: 'VolumeTable',
+  id: 'volumetable',
+  plural: 'volumetables',
+  label: 'Volume',
+  labelPlural: 'Volumes',
+  abbr: 'V',
+};
 
 const removeVolume = (
   removeVolumeModal: ModalCallback,
@@ -83,145 +106,146 @@ const ContainerLink: FC<ContainerLinkProps> = ({ name, pod }) => (
 );
 ContainerLink.displayName = 'ContainerLink';
 
-const volumeRowColumnClasses = [
-  'pf-v6-u-w-25-on-2xl',
-  'pf-v6-u-w-25-on-2xl',
-  'pf-m-hidden pf-m-visible-on-md',
-  'pf-m-hidden pf-m-visible-on-lg',
-  'pf-m-hidden pf-m-visible-on-lg',
-  'pf-m-hidden pf-m-visible-on-xl',
-  KEBAB_COLUMN_CLASS,
-];
+const useVolumeColumns = (): {
+  columns: ConsoleDataViewColumn<RowVolumeData>[];
+  resetAllColumnWidths: () => void;
+} => {
+  const { t } = useTranslation('public');
+  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(VolumeTableModel);
+  const columns = useMemo(
+    () => [
+      {
+        id: 'name',
+        resizableProps: getResizableProps('name'),
+        title: t('Name'),
+        sort: 'name',
+        props: { ...getNameColumnProps(), modifier: 'nowrap' as const },
+      },
+      {
+        id: 'mountPath',
+        resizableProps: getResizableProps('mountPath'),
+        title: t('Mount path'),
+        sort: 'mountPath',
+        props: { modifier: 'nowrap' as const },
+      },
+      {
+        id: 'subPath',
+        resizableProps: getResizableProps('subPath'),
+        title: t('SubPath'),
+        sort: 'subPath',
+        props: { modifier: 'nowrap' as const },
+      },
+      {
+        id: 'type',
+        resizableProps: getResizableProps('type'),
+        title: t('Type'),
+        props: { modifier: 'nowrap' as const },
+      },
+      {
+        id: 'permissions',
+        resizableProps: getResizableProps('permissions'),
+        title: t('Permissions'),
+        sort: 'readOnly',
+        props: { modifier: 'nowrap' as const },
+      },
+      {
+        id: 'utilizedBy',
+        resizableProps: getResizableProps('utilizedBy'),
+        title: t('Utilized by'),
+        sort: 'container',
+        props: { modifier: 'nowrap' as const },
+      },
+      { id: 'actions', title: '', props: actionsCellProps },
+    ],
+    [t, getResizableProps],
+  );
+  return { columns, resetAllColumnWidths };
+};
 
-const VolumesTableRows = ({ componentProps: { data } }) =>
-  _.map(data, (volume: RowVolumeData) => {
+export const getVolumeDataViewRows: GetDataViewRows<RowVolumeData> = (data, columns) =>
+  data.map(({ obj: volume }) => {
     const { container, mountPath, name, readOnly, resource, subPath, volumeDetail } = volume;
     const pod = getPodTemplate(resource);
     const podVolume = pod.spec?.volumes?.find((v) => name === v.name);
     const podVolumeIsReadOnly = podVolume
       ? Object.values(podVolume).some((v) => v.readOnly === 'true')
       : false;
-    return [
-      {
-        title: name,
+    const rowCells = {
+      name: {
+        cell: name,
         props: {
-          className: volumeRowColumnClasses[0],
+          ...getNameCellProps(name),
           'data-test': `volume-name-${name}`,
           'data-test-volume-name-for': name,
         },
       },
-      {
-        title: mountPath,
+      mountPath: {
+        cell: mountPath,
         props: {
-          className: volumeRowColumnClasses[1],
           'data-test': `mount-path-${name}`,
           'data-test-mount-path-for': name,
         },
       },
-      {
-        title: subPath || (
+      subPath: {
+        cell: subPath || (
           <span className="pf-v6-u-text-color-subtle">{i18next.t('public~No subpath')}</span>
         ),
-        props: {
-          className: volumeRowColumnClasses[2],
-        },
       },
-      {
-        title: <VolumeType volume={volumeDetail} namespace={resource.metadata.namespace} />,
-        props: {
-          className: volumeRowColumnClasses[3],
-        },
+      type: {
+        cell: <VolumeType volume={volumeDetail} namespace={resource.metadata.namespace} />,
+        // VolumeType renders a ResourceLink. Without nowrap on the cell itself the resource name
+        // breaks one character per line whenever the column is narrow.
+        props: { modifier: 'nowrap' as const },
       },
-      {
-        title:
+      permissions: {
+        cell:
           readOnly || podVolumeIsReadOnly
             ? i18next.t('public~Read-only')
             : i18next.t('public~Read/Write'),
-        props: {
-          className: volumeRowColumnClasses[4],
-        },
       },
-      {
-        title:
-          _.get(pod, 'kind') === 'Pod' ? (
+      utilizedBy: {
+        // `getPodTemplate` returns the resource itself for a Pod, and `spec.template` otherwise,
+        // so only a Pod's template can be linked to a container.
+        cell:
+          resource.kind === 'Pod' ? (
             <ContainerLink name={container} pod={pod as PodKind} />
           ) : (
             container
           ),
-        props: {
-          className: volumeRowColumnClasses[5],
-        },
       },
-      {
-        title: <VolumeKebab kind={resource.kind} resource={resource} rowVolumeData={volume} />,
-        props: {
-          className: volumeRowColumnClasses[6],
-        },
+      actions: {
+        cell: <VolumeKebab kind={resource.kind} resource={resource} rowVolumeData={volume} />,
+        props: actionsCellProps,
       },
-    ];
+    };
+    return columns.map(({ id }) => ({ id, ...rowCells[id] }));
   });
 
-export const VolumesTable = (props) => {
+const getObjectMetadata = (volume: RowVolumeData): ResourceMetadata => ({ name: volume.name });
+
+export const VolumesTable: FC<VolumesTableProps> = ({ resource, heading }) => {
   const { t } = useTranslation('public');
-  const { resource, ...tableProps } = props;
+  const { columns, resetAllColumnWidths } = useVolumeColumns();
   const data: RowVolumeData[] = getRowVolumeData(resource);
   const pod: PodTemplate = getPodTemplate(resource);
-  const VolumesTableHeader = () => [
-    {
-      title: t('Name'),
-      sortField: 'name',
-      transforms: [sortable],
-      props: { className: volumeRowColumnClasses[0] },
-    },
-    {
-      title: t('Mount path'),
-      sortField: 'mountPath',
-      transforms: [sortable],
-      props: { className: volumeRowColumnClasses[1] },
-    },
-    {
-      title: t('SubPath'),
-      sortField: 'subPath',
-      transforms: [sortable],
-      props: { className: volumeRowColumnClasses[2] },
-    },
-    {
-      title: t('Type'),
-      props: { className: volumeRowColumnClasses[3] },
-    },
-    {
-      title: t('Permissions'),
-      sortField: 'readOnly',
-      transforms: [sortable],
-      props: { className: volumeRowColumnClasses[4] },
-    },
-    {
-      title: t('Utilized by'),
-      sortField: 'container',
-      transforms: [sortable],
-      props: { className: volumeRowColumnClasses[5] },
-    },
-    {
-      title: '',
-      props: { className: volumeRowColumnClasses[6] },
-    },
-  ];
 
   return (
     <>
-      {props.heading && <SectionHeading text={props.heading} />}
+      {heading && <SectionHeading text={heading} />}
       {_.isEmpty(pod.spec.volumes) && !anyContainerWithVolumeMounts(pod.spec.containers) ? (
         <EmptyBox label={t('Volumes')} />
       ) : (
-        <Table
-          {...tableProps}
-          aria-label={t('Volumes')}
-          loaded
-          label={props.heading}
+        <ConsoleDataView<RowVolumeData>
+          label={t('Volumes')}
           data={data}
-          Header={VolumesTableHeader}
-          Rows={VolumesTableRows}
-          virtualize={false}
+          loaded
+          columns={columns}
+          getDataViewRows={getVolumeDataViewRows}
+          getObjectMetadata={getObjectMetadata}
+          hideColumnManagement
+          hideLabelFilter
+          isResizable
+          resetAllColumnWidths={resetAllColumnWidths}
         />
       )}
     </>
@@ -254,6 +278,11 @@ const VolumeKebab = connectToModel((props: VolumeKebabProps) => {
     />
   );
 });
+
+type VolumesTableProps = {
+  resource: K8sResourceKind;
+  heading?: string;
+};
 
 type VolumeKebabProps = {
   kindObj: K8sKind;

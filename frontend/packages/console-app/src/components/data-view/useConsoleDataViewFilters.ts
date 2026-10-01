@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useDataViewFilters } from '@patternfly/react-data-view';
 import { useSearchParams } from 'react-router';
 import { useExactSearch } from '@console/app/src/components/user-preferences/search/useExactSearch';
@@ -18,6 +18,69 @@ const getK8sResourceMetadata = (obj: K8sResourceCommon): ResourceMetadata => ({
 const getOpenShiftDisplayName = (resource: K8sResourceCommon): string | undefined =>
   resource.metadata?.annotations?.['openshift.io/display-name'];
 
+/** @see storagePrefix in `@console/internal/components/row-filter` */
+const LEGACY_ROW_FILTER_PREFIX = 'rowFilter-';
+
+/**
+ * Rewrites row filters left in the URL by the legacy `FilterToolbar` into the form DataView reads.
+ *
+ * `FilterToolbar` wrote one `rowFilter-<id>` parameter holding comma-separated values, where
+ * DataView repeats `<id>` once per value. Without this, a bookmark or a link shared before a list
+ * page moved to `ConsoleDataView` still loads, but silently drops its filters.
+ *
+ * Only filters the table declares are touched, so this cannot invent parameters. A canonical
+ * parameter already present wins, since that one came from the current UI, but the legacy
+ * parameter is dropped either way. Leaving it in place would let it resurrect the filter the
+ * moment the user clears it, because clearing removes the canonical parameter and would make the
+ * stale legacy one adoptable again.
+ *
+ * The rewrite is deferred to a later task rather than run inline. `useDataViewPagination` writes
+ * `page` and `perPage` during the same commit, from the snapshot it captured before this runs, so
+ * an inline rewrite is discarded and nothing changes the URL afterwards to trigger a retry.
+ */
+const useLegacyRowFilterParams = (
+  filterIds: string[],
+  searchParams: URLSearchParams,
+  setSearchParams: ReturnType<typeof useSearchParams>[1],
+) => {
+  const legacy = useMemo(
+    () =>
+      filterIds
+        .map((id) => ({
+          id,
+          value: searchParams.get(`${LEGACY_ROW_FILTER_PREFIX}${id}`),
+          adopt: !searchParams.has(id),
+        }))
+        .filter(({ value }) => value !== null),
+    [filterIds, searchParams],
+  );
+
+  const rewrite = useCallback(
+    (prev: URLSearchParams) => {
+      const next = new URLSearchParams(prev);
+      legacy.forEach(({ id, value, adopt }) => {
+        next.delete(`${LEGACY_ROW_FILTER_PREFIX}${id}`);
+        if (adopt) {
+          value
+            .split(',')
+            .filter(Boolean)
+            .forEach((entry) => next.append(id, entry));
+        }
+      });
+      return next;
+    },
+    [legacy],
+  );
+
+  useEffect(() => {
+    if (legacy.length === 0) {
+      return undefined;
+    }
+    const timeout = setTimeout(() => setSearchParams(rewrite, { replace: true }));
+    return () => clearTimeout(timeout);
+  }, [legacy, rewrite, setSearchParams]);
+};
+
 export const useConsoleDataViewFilters = <
   TData,
   TFilters extends ResourceFilters = ResourceFilters,
@@ -34,6 +97,9 @@ export const useConsoleDataViewFilters = <
 }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [isExactSearch] = useExactSearch();
+
+  const filterIds = useMemo(() => Object.keys(initialFilters), [initialFilters]);
+  useLegacyRowFilterParams(filterIds, searchParams, setSearchParams);
 
   const { filters, onSetFilters, clearAllFilters } = useDataViewFilters<TFilters>({
     initialFilters,

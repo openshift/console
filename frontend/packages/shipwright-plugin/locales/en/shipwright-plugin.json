@@ -52,6 +52,7 @@
   "Failed": "Failed",
   "Failure - check logs for details.": "Failure - check logs for details.",
   "Failure on task {{taskName}} - check logs for details.": "Failure on task {{taskName}} - check logs for details.",
+  "Filter by status": "Filter by status",
   "Hide optional parameters": "Hide optional parameters",
   "Image": "Image",
   "Invalid YAML - {{err}}": "Invalid YAML - {{err}}",

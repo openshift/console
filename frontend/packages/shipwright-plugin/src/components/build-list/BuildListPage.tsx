@@ -51,6 +51,7 @@ const BuildListPage: FC<BuildListPageProps> = (props) => {
       kind={referenceForModel(buildModel)}
       ListComponent={BuildTable}
       rowFilters={filters}
+      omitFilterToolbar
       canCreate
       createProps={{
         to: props.namespace
