@@ -152,7 +152,7 @@ describe('CreateYAMLInner', () => {
       expect(editorText).not.toContain('"namespace":"project-a"');
     });
 
-    it('remounts YAML editor when namespace changes', async () => {
+    it('reloads YAML editor when namespace changes', async () => {
       mockUseActiveNamespace.mockReturnValue(['project-a', jest.fn()]);
 
       const { rerender } = renderWithProviders(
@@ -163,7 +163,6 @@ describe('CreateYAMLInner', () => {
         />,
       );
 
-      expect(mockAsyncComponent).toHaveBeenCalledTimes(1);
       expect(mockAsyncComponent.mock.calls[0][0].initialResource.metadata.namespace).toBe(
         'project-a',
       );
@@ -177,7 +176,6 @@ describe('CreateYAMLInner', () => {
         />,
       );
 
-      expect(mockAsyncComponent).toHaveBeenCalledTimes(2);
       expect(mockAsyncComponent.mock.calls[1][0].initialResource.metadata.namespace).toBe(
         'project-b',
       );

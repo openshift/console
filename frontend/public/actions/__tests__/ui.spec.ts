@@ -1,3 +1,4 @@
+import { ALL_NAMESPACES_KEY } from '@console/dynamic-plugin-sdk/src/constants';
 import * as UIActions from '../ui';
 
 describe('ui-actions', () => {
