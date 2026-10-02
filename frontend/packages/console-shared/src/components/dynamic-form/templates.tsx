@@ -1,13 +1,13 @@
 import type { FC } from 'react';
-import { useState, useEffect } from 'react';
 import { Button, Alert, Divider, FormHelperText } from '@patternfly/react-core';
 import { RhUiMinusCircleIcon, RhUiAddCircleFillIcon } from '@patternfly/react-icons';
 import type {
   ArrayFieldTemplateProps,
+  ArrayFieldItemTemplateProps,
   FieldTemplateProps,
   ObjectFieldTemplateProps,
-} from '@rjsf/core';
-import { getUiOptions, getSchemaType } from '@rjsf/core/dist/cjs/utils';
+} from '@rjsf/utils';
+import { getUiOptions, getSchemaType } from '@rjsf/utils';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { ExpandCollapse } from '@console/internal/components/utils/expand-collapse';
@@ -51,32 +51,28 @@ const AdvancedProperties: FC<Pick<ObjectFieldTemplateProps, 'properties'>> = ({ 
   );
 };
 export const FieldTemplate: FC<FieldTemplateProps> = (props) => {
-  const { hidden, schema = {}, children, uiSchema = {}, formContext = {} } = props;
+  const { hidden, schema = {}, children, uiSchema = {}, registry } = props;
+  const { formContext = {} } = registry;
   const type = getSchemaType(schema);
-  const [dependencyMet, setDependencyMet] = useState(true);
-  useEffect(() => {
-    const { dependency } = getUiOptions(uiSchema ?? {}) as UiSchemaOptionsWithDependency; // Type defs for this function are awful
-    if (dependency) {
-      setDependencyMet(
-        dependency?.controlFieldValue ===
-          _.get(
-            formContext.formData ?? {},
-            ['spec', ...(dependency?.controlFieldPath ?? [])],
-            '',
-          ).toString(),
-      );
-    }
-  }, [uiSchema, formContext]);
+  const { dependency } = getUiOptions(uiSchema ?? {}) as UiSchemaOptionsWithDependency;
+  const dependencyMet =
+    !dependency ||
+    dependency.controlFieldValue ===
+      _.get(
+        formContext.formData ?? {},
+        ['spec', ...(dependency.controlFieldPath ?? [])],
+        '',
+      ).toString();
 
   if (hidden || !dependencyMet) {
     return null;
   }
-  const isGroup = JSON_SCHEMA_GROUP_TYPES.includes(type);
+  const isGroup = JSON_SCHEMA_GROUP_TYPES.includes(Array.isArray(type) ? type[0] : type);
   return isGroup ? children : <AtomicFieldTemplate {...props} />;
 };
 
 export const ObjectFieldTemplate: FC<ObjectFieldTemplateProps> = ({
-  idSchema,
+  fieldPathId,
   properties,
   required,
   schema,
@@ -90,7 +86,7 @@ export const ObjectFieldTemplate: FC<ObjectFieldTemplateProps> = ({
   return properties?.length ? (
     <FieldSet
       defaultLabel={title}
-      idSchema={idSchema}
+      fieldPathId={fieldPathId}
       required={required}
       schema={schema}
       uiSchema={uiSchema}
@@ -104,7 +100,7 @@ export const ObjectFieldTemplate: FC<ObjectFieldTemplateProps> = ({
 };
 
 export const ArrayFieldTemplate: FC<ArrayFieldTemplateProps> = ({
-  idSchema,
+  fieldPathId,
   items,
   onAddClick,
   required,
@@ -117,34 +113,16 @@ export const ArrayFieldTemplate: FC<ArrayFieldTemplateProps> = ({
   return (
     <FieldSet
       defaultLabel={label}
-      idSchema={idSchema}
+      fieldPathId={fieldPathId}
       required={required}
       schema={schema}
       uiSchema={uiSchema}
     >
-      {_.map(items ?? [], (item) => (
-        <div className="co-dynamic-form__array-field-group-item" key={item.key}>
-          {item.index > 0 && <Divider className="co-divider" />}
-          {item.hasRemove && (
-            <div className="co-dynamic-form__array-field-group-remove">
-              <Button
-                icon={<RhUiMinusCircleIcon className="co-icon-space-r" />}
-                id={`${item.key}_remove-btn`}
-                type="button"
-                onClick={item.onDropIndexClick(item.index)}
-                variant="link"
-              >
-                {t('Remove {{singularLabel}}', { singularLabel: label })}
-              </Button>
-            </div>
-          )}
-          {item.children}
-        </div>
-      ))}
+      {items}
       <div>
         <Button
           icon={<RhUiAddCircleFillIcon className="co-icon-space-r" />}
-          id={`${idSchema.$id}_add-btn`}
+          id={`${fieldPathId.$id}_add-btn`}
           type="button"
           onClick={onAddClick}
           variant="link"
@@ -153,6 +131,37 @@ export const ArrayFieldTemplate: FC<ArrayFieldTemplateProps> = ({
         </Button>
       </div>
     </FieldSet>
+  );
+};
+
+export const ArrayFieldItemTemplate: FC<ArrayFieldItemTemplateProps> = ({
+  buttonsProps,
+  children,
+  index,
+  itemKey,
+  schema,
+  uiSchema,
+}) => {
+  const { t } = useTranslation('console-shared');
+  const [, label] = useSchemaLabel(schema, uiSchema, schema.title ?? 'Items');
+  return (
+    <div className="co-dynamic-form__array-field-group-item" key={itemKey}>
+      {index > 0 && <Divider className="co-divider" />}
+      {buttonsProps.hasRemove && (
+        <div className="co-dynamic-form__array-field-group-remove">
+          <Button
+            icon={<RhUiMinusCircleIcon className="co-icon-space-r" />}
+            id={`${itemKey}_remove-btn`}
+            type="button"
+            onClick={buttonsProps.onRemoveItem}
+            variant="link"
+          >
+            {t('Remove {{singularLabel}}', { singularLabel: label })}
+          </Button>
+        </div>
+      )}
+      {children}
+    </div>
   );
 };
 
