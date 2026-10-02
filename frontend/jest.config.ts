@@ -33,7 +33,7 @@ export default defineConfig({
     ],
   },
   transformIgnorePatterns: [
-    '<rootDir>/node_modules/(?!(@patternfly(-\\S+)?|d3(-\\S+)?|delaunator|robust-predicates|internmap|lodash-es|istextorbinary|@console|@novnc|@spice-project|@popperjs|i18next(-\\S+)?|@babel/runtime|jsonpath-plus|nanoid|@rjsf|git-url-parse|git-up|parse-url|protocols|sanitize-html|linkify-react|fuzzysearch)/.*)',
+    '<rootDir>/node_modules/(?!(@patternfly(-\\S+)?|d3(-\\S+)?|delaunator|robust-predicates|internmap|lodash-es|istextorbinary|@console|@novnc|@spice-project|@popperjs|i18next(-\\S+)?|@babel/runtime|jsonpath-plus|nanoid|@rjsf|@x0k|git-url-parse|git-up|parse-url|protocols|sanitize-html|linkify-react|fuzzysearch)/.*)',
   ],
   testPathIgnorePatterns: [
     '<rootDir>/node_modules/',
@@ -57,6 +57,7 @@ export default defineConfig({
     './__mocks__/mutationObserver.js',
     './__mocks__/resizeObserver.js',
     './__mocks__/serverFlags.js',
+    './__mocks__/structuredClone.ts',
     './__mocks__/textEncoderDecoder.ts',
     './__mocks__/sharedScope.ts',
   ],

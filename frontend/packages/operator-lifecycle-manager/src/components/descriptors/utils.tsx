@@ -1,4 +1,4 @@
-import { getSchemaType } from '@rjsf/core/dist/cjs/utils';
+import { getSchemaType } from '@rjsf/utils';
 import type { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
 import { getSchemaAtPath } from '@console/shared/src/utils/utils';
@@ -201,7 +201,10 @@ export function getValidCapabilitiesForSchema<CapabilityType extends string = Sp
   schema: JSONSchema7,
 ): CapabilityType[] {
   const type = getSchemaType(schema);
-  return getValidCapabilitiesForDataType<CapabilityType>(descriptor, type);
+  return getValidCapabilitiesForDataType<CapabilityType>(
+    descriptor,
+    Array.isArray(type) ? type[0] : type,
+  );
 }
 
 export const isMainStatusDescriptor = (descriptor: Descriptor): boolean =>

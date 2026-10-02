@@ -5,7 +5,7 @@ import type { FormikValues } from 'formik';
 import { useField, useFormikContext } from 'formik';
 import { AsyncComponent } from '@console/internal/components/utils/async';
 
-type DynamicFormFieldProps = FormProps<any> & {
+type DynamicFormFieldProps = Omit<FormProps<any>, 'validator'> & {
   name: string;
   errors?: string[];
   formDescription?: ReactNode;
