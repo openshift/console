@@ -233,7 +233,15 @@ const config: Configuration = {
       {
         test: /\.css$/,
         include: path.resolve(__dirname, 'node_modules/monaco-editor'),
-        use: ['style-loader', 'css-loader'],
+        use: [
+          {
+            loader: CssExtractRspackPlugin.loader,
+            options: {
+              publicPath: './',
+            },
+          },
+          'css-loader',
+        ],
       },
       {
         test: /\.(png|jpg|jpeg|gif|svg|woff2?|ttf|eot|otf)(\?.*$|$)/,

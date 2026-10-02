@@ -3,8 +3,8 @@ import type { FC } from 'react';
 import { useMemo } from 'react';
 import { Checkbox, Switch } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
-import type { WidgetProps } from '@rjsf/core';
-import { getSchemaType } from '@rjsf/core/dist/cjs/utils';
+import type { WidgetProps } from '@rjsf/utils';
+import { getSchemaType } from '@rjsf/utils';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { RadioGroup } from '@console/internal/components/radio';
@@ -29,7 +29,9 @@ export const TextWidget: FC<WidgetProps> = (props) => {
     value = '',
   } = props;
   const schemaType = getSchemaType(schema);
-  return JSON_SCHEMA_NUMBER_TYPES.includes(schemaType) ? (
+  return JSON_SCHEMA_NUMBER_TYPES.includes(
+    Array.isArray(schemaType) ? schemaType[0] : schemaType,
+  ) ? (
     <NumberWidget {...props} />
   ) : (
     <span

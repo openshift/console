@@ -65,11 +65,21 @@ export class HelmRepositoryPage extends BasePage {
   }
 
   async clickCreate(): Promise<void> {
-    await this.robustClick(this.submitButton);
+    await Promise.all([
+      this.page.waitForURL(/\/k8s\/(?:ns|cluster)\//, { timeout: 60_000 }),
+      this.robustClick(this.submitButton),
+    ]);
   }
 
   async clickSave(): Promise<void> {
-    await this.robustClick(this.submitButton);
+    const editURL = this.page.url();
+    await Promise.all([
+      this.page.waitForURL(
+        (url) => url.href !== editURL && /\/k8s\/(?:ns|cluster)\//.test(url.pathname),
+        { timeout: 60_000 },
+      ),
+      this.robustClick(this.submitButton),
+    ]);
   }
 
   async clickCancel(): Promise<void> {
@@ -77,7 +87,7 @@ export class HelmRepositoryPage extends BasePage {
   }
 
   getRepositoryRow(name: string): Locator {
-    return this.page.locator('tr', { hasText: name });
+    return this.page.getByTestId('data-view-table').getByRole('row').filter({ hasText: name });
   }
 
   async clickKebabForRepository(name: string): Promise<void> {

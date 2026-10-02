@@ -1,4 +1,4 @@
-import type { UiSchema } from '@rjsf/core';
+import type { UiSchema } from '@rjsf/utils';
 import type { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
 import i18n from '@console/internal/i18n';

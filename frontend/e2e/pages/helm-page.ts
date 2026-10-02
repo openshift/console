@@ -23,7 +23,9 @@ export class HelmPage extends BasePage {
   private readonly submitButton = this.page.getByTestId('save-changes');
   private readonly cancelButton = this.page.getByTestId('reset-button');
   private readonly formTitle = this.page.getByTestId('form-title');
-  private readonly formSection = this.page.locator('#root_field-group');
+  private readonly formSection = this.page.locator(
+    '.co-dynamic-form .co-dynamic-form__field-group',
+  );
   private readonly formViewRadio = this.page.locator('#form-radiobutton-editorType-form-field');
   private readonly yamlViewRadio = this.page.locator('#form-radiobutton-editorType-yaml-field');
   private readonly chartVersionDropdown = this.page.locator('#form-dropdown-chartVersion-field');

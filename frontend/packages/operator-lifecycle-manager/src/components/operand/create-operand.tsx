@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { useState, useMemo, useCallback } from 'react';
-import { getDefaultFormState } from '@rjsf/core/dist/cjs/utils';
+import { createSchemaUtils } from '@rjsf/utils';
 import type { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -22,6 +22,7 @@ import {
   hasNoFields,
   prune,
 } from '@console/shared/src/components/dynamic-form/utils';
+import { dynamicFormValidator } from '@console/shared/src/components/dynamic-form/validator';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { SyncedEditor } from '@console/shared/src/components/synced-editor/SyncedEditor';
@@ -112,7 +113,8 @@ export const CreateOperand: FC<CreateOperandProps> = ({
       return rawSample;
     }
     try {
-      const enriched = getDefaultFormState(schema, rawSample, schema) as K8sResourceKind;
+      const schemaUtils = createSchemaUtils(dynamicFormValidator, schema);
+      const enriched = schemaUtils.getDefaultFormState(schema, rawSample) as K8sResourceKind;
       return prune(enriched, rawSample);
     } catch {
       return rawSample;
