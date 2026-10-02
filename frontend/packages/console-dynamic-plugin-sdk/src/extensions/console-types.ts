@@ -682,6 +682,8 @@ export interface ConsoleDataViewProps<
   };
   /** Breakpoint at which toolbar actions switch between horizontal and dropdown layout. Default is 'md'. */
   actionsBreakpoint?: OverflowMenuProps['breakpoint'];
+  /** (optional) Component to render when there is no data at all (before filtering). When provided and the `data` array is empty, this component is rendered instead of the table. */
+  NoDataEmptyMsg?: ComponentType<{}>;
 }
 
 /**
