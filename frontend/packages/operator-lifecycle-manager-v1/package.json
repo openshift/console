@@ -9,7 +9,7 @@
       "useCatalogCategories": "src/hooks/useCatalogCategories.ts",
       "useOLMv1FlagProvider": "src/hooks/useOLMv1FlagProvider.ts",
       "CreateClusterExtension": "src/components/cluster-extension/CreateClusterExtension.tsx",
-      "defaultActionsProvider": "src/actions/providers/default-actions-provider.ts",
+      "defaultActionsProvider": "src/actions/providers/default-actions-provider.tsx",
       "installedSoftwarePage": "src/components/installed-software/InstalledSoftwarePage.tsx"
     }
   }
