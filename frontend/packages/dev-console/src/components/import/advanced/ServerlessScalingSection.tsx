@@ -20,6 +20,7 @@ const ServerlessScalingSection: FC = () => {
       )}
     >
       <NumberSpinnerField
+        setOutputAsIntegerFlag
         name="serverless.scaling.minpods"
         label={t('Min Pods')}
         helpText={t(
@@ -27,11 +28,13 @@ const ServerlessScalingSection: FC = () => {
         )}
       />
       <NumberSpinnerField
+        setOutputAsIntegerFlag
         name="serverless.scaling.maxpods"
         label={t('Max Pods')}
         helpText={t('The upper limit for the number of Pods that can be set by autoscaler.')}
       />
       <NumberSpinnerField
+        setOutputAsIntegerFlag
         name="serverless.scaling.concurrencytarget"
         label={t('Concurrency target')}
         helpText={t(
@@ -39,6 +42,7 @@ const ServerlessScalingSection: FC = () => {
         )}
       />
       <NumberSpinnerField
+        setOutputAsIntegerFlag
         name="serverless.scaling.concurrencylimit"
         label={t('Concurrency limit')}
         helpText={t(
@@ -46,6 +50,7 @@ const ServerlessScalingSection: FC = () => {
         )}
       />
       <NumberSpinnerField
+        setOutputAsIntegerFlag
         name="serverless.scaling.concurrencyutilization"
         label={t('Concurrency utilization')}
         helpText={t('Percentage of concurrent requests utilization before scaling up.')}
