@@ -138,6 +138,7 @@ export const HorizontalNav: FC<HorizontalNavProps> = require('@console/internal/
  * @param {ReactNode} [customActions] - (optional) Custom actions to display in the toolbar outside of the responsive actions group.
  * @param {object} [selection] - (optional) Selection configuration for enabling row selection via checkboxes. `ConsoleDataView` does not add the checkbox column itself. It must be included in `columns`/rows separately, for example with `createSelectionColumn`/`createSelectionCell`.
  * @param {string} [actionsBreakpoint] - (optional) Breakpoint at which toolbar actions switch between horizontal and dropdown layout. Default is 'md'.
+ * @param {React.ComponentType} [NoDataEmptyMsg] - (optional) Component to render when there is no data at all (before filtering). When provided and the `data` array is empty, this component is rendered instead of the table.
  * @example
  * ```tsx
  * const getDataViewRows: GetDataViewRows<PodDisruptionBudgetKind> = (data, columns) =>
