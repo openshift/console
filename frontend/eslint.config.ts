@@ -2,8 +2,6 @@ import * as path from 'path';
 import { defineConfig, globalIgnores } from 'eslint/config';
 import { FlatCompat } from '@eslint/eslintrc';
 import * as js from '@eslint/js';
-// TODO: change moduleResolution to "bundler"
-// @ts-expect-error types not resolvable under moduleResolution "node"
 import * as tsParser from '@typescript-eslint/parser';
 import * as tsPlugin from '@typescript-eslint/eslint-plugin';
 
@@ -104,6 +102,7 @@ const config = defineConfig([
   {
     files: ['public/**/*.{js,jsx}'],
     plugins: {
+      // @ts-expect-error rules property is incompatible
       '@typescript-eslint': tsPlugin,
     },
     languageOptions: {

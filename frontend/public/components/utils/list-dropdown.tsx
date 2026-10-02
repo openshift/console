@@ -80,7 +80,8 @@ const InnerListDropdown: FC<ListDropdownInternalProps> = ({
   );
   const [title, setTitle] = useState<React.ReactNode>(loaded ? placeholder : <LoadingInline />);
 
-  const autocompleteFilter = (text: string, item: ReactElement) => fuzzy(text, item.props.name);
+  const autocompleteFilter = (text: string, item: ReactElement<{ name: string }>) =>
+    fuzzy(text, item.props.name);
 
   const handleOnChange = useCallback(
     (key: string) => {

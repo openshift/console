@@ -237,7 +237,7 @@ NavBar.displayName = 'NavBar';
 export const HorizontalNav = memo<HorizontalNavProps>((props) => {
   const params = useDeepCompareMemoize(useParams());
 
-  const renderContent = (routes: JSX.Element[]) => {
+  const renderContent = (routes: ReactNode[]) => {
     const { noStatusBox, obj, EmptyMsg, label } = props;
     const content = (
       <Suspense fallback={<LoadingBox blame="HorizontalNav" />}>

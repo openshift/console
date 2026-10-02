@@ -1,4 +1,5 @@
 import { useMemo, useCallback } from 'react';
+import type { ReactNode } from 'react';
 import { DropdownItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
@@ -49,7 +50,7 @@ export const useCustomNodeActions = ({
   }, [selectedNodes, launchModal, onComplete]);
 
   return useMemo(() => {
-    const dropdownItems: JSX.Element[] = [];
+    const dropdownItems: ReactNode[] = [];
 
     if (unschedulableCount > 0) {
       dropdownItems.push(

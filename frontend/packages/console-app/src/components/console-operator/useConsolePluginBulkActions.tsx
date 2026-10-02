@@ -1,4 +1,5 @@
 import { useMemo, useCallback } from 'react';
+import type { ReactNode } from 'react';
 import { AlertVariant, DropdownItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { ConsoleOperatorConfigModel } from '@console/internal/models';
@@ -78,7 +79,7 @@ export const useConsolePluginBulkActions = ({
   }, [selectedPlugins, consoleOperatorConfig, handlePromise, onComplete, toast, t]);
 
   return useMemo(() => {
-    const dropdownItems: JSX.Element[] = [];
+    const dropdownItems: ReactNode[] = [];
 
     if (enableableCount > 0) {
       dropdownItems.push(

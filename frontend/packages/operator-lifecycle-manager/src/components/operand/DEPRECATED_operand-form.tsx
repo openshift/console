@@ -1201,7 +1201,7 @@ type FlattenNestedPropertiesAccumulator = {
 
 type OperandFormInputGroupProps = {
   field: OperandField;
-  input: JSX.Element;
+  input: ReactNode;
 };
 
 type FieldGroupProps = {

@@ -13,8 +13,8 @@ import { ActionMenuVariant } from './types';
 type LazyMenuRendererProps = {
   isOpen: boolean;
   actions: Action[];
-  menuRef: RefObject<HTMLDivElement>;
-  toggleRef: RefObject<HTMLButtonElement>;
+  menuRef: RefObject<HTMLDivElement | null>;
+  toggleRef: RefObject<HTMLButtonElement | null>;
 } & ComponentProps<typeof ActionMenuContent>;
 
 export const KEBAB_COLUMN_CLASS = 'pf-v6-c-table__action';

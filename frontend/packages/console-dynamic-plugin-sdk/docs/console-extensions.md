@@ -502,7 +502,7 @@ Adds an inventory status group.
 | Name | Value Type | Optional | Description |
 | ---- | ---------- | -------- | ----------- |
 | `id` | `string` | no | The id of the status group. |
-| `icon` | `CodeRef<React.ReactElement<any, string \| React.JSXElementConstructor<any>>>` | no | React component representing the status group icon. |
+| `icon` | `CodeRef<React.ReactElement<unknown, string \| React.JSXElementConstructor<any>>>` | no | React component representing the status group icon. |
 
 ---
 

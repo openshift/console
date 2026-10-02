@@ -62,7 +62,7 @@ const GroupsEditorModal: OverlayComponent<ModalComponentProps> = ({ closeOverlay
   const [nodeSelections, setNodeSelections] = useState<{ nodeName: string; selected: boolean }[]>(
     [],
   );
-  const currentGroupsByName = useRef<GroupNameMap>();
+  const currentGroupsByName = useRef<GroupNameMap>(undefined);
   const [newGroupName, setNewGroupName] = useState<string>('');
   const [backgroundChange, setBackgroundChange] = useState<boolean>(false);
   const [inProgress, setInProgress] = useState<boolean>(false);

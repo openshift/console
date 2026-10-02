@@ -55,7 +55,7 @@ const PodStatusBase: FC<PodStatusProps> = ({
   subTitleComponent,
   data,
 }) => {
-  const ref = useRef();
+  const ref = useRef(undefined);
   const [updateOnEnd, setUpdateOnEnd] = useState<boolean>(false);
   const forceUpdate = useForceUpdate();
   const prevVData = useRef<PodData[]>(null);

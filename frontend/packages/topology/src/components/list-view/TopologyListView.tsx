@@ -152,7 +152,7 @@ const ConnectedTopologyListView: FC<
     };
 
     // eslint-disable-next-line react-hooks/refs -- Lazy initialization: visualization must be available in the same render
-    const visualizationRef = useRef<Visualization>();
+    const visualizationRef = useRef<Visualization>(undefined);
     if (!visualizationRef.current) {
       // eslint-disable-line react-hooks/refs -- lazy init: checks if visualization exists before creating
       visualizationRef.current = createVisualization(); // eslint-disable-line react-hooks/refs -- lazy init: creates visualization synchronously on first render
