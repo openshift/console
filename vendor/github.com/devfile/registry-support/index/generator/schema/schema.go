@@ -16,6 +16,8 @@
 package schema
 
 import (
+	"time"
+
 	apiext "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 )
 
@@ -38,6 +40,7 @@ Sample index file:
     ],
     "projectType": "maven",
     "language": "java",
+	"lastModified": "2024-05-13T12:32:02+02:00",
     "versions": [
       {
         "version": "1.1.0",
@@ -61,7 +64,8 @@ Sample index file:
         ],
         "starterProjects": [
           "springbootproject"
-        ]
+        ],
+		"lastModified": "2024-05-13T12:32:02+02:00"
       }
     ]
   },
@@ -79,6 +83,7 @@ Sample index file:
     ],
     "projectType": "quarkus",
     "language": "java",
+	"lastModified": "2024-04-29T17:08:43+03:00",
     "versions": [
       {
         "version": "1.1.0",
@@ -108,7 +113,8 @@ Sample index file:
         "starterProjects": [
           "community",
           "redhat-product"
-        ]
+        ],
+		"lastModified": "2024-04-29T17:08:43+03:00"
       }
     ]
   }
@@ -130,35 +136,39 @@ projectType: string - The project framework that is used in the devfile
 language: string - The project language that is used in the devfile
 links: map[string]string - Links related to the devfile
 commandGroups: map[CommandGroupKind]bool - The command groups that are used in the devfile
+deploymentScopes: map[DeploymentScopeKind]bool - The deployment scope that are detected in the devfile
 resources: []string - The file resources that compose a devfile stack.
 starterProjects: string[] - The project templates that can be used in the devfile
 git: *git - The information of remote repositories
 provider: string - The devfile provider information
 versions: []Version - The list of stack versions information
+lastModified: string - The date that a version of this stack/sample was last changed
 */
 
 // Schema is the index file schema
 type Schema struct {
-	Name              string                    `yaml:"name,omitempty" json:"name,omitempty"`
-	Version           string                    `yaml:"version,omitempty" json:"version,omitempty"`
-	Attributes        map[string]apiext.JSON    `yaml:"attributes,omitempty" json:"attributes,omitempty"`
-	DisplayName       string                    `yaml:"displayName,omitempty" json:"displayName,omitempty"`
-	Description       string                    `yaml:"description,omitempty" json:"description,omitempty"`
-	Type              DevfileType               `yaml:"type,omitempty" json:"type,omitempty"`
-	Tags              []string                  `yaml:"tags,omitempty" json:"tags,omitempty"`
-	Architectures     []string                  `yaml:"architectures,omitempty" json:"architectures,omitempty"`
-	Icon              string                    `yaml:"icon,omitempty" json:"icon,omitempty"`
-	GlobalMemoryLimit string                    `yaml:"globalMemoryLimit,omitempty" json:"globalMemoryLimit,omitempty"`
-	ProjectType       string                    `yaml:"projectType,omitempty" json:"projectType,omitempty"`
-	Language          string                    `yaml:"language,omitempty" json:"language,omitempty"`
-	Links             map[string]string         `yaml:"links,omitempty" json:"links,omitempty"`
-	CommandGroups     map[CommandGroupKind]bool `yaml:"commandGroups,omitempty" json:"commandGroups,omitempty"`
-	Resources         []string                  `yaml:"resources,omitempty" json:"resources,omitempty"`
-	StarterProjects   []string                  `yaml:"starterProjects,omitempty" json:"starterProjects,omitempty"`
-	Git               *Git                      `yaml:"git,omitempty" json:"git,omitempty"`
-	Provider          string                    `yaml:"provider,omitempty" json:"provider,omitempty"`
-	SupportUrl        string                    `yaml:"supportUrl,omitempty" json:"supportUrl,omitempty"`
-	Versions          []Version                 `yaml:"versions,omitempty" json:"versions,omitempty"`
+	Name              string                       `yaml:"name,omitempty" json:"name,omitempty"`
+	Version           string                       `yaml:"version,omitempty" json:"version,omitempty"`
+	Attributes        map[string]apiext.JSON       `yaml:"attributes,omitempty" json:"attributes,omitempty"`
+	DisplayName       string                       `yaml:"displayName,omitempty" json:"displayName,omitempty"`
+	Description       string                       `yaml:"description,omitempty" json:"description,omitempty"`
+	Type              DevfileType                  `yaml:"type,omitempty" json:"type,omitempty"`
+	Tags              []string                     `yaml:"tags,omitempty" json:"tags,omitempty"`
+	Architectures     []string                     `yaml:"architectures,omitempty" json:"architectures,omitempty"`
+	Icon              string                       `yaml:"icon,omitempty" json:"icon,omitempty"`
+	GlobalMemoryLimit string                       `yaml:"globalMemoryLimit,omitempty" json:"globalMemoryLimit,omitempty"`
+	ProjectType       string                       `yaml:"projectType,omitempty" json:"projectType,omitempty"`
+	Language          string                       `yaml:"language,omitempty" json:"language,omitempty"`
+	Links             map[string]string            `yaml:"links,omitempty" json:"links,omitempty"`
+	CommandGroups     map[CommandGroupKind]bool    `yaml:"commandGroups,omitempty" json:"commandGroups,omitempty"`
+	DeploymentScopes  map[DeploymentScopeKind]bool `yaml:"deploymentScopes,omitempty" json:"deploymentScopes,omitempty"`
+	Resources         []string                     `yaml:"resources,omitempty" json:"resources,omitempty"`
+	StarterProjects   []string                     `yaml:"starterProjects,omitempty" json:"starterProjects,omitempty"`
+	Git               *Git                         `yaml:"git,omitempty" json:"git,omitempty"`
+	Provider          string                       `yaml:"provider,omitempty" json:"provider,omitempty"`
+	SupportUrl        string                       `yaml:"supportUrl,omitempty" json:"supportUrl,omitempty"`
+	Versions          []Version                    `yaml:"versions,omitempty" json:"versions,omitempty"`
+	LastModified      string                       `yaml:"lastModified,omitempty" json:"lastModified,omitempty"`
 }
 
 // DevfileType describes the type of devfile
@@ -181,6 +191,14 @@ const (
 	TestCommandGroupKind   CommandGroupKind = "test"
 	DebugCommandGroupKind  CommandGroupKind = "debug"
 	DeployCommandGroupKind CommandGroupKind = "deploy"
+)
+
+// DeploymentScopeKind describes the kind of deployment scope
+type DeploymentScopeKind string
+
+const (
+	InnerloopKind DeploymentScopeKind = "innerloop"
+	OuterloopKind DeploymentScopeKind = "outerloop"
 )
 
 // StarterProject is the devfile starter project
@@ -241,16 +259,29 @@ type StackInfo struct {
 
 // Version stores the information for each stack version
 type Version struct {
-	Version         string                    `yaml:"version,omitempty" json:"version,omitempty"`
-	SchemaVersion   string                    `yaml:"schemaVersion,omitempty" json:"schemaVersion,omitempty"`
-	Default         bool                      `yaml:"default,omitempty" json:"default,omitempty"`
-	Git             *Git                      `yaml:"git,omitempty" json:"git,omitempty"`
-	Description     string                    `yaml:"description,omitempty" json:"description,omitempty"`
-	Tags            []string                  `yaml:"tags,omitempty" json:"tags,omitempty"`
-	Architectures   []string                  `yaml:"architectures,omitempty" json:"architectures,omitempty"`
-	Icon            string                    `yaml:"icon,omitempty" json:"icon,omitempty"`
-	Links           map[string]string         `yaml:"links,omitempty" json:"links,omitempty"`
-	CommandGroups   map[CommandGroupKind]bool `yaml:"commandGroups,omitempty" json:"commandGroups,omitempty"`
-	Resources       []string                  `yaml:"resources,omitempty" json:"resources,omitempty"`
-	StarterProjects []string                  `yaml:"starterProjects,omitempty" json:"starterProjects,omitempty"`
+	Version          string                       `yaml:"version,omitempty" json:"version,omitempty"`
+	SchemaVersion    string                       `yaml:"schemaVersion,omitempty" json:"schemaVersion,omitempty"`
+	Default          bool                         `yaml:"default,omitempty" json:"default,omitempty"`
+	Git              *Git                         `yaml:"git,omitempty" json:"git,omitempty"`
+	Description      string                       `yaml:"description,omitempty" json:"description,omitempty"`
+	Tags             []string                     `yaml:"tags,omitempty" json:"tags,omitempty"`
+	Architectures    []string                     `yaml:"architectures,omitempty" json:"architectures,omitempty"`
+	Icon             string                       `yaml:"icon,omitempty" json:"icon,omitempty"`
+	Links            map[string]string            `yaml:"links,omitempty" json:"links,omitempty"`
+	CommandGroups    map[CommandGroupKind]bool    `yaml:"commandGroups,omitempty" json:"commandGroups,omitempty"`
+	DeploymentScopes map[DeploymentScopeKind]bool `yaml:"deploymentScopes,omitempty" json:"deploymentScopes,omitempty"`
+	Resources        []string                     `yaml:"resources,omitempty" json:"resources,omitempty"`
+	StarterProjects  []string                     `yaml:"starterProjects,omitempty" json:"starterProjects,omitempty"`
+	LastModified     string                       `yaml:"lastModified,omitempty" json:"lastModified,omitempty"`
+}
+
+type LastModifiedEntry struct {
+	Name         string    `yaml:"name,omitempty" json:"name,omitempty"`
+	Version      string    `yaml:"version,omitempty" json:"version,omitempty"`
+	LastModified time.Time `yaml:"lastModified,omitempty" json:"lastModified,omitempty"`
+}
+
+type LastModifiedInfo struct {
+	Stacks  []LastModifiedEntry `yaml:"stacks,omitempty" json:"stacks,omitempty"`
+	Samples []LastModifiedEntry `yaml:"samples,omitempty" json:"samples,omitempty"`
 }
