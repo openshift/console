@@ -145,6 +145,7 @@ ResourceActionProvider contributes a hook that returns list of actions for speci
 | ---- | ---------- | -------- | ----------- |
 | `model` | `ExtensionK8sKindVersionModel` | no | The model for which this provider provides actions for. |
 | `provider` | `CodeRef<ExtensionHook<Action[]>>` | no | A react hook which returns actions for the given resource model |
+| `bulkProvider` | `CodeRef<BulkResourceActionHook>` | yes | (optional) Hook returning actions for a filtered selection of resources of this model. Only return actions that support bulk use, and check applicability and access for the full selection. It is not called for an empty or mixed-model selection. |
 
 ---
 

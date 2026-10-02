@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 
 export const usePromiseHandler: PromiseHandlerHook = <T extends unknown = any>() => {
   const [inProgress, setInProgress] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const handlePromise: PromiseHandlerCallback<T> = (promise) => {
+  const handlePromise = useCallback<PromiseHandlerCallback<T>>((promise) => {
     setInProgress(true);
     return promise
       .then((res) => {
@@ -15,7 +15,7 @@ export const usePromiseHandler: PromiseHandlerHook = <T extends unknown = any>()
         return Promise.reject(error);
       })
       .finally(() => setInProgress(false));
-  };
+  }, []);
   return [handlePromise, inProgress, errorMessage];
 };
 

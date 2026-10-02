@@ -1,8 +1,11 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useCommonResourceActions } from '@console/app/src/actions//hooks/useCommonResourceActions';
-import type { Action } from '@console/dynamic-plugin-sdk';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
+import type {
+  Action,
+  BulkResourceActionHook,
+} from '@console/dynamic-plugin-sdk/src/extensions/actions';
 import { useK8sModel } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { k8sUpdateResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { asAccessReview } from '@console/internal/components/utils/rbac';
@@ -16,6 +19,7 @@ import { referenceFor } from '@console/internal/module/k8s';
 import { isNodeUnschedulable } from '@console/shared/src/selectors/node';
 import { LazyConfigureUnschedulableModalOverlay } from './modals';
 import { markNodesSchedulable } from './nodeSchedulingActions';
+import { useCustomNodeActions } from './useCustomNodeActions';
 
 const updateCSR = (csr: CertificateSigningRequestKind, type: 'Approved' | 'Denied') => {
   const approvedCSR = {
@@ -83,4 +87,13 @@ export const useNodeActions: ExtensionHook<Action[], NodeKind> = (obj) => {
   }, [kindObj, obj, t, commonActions, launchModal]);
 
   return [nodeActions, !inFlight, undefined];
+};
+
+/** Only scheduling actions opt in to the resource bulk action menu. */
+export const useNodeBulkActionsProvider: BulkResourceActionHook = ({
+  resources,
+  clearSelection,
+}) => {
+  const actions = useCustomNodeActions(resources as NodeKind[], clearSelection);
+  return [actions, true, undefined];
 };

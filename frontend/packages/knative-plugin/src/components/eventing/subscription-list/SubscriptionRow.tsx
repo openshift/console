@@ -1,7 +1,6 @@
 import type { GetDataViewRows } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { ResourceLink } from '@console/internal/components/utils/resource-link';
 import { referenceFor } from '@console/internal/module/k8s/k8s';
-import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import type { EventSubscriptionKind } from '../../../types';
 import { SubscriptionConditionTypes } from '../../../types';
@@ -17,7 +16,6 @@ export const getSubscriptionDataViewRows: GetDataViewRows<EventSubscriptionKind>
       spec: { channel: connectedChannel, subscriber },
     } = obj;
     const objReference = referenceFor(obj);
-    const context = { [objReference]: obj };
     const readyCondition = obj.status
       ? getCondition(obj.status.conditions, SubscriptionConditionTypes.Ready)
       : null;
@@ -49,7 +47,6 @@ export const getSubscriptionDataViewRows: GetDataViewRows<EventSubscriptionKind>
         ),
       },
       created: { cell: <Timestamp timestamp={creationTimestamp} /> },
-      actions: { cell: <LazyActionMenu context={context} /> },
     };
     return columns.map(({ id }) => ({ id, ...rowCells[id] }));
   });

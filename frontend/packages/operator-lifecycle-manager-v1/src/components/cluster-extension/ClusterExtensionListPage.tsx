@@ -11,7 +11,6 @@ import type {
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ResourceLink } from '@console/internal/components/utils/resource-link';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DASH } from '@console/shared/src/constants/ui';
 import { ClusterExtensionModel } from '../../models';
@@ -38,7 +37,6 @@ const getDataViewRows: GetDataViewRows<ClusterExtensionKind> = (data, columns) =
       obj.status?.conditions?.find((condition) => condition.type === 'Installed')?.reason || '';
 
     const resourceKind = referenceForModel(ClusterExtensionModel);
-    const context = { [resourceKind]: obj };
 
     const rowCells = {
       [tableColumnInfo[0].id]: {
@@ -70,12 +68,10 @@ const getDataViewRows: GetDataViewRows<ClusterExtensionKind> = (data, columns) =
       [tableColumnInfo[5].id]: {
         cell: packageName || DASH,
       },
-      [tableColumnInfo[6].id]: {
-        cell: <LazyActionMenu context={context} />,
-      },
     };
 
     return columns.map(({ id }) => {
+      if (id === tableColumnInfo[6].id) return { id };
       const cell = rowCells[id]?.cell || DASH;
       return {
         id,

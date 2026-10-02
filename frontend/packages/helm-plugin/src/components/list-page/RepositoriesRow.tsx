@@ -1,10 +1,9 @@
 import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { GetDataViewRows } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import { LazyActionMenu } from '@console/dynamic-plugin-sdk/src/lib-internal';
 import { ResourceLink } from '@console/internal/components/utils';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import { referenceFor, referenceForModel } from '@console/internal/module/k8s';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { DASH } from '@console/shared/src/constants/ui';
@@ -30,9 +29,6 @@ const DisabledCell: FC<{ disabled?: boolean }> = ({ disabled }) => {
 
 export const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) =>
   data.map(({ obj }) => {
-    const objReference = referenceFor(obj);
-    const context = { [objReference]: obj };
-
     const rowCells = {
       [tableColumnInfo[0].id]: {
         cell: (
@@ -70,12 +66,10 @@ export const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns)
       [tableColumnInfo[5].id]: {
         cell: <Timestamp timestamp={obj.metadata.creationTimestamp} />,
       },
-      [tableColumnInfo[6].id]: {
-        cell: <LazyActionMenu context={context} />,
-      },
     };
 
     return columns.map(({ id }) => {
+      if (id === tableColumnInfo[6].id) return { id };
       const cell = rowCells[id]?.cell || DASH;
       return {
         id,

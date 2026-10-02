@@ -24,7 +24,6 @@ import {
 } from '@console/internal/models';
 import type { VolumeSnapshotContentKind } from '@console/internal/module/k8s';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { LoadingBox } from '@console/shared/src/components/loading/LoadingBox';
 import { Status } from '@console/shared/src/components/status/Status';
@@ -82,12 +81,10 @@ const getDataViewRows: GetDataViewRows<VolumeSnapshotContentKind> = (data, colum
       [tableColumnInfo[5].id]: {
         cell: <Timestamp timestamp={creationTimestamp} />,
       },
-      [tableColumnInfo[6].id]: {
-        cell: <LazyActionMenu context={{ [kind]: obj }} />,
-      },
     };
 
     return columns.map(({ id }) => {
+      if (id === tableColumnInfo[6].id) return { id };
       const cell = rowCells[id]?.cell || DASH;
       return {
         id,

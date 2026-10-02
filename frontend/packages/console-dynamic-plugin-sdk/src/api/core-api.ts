@@ -41,8 +41,6 @@ import {
   VirtualizedTableFC,
   UseToast,
   ConsoleDataViewFC,
-  CreateSelectionCell,
-  CreateSelectionColumn,
   DefinitionFor
 } from '../extensions/console-types';
 import { StatusPopupSectionProps, StatusPopupItemProps } from '../extensions/dashboard-types';
@@ -115,7 +113,7 @@ export const HorizontalNav: FC<HorizontalNavProps> = require('@console/internal/
  * @param {boolean} loaded - Flag indicating whether `data` has finished loading.
  * @param {*} [loadError] - (optional) An error encountered while loading `data`.
  * @param {ConsoleDataViewColumn[]} columns - The column definitions for the table.
- * @param {function} getDataViewRows - Transforms the filtered, sorted, and paginated data into table rows.
+ * @param {function} getDataViewRows - Transforms the filtered, sorted, and paginated data into table rows. An omitted `actions` cell uses the resource action providers for a Kubernetes resource row; `cell: null` leaves it empty.
  * @param {object} [columnLayout] - (optional) The persisted column layout. Supply this to show the column management action. Its ID is derived from `id`.
  * @param {K8sModel|K8sGroupVersionKind|string} id - A model, group/version/kind, or string ID used for column management, matching `console.dataview/table-column` extensions, and persisting resizable column widths. Models and GVKs resolve to `group~version~kind`.
  * @param {object} [initialFilters] - (optional) Initial values for any custom fields added via `TFilters`, and/or the built-in name and/or label filters. The name and label filters otherwise default to empty.
@@ -133,7 +131,7 @@ export const HorizontalNav: FC<HorizontalNavProps> = require('@console/internal/
  * @param {boolean} [isResizable] - (optional) Enables resizing and saved widths for columns with a title, and shows a reset action. Defaults to `true`.
  * @param {ReactNode} [additionalActions] - (optional) Additional actions to display in the toolbar, alongside the built-in column management and reset-column-widths actions.
  * @param {ReactNode} [customActions] - (optional) Custom actions to display in the toolbar outside of the responsive actions group.
- * @param {object} [selection] - (optional) Selection configuration for enabling row selection via checkboxes. `ConsoleDataView` does not add the checkbox column itself. It must be included in `columns`/rows separately, for example with `createSelectionColumn`/`createSelectionCell`.
+ * @param {object} [selection] - (optional) Enables managed checkbox selection with `getItemId`. `isSelectable` can disable rows. `getActions` receives selected items matching the current filters, plus `clearSelection` and `deselect` callbacks, and returns table-specific bulk actions as `Action[]`. Console also loads matching resource bulk providers for a single-model Kubernetes resource selection. Selection persists across pages and built-in filters and is removed when items leave `data`.
  * @example
  * ```tsx
  * const columns: ConsoleDataViewColumn<PodDisruptionBudgetKind>[] = [
@@ -144,15 +142,14 @@ export const HorizontalNav: FC<HorizontalNavProps> = require('@console/internal/
  * const getDataViewRows: GetDataViewRows<PodDisruptionBudgetKind> = (data, columns) =>
  *   data.map(({ obj: pdb }) => {
  *     const resourceKind = referenceForModel(PodDisruptionBudgetModel);
- *     return columns.map(({ id }) => ({
- *       id,
- *       cell:
- *         id === 'name' ? (
- *           <ResourceLink kind={resourceKind} name={pdb.metadata.name} namespace={pdb.metadata.namespace} />
- *         ) : (
- *           DASH
- *         ),
- *     }));
+ *     return columns.map(({ id }) =>
+ *       id === 'actions'
+ *         ? { id }
+ *         : {
+ *             id,
+ *             cell: <ResourceLink kind={resourceKind} name={pdb.metadata.name} namespace={pdb.metadata.namespace} />,
+ *           },
+ *     );
  *   });
  *
  * const PDBList: React.FC<Props> = ({ data, loaded }) => (
@@ -163,48 +160,22 @@ export const HorizontalNav: FC<HorizontalNavProps> = require('@console/internal/
  *     loaded={loaded}
  *     columns={columns}
  *     getDataViewRows={getDataViewRows}
+ *     selection={{
+ *       getItemId: (pdb) => `${pdb.metadata.namespace}/${pdb.metadata.name}`,
+ *       getActions: ({ selectedItems, clearSelection }) => [
+ *         {
+ *           id: 'clear-selection',
+ *           label: 'Clear selection',
+ *           disabled: selectedItems.length === 0,
+ *           cta: clearSelection,
+ *         },
+ *       ],
+ *     }}
  *   />
  * );
  * ```
  */
 export const ConsoleDataView: ConsoleDataViewFC = require('@console/app/src/components/data-view/ConsoleDataView').ConsoleDataView;
-
-/**
- * Creates the sticky checkbox column for a `ConsoleDataView` with row selection enabled. Add
- * the returned column to `columns`. Provide `selection.onSelectAll` to `ConsoleDataView` to
- * enable the select-all header checkbox.
- * @returns A column with id `select`.
- * @example
- * ```tsx
- * const columns: ConsoleDataViewColumn<Pod>[] = [
- *   createSelectionColumn<Pod>(),
- *   { id: 'name', title: 'Name' },
- * ];
- * ```
- */
-export const createSelectionColumn: CreateSelectionColumn =
-  require('@console/app/src/components/data-view/dataViewSelectionHelpers').createSelectionColumn;
-
-/**
- * Creates a checkbox cell for a row in a `ConsoleDataView` with selection enabled. Use the
- * returned cell for the `select` column in `getDataViewRows`.
- * @param options - Row index, item ID, selection state, selection callback, and optional disabled state.
- * @returns A cell with checkbox props for the selected row.
- * @example
- * ```tsx
- * {
- *   id: 'select',
- *   ...createSelectionCell({
- *     rowIndex: index,
- *     itemId: getItemId(pod),
- *     isSelected: selectedIds.has(getItemId(pod)),
- *     onSelect: onSelectItem,
- *   }),
- * }
- * ```
- */
-export const createSelectionCell: CreateSelectionCell =
-  require('@console/app/src/components/data-view/dataViewSelectionHelpers').createSelectionCell;
 
 /**
  * Looks up the OpenAPI (Swagger) schema definition for a given Kubernetes model.

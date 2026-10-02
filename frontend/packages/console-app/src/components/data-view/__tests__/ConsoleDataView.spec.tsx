@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import type { LoadedAndResolvedExtension } from '@openshift/dynamic-plugin-sdk';
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -5,7 +6,13 @@ import { createUserSettingsStore } from '@console/app/src/providers/user-prefere
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
 import { OverlayProvider } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import type {
+  Action,
+  BulkResourceActionHook,
+  ResourceActionProvider,
+} from '@console/dynamic-plugin-sdk/src/extensions/actions';
+import type {
   ConsoleDataViewColumn,
+  ConsoleDataViewProps,
   GetDataViewRows,
   K8sGroupVersionKind,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
@@ -23,8 +30,9 @@ jest.mock('@console/dynamic-plugin-sdk/src/api/useResolvedExtensions', () => ({
   useResolvedExtensions: jest.fn(),
 }));
 
-type Item = { metadata: { name: string }; status: string };
+type Item = { metadata: { name: string }; status: string; kind?: string; apiVersion?: string };
 type ResolvedTableColumn = LoadedAndResolvedExtension<ConsoleDataViewTableColumn<Item>>;
+type ResolvedResourceActionProvider = LoadedAndResolvedExtension<ResourceActionProvider>;
 
 const data: Item[] = [
   { metadata: { name: 'alpha' }, status: 'ready' },
@@ -42,6 +50,34 @@ const getDataViewRows: GetDataViewRows<Item> = (rows, activeColumns) =>
       cell: id === 'name' ? obj.metadata.name : id === 'status' ? obj.status : null,
     })),
   );
+
+const podRowActions: Action[] = [{ id: 'inspect-pod', label: 'Inspect pod', cta: jest.fn() }];
+const makePodActionProvider = (
+  bulkProvider?: BulkResourceActionHook,
+): ResolvedResourceActionProvider => ({
+  type: 'console.action/resource-provider',
+  pluginName: 'test-plugin',
+  uid: 'test-pod-actions',
+  properties: {
+    model: { version: 'v1', kind: 'Pod' },
+    provider: () => [podRowActions, true, undefined],
+    bulkProvider,
+  },
+});
+
+const useBulkPodActions: BulkResourceActionHook = ({ resources, clearSelection }) => {
+  const actions = useMemo<Action[]>(
+    () => [
+      {
+        id: 'inspect-selected-pods',
+        label: `Inspect ${resources.length} pods`,
+        cta: clearSelection,
+      },
+    ],
+    [resources.length, clearSelection],
+  );
+  return [actions, true, undefined];
+};
 
 const makeExtension = (
   id: string,
@@ -88,9 +124,24 @@ const renderTable = (
     useDefaultResizable?: boolean;
     columnWidths?: Record<string, number>;
     getDataViewRows?: GetDataViewRows<Item>;
+    data?: Item[];
+    selection?: ConsoleDataViewProps<Item>['selection'];
+    actionProviders?: ResolvedResourceActionProvider[];
   } = {},
 ) => {
-  (useResolvedExtensions as jest.Mock).mockReturnValue([extensions, true, []]);
+  const resolvedResults = new WeakMap<Function, [unknown[], boolean, unknown[]]>();
+  (useResolvedExtensions as jest.Mock).mockImplementation(
+    (predicate: (extension: unknown) => boolean) => {
+      if (!resolvedResults.has(predicate)) {
+        resolvedResults.set(predicate, [
+          [...extensions, ...(options.actionProviders ?? [])].filter(predicate),
+          true,
+          [],
+        ]);
+      }
+      return resolvedResults.get(predicate);
+    },
+  );
   const userSettingsStore = createUserSettingsStore();
   userSettingsStore.setSnapshot({
     data: {
@@ -113,17 +164,18 @@ const renderTable = (
     <OverlayProvider>
       <ConsoleDataView<Item>
         label="items"
-        data={data}
+        data={options.data ?? data}
         loaded
         columns={columns}
         id={options.withoutID ? undefined : (options.id ?? 'test-table')}
         columnLayout={{
           id: options.columnLayoutID ?? 'test-table',
           type: 'Item',
-          columns: columns.filter(({ title }) => title).map(({ id, title }) => ({ id, title })),
+          columns: columns.map(({ id, title }) => ({ id, title })),
           selectedColumns: new Set(preference ?? []),
         }}
         getDataViewRows={options.getDataViewRows ?? getDataViewRows}
+        selection={options.selection}
         hideNameLabelFilters
         {...(options.useDefaultResizable ? {} : { isResizable: options.isResizable ?? false })}
       />
@@ -133,7 +185,7 @@ const renderTable = (
   return { ...view, userSettingsStore };
 };
 
-describe('ConsoleDataView table column extensions', () => {
+describe('ConsoleDataView', () => {
   const originalIntersectionObserver = window.IntersectionObserver;
 
   beforeAll(() => {
@@ -217,6 +269,28 @@ describe('ConsoleDataView table column extensions', () => {
 
     expect(await screen.findByRole('columnheader', { name: 'Ready' })).toBeVisible();
     expect(screen.getByRole('cell', { name: 'Ready alpha' })).toBeVisible();
+  });
+
+  it.each([
+    ['without extensions', [], ['Name', 'Status']],
+    [
+      'with an extension',
+      [makeExtension('test-ready', 'Ready', { additional: false })],
+      ['Name', 'Status', 'Ready'],
+    ],
+  ])('keeps Actions out of column management %s', async (_scenario, extensions, names) => {
+    const user = userEvent.setup();
+    renderTable(extensions);
+
+    expect(screen.getByRole('columnheader', { name: 'Actions' })).toBeVisible();
+    await user.click(screen.getByRole('button', { name: 'Column management' }));
+
+    const dialog = await screen.findByRole('dialog');
+    expect(
+      within(dialog)
+        .getAllByRole('checkbox')
+        .map((checkbox) => checkbox.getAttribute('name')),
+    ).toEqual(names);
   });
 
   it('orders columns sharing an anchor by plugin name and column ID', () => {
@@ -356,5 +430,178 @@ describe('ConsoleDataView table column extensions', () => {
     expect(screen.getByRole('grid', { name: 'items table' })).toBeVisible();
     expect(screen.queryByRole('button', { name: 'Column management' })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Reset column widths' })).not.toBeInTheDocument();
+  });
+
+  it('uses resource provider actions for an omitted action cell and keeps an explicit empty cell', async () => {
+    const user = userEvent.setup();
+    const pods: Item[] = [
+      { kind: 'Pod', apiVersion: 'v1', metadata: { name: 'alpha' }, status: 'ready' },
+      { kind: 'Pod', apiVersion: 'v1', metadata: { name: 'bravo' }, status: 'ready' },
+    ];
+    renderTable([], undefined, {
+      data: pods,
+      actionProviders: [makePodActionProvider()],
+      getDataViewRows: (rows, activeColumns) =>
+        rows.map(({ obj }) =>
+          activeColumns.map(({ id }) =>
+            id === 'actions'
+              ? obj.metadata.name === 'alpha'
+                ? { id }
+                : { id, cell: null }
+              : { id, cell: obj.metadata.name },
+          ),
+        ),
+    });
+
+    const rows = within(screen.getByRole('grid', { name: 'items table' })).getAllByRole('row');
+    await user.click(within(rows[1]).getByRole('button', { name: 'Actions' }));
+    expect(await screen.findByRole('menuitem', { name: 'Inspect pod' })).toBeVisible();
+    expect(within(rows[2]).queryByRole('button', { name: 'Actions' })).not.toBeInTheDocument();
+  });
+
+  it('combines explicit and opted-in resource bulk actions for the selected pods', async () => {
+    const user = userEvent.setup();
+    renderTable([], undefined, {
+      data: [
+        { kind: 'Pod', apiVersion: 'v1', metadata: { name: 'alpha' }, status: 'ready' },
+        { kind: 'Pod', apiVersion: 'v1', metadata: { name: 'bravo' }, status: 'ready' },
+      ],
+      actionProviders: [makePodActionProvider(useBulkPodActions)],
+      selection: {
+        getItemId: (item) => item.metadata.name,
+        getActions: ({ selectedItems }) => [
+          {
+            id: 'local-action',
+            label: 'Local action',
+            disabled: selectedItems.length === 0,
+            cta: jest.fn(),
+          },
+        ],
+      },
+    });
+
+    const rows = within(screen.getByRole('grid', { name: 'items table' })).getAllByRole('row');
+    await user.click(within(rows[1]).getByRole('checkbox'));
+    await user.click(within(rows[2]).getByRole('checkbox'));
+    await user.click(await screen.findByRole('button', { name: 'Bulk actions' }));
+    expect(screen.getByRole('menuitem', { name: 'Local action' })).toBeVisible();
+    await user.click(await screen.findByRole('menuitem', { name: 'Inspect 2 pods' }));
+    expect(within(rows[1]).getByRole('checkbox')).not.toBeChecked();
+    expect(within(rows[2]).getByRole('checkbox')).not.toBeChecked();
+  });
+
+  it('shows opted-in resource bulk actions without table-specific actions', async () => {
+    const user = userEvent.setup();
+    renderTable([], undefined, {
+      data: [{ kind: 'Pod', apiVersion: 'v1', metadata: { name: 'alpha' }, status: 'ready' }],
+      actionProviders: [makePodActionProvider(useBulkPodActions)],
+      selection: { getItemId: (item) => item.metadata.name },
+    });
+
+    expect(await screen.findByRole('button', { name: 'Bulk actions' })).toBeDisabled();
+    const row = within(screen.getByRole('grid', { name: 'items table' })).getAllByRole('row')[1];
+    await user.click(within(row).getByRole('checkbox'));
+    await user.click(await screen.findByRole('button', { name: 'Bulk actions' }));
+    expect(await screen.findByRole('menuitem', { name: 'Inspect 1 pods' })).toBeVisible();
+    await user.keyboard('{Escape}');
+    await user.click(within(row).getByRole('checkbox'));
+    expect(screen.getByRole('button', { name: 'Bulk actions' })).toBeDisabled();
+  });
+
+  it('does not offer resource bulk actions for a mixed-model selection', async () => {
+    const user = userEvent.setup();
+    renderTable([], undefined, {
+      data: [
+        { kind: 'Pod', apiVersion: 'v1', metadata: { name: 'alpha' }, status: 'ready' },
+        { kind: 'Service', apiVersion: 'v1', metadata: { name: 'bravo' }, status: 'ready' },
+      ],
+      actionProviders: [makePodActionProvider(useBulkPodActions)],
+      selection: {
+        getItemId: (item) => item.metadata.name,
+        getActions: () => [{ id: 'local-action', label: 'Local action', cta: jest.fn() }],
+      },
+    });
+
+    const table = screen.getByRole('grid', { name: 'items table' });
+    await user.click(within(within(table).getAllByRole('row')[0]).getByRole('checkbox'));
+    await user.click(await screen.findByRole('button', { name: 'Bulk actions' }));
+    expect(screen.getByRole('menuitem', { name: 'Local action' })).toBeVisible();
+    expect(screen.queryByRole('menuitem', { name: /Inspect .* pods/ })).not.toBeInTheDocument();
+  });
+
+  it('adds selection cells and lets a bulk action deselect successful items', async () => {
+    const user = userEvent.setup();
+    renderTable(
+      [makeExtension('test-ready', 'Ready', { additional: false, insertAfter: 'name' })],
+      undefined,
+      {
+        selection: {
+          getItemId: (item) => item.metadata.name,
+          getActions: ({ selectedItems, deselect }) => [
+            {
+              id: 'remove-alpha',
+              label: `Remove alpha (${selectedItems.length})`,
+              description: 'Removes alpha from the selection',
+              disabled: selectedItems.length === 0,
+              cta: () => deselect(['alpha']),
+            },
+          ],
+        },
+      },
+    );
+
+    const table = screen.getByRole('grid', { name: 'items table' });
+    const rows = within(table).getAllByRole('row');
+    expect(within(rows[0]).getByRole('checkbox')).toBeVisible();
+    expect(rows[1]).toHaveTextContent('alphaReady alpha');
+    const actions = await screen.findByRole('button', { name: 'Bulk actions' });
+    expect(actions).toBeDisabled();
+    await user.click(within(rows[1]).getByRole('checkbox'));
+    await user.click(within(rows[2]).getByRole('checkbox'));
+
+    await user.click(actions);
+    expect(screen.getByText('Removes alpha from the selection')).toBeVisible();
+    await user.click(screen.getByRole('menuitem', { name: /Remove alpha \(2\)/ }));
+    expect(within(rows[1]).getByRole('checkbox')).not.toBeChecked();
+    expect(within(rows[2]).getByRole('checkbox')).toBeChecked();
+    await user.click(actions);
+    expect(screen.getByRole('menuitem', { name: /Remove alpha \(1\)/ })).toBeVisible();
+  });
+
+  it('selects the current page and then all selectable matching items', async () => {
+    const user = userEvent.setup();
+    const manyItems = Array.from({ length: 51 }, (_, index) => ({
+      metadata: { name: `item-${index.toString().padStart(2, '0')}` },
+      status: 'ready',
+    }));
+    renderTable([], undefined, {
+      data: manyItems,
+      selection: {
+        getItemId: (item) => item.metadata.name,
+        isSelectable: (item) => item.metadata.name !== 'item-00',
+        getActions: ({ selectedItems, clearSelection }) => [
+          {
+            id: 'clear-selection',
+            label: `Clear selection (${selectedItems.length})`,
+            disabled: selectedItems.length === 0,
+            cta: clearSelection,
+          },
+        ],
+      },
+    });
+
+    const table = screen.getByRole('grid', { name: 'items table' });
+    const rows = within(table).getAllByRole('row');
+    expect(within(rows[1]).getByRole('checkbox')).toBeDisabled();
+    await user.click(within(rows[0]).getByRole('checkbox'));
+    const actions = await screen.findByRole('button', { name: 'Bulk actions' });
+    await user.click(actions);
+    expect(screen.getByRole('menuitem', { name: 'Clear selection (49)' })).toBeVisible();
+    await user.keyboard('{Escape}');
+
+    await user.click(screen.getByRole('button', { name: /Select all 50 items/ }));
+    await user.click(actions);
+    await user.click(screen.getByRole('menuitem', { name: 'Clear selection (50)' }));
+    expect(actions).toBeDisabled();
   });
 });

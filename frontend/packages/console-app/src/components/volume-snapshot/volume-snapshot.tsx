@@ -33,8 +33,7 @@ import type {
   VolumeSnapshotKind,
   Selector,
 } from '@console/internal/module/k8s';
-import { referenceForModel, referenceFor } from '@console/internal/module/k8s';
-import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { LoadingBox } from '@console/shared/src/components/loading/LoadingBox';
 import { Status } from '@console/shared/src/components/status/Status';
@@ -75,7 +74,6 @@ const getDataViewRows: GetDataViewRows<VolumeSnapshotKind, VolumeSnapshotRowData
     const sourceName = snapshotSource(obj);
     const snapshotContent = obj.status?.boundVolumeSnapshotContentName;
     const snapshotClass = obj.spec?.volumeSnapshotClassName;
-    const context = { [referenceFor(obj)]: obj };
 
     const rowCells = {
       [tableColumnInfo[0].id]: {
@@ -120,14 +118,12 @@ const getDataViewRows: GetDataViewRows<VolumeSnapshotKind, VolumeSnapshotRowData
       [tableColumnInfo[7].id]: {
         cell: <Timestamp timestamp={creationTimestamp} />,
       },
-      [tableColumnInfo[8].id]: {
-        cell: <LazyActionMenu context={context} />,
-      },
     };
 
     return columns
-      .filter(({ id }) => !rowCells[id].disabled)
+      .filter(({ id }) => !rowCells[id]?.disabled)
       .map(({ id }) => {
+        if (id === tableColumnInfo[8].id) return { id };
         const cell = rowCells[id]?.cell || DASH;
         return {
           id,

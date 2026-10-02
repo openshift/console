@@ -48,7 +48,6 @@ import {
   k8sPatch,
   apiVersionForReference,
 } from '@console/internal/module/k8s';
-import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { Status } from '@console/shared/src/components/status/Status';
 import { FLAGS } from '@console/shared/src/constants/common';
@@ -180,9 +179,6 @@ export const getInstallPlanDataViewRows: GetDataViewRows<InstallPlanKind> = (dat
         ),
       },
       subscriptions: { cell: <InstallPlanSubscriptions obj={obj} /> },
-      actions: {
-        cell: <LazyActionMenu context={{ [referenceForModel(InstallPlanModel)]: obj }} />,
-      },
     };
     return columns.map(({ id }) => ({ id, ...rowCells[id] }));
   });

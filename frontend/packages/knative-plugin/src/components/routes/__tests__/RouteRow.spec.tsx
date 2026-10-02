@@ -12,9 +12,6 @@ jest.mock('@console/internal/module/k8s/k8s', () => ({
 jest.mock('@console/internal/components/utils/resource-link', () => ({
   ResourceLink: ({ name }) => name,
 }));
-jest.mock('@console/shared/src/components/actions/LazyActionMenu', () => ({
-  LazyActionMenu: () => null,
-}));
 jest.mock('@console/shared/src/components/datetime/Timestamp', () => ({
   Timestamp: ({ timestamp }) => timestamp,
 }));

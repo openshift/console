@@ -211,9 +211,6 @@ export const getSubscriptionDataViewRows: GetDataViewRows<SubscriptionKind> = (d
         props: { className: css('co-truncate', 'co-select-to-copy') },
       },
       approval: { cell: <SubscriptionApproval subscription={obj} /> },
-      actions: {
-        cell: <LazyActionMenu context={{ [referenceFor(obj)]: obj }} />,
-      },
     };
     return columns.map(({ id }) => ({ id, ...rowCells[id] }));
   });
