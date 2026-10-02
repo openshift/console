@@ -15,11 +15,9 @@ const getOperatorNamespace = (obj: InstalledOperator): string | null =>
 /**
  * Columns for the Installed Operators table.
  * @param allNamespaceActive - Whether the "All Projects" namespace is selected, which adds a Namespace column.
- * @param lifecycleEnabled - Whether the operator lifecycle metadata flag is on, which adds two columns.
  */
 export const useClusterServiceVersionColumns = (
   allNamespaceActive: boolean,
-  lifecycleEnabled: boolean,
 ): {
   columns: ConsoleDataViewColumn<InstalledOperator>[];
 } => {
@@ -79,20 +77,6 @@ export const useClusterServiceVersionColumns = (
         id: 'providedAPIs',
         title: t('Provided APIs'),
       },
-      ...(lifecycleEnabled
-        ? [
-            {
-              id: 'clusterCompatibility',
-              title: t('Cluster compatibility'),
-              props: { modifier: 'nowrap' as const },
-            },
-            {
-              id: 'supportPhase',
-              title: t('Support phase'),
-              props: { modifier: 'nowrap' as const },
-            },
-          ]
-        : []),
       {
         id: 'lastUpdated',
         title: t('Last updated'),
@@ -100,7 +84,7 @@ export const useClusterServiceVersionColumns = (
       },
       { type: 'actions' as const, id: 'actions' },
     ],
-    [t, allNamespaceActive, lifecycleEnabled, formatTargetNamespaces],
+    [t, allNamespaceActive, formatTargetNamespaces],
   );
   return { columns };
 };

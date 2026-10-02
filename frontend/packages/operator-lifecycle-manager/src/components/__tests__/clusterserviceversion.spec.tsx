@@ -120,34 +120,23 @@ const renderInstalledOperatorRow = (obj, ids: string[] = ALL_IDS, rowData?: any)
 
 describe('useClusterServiceVersionColumns', () => {
   it('includes the Namespace column only when all projects are selected', () => {
-    const { result: allNs } = renderHookWithProviders(() =>
-      useClusterServiceVersionColumns(true, false),
-    );
+    const { result: allNs } = renderHookWithProviders(() => useClusterServiceVersionColumns(true));
     expect(allNs.current.columns.map(({ id }) => id)).toContain('namespace');
 
     const { result: singleNs } = renderHookWithProviders(() =>
-      useClusterServiceVersionColumns(false, false),
+      useClusterServiceVersionColumns(false),
     );
     expect(singleNs.current.columns.map(({ id }) => id)).not.toContain('namespace');
   });
 
-  it('includes the lifecycle columns only when the lifecycle flag is on', () => {
-    const { result: off } = renderHookWithProviders(() =>
-      useClusterServiceVersionColumns(true, false),
-    );
-    expect(off.current.columns.map(({ id }) => id)).not.toContain('clusterCompatibility');
-
-    const { result: on } = renderHookWithProviders(() =>
-      useClusterServiceVersionColumns(true, true),
-    );
-    expect(on.current.columns.map(({ id }) => id)).toEqual([
+  it('leaves lifecycle columns to the Console data-view extension point', () => {
+    const { result } = renderHookWithProviders(() => useClusterServiceVersionColumns(true));
+    expect(result.current.columns.map(({ id }) => id)).toEqual([
       'name',
       'namespace',
       'managedNamespaces',
       'status',
       'providedAPIs',
-      'clusterCompatibility',
-      'supportPhase',
       'lastUpdated',
       'actions',
     ]);
