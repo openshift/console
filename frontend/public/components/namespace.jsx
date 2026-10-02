@@ -1,4 +1,4 @@
-import { Suspense, useEffect, useMemo, useState, useCallback } from 'react';
+import { Suspense, useEffect, useMemo, useCallback } from 'react';
 import {
   Alert,
   Button,
@@ -70,7 +70,7 @@ import {
   SecretModel,
   ServiceAccountModel,
 } from '../models';
-import { k8sGet, referenceForModel } from '../module/k8s';
+import { referenceForModel } from '../module/k8s';
 import { flagPending } from '../reducers/features';
 import {
   getNamespaceDashboardConsoleLinks,
@@ -932,27 +932,16 @@ export const ProjectsPage = (props) => {
 
 /** @type {FC<{namespace: K8sResourceKind}>} */
 export const PullSecret = (props) => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [data, setData] = useState([]);
-  const [error, setError] = useState(false);
   const { t } = useTranslation('public');
   const { namespace, canViewSecrets } = props;
   const launchModal = useOverlay();
-
-  useEffect(() => {
-    k8sGet(ServiceAccountModel, 'default', namespace.metadata.name, {})
-      .then((serviceAccount) => {
-        setIsLoading(false);
-        setData(serviceAccount.imagePullSecrets ?? []);
-        setError(false);
-      })
-      .catch((err) => {
-        setIsLoading(false);
-        setData([]);
-        setError(true);
-        console.error('Error getting default ServiceAccount', err);
-      });
-  }, [namespace.metadata.name]);
+  const [serviceAccount, loaded, error] = useK8sWatchResource({
+    groupVersionKind: getGroupVersionKindForModel(ServiceAccountModel),
+    name: 'default',
+    namespace: namespace.metadata.name,
+    isList: false,
+  });
+  const data = serviceAccount?.imagePullSecrets ?? [];
 
   const modal = () =>
     launchModal(LazyConfigureNamespacePullSecretModalOverlay, {
@@ -993,7 +982,7 @@ export const PullSecret = (props) => {
     <DescriptionListGroup>
       <DescriptionListTerm>{t('Default pull Secret', { count: data.length })}</DescriptionListTerm>
       <DescriptionListDescription>
-        {isLoading ? <LoadingInline /> : secrets()}
+        {!loaded && !error ? <LoadingInline /> : secrets()}
       </DescriptionListDescription>
     </DescriptionListGroup>
   );
