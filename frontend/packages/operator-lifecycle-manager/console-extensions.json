@@ -153,6 +153,44 @@
     }
   },
   {
+    "type": "console.dataview/table-column",
+    "properties": {
+      "tableID": "operators.coreos.com~v1alpha1~ClusterServiceVersion",
+      "columnData": {
+        "id": "clusterCompatibility",
+        "title": "%olm~Cluster compatibility%",
+        "additional": false,
+        "props": { "modifier": "nowrap" }
+      },
+      "getCellContent": {
+        "$codeRef": "operatorLifecycleColumns.getClusterCompatibilityCell"
+      },
+      "insertAfter": "providedAPIs"
+    },
+    "flags": {
+      "required": ["OPERATOR_LIFECYCLE_METADATA"]
+    }
+  },
+  {
+    "type": "console.dataview/table-column",
+    "properties": {
+      "tableID": "operators.coreos.com~v1alpha1~ClusterServiceVersion",
+      "columnData": {
+        "id": "supportPhase",
+        "title": "%olm~Support phase%",
+        "additional": false,
+        "props": { "modifier": "nowrap" }
+      },
+      "getCellContent": {
+        "$codeRef": "operatorLifecycleColumns.getSupportPhaseCell"
+      },
+      "insertAfter": "clusterCompatibility"
+    },
+    "flags": {
+      "required": ["OPERATOR_LIFECYCLE_METADATA"]
+    }
+  },
+  {
     "type": "console.page/resource/details",
     "properties": {
       "model": {

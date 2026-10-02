@@ -78,18 +78,11 @@ import {
 } from '@console/shared/src/constants/common';
 import { CONSOLE_OPERATOR_CONFIG_NAME } from '@console/shared/src/constants/resource';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
-import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import { getNamespace } from '@console/shared/src/selectors/common';
 import { isPluginEnabled } from '@console/shared/src/utils/console-plugin';
-import { Flags, GLOBAL_OPERATOR_NAMESPACES, GLOBAL_COPIED_CSV_NAMESPACE } from '../const';
-import {
-  useOperatorLifecycle,
-  getLifecycleInfoFromSubscription,
-  getPackageNameFromCSV,
-  getClusterVersion,
-} from '../hooks/useOperatorLifecycle';
+import { GLOBAL_OPERATOR_NAMESPACES, GLOBAL_COPIED_CSV_NAMESPACE } from '../const';
 import {
   ClusterServiceVersionModel,
   SubscriptionModel,
@@ -131,12 +124,6 @@ import {
   getInitializationResource,
 } from './operator-hub/operator-hub-utils';
 import { CreateInitializationResourceButton } from './operator-install-page';
-import {
-  ClusterCompatibilityStatus,
-  SupportPhaseBadge,
-  getClusterCompatibility,
-  getSupportPhase,
-} from './operator-lifecycle-status';
 import type { SubscriptionDetailsProps } from './subscription';
 import {
   SourceMissingStatus,
@@ -430,34 +417,6 @@ const CsvProvidedAPIsCell = withFallback<{ obj: ClusterServiceVersionKind }>(({ 
   );
 });
 
-/**
- * Both lifecycle cells call `useOperatorLifecycle` independently. It is backed by a module-level
- * cache that also de-duplicates in-flight requests, so the second call does not refetch.
- */
-const useCsvLifecycle = (obj: ClusterServiceVersionKind, subscription: SubscriptionKind) => {
-  const { catalogName, catalogNamespace } = getLifecycleInfoFromSubscription(subscription);
-  const packageName = getPackageNameFromCSV(obj, subscription);
-  const [lifecycleData] = useOperatorLifecycle(packageName, catalogName, catalogNamespace);
-  return lifecycleData;
-};
-
-const CsvClusterCompatibilityCell = withFallback<{
-  obj: ClusterServiceVersionKind;
-  subscription: SubscriptionKind;
-}>(({ obj, subscription }) => {
-  const lifecycleData = useCsvLifecycle(obj, subscription);
-  const compatible = getClusterCompatibility(lifecycleData, obj.spec?.version, getClusterVersion());
-  return <ClusterCompatibilityStatus compatible={compatible} />;
-});
-
-const CsvSupportPhaseCell = withFallback<{
-  obj: ClusterServiceVersionKind;
-  subscription: SubscriptionKind;
-}>(({ obj, subscription }) => {
-  const lifecycleData = useCsvLifecycle(obj, subscription);
-  return <SupportPhaseBadge phase={getSupportPhase(lifecycleData, obj.spec?.version)} />;
-});
-
 const NoneText: FC = () => {
   const { t } = useTranslation('olm');
   return <span className="pf-v6-u-text-color-subtle">{t('None')}</span>;
@@ -491,10 +450,6 @@ const csvRowCells = (
     ),
   },
   providedAPIs: { cell: <CsvProvidedAPIsCell obj={obj} /> },
-  clusterCompatibility: {
-    cell: <CsvClusterCompatibilityCell obj={obj} subscription={subscription} />,
-  },
-  supportPhase: { cell: <CsvSupportPhaseCell obj={obj} subscription={subscription} /> },
   lastUpdated: {
     cell: obj.status == null ? '-' : <Timestamp timestamp={obj.status.lastUpdateTime} />,
   },
@@ -534,8 +489,6 @@ const subscriptionRowCells = (obj: SubscriptionKind, catalogSourceMissing: boole
     ),
   },
   providedAPIs: { cell: <NoneText /> },
-  clusterCompatibility: { cell: '-' },
-  supportPhase: { cell: '-' },
   lastUpdated: {
     cell: obj.status == null ? '-' : <Timestamp timestamp={obj.status.lastUpdated} />,
   },
@@ -636,9 +589,8 @@ const ClusterServiceVersionList: FC<ClusterServiceVersionListProps> = ({
 }) => {
   const { t } = useTranslation('olm');
   const [activeNamespace] = useActiveNamespace();
-  const lifecycleEnabled = useFlag(Flags.OPERATOR_LIFECYCLE_METADATA);
   const allNamespaceActive = activeNamespace === ALL_NAMESPACES_KEY;
-  const { columns } = useClusterServiceVersionColumns(allNamespaceActive, lifecycleEnabled);
+  const { columns } = useClusterServiceVersionColumns(allNamespaceActive);
 
   const filteredOperators = useMemo(
     () =>
@@ -693,7 +645,6 @@ const ClusterServiceVersionList: FC<ClusterServiceVersionListProps> = ({
 
 export const ClusterServiceVersionsPage: FC<ClusterServiceVersionsPageProps> = (props) => {
   const { t } = useTranslation('olm');
-  const lifecycleEnabled = useFlag(Flags.OPERATOR_LIFECYCLE_METADATA);
   const [canListAllSubscriptions] = useAccessReview({
     group: SubscriptionModel.apiGroup,
     resource: SubscriptionModel.plural,
@@ -712,12 +663,6 @@ export const ClusterServiceVersionsPage: FC<ClusterServiceVersionsPageProps> = (
       { id: 'managedNamespaces', title: t('Managed Namespaces') },
       { id: 'status', title: t('Status') },
       { id: 'providedAPIs', title: t('Provided APIs') },
-      ...(lifecycleEnabled
-        ? [
-            { id: 'clusterCompatibility', title: t('Cluster compatibility') },
-            { id: 'supportPhase', title: t('Support phase') },
-          ]
-        : []),
       { id: 'lastUpdated', title: t('Last updated') },
     ];
     return {
@@ -729,7 +674,7 @@ export const ClusterServiceVersionsPage: FC<ClusterServiceVersionsPageProps> = (
           ? new Set(selectedColumns[csvColumnManagementID])
           : new Set<string>(),
     };
-  }, [lifecycleEnabled, selectedColumns, t]);
+  }, [selectedColumns, t]);
 
   const title = t('Installed Operators');
   const olmURL = getDocumentationURL(documentationURLs.operators);
