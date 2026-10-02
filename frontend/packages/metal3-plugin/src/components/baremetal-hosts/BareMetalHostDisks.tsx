@@ -1,11 +1,7 @@
 import type { FC } from 'react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  ConsoleDataView,
-  getNameCellProps,
-  getNameColumnProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import type {
   ConsoleDataViewColumn,
   GetDataViewRows,
@@ -23,10 +19,11 @@ const useBareMetalHostDiskColumns = (): {
   const columns = useMemo(
     () => [
       {
+        type: 'name' as const,
         id: 'name',
         title: t('Name'),
         sort: 'name',
-        props: { ...getNameColumnProps(), modifier: 'nowrap' as const },
+        props: { modifier: 'nowrap' as const },
       },
       {
         id: 'size',
@@ -76,7 +73,7 @@ export const getBareMetalHostDiskDataViewRows: GetDataViewRows<BareMetalHostDisk
 ) =>
   data.map(({ obj: { hctl, model, name, rotational, serialNumber, sizeBytes, vendor } }) => {
     const rowCells = {
-      name: { cell: name, props: getNameCellProps(name) },
+      name: { cell: name },
       size: { cell: humanizeDecimalBytes(sizeBytes).string },
       type: { cell: rotational ? 'Rotational' : 'SSD' },
       model: { cell: model },

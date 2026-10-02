@@ -4,12 +4,7 @@ import { Grid, GridItem } from '@patternfly/react-core';
 import { Table, Thead, Tbody, Tr, Th, Td } from '@patternfly/react-table';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import {
-  ConsoleDataView,
-  getNameCellProps,
-  actionsCellProps,
-  nameCellProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import type {
   ConsoleDataViewColumn,
   GetDataViewRows,
@@ -40,7 +35,6 @@ const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) =>
     const rowCells = {
       [tableColumnInfo[0].id]: {
         cell: <ResourceLink kind={LimitRangeReference} name={name} namespace={namespace} />,
-        props: getNameCellProps(name),
       },
       [tableColumnInfo[1].id]: {
         cell: <ResourceLink kind="Namespace" name={namespace} />,
@@ -50,16 +44,13 @@ const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) =>
       },
       [tableColumnInfo[3].id]: {
         cell: <LazyActionMenu context={{ [referenceForModel(LimitRangeModel)]: obj }} />,
-        props: actionsCellProps,
       },
     };
 
     return columns.map(({ id }) => {
       const cell = rowCells[id]?.cell || DASH;
-      const props = rowCells[id]?.props || undefined;
       return {
         id,
-        props,
         cell,
       };
     });
@@ -73,11 +64,11 @@ const useLimitRangeColumns = (): {
   const columns = useMemo<ConsoleDataViewColumn<K8sResourceKind>[]>(
     () => [
       {
+        type: 'name' as const,
         title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
         props: {
-          ...nameCellProps,
           modifier: 'nowrap' as const,
         },
       },
@@ -97,13 +88,7 @@ const useLimitRangeColumns = (): {
           modifier: 'nowrap' as const,
         },
       },
-      {
-        title: '',
-        id: tableColumnInfo[3].id,
-        props: {
-          ...actionsCellProps,
-        },
-      },
+      { type: 'actions' as const, id: tableColumnInfo[3].id },
     ],
     [t],
   );

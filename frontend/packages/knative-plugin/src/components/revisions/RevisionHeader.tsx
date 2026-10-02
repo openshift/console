@@ -1,9 +1,5 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  cellIsStickyProps,
-  getNameColumnProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
 import type { ConsoleDataViewColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import type { RevisionKind } from '../../types';
 
@@ -13,12 +9,7 @@ export const useRevisionColumns = (): {
   const { t } = useTranslation('knative-plugin');
   const columns = useMemo(
     () => [
-      {
-        id: 'name',
-        title: t('Name'),
-        sort: 'metadata.name',
-        props: getNameColumnProps(),
-      },
+      { type: 'name' as const, id: 'name', title: t('Name'), sort: 'metadata.name' },
       {
         id: 'namespace',
         title: t('Namespace'),
@@ -52,7 +43,7 @@ export const useRevisionColumns = (): {
         title: t('Reason'),
         props: { modifier: 'nowrap' as const },
       },
-      { id: 'actions', title: '', props: cellIsStickyProps },
+      { type: 'actions' as const, id: 'actions' },
     ],
     [t],
   );

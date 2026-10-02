@@ -13,12 +13,7 @@ import {
 } from '@patternfly/react-core';
 import { RhUiEditIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import {
-  actionsCellProps,
-  getNameCellProps,
-  nameCellProps,
-  ConsoleDataView,
-} from '@console/app/src/components/data-view/ConsoleDataView';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import { ListPageBody } from '@console/dynamic-plugin-sdk';
 import type { ConsoleDataViewColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import type { ConfigureCountModalProps } from '@console/internal/components/modals/configure-count-modal';
@@ -282,11 +277,11 @@ const useMachineSetColumns = (): {
   const columns: ConsoleDataViewColumn<MachineSetKind>[] = useMemo(
     () => [
       {
+        type: 'name' as const,
         title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
         props: {
-          ...nameCellProps,
           modifier: 'nowrap' as const,
         },
       },
@@ -339,13 +334,7 @@ const useMachineSetColumns = (): {
           modifier: 'nowrap' as const,
         },
       },
-      {
-        title: '',
-        id: tableColumnInfo[6].id,
-        props: {
-          ...actionsCellProps,
-        },
-      },
+      { type: 'actions' as const, id: tableColumnInfo[6].id },
     ],
     [t, context],
   );
@@ -366,7 +355,6 @@ const getDataViewRows = (
     const rowCells = {
       [tableColumnInfo[0].id]: {
         cell: <ResourceLink kind={machineSetReference} name={name} namespace={namespace} />,
-        props: getNameCellProps(name),
       },
       [tableColumnInfo[1].id]: {
         cell: <ResourceLink kind="Namespace" name={namespace} />,
@@ -391,7 +379,6 @@ const getDataViewRows = (
       },
       [tableColumnInfo[6].id]: {
         cell: <LazyActionMenu context={{ [machineSetReference]: obj }} />,
-        props: actionsCellProps,
       },
     };
 
@@ -399,7 +386,6 @@ const getDataViewRows = (
       const cell = rowCells[id]?.cell || DASH;
       return {
         id,
-        props: rowCells[id]?.props,
         cell,
       };
     });

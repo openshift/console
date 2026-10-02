@@ -13,13 +13,7 @@ import i18next from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation, withTranslation } from 'react-i18next';
 import { useLocation, useParams } from 'react-router';
-import {
-  ConsoleDataView,
-  getNameCellProps,
-  actionsCellProps,
-  nameCellProps,
-  initialFiltersDefault,
-} from '@console/app/src/components/data-view/ConsoleDataView';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
@@ -55,7 +49,6 @@ const getDataViewRows = (data, columns) =>
             namespace={role.metadata.namespace}
           />
         ),
-        props: getNameCellProps(role.metadata.name),
       },
       [tableColumnInfo[1].id]: {
         cell: role.metadata.namespace ? (
@@ -66,7 +59,6 @@ const getDataViewRows = (data, columns) =>
       },
       [tableColumnInfo[2].id]: {
         cell: <LazyActionMenu context={{ [referenceFor(role)]: role }} />,
-        props: actionsCellProps,
       },
     };
 
@@ -168,7 +160,6 @@ const getBindingsDataViewRows = (data, columns) =>
     const rowCells = {
       [bindingsTableColumnInfo[0].id]: {
         cell: <BindingName binding={binding} />,
-        props: getNameCellProps(binding.metadata.name),
       },
       [bindingsTableColumnInfo[1].id]: {
         cell: binding.subject.kind,
@@ -201,11 +192,11 @@ const useBindingsColumns = () => {
   return useMemo(
     () => [
       {
+        type: 'name',
         title: t('Name'),
         id: bindingsTableColumnInfo[0].id,
         sort: 'metadata.name',
         props: {
-          ...nameCellProps,
           modifier: 'nowrap',
         },
       },
@@ -391,11 +382,11 @@ const useRolesColumns = () => {
   const columns = useMemo(
     () => [
       {
+        type: 'name',
         title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
         props: {
-          ...nameCellProps,
           modifier: 'nowrap',
         },
       },
@@ -407,13 +398,7 @@ const useRolesColumns = () => {
           modifier: 'nowrap',
         },
       },
-      {
-        title: '',
-        id: tableColumnInfo[2].id,
-        props: {
-          ...actionsCellProps,
-        },
-      },
+      { type: 'actions', id: tableColumnInfo[2].id },
     ],
     [t],
   );
@@ -442,13 +427,13 @@ const useRoleFilterOptions = () => {
   );
 };
 
+const initialFilters = { 'role-kind': [] };
+
 const RolesList = (props) => {
   const { t } = useTranslation('public');
   const { data, loaded } = props;
   const { columns } = useRolesColumns();
   const roleFilterOptions = useRoleFilterOptions();
-
-  const initialFilters = useMemo(() => ({ ...initialFiltersDefault, 'role-kind': [] }), []);
 
   const additionalFilterNodes = useMemo(
     () => [

@@ -3,13 +3,7 @@ import { useMemo, Suspense } from 'react';
 import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import {
-  actionsCellProps,
-  getNameCellProps,
-  initialFiltersDefault,
-  ConsoleDataView,
-  nameCellProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import type {
   ConsoleDataViewColumn,
   GetDataViewRows,
@@ -53,11 +47,11 @@ const useVolumeAttributesClassColumns = (): {
   const columns: ConsoleDataViewColumn<VolumeAttributesClassKind>[] = useMemo(
     () => [
       {
+        type: 'name' as const,
         title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
         props: {
-          ...nameCellProps,
           modifier: 'nowrap' as const,
         },
       },
@@ -76,13 +70,7 @@ const useVolumeAttributesClassColumns = (): {
           modifier: 'nowrap' as const,
         },
       },
-      {
-        title: '',
-        id: tableColumnInfo[3].id,
-        props: {
-          ...actionsCellProps,
-        },
-      },
+      { type: 'actions' as const, id: tableColumnInfo[3].id },
     ],
     [t],
   );
@@ -102,7 +90,6 @@ const getDataViewRows: GetDataViewRows<VolumeAttributesClassKind, undefined> = (
             <ResourceLink groupVersionKind={VolumeAttributesClassGVK} name={name} />
           </span>
         ),
-        props: getNameCellProps(name),
       },
       [tableColumnInfo[1].id]: {
         cell: obj.driverName || DASH,
@@ -118,7 +105,6 @@ const getDataViewRows: GetDataViewRows<VolumeAttributesClassKind, undefined> = (
             }}
           />
         ),
-        props: actionsCellProps,
       },
     };
 
@@ -126,7 +112,6 @@ const getDataViewRows: GetDataViewRows<VolumeAttributesClassKind, undefined> = (
       const cell = rowCells[id]?.cell || DASH;
       return {
         id,
-        props: rowCells[id]?.props,
         cell,
       };
     });
@@ -151,7 +136,6 @@ const VolumeAttributesClassList: FC<VolumeAttributesClassListProps> = ({
         loaded={isLoaded}
         loadError={loadError}
         columns={columns}
-        initialFilters={initialFiltersDefault}
         getDataViewRows={getDataViewRows}
       />
     </Suspense>

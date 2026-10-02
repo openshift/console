@@ -4,13 +4,7 @@ import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
 import type { DataViewFilterOption } from '@patternfly/react-data-view/dist/esm/DataViewFilters';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
-import {
-  actionsCellProps,
-  getNameCellProps,
-  initialFiltersDefault,
-  ConsoleDataView,
-  nameCellProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import type {
   ConsoleDataViewColumn,
   ResourceFilters,
@@ -86,7 +80,6 @@ const getDataViewRows: GetDataViewRows<VolumeSnapshotKind, VolumeSnapshotRowData
     const rowCells = {
       [tableColumnInfo[0].id]: {
         cell: <ResourceLink kind={kind} name={name} namespace={namespace} />,
-        props: getNameCellProps(name),
       },
       [tableColumnInfo[1].id]: {
         cell: <ResourceLink kind={NamespaceModel.kind} name={namespace} />,
@@ -129,7 +122,6 @@ const getDataViewRows: GetDataViewRows<VolumeSnapshotKind, VolumeSnapshotRowData
       },
       [tableColumnInfo[8].id]: {
         cell: <LazyActionMenu context={context} />,
-        props: actionsCellProps,
       },
     };
 
@@ -137,10 +129,8 @@ const getDataViewRows: GetDataViewRows<VolumeSnapshotKind, VolumeSnapshotRowData
       .filter(({ id }) => !rowCells[id].disabled)
       .map(({ id }) => {
         const cell = rowCells[id]?.cell || DASH;
-        const props = rowCells[id]?.props || undefined;
         return {
           id,
-          props,
           cell,
         };
       });
@@ -155,10 +145,11 @@ const useVolumeSnapshotColumns = (
     () =>
       [
         {
+          type: 'name' as const,
           title: t('Name'),
           sort: 'metadata.name',
           id: tableColumnInfo[0].id,
-          props: { ...nameCellProps, modifier: 'nowrap' as const },
+          props: { modifier: 'nowrap' as const },
         },
         {
           title: t('Namespace'),
@@ -206,11 +197,7 @@ const useVolumeSnapshotColumns = (
           id: tableColumnInfo[7].id,
           props: { modifier: 'nowrap' as const },
         },
-        {
-          title: '',
-          id: tableColumnInfo[8].id,
-          props: { ...actionsCellProps },
-        },
+        { type: 'actions' as const, id: tableColumnInfo[8].id },
       ].filter((c) => !c.disabled),
     [t, rowData.hideSnapshotContentColumn],
   );
@@ -246,10 +233,7 @@ const VolumeSnapshotTable: FC<VolumeSnapshotTableProps> = ({ data, loaded, ...pr
     [t],
   );
 
-  const initialFilters = useMemo<VolumeSnapshotFilters>(
-    () => ({ ...initialFiltersDefault, status: [] }),
-    [],
-  );
+  const initialFilters = useMemo<VolumeSnapshotFilters>(() => ({ status: [] }), []);
 
   const additionalFilterNodes = useMemo<React.ReactNode[]>(
     () => [

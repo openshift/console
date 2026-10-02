@@ -12,10 +12,7 @@ import {
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import {
-  actionsCellProps,
-  getNameCellProps,
   ConsoleDataView,
-  nameCellProps,
   getLabelsColumnWidthStyleProp,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
@@ -164,7 +161,6 @@ const getDataViewRows = (data, columns) =>
             namespace={namespace}
           />
         ),
-        props: getNameCellProps(name),
       },
       [tableColumnInfo[1].id]: {
         cell: <ResourceLink kind="Namespace" name={namespace} />,
@@ -183,7 +179,6 @@ const getDataViewRows = (data, columns) =>
       },
       [tableColumnInfo[6].id]: {
         cell: <LazyActionMenu context={context} />,
-        props: actionsCellProps,
       },
     };
 
@@ -203,11 +198,11 @@ const useReplicaSetsColumns = () => {
   const columns = useMemo(
     () => [
       {
+        type: 'name',
         title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
         props: {
-          ...nameCellProps,
           modifier: 'nowrap',
         },
       },
@@ -252,13 +247,7 @@ const useReplicaSetsColumns = () => {
           modifier: 'nowrap',
         },
       },
-      {
-        title: '',
-        id: tableColumnInfo[6].id,
-        props: {
-          ...actionsCellProps,
-        },
-      },
+      { type: 'actions', id: tableColumnInfo[6].id },
     ],
     [t],
   );

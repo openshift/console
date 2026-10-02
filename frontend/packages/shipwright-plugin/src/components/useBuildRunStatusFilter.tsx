@@ -1,7 +1,6 @@
 import { useCallback, useMemo } from 'react';
 import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
 import { useTranslation } from 'react-i18next';
-import { initialFiltersDefault } from '@console/app/src/components/data-view/ConsoleDataView';
 import type { ResourceFilters } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { ComputedBuildRunStatus } from '../types';
 
@@ -22,10 +21,7 @@ export type BuildRunStatusFilters = ResourceFilters & { [STATUS_FILTER_ID]: stri
 export const useBuildRunStatusFilter = <T,>(title: string, getStatus: (obj: T) => string) => {
   const { t } = useTranslation('shipwright-plugin');
 
-  const initialFilters = useMemo<BuildRunStatusFilters>(
-    () => ({ ...initialFiltersDefault, [STATUS_FILTER_ID]: [] }),
-    [],
-  );
+  const initialFilters = useMemo<BuildRunStatusFilters>(() => ({ [STATUS_FILTER_ID]: [] }), []);
 
   const additionalFilterNodes = useMemo(
     () => [

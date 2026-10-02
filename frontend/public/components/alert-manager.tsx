@@ -11,11 +11,7 @@ import {
 } from '@patternfly/react-core';
 import { RhUiEditIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import {
-  cellIsStickyProps,
-  getNameCellProps,
-  ConsoleDataView,
-} from '@console/app/src/components/data-view/ConsoleDataView';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import type {
   ConsoleDataViewColumn,
   GetDataViewRows,
@@ -142,7 +138,6 @@ const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) =>
             title={metadata.uid}
           />
         ),
-        props: getNameCellProps(metadata.name),
       },
       [tableColumnInfo[1].id]: {
         cell: (
@@ -164,7 +159,6 @@ const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) =>
       const cell = rowCells[id]?.cell || DASH;
       return {
         id,
-        props: rowCells[id]?.props,
         cell,
       };
     });
@@ -175,13 +169,11 @@ const useAlertManagerColumns = (): ConsoleDataViewColumn<K8sResourceKind>[] => {
   const columns = useMemo<ConsoleDataViewColumn<K8sResourceKind>[]>(
     () => [
       {
+        type: 'name' as const,
         title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
-        props: {
-          ...cellIsStickyProps,
-          modifier: 'nowrap' as const,
-        },
+        props: { hasRightBorder: false, modifier: 'nowrap' as const },
       },
       {
         title: t('Namespace'),

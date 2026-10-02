@@ -16,7 +16,6 @@ jest.mock('@console/internal/components/utils', () => ({
   LoadingBox: () => 'LoadingBox',
 }));
 
-const mockResetAllColumnWidths = jest.fn();
 const mockColumns = [
   { id: 'name', title: 'Name' },
   { id: 'repoUrl', title: 'Repo URL' },
@@ -25,7 +24,6 @@ const mockColumns = [
 jest.mock('../RepositoriesHeader', () => ({
   useRepositoriesColumns: () => ({
     columns: mockColumns,
-    resetAllColumnWidths: mockResetAllColumnWidths,
   }),
 }));
 
@@ -58,7 +56,6 @@ const defaultProps: TableProps = {
 describe('RepositoriesList', () => {
   beforeEach(() => {
     mockConsoleDataView.mockClear();
-    mockResetAllColumnWidths.mockClear();
   });
 
   it('should render ConsoleDataView with HelmChartRepositories label', () => {
@@ -105,13 +102,12 @@ describe('RepositoriesList', () => {
     );
   });
 
-  it('should pass columns and resetAllColumnWidths from useRepositoriesColumns', () => {
+  it('should pass columns from useRepositoriesColumns', () => {
     renderWithProviders(<RepositoriesList {...defaultProps} loaded />);
 
     expect(mockConsoleDataView).toHaveBeenCalledWith(
       expect.objectContaining({
         columns: mockColumns,
-        resetAllColumnWidths: mockResetAllColumnWidths,
       }),
     );
   });

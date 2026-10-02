@@ -210,7 +210,7 @@ describe('SubscriptionsList', () => {
     jest.clearAllMocks();
   });
 
-  it('renders ConsoleDataView with resizable columns', () => {
+  it('passes columns to ConsoleDataView', () => {
     renderWithProviders(
       <SubscriptionsList.WrappedComponent
         data={testSubscriptions}
@@ -229,10 +229,8 @@ describe('SubscriptionsList', () => {
       'Status',
       'Update channel',
       'Update approval',
-      '',
+      undefined,
     ]);
-    expect(dataViewProps.isResizable).toBe(true);
-    expect(dataViewProps.resetAllColumnWidths).toEqual(expect.any(Function));
   });
 
   it('renders the custom empty message instead of the table when no Subscriptions exist', () => {

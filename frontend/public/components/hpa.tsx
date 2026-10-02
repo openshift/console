@@ -5,9 +5,6 @@ import { Table as PfTable, Th, Tr, Thead, Tbody, Td } from '@patternfly/react-ta
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import {
-  actionsCellProps,
-  getNameCellProps,
-  nameCellProps,
   ConsoleDataView,
   getLabelsColumnWidthStyleProp,
 } from '@console/app/src/components/data-view/ConsoleDataView';
@@ -263,7 +260,6 @@ const getDataViewRows: GetDataViewRows<HorizontalPodAutoscalerKind> = (data, col
             namespace={namespace}
           />
         ),
-        props: getNameCellProps(name),
       },
       [tableColumnInfo[1].id]: {
         cell: <ResourceLink kind="Namespace" name={namespace} />,
@@ -291,7 +287,6 @@ const getDataViewRows: GetDataViewRows<HorizontalPodAutoscalerKind> = (data, col
         cell: (
           <LazyActionMenu context={{ [referenceForModel(HorizontalPodAutoscalerModel)]: obj }} />
         ),
-        props: actionsCellProps,
       },
     };
 
@@ -299,7 +294,6 @@ const getDataViewRows: GetDataViewRows<HorizontalPodAutoscalerKind> = (data, col
       const cell = rowCells[id]?.cell || DASH;
       return {
         id,
-        props: rowCells[id]?.props,
         cell,
       };
     });
@@ -313,11 +307,11 @@ const useHorizontalPodAutoscalersColumns = (): {
   const columns: ConsoleDataViewColumn<HorizontalPodAutoscalerKind>[] = useMemo(
     () => [
       {
+        type: 'name' as const,
         title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
         props: {
-          ...nameCellProps,
           modifier: 'nowrap' as const,
         },
       },
@@ -362,13 +356,7 @@ const useHorizontalPodAutoscalersColumns = (): {
           modifier: 'nowrap' as const,
         },
       },
-      {
-        title: '',
-        id: tableColumnInfo[6].id,
-        props: {
-          ...actionsCellProps,
-        },
-      },
+      { type: 'actions' as const, id: tableColumnInfo[6].id },
     ],
     [t],
   );

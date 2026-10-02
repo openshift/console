@@ -31,9 +31,9 @@ const data: Item[] = [
   { metadata: { name: 'bravo' }, status: 'pending' },
 ];
 const columns: ConsoleDataViewColumn<Item>[] = [
-  { id: 'name', title: 'Name', sort: 'metadata.name' },
+  { id: 'name', type: 'name', title: 'Name', sort: 'metadata.name' },
   { id: 'status', title: 'Status' },
-  { id: 'actions', title: '' },
+  { id: 'actions', type: 'actions' },
 ];
 const getDataViewRows: GetDataViewRows<Item> = (rows, activeColumns) =>
   rows.map(({ obj }) =>
@@ -53,6 +53,7 @@ const makeExtension = (
     insertBefore?: string;
     insertAfter?: string;
     resizable?: boolean;
+    tooltip?: string;
     getCellContent?: (rows: { obj: Item }[]) => { cell: string }[];
   } = {},
 ): ResolvedTableColumn => ({
@@ -64,6 +65,7 @@ const makeExtension = (
     columnData: {
       id,
       title,
+      tooltip: options.tooltip,
       additional: options.additional,
       resizableProps: options.resizable ? { isResizable: true } : undefined,
     },
@@ -85,6 +87,7 @@ const renderTable = (
     isResizable?: boolean;
     useDefaultResizable?: boolean;
     columnWidths?: Record<string, number>;
+    getDataViewRows?: GetDataViewRows<Item>;
   } = {},
 ) => {
   (useResolvedExtensions as jest.Mock).mockReturnValue([extensions, true, []]);
@@ -120,7 +123,7 @@ const renderTable = (
           columns: columns.filter(({ title }) => title).map(({ id, title }) => ({ id, title })),
           selectedColumns: new Set(preference ?? []),
         }}
-        getDataViewRows={getDataViewRows}
+        getDataViewRows={options.getDataViewRows ?? getDataViewRows}
         hideNameLabelFilters
         {...(options.useDefaultResizable ? {} : { isResizable: options.isResizable ?? false })}
       />
@@ -163,6 +166,44 @@ describe('ConsoleDataView table column extensions', () => {
     ).toEqual(['Name', 'Ready', 'Status', 'Actions']);
     expect(within(table).getAllByRole('row')[1]).toHaveTextContent('alphaReady alphaready');
     expect(within(table).getAllByRole('row')[2]).toHaveTextContent('bravoReady bravopending');
+  });
+
+  it('adds name cell test IDs and lets row props override them', () => {
+    renderTable([], undefined, {
+      getDataViewRows: (rows, activeColumns) =>
+        rows.map(({ obj }) =>
+          activeColumns.map(({ id }) =>
+            id === 'name' && obj.metadata.name === 'alpha'
+              ? obj.metadata.name
+              : {
+                  id,
+                  cell: id === 'name' ? obj.metadata.name : null,
+                  props: id === 'name' ? { 'data-test': 'custom-name' } : {},
+                },
+          ),
+        ),
+    });
+
+    expect(screen.getByRole('cell', { name: 'alpha' })).toHaveAttribute(
+      'data-test',
+      'data-view-cell-alpha-name',
+    );
+    expect(screen.getByRole('cell', { name: 'bravo' })).toHaveAttribute('data-test', 'custom-name');
+  });
+
+  it('shows a help tooltip for an extension column header', async () => {
+    const user = userEvent.setup();
+    renderTable([
+      makeExtension('test-ready', 'Ready', {
+        additional: false,
+        tooltip: 'Whether this item is ready',
+      }),
+    ]);
+
+    const header = screen.getByRole('columnheader', { name: /Ready/ });
+    await user.hover(within(header).getByRole('button', { name: 'More information about Ready' }));
+
+    expect(await screen.findByRole('tooltip')).toHaveTextContent('Whether this item is ready');
   });
 
   it('keeps additional columns hidden until selected in column management', async () => {

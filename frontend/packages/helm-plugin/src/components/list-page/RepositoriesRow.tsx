@@ -1,6 +1,5 @@
 import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getNameCellProps } from '@console/app/src/components/data-view/ConsoleDataView';
 import type { GetDataViewRows } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { LazyActionMenu } from '@console/dynamic-plugin-sdk/src/lib-internal';
 import { ResourceLink } from '@console/internal/components/utils';
@@ -47,7 +46,6 @@ export const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns)
             namespace={obj.metadata?.namespace}
           />
         ),
-        props: getNameCellProps(obj.metadata.name),
       },
       [tableColumnInfo[1].id]: {
         cell: obj.spec?.name ?? DASH,
@@ -79,10 +77,8 @@ export const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns)
 
     return columns.map(({ id }) => {
       const cell = rowCells[id]?.cell || DASH;
-      const props = rowCells[id]?.props || undefined;
       return {
         id,
-        props,
         cell,
       };
     });

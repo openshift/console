@@ -158,19 +158,7 @@ describe('useInstallPlanColumns', () => {
       'Status',
       'Components',
       'Subscriptions',
-      '',
-    ]);
-  });
-
-  it('makes every column except actions resizable', () => {
-    const { result } = renderHookWithProviders(() => useInstallPlanColumns());
-    expect(result.current.columns.map(({ id, resizableProps }) => [id, !!resizableProps])).toEqual([
-      ['name', true],
-      ['namespace', true],
-      ['status', true],
-      ['components', true],
-      ['subscriptions', true],
-      ['actions', false],
+      undefined,
     ]);
   });
 });
@@ -185,7 +173,7 @@ describe('InstallPlansList', () => {
     jest.restoreAllMocks();
   });
 
-  it('renders ConsoleDataView with resizable columns', () => {
+  it('passes columns to ConsoleDataView', () => {
     renderWithProviders(
       <InstallPlansList.WrappedComponent operatorGroup={null} data={[testInstallPlan]} loaded />,
     );
@@ -198,10 +186,8 @@ describe('InstallPlansList', () => {
       'Status',
       'Components',
       'Subscriptions',
-      '',
+      undefined,
     ]);
-    expect(dataViewProps.isResizable).toBe(true);
-    expect(dataViewProps.resetAllColumnWidths).toEqual(expect.any(Function));
   });
 
   it('renders the custom empty message instead of the table when no InstallPlans exist', () => {

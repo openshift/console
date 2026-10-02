@@ -3,12 +3,7 @@ import { Suspense, useMemo } from 'react';
 import { Grid, GridItem } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import {
-  actionsCellProps,
-  getNameCellProps,
-  ConsoleDataView,
-  nameCellProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import type {
   ConsoleDataViewColumn,
   GetDataViewRows,
@@ -54,7 +49,6 @@ const getDataViewRows: GetDataViewRows<ConfigMapKind> = (data, columns) =>
             namespace={namespace}
           />
         ),
-        props: getNameCellProps(name),
       },
       [tableColumnInfo[1].id]: {
         cell: <ResourceLink kind="Namespace" name={namespace} />,
@@ -67,7 +61,6 @@ const getDataViewRows: GetDataViewRows<ConfigMapKind> = (data, columns) =>
       },
       [tableColumnInfo[4].id]: {
         cell: <LazyActionMenu context={{ [kind]: configMap }} />,
-        props: actionsCellProps,
       },
     };
 
@@ -75,7 +68,6 @@ const getDataViewRows: GetDataViewRows<ConfigMapKind> = (data, columns) =>
       const cell = rowCells[id]?.cell || DASH;
       return {
         id,
-        props: rowCells[id]?.props,
         cell,
       };
     });
@@ -89,11 +81,11 @@ const useConfigMapsColumns = (): {
   const columns = useMemo<ConsoleDataViewColumn<ConfigMapKind>[]>(
     () => [
       {
+        type: 'name' as const,
         title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
         props: {
-          ...nameCellProps,
           modifier: 'nowrap' as const,
         },
       },
@@ -121,13 +113,7 @@ const useConfigMapsColumns = (): {
           modifier: 'nowrap' as const,
         },
       },
-      {
-        title: '',
-        id: tableColumnInfo[4].id,
-        props: {
-          ...actionsCellProps,
-        },
-      },
+      { type: 'actions' as const, id: tableColumnInfo[4].id },
     ],
     [t],
   );

@@ -10,12 +10,7 @@ import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
 import type { DataViewFilterOption } from '@patternfly/react-data-view/dist/esm/DataViewFilters';
 import { useTranslation } from 'react-i18next';
 import { useParams, Link } from 'react-router';
-import {
-  ConsoleDataView,
-  initialFiltersDefault,
-  actionsCellProps,
-  nameCellProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import type {
   ConsoleDataViewColumn,
   ResourceFilters,
@@ -48,11 +43,11 @@ const useHelmReleasesColumns = (): {
   const columns = useMemo<ConsoleDataViewColumn<HelmRelease>[]>(
     () => [
       {
+        type: 'name' as const,
         title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'name',
         props: {
-          ...nameCellProps,
           modifier: 'nowrap' as const,
         },
       },
@@ -112,13 +107,7 @@ const useHelmReleasesColumns = (): {
           modifier: 'nowrap' as const,
         },
       },
-      {
-        title: '',
-        id: tableColumnInfo[8].id,
-        props: {
-          ...actionsCellProps,
-        },
-      },
+      { type: 'actions' as const, id: tableColumnInfo[8].id },
     ],
     [t],
   );
@@ -205,7 +194,7 @@ const HelmReleaseList: FC<{ mock?: boolean }> = ({ mock }) => {
     [],
   );
 
-  const initialFilters = useMemo(() => ({ ...initialFiltersDefault, status: [] }), []);
+  const initialFilters = useMemo<HelmReleaseFilters>(() => ({ status: [] }), []);
 
   const additionalFilterNodes = useMemo<React.ReactNode[]>(
     () => [

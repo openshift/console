@@ -1,6 +1,5 @@
 import { useCallback, useMemo } from 'react';
 import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
-import { initialFiltersDefault } from '@console/app/src/components/data-view/ConsoleDataView';
 import type { ResourceFilters } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import type { RowFilter } from '@console/internal/components/filter-toolbar';
 
@@ -11,7 +10,7 @@ export const useKnativeDataViewFilters = <T,>(rowFilters: RowFilter<T>[] = []) =
     () =>
       rowFilters.reduce(
         (filters, { type, defaultSelected }) => ({ ...filters, [type]: defaultSelected ?? [] }),
-        { ...initialFiltersDefault },
+        {} as KnativeFilters,
       ),
     [rowFilters],
   );

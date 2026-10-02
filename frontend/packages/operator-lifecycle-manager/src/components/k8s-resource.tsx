@@ -3,11 +3,7 @@ import { useMemo } from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
-import {
-  ConsoleDataView,
-  getNameCellProps,
-  getNameColumnProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import type {
   ConsoleDataViewColumn,
   GetDataViewRows,
@@ -57,12 +53,7 @@ export const useOperandResourceColumns = (): {
   const { t } = useTranslation('olm');
   const columns = useMemo(
     () => [
-      {
-        id: 'name',
-        title: t('Name'),
-        sort: 'metadata.name',
-        props: getNameColumnProps(),
-      },
+      { type: 'name' as const, id: 'name', title: t('Name'), sort: 'metadata.name' },
       {
         id: 'kind',
         title: t('Kind'),
@@ -95,7 +86,6 @@ export const getOperandResourceDataViewRows: GetDataViewRows<
     const rowCells = {
       name: {
         cell: linkFor(obj, providedAPI),
-        props: getNameCellProps(obj.metadata.name),
       },
       kind: { cell: obj.kind },
       status: { cell: <Status status={obj?.status?.phase ?? 'Created'} /> },

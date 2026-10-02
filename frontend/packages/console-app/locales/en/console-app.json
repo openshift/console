@@ -451,6 +451,7 @@
   "Minimize alert: {{title}}": "Minimize alert: {{title}}",
   "Model": "Model",
   "Modify VolumeAttributesClass": "Modify VolumeAttributesClass",
+  "More information about {{column}}": "More information about {{column}}",
   "More information:": "More information:",
   "Mounted persistent volumes": "Mounted persistent volumes",
   "Must have administrator access": "Must have administrator access",

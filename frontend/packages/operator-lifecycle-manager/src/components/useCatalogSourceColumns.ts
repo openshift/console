@@ -1,10 +1,6 @@
 import type { ReactNode } from 'react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  cellIsStickyProps,
-  getNameColumnProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
 import type { ConsoleDataViewColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import type { CatalogSourceKind } from '../types';
 import { sortByOptionalPath } from './dataViewSortHelpers';
@@ -35,12 +31,7 @@ export const useCatalogSourceColumns = (): {
   const { t } = useTranslation('olm');
   const columns = useMemo(
     () => [
-      {
-        id: 'name',
-        title: t('Name'),
-        sort: 'name',
-        props: getNameColumnProps(),
-      },
+      { type: 'name' as const, id: 'name', title: t('Name'), sort: 'name' },
       {
         id: 'status',
         title: t('Status'),
@@ -78,7 +69,7 @@ export const useCatalogSourceColumns = (): {
         sort: sortByOptionalPath<CatalogSourceTableRowObj>('operatorCount'),
         props: { modifier: 'nowrap' as const },
       },
-      { id: 'actions', title: '', props: cellIsStickyProps },
+      { type: 'actions' as const, id: 'actions' },
     ],
     [t],
   );

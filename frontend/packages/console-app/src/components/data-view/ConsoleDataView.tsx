@@ -41,8 +41,6 @@ import { useConsoleDataViewFilters } from './useConsoleDataViewFilters';
 
 import './ConsoleDataView.scss';
 
-export const initialFiltersDefault: ResourceFilters = { name: '', label: '' };
-
 const BodyLoading: FC<{ columns: number }> = ({ columns }) => (
   <SkeletonTableBody rowsCount={5} columnsCount={columns} />
 );
@@ -75,7 +73,7 @@ export const ConsoleDataView = <
   columns,
   columnLayout,
   id,
-  initialFilters = initialFiltersDefault as TFilters,
+  initialFilters,
   additionalFilterNodes,
   getObjectMetadata,
   matchesAdditionalFilters,
@@ -86,12 +84,12 @@ export const ConsoleDataView = <
   showNamespaceOverride,
   hideNameLabelFilters,
   hideLabelFilter,
+  EmptyMsg,
   mock,
   isResizable = true,
   additionalActions,
   customActions,
   selection,
-  actionsBreakpoint = 'md',
 }: ConsoleDataViewProps<TData, TCustomRowData, TFilters>) => {
   const { t } = useTranslation('console-app');
   const launchModal = useOverlay();
@@ -106,6 +104,7 @@ export const ConsoleDataView = <
     managedColumnLayout,
     resolvedID,
     getDataViewRows,
+    getObjectMetadata,
     isResizable,
   );
   const { resetColumnWidths } = preparedTable;
@@ -264,6 +263,7 @@ export const ConsoleDataView = <
       loaded={loaded}
       loadError={loadError}
       skeleton={<div className="loading-skeleton--table" />}
+      EmptyMsg={EmptyMsg}
     >
       <DataView
         activeState={activeState}
@@ -285,7 +285,7 @@ export const ConsoleDataView = <
           clearAllFilters={clearAllFilters}
           actions={
             <>
-              <ResponsiveActions breakpoint={actionsBreakpoint}>
+              <ResponsiveActions breakpoint="md">
                 {resolvedID && preparedTable.columnLayout && (
                   <ResponsiveAction
                     isPersistent
@@ -394,54 +394,6 @@ export const ConsoleDataView = <
       </DataView>
     </StatusBox>
   );
-};
-
-const SELECTION_COLUMN_WIDTH = '45px';
-
-export const cellIsStickyProps = {
-  isStickyColumn: true,
-  stickyMinWidth: '0',
-};
-
-export const selectionColumnProps = {
-  ...cellIsStickyProps,
-  stickyLeftOffset: '0',
-  stickyMinWidth: SELECTION_COLUMN_WIDTH,
-  style: { maxWidth: SELECTION_COLUMN_WIDTH },
-};
-
-export const nameCellProps = {
-  ...cellIsStickyProps,
-  hasRightBorder: true,
-};
-
-/**
- * Returns name column props with appropriate offset based on whether bulk select is enabled.
- * Use this for column definitions.
- * @param hasRightBorder - Whether to include hasRightBorder (default: true)
- * @param withBulkSelect - Whether the table has bulk selection enabled (default: false)
- */
-export const getNameColumnProps = (hasRightBorder = true, withBulkSelect = false) => ({
-  ...cellIsStickyProps,
-  ...(hasRightBorder && { hasRightBorder: true }),
-  ...(withBulkSelect && { stickyLeftOffset: SELECTION_COLUMN_WIDTH }),
-});
-
-/**
- * Returns name cell props with appropriate offset based on whether bulk select is enabled.
- * Use this for row cell definitions.
- * @param name - The name to use in the data-test attribute
- * @param withBulkSelect - Whether the table has bulk selection enabled (default: false)
- */
-export const getNameCellProps = (name: string, withBulkSelect = false) => ({
-  ...getNameColumnProps(true, withBulkSelect),
-  'data-test': `data-view-cell-${name}-name`,
-});
-
-export const actionsCellProps = {
-  ...cellIsStickyProps,
-  hasLeftBorder: true,
-  isActionCell: true,
 };
 
 /**

@@ -7,12 +7,7 @@ import type { DataViewFilterOption } from '@patternfly/react-data-view/dist/esm/
 import { SortByDirection } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
-import {
-  ConsoleDataView,
-  getNameCellProps,
-  getNameColumnProps,
-  initialFiltersDefault,
-} from '@console/app/src/components/data-view/ConsoleDataView';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import {
   createSelectionCell,
   createSelectionColumn,
@@ -23,7 +18,6 @@ import type {
   ConsoleDataViewRow,
   ResourceFilters,
   RowProps,
-  TableColumn,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { ListPageBody, ListPageHeader } from '@console/dynamic-plugin-sdk/src/lib-core';
 import {
@@ -81,19 +75,14 @@ const pluginColumnInfo = Object.freeze({
 const usePluginColumns = (
   canBulkEdit: boolean,
 ): {
-  columns: TableColumn<ConsolePluginTableRow>[];
+  columns: ConsoleDataViewColumn<ConsolePluginTableRow>[];
 } => {
   const { t } = useTranslation('console-app');
 
   const columns = useMemo(
     () => [
       ...(canBulkEdit ? [createSelectionColumn<ConsolePluginTableRow>()] : []),
-      {
-        title: t('Name'),
-        id: pluginColumnInfo.name.id,
-        sort: 'name',
-        props: getNameColumnProps(true, canBulkEdit),
-      },
+      { type: 'name' as const, title: t('Name'), id: pluginColumnInfo.name.id, sort: 'name' },
       {
         title: t('Version'),
         id: pluginColumnInfo.version.id,
@@ -155,7 +144,6 @@ const getPluginDataViewRows = (
         ) : (
           plugin.name
         ),
-        props: getNameCellProps(plugin.name, !developmentMode),
       },
       [pluginColumnInfo.version.id]: {
         cell: plugin.version || DASH,
@@ -302,7 +290,6 @@ const ConsolePluginsTable: FC<ConsolePluginsTableProps> = ({
 
   const initialFilters = useMemo<PluginFilters>(
     () => ({
-      ...initialFiltersDefault,
       status: [],
       enabled: [],
     }),

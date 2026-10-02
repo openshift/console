@@ -16,7 +16,7 @@ import type {
 } from '@openshift/dynamic-plugin-sdk';
 import type { QuickStartContextValues } from '@patternfly/quickstarts';
 import type { CodeEditorProps as PfCodeEditorProps } from '@patternfly/react-code-editor';
-import type { OverflowMenuProps, AlertVariant, ButtonProps } from '@patternfly/react-core';
+import type { AlertVariant, ButtonProps } from '@patternfly/react-core';
 import type {
   DataViewTd,
   DataViewTh,
@@ -484,7 +484,8 @@ export type UseActiveColumns = <D = any>({
 /**
  * Base filter state used by `ConsoleDataView` for its built-in name and label filters.
  * Extend this type with `TFilters` to add custom filter fields for use with
- * `additionalFilterNodes` and `matchesAdditionalFilters`.
+ * `additionalFilterNodes` and `matchesAdditionalFilters`. Both fields are optional since a
+ * `TFilters` that hides the built-in filters with `hideNameLabelFilters` has no need for them.
  * @example
  * ```ts
  * interface PodFilters extends ResourceFilters {
@@ -494,13 +495,13 @@ export type UseActiveColumns = <D = any>({
  */
 export interface ResourceFilters {
   /**
-   * The current value of the name filter text input. Matched against the name returned by
-   * `getObjectMetadata` as well as, for Kubernetes resources, the `openshift.io/display-name`
-   * annotation.
+   * (optional) The current value of the name filter text input. Matched against the name
+   * returned by `getObjectMetadata` as well as, for Kubernetes resources, the
+   * `openshift.io/display-name` annotation.
    */
-  name: string;
-  /** The current value of the label filter text input, as a comma-separated list of `key=value` pairs, all of which must match. */
-  label: string;
+  name?: string;
+  /** (optional) The current value of the label filter text input, as a comma-separated list of `key=value` pairs, all of which must match. */
+  label?: string;
 }
 
 /**
@@ -535,6 +536,7 @@ export type ConsoleDataViewTh = Partial<Extract<DataViewTh, { cell: ReactNode }>
  * const columns: ConsoleDataViewColumn<PodDisruptionBudgetKind>[] = [
  *   {
  *     id: 'name',
+ *     type: 'name',
  *     title: t('Name'),
  *     sort: 'metadata.name',
  *   },
@@ -544,14 +546,16 @@ export type ConsoleDataViewTh = Partial<Extract<DataViewTh, { cell: ReactNode }>
 export interface ConsoleDataViewColumn<TData> extends ConsoleDataViewTh {
   /** Unique identifier for the column, used to match up cells returned by `getDataViewRows`. */
   id: string;
-  /** The column header text. */
-  title: string;
+  /** Applies built-in header and row cell props. Explicit props take precedence. A name column gets its `data-test` from the row name and is offset automatically when a selection column is present. */
+  type?: 'name' | 'actions' | 'selection' | 'sticky';
+  /** The column header text. Defaults to an empty string. */
+  title?: string;
+  /** (optional) Content shown in a help tooltip beside the column header. */
+  tooltip?: ReactNode;
   /** (optional) A dot-delimited property path to sort by, or a function that sorts the filtered data for this column. */
   sort?: string | ((filteredData: TData[], sortDirection: SortByDirection) => TData[]);
   /** (optional) Marks the column as additional, hiding it by default until selected in column management. */
   additional?: boolean;
-  /** (optional) Override resizing for this column. With `ConsoleDataViewProps.isResizable`, columns with a title are resizable by default; set `isResizable: false` to disable one. Custom `onResize` callbacks take over width persistence. See PatternFly's `DataViewTh` `resizableProps`. */
-  resizableProps?: Extract<DataViewTh, { cell: ReactNode }>['resizableProps'];
 }
 
 /**
@@ -624,8 +628,8 @@ export interface ConsoleDataViewProps<
   columnLayout?: Omit<ColumnLayout, 'id'> & { id?: string };
   /** A model, group/version/kind, or string ID used for column management, matching `console.dataview/table-column` extensions, and saving resizable column widths. Models and GVKs resolve to `group~version~kind`. */
   id: K8sModel | K8sGroupVersionKind | string;
-  /** (optional) Initial values for the built-in name and label filters (and any custom fields added via `TFilters`). Defaults to empty name and label filters. */
-  initialFilters?: TFilters;
+  /** (optional) Initial values for any custom fields added via `TFilters`, and/or the built-in name and/or label filters. The name and label filters otherwise default to empty. */
+  initialFilters?: Partial<TFilters>;
   /** (optional) Additional filter elements to render alongside the built-in name and label filters. */
   additionalFilterNodes?: ReactNode[];
   /** (optional) Extracts the name and labels used by the built-in filters from a data item. Defaults to reading `metadata.name` and `metadata.labels` from a Kubernetes resource. The name filter additionally matches the `openshift.io/display-name` annotation, if present, regardless of this callback. */
@@ -646,9 +650,11 @@ export interface ConsoleDataViewProps<
   hideNameLabelFilters?: boolean;
   /** (optional) Hides only the label filter, keeping the name filter. The label filter is also omitted while `loaded` is `false`. */
   hideLabelFilter?: boolean;
+  /** (optional) Rendered in place of the table when `data` is empty, letting a consumer explain what is missing and how to create the first resource. Defaults to a generic "No {{label}} found" message. Note that this does not apply when the data is non-empty but the active filters match nothing; that case always renders the built-in in-table empty message. */
+  EmptyMsg?: ComponentType<unknown>;
   /** (optional) Renders an empty placeholder instead of the table. */
   mock?: boolean;
-  /** (optional) Enables resizing and saved widths for columns with a title, and shows a reset action. Defaults to `true`. Use `resizableProps` to customize or disable resizing on individual columns. */
+  /** (optional) Enables resizing and saved widths for columns with a title, and shows a reset action. Defaults to `true`. */
   isResizable?: boolean;
   /** Additional actions to display in the toolbar (inside ResponsiveActions), alongside the built-in column management and reset-column-widths actions. */
   additionalActions?: ReactNode;
@@ -680,8 +686,6 @@ export interface ConsoleDataViewProps<
     /** Callback to receive filtered selected items whenever filters or selection changes. */
     onFilteredSelectionChange?: (filteredSelectedItems: TData[]) => void;
   };
-  /** Breakpoint at which toolbar actions switch between horizontal and dropdown layout. Default is 'md'. */
-  actionsBreakpoint?: OverflowMenuProps['breakpoint'];
 }
 
 /**
@@ -701,8 +705,8 @@ export type ConsoleDataViewFC = <
 /** Creates the checkbox column used with `ConsoleDataViewProps.selection`. */
 export type CreateSelectionColumn = <TData>() => ConsoleDataViewColumn<TData>;
 
-/** Options for creating a selectable row cell with `createSelectionCell`. */
-export type CreateSelectionCellOptions = {
+/** Creates a checkbox cell for a row in a `ConsoleDataView` with selection enabled. */
+export type CreateSelectionCell = (options: {
   /** Index of the row. */
   rowIndex: number;
   /** Unique ID of the row item. */
@@ -713,54 +717,7 @@ export type CreateSelectionCellOptions = {
   onSelect: (itemId: string, isSelecting: boolean) => void;
   /** Whether the row's checkbox is disabled. */
   disabled?: boolean;
-};
-
-/** Creates a checkbox cell for a row in a `ConsoleDataView` with selection enabled. */
-export type CreateSelectionCell = (
-  options: CreateSelectionCellOptions,
-) => Extract<DataViewTd, { cell: ReactNode }>;
-
-/**
- * Props that mark a `ConsoleDataView` column header or cell as sticky, keeping it fixed at the
- * edge of the table while the rest of the table scrolls horizontally. Used as, or spread into,
- * a column's `props` or a row cell's `props`. See PatternFly's `DataViewTh`/`DataViewTd`
- * `isStickyColumn`.
- */
-export interface CellIsStickyProps {
-  isStickyColumn: true;
-  stickyMinWidth: '0';
-}
-
-/**
- * Returns sticky-column cell props for a resource name cell, including a `data-test` attribute
- * derived from the resource name.
- * @param name - The resource name, used to build the `data-test` attribute.
- * @param withBulkSelect - (optional) Whether the table has bulk selection enabled. Defaults to `false`.
- * @example
- * ```tsx
- * {
- *   id: 'name',
- *   cell: <ResourceLink kind={resourceKind} name={name} namespace={namespace} />,
- *   props: getNameCellProps(name),
- * }
- * ```
- */
-export type GetNameCellProps = (
-  name: string,
-  withBulkSelect?: boolean,
-) => CellIsStickyProps & {
-  hasRightBorder: true;
-  'data-test': string;
-};
-
-/**
- * Props for a sticky actions ("kebab menu") cell, fixed at the trailing edge of a
- * `ConsoleDataView` row.
- */
-export interface ActionsCellProps extends CellIsStickyProps {
-  hasLeftBorder: true;
-  isActionCell: true;
-}
+}) => Extract<DataViewTd, { cell: ReactNode }>;
 
 // Swagger types
 // Note: These types are duplicated from @console/internal/module/k8s/swagger

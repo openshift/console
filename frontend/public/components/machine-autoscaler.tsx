@@ -9,12 +9,7 @@ import {
 } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import {
-  actionsCellProps,
-  getNameCellProps,
-  ConsoleDataView,
-  nameCellProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import type {
   ConsoleDataViewColumn,
   GetDataViewRows,
@@ -66,7 +61,6 @@ const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) =>
     const rowCells = {
       [tableColumnInfo[0].id]: {
         cell: <ResourceLink kind={machineAutoscalerReference} name={name} namespace={namespace} />,
-        props: getNameCellProps(name),
       },
       [tableColumnInfo[1].id]: {
         cell: <ResourceLink kind="Namespace" name={namespace} />,
@@ -82,7 +76,6 @@ const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) =>
       },
       [tableColumnInfo[5].id]: {
         cell: <LazyActionMenu context={{ [machineAutoscalerReference]: obj }} />,
-        props: actionsCellProps,
       },
     };
 
@@ -90,7 +83,6 @@ const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) =>
       const cell = rowCells[id]?.cell || DASH;
       return {
         id,
-        props: rowCells[id]?.props,
         cell,
       };
     });
@@ -104,11 +96,11 @@ const useMachineAutoscalerColumns = (): {
   const columns: ConsoleDataViewColumn<K8sResourceKind>[] = useMemo(
     () => [
       {
+        type: 'name' as const,
         title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
         props: {
-          ...nameCellProps,
           modifier: 'nowrap' as const,
         },
       },
@@ -144,13 +136,7 @@ const useMachineAutoscalerColumns = (): {
           modifier: 'nowrap' as const,
         },
       },
-      {
-        title: '',
-        id: tableColumnInfo[5].id,
-        props: {
-          ...actionsCellProps,
-        },
-      },
+      { type: 'actions' as const, id: tableColumnInfo[5].id },
     ],
     [t],
   );

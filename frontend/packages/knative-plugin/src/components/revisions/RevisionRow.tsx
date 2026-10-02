@@ -1,8 +1,4 @@
 import * as _ from 'lodash';
-import {
-  actionsCellProps,
-  getNameCellProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
 import type { GetDataViewRows } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { ResourceLink } from '@console/internal/components/utils/resource-link';
 import { referenceFor } from '@console/internal/module/k8s/k8s';
@@ -35,7 +31,6 @@ export const getRevisionDataViewRows: GetDataViewRows<RevisionKind> = (data, col
             namespace={obj.metadata.namespace}
           />
         ),
-        props: getNameCellProps(obj.metadata.name),
       },
       namespace: { cell: <ResourceLink kind="Namespace" name={obj.metadata.namespace} /> },
       service: {
@@ -58,7 +53,7 @@ export const getRevisionDataViewRows: GetDataViewRows<RevisionKind> = (data, col
           )) ||
           '-',
       },
-      actions: { cell: <LazyActionMenu context={context} />, props: actionsCellProps },
+      actions: { cell: <LazyActionMenu context={context} /> },
     };
     return columns.map(({ id }) => ({ id, ...rowCells[id] }));
   });

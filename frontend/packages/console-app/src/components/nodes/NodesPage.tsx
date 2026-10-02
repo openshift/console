@@ -5,10 +5,6 @@ import type { DataViewFilterOption } from '@patternfly/react-data-view/dist/esm/
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import {
-  actionsCellProps,
-  getNameCellProps,
-  getNameColumnProps,
-  initialFiltersDefault,
   ConsoleDataView,
   getLabelsColumnWidthStyleProp,
 } from '@console/app/src/components/data-view/ConsoleDataView';
@@ -181,11 +177,11 @@ const useNodesColumns = (
     () => [
       createSelectionColumn<NodeRowItem>(),
       {
+        type: 'name' as const,
         title: t('Name'),
         id: nodeColumnInfo.name.id,
         sort: 'metadata.name',
         props: {
-          ...getNameColumnProps(true, true),
           modifier: 'nowrap' as const,
         },
       },
@@ -354,13 +350,7 @@ const useNodesColumns = (
         },
         additional: true,
       },
-      {
-        title: '',
-        id: nodeColumnInfo.actions.id,
-        props: {
-          ...actionsCellProps,
-        },
-      },
+      { type: 'actions' as const, id: nodeColumnInfo.actions.id },
     ],
     [t, isOpenShift5, vmsEnabled, isAdmin],
   );
@@ -446,7 +436,6 @@ const getNodeDataViewRows = (
         ) : (
           csr?.metadata.name || DASH
         ),
-        props: getNameCellProps(nodeName, true),
       },
       [nodeColumnInfo.status.id]: {
         cell: node ? (
@@ -541,7 +530,6 @@ const getNodeDataViewRows = (
       },
       [nodeColumnInfo.actions.id]: {
         cell: node ? <LazyActionMenu context={context} /> : null,
-        props: actionsCellProps,
       },
     };
 
@@ -557,7 +545,7 @@ const getNodeDataViewRows = (
       const cellContent = id === 'select' ? (rowCell.cell ?? '') : (rowCell.cell ?? DASH);
       return {
         id,
-        props: rowCell.props,
+        props: 'props' in rowCell ? rowCell.props : undefined,
         cell: cellContent,
       };
     });
@@ -813,7 +801,6 @@ const NodeList: FC<NodeListProps> = ({
 
   const initialFilters = useMemo<NodeFilters>(
     () => ({
-      ...initialFiltersDefault,
       status: [],
       roles: [],
       groups: [],

@@ -4,12 +4,7 @@ import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
 import { Table, Thead, Tbody, Tr, Th, Td } from '@patternfly/react-table';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import {
-  actionsCellProps,
-  getNameCellProps,
-  ConsoleDataView,
-  nameCellProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import type {
   ConsoleDataViewColumn,
   GetDataViewRows,
@@ -42,7 +37,6 @@ const getDataViewRows: GetDataViewRows<MachineHealthCheckKind> = (data, columns)
     const rowCells = {
       [tableColumnInfo[0].id]: {
         cell: <ResourceLink kind={machineHealthCheckReference} name={name} namespace={namespace} />,
-        props: getNameCellProps(name),
       },
       [tableColumnInfo[1].id]: {
         cell: <ResourceLink kind="Namespace" name={namespace} />,
@@ -52,7 +46,6 @@ const getDataViewRows: GetDataViewRows<MachineHealthCheckKind> = (data, columns)
       },
       [tableColumnInfo[3].id]: {
         cell: <LazyActionMenu context={{ [machineHealthCheckReference]: obj }} />,
-        props: actionsCellProps,
       },
     };
 
@@ -60,7 +53,6 @@ const getDataViewRows: GetDataViewRows<MachineHealthCheckKind> = (data, columns)
       const cell = rowCells[id]?.cell || DASH;
       return {
         id,
-        props: rowCells[id]?.props,
         cell,
       };
     });
@@ -74,11 +66,11 @@ const useMachineHealthCheckColumns = (): {
   const columns: ConsoleDataViewColumn<MachineHealthCheckKind>[] = useMemo(
     () => [
       {
+        type: 'name' as const,
         title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
         props: {
-          ...nameCellProps,
           modifier: 'nowrap' as const,
         },
       },
@@ -98,13 +90,7 @@ const useMachineHealthCheckColumns = (): {
           modifier: 'nowrap' as const,
         },
       },
-      {
-        title: '',
-        id: tableColumnInfo[3].id,
-        props: {
-          ...actionsCellProps,
-        },
-      },
+      { type: 'actions' as const, id: tableColumnInfo[3].id },
     ],
     [t],
   );

@@ -3,7 +3,6 @@ import type {
   CreateSelectionCell,
   CreateSelectionColumn,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import { selectionColumnProps } from './ConsoleDataView';
 
 /**
  * Creates a selection column definition for DataView tables.
@@ -23,7 +22,7 @@ import { selectionColumnProps } from './ConsoleDataView';
 export const createSelectionColumn: CreateSelectionColumn = () => ({
   title: '',
   id: 'select',
-  props: selectionColumnProps,
+  type: 'selection' as const,
 });
 
 /**
@@ -53,7 +52,6 @@ export const createSelectionCell: CreateSelectionCell = ({
 }) => ({
   cell: '', // Checkbox is rendered via props, no content needed
   props: {
-    ...selectionColumnProps,
     select: {
       rowIndex,
       onSelect: (_event: FormEvent<HTMLInputElement>, isSelecting: boolean) => {

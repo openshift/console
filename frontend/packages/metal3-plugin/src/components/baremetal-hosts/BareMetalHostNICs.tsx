@@ -5,11 +5,7 @@ import {
   RhMicronsCheckboxIncompleteIcon,
 } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import {
-  ConsoleDataView,
-  getNameCellProps,
-  getNameColumnProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import type {
   ConsoleDataViewColumn,
   GetDataViewRows,
@@ -26,10 +22,11 @@ const useBareMetalHostNICColumns = (): {
   const columns = useMemo(
     () => [
       {
+        type: 'name' as const,
         id: 'name',
         title: t('Name'),
         sort: 'name',
-        props: { ...getNameColumnProps(), modifier: 'nowrap' as const },
+        props: { modifier: 'nowrap' as const },
       },
       {
         id: 'model',
@@ -76,7 +73,7 @@ const useBareMetalHostNICColumns = (): {
 export const getBareMetalHostNICDataViewRows: GetDataViewRows<BareMetalHostNIC> = (data, columns) =>
   data.map(({ obj: { ip, mac, model, name, pxe, speedGbps, vlanId } }) => {
     const rowCells = {
-      name: { cell: name, props: getNameCellProps(name) },
+      name: { cell: name },
       model: { cell: model },
       pxe: {
         cell: pxe ? <RhMicronsCheckboxCompleteIcon /> : <RhMicronsCheckboxIncompleteIcon />,

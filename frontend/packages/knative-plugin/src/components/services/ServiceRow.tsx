@@ -1,7 +1,3 @@
-import {
-  actionsCellProps,
-  getNameCellProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
 import type { GetDataViewRows } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { ResourceLink } from '@console/internal/components/utils/resource-link';
 import { referenceFor } from '@console/internal/module/k8s/k8s';
@@ -34,7 +30,6 @@ export const getServiceDataViewRows: GetDataViewRows<ServiceKind> = (data, colum
             namespace={obj.metadata.namespace}
           />
         ),
-        props: getNameCellProps(obj.metadata.name),
       },
       namespace: { cell: <ResourceLink kind="Namespace" name={obj.metadata.namespace} /> },
       url: {
@@ -59,7 +54,7 @@ export const getServiceDataViewRows: GetDataViewRows<ServiceKind> = (data, colum
       },
       revision: { cell: obj.metadata.generation || '-' },
       created: { cell: <Timestamp timestamp={obj.metadata.creationTimestamp} /> },
-      actions: { cell: <LazyActionMenu context={context} />, props: actionsCellProps },
+      actions: { cell: <LazyActionMenu context={context} /> },
     };
     return columns.map(({ id }) => ({ id, ...rowCells[id] }));
   });

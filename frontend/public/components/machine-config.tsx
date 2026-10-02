@@ -16,12 +16,7 @@ import {
 import type { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import {
-  actionsCellProps,
-  getNameCellProps,
-  ConsoleDataView,
-  nameCellProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import { BlueInfoCircleIcon } from '@console/dynamic-plugin-sdk';
 import type {
   ConsoleDataViewColumn,
@@ -150,7 +145,6 @@ const getDataViewRows: GetDataViewRows<MachineConfigKind> = (data, columns) =>
     const rowCells = {
       [tableColumnInfo[0].id]: {
         cell: <ResourceLink kind={machineConfigReference} name={name} />,
-        props: getNameCellProps(name),
       },
       [tableColumnInfo[1].id]: {
         cell: _.get(
@@ -180,7 +174,6 @@ const getDataViewRows: GetDataViewRows<MachineConfigKind> = (data, columns) =>
       },
       [tableColumnInfo[5].id]: {
         cell: <LazyActionMenu context={{ [machineConfigReference]: obj }} />,
-        props: actionsCellProps,
       },
     };
 
@@ -202,11 +195,11 @@ const useMachineConfigColumns = (): {
   const columns: ConsoleDataViewColumn<MachineConfigKind>[] = useMemo(
     () => [
       {
+        type: 'name' as const,
         title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
         props: {
-          ...nameCellProps,
           modifier: 'nowrap' as const,
         },
       },
@@ -242,13 +235,7 @@ const useMachineConfigColumns = (): {
           modifier: 'nowrap' as const,
         },
       },
-      {
-        title: '',
-        id: tableColumnInfo[5].id,
-        props: {
-          ...actionsCellProps,
-        },
-      },
+      { type: 'actions' as const, id: tableColumnInfo[5].id },
     ],
     [t],
   );

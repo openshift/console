@@ -3,12 +3,7 @@ import { useCallback, useMemo } from 'react';
 import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
 import { RhUiWarningFillIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import {
-  ConsoleDataView,
-  getNameCellProps,
-  getNameColumnProps,
-  initialFiltersDefault,
-} from '@console/app/src/components/data-view/ConsoleDataView';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import type {
   ConsoleDataViewColumn,
   GetDataViewRows,
@@ -49,10 +44,11 @@ const useImageVulnerabilityColumns = (): {
   const columns = useMemo(
     () => [
       {
+        type: 'name' as const,
         id: 'name',
         title: t('Name'),
         sort: 'vulnerability.name',
-        props: { ...getNameColumnProps(), modifier: 'nowrap' as const },
+        props: { modifier: 'nowrap' as const },
       },
       {
         id: 'severity',
@@ -119,7 +115,6 @@ export const getImageVulnerabilityDataViewRows: GetDataViewRows<ImageVuln> = (da
     const rowCells = {
       name: {
         cell: <ExternalLink text={vulnerability.name} href={vulnerability.link} />,
-        props: getNameCellProps(vulnerability.name),
       },
       severity: {
         cell: (
@@ -151,7 +146,7 @@ const ImageVulnerabilitiesTable: FC<ImageVulnerabilitiesTableProps> = (props) =>
   const { columns } = useImageVulnerabilityColumns();
 
   const initialFilters = useMemo<ImageVulnerabilityFilters>(
-    () => ({ ...initialFiltersDefault, [TYPE_FILTER_ID]: [], [SEVERITY_FILTER_ID]: [] }),
+    () => ({ [TYPE_FILTER_ID]: [], [SEVERITY_FILTER_ID]: [] }),
     [],
   );
   const additionalFilterNodes = useMemo(

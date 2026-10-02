@@ -9,10 +9,6 @@ jest.mock('@console/internal/module/k8s', () => ({
 jest.mock('@console/internal/module/k8s/k8s', () => ({
   referenceFor: jest.fn(() => 'serving.knative.dev~v1~Route'),
 }));
-jest.mock('@console/app/src/components/data-view/ConsoleDataView', () => ({
-  actionsCellProps: {},
-  getNameCellProps: jest.fn(() => ({})),
-}));
 jest.mock('@console/internal/components/utils/resource-link', () => ({
   ResourceLink: ({ name }) => name,
 }));

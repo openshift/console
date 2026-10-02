@@ -19,13 +19,7 @@ import { Table as PFTable, Thead, Tr, Th, Tbody, Td } from '@patternfly/react-ta
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useParams, Link, useNavigate } from 'react-router';
-import {
-  ConsoleDataView,
-  actionsCellProps,
-  cellIsStickyProps,
-  getNameCellProps,
-  getNameColumnProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import { getUser, GreenCheckCircleIcon } from '@console/dynamic-plugin-sdk';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import type {
@@ -119,12 +113,7 @@ export const useInstallPlanColumns = (): {
   const { t } = useTranslation('olm');
   const columns = useMemo(
     () => [
-      {
-        id: 'name',
-        title: t('Name'),
-        sort: 'metadata.name',
-        props: getNameColumnProps(),
-      },
+      { type: 'name' as const, id: 'name', title: t('Name'), sort: 'metadata.name' },
       {
         id: 'namespace',
         title: t('Namespace'),
@@ -146,7 +135,7 @@ export const useInstallPlanColumns = (): {
         id: 'subscriptions',
         title: t('Subscriptions'),
       },
-      { id: 'actions', title: '', props: cellIsStickyProps },
+      { type: 'actions' as const, id: 'actions' },
     ],
     [t],
   );
@@ -164,7 +153,6 @@ export const getInstallPlanDataViewRows: GetDataViewRows<InstallPlanKind> = (dat
             name={obj.metadata.name}
           />
         ),
-        props: getNameCellProps(obj.metadata.name),
       },
       namespace: { cell: <ResourceLink kind="Namespace" name={obj.metadata.namespace} /> },
       status: { cell: <Status status={obj.status?.phase ?? 'Unknown'} /> },
@@ -194,7 +182,6 @@ export const getInstallPlanDataViewRows: GetDataViewRows<InstallPlanKind> = (dat
       subscriptions: { cell: <InstallPlanSubscriptions obj={obj} /> },
       actions: {
         cell: <LazyActionMenu context={{ [referenceForModel(InstallPlanModel)]: obj }} />,
-        props: actionsCellProps,
       },
     };
     return columns.map(({ id }) => ({ id, ...rowCells[id] }));

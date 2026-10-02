@@ -1,8 +1,4 @@
 import { Link } from 'react-router';
-import {
-  getNameCellProps,
-  actionsCellProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
 import type { GetDataViewRows } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { ResourceIcon, ResourceLink } from '@console/internal/components/utils';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
@@ -49,7 +45,7 @@ export const getDataViewRows: GetDataViewRows<HelmRelease, { obj: HelmRelease }>
             </Link>
           </>
         ),
-        props: getNameCellProps('helm-release'),
+        props: { 'data-test': 'data-view-cell-helm-release-name' },
       },
       [tableColumnInfo[1].id]: {
         cell: <ResourceLink kind="Namespace" name={release.namespace} />,
@@ -79,7 +75,6 @@ export const getDataViewRows: GetDataViewRows<HelmRelease, { obj: HelmRelease }>
       },
       [tableColumnInfo[8].id]: {
         cell: <LazyActionMenu context={{ 'helm-actions': actionsScope }} />,
-        props: actionsCellProps,
       },
     };
 

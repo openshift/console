@@ -2,12 +2,7 @@ import type { FC } from 'react';
 import { useMemo } from 'react';
 import { Label } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import {
-  actionsCellProps,
-  cellIsStickyProps,
-  getNameCellProps,
-  ConsoleDataView,
-} from '@console/app/src/components/data-view/ConsoleDataView';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import Status from '@console/dynamic-plugin-sdk/src/app/components/status/Status';
 import type {
   ConsoleDataViewColumn,
@@ -48,7 +43,6 @@ const getDataViewRows: GetDataViewRows<ClusterExtensionKind> = (data, columns) =
     const rowCells = {
       [tableColumnInfo[0].id]: {
         cell: <ResourceLink kind={resourceKind} name={name} />,
-        props: getNameCellProps(name),
       },
       [tableColumnInfo[1].id]: {
         cell: status ? <Status status={status} /> : DASH,
@@ -78,7 +72,6 @@ const getDataViewRows: GetDataViewRows<ClusterExtensionKind> = (data, columns) =
       },
       [tableColumnInfo[6].id]: {
         cell: <LazyActionMenu context={context} />,
-        props: actionsCellProps,
       },
     };
 
@@ -86,7 +79,6 @@ const getDataViewRows: GetDataViewRows<ClusterExtensionKind> = (data, columns) =
       const cell = rowCells[id]?.cell || DASH;
       return {
         id,
-        props: rowCells[id]?.props,
         cell,
       };
     });
@@ -97,13 +89,11 @@ const useClusterExtensionColumns = (): ConsoleDataViewColumn<ClusterExtensionKin
   const columns = useMemo<ConsoleDataViewColumn<ClusterExtensionKind>[]>(
     () => [
       {
+        type: 'name' as const,
         title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
-        props: {
-          ...cellIsStickyProps,
-          modifier: 'nowrap' as const,
-        },
+        props: { hasRightBorder: false, modifier: 'nowrap' as const },
       },
       {
         title: t('Status'),
@@ -139,11 +129,9 @@ const useClusterExtensionColumns = (): ConsoleDataViewColumn<ClusterExtensionKin
         },
       },
       {
-        title: '',
+        type: 'actions' as const,
         id: tableColumnInfo[6].id,
-        props: {
-          ...cellIsStickyProps,
-        },
+        props: { hasLeftBorder: false },
       },
     ],
     [t],
