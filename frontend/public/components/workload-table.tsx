@@ -5,12 +5,7 @@ import { sortable } from '@patternfly/react-table';
 import i18next from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
-import {
-  actionsCellProps,
-  getLabelsColumnWidthStyleProp,
-  getNameCellProps,
-  nameCellProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
+import { getLabelsColumnWidthStyleProp } from '@console/app/src/components/data-view/ConsoleDataView';
 import type { K8sModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import type {
   ConsoleDataViewColumn,
@@ -129,7 +124,6 @@ export const getWorkloadDataViewRows = <T extends K8sResourceKind>(
             />
           </span>
         ),
-        props: getNameCellProps(name),
       },
       [tableColumnInfo[1].id]: {
         cell: <ResourceLink kind="Namespace" name={namespace} />,
@@ -145,7 +139,6 @@ export const getWorkloadDataViewRows = <T extends K8sResourceKind>(
       },
       [tableColumnInfo[5].id]: {
         cell: <LazyActionMenu context={context} />,
-        props: actionsCellProps,
       },
     };
 
@@ -153,7 +146,6 @@ export const getWorkloadDataViewRows = <T extends K8sResourceKind>(
       const cell = rowCells[id]?.cell || DASH;
       return {
         id,
-        props: rowCells[id]?.props,
         cell,
       };
     });
@@ -167,11 +159,11 @@ export const useWorkloadColumns = <T extends K8sResourceKind>(): {
   const columns = useMemo<ConsoleDataViewColumn<T>[]>(
     () => [
       {
+        type: 'name' as const,
         title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
         props: {
-          ...nameCellProps,
           modifier: 'nowrap' as const,
         },
       },
@@ -208,13 +200,7 @@ export const useWorkloadColumns = <T extends K8sResourceKind>(): {
           modifier: 'nowrap' as const,
         },
       },
-      {
-        title: '',
-        id: tableColumnInfo[5].id,
-        props: {
-          ...actionsCellProps,
-        },
-      },
+      { type: 'actions' as const, id: tableColumnInfo[5].id },
     ],
     [t],
   );

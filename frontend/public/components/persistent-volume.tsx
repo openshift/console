@@ -12,10 +12,7 @@ import type { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import {
-  actionsCellProps,
-  getNameCellProps,
   ConsoleDataView,
-  nameCellProps,
   getLabelsColumnWidthStyleProp,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import type {
@@ -69,7 +66,6 @@ const getDataViewRowsCreator: (t: TFunction) => GetDataViewRows<PersistentVolume
       const rowCells = {
         [tableColumnInfo[0].id]: {
           cell: <ResourceLink kind={kind} name={name} namespace={namespace} />,
-          props: getNameCellProps(name),
         },
         [tableColumnInfo[1].id]: {
           cell: <PVStatus pv={obj} />,
@@ -97,16 +93,13 @@ const getDataViewRowsCreator: (t: TFunction) => GetDataViewRows<PersistentVolume
         },
         [tableColumnInfo[6].id]: {
           cell: <LazyActionMenu context={{ [persistentVolumeReference]: obj }} />,
-          props: actionsCellProps,
         },
       };
 
       return columns.map(({ id }) => {
         const cell = rowCells[id]?.cell || DASH;
-        const props = rowCells[id]?.props || undefined;
         return {
           id,
-          props,
           cell,
         };
       });
@@ -120,10 +113,11 @@ const usePersistentVolumeColumns = (): {
   const columns: ConsoleDataViewColumn<PersistentVolumeKind>[] = useMemo(
     () => [
       {
+        type: 'name' as const,
         title: t('Name'),
         sort: 'metadata.name',
         id: tableColumnInfo[0].id,
-        props: { ...nameCellProps, modifier: 'nowrap' as const },
+        props: { modifier: 'nowrap' as const },
       },
       {
         title: t('Status'),
@@ -158,11 +152,7 @@ const usePersistentVolumeColumns = (): {
         id: tableColumnInfo[5].id,
         props: { modifier: 'nowrap' as const },
       },
-      {
-        title: '',
-        id: tableColumnInfo[6].id,
-        props: { ...actionsCellProps },
-      },
+      { type: 'actions' as const, id: tableColumnInfo[6].id },
     ],
     [t],
   );

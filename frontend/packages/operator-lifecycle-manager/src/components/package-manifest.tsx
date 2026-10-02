@@ -3,11 +3,7 @@ import { useMemo } from 'react';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { useParams, Link } from 'react-router';
-import {
-  ConsoleDataView,
-  getNameCellProps,
-  getNameColumnProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import type {
   ConsoleDataViewColumn,
   GetDataViewRows,
@@ -53,10 +49,10 @@ export const usePackageManifestColumns = (
   const columns = useMemo(
     () => [
       {
+        type: 'name' as const,
         id: 'name',
         title: t('Name'),
         sort: sortByValue<PackageManifestKind>(displayNameFor),
-        props: getNameColumnProps(),
       },
       {
         id: 'latestVersion',
@@ -110,7 +106,6 @@ export const getPackageManifestDataViewRows: GetDataViewRows<PackageManifestKind
             />
           </Link>
         ),
-        props: getNameCellProps(packageManifest.metadata.name),
       },
       latestVersion: {
         cell: (

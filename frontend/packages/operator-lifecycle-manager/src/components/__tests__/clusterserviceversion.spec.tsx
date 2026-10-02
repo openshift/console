@@ -152,15 +152,6 @@ describe('useClusterServiceVersionColumns', () => {
       'actions',
     ]);
   });
-
-  it('makes every column except actions resizable', () => {
-    const { result } = renderHookWithProviders(() => useClusterServiceVersionColumns(true, true));
-    const actions = result.current.columns.find(({ id }) => id === 'actions');
-    expect(actions.resizableProps).toBeUndefined();
-    expect(
-      result.current.columns.filter(({ id }) => id !== 'actions').every((c) => !!c.resizableProps),
-    ).toBe(true);
-  });
 });
 
 describe('getInstalledOperatorDataViewRows', () => {

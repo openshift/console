@@ -21,12 +21,7 @@ import {
 } from '@patternfly/react-table';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import {
-  actionsCellProps,
-  getNameCellProps,
-  ConsoleDataView,
-  nameCellProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import type {
   ConsoleDataViewColumn,
   GetDataViewRows,
@@ -221,11 +216,11 @@ const useCustomResourceDefinitionsColumns = (): {
   const columns: ConsoleDataViewColumn<CustomResourceDefinitionKind>[] = useMemo(
     () => [
       {
+        type: 'name' as const,
         title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'spec.names.kind',
         props: {
-          ...nameCellProps,
           modifier: 'nowrap' as const,
         },
       },
@@ -263,13 +258,7 @@ const useCustomResourceDefinitionsColumns = (): {
           modifier: 'nowrap' as const,
         },
       },
-      {
-        title: '',
-        id: tableColumnInfo[5].id,
-        props: {
-          ...actionsCellProps,
-        },
-      },
+      { type: 'actions' as const, id: tableColumnInfo[5].id },
     ],
     [t],
   );
@@ -299,7 +288,7 @@ const getDataViewRows: GetDataViewRows<CustomResourceDefinitionKind> = (data, co
             />
           </span>
         ),
-        props: getNameCellProps(displayName),
+        props: { 'data-test': `data-view-cell-${displayName}-name` },
       },
       [tableColumnInfo[1].id]: {
         cell: obj.spec.group,
@@ -317,7 +306,6 @@ const getDataViewRows: GetDataViewRows<CustomResourceDefinitionKind> = (data, co
         cell: (
           <LazyActionMenu context={{ [referenceForModel(CustomResourceDefinitionModel)]: obj }} />
         ),
-        props: actionsCellProps,
       },
     };
 

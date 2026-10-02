@@ -6,11 +6,7 @@ import { Table as PfTable, Thead, Th, Tbody, Td, Tr } from '@patternfly/react-ta
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
-import {
-  ConsoleDataView,
-  getNameCellProps,
-  getNameColumnProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import { DASH } from '@console/dynamic-plugin-sdk/src/app/constants';
 import type {
   ConsoleDataViewColumn,
@@ -147,10 +143,11 @@ const useImageManifestVulnColumns = (): {
   const columns = useMemo(
     () => [
       {
+        type: 'name' as const,
         id: 'name',
         title: t('Image name'),
         sort: 'spec.image',
-        props: { ...getNameColumnProps(), modifier: 'nowrap' as const },
+        props: { modifier: 'nowrap' as const },
       },
       {
         id: 'namespace',
@@ -212,7 +209,6 @@ export const getImageManifestVulnDataViewRows: GetDataViewRows<ImageManifestVuln
             displayName={shortenImage(obj.spec.image)}
           />
         ),
-        props: getNameCellProps(name),
       },
       namespace: { cell: <ResourceLink kind="Namespace" name={namespace} /> },
       highestSeverity: {

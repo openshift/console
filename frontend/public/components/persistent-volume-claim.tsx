@@ -17,13 +17,7 @@ import type { TFunction } from 'i18next';
 import i18next from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import {
-  actionsCellProps,
-  getNameCellProps,
-  initialFiltersDefault,
-  ConsoleDataView,
-  nameCellProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk';
 import type {
   ConsoleDataViewColumn,
@@ -145,7 +139,6 @@ const getDataViewRowsCreator: (
     const rowCells = {
       [tableColumnInfo[0].id]: {
         cell: <ResourceLink kind={kind} name={name} namespace={namespace} title={name} />,
-        props: getNameCellProps(name),
       },
       [tableColumnInfo[1].id]: {
         cell: <ResourceLink kind="Namespace" name={namespace} title={namespace} />,
@@ -183,16 +176,13 @@ const getDataViewRowsCreator: (
       },
       [tableColumnInfo[7].id]: {
         cell: <LazyActionMenu context={context} />,
-        props: actionsCellProps,
       },
     };
 
     return columns.map(({ id }) => {
       const cell = rowCells[id]?.cell || DASH;
-      const props = rowCells[id]?.props || undefined;
       return {
         id,
-        props,
         cell,
       };
     });
@@ -206,10 +196,11 @@ const usePersistentVolumeClaimColumns = (): {
   const columns: ConsoleDataViewColumn<PersistentVolumeClaimKind>[] = useMemo(
     () => [
       {
+        type: 'name' as const,
         title: t('Name'),
         sort: 'metadata.name',
         id: tableColumnInfo[0].id,
-        props: { ...nameCellProps, modifier: 'nowrap' as const },
+        props: { modifier: 'nowrap' as const },
       },
       {
         title: t('Namespace'),
@@ -247,11 +238,7 @@ const usePersistentVolumeClaimColumns = (): {
         id: tableColumnInfo[6].id,
         props: { modifier: 'nowrap' as const },
       },
-      {
-        title: '',
-        id: tableColumnInfo[7].id,
-        props: { ...actionsCellProps },
-      },
+      { type: 'actions' as const, id: tableColumnInfo[7].id },
     ],
     [t],
   );
@@ -553,10 +540,7 @@ const PersistentVolumeClaimList: FC<PersistentVolumeClaimListProps> = ({
     [t],
   );
 
-  const initialFilters = useMemo<PersistentVolumeClaimFilters>(
-    () => ({ ...initialFiltersDefault, status: [] }),
-    [],
-  );
+  const initialFilters = useMemo<PersistentVolumeClaimFilters>(() => ({ status: [] }), []);
 
   const additionalFilterNodes = useMemo<React.ReactNode[]>(
     () => [

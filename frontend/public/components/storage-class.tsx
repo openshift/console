@@ -11,12 +11,7 @@ import {
 import type { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import {
-  actionsCellProps,
-  getNameCellProps,
-  ConsoleDataView,
-  nameCellProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import { useIsKubevirtPluginActive } from '@console/app/src/utils/kubevirt';
 import type {
   ConsoleDataViewColumn,
@@ -91,7 +86,6 @@ const getDataViewRowsCreator: (
             )}
           </ResourceLink>
         ),
-        props: getNameCellProps(name),
       },
       [tableColumnInfo[1].id]: {
         cell: obj.provisioner,
@@ -101,16 +95,13 @@ const getDataViewRowsCreator: (
       },
       [tableColumnInfo[3].id]: {
         cell: <LazyActionMenu context={context} />,
-        props: actionsCellProps,
       },
     };
 
     return columns.map(({ id }) => {
       const cell = rowCells[id]?.cell || DASH;
-      const props = rowCells[id]?.props || undefined;
       return {
         id,
-        props,
         cell,
       };
     });
@@ -124,10 +115,11 @@ const useStorageClassColumns = (): {
   const columns: ConsoleDataViewColumn<StorageClassResourceKind>[] = useMemo(
     () => [
       {
+        type: 'name' as const,
         title: t('Name'),
         sort: 'metadata.name',
         id: tableColumnInfo[0].id,
-        props: { ...nameCellProps, modifier: 'nowrap' as const },
+        props: { modifier: 'nowrap' as const },
       },
       {
         title: t('Provisioner'),
@@ -141,11 +133,7 @@ const useStorageClassColumns = (): {
         id: tableColumnInfo[2].id,
         props: { modifier: 'nowrap' as const },
       },
-      {
-        title: '',
-        id: tableColumnInfo[3].id,
-        props: { ...actionsCellProps },
-      },
+      { type: 'actions' as const, id: tableColumnInfo[3].id },
     ],
     [t],
   );

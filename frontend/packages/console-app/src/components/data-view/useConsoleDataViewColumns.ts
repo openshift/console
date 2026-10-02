@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { useMemo } from 'react';
 import type { LoadedAndResolvedExtension } from '@openshift/dynamic-plugin-sdk';
 import type { DataViewTd } from '@patternfly/react-data-view/dist/esm/DataViewTable/DataViewTable';
@@ -6,6 +7,7 @@ import type {
   ColumnLayout,
   ConsoleDataViewColumn,
   GetDataViewRows,
+  ResourceMetadata,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { isConsoleDataViewTableColumn } from '@console/dynamic-plugin-sdk/src/extensions/dataview';
 import type { ConsoleDataViewTableColumn } from '@console/dynamic-plugin-sdk/src/extensions/dataview';
@@ -13,6 +15,51 @@ import { useTranslatedExtensions } from '@console/plugin-sdk/src/utils/useTransl
 import { useConsoleDataViewResizableColumns } from './useConsoleDataViewResizableColumns';
 
 type ResolvedTableColumn = LoadedAndResolvedExtension<ConsoleDataViewTableColumn>;
+
+const cellIsStickyProps = {
+  isStickyColumn: true,
+  stickyMinWidth: '0',
+};
+
+const selectionColumnWidth = '45px';
+const selectionColumnProps = {
+  ...cellIsStickyProps,
+  stickyLeftOffset: '0',
+  stickyMinWidth: selectionColumnWidth,
+  style: { maxWidth: selectionColumnWidth },
+};
+
+const nameCellProps = {
+  ...cellIsStickyProps,
+  hasRightBorder: true,
+};
+
+const actionsCellProps = {
+  ...cellIsStickyProps,
+  hasLeftBorder: true,
+  isActionCell: true,
+};
+
+const getDefaultProps = (
+  type: ConsoleDataViewColumn<unknown>['type'],
+  hasSelection: boolean,
+  isHeader = false,
+) => {
+  switch (type) {
+    case 'name':
+      return hasSelection
+        ? { ...nameCellProps, stickyLeftOffset: selectionColumnWidth }
+        : nameCellProps;
+    case 'actions':
+      return isHeader ? { ...cellIsStickyProps, hasLeftBorder: true } : actionsCellProps;
+    case 'selection':
+      return selectionColumnProps;
+    case 'sticky':
+      return cellIsStickyProps;
+    default:
+      return undefined;
+  }
+};
 
 const compareExtensions = (a: ResolvedTableColumn, b: ResolvedTableColumn): number =>
   a.pluginName.localeCompare(b.pluginName) ||
@@ -97,6 +144,7 @@ export const useConsoleDataViewColumns = <TData, TCustomRowData>(
   columnLayout: ColumnLayout | undefined,
   tableID: string | undefined,
   getDataViewRows: GetDataViewRows<TData, TCustomRowData>,
+  getObjectMetadata: ((obj: TData) => ResourceMetadata) | undefined,
   isResizable: boolean,
 ) => {
   const [resolvedExtensions] = useResolvedExtensions(isConsoleDataViewTableColumn);
@@ -109,10 +157,18 @@ export const useConsoleDataViewColumns = <TData, TCustomRowData>(
   );
   const translatedExtensions = useTranslatedExtensions(matchingExtensions);
 
-  const ordered = useMemo(
-    () => orderConsoleDataViewColumns(columns, translatedExtensions),
-    [columns, translatedExtensions],
-  );
+  const ordered = useMemo(() => {
+    const result = orderConsoleDataViewColumns(columns, translatedExtensions);
+    const hasSelection = result.columns.some(({ type }) => type === 'selection');
+    return {
+      ...result,
+      columns: result.columns.map((column) => {
+        const withTitle = { ...column, title: column.title ?? '' };
+        const defaults = getDefaultProps(column.type, hasSelection, true);
+        return defaults ? { ...withTitle, props: { ...defaults, ...column.props } } : withTitle;
+      }),
+    };
+  }, [columns, translatedExtensions]);
   const { columns: resizableColumns, resetColumnWidths } = useConsoleDataViewResizableColumns({
     columns: ordered.columns,
     tableID,
@@ -134,8 +190,33 @@ export const useConsoleDataViewColumns = <TData, TCustomRowData>(
 
   const getRows = useMemo<GetDataViewRows<TData, TCustomRowData>>(
     () => (data, activeColumns) => {
+      const hasSelection = activeColumns.some(({ type }) => type === 'selection');
+      const getRowName = (obj: TData): string | undefined => {
+        const item = obj as { metadata?: { name?: string }; name?: string };
+        return item?.metadata?.name ?? getObjectMetadata?.(obj)?.name ?? item?.name;
+      };
+      const applyCellProps = (rows: DataViewTd[][]): DataViewTd[][] =>
+        rows.map((row, rowIndex) =>
+          row.map((cell, index) => {
+            const type = activeColumns[index]?.type;
+            const defaults = getDefaultProps(type, hasSelection);
+            if (!defaults) {
+              return cell;
+            }
+            const defaultProps = {
+              ...defaults,
+              ...(type === 'name' && {
+                'data-test': `data-view-cell-${getRowName(data[rowIndex].obj)}-name`,
+              }),
+            };
+            return cell && typeof cell === 'object' && 'cell' in cell
+              ? { ...cell, props: { ...defaultProps, ...cell.props } }
+              : { cell: cell as ReactNode, props: defaultProps };
+          }),
+        );
+
       if (!ordered.extensionsByID.size) {
-        return getDataViewRows(data, activeColumns);
+        return applyCellProps(getDataViewRows(data, activeColumns));
       }
 
       const builtInActiveColumns = activeColumns.filter(
@@ -163,18 +244,20 @@ export const useConsoleDataViewColumns = <TData, TCustomRowData>(
         }
       });
 
-      return data.map((_, rowIndex) => {
-        const builtInCells = new Map(
-          builtInActiveColumns.map(({ id }, index) => [id, builtInRows[rowIndex]?.[index]]),
-        );
-        return activeColumns.map(({ id }) =>
-          ordered.extensionsByID.has(id)
-            ? (extensionCells.get(id)?.[rowIndex] ?? null)
-            : builtInCells.get(id),
-        );
-      });
+      return applyCellProps(
+        data.map((_, rowIndex) => {
+          const builtInCells = new Map(
+            builtInActiveColumns.map(({ id }, index) => [id, builtInRows[rowIndex]?.[index]]),
+          );
+          return activeColumns.map(({ id }) =>
+            ordered.extensionsByID.has(id)
+              ? (extensionCells.get(id)?.[rowIndex] ?? null)
+              : builtInCells.get(id),
+          );
+        }),
+      );
     },
-    [getDataViewRows, ordered],
+    [getDataViewRows, getObjectMetadata, ordered],
   );
 
   return {

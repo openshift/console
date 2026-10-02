@@ -17,10 +17,6 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import {
-  actionsCellProps,
-  nameCellProps,
-  getNameCellProps,
-  initialFiltersDefault,
   ConsoleDataView,
   getLabelsColumnWidthStyleProp,
 } from '@console/app/src/components/data-view/ConsoleDataView';
@@ -217,11 +213,11 @@ const useNamespacesColumns = () => {
   const columns = useMemo(
     () => [
       {
+        type: 'name',
         title: t('Name'),
         id: namespaceColumnInfo[0].id,
         sort: 'metadata.name',
         props: {
-          ...nameCellProps,
           modifier: 'nowrap',
         },
       },
@@ -292,13 +288,7 @@ const useNamespacesColumns = () => {
         },
         additional: true,
       },
-      {
-        title: '',
-        id: namespaceColumnInfo[9].id,
-        props: {
-          ...actionsCellProps,
-        },
-      },
+      { type: 'actions', id: namespaceColumnInfo[9].id },
     ],
     [t],
   );
@@ -326,7 +316,6 @@ const getNamespaceDataViewRows = (rowData, tableColumns, namespaceMetrics, t) =>
             namespace={ns.metadata.namespace}
           />
         ),
-        props: getNameCellProps(name),
       },
       [namespaceColumnInfo[1].id]: {
         cell: (
@@ -366,7 +355,6 @@ const getNamespaceDataViewRows = (rowData, tableColumns, namespaceMetrics, t) =>
       },
       [namespaceColumnInfo[9].id]: {
         cell: <LazyActionMenu context={{ [referenceForModel(NamespaceModel)]: ns }} />,
-        props: actionsCellProps,
       },
     };
 
@@ -379,6 +367,8 @@ const getNamespaceDataViewRows = (rowData, tableColumns, namespaceMetrics, t) =>
       };
     });
   });
+
+const initialFilters = { requester: [] };
 
 const NamespacesList = (props) => {
   const { t } = useTranslation('public');
@@ -425,8 +415,6 @@ const NamespacesList = (props) => {
     ],
     [t],
   );
-
-  const initialFilters = useMemo(() => ({ ...initialFiltersDefault, requester: [] }), []);
 
   const additionalFilterNodes = useMemo(
     () => [
@@ -506,11 +494,11 @@ const useProjectsColumns = ({ showMetrics, showActions }) => {
   const columns = useMemo(() => {
     const cols = [
       {
+        type: 'name',
         title: t('Name'),
         id: projectColumnInfo[0].id,
         sort: 'metadata.name',
         props: {
-          ...nameCellProps,
           modifier: 'nowrap',
         },
       },
@@ -593,13 +581,7 @@ const useProjectsColumns = ({ showMetrics, showActions }) => {
     );
 
     if (showActions) {
-      cols.push({
-        title: '',
-        id: projectColumnInfo[9].id,
-        props: {
-          ...actionsCellProps,
-        },
-      });
+      cols.push({ type: 'actions', id: projectColumnInfo[9].id });
     }
 
     return cols;
@@ -633,7 +615,6 @@ const getProjectDataViewRows = (
             <ResourceLink kind="Project" name={project.metadata.name} />
           </span>
         ),
-        props: getNameCellProps(name),
       },
       [projectColumnInfo[1].id]: {
         cell: (
@@ -677,7 +658,6 @@ const getProjectDataViewRows = (
       },
       [projectColumnInfo[9].id]: {
         cell: <LazyActionMenu context={{ [referenceForModel(ProjectModel)]: project }} />,
-        props: actionsCellProps,
       },
     };
 
@@ -823,8 +803,6 @@ const ProjectList = (props) => {
     ],
     [t],
   );
-
-  const initialFilters = useMemo(() => ({ ...initialFiltersDefault, requester: [] }), []);
 
   const additionalFilterNodes = useMemo(
     () => [

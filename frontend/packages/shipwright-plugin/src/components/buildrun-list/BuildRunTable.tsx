@@ -2,12 +2,7 @@ import type { FC } from 'react';
 import { useMemo } from 'react';
 import { SortByDirection } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
-import {
-  ConsoleDataView,
-  actionsCellProps,
-  getNameCellProps,
-  getNameColumnProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import type {
   ConsoleDataViewColumn,
   GetDataViewRows,
@@ -34,10 +29,11 @@ const useBuildRunColumns = (): {
   const columns = useMemo(
     () => [
       {
+        type: 'name' as const,
         id: 'name',
         title: t('Name'),
         sort: 'metadata.name',
-        props: { ...getNameColumnProps(), modifier: 'nowrap' as const },
+        props: { modifier: 'nowrap' as const },
       },
       {
         id: 'namespace',
@@ -64,7 +60,7 @@ const useBuildRunColumns = (): {
           data.sort(sortResourceByValue(direction, getBuildRunDurationInSeconds)),
         props: { modifier: 'nowrap' as const },
       },
-      { id: 'actions', title: '', props: actionsCellProps },
+      { type: 'actions' as const, id: 'actions' },
     ],
     [t],
   );
@@ -83,7 +79,6 @@ export const getBuildRunDataViewRows: GetDataViewRows<BuildRun> = (data, columns
             namespace={buildRun.metadata.namespace}
           />
         ),
-        props: getNameCellProps(buildRun.metadata.name),
       },
       namespace: { cell: <ResourceLink kind="Namespace" name={buildRun.metadata.namespace} /> },
       status: { cell: <BuildRunStatus buildRun={buildRun} /> },
@@ -91,7 +86,6 @@ export const getBuildRunDataViewRows: GetDataViewRows<BuildRun> = (data, columns
       duration: { cell: <BuildRunDuration buildRun={buildRun} /> },
       actions: {
         cell: <LazyActionMenu context={{ [kindReference]: buildRun }} />,
-        props: actionsCellProps,
       },
     };
     return columns.map(({ id }) => ({ id, ...rowCells[id] }));

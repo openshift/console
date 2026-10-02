@@ -16,10 +16,7 @@ import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import * as semver from 'semver';
 import {
-  actionsCellProps,
-  getNameCellProps,
   ConsoleDataView,
-  nameCellProps,
   getLabelsColumnWidthStyleProp,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import type {
@@ -344,7 +341,6 @@ const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) =>
     const rowCells = {
       [tableColumnInfo[0].id]: {
         cell: <ResourceLink kind={ImageStreamsReference} name={name} namespace={namespace} />,
-        props: { ...getNameCellProps(name) },
       },
       [tableColumnInfo[1].id]: {
         cell: <ResourceLink kind="Namespace" name={namespace} />,
@@ -357,7 +353,6 @@ const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) =>
       },
       [tableColumnInfo[4].id]: {
         cell: <LazyActionMenu context={{ [referenceForModel(ImageStreamModel)]: imageStream }} />,
-        props: actionsCellProps,
       },
     };
 
@@ -365,7 +360,6 @@ const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) =>
       const cell = rowCells[id]?.cell || '-';
       return {
         id,
-        props: rowCells[id]?.props,
         cell,
       };
     });
@@ -380,11 +374,11 @@ const useImageStreamColumns = (): {
     const labelsColumnId = tableColumnInfo[2].id;
     return [
       {
+        type: 'name' as const,
         title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
         props: {
-          ...nameCellProps,
           modifier: 'nowrap' as const,
         },
       },
@@ -413,13 +407,7 @@ const useImageStreamColumns = (): {
           modifier: 'nowrap' as const,
         },
       },
-      {
-        title: '',
-        id: tableColumnInfo[4].id,
-        props: {
-          ...actionsCellProps,
-        },
-      },
+      { type: 'actions' as const, id: tableColumnInfo[4].id },
     ];
   }, [t]);
 

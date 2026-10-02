@@ -4,12 +4,7 @@ import { Grid, GridItem, ButtonVariant } from '@patternfly/react-core';
 import { Table, Thead, Tbody, Tr, Th, Td } from '@patternfly/react-table';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import {
-  ConsoleDataView,
-  getNameCellProps,
-  actionsCellProps,
-  nameCellProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import type {
   ConsoleDataViewColumn,
   GetDataViewRows,
@@ -53,7 +48,6 @@ const getDataViewRows: GetDataViewRows<GroupKind> = (data, columns) =>
             title={metadata.uid}
           />
         ),
-        props: getNameCellProps(metadata.name),
       },
       [tableColumnInfo[1].id]: {
         cell: _.size(obj.users),
@@ -63,16 +57,13 @@ const getDataViewRows: GetDataViewRows<GroupKind> = (data, columns) =>
       },
       [tableColumnInfo[3].id]: {
         cell: <LazyActionMenu context={context} />,
-        props: actionsCellProps,
       },
     };
 
     return columns.map(({ id }) => {
       const cell = rowCells[id]?.cell || DASH;
-      const props = rowCells[id]?.props || undefined;
       return {
         id,
-        props,
         cell,
       };
     });
@@ -86,11 +77,11 @@ const useGroupColumns = (): {
   const columns: ConsoleDataViewColumn<GroupKind>[] = useMemo(
     () => [
       {
+        type: 'name' as const,
         title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
         props: {
-          ...nameCellProps,
           modifier: 'nowrap' as const,
         },
       },
@@ -110,13 +101,7 @@ const useGroupColumns = (): {
           modifier: 'nowrap' as const,
         },
       },
-      {
-        title: '',
-        id: tableColumnInfo[3].id,
-        props: {
-          ...actionsCellProps,
-        },
-      },
+      { type: 'actions' as const, id: tableColumnInfo[3].id },
     ],
     [t],
   );

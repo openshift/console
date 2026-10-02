@@ -5,12 +5,7 @@ import i18next from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
-import {
-  ConsoleDataView,
-  actionsCellProps,
-  getNameCellProps,
-  getNameColumnProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import type {
   ConsoleDataViewColumn,
   GetDataViewRows,
@@ -99,10 +94,11 @@ const useVolumeColumns = (): {
   const columns = useMemo(
     () => [
       {
+        type: 'name' as const,
         id: 'name',
         title: t('Name'),
         sort: 'name',
-        props: { ...getNameColumnProps(), modifier: 'nowrap' as const },
+        props: { modifier: 'nowrap' as const },
       },
       {
         id: 'mountPath',
@@ -133,7 +129,7 @@ const useVolumeColumns = (): {
         sort: 'container',
         props: { modifier: 'nowrap' as const },
       },
-      { id: 'actions', title: '', props: actionsCellProps },
+      { type: 'actions' as const, id: 'actions' },
     ],
     [t],
   );
@@ -152,7 +148,6 @@ export const getVolumeDataViewRows: GetDataViewRows<RowVolumeData> = (data, colu
       name: {
         cell: name,
         props: {
-          ...getNameCellProps(name),
           'data-test': `volume-name-${name}`,
           'data-test-volume-name-for': name,
         },
@@ -193,7 +188,6 @@ export const getVolumeDataViewRows: GetDataViewRows<RowVolumeData> = (data, colu
       },
       actions: {
         cell: <VolumeKebab kind={resource.kind} resource={resource} rowVolumeData={volume} />,
-        props: actionsCellProps,
       },
     };
     return columns.map(({ id }) => ({ id, ...rowCells[id] }));

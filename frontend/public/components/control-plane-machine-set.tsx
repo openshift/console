@@ -13,12 +13,7 @@ import {
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
-import {
-  actionsCellProps,
-  getNameCellProps,
-  ConsoleDataView,
-  nameCellProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import type {
   ConsoleDataViewColumn,
   GetDataViewRows,
@@ -204,11 +199,11 @@ const useControlPlaneMachineSetColumns = (): {
   const columns: ConsoleDataViewColumn<ControlPlaneMachineSetKind>[] = useMemo(
     () => [
       {
+        type: 'name' as const,
         title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
         props: {
-          ...nameCellProps,
           modifier: 'nowrap' as const,
         },
       },
@@ -244,13 +239,7 @@ const useControlPlaneMachineSetColumns = (): {
           modifier: 'nowrap' as const,
         },
       },
-      {
-        title: '',
-        id: tableColumnInfo[5].id,
-        props: {
-          ...actionsCellProps,
-        },
-      },
+      { type: 'actions' as const, id: tableColumnInfo[5].id },
     ],
     [t],
   );
@@ -281,7 +270,6 @@ const getDataViewRows: GetDataViewRows<ControlPlaneMachineSetKind> = (data, colu
         cell: (
           <ResourceLink kind={controlPlaneMachineSetReference} name={name} namespace={namespace} />
         ),
-        props: getNameCellProps(name),
       },
       [tableColumnInfo[1].id]: {
         cell: <ResourceLink kind="Namespace" name={namespace} />,
@@ -303,7 +291,6 @@ const getDataViewRows: GetDataViewRows<ControlPlaneMachineSetKind> = (data, colu
       },
       [tableColumnInfo[5].id]: {
         cell: <LazyActionMenu context={{ [controlPlaneMachineSetReference]: obj }} />,
-        props: actionsCellProps,
       },
     };
 
@@ -311,7 +298,6 @@ const getDataViewRows: GetDataViewRows<ControlPlaneMachineSetKind> = (data, colu
       const cell = rowCells[id]?.cell || DASH;
       return {
         id,
-        props: rowCells[id]?.props,
         cell,
       };
     });

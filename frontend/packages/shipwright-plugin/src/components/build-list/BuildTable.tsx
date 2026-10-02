@@ -1,12 +1,7 @@
 import type { FC } from 'react';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  ConsoleDataView,
-  actionsCellProps,
-  getNameCellProps,
-  getNameColumnProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import type {
   ConsoleDataViewColumn,
   GetDataViewRows,
@@ -36,10 +31,11 @@ const useBuildColumns = (): {
   const columns = useMemo(
     () => [
       {
+        type: 'name' as const,
         id: 'name',
         title: t('Name'),
         sort: 'metadata.name',
-        props: { ...getNameColumnProps(), modifier: 'nowrap' as const },
+        props: { modifier: 'nowrap' as const },
       },
       {
         id: 'namespace',
@@ -84,7 +80,7 @@ const useBuildColumns = (): {
           ),
         props: { modifier: 'nowrap' as const },
       },
-      { id: 'actions', title: '', props: actionsCellProps },
+      { type: 'actions' as const, id: 'actions' },
     ],
     [t],
   );
@@ -106,7 +102,6 @@ export const getBuildDataViewRows: GetDataViewRows<Build> = (data, columns) =>
             namespace={build.metadata.namespace}
           />
         ),
-        props: getNameCellProps(build.metadata.name),
       },
       namespace: { cell: <ResourceLink kind="Namespace" name={build.metadata.namespace} /> },
       output: {
@@ -142,7 +137,6 @@ export const getBuildDataViewRows: GetDataViewRows<Build> = (data, columns) =>
       },
       actions: {
         cell: <LazyActionMenu context={{ [kindReference]: build }} />,
-        props: actionsCellProps,
       },
     };
     return columns.map(({ id }) => ({ id, ...rowCells[id] }));

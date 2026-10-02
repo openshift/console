@@ -4,12 +4,7 @@ import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
 import type { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import {
-  actionsCellProps,
-  getNameCellProps,
-  ConsoleDataView,
-  nameCellProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
 import type { RowFilter } from '@console/dynamic-plugin-sdk';
 import type {
@@ -101,7 +96,6 @@ const getDataViewRows: GetDataViewRows<CronJobKind> = (data, columns) =>
             namespace={namespace}
           />
         ),
-        props: getNameCellProps(name),
       },
       [tableColumnInfo[1].id]: {
         cell: <ResourceLink kind="Namespace" name={namespace} />,
@@ -120,7 +114,6 @@ const getDataViewRows: GetDataViewRows<CronJobKind> = (data, columns) =>
       },
       [tableColumnInfo[6].id]: {
         cell: <LazyActionMenu context={context} />,
-        props: actionsCellProps,
       },
     };
 
@@ -128,7 +121,6 @@ const getDataViewRows: GetDataViewRows<CronJobKind> = (data, columns) =>
       const cell = rowCells[id]?.cell || DASH;
       return {
         id,
-        props: rowCells[id]?.props,
         cell,
       };
     });
@@ -320,11 +312,11 @@ const useCronJobsColumns = (): {
   const columns = useMemo<ConsoleDataViewColumn<CronJobKind>[]>(
     () => [
       {
+        type: 'name' as const,
         title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
         props: {
-          ...nameCellProps,
           modifier: 'nowrap' as const,
         },
       },
@@ -368,13 +360,7 @@ const useCronJobsColumns = (): {
           modifier: 'nowrap' as const,
         },
       },
-      {
-        title: '',
-        id: tableColumnInfo[6].id,
-        props: {
-          ...actionsCellProps,
-        },
-      },
+      { type: 'actions' as const, id: tableColumnInfo[6].id },
     ],
     [t],
   );

@@ -28,7 +28,7 @@ export type GetDataViewCell<TData, TCustomRowData = unknown> = (
  * and extension columns, and the title must be nonempty. Console keeps built-in columns
  * when IDs collide. For duplicate plugin IDs, the first column in plugin-name/column-ID
  * order wins. Prefix the ID with the plugin name to avoid collisions. `columnData.title`
- * supports translated keys in the `%namespace~key%` format.
+ * and `columnData.tooltip` support translated keys in the `%namespace~key%` format.
  *
  * Columns without an insertion anchor appear before the table's actions column, or at
  * the end if there is no actions column. Anchors refer to built-in or plugin column IDs.
@@ -52,7 +52,7 @@ export type ConsoleDataViewTableColumn<TData = unknown, TCustomRowData = unknown
     /** Must exactly match the target table's resolved `id`. */
     tableID: string;
     /** Code reference to the column definition. When `additional` is omitted, Console treats it as `true`. */
-    columnData: CodeRef<ConsoleDataViewColumn<TData>>;
+    columnData: CodeRef<ConsoleDataViewColumn<TData> & { title: string }>;
     /** Code reference that returns one cell per item on the current page. */
     getCellContent: CodeRef<GetDataViewCell<TData, TCustomRowData>>;
     /** The column ID before which this item should be placed. Takes precedence when both anchors exist. */

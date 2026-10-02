@@ -14,13 +14,7 @@ import i18next from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useParams, useLocation, useNavigate } from 'react-router';
-import {
-  ConsoleDataView,
-  initialFiltersDefault,
-  getNameCellProps,
-  actionsCellProps,
-  nameCellProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import { ListPageBody } from '@console/dynamic-plugin-sdk';
 import type {
   ConsoleDataViewColumn,
@@ -100,11 +94,11 @@ const useRoleBindingsColumns = (): {
   const columns: ConsoleDataViewColumn<BindingKind>[] = useMemo(
     () => [
       {
+        type: 'name' as const,
         title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
         props: {
-          ...nameCellProps,
           modifier: 'nowrap' as const,
         },
       },
@@ -140,13 +134,7 @@ const useRoleBindingsColumns = (): {
           modifier: 'nowrap' as const,
         },
       },
-      {
-        title: '',
-        id: tableColumnInfo[5].id,
-        props: {
-          ...actionsCellProps,
-        },
-      },
+      { type: 'actions' as const, id: tableColumnInfo[5].id },
     ],
     [t],
   );
@@ -197,7 +185,6 @@ const getDataViewRows: GetDataViewRows<BindingKind> = (data, columns) =>
     const rowCells = {
       [tableColumnInfo[0].id]: {
         cell: <BindingName binding={binding} />,
-        props: getNameCellProps(binding.metadata?.name),
       },
       [tableColumnInfo[1].id]: {
         cell: <RoleLink binding={binding} />,
@@ -217,16 +204,13 @@ const getDataViewRows: GetDataViewRows<BindingKind> = (data, columns) =>
       },
       [tableColumnInfo[5].id]: {
         cell: <BindingKebab binding={binding} />,
-        props: actionsCellProps,
       },
     };
 
     return columns.map(({ id }) => {
       const cell = rowCells[id]?.cell || DASH;
-      const props = rowCells[id]?.props || undefined;
       return {
         id,
-        props,
         cell,
       };
     });
@@ -267,7 +251,7 @@ const BindingsList: FC<BindingsListTableProps> = (props) => {
     return options;
   }, [hasCRBindings, t]);
 
-  const initialFilters = useMemo(() => ({ ...initialFiltersDefault, 'role-kind': [] }), []);
+  const initialFilters = useMemo(() => ({ 'role-kind': [] }), []);
 
   const additionalFilterNodes = useMemo<React.ReactNode[]>(
     () => [

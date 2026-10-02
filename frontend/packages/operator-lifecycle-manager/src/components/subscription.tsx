@@ -20,11 +20,7 @@ import { css } from '@patternfly/react-styles';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router';
-import {
-  ConsoleDataView,
-  actionsCellProps,
-  getNameCellProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import { ResourceStatus, StatusIconAndText, useAccessReview } from '@console/dynamic-plugin-sdk';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import type { GetDataViewRows } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
@@ -206,7 +202,6 @@ export const getSubscriptionDataViewRows: GetDataViewRows<SubscriptionKind> = (d
             namespace={obj.metadata.namespace}
           />
         ),
-        props: getNameCellProps(obj.metadata.name),
       },
       namespace: { cell: <ResourceLink kind="Namespace" name={obj.metadata.namespace} /> },
       status: { cell: <SubscriptionStatus subscription={obj} /> },
@@ -218,7 +213,6 @@ export const getSubscriptionDataViewRows: GetDataViewRows<SubscriptionKind> = (d
       approval: { cell: <SubscriptionApproval subscription={obj} /> },
       actions: {
         cell: <LazyActionMenu context={{ [referenceFor(obj)]: obj }} />,
-        props: actionsCellProps,
       },
     };
     return columns.map(({ id }) => ({ id, ...rowCells[id] }));

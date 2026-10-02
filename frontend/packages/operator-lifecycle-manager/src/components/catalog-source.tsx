@@ -4,11 +4,7 @@ import { Button, DescriptionList, Grid, GridItem } from '@patternfly/react-core'
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useParams, useLocation } from 'react-router';
-import {
-  ConsoleDataView,
-  actionsCellProps,
-  getNameCellProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import type { K8sResourceKind, WatchK8sResultsObject } from '@console/dynamic-plugin-sdk';
 import { PopoverStatus, StatusIconAndText, useAccessReview } from '@console/dynamic-plugin-sdk';
 import type { GetDataViewRows } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
@@ -307,7 +303,6 @@ export const getCatalogSourceDataViewRows: GetDataViewRows<CatalogSourceTableRow
         ) : (
           name
         ),
-        props: getNameCellProps(name),
       },
       status: {
         cell: status,
@@ -324,7 +319,6 @@ export const getCatalogSourceDataViewRows: GetDataViewRows<CatalogSourceTableRow
         cell: source && (
           <LazyActionMenu context={{ [referenceForModel(CatalogSourceModel)]: source }} />
         ),
-        props: actionsCellProps,
       },
     };
     return columns.map(({ id }) => {

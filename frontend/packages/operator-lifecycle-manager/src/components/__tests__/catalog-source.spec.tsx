@@ -297,7 +297,7 @@ describe('useCatalogSourceColumns', () => {
       'Endpoint',
       'Registry poll interval',
       '# of Operators',
-      '',
+      undefined,
     ]);
   });
 

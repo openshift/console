@@ -94,18 +94,22 @@ export const useConsoleDataViewFilters = <
   matchesAdditionalFilters,
 }: {
   data: TData[];
-  initialFilters: TFilters;
+  initialFilters?: Partial<TFilters>;
   getObjectMetadata?: (obj: TData) => ResourceMetadata;
   matchesAdditionalFilters?: (obj: TData, filters: TFilters) => boolean;
 }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [isExactSearch] = useExactSearch();
 
-  const filterIds = useMemo(() => Object.keys(initialFilters), [initialFilters]);
+  const resolvedInitialFilters = useMemo(
+    () => ({ name: '', label: '', ...initialFilters }) as TFilters,
+    [initialFilters],
+  );
+  const filterIds = useMemo(() => Object.keys(resolvedInitialFilters), [resolvedInitialFilters]);
   useLegacyRowFilterParams(filterIds, searchParams, setSearchParams);
 
   const { filters, onSetFilters, clearAllFilters } = useDataViewFilters<TFilters>({
-    initialFilters,
+    initialFilters: resolvedInitialFilters,
     searchParams,
     setSearchParams,
   });

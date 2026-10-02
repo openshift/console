@@ -10,12 +10,7 @@ import {
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
-import {
-  ConsoleDataView,
-  getNameCellProps,
-  actionsCellProps,
-  nameCellProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import type {
   ConsoleDataViewColumn,
   GetDataViewRows,
@@ -49,7 +44,6 @@ const getDataViewRows: GetDataViewRows<UserKind> = (data, columns) =>
     const rowCells = {
       [tableColumnInfo[0].id]: {
         cell: <ResourceLink kind={referenceForModel(UserModel)} name={user.metadata.name} />,
-        props: getNameCellProps(user.metadata.name),
       },
       [tableColumnInfo[1].id]: {
         cell: user.fullName || DASH,
@@ -59,16 +53,13 @@ const getDataViewRows: GetDataViewRows<UserKind> = (data, columns) =>
       },
       [tableColumnInfo[3].id]: {
         cell: <LazyActionMenu context={{ [referenceForModel(UserModel)]: user }} />,
-        props: actionsCellProps,
       },
     };
 
     return columns.map(({ id }) => {
       const cell = rowCells[id]?.cell || DASH;
-      const props = rowCells[id]?.props || undefined;
       return {
         id,
-        props,
         cell,
       };
     });
@@ -132,11 +123,11 @@ const useUsersColumns = (): {
   const columns: ConsoleDataViewColumn<UserKind>[] = useMemo(
     () => [
       {
+        type: 'name' as const,
         title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
         props: {
-          ...nameCellProps,
           modifier: 'nowrap' as const,
         },
       },
@@ -156,13 +147,7 @@ const useUsersColumns = (): {
           modifier: 'nowrap' as const,
         },
       },
-      {
-        title: '',
-        id: tableColumnInfo[3].id,
-        props: {
-          ...actionsCellProps,
-        },
-      },
+      { type: 'actions' as const, id: tableColumnInfo[3].id },
     ],
     [t],
   );

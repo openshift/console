@@ -1,11 +1,7 @@
 import type { FC } from 'react';
 import { useMemo, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  getNameCellProps,
-  cellIsStickyProps,
-  ConsoleDataView,
-} from '@console/app/src/components/data-view/ConsoleDataView';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import type {
   ResourceFilters,
   ConsoleDataViewColumn,
@@ -50,7 +46,6 @@ const getRelatedObjectsDataViewRows = (
     const rowCells = {
       [columnIds[0].id]: {
         cell: <ResourceObjectName gsv={gsv} name={name} namespace={namespace} />,
-        props: getNameCellProps(name),
       },
       [columnIds[1].id]: {
         cell: resource,
@@ -67,7 +62,6 @@ const getRelatedObjectsDataViewRows = (
       const cell = rowCells[id]?.cell || DASH;
       return {
         id,
-        props: rowCells[id]?.props,
         cell,
       };
     });
@@ -78,13 +72,11 @@ const useRelatedObjectsColumns = (): ConsoleDataViewColumn<ClusterOperatorObject
   const columns = useMemo<ConsoleDataViewColumn<ClusterOperatorObjectReference>[]>(
     () => [
       {
+        type: 'name' as const,
         title: t('Name'),
         id: columnIds[0].id,
         sort: 'name',
-        props: {
-          ...cellIsStickyProps,
-          modifier: 'nowrap' as const,
-        },
+        props: { hasRightBorder: false, modifier: 'nowrap' as const },
       },
       {
         title: t('Resource'),

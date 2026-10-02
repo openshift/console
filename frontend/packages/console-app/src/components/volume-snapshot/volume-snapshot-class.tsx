@@ -2,12 +2,7 @@ import type { FC } from 'react';
 import { useMemo, Suspense } from 'react';
 import type { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
-import {
-  actionsCellProps,
-  getNameCellProps,
-  ConsoleDataView,
-  nameCellProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import type {
   ConsoleDataViewColumn,
   GetDataViewRows,
@@ -56,7 +51,6 @@ const getDataViewRowsCreator: (t: TFunction) => GetDataViewRows<VolumeSnapshotCl
               )}
             </ResourceLink>
           ),
-          props: getNameCellProps(name),
         },
         [tableColumnInfo[1].id]: {
           cell: driver,
@@ -66,16 +60,13 @@ const getDataViewRowsCreator: (t: TFunction) => GetDataViewRows<VolumeSnapshotCl
         },
         [tableColumnInfo[3].id]: {
           cell: <LazyActionMenu context={context} />,
-          props: actionsCellProps,
         },
       };
 
       return columns.map(({ id }) => {
         const cell = rowCells[id]?.cell || DASH;
-        const props = rowCells[id]?.props || undefined;
         return {
           id,
-          props,
           cell,
         };
       });
@@ -89,10 +80,11 @@ const useVolumeSnapshotClassColumns = (): {
   const columns: ConsoleDataViewColumn<VolumeSnapshotClassKind>[] = useMemo(
     () => [
       {
+        type: 'name' as const,
         title: t('Name'),
         sort: 'metadata.name',
         id: tableColumnInfo[0].id,
-        props: { ...nameCellProps, modifier: 'nowrap' as const },
+        props: { modifier: 'nowrap' as const },
       },
       {
         title: t('Driver'),
@@ -106,11 +98,7 @@ const useVolumeSnapshotClassColumns = (): {
         id: tableColumnInfo[2].id,
         props: { modifier: 'nowrap' as const },
       },
-      {
-        title: '',
-        id: tableColumnInfo[3].id,
-        props: { ...actionsCellProps },
-      },
+      { type: 'actions' as const, id: tableColumnInfo[3].id },
     ],
     [t],
   );

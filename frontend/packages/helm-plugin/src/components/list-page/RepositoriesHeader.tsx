@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { nameCellProps } from '@console/app/src/components/data-view/ConsoleDataView';
 import type { ConsoleDataViewColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 
@@ -22,11 +21,11 @@ export const useRepositoriesColumns = (): {
   const columns = useMemo<ConsoleDataViewColumn<K8sResourceKind>[]>(
     () => [
       {
+        type: 'name' as const,
         title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
         props: {
-          ...nameCellProps,
           modifier: 'nowrap' as const,
         },
       },
@@ -71,8 +70,8 @@ export const useRepositoriesColumns = (): {
         },
       },
       {
-        title: '',
         id: tableColumnInfo[6].id,
+        type: 'actions' as const,
         props: {
           modifier: 'nowrap' as const,
         },

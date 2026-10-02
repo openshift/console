@@ -20,11 +20,7 @@ import { RhUiAddCircleIcon, RhUiEditIcon } from '@patternfly/react-icons';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { useParams, useLocation, Link } from 'react-router';
-import {
-  ConsoleDataView,
-  actionsCellProps,
-  getNameCellProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import {
   ResourceStatus,
   StatusIconAndText,
@@ -472,7 +468,9 @@ const csvRowCells = (
   subscription: SubscriptionKind,
   catalogSourceMissing: boolean,
 ) => ({
-  name: { cell: <CsvNameCell obj={obj} />, props: getNameCellProps(obj.metadata.name) },
+  name: {
+    cell: <CsvNameCell obj={obj} />,
+  },
   namespace: {
     cell: (
       <ResourceLink
@@ -507,7 +505,6 @@ const csvRowCells = (
         variant={ActionMenuVariant.KEBAB}
       />
     ),
-    props: actionsCellProps,
   },
 });
 
@@ -524,7 +521,6 @@ const subscriptionRowCells = (obj: SubscriptionKind, catalogSourceMissing: boole
         />
       </Link>
     ),
-    props: getNameCellProps(obj.metadata.name),
   },
   namespace: {
     cell: <ResourceLink kind="Namespace" title={getNamespace(obj)} name={getNamespace(obj)} />,
@@ -550,7 +546,6 @@ const subscriptionRowCells = (obj: SubscriptionKind, catalogSourceMissing: boole
         variant={ActionMenuVariant.KEBAB}
       />
     ),
-    props: actionsCellProps,
   },
 });
 
@@ -712,7 +707,7 @@ export const ClusterServiceVersionsPage: FC<ClusterServiceVersionsPageProps> = (
 
   const columnLayout = useMemo<ColumnLayout>(() => {
     const columns = [
-      { id: 'name', title: t('Name') },
+      { type: 'name' as const, id: 'name', title: t('Name') },
       { id: 'namespace', title: t('Namespace') },
       { id: 'managedNamespaces', title: t('Managed Namespaces') },
       { id: 'status', title: t('Status') },

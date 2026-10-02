@@ -2,13 +2,7 @@ import type { FC } from 'react';
 import { useCallback, useMemo } from 'react';
 import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
 import { useTranslation } from 'react-i18next';
-import {
-  ConsoleDataView,
-  actionsCellProps,
-  getNameCellProps,
-  getNameColumnProps,
-  initialFiltersDefault,
-} from '@console/app/src/components/data-view/ConsoleDataView';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import { DASH } from '@console/dynamic-plugin-sdk/src/app/constants';
 import type {
   ConsoleDataViewColumn,
@@ -52,10 +46,11 @@ const useBareMetalHostColumns = (): {
   const columns = useMemo(
     () => [
       {
+        type: 'name' as const,
         id: 'name',
         title: t('Name'),
         sort: 'host.metadata.name',
-        props: { ...getNameColumnProps(), modifier: 'nowrap' as const },
+        props: { modifier: 'nowrap' as const },
       },
       {
         id: 'status',
@@ -87,7 +82,7 @@ const useBareMetalHostColumns = (): {
         sort: 'host.status.hardware.systemVendor.serialNumber',
         props: { modifier: 'nowrap' as const },
       },
-      { id: 'actions', title: '', props: actionsCellProps },
+      { type: 'actions' as const, id: 'actions' },
     ],
     [t],
   );
@@ -105,7 +100,6 @@ export const getBareMetalHostDataViewRows: GetDataViewRows<
     const rowCells = {
       name: {
         cell: <ResourceLink kind={hostReference} name={name} namespace={getNamespace(host)} />,
-        props: getNameCellProps(name),
       },
       status: {
         cell: (
@@ -136,7 +130,6 @@ export const getBareMetalHostDataViewRows: GetDataViewRows<
             }}
           />
         ),
-        props: actionsCellProps,
       },
     };
     return columns.map(({ id }) => ({ id, ...rowCells[id] }));
@@ -161,10 +154,7 @@ const BareMetalHostsTable: FC<BareMetalHostsTableProps> = (props) => {
     () => hostStatusFilter(t).items.map(({ id, title }) => ({ value: id, label: title })),
     [t],
   );
-  const initialFilters = useMemo<BareMetalHostFilters>(
-    () => ({ ...initialFiltersDefault, [HOST_STATUS_FILTER_ID]: [] }),
-    [],
-  );
+  const initialFilters = useMemo<BareMetalHostFilters>(() => ({ [HOST_STATUS_FILTER_ID]: [] }), []);
   const additionalFilterNodes = useMemo(
     () => [
       <DataViewCheckboxFilter

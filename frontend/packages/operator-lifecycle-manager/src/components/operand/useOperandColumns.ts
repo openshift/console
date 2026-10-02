@@ -1,10 +1,6 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  cellIsStickyProps,
-  getLabelsColumnWidthStyleProp,
-  getNameColumnProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
+import { getLabelsColumnWidthStyleProp } from '@console/app/src/components/data-view/ConsoleDataView';
 import type { ConsoleDataViewColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { sortByValue } from '../dataViewSortHelpers';
@@ -22,12 +18,7 @@ export const useOperandColumns = (
   const { t } = useTranslation('olm');
   const columns = useMemo(
     () => [
-      {
-        id: 'name',
-        title: t('Name'),
-        sort: 'metadata.name',
-        props: getNameColumnProps(),
-      },
+      { type: 'name' as const, id: 'name', title: t('Name'), sort: 'metadata.name' },
       {
         id: 'kind',
         title: t('Kind'),
@@ -65,7 +56,7 @@ export const useOperandColumns = (
         sort: 'metadata.creationTimestamp',
         props: { modifier: 'nowrap' as const },
       },
-      { id: 'actions', title: '', props: cellIsStickyProps },
+      { type: 'actions' as const, id: 'actions' },
     ],
     [t, showNamespace],
   );

@@ -1,12 +1,7 @@
 import { useMemo, Suspense } from 'react';
 import { Grid, GridItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import {
-  ConsoleDataView,
-  getNameCellProps,
-  actionsCellProps,
-  nameCellProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
@@ -41,7 +36,6 @@ const getDataViewRows = (data, columns) =>
     const rowCells = {
       [tableColumnInfo[0].id]: {
         cell: <ResourceLink kind={kind} name={name} namespace={namespace} title={uid} />,
-        props: getNameCellProps(name),
       },
       [tableColumnInfo[1].id]: {
         cell: <ResourceLink kind="Namespace" name={namespace} title={namespace} />,
@@ -54,7 +48,6 @@ const getDataViewRows = (data, columns) =>
       },
       [tableColumnInfo[4].id]: {
         cell: <LazyActionMenu context={{ [serviceAccountReference]: obj }} />,
-        props: actionsCellProps,
       },
     };
 
@@ -98,11 +91,11 @@ const useServiceAccountColumns = () => {
   const columns = useMemo(
     () => [
       {
+        type: 'name',
         title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
         props: {
-          ...nameCellProps,
           modifier: 'nowrap',
         },
       },
@@ -130,13 +123,7 @@ const useServiceAccountColumns = () => {
           modifier: 'nowrap',
         },
       },
-      {
-        title: '',
-        id: tableColumnInfo[4].id,
-        props: {
-          ...actionsCellProps,
-        },
-      },
+      { type: 'actions', id: tableColumnInfo[4].id },
     ],
     [t],
   );

@@ -1,8 +1,4 @@
 import { Fragment } from 'react';
-import {
-  actionsCellProps,
-  getNameCellProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
 import type { GetDataViewRows } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { ExternalLinkWithCopy } from '@console/internal/components/utils/link';
 import { ResourceLink } from '@console/internal/components/utils/resource-link';
@@ -30,7 +26,6 @@ export const getRouteDataViewRows: GetDataViewRows<RouteKind> = (data, columns) 
             namespace={obj.metadata.namespace}
           />
         ),
-        props: getNameCellProps(obj.metadata.name),
       },
       namespace: { cell: <ResourceLink kind="Namespace" name={obj.metadata.namespace} /> },
       url: {
@@ -60,7 +55,7 @@ export const getRouteDataViewRows: GetDataViewRows<RouteKind> = (data, columns) 
               ))
             : '-',
       },
-      actions: { cell: <LazyActionMenu context={context} />, props: actionsCellProps },
+      actions: { cell: <LazyActionMenu context={context} /> },
     };
     return columns.map(({ id }) => ({ id, ...rowCells[id] }));
   });

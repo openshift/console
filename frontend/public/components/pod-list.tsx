@@ -7,12 +7,8 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import {
-  actionsCellProps,
   ConsoleDataView,
   getLabelsColumnWidthStyleProp,
-  getNameCellProps,
-  initialFiltersDefault,
-  nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { ListPageBody } from '@console/dynamic-plugin-sdk';
 import type {
@@ -114,11 +110,11 @@ const usePodsColumns = (showNodes: boolean): { columns: ConsoleDataViewColumn<Po
   const columns = useMemo<ConsoleDataViewColumn<PodKind>[]>(
     () => [
       {
+        type: 'name' as const,
         title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
         props: {
-          ...nameCellProps,
           modifier: 'nowrap' as const,
         },
       },
@@ -225,13 +221,7 @@ const usePodsColumns = (showNodes: boolean): { columns: ConsoleDataViewColumn<Po
         },
         additional: true,
       },
-      {
-        title: '',
-        id: tableColumnInfo[13].id,
-        props: {
-          ...actionsCellProps,
-        },
-      },
+      { type: 'actions' as const, id: tableColumnInfo[13].id },
     ],
     [t, showNodes],
   );
@@ -391,7 +381,6 @@ const getPodDataViewRows = (
             namespace={namespace}
           />
         ),
-        props: getNameCellProps(name),
       },
       [tableColumnInfo[1].id]: {
         cell: <ResourceLink kind="Namespace" name={namespace} />,
@@ -435,7 +424,6 @@ const getPodDataViewRows = (
       },
       [tableColumnInfo[13].id]: {
         cell: <LazyActionMenu context={context} isDisabled={phase === 'Terminating'} />,
-        props: actionsCellProps,
       },
     };
 
@@ -443,7 +431,6 @@ const getPodDataViewRows = (
       const cell = rowCells[id]?.cell || DASH;
       return {
         id,
-        props: rowCells[id]?.props,
         cell,
       };
     });
@@ -527,7 +514,7 @@ export const PodList: FC<PodListProps> = ({
     [t],
   );
 
-  const initialFilters = useMemo(() => ({ ...initialFiltersDefault, status: [] }), []);
+  const initialFilters = useMemo(() => ({ status: [] }), []);
 
   const additionalFilterNodes = useMemo<ReactNode[]>(
     () => [

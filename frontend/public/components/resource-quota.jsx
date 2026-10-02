@@ -18,12 +18,7 @@ import { Table as PfTable, Thead, Tbody, Tr, Th, Td } from '@patternfly/react-ta
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { useParams, Link } from 'react-router';
-import {
-  ConsoleDataView,
-  getNameCellProps,
-  actionsCellProps,
-  nameCellProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import AppliedClusterResourceQuotaCharts from '@console/app/src/components/resource-quota/AppliedClusterResourceQuotaCharts';
 import ClusterResourceQuotaCharts from '@console/app/src/components/resource-quota/ClusterResourceQuotaCharts';
 import ResourceQuotaCharts from '@console/app/src/components/resource-quota/ResourceQuotaCharts';
@@ -422,7 +417,6 @@ const getResourceQuotaDataViewRows = (data, columns, namespace) =>
             dataTest="resource-quota-link"
           />
         ),
-        props: getNameCellProps(metadata.name),
       },
       [resourceQuotaTableColumnInfo[1].id]: {
         cell: metadata.namespace ? (
@@ -450,7 +444,6 @@ const getResourceQuotaDataViewRows = (data, columns, namespace) =>
       },
       [resourceQuotaTableColumnInfo[6].id]: {
         cell: quotaActions(obj),
-        props: actionsCellProps,
       },
     };
 
@@ -491,7 +484,6 @@ const getAppliedClusterResourceQuotaDataViewRows = (data, columns, namespace) =>
             className="co-resource-item__resource-name"
           />
         ),
-        props: getNameCellProps(metadata.name),
       },
       [appliedClusterResourceQuotaTableColumnInfo[1].id]: {
         cell: (
@@ -529,11 +521,11 @@ const useResourceQuotaColumns = () => {
   const columns = useMemo(
     () => [
       {
+        type: 'name',
         title: t('Name'),
         id: resourceQuotaTableColumnInfo[0].id,
         sort: 'metadata.name',
         props: {
-          ...nameCellProps,
           modifier: 'nowrap',
         },
       },
@@ -576,13 +568,7 @@ const useResourceQuotaColumns = () => {
           modifier: 'nowrap',
         },
       },
-      {
-        title: '',
-        id: resourceQuotaTableColumnInfo[6].id,
-        props: {
-          ...actionsCellProps,
-        },
-      },
+      { type: 'actions', id: resourceQuotaTableColumnInfo[6].id },
     ],
     [t],
   );
@@ -616,11 +602,11 @@ const useAppliedClusterResourceQuotaColumns = () => {
   const columns = useMemo(
     () => [
       {
+        type: 'name',
         title: t('Name'),
         id: appliedClusterResourceQuotaTableColumnInfo[0].id,
         sort: 'metadata.name',
         props: {
-          ...nameCellProps,
           modifier: 'nowrap',
         },
       },

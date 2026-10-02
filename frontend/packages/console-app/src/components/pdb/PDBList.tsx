@@ -1,12 +1,7 @@
 import type { FC } from 'react';
 import { useMemo, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  actionsCellProps,
-  getNameCellProps,
-  ConsoleDataView,
-  nameCellProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import type {
   ConsoleDataViewColumn,
   GetDataViewRows,
@@ -42,7 +37,6 @@ const getDataViewRows: GetDataViewRows<PodDisruptionBudgetKind> = (data, columns
     const rowCells = {
       [tableColumnInfo[0].id]: {
         cell: <ResourceLink kind={resourceKind} name={name} namespace={namespace} />,
-        props: getNameCellProps(name),
       },
       [tableColumnInfo[1].id]: {
         cell: <ResourceLink kind="Namespace" name={namespace} />,
@@ -61,7 +55,6 @@ const getDataViewRows: GetDataViewRows<PodDisruptionBudgetKind> = (data, columns
       },
       [tableColumnInfo[6].id]: {
         cell: <LazyActionMenu context={context} />,
-        props: actionsCellProps,
       },
     };
 
@@ -69,7 +62,6 @@ const getDataViewRows: GetDataViewRows<PodDisruptionBudgetKind> = (data, columns
       const cell = rowCells[id]?.cell || DASH;
       return {
         id,
-        props: rowCells[id]?.props,
         cell,
       };
     });
@@ -83,11 +75,11 @@ const usePDBColumns = (): {
   const columns = useMemo<ConsoleDataViewColumn<PodDisruptionBudgetKind>[]>(
     () => [
       {
+        type: 'name' as const,
         title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
         props: {
-          ...nameCellProps,
           modifier: 'nowrap' as const,
         },
       },
@@ -131,13 +123,7 @@ const usePDBColumns = (): {
           modifier: 'nowrap' as const,
         },
       },
-      {
-        title: '',
-        id: tableColumnInfo[6].id,
-        props: {
-          ...actionsCellProps,
-        },
-      },
+      { type: 'actions' as const, id: tableColumnInfo[6].id },
     ],
     [t],
   );

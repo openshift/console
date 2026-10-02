@@ -1,7 +1,3 @@
-import {
-  actionsCellProps,
-  getNameCellProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
 import type { GetDataViewRows } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { ResourceLink } from '@console/internal/components/utils/resource-link';
 import { referenceFor } from '@console/internal/module/k8s/k8s';
@@ -28,7 +24,6 @@ export const getSubscriptionDataViewRows: GetDataViewRows<EventSubscriptionKind>
     const rowCells = {
       name: {
         cell: <ResourceLink kind={objReference} name={name} namespace={namespace} title={uid} />,
-        props: getNameCellProps(obj.metadata.name),
       },
       namespace: { cell: <ResourceLink kind="Namespace" name={namespace} /> },
       ready: { cell: (readyCondition && readyCondition.status) || '-' },
@@ -54,7 +49,7 @@ export const getSubscriptionDataViewRows: GetDataViewRows<EventSubscriptionKind>
         ),
       },
       created: { cell: <Timestamp timestamp={creationTimestamp} /> },
-      actions: { cell: <LazyActionMenu context={context} />, props: actionsCellProps },
+      actions: { cell: <LazyActionMenu context={context} /> },
     };
     return columns.map(({ id }) => ({ id, ...rowCells[id] }));
   });

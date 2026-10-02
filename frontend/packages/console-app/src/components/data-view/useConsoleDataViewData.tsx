@@ -99,12 +99,22 @@ export const useConsoleDataViewData = <
     // Calculate selection state across all filtered items
     const totalCount = filteredData.length;
 
-    return activeColumns.map(({ id, title, sort, props, resizableProps }, index) => {
+    return activeColumns.map(({ id, type, title, tooltip, sort, props, resizableProps }, index) => {
       // Filter out custom Console props that aren't valid PatternFly ThProps
       const headerProps: ThProps = {
         ...props,
         dataLabel: title,
       };
+
+      if (tooltip) {
+        headerProps.info = {
+          ...headerProps.info,
+          tooltip,
+          ariaLabel:
+            headerProps.info?.ariaLabel ??
+            t('More information about {{column}}', { column: title }),
+        };
+      }
 
       if (sort) {
         headerProps.sort = {
@@ -134,6 +144,7 @@ export const useConsoleDataViewData = <
 
       return {
         id,
+        type,
         title,
         sort,
         props: headerProps,

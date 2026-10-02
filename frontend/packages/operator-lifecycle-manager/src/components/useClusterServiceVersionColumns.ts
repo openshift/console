@@ -1,9 +1,5 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  cellIsStickyProps,
-  getNameColumnProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
 import type { ConsoleDataViewColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { getNamespace } from '@console/shared/src/selectors/common';
 import type { ClusterServiceVersionKind, SubscriptionKind } from '../types';
@@ -53,12 +49,7 @@ export const useClusterServiceVersionColumns = (
 
   const columns = useMemo(
     () => [
-      {
-        id: 'name',
-        title: t('Name'),
-        sort: 'metadata.name',
-        props: getNameColumnProps(),
-      },
+      { type: 'name' as const, id: 'name', title: t('Name'), sort: 'metadata.name' },
       ...(allNamespaceActive
         ? [
             {
@@ -107,7 +98,7 @@ export const useClusterServiceVersionColumns = (
         title: t('Last updated'),
         props: { modifier: 'nowrap' as const },
       },
-      { id: 'actions', title: '', props: cellIsStickyProps },
+      { type: 'actions' as const, id: 'actions' },
     ],
     [t, allNamespaceActive, lifecycleEnabled, formatTargetNamespaces],
   );
