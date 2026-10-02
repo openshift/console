@@ -17,10 +17,7 @@ import type {
 import type { QuickStartContextValues } from '@patternfly/quickstarts';
 import type { CodeEditorProps as PfCodeEditorProps } from '@patternfly/react-code-editor';
 import type { AlertVariant, ButtonProps } from '@patternfly/react-core';
-import type {
-  DataViewTd,
-  DataViewTh,
-} from '@patternfly/react-data-view/dist/esm/DataViewTable/DataViewTable';
+import type { DataViewTh } from '@patternfly/react-data-view/dist/esm/DataViewTable/DataViewTable';
 import type {
   ICell,
   OnSelect,
@@ -40,6 +37,7 @@ import type {
   PrometheusValue,
   Selector,
 } from '../api/common-types';
+import type { Action } from './actions';
 import type { CustomDataSource } from './dashboard-data-source';
 
 /* eslint-disable no-barrel-files/no-barrel-files */
@@ -546,7 +544,7 @@ export type ConsoleDataViewTh = Partial<Extract<DataViewTh, { cell: ReactNode }>
 export interface ConsoleDataViewColumn<TData> extends ConsoleDataViewTh {
   /** Unique identifier for the column, used to match up cells returned by `getDataViewRows`. */
   id: string;
-  /** Applies built-in header and row cell props. Explicit props take precedence. A name column gets its `data-test` from the row name and is offset automatically when a selection column is present. */
+  /** Applies built-in header and row cell props. Explicit props take precedence. An `actions` column uses resource action providers for a Kubernetes resource row when its row cell is omitted or has no `cell`; `cell: null` suppresses the default. A name column gets its `data-test` from the row name and is offset automatically when a selection column is present. */
   type?: 'name' | 'actions' | 'selection' | 'sticky';
   /** The column header text. Defaults to an empty string. */
   title?: string;
@@ -562,7 +560,8 @@ export interface ConsoleDataViewColumn<TData> extends ConsoleDataViewTh {
  * A single row of cells for `ConsoleDataView`, as returned by `GetDataViewRows`. Each entry
  * corresponds to one of the active `ConsoleDataViewColumn`s and has the shape
  * `{ id: string, cell: ReactNode, props?: object }` — PatternFly's `DataViewTd` object variant
- * plus an `id` matching the column it belongs to.
+ * plus an `id` matching the column it belongs to. A Kubernetes resource row may omit `cell`
+ * for an `actions` column to use the resource action providers.
  */
 export type ConsoleDataViewRow = any[];
 
@@ -592,6 +591,16 @@ export type GetDataViewRows<TData, TCustomRowData = unknown> = (
   data: RowProps<TData, TCustomRowData>[],
   columns: ConsoleDataViewColumn<TData>[],
 ) => ConsoleDataViewRow[];
+
+/** Selection state and operations supplied to a `ConsoleDataView` bulk action. */
+export interface ConsoleDataViewSelectionActions<TData> {
+  /** Selected items matching the table's current filters. */
+  selectedItems: TData[];
+  /** Clears every selection, including items hidden by the current filters. */
+  clearSelection: () => void;
+  /** Deselects the given item IDs, for example after a partially successful bulk action. */
+  deselect: (itemIds: string[]) => void;
+}
 
 /**
  * Props for the `ConsoleDataView` component: a table for displaying, filtering, sorting, and
@@ -636,7 +645,7 @@ export interface ConsoleDataViewProps<
   getObjectMetadata?: (obj: TData) => ResourceMetadata;
   /** (optional) Determines whether a data item matches any custom filters beyond the built-in name and label filters. */
   matchesAdditionalFilters?: (obj: TData, filters: TFilters) => boolean;
-  /** Transforms the filtered, sorted, and paginated data into table rows. See `GetDataViewRows`. */
+  /** Transforms the filtered, sorted, and paginated data into table rows. Selection cells are added automatically and are not passed to this callback. See `GetDataViewRows`. */
   getDataViewRows: GetDataViewRows<TData, TCustomRowData>;
   /** (optional) Additional data made available to each row via `RowProps.rowData`. */
   customRowData?: TCustomRowData;
@@ -660,31 +669,14 @@ export interface ConsoleDataViewProps<
   additionalActions?: ReactNode;
   /** Custom actions to display in the toolbar outside ResponsiveActions (for actions that should not be responsive via ResponsiveActions). */
   customActions?: ReactNode;
-  /**
-   * Selection configuration for enabling row selection via checkboxes. `ConsoleDataView` does
-   * not add a selection column itself. The consumer must include one in `columns`/rows, for
-   * example with `createSelectionColumn`/`createSelectionCell`, with id `'select'` for the
-   * built-in select-all header checkbox and "select all N" banner to activate.
-   */
+  /** Enables row selection. Console adds the checkbox column and manages selected IDs. Reserve the column ID `select` for this column. Selections persist across the table's filters and pages, but are removed when their items leave `data`. When the selected items are Kubernetes resources of one model, Console includes actions from that model's `console.action/resource-provider` bulk providers. */
   selection?: {
-    /** Set of selected item IDs. */
-    selectedItems: Set<string>;
-    /**
-     * Callback for selecting/deselecting a single row. `ConsoleDataView` does not call this
-     * itself. The consumer-provided selection cell for each row must call it, for example via
-     * `createSelectionCell`.
-     */
-    onSelect: (itemId: string, isSelecting: boolean) => void;
-    /**
-     * Callback when select-all is toggled. Called with the currently visible (paginated) items
-     * when triggered from the header checkbox, or with all filtered items when triggered from
-     * the "select all N" banner action.
-     */
-    onSelectAll?: (isSelecting: boolean, filteredItems: TData[]) => void;
     /** Function to extract unique ID from an item for selection tracking. */
     getItemId: (item: TData) => string;
-    /** Callback to receive filtered selected items whenever filters or selection changes. */
-    onFilteredSelectionChange?: (filteredSelectedItems: TData[]) => void;
+    /** (optional) Excludes items from row and select-all checkboxes. Defaults to all items. */
+    isSelectable?: (item: TData) => boolean;
+    /** (optional) Returns table-specific bulk actions for selected items matching the current filters. These are shown before contributed resource bulk actions. The menu is disabled when no items are selected and hidden if neither this callback nor a matching bulk provider supplies actions. */
+    getActions?: (selection: ConsoleDataViewSelectionActions<TData>) => Action[];
   };
 }
 
@@ -699,25 +691,6 @@ export type ConsoleDataViewFC = <
 >(
   props: ConsoleDataViewProps<TData, TCustomRowData, TFilters>,
 ) => ReactElement;
-
-// ConsoleDataView helper types
-
-/** Creates the checkbox column used with `ConsoleDataViewProps.selection`. */
-export type CreateSelectionColumn = <TData>() => ConsoleDataViewColumn<TData>;
-
-/** Creates a checkbox cell for a row in a `ConsoleDataView` with selection enabled. */
-export type CreateSelectionCell = (options: {
-  /** Index of the row. */
-  rowIndex: number;
-  /** Unique ID of the row item. */
-  itemId: string;
-  /** Whether the row item is selected. */
-  isSelected: boolean;
-  /** Called when the row's checkbox is selected or cleared. */
-  onSelect: (itemId: string, isSelecting: boolean) => void;
-  /** Whether the row's checkbox is disabled. */
-  disabled?: boolean;
-}) => Extract<DataViewTd, { cell: ReactNode }>;
 
 // Swagger types
 // Note: These types are duplicated from @console/internal/module/k8s/swagger

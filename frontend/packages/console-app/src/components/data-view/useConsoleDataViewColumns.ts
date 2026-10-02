@@ -150,9 +150,7 @@ export const useConsoleDataViewColumns = <TData, TCustomRowData>(
   const [resolvedExtensions] = useResolvedExtensions(isConsoleDataViewTableColumn);
   const matchingExtensions = useMemo(
     () =>
-      tableID
-        ? resolvedExtensions.filter(({ properties }) => properties.tableID === tableID)
-        : [],
+      tableID ? resolvedExtensions.filter(({ properties }) => properties.tableID === tableID) : [],
     [tableID, resolvedExtensions],
   );
   const translatedExtensions = useTranslatedExtensions(matchingExtensions);
@@ -176,14 +174,26 @@ export const useConsoleDataViewColumns = <TData, TCustomRowData>(
   });
 
   const managedLayout = useMemo<ColumnLayout | undefined>(() => {
-    if (!columnLayout || !ordered.extensionsByID.size) {
-      return columnLayout;
+    if (!columnLayout) return undefined;
+    const fixedColumnIDs = new Set(
+      ordered.columns
+        .filter(({ type }) => type === 'actions' || type === 'selection')
+        .map(({ id }) => id),
+    );
+    const configurableColumns = columnLayout.columns.filter(({ id }) => !fixedColumnIDs.has(id));
+    if (!ordered.extensionsByID.size) {
+      return configurableColumns.length === columnLayout.columns.length
+        ? columnLayout
+        : { ...columnLayout, columns: configurableColumns };
     }
-    const original = new Map(columnLayout.columns.map((column) => [column.id, column]));
+    const original = new Map(configurableColumns.map((column) => [column.id, column]));
     return {
       ...columnLayout,
       columns: ordered.columns
-        .filter(({ id }) => original.has(id) || ordered.extensionsByID.has(id))
+        .filter(
+          ({ id }) =>
+            !fixedColumnIDs.has(id) && (original.has(id) || ordered.extensionsByID.has(id)),
+        )
         .map(({ id, title, additional }) => original.get(id) ?? { id, title, additional }),
     };
   }, [columnLayout, ordered]);

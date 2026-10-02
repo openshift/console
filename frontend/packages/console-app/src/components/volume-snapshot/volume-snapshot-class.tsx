@@ -16,8 +16,7 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { ResourceLink } from '@console/internal/components/utils/resource-link';
 import { VolumeSnapshotClassModel } from '@console/internal/models';
 import type { VolumeSnapshotClassKind, Selector } from '@console/internal/module/k8s';
-import { referenceForModel, referenceFor } from '@console/internal/module/k8s';
-import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { LoadingBox } from '@console/shared/src/components/loading/LoadingBox';
 import { DASH } from '@console/shared/src/constants/ui';
 import { getAnnotations } from '@console/shared/src/selectors/common';
@@ -38,7 +37,6 @@ const getDataViewRowsCreator: (t: TFunction) => GetDataViewRows<VolumeSnapshotCl
     data.map(({ obj }) => {
       const name = obj.metadata?.name || '';
       const { deletionPolicy, driver } = obj;
-      const context = { [referenceFor(obj)]: obj };
 
       const rowCells = {
         [tableColumnInfo[0].id]: {
@@ -58,12 +56,10 @@ const getDataViewRowsCreator: (t: TFunction) => GetDataViewRows<VolumeSnapshotCl
         [tableColumnInfo[2].id]: {
           cell: deletionPolicy,
         },
-        [tableColumnInfo[3].id]: {
-          cell: <LazyActionMenu context={context} />,
-        },
       };
 
       return columns.map(({ id }) => {
+        if (id === tableColumnInfo[3].id) return { id };
         const cell = rowCells[id]?.cell || DASH;
         return {
           id,

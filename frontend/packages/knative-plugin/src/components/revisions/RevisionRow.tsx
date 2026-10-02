@@ -1,9 +1,7 @@
 import * as _ from 'lodash';
 import type { GetDataViewRows } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { ResourceLink } from '@console/internal/components/utils/resource-link';
-import { referenceFor } from '@console/internal/module/k8s/k8s';
 import { referenceForModel } from '@console/internal/module/k8s/k8s-ref';
-import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ClampedText } from '@console/shared/src/components/text/ClampedText';
 import { RevisionModel, ServiceModel } from '../../models';
@@ -20,8 +18,6 @@ export const getRevisionDataViewRows: GetDataViewRows<RevisionKind> = (data, col
       ? getCondition(obj.status.conditions, ConditionTypes.Ready)
       : null;
     const service = _.get(obj.metadata, `labels["serving.knative.dev/service"]`);
-    const objReference = referenceFor(obj);
-    const context = { [objReference]: obj };
     const rowCells = {
       name: {
         cell: (
@@ -53,7 +49,6 @@ export const getRevisionDataViewRows: GetDataViewRows<RevisionKind> = (data, col
           )) ||
           '-',
       },
-      actions: { cell: <LazyActionMenu context={context} /> },
     };
     return columns.map(({ id }) => ({ id, ...rowCells[id] }));
   });

@@ -2,7 +2,6 @@ import type { GetDataViewRows } from '@console/dynamic-plugin-sdk/src/extensions
 import { ResourceLink } from '@console/internal/components/utils/resource-link';
 import { referenceFor } from '@console/internal/module/k8s/k8s';
 import { referenceForModel } from '@console/internal/module/k8s/k8s-ref';
-import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { EventingBrokerModel } from '../../../models';
 import type { EventTriggerKind } from '../../../types';
@@ -16,7 +15,6 @@ export const getTriggerDataViewRows: GetDataViewRows<EventTriggerKind> = (data, 
       spec: { subscriber, filter, broker: connectedBroker },
     } = obj;
     const objReference = referenceFor(obj);
-    const context = { [objReference]: obj };
     const readyCondition = obj.status
       ? getCondition(obj.status.conditions, TriggerConditionTypes.Ready)
       : null;
@@ -51,7 +49,6 @@ export const getTriggerDataViewRows: GetDataViewRows<EventTriggerKind> = (data, 
         ),
       },
       created: { cell: <Timestamp timestamp={creationTimestamp} /> },
-      actions: { cell: <LazyActionMenu context={context} /> },
     };
     return columns.map(({ id }) => ({ id, ...rowCells[id] }));
   });

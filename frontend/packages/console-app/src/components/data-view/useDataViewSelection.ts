@@ -1,106 +1,70 @@
-import { useState, useCallback, useMemo, useEffect } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
-type UseDataViewSelectionOptions<T> = {
-  /** All data items */
-  data: T[];
-  /** Function to extract unique ID from an item */
-  getItemId: (item: T) => string;
-  /** Optional filter to exclude certain items from selection (e.g., filter out CSRs) */
-  filterSelectable?: (item: T) => boolean;
-};
-
-type UseDataViewSelectionResult<T> = {
-  /** Set of selected item IDs */
-  selectedIds: Set<string>;
-  /** Array of selected item objects */
-  selectedItems: T[];
-  /** Callback to select/deselect a single item */
-  onSelectItem: (itemId: string, isSelecting: boolean) => void;
-  /** Callback to select/deselect all filtered items */
-  onSelectAll: (isSelecting: boolean, filteredItems: T[]) => void;
-  /** Clear all selections */
-  clearSelection: () => void;
-};
-
-/**
- * Custom hook for managing selection state in DataView components.
- * Provides selection state, callbacks, and selected item objects.
- *
- * @example
- * ```typescript
- * const { selectedIds, selectedItems, onSelectItem, onSelectAll, clearSelection } =
- *   useDataViewSelection({
- *     data,
- *     getItemId: (node) => getUID(node),
- *     filterSelectable: (item) => !isCSRResource(item),
- *   });
- * ```
- */
+/** Selection state used by ConsoleDataView. */
 export const useDataViewSelection = <T>({
   data,
   getItemId,
-  filterSelectable,
-}: UseDataViewSelectionOptions<T>): UseDataViewSelectionResult<T> => {
-  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  isSelectable,
+}: {
+  data: T[];
+  getItemId?: (item: T) => string;
+  isSelectable?: (item: T) => boolean;
+}) => {
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set());
 
-  // Update selection to only include items that still exist in the current data
   useEffect(() => {
-    const selectableData = filterSelectable ? data.filter(filterSelectable) : data;
-    const currentValidIds = new Set(selectableData.map(getItemId));
-
-    setSelectedIds((prev) => {
-      const filtered = new Set<string>();
-      prev.forEach((id) => {
-        if (currentValidIds.has(id)) {
-          filtered.add(id);
-        }
-      });
-      // Only update if the selection actually changed
-      return filtered.size === prev.size ? prev : filtered;
+    const validIds = new Set(
+      getItemId ? data.filter((item) => !isSelectable || isSelectable(item)).map(getItemId) : [],
+    );
+    // Removed resources must not reappear selected if the same ID later returns.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setSelectedIds((current) => {
+      const next = new Set([...current].filter((id) => validIds.has(id)));
+      return next.size === current.size ? current : next;
     });
-  }, [data, getItemId, filterSelectable]);
+  }, [data, getItemId, isSelectable]);
 
   const onSelectItem = useCallback((itemId: string, isSelecting: boolean) => {
-    setSelectedIds((prev) => {
-      const newSet = new Set(prev);
+    setSelectedIds((current) => {
+      const next = new Set(current);
       if (isSelecting) {
-        newSet.add(itemId);
+        next.add(itemId);
       } else {
-        newSet.delete(itemId);
+        next.delete(itemId);
       }
-      return newSet;
+      return next;
     });
   }, []);
 
   const onSelectAll = useCallback(
-    (isSelecting: boolean, filteredItems: T[]) => {
-      if (isSelecting) {
-        const selectableItems = filterSelectable
-          ? filteredItems.filter(filterSelectable)
-          : filteredItems;
-        const itemIds = selectableItems.map(getItemId);
-        setSelectedIds(new Set(itemIds));
-      } else {
-        setSelectedIds(new Set());
-      }
+    (isSelecting: boolean, items: T[]) => {
+      if (!getItemId) return;
+      setSelectedIds((current) => {
+        const next = new Set(current);
+        items.forEach((item) => {
+          if (!isSelectable || isSelectable(item)) {
+            const id = getItemId(item);
+            if (isSelecting) {
+              next.add(id);
+            } else {
+              next.delete(id);
+            }
+          }
+        });
+        return next;
+      });
     },
-    [getItemId, filterSelectable],
+    [getItemId, isSelectable],
   );
 
-  const clearSelection = useCallback(() => {
-    setSelectedIds(new Set());
+  const clearSelection = useCallback(() => setSelectedIds(new Set()), []);
+  const deselect = useCallback((itemIds: string[]) => {
+    setSelectedIds((current) => {
+      const next = new Set(current);
+      itemIds.forEach((id) => next.delete(id));
+      return next;
+    });
   }, []);
 
-  const selectedItems = useMemo(() => {
-    const selectableData = filterSelectable ? data.filter(filterSelectable) : data;
-    return selectableData.filter((item) => selectedIds.has(getItemId(item)));
-  }, [data, selectedIds, getItemId, filterSelectable]);
-
-  return {
-    selectedIds,
-    selectedItems,
-    onSelectItem,
-    onSelectAll,
-    clearSelection,
-  };
+  return { selectedIds, onSelectItem, onSelectAll, clearSelection, deselect };
 };

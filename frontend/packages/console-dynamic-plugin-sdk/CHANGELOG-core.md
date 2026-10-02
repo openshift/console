@@ -15,6 +15,7 @@ table in [Console dynamic plugins README](./README.md).
 - Removed `immutable` dependency from the redux store and from the package ([CONSOLE-5001], [#17024])
 - Added `ConsoleDataView` component and `definitionFor` ([CONSOLE-5131], [#17307], [#17351])
 - Added `console.dataview/table-column` extension for contributing sortable, manageable columns to `ConsoleDataView` tables ([CONSOLE-5560], [#17351])
+- Added default resource kebab actions and optional `bulkProvider` to `console.action/resource-provider` for bulk actions ([CONSOLE-5560], [#17351])
 
 ## 4.23.0-prerelease.6 - TBD
 

@@ -11,7 +11,6 @@ import type { TableProps } from '@console/internal/components/factory/table';
 import { sortResourceByValue } from '@console/internal/components/factory/Table/sort';
 import { ResourceLink } from '@console/internal/components/utils/resource-link';
 import { referenceFor } from '@console/internal/module/k8s';
-import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { BuildRunModel } from '../../models';
 import type { BuildRun } from '../../types';
@@ -84,9 +83,6 @@ export const getBuildRunDataViewRows: GetDataViewRows<BuildRun> = (data, columns
       status: { cell: <BuildRunStatus buildRun={buildRun} /> },
       started: { cell: <Timestamp timestamp={buildRun.metadata?.creationTimestamp} /> },
       duration: { cell: <BuildRunDuration buildRun={buildRun} /> },
-      actions: {
-        cell: <LazyActionMenu context={{ [kindReference]: buildRun }} />,
-      },
     };
     return columns.map(({ id }) => ({ id, ...rowCells[id] }));
   });

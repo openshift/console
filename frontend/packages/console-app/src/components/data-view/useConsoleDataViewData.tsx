@@ -51,8 +51,9 @@ export const useConsoleDataViewData = <
   isResizable?: boolean;
   selection?: {
     selectedItems: Set<string>;
-    onSelectAll?: (isSelecting: boolean, filteredItems: TData[]) => void;
+    onSelectAll: (isSelecting: boolean, filteredItems: TData[]) => void;
     getItemId: (item: TData) => string;
+    isSelectable?: (item: TData) => boolean;
   };
 }) => {
   const { t } = useTranslation('console-app');
@@ -97,7 +98,9 @@ export const useConsoleDataViewData = <
 
   const dataViewColumns = useMemo<ConsoleDataViewColumn<TData>[]>(() => {
     // Calculate selection state across all filtered items
-    const totalCount = filteredData.length;
+    const totalCount = selection?.isSelectable
+      ? filteredData.filter(selection.isSelectable).length
+      : filteredData.length;
 
     return activeColumns.map(({ id, type, title, tooltip, sort, props, resizableProps }, index) => {
       // Filter out custom Console props that aren't valid PatternFly ThProps
@@ -130,7 +133,7 @@ export const useConsoleDataViewData = <
       // Add select-all checkbox to selection column header
       // Note: onSelect handler is updated later with visibleItems via dataViewColumnsWithSortApplied
       // The checkbox state is determined by visible items only, not all items
-      if (id === 'select' && selection?.onSelectAll) {
+      if (id === 'select' && selection) {
         headerProps['data-test'] = 'select-all-header';
         headerProps.select = {
           onSelect: (_event: FormEvent<HTMLInputElement>, isSelecting: boolean) => {
@@ -235,14 +238,18 @@ export const useConsoleDataViewData = <
           };
         }
 
-        if (column.id === 'select' && column.props.select && selection?.onSelectAll) {
-          const visibleSelectedCount = visibleItems.filter((item) =>
+        if (column.id === 'select' && column.props.select && selection) {
+          const selectableVisibleItems = selection.isSelectable
+            ? visibleItems.filter(selection.isSelectable)
+            : visibleItems;
+          const visibleSelectedCount = selectableVisibleItems.filter((item) =>
             selection.selectedItems.has(selection.getItemId(item)),
           ).length;
           const allVisibleSelected =
-            visibleItems.length > 0 && visibleSelectedCount === visibleItems.length;
+            selectableVisibleItems.length > 0 &&
+            visibleSelectedCount === selectableVisibleItems.length;
           const isIndeterminate =
-            visibleSelectedCount > 0 && visibleSelectedCount < visibleItems.length;
+            visibleSelectedCount > 0 && visibleSelectedCount < selectableVisibleItems.length;
 
           updatedProps = {
             ...updatedProps,
@@ -253,6 +260,7 @@ export const useConsoleDataViewData = <
               },
               isSelected: Boolean(allVisibleSelected),
               isIndeterminate,
+              isDisabled: selectableVisibleItems.length === 0,
             },
           };
         }

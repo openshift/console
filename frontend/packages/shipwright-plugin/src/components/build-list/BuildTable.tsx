@@ -12,7 +12,6 @@ import type { TableProps } from '@console/internal/components/factory/table';
 import { sortResourceByValue } from '@console/internal/components/factory/Table/sort';
 import { ResourceLink } from '@console/internal/components/utils/resource-link';
 import { referenceFor, referenceForModel } from '@console/internal/module/k8s';
-import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { BUILDRUN_TO_BUILD_REFERENCE_LABEL } from '../../const';
 import { BuildModel, BuildRunModel, BuildRunModelV1Alpha1 } from '../../models';
@@ -134,9 +133,6 @@ export const getBuildDataViewRows: GetDataViewRows<Build> = (data, columns) =>
       },
       lastRunDuration: {
         cell: build.latestBuild ? <BuildRunDuration buildRun={build.latestBuild} /> : '-',
-      },
-      actions: {
-        cell: <LazyActionMenu context={{ [kindReference]: build }} />,
       },
     };
     return columns.map(({ id }) => ({ id, ...rowCells[id] }));

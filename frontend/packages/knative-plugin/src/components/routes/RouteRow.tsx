@@ -2,9 +2,7 @@ import { Fragment } from 'react';
 import type { GetDataViewRows } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { ExternalLinkWithCopy } from '@console/internal/components/utils/link';
 import { ResourceLink } from '@console/internal/components/utils/resource-link';
-import { referenceFor } from '@console/internal/module/k8s/k8s';
 import { referenceForModel } from '@console/internal/module/k8s/k8s-ref';
-import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { RevisionModel, RouteModel } from '../../models';
 import type { RouteKind } from '../../types';
@@ -15,8 +13,6 @@ const revisionReference = referenceForModel(RevisionModel);
 
 export const getRouteDataViewRows: GetDataViewRows<RouteKind> = (data, columns) =>
   data.map(({ obj }) => {
-    const objReference = referenceFor(obj);
-    const context = { [objReference]: obj };
     const rowCells = {
       name: {
         cell: (
@@ -55,7 +51,6 @@ export const getRouteDataViewRows: GetDataViewRows<RouteKind> = (data, columns) 
               ))
             : '-',
       },
-      actions: { cell: <LazyActionMenu context={context} /> },
     };
     return columns.map(({ id }) => ({ id, ...rowCells[id] }));
   });

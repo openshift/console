@@ -10,7 +10,6 @@ import { ResourceLink } from '@console/internal/components/utils/resource-link';
 import { Selector } from '@console/internal/components/utils/selector';
 import { LoadingBox } from '@console/internal/components/utils/status-box';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { DASH } from '@console/shared/src/constants/ui';
 import { PodDisruptionBudgetModel } from '../../models';
@@ -32,7 +31,6 @@ const getDataViewRows: GetDataViewRows<PodDisruptionBudgetKind> = (data, columns
   data.map(({ obj: pdb }) => {
     const { name, namespace } = pdb.metadata;
     const resourceKind = referenceForModel(PodDisruptionBudgetModel);
-    const context = { [resourceKind]: pdb };
 
     const rowCells = {
       [tableColumnInfo[0].id]: {
@@ -53,12 +51,10 @@ const getDataViewRows: GetDataViewRows<PodDisruptionBudgetKind> = (data, columns
       [tableColumnInfo[5].id]: {
         cell: <Timestamp timestamp={pdb.metadata.creationTimestamp} />,
       },
-      [tableColumnInfo[6].id]: {
-        cell: <LazyActionMenu context={context} />,
-      },
     };
 
     return columns.map(({ id }) => {
+      if (id === tableColumnInfo[6].id) return { id };
       const cell = rowCells[id]?.cell || DASH;
       return {
         id,

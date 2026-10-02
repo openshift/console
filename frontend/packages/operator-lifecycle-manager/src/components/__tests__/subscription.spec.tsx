@@ -6,7 +6,6 @@ import type { ConsoleDataViewColumn } from '@console/dynamic-plugin-sdk/src/exte
 import { MultiListPage, DetailsPage } from '@console/internal/components/factory';
 import { ResourceLink } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import {
   testSubscription,
@@ -41,11 +40,6 @@ jest.mock('@console/internal/components/utils', () => ({
   ResourceLink: jest.fn(() => null),
 }));
 
-jest.mock('@console/shared/src/components/actions/LazyActionMenu', () => ({
-  ...jest.requireActual('@console/shared/src/components/actions/LazyActionMenu'),
-  LazyActionMenu: jest.fn(() => null),
-}));
-
 jest.mock('@console/internal/components/factory', () => ({
   ...jest.requireActual('@console/internal/components/factory'),
   MultiListPage: jest.fn(() => null),
@@ -67,7 +61,6 @@ jest.mock('@console/internal/components/conditions', () => ({
 }));
 
 const mockResourceLink = ResourceLink as jest.Mock;
-const mockLazyActionMenu = LazyActionMenu as jest.Mock;
 const mockConsoleDataView = ConsoleDataView as unknown as jest.Mock;
 const mockMultiListPage = MultiListPage as jest.Mock;
 const mockDetailsPage = DetailsPage as jest.Mock;
@@ -124,16 +117,6 @@ describe('getSubscriptionDataViewRows', () => {
       }),
       expect.anything(),
     );
-  });
-
-  it('renders action menu with subscription context', () => {
-    renderRow(subscription, ['actions']);
-
-    expect(mockLazyActionMenu).toHaveBeenCalledTimes(1);
-    const [actionMenuProps] = mockLazyActionMenu.mock.calls[0];
-    expect(actionMenuProps.context).toEqual({
-      [referenceForModel(SubscriptionModel)]: subscription,
-    });
   });
 
   it('renders channel and approval strategy text', () => {
