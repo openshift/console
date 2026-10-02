@@ -53,6 +53,7 @@ type OAuth2Authenticator struct {
 	clientID     string
 	clientSecret string
 	scopes       []string
+	authSource   AuthSource
 
 	loginMethod
 
@@ -303,6 +304,7 @@ func newUnstartedAuthenticator(c *completedConfig) *OAuth2Authenticator {
 		clientID:     c.ClientID,
 		clientSecret: c.ClientSecret,
 		scopes:       c.Scope,
+		authSource:   c.AuthSource,
 
 		redirectURL:          c.RedirectURL,
 		errorURL:             c.ErrorURL,
@@ -336,7 +338,22 @@ func (a *OAuth2Authenticator) LoginFunc(w http.ResponseWriter, r *http.Request) 
 		MaxAge:   300,
 	}
 	http.SetCookie(w, &cookie)
-	http.Redirect(w, r, a.oauth2ConfigForHost(r.Host).AuthCodeURL(state), http.StatusSeeOther)
+
+	// For external OIDC providers, request a refresh token so a session can be
+	// re-established without an interactive login — e.g. after the short-lived
+	// access token expires, after a pod restart, or when a request is
+	// load-balanced to another replica that has no in-memory session (the OIDC
+	// login path recovers a cross-pod session only from the refresh-token cookie;
+	// see pkg/auth/oauth2/auth_oidc.go getLoginState). access_type=offline asks
+	// the provider (e.g. Google, which does not honor the `offline_access` scope)
+	// to return a refresh token; prompt=consent forces it to re-issue one even for
+	// already-consented accounts. Not applied to the OpenShift OAuth source, whose
+	// tokens work differently.
+	authCodeOpts := []oauth2.AuthCodeOption{}
+	if a.authSource == AuthSourceOIDC {
+		authCodeOpts = append(authCodeOpts, oauth2.AccessTypeOffline, oauth2.ApprovalForce)
+	}
+	http.Redirect(w, r, a.oauth2ConfigForHost(r.Host).AuthCodeURL(state, authCodeOpts...), http.StatusSeeOther)
 }
 
 // LogoutFunc cleans up session cookies.
