@@ -6,6 +6,8 @@ import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useRe
 import type { YAMLTemplate } from '@console/dynamic-plugin-sdk/src/extensions/yaml-templates';
 import { isYAMLTemplate } from '@console/dynamic-plugin-sdk/src/extensions/yaml-templates';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { safeYAMLToJS } from '@console/shared/src/utils/yaml';
 import { connectToPlural } from '../kinds';
 import { getYAMLTemplates } from '../models/yaml-templates';
@@ -28,7 +30,11 @@ export const CreateYAMLInner: FC<CreateYAMLProps> = ({
   template,
 }) => {
   const { t } = useTranslation('public');
-  const namespace = params.ns || 'default';
+  const [activeNamespace] = useActiveNamespace();
+  const namespace =
+    activeNamespace && activeNamespace !== ALL_NAMESPACES_KEY
+      ? activeNamespace
+      : params.ns || 'default';
   const [templateExtensions, resolvedTemplates] = useResolvedExtensions<YAMLTemplate>(
     useCallback(
       (e): e is YAMLTemplate => isYAMLTemplate(e) && e.properties.model.kind === kindObj?.kind,
@@ -88,10 +94,9 @@ export const CreateYAMLInner: FC<CreateYAMLProps> = ({
         objLabel: kindObj.labelKey ? t(kindObj.labelKey) : kindObj.label,
       });
 
-  // TODO: if someone edits namespace, we'll redirect to old namespace
-
   return (
     <AsyncComponent
+      key={isCreate ? `${namespace}-${kindObj.kind}` : undefined}
       blame="CreateYaml"
       loader={() => import('./droppable-edit-yaml').then((c) => c.DroppableEditYAML)}
       initialResource={initialResource}

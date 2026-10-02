@@ -1,3 +1,4 @@
+import { ALL_NAMESPACES_KEY } from '@console/dynamic-plugin-sdk/src/constants';
 import * as UIActions from '../ui';
 
 describe('ui-actions', () => {
@@ -47,6 +48,21 @@ describe('ui-actions', () => {
       expect(UIActions.formatNamespaceRoute('bar', '/k8s/ns/foo/pods', location)).toEqual(
         '/k8s/ns/bar/pods',
       );
+    });
+
+    it('preserves ~new path when switching namespaces', () => {
+      expect(UIActions.formatNamespaceRoute('bar', '/k8s/ns/foo/deployments/~new')).toEqual(
+        '/k8s/ns/bar/deployments/~new',
+      );
+      expect(UIActions.formatNamespaceRoute('bar', '/k8s/ns/foo/deployments/~new/form')).toEqual(
+        '/k8s/ns/bar/deployments/~new/form',
+      );
+    });
+
+    it('redirects to list when switching to all-namespaces from ~new path', () => {
+      expect(
+        UIActions.formatNamespaceRoute(ALL_NAMESPACES_KEY, '/k8s/ns/foo/deployments/~new'),
+      ).toEqual('/k8s/all-namespaces/deployments');
     });
   });
 });
