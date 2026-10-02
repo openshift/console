@@ -699,6 +699,8 @@ export interface ConsoleDataViewProps<
     /** (optional) Returns table-specific bulk actions for `matchingSelectedItems`, the selected items matching the current filters. These are shown before contributed resource bulk actions. The menu is disabled when no items are selected and hidden if neither this callback nor a matching bulk provider supplies actions. */
     getBulkActions?: (selection: ConsoleDataViewSelectionActions<TData>) => Action[];
   };
+  /** (optional) Component to render when there is no data at all (before filtering). When provided and the `data` array is empty, this component is rendered instead of the table. */
+  NoDataEmptyMsg?: ComponentType<{}>;
 }
 
 /**
