@@ -70,6 +70,7 @@ import {
 } from '../models';
 import type { InstallPlanKind, OperatorGroupKind, Step } from '../types';
 import { InstallPlanApproval } from '../types';
+import { ClassicOperatorMigrationAlert } from './classic-operators/ClassicOperatorMigrationAlert';
 import { sortByOptionalPath } from './dataViewSortHelpers';
 import { LazyInstallPlanPreviewModalOverlay } from './modals';
 import { requireOperatorGroup } from './operator-group';
@@ -264,6 +265,7 @@ export const InstallPlansPage: FC<InstallPlansPageProps> = (props) => {
   return (
     <MultiListPage
       {...props}
+      helpAlert={<ClassicOperatorMigrationAlert />}
       namespace={namespace}
       resources={[
         {
@@ -566,6 +568,7 @@ export const InstallPlanDetailsPage: FC = (props) => {
   return (
     <DetailsPage
       {...props}
+      helpAlert={<ClassicOperatorMigrationAlert />}
       namespace={params.ns}
       kind={referenceForModel(InstallPlanModel)}
       name={params.name}

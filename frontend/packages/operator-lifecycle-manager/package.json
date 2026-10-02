@@ -33,6 +33,7 @@
       "useOperatorActions": "src/actions/useOperatorActions.ts",
       "defaultActionsProvider": "src/actions/providers/default-actions-provider.ts",
       "catalogSourceActionsProvider": "src/actions/providers/catalog-source-provider.ts",
+      "installedOperatorsRedirect": "src/components/installed-operators-redirect.tsx",
       "useOperatorCatalogCategories": "src/hooks/useOperatorCatalogCategories.ts",
       "useOperatorCatalogItems": "src/hooks/useOperatorCatalogItems.tsx",
       "utils": "src/components/dashboard/utils.ts",

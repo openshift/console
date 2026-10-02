@@ -10,21 +10,28 @@ import {
   ModalBody,
   ModalHeader,
 } from '@patternfly/react-core';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import type { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions';
-import { CatalogBadges } from '../CatalogBadges';
+import { CatalogBadges, CatalogHeaderBadges } from '../CatalogBadges';
 import { useCtaLink } from '../hooks/useCtaLink';
-import { getIconProps } from '../utils/catalog-utils';
+import { getIconProps, partitionBadgesByPlacement } from '../utils/catalog-utils';
+import type { CatalogType } from '../utils/types';
 import { CatalogDetailsPanel } from './CatalogDetailsPanel';
 import './CatalogDetailsModal.scss';
 
 type CatalogDetailsModalProps = {
   item: CatalogItem;
+  catalogTypes?: CatalogType[];
   onClose: () => void;
 };
 
-export const CatalogDetailsModal: FC<CatalogDetailsModalProps> = ({ item, onClose }) => {
+export const CatalogDetailsModal: FC<CatalogDetailsModalProps> = ({
+  item,
+  catalogTypes,
+  onClose,
+}) => {
   const { t } = useTranslation('console-shared');
   const [to, label] = useCtaLink(item?.cta);
 
@@ -32,7 +39,9 @@ export const CatalogDetailsModal: FC<CatalogDetailsModalProps> = ({ item, onClos
     return null;
   }
 
-  const { name, title, badges } = item;
+  const { name, title, type, typeLabel, badges } = item;
+  const catalogType = _.find(catalogTypes, ['value', type]);
+  const [headerBadges, footerBadges] = partitionBadgesByPlacement(badges);
 
   const provider = item.provider
     ? t('Provided by {{provider}}', { provider: item.provider })
@@ -41,12 +50,19 @@ export const CatalogDetailsModal: FC<CatalogDetailsModalProps> = ({ item, onClos
   const vendor = <div>{provider}</div>;
 
   const modalHeader = (
-    <CatalogItemHeader
-      className="co-catalog-page__overlay-header"
-      title={title || name}
-      vendor={vendor}
-      {...getIconProps(item)}
-    />
+    <Split>
+      <SplitItem isFilled>
+        <CatalogItemHeader
+          className="co-catalog-page__overlay-header"
+          title={title || name}
+          vendor={vendor}
+          {...getIconProps(item)}
+        />
+      </SplitItem>
+      <SplitItem>
+        <CatalogHeaderBadges typeLabel={typeLabel ?? catalogType?.label} badges={headerBadges} />
+      </SplitItem>
+    </Split>
   );
 
   return (
@@ -78,7 +94,7 @@ export const CatalogDetailsModal: FC<CatalogDetailsModalProps> = ({ item, onClos
               </SplitItem>
               <SplitItem isFilled />
               <SplitItem>
-                {badges?.length > 0 ? <CatalogBadges badges={badges} /> : undefined}
+                {footerBadges.length > 0 ? <CatalogBadges badges={footerBadges} /> : undefined}
               </SplitItem>
             </Split>
           </StackItem>

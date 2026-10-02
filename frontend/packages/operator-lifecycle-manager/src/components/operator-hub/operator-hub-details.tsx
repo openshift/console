@@ -15,6 +15,7 @@ import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { OperatorHubModel } from '../../models';
 import type { CatalogSourceListPageProps } from '../catalog-source';
 import { CatalogSourceListPage } from '../catalog-source';
+import { ClassicOperatorMigrationAlert } from '../classic-operators/ClassicOperatorMigrationAlert';
 import { LazyEditDefaultSourcesModalOverlay } from '../modals';
 import type { OperatorHubKind } from '.';
 
@@ -88,7 +89,7 @@ export const OperatorHubDetailsPage: FC<DetailsPageProps> = (props) => {
       component: Sources,
     },
   ];
-  return <DetailsPage {...props} pages={pages} />;
+  return <DetailsPage {...props} pages={pages} helpAlert={<ClassicOperatorMigrationAlert />} />;
 };
 
 type OperatorHubDetailsProps = {

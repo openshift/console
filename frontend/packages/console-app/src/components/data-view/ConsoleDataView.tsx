@@ -85,6 +85,7 @@ export const ConsoleDataView = <
   hideNameLabelFilters,
   hideLabelFilter,
   hideColumnManagement,
+  EmptyMsg,
   mock,
   isResizable,
   resetAllColumnWidths,
@@ -250,6 +251,7 @@ export const ConsoleDataView = <
       data={data}
       loaded={loaded}
       loadError={loadError}
+      EmptyMsg={EmptyMsg}
       skeleton={<div className="loading-skeleton--table" />}
     >
       <DataView

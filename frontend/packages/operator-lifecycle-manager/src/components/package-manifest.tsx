@@ -9,6 +9,7 @@ import {
   getNameColumnProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
+import { FLAG_TECH_PREVIEW } from '@console/app/src/consts';
 import type {
   ConsoleDataViewColumn,
   GetDataViewRows,
@@ -25,8 +26,11 @@ import { referenceForModel } from '@console/internal/module/k8s';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ConsoleEmptyState } from '@console/shared/src/components/empty-state/ConsoleEmptyState';
 import { OPERATOR_HUB_LABEL } from '@console/shared/src/constants/common';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
+import { CLASSIC_CATALOG_PATH } from '../const';
 import { PackageManifestModel, CatalogSourceModel } from '../models';
 import type { PackageManifestKind, CatalogSourceKind } from '../types';
+import { ClassicOperatorMigrationAlert } from './classic-operators/ClassicOperatorMigrationAlert';
 import { ClusterServiceVersionLogo } from './cluster-service-version-logo';
 import { sortByValue } from './dataViewSortHelpers';
 import { visibilityLabel, iconFor, defaultChannelFor } from './index';
@@ -178,16 +182,24 @@ const PackageManifestList: FC<PackageManifestListProps> = (props) => {
 };
 
 export const PackageManifestsPage: FC<PackageManifestsPageProps> = (props) => {
-  const { catalogSource } = props;
+  const { catalogSource, showMigrationAlert = true } = props;
   const { ns: namespace } = useParams();
+  const techPreview = useFlag(FLAG_TECH_PREVIEW);
 
   const flatten: Flatten = (resources) => _.get(resources.packageManifest, 'data', []);
 
-  const helpText = (
+  // Outside Tech Preview there is only one operator catalog, so it keeps its generic name.
+  const helpText = techPreview ? (
     <Trans ns="olm">
       Catalogs are groups of Operators you can make available on the cluster. Use the{' '}
-      <Link to="/catalog?catalogType=operator">Software Catalog</Link> to subscribe and grant
+      <Link to={CLASSIC_CATALOG_PATH}>Classic Operators catalog</Link> to subscribe and grant
       namespaces access to use installed Operators.
+    </Trans>
+  ) : (
+    <Trans ns="olm">
+      Catalogs are groups of Operators you can make available on the cluster. Use the{' '}
+      <Link to={CLASSIC_CATALOG_PATH}>Software Catalog</Link> to subscribe and grant namespaces
+      access to use installed Operators.
     </Trans>
   );
 
@@ -201,6 +213,7 @@ export const PackageManifestsPage: FC<PackageManifestsPageProps> = (props) => {
   return (
     <MultiListPage
       {...props}
+      helpAlert={showMigrationAlert ? <ClassicOperatorMigrationAlert /> : undefined}
       customData={customData}
       namespace={namespace}
       showTitle={false}
@@ -243,6 +256,8 @@ export const PackageManifestsPage: FC<PackageManifestsPageProps> = (props) => {
 export type PackageManifestsPageProps = {
   catalogSource: CatalogSourceKind;
   namespace?: string;
+  /** Off when nested in a page that already warns, such as the CatalogSource details tabs. */
+  showMigrationAlert?: boolean;
 };
 
 type PackageManifestListProps = {

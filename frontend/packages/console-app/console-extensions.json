@@ -1099,7 +1099,22 @@
       "startsWith": ["operators.coreos.com", "clusterserviceversions"]
     },
     "flags": {
-      "disallowed": ["OLMV1_ENABLED"]
+      "disallowed": ["TECH_PREVIEW"]
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "operators",
+      "section": "ecosystem",
+      "name": "%console-app~Installed Operators%",
+      "insertAfter": "developer-catalog",
+      "href": "/installed-operators",
+      "namespaced": true,
+      "startsWith": ["installed-operators", "installed-software"]
+    },
+    "flags": {
+      "required": ["INSTALLED_OPERATORS"]
     }
   },
   {
