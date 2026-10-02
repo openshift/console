@@ -307,6 +307,22 @@
     }
   },
   {
+    "type": "console.dataview/table-column",
+    "properties": {
+      "tableID": "console-demo-plugin~v1~Pod",
+      "columnData": {
+        "id": "console-demo-plugin-pixaa-pod",
+        "title": "%plugin__console-demo-plugin~PIXAA pod?%",
+        "tooltip": "%plugin__console-demo-plugin~A \"PIXAA pod\" has a lowercase name in the format [valid CSS color]-[animal].%",
+        "additional": false
+      },
+      "getCellContent": {
+        "$codeRef": "pixaaPodColumn.getPixaaPodCells"
+      },
+      "insertAfter": "name"
+    }
+  },
+  {
     "type": "console.navigation/href",
     "properties": {
       "id": "test-k8s-api",
