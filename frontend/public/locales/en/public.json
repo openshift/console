@@ -1729,6 +1729,8 @@
   "Versions": "Versions",
   "View alerts": "View alerts",
   "View all": "View all",
+  "View all {{count}} alerts_one": "View {{count}} alert",
+  "View all {{count}} alerts_other": "View all {{count}} alerts",
   "View all alerts": "View all alerts",
   "View all events": "View all events",
   "View all samples": "View all samples",
