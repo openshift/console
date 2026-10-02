@@ -20,6 +20,7 @@ import {
   PrometheusModel,
 } from '../models';
 import type { K8sModel } from '../module/k8s';
+import { referenceForExtensionModel } from '../module/k8s/k8s';
 import { referenceForGroupVersionKind, referenceForModel } from '../module/k8s/k8s-ref';
 import { pluginStore } from '../plugins';
 import type { RootState } from '../redux';
@@ -71,8 +72,7 @@ const getModelRef = (e: ModelFeatureFlag) => {
 // TODO: When migrating to @openshift/dynamic-plugin-sdk, use the type parameter from
 // pluginStore.getExtensions<...>() to avoid `as any` cast.
 (pluginStore.getExtensions().filter(isModelFeatureFlag) as any).forEach((ff) => {
-  // This is incorrect (for `ExtensionK8sModel` we should use `referenceForExtensionModel`).
-  addToCRDs(referenceForModel(ff.properties.model), ff.properties.flag);
+  addToCRDs(referenceForExtensionModel(ff.properties.model), ff.properties.flag);
 });
 
 export const featureReducerName = 'FLAGS';
