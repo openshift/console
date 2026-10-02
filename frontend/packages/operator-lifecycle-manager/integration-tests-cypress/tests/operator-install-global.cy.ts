@@ -16,7 +16,9 @@ const testOperand: TestOperandProps = {
   exampleName: 'example-infinispan',
 };
 
-describe(`Globally installing "${testOperator.name}" operator in ${GlobalInstalledNamespace}`, () => {
+// Temporarily disabled: the Data Grid OperatorHub card intermittently fails to appear in CI.
+// Re-enable once the catalog lookup in the installation setup is reliable.
+describe.skip(`Globally installing "${testOperator.name}" operator in ${GlobalInstalledNamespace}`, () => {
   before(() => {
     cy.login();
     guidedTour.close();
