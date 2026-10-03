@@ -1,16 +1,11 @@
 import type { FC } from 'react';
 import { useMemo, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  ConsoleDataView,
-  getNameCellProps,
-  actionsCellProps,
-  cellIsStickyProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import type {
   ConsoleDataViewColumn,
   GetDataViewRows,
-} from '@console/app/src/components/data-view/types';
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { DASH } from '@console/shared/src/constants/ui';
 import { PrometheusModel } from '../models';
@@ -48,7 +43,6 @@ const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) =>
             title={metadata.uid}
           />
         ),
-        props: getNameCellProps(metadata.name),
       },
       [tableColumnInfo[1].id]: {
         cell: (
@@ -72,16 +66,13 @@ const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) =>
       },
       [tableColumnInfo[5].id]: {
         cell: <LazyActionMenu context={context} />,
-        props: actionsCellProps,
       },
     };
 
     return columns.map(({ id }) => {
       const cell = rowCells[id]?.cell || DASH;
-      const props = rowCells[id]?.props || undefined;
       return {
         id,
-        props,
         cell,
       };
     });
@@ -92,13 +83,11 @@ const usePrometheusColumns = (): ConsoleDataViewColumn<K8sResourceKind>[] => {
   return useMemo(
     () => [
       {
+        type: 'name' as const,
         title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
-        props: {
-          ...cellIsStickyProps,
-          modifier: 'nowrap' as const,
-        },
+        props: { hasRightBorder: false, modifier: 'nowrap' as const },
       },
       {
         title: t('Namespace'),
@@ -135,11 +124,9 @@ const usePrometheusColumns = (): ConsoleDataViewColumn<K8sResourceKind>[] => {
         },
       },
       {
-        title: '',
+        type: 'actions' as const,
         id: tableColumnInfo[5].id,
-        props: {
-          ...cellIsStickyProps,
-        },
+        props: { hasLeftBorder: false },
       },
     ],
     [t],
@@ -154,12 +141,13 @@ const PrometheusInstancesList: FC<{ data: K8sResourceKind[]; loaded: boolean }> 
     <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<K8sResourceKind>
         {...props}
+        isResizable={false}
+        id={PrometheusModel}
         data={data}
         loaded={loaded}
         label={PrometheusModel.labelPlural}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement
       />
     </Suspense>
   );

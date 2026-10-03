@@ -9,20 +9,18 @@ import { getChannelDataViewRows } from './ChannelRow';
 
 export const ChannelList: FC<TableProps> = (props) => {
   const { t } = useTranslation('knative-plugin');
-  const { columns, resetAllColumnWidths } = useChannelColumns();
+  const { columns } = useChannelColumns();
   const dataViewFilters = useKnativeDataViewFilters<EventChannelKind>(props.rowFilters);
   return (
     <ConsoleDataView<EventChannelKind>
       {...props}
       {...dataViewFilters}
+      id="console.ui~v1~KnativeChannelsCombinedList"
       label={t('Channels')}
       data={props.data}
       loaded={props.loaded}
       columns={columns}
       getDataViewRows={getChannelDataViewRows}
-      hideColumnManagement
-      isResizable
-      resetAllColumnWidths={resetAllColumnWidths}
     />
   );
 };

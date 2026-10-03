@@ -18,13 +18,7 @@ import { Table as PfTable, Thead, Tbody, Tr, Th, Td } from '@patternfly/react-ta
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { useParams, Link } from 'react-router';
-import {
-  ConsoleDataView,
-  getNameCellProps,
-  actionsCellProps,
-  nameCellProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
-import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import AppliedClusterResourceQuotaCharts from '@console/app/src/components/resource-quota/AppliedClusterResourceQuotaCharts';
 import ClusterResourceQuotaCharts from '@console/app/src/components/resource-quota/ClusterResourceQuotaCharts';
 import ResourceQuotaCharts from '@console/app/src/components/resource-quota/ResourceQuotaCharts';
@@ -423,7 +417,6 @@ const getResourceQuotaDataViewRows = (data, columns, namespace) =>
             dataTest="resource-quota-link"
           />
         ),
-        props: getNameCellProps(metadata.name),
       },
       [resourceQuotaTableColumnInfo[1].id]: {
         cell: metadata.namespace ? (
@@ -451,7 +444,6 @@ const getResourceQuotaDataViewRows = (data, columns, namespace) =>
       },
       [resourceQuotaTableColumnInfo[6].id]: {
         cell: quotaActions(obj),
-        props: actionsCellProps,
       },
     };
 
@@ -492,7 +484,6 @@ const getAppliedClusterResourceQuotaDataViewRows = (data, columns, namespace) =>
             className="co-resource-item__resource-name"
           />
         ),
-        props: getNameCellProps(metadata.name),
       },
       [appliedClusterResourceQuotaTableColumnInfo[1].id]: {
         cell: (
@@ -526,17 +517,15 @@ const getAppliedClusterResourceQuotaDataViewRows = (data, columns, namespace) =>
 
 const useResourceQuotaColumns = () => {
   const { t } = useTranslation('public');
-  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(ResourceQuotaModel);
 
   const columns = useMemo(
     () => [
       {
+        type: 'name',
         title: t('Name'),
         id: resourceQuotaTableColumnInfo[0].id,
         sort: 'metadata.name',
-        resizableProps: getResizableProps(resourceQuotaTableColumnInfo[0].id),
         props: {
-          ...nameCellProps,
           modifier: 'nowrap',
         },
       },
@@ -544,7 +533,6 @@ const useResourceQuotaColumns = () => {
         title: t('Namespace'),
         id: resourceQuotaTableColumnInfo[1].id,
         sort: 'metadata.namespace',
-        resizableProps: getResizableProps(resourceQuotaTableColumnInfo[1].id),
         props: {
           modifier: 'nowrap',
         },
@@ -553,7 +541,6 @@ const useResourceQuotaColumns = () => {
         title: t('Label selector'),
         id: resourceQuotaTableColumnInfo[2].id,
         sort: 'spec.selector.labels.matchLabels',
-        resizableProps: getResizableProps(resourceQuotaTableColumnInfo[2].id),
         props: {
           modifier: 'nowrap',
         },
@@ -562,7 +549,6 @@ const useResourceQuotaColumns = () => {
         title: t('Project annotations'),
         id: resourceQuotaTableColumnInfo[3].id,
         sort: 'spec.selector.annotations',
-        resizableProps: getResizableProps(resourceQuotaTableColumnInfo[3].id),
         props: {
           modifier: 'nowrap',
         },
@@ -570,7 +556,6 @@ const useResourceQuotaColumns = () => {
       {
         title: t('Status'),
         id: resourceQuotaTableColumnInfo[4].id,
-        resizableProps: getResizableProps(resourceQuotaTableColumnInfo[4].id),
         props: {
           modifier: 'nowrap',
         },
@@ -579,32 +564,26 @@ const useResourceQuotaColumns = () => {
         title: t('Created'),
         id: resourceQuotaTableColumnInfo[5].id,
         sort: 'metadata.creationTimestamp',
-        resizableProps: getResizableProps(resourceQuotaTableColumnInfo[5].id),
         props: {
           modifier: 'nowrap',
         },
       },
-      {
-        title: '',
-        id: resourceQuotaTableColumnInfo[6].id,
-        props: {
-          ...actionsCellProps,
-        },
-      },
+      { type: 'actions', id: resourceQuotaTableColumnInfo[6].id },
     ],
-    [t, getResizableProps],
+    [t],
   );
 
-  return { columns, resetAllColumnWidths };
+  return { columns };
 };
 
 const ResourceQuotasList = (props) => {
   const { data, loaded, namespace } = props;
-  const { columns, resetAllColumnWidths } = useResourceQuotaColumns();
+  const { columns } = useResourceQuotaColumns();
 
   return (
     <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView
+        id={ResourceQuotaModel}
         data={data}
         loaded={loaded}
         label={ResourceQuotaModel.labelPlural}
@@ -612,9 +591,6 @@ const ResourceQuotasList = (props) => {
         getDataViewRows={(dvData, dvColumns) =>
           getResourceQuotaDataViewRows(dvData, dvColumns, namespace)
         }
-        hideColumnManagement
-        isResizable
-        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );
@@ -622,19 +598,15 @@ const ResourceQuotasList = (props) => {
 
 const useAppliedClusterResourceQuotaColumns = () => {
   const { t } = useTranslation('public');
-  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(
-    AppliedClusterResourceQuotaModel,
-  );
 
   const columns = useMemo(
     () => [
       {
+        type: 'name',
         title: t('Name'),
         id: appliedClusterResourceQuotaTableColumnInfo[0].id,
         sort: 'metadata.name',
-        resizableProps: getResizableProps(appliedClusterResourceQuotaTableColumnInfo[0].id),
         props: {
-          ...nameCellProps,
           modifier: 'nowrap',
         },
       },
@@ -642,7 +614,6 @@ const useAppliedClusterResourceQuotaColumns = () => {
         title: t('Label selector'),
         id: appliedClusterResourceQuotaTableColumnInfo[1].id,
         sort: 'spec.selector.labels.matchLabels',
-        resizableProps: getResizableProps(appliedClusterResourceQuotaTableColumnInfo[1].id),
         props: {
           modifier: 'nowrap',
         },
@@ -651,7 +622,6 @@ const useAppliedClusterResourceQuotaColumns = () => {
         title: t('Project annotations'),
         id: appliedClusterResourceQuotaTableColumnInfo[2].id,
         sort: 'spec.selector.annotations',
-        resizableProps: getResizableProps(appliedClusterResourceQuotaTableColumnInfo[2].id),
         props: {
           modifier: 'nowrap',
         },
@@ -659,7 +629,6 @@ const useAppliedClusterResourceQuotaColumns = () => {
       {
         title: t('Status'),
         id: appliedClusterResourceQuotaTableColumnInfo[3].id,
-        resizableProps: getResizableProps(appliedClusterResourceQuotaTableColumnInfo[3].id),
         props: {
           modifier: 'nowrap',
         },
@@ -668,26 +637,26 @@ const useAppliedClusterResourceQuotaColumns = () => {
         title: t('Created'),
         id: appliedClusterResourceQuotaTableColumnInfo[4].id,
         sort: 'metadata.creationTimestamp',
-        resizableProps: getResizableProps(appliedClusterResourceQuotaTableColumnInfo[4].id),
         props: {
           modifier: 'nowrap',
         },
       },
     ],
-    [t, getResizableProps],
+    [t],
   );
 
-  return { columns, resetAllColumnWidths };
+  return { columns };
 };
 
 const AppliedClusterResourceQuotasList = (props) => {
   const { data, loaded, namespace } = props;
-  const { columns, resetAllColumnWidths } = useAppliedClusterResourceQuotaColumns();
+  const { columns } = useAppliedClusterResourceQuotaColumns();
 
   return (
     <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView
         {...props}
+        id={AppliedClusterResourceQuotaModel}
         data={data}
         loaded={loaded}
         label={AppliedClusterResourceQuotaModel.labelPlural}
@@ -695,9 +664,6 @@ const AppliedClusterResourceQuotasList = (props) => {
         getDataViewRows={(dvData, dvColumns) =>
           getAppliedClusterResourceQuotaDataViewRows(dvData, dvColumns, namespace)
         }
-        hideColumnManagement
-        isResizable
-        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );

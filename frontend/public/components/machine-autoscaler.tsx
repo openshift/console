@@ -9,17 +9,11 @@ import {
 } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import {
-  actionsCellProps,
-  getNameCellProps,
-  ConsoleDataView,
-  nameCellProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import type {
   ConsoleDataViewColumn,
   GetDataViewRows,
-} from '@console/app/src/components/data-view/types';
-import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DASH } from '@console/shared/src/constants/ui';
@@ -67,7 +61,6 @@ const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) =>
     const rowCells = {
       [tableColumnInfo[0].id]: {
         cell: <ResourceLink kind={machineAutoscalerReference} name={name} namespace={namespace} />,
-        props: getNameCellProps(name),
       },
       [tableColumnInfo[1].id]: {
         cell: <ResourceLink kind="Namespace" name={namespace} />,
@@ -83,7 +76,6 @@ const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) =>
       },
       [tableColumnInfo[5].id]: {
         cell: <LazyActionMenu context={{ [machineAutoscalerReference]: obj }} />,
-        props: actionsCellProps,
       },
     };
 
@@ -91,7 +83,6 @@ const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) =>
       const cell = rowCells[id]?.cell || DASH;
       return {
         id,
-        props: rowCells[id]?.props,
         cell,
       };
     });
@@ -99,21 +90,17 @@ const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) =>
 
 const useMachineAutoscalerColumns = (): {
   columns: ConsoleDataViewColumn<K8sResourceKind>[];
-  resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation('public');
-  const { getResizableProps, resetAllColumnWidths } =
-    useColumnWidthSettings(MachineAutoscalerModel);
 
   const columns: ConsoleDataViewColumn<K8sResourceKind>[] = useMemo(
     () => [
       {
+        type: 'name' as const,
         title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
-        resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: {
-          ...nameCellProps,
           modifier: 'nowrap' as const,
         },
       },
@@ -121,7 +108,6 @@ const useMachineAutoscalerColumns = (): {
         title: t('Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',
-        resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
           modifier: 'nowrap' as const,
         },
@@ -130,7 +116,6 @@ const useMachineAutoscalerColumns = (): {
         title: t('Scale target'),
         id: tableColumnInfo[2].id,
         sort: 'spec.scaleTargetRef.name',
-        resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
           modifier: 'nowrap' as const,
         },
@@ -139,7 +124,6 @@ const useMachineAutoscalerColumns = (): {
         title: t('Min'),
         id: tableColumnInfo[3].id,
         sort: 'spec.minReplicas',
-        resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
           modifier: 'nowrap' as const,
         },
@@ -148,23 +132,16 @@ const useMachineAutoscalerColumns = (): {
         title: t('Max'),
         id: tableColumnInfo[4].id,
         sort: 'spec.maxReplicas',
-        resizableProps: getResizableProps(tableColumnInfo[4].id),
         props: {
           modifier: 'nowrap' as const,
         },
       },
-      {
-        title: '',
-        id: tableColumnInfo[5].id,
-        props: {
-          ...actionsCellProps,
-        },
-      },
+      { type: 'actions' as const, id: tableColumnInfo[5].id },
     ],
-    [t, getResizableProps],
+    [t],
   );
 
-  return { columns, resetAllColumnWidths };
+  return { columns };
 };
 
 const MachineAutoscalerList: FC<MachineAutoscalerListProps> = ({
@@ -173,21 +150,19 @@ const MachineAutoscalerList: FC<MachineAutoscalerListProps> = ({
   loadError,
   ...props
 }) => {
-  const { columns, resetAllColumnWidths } = useMachineAutoscalerColumns();
+  const { columns } = useMachineAutoscalerColumns();
 
   return (
     <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<K8sResourceKind>
         {...props}
+        id={MachineAutoscalerModel}
         label={MachineAutoscalerModel.labelPlural}
         data={data}
         loaded={loaded}
         loadError={loadError}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement
-        isResizable
-        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );

@@ -5,14 +5,7 @@ import i18next from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
-import {
-  ConsoleDataView,
-  actionsCellProps,
-  getNameCellProps,
-  getNameColumnProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
-import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-import type { K8sModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import type {
   ConsoleDataViewColumn,
   GetDataViewRows,
@@ -38,18 +31,6 @@ import { asAccessReview } from './utils/rbac';
 import { ResourceIcon } from './utils/resource-icon';
 import { EmptyBox } from './utils/status-box';
 import { VolumeType } from './utils/volume-type';
-
-/** Console-only model for column width preferences; not a cluster API resource. */
-const VolumeTableModel: K8sModel = {
-  apiGroup: 'console.ui',
-  apiVersion: 'v1',
-  kind: 'VolumeTable',
-  id: 'volumetable',
-  plural: 'volumetables',
-  label: 'Volume',
-  labelPlural: 'Volumes',
-  abbr: 'V',
-};
 
 const removeVolume = (
   removeVolumeModal: ModalCallback,
@@ -108,58 +89,51 @@ ContainerLink.displayName = 'ContainerLink';
 
 const useVolumeColumns = (): {
   columns: ConsoleDataViewColumn<RowVolumeData>[];
-  resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation('public');
-  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(VolumeTableModel);
   const columns = useMemo(
     () => [
       {
+        type: 'name' as const,
         id: 'name',
-        resizableProps: getResizableProps('name'),
         title: t('Name'),
         sort: 'name',
-        props: { ...getNameColumnProps(), modifier: 'nowrap' as const },
+        props: { modifier: 'nowrap' as const },
       },
       {
         id: 'mountPath',
-        resizableProps: getResizableProps('mountPath'),
         title: t('Mount path'),
         sort: 'mountPath',
         props: { modifier: 'nowrap' as const },
       },
       {
         id: 'subPath',
-        resizableProps: getResizableProps('subPath'),
         title: t('SubPath'),
         sort: 'subPath',
         props: { modifier: 'nowrap' as const },
       },
       {
         id: 'type',
-        resizableProps: getResizableProps('type'),
         title: t('Type'),
         props: { modifier: 'nowrap' as const },
       },
       {
         id: 'permissions',
-        resizableProps: getResizableProps('permissions'),
         title: t('Permissions'),
         sort: 'readOnly',
         props: { modifier: 'nowrap' as const },
       },
       {
         id: 'utilizedBy',
-        resizableProps: getResizableProps('utilizedBy'),
         title: t('Utilized by'),
         sort: 'container',
         props: { modifier: 'nowrap' as const },
       },
-      { id: 'actions', title: '', props: actionsCellProps },
+      { type: 'actions' as const, id: 'actions' },
     ],
-    [t, getResizableProps],
+    [t],
   );
-  return { columns, resetAllColumnWidths };
+  return { columns };
 };
 
 export const getVolumeDataViewRows: GetDataViewRows<RowVolumeData> = (data, columns) =>
@@ -174,7 +148,6 @@ export const getVolumeDataViewRows: GetDataViewRows<RowVolumeData> = (data, colu
       name: {
         cell: name,
         props: {
-          ...getNameCellProps(name),
           'data-test': `volume-name-${name}`,
           'data-test-volume-name-for': name,
         },
@@ -215,7 +188,6 @@ export const getVolumeDataViewRows: GetDataViewRows<RowVolumeData> = (data, colu
       },
       actions: {
         cell: <VolumeKebab kind={resource.kind} resource={resource} rowVolumeData={volume} />,
-        props: actionsCellProps,
       },
     };
     return columns.map(({ id }) => ({ id, ...rowCells[id] }));
@@ -225,7 +197,7 @@ const getObjectMetadata = (volume: RowVolumeData): ResourceMetadata => ({ name: 
 
 export const VolumesTable: FC<VolumesTableProps> = ({ resource, heading }) => {
   const { t } = useTranslation('public');
-  const { columns, resetAllColumnWidths } = useVolumeColumns();
+  const { columns } = useVolumeColumns();
   const data: RowVolumeData[] = getRowVolumeData(resource);
   const pod: PodTemplate = getPodTemplate(resource);
 
@@ -236,16 +208,14 @@ export const VolumesTable: FC<VolumesTableProps> = ({ resource, heading }) => {
         <EmptyBox label={t('Volumes')} />
       ) : (
         <ConsoleDataView<RowVolumeData>
+          id="console.ui~v1~VolumeTable"
           label={t('Volumes')}
           data={data}
           loaded
           columns={columns}
           getDataViewRows={getVolumeDataViewRows}
           getObjectMetadata={getObjectMetadata}
-          hideColumnManagement
           hideLabelFilter
-          isResizable
-          resetAllColumnWidths={resetAllColumnWidths}
         />
       )}
     </>

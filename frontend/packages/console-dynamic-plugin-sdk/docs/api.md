@@ -2,39 +2,11 @@
 
 | API kind | Exposed APIs |
 | -------- | ------------ |
-| Variable (90) | [actionsCellProps](#actionscellprops), [ActionServiceProvider](#actionserviceprovider), [BlueInfoCircleIcon](#blueinfocircleicon), [CamelCaseWrap](#camelcasewrap), [cellIsStickyProps](#cellisstickyprops), [checkAccess](#checkaccess), [CodeEditor](#codeeditor), [ConsoleDataView](#consoledataview), [consoleFetch](#consolefetch), [consoleFetchJSON](#consolefetchjson), [consoleFetchText](#consolefetchtext), [definitionFor](#definitionfor), [DocumentTitle](#documenttitle), [ErrorBoundaryFallbackPage](#errorboundaryfallbackpage), [ErrorStatus](#errorstatus), [GenericStatus](#genericstatus), [getAPIVersionForModel](#getapiversionformodel), [getGroupVersionKindForModel](#getgroupversionkindformodel), [getGroupVersionKindForResource](#getgroupversionkindforresource), [getNameCellProps](#getnamecellprops), [getNameColumnProps](#getnamecolumnprops), [GreenCheckCircleIcon](#greencheckcircleicon), [HorizontalNav](#horizontalnav), [InfoStatus](#infostatus), [initialFiltersDefault](#initialfiltersdefault), [InventoryItem](#inventoryitem), [InventoryItemBody](#inventoryitembody), [InventoryItemLoading](#inventoryitemloading), [InventoryItemStatus](#inventoryitemstatus), [InventoryItemTitle](#inventoryitemtitle), [isAllNamespacesKey](#isallnamespaceskey), [k8sCreate](#k8screate), [k8sDelete](#k8sdelete), [k8sGet](#k8sget), [k8sList](#k8slist), [k8sListItems](#k8slistitems), [k8sPatch](#k8spatch), [k8sUpdate](#k8supdate), [ListPageBody](#listpagebody), [ListPageCreate](#listpagecreate), [ListPageCreateButton](#listpagecreatebutton), [ListPageCreateDropdown](#listpagecreatedropdown), [ListPageCreateLink](#listpagecreatelink), [ListPageHeader](#listpageheader), [NamespaceBar](#namespacebar), [Overview](#overview), [OverviewGrid](#overviewgrid), [PopoverStatus](#popoverstatus), [ProgressStatus](#progressstatus), [QueryBrowser](#querybrowser), [RedExclamationCircleIcon](#redexclamationcircleicon), [ResourceEventStream](#resourceeventstream), [ResourceIcon](#resourceicon), [ResourceLink](#resourcelink), [ResourceStatus](#resourcestatus), [ResourceYAMLEditor](#resourceyamleditor), [StatusComponent](#statuscomponent), [StatusIconAndText](#statusiconandtext), [StatusPopupItem](#statuspopupitem), [StatusPopupSection](#statuspopupsection), [SuccessStatus](#successstatus), [TableData](#tabledata), [Timestamp](#timestamp), [useAccessReview](#useaccessreview), [useActiveColumns](#useactivecolumns), [useActiveNamespace](#useactivenamespace), [useActivePerspective](#useactiveperspective), [useAnnotationsModal](#useannotationsmodal), [useDeleteModal](#usedeletemodal), [useFlag](#useflag), [useK8sModel](#usek8smodel), [useK8sModels](#usek8smodels), [useK8sWatchResource](#usek8swatchresource), [useK8sWatchResources](#usek8swatchresources), [useLabelsModal](#uselabelsmodal), [useOverlay](#useoverlay), [usePrometheusPoll](#useprometheuspoll), [useQuickStartContext](#usequickstartcontext), [useResolvedExtensions](#useresolvedextensions), [useToast](#usetoast), [useUserPreference](#useuserpreference), [YellowExclamationTriangleIcon](#yellowexclamationtriangleicon), [ListPageFilter](#listpagefilter), [PerspectiveContext](#perspectivecontext), [useAccessReviewAllowed](#useaccessreviewallowed), [useListPageFilter](#uselistpagefilter), [useModal](#usemodal), [useUserSettings](#useusersettings), [VirtualizedTable](#virtualizedtable), [YAMLEditor](#yamleditor) |
+| Variable (85) | [ActionServiceProvider](#actionserviceprovider), [BlueInfoCircleIcon](#blueinfocircleicon), [CamelCaseWrap](#camelcasewrap), [checkAccess](#checkaccess), [CodeEditor](#codeeditor), [ConsoleDataView](#consoledataview), [consoleFetch](#consolefetch), [consoleFetchJSON](#consolefetchjson), [consoleFetchText](#consolefetchtext), [definitionFor](#definitionfor), [DocumentTitle](#documenttitle), [ErrorBoundaryFallbackPage](#errorboundaryfallbackpage), [ErrorStatus](#errorstatus), [GenericStatus](#genericstatus), [getAPIVersionForModel](#getapiversionformodel), [getGroupVersionKindForModel](#getgroupversionkindformodel), [getGroupVersionKindForResource](#getgroupversionkindforresource), [GreenCheckCircleIcon](#greencheckcircleicon), [HorizontalNav](#horizontalnav), [InfoStatus](#infostatus), [InventoryItem](#inventoryitem), [InventoryItemBody](#inventoryitembody), [InventoryItemLoading](#inventoryitemloading), [InventoryItemStatus](#inventoryitemstatus), [InventoryItemTitle](#inventoryitemtitle), [isAllNamespacesKey](#isallnamespaceskey), [k8sCreate](#k8screate), [k8sDelete](#k8sdelete), [k8sGet](#k8sget), [k8sList](#k8slist), [k8sListItems](#k8slistitems), [k8sPatch](#k8spatch), [k8sUpdate](#k8supdate), [ListPageBody](#listpagebody), [ListPageCreate](#listpagecreate), [ListPageCreateButton](#listpagecreatebutton), [ListPageCreateDropdown](#listpagecreatedropdown), [ListPageCreateLink](#listpagecreatelink), [ListPageHeader](#listpageheader), [NamespaceBar](#namespacebar), [Overview](#overview), [OverviewGrid](#overviewgrid), [PopoverStatus](#popoverstatus), [ProgressStatus](#progressstatus), [QueryBrowser](#querybrowser), [RedExclamationCircleIcon](#redexclamationcircleicon), [ResourceEventStream](#resourceeventstream), [ResourceIcon](#resourceicon), [ResourceLink](#resourcelink), [ResourceStatus](#resourcestatus), [ResourceYAMLEditor](#resourceyamleditor), [StatusComponent](#statuscomponent), [StatusIconAndText](#statusiconandtext), [StatusPopupItem](#statuspopupitem), [StatusPopupSection](#statuspopupsection), [SuccessStatus](#successstatus), [TableData](#tabledata), [Timestamp](#timestamp), [useAccessReview](#useaccessreview), [useActiveColumns](#useactivecolumns), [useActiveNamespace](#useactivenamespace), [useActivePerspective](#useactiveperspective), [useAnnotationsModal](#useannotationsmodal), [useDeleteModal](#usedeletemodal), [useFlag](#useflag), [useK8sModel](#usek8smodel), [useK8sModels](#usek8smodels), [useK8sWatchResource](#usek8swatchresource), [useK8sWatchResources](#usek8swatchresources), [useLabelsModal](#uselabelsmodal), [useOverlay](#useoverlay), [usePrometheusPoll](#useprometheuspoll), [useQuickStartContext](#usequickstartcontext), [useResolvedExtensions](#useresolvedextensions), [useToast](#usetoast), [useUserPreference](#useuserpreference), [YellowExclamationTriangleIcon](#yellowexclamationtriangleicon), [ListPageFilter](#listpagefilter), [PerspectiveContext](#perspectivecontext), [useAccessReviewAllowed](#useaccessreviewallowed), [useListPageFilter](#uselistpagefilter), [useModal](#usemodal), [useUserSettings](#useusersettings), [VirtualizedTable](#virtualizedtable), [YAMLEditor](#yamleditor) |
 | TypeAlias (27) | [Alert](#alert), [Alerts](#alerts), [ColoredIconProps](#colorediconprops), [DiscoveryResources](#discoveryresources), [ExtensionHook](#extensionhook), [ExtensionHookResult](#extensionhookresult), [ExtensionK8sGroupKindModel](#extensionk8sgroupkindmodel), [ExtensionK8sGroupModel](#extensionk8sgroupmodel), [ExtensionK8sKindVersionModel](#extensionk8skindversionmodel), [ExtensionK8sModel](#extensionk8smodel), [K8sModel](#k8smodel), [K8sVerb](#k8sverb), [MatchExpression](#matchexpression), [MatchLabels](#matchlabels), [ModalComponent](#modalcomponent), [OverlayComponent](#overlaycomponent), [PerspectiveContextType](#perspectivecontexttype), [PrometheusAlert](#prometheusalert), [PrometheusLabels](#prometheuslabels), [PrometheusRule](#prometheusrule), [PrometheusRulesResponse](#prometheusrulesresponse), [PrometheusValue](#prometheusvalue), [ResolvedExtension](#resolvedextension), [Rule](#rule), [Selector](#selector), [Silence](#silence), [K8sKind](#k8skind) |
 | Interface (0) |  |
 | Enum (6) | [AlertSeverity](#alertseverity), [AlertStates](#alertstates), [Operator](#operator), [PrometheusEndpoint](#prometheusendpoint), [RuleStates](#rulestates), [SilenceStates](#silencestates) |
 | Class (1) | [HttpError](#httperror) |
-
----
-
-## `actionsCellProps`
-
-### Summary 
-
-Props for a sticky actions ("kebab menu") cell, fixed at the trailing edge of a<br/>`ConsoleDataView` row. Spread onto the actions column's/cell's `props`.
-
-
-### Example
-
-```tsx
-{
-  id: 'actions',
-  cell: <LazyActionMenu context={context} />,
-  props: actionsCellProps,
-}
-```
-
-
-
-
-
-
-### Source
-
-[`frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts)
 
 ---
 
@@ -200,30 +172,6 @@ Documentation is not available, please refer to the implementation.
 
 ---
 
-## `cellIsStickyProps`
-
-### Summary 
-
-Props that mark a `ConsoleDataView` column header or cell as sticky, keeping it fixed at the<br/>edge of the table while the rest of the table scrolls horizontally. Used as, or spread into,<br/>a column's `props` or a row cell's `props`.
-
-
-### Example
-
-```tsx
-const columns = [{ id: 'name', title: t('Name'), props: cellIsStickyProps }];
-```
-
-
-
-
-
-
-### Source
-
-[`frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts)
-
----
-
 ## `checkAccess`
 
 ### Summary 
@@ -324,27 +272,43 @@ A table component for displaying, filtering, sorting, and paginating a list of r
 ### Example
 
 ```tsx
+const columns: ConsoleDataViewColumn<PodDisruptionBudgetKind>[] = [
+  { id: 'name', type: 'name', title: 'Name' },
+  { id: 'actions', type: 'actions' },
+];
+
 const getDataViewRows: GetDataViewRows<PodDisruptionBudgetKind> = (data, columns) =>
   data.map(({ obj: pdb }) => {
     const resourceKind = referenceForModel(PodDisruptionBudgetModel);
-    return columns.map(({ id }) => ({
-      id,
-      cell:
-        id === 'name' ? (
-          <ResourceLink kind={resourceKind} name={pdb.metadata.name} namespace={pdb.metadata.namespace} />
-        ) : (
-          DASH
-        ),
-    }));
+    return columns.map(({ id }) =>
+      id === 'actions'
+        ? { id }
+        : {
+            id,
+            cell: <ResourceLink kind={resourceKind} name={pdb.metadata.name} namespace={pdb.metadata.namespace} />,
+          },
+    );
   });
 
 const PDBList: React.FC<Props> = ({ data, loaded }) => (
   <ConsoleDataView<PodDisruptionBudgetKind>
+    id={PodDisruptionBudgetModel}
     label="PodDisruptionBudgets"
     data={data}
     loaded={loaded}
     columns={columns}
     getDataViewRows={getDataViewRows}
+    selection={{
+      getItemId: (pdb) => `${pdb.metadata.namespace}/${pdb.metadata.name}`,
+      getActions: ({ selectedItems, clearSelection }) => [
+        {
+          id: 'clear-selection',
+          label: 'Clear selection',
+          disabled: selectedItems.length === 0,
+          cta: clearSelection,
+        },
+      ],
+    }}
   />
 );
 ```
@@ -360,10 +324,10 @@ const PDBList: React.FC<Props> = ({ data, loaded }) => (
 | `loaded` | Flag indicating whether `data` has finished loading. |
 | `loadError` | (optional) An error encountered while loading `data`. |
 | `columns` | The column definitions for the table. |
-| `getDataViewRows` | Transforms the filtered, sorted, and paginated data into table rows. |
-| `columnLayout` | (optional) The persisted column layout, used for column management. |
-| `columnManagementID` | (optional) A unique id used to persist column management selections to and from user settings. |
-| `initialFilters` | (optional) Initial values for the built-in name and label filters. |
+| `getDataViewRows` | Transforms the filtered, sorted, and paginated data into table rows. An omitted `actions` cell uses the resource action providers for a Kubernetes resource row; `cell: null` leaves it empty. |
+| `columnLayout` | (optional) The persisted column layout. Supply this to show the column management action. Its ID is derived from `id`. |
+| `id` | A model, group/version/kind, or string ID used for column management, matching `console.dataview/table-column` extensions, and persisting resizable column widths. Models and GVKs resolve to `group~version~kind`. |
+| `initialFilters` | (optional) Initial values for any custom fields added via `TFilters`, and/or the built-in name and/or label filters. The name and label filters otherwise default to empty. |
 | `additionalFilterNodes` | (optional) Additional filter elements to render alongside the built-in name and label filters. |
 | `getObjectMetadata` | (optional) Extracts the name and labels used by the built-in filters from a data item. |
 | `matchesAdditionalFilters` | (optional) Determines whether a data item matches any custom filters. |
@@ -373,14 +337,12 @@ const PDBList: React.FC<Props> = ({ data, loaded }) => (
 | `showNamespaceOverride` | (optional) If true, a column with id `'namespace'` is kept active regardless of column management selections or the active namespace. |
 | `hideNameLabelFilters` | (optional) Hides both the name and label filters. |
 | `hideLabelFilter` | (optional) Hides only the label filter, keeping the name filter. |
-| `hideColumnManagement` | (optional) Hides the column management action in the toolbar. |
+| `EmptyMsg` | (optional) Rendered in place of the table when `data` is empty, letting a consumer explain what is missing and how to create the first resource. Defaults to a generic "No {{label}} found" message. Note that this does not apply when the data is non-empty but the active filters match nothing; that case always renders the built-in in-table empty message. |
 | `mock` | (optional) Renders an empty placeholder instead of the table. |
-| `isResizable` | (optional) Enables column resizing. |
-| `resetAllColumnWidths` | (optional) When provided and `isResizable` is true, a toolbar action is shown to reset all column widths. |
+| `isResizable` | (optional) Enables resizing and saved widths for columns with a title, and shows a reset action. Defaults to `true`. |
 | `additionalActions` | (optional) Additional actions to display in the toolbar, alongside the built-in column management and reset-column-widths actions. |
 | `customActions` | (optional) Custom actions to display in the toolbar outside of the responsive actions group. |
-| `selection` | (optional) Selection configuration for enabling row selection via checkboxes. `ConsoleDataView` does not add the checkbox column itself. It must be included in `columns`/rows separately, for example with `createSelectionColumn`/`createSelectionCell`. |
-| `actionsBreakpoint` | (optional) Breakpoint at which toolbar actions switch between horizontal and dropdown layout. Default is 'md'. |
+| `selection` | (optional) Enables managed checkbox selection with `getItemId`. `isSelectable` can disable rows. `getActions` receives selected items matching the current filters, plus `clearSelection` and `deselect` callbacks, and returns table-specific bulk actions as `Action[]`. Console also loads matching resource bulk providers for a single-model Kubernetes resource selection. Selection persists across pages and built-in filters and is removed when items leave `data`. |
 
 
 
@@ -870,72 +832,6 @@ The group, version, kind for the provided resource.<br/>If the resource does not
 
 ---
 
-## `getNameCellProps`
-
-### Summary 
-
-Returns name cell props with the appropriate sticky offset based on whether bulk select is<br/>enabled, including a `data-test` attribute derived from the resource name. Use this for row<br/>cell definitions returned from `getDataViewRows`.
-
-
-### Example
-
-```tsx
-{
-  id: 'name',
-  cell: <ResourceLink kind={resourceKind} name={name} namespace={namespace} />,
-  props: getNameCellProps(name),
-}
-```
-
-
-
-### Parameters
-
-| Parameter Name | Description |
-| -------------- | ----------- |
-| `name` | The resource name, used to build the `data-test` attribute. |
-| `withBulkSelect` | (optional) Whether the table has bulk selection enabled. |
-
-
-
-
-### Source
-
-[`frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts)
-
----
-
-## `getNameColumnProps`
-
-### Summary 
-
-Returns name column header props with the appropriate sticky offset based on whether bulk<br/>select is enabled. Use this for `ConsoleDataViewColumn` definitions; for row cells, use<br/>`getNameCellProps` instead.
-
-
-### Example
-
-```tsx
-const columns = [{ id: 'name', title: t('Name'), props: getNameColumnProps() }];
-```
-
-
-
-### Parameters
-
-| Parameter Name | Description |
-| -------------- | ----------- |
-| `hasRightBorder` | (optional) Whether to include a right border on the column. |
-| `withBulkSelect` | (optional) Whether the table has bulk selection enabled. |
-
-
-
-
-### Source
-
-[`frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts)
-
----
-
 ## `GreenCheckCircleIcon`
 
 ### Summary 
@@ -1077,30 +973,6 @@ Component for displaying an information status popover.
 ### Source
 
 [`frontend/packages/console-dynamic-plugin-sdk/src/app/components/status/statuses.tsx`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/app/components/status/statuses.tsx)
-
----
-
-## `initialFiltersDefault`
-
-### Summary 
-
-The default value of `ConsoleDataViewProps['initialFilters']`: empty name and label filters.
-
-
-### Example
-
-```ts
-const initialFilters = { ...initialFiltersDefault, status: 'Running' };
-```
-
-
-
-
-
-
-### Source
-
-[`frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts)
 
 ---
 

@@ -4,19 +4,12 @@ import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
 import type { DataViewFilterOption } from '@patternfly/react-data-view/dist/esm/DataViewFilters';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
-import {
-  actionsCellProps,
-  getNameCellProps,
-  initialFiltersDefault,
-  ConsoleDataView,
-  nameCellProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import type {
   ConsoleDataViewColumn,
   ResourceFilters,
   GetDataViewRows,
-} from '@console/app/src/components/data-view/types';
-import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import {
   ListPageBody,
   ListPageHeader,
@@ -40,8 +33,7 @@ import type {
   VolumeSnapshotKind,
   Selector,
 } from '@console/internal/module/k8s';
-import { referenceForModel, referenceFor } from '@console/internal/module/k8s';
-import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { LoadingBox } from '@console/shared/src/components/loading/LoadingBox';
 import { Status } from '@console/shared/src/components/status/Status';
@@ -82,12 +74,10 @@ const getDataViewRows: GetDataViewRows<VolumeSnapshotKind, VolumeSnapshotRowData
     const sourceName = snapshotSource(obj);
     const snapshotContent = obj.status?.boundVolumeSnapshotContentName;
     const snapshotClass = obj.spec?.volumeSnapshotClassName;
-    const context = { [referenceFor(obj)]: obj };
 
     const rowCells = {
       [tableColumnInfo[0].id]: {
         cell: <ResourceLink kind={kind} name={name} namespace={namespace} />,
-        props: getNameCellProps(name),
       },
       [tableColumnInfo[1].id]: {
         cell: <ResourceLink kind={NamespaceModel.kind} name={namespace} />,
@@ -128,20 +118,15 @@ const getDataViewRows: GetDataViewRows<VolumeSnapshotKind, VolumeSnapshotRowData
       [tableColumnInfo[7].id]: {
         cell: <Timestamp timestamp={creationTimestamp} />,
       },
-      [tableColumnInfo[8].id]: {
-        cell: <LazyActionMenu context={context} />,
-        props: actionsCellProps,
-      },
     };
 
     return columns
-      .filter(({ id }) => !rowCells[id].disabled)
+      .filter(({ id }) => !rowCells[id]?.disabled)
       .map(({ id }) => {
+        if (id === tableColumnInfo[8].id) return { id };
         const cell = rowCells[id]?.cell || DASH;
-        const props = rowCells[id]?.props || undefined;
         return {
           id,
-          props,
           cell,
         };
       });
@@ -149,25 +134,23 @@ const getDataViewRows: GetDataViewRows<VolumeSnapshotKind, VolumeSnapshotRowData
 
 const useVolumeSnapshotColumns = (
   rowData: VolumeSnapshotRowData,
-): { columns: ConsoleDataViewColumn<VolumeSnapshotKind>[]; resetAllColumnWidths: () => void } => {
+): { columns: ConsoleDataViewColumn<VolumeSnapshotKind>[] } => {
   const { t } = useTranslation('console-app');
-  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(VolumeSnapshotModel);
 
   const columns: ConsoleDataViewColumn<VolumeSnapshotKind>[] = useMemo(
     () =>
       [
         {
+          type: 'name' as const,
           title: t('Name'),
           sort: 'metadata.name',
           id: tableColumnInfo[0].id,
-          resizableProps: getResizableProps(tableColumnInfo[0].id),
-          props: { ...nameCellProps, modifier: 'nowrap' as const },
+          props: { modifier: 'nowrap' as const },
         },
         {
           title: t('Namespace'),
           sort: 'metadata.namespace',
           id: tableColumnInfo[1].id,
-          resizableProps: getResizableProps(tableColumnInfo[1].id),
           props: { modifier: 'nowrap' as const },
         },
         {
@@ -175,7 +158,6 @@ const useVolumeSnapshotColumns = (
           sort: (data, direction) =>
             data.sort(sortResourceByValue(direction, sorts.volumeSnapshotStatus)),
           id: tableColumnInfo[2].id,
-          resizableProps: getResizableProps(tableColumnInfo[2].id),
           props: { modifier: 'nowrap' as const },
         },
         {
@@ -183,7 +165,6 @@ const useVolumeSnapshotColumns = (
           sort: (data, direction) =>
             data.sort(sortResourceByValue(direction, sorts.volumeSnapshotSize)),
           id: tableColumnInfo[3].id,
-          resizableProps: getResizableProps(tableColumnInfo[3].id),
           props: { modifier: 'nowrap' as const },
         },
         {
@@ -191,14 +172,12 @@ const useVolumeSnapshotColumns = (
           sort: (data, direction) =>
             data.sort(sortResourceByValue(direction, sorts.volumeSnapshotSource)),
           id: tableColumnInfo[4].id,
-          resizableProps: getResizableProps(tableColumnInfo[4].id),
           props: { modifier: 'nowrap' as const },
         },
         {
           title: t('Snapshot content'),
           sort: 'status.boundVolumeSnapshotContentName',
           id: tableColumnInfo[5].id,
-          resizableProps: getResizableProps(tableColumnInfo[5].id),
           props: { modifier: 'nowrap' as const },
           disabled: rowData.hideSnapshotContentColumn,
         },
@@ -206,26 +185,20 @@ const useVolumeSnapshotColumns = (
           title: t('VolumeSnapshotClass'),
           sort: 'spec.volumeSnapshotClassName',
           id: tableColumnInfo[6].id,
-          resizableProps: getResizableProps(tableColumnInfo[6].id),
           props: { modifier: 'nowrap' as const },
         },
         {
           title: t('Created at'),
           sort: 'metadata.creationTimestamp',
           id: tableColumnInfo[7].id,
-          resizableProps: getResizableProps(tableColumnInfo[7].id),
           props: { modifier: 'nowrap' as const },
         },
-        {
-          title: '',
-          id: tableColumnInfo[8].id,
-          props: { ...actionsCellProps },
-        },
+        { type: 'actions' as const, id: tableColumnInfo[8].id },
       ].filter((c) => !c.disabled),
-    [t, rowData.hideSnapshotContentColumn, getResizableProps],
+    [t, rowData.hideSnapshotContentColumn],
   );
 
-  return { columns, resetAllColumnWidths };
+  return { columns };
 };
 
 const VolumeSnapshotTable: FC<VolumeSnapshotTableProps> = ({ data, loaded, ...props }) => {
@@ -236,7 +209,7 @@ const VolumeSnapshotTable: FC<VolumeSnapshotTableProps> = ({ data, loaded, ...pr
     hideSnapshotContentColumn: !canListVSC,
   };
 
-  const { columns, resetAllColumnWidths } = useVolumeSnapshotColumns(customRowData);
+  const { columns } = useVolumeSnapshotColumns(customRowData);
 
   const snapshotStatusFilterOptions = useMemo<DataViewFilterOption[]>(
     () => [
@@ -256,10 +229,7 @@ const VolumeSnapshotTable: FC<VolumeSnapshotTableProps> = ({ data, loaded, ...pr
     [t],
   );
 
-  const initialFilters = useMemo<VolumeSnapshotFilters>(
-    () => ({ ...initialFiltersDefault, status: [] }),
-    [],
-  );
+  const initialFilters = useMemo<VolumeSnapshotFilters>(() => ({ status: [] }), []);
 
   const additionalFilterNodes = useMemo<React.ReactNode[]>(
     () => [
@@ -293,6 +263,7 @@ const VolumeSnapshotTable: FC<VolumeSnapshotTableProps> = ({ data, loaded, ...pr
     <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<VolumeSnapshotKind>
         {...props}
+        id={VolumeSnapshotModel}
         label={VolumeSnapshotModel.labelPlural}
         data={data}
         loaded={loaded}
@@ -302,9 +273,6 @@ const VolumeSnapshotTable: FC<VolumeSnapshotTableProps> = ({ data, loaded, ...pr
         initialFilters={initialFilters}
         additionalFilterNodes={additionalFilterNodes}
         matchesAdditionalFilters={matchesAdditionalFilters}
-        hideColumnManagement
-        isResizable
-        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );

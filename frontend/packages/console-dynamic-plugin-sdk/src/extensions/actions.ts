@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import type { ExtensionHook, ExtensionK8sKindVersionModel } from '../api/common-types';
 import type { ActionContext } from '../api/internal-types';
 import type { Extension, CodeRef } from '../types';
-import type { AccessReviewResourceAttributes } from './console-types';
+import type { AccessReviewResourceAttributes, K8sResourceCommon } from './console-types';
 
 /** ActionProvider contributes a hook that returns list of actions for specific context */
 export type ActionProvider = Extension<
@@ -25,8 +25,25 @@ export type ResourceActionProvider = Extension<
     model: ExtensionK8sKindVersionModel;
     /** A react hook which returns actions for the given resource model */
     provider: CodeRef<ExtensionHook<Action[]>>;
+    /** (optional) Hook returning actions for a filtered selection of resources of this model. Only return actions that support bulk use, and check applicability and access for the full selection. It is not called for an empty or mixed-model selection. */
+    bulkProvider?: CodeRef<BulkResourceActionHook>;
   }
 >;
+
+/** Selection passed to a resource bulk action provider. IDs passed to `deselect` come from `getResourceId`. */
+export type BulkResourceActionContext = {
+  /** Selected resources matching the table's current filters. */
+  resources: K8sResourceCommon[];
+  /** Returns the ID used by the table to track a resource's selection. */
+  getResourceId: (resource: K8sResourceCommon) => string;
+  /** Clears every selection, including resources hidden by the current filters. */
+  clearSelection: () => void;
+  /** Deselects resources by their table selection IDs, for example after partial success. */
+  deselect: (resourceIds: string[]) => void;
+};
+
+/** Hook supplying the bulk-capable actions for a resource selection. */
+export type BulkResourceActionHook = ExtensionHook<Action[], BulkResourceActionContext>;
 
 /** ActionGroup contributes an action group that can also be a submenu */
 export type ActionGroup = Extension<

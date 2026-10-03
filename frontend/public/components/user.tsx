@@ -10,17 +10,11 @@ import {
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
-import {
-  ConsoleDataView,
-  getNameCellProps,
-  actionsCellProps,
-  nameCellProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import type {
   ConsoleDataViewColumn,
   GetDataViewRows,
-} from '@console/app/src/components/data-view/types';
-import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
@@ -50,7 +44,6 @@ const getDataViewRows: GetDataViewRows<UserKind> = (data, columns) =>
     const rowCells = {
       [tableColumnInfo[0].id]: {
         cell: <ResourceLink kind={referenceForModel(UserModel)} name={user.metadata.name} />,
-        props: getNameCellProps(user.metadata.name),
       },
       [tableColumnInfo[1].id]: {
         cell: user.fullName || DASH,
@@ -60,16 +53,13 @@ const getDataViewRows: GetDataViewRows<UserKind> = (data, columns) =>
       },
       [tableColumnInfo[3].id]: {
         cell: <LazyActionMenu context={{ [referenceForModel(UserModel)]: user }} />,
-        props: actionsCellProps,
       },
     };
 
     return columns.map(({ id }) => {
       const cell = rowCells[id]?.cell || DASH;
-      const props = rowCells[id]?.props || undefined;
       return {
         id,
-        props,
         cell,
       };
     });
@@ -127,20 +117,17 @@ const NoDataEmptyMsg = () => {
 
 const useUsersColumns = (): {
   columns: ConsoleDataViewColumn<UserKind>[];
-  resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation('public');
-  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(UserModel);
 
   const columns: ConsoleDataViewColumn<UserKind>[] = useMemo(
     () => [
       {
+        type: 'name' as const,
         title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
-        resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: {
-          ...nameCellProps,
           modifier: 'nowrap' as const,
         },
       },
@@ -148,7 +135,6 @@ const useUsersColumns = (): {
         title: t('Full name'),
         id: tableColumnInfo[1].id,
         sort: 'fullName',
-        resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
           modifier: 'nowrap' as const,
         },
@@ -157,28 +143,21 @@ const useUsersColumns = (): {
         title: t('Identities'),
         id: tableColumnInfo[2].id,
         sort: 'identities[0]',
-        resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
           modifier: 'nowrap' as const,
         },
       },
-      {
-        title: '',
-        id: tableColumnInfo[3].id,
-        props: {
-          ...actionsCellProps,
-        },
-      },
+      { type: 'actions' as const, id: tableColumnInfo[3].id },
     ],
-    [t, getResizableProps],
+    [t],
   );
 
-  return { columns, resetAllColumnWidths };
+  return { columns };
 };
 
 const UserList: FC<UserListProps> = (props) => {
   const { t } = useTranslation('public');
-  const { columns, resetAllColumnWidths } = useUsersColumns();
+  const { columns } = useUsersColumns();
   const { data, loaded } = props;
 
   // Show custom empty state when no users exist
@@ -190,14 +169,12 @@ const UserList: FC<UserListProps> = (props) => {
     <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<UserKind>
         {...props}
+        id={UserModel}
         data={data}
         loaded={loaded}
         label={t('Users')}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement
-        isResizable
-        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );

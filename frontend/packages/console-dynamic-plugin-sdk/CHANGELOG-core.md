@@ -13,8 +13,9 @@ table in [Console dynamic plugins README](./README.md).
 ## 5.1.0-prerelease.1 - TBD
 
 - Removed `immutable` dependency from the redux store and from the package ([CONSOLE-5001], [#17024])
-- Added `ConsoleDataView` component, related utilities for `ConsoleDataView`, and `definitionFor` ([CONSOLE-5131], [#17307])
-- Added optional `defaultSortColumnId` and `defaultSortDirection` props to `ConsoleDataView`, so a table can open sorted by a column other than the first ([CONSOLE-5131], [#17340])
+- Added `ConsoleDataView` component and `definitionFor` ([CONSOLE-5131], [#17307], [#17351])
+- Added `console.dataview/table-column` extension for contributing sortable, manageable columns to `ConsoleDataView` tables ([CONSOLE-5560], [#17351])
+- Added default resource kebab actions and optional `bulkProvider` to `console.action/resource-provider` for bulk actions ([CONSOLE-5560], [#17351])
 
 ## 4.23.0-prerelease.6 - TBD
 
@@ -267,6 +268,7 @@ table in [Console dynamic plugins README](./README.md).
 [CONSOLE-5415]: https://issues.redhat.com/browse/CONSOLE-5415
 [CONSOLE-5424]: https://issues.redhat.com/browse/CONSOLE-5424
 [CONSOLE-5438]: https://issues.redhat.com/browse/CONSOLE-5438
+[CONSOLE-5560]: https://issues.redhat.com/browse/CONSOLE-5560
 [OCPBUGS-19048]: https://issues.redhat.com/browse/OCPBUGS-19048
 [OCPBUGS-30077]: https://issues.redhat.com/browse/OCPBUGS-30077
 [OCPBUGS-31355]: https://issues.redhat.com/browse/OCPBUGS-31355
@@ -366,3 +368,4 @@ table in [Console dynamic plugins README](./README.md).
 [#17024]: https://github.com/openshift/console/pull/17024
 [#17307]: https://github.com/openshift/console/pull/17307
 [#17340]: https://github.com/openshift/console/pull/17340
+[#17351]: https://github.com/openshift/console/pull/17351

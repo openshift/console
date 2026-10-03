@@ -1,14 +1,8 @@
 import { Link } from 'react-router';
-import {
-  actionsCellProps,
-  getNameCellProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
 import type { GetDataViewRows } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { ResourceIcon } from '@console/internal/components/utils/resource-icon';
 import { ResourceLink } from '@console/internal/components/utils/resource-link';
-import { referenceFor } from '@console/internal/module/k8s/k8s';
 import { referenceForModel } from '@console/internal/module/k8s/k8s-ref';
-import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { ClampedText } from '@console/shared/src/components/text/ClampedText';
@@ -25,8 +19,6 @@ export const getFunctionDataViewRows: GetDataViewRows<ServiceKind> = (data, colu
     const readyCondition = obj.status
       ? getCondition(obj.status.conditions, ConditionTypes.Ready)
       : null;
-    const objReference = referenceFor(obj);
-    const context = { [objReference]: obj };
     const rowCells = {
       name: {
         cell: (
@@ -42,7 +34,6 @@ export const getFunctionDataViewRows: GetDataViewRows<ServiceKind> = (data, colu
             </Link>{' '}
           </>
         ),
-        props: getNameCellProps(obj.metadata.name),
       },
       namespace: { cell: <ResourceLink kind="Namespace" name={obj.metadata.namespace} /> },
       url: {
@@ -67,7 +58,6 @@ export const getFunctionDataViewRows: GetDataViewRows<ServiceKind> = (data, colu
       },
       revision: { cell: obj.metadata.generation || '-' },
       created: { cell: <Timestamp timestamp={obj.metadata.creationTimestamp} /> },
-      actions: { cell: <LazyActionMenu context={context} />, props: actionsCellProps },
     };
     return columns.map(({ id }) => ({ id, ...rowCells[id] }));
   });

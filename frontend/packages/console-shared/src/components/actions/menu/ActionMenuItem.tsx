@@ -27,7 +27,7 @@ const ActionItem: FC<ActionMenuItemProps & { isAllowed: boolean }> = ({
   component,
 }) => {
   const navigate = useNavigate();
-  const { label, icon, disabled, cta } = action;
+  const { label, description, icon, disabled, cta } = action;
   const { href, external } = cta as { href: string; external?: boolean };
   const isDisabled = !isAllowed || disabled;
   const classes = css({ 'pf-m-disabled': isDisabled });
@@ -61,6 +61,7 @@ const ActionItem: FC<ActionMenuItemProps & { isAllowed: boolean }> = ({
 
   const props = {
     icon,
+    description,
     autoFocus,
     isDisabled,
     className: classes,

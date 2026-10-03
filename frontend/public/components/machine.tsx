@@ -9,16 +9,10 @@ import {
   GridItem,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import {
-  actionsCellProps,
-  getNameCellProps,
-  ConsoleDataView,
-  nameCellProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
-import type { ConsoleDataViewColumn } from '@console/app/src/components/data-view/types';
-import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import NodeIPList from '@console/app/src/components/nodes/NodeIPList';
 import { ListPageBody } from '@console/dynamic-plugin-sdk';
+import type { ConsoleDataViewColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { Status } from '@console/shared/src/components/status/Status';
@@ -79,7 +73,6 @@ const getDataViewRows = (
     const rowCells = {
       [tableColumnInfo[0].id]: {
         cell: <ResourceLink kind={machineReference} name={name} namespace={namespace} />,
-        props: getNameCellProps(name),
       },
       [tableColumnInfo[1].id]: {
         cell: <ResourceLink kind="Namespace" name={namespace} />,
@@ -101,7 +94,6 @@ const getDataViewRows = (
       },
       [tableColumnInfo[7].id]: {
         cell: <LazyActionMenu context={{ [machineReference]: obj }} />,
-        props: actionsCellProps,
       },
     };
 
@@ -109,7 +101,6 @@ const getDataViewRows = (
       const cell = rowCells[id]?.cell || DASH;
       return {
         id,
-        props: rowCells[id]?.props,
         cell,
       };
     });
@@ -204,20 +195,17 @@ type MachineListProps = {
 
 const useMachineColumns = (): {
   columns: ConsoleDataViewColumn<MachineKind>[];
-  resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation('public');
-  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(MachineModel);
 
   const columns: ConsoleDataViewColumn<MachineKind>[] = useMemo(
     () => [
       {
+        type: 'name' as const,
         title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
-        resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: {
-          ...nameCellProps,
           modifier: 'nowrap' as const,
         },
       },
@@ -225,7 +213,6 @@ const useMachineColumns = (): {
         title: t('Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',
-        resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
           modifier: 'nowrap' as const,
         },
@@ -234,7 +221,6 @@ const useMachineColumns = (): {
         title: t('Node'),
         id: tableColumnInfo[2].id,
         sort: 'status.nodeRef.name',
-        resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
           modifier: 'nowrap' as const,
         },
@@ -243,7 +229,6 @@ const useMachineColumns = (): {
         title: t('Phase'),
         id: tableColumnInfo[3].id,
         sort: (data, direction) => data.sort(sortResourceByValue(direction, getMachinePhase)),
-        resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
           modifier: 'nowrap' as const,
         },
@@ -252,7 +237,6 @@ const useMachineColumns = (): {
         title: t('Provider state'),
         id: tableColumnInfo[4].id,
         sort: 'status.providerStatus.instanceState',
-        resizableProps: getResizableProps(tableColumnInfo[4].id),
         props: {
           modifier: 'nowrap' as const,
         },
@@ -261,7 +245,6 @@ const useMachineColumns = (): {
         title: t('Region'),
         id: tableColumnInfo[5].id,
         sort: "metadata.labels['machine.openshift.io/region']",
-        resizableProps: getResizableProps(tableColumnInfo[5].id),
         props: {
           modifier: 'nowrap' as const,
         },
@@ -270,41 +253,32 @@ const useMachineColumns = (): {
         title: t('Availability zone'),
         id: tableColumnInfo[6].id,
         sort: "metadata.labels['machine.openshift.io/zone']",
-        resizableProps: getResizableProps(tableColumnInfo[6].id),
         props: {
           modifier: 'nowrap' as const,
         },
       },
-      {
-        title: '',
-        id: tableColumnInfo[7].id,
-        props: {
-          ...actionsCellProps,
-        },
-      },
+      { type: 'actions' as const, id: tableColumnInfo[7].id },
     ],
-    [t, getResizableProps],
+    [t],
   );
 
-  return { columns, resetAllColumnWidths };
+  return { columns };
 };
 
 const MachineList: FC<MachineListProps> = ({ data, loaded, loadError, ...props }) => {
-  const { columns, resetAllColumnWidths } = useMachineColumns();
+  const { columns } = useMachineColumns();
 
   return (
     <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<MachineKind>
         {...props}
+        id={MachineModel}
         label={MachineModel.labelPlural}
         data={data}
         loaded={loaded}
         loadError={loadError}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement
-        isResizable
-        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );

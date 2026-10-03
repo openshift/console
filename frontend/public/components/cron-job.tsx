@@ -4,19 +4,13 @@ import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
 import type { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import {
-  actionsCellProps,
-  getNameCellProps,
-  ConsoleDataView,
-  nameCellProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
+import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
+import type { RowFilter } from '@console/dynamic-plugin-sdk';
 import type {
   ConsoleDataViewColumn,
   GetDataViewRows,
-} from '@console/app/src/components/data-view/types';
-import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
-import type { RowFilter } from '@console/dynamic-plugin-sdk';
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { ActionServiceProvider } from '@console/shared/src/components/actions/ActionServiceProvider';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
@@ -102,7 +96,6 @@ const getDataViewRows: GetDataViewRows<CronJobKind> = (data, columns) =>
             namespace={namespace}
           />
         ),
-        props: getNameCellProps(name),
       },
       [tableColumnInfo[1].id]: {
         cell: <ResourceLink kind="Namespace" name={namespace} />,
@@ -121,7 +114,6 @@ const getDataViewRows: GetDataViewRows<CronJobKind> = (data, columns) =>
       },
       [tableColumnInfo[6].id]: {
         cell: <LazyActionMenu context={context} />,
-        props: actionsCellProps,
       },
     };
 
@@ -129,7 +121,6 @@ const getDataViewRows: GetDataViewRows<CronJobKind> = (data, columns) =>
       const cell = rowCells[id]?.cell || DASH;
       return {
         id,
-        props: rowCells[id]?.props,
         cell,
       };
     });
@@ -315,20 +306,17 @@ const CronJobJobsComponent: FC<CronJobJobsComponentProps> = ({ obj }) => {
 
 const useCronJobsColumns = (): {
   columns: ConsoleDataViewColumn<CronJobKind>[];
-  resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation('public');
-  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(CronJobModel);
 
   const columns = useMemo<ConsoleDataViewColumn<CronJobKind>[]>(
     () => [
       {
+        type: 'name' as const,
         title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
-        resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: {
-          ...nameCellProps,
           modifier: 'nowrap' as const,
         },
       },
@@ -336,7 +324,6 @@ const useCronJobsColumns = (): {
         title: t('Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',
-        resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
           modifier: 'nowrap' as const,
         },
@@ -345,7 +332,6 @@ const useCronJobsColumns = (): {
         title: t('Schedule'),
         id: tableColumnInfo[2].id,
         sort: 'spec.schedule',
-        resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
           modifier: 'nowrap' as const,
         },
@@ -354,7 +340,6 @@ const useCronJobsColumns = (): {
         title: t('Suspend'),
         id: tableColumnInfo[3].id,
         sort: 'spec.suspend',
-        resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
           modifier: 'nowrap' as const,
         },
@@ -363,7 +348,6 @@ const useCronJobsColumns = (): {
         title: t('Concurrency policy'),
         id: tableColumnInfo[4].id,
         sort: 'spec.concurrencyPolicy',
-        resizableProps: getResizableProps(tableColumnInfo[4].id),
         props: {
           modifier: 'nowrap' as const,
         },
@@ -372,40 +356,31 @@ const useCronJobsColumns = (): {
         title: t('Starting deadline seconds'),
         id: tableColumnInfo[5].id,
         sort: 'spec.startingDeadlineSeconds',
-        resizableProps: getResizableProps(tableColumnInfo[5].id),
         props: {
           modifier: 'nowrap' as const,
         },
       },
-      {
-        title: '',
-        id: tableColumnInfo[6].id,
-        props: {
-          ...actionsCellProps,
-        },
-      },
+      { type: 'actions' as const, id: tableColumnInfo[6].id },
     ],
-    [t, getResizableProps],
+    [t],
   );
 
-  return { columns, resetAllColumnWidths };
+  return { columns };
 };
 
 const CronJobsList: FC<CronJobsListProps> = ({ data, loaded, ...props }) => {
-  const { columns, resetAllColumnWidths } = useCronJobsColumns();
+  const { columns } = useCronJobsColumns();
 
   return (
     <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<CronJobKind>
         {...props}
+        id={CronJobModel}
         label={CronJobModel.labelPlural}
         data={data}
         loaded={loaded}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement
-        isResizable
-        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );

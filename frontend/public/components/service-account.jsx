@@ -1,13 +1,7 @@
 import { useMemo, Suspense } from 'react';
 import { Grid, GridItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import {
-  ConsoleDataView,
-  getNameCellProps,
-  actionsCellProps,
-  nameCellProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
-import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
@@ -42,7 +36,6 @@ const getDataViewRows = (data, columns) =>
     const rowCells = {
       [tableColumnInfo[0].id]: {
         cell: <ResourceLink kind={kind} name={name} namespace={namespace} title={uid} />,
-        props: getNameCellProps(name),
       },
       [tableColumnInfo[1].id]: {
         cell: <ResourceLink kind="Namespace" name={namespace} title={namespace} />,
@@ -55,7 +48,6 @@ const getDataViewRows = (data, columns) =>
       },
       [tableColumnInfo[4].id]: {
         cell: <LazyActionMenu context={{ [serviceAccountReference]: obj }} />,
-        props: actionsCellProps,
       },
     };
 
@@ -95,17 +87,15 @@ const ServiceAccountsDetailsPage = (props) => (
 
 const useServiceAccountColumns = () => {
   const { t } = useTranslation('public');
-  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(ServiceAccountModel);
 
   const columns = useMemo(
     () => [
       {
+        type: 'name',
         title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
-        resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: {
-          ...nameCellProps,
           modifier: 'nowrap',
         },
       },
@@ -113,7 +103,6 @@ const useServiceAccountColumns = () => {
         title: t('Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',
-        resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
           modifier: 'nowrap',
         },
@@ -122,7 +111,6 @@ const useServiceAccountColumns = () => {
         title: t('Secrets'),
         id: tableColumnInfo[2].id,
         sort: 'secrets.length',
-        resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
           modifier: 'nowrap',
         },
@@ -131,42 +119,33 @@ const useServiceAccountColumns = () => {
         title: t('Created'),
         id: tableColumnInfo[3].id,
         sort: 'metadata.creationTimestamp',
-        resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
           modifier: 'nowrap',
         },
       },
-      {
-        title: '',
-        id: tableColumnInfo[4].id,
-        props: {
-          ...actionsCellProps,
-        },
-      },
+      { type: 'actions', id: tableColumnInfo[4].id },
     ],
-    [t, getResizableProps],
+    [t],
   );
 
-  return { columns, resetAllColumnWidths };
+  return { columns };
 };
 
 const ServiceAccountsList = (props) => {
   const { data, loaded } = props;
   const { t } = useTranslation('public');
-  const { columns, resetAllColumnWidths } = useServiceAccountColumns();
+  const { columns } = useServiceAccountColumns();
 
   return (
     <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView
         {...props}
+        id={ServiceAccountModel}
         data={data || []}
         loaded={loaded}
         label={t('ServiceAccounts')}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement
-        isResizable
-        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );

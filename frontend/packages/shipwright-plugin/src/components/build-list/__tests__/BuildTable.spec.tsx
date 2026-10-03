@@ -6,9 +6,6 @@ import { getBuildDataViewRows } from '../BuildTable';
 jest.mock('@console/internal/components/utils/resource-link', () => ({
   ResourceLink: jest.fn(({ name }) => name),
 }));
-jest.mock('@console/shared/src/components/actions/LazyActionMenu', () => ({
-  LazyActionMenu: jest.fn(() => 'Actions'),
-}));
 jest.mock('@console/shared/src/components/datetime/Timestamp', () => ({
   Timestamp: jest.fn(({ timestamp }) => timestamp),
 }));

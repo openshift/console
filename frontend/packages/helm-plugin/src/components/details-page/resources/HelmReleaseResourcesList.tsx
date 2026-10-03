@@ -16,12 +16,13 @@ const HelmReleaseResourcesList: FC<TableProps> = (props) => {
     <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<K8sResourceKind>
         {...props}
+        isResizable={false}
+        id="console.ui~v1~HelmReleaseResourcesList"
         data={props.data}
         loaded={props.loaded}
         label={t('Resources')}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement
         data-test="helm-resources-list"
       />
     </Suspense>

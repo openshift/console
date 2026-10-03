@@ -17,14 +17,9 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import {
-  actionsCellProps,
-  nameCellProps,
-  getNameCellProps,
-  initialFiltersDefault,
   ConsoleDataView,
   getLabelsColumnWidthStyleProp,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import * as k8sActions from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
@@ -214,18 +209,15 @@ const namespaceColumnInfo = [
 
 const useNamespacesColumns = () => {
   const { t } = useTranslation('public');
-  const { getResizableProps, getWidth, resetAllColumnWidths } =
-    useColumnWidthSettings(NamespaceModel);
 
   const columns = useMemo(
     () => [
       {
+        type: 'name',
         title: t('Name'),
         id: namespaceColumnInfo[0].id,
         sort: 'metadata.name',
-        resizableProps: getResizableProps(namespaceColumnInfo[0].id),
         props: {
-          ...nameCellProps,
           modifier: 'nowrap',
         },
       },
@@ -233,7 +225,6 @@ const useNamespacesColumns = () => {
         title: t('Display name'),
         id: namespaceColumnInfo[1].id,
         sort: 'metadata.annotations["openshift.io/display-name"]',
-        resizableProps: getResizableProps(namespaceColumnInfo[1].id),
         props: {
           modifier: 'nowrap',
         },
@@ -242,7 +233,6 @@ const useNamespacesColumns = () => {
         title: t('Status'),
         id: namespaceColumnInfo[2].id,
         sort: 'status.phase',
-        resizableProps: getResizableProps(namespaceColumnInfo[2].id),
         props: {
           modifier: 'nowrap',
         },
@@ -251,7 +241,6 @@ const useNamespacesColumns = () => {
         title: t('Requester'),
         id: namespaceColumnInfo[3].id,
         sort: "metadata.annotations.['openshift.io/requester']",
-        resizableProps: getResizableProps(namespaceColumnInfo[3].id),
         props: {
           modifier: 'nowrap',
         },
@@ -260,7 +249,6 @@ const useNamespacesColumns = () => {
         title: t('Memory'),
         id: namespaceColumnInfo[4].id,
         sort: (data, direction) => data.sort(sortResourceByValue(direction, sorts.namespaceMemory)),
-        resizableProps: getResizableProps(namespaceColumnInfo[4].id),
         props: {
           modifier: 'nowrap',
         },
@@ -269,7 +257,6 @@ const useNamespacesColumns = () => {
         title: t('CPU'),
         id: namespaceColumnInfo[5].id,
         sort: (data, direction) => data.sort(sortResourceByValue(direction, sorts.namespaceCPU)),
-        resizableProps: getResizableProps(namespaceColumnInfo[5].id),
         props: {
           modifier: 'nowrap',
         },
@@ -278,7 +265,6 @@ const useNamespacesColumns = () => {
         title: t('Created'),
         id: namespaceColumnInfo[6].id,
         sort: 'metadata.creationTimestamp',
-        resizableProps: getResizableProps(namespaceColumnInfo[6].id),
         props: {
           modifier: 'nowrap',
         },
@@ -287,7 +273,6 @@ const useNamespacesColumns = () => {
         title: t('Description'),
         id: namespaceColumnInfo[7].id,
         sort: "metadata.annotations.['openshift.io/description']",
-        resizableProps: getResizableProps(namespaceColumnInfo[7].id),
         props: {
           modifier: 'nowrap',
         },
@@ -297,25 +282,18 @@ const useNamespacesColumns = () => {
         title: t('Labels'),
         id: namespaceColumnInfo[8].id,
         sort: 'metadata.labels',
-        resizableProps: getResizableProps(namespaceColumnInfo[8].id),
         props: {
           modifier: 'nowrap',
-          ...getLabelsColumnWidthStyleProp(getWidth(namespaceColumnInfo[8].id)),
+          ...getLabelsColumnWidthStyleProp(),
         },
         additional: true,
       },
-      {
-        title: '',
-        id: namespaceColumnInfo[9].id,
-        props: {
-          ...actionsCellProps,
-        },
-      },
+      { type: 'actions', id: namespaceColumnInfo[9].id },
     ],
-    [t, getResizableProps, getWidth],
+    [t],
   );
 
-  return { columns, resetAllColumnWidths };
+  return { columns };
 };
 
 const NamespacesColumnManagementID = referenceForModel(NamespaceModel);
@@ -338,7 +316,6 @@ const getNamespaceDataViewRows = (rowData, tableColumns, namespaceMetrics, t) =>
             namespace={ns.metadata.namespace}
           />
         ),
-        props: getNameCellProps(name),
       },
       [namespaceColumnInfo[1].id]: {
         cell: (
@@ -378,7 +355,6 @@ const getNamespaceDataViewRows = (rowData, tableColumns, namespaceMetrics, t) =>
       },
       [namespaceColumnInfo[9].id]: {
         cell: <LazyActionMenu context={{ [referenceForModel(NamespaceModel)]: ns }} />,
-        props: actionsCellProps,
       },
     };
 
@@ -392,10 +368,12 @@ const getNamespaceDataViewRows = (rowData, tableColumns, namespaceMetrics, t) =>
     });
   });
 
+const initialFilters = { requester: [] };
+
 const NamespacesList = (props) => {
   const { t } = useTranslation('public');
   const dispatch = useConsoleDispatch();
-  const { columns, resetAllColumnWidths } = useNamespacesColumns();
+  const { columns } = useNamespacesColumns();
   const [selectedColumns, , columnPreferenceLoaded] = useUserPreference(
     COLUMN_MANAGEMENT_USER_PREFERENCE_KEY,
     undefined,
@@ -438,8 +416,6 @@ const NamespacesList = (props) => {
     [t],
   );
 
-  const initialFilters = useMemo(() => ({ ...initialFiltersDefault, requester: [] }), []);
-
   const additionalFilterNodes = useMemo(
     () => [
       <DataViewCheckboxFilter
@@ -481,15 +457,13 @@ const NamespacesList = (props) => {
         label={NamespaceModel.labelPlural}
         columns={columns}
         columnLayout={columnLayout}
-        columnManagementID={NamespacesColumnManagementID}
+        id={NamespacesColumnManagementID}
         initialFilters={initialFilters}
         additionalFilterNodes={additionalFilterNodes}
         matchesAdditionalFilters={matchesAdditionalFilters}
         getDataViewRows={(rowData, tableColumns) =>
           getNamespaceDataViewRows(rowData, tableColumns, namespaceMetrics, t)
         }
-        isResizable
-        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );
@@ -516,18 +490,15 @@ const projectColumnInfo = namespaceColumnInfo;
 
 const useProjectsColumns = ({ showMetrics, showActions }) => {
   const { t } = useTranslation('public');
-  const { getResizableProps, getWidth, resetAllColumnWidths } =
-    useColumnWidthSettings(ProjectModel);
 
   const columns = useMemo(() => {
     const cols = [
       {
+        type: 'name',
         title: t('Name'),
         id: projectColumnInfo[0].id,
         sort: 'metadata.name',
-        resizableProps: getResizableProps(projectColumnInfo[0].id),
         props: {
-          ...nameCellProps,
           modifier: 'nowrap',
         },
       },
@@ -535,7 +506,6 @@ const useProjectsColumns = ({ showMetrics, showActions }) => {
         title: t('Display name'),
         id: projectColumnInfo[1].id,
         sort: 'metadata.annotations["openshift.io/display-name"]',
-        resizableProps: getResizableProps(projectColumnInfo[1].id),
         props: {
           modifier: 'nowrap',
         },
@@ -544,7 +514,6 @@ const useProjectsColumns = ({ showMetrics, showActions }) => {
         title: t('Status'),
         id: projectColumnInfo[2].id,
         sort: 'status.phase',
-        resizableProps: getResizableProps(projectColumnInfo[2].id),
         props: {
           modifier: 'nowrap',
         },
@@ -553,7 +522,6 @@ const useProjectsColumns = ({ showMetrics, showActions }) => {
         title: t('Requester'),
         id: projectColumnInfo[3].id,
         sort: "metadata.annotations.['openshift.io/requester']",
-        resizableProps: getResizableProps(projectColumnInfo[3].id),
         props: {
           modifier: 'nowrap',
         },
@@ -567,7 +535,6 @@ const useProjectsColumns = ({ showMetrics, showActions }) => {
           id: projectColumnInfo[4].id,
           sort: (data, direction) =>
             data.sort(sortResourceByValue(direction, sorts.namespaceMemory)),
-          resizableProps: getResizableProps(projectColumnInfo[4].id),
           props: {
             modifier: 'nowrap',
           },
@@ -576,7 +543,6 @@ const useProjectsColumns = ({ showMetrics, showActions }) => {
           title: t('CPU'),
           id: projectColumnInfo[5].id,
           sort: (data, direction) => data.sort(sortResourceByValue(direction, sorts.namespaceCPU)),
-          resizableProps: getResizableProps(projectColumnInfo[5].id),
           props: {
             modifier: 'nowrap',
           },
@@ -589,7 +555,6 @@ const useProjectsColumns = ({ showMetrics, showActions }) => {
         title: t('Created'),
         id: projectColumnInfo[6].id,
         sort: 'metadata.creationTimestamp',
-        resizableProps: getResizableProps(projectColumnInfo[6].id),
         props: {
           modifier: 'nowrap',
         },
@@ -598,7 +563,6 @@ const useProjectsColumns = ({ showMetrics, showActions }) => {
         title: t('Description'),
         id: projectColumnInfo[7].id,
         sort: "metadata.annotations.['openshift.io/description']",
-        resizableProps: getResizableProps(projectColumnInfo[7].id),
         props: {
           modifier: 'nowrap',
         },
@@ -608,29 +572,22 @@ const useProjectsColumns = ({ showMetrics, showActions }) => {
         title: t('Labels'),
         id: projectColumnInfo[8].id,
         sort: 'metadata.labels',
-        resizableProps: getResizableProps(projectColumnInfo[8].id),
         props: {
           modifier: 'nowrap',
-          ...getLabelsColumnWidthStyleProp(getWidth(projectColumnInfo[8].id)),
+          ...getLabelsColumnWidthStyleProp(),
         },
         additional: true,
       },
     );
 
     if (showActions) {
-      cols.push({
-        title: '',
-        id: projectColumnInfo[9].id,
-        props: {
-          ...actionsCellProps,
-        },
-      });
+      cols.push({ type: 'actions', id: projectColumnInfo[9].id });
     }
 
     return cols;
-  }, [t, showMetrics, showActions, getResizableProps, getWidth]);
+  }, [t, showMetrics, showActions]);
 
-  return { columns, resetAllColumnWidths };
+  return { columns };
 };
 
 const getProjectDataViewRows = (
@@ -658,7 +615,6 @@ const getProjectDataViewRows = (
             <ResourceLink kind="Project" name={project.metadata.name} />
           </span>
         ),
-        props: getNameCellProps(name),
       },
       [projectColumnInfo[1].id]: {
         cell: (
@@ -702,7 +658,6 @@ const getProjectDataViewRows = (
       },
       [projectColumnInfo[9].id]: {
         cell: <LazyActionMenu context={{ [referenceForModel(ProjectModel)]: project }} />,
-        props: actionsCellProps,
       },
     };
 
@@ -759,12 +714,13 @@ export const ProjectsTable = (props) => {
     <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView
         {...props}
+        isResizable={false}
+        id={`${projectColumnManagementID}-compact`}
         label={ProjectModel.labelPlural}
         columns={columns}
         getDataViewRows={(rowData, tableColumns) =>
           getProjectDataViewRows(rowData, tableColumns, null, false, ProjectLink, t)
         }
-        hideColumnManagement
       />
     </Suspense>
   );
@@ -782,7 +738,7 @@ const ProjectList = (props) => {
   const isPrometheusAvailable = usePrometheusGate();
   const showMetrics = isPrometheusAvailable;
   const showActions = true;
-  const { columns, resetAllColumnWidths } = useProjectsColumns({ showMetrics, showActions });
+  const { columns } = useProjectsColumns({ showMetrics, showActions });
   const namespaceMetrics = useConsoleSelector(({ UI }) => UI.metrics?.namespace);
 
   const namespaces = useMemo(
@@ -848,8 +804,6 @@ const ProjectList = (props) => {
     [t],
   );
 
-  const initialFilters = useMemo(() => ({ ...initialFiltersDefault, requester: [] }), []);
-
   const additionalFilterNodes = useMemo(
     () => [
       <DataViewCheckboxFilter
@@ -893,7 +847,7 @@ const ProjectList = (props) => {
         label={ProjectModel.labelPlural}
         columns={columns}
         columnLayout={columnLayout}
-        columnManagementID={projectColumnManagementID}
+        id={projectColumnManagementID}
         initialFilters={initialFilters}
         additionalFilterNodes={additionalFilterNodes}
         matchesAdditionalFilters={matchesAdditionalFilters}
@@ -901,8 +855,6 @@ const ProjectList = (props) => {
           getProjectDataViewRows(rowData, tableColumns, namespaceMetrics, showMetrics, undefined, t)
         }
         NoDataEmptyMsg={OpenShiftGettingStarted}
-        isResizable
-        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );

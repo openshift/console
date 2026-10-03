@@ -13,19 +13,13 @@ import type { DataViewFilterOption } from '@patternfly/react-data-view/dist/esm/
 import { Table as PfTable, Th, Thead, Tr, Tbody, Td } from '@patternfly/react-table';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import {
-  actionsCellProps,
-  cellIsStickyProps,
-  getNameCellProps,
-  initialFiltersDefault,
-  ConsoleDataView,
-} from '@console/app/src/components/data-view/ConsoleDataView';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import type {
   ResourceFilters,
   ConsoleDataViewColumn,
   ConsoleDataViewRow,
-} from '@console/app/src/components/data-view/types';
-import type { RowProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+  RowProps,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
@@ -66,7 +60,6 @@ const getTemplateInstanceDataViewRows = (
             namespace={namespace}
           />
         ),
-        props: getNameCellProps(name),
       },
       [tableColumnInfo[1].id]: {
         cell: <ResourceLink kind="Namespace" name={namespace} />,
@@ -76,7 +69,6 @@ const getTemplateInstanceDataViewRows = (
       },
       [tableColumnInfo[3].id]: {
         cell: <LazyActionMenu context={{ [templateInstanceReference]: obj }} />,
-        props: actionsCellProps,
       },
     };
 
@@ -84,7 +76,6 @@ const getTemplateInstanceDataViewRows = (
       const cell = rowCells[id]?.cell || DASH;
       return {
         id,
-        props: rowCells[id]?.props,
         cell,
       };
     });
@@ -95,13 +86,11 @@ const useTemplateInstanceColumns = (): ConsoleDataViewColumn<TemplateInstanceKin
   const columns = useMemo<ConsoleDataViewColumn<TemplateInstanceKind>[]>(
     () => [
       {
+        type: 'name' as const,
         title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
-        props: {
-          ...cellIsStickyProps,
-          modifier: 'nowrap' as const,
-        },
+        props: { hasRightBorder: false, modifier: 'nowrap' as const },
       },
       {
         title: t('Namespace'),
@@ -123,11 +112,9 @@ const useTemplateInstanceColumns = (): ConsoleDataViewColumn<TemplateInstanceKin
         },
       },
       {
-        title: '',
+        type: 'actions' as const,
         id: tableColumnInfo[3].id,
-        props: {
-          ...cellIsStickyProps,
-        },
+        props: { hasLeftBorder: false },
       },
     ],
     [t],
@@ -157,7 +144,7 @@ const TemplateInstanceList: FC<TemplateInstanceListProps> = ({ data, loaded, ...
     [t],
   );
 
-  const initialFilters = useMemo(() => ({ ...initialFiltersDefault, status: [] }), []);
+  const initialFilters = useMemo(() => ({ status: [] }), []);
 
   const additionalFilterNodes = useMemo<React.ReactNode[]>(
     () => [
@@ -182,6 +169,8 @@ const TemplateInstanceList: FC<TemplateInstanceListProps> = ({ data, loaded, ...
     <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<TemplateInstanceKind, TemplateInstanceRowData, TemplateInstanceFilters>
         {...props}
+        isResizable={false}
+        id={TemplateInstanceModel}
         label={TemplateInstanceModel.labelPlural}
         data={data}
         loaded={loaded}
@@ -190,7 +179,6 @@ const TemplateInstanceList: FC<TemplateInstanceListProps> = ({ data, loaded, ...
         additionalFilterNodes={additionalFilterNodes}
         matchesAdditionalFilters={matchesAdditionalFilters}
         getDataViewRows={getTemplateInstanceDataViewRows}
-        hideColumnManagement
       />
     </Suspense>
   );

@@ -57,11 +57,6 @@ describe('useOperandResourceColumns', () => {
       'Created',
     ]);
   });
-
-  it('makes every column resizable, since the table has no actions column', () => {
-    const { result } = renderHookWithProviders(() => useOperandResourceColumns());
-    expect(result.current.columns.every(({ resizableProps }) => !!resizableProps)).toBe(true);
-  });
 });
 
 describe('getOperandResourceDataViewRows', () => {

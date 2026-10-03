@@ -7,8 +7,9 @@ export class CatalogSourcePage extends BasePage {
   private readonly sourcesTab = this.page.getByTestId('horizontal-link-Sources');
   private readonly operatorsTab = this.page.getByTestId('horizontal-link-Operators');
 
-  // ConsoleDataView renders its own table and does not forward a custom data-test.
-  private readonly packageManifestTable = this.page.getByTestId('data-view-table');
+  private readonly packageManifestTable = this.page.getByTestId(
+    'console-data-view-packages.operators.coreos.com~v1~PackageManifest',
+  );
 
   private readonly registryPollIntervalDropdown = this.page.getByTestId(
     'registry-poll-interval-dropdown',

@@ -1,7 +1,6 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { cellIsStickyProps } from '@console/app/src/components/data-view/ConsoleDataView';
-import type { ConsoleDataViewColumn } from '@console/app/src/components/data-view/types';
+import type { ConsoleDataViewColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 
 export const tableColumnInfo = [
@@ -16,13 +15,11 @@ export const useHelmReleaseResourcesColumns = (): ConsoleDataViewColumn<K8sResou
   return useMemo(
     () => [
       {
+        type: 'name' as const,
         title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
-        props: {
-          ...cellIsStickyProps,
-          modifier: 'nowrap' as const,
-        },
+        props: { hasRightBorder: false, modifier: 'nowrap' as const },
       },
       {
         title: t('Type'),

@@ -41,10 +41,6 @@ import {
   VirtualizedTableFC,
   UseToast,
   ConsoleDataViewFC,
-  CellIsStickyProps,
-  GetNameCellProps,
-  ActionsCellProps,
-  ResourceFilters,
   DefinitionFor
 } from '../extensions/console-types';
 import { StatusPopupSectionProps, StatusPopupItemProps } from '../extensions/dashboard-types';
@@ -117,10 +113,10 @@ export const HorizontalNav: FC<HorizontalNavProps> = require('@console/internal/
  * @param {boolean} loaded - Flag indicating whether `data` has finished loading.
  * @param {*} [loadError] - (optional) An error encountered while loading `data`.
  * @param {ConsoleDataViewColumn[]} columns - The column definitions for the table.
- * @param {function} getDataViewRows - Transforms the filtered, sorted, and paginated data into table rows.
- * @param {object} [columnLayout] - (optional) The persisted column layout, used for column management.
- * @param {string} [columnManagementID] - (optional) A unique id used to persist column management selections to and from user settings.
- * @param {object} [initialFilters] - (optional) Initial values for the built-in name and label filters.
+ * @param {function} getDataViewRows - Transforms the filtered, sorted, and paginated data into table rows. An omitted `actions` cell uses the resource action providers for a Kubernetes resource row; `cell: null` leaves it empty.
+ * @param {object} [columnLayout] - (optional) The persisted column layout. Supply this to show the column management action. Its ID is derived from `id`.
+ * @param {K8sModel|K8sGroupVersionKind|string} id - A model, group/version/kind, or string ID used for column management, matching `console.dataview/table-column` extensions, and persisting resizable column widths. Models and GVKs resolve to `group~version~kind`.
+ * @param {object} [initialFilters] - (optional) Initial values for any custom fields added via `TFilters`, and/or the built-in name and/or label filters. The name and label filters otherwise default to empty.
  * @param {ReactNode[]} [additionalFilterNodes] - (optional) Additional filter elements to render alongside the built-in name and label filters.
  * @param {function} [getObjectMetadata] - (optional) Extracts the name and labels used by the built-in filters from a data item.
  * @param {function} [matchesAdditionalFilters] - (optional) Determines whether a data item matches any custom filters.
@@ -130,114 +126,56 @@ export const HorizontalNav: FC<HorizontalNavProps> = require('@console/internal/
  * @param {boolean} [showNamespaceOverride] - (optional) If true, a column with id `'namespace'` is kept active regardless of column management selections or the active namespace.
  * @param {boolean} [hideNameLabelFilters] - (optional) Hides both the name and label filters.
  * @param {boolean} [hideLabelFilter] - (optional) Hides only the label filter, keeping the name filter.
- * @param {boolean} [hideColumnManagement] - (optional) Hides the column management action in the toolbar.
+ * @param {ComponentType<unknown>} [EmptyMsg] - (optional) Rendered in place of the table when `data` is empty, letting a consumer explain what is missing and how to create the first resource. Defaults to a generic "No {{label}} found" message. Note that this does not apply when the data is non-empty but the active filters match nothing; that case always renders the built-in in-table empty message.
  * @param {boolean} [mock] - (optional) Renders an empty placeholder instead of the table.
- * @param {boolean} [isResizable] - (optional) Enables column resizing.
- * @param {function} [resetAllColumnWidths] - (optional) When provided and `isResizable` is true, a toolbar action is shown to reset all column widths.
+ * @param {boolean} [isResizable] - (optional) Enables resizing and saved widths for columns with a title, and shows a reset action. Defaults to `true`.
  * @param {ReactNode} [additionalActions] - (optional) Additional actions to display in the toolbar, alongside the built-in column management and reset-column-widths actions.
  * @param {ReactNode} [customActions] - (optional) Custom actions to display in the toolbar outside of the responsive actions group.
- * @param {object} [selection] - (optional) Selection configuration for enabling row selection via checkboxes. `ConsoleDataView` does not add the checkbox column itself. It must be included in `columns`/rows separately, for example with `createSelectionColumn`/`createSelectionCell`.
- * @param {string} [actionsBreakpoint] - (optional) Breakpoint at which toolbar actions switch between horizontal and dropdown layout. Default is 'md'.
+ * @param {object} [selection] - (optional) Enables managed checkbox selection with `getItemId`. `isSelectable` can disable rows. `getActions` receives selected items matching the current filters, plus `clearSelection` and `deselect` callbacks, and returns table-specific bulk actions as `Action[]`. Console also loads matching resource bulk providers for a single-model Kubernetes resource selection. Selection persists across pages and built-in filters and is removed when items leave `data`.
  * @example
  * ```tsx
+ * const columns: ConsoleDataViewColumn<PodDisruptionBudgetKind>[] = [
+ *   { id: 'name', type: 'name', title: 'Name' },
+ *   { id: 'actions', type: 'actions' },
+ * ];
+ *
  * const getDataViewRows: GetDataViewRows<PodDisruptionBudgetKind> = (data, columns) =>
  *   data.map(({ obj: pdb }) => {
  *     const resourceKind = referenceForModel(PodDisruptionBudgetModel);
- *     return columns.map(({ id }) => ({
- *       id,
- *       cell:
- *         id === 'name' ? (
- *           <ResourceLink kind={resourceKind} name={pdb.metadata.name} namespace={pdb.metadata.namespace} />
- *         ) : (
- *           DASH
- *         ),
- *     }));
+ *     return columns.map(({ id }) =>
+ *       id === 'actions'
+ *         ? { id }
+ *         : {
+ *             id,
+ *             cell: <ResourceLink kind={resourceKind} name={pdb.metadata.name} namespace={pdb.metadata.namespace} />,
+ *           },
+ *     );
  *   });
  *
  * const PDBList: React.FC<Props> = ({ data, loaded }) => (
  *   <ConsoleDataView<PodDisruptionBudgetKind>
+ *     id={PodDisruptionBudgetModel}
  *     label="PodDisruptionBudgets"
  *     data={data}
  *     loaded={loaded}
  *     columns={columns}
  *     getDataViewRows={getDataViewRows}
+ *     selection={{
+ *       getItemId: (pdb) => `${pdb.metadata.namespace}/${pdb.metadata.name}`,
+ *       getActions: ({ selectedItems, clearSelection }) => [
+ *         {
+ *           id: 'clear-selection',
+ *           label: 'Clear selection',
+ *           disabled: selectedItems.length === 0,
+ *           cta: clearSelection,
+ *         },
+ *       ],
+ *     }}
  *   />
  * );
  * ```
  */
 export const ConsoleDataView: ConsoleDataViewFC = require('@console/app/src/components/data-view/ConsoleDataView').ConsoleDataView;
-
-/**
- * Props that mark a `ConsoleDataView` column header or cell as sticky, keeping it fixed at the
- * edge of the table while the rest of the table scrolls horizontally. Used as, or spread into,
- * a column's `props` or a row cell's `props`.
- * @example
- * ```tsx
- * const columns = [{ id: 'name', title: t('Name'), props: cellIsStickyProps }];
- * ```
- */
-export const cellIsStickyProps: CellIsStickyProps = require('@console/app/src/components/data-view/ConsoleDataView')
-  .cellIsStickyProps;
-
-/**
- * Returns name column header props with the appropriate sticky offset based on whether bulk
- * select is enabled. Use this for `ConsoleDataViewColumn` definitions; for row cells, use
- * `getNameCellProps` instead.
- * @param {boolean} [hasRightBorder=true] - (optional) Whether to include a right border on the column.
- * @param {boolean} [withBulkSelect=false] - (optional) Whether the table has bulk selection enabled.
- * @example
- * ```tsx
- * const columns = [{ id: 'name', title: t('Name'), props: getNameColumnProps() }];
- * ```
- */
-export const getNameColumnProps: (
-  hasRightBorder?: boolean,
-  withBulkSelect?: boolean,
-) => CellIsStickyProps = require('@console/app/src/components/data-view/ConsoleDataView')
-  .getNameColumnProps;
-
-/**
- * Returns name cell props with the appropriate sticky offset based on whether bulk select is
- * enabled, including a `data-test` attribute derived from the resource name. Use this for row
- * cell definitions returned from `getDataViewRows`.
- * @param {string} name - The resource name, used to build the `data-test` attribute.
- * @param {boolean} [withBulkSelect=false] - (optional) Whether the table has bulk selection enabled.
- * @example
- * ```tsx
- * {
- *   id: 'name',
- *   cell: <ResourceLink kind={resourceKind} name={name} namespace={namespace} />,
- *   props: getNameCellProps(name),
- * }
- * ```
- */
-export const getNameCellProps: GetNameCellProps = require('@console/app/src/components/data-view/ConsoleDataView')
-  .getNameCellProps;
-
-/**
- * Props for a sticky actions ("kebab menu") cell, fixed at the trailing edge of a
- * `ConsoleDataView` row. Spread onto the actions column's/cell's `props`.
- * @example
- * ```tsx
- * {
- *   id: 'actions',
- *   cell: <LazyActionMenu context={context} />,
- *   props: actionsCellProps,
- * }
- * ```
- */
-export const actionsCellProps: ActionsCellProps = require('@console/app/src/components/data-view/ConsoleDataView')
-  .actionsCellProps;
-
-/**
- * The default value of `ConsoleDataViewProps['initialFilters']`: empty name and label filters.
- * @example
- * ```ts
- * const initialFilters = { ...initialFiltersDefault, status: 'Running' };
- * ```
- */
-export const initialFiltersDefault: ResourceFilters = require('@console/app/src/components/data-view/ConsoleDataView')
-  .initialFiltersDefault;
 
 /**
  * Looks up the OpenAPI (Swagger) schema definition for a given Kubernetes model.

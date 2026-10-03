@@ -5,19 +5,14 @@ import { JSONPath } from 'jsonpath-plus';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useCommonResourceActions } from '@console/app/src/actions/hooks/useCommonResourceActions';
-import {
-  actionsCellProps,
-  cellIsStickyProps,
-  getNameCellProps,
-  ConsoleDataView,
-} from '@console/app/src/components/data-view/ConsoleDataView';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
+import type { ResourceActionProvider, ResolvedExtension } from '@console/dynamic-plugin-sdk';
+import { isResourceActionProvider, useResolvedExtensions } from '@console/dynamic-plugin-sdk';
 import type {
   ConsoleDataViewColumn,
   ConsoleDataViewRow,
-} from '@console/app/src/components/data-view/types';
-import type { ResourceActionProvider, ResolvedExtension } from '@console/dynamic-plugin-sdk';
-import { isResourceActionProvider, useResolvedExtensions } from '@console/dynamic-plugin-sdk';
-import type { RowProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+  RowProps,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import type { PageComponentProps } from '@console/dynamic-plugin-sdk/src/extensions/horizontal-nav-tabs';
 import { useK8sModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sModel';
 import { getGroupVersionKindForResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
@@ -194,7 +189,6 @@ const getDataViewRows = (
     const rowCells = {
       [tableColumnInfo[0].id]: {
         cell: <ResourceLink kind={kind} name={name} namespace={namespace} />,
-        props: getNameCellProps(name),
       },
       [tableColumnInfo[1].id]: {
         cell: <NamespaceCell namespace={namespace} />,
@@ -222,7 +216,6 @@ const getDataViewRows = (
             )}
           </>
         ),
-        props: actionsCellProps,
       },
     };
 
@@ -259,13 +252,11 @@ const useDefaultResourceColumns = <T extends K8sResourceKind>(
 
     const baseColumns = [
       {
+        type: 'name' as const,
         title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
-        props: {
-          ...cellIsStickyProps,
-          modifier: 'nowrap' as const,
-        },
+        props: { hasRightBorder: false, modifier: 'nowrap' as const },
       },
       {
         title: t('Namespace'),
@@ -276,7 +267,7 @@ const useDefaultResourceColumns = <T extends K8sResourceKind>(
         },
       },
       ...additionalPrinterColumnsHeaders,
-    ];
+    ] as ConsoleDataViewColumn<T>[];
 
     if (!checkColumnsForCreationTimestamp(additionalPrinterColumns)) {
       baseColumns.push({
@@ -287,17 +278,14 @@ const useDefaultResourceColumns = <T extends K8sResourceKind>(
           modifier: 'nowrap' as const,
           'data-test': 'column-header-Created',
         },
-      });
+      } as ConsoleDataViewColumn<T>);
     }
 
     baseColumns.push({
-      title: '',
+      type: 'actions' as const,
       id: tableColumnInfo[3].id,
       sort: '',
-      props: {
-        ...cellIsStickyProps,
-        modifier: 'nowrap' as const,
-      },
+      props: { hasLeftBorder: false, modifier: 'nowrap' as const },
     });
 
     return baseColumns;
@@ -339,6 +327,8 @@ export const DefaultList: FC<TableProps & { kinds: string[] }> = (props) => {
       ) : (
         <ConsoleDataView<K8sResourceKind>
           {...props}
+          isResizable={false}
+          id={model ?? kinds[0]}
           label={getAriaLabel()}
           data={data}
           loaded={loaded}
@@ -353,7 +343,6 @@ export const DefaultList: FC<TableProps & { kinds: string[] }> = (props) => {
               resourceProviderExtensionsResolved,
             )
           }
-          hideColumnManagement
         />
       )}
     </>

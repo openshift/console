@@ -13,10 +13,16 @@ async function gotoNodesPage(page: Page): Promise<void> {
   // init) so navigating straight to this data-heavy page doesn't race a cold
   // bootstrap — the direct goto was timing out on CI before the shell rendered.
   await warmupSPA(page);
-  await page.goto('/k8s/cluster/nodes');
-  await expect(
-    page.getByTestId('data-view-table').or(page.getByTestId('page-heading')).first(),
-  ).toBeVisible({ timeout: 30_000 });
+  // The Nodes page waits on several parallel watches (nodes, CSRs, machines,
+  // machine sets, machine config pools) plus a Prometheus metrics fetch before
+  // it renders, which can occasionally exceed a single navigation's timeout
+  // under CI load. Retry the navigation itself, matching warmupSPA's pattern.
+  await expect(async () => {
+    await page.goto('/k8s/cluster/nodes', { timeout: 30_000 });
+    await expect(page.getByTestId('console-data-view-core~v1~Node')).toBeVisible({
+      timeout: 30_000,
+    });
+  }).toPass({ intervals: [1_000, 2_000, 5_000], timeout: 90_000 });
 }
 
 function groupsFilter(page: Page) {
@@ -24,7 +30,7 @@ function groupsFilter(page: Page) {
 }
 
 function nodeRows(page: Page) {
-  return page.locator('[data-test="node-row"], tr[data-test-id*="node"]');
+  return page.locator('[data-test="console-data-view-core~v1~Node"] tbody tr');
 }
 
 function filterDropdown(page: Page) {

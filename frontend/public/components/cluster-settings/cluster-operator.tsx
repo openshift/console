@@ -15,18 +15,13 @@ import { RhUiSyncIcon, RhUiUnknownIcon } from '@patternfly/react-icons';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router';
-import {
-  cellIsStickyProps,
-  getNameCellProps,
-  initialFiltersDefault,
-  ConsoleDataView,
-} from '@console/app/src/components/data-view/ConsoleDataView';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import type {
   ResourceFilters,
   ConsoleDataViewColumn,
   ConsoleDataViewRow,
-} from '@console/app/src/components/data-view/types';
-import type { RowProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+  RowProps,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import {
   GreenCheckCircleIcon,
@@ -99,7 +94,6 @@ const getClusterOperatorDataViewRows = (
     const rowCells = {
       [tableColumnInfo[0].id]: {
         cell: <ResourceLink kind={clusterOperatorReference} name={name} namespace={namespace} />,
-        props: getNameCellProps(name),
       },
       [tableColumnInfo[1].id]: {
         cell: <OperatorStatusIconAndLabel status={status} />,
@@ -120,7 +114,6 @@ const getClusterOperatorDataViewRows = (
       const cell = rowCells[id]?.cell || DASH;
       return {
         id,
-        props: rowCells[id]?.props,
         cell,
       };
     });
@@ -131,14 +124,11 @@ const useClusterOperatorColumns = (): ConsoleDataViewColumn<ClusterOperator>[] =
   const columns = useMemo<ConsoleDataViewColumn<ClusterOperator>[]>(
     () => [
       {
+        type: 'name' as const,
         title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
-        props: {
-          ...cellIsStickyProps,
-          modifier: 'nowrap' as const,
-          width: 20,
-        },
+        props: { hasRightBorder: false, modifier: 'nowrap' as const, width: 20 },
       },
       {
         title: t('Status'),
@@ -210,7 +200,7 @@ const ClusterOperatorList: FC<ClusterOperatorListProps> = ({ data, loaded, ...pr
     [t],
   );
 
-  const initialFilters = useMemo(() => ({ ...initialFiltersDefault, status: [] }), []);
+  const initialFilters = useMemo(() => ({ status: [] }), []);
 
   const additionalFilterNodes = useMemo<React.ReactNode[]>(
     () => [
@@ -235,6 +225,8 @@ const ClusterOperatorList: FC<ClusterOperatorListProps> = ({ data, loaded, ...pr
     <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<ClusterOperator, ClusterOperatorRowData, ClusterOperatorFilters>
         {...props}
+        isResizable={false}
+        id={ClusterOperatorModel}
         label={ClusterOperatorModel.labelPlural}
         data={data}
         loaded={loaded}
@@ -243,7 +235,6 @@ const ClusterOperatorList: FC<ClusterOperatorListProps> = ({ data, loaded, ...pr
         additionalFilterNodes={additionalFilterNodes}
         matchesAdditionalFilters={matchesAdditionalFilters}
         getDataViewRows={getClusterOperatorDataViewRows}
-        hideColumnManagement
       />
     </Suspense>
   );

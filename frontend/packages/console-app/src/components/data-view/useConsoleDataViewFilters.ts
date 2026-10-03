@@ -2,13 +2,16 @@ import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useDataViewFilters } from '@patternfly/react-data-view';
 import { useSearchParams } from 'react-router';
 import { useExactSearch } from '@console/app/src/components/user-preferences/search/useExactSearch';
-import type { K8sResourceCommon } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import type {
+  K8sResourceCommon,
+  ResourceFilters,
+  ResourceMetadata,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import {
   exactMatch,
   fuzzyCaseInsensitive,
 } from '@console/internal/components/factory/table-filters';
 import { mapLabelsToStrings } from '@console/shared/src/utils/label-filter';
-import type { ResourceFilters, ResourceMetadata } from './types';
 
 const getK8sResourceMetadata = (obj: K8sResourceCommon): ResourceMetadata => ({
   name: obj.metadata?.name,
@@ -91,18 +94,22 @@ export const useConsoleDataViewFilters = <
   matchesAdditionalFilters,
 }: {
   data: TData[];
-  initialFilters: TFilters;
+  initialFilters?: Partial<TFilters>;
   getObjectMetadata?: (obj: TData) => ResourceMetadata;
   matchesAdditionalFilters?: (obj: TData, filters: TFilters) => boolean;
 }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [isExactSearch] = useExactSearch();
 
-  const filterIds = useMemo(() => Object.keys(initialFilters), [initialFilters]);
+  const resolvedInitialFilters = useMemo(
+    () => ({ name: '', label: '', ...initialFilters }) as TFilters,
+    [initialFilters],
+  );
+  const filterIds = useMemo(() => Object.keys(resolvedInitialFilters), [resolvedInitialFilters]);
   useLegacyRowFilterParams(filterIds, searchParams, setSearchParams);
 
   const { filters, onSetFilters, clearAllFilters } = useDataViewFilters<TFilters>({
-    initialFilters,
+    initialFilters: resolvedInitialFilters,
     searchParams,
     setSearchParams,
   });
