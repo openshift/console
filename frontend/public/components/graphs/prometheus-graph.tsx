@@ -34,7 +34,7 @@ const PrometheusGraphLink_: React.FC<PrometheusGraphLinkProps> = ({
   queries.forEach((q, index) => params.set(`query${index}`, q));
 
   const url =
-    canAccessMonitoring && activePerspective === 'admin'
+    canAccessMonitoring && activePerspective !== 'dev'
       ? `/monitoring/query-browser?${params.toString()}`
       : `/dev-monitoring/ns/${namespace}/metrics?${params.toString()}`;
 

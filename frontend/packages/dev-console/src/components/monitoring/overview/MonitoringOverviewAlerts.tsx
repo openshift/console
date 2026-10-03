@@ -27,22 +27,28 @@ const MonitoringOverviewAlerts: React.FC<MonitoringOverviewAlertsProps> = ({ ale
           rule: { name, id },
         } = alert;
         const alertDetailsPageLink =
-          activePerspective === 'admin'
-            ? `/monitoring/alerts/${id}?${labelsToParams(alert.labels)}`
-            : `/dev-monitoring/ns/${namespace}/alerts/${id}?${labelsToParams(alert.labels)}`;
+          activePerspective === 'dev'
+            ? `/dev-monitoring/ns/${namespace}/alerts/${id}?${labelsToParams(alert.labels)}`
+            : `/monitoring/alerts/${id}?${labelsToParams(alert.labels)}`;
         return (
           <Alert
             variant={getAlertType(severity)}
             isInline
-            title={<Link to={alertDetailsPageLink}>{name}</Link>}
-            onClick={() => {
-              if (
-                alertDetailsPageLink.startsWith('/dev-monitoring') &&
-                activePerspective !== 'dev'
-              ) {
-                setActivePerspective('dev');
-              }
-            }}
+            title={
+              <Link
+                onClick={() => {
+                  if (
+                    alertDetailsPageLink.startsWith('/dev-monitoring') &&
+                    activePerspective !== 'dev'
+                  ) {
+                    setActivePerspective('dev');
+                  }
+                }}
+                to={alertDetailsPageLink}
+              >
+                {name}
+              </Link>
+            }
             key={`${alertname}-${id}`}
           >
             {message}
