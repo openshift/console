@@ -136,6 +136,16 @@ func securityHeadersMiddleware(hdlr http.Handler) http.HandlerFunc {
 		w.Header().Set("X-DNS-Prefetch-Control", "off")
 		// Less information leakage about what domains we link to
 		w.Header().Set("Referrer-Policy", "strict-origin-when-cross-origin")
+		w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
+		w.Header().Set("Pragma", "no-cache")
+		hdlr.ServeHTTP(w, r)
+	}
+}
+
+func staticCacheHeaders(hdlr http.Handler) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Cache-Control", "public, max-age=31536000, immutable")
+		w.Header().Del("Pragma")
 		hdlr.ServeHTTP(w, r)
 	}
 }
