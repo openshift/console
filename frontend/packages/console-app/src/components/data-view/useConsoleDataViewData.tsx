@@ -92,7 +92,8 @@ export const useConsoleDataViewData = <
   });
 
   const dataViewColumns = useMemo<ConsoleDataViewColumn<TData>[]>(() => {
-    // Calculate selection state across all filtered items
+    // Selection header only needs the filtered count; using the full array here
+    // rebuilt columns (and reset sort) on every watch update / row delete.
     const totalCount = filteredData.length;
 
     return activeColumns.map(({ id, title, sort, props, resizableProps }, index) => {
@@ -141,7 +142,10 @@ export const useConsoleDataViewData = <
         ),
       } satisfies ConsoleDataViewColumn<TData>;
     });
-  }, [activeColumns, t, isResizable, selection, filteredData]);
+    // filteredData is read only for the placeholder select-all handler, which is replaced later.
+    // Depend on length so a row delete does not rebuild columns and reset sort.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeColumns, t, isResizable, selection, filteredData.length]);
 
   // Resolved from the column id rather than taken as an index, so that hiding or reordering
   // columns cannot silently point the default sort at a different column.
@@ -165,13 +169,13 @@ export const useConsoleDataViewData = <
     }
 
     if (typeof sortColumn.sort === 'string') {
-      return filteredData.sort(
+      return [...filteredData].sort(
         sortResourceByValue(sortDirection, (obj) => _.get(obj, sortColumn.sort as string)),
       );
     }
 
     if (typeof sortColumn.sort === 'function') {
-      return sortColumn.sort(filteredData, sortDirection);
+      return sortColumn.sort([...filteredData], sortDirection);
     }
 
     return filteredData;
