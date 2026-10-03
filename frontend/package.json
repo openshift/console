@@ -341,7 +341,7 @@
     "minimatch@^9.0.4": "^9.0.6",
     "shell-quote": "^1.8.4",
     "protobufjs": "7.5.6",
-    "fast-uri": "3.1.2",
+    "fast-uri": "3.1.7",
     "nanoid@^3.3.6": "^3.3.12",
     "form-data@^2.3.3": "^2.5.6",
     "form-data@~2.3.2": "^2.5.6",
