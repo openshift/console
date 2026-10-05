@@ -2,6 +2,7 @@ import { test, expect } from '../../fixtures';
 import { setEditorContent, warmupSPA } from '../../pages/base-page';
 import { AddPage, ImportYAMLPage } from '../../pages/dev-console/add-page';
 import { TopologyPage } from '../../pages/topology-page';
+import { YamlEditorPage } from '../../pages/yaml-editor-page';
 
 /**
  * Migrated from:
@@ -46,11 +47,13 @@ test.describe('Create Application from YAML file', { tag: ['@dev-console', '@smo
   let addPage: AddPage;
   let yamlPage: ImportYAMLPage;
   let topologyPage: TopologyPage;
+  let yamlEditorPage: YamlEditorPage;
 
   test.beforeEach(async ({ page, k8sClient, cleanup }) => {
     addPage = new AddPage(page);
     yamlPage = new ImportYAMLPage(page);
     topologyPage = new TopologyPage(page);
+    yamlEditorPage = new YamlEditorPage(page);
     await k8sClient.createNamespace(ns);
     cleanup.trackNamespace(ns);
     await warmupSPA(page);
@@ -84,10 +87,14 @@ test.describe('Create Application from YAML file', { tag: ['@dev-console', '@smo
   test('cancel operation on YAML file redirects to Add page [A-07-TC02]', async () => {
     await test.step('Navigate to Import YAML page', async () => {
       await addPage.clickImportYAML();
+      await yamlEditorPage.waitForEditorReady();
     });
 
-    await test.step('Click cancel', async () => {
-      await yamlPage.getCancelButton().click();
+    await test.step('Cancel with the keyboard', async () => {
+      // Pointer movement over Monaco while it unmounts can trigger a mouseleave
+      // callback after Monaco has disposed its services.
+      await yamlPage.getCancelButton().focus();
+      await yamlPage.getCancelButton().press('Enter');
     });
 
     await test.step('Verify redirect to Add page', async () => {
