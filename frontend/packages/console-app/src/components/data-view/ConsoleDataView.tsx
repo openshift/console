@@ -39,7 +39,7 @@ import { DataViewLabelFilter } from './DataViewLabelFilter';
 import { createSelectionCell, createSelectionColumn } from './dataViewSelectionHelpers';
 import { DataViewTextFilter } from './DataViewTextFilter';
 import { getConsoleDataViewID } from './getConsoleDataViewID';
-import { getResourceReference, getSelectedResources } from './resourceActions';
+import { getResourceReferenceForItems, getSelectedResources } from './resourceActions';
 import { ResourceBulkActionMenu } from './ResourceBulkActionMenu';
 import { useConsoleDataViewColumns } from './useConsoleDataViewColumns';
 import { useConsoleDataViewData } from './useConsoleDataViewData';
@@ -102,14 +102,17 @@ export const ConsoleDataView = <
   const launchModal = useOverlay();
   const [tableKey, setTableKey] = useState(0);
   const resolvedID = getConsoleDataViewID(id);
+  const selectionEnabled = Boolean(selection);
+  const getItemId = selection?.getItemId;
+  const isSelectable = selection?.isSelectable;
+  const getActions = selection?.getActions;
   const { selectedIds, onSelectItem, onSelectAll, clearSelection, deselect } = useDataViewSelection(
     {
       data,
-      getItemId: selection?.getItemId,
-      isSelectable: selection?.isSelectable,
+      getItemId,
+      isSelectable,
     },
   );
-  const selectionEnabled = Boolean(selection);
   const tableColumns = useMemo(
     () => (selectionEnabled ? [createSelectionColumn<TData>(), ...columns] : columns),
     [columns, selectionEnabled],
@@ -154,13 +157,15 @@ export const ConsoleDataView = <
   );
   const getRowsWithSelection = useCallback<GetDataViewRows<TData, TCustomRowData>>(
     (rows, activeColumns) => {
-      if (!selection) return getRowsWithResourceActions(rows, activeColumns);
+      if (!selectionEnabled || !getItemId) {
+        return getRowsWithResourceActions(rows, activeColumns);
+      }
       const selectionIndex = activeColumns.findIndex(({ id: columnID }) => columnID === 'select');
       if (selectionIndex < 0) return getRowsWithResourceActions(rows, activeColumns);
       const contentColumns = activeColumns.filter(({ id: columnID }) => columnID !== 'select');
       const contentRows = getRowsWithResourceActions(rows, contentColumns);
       return rows.map(({ obj }, rowIndex) => {
-        const itemId = selection.getItemId(obj);
+        const itemId = getItemId(obj);
         const cell = {
           id: 'select',
           ...createSelectionCell({
@@ -168,14 +173,21 @@ export const ConsoleDataView = <
             itemId,
             isSelected: selectedIds.has(itemId),
             onSelect: onSelectItem,
-            disabled: selection.isSelectable ? !selection.isSelectable(obj) : false,
+            disabled: isSelectable ? !isSelectable(obj) : false,
           }),
         };
         const contentRow = contentRows[rowIndex];
         return [...contentRow.slice(0, selectionIndex), cell, ...contentRow.slice(selectionIndex)];
       });
     },
-    [getRowsWithResourceActions, selection, selectedIds, onSelectItem],
+    [
+      getRowsWithResourceActions,
+      selectionEnabled,
+      getItemId,
+      isSelectable,
+      selectedIds,
+      onSelectItem,
+    ],
   );
   const managedColumnLayout = useMemo(
     () => (columnLayout && resolvedID ? { ...columnLayout, id: resolvedID } : undefined),
@@ -207,24 +219,24 @@ export const ConsoleDataView = <
   });
 
   const selectableFilteredData = useMemo(
-    () => (selection?.isSelectable ? filteredData.filter(selection.isSelectable) : filteredData),
-    [filteredData, selection],
+    () => (isSelectable ? filteredData.filter(isSelectable) : filteredData),
+    [filteredData, isSelectable],
   );
   const filteredSelectedItems = useMemo(
     () =>
-      selection
-        ? selectableFilteredData.filter((item) => selectedIds.has(selection.getItemId(item)))
+      selectionEnabled && getItemId
+        ? selectableFilteredData.filter((item) => selectedIds.has(getItemId(item)))
         : [],
-    [selectableFilteredData, selectedIds, selection],
+    [selectableFilteredData, selectedIds, selectionEnabled, getItemId],
   );
   const bulkActions = useMemo(
     () =>
-      selection?.getActions?.({
+      getActions?.({
         selectedItems: filteredSelectedItems,
         clearSelection,
         deselect,
       }),
-    [selection, filteredSelectedItems, clearSelection, deselect],
+    [getActions, filteredSelectedItems, clearSelection, deselect],
   );
   const selectedResources = useMemo(
     () => getSelectedResources(filteredSelectedItems),
@@ -232,25 +244,21 @@ export const ConsoleDataView = <
   );
   const bulkActionReference = useMemo(() => {
     if (filteredSelectedItems.length > 0) return selectedResources?.reference;
-    const selectableData = selection?.isSelectable ? data.filter(selection.isSelectable) : data;
-    return getSelectedResources(selectableData)?.reference;
-  }, [data, filteredSelectedItems.length, selectedResources, selection]);
-  const getItemId = selection?.getItemId;
+    return getResourceReferenceForItems(data, isSelectable);
+  }, [data, filteredSelectedItems.length, selectedResources, isSelectable]);
   const getResourceId = useCallback(
     (resource: K8sResourceCommon) => getItemId?.(resource as TData) ?? '',
     [getItemId],
   );
-  const selectionKey = selection
-    ? JSON.stringify(filteredSelectedItems.map(selection.getItemId))
-    : '';
-  const selectionState = selection
-    ? {
-        selectedItems: selectedIds,
-        onSelectAll,
-        getItemId: selection.getItemId,
-        isSelectable: selection.isSelectable,
-      }
-    : undefined;
+  const selectionKey =
+    selectionEnabled && getItemId ? JSON.stringify(filteredSelectedItems.map(getItemId)) : '';
+  const selectionState = useMemo(
+    () =>
+      selectionEnabled && getItemId
+        ? { selectedItems: selectedIds, onSelectAll, getItemId, isSelectable }
+        : undefined,
+    [selectionEnabled, selectedIds, onSelectAll, getItemId, isSelectable],
+  );
 
   const { dataViewColumns, dataViewRows, pagination, visibleItems } = useConsoleDataViewData<
     TData,
@@ -305,15 +313,13 @@ export const ConsoleDataView = <
 
   // Calculate whether to show the "select all" banner
   const bannerState = useMemo(() => {
-    if (!selection || !loaded || selectableFilteredData.length === 0) {
+    if (!selectionEnabled || !getItemId || !loaded || selectableFilteredData.length === 0) {
       return { show: false, allSelected: false };
     }
 
-    const selectableVisibleItems = selection.isSelectable
-      ? visibleItems.filter(selection.isSelectable)
-      : visibleItems;
+    const selectableVisibleItems = isSelectable ? visibleItems.filter(isSelectable) : visibleItems;
     const allVisibleSelected = selectableVisibleItems.every((item) =>
-      selectedIds.has(selection.getItemId(item)),
+      selectedIds.has(getItemId(item)),
     );
 
     const visibleCount = selectableVisibleItems.length;
@@ -326,7 +332,9 @@ export const ConsoleDataView = <
 
     return { show: shouldShow, allSelected };
   }, [
-    selection,
+    selectionEnabled,
+    getItemId,
+    isSelectable,
     loaded,
     selectableFilteredData,
     filteredSelectedItems.length,
