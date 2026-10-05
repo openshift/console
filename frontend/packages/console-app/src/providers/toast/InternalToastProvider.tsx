@@ -58,8 +58,10 @@ export const InternalToastProvider: FC<InternalToastProviderProps> = ({
   const [toasts, setToasts] = useState<ToastRenderOptions[]>([]);
   const [notifications, setNotifications] = useState<ToastNotification[]>([]);
   const toastIdCounterRef = useRef(0);
+  const minimizedToastIds = useRef(new Set<string>());
 
   const removeToast = useCallback((id: string) => {
+    minimizedToastIds.current.delete(id);
     setToasts((state) => {
       const index = state.findIndex((toast) => toast.id === id);
       if (index !== -1) {
@@ -94,7 +96,7 @@ export const InternalToastProvider: FC<InternalToastProviderProps> = ({
         return next.slice(0, DEFAULT_MAX_NOTIFICATION_HISTORY);
       });
 
-      if (!isNotificationDrawerExpanded) {
+      if (!isNotificationDrawerExpanded && !minimizedToastIds.current.has(clone.id)) {
         setToasts((state) => {
           const index = state.findIndex((item) => item.id === clone.id);
           if (index !== -1) {
@@ -130,6 +132,7 @@ export const InternalToastProvider: FC<InternalToastProviderProps> = ({
     setToasts((state) => {
       const toast = state.find((item) => item.id === id);
       canMinimize = toast?.persistInDrawer === true;
+      if (canMinimize) minimizedToastIds.current.add(id);
       return canMinimize ? state.filter((item) => item.id !== id) : state;
     });
     if (canMinimize) {
@@ -154,6 +157,7 @@ export const InternalToastProvider: FC<InternalToastProviderProps> = ({
   );
 
   const clearAllNotifications = useCallback(() => {
+    minimizedToastIds.current.clear();
     setNotifications((state) => {
       state.forEach((notification) => notification.onClose?.());
       return [];

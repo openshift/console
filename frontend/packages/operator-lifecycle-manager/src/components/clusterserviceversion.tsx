@@ -21,6 +21,7 @@ import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { useParams, useLocation, Link } from 'react-router';
 import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
+import { FLAG_TECH_PREVIEW } from '@console/app/src/consts';
 import {
   ResourceStatus,
   StatusIconAndText,
@@ -34,6 +35,7 @@ import type {
   GetDataViewRows,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/lib-core';
+import { useFlag } from '@console/dynamic-plugin-sdk/src/utils/flags';
 import { Conditions, ConditionTypes } from '@console/internal/components/conditions';
 import { ResourceEventStream } from '@console/internal/components/events';
 import type { Flatten } from '@console/internal/components/factory';
@@ -451,7 +453,10 @@ const csvRowCells = (
   actions: {
     cell: (
       <LazyActionMenu
-        context={{ 'operator-actions': { resource: obj, subscription } }}
+        context={{
+          'operator-actions': { resource: obj, subscription },
+          [referenceForModel(ClusterServiceVersionModel)]: obj,
+        }}
         variant={ActionMenuVariant.KEBAB}
       />
     ),
@@ -584,6 +589,7 @@ const ClusterServiceVersionList: FC<ClusterServiceVersionListProps> = ({
 }) => {
   const { t } = useTranslation('olm');
   const [activeNamespace] = useActiveNamespace();
+  const techPreviewEnabled = useFlag(FLAG_TECH_PREVIEW);
   const allNamespaceActive = activeNamespace === ALL_NAMESPACES_KEY;
   const { columns } = useClusterServiceVersionColumns(allNamespaceActive);
 
@@ -616,6 +622,25 @@ const ClusterServiceVersionList: FC<ClusterServiceVersionListProps> = ({
     [catalogSources, subscriptions],
   );
 
+  const selection = useMemo(
+    () =>
+      techPreviewEnabled
+        ? {
+            getItemId: (operator: ClusterServiceVersionKind | SubscriptionKind) =>
+              `${operator.kind}/${operator.metadata.namespace}/${operator.metadata.name}`,
+            isSelectable: (operator: ClusterServiceVersionKind | SubscriptionKind) =>
+              isCSV(operator) &&
+              Boolean(
+                subscriptionForCSV(
+                  customRowData.subscriptions,
+                  operator as ClusterServiceVersionKind,
+                ),
+              ),
+          }
+        : undefined,
+    [customRowData.subscriptions, techPreviewEnabled],
+  );
+
   // Guard on loadError too, otherwise a 403 or watch failure is hidden behind "No Operators".
   if (loaded && !rest.loadError && filteredOperators.length === 0) {
     return <CSVListNoDataEmptyMsg />;
@@ -632,6 +657,7 @@ const ClusterServiceVersionList: FC<ClusterServiceVersionListProps> = ({
         getDataViewRows={getInstalledOperatorDataViewRows}
         getObjectMetadata={getInstalledOperatorMetadata}
         customRowData={customRowData}
+        selection={selection}
         id={csvColumnManagementID}
       />
     </div>
@@ -858,16 +884,13 @@ const ClusterServiceVersionDetails: FC<ClusterServiceVersionDetailsProps> = (pro
   const providedAPIs = providedAPIsForCSV(props.obj);
   const marketplaceSupportWorkflow = metadata?.annotations?.[OLMAnnotation.SupportWorkflow] || '';
   const initializationLink = getInitializationLink(metadata?.annotations);
-  const initializationResource = useMemo(
-    () =>
-      !initializationLink &&
-      getInitializationResource(metadata?.annotations, {
-        onError: (error) => {
-          console.error('Error while parsing CSV initialization resource JSON,', error.message);
-        },
-      }),
-    [metadata?.annotations, initializationLink],
-  );
+  const initializationResource =
+    !initializationLink &&
+    getInitializationResource(metadata?.annotations, {
+      onError: (error) => {
+        console.error('Error while parsing CSV initialization resource JSON,', error.message);
+      },
+    });
 
   const supportWorkflowUrl = useMemo(() => {
     if (marketplaceSupportWorkflow) {
