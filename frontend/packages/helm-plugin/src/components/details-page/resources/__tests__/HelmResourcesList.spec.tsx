@@ -18,8 +18,9 @@ describe('HelmResourcesList', () => {
 
   it('should render the ConsoleDataView component', () => {
     renderComponent();
-    // Check that the ConsoleDataView is rendered by looking for the data view table
-    expect(screen.getByTestId('data-view-table')).toBeTruthy();
+    expect(
+      screen.getByTestId('console-data-view-console.ui~v1~HelmReleaseResourcesList'),
+    ).toBeTruthy();
   });
 
   it('should render the proper Headers in the Resources tab', () => {

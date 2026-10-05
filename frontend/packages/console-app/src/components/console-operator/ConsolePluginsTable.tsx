@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useMemo, useCallback, useState } from 'react';
+import { useMemo, useCallback } from 'react';
 import type { PluginInfoEntry } from '@openshift/dynamic-plugin-sdk';
 import { Alert, Button } from '@patternfly/react-core';
 import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
@@ -7,26 +7,13 @@ import type { DataViewFilterOption } from '@patternfly/react-data-view/dist/esm/
 import { SortByDirection } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
-import {
-  ConsoleDataView,
-  getNameCellProps,
-  getNameColumnProps,
-  initialFiltersDefault,
-} from '@console/app/src/components/data-view/ConsoleDataView';
-import {
-  createSelectionCell,
-  createSelectionColumn,
-} from '@console/app/src/components/data-view/dataViewSelectionHelpers';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import type {
   ConsoleDataViewColumn,
   ConsoleDataViewRow,
+  ConsoleDataViewSelectionActions,
   ResourceFilters,
-} from '@console/app/src/components/data-view/types';
-import { useDataViewSelection } from '@console/app/src/components/data-view/useDataViewSelection';
-import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-import type {
   RowProps,
-  TableColumn,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { ListPageBody, ListPageHeader } from '@console/dynamic-plugin-sdk/src/lib-core';
 import {
@@ -81,40 +68,26 @@ const pluginColumnInfo = Object.freeze({
   cspViolations: { id: 'csp-violations' },
 });
 
-const usePluginColumns = (
-  canBulkEdit: boolean,
-): {
-  columns: TableColumn<ConsolePluginTableRow>[];
-  resetAllColumnWidths: () => void;
+const usePluginColumns = (): {
+  columns: ConsoleDataViewColumn<ConsolePluginTableRow>[];
 } => {
   const { t } = useTranslation('console-app');
-  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(ConsolePluginModel);
 
   const columns = useMemo(
     () => [
-      ...(canBulkEdit ? [createSelectionColumn<ConsolePluginTableRow>()] : []),
-      {
-        title: t('Name'),
-        id: pluginColumnInfo.name.id,
-        sort: 'name',
-        resizableProps: getResizableProps(pluginColumnInfo.name.id),
-        props: getNameColumnProps(true, canBulkEdit),
-      },
+      { type: 'name' as const, title: t('Name'), id: pluginColumnInfo.name.id, sort: 'name' },
       {
         title: t('Version'),
         id: pluginColumnInfo.version.id,
-        resizableProps: getResizableProps(pluginColumnInfo.version.id),
       },
       {
         title: t('Description'),
         id: pluginColumnInfo.description.id,
-        resizableProps: getResizableProps(pluginColumnInfo.description.id),
       },
       {
         title: t('Status'),
         id: pluginColumnInfo.status.id,
         sort: 'status',
-        resizableProps: getResizableProps(pluginColumnInfo.status.id),
       },
       {
         title: t('Enabled'),
@@ -124,49 +97,34 @@ const usePluginColumns = (
             const result = Number(a.enabled) - Number(b.enabled);
             return direction === SortByDirection.desc ? -result : result;
           }),
-        resizableProps: getResizableProps(pluginColumnInfo.enabled.id),
       },
       {
         title: t('CSP violations'),
         id: pluginColumnInfo.cspViolations.id,
-        resizableProps: getResizableProps(pluginColumnInfo.cspViolations.id),
       },
     ],
-    [t, getResizableProps, canBulkEdit],
+    [t],
   );
 
-  return { columns, resetAllColumnWidths };
+  return { columns };
 };
 
 const getPluginDataViewRows = (
   rowData: RowProps<ConsolePluginTableRow>[],
   tableColumns: ConsoleDataViewColumn<ConsolePluginTableRow>[],
-  selection?: {
-    selectedItems: Set<string>;
-    onSelect: (itemId: string, isSelecting: boolean) => void;
-  },
   enabledStatusProps?: {
     consoleOperatorConfig: K8sResourceKind;
     canPatch: boolean;
   },
 ): ConsoleDataViewRow[] =>
-  rowData.map(({ obj: plugin }, rowIndex) => {
+  rowData.map(({ obj: plugin }) => {
     const rowCells = {
-      select: selection
-        ? createSelectionCell({
-            rowIndex,
-            itemId: plugin.name,
-            isSelected: selection.selectedItems.has(plugin.name),
-            onSelect: selection.onSelect,
-          })
-        : undefined,
       [pluginColumnInfo.name.id]: {
         cell: !developmentMode ? (
           <ResourceLink groupVersionKind={consolePluginGVK} name={plugin.name} hideIcon />
         ) : (
           plugin.name
         ),
-        props: getNameCellProps(plugin.name, !developmentMode),
       },
       [pluginColumnInfo.version.id]: {
         cell: plugin.version || DASH,
@@ -202,11 +160,10 @@ const getPluginDataViewRows = (
       if (!rowCell) {
         return { id, cell: DASH };
       }
-      const cellContent = id === 'select' ? (rowCell.cell ?? '') : (rowCell.cell ?? DASH);
       return {
         id,
         props: rowCell.props,
-        cell: cellContent,
+        cell: rowCell.cell ?? DASH,
       };
     });
   });
@@ -247,28 +204,13 @@ const ConsolePluginsTable: FC<ConsolePluginsTableProps> = ({
   const { t } = useTranslation('console-app');
   const { canPatchConsoleOperatorConfig } = useConsoleOperatorConfigData();
   const canBulkEdit = !developmentMode && canPatchConsoleOperatorConfig;
-  const { columns, resetAllColumnWidths } = usePluginColumns(canBulkEdit);
-
-  const { selectedIds, onSelectItem, onSelectAll, clearSelection } = useDataViewSelection({
-    data: rows,
-    getItemId: (row) => row.name,
-  });
-
-  const [filteredSelectedPlugins, setFilteredSelectedPlugins] = useState<ConsolePluginTableRow[]>(
-    [],
+  const { columns } = usePluginColumns();
+  const buildPluginActions = useConsolePluginBulkActions(obj);
+  const getPluginActions = useCallback(
+    ({ selectedItems, clearSelection }: ConsoleDataViewSelectionActions<ConsolePluginTableRow>) =>
+      buildPluginActions(selectedItems, clearSelection),
+    [buildPluginActions],
   );
-
-  const handleFilteredSelectionChange = useCallback((items: ConsolePluginTableRow[]) => {
-    setFilteredSelectedPlugins(items);
-  }, []);
-
-  const bulkActions = useConsolePluginBulkActions({
-    selectedPlugins: filteredSelectedPlugins,
-    consoleOperatorConfig: obj,
-    onComplete: clearSelection,
-  });
-
-  const customActions = canBulkEdit ? bulkActions : undefined;
 
   const getDataViewRows = useCallback(
     (
@@ -278,12 +220,6 @@ const ConsolePluginsTable: FC<ConsolePluginsTableProps> = ({
       getPluginDataViewRows(
         rowData,
         tableColumns,
-        canBulkEdit
-          ? {
-              selectedItems: selectedIds,
-              onSelect: onSelectItem,
-            }
-          : undefined,
         obj
           ? {
               consoleOperatorConfig: obj,
@@ -291,7 +227,7 @@ const ConsolePluginsTable: FC<ConsolePluginsTableProps> = ({
             }
           : undefined,
       ),
-    [canBulkEdit, selectedIds, onSelectItem, obj, canPatchConsoleOperatorConfig],
+    [obj, canPatchConsoleOperatorConfig],
   );
 
   const statusFilterOptions = useMemo<DataViewFilterOption[]>(
@@ -313,7 +249,6 @@ const ConsolePluginsTable: FC<ConsolePluginsTableProps> = ({
 
   const initialFilters = useMemo<PluginFilters>(
     () => ({
-      ...initialFiltersDefault,
       status: [],
       enabled: [],
     }),
@@ -357,16 +292,13 @@ const ConsolePluginsTable: FC<ConsolePluginsTableProps> = ({
 
   const selectionProps = useMemo(
     () =>
-      !canBulkEdit
-        ? undefined
-        : {
-            selectedItems: selectedIds,
-            onSelect: onSelectItem,
-            onSelectAll,
+      canBulkEdit
+        ? {
             getItemId,
-            onFilteredSelectionChange: handleFilteredSelectionChange,
-          },
-    [canBulkEdit, selectedIds, onSelectItem, onSelectAll, getItemId, handleFilteredSelectionChange],
+            getActions: getPluginActions,
+          }
+        : undefined,
+    [canBulkEdit, getItemId, getPluginActions],
   );
 
   const Wrapper = isListPage ? ListPageBody : PaneBody;
@@ -388,6 +320,7 @@ const ConsolePluginsTable: FC<ConsolePluginsTableProps> = ({
           />
         )}
         <ConsoleDataView<ConsolePluginTableRow, undefined, PluginFilters>
+          id={ConsolePluginModel}
           label={t('Console plugins')}
           data={rows}
           loaded={loaded}
@@ -398,11 +331,7 @@ const ConsolePluginsTable: FC<ConsolePluginsTableProps> = ({
           additionalFilterNodes={additionalFilterNodes}
           matchesAdditionalFilters={matchesAdditionalFilters}
           hideLabelFilter
-          hideColumnManagement
-          isResizable
-          resetAllColumnWidths={resetAllColumnWidths}
           selection={selectionProps}
-          customActions={customActions}
         />
       </Wrapper>
     </>
@@ -474,10 +403,7 @@ const useConsolePluginRows = (enabledPlugins: string[]) => {
 };
 
 const PluginsPage: FC<ConsoleOperatorConfigPageProps> = (props) => {
-  const enabledPlugins = useMemo(
-    () => props?.obj?.spec?.plugins ?? [],
-    [props?.obj?.spec?.plugins],
-  );
+  const enabledPlugins = useMemo(() => props.obj?.spec?.plugins ?? [], [props.obj?.spec?.plugins]);
   const { rows, loaded } = useConsolePluginRows(enabledPlugins);
 
   return (

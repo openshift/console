@@ -1,5 +1,5 @@
 import { screen, configure } from '@testing-library/react';
-import type { ConsoleDataViewColumn } from '@console/app/src/components/data-view/types';
+import type { ConsoleDataViewColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import type { K8sResourceKind, RowProps } from '@console/internal/module/k8s';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { getDataViewRows, HelmReleaseResourceStatus } from '../HelmReleaseResourcesRow';

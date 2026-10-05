@@ -26,16 +26,6 @@ jest.mock('@console/app/src/components/data-view/ConsoleDataView', () => ({
       {loaded && !loadError && <span data-test="data-count">{data?.length ?? 0} releases</span>}
     </div>
   ),
-  initialFiltersDefault: { name: '' },
-  actionsCellProps: {},
-  nameCellProps: {},
-}));
-
-jest.mock('@console/app/src/components/data-view/useResizableColumnProps', () => ({
-  useColumnWidthSettings: jest.fn(() => ({
-    getResizableProps: jest.fn(() => ({})),
-    resetAllColumnWidths: jest.fn(),
-  })),
 }));
 
 jest.mock('@console/internal/components/utils', () => ({

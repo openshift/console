@@ -15,7 +15,7 @@ import './FunctionsPage.scss';
 export const FunctionsList: FC<TableProps> = (props) => {
   const { t } = useTranslation('knative-plugin');
   const { ns } = useParams();
-  const { columns, resetAllColumnWidths } = useServiceColumns();
+  const { columns } = useServiceColumns();
   const emptyState = (
     <EmptyState
       titleText={
@@ -41,14 +41,12 @@ export const FunctionsList: FC<TableProps> = (props) => {
   ) : (
     <ConsoleDataView<ServiceKind>
       {...props}
+      id="console.ui~v1~KnativeFunctions"
       label={t('Functions')}
       data={props.data}
       loaded={props.loaded}
       columns={columns}
       getDataViewRows={getFunctionDataViewRows}
-      hideColumnManagement
-      isResizable
-      resetAllColumnWidths={resetAllColumnWidths}
     />
   );
 };

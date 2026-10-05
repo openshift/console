@@ -1,12 +1,7 @@
 import { useMemo, Suspense } from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import {
-  ConsoleDataView,
-  getNameCellProps,
-  actionsCellProps,
-  cellIsStickyProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { DASH } from '@console/shared/src/constants/ui';
 import { ServiceMonitorModel } from '../models';
@@ -65,7 +60,6 @@ const getServiceMonitorDataViewRows = (data, columns) =>
             title={metadata.uid}
           />
         ),
-        props: getNameCellProps(metadata.name),
       },
       [serviceMonitorTableColumnInfo[1].id]: {
         cell: (
@@ -80,7 +74,6 @@ const getServiceMonitorDataViewRows = (data, columns) =>
       },
       [serviceMonitorTableColumnInfo[4].id]: {
         cell: <LazyActionMenu context={{ [referenceForModel(ServiceMonitorModel)]: obj }} />,
-        props: actionsCellProps,
       },
     };
 
@@ -100,13 +93,11 @@ const useServiceMonitorColumns = () => {
   return useMemo(
     () => [
       {
+        type: 'name',
         title: t('Name'),
         id: serviceMonitorTableColumnInfo[0].id,
         sort: 'metadata.name',
-        props: {
-          ...cellIsStickyProps,
-          modifier: 'nowrap',
-        },
+        props: { hasRightBorder: false, modifier: 'nowrap' },
       },
       {
         title: t('Namespace'),
@@ -134,11 +125,9 @@ const useServiceMonitorColumns = () => {
         },
       },
       {
-        title: '',
+        type: 'actions',
         id: serviceMonitorTableColumnInfo[4].id,
-        props: {
-          ...cellIsStickyProps,
-        },
+        props: { hasLeftBorder: false },
       },
     ],
     [t],
@@ -153,12 +142,13 @@ const ServiceMonitorsList = (props) => {
     <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView
         {...props}
+        isResizable={false}
+        id={ServiceMonitorModel}
         data={data}
         loaded={loaded}
         label={ServiceMonitorModel.labelPlural}
         columns={columns}
         getDataViewRows={getServiceMonitorDataViewRows}
-        hideColumnManagement
       />
     </Suspense>
   );

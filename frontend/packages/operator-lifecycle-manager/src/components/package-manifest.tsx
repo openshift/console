@@ -3,12 +3,7 @@ import { useMemo } from 'react';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { useParams, Link } from 'react-router';
-import {
-  ConsoleDataView,
-  getNameCellProps,
-  getNameColumnProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
-import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import type {
   ConsoleDataViewColumn,
   GetDataViewRows,
@@ -49,28 +44,23 @@ export const usePackageManifestColumns = (
   hasCatalogSource: boolean,
 ): {
   columns: ConsoleDataViewColumn<PackageManifestKind>[];
-  resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation('olm');
-  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(PackageManifestModel);
   const columns = useMemo(
     () => [
       {
+        type: 'name' as const,
         id: 'name',
-        resizableProps: getResizableProps('name'),
         title: t('Name'),
         sort: sortByValue<PackageManifestKind>(displayNameFor),
-        props: getNameColumnProps(),
       },
       {
         id: 'latestVersion',
-        resizableProps: getResizableProps('latestVersion'),
         title: t('Latest version'),
         props: { modifier: 'nowrap' as const },
       },
       {
         id: 'created',
-        resizableProps: getResizableProps('created'),
         title: t('Created'),
         sort: 'metadata.creationTimestamp',
         props: { modifier: 'nowrap' as const },
@@ -81,16 +71,15 @@ export const usePackageManifestColumns = (
         : [
             {
               id: 'catalogsource',
-              resizableProps: getResizableProps('catalogsource'),
               title: t('CatalogSource'),
               sort: 'status.catalogSource',
               props: { modifier: 'nowrap' as const },
             },
           ]),
     ],
-    [t, getResizableProps, hasCatalogSource],
+    [t, hasCatalogSource],
   );
-  return { columns, resetAllColumnWidths };
+  return { columns };
 };
 
 export const getPackageManifestDataViewRows: GetDataViewRows<PackageManifestKind> = (
@@ -117,7 +106,6 @@ export const getPackageManifestDataViewRows: GetDataViewRows<PackageManifestKind
             />
           </Link>
         ),
-        props: getNameCellProps(packageManifest.metadata.name),
       },
       latestVersion: {
         cell: (
@@ -153,7 +141,7 @@ const PackageManifestList: FC<PackageManifestListProps> = (props) => {
   const { t } = useTranslation('olm');
   // If the CatalogSource is not present, display PackageManifests along with their CatalogSources (used in PackageManifest Search page)
   const hasCatalogSource = !!props.customData?.catalogSource;
-  const { columns, resetAllColumnWidths } = usePackageManifestColumns(hasCatalogSource);
+  const { columns } = usePackageManifestColumns(hasCatalogSource);
 
   // ConsoleDataView has a generic empty body state, so keep the CatalogSource-specific wording by
   // short-circuiting when nothing loaded at all. Filtering down to zero rows still uses the table.
@@ -164,15 +152,13 @@ const PackageManifestList: FC<PackageManifestListProps> = (props) => {
   return (
     <ConsoleDataView<PackageManifestKind>
       {...props}
+      id={PackageManifestModel}
       label={t('PackageManifests')}
       data={props.data || []}
       loaded={props.loaded}
       columns={columns}
       getDataViewRows={getPackageManifestDataViewRows}
       getObjectMetadata={getPackageManifestMetadata}
-      hideColumnManagement
-      isResizable
-      resetAllColumnWidths={resetAllColumnWidths}
     />
   );
 };

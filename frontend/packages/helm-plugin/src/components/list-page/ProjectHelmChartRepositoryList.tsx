@@ -11,21 +11,19 @@ import { useRepositoriesColumns } from './RepositoriesHeader';
 
 const ProjectHelmChartRepositoryList: FC<TableProps> = (props) => {
   const { t } = useTranslation('helm-plugin');
-  const { columns, resetAllColumnWidths } = useRepositoriesColumns(ProjectHelmChartRepositoryModel);
+  const { columns } = useRepositoriesColumns();
 
   return (
     <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<K8sResourceKind>
         {...props}
+        id={ProjectHelmChartRepositoryModel}
         data={props.data}
         loaded={props.loaded}
         label={t('HelmChartRepositories')}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement
         data-test="project-helm-chart-repositories-list"
-        isResizable
-        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );

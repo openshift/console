@@ -3,18 +3,11 @@ import { useMemo, Suspense } from 'react';
 import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import {
-  actionsCellProps,
-  getNameCellProps,
-  initialFiltersDefault,
-  ConsoleDataView,
-  nameCellProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import type {
   ConsoleDataViewColumn,
   GetDataViewRows,
-} from '@console/app/src/components/data-view/types';
-import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { ActionServiceProvider } from '@console/shared/src/components/actions/ActionServiceProvider';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { ActionMenu } from '@console/shared/src/components/actions/menu/ActionMenu';
@@ -48,22 +41,17 @@ const tableColumnInfo = [{ id: 'name' }, { id: 'driverName' }, { id: 'parameters
 
 const useVolumeAttributesClassColumns = (): {
   columns: ConsoleDataViewColumn<VolumeAttributesClassKind>[];
-  resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation('public');
-  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(
-    VolumeAttributesClassModel,
-  );
 
   const columns: ConsoleDataViewColumn<VolumeAttributesClassKind>[] = useMemo(
     () => [
       {
+        type: 'name' as const,
         title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
-        resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: {
-          ...nameCellProps,
           modifier: 'nowrap' as const,
         },
       },
@@ -71,7 +59,6 @@ const useVolumeAttributesClassColumns = (): {
         title: t('Driver name'),
         id: tableColumnInfo[1].id,
         sort: 'driverName',
-        resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
           modifier: 'nowrap' as const,
         },
@@ -79,23 +66,16 @@ const useVolumeAttributesClassColumns = (): {
       {
         title: t('Parameters'),
         id: tableColumnInfo[2].id,
-        resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
           modifier: 'nowrap' as const,
         },
       },
-      {
-        title: '',
-        id: tableColumnInfo[3].id,
-        props: {
-          ...actionsCellProps,
-        },
-      },
+      { type: 'actions' as const, id: tableColumnInfo[3].id },
     ],
-    [t, getResizableProps],
+    [t],
   );
 
-  return { columns, resetAllColumnWidths };
+  return { columns };
 };
 
 const getDataViewRows: GetDataViewRows<VolumeAttributesClassKind, undefined> = (data, columns) =>
@@ -110,7 +90,6 @@ const getDataViewRows: GetDataViewRows<VolumeAttributesClassKind, undefined> = (
             <ResourceLink groupVersionKind={VolumeAttributesClassGVK} name={name} />
           </span>
         ),
-        props: getNameCellProps(name),
       },
       [tableColumnInfo[1].id]: {
         cell: obj.driverName || DASH,
@@ -126,7 +105,6 @@ const getDataViewRows: GetDataViewRows<VolumeAttributesClassKind, undefined> = (
             }}
           />
         ),
-        props: actionsCellProps,
       },
     };
 
@@ -134,7 +112,6 @@ const getDataViewRows: GetDataViewRows<VolumeAttributesClassKind, undefined> = (
       const cell = rowCells[id]?.cell || DASH;
       return {
         id,
-        props: rowCells[id]?.props,
         cell,
       };
     });
@@ -146,23 +123,20 @@ const VolumeAttributesClassList: FC<VolumeAttributesClassListProps> = ({
   loadError,
   ...restProps
 }) => {
-  const { columns, resetAllColumnWidths } = useVolumeAttributesClassColumns();
+  const { columns } = useVolumeAttributesClassColumns();
   const isLoaded = loaded !== undefined ? loaded : true;
 
   return (
     <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<VolumeAttributesClassKind>
         {...restProps}
+        id={VolumeAttributesClassModel}
         label={VolumeAttributesClassModel.labelPlural}
         data={data}
         loaded={isLoaded}
         loadError={loadError}
         columns={columns}
-        initialFilters={initialFiltersDefault}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement
-        isResizable
-        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );

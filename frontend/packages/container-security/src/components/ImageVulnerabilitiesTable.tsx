@@ -3,14 +3,7 @@ import { useCallback, useMemo } from 'react';
 import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
 import { RhUiWarningFillIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import {
-  ConsoleDataView,
-  getNameCellProps,
-  getNameColumnProps,
-  initialFiltersDefault,
-} from '@console/app/src/components/data-view/ConsoleDataView';
-import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-import type { K8sModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import type {
   ConsoleDataViewColumn,
   GetDataViewRows,
@@ -27,18 +20,6 @@ import {
   getVulnerabilityType,
   VulnerabilitiesType,
 } from './image-vulnerability-utils';
-
-/** Console-only model for column width preferences; not a cluster API resource. */
-const ImageVulnerabilityTableModel: K8sModel = {
-  apiGroup: 'console.ui',
-  apiVersion: 'v1',
-  kind: 'ImageVulnerabilityTable',
-  id: 'imagevulnerabilitytable',
-  plural: 'imagevulnerabilitytables',
-  label: 'Image vulnerability',
-  labelPlural: 'Image vulnerabilities',
-  abbr: 'IV',
-};
 
 const TYPE_FILTER_ID = 'vulnerability-type';
 const SEVERITY_FILTER_ID = 'vulnerability-severity';
@@ -58,24 +39,19 @@ type ImageVulnerabilityFilters = ResourceFilters & {
 
 const useImageVulnerabilityColumns = (): {
   columns: ConsoleDataViewColumn<ImageVuln>[];
-  resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation('container-security');
-  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(
-    ImageVulnerabilityTableModel,
-  );
   const columns = useMemo(
     () => [
       {
+        type: 'name' as const,
         id: 'name',
-        resizableProps: getResizableProps('name'),
         title: t('Name'),
         sort: 'vulnerability.name',
-        props: { ...getNameColumnProps(), modifier: 'nowrap' as const },
+        props: { modifier: 'nowrap' as const },
       },
       {
         id: 'severity',
-        resizableProps: getResizableProps('severity'),
         title: t('Severity'),
         // Order by how urgent the severity is rather than alphabetically. `index` counts up from
         // the most severe, so ascending puts Defcon1 first.
@@ -90,14 +66,12 @@ const useImageVulnerabilityColumns = (): {
       },
       {
         id: 'package',
-        resizableProps: getResizableProps('package'),
         title: t('Package'),
         sort: 'feature.name',
         props: { modifier: 'nowrap' as const },
       },
       {
         id: 'type',
-        resizableProps: getResizableProps('type'),
         title: t('Type'),
         sort: (data, direction) =>
           data.sort(
@@ -109,7 +83,6 @@ const useImageVulnerabilityColumns = (): {
       },
       {
         id: 'source',
-        resizableProps: getResizableProps('source'),
         title: t('Source'),
         sort: (data, direction) =>
           data.sort(
@@ -121,22 +94,20 @@ const useImageVulnerabilityColumns = (): {
       },
       {
         id: 'currentVersion',
-        resizableProps: getResizableProps('currentVersion'),
         title: t('Current version'),
         sort: 'feature.version',
         props: { modifier: 'nowrap' as const },
       },
       {
         id: 'fixedInVersion',
-        resizableProps: getResizableProps('fixedInVersion'),
         title: t('Fixed in version'),
         sort: 'vulnerability.fixedby',
         props: { modifier: 'nowrap' as const },
       },
     ],
-    [t, getResizableProps],
+    [t],
   );
-  return { columns, resetAllColumnWidths };
+  return { columns };
 };
 
 export const getImageVulnerabilityDataViewRows: GetDataViewRows<ImageVuln> = (data, columns) =>
@@ -144,7 +115,6 @@ export const getImageVulnerabilityDataViewRows: GetDataViewRows<ImageVuln> = (da
     const rowCells = {
       name: {
         cell: <ExternalLink text={vulnerability.name} href={vulnerability.link} />,
-        props: getNameCellProps(vulnerability.name),
       },
       severity: {
         cell: (
@@ -173,10 +143,10 @@ type ImageVulnerabilitiesTableProps = TableProps & {
 
 const ImageVulnerabilitiesTable: FC<ImageVulnerabilitiesTableProps> = (props) => {
   const { t } = useTranslation('container-security');
-  const { columns, resetAllColumnWidths } = useImageVulnerabilityColumns();
+  const { columns } = useImageVulnerabilityColumns();
 
   const initialFilters = useMemo<ImageVulnerabilityFilters>(
-    () => ({ ...initialFiltersDefault, [TYPE_FILTER_ID]: [], [SEVERITY_FILTER_ID]: [] }),
+    () => ({ [TYPE_FILTER_ID]: [], [SEVERITY_FILTER_ID]: [] }),
     [],
   );
   const additionalFilterNodes = useMemo(
@@ -213,6 +183,7 @@ const ImageVulnerabilitiesTable: FC<ImageVulnerabilitiesTableProps> = (props) =>
   return (
     <ConsoleDataView<ImageVuln, unknown, ImageVulnerabilityFilters>
       {...props}
+      id="console.ui~v1~ImageVulnerabilityTable"
       label={t('Image vulnerabilities')}
       data={props.data}
       loaded={props.loaded}
@@ -223,10 +194,7 @@ const ImageVulnerabilitiesTable: FC<ImageVulnerabilitiesTableProps> = (props) =>
       initialFilters={initialFilters}
       additionalFilterNodes={additionalFilterNodes}
       matchesAdditionalFilters={matchesAdditionalFilters}
-      hideColumnManagement
       hideLabelFilter
-      isResizable
-      resetAllColumnWidths={resetAllColumnWidths}
     />
   );
 };

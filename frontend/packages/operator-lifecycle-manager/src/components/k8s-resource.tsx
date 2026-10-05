@@ -3,12 +3,7 @@ import { useMemo } from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
-import {
-  ConsoleDataView,
-  getNameCellProps,
-  getNameColumnProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
-import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import type {
   ConsoleDataViewColumn,
   GetDataViewRows,
@@ -52,61 +47,35 @@ const DEFAULT_RESOURCES: CRDDescription['resources'] = [
   { kind: JobModel.kind, version: JobModel.apiVersion },
 ];
 
-/**
- * Console-only model for column width preferences. This table lists whatever kinds an operand
- * owns, so the widths cannot be keyed by any single resource model.
- */
-const OperandResourcesListModel = {
-  apiGroup: 'console.ui',
-  apiVersion: 'v1',
-  kind: 'OperandResourcesList',
-  plural: 'operandresourceslists',
-  label: 'Resource',
-  labelPlural: 'Resources',
-  abbr: 'R',
-};
-
 export const useOperandResourceColumns = (): {
   columns: ConsoleDataViewColumn<K8sResourceKind>[];
-  resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation('olm');
-  const { getResizableProps, resetAllColumnWidths } =
-    useColumnWidthSettings(OperandResourcesListModel);
   const columns = useMemo(
     () => [
-      {
-        id: 'name',
-        resizableProps: getResizableProps('name'),
-        title: t('Name'),
-        sort: 'metadata.name',
-        props: getNameColumnProps(),
-      },
+      { type: 'name' as const, id: 'name', title: t('Name'), sort: 'metadata.name' },
       {
         id: 'kind',
-        resizableProps: getResizableProps('kind'),
         title: t('Kind'),
         sort: 'kind',
         props: { modifier: 'nowrap' as const },
       },
       {
         id: 'status',
-        resizableProps: getResizableProps('status'),
         title: t('Status'),
         sort: sortByOptionalPath<K8sResourceKind>('status.phase'),
         props: { modifier: 'nowrap' as const },
       },
       {
         id: 'created',
-        resizableProps: getResizableProps('created'),
         title: t('Created'),
         sort: 'metadata.creationTimestamp',
         props: { modifier: 'nowrap' as const },
       },
     ],
-    [t, getResizableProps],
+    [t],
   );
-  return { columns, resetAllColumnWidths };
+  return { columns };
 };
 
 export const getOperandResourceDataViewRows: GetDataViewRows<
@@ -117,7 +86,6 @@ export const getOperandResourceDataViewRows: GetDataViewRows<
     const rowCells = {
       name: {
         cell: linkFor(obj, providedAPI),
-        props: getNameCellProps(obj.metadata.name),
       },
       kind: { cell: obj.kind },
       status: { cell: <Status status={obj?.status?.phase ?? 'Created'} /> },
@@ -137,7 +105,7 @@ const ResourceTableEmptyMsg: FC = () => {
 
 const ResourceTable: FC<ResourceTableProps> = (props) => {
   const { t } = useTranslation('olm');
-  const { columns, resetAllColumnWidths } = useOperandResourceColumns();
+  const { columns } = useOperandResourceColumns();
   const dataViewFilters = useOlmDataViewFilters<K8sResourceKind>(props.rowFilters);
 
   // ConsoleDataView has a generic empty body state, so keep the operand-specific wording by
@@ -150,15 +118,13 @@ const ResourceTable: FC<ResourceTableProps> = (props) => {
     <ConsoleDataView<K8sResourceKind, ResourceTableCustomData>
       {...props}
       {...dataViewFilters}
+      id="console.ui~v1~OperandResourcesList"
       label={t('Resources')}
       data={props.data || []}
       loaded={props.loaded}
       columns={columns}
       getDataViewRows={getOperandResourceDataViewRows}
       customRowData={props.customData}
-      hideColumnManagement
-      isResizable
-      resetAllColumnWidths={resetAllColumnWidths}
     />
   );
 };

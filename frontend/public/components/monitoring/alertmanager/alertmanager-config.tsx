@@ -21,20 +21,15 @@ import { RhUiEditIcon } from '@patternfly/react-icons';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router';
-import {
-  actionsCellProps,
-  cellIsStickyProps,
-  getNameCellProps,
-  ConsoleDataView,
-} from '@console/app/src/components/data-view/ConsoleDataView';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import type {
   ResourceFilters,
   ConsoleDataViewColumn,
   ConsoleDataViewRow,
   ResourceMetadata,
-} from '@console/app/src/components/data-view/types';
-import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
-import type { RowProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+  RowProps,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { NavBar } from '@console/internal/components/utils/horizontal-nav';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
@@ -361,7 +356,6 @@ const getReceiverDataViewRows = (
     const rowCells = {
       [tableColumnInfo[0].id]: {
         cell: receiver.name,
-        props: getNameCellProps(receiver.name),
       },
       [tableColumnInfo[1].id]: {
         cell:
@@ -389,7 +383,6 @@ const getReceiverDataViewRows = (
       },
       [tableColumnInfo[3].id]: {
         cell: <Kebab options={receiverMenuItems(receiver.name)} />,
-        props: actionsCellProps,
       },
     };
 
@@ -408,13 +401,11 @@ const useReceiverColumns = (): ConsoleDataViewColumn<AlertmanagerReceiver>[] => 
   const columns = useMemo<ConsoleDataViewColumn<AlertmanagerReceiver>[]>(
     () => [
       {
+        type: 'name' as const,
         title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'name',
-        props: {
-          ...cellIsStickyProps,
-          modifier: 'nowrap' as const,
-        },
+        props: { hasRightBorder: false, modifier: 'nowrap' as const },
       },
       {
         title: t('Integration type'),
@@ -431,12 +422,9 @@ const useReceiverColumns = (): ConsoleDataViewColumn<AlertmanagerReceiver>[] => 
         },
       },
       {
-        title: '',
+        type: 'actions' as const,
         id: tableColumnInfo[3].id,
-        props: {
-          ...cellIsStickyProps,
-          modifier: 'nowrap' as const,
-        },
+        props: { hasLeftBorder: false, modifier: 'nowrap' as const },
       },
     ],
     [t],
@@ -475,6 +463,8 @@ const ReceiversTable: FC<ReceiversTableProps> = (props) => {
   return (
     <Suspense fallback={<div className="loading-skeleton--table" />}>
       <ConsoleDataView<AlertmanagerReceiver, ReceiverRowData, ReceiverFilters>
+        isResizable={false}
+        id="console.ui~v1~AlertmanagerReceivers"
         label={t('Receivers')}
         data={data}
         loaded
@@ -482,7 +472,6 @@ const ReceiversTable: FC<ReceiversTableProps> = (props) => {
         getObjectMetadata={getObjectMetadata}
         getDataViewRows={getReceiverDataViewRows}
         customRowData={customRowData}
-        hideColumnManagement
         hideNameLabelFilters={false}
         hideLabelFilter
       />

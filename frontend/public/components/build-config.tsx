@@ -3,17 +3,11 @@ import { useMemo, Suspense } from 'react';
 import { Grid, GridItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
-import {
-  actionsCellProps,
-  getNameCellProps,
-  ConsoleDataView,
-  nameCellProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import type {
   ConsoleDataViewColumn,
   GetDataViewRows,
-} from '@console/app/src/components/data-view/types';
-import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
@@ -146,7 +140,6 @@ const getDataViewRows: GetDataViewRows<BuildConfig> = (data, columns) =>
             namespace={namespace}
           />
         ),
-        props: getNameCellProps(name),
       },
       [tableColumnInfo[1].id]: {
         cell: <ResourceLink kind="Namespace" name={namespace} />,
@@ -184,7 +177,6 @@ const getDataViewRows: GetDataViewRows<BuildConfig> = (data, columns) =>
             context={{ [referenceForModel(BuildConfigModel)]: { buildConfig: obj, latestBuild } }}
           />
         ),
-        props: actionsCellProps,
       },
     };
 
@@ -192,7 +184,6 @@ const getDataViewRows: GetDataViewRows<BuildConfig> = (data, columns) =>
       const cell = rowCells[id]?.cell || DASH;
       return {
         id,
-        props: rowCells[id]?.props,
         cell,
       };
     });
@@ -213,20 +204,17 @@ const getBuildStatus = (buildConfig: BuildConfig) =>
 
 const useBuildConfigColumns = (): {
   columns: ConsoleDataViewColumn<BuildConfig>[];
-  resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation('public');
-  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(BuildConfigModel);
 
   const columns = useMemo<ConsoleDataViewColumn<BuildConfig>[]>(
     () => [
       {
+        type: 'name' as const,
         title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
-        resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: {
-          ...nameCellProps,
           modifier: 'nowrap' as const,
         },
       },
@@ -234,7 +222,6 @@ const useBuildConfigColumns = (): {
         title: t('Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',
-        resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
           modifier: 'nowrap' as const,
         },
@@ -243,7 +230,6 @@ const useBuildConfigColumns = (): {
         title: t('Last run'),
         id: tableColumnInfo[2].id,
         sort: 'latestBuild.metadata.name',
-        resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
           modifier: 'nowrap' as const,
         },
@@ -252,7 +238,6 @@ const useBuildConfigColumns = (): {
         title: t('Last run status'),
         id: tableColumnInfo[3].id,
         sort: 'latestBuild.status.phase',
-        resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
           modifier: 'nowrap' as const,
         },
@@ -261,7 +246,6 @@ const useBuildConfigColumns = (): {
         title: t('Last run time'),
         id: tableColumnInfo[4].id,
         sort: 'latestBuild.metadata.creationTimestamp',
-        resizableProps: getResizableProps(tableColumnInfo[4].id),
         props: {
           modifier: 'nowrap' as const,
         },
@@ -270,27 +254,20 @@ const useBuildConfigColumns = (): {
         title: t('Last run duration'),
         id: tableColumnInfo[5].id,
         sort: (data, direction) => data.sort(sortResourceByValue(direction, sorts.buildDuration)),
-        resizableProps: getResizableProps(tableColumnInfo[5].id),
         props: {
           modifier: 'nowrap' as const,
         },
       },
-      {
-        title: '',
-        id: tableColumnInfo[6].id,
-        props: {
-          ...actionsCellProps,
-        },
-      },
+      { type: 'actions' as const, id: tableColumnInfo[6].id },
     ],
-    [t, getResizableProps],
+    [t],
   );
 
-  return { columns, resetAllColumnWidths };
+  return { columns };
 };
 
 const BuildConfigsList: FC<BuildConfigsListProps> = ({ data, loaded, ...props }) => {
-  const { columns, resetAllColumnWidths } = useBuildConfigColumns();
+  const { columns } = useBuildConfigColumns();
   const buildModel = referenceForModel(BuildModel);
   const BUILDCONFIG_TO_BUILD_REFERENCE_LABEL = 'openshift.io/build-config.name';
   const [builds, buildsLoaded, buildsLoadError] = useK8sWatchResource<K8sResourceKind[]>({
@@ -333,14 +310,12 @@ const BuildConfigsList: FC<BuildConfigsListProps> = ({ data, loaded, ...props })
     <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView
         {...props}
+        id={BuildConfigModel}
         label={BuildConfigModel.labelPlural}
         data={buildResource}
         loaded={loaded}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement
-        isResizable
-        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );

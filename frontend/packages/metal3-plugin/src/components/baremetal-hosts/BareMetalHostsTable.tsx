@@ -2,14 +2,7 @@ import type { FC } from 'react';
 import { useCallback, useMemo } from 'react';
 import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
 import { useTranslation } from 'react-i18next';
-import {
-  ConsoleDataView,
-  actionsCellProps,
-  getNameCellProps,
-  getNameColumnProps,
-  initialFiltersDefault,
-} from '@console/app/src/components/data-view/ConsoleDataView';
-import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import { DASH } from '@console/dynamic-plugin-sdk/src/app/constants';
 import type {
   ConsoleDataViewColumn,
@@ -48,59 +41,52 @@ type BareMetalHostRowData = {
 
 const useBareMetalHostColumns = (): {
   columns: ConsoleDataViewColumn<BareMetalHostBundle>[];
-  resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation('metal3-plugin');
-  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(BareMetalHostModel);
   const columns = useMemo(
     () => [
       {
+        type: 'name' as const,
         id: 'name',
-        resizableProps: getResizableProps('name'),
         title: t('Name'),
         sort: 'host.metadata.name',
-        props: { ...getNameColumnProps(), modifier: 'nowrap' as const },
+        props: { modifier: 'nowrap' as const },
       },
       {
         id: 'status',
-        resizableProps: getResizableProps('status'),
         title: t('Status'),
         sort: 'status.status',
         props: { modifier: 'nowrap' as const },
       },
       {
         id: 'node',
-        resizableProps: getResizableProps('node'),
         title: t('Node'),
         sort: 'node.metadata.name',
         props: { modifier: 'nowrap' as const },
       },
       {
         id: 'role',
-        resizableProps: getResizableProps('role'),
         title: t('Role'),
         sort: 'machine.metadata.labels["machine.openshift.io/cluster-api-machine-role"]',
         props: { modifier: 'nowrap' as const },
       },
       {
         id: 'address',
-        resizableProps: getResizableProps('address'),
         title: t('Management Address'),
         sort: 'host.spec.bmc.address',
         props: { modifier: 'nowrap' as const },
       },
       {
         id: 'serialNumber',
-        resizableProps: getResizableProps('serialNumber'),
         title: t('Serial Number'),
         sort: 'host.status.hardware.systemVendor.serialNumber',
         props: { modifier: 'nowrap' as const },
       },
-      { id: 'actions', title: '', props: actionsCellProps },
+      { type: 'actions' as const, id: 'actions' },
     ],
-    [t, getResizableProps],
+    [t],
   );
-  return { columns, resetAllColumnWidths };
+  return { columns };
 };
 
 export const getBareMetalHostDataViewRows: GetDataViewRows<
@@ -114,7 +100,6 @@ export const getBareMetalHostDataViewRows: GetDataViewRows<
     const rowCells = {
       name: {
         cell: <ResourceLink kind={hostReference} name={name} namespace={getNamespace(host)} />,
-        props: getNameCellProps(name),
       },
       status: {
         cell: (
@@ -145,7 +130,6 @@ export const getBareMetalHostDataViewRows: GetDataViewRows<
             }}
           />
         ),
-        props: actionsCellProps,
       },
     };
     return columns.map(({ id }) => ({ id, ...rowCells[id] }));
@@ -162,7 +146,7 @@ type BareMetalHostsTableProps = TableProps & {
 
 const BareMetalHostsTable: FC<BareMetalHostsTableProps> = (props) => {
   const { t } = useTranslation('metal3-plugin');
-  const { columns, resetAllColumnWidths } = useBareMetalHostColumns();
+  const { columns } = useBareMetalHostColumns();
   const [maintenanceModel] = useMaintenanceCapability();
   const bmoEnabled = useFlag(BMO_ENABLED_FLAG);
 
@@ -170,10 +154,7 @@ const BareMetalHostsTable: FC<BareMetalHostsTableProps> = (props) => {
     () => hostStatusFilter(t).items.map(({ id, title }) => ({ value: id, label: title })),
     [t],
   );
-  const initialFilters = useMemo<BareMetalHostFilters>(
-    () => ({ ...initialFiltersDefault, [HOST_STATUS_FILTER_ID]: [] }),
-    [],
-  );
+  const initialFilters = useMemo<BareMetalHostFilters>(() => ({ [HOST_STATUS_FILTER_ID]: [] }), []);
   const additionalFilterNodes = useMemo(
     () => [
       <DataViewCheckboxFilter
@@ -201,6 +182,7 @@ const BareMetalHostsTable: FC<BareMetalHostsTableProps> = (props) => {
   return (
     <ConsoleDataView<BareMetalHostBundle, BareMetalHostRowData, BareMetalHostFilters>
       {...props}
+      id={BareMetalHostModel}
       label={t('Bare Metal Hosts')}
       data={props.data}
       loaded={props.loaded}
@@ -211,9 +193,6 @@ const BareMetalHostsTable: FC<BareMetalHostsTableProps> = (props) => {
       initialFilters={initialFilters}
       additionalFilterNodes={additionalFilterNodes}
       matchesAdditionalFilters={matchesAdditionalFilters}
-      hideColumnManagement
-      isResizable
-      resetAllColumnWidths={resetAllColumnWidths}
     />
   );
 };

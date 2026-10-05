@@ -29,58 +29,59 @@
 27.  [console.dashboards/overview/prometheus/activity/resource](#consoledashboardsoverviewprometheusactivityresource)
 28.  [console.dashboards/project/overview/item](#consoledashboardsprojectoverviewitem)
 29.  [console.dashboards/tab](#consoledashboardstab)
-30.  [console.file-upload](#consolefile-upload)
-31.  [console.flag](#consoleflag)
-32.  [console.flag/hookProvider](#consoleflaghookProvider)
-33.  [console.flag/model](#consoleflagmodel)
-34.  [console.global-config](#consoleglobal-config)
-35.  [console.model-metadata](#consolemodel-metadata)
-36.  [console.navigation/href](#consolenavigationhref)
-37.  [console.navigation/resource-cluster](#consolenavigationresource-cluster)
-38.  [console.navigation/resource-ns](#consolenavigationresource-ns)
-39.  [console.navigation/section](#consolenavigationsection)
-40.  [console.navigation/separator](#consolenavigationseparator)
-41.  [console.node/inventory-item](#consolenodeinventory-item)
-42.  [console.node/status](#consolenodestatus)
-43.  [console.node/sub-nav-tab](#consolenodesub-nav-tab)
-44.  [console.page/resource/details](#consolepageresourcedetails)
-45.  [console.page/resource/list](#consolepageresourcelist)
-46.  [console.page/route](#consolepageroute)
-47.  [console.page/route/standalone](#consolepageroutestandalone)
-48.  [console.perspective](#consoleperspective)
-49.  [console.project-overview/inventory-item](#consoleproject-overviewinventory-item)
-50.  [console.project-overview/utilization-item](#consoleproject-overviewutilization-item)
-51.  [console.pvc/alert](#consolepvcalert)
-52.  [console.pvc/create-prop](#consolepvccreate-prop)
-53.  [console.pvc/delete](#consolepvcdelete)
-54.  [console.pvc/status](#consolepvcstatus)
-55.  [console.redux-reducer](#consoleredux-reducer)
-56.  [console.resource/create](#consoleresourcecreate)
-57.  [console.resource/details-item](#consoleresourcedetails-item)
-58.  [console.storage-class/provisioner](#consolestorage-classprovisioner)
-59.  [console.storage-provider](#consolestorage-provider)
-60.  [console.tab](#consoletab)
-61.  [console.tab/horizontalNav](#consoletabhorizontalNav)
-62.  [console.telemetry/listener](#consoletelemetrylistener)
-63.  [console.topology/adapter/build](#consoletopologyadapterbuild)
-64.  [console.topology/adapter/network](#consoletopologyadapternetwork)
-65.  [console.topology/adapter/pod](#consoletopologyadapterpod)
-66.  [console.topology/component/factory](#consoletopologycomponentfactory)
-67.  [console.topology/create/connector](#consoletopologycreateconnector)
-68.  [console.topology/data/factory](#consoletopologydatafactory)
-69.  [console.topology/decorator/provider](#consoletopologydecoratorprovider)
-70.  [console.topology/details/resource-alert](#consoletopologydetailsresource-alert)
-71.  [console.topology/details/resource-link](#consoletopologydetailsresource-link)
-72.  [console.topology/details/tab](#consoletopologydetailstab)
-73.  [console.topology/details/tab-section](#consoletopologydetailstab-section)
-74.  [console.topology/display/filters](#consoletopologydisplayfilters)
-75.  [console.topology/relationship/provider](#consoletopologyrelationshipprovider)
-76.  [console.user-preference/group](#consoleuser-preferencegroup)
-77.  [console.user-preference/item](#consoleuser-preferenceitem)
-78.  [console.yaml-template](#consoleyaml-template)
-79.  [dev-console.add/action](#dev-consoleaddaction)
-80.  [dev-console.add/action-group](#dev-consoleaddaction-group)
-81.  [dev-console.import/environment](#dev-consoleimportenvironment)
+30.  [console.dataview/table-column](#consoledataviewtable-column)
+31.  [console.file-upload](#consolefile-upload)
+32.  [console.flag](#consoleflag)
+33.  [console.flag/hookProvider](#consoleflaghookProvider)
+34.  [console.flag/model](#consoleflagmodel)
+35.  [console.global-config](#consoleglobal-config)
+36.  [console.model-metadata](#consolemodel-metadata)
+37.  [console.navigation/href](#consolenavigationhref)
+38.  [console.navigation/resource-cluster](#consolenavigationresource-cluster)
+39.  [console.navigation/resource-ns](#consolenavigationresource-ns)
+40.  [console.navigation/section](#consolenavigationsection)
+41.  [console.navigation/separator](#consolenavigationseparator)
+42.  [console.node/inventory-item](#consolenodeinventory-item)
+43.  [console.node/status](#consolenodestatus)
+44.  [console.node/sub-nav-tab](#consolenodesub-nav-tab)
+45.  [console.page/resource/details](#consolepageresourcedetails)
+46.  [console.page/resource/list](#consolepageresourcelist)
+47.  [console.page/route](#consolepageroute)
+48.  [console.page/route/standalone](#consolepageroutestandalone)
+49.  [console.perspective](#consoleperspective)
+50.  [console.project-overview/inventory-item](#consoleproject-overviewinventory-item)
+51.  [console.project-overview/utilization-item](#consoleproject-overviewutilization-item)
+52.  [console.pvc/alert](#consolepvcalert)
+53.  [console.pvc/create-prop](#consolepvccreate-prop)
+54.  [console.pvc/delete](#consolepvcdelete)
+55.  [console.pvc/status](#consolepvcstatus)
+56.  [console.redux-reducer](#consoleredux-reducer)
+57.  [console.resource/create](#consoleresourcecreate)
+58.  [console.resource/details-item](#consoleresourcedetails-item)
+59.  [console.storage-class/provisioner](#consolestorage-classprovisioner)
+60.  [console.storage-provider](#consolestorage-provider)
+61.  [console.tab](#consoletab)
+62.  [console.tab/horizontalNav](#consoletabhorizontalNav)
+63.  [console.telemetry/listener](#consoletelemetrylistener)
+64.  [console.topology/adapter/build](#consoletopologyadapterbuild)
+65.  [console.topology/adapter/network](#consoletopologyadapternetwork)
+66.  [console.topology/adapter/pod](#consoletopologyadapterpod)
+67.  [console.topology/component/factory](#consoletopologycomponentfactory)
+68.  [console.topology/create/connector](#consoletopologycreateconnector)
+69.  [console.topology/data/factory](#consoletopologydatafactory)
+70.  [console.topology/decorator/provider](#consoletopologydecoratorprovider)
+71.  [console.topology/details/resource-alert](#consoletopologydetailsresource-alert)
+72.  [console.topology/details/resource-link](#consoletopologydetailsresource-link)
+73.  [console.topology/details/tab](#consoletopologydetailstab)
+74.  [console.topology/details/tab-section](#consoletopologydetailstab-section)
+75.  [console.topology/display/filters](#consoletopologydisplayfilters)
+76.  [console.topology/relationship/provider](#consoletopologyrelationshipprovider)
+77.  [console.user-preference/group](#consoleuser-preferencegroup)
+78.  [console.user-preference/item](#consoleuser-preferenceitem)
+79.  [console.yaml-template](#consoleyaml-template)
+80.  [dev-console.add/action](#dev-consoleaddaction)
+81.  [dev-console.add/action-group](#dev-consoleaddaction-group)
+82.  [dev-console.import/environment](#dev-consoleimportenvironment)
 
 ---
 
@@ -144,6 +145,7 @@ ResourceActionProvider contributes a hook that returns list of actions for speci
 | ---- | ---------- | -------- | ----------- |
 | `model` | `ExtensionK8sKindVersionModel` | no | The model for which this provider provides actions for. |
 | `provider` | `CodeRef<ExtensionHook<Action[]>>` | no | A react hook which returns actions for the given resource model |
+| `bulkProvider` | `CodeRef<BulkResourceActionHook>` | yes | (optional) Hook returning actions for a filtered selection of resources of this model. Only return actions that support bulk use, and check applicability and access for the full selection. It is not called for an empty or mixed-model selection. |
 
 ---
 
@@ -567,6 +569,24 @@ Adds a new dashboard tab, placed after the Overview tab.
 | `id` | `string` | no | A unique tab identifier, used as tab link `href` and when adding cards to this tab. |
 | `navSection` | `'home' \| 'storage'` | no | NavSection to which the tab belongs to |
 | `title` | `string` | no | The title of the tab. |
+
+---
+
+## `console.dataview/table-column`
+
+### Summary 
+
+Adds a column to a `ConsoleDataView` table whose resolved `id` matches `tableID`.<br/>A default-hidden column can be selected only when that table provides a `columnLayout`<br/>and shows the column management action. `columnData.id` must be unique among built-in<br/>and extension columns, and the title must be nonempty. Console keeps built-in columns<br/>when IDs collide. For duplicate plugin IDs, the first column in plugin-name/column-ID<br/>order wins. Prefix the ID with the plugin name to avoid collisions. `columnData.title`<br/>and `columnData.tooltip` support translated keys in the `%namespace~key%` format.<br/><br/>Columns without an insertion anchor appear before the table's actions column, or at<br/>the end if there is no actions column. Anchors refer to built-in or plugin column IDs.<br/>When several plugins use the same anchor, Console orders them by plugin name and then<br/>column ID. An unknown anchor or insertion cycle uses the default position.<br/>Example `console-extensions.json` entry:<br/>```json<br/>{<br/>  "type": "console.dataview/table-column",<br/>  "properties": {<br/>    "tableID": "apps~v1~Deployment",<br/>    "columnData": { "$codeRef": "columns.readyColumn" },<br/>    "getCellContent": { "$codeRef": "columns.getReadyCell" }<br/>  }<br/>}<br/>```
+
+### Properties
+
+| Name | Value Type | Optional | Description |
+| ---- | ---------- | -------- | ----------- |
+| `tableID` | `string` | no | Must exactly match the target table's resolved `id`. |
+| `columnData` | `CodeRef<ConsoleDataViewColumn<TData> & { title: string; }>` | no | Code reference to the column definition. When `additional` is omitted, Console treats it as `true`. |
+| `getCellContent` | `CodeRef<GetDataViewCell<TData, TCustomRowData>>` | no | Code reference that returns one cell per item on the current page. |
+| `insertBefore` | `string` | yes | The column ID before which this item should be placed. Takes precedence when both anchors exist. |
+| `insertAfter` | `string` | yes | The column ID after which this item should be placed. Used if `insertBefore` is absent or unknown. |
 
 ---
 

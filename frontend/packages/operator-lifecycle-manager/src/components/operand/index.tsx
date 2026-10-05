@@ -5,11 +5,7 @@ import type { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useParams, useLocation, useNavigate } from 'react-router';
-import {
-  ConsoleDataView,
-  actionsCellProps,
-  getNameCellProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import type { K8sModel } from '@console/dynamic-plugin-sdk';
 import { ListPageBody } from '@console/dynamic-plugin-sdk';
 import type { GetDataViewRows } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
@@ -95,7 +91,9 @@ export const getOperandDataViewRows: GetDataViewRows<K8sResourceKind> = (data, c
     const objReference = referenceFor(obj);
     const context = { [objReference]: obj, 'operand-actions': { resource: obj } };
     const rowCells = {
-      name: { cell: <OperandLink obj={obj} />, props: getNameCellProps(obj.metadata.name) },
+      name: {
+        cell: <OperandLink obj={obj} />,
+      },
       kind: { cell: obj.kind, props: { 'data-test-operand-kind': obj.kind } },
       namespace: {
         cell: obj.metadata.namespace ? (
@@ -115,7 +113,6 @@ export const getOperandDataViewRows: GetDataViewRows<K8sResourceKind> = (data, c
         cell: (
           <LazyActionMenu context={context} isDisabled={_.has(obj.metadata, 'deletionTimestamp')} />
         ),
-        props: actionsCellProps,
       },
     };
     return columns.map(({ id }) => ({ id, ...rowCells[id] }));
@@ -137,7 +134,7 @@ const OperandListEmptyMsg: FC<{ noAPIsFound?: boolean }> = ({ noAPIsFound }) => 
 const OperandList: FC<OperandListProps> = (props) => {
   const { t } = useTranslation('olm');
   const { noAPIsFound, showNamespace } = props;
-  const { columns, resetAllColumnWidths } = useOperandColumns(showNamespace);
+  const { columns } = useOperandColumns(showNamespace);
   const dataViewFilters = useOlmDataViewFilters<K8sResourceKind>(props.rowFilters);
 
   // ConsoleDataView has a generic empty body state, so keep the operand-specific wording by
@@ -150,6 +147,7 @@ const OperandList: FC<OperandListProps> = (props) => {
     <ConsoleDataView<K8sResourceKind>
       {...props}
       {...dataViewFilters}
+      id="console.ui~v1~OperandsList"
       label={t('Operands')}
       data={props.data || []}
       loaded={props.loaded}
@@ -159,9 +157,6 @@ const OperandList: FC<OperandListProps> = (props) => {
       // so the Namespace column has to be kept explicitly or the single-namespace auto-hide
       // strips it right back out.
       showNamespaceOverride={showNamespace}
-      hideColumnManagement
-      isResizable
-      resetAllColumnWidths={resetAllColumnWidths}
     />
   );
 };

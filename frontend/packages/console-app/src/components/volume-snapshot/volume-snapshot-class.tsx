@@ -2,17 +2,11 @@ import type { FC } from 'react';
 import { useMemo, Suspense } from 'react';
 import type { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
-import {
-  actionsCellProps,
-  getNameCellProps,
-  ConsoleDataView,
-  nameCellProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import type {
   ConsoleDataViewColumn,
   GetDataViewRows,
-} from '@console/app/src/components/data-view/types';
-import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import {
   ListPageBody,
   ListPageCreate,
@@ -22,8 +16,7 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { ResourceLink } from '@console/internal/components/utils/resource-link';
 import { VolumeSnapshotClassModel } from '@console/internal/models';
 import type { VolumeSnapshotClassKind, Selector } from '@console/internal/module/k8s';
-import { referenceForModel, referenceFor } from '@console/internal/module/k8s';
-import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { LoadingBox } from '@console/shared/src/components/loading/LoadingBox';
 import { DASH } from '@console/shared/src/constants/ui';
 import { getAnnotations } from '@console/shared/src/selectors/common';
@@ -44,7 +37,6 @@ const getDataViewRowsCreator: (t: TFunction) => GetDataViewRows<VolumeSnapshotCl
     data.map(({ obj }) => {
       const name = obj.metadata?.name || '';
       const { deletionPolicy, driver } = obj;
-      const context = { [referenceFor(obj)]: obj };
 
       const rowCells = {
         [tableColumnInfo[0].id]: {
@@ -57,7 +49,6 @@ const getDataViewRowsCreator: (t: TFunction) => GetDataViewRows<VolumeSnapshotCl
               )}
             </ResourceLink>
           ),
-          props: getNameCellProps(name),
         },
         [tableColumnInfo[1].id]: {
           cell: driver,
@@ -65,18 +56,13 @@ const getDataViewRowsCreator: (t: TFunction) => GetDataViewRows<VolumeSnapshotCl
         [tableColumnInfo[2].id]: {
           cell: deletionPolicy,
         },
-        [tableColumnInfo[3].id]: {
-          cell: <LazyActionMenu context={context} />,
-          props: actionsCellProps,
-        },
       };
 
       return columns.map(({ id }) => {
+        if (id === tableColumnInfo[3].id) return { id };
         const cell = rowCells[id]?.cell || DASH;
-        const props = rowCells[id]?.props || undefined;
         return {
           id,
-          props,
           cell,
         };
       });
@@ -84,45 +70,36 @@ const getDataViewRowsCreator: (t: TFunction) => GetDataViewRows<VolumeSnapshotCl
 
 const useVolumeSnapshotClassColumns = (): {
   columns: ConsoleDataViewColumn<VolumeSnapshotClassKind>[];
-  resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation('console-app');
-  const { getResizableProps, resetAllColumnWidths } =
-    useColumnWidthSettings(VolumeSnapshotClassModel);
 
   const columns: ConsoleDataViewColumn<VolumeSnapshotClassKind>[] = useMemo(
     () => [
       {
+        type: 'name' as const,
         title: t('Name'),
         sort: 'metadata.name',
         id: tableColumnInfo[0].id,
-        resizableProps: getResizableProps(tableColumnInfo[0].id),
-        props: { ...nameCellProps, modifier: 'nowrap' as const },
+        props: { modifier: 'nowrap' as const },
       },
       {
         title: t('Driver'),
         sort: 'driver',
         id: tableColumnInfo[1].id,
-        resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: { modifier: 'nowrap' as const },
       },
       {
         title: t('Deletion policy'),
         sort: 'deletionPolicy',
         id: tableColumnInfo[2].id,
-        resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: { modifier: 'nowrap' as const },
       },
-      {
-        title: '',
-        id: tableColumnInfo[3].id,
-        props: { ...actionsCellProps },
-      },
+      { type: 'actions' as const, id: tableColumnInfo[3].id },
     ],
-    [t, getResizableProps],
+    [t],
   );
 
-  return { columns, resetAllColumnWidths };
+  return { columns };
 };
 
 const VolumeSnapshotClassTable: FC<VolumeSnapshotClassTableProps> = ({
@@ -131,21 +108,19 @@ const VolumeSnapshotClassTable: FC<VolumeSnapshotClassTableProps> = ({
   ...props
 }) => {
   const { t } = useTranslation('console-app');
-  const { columns, resetAllColumnWidths } = useVolumeSnapshotClassColumns();
+  const { columns } = useVolumeSnapshotClassColumns();
   const getDataViewRows = useMemo(() => getDataViewRowsCreator(t), [t]);
 
   return (
     <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<VolumeSnapshotClassKind>
         {...props}
+        id={VolumeSnapshotClassModel}
         label={VolumeSnapshotClassModel.labelPlural}
         data={data}
         loaded={loaded}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement
-        isResizable
-        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );
