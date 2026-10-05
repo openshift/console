@@ -759,7 +759,7 @@ func main() {
 		flags.FatalIfFailed(flags.NewInvalidFlagError("listen", "scheme must be one of: http, https"))
 	}
 
-	handler, err := srv.HTTPHandler()
+	handler, err := srv.HTTPHandler(ctx)
 	if err != nil {
 		klog.Fatalf("failed to set up HTTP handler: %v", err)
 	}
