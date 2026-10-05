@@ -119,7 +119,6 @@ const renderTable = (
   options: {
     id?: K8sGroupVersionKind | string;
     columnLayoutID?: string;
-    withoutID?: boolean;
     isResizable?: boolean;
     useDefaultResizable?: boolean;
     columnWidths?: Record<string, number>;
@@ -167,7 +166,7 @@ const renderTable = (
         data={options.data ?? data}
         loaded
         columns={columns}
-        id={options.withoutID ? undefined : (options.id ?? 'test-table')}
+        id={options.id ?? 'test-table'}
         columnLayout={{
           id: options.columnLayoutID ?? 'test-table',
           type: 'Item',
@@ -422,14 +421,6 @@ describe('ConsoleDataView', () => {
       'apps~v1~Deployment',
     );
     expect(getConsoleDataViewID('demo-plugin~v1~Pod')).toBe('demo-plugin~v1~Pod');
-  });
-
-  it('renders without table actions when no ID is supplied', () => {
-    renderTable([], undefined, { withoutID: true, isResizable: true });
-
-    expect(screen.getByRole('grid', { name: 'items table' })).toBeVisible();
-    expect(screen.queryByRole('button', { name: 'Column management' })).not.toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: 'Reset column widths' })).not.toBeInTheDocument();
   });
 
   it('uses resource provider actions for an omitted action cell and keeps an explicit empty cell', async () => {

@@ -190,7 +190,7 @@ export const ConsoleDataView = <
     ],
   );
   const managedColumnLayout = useMemo(
-    () => (columnLayout && resolvedID ? { ...columnLayout, id: resolvedID } : undefined),
+    () => (columnLayout ? { ...columnLayout, id: resolvedID } : undefined),
     [columnLayout, resolvedID],
   );
   const preparedTable = useConsoleDataViewColumns(
@@ -202,6 +202,8 @@ export const ConsoleDataView = <
     isResizable,
   );
   const { resetColumnWidths } = preparedTable;
+  const canResetColumnWidths =
+    isResizable && preparedTable.columns.some(({ resizableProps }) => resizableProps?.isResizable);
 
   const handleResetColumnWidths = useCallback(() => {
     resetColumnWidths();
@@ -406,7 +408,7 @@ export const ConsoleDataView = <
           actions={
             <>
               <ResponsiveActions breakpoint="md">
-                {resolvedID && preparedTable.columnLayout && (
+                {preparedTable.columnLayout && (
                   <ResponsiveAction
                     isPersistent
                     variant="plain"
@@ -424,7 +426,7 @@ export const ConsoleDataView = <
                     </Tooltip>
                   </ResponsiveAction>
                 )}
-                {isResizable && resolvedID && (
+                {canResetColumnWidths && (
                   <ResponsiveAction
                     isPersistent
                     variant="plain"
