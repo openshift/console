@@ -39,7 +39,11 @@ import { DataViewLabelFilter } from './DataViewLabelFilter';
 import { createSelectionCell, createSelectionColumn } from './dataViewSelectionHelpers';
 import { DataViewTextFilter } from './DataViewTextFilter';
 import { getConsoleDataViewID } from './getConsoleDataViewID';
-import { getResourceReferenceForItems, getSelectedResources } from './resourceActions';
+import {
+  getResourceReference,
+  getResourceReferenceForItems,
+  getSelectedResources,
+} from './resourceActions';
 import { ResourceBulkActionMenu } from './ResourceBulkActionMenu';
 import { useConsoleDataViewColumns } from './useConsoleDataViewColumns';
 import { useConsoleDataViewData } from './useConsoleDataViewData';

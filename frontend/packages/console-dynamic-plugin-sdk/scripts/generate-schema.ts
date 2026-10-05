@@ -5,6 +5,7 @@ import * as tsj from 'ts-json-schema-generator';
 import { CodeRefTypeReferenceParser } from './parsers/CodeRefTypeReferenceParser';
 import { ConstructorTypeParser } from './parsers/ConstructorTypeParser';
 import { ExtensionParser } from './parsers/ExtensionParser';
+import { OutOfScopeTypeParser } from './parsers/OutOfScopeTypeParser';
 import { resolvePath, relativePath } from './utils/path';
 import { getConsoleTypeResolver } from './utils/type-resolver';
 import { getSchemaGeneratorConfig, getProgram } from './utils/typescript';
@@ -38,11 +39,21 @@ const generateSchema = ({ srcFile, typeName, handleConsoleExtensions }: SchemaTy
       const consoleTypeDeclarations = consoleTypeResolver.getDeclarations();
       const consoleExtensions = consoleTypeResolver.getConsoleExtensions(true).result;
       const getMainParser = () => parser;
+      const schemaTypeRoots = [
+        resolvePath('src'),
+        // The shared Extension declaration is part of Console's extension schema contract.
+        // eslint-disable-next-line n/no-extraneous-require
+        path.dirname(require.resolve('@openshift/dynamic-plugin-sdk/package.json')),
+        // Keep TypeScript utility aliases such as Partial and Extract expandable.
+        // eslint-disable-next-line n/no-extraneous-require
+        path.dirname(require.resolve('typescript')),
+      ];
 
       p.addNodeParser(
         new CodeRefTypeReferenceParser(typeChecker, consoleTypeDeclarations, getMainParser),
       );
       p.addNodeParser(new ExtensionParser(annotationsReader, consoleExtensions, getMainParser));
+      p.addNodeParser(new OutOfScopeTypeParser(typeChecker, schemaTypeRoots, getMainParser));
     }
   });
 

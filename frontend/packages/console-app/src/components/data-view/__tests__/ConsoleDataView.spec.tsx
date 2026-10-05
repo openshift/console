@@ -3,6 +3,7 @@ import type { LoadedAndResolvedExtension } from '@openshift/dynamic-plugin-sdk';
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createUserSettingsStore } from '@console/app/src/providers/user-preferences/UserPreferenceContext';
+import type { ExtensionK8sKindVersionModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
 import { OverlayProvider } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import type {
@@ -38,6 +39,8 @@ const data: Item[] = [
   { metadata: { name: 'alpha' }, status: 'ready' },
   { metadata: { name: 'bravo' }, status: 'pending' },
 ];
+const defaultTable: ExtensionK8sKindVersionModel = { version: 'v1', kind: 'Pod' };
+const defaultTableID = 'core~v1~Pod';
 const columns: ConsoleDataViewColumn<Item>[] = [
   { id: 'name', type: 'name', title: 'Name', sort: 'metadata.name' },
   { id: 'status', title: 'Status' },
@@ -84,7 +87,7 @@ const makeExtension = (
   title: string,
   options: {
     pluginName?: string;
-    tableID?: string;
+    table?: ExtensionK8sKindVersionModel | string;
     additional?: boolean;
     insertBefore?: string;
     insertAfter?: string;
@@ -97,7 +100,7 @@ const makeExtension = (
   pluginName: options.pluginName ?? 'test-plugin',
   uid: `${options.pluginName ?? 'test-plugin'}-${id}`,
   properties: {
-    tableID: options.tableID ?? 'test-table',
+    table: options.table ?? defaultTable,
     columnData: {
       id,
       title,
@@ -145,10 +148,12 @@ const renderTable = (
   userSettingsStore.setSnapshot({
     data: {
       ...(preference && {
-        [COLUMN_MANAGEMENT_USER_PREFERENCE_KEY]: JSON.stringify({ 'test-table': preference }),
+        [COLUMN_MANAGEMENT_USER_PREFERENCE_KEY]: JSON.stringify({ [defaultTableID]: preference }),
       }),
       ...(options.columnWidths && {
-        [COLUMN_WIDTH_USER_PREFERENCE_KEY]: JSON.stringify({ 'test-table': options.columnWidths }),
+        [COLUMN_WIDTH_USER_PREFERENCE_KEY]: JSON.stringify({
+          [defaultTableID]: options.columnWidths,
+        }),
       }),
     },
     loaded: true,
@@ -166,7 +171,7 @@ const renderTable = (
         data={options.data ?? data}
         loaded
         columns={columns}
-        id={options.id ?? 'test-table'}
+        id={options.id ?? defaultTable}
         columnLayout={{
           id: options.columnLayoutID ?? 'test-table',
           type: 'Item',
@@ -330,7 +335,10 @@ describe('ConsoleDataView', () => {
 
   it('ignores columns for other tables and duplicate built-in IDs', () => {
     renderTable([
-      makeExtension('other', 'Other', { tableID: 'different', additional: false }),
+      makeExtension('other', 'Other', {
+        table: { group: 'different', version: 'v1', kind: 'Pod' },
+        additional: false,
+      }),
       makeExtension('name', 'Duplicate', { additional: false }),
     ]);
 
@@ -372,7 +380,7 @@ describe('ConsoleDataView', () => {
     await waitFor(() =>
       expect(
         JSON.parse(userSettingsStore.getSnapshot().data[COLUMN_WIDTH_USER_PREFERENCE_KEY])[
-          'test-table'
+          defaultTableID
         ]['test-ready'],
       ).not.toBe(240),
     );
@@ -388,7 +396,7 @@ describe('ConsoleDataView', () => {
   it('uses the resolved GVK for extension matching and column preferences', async () => {
     const user = userEvent.setup();
     const { userSettingsStore } = renderTable(
-      [makeExtension('test-ready', 'Ready', { tableID: 'core~v1~Pod' })],
+      [makeExtension('test-ready', 'Ready', { table: defaultTable })],
       undefined,
       { id: { version: 'v1', kind: 'Pod' }, columnLayoutID: 'old-table-id' },
     );

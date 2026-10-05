@@ -1,4 +1,5 @@
 import type { DataViewTd } from '@patternfly/react-data-view/dist/esm/DataViewTable/DataViewTable';
+import type { ExtensionK8sKindVersionModel } from '../api/common-types';
 import type { Extension, CodeRef } from '../types';
 import type { ConsoleDataViewColumn, RowProps } from './console-types';
 
@@ -21,8 +22,14 @@ export type GetDataViewCell<TData, TCustomRowData = unknown> = (
   data: RowProps<TData, TCustomRowData>[],
 ) => DataViewTd[];
 
+/** A column contributed by an extension. Extension columns require a title. */
+export type ConsoleDataViewExtensionColumn<TData = unknown> = Omit<
+  ConsoleDataViewColumn<TData>,
+  'type'
+> & { title: string };
+
 /**
- * Adds a column to a `ConsoleDataView` table whose resolved `id` matches `tableID`.
+ * Adds a column to a `ConsoleDataView` table matched by its Kubernetes model or resolved ID.
  * A default-hidden column can be selected only when that table provides a `columnLayout`
  * and shows the column management action. `columnData.id` must be unique among built-in
  * and extension columns, and the title must be nonempty. Console keeps built-in columns
@@ -39,8 +46,8 @@ export type GetDataViewCell<TData, TCustomRowData = unknown> = (
  * {
  *   "type": "console.dataview/table-column",
  *   "properties": {
- *     "tableID": "apps~v1~Deployment",
- *     "columnData": { "$codeRef": "columns.readyColumn" },
+ *     "table": { "group": "apps", "version": "v1", "kind": "Deployment" },
+ *     "columnData": { "id": "ready", "title": "%plugin~Ready%" },
  *     "getCellContent": { "$codeRef": "columns.getReadyCell" }
  *   }
  * }
@@ -49,10 +56,11 @@ export type GetDataViewCell<TData, TCustomRowData = unknown> = (
 export type ConsoleDataViewTableColumn<TData = unknown, TCustomRowData = unknown> = Extension<
   'console.dataview/table-column',
   {
-    /** Must exactly match the target table's resolved `id`. */
-    tableID: string;
-    /** Code reference to the column definition. When `additional` is omitted, Console treats it as `true`. */
-    columnData: CodeRef<ConsoleDataViewColumn<TData> & { title: string }>;
+    /** The Kubernetes group, version, and kind of the target table, or a string exactly matching its resolved ID. */
+    table: ExtensionK8sKindVersionModel | string;
+    /** Inline column definition or code reference. When `additional` is omitted, Console treats it as `true`. */
+    columnData:
+      CodeRef<ConsoleDataViewExtensionColumn<TData>> | ConsoleDataViewExtensionColumn<TData>;
     /** Code reference that returns one cell per item on the current page. */
     getCellContent: CodeRef<GetDataViewCell<TData, TCustomRowData>>;
     /** The column ID before which this item should be placed. Takes precedence when both anchors exist. */

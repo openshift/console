@@ -12,6 +12,7 @@ import type {
 import { isConsoleDataViewTableColumn } from '@console/dynamic-plugin-sdk/src/extensions/dataview';
 import type { ConsoleDataViewTableColumn } from '@console/dynamic-plugin-sdk/src/extensions/dataview';
 import { useTranslatedExtensions } from '@console/plugin-sdk/src/utils/useTranslatedExtensions';
+import { getConsoleDataViewID } from './getConsoleDataViewID';
 import { useConsoleDataViewResizableColumns } from './useConsoleDataViewResizableColumns';
 
 type ResolvedTableColumn = LoadedAndResolvedExtension<ConsoleDataViewTableColumn>;
@@ -66,6 +67,14 @@ const compareExtensions = (a: ResolvedTableColumn, b: ResolvedTableColumn): numb
   a.properties.columnData.id.localeCompare(b.properties.columnData.id) ||
   a.uid.localeCompare(b.uid);
 
+const isValidColumnData = (
+  columnData: unknown,
+): columnData is ConsoleDataViewColumn<unknown> & { title: string } => {
+  if (!columnData || typeof columnData !== 'object' || Array.isArray(columnData)) return false;
+  const { id, title } = columnData as Record<string, unknown>;
+  return typeof id === 'string' && id.length > 0 && typeof title === 'string' && title.length > 0;
+};
+
 /** Keep built-in columns fixed and place equally anchored plugin columns in plugin-name/ID order. */
 export const orderConsoleDataViewColumns = <TData>(
   builtInColumns: ConsoleDataViewColumn<TData>[],
@@ -77,19 +86,23 @@ export const orderConsoleDataViewColumns = <TData>(
   const columns = [...builtInColumns];
   const extensionsByID = new Map<string, ResolvedTableColumn>();
   const knownIDs = new Set(columns.map(({ id }) => id));
-  const validExtensions = [...extensions].sort(compareExtensions).filter((extension) => {
-    const { id, title } = extension.properties.columnData;
-    if (!id || typeof title !== 'string' || !title || knownIDs.has(id)) {
-      return false;
-    }
-    knownIDs.add(id);
-    return true;
-  });
+  const validExtensions = [...extensions]
+    .filter((extension) => isValidColumnData(extension.properties?.columnData))
+    .sort(compareExtensions)
+    .filter((extension) => {
+      const { id } = extension.properties.columnData;
+      if (knownIDs.has(id)) return false;
+      knownIDs.add(id);
+      return true;
+    });
 
   const insert = (extension: ResolvedTableColumn, index: number): void => {
     const { columnData } = extension.properties;
+    const columnDefinition = { ...columnData } as ConsoleDataViewColumn<TData>;
+    // Column type controls Console behavior and cannot be set by an extension.
+    delete columnDefinition.type;
     columns.splice(index, 0, {
-      ...columnData,
+      ...columnDefinition,
       additional: columnData.additional ?? true,
     } as ConsoleDataViewColumn<TData>);
     extensionsByID.set(columnData.id, extension);
@@ -150,7 +163,11 @@ export const useConsoleDataViewColumns = <TData, TCustomRowData>(
   const [resolvedExtensions] = useResolvedExtensions(isConsoleDataViewTableColumn);
   const matchingExtensions = useMemo(
     () =>
-      tableID ? resolvedExtensions.filter(({ properties }) => properties.tableID === tableID) : [],
+      tableID
+        ? resolvedExtensions.filter(
+            ({ properties }) => getConsoleDataViewID(properties.table) === tableID,
+          )
+        : [],
     [tableID, resolvedExtensions],
   );
   const translatedExtensions = useTranslatedExtensions(matchingExtensions);

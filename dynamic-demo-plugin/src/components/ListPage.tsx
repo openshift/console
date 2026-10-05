@@ -39,7 +39,7 @@ import { useTranslation } from 'react-i18next';
 import { isPixaaPod } from './pixaa-pods';
 
 const POD_GVK: K8sGroupVersionKind = { version: 'v1', kind: 'Pod' };
-const TABLE_ID = 'console-demo-plugin~v1~Pod';
+const TABLE_ID = 'console-demo-plugin-list-page-pods-table';
 const COLUMN_MANAGEMENT_PREFERENCE_KEY = 'console.tableColumns';
 
 type PodFilters = ResourceFilters & { 'pod-app': string[] };
