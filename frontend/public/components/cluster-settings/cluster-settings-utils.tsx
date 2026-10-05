@@ -60,6 +60,11 @@ export const ClusterNotUpgradeableAlert: FC<ClusterNotUpgradeableAlertProps> = (
 }) => {
   const { t } = useTranslation('public');
   const clusterUpgradeableFalseCondition = getConditionUpgradeableFalse(cv);
+  // CVO sets Upgradeable=False / ClusterVersionUpdating while an update is already
+  // applying. That is not a next-minor block; hide this alert (OCPBUGS-127055).
+  if (clusterUpgradeableFalseCondition?.reason === 'ClusterVersionUpdating') {
+    return null;
+  }
   const currentVersion = getLastCompletedUpdate(cv);
   const currentVersionParsed = semver.parse(currentVersion);
   const currentMajorMinorVersion = `${currentVersionParsed?.major}.${currentVersionParsed?.minor}`;
