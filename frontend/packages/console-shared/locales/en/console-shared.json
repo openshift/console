@@ -239,6 +239,7 @@
   "Security warning: You are in a default namespace": "Security warning: You are in a default namespace",
   "Security warning: You are in a default project": "Security warning: You are in a default project",
   "Select {{label}}": "Select {{label}}",
+  "Select {{name}}": "Select {{name}}",
   "Select {{title}}": "Select {{title}}",
   "Select consumer type": "Select consumer type",
   "Select namespace...": "Select namespace...",
