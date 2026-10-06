@@ -319,6 +319,7 @@ const PDBList: React.FC<Props> = ({ data, loaded }) => (
 
 | Parameter Name | Description |
 | -------------- | ----------- |
+| `id` | A model, group/version/kind, or string ID used for column management, matching `console.dataview/table-column` extensions, and persisting resizable column widths. |
 | `label` | (optional) A label describing the type of resource displayed. Used in empty state messages and the table's `aria-label`. |
 | `data` | The array of data items to display in the table. |
 | `loaded` | Flag indicating whether `data` has finished loading. |
@@ -326,7 +327,6 @@ const PDBList: React.FC<Props> = ({ data, loaded }) => (
 | `columns` | The column definitions for the table. |
 | `getDataViewRows` | Transforms the filtered, sorted, and paginated data into table rows. An omitted `actions` cell uses the resource action providers for a Kubernetes resource row; `cell: null` leaves it empty. |
 | `columnLayout` | (optional) The persisted column layout. Supply this to show the column management action. Its ID is derived from `id`. |
-| `id` | A model, group/version/kind, or string ID used for column management, matching `console.dataview/table-column` extensions, and persisting resizable column widths. Models and GVKs resolve to `group~version~kind`. |
 | `initialFilters` | (optional) Initial values for any custom fields added via `TFilters`, and/or the built-in name and/or label filters. The name and label filters otherwise default to empty. |
 | `additionalFilterNodes` | (optional) Additional filter elements to render alongside the built-in name and label filters. |
 | `getObjectMetadata` | (optional) Extracts the name and labels used by the built-in filters from a data item. |
@@ -340,8 +340,8 @@ const PDBList: React.FC<Props> = ({ data, loaded }) => (
 | `EmptyMsg` | (optional) Rendered in place of the table when `data` is empty, letting a consumer explain what is missing and how to create the first resource. Defaults to a generic "No {{label}} found" message. Note that this does not apply when the data is non-empty but the active filters match nothing; that case always renders the built-in in-table empty message. |
 | `mock` | (optional) Renders an empty placeholder instead of the table. |
 | `isResizable` | (optional) Enables resizing and saved widths for columns with a title, and shows a reset action. Defaults to `true`. |
-| `additionalActions` | (optional) Additional actions to display in the toolbar, alongside the built-in column management and reset-column-widths actions. |
-| `customActions` | (optional) Custom actions to display in the toolbar outside of the responsive actions group. |
+| `additionalResponsiveActions` | (optional) Additional ResponsiveAction props to render inside ResponsiveActions, alongside the built-in column management and reset-column-widths actions. |
+| `additionalToolbarContent` | (optional) Additional content to display in the actions toolbar outside ResponsiveActions. |
 | `selection` | (optional) Enables managed checkbox selection with `getItemId`. `isSelectable` can disable rows. `getActions` receives selected items matching the current filters, plus `clearSelection` and `deselect` callbacks, and returns table-specific bulk actions as `Action[]`. Console also loads matching resource bulk providers for a single-model Kubernetes resource selection. Selection persists across pages and built-in filters and is removed when items leave `data`. |
 
 

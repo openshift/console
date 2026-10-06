@@ -16,6 +16,7 @@ import type {
 } from '@openshift/dynamic-plugin-sdk';
 import type { QuickStartContextValues } from '@patternfly/quickstarts';
 import type { CodeEditorProps as PfCodeEditorProps } from '@patternfly/react-code-editor';
+import type { ResponsiveActionProps } from '@patternfly/react-component-groups/dist/dynamic/ResponsiveAction';
 import type { AlertVariant, ButtonProps } from '@patternfly/react-core';
 import type { DataViewTh } from '@patternfly/react-data-view/dist/esm/DataViewTable/DataViewTable';
 import type {
@@ -623,6 +624,8 @@ export interface ConsoleDataViewProps<
   TCustomRowData = unknown,
   TFilters extends ResourceFilters = ResourceFilters,
 > {
+  /** A model, group/version/kind, or string ID used for column management, matching `console.dataview/table-column` extensions, and saving resizable column widths. */
+  id: K8sModel | K8sGroupVersionKind | string;
   /** (optional) A label describing the type of resource displayed. Used in empty state messages and the table's `aria-label`. */
   label?: string;
   /** The array of data items to display in the table. */
@@ -635,8 +638,6 @@ export interface ConsoleDataViewProps<
   columns: ConsoleDataViewColumn<TData>[];
   /** (optional) The persisted column layout, used for column management (showing/hiding columns). Supply this to show the column management action. The layout ID is derived from `id`. */
   columnLayout?: Omit<ColumnLayout, 'id'> & { id?: string };
-  /** A model, group/version/kind, or string ID used for column management, matching `console.dataview/table-column` extensions, and saving resizable column widths. Models and GVKs resolve to `group~version~kind`. */
-  id: K8sModel | K8sGroupVersionKind | string;
   /** (optional) Initial values for any custom fields added via `TFilters`, and/or the built-in name and/or label filters. The name and label filters otherwise default to empty. */
   initialFilters?: Partial<TFilters>;
   /** (optional) Additional filter elements to render alongside the built-in name and label filters. */
@@ -665,10 +666,10 @@ export interface ConsoleDataViewProps<
   mock?: boolean;
   /** (optional) Enables resizing and saved widths for columns with a title, and shows a reset action. Defaults to `true`. */
   isResizable?: boolean;
-  /** Additional actions to display in the toolbar (inside ResponsiveActions), alongside the built-in column management and reset-column-widths actions. */
-  additionalActions?: ReactNode;
-  /** Custom actions to display in the toolbar outside ResponsiveActions (for actions that should not be responsive via ResponsiveActions). */
-  customActions?: ReactNode;
+  /** Additional ResponsiveAction props to render inside ResponsiveActions, alongside the built-in column management and reset-column-widths actions. */
+  additionalResponsiveActions?: (ResponsiveActionProps & { key: string })[];
+  /** Additional content to display in the actions toolbar outside ResponsiveActions. */
+  additionalToolbarContent?: ReactNode;
   /** Enables row selection. Console adds the checkbox column and manages selected IDs. Reserve the column ID `select` for this column. Selections persist across the table's filters and pages, but are removed when their items leave `data`. When the selected items are Kubernetes resources of one model, Console includes actions from that model's `console.action/resource-provider` bulk providers. */
   selection?: {
     /** Function to extract unique ID from an item for selection tracking. */

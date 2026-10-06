@@ -98,8 +98,8 @@ export const ConsoleDataView = <
   EmptyMsg,
   mock,
   isResizable = true,
-  additionalActions,
-  customActions,
+  additionalResponsiveActions = [],
+  additionalToolbarContent,
   selection,
 }: ConsoleDataViewProps<TData, TCustomRowData, TFilters>) => {
   const { t } = useTranslation('console-app');
@@ -443,9 +443,11 @@ export const ConsoleDataView = <
                     </Tooltip>
                   </ResponsiveAction>
                 )}
-                {additionalActions}
+                {additionalResponsiveActions.map((action) => (
+                  <ResponsiveAction key={action.key} {...action} />
+                ))}
               </ResponsiveActions>
-              {customActions}
+              {additionalToolbarContent}
               {selection && (
                 <ResourceBulkActionMenu
                   reference={bulkActionReference}
