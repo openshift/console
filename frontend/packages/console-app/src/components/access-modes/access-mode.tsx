@@ -1,5 +1,5 @@
 import type { FC, Ref, CSSProperties } from 'react';
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 import type { MenuToggleElement } from '@patternfly/react-core';
 import { FormGroup, Select, SelectOption, SelectList, MenuToggle } from '@patternfly/react-core';
 import * as _ from 'lodash';
@@ -42,7 +42,6 @@ export const AccessModeSelector: FC<AccessModeSelectorProps> = (props) => {
     : availableAccessModes;
   const volumeMode: string = pvcResource?.spec?.volumeMode ?? '';
 
-  const [allowedAccessModes, setAllowedAccessModes] = useState<string[]>();
   const [accessMode, setAccessMode] = useState<string>();
 
   const changeAccessMode = useCallback(
@@ -96,17 +95,17 @@ export const AccessModeSelector: FC<AccessModeSelectorProps> = (props) => {
     </MenuToggle>
   );
 
-  useEffect(() => {
-    if (loaded) {
-      setAllowedAccessModes(
-        getAccessModeForProvisioner(
-          provisioner,
-          ignoreReadOnly,
-          filterByVolumeMode ? volumeMode : undefined,
-        ),
-      );
-    }
-  }, [filterByVolumeMode, ignoreReadOnly, loaded, provisioner, volumeMode]);
+  const allowedAccessModes = useMemo(
+    () =>
+      loaded
+        ? getAccessModeForProvisioner(
+            provisioner,
+            ignoreReadOnly,
+            filterByVolumeMode ? volumeMode : undefined,
+          )
+        : undefined,
+    [loaded, provisioner, ignoreReadOnly, filterByVolumeMode, volumeMode],
+  );
 
   useEffect(() => {
     // Make sure the default or already checked option button value is from any one of allowed the access mode
