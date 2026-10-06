@@ -417,7 +417,6 @@
   "ConsoleYAMLSamples": "ConsoleYAMLSamples",
   "Container": "Container",
   "Container details": "Container details",
-  "Container images": "Container images",
   "Container volume": "Container volume",
   "Container:": "Container:",
   "Containers": "Containers",
@@ -802,7 +801,6 @@
   "Impersonate user": "Impersonate user",
   "Impersonating a user or service account grants you their exact permissions. You must enter a user name or service account, but you can also enter a group to simulate the permissions of a member of that group.": "Impersonating a user or service account grants you their exact permissions. You must enter a user name or service account, but you can also enter a group to simulate the permissions of a member of that group.",
   "Import code from your Git repository to be built and deployed": "Import code from your Git repository to be built and deployed",
-  "Import from Git": "Import from Git",
   "Import more YAML": "Import more YAML",
   "Import YAML": "Import YAML",
   "Import YAML results": "Import YAML results",
@@ -1203,7 +1201,6 @@
   "Push secret": "Push secret",
   "pushed image": "pushed image",
   "quay.io": "quay.io",
-  "Quick create": "Quick create",
   "Quick starts": "Quick starts",
   "Read only": "Read only",
   "Read only (ROX)": "Read only (ROX)",
@@ -1823,5 +1820,9 @@
   "Your default receiver will automatically receive all alerts from this cluster that are not caught by other receivers first.": "Your default receiver will automatically receive all alerts from this cluster that are not caught by other receivers first.",
   "Your feedback is valuable in enhancing our services. To help us improve, we seek your consent to collect anonymized telemetry data. <2>Privacy statement</2>.": "Your feedback is valuable in enhancing our services. To help us improve, we seek your consent to collect anonymized telemetry data. <2>Privacy statement</2>.",
   "Your personal AI helper.": "Your personal AI helper.",
-  "Your volume settings are being updated from \"{{current}}\" to \"{{target}}\". This may take a few moments.": "Your volume settings are being updated from \"{{current}}\" to \"{{target}}\". This may take a few moments."
+  "Your volume settings are being updated from \"{{current}}\" to \"{{target}}\". This may take a few moments.": "Your volume settings are being updated from \"{{current}}\" to \"{{target}}\". This may take a few moments.",
+  "Create resources": "Create resources",
+  "Create from Git": "Create from Git",
+  "Create from container image": "Create from container image",
+  "Create from YAML": "Create from YAML"
 }
