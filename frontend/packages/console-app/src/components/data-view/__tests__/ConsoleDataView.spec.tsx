@@ -19,6 +19,7 @@ import type {
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import type { ConsoleDataViewTableColumn } from '@console/dynamic-plugin-sdk/src/extensions/dataview';
 import {
+  COLUMN_MANAGEMENT_ORDER_USER_PREFERENCE_KEY,
   COLUMN_MANAGEMENT_USER_PREFERENCE_KEY,
   COLUMN_WIDTH_USER_PREFERENCE_KEY,
 } from '@console/shared/src/constants/common';
@@ -124,6 +125,8 @@ const renderTable = (
     isResizable?: boolean;
     useDefaultResizable?: boolean;
     columnWidths?: Record<string, number>;
+    columnOrder?: string[];
+    columns?: ConsoleDataViewColumn<Item>[];
     getDataViewRows?: GetDataViewRows<Item>;
     data?: Item[];
     selection?: ConsoleDataViewProps<Item>['selection'];
@@ -149,6 +152,11 @@ const renderTable = (
       ...(preference && {
         [COLUMN_MANAGEMENT_USER_PREFERENCE_KEY]: JSON.stringify({ [defaultTableID]: preference }),
       }),
+      ...(options.columnOrder && {
+        [COLUMN_MANAGEMENT_ORDER_USER_PREFERENCE_KEY]: JSON.stringify({
+          [defaultTableID]: options.columnOrder,
+        }),
+      }),
       ...(options.columnWidths && {
         [COLUMN_WIDTH_USER_PREFERENCE_KEY]: JSON.stringify({
           [defaultTableID]: options.columnWidths,
@@ -169,7 +177,7 @@ const renderTable = (
         label="items"
         data={options.data ?? data}
         loaded
-        columns={columns}
+        columns={options.columns ?? columns}
         id={options.id ?? defaultTable}
         getDataViewRows={options.getDataViewRows ?? getDataViewRows}
         selection={options.selection}
@@ -283,11 +291,8 @@ describe('ConsoleDataView', () => {
     await user.click(screen.getByRole('button', { name: 'Column management' }));
 
     const dialog = await screen.findByRole('dialog');
-    expect(
-      within(dialog)
-        .getAllByRole('checkbox')
-        .map((checkbox) => checkbox.getAttribute('name')),
-    ).toEqual(names);
+    names.forEach((name) => expect(within(dialog).getByRole('checkbox', { name })).toBeVisible());
+    expect(within(dialog).queryByRole('checkbox', { name: 'Actions' })).not.toBeInTheDocument();
   });
 
   it('orders columns sharing an anchor by plugin name and column ID', () => {
@@ -386,6 +391,34 @@ describe('ConsoleDataView', () => {
     );
   });
 
+  it('resets saved widths when restoring default columns after changing the order', async () => {
+    const user = userEvent.setup();
+    const { userSettingsStore } = renderTable(
+      [makeExtension('test-ready', 'Ready', { additional: false })],
+      ['name', 'status', 'test-ready'],
+      {
+        columnOrder: ['name', 'test-ready', 'status'],
+        useDefaultResizable: true,
+        columnWidths: { status: 240 },
+      },
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Column management' }));
+    await user.click(screen.getByRole('button', { name: 'Restore default columns' }));
+    await user.click(screen.getByRole('button', { name: 'Save' }));
+
+    await waitFor(() =>
+      expect(
+        JSON.parse(userSettingsStore.getSnapshot().data[COLUMN_WIDTH_USER_PREFERENCE_KEY]),
+      ).toEqual({}),
+    );
+    expect(
+      JSON.parse(userSettingsStore.getSnapshot().data[COLUMN_MANAGEMENT_ORDER_USER_PREFERENCE_KEY])[
+        defaultTableID
+      ],
+    ).toEqual(['name', 'status', 'test-ready']);
+  });
+
   it('uses the resolved GVK for extension matching and column preferences', async () => {
     const user = userEvent.setup();
     const { userSettingsStore } = renderTable(
@@ -404,6 +437,31 @@ describe('ConsoleDataView', () => {
         'core~v1~Pod'
       ],
     ).toContain('test-ready');
+    expect(
+      JSON.parse(userSettingsStore.getSnapshot().data[COLUMN_MANAGEMENT_ORDER_USER_PREFERENCE_KEY])[
+        'core~v1~Pod'
+      ],
+    ).toEqual(['name', 'status', 'test-ready']);
+  });
+
+  it('renders saved column order without moving sticky columns from their slots', () => {
+    const stickyColumns: ConsoleDataViewColumn<Item>[] = [
+      { id: 'name', type: 'name', title: 'Name', sort: 'metadata.name' },
+      { id: 'zone', title: 'Zone', props: { isStickyColumn: true } },
+      { id: 'status', title: 'Status' },
+      { id: 'owner', title: 'Owner' },
+    ];
+
+    renderTable([], ['name', 'zone', 'status', 'owner'], {
+      columns: stickyColumns,
+      columnOrder: ['owner', 'name', 'status', 'zone'],
+    });
+
+    expect(
+      within(screen.getByRole('grid', { name: 'items table' }))
+        .getAllByRole('columnheader')
+        .map((header) => header.textContent),
+    ).toEqual(['Name', 'Zone', 'Owner', 'Status']);
   });
 
   it('resolves model, GVK, and string table IDs', () => {

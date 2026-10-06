@@ -215,6 +215,14 @@ export const ConsoleDataView = <
     getObjectMetadata,
     isResizable,
   );
+  const nonReorderableColumnIDs = useMemo(() => {
+    const managedColumnIDs = new Set(
+      preparedTable.columnLayout.columns.map(({ id: columnID }) => columnID),
+    );
+    return preparedTable.columns
+      .filter(({ id: columnID, props }) => managedColumnIDs.has(columnID) && props?.isStickyColumn)
+      .map(({ id: columnID }) => columnID);
+  }, [preparedTable.columnLayout.columns, preparedTable.columns]);
   const { resetColumnWidths } = preparedTable;
   const canResetColumnWidths =
     isResizable && preparedTable.columns.some(({ resizableProps }) => resizableProps?.isResizable);
@@ -428,7 +436,9 @@ export const ConsoleDataView = <
                   onClick={() =>
                     launchModal(LazyConsoleDataViewColumnManagementModalOverlay, {
                       columnLayout: preparedTable.columnLayout,
+                      nonReorderableColumnIDs,
                       noLimit: true,
+                      onResetColumnWidths: handleResetColumnWidths,
                     })
                   }
                   aria-label={t('Column management')}

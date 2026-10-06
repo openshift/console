@@ -95,6 +95,7 @@ export enum FLAGS {
 }
 
 export const COLUMN_MANAGEMENT_USER_PREFERENCE_KEY = `${USER_PREFERENCE_PREFIX}.tableColumns`;
+export const COLUMN_MANAGEMENT_ORDER_USER_PREFERENCE_KEY = `${USER_PREFERENCE_PREFIX}.tableColumnsOrder`;
 export const COLUMN_WIDTH_USER_PREFERENCE_KEY = `${USER_PREFERENCE_PREFIX}.tableColumnsWidth`;
 export const ACM_LINK_ID = 'acm-console-link';
 
