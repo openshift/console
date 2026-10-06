@@ -154,7 +154,7 @@ export const orderConsoleDataViewColumns = <TData>(
 
 export const useConsoleDataViewColumns = <TData, TCustomRowData>(
   columns: ConsoleDataViewColumn<TData>[],
-  columnLayout: ColumnLayout | undefined,
+  columnLayout: ColumnLayout,
   tableID: string | undefined,
   getDataViewRows: GetDataViewRows<TData, TCustomRowData>,
   getObjectMetadata: ((obj: TData) => ResourceMetadata) | undefined,
@@ -190,8 +190,7 @@ export const useConsoleDataViewColumns = <TData, TCustomRowData>(
     isResizable,
   });
 
-  const managedLayout = useMemo<ColumnLayout | undefined>(() => {
-    if (!columnLayout) return undefined;
+  const managedLayout = useMemo<ColumnLayout>(() => {
     const fixedColumnIDs = new Set(
       ordered.columns
         .filter(({ type }) => type === 'actions' || type === 'selection')

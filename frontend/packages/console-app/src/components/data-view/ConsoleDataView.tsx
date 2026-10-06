@@ -27,6 +27,7 @@ import { useTranslation } from 'react-i18next';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import type {
   ResourceFilters,
+  ColumnLayout,
   ConsoleDataViewProps,
   GetDataViewRows,
   K8sResourceCommon,
@@ -82,7 +83,6 @@ export const ConsoleDataView = <
   loaded,
   loadError,
   columns,
-  columnLayout,
   id,
   initialFilters,
   additionalFilterNodes,
@@ -193,9 +193,19 @@ export const ConsoleDataView = <
       onSelectItem,
     ],
   );
-  const managedColumnLayout = useMemo(
-    () => (columnLayout ? { ...columnLayout, id: resolvedID } : undefined),
-    [columnLayout, resolvedID],
+  const managedColumnLayout = useMemo<ColumnLayout>(
+    () => ({
+      id: resolvedID,
+      type: label ?? resolvedID,
+      columns: tableColumns.map(({ id: columnID, title, additional }) => ({
+        id: columnID,
+        title: title ?? '',
+        additional,
+      })),
+      selectedColumns: new Set(),
+      showNamespaceOverride,
+    }),
+    [label, resolvedID, showNamespaceOverride, tableColumns],
   );
   const preparedTable = useConsoleDataViewColumns(
     tableColumns,
@@ -412,24 +422,22 @@ export const ConsoleDataView = <
           actions={
             <>
               <ResponsiveActions breakpoint="md">
-                {preparedTable.columnLayout && (
-                  <ResponsiveAction
-                    isPersistent
-                    variant="plain"
-                    onClick={() =>
-                      launchModal(LazyColumnManagementModalOverlay, {
-                        columnLayout: preparedTable.columnLayout,
-                        noLimit: true,
-                      })
-                    }
-                    aria-label={t('Column management')}
-                    data-test="manage-columns"
-                  >
-                    <Tooltip content={t('Manage columns')} trigger="mouseenter">
-                      <RhUiColumnsIcon />
-                    </Tooltip>
-                  </ResponsiveAction>
-                )}
+                <ResponsiveAction
+                  isPersistent
+                  variant="plain"
+                  onClick={() =>
+                    launchModal(LazyColumnManagementModalOverlay, {
+                      columnLayout: preparedTable.columnLayout,
+                      noLimit: true,
+                    })
+                  }
+                  aria-label={t('Column management')}
+                  data-test="manage-columns"
+                >
+                  <Tooltip content={t('Manage columns')} trigger="mouseenter">
+                    <RhUiColumnsIcon />
+                  </Tooltip>
+                </ResponsiveAction>
                 {canResetColumnWidths && (
                   <ResponsiveAction
                     isPersistent

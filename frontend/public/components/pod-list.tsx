@@ -15,19 +15,15 @@ import type {
   ConsoleDataViewColumn,
   ConsoleDataViewRow,
   ResourceFilters,
-  ColumnLayout,
   RowProps,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { Status } from '@console/shared/src/components/status/Status';
-import { COLUMN_MANAGEMENT_USER_PREFERENCE_KEY } from '@console/shared/src/constants/common';
 import { DASH } from '@console/shared/src/constants/ui';
 import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
 import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
-import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
-import type { TableColumnsType } from '@console/shared/src/types/tableColumn';
 import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
 import * as UIActions from '../actions/ui';
 import { PodModel } from '../models';
@@ -445,34 +441,12 @@ export const PodList: FC<PodListProps> = ({
   mock,
   hideNameLabelFilters,
   hideLabelFilter,
-  hideColumnManagement,
-  selectedColumns,
   ...props
 }) => {
   const { t } = useTranslation('public');
   const { columns } = usePodsColumns(showNodes);
 
   const podMetrics = useConsoleSelector<UIActions.PodMetrics>(({ UI }) => UI.metrics?.pod);
-
-  const columnManagementID = referenceForModel(PodModel);
-
-  const columnLayout = useMemo<ColumnLayout>(
-    () => ({
-      id: columnManagementID,
-      type: t('Pod'),
-      columns: columns.map((col) => ({
-        id: col.id,
-        title: col.title,
-        additional: col.additional,
-      })),
-      selectedColumns:
-        selectedColumns?.[columnManagementID]?.length > 0
-          ? new Set(selectedColumns[columnManagementID])
-          : new Set(),
-      showNamespaceOverride,
-    }),
-    [columns, columnManagementID, selectedColumns, showNamespaceOverride, t],
-  );
 
   const podStatusFilterOptions = useMemo<DataViewFilterOption[]>(
     () => [
@@ -551,7 +525,6 @@ export const PodList: FC<PodListProps> = ({
         loadError={loadError}
         mock={mock}
         columns={columns}
-        columnLayout={hideColumnManagement ? undefined : columnLayout}
         id={PodModel}
         showNamespaceOverride={showNamespaceOverride}
         initialFilters={initialFilters}
@@ -577,17 +550,11 @@ export const PodsPage: FC<PodPageProps> = ({
   fieldSelector,
   hideNameLabelFilters,
   hideLabelFilter,
-  hideColumnManagement,
   showNamespaceOverride,
   hideFavoriteButton,
 }) => {
   const { t } = useTranslation('public');
   const dispatch = useConsoleDispatch();
-  const [selectedColumns, , columnPreferenceLoaded] = useUserPreference<TableColumnsType>(
-    COLUMN_MANAGEMENT_USER_PREFERENCE_KEY,
-    undefined,
-    true,
-  );
 
   useEffect(() => {
     if (showMetrics && !mock) {
@@ -627,10 +594,6 @@ export const PodsPage: FC<PodPageProps> = ({
     namespace: namespace || 'default',
   };
 
-  if (!columnPreferenceLoaded) {
-    return null;
-  }
-
   return (
     <>
       <ListPageHeader title={showTitle ? t('Pods') : ''} hideFavoriteButton={hideFavoriteButton}>
@@ -651,8 +614,6 @@ export const PodsPage: FC<PodPageProps> = ({
           namespace={namespace}
           hideNameLabelFilters={hideNameLabelFilters}
           hideLabelFilter={hideLabelFilter}
-          hideColumnManagement={hideColumnManagement}
-          selectedColumns={selectedColumns}
         />
       </ListPageBody>
     </>
@@ -688,9 +649,7 @@ type PodListProps = {
   showNamespaceOverride?: boolean;
   hideNameLabelFilters?: boolean;
   hideLabelFilter?: boolean;
-  hideColumnManagement?: boolean;
   namespace?: string;
-  selectedColumns?: TableColumnsType;
 };
 
 type PodPageProps = {
@@ -703,7 +662,6 @@ type PodPageProps = {
   showNodes?: boolean;
   hideLabelFilter?: boolean;
   hideNameLabelFilters?: boolean;
-  hideColumnManagement?: boolean;
   showNamespaceOverride?: boolean;
   hideFavoriteButton?: boolean;
 };

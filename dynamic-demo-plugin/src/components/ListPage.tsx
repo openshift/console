@@ -6,7 +6,6 @@ import {
   ListPageCreate,
   ConsoleDataView,
   k8sDelete,
-  useUserPreference,
   useK8sWatchResource,
   useK8sModel,
   useOverlay,
@@ -16,7 +15,6 @@ import {
 } from '@openshift-console/dynamic-plugin-sdk';
 import type {
   Action,
-  ColumnLayout,
   ConsoleDataViewColumn,
   ConsoleDataViewSelectionActions,
   GetDataViewRows,
@@ -40,7 +38,6 @@ import { isPixaaPod } from './pixaa-pods';
 
 const POD_GVK: K8sGroupVersionKind = { version: 'v1', kind: 'Pod' };
 const TABLE_ID = 'console-demo-plugin-list-page-pods-table';
-const COLUMN_MANAGEMENT_PREFERENCE_KEY = 'console.tableColumns';
 
 type PodFilters = ResourceFilters & { 'pod-app': string[] };
 const initialFilters: PodFilters = { 'pod-app': [] };
@@ -199,11 +196,6 @@ const PodsTable: React.FC<PodsTableProps> = ({ data, loaded, loadError }) => {
       filters['pod-app'].length === 0 || filters['pod-app'].includes(getPodType(pod.metadata.name)),
     [],
   );
-  const [selectedColumnPreferences] = useUserPreference<Record<string, string[]>>(
-    COLUMN_MANAGEMENT_PREFERENCE_KEY,
-    undefined,
-    true,
-  );
   const getPodDataViewRows = React.useCallback<GetDataViewRows<K8sResourceCommon>>(
     (rows, activeColumns) =>
       rows.map(({ obj }) =>
@@ -242,20 +234,9 @@ const PodsTable: React.FC<PodsTableProps> = ({ data, loaded, loadError }) => {
     [t],
   );
 
-  const columnLayout = React.useMemo<Omit<ColumnLayout, 'id'>>(
-    () => ({
-      type: t('Pod'),
-      columns: columns.map(({ id, title, additional }) => ({ id, title, additional })),
-      selectedColumns: new Set(selectedColumnPreferences?.[TABLE_ID] ?? []),
-      showNamespaceOverride: true,
-    }),
-    [columns, selectedColumnPreferences, t],
-  );
-
   return (
     <ConsoleDataView<K8sResourceCommon, unknown, PodFilters>
       id={TABLE_ID}
-      columnLayout={columnLayout}
       label={t('Pods')}
       data={data}
       loaded={loaded}

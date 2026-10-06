@@ -115,7 +115,6 @@ export const HorizontalNav: FC<HorizontalNavProps> = require('@console/internal/
  * @param {*} [loadError] - (optional) An error encountered while loading `data`.
  * @param {ConsoleDataViewColumn[]} columns - The column definitions for the table.
  * @param {function} getDataViewRows - Transforms the filtered, sorted, and paginated data into table rows. An omitted `actions` cell uses the resource action providers for a Kubernetes resource row; `cell: null` leaves it empty.
- * @param {object} [columnLayout] - (optional) The persisted column layout. Supply this to show the column management action. Its ID is derived from `id`.
  * @param {object} [initialFilters] - (optional) Initial values for any custom fields added via `TFilters`, and/or the built-in name and/or label filters. The name and label filters otherwise default to empty.
  * @param {ReactNode[]} [additionalFilterNodes] - (optional) Additional filter elements to render alongside the built-in name and label filters.
  * @param {function} [getObjectMetadata] - (optional) Extracts the name and labels used by the built-in filters from a data item.

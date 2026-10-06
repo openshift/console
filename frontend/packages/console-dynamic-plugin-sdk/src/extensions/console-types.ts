@@ -636,8 +636,6 @@ export interface ConsoleDataViewProps<
   loadError?: unknown;
   /** The column definitions for the table. */
   columns: ConsoleDataViewColumn<TData>[];
-  /** (optional) The persisted column layout, used for column management (showing/hiding columns). Supply this to show the column management action. The layout ID is derived from `id`. */
-  columnLayout?: Omit<ColumnLayout, 'id'> & { id?: string };
   /** (optional) Initial values for any custom fields added via `TFilters`, and/or the built-in name and/or label filters. The name and label filters otherwise default to empty. */
   initialFilters?: Partial<TFilters>;
   /** (optional) Additional filter elements to render alongside the built-in name and label filters. */

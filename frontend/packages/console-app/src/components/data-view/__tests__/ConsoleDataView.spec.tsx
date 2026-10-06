@@ -121,7 +121,6 @@ const renderTable = (
   preference?: string[],
   options: {
     id?: K8sGroupVersionKind | string;
-    columnLayoutID?: string;
     isResizable?: boolean;
     useDefaultResizable?: boolean;
     columnWidths?: Record<string, number>;
@@ -172,12 +171,6 @@ const renderTable = (
         loaded
         columns={columns}
         id={options.id ?? defaultTable}
-        columnLayout={{
-          id: options.columnLayoutID ?? 'test-table',
-          type: 'Item',
-          columns: columns.map(({ id, title }) => ({ id, title })),
-          selectedColumns: new Set(preference ?? []),
-        }}
         getDataViewRows={options.getDataViewRows ?? getDataViewRows}
         selection={options.selection}
         hideNameLabelFilters
@@ -398,7 +391,7 @@ describe('ConsoleDataView', () => {
     const { userSettingsStore } = renderTable(
       [makeExtension('test-ready', 'Ready', { table: defaultTable })],
       undefined,
-      { id: { version: 'v1', kind: 'Pod' }, columnLayoutID: 'old-table-id' },
+      { id: { version: 'v1', kind: 'Pod' } },
     );
 
     await user.click(screen.getByRole('button', { name: 'Column management' }));
