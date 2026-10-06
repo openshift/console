@@ -169,19 +169,37 @@ export const getVolumeLocation = (volume: Volume) => {
 
 export const getRestartPolicyLabel = (pod: PodKind) => _.get(getRestartPolicy(pod), 'label', '');
 
+const isRestartableInitContainer = (pod: PodKind, containerName: string): boolean =>
+  pod.spec?.initContainers?.find((c) => c.name === containerName)?.restartPolicy === 'Always';
+
+const sumRestarts = (statuses: ContainerStatus[]): number =>
+  statuses.reduce((restartCount, status) => restartCount + (status.restartCount || 0), 0);
+
 export const podRestarts = (pod: PodKind): number => {
   if (!pod || !pod.status) {
     return 0;
   }
   const { initContainerStatuses = [], containerStatuses = [] } = pod.status;
-  const isInitializing = initContainerStatuses.some(
-    ({ state }) => !state.terminated || state.terminated.exitCode !== 0,
+  // Match kubectl printPod(): a native sidecar (init container with restartPolicy
+  // Always that has started) does not keep the pod in the initializing state.
+  const isInitializing = initContainerStatuses.some((status) => {
+    if (status.state?.terminated?.exitCode === 0) {
+      return false;
+    }
+    if (isRestartableInitContainer(pod, status.name) && status.started) {
+      return false;
+    }
+    return true;
+  });
+
+  if (isInitializing) {
+    return sumRestarts(initContainerStatuses);
+  }
+
+  const sidecarStatuses = initContainerStatuses.filter((status) =>
+    isRestartableInitContainer(pod, status.name),
   );
-  const toCheck = isInitializing ? initContainerStatuses : containerStatuses;
-  return toCheck.reduce(
-    (restartCount, status: ContainerStatus) => restartCount + status.restartCount,
-    0,
-  );
+  return sumRestarts(containerStatuses) + sumRestarts(sidecarStatuses);
 };
 
 export const podReadiness = (pod: PodKind): { readyCount: number; totalContainers: number } => {
