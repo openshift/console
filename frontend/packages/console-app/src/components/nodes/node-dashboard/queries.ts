@@ -1,4 +1,3 @@
-import * as _ from 'lodash';
 import type { QueryWithDescription } from '@console/shared/src/components/dashboard/utilization-card/UtilizationItem';
 
 export enum NodeQueries {
@@ -29,78 +28,62 @@ export enum NodeQueries {
 }
 
 const queries = {
-  [NodeQueries.CPU_USAGE]: _.template(
-    `instance:node_cpu:rate:sum{instance='<%= node %>'} or sum without(mode, core) (rate(windows_cpu_time_total{mode!="idle", instance=~'<%= ipAddress %>:.*'}[3m]))`,
-  ),
-  [NodeQueries.CPU_TOTAL]: _.template(
-    `instance:node_num_cpu:sum{instance='<%= node %>'} or count(windows_cpu_time_total{mode="idle", instance=~'<%= ipAddress %>:.*'})`,
-  ),
-  [NodeQueries.MEMORY_USAGE]: _.template(
-    `node_memory_MemTotal_bytes{instance='<%= node %>'} - node_memory_MemAvailable_bytes{instance='<%= node %>'}`,
-  ),
-  [NodeQueries.MEMORY_TOTAL]: _.template(`node_memory_MemTotal_bytes{instance='<%= node %>'}`),
-  [NodeQueries.POD_COUNT]: _.template(`kubelet_running_pods{instance=~'<%= ipAddress %>:.*'}`),
-  [NodeQueries.FILESYSTEM_USAGE]: _.template(
-    `sum(max by (device) (node_filesystem_size_bytes{instance='<%= node %>', device=~"/.*"})) - sum(max by (device) (node_filesystem_avail_bytes{instance='<%= node %>', device=~"/.*"})) or
-    sum (max by (volume) (windows_logical_disk_size_bytes{instance='<%= node %>'})) - sum(max by (volume) (windows_logical_disk_free_bytes{instance='<%= node %>'}))`,
-  ),
-  [NodeQueries.FILESYSTEM_TOTAL]: _.template(
-    `sum(max by (device) (node_filesystem_size_bytes{instance='<%= node %>', device=~"/.*"})) or sum(max by (volume) (windows_logical_disk_size_bytes{instance='<%= node %>'}))`,
-  ),
-  [NodeQueries.NETWORK_IN_UTILIZATION]: _.template(
-    `instance:node_network_receive_bytes:rate:sum{instance='<%= node %>'}`,
-  ),
-  [NodeQueries.NETWORK_OUT_UTILIZATION]: _.template(
-    `instance:node_network_transmit_bytes:rate:sum{instance='<%= node %>'}`,
-  ),
+  [NodeQueries.CPU_USAGE]: ({ node = '', ipAddress = '' }: { node?: string; ipAddress?: string }) =>
+    `instance:node_cpu:rate:sum{instance='${node}'} or sum without(mode, core) (rate(windows_cpu_time_total{mode!="idle", instance=~'${ipAddress}:.*'}[3m]))`,
+  [NodeQueries.CPU_TOTAL]: ({ node = '', ipAddress = '' }: { node?: string; ipAddress?: string }) =>
+    `instance:node_num_cpu:sum{instance='${node}'} or count(windows_cpu_time_total{mode="idle", instance=~'${ipAddress}:.*'})`,
+  [NodeQueries.MEMORY_USAGE]: ({ node = '' }: { node?: string }) =>
+    `node_memory_MemTotal_bytes{instance='${node}'} - node_memory_MemAvailable_bytes{instance='${node}'}`,
+  [NodeQueries.MEMORY_TOTAL]: ({ node = '' }: { node?: string }) =>
+    `node_memory_MemTotal_bytes{instance='${node}'}`,
+  [NodeQueries.POD_COUNT]: ({ ipAddress = '' }: { ipAddress?: string }) =>
+    `kubelet_running_pods{instance=~'${ipAddress}:.*'}`,
+  [NodeQueries.FILESYSTEM_USAGE]: ({
+    node = '',
+  }: {
+    node?: string;
+  }) => `sum(max by (device) (node_filesystem_size_bytes{instance='${node}', device=~"/.*"})) - sum(max by (device) (node_filesystem_avail_bytes{instance='${node}', device=~"/.*"})) or
+    sum (max by (volume) (windows_logical_disk_size_bytes{instance='${node}'})) - sum(max by (volume) (windows_logical_disk_free_bytes{instance='${node}'}))`,
+  [NodeQueries.FILESYSTEM_TOTAL]: ({ node = '' }: { node?: string }) =>
+    `sum(max by (device) (node_filesystem_size_bytes{instance='${node}', device=~"/.*"})) or sum(max by (volume) (windows_logical_disk_size_bytes{instance='${node}'}))`,
+  [NodeQueries.NETWORK_IN_UTILIZATION]: ({ node = '' }: { node?: string }) =>
+    `instance:node_network_receive_bytes:rate:sum{instance='${node}'}`,
+  [NodeQueries.NETWORK_OUT_UTILIZATION]: ({ node = '' }: { node?: string }) =>
+    `instance:node_network_transmit_bytes:rate:sum{instance='${node}'}`,
 };
 
 const top25Queries = {
-  [NodeQueries.PODS_BY_CPU]: _.template(
-    `topk(25, sort_desc(sum(rate(container_cpu_usage_seconds_total{container="",pod!="", instance=~'<%= ipAddress %>:.*'}[5m])) by (pod, namespace)))`,
-  ),
-  [NodeQueries.PODS_BY_MEMORY]: _.template(
-    `topk(25, sort_desc(sum(avg_over_time(container_memory_working_set_bytes{container="",pod!="",instance=~'<%= ipAddress %>:.*'}[5m])) BY (pod, namespace)))`,
-  ),
-  [NodeQueries.PODS_BY_FILESYSTEM]: _.template(
-    `topk(25, sort_desc(sum(container_fs_usage_bytes{instance=~'<%= ipAddress %>:.*'}) BY (pod, namespace)))`,
-  ),
-  [NodeQueries.PODS_BY_NETWORK_IN]: _.template(
-    `topk(25, sort_desc(sum(rate(container_network_receive_bytes_total{ container="POD", pod!= "", instance=~'<%= ipAddress %>:.*'}[5m])) BY (pod, namespace)))`,
-  ),
-  [NodeQueries.PODS_BY_NETWORK_OUT]: _.template(
-    `topk(25, sort_desc(sum(rate(container_network_transmit_bytes_total{ container="POD", pod!= "", instance=~'<%= ipAddress %>:.*'}[5m])) BY (pod, namespace)))`,
-  ),
-  [NodeQueries.PROJECTS_BY_CPU]: _.template(
-    `topk(25, sort_desc(sum(rate(container_cpu_usage_seconds_total{container="",pod!="", instance=~'<%= ipAddress %>:.*'}[5m])) by (namespace)))`,
-  ),
-  [NodeQueries.PROJECTS_BY_MEMORY]: _.template(
-    `topk(25, sort_desc(sum(avg_over_time(container_memory_working_set_bytes{container="",pod!="",instance=~'<%= ipAddress %>:.*'}[5m])) BY (namespace)))`,
-  ),
-  [NodeQueries.PROJECTS_BY_FILESYSTEM]: _.template(
-    `topk(25, sort_desc(sum(container_fs_usage_bytes{instance=~'<%= ipAddress %>:.*'}) BY (namespace)))`,
-  ),
-  [NodeQueries.PROJECTS_BY_NETWORK_IN]: _.template(
-    `topk(25, sort_desc(sum(rate(container_network_receive_bytes_total{ container="POD", pod!= "", instance=~'<%= ipAddress %>:.*'}[5m])) BY (namespace)))`,
-  ),
-  [NodeQueries.PROJECTS_BY_NETWORK_OUT]: _.template(
-    `topk(25, sort_desc(sum(rate(container_network_transmit_bytes_total{ container="POD", pod!= "", instance=~'<%= ipAddress %>:.*'}[5m])) BY (namespace)))`,
-  ),
+  [NodeQueries.PODS_BY_CPU]: ({ ipAddress = '' }: { ipAddress?: string }) =>
+    `topk(25, sort_desc(sum(rate(container_cpu_usage_seconds_total{container="",pod!="", instance=~'${ipAddress}:.*'}[5m])) by (pod, namespace)))`,
+  [NodeQueries.PODS_BY_MEMORY]: ({ ipAddress = '' }: { ipAddress?: string }) =>
+    `topk(25, sort_desc(sum(avg_over_time(container_memory_working_set_bytes{container="",pod!="",instance=~'${ipAddress}:.*'}[5m])) BY (pod, namespace)))`,
+  [NodeQueries.PODS_BY_FILESYSTEM]: ({ ipAddress = '' }: { ipAddress?: string }) =>
+    `topk(25, sort_desc(sum(container_fs_usage_bytes{instance=~'${ipAddress}:.*'}) BY (pod, namespace)))`,
+  [NodeQueries.PODS_BY_NETWORK_IN]: ({ ipAddress = '' }: { ipAddress?: string }) =>
+    `topk(25, sort_desc(sum(rate(container_network_receive_bytes_total{ container="POD", pod!= "", instance=~'${ipAddress}:.*'}[5m])) BY (pod, namespace)))`,
+  [NodeQueries.PODS_BY_NETWORK_OUT]: ({ ipAddress = '' }: { ipAddress?: string }) =>
+    `topk(25, sort_desc(sum(rate(container_network_transmit_bytes_total{ container="POD", pod!= "", instance=~'${ipAddress}:.*'}[5m])) BY (pod, namespace)))`,
+  [NodeQueries.PROJECTS_BY_CPU]: ({ ipAddress = '' }: { ipAddress?: string }) =>
+    `topk(25, sort_desc(sum(rate(container_cpu_usage_seconds_total{container="",pod!="", instance=~'${ipAddress}:.*'}[5m])) by (namespace)))`,
+  [NodeQueries.PROJECTS_BY_MEMORY]: ({ ipAddress = '' }: { ipAddress?: string }) =>
+    `topk(25, sort_desc(sum(avg_over_time(container_memory_working_set_bytes{container="",pod!="",instance=~'${ipAddress}:.*'}[5m])) BY (namespace)))`,
+  [NodeQueries.PROJECTS_BY_FILESYSTEM]: ({ ipAddress = '' }: { ipAddress?: string }) =>
+    `topk(25, sort_desc(sum(container_fs_usage_bytes{instance=~'${ipAddress}:.*'}) BY (namespace)))`,
+  [NodeQueries.PROJECTS_BY_NETWORK_IN]: ({ ipAddress = '' }: { ipAddress?: string }) =>
+    `topk(25, sort_desc(sum(rate(container_network_receive_bytes_total{ container="POD", pod!= "", instance=~'${ipAddress}:.*'}[5m])) BY (namespace)))`,
+  [NodeQueries.PROJECTS_BY_NETWORK_OUT]: ({ ipAddress = '' }: { ipAddress?: string }) =>
+    `topk(25, sort_desc(sum(rate(container_network_transmit_bytes_total{ container="POD", pod!= "", instance=~'${ipAddress}:.*'}[5m])) BY (namespace)))`,
 };
 
 const resourceQuotaQueries = {
-  [NodeQueries.POD_RESOURCE_LIMIT_CPU]: _.template(
-    `sum(kube_pod_resource_limit{node='<%= node %>',resource='cpu'})`,
-  ),
-  [NodeQueries.POD_RESOURCE_LIMIT_MEMORY]: _.template(
-    `sum(kube_pod_resource_limit{node='<%= node %>',resource='memory'})`,
-  ),
-  [NodeQueries.POD_RESOURCE_REQUEST_CPU]: _.template(
-    `sum(kube_pod_resource_request{node='<%= node %>',resource='cpu'})`,
-  ),
-  [NodeQueries.POD_RESOURCE_REQUEST_MEMORY]: _.template(
-    `sum(kube_pod_resource_request{node='<%= node %>',resource='memory'})`,
-  ),
+  [NodeQueries.POD_RESOURCE_LIMIT_CPU]: ({ node = '' }: { node?: string }) =>
+    `sum(kube_pod_resource_limit{node='${node}',resource='cpu'})`,
+  [NodeQueries.POD_RESOURCE_LIMIT_MEMORY]: ({ node = '' }: { node?: string }) =>
+    `sum(kube_pod_resource_limit{node='${node}',resource='memory'})`,
+  [NodeQueries.POD_RESOURCE_REQUEST_CPU]: ({ node = '' }: { node?: string }) =>
+    `sum(kube_pod_resource_request{node='${node}',resource='cpu'})`,
+  [NodeQueries.POD_RESOURCE_REQUEST_MEMORY]: ({ node = '' }: { node?: string }) =>
+    `sum(kube_pod_resource_request{node='${node}',resource='memory'})`,
 };
 
 export const getMultilineQueries = (node: string): { [key: string]: QueryWithDescription[] } => ({

@@ -1,4 +1,3 @@
-import * as _ from 'lodash';
 import type { QueryWithDescription } from '../components/dashboard/utilization-card/UtilizationItem';
 
 export enum OverviewQuery {
@@ -34,8 +33,7 @@ export enum OverviewQuery {
 }
 
 const top25Queries = {
-  [OverviewQuery.PODS_BY_CPU]: _.template(
-    `
+  [OverviewQuery.PODS_BY_CPU]: ({ nodeType = '' }: { nodeType?: string }) => `
       topk(25, sort_desc(
         (
           sum(avg_over_time(pod:container_cpu_usage:sum{container="",pod!=""}[5m])) BY (pod, namespace)
@@ -43,12 +41,10 @@ const top25Queries = {
           on(pod,namespace) group_left(node) (node_namespace_pod:kube_pod_info:)
         )
         *
-        on(node) group_left(role) (max by (node) (kube_node_role{role=~"<%= nodeType %>"}))
+        on(node) group_left(role) (max by (node) (kube_node_role{role=~"${nodeType}"}))
       ))
     `,
-  ),
-  [OverviewQuery.PODS_BY_MEMORY]: _.template(
-    `
+  [OverviewQuery.PODS_BY_MEMORY]: ({ nodeType = '' }: { nodeType?: string }) => `
       topk(25, sort_desc(
         (
           sum(avg_over_time(container_memory_working_set_bytes{container="",pod!=""}[5m])) BY (pod, namespace)
@@ -56,12 +52,10 @@ const top25Queries = {
           on(pod,namespace) group_left(node) (node_namespace_pod:kube_pod_info:)
         )
         *
-        on(node) group_left(role) (max by (node) (kube_node_role{role=~"<%= nodeType %>"}))
+        on(node) group_left(role) (max by (node) (kube_node_role{role=~"${nodeType}"}))
       ))
     `,
-  ),
-  [OverviewQuery.PODS_BY_STORAGE]: _.template(
-    `
+  [OverviewQuery.PODS_BY_STORAGE]: ({ nodeType = '' }: { nodeType?: string }) => `
       topk(25, sort_desc(
         (
           sum(avg_over_time(pod:container_fs_usage_bytes:sum{container="", pod!=""}[5m])) BY (pod, namespace)
@@ -69,12 +63,10 @@ const top25Queries = {
           on(pod,namespace) group_left(node) (node_namespace_pod:kube_pod_info:)
         )
         *
-        on(node) group_left(role) (max by (node) (kube_node_role{role=~"<%= nodeType %>"}))
+        on(node) group_left(role) (max by (node) (kube_node_role{role=~"${nodeType}"}))
       ))
     `,
-  ),
-  [OverviewQuery.PODS_BY_NETWORK_IN]: _.template(
-    `
+  [OverviewQuery.PODS_BY_NETWORK_IN]: ({ nodeType = '' }: { nodeType?: string }) => `
       topk(25, sort_desc(
         (
           sum(rate(container_network_receive_bytes_total{ container="POD", pod!= ""}[5m])) BY (namespace, pod)
@@ -82,12 +74,10 @@ const top25Queries = {
           on(pod,namespace) group_left(node) (node_namespace_pod:kube_pod_info:)
         )
         *
-        on(node) group_left(role) (max by (node) (kube_node_role{role=~"<%= nodeType %>"}))
+        on(node) group_left(role) (max by (node) (kube_node_role{role=~"${nodeType}"}))
       ))
     `,
-  ),
-  [OverviewQuery.PODS_BY_NETWORK_OUT]: _.template(
-    `
+  [OverviewQuery.PODS_BY_NETWORK_OUT]: ({ nodeType = '' }: { nodeType?: string }) => `
       topk(25, sort_desc(
         (
           sum(rate(container_network_transmit_bytes_total{ container="POD", pod!= ""}[5m])) BY (namespace, pod)
@@ -95,34 +85,28 @@ const top25Queries = {
           on(pod,namespace) group_left(node) (node_namespace_pod:kube_pod_info:)
         )
         *
-        on(node) group_left(role) (max by (node) (kube_node_role{role=~"<%= nodeType %>"}))
+        on(node) group_left(role) (max by (node) (kube_node_role{role=~"${nodeType}"}))
       ))
     `,
-  ),
-  [OverviewQuery.NODES_BY_CPU]: _.template(
-    `
+  [OverviewQuery.NODES_BY_CPU]: ({ nodeType = '' }: { nodeType?: string }) => `
       topk(25, sort_desc(
         avg_over_time(instance:node_cpu:rate:sum[5m])
         *
         on(instance) group_left(role) (
-          label_replace(max by (node) (kube_node_role{role=~"<%= nodeType %>"}), "instance", "$1", "node", "(.*)")
+          label_replace(max by (node) (kube_node_role{role=~"${nodeType}"}), "instance", "$1", "node", "(.*)")
         )
       ))
     `,
-  ),
-  [OverviewQuery.NODES_BY_MEMORY]: _.template(
-    `
+  [OverviewQuery.NODES_BY_MEMORY]: ({ nodeType = '' }: { nodeType?: string }) => `
       topk(25, sort_desc(
         (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes)
         *
         on(instance) group_left(role) (
-          label_replace(max by (node) (kube_node_role{role=~"<%= nodeType %>"}), "instance", "$1", "node", "(.*)")
+          label_replace(max by (node) (kube_node_role{role=~"${nodeType}"}), "instance", "$1", "node", "(.*)")
         )
       ))
     `,
-  ),
-  [OverviewQuery.NODES_BY_STORAGE]: _.template(
-    `
+  [OverviewQuery.NODES_BY_STORAGE]: ({ nodeType = '' }: { nodeType?: string }) => `
       topk(25, sort_desc(
         (
           sum by (instance) (max by (device, instance) (node_filesystem_size_bytes{device=~"/.*"}))
@@ -131,45 +115,37 @@ const top25Queries = {
         )
         *
         on(instance) group_left(role) (
-          label_replace(max by (node) (kube_node_role{role=~"<%= nodeType %>"}), "instance", "$1", "node", "(.*)")
+          label_replace(max by (node) (kube_node_role{role=~"${nodeType}"}), "instance", "$1", "node", "(.*)")
         )
       ))
     `,
-  ),
-  [OverviewQuery.NODES_BY_PODS]: _.template(
-    `
+  [OverviewQuery.NODES_BY_PODS]: ({ nodeType = '' }: { nodeType?: string }) => `
       topk(25, sort_desc(
         sum(avg_over_time(kubelet_running_pods[5m])) BY (node)
         *
-        on(node) group_left(role) (max by (node) (kube_node_role{role=~"<%= nodeType %>"}))
+        on(node) group_left(role) (max by (node) (kube_node_role{role=~"${nodeType}"}))
       ))
     `,
-  ),
-  [OverviewQuery.NODES_BY_NETWORK_IN]: _.template(
-    `
+  [OverviewQuery.NODES_BY_NETWORK_IN]: ({ nodeType = '' }: { nodeType?: string }) => `
       topk(25, sort_desc(
         sum(instance:node_network_receive_bytes_excluding_lo:rate1m) BY (instance)
         *
         on(instance) group_left(role) (
-          label_replace(max by (node) (kube_node_role{role=~"<%= nodeType %>"}), "instance", "$1", "node", "(.*)")
+          label_replace(max by (node) (kube_node_role{role=~"${nodeType}"}), "instance", "$1", "node", "(.*)")
         )
       ))
     `,
-  ),
-  [OverviewQuery.NODES_BY_NETWORK_OUT]: _.template(
-    `
+  [OverviewQuery.NODES_BY_NETWORK_OUT]: ({ nodeType = '' }: { nodeType?: string }) => `
       topk(25, sort_desc(
         sum(instance:node_network_transmit_bytes_excluding_lo:rate1m) BY (instance)
         *
         on(instance) group_left(role) (
-          label_replace(max by (node) (kube_node_role{role=~"<%= nodeType %>"}), "instance", "$1", "node", "(.*)")
+          label_replace(max by (node) (kube_node_role{role=~"${nodeType}"}), "instance", "$1", "node", "(.*)")
         )
       ))
     `,
-  ),
 
-  [OverviewQuery.PROJECTS_BY_CPU]: _.template(
-    `
+  [OverviewQuery.PROJECTS_BY_CPU]: ({ nodeType = '' }: { nodeType?: string }) => `
       topk(25, sort_desc(
         sum by (namespace) (
           (
@@ -178,13 +154,11 @@ const top25Queries = {
             on(pod,namespace) group_left(node) (node_namespace_pod:kube_pod_info:)
           )
           *
-          on(node) group_left(role) (max by (node) (kube_node_role{role=~"<%= nodeType %>"}))
+          on(node) group_left(role) (max by (node) (kube_node_role{role=~"${nodeType}"}))
         )
       ))
     `,
-  ),
-  [OverviewQuery.PROJECTS_BY_MEMORY]: _.template(
-    `
+  [OverviewQuery.PROJECTS_BY_MEMORY]: ({ nodeType = '' }: { nodeType?: string }) => `
       topk(25, sort_desc(
         sum by (namespace) (
           (
@@ -193,13 +167,11 @@ const top25Queries = {
             on(pod,namespace) group_left(node) (node_namespace_pod:kube_pod_info:)
           )
           *
-          on(node) group_left(role) (max by (node) (kube_node_role{role=~"<%= nodeType %>"}))
+          on(node) group_left(role) (max by (node) (kube_node_role{role=~"${nodeType}"}))
         )
       ))
     `,
-  ),
-  [OverviewQuery.PROJECTS_BY_STORAGE]: _.template(
-    `
+  [OverviewQuery.PROJECTS_BY_STORAGE]: ({ nodeType = '' }: { nodeType?: string }) => `
       topk(25, sort_desc(
         sum by (namespace) (
           (
@@ -208,25 +180,21 @@ const top25Queries = {
             on(pod,namespace) group_left(node) (node_namespace_pod:kube_pod_info:)
           )
           *
-          on(node) group_left(role) (max by (node) (kube_node_role{role=~"<%= nodeType %>"}))
+          on(node) group_left(role) (max by (node) (kube_node_role{role=~"${nodeType}"}))
         )
       ))
     `,
-  ),
-  [OverviewQuery.PROJECTS_BY_PODS]: _.template(
-    `
+  [OverviewQuery.PROJECTS_BY_PODS]: ({ nodeType = '' }: { nodeType?: string }) => `
       topk(25, sort_desc(
         count by (namespace) (
             topk without(uid) (1, kube_running_pod_ready)
             *
             ignoring(node,uid) group_right node_namespace_pod:kube_pod_info:
           *
-          on(node) group_left() (max by (node) (kube_node_role{role=~"<%= nodeType %>"})))
+          on(node) group_left() (max by (node) (kube_node_role{role=~"${nodeType}"})))
         ))
     `,
-  ),
-  [OverviewQuery.PROJECTS_BY_NETWORK_IN]: _.template(
-    `
+  [OverviewQuery.PROJECTS_BY_NETWORK_IN]: ({ nodeType = '' }: { nodeType?: string }) => `
       topk(25, sort_desc(
         sum by (namespace) (
           (
@@ -235,13 +203,11 @@ const top25Queries = {
             on(pod,namespace) group_left(node) (node_namespace_pod:kube_pod_info:)
           )
           *
-          on(node) group_left(role) (max by (node) (kube_node_role{role=~"<%= nodeType %>"}))
+          on(node) group_left(role) (max by (node) (kube_node_role{role=~"${nodeType}"}))
         )
       ))
     `,
-  ),
-  [OverviewQuery.PROJECTS_BY_NETWORK_OUT]: _.template(
-    `
+  [OverviewQuery.PROJECTS_BY_NETWORK_OUT]: ({ nodeType = '' }: { nodeType?: string }) => `
       topk(25, sort_desc(
         sum by (namespace) (
           (
@@ -250,49 +216,41 @@ const top25Queries = {
             on(pod,namespace) group_left(node) (node_namespace_pod:kube_pod_info:)
           )
           *
-          on(node) group_left(role) (max by (node) (kube_node_role{role=~"<%= nodeType %>"}))
+          on(node) group_left(role) (max by (node) (kube_node_role{role=~"${nodeType}"}))
         )
       ))
     `,
-  ),
 };
 
 const overviewQueries = {
-  [OverviewQuery.MEMORY_TOTAL]: _.template(
-    `
+  [OverviewQuery.MEMORY_TOTAL]: ({ nodeType = '' }: { nodeType?: string }) => `
       sum(
         node_memory_MemTotal_bytes
         *
         on(instance) group_left(role) (
-          label_replace(max by (node) (kube_node_role{role=~"<%= nodeType %>"}), "instance", "$1", "node", "(.*)")
+          label_replace(max by (node) (kube_node_role{role=~"${nodeType}"}), "instance", "$1", "node", "(.*)")
         )
       )
     `,
-  ),
-  [OverviewQuery.MEMORY_UTILIZATION]: _.template(
-    `
+  [OverviewQuery.MEMORY_UTILIZATION]: ({ nodeType = '' }: { nodeType?: string }) => `
       sum(
         (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes)
         *
         on(instance) group_left(role) (
-          label_replace(max by (node) (kube_node_role{role=~"<%= nodeType %>"}), "instance", "$1", "node", "(.*)")
+          label_replace(max by (node) (kube_node_role{role=~"${nodeType}"}), "instance", "$1", "node", "(.*)")
         )
       )
     `,
-  ),
-  [OverviewQuery.MEMORY_REQUESTS]: _.template(
-    `
+  [OverviewQuery.MEMORY_REQUESTS]: ({ nodeType = '' }: { nodeType?: string }) => `
       sum(
         kube_pod_resource_request{resource="memory"}
         *
         on(node) group_left(role) (
-          max by (node) (kube_node_role{role=~"<%= nodeType %>"})
+          max by (node) (kube_node_role{role=~"${nodeType}"})
         )
       )
     `,
-  ),
-  [OverviewQuery.NETWORK_UTILIZATION]: _.template(
-    `
+  [OverviewQuery.NETWORK_UTILIZATION]: ({ nodeType = '' }: { nodeType?: string }) => `
       sum(
         (
           instance:node_network_transmit_bytes_excluding_lo:rate1m
@@ -301,13 +259,11 @@ const overviewQueries = {
         )
         *
         on(instance) group_left(role) (
-          label_replace(max by (node) (kube_node_role{role=~"<%= nodeType %>"}), "instance", "$1", "node", "(.*)")
+          label_replace(max by (node) (kube_node_role{role=~"${nodeType}"}), "instance", "$1", "node", "(.*)")
         )
       )
     `,
-  ),
-  [OverviewQuery.CPU_UTILIZATION]: _.template(
-    `
+  [OverviewQuery.CPU_UTILIZATION]: ({ nodeType = '' }: { nodeType?: string }) => `
       sum(
           (
             sum without (mode) (rate(node_cpu_seconds_total{}[2m]))
@@ -315,35 +271,29 @@ const overviewQueries = {
           )
         *
         on(instance) group_left() (
-          label_replace(max by (node) (kube_node_role{role=~"<%= nodeType %>"}), "instance", "$1", "node","(.*)")
+          label_replace(max by (node) (kube_node_role{role=~"${nodeType}"}), "instance", "$1", "node","(.*)")
         )
       )
     `,
-  ),
-  [OverviewQuery.CPU_TOTAL]: _.template(
-    `
+  [OverviewQuery.CPU_TOTAL]: ({ nodeType = '' }: { nodeType?: string }) => `
       sum(
         kube_node_status_capacity{resource="cpu",unit="core"}
         *
         on(node) group_left(role) (
-          max by (node) (kube_node_role{role=~"<%= nodeType %>"})
+          max by (node) (kube_node_role{role=~"${nodeType}"})
         )
       )
     `,
-  ),
-  [OverviewQuery.CPU_REQUESTS]: _.template(
-    `
+  [OverviewQuery.CPU_REQUESTS]: ({ nodeType = '' }: { nodeType?: string }) => `
       sum(
         kube_pod_resource_request{resource="cpu"}
         *
         on(node) group_left(role) (
-          max by (node) (kube_node_role{role=~"<%= nodeType %>"})
+          max by (node) (kube_node_role{role=~"${nodeType}"})
         )
       )
     `,
-  ),
-  [OverviewQuery.STORAGE_UTILIZATION]: _.template(
-    `
+  [OverviewQuery.STORAGE_UTILIZATION]: ({ nodeType = '' }: { nodeType?: string }) => `
       sum(
         (
           max by (device, instance) (node_filesystem_size_bytes{device=~"/.*"})
@@ -352,24 +302,20 @@ const overviewQueries = {
         )
         *
         on(instance) group_left(role) (
-          label_replace(max by (node) (kube_node_role{role=~"<%= nodeType %>"}), "instance", "$1", "node", "(.*)")
+          label_replace(max by (node) (kube_node_role{role=~"${nodeType}"}), "instance", "$1", "node", "(.*)")
         )
       )
     `,
-  ),
-  [OverviewQuery.STORAGE_TOTAL]: _.template(
-    `
+  [OverviewQuery.STORAGE_TOTAL]: ({ nodeType = '' }: { nodeType?: string }) => `
       sum(
         max by (device, instance) (node_filesystem_size_bytes{device=~"/.*"})
         *
         on(instance) group_left(role) (
-          label_replace(max by (node) (kube_node_role{role=~"<%= nodeType %>"}), "instance", "$1", "node", "(.*)")
+          label_replace(max by (node) (kube_node_role{role=~"${nodeType}"}), "instance", "$1", "node", "(.*)")
         )
       )
     `,
-  ),
-  [OverviewQuery.POD_UTILIZATION]: _.template(
-    `
+  [OverviewQuery.POD_UTILIZATION]: ({ nodeType = '' }: { nodeType?: string }) => `
       count(
         (
           topk without(uid) (1, kube_running_pod_ready)
@@ -377,32 +323,27 @@ const overviewQueries = {
           ignoring(node,uid) group_right node_namespace_pod:kube_pod_info:
         )
         *
-        on(node) group_left() (max by (node) (kube_node_role{role=~"<%= nodeType %>"}))
+        on(node) group_left() (max by (node) (kube_node_role{role=~"${nodeType}"}))
       )
     `,
-  ),
-  [OverviewQuery.NETWORK_IN_UTILIZATION]: _.template(
-    `
+  [OverviewQuery.NETWORK_IN_UTILIZATION]: ({ nodeType = '' }: { nodeType?: string }) => `
       sum(
         instance:node_network_receive_bytes_excluding_lo:rate1m
         *
         on(instance) group_left(role) (
-          label_replace(max by (node) (kube_node_role{role=~"<%= nodeType %>"}), "instance", "$1", "node", "(.*)")
+          label_replace(max by (node) (kube_node_role{role=~"${nodeType}"}), "instance", "$1", "node", "(.*)")
         )
       )
     `,
-  ),
-  [OverviewQuery.NETWORK_OUT_UTILIZATION]: _.template(
-    `
+  [OverviewQuery.NETWORK_OUT_UTILIZATION]: ({ nodeType = '' }: { nodeType?: string }) => `
       sum(
         instance:node_network_transmit_bytes_excluding_lo:rate1m
         *
         on(instance) group_left(role) (
-          label_replace(max by (node) (kube_node_role{role=~"<%= nodeType %>"}), "instance", "$1", "node", "(.*)")
+          label_replace(max by (node) (kube_node_role{role=~"${nodeType}"}), "instance", "$1", "node", "(.*)")
         )
       )
     `,
-  ),
 };
 
 export const getMultilineQueries = (

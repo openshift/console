@@ -123,7 +123,7 @@ function buildHTMLReportURL(): string | null {
 
   if (!buildId || !jobName) return null;
 
-  const baseURL = 'https://gcsweb-ci.apps.ci.l2s4.p1.openshiftapps.com/gcs/test-platform-results';
+  const baseURL = 'https://gcs.ci.openshift.org/gcs/test-platform-results-public';
   let jobPath: string;
 
   if (pullNumber && repoOwner && repoName) {

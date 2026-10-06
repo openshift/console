@@ -1,5 +1,5 @@
 import type { FC, ReactNode } from 'react';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import {
   AccordionContent,
   AccordionItem,
@@ -10,10 +10,9 @@ import {
   DescriptionListTerm,
 } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
-import type { FieldProps, UiSchema } from '@rjsf/core';
-import type { SchemaFieldProps } from '@rjsf/core/dist/cjs/components/fields/SchemaField';
-import SchemaField from '@rjsf/core/dist/cjs/components/fields/SchemaField';
-import { retrieveSchema, getUiOptions } from '@rjsf/core/dist/cjs/utils';
+import { getDefaultRegistry } from '@rjsf/core';
+import type { FieldPathId, FieldProps, UiSchema } from '@rjsf/utils';
+import { getUiOptions } from '@rjsf/utils';
 import type { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -29,6 +28,11 @@ import {
 import { MatchExpressions } from '@console/operator-lifecycle-manager/src/components/descriptors/spec/match-expressions';
 import { ResourceRequirements } from '@console/operator-lifecycle-manager/src/components/descriptors/spec/resource-requirements';
 import { hasNoFields, useSchemaDescription, useSchemaLabel } from './utils';
+
+const { SchemaField } = getDefaultRegistry().fields;
+
+const updateField = (onChange: FieldProps['onChange'], fieldPathId: FieldPathId, value: unknown) =>
+  onChange(value, fieldPathId.path);
 
 const Description = ({ id, description }) =>
   description ? (
@@ -68,7 +72,7 @@ export const FormField: FC<FormFieldProps> = ({
 export const FieldSet: FC<FieldSetProps> = ({
   children,
   defaultLabel,
-  idSchema,
+  fieldPathId,
   required = false,
   schema,
   uiSchema,
@@ -81,20 +85,24 @@ export const FieldSet: FC<FieldSetProps> = ({
     setExpanded((current) => !current);
   };
   return showLabel && label ? (
-    <div id={`${idSchema.$id}_field-group`} className="form-group co-dynamic-form__field-group">
+    <div
+      id={`${fieldPathId.$id}_field-group`}
+      className="form-group co-dynamic-form__field-group"
+      data-test="dynamic-form-field-group"
+    >
       <AccordionItem isExpanded={expanded}>
-        <AccordionToggle id={`${idSchema.$id}_accordion-toggle`} onClick={onToggle}>
+        <AccordionToggle id={`${fieldPathId.$id}_accordion-toggle`} onClick={onToggle}>
           <label
             className={css({ 'co-required': required })}
-            htmlFor={`${idSchema.$id}_accordion-content`}
+            htmlFor={`${fieldPathId.$id}_accordion-content`}
           >
             {label}
           </label>
         </AccordionToggle>
         {description && (
-          <Description id={`${idSchema.$id}_description`} description={description} />
+          <Description id={`${fieldPathId.$id}_description`} description={description} />
         )}
-        <AccordionContent id={`${idSchema.$id}_accordion-content`}>{children}</AccordionContent>
+        <AccordionContent id={`${fieldPathId.$id}_accordion-content`}>{children}</AccordionContent>
       </AccordionItem>
     </div>
   ) : (
@@ -104,7 +112,7 @@ export const FieldSet: FC<FieldSetProps> = ({
 
 export const ResourceRequirementsField: FC<FieldProps> = ({
   formData,
-  idSchema,
+  fieldPathId,
   name,
   onChange,
   required,
@@ -112,15 +120,53 @@ export const ResourceRequirementsField: FC<FieldProps> = ({
   uiSchema,
 }) => {
   const { t } = useTranslation('console-shared');
+  const onChangeLimitsCPU = useCallback(
+    (cpu: string) =>
+      updateField(onChange, fieldPathId, _.set(_.cloneDeep(formData), 'limits.cpu', cpu)),
+    [onChange, fieldPathId, formData],
+  );
+  const onChangeLimitsMemory = useCallback(
+    (memory: string) =>
+      updateField(onChange, fieldPathId, _.set(_.cloneDeep(formData), 'limits.memory', memory)),
+    [onChange, fieldPathId, formData],
+  );
+  const onChangeLimitsStorage = useCallback(
+    (storage: string) =>
+      updateField(
+        onChange,
+        fieldPathId,
+        _.set(_.cloneDeep(formData), 'limits.ephemeral-storage', storage),
+      ),
+    [onChange, fieldPathId, formData],
+  );
+  const onChangeRequestsCPU = useCallback(
+    (cpu: string) =>
+      updateField(onChange, fieldPathId, _.set(_.cloneDeep(formData), 'requests.cpu', cpu)),
+    [onChange, fieldPathId, formData],
+  );
+  const onChangeRequestsMemory = useCallback(
+    (memory: string) =>
+      updateField(onChange, fieldPathId, _.set(_.cloneDeep(formData), 'requests.memory', memory)),
+    [onChange, fieldPathId, formData],
+  );
+  const onChangeRequestsStorage = useCallback(
+    (storage: string) =>
+      updateField(
+        onChange,
+        fieldPathId,
+        _.set(_.cloneDeep(formData), 'requests.ephemeral-storage', storage),
+      ),
+    [onChange, fieldPathId, formData],
+  );
   return (
     <FieldSet
       defaultLabel={name || t('Resource requirements')}
-      idSchema={idSchema}
+      fieldPathId={fieldPathId}
       required={required}
       schema={schema}
       uiSchema={uiSchema}
     >
-      <DescriptionList id={idSchema.$id}>
+      <DescriptionList id={fieldPathId.$id}>
         <DescriptionListGroup>
           <DescriptionListTerm>{t('Limits')}</DescriptionListTerm>
           <DescriptionListDescription>
@@ -128,12 +174,10 @@ export const ResourceRequirementsField: FC<FieldProps> = ({
               cpu={formData?.limits?.cpu || ''}
               memory={formData?.limits?.memory || ''}
               storage={formData?.limits?.['ephemeral-storage'] || ''}
-              onChangeCPU={(cpu) => onChange(_.set(_.cloneDeep(formData), 'limits.cpu', cpu))}
-              onChangeMemory={(mem) => onChange(_.set(_.cloneDeep(formData), 'limits.memory', mem))}
-              onChangeStorage={(sto) =>
-                onChange(_.set(_.cloneDeep(formData), 'limits.ephemeral-storage', sto))
-              }
-              path={`${idSchema.$id}.limits`}
+              onChangeCPU={onChangeLimitsCPU}
+              onChangeMemory={onChangeLimitsMemory}
+              onChangeStorage={onChangeLimitsStorage}
+              path={`${fieldPathId.$id}.limits`}
             />
           </DescriptionListDescription>
         </DescriptionListGroup>
@@ -144,14 +188,10 @@ export const ResourceRequirementsField: FC<FieldProps> = ({
               cpu={formData?.requests?.cpu || ''}
               memory={formData?.requests?.memory || ''}
               storage={formData?.requests?.['ephemeral-storage'] || ''}
-              onChangeCPU={(cpu) => onChange(_.set(_.cloneDeep(formData), 'requests.cpu', cpu))}
-              onChangeMemory={(mem) =>
-                onChange(_.set(_.cloneDeep(formData), 'requests.memory', mem))
-              }
-              onChangeStorage={(sto) =>
-                onChange(_.set(_.cloneDeep(formData), 'requests.ephemeral-storage', sto))
-              }
-              path={`${idSchema.$id}.requests`}
+              onChangeCPU={onChangeRequestsCPU}
+              onChangeMemory={onChangeRequestsMemory}
+              onChangeStorage={onChangeRequestsStorage}
+              path={`${fieldPathId.$id}.requests`}
             />
           </DescriptionListDescription>
         </DescriptionListGroup>
@@ -162,7 +202,7 @@ export const ResourceRequirementsField: FC<FieldProps> = ({
 
 export const UpdateStrategyField: FC<FieldProps> = ({
   formData,
-  idSchema,
+  fieldPathId,
   name,
   onChange,
   required,
@@ -178,26 +218,36 @@ export const UpdateStrategyField: FC<FieldProps> = ({
   return (
     <FormField
       defaultLabel={name || t('Update strategy')}
-      id={idSchema.$id}
+      id={fieldPathId.$id}
       required={required}
       schema={schema}
       uiSchema={uiSchema}
     >
-      <Description description={description} id={idSchema.$id} />
+      <Description description={description} id={fieldPathId.$id} />
       <ConfigureUpdateStrategy
         showDescription={false}
         strategyType={formData?.type || 'RollingUpdate'}
         maxUnavailable={formData?.rollingUpdate?.maxUnavailable || ''}
         maxSurge={formData?.rollingUpdate?.maxSurge || ''}
-        onChangeStrategyType={(type) => onChange(_.set(_.cloneDeep(formData), 'type', type))}
+        onChangeStrategyType={(type) =>
+          updateField(onChange, fieldPathId, _.set(_.cloneDeep(formData), 'type', type))
+        }
         onChangeMaxUnavailable={(maxUnavailable) =>
-          onChange(_.set(_.cloneDeep(formData), 'rollingUpdate.maxUnavailable', maxUnavailable))
+          updateField(
+            onChange,
+            fieldPathId,
+            _.set(_.cloneDeep(formData), 'rollingUpdate.maxUnavailable', maxUnavailable),
+          )
         }
         onChangeMaxSurge={(maxSurge) =>
-          onChange(_.set(_.cloneDeep(formData), 'rollingUpdate.maxSurge', maxSurge))
+          updateField(
+            onChange,
+            fieldPathId,
+            _.set(_.cloneDeep(formData), 'rollingUpdate.maxSurge', maxSurge),
+          )
         }
         replicas={1}
-        uid={idSchema.$id}
+        uid={fieldPathId.$id}
       />
     </FormField>
   );
@@ -205,7 +255,7 @@ export const UpdateStrategyField: FC<FieldProps> = ({
 
 export const NodeAffinityField: FC<FieldProps> = ({
   formData,
-  idSchema,
+  fieldPathId,
   name,
   onChange,
   required,
@@ -216,22 +266,22 @@ export const NodeAffinityField: FC<FieldProps> = ({
   return (
     <FieldSet
       defaultLabel={name || t('Node affinity')}
-      idSchema={idSchema}
+      fieldPathId={fieldPathId}
       required={required}
       schema={schema}
       uiSchema={uiSchema}
     >
       <NodeAffinity
         affinity={formData}
-        onChange={(affinity) => onChange(affinity)}
-        uid={idSchema.$id}
+        onChange={(affinity) => updateField(onChange, fieldPathId, affinity)}
+        uid={fieldPathId.$id}
       />
     </FieldSet>
   );
 };
 export const PodAffinityField: FC<FieldProps> = ({
   formData,
-  idSchema,
+  fieldPathId,
   name,
   onChange,
   required,
@@ -242,15 +292,15 @@ export const PodAffinityField: FC<FieldProps> = ({
   return (
     <FieldSet
       defaultLabel={name || t('Pod affinity')}
-      idSchema={idSchema}
+      fieldPathId={fieldPathId}
       required={required}
       schema={schema}
       uiSchema={uiSchema}
     >
       <PodAffinity
         affinity={formData}
-        onChange={(affinity) => onChange(affinity)}
-        uid={idSchema.$id}
+        onChange={(affinity) => updateField(onChange, fieldPathId, affinity)}
+        uid={fieldPathId.$id}
       />
     </FieldSet>
   );
@@ -258,7 +308,7 @@ export const PodAffinityField: FC<FieldProps> = ({
 
 const MatchExpressionsField: FC<FieldProps> = ({
   formData,
-  idSchema,
+  fieldPathId,
   name,
   onChange,
   required,
@@ -269,15 +319,15 @@ const MatchExpressionsField: FC<FieldProps> = ({
   return (
     <FieldSet
       defaultLabel={name || t('Expressions')}
-      idSchema={idSchema}
+      fieldPathId={fieldPathId}
       required={required}
       schema={schema}
       uiSchema={uiSchema}
     >
       <MatchExpressions
         matchExpressions={formData}
-        onChange={(v) => onChange(v)}
-        uid={idSchema.$id}
+        onChange={(v) => updateField(onChange, fieldPathId, v)}
+        uid={fieldPathId.$id}
       />
     </FieldSet>
   );
@@ -285,7 +335,7 @@ const MatchExpressionsField: FC<FieldProps> = ({
 
 const LabelsField: FC<FieldProps> = ({
   formData,
-  idSchema,
+  fieldPathId,
   name,
   onChange,
   required,
@@ -294,14 +344,14 @@ const LabelsField: FC<FieldProps> = ({
 }) => (
   <FormField
     defaultLabel={name}
-    id={idSchema.$id}
+    id={fieldPathId.$id}
     required={required}
     schema={schema}
     uiSchema={uiSchema}
   >
     <SelectorInput
-      inputProps={{ id: idSchema.$id }}
-      onChange={(newValue) => onChange(SelectorInput.objectify(newValue))}
+      inputProps={{ id: fieldPathId.$id }}
+      onChange={(newValue) => updateField(onChange, fieldPathId, SelectorInput.objectify(newValue))}
       tags={SelectorInput.arrayify(formData)}
     />
   </FormField>
@@ -309,7 +359,7 @@ const LabelsField: FC<FieldProps> = ({
 
 const DropdownField: FC<FieldProps> = ({
   formData,
-  idSchema,
+  fieldPathId,
   name,
   onChange,
   schema,
@@ -322,31 +372,31 @@ const DropdownField: FC<FieldProps> = ({
   };
   return (
     <ConsoleSelect
-      id={idSchema.$id}
-      key={idSchema.$id}
+      id={fieldPathId.$id}
+      key={fieldPathId.$id}
       title={t('Select {{title}}', { title: title || schema?.title || name })}
       selectedKey={formData}
       items={items ?? {}}
-      onChange={(val) => onChange(val)}
+      onChange={(val) => updateField(onChange, fieldPathId, val)}
     />
   );
 };
 
-const CustomSchemaField: FC<SchemaFieldProps> = (props) => {
+const CustomSchemaField: FC<FieldProps> = (props) => {
   // If the provided schema will not generate any form field elements, return null.
   // To check that, it's required to resolving definition references ($ref) in the
   // JSON schema as it is implemented in the origin SchemaField:
   // https://github.com/rjsf-team/react-jsonschema-form/blob/v2.5.1/packages/core/src/components/fields/SchemaField.js#L226-L244
   const {
     schema: fieldSchema,
-    registry: { rootSchema },
+    registry: { schemaUtils },
     formData,
     uiSchema,
   } = props;
 
   let resolvedSchema = fieldSchema;
   try {
-    resolvedSchema = retrieveSchema(fieldSchema, rootSchema, formData);
+    resolvedSchema = schemaUtils.retrieveSchema(fieldSchema, formData);
   } catch (error) {
     console.error('dynamic-form CustomSchemaField retrieveSchema error:', error);
   }
@@ -382,7 +432,7 @@ type FormFieldProps = {
   children?: ReactNode;
 };
 
-type FieldSetProps = Pick<FieldProps, 'idSchema' | 'required' | 'schema' | 'uiSchema'> & {
+type FieldSetProps = Pick<FieldProps, 'fieldPathId' | 'required' | 'schema' | 'uiSchema'> & {
   defaultLabel?: string;
   children?: ReactNode;
 };
