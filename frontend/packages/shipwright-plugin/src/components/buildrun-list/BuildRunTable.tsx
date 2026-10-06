@@ -5,9 +5,9 @@ import { useTranslation } from 'react-i18next';
 import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import type {
   ConsoleDataViewColumn,
+  ConsoleDataViewProps,
   GetDataViewRows,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import type { TableProps } from '@console/internal/components/factory/table';
 import { sortResourceByValue } from '@console/internal/components/factory/Table/sort';
 import { ResourceLink } from '@console/internal/components/utils/resource-link';
 import { referenceFor } from '@console/internal/module/k8s';
@@ -87,7 +87,12 @@ export const getBuildRunDataViewRows: GetDataViewRows<BuildRun> = (data, columns
     return columns.map(({ id }) => ({ id, ...rowCells[id] }));
   });
 
-export const BuildRunTable: FC<TableProps> = (props) => {
+type BuildRunTableProps = Omit<
+  ConsoleDataViewProps<BuildRun, unknown, BuildRunStatusFilters>,
+  'id' | 'columns' | 'getDataViewRows'
+>;
+
+export const BuildRunTable: FC<BuildRunTableProps> = (props) => {
   const { t } = useTranslation('shipwright-plugin');
   const { columns } = useBuildRunColumns();
   const statusFilter = useBuildRunStatusFilter<BuildRun>(t('Status'), getBuildRunStatus);

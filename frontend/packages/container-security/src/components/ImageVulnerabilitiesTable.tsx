@@ -6,11 +6,11 @@ import { useTranslation } from 'react-i18next';
 import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import type {
   ConsoleDataViewColumn,
+  ConsoleDataViewProps,
   GetDataViewRows,
   ResourceFilters,
   ResourceMetadata,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import type { TableProps } from '@console/internal/components/factory/table';
 import { sortResourceByValue } from '@console/internal/components/factory/Table/sort';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { Priority, priorityFor } from '../const';
@@ -137,9 +137,10 @@ const getObjectMetadata = (imageVuln: ImageVuln): ResourceMetadata => ({
   name: imageVuln.vulnerability.name,
 });
 
-type ImageVulnerabilitiesTableProps = TableProps & {
-  data: ImageVuln[];
-};
+type ImageVulnerabilitiesTableProps = Omit<
+  ConsoleDataViewProps<ImageVuln, unknown, ImageVulnerabilityFilters>,
+  'id' | 'columns' | 'getDataViewRows'
+>;
 
 const ImageVulnerabilitiesTable: FC<ImageVulnerabilitiesTableProps> = (props) => {
   const { t } = useTranslation('container-security');

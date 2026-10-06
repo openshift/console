@@ -7,9 +7,12 @@ import { useParams, useLocation } from 'react-router';
 import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import type { K8sResourceKind, WatchK8sResultsObject } from '@console/dynamic-plugin-sdk';
 import { PopoverStatus, StatusIconAndText, useAccessReview } from '@console/dynamic-plugin-sdk';
-import type { GetDataViewRows } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import type {
+  ConsoleDataViewProps,
+  GetDataViewRows,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { CreateYAML } from '@console/internal/components/create-yaml';
-import type { TableProps, MultiListPageProps } from '@console/internal/components/factory';
+import type { MultiListPageProps } from '@console/internal/components/factory';
 import { DetailsPage, MultiListPage } from '@console/internal/components/factory';
 import {
   LoadingBox,
@@ -341,7 +344,12 @@ export const getCatalogSourceDataViewRows: GetDataViewRows<CatalogSourceTableRow
     });
   });
 
-const CatalogSourceList: FC<TableProps> = (props) => {
+type CatalogSourceListProps = Omit<
+  ConsoleDataViewProps<CatalogSourceTableRowObj>,
+  'id' | 'columns' | 'getDataViewRows'
+>;
+
+const CatalogSourceList: FC<CatalogSourceListProps> = (props) => {
   const { t } = useTranslation('olm');
   const { columns } = useCatalogSourceColumns();
   return (
