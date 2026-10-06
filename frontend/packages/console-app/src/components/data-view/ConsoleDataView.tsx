@@ -32,7 +32,6 @@ import type {
   GetDataViewRows,
   K8sResourceCommon,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import { LazyColumnManagementModalOverlay } from '@console/internal/components/modals/lazy-column-management-modal';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { EmptyBox } from '@console/shared/src/components/empty-state/EmptyBox';
 import { StatusBox } from '@console/shared/src/components/status/StatusBox';
@@ -40,6 +39,7 @@ import { DataViewLabelFilter } from './DataViewLabelFilter';
 import { createSelectionCell, createSelectionColumn } from './dataViewSelectionHelpers';
 import { DataViewTextFilter } from './DataViewTextFilter';
 import { getConsoleDataViewID } from './getConsoleDataViewID';
+import { LazyConsoleDataViewColumnManagementModalOverlay } from './lazyConsoleDataViewColumnManagementModal';
 import {
   getResourceReference,
   getResourceReferenceForItems,
@@ -426,7 +426,7 @@ export const ConsoleDataView = <
                   isPersistent
                   variant="plain"
                   onClick={() =>
-                    launchModal(LazyColumnManagementModalOverlay, {
+                    launchModal(LazyConsoleDataViewColumnManagementModalOverlay, {
                       columnLayout: preparedTable.columnLayout,
                       noLimit: true,
                     })
