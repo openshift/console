@@ -474,7 +474,7 @@ describe('ConsoleDataView', () => {
     const rows = within(screen.getByRole('grid', { name: 'items table' })).getAllByRole('row');
     await user.click(within(rows[1]).getByRole('checkbox'));
     await user.click(within(rows[2]).getByRole('checkbox'));
-    await user.click(await screen.findByRole('button', { name: 'Bulk actions' }));
+    await user.click(screen.getByTestId('data-view-bulk-actions-menu-button'));
     expect(screen.getByRole('menuitem', { name: 'Local action' })).toBeVisible();
     await user.click(await screen.findByRole('menuitem', { name: 'Inspect 2 pods' }));
     expect(within(rows[1]).getByRole('checkbox')).not.toBeChecked();
@@ -489,14 +489,14 @@ describe('ConsoleDataView', () => {
       selection: { getItemId: (item) => item.metadata.name },
     });
 
-    expect(await screen.findByRole('button', { name: 'Bulk actions' })).toBeDisabled();
+    expect(screen.getByTestId('data-view-bulk-actions-menu-button')).toBeDisabled();
     const row = within(screen.getByRole('grid', { name: 'items table' })).getAllByRole('row')[1];
     await user.click(within(row).getByRole('checkbox'));
-    await user.click(await screen.findByRole('button', { name: 'Bulk actions' }));
+    await user.click(screen.getByTestId('data-view-bulk-actions-menu-button'));
     expect(await screen.findByRole('menuitem', { name: 'Inspect 1 pods' })).toBeVisible();
     await user.keyboard('{Escape}');
     await user.click(within(row).getByRole('checkbox'));
-    expect(screen.getByRole('button', { name: 'Bulk actions' })).toBeDisabled();
+    expect(screen.getByTestId('data-view-bulk-actions-menu-button')).toBeDisabled();
   });
 
   it('does not offer resource bulk actions for a mixed-model selection', async () => {
@@ -515,7 +515,7 @@ describe('ConsoleDataView', () => {
 
     const table = screen.getByRole('grid', { name: 'items table' });
     await user.click(within(within(table).getAllByRole('row')[0]).getByRole('checkbox'));
-    await user.click(await screen.findByRole('button', { name: 'Bulk actions' }));
+    await user.click(screen.getByTestId('data-view-bulk-actions-menu-button'));
     expect(screen.getByRole('menuitem', { name: 'Local action' })).toBeVisible();
     expect(screen.queryByRole('menuitem', { name: /Inspect .* pods/ })).not.toBeInTheDocument();
   });
@@ -545,7 +545,7 @@ describe('ConsoleDataView', () => {
     const rows = within(table).getAllByRole('row');
     expect(within(rows[0]).getByRole('checkbox')).toBeVisible();
     expect(rows[1]).toHaveTextContent('alphaReady alpha');
-    const actions = await screen.findByRole('button', { name: 'Bulk actions' });
+    const actions = screen.getByTestId('data-view-bulk-actions-menu-button');
     expect(actions).toBeDisabled();
     await user.click(within(rows[1]).getByRole('checkbox'));
     await user.click(within(rows[2]).getByRole('checkbox'));
@@ -585,7 +585,7 @@ describe('ConsoleDataView', () => {
     const rows = within(table).getAllByRole('row');
     expect(within(rows[1]).getByRole('checkbox')).toBeDisabled();
     await user.click(within(rows[0]).getByRole('checkbox'));
-    const actions = await screen.findByRole('button', { name: 'Bulk actions' });
+    const actions = screen.getByTestId('data-view-bulk-actions-menu-button');
     await user.click(actions);
     expect(screen.getByRole('menuitem', { name: 'Clear selection (49)' })).toBeVisible();
     await user.keyboard('{Escape}');
