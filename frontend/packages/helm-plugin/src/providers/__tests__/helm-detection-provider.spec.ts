@@ -120,12 +120,21 @@ describe('useDetectHelmChartRepositories', () => {
   });
 
   it('should call setFeatureFlag with FLAG_OPENSHIFT_HELM flag and true if only one of the two requests succeeds', async () => {
+    // Exercise the real settleAllPromises/Promise.allSettled plumbing here instead of
+    // handing the hook a synthetic settlement tuple, so this test also catches
+    // regressions in settleAllPromises itself.
+    const { settleAllPromises: actualSettleAllPromises } = jest.requireActual(
+      '@console/dynamic-plugin-sdk/src/utils/promise',
+    );
+    settleAllPromisesMock.mockImplementation(actualSettleAllPromises);
+
     const error404 = new HttpError('404', 404, {
       status: 404,
     } as Response);
-    settleAllPromisesMock.mockReturnValue(
-      Promise.resolve([[mockHelmChartRepositories], [error404], []]),
-    );
+    k8sListResourceMock
+      .mockReturnValueOnce(Promise.resolve(mockHelmChartRepositories))
+      .mockReturnValueOnce(Promise.reject(error404));
+
     renderHook(() => useDetectHelmChartRepositories(setFeatureFlag));
     await waitFor(() => {
       expect(setFeatureFlag).toHaveBeenCalledTimes(1);
