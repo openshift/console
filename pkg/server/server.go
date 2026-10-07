@@ -163,6 +163,7 @@ type Server struct {
 	ClusterManagementProxyConfig        *proxy.Config
 	CookieEncryptionKey                 []byte
 	CookieAuthenticationKey             []byte
+	CSPMode                             serverconfig.CSPMode
 	ContentSecurityPolicy               serverconfig.MultiKeyValue
 	ControlPlaneTopology                string
 	CopiedCSVsDisabled                  bool
@@ -737,7 +738,11 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		klog.Fatalf("Error building Content Security Policy directives: %s", err)
 	}
-	w.Header().Set("Content-Security-Policy-Report-Only", strings.Join(cspDirectives, "; "))
+	headerName := "Content-Security-Policy-Report-Only"
+	if s.CSPMode == serverconfig.CSPModeEnforce {
+		headerName = "Content-Security-Policy"
+	}
+	w.Header().Set(headerName, strings.Join(cspDirectives, "; "))
 
 	jsg := &jsGlobals{
 		AddPage:                   s.AddPage,

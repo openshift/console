@@ -11,6 +11,14 @@ import (
 //   https://github.com/openshift/console-operator/blob/master/pkg/console/subresource/consoleserver/types.go
 // These structs need to remain in sync.
 
+// CSPMode controls whether the console reports or enforces Content Security Policy.
+type CSPMode string
+
+const (
+	CSPModeReportOnly CSPMode = "report-only"
+	CSPModeEnforce    CSPMode = "enforce"
+)
+
 // Config is the top-level console server cli configuration.
 type Config struct {
 	APIVersion            string `yaml:"apiVersion"`
