@@ -77,20 +77,23 @@ export const ColumnManagementModal: FC<ColumnManagementModalProps> = ({
   columnLayout,
   noLimit,
 }) => {
-  const [, setTableColumns, preferenceLoaded] = useUserPreference<object>(
-    COLUMN_MANAGEMENT_USER_PREFERENCE_KEY,
-    undefined,
-    true,
-  );
+  const [tableColumns, setTableColumns, preferenceLoaded] = useUserPreference<
+    Record<string, string[]>
+  >(COLUMN_MANAGEMENT_USER_PREFERENCE_KEY, undefined, true);
   const { t } = useTranslation('public');
   const defaultColumns = columnLayout.columns.filter((column) => column.id && !column.additional);
   const additionalColumns = columnLayout.columns.filter((column) => column.additional);
-
-  const [checkedColumns, setCheckedColumns] = useState<Set<string>>(
-    columnLayout.selectedColumns && columnLayout.selectedColumns.size !== 0
-      ? new Set(columnLayout.selectedColumns)
-      : new Set(defaultColumns.map((col) => col.id)),
-  );
+  const showNamespaceHelpText =
+    columnLayout.columns.some((column) => column.id === 'namespace') &&
+    !columnLayout.showNamespaceOverride;
+  const [checkedColumnOverrides, setCheckedColumnOverrides] = useState<Set<string>>();
+  const checkedColumns =
+    checkedColumnOverrides ??
+    (tableColumns?.[columnLayout.id]?.length
+      ? new Set(tableColumns[columnLayout.id])
+      : columnLayout.selectedColumns?.size
+        ? new Set(columnLayout.selectedColumns)
+        : new Set(defaultColumns.map((col) => col.id)));
 
   if (!preferenceLoaded) {
     return null;
@@ -102,7 +105,7 @@ export const ColumnManagementModal: FC<ColumnManagementModalProps> = ({
     updatedCheckedColumns.has(selectedId)
       ? updatedCheckedColumns.delete(selectedId)
       : updatedCheckedColumns.add(selectedId);
-    setCheckedColumns(updatedCheckedColumns);
+    setCheckedColumnOverrides(updatedCheckedColumns);
   };
 
   const submit = (event): void => {
@@ -125,7 +128,7 @@ export const ColumnManagementModal: FC<ColumnManagementModalProps> = ({
     const updatedCheckedColumns = new Set(checkedColumns);
     defaultColumns.forEach((col) => col.id && updatedCheckedColumns.add(col.id));
     additionalColumns.forEach((col) => updatedCheckedColumns.delete(col.id));
-    setCheckedColumns(updatedCheckedColumns);
+    setCheckedColumnOverrides(updatedCheckedColumns);
   };
 
   return (
@@ -147,11 +150,11 @@ export const ColumnManagementModal: FC<ColumnManagementModalProps> = ({
                 })}
                 variant="info"
               >
-                {!columnLayout?.showNamespaceOverride && <NamespaceColumnHelpText />}
+                {showNamespaceHelpText && <NamespaceColumnHelpText />}
               </Alert>
             </>
           ) : (
-            !columnLayout?.showNamespaceOverride && <NamespaceColumnHelpText />
+            showNamespaceHelpText && <NamespaceColumnHelpText />
           )}
           <Grid hasGutter>
             <GridItem sm={6}>

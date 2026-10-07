@@ -15,13 +15,49 @@ export const getResourceReference = (item: unknown): string | undefined => {
   return referenceFor(resource) || undefined;
 };
 
+/** Returns one reference for selectable items of a single Kubernetes resource kind. */
+export const getResourceReferenceForItems = <TData>(
+  items: TData[],
+  isSelectable?: (item: TData) => boolean,
+): string | undefined => {
+  let firstResource: K8sResourceCommon | undefined;
+  let reference: string | undefined;
+
+  for (const item of items) {
+    if (!isSelectable || isSelectable(item)) {
+      if (!item || typeof item !== 'object') return undefined;
+
+      const resource = item as K8sResourceCommon;
+      if (
+        typeof resource.apiVersion !== 'string' ||
+        typeof resource.kind !== 'string' ||
+        typeof resource.metadata?.name !== 'string'
+      ) {
+        return undefined;
+      }
+
+      if (!firstResource) {
+        firstResource = resource;
+        reference = getResourceReference(resource);
+        if (!reference) return undefined;
+      } else if (
+        resource.apiVersion !== firstResource.apiVersion ||
+        resource.kind !== firstResource.kind
+      ) {
+        return undefined;
+      }
+    }
+  }
+
+  return reference;
+};
+
 /** Bulk providers only receive selections of one Kubernetes model. */
 export const getSelectedResources = (
   items: unknown[],
 ): { reference: string; resources: K8sResourceCommon[] } | undefined => {
   if (!items.length) return undefined;
-  const reference = getResourceReference(items[0]);
-  if (!reference || items.some((item) => getResourceReference(item) !== reference))
-    return undefined;
+  const reference = getResourceReferenceForItems(items);
+  if (!reference) return undefined;
   return { reference, resources: items as K8sResourceCommon[] };
 };

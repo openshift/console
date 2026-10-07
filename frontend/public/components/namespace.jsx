@@ -38,11 +38,7 @@ import {
 } from '@console/shared/src/components/namespace/filters';
 import { GreenCheckCircleIcon } from '@console/shared/src/components/status/icons';
 import { Status } from '@console/shared/src/components/status/Status';
-import {
-  FLAGS,
-  COLUMN_MANAGEMENT_USER_PREFERENCE_KEY,
-  REQUESTER_FILTER,
-} from '@console/shared/src/constants/common';
+import { FLAGS, REQUESTER_FILTER } from '@console/shared/src/constants/common';
 import { DASH } from '@console/shared/src/constants/ui';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
@@ -52,7 +48,6 @@ import { useCreateNamespaceModal } from '@console/shared/src/hooks/useCreateName
 import { useCreateProjectModal } from '@console/shared/src/hooks/useCreateProjectModal';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { usePrometheusGate } from '@console/shared/src/hooks/usePrometheusGate';
-import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import { getName } from '@console/shared/src/selectors/common';
 import { getRequester, getDescription } from '@console/shared/src/selectors/namespace';
 import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
@@ -374,11 +369,6 @@ const NamespacesList = (props) => {
   const { t } = useTranslation('public');
   const dispatch = useConsoleDispatch();
   const { columns } = useNamespacesColumns();
-  const [selectedColumns, , columnPreferenceLoaded] = useUserPreference(
-    COLUMN_MANAGEMENT_USER_PREFERENCE_KEY,
-    undefined,
-    true,
-  );
   const namespaceMetrics = useConsoleSelector(({ UI }) => UI.metrics?.namespace);
 
   // TODO Utilize usePoll hook
@@ -389,23 +379,6 @@ const NamespacesList = (props) => {
     const id = setInterval(updateMetrics, 30 * 1000);
     return () => clearInterval(id);
   }, [dispatch]);
-
-  const columnLayout = useMemo(
-    () => ({
-      id: NamespacesColumnManagementID,
-      type: t('Namespace'),
-      columns: columns.map((col) => ({
-        id: col.id,
-        title: col.title,
-        additional: col.additional,
-      })),
-      selectedColumns:
-        selectedColumns?.[NamespacesColumnManagementID]?.length > 0
-          ? new Set(selectedColumns[NamespacesColumnManagementID])
-          : new Set(),
-    }),
-    [columns, selectedColumns, t],
-  );
 
   const requesterFilterOptions = useMemo(
     () => [
@@ -446,17 +419,12 @@ const NamespacesList = (props) => {
     return !filters.requester || filters.requester.includes(String(requesterType));
   }, []);
 
-  if (!columnPreferenceLoaded) {
-    return null;
-  }
-
   return (
     <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView
         {...props}
         label={NamespaceModel.labelPlural}
         columns={columns}
-        columnLayout={columnLayout}
         id={NamespacesColumnManagementID}
         initialFilters={initialFilters}
         additionalFilterNodes={additionalFilterNodes}
@@ -730,11 +698,6 @@ const ProjectList = (props) => {
   const { t } = useTranslation('public');
   const dispatch = useConsoleDispatch();
   const canGetNS = useFlag(FLAGS.CAN_GET_NS);
-  const [selectedColumns, , columnPreferenceLoaded] = useUserPreference(
-    COLUMN_MANAGEMENT_USER_PREFERENCE_KEY,
-    undefined,
-    true,
-  );
   const isPrometheusAvailable = usePrometheusGate();
   const showMetrics = isPrometheusAvailable;
   const showActions = true;
@@ -778,23 +741,6 @@ const ProjectList = (props) => {
     };
   }, [dispatch, showMetrics, canGetNS, namespaces]);
 
-  const columnLayout = useMemo(
-    () => ({
-      id: projectColumnManagementID,
-      type: t('Project'),
-      columns: columns.map((col) => ({
-        id: col.id,
-        title: col.title,
-        additional: col.additional,
-      })),
-      selectedColumns:
-        selectedColumns?.[projectColumnManagementID]?.length > 0
-          ? new Set(selectedColumns[projectColumnManagementID])
-          : new Set(),
-    }),
-    [columns, selectedColumns, t],
-  );
-
   const requesterFilterOptions = useMemo(
     () => [
       { value: REQUESTER_FILTER.ME, label: t('Me') },
@@ -836,7 +782,7 @@ const ProjectList = (props) => {
 
   // Don't render the table until we know whether we can get metrics. It's
   // not possible to change the table headers once the component is mounted.
-  if (flagPending(canGetNS) || !columnPreferenceLoaded) {
+  if (flagPending(canGetNS)) {
     return null;
   }
 
@@ -846,7 +792,6 @@ const ProjectList = (props) => {
         {...props}
         label={ProjectModel.labelPlural}
         columns={columns}
-        columnLayout={columnLayout}
         id={projectColumnManagementID}
         initialFilters={initialFilters}
         additionalFilterNodes={additionalFilterNodes}

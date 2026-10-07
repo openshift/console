@@ -3,7 +3,7 @@ import { EmptyState, EmptyStateVariant, Title } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
 import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
-import type { TableProps } from '@console/internal/components/factory/table';
+import type { ConsoleDataViewProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import type { ServiceKind } from '../../types';
 import { ServerlessFunctionIcon } from '../../utils/icons';
 import { useServiceColumns } from '../services/useServiceColumns';
@@ -12,7 +12,12 @@ import { getFunctionDataViewRows } from './FunctionRow';
 
 import './FunctionsPage.scss';
 
-export const FunctionsList: FC<TableProps> = (props) => {
+type FunctionsListProps = Omit<
+  ConsoleDataViewProps<ServiceKind>,
+  'id' | 'columns' | 'getDataViewRows'
+>;
+
+export const FunctionsList: FC<FunctionsListProps> = (props) => {
   const { t } = useTranslation('knative-plugin');
   const { ns } = useParams();
   const { columns } = useServiceColumns();

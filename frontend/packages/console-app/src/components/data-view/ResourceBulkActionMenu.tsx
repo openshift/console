@@ -1,6 +1,5 @@
 import type { FC } from 'react';
 import { useCallback, useMemo, useState } from 'react';
-import { MenuToggle } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
 import type {
@@ -11,8 +10,9 @@ import type {
 import { isResourceActionProvider } from '@console/dynamic-plugin-sdk/src/extensions/actions';
 import { referenceForExtensionModel } from '@console/internal/module/k8s';
 import ActionsHookResolver from '@console/shared/src/components/actions/loader/ActionsHookResolver';
-import { ActionMenu } from '@console/shared/src/components/actions/menu/ActionMenu';
-import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
+import ActionMenuItem from '@console/shared/src/components/actions/menu/ActionMenuItem';
+import { ResponsiveActionDropdown } from '@console/shared/src/components/dropdown/ResponsiveActionDropdown';
+import { orderExtensionBasedOnInsertBeforeAndAfter } from '@console/shared/src/utils/order-extensions';
 
 type ResourceBulkActionMenuProps = BulkResourceActionContext & {
   reference?: string;
@@ -86,6 +86,10 @@ export const ResourceBulkActionMenu: FC<ResourceBulkActionMenuProps> = ({
       return true;
     });
   }, [localActions, providers, providerActions, selectionKey]);
+  const orderedActions = useMemo(
+    () => orderExtensionBasedOnInsertBeforeAndAfter(actions),
+    [actions],
+  );
 
   return (
     <>
@@ -100,19 +104,18 @@ export const ResourceBulkActionMenu: FC<ResourceBulkActionMenuProps> = ({
             onContextChange={() => {}}
           />
         ))}
-      {(Boolean(localActions?.length) || providers.length > 0) &&
-        (actions.length === 0 ? (
-          <MenuToggle isDisabled aria-label={t('Bulk actions')} aria-haspopup="true">
-            {t('Bulk actions')}
-          </MenuToggle>
-        ) : (
-          <ActionMenu
-            actions={actions}
-            variant={ActionMenuVariant.DROPDOWN}
-            label={t('Bulk actions')}
-            isDisabled={selectedCount === 0 || actions.every(({ disabled }) => disabled)}
-          />
-        ))}
+      {(Boolean(localActions?.length) || providers.length > 0) && (
+        <ResponsiveActionDropdown
+          label={t('Actions')}
+          variant="default"
+          data-test="data-view-bulk-actions-menu-button"
+          isDisabled={selectedCount === 0 || actions.every(({ disabled }) => disabled)}
+        >
+          {orderedActions.map((action) => (
+            <ActionMenuItem key={action.id} action={action} />
+          ))}
+        </ResponsiveActionDropdown>
+      )}
     </>
   );
 };

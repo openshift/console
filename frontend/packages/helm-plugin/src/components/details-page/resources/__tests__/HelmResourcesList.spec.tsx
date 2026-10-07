@@ -11,7 +11,6 @@ describe('HelmResourcesList', () => {
         loaded
         data={helmReleaseResourceData}
         data-test="helm-resources-list"
-        Header={() => null}
       />,
     );
   };

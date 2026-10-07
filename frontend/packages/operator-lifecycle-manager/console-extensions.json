@@ -155,7 +155,11 @@
   {
     "type": "console.dataview/table-column",
     "properties": {
-      "tableID": "operators.coreos.com~v1alpha1~ClusterServiceVersion",
+      "table": {
+        "group": "operators.coreos.com",
+        "version": "v1alpha1",
+        "kind": "ClusterServiceVersion"
+      },
       "columnData": {
         "id": "clusterCompatibility",
         "title": "%olm~Cluster compatibility%",
@@ -174,7 +178,11 @@
   {
     "type": "console.dataview/table-column",
     "properties": {
-      "tableID": "operators.coreos.com~v1alpha1~ClusterServiceVersion",
+      "table": {
+        "group": "operators.coreos.com",
+        "version": "v1alpha1",
+        "kind": "ClusterServiceVersion"
+      },
       "columnData": {
         "id": "supportPhase",
         "title": "%olm~Support phase%",

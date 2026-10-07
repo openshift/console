@@ -309,7 +309,7 @@
   {
     "type": "console.dataview/table-column",
     "properties": {
-      "tableID": "console-demo-plugin~v1~Pod",
+      "table": "console-demo-plugin-list-page-pods-table",
       "columnData": {
         "id": "console-demo-plugin-pixaa-pod",
         "title": "%plugin__console-demo-plugin~PIXAA pod?%",

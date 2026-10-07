@@ -1,5 +1,5 @@
 import { screen } from '@testing-library/react';
-import type { TableProps } from '@console/internal/components/factory';
+import type { ConsoleDataViewProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import RepositoriesList from '../RepositoriesList';
@@ -46,11 +46,12 @@ const mockData: K8sResourceKind[] = [
   },
 ];
 
-const defaultProps: TableProps = {
+const defaultProps: Omit<
+  ConsoleDataViewProps<K8sResourceKind>,
+  'id' | 'columns' | 'getDataViewRows'
+> = {
   data: [],
   loaded: false,
-  Header: () => [],
-  'aria-label': 'Repositories',
 };
 
 describe('RepositoriesList', () => {

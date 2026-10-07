@@ -10,7 +10,6 @@ import type {
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import type { Flatten } from '@console/internal/components/factory/list-page';
 import { MultiListPage } from '@console/internal/components/factory/list-page';
-import type { Filter } from '@console/internal/components/factory/table';
 import {
   ResourceLink,
   resourcePathFromModel,
@@ -235,7 +234,6 @@ type PackageManifestListProps = {
   customData?: { catalogSource: CatalogSourceKind };
   namespace?: string;
   data: PackageManifestKind[];
-  filters?: Filter[];
   loaded: boolean;
   loadError?: string | Record<string, any>;
   showDetailsLink?: boolean;

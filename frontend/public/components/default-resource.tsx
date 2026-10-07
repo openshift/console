@@ -10,6 +10,7 @@ import type { ResourceActionProvider, ResolvedExtension } from '@console/dynamic
 import { isResourceActionProvider, useResolvedExtensions } from '@console/dynamic-plugin-sdk';
 import type {
   ConsoleDataViewColumn,
+  ConsoleDataViewProps,
   ConsoleDataViewRow,
   RowProps,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
@@ -35,7 +36,6 @@ import { referenceFor, referenceForExtensionModel } from '../module/k8s';
 import { Conditions } from './conditions';
 import { DetailsPage } from './factory/details';
 import { ListPage } from './factory/list-page';
-import type { TableProps } from './factory/table';
 import { DetailsItem } from './utils/details-item';
 import { ResourceSummary } from './utils/details-page';
 import { SectionHeading } from './utils/headings';
@@ -294,7 +294,11 @@ const useDefaultResourceColumns = <T extends K8sResourceKind>(
   return columns;
 };
 
-export const DefaultList: FC<TableProps & { kinds: string[] }> = (props) => {
+export const DefaultList: FC<
+  Omit<ConsoleDataViewProps<K8sResourceKind>, 'id' | 'columns' | 'getDataViewRows'> & {
+    kinds: string[];
+  }
+> = (props) => {
   const { t } = useTranslation('public');
   const { kinds, data, loaded } = props;
   const [model] = useK8sModel(kinds[0]);

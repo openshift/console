@@ -6,11 +6,11 @@ import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDa
 import { DASH } from '@console/dynamic-plugin-sdk/src/app/constants';
 import type {
   ConsoleDataViewColumn,
+  ConsoleDataViewProps,
   GetDataViewRows,
   ResourceFilters,
   ResourceMetadata,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import type { TableProps } from '@console/internal/components/factory/table';
 import { ResourceLink } from '@console/internal/components/utils/resource-link';
 import { referenceForModel } from '@console/internal/module/k8s/k8s-ref';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
@@ -140,9 +140,10 @@ const getObjectMetadata = (bundle: BareMetalHostBundle): ResourceMetadata => ({
   labels: bundle.host?.metadata?.labels,
 });
 
-type BareMetalHostsTableProps = TableProps & {
-  data: BareMetalHostBundle[];
-};
+type BareMetalHostsTableProps = Omit<
+  ConsoleDataViewProps<BareMetalHostBundle, BareMetalHostRowData, BareMetalHostFilters>,
+  'id' | 'columns' | 'getDataViewRows'
+>;
 
 const BareMetalHostsTable: FC<BareMetalHostsTableProps> = (props) => {
   const { t } = useTranslation('metal3-plugin');
