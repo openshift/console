@@ -57,6 +57,13 @@ declare interface Window {
       // Additional telemetry options passed to Console frontend
       DEBUG: 'true' | 'false';
       DISABLED: 'true' | 'false';
+      /**
+       * Domain part of the account owner's email address. The full address is
+       * deliberately never exposed here — SERVER_FLAGS is embedded into the
+       * unauthenticated index page, so every value in this map is readable by
+       * anyone who can reach the console.
+       */
+      ACCOUNT_MAIL_DOMAIN: string;
       [name: string]: string;
     }>;
     nodeArchitectures: string[];
