@@ -465,6 +465,44 @@ this way, then 'none' will be used. Additionally, violation reporting is throttl
 spamming the telemetry service with repetitive data. Identical violations will not be
 reported more than once a day.
 
+Bridge defaults to `--csp-mode=report-only`, which emits the
+`Content-Security-Policy-Report-Only` header. Use `--csp-mode=enforce` to emit
+`Content-Security-Policy` and block resources that violate the policy. Both modes
+use the same directives. Restart Bridge with `--csp-mode=report-only` to roll back
+enforcement. Invalid mode values prevent startup.
+
+The mode can also be set with `BRIDGE_CSP_MODE` or the top-level ConsoleConfig
+YAML field `contentSecurityPolicyMode`. CLI flags override environment variables,
+which override YAML configuration. The console-operator's ConsoleConfig struct
+must include the matching field before it can supply this setting.
+
+To validate both modes with Playwright, set `EXPECTED_CSP_MODE` in the test process
+to the effective mode of the running Bridge, regardless of whether Bridge obtains
+that mode from CLI flags, environment variables, or YAML. This test setting does
+not configure Bridge.
+
+Run the security spec against Bridge in its default mode, restart Bridge with
+`--csp-mode=enforce`, and repeat with `EXPECTED_CSP_MODE=enforce`. Then restart in
+report-only mode and repeat the first run to verify rollback:
+
+```sh
+cd frontend
+yarn test-playwright e2e/tests/console/security/csp-mode.spec.ts --project=console
+# After restarting Bridge with --csp-mode=enforce:
+EXPECTED_CSP_MODE=enforce yarn test-playwright e2e/tests/console/security/csp-mode.spec.ts --project=console
+```
+
+To exercise environment-based configuration, start Bridge with
+`BRIDGE_CSP_MODE=enforce` and no `--csp-mode` flag, preserving your other Bridge
+options. Run the same `EXPECTED_CSP_MODE=enforce` Playwright command against it.
+For YAML-based configuration, set `contentSecurityPolicyMode: enforce`, omit both
+Bridge mode overrides, and run that Playwright command again.
+
+These tests check Console startup, the response header, and whether an undeclared
+script executes or is blocked, including the violation report disposition. They
+require the usual [integration test prerequisites](#integration-tests). Proxy
+responses continue to use their independent, enforcing `sandbox` policy.
+
 In case of local developement of the dynamic plugin, just pass needed CSP directives address to the console server, using the `--content-security-policy` flag.
 
 Example:
