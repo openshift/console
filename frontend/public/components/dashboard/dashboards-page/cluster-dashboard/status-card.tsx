@@ -1,6 +1,14 @@
 import type { FC, ReactNode } from 'react';
 import { useMemo } from 'react';
-import { Gallery, GalleryItem, Card, CardHeader, CardTitle } from '@patternfly/react-core';
+import {
+  Gallery,
+  GalleryItem,
+  Card,
+  CardHeader,
+  CardTitle,
+  CardFooter,
+  Divider,
+} from '@patternfly/react-core';
 import type { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -80,8 +88,11 @@ const cvResource: WatchK8sResource = {
   isList: false,
 };
 
+const MAX_ALERTS = 50;
+
 export const DashboardAlerts: FC<DashboardAlertsProps> = ({ labelSelector }) => {
   const { t } = useTranslation('public');
+  const [, setActiveNamespace] = useActiveNamespace();
   const hasCVResource = useFlag(FLAGS.CLUSTER_VERSION);
   const [alerts, , loadError] = useNotificationAlerts(labelSelector);
   const [cv, cvLoaded] = useK8sWatchResource<ClusterVersionKind>(
@@ -102,21 +113,42 @@ export const DashboardAlerts: FC<DashboardAlertsProps> = ({ labelSelector }) => 
           <Link to="/settings/cluster?showVersions">{t('Update cluster')}</Link>
         </StatusItem>
       )}
-      {alerts.map((alert) => (
+      {alerts.slice(0, MAX_ALERTS).map((alert) => (
         <AlertItem key={alertURL(alert, alert.rule.id)} alert={alert} />
       ))}
+      {alerts.length > MAX_ALERTS && (
+        <>
+          <Divider />
+          <CardFooter>
+            <Link to="/monitoring/alerts" onClick={() => setActiveNamespace(ALL_NAMESPACES_KEY)}>
+              {t('View all {{count}} alerts', { count: alerts.length })}
+            </Link>
+          </CardFooter>
+        </>
+      )}
     </AlertsBody>
   );
 };
 
 export const DashboardNamespacedAlerts: FC<DashboardNamespacedAlertsProps> = ({ namespace }) => {
+  const { t } = useTranslation('public');
   const [namespacedAlerts, , loadError] = useNamespacedNotificationAlerts(namespace);
 
   return (
     <AlertsBody error={!_.isEmpty(loadError)}>
-      {namespacedAlerts.map((alert) => (
+      {namespacedAlerts.slice(0, MAX_ALERTS).map((alert) => (
         <AlertItem key={alertURL(alert, alert.rule.id)} alert={alert} />
       ))}
+      {namespacedAlerts.length > MAX_ALERTS && (
+        <>
+          <Divider />
+          <CardFooter>
+            <Link to="/monitoring/alerts">
+              {t('View all {{count}} alerts', { count: namespacedAlerts.length })}
+            </Link>
+          </CardFooter>
+        </>
+      )}
     </AlertsBody>
   );
 };
