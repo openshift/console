@@ -30,7 +30,7 @@ export const useDetectHelmChartRepositories = (setFeatureFlag: SetFeatureFlag) =
         // enabled. Repository instance state is handled by the Helm list pages themselves.
         if (fulfilledValues.length > 0) {
           setFeatureFlag(FLAG_OPENSHIFT_HELM, true);
-        } else if (rejectedReasons.length === helmChartRepos.length) {
+        } else {
           const notFound = rejectedReasons.some((e) => e?.response?.status === 404);
           notFound
             ? setFeatureFlag(FLAG_OPENSHIFT_HELM, false)
