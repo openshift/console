@@ -3,7 +3,7 @@ import { usePluginStore } from '@openshift/dynamic-plugin-sdk';
 import { AlertVariant } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { matchPath } from 'react-router';
+import { matchRoutes } from 'react-router';
 import type { RoutePage } from '@console/dynamic-plugin-sdk/src/extensions/pages';
 import { isRoutePage } from '@console/dynamic-plugin-sdk/src/extensions/pages';
 import type { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
@@ -44,13 +44,7 @@ const getPluginNameFromDocumentRoute = (
       return null;
     }
 
-    const basePath = window.SERVER_FLAGS.basePath.replace(/\/+$/, '');
-    currentPath =
-      basePath && eventDocumentURL.pathname.startsWith(`${basePath}/`)
-        ? eventDocumentURL.pathname.substring(basePath.length)
-        : eventDocumentURL.pathname === basePath
-          ? '/'
-          : eventDocumentURL.pathname;
+    currentPath = eventDocumentURL.pathname;
   } catch {
     return null;
   }
@@ -66,7 +60,11 @@ const getPluginNameFromDocumentRoute = (
 
     const paths = Array.isArray(properties.path) ? properties.path : [properties.path];
     const routeMatches = paths.some((path) =>
-      matchPath(`${path}${properties.exact ? '' : '/*'}`, currentPath),
+      matchRoutes(
+        [{ path: `${path}${properties.exact ? '' : '/*'}` }],
+        { pathname: currentPath },
+        window.SERVER_FLAGS.basePath,
+      ),
     );
     if (routeMatches) {
       matchingPluginNames.add(pluginName);

@@ -241,7 +241,7 @@ describe('useCSPViolationDetector', () => {
     {
       name: 'the root route under a Console base path',
       basePath: '/console/',
-      pagePath: '/console',
+      pagePath: '/console/',
       routePath: '/',
       expectedPlugin: 'foo',
     },
