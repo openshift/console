@@ -9,6 +9,7 @@ import storeHandler from '@console/dynamic-plugin-sdk/src/app/storeHandler';
 import type { ReduxReducer } from '@console/dynamic-plugin-sdk/src/extensions/redux';
 import type { ResolvedExtension } from '@console/dynamic-plugin-sdk/src/types';
 import { featureFlagMiddleware } from '@console/internal/plugins';
+import { IS_PRODUCTION } from '@console/shared/src/constants/common';
 import type { DashboardsState } from './reducers/dashboards';
 import { dashboardsReducer } from './reducers/dashboards';
 import { featureReducer, featureReducerName } from './reducers/features';
@@ -17,8 +18,7 @@ import ObserveReducers from './reducers/observe';
 import type { UIState } from './reducers/ui';
 import UIReducers from './reducers/ui';
 
-const composeEnhancers =
-  (process.env.NODE_ENV !== 'production' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) || compose;
+const composeEnhancers = (!IS_PRODUCTION && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) || compose;
 
 export type RootState = {
   observe: ObserveState;
@@ -62,7 +62,7 @@ export const applyReduxExtensions = (reducerExtensions: ResolvedExtension<ReduxR
   store.replaceReducer(combineReducers(nextReducers));
 };
 
-if (process.env.NODE_ENV !== 'production') {
+if (!IS_PRODUCTION) {
   // Expose Redux store for debugging
   window.store = store;
 }

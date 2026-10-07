@@ -28,12 +28,7 @@ export class ClusterDashboardPage extends BasePage {
   async waitForStatusCardLoaded(): Promise<void> {
     await expect(this.statusCard).toBeVisible({ timeout: 30_000 });
     // eslint-disable-next-line no-restricted-syntax
-    await this.statusCard
-      .locator('.skeleton-health')
-      .waitFor({ state: 'hidden', timeout: 30_000 })
-      .catch(() => {
-        // Skeletons may have already disappeared
-      });
+    await this.statusCard.locator('.skeleton-health').waitFor({ state: 'hidden', timeout: 30_000 });
   }
 
   getDetailsCard(): Locator {
