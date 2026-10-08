@@ -1,4 +1,5 @@
 import type { Locator } from '@playwright/test';
+import { coerce, gtr } from 'semver';
 
 import BasePage from '../base-page';
 import { MastheadPage } from '../masthead-page';
@@ -88,11 +89,22 @@ export class UserPreferencesPage extends BasePage {
     throw new Error(`Unable to focus target with ${maxTabs} Tab presses`);
   }
 
+  /** Mirrors IS_OPENSHIFT_5 in packages/console-app/src/features/openshift5.ts */
   async isOpenShift5(): Promise<boolean> {
-    return this.page.evaluate(() => {
-      const releaseVersion = window.SERVER_FLAGS?.releaseVersion;
-      return !releaseVersion || !releaseVersion.startsWith('4');
+    const releaseVersion = await this.page.evaluate(() => window.SERVER_FLAGS?.releaseVersion);
+    return gtr(coerce(releaseVersion || '5.0.0-unknown'), '4.x', {
+      includePrerelease: true,
+      loose: true,
     });
+  }
+
+  async reloadPreferences(): Promise<void> {
+    await this.page.reload();
+    await this.waitForLoadingComplete();
+  }
+
+  async navigateToUrl(url: string): Promise<void> {
+    await this.goTo(url);
   }
 
   getDocumentRoot(): Locator {

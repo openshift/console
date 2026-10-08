@@ -1,12 +1,15 @@
 import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { useFlag } from '@console/dynamic-plugin-sdk/src/utils/flags';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import ThemeSelector from '../ThemeSelector';
 
-jest.mock('@console/dynamic-plugin-sdk/src/utils/flags', () => ({
-  useFlag: jest.fn(),
+let mockIsOpenShift5: boolean;
+
+jest.mock('@console/app/src/features/openshift5', () => ({
+  get IS_OPENSHIFT_5() {
+    return mockIsOpenShift5;
+  },
 }));
 
 jest.mock('@console/shared/src/hooks/useTelemetry', () => ({
@@ -17,7 +20,6 @@ jest.mock('@console/shared/src/hooks/useUserPreference', () => ({
   useUserPreference: jest.fn(),
 }));
 
-const mockUseFlag = useFlag as jest.Mock;
 const mockUseTelemetry = useTelemetry as jest.Mock;
 const mockUseUserPreference = useUserPreference as jest.Mock;
 
@@ -54,7 +56,7 @@ describe('ThemeSelector', () => {
       'console.theme': true,
       'console.theme/contrast': true,
     };
-    mockUseFlag.mockReturnValue(true);
+    mockIsOpenShift5 = true;
     mockUseTelemetry.mockReturnValue(fireTelemetryEvent);
     mockUseUserPreference.mockImplementation((key: string, defaultValue: string) => [
       preferences[key] ?? defaultValue,
@@ -153,12 +155,10 @@ describe('ThemeSelector', () => {
     const highContrast = within(getGroup('Contrast mode')).getByRole('button', {
       name: 'High contrast',
     });
-    await waitFor(() => expect(traditional).toHaveFocus());
+    await waitFor(() => expect(glass).toHaveFocus());
     expect(traditional).toHaveAttribute('aria-pressed', 'false');
     expect(glass).toHaveAttribute('aria-pressed', 'true');
 
-    await user.tab();
-    expect(glass).toHaveFocus();
     await user.tab();
     expect(highContrast).toHaveFocus();
     await user.keyboard(' ');
@@ -240,7 +240,7 @@ describe('ThemeSelector', () => {
 
   it('should keep all color choices usable and hide contrast outside OpenShift 5', async () => {
     const user = userEvent.setup();
-    mockUseFlag.mockReturnValue(false);
+    mockIsOpenShift5 = false;
     loadedPreferences['console.theme/contrast'] = false;
     preferences['console.theme'] = 'systemDefault';
     const { rerender } = render(<ThemeSelector />);
@@ -292,6 +292,39 @@ describe('ThemeSelector', () => {
     expect(setContrastMode).not.toHaveBeenCalled();
   });
 
+  it('should focus the selected option when the panel opens', async () => {
+    const user = userEvent.setup();
+    const { unmount } = render(<ThemeSelector />);
+    await user.click(screen.getByRole('button', { name: 'Theme: Glass · Dark' }));
+    await waitFor(() =>
+      expect(
+        within(getGroup('Contrast mode')).getByRole('button', { name: 'Glass' }),
+      ).toHaveFocus(),
+    );
+
+    unmount();
+    mockIsOpenShift5 = false;
+    render(<ThemeSelector />);
+    await user.click(screen.getByRole('button', { name: 'Theme: Dark' }));
+    await waitFor(() =>
+      expect(within(getGroup('Color scheme')).getByRole('button', { name: 'Dark' })).toHaveFocus(),
+    );
+  });
+
+  it.each([
+    ['default', 'The traditional console appearance.'],
+    ['glass', 'A modern, visually refreshed console appearance.'],
+    ['contrast', 'Enhances contrast between interface elements for readability.'],
+    ['systemDefault', "Matches your operating system's contrast setting."],
+  ])('should describe the selected %s contrast mode', async (value, description) => {
+    const user = userEvent.setup();
+    preferences['console.theme/contrast'] = value;
+    render(<ThemeSelector />);
+    await user.click(screen.getByRole('button', { name: /^Theme: / }));
+
+    expect(getGroup('Contrast mode')).toHaveAccessibleDescription(description);
+  });
+
   it('should normalize invalid visible preferences without rewriting hidden contrast', () => {
     preferences['console.theme'] = 'invalid-color';
     preferences['console.theme/contrast'] = 'invalid-contrast';
@@ -302,7 +335,7 @@ describe('ThemeSelector', () => {
 
     unmount();
     jest.clearAllMocks();
-    mockUseFlag.mockReturnValue(false);
+    mockIsOpenShift5 = false;
     render(<ThemeSelector />);
 
     expect(setColorScheme).toHaveBeenCalledWith('systemDefault');
@@ -313,10 +346,10 @@ describe('ThemeSelector', () => {
     loadedPreferences['console.theme/contrast'] = false;
     const { rerender } = render(<ThemeSelector />);
 
-    expect(screen.getByTestId('select skeleton console.theme')).toBeVisible();
+    expect(screen.getByTestId('theme-selector-skeleton')).toBeVisible();
     expect(screen.queryByRole('button')).not.toBeInTheDocument();
 
-    mockUseFlag.mockReturnValue(false);
+    mockIsOpenShift5 = false;
     rerender(<ThemeSelector />);
     expect(screen.getByRole('button', { name: 'Theme: Dark' })).toBeVisible();
   });

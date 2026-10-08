@@ -730,7 +730,7 @@
       "id": "console.theme",
       "label": "%console-app~Theme%",
       "groupId": "general",
-      "description": "",
+      "description": "%console-app~Console will appear as per the selected theme.%",
       "field": {
         "type": "custom",
         "component": { "$codeRef": "ThemeSelector" }

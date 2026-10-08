@@ -2,6 +2,8 @@ import type { FC } from 'react';
 import { useEffect, useState } from 'react';
 import {
   Divider,
+  HelperText,
+  HelperTextItem,
   MenuToggle,
   Popover,
   PopoverPosition,
@@ -11,8 +13,7 @@ import {
   ToggleGroupItem,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { FLAG_OPENSHIFT_5 } from '@console/app/src/consts';
-import { useFlag } from '@console/dynamic-plugin-sdk/src/utils/flags';
+import { IS_OPENSHIFT_5 } from '@console/app/src/features/openshift5';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import {
@@ -38,7 +39,8 @@ const isContrastMode = (value: string): value is ContrastMode =>
 
 const ThemeSelector: FC = () => {
   const { t } = useTranslation('console-app');
-  const isOpenShift5 = useFlag(FLAG_OPENSHIFT_5);
+  // Same source of truth as ThemeProvider, so the controls always match what is applied
+  const isOpenShift5 = IS_OPENSHIFT_5;
   const fireTelemetryEvent = useTelemetry();
   const [isOpen, setIsOpen] = useState(false);
   const [colorScheme, setColorScheme, colorSchemeLoaded] = useUserPreference<string>(
@@ -92,6 +94,19 @@ const ThemeSelector: FC = () => {
     }
   };
 
+  const getContrastModeDescription = (value: ContrastMode): string => {
+    switch (value) {
+      case 'default':
+        return t('The traditional console appearance.');
+      case 'glass':
+        return t('A modern, visually refreshed console appearance.');
+      case 'contrast':
+        return t('Enhances contrast between interface elements for readability.');
+      default:
+        return t("Matches your operating system's contrast setting.");
+    }
+  };
+
   const colorSchemeLabel = getColorSchemeLabel(selectedColorScheme);
   const contrastModeLabel = getContrastModeLabel(selectedContrastMode);
   const summary = isOpenShift5
@@ -122,11 +137,15 @@ const ThemeSelector: FC = () => {
   };
 
   if (!loaded) {
-    return <Skeleton height="30px" width="100%" data-test="select skeleton console.theme" />;
+    return <Skeleton height="30px" width="100%" data-test="theme-selector-skeleton" />;
   }
 
   const panelId = 'console-theme-panel';
-  const initialFocusId = isOpenShift5 ? '#theme-contrast-default' : '#theme-color-light';
+  const contrastDescriptionId = 'console-theme-contrast-description';
+  // Land focus on the current selection rather than the first option
+  const initialFocusId = isOpenShift5
+    ? `#theme-contrast-${selectedContrastMode}`
+    : `#theme-color-${selectedColorScheme}`;
 
   return (
     <Popover
@@ -139,6 +158,7 @@ const ThemeSelector: FC = () => {
                 {t('Contrast mode')}
               </Title>
               <ToggleGroup
+                aria-describedby={contrastDescriptionId}
                 aria-label={t('Contrast mode')}
                 className="co-theme-selector__toggle-group"
                 isCompact
@@ -153,6 +173,9 @@ const ThemeSelector: FC = () => {
                   />
                 ))}
               </ToggleGroup>
+              <HelperText id={contrastDescriptionId}>
+                <HelperTextItem>{getContrastModeDescription(selectedContrastMode)}</HelperTextItem>
+              </HelperText>
             </div>
           )}
           {isOpenShift5 && <Divider />}

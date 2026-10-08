@@ -40,8 +40,12 @@ test.describe('User Preferences', { tag: ['@dev-console'] }, () => {
         return;
       }
       pendingThemeWrites.push(
-        request
-          .response()
+        Promise.race([
+          request.response(),
+          new Promise<never>((_resolve, reject) =>
+            setTimeout(() => reject(new Error('Theme preference PATCH timed out')), 30_000),
+          ),
+        ])
           .then((response) => {
             if (!response?.ok()) {
               throw new Error(
@@ -118,6 +122,7 @@ test.describe('User Preferences', { tag: ['@dev-console'] }, () => {
   };
 
   test.afterEach(async ({ k8sClient }) => {
+    // Let in-flight Theme writes settle so they cannot land after cleanup
     await Promise.all(pendingThemeWrites);
     try {
       await k8sClient.patchConfigMap('user-settings-kubeadmin', 'openshift-console-user-settings', {
@@ -129,8 +134,11 @@ test.describe('User Preferences', { tag: ['@dev-console'] }, () => {
     } catch {
       // ConfigMap may not exist on fresh clusters where kubeadmin has no user-settings yet
     }
-    await k8sClient.clearUserSettings('kubeadmin', ['console.theme', 'console.theme/contrast']);
-    expect(themeWriteErrors).toEqual([]);
+    try {
+      await k8sClient.clearUserSettings('kubeadmin', ['console.theme', 'console.theme/contrast']);
+    } finally {
+      expect(themeWriteErrors).toEqual([]);
+    }
   });
 
   test(
@@ -153,15 +161,8 @@ test.describe('User Preferences', { tag: ['@dev-console'] }, () => {
     },
   );
 
+  // One pair per contrast mode; all 12 summary combinations are covered by ThemeSelector unit tests
   const themeSelectionPairs = [
-    {
-      contrast: 'Traditional',
-      color: 'Light',
-      summary: 'Traditional · Light',
-      glass: false,
-      highContrast: false,
-      dark: false,
-    },
     {
       contrast: 'Traditional',
       color: 'Dark',
@@ -171,43 +172,11 @@ test.describe('User Preferences', { tag: ['@dev-console'] }, () => {
       dark: true,
     },
     {
-      contrast: 'Traditional',
-      color: 'System default',
-      summary: 'Traditional · System default',
-      glass: false,
-      highContrast: false,
-      dark: false,
-    },
-    {
       contrast: 'Glass',
       color: 'Light',
       summary: 'Glass · Light',
       glass: true,
       highContrast: false,
-      dark: false,
-    },
-    {
-      contrast: 'Glass',
-      color: 'Dark',
-      summary: 'Glass · Dark',
-      glass: true,
-      highContrast: false,
-      dark: true,
-    },
-    {
-      contrast: 'Glass',
-      color: 'System default',
-      summary: 'Glass · System default',
-      glass: true,
-      highContrast: false,
-      dark: false,
-    },
-    {
-      contrast: 'High contrast',
-      color: 'Light',
-      summary: 'High contrast · Light',
-      glass: false,
-      highContrast: true,
       dark: false,
     },
     {
@@ -219,33 +188,9 @@ test.describe('User Preferences', { tag: ['@dev-console'] }, () => {
       dark: true,
     },
     {
-      contrast: 'High contrast',
-      color: 'System default',
-      summary: 'High contrast · System default',
-      glass: false,
-      highContrast: true,
-      dark: false,
-    },
-    {
       contrast: 'System default',
       color: 'Light',
       summary: 'System default · Light',
-      glass: true,
-      highContrast: false,
-      dark: false,
-    },
-    {
-      contrast: 'System default',
-      color: 'Dark',
-      summary: 'System default · Dark',
-      glass: true,
-      highContrast: false,
-      dark: true,
-    },
-    {
-      contrast: 'System default',
-      color: 'System default',
-      summary: 'System default · System default',
       glass: true,
       highContrast: false,
       dark: false,
@@ -259,10 +204,7 @@ test.describe('User Preferences', { tag: ['@dev-console'] }, () => {
       async ({ page, k8sClient }) => {
         await page.emulateMedia({ colorScheme: 'light', contrast: 'no-preference' });
         await userPrefs.navigateToPreferences();
-        test.skip(
-          !(await userPrefs.isOpenShift5()),
-          'The complete Theme matrix requires OpenShift 5',
-        );
+        test.skip(!(await userPrefs.isOpenShift5()), 'Contrast modes require OpenShift 5');
 
         await userPrefs.selectThemeOption('Contrast mode', selection.contrast);
         await userPrefs.selectThemeOption('Color scheme', selection.color);
@@ -351,8 +293,7 @@ test.describe('User Preferences', { tag: ['@dev-console'] }, () => {
 
         await warmupSPA(page);
         await userPrefs.navigateToPreferences();
-        await page.reload();
-        await userPrefs.waitForLoadingComplete();
+        await userPrefs.reloadPreferences();
         await expectThemeSummary(selection.summary);
         await expectThemeClasses(selection.classes);
 
@@ -390,8 +331,7 @@ test.describe('User Preferences', { tag: ['@dev-console'] }, () => {
       await expectThemeSummary('System default · Dark');
       await expectThemePreferencesPersisted(k8sClient, 'System default', 'Dark');
 
-      await page.reload();
-      await userPrefs.waitForLoadingComplete();
+      await userPrefs.reloadPreferences();
       await expectThemeSummary('System default · Dark');
       await expectThemeClasses({ glass: true, highContrast: false, dark: true });
       await userPrefs.openTheme();
@@ -417,14 +357,13 @@ test.describe('User Preferences', { tag: ['@dev-console'] }, () => {
       await toggle.focus();
       await page.keyboard.press('Enter');
 
-      const traditional = userPrefs.getThemeOption('Contrast mode', 'Traditional');
-      await expect(traditional).toBeFocused();
-      await expect(userPrefs.getThemeOption('Contrast mode', 'System default')).toHaveAttribute(
-        'aria-pressed',
-        'true',
-      );
+      const systemDefault = userPrefs.getThemeOption('Contrast mode', 'System default');
+      await expect(systemDefault).toBeFocused();
+      await expect(systemDefault).toHaveAttribute('aria-pressed', 'true');
 
-      await page.keyboard.press('Tab');
+      await page.keyboard.press('Shift+Tab');
+      await expect(userPrefs.getThemeOption('Contrast mode', 'High contrast')).toBeFocused();
+      await page.keyboard.press('Shift+Tab');
       const glass = userPrefs.getThemeOption('Contrast mode', 'Glass');
       await expect(glass).toBeFocused();
       await page.keyboard.press('Space');
@@ -464,8 +403,7 @@ test.describe('User Preferences', { tag: ['@dev-console'] }, () => {
         const url = new URL(page.url());
         url.searchParams.set('pseudolocalization', 'true');
         url.searchParams.set('lng', 'en');
-        await page.goto(url.toString());
-        await userPrefs.waitForLoadingComplete();
+        await userPrefs.navigateToUrl(url.toString());
         await page.setViewportSize({ width: 320, height: 800 });
 
         const toggle = userPrefs.getThemeToggle();
@@ -510,6 +448,11 @@ test.describe('User Preferences', { tag: ['@dev-console'] }, () => {
             };
           });
 
+        // Focus opens on the selected contrast option (System default); walk back to the first
+        await expect(buttons[3]).toBeFocused();
+        for (let index = 0; index < 3; index++) {
+          await page.keyboard.press('Shift+Tab');
+        }
         const firstButton = buttons[0];
         await expect(firstButton).toBeFocused();
         await expect(firstButton).toHaveAttribute('aria-pressed', 'false');
@@ -563,8 +506,7 @@ test.describe('User Preferences', { tag: ['@dev-console'] }, () => {
         await userPrefs.closeTheme();
         await expectThemeSummary(color);
         await expectThemePreferencesPersisted(k8sClient, 'System default', color);
-        await page.reload();
-        await userPrefs.waitForLoadingComplete();
+        await userPrefs.reloadPreferences();
         await expectThemeSummary(color);
         await userPrefs.openTheme();
         await expect(userPrefs.getThemeOption('Color scheme', color)).toHaveAttribute(
