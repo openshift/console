@@ -50,6 +50,7 @@ type ServingInfo struct {
 	RedirectPort  int      `yaml:"redirectPort,omitempty"`
 	MinTLSVersion string   `yaml:"minTLSVersion,omitempty"`
 	CipherSuites  []string `yaml:"cipherSuites,omitempty"`
+	Groups        []string `yaml:"groups,omitempty"`
 
 	// These fields are defined in `HTTPServingInfo`, but are not supported for console. Fail if any are specified.
 	// https://github.com/openshift/api/blob/0cb4131a7636e1ada6b2769edc9118f0fe6844c8/config/v1/types.go#L7-L38
