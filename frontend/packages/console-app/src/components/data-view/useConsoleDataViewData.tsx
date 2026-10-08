@@ -35,6 +35,7 @@ export const useConsoleDataViewData = <
   defaultSortDirection,
   showNamespaceOverride,
   columnManagementID,
+  columnsResolved = true,
   customRowData,
   isResizable = true,
   selection,
@@ -47,6 +48,7 @@ export const useConsoleDataViewData = <
   defaultSortDirection?: SortByDirection;
   showNamespaceOverride?: boolean;
   columnManagementID?: string;
+  columnsResolved?: boolean;
   customRowData?: TCustomRowData;
   isResizable?: boolean;
   selection?: {
@@ -95,7 +97,7 @@ export const useConsoleDataViewData = <
     prevNamespaceRef.current = currentNamespace;
   }, [filters, activeNamespace, pagination.page, setSearchParams]);
 
-  const [activeColumns] = useActiveColumns({
+  const [activeColumns, activeColumnsResolved] = useActiveColumns({
     columns,
     showNamespaceOverride,
     columnManagementID,
@@ -177,6 +179,7 @@ export const useConsoleDataViewData = <
     columns: dataViewColumns,
     sortColumnIndex: defaultSortColumnIndex,
     sortDirection: defaultSortDirection,
+    columnsResolved: columnsResolved && activeColumnsResolved,
   });
 
   const sortedData = useMemo(() => {

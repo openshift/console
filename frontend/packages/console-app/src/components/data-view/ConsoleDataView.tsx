@@ -299,6 +299,7 @@ export const ConsoleDataView = <
     columnManagementID: resolvedID,
     customRowData,
     isResizable,
+    columnsResolved: preparedTable.columnsResolved,
     selection: selectionState,
   });
 
