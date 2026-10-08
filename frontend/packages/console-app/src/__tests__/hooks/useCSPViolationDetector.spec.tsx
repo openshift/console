@@ -1,5 +1,11 @@
 import { act } from '@testing-library/react';
+import type { RoutePage } from '@console/dynamic-plugin-sdk/src/extensions/pages';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
+import {
+  addLoadedPluginFromManifest,
+  createLocalPluginManifest,
+  createTestPluginStore,
+} from '../../components/console-operator/__tests__/pluginTestUtils';
 import {
   newPluginCSPViolationEvent,
   useCSPViolationDetector,
@@ -20,7 +26,7 @@ jest.mock('@console/shared/src/hooks/useTelemetry', () => ({
   useTelemetry: () => mockFireTelemetry,
 }));
 
-const mockRoutePages: {
+const routePages: {
   pluginName: string;
   properties: { path: string | string[]; exact?: boolean; perspective?: string };
 }[] = [];
@@ -31,25 +37,13 @@ const pluginRoutePath = '/dynamic-route-1';
 
 const activatePluginRoute = (...pluginNames: string[]) => {
   window.history.pushState({}, '', pluginRoutePath);
-  mockRoutePages.push(
+  routePages.push(
     ...pluginNames.map((pluginName) => ({
       pluginName,
       properties: { path: pluginRoutePath, exact: true, perspective: 'admin' },
     })),
   );
 };
-
-jest.mock('@console/plugin-sdk/src/api/useExtensions', () => ({
-  useExtensions: () => mockRoutePages,
-}));
-
-const mockPluginStore = {
-  getPluginInfo: jest.fn().mockReturnValue([]),
-};
-jest.mock('@openshift/dynamic-plugin-sdk', () => ({
-  ...jest.requireActual('@openshift/dynamic-plugin-sdk'),
-  usePluginStore: () => mockPluginStore,
-}));
 
 class MockSecurityPolicyViolationEvent extends Event {
   documentURI;
@@ -91,11 +85,29 @@ const TestComponent = () => {
   return <div>hello, world!</div>;
 };
 
+const EmptyPage = () => null;
+
+const renderDetector = () => {
+  const pluginStore = createTestPluginStore((store) => {
+    new Set(routePages.map(({ pluginName }) => pluginName)).forEach((pluginName) => {
+      const extensions: RoutePage[] = routePages
+        .filter((routePage) => routePage.pluginName === pluginName)
+        .map(({ properties }) => ({
+          type: 'console.page/route',
+          properties: { ...properties, component: async () => EmptyPage },
+        }));
+      addLoadedPluginFromManifest(store, createLocalPluginManifest(pluginName), extensions);
+    });
+  });
+
+  return renderWithProviders(<TestComponent />, { pluginStore });
+};
+
 describe('useCSPViolationDetector', () => {
   afterEach(() => {
     mockFireTelemetry.mockClear();
     mockCacheEvent.mockClear();
-    mockRoutePages.length = 0;
+    routePages.length = 0;
     mockActivePerspective = 'admin';
     window.SERVER_FLAGS.basePath = originalBasePath;
     window.history.replaceState({}, '', originalPageURL);
@@ -103,7 +115,7 @@ describe('useCSPViolationDetector', () => {
 
   it('records a new CSP violation', () => {
     mockCacheEvent.mockReturnValue(true);
-    renderWithProviders(<TestComponent />);
+    renderDetector();
     act(() => {
       document.dispatchEvent(testEvent);
     });
@@ -113,7 +125,7 @@ describe('useCSPViolationDetector', () => {
 
   it('does not update store when matching event exists', () => {
     mockCacheEvent.mockReturnValue(false);
-    renderWithProviders(<TestComponent />);
+    renderDetector();
 
     act(() => {
       document.dispatchEvent(testEvent);
@@ -129,7 +141,7 @@ describe('useCSPViolationDetector', () => {
       'http://localhost/api/plugins/foo',
     );
     const expected = newPluginCSPViolationEvent('foo', testEventWithPlugin);
-    renderWithProviders(<TestComponent />);
+    renderDetector();
     act(() => {
       document.dispatchEvent(testEventWithPlugin);
     });
@@ -144,7 +156,7 @@ describe('useCSPViolationDetector', () => {
       'http://localhost/api/plugins/foo',
     );
     const expected = newPluginCSPViolationEvent('foo', testEventWithPlugin);
-    renderWithProviders(<TestComponent />);
+    renderDetector();
     act(() => {
       document.dispatchEvent(testEventWithPlugin);
     });
@@ -162,7 +174,7 @@ describe('useCSPViolationDetector', () => {
       window.location.href,
     );
     const expected = newPluginCSPViolationEvent('foo', testEventWithBrowserExtension);
-    renderWithProviders(<TestComponent />);
+    renderDetector();
 
     act(() => {
       document.dispatchEvent(testEventWithBrowserExtension);
@@ -181,7 +193,7 @@ describe('useCSPViolationDetector', () => {
       window.location.href,
     );
     const expected = newPluginCSPViolationEvent(null, testEventWithBrowserExtension);
-    renderWithProviders(<TestComponent />);
+    renderDetector();
 
     act(() => {
       document.dispatchEvent(testEventWithBrowserExtension);
@@ -200,7 +212,7 @@ describe('useCSPViolationDetector', () => {
       window.location.href,
     );
     const expected = newPluginCSPViolationEvent(null, testEventWithOtherSource);
-    renderWithProviders(<TestComponent />);
+    renderDetector();
 
     act(() => {
       document.dispatchEvent(testEventWithOtherSource);
@@ -220,7 +232,7 @@ describe('useCSPViolationDetector', () => {
       eventDocumentURI,
     );
     const expected = newPluginCSPViolationEvent(null, testEventWithDifferentDocument);
-    renderWithProviders(<TestComponent />);
+    renderDetector();
 
     act(() => {
       document.dispatchEvent(testEventWithDifferentDocument);
@@ -325,7 +337,7 @@ describe('useCSPViolationDetector', () => {
     window.SERVER_FLAGS.basePath = scenario.basePath ?? '/';
     window.history.replaceState({}, '', scenario.pagePath ?? pluginRoutePath);
     mockActivePerspective = scenario.activePerspective ?? 'admin';
-    mockRoutePages.push({
+    routePages.push({
       pluginName: 'foo',
       properties: {
         path: scenario.routePath,
@@ -339,7 +351,7 @@ describe('useCSPViolationDetector', () => {
       scenario.documentURI ?? window.location.href,
     );
     const expected = newPluginCSPViolationEvent(scenario.expectedPlugin, event);
-    renderWithProviders(<TestComponent />);
+    renderDetector();
 
     act(() => {
       document.dispatchEvent(event);
@@ -357,7 +369,7 @@ describe('useCSPViolationDetector', () => {
       'browser-extension',
       window.location.href,
     );
-    renderWithProviders(<TestComponent />);
+    renderDetector();
 
     act(() => {
       document.dispatchEvent(event);
@@ -374,7 +386,7 @@ describe('useCSPViolationDetector', () => {
       'browser-extension',
       window.location.href,
     );
-    renderWithProviders(<TestComponent />);
+    renderDetector();
 
     act(() => {
       document.dispatchEvent(event);
