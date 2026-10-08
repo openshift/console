@@ -1,11 +1,16 @@
 import type { ComponentProps } from 'react';
-import { PluginStore } from '@openshift/dynamic-plugin-sdk';
+import type { PluginStore, TestPluginStore } from '@openshift/dynamic-plugin-sdk';
 import { act } from '@testing-library/react';
 import { createRoutesFromElements, matchRoutes } from 'react-router';
 import type { RoutePage } from '@console/dynamic-plugin-sdk/src/extensions/pages';
 import { isRoutePage } from '@console/dynamic-plugin-sdk/src/extensions/pages';
 import type { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
+import {
+  addLoadedPluginFromManifest,
+  createLocalPluginManifest,
+  createTestPluginStore,
+} from '../../components/console-operator/__tests__/pluginTestUtils';
 import { useCSPViolationDetector } from '../../hooks/useCSPViolationDetector';
 import { mapExtensionToRoutes } from '../../hooks/usePluginRoutes';
 import { ToastContext } from '../../providers/toast/ToastContext';
@@ -35,20 +40,14 @@ type Candidate = {
   perspective?: string;
 };
 
-const register = async (pluginStore: PluginStore, candidate: Candidate) => {
+const register = (pluginStore: TestPluginStore, candidate: Candidate) => {
   const { name, path, exact = true, perspective = 'admin' } = candidate;
-  await pluginStore.loadPlugin({
-    name,
-    version: '1.0.0',
-    registrationMethod: 'local',
-    extensions: [
-      {
-        type: 'console.page/route',
-        properties: { path, exact, perspective, component: async () => EmptyPage },
-      },
-    ],
-  });
-  pluginStore.enablePlugins([name]);
+  addLoadedPluginFromManifest(pluginStore, createLocalPluginManifest(name), [
+    {
+      type: 'console.page/route',
+      properties: { path, exact, perspective, component: async () => EmptyPage },
+    },
+  ]);
   expect(pluginStore.getPluginInfo().find((info) => info.manifest.name === name)?.status).toBe(
     'loaded',
   );
@@ -247,9 +246,9 @@ const cases: RouteCase[] = [
 ];
 
 describe('useCSPViolationDetector router normalization', () => {
-  it.each(cases)('$title', async ({ pathname, candidates, owners, basename = '/' }) => {
-    const pluginStore = new PluginStore();
-    await Promise.all(candidates.map((candidate) => register(pluginStore, candidate)));
+  it.each(cases)('$title', ({ pathname, candidates, owners, basename = '/' }) => {
+    const pluginStore = createTestPluginStore();
+    candidates.forEach((candidate) => register(pluginStore, candidate));
     window.SERVER_FLAGS.basePath = basename;
     window.history.replaceState({}, '', pathname);
     expect(routeOwners(pluginStore)).toEqual(owners);
