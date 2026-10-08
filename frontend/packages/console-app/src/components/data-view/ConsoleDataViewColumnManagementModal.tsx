@@ -21,7 +21,6 @@ const ConsoleDataViewColumnManagementModal: FC<ConsoleDataViewColumnManagementMo
   columnLayout,
   nonReorderableColumnIDs,
   noLimit,
-  onResetColumnWidths,
 }) => {
   const [tableColumns, setTableColumns, preferenceLoaded] = useUserPreference<
     Record<string, string[]>
@@ -98,16 +97,16 @@ const ConsoleDataViewColumnManagementModal: FC<ConsoleDataViewColumnManagementMo
   );
   const orderedColumns = useMemo(() => {
     const availableIDs = new Set(columnDefinitions.map(({ key }) => key));
-    const orderedIDs = (columnOrders?.[columnLayout.id] ?? []).filter((id) => availableIDs.has(id));
-    const orderedIDSet = new Set(orderedIDs);
+    const orderedIDs = new Set<string>(
+      (columnOrders?.[columnLayout.id] ?? []).filter((id) => availableIDs.has(id)),
+    );
     [...selectedColumnIDs, ...columnDefinitions.map(({ key }) => key)].forEach((id) => {
-      if (availableIDs.has(id) && !orderedIDSet.has(id)) {
-        orderedIDSet.add(id);
-        orderedIDs.push(id);
+      if (availableIDs.has(id)) {
+        orderedIDs.add(id);
       }
     });
     const columnOrder = new Map<string, number>(
-      orderedIDs.map((id, index) => [id, index] as [string, number]),
+      [...orderedIDs].map((id, index) => [id, index] as [string, number]),
     );
     const orderedMovableColumns = columnDefinitions
       .map((column, index) => ({ column, index }))
@@ -130,7 +129,7 @@ const ConsoleDataViewColumnManagementModal: FC<ConsoleDataViewColumnManagementMo
 
   useEffect(() => {
     if (nonReorderableIDs.size === 0) {
-      return undefined;
+      return;
     }
 
     const columnListSelector = '[data-ouia-component-id="ColumnManagementModal-column-list"]';
@@ -230,7 +229,7 @@ const ConsoleDataViewColumnManagementModal: FC<ConsoleDataViewColumnManagementMo
       .map(({ key }) => key)
       .filter((id) => !nonReorderableIDs.has(id));
     let nextMovableColumn = 0;
-    const orderedIDs = columnLayout.columns.flatMap(({ id }) => {
+    const orderedIDs: string[] = columnLayout.columns.flatMap(({ id }) => {
       if (nonReorderableIDs.has(id)) {
         return [id];
       }
@@ -240,13 +239,6 @@ const ConsoleDataViewColumnManagementModal: FC<ConsoleDataViewColumnManagementMo
     const orderedIDSet = new Set(orderedIDs);
     orderedIDs.push(...columns.map(({ key }) => key).filter((id) => !orderedIDSet.has(id)));
     const orderedShownIDs = orderedIDs.filter((id) => shownIDs.has(id));
-    const initialColumnOrderIDs = orderedColumns.map(({ key }) => key);
-    const orderChanged =
-      orderedIDs.length !== initialColumnOrderIDs.length ||
-      orderedIDs.some((id, index) => id !== initialColumnOrderIDs[index]);
-    if (orderChanged || restoreDefaultOrder) {
-      onResetColumnWidths?.();
-    }
     setTableColumns((prevState) => ({
       ...prevState,
       [columnLayout.id]: orderedShownIDs,
@@ -311,11 +303,8 @@ export const ConsoleDataViewColumnManagementModalOverlay: OverlayComponent<
   />
 );
 
-ConsoleDataViewColumnManagementModal.displayName = 'ConsoleDataViewColumnManagementModal';
-
-type ConsoleDataViewColumnManagementModalProps = {
+interface ConsoleDataViewColumnManagementModalProps extends ModalComponentProps {
   columnLayout: ColumnLayout;
   nonReorderableColumnIDs?: string[];
   noLimit?: boolean;
-  onResetColumnWidths?: () => void;
-} & ModalComponentProps;
+}

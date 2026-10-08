@@ -303,6 +303,10 @@ export const ConsoleDataView = <
     selection: selectionState,
   });
 
+  // PatternFly keys headers by index and only reads their widths on mount,
+  // so we re-render the table when column visibility or order changes.
+  const tableColumnsKey = JSON.stringify(dataViewColumns.map(({ id: columnId }) => columnId));
+
   const bodyLoading = useMemo(
     () => <BodyLoading columns={dataViewColumns.length} />,
     [dataViewColumns.length],
@@ -439,7 +443,6 @@ export const ConsoleDataView = <
                       columnLayout: preparedTable.columnLayout,
                       nonReorderableColumnIDs,
                       noLimit: true,
-                      onResetColumnWidths: handleResetColumnWidths,
                     })
                   }
                   aria-label={t('Column management')}
@@ -530,7 +533,7 @@ export const ConsoleDataView = <
         )}
         <InnerScrollContainer>
           <DataViewTable
-            key={tableKey}
+            key={`${resolvedID}-${tableKey}-${tableColumnsKey}`}
             aria-label={t(`public~{{label}} table`, { label })}
             columns={dataViewColumns}
             rows={dataViewRows}

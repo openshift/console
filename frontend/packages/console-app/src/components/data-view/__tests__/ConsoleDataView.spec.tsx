@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import type { LoadedAndResolvedExtension } from '@openshift/dynamic-plugin-sdk';
-import { screen, waitFor, within } from '@testing-library/react';
+import { act, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createUserSettingsStore } from '@console/app/src/providers/user-preferences/UserPreferenceContext';
 import type { ExtensionK8sKindVersionModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
@@ -391,7 +391,71 @@ describe('ConsoleDataView', () => {
     );
   });
 
-  it('resets saved widths when restoring default columns after changing the order', async () => {
+  it('should preserve widths by column ID when columns are reordered, hidden, and shown again', async () => {
+    const user = userEvent.setup();
+    const { userSettingsStore } = renderTable(
+      [makeExtension('test-ready', 'Ready', { additional: false })],
+      undefined,
+      { useDefaultResizable: true, columnWidths: { status: 240, 'test-ready': 160 } },
+    );
+    const expectSavedWidths = () => {
+      expect(screen.getByRole('columnheader', { name: /Status/ })).toHaveTextContent(
+        'Column 240 pixels',
+      );
+      expect(screen.getByRole('columnheader', { name: /Ready/ })).toHaveTextContent(
+        'Column 160 pixels',
+      );
+    };
+    expectSavedWidths();
+
+    // Update the saved order without depending on browser drag geometry in jsdom.
+    act(() => {
+      const snapshot = userSettingsStore.getSnapshot();
+      userSettingsStore.setSnapshot({
+        ...snapshot,
+        data: {
+          ...snapshot.data,
+          [COLUMN_MANAGEMENT_ORDER_USER_PREFERENCE_KEY]: JSON.stringify({
+            [defaultTableID]: ['name', 'test-ready', 'status'],
+          }),
+        },
+      });
+    });
+    expect(screen.getAllByRole('columnheader')[1]).toHaveAccessibleName(/^Ready/);
+    expect(screen.getAllByRole('columnheader')[2]).toHaveAccessibleName(/^Status/);
+    expectSavedWidths();
+
+    await user.click(screen.getByRole('button', { name: 'Column management' }));
+    await user.click(await screen.findByRole('checkbox', { name: 'Ready' }));
+    await user.click(screen.getByRole('button', { name: 'Save' }));
+
+    expect(screen.queryByRole('columnheader', { name: /Ready/ })).not.toBeInTheDocument();
+    expect(screen.getAllByRole('columnheader')[1]).toHaveAccessibleName(/^Status/);
+    expect(screen.getByRole('columnheader', { name: /Status/ })).toHaveTextContent(
+      'Column 240 pixels',
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Column management' }));
+    await user.click(await screen.findByRole('checkbox', { name: 'Ready' }));
+    await user.click(screen.getByRole('button', { name: 'Save' }));
+
+    expect(screen.getAllByRole('columnheader')[1]).toHaveAccessibleName(/^Ready/);
+    expect(screen.getAllByRole('columnheader')[2]).toHaveAccessibleName(/^Status/);
+    expectSavedWidths();
+
+    await user.click(screen.getByRole('button', { name: 'Reset column widths' }));
+
+    expect(screen.getAllByRole('columnheader')[1]).toHaveAccessibleName(/^Ready/);
+    expect(screen.getAllByRole('columnheader')[2]).toHaveAccessibleName(/^Status/);
+    expect(screen.getByRole('columnheader', { name: /Status/ })).toHaveTextContent(
+      'Column 0 pixels',
+    );
+    expect(screen.getByRole('columnheader', { name: /Ready/ })).toHaveTextContent(
+      'Column 0 pixels',
+    );
+  });
+
+  it('preserves saved widths by column ID when restoring the default column order', async () => {
     const user = userEvent.setup();
     const { userSettingsStore } = renderTable(
       [makeExtension('test-ready', 'Ready', { additional: false })],
@@ -407,10 +471,14 @@ describe('ConsoleDataView', () => {
     await user.click(screen.getByRole('button', { name: 'Restore default columns' }));
     await user.click(screen.getByRole('button', { name: 'Save' }));
 
-    await waitFor(() =>
-      expect(
-        JSON.parse(userSettingsStore.getSnapshot().data[COLUMN_WIDTH_USER_PREFERENCE_KEY]),
-      ).toEqual({}),
+    expect(
+      JSON.parse(userSettingsStore.getSnapshot().data[COLUMN_WIDTH_USER_PREFERENCE_KEY]),
+    ).toEqual({ [defaultTableID]: { status: 240 } });
+    expect(screen.getByRole('columnheader', { name: /Status/ })).toHaveTextContent(
+      'Column 240 pixels',
+    );
+    expect(screen.getByRole('columnheader', { name: /Ready/ })).toHaveTextContent(
+      'Column 0 pixels',
     );
     expect(
       JSON.parse(userSettingsStore.getSnapshot().data[COLUMN_MANAGEMENT_ORDER_USER_PREFERENCE_KEY])[

@@ -18,6 +18,10 @@ import { sortResourceByValue } from '@console/internal/components/factory/Table/
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { useConsoleDataViewSort, getSortByDirection } from './useConsoleDataViewSort';
 
+interface EnhancedDataViewTh extends Extract<DataViewTh, { cell: ReactNode }> {
+  id: string;
+}
+
 const isDataViewConfigurableColumn = <TData,>(
   column: ConsoleDataViewColumn<TData>,
 ): column is ConsoleDataViewColumn<TData> & { cell: ReactNode } => column?.cell !== undefined;
@@ -219,7 +223,7 @@ export const useConsoleDataViewData = <
   const dataViewRows = getDataViewRows(transformedData, dataViewColumns);
 
   // Apply sort state and select-all handler updates to columns independently
-  const dataViewColumnsWithSortApplied = useMemo<DataViewTh[]>(
+  const dataViewColumnsWithSortApplied = useMemo<EnhancedDataViewTh[]>(
     () =>
       dataViewColumns.map((column) => {
         if (!isDataViewConfigurableColumn(column)) {
