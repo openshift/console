@@ -7,6 +7,7 @@ import {
   monkeyPatchSharedScope,
 } from '@console/dynamic-plugin-sdk/src/runtime/plugin-shared-modules';
 import { dynamicPluginNames } from '@console/plugin-sdk/src/utils/allowed-plugins';
+import { IS_PRODUCTION } from '@console/shared/src/constants/common';
 import { addTestError } from '@console/shared/src/utils/test-errors';
 import { REMOTE_ENTRY_CALLBACK } from '../constants';
 import type { ErrorWithCause } from '../utils/error/custom-error';
@@ -109,7 +110,7 @@ export const initConsolePlugins = _.once((pluginStore: PluginStore) => {
       // Patch webpack share scope object for backwards compatibility
       monkeyPatchSharedScope(scope);
 
-      if (process.env.NODE_ENV !== 'production') {
+      if (!IS_PRODUCTION) {
         // Expose webpack share scope object for debugging
         window.pluginSharedScope = scope;
       }

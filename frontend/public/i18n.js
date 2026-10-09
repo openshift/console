@@ -6,6 +6,7 @@ import Pseudo from 'i18next-pseudo/es';
 import { transformNamespace } from 'i18next-v4-format-converter';
 import { initReactI18next } from 'react-i18next';
 import { getLastLanguage } from '@console/app/src/components/user-preferences/language/getLastLanguage';
+import { IS_PRODUCTION } from '@console/shared/src/constants/common';
 import { addTestError } from '@console/shared/src/utils/test-errors';
 
 const params = new URLSearchParams(window.location.search);
@@ -105,7 +106,7 @@ export const init = () => {
     });
 };
 
-if (process.env.NODE_ENV !== 'production') {
+if (!IS_PRODUCTION) {
   // Expose i18next for debugging
   window.i18n = i18n;
 }
