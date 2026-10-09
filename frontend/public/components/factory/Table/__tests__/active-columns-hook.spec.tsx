@@ -79,7 +79,7 @@ describe('useActiveColumns', () => {
     const { result } = setupHook({
       columns: [
         ...columns,
-        { id: 'extra', title: 'Extra', additional: true },
+        { id: 'extra', title: 'Extra', defaultVisible: false },
         { id: '', title: '' },
       ],
     });

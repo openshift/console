@@ -24,6 +24,7 @@ import type {
   OnSelect,
   SortByDirection,
   TableGridBreakpoint,
+  ThProps,
 } from '@patternfly/react-table';
 import type { TFunction } from 'i18next';
 import type * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
@@ -522,11 +523,26 @@ export interface ResourceMetadata {
 }
 
 /**
- * PatternFly `DataViewTh` column header definition, restricted to the `cell`-based variant used
- * by `ConsoleDataViewColumn`. All properties are optional since `ConsoleDataView` supplies its
- * own `cell` for each column header.
+ * Header props a `ConsoleDataViewColumn` may customize. Console owns the header content,
+ * sorting, selection, and responsive label. Use the column's `tooltip` for help content;
+ * `info` can customize its presentation. Explicit styling props override role defaults.
  */
-export type ConsoleDataViewTh = Partial<Extract<DataViewTh, { cell: ReactNode }>>;
+export type ConsoleDataViewHeaderProps = Omit<
+  ThProps,
+  'children' | 'sort' | 'select' | 'dataLabel' | 'info'
+> & {
+  /** Presentation options for the help tooltip supplied by the column's `tooltip`. */
+  info?: Omit<NonNullable<ThProps['info']>, 'tooltip'>;
+};
+
+/** Column header options excluding the content and behaviors managed by Console. */
+export type ConsoleDataViewTh = Omit<
+  Partial<Extract<DataViewTh, { cell: ReactNode }>>,
+  'cell' | 'props'
+> & {
+  /** Header props. Row cell props are supplied separately by the cell renderer. */
+  props?: ConsoleDataViewHeaderProps;
+};
 
 /**
  * Defines a single column for `ConsoleDataView`.
@@ -553,8 +569,8 @@ export interface ConsoleDataViewColumn<TData> extends ConsoleDataViewTh {
   tooltip?: ReactNode;
   /** (optional) A dot-delimited property path to sort by, or a function that sorts the filtered data for this column. */
   sort?: string | ((filteredData: TData[], sortDirection: SortByDirection) => TData[]);
-  /** (optional) Marks the column as additional, hiding it by default until selected in column management. */
-  additional?: boolean;
+  /** (optional) Whether the column is initially visible before the user saves column preferences. Defaults to `true` for built-in columns and `false` for extension columns. */
+  defaultVisible?: boolean;
 }
 
 /**
@@ -596,7 +612,7 @@ export type GetDataViewRows<TData, TCustomRowData = unknown> = (
 /** Selection state and operations supplied to a `ConsoleDataView` bulk action. */
 export interface ConsoleDataViewSelectionActions<TData> {
   /** Selected items matching the table's current filters. */
-  selectedItems: TData[];
+  matchingSelectedItems: TData[];
   /** Clears every selection, including items hidden by the current filters. */
   clearSelection: () => void;
   /** Deselects the given item IDs, for example after a partially successful bulk action. */
@@ -674,8 +690,8 @@ export interface ConsoleDataViewProps<
     getItemId: (item: TData) => string;
     /** (optional) Excludes items from row and select-all checkboxes. Defaults to all items. */
     isSelectable?: (item: TData) => boolean;
-    /** (optional) Returns table-specific bulk actions for selected items matching the current filters. These are shown before contributed resource bulk actions. The menu is disabled when no items are selected and hidden if neither this callback nor a matching bulk provider supplies actions. */
-    getActions?: (selection: ConsoleDataViewSelectionActions<TData>) => Action[];
+    /** (optional) Returns table-specific bulk actions for `matchingSelectedItems`, the selected items matching the current filters. These are shown before contributed resource bulk actions. The menu is disabled when no items are selected and hidden if neither this callback nor a matching bulk provider supplies actions. */
+    getBulkActions?: (selection: ConsoleDataViewSelectionActions<TData>) => Action[];
   };
 }
 

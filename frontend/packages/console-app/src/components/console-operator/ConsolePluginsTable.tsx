@@ -206,9 +206,12 @@ const ConsolePluginsTable: FC<ConsolePluginsTableProps> = ({
   const canBulkEdit = !developmentMode && canPatchConsoleOperatorConfig;
   const { columns } = usePluginColumns();
   const buildPluginActions = useConsolePluginBulkActions(obj);
-  const getPluginActions = useCallback(
-    ({ selectedItems, clearSelection }: ConsoleDataViewSelectionActions<ConsolePluginTableRow>) =>
-      buildPluginActions(selectedItems, clearSelection),
+  const getPluginBulkActions = useCallback(
+    ({
+      matchingSelectedItems,
+      clearSelection,
+    }: ConsoleDataViewSelectionActions<ConsolePluginTableRow>) =>
+      buildPluginActions(matchingSelectedItems, clearSelection),
     [buildPluginActions],
   );
 
@@ -295,10 +298,10 @@ const ConsolePluginsTable: FC<ConsolePluginsTableProps> = ({
       canBulkEdit
         ? {
             getItemId,
-            getActions: getPluginActions,
+            getBulkActions: getPluginBulkActions,
           }
         : undefined,
-    [canBulkEdit, getItemId, getPluginActions],
+    [canBulkEdit, getItemId, getPluginBulkActions],
   );
 
   const Wrapper = isListPage ? ListPageBody : PaneBody;

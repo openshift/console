@@ -43,7 +43,7 @@ import { LazyConsoleDataViewColumnManagementModalOverlay } from './lazyConsoleDa
 import {
   getResourceReference,
   getResourceReferenceForItems,
-  getSelectedResources,
+  getMatchingSelectedResources,
 } from './resourceActions';
 import { ResourceBulkActionMenu } from './ResourceBulkActionMenu';
 import { useConsoleDataViewColumns } from './useConsoleDataViewColumns';
@@ -109,7 +109,7 @@ export const ConsoleDataView = <
   const selectionEnabled = Boolean(selection);
   const getItemId = selection?.getItemId;
   const isSelectable = selection?.isSelectable;
-  const getActions = selection?.getActions;
+  const getBulkActions = selection?.getBulkActions;
   const { selectedIds, onSelectItem, onSelectAll, clearSelection, deselect } = useDataViewSelection(
     {
       data,
@@ -197,10 +197,10 @@ export const ConsoleDataView = <
     () => ({
       id: resolvedID,
       type: label ?? resolvedID,
-      columns: tableColumns.map(({ id: columnID, title, additional }) => ({
+      columns: tableColumns.map(({ id: columnID, title, defaultVisible }) => ({
         id: columnID,
         title: title ?? '',
-        additional,
+        additional: defaultVisible === false,
       })),
       selectedColumns: new Set(),
       showNamespaceOverride,
@@ -246,7 +246,7 @@ export const ConsoleDataView = <
     () => (isSelectable ? filteredData.filter(isSelectable) : filteredData),
     [filteredData, isSelectable],
   );
-  const filteredSelectedItems = useMemo(
+  const matchingSelectedItems = useMemo(
     () =>
       selectionEnabled && getItemId
         ? selectableFilteredData.filter((item) => selectedIds.has(getItemId(item)))
@@ -255,31 +255,31 @@ export const ConsoleDataView = <
   );
   const bulkActions = useMemo(
     () =>
-      getActions?.({
-        selectedItems: filteredSelectedItems,
+      getBulkActions?.({
+        matchingSelectedItems,
         clearSelection,
         deselect,
       }),
-    [getActions, filteredSelectedItems, clearSelection, deselect],
+    [getBulkActions, matchingSelectedItems, clearSelection, deselect],
   );
-  const selectedResources = useMemo(
-    () => getSelectedResources(filteredSelectedItems),
-    [filteredSelectedItems],
+  const matchingResourceSelection = useMemo(
+    () => getMatchingSelectedResources(matchingSelectedItems),
+    [matchingSelectedItems],
   );
   const bulkActionReference = useMemo(() => {
-    if (filteredSelectedItems.length > 0) return selectedResources?.reference;
+    if (matchingSelectedItems.length > 0) return matchingResourceSelection?.reference;
     return getResourceReferenceForItems(data, isSelectable);
-  }, [data, filteredSelectedItems.length, selectedResources, isSelectable]);
+  }, [data, matchingSelectedItems.length, matchingResourceSelection, isSelectable]);
   const getResourceId = useCallback(
     (resource: K8sResourceCommon) => getItemId?.(resource as TData) ?? '',
     [getItemId],
   );
   const selectionKey =
-    selectionEnabled && getItemId ? JSON.stringify(filteredSelectedItems.map(getItemId)) : '';
+    selectionEnabled && getItemId ? JSON.stringify(matchingSelectedItems.map(getItemId)) : '';
   const selectionState = useMemo(
     () =>
       selectionEnabled && getItemId
-        ? { selectedItems: selectedIds, onSelectAll, getItemId, isSelectable }
+        ? { selectedIds, onSelectAll, getItemId, isSelectable }
         : undefined,
     [selectionEnabled, selectedIds, onSelectAll, getItemId, isSelectable],
   );
@@ -353,7 +353,7 @@ export const ConsoleDataView = <
 
     const visibleCount = selectableVisibleItems.length;
     const totalCount = selectableFilteredData.length;
-    const selectedCount = filteredSelectedItems.length;
+    const selectedCount = matchingSelectedItems.length;
 
     // Show banner if all visible items are selected and there are more items than visible
     const shouldShow = allVisibleSelected && visibleCount > 0 && totalCount > visibleCount;
@@ -366,7 +366,7 @@ export const ConsoleDataView = <
     isSelectable,
     loaded,
     selectableFilteredData,
-    filteredSelectedItems.length,
+    matchingSelectedItems.length,
     selectedIds,
     visibleItems,
   ]);
@@ -473,12 +473,14 @@ export const ConsoleDataView = <
               {selection && (
                 <ResourceBulkActionMenu
                   reference={bulkActionReference}
-                  resources={selectedResources?.resources ?? []}
+                  matchingSelectedResources={
+                    matchingResourceSelection?.matchingSelectedResources ?? []
+                  }
                   getResourceId={getResourceId}
                   clearSelection={clearSelection}
                   deselect={deselect}
                   localActions={bulkActions}
-                  selectedCount={filteredSelectedItems.length}
+                  selectedCount={matchingSelectedItems.length}
                   selectionKey={selectionKey}
                 />
               )}

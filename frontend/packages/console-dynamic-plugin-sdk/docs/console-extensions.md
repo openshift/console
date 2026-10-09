@@ -96,7 +96,7 @@ ActionFilter can be used to filter an action
 | Name | Value Type | Optional | Description |
 | ---- | ---------- | -------- | ----------- |
 | `contextId` | `string` | no | The context ID helps to narrow the scope of contributed actions to a particular area of the application. Ex - topology, helm |
-| `filter` | `CodeRef<(scope: any, action: Action) => boolean>` | no | A function which will filter actions based on some conditions.<br/>scope: The scope in which actions should be provided for.<br/>Note: hook may be required if we want to remove the ModifyCount action from a deployment with HPA |
+| `filter` | `CodeRef<(scope: any, action: Action) => boolean>` | no | A function which will filter actions based on some conditions.<br/>scope: The scope in which actions should be provided for.<br/>In a `ConsoleDataView` bulk menu, filters matching the resource model are evaluated<br/>for each matching selected resource. Every resource must pass at least one matching<br/>filter for the action to remain visible. Scope is one resource, not the bulk context.<br/>Note: hook may be required if we want to remove the ModifyCount action from a deployment with HPA |
 
 ---
 
@@ -576,14 +576,14 @@ Adds a new dashboard tab, placed after the Overview tab.
 
 ### Summary 
 
-Adds a column to a `ConsoleDataView` table matched by its Kubernetes model or resolved ID.<br/>A default-hidden column can be selected only when that table provides a `columnLayout`<br/>and shows the column management action. `columnData.id` must be unique among built-in<br/>and extension columns, and the title must be nonempty. Console keeps built-in columns<br/>when IDs collide. For duplicate plugin IDs, the first column in plugin-name/column-ID<br/>order wins. Prefix the ID with the plugin name to avoid collisions. `columnData.title`<br/>and `columnData.tooltip` support translated keys in the `%namespace~key%` format.<br/><br/>Columns without an insertion anchor appear before the table's actions column, or at<br/>the end if there is no actions column. Anchors refer to built-in or plugin column IDs.<br/>When several plugins use the same anchor, Console orders them by plugin name and then<br/>column ID. An unknown anchor or insertion cycle uses the default position.<br/>Example `console-extensions.json` entry:<br/>```json<br/>{<br/>  "type": "console.dataview/table-column",<br/>  "properties": {<br/>    "table": { "group": "apps", "version": "v1", "kind": "Deployment" },<br/>    "columnData": { "id": "ready", "title": "%plugin~Ready%" },<br/>    "getCellContent": { "$codeRef": "columns.getReadyCell" }<br/>  }<br/>}<br/>```
+Adds a column to a `ConsoleDataView` table matched by its Kubernetes model or resolved ID.<br/>Default-hidden columns can be selected through the table's column management action.<br/>`columnData.id` must be unique among built-in<br/>and extension columns, and the title must be nonempty. Console keeps built-in columns<br/>when IDs collide. For duplicate plugin IDs, the first column in plugin-name/column-ID<br/>order wins. Prefix the ID with the plugin name to avoid collisions. `columnData.title`<br/>and `columnData.tooltip` support translated keys in the `%namespace~key%` format.<br/><br/>Columns without an insertion anchor appear before the table's actions column, or at<br/>the end if there is no actions column. Anchors refer to built-in or plugin column IDs.<br/>When several plugins use the same anchor, Console orders them by plugin name and then<br/>column ID. An unknown anchor or insertion cycle uses the default position.<br/>Example `console-extensions.json` entry:<br/>```json<br/>{<br/>  "type": "console.dataview/table-column",<br/>  "properties": {<br/>    "table": { "group": "apps", "version": "v1", "kind": "Deployment" },<br/>    "columnData": { "id": "ready", "title": "%plugin~Ready%" },<br/>    "getCellContent": { "$codeRef": "columns.getReadyCell" }<br/>  }<br/>}<br/>```
 
 ### Properties
 
 | Name | Value Type | Optional | Description |
 | ---- | ---------- | -------- | ----------- |
 | `table` | `string \| ExtensionK8sKindVersionModel` | no | The Kubernetes group, version, and kind of the target table, or a string exactly matching its resolved ID. |
-| `columnData` | `ConsoleDataViewExtensionColumn<TData> \| CodeRef<ConsoleDataViewExtensionColumn<TData>>` | no | Inline column definition or code reference. When `additional` is omitted, Console treats it as `true`. |
+| `columnData` | `ConsoleDataViewInlineColumn \| CodeRef<ConsoleDataViewExtensionColumn<TData>>` | no | JSON-compatible inline column definition or code reference. When `defaultVisible` is omitted, Console treats it as `false`. |
 | `getCellContent` | `CodeRef<GetDataViewCell<TData, TCustomRowData>>` | no | Code reference that returns one cell per item on the current page. |
 | `insertBefore` | `string` | yes | The column ID before which this item should be placed. Takes precedence when both anchors exist. |
 | `insertAfter` | `string` | yes | The column ID after which this item should be placed. Used if `insertBefore` is absent or unknown. |

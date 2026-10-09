@@ -163,7 +163,7 @@
       "columnData": {
         "id": "clusterCompatibility",
         "title": "%olm~Cluster compatibility%",
-        "additional": false,
+        "defaultVisible": true,
         "props": { "modifier": "nowrap" }
       },
       "getCellContent": {
@@ -186,7 +186,7 @@
       "columnData": {
         "id": "supportPhase",
         "title": "%olm~Support phase%",
-        "additional": false,
+        "defaultVisible": true,
         "props": { "modifier": "nowrap" }
       },
       "getCellContent": {

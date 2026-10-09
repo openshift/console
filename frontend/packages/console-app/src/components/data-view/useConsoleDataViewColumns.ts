@@ -103,7 +103,7 @@ export const orderConsoleDataViewColumns = <TData>(
     delete columnDefinition.type;
     columns.splice(index, 0, {
       ...columnDefinition,
-      additional: columnData.additional ?? true,
+      defaultVisible: columnData.defaultVisible ?? false,
     } as ConsoleDataViewColumn<TData>);
     extensionsByID.set(columnData.id, extension);
   };
@@ -212,7 +212,10 @@ export const useConsoleDataViewColumns = <TData, TCustomRowData>(
           ({ id }) =>
             !fixedColumnIDs.has(id) && (original.has(id) || ordered.extensionsByID.has(id)),
         )
-        .map(({ id, title, additional }) => original.get(id) ?? { id, title, additional }),
+        .map(
+          ({ id, title, defaultVisible }) =>
+            original.get(id) ?? { id, title, additional: defaultVisible === false },
+        ),
     };
   }, [columnLayout, ordered]);
 

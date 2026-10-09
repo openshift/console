@@ -300,11 +300,11 @@ const PDBList: React.FC<Props> = ({ data, loaded }) => (
     getDataViewRows={getDataViewRows}
     selection={{
       getItemId: (pdb) => `${pdb.metadata.namespace}/${pdb.metadata.name}`,
-      getActions: ({ selectedItems, clearSelection }) => [
+      getBulkActions: ({ matchingSelectedItems, clearSelection }) => [
         {
           id: 'clear-selection',
           label: 'Clear selection',
-          disabled: selectedItems.length === 0,
+          disabled: matchingSelectedItems.length === 0,
           cta: clearSelection,
         },
       ],
@@ -341,7 +341,7 @@ const PDBList: React.FC<Props> = ({ data, loaded }) => (
 | `isResizable` | (optional) Enables resizing and saved widths for columns with a title, and shows a reset action. Defaults to `true`. |
 | `additionalResponsiveActions` | (optional) Additional ResponsiveAction props to render inside ResponsiveActions, alongside the built-in column management and reset-column-widths actions. |
 | `additionalToolbarContent` | (optional) Additional content to display in the actions toolbar outside ResponsiveActions. |
-| `selection` | (optional) Enables managed checkbox selection with `getItemId`. `isSelectable` can disable rows. `getActions` receives selected items matching the current filters, plus `clearSelection` and `deselect` callbacks, and returns table-specific bulk actions as `Action[]`. Console also loads matching resource bulk providers for a single-model Kubernetes resource selection. Selection persists across pages and built-in filters and is removed when items leave `data`. |
+| `selection` | (optional) Enables managed checkbox selection with `getItemId`. `isSelectable` can disable rows. `getBulkActions` receives `matchingSelectedItems`, the selected items matching the current filters, plus `clearSelection` and `deselect` callbacks, and returns table-specific bulk actions as `Action[]`. Console also loads matching resource bulk providers for a single-model Kubernetes resource selection. Selection persists across pages and built-in filters and is removed when items leave `data`. |
 
 
 

@@ -40,7 +40,7 @@ export const useActiveColumns = <D = any>({
       ? new Set(selectedColumnIDs)
       : new Set(
           columns.map((col) => {
-            if (col.id && !col.additional) {
+            if (col.id && col.defaultVisible !== false) {
               return col.id;
             }
             return undefined;

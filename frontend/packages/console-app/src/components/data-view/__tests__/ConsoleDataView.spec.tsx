@@ -69,16 +69,19 @@ const makePodActionProvider = (
   },
 });
 
-const useBulkPodActions: BulkResourceActionHook = ({ resources, clearSelection }) => {
+const useBulkPodActions: BulkResourceActionHook = ({
+  matchingSelectedResources,
+  clearSelection,
+}) => {
   const actions = useMemo<Action[]>(
     () => [
       {
         id: 'inspect-selected-pods',
-        label: `Inspect ${resources.length} pods`,
+        label: `Inspect ${matchingSelectedResources.length} pods`,
         cta: clearSelection,
       },
     ],
-    [resources.length, clearSelection],
+    [matchingSelectedResources.length, clearSelection],
   );
   return [actions, true, undefined];
 };
@@ -89,7 +92,7 @@ const makeExtension = (
   options: {
     pluginName?: string;
     table?: ExtensionK8sKindVersionModel | string;
-    additional?: boolean;
+    defaultVisible?: boolean;
     insertBefore?: string;
     insertAfter?: string;
     resizable?: boolean;
@@ -106,7 +109,7 @@ const makeExtension = (
       id,
       title,
       tooltip: options.tooltip,
-      additional: options.additional,
+      defaultVisible: options.defaultVisible,
       resizableProps: options.resizable ? { isResizable: true } : undefined,
     },
     getCellContent:
@@ -213,7 +216,9 @@ describe('ConsoleDataView', () => {
   afterEach(() => jest.clearAllMocks());
 
   it('renders a default-visible extension between built-in columns and aligns its cells', () => {
-    renderTable([makeExtension('test-ready', 'Ready', { additional: false, insertAfter: 'name' })]);
+    renderTable([
+      makeExtension('test-ready', 'Ready', { defaultVisible: true, insertAfter: 'name' }),
+    ]);
 
     const table = screen.getByRole('grid', { name: 'items table' });
     expect(
@@ -252,7 +257,7 @@ describe('ConsoleDataView', () => {
     const user = userEvent.setup();
     renderTable([
       makeExtension('test-ready', 'Ready', {
-        additional: false,
+        defaultVisible: true,
         tooltip: 'Whether this item is ready',
       }),
     ]);
@@ -263,7 +268,7 @@ describe('ConsoleDataView', () => {
     expect(await screen.findByRole('tooltip')).toHaveTextContent('Whether this item is ready');
   });
 
-  it('keeps additional columns hidden until selected in column management', async () => {
+  it('keeps default-hidden extension columns hidden until selected in column management', async () => {
     const user = userEvent.setup();
     renderTable([makeExtension('test-ready', 'Ready')]);
 
@@ -276,11 +281,31 @@ describe('ConsoleDataView', () => {
     expect(screen.getByRole('cell', { name: 'Ready alpha' })).toBeVisible();
   });
 
+  it('uses built-in visibility defaults in both the table and column management', async () => {
+    const user = userEvent.setup();
+    renderTable([], undefined, {
+      columns: columns.map((column) =>
+        column.id === 'status' ? { ...column, defaultVisible: false } : column,
+      ),
+    });
+
+    expect(screen.getByRole('columnheader', { name: 'Name' })).toBeVisible();
+    expect(screen.queryByRole('columnheader', { name: 'Status' })).not.toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'Column management' }));
+    const status = await screen.findByRole('checkbox', { name: 'Status' });
+    expect(status).not.toBeChecked();
+    await user.click(status);
+    await user.click(screen.getByRole('button', { name: 'Save' }));
+
+    expect(await screen.findByRole('columnheader', { name: 'Status' })).toBeVisible();
+    expect(screen.getByRole('cell', { name: 'ready' })).toBeVisible();
+  });
+
   it.each([
     ['without extensions', [], ['Name', 'Status']],
     [
       'with an extension',
-      [makeExtension('test-ready', 'Ready', { additional: false })],
+      [makeExtension('test-ready', 'Ready', { defaultVisible: true })],
       ['Name', 'Status', 'Ready'],
     ],
   ])('keeps Actions out of column management %s', async (_scenario, extensions, names) => {
@@ -299,12 +324,12 @@ describe('ConsoleDataView', () => {
     renderTable([
       makeExtension('z-last', 'Last', {
         pluginName: 'z-plugin',
-        additional: false,
+        defaultVisible: true,
         insertAfter: 'name',
       }),
       makeExtension('a-first', 'First', {
         pluginName: 'a-plugin',
-        additional: false,
+        defaultVisible: true,
         insertAfter: 'name',
       }),
     ]);
@@ -326,7 +351,7 @@ describe('ConsoleDataView', () => {
   });
 
   it('translates a plugin column title', () => {
-    renderTable([makeExtension('test-ready', '%console-app~Ready%', { additional: false })]);
+    renderTable([makeExtension('test-ready', '%console-app~Ready%', { defaultVisible: true })]);
 
     expect(screen.getByRole('columnheader', { name: 'Ready' })).toBeVisible();
   });
@@ -335,9 +360,9 @@ describe('ConsoleDataView', () => {
     renderTable([
       makeExtension('other', 'Other', {
         table: { group: 'different', version: 'v1', kind: 'Pod' },
-        additional: false,
+        defaultVisible: true,
       }),
-      makeExtension('name', 'Duplicate', { additional: false }),
+      makeExtension('name', 'Duplicate', { defaultVisible: true }),
     ]);
 
     expect(screen.getAllByRole('columnheader').map((header) => header.textContent)).toEqual([
@@ -363,7 +388,7 @@ describe('ConsoleDataView', () => {
   it('automatically resizes extension columns and uses the table ID to restore and reset widths', async () => {
     const user = userEvent.setup();
     const { userSettingsStore } = renderTable(
-      [makeExtension('test-ready', 'Ready', { additional: false })],
+      [makeExtension('test-ready', 'Ready', { defaultVisible: true })],
       undefined,
       { useDefaultResizable: true, columnWidths: { 'test-ready': 240 } },
     );
@@ -394,7 +419,7 @@ describe('ConsoleDataView', () => {
   it('should preserve widths by column ID when columns are reordered, hidden, and shown again', async () => {
     const user = userEvent.setup();
     const { userSettingsStore } = renderTable(
-      [makeExtension('test-ready', 'Ready', { additional: false })],
+      [makeExtension('test-ready', 'Ready', { defaultVisible: true })],
       undefined,
       { useDefaultResizable: true, columnWidths: { status: 240, 'test-ready': 160 } },
     );
@@ -458,7 +483,7 @@ describe('ConsoleDataView', () => {
   it('preserves saved widths by column ID when restoring the default column order', async () => {
     const user = userEvent.setup();
     const { userSettingsStore } = renderTable(
-      [makeExtension('test-ready', 'Ready', { additional: false })],
+      [makeExtension('test-ready', 'Ready', { defaultVisible: true })],
       ['name', 'status', 'test-ready'],
       {
         columnOrder: ['name', 'test-ready', 'status'],
@@ -587,11 +612,11 @@ describe('ConsoleDataView', () => {
       actionProviders: [makePodActionProvider(useBulkPodActions)],
       selection: {
         getItemId: (item) => item.metadata.name,
-        getActions: ({ selectedItems }) => [
+        getBulkActions: ({ matchingSelectedItems }) => [
           {
             id: 'local-action',
             label: 'Local action',
-            disabled: selectedItems.length === 0,
+            disabled: matchingSelectedItems.length === 0,
             cta: jest.fn(),
           },
         ],
@@ -636,7 +661,7 @@ describe('ConsoleDataView', () => {
       actionProviders: [makePodActionProvider(useBulkPodActions)],
       selection: {
         getItemId: (item) => item.metadata.name,
-        getActions: () => [{ id: 'local-action', label: 'Local action', cta: jest.fn() }],
+        getBulkActions: () => [{ id: 'local-action', label: 'Local action', cta: jest.fn() }],
       },
     });
 
@@ -650,17 +675,17 @@ describe('ConsoleDataView', () => {
   it('adds selection cells and lets a bulk action deselect successful items', async () => {
     const user = userEvent.setup();
     renderTable(
-      [makeExtension('test-ready', 'Ready', { additional: false, insertAfter: 'name' })],
+      [makeExtension('test-ready', 'Ready', { defaultVisible: true, insertAfter: 'name' })],
       undefined,
       {
         selection: {
           getItemId: (item) => item.metadata.name,
-          getActions: ({ selectedItems, deselect }) => [
+          getBulkActions: ({ matchingSelectedItems, deselect }) => [
             {
               id: 'remove-alpha',
-              label: `Remove alpha (${selectedItems.length})`,
+              label: `Remove alpha (${matchingSelectedItems.length})`,
               description: 'Removes alpha from the selection',
-              disabled: selectedItems.length === 0,
+              disabled: matchingSelectedItems.length === 0,
               cta: () => deselect(['alpha']),
             },
           ],
@@ -697,11 +722,11 @@ describe('ConsoleDataView', () => {
       selection: {
         getItemId: (item) => item.metadata.name,
         isSelectable: (item) => item.metadata.name !== 'item-00',
-        getActions: ({ selectedItems, clearSelection }) => [
+        getBulkActions: ({ matchingSelectedItems, clearSelection }) => [
           {
             id: 'clear-selection',
-            label: `Clear selection (${selectedItems.length})`,
-            disabled: selectedItems.length === 0,
+            label: `Clear selection (${matchingSelectedItems.length})`,
+            disabled: matchingSelectedItems.length === 0,
             cta: clearSelection,
           },
         ],

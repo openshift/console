@@ -18,13 +18,8 @@ import { sortResourceByValue } from '@console/internal/components/factory/Table/
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { useConsoleDataViewSort, getSortByDirection } from './useConsoleDataViewSort';
 
-interface EnhancedDataViewTh extends Extract<DataViewTh, { cell: ReactNode }> {
-  id: string;
-}
-
-const isDataViewConfigurableColumn = <TData,>(
-  column: ConsoleDataViewColumn<TData>,
-): column is ConsoleDataViewColumn<TData> & { cell: ReactNode } => column?.cell !== undefined;
+type PreparedDataViewColumn<TData> = ConsoleDataViewColumn<TData> &
+  Extract<DataViewTh, { cell: ReactNode }>;
 
 export const useConsoleDataViewData = <
   TData,
@@ -56,7 +51,7 @@ export const useConsoleDataViewData = <
   customRowData?: TCustomRowData;
   isResizable?: boolean;
   selection?: {
-    selectedItems: Set<string>;
+    selectedIds: Set<string>;
     onSelectAll: (isSelecting: boolean, filteredItems: TData[]) => void;
     getItemId: (item: TData) => string;
     isSelectable?: (item: TData) => boolean;
@@ -65,7 +60,7 @@ export const useConsoleDataViewData = <
   const { t } = useTranslation('console-app');
   const [searchParams, setSearchParams] = useSearchParams();
   const selectionEnabled = Boolean(selection);
-  const selectedItems = selection?.selectedItems;
+  const selectedIds = selection?.selectedIds;
   const onSelectAll = selection?.onSelectAll;
   const getItemId = selection?.getItemId;
   const isSelectable = selection?.isSelectable;
@@ -107,7 +102,7 @@ export const useConsoleDataViewData = <
     columnManagementID,
   });
 
-  const dataViewColumns = useMemo<ConsoleDataViewColumn<TData>[]>(() => {
+  const dataViewColumns = useMemo<PreparedDataViewColumn<TData>[]>(() => {
     // Calculate selection state across all filtered items
     const totalCount = isSelectable
       ? filteredData.filter(isSelectable).length
@@ -168,7 +163,7 @@ export const useConsoleDataViewData = <
         ) : (
           <span className="pf-v6-u-screen-reader">{t('Actions')}</span>
         ),
-      } satisfies ConsoleDataViewColumn<TData>;
+      } satisfies PreparedDataViewColumn<TData>;
     });
   }, [activeColumns, t, isResizable, isSelectable, onSelectAll, filteredData]);
 
@@ -190,7 +185,7 @@ export const useConsoleDataViewData = <
     const sortColumn = dataViewColumns[sortBy.index];
     const sortDirection = getSortByDirection(sortBy.direction);
 
-    if (!isDataViewConfigurableColumn(sortColumn)) {
+    if (!sortColumn) {
       return filteredData;
     }
 
@@ -223,16 +218,9 @@ export const useConsoleDataViewData = <
   const dataViewRows = getDataViewRows(transformedData, dataViewColumns);
 
   // Apply sort state and select-all handler updates to columns independently
-  const dataViewColumnsWithSortApplied = useMemo<EnhancedDataViewTh[]>(
+  const dataViewColumnsWithSortApplied = useMemo<PreparedDataViewColumn<TData>[]>(
     () =>
       dataViewColumns.map((column) => {
-        if (!isDataViewConfigurableColumn(column)) {
-          return {
-            ...column,
-            cell: null,
-          };
-        }
-
         let updatedProps = column.props;
 
         if (column.sort !== undefined && column.props.sort) {
@@ -254,7 +242,7 @@ export const useConsoleDataViewData = <
           column.id === 'select' &&
           column.props.select &&
           selectionEnabled &&
-          selectedItems &&
+          selectedIds &&
           getItemId &&
           onSelectAll
         ) {
@@ -262,7 +250,7 @@ export const useConsoleDataViewData = <
             ? visibleItems.filter(isSelectable)
             : visibleItems;
           const visibleSelectedCount = selectableVisibleItems.filter((item) =>
-            selectedItems.has(getItemId(item)),
+            selectedIds.has(getItemId(item)),
           ).length;
           const allVisibleSelected =
             selectableVisibleItems.length > 0 &&
@@ -292,7 +280,7 @@ export const useConsoleDataViewData = <
       sortBy.direction,
       onSort,
       selectionEnabled,
-      selectedItems,
+      selectedIds,
       getItemId,
       isSelectable,
       onSelectAll,
