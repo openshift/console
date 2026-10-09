@@ -717,6 +717,47 @@ func (s *Server) handleKnativeChannelCRDs(w http.ResponseWriter, r *http.Request
 	s.KnativeChannelCRDLister.HandleResources(w, r)
 }
 
+const (
+	telemetryAccountMailKey       = "ACCOUNT_MAIL"
+	telemetryAccountMailDomainKey = "ACCOUNT_MAIL_DOMAIN"
+)
+
+// redactSensitiveTelemetry returns a copy of the telemetry config with the
+// account owner's email address removed.
+//
+// The telemetry map is embedded verbatim into window.SERVER_FLAGS by
+// indexHandler, which must stay unauthenticated so the pre-login page can
+// render. Anything left in this map is therefore readable by any client that
+// can reach the console, before signing in. ACCOUNT_MAIL holds the real email
+// address of the cluster's Red Hat subscription owner, so it must not survive
+// into the response.
+//
+// Only the domain is forwarded, because that is all telemetry reporting
+// consumes. The browser already discarded the local part before sending the
+// event onward — doing it here instead means the address is never disclosed
+// in the first place.
+func redactSensitiveTelemetry(in serverconfig.MultiKeyValue) serverconfig.MultiKeyValue {
+	out := make(serverconfig.MultiKeyValue, len(in))
+	for k, v := range in {
+		out[k] = v
+	}
+
+	email, ok := out[telemetryAccountMailKey]
+	if !ok {
+		return out
+	}
+	delete(out, telemetryAccountMailKey)
+
+	// Mirror the frontend's previous extraction exactly: a domain is only
+	// emitted for an address containing a single "@". Anything else reported
+	// an empty domain, and callers still rely on that.
+	if parts := strings.Split(email, "@"); len(parts) == 2 && parts[1] != "" {
+		out[telemetryAccountMailDomainKey] = parts[1]
+	}
+
+	return out
+}
+
 func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 	if serverutils.IsUnsupportedBrowser(r) {
 		serverutils.SendUnsupportedBrowserResponse(w, s.Branding)
@@ -778,7 +819,7 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		QuickStarts:               s.QuickStarts,
 		ReleaseVersion:            s.ReleaseVersion,
 		StatuspageID:              s.StatuspageID,
-		Telemetry:                 s.Telemetry,
+		Telemetry:                 redactSensitiveTelemetry(s.Telemetry),
 		ThanosPublicURL:           s.ThanosPublicURL.String(),
 		TechPreview:               s.TechPreview,
 		OLMLifecycleMetadata:      s.OLMLifecycleMetadata,
