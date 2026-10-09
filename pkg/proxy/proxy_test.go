@@ -12,7 +12,7 @@ import (
 )
 
 func TestProxyWebsocket(t *testing.T) {
-	proxyURL, closer, err := startProxyServer(t)
+	proxyURL, closer, err := startProxyServerWithOrigin(t, "http://localhost")
 	if err != nil {
 		t.Fatalf("problem setting up proxy server: %v", err)
 	}
@@ -25,20 +25,66 @@ func TestProxyWebsocket(t *testing.T) {
 	headers := http.Header{}
 	headers.Add("Origin", "http://localhost")
 
-	ws, _, err := dialer.Dial(toWSScheme(proxyURL)+"/proxy/lower", headers)
+	ws, resp, err := dialer.Dial(toWSScheme(proxyURL)+"/proxy/lower", headers)
 	if err != nil {
 		t.Fatalf("error connecting to /proxy/lower as websocket: %v", err)
-		return
 	}
 	defer ws.Close()
+	defer resp.Body.Close()
 
-	ws.WriteMessage(websocket.TextMessage, []byte("HI"))
+	if resp.StatusCode != http.StatusSwitchingProtocols {
+		t.Errorf("status code = %d, want %d", resp.StatusCode, http.StatusSwitchingProtocols)
+	}
+	if got := resp.Header.Values("X-Content-Type-Options"); len(got) != 1 || got[0] != "nosniff" {
+		t.Errorf("X-Content-Type-Options = %q, want %q", got, []string{"nosniff"})
+	}
+	if got := resp.Header.Get("Content-Security-Policy"); got != "" {
+		t.Errorf("Content-Security-Policy = %q, want empty", got)
+	}
+	if got := resp.Header.Values("Set-Cookie"); len(got) != 0 {
+		t.Errorf("Set-Cookie = %q, want empty", got)
+	}
+	if got := resp.Header.Values("Sec-WebSocket-Protocol"); len(got) != 1 || got[0] != "base64.binary.k8s.io" {
+		t.Errorf("Sec-WebSocket-Protocol = %q, want %q", got, []string{"base64.binary.k8s.io"})
+	}
+	if got := ws.Subprotocol(); got != "base64.binary.k8s.io" {
+		t.Errorf("subprotocol = %q, want %q", got, "base64.binary.k8s.io")
+	}
+
+	if err := ws.WriteMessage(websocket.TextMessage, []byte("HI")); err != nil {
+		t.Fatalf("error writing websocket message: %v", err)
+	}
 	res, err := readStringFromWS(ws)
 	if err != nil {
 		t.Fatalf("error reading from websocket: %v", err)
 	}
 	if res != "hi" {
 		t.Errorf("res == %v, want %v", res, "hi")
+	}
+}
+
+func TestProxyWebsocketRejectsInvalidOrigin(t *testing.T) {
+	proxyURL, closer, err := startProxyServerWithOrigin(t, "http://localhost")
+	if err != nil {
+		t.Fatalf("problem setting up proxy server: %v", err)
+	}
+	defer closer()
+
+	headers := http.Header{}
+	headers.Add("Origin", "http://example.com")
+
+	ws, resp, err := websocket.DefaultDialer.Dial(toWSScheme(proxyURL)+"/proxy/lower", headers)
+	if err == nil {
+		ws.Close()
+		t.Fatal("expected invalid origin to be rejected")
+	}
+	if resp == nil {
+		t.Fatal("expected an HTTP response for invalid origin")
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusForbidden {
+		t.Errorf("status code = %d, want %d", resp.StatusCode, http.StatusForbidden)
 	}
 }
 
@@ -100,6 +146,10 @@ func TestProxyDecodeSubprotocol(t *testing.T) {
 // those strings.
 // The proxy server proxies requests to the underlying server on the endpoint "/proxy".
 func startProxyServer(t *testing.T) (string, func(), error) {
+	return startProxyServerWithOrigin(t, "")
+}
+
+func startProxyServerWithOrigin(t *testing.T, origin string) (string, func(), error) {
 	// Setup the server we want to proxy.
 	mux := http.NewServeMux()
 	mux.HandleFunc("/lower", lowercaseServer(t))
@@ -114,9 +164,13 @@ func startProxyServer(t *testing.T) (string, func(), error) {
 	targetURL.Path = ""
 	p := NewProxy(&Config{
 		Endpoint: targetURL,
+		Origin:   origin,
 	})
 	proxyMux := http.NewServeMux()
-	proxyMux.Handle("/proxy/", http.StripPrefix("/proxy/", p))
+	proxyMux.Handle("/proxy/", http.StripPrefix("/proxy/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Set-Cookie", "test-cookie=synthetic")
+		p.ServeHTTP(w, r)
+	})))
 	proxyServer := httptest.NewServer(proxyMux)
 
 	return proxyServer.URL, func() {
@@ -142,6 +196,9 @@ func lowercaseServer(t *testing.T) func(w http.ResponseWriter, r *http.Request) 
 		for {
 			str, err := readStringFromWS(ws)
 			if err != nil {
+				if websocket.IsCloseError(err, websocket.CloseNormalClosure) {
+					return
+				}
 				t.Fatalf("err reading from websocket: %v", err)
 			}
 			err = ws.WriteMessage(websocket.TextMessage, []byte(strings.ToLower(str)))

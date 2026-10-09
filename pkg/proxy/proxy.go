@@ -290,7 +290,10 @@ func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			return false
 		},
 	}
-	frontend, err := upgrader.Upgrade(w, r, nil)
+	// The upgrader writes the 101 response directly and does not include headers already queued on w.
+	upgradeResponseHeader := http.Header{}
+	upgradeResponseHeader.Set("X-Content-Type-Options", "nosniff")
+	frontend, err := upgrader.Upgrade(w, r, upgradeResponseHeader)
 	if err != nil {
 		klog.Errorf("Failed to upgrade websocket to client: '%v'", err)
 		return

@@ -122,6 +122,8 @@ func WithSecurityHeaders(hdlr http.Handler) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// Prevent MIME sniffing (https://en.wikipedia.org/wiki/Content_sniffing)
 		w.Header().Set("X-Content-Type-Options", "nosniff")
+		// Isolate top-level documents from cross-origin opener references
+		w.Header().Set("Cross-Origin-Opener-Policy", "same-origin")
 		// Prevent clickjacking attacks involving iframes
 		w.Header().Set("X-Frame-Options", "DENY")
 		// Less information leakage about what domains we link to
