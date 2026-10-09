@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useState, useMemo, useEffect } from 'react';
+import { useMemo } from 'react';
 import { Label } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
@@ -20,9 +20,6 @@ export interface ResourceQuotaAlertProps {
 export const ResourceQuotaAlert: FC<ResourceQuotaAlertProps> = ({ namespace }) => {
   const { t } = useTranslation('devconsole');
   const fireTelemetryEvent = useTelemetry();
-  const [warningMessageFlag, setWarningMessageFlag] = useState<boolean>();
-  const [resourceQuotaName, setResourceQuotaName] = useState(null);
-  const [resourceQuotaKind, setResourceQuotaKind] = useState(null);
 
   const watchedResources = useMemo(
     () => ({
@@ -68,29 +65,14 @@ export const ResourceQuotaAlert: FC<ResourceQuotaAlertProps> = ({ namespace }) =
     [appliedclusterresourcequotas],
   );
 
-  let totalResourcesAtQuota = useMemo(
-    () => [...totalRQatQuota, ...totalACRQatQuota],
-    [totalRQatQuota, totalACRQatQuota],
+  const totalResourcesAtQuota = [...totalRQatQuota, ...totalACRQatQuota].filter(
+    (resourceAtQuota) => resourceAtQuota !== 0,
   );
-  totalResourcesAtQuota = totalResourcesAtQuota.filter((resourceAtQuota) => resourceAtQuota !== 0);
 
-  useEffect(() => {
-    if (totalResourcesAtQuota.length === 1) {
-      setResourceQuotaName(quotaName || clusterRQName);
-      setResourceQuotaKind(quotaKind || clusterRQKind);
-    } else {
-      setResourceQuotaName(null);
-      setResourceQuotaKind(null);
-    }
-  }, [clusterRQKind, clusterRQName, totalResourcesAtQuota, quotaKind, quotaName]);
+  const warningMessageFlag = totalResourcesAtQuota.length > 0;
 
-  useEffect(() => {
-    if (totalResourcesAtQuota.length > 0) {
-      setWarningMessageFlag(true);
-    } else {
-      setWarningMessageFlag(false);
-    }
-  }, [totalResourcesAtQuota]);
+  const resourceQuotaName = totalResourcesAtQuota.length === 1 ? quotaName || clusterRQName : null;
+  const resourceQuotaKind = totalResourcesAtQuota.length === 1 ? quotaKind || clusterRQKind : null;
 
   const getRedirectLink = () => {
     if (resourceQuotaName && resourceQuotaKind === AppliedClusterResourceQuotaModel.kind) {

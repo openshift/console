@@ -51,6 +51,7 @@ const TabBarTabHookResolver: FC<TabBarTabHookResolverProps> = ({
         [contentElement] = hookResult;
       } else if (section) {
         if (!blamedDeprecatedPlugins[rest.id]) {
+          // eslint-disable-next-line react-hooks/immutability -- intentional warn-once cache
           blamedDeprecatedPlugins[rest.id] = true;
           console.warn(
             `TabSectionExtension "${rest.id}" should be updated from section to provider (hook)`,
@@ -98,16 +99,20 @@ const TabBarTabHookResolver: FC<TabBarTabHookResolverProps> = ({
   // show default side bar
   if (tabsLoaded && tabs.length === 0) {
     const resource = getResource(graphElement);
-    resource &&
-      tabs.push({
+    const defaultTabs: Tab[] = [];
+    if (resource) {
+      defaultTabs.push({
         name: t('Details'),
         component: () => <DefaultResourceSideBar resource={resource} />,
       });
-    isEdge(graphElement) &&
-      tabs.push({
+    }
+    if (isEdge(graphElement)) {
+      defaultTabs.push({
         name: t('Resources'),
         component: () => <TopologyEdgeResourcesPanel edge={graphElement} />,
       });
+    }
+    return children(defaultTabs, tabsLoaded);
   }
 
   return children(tabs, tabsLoaded);
