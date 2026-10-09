@@ -52,6 +52,7 @@ export interface ConsolePluginTableRow {
   enabled: boolean;
   errorMessage?: string;
   hasCSPViolations?: boolean;
+  proxies?: ConsolePluginKind['spec']['proxy'];
 }
 
 interface PluginFilters extends ResourceFilters {
@@ -387,6 +388,7 @@ const useConsolePluginRows = (enabledPlugins: string[]) => {
           enabled,
           status: info.status,
           hasCSPViolations: cspViolations[pluginName] ?? false,
+          proxies: plugin.spec.proxy ?? [],
         };
       }
 
@@ -395,6 +397,7 @@ const useConsolePluginRows = (enabledPlugins: string[]) => {
         enabled,
         status: info?.status,
         errorMessage: info?.status === 'failed' ? info.errorMessage : undefined,
+        proxies: plugin.spec.proxy ?? [],
       };
     });
   }, [consolePluginsLoaded, consolePlugins, pluginInfo, enabledPlugins, cspViolations]);
