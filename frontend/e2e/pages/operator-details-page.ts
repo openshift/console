@@ -236,7 +236,8 @@ export class OperatorDetailsPage extends BasePage {
     }
 
     await this.modalPage.submit();
-    await this.modalPage.waitForClosed();
+    // Operand finalizers can take longer than an ordinary modal submission.
+    await this.modalPage.waitForClosed(deleteOperands ? 120_000 : 30_000);
   }
 
   /**

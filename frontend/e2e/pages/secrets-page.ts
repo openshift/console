@@ -42,6 +42,7 @@ export class SecretsPage extends BasePage {
 
   async enterSecretName(name: string): Promise<void> {
     await this.secretNameInput.fill(name);
+    await expect(this.secretNameInput).toHaveValue(name);
   }
 
   async fillSecretKey(key: string, index = 0): Promise<void> {

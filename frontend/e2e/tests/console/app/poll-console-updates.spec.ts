@@ -64,7 +64,9 @@ async function navigateAndWaitForInit(page: Page) {
   }, 90_000);
 
   try {
-    await page.goto('/');
+    // These manifests model polling responses, not loadable plugins. Keep the
+    // startup loader from consuming them while update polling remains enabled.
+    await page.goto('./?disable-plugins=');
     await expect(page.getByTestId('dashboard').first()).toBeVisible({
       timeout: 60_000,
     });
