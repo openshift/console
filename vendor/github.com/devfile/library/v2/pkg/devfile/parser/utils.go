@@ -96,16 +96,14 @@ func GetImageBuildComponent(devfileData data.DevfileData, deployAssociatedCompon
 			if reflect.DeepEqual(imageBuildComponent, devfilev1.Component{}) {
 				imageBuildComponent = component
 			} else {
-				errMsg := "expected to find one devfile image component with a deploy command for build. Currently there is more than one image component"
-				return devfilev1.Component{}, fmt.Errorf(errMsg)
+				return devfilev1.Component{}, fmt.Errorf("expected to find one devfile image component with a deploy command for build. Currently there is more than one image component")
 			}
 		}
 	}
 
 	// If there is not one image component defined in the deploy command, err out
 	if reflect.DeepEqual(imageBuildComponent, devfilev1.Component{}) {
-		errMsg := "expected to find one devfile image component with a deploy command for build. Currently there is no image component"
-		return devfilev1.Component{}, fmt.Errorf(errMsg)
+		return devfilev1.Component{}, fmt.Errorf("expected to find one devfile image component with a deploy command for build. Currently there is no image component")
 	}
 
 	return imageBuildComponent, nil

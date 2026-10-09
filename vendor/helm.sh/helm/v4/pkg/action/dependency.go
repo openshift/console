@@ -92,7 +92,7 @@ func (d *Dependency) dependencyStatus(chartpath string, dep *chart.Dependency, p
 		for _, arc := range archives {
 			// we need to trip the prefix dirs and the extension off.
 			filename = strings.TrimSuffix(filepath.Base(arc), ".tgz")
-			maybeVersion := strings.TrimPrefix(filename, fmt.Sprintf("%s-", dep.Name))
+			maybeVersion := strings.TrimPrefix(filename, dep.Name+"-")
 
 			if _, err := semver.StrictNewVersion(maybeVersion); err == nil {
 				// If the version parsed without an error, it is possibly a valid
@@ -120,7 +120,6 @@ func (d *Dependency) dependencyStatus(chartpath string, dep *chart.Dependency, p
 		if r := statArchiveForStatus(archive, dep); r != "" {
 			return r
 		}
-
 	}
 	// End unnecessary code.
 
@@ -202,7 +201,7 @@ func (d *Dependency) printDependencies(chartpath string, out io.Writer, c *chart
 // printMissing prints warnings about charts that are present on disk, but are
 // not in Chart.yaml.
 func (d *Dependency) printMissing(chartpath string, out io.Writer, reqs []*chart.Dependency) {
-	folder := filepath.Join(chartpath, "charts/*")
+	folder := filepath.Join(chartpath, "charts", "*")
 	files, err := filepath.Glob(folder)
 	if err != nil {
 		fmt.Fprintln(out, err)
