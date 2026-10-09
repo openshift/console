@@ -71,6 +71,11 @@ export class CatalogPage extends BasePage {
     });
   }
 
+  /** Selects Operator tiles without depending on other catalog item types. */
+  getOperatorCards(): Locator {
+    return this.page.getByTestId(/^operator-/);
+  }
+
   getOperatorCard(operatorName: string): Locator {
     return this.page
       .getByTestId(`operator-${operatorName}`)
