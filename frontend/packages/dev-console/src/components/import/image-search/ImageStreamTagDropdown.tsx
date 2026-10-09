@@ -6,6 +6,7 @@ import { useFormikContext, getIn } from 'formik';
 import * as fuzzy from 'fuzzysearch';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import type { K8sResourceCondition } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { ImageStreamTagModel } from '@console/internal/models';
 import type { K8sResourceKind, ContainerPort } from '@console/internal/module/k8s';
 import { k8sGet } from '@console/internal/module/k8s';
@@ -64,6 +65,27 @@ const ImageStreamTagDropdown: FC<{
           formContextField && setFieldValue(`${fieldPrefix}imageStreamTag`, imageStreamImport);
           const imgStreamLabels = _.pick(labels, imageStreamLabels);
           const name = imageStream.image;
+
+          // Check for error conditions in the ImageStreamTag status
+          // ImageStreamTag may have conditions array with ImportSuccess failures
+          const failureCondition = _.find(status?.conditions, {
+            type: 'ImportSuccess',
+            status: 'False',
+          }) as K8sResourceCondition | undefined;
+
+          if (failureCondition) {
+            // Handle import failure - set error state similar to catch block
+            setFieldValue(`${fieldPrefix}isi`, {});
+            setFieldValue(`${fieldPrefix}isi.status`, {
+              metadata: {},
+              status: '',
+              message: failureCondition.message || t('devconsole~Failed to import image'),
+            });
+            setFieldValue(`${fieldPrefix}isSearchingForImage`, false);
+            setValidated(ValidatedOptions.error);
+            return;
+          }
+
           // Ensure status has the required structure for validation (isi.status.status must be a string)
           // ImageStreamTag status may not have the nested status.status property, so we normalize it
           const normalizedStatus = status?.status
@@ -126,6 +148,7 @@ const ImageStreamTagDropdown: FC<{
       initialRoute,
       touched,
       setValidated,
+      t,
     ],
   );
 
