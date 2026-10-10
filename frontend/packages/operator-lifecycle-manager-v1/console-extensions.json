@@ -143,7 +143,9 @@
         "version": "v1",
         "kind": "ClusterExtension"
       },
-      "provider": { "$codeRef": "defaultActionsProvider.useDefaultActionsProvider" }
+      "provider": {
+        "$codeRef": "clusterExtensionActionsProvider.useClusterExtensionActionsProvider"
+      }
     },
     "flags": {
       "required": ["CLUSTER_EXTENSION_API"]
