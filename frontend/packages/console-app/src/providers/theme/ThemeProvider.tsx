@@ -2,13 +2,15 @@ import type { FC, ReactNode } from 'react';
 import { createContext, useState, useCallback, useEffect, useMemo, useContext } from 'react';
 import { IS_OPENSHIFT_5 } from '@console/app/src/features/openshift5';
 import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
+import {
+  CONTRAST_USER_PREFERENCE_KEY,
+  THEME_DEFAULT,
+  THEME_SYSTEM_DEFAULT,
+  THEME_USER_PREFERENCE_KEY,
+} from './theme-constants';
 
-const THEME_USER_PREFERENCE_KEY = 'console.theme';
 const THEME_LOCAL_STORAGE_KEY = 'bridge/theme';
-const CONTRAST_USER_PREFERENCE_KEY = 'console.theme/contrast';
 const CONTRAST_LOCAL_STORAGE_KEY = 'bridge/contrast';
-/** Use whatever theme is set by the user at the system level */
-const THEME_SYSTEM_DEFAULT = 'systemDefault';
 export const THEME_DARK_CLASS = 'pf-v6-theme-dark';
 export const THEME_GLASS_CLASS = 'pf-v6-theme-glass';
 export const THEME_CONTRAST_CLASS = 'pf-v6-theme-high-contrast';
@@ -18,8 +20,6 @@ export const THEME_LIGHT = 'light';
 export const THEME_GLASS = 'glass';
 /** High contrast theme */
 export const THEME_CONTRAST = 'contrast';
-/** PatternFly's default theme, i.e., no high contrast and no glass */
-const THEME_DEFAULT = 'default';
 export const darkThemeMq = window.matchMedia('(prefers-color-scheme: dark)');
 const contrastThemeMq = window.matchMedia('(prefers-contrast: more)');
 

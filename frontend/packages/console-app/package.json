@@ -55,6 +55,7 @@
       "projectProvider": "src/actions/providers/project-provider.ts",
       "ClusterConfigurationPage": "src/components/cluster-configuration/ClusterConfigurationPage.tsx",
       "PreferredPerspectiveSelect": "src/components/user-preferences/perspective/PreferredPerspectiveSelect.tsx",
+      "ThemeSelector": "src/components/user-preferences/theme/ThemeSelector.tsx",
       "NamespaceDropdown": "src/components/user-preferences/namespace/NamespaceDropdown.tsx",
       "LanguageDropdown": "src/components/user-preferences/language/LanguageDropdown.tsx",
       "perspective": "src/utils/perspective.tsx",
