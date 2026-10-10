@@ -221,6 +221,20 @@
     }
   },
   {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": [
+        "/k8s/ns/:ns/operators.coreos.com~v1alpha1~ClusterServiceVersion",
+        "/k8s/all-namespaces/operators.coreos.com~v1alpha1~ClusterServiceVersion"
+      ],
+      "component": { "$codeRef": "installedOperatorsRedirect.default" }
+    },
+    "flags": {
+      "required": ["OPERATOR_LIFECYCLE_MANAGER", "TECH_PREVIEW"]
+    }
+  },
+  {
     "type": "console.page/resource/list",
     "properties": {
       "model": {
@@ -430,21 +444,58 @@
     "properties": {
       "title": "%olm~Operators%",
       "catalogId": "dev-catalog",
-      "type": "operator",
+      "type": "operator-olmv0",
       "provider": { "$codeRef": "useOperatorCatalogItems" }
     },
     "flags": {
-      "disallowed": ["OLMV1_ENABLED"]
+      "required": ["OPERATOR_LIFECYCLE_MANAGER"],
+      "disallowed": ["TECH_PREVIEW"]
+    }
+  },
+  {
+    "type": "console.catalog/item-provider",
+    "properties": {
+      "title": "%olm~Classic Operators%",
+      "catalogId": "dev-catalog",
+      "type": "operator-olmv0",
+      "provider": { "$codeRef": "useOperatorCatalogItems" }
+    },
+    "flags": {
+      "required": ["OPERATOR_LIFECYCLE_MANAGER", "TECH_PREVIEW"]
     }
   },
   {
     "type": "console.catalog/item-type",
     "properties": {
-      "type": "operator",
+      "type": "operator-olmv0",
       "title": "%olm~Operators%",
       "catalogDescription": "%olm~Browse for Operators provided by Operator Lifecycle Manager.%",
       "typeDescription": "%olm~**Operators** are software extensions to OpenShift that make use of custom resources to manage applications and their components. They are managed by Operator Lifecycle Manager.%",
+      "sortFilterGroups": false
+    },
+    "flags": {
+      "required": ["OPERATOR_LIFECYCLE_MANAGER"],
+      "disallowed": ["TECH_PREVIEW"]
+    }
+  },
+  {
+    "type": "console.catalog/item-type",
+    "properties": {
+      "type": "operator-olmv0",
+      "title": "%olm~Classic Operators%",
+      "catalogDescription": "%olm~Browse for Operators managed by Classic Operator Lifecycle Manager (OLMv0).%",
+      "typeDescription": "%olm~**Operators** are software extensions to OpenShift that make use of custom resources to manage applications and their components. They are managed by Operator Lifecycle Manager.%",
       "sortFilterGroups": false,
+      "sortWeight": 1
+    },
+    "flags": {
+      "required": ["OPERATOR_LIFECYCLE_MANAGER", "TECH_PREVIEW"]
+    }
+  },
+  {
+    "type": "console.catalog/item-type-metadata",
+    "properties": {
+      "type": "operator-olmv0",
       "filters": [
         {
           "label": "%olm~Source%",
@@ -488,17 +539,18 @@
       ]
     },
     "flags": {
-      "disallowed": ["OLMV1_ENABLED"]
+      "required": ["OPERATOR_LIFECYCLE_MANAGER"]
     }
   },
   {
     "type": "console.catalog/categories-provider",
     "properties": {
       "catalogId": "dev-catalog",
+      "type": "operator-olmv0",
       "provider": { "$codeRef": "useOperatorCatalogCategories" }
     },
     "flags": {
-      "disallowed": ["OLMV1_ENABLED"]
+      "required": ["OPERATOR_LIFECYCLE_MANAGER"]
     }
   },
   {

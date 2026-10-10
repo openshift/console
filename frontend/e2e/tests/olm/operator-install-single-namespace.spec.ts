@@ -7,7 +7,7 @@ import { OLM_CLUSTER_STATE_LOCK } from '../../utils/locks';
 
 const testOperator = {
   name: 'Data Grid',
-  operatorCardTestID: 'operator-Data Grid',
+  operatorCardTestID: 'operator-olmv0-Data Grid',
   urlName: 'datagrid-operator',
 };
 

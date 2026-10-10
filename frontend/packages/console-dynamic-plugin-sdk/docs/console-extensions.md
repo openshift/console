@@ -243,9 +243,11 @@ This extension allows plugins to contribute a new type of catalog item. For exam
 | ---- | ---------- | -------- | ----------- |
 | `type` | `string` | no | Type for the catalog item. |
 | `title` | `string` | no | Title for the catalog item. |
+| `catalogId` | `string \| string[]` | yes | The unique identifier(s) for the catalog(s) this type belongs to. If not specified,<br/>the type is available in all catalogs. |
 | `catalogDescription` | `string \| CodeRef<ComponentType>` | yes | Description for the type specific catalog. |
 | `typeDescription` | `string` | yes | Description for the catalog item type. |
 | `sortFilterGroups` | `boolean` | yes | Determine if filter groups should be sorted alphabetically. Defaults to true. |
+| `sortWeight` | `number` | yes | Ordering weight for this type in the catalog's type list. Types are sorted by weight<br/>ascending and then alphabetically by title, so a higher weight sinks the type towards<br/>the bottom of the list. Defaults to 0. |
 | `filters` | `CatalogItemAttribute[]` | yes | Custom filters specific to the catalog item. |
 | `groupings` | `CatalogItemAttribute[]` | yes | Custom groupings specific to the catalog item. |
 

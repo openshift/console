@@ -16,6 +16,8 @@ table in [Console dynamic plugins README](./README.md).
 - Added `ConsoleDataView` component and `definitionFor` ([CONSOLE-5131], [#17307], [#17351])
 - Added `console.dataview/table-column` extension for contributing sortable, manageable columns to `ConsoleDataView` tables ([CONSOLE-5560], [#17351])
 - Added default resource kebab actions and optional `bulkProvider` to `console.action/resource-provider` for bulk actions ([CONSOLE-5560], [#17351])
+- Added optional `catalogId` and `sortWeight` properties to extension `console.catalog/item-type`, so a type can be scoped to specific catalogs and ordered within the catalog's type list ([CONSOLE-5527])
+- Added optional `placement` property to `CatalogItemBadge`, so a badge can render in the catalog item header below the catalog type label instead of the default footer ([CONSOLE-5527])
 
 ## 4.23.0-prerelease.6 - TBD
 
@@ -269,6 +271,7 @@ table in [Console dynamic plugins README](./README.md).
 [CONSOLE-5424]: https://issues.redhat.com/browse/CONSOLE-5424
 [CONSOLE-5438]: https://issues.redhat.com/browse/CONSOLE-5438
 [CONSOLE-5560]: https://issues.redhat.com/browse/CONSOLE-5560
+[CONSOLE-5527]: https://issues.redhat.com/browse/CONSOLE-5527
 [OCPBUGS-19048]: https://issues.redhat.com/browse/OCPBUGS-19048
 [OCPBUGS-30077]: https://issues.redhat.com/browse/OCPBUGS-30077
 [OCPBUGS-31355]: https://issues.redhat.com/browse/OCPBUGS-31355

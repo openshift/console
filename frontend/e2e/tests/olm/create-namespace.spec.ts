@@ -17,14 +17,10 @@ test.describe(
       const catalogPage = new CatalogPage(page);
       const installPage = new OperatorInstallPage(page);
 
+      // Classic (OLMv0) Operators are their own catalog type, present on every cluster that runs
+      // OLMv0. On Tech Preview clusters they sit alongside Next-Gen (OLMv1) instead of being
+      // replaced by it, so this flow is no longer Tech Preview sensitive.
       await catalogPage.navigateToOperatorCatalog('default');
-      // OLMv1 is enabled by default on techPreview clusters, replacing the OLMv0
-      // OperatorHub catalog with an empty Software Catalog. Skip instead of timing out.
-      const isTechPreview = await page.evaluate(() => Boolean(window.SERVER_FLAGS?.techPreview));
-      test.skip(
-        isTechPreview,
-        'OLMv1 is active on techPreview clusters — OLMv0 OperatorHub catalog is unavailable',
-      );
 
       const nsName = generateTestNamespace();
       cleanup.trackNamespace(nsName);

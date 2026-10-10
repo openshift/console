@@ -2,8 +2,10 @@ import { test, expect } from '../../fixtures';
 import { CatalogPage } from '../../pages/catalog-page';
 import { OLM_CLUSTER_STATE_LOCK } from '../../utils/locks';
 
+// The OLMv0 catalog is its own type rather than a tab, so navigate straight to it. It is titled
+// "Classic Operators" under Tech Preview and plain "Operators" everywhere else.
 test.describe(
-  'Software Catalog Operator filtering',
+  'OLMv0 Operators catalog filtering',
   { tag: ['@admin'], lock: OLM_CLUSTER_STATE_LOCK },
   () => {
     test('displays Operator catalog items with expected available Operators', async ({
@@ -19,13 +21,12 @@ test.describe(
         cleanup.trackNamespace(testNamespace);
       });
 
-      await test.step('Navigate to Software Catalog and verify page', async () => {
-        await catalogPage.navigateToSoftwareCatalog(testNamespace);
-        await expect(catalogPage.getPageHeading()).toContainText('Software Catalog');
+      await test.step('Navigate to the Operators catalog and verify page', async () => {
+        await catalogPage.navigateToOperatorCatalog(testNamespace);
+        await expect(catalogPage.getPageHeading()).toContainText('Operators');
       });
 
-      await test.step('Switch to Operators tab and verify tiles are present', async () => {
-        await catalogPage.clickOperatorTab();
+      await test.step('Verify tiles are present', async () => {
         await expect(async () => {
           const count = await catalogPage.getCatalogTiles().count();
           expect(count).toBeGreaterThan(0);
