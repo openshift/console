@@ -157,6 +157,7 @@ func main() {
 	fPluginProxy := fs.String("plugin-proxy", "", "Defines various service types to which will console proxy plugins requests. (JSON as string)")
 	fI18NamespacesFlags := fs.String("i18n-namespaces", "", "List of namespaces separated by comma. Example --i18n-namespaces=plugin__acm,plugin__kubevirt")
 
+	fCSPMode := fs.String("csp-mode", string(serverconfig.CSPModeReportOnly), "CSP header mode: 'report-only' emits Content-Security-Policy-Report-Only; 'enforce' emits Content-Security-Policy.")
 	consoleCSPFlags := serverconfig.MultiKeyValue{}
 	fs.Var(&consoleCSPFlags, "content-security-policy", "List of CSP directives that are enabled for the console. Each entry consist of csp-directive-name as a key and csp-directive-value as a value. Example --content-security-policy script-src='localhost:9000',font-src='localhost:9001'")
 
@@ -368,6 +369,7 @@ func main() {
 		I18nNamespaces:               i18nNamespaces,
 		PluginProxy:                  *fPluginProxy,
 		ContentSecurityPolicy:        consoleCSPFlags,
+		CSPMode:                      serverconfig.CSPMode(*fCSPMode),
 		QuickStarts:                  *fQuickStarts,
 		AddPage:                      *fAddPage,
 		ProjectAccessClusterRoles:    *fProjectAccessClusterRoles,

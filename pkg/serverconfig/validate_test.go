@@ -2,8 +2,10 @@ package serverconfig
 
 import (
 	"errors"
+	"flag"
 	"fmt"
 	"reflect"
+	"strings"
 	"testing"
 
 	operatorv1 "github.com/openshift/api/operator/v1"
@@ -326,5 +328,30 @@ func TestUnknownPropertiesForCustomLogos(t *testing.T) {
 	actualMsg2 := err2.Error()
 	if actualMsg2 != expectedUnknownLogoThemeErr {
 		t.Errorf("Unexpected error: actual \n%v\n. expected \n%v\n", actualMsg2, expectedUnknownLogoThemeErr)
+	}
+}
+
+func TestValidateCSPMode(t *testing.T) {
+	for _, mode := range []string{"report-only", "enforce", "", "invalid", "Enforce"} {
+		t.Run(mode, func(t *testing.T) {
+			fs := flag.NewFlagSet("csp", flag.ContinueOnError)
+			fs.String("csp-mode", mode, "")
+			fs.String("user-settings-location", "configmap", "")
+			for _, name := range []string{
+				"developer-catalog-categories", "developer-catalog-types", "quick-starts",
+				"add-page", "project-access-cluster-roles", "perspectives",
+				"custom-logo-files", "custom-favicon-files", "control-plane-topology-mode",
+			} {
+				fs.String(name, "", "")
+			}
+			err := Validate(fs)
+			if mode == "report-only" || mode == "enforce" {
+				if err != nil {
+					t.Fatal(err)
+				}
+			} else if err == nil || !strings.Contains(err.Error(), "csp-mode") || !strings.Contains(err.Error(), "report-only enforce") {
+				t.Fatalf("expected an invalid csp-mode error listing allowed values, got %v", err)
+			}
+		})
 	}
 }

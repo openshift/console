@@ -152,9 +152,9 @@ test.describe('Image pull secrets', () => {
     await test.step('Create secret with uploaded config file', async () => {
       await secretsPage.navigateToCreateImagePullSecret(namespace);
       await expect(secretsPage.getPageHeading()).toContainText('Create image pull secret');
-      await secretsPage.enterSecretName(secretName);
       await secretsPage.selectAuthType('config-file');
       await secretsPage.getFileInputTextarea().fill(JSON.stringify(configFile));
+      await secretsPage.enterSecretName(secretName);
       await expect(page.getByTestId('save-changes')).toBeEnabled({ timeout: 30_000 });
       await secretsPage.save();
     });

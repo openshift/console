@@ -11,24 +11,33 @@ import (
 //   https://github.com/openshift/console-operator/blob/master/pkg/console/subresource/consoleserver/types.go
 // These structs need to remain in sync.
 
+// CSPMode controls whether the console reports or enforces Content Security Policy.
+type CSPMode string
+
+const (
+	CSPModeReportOnly CSPMode = "report-only"
+	CSPModeEnforce    CSPMode = "enforce"
+)
+
 // Config is the top-level console server cli configuration.
 type Config struct {
-	APIVersion            string `yaml:"apiVersion"`
-	Kind                  string `yaml:"kind"`
-	ServingInfo           `yaml:"servingInfo"`
-	ClusterInfo           `yaml:"clusterInfo"`
-	Auth                  `yaml:"auth"`
-	Session               `yaml:"session"`
-	Customization         `yaml:"customization"`
-	Providers             `yaml:"providers"`
-	Helm                  `yaml:"helm"`
-	MonitoringInfo        `yaml:"monitoringInfo,omitempty"`
-	Plugins               MultiKeyValue                        `yaml:"plugins,omitempty"`
-	I18nNamespaces        []string                             `yaml:"i18nNamespaces,omitempty"`
-	Proxy                 Proxy                                `yaml:"proxy,omitempty"`
-	ContentSecurityPolicy map[consolev1.DirectiveType][]string `yaml:"contentSecurityPolicy,omitempty"`
-	Telemetry             MultiKeyValue                        `yaml:"telemetry,omitempty"`
-	PluginsOrder          []string                             `yaml:"pluginsOrder,omitempty"`
+	APIVersion                string `yaml:"apiVersion"`
+	Kind                      string `yaml:"kind"`
+	ServingInfo               `yaml:"servingInfo"`
+	ClusterInfo               `yaml:"clusterInfo"`
+	Auth                      `yaml:"auth"`
+	Session                   `yaml:"session"`
+	Customization             `yaml:"customization"`
+	Providers                 `yaml:"providers"`
+	Helm                      `yaml:"helm"`
+	MonitoringInfo            `yaml:"monitoringInfo,omitempty"`
+	Plugins                   MultiKeyValue                        `yaml:"plugins,omitempty"`
+	I18nNamespaces            []string                             `yaml:"i18nNamespaces,omitempty"`
+	Proxy                     Proxy                                `yaml:"proxy,omitempty"`
+	ContentSecurityPolicy     map[consolev1.DirectiveType][]string `yaml:"contentSecurityPolicy,omitempty"`
+	ContentSecurityPolicyMode string                               `yaml:"contentSecurityPolicyMode,omitempty"`
+	Telemetry                 MultiKeyValue                        `yaml:"telemetry,omitempty"`
+	PluginsOrder              []string                             `yaml:"pluginsOrder,omitempty"`
 }
 
 type Proxy struct {

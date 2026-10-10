@@ -366,3 +366,44 @@ func TestSetFlagsFromConfig(t *testing.T) {
 		})
 	}
 }
+
+func TestCSPModeConfigPrecedence(t *testing.T) {
+	for _, test := range []struct {
+		name     string
+		yamlMode string
+		envMode  string
+		cliMode  string
+		expected string
+	}{
+		{"default", "", "", "", "report-only"},
+		{"YAML enforce", "enforce", "", "", "enforce"},
+		{"YAML report-only", "report-only", "", "", "report-only"},
+		{"environment overrides YAML", "enforce", "report-only", "", "report-only"},
+		{"CLI overrides environment and YAML", "report-only", "report-only", "enforce", "enforce"},
+	} {
+		t.Run(test.name, func(t *testing.T) {
+			filename := t.TempDir() + "/config.yaml"
+			content := "apiVersion: console.openshift.io/v1\nkind: ConsoleConfig\n"
+			if test.yamlMode != "" {
+				content += "contentSecurityPolicyMode: " + test.yamlMode + "\n"
+			}
+			if err := os.WriteFile(filename, []byte(content), 0600); err != nil {
+				t.Fatal(err)
+			}
+			fs := flag.NewFlagSet("csp", flag.ContinueOnError)
+			fs.String("config", "", "")
+			mode := fs.String("csp-mode", string(CSPModeReportOnly), "")
+			t.Setenv("TEST_CSP_MODE", test.envMode)
+			args := []string{"--config", filename}
+			if test.cliMode != "" {
+				args = append(args, "--csp-mode", test.cliMode)
+			}
+			if _, err := Parse(fs, args, "TEST"); err != nil {
+				t.Fatal(err)
+			}
+			if *mode != test.expected {
+				t.Errorf("expected %q, got %q", test.expected, *mode)
+			}
+		})
+	}
+}

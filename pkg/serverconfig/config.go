@@ -179,6 +179,11 @@ func SetFlagsFromConfig(fs *flag.FlagSet, config *Config) (err error) {
 	}
 
 	addContentSecurityPolicy(fs, config.ContentSecurityPolicy)
+	if config.ContentSecurityPolicyMode != "" && !isAlreadySet(fs, "csp-mode") {
+		if err := fs.Set("csp-mode", config.ContentSecurityPolicyMode); err != nil {
+			return err
+		}
+	}
 	addTelemetry(fs, config.Telemetry)
 
 	return nil

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import type { FC, FormEvent } from 'react';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import {
   Alert,
   Button,
@@ -86,6 +86,7 @@ export const UninstallOperatorModal: FC<UninstallOperatorModalProps> = ({
   const [operandDeletionErrors, setOperandDeletionErrors] = useState<OperandError[]>([]);
   const [operandDeletionVerificationError, setOperandDeletionVerificationError] = useState(false);
   const [clusterServiceVersionExistsError, setClusterServiceVersionExistsError] = useState('');
+  const operandVerificationFinished = useRef(false);
 
   const canPatchConsoleOperatorConfig = useAccessReview({
     group: ConsoleOperatorConfigModel.apiGroup,
@@ -157,9 +158,12 @@ export const UninstallOperatorModal: FC<UninstallOperatorModalProps> = ({
       }
     };
 
+    // Finish the asynchronous existence check before starting deletions so every
+    // deletion promise has a rejection handler attached immediately.
+    const deleteCSV = subscription?.status?.installedCSV && (await clusterServiceVersionExists());
     const operatorUninstallPromises = [
       k8sKill(SubscriptionModel, subscription, {}, {}, deleteOptions),
-      ...(subscription?.status?.installedCSV && (await clusterServiceVersionExists())
+      ...(deleteCSV
         ? [
             k8sKill(
               ClusterServiceVersionModel,
@@ -214,13 +218,24 @@ export const UninstallOperatorModal: FC<UninstallOperatorModalProps> = ({
     const interval = setInterval(() => {
       coFetchJSON(url)
         .then((curOperands) => {
+          if (operandVerificationFinished.current) {
+            return;
+          }
           setOperandsRemaining(curOperands.items.length);
           if (curOperands.items.length === 0) {
+            // Claim success before the display delay so another in-flight poll
+            // cannot replace it with a failure or trigger a second uninstall.
+            operandVerificationFinished.current = true;
             clearInterval(interval);
             setTimeout(() => finishVerification(true), 1000); // allow '0 Operands remaining' to display for a second
           }
         })
         .catch(() => {
+          if (operandVerificationFinished.current) {
+            return;
+          }
+          operandVerificationFinished.current = true;
+          clearInterval(interval);
           finishVerification(false);
         });
     }, 2000); // every 2 seconds
@@ -267,6 +282,7 @@ export const UninstallOperatorModal: FC<UninstallOperatorModalProps> = ({
 
     setShowInstructions(false);
     if (deleteOperands) {
+      operandVerificationFinished.current = false;
       setOperandsDeleteInProgress(true);
       setOperandsRemaining(operands.length);
       const operandDeletionPromises = operands.map((operand: K8sResourceCommon) => {

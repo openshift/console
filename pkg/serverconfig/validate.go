@@ -12,6 +12,10 @@ import (
 )
 
 func Validate(fs *flag.FlagSet) error {
+	if err := flags.ValidateFlagIs("csp-mode", fs.Lookup("csp-mode").Value.String(), string(CSPModeReportOnly), string(CSPModeEnforce)); err != nil {
+		return err
+	}
+
 	if _, err := validateDeveloperCatalogCategories(fs.Lookup("developer-catalog-categories").Value.String()); err != nil {
 		return err
 	}
