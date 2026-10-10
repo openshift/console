@@ -1,4 +1,4 @@
-import type { FC, FormEvent, Ref, CSSProperties } from 'react';
+import type { FC, FormEvent, ReactNode, Ref, CSSProperties } from 'react';
 import { useState, useMemo, useCallback } from 'react';
 import type { MenuToggleElement } from '@patternfly/react-core';
 import {
@@ -43,7 +43,7 @@ const SecureRouteFields: FC = () => {
     [t],
   );
 
-  const tlsTerminationSelectOptions: JSX.Element[] = useMemo(
+  const tlsTerminationSelectOptions: ReactNode[] = useMemo(
     () =>
       Object.keys(terminationOptions).map((tlsTerminationOption) => (
         <SelectOption key={tlsTerminationOption} value={tlsTerminationOption}>
@@ -68,7 +68,7 @@ const SecureRouteFields: FC = () => {
     [t, tlsTermination],
   );
 
-  const insecureTrafficSelectOptions: JSX.Element[] = useMemo(
+  const insecureTrafficSelectOptions: ReactNode[] = useMemo(
     () =>
       Object.keys(insecureTrafficOptions).map((insecureTrafficOption) => (
         <SelectOption key={insecureTrafficOption} value={insecureTrafficOption}>

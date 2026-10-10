@@ -19,7 +19,7 @@ export const MultiStreamLogs: FC<MultiStreamLogsProps> = ({
   taskName,
   setCurrentLogsGetter,
 }) => {
-  const scrollPane = useRef<HTMLDivElement>();
+  const scrollPane = useRef<HTMLDivElement>(undefined);
   const completedRef = useRef<boolean[]>([]);
   const [renderToCount, setRenderToCount] = useState(0);
   const [scrollDirection, handleScrollCallback] = useScrollDirection();

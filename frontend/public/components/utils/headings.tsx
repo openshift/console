@@ -256,7 +256,7 @@ export type ConnectedPageHeadingProps = Omit<PageHeadingProps, 'primaryAction'> 
   OverrideTitle?: ComponentType<{ obj?: K8sResourceKind }>;
   resourceKeys?: string[];
   /** A function to get the title of the resource that is used when `data` is present */
-  titleFunc?: (obj: K8sResourceKind) => string | JSX.Element;
+  titleFunc?: (obj: K8sResourceKind) => string | ReactNode;
 };
 
 export type SectionHeadingProps = {

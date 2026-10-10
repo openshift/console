@@ -42,7 +42,7 @@ export const useFullscreen = <T extends HTMLElement = HTMLDivElement>() => {
   }, []);
 
   return [fullscreenRef, toggleFullscreen, isFullscreen, canUseFullScreen] as [
-    RefObject<T>,
+    RefObject<T | null>,
     () => void,
     boolean,
     boolean,

@@ -1,8 +1,6 @@
 import type {
   ComponentType,
   ReactNode,
-  ReactText,
-  ReactNodeArray,
   SetStateAction,
   Dispatch,
   ElementType,
@@ -457,7 +455,7 @@ export type VirtualizedTableProps<D, R extends any = {}> = {
  */
 export type VirtualizedTableFC = <D, R extends any = {}>(
   props: VirtualizedTableProps<D, R>,
-) => JSX.Element;
+) => ReactNode;
 
 /**
  * @deprecated Used only by the deprecated `TableData` component, for rendering cells within the deprecated
@@ -820,7 +818,7 @@ export type RowMatchFilter<R = any> = RowFilterBase<R> & {
 };
 
 export type RowReducerFilter<R = any> = RowFilterBase<R> & {
-  reducer: (obj: R) => ReactText;
+  reducer: (obj: R) => number | string;
 };
 
 export type RowFilter<R = any> = RowMatchFilter<R> | RowReducerFilter<R>;
@@ -1147,7 +1145,7 @@ export type CodeEditorToolbarProps = {
   /** Whether to show a toolbar with shortcuts on top of the editor. */
   showShortcuts?: boolean;
   /** Toolbar links section on the left side of the editor */
-  toolbarLinks?: ReactNodeArray;
+  toolbarLinks?: readonly ReactNode[];
 };
 
 // Omit the ref as we have our own ref type, which is completely different
@@ -1243,7 +1241,7 @@ export type UseAnnotationsModal = (resource: K8sResourceCommon) => () => void;
 export type UseDeleteModal = (
   resource: K8sResourceCommon,
   redirectTo?: To,
-  message?: JSX.Element,
+  message?: ReactNode,
   btnText?: ReactNode,
   deleteAllResources?: () => Promise<K8sResourceKind[]>,
 ) => () => void;

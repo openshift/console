@@ -64,8 +64,8 @@ export const PollConsoleUpdates = memo(() => {
   }, [safeFetch]);
   usePoll(tick, URL_POLL_DEFAULT_DELAY);
 
-  const prevUpdateDataRef = useRef<CheckUpdatesApiResult>();
-  const prevPluginManifestsDataRef = useRef<RemotePluginManifest[]>();
+  const prevUpdateDataRef = useRef<CheckUpdatesApiResult>(undefined);
+  const prevPluginManifestsDataRef = useRef<RemotePluginManifest[]>(undefined);
   useEffect(() => {
     prevUpdateDataRef.current = updateData;
     prevPluginManifestsDataRef.current = pluginManifestsData;

@@ -501,7 +501,7 @@ export const ResourceLog: FC<ResourceLogProps> = ({
   );
   const [showFullLogCheckbox, setShowFullLogCheckbox] = useState(showFullLog);
   const buffer = useToggleLineBuffer(showFullLogCheckbox ? null : bufferSize);
-  const ws = useRef<any>(); // TODO Make this a hook
+  const ws = useRef<any>(undefined); // TODO Make this a hook
   const [fullscreenRef, toggleFullscreen, isFullscreen, canUseFullScreen] = useFullscreen();
   const logViewerRef = useRef(null);
   const externalLogLinkFlag = useFlag(FLAGS.CONSOLE_EXTERNAL_LOG_LINK);

@@ -96,7 +96,7 @@ const GitSection: FC<GitSectionProps> = ({
   flowType,
 }) => {
   const { t } = useTranslation('devconsole');
-  const inputRef = useRef<HTMLInputElement>();
+  const inputRef = useRef<HTMLInputElement>(undefined);
 
   const {
     dirty,

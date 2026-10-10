@@ -8,8 +8,8 @@ import { ActionMenuVariant } from '../types';
 type ActionMenuToggleProps = {
   isOpen: boolean;
   isDisabled: boolean;
-  menuRef: RefObject<HTMLElement>;
-  toggleRef: RefObject<HTMLButtonElement>;
+  menuRef: RefObject<HTMLElement | null>;
+  toggleRef: RefObject<HTMLButtonElement | null>;
   toggleVariant?: ActionMenuVariant;
   toggleTitle?: string;
   onToggleClick: (state: SetStateAction<boolean>) => void;
