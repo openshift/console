@@ -160,7 +160,9 @@ export const useConsoleDataViewColumns = <TData, TCustomRowData>(
   getObjectMetadata: ((obj: TData) => ResourceMetadata) | undefined,
   isResizable: boolean,
 ) => {
-  const [resolvedExtensions] = useResolvedExtensions(isConsoleDataViewTableColumn);
+  const [resolvedExtensions, extensionsResolved] = useResolvedExtensions(
+    isConsoleDataViewTableColumn,
+  );
   const matchingExtensions = useMemo(
     () =>
       tableID
@@ -288,6 +290,7 @@ export const useConsoleDataViewColumns = <TData, TCustomRowData>(
 
   return {
     columns: resizableColumns,
+    columnsResolved: extensionsResolved,
     columnLayout: managedLayout,
     getDataViewRows: getRows,
     resetColumnWidths,

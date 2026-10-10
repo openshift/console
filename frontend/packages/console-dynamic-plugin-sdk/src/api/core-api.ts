@@ -234,6 +234,7 @@ export const VirtualizedTable: VirtualizedTableFC = require('@console/internal/c
   .default;
 
 /**
+ * @deprecated Use PatternFly's [Data view](https://www.patternfly.org/extensions/data-view/overview) or ConsoleDataView instead.
  * Component for displaying table data within a table row
  * @param {string} id - unique id for table
  * @param {Set<string>} activeColumnIDs - active columns
@@ -262,6 +263,7 @@ export const TableData: FC<TableDataProps> = require('@console/internal/componen
   .TableData;
 
 /**
+ * @deprecated Use ConsoleDataView instead which handles this internally.
  * A hook that provides a list of user-selected active TableColumns.
  * @param {Object} options - Which are passed as a key-value in the map
  * @param options.columns - An array of all available TableColumns
