@@ -771,7 +771,7 @@ func main() {
 		klog.Info("HTTP/2 enabled")
 	}
 
-	listener, err := listen(listenURL.Scheme, listenURL.Host, *fTLSCertFile, *fTLSKeyFile, cfg.ServingInfo.MinTLSVersion, cfg.ServingInfo.CipherSuites)
+	listener, err := listen(listenURL.Scheme, listenURL.Host, *fTLSCertFile, *fTLSKeyFile, cfg.ServingInfo.MinTLSVersion, cfg.ServingInfo.CipherSuites, cfg.ServingInfo.Groups)
 	if err != nil {
 		klog.Fatalf("error getting listener, %v", err)
 	}
@@ -810,7 +810,7 @@ func main() {
 	httpsrv.Serve(listener)
 }
 
-func listen(scheme, host, certFile, keyFile, minTLSVersion string, cipherSuites []string) (net.Listener, error) {
+func listen(scheme, host, certFile, keyFile, minTLSVersion string, cipherSuites, groups []string) (net.Listener, error) {
 	klog.Infof("Binding to %s...", host)
 	if scheme == "http" {
 		klog.Info("Not using TLS")
@@ -847,6 +847,18 @@ func listen(scheme, host, certFile, keyFile, minTLSVersion string, cipherSuites 
 			ciphers = append(ciphers, cipher)
 		}
 		tlsConfig.CipherSuites = ciphers
+	}
+
+	if len(groups) > 0 {
+		curves, unsupported := tlsCurvePreferences(groups)
+		if len(unsupported) > 0 {
+			klog.Warningf("Ignoring unsupported TLS groups: %v", unsupported)
+		}
+		if len(curves) > 0 {
+			tlsConfig.CurvePreferences = curves
+		} else {
+			klog.Warningf("None of the configured TLS groups %v are supported by the Go runtime; falling back to default curve preferences", groups)
+		}
 	}
 
 	return tls.Listen("tcp", host, tlsConfig)
