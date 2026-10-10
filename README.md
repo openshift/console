@@ -460,10 +460,13 @@ docker run -p 8081:8081 downloadsserver:latest
 
 The console application automatically reports CSP violations to telemetry. This detection and
 reporting logic attempts to parse a dynamic plugin name from the securitypolicyviolation event to
-include in the data reported to telemetry. If a plugin name is not determined in
-this way, then 'none' will be used. Additionally, violation reporting is throttled to prevent
-spamming the telemetry service with repetitive data. Identical violations will not be
-reported more than once a day.
+include in the data reported to telemetry. When the event does not expose a plugin asset URL and
+reports `browser-extension` as its source file, the document URL is matched against active dynamic
+plugin routes; a plugin name is included only when one plugin has matching routes. This is a route
+association and does not prove which page React Router selected or which script initiated the
+violation. If a plugin name is not determined in this way, an empty plugin name is used.
+Additionally, violation reporting is throttled to prevent spamming the telemetry service with
+repetitive data. Identical violations will not be reported more than once a day.
 
 In case of local developement of the dynamic plugin, just pass needed CSP directives address to the console server, using the `--content-security-policy` flag.
 

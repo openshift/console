@@ -27,6 +27,7 @@ import { LoadingBox } from '@console/shared/src/components/loading/LoadingBox';
 import { usePerspectives } from '@console/shared/src/hooks/usePerspectives';
 import { useLanguage } from '../../components/user-preferences/language/useLanguage';
 import { usePreferredLanguage } from '../../components/user-preferences/language/usePreferredLanguage';
+import { useCSPViolationDetector } from '../../hooks/useCSPViolationDetector';
 import { NamespaceContext, useValuesForNamespaceContext } from './namespace';
 import PerspectiveDetector from './PerspectiveDetector';
 import { useValuesForPerspectiveContext } from './useValuesForPerspectiveContext';
@@ -150,6 +151,7 @@ export const ContextProviderExtensionWrapper: FC<{ children: ReactNode }> = ({ c
 export const DetectContext: FC<{ children: ReactNode }> = ({ children }) => {
   const [activePerspective, setActivePerspective, perspectiveLoaded] =
     useValuesForPerspectiveContext();
+  useCSPViolationDetector(activePerspective);
   const { namespace, setNamespace, loaded: namespaceLoaded } = useValuesForNamespaceContext();
 
   const [preferredLanguage, , preferredLanguageLoaded] = usePreferredLanguage();
