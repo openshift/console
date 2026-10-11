@@ -1,5 +1,17 @@
 [
   {
+    "type": "console.context-provider",
+    "properties": {
+      "provider": {
+        "$codeRef": "operatorMigrationNotifications.OperatorMigrationNotificationsProvider"
+      },
+      "useValueHook": {
+        "$codeRef": "operatorMigrationNotifications.useOperatorMigrationNotifications"
+      }
+    },
+    "flags": { "required": ["TECH_PREVIEW"] }
+  },
+  {
     "type": "console.flag/model",
     "properties": {
       "model": {
@@ -150,6 +162,30 @@
         "kind": "Subscription"
       },
       "component": { "$codeRef": "subscriptions.SubscriptionsPage" }
+    }
+  },
+  {
+    "type": "console.dataview/table-column",
+    "properties": {
+      "table": {
+        "group": "operators.coreos.com",
+        "version": "v1alpha1",
+        "kind": "ClusterServiceVersion"
+      },
+      "columnData": {
+        "id": "migrationEligibility",
+        "title": "%olm~Migration status%",
+        "tooltip": "%olm~Indicates whether the operator is eligible to be migrated to the new Next-Gen Operators (Operator Lifecycle Manager v1) architecture.%",
+        "additional": false,
+        "props": { "modifier": "nowrap" }
+      },
+      "getCellContent": {
+        "$codeRef": "operatorMigrationEligibility.getOperatorMigrationEligibilityCell"
+      },
+      "insertAfter": "status"
+    },
+    "flags": {
+      "required": ["TECH_PREVIEW"]
     }
   },
   {
@@ -526,6 +562,21 @@
     },
     "flags": {
       "required": ["CAN_LIST_OPERATOR_GROUP"]
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "operators.coreos.com",
+        "version": "v1alpha1",
+        "kind": "ClusterServiceVersion"
+      },
+      "provider": { "$codeRef": "operatorMigrationActions.useOperatorMigrationResourceActions" },
+      "bulkProvider": { "$codeRef": "operatorMigrationActions.useOperatorMigrationBulkActions" }
+    },
+    "flags": {
+      "required": ["TECH_PREVIEW"]
     }
   },
   {

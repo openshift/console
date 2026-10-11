@@ -475,12 +475,23 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 		})),
 	)
 
+	olmTLSConfig := s.InternalProxiedK8SClientConfig.TLSClientConfig
+	if s.K8sProxyConfig.TLSClientConfig != nil {
+		olmTLSConfig.Insecure = s.K8sProxyConfig.TLSClientConfig.InsecureSkipVerify
+		olmTLSConfig.ServerName = s.K8sProxyConfig.TLSClientConfig.ServerName
+	}
+	migrationBackendConfig := rest.CopyConfig(s.InternalProxiedK8SClientConfig)
+	migrationBackendConfig.Transport = nil
+	migrationBackendConfig.TLSClientConfig = olmTLSConfig
 	olmHandler := olm.NewOLMHandler(
 		k8sProxyURL,
 		&http.Client{
 			Transport: internalProxiedK8SRT,
 		},
 		s.CatalogService,
+		olmTLSConfig,
+		s.Authenticator.IsStatic(),
+		&olm.MigrationBackendConfig{Config: migrationBackendConfig, Enabled: s.TechPreview},
 	)
 
 	handle("/api/olm/", authHandler(olmHandler.ServeHTTP))
