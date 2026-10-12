@@ -1,6 +1,6 @@
 import type { FC, MouseEvent, ReactElement } from 'react';
 import { useState, useMemo, createRef } from 'react';
-import { IconStatus, Status } from '@patternfly/react-component-groups/dist/dynamic/Status';
+import { IconStatus, Status } from '@patternfly/react-component-groups/dist/esm/Status';
 import type { TabProps, TabContentProps } from '@patternfly/react-core';
 import {
   Tabs,
