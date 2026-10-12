@@ -1,5 +1,4 @@
 import { forwardRef, useRef, useEffect, useImperativeHandle, useCallback, useState } from 'react';
-import { getResizeObserver } from '@patternfly/react-core';
 import { FitAddon } from '@xterm/addon-fit';
 import type { ITerminalOptions, ITerminalAddon } from '@xterm/xterm';
 import { Terminal as XTerminal } from '@xterm/xterm';
@@ -37,7 +36,10 @@ export const Terminal = forwardRef<ImperativeTerminalType, TerminalProps>(
     const terminal = useRef<XTerminal>();
     const fitAddon = useRef<FitAddon>();
     const terminalRef = useRef<HTMLDivElement>(null);
+    const onResizeRef = useRef(onResize);
     const isFullscreen = useIsFullscreen();
+
+    onResizeRef.current = onResize;
 
     const [dimensions, setDimensions] = useState<Pick<CSSStyleDeclaration, 'width' | 'height'>>({
       width: '0',
@@ -78,31 +80,42 @@ export const Terminal = forwardRef<ImperativeTerminalType, TerminalProps>(
 
       term.loadAddon(fit);
 
-      let unobserveResize: () => void;
+      let resizeObserver: ResizeObserver | undefined;
+      let fitFrame = 0;
+
+      // PatternFly getResizeObserver(..., true) builds a debounced function and never
+      // calls it, so fit() and the PTY winsize update never ran. Observe directly.
+      const fitToContainer = (attempt = 0) => {
+        const node = terminalRef.current;
+        const current = terminal.current;
+        if (!node || !current || node.clientWidth < 1 || node.clientHeight < 1) {
+          return;
+        }
+        try {
+          fit.fit();
+          if (current.rows > 0 && current.cols > 0) {
+            onResizeRef.current(current.rows, current.cols);
+          }
+          // @ts-expect-error The internal xterm textarea was not repositioned when the window was resized.
+          // See https://bugzilla.redhat.com/show_bug.cgi?id=1983220
+          // and https://github.com/xtermjs/xterm.js/issues/3390
+          current._core?._syncTextArea?.();
+        } catch {
+          // xterm's dimensions getter throws until its renderer is ready.
+          if (attempt < 5) {
+            fitFrame = window.requestAnimationFrame(() => fitToContainer(attempt + 1));
+          }
+        }
+      };
 
       if (terminalRef.current) {
         term.open(terminalRef.current);
         term.focus();
-        unobserveResize = getResizeObserver(
-          terminalRef.current,
-          () => {
-            if (!terminal.current) {
-              return;
-            }
-            // @ts-expect-error Guard: skip resize if xterm's render service hasn't initialized yet.
-            // ResizeObserver can fire before the internal dimensions are available.
-            if (!terminal.current._core?._renderService?.dimensions) {
-              return;
-            }
-            fit.fit();
-            onResize(terminal.current.rows, terminal.current.cols);
-            // @ts-expect-error The internal xterm textarea was not repositioned when the window was resized.
-            // See https://bugzilla.redhat.com/show_bug.cgi?id=1983220
-            // and https://github.com/xtermjs/xterm.js/issues/3390
-            terminal.current._core?._syncTextArea?.();
-          },
-          true,
-        );
+        resizeObserver = new ResizeObserver(() => {
+          cancelAnimationFrame(fitFrame);
+          fitFrame = window.requestAnimationFrame(() => fitToContainer());
+        });
+        resizeObserver.observe(terminalRef.current);
         handleResize();
       }
 
@@ -110,8 +123,9 @@ export const Terminal = forwardRef<ImperativeTerminalType, TerminalProps>(
       window.addEventListener('sidebar_toggle', handleResize);
 
       return () => {
+        cancelAnimationFrame(fitFrame);
+        resizeObserver?.disconnect();
         term.dispose();
-        unobserveResize?.();
         window.removeEventListener('resize', handleResize);
         window.removeEventListener('sidebar_toggle', handleResize);
       };
