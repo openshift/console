@@ -3,8 +3,13 @@ import { usePluginStore } from '@openshift/dynamic-plugin-sdk';
 import { AlertVariant } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { matchRoutes } from 'react-router';
+import type { RoutePage } from '@console/dynamic-plugin-sdk/src/extensions/pages';
+import { isRoutePage } from '@console/dynamic-plugin-sdk/src/extensions/pages';
+import type { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
 import type { PluginCSPViolations } from '@console/internal/actions/ui';
 import { setPluginCSPViolations } from '@console/internal/actions/ui';
+import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import { useToast } from '@console/shared/src/components/toast/useToast';
 import { IS_PRODUCTION } from '@console/shared/src/constants/common';
 import { ONE_DAY } from '@console/shared/src/constants/time';
@@ -23,6 +28,51 @@ const getPluginNameFromResourceURL = (url: string): string =>
   url?.startsWith(pluginAssetBaseURL)
     ? url.substring(pluginAssetBaseURL.length).split('/')[0]
     : null;
+
+const getPluginNameFromDocumentRoute = (
+  documentURI: string,
+  activePerspective: string,
+  routePages: LoadedExtension<RoutePage>[],
+): string | null => {
+  let currentPath: string;
+  try {
+    const eventDocumentURL = new URL(documentURI);
+    if (
+      eventDocumentURL.origin !== window.location.origin ||
+      eventDocumentURL.pathname !== window.location.pathname
+    ) {
+      return null;
+    }
+
+    currentPath = eventDocumentURL.pathname;
+  } catch {
+    return null;
+  }
+
+  // Some browsers report "browser-extension" as the source file. In that case,
+  // the document route can associate the event with a plugin page, but cannot
+  // identify which script initiated the violation.
+  const matchingPluginNames = new Set<string>();
+  routePages.forEach(({ pluginName, properties }) => {
+    if ((properties.perspective ?? activePerspective) !== activePerspective) {
+      return;
+    }
+
+    const paths = Array.isArray(properties.path) ? properties.path : [properties.path];
+    const routeMatches = paths.some((path) =>
+      matchRoutes(
+        [{ path: `${path}${properties.exact ? '' : '/*'}` }],
+        { pathname: currentPath },
+        window.SERVER_FLAGS.basePath,
+      ),
+    );
+    if (routeMatches) {
+      matchingPluginNames.add(pluginName);
+    }
+  });
+
+  return matchingPluginNames.size === 1 ? [...matchingPluginNames][0] : null;
+};
 
 const sameHostname = (a: string, b: string): boolean => {
   // SecurityPolicyViolationEvent URIs can be tokens such as "inline" or
@@ -68,11 +118,12 @@ export const newPluginCSPViolationEvent = (
   pluginName: pluginName || '',
 });
 
-export const useCSPViolationDetector = () => {
+export const useCSPViolationDetector = (activePerspective: string) => {
   const { t } = useTranslation('console-app');
   const toastContext = useToast();
   const fireTelemetryEvent = useTelemetry();
   const pluginStore = usePluginStore();
+  const routePages = useExtensions<RoutePage>(isRoutePage);
   const cspViolations = useConsoleSelector<PluginCSPViolations>(({ UI }) => UI.pluginCSPViolations);
   const dispatch = useConsoleDispatch();
   const [, cacheEvent] = useLocalStorageCache<PluginCSPViolationEvent>(
@@ -86,9 +137,14 @@ export const useCSPViolationDetector = () => {
       console.warn('Content Security Policy violation detected', event);
 
       // Attempt to infer Console plugin name from SecurityPolicyViolation event
-      const pluginName =
+      const pluginNameFromResourceURL =
         getPluginNameFromResourceURL(event.blockedURI) ||
         getPluginNameFromResourceURL(event.sourceFile);
+      const pluginNameFromDocumentRoute =
+        !pluginNameFromResourceURL && event.sourceFile === 'browser-extension'
+          ? getPluginNameFromDocumentRoute(event.documentURI, activePerspective, routePages)
+          : null;
+      const pluginName = pluginNameFromResourceURL || pluginNameFromDocumentRoute;
 
       const pluginCSPViolationEvent = newPluginCSPViolationEvent(pluginName, event);
       const isNew = cacheEvent(pluginCSPViolationEvent);
@@ -105,11 +161,14 @@ export const useCSPViolationDetector = () => {
         const validPlugin = !!pluginInfo;
         const pluginIsLoaded = validPlugin && pluginInfo.status === 'loaded';
 
-        console.warn(
-          `Content Security Policy violation seems to originate from ${
-            validPlugin ? `plugin ${pluginName}` : `unknown plugin ${pluginName}`
-          }`,
-        );
+        const warningMessage = `Content Security Policy violation seems to originate from ${
+          validPlugin ? `plugin ${pluginName}` : `unknown plugin ${pluginName}`
+        }`;
+        if (pluginNameFromDocumentRoute) {
+          console.warn(warningMessage, 'Plugin association inferred from the document route.');
+        } else {
+          console.warn(warningMessage);
+        }
 
         if (validPlugin) {
           dispatch(setPluginCSPViolations(pluginName, true));
@@ -131,7 +190,17 @@ export const useCSPViolationDetector = () => {
         }
       }
     },
-    [cacheEvent, fireTelemetryEvent, pluginStore, toastContext, t, dispatch, cspViolations],
+    [
+      cacheEvent,
+      fireTelemetryEvent,
+      pluginStore,
+      toastContext,
+      t,
+      dispatch,
+      cspViolations,
+      activePerspective,
+      routePages,
+    ],
   );
 
   useEffect(() => {

@@ -71,7 +71,6 @@ import { withoutSensitiveInformations, getTelemetryTitle } from './utils/telemet
 import { AdmissionWebhookWarningNotifications } from '@console/app/src/components/admission-webhook-warnings/AdmissionWebhookWarningNotifications';
 import { usePackageManifestCheck } from '@console/shared/src/hooks/usePackageManifestCheck';
 import { UserPreferenceProvider } from '@console/app/src/providers/user-preferences/UserPreferenceContext';
-import { useCSPViolationDetector } from '@console/app/src/hooks/useCSPViolationDetector';
 import { useNotificationPoller } from '@console/app/src/hooks/useNotificationPoller';
 import { useImpersonateRefreshFeatures } from './useImpersonateRefreshFeatures';
 
@@ -129,7 +128,6 @@ const App: FC = () => {
     }
   }, []);
 
-  useCSPViolationDetector();
   useNotificationPoller();
 
   useEffect(() => {
