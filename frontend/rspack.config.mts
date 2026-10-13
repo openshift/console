@@ -233,7 +233,7 @@ const config: Configuration = {
       {
         test: /\.css$/,
         include: path.resolve(__dirname, 'node_modules/monaco-editor'),
-        use: ['style-loader', 'css-loader'],
+        type: 'css',
       },
       {
         test: /\.(png|jpg|jpeg|gif|svg|woff2?|ttf|eot|otf)(\?.*$|$)/,
@@ -241,6 +241,13 @@ const config: Configuration = {
         generator: {
           filename: 'assets/[path][name][ext]',
         },
+        rules: [
+          {
+            include: path.resolve(__dirname, 'node_modules/monaco-editor'),
+            // Native CSS resolves Monaco's font URLs relative to the stylesheet.
+            generator: { publicPath: './' },
+          },
+        ],
       },
     ],
   },

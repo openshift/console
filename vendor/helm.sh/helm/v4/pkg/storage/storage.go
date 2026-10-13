@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package storage // import "helm.sh/helm/v4/pkg/storage"
+package storage
 
 import (
 	"errors"
@@ -339,12 +339,14 @@ func Init(d driver.Driver) *Storage {
 		Driver: d,
 	}
 
+	var h slog.Handler
 	// Get logger from driver if it implements the LoggerSetterGetter interface
 	if ls, ok := d.(logging.LoggerSetterGetter); ok {
-		ls.SetLogger(s.Logger().Handler())
+		h = ls.Logger().Handler()
 	} else {
 		// If the driver does not implement the LoggerSetterGetter interface, set the default logger
-		s.SetLogger(slog.Default().Handler())
+		h = slog.Default().Handler()
 	}
+	s.SetLogger(h)
 	return s
 }

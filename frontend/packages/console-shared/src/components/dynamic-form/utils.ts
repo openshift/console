@@ -1,5 +1,5 @@
-import type { UiSchema } from '@rjsf/core';
-import { getSchemaType, getUiOptions } from '@rjsf/core/dist/cjs/utils';
+import type { UiSchema } from '@rjsf/utils';
+import { getSchemaType, getUiOptions } from '@rjsf/utils';
 import type { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
 import { THOUSAND, MILLION, BILLION } from './const';
@@ -53,11 +53,18 @@ export const hasNoFields = (jsonSchema: JSONSchema7 = {}, uiSchema: UiSchema = {
     return true;
   }
 
-  const type = getSchemaType(jsonSchema) ?? '';
+  const schemaType = getSchemaType(jsonSchema);
+  const type = Array.isArray(schemaType) ? schemaType[0] : (schemaType ?? '');
   const noUIFieldOrWidget = !uiSchema?.['ui:field'] && !uiSchema?.['ui:widget'];
   switch (type) {
     case JSONSchemaType.array:
-      return noUIFieldOrWidget && hasNoFields(jsonSchema.items as JSONSchema7, uiSchema?.items);
+      return (
+        noUIFieldOrWidget &&
+        hasNoFields(
+          jsonSchema.items as JSONSchema7,
+          typeof uiSchema?.items === 'function' ? {} : uiSchema?.items,
+        )
+      );
     case JSONSchemaType.object:
       return (
         noUIFieldOrWidget &&
@@ -189,12 +196,14 @@ export const getJSONSchemaOrder = (
   uiSchema: UiSchema,
   currentPath?: string[],
 ) => {
-  const type = getSchemaType(jsonSchema ?? {});
+  const schemaType = getSchemaType(jsonSchema ?? {});
+  const type = Array.isArray(schemaType) ? schemaType[0] : schemaType;
   const handleArray = () => {
-    const descendantOrder = getJSONSchemaOrder(jsonSchema?.items as JSONSchema7, uiSchema?.items, [
-      ...(currentPath ?? []),
-      'items',
-    ]);
+    const descendantOrder = getJSONSchemaOrder(
+      jsonSchema?.items as JSONSchema7,
+      typeof uiSchema?.items === 'function' ? {} : uiSchema?.items,
+      [...(currentPath ?? []), 'items'],
+    );
     return !_.isEmpty(descendantOrder) ? { items: descendantOrder } : {};
   };
 

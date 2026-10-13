@@ -9,7 +9,6 @@ import { useParams, useNavigate } from 'react-router';
 import type { Selector } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import { filterList } from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
 import type {
-  ColumnLayout,
   K8sResourceCommon,
   WatchK8sResource,
   WatchK8sResultsObject,
@@ -62,7 +61,6 @@ type ListPageWrapperProps<L = any, C = any> = {
   rowFilters?: RowFilter[];
   hideNameLabelFilters?: boolean;
   hideLabelFilter?: boolean;
-  columnLayout?: ColumnLayout;
   name?: string;
   watchedResources?: Record<string, WatchK8sResultsObject<K8sResourceCommon | K8sResourceCommon[]>>;
   loaded?: boolean;
@@ -91,7 +89,6 @@ export const ListPageWrapper: FC<ListPageWrapperProps> = (props) => {
     labelFilterPlaceholder,
     hideNameLabelFilters,
     hideLabelFilter,
-    columnLayout,
     name,
     watchedResources,
     nameFilter,
@@ -133,7 +130,6 @@ export const ListPageWrapper: FC<ListPageWrapperProps> = (props) => {
       textFilter={textFilter}
       hideNameLabelFilters={hideNameLabelFilters}
       hideLabelFilter={hideLabelFilter}
-      columnLayout={columnLayout}
       uniqueFilterName={name}
       {...props}
     />
@@ -385,7 +381,6 @@ export const ListPage = withFallback<ListPageProps>((props) => {
     hideLabelFilter,
     hideNameLabelFilters,
     hideColumnManagement,
-    columnLayout,
     omitFilterToolbar,
     flatten = (_resources) => (_resources[name || kind]?.data ?? []) as K8sResourceCommon[],
   } = props;
@@ -460,7 +455,6 @@ export const ListPage = withFallback<ListPageProps>((props) => {
       hideLabelFilter={hideLabelFilter}
       hideNameLabelFilters={hideNameLabelFilters}
       hideColumnManagement={hideColumnManagement}
-      columnLayout={columnLayout}
       nameFilter={nameFilter}
       omitFilterToolbar={omitFilterToolbar}
     />
@@ -485,7 +479,6 @@ type PageCommonProps<L = any, C = any> = {
   badge?: ReactNode;
   hideNameLabelFilters?: boolean;
   hideLabelFilter?: boolean;
-  columnLayout?: ColumnLayout;
   hideColumnManagement?: boolean;
   labelFilterPlaceholder?: string;
   nameFilterPlaceholder?: string;
@@ -538,7 +531,6 @@ export const MultiListPage: FC<MultiListPageProps> = (props) => {
     hideLabelFilter,
     hideNameLabelFilters,
     hideColumnManagement,
-    columnLayout,
     nameFilter,
     omitFilterToolbar,
   } = props;
@@ -651,7 +643,6 @@ export const MultiListPage: FC<MultiListPageProps> = (props) => {
         hideLabelFilter={hideLabelFilter}
         hideNameLabelFilters={hideNameLabelFilters}
         hideColumnManagement={hideColumnManagement}
-        columnLayout={columnLayout}
         nameFilterPlaceholder={nameFilterPlaceholder}
         labelFilterPlaceholder={labelFilterPlaceholder}
         nameFilter={nameFilter}

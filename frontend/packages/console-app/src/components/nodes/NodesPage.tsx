@@ -54,12 +54,11 @@ import type {
 } from '@console/internal/module/k8s';
 import { referenceForModel, referenceFor, LabelSelector } from '@console/internal/module/k8s';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import { COLUMN_MANAGEMENT_USER_PREFERENCE_KEY, FLAGS } from '@console/shared/src/constants/common';
+import { FLAGS } from '@console/shared/src/constants/common';
 import { DASH } from '@console/shared/src/constants/ui';
 import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
 import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
-import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import { getName, getUID, getLabels } from '@console/shared/src/selectors/common';
 import {
   getNodeArchitecture,
@@ -80,7 +79,6 @@ import {
   nodeRoles as nodeRolesSort,
   sortWithCSRResource,
 } from '@console/shared/src/sorts/nodes';
-import type { TableColumnsType } from '@console/shared/src/types/tableColumn';
 import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
 import { nodeStatus } from '../../status/node';
 import { useIsKubevirtPluginActive } from '../../utils/kubevirt';
@@ -620,7 +618,6 @@ type NodeListProps = {
   vmsEnabled: boolean;
   hideNameLabelFilters?: boolean;
   hideLabelFilter?: boolean;
-  selectedColumns?: TableColumnsType;
   isOpenShift5?: boolean;
 };
 
@@ -636,13 +633,11 @@ const NodeList: FC<NodeListProps> = ({
   vmsEnabled,
   hideNameLabelFilters,
   hideLabelFilter,
-  selectedColumns,
   isOpenShift5 = false,
 }) => {
   const { t } = useTranslation('console-app');
   const { columns } = useNodesColumns(vmsEnabled, isOpenShift5);
   const nodeMetrics = useConsoleSelector<NodeMetrics>(({ UI }) => UI.metrics?.node);
-  const columnManagementID = referenceForModel(NodeModel);
   const statusExtensions = useNodeStatusExtensions();
   const selection = useMemo(
     () => ({
@@ -661,25 +656,6 @@ const NodeList: FC<NodeListProps> = ({
         statusExtensions,
       ),
     [nodeMetrics, statusExtensions],
-  );
-
-  const columnLayout = useMemo(
-    () => ({
-      id: columnManagementID,
-      type: t('Node'),
-      columns: columns
-        .filter((col) => col.id !== nodeColumnInfo.actions.id)
-        .map((col) => ({
-          id: col.id,
-          title: col.title,
-          additional: col.additional,
-        })),
-      selectedColumns:
-        selectedColumns?.[columnManagementID]?.length > 0
-          ? new Set(selectedColumns[columnManagementID] as string[])
-          : new Set<string>(),
-    }),
-    [columns, columnManagementID, selectedColumns, t],
   );
 
   const nodeStatusFilterOptions = useMemo<DataViewFilterOption[]>(
@@ -905,7 +881,6 @@ const NodeList: FC<NodeListProps> = ({
         loaded={loaded}
         loadError={loadError}
         columns={columns}
-        columnLayout={columnLayout}
         id={NodeModel}
         initialFilters={initialFilters}
         additionalFilterNodes={additionalFilterNodes}
@@ -959,12 +934,6 @@ export const NodesPage: FC<NodesPageProps> = ({ selector }) => {
   const dispatch = useConsoleDispatch();
   const { t } = useTranslation('console-app');
   const isOpenShift5 = useFlag(FLAG_OPENSHIFT_5);
-
-  const [selectedColumns, , columnPreferenceLoaded] = useUserPreference<TableColumnsType>(
-    COLUMN_MANAGEMENT_USER_PREFERENCE_KEY,
-    undefined,
-    true,
-  );
 
   const [nodes, nodesLoaded, nodesLoadError] = useK8sWatchResource<NodeKind[]>({
     groupVersionKind: {
@@ -1079,10 +1048,6 @@ export const NodesPage: FC<NodesPageProps> = ({ selector }) => {
   // Don't fail on machine load errors, instead we hide those columns and filters
   const loadError = nodesLoadError || csrsLoadError;
 
-  if (!columnPreferenceLoaded) {
-    return null;
-  }
-
   return (
     <>
       <ListPageHeader title={t('Nodes')}>
@@ -1097,7 +1062,6 @@ export const NodesPage: FC<NodesPageProps> = ({ selector }) => {
           controlPlaneMachineSets={controlPlaneMachineSets}
           machineConfigPools={machineConfigPools}
           vmsEnabled={isKubevirtPluginActive}
-          selectedColumns={selectedColumns}
           isOpenShift5={isOpenShift5}
         />
       </ListPageBody>

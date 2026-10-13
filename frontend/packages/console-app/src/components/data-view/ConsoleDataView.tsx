@@ -27,11 +27,11 @@ import { useTranslation } from 'react-i18next';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import type {
   ResourceFilters,
+  ColumnLayout,
   ConsoleDataViewProps,
   GetDataViewRows,
   K8sResourceCommon,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import { LazyColumnManagementModalOverlay } from '@console/internal/components/modals/lazy-column-management-modal';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { EmptyBox } from '@console/shared/src/components/empty-state/EmptyBox';
 import { StatusBox } from '@console/shared/src/components/status/StatusBox';
@@ -39,7 +39,12 @@ import { DataViewLabelFilter } from './DataViewLabelFilter';
 import { createSelectionCell, createSelectionColumn } from './dataViewSelectionHelpers';
 import { DataViewTextFilter } from './DataViewTextFilter';
 import { getConsoleDataViewID } from './getConsoleDataViewID';
-import { getResourceReference, getSelectedResources } from './resourceActions';
+import { LazyConsoleDataViewColumnManagementModalOverlay } from './lazyConsoleDataViewColumnManagementModal';
+import {
+  getResourceReference,
+  getResourceReferenceForItems,
+  getSelectedResources,
+} from './resourceActions';
 import { ResourceBulkActionMenu } from './ResourceBulkActionMenu';
 import { useConsoleDataViewColumns } from './useConsoleDataViewColumns';
 import { useConsoleDataViewData } from './useConsoleDataViewData';
@@ -78,7 +83,6 @@ export const ConsoleDataView = <
   loaded,
   loadError,
   columns,
-  columnLayout,
   id,
   initialFilters,
   additionalFilterNodes,
@@ -94,22 +98,25 @@ export const ConsoleDataView = <
   EmptyMsg,
   mock,
   isResizable = true,
-  additionalActions,
-  customActions,
+  additionalResponsiveActions = [],
+  additionalToolbarContent,
   selection,
 }: ConsoleDataViewProps<TData, TCustomRowData, TFilters>) => {
   const { t } = useTranslation('console-app');
   const launchModal = useOverlay();
   const [tableKey, setTableKey] = useState(0);
   const resolvedID = getConsoleDataViewID(id);
+  const selectionEnabled = Boolean(selection);
+  const getItemId = selection?.getItemId;
+  const isSelectable = selection?.isSelectable;
+  const getActions = selection?.getActions;
   const { selectedIds, onSelectItem, onSelectAll, clearSelection, deselect } = useDataViewSelection(
     {
       data,
-      getItemId: selection?.getItemId,
-      isSelectable: selection?.isSelectable,
+      getItemId,
+      isSelectable,
     },
   );
-  const selectionEnabled = Boolean(selection);
   const tableColumns = useMemo(
     () => (selectionEnabled ? [createSelectionColumn<TData>(), ...columns] : columns),
     [columns, selectionEnabled],
@@ -154,13 +161,15 @@ export const ConsoleDataView = <
   );
   const getRowsWithSelection = useCallback<GetDataViewRows<TData, TCustomRowData>>(
     (rows, activeColumns) => {
-      if (!selection) return getRowsWithResourceActions(rows, activeColumns);
+      if (!selectionEnabled || !getItemId) {
+        return getRowsWithResourceActions(rows, activeColumns);
+      }
       const selectionIndex = activeColumns.findIndex(({ id: columnID }) => columnID === 'select');
       if (selectionIndex < 0) return getRowsWithResourceActions(rows, activeColumns);
       const contentColumns = activeColumns.filter(({ id: columnID }) => columnID !== 'select');
       const contentRows = getRowsWithResourceActions(rows, contentColumns);
       return rows.map(({ obj }, rowIndex) => {
-        const itemId = selection.getItemId(obj);
+        const itemId = getItemId(obj);
         const cell = {
           id: 'select',
           ...createSelectionCell({
@@ -168,18 +177,35 @@ export const ConsoleDataView = <
             itemId,
             isSelected: selectedIds.has(itemId),
             onSelect: onSelectItem,
-            disabled: selection.isSelectable ? !selection.isSelectable(obj) : false,
+            disabled: isSelectable ? !isSelectable(obj) : false,
           }),
         };
         const contentRow = contentRows[rowIndex];
         return [...contentRow.slice(0, selectionIndex), cell, ...contentRow.slice(selectionIndex)];
       });
     },
-    [getRowsWithResourceActions, selection, selectedIds, onSelectItem],
+    [
+      getRowsWithResourceActions,
+      selectionEnabled,
+      getItemId,
+      isSelectable,
+      selectedIds,
+      onSelectItem,
+    ],
   );
-  const managedColumnLayout = useMemo(
-    () => (columnLayout && resolvedID ? { ...columnLayout, id: resolvedID } : undefined),
-    [columnLayout, resolvedID],
+  const managedColumnLayout = useMemo<ColumnLayout>(
+    () => ({
+      id: resolvedID,
+      type: label ?? resolvedID,
+      columns: tableColumns.map(({ id: columnID, title, additional }) => ({
+        id: columnID,
+        title: title ?? '',
+        additional,
+      })),
+      selectedColumns: new Set(),
+      showNamespaceOverride,
+    }),
+    [label, resolvedID, showNamespaceOverride, tableColumns],
   );
   const preparedTable = useConsoleDataViewColumns(
     tableColumns,
@@ -189,7 +215,17 @@ export const ConsoleDataView = <
     getObjectMetadata,
     isResizable,
   );
+  const nonReorderableColumnIDs = useMemo(() => {
+    const managedColumnIDs = new Set(
+      preparedTable.columnLayout.columns.map(({ id: columnID }) => columnID),
+    );
+    return preparedTable.columns
+      .filter(({ id: columnID, props }) => managedColumnIDs.has(columnID) && props?.isStickyColumn)
+      .map(({ id: columnID }) => columnID);
+  }, [preparedTable.columnLayout.columns, preparedTable.columns]);
   const { resetColumnWidths } = preparedTable;
+  const canResetColumnWidths =
+    isResizable && preparedTable.columns.some(({ resizableProps }) => resizableProps?.isResizable);
 
   const handleResetColumnWidths = useCallback(() => {
     resetColumnWidths();
@@ -207,24 +243,24 @@ export const ConsoleDataView = <
   });
 
   const selectableFilteredData = useMemo(
-    () => (selection?.isSelectable ? filteredData.filter(selection.isSelectable) : filteredData),
-    [filteredData, selection],
+    () => (isSelectable ? filteredData.filter(isSelectable) : filteredData),
+    [filteredData, isSelectable],
   );
   const filteredSelectedItems = useMemo(
     () =>
-      selection
-        ? selectableFilteredData.filter((item) => selectedIds.has(selection.getItemId(item)))
+      selectionEnabled && getItemId
+        ? selectableFilteredData.filter((item) => selectedIds.has(getItemId(item)))
         : [],
-    [selectableFilteredData, selectedIds, selection],
+    [selectableFilteredData, selectedIds, selectionEnabled, getItemId],
   );
   const bulkActions = useMemo(
     () =>
-      selection?.getActions?.({
+      getActions?.({
         selectedItems: filteredSelectedItems,
         clearSelection,
         deselect,
       }),
-    [selection, filteredSelectedItems, clearSelection, deselect],
+    [getActions, filteredSelectedItems, clearSelection, deselect],
   );
   const selectedResources = useMemo(
     () => getSelectedResources(filteredSelectedItems),
@@ -232,25 +268,21 @@ export const ConsoleDataView = <
   );
   const bulkActionReference = useMemo(() => {
     if (filteredSelectedItems.length > 0) return selectedResources?.reference;
-    const selectableData = selection?.isSelectable ? data.filter(selection.isSelectable) : data;
-    return getSelectedResources(selectableData)?.reference;
-  }, [data, filteredSelectedItems.length, selectedResources, selection]);
-  const getItemId = selection?.getItemId;
+    return getResourceReferenceForItems(data, isSelectable);
+  }, [data, filteredSelectedItems.length, selectedResources, isSelectable]);
   const getResourceId = useCallback(
     (resource: K8sResourceCommon) => getItemId?.(resource as TData) ?? '',
     [getItemId],
   );
-  const selectionKey = selection
-    ? JSON.stringify(filteredSelectedItems.map(selection.getItemId))
-    : '';
-  const selectionState = selection
-    ? {
-        selectedItems: selectedIds,
-        onSelectAll,
-        getItemId: selection.getItemId,
-        isSelectable: selection.isSelectable,
-      }
-    : undefined;
+  const selectionKey =
+    selectionEnabled && getItemId ? JSON.stringify(filteredSelectedItems.map(getItemId)) : '';
+  const selectionState = useMemo(
+    () =>
+      selectionEnabled && getItemId
+        ? { selectedItems: selectedIds, onSelectAll, getItemId, isSelectable }
+        : undefined,
+    [selectionEnabled, selectedIds, onSelectAll, getItemId, isSelectable],
+  );
 
   const { dataViewColumns, dataViewRows, pagination, visibleItems } = useConsoleDataViewData<
     TData,
@@ -267,8 +299,13 @@ export const ConsoleDataView = <
     columnManagementID: resolvedID,
     customRowData,
     isResizable,
+    columnsResolved: preparedTable.columnsResolved,
     selection: selectionState,
   });
+
+  // PatternFly keys headers by index and only reads their widths on mount,
+  // so we re-render the table when column visibility or order changes.
+  const tableColumnsKey = JSON.stringify(dataViewColumns.map(({ id: columnId }) => columnId));
 
   const bodyLoading = useMemo(
     () => <BodyLoading columns={dataViewColumns.length} />,
@@ -305,15 +342,13 @@ export const ConsoleDataView = <
 
   // Calculate whether to show the "select all" banner
   const bannerState = useMemo(() => {
-    if (!selection || !loaded || selectableFilteredData.length === 0) {
+    if (!selectionEnabled || !getItemId || !loaded || selectableFilteredData.length === 0) {
       return { show: false, allSelected: false };
     }
 
-    const selectableVisibleItems = selection.isSelectable
-      ? visibleItems.filter(selection.isSelectable)
-      : visibleItems;
+    const selectableVisibleItems = isSelectable ? visibleItems.filter(isSelectable) : visibleItems;
     const allVisibleSelected = selectableVisibleItems.every((item) =>
-      selectedIds.has(selection.getItemId(item)),
+      selectedIds.has(getItemId(item)),
     );
 
     const visibleCount = selectableVisibleItems.length;
@@ -326,7 +361,9 @@ export const ConsoleDataView = <
 
     return { show: shouldShow, allSelected };
   }, [
-    selection,
+    selectionEnabled,
+    getItemId,
+    isSelectable,
     loaded,
     selectableFilteredData,
     filteredSelectedItems.length,
@@ -398,25 +435,24 @@ export const ConsoleDataView = <
           actions={
             <>
               <ResponsiveActions breakpoint="md">
-                {resolvedID && preparedTable.columnLayout && (
-                  <ResponsiveAction
-                    isPersistent
-                    variant="plain"
-                    onClick={() =>
-                      launchModal(LazyColumnManagementModalOverlay, {
-                        columnLayout: preparedTable.columnLayout,
-                        noLimit: true,
-                      })
-                    }
-                    aria-label={t('Column management')}
-                    data-test="manage-columns"
-                  >
-                    <Tooltip content={t('Manage columns')} trigger="mouseenter">
-                      <RhUiColumnsIcon />
-                    </Tooltip>
-                  </ResponsiveAction>
-                )}
-                {isResizable && resolvedID && (
+                <ResponsiveAction
+                  isPersistent
+                  variant="plain"
+                  onClick={() =>
+                    launchModal(LazyConsoleDataViewColumnManagementModalOverlay, {
+                      columnLayout: preparedTable.columnLayout,
+                      nonReorderableColumnIDs,
+                      noLimit: true,
+                    })
+                  }
+                  aria-label={t('Column management')}
+                  data-test="manage-columns"
+                >
+                  <Tooltip content={t('Manage columns')} trigger="mouseenter">
+                    <RhUiColumnsIcon />
+                  </Tooltip>
+                </ResponsiveAction>
+                {canResetColumnWidths && (
                   <ResponsiveAction
                     isPersistent
                     variant="plain"
@@ -429,9 +465,11 @@ export const ConsoleDataView = <
                     </Tooltip>
                   </ResponsiveAction>
                 )}
-                {additionalActions}
+                {additionalResponsiveActions.map((action) => (
+                  <ResponsiveAction key={action.key} {...action} />
+                ))}
               </ResponsiveActions>
-              {customActions}
+              {additionalToolbarContent}
               {selection && (
                 <ResourceBulkActionMenu
                   reference={bulkActionReference}
@@ -495,7 +533,7 @@ export const ConsoleDataView = <
         )}
         <InnerScrollContainer>
           <DataViewTable
-            key={tableKey}
+            key={`${resolvedID}-${tableKey}-${tableColumnsKey}`}
             aria-label={t(`public~{{label}} table`, { label })}
             columns={dataViewColumns}
             rows={dataViewRows}

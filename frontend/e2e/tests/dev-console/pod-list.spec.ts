@@ -45,6 +45,7 @@ test.describe(
         await podList.navigateToPods(ns);
         await podList.showReceivingTrafficColumn();
         await expect(podList.getColumnHeader('Receiving Traffic')).toBeVisible();
+        await expect(podList.getColumnHeader('Created')).toBeHidden();
       });
     });
 
@@ -66,6 +67,7 @@ test.describe(
         await podList.navigateToPodsAllProjects();
         await podList.showReceivingTrafficColumn();
         await expect(podList.getColumnHeader('Receiving Traffic')).toBeVisible();
+        await expect(podList.getColumnHeader('Created')).toBeHidden();
       });
     });
   },

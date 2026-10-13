@@ -1,14 +1,20 @@
 import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
-import type { TableProps } from '@console/internal/components/factory/table';
+import type { ConsoleDataViewProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import type { RowFilter } from '@console/internal/components/filter-toolbar';
 import { ServiceModel } from '../../models';
 import type { ServiceKind } from '../../types';
 import { useKnativeDataViewFilters } from '../useKnativeDataViewFilters';
 import { getServiceDataViewRows } from './ServiceRow';
 import { useServiceColumns } from './useServiceColumns';
 
-export const ServiceList: FC<TableProps> = (props) => {
+type ServiceListProps = Omit<
+  ConsoleDataViewProps<ServiceKind>,
+  'id' | 'columns' | 'getDataViewRows'
+> & { rowFilters?: RowFilter[] };
+
+export const ServiceList: FC<ServiceListProps> = (props) => {
   const { t } = useTranslation('knative-plugin');
   const { columns } = useServiceColumns();
   const dataViewFilters = useKnativeDataViewFilters<ServiceKind>(props.rowFilters);

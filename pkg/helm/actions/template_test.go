@@ -113,7 +113,7 @@ func TestRenderManifests(t *testing.T) {
 
 				if tt.testType == "valid chartPath" {
 					require.NoError(t, err)
-					require.Equal(t, txt, tt.templateValue)
+					requireManifestsEqual(t, tt.templateValue, txt)
 				} else if tt.testType == "invalid chartPath" {
 					require.Error(t, err)
 				}
@@ -198,7 +198,7 @@ func TestRenderManifestsBasicAuth(t *testing.T) {
 
 				if tt.testType == "valid chartPath" {
 					require.NoError(t, err)
-					require.Equal(t, txt, tt.templateValue)
+					requireManifestsEqual(t, tt.templateValue, txt)
 				} else if tt.testType == "invalid chartPath" {
 					require.Error(t, err)
 				}

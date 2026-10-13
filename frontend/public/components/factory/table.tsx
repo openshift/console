@@ -1,11 +1,8 @@
-import type { ComponentType, FC, ReactNode, ReactText } from 'react';
+import type { ReactNode } from 'react';
 import { forwardRef } from 'react';
 import { css } from '@patternfly/react-styles';
-import type { IRow, OnSelect, SortByDirection, TableGridBreakpoint } from '@patternfly/react-table';
 import { Tr } from '@patternfly/react-table';
-import type { Scroll } from '@patternfly/react-virtualized-extension/dist/esm/components/Virtualized/types';
 import * as _ from 'lodash';
-import type { K8sResourceKindReference } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { getName } from '@console/shared/src/selectors/common';
 import { getMachinePhase } from '@console/shared/src/selectors/machine';
 import { getMachineSetInstanceType } from '@console/shared/src/selectors/machineSet';
@@ -31,7 +28,6 @@ import type {
   VolumeSnapshotContentKind,
   VolumeSnapshotKind,
 } from '../../module/k8s/types';
-import type { RowFilter } from '../filter-toolbar';
 import { alertingRuleStateOrder, alertSeverityOrder } from '../monitoring/utils';
 import { displayDurationInWords } from '../utils/build-utils';
 import { convertToBaseValue } from '../utils/units';
@@ -98,99 +94,11 @@ export const TableRow = forwardRef<HTMLTableRowElement, TableRowProps>(
 TableRow.displayName = 'TableRow';
 
 export type TableRowProps = {
-  id: ReactText;
+  id: string | number;
   index: number;
   title?: string;
   trKey: string;
   style: object;
   className?: string;
   children?: ReactNode;
-};
-
-type VirtualBodyProps = {
-  customData?: any;
-  Row: FC<RowFunctionArgs>;
-  height: number;
-  isScrolling: boolean;
-  onChildScroll: (params: Scroll) => void;
-  data: any[];
-  columns: any[];
-  scrollTop: number;
-  width: number;
-  expand: boolean;
-  getRowProps?: (obj: any) => Partial<Pick<TableRowProps, 'id' | 'className' | 'title'>>;
-  onRowsRendered?: (params: {
-    overscanStartIndex: number;
-    overscanStopIndex: number;
-    startIndex: number;
-    stopIndex: number;
-  }) => void;
-};
-
-type HeaderFunc = (componentProps: ComponentProps) => TableColumn[];
-
-export type Filter = { key: string; value: string };
-
-type RowsArgs = {
-  componentProps: ComponentProps;
-  selectedResourcesForKind: string[];
-  customData: any;
-};
-
-export type TableColumn = {
-  title: string;
-  id?: string;
-  additional?: boolean;
-  sortFunc?: string;
-  sortField?: string;
-  props?: any;
-};
-
-type RowFunctionArgs<T = any, C = any> = {
-  obj: T;
-  columns: any[];
-  customData?: C;
-};
-
-export type TableProps = Partial<ComponentProps> & {
-  customData?: any;
-  customSorts?: { [key: string]: (obj: any) => number | string };
-  defaultSortFunc?: string;
-  defaultSortField?: string;
-  defaultSortOrder?: SortByDirection;
-  showNamespaceOverride?: boolean;
-  Header: HeaderFunc;
-  loadError?: string | Object;
-  Row?: FC<RowFunctionArgs>;
-  Rows?: (args: RowsArgs) => IRow[];
-  'aria-label': string;
-  onSelect?: OnSelect;
-  virtualize?: boolean;
-  NoDataEmptyMsg?: ComponentType<{}>;
-  EmptyMsg?: ComponentType<{}>;
-  loaded?: boolean;
-  reduxID?: string;
-  reduxIDs?: string[];
-  rowFilters?: RowFilter[];
-  label?: string;
-  columnManagementID?: string;
-  isPinned?: (val: any) => boolean;
-  staticFilters?: Filter[];
-  filters?: Filter[];
-  activeColumns?: Set<string>;
-  gridBreakPoint?: TableGridBreakpoint;
-  selectedResourcesForKind?: string[];
-  mock?: boolean;
-  expand?: boolean;
-  scrollElement?: HTMLElement | (() => HTMLElement);
-  getRowProps?: VirtualBodyProps['getRowProps'];
-  onRowsRendered?: VirtualBodyProps['onRowsRendered'];
-  'data-test'?: string;
-};
-
-type ComponentProps = {
-  data: any[];
-  filters: Filter[];
-  selected: boolean;
-  kindObj: K8sResourceKindReference;
 };

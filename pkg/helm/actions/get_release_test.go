@@ -85,7 +85,7 @@ func TestGetRelease(t *testing.T) {
 				require.NoError(t, err)
 				require.Equal(t, tt.releaseName, rel.Name)
 				require.Equal(t, releasecommon.StatusDeployed, rel.Info.Status)
-				require.Equal(t, tt.manifestValue, rel.Manifest)
+				requireManifestsEqual(t, tt.manifestValue, rel.Manifest)
 			} else if tt.testName == "invalid chart path" {
 				require.Error(t, err)
 			} else if tt.testName == "invalid release name" {

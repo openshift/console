@@ -13,8 +13,12 @@ export class HelmRepositoryPage extends BasePage {
   private readonly urlField = this.page.getByTestId('repo-url');
   private readonly submitButton = this.page.getByTestId('save-changes');
   private readonly cancelButton = this.page.getByTestId('reset-button');
-  private readonly repositoriesList = this.page.getByTestId('repositories-list');
-  private readonly projectRepoList = this.page.getByTestId('project-helm-chart-repositories-list');
+  private readonly repositoriesList = this.page.getByTestId(
+    'console-data-view-console.ui~v1~HelmRepositoriesCombinedList',
+  );
+  private readonly projectRepoList = this.page.getByTestId(
+    'console-data-view-helm.openshift.io~v1beta1~ProjectHelmChartRepository',
+  );
 
   async navigateToCreateForm(namespace: string): Promise<void> {
     await this.goTo(`/helm-repositories/ns/${namespace}/~new/form`);
@@ -65,11 +69,21 @@ export class HelmRepositoryPage extends BasePage {
   }
 
   async clickCreate(): Promise<void> {
-    await this.robustClick(this.submitButton);
+    await Promise.all([
+      this.page.waitForURL(/\/k8s\/(?:ns|cluster)\//, { timeout: 60_000 }),
+      this.robustClick(this.submitButton),
+    ]);
   }
 
   async clickSave(): Promise<void> {
-    await this.robustClick(this.submitButton);
+    const editURL = this.page.url();
+    await Promise.all([
+      this.page.waitForURL(
+        (url) => url.href !== editURL && /\/k8s\/(?:ns|cluster)\//.test(url.pathname),
+        { timeout: 60_000 },
+      ),
+      this.robustClick(this.submitButton),
+    ]);
   }
 
   async clickCancel(): Promise<void> {
@@ -77,7 +91,10 @@ export class HelmRepositoryPage extends BasePage {
   }
 
   getRepositoryRow(name: string): Locator {
-    return this.page.locator('tr', { hasText: name });
+    return this.repositoriesList
+      .or(this.projectRepoList)
+      .getByRole('row')
+      .filter({ hasText: name });
   }
 
   async clickKebabForRepository(name: string): Promise<void> {

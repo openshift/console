@@ -30,7 +30,9 @@ function groupsFilter(page: Page) {
 }
 
 function nodeRows(page: Page) {
-  return page.locator('[data-test="console-data-view-core~v1~Node"] tbody tr');
+  return page.locator(
+    '[data-test="console-data-view-core~v1~Node"] tbody tr:has([data-test^="data-view-cell-"])',
+  );
 }
 
 function filterDropdown(page: Page) {

@@ -29,7 +29,6 @@ import {
 } from '@console/dynamic-plugin-sdk';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import type {
-  ColumnLayout,
   WatchK8sResource,
   WatchK8sResultsObject,
   GetDataViewRows,
@@ -72,14 +71,10 @@ import { MarkdownView } from '@console/shared/src/components/markdown/MarkdownVi
 import { LazyConsolePluginModalOverlay } from '@console/shared/src/components/modals/LazyConsolePluginModal';
 import { RedExclamationCircleIcon } from '@console/shared/src/components/status/icons';
 import { Status } from '@console/shared/src/components/status/Status';
-import {
-  ALL_NAMESPACES_KEY,
-  COLUMN_MANAGEMENT_USER_PREFERENCE_KEY,
-} from '@console/shared/src/constants/common';
+import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
 import { CONSOLE_OPERATOR_CONFIG_NAME } from '@console/shared/src/constants/resource';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
-import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import { getNamespace } from '@console/shared/src/selectors/common';
 import { isPluginEnabled } from '@console/shared/src/utils/console-plugin';
 import { GLOBAL_OPERATOR_NAMESPACES, GLOBAL_COPIED_CSV_NAMESPACE } from '../const';
@@ -650,32 +645,6 @@ export const ClusterServiceVersionsPage: FC<ClusterServiceVersionsPageProps> = (
     resource: SubscriptionModel.plural,
     verb: 'list',
   });
-  const [selectedColumns] = useUserPreference(
-    COLUMN_MANAGEMENT_USER_PREFERENCE_KEY,
-    undefined,
-    true,
-  );
-
-  const columnLayout = useMemo<ColumnLayout>(() => {
-    const columns = [
-      { type: 'name' as const, id: 'name', title: t('Name') },
-      { id: 'namespace', title: t('Namespace') },
-      { id: 'managedNamespaces', title: t('Managed Namespaces') },
-      { id: 'status', title: t('Status') },
-      { id: 'providedAPIs', title: t('Provided APIs') },
-      { id: 'lastUpdated', title: t('Last updated') },
-    ];
-    return {
-      id: csvColumnManagementID,
-      type: t('Operator'),
-      columns,
-      selectedColumns:
-        selectedColumns?.[csvColumnManagementID]?.length > 0
-          ? new Set(selectedColumns[csvColumnManagementID])
-          : new Set<string>(),
-    };
-  }, [selectedColumns, t]);
-
   const title = t('Installed Operators');
   const olmURL = getDocumentationURL(documentationURLs.operators);
   const helpText = (
@@ -766,7 +735,6 @@ export const ClusterServiceVersionsPage: FC<ClusterServiceVersionsPageProps> = (
         ListComponent={ClusterServiceVersionList}
         helpText={showTitle ? helpText : undefined}
         omitFilterToolbar
-        columnLayout={columnLayout}
       />
     </>
   );

@@ -4,11 +4,11 @@ import { useTranslation } from 'react-i18next';
 import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import type {
   ConsoleDataViewColumn,
+  ConsoleDataViewProps,
   GetDataViewRows,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { useFlag } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sWatchResource';
-import type { TableProps } from '@console/internal/components/factory/table';
 import { sortResourceByValue } from '@console/internal/components/factory/Table/sort';
 import { ResourceLink } from '@console/internal/components/utils/resource-link';
 import { referenceFor, referenceForModel } from '@console/internal/module/k8s';
@@ -138,9 +138,11 @@ export const getBuildDataViewRows: GetDataViewRows<Build> = (data, columns) =>
     return columns.map(({ id }) => ({ id, ...rowCells[id] }));
   });
 
-type BuildTableProps = TableProps & {
+type BuildTableProps = Omit<
+  ConsoleDataViewProps<Build, unknown, BuildRunStatusFilters>,
+  'id' | 'columns' | 'getDataViewRows'
+> & {
   namespace: string;
-  data: Build[];
 };
 
 export const BuildTable: FC<BuildTableProps> = (props) => {

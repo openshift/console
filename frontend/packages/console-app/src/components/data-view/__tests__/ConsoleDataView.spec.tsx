@@ -1,8 +1,9 @@
 import { useMemo } from 'react';
 import type { LoadedAndResolvedExtension } from '@openshift/dynamic-plugin-sdk';
-import { screen, waitFor, within } from '@testing-library/react';
+import { act, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createUserSettingsStore } from '@console/app/src/providers/user-preferences/UserPreferenceContext';
+import type { ExtensionK8sKindVersionModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
 import { OverlayProvider } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import type {
@@ -18,6 +19,7 @@ import type {
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import type { ConsoleDataViewTableColumn } from '@console/dynamic-plugin-sdk/src/extensions/dataview';
 import {
+  COLUMN_MANAGEMENT_ORDER_USER_PREFERENCE_KEY,
   COLUMN_MANAGEMENT_USER_PREFERENCE_KEY,
   COLUMN_WIDTH_USER_PREFERENCE_KEY,
 } from '@console/shared/src/constants/common';
@@ -38,6 +40,8 @@ const data: Item[] = [
   { metadata: { name: 'alpha' }, status: 'ready' },
   { metadata: { name: 'bravo' }, status: 'pending' },
 ];
+const defaultTable: ExtensionK8sKindVersionModel = { version: 'v1', kind: 'Pod' };
+const defaultTableID = 'core~v1~Pod';
 const columns: ConsoleDataViewColumn<Item>[] = [
   { id: 'name', type: 'name', title: 'Name', sort: 'metadata.name' },
   { id: 'status', title: 'Status' },
@@ -84,7 +88,7 @@ const makeExtension = (
   title: string,
   options: {
     pluginName?: string;
-    tableID?: string;
+    table?: ExtensionK8sKindVersionModel | string;
     additional?: boolean;
     insertBefore?: string;
     insertAfter?: string;
@@ -97,7 +101,7 @@ const makeExtension = (
   pluginName: options.pluginName ?? 'test-plugin',
   uid: `${options.pluginName ?? 'test-plugin'}-${id}`,
   properties: {
-    tableID: options.tableID ?? 'test-table',
+    table: options.table ?? defaultTable,
     columnData: {
       id,
       title,
@@ -118,11 +122,11 @@ const renderTable = (
   preference?: string[],
   options: {
     id?: K8sGroupVersionKind | string;
-    columnLayoutID?: string;
-    withoutID?: boolean;
     isResizable?: boolean;
     useDefaultResizable?: boolean;
     columnWidths?: Record<string, number>;
+    columnOrder?: string[];
+    columns?: ConsoleDataViewColumn<Item>[];
     getDataViewRows?: GetDataViewRows<Item>;
     data?: Item[];
     selection?: ConsoleDataViewProps<Item>['selection'];
@@ -146,10 +150,17 @@ const renderTable = (
   userSettingsStore.setSnapshot({
     data: {
       ...(preference && {
-        [COLUMN_MANAGEMENT_USER_PREFERENCE_KEY]: JSON.stringify({ 'test-table': preference }),
+        [COLUMN_MANAGEMENT_USER_PREFERENCE_KEY]: JSON.stringify({ [defaultTableID]: preference }),
+      }),
+      ...(options.columnOrder && {
+        [COLUMN_MANAGEMENT_ORDER_USER_PREFERENCE_KEY]: JSON.stringify({
+          [defaultTableID]: options.columnOrder,
+        }),
       }),
       ...(options.columnWidths && {
-        [COLUMN_WIDTH_USER_PREFERENCE_KEY]: JSON.stringify({ 'test-table': options.columnWidths }),
+        [COLUMN_WIDTH_USER_PREFERENCE_KEY]: JSON.stringify({
+          [defaultTableID]: options.columnWidths,
+        }),
       }),
     },
     loaded: true,
@@ -166,14 +177,8 @@ const renderTable = (
         label="items"
         data={options.data ?? data}
         loaded
-        columns={columns}
-        id={options.withoutID ? undefined : (options.id ?? 'test-table')}
-        columnLayout={{
-          id: options.columnLayoutID ?? 'test-table',
-          type: 'Item',
-          columns: columns.map(({ id, title }) => ({ id, title })),
-          selectedColumns: new Set(preference ?? []),
-        }}
+        columns={options.columns ?? columns}
+        id={options.id ?? defaultTable}
         getDataViewRows={options.getDataViewRows ?? getDataViewRows}
         selection={options.selection}
         hideNameLabelFilters
@@ -286,11 +291,8 @@ describe('ConsoleDataView', () => {
     await user.click(screen.getByRole('button', { name: 'Column management' }));
 
     const dialog = await screen.findByRole('dialog');
-    expect(
-      within(dialog)
-        .getAllByRole('checkbox')
-        .map((checkbox) => checkbox.getAttribute('name')),
-    ).toEqual(names);
+    names.forEach((name) => expect(within(dialog).getByRole('checkbox', { name })).toBeVisible());
+    expect(within(dialog).queryByRole('checkbox', { name: 'Actions' })).not.toBeInTheDocument();
   });
 
   it('orders columns sharing an anchor by plugin name and column ID', () => {
@@ -331,7 +333,10 @@ describe('ConsoleDataView', () => {
 
   it('ignores columns for other tables and duplicate built-in IDs', () => {
     renderTable([
-      makeExtension('other', 'Other', { tableID: 'different', additional: false }),
+      makeExtension('other', 'Other', {
+        table: { group: 'different', version: 'v1', kind: 'Pod' },
+        additional: false,
+      }),
       makeExtension('name', 'Duplicate', { additional: false }),
     ]);
 
@@ -373,7 +378,7 @@ describe('ConsoleDataView', () => {
     await waitFor(() =>
       expect(
         JSON.parse(userSettingsStore.getSnapshot().data[COLUMN_WIDTH_USER_PREFERENCE_KEY])[
-          'test-table'
+          defaultTableID
         ]['test-ready'],
       ).not.toBe(240),
     );
@@ -386,12 +391,108 @@ describe('ConsoleDataView', () => {
     );
   });
 
+  it('should preserve widths by column ID when columns are reordered, hidden, and shown again', async () => {
+    const user = userEvent.setup();
+    const { userSettingsStore } = renderTable(
+      [makeExtension('test-ready', 'Ready', { additional: false })],
+      undefined,
+      { useDefaultResizable: true, columnWidths: { status: 240, 'test-ready': 160 } },
+    );
+    const expectSavedWidths = () => {
+      expect(screen.getByRole('columnheader', { name: /Status/ })).toHaveTextContent(
+        'Column 240 pixels',
+      );
+      expect(screen.getByRole('columnheader', { name: /Ready/ })).toHaveTextContent(
+        'Column 160 pixels',
+      );
+    };
+    expectSavedWidths();
+
+    // Update the saved order without depending on browser drag geometry in jsdom.
+    act(() => {
+      const snapshot = userSettingsStore.getSnapshot();
+      userSettingsStore.setSnapshot({
+        ...snapshot,
+        data: {
+          ...snapshot.data,
+          [COLUMN_MANAGEMENT_ORDER_USER_PREFERENCE_KEY]: JSON.stringify({
+            [defaultTableID]: ['name', 'test-ready', 'status'],
+          }),
+        },
+      });
+    });
+    expect(screen.getAllByRole('columnheader')[1]).toHaveAccessibleName(/^Ready/);
+    expect(screen.getAllByRole('columnheader')[2]).toHaveAccessibleName(/^Status/);
+    expectSavedWidths();
+
+    await user.click(screen.getByRole('button', { name: 'Column management' }));
+    await user.click(await screen.findByRole('checkbox', { name: 'Ready' }));
+    await user.click(screen.getByRole('button', { name: 'Save' }));
+
+    expect(screen.queryByRole('columnheader', { name: /Ready/ })).not.toBeInTheDocument();
+    expect(screen.getAllByRole('columnheader')[1]).toHaveAccessibleName(/^Status/);
+    expect(screen.getByRole('columnheader', { name: /Status/ })).toHaveTextContent(
+      'Column 240 pixels',
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Column management' }));
+    await user.click(await screen.findByRole('checkbox', { name: 'Ready' }));
+    await user.click(screen.getByRole('button', { name: 'Save' }));
+
+    expect(screen.getAllByRole('columnheader')[1]).toHaveAccessibleName(/^Ready/);
+    expect(screen.getAllByRole('columnheader')[2]).toHaveAccessibleName(/^Status/);
+    expectSavedWidths();
+
+    await user.click(screen.getByRole('button', { name: 'Reset column widths' }));
+
+    expect(screen.getAllByRole('columnheader')[1]).toHaveAccessibleName(/^Ready/);
+    expect(screen.getAllByRole('columnheader')[2]).toHaveAccessibleName(/^Status/);
+    expect(screen.getByRole('columnheader', { name: /Status/ })).toHaveTextContent(
+      'Column 0 pixels',
+    );
+    expect(screen.getByRole('columnheader', { name: /Ready/ })).toHaveTextContent(
+      'Column 0 pixels',
+    );
+  });
+
+  it('preserves saved widths by column ID when restoring the default column order', async () => {
+    const user = userEvent.setup();
+    const { userSettingsStore } = renderTable(
+      [makeExtension('test-ready', 'Ready', { additional: false })],
+      ['name', 'status', 'test-ready'],
+      {
+        columnOrder: ['name', 'test-ready', 'status'],
+        useDefaultResizable: true,
+        columnWidths: { status: 240 },
+      },
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Column management' }));
+    await user.click(screen.getByRole('button', { name: 'Restore default columns' }));
+    await user.click(screen.getByRole('button', { name: 'Save' }));
+
+    expect(
+      JSON.parse(userSettingsStore.getSnapshot().data[COLUMN_WIDTH_USER_PREFERENCE_KEY]),
+    ).toEqual({ [defaultTableID]: { status: 240 } });
+    expect(screen.getByRole('columnheader', { name: /Status/ })).toHaveTextContent(
+      'Column 240 pixels',
+    );
+    expect(screen.getByRole('columnheader', { name: /Ready/ })).toHaveTextContent(
+      'Column 0 pixels',
+    );
+    expect(
+      JSON.parse(userSettingsStore.getSnapshot().data[COLUMN_MANAGEMENT_ORDER_USER_PREFERENCE_KEY])[
+        defaultTableID
+      ],
+    ).toEqual(['name', 'status', 'test-ready']);
+  });
+
   it('uses the resolved GVK for extension matching and column preferences', async () => {
     const user = userEvent.setup();
     const { userSettingsStore } = renderTable(
-      [makeExtension('test-ready', 'Ready', { tableID: 'core~v1~Pod' })],
+      [makeExtension('test-ready', 'Ready', { table: defaultTable })],
       undefined,
-      { id: { version: 'v1', kind: 'Pod' }, columnLayoutID: 'old-table-id' },
+      { id: { version: 'v1', kind: 'Pod' } },
     );
 
     await user.click(screen.getByRole('button', { name: 'Column management' }));
@@ -404,6 +505,31 @@ describe('ConsoleDataView', () => {
         'core~v1~Pod'
       ],
     ).toContain('test-ready');
+    expect(
+      JSON.parse(userSettingsStore.getSnapshot().data[COLUMN_MANAGEMENT_ORDER_USER_PREFERENCE_KEY])[
+        'core~v1~Pod'
+      ],
+    ).toEqual(['name', 'status', 'test-ready']);
+  });
+
+  it('renders saved column order without moving sticky columns from their slots', () => {
+    const stickyColumns: ConsoleDataViewColumn<Item>[] = [
+      { id: 'name', type: 'name', title: 'Name', sort: 'metadata.name' },
+      { id: 'zone', title: 'Zone', props: { isStickyColumn: true } },
+      { id: 'status', title: 'Status' },
+      { id: 'owner', title: 'Owner' },
+    ];
+
+    renderTable([], ['name', 'zone', 'status', 'owner'], {
+      columns: stickyColumns,
+      columnOrder: ['owner', 'name', 'status', 'zone'],
+    });
+
+    expect(
+      within(screen.getByRole('grid', { name: 'items table' }))
+        .getAllByRole('columnheader')
+        .map((header) => header.textContent),
+    ).toEqual(['Name', 'Zone', 'Owner', 'Status']);
   });
 
   it('resolves model, GVK, and string table IDs', () => {
@@ -422,14 +548,6 @@ describe('ConsoleDataView', () => {
       'apps~v1~Deployment',
     );
     expect(getConsoleDataViewID('demo-plugin~v1~Pod')).toBe('demo-plugin~v1~Pod');
-  });
-
-  it('renders without table actions when no ID is supplied', () => {
-    renderTable([], undefined, { withoutID: true, isResizable: true });
-
-    expect(screen.getByRole('grid', { name: 'items table' })).toBeVisible();
-    expect(screen.queryByRole('button', { name: 'Column management' })).not.toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: 'Reset column widths' })).not.toBeInTheDocument();
   });
 
   it('uses resource provider actions for an omitted action cell and keeps an explicit empty cell', async () => {
@@ -483,7 +601,7 @@ describe('ConsoleDataView', () => {
     const rows = within(screen.getByRole('grid', { name: 'items table' })).getAllByRole('row');
     await user.click(within(rows[1]).getByRole('checkbox'));
     await user.click(within(rows[2]).getByRole('checkbox'));
-    await user.click(await screen.findByRole('button', { name: 'Bulk actions' }));
+    await user.click(screen.getByTestId('data-view-bulk-actions-menu-button'));
     expect(screen.getByRole('menuitem', { name: 'Local action' })).toBeVisible();
     await user.click(await screen.findByRole('menuitem', { name: 'Inspect 2 pods' }));
     expect(within(rows[1]).getByRole('checkbox')).not.toBeChecked();
@@ -498,14 +616,14 @@ describe('ConsoleDataView', () => {
       selection: { getItemId: (item) => item.metadata.name },
     });
 
-    expect(await screen.findByRole('button', { name: 'Bulk actions' })).toBeDisabled();
+    expect(screen.getByTestId('data-view-bulk-actions-menu-button')).toBeDisabled();
     const row = within(screen.getByRole('grid', { name: 'items table' })).getAllByRole('row')[1];
     await user.click(within(row).getByRole('checkbox'));
-    await user.click(await screen.findByRole('button', { name: 'Bulk actions' }));
+    await user.click(screen.getByTestId('data-view-bulk-actions-menu-button'));
     expect(await screen.findByRole('menuitem', { name: 'Inspect 1 pods' })).toBeVisible();
     await user.keyboard('{Escape}');
     await user.click(within(row).getByRole('checkbox'));
-    expect(screen.getByRole('button', { name: 'Bulk actions' })).toBeDisabled();
+    expect(screen.getByTestId('data-view-bulk-actions-menu-button')).toBeDisabled();
   });
 
   it('does not offer resource bulk actions for a mixed-model selection', async () => {
@@ -524,7 +642,7 @@ describe('ConsoleDataView', () => {
 
     const table = screen.getByRole('grid', { name: 'items table' });
     await user.click(within(within(table).getAllByRole('row')[0]).getByRole('checkbox'));
-    await user.click(await screen.findByRole('button', { name: 'Bulk actions' }));
+    await user.click(screen.getByTestId('data-view-bulk-actions-menu-button'));
     expect(screen.getByRole('menuitem', { name: 'Local action' })).toBeVisible();
     expect(screen.queryByRole('menuitem', { name: /Inspect .* pods/ })).not.toBeInTheDocument();
   });
@@ -554,7 +672,7 @@ describe('ConsoleDataView', () => {
     const rows = within(table).getAllByRole('row');
     expect(within(rows[0]).getByRole('checkbox')).toBeVisible();
     expect(rows[1]).toHaveTextContent('alphaReady alpha');
-    const actions = await screen.findByRole('button', { name: 'Bulk actions' });
+    const actions = screen.getByTestId('data-view-bulk-actions-menu-button');
     expect(actions).toBeDisabled();
     await user.click(within(rows[1]).getByRole('checkbox'));
     await user.click(within(rows[2]).getByRole('checkbox'));
@@ -594,7 +712,7 @@ describe('ConsoleDataView', () => {
     const rows = within(table).getAllByRole('row');
     expect(within(rows[1]).getByRole('checkbox')).toBeDisabled();
     await user.click(within(rows[0]).getByRole('checkbox'));
-    const actions = await screen.findByRole('button', { name: 'Bulk actions' });
+    const actions = screen.getByTestId('data-view-bulk-actions-menu-button');
     await user.click(actions);
     expect(screen.getByRole('menuitem', { name: 'Clear selection (49)' })).toBeVisible();
     await user.keyboard('{Escape}');

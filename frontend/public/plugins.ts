@@ -7,6 +7,7 @@ import { initConsolePlugins } from '@console/dynamic-plugin-sdk/src/runtime/plug
 import { getSharedScope } from '@console/dynamic-plugin-sdk/src/runtime/plugin-shared-modules';
 import { ValidationResult } from '@console/dynamic-plugin-sdk/src/validation/ValidationResult';
 import { dynamicPluginNames } from '@console/plugin-sdk/src/utils/allowed-plugins';
+import { IS_PRODUCTION } from '@console/shared/src/constants/common';
 import { coFetch } from '@console/shared/src/utils/console-fetch';
 import type { RootState } from './redux';
 // eslint-disable-next-line @typescript-eslint/no-require-imports -- This module has its source generated during val-loader
@@ -102,7 +103,7 @@ export const pluginStore = new PluginStore({
   },
 });
 
-if (process.env.NODE_ENV !== 'production') {
+if (!IS_PRODUCTION) {
   // Expose Console plugin store for debugging
   window.pluginStore = pluginStore;
 }
