@@ -191,6 +191,8 @@ const validateConsoleProvidedSharedModules = (pkg: ConsolePluginPackageJSON) => 
  * Console provided {@link sharedPluginModules} should _NOT_ be listed here.
  */
 const dynamicModulePatternFlyPackages = [
+  '@patternfly/react-charts',
+  '@patternfly/react-component-groups',
   '@patternfly/react-core',
   '@patternfly/react-data-view',
   '@patternfly/react-icons',

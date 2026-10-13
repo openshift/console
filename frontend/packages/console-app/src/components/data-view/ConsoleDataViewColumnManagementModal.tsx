@@ -1,7 +1,7 @@
 import type { FC, MouseEvent } from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import PatternFlyColumnManagementModal from '@patternfly/react-component-groups/dist/dynamic/ColumnManagementModal';
-import type { ColumnManagementModalColumn } from '@patternfly/react-component-groups/dist/dynamic/ColumnManagementModal';
+import type { ColumnManagementModalColumn } from '@patternfly/react-component-groups';
+import { ColumnManagementModal as PatternFlyColumnManagementModal } from '@patternfly/react-component-groups';
 import { useTranslation } from 'react-i18next';
 import type { ColumnLayout } from '@console/dynamic-plugin-sdk';
 import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';

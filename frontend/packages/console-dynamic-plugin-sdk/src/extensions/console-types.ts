@@ -16,7 +16,7 @@ import type {
 } from '@openshift/dynamic-plugin-sdk';
 import type { QuickStartContextValues } from '@patternfly/quickstarts';
 import type { CodeEditorProps as PfCodeEditorProps } from '@patternfly/react-code-editor';
-import type { ResponsiveActionProps } from '@patternfly/react-component-groups/dist/dynamic/ResponsiveAction';
+import type { ResponsiveActionProps } from '@patternfly/react-component-groups';
 import type { AlertVariant, ButtonProps } from '@patternfly/react-core';
 import type { DataViewTh } from '@patternfly/react-data-view/dist/esm/DataViewTable/DataViewTable';
 import type {
