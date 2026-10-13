@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import { useMemo } from 'react';
 import type { LoadedAndResolvedExtension } from '@openshift/dynamic-plugin-sdk';
 import type { DataViewTd } from '@patternfly/react-data-view/dist/esm/DataViewTable/DataViewTable';
+import { useTranslation } from 'react-i18next';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
 import type {
   ColumnLayout,
@@ -38,8 +39,13 @@ const selectionColumnProps = {
   style: { maxWidth: selectionColumnWidth },
 };
 
+const nowrapCellProps = {
+  modifier: 'nowrap' as const,
+};
+
 const nameCellProps = {
   ...cellIsStickyProps,
+  ...nowrapCellProps,
   hasRightBorder: true,
 };
 
@@ -59,6 +65,8 @@ const getDefaultProps = (
       return hasSelection
         ? { ...nameCellProps, stickyLeftOffset: selectionColumnWidth }
         : nameCellProps;
+    case 'namespace':
+      return nowrapCellProps;
     case 'actions':
       return isHeader ? { ...cellIsStickyProps, hasLeftBorder: true } : actionsCellProps;
     case 'selection':
@@ -168,6 +176,7 @@ export const useConsoleDataViewColumns = <TData, TCustomRowData>(
   getObjectMetadata: ((obj: TData) => ResourceMetadata) | undefined,
   isResizable: boolean,
 ) => {
+  const { t } = useTranslation('console-app');
   const [resolvedExtensions, extensionsResolved] = useResolvedExtensions(
     isConsoleDataViewTableColumn,
   );
@@ -188,12 +197,24 @@ export const useConsoleDataViewColumns = <TData, TCustomRowData>(
     return {
       ...result,
       columns: result.columns.map((column) => {
-        const withTitle = { ...column, title: column.title ?? '' };
+        const preset =
+          column.type === 'name'
+            ? { title: t('Name'), sort: 'metadata.name' }
+            : column.type === 'namespace'
+              ? { title: t('Namespace'), sort: 'metadata.namespace' }
+              : undefined;
+        const resolvedColumn = {
+          ...column,
+          title: column.title ?? preset?.title ?? '',
+          sort: column.sort ?? preset?.sort,
+        };
         const defaults = getDefaultProps(column.type, hasSelection, true);
-        return defaults ? { ...withTitle, props: { ...defaults, ...column.props } } : withTitle;
+        return defaults
+          ? { ...resolvedColumn, props: { ...defaults, ...column.props } }
+          : resolvedColumn;
       }),
     };
-  }, [columns, translatedExtensions]);
+  }, [columns, t, translatedExtensions]);
   const { columns: resizableColumns, resetColumnWidths } = useConsoleDataViewResizableColumns({
     columns: ordered.columns,
     tableID,
@@ -207,11 +228,6 @@ export const useConsoleDataViewColumns = <TData, TCustomRowData>(
         .map(({ id }) => id),
     );
     const configurableColumns = columnLayout.columns.filter(({ id }) => !fixedColumnIDs.has(id));
-    if (!ordered.extensionsByID.size) {
-      return configurableColumns.length === columnLayout.columns.length
-        ? columnLayout
-        : { ...columnLayout, columns: configurableColumns };
-    }
     const original = new Map(configurableColumns.map((column) => [column.id, column]));
     return {
       ...columnLayout,
@@ -220,10 +236,10 @@ export const useConsoleDataViewColumns = <TData, TCustomRowData>(
           ({ id }) =>
             !fixedColumnIDs.has(id) && (original.has(id) || ordered.extensionsByID.has(id)),
         )
-        .map(
-          ({ id, type, title, defaultVisible }) =>
-            original.get(id) ?? { id, type, title, additional: defaultVisible === false },
-        ),
+        .map(({ id, type, title, defaultVisible }) => ({
+          ...(original.get(id) ?? { id, type, additional: defaultVisible === false }),
+          title,
+        })),
     };
   }, [columnLayout, ordered]);
 

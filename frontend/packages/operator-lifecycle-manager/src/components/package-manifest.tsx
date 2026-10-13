@@ -50,7 +50,6 @@ export const usePackageManifestColumns = (
       {
         type: 'name' as const,
         id: 'name',
-        title: t('Name'),
         sort: sortByValue<PackageManifestKind>(displayNameFor),
       },
       {

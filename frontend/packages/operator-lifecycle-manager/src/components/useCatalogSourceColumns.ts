@@ -31,7 +31,7 @@ export const useCatalogSourceColumns = (): {
   const { t } = useTranslation('olm');
   const columns = useMemo(
     () => [
-      { type: 'name' as const, id: 'name', title: t('Name'), sort: 'name' },
+      { type: 'name' as const, id: 'name', sort: 'name' },
       {
         id: 'status',
         title: t('Status'),

@@ -2,7 +2,6 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as _ from 'lodash';
 import * as Router from 'react-router';
-import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import type { ConsoleDataViewColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import * as k8sResourceModule from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
 import { MultiListPage, DetailsPage } from '@console/internal/components/factory';
@@ -42,18 +41,12 @@ jest.mock('@console/internal/components/factory', () => ({
   DetailsPage: jest.fn(() => null),
 }));
 
-jest.mock('@console/app/src/components/data-view/ConsoleDataView', () => ({
-  ...jest.requireActual('@console/app/src/components/data-view/ConsoleDataView'),
-  ConsoleDataView: jest.fn(() => null),
-}));
-
 jest.mock('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource', () => ({
   ...jest.requireActual('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource'),
   k8sPatch: jest.fn(),
 }));
 
 const k8sPatchMock = k8sResourceModule.k8sPatch as jest.Mock;
-const mockConsoleDataView = ConsoleDataView as unknown as jest.Mock;
 const mockMultiListPage = MultiListPage as jest.Mock;
 const mockDetailsPage = DetailsPage as jest.Mock;
 const mockUseAccessReview = useAccessReview as jest.Mock;
@@ -150,11 +143,15 @@ describe('getInstallPlanDataViewRows', () => {
 });
 
 describe('useInstallPlanColumns', () => {
-  it('returns the expected column titles', () => {
+  it('uses standard column roles and titles the custom columns', () => {
     const { result } = renderHookWithProviders(() => useInstallPlanColumns());
-    expect(result.current.columns.map(({ title }) => title)).toEqual([
-      'Name',
-      'Namespace',
+    expect(result.current.columns[0]).toEqual(
+      expect.objectContaining({ id: 'name', type: 'name' }),
+    );
+    expect(result.current.columns[1]).toEqual(
+      expect.objectContaining({ id: 'namespace', type: 'namespace' }),
+    );
+    expect(result.current.columns.slice(2).map(({ title }) => title)).toEqual([
       'Status',
       'Components',
       'Subscriptions',
@@ -164,30 +161,43 @@ describe('useInstallPlanColumns', () => {
 });
 
 describe('InstallPlansList', () => {
+  const originalIntersectionObserver = window.IntersectionObserver;
+
+  beforeAll(() => {
+    Object.defineProperty(window, 'IntersectionObserver', {
+      configurable: true,
+      value: jest.fn().mockImplementation(() => ({
+        observe: jest.fn(),
+        unobserve: jest.fn(),
+      })),
+    });
+  });
+
+  afterAll(() => {
+    Object.defineProperty(window, 'IntersectionObserver', {
+      configurable: true,
+      value: originalIntersectionObserver,
+    });
+  });
+
   beforeEach(() => {
     jest.clearAllMocks();
-    mockConsoleDataView.mockClear();
   });
 
   afterEach(() => {
     jest.restoreAllMocks();
   });
 
-  it('passes columns to ConsoleDataView', () => {
+  it('renders the default and custom column headings', () => {
     renderWithProviders(
       <InstallPlansList.WrappedComponent operatorGroup={null} data={[testInstallPlan]} loaded />,
     );
 
-    expect(mockConsoleDataView).toHaveBeenCalledTimes(1);
-    const [dataViewProps] = mockConsoleDataView.mock.calls[0];
-    expect(dataViewProps.columns.map((column) => column.title)).toEqual([
-      'Name',
-      'Namespace',
-      'Status',
-      'Components',
-      'Subscriptions',
-      undefined,
-    ]);
+    expect(screen.getByRole('columnheader', { name: /^Name\b/ })).toBeVisible();
+    expect(screen.getByRole('columnheader', { name: /^Namespace\b/ })).toBeVisible();
+    expect(screen.getByRole('columnheader', { name: /^Status\b/ })).toBeVisible();
+    expect(screen.getByRole('columnheader', { name: /^Components\b/ })).toBeVisible();
+    expect(screen.getByRole('columnheader', { name: /^Subscriptions\b/ })).toBeVisible();
   });
 
   it('renders the custom empty message instead of the table when no InstallPlans exist', () => {
@@ -195,7 +205,7 @@ describe('InstallPlansList', () => {
       <InstallPlansList.WrappedComponent operatorGroup={null} data={[]} loaded />,
     );
 
-    expect(mockConsoleDataView).not.toHaveBeenCalled();
+    expect(screen.queryByRole('grid')).not.toBeInTheDocument();
     expect(screen.getByText('No InstallPlans found')).toBeVisible();
   });
 });

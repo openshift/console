@@ -30,16 +30,10 @@ const useBuildRunColumns = (): {
       {
         type: 'name' as const,
         id: 'name',
-        title: t('Name'),
-        sort: 'metadata.name',
-        props: { modifier: 'nowrap' as const },
       },
       {
         type: 'namespace' as const,
         id: 'namespace',
-        title: t('Namespace'),
-        sort: 'metadata.namespace',
-        props: { modifier: 'nowrap' as const },
       },
       {
         id: 'status',

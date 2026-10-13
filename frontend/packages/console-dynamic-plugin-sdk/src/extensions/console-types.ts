@@ -553,8 +553,6 @@ export type ConsoleDataViewTh = Omit<
  *   {
  *     id: 'name',
  *     type: 'name',
- *     title: t('Name'),
- *     sort: 'metadata.name',
  *   },
  * ];
  * ```
@@ -562,14 +560,14 @@ export type ConsoleDataViewTh = Omit<
 export interface ConsoleDataViewColumn<TData> extends ConsoleDataViewTh {
   /** Unique identifier for the column, used to match up cells returned by `getDataViewRows`. */
   id: string;
-  /** Applies built-in column behavior and header and row cell props. Explicit props take precedence. An `actions` column uses resource action providers for a Kubernetes resource row when its row cell is omitted or has no `cell`; `cell: null` suppresses the default. A namespace column is hidden in a single project unless `showNamespaceOverride` is set, regardless of its ID. A name column gets its `data-test` from the row name and is offset automatically when a selection column is present. */
+  /** Applies built-in column behavior and header and row cell props. Name and namespace headers and row cells default to `modifier: 'nowrap'`. Explicit header props and row cell props override their respective defaults independently. An `actions` column uses resource action providers for a Kubernetes resource row when its row cell is omitted or has no `cell`; `cell: null` suppresses the default. A namespace column is hidden in a single project unless `showNamespaceOverride` is set, regardless of its ID. A name column gets its `data-test` from the row name and is offset automatically when a selection column is present. */
   type?: 'name' | 'namespace' | 'actions' | 'selection' | 'sticky';
-  /** The column header text. Defaults to an empty string. */
+  /** The column header text. Defaults to translated `Name` or `Namespace` for those column types, and an empty string for other types. Explicit titles, including an empty string, take precedence. */
   title?: string;
   /** (optional) Content shown in a help tooltip beside the column header. */
   tooltip?: ReactNode;
-  /** (optional) A dot-delimited property path to sort by, or a function that sorts the filtered data for this column. */
-  sort?: string | ((filteredData: TData[], sortDirection: SortByDirection) => TData[]);
+  /** (optional) A dot-delimited property path to sort by, or a function that sorts the filtered data for this column. Defaults to `metadata.name` for `name` columns and `metadata.namespace` for `namespace` columns. Other column types are unsortable by default. Set `false` to disable sorting; custom row shapes can supply a different path or function. */
+  sort?: false | string | ((filteredData: TData[], sortDirection: SortByDirection) => TData[]);
   /** (optional) Whether the column is initially visible before the user saves column preferences. Defaults to `true` for built-in columns and `false` for extension columns. */
   defaultVisible?: boolean;
 }

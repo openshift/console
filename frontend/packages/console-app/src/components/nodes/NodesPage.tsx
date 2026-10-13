@@ -169,12 +169,7 @@ const useNodesColumns = (
     () => [
       {
         type: 'name' as const,
-        title: t('Name'),
         id: nodeColumnInfo.name.id,
-        sort: 'metadata.name',
-        props: {
-          modifier: 'nowrap' as const,
-        },
       },
       {
         title: t('Status'),

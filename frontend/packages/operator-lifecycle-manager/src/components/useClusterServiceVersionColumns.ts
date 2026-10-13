@@ -47,15 +47,13 @@ export const useClusterServiceVersionColumns = (
 
   const columns = useMemo(
     () => [
-      { type: 'name' as const, id: 'name', title: t('Name'), sort: 'metadata.name' },
+      { type: 'name' as const, id: 'name' },
       ...(allNamespaceActive
         ? [
             {
               type: 'namespace' as const,
               id: 'namespace',
-              title: t('Namespace'),
               sort: sortByValue<InstalledOperator>(getOperatorNamespace),
-              props: { modifier: 'nowrap' as const },
             },
           ]
         : []),

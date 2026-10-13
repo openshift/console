@@ -102,10 +102,7 @@ const useVolumeSnapshotContentColumns = (): {
     () => [
       {
         type: 'name' as const,
-        title: t('Name'),
-        sort: 'metadata.name',
         id: tableColumnInfo[0].id,
-        props: { modifier: 'nowrap' as const },
       },
       {
         title: t('Status'),

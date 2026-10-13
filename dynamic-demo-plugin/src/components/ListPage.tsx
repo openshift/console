@@ -167,6 +167,18 @@ const usePodBulkActions = () => {
   );
 };
 
+const columns: ConsoleDataViewColumn<K8sResourceCommon>[] = [
+  {
+    id: 'name',
+    type: 'name' as const,
+  },
+  {
+    id: 'namespace',
+    type: 'namespace' as const,
+  },
+  { id: 'actions', type: 'actions' as const },
+];
+
 const PodsTable: React.FC<PodsTableProps> = ({ data, loaded, loadError }) => {
   const { t } = useTranslation('plugin__console-demo-plugin');
   const getPodBulkActions = usePodBulkActions();
@@ -217,25 +229,6 @@ const PodsTable: React.FC<PodsTableProps> = ({ data, loaded, loadError }) => {
         })),
       ),
     [],
-  );
-
-  const columns = React.useMemo<ConsoleDataViewColumn<K8sResourceCommon>[]>(
-    () => [
-      {
-        title: t('Name'),
-        id: 'name',
-        type: 'name' as const,
-        sort: 'metadata.name',
-      },
-      {
-        title: t('Namespace'),
-        id: 'namespace',
-        type: 'namespace' as const,
-        sort: 'metadata.namespace',
-      },
-      { id: 'actions', type: 'actions' as const },
-    ],
-    [t],
   );
 
   return (

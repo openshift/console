@@ -22,12 +22,7 @@ export const useRepositoriesColumns = (): {
     () => [
       {
         type: 'name' as const,
-        title: t('Name'),
         id: tableColumnInfo[0].id,
-        sort: 'metadata.name',
-        props: {
-          modifier: 'nowrap' as const,
-        },
       },
       {
         title: t('Display Name'),
@@ -39,12 +34,7 @@ export const useRepositoriesColumns = (): {
       },
       {
         type: 'namespace' as const,
-        title: t('Namespace'),
         id: tableColumnInfo[2].id,
-        sort: 'metadata.namespace',
-        props: {
-          modifier: 'nowrap' as const,
-        },
       },
       {
         title: t('Disabled'),

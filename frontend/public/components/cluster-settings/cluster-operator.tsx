@@ -125,10 +125,8 @@ const useClusterOperatorColumns = (): ConsoleDataViewColumn<ClusterOperator>[] =
     () => [
       {
         type: 'name' as const,
-        title: t('Name'),
         id: tableColumnInfo[0].id,
-        sort: 'metadata.name',
-        props: { hasRightBorder: false, modifier: 'nowrap' as const, width: 20 },
+        props: { hasRightBorder: false, width: 20 },
       },
       {
         title: t('Status'),

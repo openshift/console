@@ -48,10 +48,12 @@ const renderRow = (obj: K8sResourceKind, ids: string[]) => {
 };
 
 describe('useOperandResourceColumns', () => {
-  it('returns the expected column titles', () => {
+  it('uses the name column role and titles the custom columns', () => {
     const { result } = renderHookWithProviders(() => useOperandResourceColumns());
-    expect(result.current.columns.map(({ title }) => title)).toEqual([
-      'Name',
+    expect(result.current.columns[0]).toEqual(
+      expect.objectContaining({ id: 'name', type: 'name' }),
+    );
+    expect(result.current.columns.slice(1).map(({ title }) => title)).toEqual([
       'Kind',
       'Status',
       'Created',

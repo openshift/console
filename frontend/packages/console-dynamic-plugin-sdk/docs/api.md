@@ -273,7 +273,7 @@ A table component for displaying, filtering, sorting, and paginating a list of r
 
 ```tsx
 const columns: ConsoleDataViewColumn<PodDisruptionBudgetKind>[] = [
-  { id: 'name', type: 'name', title: 'Name' },
+  { id: 'name', type: 'name' },
   { id: 'actions', type: 'actions' },
 ];
 
@@ -324,7 +324,7 @@ const PDBList: React.FC<Props> = ({ data, loaded }) => (
 | `data` | The array of data items to display in the table. |
 | `loaded` | Flag indicating whether `data` has finished loading. |
 | `loadError` | (optional) An error encountered while loading `data`. |
-| `columns` | The column definitions for the table. |
+| `columns` | The column definitions for the table. Every column requires an ID. Name and namespace types default their translated title, metadata sort path, and nowrap header and row cell modifiers. Explicit values override the defaults; header and row cell props apply independently, and `sort: false` disables sorting. |
 | `getDataViewRows` | Transforms the filtered, sorted, and paginated data into rows of typed cells matched to columns by ID, independent of cell order. Unknown IDs are ignored and omitted cells render empty. Console supplies selection and extension cells separately. An omitted `actions` cell uses the resource action providers for a Kubernetes resource row; `cell: null` leaves it empty. |
 | `initialFilters` | (optional) Initial values for custom string or string-array fields added via `TFilters`, and/or the built-in name and label filters. Declare every custom key here, using `''` or `[]` for inactive filters, so it participates in URL synchronization and clearing. Strings use one URL parameter and arrays use repeated parameters. The name and label filters otherwise default to empty. |
 | `additionalFilterNodes` | (optional) Additional filter elements to render alongside the built-in name and label filters. |

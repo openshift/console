@@ -44,21 +44,13 @@ const useHelmReleasesColumns = (): {
     () => [
       {
         type: 'name' as const,
-        title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'name',
-        props: {
-          modifier: 'nowrap' as const,
-        },
       },
       {
         type: 'namespace' as const,
-        title: t('Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'namespace',
-        props: {
-          modifier: 'nowrap' as const,
-        },
       },
       {
         title: t('Revision'),

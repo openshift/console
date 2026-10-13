@@ -75,7 +75,7 @@ const usePluginColumns = (): {
 
   const columns = useMemo(
     () => [
-      { type: 'name' as const, title: t('Name'), id: pluginColumnInfo.name.id, sort: 'name' },
+      { type: 'name' as const, id: pluginColumnInfo.name.id, sort: 'name' },
       {
         title: t('Version'),
         id: pluginColumnInfo.version.id,

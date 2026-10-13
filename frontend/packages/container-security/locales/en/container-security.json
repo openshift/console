@@ -23,8 +23,6 @@
   "Image vulnerabilities": "Image vulnerabilities",
   "Impact": "Impact",
   "Manifest": "Manifest",
-  "Name": "Name",
-  "Namespace": "Namespace",
   "No {{isSelected}} vulnerabilities": "No {{isSelected}} vulnerabilities",
   "No vulnerabilities detected.": "No vulnerabilities detected.",
   "No vulnerabilities found": "No vulnerabilities found",

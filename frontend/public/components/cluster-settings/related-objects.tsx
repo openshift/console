@@ -73,10 +73,9 @@ const useRelatedObjectsColumns = (): ConsoleDataViewColumn<ClusterOperatorObject
     () => [
       {
         type: 'name' as const,
-        title: t('Name'),
         id: columnIds[0].id,
         sort: 'name',
-        props: { hasRightBorder: false, modifier: 'nowrap' as const },
+        props: { hasRightBorder: false },
       },
       {
         title: t('Resource'),
@@ -96,12 +95,8 @@ const useRelatedObjectsColumns = (): ConsoleDataViewColumn<ClusterOperatorObject
       },
       {
         type: 'namespace' as const,
-        title: t('Namespace'),
         id: columnIds[3].id,
         sort: 'namespace',
-        props: {
-          modifier: 'nowrap' as const,
-        },
       },
     ],
     [t],

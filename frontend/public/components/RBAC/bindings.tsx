@@ -95,12 +95,7 @@ const useRoleBindingsColumns = (): {
     () => [
       {
         type: 'name' as const,
-        title: t('Name'),
         id: tableColumnInfo[0].id,
-        sort: 'metadata.name',
-        props: {
-          modifier: 'nowrap' as const,
-        },
       },
       {
         title: t('Role ref'),
@@ -128,12 +123,7 @@ const useRoleBindingsColumns = (): {
       },
       {
         type: 'namespace' as const,
-        title: t('Namespace'),
         id: tableColumnInfo[4].id,
-        sort: 'metadata.namespace',
-        props: {
-          modifier: 'nowrap' as const,
-        },
       },
       { type: 'actions' as const, id: tableColumnInfo[5].id },
     ],

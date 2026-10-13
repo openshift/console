@@ -197,17 +197,11 @@ const usePersistentVolumeClaimColumns = (): {
     () => [
       {
         type: 'name' as const,
-        title: t('Name'),
-        sort: 'metadata.name',
         id: tableColumnInfo[0].id,
-        props: { modifier: 'nowrap' as const },
       },
       {
         type: 'namespace' as const,
-        title: t('Namespace'),
-        sort: 'metadata.namespace',
         id: tableColumnInfo[1].id,
-        props: { modifier: 'nowrap' as const },
       },
       {
         title: t('Status'),

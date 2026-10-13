@@ -32,7 +32,12 @@ jest.mock('@console/dynamic-plugin-sdk/src/api/useResolvedExtensions', () => ({
   useResolvedExtensions: jest.fn(),
 }));
 
-type Item = { metadata: { name: string }; status: string; kind?: string; apiVersion?: string };
+type Item = {
+  metadata: { name: string; namespace?: string };
+  status: string;
+  kind?: string;
+  apiVersion?: string;
+};
 type ResolvedTableColumn = LoadedAndResolvedExtension<ConsoleDataViewTableColumn<Item>>;
 type ResolvedResourceActionProvider = LoadedAndResolvedExtension<ResourceActionProvider>;
 
@@ -278,6 +283,86 @@ describe('ConsoleDataView', () => {
     expect(
       screen.queryByText('The namespace column is only shown when in "All projects"'),
     ).not.toBeInTheDocument();
+  });
+
+  it.each([
+    ['without extensions', []],
+    ['with an extension', [makeExtension('test-ready', 'Ready', { defaultVisible: true })]],
+  ])(
+    'defaults role titles and sorts consistently with column management %s',
+    async (_scenario, extensions) => {
+      const user = userEvent.setup();
+      renderTable(extensions, undefined, {
+        data: [
+          { metadata: { name: 'bravo', namespace: 'project-a' }, status: 'ready' },
+          { metadata: { name: 'alpha', namespace: 'project-z' }, status: 'ready' },
+        ],
+        columns: [
+          { id: 'name', type: 'name' },
+          { id: 'project', type: 'namespace' },
+        ],
+        showNamespaceOverride: true,
+        getDataViewRows: (rows, activeColumns) =>
+          rows.map(({ obj }) =>
+            activeColumns.map(({ id, type }) => ({
+              id,
+              cell: type === 'name' ? obj.metadata.name : obj.metadata.namespace,
+            })),
+          ),
+      });
+
+      const table = screen.getByRole('grid', { name: 'items table' });
+      expect(within(table).getByRole('columnheader', { name: 'Name' })).toBeVisible();
+      const namespaceHeader = within(table).getByRole('columnheader', { name: 'Namespace' });
+      expect(within(table).getAllByRole('row')[1]).toHaveTextContent('alphaproject-z');
+      await user.click(within(namespaceHeader).getByRole('button'));
+      expect(within(table).getAllByRole('row')[1]).toHaveTextContent('bravoproject-a');
+
+      await user.click(screen.getByRole('button', { name: 'Column management' }));
+      expect(await screen.findByRole('checkbox', { name: 'Name' })).toBeChecked();
+      expect(screen.getByRole('checkbox', { name: 'Namespace' })).toBeChecked();
+    },
+  );
+
+  it('keeps explicit role titles and custom sort paths and functions', async () => {
+    const user = userEvent.setup();
+    renderTable([], undefined, {
+      columns: [
+        { id: 'name', type: 'name', title: 'Resource', sort: (items) => [...items].reverse() },
+        { id: 'project', type: 'namespace', title: 'Project', sort: 'status' },
+      ],
+    });
+
+    const table = screen.getByRole('grid', { name: 'items table' });
+    expect(within(table).getByRole('columnheader', { name: 'Resource' })).toBeVisible();
+    const projectHeader = within(table).getByRole('columnheader', { name: 'Project' });
+    expect(projectHeader).toBeVisible();
+    expect(within(table).getAllByRole('row')[1]).toHaveTextContent('bravo');
+    await user.click(within(projectHeader).getByRole('button'));
+    expect(within(table).getAllByRole('row')[1]).toHaveTextContent('bravo');
+    expect(within(table).queryByRole('columnheader', { name: 'Name' })).not.toBeInTheDocument();
+  });
+
+  it('preserves an explicitly empty role title', () => {
+    renderTable([], undefined, {
+      columns: [{ id: 'name', type: 'name', title: '', sort: false }],
+    });
+
+    const table = screen.getByRole('grid', { name: 'items table' });
+    expect(within(table).queryByRole('columnheader', { name: 'Name' })).not.toBeInTheDocument();
+    expect(within(table).getByRole('columnheader', { name: 'Actions' })).toBeVisible();
+  });
+
+  it('allows disabling a role default sort without changing the data order', () => {
+    renderTable([], undefined, {
+      data: [...data].reverse(),
+      columns: [{ id: 'name', type: 'name', sort: false }],
+    });
+
+    const table = screen.getByRole('grid', { name: 'items table' });
+    const nameHeader = within(table).getByRole('columnheader', { name: 'Name' });
+    expect(within(nameHeader).queryByRole('button')).not.toBeInTheDocument();
+    expect(within(table).getAllByRole('row')[1]).toHaveTextContent('bravo');
   });
 
   it('adds name cell test IDs and lets row props override them', () => {

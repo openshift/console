@@ -1,7 +1,6 @@
 import { screen } from '@testing-library/react';
 import * as _ from 'lodash';
 import * as Router from 'react-router';
-import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import type { ConsoleDataViewColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { MultiListPage, DetailsPage } from '@console/internal/components/factory';
 import { ResourceLink } from '@console/internal/components/utils';
@@ -46,11 +45,6 @@ jest.mock('@console/internal/components/factory', () => ({
   DetailsPage: jest.fn(() => null),
 }));
 
-jest.mock('@console/app/src/components/data-view/ConsoleDataView', () => ({
-  ...jest.requireActual('@console/app/src/components/data-view/ConsoleDataView'),
-  ConsoleDataView: jest.fn(() => null),
-}));
-
 jest.mock('@console/internal/components/utils/details-page', () => ({
   ...jest.requireActual('@console/internal/components/utils/details-page'),
   ResourceSummary: jest.fn(() => null),
@@ -61,7 +55,6 @@ jest.mock('@console/internal/components/conditions', () => ({
 }));
 
 const mockResourceLink = ResourceLink as jest.Mock;
-const mockConsoleDataView = ConsoleDataView as unknown as jest.Mock;
 const mockMultiListPage = MultiListPage as jest.Mock;
 const mockDetailsPage = DetailsPage as jest.Mock;
 
@@ -189,11 +182,30 @@ describe('SubscriptionStatus', () => {
 });
 
 describe('SubscriptionsList', () => {
+  const originalIntersectionObserver = window.IntersectionObserver;
+
+  beforeAll(() => {
+    Object.defineProperty(window, 'IntersectionObserver', {
+      configurable: true,
+      value: jest.fn().mockImplementation(() => ({
+        observe: jest.fn(),
+        unobserve: jest.fn(),
+      })),
+    });
+  });
+
+  afterAll(() => {
+    Object.defineProperty(window, 'IntersectionObserver', {
+      configurable: true,
+      value: originalIntersectionObserver,
+    });
+  });
+
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  it('passes columns to ConsoleDataView', () => {
+  it('renders the default and custom column headings', () => {
     renderWithProviders(
       <SubscriptionsList.WrappedComponent
         data={testSubscriptions}
@@ -203,17 +215,11 @@ describe('SubscriptionsList', () => {
       />,
     );
 
-    expect(mockConsoleDataView).toHaveBeenCalledTimes(1);
-    const [dataViewProps] = mockConsoleDataView.mock.calls[0];
-
-    expect(dataViewProps.columns.map((column) => column.title)).toEqual([
-      'Name',
-      'Namespace',
-      'Status',
-      'Update channel',
-      'Update approval',
-      undefined,
-    ]);
+    expect(screen.getByRole('columnheader', { name: /^Name\b/ })).toBeVisible();
+    expect(screen.getByRole('columnheader', { name: /^Namespace\b/ })).toBeVisible();
+    expect(screen.getByRole('columnheader', { name: /^Status\b/ })).toBeVisible();
+    expect(screen.getByRole('columnheader', { name: /^Update channel\b/ })).toBeVisible();
+    expect(screen.getByRole('columnheader', { name: /^Update approval\b/ })).toBeVisible();
   });
 
   it('renders the custom empty message instead of the table when no Subscriptions exist', () => {
@@ -226,7 +232,7 @@ describe('SubscriptionsList', () => {
       />,
     );
 
-    expect(mockConsoleDataView).not.toHaveBeenCalled();
+    expect(screen.queryByRole('grid')).not.toBeInTheDocument();
     expect(screen.getByText('No Subscriptions found')).toBeVisible();
   });
 });
