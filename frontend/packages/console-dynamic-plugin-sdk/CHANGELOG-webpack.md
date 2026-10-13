@@ -10,7 +10,7 @@ For current development version of Console, use `4.x.0-prerelease.n` packages.
 For older 1.x plugin SDK packages, refer to "OpenShift Console Versions vs SDK Versions" compatibility
 table in [Console dynamic plugins README](./README.md).
 
-## 4.23.0-prerelease.6 - TBD
+## 4.23.0 - 2026-10-16
 
 - Minimum compatible version of `@rspack/core` peer dependency increased to `2.1.10` ([OCPBUGS-109592], [#16978])
 
