@@ -728,7 +728,7 @@
     "type": "console.user-preference/item",
     "properties": {
       "id": "console.theme",
-      "label": "%console-app~Theme%",
+      "label": "%console-app~Color scheme%",
       "groupId": "general",
       "description": "%console-app~Console will appear as per the selected theme.%",
       "field": {
@@ -781,9 +781,6 @@
         ]
       },
       "insertAfter": "console.theme"
-    },
-    "flags": {
-      "required": ["FLAG_OPENSHIFT_5"]
     }
   },
   {
