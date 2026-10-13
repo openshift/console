@@ -150,6 +150,7 @@ const useImageManifestVulnColumns = (): {
         props: { modifier: 'nowrap' as const },
       },
       {
+        type: 'namespace' as const,
         id: 'namespace',
         title: t('Namespace'),
         sort: 'metadata.namespace',

@@ -157,7 +157,7 @@ const getDataViewRows: GetDataViewRows<MachineConfigKind> = (data, columns) =>
           DASH,
         ),
         props: {
-          modifier: 'breakWord',
+          modifier: 'breakWord' as const,
         },
       },
       [tableColumnInfo[2].id]: {
@@ -166,7 +166,7 @@ const getDataViewRows: GetDataViewRows<MachineConfigKind> = (data, columns) =>
       [tableColumnInfo[3].id]: {
         cell: _.get(obj, 'spec.osImageURL') || DASH,
         props: {
-          modifier: 'breakWord',
+          modifier: 'breakWord' as const,
         },
       },
       [tableColumnInfo[4].id]: {

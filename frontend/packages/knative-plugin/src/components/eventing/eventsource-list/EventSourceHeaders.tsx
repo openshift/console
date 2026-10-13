@@ -11,6 +11,7 @@ export const useEventSourceColumns = (): {
     () => [
       { type: 'name' as const, id: 'name', title: t('Name'), sort: 'metadata.name' },
       {
+        type: 'namespace' as const,
         id: 'namespace',
         title: t('Namespace'),
         sort: 'metadata.namespace',

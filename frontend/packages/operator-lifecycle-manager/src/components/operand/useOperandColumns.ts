@@ -28,6 +28,7 @@ export const useOperandColumns = (
       ...(showNamespace
         ? [
             {
+              type: 'namespace' as const,
               id: 'namespace',
               title: t('Namespace'),
               sort: sortByValue<K8sResourceKind>(getOperandNamespace),

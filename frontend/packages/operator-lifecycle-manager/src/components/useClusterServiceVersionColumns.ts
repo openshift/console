@@ -51,6 +51,7 @@ export const useClusterServiceVersionColumns = (
       ...(allNamespaceActive
         ? [
             {
+              type: 'namespace' as const,
               id: 'namespace',
               title: t('Namespace'),
               sort: sortByValue<InstalledOperator>(getOperatorNamespace),

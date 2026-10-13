@@ -230,6 +230,7 @@ const PodsTable: React.FC<PodsTableProps> = ({ data, loaded, loadError }) => {
       {
         title: t('Namespace'),
         id: 'namespace',
+        type: 'namespace' as const,
         sort: 'metadata.namespace',
       },
       { id: 'actions', type: 'actions' as const },

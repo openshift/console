@@ -110,6 +110,7 @@ const useClusterExtensionColumns = (): ConsoleDataViewColumn<ClusterExtensionKin
         id: tableColumnInfo[3].id,
       },
       {
+        type: 'namespace' as const,
         title: t('Namespace'),
         id: tableColumnInfo[4].id,
         sort: 'spec.namespace',

@@ -128,12 +128,12 @@ describe('useActiveColumns', () => {
   it('hides the namespace column in a single project unless the override is enabled', () => {
     const namespaceColumns: TestColumn[] = [
       { id: 'name', title: 'Name' },
-      { id: 'namespace', title: 'Namespace' },
+      { id: 'project', type: 'namespace', title: 'Namespace' },
       { id: 'status', title: 'Status' },
     ];
     const options = {
       columns: namespaceColumns,
-      selectedColumns: ['name', 'namespace', 'status'],
+      selectedColumns: ['name', 'project', 'status'],
       namespace: 'project-a',
     };
 
@@ -141,7 +141,36 @@ describe('useActiveColumns', () => {
     expect(hiddenResult.current[0].map(({ id }) => id)).toEqual(['name', 'status']);
 
     const overrideResult = setupHook({ ...options, showNamespaceOverride: true }).result;
-    expect(overrideResult.current[0].map(({ id }) => id)).toEqual(['name', 'namespace', 'status']);
+    expect(overrideResult.current[0].map(({ id }) => id)).toEqual(['name', 'project', 'status']);
+  });
+
+  it('keeps a column with ID namespace visible when it has no namespace type', () => {
+    const { result } = setupHook({
+      namespace: 'project-a',
+      columns: [...columns, { id: 'namespace', title: 'Custom namespace value' }],
+    });
+
+    expect(result.current[0].map(({ id }) => id)).toContain('namespace');
+  });
+
+  it('forces namespace-type columns visible even when preferences exclude them', () => {
+    const { result } = setupHook({
+      namespace: 'project-a',
+      selectedColumns: ['name'],
+      showNamespaceOverride: true,
+      columns: [...columns, { id: 'project', type: 'namespace', title: 'Project' }],
+    });
+
+    expect(result.current[0].map(({ id }) => id)).toEqual(['name', 'project']);
+  });
+
+  it('shows selected namespace-type columns in All projects', () => {
+    const { result } = setupHook({
+      selectedColumns: ['name', 'project'],
+      columns: [...columns, { id: 'project', type: 'namespace', title: 'Project' }],
+    });
+
+    expect(result.current[0].map(({ id }) => id)).toEqual(['name', 'project']);
   });
 
   it('waits for both column preferences to load', () => {

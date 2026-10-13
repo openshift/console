@@ -148,6 +148,7 @@ const useVolumeSnapshotColumns = (
           props: { modifier: 'nowrap' as const },
         },
         {
+          type: 'namespace' as const,
           title: t('Namespace'),
           sort: 'metadata.namespace',
           id: tableColumnInfo[1].id,

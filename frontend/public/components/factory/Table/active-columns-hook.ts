@@ -47,13 +47,15 @@ export const useActiveColumns = <D = any>({
           }),
         );
 
-    if (showNamespaceOverride && !activeColumnIDs.has('namespace')) {
-      activeColumnIDs.add('namespace');
+    if (showNamespaceOverride) {
+      columns.forEach(({ id, type }) => {
+        if (type === 'namespace') activeColumnIDs.add(id);
+      });
     }
 
     let activeColumns = columns.filter((c) => activeColumnIDs.has(c.id) || c.title === '');
     if (namespace && namespace !== ALL_NAMESPACES_KEY && !showNamespaceOverride) {
-      activeColumns = activeColumns.filter((column) => column.id !== 'namespace');
+      activeColumns = activeColumns.filter((column) => column.type !== 'namespace');
     }
 
     if (hasPreferredColumnOrder) {

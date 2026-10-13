@@ -95,6 +95,7 @@ const useRelatedObjectsColumns = (): ConsoleDataViewColumn<ClusterOperatorObject
         },
       },
       {
+        type: 'namespace' as const,
         title: t('Namespace'),
         id: columnIds[3].id,
         sort: 'namespace',

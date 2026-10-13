@@ -27,7 +27,6 @@ import { useTranslation } from 'react-i18next';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import type {
   ResourceFilters,
-  ColumnLayout,
   ConsoleDataViewProps,
   GetDataViewRows,
   K8sResourceCommon,
@@ -47,6 +46,7 @@ import {
 } from './resourceActions';
 import { ResourceBulkActionMenu } from './ResourceBulkActionMenu';
 import { useConsoleDataViewColumns } from './useConsoleDataViewColumns';
+import type { ConsoleDataViewColumnLayout } from './useConsoleDataViewColumns';
 import { useConsoleDataViewData } from './useConsoleDataViewData';
 import { useConsoleDataViewFilters } from './useConsoleDataViewFilters';
 import { useDataViewSelection } from './useDataViewSelection';
@@ -124,37 +124,24 @@ export const ConsoleDataView = <
   const getRowsWithResourceActions = useCallback<GetDataViewRows<TData, TCustomRowData>>(
     (rows, activeColumns) => {
       const contentRows = getDataViewRows(rows, activeColumns);
-      const actionIndex = activeColumns.findIndex(({ type }) => type === 'actions');
-      if (actionIndex < 0) return contentRows;
+      const actionColumn = activeColumns.find(({ type }) => type === 'actions');
+      if (!actionColumn) return contentRows;
 
       return contentRows.map((cells, rowIndex) => {
-        const actionCell = cells[actionIndex];
-        if (
-          actionCell !== undefined &&
-          (actionCell === null ||
-            typeof actionCell !== 'object' ||
-            !('id' in actionCell) ||
-            actionCell.cell !== undefined)
-        ) {
-          return cells;
-        }
+        const actionCell = cells.find(({ id: columnID }) => columnID === actionColumn.id);
+        if (actionCell?.cell !== undefined) return cells;
         const resource = rows[rowIndex]?.obj;
         const resourceReference = getResourceReference(resource);
-        const nextCells = [...cells];
-        if (!resourceReference) {
-          nextCells[actionIndex] = {
+        return [
+          ...cells.filter(({ id: columnID }) => columnID !== actionColumn.id),
+          {
             ...actionCell,
-            id: activeColumns[actionIndex].id,
-            cell: null,
-          };
-          return nextCells;
-        }
-        nextCells[actionIndex] = {
-          ...actionCell,
-          id: activeColumns[actionIndex].id,
-          cell: <LazyActionMenu context={{ [resourceReference]: resource }} />,
-        };
-        return nextCells;
+            id: actionColumn.id,
+            cell: resourceReference ? (
+              <LazyActionMenu context={{ [resourceReference]: resource }} />
+            ) : null,
+          },
+        ];
       });
     },
     [getDataViewRows],
@@ -181,7 +168,7 @@ export const ConsoleDataView = <
           }),
         };
         const contentRow = contentRows[rowIndex];
-        return [...contentRow.slice(0, selectionIndex), cell, ...contentRow.slice(selectionIndex)];
+        return [...contentRow, cell];
       });
     },
     [
@@ -193,12 +180,13 @@ export const ConsoleDataView = <
       onSelectItem,
     ],
   );
-  const managedColumnLayout = useMemo<ColumnLayout>(
+  const managedColumnLayout = useMemo<ConsoleDataViewColumnLayout>(
     () => ({
       id: resolvedID,
       type: label ?? resolvedID,
-      columns: tableColumns.map(({ id: columnID, title, defaultVisible }) => ({
+      columns: tableColumns.map(({ id: columnID, type, title, defaultVisible }) => ({
         id: columnID,
+        type,
         title: title ?? '',
         additional: defaultVisible === false,
       })),

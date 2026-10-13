@@ -895,8 +895,8 @@ Adds a new standalone page rendered outside the common Console page layout.<br/>
 
 | Name | Value Type | Optional | Description |
 | ---- | ---------- | -------- | ----------- |
-| `path` | `string \| string[]` | no | Valid URL path or array of paths. Note that React Router v7 does not use `path-to-regexp`. |
 | `component` | `CodeRef<React.ComponentType<{}>>` | no | The component to be rendered when the route matches. |
+| `path` | `string \| string[]` | no | Valid URL path or array of paths. Note that React Router v7 does not use `path-to-regexp`. |
 | `exact` | `boolean` | yes | When `true`, the path must match the URL exactly. |
 
 ---

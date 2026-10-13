@@ -325,15 +325,15 @@ const PDBList: React.FC<Props> = ({ data, loaded }) => (
 | `loaded` | Flag indicating whether `data` has finished loading. |
 | `loadError` | (optional) An error encountered while loading `data`. |
 | `columns` | The column definitions for the table. |
-| `getDataViewRows` | Transforms the filtered, sorted, and paginated data into table rows. An omitted `actions` cell uses the resource action providers for a Kubernetes resource row; `cell: null` leaves it empty. |
-| `initialFilters` | (optional) Initial values for any custom fields added via `TFilters`, and/or the built-in name and/or label filters. The name and label filters otherwise default to empty. |
+| `getDataViewRows` | Transforms the filtered, sorted, and paginated data into rows of typed cells matched to columns by ID, independent of cell order. Unknown IDs are ignored and omitted cells render empty. Console supplies selection and extension cells separately. An omitted `actions` cell uses the resource action providers for a Kubernetes resource row; `cell: null` leaves it empty. |
+| `initialFilters` | (optional) Initial values for custom string or string-array fields added via `TFilters`, and/or the built-in name and label filters. Declare every custom key here, using `''` or `[]` for inactive filters, so it participates in URL synchronization and clearing. Strings use one URL parameter and arrays use repeated parameters. The name and label filters otherwise default to empty. |
 | `additionalFilterNodes` | (optional) Additional filter elements to render alongside the built-in name and label filters. |
 | `getObjectMetadata` | (optional) Extracts the name and labels used by the built-in filters from a data item. |
 | `matchesAdditionalFilters` | (optional) Determines whether a data item matches any custom filters. |
 | `customRowData` | (optional) Additional data made available to each row. |
 | `defaultSortColumnId` | (optional) The `id` of the column to sort by before the user picks one. Defaults to the first column, and is ignored if no column has this id. A `sortBy` URL parameter takes precedence; note that `sortBy` names its column by translated title, not by id. |
 | `defaultSortDirection` | (optional) The direction to sort by before the user picks one. Defaults to ascending. An `orderBy` URL parameter takes precedence. |
-| `showNamespaceOverride` | (optional) If true, a column with id `'namespace'` is kept active regardless of column management selections or the active namespace. |
+| `showNamespaceOverride` | (optional) If true, columns with `type: 'namespace'` are kept active regardless of column management selections or the active namespace. |
 | `hideNameLabelFilters` | (optional) Hides both the name and label filters. |
 | `hideLabelFilter` | (optional) Hides only the label filter, keeping the name filter. |
 | `EmptyMsg` | (optional) Rendered in place of the table when `data` is empty, letting a consumer explain what is missing and how to create the first resource. Defaults to a generic "No {{label}} found" message. Note that this does not apply when the data is non-empty but the active filters match nothing; that case always renders the built-in in-table empty message. |

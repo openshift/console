@@ -176,6 +176,7 @@ const useAlertManagerColumns = (): ConsoleDataViewColumn<K8sResourceKind>[] => {
         props: { hasRightBorder: false, modifier: 'nowrap' as const },
       },
       {
+        type: 'namespace' as const,
         title: t('Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',

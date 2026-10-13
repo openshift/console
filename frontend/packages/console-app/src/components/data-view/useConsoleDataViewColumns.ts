@@ -6,6 +6,7 @@ import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useRe
 import type {
   ColumnLayout,
   ConsoleDataViewColumn,
+  ConsoleDataViewRow,
   GetDataViewRows,
   ResourceMetadata,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
@@ -15,7 +16,14 @@ import { useTranslatedExtensions } from '@console/plugin-sdk/src/utils/useTransl
 import { getConsoleDataViewID } from './getConsoleDataViewID';
 import { useConsoleDataViewResizableColumns } from './useConsoleDataViewResizableColumns';
 
+export type ConsoleDataViewColumnLayout = Omit<ColumnLayout, 'columns'> & {
+  columns: (ColumnLayout['columns'][number] & Pick<ConsoleDataViewColumn<unknown>, 'type'>)[];
+};
+
 type ResolvedTableColumn = LoadedAndResolvedExtension<ConsoleDataViewTableColumn>;
+
+const isDataViewCellObject = (cell: DataViewTd): cell is Extract<DataViewTd, { cell: ReactNode }> =>
+  cell !== null && typeof cell === 'object' && 'cell' in cell;
 
 const cellIsStickyProps = {
   isStickyColumn: true,
@@ -154,7 +162,7 @@ export const orderConsoleDataViewColumns = <TData>(
 
 export const useConsoleDataViewColumns = <TData, TCustomRowData>(
   columns: ConsoleDataViewColumn<TData>[],
-  columnLayout: ColumnLayout,
+  columnLayout: ConsoleDataViewColumnLayout,
   tableID: string | undefined,
   getDataViewRows: GetDataViewRows<TData, TCustomRowData>,
   getObjectMetadata: ((obj: TData) => ResourceMetadata) | undefined,
@@ -192,7 +200,7 @@ export const useConsoleDataViewColumns = <TData, TCustomRowData>(
     isResizable,
   });
 
-  const managedLayout = useMemo<ColumnLayout>(() => {
+  const managedLayout = useMemo<ConsoleDataViewColumnLayout>(() => {
     const fixedColumnIDs = new Set(
       ordered.columns
         .filter(({ type }) => type === 'actions' || type === 'selection')
@@ -213,8 +221,8 @@ export const useConsoleDataViewColumns = <TData, TCustomRowData>(
             !fixedColumnIDs.has(id) && (original.has(id) || ordered.extensionsByID.has(id)),
         )
         .map(
-          ({ id, title, defaultVisible }) =>
-            original.get(id) ?? { id, title, additional: defaultVisible === false },
+          ({ id, type, title, defaultVisible }) =>
+            original.get(id) ?? { id, type, title, additional: defaultVisible === false },
         ),
     };
   }, [columnLayout, ordered]);
@@ -226,29 +234,24 @@ export const useConsoleDataViewColumns = <TData, TCustomRowData>(
         const item = obj as { metadata?: { name?: string }; name?: string };
         return item?.metadata?.name ?? getObjectMetadata?.(obj)?.name ?? item?.name;
       };
-      const applyCellProps = (rows: DataViewTd[][]): DataViewTd[][] =>
+      const applyCellProps = (rows: ConsoleDataViewRow[]): ConsoleDataViewRow[] =>
         rows.map((row, rowIndex) =>
           row.map((cell, index) => {
             const type = activeColumns[index]?.type;
             const defaults = getDefaultProps(type, hasSelection);
-            if (!defaults) {
-              return cell;
-            }
-            const defaultProps = {
-              ...defaults,
-              ...(type === 'name' && {
-                'data-test': `data-view-cell-${getRowName(data[rowIndex].obj)}-name`,
-              }),
+            if (!defaults) return cell;
+            return {
+              ...cell,
+              props: {
+                ...defaults,
+                ...(type === 'name' && {
+                  'data-test': `data-view-cell-${getRowName(data[rowIndex].obj)}-name`,
+                }),
+                ...cell.props,
+              },
             };
-            return cell && typeof cell === 'object' && 'cell' in cell
-              ? { ...cell, props: { ...defaultProps, ...cell.props } }
-              : { cell: cell as ReactNode, props: defaultProps };
           }),
         );
-
-      if (!ordered.extensionsByID.size) {
-        return applyCellProps(getDataViewRows(data, activeColumns));
-      }
 
       const builtInActiveColumns = activeColumns.filter(
         ({ id }) => !ordered.extensionsByID.has(id),
@@ -278,13 +281,16 @@ export const useConsoleDataViewColumns = <TData, TCustomRowData>(
       return applyCellProps(
         data.map((_, rowIndex) => {
           const builtInCells = new Map(
-            builtInActiveColumns.map(({ id }, index) => [id, builtInRows[rowIndex]?.[index]]),
+            (builtInRows[rowIndex] ?? []).map((cell) => [cell.id, cell]),
           );
-          return activeColumns.map(({ id }) =>
-            ordered.extensionsByID.has(id)
-              ? (extensionCells.get(id)?.[rowIndex] ?? null)
-              : builtInCells.get(id),
-          );
+          return activeColumns.map(({ id }) => {
+            if (!ordered.extensionsByID.has(id)) {
+              const cell = builtInCells.get(id);
+              return { ...cell, id, cell: cell?.cell ?? null };
+            }
+            const cell = extensionCells.get(id)?.[rowIndex];
+            return isDataViewCellObject(cell) ? { ...cell, id } : { id, cell: cell ?? null };
+          });
         }),
       );
     },

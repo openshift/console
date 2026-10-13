@@ -168,6 +168,7 @@ export const useWorkloadColumns = <T extends K8sResourceKind>(): {
         },
       },
       {
+        type: 'namespace' as const,
         title: t('Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',

@@ -523,7 +523,6 @@ const getNodeDataViewRows = (
       }
       return {
         id,
-        props: 'props' in rowCell ? rowCell.props : undefined,
         cell: rowCell.cell ?? DASH,
       };
     });

@@ -134,6 +134,7 @@ const renderTable = (
     data?: Item[];
     selection?: ConsoleDataViewProps<Item>['selection'];
     actionProviders?: ResolvedResourceActionProvider[];
+    showNamespaceOverride?: boolean;
   } = {},
 ) => {
   const resolvedResults = new WeakMap<Function, [unknown[], boolean, unknown[]]>();
@@ -184,6 +185,7 @@ const renderTable = (
         id={options.id ?? defaultTable}
         getDataViewRows={options.getDataViewRows ?? getDataViewRows}
         selection={options.selection}
+        showNamespaceOverride={options.showNamespaceOverride}
         hideNameLabelFilters
         {...(options.useDefaultResizable ? {} : { isResizable: options.isResizable ?? false })}
       />
@@ -230,13 +232,61 @@ describe('ConsoleDataView', () => {
     expect(within(table).getAllByRole('row')[2]).toHaveTextContent('bravoReady bravopending');
   });
 
+  it.each([
+    ['without extensions', []],
+    ['with an extension', [makeExtension('test-ready', 'Ready', { defaultVisible: true })]],
+  ])('matches reordered and omitted cells by ID %s', (_scenario, extensions) => {
+    renderTable(extensions, undefined, {
+      selection: { getItemId: (item) => item.metadata.name },
+      getDataViewRows: (rows) =>
+        rows.map(({ obj }) => [
+          ...(obj.metadata.name === 'alpha' ? [{ id: 'status', cell: obj.status }] : []),
+          { id: 'unknown-column', cell: 'Ignored cell' },
+          { id: 'name', cell: obj.metadata.name },
+        ]),
+    });
+
+    const table = screen.getByRole('grid', { name: 'items table' });
+    const rows = within(table).getAllByRole('row').slice(1);
+    expect(within(rows[0]).getAllByRole('cell')[1]).toHaveTextContent('alpha');
+    expect(within(rows[0]).getAllByRole('cell')[2]).toHaveTextContent('ready');
+    expect(within(rows[1]).getAllByRole('cell')[1]).toHaveTextContent('bravo');
+    expect(within(rows[1]).getAllByRole('cell')[2]).toBeEmptyDOMElement();
+    expect(within(rows[0]).getByRole('checkbox')).toBeVisible();
+    expect(screen.queryByText('Ignored cell')).not.toBeInTheDocument();
+    expect(within(rows[0]).queryAllByRole('cell', { name: 'Ready alpha' })).toHaveLength(
+      extensions.length,
+    );
+  });
+
+  it('uses namespace roles with custom IDs in the table and column management', async () => {
+    const user = userEvent.setup();
+    renderTable([], ['name'], {
+      columns: [columns[0], { id: 'project', type: 'namespace', title: 'Project' }],
+      showNamespaceOverride: true,
+      getDataViewRows: (rows) =>
+        rows.map(({ obj }) => [
+          { id: 'project', cell: 'project-a' },
+          { id: 'name', cell: obj.metadata.name },
+        ]),
+    });
+
+    expect(screen.getByRole('columnheader', { name: 'Project' })).toBeVisible();
+    expect(screen.getAllByRole('cell', { name: 'project-a' })).toHaveLength(2);
+    await user.click(screen.getByRole('button', { name: 'Column management' }));
+    expect(await screen.findByRole('checkbox', { name: 'Project' })).toBeVisible();
+    expect(
+      screen.queryByText('The namespace column is only shown when in "All projects"'),
+    ).not.toBeInTheDocument();
+  });
+
   it('adds name cell test IDs and lets row props override them', () => {
     renderTable([], undefined, {
       getDataViewRows: (rows, activeColumns) =>
         rows.map(({ obj }) =>
           activeColumns.map(({ id }) =>
             id === 'name' && obj.metadata.name === 'alpha'
-              ? obj.metadata.name
+              ? { id, cell: obj.metadata.name }
               : {
                   id,
                   cell: id === 'name' ? obj.metadata.name : null,
@@ -586,13 +636,10 @@ describe('ConsoleDataView', () => {
       actionProviders: [makePodActionProvider()],
       getDataViewRows: (rows, activeColumns) =>
         rows.map(({ obj }) =>
-          activeColumns.map(({ id }) =>
-            id === 'actions'
-              ? obj.metadata.name === 'alpha'
-                ? { id }
-                : { id, cell: null }
-              : { id, cell: obj.metadata.name },
-          ),
+          activeColumns
+            .filter(({ id }) => id !== 'actions' || obj.metadata.name !== 'alpha')
+            .map(({ id }) => ({ id, cell: id === 'actions' ? null : obj.metadata.name }))
+            .reverse(),
         ),
     });
 

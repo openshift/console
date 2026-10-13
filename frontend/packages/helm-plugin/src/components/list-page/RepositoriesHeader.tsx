@@ -38,6 +38,7 @@ export const useRepositoriesColumns = (): {
         },
       },
       {
+        type: 'namespace' as const,
         title: t('Namespace'),
         id: tableColumnInfo[2].id,
         sort: 'metadata.namespace',

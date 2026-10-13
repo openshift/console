@@ -398,6 +398,7 @@ const useBuildsColumns = (): {
         },
       },
       {
+        type: 'namespace' as const,
         title: t('Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',

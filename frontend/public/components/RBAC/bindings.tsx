@@ -127,6 +127,7 @@ const useRoleBindingsColumns = (): {
         },
       },
       {
+        type: 'namespace' as const,
         title: t('Namespace'),
         id: tableColumnInfo[4].id,
         sort: 'metadata.namespace',

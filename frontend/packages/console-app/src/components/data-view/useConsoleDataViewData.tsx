@@ -215,7 +215,9 @@ export const useConsoleDataViewData = <
     );
 
   const visibleItems = transformedData.map((item) => item.obj);
-  const dataViewRows = getDataViewRows(transformedData, dataViewColumns);
+  const dataViewRows = getDataViewRows(transformedData, dataViewColumns).map((row) =>
+    row.map(({ cell, props }) => ({ cell: cell ?? null, props })),
+  );
 
   // Apply sort state and select-all handler updates to columns independently
   const dataViewColumnsWithSortApplied = useMemo<PreparedDataViewColumn<TData>[]>(
