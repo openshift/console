@@ -74,4 +74,23 @@ describe('useConsoleDataViewSort cleanup', () => {
 
     expect(window.location.search).toBe('?sortBy=Missing&orderBy=desc&page=2');
   });
+
+  it.each([true, false])(
+    'should validate URL sortability only with a checkbox column (selection: %s)',
+    (hasSelection) => {
+      window.history.replaceState({}, '', '?sortBy=Status&orderBy=desc&page=2');
+      const tableColumns: ConsoleDataViewColumn[] = [
+        ...(hasSelection ? [{ id: 'select', type: 'selection' as const, title: '' }] : []),
+        { id: 'name', title: 'Name', sort: 'metadata.name' },
+        { id: 'status', title: 'Status' },
+      ];
+      renderHook(() => useConsoleDataViewSort({ columns: tableColumns }), { wrapper });
+
+      act(() => jest.runOnlyPendingTimers());
+
+      expect(window.location.search).toBe(
+        hasSelection ? '?page=2' : '?sortBy=Status&orderBy=desc&page=2',
+      );
+    },
+  );
 });

@@ -350,7 +350,75 @@ describe('ConsoleDataView', () => {
 
     const table = screen.getByRole('grid', { name: 'items table' });
     expect(within(table).queryByRole('columnheader', { name: 'Name' })).not.toBeInTheDocument();
-    expect(within(table).getByRole('columnheader', { name: 'Actions' })).toBeVisible();
+    expect(within(table).queryByRole('columnheader', { name: 'Actions' })).not.toBeInTheDocument();
+    expect(within(table).getByRole('columnheader', { name: '' })).toBeVisible();
+  });
+
+  it.each([
+    ['default visibility', undefined],
+    ['saved visibility', ['resource']],
+  ])('keeps a blank-title column hidden according to %s', (_scenario, preference) => {
+    renderTable([], preference, {
+      columns: [
+        { id: 'resource', type: 'name', title: 'Resource' },
+        {
+          id: 'details',
+          title: '',
+          defaultVisible: false,
+          props: { 'aria-label': 'Details' },
+        },
+      ],
+    });
+
+    const table = screen.getByRole('grid', { name: 'items table' });
+    expect(within(table).getAllByRole('columnheader')).toHaveLength(1);
+    expect(within(table).queryByRole('columnheader', { name: 'Details' })).not.toBeInTheDocument();
+  });
+
+  it('uses a supplied accessible label for a blank-title ordinary column', () => {
+    renderTable([], undefined, {
+      columns: [{ id: 'details', title: '', props: { 'aria-label': 'Details' } }],
+    });
+
+    const table = screen.getByRole('grid', { name: 'items table' });
+    expect(within(table).getByRole('columnheader', { name: 'Details' })).toBeVisible();
+    expect(within(table).queryByRole('columnheader', { name: 'Actions' })).not.toBeInTheDocument();
+  });
+
+  it('keeps only name-role columns untoggleable in column management', async () => {
+    const user = userEvent.setup();
+    renderTable([], undefined, {
+      columns: [
+        { id: 'resource', type: 'name', title: 'Resource' },
+        { id: 'name', title: 'Alias' },
+      ],
+    });
+
+    await user.click(screen.getByRole('button', { name: 'Column management' }));
+    expect(await screen.findByRole('checkbox', { name: 'Resource' })).toBeDisabled();
+    const aliasCheckbox = screen.getByRole('checkbox', { name: 'Alias' });
+    expect(aliasCheckbox).toBeEnabled();
+    await user.click(aliasCheckbox);
+    await user.click(screen.getByRole('button', { name: 'Save' }));
+
+    expect(screen.getByRole('columnheader', { name: 'Resource' })).toBeVisible();
+    expect(screen.queryByRole('columnheader', { name: 'Alias' })).not.toBeInTheDocument();
+  });
+
+  it('places extensions before the actions role regardless of column IDs or titles', () => {
+    renderTable([makeExtension('test-ready', 'Ready', { defaultVisible: true })], undefined, {
+      columns: [
+        { id: 'name', type: 'name' },
+        { id: 'actions', title: 'Notes' },
+        { id: 'tools', type: 'actions', title: 'Operations', defaultVisible: false },
+      ],
+    });
+
+    expect(
+      within(screen.getByRole('grid', { name: 'items table' }))
+        .getAllByRole('columnheader')
+        .map((header) => header.textContent),
+    ).toEqual(['Name', 'Notes', 'Ready', 'Operations']);
   });
 
   it('allows disabling a role default sort without changing the data order', () => {
@@ -363,6 +431,18 @@ describe('ConsoleDataView', () => {
     const nameHeader = within(table).getByRole('columnheader', { name: 'Name' });
     expect(within(nameHeader).queryByRole('button')).not.toBeInTheDocument();
     expect(within(table).getAllByRole('row')[1]).toHaveTextContent('bravo');
+  });
+
+  it('defaults to name sorting after adding the managed checkbox column', () => {
+    renderTable([], undefined, {
+      data: [...data].reverse(),
+      selection: { getItemId: (item) => item.metadata.name },
+    });
+
+    const rows = within(screen.getByRole('grid', { name: 'items table' })).getAllByRole('row');
+    expect(within(rows[0]).getByRole('checkbox')).toBeVisible();
+    expect(within(rows[1]).getByRole('cell', { name: 'alpha' })).toBeVisible();
+    expect(within(rows[2]).getByRole('cell', { name: 'bravo' })).toBeVisible();
   });
 
   it('adds name cell test IDs and lets row props override them', () => {
@@ -510,14 +590,14 @@ describe('ConsoleDataView', () => {
   it('puts unanchored columns after the selection column and before actions', () => {
     const { columns: ordered } = orderConsoleDataViewColumns(
       [
-        { id: 'select', title: '' },
-        { id: 'name', title: 'Name' },
-        { id: '', title: '' },
+        { id: 'select', type: 'selection', title: '' },
+        { id: 'name', type: 'name', title: 'Name' },
+        { id: 'tools', type: 'actions', title: '' },
       ],
       [makeExtension('test-ready', 'Ready')],
     );
 
-    expect(ordered.map(({ id }) => id)).toEqual(['select', 'name', 'test-ready', '']);
+    expect(ordered.map(({ id }) => id)).toEqual(['select', 'name', 'test-ready', 'tools']);
   });
 
   it('automatically resizes extension columns and uses the table ID to restore and reset widths', async () => {

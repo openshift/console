@@ -13,7 +13,6 @@ import type { ModalComponentProps } from '@console/shared/src/types/modal';
 import type { ConsoleDataViewColumnLayout } from './useConsoleDataViewColumns';
 
 const MAX_VIEW_COLS = 9;
-const NAME_COLUMN_ID = 'name';
 
 const ConsoleDataViewColumnManagementModal: FC<ConsoleDataViewColumnManagementModalProps> = ({
   cancel,
@@ -58,11 +57,11 @@ const ConsoleDataViewColumnManagementModal: FC<ConsoleDataViewColumnManagementMo
     () =>
       columnLayout.columns
         .filter(({ id }) => id)
-        .map(({ id, title, additional }) => ({
+        .map(({ id, type, title, additional }) => ({
           key: id,
           title,
           isShownByDefault: !additional,
-          isUntoggleable: id === NAME_COLUMN_ID,
+          isUntoggleable: type === 'name',
         })),
     [columnLayout.columns],
   );

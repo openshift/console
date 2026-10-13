@@ -87,6 +87,47 @@ describe('useConsoleDataViewData default sort', () => {
     const { result } = renderData({ defaultSortColumnId: 'does-not-exist' });
     expect(namesInOrder(result)).toEqual(['alpha', 'bravo', 'charlie']);
   });
+
+  it('should skip the checkbox and unsortable columns when choosing a default sort', () => {
+    const { result } = renderData({
+      columns: [
+        { id: 'select', type: 'selection', title: '' },
+        { id: 'description', title: 'Description' },
+        ...columns,
+      ],
+    });
+
+    expect(namesInOrder(result)).toEqual(['alpha', 'bravo', 'charlie']);
+  });
+
+  it('should preserve the first-column fallback without a checkbox column', () => {
+    const { result } = renderData({
+      columns: [{ id: 'description', title: 'Description' }, ...columns],
+    });
+
+    expect(namesInOrder(result)).toEqual(['charlie', 'alpha', 'bravo']);
+  });
+
+  it('should preserve an explicit default sort with a checkbox column', () => {
+    const { result } = renderData({
+      columns: [{ id: 'select', type: 'selection', title: '' }, ...columns],
+      defaultSortColumnId: 'started',
+      defaultSortDirection: SortByDirection.desc,
+    });
+
+    expect(namesInOrder(result)).toEqual(['charlie', 'bravo', 'alpha']);
+  });
+
+  it('should preserve data order when a checkbox table has no sortable columns', () => {
+    const { result } = renderData({
+      columns: [
+        { id: 'select', type: 'selection', title: '' },
+        { id: 'name', title: 'Name', sort: false },
+      ],
+    });
+
+    expect(namesInOrder(result)).toEqual(['charlie', 'alpha', 'bravo']);
+  });
 });
 
 describe('useConsoleDataViewData sort cleanup', () => {

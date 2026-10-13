@@ -160,9 +160,9 @@ export const useConsoleDataViewData = <
         resizableProps: isResizable ? resizableProps : undefined,
         cell: title ? (
           <span>{title}</span>
-        ) : (
+        ) : type === 'actions' ? (
           <span className="pf-v6-u-screen-reader">{t('Actions')}</span>
-        ),
+        ) : null,
       } satisfies PreparedDataViewColumn<TData>;
     });
   }, [activeColumns, t, isResizable, isSelectable, onSelectAll, filteredData]);

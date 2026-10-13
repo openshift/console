@@ -75,16 +75,24 @@ describe('useActiveColumns', () => {
     jest.clearAllMocks();
   });
 
-  it('shows default columns and keeps unlabeled action columns', () => {
+  it('keeps action and selection roles visible while respecting other visibility defaults', () => {
     const { result } = setupHook({
       columns: [
         ...columns,
         { id: 'extra', title: 'Extra', defaultVisible: false },
-        { id: '', title: '' },
+        { id: 'blank', title: '', defaultVisible: false },
+        { id: 'tools', type: 'actions', title: 'Tools', defaultVisible: false },
+        { id: 'checkbox', type: 'selection', title: '', defaultVisible: false },
       ],
     });
 
-    expect(result.current[0].map(({ id }) => id)).toEqual(['name', 'status', 'owner', '']);
+    expect(result.current[0].map(({ id }) => id)).toEqual([
+      'name',
+      'status',
+      'owner',
+      'tools',
+      'checkbox',
+    ]);
     expect(result.current[1]).toBe(true);
   });
 
@@ -92,6 +100,20 @@ describe('useActiveColumns', () => {
     const { result } = setupHook({ selectedColumns: ['name', 'owner'] });
 
     expect(result.current[0].map(({ id }) => id)).toEqual(['name', 'owner']);
+  });
+
+  it('does not force blank-title columns into a saved selection', () => {
+    const { result } = setupHook({
+      selectedColumns: ['name'],
+      columns: [
+        ...columns,
+        { id: 'blank', title: '' },
+        { id: 'tools', type: 'actions', title: '' },
+        { id: 'checkbox', type: 'selection', title: '' },
+      ],
+    });
+
+    expect(result.current[0].map(({ id }) => id)).toEqual(['name', 'tools', 'checkbox']);
   });
 
   it('renders visible columns in the saved order', () => {

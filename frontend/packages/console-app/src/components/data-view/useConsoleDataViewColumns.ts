@@ -124,9 +124,7 @@ export const orderConsoleDataViewColumns = <TData>(
     extensionsByID.set(columnData.id, extension);
   };
   const defaultIndex = (): number => {
-    const actionIndex = columns.findIndex(
-      ({ id, type }) => id === '' || id === 'actions' || type === 'actions',
-    );
+    const actionIndex = columns.findIndex(({ type }) => type === 'actions');
     return actionIndex < 0 ? columns.length : actionIndex;
   };
   const lastAfter = new Map<string, string>();

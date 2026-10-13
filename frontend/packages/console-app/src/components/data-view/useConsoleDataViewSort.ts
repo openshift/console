@@ -2,7 +2,6 @@ import type { BaseSyntheticEvent } from 'react';
 import { useCallback, useEffect } from 'react';
 import type { ISortBy } from '@patternfly/react-table';
 import { SortByDirection } from '@patternfly/react-table';
-import * as _ from 'lodash';
 import { useSearchParams } from 'react-router';
 import type { ConsoleDataViewColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 
@@ -24,7 +23,16 @@ export const useConsoleDataViewSort = <TData>({
 
   const sortByParam = searchParams.get('sortBy');
   const orderByParam = searchParams.get('orderBy');
-  const sortColumnIndexFromURL = sortByParam ? _.findIndex(columns, { title: sortByParam }) : -1;
+  const hasSelectionColumn = columns.some(({ type }) => type === 'selection');
+  const fallbackSortColumnIndex = hasSelectionColumn
+    ? columns.findIndex(({ type, sort }) => type !== 'selection' && Boolean(sort))
+    : 0;
+  const sortColumnIndexFromURL = sortByParam
+    ? columns.findIndex(
+        ({ title, type, sort }) =>
+          title === sortByParam && (!hasSelectionColumn || (type !== 'selection' && Boolean(sort))),
+      )
+    : -1;
   const sortBy: ISortBy =
     sortColumnIndexFromURL >= 0
       ? {
@@ -32,19 +40,13 @@ export const useConsoleDataViewSort = <TData>({
           direction: getSortByDirection(orderByParam),
         }
       : {
-          index: sortColumnIndex ?? 0,
+          index: sortColumnIndex ?? fallbackSortColumnIndex,
           direction: sortDirection ?? SortByDirection.asc,
         };
 
   // Remove sort parameters for columns that are no longer visible or available.
   useEffect(() => {
-    if (
-      columnsResolved &&
-      sortByParam !== null &&
-      !columns.some(
-        ({ title }) => typeof title === 'string' && title.length > 0 && title === sortByParam,
-      )
-    ) {
+    if (columnsResolved && sortByParam !== null && sortColumnIndexFromURL < 0) {
       // Defer the rewrite so it preserves query updates from pagination on the same commit.
       const timeout = setTimeout(() => {
         setSearchParams(
@@ -63,7 +65,7 @@ export const useConsoleDataViewSort = <TData>({
       return () => clearTimeout(timeout);
     }
     return undefined;
-  }, [columns, columnsResolved, sortByParam, setSearchParams]);
+  }, [columnsResolved, sortByParam, sortColumnIndexFromURL, setSearchParams]);
 
   const applySort = useCallback(
     (index: number, direction: SortByDirection) => {

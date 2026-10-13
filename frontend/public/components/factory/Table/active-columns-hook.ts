@@ -53,7 +53,9 @@ export const useActiveColumns = <D = any>({
       });
     }
 
-    let activeColumns = columns.filter((c) => activeColumnIDs.has(c.id) || c.title === '');
+    let activeColumns = columns.filter(
+      ({ id, type }) => activeColumnIDs.has(id) || type === 'actions' || type === 'selection',
+    );
     if (namespace && namespace !== ALL_NAMESPACES_KEY && !showNamespaceOverride) {
       activeColumns = activeColumns.filter((column) => column.type !== 'namespace');
     }

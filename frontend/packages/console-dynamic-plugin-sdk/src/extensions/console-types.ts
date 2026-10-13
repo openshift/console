@@ -560,15 +560,15 @@ export type ConsoleDataViewTh = Omit<
 export interface ConsoleDataViewColumn<TData = unknown> extends ConsoleDataViewTh {
   /** Unique identifier for the column, used to match up cells returned by `getDataViewRows`. */
   id: string;
-  /** Applies built-in column behavior and header and row cell props. Name and namespace headers and row cells default to `modifier: 'nowrap'`. Explicit header props and row cell props override their respective defaults independently. An `actions` column uses resource action providers for a Kubernetes resource row when its row cell is omitted or has no `cell`; `cell: null` suppresses the default. A namespace column is hidden in a single project unless `showNamespaceOverride` is set, regardless of its ID. A name column gets its `data-test` from the row name and is offset automatically when a selection column is present. */
+  /** Applies built-in column behavior and header and row cell props. Name and namespace headers and row cells default to `modifier: 'nowrap'`. Explicit header props and row cell props override their respective defaults independently. An `actions` column uses resource action providers for a Kubernetes resource row when its row cell is omitted or has no `cell`; `cell: null` suppresses the default. A namespace column is hidden in a single project unless `showNamespaceOverride` is set, regardless of its ID. A name column is untoggleable through column management regardless of its ID, gets its `data-test` from the row name, and is offset automatically when a selection column is present. */
   type?: 'name' | 'namespace' | 'actions' | 'selection' | 'sticky';
-  /** The column header text. Defaults to translated `Name` or `Namespace` for those column types, and an empty string for other types. Explicit titles, including an empty string, take precedence. */
+  /** The column header text. Defaults to translated `Name` or `Namespace` for those column types, and an empty string for other types. Explicit titles, including an empty string, take precedence. An empty title does not affect visibility or imply an actions column; supply an accessible header label through `props['aria-label']` or `props.screenReaderText`. */
   title?: string;
   /** (optional) Content shown in a help tooltip beside the column header. */
   tooltip?: ReactNode;
   /** (optional) A dot-delimited property path to sort by, or a function that sorts the filtered data for this column. Defaults to `metadata.name` for `name` columns and `metadata.namespace` for `namespace` columns. Other column types are unsortable by default. Set `false` to disable sorting; custom row shapes can supply a different path or function. */
   sort?: false | string | ((filteredData: TData[], sortDirection: SortByDirection) => TData[]);
-  /** (optional) Whether the column is initially visible before the user saves column preferences. Defaults to `true` for built-in columns and `false` for extension columns. */
+  /** (optional) Whether the column is initially visible before the user saves column preferences. Defaults to `true` for built-in columns and `false` for extension columns. Actions and selection columns always remain visible. */
   defaultVisible?: boolean;
 }
 
@@ -672,7 +672,7 @@ export interface ConsoleDataViewProps<
   getDataViewRows: GetDataViewRows<TData, TCustomRowData>;
   /** (optional) Additional data made available to each row via `RowProps.rowData`. */
   customRowData?: TCustomRowData;
-  /** (optional) The `id` of the column to sort by before the user picks one. Defaults to the first column, and is ignored if no column has this id. A `sortBy` URL parameter takes precedence; note that `sortBy` names its column by translated title, not by id. */
+  /** (optional) The `id` of the column to sort by before the user picks one. Defaults to the first column, or the first sortable column when a checkbox column is present, and is ignored if no column has this id. A `sortBy` URL parameter takes precedence; checkbox tables accept only sortable URL targets. Note that `sortBy` names its column by translated title, not by id. */
   defaultSortColumnId?: string;
   /** (optional) The direction to sort by before the user picks one. Defaults to ascending. An `orderBy` URL parameter takes precedence. */
   defaultSortDirection?: SortByDirection;
