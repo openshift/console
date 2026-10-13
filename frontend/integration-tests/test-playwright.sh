@@ -15,8 +15,9 @@
 # Environment:
 #   BRIDGE_BASE_ADDRESS, BRIDGE_BASE_PATH, WEB_CONSOLE_URL
 #   INSTALLER_DIR, ARTIFACT_DIR, KUBEADMIN_PASSWORD_FILE
-#   ARTIFACT_DIR — Prow/OpenShift CI artifact root (default: /tmp/artifacts). On EXIT, copies
-#     frontend/test-results → $ARTIFACT_DIR/playwright-test-results
+#   ARTIFACT_DIR — Prow/OpenShift CI artifact root (default: /tmp/artifacts). Writes test
+#     attachments directly to $ARTIFACT_DIR/playwright-test-results so timeout artifacts survive.
+#     On EXIT, copies remaining reports:
 #     frontend/playwright-report → $ARTIFACT_DIR/playwright-report (CI HTML report)
 #     junit → $ARTIFACT_DIR/junit-playwright.xml
 #
@@ -96,14 +97,16 @@ copy_playwright_artifacts_to_dir() {
   mkdir -p "$ARTIFACT_DIR"
   local copied=false
 
+  if [ -d "${ARTIFACT_DIR}/playwright-test-results" ]; then
+    copied=true
+  fi
+
   if [ -d test-results ]; then
     local dest="${ARTIFACT_DIR}/playwright-test-results"
-    # Safety check before rm -rf to prevent accidental deletion
-    if [ -n "$dest" ] && [ "$dest" != "/" ]; then
-      rm -rf "$dest"
-    fi
     mkdir -p "$dest"
-    if cp -a test-results/. "$dest/"; then
+    # Preserve attachments already written there during the test, including
+    # partial results from an interrupted run.
+    if cp -an test-results/. "$dest/"; then
       copied=true
       # Remove JUnit XML files from the bulk copy so Prow Spyglass doesn't
       # parse them as duplicates of the top-level junit-playwright.xml.
@@ -173,4 +176,4 @@ fi
 
 export CI=true
 
-"$playwright_bin" test "$@"
+"$playwright_bin" test --output="${ARTIFACT_DIR}/playwright-test-results" "$@"
