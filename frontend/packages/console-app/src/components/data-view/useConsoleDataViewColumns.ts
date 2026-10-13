@@ -18,7 +18,7 @@ import { getConsoleDataViewID } from './getConsoleDataViewID';
 import { useConsoleDataViewResizableColumns } from './useConsoleDataViewResizableColumns';
 
 export type ConsoleDataViewColumnLayout = Omit<ColumnLayout, 'columns'> & {
-  columns: (ColumnLayout['columns'][number] & Pick<ConsoleDataViewColumn<unknown>, 'type'>)[];
+  columns: (ColumnLayout['columns'][number] & Pick<ConsoleDataViewColumn, 'type'>)[];
 };
 
 type ResolvedTableColumn = LoadedAndResolvedExtension<ConsoleDataViewTableColumn>;
@@ -56,7 +56,7 @@ const actionsCellProps = {
 };
 
 const getDefaultProps = (
-  type: ConsoleDataViewColumn<unknown>['type'],
+  type: ConsoleDataViewColumn['type'],
   hasSelection: boolean,
   isHeader = false,
 ) => {
@@ -85,7 +85,7 @@ const compareExtensions = (a: ResolvedTableColumn, b: ResolvedTableColumn): numb
 
 const isValidColumnData = (
   columnData: unknown,
-): columnData is ConsoleDataViewColumn<unknown> & { title: string } => {
+): columnData is ConsoleDataViewColumn & { title: string } => {
   if (!columnData || typeof columnData !== 'object' || Array.isArray(columnData)) return false;
   const { id, title } = columnData as Record<string, unknown>;
   return typeof id === 'string' && id.length > 0 && typeof title === 'string' && title.length > 0;

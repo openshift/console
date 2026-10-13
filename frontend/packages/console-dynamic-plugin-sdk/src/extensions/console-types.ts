@@ -557,7 +557,7 @@ export type ConsoleDataViewTh = Omit<
  * ];
  * ```
  */
-export interface ConsoleDataViewColumn<TData> extends ConsoleDataViewTh {
+export interface ConsoleDataViewColumn<TData = unknown> extends ConsoleDataViewTh {
   /** Unique identifier for the column, used to match up cells returned by `getDataViewRows`. */
   id: string;
   /** Applies built-in column behavior and header and row cell props. Name and namespace headers and row cells default to `modifier: 'nowrap'`. Explicit header props and row cell props override their respective defaults independently. An `actions` column uses resource action providers for a Kubernetes resource row when its row cell is omitted or has no `cell`; `cell: null` suppresses the default. A namespace column is hidden in a single project unless `showNamespaceOverride` is set, regardless of its ID. A name column gets its `data-test` from the row name and is offset automatically when a selection column is present. */

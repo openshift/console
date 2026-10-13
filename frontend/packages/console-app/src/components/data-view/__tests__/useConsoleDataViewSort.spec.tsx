@@ -4,7 +4,7 @@ import { BrowserRouter } from 'react-router';
 import type { ConsoleDataViewColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { useConsoleDataViewSort } from '../useConsoleDataViewSort';
 
-const columns: ConsoleDataViewColumn<unknown>[] = [{ id: 'name', title: 'Name' }];
+const columns: ConsoleDataViewColumn[] = [{ id: 'name', title: 'Name' }];
 
 // Use the browser URL so updates before a router render are included in cleanup.
 const wrapper: FC<{ children: ReactNode }> = ({ children }) => (
