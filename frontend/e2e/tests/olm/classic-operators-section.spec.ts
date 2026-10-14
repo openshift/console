@@ -3,84 +3,90 @@ import { isTechPreview } from '../../utils/tech-preview';
 
 const CATALOG_READY_TIMEOUT = 30_000;
 
-/**
- * Splitting the operator catalog into Classic (OLMv0) and Next-Gen (OLMv1) types is Tech Preview
- * only. On a standard cluster there is no Next-Gen catalog to migrate to, so the single operator
- * catalog keeps its generic name and the Classic surfaces stay exactly where they were. Both
- * shapes are asserted here so a regression in either one fails.
- */
+/** Both Lifecycle versions share one catalog type; generation filtering is Tech Preview only. */
 test.describe('Classic Operators', { tag: ['@admin'] }, () => {
-  test('offers both Operator types in the Software Catalog under Tech Preview', async ({
-    page,
-  }) => {
+  test('offers one Operators type in the Software Catalog', async ({ page }) => {
     await page.goto('/catalog/all-namespaces');
+    await expect(page.getByTestId('search-catalog')).toBeVisible({
+      timeout: CATALOG_READY_TIMEOUT,
+    });
+
+    await expect(page.getByText('Operators', { exact: true })).toBeVisible();
+    await expect(page.getByText('Next-Gen Operators', { exact: true })).toBeHidden();
+    await expect(page.getByText('Classic Operators', { exact: true })).toBeHidden();
+  });
+
+  test('filters operators by lifecycle version under Tech Preview', async ({ page }) => {
+    await page.goto('/catalog/all-namespaces?catalogType=operator');
     await expect(page.getByTestId('search-catalog')).toBeVisible({
       timeout: CATALOG_READY_TIMEOUT,
     });
     test.skip(!(await isTechPreview(page)), 'Next-Gen Operators are Tech Preview only');
 
-    await expect(page.getByText('Classic Operators')).toBeVisible();
-    await expect(page.getByText('Next-Gen Operators')).toBeVisible();
+    const classicFilter = page.getByTestId('olmGeneration-classic').getByRole('checkbox');
+    const nextGenFilter = page.getByTestId('olmGeneration-next-gen').getByRole('checkbox');
+    await expect(classicFilter).toBeVisible();
+    await expect(nextGenFilter).toBeVisible();
+
+    await classicFilter.check();
+    await expect(page.getByTestId('classic-operator-migration-alert')).toBeVisible();
+    await expect(page.getByTestId('Classic Operator-badge').first()).toBeVisible();
+    await expect(page.getByTestId('Next-Gen Operator-badge')).toHaveCount(0);
+    await classicFilter.uncheck();
+
+    await nextGenFilter.check();
+    await expect(page.getByTestId('classic-operator-migration-alert')).toBeHidden();
+    await expect(page.getByTestId('Next-Gen Operator-badge').first()).toBeVisible();
+    await expect(page.getByTestId('Classic Operator-badge')).toHaveCount(0);
   });
 
-  test('offers a single, generically named Operators type outside Tech Preview', async ({
-    page,
-  }) => {
-    await page.goto('/catalog/all-namespaces');
+  test('redirects /operatorhub to the shared Operators catalog', async ({ page }) => {
+    await page.goto('/operatorhub');
+    await expect(page).toHaveURL(/\/catalog\/all-namespaces\?.*catalogType=operator/);
+  });
+
+  test('keeps existing ?catalogType=operator links working', async ({ page }) => {
+    await page.goto('/catalog/all-namespaces?catalogType=operator');
     await expect(page.getByTestId('search-catalog')).toBeVisible({
       timeout: CATALOG_READY_TIMEOUT,
     });
-    test.skip(await isTechPreview(page), 'Tech Preview splits the type in two');
-
-    await expect(page.getByText('Operators', { exact: true })).toBeVisible();
-    await expect(page.getByText('Next-Gen Operators')).toBeHidden();
-    await expect(page.getByText('Classic Operators')).toBeHidden();
-  });
-
-  // The catalog type id was renamed on every cluster, so /operatorhub and legacy
-  // ?catalogType=operator links must land on it regardless of Tech Preview.
-  test('redirects /operatorhub to the OLMv0 catalog type', async ({ page }) => {
-    await page.goto('/operatorhub');
-
-    await expect(page).toHaveURL(/\/catalog\/all-namespaces\?.*catalogType=operator-olmv0/);
-  });
-
-  test('redirects legacy ?catalogType=operator links to the OLMv0 catalog type', async ({
-    page,
-  }) => {
-    await page.goto('/catalog/all-namespaces?catalogType=operator');
-
-    await expect(page).toHaveURL(/catalogType=operator-olmv0/);
+    await expect(page.getByTestId('page-heading')).toHaveText('Operators');
   });
 
   test('badges Classic catalog items and warns in the details panel under Tech Preview', async ({
     page,
   }) => {
-    await page.goto('/catalog/all-namespaces?catalogType=operator-olmv0');
+    await page.goto(
+      '/catalog/all-namespaces?catalogType=operator&olmGeneration=%5B%22Classic%22%5D',
+    );
     await expect(page.getByTestId('search-catalog')).toBeVisible({
       timeout: CATALOG_READY_TIMEOUT,
     });
     test.skip(!(await isTechPreview(page)), 'Classic badging is Tech Preview only');
 
     // CatalogTile renders data-test as `${type}-${name}`.
-    const firstOperatorCard = page.locator('[data-test^="operator-olmv0-"]').first();
+    const firstOperatorCard = page.locator('[data-test^="operator-"]').first();
     await expect(firstOperatorCard).toBeVisible({ timeout: CATALOG_READY_TIMEOUT });
     await expect(firstOperatorCard.getByTestId('Classic Operator-badge')).toBeVisible();
 
     await firstOperatorCard.click();
-    await expect(page.getByTestId('classic-operator-migration-alert')).toBeVisible({
+    await expect(
+      page.getByRole('dialog').getByTestId('classic-operator-migration-alert'),
+    ).toBeVisible({
       timeout: 10_000,
     });
   });
 
   test('does not badge or warn on Classic catalog items outside Tech Preview', async ({ page }) => {
-    await page.goto('/catalog/all-namespaces?catalogType=operator-olmv0');
+    await page.goto(
+      '/catalog/all-namespaces?catalogType=operator&olmGeneration=%5B%22Classic%22%5D',
+    );
     await expect(page.getByTestId('search-catalog')).toBeVisible({
       timeout: CATALOG_READY_TIMEOUT,
     });
     test.skip(await isTechPreview(page), 'Classic badging is Tech Preview only');
 
-    const firstOperatorCard = page.locator('[data-test^="operator-olmv0-"]').first();
+    const firstOperatorCard = page.locator('[data-test^="operator-"]').first();
     await expect(firstOperatorCard).toBeVisible({ timeout: CATALOG_READY_TIMEOUT });
     await expect(firstOperatorCard.getByTestId('Classic Operator-badge')).toBeHidden();
 

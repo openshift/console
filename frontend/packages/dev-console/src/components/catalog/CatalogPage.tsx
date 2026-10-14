@@ -1,14 +1,10 @@
 import type { FC } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { Navigate } from 'react-router';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk/src';
 import { ErrorPage404 } from '@console/internal/components/error';
 import { withStartGuide } from '@console/internal/components/start-guide';
 import { ClassicOperatorMigrationAlert } from '@console/operator-lifecycle-manager/src/components/classic-operators/ClassicOperatorMigrationAlert';
-import {
-  LEGACY_OPERATOR_TYPE,
-  OPERATOR_OLMV0_TYPE,
-} from '@console/operator-lifecycle-manager/src/const';
+import { OLMGeneration, OPERATOR_TYPE } from '@console/operator-lifecycle-manager/src/const';
 import { CatalogController } from '@console/shared/src/components/catalog/CatalogController';
 import { CatalogServiceProvider } from '@console/shared/src/components/catalog/service/CatalogServiceProvider';
 import { isCatalogTypeEnabled } from '@console/shared/src/components/catalog/utils/catalog-utils';
@@ -54,7 +50,12 @@ const PageContents: FC = () => {
         <CatalogController
           {...service}
           enableDetailsPanel
-          helpAlert={catalogType === OPERATOR_OLMV0_TYPE && <ClassicOperatorMigrationAlert />}
+          helpAlert={
+            catalogType === OPERATOR_TYPE &&
+            queryParams.get('olmGeneration') === JSON.stringify([OLMGeneration.Classic]) && (
+              <ClassicOperatorMigrationAlert />
+            )
+          }
           title={t('Software Catalog')}
           description={t(
             'Add shared applications, services, event sources, or source-to-image builders to your Project from the software catalog. Cluster administrators can customize the content made available in the catalog.',
@@ -71,14 +72,6 @@ const CatalogPage: FC = () => {
   const queryParams = useQueryParams();
   const catalogType = queryParams.get(CatalogQueryParams.TYPE);
   const isCatalogEnabled = isCatalogTypeEnabled(catalogType);
-
-  // The OLMv0 catalog type was renamed from `operator` to `operator-olmv0`. Keep the old value
-  // working so existing links and bookmarks do not fall through to the 404 below.
-  if (catalogType === LEGACY_OPERATOR_TYPE) {
-    const params = new URLSearchParams(queryParams);
-    params.set(CatalogQueryParams.TYPE, OPERATOR_OLMV0_TYPE);
-    return <Navigate to={{ search: `?${params.toString()}` }} replace />;
-  }
 
   if (catalogType && !isCatalogEnabled) {
     return <ErrorPage404 />;

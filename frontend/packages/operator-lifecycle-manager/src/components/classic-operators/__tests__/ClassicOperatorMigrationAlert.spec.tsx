@@ -27,19 +27,19 @@ describe('ClassicOperatorMigrationAlert', () => {
     expect(screen.getByRole('heading', { name: /Next-Gen Operators/ })).toBeInTheDocument();
   });
 
-  // Not dismissible on purpose: the banner is the whole point of splitting Classic out.
+  // The migration warning stays visible while managing Classic operators.
   it('should not offer a close button', () => {
     renderWithProviders(<ClassicOperatorMigrationAlert />);
 
     expect(screen.queryByRole('button', { name: /close/i })).not.toBeInTheDocument();
   });
 
-  it('should link to the Next-Gen Operators catalog type', () => {
+  it('should link to the Operators catalog filtered to Next-Gen', () => {
     renderWithProviders(<ClassicOperatorMigrationAlert />);
 
     expect(screen.getByRole('link', { name: /Next-Gen Operators/ })).toHaveAttribute(
       'href',
-      '/catalog/all-namespaces?catalogType=operator-olmv1',
+      '/catalog/all-namespaces?catalogType=operator&olmGeneration=%5B%22Next-Gen%22%5D',
     );
   });
 });

@@ -8,7 +8,7 @@ import { NEXT_GEN_CATALOG_PATH } from '../../const';
 
 /**
  * Shown on every Classic (OLMv0) surface. Deliberately not dismissible: steering users towards
- * Next-Gen is the reason Classic is split out into its own catalog type and tab.
+ * Next-Gen operators are available through the OLM generation filter and Installed Operators tab.
  *
  * Gated here rather than at each call site: Next-Gen only exists in Tech Preview, so outside it
  * there is nothing to migrate to and the OLMv0 pages must look exactly as they did before.

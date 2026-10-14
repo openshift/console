@@ -17,7 +17,6 @@ table in [Console dynamic plugins README](./README.md).
 - Added `console.dataview/table-column` extension for contributing sortable, manageable columns to `ConsoleDataView` tables ([CONSOLE-5560], [#17351])
 - Added default resource kebab actions and optional `bulkProvider` to `console.action/resource-provider` for bulk actions ([CONSOLE-5560], [#17351])
 - Added optional `sortWeight` property to extension `console.catalog/item-type`, so a type can be ordered within the catalog's type list ([CONSOLE-5527])
-- Added optional `placement` property to `CatalogItemBadge`, so a badge can render in the catalog item header below the catalog type label instead of the default footer ([CONSOLE-5527])
 - Added optional `badge` property to extension `console.tab`, so a plugin can render a component beside a contributed tab label ([CONSOLE-5527])
 - Changed `HorizontalNav` to order contributed default tabs before other tabs, with remaining tabs still ordered alphabetically ([CONSOLE-5527])
 

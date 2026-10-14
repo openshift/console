@@ -173,7 +173,7 @@ test.describe('Software Catalog Page details', { tag: ['@dev-console', '@regress
   });
 });
 
-// Titled "Classic Operators" under Tech Preview and plain "Operators" elsewhere, but the catalog
+// Both OLM generations share the "Operators" catalog type. The catalog
 // type id and tile test ids are the same on every cluster.
 test.describe('OLMv0 Operators catalog', { tag: ['@dev-console', '@regression'] }, () => {
   let catalogPage: CatalogPage;
@@ -185,11 +185,11 @@ test.describe('OLMv0 Operators catalog', { tag: ['@dev-console', '@regression'] 
 
   test('displays operator tiles in catalog', async ({ page }) => {
     await test.step('Navigate to operator catalog', async () => {
-      await page.goto('/catalog/ns/default?catalogType=operator-olmv0');
+      await page.goto('/catalog/ns/default?catalogType=operator');
     });
 
     await test.step('Verify operator tiles are rendered', async () => {
-      await expect(page.locator('[data-test^="operator-olmv0-"]').first()).toBeVisible({
+      await expect(page.locator('[data-test^="operator-"]').first()).toBeVisible({
         timeout: 30_000,
       });
     });
@@ -197,7 +197,7 @@ test.describe('OLMv0 Operators catalog', { tag: ['@dev-console', '@regression'] 
 
   test('filters operator tiles by keyword', async ({ page }) => {
     await test.step('Navigate to operator catalog', async () => {
-      await page.goto('/catalog/ns/default?catalogType=operator-olmv0');
+      await page.goto('/catalog/ns/default?catalogType=operator');
     });
 
     await test.step('Wait for tiles to render', async () => {

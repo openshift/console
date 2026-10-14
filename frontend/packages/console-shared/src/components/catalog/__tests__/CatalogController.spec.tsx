@@ -1,17 +1,21 @@
 import type { ComponentProps } from 'react';
 import { screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { useLocation } from 'react-router';
+import type { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions/catalog';
 import * as UseQueryParams from '@console/shared/src/hooks/useQueryParams';
 import { renderWithProviders } from '../../../test-utils/unit-test-utils';
 import { CatalogController } from '../CatalogController';
 
-jest.mock('react-router', () => ({
-  ...jest.requireActual('react-router'),
-  useLocation: () => ({
-    pathname: '/test-path',
-    search: '',
-    hash: '',
-    state: null,
-  }),
+// jsdom has no layout dimensions for the virtualized grid.
+jest.mock('../../virtualized-grid/VirtualizedGrid', () => ({
+  VirtualizedGrid: ({
+    items,
+    renderCell,
+  }: {
+    items: CatalogItem[];
+    renderCell: (item: CatalogItem) => React.ReactNode;
+  }) => items.map(renderCell),
 }));
 
 jest.mock('@console/shared/src/hooks/useQueryParams', () => ({
@@ -83,38 +87,105 @@ describe('CatalogController', () => {
     expect(screen.getByText('Default description')).toBeVisible();
   });
 
-  it('should sort types by weight and then alphabetically', async () => {
-    const itemType = (type: string, title: string, sortWeight?: number) => ({
-      pluginName: '@console/test-plugin',
-      properties: { type, title, ...(sortWeight ? { sortWeight } : {}) },
-      type: 'console.catalog/item-type' as const,
-      uid: `@console/test-plugin[${type}]`,
-    });
-    const item = (type: string) => ({ uid: `${type}-1`, type, name: type });
-
-    const catalogControllerProps: ComponentProps<typeof CatalogController> = {
+  it('should combine both operator generations in one landing-page type', async () => {
+    const props: ComponentProps<typeof CatalogController> = {
       type: '',
       title: 'Software Catalog',
       description: null,
       catalogExtensions: [
-        itemType('operator-olmv0', 'Classic Operators', 1),
-        itemType('operator-olmv1', 'Next-Gen Operators'),
-        itemType('HelmChart', 'Helm Charts'),
+        {
+          pluginName: '@console/test-plugin',
+          properties: { type: 'operator', title: 'Operators' },
+          type: 'console.catalog/item-type',
+          uid: 'operators',
+        },
+        {
+          pluginName: '@console/test-plugin',
+          properties: { type: 'HelmChart', title: 'Helm Charts' },
+          type: 'console.catalog/item-type',
+          uid: 'helm',
+        },
       ],
-      items: [item('operator-olmv0'), item('operator-olmv1'), item('HelmChart')],
+      items: [
+        { uid: 'classic', type: 'operator', name: 'Classic example' },
+        { uid: 'next-gen', type: 'operator', name: 'Next-Gen example' },
+        { uid: 'helm', type: 'HelmChart', name: 'Example chart' },
+      ],
       itemsMap: {},
       loaded: true,
       loadError: null,
       searchCatalog: jest.fn(),
     };
 
-    renderWithProviders(<CatalogController {...catalogControllerProps} />);
+    renderWithProviders(<CatalogController {...props} />);
 
     const typeLinks = await screen.findAllByRole('link');
-    expect(typeLinks.map((link) => link.textContent)).toEqual([
-      'Helm Charts (1)',
-      'Next-Gen Operators (1)',
-      'Classic Operators (1)',
-    ]);
+    expect(typeLinks.map((link) => link.textContent)).toEqual(['Helm Charts (1)', 'Operators (2)']);
+  });
+
+  it('should filter the shared operator catalog by lifecycle version', async () => {
+    function useRouterQueryParams() {
+      return new URLSearchParams(useLocation().search);
+    }
+    useQueryParamsMock.mockImplementation(useRouterQueryParams);
+    const user = userEvent.setup();
+    const items = [
+      {
+        uid: 'classic',
+        type: 'operator',
+        name: 'Classic example',
+        attributes: { olmGeneration: 'Classic' },
+      },
+      {
+        uid: 'next-gen',
+        type: 'operator',
+        name: 'Next-Gen example',
+        attributes: { olmGeneration: 'Next-Gen' },
+      },
+    ];
+    const props: ComponentProps<typeof CatalogController> = {
+      type: 'operator',
+      title: 'Operators',
+      description: null,
+      catalogExtensions: [
+        {
+          pluginName: '@console/test-plugin',
+          properties: {
+            type: 'operator',
+            title: 'Operators',
+            filters: [{ label: 'Lifecycle version', attribute: 'olmGeneration' }],
+          },
+          type: 'console.catalog/item-type',
+          uid: 'operators',
+        },
+      ],
+      items,
+      itemsMap: { operator: items },
+      loaded: true,
+      loadError: null,
+      searchCatalog: jest.fn(),
+    };
+
+    renderWithProviders(<CatalogController {...props} />);
+
+    expect(screen.getByText('Lifecycle version')).toBeVisible();
+    expect(screen.getByText('Classic example')).toBeVisible();
+    expect(screen.getByText('Next-Gen example')).toBeVisible();
+
+    await user.click(screen.getByRole('checkbox', { name: /Classic/ }));
+    expect(screen.getByText('Classic example')).toBeVisible();
+    expect(screen.queryByText('Next-Gen example')).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole('checkbox', { name: /Next-Gen/ }));
+    expect(screen.getByText('Classic example')).toBeVisible();
+    expect(screen.getByText('Next-Gen example')).toBeVisible();
+
+    await user.click(screen.getByRole('checkbox', { name: /Classic/ }));
+    expect(screen.queryByText('Classic example')).not.toBeInTheDocument();
+    expect(screen.getByText('Next-Gen example')).toBeVisible();
+
+    await user.click(screen.getByRole('checkbox', { name: /Next-Gen/ }));
+    expect(screen.getByText('Classic example')).toBeVisible();
+    expect(screen.getByText('Next-Gen example')).toBeVisible();
   });
 });

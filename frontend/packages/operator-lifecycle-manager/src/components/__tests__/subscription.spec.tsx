@@ -247,7 +247,7 @@ describe('SubscriptionsPage', () => {
     expect(multiListPageProps.title).toEqual('Subscriptions');
     expect(multiListPageProps.canCreate).toBe(true);
     expect(multiListPageProps.createProps).toEqual({
-      to: '/catalog/all-namespaces?catalogType=operator-olmv0',
+      to: '/catalog/all-namespaces?catalogType=operator&olmGeneration=%5B%22Classic%22%5D',
     });
     expect(multiListPageProps.createButtonText).toEqual('Create Subscription');
     expect(multiListPageProps.omitFilterToolbar).toBe(true);

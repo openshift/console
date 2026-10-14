@@ -61,7 +61,7 @@ import { PageHeading } from '@console/shared/src/components/heading/PageHeading'
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { CONSOLE_OPERATOR_CONFIG_NAME } from '@console/shared/src/constants/resource';
-import { OPERATOR_OLMV0_TYPE } from '../../const';
+import { OPERATOR_TYPE } from '../../const';
 import { SubscriptionModel, OperatorGroupModel, PackageManifestModel } from '../../models';
 import type { OperatorGroupKind, PackageManifestKind, SubscriptionKind } from '../../types';
 import { InstallPlanApproval, InstallModeType } from '../../types';
@@ -812,7 +812,7 @@ const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
         breadcrumbs={[
           {
             name: t('Software Catalog'),
-            path: `/catalog/ns/${activeNamespace}?catalogType=${OPERATOR_OLMV0_TYPE}&${search.toString()}`,
+            path: `/catalog/ns/${activeNamespace}?catalogType=${OPERATOR_TYPE}&${search.toString()}`,
           },
           { name: t('Operator Installation'), path: url },
         ]}

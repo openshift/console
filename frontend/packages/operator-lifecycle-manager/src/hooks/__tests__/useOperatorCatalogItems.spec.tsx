@@ -65,16 +65,16 @@ describe('useOperatorCatalogItems', () => {
       .mockReturnValue([[packageManifest], true, undefined]);
   });
 
-  // The Classic Operators catalog page pins catalogType="operator-olmv0" and
-  // CatalogServiceProvider buckets items by item.type, so an item type that does not match the
-  // console.catalog/item-provider extension leaves the page rendering an empty grid.
-  it('should emit items typed to match the operator-olmv0 catalog item provider extension', () => {
+  it('should emit items typed to match the operator catalog item provider extension', () => {
     const { result } = renderHook(() => useOperatorCatalogItems({ namespace: 'default' }));
     const [items, loaded] = result.current;
 
     expect(loaded).toBe(true);
     expect(items).toHaveLength(1);
-    expect(items[0].type).toBe('operator-olmv0');
+    expect(items[0]).toMatchObject({
+      type: 'operator',
+      attributes: { olmGeneration: 'Classic' },
+    });
   });
 
   // Outside Tech Preview there is no Next-Gen to migrate to, so a package that OLM has not
@@ -100,7 +100,7 @@ describe('useOperatorCatalogItems', () => {
     const [items] = result.current;
 
     expect(items[0].badges?.[0]).toEqual(
-      expect.objectContaining({ text: 'Classic Operator', color: 'grey', placement: 'header' }),
+      expect.objectContaining({ text: 'Classic Operator', color: 'blue' }),
     );
   });
 
@@ -113,15 +113,5 @@ describe('useOperatorCatalogItems', () => {
     const [items] = result.current;
 
     expect(items[0].badges).toEqual([]);
-  });
-
-  it('should keep the Classic Operator badge in the header and every other badge in the footer', () => {
-    const { result } = renderHook(() => useOperatorCatalogItems({ namespace: 'default' }));
-    const [items] = result.current;
-    const placementFor = (text: string) =>
-      items[0].badges?.find((badge) => badge.text === text)?.placement;
-
-    expect(placementFor('Classic Operator')).toBe('header');
-    expect(placementFor('Deprecated')).toBeUndefined();
   });
 });

@@ -23,16 +23,18 @@ const baseItem = {
 } as unknown as OLMCatalogItem;
 
 describe('normalizeCatalogItem', () => {
-  it('should emit the operator-olmv1 catalog type', () => {
-    expect(normalizeCatalogItem(baseItem).type).toBe('operator-olmv1');
+  it('should emit the shared operator type with the Next-Gen generation', () => {
+    expect(normalizeCatalogItem(baseItem)).toMatchObject({
+      type: 'operator',
+      attributes: { olmGeneration: 'Next-Gen' },
+    });
   });
 
-  it('should badge the item as a Next-Gen Operator in the catalog item header', () => {
+  it('should badge the item as a Next-Gen Operator with a purple badge', () => {
     expect(normalizeCatalogItem(baseItem).badges).toEqual([
       expect.objectContaining({
         text: 'Next-Gen Operator',
-        color: 'blue',
-        placement: 'header',
+        color: 'purple',
       }),
     ]);
   });

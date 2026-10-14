@@ -25,11 +25,11 @@ describe('ClusterExtensionEmptyState', () => {
 
     expect(screen.getByRole('link', { name: /Next-Gen Operators catalog/ })).toHaveAttribute(
       'href',
-      '/catalog/all-namespaces?catalogType=operator-olmv1',
+      '/catalog/all-namespaces?catalogType=operator&olmGeneration=%5B%22Next-Gen%22%5D',
     );
   });
 
-  // Without the ClusterCatalog CRD the Next-Gen catalog type is not registered, so the link would 404.
+  // Next-Gen catalog items require the ClusterCatalog API.
   it('should omit the catalog link when the ClusterCatalog API is unavailable', () => {
     mockUseFlag.mockReturnValue(false);
 

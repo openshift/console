@@ -221,12 +221,6 @@ export type CatalogItemBadge = {
   color?: 'blue' | 'teal' | 'green' | 'orange' | 'purple' | 'red' | 'grey';
   icon?: ReactNode;
   variant?: 'outline' | 'filled';
-  /**
-   * Where the badge renders on a catalog tile and in the catalog item details.
-   * `footer` (default) places it alongside the other badges below the description.
-   * `header` stacks it vertically under the catalog type label.
-   */
-  placement?: 'header' | 'footer';
 };
 
 export type CatalogItemMetadataProviderFunction = (item: CatalogItem) =>

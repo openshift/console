@@ -30,9 +30,11 @@ export class CatalogPage extends BasePage {
     await expect(this.pageHeading).toBeVisible({ timeout: 60_000 });
   }
 
-  /** Classic (OLMv0) Operators are one of two selectable Operator types in the Software Catalog. */
+  /** Browse Classic (OLMv0) operators within the shared Operators catalog. */
   async navigateToOperatorCatalog(namespace: string): Promise<void> {
-    await this.goTo(`/catalog/ns/${namespace}?catalogType=operator-olmv0`);
+    await this.goTo(
+      `/catalog/ns/${namespace}?catalogType=operator&olmGeneration=%5B%22Classic%22%5D`,
+    );
     await expect(this.pageHeading).toBeVisible({ timeout: 60_000 });
   }
 
@@ -69,7 +71,7 @@ export class CatalogPage extends BasePage {
 
   getOperatorCard(operatorName: string): Locator {
     return this.page
-      .getByTestId(`operator-olmv0-${operatorName}`)
+      .getByTestId(`operator-${operatorName}`)
       .filter({ hasNotText: 'testing deprecation' });
   }
 

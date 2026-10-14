@@ -231,30 +231,37 @@ describe('useCatalogExtensions', () => {
   });
 });
 
-// The OLMv0 catalog type is registered twice (Tech Preview and not), so its filters live on a
-// single console.catalog/item-type-metadata extension instead of being duplicated on both.
+// Shared operator filters and generation filters are contributed through item-type metadata.
 describe('useCatalogExtensions item type metadata merging', () => {
   it('should merge filters from a matching item-type-metadata into a filterless type', () => {
     mockExtensions = [
       {
         type: 'console.catalog/item-type',
-        properties: { type: 'operator-olmv0', title: 'Operators' },
+        properties: { type: 'operator', title: 'Operators' },
       },
       {
         type: 'console.catalog/item-type-metadata',
         properties: {
-          type: 'operator-olmv0',
+          type: 'operator',
           filters: [{ label: 'Source', attribute: 'source' }],
+        },
+      },
+      {
+        type: 'console.catalog/item-type-metadata',
+        properties: {
+          type: 'operator',
+          filters: [{ label: 'Lifecycle version', attribute: 'olmGeneration' }],
         },
       },
     ];
     const { result } = renderHookWithProviders(() =>
-      useCatalogExtensions('dev-catalog', 'operator-olmv0'),
+      useCatalogExtensions('dev-catalog', 'operator'),
     );
 
     expect(result.current[0]).toHaveLength(1);
     expect(result.current[0][0].properties.filters).toEqual([
       { label: 'Source', attribute: 'source' },
+      { label: 'Lifecycle version', attribute: 'olmGeneration' },
     ]);
   });
 
@@ -262,18 +269,18 @@ describe('useCatalogExtensions item type metadata merging', () => {
     mockExtensions = [
       {
         type: 'console.catalog/item-type',
-        properties: { type: 'operator-olmv1', title: 'Next-Gen Operators' },
+        properties: { type: 'HelmChart', title: 'Helm Charts' },
       },
       {
         type: 'console.catalog/item-type-metadata',
         properties: {
-          type: 'operator-olmv0',
+          type: 'operator',
           filters: [{ label: 'Source', attribute: 'source' }],
         },
       },
     ];
     const { result } = renderHookWithProviders(() =>
-      useCatalogExtensions('dev-catalog', 'operator-olmv1'),
+      useCatalogExtensions('dev-catalog', 'HelmChart'),
     );
 
     expect(result.current[0][0].properties.filters).toBeUndefined();

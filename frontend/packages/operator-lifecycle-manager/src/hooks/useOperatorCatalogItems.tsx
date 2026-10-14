@@ -42,7 +42,7 @@ import { OperatorInfrastructureFeatures } from '../components/operator-hub/opera
 import { OperatorRepository } from '../components/operator-hub/operator-repository';
 import { OperatorSupport } from '../components/operator-hub/operator-support';
 import { OperatorValidSubscriptions } from '../components/operator-hub/operator-valid-subscriptions';
-import { OPERATOR_OLMV0_TYPE } from '../const';
+import { OLMGeneration, OPERATOR_TYPE } from '../const';
 import { PackageManifestModel, SubscriptionModel } from '../models';
 import type { PackageManifestKind } from '../types';
 import { clusterServiceVersionFor } from '../utils/clusterserviceversions';
@@ -201,7 +201,7 @@ const useOperatorCatalogItems: ExtensionHook<CatalogItem[], CatalogExtensionHook
         .map((c) => c.trim())
         .filter(Boolean);
       const imgUrl = iconFor(pkg);
-      const type = OPERATOR_OLMV0_TYPE;
+      const type = OPERATOR_TYPE;
 
       // Compute tokenizedAuth per operator based on its infrastructureFeatures
       // Only set tokenizedAuth if both the cluster supports it AND the operator supports it
@@ -257,9 +257,8 @@ const useOperatorCatalogItems: ExtensionHook<CatalogItem[], CatalogExtensionHook
           ? [
               {
                 text: t('Classic Operator'),
-                color: 'grey',
+                color: 'blue',
                 variant: 'filled',
-                placement: 'header',
               } as CatalogItemBadge,
             ]
           : []),
@@ -303,6 +302,7 @@ const useOperatorCatalogItems: ExtensionHook<CatalogItem[], CatalogExtensionHook
 
       return {
         attributes: {
+          olmGeneration: OLMGeneration.Classic,
           capabilities,
           infrastructureFeatures,
           installState,

@@ -1,9 +1,10 @@
 import type { FC } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
+import { NEXT_GEN_CATALOG_PATH } from '@console/operator-lifecycle-manager/src/const';
 import { ConsoleEmptyState } from '@console/shared/src/components/empty-state/ConsoleEmptyState';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
-import { FLAG_CLUSTER_CATALOG_API, NEXT_GEN_CATALOG_PATH } from '../../const';
+import { FLAG_CLUSTER_CATALOG_API } from '../../const';
 
 /**
  * Shown on the Next-Gen (OLMv1) tab when no ClusterExtension is installed. Mirrors the Classic
@@ -12,7 +13,7 @@ import { FLAG_CLUSTER_CATALOG_API, NEXT_GEN_CATALOG_PATH } from '../../const';
  */
 export const ClusterExtensionEmptyState: FC = () => {
   const { t } = useTranslation('olm-v1');
-  // Without the ClusterCatalog CRD the Next-Gen catalog type is not registered, so the link would 404.
+  // Next-Gen catalog items require the ClusterCatalog API.
   const hasCatalogAccess = useFlag(FLAG_CLUSTER_CATALOG_API);
 
   return (
