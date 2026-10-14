@@ -346,6 +346,7 @@
     "dompurify": "3.2.7",
     "hosted-git-info": "^3.0.8",
     "jquery": "3.5.1",
+    "react-linkify/linkify-it": "^5.0.2",
     "lodash-es": "^4.17.23",
     "minimist": "1.2.5",
     "ua-parser-js": "^0.7.24",
