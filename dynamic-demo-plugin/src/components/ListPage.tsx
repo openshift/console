@@ -144,8 +144,11 @@ const usePodBulkActions = () => {
   );
 
   return React.useCallback(
-    ({ selectedItems, deselect }: ConsoleDataViewSelectionActions<K8sResourceCommon>): Action[] => {
-      const hasPodsToKill = selectedItems.some((pod) => !isPixaaPod(pod.metadata.name));
+    ({
+      matchingSelectedItems,
+      deselect,
+    }: ConsoleDataViewSelectionActions<K8sResourceCommon>): Action[] => {
+      const hasPodsToKill = matchingSelectedItems.some((pod) => !isPixaaPod(pod.metadata.name));
       return [
         {
           id: 'kill-selected-pods',
@@ -155,7 +158,7 @@ const usePodBulkActions = () => {
           cta: () =>
             launchOverlay(KillPodsModal, {
               hasPodsToKill,
-              onConfirm: () => killSelectedPods(selectedItems, deselect),
+              onConfirm: () => killSelectedPods(matchingSelectedItems, deselect),
             }),
         },
       ];
@@ -164,12 +167,24 @@ const usePodBulkActions = () => {
   );
 };
 
+const columns: ConsoleDataViewColumn<K8sResourceCommon>[] = [
+  {
+    id: 'name',
+    type: 'name' as const,
+  },
+  {
+    id: 'namespace',
+    type: 'namespace' as const,
+  },
+  { id: 'actions', type: 'actions' as const },
+];
+
 const PodsTable: React.FC<PodsTableProps> = ({ data, loaded, loadError }) => {
   const { t } = useTranslation('plugin__console-demo-plugin');
-  const getPodActions = usePodBulkActions();
+  const getPodBulkActions = usePodBulkActions();
   const selection = React.useMemo(
-    () => ({ getItemId: getPodId, getActions: getPodActions }),
-    [getPodActions],
+    () => ({ getItemId: getPodId, getBulkActions: getPodBulkActions }),
+    [getPodBulkActions],
   );
   const podTypeOptions = React.useMemo(
     () => [
@@ -214,24 +229,6 @@ const PodsTable: React.FC<PodsTableProps> = ({ data, loaded, loadError }) => {
         })),
       ),
     [],
-  );
-
-  const columns = React.useMemo<ConsoleDataViewColumn<K8sResourceCommon>[]>(
-    () => [
-      {
-        title: t('Name'),
-        id: 'name',
-        type: 'name' as const,
-        sort: 'metadata.name',
-      },
-      {
-        title: t('Namespace'),
-        id: 'namespace',
-        sort: 'metadata.namespace',
-      },
-      { id: 'actions', type: 'actions' as const },
-    ],
-    [t],
   );
 
   return (

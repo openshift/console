@@ -169,12 +169,7 @@ const useNodesColumns = (
     () => [
       {
         type: 'name' as const,
-        title: t('Name'),
         id: nodeColumnInfo.name.id,
-        sort: 'metadata.name',
-        props: {
-          modifier: 'nowrap' as const,
-        },
       },
       {
         title: t('Status'),
@@ -210,14 +205,16 @@ const useNodesColumns = (
               title: t('Virtual machines'),
               id: nodeColumnInfo.vms.id,
               sort: 'virtualMachines',
+              tooltip: isAdmin
+                ? undefined
+                : t(
+                    'This count is based on your access permissions and might not include all virtual machines. Contact your administrator for full access.',
+                  ),
               props: isAdmin
                 ? undefined
                 : {
                     modifier: 'nowrap' as const,
                     info: {
-                      tooltip: t(
-                        'This count is based on your access permissions and might not include all virtual machines. Contact your administrator for full access.',
-                      ),
                       tooltipProps: {
                         isContentLeftAligned: true,
                       },
@@ -257,7 +254,7 @@ const useNodesColumns = (
         props: {
           modifier: 'nowrap' as const,
         },
-        additional: true,
+        defaultVisible: false,
       },
       {
         title: t('Architecture'),
@@ -266,7 +263,7 @@ const useNodesColumns = (
         props: {
           modifier: 'nowrap' as const,
         },
-        additional: true,
+        defaultVisible: false,
       },
       {
         title: t('Filesystem'),
@@ -275,7 +272,7 @@ const useNodesColumns = (
         props: {
           modifier: 'nowrap' as const,
         },
-        additional: true,
+        defaultVisible: false,
       },
       {
         title: t('Created'),
@@ -284,7 +281,7 @@ const useNodesColumns = (
         props: {
           modifier: 'nowrap' as const,
         },
-        additional: true,
+        defaultVisible: false,
       },
       {
         title: t('Instance type'),
@@ -293,7 +290,7 @@ const useNodesColumns = (
         props: {
           modifier: 'nowrap' as const,
         },
-        additional: true,
+        defaultVisible: false,
       },
       {
         title: t('Machine'),
@@ -302,7 +299,7 @@ const useNodesColumns = (
         props: {
           modifier: 'nowrap' as const,
         },
-        additional: true,
+        defaultVisible: false,
       },
       {
         title: t('MachineConfigPool'),
@@ -311,7 +308,7 @@ const useNodesColumns = (
         props: {
           modifier: 'nowrap' as const,
         },
-        additional: true,
+        defaultVisible: false,
       },
       {
         title: t('Labels'),
@@ -321,7 +318,7 @@ const useNodesColumns = (
           modifier: 'nowrap' as const,
           ...getLabelsColumnWidthStyleProp(),
         },
-        additional: true,
+        defaultVisible: false,
       },
       {
         title: t('Zone'),
@@ -330,7 +327,7 @@ const useNodesColumns = (
         props: {
           modifier: 'nowrap' as const,
         },
-        additional: true,
+        defaultVisible: false,
       },
       {
         title: t('Uptime'),
@@ -339,7 +336,7 @@ const useNodesColumns = (
         props: {
           modifier: 'nowrap' as const,
         },
-        additional: true,
+        defaultVisible: false,
       },
       { type: 'actions' as const, id: nodeColumnInfo.actions.id },
     ],
@@ -521,7 +518,6 @@ const getNodeDataViewRows = (
       }
       return {
         id,
-        props: 'props' in rowCell ? rowCell.props : undefined,
         cell: rowCell.cell ?? DASH,
       };
     });

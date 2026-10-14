@@ -48,9 +48,7 @@ const useBareMetalHostColumns = (): {
       {
         type: 'name' as const,
         id: 'name',
-        title: t('Name'),
         sort: 'host.metadata.name',
-        props: { modifier: 'nowrap' as const },
       },
       {
         id: 'status',

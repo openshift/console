@@ -27,7 +27,6 @@ import { useTranslation } from 'react-i18next';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import type {
   ResourceFilters,
-  ColumnLayout,
   ConsoleDataViewProps,
   GetDataViewRows,
   K8sResourceCommon,
@@ -43,10 +42,11 @@ import { LazyConsoleDataViewColumnManagementModalOverlay } from './lazyConsoleDa
 import {
   getResourceReference,
   getResourceReferenceForItems,
-  getSelectedResources,
+  getMatchingSelectedResources,
 } from './resourceActions';
 import { ResourceBulkActionMenu } from './ResourceBulkActionMenu';
 import { useConsoleDataViewColumns } from './useConsoleDataViewColumns';
+import type { ConsoleDataViewColumnLayout } from './useConsoleDataViewColumns';
 import { useConsoleDataViewData } from './useConsoleDataViewData';
 import { useConsoleDataViewFilters } from './useConsoleDataViewFilters';
 import { useDataViewSelection } from './useDataViewSelection';
@@ -109,7 +109,7 @@ export const ConsoleDataView = <
   const selectionEnabled = Boolean(selection);
   const getItemId = selection?.getItemId;
   const isSelectable = selection?.isSelectable;
-  const getActions = selection?.getActions;
+  const getBulkActions = selection?.getBulkActions;
   const { selectedIds, onSelectItem, onSelectAll, clearSelection, deselect } = useDataViewSelection(
     {
       data,
@@ -124,37 +124,24 @@ export const ConsoleDataView = <
   const getRowsWithResourceActions = useCallback<GetDataViewRows<TData, TCustomRowData>>(
     (rows, activeColumns) => {
       const contentRows = getDataViewRows(rows, activeColumns);
-      const actionIndex = activeColumns.findIndex(({ type }) => type === 'actions');
-      if (actionIndex < 0) return contentRows;
+      const actionColumn = activeColumns.find(({ type }) => type === 'actions');
+      if (!actionColumn) return contentRows;
 
       return contentRows.map((cells, rowIndex) => {
-        const actionCell = cells[actionIndex];
-        if (
-          actionCell !== undefined &&
-          (actionCell === null ||
-            typeof actionCell !== 'object' ||
-            !('id' in actionCell) ||
-            actionCell.cell !== undefined)
-        ) {
-          return cells;
-        }
+        const actionCell = cells.find(({ id: columnID }) => columnID === actionColumn.id);
+        if (actionCell?.cell !== undefined) return cells;
         const resource = rows[rowIndex]?.obj;
         const resourceReference = getResourceReference(resource);
-        const nextCells = [...cells];
-        if (!resourceReference) {
-          nextCells[actionIndex] = {
+        return [
+          ...cells.filter(({ id: columnID }) => columnID !== actionColumn.id),
+          {
             ...actionCell,
-            id: activeColumns[actionIndex].id,
-            cell: null,
-          };
-          return nextCells;
-        }
-        nextCells[actionIndex] = {
-          ...actionCell,
-          id: activeColumns[actionIndex].id,
-          cell: <LazyActionMenu context={{ [resourceReference]: resource }} />,
-        };
-        return nextCells;
+            id: actionColumn.id,
+            cell: resourceReference ? (
+              <LazyActionMenu context={{ [resourceReference]: resource }} />
+            ) : null,
+          },
+        ];
       });
     },
     [getDataViewRows],
@@ -181,7 +168,7 @@ export const ConsoleDataView = <
           }),
         };
         const contentRow = contentRows[rowIndex];
-        return [...contentRow.slice(0, selectionIndex), cell, ...contentRow.slice(selectionIndex)];
+        return [...contentRow, cell];
       });
     },
     [
@@ -193,14 +180,15 @@ export const ConsoleDataView = <
       onSelectItem,
     ],
   );
-  const managedColumnLayout = useMemo<ColumnLayout>(
+  const managedColumnLayout = useMemo<ConsoleDataViewColumnLayout>(
     () => ({
       id: resolvedID,
       type: label ?? resolvedID,
-      columns: tableColumns.map(({ id: columnID, title, additional }) => ({
+      columns: tableColumns.map(({ id: columnID, type, title, defaultVisible }) => ({
         id: columnID,
+        type,
         title: title ?? '',
-        additional,
+        additional: defaultVisible === false,
       })),
       selectedColumns: new Set(),
       showNamespaceOverride,
@@ -246,7 +234,7 @@ export const ConsoleDataView = <
     () => (isSelectable ? filteredData.filter(isSelectable) : filteredData),
     [filteredData, isSelectable],
   );
-  const filteredSelectedItems = useMemo(
+  const matchingSelectedItems = useMemo(
     () =>
       selectionEnabled && getItemId
         ? selectableFilteredData.filter((item) => selectedIds.has(getItemId(item)))
@@ -255,31 +243,31 @@ export const ConsoleDataView = <
   );
   const bulkActions = useMemo(
     () =>
-      getActions?.({
-        selectedItems: filteredSelectedItems,
+      getBulkActions?.({
+        matchingSelectedItems,
         clearSelection,
         deselect,
       }),
-    [getActions, filteredSelectedItems, clearSelection, deselect],
+    [getBulkActions, matchingSelectedItems, clearSelection, deselect],
   );
-  const selectedResources = useMemo(
-    () => getSelectedResources(filteredSelectedItems),
-    [filteredSelectedItems],
+  const matchingResourceSelection = useMemo(
+    () => getMatchingSelectedResources(matchingSelectedItems),
+    [matchingSelectedItems],
   );
   const bulkActionReference = useMemo(() => {
-    if (filteredSelectedItems.length > 0) return selectedResources?.reference;
+    if (matchingSelectedItems.length > 0) return matchingResourceSelection?.reference;
     return getResourceReferenceForItems(data, isSelectable);
-  }, [data, filteredSelectedItems.length, selectedResources, isSelectable]);
+  }, [data, matchingSelectedItems.length, matchingResourceSelection, isSelectable]);
   const getResourceId = useCallback(
     (resource: K8sResourceCommon) => getItemId?.(resource as TData) ?? '',
     [getItemId],
   );
   const selectionKey =
-    selectionEnabled && getItemId ? JSON.stringify(filteredSelectedItems.map(getItemId)) : '';
+    selectionEnabled && getItemId ? JSON.stringify(matchingSelectedItems.map(getItemId)) : '';
   const selectionState = useMemo(
     () =>
       selectionEnabled && getItemId
-        ? { selectedItems: selectedIds, onSelectAll, getItemId, isSelectable }
+        ? { selectedIds, onSelectAll, getItemId, isSelectable }
         : undefined,
     [selectionEnabled, selectedIds, onSelectAll, getItemId, isSelectable],
   );
@@ -353,7 +341,7 @@ export const ConsoleDataView = <
 
     const visibleCount = selectableVisibleItems.length;
     const totalCount = selectableFilteredData.length;
-    const selectedCount = filteredSelectedItems.length;
+    const selectedCount = matchingSelectedItems.length;
 
     // Show banner if all visible items are selected and there are more items than visible
     const shouldShow = allVisibleSelected && visibleCount > 0 && totalCount > visibleCount;
@@ -366,7 +354,7 @@ export const ConsoleDataView = <
     isSelectable,
     loaded,
     selectableFilteredData,
-    filteredSelectedItems.length,
+    matchingSelectedItems.length,
     selectedIds,
     visibleItems,
   ]);
@@ -473,12 +461,14 @@ export const ConsoleDataView = <
               {selection && (
                 <ResourceBulkActionMenu
                   reference={bulkActionReference}
-                  resources={selectedResources?.resources ?? []}
+                  matchingSelectedResources={
+                    matchingResourceSelection?.matchingSelectedResources ?? []
+                  }
                   getResourceId={getResourceId}
                   clearSelection={clearSelection}
                   deselect={deselect}
                   localActions={bulkActions}
-                  selectedCount={filteredSelectedItems.length}
+                  selectedCount={matchingSelectedItems.length}
                   selectionKey={selectionKey}
                 />
               )}

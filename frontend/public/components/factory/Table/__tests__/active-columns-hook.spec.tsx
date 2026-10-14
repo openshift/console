@@ -75,16 +75,24 @@ describe('useActiveColumns', () => {
     jest.clearAllMocks();
   });
 
-  it('shows default columns and keeps unlabeled action columns', () => {
+  it('keeps action and selection roles visible while respecting other visibility defaults', () => {
     const { result } = setupHook({
       columns: [
         ...columns,
-        { id: 'extra', title: 'Extra', additional: true },
-        { id: '', title: '' },
+        { id: 'extra', title: 'Extra', defaultVisible: false },
+        { id: 'blank', title: '', defaultVisible: false },
+        { id: 'tools', type: 'actions', title: 'Tools', defaultVisible: false },
+        { id: 'checkbox', type: 'selection', title: '', defaultVisible: false },
       ],
     });
 
-    expect(result.current[0].map(({ id }) => id)).toEqual(['name', 'status', 'owner', '']);
+    expect(result.current[0].map(({ id }) => id)).toEqual([
+      'name',
+      'status',
+      'owner',
+      'tools',
+      'checkbox',
+    ]);
     expect(result.current[1]).toBe(true);
   });
 
@@ -92,6 +100,20 @@ describe('useActiveColumns', () => {
     const { result } = setupHook({ selectedColumns: ['name', 'owner'] });
 
     expect(result.current[0].map(({ id }) => id)).toEqual(['name', 'owner']);
+  });
+
+  it('does not force blank-title columns into a saved selection', () => {
+    const { result } = setupHook({
+      selectedColumns: ['name'],
+      columns: [
+        ...columns,
+        { id: 'blank', title: '' },
+        { id: 'tools', type: 'actions', title: '' },
+        { id: 'checkbox', type: 'selection', title: '' },
+      ],
+    });
+
+    expect(result.current[0].map(({ id }) => id)).toEqual(['name', 'tools', 'checkbox']);
   });
 
   it('renders visible columns in the saved order', () => {
@@ -128,12 +150,12 @@ describe('useActiveColumns', () => {
   it('hides the namespace column in a single project unless the override is enabled', () => {
     const namespaceColumns: TestColumn[] = [
       { id: 'name', title: 'Name' },
-      { id: 'namespace', title: 'Namespace' },
+      { id: 'project', type: 'namespace', title: 'Namespace' },
       { id: 'status', title: 'Status' },
     ];
     const options = {
       columns: namespaceColumns,
-      selectedColumns: ['name', 'namespace', 'status'],
+      selectedColumns: ['name', 'project', 'status'],
       namespace: 'project-a',
     };
 
@@ -141,7 +163,36 @@ describe('useActiveColumns', () => {
     expect(hiddenResult.current[0].map(({ id }) => id)).toEqual(['name', 'status']);
 
     const overrideResult = setupHook({ ...options, showNamespaceOverride: true }).result;
-    expect(overrideResult.current[0].map(({ id }) => id)).toEqual(['name', 'namespace', 'status']);
+    expect(overrideResult.current[0].map(({ id }) => id)).toEqual(['name', 'project', 'status']);
+  });
+
+  it('keeps a column with ID namespace visible when it has no namespace type', () => {
+    const { result } = setupHook({
+      namespace: 'project-a',
+      columns: [...columns, { id: 'namespace', title: 'Custom namespace value' }],
+    });
+
+    expect(result.current[0].map(({ id }) => id)).toContain('namespace');
+  });
+
+  it('forces namespace-type columns visible even when preferences exclude them', () => {
+    const { result } = setupHook({
+      namespace: 'project-a',
+      selectedColumns: ['name'],
+      showNamespaceOverride: true,
+      columns: [...columns, { id: 'project', type: 'namespace', title: 'Project' }],
+    });
+
+    expect(result.current[0].map(({ id }) => id)).toEqual(['name', 'project']);
+  });
+
+  it('shows selected namespace-type columns in All projects', () => {
+    const { result } = setupHook({
+      selectedColumns: ['name', 'project'],
+      columns: [...columns, { id: 'project', type: 'namespace', title: 'Project' }],
+    });
+
+    expect(result.current[0].map(({ id }) => id)).toEqual(['name', 'project']);
   });
 
   it('waits for both column preferences to load', () => {

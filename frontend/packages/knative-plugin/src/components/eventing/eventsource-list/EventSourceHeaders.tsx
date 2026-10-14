@@ -9,12 +9,10 @@ export const useEventSourceColumns = (): {
   const { t } = useTranslation('knative-plugin');
   const columns = useMemo(
     () => [
-      { type: 'name' as const, id: 'name', title: t('Name'), sort: 'metadata.name' },
+      { type: 'name' as const, id: 'name' },
       {
+        type: 'namespace' as const,
         id: 'namespace',
-        title: t('Namespace'),
-        sort: 'metadata.namespace',
-        props: { modifier: 'nowrap' as const },
       },
       {
         id: 'ready',

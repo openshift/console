@@ -2,10 +2,12 @@ import type { ReactNode } from 'react';
 import { useMemo } from 'react';
 import type { LoadedAndResolvedExtension } from '@openshift/dynamic-plugin-sdk';
 import type { DataViewTd } from '@patternfly/react-data-view/dist/esm/DataViewTable/DataViewTable';
+import { useTranslation } from 'react-i18next';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
 import type {
   ColumnLayout,
   ConsoleDataViewColumn,
+  ConsoleDataViewRow,
   GetDataViewRows,
   ResourceMetadata,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
@@ -15,7 +17,14 @@ import { useTranslatedExtensions } from '@console/plugin-sdk/src/utils/useTransl
 import { getConsoleDataViewID } from './getConsoleDataViewID';
 import { useConsoleDataViewResizableColumns } from './useConsoleDataViewResizableColumns';
 
+export type ConsoleDataViewColumnLayout = Omit<ColumnLayout, 'columns'> & {
+  columns: (ColumnLayout['columns'][number] & Pick<ConsoleDataViewColumn, 'type'>)[];
+};
+
 type ResolvedTableColumn = LoadedAndResolvedExtension<ConsoleDataViewTableColumn>;
+
+const isDataViewCellObject = (cell: DataViewTd): cell is Extract<DataViewTd, { cell: ReactNode }> =>
+  cell !== null && typeof cell === 'object' && 'cell' in cell;
 
 const cellIsStickyProps = {
   isStickyColumn: true,
@@ -30,8 +39,13 @@ const selectionColumnProps = {
   style: { maxWidth: selectionColumnWidth },
 };
 
+const nowrapCellProps = {
+  modifier: 'nowrap' as const,
+};
+
 const nameCellProps = {
   ...cellIsStickyProps,
+  ...nowrapCellProps,
   hasRightBorder: true,
 };
 
@@ -42,7 +56,7 @@ const actionsCellProps = {
 };
 
 const getDefaultProps = (
-  type: ConsoleDataViewColumn<unknown>['type'],
+  type: ConsoleDataViewColumn['type'],
   hasSelection: boolean,
   isHeader = false,
 ) => {
@@ -51,6 +65,8 @@ const getDefaultProps = (
       return hasSelection
         ? { ...nameCellProps, stickyLeftOffset: selectionColumnWidth }
         : nameCellProps;
+    case 'namespace':
+      return nowrapCellProps;
     case 'actions':
       return isHeader ? { ...cellIsStickyProps, hasLeftBorder: true } : actionsCellProps;
     case 'selection':
@@ -69,7 +85,7 @@ const compareExtensions = (a: ResolvedTableColumn, b: ResolvedTableColumn): numb
 
 const isValidColumnData = (
   columnData: unknown,
-): columnData is ConsoleDataViewColumn<unknown> & { title: string } => {
+): columnData is ConsoleDataViewColumn & { title: string } => {
   if (!columnData || typeof columnData !== 'object' || Array.isArray(columnData)) return false;
   const { id, title } = columnData as Record<string, unknown>;
   return typeof id === 'string' && id.length > 0 && typeof title === 'string' && title.length > 0;
@@ -103,14 +119,12 @@ export const orderConsoleDataViewColumns = <TData>(
     delete columnDefinition.type;
     columns.splice(index, 0, {
       ...columnDefinition,
-      additional: columnData.additional ?? true,
+      defaultVisible: columnData.defaultVisible ?? false,
     } as ConsoleDataViewColumn<TData>);
     extensionsByID.set(columnData.id, extension);
   };
   const defaultIndex = (): number => {
-    const actionIndex = columns.findIndex(
-      ({ id, type }) => id === '' || id === 'actions' || type === 'actions',
-    );
+    const actionIndex = columns.findIndex(({ type }) => type === 'actions');
     return actionIndex < 0 ? columns.length : actionIndex;
   };
   const lastAfter = new Map<string, string>();
@@ -154,12 +168,13 @@ export const orderConsoleDataViewColumns = <TData>(
 
 export const useConsoleDataViewColumns = <TData, TCustomRowData>(
   columns: ConsoleDataViewColumn<TData>[],
-  columnLayout: ColumnLayout,
+  columnLayout: ConsoleDataViewColumnLayout,
   tableID: string | undefined,
   getDataViewRows: GetDataViewRows<TData, TCustomRowData>,
   getObjectMetadata: ((obj: TData) => ResourceMetadata) | undefined,
   isResizable: boolean,
 ) => {
+  const { t } = useTranslation('console-app');
   const [resolvedExtensions, extensionsResolved] = useResolvedExtensions(
     isConsoleDataViewTableColumn,
   );
@@ -180,30 +195,37 @@ export const useConsoleDataViewColumns = <TData, TCustomRowData>(
     return {
       ...result,
       columns: result.columns.map((column) => {
-        const withTitle = { ...column, title: column.title ?? '' };
+        const preset =
+          column.type === 'name'
+            ? { title: t('Name'), sort: 'metadata.name' }
+            : column.type === 'namespace'
+              ? { title: t('Namespace'), sort: 'metadata.namespace' }
+              : undefined;
+        const resolvedColumn = {
+          ...column,
+          title: column.title ?? preset?.title ?? '',
+          sort: column.sort ?? preset?.sort,
+        };
         const defaults = getDefaultProps(column.type, hasSelection, true);
-        return defaults ? { ...withTitle, props: { ...defaults, ...column.props } } : withTitle;
+        return defaults
+          ? { ...resolvedColumn, props: { ...defaults, ...column.props } }
+          : resolvedColumn;
       }),
     };
-  }, [columns, translatedExtensions]);
+  }, [columns, t, translatedExtensions]);
   const { columns: resizableColumns, resetColumnWidths } = useConsoleDataViewResizableColumns({
     columns: ordered.columns,
     tableID,
     isResizable,
   });
 
-  const managedLayout = useMemo<ColumnLayout>(() => {
+  const managedLayout = useMemo<ConsoleDataViewColumnLayout>(() => {
     const fixedColumnIDs = new Set(
       ordered.columns
         .filter(({ type }) => type === 'actions' || type === 'selection')
         .map(({ id }) => id),
     );
     const configurableColumns = columnLayout.columns.filter(({ id }) => !fixedColumnIDs.has(id));
-    if (!ordered.extensionsByID.size) {
-      return configurableColumns.length === columnLayout.columns.length
-        ? columnLayout
-        : { ...columnLayout, columns: configurableColumns };
-    }
     const original = new Map(configurableColumns.map((column) => [column.id, column]));
     return {
       ...columnLayout,
@@ -212,7 +234,10 @@ export const useConsoleDataViewColumns = <TData, TCustomRowData>(
           ({ id }) =>
             !fixedColumnIDs.has(id) && (original.has(id) || ordered.extensionsByID.has(id)),
         )
-        .map(({ id, title, additional }) => original.get(id) ?? { id, title, additional }),
+        .map(({ id, type, title, defaultVisible }) => ({
+          ...(original.get(id) ?? { id, type, additional: defaultVisible === false }),
+          title,
+        })),
     };
   }, [columnLayout, ordered]);
 
@@ -223,29 +248,24 @@ export const useConsoleDataViewColumns = <TData, TCustomRowData>(
         const item = obj as { metadata?: { name?: string }; name?: string };
         return item?.metadata?.name ?? getObjectMetadata?.(obj)?.name ?? item?.name;
       };
-      const applyCellProps = (rows: DataViewTd[][]): DataViewTd[][] =>
+      const applyCellProps = (rows: ConsoleDataViewRow[]): ConsoleDataViewRow[] =>
         rows.map((row, rowIndex) =>
           row.map((cell, index) => {
             const type = activeColumns[index]?.type;
             const defaults = getDefaultProps(type, hasSelection);
-            if (!defaults) {
-              return cell;
-            }
-            const defaultProps = {
-              ...defaults,
-              ...(type === 'name' && {
-                'data-test': `data-view-cell-${getRowName(data[rowIndex].obj)}-name`,
-              }),
+            if (!defaults) return cell;
+            return {
+              ...cell,
+              props: {
+                ...defaults,
+                ...(type === 'name' && {
+                  'data-test': `data-view-cell-${getRowName(data[rowIndex].obj)}-name`,
+                }),
+                ...cell.props,
+              },
             };
-            return cell && typeof cell === 'object' && 'cell' in cell
-              ? { ...cell, props: { ...defaultProps, ...cell.props } }
-              : { cell: cell as ReactNode, props: defaultProps };
           }),
         );
-
-      if (!ordered.extensionsByID.size) {
-        return applyCellProps(getDataViewRows(data, activeColumns));
-      }
 
       const builtInActiveColumns = activeColumns.filter(
         ({ id }) => !ordered.extensionsByID.has(id),
@@ -275,13 +295,16 @@ export const useConsoleDataViewColumns = <TData, TCustomRowData>(
       return applyCellProps(
         data.map((_, rowIndex) => {
           const builtInCells = new Map(
-            builtInActiveColumns.map(({ id }, index) => [id, builtInRows[rowIndex]?.[index]]),
+            (builtInRows[rowIndex] ?? []).map((cell) => [cell.id, cell]),
           );
-          return activeColumns.map(({ id }) =>
-            ordered.extensionsByID.has(id)
-              ? (extensionCells.get(id)?.[rowIndex] ?? null)
-              : builtInCells.get(id),
-          );
+          return activeColumns.map(({ id }) => {
+            if (!ordered.extensionsByID.has(id)) {
+              const cell = builtInCells.get(id);
+              return { ...cell, id, cell: cell?.cell ?? null };
+            }
+            const cell = extensionCells.get(id)?.[rowIndex];
+            return isDataViewCellObject(cell) ? { ...cell, id } : { id, cell: cell ?? null };
+          });
         }),
       );
     },

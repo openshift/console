@@ -10,14 +10,14 @@ For current development version of Console, use `4.x.0-prerelease.n` packages.
 For older 1.x plugin SDK packages, refer to "OpenShift Console Versions vs SDK Versions" compatibility
 table in [Console dynamic plugins README](./README.md).
 
-## 5.1.0-prerelease.1 - TBD
+## 5.1.0-prerelease.1 - 2026-10-16
 
 - Removed `immutable` dependency from the redux store and from the package ([CONSOLE-5001], [#17024])
 - Added `ConsoleDataView` component and `definitionFor` ([CONSOLE-5131], [#17307], [#17351])
 - Added `console.dataview/table-column` extension for contributing sortable, manageable columns to `ConsoleDataView` tables ([CONSOLE-5560], [#17351])
 - Added default resource kebab actions and optional `bulkProvider` to `console.action/resource-provider` for bulk actions ([CONSOLE-5560], [#17351])
 
-## 4.23.0-prerelease.6 - TBD
+## 4.23.0 - 2026-10-16
 
 - Add an `onCancel` prop to `ResourceYAMLEditor` to allow overriding the default cancel behavior ([CONSOLE-5438], [#16941])
 

@@ -91,9 +91,9 @@ export const useNodeActions: ExtensionHook<Action[], NodeKind> = (obj) => {
 
 /** Only scheduling actions opt in to the resource bulk action menu. */
 export const useNodeBulkActionsProvider: BulkResourceActionHook = ({
-  resources,
+  matchingSelectedResources,
   clearSelection,
 }) => {
-  const actions = useCustomNodeActions(resources as NodeKind[], clearSelection);
+  const actions = useCustomNodeActions(matchingSelectedResources as NodeKind[], clearSelection);
   return [actions, true, undefined];
 };

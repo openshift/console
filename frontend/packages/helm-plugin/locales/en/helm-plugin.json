@@ -97,7 +97,6 @@
   "Must be a valid OCI URL or a valid HTTP/HTTPS .tar file; for example, oci://registry.example.com/chart, https://example.com/chart-1.0.0.tgz.": "Must be a valid OCI URL or a valid HTTP/HTTPS .tar file; for example, oci://registry.example.com/chart, https://example.com/chart-1.0.0.tgz.",
   "Name": "Name",
   "Name must consist of lowercase letters, numbers, and hyphens. It must start with a letter and end with a letter or number.": "Name must consist of lowercase letters, numbers, and hyphens. It must start with a letter and end with a letter or number.",
-  "Namespace": "Namespace",
   "Namespaced scoped  (ProjectHelmChartRepository)": "Namespaced scoped  (ProjectHelmChartRepository)",
   "Next": "Next",
   "No Helm releases found": "No Helm releases found",

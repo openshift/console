@@ -217,12 +217,8 @@ const useCustomResourceDefinitionsColumns = (): {
     () => [
       {
         type: 'name' as const,
-        title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'spec.names.kind',
-        props: {
-          modifier: 'nowrap' as const,
-        },
       },
       {
         title: t('Group'),

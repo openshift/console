@@ -28,11 +28,11 @@ describe('getDataViewRows', () => {
     ];
 
     testColumns = [
-      { id: 'name', title: 'Name', cell: null },
-      { id: 'type', title: 'Type', cell: null },
-      { id: 'status', title: 'Status', cell: null },
-      { id: 'created', title: 'Created', cell: null },
-    ] as ConsoleDataViewColumn<K8sResourceKind>[];
+      { id: 'name', title: 'Name' },
+      { id: 'type', title: 'Type' },
+      { id: 'status', title: 'Status' },
+      { id: 'created', title: 'Created' },
+    ];
   });
 
   it('should return data view rows with correct structure', () => {

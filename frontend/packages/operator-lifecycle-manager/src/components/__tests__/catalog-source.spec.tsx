@@ -290,7 +290,7 @@ describe('useCatalogSourceColumns', () => {
   it('returns the expected column titles', () => {
     const { result } = renderHookWithProviders(() => useCatalogSourceColumns());
     expect(result.current.columns.map(({ title }) => title)).toEqual([
-      'Name',
+      undefined, // provided by dataview itself
       'Status',
       'Publisher',
       'Availability',

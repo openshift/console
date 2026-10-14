@@ -4,15 +4,22 @@ import { useTranslation } from 'react-i18next';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
 import type {
   Action,
+  ActionFilter,
+  ActionGroup,
   BulkResourceActionContext,
   ResourceActionProvider,
 } from '@console/dynamic-plugin-sdk/src/extensions/actions';
-import { isResourceActionProvider } from '@console/dynamic-plugin-sdk/src/extensions/actions';
+import {
+  isActionFilter,
+  isActionGroup,
+  isResourceActionProvider,
+} from '@console/dynamic-plugin-sdk/src/extensions/actions';
+import type { Extension } from '@console/dynamic-plugin-sdk/src/types';
 import { referenceForExtensionModel } from '@console/internal/module/k8s';
 import ActionsHookResolver from '@console/shared/src/components/actions/loader/ActionsHookResolver';
-import ActionMenuItem from '@console/shared/src/components/actions/menu/ActionMenuItem';
+import ActionMenuContent from '@console/shared/src/components/actions/menu/ActionMenuContent';
+import { createMenuOptions } from '@console/shared/src/components/actions/utils';
 import { ResponsiveActionDropdown } from '@console/shared/src/components/dropdown/ResponsiveActionDropdown';
-import { orderExtensionBasedOnInsertBeforeAndAfter } from '@console/shared/src/utils/order-extensions';
 
 type ResourceBulkActionMenuProps = BulkResourceActionContext & {
   reference?: string;
@@ -24,7 +31,7 @@ type ResourceBulkActionMenuProps = BulkResourceActionContext & {
 /** Combines table actions with bulk providers for a single resource model. */
 export const ResourceBulkActionMenu: FC<ResourceBulkActionMenuProps> = ({
   reference,
-  resources,
+  matchingSelectedResources,
   getResourceId,
   clearSelection,
   deselect,
@@ -49,6 +56,15 @@ export const ResourceBulkActionMenu: FC<ResourceBulkActionMenuProps> = ({
     [reference],
   );
   const [resolvedExtensions] = useResolvedExtensions<ResourceActionProvider>(providerGuard);
+  const filterGuard = useCallback(
+    (extension: Extension): extension is ActionFilter =>
+      Boolean(reference) &&
+      isActionFilter(extension) &&
+      extension.properties.contextId === reference,
+    [reference],
+  );
+  const [filters, filtersResolved] = useResolvedExtensions(filterGuard);
+  const [groups, groupsResolved] = useResolvedExtensions<ActionGroup>(isActionGroup);
   const providers = useMemo(
     () =>
       resolvedExtensions
@@ -57,8 +73,8 @@ export const ResourceBulkActionMenu: FC<ResourceBulkActionMenuProps> = ({
     [resolvedExtensions, providerGuard],
   );
   const scope = useMemo<BulkResourceActionContext>(
-    () => ({ resources, getResourceId, clearSelection, deselect }),
-    [resources, getResourceId, clearSelection, deselect],
+    () => ({ matchingSelectedResources, getResourceId, clearSelection, deselect }),
+    [matchingSelectedResources, getResourceId, clearSelection, deselect],
   );
   const onActionsResolved = useCallback(
     (uid: string, actions: Action[]) => {
@@ -80,15 +96,30 @@ export const ResourceBulkActionMenu: FC<ResourceBulkActionMenuProps> = ({
     return [
       ...(localActions ?? []),
       ...providers.flatMap(({ uid }) => actionsByProvider[uid] ?? []),
-    ].filter(({ id }) => {
+    ].filter((action) => {
+      const { id } = action;
       if (seen.has(id)) return false;
       seen.add(id);
-      return true;
+      return (
+        filtersResolved &&
+        (filters.length === 0 ||
+          matchingSelectedResources.every((resource) =>
+            filters.some(({ properties }) => properties.filter(resource, action)),
+          ))
+      );
     });
-  }, [localActions, providers, providerActions, selectionKey]);
-  const orderedActions = useMemo(
-    () => orderExtensionBasedOnInsertBeforeAndAfter(actions),
-    [actions],
+  }, [
+    localActions,
+    providers,
+    providerActions,
+    selectionKey,
+    filters,
+    filtersResolved,
+    matchingSelectedResources,
+  ]);
+  const options = useMemo(
+    () => (groupsResolved ? createMenuOptions(actions, groups) : []),
+    [actions, groups, groupsResolved],
   );
 
   return (
@@ -108,12 +139,13 @@ export const ResourceBulkActionMenu: FC<ResourceBulkActionMenuProps> = ({
         <ResponsiveActionDropdown
           label={t('Actions')}
           variant="default"
+          containsFlyout
           data-test="data-view-bulk-actions-menu-button"
-          isDisabled={selectedCount === 0 || actions.every(({ disabled }) => disabled)}
+          isDisabled={
+            selectedCount === 0 || !groupsResolved || actions.every(({ disabled }) => disabled)
+          }
         >
-          {orderedActions.map((action) => (
-            <ActionMenuItem key={action.id} action={action} />
-          ))}
+          {(closeDropdown) => <ActionMenuContent options={options} onClick={closeDropdown} />}
         </ResponsiveActionDropdown>
       )}
     </>

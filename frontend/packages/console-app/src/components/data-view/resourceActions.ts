@@ -53,11 +53,11 @@ export const getResourceReferenceForItems = <TData>(
 };
 
 /** Bulk providers only receive selections of one Kubernetes model. */
-export const getSelectedResources = (
+export const getMatchingSelectedResources = (
   items: unknown[],
-): { reference: string; resources: K8sResourceCommon[] } | undefined => {
+): { reference: string; matchingSelectedResources: K8sResourceCommon[] } | undefined => {
   if (!items.length) return undefined;
   const reference = getResourceReferenceForItems(items);
   if (!reference) return undefined;
-  return { reference, resources: items as K8sResourceCommon[] };
+  return { reference, matchingSelectedResources: items as K8sResourceCommon[] };
 };

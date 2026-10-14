@@ -53,7 +53,7 @@ export const useOperandResourceColumns = (): {
   const { t } = useTranslation('olm');
   const columns = useMemo(
     () => [
-      { type: 'name' as const, id: 'name', title: t('Name'), sort: 'metadata.name' },
+      { type: 'name' as const, id: 'name' },
       {
         id: 'kind',
         title: t('Kind'),

@@ -1,4 +1,6 @@
 import type { DataViewTd } from '@patternfly/react-data-view/dist/esm/DataViewTable/DataViewTable';
+import type { DataViewThResizableProps } from '@patternfly/react-data-view/dist/esm/DataViewTh/DataViewTh';
+import type { ThProps } from '@patternfly/react-table';
 import type { ExtensionK8sKindVersionModel } from '../api/common-types';
 import type { Extension, CodeRef } from '../types';
 import type { ConsoleDataViewColumn, RowProps } from './console-types';
@@ -28,10 +30,51 @@ export type ConsoleDataViewExtensionColumn<TData = unknown> = Omit<
   'type'
 > & { title: string };
 
+type InlineColumnHeaderProps = Pick<
+  ThProps,
+  | 'className'
+  | 'modifier'
+  | 'style'
+  | 'width'
+  | 'textCenter'
+  | 'hasLeftBorder'
+  | 'hasRightBorder'
+  | 'isStickyColumn'
+  | 'stickyMinWidth'
+  | 'stickyLeftOffset'
+  | 'stickyRightOffset'
+  | 'screenReaderText'
+  | 'aria-label'
+>;
+
+type InlineColumnResizableProps = Omit<DataViewThResizableProps, 'onResize'>;
+
+/**
+ * JSON-compatible column options for an inline extension definition. Use a code reference
+ * to `ConsoleDataViewExtensionColumn` for a sort function, React tooltip, or additional
+ * PatternFly props and callbacks.
+ */
+export interface ConsoleDataViewInlineColumn {
+  /** Unique column ID. Prefix it with the plugin name to avoid collisions. */
+  id: string;
+  /** Nonempty header text, optionally translated using `%namespace~key%`. */
+  title: string;
+  /** Whether the column is initially visible. Defaults to `false`. */
+  defaultVisible?: boolean;
+  /** Dot-delimited property path to sort by. */
+  sort?: string;
+  /** Help text, optionally translated using `%namespace~key%`. */
+  tooltip?: string;
+  /** JSON-compatible header styling and accessibility options. */
+  props?: InlineColumnHeaderProps;
+  /** Resize options. Console supplies the resize callback and saves widths. */
+  resizableProps?: InlineColumnResizableProps;
+}
+
 /**
  * Adds a column to a `ConsoleDataView` table matched by its Kubernetes model or resolved ID.
- * A default-hidden column can be selected only when that table provides a `columnLayout`
- * and shows the column management action. `columnData.id` must be unique among built-in
+ * Default-hidden columns can be selected through the table's column management action.
+ * `columnData.id` must be unique among built-in
  * and extension columns, and the title must be nonempty. Console keeps built-in columns
  * when IDs collide. For duplicate plugin IDs, the first column in plugin-name/column-ID
  * order wins. Prefix the ID with the plugin name to avoid collisions. `columnData.title`
@@ -58,9 +101,8 @@ export type ConsoleDataViewTableColumn<TData = unknown, TCustomRowData = unknown
   {
     /** The Kubernetes group, version, and kind of the target table, or a string exactly matching its resolved ID. */
     table: ExtensionK8sKindVersionModel | string;
-    /** Inline column definition or code reference. When `additional` is omitted, Console treats it as `true`. */
-    columnData:
-      CodeRef<ConsoleDataViewExtensionColumn<TData>> | ConsoleDataViewExtensionColumn<TData>;
+    /** JSON-compatible inline column definition or code reference. When `defaultVisible` is omitted, Console treats it as `false`. */
+    columnData: CodeRef<ConsoleDataViewExtensionColumn<TData>> | ConsoleDataViewInlineColumn;
     /** Code reference that returns one cell per item on the current page. */
     getCellContent: CodeRef<GetDataViewCell<TData, TCustomRowData>>;
     /** The column ID before which this item should be placed. Takes precedence when both anchors exist. */

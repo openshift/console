@@ -402,10 +402,9 @@ const useReceiverColumns = (): ConsoleDataViewColumn<AlertmanagerReceiver>[] => 
     () => [
       {
         type: 'name' as const,
-        title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'name',
-        props: { hasRightBorder: false, modifier: 'nowrap' as const },
+        props: { hasRightBorder: false },
       },
       {
         title: t('Integration type'),

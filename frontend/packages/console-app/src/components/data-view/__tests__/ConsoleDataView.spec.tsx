@@ -32,7 +32,12 @@ jest.mock('@console/dynamic-plugin-sdk/src/api/useResolvedExtensions', () => ({
   useResolvedExtensions: jest.fn(),
 }));
 
-type Item = { metadata: { name: string }; status: string; kind?: string; apiVersion?: string };
+type Item = {
+  metadata: { name: string; namespace?: string };
+  status: string;
+  kind?: string;
+  apiVersion?: string;
+};
 type ResolvedTableColumn = LoadedAndResolvedExtension<ConsoleDataViewTableColumn<Item>>;
 type ResolvedResourceActionProvider = LoadedAndResolvedExtension<ResourceActionProvider>;
 
@@ -69,16 +74,19 @@ const makePodActionProvider = (
   },
 });
 
-const useBulkPodActions: BulkResourceActionHook = ({ resources, clearSelection }) => {
+const useBulkPodActions: BulkResourceActionHook = ({
+  matchingSelectedResources,
+  clearSelection,
+}) => {
   const actions = useMemo<Action[]>(
     () => [
       {
         id: 'inspect-selected-pods',
-        label: `Inspect ${resources.length} pods`,
+        label: `Inspect ${matchingSelectedResources.length} pods`,
         cta: clearSelection,
       },
     ],
-    [resources.length, clearSelection],
+    [matchingSelectedResources.length, clearSelection],
   );
   return [actions, true, undefined];
 };
@@ -89,7 +97,7 @@ const makeExtension = (
   options: {
     pluginName?: string;
     table?: ExtensionK8sKindVersionModel | string;
-    additional?: boolean;
+    defaultVisible?: boolean;
     insertBefore?: string;
     insertAfter?: string;
     resizable?: boolean;
@@ -106,7 +114,7 @@ const makeExtension = (
       id,
       title,
       tooltip: options.tooltip,
-      additional: options.additional,
+      defaultVisible: options.defaultVisible,
       resizableProps: options.resizable ? { isResizable: true } : undefined,
     },
     getCellContent:
@@ -131,6 +139,7 @@ const renderTable = (
     data?: Item[];
     selection?: ConsoleDataViewProps<Item>['selection'];
     actionProviders?: ResolvedResourceActionProvider[];
+    showNamespaceOverride?: boolean;
   } = {},
 ) => {
   const resolvedResults = new WeakMap<Function, [unknown[], boolean, unknown[]]>();
@@ -181,6 +190,7 @@ const renderTable = (
         id={options.id ?? defaultTable}
         getDataViewRows={options.getDataViewRows ?? getDataViewRows}
         selection={options.selection}
+        showNamespaceOverride={options.showNamespaceOverride}
         hideNameLabelFilters
         {...(options.useDefaultResizable ? {} : { isResizable: options.isResizable ?? false })}
       />
@@ -213,7 +223,9 @@ describe('ConsoleDataView', () => {
   afterEach(() => jest.clearAllMocks());
 
   it('renders a default-visible extension between built-in columns and aligns its cells', () => {
-    renderTable([makeExtension('test-ready', 'Ready', { additional: false, insertAfter: 'name' })]);
+    renderTable([
+      makeExtension('test-ready', 'Ready', { defaultVisible: true, insertAfter: 'name' }),
+    ]);
 
     const table = screen.getByRole('grid', { name: 'items table' });
     expect(
@@ -225,13 +237,221 @@ describe('ConsoleDataView', () => {
     expect(within(table).getAllByRole('row')[2]).toHaveTextContent('bravoReady bravopending');
   });
 
+  it.each([
+    ['without extensions', []],
+    ['with an extension', [makeExtension('test-ready', 'Ready', { defaultVisible: true })]],
+  ])('matches reordered and omitted cells by ID %s', (_scenario, extensions) => {
+    renderTable(extensions, undefined, {
+      selection: { getItemId: (item) => item.metadata.name },
+      getDataViewRows: (rows) =>
+        rows.map(({ obj }) => [
+          ...(obj.metadata.name === 'alpha' ? [{ id: 'status', cell: obj.status }] : []),
+          { id: 'unknown-column', cell: 'Ignored cell' },
+          { id: 'name', cell: obj.metadata.name },
+        ]),
+    });
+
+    const table = screen.getByRole('grid', { name: 'items table' });
+    const rows = within(table).getAllByRole('row').slice(1);
+    expect(within(rows[0]).getAllByRole('cell')[1]).toHaveTextContent('alpha');
+    expect(within(rows[0]).getAllByRole('cell')[2]).toHaveTextContent('ready');
+    expect(within(rows[1]).getAllByRole('cell')[1]).toHaveTextContent('bravo');
+    expect(within(rows[1]).getAllByRole('cell')[2]).toBeEmptyDOMElement();
+    expect(within(rows[0]).getByRole('checkbox')).toBeVisible();
+    expect(screen.queryByText('Ignored cell')).not.toBeInTheDocument();
+    expect(within(rows[0]).queryAllByRole('cell', { name: 'Ready alpha' })).toHaveLength(
+      extensions.length,
+    );
+  });
+
+  it('uses namespace roles with custom IDs in the table and column management', async () => {
+    const user = userEvent.setup();
+    renderTable([], ['name'], {
+      columns: [columns[0], { id: 'project', type: 'namespace', title: 'Project' }],
+      showNamespaceOverride: true,
+      getDataViewRows: (rows) =>
+        rows.map(({ obj }) => [
+          { id: 'project', cell: 'project-a' },
+          { id: 'name', cell: obj.metadata.name },
+        ]),
+    });
+
+    expect(screen.getByRole('columnheader', { name: 'Project' })).toBeVisible();
+    expect(screen.getAllByRole('cell', { name: 'project-a' })).toHaveLength(2);
+    await user.click(screen.getByRole('button', { name: 'Column management' }));
+    expect(await screen.findByRole('checkbox', { name: 'Project' })).toBeVisible();
+    expect(
+      screen.queryByText('The namespace column is only shown when in "All projects"'),
+    ).not.toBeInTheDocument();
+  });
+
+  it.each([
+    ['without extensions', []],
+    ['with an extension', [makeExtension('test-ready', 'Ready', { defaultVisible: true })]],
+  ])(
+    'defaults role titles and sorts consistently with column management %s',
+    async (_scenario, extensions) => {
+      const user = userEvent.setup();
+      renderTable(extensions, undefined, {
+        data: [
+          { metadata: { name: 'bravo', namespace: 'project-a' }, status: 'ready' },
+          { metadata: { name: 'alpha', namespace: 'project-z' }, status: 'ready' },
+        ],
+        columns: [
+          { id: 'name', type: 'name' },
+          { id: 'project', type: 'namespace' },
+        ],
+        showNamespaceOverride: true,
+        getDataViewRows: (rows, activeColumns) =>
+          rows.map(({ obj }) =>
+            activeColumns.map(({ id, type }) => ({
+              id,
+              cell: type === 'name' ? obj.metadata.name : obj.metadata.namespace,
+            })),
+          ),
+      });
+
+      const table = screen.getByRole('grid', { name: 'items table' });
+      expect(within(table).getByRole('columnheader', { name: 'Name' })).toBeVisible();
+      const namespaceHeader = within(table).getByRole('columnheader', { name: 'Namespace' });
+      expect(within(table).getAllByRole('row')[1]).toHaveTextContent('alphaproject-z');
+      await user.click(within(namespaceHeader).getByRole('button'));
+      expect(within(table).getAllByRole('row')[1]).toHaveTextContent('bravoproject-a');
+
+      await user.click(screen.getByRole('button', { name: 'Column management' }));
+      expect(await screen.findByRole('checkbox', { name: 'Name' })).toBeChecked();
+      expect(screen.getByRole('checkbox', { name: 'Namespace' })).toBeChecked();
+    },
+  );
+
+  it('keeps explicit role titles and custom sort paths and functions', async () => {
+    const user = userEvent.setup();
+    renderTable([], undefined, {
+      columns: [
+        { id: 'name', type: 'name', title: 'Resource', sort: (items) => [...items].reverse() },
+        { id: 'project', type: 'namespace', title: 'Project', sort: 'status' },
+      ],
+    });
+
+    const table = screen.getByRole('grid', { name: 'items table' });
+    expect(within(table).getByRole('columnheader', { name: 'Resource' })).toBeVisible();
+    const projectHeader = within(table).getByRole('columnheader', { name: 'Project' });
+    expect(projectHeader).toBeVisible();
+    expect(within(table).getAllByRole('row')[1]).toHaveTextContent('bravo');
+    await user.click(within(projectHeader).getByRole('button'));
+    expect(within(table).getAllByRole('row')[1]).toHaveTextContent('bravo');
+    expect(within(table).queryByRole('columnheader', { name: 'Name' })).not.toBeInTheDocument();
+  });
+
+  it('preserves an explicitly empty role title', () => {
+    renderTable([], undefined, {
+      columns: [{ id: 'name', type: 'name', title: '', sort: false }],
+    });
+
+    const table = screen.getByRole('grid', { name: 'items table' });
+    expect(within(table).queryByRole('columnheader', { name: 'Name' })).not.toBeInTheDocument();
+    expect(within(table).queryByRole('columnheader', { name: 'Actions' })).not.toBeInTheDocument();
+    expect(within(table).getByRole('columnheader', { name: '' })).toBeVisible();
+  });
+
+  it.each([
+    ['default visibility', undefined],
+    ['saved visibility', ['resource']],
+  ])('keeps a blank-title column hidden according to %s', (_scenario, preference) => {
+    renderTable([], preference, {
+      columns: [
+        { id: 'resource', type: 'name', title: 'Resource' },
+        {
+          id: 'details',
+          title: '',
+          defaultVisible: false,
+          props: { 'aria-label': 'Details' },
+        },
+      ],
+    });
+
+    const table = screen.getByRole('grid', { name: 'items table' });
+    expect(within(table).getAllByRole('columnheader')).toHaveLength(1);
+    expect(within(table).queryByRole('columnheader', { name: 'Details' })).not.toBeInTheDocument();
+  });
+
+  it('uses a supplied accessible label for a blank-title ordinary column', () => {
+    renderTable([], undefined, {
+      columns: [{ id: 'details', title: '', props: { 'aria-label': 'Details' } }],
+    });
+
+    const table = screen.getByRole('grid', { name: 'items table' });
+    expect(within(table).getByRole('columnheader', { name: 'Details' })).toBeVisible();
+    expect(within(table).queryByRole('columnheader', { name: 'Actions' })).not.toBeInTheDocument();
+  });
+
+  it('keeps only name-role columns untoggleable in column management', async () => {
+    const user = userEvent.setup();
+    renderTable([], undefined, {
+      columns: [
+        { id: 'resource', type: 'name', title: 'Resource' },
+        { id: 'name', title: 'Alias' },
+      ],
+    });
+
+    await user.click(screen.getByRole('button', { name: 'Column management' }));
+    expect(await screen.findByRole('checkbox', { name: 'Resource' })).toBeDisabled();
+    const aliasCheckbox = screen.getByRole('checkbox', { name: 'Alias' });
+    expect(aliasCheckbox).toBeEnabled();
+    await user.click(aliasCheckbox);
+    await user.click(screen.getByRole('button', { name: 'Save' }));
+
+    expect(screen.getByRole('columnheader', { name: 'Resource' })).toBeVisible();
+    expect(screen.queryByRole('columnheader', { name: 'Alias' })).not.toBeInTheDocument();
+  });
+
+  it('places extensions before the actions role regardless of column IDs or titles', () => {
+    renderTable([makeExtension('test-ready', 'Ready', { defaultVisible: true })], undefined, {
+      columns: [
+        { id: 'name', type: 'name' },
+        { id: 'actions', title: 'Notes' },
+        { id: 'tools', type: 'actions', title: 'Operations', defaultVisible: false },
+      ],
+    });
+
+    expect(
+      within(screen.getByRole('grid', { name: 'items table' }))
+        .getAllByRole('columnheader')
+        .map((header) => header.textContent),
+    ).toEqual(['Name', 'Notes', 'Ready', 'Operations']);
+  });
+
+  it('allows disabling a role default sort without changing the data order', () => {
+    renderTable([], undefined, {
+      data: [...data].reverse(),
+      columns: [{ id: 'name', type: 'name', sort: false }],
+    });
+
+    const table = screen.getByRole('grid', { name: 'items table' });
+    const nameHeader = within(table).getByRole('columnheader', { name: 'Name' });
+    expect(within(nameHeader).queryByRole('button')).not.toBeInTheDocument();
+    expect(within(table).getAllByRole('row')[1]).toHaveTextContent('bravo');
+  });
+
+  it('defaults to name sorting after adding the managed checkbox column', () => {
+    renderTable([], undefined, {
+      data: [...data].reverse(),
+      selection: { getItemId: (item) => item.metadata.name },
+    });
+
+    const rows = within(screen.getByRole('grid', { name: 'items table' })).getAllByRole('row');
+    expect(within(rows[0]).getByRole('checkbox')).toBeVisible();
+    expect(within(rows[1]).getByRole('cell', { name: 'alpha' })).toBeVisible();
+    expect(within(rows[2]).getByRole('cell', { name: 'bravo' })).toBeVisible();
+  });
+
   it('adds name cell test IDs and lets row props override them', () => {
     renderTable([], undefined, {
       getDataViewRows: (rows, activeColumns) =>
         rows.map(({ obj }) =>
           activeColumns.map(({ id }) =>
             id === 'name' && obj.metadata.name === 'alpha'
-              ? obj.metadata.name
+              ? { id, cell: obj.metadata.name }
               : {
                   id,
                   cell: id === 'name' ? obj.metadata.name : null,
@@ -252,7 +472,7 @@ describe('ConsoleDataView', () => {
     const user = userEvent.setup();
     renderTable([
       makeExtension('test-ready', 'Ready', {
-        additional: false,
+        defaultVisible: true,
         tooltip: 'Whether this item is ready',
       }),
     ]);
@@ -263,7 +483,7 @@ describe('ConsoleDataView', () => {
     expect(await screen.findByRole('tooltip')).toHaveTextContent('Whether this item is ready');
   });
 
-  it('keeps additional columns hidden until selected in column management', async () => {
+  it('keeps default-hidden extension columns hidden until selected in column management', async () => {
     const user = userEvent.setup();
     renderTable([makeExtension('test-ready', 'Ready')]);
 
@@ -276,11 +496,31 @@ describe('ConsoleDataView', () => {
     expect(screen.getByRole('cell', { name: 'Ready alpha' })).toBeVisible();
   });
 
+  it('uses built-in visibility defaults in both the table and column management', async () => {
+    const user = userEvent.setup();
+    renderTable([], undefined, {
+      columns: columns.map((column) =>
+        column.id === 'status' ? { ...column, defaultVisible: false } : column,
+      ),
+    });
+
+    expect(screen.getByRole('columnheader', { name: 'Name' })).toBeVisible();
+    expect(screen.queryByRole('columnheader', { name: 'Status' })).not.toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'Column management' }));
+    const status = await screen.findByRole('checkbox', { name: 'Status' });
+    expect(status).not.toBeChecked();
+    await user.click(status);
+    await user.click(screen.getByRole('button', { name: 'Save' }));
+
+    expect(await screen.findByRole('columnheader', { name: 'Status' })).toBeVisible();
+    expect(screen.getByRole('cell', { name: 'ready' })).toBeVisible();
+  });
+
   it.each([
     ['without extensions', [], ['Name', 'Status']],
     [
       'with an extension',
-      [makeExtension('test-ready', 'Ready', { additional: false })],
+      [makeExtension('test-ready', 'Ready', { defaultVisible: true })],
       ['Name', 'Status', 'Ready'],
     ],
   ])('keeps Actions out of column management %s', async (_scenario, extensions, names) => {
@@ -299,12 +539,12 @@ describe('ConsoleDataView', () => {
     renderTable([
       makeExtension('z-last', 'Last', {
         pluginName: 'z-plugin',
-        additional: false,
+        defaultVisible: true,
         insertAfter: 'name',
       }),
       makeExtension('a-first', 'First', {
         pluginName: 'a-plugin',
-        additional: false,
+        defaultVisible: true,
         insertAfter: 'name',
       }),
     ]);
@@ -326,7 +566,7 @@ describe('ConsoleDataView', () => {
   });
 
   it('translates a plugin column title', () => {
-    renderTable([makeExtension('test-ready', '%console-app~Ready%', { additional: false })]);
+    renderTable([makeExtension('test-ready', '%console-app~Ready%', { defaultVisible: true })]);
 
     expect(screen.getByRole('columnheader', { name: 'Ready' })).toBeVisible();
   });
@@ -335,9 +575,9 @@ describe('ConsoleDataView', () => {
     renderTable([
       makeExtension('other', 'Other', {
         table: { group: 'different', version: 'v1', kind: 'Pod' },
-        additional: false,
+        defaultVisible: true,
       }),
-      makeExtension('name', 'Duplicate', { additional: false }),
+      makeExtension('name', 'Duplicate', { defaultVisible: true }),
     ]);
 
     expect(screen.getAllByRole('columnheader').map((header) => header.textContent)).toEqual([
@@ -350,20 +590,20 @@ describe('ConsoleDataView', () => {
   it('puts unanchored columns after the selection column and before actions', () => {
     const { columns: ordered } = orderConsoleDataViewColumns(
       [
-        { id: 'select', title: '' },
-        { id: 'name', title: 'Name' },
-        { id: '', title: '' },
+        { id: 'select', type: 'selection', title: '' },
+        { id: 'name', type: 'name', title: 'Name' },
+        { id: 'tools', type: 'actions', title: '' },
       ],
       [makeExtension('test-ready', 'Ready')],
     );
 
-    expect(ordered.map(({ id }) => id)).toEqual(['select', 'name', 'test-ready', '']);
+    expect(ordered.map(({ id }) => id)).toEqual(['select', 'name', 'test-ready', 'tools']);
   });
 
   it('automatically resizes extension columns and uses the table ID to restore and reset widths', async () => {
     const user = userEvent.setup();
     const { userSettingsStore } = renderTable(
-      [makeExtension('test-ready', 'Ready', { additional: false })],
+      [makeExtension('test-ready', 'Ready', { defaultVisible: true })],
       undefined,
       { useDefaultResizable: true, columnWidths: { 'test-ready': 240 } },
     );
@@ -394,7 +634,7 @@ describe('ConsoleDataView', () => {
   it('should preserve widths by column ID when columns are reordered, hidden, and shown again', async () => {
     const user = userEvent.setup();
     const { userSettingsStore } = renderTable(
-      [makeExtension('test-ready', 'Ready', { additional: false })],
+      [makeExtension('test-ready', 'Ready', { defaultVisible: true })],
       undefined,
       { useDefaultResizable: true, columnWidths: { status: 240, 'test-ready': 160 } },
     );
@@ -458,7 +698,7 @@ describe('ConsoleDataView', () => {
   it('preserves saved widths by column ID when restoring the default column order', async () => {
     const user = userEvent.setup();
     const { userSettingsStore } = renderTable(
-      [makeExtension('test-ready', 'Ready', { additional: false })],
+      [makeExtension('test-ready', 'Ready', { defaultVisible: true })],
       ['name', 'status', 'test-ready'],
       {
         columnOrder: ['name', 'test-ready', 'status'],
@@ -561,13 +801,10 @@ describe('ConsoleDataView', () => {
       actionProviders: [makePodActionProvider()],
       getDataViewRows: (rows, activeColumns) =>
         rows.map(({ obj }) =>
-          activeColumns.map(({ id }) =>
-            id === 'actions'
-              ? obj.metadata.name === 'alpha'
-                ? { id }
-                : { id, cell: null }
-              : { id, cell: obj.metadata.name },
-          ),
+          activeColumns
+            .filter(({ id }) => id !== 'actions' || obj.metadata.name !== 'alpha')
+            .map(({ id }) => ({ id, cell: id === 'actions' ? null : obj.metadata.name }))
+            .reverse(),
         ),
     });
 
@@ -587,11 +824,11 @@ describe('ConsoleDataView', () => {
       actionProviders: [makePodActionProvider(useBulkPodActions)],
       selection: {
         getItemId: (item) => item.metadata.name,
-        getActions: ({ selectedItems }) => [
+        getBulkActions: ({ matchingSelectedItems }) => [
           {
             id: 'local-action',
             label: 'Local action',
-            disabled: selectedItems.length === 0,
+            disabled: matchingSelectedItems.length === 0,
             cta: jest.fn(),
           },
         ],
@@ -636,7 +873,7 @@ describe('ConsoleDataView', () => {
       actionProviders: [makePodActionProvider(useBulkPodActions)],
       selection: {
         getItemId: (item) => item.metadata.name,
-        getActions: () => [{ id: 'local-action', label: 'Local action', cta: jest.fn() }],
+        getBulkActions: () => [{ id: 'local-action', label: 'Local action', cta: jest.fn() }],
       },
     });
 
@@ -650,17 +887,17 @@ describe('ConsoleDataView', () => {
   it('adds selection cells and lets a bulk action deselect successful items', async () => {
     const user = userEvent.setup();
     renderTable(
-      [makeExtension('test-ready', 'Ready', { additional: false, insertAfter: 'name' })],
+      [makeExtension('test-ready', 'Ready', { defaultVisible: true, insertAfter: 'name' })],
       undefined,
       {
         selection: {
           getItemId: (item) => item.metadata.name,
-          getActions: ({ selectedItems, deselect }) => [
+          getBulkActions: ({ matchingSelectedItems, deselect }) => [
             {
               id: 'remove-alpha',
-              label: `Remove alpha (${selectedItems.length})`,
+              label: `Remove alpha (${matchingSelectedItems.length})`,
               description: 'Removes alpha from the selection',
-              disabled: selectedItems.length === 0,
+              disabled: matchingSelectedItems.length === 0,
               cta: () => deselect(['alpha']),
             },
           ],
@@ -697,11 +934,11 @@ describe('ConsoleDataView', () => {
       selection: {
         getItemId: (item) => item.metadata.name,
         isSelectable: (item) => item.metadata.name !== 'item-00',
-        getActions: ({ selectedItems, clearSelection }) => [
+        getBulkActions: ({ matchingSelectedItems, clearSelection }) => [
           {
             id: 'clear-selection',
-            label: `Clear selection (${selectedItems.length})`,
-            disabled: selectedItems.length === 0,
+            label: `Clear selection (${matchingSelectedItems.length})`,
+            disabled: matchingSelectedItems.length === 0,
             cta: clearSelection,
           },
         ],

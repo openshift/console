@@ -24,6 +24,8 @@ import type {
   OnSelect,
   SortByDirection,
   TableGridBreakpoint,
+  ThProps,
+  TdProps,
 } from '@patternfly/react-table';
 import type { TFunction } from 'i18next';
 import type * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
@@ -522,11 +524,26 @@ export interface ResourceMetadata {
 }
 
 /**
- * PatternFly `DataViewTh` column header definition, restricted to the `cell`-based variant used
- * by `ConsoleDataViewColumn`. All properties are optional since `ConsoleDataView` supplies its
- * own `cell` for each column header.
+ * Header props a `ConsoleDataViewColumn` may customize. Console owns the header content,
+ * sorting, selection, and responsive label. Use the column's `tooltip` for help content;
+ * `info` can customize its presentation. Explicit styling props override role defaults.
  */
-export type ConsoleDataViewTh = Partial<Extract<DataViewTh, { cell: ReactNode }>>;
+export type ConsoleDataViewHeaderProps = Omit<
+  ThProps,
+  'children' | 'sort' | 'select' | 'dataLabel' | 'info'
+> & {
+  /** Presentation options for the help tooltip supplied by the column's `tooltip`. */
+  info?: Omit<NonNullable<ThProps['info']>, 'tooltip'>;
+};
+
+/** Column header options excluding the content and behaviors managed by Console. */
+export type ConsoleDataViewTh = Omit<
+  Partial<Extract<DataViewTh, { cell: ReactNode }>>,
+  'cell' | 'props'
+> & {
+  /** Header props. Row cell props are supplied separately by the cell renderer. */
+  props?: ConsoleDataViewHeaderProps;
+};
 
 /**
  * Defines a single column for `ConsoleDataView`.
@@ -536,41 +553,48 @@ export type ConsoleDataViewTh = Partial<Extract<DataViewTh, { cell: ReactNode }>
  *   {
  *     id: 'name',
  *     type: 'name',
- *     title: t('Name'),
- *     sort: 'metadata.name',
  *   },
  * ];
  * ```
  */
-export interface ConsoleDataViewColumn<TData> extends ConsoleDataViewTh {
+export interface ConsoleDataViewColumn<TData = unknown> extends ConsoleDataViewTh {
   /** Unique identifier for the column, used to match up cells returned by `getDataViewRows`. */
   id: string;
-  /** Applies built-in header and row cell props. Explicit props take precedence. An `actions` column uses resource action providers for a Kubernetes resource row when its row cell is omitted or has no `cell`; `cell: null` suppresses the default. A name column gets its `data-test` from the row name and is offset automatically when a selection column is present. */
-  type?: 'name' | 'actions' | 'selection' | 'sticky';
-  /** The column header text. Defaults to an empty string. */
+  /** Applies built-in column behavior and header and row cell props. Name and namespace headers and row cells default to `modifier: 'nowrap'`. Explicit header props and row cell props override their respective defaults independently. An `actions` column uses resource action providers for a Kubernetes resource row when its row cell is omitted or has no `cell`; `cell: null` suppresses the default. A namespace column is hidden in a single project unless `showNamespaceOverride` is set, regardless of its ID. A name column is untoggleable through column management regardless of its ID, gets its `data-test` from the row name, and is offset automatically when a selection column is present. */
+  type?: 'name' | 'namespace' | 'actions' | 'selection' | 'sticky';
+  /** The column header text. Defaults to translated `Name` or `Namespace` for those column types, and an empty string for other types. Explicit titles, including an empty string, take precedence. An empty title does not affect visibility or imply an actions column; supply an accessible header label through `props['aria-label']` or `props.screenReaderText`. */
   title?: string;
   /** (optional) Content shown in a help tooltip beside the column header. */
   tooltip?: ReactNode;
-  /** (optional) A dot-delimited property path to sort by, or a function that sorts the filtered data for this column. */
-  sort?: string | ((filteredData: TData[], sortDirection: SortByDirection) => TData[]);
-  /** (optional) Marks the column as additional, hiding it by default until selected in column management. */
-  additional?: boolean;
+  /** (optional) A dot-delimited property path to sort by, or a function that sorts the filtered data for this column. Defaults to `metadata.name` for `name` columns and `metadata.namespace` for `namespace` columns. Other column types are unsortable by default. Set `false` to disable sorting; custom row shapes can supply a different path or function. */
+  sort?: false | string | ((filteredData: TData[], sortDirection: SortByDirection) => TData[]);
+  /** (optional) Whether the column is initially visible before the user saves column preferences. Defaults to `true` for built-in columns and `false` for extension columns. Actions and selection columns always remain visible. */
+  defaultVisible?: boolean;
+}
+
+/** A cell matched to a `ConsoleDataViewColumn` by its ID, independently of array order. */
+export interface ConsoleDataViewCell {
+  /** The ID of the column this cell belongs to. */
+  id: string;
+  /** Cell content. Omit it for an `actions` column to use resource action providers; `null` suppresses the default. Other omitted content renders empty. */
+  cell?: ReactNode;
+  /** PatternFly row cell props */
+  props?: TdProps & { 'data-test'?: string };
 }
 
 /**
- * A single row of cells for `ConsoleDataView`, as returned by `GetDataViewRows`. Each entry
- * corresponds to one of the active `ConsoleDataViewColumn`s and has the shape
- * `{ id: string, cell: ReactNode, props?: object }` — PatternFly's `DataViewTd` object variant
- * plus an `id` matching the column it belongs to. A Kubernetes resource row may omit `cell`
- * for an `actions` column to use the resource action providers.
+ * A row of cells for `ConsoleDataView`, as returned by `GetDataViewRows`. Cells may be
+ * returned in any order; Console matches their IDs to the active columns. Return at most
+ * one cell per column ID. Unknown IDs are ignored and omitted cells render empty, except
+ * that an omitted `actions` cell uses resource action providers for Kubernetes resources.
  */
-export type ConsoleDataViewRow = any[];
+export type ConsoleDataViewRow = ConsoleDataViewCell[];
 
 /**
  * Transforms a page of row data into `ConsoleDataView` table rows.
  * @param data - The current page of row data, each entry wrapping a data item along with row-level metadata.
- * @param columns - The active columns for the table, used to know which cell IDs to produce for each row.
- * @returns An array of rows, one per entry in `data`, each an array of cells matching `columns`.
+ * @param columns - The active built-in columns to render. Console supplies selection and extension cells separately.
+ * @returns An array of rows, one per entry in `data`, each an array of cells matched to `columns` by ID. Cell order does not affect placement.
  * @example
  * ```tsx
  * const getDataViewRows: GetDataViewRows<PodDisruptionBudgetKind> = (data, columns) =>
@@ -596,7 +620,7 @@ export type GetDataViewRows<TData, TCustomRowData = unknown> = (
 /** Selection state and operations supplied to a `ConsoleDataView` bulk action. */
 export interface ConsoleDataViewSelectionActions<TData> {
   /** Selected items matching the table's current filters. */
-  selectedItems: TData[];
+  matchingSelectedItems: TData[];
   /** Clears every selection, including items hidden by the current filters. */
   clearSelection: () => void;
   /** Deselects the given item IDs, for example after a partially successful bulk action. */
@@ -636,7 +660,7 @@ export interface ConsoleDataViewProps<
   loadError?: unknown;
   /** The column definitions for the table. */
   columns: ConsoleDataViewColumn<TData>[];
-  /** (optional) Initial values for any custom fields added via `TFilters`, and/or the built-in name and/or label filters. The name and label filters otherwise default to empty. */
+  /** (optional) Initial values for custom string or string-array fields added via `TFilters`, and/or the built-in name and label filters. Declare every custom key here, using `''` or `[]` for inactive filters, so it participates in URL synchronization and clearing. Strings use one URL parameter and arrays use repeated parameters. The name and label filters otherwise default to empty. */
   initialFilters?: Partial<TFilters>;
   /** (optional) Additional filter elements to render alongside the built-in name and label filters. */
   additionalFilterNodes?: ReactNode[];
@@ -644,15 +668,15 @@ export interface ConsoleDataViewProps<
   getObjectMetadata?: (obj: TData) => ResourceMetadata;
   /** (optional) Determines whether a data item matches any custom filters beyond the built-in name and label filters. */
   matchesAdditionalFilters?: (obj: TData, filters: TFilters) => boolean;
-  /** Transforms the filtered, sorted, and paginated data into table rows. Selection cells are added automatically and are not passed to this callback. See `GetDataViewRows`. */
+  /** Transforms the filtered, sorted, and paginated data into table rows. Selection and extension cells are added automatically and their columns are not passed to this callback. See `GetDataViewRows`. */
   getDataViewRows: GetDataViewRows<TData, TCustomRowData>;
   /** (optional) Additional data made available to each row via `RowProps.rowData`. */
   customRowData?: TCustomRowData;
-  /** (optional) The `id` of the column to sort by before the user picks one. Defaults to the first column, and is ignored if no column has this id. A `sortBy` URL parameter takes precedence; note that `sortBy` names its column by translated title, not by id. */
+  /** (optional) The `id` of the column to sort by before the user picks one. Defaults to the first column, or the first sortable column when a checkbox column is present, and is ignored if no column has this id. A `sortBy` URL parameter takes precedence; checkbox tables accept only sortable URL targets. Note that `sortBy` names its column by translated title, not by id. */
   defaultSortColumnId?: string;
   /** (optional) The direction to sort by before the user picks one. Defaults to ascending. An `orderBy` URL parameter takes precedence. */
   defaultSortDirection?: SortByDirection;
-  /** (optional) If true, a column with id `'namespace'` is kept active regardless of column management selections or the active namespace, instead of being hidden. Has no effect unless such a column is included in `columns`. */
+  /** (optional) If true, columns with `type: 'namespace'` are kept active regardless of column management selections or the active namespace, instead of being hidden. Has no effect unless a namespace column is included in `columns`. */
   showNamespaceOverride?: boolean;
   /** (optional) Hides both the name and label filters. */
   hideNameLabelFilters?: boolean;
@@ -674,8 +698,8 @@ export interface ConsoleDataViewProps<
     getItemId: (item: TData) => string;
     /** (optional) Excludes items from row and select-all checkboxes. Defaults to all items. */
     isSelectable?: (item: TData) => boolean;
-    /** (optional) Returns table-specific bulk actions for selected items matching the current filters. These are shown before contributed resource bulk actions. The menu is disabled when no items are selected and hidden if neither this callback nor a matching bulk provider supplies actions. */
-    getActions?: (selection: ConsoleDataViewSelectionActions<TData>) => Action[];
+    /** (optional) Returns table-specific bulk actions for `matchingSelectedItems`, the selected items matching the current filters. These are shown before contributed resource bulk actions. The menu is disabled when no items are selected and hidden if neither this callback nor a matching bulk provider supplies actions. */
+    getBulkActions?: (selection: ConsoleDataViewSelectionActions<TData>) => Action[];
   };
 }
 

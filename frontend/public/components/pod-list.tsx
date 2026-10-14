@@ -107,20 +107,11 @@ const usePodsColumns = (showNodes: boolean): { columns: ConsoleDataViewColumn<Po
     () => [
       {
         type: 'name' as const,
-        title: t('Name'),
         id: tableColumnInfo[0].id,
-        sort: 'metadata.name',
-        props: {
-          modifier: 'nowrap' as const,
-        },
       },
       {
-        title: t('Namespace'),
+        type: 'namespace' as const,
         id: tableColumnInfo[1].id,
-        sort: 'metadata.namespace',
-        props: {
-          modifier: 'nowrap' as const,
-        },
       },
       {
         title: t('Status'),
@@ -188,7 +179,7 @@ const usePodsColumns = (showNodes: boolean): { columns: ConsoleDataViewColumn<Po
         props: {
           modifier: 'nowrap' as const,
         },
-        additional: true,
+        defaultVisible: false,
       },
       {
         title: t('Labels'),
@@ -198,7 +189,7 @@ const usePodsColumns = (showNodes: boolean): { columns: ConsoleDataViewColumn<Po
           modifier: 'nowrap' as const,
           ...getLabelsColumnWidthStyleProp(),
         },
-        additional: true,
+        defaultVisible: false,
       },
       {
         title: t('IP address'),
@@ -207,7 +198,7 @@ const usePodsColumns = (showNodes: boolean): { columns: ConsoleDataViewColumn<Po
         props: {
           modifier: 'nowrap' as const,
         },
-        additional: true,
+        defaultVisible: false,
       },
       {
         title: t('Receiving Traffic'),
@@ -215,7 +206,7 @@ const usePodsColumns = (showNodes: boolean): { columns: ConsoleDataViewColumn<Po
         props: {
           modifier: 'nowrap' as const,
         },
-        additional: true,
+        defaultVisible: false,
       },
       { type: 'actions' as const, id: tableColumnInfo[13].id },
     ],

@@ -18,7 +18,7 @@ export const useOperandColumns = (
   const { t } = useTranslation('olm');
   const columns = useMemo(
     () => [
-      { type: 'name' as const, id: 'name', title: t('Name'), sort: 'metadata.name' },
+      { type: 'name' as const, id: 'name' },
       {
         id: 'kind',
         title: t('Kind'),
@@ -28,10 +28,9 @@ export const useOperandColumns = (
       ...(showNamespace
         ? [
             {
+              type: 'namespace' as const,
               id: 'namespace',
-              title: t('Namespace'),
               sort: sortByValue<K8sResourceKind>(getOperandNamespace),
-              props: { modifier: 'nowrap' as const },
             },
           ]
         : []),

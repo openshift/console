@@ -33,7 +33,7 @@ export type ResourceActionProvider = Extension<
 /** Selection passed to a resource bulk action provider. IDs passed to `deselect` come from `getResourceId`. */
 export type BulkResourceActionContext = {
   /** Selected resources matching the table's current filters. */
-  resources: K8sResourceCommon[];
+  matchingSelectedResources: K8sResourceCommon[];
   /** Returns the ID used by the table to track a resource's selection. */
   getResourceId: (resource: K8sResourceCommon) => string;
   /** Clears every selection, including resources hidden by the current filters. */
@@ -77,6 +77,9 @@ export type ActionFilter = Extension<
     contextId: string | 'resource';
     /** A function which will filter actions based on some conditions.
      * scope: The scope in which actions should be provided for.
+     * In a `ConsoleDataView` bulk menu, filters matching the resource model are evaluated
+     * for each matching selected resource. Every resource must pass at least one matching
+     * filter for the action to remain visible. Scope is one resource, not the bulk context.
      * Note: hook may be required if we want to remove the ModifyCount action from a deployment with HPA
      * */
     filter: CodeRef<(scope: any, action: Action) => boolean>;

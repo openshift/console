@@ -16,10 +16,8 @@ export const useHelmReleaseResourcesColumns = (): ConsoleDataViewColumn<K8sResou
     () => [
       {
         type: 'name' as const,
-        title: t('Name'),
         id: tableColumnInfo[0].id,
-        sort: 'metadata.name',
-        props: { hasRightBorder: false, modifier: 'nowrap' as const },
+        props: { hasRightBorder: false },
       },
       {
         title: t('Type'),

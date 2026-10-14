@@ -96,9 +96,7 @@ const useVolumeColumns = (): {
       {
         type: 'name' as const,
         id: 'name',
-        title: t('Name'),
         sort: 'name',
-        props: { modifier: 'nowrap' as const },
       },
       {
         id: 'mountPath',

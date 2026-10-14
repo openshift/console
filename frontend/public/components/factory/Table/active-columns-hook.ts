@@ -40,20 +40,24 @@ export const useActiveColumns = <D = any>({
       ? new Set(selectedColumnIDs)
       : new Set(
           columns.map((col) => {
-            if (col.id && !col.additional) {
+            if (col.id && col.defaultVisible !== false) {
               return col.id;
             }
             return undefined;
           }),
         );
 
-    if (showNamespaceOverride && !activeColumnIDs.has('namespace')) {
-      activeColumnIDs.add('namespace');
+    if (showNamespaceOverride) {
+      columns.forEach(({ id, type }) => {
+        if (type === 'namespace') activeColumnIDs.add(id);
+      });
     }
 
-    let activeColumns = columns.filter((c) => activeColumnIDs.has(c.id) || c.title === '');
+    let activeColumns = columns.filter(
+      ({ id, type }) => activeColumnIDs.has(id) || type === 'actions' || type === 'selection',
+    );
     if (namespace && namespace !== ALL_NAMESPACES_KEY && !showNamespaceOverride) {
-      activeColumns = activeColumns.filter((column) => column.id !== 'namespace');
+      activeColumns = activeColumns.filter((column) => column.type !== 'namespace');
     }
 
     if (hasPreferredColumnOrder) {

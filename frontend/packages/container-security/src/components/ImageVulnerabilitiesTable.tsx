@@ -46,9 +46,7 @@ const useImageVulnerabilityColumns = (): {
       {
         type: 'name' as const,
         id: 'name',
-        title: t('Name'),
         sort: 'vulnerability.name',
-        props: { modifier: 'nowrap' as const },
       },
       {
         id: 'severity',

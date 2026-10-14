@@ -9,6 +9,7 @@ const STORAGE_STATE_DIR = path.resolve(import.meta.dirname, '..', '.auth');
 export const adminStorageState = path.join(STORAGE_STATE_DIR, 'kubeadmin.json');
 export const developerStorageState = path.join(STORAGE_STATE_DIR, 'developer.json');
 
+/** Establishes a Console session from an existing login, provider chooser, credentials form, or authentication-disabled mode. */
 export async function performLogin(
   page: Page,
   baseURL: string,
@@ -28,19 +29,25 @@ export async function performLogin(
 
   const userMenu = page.getByTestId('user-dropdown-toggle');
   const loginForm = page.locator('[data-test-id="login"]').or(page.locator('#inputUsername'));
+  const providerLink = idpName ? page.getByRole('link', { name: idpName, exact: true }) : undefined;
 
   // The context may already be authenticated (e.g. a reused storageState). In that
   // case the OAuth flow completes automatically and lands back on the console
-  // without ever rendering a login form, so wait for whichever appears first.
-  await expect(userMenu.or(loginForm).first()).toBeVisible({ timeout: 60_000 });
+  // without ever rendering a login form. The provider chooser can precede
+  // that form, so include it in the starting states rather than waiting past it.
+  const loginReady = providerLink
+    ? userMenu.or(loginForm).or(providerLink)
+    : userMenu.or(loginForm);
+  await expect(loginReady.first()).toBeVisible({ timeout: 60_000 });
   if (await userMenu.isVisible().catch(() => false)) {
     return;
   }
 
-  if (idpName) {
-    const providerButton = page.getByText(idpName).first();
-    if (await providerButton.isVisible().catch(() => false)) {
-      await providerButton.click();
+  if (await providerLink?.isVisible().catch(() => false)) {
+    await providerLink.click();
+    await expect(userMenu.or(loginForm).first()).toBeVisible({ timeout: 60_000 });
+    if (await userMenu.isVisible().catch(() => false)) {
+      return;
     }
   }
 

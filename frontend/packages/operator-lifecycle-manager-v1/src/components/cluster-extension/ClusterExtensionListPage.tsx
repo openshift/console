@@ -86,10 +86,8 @@ const useClusterExtensionColumns = (): ConsoleDataViewColumn<ClusterExtensionKin
     () => [
       {
         type: 'name' as const,
-        title: t('Name'),
         id: tableColumnInfo[0].id,
-        sort: 'metadata.name',
-        props: { hasRightBorder: false, modifier: 'nowrap' as const },
+        props: { hasRightBorder: false },
       },
       {
         title: t('Status'),
@@ -110,12 +108,9 @@ const useClusterExtensionColumns = (): ConsoleDataViewColumn<ClusterExtensionKin
         id: tableColumnInfo[3].id,
       },
       {
-        title: t('Namespace'),
+        type: 'namespace' as const,
         id: tableColumnInfo[4].id,
         sort: 'spec.namespace',
-        props: {
-          modifier: 'nowrap' as const,
-        },
       },
       {
         title: t('Package'),

@@ -66,10 +66,12 @@ describe('usePackageManifestColumns', () => {
     ]);
   });
 
-  it('should title the columns', () => {
+  it('should use the name column role and title the custom columns', () => {
     const { result } = renderHookWithProviders(() => usePackageManifestColumns(false));
-    expect(result.current.columns.map(({ title }) => title)).toEqual([
-      'Name',
+    expect(result.current.columns[0]).toEqual(
+      expect.objectContaining({ id: 'name', type: 'name' }),
+    );
+    expect(result.current.columns.slice(1).map(({ title }) => title)).toEqual([
       'Latest version',
       'Created',
       'CatalogSource',

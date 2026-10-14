@@ -3,7 +3,6 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import type { ColumnManagementModalColumn } from '@patternfly/react-component-groups';
 import { ColumnManagementModal as PatternFlyColumnManagementModal } from '@patternfly/react-component-groups';
 import { useTranslation } from 'react-i18next';
-import type { ColumnLayout } from '@console/dynamic-plugin-sdk';
 import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import {
   COLUMN_MANAGEMENT_ORDER_USER_PREFERENCE_KEY,
@@ -11,9 +10,9 @@ import {
 } from '@console/shared/src/constants/common';
 import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import type { ModalComponentProps } from '@console/shared/src/types/modal';
+import type { ConsoleDataViewColumnLayout } from './useConsoleDataViewColumns';
 
 const MAX_VIEW_COLS = 9;
-const NAME_COLUMN_ID = 'name';
 
 const ConsoleDataViewColumnManagementModal: FC<ConsoleDataViewColumnManagementModalProps> = ({
   cancel,
@@ -58,11 +57,11 @@ const ConsoleDataViewColumnManagementModal: FC<ConsoleDataViewColumnManagementMo
     () =>
       columnLayout.columns
         .filter(({ id }) => id)
-        .map(({ id, title, additional }) => ({
+        .map(({ id, type, title, additional }) => ({
           key: id,
           title,
           isShownByDefault: !additional,
-          isUntoggleable: id === NAME_COLUMN_ID,
+          isUntoggleable: type === 'name',
         })),
     [columnLayout.columns],
   );
@@ -209,7 +208,8 @@ const ConsoleDataViewColumnManagementModal: FC<ConsoleDataViewColumnManagementMo
   const description = [
     !noLimit && t('Selected columns will appear in the table.'),
     !noLimit && t('You can select up to {{MAX_VIEW_COLS}} columns', { MAX_VIEW_COLS }),
-    !columnLayout.showNamespaceOverride &&
+    columnLayout.columns.some(({ type }) => type === 'namespace') &&
+      !columnLayout.showNamespaceOverride &&
       t('The namespace column is only shown when in "All projects"'),
   ]
     .filter(Boolean)
@@ -304,7 +304,7 @@ export const ConsoleDataViewColumnManagementModalOverlay: OverlayComponent<
 );
 
 interface ConsoleDataViewColumnManagementModalProps extends ModalComponentProps {
-  columnLayout: ColumnLayout;
+  columnLayout: ConsoleDataViewColumnLayout;
   nonReorderableColumnIDs?: string[];
   noLimit?: boolean;
 }

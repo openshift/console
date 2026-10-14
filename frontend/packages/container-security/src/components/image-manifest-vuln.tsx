@@ -147,13 +147,10 @@ const useImageManifestVulnColumns = (): {
         id: 'name',
         title: t('Image name'),
         sort: 'spec.image',
-        props: { modifier: 'nowrap' as const },
       },
       {
+        type: 'namespace' as const,
         id: 'namespace',
-        title: t('Namespace'),
-        sort: 'metadata.namespace',
-        props: { modifier: 'nowrap' as const },
       },
       {
         id: 'highestSeverity',

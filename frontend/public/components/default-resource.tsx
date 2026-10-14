@@ -253,18 +253,12 @@ const useDefaultResourceColumns = <T extends K8sResourceKind>(
     const baseColumns = [
       {
         type: 'name' as const,
-        title: t('Name'),
         id: tableColumnInfo[0].id,
-        sort: 'metadata.name',
-        props: { hasRightBorder: false, modifier: 'nowrap' as const },
+        props: { hasRightBorder: false },
       },
       {
-        title: t('Namespace'),
+        type: 'namespace' as const,
         id: tableColumnInfo[1].id,
-        sort: 'metadata.namespace',
-        props: {
-          modifier: 'nowrap' as const,
-        },
       },
       ...additionalPrinterColumnsHeaders,
     ] as ConsoleDataViewColumn<T>[];

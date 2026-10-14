@@ -113,16 +113,16 @@ export const HorizontalNav: FC<HorizontalNavProps> = require('@console/internal/
  * @param {TData[]} data - The array of data items to display in the table.
  * @param {boolean} loaded - Flag indicating whether `data` has finished loading.
  * @param {*} [loadError] - (optional) An error encountered while loading `data`.
- * @param {ConsoleDataViewColumn[]} columns - The column definitions for the table.
- * @param {function} getDataViewRows - Transforms the filtered, sorted, and paginated data into table rows. An omitted `actions` cell uses the resource action providers for a Kubernetes resource row; `cell: null` leaves it empty.
- * @param {object} [initialFilters] - (optional) Initial values for any custom fields added via `TFilters`, and/or the built-in name and/or label filters. The name and label filters otherwise default to empty.
+ * @param {ConsoleDataViewColumn[]} columns - The column definitions for the table. Every column requires an ID. Name and namespace types default their translated title, metadata sort path, and nowrap header and row cell modifiers. Explicit values override the defaults; header and row cell props apply independently, and `sort: false` disables sorting. Actions and selection columns always remain visible; empty titles do not bypass visibility.
+ * @param {function} getDataViewRows - Transforms the filtered, sorted, and paginated data into rows of typed cells matched to columns by ID, independent of cell order. Unknown IDs are ignored and omitted cells render empty. Console supplies selection and extension cells separately. An omitted `actions` cell uses the resource action providers for a Kubernetes resource row; `cell: null` leaves it empty.
+ * @param {object} [initialFilters] - (optional) Initial values for custom string or string-array fields added via `TFilters`, and/or the built-in name and label filters. Declare every custom key here, using `''` or `[]` for inactive filters, so it participates in URL synchronization and clearing. Strings use one URL parameter and arrays use repeated parameters. The name and label filters otherwise default to empty.
  * @param {ReactNode[]} [additionalFilterNodes] - (optional) Additional filter elements to render alongside the built-in name and label filters.
  * @param {function} [getObjectMetadata] - (optional) Extracts the name and labels used by the built-in filters from a data item.
  * @param {function} [matchesAdditionalFilters] - (optional) Determines whether a data item matches any custom filters.
  * @param {*} [customRowData] - (optional) Additional data made available to each row.
- * @param {string} [defaultSortColumnId] - (optional) The `id` of the column to sort by before the user picks one. Defaults to the first column, and is ignored if no column has this id. A `sortBy` URL parameter takes precedence; note that `sortBy` names its column by translated title, not by id.
+ * @param {string} [defaultSortColumnId] - (optional) The `id` of the column to sort by before the user picks one. Defaults to the first column, or the first sortable column when a checkbox column is present, and is ignored if no column has this id. A `sortBy` URL parameter takes precedence; checkbox tables accept only sortable URL targets. Note that `sortBy` names its column by translated title, not by id.
  * @param {SortByDirection} [defaultSortDirection] - (optional) The direction to sort by before the user picks one. Defaults to ascending. An `orderBy` URL parameter takes precedence.
- * @param {boolean} [showNamespaceOverride] - (optional) If true, a column with id `'namespace'` is kept active regardless of column management selections or the active namespace.
+ * @param {boolean} [showNamespaceOverride] - (optional) If true, columns with `type: 'namespace'` are kept active regardless of column management selections or the active namespace.
  * @param {boolean} [hideNameLabelFilters] - (optional) Hides both the name and label filters.
  * @param {boolean} [hideLabelFilter] - (optional) Hides only the label filter, keeping the name filter.
  * @param {ComponentType<unknown>} [EmptyMsg] - (optional) Rendered in place of the table when `data` is empty, letting a consumer explain what is missing and how to create the first resource. Defaults to a generic "No {{label}} found" message. Note that this does not apply when the data is non-empty but the active filters match nothing; that case always renders the built-in in-table empty message.
@@ -130,11 +130,11 @@ export const HorizontalNav: FC<HorizontalNavProps> = require('@console/internal/
  * @param {boolean} [isResizable] - (optional) Enables resizing and saved widths for columns with a title, and shows a reset action. Defaults to `true`.
  * @param {object[]} [additionalResponsiveActions] - (optional) Additional ResponsiveAction props to render inside ResponsiveActions, alongside the built-in column management and reset-column-widths actions.
  * @param {ReactNode} [additionalToolbarContent] - (optional) Additional content to display in the actions toolbar outside ResponsiveActions.
- * @param {object} [selection] - (optional) Enables managed checkbox selection with `getItemId`. `isSelectable` can disable rows. `getActions` receives selected items matching the current filters, plus `clearSelection` and `deselect` callbacks, and returns table-specific bulk actions as `Action[]`. Console also loads matching resource bulk providers for a single-model Kubernetes resource selection. Selection persists across pages and built-in filters and is removed when items leave `data`.
+ * @param {object} [selection] - (optional) Enables managed checkbox selection with `getItemId`. `isSelectable` can disable rows. `getBulkActions` receives `matchingSelectedItems`, the selected items matching the current filters, plus `clearSelection` and `deselect` callbacks, and returns table-specific bulk actions as `Action[]`. Console also loads matching resource bulk providers for a single-model Kubernetes resource selection. Selection persists across pages and built-in filters and is removed when items leave `data`.
  * @example
  * ```tsx
  * const columns: ConsoleDataViewColumn<PodDisruptionBudgetKind>[] = [
- *   { id: 'name', type: 'name', title: 'Name' },
+ *   { id: 'name', type: 'name' },
  *   { id: 'actions', type: 'actions' },
  * ];
  *
@@ -161,11 +161,11 @@ export const HorizontalNav: FC<HorizontalNavProps> = require('@console/internal/
  *     getDataViewRows={getDataViewRows}
  *     selection={{
  *       getItemId: (pdb) => `${pdb.metadata.namespace}/${pdb.metadata.name}`,
- *       getActions: ({ selectedItems, clearSelection }) => [
+ *       getBulkActions: ({ matchingSelectedItems, clearSelection }) => [
  *         {
  *           id: 'clear-selection',
  *           label: 'Clear selection',
- *           disabled: selectedItems.length === 0,
+ *           disabled: matchingSelectedItems.length === 0,
  *           cta: clearSelection,
  *         },
  *       ],
