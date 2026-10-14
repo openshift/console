@@ -8,7 +8,7 @@ import { namespaceToDirName } from './i18n-scripts/namespace-map';
 export default defineConfig({
   locales: ['en'],
   extract: {
-    input: '{public,packages/*}/**/*.{js,jsx,ts,tsx}',
+    input: '{public,packages/*}/**/*.{ts,tsx}',
     output: (language, ns) => {
       if (ns === 'public') {
         return join('public', 'locales', language, `${ns}.json`);
@@ -38,7 +38,7 @@ export default defineConfig({
     ],
   },
   lint: {
-    ignore: ['**/*.spec.{js,jsx,ts,tsx}', '**/__tests__/**'],
+    ignore: ['**/*.spec.{ts,tsx}', '**/__tests__/**'],
   },
   plugins: [
     ConsoleExtensionsI18nextCLIPlugin({

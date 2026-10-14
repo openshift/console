@@ -1,5 +1,3 @@
-const merge = require('merge');
-
 module.exports = {
   parserOptions: {
     ecmaVersion: 2018,
@@ -12,7 +10,7 @@ module.exports = {
 
   plugins: ['n'],
 
-  rules: merge(require('./rules/node'), {
+  rules: require('merge')(require('./rules/node.ts'), {
     'no-process-env': 'off',
   }),
 };

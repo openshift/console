@@ -29,13 +29,13 @@
     "test-playwright-developer": "playwright test --project=dev-console-developer --project=topology-developer --project=smoke-developer",
     "analyze": "ANALYZE_BUNDLE=true NODE_ENV=production NODE_OPTIONS=--max-old-space-size=8192 yarn ts-node ./node_modules/.bin/rspack --mode=production",
     "knip": "knip --config scripts/knip.ts",
-    "prettier-all": "prettier --write '**/*.{js,jsx,ts,tsx,json}'",
+    "prettier-all": "prettier --write '**/*.{ts,tsx,json}'",
     "ts-node": "ts-node -O '{\"module\":\"commonjs\"}'",
     "generate": "yarn --cwd packages/console-dynamic-plugin-sdk build",
     "generate-plugin-sdk-docs": "yarn --cwd packages/console-dynamic-plugin-sdk generate-doc",
     "generate-plugin-sdk-schema": "yarn --cwd packages/console-dynamic-plugin-sdk generate-schema",
-    "i18n-to-po": "node ./i18n-scripts/i18n-to-po.js",
-    "po-to-i18n": "node ./i18n-scripts/po-to-i18n.js",
+    "i18n-to-po": "yarn ts-node ./i18n-scripts/i18n-to-po.ts",
+    "po-to-i18n": "yarn ts-node ./i18n-scripts/po-to-i18n.ts",
     "i18n": "i18next-cli lint && i18next-cli extract",
     "export-pos": "./i18n-scripts/export-pos.sh",
     "memsource-upload": "./i18n-scripts/memsource-upload.sh",
@@ -187,7 +187,7 @@
     "node": ">=22.x"
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx,json}": "eslint --color --fix"
+    "*.{ts,tsx,json}": "eslint --color --fix"
   },
   "packageManager": "yarn@4.18.0+sha512.fcb8716fe7cd0eece141ffc18b92193a9df9204c1ba83189c288835223fc0bbe64af473bab0d5e9927a7daeb5caf2bb07eb2787cc9338ca040ea125f2a1f2f7e"
 }

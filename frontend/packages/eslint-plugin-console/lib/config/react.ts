@@ -1,5 +1,3 @@
-const merge = require('merge');
-
 module.exports = {
   extends: ['plugin:console/base', 'airbnb'],
 
@@ -21,18 +19,16 @@ module.exports = {
     },
   },
 
-  rules: merge(
-    require('./rules/react'),
-    require('./rules/react-hooks'),
-    require('./rules/airbnb-base-overrides'),
+  rules: require('merge')(
+    require('./rules/react.ts'),
+    require('./rules/react-hooks.ts'),
+    require('./rules/airbnb-base-overrides.ts'),
   ),
 
   overrides: [
     {
       files: ['*.tsx'],
       rules: {
-        // Restrict file extensions that may contain JSX
-        'react/jsx-filename-extension': ['error', { extensions: ['.tsx'] }],
         // Disable JS specific rules
         'react/default-props-match-prop-types': 'off',
         // Prevent missing props validation in a React component definition

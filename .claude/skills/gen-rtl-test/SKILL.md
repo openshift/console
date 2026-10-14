@@ -16,7 +16,7 @@ argument-hint: "[path/to/Component.tsx] or use @file for autocomplete"
 When invoked without arguments, the slash command follows this intelligent workflow:
 
 1. **Check git diff**: Automatically run `git diff --name-only` to find modified files
-2. **Filter for components**: Identify `.tsx` and `.jsx` component files (exclude test files, type files, utils)
+2. **Filter for components**: Identify `.tsx` component files (exclude test files, type files, utils)
 3. **Validate components**: Ensure files contain React components (not just types or utilities)
 4. **Present options**: Show user the detected components and ask which to generate tests for
 5. **Fallback**: If no valid components found, prompt user for component path
@@ -1488,9 +1488,9 @@ Before adding `data-test`:
    ```
 
 2. **Filter for React components**:
-   - Include files matching: `*.tsx`, `*.jsx`
+   - Include files matching: `*.tsx`
    - Exclude files matching:
-     - `*.spec.tsx`, `*.spec.jsx`, `*.test.tsx`, `*.test.jsx` (test files)
+     - `*.spec.tsx`, `*.test.tsx` (test files)
      - `*.types.ts`, `*.types.tsx` (type definition files)
      - Files in `__mocks__/`, `__tests__/` directories
      - `*utils*.ts`, `*utils*.tsx`, `*helpers*.ts` (utility files)

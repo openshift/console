@@ -2,11 +2,11 @@
   "name": "eslint-plugin-console",
   "version": "0.0.0-fixed",
   "description": "Console ESLint rules and configs.",
-  "main": "index.js",
+  "main": "index.ts",
   "scripts": {
     "lint": "eslint . --max-warnings 0 --format codeframe",
     "prettier": "eslint --format codeframe . --fix",
-    "prettier-check": "eslint --print-config ./lib/config/prettier.js | eslint-config-prettier-check"
+    "prettier-check": "eslint --print-config ./lib/config/prettier.ts | eslint-config-prettier-check"
   },
   "dependencies": {
     "@typescript-eslint/eslint-plugin": "^8.0.0",

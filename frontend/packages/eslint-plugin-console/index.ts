@@ -4,24 +4,24 @@ module.exports = {
     // When extending multiple configurations, add to the list following the order outlined below:
 
     // Core configs: choose one
-    base: require('./lib/config/base'),
-    react: require('./lib/config/react'),
+    base: require('./lib/config/base.ts'),
+    react: require('./lib/config/react.ts'),
 
     // TypeScript support: choose one
-    typescriptParser: require('./lib/config/typescript-parser'),
-    typescript: require('./lib/config/typescript'),
+    typescriptParser: require('./lib/config/typescript-parser.ts'),
+    typescript: require('./lib/config/typescript.ts'),
 
     // Augmenting configs: choose one or more
-    jest: require('./lib/config/jest'),
-    playwright: require('./lib/config/playwright'),
+    jest: require('./lib/config/jest.ts'),
+    playwright: require('./lib/config/playwright.ts'),
 
-    node: require('./lib/config/node'),
+    node: require('./lib/config/node.ts'),
 
     // Add JSON linting (optional)
-    json: require('./lib/config/json'),
+    json: require('./lib/config/json.ts'),
 
     // Prettier must go last (optional)
-    prettier: require('./lib/config/prettier'),
+    prettier: require('./lib/config/prettier.ts'),
 
     // ...or use the pre-composed configurations representing common code archetypes (choose one):
 

@@ -8,7 +8,6 @@
     "target": "es2021",
     "jsx": "react-jsx",
     "strict": false,
-    "allowJs": true,
     "experimentalDecorators": true,
     "sourceMap": true,
     "noUnusedLocals": true,
@@ -45,5 +44,5 @@
     "**/integration-tests",
     "e2e"
   ],
-  "include": ["**/*.js", "**/*.jsx", "**/*.mts", "**/*.ts", "**/*.tsx", "**/*.json"]
+  "include": ["**/*.mts", "**/*.ts", "**/*.tsx", "**/*.json"]
 }

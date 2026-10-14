@@ -1,33 +1,34 @@
-const fs = require('fs');
-const path = require('path');
-const { i18nextToPo } = require('i18next-conv');
-const minimist = require('minimist');
-const common = require('./common.js');
+import * as fs from 'fs';
+import * as path from 'path';
+import { i18nextToPo } from 'i18next-conv';
+import * as minimist from 'minimist';
+import { deleteFile } from './common';
 
-function save(target) {
-  return (result) => {
-    fs.writeFileSync(target, result);
-  };
-}
+const save = (target: string) => (result: string) => {
+  fs.writeFileSync(target, result);
+};
 
-function removeValues(i18nFile, filePath) {
+const removeValues = (i18nFile: string, filePath: string) => {
   const file = require(i18nFile);
 
-  const updatedFile = {};
+  const updatedFile: { [key: string]: string } = {};
 
-  const keys = Object.keys(file);
-
-  for (let i = 0; i < keys.length; i++) {
-    updatedFile[keys[i]] = '';
+  for (const key of Object.keys(file)) {
+    updatedFile[key] = '';
   }
 
   const tmpFile = fs.openSync(filePath, 'w');
 
   fs.writeFileSync(tmpFile, JSON.stringify(updatedFile, null, 2));
-}
+};
 
-function consolidateWithExistingTranslations(filePath, fileName, language, packageDir) {
-  let existingTranslationsPath;
+const consolidateWithExistingTranslations = (
+  filePath: string,
+  fileName: string,
+  language: string,
+  packageDir?: string,
+) => {
+  let existingTranslationsPath: string;
   const englishFile = require(filePath);
   const englishKeys = Object.keys(englishFile);
   if (packageDir) {
@@ -40,16 +41,16 @@ function consolidateWithExistingTranslations(filePath, fileName, language, packa
     const existingKeys = Object.keys(existingTranslationsFile);
     const matchingKeys = englishKeys.filter((k) => existingKeys.indexOf(k) > -1);
 
-    for (let i = 0; i < matchingKeys.length; i++) {
-      englishFile[matchingKeys[i]] = existingTranslationsFile[matchingKeys[i]];
+    for (const key of matchingKeys) {
+      englishFile[key] = existingTranslationsFile[key];
     }
 
     fs.writeFileSync(filePath, JSON.stringify(englishFile, null, 2));
   }
-}
+};
 
-function processFile(fileName, packageDir, language) {
-  let tmpFile;
+const processFile = (fileName: string, packageDir: string | undefined, language: string) => {
+  let tmpFile: string | undefined;
   if (packageDir) {
     const i18nFile = path.join(
       __dirname,
@@ -102,7 +103,9 @@ function processFile(fileName, packageDir, language) {
         removeValues(i18nFile, tmpFile);
         consolidateWithExistingTranslations(tmpFile, fileName, language);
 
-        fs.mkdirSync(path.join(__dirname, `./../po-files/${language}`), { recursive: true });
+        fs.mkdirSync(path.join(__dirname, `./../po-files/${language}`), {
+          recursive: true,
+        });
         i18nextToPo(language, fs.readFileSync(tmpFile), {
           language,
           foldLength: 0,
@@ -114,18 +117,19 @@ function processFile(fileName, packageDir, language) {
                 __dirname,
                 `./../po-files/${language}/public__${path.basename(fileName)}.po`,
               ),
-              language,
             ),
           )
-          .catch((e) => console.error(fileName, e));
+          .catch((e: unknown) => console.error(fileName, e));
       }
     } catch (err) {
       console.error(`Failed to processFile ${fileName}:`, err);
     }
   }
-  common.deleteFile(tmpFile);
+  if (tmpFile) {
+    deleteFile(tmpFile);
+  }
   console.log(`Processed ${fileName}`);
-}
+};
 
 const options = {
   string: ['language', 'package', 'file'],
@@ -150,8 +154,8 @@ if (args.help) {
   );
 } else if (args.files && args.language) {
   if (Array.isArray(args.files)) {
-    for (let i = 0; i < args.files.length; i++) {
-      processFile(args.files[i], args.package, args.language);
+    for (const file of args.files) {
+      processFile(file, args.package, args.language);
     }
   } else {
     processFile(args.files, args.package, args.language);

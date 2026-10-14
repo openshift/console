@@ -55,7 +55,7 @@ module.exports = {
 
   // Restrict file extensions that may contain JSX
   // https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-filename-extension.md
-  'react/jsx-filename-extension': ['error', { extensions: ['.jsx'] }],
+  'react/jsx-filename-extension': ['error', { extensions: ['.tsx'] }],
 
   // Enforce shorthand React fragment syntax
   'react/jsx-fragments': 'error',

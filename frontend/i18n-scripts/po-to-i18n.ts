@@ -1,15 +1,13 @@
-const fs = require('fs');
-const path = require('path');
-const { gettextToI18next } = require('i18next-conv');
-const minimist = require('minimist');
+import * as fs from 'fs';
+import * as path from 'path';
+import { gettextToI18next } from 'i18next-conv';
+import * as minimist from 'minimist';
 
-function save(target) {
-  return (result) => {
-    fs.writeFileSync(target, JSON.stringify(JSON.parse(result), null, 2));
-  };
-}
+const save = (target: string) => (result: string) => {
+  fs.writeFileSync(target, JSON.stringify(JSON.parse(result), null, 2));
+};
 
-function processFile(fileName, language) {
+const processFile = (fileName: string, language: string) => {
   if (fileName.includes('.DS_Store')) {
     return;
   }
@@ -35,10 +33,10 @@ function processFile(fileName, language) {
   }
   gettextToI18next(language, fs.readFileSync(fileName))
     .then(save(newFilePath))
-    .catch((e) => console.error(fileName, e));
-}
+    .catch((e: unknown) => console.error(fileName, e));
+};
 
-function processDirectory(directory, language) {
+const processDirectory = (directory: string, language: string) => {
   if (fs.existsSync(directory)) {
     (async () => {
       try {
@@ -54,7 +52,7 @@ function processDirectory(directory, language) {
   } else {
     console.error('Directory does not exist.');
   }
-}
+};
 
 const options = {
   string: ['language', 'directory'],

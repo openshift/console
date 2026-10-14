@@ -99,7 +99,7 @@ describe('i18n structure', () => {
   });
 
   describe('useTranslation namespace', () => {
-    const SOURCE_FILES = glob('{packages/*/src,public}/**/*.{ts,tsx,jsx}', {
+    const SOURCE_FILES = glob('{packages/*/src,public}/**/*.{ts,tsx}', {
       cwd: FRONTEND_DIR,
       ignore: [
         '**/__tests__/**',

@@ -31,7 +31,7 @@ describe('dist files must not contain monorepo-specific imports', () => {
   }
 
   it('should not have ES import/export statements referencing @console packages', () => {
-    const distFiles = getDistFiles(DIST_DIR, ['.js', '.jsx', '.d.ts', '.d.tsx']);
+    const distFiles = getDistFiles(DIST_DIR, ['.js', '.d.ts', '.d.tsx']);
     expect(distFiles.length).toBeGreaterThan(0);
 
     const violations: { file: string; line: number; specifier: string }[] = [];

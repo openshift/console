@@ -149,7 +149,7 @@ const config: Configuration = {
     ignored: /node_modules/, // needed to prevent ENOSPC: System limit for number of file watchers reached error
   },
   resolve: {
-    extensions: ['.ts', '.tsx', '.js', '.jsx'],
+    extensions: ['.ts', '.tsx', '.js'],
     alias: {
       prettier: false,
       'prettier/parser-yaml': false,
@@ -172,7 +172,7 @@ const config: Configuration = {
         options: { pluginPackages },
       },
       {
-        test: /(\.jsx?)|(\.tsx?)$/,
+        test: /(\.js)|(\.tsx?)$/,
         exclude: /node_modules\/(?!(bitbucket|ky|ini|@patternfly(-\S+)?)\/)/,
         type: 'javascript/auto',
         use: {
@@ -182,8 +182,7 @@ const config: Configuration = {
             jsc: {
               parser: {
                 syntax: 'typescript',
-                tsx: true,
-                jsx: true
+                tsx: true
               },
               transform: {
                 react: {

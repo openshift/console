@@ -6,7 +6,6 @@
     "esModuleInterop": false,
     "allowSyntheticDefaultImports": false,
     "jsx": "react-jsx",
-    "allowJs": true,
     "noEmitOnError": true,
     "declaration": true,
     "experimentalDecorators": true,

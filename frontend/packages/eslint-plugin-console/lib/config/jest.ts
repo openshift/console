@@ -1,10 +1,7 @@
-const merge = require('merge');
-
 module.exports = {
   overrides: [
     {
-      files: ['**/__tests__/**/*.{tsx,ts,js}', '**/*.spec.{tsx,ts,js}'],
-      excludedFiles: ['**/*.cy.{ts,tsx,js}'],
+      files: ['**/__tests__/**/*.{tsx,ts}', '**/*.spec.{tsx,ts}'],
 
       env: {
         'jest/globals': true,
@@ -18,7 +15,7 @@ module.exports = {
         ecmaVersion: 2021,
       },
 
-      rules: merge(require('./rules/jest')),
+      rules: require('merge')(require('./rules/jest.ts')),
     },
   ],
 };

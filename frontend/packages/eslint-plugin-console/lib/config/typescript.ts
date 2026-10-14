@@ -1,5 +1,3 @@
-const merge = require('merge');
-
 module.exports = {
   overrides: [
     {
@@ -22,7 +20,7 @@ module.exports = {
         },
       },
 
-      rules: merge(require('./rules/typescript'), {
+      rules: require('merge')(require('./rules/typescript.ts'), {
         // Performance issues with using `project` and specific rules with new parser:
         // https://github.com/typescript-eslint/typescript-eslint/issues/389
         '@typescript-eslint/await-thenable': 'off',

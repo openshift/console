@@ -36,11 +36,7 @@ const config = defineConfig([
     '**/node_modules/**',
     '**/dist/**',
     '**/generated/**',
-    '**/*.min.js',
     'gui_test_screenshots/**',
-    'public/lib/**',
-    // Standalone service worker copied verbatim by the build; not part of the module graph.
-    'public/load-test.sw.js',
     'Godeps/**',
     '@types/**',
     'dynamic-demo-plugin/**',
@@ -65,7 +61,7 @@ const config = defineConfig([
   // Scope: public/ + packages/ (react-typescript-prettier)
   // ------------------------------------------------
   {
-    files: ['public/**/*.{js,jsx,ts,tsx,json}', 'packages/**/*.{js,jsx,ts,tsx,json}'],
+    files: ['public/**/*.{ts,tsx,json}', 'packages/**/*.{ts,tsx,json}'],
     ignores: PACKAGES_EXCLUDE,
     extends: compat.extends('plugin:console/react-typescript-prettier'),
     languageOptions: {
@@ -84,23 +80,18 @@ const config = defineConfig([
   },
 
   // ------------------------------------------------
-  // Scope: eslint-plugin-console (base + node + json + prettier)
+  // Scope: eslint-plugin-console (node-typescript-prettier + json)
   // ------------------------------------------------
   {
-    files: ['packages/eslint-plugin-console/**/*.{js,jsx,ts,tsx,json}'],
-    extends: compat.extends(
-      'plugin:console/base',
-      'plugin:console/node',
-      'plugin:console/json',
-      'plugin:console/prettier',
-    ),
+    files: ['packages/eslint-plugin-console/**/*.{ts,tsx,json}'],
+    extends: compat.extends('plugin:console/node-typescript-prettier'),
   },
 
   // ------------------------------------------------
   // Scope: repo scripts (node-typescript-prettier)
   // ------------------------------------------------
   {
-    files: ['*.{js,jsx,ts,tsx,json}', ...REPO_SCRIPTS.map((dir) => `${dir}/**/*.{js,jsx,ts,tsx,json}`)],
+    files: ['*.{ts,tsx,json}', ...REPO_SCRIPTS.map((dir) => `${dir}/**/*.{ts,tsx,json}`)],
     extends: compat.extends('plugin:console/node-typescript-prettier'),
     rules: {
       'n/no-unsupported-features/node-builtins': 'off',
@@ -111,7 +102,7 @@ const config = defineConfig([
   // Scope: e2e (Playwright)
   // ------------------------------------------------
   {
-    files: ['e2e/**/*.{js,jsx,ts,tsx,json}'],
+    files: ['e2e/**/*.{ts,tsx,json}'],
     ignores: ['e2e/**/testData/**'],
     extends: compat.extends(
       'plugin:console/prettier',
