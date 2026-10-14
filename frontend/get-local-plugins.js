@@ -1,4 +1,5 @@
 // @ts-check
+// eslint-disable-next-line import/no-unresolved -- eslint ts plugin not setup here
 const { getLocalPluginsModuleData } = require('@console/plugin-sdk/src/codegen/local-plugins');
 
 /**

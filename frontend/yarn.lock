@@ -5101,7 +5101,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ajv@npm:^6.12.3, ajv@npm:^6.12.5, ajv@npm:^6.14.0":
+"ajv@npm:^6.12.5, ajv@npm:^6.14.0":
   version: 6.15.0
   resolution: "ajv@npm:6.15.0"
   dependencies:
@@ -12669,7 +12669,7 @@ __metadata:
     "@xterm/addon-fit": "npm:0.10.0"
     "@xterm/xterm": "npm:^5.5.0"
     "@yarnpkg/parsers": "npm:^3.1.0"
-    ajv: "npm:^6.12.3"
+    ajv: "npm:^8.12.0"
     asn1js: "npm:^3.0.10"
     axe-core: "npm:^4.10.2"
     chalk: "npm:2.4.x"

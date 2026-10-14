@@ -2,8 +2,8 @@ import { existsSync } from 'fs';
 import { join } from 'path';
 import { sync as glob } from 'glob';
 import { defineConfig } from 'i18next-cli';
-import { namespaceToDirName } from './i18n-scripts/namespace-map';
 import { ConsoleExtensionsI18nextCLIPlugin } from './i18n-scripts/ConsoleExtensionsI18nextCLIPlugin';
+import { namespaceToDirName } from './i18n-scripts/namespace-map';
 
 export default defineConfig({
   locales: ['en'],

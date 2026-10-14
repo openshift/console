@@ -1,5 +1,5 @@
-import { defineConfig } from 'jest';
 import type { Options as SwcOptions } from '@swc/core';
+import { defineConfig } from 'jest';
 
 export default defineConfig({
   moduleFileExtensions: ['js', 'jsx', 'ts', 'tsx', 'json'],
@@ -35,15 +35,8 @@ export default defineConfig({
   transformIgnorePatterns: [
     '<rootDir>/node_modules/(?!(@patternfly(-\\S+)?|d3(-\\S+)?|delaunator|robust-predicates|internmap|lodash-es|istextorbinary|@console|@novnc|@spice-project|@popperjs|i18next(-\\S+)?|@babel/runtime|jsonpath-plus|nanoid|@rjsf|@x0k|git-url-parse|git-up|parse-url|protocols|sanitize-html|linkify-react|fuzzysearch)/.*)',
   ],
-  testPathIgnorePatterns: [
-    '<rootDir>/node_modules/',
-    '<rootDir>/public/dist',
-    '<rootDir>/e2e',
-  ],
-  modulePathIgnorePatterns: [
-    '<rootDir>/public/dist',
-    '<rootDir>/e2e',
-  ],
+  testPathIgnorePatterns: ['<rootDir>/node_modules/', '<rootDir>/public/dist', '<rootDir>/e2e'],
+  modulePathIgnorePatterns: ['<rootDir>/public/dist', '<rootDir>/e2e'],
   testRegex: '.*\\.spec\\.(ts|tsx|js|jsx)$',
   testEnvironmentOptions: {
     url: 'http://localhost',

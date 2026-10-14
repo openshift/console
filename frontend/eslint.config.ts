@@ -2,8 +2,6 @@ import * as path from 'path';
 import { defineConfig, globalIgnores } from 'eslint/config';
 import { FlatCompat } from '@eslint/eslintrc';
 import * as js from '@eslint/js';
-// TODO: change moduleResolution to "bundler"
-// @ts-expect-error types not resolvable under moduleResolution "node"
 import * as tsParser from '@typescript-eslint/parser';
 import * as tsPlugin from '@typescript-eslint/eslint-plugin';
 
@@ -19,6 +17,12 @@ const SDK_NODE_DIRS = [
   'packages/console-dynamic-plugin-sdk/scripts',
   'packages/console-dynamic-plugin-sdk/src/webpack',
 ];
+
+const REPO_SCRIPTS = [
+  ...SDK_NODE_DIRS,
+  'scripts',
+  'i18n-scripts',
+]
 
 const PACKAGES_EXCLUDE = [
   'packages/eslint-plugin-console/**',
@@ -104,6 +108,7 @@ const config = defineConfig([
   {
     files: ['public/**/*.{js,jsx}'],
     plugins: {
+      // @ts-expect-error rules property is incompatible
       '@typescript-eslint': tsPlugin,
     },
     languageOptions: {
@@ -120,14 +125,6 @@ const config = defineConfig([
   },
 
   // ------------------------------------------------
-  // Scope: SDK Node.js directories (node-typescript-prettier)
-  // ------------------------------------------------
-  {
-    files: SDK_NODE_DIRS.map((dir) => `${dir}/**/*.{js,jsx,ts,tsx,json}`),
-    extends: compat.extends('plugin:console/node-typescript-prettier'),
-  },
-
-  // ------------------------------------------------
   // Scope: eslint-plugin-console (base + node + json + prettier)
   // ------------------------------------------------
   {
@@ -141,10 +138,10 @@ const config = defineConfig([
   },
 
   // ------------------------------------------------
-  // Scope: i18n-scripts (node-typescript-prettier)
+  // Scope: repo scripts (node-typescript-prettier)
   // ------------------------------------------------
   {
-    files: ['i18n-scripts/**/*.{js,jsx,ts,tsx,json}'],
+    files: ['*.{js,jsx,ts,tsx,json}', ...REPO_SCRIPTS.map((dir) => `${dir}/**/*.{js,jsx,ts,tsx,json}`)],
     extends: compat.extends('plugin:console/node-typescript-prettier'),
     rules: {
       'n/no-unsupported-features/node-builtins': 'off',
