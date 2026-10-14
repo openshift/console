@@ -50,7 +50,7 @@ test.describe('YAML Editor Settings', { tag: ['@admin', '@yaml-editor'] }, () =>
     await yamlEditorPage.openSettingsModal();
     await yamlEditorPage.selectTheme('Dark');
     await expect(yamlEditorPage.getMonacoEditor()).toHaveClass(/vs-dark/);
-    await yamlEditorPage.selectTheme('Use theme setting');
+    await yamlEditorPage.selectTheme('Default');
     await expect(yamlEditorPage.getMonacoEditor()).not.toHaveClass(/vs-dark/);
     await yamlEditorPage.closeSettingsModal();
   });

@@ -1,6 +1,6 @@
-/* eslint-disable no-barrel-files/no-barrel-files */
 /* eslint-disable @typescript-eslint/naming-convention */
 
+// eslint-disable-next-line no-barrel-files/no-barrel-files
 export { ALL_NAMESPACES_KEY } from '@console/dynamic-plugin-sdk/src/constants';
 
 export const CONST = Object.freeze({
@@ -125,4 +125,13 @@ export const CLUSTER_VERSION_DEFAULT_UPSTREAM_SERVER_URL_PLACEHOLDER =
 export const INTEGRATION_TEST_USER_AGENT = 'ConsoleIntegrationTestEnvironment';
 
 export const PREFERRED_TELEMETRY_USER_PREFERENCE_KEY = 'telemetry.analytics';
-export const IS_PRODUCTION = process.env.NODE_ENV === 'production';
+
+/**
+ * Flag that enables exposing variables typically only in development inside of a production environment.
+ *
+ * Note that you can expose these objects via React DevTools without this flag, but this allows testing via e2e.
+ */
+const IS_DEBUG_MODE =
+  typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('debug-mode');
+
+export const IS_PRODUCTION = process.env.NODE_ENV === 'production' && !IS_DEBUG_MODE;
