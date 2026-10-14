@@ -16,6 +16,7 @@ table in [Console dynamic plugins README](./README.md).
 - Added `ConsoleDataView` component and `definitionFor` ([CONSOLE-5131], [#17307], [#17351])
 - Added `console.dataview/table-column` extension for contributing sortable, manageable columns to `ConsoleDataView` tables ([CONSOLE-5560], [#17351])
 - Added default resource kebab actions and optional `bulkProvider` to `console.action/resource-provider` for bulk actions ([CONSOLE-5560], [#17351])
+- Remove deprecated React 18 types from type definitions ([CONSOLE-5065], [#17140])
 
 ## 4.23.0 - 2026-10-16
 

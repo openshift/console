@@ -49,7 +49,7 @@ const TelemetryAnalyticsSelect: FC<{
   const [isOpen, setIsOpen] = useState(false);
   const selection = options.find((option) => option.isSelected)?.value;
 
-  const toggle = (toggleRef: RefObject<MenuToggleElement>) => (
+  const toggle = (toggleRef: RefObject<MenuToggleElement | null>) => (
     <MenuToggle
       ref={toggleRef}
       onClick={() => setIsOpen(!isOpen)}

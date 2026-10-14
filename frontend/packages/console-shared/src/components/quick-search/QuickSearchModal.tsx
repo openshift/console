@@ -31,7 +31,7 @@ const QuickSearchModal: FC<QuickSearchModalProps> = ({
   detailsRenderer,
 }) => {
   const { t } = useTranslation('console-shared');
-  const ref = useRef<HTMLDivElement>();
+  const ref = useRef<HTMLDivElement>(undefined);
 
   // close the modal when clicking outside of it
   useEffect(() => {

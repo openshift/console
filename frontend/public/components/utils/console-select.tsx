@@ -278,7 +278,7 @@ export const ConsoleSelect: FC<ConsoleSelectProps> = ({
         onSelect={onClick}
         selected={selectedKey}
         shouldFocusToggleOnSelect
-        toggle={(toggleRef: RefObject<MenuToggleElement>) => (
+        toggle={(toggleRef: RefObject<MenuToggleElement | null>) => (
           <MenuToggle
             aria-describedby={describedBy}
             aria-label={ariaLabel}

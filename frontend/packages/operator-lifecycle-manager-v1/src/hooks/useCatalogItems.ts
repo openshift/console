@@ -21,7 +21,7 @@ const useCatalogItems: UseCatalogItems = () => {
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState('');
   const [lastModified, setLastModified] = useState('');
-  const abortControllerRef = useRef<AbortController>();
+  const abortControllerRef = useRef<AbortController>(undefined);
 
   const headers = useMemo(() => {
     const consoleHeaders = getConsoleRequestHeaders();

@@ -73,7 +73,7 @@ type DropdownWithSwitchToggleProps = {
   isOpen: boolean;
   label: string;
   menu: ReactElement;
-  menuRef: RefObject<HTMLElement>;
+  menuRef: RefObject<HTMLElement | null>;
   onToggle: (state: boolean) => void;
 };
 

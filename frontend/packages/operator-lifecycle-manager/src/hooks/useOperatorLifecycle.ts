@@ -92,7 +92,7 @@ export const useOperatorLifecycle = (
   const [data, setData] = useState<LifecycleData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
-  const abortRef = useRef<AbortController>();
+  const abortRef = useRef<AbortController>(undefined);
 
   useEffect(() => {
     if (!packageName || !catalogName || !catalogNamespace) {

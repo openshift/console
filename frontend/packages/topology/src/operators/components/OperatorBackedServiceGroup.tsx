@@ -62,7 +62,7 @@ const OperatorBackedServiceGroup: FC<OperatorBackedServiceGroupProps> = ({
   onContextMenu,
   contextMenuOpen,
 }) => {
-  const ref = useRef();
+  const ref = useRef(undefined);
   const { t } = useTranslation('topology');
   const [hover, hoverRef] = useHover(0, 200);
   const [innerHover, innerHoverRef] = useHover(0, 200);
