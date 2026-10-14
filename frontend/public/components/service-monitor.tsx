@@ -1,10 +1,17 @@
+import type { FC } from 'react';
 import { useMemo, Suspense } from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
+import type {
+  ConsoleDataViewCell,
+  ConsoleDataViewColumn,
+  GetDataViewRows,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { DASH } from '@console/shared/src/constants/ui';
 import { ServiceMonitorModel } from '../models';
+import type { K8sResourceKind } from '../module/k8s';
 import { referenceForModel } from '../module/k8s';
 import { ListPage } from './factory';
 import { ResourceLink } from './utils/resource-link';
@@ -19,7 +26,7 @@ const serviceMonitorTableColumnInfo = [
   { id: 'actions' },
 ];
 
-const namespaceSelectorLinks = ({ spec }) => {
+const namespaceSelectorLinks = ({ spec }: K8sResourceKind) => {
   const namespaces = _.get(spec, 'namespaceSelector.matchNames', []);
   if (namespaces.length) {
     return _.map(namespaces, (n) => (
@@ -32,7 +39,7 @@ const namespaceSelectorLinks = ({ spec }) => {
   return <span className="pf-v6-u-text-color-subtle">{DASH}</span>;
 };
 
-const serviceSelectorLinks = ({ spec }) => {
+const serviceSelectorLinks = ({ spec }: K8sResourceKind) => {
   const namespaces = _.get(spec, 'namespaceSelector.matchNames', []);
   if (namespaces.length) {
     return _.map(namespaces, (n) => (
@@ -45,12 +52,12 @@ const serviceSelectorLinks = ({ spec }) => {
   return <Selector selector={spec.selector} kind="Service" />;
 };
 
-const getServiceMonitorDataViewRows = (data, columns) =>
+const getServiceMonitorDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) =>
   data.map(({ obj }) => {
     const { metadata } = obj;
     const resourceKind = referenceForModel(ServiceMonitorModel);
 
-    const rowCells = {
+    const rowCells: { [columnId: string]: Omit<ConsoleDataViewCell, 'id'> } = {
       [serviceMonitorTableColumnInfo[0].id]: {
         cell: (
           <ResourceLink
@@ -88,9 +95,9 @@ const getServiceMonitorDataViewRows = (data, columns) =>
     });
   });
 
-const useServiceMonitorColumns = () => {
+const useServiceMonitorColumns = (): ConsoleDataViewColumn<K8sResourceKind>[] => {
   const { t } = useTranslation('public');
-  return useMemo(
+  return useMemo<ConsoleDataViewColumn<K8sResourceKind>[]>(
     () => [
       {
         type: 'name',
@@ -134,7 +141,14 @@ const useServiceMonitorColumns = () => {
   );
 };
 
-const ServiceMonitorsList = (props) => {
+interface ServiceMonitorsListProps {
+  data: K8sResourceKind[];
+  loaded: boolean;
+  loadError?: unknown;
+  mock?: boolean;
+}
+
+const ServiceMonitorsList: FC<ServiceMonitorsListProps> = (props) => {
   const { data, loaded } = props;
   const columns = useServiceMonitorColumns();
 
@@ -154,7 +168,7 @@ const ServiceMonitorsList = (props) => {
   );
 };
 
-export const ServiceMonitorsPage = (props) => (
+export const ServiceMonitorsPage: FC = (props) => (
   <ListPage
     {...props}
     canCreate

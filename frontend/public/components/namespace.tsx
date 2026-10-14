@@ -1,4 +1,5 @@
 import { Suspense, useEffect, useMemo, useCallback } from 'react';
+import type { ComponentType, FC } from 'react';
 import {
   Alert,
   Button,
@@ -12,6 +13,7 @@ import {
 import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
 import { RhUiEditIcon } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
+import type { TFunction } from 'i18next';
 import i18next from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -23,6 +25,14 @@ import {
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import * as k8sActions from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
+import type {
+  ConsoleDataViewCell,
+  ConsoleDataViewColumn,
+  ConsoleDataViewRow,
+  FilterValue,
+  ResourceFilters,
+  RowProps,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
@@ -53,6 +63,7 @@ import { getRequester, getDescription } from '@console/shared/src/selectors/name
 import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
 import { isModifiedEvent } from '@console/shared/src/utils/utils';
 import * as UIActions from '../actions/ui';
+import type { NamespaceMetrics } from '../actions/ui';
 import {
   ConsoleLinkModel,
   NamespaceModel,
@@ -60,6 +71,7 @@ import {
   SecretModel,
   ServiceAccountModel,
 } from '../models';
+import type { K8sModel, K8sResourceKind } from '../module/k8s';
 import { referenceForModel } from '../module/k8s';
 import { flagPending } from '../reducers/features';
 import {
@@ -72,9 +84,9 @@ import { Area } from './graphs/area';
 import { Bar } from './graphs/bar';
 import { PROMETHEUS_BASE_PATH, PROMETHEUS_TENANCY_BASE_PATH } from './graphs/consts';
 import { LazyConfigureNamespacePullSecretModalOverlay } from './modals';
-import { OverviewListPage } from './overview';
 import { RoleBindingsPage } from './RBAC';
 import { OpenShiftGettingStarted } from './start-guide';
+import { AsyncComponent } from './utils/async';
 import { DetailsItem } from './utils/details-item';
 import { ResourceSummary } from './utils/details-page';
 import { SectionHeading } from './utils/headings';
@@ -91,7 +103,7 @@ import {
   humanizeCpuCores,
 } from './utils/units';
 
-const getDisplayName = (obj) =>
+const getDisplayName = (obj: K8sResourceKind) =>
   _.get(obj, ['metadata', 'annotations', 'openshift.io/display-name']);
 
 // KKD CHECK TO SEE THAT ITEMS CHANGE WHEN LANGUAGE CHANGES
@@ -99,7 +111,7 @@ const getFilters = () => [
   {
     filterGroupName: i18next.t('public~Requester'),
     type: 'requester',
-    reducer: (namespace) => {
+    reducer: (namespace: K8sResourceKind) => {
       const name = namespace.metadata?.name;
       const requester = namespace.metadata?.annotations?.['openshift.io/requester'];
       if (isCurrentUser(requester)) {
@@ -115,12 +127,13 @@ const getFilters = () => [
     items: [
       { id: REQUESTER_FILTER.ME, title: i18next.t('public~Me') },
       { id: REQUESTER_FILTER.USER, title: i18next.t('public~User') },
-      { id: REQUESTER_FILTER.SYSTEM, title: i18next.t('public~System'), hideIfEmpty: true },
+      // `hideIfEmpty` is typed as a string in the SDK but only used as a truthy flag.
+      { id: REQUESTER_FILTER.SYSTEM, title: i18next.t('public~System'), hideIfEmpty: 'true' },
     ],
   },
 ];
 
-const fetchNamespaceMetrics = () => {
+const fetchNamespaceMetrics = (): Promise<NamespaceMetrics | void> => {
   const metrics = [
     {
       key: 'memory',
@@ -147,7 +160,7 @@ const fetchNamespaceMetrics = () => {
 
 const DNS_LABEL_RE = /^[a-z]([a-z0-9-]{0,61}[a-z0-9])?$/;
 
-const fetchNamespaceTenancyMetrics = async (namespaces) => {
+const fetchNamespaceTenancyMetrics = async (namespaces: string[]) => {
   if (!PROMETHEUS_TENANCY_BASE_PATH || namespaces.length === 0) {
     return {};
   }
@@ -202,10 +215,12 @@ const namespaceColumnInfo = [
   { id: '' },
 ];
 
-const useNamespacesColumns = () => {
+const useNamespacesColumns = (): {
+  columns: ConsoleDataViewColumn<K8sResourceKind>[];
+} => {
   const { t } = useTranslation('public');
 
-  const columns = useMemo(
+  const columns = useMemo<ConsoleDataViewColumn<K8sResourceKind>[]>(
     () => [
       {
         type: 'name',
@@ -271,7 +286,6 @@ const useNamespacesColumns = () => {
         props: {
           modifier: 'nowrap',
         },
-        additional: true,
       },
       {
         title: t('Labels'),
@@ -281,7 +295,6 @@ const useNamespacesColumns = () => {
           modifier: 'nowrap',
           ...getLabelsColumnWidthStyleProp(),
         },
-        additional: true,
       },
       { type: 'actions', id: namespaceColumnInfo[9].id },
     ],
@@ -293,7 +306,12 @@ const useNamespacesColumns = () => {
 
 const NamespacesColumnManagementID = referenceForModel(NamespaceModel);
 
-const getNamespaceDataViewRows = (rowData, tableColumns, namespaceMetrics, t) =>
+const getNamespaceDataViewRows = (
+  rowData: RowProps<K8sResourceKind>[],
+  tableColumns: ConsoleDataViewColumn<K8sResourceKind>[],
+  namespaceMetrics: NamespaceMetrics,
+  t: TFunction,
+): ConsoleDataViewRow[] =>
   rowData.map(({ obj: ns }) => {
     const name = getName(ns);
     const requester = getRequester(ns);
@@ -302,7 +320,7 @@ const getNamespaceDataViewRows = (rowData, tableColumns, namespaceMetrics, t) =>
     const description = getDescription(ns);
     const { labels } = ns.metadata;
 
-    const rowCells = {
+    const rowCells: { [columnId: string]: Omit<ConsoleDataViewCell, 'id'> } = {
       [namespaceColumnInfo[0].id]: {
         cell: (
           <ResourceLink
@@ -363,9 +381,13 @@ const getNamespaceDataViewRows = (rowData, tableColumns, namespaceMetrics, t) =>
     });
   });
 
-const initialFilters = { requester: [] };
+interface RequesterFilters extends ResourceFilters {
+  requester: string[];
+}
 
-const NamespacesList = (props) => {
+const initialFilters: Partial<RequesterFilters> = { requester: [] };
+
+const NamespacesList: FC<NamespacesListProps> = (props) => {
   const { t } = useTranslation('public');
   const dispatch = useConsoleDispatch();
   const { columns } = useNamespacesColumns();
@@ -374,7 +396,11 @@ const NamespacesList = (props) => {
   // TODO Utilize usePoll hook
   useEffect(() => {
     const updateMetrics = () =>
-      fetchNamespaceMetrics().then((result) => dispatch(UIActions.setNamespaceMetrics(result)));
+      fetchNamespaceMetrics().then((result) => {
+        if (result) {
+          dispatch(UIActions.setNamespaceMetrics(result));
+        }
+      });
     updateMetrics();
     const id = setInterval(updateMetrics, 30 * 1000);
     return () => clearInterval(id);
@@ -402,26 +428,29 @@ const NamespacesList = (props) => {
     [t, requesterFilterOptions],
   );
 
-  const matchesAdditionalFilters = useCallback((resource, filters) => {
-    if (filters.requester?.length === 0) {
-      return true;
-    }
-    const name = resource.metadata?.name;
-    const requester = resource.metadata?.annotations?.['openshift.io/requester'];
-    let requesterType;
-    if (isCurrentUser(requester)) {
-      requesterType = REQUESTER_FILTER.ME;
-    } else if (isOtherUser(requester, name)) {
-      requesterType = REQUESTER_FILTER.USER;
-    } else if (isSystemNamespace({ title: name })) {
-      requesterType = REQUESTER_FILTER.SYSTEM;
-    }
-    return !filters.requester || filters.requester.includes(String(requesterType));
-  }, []);
+  const matchesAdditionalFilters = useCallback(
+    (resource: K8sResourceKind, filters: RequesterFilters) => {
+      if (filters.requester?.length === 0) {
+        return true;
+      }
+      const name = resource.metadata?.name;
+      const requester = resource.metadata?.annotations?.['openshift.io/requester'];
+      let requesterType;
+      if (isCurrentUser(requester)) {
+        requesterType = REQUESTER_FILTER.ME;
+      } else if (isOtherUser(requester, name)) {
+        requesterType = REQUESTER_FILTER.USER;
+      } else if (isSystemNamespace({ title: name })) {
+        requesterType = REQUESTER_FILTER.SYSTEM;
+      }
+      return !filters.requester || filters.requester.includes(String(requesterType));
+    },
+    [],
+  );
 
   return (
     <Suspense fallback={<LoadingBox />}>
-      <ConsoleDataView
+      <ConsoleDataView<K8sResourceKind, undefined, RequesterFilters>
         {...props}
         label={NamespaceModel.labelPlural}
         columns={columns}
@@ -437,7 +466,7 @@ const NamespacesList = (props) => {
   );
 };
 
-export const NamespacesPage = (props) => {
+export const NamespacesPage: FC = (props) => {
   const createNamespaceModal = useCreateNamespaceModal();
 
   return (
@@ -445,7 +474,8 @@ export const NamespacesPage = (props) => {
       {...props}
       ListComponent={NamespacesList}
       canCreate
-      createHandler={() => createNamespaceModal()}
+      createHandler={() => createNamespaceModal({})}
+      kind={referenceForModel(NamespaceModel)}
       omitFilterToolbar
     />
   );
@@ -456,11 +486,21 @@ const projectColumnManagementID = referenceForModel(ProjectModel);
 // Use same column info as namespaces since projects are namespaces
 const projectColumnInfo = namespaceColumnInfo;
 
-const useProjectsColumns = ({ showMetrics, showActions }) => {
+interface UseProjectsColumnsProps {
+  showMetrics: boolean;
+  showActions: boolean;
+}
+
+const useProjectsColumns = ({
+  showMetrics,
+  showActions,
+}: UseProjectsColumnsProps): {
+  columns: ConsoleDataViewColumn<K8sResourceKind>[];
+} => {
   const { t } = useTranslation('public');
 
-  const columns = useMemo(() => {
-    const cols = [
+  const columns = useMemo<ConsoleDataViewColumn<K8sResourceKind>[]>(() => {
+    const cols: ConsoleDataViewColumn<K8sResourceKind>[] = [
       {
         type: 'name',
         title: t('Name'),
@@ -534,7 +574,6 @@ const useProjectsColumns = ({ showMetrics, showActions }) => {
         props: {
           modifier: 'nowrap',
         },
-        additional: true,
       },
       {
         title: t('Labels'),
@@ -544,7 +583,6 @@ const useProjectsColumns = ({ showMetrics, showActions }) => {
           modifier: 'nowrap',
           ...getLabelsColumnWidthStyleProp(),
         },
-        additional: true,
       },
     );
 
@@ -559,13 +597,13 @@ const useProjectsColumns = ({ showMetrics, showActions }) => {
 };
 
 const getProjectDataViewRows = (
-  rowData,
-  tableColumns,
-  namespaceMetrics,
-  showMetrics,
-  ProjectLinkComponent,
-  t,
-) =>
+  rowData: RowProps<K8sResourceKind>[],
+  tableColumns: ConsoleDataViewColumn<K8sResourceKind>[],
+  namespaceMetrics: NamespaceMetrics,
+  showMetrics: boolean,
+  ProjectLinkComponent: ComponentType<{ project: K8sResourceKind }>,
+  t: TFunction,
+): ConsoleDataViewRow[] =>
   rowData.map(({ obj: project }) => {
     const name = getName(project);
     const requester = getRequester(project);
@@ -574,7 +612,7 @@ const getProjectDataViewRows = (
     const description = getDescription(project);
     const { labels } = project.metadata;
 
-    const rowCells = {
+    const rowCells: { [columnId: string]: Omit<ConsoleDataViewCell, 'id'> } = {
       [projectColumnInfo[0].id]: {
         cell: ProjectLinkComponent ? (
           <ProjectLinkComponent project={project} />
@@ -639,7 +677,7 @@ const getProjectDataViewRows = (
     });
   });
 
-export const ProjectLink = ({ project }) => {
+export const ProjectLink: FC<{ project: K8sResourceKind }> = ({ project }) => {
   const dispatch = useConsoleDispatch();
   const [, setActiveNamespace] = useActiveNamespace();
   const url = new URL(window.location.href);
@@ -655,14 +693,18 @@ export const ProjectLink = ({ project }) => {
   };
   const namespacedPath = UIActions.formatNamespaceRoute(project.metadata.name, basePath, newUrl);
 
-  const handleClick = (e) => {
+  const handleClick = (e: React.MouseEvent<HTMLElement>) => {
     // Don't set last namespace if its modified click (Ctrl+Click).
     if (isModifiedEvent(e)) {
       return;
     }
 
     setActiveNamespace(project.metadata.name);
-    dispatch(k8sActions.filterList(referenceForModel(ProjectModel), 'project-name', ''));
+    // Clear the `project-name` text filter. The action creator types the value as FilterValue,
+    // but text filters are cleared with a plain empty string.
+    dispatch(
+      k8sActions.filterList(referenceForModel(ProjectModel), 'project-name', '' as FilterValue),
+    );
   };
   return (
     <span className="co-resource-item co-resource-item--truncate">
@@ -674,7 +716,7 @@ export const ProjectLink = ({ project }) => {
   );
 };
 
-export const ProjectsTable = (props) => {
+export const ProjectsTable: FC<ProjectsTableProps> = (props) => {
   const { t } = useTranslation('public');
   const { columns } = useProjectsColumns({ showMetrics: false, showActions: false });
 
@@ -694,7 +736,7 @@ export const ProjectsTable = (props) => {
   );
 };
 
-const ProjectList = (props) => {
+const ProjectList: FC<ProjectListProps> = (props) => {
   const { t } = useTranslation('public');
   const dispatch = useConsoleDispatch();
   const canGetNS = useFlag(FLAGS.CAN_GET_NS);
@@ -763,22 +805,25 @@ const ProjectList = (props) => {
     [t, requesterFilterOptions],
   );
 
-  const matchesAdditionalFilters = useCallback((resource, filters) => {
-    if (filters.requester?.length === 0) {
-      return true;
-    }
-    const name = resource.metadata?.name;
-    const requester = resource.metadata?.annotations?.['openshift.io/requester'];
-    let requesterType;
-    if (isCurrentUser(requester)) {
-      requesterType = REQUESTER_FILTER.ME;
-    } else if (isOtherUser(requester, name)) {
-      requesterType = REQUESTER_FILTER.USER;
-    } else if (isSystemNamespace({ title: name })) {
-      requesterType = REQUESTER_FILTER.SYSTEM;
-    }
-    return !filters.requester || filters.requester.includes(String(requesterType));
-  }, []);
+  const matchesAdditionalFilters = useCallback(
+    (resource: K8sResourceKind, filters: RequesterFilters) => {
+      if (filters.requester?.length === 0) {
+        return true;
+      }
+      const name = resource.metadata?.name;
+      const requester = resource.metadata?.annotations?.['openshift.io/requester'];
+      let requesterType;
+      if (isCurrentUser(requester)) {
+        requesterType = REQUESTER_FILTER.ME;
+      } else if (isOtherUser(requester, name)) {
+        requesterType = REQUESTER_FILTER.USER;
+      } else if (isSystemNamespace({ title: name })) {
+        requesterType = REQUESTER_FILTER.SYSTEM;
+      }
+      return !filters.requester || filters.requester.includes(String(requesterType));
+    },
+    [],
+  );
 
   // Don't render the table until we know whether we can get metrics. It's
   // not possible to change the table headers once the component is mounted.
@@ -788,7 +833,7 @@ const ProjectList = (props) => {
 
   return (
     <Suspense fallback={<LoadingBox />}>
-      <ConsoleDataView
+      <ConsoleDataView<K8sResourceKind, undefined, RequesterFilters>
         {...props}
         label={ProjectModel.labelPlural}
         columns={columns}
@@ -799,13 +844,12 @@ const ProjectList = (props) => {
         getDataViewRows={(rowData, tableColumns) =>
           getProjectDataViewRows(rowData, tableColumns, namespaceMetrics, showMetrics, undefined, t)
         }
-        NoDataEmptyMsg={OpenShiftGettingStarted}
+        EmptyMsg={OpenShiftGettingStarted}
       />
     </Suspense>
   );
 };
-
-export const ProjectsPage = (props) => {
+export const ProjectsPage: FC = (props) => {
   const { t } = useTranslation('public');
   const createProjectModal = useCreateProjectModal();
   // Skip self-subject access review for projects since they use a special project request API.
@@ -817,7 +861,7 @@ export const ProjectsPage = (props) => {
       rowFilters={getFilters()}
       ListComponent={ProjectList}
       canCreate={canCreateProject}
-      createHandler={() => createProjectModal()}
+      createHandler={() => createProjectModal({})}
       filterLabel={t('by name or display name')}
       skipAccessReview
       textFilter="project-name"
@@ -827,12 +871,11 @@ export const ProjectsPage = (props) => {
   );
 };
 
-/** @type {FC<{namespace: K8sResourceKind}>} */
-export const PullSecret = (props) => {
+export const PullSecret: FC<PullSecretProps> = (props) => {
   const { t } = useTranslation('public');
   const { namespace, canViewSecrets } = props;
   const launchModal = useOverlay();
-  const [serviceAccount, loaded, error] = useK8sWatchResource({
+  const [serviceAccount, loaded, error] = useK8sWatchResource<PullSecretServiceAccount>({
     groupVersionKind: getGroupVersionKindForModel(ServiceAccountModel),
     name: 'default',
     namespace: namespace.metadata.name,
@@ -885,7 +928,7 @@ export const PullSecret = (props) => {
   );
 };
 
-const NamespaceLineCharts = ({ ns }) => {
+const NamespaceLineCharts: FC<{ ns: K8sResourceKind }> = ({ ns }) => {
   const { t } = useTranslation('public');
   return (
     <Grid hasGutter>
@@ -910,7 +953,7 @@ const NamespaceLineCharts = ({ ns }) => {
   );
 };
 
-const TopPodsBarChart = ({ ns }) => {
+const TopPodsBarChart: FC<{ ns: K8sResourceKind }> = ({ ns }) => {
   const { t } = useTranslation('public');
   return (
     <Bar
@@ -923,7 +966,7 @@ const TopPodsBarChart = ({ ns }) => {
   );
 };
 
-const ResourceUsage = ({ ns }) => {
+const ResourceUsage: FC<{ ns: K8sResourceKind }> = ({ ns }) => {
   const { t } = useTranslation('public');
   const isPrometheusAvailable = usePrometheusGate();
   return isPrometheusAvailable ? (
@@ -935,7 +978,7 @@ const ResourceUsage = ({ ns }) => {
   ) : null;
 };
 
-const NamespaceSummary = ({ ns }) => {
+const NamespaceSummary: FC<{ ns: K8sResourceKind }> = ({ ns }) => {
   const { t } = useTranslation('public');
   const displayName = getDisplayName(ns);
   const description = getDescription(ns);
@@ -1011,10 +1054,10 @@ const NamespaceSummary = ({ ns }) => {
   );
 };
 
-export const NamespaceDetails = ({ obj: ns, customData }) => {
+export const NamespaceDetails: FC<NamespaceDetailsProps> = ({ obj: ns, customData }) => {
   const { t } = useTranslation('public');
   const [perspective] = useActivePerspective();
-  const [consoleLinks] = useK8sWatchResource({
+  const [consoleLinks] = useK8sWatchResource<K8sResourceKind[]>({
     isList: true,
     kind: referenceForModel(ConsoleLinkModel),
     optional: true,
@@ -1046,7 +1089,7 @@ export const NamespaceDetails = ({ obj: ns, customData }) => {
   );
 };
 
-const RolesPage = ({ obj: { metadata } }) => (
+const RolesPage: FC<{ obj: K8sResourceKind }> = ({ obj: { metadata } }) => (
   <RoleBindingsPage
     createPath={`/k8s/ns/${metadata.name}/rolebindings/~new`}
     namespace={metadata.name}
@@ -1054,11 +1097,21 @@ const RolesPage = ({ obj: { metadata } }) => (
   />
 );
 
-export const NamespacesDetailsPage = (props) => (
+// Lazy loaded to avoid a static import cycle with the dev-console project list pages.
+const WorkloadsListPage: FC = (props) => (
+  <AsyncComponent
+    loader={() =>
+      import('./overview' /* webpackChunkName: "overview" */).then((c) => c.OverviewListPage)
+    }
+    {...props}
+  />
+);
+
+export const NamespacesDetailsPage: FC = (props) => (
   <DetailsPage
     {...props}
     kind={referenceForModel(NamespaceModel)}
-    customActionMenu={(k8sObj, obj) => (
+    customActionMenu={(_k8sObj: K8sModel, obj: K8sResourceKind) => (
       <LazyActionMenu
         context={{ [referenceForModel(NamespaceModel)]: obj }}
         variant={ActionMenuVariant.DROPDOWN}
@@ -1072,11 +1125,11 @@ export const NamespacesDetailsPage = (props) => (
   />
 );
 
-export const ProjectsDetailsPage = (props) => (
+export const ProjectsDetailsPage: FC = (props) => (
   <DetailsPage
     {...props}
     kind={referenceForModel(ProjectModel)}
-    customActionMenu={(k8sObj, obj) => (
+    customActionMenu={(_k8sObj: K8sModel, obj: K8sResourceKind) => (
       <LazyActionMenu
         context={{ [referenceForModel(ProjectModel)]: obj }}
         variant={ActionMenuVariant.DROPDOWN}
@@ -1096,8 +1149,45 @@ export const ProjectsDetailsPage = (props) => (
         component: NamespaceDetails,
       },
       navFactory.editYaml(),
-      navFactory.workloads(OverviewListPage),
+      navFactory.workloads(WorkloadsListPage),
       navFactory.roles(RolesPage),
     ]}
   />
 );
+
+interface NamespacesListProps {
+  data: K8sResourceKind[];
+  loaded: boolean;
+  loadError?: unknown;
+  mock?: boolean;
+}
+
+interface ProjectsTableProps {
+  data: K8sResourceKind[];
+  loaded: boolean;
+  loadError?: unknown;
+  mock?: boolean;
+}
+
+interface ProjectListProps {
+  data: K8sResourceKind[];
+  loaded: boolean;
+  loadError?: unknown;
+  mock?: boolean;
+}
+
+interface PullSecretProps {
+  namespace: K8sResourceKind;
+  canViewSecrets?: boolean;
+}
+
+interface PullSecretServiceAccount extends K8sResourceKind {
+  imagePullSecrets?: { name: string }[];
+}
+
+interface NamespaceDetailsProps {
+  obj: K8sResourceKind;
+  customData?: {
+    hideHeading?: boolean;
+  };
+}

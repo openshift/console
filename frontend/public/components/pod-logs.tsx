@@ -1,7 +1,9 @@
+import type { FC } from 'react';
 import { Component } from 'react';
 import * as _ from 'lodash';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
+import type { ContainerSpec, ContainerStatus, PodKind } from '../module/k8s';
 import { ContainerSelect } from './utils/container-select';
 import {
   LOG_SOURCE_RESTARTING,
@@ -11,13 +13,18 @@ import {
   ResourceLog,
 } from './utils/resource-log';
 
-const containersToStatuses = ({ status }, containers) =>
+type OrderedContainerStatuses = { [name: string]: ContainerStatus & { order: number } };
+
+const containersToStatuses = (
+  pod: PodKind,
+  containers: ContainerSpec[],
+): OrderedContainerStatuses =>
   _.reduce(
     containers,
-    (accumulator, { name }, order) => {
+    (accumulator: OrderedContainerStatuses, { name }, order) => {
       const containerStatus =
-        _.find(status.containerStatuses, { name }) ||
-        _.find(status.initContainerStatuses, { name });
+        _.find(pod.status?.containerStatuses, { name }) ||
+        _.find(pod.status?.initContainerStatuses, { name });
       if (containerStatus) {
         return {
           ...accumulator,
@@ -29,35 +36,50 @@ const containersToStatuses = ({ status }, containers) =>
     {},
   );
 
-const containerToLogSourceStatus = (container) => {
+const containerToLogSourceStatus = (container?: ContainerStatus): string => {
   if (!container) {
     return LOG_SOURCE_WAITING;
   }
 
   const { state, lastState } = container;
 
-  if (state.waiting && !_.isEmpty(lastState)) {
+  if (state?.waiting && !_.isEmpty(lastState)) {
     return LOG_SOURCE_RESTARTING;
   }
 
-  if (state.waiting) {
+  if (state?.waiting) {
     return LOG_SOURCE_WAITING;
   }
 
-  if (state.terminated) {
+  if (state?.terminated) {
     return LOG_SOURCE_TERMINATED;
   }
 
   return LOG_SOURCE_RUNNING;
 };
 
-class PodLogsInner extends Component {
-  static getDerivedStateFromProps({ obj: build }, { currentKey }) {
-    const newState = {};
-    const containers = _.get(build, 'spec.containers', []);
-    const initContainers = _.get(build, 'spec.initContainers', []);
-    newState.containers = containersToStatuses(build, containers);
-    newState.initContainers = containersToStatuses(build, initContainers);
+interface PodLogsInnerProps {
+  obj: PodKind;
+  getQueryArgument: (arg: string) => string;
+  setQueryArgument: (arg: string, value: string) => void;
+}
+
+interface PodLogsInnerState {
+  containers: OrderedContainerStatuses;
+  currentKey: string;
+  initContainers: OrderedContainerStatuses;
+}
+
+class PodLogsInner extends Component<PodLogsInnerProps, PodLogsInnerState> {
+  static getDerivedStateFromProps(
+    { obj: pod }: PodLogsInnerProps,
+    { currentKey }: PodLogsInnerState,
+  ): Partial<PodLogsInnerState> {
+    const newState: Partial<PodLogsInnerState> = {};
+    const containers = _.get(pod, 'spec.containers', []) as ContainerSpec[];
+    const initContainers = _.get(pod, 'spec.initContainers', []) as ContainerSpec[];
+    newState.containers = containersToStatuses(pod, containers);
+    newState.initContainers = containersToStatuses(pod, initContainers);
     if (!currentKey) {
       const firstContainer = _.find(newState.containers, { order: 0 });
       newState.currentKey = firstContainer ? firstContainer.name : '';
@@ -65,7 +87,7 @@ class PodLogsInner extends Component {
     return newState;
   }
 
-  constructor(props) {
+  constructor(props: PodLogsInnerProps) {
     super(props);
     this._selectContainer = this._selectContainer.bind(this);
     this.state = {
@@ -103,7 +125,7 @@ class PodLogsInner extends Component {
     );
   }
 
-  _selectContainer(name) {
+  _selectContainer(name: string) {
     this.setState({ currentKey: name }, () => {
       this.props.setQueryArgument('container', this.state.currentKey);
     });
@@ -111,7 +133,7 @@ class PodLogsInner extends Component {
 }
 
 // Functional wrapper to inject router hooks as props
-export const PodLogs = (props) => {
+export const PodLogs: FC<PodLogsProps> = (props) => {
   const { getQueryArgument, setQueryArgument } = useQueryParamsMutator();
   return (
     <PodLogsInner
@@ -121,3 +143,7 @@ export const PodLogs = (props) => {
     />
   );
 };
+
+interface PodLogsProps {
+  obj: PodKind;
+}

@@ -1,12 +1,19 @@
+import type { FC } from 'react';
 import { useMemo, Suspense } from 'react';
 import { Grid, GridItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
+import type {
+  ConsoleDataViewCell,
+  ConsoleDataViewColumn,
+  GetDataViewRows,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DASH } from '@console/shared/src/constants/ui';
 import { ServiceAccountModel } from '../models';
+import type { K8sResourceKind } from '../module/k8s';
 import { referenceForModel } from '../module/k8s';
 import { DetailsPage, ListPage } from './factory';
 import { ResourceSummary } from './utils/details-page';
@@ -18,6 +25,10 @@ import { LoadingBox } from './utils/status-box';
 const kind = 'ServiceAccount';
 const serviceAccountReference = referenceForModel(ServiceAccountModel);
 
+interface ServiceAccountKind extends K8sResourceKind {
+  secrets?: { name: string }[];
+}
+
 const tableColumnInfo = [
   { id: 'name' },
   { id: 'namespace' },
@@ -26,14 +37,14 @@ const tableColumnInfo = [
   { id: 'actions' },
 ];
 
-const getDataViewRows = (data, columns) =>
+const getDataViewRows: GetDataViewRows<ServiceAccountKind> = (data, columns) =>
   data.map(({ obj }) => {
     const {
       metadata: { name, namespace, uid, creationTimestamp },
       secrets,
     } = obj;
 
-    const rowCells = {
+    const rowCells: { [columnId: string]: Omit<ConsoleDataViewCell, 'id'> } = {
       [tableColumnInfo[0].id]: {
         cell: <ResourceLink kind={kind} name={name} namespace={namespace} title={uid} />,
       },
@@ -62,7 +73,7 @@ const getDataViewRows = (data, columns) =>
     });
   });
 
-const Details = ({ obj: serviceaccount }) => {
+const Details: FC<{ obj: ServiceAccountKind }> = ({ obj: serviceaccount }) => {
   const { t } = useTranslation('public');
 
   return (
@@ -77,7 +88,7 @@ const Details = ({ obj: serviceaccount }) => {
   );
 };
 
-const ServiceAccountsDetailsPage = (props) => (
+const ServiceAccountsDetailsPage: FC = (props) => (
   <DetailsPage
     {...props}
     kind={serviceAccountReference}
@@ -85,10 +96,12 @@ const ServiceAccountsDetailsPage = (props) => (
   />
 );
 
-const useServiceAccountColumns = () => {
+const useServiceAccountColumns = (): {
+  columns: ConsoleDataViewColumn<ServiceAccountKind>[];
+} => {
   const { t } = useTranslation('public');
 
-  const columns = useMemo(
+  const columns = useMemo<ConsoleDataViewColumn<ServiceAccountKind>[]>(
     () => [
       {
         type: 'name',
@@ -131,7 +144,12 @@ const useServiceAccountColumns = () => {
   return { columns };
 };
 
-const ServiceAccountsList = (props) => {
+const ServiceAccountsList: FC<{
+  data: ServiceAccountKind[];
+  loaded: boolean;
+  loadError?: unknown;
+  mock?: boolean;
+}> = (props) => {
   const { data, loaded } = props;
   const { t } = useTranslation('public');
   const { columns } = useServiceAccountColumns();
@@ -150,7 +168,13 @@ const ServiceAccountsList = (props) => {
     </Suspense>
   );
 };
-const ServiceAccountsPage = (props) => (
-  <ListPage ListComponent={ServiceAccountsList} {...props} canCreate omitFilterToolbar />
+const ServiceAccountsPage: FC = (props) => (
+  <ListPage
+    ListComponent={ServiceAccountsList}
+    {...props}
+    canCreate
+    omitFilterToolbar
+    kind={serviceAccountReference}
+  />
 );
 export { ServiceAccountsPage, ServiceAccountsDetailsPage };

@@ -863,7 +863,7 @@ export const CopyRoleBinding: FC<EditRoleBindingProps> = ({ kind }) => {
   );
 };
 
-type BindingKind = (RoleBindingKind | ClusterRoleBindingKind) & { subject: Subject };
+export type BindingKind = (RoleBindingKind | ClusterRoleBindingKind) & { subject: Subject };
 
 type BindingFilters = ResourceFilters & { 'role-kind': string[] };
 

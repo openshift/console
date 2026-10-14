@@ -67,6 +67,11 @@ const config = defineConfig([
     files: ['public/**/*.{js,jsx,ts,tsx,json}', 'packages/**/*.{js,jsx,ts,tsx,json}'],
     ignores: PACKAGES_EXCLUDE,
     extends: compat.extends('plugin:console/react-typescript-prettier'),
+    rules: {
+      // Allow dependency cycles that are broken up by at least one dynamic import, which is
+      // safe at runtime (the module is loaded only after its dependencies are initialized).
+      'import/no-cycle': ['error', { allowUnsafeDynamicCyclicDependency: true }],
+    },
     languageOptions: {
       globals: {
         process: 'readonly',

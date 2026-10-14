@@ -1,7 +1,22 @@
+import type { FC, MouseEventHandler, ReactNode } from 'react';
 import { Button, Divider, Flex, FlexItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 
-export const RowFilter = ({ allSelected, itemCount, selectedCount, onSelectAll, children }) => {
+interface RowFilterProps {
+  allSelected?: boolean;
+  itemCount: number;
+  selectedCount: number;
+  onSelectAll: MouseEventHandler<HTMLButtonElement>;
+  children?: ReactNode;
+}
+
+export const RowFilter: FC<RowFilterProps> = ({
+  allSelected,
+  itemCount,
+  selectedCount,
+  onSelectAll,
+  children,
+}) => {
   const { t } = useTranslation('public');
   return (
     <Flex

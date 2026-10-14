@@ -1,4 +1,5 @@
-import { Component, useState, useMemo, useEffect, useCallback, Suspense } from 'react';
+import type { FC } from 'react';
+import { useState, useMemo, useEffect, useCallback, Suspense } from 'react';
 import {
   DescriptionList,
   DescriptionListDescription,
@@ -11,9 +12,17 @@ import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
 import * as fuzzy from 'fuzzysearch';
 import i18next from 'i18next';
 import * as _ from 'lodash';
-import { useTranslation, withTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { useLocation, useParams } from 'react-router';
+import type { Location } from 'react-router';
 import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
+import type {
+  ConsoleDataViewCell,
+  ConsoleDataViewColumn,
+  GetDataViewRows,
+  ResourceFilters,
+  WatchK8sResource,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
@@ -21,6 +30,7 @@ import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
 import { DASH } from '@console/shared/src/constants/ui';
 import { RoleModel, RoleBindingModel } from '../../models';
+import type { K8sKind, K8sModel, K8sResourceKind } from '../../module/k8s';
 import { referenceForModel, referenceFor } from '../../module/k8s';
 import { DetailsForKind } from '../default-resource';
 import { DetailsPage } from '../factory/details';
@@ -33,14 +43,16 @@ import { navFactory } from '../utils/horizontal-nav';
 import { ResourceLink, resourceListPathFromModel } from '../utils/resource-link';
 import { LoadingBox } from '../utils/status-box';
 import { BindingName, flatten as bindingsFlatten } from './bindings';
+import type { BindingKind } from './bindings';
 import { roleKind, roleType } from './role-type';
 import { RulesList } from './rules';
+import type { RoleKind } from './rules';
 
 const tableColumnInfo = [{ id: 'name' }, { id: 'namespace-always-show' }, { id: 'actions' }];
 
-const getDataViewRows = (data, columns) =>
+const getDataViewRows: GetDataViewRows<RoleKind> = (data, columns) =>
   data.map(({ obj: role }) => {
-    const rowCells = {
+    const rowCells: { [columnId: string]: Omit<ConsoleDataViewCell, 'id'> } = {
       [tableColumnInfo[0].id]: {
         cell: (
           <ResourceLink
@@ -73,80 +85,74 @@ const getDataViewRows = (data, columns) =>
     });
   });
 
-class Details extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {};
-    this.changeFilter = (val) => this.setState({ ruleFilter: val });
-  }
+const Details: FC<{ obj: RoleKind }> = ({ obj: ruleObj }) => {
+  const { t } = useTranslation('public');
+  const [ruleFilter, setRuleFilter] = useState('');
 
-  render() {
-    const ruleObj = this.props.obj;
-    const { creationTimestamp, name, namespace } = ruleObj.metadata;
-    const { ruleFilter } = this.state;
+  const { creationTimestamp, name, namespace } = ruleObj.metadata;
 
-    let { rules } = ruleObj;
-    if (ruleFilter) {
-      const fuzzyCaseInsensitive = (a, b) => fuzzy(_.toLower(a), _.toLower(b));
-      const searchKeys = ['nonResourceURLs', 'resources', 'verbs', 'resourceNames'];
-      rules = rules.filter((rule) =>
-        searchKeys.some((k) => _.some(rule[k], (v) => fuzzyCaseInsensitive(ruleFilter, v))),
-      );
-    }
-    const { t } = this.props;
-
-    return (
-      <div>
-        <PaneBody>
-          <SectionHeading text={t('Role details')} />
-          <Grid hasGutter>
-            <GridItem span={6}>
-              <DescriptionList>
-                <DescriptionListGroup>
-                  <DescriptionListTerm>{t('Role name')}</DescriptionListTerm>
-                  <DescriptionListDescription>{name}</DescriptionListDescription>
-                </DescriptionListGroup>
-                {namespace && (
-                  <DescriptionListGroup>
-                    <DescriptionListTerm>{t('Namespace')}</DescriptionListTerm>
-                    <DescriptionListDescription>
-                      <ResourceLink kind="Namespace" name={namespace} />
-                    </DescriptionListDescription>
-                  </DescriptionListGroup>
-                )}
-              </DescriptionList>
-            </GridItem>
-            <GridItem span={6}>
-              <DescriptionList>
-                <DescriptionListGroup>
-                  <DescriptionListTerm>{t('Created at')}</DescriptionListTerm>
-                  <DescriptionListDescription>
-                    <Timestamp timestamp={creationTimestamp} />
-                  </DescriptionListDescription>
-                </DescriptionListGroup>
-              </DescriptionList>
-            </GridItem>
-          </Grid>
-        </PaneBody>
-        <PaneBody>
-          <SectionHeading text={t('Rules')} />
-          <div>
-            {/* This page is temporarily disabled until we update the safe resources list.
-            <div>
-              <Link to={addHref(name, namespace)}>
-                <Button variant="primary">{t('Add Rule')}</Button>
-              </Link>
-            </div>
-            */}
-            <TextFilter label={t('rules by action or resource')} onChange={this.changeFilter} />
-          </div>
-          <RulesList rules={rules} name={name} namespace={namespace} />
-        </PaneBody>
-      </div>
+  let { rules } = ruleObj;
+  if (ruleFilter) {
+    const fuzzyCaseInsensitive = (a: string, b: string) => fuzzy(_.toLower(a), _.toLower(b));
+    const searchKeys = ['nonResourceURLs', 'resources', 'verbs', 'resourceNames'];
+    rules = rules?.filter((rule) =>
+      searchKeys.some((k) => _.some(rule[k], (v) => fuzzyCaseInsensitive(ruleFilter, v))),
     );
   }
-}
-const DetailsWithTranslation = withTranslation()(Details);
+
+  return (
+    <div>
+      <PaneBody>
+        <SectionHeading text={t('Role details')} />
+        <Grid hasGutter>
+          <GridItem span={6}>
+            <DescriptionList>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('Role name')}</DescriptionListTerm>
+                <DescriptionListDescription>{name}</DescriptionListDescription>
+              </DescriptionListGroup>
+              {namespace && (
+                <DescriptionListGroup>
+                  <DescriptionListTerm>{t('Namespace')}</DescriptionListTerm>
+                  <DescriptionListDescription>
+                    <ResourceLink kind="Namespace" name={namespace} />
+                  </DescriptionListDescription>
+                </DescriptionListGroup>
+              )}
+            </DescriptionList>
+          </GridItem>
+          <GridItem span={6}>
+            <DescriptionList>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('Created at')}</DescriptionListTerm>
+                <DescriptionListDescription>
+                  <Timestamp timestamp={creationTimestamp} />
+                </DescriptionListDescription>
+              </DescriptionListGroup>
+            </DescriptionList>
+          </GridItem>
+        </Grid>
+      </PaneBody>
+      <PaneBody>
+        <SectionHeading text={t('Rules')} />
+        <div>
+          {/* This page is temporarily disabled until we update the safe resources list.
+          <div>
+            <Link to={addHref(name, namespace)}>
+              <Button variant="primary">{t('Add Rule')}</Button>
+            </Link>
+          </div>
+          */}
+          <TextFilter
+            label={t('rules by action or resource')}
+            onChange={(_e, val) => setRuleFilter(val)}
+          />
+        </div>
+        <RulesList rules={rules ?? []} name={name} namespace={namespace} />
+      </PaneBody>
+    </div>
+  );
+};
 
 const bindingsTableColumnInfo = [
   { id: 'name' },
@@ -155,9 +161,9 @@ const bindingsTableColumnInfo = [
   { id: 'namespace-always-show' },
 ];
 
-const getBindingsDataViewRows = (data, columns) =>
+const getBindingsDataViewRows: GetDataViewRows<BindingKind> = (data, columns) =>
   data.map(({ obj: binding }) => {
-    const rowCells = {
+    const rowCells: { [columnId: string]: Omit<ConsoleDataViewCell, 'id'> } = {
       [bindingsTableColumnInfo[0].id]: {
         cell: <BindingName binding={binding} />,
       },
@@ -187,9 +193,9 @@ const getBindingsDataViewRows = (data, columns) =>
     });
   });
 
-const useBindingsColumns = () => {
+const useBindingsColumns = (): ConsoleDataViewColumn<BindingKind>[] => {
   const { t } = useTranslation('public');
-  return useMemo(
+  return useMemo<ConsoleDataViewColumn<BindingKind>[]>(
     () => [
       {
         type: 'name',
@@ -229,7 +235,7 @@ const useBindingsColumns = () => {
   );
 };
 
-const BindingsListComponent = (props) => {
+const BindingsListComponent: FC<BindingsListComponentProps> = (props) => {
   const { t } = useTranslation('public');
   const columns = useBindingsColumns();
 
@@ -251,9 +257,11 @@ const BindingsListComponent = (props) => {
         const filterKey = Object.keys(filter)[0];
         const filterValue = filter[filterKey];
 
-        // Use the table filter function if it exists
+        // Use the table filter function if it exists. Static filters pass plain string
+        // values, while row-filter functions expect a FilterValue object.
+        const filterFn = filtersMap[filterKey] as (value: string, obj: BindingKind) => boolean;
         if (filtersMap[filterKey]) {
-          return filtersMap[filterKey](filterValue, binding);
+          return filterFn(filterValue, binding);
         }
         return true;
       }),
@@ -276,12 +284,12 @@ const BindingsListComponent = (props) => {
   );
 };
 
-const BindingsForRolePage = (props) => {
+const BindingsForRolePage: FC<{ obj: RoleKind }> = (props) => {
   const { name, ns } = useParams();
   const {
     obj: { kind },
   } = props;
-  const resources = [{ kind: 'RoleBinding', namespaced: true }];
+  const resources: WatchK8sResource[] = [{ kind: 'RoleBinding', namespaced: true }];
   if (!ns) {
     resources.push({ kind: 'ClusterRoleBinding', namespaced: false, optional: true });
   }
@@ -310,7 +318,7 @@ const BindingsForRolePage = (props) => {
   );
 };
 
-const getBreadcrumbs = (model, kindObj, location) => {
+const getBreadcrumbs = (model: K8sKind, kindObj: K8sKind, location: Location) => {
   const lastNamespace = getLastNamespace();
   return [
     {
@@ -329,20 +337,20 @@ const getBreadcrumbs = (model, kindObj, location) => {
   ];
 };
 
-export const RolesDetailsPage = (props) => {
+export const RolesDetailsPage: FC<{ kindObj: K8sKind }> = (props) => {
   const location = useLocation();
   return (
     <DetailsPage
       {...props}
       kind={referenceForModel(props.kindObj)}
-      customActionMenu={(k8sObj, obj) => (
+      customActionMenu={(_k8sObj: K8sModel, obj: K8sResourceKind) => (
         <LazyActionMenu
           context={{ [referenceForModel(props.kindObj)]: obj }}
           variant={ActionMenuVariant.DROPDOWN}
         />
       )}
       pages={[
-        navFactory.details(DetailsWithTranslation),
+        navFactory.details(Details),
         navFactory.editYaml(),
         {
           href: 'bindings',
@@ -356,7 +364,7 @@ export const RolesDetailsPage = (props) => {
   );
 };
 
-export const ClusterRoleBindingsDetailsPage = (props) => {
+export const ClusterRoleBindingsDetailsPage: FC<{ kindObj: K8sKind }> = (props) => {
   const pages = [navFactory.details(DetailsForKind), navFactory.editYaml()];
   const location = useLocation();
 
@@ -364,7 +372,7 @@ export const ClusterRoleBindingsDetailsPage = (props) => {
     <DetailsPage
       {...props}
       kind={referenceForModel(props.kindObj)}
-      customActionMenu={(k8sObj, obj) => (
+      customActionMenu={(_k8sObj: K8sModel, obj: K8sResourceKind) => (
         <LazyActionMenu
           context={{ [referenceForModel(props.kindObj)]: obj }}
           variant={ActionMenuVariant.DROPDOWN}
@@ -376,10 +384,12 @@ export const ClusterRoleBindingsDetailsPage = (props) => {
   );
 };
 
-const useRolesColumns = () => {
+const useRolesColumns = (): {
+  columns: ConsoleDataViewColumn<RoleKind>[];
+} => {
   const { t } = useTranslation('public');
 
-  const columns = useMemo(
+  const columns = useMemo<ConsoleDataViewColumn<RoleKind>[]>(
     () => [
       {
         type: 'name',
@@ -427,9 +437,13 @@ const useRoleFilterOptions = () => {
   );
 };
 
-const initialFilters = { 'role-kind': [] };
+interface RoleFilters extends ResourceFilters {
+  'role-kind': string[];
+}
 
-const RolesList = (props) => {
+const initialFilters: Partial<RoleFilters> = { 'role-kind': [] };
+
+const RolesList: FC<RolesListProps> = (props) => {
   const { t } = useTranslation('public');
   const { data, loaded } = props;
   const { columns } = useRolesColumns();
@@ -449,14 +463,14 @@ const RolesList = (props) => {
   );
 
   const matchesAdditionalFilters = useCallback(
-    (resource, filters) =>
+    (resource: RoleKind, filters: RoleFilters) =>
       filters['role-kind'].length === 0 || filters['role-kind'].includes(roleType(resource)),
     [],
   );
 
   return (
     <Suspense fallback={<LoadingBox />}>
-      <ConsoleDataView
+      <ConsoleDataView<RoleKind, undefined, RoleFilters>
         {...props}
         id={RoleModel}
         data={data}
@@ -472,7 +486,7 @@ const RolesList = (props) => {
   );
 };
 
-export const RolesPage = ({ namespace, mock, showTitle }) => {
+export const RolesPage: FC<RolesPageProps> = ({ namespace, mock, showTitle }) => {
   const { t } = useTranslation('public');
   const location = useLocation();
 
@@ -495,7 +509,7 @@ export const RolesPage = ({ namespace, mock, showTitle }) => {
     const hasNamespaceOrSystem =
       selectedFilters.includes('namespace') || selectedFilters.includes('system');
 
-    const resourcesList = [];
+    const resourcesList: WatchK8sResource[] = [];
 
     // Only fetch Role if namespace/system filter selected OR no filters selected
     if (hasNamespaceOrSystem || selectedFilters.length === 0) {
@@ -541,3 +555,24 @@ export const RolesPage = ({ namespace, mock, showTitle }) => {
     />
   );
 };
+
+interface BindingsListComponentProps {
+  data: BindingKind[];
+  loaded: boolean;
+  loadError?: unknown;
+  mock?: boolean;
+  staticFilters?: { [key: string]: string } | { [key: string]: string }[];
+}
+
+interface RolesListProps {
+  data: RoleKind[];
+  loaded: boolean;
+  loadError?: unknown;
+  mock?: boolean;
+}
+
+interface RolesPageProps {
+  namespace?: string;
+  mock?: boolean;
+  showTitle?: boolean;
+}

@@ -1,3 +1,4 @@
+import type { FC } from 'react';
 import { useMemo, Suspense } from 'react';
 import {
   DescriptionList,
@@ -9,8 +10,16 @@ import {
 } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
+import {
+  ConsoleDataView,
+  getLabelsColumnWidthStyleProp,
+} from '@console/app/src/components/data-view/ConsoleDataView';
 import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
+import type {
+  ConsoleDataViewCell,
+  ConsoleDataViewColumn,
+  GetDataViewRows,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { ActionServiceProvider } from '@console/shared/src/components/actions/ActionServiceProvider';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
@@ -18,25 +27,70 @@ import { ActionMenu } from '@console/shared/src/components/actions/menu/ActionMe
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { Status } from '@console/shared/src/components/status/Status';
 import { DASH } from '@console/shared/src/constants/ui';
-import { ReplicationControllerModel } from '../models';
-import { referenceForModel } from '../module/k8s';
+import { ReplicaSetModel } from '../models';
+import type { K8sModel, K8sResourceKind, ReplicaSetKind } from '../module/k8s';
+import { referenceFor, referenceForModel } from '../module/k8s';
 import { ResourceEventStream } from './events';
-import { DetailsPage, ListPage, sorts } from './factory';
+import { DetailsPage } from './factory/details';
+import { ListPage } from './factory/list-page';
+import { sorts } from './factory/table';
 import { sortResourceByValue } from './factory/Table/sort';
 import { AsyncComponent } from './utils/async';
 import { ContainerTable } from './utils/container-table';
 import { ResourceSummary, ResourcePodCount, RuntimeClass } from './utils/details-page';
 import { SectionHeading } from './utils/headings';
 import { navFactory, PodsComponent } from './utils/horizontal-nav';
+import { LabelList } from './utils/label-list';
 import { OwnerReferences } from './utils/owner-references';
 import { ResourceLink } from './utils/resource-link';
 import { LoadingBox } from './utils/status-box';
 import { VolumesTable } from './volumes-table';
 import { ReplicasCount } from './workload-table';
 
-const EnvironmentPage = (props) => (
+const Details: FC<{ obj: ReplicaSetKind }> = ({ obj: replicaSet }) => {
+  const revision = _.get(replicaSet, [
+    'metadata',
+    'annotations',
+    'deployment.kubernetes.io/revision',
+  ]);
+  const { t } = useTranslation('public');
+  return (
+    <>
+      <PaneBody>
+        <SectionHeading text={t('ReplicaSet details')} />
+        <Grid hasGutter>
+          <GridItem md={6}>
+            <ResourceSummary resource={replicaSet} showPodSelector showNodeSelector showTolerations>
+              {revision && (
+                <DescriptionListGroup>
+                  <DescriptionListTerm>{t('Deployment revision')}</DescriptionListTerm>
+                  <DescriptionListDescription>{revision}</DescriptionListDescription>
+                </DescriptionListGroup>
+              )}
+            </ResourceSummary>
+          </GridItem>
+          <GridItem md={6}>
+            <DescriptionList>
+              <ResourcePodCount resource={replicaSet} />
+              <RuntimeClass obj={replicaSet} />
+              <PodDisruptionBudgetField obj={replicaSet} />
+            </DescriptionList>
+          </GridItem>
+        </Grid>
+      </PaneBody>
+      <PaneBody>
+        <SectionHeading text={t('Containers')} />
+        <ContainerTable containers={replicaSet.spec.template.spec.containers} />
+      </PaneBody>
+      <PaneBody>
+        <VolumesTable resource={replicaSet} heading={t('Volumes')} />
+      </PaneBody>
+    </>
+  );
+};
+
+const EnvironmentPage: FC<EnvironmentPageProps> = (props) => (
   <AsyncComponent
     loader={() => import('./environment').then((c) => c.EnvironmentPage)}
     {...props}
@@ -44,7 +98,7 @@ const EnvironmentPage = (props) => (
 );
 
 const envPath = ['spec', 'template', 'spec', 'containers'];
-const environmentComponent = (props) => (
+const EnvironmentTab: FC<{ obj: ReplicaSetKind }> = (props) => (
   <EnvironmentPage
     obj={props.obj}
     rawEnvData={props.obj.spec.template.spec}
@@ -53,72 +107,13 @@ const environmentComponent = (props) => (
   />
 );
 
+const ReplicaSetPods: FC<{ obj: ReplicaSetKind }> = (props) => (
+  <PodsComponent {...props} showNodes />
+);
+
 const { details, editYaml, pods, envEditor, events } = navFactory;
-
-const ReplicationControllerPods = (props) => <PodsComponent {...props} showNodes />;
-
-export const ReplicationControllersDetailsPage = (props) => {
-  const { t } = useTranslation('public');
-  const Details = ({ obj: replicationController }) => {
-    const revision = _.get(replicationController, [
-      'metadata',
-      'annotations',
-      'openshift.io/deployment-config.latest-version',
-    ]);
-    const phase = _.get(replicationController, [
-      'metadata',
-      'annotations',
-      'openshift.io/deployment.phase',
-    ]);
-    return (
-      <>
-        <PaneBody>
-          <SectionHeading text={t('ReplicationController details')} />
-          <Grid hasGutter>
-            <GridItem md={6}>
-              <ResourceSummary
-                resource={replicationController}
-                showPodSelector
-                showNodeSelector
-                showTolerations
-              >
-                {revision && (
-                  <DescriptionListGroup>
-                    <DescriptionListTerm>{t('Deployment revision')}</DescriptionListTerm>
-                    <DescriptionListDescription>{revision}</DescriptionListDescription>
-                  </DescriptionListGroup>
-                )}
-              </ResourceSummary>
-            </GridItem>
-            <GridItem md={6}>
-              <DescriptionList>
-                {phase && (
-                  <DescriptionListGroup>
-                    <DescriptionListTerm>{t('Phase')}</DescriptionListTerm>
-                    <DescriptionListDescription>
-                      <Status status={phase} />
-                    </DescriptionListDescription>
-                  </DescriptionListGroup>
-                )}
-                <ResourcePodCount resource={replicationController} />
-                <RuntimeClass obj={replicationController} />
-                <PodDisruptionBudgetField obj={replicationController} />
-              </DescriptionList>
-            </GridItem>
-          </Grid>
-        </PaneBody>
-        <PaneBody>
-          <SectionHeading text={t('Containers')} />
-          <ContainerTable containers={replicationController.spec.template.spec.containers} />
-        </PaneBody>
-        <PaneBody>
-          <VolumesTable resource={replicationController} heading={t('Volumes')} />
-        </PaneBody>
-      </>
-    );
-  };
-
-  const customActionMenu = (kindObj, obj) => {
+const ReplicaSetsDetailsPage: FC = (props) => {
+  const customActionMenu = (kindObj: K8sModel, obj: ReplicaSetKind) => {
     const resourceKind = referenceForModel(kindObj);
     const context = { [resourceKind]: obj };
     return (
@@ -135,15 +130,13 @@ export const ReplicationControllersDetailsPage = (props) => {
   return (
     <DetailsPage
       {...props}
-      getResourceStatus={(resource) =>
-        resource?.metadata?.annotations?.['openshift.io/deployment.phase'] || null
-      }
+      kind={referenceForModel(ReplicaSetModel)}
       customActionMenu={customActionMenu}
       pages={[
         details(Details),
         editYaml(),
-        pods(ReplicationControllerPods),
-        envEditor(environmentComponent),
+        pods(ReplicaSetPods),
+        envEditor(EnvironmentTab),
         events(ResourceEventStream),
       ]}
     />
@@ -154,23 +147,24 @@ const tableColumnInfo = [
   { id: 'name' },
   { id: 'namespace' },
   { id: 'status' },
-  { id: 'phase' },
+  { id: 'labels' },
   { id: 'owner' },
   { id: 'created' },
   { id: '' },
 ];
 
-const getDataViewRows = (data, columns) =>
+const getDataViewRows: GetDataViewRows<ReplicaSetKind> = (data, columns) =>
   data.map(({ obj }) => {
     const { name, namespace } = obj.metadata;
-    const phase = obj?.metadata?.annotations?.['openshift.io/deployment.phase'];
-    const context = { [referenceForModel(ReplicationControllerModel)]: obj };
+    const kind = referenceForModel(ReplicaSetModel);
+    const resourceKind = referenceFor(obj);
+    const context = { [resourceKind]: obj };
 
-    const rowCells = {
+    const rowCells: { [columnId: string]: Omit<ConsoleDataViewCell, 'id'> } = {
       [tableColumnInfo[0].id]: {
         cell: (
           <ResourceLink
-            groupVersionKind={getGroupVersionKindForModel(ReplicationControllerModel)}
+            groupVersionKind={getGroupVersionKindForModel(ReplicaSetModel)}
             name={name}
             namespace={namespace}
           />
@@ -180,10 +174,10 @@ const getDataViewRows = (data, columns) =>
         cell: <ResourceLink kind="Namespace" name={namespace} />,
       },
       [tableColumnInfo[2].id]: {
-        cell: <ReplicasCount obj={obj} kind={referenceForModel(ReplicationControllerModel)} />,
+        cell: <ReplicasCount obj={obj} kind={kind} />,
       },
       [tableColumnInfo[3].id]: {
-        cell: <Status status={phase} />,
+        cell: <LabelList kind={kind} labels={obj.metadata.labels} />,
       },
       [tableColumnInfo[4].id]: {
         cell: <OwnerReferences resource={obj} />,
@@ -206,10 +200,12 @@ const getDataViewRows = (data, columns) =>
     });
   });
 
-const useReplicationControllersColumns = () => {
+const useReplicaSetsColumns = (): {
+  columns: ConsoleDataViewColumn<ReplicaSetKind>[];
+} => {
   const { t } = useTranslation('public');
 
-  const columns = useMemo(
+  const columns = useMemo<ConsoleDataViewColumn<ReplicaSetKind>[]>(
     () => [
       {
         type: 'name',
@@ -237,11 +233,12 @@ const useReplicationControllersColumns = () => {
         },
       },
       {
-        title: t('Phase'),
+        title: t('Labels'),
         id: tableColumnInfo[3].id,
-        sort: 'metadata.annotations["openshift.io/deployment.phase"]',
+        sort: 'metadata.labels',
         props: {
           modifier: 'nowrap',
+          ...getLabelsColumnWidthStyleProp(),
         },
       },
       {
@@ -268,15 +265,15 @@ const useReplicationControllersColumns = () => {
   return { columns };
 };
 
-const ReplicationControllersList = ({ data, loaded, ...props }) => {
-  const { columns } = useReplicationControllersColumns();
+const ReplicaSetsList: FC<ReplicaSetsListProps> = ({ data, loaded, ...props }) => {
+  const { columns } = useReplicaSetsColumns();
 
   return (
     <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView
         {...props}
-        id={ReplicationControllerModel}
-        label={ReplicationControllerModel.labelPlural}
+        id={ReplicaSetModel}
+        label={ReplicaSetModel.labelPlural}
         data={data}
         loaded={loaded}
         columns={columns}
@@ -285,16 +282,38 @@ const ReplicationControllersList = ({ data, loaded, ...props }) => {
     </Suspense>
   );
 };
-
-export const ReplicationControllersPage = (props) => {
+const ReplicaSetsPage: FC<ReplicaSetsPageProps> = (props) => {
   const { canCreate = true } = props;
   return (
     <ListPage
       {...props}
-      kind={referenceForModel(ReplicationControllerModel)}
-      ListComponent={ReplicationControllersList}
+      kind={referenceForModel(ReplicaSetModel)}
+      ListComponent={ReplicaSetsList}
       canCreate={canCreate}
       omitFilterToolbar
     />
   );
 };
+
+interface EnvironmentPageProps {
+  obj: K8sResourceKind;
+  rawEnvData: any;
+  envPath: string[];
+  readOnly: boolean;
+}
+
+interface ReplicaSetsListProps {
+  data: ReplicaSetKind[];
+  loaded: boolean;
+  loadError?: unknown;
+  mock?: boolean;
+}
+
+interface ReplicaSetsPageProps {
+  canCreate?: boolean;
+  showTitle?: boolean;
+  namespace?: string;
+  selector?: any;
+}
+
+export { ReplicaSetsPage, ReplicaSetsDetailsPage };

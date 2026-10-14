@@ -1,23 +1,59 @@
+import type { ChangeEvent, DetailedHTMLProps, HTMLAttributes } from 'react';
 import { Component } from 'react';
 import { Label as PfLabel } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
 import * as _ from 'lodash';
 import * as TagsInput from 'react-tagsinput';
+import type { MatchExpression } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import { selectorToString } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { split, selectorFromString } from '../../module/k8s/selector';
 import * as k8sSelectorRequirement from '../../module/k8s/selector-requirement';
 
-// Helpers for cleaning up tags by running them through the selector parser
-const cleanSelectorStr = (tag) => selectorToString(selectorFromString(tag));
-const cleanTags = (tags) => split(cleanSelectorStr(tags.join(',')));
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      // Custom element used as a styling hook for the tags input (see `_label.scss`)
+      'tags-input': DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>;
+    }
+  }
+}
 
-export class SelectorInput extends Component {
-  static arrayify(obj) {
+// Helpers for cleaning up tags by running them through the selector parser
+const cleanSelectorStr = (tag: string) => selectorToString(selectorFromString(tag));
+const cleanTags = (tags: string[]) => split(cleanSelectorStr(tags.join(',')));
+
+export interface SelectorInputProps {
+  autoFocus?: boolean;
+  /** Additional props spread onto the underlying input element. */
+  inputProps?: { [key: string]: unknown };
+  labelClassName?: string;
+  onChange: (tags: string[]) => void;
+  onValidationChange?: (isValid: boolean) => void;
+  options?: { basic?: boolean };
+  placeholder?: string;
+  tags: string[];
+}
+
+interface SelectorInputState {
+  inputValue: string;
+  isInputValid: boolean;
+  tags: string[];
+}
+
+interface RenderTagProps {
+  tag: string;
+  key: number;
+  onRemove: (key: number) => void;
+  getTagDisplayValue: (tag: string) => string;
+}
+
+export class SelectorInput extends Component<SelectorInputProps, SelectorInputState> {
+  static arrayify(obj: { [key: string]: string | null }): string[] {
     return _.map(obj, (v, k) => (v ? `${k}=${v}` : k));
   }
 
-  static objectify(arr) {
-    const result = {};
+  static objectify(arr: string[]): { [key: string]: string | null } {
+    const result: { [key: string]: string | null } = {};
     _.each(arr, (item) => {
       const [key, value = null] = item.split('=');
       result[key] = value;
@@ -25,12 +61,15 @@ export class SelectorInput extends Component {
     return result;
   }
 
-  static arrayObjectsToArrayStrings(obj) {
-    return _.map(obj, (v) => `${v.key} ${v.operator.toLowerCase()} (${v.values.join(',')})`);
+  static arrayObjectsToArrayStrings(obj: MatchExpression[]): string[] {
+    return _.map(
+      obj,
+      (v) => `${v.key} ${v.operator.toLowerCase()} (${(v.values ?? []).join(',')})`,
+    );
   }
 
-  static arrayToArrayOfObjects(arr) {
-    const result = [];
+  static arrayToArrayOfObjects(arr: string[]): MatchExpression[] {
+    const result: MatchExpression[] = [];
     for (const item of arr) {
       if (item.includes('(')) {
         const [key, operator, values] = item.split(' ');
@@ -45,17 +84,16 @@ export class SelectorInput extends Component {
     return result;
   }
 
-  notifyValidationChange = (isValid) => {
-    if (this.props.onValidationChange) {
-      this.props.onValidationChange(isValid);
-    }
+  private isBasic = !!_.get(this.props.options, 'basic');
+
+  private inputRef: { focus: () => void };
+
+  private setRef = (ref: { focus: () => void }) => {
+    this.inputRef = ref;
   };
 
-  constructor(props) {
+  constructor(props: SelectorInputProps) {
     super(props);
-    this.isBasic = !!_.get(this.props.options, 'basic');
-    this.setRef = (ref) => (this.ref_ = ref);
-    this.handleChange = this.handleChange.bind(this);
     this.state = {
       inputValue: '',
       isInputValid: true,
@@ -63,7 +101,13 @@ export class SelectorInput extends Component {
     };
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  notifyValidationChange = (isValid: boolean) => {
+    if (this.props.onValidationChange) {
+      this.props.onValidationChange(isValid);
+    }
+  };
+
+  componentDidUpdate(prevProps: SelectorInputProps, prevState: SelectorInputState) {
     if (!_.isEqual(prevProps.tags, this.props.tags)) {
       this.setState({ tags: this.props.tags });
     }
@@ -76,17 +120,17 @@ export class SelectorInput extends Component {
 
   // eslint-disable-next-line react/no-unused-class-component-methods
   focus() {
-    if (this.ref_) {
-      this.ref_.focus();
+    if (this.inputRef) {
+      this.inputRef.focus();
     }
   }
 
-  isTagValid(tag) {
+  isTagValid(tag: string) {
     const requirement = k8sSelectorRequirement.requirementFromString(tag);
     return !!(requirement && (!this.isBasic || requirement.operator === 'Equals'));
   }
 
-  handleInputChange(e) {
+  handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     // We track the input field value in state so we can retain the input value when an invalid tag is entered.
     // Otherwise, the default behaviour of TagsInput is to clear the input field.
     const inputValue = e.target.value;
@@ -99,9 +143,9 @@ export class SelectorInput extends Component {
 
     const isValid = this.isTagValid(inputValue);
     this.setState({ inputValue, isInputValid: isValid });
-  }
+  };
 
-  handleChange(tags, changed) {
+  handleChange = (tags: string[], changed: string[]) => {
     // The way we use TagsInput, there should only ever be one new tag in changed
     const newTag = changed[0];
 
@@ -124,7 +168,7 @@ export class SelectorInput extends Component {
     const newTags = cleanTags(tags);
     this.setState({ inputValue: '', isInputValid: true, tags: newTags });
     this.props.onChange(newTags);
-  }
+  };
 
   render() {
     const { inputValue, isInputValid, tags } = this.state;
@@ -138,7 +182,7 @@ export class SelectorInput extends Component {
     const inputProps = {
       autoFocus: this.props.autoFocus,
       className: css('input', { 'invalid-tag': !isInputValid }),
-      onChange: this.handleInputChange.bind(this),
+      onChange: this.handleInputChange,
       placeholder: _.isEmpty(tags) ? this.props.placeholder || 'app=frontend' : '',
       spellCheck: 'false',
       value: inputValue,
@@ -147,7 +191,7 @@ export class SelectorInput extends Component {
       ...(this.props.inputProps || {}),
     };
 
-    const renderTag = ({ tag, key, onRemove, getTagDisplayValue }) => (
+    const renderTag = ({ tag, key, onRemove, getTagDisplayValue }: RenderTagProps): JSX.Element => (
       <PfLabel
         className={css('co-label tag-item-content', this.props.labelClassName)}
         key={key}

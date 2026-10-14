@@ -1,5 +1,4 @@
-// TODO file should be renamed replica-set.jsx to match convention
-
+import type { FC } from 'react';
 import { useMemo, Suspense } from 'react';
 import {
   DescriptionList,
@@ -11,11 +10,13 @@ import {
 } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import {
-  ConsoleDataView,
-  getLabelsColumnWidthStyleProp,
-} from '@console/app/src/components/data-view/ConsoleDataView';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
+import type {
+  ConsoleDataViewCell,
+  ConsoleDataViewColumn,
+  GetDataViewRows,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { ActionServiceProvider } from '@console/shared/src/components/actions/ActionServiceProvider';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
@@ -23,40 +24,72 @@ import { ActionMenu } from '@console/shared/src/components/actions/menu/ActionMe
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { Status } from '@console/shared/src/components/status/Status';
 import { DASH } from '@console/shared/src/constants/ui';
-import { ReplicaSetModel } from '../models';
-import { referenceFor, referenceForModel } from '../module/k8s';
+import { ReplicationControllerModel } from '../models';
+import type { K8sModel, K8sResourceKind, ReplicationControllerKind } from '../module/k8s';
+import { referenceForModel } from '../module/k8s';
 import { ResourceEventStream } from './events';
-import { DetailsPage } from './factory/details';
-import { ListPage } from './factory/list-page';
-import { sorts } from './factory/table';
+import { DetailsPage, ListPage, sorts } from './factory';
 import { sortResourceByValue } from './factory/Table/sort';
 import { AsyncComponent } from './utils/async';
 import { ContainerTable } from './utils/container-table';
 import { ResourceSummary, ResourcePodCount, RuntimeClass } from './utils/details-page';
 import { SectionHeading } from './utils/headings';
 import { navFactory, PodsComponent } from './utils/horizontal-nav';
-import { LabelList } from './utils/label-list';
 import { OwnerReferences } from './utils/owner-references';
 import { ResourceLink } from './utils/resource-link';
 import { LoadingBox } from './utils/status-box';
 import { VolumesTable } from './volumes-table';
 import { ReplicasCount } from './workload-table';
 
-const Details = ({ obj: replicaSet }) => {
-  const revision = _.get(replicaSet, [
+const EnvironmentPage: FC<EnvironmentPageProps> = (props) => (
+  <AsyncComponent
+    loader={() => import('./environment').then((c) => c.EnvironmentPage)}
+    {...props}
+  />
+);
+
+const envPath = ['spec', 'template', 'spec', 'containers'];
+const EnvironmentTab: FC<{ obj: ReplicationControllerKind }> = (props) => (
+  <EnvironmentPage
+    obj={props.obj}
+    rawEnvData={props.obj.spec.template.spec}
+    envPath={envPath}
+    readOnly={false}
+  />
+);
+
+const { details, editYaml, pods, envEditor, events } = navFactory;
+
+const ReplicationControllerPods: FC<{ obj: ReplicationControllerKind }> = (props) => (
+  <PodsComponent {...props} showNodes />
+);
+
+const Details: FC<{ obj: ReplicationControllerKind }> = ({ obj: replicationController }) => {
+  const { t } = useTranslation('public');
+  const revision = _.get(replicationController, [
     'metadata',
     'annotations',
-    'deployment.kubernetes.io/revision',
+    'openshift.io/deployment-config.latest-version',
   ]);
-  const { t } = useTranslation('public');
+  const phase = _.get(replicationController, [
+    'metadata',
+    'annotations',
+    'openshift.io/deployment.phase',
+  ]);
   return (
     <>
       <PaneBody>
-        <SectionHeading text={t('ReplicaSet details')} />
+        <SectionHeading text={t('ReplicationController details')} />
         <Grid hasGutter>
           <GridItem md={6}>
-            <ResourceSummary resource={replicaSet} showPodSelector showNodeSelector showTolerations>
+            <ResourceSummary
+              resource={replicationController}
+              showPodSelector
+              showNodeSelector
+              showTolerations
+            >
               {revision && (
                 <DescriptionListGroup>
                   <DescriptionListTerm>{t('Deployment revision')}</DescriptionListTerm>
@@ -67,46 +100,34 @@ const Details = ({ obj: replicaSet }) => {
           </GridItem>
           <GridItem md={6}>
             <DescriptionList>
-              <ResourcePodCount resource={replicaSet} />
-              <RuntimeClass obj={replicaSet} />
-              <PodDisruptionBudgetField obj={replicaSet} />
+              {phase && (
+                <DescriptionListGroup>
+                  <DescriptionListTerm>{t('Phase')}</DescriptionListTerm>
+                  <DescriptionListDescription>
+                    <Status status={phase} />
+                  </DescriptionListDescription>
+                </DescriptionListGroup>
+              )}
+              <ResourcePodCount resource={replicationController} />
+              <RuntimeClass obj={replicationController} />
+              <PodDisruptionBudgetField obj={replicationController} />
             </DescriptionList>
           </GridItem>
         </Grid>
       </PaneBody>
       <PaneBody>
         <SectionHeading text={t('Containers')} />
-        <ContainerTable containers={replicaSet.spec.template.spec.containers} />
+        <ContainerTable containers={replicationController.spec.template.spec.containers} />
       </PaneBody>
       <PaneBody>
-        <VolumesTable resource={replicaSet} heading={t('Volumes')} />
+        <VolumesTable resource={replicationController} heading={t('Volumes')} />
       </PaneBody>
     </>
   );
 };
 
-const EnvironmentPage = (props) => (
-  <AsyncComponent
-    loader={() => import('./environment').then((c) => c.EnvironmentPage)}
-    {...props}
-  />
-);
-
-const envPath = ['spec', 'template', 'spec', 'containers'];
-const environmentComponent = (props) => (
-  <EnvironmentPage
-    obj={props.obj}
-    rawEnvData={props.obj.spec.template.spec}
-    envPath={envPath}
-    readOnly={false}
-  />
-);
-
-const ReplicaSetPods = (props) => <PodsComponent {...props} showNodes />;
-
-const { details, editYaml, pods, envEditor, events } = navFactory;
-const ReplicaSetsDetailsPage = (props) => {
-  const customActionMenu = (kindObj, obj) => {
+export const ReplicationControllersDetailsPage: FC = (props) => {
+  const customActionMenu = (kindObj: K8sModel, obj: K8sResourceKind) => {
     const resourceKind = referenceForModel(kindObj);
     const context = { [resourceKind]: obj };
     return (
@@ -123,12 +144,16 @@ const ReplicaSetsDetailsPage = (props) => {
   return (
     <DetailsPage
       {...props}
+      kind={referenceForModel(ReplicationControllerModel)}
+      getResourceStatus={(resource: K8sResourceKind) =>
+        resource?.metadata?.annotations?.['openshift.io/deployment.phase'] || null
+      }
       customActionMenu={customActionMenu}
       pages={[
         details(Details),
         editYaml(),
-        pods(ReplicaSetPods),
-        envEditor(environmentComponent),
+        pods(ReplicationControllerPods),
+        envEditor(EnvironmentTab),
         events(ResourceEventStream),
       ]}
     />
@@ -139,24 +164,23 @@ const tableColumnInfo = [
   { id: 'name' },
   { id: 'namespace' },
   { id: 'status' },
-  { id: 'labels' },
+  { id: 'phase' },
   { id: 'owner' },
   { id: 'created' },
   { id: '' },
 ];
 
-const getDataViewRows = (data, columns) =>
+const getDataViewRows: GetDataViewRows<ReplicationControllerKind> = (data, columns) =>
   data.map(({ obj }) => {
     const { name, namespace } = obj.metadata;
-    const kind = referenceForModel(ReplicaSetModel);
-    const resourceKind = referenceFor(obj);
-    const context = { [resourceKind]: obj };
+    const phase = obj?.metadata?.annotations?.['openshift.io/deployment.phase'];
+    const context = { [referenceForModel(ReplicationControllerModel)]: obj };
 
-    const rowCells = {
+    const rowCells: { [columnId: string]: Omit<ConsoleDataViewCell, 'id'> } = {
       [tableColumnInfo[0].id]: {
         cell: (
           <ResourceLink
-            groupVersionKind={getGroupVersionKindForModel(ReplicaSetModel)}
+            groupVersionKind={getGroupVersionKindForModel(ReplicationControllerModel)}
             name={name}
             namespace={namespace}
           />
@@ -166,10 +190,10 @@ const getDataViewRows = (data, columns) =>
         cell: <ResourceLink kind="Namespace" name={namespace} />,
       },
       [tableColumnInfo[2].id]: {
-        cell: <ReplicasCount obj={obj} kind={kind} />,
+        cell: <ReplicasCount obj={obj} kind={referenceForModel(ReplicationControllerModel)} />,
       },
       [tableColumnInfo[3].id]: {
-        cell: <LabelList kind={kind} labels={obj.metadata.labels} />,
+        cell: <Status status={phase} />,
       },
       [tableColumnInfo[4].id]: {
         cell: <OwnerReferences resource={obj} />,
@@ -192,10 +216,12 @@ const getDataViewRows = (data, columns) =>
     });
   });
 
-const useReplicaSetsColumns = () => {
+const useReplicationControllersColumns = (): {
+  columns: ConsoleDataViewColumn<ReplicationControllerKind>[];
+} => {
   const { t } = useTranslation('public');
 
-  const columns = useMemo(
+  const columns = useMemo<ConsoleDataViewColumn<ReplicationControllerKind>[]>(
     () => [
       {
         type: 'name',
@@ -223,12 +249,11 @@ const useReplicaSetsColumns = () => {
         },
       },
       {
-        title: t('Labels'),
+        title: t('Phase'),
         id: tableColumnInfo[3].id,
-        sort: 'metadata.labels',
+        sort: 'metadata.annotations["openshift.io/deployment.phase"]',
         props: {
           modifier: 'nowrap',
-          ...getLabelsColumnWidthStyleProp(),
         },
       },
       {
@@ -255,15 +280,19 @@ const useReplicaSetsColumns = () => {
   return { columns };
 };
 
-const ReplicaSetsList = ({ data, loaded, ...props }) => {
-  const { columns } = useReplicaSetsColumns();
+const ReplicationControllersList: FC<ReplicationControllersListProps> = ({
+  data,
+  loaded,
+  ...props
+}) => {
+  const { columns } = useReplicationControllersColumns();
 
   return (
     <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView
         {...props}
-        id={ReplicaSetModel}
-        label={ReplicaSetModel.labelPlural}
+        id={ReplicationControllerModel}
+        label={ReplicationControllerModel.labelPlural}
         data={data}
         loaded={loaded}
         columns={columns}
@@ -272,17 +301,37 @@ const ReplicaSetsList = ({ data, loaded, ...props }) => {
     </Suspense>
   );
 };
-const ReplicaSetsPage = (props) => {
+
+export const ReplicationControllersPage: FC<ReplicationControllersPageProps> = (props) => {
   const { canCreate = true } = props;
   return (
     <ListPage
       {...props}
-      kind={referenceForModel(ReplicaSetModel)}
-      ListComponent={ReplicaSetsList}
+      kind={referenceForModel(ReplicationControllerModel)}
+      ListComponent={ReplicationControllersList}
       canCreate={canCreate}
       omitFilterToolbar
     />
   );
 };
 
-export { ReplicaSetsPage, ReplicaSetsDetailsPage };
+interface EnvironmentPageProps {
+  obj: K8sResourceKind;
+  rawEnvData: any;
+  envPath: string[];
+  readOnly: boolean;
+}
+
+interface ReplicationControllersListProps {
+  data: ReplicationControllerKind[];
+  loaded: boolean;
+  loadError?: unknown;
+  mock?: boolean;
+}
+
+interface ReplicationControllersPageProps {
+  canCreate?: boolean;
+  showTitle?: boolean;
+  namespace?: string;
+  selector?: any;
+}
