@@ -352,14 +352,11 @@ describe('useTelemetry', () => {
     expect(listener).toHaveBeenCalledTimes(1);
   });
 
-  it('anonymizes email to only return the domain', () => {
-    const email = 'shadowman@redhat.com';
-    const expectedDomain = 'redhat.com';
-
+  it('reports the account mail domain supplied by the backend', () => {
     window.SERVER_FLAGS = {
       ...originServerFlags,
       telemetry: {
-        ACCOUNT_MAIL: email,
+        ACCOUNT_MAIL_DOMAIN: 'redhat.com',
       },
     };
     updateClusterPropertiesFromTests();
@@ -369,7 +366,7 @@ describe('useTelemetry', () => {
     expect(listener).toHaveBeenCalledTimes(1);
     expect(listener).toHaveBeenCalledWith('test 12', {
       ...exampleReturnValue,
-      accountMailDomain: expectedDomain,
+      accountMailDomain: 'redhat.com',
     });
 
     // assert PII is not sent
@@ -380,23 +377,40 @@ describe('useTelemetry', () => {
     expect(callArgs.sandboxUserId).toBeUndefined();
   });
 
-  it.each(['invalid-email', 'shadowman@', 'red@hat@redhat.com', '@@', ''])(
-    'should not extract domains from invalid emails (%s)',
-    (email) => {
-      window.SERVER_FLAGS = {
-        ...originServerFlags,
-        telemetry: {
-          ACCOUNT_MAIL: email,
-        },
-      };
-      updateClusterPropertiesFromTests();
-      const { result } = renderHook(() => useTelemetry());
-      const fireTelemetryEvent = result.current;
-      fireTelemetryEvent('test 12');
-      expect(listener).toHaveBeenCalledWith('test 12', {
-        ...exampleReturnValue,
-        accountMailDomain: '',
-      });
-    },
-  );
+  // The backend strips ACCOUNT_MAIL before it ever reaches the browser. Should
+  // a stale or tampered-with payload still carry it, it must not be forwarded.
+  it('never forwards a full account mail address', () => {
+    window.SERVER_FLAGS = {
+      ...originServerFlags,
+      telemetry: {
+        ACCOUNT_MAIL: 'shadowman@redhat.com',
+      },
+    };
+    updateClusterPropertiesFromTests();
+    const { result } = renderHook(() => useTelemetry());
+    const fireTelemetryEvent = result.current;
+    fireTelemetryEvent('test 12');
+    expect(listener).toHaveBeenCalledWith('test 12', {
+      ...exampleReturnValue,
+      accountMailDomain: '',
+    });
+
+    const callArgs = listener.mock.calls[0][1];
+    expect(JSON.stringify(callArgs)).not.toContain('shadowman');
+  });
+
+  it('reports an empty domain when the backend supplies none', () => {
+    window.SERVER_FLAGS = {
+      ...originServerFlags,
+      telemetry: {},
+    };
+    updateClusterPropertiesFromTests();
+    const { result } = renderHook(() => useTelemetry());
+    const fireTelemetryEvent = result.current;
+    fireTelemetryEvent('test 12');
+    expect(listener).toHaveBeenCalledWith('test 12', {
+      ...exampleReturnValue,
+      accountMailDomain: '',
+    });
+  });
 });

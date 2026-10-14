@@ -36,11 +36,6 @@ interface TelemetryEvent {
 
 let telemetryEvents: TelemetryEvent[] = [];
 
-const getEmailDomain = (email: string = ''): string => {
-  const emailParts = email.split('@');
-  return emailParts.length === 2 ? emailParts[1] : '';
-};
-
 export const getClusterProperties = () => {
   const clusterProperties: ClusterProperties = {};
   clusterProperties.clusterId = window.SERVER_FLAGS.telemetry?.CLUSTER_ID;
@@ -52,7 +47,9 @@ export const getClusterProperties = () => {
   clusterProperties.consoleVersion =
     window.SERVER_FLAGS.releaseVersion || window.SERVER_FLAGS.consoleVersion;
   clusterProperties.organizationId = window.SERVER_FLAGS.telemetry?.ORGANIZATION_ID;
-  clusterProperties.accountMailDomain = getEmailDomain(window.SERVER_FLAGS.telemetry?.ACCOUNT_MAIL);
+  // The backend only exposes the domain. It deliberately never sends the full
+  // address, because SERVER_FLAGS is embedded in the unauthenticated index page.
+  clusterProperties.accountMailDomain = window.SERVER_FLAGS.telemetry?.ACCOUNT_MAIL_DOMAIN ?? '';
   return clusterProperties;
 };
 
