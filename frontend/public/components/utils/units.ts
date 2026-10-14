@@ -1,9 +1,12 @@
 import * as _ from 'lodash';
 
-export const units = {};
-export const validate = {};
+interface UnitType {
+  units: string[];
+  space: boolean;
+  divisor: number;
+}
 
-const TYPES = {
+const TYPES: { [name: string]: UnitType } = {
   numeric: {
     units: ['', 'k', 'm', 'b'],
     space: false,
@@ -51,7 +54,7 @@ const TYPES = {
   },
 };
 
-export const getType = (name) => {
+export const getType = (name: string): UnitType => {
   const type = TYPES[name];
   if (!_.isPlainObject(type)) {
     return {
@@ -63,12 +66,18 @@ export const getType = (name) => {
   return type;
 };
 
-const convertBaseValueToUnits = (value, unitArray, divisor, initialUnit, preferredUnit) => {
+const convertBaseValueToUnits = (
+  value: number,
+  unitArray: string[],
+  divisor: number,
+  initialUnit?: string,
+  preferredUnit?: string,
+) => {
   const sliceIndex = initialUnit ? unitArray.indexOf(initialUnit) : 0;
-  const units_ = unitArray.slice(sliceIndex);
+  const remainingUnits = unitArray.slice(sliceIndex);
 
   if (preferredUnit || preferredUnit === '') {
-    const unitIndex = units_.indexOf(preferredUnit);
+    const unitIndex = remainingUnits.indexOf(preferredUnit);
     if (unitIndex !== -1) {
       return {
         value: value / divisor ** unitIndex,
@@ -78,25 +87,29 @@ const convertBaseValueToUnits = (value, unitArray, divisor, initialUnit, preferr
   }
 
   let currentValue = value;
-  let unit = units_.shift();
-  while (currentValue >= divisor && units_.length > 0) {
+  let unit = remainingUnits.shift();
+  while (currentValue >= divisor && remainingUnits.length > 0) {
     currentValue /= divisor;
-    unit = units_.shift();
+    unit = remainingUnits.shift();
   }
   return { value: currentValue, unit };
 };
 
-const convertValueWithUnitsToBaseValue = (value, unitArray, divisor) => {
+const convertValueWithUnitsToBaseValue = (
+  value: string | number,
+  unitArray: string[],
+  divisor: number,
+) => {
   const defaultReturn = { value, unit: '' };
   if (typeof value !== 'string') {
     return defaultReturn;
   }
 
-  let units_ = unitArray.slice().reverse();
+  let remainingUnits = unitArray.slice().reverse();
 
   // find which unit we're given
   let truncateStringAt = -1;
-  const startingUnitIndex = _.findIndex(units_, (currentUnitValue) => {
+  const startingUnitIndex = _.findIndex(remainingUnits, (currentUnitValue) => {
     const index = value.indexOf(currentUnitValue);
     if (index > -1) {
       truncateStringAt = index;
@@ -111,19 +124,19 @@ const convertValueWithUnitsToBaseValue = (value, unitArray, divisor) => {
   }
 
   // get the numeric value & prepare unit array for conversion
-  units_ = units_.slice(startingUnitIndex);
+  remainingUnits = remainingUnits.slice(startingUnitIndex);
   let currentValue = _.toNumber(value.substring(0, truncateStringAt));
 
-  let unit = units_.shift();
-  while (units_.length > 0) {
+  let unit = remainingUnits.shift();
+  while (remainingUnits.length > 0) {
     currentValue *= divisor;
-    unit = units_.shift();
+    unit = remainingUnits.shift();
   }
 
   return { value: currentValue, unit };
 };
 
-const getDefaultFractionDigits = (value) => {
+const getDefaultFractionDigits = (value: number) => {
   if (value < 1) {
     return 3;
   }
@@ -133,7 +146,13 @@ const getDefaultFractionDigits = (value) => {
   return 1;
 };
 
-const formatValue = (value, options) => {
+interface FormatValueOptions {
+  locales?: string | string[];
+  maximumFractionDigits?: number;
+  minimumFractionDigits?: number;
+}
+
+const formatValue = (value: number, options?: FormatValueOptions) => {
   const fractionDigits = getDefaultFractionDigits(value);
   const { locales, ...rest } = _.defaults(options, {
     maximumFractionDigits: fractionDigits,
@@ -147,25 +166,26 @@ const formatValue = (value, options) => {
   return Intl.NumberFormat(locales, rest).format(currentValue);
 };
 
-const round = (value, fractionDigits) => {
+const round = (value: number, fractionDigits?: number) => {
   if (!Number.isFinite(value)) {
     return 0;
   }
   const multiplier = 10 ** (fractionDigits || getDefaultFractionDigits(value));
   return Math.round(value * multiplier) / multiplier;
 };
-units.round = round;
 
 const humanize = (
-  value,
-  typeName,
+  value: number | string,
+  typeName: string,
   useRound = false,
   initialUnit = undefined,
   preferredUnit = undefined,
 ) => {
   const type = getType(typeName);
 
-  let currentValue = value;
+  // Numeric strings are coerced to numbers; non-finite values (including non-numeric strings)
+  // are treated as 0.
+  let currentValue: number = typeof value === 'string' ? Number(value) : value;
   if (!Number.isFinite(currentValue) || currentValue < 0) {
     currentValue = 0;
   }
@@ -197,11 +217,31 @@ const humanize = (
     value: converted.value,
   };
 };
-units.humanize = humanize;
 
-const formatPercentage = (value, options) => {
+const dehumanize = (value: string | number, typeName: string) => {
+  const type = getType(typeName);
+  return convertValueWithUnitsToBaseValue(value, type.units, type.divisor);
+};
+
+/**
+ * Utilities for formatting and validating quantities with units, e.g. k8s compute resources.
+ * Prefer the named `humanize*` helpers where possible.
+ */
+interface Units {
+  round: (value: number, fractionDigits?: number) => number;
+  humanize: typeof humanize;
+  dehumanize: typeof dehumanize;
+}
+
+export const units: Units = {
+  round,
+  humanize,
+  dehumanize,
+};
+
+const formatPercentage = (value: number, options?: FormatValueOptions) => {
   const { locales, ...rest } = _.defaults(
-    { style: 'percent' }, // Don't allow perent style to be overridden.
+    { style: 'percent' as const }, // Don't allow perent style to be overridden.
     options,
     {
       maximumFractionDigits: 1,
@@ -210,23 +250,29 @@ const formatPercentage = (value, options) => {
   return Intl.NumberFormat(locales, rest).format(value);
 };
 
-export const humanizeBinaryBytesWithoutB = (v, initialUnit, preferredUnit) =>
-  humanize(v, 'binaryBytesWithoutB', true, initialUnit, preferredUnit);
-export const humanizeBinaryBytes = (v, initialUnit, preferredUnit) =>
+export const humanizeBinaryBytesWithoutB = (
+  v: number,
+  initialUnit?: string,
+  preferredUnit?: string,
+) => humanize(v, 'binaryBytesWithoutB', true, initialUnit, preferredUnit);
+export const humanizeBinaryBytes = (v: number, initialUnit?: string, preferredUnit?: string) =>
   humanize(v, 'binaryBytes', true, initialUnit, preferredUnit);
-export const humanizeDecimalBytes = (v, initialUnit, preferredUnit) =>
+export const humanizeDecimalBytes = (v: number, initialUnit?: string, preferredUnit?: string) =>
   humanize(v, 'decimalBytes', true, initialUnit, preferredUnit);
-export const humanizeDecimalBytesPerSec = (v, initialUnit, preferredUnit) =>
-  humanize(v, 'decimalBytesPerSec', true, initialUnit, preferredUnit);
-export const humanizePacketsPerSec = (v, initialUnit, preferredUnit) =>
+export const humanizeDecimalBytesPerSec = (
+  v: number,
+  initialUnit?: string,
+  preferredUnit?: string,
+) => humanize(v, 'decimalBytesPerSec', true, initialUnit, preferredUnit);
+export const humanizePacketsPerSec = (v: number, initialUnit?: string, preferredUnit?: string) =>
   humanize(v, 'packetsPerSec', true, initialUnit, preferredUnit);
-export const humanizeNumber = (v, initialUnit, preferredUnit) =>
+export const humanizeNumber = (v: number, initialUnit?: string, preferredUnit?: string) =>
   humanize(v, 'numeric', true, initialUnit, preferredUnit);
-export const humanizeNumberSI = (v, initialUnit, preferredUnit) =>
+export const humanizeNumberSI = (v: number, initialUnit?: string, preferredUnit?: string) =>
   humanize(v, 'SI', true, initialUnit, preferredUnit);
-export const humanizeSeconds = (v, initialUnit, preferredUnit) =>
+export const humanizeSeconds = (v: number, initialUnit?: string, preferredUnit?: string) =>
   humanize(v, 'seconds', true, initialUnit, preferredUnit);
-export const humanizeCpuCores = (v) => {
+export const humanizeCpuCores = (v: number) => {
   const value = v < 1 ? round(v * 1000) : v;
   const unit = v < 1 ? 'm' : '';
   return {
@@ -235,7 +281,7 @@ export const humanizeCpuCores = (v) => {
     value,
   };
 };
-export const humanizePercentage = (value) => {
+export const humanizePercentage = (value: number | string) => {
   // 2nd check converts -0 to 0.
   let currentValue = typeof value === 'string' ? Number(value) : value;
   if (!Number.isFinite(currentValue) || currentValue === 0) {
@@ -248,25 +294,7 @@ export const humanizePercentage = (value) => {
   };
 };
 
-units.dehumanize = (value, typeName) => {
-  const type = getType(typeName);
-  return convertValueWithUnitsToBaseValue(value, type.units, type.divisor);
-};
-
-validate.split = (value) => {
-  const index = value.search(/([a-zA-Z]+)/g);
-  let number;
-  let unit;
-  if (index === -1) {
-    number = value;
-  } else {
-    number = value.slice(0, index);
-    unit = value.slice(index);
-  }
-  return [parseFloat(number, 10), unit];
-};
-
-const baseUnitedValidation = (value) => {
+const baseUnitedValidation = (value: string) => {
   if (value === null || value.length === 0) {
     return;
   }
@@ -275,8 +303,8 @@ const baseUnitedValidation = (value) => {
   }
 };
 
-const validateNumber = (float = '') => {
-  if (float < 0) {
+const validateNumber = (float: number | string = '') => {
+  if (Number(float) < 0) {
     return 'must be positive';
   }
   if (!Number.isFinite(Number(float))) {
@@ -289,24 +317,6 @@ const validateCPUUnit = (value = '') => {
     return;
   }
   return `unrecongnized unit: ${value}`;
-};
-
-validate.CPU = (value = '') => {
-  if (!value) {
-    return;
-  }
-  const error = baseUnitedValidation(value);
-  if (error) {
-    return error;
-  }
-
-  const [number, unit] = validate.split(value);
-
-  if (!unit) {
-    return validateNumber(number);
-  }
-
-  return validateNumber(number) || validateCPUUnit(unit);
 };
 
 const validMemUnits = new Set(['E', 'P', 'T', 'G', 'M', 'k', 'Ei', 'Pi', 'Ti', 'Gi', 'Mi', 'Ki']);
@@ -325,40 +335,80 @@ const validateTimeUnit = (value = '') => {
   return `unrecongnized unit: ${value}`;
 };
 
-validate.time = (value = '') => {
-  if (!value) {
-    return;
-  }
-  const error = baseUnitedValidation(value);
-  if (error) {
-    return error;
-  }
+interface Validate {
+  split: (value: string) => [number, string | undefined];
+  CPU: (value?: string) => string | undefined;
+  time: (value?: string) => string | undefined;
+  memory: (value?: string) => string | undefined;
+}
 
-  const [number, unit] = validate.split(value);
+export const validate: Validate = {
+  split: (value: string) => {
+    const index = value.search(/([a-zA-Z]+)/g);
+    let number;
+    let unit;
+    if (index === -1) {
+      number = value;
+    } else {
+      number = value.slice(0, index);
+      unit = value.slice(index);
+    }
+    return [parseFloat(number), unit];
+  },
 
-  if (!unit) {
-    return 'number and unit required';
-  }
+  CPU: (value = '') => {
+    if (!value) {
+      return;
+    }
+    const error = baseUnitedValidation(value);
+    if (error) {
+      return error;
+    }
 
-  return validateNumber(number) || validateTimeUnit(unit);
-};
+    const [number, unit] = validate.split(value);
 
-validate.memory = (value = '') => {
-  if (!value) {
-    return;
-  }
-  const error = baseUnitedValidation(value);
-  if (error) {
-    return error;
-  }
+    if (!unit) {
+      return validateNumber(number);
+    }
 
-  const [number, unit] = validate.split(value);
+    return validateNumber(number) || validateCPUUnit(unit);
+  },
 
-  if (!unit) {
-    return validateNumber(value);
-  }
+  time: (value = '') => {
+    if (!value) {
+      return;
+    }
+    const error = baseUnitedValidation(value);
+    if (error) {
+      return error;
+    }
 
-  return validateNumber(number) || validateMemUnit(unit);
+    const [number, unit] = validate.split(value);
+
+    if (!unit) {
+      return 'number and unit required';
+    }
+
+    return validateNumber(number) || validateTimeUnit(unit);
+  },
+
+  memory: (value = '') => {
+    if (!value) {
+      return;
+    }
+    const error = baseUnitedValidation(value);
+    if (error) {
+      return error;
+    }
+
+    const [number, unit] = validate.split(value);
+
+    if (!unit) {
+      return validateNumber(value);
+    }
+
+    return validateNumber(number) || validateMemUnit(unit);
+  },
 };
 
 // Convert k8s compute resources values to a base value for comparison.
@@ -367,7 +417,7 @@ validate.memory = (value = '') => {
 // is problematic for comparing quota resources because you need to know
 // what unit you're dealing with already (e.g. decimal vs binary). Returns
 // null if value isn't recognized as valid.
-export const convertToBaseValue = (value) => {
+export const convertToBaseValue = (value: string | number): number | null => {
   if (!_.isString(value)) {
     return null;
   }
@@ -388,31 +438,32 @@ export const convertToBaseValue = (value) => {
   }
 
   if (TYPES.binaryBytesWithoutB.units.includes(unit)) {
-    return units.dehumanize(value, 'binaryBytesWithoutB').value;
+    // The value was validated above, so dehumanize returns a number.
+    return units.dehumanize(value, 'binaryBytesWithoutB').value as number;
   }
 
   if (TYPES.decimalBytesWithoutB.units.includes(unit)) {
-    return units.dehumanize(value, 'decimalBytesWithoutB').value;
+    return units.dehumanize(value, 'decimalBytesWithoutB').value as number;
   }
 
   // Unrecognized unit.
   return null;
 };
 
-const formatToFractionalDigits = (value, digits) =>
+const formatToFractionalDigits = (value: number, digits: number) =>
   Intl.NumberFormat(undefined, {
     minimumFractionDigits: digits,
     maximumFractionDigits: digits,
   }).format(value);
 
-export const formatBytesAsMiB = (bytes) => {
+export const formatBytesAsMiB = (bytes: number) => {
   const mib = bytes / 1024 / 1024;
   return formatToFractionalDigits(mib, 1);
 };
 
-export const formatBytesAsGiB = (bytes) => {
+export const formatBytesAsGiB = (bytes: number) => {
   const gib = bytes / 1024 / 1024 / 1024;
   return formatToFractionalDigits(gib, 2);
 };
 
-export const formatCores = (cores) => formatToFractionalDigits(cores, 3);
+export const formatCores = (cores: number) => formatToFractionalDigits(cores, 3);

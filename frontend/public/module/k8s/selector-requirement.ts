@@ -1,7 +1,8 @@
 import * as _ from 'lodash';
+import type { MatchExpression } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import { createEquals } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 
-export const requirementFromString = (string) => {
+export const requirementFromString = (string: string): MatchExpression | undefined => {
   const str = string.trim();
 
   // "key"

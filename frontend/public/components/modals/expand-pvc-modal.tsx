@@ -28,7 +28,7 @@ import { validate, convertToBaseValue, humanizeBinaryBytesWithoutB } from '../ut
 const ExpandPVCModal: FC<ExpandPVCModalProps> = ({ resource, kind, close, cancel }) => {
   const baseValue = convertToBaseValue(getRequestedPVCSize(resource));
   const defaultSize = validate.split(humanizeBinaryBytesWithoutB(baseValue).string);
-  const [requestSizeValue, setRequestSizeValue] = useState(defaultSize[0] || '');
+  const [requestSizeValue, setRequestSizeValue] = useState(String(defaultSize[0] || ''));
   const [requestSizeUnit, setRequestSizeUnit] = useState(defaultSize[1] || 'Gi');
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
 

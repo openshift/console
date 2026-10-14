@@ -13,9 +13,9 @@ const params = new URLSearchParams(window.location.search);
 const pseudolocalizationEnabled = params.get('pseudolocalization') === 'true';
 const language = params.get('lng');
 
-let resolvedLoading;
+let resolvedLoading: (value: boolean) => void;
 
-export const loading = new Promise((resolve) => {
+export const loading = new Promise<boolean>((resolve) => {
   resolvedLoading = resolve;
 });
 
@@ -37,7 +37,7 @@ export const init = () => {
     .init({
       backend: {
         loadPath: `${window.SERVER_FLAGS.basePath}locales/resource.json?lng={{lng}}&ns={{ns}}`,
-        parse: function (data, lng, ns) {
+        parse: function (data: string, lng: string, ns: string) {
           const parsed = JSON.parse(data);
           // i18next-v4-format-converter functions differently for plurals in
           // 'en' compared to other languages. Therefore, two conversions are
@@ -89,8 +89,8 @@ export const init = () => {
         transSupportBasicHtmlNodes: true, // allow <br/> and simple html elements in translations
       },
       saveMissing: true,
-      missingKeyHandler: function (lng, ns, key) {
-        const formattedMessage = `Missing i18n key "${key}" in namespace "${ns}" and language "${lng}".`;
+      missingKeyHandler: function (lngs: readonly string[], ns: string, key: string) {
+        const formattedMessage = `Missing i18n key "${key}" in namespace "${ns}" and language "${lngs}".`;
         addTestError(formattedMessage);
         console.error(formattedMessage);
       },

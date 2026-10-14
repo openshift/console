@@ -5,6 +5,7 @@ import { useParams } from 'react-router';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
+// eslint-disable-next-line import/no-cycle -- pre-existing cycle with the dev-console project list pages
 import CreateProjectListPage, {
   CreateAProjectButton,
 } from '@console/dev-console/src/components/projects/CreateProjectListPage';

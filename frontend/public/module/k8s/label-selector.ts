@@ -1,11 +1,17 @@
 /* eslint-disable guard-for-in, default-case, no-case-declarations */
 
-/**
+/*
  * Converted from Angular based  "kubernetes-label-selector"
  *    git://github.com/kubernetes-ui/label-selector.git
  *    author: Jessica Forrester <jforrest@redhat.com>
  * */
 import * as _ from 'lodash';
+import type {
+  MatchExpression,
+  MatchLabels,
+  Selector,
+} from '@console/dynamic-plugin-sdk/src/api/common-types';
+
 // selector (optional) - the JSON format as returned by k8s API, will also
 //      handle {key: null} as the key exists operator (not currently returned
 //      by API)
@@ -13,15 +19,34 @@ import * as _ from 'lodash';
 //      selects objects.  Typical behavior is false.  Example of an
 //      exceptional case is when filtering by labels, no label selectors
 //      means no filters.
+interface Conjunct {
+  key: string;
+  operator: string;
+  values: string[];
+  id?: string;
+  string?: string;
+}
+
+/** Old-style `{key: value}` selectors, e.g. on ReplicationControllers. */
+type LegacySelectorMap = { [key: string]: string | null };
+
 export class LabelSelector {
-  constructor(selector, emptySelectsAll) {
+  private _conjuncts: { [id: string]: Conjunct };
+
+  private _emptySelectsAll: boolean;
+
+  private _OPERATOR_MAP: { [key: string]: string };
+
+  private _REVERSE_OPERATOR_MAP: { [key: string]: string };
+
+  // expects the JSON format as returned by k8s API
+  // Supports both the old selector syntax of just key: value pairs like on RCs
+  // as well as the new matchLabel and matchExpression syntax on newer controllers like ReplicaSets
+  // For now it will also handle key: null as key exists for backwards compatibility from before
+  // the matchExpression support was added.
+  constructor(selector?: Selector | LegacySelectorMap, emptySelectsAll?: boolean) {
     this._conjuncts = {};
     this._emptySelectsAll = !!emptySelectsAll;
-    // expects the JSON format as returned by k8s API
-    // Supports both the old selector syntax of just key: value pairs like on RCs
-    // as well as the new matchLabel and matchExpression syntax on newer controllers like ReplicaSets
-    // For now it will also handle key: null as key exists for backwards compatibility from before
-    // the matchExpression support was added.
     this._OPERATOR_MAP = {
       In: 'in',
       NotIn: 'not in',
@@ -35,43 +60,34 @@ export class LabelSelector {
       'does not exist': 'DoesNotExist',
     };
     if (selector) {
-      if (selector.matchLabels || selector.matchExpressions) {
-        _.forEach(
-          selector.matchLabels,
-          (details, key) => {
-            this.addConjunct(key, 'in', [details]);
-          },
-          this,
-        );
-        _.forEach(
-          selector.matchExpressions,
-          (expression) => {
-            this.addConjunct(
-              expression.key,
-              this._OPERATOR_MAP[expression.operator],
-              expression.values,
-            );
-          },
-          this,
-        );
+      // Supports both the new matchLabel and matchExpression syntax on newer controllers like
+      // ReplicaSets and the old selector syntax of just key: value pairs like on RCs.
+      const k8sSelector = selector as Selector;
+      if (k8sSelector.matchLabels || k8sSelector.matchExpressions) {
+        _.forEach(k8sSelector.matchLabels, (details: string, key: string) => {
+          this.addConjunct(key, 'in', [details]);
+        });
+        _.forEach(k8sSelector.matchExpressions, (expression: MatchExpression) => {
+          this.addConjunct(
+            expression.key,
+            this._OPERATOR_MAP[expression.operator],
+            expression.values,
+          );
+        });
       } else {
-        _.forEach(
-          selector,
-          (details, key) => {
-            if (details || details === '') {
-              this.addConjunct(key, 'in', [details]);
-            } else {
-              this.addConjunct(key, 'exists', []);
-            }
-          },
-          this,
-        );
+        _.forEach(selector as LegacySelectorMap, (details: string | null, key: string) => {
+          if (details || details === '') {
+            this.addConjunct(key, 'in', [details]);
+          } else {
+            this.addConjunct(key, 'exists', []);
+          }
+        });
       }
     }
   }
 
-  addConjunct(key, operator, values) {
-    const conjunct = {
+  addConjunct(key: string, operator: string, values: string[]): Conjunct {
+    const conjunct: Conjunct = {
       key,
       operator,
       values,
@@ -85,11 +101,11 @@ export class LabelSelector {
 
   // Can accept either the id of the conjunct to remove, or the conjunct
   // object that was returned from a call to addConjunct
-  removeConjunct(conjunct) {
-    if (conjunct.id) {
+  removeConjunct(conjunct: Conjunct | string) {
+    if (typeof conjunct !== 'string' && conjunct.id) {
       delete this._conjuncts[conjunct.id];
     } else {
-      delete this._conjuncts[conjunct];
+      delete this._conjuncts[conjunct as string];
     }
   }
 
@@ -101,11 +117,11 @@ export class LabelSelector {
     return _.isEmpty(this._conjuncts);
   }
 
-  each(fn) {
+  each(fn: (conjunct: Conjunct) => void) {
     _.forEach(this._conjuncts, fn);
   }
 
-  select(resources) {
+  select<T extends { metadata?: { labels?: MatchLabels } }>(resources: T[] | { [key: string]: T }) {
     // If passed an array, return an array.
     if (_.isArray(resources)) {
       return _.filter(resources, _.bind(this.matches, this));
@@ -114,7 +130,7 @@ export class LabelSelector {
     return _.pickBy(resources, _.bind(this.matches, this));
   }
 
-  matchesLabels(labels) {
+  matchesLabels(labels: MatchLabels) {
     if (this.isEmpty()) {
       return this._emptySelectsAll;
     }
@@ -159,7 +175,7 @@ export class LabelSelector {
     return true;
   }
 
-  matches(resource) {
+  matches(resource: { metadata?: { labels?: MatchLabels } }) {
     if (!resource) {
       return false;
     }
@@ -167,11 +183,11 @@ export class LabelSelector {
     return this.matchesLabels(labels);
   }
 
-  hasConjunct(conjunct) {
+  hasConjunct(conjunct: Conjunct) {
     return !!this._conjuncts[this._getIdForConjunct(conjunct)];
   }
 
-  findConjunctsMatching(operator, key) {
+  findConjunctsMatching(operator: string, key: string) {
     return _.pickBy(
       this._conjuncts,
       _.matches({
@@ -182,7 +198,7 @@ export class LabelSelector {
   }
 
   // Test whether this label selector covers the given selector
-  covers(selector) {
+  covers(selector: LabelSelector) {
     if (this.isEmpty()) {
       // TODO don't think we ever want to consider an empty
       // label selector as covering any other label selector
@@ -235,9 +251,7 @@ export class LabelSelector {
 
   // Exports the labelSelector as a string in the API format, exports as matchExpressions
   exportJSON() {
-    const result = {
-      matchExpressions: [],
-    };
+    const result = { matchExpressions: [] as MatchExpression[] };
     for (const id in this._conjuncts) {
       const conjunct = this._conjuncts[id];
       const expression = {
@@ -252,7 +266,7 @@ export class LabelSelector {
 
   // We assume label values have no whitespace, commas, parens, etc. based
   // on k8s def for label values
-  _getStringForConjunct(conjunct) {
+  private _getStringForConjunct(conjunct: Conjunct) {
     let conjunctString = conjunct.key;
     if (conjunct.operator === 'exists') {
       return `${conjunctString} exists`;
@@ -279,7 +293,7 @@ export class LabelSelector {
     return conjunctString;
   }
 
-  _getIdForConjunct(conjunct) {
+  private _getIdForConjunct(conjunct: Conjunct) {
     let id = `${conjunct.key}-${conjunct.operator}`;
     if (conjunct.values) {
       id += `-${conjunct.values.join(',')}`;

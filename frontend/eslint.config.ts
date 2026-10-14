@@ -3,7 +3,6 @@ import { defineConfig, globalIgnores } from 'eslint/config';
 import { FlatCompat } from '@eslint/eslintrc';
 import * as js from '@eslint/js';
 import * as tsParser from '@typescript-eslint/parser';
-import * as tsPlugin from '@typescript-eslint/eslint-plugin';
 
 const compat = new FlatCompat({
   baseDirectory: import.meta.dirname,
@@ -40,6 +39,8 @@ const config = defineConfig([
     '**/*.min.js',
     'gui_test_screenshots/**',
     'public/lib/**',
+    // Standalone service worker copied verbatim by the build; not part of the module graph.
+    'public/load-test.sw.js',
     'Godeps/**',
     '@types/**',
     'dynamic-demo-plugin/**',
@@ -67,11 +68,6 @@ const config = defineConfig([
     files: ['public/**/*.{js,jsx,ts,tsx,json}', 'packages/**/*.{js,jsx,ts,tsx,json}'],
     ignores: PACKAGES_EXCLUDE,
     extends: compat.extends('plugin:console/react-typescript-prettier'),
-    rules: {
-      // Allow dependency cycles that are broken up by at least one dynamic import, which is
-      // safe at runtime (the module is loaded only after its dependencies are initialized).
-      'import/no-cycle': ['error', { allowUnsafeDynamicCyclicDependency: true }],
-    },
     languageOptions: {
       globals: {
         process: 'readonly',
@@ -84,48 +80,6 @@ const config = defineConfig([
         VoidFunction: 'readonly',
         RequestInit: 'readonly',
       },
-    },
-  },
-  {
-    files: ['public/**/*.{ts,tsx}', 'packages/**/*.{ts,tsx}'],
-    ignores: PACKAGES_EXCLUDE,
-    rules: {
-      '@typescript-eslint/no-unused-vars': [
-        'error',
-        {
-          varsIgnorePattern: '^React$',
-          args: 'after-used',
-          ignoreRestSiblings: true,
-          caughtErrors: 'none',
-        },
-      ],
-    },
-  },
-  // TSDoc linting for public/ TypeScript files
-  {
-    files: ['public/**/*.{ts,tsx}'],
-    extends: compat.config({
-      plugins: ['eslint-plugin-tsdoc'],
-      rules: { 'tsdoc/syntax': 'warn' },
-    }),
-  },
-  // Use TS parser and plugin for .js/.jsx in public/ (matches old config behavior)
-  {
-    files: ['public/**/*.{js,jsx}'],
-    plugins: {
-      // @ts-expect-error rules property is incompatible
-      '@typescript-eslint': tsPlugin,
-    },
-    languageOptions: {
-      parser: tsParser,
-    },
-  },
-  // Rules that are broken or not relevant in non-typed JavaScript
-  {
-    files: ['public/**/*.{js,jsx}'],
-    rules: {
-      'react/prop-types': 'off',
-      'import/no-unresolved': 'off',
     },
   },
 

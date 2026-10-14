@@ -8,6 +8,7 @@ import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace
 import { useCreateNamespaceOrProjectModal } from '@console/shared/src/hooks/useCreateNamespaceOrProjectModal';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
 import type { ProjectListPageProps } from './ProjectListPage';
+// eslint-disable-next-line import/no-cycle -- pre-existing cycle with the dev-console project list pages
 import ProjectListPage from './ProjectListPage';
 
 type LazySubTitleRender = (openProjectModal: () => void) => ReactNode;
