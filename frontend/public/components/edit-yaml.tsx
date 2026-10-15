@@ -211,9 +211,9 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
   const closeOLS = () => action(ActionType.CloseOLS);
   const dispatch = useConsoleDispatch();
 
-  const monacoRef = useRef<CodeEditorRef>();
-  const editor = useRef();
-  const buttons = useRef();
+  const monacoRef = useRef<CodeEditorRef>(undefined);
+  const editor = useRef(undefined);
+  const buttons = useRef(undefined);
 
   const { t } = useTranslation('public');
 

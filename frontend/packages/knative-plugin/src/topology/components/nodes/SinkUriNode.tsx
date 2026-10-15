@@ -41,8 +41,8 @@ const SinkUriNode: FC<SinkUriNodeProps> = ({
   contextMenuOpen,
   ...rest
 }) => {
-  const ref = useRef();
-  const sinkRef = useRef();
+  const ref = useRef(undefined);
+  const sinkRef = useRef(undefined);
   const { t } = useTranslation('knative-plugin');
   const { width, height } = element.getDimensions();
   const [hover, hoverRef] = useHover();

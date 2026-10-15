@@ -54,7 +54,7 @@ const PipelineTaskNode: FC<PipelineTaskNodeProps> = ({
 }) => {
   const data = element.getData();
   const [hover, hoverRef] = useHover();
-  const taskRef = useRef();
+  const taskRef = useRef(undefined);
   const detailsLevel = useDetailsLevel();
   const IS_PIPELINE_OPERATOR_VERSION_1_17_OR_NEWER = useFlag(
     FLAG_PIPELINES_OPERATOR_VERSION_1_17_OR_NEWER,

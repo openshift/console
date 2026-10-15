@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
     "skipLibCheck": true,
-    "baseUrl": ".",
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
+    "customConditions": ["browser"],
     "outDir": "./public/dist/build/",
     "target": "es2021",
     "jsx": "react-jsx",

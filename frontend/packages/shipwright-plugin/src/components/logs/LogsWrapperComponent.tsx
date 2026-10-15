@@ -34,7 +34,7 @@ const LogsWrapperComponent: FC<LogsWrapperComponentProps> = ({
   const [obj, loaded, error] = useK8sWatchResource<PodKind>(resource);
   const [fullscreenRef, fullscreenToggle, isFullscreen] = useFullscreen();
   const [downloadAllStatus, setDownloadAllStatus] = useState(false);
-  const currentLogGetterRef = useRef<() => string>();
+  const currentLogGetterRef = useRef<() => string>(undefined);
 
   useEffect(() => {
     if (!resource) {

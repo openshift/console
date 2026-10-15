@@ -19,7 +19,7 @@ type TektonTaskRunLogProps = {
 };
 
 export const TektonTaskRunLog: FC<TektonTaskRunLogProps> = ({ taskRun, setCurrentLogsGetter }) => {
-  const scrollPane = useRef<HTMLDivElement>();
+  const scrollPane = useRef<HTMLDivElement>(undefined);
   const taskName = taskRun?.metadata?.labels?.[TektonResourceLabel.pipelineTask] || '-';
   const [trResults, trLoaded, trError] = useTRTaskRunLog(
     taskRun.metadata.namespace,

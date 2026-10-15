@@ -26,7 +26,7 @@ const EventingPubSubLink: FC<EventingPubSubLinkProps> = ({ element, children, ..
     resourceSourceObj.kind === EventingBrokerModel.kind &&
     Object.keys(edgeObj?.spec?.filter?.attributes ?? {}).length > 0;
 
-  let filterMarker: JSX.Element;
+  let filterMarker: ReactNode;
   if (edgeHasFilter) {
     const markerPoint = element.getEndPoint();
     const startPoint = element.getStartPoint();

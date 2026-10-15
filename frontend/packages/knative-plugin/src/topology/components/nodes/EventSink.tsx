@@ -64,7 +64,7 @@ const EventSink: FC<EventSinkProps> = ({
   ...rest
 }) => {
   useAnchor(EventSinkTargetAnchor, AnchorEnd.target, TYPE_EVENT_SINK_LINK);
-  const ref = useRef();
+  const ref = useRef(undefined);
   const { t } = useTranslation('knative-plugin');
   const [hover, hoverRef] = useHover();
   const groupRefs = useCombineRefs(dragNodeRef, dndDropRef);

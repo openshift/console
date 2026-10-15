@@ -38,7 +38,7 @@ const ConnectedBuildRunDecorator: FC<BuildRunDecoratorProps & StateProps> = ({
   x,
   y,
 }) => {
-  const ref = useRef();
+  const ref = useRef(undefined);
   const { t } = useTranslation('shipwright-plugin');
   const { latestBuildRun, status } = getLatestBuildRunStatusforDeployment(buildRuns, resource);
 
