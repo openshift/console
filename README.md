@@ -468,6 +468,12 @@ violation. If a plugin name is not determined in this way, an empty plugin name 
 Additionally, violation reporting is throttled to prevent spamming the telemetry service with
 repetitive data. Identical violations will not be reported more than once a day.
 
+Bridge defaults to `--csp-mode=report-only`, which emits the
+`Content-Security-Policy-Report-Only` HTTP header. Use `--csp-mode=enforce` to emit
+`Content-Security-Policy` HTTP header and block resources that violate the policy. Both modes
+use the same CSP directives. Restart Bridge with `--csp-mode=report-only` to roll back
+enforcement. Invalid mode values prevent startup.
+
 In case of local developement of the dynamic plugin, just pass needed CSP directives address to the console server, using the `--content-security-policy` flag.
 
 Example:
