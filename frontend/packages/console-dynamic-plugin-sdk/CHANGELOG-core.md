@@ -24,6 +24,10 @@ table in [Console dynamic plugins README](./README.md).
 - Remove deprecated React 18 types from type definitions and update TSConfig for package build ([CONSOLE-5065], [#17140])
 - Remove `unsafe-eval` from Console Content Security Policy ([CONSOLE-4267], [#17337])
 - Set `Cross-Origin-Opener-Policy: same-origin` HTTP header for Console page ([OCPBUGS-130732], [#17376])
+- Added optional `sortWeight` property to extension `console.catalog/item-type`, so a type can be ordered within the catalog's type list ([CONSOLE-5527], [#17355])
+- Added optional `placement` property to `CatalogItemBadge`, so a badge can render in the catalog item header below the catalog type label instead of the default footer ([CONSOLE-5527], [#17355])
+- Added optional `badge` property to extension `console.tab`, so a plugin can render a component beside a contributed tab label ([CONSOLE-5527], [#17355])
+- Changed `HorizontalNav` to order contributed default tabs before other tabs, with remaining tabs still ordered alphabetically ([CONSOLE-5527], [#17355])
 
 ## 4.23.0 - 2026-10-16
 
@@ -280,6 +284,7 @@ table in [Console dynamic plugins README](./README.md).
 [CONSOLE-5424]: https://issues.redhat.com/browse/CONSOLE-5424
 [CONSOLE-5438]: https://issues.redhat.com/browse/CONSOLE-5438
 [CONSOLE-5560]: https://issues.redhat.com/browse/CONSOLE-5560
+[CONSOLE-5527]: https://issues.redhat.com/browse/CONSOLE-5527
 [OCPBUGS-19048]: https://issues.redhat.com/browse/OCPBUGS-19048
 [OCPBUGS-30077]: https://issues.redhat.com/browse/OCPBUGS-30077
 [OCPBUGS-31355]: https://issues.redhat.com/browse/OCPBUGS-31355
