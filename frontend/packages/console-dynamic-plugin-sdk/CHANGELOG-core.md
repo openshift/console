@@ -12,13 +12,22 @@ table in [Console dynamic plugins README](./README.md).
 
 ## 5.1.0-prerelease.1 - 2026-10-16
 
-- Removed `immutable` dependency from the redux store and from the package ([CONSOLE-5001], [#17024])
-- Added `ConsoleDataView` component and `definitionFor` ([CONSOLE-5131], [#17307], [#17351])
-- Added `console.dataview/table-column` extension for contributing sortable, manageable columns to `ConsoleDataView` tables ([CONSOLE-5560], [#17351])
-- Added default resource kebab actions and optional `bulkProvider` to `console.action/resource-provider` for bulk actions ([CONSOLE-5560], [#17351])
-- Remove deprecated React 18 types from type definitions ([CONSOLE-5065], [#17140])
+> [!IMPORTANT]
+> This release contains adjustments to Console Content Security Policy (CSP). While Console 5.1 CSP
+> remains in report-only mode, plugin developers should check for CSP violations to ensure compliance
+> before Console 5.2 CSP enforcement becomes the default.
+
+- Add `ConsoleDataView` component and `definitionFor` function ([CONSOLE-5131], [#17307], [#17351])
+- Add `console.dataview/table-column` extension for contributing sortable, manageable columns to `ConsoleDataView` tables ([CONSOLE-5560], [#17351], [#17363])
+- Add default resource kebab actions and optional `bulkProvider` to `console.action/resource-provider` for bulk actions ([CONSOLE-5560], [#17351])
+- Remove `immutable` dependency from the Redux store and from the package ([CONSOLE-5001], [#17024])
+- Remove deprecated React 18 types from type definitions and update TSConfig for package build ([CONSOLE-5065], [#17140])
+- Remove `unsafe-eval` from Console Content Security Policy ([CONSOLE-4267], [#17337])
+- Set `Cross-Origin-Opener-Policy: same-origin` HTTP header for Console page ([OCPBUGS-130732], [#17376])
 
 ## 4.23.0 - 2026-10-16
+
+> Initial release for OCP Console 4.23.
 
 - Add an `onCancel` prop to `ResourceYAMLEditor` to allow overriding the default cancel behavior ([CONSOLE-5438], [#16941])
 
@@ -234,6 +243,7 @@ table in [Console dynamic plugins README](./README.md).
 [CONSOLE-4097]: https://issues.redhat.com/browse/CONSOLE-4097
 [CONSOLE-4185]: https://issues.redhat.com/browse/CONSOLE-4185
 [CONSOLE-4263]: https://issues.redhat.com/browse/CONSOLE-4263
+[CONSOLE-4267]: https://issues.redhat.com/browse/CONSOLE-4267
 [CONSOLE-4269]: https://issues.redhat.com/browse/CONSOLE-4269
 [CONSOLE-4400]: https://issues.redhat.com/browse/CONSOLE-4400
 [CONSOLE-4402]: https://issues.redhat.com/browse/CONSOLE-4402
@@ -296,6 +306,7 @@ table in [Console dynamic plugins README](./README.md).
 [OCPBUGS-84216]: https://issues.redhat.com/browse/OCPBUGS-84216
 [OCPBUGS-86488]: https://issues.redhat.com/browse/OCPBUGS-86488
 [OCPBUGS-86587]: https://issues.redhat.com/browse/OCPBUGS-86587
+[OCPBUGS-130732]: https://issues.redhat.com/browse/OCPBUGS-130732
 [ODC-7425]: https://issues.redhat.com/browse/ODC-7425
 [#12983]: https://github.com/openshift/console/pull/12983
 [#13233]: https://github.com/openshift/console/pull/13233
@@ -367,6 +378,10 @@ table in [Console dynamic plugins README](./README.md).
 [#16762]: https://github.com/openshift/console/pull/16762
 [#16941]: https://github.com/openshift/console/pull/16941
 [#17024]: https://github.com/openshift/console/pull/17024
+[#17140]: https://github.com/openshift/console/pull/17140
 [#17307]: https://github.com/openshift/console/pull/17307
+[#17337]: https://github.com/openshift/console/pull/17337
 [#17340]: https://github.com/openshift/console/pull/17340
 [#17351]: https://github.com/openshift/console/pull/17351
+[#17363]: https://github.com/openshift/console/pull/17363
+[#17376]: https://github.com/openshift/console/pull/17376
