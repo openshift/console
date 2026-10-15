@@ -14,6 +14,42 @@ export const isSystemNamespace = (option: { title: string; key?: string }) => {
   return startsWithNamespace || isNamespace;
 };
 
+const normalizeNamespaceSearchText = (value: string): string =>
+  value
+    .trim()
+    .toLowerCase()
+    .replace(/[-_.\s/]+/g, '');
+
+export const matchesNamespaceFilterText = (
+  filterText: string,
+  namespace: {
+    title?: string;
+    key?: string;
+    metadata?: {
+      name?: string;
+      annotations?: Record<string, string>;
+      labels?: Record<string, string>;
+    };
+  },
+): boolean => {
+  if (!filterText) {
+    return true;
+  }
+
+  const normalizedFilterText = normalizeNamespaceSearchText(filterText ?? '');
+  const values: string[] = [
+    namespace.title,
+    namespace.metadata?.name ?? '',
+    namespace.metadata?.annotations?.['openshift.io/display-name'] ?? '',
+    ...Object.entries(namespace.metadata?.labels ?? {}).map(([key, value]) => `${key}=${value}`),
+    ...Object.entries(namespace.metadata?.annotations ?? {}).map(
+      ([key, value]) => `${key}=${value}`,
+    ),
+  ].filter(Boolean);
+
+  return values.some((value) => normalizeNamespaceSearchText(value).includes(normalizedFilterText));
+};
+
 export const isOtherUser = (user: string, title: string): boolean =>
   !isCurrentUser(user) && !isSystemNamespace({ title });
 
