@@ -90,11 +90,9 @@ export const PodConnect: FC<PodConnectProps> = ({
 
   const containers = useMemo(() => _.keyBy(_.get(obj, 'spec.containers', []), 'name'), [obj]);
 
-  const podName = useMemo(() => obj.metadata?.name || '', [obj?.metadata?.name]);
-  const namespace = useMemo(() => obj.metadata?.namespace || 'default', [obj?.metadata?.namespace]);
-  // We are being more specific with the dependency array here to avoid additional rerenders when other fields in obj changes
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const isWindows = useMemo(() => isWindowsPod(obj), [obj?.spec?.tolerations]);
+  const podName = obj.metadata?.name || '';
+  const namespace = obj.metadata?.namespace || 'default';
+  const isWindows = isWindowsPod(obj);
 
   const connect = useCallback(() => {
     const usedClient = isOpenShift ? 'oc' : 'kubectl';

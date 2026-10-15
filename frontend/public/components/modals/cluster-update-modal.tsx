@@ -1,5 +1,5 @@
 import type { FormEvent, FormEventHandler } from 'react';
-import { useState, useEffect, useCallback, Fragment } from 'react';
+import { useState, useEffect, Fragment } from 'react';
 import {
   Alert,
   Button,
@@ -114,67 +114,52 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
   const desiredNotRecommendedUpdateConditions = getNotRecommendedUpdateCondition(
     desiredNotRecommendedUpdate?.conditions,
   );
-  const submit: FormEventHandler<HTMLFormElement> = useCallback(
-    (e) => {
-      e.preventDefault();
-      if (!desiredRecommendedUpdate && !desiredNotRecommendedUpdate) {
-        setError(
-          t(
-            'Version {{desiredVersion}} not found among the supported updates. Select another version.',
-            { desiredVersion },
-          ),
-        );
-        return;
-      }
+  const submit: FormEventHandler<HTMLFormElement> = (e) => {
+    e.preventDefault();
+    if (!desiredRecommendedUpdate && !desiredNotRecommendedUpdate) {
+      setError(
+        t(
+          'Version {{desiredVersion}} not found among the supported updates. Select another version.',
+          { desiredVersion },
+        ),
+      );
+      return;
+    }
 
-      // Clear any previous error message.
-      setError('');
-      let MCPsToPausePromises;
-      let MCPsToResumePromises;
-      if (upgradeType === UpgradeTypes.Full) {
-        MCPsToPausePromises = [];
-        MCPsToResumePromises = getMCPsToPausePromises(pausedMCPs, false);
-      } else {
-        const MCPsToPause = pauseableMCPs.filter((mcp) =>
-          machineConfigPoolsToPause.find((m) => m === mcp.metadata.name),
-        );
-        const MCPsToResume = pauseableMCPs.filter((mcp) => !MCPsToPause.includes(mcp));
-        MCPsToPausePromises = getMCPsToPausePromises(MCPsToPause, true);
-        MCPsToResumePromises = getMCPsToPausePromises(MCPsToResume, false);
-      }
-      const patch = [
-        {
-          op: 'add',
-          path: '/spec/desiredUpdate',
-          value: desiredNotRecommendedUpdate
-            ? desiredNotRecommendedUpdate.release
-            : desiredRecommendedUpdate,
-        },
-      ];
-      handlePromise(
-        Promise.all([
-          k8sPatch(ClusterVersionModel, cv, patch),
-          ...MCPsToResumePromises,
-          ...MCPsToPausePromises,
-        ]),
-      )
-        .then(() => close())
-        .catch(() => {});
-    },
-    [
-      desiredRecommendedUpdate,
-      desiredNotRecommendedUpdate,
-      t,
-      desiredVersion,
-      upgradeType,
-      pausedMCPs,
-      pauseableMCPs,
-      machineConfigPoolsToPause,
-      handlePromise,
-      cv,
-      close,
-    ],
-  );
+    // Clear any previous error message.
+    setError('');
+    let MCPsToPausePromises;
+    let MCPsToResumePromises;
+    if (upgradeType === UpgradeTypes.Full) {
+      MCPsToPausePromises = [];
+      MCPsToResumePromises = getMCPsToPausePromises(pausedMCPs, false);
+    } else {
+      const MCPsToPause = pauseableMCPs.filter((mcp) =>
+        machineConfigPoolsToPause.find((m) => m === mcp.metadata.name),
+      );
+      const MCPsToResume = pauseableMCPs.filter((mcp) => !MCPsToPause.includes(mcp));
+      MCPsToPausePromises = getMCPsToPausePromises(MCPsToPause, true);
+      MCPsToResumePromises = getMCPsToPausePromises(MCPsToResume, false);
+    }
+    const patch = [
+      {
+        op: 'add',
+        path: '/spec/desiredUpdate',
+        value: desiredNotRecommendedUpdate
+          ? desiredNotRecommendedUpdate.release
+          : desiredRecommendedUpdate,
+      },
+    ];
+    handlePromise(
+      Promise.all([
+        k8sPatch(ClusterVersionModel, cv, patch),
+        ...MCPsToResumePromises,
+        ...MCPsToPausePromises,
+      ]),
+    )
+      .then(() => close())
+      .catch(() => {});
+  };
   const dropdownItem = (version) => {
     const isDisabled = clusterUpgradeableFalse && isMinorVersionNewer(currentVersion, version);
     return {

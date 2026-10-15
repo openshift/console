@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   ActionGroup,
   Alert,
@@ -231,10 +231,9 @@ const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
   });
   const csvPlugins = getClusterServiceVersionPlugins(currentCSVDesc?.annotations);
 
-  const initializationResourceReference = useMemo(
-    () => (initializationResource ? referenceFor(initializationResource) : null),
-    [initializationResource],
-  );
+  const initializationResourceReference = initializationResource
+    ? referenceFor(initializationResource)
+    : null;
 
   const globalNS =
     (props.operatorGroup?.data || ([] as OperatorGroupKind[])).find(
@@ -330,14 +329,11 @@ const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
   );
   const supportsGlobal = globalInstallMode && globalInstallMode.supported;
 
-  const navigateToInstallPage = useCallback(
-    (csvName: string) => {
-      navigate(
-        `/operatorhub/install/${catalogNamespace}/${catalog}/${pkg}/${csvName}/to/${selectedTargetNamespace}`,
-      );
-    },
-    [catalog, catalogNamespace, navigate, pkg, selectedTargetNamespace],
-  );
+  const navigateToInstallPage = (csvName: string) => {
+    navigate(
+      `/operatorhub/install/${catalogNamespace}/${catalog}/${pkg}/${csvName}/to/${selectedTargetNamespace}`,
+    );
+  };
 
   if (!supportsSingle && !supportsGlobal) {
     return (

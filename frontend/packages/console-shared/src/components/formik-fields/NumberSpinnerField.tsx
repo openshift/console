@@ -1,5 +1,4 @@
 import type { FC, ReactEventHandler } from 'react';
-import { useCallback } from 'react';
 import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternfly/react-core';
 import type { FormikValues } from 'formik';
 import { useField, useFormikContext } from 'formik';
@@ -31,18 +30,15 @@ export const NumberSpinnerField: FC<NumberSpinnerFieldProps> = ({
 
   useFormikValidationFix(field.value);
 
-  const handleChange: ReactEventHandler<HTMLInputElement> = useCallback(
-    (event) => {
-      field.onChange(event);
-      setFieldValue(
-        props.name,
-        props?.setOutputAsIntegerFlag
-          ? _.toInteger(event.currentTarget.value)
-          : event.currentTarget.value,
-      );
-    },
-    [field, props.name, setFieldValue, props?.setOutputAsIntegerFlag],
-  );
+  const handleChange: ReactEventHandler<HTMLInputElement> = (event) => {
+    field.onChange(event);
+    setFieldValue(
+      props.name,
+      props?.setOutputAsIntegerFlag
+        ? _.toInteger(event.currentTarget.value)
+        : event.currentTarget.value,
+    );
+  };
 
   return (
     <FormGroup fieldId={fieldId} label={label} isRequired={required}>
