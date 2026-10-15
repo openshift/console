@@ -1,4 +1,5 @@
 import type { GetSegmentAnalytics } from '../extensions/console-types';
+import { isSessionSampled } from './segment-utils';
 
 // Segment API key. Must be present for telemetry to be enabled.
 // When running in DevSandbox mode, prefer the DevSandbox-specific key.
@@ -29,9 +30,6 @@ export const TELEMETRY_DISABLED =
   window.SERVER_FLAGS.telemetry?.TELEMETER_CLIENT_DISABLED === 'true';
 
 export const TELEMETRY_DEBUG = window.SERVER_FLAGS.telemetry?.DEBUG === 'true';
-
-// Sample 20% of sessions
-const SAMPLE_SESSION = Math.random() < 0.2;
 
 // TODO: replace this copy-pasted Segment init snippet with proper use of Segment package
 // https://segment.com/docs/connections/sources/catalog/libraries/website/javascript/quickstart/#step-2-install-segment-to-your-site
@@ -109,11 +107,14 @@ const initSegmentAnalytics = () => {
   analytics.page(); // Make the first page call to load the integrations
 };
 
+// Check whether the session is sampled and therefore we are sending telemetry
+// data to Segment.
+const SAMPLE_SESSION = !TELEMETRY_DISABLED && isSessionSampled();
 if (!SAMPLE_SESSION) {
   console.debug('Analytics session is not being sampled, telemetry events will be ignored');
 }
 
-const analyticsEnabled = !TELEMETRY_DISABLED && SAMPLE_SESSION;
+const analyticsEnabled = SAMPLE_SESSION;
 
 // Initialize Segment Analytics as soon as possible, outside of React useEffect.
 // This ensures that analytics.load method is invoked before any other methods.
