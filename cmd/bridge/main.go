@@ -771,9 +771,9 @@ func main() {
 		klog.Info("HTTP/2 enabled")
 	}
 
-	listener, err := listen(listenURL.Scheme, listenURL.Host, *fTLSCertFile, *fTLSKeyFile, cfg.ServingInfo.MinTLSVersion, cfg.ServingInfo.CipherSuites, cfg.ServingInfo.Groups)
+	listener, err := listen(listenURL.Scheme, listenURL.Host, *fTLSCertFile, *fTLSKeyFile, cfg.ServingInfo.MinTLSVersion, cfg.ServingInfo.CipherSuites, cfg.ServingInfo.TLSGroups)
 	if err != nil {
-		klog.Fatalf("error getting listener, %v", err)
+		klog.Fatalf("Failed to start the server listener: %v. Verify the --tls-cert-file and --tls-key-file flags and the servingInfo TLS settings (minTLSVersion, cipherSuites, tlsGroups).", err)
 	}
 	defer listener.Close()
 
@@ -813,7 +813,7 @@ func main() {
 func listen(scheme, host, certFile, keyFile, minTLSVersion string, cipherSuites, groups []string) (net.Listener, error) {
 	klog.Infof("Binding to %s...", host)
 	if scheme == "http" {
-		klog.Info("Not using TLS")
+		klog.Info("Serving over plain HTTP without TLS because the listen address scheme is \"http\"; traffic will not be encrypted. To enable TLS, use an \"https\" listen address together with --tls-cert-file and --tls-key-file.")
 		return net.Listen("tcp", host)
 	}
 	klog.Info("Using TLS")
@@ -852,12 +852,12 @@ func listen(scheme, host, certFile, keyFile, minTLSVersion string, cipherSuites,
 	if len(groups) > 0 {
 		curves, unsupported := tlsCurvePreferences(groups)
 		if len(unsupported) > 0 {
-			klog.Warningf("Ignoring unsupported TLS groups: %v", unsupported)
+			klog.Warningf("Ignoring TLS groups not supported by this console build: %v. Remove them from the TLSSecurityProfile or replace them with supported groups (X25519, secp256r1, secp384r1, secp521r1, X25519MLKEM768, SecP256r1MLKEM768, SecP384r1MLKEM1024).", unsupported)
 		}
 		if len(curves) > 0 {
 			tlsConfig.CurvePreferences = curves
 		} else {
-			klog.Warningf("None of the configured TLS groups %v are supported by the Go runtime; falling back to default curve preferences", groups)
+			klog.Warningf("The console does not support any of the configured TLS groups %v and is using the default TLS groups instead. To use specific groups, configure supported groups in the TLSSecurityProfile.", groups)
 		}
 	}
 
