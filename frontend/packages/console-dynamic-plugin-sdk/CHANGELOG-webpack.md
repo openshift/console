@@ -12,6 +12,8 @@ table in [Console dynamic plugins README](./README.md).
 
 ## 4.23.0 - 2026-10-16
 
+> Initial release for OCP Console 4.23.
+
 - Minimum compatible version of `@rspack/core` peer dependency increased to `2.1.10` ([OCPBUGS-109592], [#16978])
 
 ## 4.23.0-prerelease.5 - 2026-08-04

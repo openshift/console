@@ -12,6 +12,8 @@ table in [Console dynamic plugins README](./README.md).
 
 ## 4.23.0 - 2026-10-16
 
+> Initial release for OCP Console 4.23.
+
 - Add an `onCancel` prop to `ResourceYAMLEditor` to allow overriding the default cancel behavior ([CONSOLE-5438], [#16941])
 
 ## 4.23.0-prerelease.5 - 2026-08-04
