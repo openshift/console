@@ -44,7 +44,7 @@ export interface HelmChartMetaData {
   maintainers?: { name: string; email?: string; url?: string }[];
   dependencies?: object[];
   type?: string;
-  urls: string[];
+  urls?: string[] | null;
   kubeVersion?: string;
   repoName?: string;
 }
