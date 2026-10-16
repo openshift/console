@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import type { ConsolePluginKind } from '@openshift/api-types/dist/openshift/console.openshift.io/v1/ConsolePlugin';
 import {
   Button,
   Content,
@@ -11,9 +12,10 @@ import {
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
-import { ConsoleOperatorConfigModel } from '@console/internal/models';
+import { getGroupVersionKindForModel, k8sPatch } from '@console/dynamic-plugin-sdk/src/utils/k8s';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { ConsoleOperatorConfigModel, ConsolePluginModel } from '@console/internal/models';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import { k8sPatch } from '@console/internal/module/k8s';
 import { ConsolePluginRadioInputs } from '@console/shared/src/components/utils/ConsolePluginRadioInputs';
 import { ConsolePluginWarning } from '@console/shared/src/components/utils/ConsolePluginWarning';
 import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
@@ -27,6 +29,11 @@ const ConsolePluginModal = (props: ConsolePluginModalProps) => {
   const previouslyEnabled = isPluginEnabled(consoleOperatorConfig, pluginName);
   const { t } = useTranslation('console-shared');
   const [enabled, setEnabled] = useState(previouslyEnabled);
+  const [plugin, pluginLoaded, pluginLoadError] = useK8sWatchResource<ConsolePluginKind>({
+    groupVersionKind: getGroupVersionKindForModel(ConsolePluginModel),
+    name: pluginName,
+    isList: false,
+  });
   const submit = (event): void => {
     event.preventDefault();
     const patch = getPluginPatch(consoleOperatorConfig, pluginName, enabled);
@@ -69,6 +76,9 @@ const ConsolePluginModal = (props: ConsolePluginModalProps) => {
             previouslyEnabled={previouslyEnabled}
             enabled={enabled}
             trusted={trusted}
+            proxies={
+              pluginLoaded && !pluginLoadError && plugin ? (plugin.spec.proxy ?? []) : undefined
+            }
           />
         </Form>
       </ModalBody>

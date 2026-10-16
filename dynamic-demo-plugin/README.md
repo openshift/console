@@ -136,6 +136,20 @@ spec:
 If the service proxy request shouldn't contain the logged-in user's
 OpenShift access token, set the `authorization` field to `None`.
 
+Console does not forward the user's OAuth token, session cookies, or CSRF token
+when fetching plugin assets, including `plugin-manifest.json`, `plugin-entry.js`,
+other bundled files, and localization resources. This applies regardless of
+whether the plugin declares a service proxy.
+
+A service proxy configured with `authorization: UserToken` deliberately receives
+the logged-in user's OAuth bearer token when the plugin calls that proxy. The
+receiving service can use this token with the user's permissions, including
+cluster-admin permissions when the visitor is a cluster administrator. Plugin
+code can make proxy requests automatically when Console loads; no user interaction
+or separate visitor confirmation is required. Administrators must trust both the
+plugin and the services receiving these tokens before enabling it. `None` prevents
+Console from injecting the user's session token into service proxy requests.
+
 ### Local development
 
 In case of local developement of the dynamic plugin, just set up your
