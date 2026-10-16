@@ -23,6 +23,7 @@
   "Healthy": "Healthy",
   "Help": "Help",
   "Invalid credentials": "Invalid credentials",
+  "{{message}} (Last detected {{timestamp}})": "{{message}} (Last detected {{timestamp}})",
   "Kube API Server": "Kube API Server",
   "Kube Controller Manager": "Kube Controller Manager",
   "Loading vSphere connection status": "Loading vSphere connection status",
