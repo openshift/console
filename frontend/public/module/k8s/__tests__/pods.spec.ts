@@ -245,4 +245,92 @@ describe('podRestarts', () => {
 
     expect(restartCount).toBe(3);
   });
+
+  it('includes app container restarts when a native sidecar is running', () => {
+    pod.spec = {
+      initContainers: [{ name: 'istio-proxy', restartPolicy: 'Always' }],
+      containers: [{ name: 'httpd' }],
+    };
+    pod.status.initContainerStatuses = [
+      {
+        name: 'istio-proxy',
+        restartCount: 0,
+        started: true,
+        ready: true,
+        state: {
+          running: {
+            startedAt: '2026-09-14T12:00:00Z',
+          },
+        },
+      },
+    ];
+    pod.status.containerStatuses = [
+      {
+        name: 'httpd',
+        restartCount: 5,
+        state: {
+          waiting: {
+            reason: 'CrashLoopBackOff',
+          },
+        },
+      },
+    ];
+
+    expect(podRestarts(pod)).toBe(5);
+  });
+
+  it('includes native sidecar restarts after initialization', () => {
+    pod.spec = {
+      initContainers: [{ name: 'istio-proxy', restartPolicy: 'Always' }],
+      containers: [{ name: 'httpd' }],
+    };
+    pod.status.initContainerStatuses = [
+      {
+        name: 'istio-proxy',
+        restartCount: 2,
+        started: true,
+        ready: true,
+        state: {
+          running: {
+            startedAt: '2026-09-14T12:00:00Z',
+          },
+        },
+      },
+    ];
+    pod.status.containerStatuses = [
+      {
+        name: 'httpd',
+        restartCount: 3,
+      },
+    ];
+
+    expect(podRestarts(pod)).toBe(5);
+  });
+
+  it('counts only init restarts while a native sidecar has not started', () => {
+    pod.spec = {
+      initContainers: [{ name: 'istio-proxy', restartPolicy: 'Always' }],
+      containers: [{ name: 'httpd' }],
+    };
+    pod.status.initContainerStatuses = [
+      {
+        name: 'istio-proxy',
+        restartCount: 1,
+        started: false,
+        state: {
+          waiting: {
+            reason: 'PodInitializing',
+          },
+        },
+      },
+    ];
+    pod.status.containerStatuses = [
+      {
+        name: 'httpd',
+        restartCount: 4,
+      },
+    ];
+
+    expect(podRestarts(pod)).toBe(1);
+  });
 });
