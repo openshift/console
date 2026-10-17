@@ -52,9 +52,15 @@ export type OLMCatalogItem = {
   support: string;
   validSubscription: string[];
   version: string;
+  availableVersions?: string[];
+  clusterCompatibility?: CatalogClusterCompatibility;
 };
+
+export type CatalogClusterCompatibility = 'compatible' | 'incompatible' | 'unknown';
 
 export type OLMCatalogItemData = {
   categories: string[];
   latestVersion: string;
+  availableVersions: string[];
+  clusterCompatibility: CatalogClusterCompatibility;
 };
