@@ -27,7 +27,7 @@ import { Conditions } from './conditions';
 import { ResourceEventStream } from './events';
 import { DetailsPage } from './factory/details';
 import { ListPage } from './factory/list-page';
-import { ReplicaSetsPage } from './replicaset';
+import { ReplicaSetsPage } from './replica-set';
 import { AsyncComponent } from './utils/async';
 import { ContainerTable } from './utils/container-table';
 import { DetailsItem } from './utils/details-item';

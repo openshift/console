@@ -4,7 +4,7 @@ import { defineConfig } from 'i18next-cli';
 export default defineConfig({
   locales: ['en'],
   extract: {
-    input: 'src/**/*.{js,jsx,ts,tsx}',
+    input: 'src/**/*.{ts,tsx}',
     output: 'locales/{{language}}/{{namespace}}.json',
 
     defaultValue: (key) => key.replace(/_(?:one|other)$/, ''),

@@ -5,7 +5,6 @@
     "module": "esnext",
     "moduleResolution": "node",
     "jsx": "react-jsx",
-    "allowJs": true,
     "experimentalDecorators": true,
     "noUnusedLocals": true,
     "skipLibCheck": true,

@@ -11,7 +11,7 @@ import { IS_PRODUCTION } from '@console/shared/src/constants/common';
 import { coFetch } from '@console/shared/src/utils/console-fetch';
 import type { RootState } from './redux';
 // eslint-disable-next-line @typescript-eslint/no-require-imports -- This module has its source generated during val-loader
-const localPlugins: LocalPluginManifest[] = require('../get-local-plugins').default;
+const localPlugins: LocalPluginManifest[] = require('../get-local-plugins.js').default;
 
 /**
  * Set by `console-operator` or `./bin/bridge -release-version`. If this is

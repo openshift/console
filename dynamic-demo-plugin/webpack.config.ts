@@ -26,12 +26,12 @@ const config: Configuration = {
     chunkFilename: '[name]-chunk.js',
   },
   resolve: {
-    extensions: ['.ts', '.tsx', '.js', '.jsx'],
+    extensions: ['.ts', '.tsx', '.js'],
   },
   module: {
     rules: [
       {
-        test: /\.(jsx?|tsx?)$/,
+        test: /\.(js|tsx?)$/,
         exclude: /node_modules/,
         use: [
           isRunningWebpack ? {

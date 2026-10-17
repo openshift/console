@@ -85,7 +85,7 @@ const packageWorkspaces = Object.fromEntries(
         `packages/${dir.name}`,
         {
           entry: hasExtensions ? [extensionsFile] : [],
-          project: ['src/**/*.{ts,tsx,js,jsx,json}'],
+          project: ['src/**/*.{ts,tsx,json}'],
         },
       ];
     }),
@@ -214,8 +214,6 @@ const config: KnipConfig = {
   asyncCompilers: {
     ts: compileScript,
     tsx: compileScript,
-    js: compileScript,
-    jsx: compileScript,
   },
 
   workspaces: {
@@ -224,8 +222,7 @@ const config: KnipConfig = {
 
     // public/ is the @console/internal workspace (has its own package.json)
     public: {
-      entry: ['load-test.sw.js'],
-      project: ['**/*.{ts,tsx,js,jsx,json}'],
+      project: ['**/*.{ts,tsx,json}'],
       ignore: ['locales/**/*']
     },
 

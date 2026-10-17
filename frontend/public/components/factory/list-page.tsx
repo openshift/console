@@ -71,7 +71,7 @@ type ListPageWrapperProps<L = any, C = any> = {
   namespace?: string;
   labelFilterPlaceholder?: string;
   label?: string;
-  staticFilters?: { key: string; value: string }[];
+  staticFilters?: { [key: string]: string } | { [key: string]: string }[];
   customData?: C;
   hideColumnManagement?: boolean;
   nameFilter?: string;
@@ -499,7 +499,7 @@ export type MultiListPageProps<L = any, C = any> = PageCommonProps<L, C> & {
   resources: (Omit<WatchK8sResourceWithProp, 'prop'> & {
     prop?: WatchK8sResourceWithProp['prop'];
   })[];
-  staticFilters?: { key: string; value: string }[];
+  staticFilters?: { [key: string]: string } | { [key: string]: string }[];
   nameFilter?: string;
   omitFilterToolbar?: boolean;
 };

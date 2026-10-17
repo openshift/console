@@ -84,8 +84,8 @@ describe('Check quota table columns by ResourceUsageRow', () => {
     apiVersion: 'v1',
     kind: 'ResourceQuota',
     metadata: { name: 'example', namespace: 'example' },
-    spec: { hard: { 'limits.cpu': 2 } },
-    status: { hard: { 'limits.cpu': 2 }, used: { 'limits.cpu': 1 } },
+    spec: { hard: { 'limits.cpu': '2' } },
+    status: { hard: { 'limits.cpu': '2' }, used: { 'limits.cpu': '1' } },
   };
 
   it('verifies resource quota information in table columns', () => {
@@ -115,8 +115,8 @@ describe('Check cluster quota table columns by ResourceUsageRow', () => {
     apiVersion: 'quota.openshift.io/v1',
     kind: 'ClusterResourceQuota',
     metadata: { name: 'example' },
-    spec: { quota: { hard: { 'limits.cpu': 2 } } },
-    status: { total: { hard: { 'limits.cpu': 2 }, used: { 'limits.cpu': 1 } } },
+    spec: { quota: { hard: { 'limits.cpu': '2' } } },
+    status: { total: { hard: { 'limits.cpu': '2' }, used: { 'limits.cpu': '1' } } },
   };
 
   it('verifies cluster resource quota information in table columns', () => {
@@ -147,19 +147,19 @@ describe('Check applied cluster quota table columns by ResourceUsageRow', () => 
     apiVersion: 'quota.openshift.io/v1',
     kind: 'AppliedClusterResourceQuota',
     metadata: { name: 'example' },
-    spec: { quota: { hard: { 'limits.cpu': 2 } } },
+    spec: { quota: { hard: { 'limits.cpu': '2' } } },
     status: {
       namespaces: [
         {
           namespace: 'test-namespace',
-          status: { used: { 'limits.cpu': 0 }, hard: { 'limits.cpu': 2 } },
+          status: { used: { 'limits.cpu': '0' }, hard: { 'limits.cpu': '2' } },
         },
         {
           namespace: 'test-namespace2',
-          status: { used: { 'limits.cpu': 1 }, hard: { 'limits.cpu': 2 } },
+          status: { used: { 'limits.cpu': '1' }, hard: { 'limits.cpu': '2' } },
         },
       ],
-      total: { hard: { 'limits.cpu': 2 }, used: { 'limits.cpu': 1 } },
+      total: { hard: { 'limits.cpu': '2' }, used: { 'limits.cpu': '1' } },
     },
   };
 

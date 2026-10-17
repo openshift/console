@@ -156,6 +156,6 @@ type BarProps = {
   query: string;
   theme?: any; // TODO figure out the best way to import VictoryThemeDefinition
   title?: string;
-  titleClassName: string;
+  titleClassName?: string;
   customDataSource?: CustomDataSource;
 };
