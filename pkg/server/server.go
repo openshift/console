@@ -247,6 +247,7 @@ func (s *Server) gitopsProxyEnabled() bool {
 	return s.GitOpsProxyConfig != nil
 }
 
+// HTTPHandler assembles Console routes with configured authentication, API proxying, and optional feature handlers.
 func (s *Server) HTTPHandler() (http.Handler, error) {
 	if s.Authenticator == nil {
 		return s.NoAuthConfiguredHandler(), nil
@@ -476,12 +477,23 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 		})),
 	)
 
+	olmTLSConfig := s.InternalProxiedK8SClientConfig.TLSClientConfig
+	if s.K8sProxyConfig.TLSClientConfig != nil {
+		olmTLSConfig.Insecure = s.K8sProxyConfig.TLSClientConfig.InsecureSkipVerify
+		olmTLSConfig.ServerName = s.K8sProxyConfig.TLSClientConfig.ServerName
+	}
+	migrationBackendConfig := rest.CopyConfig(s.InternalProxiedK8SClientConfig)
+	migrationBackendConfig.Transport = nil
+	migrationBackendConfig.TLSClientConfig = olmTLSConfig
 	olmHandler := olm.NewOLMHandler(
 		k8sProxyURL,
 		&http.Client{
 			Transport: internalProxiedK8SRT,
 		},
 		s.CatalogService,
+		olmTLSConfig,
+		s.Authenticator.IsStatic(),
+		&olm.MigrationBackendConfig{Config: migrationBackendConfig, Enabled: s.TechPreview},
 	)
 
 	handle("/api/olm/", authHandler(olmHandler.ServeHTTP))

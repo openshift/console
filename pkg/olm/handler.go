@@ -8,8 +8,10 @@ import (
 	"net/http"
 
 	"github.com/operator-framework/kubectl-operator/pkg/action"
+	"github.com/operator-framework/library-olm/migration/pkg/migration"
 	olmv1 "github.com/operator-framework/operator-lifecycle-manager/pkg/package-server/apis/operators/v1"
 	"k8s.io/apimachinery/pkg/types"
+	"k8s.io/client-go/rest"
 	"k8s.io/klog/v2"
 
 	"github.com/openshift/console/pkg/middleware"
@@ -17,18 +19,35 @@ import (
 )
 
 type OLMHandler struct {
-	client         *http.Client
-	catalogService *CatalogService
-	apiServerURL   string
-	mux            *http.ServeMux
+	client                   *http.Client
+	catalogService           *CatalogService
+	apiServerURL             string
+	apiServerTLSConfig       rest.TLSClientConfig
+	authDisabled             bool
+	mux                      *http.ServeMux
+	migrationJobs            *migrationJobStore
+	migrationFactory         operatorMigrationFactory
+	migrationCoordinator     *migrationCoordinator
+	migrationRunContext      context.Context
+	migrationResumeCandidate func(operatorMigrationOptionsRequest) (bool, error)
+	migrationExecute         func(context.Context, *migration.Migrator, migration.Options) error
 }
 
-func NewOLMHandler(apiServerURL string, client *http.Client, service *CatalogService) http.Handler {
+// NewOLMHandler serves catalog APIs and enables migration routes only when the backend configuration enables migration.
+func NewOLMHandler(apiServerURL string, client *http.Client, service *CatalogService, apiServerTLSConfig rest.TLSClientConfig, authDisabled bool, backendConfig ...*MigrationBackendConfig) http.Handler {
 	o := &OLMHandler{
-		apiServerURL:   apiServerURL,
-		client:         client,
-		catalogService: service,
+		apiServerURL:       apiServerURL,
+		apiServerTLSConfig: apiServerTLSConfig,
+		authDisabled:       authDisabled,
+		client:             client,
+		catalogService:     service,
+		migrationJobs:      newMigrationJobStore(),
 	}
+	migrationEnabled := len(backendConfig) > 0 && backendConfig[0] != nil && backendConfig[0].Enabled
+	if migrationEnabled {
+		o.startMigrationCoordinator(backendConfig[0])
+	}
+
 	mux := http.NewServeMux()
 	mux.HandleFunc("/api/olm/catalog-items/", o.catalogItemsHandler)
 	mux.HandleFunc("/api/olm/catalogd/metas/{catalogName}", middleware.AllowMethod(http.MethodGet, o.catalogdMetasHandler))
@@ -36,6 +55,16 @@ func NewOLMHandler(apiServerURL string, client *http.Client, service *CatalogSer
 	mux.HandleFunc("/api/olm/lifecycle/{catalogNamespace}/{catalogName}/{packageName}", middleware.AllowMethod(http.MethodGet, o.lifecycleHandler))
 	mux.HandleFunc("/api/olm/list-operands/", o.operandsListHandler)
 	mux.HandleFunc("/api/olm/check-package-manifests/", o.checkPackageManifestHandler)
+	if migrationEnabled {
+		mux.HandleFunc("/api/olm/migration/operators", middleware.AllowMethod(http.MethodGet, o.migrationScanHandler))
+		mux.HandleFunc("/api/olm/migration/dry-run", middleware.AllowMethod(http.MethodPost, o.migrationDryRunHandler))
+		mux.HandleFunc("/api/olm/migration/bulk", middleware.AllowMethod(http.MethodPost, o.migrationBulkHandler))
+		mux.HandleFunc("/api/olm/migration/jobs", middleware.AllowMethod(http.MethodGet, o.migrationJobsHandler))
+		mux.HandleFunc("/api/olm/migration/jobs/{jobID}", middleware.AllowMethod(http.MethodGet, o.migrationJobHandler))
+		mux.HandleFunc("/api/olm/migration/jobs/{jobID}/cancel", middleware.AllowMethod(http.MethodPost, o.migrationJobCancelHandler))
+		mux.HandleFunc("/api/olm/migration/rollback", middleware.AllowMethod(http.MethodPost, o.migrationRollbackHandler))
+		mux.HandleFunc("/api/olm/migration/cleanup", middleware.AllowMethod(http.MethodPost, o.migrationCleanupHandler))
+	}
 	o.mux = mux
 	return o
 }
