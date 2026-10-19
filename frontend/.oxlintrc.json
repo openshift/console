@@ -51,6 +51,9 @@
       "env": {
         "browser": true
       },
+      "jsPlugins": [
+        "eslint-plugin-n"
+      ],
       "globals": {
         "process": "readonly",
         "React": true,
@@ -379,8 +382,8 @@
           }
         ],
         "unicorn/no-new-buffer": "error",
-        "node/no-new-require": "error",
-        "node/no-path-concat": "warn",
+        "n/no-new-require": "error",
+        "n/no-path-concat": "error",
         "max-nested-callbacks": [
           "warn",
           4
@@ -1068,6 +1071,9 @@
       "env": {
         "node": true
       },
+      "jsPlugins": [
+        "eslint-plugin-n"
+      ],
       "rules": {
         "array-callback-return": [
           "error",
@@ -1385,8 +1391,8 @@
           }
         ],
         "unicorn/no-new-buffer": "error",
-        "node/no-new-require": "error",
-        "node/no-path-concat": "warn",
+        "n/no-new-require": "error",
+        "n/no-path-concat": "error",
         "max-nested-callbacks": [
           "warn",
           4
@@ -1672,7 +1678,7 @@
             ]
           }
         ],
-        "node/callback-return": [
+        "n/callback-return": [
           "error",
           [
             "callback",
@@ -1680,14 +1686,28 @@
             "next"
           ]
         ],
-        "node/handle-callback-err": [
+        "n/handle-callback-err": [
           "error",
           "^.*(e|E)rr(or)?$"
         ],
-        "node/exports-style": [
+        "n/no-extraneous-require": "error",
+        "n/exports-style": [
           "error",
           "module.exports"
-        ]
+        ],
+        "n/prefer-global/buffer": "error",
+        "n/prefer-global/console": "error",
+        "n/prefer-global/process": "error",
+        "n/prefer-global/text-decoder": "error",
+        "n/prefer-global/text-encoder": "error",
+        "n/prefer-global/url-search-params": "error",
+        "n/prefer-global/url": "error",
+        "n/no-deprecated-api": "error",
+        "n/no-unpublished-bin": "error",
+        "n/no-unsupported-features/node-builtins": "error",
+        "n/hashbang": "error",
+        "n/prefer-promises/dns": "error",
+        "n/prefer-promises/fs": "error"
       }
     },
     {

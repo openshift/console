@@ -10,11 +10,12 @@ and documents every coverage gap found along the way.
 ## TL;DR
 
 A migration **without losing linting rule coverage is not possible today**.
-Oxlint covers **324 of 371 (87.3%)** enabled ESLint rules: 265 natively by
-name, plus 59 (`playwright/*`, `testing-library/*`) by running the actual
-ESLint plugins through oxlint's JS plugin support. The remaining **47 rules
-(12.7%)** have no oxlint equivalent, and several ported rules behave
-differently in practice (see [Divergences](#divergences)).
+Oxlint covers **338 of 371 (91.1%)** enabled ESLint rules: 265 natively by
+name, plus 73 (`playwright/*`, `testing-library/*`, `n/*`) by running the
+actual ESLint plugins through oxlint's JS plugin support. The remaining
+**33 rules (8.9%)** have no oxlint equivalent (plus one covered without its
+custom option), and several ported rules behave differently in practice
+(see [Divergences](#divergences)).
 
 The repo keeps ESLint as the authoritative linter. Oxlint is wired up as a
 fast pre-pass (`yarn oxlint`, ~2s vs ~15min for ESLint) with a translated
@@ -39,6 +40,10 @@ configuration in [`.oxlintrc.json`](../.oxlintrc.json).
    same approach as `console-plugin-template`): the real plugin code runs,
    so behavior matches ESLint exactly.
 5. Ran both linters on the whole tree and diffed the results per rule.
+6. Feasibility-tested JS plugins for every remaining gap (react, import,
+   core rules, typescript-eslint, react-hooks, prettier) — see
+   [JS plugin feasibility](#js-plugin-feasibility) for why most are wired
+   and three plugin families are not.
 
 ## Scopes
 
@@ -47,29 +52,27 @@ configuration in [`.oxlintrc.json`](../.oxlintrc.json).
 | Scope                     | Files                                          | Rules translated |
 | ------------------------- | ---------------------------------------------- | ---------------- |
 | frontend (react+ts)       | `public/**`, `packages/**` (minus tooling)     | 240              |
-| repo tooling (node+ts)    | root `*.ts`, `scripts`, SDK codegen/webpack, … | 162              |
+| repo tooling (node+ts)    | root `*.ts`, `scripts`, SDK codegen/webpack, … | 176 (14 via JS plugin) |
 | e2e (playwright)          | `e2e/**`                                       | 34 (JS plugin)   |
 | jest/testing-library      | `**/__tests__/**`, `**/*.spec.*`               | 45 (overlay)     |
 
-## Gaps — rules with no oxlint equivalent (47)
+## Gaps — rules with no oxlint equivalent (33)
 
 ### Covered via JS plugins
 
-`eslint-plugin-playwright` (34 rules) and `eslint-plugin-testing-library`
-(25 rules) have no native oxlint implementation, but oxlint's JS plugin
-support runs the actual plugin code, so these rules — including their
-options and severities — are enforced by `yarn oxlint` with ESLint-identical
-behavior. Both plugins are declared as root devDependencies for this
-(`jsPlugins` resolves them from the workspace root). The e2e scope's only
-remaining gaps are `no-restricted-syntax` (the custom `waitFor()` guard)
-and `prettier/prettier`.
+`eslint-plugin-playwright` (34 rules), `eslint-plugin-testing-library`
+(25 rules), and `eslint-plugin-n` (14 rules) have no native oxlint
+implementation, but oxlint's JS plugin support runs the actual plugin code,
+so these rules — including their options and severities — are enforced by
+`yarn oxlint` with ESLint-identical behavior, including `eslint-disable`
+comments (oxlint honors them by rule name). The plugins are declared as
+root devDependencies (`jsPlugins` resolves them from the workspace root).
+The deprecated core rules `no-new-require`/`no-path-concat` (which airbnb
+enables everywhere and eslint-plugin-n supersedes) are also routed to the
+n plugin, which eliminated the native `node/no-path-concat` divergence.
 
-### `eslint-plugin-n` (14)
-
-`n/no-extraneous-require`, `n/no-deprecated-api`, `n/no-unpublished-bin`,
-`n/no-unsupported-features/node-builtins`, `n/hashbang`,
-`n/prefer-promises/dns`, `n/prefer-promises/fs` and all seven
-`n/prefer-global/*` rules.
+The e2e scope's only remaining gaps are `no-restricted-syntax` (the custom
+`waitFor()` guard) and `prettier/prettier`.
 
 ### `eslint-plugin-react` (14)
 
@@ -102,16 +105,50 @@ one of the most-visible losses.
 
 ### Other
 
-- `@typescript-eslint/naming-convention` — the repo-wide naming rules are
-  not portable.
+- `@typescript-eslint/naming-convention` — requires type information from
+  `@typescript-eslint/parser`, which oxlint's runtime cannot provide; would
+  need the experimental `oxlint-tsgolint` (see
+  [JS plugin feasibility](#js-plugin-feasibility)).
 - `react-hooks/config`, `react-hooks/gating` — the only two React Compiler
   rules without an oxlint counterpart (the other 14 compiler rules map to
   `react/*`).
-- `prettier/prettier` — formatting is out of scope for a linter; oxlint
-  intentionally does not run formatters. Prettier must stay a separate
-  `prettier --check` step if ESLint is ever dropped.
+- `prettier/prettier` — runs fine through `eslint-plugin-prettier` as a
+  JS plugin (verified) but is intentionally not wired: it would duplicate
+  the authoritative ESLint rule and negate oxlint's speed. A separate
+  `prettier --check` (or oxfmt) step is the right replacement if ESLint
+  is ever dropped.
 - `react/jsx-no-duplicate-props` is supported, but its
   `{ ignoreCase: true }` option had to be dropped (oxlint accepts no options).
+
+## JS plugin feasibility
+
+Every remaining gap was feasibility-tested by loading the real ESLint
+plugin through `jsPlugins` and probing rule behavior against ESLint on the
+same files. Results:
+
+| Candidate | Feasible? | Why |
+| --------- | --------- | --- |
+| `eslint-plugin-n` | **yes — wired** | `n` is not a reserved namespace; rule names and `eslint-disable n/...` comments match verbatim |
+| `eslint-plugin-playwright` | **yes — wired** | same |
+| `eslint-plugin-testing-library` | **yes — wired** | same |
+| `eslint-plugin-react` | mechanically yes, **not wired** | `react` is a reserved namespace (native Rust plugin), so it must load under an alias (`react-js/*`). Rules then behave identically (verified: `no-string-refs`, `no-unused-class-component-methods` fire at the exact same locations as ESLint), **but** the ~150 existing `// eslint-disable react/...` comments no longer match the aliased names, surfacing suppressed code as false positives (2 today) |
+| `eslint-plugin-import` | mechanically yes, **not wired** | `import` is reserved → alias (`import-js/*`). `import/order` and `import/no-unresolved` were verified working with full option forwarding and resolver settings, but the file-level `/* eslint-disable import/order */` in app.tsx alone would resurface 15 false positives |
+| ESLint core rules (shim via `eslint/use-at-your-own-risk`) | mechanically yes, **not wired** | a local shim plugin re-exporting core rules works (`no-octal`, `lines-between-class-members` verified with exact location parity), but `eslint` is also reserved → shim rules are `eslint-core/*` → the 34 `// eslint-disable no-restricted-syntax` comments in e2e/ would resurface as 36 false positives |
+| `@typescript-eslint/naming-convention` | **no** | the rule requires `@typescript-eslint/parser` type information; oxlint's runtime cannot provide it (verified: the rule throws). Would need the experimental `oxlint-tsgolint` type-aware runtime (which console-plugin-template adopts) |
+| `react-hooks/config`, `react-hooks/gating` | **no** | the plugin loads but these compiler-infrastructure rules no-op outside the full React Compiler pipeline; ESLint reports zero findings for them today |
+| `eslint-plugin-prettier` | mechanically yes, **not wired by choice** | verified working (correct fixes, config pickup), but running prettier through the JS bridge duplicates the authoritative `prettier/prettier` ESLint rule and negates oxlint's speed; oxfmt / `prettier --check` is the right replacement if ESLint is ever dropped |
+
+The blocking issue for react/import/core rules is **not** the JS plugin
+runtime — it is that aliased rule names break `eslint-disable` comment
+matching. Unblock options, in rough order of preference:
+
+1. oxlint gains support for mapping disable-comment rule names to aliased
+   jsPlugin rules (or loads these plugins under their canonical names once
+   the native implementations reach parity).
+2. A codemod appends `// oxlint-disable-next-line <alias>/<rule>` lines
+   next to the ~150 existing `eslint-disable` comments (oxlint and ESLint
+   each honor only their matching directive).
+3. The suppressions are removed by fixing the underlying code.
 
 ## Divergences — same rule name, different behavior
 
@@ -126,7 +163,6 @@ are from a full run of both tools with the migrated config on the same tree.
 | `max-nested-callbacks`                 |      0 |      6 | mostly in files ESLint could not parse before (see below) |
 | `import/export`                        |      0 |      4 | |
 | `jsx-a11y/role-has-required-aria-props`|      0 |      4 | |
-| `n/no-path-concat`                     |      0 |      4 | |
 | `jest/no-standalone-expect`            |      0 |      3 | |
 | `jest/prefer-todo`                     |      0 |      2 | |
 | `prefer-const`                         |      0 |      2 | |
@@ -151,7 +187,7 @@ ESLint must stay authoritative for those rules.
 ## Running
 
 ```sh
-yarn oxlint        # fast pre-pass (~2s), exact-warning ratchet (MAX_WARNINGS=484)
+yarn oxlint        # fast pre-pass (~2s), exact-warning ratchet (MAX_WARNINGS=480)
 yarn lint          # oxlint pre-pass + authoritative ESLint run (MAX_WARNINGS=267)
 ```
 
