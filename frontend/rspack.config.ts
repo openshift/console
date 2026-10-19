@@ -26,7 +26,7 @@ import { TsCheckerRspackPlugin } from 'ts-checker-rspack-plugin';
 import {
   getSharedModuleMetadata,
   sharedPluginModules,
-} from '@console/dynamic-plugin-sdk/src/shared-modules/shared-modules-meta';
+} from '@console/dynamic-plugin-sdk/src/shared-modules/console-shared-modules';
 import {
   dynamicModuleImportTransformFilter,
   dynamicModulePackageSpecs,
@@ -74,14 +74,16 @@ const dynamicModuleMaps = resolveDynamicModuleMaps(dynamicModulePackageSpecs, [
 ]);
 
 /**
- * Get webpack shared module configuration to use by Console application.
+ * Get shared module configuration: Console provided shared modules.
  *
- * This includes Console provided {@link sharedPluginModules} only. Shared dynamic modules
- * resolved from {@link dynamicModulePackageSpecs} are provided separately, see
- * {@link getProvidedDynamicModules} for why they are not consumed by Console itself.
+ * Console provides specific {@link sharedPluginModules} to its plugins; these are typically singleton
+ * (only one version can be loaded) without a fallback (plugin does not provide its own module version).
  *
- * Note: shared modules contributed by Console application should be marked with `eager: true`
- * to ensure these modules are part of the initial chunk.
+ * Console both provides and consumes these shared modules.
+ *
+ * This configuration excludes shared dynamic modules, see {@link getProvidedDynamicModules} for details.
+ *
+ * Note: using `eager: true` ensures that these modules are part of the initial chunk.
  *
  * @see https://webpack.js.org/plugins/module-federation-plugin/#sharing-hints
  */
@@ -91,18 +93,19 @@ const getWebpackSharedModules = (): Shared =>
     const moduleConfig: SharedConfig = { singleton, eager: true };
 
     moduleConfig.import = getSharedModuleImport(moduleName);
-
     acc[moduleName] = moduleConfig;
+
     return acc;
   }, {});
 
 /**
- * Get PatternFly dynamic module configuration to provide to Console plugins, without Console
- * itself consuming them.
+ * Get shared dynamic module configuration: Console provided shared dynamic modules.
  *
- * Unlike {@link getWebpackSharedModules}, this uses `sharing.ProvideSharedPlugin` directly so
- * Console's own imports of these components are not rewritten into shared-scope lookups and
- * cannot fail from a PatternFly version mismatch with a plugin.
+ * This configuration ensures that Console provides {@link dynamicModulePackageSpecs dynamic modules}
+ * to its plugins. Console plugins are expected to reuse the existing dynamic modules within the share
+ * scope object, or contribute new entries if the requested dynamic module or its version is missing.
+ *
+ * Console does _NOT_ consume these shared dynamic modules, it only provides them to its plugins.
  */
 const getProvidedDynamicModules = (): Provides<false> =>
   Object.entries(dynamicModuleMaps).reduce<ProvidesObject<false>>(

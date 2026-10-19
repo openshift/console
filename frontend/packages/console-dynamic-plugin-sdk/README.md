@@ -117,8 +117,8 @@ table will help align compatible versions of PatternFly to versions of the OpenS
 
 Console application is responsible for loading base styles for all supported PatternFly version(s).
 
-As a result, plugins should not use PatternFly versions that are newer than what the console
-supports. For example, if the console loads PatternFly 6.5.x, plugins should not use PatternFly
+As a result, plugins should not use PatternFly versions that are newer than what the Console
+supports. For example, if the Console loads PatternFly 6.5.x, plugins should not use PatternFly
 6.6.x or newer.
 
 Plugins should only include styles that are specific to their user interfaces to be evaluated on top
@@ -175,31 +175,27 @@ when your plugin supports multiple Console versions.
 
 ## Shared modules
 
-Console is [configured](./src/shared-modules/shared-modules-meta.ts) to share specific modules with
-its dynamic plugins.
+Console is configured to share specific modules with its dynamic plugins:
+- [Console provided shared modules](./src/shared-modules/console-shared-modules.ts): singleton
+  no-fallback modules to be used by all plugins
+- [Shared dynamic modules](./src/shared-modules/dynamic-shared-modules.ts): PatternFly packages
+  that support `dist/dynamic` module structure
 
-The following shared modules are provided by Console, without plugins providing their own fallback:
+Shared modules and their supported versions are listed in the `meta/shared-modules.json` file
+within the `@openshift-console/dynamic-plugin-sdk` package. Console provided shared modules are
+also listed as optional `peerDependencies` for this package.
 
-- `@openshift/dynamic-plugin-sdk`
-- `@openshift-console/dynamic-plugin-sdk`
-- `@openshift-console/dynamic-plugin-sdk-internal`
-- `@patternfly/react-topology`
-- `react`
-- `react-i18next`
-- `react-redux`
-- `react-router`
-- `react-router-dom`
-- `react-router-dom-v5-compat`
-- `redux`
-- `redux-thunk`
-
-Shared modules without plugin fallbacks are defined as optional `peerDependencies` in the
-`@openshift-console/dynamic-plugin-sdk` package.
+Note: `meta/shared-modules.json` file does not include Console plugin SDK modules themselves
+(`@openshift-console/*`) and their runtime dependencies (`@openshift/dynamic-plugin-sdk`).
 
 ## How to upgrade your plugins
 
 Refer to the `CHANGELOG.md` in `@openshift-console/dynamic-plugin-sdk` and
 `@openshift-console/dynamic-plugin-sdk-webpack` for each release for package-specific changes.
+
+**Important!** Both `@openshift-console/dynamic-plugin-sdk` and
+`@openshift-console/dynamic-plugin-sdk-webpack` packages are expected to have matching version
+resolutions.
 
 For general changes made to Console's API, such as changes to shared modules, refer to the relevant
 [release notes](./release-notes).
@@ -360,9 +356,8 @@ exposed modules (i.e. the keys of `exposedModules` object) may be used in code r
 
 ## Webpack config
 
-Dynamic plugins _must_ be built with [webpack] in order for their modules to seamlessly integrate
-with Console application at runtime. Use webpack version 5+ which includes native support for module
-federation.
+Dynamic plugins _must_ be built with [webpack] or [rspack] in order for their modules to seamlessly
+integrate with Console application at runtime.
 
 All dynamic plugin assets are generated via webpack `ConsoleRemotePlugin`.
 
@@ -675,10 +670,11 @@ page].
 [`pkg/utils/utils.go`]: https://github.com/openshift/console/blob/main/pkg/utils/utils.go
 [DNS subdomain name]:
   https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#dns-subdomain-names
-[webpack chunk]: https://webpack.js.org/guides/code-splitting/
 [webpack]: https://webpack.js.org/
+[webpack chunk]: https://webpack.js.org/guides/code-splitting/
 [webpack container entry chunk]:
   https://webpack.js.org/concepts/module-federation/#low-level-concepts
+[rspack]: https://rspack.rs
 [Console operator]: https://github.com/openshift/console-operator
 [override]: https://webpack.js.org/concepts/module-federation/#overriding
 [npm registry]: https://www.npmjs.com/

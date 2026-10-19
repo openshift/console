@@ -20,6 +20,8 @@ compatibility table in [Console dynamic plugins README](./README.md).
   beside a contributed tab label ([CONSOLE-5527], [#17355])
 - Changed `HorizontalNav` to order contributed default tabs before other tabs, with remaining tabs
   still ordered alphabetically ([CONSOLE-5527], [#17355])
+- Provide `meta/shared-modules.json` containing shared modules and their supported versions
+  ([CONSOLE-5065], [#17439])
 
 ## 5.1.0-prerelease.1 - 2026-10-16
 
@@ -154,7 +156,7 @@ compatibility table in [Console dynamic plugins README](./README.md).
   [#14869])
 - Add support for the updated `React.FC` type in `@types/react` version 18 ([CONSOLE-4630],
   [#15893])
-- Make all Console-provided shared modules optional peer dependencies ([CONSOLE-5050], [#15934])
+- Make all Console provided shared modules optional peer dependencies ([CONSOLE-5050], [#15934])
 
 ## 4.21.0 - 2026-03-09
 
@@ -467,3 +469,4 @@ compatibility table in [Console dynamic plugins README](./README.md).
 [#17351]: https://github.com/openshift/console/pull/17351
 [#17363]: https://github.com/openshift/console/pull/17363
 [#17376]: https://github.com/openshift/console/pull/17376
+[#17439]: https://github.com/openshift/console/pull/17439
