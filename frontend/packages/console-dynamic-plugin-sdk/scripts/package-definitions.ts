@@ -4,11 +4,17 @@ import * as glob from 'glob';
 import * as _ from 'lodash';
 import type { PackageJson } from 'read-pkg';
 import * as semver from 'semver';
+import type { ConsolePluginSharedModuleVersions } from '../src/build-types';
 import {
   sharedPluginModules,
   getSharedModuleMetadata,
-} from '../src/shared-modules/shared-modules-meta';
+} from '../src/shared-modules/console-shared-modules';
+import { sharedDynamicModules } from '../src/shared-modules/dynamic-shared-modules';
 import { resolvePath } from './utils/path';
+
+export type FilesToCopy = Record<string, string>;
+
+export type FilesToWrite = { path: string; content: string }[];
 
 type GeneratedPackage = {
   /** Package output directory. */
@@ -16,7 +22,9 @@ type GeneratedPackage = {
   /** Package manifest. Note: `version` must be set before publishing. */
   manifest: PackageJson;
   /** Additional files or directories to copy to the package output directory. */
-  filesToCopy: Record<string, string>;
+  filesToCopy?: FilesToCopy;
+  /** Additional files to write to the package output directory. */
+  filesToWrite?: FilesToWrite;
 };
 
 type MissingDependencyCallback = (name: string) => void;
@@ -86,28 +94,39 @@ const parseDepsAs = (
   missingDepCallback: MissingDependencyCallback,
 ) => _.mapKeys(parseDeps(pkg, Object.keys(deps), missingDepCallback), (value, key) => deps[key]);
 
-const parseSharedModuleDeps = (pkg: PackageJson, missingDepCallback: MissingDependencyCallback) =>
+const parseConsoleProvidedSharedModuleDeps = (
+  pkg: PackageJson,
+  missingDepCallback: MissingDependencyCallback,
+) =>
   parseDeps(
     pkg,
-    sharedPluginModules
-      .filter((m) => {
-        const { allowFallback, aliased } = getSharedModuleMetadata(m);
+    sharedPluginModules.filter((m) => {
+      const { allowFallback, aliased, partOfModule } = getSharedModuleMetadata(m);
 
-        return (
-          // Exclude Console plugin SDK shared modules.
-          !m.startsWith('@openshift-console/') &&
-          // This is a Console plugin SDK dependency and a shared module.
-          m !== '@openshift/dynamic-plugin-sdk' &&
-          // Exclude modules for which a plugin provided fallback version is disallowed.
-          // Also exclude modules whose implementation is aliased to another module.
-          !allowFallback &&
-          !aliased
-        );
-      })
-      // Shared subpath modules use their parent package's dependency declaration.
-      .map((m) => (m.startsWith('react/') ? 'react' : m)),
+      return (
+        // Exclude Console plugin SDK shared modules.
+        !m.startsWith('@openshift-console/') &&
+        // This is a Console plugin SDK dependency and a shared module.
+        m !== '@openshift/dynamic-plugin-sdk' &&
+        // Include only modules with the following configuration:
+        // - plugins may _not_ provide their own fallback version of the module
+        // - module's implementation is _not_ aliased to another module
+        // - module's implementation is _not_ part of another module
+        !allowFallback &&
+        !aliased &&
+        !partOfModule
+      );
+    }),
     missingDepCallback,
   );
+
+const getConsolePluginSharedModuleVersions = (
+  pkg: PackageJson,
+  missingDepCallback: MissingDependencyCallback,
+): ConsolePluginSharedModuleVersions => ({
+  console: parseConsoleProvidedSharedModuleDeps(pkg, missingDepCallback),
+  dynamic: parseDeps(pkg, sharedDynamicModules, missingDepCallback),
+});
 
 const getMinDepVersion = (
   pkg: PackageJson,
@@ -138,11 +157,9 @@ export const getCorePackage: GetPackageDefinition = (
       ),
       ...parseDepsAs(rootPackage, { 'lodash-es': 'lodash' }, missingDepCallback),
     },
-    peerDependencies: {
-      ...parseSharedModuleDeps(rootPackage, missingDepCallback),
-    },
+    peerDependencies: { ...parseConsoleProvidedSharedModuleDeps(rootPackage, missingDepCallback) },
     peerDependenciesMeta: _.mapValues(
-      parseSharedModuleDeps(rootPackage, missingDepCallback),
+      parseConsoleProvidedSharedModuleDeps(rootPackage, missingDepCallback),
       () => ({ optional: true }),
     ),
   },
@@ -152,6 +169,16 @@ export const getCorePackage: GetPackageDefinition = (
     ...getReferencedAssets('dist/core'),
     'CHANGELOG-core.md': 'CHANGELOG.md',
   },
+  filesToWrite: [
+    {
+      path: 'meta/shared-modules.json',
+      content: JSON.stringify(
+        getConsolePluginSharedModuleVersions(rootPackage, missingDepCallback),
+        null,
+        2,
+      ),
+    },
+  ],
 });
 
 export const getInternalPackage: GetPackageDefinition = (

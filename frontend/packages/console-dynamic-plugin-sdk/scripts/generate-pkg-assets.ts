@@ -1,8 +1,10 @@
+import * as path from 'path';
 import chalk from 'chalk';
 import * as fs from 'fs-extra';
 import * as _ from 'lodash';
 import type { PackageJson } from 'read-pkg';
 import { readPackageSync } from 'read-pkg';
+import type { FilesToCopy, FilesToWrite } from './package-definitions';
 import { getCorePackage, getInternalPackage, getWebpackPackage } from './package-definitions';
 import { resolvePath, relativePath } from './utils/path';
 
@@ -12,10 +14,18 @@ const writePackageManifest = (manifest: PackageJson, outDir: string) => {
   console.log(chalk.green(relativePath(outPath)));
 };
 
-const copyFiles = (files: Record<string, string>) => {
+const copyFiles = (files: FilesToCopy) => {
   Object.entries(files).forEach(([src, dest]) => {
     fs.copySync(resolvePath(src), resolvePath(dest), { recursive: true });
     console.log(chalk.green(relativePath(dest)));
+  });
+};
+
+const writeFiles = (files: FilesToWrite) => {
+  files.forEach(({ path: outPath, content }) => {
+    fs.mkdirSync(path.dirname(outPath), { recursive: true });
+    fs.writeFileSync(outPath, content);
+    console.log(chalk.green(relativePath(outPath)));
   });
 };
 
@@ -39,4 +49,5 @@ outPackages.forEach((pkg) => {
 
   writePackageManifest(pkg.manifest, pkg.outDir);
   copyFiles(_.mapValues(pkg.filesToCopy, (dest) => `${pkg.outDir}/${dest}`));
+  writeFiles((pkg.filesToWrite ?? []).map((f) => ({ ...f, path: `${pkg.outDir}/${f.path}` })));
 });

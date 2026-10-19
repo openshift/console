@@ -12,8 +12,10 @@ compatibility table in [Console dynamic plugins README](./README.md).
 
 ## 5.1.0-prerelease.2 - TBD
 
-- Add `react-dom` and `react/jsx-runtime` as Console provided shared modules. ([CONSOLE-5571],
+- Add `react-dom` and `react/jsx-runtime` as Console provided shared modules ([CONSOLE-5571],
   [#17462])
+- Provide `meta/shared-modules.json` containing shared modules and their supported versions
+  ([CONSOLE-5065], [#17439])
 - Added optional `sortWeight` property to extension `console.catalog/item-type`, so a plugin can
   control where a type displays in the catalog's type list ([CONSOLE-5527], [#17355])
 - Added optional `badge` property to extension `console.tab`, so a plugin can display a component
@@ -157,7 +159,7 @@ compatibility table in [Console dynamic plugins README](./README.md).
   [#14869])
 - Add support for the updated `React.FC` type in `@types/react` version 18 ([CONSOLE-4630],
   [#15893])
-- Make all Console-provided shared modules optional peer dependencies ([CONSOLE-5050], [#15934])
+- Make all Console provided shared modules optional peer dependencies ([CONSOLE-5050], [#15934])
 
 ## 4.21.0 - 2026-03-09
 
@@ -472,4 +474,5 @@ compatibility table in [Console dynamic plugins README](./README.md).
 [#17363]: https://github.com/openshift/console/pull/17363
 [#17376]: https://github.com/openshift/console/pull/17376
 [#17389]: https://github.com/openshift/console/pull/17389
+[#17439]: https://github.com/openshift/console/pull/17439
 [#17462]: https://github.com/openshift/console/pull/17462
