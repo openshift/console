@@ -1698,7 +1698,59 @@
       "excludeFiles": [
         "e2e/**/testData/**"
       ],
-      "rules": {}
+      "jsPlugins": [
+        "eslint-plugin-playwright"
+      ],
+      "rules": {
+        "playwright/consistent-spacing-between-blocks": "warn",
+        "playwright/expect-expect": "warn",
+        "playwright/max-nested-describe": "warn",
+        "playwright/missing-playwright-await": "error",
+        "playwright/no-conditional-expect": "warn",
+        "playwright/no-duplicate-hooks": "warn",
+        "playwright/no-duplicate-slow": "warn",
+        "playwright/no-element-handle": "warn",
+        "playwright/no-eval": "warn",
+        "playwright/no-focused-test": "error",
+        "playwright/no-force-option": "warn",
+        "playwright/no-nested-step": "warn",
+        "playwright/no-networkidle": "error",
+        "playwright/no-page-pause": "warn",
+        "playwright/no-skipped-test": [
+          "error",
+          {
+            "allowConditional": true,
+            "disallowFixme": false
+          }
+        ],
+        "playwright/no-standalone-expect": "error",
+        "playwright/no-unsafe-references": "error",
+        "playwright/no-unused-locators": "error",
+        "playwright/no-useless-await": "warn",
+        "playwright/no-useless-not": "warn",
+        "playwright/no-wait-for-navigation": "error",
+        "playwright/no-wait-for-selector": "warn",
+        "playwright/no-wait-for-timeout": "warn",
+        "playwright/prefer-hooks-in-order": "warn",
+        "playwright/prefer-hooks-on-top": "warn",
+        "playwright/prefer-locator": "warn",
+        "playwright/prefer-to-have-count": "warn",
+        "playwright/prefer-to-have-length": "warn",
+        "playwright/prefer-web-first-assertions": "error",
+        "playwright/valid-describe-callback": "error",
+        "playwright/valid-expect": "error",
+        "playwright/valid-expect-in-promise": "error",
+        "playwright/valid-test-tags": "error",
+        "playwright/valid-title": "error"
+      }
+    },
+    {
+      "files": [
+        "e2e/setup/**/*.ts"
+      ],
+      "rules": {
+        "playwright/expect-expect": "off"
+      }
     },
     {
       "files": [
@@ -1713,7 +1765,47 @@
       "env": {
         "jest": true
       },
+      "jsPlugins": [
+        "eslint-plugin-testing-library"
+      ],
       "rules": {
+        "testing-library/await-async-events": [
+          "error",
+          {
+            "eventModule": "userEvent"
+          }
+        ],
+        "testing-library/await-async-queries": "error",
+        "testing-library/await-async-utils": "error",
+        "testing-library/no-await-sync-events": [
+          "error",
+          {
+            "eventModules": [
+              "fire-event"
+            ]
+          }
+        ],
+        "testing-library/no-await-sync-queries": "error",
+        "testing-library/no-container": "error",
+        "testing-library/no-debugging-utils": "warn",
+        "testing-library/no-dom-import": [
+          "error",
+          "react"
+        ],
+        "testing-library/no-global-regexp-flag-in-query": "error",
+        "testing-library/no-manual-cleanup": "error",
+        "testing-library/no-node-access": "error",
+        "testing-library/no-promise-in-fire-event": "error",
+        "testing-library/no-render-in-lifecycle": "error",
+        "testing-library/no-unnecessary-act": "error",
+        "testing-library/no-wait-for-multiple-assertions": "error",
+        "testing-library/no-wait-for-side-effects": "error",
+        "testing-library/no-wait-for-snapshot": "error",
+        "testing-library/prefer-find-by": "error",
+        "testing-library/prefer-presence-queries": "error",
+        "testing-library/prefer-query-by-disappearance": "error",
+        "testing-library/prefer-screen-queries": "error",
+        "testing-library/render-result-naming-convention": "error",
         "jest/no-alias-methods": "error",
         "jest/no-commented-out-tests": "error",
         "jest/no-conditional-expect": "error",
@@ -1732,6 +1824,9 @@
         "jest/valid-expect": "error",
         "jest/valid-expect-in-promise": "error",
         "jest/valid-title": "error",
+        "testing-library/prefer-explicit-assert": "error",
+        "testing-library/prefer-user-event": "error",
+        "testing-library/prefer-user-event-setup": "error",
         "jest/prefer-todo": "warn",
         "jest/no-restricted-matchers": [
           "error",

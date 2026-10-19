@@ -66,6 +66,16 @@ const candidates = (name: string): string[] => {
   return list;
 };
 
+// ESLint plugins that oxlint does not implement natively but supports
+// running verbatim through its JS plugin runtime (see
+// docs/oxlint-migration-poc.md and the console-plugin-template repo, which
+// uses the same mechanism). Their rules keep their ESLint names and options;
+// because the actual plugin code runs, behavior matches ESLint exactly.
+const JS_PLUGIN_RULES: Record<string, string> = {
+  'playwright/': 'eslint-plugin-playwright',
+  'testing-library/': 'eslint-plugin-testing-library',
+};
+
 // Rules whose ESLint options are rejected by oxlint. The rule stays enabled
 // with default options; the loss is documented in the migration notes.
 const DROP_OPTIONS = new Set(['react/jsx-no-duplicate-props']); // takes no options in oxlint
@@ -154,7 +164,10 @@ const translate = (
 ): Record<string, unknown> => {
   const out: Record<string, unknown> = {};
   for (const [name, conf] of Object.entries(eslintRules)) {
-    const oxName = mapRule(name);
+    // JS-plugin rules keep their ESLint names; they are provided by the
+    // eslint plugins declared in `jsPlugins` on the matching override.
+    const jsPlugin = Object.keys(JS_PLUGIN_RULES).find((p) => name.startsWith(p));
+    const oxName = jsPlugin ? name : mapRule(name);
     if (!oxName) {
       gaps.push({ scope, rule: name, reason: 'no oxlint equivalent' });
     } else if (typeof conf !== 'string' && DROP_OPTIONS.has(name)) {
@@ -266,19 +279,29 @@ const config = {
       rules: nodeRules,
     },
     {
-      // Scope: e2e (playwright). Currently empty: every rule in this scope
-      // (playwright/*, no-restricted-syntax, prettier/prettier) is an
-      // documented migration gap; ESLint remains authoritative for e2e/.
+      // Scope: e2e (playwright). The playwright rules run verbatim through
+      // eslint-plugin-playwright via oxlint's JS plugin support (same
+      // approach as console-plugin-template). Still uncovered here:
+      // no-restricted-syntax (custom waitFor() guard) and prettier/prettier.
       files: ['e2e/**/*.ts', 'e2e/**/*.tsx'],
       excludeFiles: ['e2e/**/testData/**'],
+      jsPlugins: ['eslint-plugin-playwright'],
       rules: e2eRules,
+    },
+    {
+      // Scope: e2e setup helpers (mirrors eslint.config.ts).
+      files: ['e2e/setup/**/*.ts'],
+      rules: { 'playwright/expect-expect': 'off' },
     },
     {
       // Scope: jest/testing-library overlay on test files within the
       // frontend and tooling scopes (e2e/ is excluded to match ESLint).
+      // testing-library rules run verbatim through eslint-plugin-testing-library
+      // via oxlint's JS plugin support (same approach as console-plugin-template).
       files: ['**/__tests__/**/*.ts', '**/__tests__/**/*.tsx', '**/*.spec.ts', '**/*.spec.tsx'],
       excludeFiles: ['e2e/**'],
       env: { jest: true },
+      jsPlugins: ['eslint-plugin-testing-library'],
       rules: jestOverlay,
     },
   ],
@@ -295,7 +318,7 @@ for (const g of gaps) {
 console.log(`frontend rules: ${Object.keys(frontendRules).length}`);
 console.log(`node rules: ${Object.keys(nodeRules).length}`);
 console.log(
-  `e2e rules: ${Object.keys(e2eRules).length} (all rules in this scope are documented gaps)`,
+  `e2e rules: ${Object.keys(e2eRules).length} (playwright rules via eslint-plugin-playwright JS plugin)`,
 );
 console.log(`jest overlay rules: ${Object.keys(jestOverlay).length}`);
 console.log(`\n${uniqueGaps.size} rules without oxlint coverage:`);
