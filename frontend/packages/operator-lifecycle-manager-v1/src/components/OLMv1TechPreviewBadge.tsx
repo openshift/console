@@ -4,8 +4,8 @@ import { RhUiQuestionMarkCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 
 /**
- * Shared tech preview badge with info popover for OLMv1 features.
- * Displays a yellow outline label with "Tech Preview" and an info icon that shows
+ * Shared Technology Preview badge with info popover for OLMv1 features.
+ * Displays a yellow outline label with "Technology Preview" and an info icon that shows
  * a popover with details about OLMv1 when clicked.
  * Renders inline for use in tabs or toolbars.
  */
@@ -23,7 +23,7 @@ export const OLMv1TechPreviewBadge: FC = () => {
   return (
     <>
       <Label color="yellow" isCompact variant="outline">
-        {t('Tech Preview')}
+        {t('Technology Preview')}
       </Label>{' '}
       <Popover aria-label={t('OLMv1 information')} bodyContent={popoverContent}>
         <Button
