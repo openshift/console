@@ -83,9 +83,6 @@ interface EnvFromPairElementProps {
   serviceAccounts?: Record<string, unknown>;
 }
 
-// PatternFly grid layout places content on a fixed 12 column grid, therefore the combined
-// span value of all grid items must equal 12. Action columns should always use a span of 1.
-
 const PairElement: FC<PairElementProps> = ({
   nameString,
   valueString,
