@@ -45,8 +45,12 @@ const oxlintRuleNames = new Set<string>(
 const ALIASES: Record<string, string> = {
   'no-barrel-files/no-barrel-files': 'oxc/no-barrel-file',
   'no-return-await': 'typescript/return-await',
-  'no-new-require': 'node/no-new-require',
-  'no-path-concat': 'node/no-path-concat',
+  // The deprecated core no-new-require/no-path-concat rules are superseded
+  // by eslint-plugin-n's versions (which ESLint also runs in the node scope);
+  // route them to the JS plugin so the real rule code executes everywhere —
+  // the native oxlint implementation over-reports (see Divergences).
+  'no-new-require': 'n/no-new-require',
+  'no-path-concat': 'n/no-path-concat',
   'dot-notation': 'typescript/dot-notation',
   'no-buffer-constructor': 'unicorn/no-new-buffer',
 };
@@ -70,10 +74,21 @@ const candidates = (name: string): string[] => {
 // running verbatim through its JS plugin runtime (see
 // docs/oxlint-migration-poc.md and the console-plugin-template repo, which
 // uses the same mechanism). Their rules keep their ESLint names and options;
-// because the actual plugin code runs, behavior matches ESLint exactly.
+// because the actual plugin code runs, behavior matches ESLint exactly —
+// including `eslint-disable` comments, which oxlint honors by rule name.
+//
+// ONLY plugins whose namespace is NOT reserved by oxlint can be wired this
+// way. The namespaces `eslint`, `react`, and `import` are implemented
+// natively in Rust and reserved, so those plugins must be loaded under an
+// alias (e.g. `react-js/no-typos`). Aliased rule names no longer match the
+// existing `// eslint-disable react/jsx-no-bind`-style comments in the tree
+// (~150 of them), which would surface as false positives. Those rules are
+// therefore left to ESLint and documented as gaps; see
+// docs/oxlint-migration-poc.md for the unblock options.
 const JS_PLUGIN_RULES: Record<string, string> = {
   'playwright/': 'eslint-plugin-playwright',
   'testing-library/': 'eslint-plugin-testing-library',
+  'n/': 'eslint-plugin-n',
 };
 
 // Rules whose ESLint options are rejected by oxlint. The rule stays enabled
@@ -90,7 +105,7 @@ const TRANSLATE_OPTIONS: Record<string, (opts: unknown[]) => unknown[]> = {
     }),
 };
 
-// Rules whose oxlint implementation reports findings that ESLint does not
+// Rules where oxlint's implementation reports findings that ESLint does not
 // (see "Divergences" in docs/oxlint-migration-poc.md). They are downgraded to
 // `warn` so that `yarn oxlint` can gate on a warning budget, mirroring the
 // ESLint MAX_WARNINGS ratchet. Revisit when the two tools converge.
@@ -102,7 +117,6 @@ const DIVERGENT_DOWNGRADE = new Set([
   'react/exhaustive-deps',
   'react/no-did-update-set-state',
   'jsx-a11y/role-has-required-aria-props',
-  'node/no-path-concat',
   'jest/no-standalone-expect',
   'jest/prefer-todo',
   'jest/no-disabled-tests',
@@ -111,7 +125,6 @@ const DIVERGENT_DOWNGRADE = new Set([
   'no-unused-vars',
   'no-var',
 ]);
-
 interface Gap {
   scope: string;
   rule: string;
@@ -132,10 +145,10 @@ const printConfig = (file: string): Record<string, unknown> => {
 const ruleMap = new Map<string, string>();
 const mapRule = (name: string): string | undefined => {
   if (!ruleMap.has(name)) {
-    ruleMap.set(
-      name,
-      candidates(name).find((c) => oxlintRuleNames.has(c)),
-    );
+    // Hand-curated aliases are trusted as-is: some target native oxlint
+    // rules, others target JS plugin rules (e.g. `n/*`), which are not part
+    // of the native schema checked below.
+    ruleMap.set(name, ALIASES[name] ?? candidates(name).find((c) => oxlintRuleNames.has(c)));
   }
   return ruleMap.get(name);
 };
@@ -258,6 +271,9 @@ const config = {
       files: ['public/**/*.ts', 'public/**/*.tsx', 'packages/**/*.ts', 'packages/**/*.tsx'],
       excludeFiles: REPO_TOOLING.flatMap((d) => [`${d}/**/*.ts`, `${d}/**/*.tsx`]),
       env: { browser: true },
+      // eslint-plugin-n provides the deprecated core no-new-require and
+      // no-path-concat rules that airbnb enables for this scope.
+      jsPlugins: ['eslint-plugin-n'],
       globals: {
         process: 'readonly',
         React: true,
@@ -276,6 +292,7 @@ const config = {
       // slash) matches root-level files only, mirroring ESLint semantics.
       files: ['/*.ts', '/*.tsx', ...REPO_TOOLING.flatMap((d) => [`${d}/**/*.ts`, `${d}/**/*.tsx`])],
       env: { node: true },
+      jsPlugins: ['eslint-plugin-n'],
       rules: nodeRules,
     },
     {
