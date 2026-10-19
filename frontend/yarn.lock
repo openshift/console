@@ -12865,6 +12865,8 @@ __metadata:
     css-loader: "npm:^5.2.7"
     dagre: "npm:^0.8.5"
     dotenv: "npm:^17.4.2"
+    eslint-plugin-playwright: "npm:^2.10.2"
+    eslint-plugin-testing-library: "npm:^7.16.2"
     file-saver: "npm:^2.0.5"
     find-up: "npm:4.x"
     formik: "npm:^2.1.5"

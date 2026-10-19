@@ -10,9 +10,11 @@ and documents every coverage gap found along the way.
 ## TL;DR
 
 A migration **without losing linting rule coverage is not possible today**.
-Oxlint covers **265 of 371 (71.4%)** enabled ESLint rules by name. The
-remaining **106 rules (28.6%)** have no oxlint equivalent, and several ported
-rules behave differently in practice (see [Divergences](#divergences)).
+Oxlint covers **324 of 371 (87.3%)** enabled ESLint rules: 265 natively by
+name, plus 59 (`playwright/*`, `testing-library/*`) by running the actual
+ESLint plugins through oxlint's JS plugin support. The remaining **47 rules
+(12.7%)** have no oxlint equivalent, and several ported rules behave
+differently in practice (see [Divergences](#divergences)).
 
 The repo keeps ESLint as the authoritative linter. Oxlint is wired up as a
 fast pre-pass (`yarn oxlint`, ~2s vs ~15min for ESLint) with a translated
@@ -32,7 +34,11 @@ configuration in [`.oxlintrc.json`](../.oxlintrc.json).
 3. Generated `.oxlintrc.json` with one `overrides` entry per ESLint scope
    (frontend, repo tooling, e2e, jest overlay), preserving severities and
    rule options.
-4. Ran both linters on the whole tree and diffed the results per rule.
+4. Wired `eslint-plugin-playwright` and `eslint-plugin-testing-library`
+   into the e2e and jest overrides via oxlint's `jsPlugins` support (the
+   same approach as `console-plugin-template`): the real plugin code runs,
+   so behavior matches ESLint exactly.
+5. Ran both linters on the whole tree and diffed the results per rule.
 
 ## Scopes
 
@@ -42,21 +48,21 @@ configuration in [`.oxlintrc.json`](../.oxlintrc.json).
 | ------------------------- | ---------------------------------------------- | ---------------- |
 | frontend (react+ts)       | `public/**`, `packages/**` (minus tooling)     | 240              |
 | repo tooling (node+ts)    | root `*.ts`, `scripts`, SDK codegen/webpack, … | 162              |
-| e2e (playwright)          | `e2e/**`                                       | 0 — see gaps     |
-| jest/testing-library      | `**/__tests__/**`, `**/*.spec.*`               | 20 (overlay)     |
+| e2e (playwright)          | `e2e/**`                                       | 34 (JS plugin)   |
+| jest/testing-library      | `**/__tests__/**`, `**/*.spec.*`               | 45 (overlay)     |
 
-## Gaps — rules with no oxlint equivalent (106)
+## Gaps — rules with no oxlint equivalent (47)
 
-### Whole plugins missing
+### Covered via JS plugins
 
-| Plugin                | Rules | Notes                                                    |
-| --------------------- | ----- | -------------------------------------------------------- |
-| `playwright`          | 34    | entire e2e scope is uncovered by oxlint                  |
-| `testing-library`     | 25    | RTL-specific rules (queries, `await` patterns, `act`, …) |
-
-The e2e scope (`eslint.config.ts`) enables only `playwright/*`,
-`no-restricted-syntax` (custom `waitFor()` guard) and `prettier/prettier` —
-all unsupported — so **the e2e scope currently gets zero oxlint rules**.
+`eslint-plugin-playwright` (34 rules) and `eslint-plugin-testing-library`
+(25 rules) have no native oxlint implementation, but oxlint's JS plugin
+support runs the actual plugin code, so these rules — including their
+options and severities — are enforced by `yarn oxlint` with ESLint-identical
+behavior. Both plugins are declared as root devDependencies for this
+(`jsPlugins` resolves them from the workspace root). The e2e scope's only
+remaining gaps are `no-restricted-syntax` (the custom `waitFor()` guard)
+and `prettier/prettier`.
 
 ### `eslint-plugin-n` (14)
 
@@ -159,8 +165,9 @@ change.
 
 ## Path to full migration
 
-1. Upstream oxlint to implement the missing plugins (playwright,
-   testing-library) and rules listed above; track
+1. Upstream oxlint to implement the remaining rules listed above (the
+   playwright and testing-library plugins no longer block migration thanks
+   to JS plugins); track
    <https://github.com/oxc-project/oxc/issues/481>.
 2. Resolve the divergences above (file issues upstream or fix the code).
 3. Replace `prettier/prettier` with an explicit `prettier --check` CI step.
