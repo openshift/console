@@ -83,6 +83,9 @@ interface EnvFromPairElementProps {
   serviceAccounts?: Record<string, unknown>;
 }
 
+// PatternFly grid layout places content on a fixed 12 column grid, therefore the combined
+// span value of all grid items must equal 12. Action columns should always use a span of 1.
+
 const PairElement: FC<PairElementProps> = ({
   nameString,
   valueString,
@@ -98,6 +101,7 @@ const PairElement: FC<PairElementProps> = ({
   alwaysAllowRemove,
 }) => {
   const { t } = useTranslation('public');
+  const hasAction = !readOnly;
 
   const handleRemove = () => onRemove(index);
   const handleChangeName: TextInputProps['onChange'] = (_event, value) =>
@@ -121,7 +125,7 @@ const PairElement: FC<PairElementProps> = ({
         />
       </GridItem>
       {_.isPlainObject(pair[NameValueEditorPair.Value]) ? (
-        <GridItem span={5} className="pairs-list__value-pair-field">
+        <GridItem span={hasAction ? 6 : 7} className="pairs-list__value-pair-field">
           <ValueFromPair
             data-test="pairs-list-value"
             pair={pair[NameValueEditorPair.Value]}
@@ -132,7 +136,7 @@ const PairElement: FC<PairElementProps> = ({
           />
         </GridItem>
       ) : (
-        <GridItem span={5} className="pairs-list__value-field">
+        <GridItem span={hasAction ? 6 : 7} className="pairs-list__value-field">
           <TextInput
             type="text"
             data-test="pairs-list-value"
@@ -144,7 +148,7 @@ const PairElement: FC<PairElementProps> = ({
           />
         </GridItem>
       )}
-      {!readOnly && (
+      {hasAction && (
         <GridItem span={1} className="pairs-list__action">
           <Tooltip content={toolTip || t('Remove')}>
             <Button
@@ -175,6 +179,7 @@ const EnvFromPairElement: FC<EnvFromPairElementProps> = ({
   serviceAccounts,
 }) => {
   const { t } = useTranslation('public');
+  const hasAction = !readOnly;
 
   const handleRemove = () => onRemove(index);
   const handleChangePrefix: TextInputProps['onChange'] = (_event, value) =>
@@ -184,7 +189,7 @@ const EnvFromPairElement: FC<EnvFromPairElementProps> = ({
 
   return (
     <Grid hasGutter className="pairs-list__row pf-v6-u-flex-grow-1">
-      <GridItem span={5} className="pairs-list__value-pair-field">
+      <GridItem span={hasAction ? 6 : 7} className="pairs-list__value-pair-field">
         <ValueFromPair
           pair={pair[EnvFromPair.Resource]}
           configMaps={configMaps}
@@ -206,7 +211,7 @@ const EnvFromPairElement: FC<EnvFromPairElementProps> = ({
           isDisabled={readOnly}
         />
       </GridItem>
-      {readOnly ? null : (
+      {hasAction && (
         <GridItem span={1} className="pairs-list__action">
           <Tooltip content={t('Remove')}>
             <Button
@@ -245,6 +250,7 @@ export const NameValueEditor: FC<NameValueEditorProps> = ({
   const { t } = useTranslation('public');
   const nameString = props.nameString || t('Key');
   const valueString = props.valueString || t('Value');
+  const hasAction = !readOnly;
 
   const handleAppend = () => {
     updateParentData(
@@ -326,8 +332,8 @@ export const NameValueEditor: FC<NameValueEditorProps> = ({
               <div className="pairs-list__drag-spacer" />
               <Grid hasGutter className="pf-v6-u-flex-grow-1">
                 <GridItem span={5}>{nameString}</GridItem>
-                <GridItem span={5}>{valueString}</GridItem>
-                <GridItem span={1} />
+                <GridItem span={hasAction ? 6 : 7}>{valueString}</GridItem>
+                {hasAction && <GridItem span={1} />}
               </Grid>
             </div>
           </GridItem>
@@ -350,8 +356,8 @@ export const NameValueEditor: FC<NameValueEditorProps> = ({
       ) : (
         <>
           <GridItem span={5}>{nameString}</GridItem>
-          <GridItem span={5}>{valueString}</GridItem>
-          <GridItem span={1} />
+          <GridItem span={hasAction ? 6 : 7}>{valueString}</GridItem>
+          {hasAction && <GridItem span={1} />}
           {nameValuePairs.map((pair, i) => {
             const key = (pair[NameValueEditorPair.Index] as Key) ?? i;
             return (
@@ -365,7 +371,7 @@ export const NameValueEditor: FC<NameValueEditorProps> = ({
 
       <GridItem>
         <ActionList>
-          {readOnly ? null : (
+          {hasAction && (
             <ActionListGroup>
               <ActionListItem>
                 <Button
@@ -425,6 +431,7 @@ export const EnvFromEditor: FC<EnvFromEditorProps> = ({
   addButtonLabel,
 }) => {
   const { t } = useTranslation('public');
+  const hasAction = !readOnly;
 
   const handleAppend = () => {
     const configMapSecretRef = { name: '', key: '' };
@@ -492,13 +499,13 @@ export const EnvFromEditor: FC<EnvFromEditorProps> = ({
             <div className="pf-v6-u-display-flex">
               <div className="pairs-list__drag-spacer" />
               <Grid hasGutter className="pf-v6-u-flex-grow-1">
-                <GridItem span={5} className="pf-v6-u-text-color-subtle">
+                <GridItem span={hasAction ? 6 : 7} className="pf-v6-u-text-color-subtle">
                   {firstTitle || t('ConfigMap/Secret')}
                 </GridItem>
                 <GridItem span={5} className="pf-v6-u-text-color-subtle">
                   {secondTitle || t('Prefix (optional)')}
                 </GridItem>
-                <GridItem span={1} />
+                {hasAction && <GridItem span={1} />}
               </Grid>
             </div>
           </GridItem>
@@ -517,13 +524,13 @@ export const EnvFromEditor: FC<EnvFromEditorProps> = ({
         </>
       ) : (
         <>
-          <GridItem span={5} className="pf-v6-u-text-color-subtle">
+          <GridItem span={hasAction ? 6 : 7} className="pf-v6-u-text-color-subtle">
             {firstTitle || t('ConfigMap/Secret')}
           </GridItem>
           <GridItem span={5} className="pf-v6-u-text-color-subtle">
             {secondTitle || t('Prefix (optional)')}
           </GridItem>
-          <GridItem span={1} />
+          {hasAction && <GridItem span={1} />}
           {nameValuePairs.map((pair, i) => {
             const key = (pair[EnvFromPair.Index] as Key) ?? i;
             return (
@@ -535,7 +542,7 @@ export const EnvFromEditor: FC<EnvFromEditorProps> = ({
         </>
       )}
 
-      {!readOnly && (
+      {hasAction && (
         <GridItem>
           <ActionList>
             <ActionListGroup>
