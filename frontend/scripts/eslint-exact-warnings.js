@@ -1,3 +1,4 @@
+// @ts-check
 'use strict';
 
 /**
@@ -91,7 +92,6 @@ const writeJunitXml = (failed, message) => {
  * bin assigns that value to `process.exitCode` *after* the formatter runs. An
  * `'exit'` listener runs later still, so it is the reliable place to set the
  * failing code even when ESLint itself considers the run a pass.
- * @param {string} testName The name of the test case that failed, for JUnit XML output.
  * @param {string} message The error to print to stderr.
  * @returns {void}
  */

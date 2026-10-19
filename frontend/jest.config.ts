@@ -10,7 +10,7 @@ export default defineConfig({
   },
   testEnvironment: 'jsdom',
   transform: {
-    'get-local-plugins\\.js$': './scripts/jest-transform-local-plugins.js',
+    'get-local-plugins\\.js$': './scripts/jest-transform-local-plugins.cjs',
     '^.+\\.(ts|tsx|js|mjs)$': [
       '@swc/jest',
       {

@@ -31,6 +31,7 @@ const isRetryableError = (err: unknown): boolean => {
 
 setup.describe.configure({ mode: 'serial' });
 
+// eslint-disable-next-line playwright/expect-expect
 setup('install OpenShift Serverless operator if not present', async ({}) => {
   setup.setTimeout(600_000);
 
@@ -110,6 +111,7 @@ setup('install OpenShift Serverless operator if not present', async ({}) => {
   }
 });
 
+// eslint-disable-next-line playwright/expect-expect
 setup('create KnativeServing and KnativeEventing instances', async ({}) => {
   setup.setTimeout(600_000);
 

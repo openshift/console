@@ -1,6 +1,6 @@
-import { parseSyml } from '@yarnpkg/parsers';
 import { readFileSync } from 'fs';
 import { basename } from 'path';
+import { parseSyml } from '@yarnpkg/parsers';
 import chalk from 'chalk';
 import * as semver from 'semver';
 
@@ -10,7 +10,7 @@ const lockFileContent = readFileSync('yarn.lock', 'utf8');
 const lockFile = parseSyml(lockFileContent);
 
 /** List of packages to check along with their required semver ranges */
-const PKGS_TO_CHECK: Array<{ name: string; semver: string }> = [
+const PKGS_TO_CHECK: { name: string; semver: string }[] = [
   { name: '@patternfly/patternfly', semver: '6.x' },
   { name: '@patternfly/quickstarts', semver: '6.x' },
   { name: '@patternfly/react-catalog-view-extension', semver: '6.x' },
@@ -63,7 +63,7 @@ const patternflyModules = Object.entries(lockFile).reduce(
 
     return acc;
   },
-  new Map<string, Array<{ resolvedVersion: string }>>(),
+  new Map<string, { resolvedVersion: string }[]>(),
 );
 
 let hasResolutionErrors = false;
@@ -86,10 +86,7 @@ for (const pkg of PKGS_TO_CHECK) {
         )}`,
       );
       hasResolutionErrors = true;
-      continue;
-    }
-
-    if (!semver.satisfies(resolvedVersion, pkg.semver)) {
+    } else if (!semver.satisfies(resolvedVersion, pkg.semver)) {
       console.error(
         `${chalk.red(pkg.name)} has one resolution ${chalk.yellow(
           resolvedVersions[0],

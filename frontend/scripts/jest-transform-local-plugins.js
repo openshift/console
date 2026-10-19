@@ -1,4 +1,3 @@
-/* eslint-disable tsdoc/syntax */ // This file is written in JavaScript, so we use JSDoc here. TSDoc rules don't apply
 // @ts-check
 // Register ts-node to handle TypeScript imports before Jest's module system is active
 require('ts-node').register({

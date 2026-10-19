@@ -1,9 +1,10 @@
+import * as path from 'path';
 import {
+  type NormalModule,
   type Configuration,
   CopyRspackPlugin,
   CssExtractRspackPlugin,
   LightningCssMinimizerRspackPlugin,
-  NormalModule,
   NormalModuleReplacementPlugin,
   ProgressPlugin,
   type Provides,
@@ -14,12 +15,13 @@ import {
   sharing,
   SwcJsMinimizerRspackPlugin,
 } from '@rspack/core';
-import { TsCheckerRspackPlugin } from 'ts-checker-rspack-plugin';
 import { ReactRefreshRspackPlugin } from '@rspack/plugin-react-refresh';
+import HtmlWebpackPlugin from 'html-webpack-plugin';
 import * as _ from 'lodash';
-import * as path from 'path';
+import MonacoWebpackPlugin from 'monaco-editor-webpack-plugin';
+import NodePolyfillPlugin from 'node-polyfill-webpack-plugin';
 import * as semver from 'semver';
-
+import { TsCheckerRspackPlugin } from 'ts-checker-rspack-plugin';
 import {
   getSharedModuleMetadata,
   sharedPluginModules,
@@ -35,10 +37,6 @@ import {
 import { ExtensionValidatorPlugin } from '@console/dynamic-plugin-sdk/src/webpack/ExtensionValidatorPlugin';
 import { resolvePluginPackages } from '@console/plugin-sdk/src/codegen/plugin-resolver';
 import { CircularDependencyPreset } from './webpack.circular-deps';
-
-const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
-const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const NODE_ENV = process.env.NODE_ENV || 'development';
 const HOT_RELOAD = process.env.HOT_RELOAD || 'true';
@@ -182,14 +180,14 @@ const config: Configuration = {
             jsc: {
               parser: {
                 syntax: 'typescript',
-                tsx: true
+                tsx: true,
               },
               transform: {
                 react: {
                   runtime: 'automatic',
                   development: REACT_REFRESH,
                   refresh: REACT_REFRESH,
-                }
+                },
               },
               target: 'es2021',
             },
@@ -286,15 +284,14 @@ const config: Configuration = {
   plugins: [
     new ExtensionValidatorPlugin({ pluginPackages }),
     new DynamicModuleImportPlugin({
-      loader: require.resolve(
-        '@console/dynamic-plugin-sdk/src/webpack/loaders/dynamic-module-import-loader',
-      ),
+      loader:
+        require.resolve('@console/dynamic-plugin-sdk/src/webpack/loaders/dynamic-module-import-loader'),
       dynamicModuleMaps,
       moduleFilter: dynamicModuleImportTransformFilter,
     }),
     new sharing.SharePlugin({
       shared: getWebpackSharedModules(),
-      enhanced: false // retains webpack 5 SharePlugin behavior as opposed to MF 2.0
+      enhanced: false, // retains webpack 5 SharePlugin behavior as opposed to MF 2.0
     }),
     new sharing.ProvideSharedPlugin({
       provides: getProvidedDynamicModules(),
@@ -321,7 +318,7 @@ const config: Configuration = {
       chunksSortMode: 'auto',
     }),
     new MonacoWebpackPlugin({
-      languages: ['yaml', 'dockerfile', 'json', 'plaintext'],
+      languages: ['yaml', 'dockerfile', 'json'],
       globalAPI: true,
       customLanguages: [
         {
@@ -387,7 +384,7 @@ if (ANALYZE_BUNDLE === 'true') {
     config.plugins.push(
       new RsdoctorRspackPlugin({
         features: {
-          loader: false // doesn't work: "Load data failed, please try again"
+          loader: false, // doesn't work: "Load data failed, please try again"
         },
         output: {
           mode: 'brief',
@@ -403,12 +400,12 @@ if (ANALYZE_BUNDLE === 'true') {
         disableClientServer: true,
       }),
     );
-    } catch (err) {
+  } catch (err) {
     console.warn(
-        'Failed to load @rsdoctor/rspack-plugin. Bundle analysis will not be available.',
-        err,
-      );
-    }
+      'Failed to load @rsdoctor/rspack-plugin. Bundle analysis will not be available.',
+      err,
+    );
+  }
 
   // Only fail the build due to excess bundle size if running analyze.sh
   // This way, the other tests (frontend, e2e) can still provide feedback in CI

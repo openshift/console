@@ -31,7 +31,6 @@ module.exports = {
         'plugin:console/react',
         'plugin:console/typescript',
         'plugin:console/jest',
-        'plugin:console/json',
         'plugin:console/prettier',
       ],
 
@@ -48,7 +47,6 @@ module.exports = {
         'plugin:console/typescript',
         'plugin:console/node',
         'plugin:console/jest',
-        'plugin:console/json',
         'plugin:console/prettier',
       ],
       rules: {

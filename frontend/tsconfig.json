@@ -4,12 +4,9 @@
     "module": "esnext",
     "moduleResolution": "bundler",
     "customConditions": ["browser"],
-    "outDir": "./public/dist/build/",
     "target": "es2021",
     "jsx": "react-jsx",
     "strict": false,
-    "experimentalDecorators": true,
-    "sourceMap": true,
     "noUnusedLocals": true,
     "typeRoots": ["node_modules/@types", "@types"],
     "types": ["node", "jest", "console"],
@@ -44,5 +41,5 @@
     "**/integration-tests",
     "e2e"
   ],
-  "include": ["**/*.mts", "**/*.ts", "**/*.tsx", "**/*.json"]
+  "include": ["**/*.ts", "**/*.tsx", "**/*.json"]
 }
