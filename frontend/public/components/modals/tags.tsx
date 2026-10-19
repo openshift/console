@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { useState, useEffect } from 'react';
-import { Button, Form, Modal, ModalBody, ModalHeader } from '@patternfly/react-core';
+import { Button, Form, Modal, ModalBody, ModalHeader, ModalVariant } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import type { K8sModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
@@ -123,7 +123,7 @@ const AnnotationsModal: FC<AnnotationsModalProps> = (props) => (
 
 export const AnnotationsModalOverlay: OverlayComponent<AnnotationsModalProps> = (props) => (
   <Modal
-    variant="small"
+    variant={ModalVariant.large}
     isOpen
     onClose={props.closeOverlay}
     aria-labelledby="annotations-modal-title"

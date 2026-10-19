@@ -192,7 +192,7 @@ export const LabelsModalOverlay: OverlayComponent<LabelsModalProps> = (props) =>
 
   return isOpen ? (
     <Modal
-      variant={ModalVariant.small}
+      variant={ModalVariant.medium}
       isOpen
       onClose={handleClose}
       aria-labelledby="labels-modal-title"
