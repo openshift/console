@@ -399,4 +399,45 @@ describe('useTelemetry', () => {
       });
     },
   );
+
+  it('resolves cluster properties on a later event when SERVER_FLAGS is populated after module evaluation', () => {
+    // Simulate the properties having been resolved before SERVER_FLAGS was ready,
+    // which is what happens when the bundle evaluates early in page load.
+    window.SERVER_FLAGS = { ...originServerFlags };
+    delete window.SERVER_FLAGS.consoleVersion;
+    delete window.SERVER_FLAGS.releaseVersion;
+    window.SERVER_FLAGS = {
+      ...window.SERVER_FLAGS,
+      telemetry: { STATE: CLUSTER_TELEMETRY_ANALYTICS.ENFORCE },
+    };
+    updateClusterPropertiesFromTests();
+
+    const { result } = renderHook(() => useTelemetry());
+    const fireTelemetryEvent = result.current;
+
+    fireTelemetryEvent('before SERVER_FLAGS is populated');
+    expect(listener).toHaveBeenNthCalledWith(1, 'before SERVER_FLAGS is populated', {
+      ...exampleReturnValue,
+    });
+
+    // SERVER_FLAGS resolves late. Deliberately no updateClusterPropertiesFromTests()
+    // call here: the hook itself has to pick the values up on the next event.
+    window.SERVER_FLAGS = {
+      ...originServerFlags,
+      releaseVersion: '4.20.25',
+      telemetry: {
+        CLUSTER_ID: 'cluster-id-123',
+        CLUSTER_TYPE: 'OSD',
+        STATE: CLUSTER_TELEMETRY_ANALYTICS.ENFORCE,
+      },
+    };
+
+    fireTelemetryEvent('after SERVER_FLAGS is populated');
+    expect(listener).toHaveBeenNthCalledWith(2, 'after SERVER_FLAGS is populated', {
+      ...exampleReturnValue,
+      clusterId: 'cluster-id-123',
+      clusterType: 'OSD',
+      consoleVersion: '4.20.25',
+    });
+  });
 });
