@@ -95,15 +95,25 @@ type ClusterInfo struct {
 
 // Auth holds configuration for authenticating with OpenShift. The auth method is assumed to be "openshift".
 type Auth struct {
-	AuthType                 string   `yaml:"authType,omitempty"`
-	OIDCIssuer               string   `yaml:"oidcIssuer,omitempty"`
-	OIDCExtraScopes          []string `yaml:"oidcExtraScopes,omitempty"`
-	OIDCOCLoginCommand       string   `yaml:"oidcOCLoginCommand,omitempty"`
-	ClientID                 string   `yaml:"clientID,omitempty"`
-	ClientSecretFile         string   `yaml:"clientSecretFile,omitempty"`
-	OAuthEndpointCAFile      string   `yaml:"oauthEndpointCAFile,omitempty"`
-	LogoutRedirect           string   `yaml:"logoutRedirect,omitempty"`
-	InactivityTimeoutSeconds int      `yaml:"inactivityTimeoutSeconds,omitempty"`
+	AuthType                 string     `yaml:"authType,omitempty"`
+	OIDCIssuer               string     `yaml:"oidcIssuer,omitempty"`
+	OIDCExtraScopes          []string   `yaml:"oidcExtraScopes,omitempty"`
+	OIDCOCLoginCommand       string     `yaml:"oidcOCLoginCommand,omitempty"`
+	ClientID                 string     `yaml:"clientID,omitempty"`
+	ClientSecretFile         string     `yaml:"clientSecretFile,omitempty"`
+	OAuthEndpointCAFile      string     `yaml:"oauthEndpointCAFile,omitempty"`
+	LogoutRedirect           string     `yaml:"logoutRedirect,omitempty"`
+	InactivityTimeoutSeconds int        `yaml:"inactivityTimeoutSeconds,omitempty"`
+	Proxy                    *AuthProxy `yaml:"proxy,omitempty"`
+}
+
+// AuthProxy configures Console's OIDC clients. Absence preserves their
+// environment fallback; a present block replaces all proxy settings.
+type AuthProxy struct {
+	HTTPProxy         string   `yaml:"httpProxy,omitempty"`
+	HTTPSProxy        string   `yaml:"httpsProxy,omitempty"`
+	NoProxy           []string `yaml:"noProxy,omitempty"`
+	TrustedCAFilePath string   `yaml:"trustedCAFilePath,omitempty"`
 }
 
 // Session holds configuration for web-session related configuration

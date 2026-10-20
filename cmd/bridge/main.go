@@ -21,8 +21,10 @@ import (
 
 	operatorv1 "github.com/openshift/api/operator/v1"
 	authopts "github.com/openshift/console/cmd/bridge/config/auth"
+	"github.com/openshift/console/cmd/bridge/config/flagvalues"
 	"github.com/openshift/console/cmd/bridge/config/session"
 	"github.com/openshift/console/pkg/auth"
+	"github.com/openshift/console/pkg/auth/httpclient"
 	"github.com/openshift/console/pkg/controllers"
 	"github.com/openshift/console/pkg/flags"
 	"github.com/openshift/console/pkg/knative"
@@ -743,7 +745,20 @@ func main() {
 	}
 	srv.TokenReviewer = tokenReviewer
 
-	if err := completedAuthnOptions.ApplyTo(srv, k8sEndpoint, caCertFilePath, completedSessionOptions); err != nil {
+	var authClients *httpclient.Clients
+	if completedAuthnOptions.AuthType != flagvalues.AuthTypeDisabled {
+		authClients, err = httpclient.New(completedAuthnOptions.CAFilePath, caCertFilePath, completedAuthnOptions.Proxy)
+		if err != nil {
+			klog.Fatalf("failed to create auth HTTP clients: %v", err)
+		}
+		authClients.Run(ctx)
+		if completedAuthnOptions.Proxy != nil {
+			// Proxy is safe to log since it implements a custom String() method.
+			klog.Infof("OIDC authentication proxy: %s", completedAuthnOptions.Proxy)
+		}
+	}
+
+	if err := completedAuthnOptions.ApplyTo(ctx, srv, k8sEndpoint, authClients, completedSessionOptions); err != nil {
 		klog.Fatalf("failed to apply configuration to server: %v", err)
 	}
 

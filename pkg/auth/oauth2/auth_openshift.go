@@ -154,7 +154,7 @@ func (o *openShiftAuth) getOIDCDiscoveryInternal(ctx context.Context) (*oidcDisc
 		return nil, err
 	}
 
-	resp, err = o.getClient().Do(req.WithContext(ctx))
+	resp, err = o.issuerClient.Do(req.WithContext(ctx))
 	if err != nil {
 		return nil, fmt.Errorf("request to OAuth issuer endpoint %s failed: %v",
 			metadata.Token, err)
@@ -256,7 +256,7 @@ func (o *openShiftAuth) refreshSession(ctx context.Context, w http.ResponseWrite
 	}
 
 	newTokens, err := oauthConfig.TokenSource(
-		context.WithValue(ctx, oauth2.HTTPClient, o.getClient()), // supply our client with custom trust
+		context.WithValue(ctx, oauth2.HTTPClient, o.issuerClient), // supply our client with custom trust
 		&oauth2.Token{RefreshToken: cookieRefreshToken},
 	).Token()
 

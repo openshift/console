@@ -3,23 +3,17 @@ package oauth2
 import (
 	"context"
 	"crypto/rand"
-	"crypto/tls"
-	"crypto/x509"
 	"encoding/hex"
 	"fmt"
 	"io"
 	"net/http"
 	"net/url"
-	"os"
-	"sync"
-	"time"
 
 	oidc "github.com/coreos/go-oidc"
 	"golang.org/x/oauth2"
 
 	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/auth/sessions"
-	oscrypto "github.com/openshift/library-go/pkg/crypto"
 
 	"k8s.io/client-go/rest"
 	"k8s.io/klog/v2"
@@ -38,17 +32,11 @@ const (
 	errorInvalidState = "invalid_state"
 )
 
-var (
-	// Cache HTTP clients to avoid recreating them for each request to the
-	// OAuth server. The key is the ca.crt bytes cast to a string and the
-	// value is a pointer to the http.Client. Keep two maps: one that
-	// incldues system roots and one that doesn't.
-	httpClientCache            sync.Map
-	httpClientCacheSystemRoots sync.Map
-)
-
 type OAuth2Authenticator struct {
-	clientFunc func() *http.Client
+	// issuerClient is the same *http.Client as the embedded loginMethod's
+	// oidcConfig.issuerClient, duplicated because loginMethod is an interface.
+	// Both are set once from completedConfig.IssuerClient.
+	issuerClient *http.Client
 
 	clientID     string
 	clientSecret string
@@ -110,16 +98,18 @@ type Config struct {
 
 	IssuerURL              string
 	LogoutRedirectOverride string // overrides the OIDC provider's front-channel logout URL
-	IssuerCA               string
 	RedirectURL            string
 	ConsoleBaseAddress     string // used as post_logout_redirect_uri in OIDC RP-Initiated Logout
 	ClientID               string
 	ClientSecret           string
 	Scope                  []string
 
-	// K8sCA is required for OpenShift OAuth metadata discovery. This is the CA
-	// used to talk to the master, which might be different than the issuer CA.
-	K8sCA string
+	// IssuerClient is shared by discovery, JWKS, code exchange, and token refresh.
+	// Integrated OAuth also uses it for the issuer probe and token requests.
+	IssuerClient *http.Client
+
+	// K8sClient is used only for OpenShift OAuth metadata discovery.
+	K8sClient *http.Client
 
 	SuccessURL string
 	ErrorURL   string
@@ -144,60 +134,9 @@ type Config struct {
 
 type completedConfig struct {
 	*Config
-
-	clientFunc func() *http.Client
 }
 
-func newHTTPClient(issuerCA string, includeSystemRoots bool) (*http.Client, error) {
-	if issuerCA == "" {
-		return http.DefaultClient, nil
-	}
-	data, err := os.ReadFile(issuerCA)
-	if err != nil {
-		return nil, fmt.Errorf("load issuer CA file %s: %v", issuerCA, err)
-	}
-
-	caKey := string(data)
-	var certPool *x509.CertPool
-	if includeSystemRoots {
-		if httpClient, ok := httpClientCacheSystemRoots.Load(caKey); ok {
-			return httpClient.(*http.Client), nil
-		}
-		certPool, err = x509.SystemCertPool()
-		if err != nil {
-			klog.Errorf("error copying system cert pool: %v", err)
-			certPool = x509.NewCertPool()
-		}
-	} else {
-		if httpClient, ok := httpClientCache.Load(caKey); ok {
-			return httpClient.(*http.Client), nil
-		}
-		certPool = x509.NewCertPool()
-	}
-	if !certPool.AppendCertsFromPEM(data) {
-		return nil, fmt.Errorf("file %s contained no CA data", issuerCA)
-	}
-
-	httpClient := &http.Client{
-		Transport: &http.Transport{
-			Proxy: http.ProxyFromEnvironment,
-			TLSClientConfig: oscrypto.SecureTLSConfig(&tls.Config{
-				RootCAs: certPool,
-			}),
-		},
-		Timeout: time.Second * 5,
-	}
-
-	if includeSystemRoots {
-		httpClientCacheSystemRoots.Store(caKey, httpClient)
-	} else {
-		httpClientCache.Store(caKey, httpClient)
-	}
-
-	return httpClient, nil
-}
-
-// NewAuthenticator initializes an Authenticator struct. It blocks until the authenticator is
+// NewOAuth2Authenticator initializes an Authenticator struct. It blocks until the authenticator is
 // able to contact the provider.
 func NewOAuth2Authenticator(ctx context.Context, config *Config) (*OAuth2Authenticator, error) {
 	c, err := config.Complete()
@@ -208,7 +147,7 @@ func NewOAuth2Authenticator(ctx context.Context, config *Config) (*OAuth2Authent
 	a := newUnstartedAuthenticator(c)
 
 	authConfig := &oidcConfig{
-		getClient:                       a.clientFunc,
+		issuerClient:                    c.IssuerClient,
 		issuerURL:                       c.IssuerURL,
 		logoutRedirectOverride:          c.LogoutRedirectOverride,
 		clientID:                        c.ClientID,
@@ -225,17 +164,8 @@ func NewOAuth2Authenticator(ctx context.Context, config *Config) (*OAuth2Authent
 	var tokenHandler loginMethod
 	switch c.AuthSource {
 	case AuthSourceOpenShift:
-		// TODO: once https://github.com/kubernetes/kubernetes/issues/11948 is fixed,
-		// copy the transport config from c.k8sConfig with rest.CopyConfig,
-		// add the c.K8SCA to it and use the roundtripper created from that config
-		//
-		// Use the k8s CA for OAuth metadata discovery.
-		k8sClient, errK8Client := newHTTPClient(c.K8sCA, true)
-		if errK8Client != nil {
-			return nil, errK8Client
-		}
-
-		tokenHandler, err = newOpenShiftAuth(ctx, k8sClient, authConfig)
+		// Use the Kubernetes client only for OAuth metadata discovery.
+		tokenHandler, err = newOpenShiftAuth(ctx, c.K8sClient, authConfig)
 		if err != nil {
 			return nil, err
 		}
@@ -298,7 +228,7 @@ func (a *OAuth2Authenticator) oauth2ConfigForHost(host string) *oauth2.Config {
 
 func newUnstartedAuthenticator(c *completedConfig) *OAuth2Authenticator {
 	return &OAuth2Authenticator{
-		clientFunc: c.clientFunc,
+		issuerClient: c.IssuerClient,
 
 		clientID:     c.ClientID,
 		clientSecret: c.ClientSecret,
@@ -399,7 +329,7 @@ func (a *OAuth2Authenticator) CallbackFunc(fn func(loginInfo sessions.LoginJSON,
 		}
 		http.SetCookie(w, &http.Cookie{Name: cookieState.Name, Path: "/auth", MaxAge: -1})
 
-		ctx := oidc.ClientContext(r.Context(), a.clientFunc())
+		ctx := oidc.ClientContext(r.Context(), a.issuerClient)
 		oauthConfig := a.oauth2ConfigForHost(r.Host)
 		token, err := oauthConfig.Exchange(ctx, code)
 		if err != nil {
@@ -449,21 +379,14 @@ func (c *Config) Complete() (*completedConfig, error) {
 		Config: c,
 	}
 
-	// make sure we get a valid starting client
-	fallbackClient, err := newHTTPClient(c.IssuerCA, true)
-	if err != nil {
-		return nil, err
+	// cmd/bridge always injects both clients; these defaults only keep tests
+	// that construct a Config directly working without one.
+	if c.IssuerClient == nil {
+		completed.IssuerClient = http.DefaultClient
 	}
-
-	clientFunc := func() *http.Client {
-		currentClient, err := newHTTPClient(c.IssuerCA, true)
-		if err != nil {
-			klog.Errorf("failed to get latest http client: %v", err)
-			return fallbackClient
-		}
-		return currentClient
+	if c.K8sClient == nil {
+		completed.K8sClient = http.DefaultClient
 	}
-	completed.clientFunc = clientFunc
 
 	errURL := "/"
 	if c.ErrorURL != "" {
