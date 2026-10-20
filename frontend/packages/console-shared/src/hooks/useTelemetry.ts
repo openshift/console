@@ -68,7 +68,25 @@ const isOptedOutFromTelemetry = (currentUserPreferenceTelemetryValue: USER_TELEM
 const userIsOptedInToTelemetry = (currentUserPreferenceTelemetryValue: USER_TELEMETRY_ANALYTICS) =>
   currentUserPreferenceTelemetryValue === USER_TELEMETRY_ANALYTICS.ALLOW;
 
-let clusterProperties = getClusterProperties();
+let clusterProperties: ClusterProperties = {};
+
+/**
+ * Resolves the cluster properties, caching them once they are actually available.
+ *
+ * `window.SERVER_FLAGS` is not guaranteed to be populated by the time this module is
+ * first evaluated. Snapshotting the properties at module scope therefore permanently
+ * dropped `clusterId`, `consoleVersion`, `organizationId` and `accountMailDomain` from
+ * every event for the lifetime of that page load, with no way to recover them.
+ *
+ * The result is only cached once a `clusterId` is present, so a late-populated
+ * SERVER_FLAGS is picked up on the next event rather than being missed entirely.
+ */
+const resolveClusterProperties = (): ClusterProperties => {
+  if (!clusterProperties.clusterId) {
+    clusterProperties = getClusterProperties();
+  }
+  return clusterProperties;
+};
 
 export const updateClusterPropertiesFromTests = () => (clusterProperties = getClusterProperties());
 
@@ -76,7 +94,7 @@ const injectSandboxProperties = (
   properties: TelemetryEventProperties,
   userResource: UserKind,
 ): TelemetryEventProperties => {
-  if (clusterProperties.clusterType === 'DEVSANDBOX') {
+  if (resolveClusterProperties().clusterType === 'DEVSANDBOX') {
     return {
       ...properties,
       sandboxUserId:
@@ -124,7 +142,7 @@ export const useTelemetry = () => {
       if (isOptedOutFromTelemetry(currentUserPreferenceTelemetryValue)) return;
 
       const event = {
-        ...clusterProperties,
+        ...resolveClusterProperties(),
         ...properties,
         // This is required to ensure that the replayed events uses the right path.
         path: properties?.pathname,
