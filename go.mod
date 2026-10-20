@@ -14,9 +14,9 @@ require (
 	github.com/gorilla/securecookie v1.1.2
 	github.com/gorilla/sessions v1.4.0
 	github.com/gorilla/websocket v1.5.4-0.20250319132907-e064f32e3674
-	github.com/openshift/api v0.0.0-20261002115817-f8795cdde518
-	github.com/openshift/client-go v0.0.0-20261001003915-dcaad1dc7fe8
-	github.com/openshift/library-go v0.0.0-20261001144932-192662696fc7
+	github.com/openshift/api v0.0.0-20261017003925-24b2699a9b32
+	github.com/openshift/client-go v0.0.0-20261006222332-348fc1ca8bb1
+	github.com/openshift/library-go v0.0.0-20261019145849-b3e46fec8a08
 	github.com/operator-framework/api v0.42.0
 	github.com/operator-framework/kubectl-operator v0.4.0
 	github.com/operator-framework/operator-controller v1.2.0
@@ -38,6 +38,7 @@ require (
 	k8s.io/api v0.37.1
 	k8s.io/apiextensions-apiserver v0.37.1
 	k8s.io/apimachinery v0.37.1
+	k8s.io/apiserver v0.37.1
 	k8s.io/cli-runtime v0.37.1
 	k8s.io/client-go v0.37.1
 	k8s.io/klog/v2 v2.140.0
@@ -224,7 +225,6 @@ require (
 	gopkg.in/go-jose/go-jose.v2 v2.6.3 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/warnings.v0 v0.1.2 // indirect
-	k8s.io/apiserver v0.37.1 // indirect
 	k8s.io/component-base v0.37.1 // indirect
 	k8s.io/klog v1.0.0 // indirect
 	k8s.io/kube-openapi v0.0.0-20260721132016-d427ff9ee9ad // indirect
@@ -245,3 +245,6 @@ require (
 replace github.com/docker/docker => github.com/docker/docker v27.5.0+incompatible
 
 replace github.com/docker/cli => github.com/docker/cli v27.5.0+incompatible
+
+// branch: httptransport-tls
+replace github.com/openshift/library-go => github.com/tchap/library-go v0.0.0-20261020121909-c5a2b10f39ea
