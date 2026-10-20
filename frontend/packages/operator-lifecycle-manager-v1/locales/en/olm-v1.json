@@ -61,7 +61,7 @@
   "Service Account Name": "Service Account Name",
   "Source": "Source",
   "Status": "Status",
-  "Tech Preview": "Tech Preview",
+  "Technology Preview": "Technology Preview",
   "These objects might include CustomResourceDefinitions. When you delete a CustomResourceDefinition, you also permanently delete every custom resource based on it, including resources that you or your team created. You can't recover this data, and reinstalling the extension doesn't restore it. Before you delete, download the YAML for any custom resources that you want to keep.": "These objects might include CustomResourceDefinitions. When you delete a CustomResourceDefinition, you also permanently delete every custom resource based on it, including resources that you or your team created. You can't recover this data, and reinstalling the extension doesn't restore it. Before you delete, download the YAML for any custom resources that you want to keep.",
   "To delete these managed objects, keep the Delete dependent objects of this resource checkbox selected. To keep them running on the cluster, clear the checkbox. If you clear it, no extension manages these objects, so you must update or remove them yourself.": "To delete these managed objects, keep the Delete dependent objects of this resource checkbox selected. To keep them running on the cluster, clear the checkbox. If you clear it, no extension manages these objects, so you must update or remove them yourself.",
   "Toggle OLMv1 UI": "Toggle OLMv1 UI",

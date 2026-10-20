@@ -136,7 +136,7 @@ const PinnedResourcesConfiguration: FC<PinnedResourcesConfigurationProps> = ({
           <span>
             {model.labelKey ? t(model.labelKey) : model.kind}
             {model.badge && model.badge === 'Tech Preview' && (
-              <span className="co-resource-item__tech-dev-preview">{t('Tech Preview')}</span>
+              <span className="co-resource-item__tech-dev-preview">{t('Technology Preview')}</span>
             )}
           </span>
           {isDup(model.kind) && (
