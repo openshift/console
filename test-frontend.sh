@@ -73,6 +73,12 @@ run \
   'yarn run knip'
 
 run \
+  'oxfmt' \
+  'the code should be formatted correctly per yarn prettier-all' \
+  "Code is not pretty!" \
+  'yarn run prettier-all --check'
+
+run \
   'eslint' \
   'the linter should pass without any errors as reported by yarn lint' \
   "ESLint errors detected!" \

@@ -42,7 +42,7 @@ const config = defineConfig([
   {
     files: ['public/**/*.{ts,tsx}', 'packages/**/*.{ts,tsx}', '__tests__/**/*.{ts,tsx}'],
     ignores: REPO_TOOLING.map((dir) => `${dir}/**`),
-    extends: compat.extends('plugin:console/react-typescript-prettier'),
+    extends: compat.extends('plugin:console/react-typescript'),
     languageOptions: {
       globals: {
         process: 'readonly',
@@ -67,14 +67,14 @@ const config = defineConfig([
   // repo tooling
   {
     files: ['*.{ts,tsx}', ...REPO_TOOLING.map((dir) => `${dir}/**/*.{ts,tsx}`)],
-    extends: compat.extends('plugin:console/node-typescript-prettier'),
+    extends: compat.extends('plugin:console/node-typescript'),
   },
 
   // e2e
   {
     files: ['e2e/**/*.{ts,tsx}'],
     ignores: ['e2e/**/testData/**'],
-    extends: compat.extends('plugin:console/prettier', 'plugin:console/playwright'),
+    extends: compat.extends('plugin:console/playwright'),
     languageOptions: {
       parser: tsParser,
       parserOptions: {
