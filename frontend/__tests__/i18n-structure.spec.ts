@@ -1,5 +1,5 @@
-import { basename, resolve, sep } from 'path';
 import { readFileSync } from 'fs';
+import { basename, resolve, sep } from 'path';
 import { sync as glob } from 'glob';
 import { NAMESPACE_EXCEPTIONS } from '../i18n-scripts/namespace-map';
 

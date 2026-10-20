@@ -37,7 +37,7 @@ const loadBaseFormatter = () => {
   }
   const eslintDir = path.dirname(require.resolve('eslint/package.json'));
   return require(path.join(eslintDir, 'lib', 'cli-engine', 'formatters', 'stylish.js'));
-}
+};
 
 /**
  * Resolve the `MAX_WARNINGS` env var for this run.
@@ -45,10 +45,12 @@ const loadBaseFormatter = () => {
  */
 const getMaxWarnings = () => {
   if (process.env.MAX_WARNINGS === undefined) {
-    throw new Error('MAX_WARNINGS is not set. This formatter requires a concrete value to enforce.');
+    throw new Error(
+      'MAX_WARNINGS is not set. This formatter requires a concrete value to enforce.',
+    );
   }
   return Number(process.env.MAX_WARNINGS);
-}
+};
 
 /**
  * Count total errors and warnings across all lint results
@@ -74,11 +76,12 @@ const writeJunitXml = (failed, message) => {
   if (process.env.OPENSHIFT_CI === 'true') {
     const artifactDir = process.env.ARTIFACT_DIR || '/tmp/artifacts';
     const name = 'eslint-exact-warnings';
-    const testCaseName = 'no eslint errors are present and the current number of warnings matches MAX_WARNINGS';
+    const testCaseName =
+      'no eslint errors are present and the current number of warnings matches MAX_WARNINGS';
 
-    const xml = failed ?
-      `<?xml version="1.0" encoding="UTF-8"?><testsuites><testsuite name="${name}" tests="1" failures="1"><testcase classname="${name}" name="${testCaseName}"><failure>${message}</failure></testcase></testsuite></testsuites>` :
-      `<?xml version="1.0" encoding="UTF-8"?><testsuites><testsuite name="${name}" tests="1" failures="0"><testcase classname="${name}" name="${testCaseName}"/></testsuite></testsuites>`;
+    const xml = failed
+      ? `<?xml version="1.0" encoding="UTF-8"?><testsuites><testsuite name="${name}" tests="1" failures="1"><testcase classname="${name}" name="${testCaseName}"><failure>${message}</failure></testcase></testsuite></testsuites>`
+      : `<?xml version="1.0" encoding="UTF-8"?><testsuites><testsuite name="${name}" tests="1" failures="0"><testcase classname="${name}" name="${testCaseName}"/></testsuite></testsuites>`;
 
     fs.mkdirSync(artifactDir, { recursive: true });
     fs.writeFileSync(path.join(artifactDir, `${name}.junit.xml`), xml);
@@ -116,7 +119,7 @@ module.exports = (results, context) => {
 
   if (errorCount > 0) {
     failRun(
-      `Found ${errorCount} error(s). All eslint errors must be fixed before merging. Found ${warningCount} warning(s) and expected ${maxWarnings}.`
+      `Found ${errorCount} error(s). All eslint errors must be fixed before merging. Found ${warningCount} warning(s) and expected ${maxWarnings}.`,
     );
   } else if (warningCount > maxWarnings) {
     failRun(
@@ -124,7 +127,7 @@ module.exports = (results, context) => {
     );
   } else if (warningCount < maxWarnings) {
     failRun(
-      `Found ${warningCount} warning(s) but the count is ${maxWarnings}. Lower the MAX_WARNINGS value in the lint script in package.json to match the actual warning count.`
+      `Found ${warningCount} warning(s) but the count is ${maxWarnings}. Lower the MAX_WARNINGS value in the lint script in package.json to match the actual warning count.`,
     );
   } else {
     writeJunitXml(false);

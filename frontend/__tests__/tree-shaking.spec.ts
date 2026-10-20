@@ -13,6 +13,7 @@ const findFilesContaining = (files: string[], needle: string): string[] =>
 // diagnose when this happens, and also serves as a regression test
 describe('tree shaking', () => {
   if (!existsSync(DIST_DIR)) {
+    // eslint-disable-next-line jest/prefer-todo, jest/no-disabled-tests -- the test is done but has to be skipped if it can be run
     it.skip('dist directory not found, skipping bundle checks', () => {});
     return;
   }
@@ -26,9 +27,10 @@ describe('tree shaking', () => {
     'text/html',
   );
 
-  const initialJsFiles = Array.from(indexHtml.querySelectorAll('script[src]')).map((s) =>
-    resolve(DIST_DIR, basename(s.getAttribute('src')!)),
-  );
+  const initialJsFiles = Array.from(indexHtml.querySelectorAll('script[src]'))
+    .map((s) => s.getAttribute('src'))
+    .filter((src): src is string => src !== null)
+    .map((src) => resolve(DIST_DIR, basename(src)));
 
   // Only check vendor chunks: when this test is run in CI, the dev build embeds
   // package names in chunk filenames (e.g., vendors-[...]-monaco-editor-[...].js),
