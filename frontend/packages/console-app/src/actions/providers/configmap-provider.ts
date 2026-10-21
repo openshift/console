@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import type { ConfigMapKind } from '@openshift/api-types/dist/kubernetes/latest';
+import type { ConfigMapKind } from '@console/internal/module/k8s/types';
 import { resourceObjPath } from '@console/internal/components/utils/resource-link';
 import { referenceFor } from '@console/internal/module/k8s';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
