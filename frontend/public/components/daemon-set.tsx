@@ -21,7 +21,7 @@ import { ListPage } from './factory/list-page';
 import { AsyncComponent } from './utils/async';
 import { ContainerTable } from './utils/container-table';
 import { DetailsItem } from './utils/details-item';
-import { detailsPage, ResourceSummary } from './utils/details-page';
+import { ResourceSummary } from './utils/details-page';
 import { SectionHeading } from './utils/headings';
 import { navFactory, PodsComponent } from './utils/horizontal-nav';
 import { LoadingBox, LoadingInline } from './utils/status-box';
@@ -151,7 +151,7 @@ export const DaemonSetsDetailsPage: FC = (props) => {
       kind={kind}
       customActionMenu={customActionMenu}
       pages={[
-        navFactory.details(detailsPage(DaemonSetDetails)),
+        navFactory.details(DaemonSetDetails),
         ...(prometheusIsAvailable ? [navFactory.metrics()] : []),
         navFactory.editYaml(),
         navFactory.pods(DaemonSetPods),
