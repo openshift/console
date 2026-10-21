@@ -1,0 +1,172 @@
+import type { FC } from 'react';
+import { useRef, useMemo, useCallback } from 'react';
+import {
+  AlertVariant,
+  Alert,
+  ButtonVariant,
+  Button,
+  SplitItem,
+  Split,
+} from '@patternfly/react-core';
+import { PencilAltIcon, UndoIcon } from '@patternfly/react-icons';
+import type { FormikValues } from 'formik';
+import { useFormikContext } from 'formik';
+import { useTranslation } from 'react-i18next';
+import { ImportStrategy } from '@console/git-service/src';
+import type { NormalizedBuilderImages } from '../../utils/imagestream-utils';
+import BuilderSection from './builder/BuilderSection';
+import DevfileStrategySection from './devfile/DevfileStrategySection';
+import DockerSection from './git/DockerSection';
+import ImportStrategySelector from './ImportStrategySelector';
+import FormSection from './section/FormSection';
+import ServerlessFunctionSection from './serverless-function/ServerlessFunctionSection';
+import './ImportStrategySection.scss';
+
+export interface ImportStrategySectionProps {
+  builderImages: NormalizedBuilderImages;
+}
+
+const ImportStrategySection: FC<ImportStrategySectionProps> = ({ builderImages }) => {
+  const { t } = useTranslation();
+  const { values, setFieldValue, setValues } = useFormikContext<FormikValues>();
+  const {
+    import: {
+      strategies: importStrategies,
+      loaded,
+      loadError,
+      selectedStrategy,
+      showEditImportStrategy,
+      recommendedStrategy,
+      strategyChanged,
+    },
+    devfile,
+    docker,
+  } = values;
+  const recommendedValues = useRef<FormikValues>(null);
+
+  const strategySections = useMemo(
+    () => ({
+      [ImportStrategy.DEVFILE]: <DevfileStrategySection />,
+      [ImportStrategy.DOCKERFILE]: <DockerSection />,
+      [ImportStrategy.SERVERLESS_FUNCTION]: (
+        <ServerlessFunctionSection builderImages={builderImages} />
+      ),
+      [ImportStrategy.S2I]: <BuilderSection builderImages={builderImages} />,
+    }),
+    [builderImages],
+  );
+
+  const recommendedStrategyDescriptions = useMemo(
+    () => ({
+      [ImportStrategy.DEVFILE]: t('devconsole~The Devfile at {{filePath}} is recommended.', {
+        filePath: devfile?.devfilePath,
+      }),
+      [ImportStrategy.SERVERLESS_FUNCTION]: t(
+        'devconsole~The Serverless function strategy is recommended.',
+      ),
+      [ImportStrategy.DOCKERFILE]: t('devconsole~The Dockerfile at {{filePath}} is recommended.', {
+        filePath: docker?.dockerfilePath,
+      }),
+      [ImportStrategy.S2I]: t('devconsole~A Builder Image is recommended.'),
+    }),
+    [devfile, docker, t],
+  );
+
+  const alertInfo = useMemo(() => {
+    let title;
+    let description;
+    let variant;
+    if (loaded && !loadError && importStrategies.length > 0) {
+      variant = AlertVariant.success;
+      if (recommendedStrategy && !strategyChanged) {
+        if (importStrategies.length > 1) {
+          title = t('devconsole~Multiple import strategies detected');
+        } else if (importStrategies.length === 1) {
+          title = t('devconsole~{{strategy}} detected.', { strategy: recommendedStrategy.name });
+        }
+        description = recommendedStrategyDescriptions[recommendedStrategy.type];
+      } else if (strategyChanged) {
+        title = t('devconsole~Import strategy changed to {{strategy}}', {
+          strategy: selectedStrategy.name,
+        });
+        description = '';
+        variant = AlertVariant.info;
+      }
+    } else {
+      variant = AlertVariant.warning;
+      title = t('devconsole~Unable to detect import strategy');
+      description = (
+        <span>
+          {loadError && (
+            <>
+              <p>{t('devconsole~Error: {{loadError}}', { loadError })}</p> <br />
+            </>
+          )}
+          <p>{t('devconsole~Select from the options below.')}</p>
+        </span>
+      );
+    }
+    return { title, description, variant };
+  }, [
+    loaded,
+    loadError,
+    importStrategies.length,
+    recommendedStrategy,
+    strategyChanged,
+    recommendedStrategyDescriptions,
+    t,
+    selectedStrategy.name,
+  ]);
+
+  const handleEditStrategy = useCallback(() => {
+    if (showEditImportStrategy) {
+      setValues(recommendedValues.current);
+    } else {
+      recommendedValues.current = values;
+    }
+    setFieldValue('import.showEditImportStrategy', !showEditImportStrategy);
+    setFieldValue('import.strategyChanged', false);
+  }, [setFieldValue, setValues, showEditImportStrategy, values]);
+
+  return (
+    <>
+      <FormSection>
+        <Alert isInline variant={alertInfo.variant} title={alertInfo.title}>
+          {alertInfo.description}
+        </Alert>
+        {recommendedStrategy && (
+          <Split>
+            <SplitItem isFilled />
+            <SplitItem>
+              <Button
+                variant={ButtonVariant.link}
+                className="odc-import-strategy-section__edit-strategy-button"
+                onClick={handleEditStrategy}
+                icon={!showEditImportStrategy ? <PencilAltIcon /> : <UndoIcon />}
+                iconPosition="end"
+                data-test="import-strategy-button"
+              >
+                {!showEditImportStrategy
+                  ? t('devconsole~Edit Import Strategy')
+                  : t('devconsole~Revert to recommended')}
+              </Button>
+            </SplitItem>
+          </Split>
+        )}
+      </FormSection>
+      <div className={recommendedStrategy ? 'odc-import-strategy-section__strategy-selector' : ''}>
+        {showEditImportStrategy && (
+          <>
+            <FormSection>
+              <ImportStrategySelector />
+            </FormSection>
+            <br />
+          </>
+        )}
+        {strategySections[selectedStrategy.type]}
+      </div>
+    </>
+  );
+};
+
+export default ImportStrategySection;

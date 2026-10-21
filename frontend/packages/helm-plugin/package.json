@@ -1,0 +1,37 @@
+{
+  "name": "@console/helm-plugin",
+  "version": "0.0.0-fixed",
+  "description": "Helm plugin contributes helm related features to Developer Console UI.",
+  "private": true,
+  "scripts": {
+    "coverage": "yarn test --coverage --collectCoverageFrom='[\"packages/helm-plugin/src/**\",\"!**/__tests__/**\",\"!packages/helm-plugin/src/test/**\"]'",
+    "lint": "yarn --cwd ../.. eslint packages/helm-plugin",
+    "test": "yarn --cwd ../.. test packages/helm-plugin"
+  },
+  "consolePlugin": {
+    "exposedModules": {
+      "helmProviderActions": "src/actions/providers.ts",
+      "helmChartProvider": "src/catalog/providers/useHelmCharts.tsx",
+      "getHelmCatalogTypeDescription": "src/catalog/components/HelmCatalogTypeDescription.tsx",
+      "HelmInstallUpgradePage": "src/components/forms/install-upgrade/HelmInstallUpgradePage.tsx",
+      "HelmReleaseRollbackPage": "src/components/forms/rollback/HelmReleaseRollbackPage.tsx",
+      "HelmReleaseDetailsPage": "src/components/details-page/HelmReleaseDetailsPage.tsx",
+      "HelmChartRepositoryForm": "src/components/forms/HelmChartRepository/CreateHelmChartRepositoryPage.tsx",
+      "ProjectHelmChartRepositoryListPage": "src/components/list-page/ProjectHelmChartRepositoryListPage.tsx",
+      "HelmChartRepositoryListPage": "src/components/list-page/HelmChartRepositoryListPage.tsx",
+      "NamespaceRedirect": "src/components/NamespaceRedirect.tsx",
+      "HelmTabbedPage": "src/components/list-page/HelmTabbedPage.tsx",
+      "HelmDataTransformer": "src/topology/helm-data-transformer.ts",
+      "HelmComponentFactory": "src/topology/components/helmComponentFactory.ts",
+      "isHelmResource": "src/topology/isHelmResource.ts",
+      "helmFilters": "src/topology/helmFilters.ts",
+      "getHelmReleaseStatusDecorator": "src/topology/components/getHelmReleaseStatusDecorator.tsx",
+      "helmTopologySidebarResourceLinks": "src/topology/sidebar/release-panel/resource-link.tsx",
+      "helmTopologySidebarTabSections": "src/topology/sidebar/release-panel/tab-sections.tsx",
+      "helmIcons": "src/utils/icons.tsx",
+      "helmDetectionProvider": "src/providers/helm-detection-provider.ts",
+      "useHelmChartRepositoriesBreadcrumbs": "src/providers/useHelmChartRepositoriesBreadcrumbs.ts",
+      "HelmURLChartInstallPage": "src/components/forms/url-chart/HelmURLChartInstallPage.tsx"
+    }
+  }
+}

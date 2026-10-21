@@ -1,0 +1,44 @@
+@import '~@xterm/xterm/css/xterm.css';
+
+$console-z-index: $zindex-navbar-fixed + 20;
+$console-collapse-link-z-index: $console-z-index + 20;
+
+.co-terminal > .terminal {
+  color: var(--pf-t--color--white);
+  padding: 10px;
+  background-color: var(--pf-t--color--black);
+}
+
+.co-terminal > .terminal.fullscreen {
+  z-index: $console-z-index; // in fullscreen mode, to get above $zindex-navbar-fixed
+}
+
+.co-terminal {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  background-color: var(--pf-t--color--black);
+  position: relative;
+  > .terminal {
+    height: 100%;
+  }
+}
+
+.co-terminal-collapse-link.pf-v6-c-button {
+  background: rgba(0, 0, 0, 0.75) !important;
+  color: var(--pf-t--global--text--color--link--default);
+  position: fixed;
+  right: 18px;
+  top: 4px;
+  z-index: $console-collapse-link-z-index; // in fullscreen mode, to get above console's z-index
+}
+
+.default-overflow {
+  overflow: visible !important;
+}
+
+.fullscreen-fix {
+  z-index: calc(
+    var(--pf-v6-c-page--c-masthead--ZIndex) + 1
+  ); // 1 more than masthead so the terminal is on top
+}

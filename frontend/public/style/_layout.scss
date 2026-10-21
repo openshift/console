@@ -1,0 +1,59 @@
+html,
+body,
+#app,
+.pf-v6-c-drawer {
+  display: flex;
+  flex-basis: 100%;
+  flex-direction: column;
+  height: 100%;
+}
+
+#content-scrollable {
+  overflow: auto;
+}
+
+.co-p-has-sidebar {
+  display: flex;
+  flex: 1;
+  height: 100%;
+  position: relative;
+
+  &__body {
+    flex: 2;
+    max-width: 100%;
+
+    @media (min-width: $screen-md-min) {
+      &--sidebar-open {
+        max-width: 66%;
+      }
+    }
+  }
+
+  &__sidebar {
+    position: relative;
+    @media (min-width: $screen-md-min) {
+      flex: 1 0 auto;
+      overflow-y: auto;
+      max-width: 34%;
+    }
+
+    &--bordered {
+      @media (max-width: $screen-sm-max) {
+        border-top: var(--pf-t--global--border--width--divider--default) solid
+          var(--pf-t--global--border--color--default);
+      }
+      @media (min-width: $screen-md-min) {
+        border-left: var(--pf-t--global--border--width--divider--default) solid
+          var(--pf-t--global--border--color--default);
+      }
+    }
+  }
+
+  &__sidebar-body {
+    position: absolute;
+    width: 100%;
+    &:focus {
+      outline: 0;
+    }
+  }
+}

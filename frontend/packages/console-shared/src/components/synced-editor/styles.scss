@@ -1,0 +1,18 @@
+@import '../../../../../public/style/vars';
+
+.co-synced-editor__editor-toggle {
+  border-bottom: var(--pf-t--global--border--width--divider--default) solid
+    var(--pf-t--global--border--color--default);
+  border-top: var(--pf-t--global--border--width--divider--default) solid
+    var(--pf-t--global--border--color--default);
+  padding: var(--pf-t--global--spacer--sm) var(--pf-t--global--spacer--lg);
+}
+
+.co-synced-editor__editor-toggle-label {
+  font-size: $font-size-base - 1; // match --pf-v6-c-form__label--FontSize that's used for the osc-yaml-editor
+  margin-bottom: 0;
+}
+
+.co-synced-editor__yaml-warning {
+  margin: 0 0 $pf-v6-global-gutter-y;
+}

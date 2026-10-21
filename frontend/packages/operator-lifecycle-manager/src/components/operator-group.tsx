@@ -1,0 +1,180 @@
+import type { ComponentClass, ComponentType, FC } from 'react';
+import { Component as ReactComponent } from 'react';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router';
+import { getActiveNamespace } from '@console/internal/actions/ui';
+import { AsyncComponent } from '@console/internal/components/utils/async';
+import type { K8sResourceKind, GroupVersionKind } from '@console/internal/module/k8s';
+import { referenceForModel, referenceForGroupVersionKind } from '@console/internal/module/k8s';
+import { ConsoleEmptyState } from '@console/shared/src/components/empty-state';
+import { OPERATOR_NAMESPACE_ANNOTATION } from '../const';
+import { OperatorGroupModel } from '../models';
+import type { OperatorGroupKind, SubscriptionKind, PackageManifestKind } from '../types';
+import { InstallModeType } from '../types';
+
+export const targetNamespacesFor = (obj: K8sResourceKind) =>
+  obj?.metadata?.annotations?.['olm.targetNamespaces']; // FIXME magic string
+export const operatorNamespaceFor = (obj: K8sResourceKind) =>
+  obj?.metadata?.annotations?.[OPERATOR_NAMESPACE_ANNOTATION];
+export const operatorGroupFor = (obj: K8sResourceKind) =>
+  obj?.metadata?.annotations?.['olm.operatorGroup']; // FIXME magic string
+
+export const NoOperatorGroupMsg: FC = () => {
+  const { t } = useTranslation();
+  const actions = [
+    <Link
+      key="create-operator-group"
+      to={`/ns/${getActiveNamespace()}/${referenceForModel(OperatorGroupModel)}/~new`}
+    >
+      {t('olm~Create an OperatorGroup for this Namespace')}
+    </Link>,
+  ];
+  return (
+    <ConsoleEmptyState title={t('olm~Namespace not enabled')} primaryActions={actions}>
+      {t(
+        'olm~The Operator Lifecycle Manager will not watch this Namespace because it is not configured with an OperatorGroup.',
+      )}
+    </ConsoleEmptyState>
+  );
+};
+
+export const OperatorGroupSelector: FC<OperatorGroupSelectorProps> = (props) => {
+  const { t } = useTranslation();
+  return (
+    <AsyncComponent
+      loader={() =>
+        import('@console/internal/components/utils/list-dropdown').then((m) => m.ListDropdown)
+      }
+      onChange={
+        props.onChange ||
+        function () {
+          return null;
+        }
+      }
+      desc={OperatorGroupModel.plural}
+      placeholder={t('olm~Select OperatorGroup')}
+      selectedKeyKind={referenceForModel(OperatorGroupModel)}
+      dataFilter={props.dataFilter}
+      resources={[
+        {
+          kind: referenceForModel(OperatorGroupModel),
+          fieldSelector: `metadata.name!=${props.excludeName}`,
+        },
+      ]}
+    />
+  );
+};
+
+export const requireOperatorGroup = <P extends RequireOperatorGroupProps>(
+  Component: ComponentType<P>,
+) => {
+  return class RequireOperatorGroup extends ReactComponent<P> {
+    static WrappedComponent = Component;
+
+    render() {
+      const namespaceEnabled =
+        !_.get(this.props.operatorGroup, 'loaded') || !_.isEmpty(this.props.operatorGroup.data);
+
+      return namespaceEnabled ? <Component {...this.props} /> : <NoOperatorGroupMsg />;
+    }
+  } as ComponentClass<P> & { WrappedComponent: ComponentType<P> };
+};
+
+export type InstallModeSet = { type: InstallModeType; supported: boolean }[];
+
+/**
+ * Logic consistent with https://github.com/operator-framework/operator-lifecycle-manager/blob/4ef074e4207f5518d95ddf8c378036dfc4270dda/pkg/api/apis/operators/v1alpha1/clusterserviceversion.go#L165.
+ */
+export const supports = (set: InstallModeSet) => (obj: OperatorGroupKind) => {
+  const namespaces = obj?.status?.namespaces ?? [];
+  const supportedModes = set.filter(({ supported }) => supported).map(({ type }) => type);
+
+  if (namespaces.length === 0) {
+    return false;
+  }
+  if (namespaces.length === 1) {
+    if (namespaces[0] === obj.metadata.namespace) {
+      return supportedModes.includes(InstallModeType.InstallModeTypeOwnNamespace);
+    }
+    if (namespaces[0] === '') {
+      return supportedModes.includes(InstallModeType.InstallModeTypeAllNamespaces);
+    }
+    return supportedModes.includes(InstallModeType.InstallModeTypeSingleNamespace);
+  }
+  if (
+    namespaces.length > 1 &&
+    !supportedModes.includes(InstallModeType.InstallModeTypeMultiNamespace)
+  ) {
+    return false;
+  }
+  if (namespaces.length > 1) {
+    if (
+      namespaces.includes(obj.metadata.namespace) &&
+      !supportedModes.includes(InstallModeType.InstallModeTypeOwnNamespace)
+    ) {
+      return false;
+    }
+    if (namespaces.includes('')) {
+      return false;
+    }
+  }
+
+  return true;
+};
+
+export const isGlobal = (obj: OperatorGroupKind) =>
+  supports([{ type: InstallModeType.InstallModeTypeAllNamespaces, supported: true }])(obj);
+export const isSingle = (obj: OperatorGroupKind) =>
+  supports([{ type: InstallModeType.InstallModeTypeSingleNamespace, supported: true }])(obj);
+
+/**
+ * Determines if a given Operator package has a `Subscription` that makes it available in the given namespace.
+ * Finds any `Subscriptions` for the given package, matches them to their `OperatorGroup`, and checks if the `OperatorGroup` is targeting the given namespace or if it is global.
+ */
+export const subscriptionFor = (allSubscriptions: SubscriptionKind[] = []) => (
+  allGroups: OperatorGroupKind[] = [],
+) => (pkg: PackageManifestKind) => (ns = '') => {
+  return allSubscriptions
+    .filter(
+      (sub) =>
+        sub.spec.name === pkg.status.packageName &&
+        sub.spec.source === pkg.status.catalogSource &&
+        sub.spec.sourceNamespace === pkg.status.catalogSourceNamespace,
+    )
+    .find((sub) =>
+      allGroups.some(
+        (og) =>
+          og.metadata.namespace === sub.metadata.namespace &&
+          (isGlobal(og) || og.status?.namespaces?.includes(ns)),
+      ),
+    );
+};
+
+export const installedFor = (allSubscriptions: SubscriptionKind[] = []) => (
+  allGroups: OperatorGroupKind[] = [],
+) => (pkg: PackageManifestKind) => (ns = '') => {
+  return !_.isNil(subscriptionFor(allSubscriptions)(allGroups)(pkg)(ns));
+};
+
+export const providedAPIsForOperatorGroup = (og: OperatorGroupKind) =>
+  (og?.metadata?.annotations?.['olm.providedAPIs'] ?? '')
+    .split(',')
+    .map((api) => ({
+      group: api.split('.').slice(2).join('.'),
+      version: api.split('.')[1],
+      kind: api.split('.')[0],
+    }))
+    .map(({ group, version, kind }) => referenceForGroupVersionKind(group)(version)(kind));
+
+type RequireOperatorGroupProps = {
+  operatorGroup: { loaded: boolean; data?: OperatorGroupKind[] };
+};
+
+export type OperatorGroupSelectorProps = {
+  onChange?: (name: string, kind: GroupVersionKind) => void;
+  excludeName?: string;
+  dataFilter?: (obj: OperatorGroupKind) => boolean;
+};
+
+NoOperatorGroupMsg.displayName = 'NoOperatorGroupMsg';

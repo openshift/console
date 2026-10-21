@@ -1,0 +1,12 @@
+{
+  "extends": "../../dev-console/integration-tests/tsconfig.json",
+  "compilerOptions": {
+    "target": "es2021",
+    "module": "commonjs",
+    "strict": true,
+    "esModuleInterop": true,
+    "types": ["cypress"],
+    "lib": ["es6", "dom", "es2017"]
+  },
+  "include": ["**/*.ts", "./support/commands/index.ts"]
+}

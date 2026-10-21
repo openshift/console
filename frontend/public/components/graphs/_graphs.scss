@@ -1,0 +1,90 @@
+.graph-bar__chart {
+  height: auto;
+}
+
+.graph-bar__label {
+  text-align: left;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.graph-donut-subtitle {
+  bottom: 20px;
+  color: var(--pf-t--global--text--color--subtle);
+  line-height: 1.1;
+  margin: 0 0 10px;
+  position: relative;
+  text-align: center;
+  @include co-break-word;
+}
+
+.graph-wrapper {
+  align-items: stretch;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 16px;
+  margin-top: 0;
+  overflow: visible; // Tooltips may overflow
+  padding-top: 15px; // So graph title doesn't abut border
+  width: 100%;
+}
+
+.graph-wrapper svg {
+  overflow: visible !important; // Tooltips may overflow
+}
+
+.graph-title {
+  color: var(--pf-t--global--text--color--regular);
+  line-height: 1.4; // so descenders don't clip
+  margin: 0 0 10px 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+}
+
+.graph-wrapper--title-center .graph-title {
+  text-align: center;
+}
+
+.graph-wrapper--gauge {
+  max-width: 170px;
+  min-width: 135px;
+  width: 100%;
+}
+
+.graph-wrapper--status {
+  margin-bottom: 30px;
+}
+
+.graph-status {
+  color: var(--pf-v6-chart-color-black-200);
+  text-align: center;
+}
+
+.graph-status__link {
+  text-decoration: none !important;
+}
+
+.graph-status__long {
+  font-size: 14px;
+  line-height: 1.3;
+}
+
+.graph-status__short {
+  font-size: 26px;
+  margin-bottom: 2px;
+
+  &.graph-status__short--error {
+    color: var(--pf-v6-chart-global--danger--Color--100);
+  }
+
+  &.graph-status__short--ok {
+    color: var(--pf-v6-chart-color-green-300);
+  }
+
+  &.graph-status__short--warn {
+    color: var(--pf-v6-chart-global--warning--Color--200);
+  }
+}

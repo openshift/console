@@ -1,0 +1,226 @@
+import type { FC } from 'react';
+import * as _ from 'lodash';
+import { Trans, useTranslation } from 'react-i18next';
+import type { GroupVersionKind, K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
+import {
+  referenceForGroupVersionKind,
+  resourceURL,
+  referenceFor,
+  referenceForModel,
+  apiVersionCompare,
+} from '@console/internal/module/k8s';
+import { PackageManifestModel } from '../models';
+import type {
+  APIServiceDefinition,
+  ClusterServiceVersionIcon,
+  ClusterServiceVersionKind,
+  CRDDescription,
+  InstallPlanKind,
+  PackageManifestKind,
+  ProvidedAPI,
+  StepResource,
+  SubscriptionKind,
+} from '../types';
+import { InstallPlanApproval } from '../types';
+import { getInternalObjects } from './operator-hub/operator-hub-utils';
+
+export const visibilityLabel = 'olm-visibility';
+
+const filteredAPIs = (providedAPIs: ProvidedAPI[], internalObjects: string[]): ProvidedAPI[] => {
+  const filteredAndSorted = providedAPIs
+    .filter((api) => !internalObjects.includes(api.name))
+    .sort((a, b) => apiVersionCompare(a.version, b.version));
+  return _.uniqBy(filteredAndSorted, 'name');
+};
+
+// Returns provided apis for a given csv, excluding internal objects and duplicate
+export const providedAPIsForCSV = (csv: ClusterServiceVersionKind): ProvidedAPI[] => {
+  const allProvidedAPIs: ProvidedAPI[] = [
+    ...(csv?.spec?.apiservicedefinitions?.owned ?? []),
+    ...(csv?.spec?.customresourcedefinitions?.owned ?? []),
+  ];
+  const internalObjects = getInternalObjects(csv?.metadata?.annotations);
+  return filteredAPIs(allProvidedAPIs, internalObjects);
+};
+
+export const providedAPIsForChannel = (pkg: PackageManifestKind) => (channel: string) => {
+  const { currentCSVDesc } = pkg.status.channels.find((ch) => ch.name === channel);
+  const allProvidedAPIs: ProvidedAPI[] = [
+    ...(currentCSVDesc?.customresourcedefinitions?.owned ?? []),
+    ...(currentCSVDesc?.apiservicedefinitions?.owned ?? []),
+  ];
+  const internalObjects = getInternalObjects(currentCSVDesc?.annotations);
+  return filteredAPIs(allProvidedAPIs, internalObjects);
+};
+
+export const referenceForProvidedAPI = (
+  desc: CRDDescription | APIServiceDefinition,
+): GroupVersionKind =>
+  _.get(desc, 'group')
+    ? referenceForGroupVersionKind((desc as APIServiceDefinition).group)(desc.version)(desc.kind)
+    : referenceForGroupVersionKind((desc as CRDDescription).name.slice(desc.name.indexOf('.') + 1))(
+        desc.version,
+      )(desc.kind);
+export const referenceForStepResource = (resource: StepResource): GroupVersionKind =>
+  referenceForGroupVersionKind(resource.group || 'core')(resource.version)(resource.kind);
+
+export const defaultChannelFor = (packageManifest: PackageManifestKind) => {
+  const channel = !_.isEmpty(packageManifest.status.defaultChannel)
+    ? packageManifest.status.channels.find(
+        (ch) => ch.name === packageManifest.status.defaultChannel,
+      )
+    : packageManifest.status.channels[0];
+  return channel;
+};
+export const defaultChannelNameFor = (pkg: PackageManifestKind): string =>
+  pkg?.status?.defaultChannel || pkg?.status?.channels?.[0]?.name || '-';
+export const installModesFor = (pkg: PackageManifestKind) => (channel: string) =>
+  pkg?.status?.channels?.find((ch) => ch.name === channel)?.currentCSVDesc?.installModes || [];
+export const supportedInstallModesFor = (pkg: PackageManifestKind) => (channel: string) =>
+  installModesFor(pkg)(channel).filter(({ supported }) => supported);
+
+export const iconFor = (pkg: PackageManifestKind) => {
+  const defaultChannel = pkg?.status?.defaultChannel
+    ? pkg.status.channels?.find((ch) => ch.name === pkg.status.defaultChannel)
+    : pkg?.status?.channels?.[0];
+  if (!defaultChannel) {
+    return null;
+  }
+
+  return resourceURL(PackageManifestModel, {
+    ns: pkg?.status?.catalogSourceNamespace,
+    name: pkg.metadata.name,
+    path: 'icon',
+    queryParams: {
+      resourceVersion: [pkg.metadata.name, defaultChannel.name, defaultChannel.currentCSV].join(
+        '.',
+      ),
+    },
+  });
+};
+
+export const providedAPIForReference = (csv, reference) => {
+  const providedAPIs = providedAPIsForCSV(csv) ?? [];
+  return providedAPIs.find((api) => referenceForProvidedAPI(api) === reference);
+};
+
+export const providedAPIForModel = (csv: ClusterServiceVersionKind, model: K8sKind): ProvidedAPI =>
+  providedAPIForReference(csv, referenceForModel(model));
+
+export const parseALMExamples = (
+  csv: ClusterServiceVersionKind,
+  useInitializationResource: boolean,
+) => {
+  try {
+    if (useInitializationResource) {
+      const resource = JSON.parse(
+        csv?.metadata?.annotations?.['operatorframework.io/initialization-resource'],
+      );
+      return [resource];
+    }
+    return JSON.parse(csv?.metadata?.annotations?.['alm-examples'] ?? '[]');
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.warn('Unable to parse ALM expamples\n', e);
+    return [];
+  }
+};
+
+export const exampleForModel = (csv: ClusterServiceVersionKind, model: K8sKind) =>
+  _.defaultsDeep(
+    {},
+    {
+      kind: model.kind,
+      apiVersion: `${model.apiGroup}/${model.apiVersion}`,
+    },
+    _.find(
+      parseALMExamples(
+        csv,
+        new URLSearchParams(window.location.search).has('useInitializationResource'),
+      ),
+      (s: K8sResourceKind) => referenceFor(s) === referenceForModel(model),
+    ),
+  );
+
+export const getManualSubscriptionsInNamespace = (
+  subscriptions: SubscriptionKind[],
+  namespace: string,
+) => {
+  return subscriptions?.filter(
+    (subscription) =>
+      subscription.metadata.namespace === namespace &&
+      subscription.spec.installPlanApproval === InstallPlanApproval.Manual,
+  );
+};
+
+export const OperatorsWithManualApproval: FC<OperatorsWithManualApprovalProps> = ({
+  subscriptions,
+}) => {
+  const { t } = useTranslation();
+  const subs = subscriptions
+    ?.map((subscription) => (
+      <strong key={subscription.metadata.uid}>{subscription.metadata.name}</strong>
+    ))
+    .map((sub, i) => (i > 0 ? [', ', sub] : sub));
+  return (
+    <>
+      {t('olm~operator', { count: subscriptions?.length })} {subs}
+    </>
+  );
+};
+
+export const NamespaceIncludesManualApproval: FC<NamespaceIncludesManualApprovalProps> = ({
+  subscriptions,
+  namespace,
+}) => (
+  <Trans ns="olm">
+    Installation namespace <strong>{{ namespace }}</strong> contains{' '}
+    <OperatorsWithManualApproval subscriptions={subscriptions} /> installed with manual approval,
+    and all operators installed in the same namespace will function as manual approval strategy. To
+    allow automatic approval, all operators installed in the namespace must use automatic approval
+    strategy.
+  </Trans>
+);
+
+const InstallPlanCSVNames: FC<InstallPlanReviewProps> = ({ installPlan }) =>
+  installPlan?.spec.clusterServiceVersionNames
+    .sort()
+    // eslint-disable-next-line react/no-array-index-key
+    .map((CSVName, i) => <strong key={`${CSVName}-${i}`}>{CSVName}</strong>)
+    // eslint-disable-next-line react/no-array-index-key
+    .map((CSVName, i) => (i > 0 ? <span key={`${CSVName}-${i}`}>, {CSVName}</span> : CSVName));
+
+export const InstallPlanReview: FC<InstallPlanReviewProps> = ({ installPlan }) => (
+  <p>
+    <Trans ns="olm">
+      Review the manual install plan for operators <InstallPlanCSVNames installPlan={installPlan} />
+      . Once approved, the following resources will be created in order to satisfy the requirements
+      for the components specified in the plan. Click the resource name to view the resource in
+      detail.
+    </Trans>
+  </p>
+);
+
+export type ClusterServiceVersionLogoProps = {
+  displayName: string;
+  icon: ClusterServiceVersionIcon | string;
+  provider: { name: string } | string;
+  version?: string;
+};
+
+export type OperatorsWithManualApprovalProps = {
+  subscriptions: SubscriptionKind[];
+};
+
+export type NamespaceIncludesManualApprovalProps = {
+  namespace: string;
+  subscriptions: SubscriptionKind[];
+};
+
+export type InstallPlanReviewProps = {
+  installPlan: ClusterServiceVersionKind | InstallPlanKind;
+};
+
+OperatorsWithManualApproval.displayName = 'OperatorsWithManualApproval';
+NamespaceIncludesManualApproval.displayName = 'NamespaceIncludesManualApproval';
+InstallPlanReview.displayName = 'InstallPlanReview';

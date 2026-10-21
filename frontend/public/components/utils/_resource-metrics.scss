@@ -1,0 +1,22 @@
+.resource-metrics-dashboard__card-body {
+  align-items: stretch;
+  display: flex;
+  height: 300px;
+  justify-content: center;
+
+  .query-browser__wrapper {
+    border: none;
+    margin: auto;
+    padding: 0;
+  }
+
+  // For legacy <Area> charts
+  & > .graph-wrapper {
+    margin: auto;
+    padding: 0;
+  }
+
+  .graph-empty-state {
+    min-height: unset;
+  }
+}

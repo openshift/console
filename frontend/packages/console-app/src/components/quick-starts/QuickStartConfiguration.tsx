@@ -1,0 +1,178 @@
+import type { FC, ReactElement } from 'react';
+import { useState, useEffect, useMemo } from 'react';
+import type { QuickStart } from '@patternfly/quickstarts';
+import { FormSection } from '@patternfly/react-core';
+import { DualListSelector } from '@patternfly/react-core/deprecated';
+import * as fuzzy from 'fuzzysearch';
+import { useTranslation } from 'react-i18next';
+import {
+  getGroupVersionKindForModel,
+  ResourceIcon,
+} from '@console/dynamic-plugin-sdk/src/lib-core';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import type { SaveStatusProps } from '@console/shared/src/components/cluster-configuration';
+import {
+  useDebounceCallback,
+  useConsoleOperatorConfig,
+  patchConsoleOperatorConfig,
+  LoadError,
+  SaveStatus,
+} from '@console/shared/src/components/cluster-configuration';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
+import { QuickStartModel } from '../../models';
+import { getQuickStartNameRef, useQuickStarts } from './utils/useQuickStarts';
+
+type DisabledQuickStartsConsoleConfig = K8sResourceKind & {
+  spec: {
+    customization?: {
+      quickStarts?: {
+        disabled: string[] | undefined;
+      };
+    };
+  };
+};
+
+type ItemProps = { id: string; quickStart?: QuickStart };
+
+const Item: FC<ItemProps> = ({ id, quickStart }) => (
+  <div style={{ display: 'flex', alignItems: 'center' }}>
+    {quickStart ? (
+      <>
+        <ResourceIcon groupVersionKind={getGroupVersionKindForModel(QuickStartModel)} />
+        <div>
+          <div>{quickStart.spec.displayName || quickStart.metadata.name}</div>
+          {quickStart.spec.displayName ? <div>{id}</div> : null}
+        </div>
+      </>
+    ) : (
+      id
+    )}
+  </div>
+);
+
+const QuickStartConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
+  const { t } = useTranslation();
+  const fireTelemetryEvent = useTelemetry();
+
+  // All available quick starts
+  const [allQuickStarts, allQuickStartsLoaded, allQuickStartsError] = useQuickStarts(false);
+
+  // Current configuration
+  const [consoleConfig, consoleConfigLoaded, consoleConfigError] = useConsoleOperatorConfig<
+    DisabledQuickStartsConsoleConfig
+  >();
+  const [disabled, setDisabled] = useState<string[]>();
+  useEffect(() => {
+    if (consoleConfig && consoleConfigLoaded && !disabled) {
+      setDisabled(consoleConfig?.spec?.customization?.quickStarts?.disabled || []);
+    }
+  }, [consoleConfig, consoleConfigLoaded, disabled]);
+
+  // Calculate options
+  const enabledOptions = useMemo<React.ReactElement<ItemProps>[]>(() => {
+    if (!consoleConfigLoaded || !allQuickStartsLoaded || allQuickStartsError || !disabled) {
+      return [];
+    }
+    return allQuickStarts
+      .filter((quickStart) => !disabled || !disabled.includes(getQuickStartNameRef(quickStart)))
+      .sort((quickStartA, quickStartB) => {
+        const displayNameA = quickStartA.spec.displayName || quickStartA.metadata.name;
+        const displayNameB = quickStartB.spec.displayName || quickStartB.metadata.name;
+        return displayNameA.localeCompare(displayNameB);
+      })
+      .map((quickStart) => (
+        <Item
+          key={quickStart.metadata.name}
+          id={getQuickStartNameRef(quickStart)}
+          quickStart={quickStart}
+        />
+      ));
+  }, [allQuickStarts, allQuickStartsError, allQuickStartsLoaded, consoleConfigLoaded, disabled]);
+  const disabledOptions = useMemo<React.ReactElement<ItemProps>[]>(() => {
+    if (!disabled) {
+      return [];
+    }
+    const quickStartsByName = allQuickStarts.reduce<Record<string, QuickStart>>(
+      (acc, quickStart) => {
+        acc[getQuickStartNameRef(quickStart)] = quickStart;
+        return acc;
+      },
+      {},
+    );
+    const sortedIds = [...disabled];
+    sortedIds.sort((idA, idB) => {
+      const quickStartA = quickStartsByName[idA];
+      const quickStartB = quickStartsByName[idB];
+      const displayNameA = quickStartA?.spec.displayName || quickStartA?.metadata.name || idA;
+      const displayNameB = quickStartB?.spec.displayName || quickStartB?.metadata.name || idB;
+      return displayNameA.localeCompare(displayNameB);
+    });
+    return sortedIds.map((id) => <Item key={id} id={id} quickStart={quickStartsByName[id]} />);
+  }, [allQuickStarts, disabled]);
+
+  // Save the latest value (disabled string array)
+  const [saveStatus, setSaveStatus] = useState<SaveStatusProps>();
+  const save = useDebounceCallback(() => {
+    fireTelemetryEvent('Console cluster configuration changed', {
+      customize: 'Quick Starts',
+      disabled,
+    });
+    setSaveStatus({ status: 'in-progress' });
+
+    const patch: DisabledQuickStartsConsoleConfig = {
+      spec: {
+        customization: {
+          quickStarts: {
+            disabled,
+          },
+        },
+      },
+    };
+    patchConsoleOperatorConfig(patch)
+      .then(() => setSaveStatus({ status: 'successful' }))
+      .catch((error) => setSaveStatus({ status: 'error', error }));
+  }, 2000);
+
+  // Extract disabled string array from Items
+  const onListChange = (
+    _event,
+    newEnabledOptions: ReactElement<ItemProps>[],
+    newDisabledOptions: ReactElement<ItemProps>[],
+  ) => {
+    setDisabled(newDisabledOptions.map((node) => node.props.id));
+    setSaveStatus({ status: 'pending' });
+    save();
+  };
+
+  const filterOption = (option: ReactElement<ItemProps>, input: string): boolean => {
+    const displayName =
+      option.props.quickStart?.spec.displayName ||
+      option.props.quickStart?.metadata.name ||
+      option.props.id;
+    return fuzzy(input.toLocaleLowerCase(), displayName.toLocaleLowerCase());
+  };
+
+  return (
+    <FormSection
+      title={t('console-app~Quick starts')}
+      data-test="quickstarts form-section"
+      id="quick-starts-configuration"
+    >
+      <DualListSelector
+        availableOptionsTitle={t('console-app~Enabled')}
+        chosenOptionsTitle={t('console-app~Disabled')}
+        isSearchable
+        availableOptions={enabledOptions}
+        chosenOptions={disabledOptions}
+        onListChange={onListChange}
+        filterOption={filterOption}
+        isDisabled={readonly || !allQuickStartsLoaded || !consoleConfigLoaded || consoleConfigError}
+      />
+
+      <LoadError error={consoleConfigError} />
+      {saveStatus && <SaveStatus {...saveStatus} />}
+    </FormSection>
+  );
+};
+
+export default QuickStartConfiguration;

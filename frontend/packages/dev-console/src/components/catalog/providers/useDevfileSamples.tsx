@@ -1,0 +1,82 @@
+import { useState, useEffect, useMemo } from 'react';
+import type { TFunction } from 'i18next';
+import { useTranslation } from 'react-i18next';
+import type { CatalogItem, ExtensionHook } from '@console/dynamic-plugin-sdk';
+import type { APIError } from '@console/shared';
+import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
+import type { DevfileSample } from '../../import/devfile/devfile-types';
+
+const normalizeDevfileSamples = (
+  devfileSamples: DevfileSample[],
+  namespace: string,
+  t: TFunction,
+): CatalogItem[] => {
+  const normalizedDevfileSamples = devfileSamples.map((sample) => {
+    const { name: uid, displayName, description, tags, git, icon, provider } = sample;
+    const gitRepositoryUrl = Object.values(git.remotes)[0];
+    const label = t('devconsole~Create Devfile Sample');
+
+    const searchParams = new URLSearchParams();
+    searchParams.set('formType', 'sample');
+    searchParams.set('importType', 'devfile');
+    searchParams.set('devfileName', uid);
+    searchParams.set('git.repository', gitRepositoryUrl);
+
+    const namespacePath = namespace ? `/ns/${namespace}` : '';
+    const href = `/import${namespacePath}?${searchParams}`;
+    const iconUrl = icon || '';
+
+    const item: CatalogItem = {
+      uid,
+      type: 'Devfile',
+      name: displayName,
+      secondaryLabel: 'Samples',
+      description,
+      tags,
+      provider,
+      cta: {
+        label,
+        href,
+      },
+      icon: { url: iconUrl },
+    };
+
+    return item;
+  });
+
+  return normalizedDevfileSamples;
+};
+
+const useDevfileSamples: ExtensionHook<CatalogItem[]> = ({
+  namespace,
+}): [CatalogItem[], boolean, any] => {
+  const { t } = useTranslation();
+  const [devfileSamples, setDevfileSamples] = useState<DevfileSample[]>();
+  const [loadedError, setLoadedError] = useState<APIError>();
+
+  useEffect(() => {
+    let mounted = true;
+    coFetchJSON('/api/devfile/samples/?registry=https://registry.devfile.io')
+      .then((res) => {
+        if (mounted) setDevfileSamples(res);
+      })
+      .catch((err) => {
+        if (mounted) setLoadedError(err);
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const normalizedDevfileSamples = useMemo(
+    () => normalizeDevfileSamples(devfileSamples || [], namespace, t),
+    [namespace, devfileSamples, t],
+  );
+
+  const loaded = !!devfileSamples;
+
+  return [normalizedDevfileSamples, loaded, loadedError];
+};
+
+export default useDevfileSamples;

@@ -1,0 +1,41 @@
+@import '../../../../../topology/src/components/topology-utils';
+
+.odc-sink-uri {
+  outline: none;
+  cursor: pointer;
+
+  .odc-m-drag-active & {
+    pointer-events: none;
+  }
+
+  &.is-filtered .pf-topology__node__background {
+    stroke-width: 2px;
+    stroke: $filtered-stroke-color;
+  }
+  &.pf-m-highlight .pf-topology__node__background {
+    stroke: $interactive-stroke-color;
+  }
+  &.pf-m-drop-target .pf-topology__node__background {
+    fill: $interactive-fill-color;
+    stroke: $interactive-stroke-color;
+  }
+}
+
+.odc-m-drag-active,
+.odc-m-filter-active {
+  .odc-sink-uri {
+    opacity: $de-emphasize-opacity;
+    &.pf-m-dragging,
+    &.pf-m-highlight {
+      opacity: 1;
+    }
+  }
+}
+
+.odc-m-filter-active:not(.odc-m-drag-active) {
+  .odc-sink-uri {
+    &.is-filtered {
+      opacity: 1;
+    }
+  }
+}

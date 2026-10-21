@@ -1,0 +1,152 @@
+import type { FC } from 'react';
+import { useMemo, useCallback } from 'react';
+import type { FormikHelpers } from 'formik';
+import { Formik } from 'formik';
+import { useTranslation } from 'react-i18next';
+import { useParams, useLocation, useNavigate } from 'react-router';
+import { deployValidationSchema } from '@console/dev-console/src/components/import/deployImage-validation-utils';
+import { handleRedirect } from '@console/dev-console/src/components/import/import-submit-utils';
+import type { DeployImageFormData } from '@console/dev-console/src/components/import/import-types';
+import NamespacedPage, {
+  NamespacedPageVariants,
+} from '@console/dev-console/src/components/NamespacedPage';
+import type { WatchK8sResults } from '@console/dynamic-plugin-sdk';
+import { useActivePerspective } from '@console/dynamic-plugin-sdk';
+import { LoadingBox } from '@console/internal/components/utils';
+import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
+import { ProjectModel, ServiceModel } from '@console/internal/models';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import { k8sGet } from '@console/internal/module/k8s';
+import { BadgeType, getBadgeFromType } from '@console/shared';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
+import { usePerspectives } from '@console/shared/src/hooks/usePerspectives';
+import { useRelatedHPA } from '@console/shared/src/hooks/useRelatedHPA';
+import {
+  getInitialValuesKnatify,
+  knatifyResources,
+  getKnatifyWorkloadData,
+} from '../../utils/knatify-utils';
+import KnatifyForm from './KnatifyForm';
+
+type WatchedResources = {
+  projects: K8sResourceKind[];
+  imageStream: K8sResourceKind[];
+  workloadResource?: K8sResourceKind;
+};
+
+const CreateKnatifyPage: FC = () => {
+  const { t } = useTranslation();
+  const { ns: namespace } = useParams();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const handleCancel = useCallback(() => navigate(-1), [navigate]);
+  const queryParams = new URLSearchParams(location.search);
+  const kind = queryParams.get('kind');
+  const appName = queryParams.get('name');
+  const apiVersion = queryParams.get('apiversion');
+  const [perspective] = useActivePerspective();
+  const perspectiveExtensions = usePerspectives();
+  const [hpa, hpaLoaded, hpaError] = useRelatedHPA(apiVersion, kind, appName, namespace);
+
+  const watchedResources = useMemo(
+    () => ({
+      projects: {
+        kind: ProjectModel.kind,
+        isList: true,
+      },
+      imageStream: {
+        kind: 'ImageStream',
+        isList: true,
+        namespace,
+        selector: {
+          matchLabels: { 'app.kubernetes.io/instance': appName },
+        },
+        optional: true,
+      },
+      ...(kind &&
+        appName && {
+          workloadResource: {
+            kind,
+            name: appName,
+            namespace,
+            optional: true,
+          },
+        }),
+    }),
+    [namespace, kind, appName],
+  );
+
+  const resources: WatchK8sResults<WatchedResources> = useK8sWatchResources<WatchedResources>(
+    watchedResources,
+  );
+
+  const isResourceLoaded =
+    Object.keys(resources).length > 0 &&
+    Object.values(resources).every((value) => value.loaded || !!value.loadError) &&
+    (hpaLoaded || !!hpaError);
+
+  const handleSubmit = async (
+    values: DeployImageFormData,
+    helpers: FormikHelpers<DeployImageFormData>,
+  ) => {
+    try {
+      const svcData = await k8sGet(ServiceModel, values.name, values.project.name);
+      if (svcData) {
+        helpers.setStatus({
+          submitError: t(
+            'knative-plugin~There is an existing placeholder Service with name {{name}} in namespace {{namespace}}. Please provide another name',
+            {
+              name: values.name,
+              namespace: values.project.name,
+            },
+          ),
+        });
+      }
+    } catch {
+      const resourceActions = knatifyResources(values, appName, true).then(() =>
+        knatifyResources(values, appName),
+      );
+
+      resourceActions
+        .then(() => {
+          helpers.setStatus({ submitError: '' });
+          handleRedirect(namespace, perspective, perspectiveExtensions, navigate);
+        })
+        .catch((err) => {
+          helpers.setStatus({ submitError: err.message });
+        });
+    }
+  };
+
+  return (
+    <NamespacedPage disabled variant={NamespacedPageVariants.light}>
+      <DocumentTitle>{t('knative-plugin~Make Serverless')}</DocumentTitle>
+      <PageHeading
+        title={t('knative-plugin~Make Serverless')}
+        badge={getBadgeFromType(BadgeType.TECH)}
+        helpText={t(
+          'knative-plugin~This feature will create a new serverless deployment next to your existing deployment. Other configurations, including the traffic pattern, can be modified in the form.',
+        )}
+      />
+      {isResourceLoaded ? (
+        <Formik
+          initialValues={getInitialValuesKnatify(
+            getKnatifyWorkloadData(resources.workloadResource?.data, hpa),
+            namespace,
+            resources.imageStream.data,
+          )}
+          validationSchema={deployValidationSchema(t)}
+          onSubmit={handleSubmit}
+          onReset={handleCancel}
+        >
+          {(formikProps) => <KnatifyForm {...formikProps} projects={resources.projects} />}
+        </Formik>
+      ) : (
+        <LoadingBox />
+      )}
+    </NamespacedPage>
+  );
+};
+
+export default CreateKnatifyPage;

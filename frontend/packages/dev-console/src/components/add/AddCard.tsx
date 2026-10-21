@@ -1,0 +1,57 @@
+import type { ReactNode } from 'react';
+import { isValidElement, memo } from 'react';
+import { Card, SimpleList, Title } from '@patternfly/react-core';
+import type { ResolvedExtension, AddAction } from '@console/dynamic-plugin-sdk';
+import type { CodeRef } from '@console/dynamic-plugin-sdk/src/types';
+import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
+import { isValidUrl } from '@console/shared/src/utils/utils';
+import AddCardItem from './AddCardItem';
+import './AddCard.scss';
+
+interface AddCardProps {
+  id: string;
+  title: string;
+  items: ResolvedExtension<AddAction>[];
+  namespace: string;
+  icon?: CodeRef<ReactNode> | string;
+}
+
+const AddCard = memo<AddCardProps>(({ id, title, items, namespace, icon }) => {
+  const isTitleFromItem: boolean = items?.length === 1 && items[0].properties.label === title;
+  const actionIcon = (): JSX.Element => {
+    if (typeof icon === 'string') {
+      return (
+        <img
+          className="odc-add-card__icon odc-add-card__img-icon"
+          src={isValidUrl(icon) ? icon : getImageForIconClass(icon)}
+          aria-hidden="true"
+          alt={title}
+        />
+      );
+    }
+    if (typeof icon !== 'string' && isValidElement(icon)) {
+      return (
+        <span className="odc-add-card__icon" aria-hidden="true">
+          {icon}
+        </span>
+      );
+    }
+    return null;
+  };
+  return items?.length > 0 ? (
+    <Card key={title} className="odc-add-card" data-test={`card ${id}`}>
+      {!isTitleFromItem && (
+        <Title size="lg" headingLevel="h2" className="odc-add-card__title" data-test="title">
+          {actionIcon()}
+          {title}
+        </Title>
+      )}
+      <SimpleList isControlled={false}>
+        {items.map((item) => (
+          <AddCardItem key={item.properties.id} namespace={namespace} action={item} />
+        ))}
+      </SimpleList>
+    </Card>
+  ) : null;
+});
+export default AddCard;

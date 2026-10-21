@@ -1,0 +1,19 @@
+{
+  "name": "@console/telemetry-plugin",
+  "version": "0.0.0-fixed",
+  "description": "An OpenShift Console plugin for capturing events in segment.",
+  "private": true,
+  "consolePlugin": {
+    "displayName": "Telemetry Plugin",
+    "description": "An OpenShift Console plugin for capturing events in segment.",
+    "exposedModules": {
+      "telemetryDebugListener": "src/listeners/debug.ts",
+      "telemetryUsageListener": "src/listeners/usage.ts",
+      "telemetrySegmentListener": "src/listeners/segment.ts",
+      "detectTelemetry": "src/flags/detect-telemetry.ts",
+      "telemetryConfiguration": "src/components/TelemetryConfiguration.tsx",
+      "telemetryUserPreferenceDropdown": "src/components/TelemetryUserPreferenceDropdown.tsx",
+      "useTelemetryProvider": "src/providers/telemetry-provider.ts"
+    }
+  }
+}

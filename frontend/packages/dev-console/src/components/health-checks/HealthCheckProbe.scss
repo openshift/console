@@ -1,0 +1,14 @@
+.odc-heath-check-probe {
+  &__formTitle {
+    margin: 0 !important;
+    font-weight: var(--pf-t--global--font--weight--body--bold);
+  }
+  &__successText {
+    color: var(--pf-t--global--text--color--status--success--default);
+    font-weight: var(--pf-t--global--font--weight--body--bold);
+  }
+
+  &__successButton {
+    padding: 0;
+  }
+}

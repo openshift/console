@@ -1,0 +1,32 @@
+.odc-item-selector-filter {
+  display: flex;
+  padding-bottom: var(--pf-t--global--spacer--md);
+
+  &__input {
+    max-width: 20em;
+  }
+
+  &__count {
+    color: var(--pf-t--global--text--color--subtle);
+    margin-left: auto;
+  }
+}
+
+.odc-item-selector-field {
+  display: inline-flex;
+  flex-direction: column;
+  flex-flow: wrap;
+  background: var(--pf-t--global--background--color--secondary--default);
+  padding: 4px;
+
+  &__scrollbar {
+    max-height: 260px;
+    overflow-y: auto;
+  }
+
+  &__success-icon {
+    color: var(--pf-t--global--icon--color--status--success--default);
+    font-size: var(--pf-t--global--font--size--md);
+    margin-left: var(--pf-t--global--spacer--lg);
+  }
+}

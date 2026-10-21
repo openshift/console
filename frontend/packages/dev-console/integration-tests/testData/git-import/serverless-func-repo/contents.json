@@ -1,0 +1,114 @@
+[
+    {
+      "name": ".gitignore",
+      "path": ".gitignore",
+      "sha": "3abd5fdff11e295a0d72346ac99fe7034da1c6cb",
+      "size": 126,
+      "url": "https://api.github.com/repos/Lucifergene/serverless-func-repo/contents/.gitignore?ref=master",
+      "html_url": "https://github.com/Lucifergene/serverless-func-repo/blob/master/.gitignore",
+      "git_url": "https://api.github.com/repos/Lucifergene/serverless-func-repo/git/blobs/3abd5fdff11e295a0d72346ac99fe7034da1c6cb",
+      "download_url": "https://raw.githubusercontent.com/Lucifergene/serverless-func-repo/master/.gitignore",
+      "type": "file",
+      "_links": {
+        "self": "https://api.github.com/repos/Lucifergene/serverless-func-repo/contents/.gitignore?ref=master",
+        "git": "https://api.github.com/repos/Lucifergene/serverless-func-repo/git/blobs/3abd5fdff11e295a0d72346ac99fe7034da1c6cb",
+        "html": "https://github.com/Lucifergene/serverless-func-repo/blob/master/.gitignore"
+      }
+    },
+    {
+      "name": "README.md",
+      "path": "README.md",
+      "sha": "3ecedd17b45af0a59d4a52dd648eda8ba090047a",
+      "size": 2096,
+      "url": "https://api.github.com/repos/Lucifergene/serverless-func-repo/contents/README.md?ref=master",
+      "html_url": "https://github.com/Lucifergene/serverless-func-repo/blob/master/README.md",
+      "git_url": "https://api.github.com/repos/Lucifergene/serverless-func-repo/git/blobs/3ecedd17b45af0a59d4a52dd648eda8ba090047a",
+      "download_url": "https://raw.githubusercontent.com/Lucifergene/serverless-func-repo/master/README.md",
+      "type": "file",
+      "_links": {
+        "self": "https://api.github.com/repos/Lucifergene/serverless-func-repo/contents/README.md?ref=master",
+        "git": "https://api.github.com/repos/Lucifergene/serverless-func-repo/git/blobs/3ecedd17b45af0a59d4a52dd648eda8ba090047a",
+        "html": "https://github.com/Lucifergene/serverless-func-repo/blob/master/README.md"
+      }
+    },
+    {
+      "name": "func.yaml",
+      "path": "func.yaml",
+      "sha": "9336f0c8f3b0f5c37a55dc7e4e063fa99bfa4a29",
+      "size": 612,
+      "url": "https://api.github.com/repos/Lucifergene/serverless-func-repo/contents/func.yaml?ref=master",
+      "html_url": "https://github.com/Lucifergene/serverless-func-repo/blob/master/func.yaml",
+      "git_url": "https://api.github.com/repos/Lucifergene/serverless-func-repo/git/blobs/9336f0c8f3b0f5c37a55dc7e4e063fa99bfa4a29",
+      "download_url": "https://raw.githubusercontent.com/Lucifergene/serverless-func-repo/master/func.yaml",
+      "type": "file",
+      "_links": {
+        "self": "https://api.github.com/repos/Lucifergene/serverless-func-repo/contents/func.yaml?ref=master",
+        "git": "https://api.github.com/repos/Lucifergene/serverless-func-repo/git/blobs/9336f0c8f3b0f5c37a55dc7e4e063fa99bfa4a29",
+        "html": "https://github.com/Lucifergene/serverless-func-repo/blob/master/func.yaml"
+      }
+    },
+    {
+      "name": "index.js",
+      "path": "index.js",
+      "sha": "04c81441d0b3e3e39bee13343c4058956f4ee0e4",
+      "size": 1463,
+      "url": "https://api.github.com/repos/Lucifergene/serverless-func-repo/contents/index.js?ref=master",
+      "html_url": "https://github.com/Lucifergene/serverless-func-repo/blob/master/index.js",
+      "git_url": "https://api.github.com/repos/Lucifergene/serverless-func-repo/git/blobs/04c81441d0b3e3e39bee13343c4058956f4ee0e4",
+      "download_url": "https://raw.githubusercontent.com/Lucifergene/serverless-func-repo/master/index.js",
+      "type": "file",
+      "_links": {
+        "self": "https://api.github.com/repos/Lucifergene/serverless-func-repo/contents/index.js?ref=master",
+        "git": "https://api.github.com/repos/Lucifergene/serverless-func-repo/git/blobs/04c81441d0b3e3e39bee13343c4058956f4ee0e4",
+        "html": "https://github.com/Lucifergene/serverless-func-repo/blob/master/index.js"
+      }
+    },
+    {
+      "name": "package-lock.json",
+      "path": "package-lock.json",
+      "sha": "14391b4480f8919aa6cedfe7e92585eb55259d8a",
+      "size": 151831,
+      "url": "https://api.github.com/repos/Lucifergene/serverless-func-repo/contents/package-lock.json?ref=master",
+      "html_url": "https://github.com/Lucifergene/serverless-func-repo/blob/master/package-lock.json",
+      "git_url": "https://api.github.com/repos/Lucifergene/serverless-func-repo/git/blobs/14391b4480f8919aa6cedfe7e92585eb55259d8a",
+      "download_url": "https://raw.githubusercontent.com/Lucifergene/serverless-func-repo/master/package-lock.json",
+      "type": "file",
+      "_links": {
+        "self": "https://api.github.com/repos/Lucifergene/serverless-func-repo/contents/package-lock.json?ref=master",
+        "git": "https://api.github.com/repos/Lucifergene/serverless-func-repo/git/blobs/14391b4480f8919aa6cedfe7e92585eb55259d8a",
+        "html": "https://github.com/Lucifergene/serverless-func-repo/blob/master/package-lock.json"
+      }
+    },
+    {
+      "name": "package.json",
+      "path": "package.json",
+      "sha": "2806b7a4ce0a7caf6f1e3d9c0a833c81db97f7eb",
+      "size": 565,
+      "url": "https://api.github.com/repos/Lucifergene/serverless-func-repo/contents/package.json?ref=master",
+      "html_url": "https://github.com/Lucifergene/serverless-func-repo/blob/master/package.json",
+      "git_url": "https://api.github.com/repos/Lucifergene/serverless-func-repo/git/blobs/2806b7a4ce0a7caf6f1e3d9c0a833c81db97f7eb",
+      "download_url": "https://raw.githubusercontent.com/Lucifergene/serverless-func-repo/master/package.json",
+      "type": "file",
+      "_links": {
+        "self": "https://api.github.com/repos/Lucifergene/serverless-func-repo/contents/package.json?ref=master",
+        "git": "https://api.github.com/repos/Lucifergene/serverless-func-repo/git/blobs/2806b7a4ce0a7caf6f1e3d9c0a833c81db97f7eb",
+        "html": "https://github.com/Lucifergene/serverless-func-repo/blob/master/package.json"
+      }
+    },
+    {
+      "name": "test",
+      "path": "test",
+      "sha": "9cea2aab5cb7d30f925060499367172b566d0842",
+      "size": 0,
+      "url": "https://api.github.com/repos/Lucifergene/serverless-func-repo/contents/test?ref=master",
+      "html_url": "https://github.com/Lucifergene/serverless-func-repo/tree/master/test",
+      "git_url": "https://api.github.com/repos/Lucifergene/serverless-func-repo/git/trees/9cea2aab5cb7d30f925060499367172b566d0842",
+      "download_url": null,
+      "type": "dir",
+      "_links": {
+        "self": "https://api.github.com/repos/Lucifergene/serverless-func-repo/contents/test?ref=master",
+        "git": "https://api.github.com/repos/Lucifergene/serverless-func-repo/git/trees/9cea2aab5cb7d30f925060499367172b566d0842",
+        "html": "https://github.com/Lucifergene/serverless-func-repo/tree/master/test"
+      }
+    }
+  ]

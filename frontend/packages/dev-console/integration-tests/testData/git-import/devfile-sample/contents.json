@@ -1,0 +1,162 @@
+[
+  {
+    "name": ".gitignore",
+    "path": ".gitignore",
+    "sha": "67045665db202cf951f839a5f3e73efdcfd45021",
+    "size": 1610,
+    "url": "https://api.github.com/repos/nodeshift-starters/devfile-sample/contents/.gitignore?ref=main",
+    "html_url": "https://github.com/nodeshift-starters/devfile-sample/blob/main/.gitignore",
+    "git_url": "https://api.github.com/repos/nodeshift-starters/devfile-sample/git/blobs/67045665db202cf951f839a5f3e73efdcfd45021",
+    "download_url": "https://raw.githubusercontent.com/nodeshift-starters/devfile-sample/main/.gitignore",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/nodeshift-starters/devfile-sample/contents/.gitignore?ref=main",
+      "git": "https://api.github.com/repos/nodeshift-starters/devfile-sample/git/blobs/67045665db202cf951f839a5f3e73efdcfd45021",
+      "html": "https://github.com/nodeshift-starters/devfile-sample/blob/main/.gitignore"
+    }
+  },
+  {
+    "name": "Dockerfile",
+    "path": "Dockerfile",
+    "sha": "ba8d5004862f90107fcf94f4ee23e537f86c6670",
+    "size": 542,
+    "url": "https://api.github.com/repos/nodeshift-starters/devfile-sample/contents/Dockerfile?ref=main",
+    "html_url": "https://github.com/nodeshift-starters/devfile-sample/blob/main/Dockerfile",
+    "git_url": "https://api.github.com/repos/nodeshift-starters/devfile-sample/git/blobs/ba8d5004862f90107fcf94f4ee23e537f86c6670",
+    "download_url": "https://raw.githubusercontent.com/nodeshift-starters/devfile-sample/main/Dockerfile",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/nodeshift-starters/devfile-sample/contents/Dockerfile?ref=main",
+      "git": "https://api.github.com/repos/nodeshift-starters/devfile-sample/git/blobs/ba8d5004862f90107fcf94f4ee23e537f86c6670",
+      "html": "https://github.com/nodeshift-starters/devfile-sample/blob/main/Dockerfile"
+    }
+  },
+  {
+    "name": "LICENSE",
+    "path": "LICENSE",
+    "sha": "e48e0963459bf4c4e175956b657a8f4a91967880",
+    "size": 14197,
+    "url": "https://api.github.com/repos/nodeshift-starters/devfile-sample/contents/LICENSE?ref=main",
+    "html_url": "https://github.com/nodeshift-starters/devfile-sample/blob/main/LICENSE",
+    "git_url": "https://api.github.com/repos/nodeshift-starters/devfile-sample/git/blobs/e48e0963459bf4c4e175956b657a8f4a91967880",
+    "download_url": "https://raw.githubusercontent.com/nodeshift-starters/devfile-sample/main/LICENSE",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/nodeshift-starters/devfile-sample/contents/LICENSE?ref=main",
+      "git": "https://api.github.com/repos/nodeshift-starters/devfile-sample/git/blobs/e48e0963459bf4c4e175956b657a8f4a91967880",
+      "html": "https://github.com/nodeshift-starters/devfile-sample/blob/main/LICENSE"
+    }
+  },
+  {
+    "name": "README.md",
+    "path": "README.md",
+    "sha": "6422a09fbc26ed4385babd4af54e3534fde53c4a",
+    "size": 1189,
+    "url": "https://api.github.com/repos/nodeshift-starters/devfile-sample/contents/README.md?ref=main",
+    "html_url": "https://github.com/nodeshift-starters/devfile-sample/blob/main/README.md",
+    "git_url": "https://api.github.com/repos/nodeshift-starters/devfile-sample/git/blobs/6422a09fbc26ed4385babd4af54e3534fde53c4a",
+    "download_url": "https://raw.githubusercontent.com/nodeshift-starters/devfile-sample/main/README.md",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/nodeshift-starters/devfile-sample/contents/README.md?ref=main",
+      "git": "https://api.github.com/repos/nodeshift-starters/devfile-sample/git/blobs/6422a09fbc26ed4385babd4af54e3534fde53c4a",
+      "html": "https://github.com/nodeshift-starters/devfile-sample/blob/main/README.md"
+    }
+  },
+  {
+    "name": "devfile.yaml",
+    "path": "devfile.yaml",
+    "sha": "33a99125923b53c7197ffd3ac4f94d1777686a87",
+    "size": 1800,
+    "url": "https://api.github.com/repos/nodeshift-starters/devfile-sample/contents/devfile.yaml?ref=main",
+    "html_url": "https://github.com/nodeshift-starters/devfile-sample/blob/main/devfile.yaml",
+    "git_url": "https://api.github.com/repos/nodeshift-starters/devfile-sample/git/blobs/33a99125923b53c7197ffd3ac4f94d1777686a87",
+    "download_url": "https://raw.githubusercontent.com/nodeshift-starters/devfile-sample/main/devfile.yaml",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/nodeshift-starters/devfile-sample/contents/devfile.yaml?ref=main",
+      "git": "https://api.github.com/repos/nodeshift-starters/devfile-sample/git/blobs/33a99125923b53c7197ffd3ac4f94d1777686a87",
+      "html": "https://github.com/nodeshift-starters/devfile-sample/blob/main/devfile.yaml"
+    }
+  },
+  {
+    "name": "outerloop-deploy.yaml",
+    "path": "outerloop-deploy.yaml",
+    "sha": "c3b22314a950180fc619de4babe2533ad5987fa2",
+    "size": 493,
+    "url": "https://api.github.com/repos/nodeshift-starters/devfile-sample/contents/outerloop-deploy.yaml?ref=main",
+    "html_url": "https://github.com/nodeshift-starters/devfile-sample/blob/main/outerloop-deploy.yaml",
+    "git_url": "https://api.github.com/repos/nodeshift-starters/devfile-sample/git/blobs/c3b22314a950180fc619de4babe2533ad5987fa2",
+    "download_url": "https://raw.githubusercontent.com/nodeshift-starters/devfile-sample/main/outerloop-deploy.yaml",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/nodeshift-starters/devfile-sample/contents/outerloop-deploy.yaml?ref=main",
+      "git": "https://api.github.com/repos/nodeshift-starters/devfile-sample/git/blobs/c3b22314a950180fc619de4babe2533ad5987fa2",
+      "html": "https://github.com/nodeshift-starters/devfile-sample/blob/main/outerloop-deploy.yaml"
+    }
+  },
+  {
+    "name": "package-lock.json",
+    "path": "package-lock.json",
+    "sha": "4ea04351482cc74fc5fad9517d814693604e2a6a",
+    "size": 18290,
+    "url": "https://api.github.com/repos/nodeshift-starters/devfile-sample/contents/package-lock.json?ref=main",
+    "html_url": "https://github.com/nodeshift-starters/devfile-sample/blob/main/package-lock.json",
+    "git_url": "https://api.github.com/repos/nodeshift-starters/devfile-sample/git/blobs/4ea04351482cc74fc5fad9517d814693604e2a6a",
+    "download_url": "https://raw.githubusercontent.com/nodeshift-starters/devfile-sample/main/package-lock.json",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/nodeshift-starters/devfile-sample/contents/package-lock.json?ref=main",
+      "git": "https://api.github.com/repos/nodeshift-starters/devfile-sample/git/blobs/4ea04351482cc74fc5fad9517d814693604e2a6a",
+      "html": "https://github.com/nodeshift-starters/devfile-sample/blob/main/package-lock.json"
+    }
+  },
+  {
+    "name": "package.json",
+    "path": "package.json",
+    "sha": "73003980284f47ce6ce7fc44098ac5e4c26800ad",
+    "size": 391,
+    "url": "https://api.github.com/repos/nodeshift-starters/devfile-sample/contents/package.json?ref=main",
+    "html_url": "https://github.com/nodeshift-starters/devfile-sample/blob/main/package.json",
+    "git_url": "https://api.github.com/repos/nodeshift-starters/devfile-sample/git/blobs/73003980284f47ce6ce7fc44098ac5e4c26800ad",
+    "download_url": "https://raw.githubusercontent.com/nodeshift-starters/devfile-sample/main/package.json",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/nodeshift-starters/devfile-sample/contents/package.json?ref=main",
+      "git": "https://api.github.com/repos/nodeshift-starters/devfile-sample/git/blobs/73003980284f47ce6ce7fc44098ac5e4c26800ad",
+      "html": "https://github.com/nodeshift-starters/devfile-sample/blob/main/package.json"
+    }
+  },
+  {
+    "name": "server.js",
+    "path": "server.js",
+    "sha": "d096b1fe8f53be963b73626a90bb2903d11d25c0",
+    "size": 1897,
+    "url": "https://api.github.com/repos/nodeshift-starters/devfile-sample/contents/server.js?ref=main",
+    "html_url": "https://github.com/nodeshift-starters/devfile-sample/blob/main/server.js",
+    "git_url": "https://api.github.com/repos/nodeshift-starters/devfile-sample/git/blobs/d096b1fe8f53be963b73626a90bb2903d11d25c0",
+    "download_url": "https://raw.githubusercontent.com/nodeshift-starters/devfile-sample/main/server.js",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/nodeshift-starters/devfile-sample/contents/server.js?ref=main",
+      "git": "https://api.github.com/repos/nodeshift-starters/devfile-sample/git/blobs/d096b1fe8f53be963b73626a90bb2903d11d25c0",
+      "html": "https://github.com/nodeshift-starters/devfile-sample/blob/main/server.js"
+    }
+  },
+  {
+    "name": "test",
+    "path": "test",
+    "sha": "0e7811b8220b549baa90542ad731e53bbaac48f1",
+    "size": 0,
+    "url": "https://api.github.com/repos/nodeshift-starters/devfile-sample/contents/test?ref=main",
+    "html_url": "https://github.com/nodeshift-starters/devfile-sample/tree/main/test",
+    "git_url": "https://api.github.com/repos/nodeshift-starters/devfile-sample/git/trees/0e7811b8220b549baa90542ad731e53bbaac48f1",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/nodeshift-starters/devfile-sample/contents/test?ref=main",
+      "git": "https://api.github.com/repos/nodeshift-starters/devfile-sample/git/trees/0e7811b8220b549baa90542ad731e53bbaac48f1",
+      "html": "https://github.com/nodeshift-starters/devfile-sample/tree/main/test"
+    }
+  }
+]

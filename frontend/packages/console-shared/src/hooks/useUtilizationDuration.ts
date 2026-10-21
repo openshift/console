@@ -1,0 +1,46 @@
+import { useCallback, useMemo } from 'react';
+import type { UseUtilizationDuration } from '@console/dynamic-plugin-sdk/src/api/internal-types';
+import * as UIActions from '@console/internal/actions/ui';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
+import { DEFAULT_DURATION, DEFAULT_DURATION_KEY } from '../constants';
+
+export const useUtilizationDuration: UseUtilizationDuration = (
+  adjustDuration?: (duration: number) => number,
+) => {
+  const dispatch = useConsoleDispatch();
+  const duration =
+    useConsoleSelector<number>(({ UI }) => UI.getIn(['utilizationDuration', 'duration'])) ??
+    DEFAULT_DURATION;
+  const storeEndDate = useConsoleSelector<Date | undefined>(({ UI }) =>
+    UI.getIn(['utilizationDuration', 'endDate']),
+  );
+  const endDate = useMemo(() => storeEndDate ?? new Date(), [storeEndDate]);
+  const selectedKey =
+    useConsoleSelector<string>(({ UI }) => UI.getIn(['utilizationDuration', 'selectedKey'])) ??
+    DEFAULT_DURATION_KEY;
+  const startDate = new Date(endDate.getTime() - duration);
+  const updateEndDate = useCallback(
+    (date: Date) => date > endDate && dispatch(UIActions.setUtilizationDurationEndTime(date)),
+    [dispatch, endDate],
+  );
+  const updateDuration = useCallback(
+    (newDuration: number) =>
+      dispatch(UIActions.setUtilizationDuration(adjustDuration?.(newDuration) ?? newDuration)),
+    [adjustDuration, dispatch],
+  );
+  const updateSelectedKey = useCallback(
+    (key: string) => dispatch(UIActions.setUtilizationDurationSelectedKey(key)),
+    [dispatch],
+  );
+
+  return {
+    duration,
+    endDate,
+    selectedKey,
+    startDate,
+    updateDuration,
+    updateEndDate,
+    updateSelectedKey,
+  };
+};

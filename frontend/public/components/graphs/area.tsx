@@ -1,0 +1,282 @@
+import type { FC } from 'react';
+import { useMemo, useCallback } from 'react';
+import * as _ from 'lodash';
+import i18n from 'i18next';
+import {
+  ChartAreaProps,
+  Chart,
+  ChartArea,
+  ChartAxis,
+  ChartThemeColor,
+  ChartVoronoiContainer,
+  getCustomTheme,
+  ChartGroup,
+} from '@patternfly/react-charts/victory';
+
+import {
+  t_global_icon_color_status_warning_default as warningColor,
+  t_global_icon_color_status_danger_default as dangerColor,
+} from '@patternfly/react-tokens';
+
+import { processFrame, ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
+import { timeFormatter } from '../utils/datetime';
+import { humanizeNumber } from '../utils/units';
+import { useRefWidth } from '../utils/ref-width-hook';
+import type { Humanize } from '../utils/types';
+import { PrometheusEndpoint } from './helpers';
+import { PrometheusGraph, PrometheusGraphLink } from './prometheus-graph';
+import { usePrometheusPoll } from './prometheus-poll-hook';
+import { areaTheme } from './themes';
+import {
+  DataPoint,
+  CursorVoronoiContainer,
+  DEFAULT_PROMETHEUS_SAMPLES,
+  DEFAULT_PROMETHEUS_TIMESPAN,
+} from './';
+import { mapLimitsRequests } from './utils';
+import { GraphEmpty } from './graph-empty';
+import { ChartLegendTooltip } from './tooltip';
+
+const DEFAULT_HEIGHT = 180;
+const DEFAULT_TICK_COUNT = 2;
+
+export enum AreaChartStatus {
+  ERROR = 'ERROR',
+  WARNING = 'WARNING',
+}
+
+export const chartStatusColors = {
+  [AreaChartStatus.ERROR]: dangerColor.value,
+  [AreaChartStatus.WARNING]: warningColor.value,
+};
+
+export const AreaChart: FC<AreaChartProps> = ({
+  className,
+  data = [],
+  formatDate = timeFormatter.format,
+  height = DEFAULT_HEIGHT,
+  humanize = humanizeNumber,
+  loading = true,
+  padding,
+  query,
+  tickCount = DEFAULT_TICK_COUNT,
+  title,
+  ariaChartLinkLabel,
+  ariaChartTitle,
+  xAxis = true,
+  yAxis = true,
+  chartStyle,
+  byteDataType = '',
+  showAllTooltip,
+  mainDataName,
+  ...rest
+}) => {
+  const theme = getCustomTheme(ChartThemeColor.blue, areaTheme);
+  const [containerRef, width] = useRefWidth();
+  const { processedData, unit } = useMemo(() => {
+    const nonEmptyDataSets = data.filter((dataSet) => dataSet?.length);
+    if (byteDataType) {
+      return processFrame(nonEmptyDataSets, byteDataType);
+    }
+    return { processedData: nonEmptyDataSets, unit: '' };
+  }, [byteDataType, data]);
+
+  // If every data point of every data set is 0, force y-domain to [0,1]
+  const allZero = useMemo(
+    () => _.every(processedData, (dataSet) => _.every(dataSet, ({ y }) => y === 0)),
+    [processedData],
+  );
+
+  const xTickFormat = useCallback((tick) => formatDate(tick), [formatDate]);
+  const yTickFormat = useCallback((tick) => `${humanize(tick, unit, unit).string}`, [
+    humanize,
+    unit,
+  ]);
+
+  const domain = useMemo<AreaChartProps['domain']>(
+    () => ({
+      ...(allZero && { y: [0, 1] }),
+      ...(rest.domain ?? {}),
+    }),
+    [allZero, rest.domain],
+  );
+
+  const getLabel = useCallback(
+    (prop: { datum: DataPoint<Date> }, includeDate = true) => {
+      const { x, y } = prop.datum;
+      const value = humanize(y, unit, unit).string;
+      const date = formatDate(x);
+      return includeDate ? i18n.t('public~{{value}} at {{date}}', { value, date }) : value;
+    },
+    [humanize, unit, formatDate],
+  );
+
+  const multiLine = processedData?.length > 1;
+
+  const container = useMemo(() => {
+    if (multiLine) {
+      const legendData = processedData.map((d) => ({
+        childName: d[0].description,
+        name: d[0].description,
+        symbol: d[0].symbol,
+      }));
+      return (
+        <CursorVoronoiContainer
+          activateData={false}
+          cursorDimension="x"
+          labels={(props) => getLabel(props, false)}
+          mouseFollowTooltips
+          labelComponent={
+            <ChartLegendTooltip
+              stack={showAllTooltip}
+              legendData={legendData}
+              getLabel={getLabel}
+              formatDate={(d) => formatDate(d[0].x)}
+              mainDataName={mainDataName}
+            />
+          }
+          voronoiDimension="x"
+        />
+      );
+    }
+    return (
+      <ChartVoronoiContainer
+        voronoiDimension="x"
+        labels={(prop) => getLabel(prop)}
+        activateData={false}
+      />
+    );
+  }, [formatDate, getLabel, mainDataName, multiLine, processedData, showAllTooltip]);
+
+  return (
+    <PrometheusGraph className={className} ref={containerRef} title={title}>
+      <PrometheusGraphLink query={query} ariaChartLinkLabel={ariaChartLinkLabel}>
+        {processedData?.length ? (
+          <Chart
+            ariaTitle={ariaChartTitle || title}
+            containerComponent={container}
+            domainPadding={{ y: 20 }}
+            height={height}
+            width={width}
+            theme={theme}
+            scale={{ x: 'time', y: 'linear' }}
+            padding={padding}
+            domain={domain}
+            data-test="area-chart"
+          >
+            {xAxis && (
+              <ChartAxis
+                tickCount={tickCount}
+                tickFormat={xTickFormat}
+                data-test="area-chart-x-axis"
+              />
+            )}
+            {yAxis && (
+              <ChartAxis
+                dependentAxis
+                tickCount={tickCount}
+                tickFormat={yTickFormat}
+                data-test="area-chart-y-axis"
+              />
+            )}
+            <ChartGroup>
+              {processedData.map((datum, index) => (
+                <ChartArea
+                  key={index}
+                  data={datum}
+                  style={chartStyle && chartStyle[index]}
+                  name={datum[0]?.description}
+                />
+              ))}
+            </ChartGroup>
+          </Chart>
+        ) : (
+          <GraphEmpty height={height} loading={loading} />
+        )}
+      </PrometheusGraphLink>
+    </PrometheusGraph>
+  );
+};
+
+export const Area: FC<AreaProps> = ({
+  endTime = Date.now(),
+  namespace,
+  query,
+  limitQuery,
+  requestedQuery,
+  samples = DEFAULT_PROMETHEUS_SAMPLES,
+  timeout,
+  timespan = DEFAULT_PROMETHEUS_TIMESPAN,
+  ...rest
+}) => {
+  const prometheusPollProps = {
+    endpoint: PrometheusEndpoint.QUERY_RANGE,
+    endTime,
+    namespace,
+    samples,
+    timeout,
+    timespan,
+  };
+
+  const [utilization, , utilizationLoading] = usePrometheusPoll({
+    query,
+    ...prometheusPollProps,
+  });
+  const [limit, , limitLoading] = usePrometheusPoll({
+    query: limitQuery,
+    ...prometheusPollProps,
+  });
+  const [requested, , requestedLoading] = usePrometheusPoll({
+    query: requestedQuery,
+    ...prometheusPollProps,
+  });
+
+  const loading = utilizationLoading && limitLoading && requestedLoading;
+  const { data, chartStyle } = mapLimitsRequests(utilization, limit, requested);
+
+  return (
+    <AreaChart
+      chartStyle={chartStyle}
+      data={data}
+      loading={loading}
+      query={[query, limitQuery, requestedQuery]}
+      mainDataName="usage"
+      {...rest}
+    />
+  );
+};
+
+export type AreaChartProps = {
+  className?: string;
+  domain?: ChartAreaProps['domain'];
+  formatDate?: (date: Date, showSeconds?: boolean) => string;
+  humanize?: Humanize;
+  height?: number;
+  loading?: boolean;
+  query?: string | string[];
+  theme?: any; // TODO figure out the best way to import VictoryThemeDefinition
+  tickCount?: number;
+  title?: string;
+  ariaChartLinkLabel?: string;
+  ariaChartTitle?: string;
+  data?: DataPoint[][];
+  xAxis?: boolean;
+  yAxis?: boolean;
+  padding?: object;
+  chartStyle?: object[];
+  byteDataType?: ByteDataTypes; //Use this to process the whole data frame at once
+  showAllTooltip?: boolean;
+  mainDataName?: string;
+};
+
+type AreaProps = AreaChartProps & {
+  endTime?: number;
+  namespace?: string;
+  query: string;
+  samples?: number;
+  timeout?: string;
+  timespan?: number;
+  byteDataType?: ByteDataTypes;
+  limitQuery?: string;
+  requestedQuery?: string;
+};

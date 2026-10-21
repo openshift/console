@@ -1,0 +1,50 @@
+[
+  {
+    "scope": "https://gitlab.com:443",
+    "method": "GET",
+    "path": "/api/v4/projects/jpratik99%2Fdevconsole-git",
+    "body": "",
+    "status": 404,
+    "response": {
+      "message": "404 Project Not Found"
+    },
+    "rawHeaders": [
+      "Server",
+      "nginx",
+      "Date",
+      "Fri, 03 Jan 2020 11:43:58 GMT",
+      "Content-Type",
+      "application/json",
+      "Content-Length",
+      "35",
+      "Connection",
+      "close",
+      "Cache-Control",
+      "no-cache",
+      "Vary",
+      "Origin",
+      "X-Content-Type-Options",
+      "nosniff",
+      "X-Frame-Options",
+      "SAMEORIGIN",
+      "X-Request-Id",
+      "UMXhrUgomK4",
+      "X-Runtime",
+      "0.020067",
+      "RateLimit-Limit",
+      "600",
+      "RateLimit-Observed",
+      "1",
+      "RateLimit-Remaining",
+      "599",
+      "RateLimit-Reset",
+      "1578051898",
+      "RateLimit-ResetTime",
+      "Fri, 03 Jan 2020 11:44:58 GMT",
+      "GitLab-LB",
+      "fe-10-lb-gprd",
+      "GitLab-SV",
+      "localhost"
+    ]
+  }
+]

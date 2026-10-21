@@ -1,0 +1,49 @@
+@use '../../../../public/style/vars';
+
+#operator-install-page {
+  margin: 0 vars.$pf-v6-global-gutter-x;
+  @media (min-width: vars.$screen-sm-min) {
+    margin: vars.$pf-v6-global-gutter-y vars.$pf-v6-global-gutter-x;
+    max-width: 600px;
+    min-width: 375px;
+    width: 100%;
+  }
+}
+
+#operator-install-page .pf-v6-c-card {
+  margin: 10px auto;
+}
+
+#operator-install-page .pf-v6-c-alert {
+  margin-bottom: 10px;
+}
+
+.co-clusterserviceversion-install__heading {
+  margin-bottom: var(--pf-v6-c-content--h2--MarginBlockEnd);
+}
+
+.co-clusterserviceversion__box {
+  border: 1px solid var(--pf-t--global--border--color--default);
+  margin: var(--pf-t--global--spacer--md) 0;
+  padding: var(--pf-t--global--spacer--md) var(--pf-t--global--spacer--md)
+    var(--pf-t--global--spacer--xs);
+}
+
+.co-operator-install-page__indicator {
+  text-align: center;
+}
+
+.co-operator-install-page__pkg-indicator {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+
+.co-operator-install-page__main {
+  height: 100%;
+}
+
+.co-operator-install-page__link {
+  display: flex;
+  align-items: center;
+}

@@ -1,0 +1,166 @@
+@import '../../../styles/skeleton-screen';
+
+.co-status-card__alerts-body {
+  border-top: var(--pf-t--global--border--width--divider--default) solid
+    var(--pf-t--global--border--color--default);
+  /* cuts off 1 pixel at the bottom of the status alerts container - fixes scrollable content leaks on border */
+  clip-path: inset(0 0 1px 0);
+  max-height: 19rem;
+  min-height: 6rem;
+  overflow-x: hidden;
+  overflow-y: auto;
+
+  .pf-v6-c-empty-state {
+    --pf-v6-c-empty-state__icon--MarginBottom: 0 !important;
+  }
+}
+
+.co-status-card__alert-item--loading {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
+.co-status-card__alerts-msg.pf-v6-c-empty-state {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: center;
+}
+
+.co-status-card__alerts-icon.pf-v6-c-empty-state__icon {
+  --pf-v6-c-empty-state__icon--Color: var(--pf-t--global--icon--color--severity--undefined--default);
+}
+
+.co-status-card__alert-item {
+  display: flex;
+  padding-bottom: var(--pf-v6-c-card--child--PaddingBlockEnd);
+  padding-left: var(--pf-v6-c-card--child--PaddingInlineStart);
+  padding-right: var(--pf-v6-c-card--child--PaddingInlineEnd);
+}
+
+.co-status-card__alert-item-icon {
+  display: flex;
+}
+
+.co-status-card__alert-item-message {
+  display: flex;
+  flex-direction: column;
+}
+
+.co-status-card__alert-item-more {
+  display: flex;
+  flex-shrink: 0;
+  justify-content: flex-end;
+  padding-left: var(--pf-v6-c-card--child--PaddingInlineStart);
+}
+
+.co-status-card__alert-item-text {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  font-size: small;
+}
+
+.co-status-card__alert-item-header {
+  margin-left: 1rem;
+  font-weight: var(--pf-t--global--font--weight--heading--default);
+}
+
+.co-status-card__alert-item-doc-link {
+  margin-left: 1rem;
+  margin-top: 0.2rem;
+  width: fit-content;
+}
+
+.co-health-card__alert-item-timestamp {
+  white-space: nowrap;
+  font-size: smaller;
+  margin-bottom: 0.5rem;
+}
+
+.co-status-card__alert-item:first-of-type {
+  padding-top: var(--pf-v6-c-card--first-child--PaddingBlockStart);
+}
+
+.co-status-card__alert-item:last-of-type {
+  padding-bottom: var(--pf-v6-c-card--child--PaddingBlockEnd);
+}
+
+.co-status-card__health-body {
+  display: flex;
+  flex-wrap: wrap;
+  padding-bottom: var(--pf-v6-c-card--child--PaddingBlockEnd);
+  padding-left: var(--pf-v6-c-card--child--PaddingInlineStart);
+  padding-right: var(--pf-v6-c-card--child--PaddingInlineEnd);
+}
+
+.co-status-card__health-item {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  padding-right: 3rem;
+}
+
+.co-status-card__health-item-text {
+  word-break: break-word;
+  display: block;
+  margin-left: 1rem;
+  overflow-wrap: break-word;
+  white-space: pre-line;
+}
+
+.co-status-card__health-item:last-of-type {
+  padding-right: 0;
+}
+
+.co-status-card__popup {
+  padding: 0;
+}
+
+.skeleton-health {
+  animation: $skeleton-animation;
+  border-radius: 50px;
+  background: $skeleton-color;
+  height: $skeleton-bone-height-1line;
+  opacity: 0;
+  width: $skeleton-bone-height-1line;
+  &::after {
+    background-repeat: no-repeat;
+    content: '';
+    display: block;
+    height: 100%;
+    width: 100%;
+  }
+}
+
+.skeleton-status-alerts {
+  animation: $skeleton-animation;
+  height: 50px;
+  margin-bottom: 1em;
+  opacity: 0;
+  width: 100%;
+  &::after {
+    background-repeat: no-repeat;
+    content: '';
+    display: block;
+    height: 100%;
+    width: 100%;
+  }
+  &:last-of-type {
+    margin-bottom: 0;
+  }
+}
+
+.skeleton-status-alerts::after {
+  background-image: $skeleton-status-bone, $skeleton-status-bone, $skeleton-status-resource-icon;
+
+  background-position: $skeleton-status-metadata-position, $skeleton-status-resource-position,
+    $skeleton-status-resource-icon-position;
+
+  background-size: $skeleton-status-metadata-size, $skeleton-status-resource-size,
+    $skeleton-status-resource-icon-size;
+}

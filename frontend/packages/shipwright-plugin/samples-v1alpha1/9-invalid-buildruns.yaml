@@ -1,0 +1,13 @@
+apiVersion: shipwright.io/v1alpha1
+kind: BuildRun
+metadata:
+  name: build-not-found
+spec:
+  buildRef:
+    name: build-not-found
+---
+apiVersion: shipwright.io/v1alpha1
+kind: BuildRun
+metadata:
+  name: no-buildref-nor-buildspec
+spec: {}

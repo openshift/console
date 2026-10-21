@@ -1,0 +1,439 @@
+[
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "helm.openshift.io",
+        "version": "v1beta1",
+        "kind": "HelmChartRepository"
+      },
+      "label": "%helm-plugin~HelmChartRepository%",
+      "labelPlural": "%helm-plugin~HelmChartRepositories%",
+      "abbr": "HCR"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "helm.openshift.io",
+        "version": "v1beta1",
+        "kind": "ProjectHelmChartRepository"
+      },
+      "label": "%helm-plugin~ProjectHelmChartRepository%",
+      "labelPlural": "%helm-plugin~ProjectHelmChartRepositories%",
+      "abbr": "PHCR"
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "helm.openshift.io",
+        "version": "v1beta1",
+        "kind": "HelmChartRepository"
+      },
+      "provider": { "$codeRef": "helmProviderActions.useHelmChartRepositoryActions" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "helm.openshift.io",
+        "version": "v1beta1",
+        "kind": "ProjectHelmChartRepository"
+      },
+      "provider": { "$codeRef": "helmProviderActions.useHelmChartRepositoryActions" }
+    }
+  },
+  {
+    "type": "console.flag/hookProvider",
+    "properties": {
+      "handler": { "$codeRef": "helmDetectionProvider.useDetectHelmChartRepositories" }
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": ["/helm"],
+      "component": { "$codeRef": "NamespaceRedirect.NamespaceRedirect" }
+    },
+    "flags": {
+      "required": ["OPENSHIFT_HELM"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": ["/catalog/helm-install"],
+      "component": { "$codeRef": "HelmInstallUpgradePage" }
+    },
+    "flags": {
+      "required": ["OPENSHIFT_HELM"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": ["/helm-releases/ns/:ns/:releaseName/upgrade"],
+      "component": { "$codeRef": "HelmInstallUpgradePage" }
+    },
+    "flags": {
+      "required": ["OPENSHIFT_HELM"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": ["/helm-releases/ns/:ns/:releaseName/rollback"],
+      "component": { "$codeRef": "HelmReleaseRollbackPage" }
+    },
+    "flags": {
+      "required": ["OPENSHIFT_HELM"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": false,
+      "path": ["/helm-releases/ns/:ns/release/:name"],
+      "component": { "$codeRef": "HelmReleaseDetailsPage" }
+    },
+    "flags": {
+      "required": ["OPENSHIFT_HELM"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": false,
+      "path": ["/helm/all-namespaces", "/helm/ns/:ns"],
+      "component": { "$codeRef": "HelmTabbedPage" }
+    },
+    "flags": {
+      "required": ["OPENSHIFT_HELM"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": [
+        "/helm-repositories/ns/:ns/~new/form",
+        "/helm-repositories/ns/:ns/:name/form",
+        "/k8s/cluster/helmchartrepositories/:name/form"
+      ],
+      "component": { "$codeRef": "HelmChartRepositoryForm" }
+    },
+    "flags": {
+      "required": ["OPENSHIFT_HELM"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": ["/helm/ns/:ns/url-chart"],
+      "component": { "$codeRef": "HelmURLChartInstallPage" }
+    },
+    "flags": {
+      "required": ["OPENSHIFT_HELM"]
+    }
+  },
+  {
+    "type": "dev-console.add/action-group",
+    "properties": {
+      "id": "helm-chart-repositories",
+      "name": "%helm-plugin~Helm Chart repositories%",
+      "insertAfter": "local-machine"
+    }
+  },
+  {
+    "type": "console.flag/hookProvider",
+    "properties": {
+      "handler": { "$codeRef": "helmProviderActions.helmChartTypeProvider" }
+    }
+  },
+  {
+    "type": "dev-console.add/action",
+    "properties": {
+      "id": "helm",
+      "groupId": "developer-catalog",
+      "href": "/catalog/ns/:namespace?catalogType=HelmChart",
+      "label": "%helm-plugin~Helm Chart%",
+      "description": "%helm-plugin~Browse the catalog to discover and install Helm Charts%",
+      "icon": { "$codeRef": "helmIcons.helmCatalogIconSVG" }
+    },
+    "flags": {
+      "required": ["OPENSHIFT_HELM", "DEVELOPER_CATALOG", "HELM_CHARTS_CATALOG_TYPE"]
+    }
+  },
+  {
+    "type": "dev-console.add/action",
+    "properties": {
+      "id": "project-helm-chart-repositories",
+      "groupId": "helm-chart-repositories",
+      "href": "/helm-repositories/ns/:namespace/~new/form?actionOrigin=addPage",
+      "label": "%helm-plugin~Helm Chart repositories%",
+      "description": "%helm-plugin~Add a Helm Chart Repository to extend the Developer Catalog%",
+      "icon": { "$codeRef": "helmIcons.helmChartRepositoriesIconElement" },
+      "accessReview": [
+        { "group": "helm.openshift.io", "resource": "ProjectHelmChartRepository", "verb": "create" }
+      ]
+    },
+    "flags": {
+      "required": ["OPENSHIFT_HELM"]
+    }
+  },
+  {
+    "type": "console.catalog/item-type",
+    "properties": {
+      "type": "HelmChart",
+      "title": "%helm-plugin~Helm Charts%",
+      "catalogDescription": { "$codeRef": "getHelmCatalogTypeDescription" },
+      "typeDescription": "%helm-plugin~**Helm Charts** are packages for deploying an Application or components of a larger Application.%",
+      "filters": [
+        {
+          "label": "%helm-plugin~Chart Repositories%",
+          "attribute": "chartRepositoryTitle"
+        },
+        {
+          "label": "%helm-plugin~Source%",
+          "attribute": "providerType"
+        }
+      ]
+    },
+    "flags": {
+      "required": ["OPENSHIFT_HELM"]
+    }
+  },
+  {
+    "type": "console.catalog/item-provider",
+    "properties": {
+      "catalogId": "dev-catalog",
+      "type": "HelmChart",
+      "title": "%helm-plugin~Helm Charts%",
+      "provider": { "$codeRef": "helmChartProvider" }
+    },
+    "flags": {
+      "required": ["OPENSHIFT_HELM"]
+    }
+  },
+  {
+    "type": "console.action/provider",
+    "properties": {
+      "contextId": "helm-actions",
+      "provider": { "$codeRef": "helmProviderActions.useHelmActionProvider" }
+    },
+    "flags": {
+      "required": ["OPENSHIFT_HELM"]
+    }
+  },
+  {
+    "type": "console.action/provider",
+    "properties": {
+      "contextId": "topology-actions",
+      "provider": { "$codeRef": "helmProviderActions.useHelmActionProviderForTopology" }
+    },
+    "flags": {
+      "required": ["OPENSHIFT_HELM"]
+    }
+  },
+  {
+    "type": "console.action/provider",
+    "properties": {
+      "contextId": "topology-context-actions",
+      "provider": { "$codeRef": "helmProviderActions.useTopologyActionProvider" }
+    },
+    "flags": {
+      "required": ["OPENSHIFT_HELM", "DEVELOPER_CATALOG", "HELM_CHARTS_CATALOG_TYPE"]
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "helm",
+      "perspective": "dev",
+      "section": "resources",
+      "insertBefore": "project",
+      "name": "%helm-plugin~Helm%",
+      "href": "/helm",
+      "namespaced": true,
+      "dataAttributes": {
+        "data-quickstart-id": "qs-nav-helm",
+        "data-test-id": "helm-releases-header"
+      }
+    },
+    "flags": {
+      "required": ["OPENSHIFT_HELM"]
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "repositories",
+      "perspective": "admin",
+      "section": "ecosystem",
+      "insertAfter": "operators",
+      "name": "%helm-plugin~Helm%",
+      "href": "/helm",
+      "namespaced": true,
+      "dataAttributes": {
+        "data-test-id": "helm-nav",
+        "data-quickstart-id": "qs-nav-helm",
+        "data-tour-id": "tour-helm-nav"
+      }
+    },
+    "flags": {
+      "required": ["OPENSHIFT_HELM"]
+    }
+  },
+  {
+    "type": "console.topology/component/factory",
+    "properties": {
+      "getFactory": { "$codeRef": "HelmComponentFactory.getHelmComponentFactory" }
+    }
+  },
+  {
+    "type": "console.topology/data/factory",
+    "properties": {
+      "id": "helm-topology-model-factory",
+      "priority": 400,
+      "resources": {
+        "secrets": {
+          "opts": {
+            "isList": true,
+            "kind": "Secret",
+            "optional": true,
+            "selector": {
+              "matchLabels": { "owner": "helm" },
+              "matchExpressions": [
+                { "key": "status", "operator": "NotEquals", "values": ["superseded"] }
+              ]
+            },
+            "partialMetadata": true
+          }
+        }
+      },
+      "getDataModel": { "$codeRef": "HelmDataTransformer.getTopologyDataModel" },
+      "isResourceDepicted": { "$codeRef": "isHelmResource.isHelmResourceInModel" }
+    }
+  },
+  {
+    "type": "console.topology/display/filters",
+    "properties": {
+      "getTopologyFilters": { "$codeRef": "helmFilters.getTopologyFilters" },
+      "applyDisplayOptions": { "$codeRef": "helmFilters.applyHelmDisplayOptions" }
+    }
+  },
+  {
+    "type": "console.topology/details/resource-link",
+    "properties": {
+      "priority": 100,
+      "link": { "$codeRef": "helmTopologySidebarResourceLinks" }
+    },
+    "flags": {
+      "required": ["OPENSHIFT_HELM"]
+    }
+  },
+  {
+    "type": "console.topology/details/tab",
+    "properties": {
+      "id": "helm-release-panel-tab-releaseNotes",
+      "label": "%helm-plugin~Release notes%",
+      "insertAfter": "topology-side-bar-tab-resource"
+    },
+    "flags": {
+      "required": ["OPENSHIFT_HELM"]
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "helm-release-panel-tab-section-details",
+      "tab": "topology-side-bar-tab-details",
+      "provider": {
+        "$codeRef": "helmTopologySidebarTabSections.useHelmReleasePanelDetailsTabSection"
+      }
+    },
+    "flags": {
+      "required": ["OPENSHIFT_HELM"]
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "helm-release-panel-tab-section-resource",
+      "tab": "topology-side-bar-tab-resource",
+      "provider": {
+        "$codeRef": "helmTopologySidebarTabSections.useHelmReleasePanelResourceTabSection"
+      }
+    },
+    "flags": {
+      "required": ["OPENSHIFT_HELM"]
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "helm-release-panel-tab-section-releaseNotes",
+      "tab": "helm-release-panel-tab-releaseNotes",
+      "provider": {
+        "$codeRef": "helmTopologySidebarTabSections.useHelmReleasePanelReleaseNotesTabSection"
+      }
+    },
+    "flags": {
+      "required": ["OPENSHIFT_HELM"]
+    }
+  },
+  {
+    "type": "console.page/resource/list",
+    "properties": {
+      "model": {
+        "group": "helm.openshift.io",
+        "version": "v1beta1",
+        "kind": "ProjectHelmChartRepository"
+      },
+      "component": { "$codeRef": "ProjectHelmChartRepositoryListPage" }
+    }
+  },
+  {
+    "type": "console.page/resource/list",
+    "properties": {
+      "model": {
+        "group": "helm.openshift.io",
+        "version": "v1beta1",
+        "kind": "HelmChartRepository"
+      },
+      "component": { "$codeRef": "HelmChartRepositoryListPage" }
+    }
+  },
+  {
+    "type": "dev-console.detailsPage/breadcrumbs",
+    "properties": {
+      "getModels": {
+        "$codeRef": "useHelmChartRepositoriesBreadcrumbs.getHelmChartRepositoriesModel"
+      },
+      "breadcrumbsProvider": {
+        "$codeRef": "useHelmChartRepositoriesBreadcrumbs.useHelmChartRepositoriesBreadcrumbs"
+      }
+    },
+    "flags": {
+      "required": ["OPENSHIFT_HELM"]
+    }
+  },
+  {
+    "type": "console.topology/decorator/provider",
+    "properties": {
+      "id": "helm-release-status-decorator",
+      "priority": 100,
+      "quadrant": "lowerLeft",
+      "decorator": { "$codeRef": "getHelmReleaseStatusDecorator.getHelmReleaseStatusDecorator" }
+    }
+  }
+]

@@ -1,0 +1,48 @@
+import type { FC } from 'react';
+import { memo } from 'react';
+import { DataListCell } from '@patternfly/react-core';
+import type { Node } from '@patternfly/react-topology';
+import { useTranslation } from 'react-i18next';
+import type { CpuCellComponentProps } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
+import { formatCores } from '@console/internal/components/utils';
+import { getTopologyResourceObject } from '../../../utils/topology-utils';
+import { useMetricStats } from '../../../utils/useMetricStats';
+import MetricsTooltip from './MetricsTooltip';
+
+import './MetricsCell.scss';
+
+const CpuCellComponent = memo<CpuCellComponentProps>(({ cpuByPod, totalCores }) => {
+  const { t } = useTranslation();
+  return (
+    <div className="odc-topology-list-view__metrics-cell__detail--cpu">
+      <MetricsTooltip metricLabel={t('topology~CPU')} byPod={cpuByPod}>
+        <span>
+          <span className="odc-topology-list-view__metrics-cell__metric-value">
+            {formatCores(totalCores)}
+          </span>
+          &nbsp;
+          <span className="odc-topology-list-view__metrics-cell__metric-unit">cores</span>
+        </span>
+      </MetricsTooltip>
+    </div>
+  );
+});
+
+type CpuCellProps = {
+  item: Node;
+};
+
+const CpuCell: FC<CpuCellProps> = ({ item }) => {
+  const resource = getTopologyResourceObject(item.getData());
+  const memoryStats = useMetricStats(resource);
+
+  return (
+    <DataListCell id={`${item.getId()}_metrics`}>
+      {!memoryStats || !memoryStats.totalBytes || !memoryStats.totalCores ? null : (
+        <CpuCellComponent cpuByPod={memoryStats.cpuByPod} totalCores={memoryStats.totalCores} />
+      )}
+    </DataListCell>
+  );
+};
+
+export { CpuCell, CpuCellComponent };

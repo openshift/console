@@ -1,0 +1,45 @@
+apiVersion: shipwright.io/v1beta1
+kind: Build
+metadata:
+  name: buildpack-nodejs-build-heroku
+  labels:
+    app.kubernetes.io/instance: buildpack-nodejs-build-heroku
+    build.shipwright.io/name: buildpack-nodejs-build-heroku
+spec:
+  source:
+    type: Git
+    git:
+      url: https://github.com/nodeshift-blog-examples/react-web-app
+    contextDir: /
+  strategy:
+    name: source-to-image
+    kind: ClusterBuildStrategy
+  paramValues:
+    - name: builder-image
+      value: image-registry.openshift-image-registry.svc:5000/openshift/nodejs:20-ubi8
+  output:
+    image: image-registry.openshift-image-registry.svc:5000/build-examples/s2i-cbs-example:latest
+---
+apiVersion: shipwright.io/v1beta1
+kind: BuildRun
+metadata:
+  name: buildpack-nodejs-build-heroku-1
+  labels:
+    app.kubernetes.io/instance: buildpack-nodejs-build-heroku
+    build.shipwright.io/name: buildpack-nodejs-build-heroku
+spec:
+  build:
+    name: buildpack-nodejs-build-heroku
+---
+apiVersion: shipwright.io/v1beta1
+kind: BuildRun
+metadata:
+  name: buildpack-nodejs-build-heroku-2
+  labels:
+    app.kubernetes.io/instance: buildpack-nodejs-build-heroku
+    build.shipwright.io/name: buildpack-nodejs-build-heroku
+spec:
+  build:
+    name: buildpack-nodejs-build-heroku
+---
+

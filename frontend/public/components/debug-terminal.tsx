@@ -1,0 +1,242 @@
+import * as _ from 'lodash';
+import type { FC, ReactNode } from 'react';
+import { useState, useMemo, useEffect } from 'react';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import { useParams, useLocation } from 'react-router';
+import { Alert } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
+import { LoadingBox } from '@console/internal/components/utils/status-box';
+import { ConnectedPageHeading } from '@console/internal/components/utils/headings';
+import { ObjectMetadata, PodKind, k8sCreate, k8sKillByName } from '@console/internal/module/k8s';
+import { PodConnectLoader } from '@console/internal/components/pod';
+import { PodModel } from '@console/internal/models';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+
+import { resourcePath } from './utils/resource-link';
+import { getBreadcrumbPath } from '@console/internal/components/utils/breadcrumbs';
+import { isWindowsPod } from '../module/k8s/pods';
+
+const pickWorkloadAnnotations = (
+  annotations: ObjectMetadata['annotations'],
+): ObjectMetadata['annotations'] =>
+  Object.keys(annotations)
+    .filter((k) =>
+      ['resources.workload.openshift.io/', 'target.workload.openshift.io/'].find((prefix) =>
+        k.startsWith(prefix),
+      ),
+    )
+    .reduce((res, k) => Object.assign(res, { [k]: annotations[k] }), {});
+
+const getDebugPod = (debugPodName: string, podToDebug: PodKind, containerName: string) => {
+  const debugPod: PodKind = _.cloneDeep(podToDebug);
+  delete debugPod.metadata.resourceVersion;
+  delete debugPod.metadata.uid;
+  delete debugPod.metadata.managedFields;
+  delete debugPod.metadata.name;
+  delete debugPod.metadata.ownerReferences;
+  delete debugPod.metadata.labels;
+  debugPod.metadata.annotations = pickWorkloadAnnotations(debugPod.metadata.annotations);
+  debugPod.metadata.annotations['debug.openshift.io/source-container'] = containerName;
+  debugPod.metadata.annotations[
+    'debug.openshift.io/source-resource'
+  ] = `/v1, Resource=pods/${podToDebug?.metadata?.name}`;
+  debugPod.metadata.generateName = debugPodName;
+  debugPod.spec.restartPolicy = 'Never';
+
+  debugPod.spec.containers.forEach((container) => {
+    container.command = isWindowsPod(podToDebug) ? ['cmd'] : ['/bin/sh'];
+    container.stdin = true;
+    container.stdinOnce = true;
+    container.tty = true;
+    delete container?.args;
+    delete container?.readinessProbe;
+    delete container?.livenessProbe;
+  });
+  delete debugPod.spec.host;
+  delete debugPod.spec.nodeName;
+  delete debugPod.status;
+
+  return debugPod;
+};
+
+const DebugTerminalError: FC<DebugTerminalErrorProps> = ({ error, description }) => {
+  return (
+    <PaneBody>
+      <Alert variant="danger" isInline title={error}>
+        <p>{description}</p>
+      </Alert>
+    </PaneBody>
+  );
+};
+
+const DebugTerminalInner: FC<DebugTerminalInnerProps> = ({ debugPod, initialContainer }) => {
+  const { t } = useTranslation();
+  const infoMessage = (
+    <Alert
+      variant="info"
+      isInline
+      title={t(
+        'public~This temporary pod has a modified entrypoint command to debug a failing container. The pod will be deleted when the terminal window is closed.',
+      )}
+    />
+  );
+  switch (debugPod?.status?.phase) {
+    case 'Failed':
+    case 'Unknown':
+      return (
+        <DebugTerminalError
+          error={<>{t('public~The debug pod failed.')}</>}
+          description={
+            debugPod.status.containerStatuses?.[0]?.state?.terminated?.message ||
+            debugPod.status.message
+          }
+        />
+      );
+    case 'Running':
+      return (
+        <PodConnectLoader
+          obj={debugPod}
+          initialContainer={initialContainer}
+          infoMessage={infoMessage}
+        />
+      );
+    case 'Pending':
+      return <LoadingBox>{debugPod.status.phase}</LoadingBox>;
+    default:
+      return <LoadingBox />;
+  }
+};
+
+export const DebugTerminal: FC<DebugTerminalProps> = ({ podData, containerName }) => {
+  const [errorMessage, setErrorMessage] = useState('');
+  const [generatedDebugPodName, setGeneratedDebugPodName] = useState('');
+  const { t } = useTranslation();
+  const podNamespace = podData?.metadata.namespace;
+  const podContainerName = containerName || podData?.spec.containers[0].name;
+  const debugPodName = `${podData?.metadata?.name?.replace(/\./g, '-')}-debug-`;
+  const podToCreate = useMemo(() => {
+    return getDebugPod(debugPodName, podData, podContainerName);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [debugPodName, podContainerName]);
+
+  useEffect(() => {
+    const deleteDebugPod = async (podToDelete) => {
+      try {
+        await k8sKillByName(PodModel, podToDelete, podNamespace);
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.warn('Could not delete container terminal debug pod.', e);
+      }
+    };
+    let newDebugPod;
+    const closeTab = (event) => {
+      event.preventDefault();
+      deleteDebugPod(newDebugPod.metadata.name);
+    };
+    const createDebugPod = async () => {
+      try {
+        newDebugPod = await k8sCreate(PodModel, podToCreate);
+        setGeneratedDebugPodName(newDebugPod?.metadata?.name);
+      } catch (e) {
+        setErrorMessage(e.message);
+      }
+    };
+    createDebugPod();
+
+    window.addEventListener('beforeunload', closeTab);
+    return () => {
+      if (newDebugPod) {
+        deleteDebugPod(newDebugPod.metadata.name);
+      }
+      window.removeEventListener('beforeunload', closeTab);
+    };
+  }, [debugPodName, podNamespace, podToCreate]);
+
+  const [debugPod, loaded, err] = useK8sWatchResource<PodKind>(
+    generatedDebugPodName
+      ? {
+          isList: false,
+          kind: 'Pod',
+          name: generatedDebugPodName,
+          namespace: podNamespace,
+        }
+      : {},
+  );
+
+  if (errorMessage) {
+    return <DebugTerminalError error={errorMessage} />;
+  }
+
+  if (generatedDebugPodName) {
+    if (err) {
+      return <DebugTerminalError error={err.message || t('public~The debug pod failed.')} />;
+    }
+    if (loaded) {
+      return <DebugTerminalInner initialContainer={containerName} debugPod={debugPod} />;
+    }
+  }
+
+  return <LoadingBox />;
+};
+
+export const DebugTerminalPage: FC<DebugTerminalPageProps> = () => {
+  const { t } = useTranslation();
+  const params = useParams();
+  const { podName, ns, name } = params;
+  const { pathname: url } = useLocation();
+
+  const [podData, loaded, err] = useK8sWatchResource<PodKind>({
+    isList: false,
+    kind: 'Pod',
+    name: podName,
+    namespace: ns,
+  });
+
+  return (
+    <div>
+      <DocumentTitle>{t('public~Debug {{name}}', { name })}</DocumentTitle>
+      <ConnectedPageHeading
+        title={t('public~Debug {{name}}', { name })}
+        kind="Pod"
+        obj={{ data: podData }}
+        breadcrumbs={[
+          { name: t('public~Pods'), path: getBreadcrumbPath(params, 'pods') },
+          {
+            name: podName,
+            path: resourcePath('Pod', podName, ns),
+          },
+          {
+            name: t('public~Container details'),
+            path: `${resourcePath('Pod', podName, ns)}/containers/${name}`,
+          },
+          { name: t('public~Debug container'), path: url },
+        ]}
+      />
+      {loaded && !err && <DebugTerminal podData={podData} containerName={name} />}
+      {err && <LoadingBox>{err}</LoadingBox>}
+      {!loaded && <LoadingBox />}
+    </div>
+  );
+};
+
+DebugTerminalPage.displayName = 'DebugTerminalPage';
+
+type DebugTerminalErrorProps = {
+  error: ReactNode;
+  description?: string;
+};
+
+type DebugTerminalInnerProps = {
+  debugPod: PodKind;
+  initialContainer?: string;
+};
+
+type DebugTerminalProps = {
+  podData: PodKind;
+  containerName: string;
+};
+
+type DebugTerminalPageProps = {
+  obj?: PodKind;
+};

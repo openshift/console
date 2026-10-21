@@ -1,0 +1,651 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
+import * as _ from 'lodash';
+import type { ComponentType, FC, ReactNode } from 'react';
+import { useEffect, useState, useMemo, useCallback } from 'react';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
+import { useParams, useNavigate } from 'react-router';
+import { Button, Grid, GridItem } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
+import { LinkTo } from '@console/shared/src/components/links/LinkTo';
+import { useDeepCompareMemoize } from '@console/shared/src/hooks/useDeepCompareMemoize';
+import withFallback from '@console/shared/src/components/error/fallbacks/withFallback';
+import ErrorBoundaryFallbackPage from '@console/shared/src/components/error/fallbacks/ErrorBoundaryFallbackPage';
+import {
+  ColumnLayout,
+  K8sResourceCommon,
+  WatchK8sResource,
+  WatchK8sResultsObject,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { filterList } from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { storagePrefix } from '../row-filter';
+import { ErrorPage404 } from '../error';
+import { K8sKind } from '../../module/k8s/types';
+import { getReferenceForModel as referenceForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
+import { Selector } from '@console/dynamic-plugin-sdk/src/api/common-types';
+import { useK8sWatchResources } from '../utils/k8s-watch-hook';
+import type {
+  ResourcesObject,
+  WatchK8sResourceWithProp,
+  WatchK8sResults,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { inject, kindObj } from '../utils/inject';
+import {
+  makeQuery,
+  makeReduxID,
+  NoModelError,
+} from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/k8s-watcher';
+import { RequireCreatePermission } from '../utils/rbac';
+import { FilterToolbar, RowFilter } from '../filter-toolbar';
+import ListPageHeader from './ListPage/ListPageHeader';
+import { SimpleDropdown } from '@patternfly/react-templates';
+
+type CreateProps = {
+  action?: string;
+  createLink?: (item: string) => string;
+  to?: string;
+  items?: {
+    [key: string]: string;
+  };
+  onClick?: () => void;
+  isDisabled?: boolean;
+  id?: string;
+};
+
+// TODO (jon) make this into "withListPageFilters" HOC
+
+type ListPageWrapperProps<L = any, C = any> = {
+  ListComponent: ComponentType<L>;
+  kinds: string[];
+  filters?: any;
+  flatten?: Flatten;
+  rowFilters?: RowFilter[];
+  hideNameLabelFilters?: boolean;
+  hideLabelFilter?: boolean;
+  columnLayout?: ColumnLayout;
+  name?: string;
+  watchedResources?: Record<string, WatchK8sResultsObject<K8sResourceCommon | K8sResourceCommon[]>>;
+  loaded?: boolean;
+  loadError?: unknown;
+  reduxIDs?: string[];
+  textFilter?: string;
+  nameFilterPlaceholder?: string;
+  namespace?: string;
+  labelFilterPlaceholder?: string;
+  label?: string;
+  staticFilters?: { key: string; value: string }[];
+  customData?: C;
+  hideColumnManagement?: boolean;
+  nameFilter?: string;
+  omitFilterToolbar?: boolean;
+};
+
+export const ListPageWrapper: FC<ListPageWrapperProps> = (props) => {
+  const {
+    flatten,
+    ListComponent,
+    reduxIDs,
+    rowFilters,
+    textFilter,
+    nameFilterPlaceholder,
+    labelFilterPlaceholder,
+    hideNameLabelFilters,
+    hideLabelFilter,
+    columnLayout,
+    name,
+    watchedResources,
+    nameFilter,
+    omitFilterToolbar,
+  } = props;
+  const dispatch = useConsoleDispatch();
+  const memoizedIds = useDeepCompareMemoize(reduxIDs);
+
+  useEffect(() => {
+    if (!_.isNil(nameFilter)) {
+      memoizedIds.forEach((id) => dispatch(filterList(id, 'name', { selected: [nameFilter] })));
+    }
+  }, [dispatch, nameFilter, memoizedIds]);
+
+  const data = flatten ? flatten(watchedResources) : [];
+  const Filter = (
+    <FilterToolbar
+      rowFilters={rowFilters}
+      data={data}
+      nameFilterPlaceholder={nameFilterPlaceholder}
+      labelFilterPlaceholder={labelFilterPlaceholder}
+      reduxIDs={reduxIDs}
+      textFilter={textFilter}
+      hideNameLabelFilters={hideNameLabelFilters}
+      hideLabelFilter={hideLabelFilter}
+      columnLayout={columnLayout}
+      uniqueFilterName={name}
+      {...props}
+    />
+  );
+
+  return (
+    <div>
+      {!omitFilterToolbar && !_.isEmpty(data) && Filter}
+      <Grid>
+        <GridItem>
+          <ListComponent {...props} {...watchedResources} data={data} />
+        </GridItem>
+      </Grid>
+    </div>
+  );
+};
+
+ListPageWrapper.displayName = 'ListPageWrapper_';
+
+export type FireManProps = {
+  canCreate?: boolean;
+  textFilter?: string;
+  createAccessReview?: {
+    model: K8sKind;
+    namespace?: string;
+  };
+  createButtonText?: string;
+  createProps?: CreateProps;
+  fieldSelector?: string;
+  filterLabel?: string;
+  resources: WatchK8sResourceWithProp[];
+  badge?: ReactNode;
+  helpText?: ReactNode;
+  helpAlert?: ReactNode;
+  title?: string;
+  autoFocus?: boolean;
+  children?: ReactNode;
+  /** Pre-computed reduxIDs from parent - if provided, FireMan will use these instead of computing its own */
+  reduxIDs?: string[];
+};
+
+export const FireMan: FC<FireManProps & { filterList?: typeof filterList }> = (props) => {
+  const {
+    resources,
+    textFilter,
+    canCreate,
+    createAccessReview,
+    createButtonText,
+    createProps = {},
+    helpText,
+    helpAlert,
+    badge,
+    title,
+    reduxIDs: propsReduxIDs,
+    filterList: propsFilterList,
+  } = props;
+  const navigate = useNavigate();
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [expand] = useState();
+
+  // Compute reduxIDs synchronously to ensure they're available immediately for filtering
+  // If parent provides reduxIDs, use those; otherwise compute from resources
+  const computedReduxIDs = useMemo(
+    () =>
+      resources.map((r) =>
+        makeReduxID(
+          kindObj(r.kind),
+          makeQuery(r.namespace, r.selector, r.fieldSelector, r.name, r.limit),
+        ),
+      ),
+    [resources],
+  );
+
+  // Use parent-provided reduxIDs if available, otherwise use computed ones
+  const reduxIDs = propsReduxIDs ?? computedReduxIDs;
+
+  // Apply URL filters on mount - must happen after reduxIDs is computed
+  // Using useCallback to ensure applyFilterInternal has access to current reduxIDs
+  const applyFilterInternal = useCallback(
+    (filterName: string, options: any) => {
+      if (['q', 'kind', 'orderBy', 'sortBy'].includes(filterName)) {
+        return;
+      }
+      if (filterName.indexOf(storagePrefix) === 0) {
+        return;
+      }
+      reduxIDs.forEach((id) => propsFilterList(id, filterName, options));
+    },
+    [reduxIDs, propsFilterList],
+  );
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    params.forEach((v, k) => applyFilterInternal(k, v));
+  }, [applyFilterInternal]);
+
+  const updateURL = useCallback(
+    (filterName: string, options: any) => {
+      if (filterName !== textFilter) {
+        // TODO (ggreer): support complex filters (objects, not just strings)
+        return;
+      }
+      const params = new URLSearchParams(window.location.search);
+      if (options) {
+        params.set(filterName, options);
+      } else {
+        params.delete(filterName);
+      }
+      const url = new URL(window.location.href);
+      navigate(`${url.pathname}?${params.toString()}${url.hash}`, { replace: true });
+    },
+    [textFilter, navigate],
+  );
+
+  const applyFilter = useCallback(
+    (filterName: string, options: any) => {
+      applyFilterInternal(filterName, options);
+      updateURL(filterName, options);
+    },
+    [applyFilterInternal, updateURL],
+  );
+
+  const runOrNavigate = (itemName: string) => {
+    const action = _.isFunction(createProps.action) && createProps.action(itemName);
+    if (action) {
+      action();
+    } else if (_.isFunction(createProps.createLink)) {
+      navigate(createProps.createLink(itemName));
+    }
+  };
+
+  let createLink: any;
+
+  if (canCreate) {
+    if (createProps.to) {
+      createLink = (
+        <Button
+          variant="primary"
+          id="yaml-create"
+          data-test="item-create"
+          component={LinkTo(createProps.to)}
+        >
+          {createButtonText}
+        </Button>
+      );
+    } else if (createProps.items) {
+      createLink = (
+        <SimpleDropdown
+          toggleProps={{
+            variant: 'primary',
+            id: 'item-create',
+            // @ts-expect-error non-prop attribute is used for cypress
+            'data-test': 'item-create',
+          }}
+          toggleContent={createButtonText}
+          initialItems={Object.keys(createProps.items).map((item) => ({
+            value: item,
+            content: createProps.items[item],
+            'data-test-dropdown-menu': item,
+          }))}
+          onSelect={(_e, value: string) => runOrNavigate(value)}
+        />
+      );
+    } else {
+      createLink = (
+        <Button variant="primary" id="yaml-create" data-test="item-create" {...createProps}>
+          {createButtonText}
+        </Button>
+      );
+    }
+    if (!_.isEmpty(createAccessReview)) {
+      createLink = (
+        <RequireCreatePermission
+          model={createAccessReview.model}
+          namespace={createAccessReview.namespace}
+        >
+          {createLink}
+        </RequireCreatePermission>
+      );
+    }
+  }
+
+  return (
+    <>
+      <ListPageHeader title={title} badge={badge} helpText={helpText} helpAlert={helpAlert}>
+        {createLink}
+      </ListPageHeader>
+      <PaneBody>
+        {inject(props.children, {
+          resources,
+          expand,
+          reduxIDs,
+          applyFilter,
+        })}
+      </PaneBody>
+    </>
+  );
+};
+FireMan.displayName = 'FireMan';
+
+export type Flatten<
+  F extends ResourcesObject = { [key: string]: K8sResourceCommon | K8sResourceCommon[] },
+  R = any
+> = (resources: WatchK8sResults<F>) => R;
+
+export type ListPageProps<L = any, C = any> = PageCommonProps<L, C> & {
+  kind: string;
+  helpText?: ReactNode;
+  helpAlert?: ReactNode;
+  selector?: Selector;
+  fieldSelector?: string;
+  createHandler?: () => void;
+  name?: string;
+  filters?: any;
+  limit?: number;
+  nameFilter?: string;
+  skipAccessReview?: boolean;
+  omitFilterToolbar?: boolean;
+};
+
+export const ListPage = withFallback<ListPageProps>((props) => {
+  const {
+    autoFocus,
+    canCreate,
+    createButtonText,
+    createHandler,
+    customData,
+    fieldSelector,
+    filterLabel,
+    labelFilterPlaceholder,
+    nameFilterPlaceholder,
+    filters,
+    helpText,
+    helpAlert,
+    kind,
+    limit,
+    ListComponent,
+    mock,
+    name,
+    nameFilter,
+    namespace,
+    selector,
+    showTitle = true,
+    skipAccessReview,
+    textFilter,
+    badge,
+    hideLabelFilter,
+    hideNameLabelFilters,
+    hideColumnManagement,
+    columnLayout,
+    omitFilterToolbar,
+    flatten = (_resources) => (_resources[name || kind]?.data ?? []) as K8sResourceCommon[],
+  } = props;
+  const { t } = useTranslation();
+  const params = useParams();
+  let { createProps } = props;
+  const ko = kindObj(kind);
+  const { label, labelKey, labelPlural, labelPluralKey, namespaced, plural } = ko;
+  const title = props.title || t(labelPluralKey) || labelPlural;
+  const usedNamespace = !namespace && namespaced ? params.ns : namespace;
+
+  let href = usedNamespace
+    ? `/k8s/ns/${usedNamespace || 'default'}/${plural}/~new`
+    : `/k8s/cluster/${plural}/~new`;
+  if (ko.crd) {
+    try {
+      const ref = referenceForModel(ko);
+      href = usedNamespace
+        ? `/k8s/ns/${usedNamespace || 'default'}/${ref}/~new`
+        : `/k8s/cluster/${ref}/~new`;
+    } catch (unused) {
+      /**/
+    }
+  }
+
+  createProps = createProps || (createHandler ? { onClick: createHandler } : { to: href });
+  const createAccessReview = skipAccessReview ? null : { model: ko, namespace: usedNamespace };
+  const resources = [
+    {
+      fieldSelector,
+      filters,
+      kind,
+      limit,
+      name,
+      namespaced,
+      selector,
+      prop: kind,
+    },
+  ];
+
+  // Don't show row filters if props.filters were passed. The content is already filtered and the row filters will have incorrect counts.
+  const rowFilters = _.isEmpty(filters) ? props.rowFilters : undefined;
+
+  if (!namespaced && usedNamespace) {
+    return <ErrorPage404 />;
+  }
+
+  return (
+    <MultiListPage
+      autoFocus={autoFocus}
+      canCreate={canCreate}
+      createAccessReview={createAccessReview}
+      createButtonText={
+        createButtonText || t('public~Create {{label}}', { label: t(labelKey) || label })
+      }
+      createProps={createProps}
+      customData={customData}
+      filterLabel={filterLabel || t('public~by name')}
+      nameFilterPlaceholder={nameFilterPlaceholder}
+      labelFilterPlaceholder={labelFilterPlaceholder}
+      flatten={flatten}
+      helpText={helpText}
+      helpAlert={helpAlert}
+      label={t(labelPluralKey) || labelPlural}
+      ListComponent={ListComponent}
+      mock={mock}
+      namespace={usedNamespace}
+      resources={resources}
+      rowFilters={rowFilters}
+      showTitle={showTitle}
+      textFilter={textFilter}
+      title={title}
+      badge={badge}
+      hideLabelFilter={hideLabelFilter}
+      hideNameLabelFilters={hideNameLabelFilters}
+      hideColumnManagement={hideColumnManagement}
+      columnLayout={columnLayout}
+      nameFilter={nameFilter}
+      omitFilterToolbar={omitFilterToolbar}
+    />
+  );
+}, ErrorBoundaryFallbackPage);
+
+ListPage.displayName = 'ListPage';
+
+type PageCommonProps<L = any, C = any> = {
+  canCreate?: boolean;
+  createButtonText?: string;
+  createProps?: CreateProps;
+  flatten?: Flatten;
+  title?: string;
+  showTitle?: boolean;
+  filterLabel?: string;
+  textFilter?: string;
+  rowFilters?: RowFilter[];
+  ListComponent: ComponentType<L>;
+  namespace?: string;
+  customData?: C;
+  badge?: ReactNode;
+  hideNameLabelFilters?: boolean;
+  hideLabelFilter?: boolean;
+  columnLayout?: ColumnLayout;
+  hideColumnManagement?: boolean;
+  labelFilterPlaceholder?: string;
+  nameFilterPlaceholder?: string;
+  autoFocus?: boolean;
+  mock?: boolean;
+  omitFilterToolbar?: boolean;
+};
+
+export type MultiListPageProps<L = any, C = any> = PageCommonProps<L, C> & {
+  createAccessReview?: {
+    model: K8sKind;
+    namespace?: string;
+  };
+  label?: string;
+  hideTextFilter?: boolean;
+  helpText?: ReactNode;
+  helpAlert?: ReactNode;
+  resources: (Omit<WatchK8sResourceWithProp, 'prop'> & {
+    prop?: WatchK8sResourceWithProp['prop'];
+  })[];
+  staticFilters?: { key: string; value: string }[];
+  nameFilter?: string;
+  omitFilterToolbar?: boolean;
+};
+
+export const MultiListPage: FC<MultiListPageProps> = (props) => {
+  const {
+    autoFocus,
+    canCreate,
+    createAccessReview,
+    createButtonText,
+    createProps,
+    filterLabel,
+    nameFilterPlaceholder,
+    labelFilterPlaceholder,
+    flatten,
+    helpText,
+    helpAlert,
+    label,
+    ListComponent,
+    mock,
+    namespace,
+    rowFilters,
+    showTitle = true,
+    staticFilters,
+    textFilter,
+    title,
+    customData,
+    badge,
+    hideLabelFilter,
+    hideNameLabelFilters,
+    hideColumnManagement,
+    columnLayout,
+    nameFilter,
+    omitFilterToolbar,
+  } = props;
+
+  const { t } = useTranslation();
+
+  // Build resources configuration for FireMan (needs prop for redux IDs)
+  const k8sResources = useMemo(
+    () =>
+      _.map(props.resources, (r) => ({
+        ...r,
+        isList: r.isList !== undefined ? r.isList : true,
+        namespace: r.namespaced ? namespace : r.namespace,
+        prop: r.prop || r.kind,
+      })),
+    [props.resources, namespace],
+  );
+
+  // Build watch resources configuration for useK8sWatchResources
+  const watchResources = useMemo(() => {
+    if (mock) {
+      return {};
+    }
+    return k8sResources.reduce((acc, r) => {
+      const key = r.prop || r.kind;
+      acc[key] = {
+        kind: r.kind,
+        groupVersionKind: r.groupVersionKind,
+        name: r.name,
+        namespace: r.namespace,
+        isList: r.isList,
+        selector: r.selector,
+        fieldSelector: r.fieldSelector,
+        limit: r.limit,
+        namespaced: r.namespaced,
+        optional: r.optional,
+        partialMetadata: r.partialMetadata,
+      };
+      return acc;
+    }, {} as Record<string, WatchK8sResource>);
+  }, [k8sResources, mock]);
+
+  const watchedResources = useK8sWatchResources<
+    Record<string, K8sResourceCommon | K8sResourceCommon[]>
+  >(watchResources);
+
+  // Aggregate individual resource loading states into a single boolean
+  const loaded = useMemo(() => {
+    const resourceValues = Object.values(watchedResources);
+    // If we expect resources but haven't received any yet, we're still loading
+    if (Object.keys(watchResources).length > 0 && resourceValues.length === 0) {
+      return false;
+    }
+    // No resources to watch means we're loaded
+    if (resourceValues.length === 0) {
+      return true;
+    }
+    // All resources must be loaded (those with errors are considered "loaded" for this purpose)
+    return resourceValues.every((r) => r.loaded || r.loadError);
+  }, [watchedResources, watchResources]);
+
+  const loadError = useMemo(
+    () =>
+      Object.values(watchedResources).find(
+        (r) => r.loadError && !(r.loadError instanceof NoModelError),
+      )?.loadError,
+    [watchedResources],
+  );
+
+  const reduxIDs = useMemo(
+    () =>
+      k8sResources.map((r) =>
+        makeReduxID(
+          kindObj(r.kind),
+          makeQuery(r.namespace, r.selector, r.fieldSelector, r.name, r.limit),
+        ),
+      ),
+    [k8sResources],
+  );
+
+  return (
+    <FireMan
+      autoFocus={autoFocus}
+      canCreate={canCreate}
+      createAccessReview={createAccessReview}
+      createButtonText={createButtonText || t('public~Create')}
+      createProps={createProps}
+      filterLabel={filterLabel || t('public~by name')}
+      helpText={helpText}
+      helpAlert={helpAlert}
+      resources={mock ? [] : k8sResources}
+      textFilter={textFilter}
+      title={showTitle ? title : undefined}
+      badge={badge}
+      reduxIDs={mock ? [] : reduxIDs}
+      filterList={filterList}
+    >
+      <ListPageWrapper
+        flatten={flatten}
+        kinds={_.map(k8sResources, 'kind')}
+        label={label}
+        ListComponent={ListComponent}
+        textFilter={textFilter}
+        rowFilters={rowFilters}
+        staticFilters={staticFilters}
+        customData={customData}
+        hideLabelFilter={hideLabelFilter}
+        hideNameLabelFilters={hideNameLabelFilters}
+        hideColumnManagement={hideColumnManagement}
+        columnLayout={columnLayout}
+        nameFilterPlaceholder={nameFilterPlaceholder}
+        labelFilterPlaceholder={labelFilterPlaceholder}
+        nameFilter={nameFilter}
+        namespace={namespace}
+        omitFilterToolbar={omitFilterToolbar}
+        watchedResources={mock ? {} : watchedResources}
+        loaded={loaded}
+        loadError={loadError}
+        reduxIDs={mock ? [] : reduxIDs}
+      />
+    </FireMan>
+  );
+};
+
+MultiListPage.displayName = 'MultiListPage';

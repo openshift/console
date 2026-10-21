@@ -1,0 +1,512 @@
+[
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "operators.coreos.com",
+        "version": "v1alpha1",
+        "kind": "ClusterServiceVersion"
+      },
+      "flag": "OPERATOR_LIFECYCLE_MANAGER"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "operators.coreos.com",
+        "version": "v1",
+        "kind": "OperatorSource"
+      },
+      "label": "%olm~OperatorSource%",
+      "labelPlural": "%olm~OperatorSource%",
+      "abbr": "OSRC"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "operators.coreos.com",
+        "version": "v1alpha1",
+        "kind": "CatalogSource"
+      },
+      "label": "%olm~CatalogSource%",
+      "labelPlural": "%olm~CatalogSources%",
+      "abbr": "CS"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "packages.operators.coreos.com",
+        "version": "v1",
+        "kind": "PackageManifest"
+      },
+      "label": "%olm~PackageManifest%",
+      "labelPlural": "%olm~PackageManifests%",
+      "abbr": "PM"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "operators.coreos.com",
+        "version": "v1alpha1",
+        "kind": "ClusterServiceVersion"
+      },
+      "label": "%olm~ClusterServiceVersion%",
+      "labelPlural": "%olm~ClusterServiceVersions%",
+      "abbr": "CSV"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "operators.coreos.com",
+        "version": "v1alpha1",
+        "kind": "InstallPlan"
+      },
+      "label": "%olm~InstallPlan%",
+      "labelPlural": "%olm~InstallPlans%",
+      "abbr": "IP"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "operators.coreos.com",
+        "version": "v1alpha1",
+        "kind": "Subscription"
+      },
+      "label": "%olm~Subscription%",
+      "labelPlural": "%olm~Subscriptions%",
+      "abbr": "SUB"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "operators.coreos.com",
+        "version": "v1",
+        "kind": "OperatorGroup"
+      },
+      "label": "%olm~OperatorGroup%",
+      "labelPlural": "%olm~OperatorGroups%",
+      "abbr": "OG"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "config.openshift.io",
+        "version": "v1",
+        "kind": "OperatorHub"
+      },
+      "label": "%olm~OperatorHub%",
+      "labelPlural": "%olm~OperatorHubs%",
+      "abbr": "OH"
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": [
+        "/k8s/ns/:ns/operators.coreos.com~v1alpha1~ClusterServiceVersion/:csvName/:plural/~new",
+        "/k8s/ns/:ns/clusterserviceversions/:csvName/:plural/~new"
+      ],
+      "component": { "$codeRef": "createOperand.default" }
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "path": [
+        "/k8s/ns/:ns/operators.coreos.com~v1alpha1~ClusterServiceVersion/:appName/:plural/:name",
+        "/k8s/ns/:ns/clusterserviceversions/:appName/:plural/:name"
+      ],
+      "component": { "$codeRef": "operand.OperandDetailsPage" }
+    }
+  },
+  {
+    "type": "console.page/resource/list",
+    "properties": {
+      "model": {
+        "group": "operators.coreos.com",
+        "version": "v1alpha1",
+        "kind": "Subscription"
+      },
+      "component": { "$codeRef": "subscriptions.SubscriptionsPage" }
+    }
+  },
+  {
+    "type": "console.page/resource/details",
+    "properties": {
+      "model": {
+        "group": "operators.coreos.com",
+        "version": "v1alpha1",
+        "kind": "Subscription"
+      },
+      "component": { "$codeRef": "subscriptions.SubscriptionDetailsPage" }
+    }
+  },
+  {
+    "type": "console.page/resource/list",
+    "properties": {
+      "model": {
+        "group": "operators.coreos.com",
+        "version": "v1alpha1",
+        "kind": "ClusterServiceVersion"
+      },
+      "component": { "$codeRef": "clusterServiceVersions.ClusterServiceVersionsPage" }
+    }
+  },
+  {
+    "type": "console.page/resource/list",
+    "properties": {
+      "model": {
+        "group": "operators.coreos.com",
+        "version": "v1",
+        "kind": "PackageManifest"
+      },
+      "component": { "$codeRef": "packageManifest.PackageManifestsPage" }
+    }
+  },
+  {
+    "type": "console.page/resource/details",
+    "properties": {
+      "model": {
+        "group": "operators.coreos.com",
+        "version": "v1alpha1",
+        "kind": "ClusterServiceVersion"
+      },
+      "component": { "$codeRef": "clusterServiceVersions.ClusterServiceVersionDetailsPage" }
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": "/k8s/ns/:ns/operators.coreos.com~v1alpha1~Subscription/~new",
+      "component": { "$codeRef": "catalogSource.CreateSubscriptionYAML" }
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": "/operatorhub/subscribe",
+      "component": { "$codeRef": "operatorHubSubscribe.OperatorHubSubscribePage" }
+    }
+  },
+  {
+    "type": "console.page/resource/details",
+    "properties": {
+      "model": {
+        "group": "config.openshift.io",
+        "version": "v1",
+        "kind": "OperatorHub"
+      },
+      "component": { "$codeRef": "operatorHubDetails.OperatorHubDetailsPage" }
+    }
+  },
+  {
+    "type": "console.page/resource/details",
+    "properties": {
+      "model": {
+        "group": "operators.coreos.com",
+        "version": "v1alpha1",
+        "kind": "CatalogSource"
+      },
+      "component": { "$codeRef": "catalogSource.CatalogSourceDetailsPage" }
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": [
+        "/k8s/cluster/operators.coreos.com~v1alpha1~CatalogSource/~new",
+        "/k8s/ns/:ns/operators.coreos.com~v1alpha1~CatalogSource/~new"
+      ],
+      "component": { "$codeRef": "createCatalogSource.CreateCatalogSource" }
+    }
+  },
+  {
+    "type": "console.page/resource/details",
+    "properties": {
+      "model": {
+        "group": "operators.coreos.com",
+        "version": "v1alpha1",
+        "kind": "InstallPlan"
+      },
+      "component": { "$codeRef": "installPlan.InstallPlanDetailsPage" }
+    }
+  },
+  {
+    "type": "console.page/resource/list",
+    "properties": {
+      "model": {
+        "group": "operators.coreos.com",
+        "version": "v1alpha1",
+        "kind": "InstallPlan"
+      },
+      "component": { "$codeRef": "installPlan.InstallPlansPage" }
+    }
+  },
+  {
+    "type": "console.catalog/item-type",
+    "properties": {
+      "type": "OperatorBackedService",
+      "title": "%olm~Operator Backed%",
+      "catalogDescription": "%olm~Browse for a variety of managed services that are installed by cluster administrators. Cluster administrators can customize the content made available in the catalog.%",
+      "typeDescription": "%olm~**Operator backed** includes a variety of services managed by Kubernetes controllers.%",
+      "groupings": [
+        {
+          "label": "Operators",
+          "attribute": "operatorName"
+        }
+      ]
+    },
+    "flags": {
+      "required": ["OPERATOR_LIFECYCLE_MANAGER"]
+    }
+  },
+  {
+    "type": "console.catalog/item-provider",
+    "properties": {
+      "catalogId": "dev-catalog",
+      "type": "OperatorBackedService",
+      "title": "%olm~Operator Backed Services%",
+      "provider": { "$codeRef": "useClusterServiceVersions" }
+    },
+    "flags": {
+      "required": ["OPERATOR_LIFECYCLE_MANAGER"]
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "topology-tab-section-operator-link",
+      "tab": "topology-side-bar-tab-resource",
+      "insertBefore": "topology-tab-section-pods-overview",
+      "provider": {
+        "$codeRef": "operatorLinkTabSection.useManagedByOperatorLinkSideBarTabSection"
+      }
+    }
+  },
+  {
+    "type": "console.topology/details/resource-link",
+    "properties": {
+      "priority": 100,
+      "link": { "$codeRef": "topologySidebarResourceLink.getOperatorBackedPanelResourceLink" }
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "operator-backed-panel-tab-section-details",
+      "tab": "topology-side-bar-tab-details",
+      "provider": {
+        "$codeRef": "topologySidebarDetailsSections.useOperatorBackedPanelDetailsSection"
+      }
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "operator-backed-panel-tab-section-resource",
+      "tab": "topology-side-bar-tab-resource",
+      "provider": {
+        "$codeRef": "topologySidebarResourceSections.useOperatorBackedPanelResourceSection"
+      }
+    }
+  },
+  {
+    "type": "console.action/provider",
+    "properties": {
+      "contextId": "operator-actions",
+      "provider": { "$codeRef": "useOperatorActions" }
+    }
+  },
+  {
+    "type": "console.action/provider",
+    "properties": {
+      "contextId": "operand-actions",
+      "provider": { "$codeRef": "useDefaultOperandActions" }
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "path": "/operatorhub/install/:catalogNamespace/:catalog/:pkg/:currentCSV/to/:targetNamespace/",
+      "component": {
+        "$codeRef": "install.OperatorInstallStatusPage"
+      }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "version": "v1alpha1",
+        "kind": "Subscription",
+        "group": "operators.coreos.com"
+      },
+      "provider": { "$codeRef": "subscriptionProvider.useSubscriptionActionsProvider" }
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "path": ["/operatorhub", "/catalog"],
+      "exact": true,
+      "component": {
+        "$codeRef": "CatalogRedirect"
+      }
+    }
+  },
+  {
+    "type": "console.catalog/item-provider",
+    "properties": {
+      "title": "%olm~Operators%",
+      "catalogId": "dev-catalog",
+      "type": "operator",
+      "provider": { "$codeRef": "useOperatorCatalogItems" }
+    },
+    "flags": {
+      "disallowed": ["OLMV1_ENABLED"]
+    }
+  },
+  {
+    "type": "console.catalog/item-type",
+    "properties": {
+      "type": "operator",
+      "title": "%olm~Operators%",
+      "catalogDescription": "%olm~Browse for Operators provided by Operator Lifecycle Manager.%",
+      "typeDescription": "%olm~**Operators** are software extensions to OpenShift that make use of custom resources to manage applications and their components. They are managed by Operator Lifecycle Manager.%",
+      "sortFilterGroups": false,
+      "filters": [
+        {
+          "label": "%olm~Source%",
+          "attribute": "source",
+          "comparator": {
+            "$codeRef": "filters.sourceComparator"
+          }
+        },
+        {
+          "label": "%olm~Installed%",
+          "attribute": "installState"
+        },
+        {
+          "label": "%olm~Provider%",
+          "attribute": "provider",
+          "comparator": {
+            "$codeRef": "filters.providerComparator"
+          }
+        },
+        {
+          "label": "%olm~Capability level%",
+          "attribute": "capabilities",
+          "comparator": {
+            "$codeRef": "filters.capabilityLevelComparator"
+          }
+        },
+        {
+          "label": "%olm~Infrastructure features%",
+          "attribute": "infrastructureFeatures",
+          "comparator": {
+            "$codeRef": "filters.infrastructureFeatureComparator"
+          }
+        },
+        {
+          "label": "%olm~Valid subscription%",
+          "attribute": "validSubscription",
+          "comparator": {
+            "$codeRef": "filters.validSubscriptionComparator"
+          }
+        }
+      ]
+    },
+    "flags": {
+      "disallowed": ["OLMV1_ENABLED"]
+    }
+  },
+  {
+    "type": "console.catalog/categories-provider",
+    "properties": {
+      "catalogId": "dev-catalog",
+      "provider": { "$codeRef": "useOperatorCatalogCategories" }
+    },
+    "flags": {
+      "disallowed": ["OLMV1_ENABLED"]
+    }
+  },
+  {
+    "type": "console.dashboards/overview/health/operator",
+    "properties": {
+      "title": "%olm~Operators%",
+      "resources": [
+        {
+          "kind": "operators.coreos.com~v1alpha1~ClusterServiceVersion",
+          "isList": true,
+          "prop": "clusterServiceVersions"
+        },
+        {
+          "kind": "operators.coreos.com~v1alpha1~Subscription",
+          "prop": "subscriptions",
+          "isList": true
+        }
+      ],
+      "getOperatorsWithStatuses": {
+        "$codeRef": "utils.getClusterServiceVersionsWithStatuses"
+      },
+      "operatorRowLoader": {
+        "$codeRef": "csvStatus.default"
+      }
+    },
+    "flags": {
+      "required": ["CAN_LIST_OPERATOR_GROUP"]
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "operators.coreos.com",
+        "version": "v1alpha1",
+        "kind": "InstallPlan"
+      },
+      "provider": { "$codeRef": "defaultActionsProvider.useDefaultActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "config.openshift.io",
+        "version": "v1",
+        "kind": "OperatorHub"
+      },
+      "provider": { "$codeRef": "defaultActionsProvider.useDefaultActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "operators.coreos.com",
+        "version": "v1alpha1",
+        "kind": "CatalogSource"
+      },
+      "provider": { "$codeRef": "catalogSourceActionsProvider.useCatalogSourceActionsProvider" }
+    }
+  }
+]

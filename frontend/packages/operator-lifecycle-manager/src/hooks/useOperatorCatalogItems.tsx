@@ -1,0 +1,474 @@
+import { useState, useMemo } from 'react';
+import { Spinner } from '@patternfly/react-core';
+import { CheckCircleIcon, ExclamationCircleIcon } from '@patternfly/react-icons';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import type {
+  CatalogItem,
+  CatalogItemBadge,
+  CatalogExtensionHookOptions,
+  ExtensionHook,
+} from '@console/dynamic-plugin-sdk';
+import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants';
+import { parseList, strConcat } from '@console/shared/src/utils/utils';
+import { iconFor } from '../components';
+import { subscriptionFor } from '../components/operator-group';
+import type { CSVAnnotations, TokenizedAuthProvider } from '../components/operator-hub/index';
+import {
+  InstalledState,
+  OLMAnnotation,
+  InfrastructureFeature,
+} from '../components/operator-hub/index';
+import { OperatorCapability } from '../components/operator-hub/operator-capability';
+import {
+  OperatorVersionSelect,
+  OperatorChannelSelect,
+} from '../components/operator-hub/operator-channel-version-select';
+import { OperatorContainerImage } from '../components/operator-hub/operator-container-image';
+import { OperatorCreatedAt } from '../components/operator-hub/operator-created-at';
+import { OperatorDescription } from '../components/operator-hub/operator-hub-item-details';
+import {
+  getInfrastructureFeatures,
+  getPackageSource,
+  getValidSubscription,
+  isAWSSTSCluster,
+  isAzureWIFCluster,
+  isGCPWIFCluster,
+} from '../components/operator-hub/operator-hub-utils';
+import { OperatorInfrastructureFeatures } from '../components/operator-hub/operator-infrastructure-features';
+import { OperatorRepository } from '../components/operator-hub/operator-repository';
+import { OperatorSupport } from '../components/operator-hub/operator-support';
+import { OperatorValidSubscriptions } from '../components/operator-hub/operator-valid-subscriptions';
+import { PackageManifestModel, SubscriptionModel } from '../models';
+import type { PackageManifestKind } from '../types';
+import { clusterServiceVersionFor } from '../utils/clusterserviceversions';
+import { getCurrentCSVDescription } from '../utils/packagemanifests';
+import { useClusterAuthenticationConfig } from './useClusterAuthenticationConfig';
+import { useClusterCloudCredentialConfig } from './useClusterCloudCredentialConfig';
+import { useClusterInfrastructureConfig } from './useClusterInfrastructureConfig';
+import { useClusterServiceVersions } from './useClusterServiceVersions';
+import { useOperatorGroups } from './useOperatorGroups';
+import { useOperatorHubPackageManifests } from './useOperatorHubPackageManifests';
+import { useSubscriptions } from './useSubscriptions';
+
+const onInfrastructureFeaturesAnnotationError = (error: Error, pkg: PackageManifestKind) =>
+  // eslint-disable-next-line no-console
+  console.warn(
+    `Error parsing infrastructure features from PackageManifest "${pkg.metadata.name}":`,
+    error,
+  );
+
+const onValidSubscriptionAnnotationError = (error: Error, pkg: PackageManifestKind) =>
+  // eslint-disable-next-line no-console
+  console.warn(
+    `Error parsing valid subscription from PackageManifest "${pkg.metadata.name}":`,
+    error,
+  );
+
+export const useOperatorCatalogItems: ExtensionHook<CatalogItem[], CatalogExtensionHookOptions> = (
+  options,
+) => {
+  const { t } = useTranslation('olm');
+  const namespace = options?.namespace || '';
+  const targetNamespace = namespace === ALL_NAMESPACES_KEY ? '' : namespace;
+  const [operatorGroups, operatorGroupsLoaded, operatorGroupsLoadError] = useOperatorGroups();
+  const [
+    operatorHubPackageManifests,
+    operatorHubPackageManifestsLoaded,
+    operatorHubPackageManifestsLoadError,
+  ] = useOperatorHubPackageManifests(targetNamespace);
+  const [subscriptions, subscriptionsLoaded, subscriptionsLoadError] = useSubscriptions();
+  const [
+    clusterServiceVersions,
+    clusterServiceVersionsLoaded,
+    clusterServiceVersionsLoadError,
+  ] = useClusterServiceVersions(targetNamespace);
+  // cloudCredentials are optional
+  const [cloudCredentials] = useClusterCloudCredentialConfig();
+  const [
+    infrastructure,
+    infrastructureLoaded,
+    infrastructureLoadError,
+  ] = useClusterInfrastructureConfig();
+  const [
+    authentication,
+    authenticationLoaded,
+    authenticationLoadError,
+  ] = useClusterAuthenticationConfig();
+
+  const [updateChannel, setUpdateChannel] = useState('');
+  const [updateVersion, setUpdateVersion] = useState('');
+
+  const loaded = useMemo(
+    () =>
+      operatorGroupsLoaded &&
+      operatorHubPackageManifestsLoaded &&
+      subscriptionsLoaded &&
+      clusterServiceVersionsLoaded &&
+      infrastructureLoaded &&
+      authenticationLoaded,
+    [
+      authenticationLoaded,
+      clusterServiceVersionsLoaded,
+      infrastructureLoaded,
+      operatorGroupsLoaded,
+      operatorHubPackageManifestsLoaded,
+      subscriptionsLoaded,
+    ],
+  );
+
+  const loadError = useMemo(
+    () =>
+      strConcat(
+        operatorGroupsLoadError,
+        operatorHubPackageManifestsLoadError,
+        subscriptionsLoadError,
+        clusterServiceVersionsLoadError,
+        infrastructureLoadError,
+        authenticationLoadError,
+      ),
+    [
+      authenticationLoadError,
+      clusterServiceVersionsLoadError,
+      infrastructureLoadError,
+      operatorHubPackageManifestsLoadError,
+      operatorGroupsLoadError,
+      subscriptionsLoadError,
+    ],
+  );
+
+  const clusterIsAWSSTS = isAWSSTSCluster(cloudCredentials, infrastructure, authentication);
+  const clusterIsAzureWIF = isAzureWIFCluster(cloudCredentials, infrastructure, authentication);
+  const clusterIsGCPWIF = isGCPWIFCluster(cloudCredentials, infrastructure, authentication);
+
+  const items = useMemo(() => {
+    if (!loaded || loadError) {
+      return [];
+    }
+
+    const allItems = operatorHubPackageManifests.map(
+      (pkg): CatalogItem => {
+        const { kind } = PackageManifestModel;
+        const { catalogSource, catalogSourceNamespace } = pkg.status;
+        const source = getPackageSource(pkg);
+        const subscription = subscriptionFor(subscriptions)(operatorGroups)(pkg)(targetNamespace);
+        const clusterServiceVersion = clusterServiceVersionFor(clusterServiceVersions)(
+          subscription,
+        );
+        const channel = updateChannel || pkg.status.defaultChannel || pkg.status.channels[0]?.name;
+        const currentCSVDesc = getCurrentCSVDescription(pkg);
+        const { displayName } = currentCSVDesc ?? {};
+        const currentCSVAnnotations: CSVAnnotations = currentCSVDesc?.annotations ?? {};
+        const infrastructureFeatures = getInfrastructureFeatures(currentCSVAnnotations, {
+          clusterIsAWSSTS,
+          clusterIsAzureWIF,
+          clusterIsGCPWIF,
+          onError: (error) => onInfrastructureFeaturesAnnotationError(error, pkg),
+        });
+        const [validSubscription, validSubscriptionFilters] = getValidSubscription(
+          currentCSVAnnotations,
+          {
+            onError: (error) => onValidSubscriptionAnnotationError(error, pkg),
+          },
+        );
+        const {
+          capabilities,
+          certifiedLevel,
+          healthIndex,
+          repository,
+          containerImage,
+          createdAt,
+          support,
+          capabilities: capabilityLevel,
+          [OLMAnnotation.Categories]: categories,
+          [OLMAnnotation.ActionText]: marketplaceActionText,
+          [OLMAnnotation.RemoteWorkflow]: marketplaceRemoteWorkflow,
+          [OLMAnnotation.SupportWorkflow]: marketplaceSupportWorkflow,
+        } = currentCSVAnnotations;
+        const keywords =
+          currentCSVDesc?.keywords || parseList(currentCSVAnnotations?.keywords || '') || [];
+        const installed = clusterServiceVersion?.status?.phase === 'Succeeded';
+        const isInstalling =
+          loaded &&
+          !_.isNil(subscription) &&
+          !_.isNil(clusterServiceVersion?.status?.phase) &&
+          clusterServiceVersion?.status?.phase !== 'Succeeded';
+        const installState = installed ? InstalledState.Installed : InstalledState.NotInstalled;
+        const description = currentCSVAnnotations?.description || currentCSVDesc?.description;
+        const longDescription = currentCSVDesc?.description || currentCSVAnnotations?.description;
+        const name = displayName ?? pkg.metadata.name;
+        const obj = pkg;
+        const provider =
+          currentCSVDesc?.provider?.name ||
+          pkg.status.provider?.name ||
+          pkg.metadata.labels?.provider;
+        const uid = `${pkg.metadata.name}-${pkg.status.catalogSource}-${pkg.status.catalogSourceNamespace}`;
+        const latestVersion = currentCSVDesc?.version;
+        const tags = (categories ?? '')
+          .toLowerCase()
+          .split(',')
+          .map((c) => c.trim())
+          .filter(Boolean);
+        const imgUrl = iconFor(pkg);
+        const type = 'operator';
+
+        // Compute tokenizedAuth per operator based on its infrastructureFeatures
+        // Only set tokenizedAuth if both the cluster supports it AND the operator supports it
+        // (i.e., the operator's CSV annotations don't have token-auth-aws/azure/gcp=false)
+        let operatorTokenizedAuth: TokenizedAuthProvider | undefined;
+        if (clusterIsAWSSTS && infrastructureFeatures.includes(InfrastructureFeature.TokenAuth)) {
+          operatorTokenizedAuth = 'AWS';
+        } else if (
+          clusterIsAzureWIF &&
+          infrastructureFeatures.includes(InfrastructureFeature.TokenAuth)
+        ) {
+          operatorTokenizedAuth = 'Azure';
+        } else if (
+          clusterIsGCPWIF &&
+          infrastructureFeatures.includes(InfrastructureFeature.TokenAuthGCP)
+        ) {
+          operatorTokenizedAuth = 'GCP';
+        }
+
+        // Build install parameters URL
+        const installParams: Record<string, string> = {
+          pkg: pkg.metadata.name,
+          catalog: catalogSource,
+          catalogNamespace: catalogSourceNamespace,
+          ...(targetNamespace && { targetNamespace }),
+        };
+
+        if (operatorTokenizedAuth) {
+          installParams.tokenizedAuth = operatorTokenizedAuth;
+        }
+
+        const installParamsURL = new URLSearchParams(installParams).toString();
+        const installLink = `/operatorhub/subscribe?${installParamsURL}`;
+        const uninstallLink = subscription
+          ? `/k8s/ns/${subscription.metadata.namespace}/${SubscriptionModel.plural}/${subscription.metadata.name}?showDelete=true`
+          : null;
+        const cta =
+          installed && uninstallLink
+            ? {
+                label: t('Uninstall'),
+                href: uninstallLink,
+                variant: 'secondary',
+              }
+            : {
+                label: t('Install'),
+                href: installLink,
+                variant: 'primary',
+              };
+
+        const badges = [
+          ...(installed && !isInstalling
+            ? [
+                {
+                  text: t('Installed'),
+                  color: 'green',
+                  variant: 'outline',
+                  icon: <CheckCircleIcon />,
+                } as CatalogItemBadge,
+              ]
+            : []),
+          ...(isInstalling
+            ? [
+                {
+                  text: t('Installing'),
+                  color: 'blue',
+                  variant: 'outline',
+                  icon: <Spinner size="sm" />,
+                } as CatalogItemBadge,
+              ]
+            : []),
+          ...(pkg?.status?.deprecation
+            ? [
+                {
+                  text: t('Deprecated'),
+                  color: 'orange',
+                  tooltip: pkg.status.deprecation.message,
+                  variant: 'outline',
+                  icon: <ExclamationCircleIcon />,
+                } as CatalogItemBadge,
+              ]
+            : []),
+        ];
+
+        return {
+          attributes: {
+            capabilities,
+            infrastructureFeatures,
+            installState,
+            keywords,
+            provider,
+            source,
+            validSubscription: validSubscriptionFilters,
+            metadataName: pkg.metadata.name, // Add metadata name for enhanced scoring
+          },
+          badges,
+          creationTimestamp: createdAt,
+          cta,
+          description,
+          data: {
+            authentication,
+            capabilityLevel,
+            catalogSource,
+            catalogSourceNamespace,
+            categories,
+            certifiedLevel,
+            cloudCredentials,
+            containerImage,
+            createdAt,
+            description,
+            healthIndex,
+            imgUrl,
+            infrastructureFeatures,
+            infrastructure,
+            installed,
+            installState,
+            isInstalling,
+            keywords,
+            kind,
+            longDescription,
+            marketplaceActionText,
+            marketplaceRemoteWorkflow,
+            marketplaceSupportWorkflow,
+            name,
+            obj,
+            provider,
+            repository,
+            source,
+            subscription,
+            support,
+            tags,
+            uid,
+            validSubscription,
+            validSubscriptionFilters,
+            version: latestVersion,
+          },
+          details: {
+            properties: [
+              {
+                label: t('Channel'),
+                value: (
+                  <OperatorChannelSelect
+                    packageManifest={pkg}
+                    selectedUpdateChannel={channel}
+                    setUpdateChannel={setUpdateChannel}
+                    setUpdateVersion={setUpdateVersion}
+                  />
+                ),
+              },
+              {
+                label: t('Version'),
+                value: (
+                  <OperatorVersionSelect
+                    packageManifest={pkg}
+                    selectedUpdateChannel={channel}
+                    updateVersion={updateVersion}
+                    setUpdateVersion={setUpdateVersion}
+                  />
+                ),
+              },
+              {
+                label: t('Capability level'),
+                value: <OperatorCapability packageManifest={pkg} />,
+              },
+              { label: t('Source'), value: source || '-' },
+              { label: t('Provider'), value: provider || '-' },
+              {
+                label: t('Infrastructure features'),
+                value: (
+                  <OperatorInfrastructureFeatures
+                    packageManifest={pkg}
+                    clusterIsAWSSTS={clusterIsAWSSTS}
+                    clusterIsAzureWIF={clusterIsAzureWIF}
+                    clusterIsGCPWIF={clusterIsGCPWIF}
+                  />
+                ),
+              },
+              {
+                label: t('Valid subscriptions'),
+                value: <OperatorValidSubscriptions packageManifest={pkg} />,
+              },
+              {
+                label: t('Repository'),
+                value: <OperatorRepository packageManifest={pkg} />,
+              },
+              {
+                label: t('Container image'),
+                value: <OperatorContainerImage packageManifest={pkg} />,
+              },
+              {
+                label: t('Created at'),
+                value: <OperatorCreatedAt packageManifest={pkg} />,
+              },
+              {
+                label: t('Support'),
+                value: <OperatorSupport packageManifest={pkg} />,
+              },
+            ],
+            descriptions: [
+              {
+                value: (
+                  <OperatorDescription
+                    catalogSource={catalogSource}
+                    description={description}
+                    installed={installed}
+                    isInstalling={isInstalling}
+                    subscription={subscription}
+                    version={latestVersion}
+                    clusterIsAWSSTS={clusterIsAWSSTS}
+                    clusterIsAzureWIF={clusterIsAzureWIF}
+                    clusterIsGCPWIF={clusterIsGCPWIF}
+                    longDescription={longDescription}
+                    packageManifest={pkg}
+                  />
+                ),
+              },
+            ],
+          },
+          icon: {
+            url: imgUrl,
+          },
+          name,
+          provider,
+          supportUrl: support,
+          tags,
+          title: name,
+          type,
+          typeLabel: source,
+          uid,
+        };
+      },
+    );
+    const uniqueItems = _.uniqBy(allItems, 'uid');
+    const dupCount = allItems.length - uniqueItems.length;
+    if (dupCount > 0) {
+      // eslint-disable-next-line no-console
+      console.warn(`${dupCount} duplicate PackageManifests.`);
+    }
+    return uniqueItems;
+  }, [
+    authentication,
+    cloudCredentials,
+    clusterIsAWSSTS,
+    clusterIsAzureWIF,
+    clusterIsGCPWIF,
+    clusterServiceVersions,
+    infrastructure,
+    loadError,
+    loaded,
+    targetNamespace,
+    operatorGroups,
+    operatorHubPackageManifests,
+    subscriptions,
+    t,
+    updateChannel,
+    updateVersion,
+  ]);
+
+  return [items, loaded, loadError];
+};
+
+export default useOperatorCatalogItems;

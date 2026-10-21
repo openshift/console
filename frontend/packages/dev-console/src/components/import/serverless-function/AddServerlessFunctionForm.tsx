@@ -1,0 +1,209 @@
+import type { FC } from 'react';
+import { useState, useEffect } from 'react';
+import { Alert, Flex, FlexItem, ValidatedOptions } from '@patternfly/react-core';
+import type { FormikProps, FormikValues } from 'formik';
+import * as _ from 'lodash';
+import { Trans, useTranslation } from 'react-i18next';
+import type { WatchK8sResultsObject } from '@console/dynamic-plugin-sdk';
+import { k8sListResourceItems } from '@console/dynamic-plugin-sdk/src/utils/k8s';
+import { getGitService, GitProvider } from '@console/git-service/src';
+import { evaluateFunc } from '@console/git-service/src/utils/serverless-strategy-detector';
+import { DOC_URL_SERVERLESS_FUNCTIONS_GETTING_STARTED } from '@console/internal/components/utils/documentation';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import { ServerlessBuildStrategyType } from '@console/knative-plugin/src/types';
+import { FlexForm, FormBody, FormFooter } from '@console/shared/src/components/form-utils';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
+import {
+  CLUSTER_PIPELINE_NS,
+  FUNC_PIPELINE_RUNTIME_LABEL,
+  FLAG_OPENSHIFT_PIPELINE,
+} from '../../../const';
+import { PipelineModel } from '../../../models/pipelines';
+import type { PipelineKind } from '../../../types/pipeline';
+import type { NormalizedBuilderImages } from '../../../utils/imagestream-utils';
+import { notSupportedRuntime } from '../../../utils/serverless-functions';
+import PipelineSection from '../../pipeline-section/pipeline/PipelineSection';
+import AdvancedSection from '../advanced/AdvancedSection';
+import AppSection from '../app/AppSection';
+import GitSection from '../git/GitSection';
+import ServerlessFunctionStrategySection from './ServerlessFunctionStrategySection';
+
+import './AddServerlessFunctionForm.scss';
+
+type AddServerlessFunctionFormProps = {
+  builderImages?: NormalizedBuilderImages;
+  projects: WatchK8sResultsObject<K8sResourceKind[]>;
+};
+
+enum SupportedRuntime {
+  node = 'nodejs',
+  nodejs = 'nodejs',
+  typescript = 'nodejs',
+  quarkus = 'java',
+}
+
+const AddServerlessFunctionForm: FC<FormikProps<FormikValues> & AddServerlessFunctionFormProps> = ({
+  values,
+  errors,
+  handleSubmit,
+  handleReset,
+  status,
+  isSubmitting,
+  dirty,
+  builderImages,
+  projects,
+  setFieldValue,
+  setStatus,
+}) => {
+  const { t } = useTranslation();
+
+  const {
+    git: { validated, url, type, ref, dir, secretResource },
+    build: { strategy },
+    image,
+  } = values;
+  const isPipelineEnabled = useFlag(FLAG_OPENSHIFT_PIPELINE);
+  const [showPipelineSection, setShowPipelineSection] = useState<boolean>(false);
+  const showFullForm =
+    strategy === ServerlessBuildStrategyType.ServerlessFunction &&
+    validated !== ValidatedOptions.default &&
+    type !== GitProvider.INVALID;
+  const [helpText, setHelpText] = useState<string>('');
+
+  useEffect(() => {
+    if (url) {
+      const gitService = getGitService(url, type, ref, dir, secretResource);
+      if (gitService) {
+        gitService
+          .isFuncYamlPresent()
+          // eslint-disable-next-line consistent-return
+          .then((isFuncYamlPresent) => {
+            if (!isFuncYamlPresent) {
+              setHelpText(t('devconsole~Unable to find func.yaml in the repository.'));
+              setStatus({ errors: 'func.yaml not present' });
+            } else {
+              return evaluateFunc(gitService);
+            }
+          })
+          .then((res) => {
+            if (res) {
+              setStatus({});
+              setFieldValue('build.env', res?.values?.builderEnvs || []);
+              setFieldValue('deployment.env', res?.values?.runtimeEnvs || []);
+              setFieldValue(
+                'image.selected',
+                notSupportedRuntime.indexOf(res?.values?.runtime) === -1
+                  ? SupportedRuntime[res?.values?.runtime]
+                  : res?.values?.runtime,
+              );
+              setFieldValue('import.showEditImportStrategy', true);
+              setFieldValue(
+                'image.tag',
+                builderImages?.[SupportedRuntime[res?.values?.runtime]]?.recentTag?.name ?? '',
+              );
+              if (res?.values?.builder && res?.values?.builder !== 's2i') {
+                setHelpText(
+                  t(
+                    'devconsole~Unsupported builder strategy detected. s2i is currently supported.',
+                  ),
+                );
+                setStatus({ errors: 'Builder strategy not supported' });
+              }
+              if (builderImages?.[SupportedRuntime[res?.values?.runtime]] === undefined) {
+                setHelpText(
+                  t('devconsole~Support for {{runtime}} is not yet available.', {
+                    runtime: res?.values?.runtime,
+                  }),
+                );
+                setStatus({ errors: 'Builder Image is not present' });
+              }
+            } else {
+              setStatus({ errors: 'Not evaluated' });
+            }
+          })
+          .catch((err) => {
+            setStatus({ errors: err });
+          });
+      }
+    }
+  }, [setFieldValue, url, type, ref, dir, secretResource, builderImages, setStatus, t]);
+
+  useEffect(() => {
+    if (image.selected && isPipelineEnabled) {
+      const fetchPipelineTemplate = async () => {
+        const fetchedPipelines = (await k8sListResourceItems({
+          model: PipelineModel,
+          queryParams: {
+            ns: CLUSTER_PIPELINE_NS,
+            labelSelector: { matchLabels: { [FUNC_PIPELINE_RUNTIME_LABEL]: image?.selected } },
+          },
+        })) as PipelineKind[];
+        if (fetchedPipelines.length > 0) {
+          setShowPipelineSection(true);
+        } else {
+          setShowPipelineSection(false);
+        }
+      };
+      fetchPipelineTemplate();
+    }
+  }, [image, isPipelineEnabled]);
+
+  return (
+    <FlexForm onSubmit={handleSubmit} data-test="create-serverless-function-form">
+      <Flex direction={{ default: 'column', sm: 'row' }}>
+        <FlexItem flex={{ default: 'flex_1' }} alignSelf={{ default: 'alignSelfFlexStart' }}>
+          <FormBody flexLayout>
+            <GitSection builderImages={builderImages} />
+            {showFullForm && (
+              <>
+                {builderImages && (
+                  <ServerlessFunctionStrategySection builderImages={builderImages} />
+                )}
+                <AppSection
+                  project={values.project}
+                  noProjectsAvailable={projects.loaded && _.isEmpty(projects.data)}
+                />
+                {showPipelineSection && <PipelineSection builderImages={builderImages} />}
+                <AdvancedSection values={values} />
+              </>
+            )}
+            {validated !== ValidatedOptions.default &&
+              validated !== ValidatedOptions.warning &&
+              strategy !== ServerlessBuildStrategyType.ServerlessFunction && (
+                <Alert
+                  variant="warning"
+                  isInline
+                  title={t('devconsole~Serverless function cannot be created')}
+                >
+                  {helpText}
+                  <p className="odc-func-form-helpText">
+                    <Trans t={t} ns="devconsole">
+                      <b>Tip:</b> Use the <code className="co-code">kn func create</code> command to
+                      create the serverless function.
+                    </Trans>
+                  </p>
+                  <ExternalLink
+                    className="odc-func-form-link"
+                    href={DOC_URL_SERVERLESS_FUNCTIONS_GETTING_STARTED}
+                    text={t('devconsole~Learn more')}
+                  />
+                </Alert>
+              )}
+          </FormBody>
+        </FlexItem>
+      </Flex>
+      <FormFooter
+        handleReset={handleReset}
+        errorMessage={status && status.submitError}
+        isSubmitting={isSubmitting}
+        submitLabel={t('devconsole~Create')}
+        disableSubmit={!dirty || !_.isEmpty(status?.errors) || !_.isEmpty(errors) || isSubmitting}
+        resetLabel={t('devconsole~Cancel')}
+        sticky
+      />
+    </FlexForm>
+  );
+};
+
+export default AddServerlessFunctionForm;

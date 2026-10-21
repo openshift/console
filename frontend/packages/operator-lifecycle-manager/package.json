@@ -1,0 +1,41 @@
+{
+  "name": "@console/operator-lifecycle-manager",
+  "version": "0.0.0-fixed",
+  "description": "A management framework for extending Kubernetes with Operators",
+  "main": "src/index.ts",
+  "private": true,
+  "dependencies": {
+    "@console/plugin-sdk": "0.0.0-fixed"
+  },
+  "consolePlugin": {
+    "exposedModules": {
+      "CatalogRedirect": "src/components/catalog-redirect.tsx",
+      "catalogSource": "src/components/catalog-source.tsx",
+      "clusterServiceVersions": "src/components/clusterserviceversion.tsx",
+      "createCatalogSource": "src/components/create-catalog-source.tsx",
+      "createOperand": "src/components/operand/create-operand.tsx",
+      "csvStatus": "src/components/dashboard/csv-status.tsx",
+      "filters": "src/utils/filters.ts",
+      "install": "src/components/operator-install-page.tsx",
+      "installPlan": "src/components/install-plan.tsx",
+      "operand": "src/components/operand/index.tsx",
+      "operatorHubDetails": "src/components/operator-hub/operator-hub-details.tsx",
+      "operatorHubSubscribe": "src/components/operator-hub/operator-hub-subscribe.tsx",
+      "operatorLinkTabSection": "src/components/topology/operator-link-tab-section.tsx",
+      "packageManifest": "src/components/package-manifest.tsx",
+      "subscriptionProvider": "src/actions/providers/subscription-provider.ts",
+      "subscriptions": "src/components/subscription.tsx",
+      "topologySidebarDetailsSections": "src/components/topology/sidebar/details-sections.tsx",
+      "topologySidebarResourceLink": "src/components/topology/sidebar/resource-link.tsx",
+      "topologySidebarResourceSections": "src/components/topology/sidebar/resource-sections.tsx",
+      "useClusterServiceVersions": "src/utils/useClusterServiceVersions.tsx",
+      "useDefaultOperandActions": "src/actions/useDefaultOperandActions.ts",
+      "useOperatorActions": "src/actions/useOperatorActions.ts",
+      "defaultActionsProvider": "src/actions/providers/default-actions-provider.ts",
+      "catalogSourceActionsProvider": "src/actions/providers/catalog-source-provider.ts",
+      "useOperatorCatalogCategories": "src/hooks/useOperatorCatalogCategories.ts",
+      "useOperatorCatalogItems": "src/hooks/useOperatorCatalogItems.tsx",
+      "utils": "src/components/dashboard/utils.ts"
+    }
+  }
+}

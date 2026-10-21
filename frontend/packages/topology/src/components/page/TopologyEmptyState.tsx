@@ -1,0 +1,58 @@
+import type { FC } from 'react';
+import { memo } from 'react';
+import {
+  Button,
+  EmptyState,
+  EmptyStateVariant,
+  EmptyStateActions,
+  EmptyStateFooter,
+} from '@patternfly/react-core';
+import { TopologyIcon } from '@patternfly/react-icons';
+import { Trans, useTranslation } from 'react-i18next';
+import { Link } from 'react-router';
+
+type TopologyEmptyStateProps = {
+  setIsQuickSearchOpen: (isOpen: boolean) => void;
+};
+
+const TopologyEmptyState: FC<TopologyEmptyStateProps> = ({ setIsQuickSearchOpen }) => {
+  const { t } = useTranslation();
+
+  return (
+    <EmptyState
+      headingLevel="h3"
+      icon={TopologyIcon}
+      titleText={<>{t('topology~No resources found')}</>}
+      className="odc-topology__empty-state"
+      variant={EmptyStateVariant.full}
+      data-test="no-resources-found"
+    >
+      <EmptyStateFooter>
+        <EmptyStateActions>
+          <div>
+            <Trans t={t} ns="topology">
+              <Button
+                isInline
+                variant="link"
+                data-test="start-building-your-application"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsQuickSearchOpen(true);
+                }}
+              >
+                Start building your application
+              </Button>
+              {' or visit the '}
+              <Link to="/add" data-test="add-page">
+                Add page
+              </Link>
+              {' for more details.'}
+            </Trans>
+          </div>
+        </EmptyStateActions>
+      </EmptyStateFooter>
+    </EmptyState>
+  );
+};
+
+export default memo<TopologyEmptyStateProps>(TopologyEmptyState);

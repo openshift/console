@@ -1,0 +1,24 @@
+{
+  "$schema": "https://swc.rs/schema.json",
+  "jsc": {
+    "parser": {
+      "syntax": "typescript",
+      "jsx": true,
+      "tsx": true,
+      "decorators": true
+    },
+    "transform": {
+      "react": {
+        "runtime": "automatic"
+      },
+      "decoratorMetadata": true
+    },
+    "target": "es2021",
+    "baseUrl": "."
+  },
+  "module": {
+    "type": "es6"
+  },
+  "sourceMaps": true,
+  "minify": true
+}

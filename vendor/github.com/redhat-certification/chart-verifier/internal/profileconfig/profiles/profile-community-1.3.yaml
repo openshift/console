@@ -1,0 +1,38 @@
+apiversion: v1
+kind: verifier-profile
+vendorType: community
+version: v1.3
+annotations:
+  - "Digest"
+  - "TestedOpenShiftVersion"
+  - "LastCertifiedTimestamp"
+  - "SupportedOpenShiftVersions"
+checks:
+    - name: v1.0/has-readme
+      type: Optional
+    - name: v1.0/is-helm-v3
+      type: Optional
+    - name: v1.0/contains-test
+      type: Optional
+    - name: v1.0/contains-values
+      type: Optional
+    - name: v1.0/contains-values-schema
+      type: Optional
+    - name: v1.1/has-kubeversion
+      type: Optional
+    - name: v1.0/not-contains-crds
+      type: Optional
+    - name: v1.0/helm-lint
+      type: Mandatory
+    - name: v1.0/not-contain-csi-objects
+      type: Optional
+    - name: v1.1/images-are-certified
+      type: Optional
+    - name: v1.0/chart-testing
+      type: Optional
+    - name: v1.0/required-annotations-present
+      type: Optional
+    - name: v1.0/signature-is-valid
+      type: Optional
+    - name: v1.0/has-notes
+      type: Optional

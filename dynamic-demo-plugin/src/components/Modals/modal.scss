@@ -1,0 +1,12 @@
+.demo-modal__loader {
+    position: absolute;
+    z-index: 999;
+    opacity: 0.4;
+    background-color: #b9b9b9;
+    height: 100vh;
+    width: 100vw;
+}
+
+.demo-modal__page {
+    height: 80%;
+}

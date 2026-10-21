@@ -1,0 +1,4 @@
+{
+  "Unable to find repository": "Impossible de trouver le dépôt",
+  "Repository path {{path}} does not match expected name {{name}}": "Le chemin {{path}} du dépôt ne correspond pas au nom {{name}} attendu."
+}

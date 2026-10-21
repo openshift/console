@@ -1,0 +1,48 @@
+.rbac-rule-resource {
+  align-items: baseline;
+  display: inline-flex;
+  margin-right: 20px;
+  min-width: 0; // so co-break-word works on .rbac-rule-resource__label
+  &__label {
+    @include co-break-word;
+    min-width: 0; // so co-break-word works
+  }
+  .co-m-resource-icon {
+    flex-shrink: 0;
+  }
+}
+
+.rbac-rule-resources {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.rbac-rule-row:not(:last-of-type) {
+  padding-bottom: 5px;
+}
+
+.resource-separator {
+  margin: var(--pf-t--global--spacer--sm) 0;
+}
+
+.edit-rule {
+  .rule-row {
+    margin-top: 30px;
+  }
+  .checkbox-label {
+    margin-bottom: 5px;
+  }
+
+  .rbac-minor {
+    margin-bottom: var(--pf-t--global--spacer--md);
+    margin-top: var(--pf-t--global--spacer--sm);
+  }
+  .newspaper-columns {
+    columns: 3 auto;
+    margin-top: 20px;
+  }
+  .text-input {
+    max-width: 500px;
+    margin-top: 20px;
+  }
+}

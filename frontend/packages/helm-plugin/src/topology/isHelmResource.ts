@@ -1,0 +1,13 @@
+import type { Model } from '@patternfly/react-topology';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import { isHelmResource } from '@console/shared/src/utils/helm-utils';
+import type { OdcNodeModel } from '@console/topology/src/topology-types';
+
+export const isHelmResourceInModel = (resource: K8sResourceKind, model: Model): boolean => {
+  if (!isHelmResource(resource)) {
+    return false;
+  }
+  return !!model.nodes.find((node) => {
+    return (node as OdcNodeModel).resource?.metadata?.uid === resource?.metadata?.uid;
+  });
+};

@@ -1,0 +1,38 @@
+@import '../../../topology-utils';
+
+.odc-base-node {
+  outline: none;
+  cursor: pointer;
+
+  .odc-m-drag-active & {
+    pointer-events: none;
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  &.is-filtered .pf-topology__node__background {
+    stroke-width: 2px;
+    stroke: $filtered-stroke-color;
+  }
+}
+
+.odc-m-drag-active,
+.odc-m-filter-active {
+  .odc-base-node {
+    opacity: $de-emphasize-opacity;
+    &.pf-m-dragging,
+    &.pf-m-highlight {
+      opacity: 1;
+    }
+  }
+}
+
+.odc-m-filter-active:not(.odc-m-drag-active) {
+  .odc-base-node {
+    &.is-filtered {
+      opacity: 1;
+    }
+  }
+}

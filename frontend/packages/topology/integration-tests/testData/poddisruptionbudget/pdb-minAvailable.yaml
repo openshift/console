@@ -1,0 +1,29 @@
+apiVersion: policy/v1 
+kind: PodDisruptionBudget
+metadata:
+  name: my-pdb-1
+spec:
+  minAvailable: 1
+  selector:  
+    matchLabels:
+      app: label-not-matched
+---
+apiVersion: policy/v1 
+kind: PodDisruptionBudget
+metadata:
+  name: my-pdb-2
+spec:
+  minAvailable: 100%
+  selector:  
+    matchLabels:
+      app: ex-node-js
+---
+apiVersion: policy/v1 
+kind: PodDisruptionBudget
+metadata:
+  name: my-pdb-3
+spec:
+  maxUnavailable: 0%
+  selector:  
+    matchLabels:
+      app: ex-node-js

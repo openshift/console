@@ -1,0 +1,35 @@
+import type { ComponentType } from 'react';
+import type { GraphElement } from '@patternfly/react-topology';
+import { withDragNode, withSelection } from '@patternfly/react-topology';
+import { contextMenuActions } from '@console/topology/src/actions';
+import { withCreateConnector } from '@console/topology/src/behavior';
+import {
+  createConnectorCallback,
+  nodeDragSourceSpec,
+  withContextMenu,
+  CreateConnector,
+} from '@console/topology/src/components/graph-view';
+import BindableNode from '@console/topology/src/components/graph-view/components/nodes/BindableNode';
+import { withEditReviewAccess } from '@console/topology/src/utils';
+import { TYPE_BINDABLE_NODE } from '../const';
+
+export const getDevConsoleComponentFactory = (
+  kind,
+  type,
+): ComponentType<{ element: GraphElement }> | undefined => {
+  switch (type) {
+    case TYPE_BINDABLE_NODE:
+      return withCreateConnector(
+        createConnectorCallback(),
+        CreateConnector,
+      )(
+        withEditReviewAccess('patch')(
+          withDragNode(nodeDragSourceSpec(type))(
+            withSelection({ controlled: true })(withContextMenu(contextMenuActions)(BindableNode)),
+          ),
+        ),
+      );
+    default:
+      return undefined;
+  }
+};

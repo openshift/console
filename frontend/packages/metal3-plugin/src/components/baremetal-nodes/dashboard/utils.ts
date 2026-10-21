@@ -1,0 +1,65 @@
+import type { NodeKind } from '@console/internal/module/k8s';
+import type { StatusGroupMapper } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
+import { InventoryStatusGroup } from '@console/shared/src/components/dashboard/inventory-card/status-group';
+import { getName } from '@console/shared/src/selectors/common';
+import { createBasicLookup } from '@console/shared/src/utils/utils';
+import { NODE_STATUS_TITLE_KEYS } from '../../../constants';
+import { getNodeMaintenanceNodeName } from '../../../selectors';
+import { getNodeServerCSR } from '../../../selectors/csr';
+import { bareMetalNodeStatus, NODE_STATUS_SERVER_CSR } from '../../../status/baremetal-node-status';
+import type { CertificateSigningRequestKind } from '../../../types';
+
+export { NodeModel } from '@console/internal/models';
+
+const BMN_STATUS_GROUP_MAPPER = {
+  [InventoryStatusGroup.PROGRESS]: ['Not Ready', NODE_STATUS_SERVER_CSR],
+  [InventoryStatusGroup.NOT_MAPPED]: ['Ready'],
+  'node-maintenance': Object.keys(NODE_STATUS_TITLE_KEYS),
+};
+
+export const getBMNStatusGroups: StatusGroupMapper = (
+  nodes: NodeKind[],
+  { maintenances, csrs, kvAlphaMaintenances, kvBetaMaintenances },
+) => {
+  const groups = {
+    [InventoryStatusGroup.NOT_MAPPED]: {
+      statusIDs: ['ready'],
+      count: 0,
+      filterType: 'bare-metal-node-status',
+    },
+    [InventoryStatusGroup.PROGRESS]: {
+      statusIDs: ['notReady', 'approval'],
+      count: 0,
+      filterType: 'bare-metal-node-status',
+    },
+    'node-maintenance': {
+      statusIDs: ['maintenance'],
+      count: 0,
+      filterType: 'bare-metal-node-status',
+    },
+  };
+  const maintenancesByNodeName = createBasicLookup(maintenances, getNodeMaintenanceNodeName);
+  const kvAlphaMaintenancesByNodeName = createBasicLookup(
+    kvAlphaMaintenances,
+    getNodeMaintenanceNodeName,
+  );
+  const kvBetaMaintenancesByNodeName = createBasicLookup(
+    kvBetaMaintenances,
+    getNodeMaintenanceNodeName,
+  );
+  nodes.forEach((node) => {
+    const nodeName = getName(node);
+    const nodeMaintenance =
+      maintenancesByNodeName[nodeName] ||
+      kvBetaMaintenancesByNodeName[nodeName] ||
+      kvAlphaMaintenancesByNodeName[nodeName];
+    const csr = getNodeServerCSR(csrs as CertificateSigningRequestKind[], node);
+    const { status } = bareMetalNodeStatus({ node, nodeMaintenance, csr });
+    const group =
+      Object.keys(BMN_STATUS_GROUP_MAPPER).find((key) =>
+        BMN_STATUS_GROUP_MAPPER[key].includes(status),
+      ) || InventoryStatusGroup.NOT_MAPPED;
+    groups[group].count++;
+  });
+  return groups;
+};

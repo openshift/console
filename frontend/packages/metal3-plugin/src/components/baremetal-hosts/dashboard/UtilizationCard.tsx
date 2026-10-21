@@ -1,0 +1,176 @@
+import type { FC } from 'react';
+import { useContext, useMemo, useCallback } from 'react';
+import { Card, CardHeader, CardTitle } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
+import {
+  PrometheusUtilizationItem,
+  PrometheusMultilineUtilizationItem,
+} from '@console/internal/components/dashboard/dashboards-page/cluster-dashboard/utilization-card';
+import {
+  humanizeBinaryBytes,
+  humanizeCpuCores,
+  humanizeDecimalBytesPerSec,
+} from '@console/internal/components/utils';
+import { PodModel, ProjectModel } from '@console/internal/models';
+import { getMachineNodeName } from '@console/shared';
+import ConsumerPopover from '@console/shared/src/components/dashboard/utilization-card/TopConsumerPopover';
+import { UtilizationBody } from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
+import { UtilizationDurationDropdown } from '@console/shared/src/components/dashboard/utilization-card/UtilizationDurationDropdown';
+import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
+import { BareMetalHostDashboardContext } from './BareMetalHostDashboardContext';
+import {
+  getUtilizationQueries,
+  HostQuery,
+  getTopConsumerQueries,
+  getMultilineUtilizationQueries,
+} from './queries';
+
+const UtilizationCard: FC = () => {
+  const { t } = useTranslation();
+  const { machine } = useContext(BareMetalHostDashboardContext);
+  const nodeName = getMachineNodeName(machine);
+
+  const queries = useMemo(() => getUtilizationQueries(nodeName), [nodeName]);
+  const multilineQueries = useMemo(() => getMultilineUtilizationQueries(nodeName), [nodeName]);
+
+  const humanizePods = useCallback(
+    (v) => ({
+      string: `${v}`,
+      value: v as number,
+      unit: '',
+    }),
+    [],
+  );
+
+  const cpuPopover = useCallback(
+    ({ current }) => {
+      const topConsumerQueries = getTopConsumerQueries(nodeName);
+      return (
+        <ConsumerPopover
+          title={t('metal3-plugin~CPU')}
+          current={current}
+          humanize={humanizeCpuCores}
+          consumers={[
+            {
+              query: topConsumerQueries[HostQuery.PROJECTS_BY_CPU],
+              model: ProjectModel,
+              metric: 'namespace',
+            },
+            {
+              query: topConsumerQueries[HostQuery.PODS_BY_CPU],
+              model: PodModel,
+              metric: 'pod',
+            },
+          ]}
+        />
+      );
+    },
+    [nodeName, t],
+  );
+
+  const memPopover = useCallback(
+    ({ current }) => {
+      const topConsumerQueries = getTopConsumerQueries(nodeName);
+      return (
+        <ConsumerPopover
+          title={t('metal3-plugin~Memory')}
+          current={current}
+          humanize={humanizeBinaryBytes}
+          consumers={[
+            {
+              query: topConsumerQueries[HostQuery.PROJECTS_BY_MEMORY],
+              model: ProjectModel,
+              metric: 'namespace',
+            },
+            {
+              query: topConsumerQueries[HostQuery.PODS_BY_MEMORY],
+              model: PodModel,
+              metric: 'pod',
+            },
+          ]}
+        />
+      );
+    },
+    [nodeName, t],
+  );
+
+  const storagePopover = useCallback(
+    ({ current }) => {
+      const topConsumerQueries = getTopConsumerQueries(nodeName);
+      return (
+        <ConsumerPopover
+          title={t('metal3-plugin~Disk Usage')}
+          current={current}
+          humanize={humanizeBinaryBytes}
+          consumers={[
+            {
+              query: topConsumerQueries[HostQuery.PROJECTS_BY_STORAGE],
+              model: ProjectModel,
+              metric: 'namespace',
+            },
+            {
+              query: topConsumerQueries[HostQuery.PODS_BY_STORAGE],
+              model: PodModel,
+              metric: 'pod',
+            },
+          ]}
+        />
+      );
+    },
+    [nodeName, t],
+  );
+
+  return (
+    <Card>
+      <CardHeader
+        actions={{
+          actions: (
+            <>
+              <UtilizationDurationDropdown />
+            </>
+          ),
+          hasNoOffset: false,
+          className: undefined,
+        }}
+      >
+        <CardTitle>{t('metal3-plugin~Utilization')}</CardTitle>
+      </CardHeader>
+      <UtilizationBody>
+        <PrometheusUtilizationItem
+          title={t('metal3-plugin~CPU')}
+          utilizationQuery={queries[HostQuery.CPU_UTILIZATION].utilization}
+          humanizeValue={humanizeCpuCores}
+          TopConsumerPopover={cpuPopover}
+        />
+        <PrometheusUtilizationItem
+          title={t('metal3-plugin~Memory')}
+          utilizationQuery={queries[HostQuery.MEMORY_UTILIZATION].utilization}
+          totalQuery={queries[HostQuery.MEMORY_UTILIZATION].total}
+          humanizeValue={humanizeBinaryBytes}
+          byteDataType={ByteDataTypes.BinaryBytes}
+          TopConsumerPopover={memPopover}
+        />
+        <PrometheusUtilizationItem
+          title={t('metal3-plugin~Filesystem')}
+          utilizationQuery={queries[HostQuery.STORAGE_UTILIZATION].utilization}
+          totalQuery={queries[HostQuery.STORAGE_UTILIZATION].total}
+          humanizeValue={humanizeBinaryBytes}
+          byteDataType={ByteDataTypes.BinaryBytes}
+          TopConsumerPopover={storagePopover}
+        />
+        <PrometheusMultilineUtilizationItem
+          title={t('metal3-plugin~Network Transfer')}
+          queries={multilineQueries[HostQuery.NETWORK_UTILIZATION]}
+          humanizeValue={humanizeDecimalBytesPerSec}
+        />
+        <PrometheusUtilizationItem
+          title={t('metal3-plugin~Pod count')}
+          utilizationQuery={queries[HostQuery.NUMBER_OF_PODS].utilization}
+          humanizeValue={humanizePods}
+        />
+      </UtilizationBody>
+    </Card>
+  );
+};
+
+export default UtilizationCard;

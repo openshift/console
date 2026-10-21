@@ -1,0 +1,227 @@
+import type { FC } from 'react';
+import { useState, useMemo } from 'react';
+import { Base64 } from 'js-base64';
+import { saveAs } from 'file-saver';
+import { EyeIcon, EyeSlashIcon } from '@patternfly/react-icons';
+import {
+  Button,
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+} from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
+import { CopyToClipboard } from './utils/copy-to-clipboard';
+import { EmptyBox } from './utils/status-box';
+import { SectionHeading } from './utils/headings';
+import * as ITOB from 'istextorbinary';
+
+export const MaskedData: FC<{}> = () => {
+  const { t } = useTranslation();
+  return (
+    <>
+      <span className="pf-v6-u-screen-reader">{t('public~Value hidden')}</span>
+      <span aria-hidden="true">&bull;&bull;&bull;&bull;&bull;</span>
+    </>
+  );
+};
+
+const downloadBinary = (key, value) => {
+  const rawBinary = window.atob(value);
+  const rawBinaryLength = rawBinary.length;
+  const array = new Uint8Array(new ArrayBuffer(rawBinaryLength));
+  for (let i = 0; i < rawBinaryLength; i++) {
+    array[i] = rawBinary.charCodeAt(i);
+  }
+  const blob = new Blob([array], { type: 'data:application/octet-stream;' });
+  saveAs(blob, key);
+};
+
+const DownloadBinaryButton: FC<DownloadBinaryButtonProps> = ({ label, value }) => {
+  const { t } = useTranslation();
+  return (
+    <Button
+      className="pf-m-link--align-left"
+      type="button"
+      onClick={() => downloadBinary(label, value)}
+      variant="link"
+    >
+      {t('public~Save file')}
+    </Button>
+  );
+};
+DownloadBinaryButton.displayName = 'DownloadBinaryButton';
+
+export const ConfigMapBinaryData: FC<DownloadValueProps> = ({ data }) => {
+  const dl = [];
+  const { t } = useTranslation();
+  Object.keys(data || {})
+    .sort()
+    .forEach((k) => {
+      const value = data[k];
+      dl.push(
+        <DescriptionListGroup>
+          <DescriptionListTerm i18n-not-translated="true" key={`${k}-k`}>
+            {k}
+          </DescriptionListTerm>
+          <DescriptionListDescription key={`${k}-v`}>
+            <DownloadBinaryButton label={k} value={value} />
+          </DescriptionListDescription>
+        </DescriptionListGroup>,
+      );
+    });
+  return dl.length ? (
+    <DescriptionList>{dl}</DescriptionList>
+  ) : (
+    <EmptyBox label={t('public~binary data')} />
+  );
+};
+ConfigMapBinaryData.displayName = 'ConfigMapBinaryData';
+
+export const ConfigMapData: FC<ConfigMapDataProps> = ({ data, label }) => {
+  const dl = [];
+  Object.keys(data || {})
+    .sort()
+    .forEach((k) => {
+      const value = data[k];
+      dl.push(
+        <DescriptionListGroup>
+          <DescriptionListTerm i18n-not-translated="true" key={`${k}-k`}>
+            {k}
+          </DescriptionListTerm>
+          <DescriptionListDescription key={`${k}-v`}>
+            <CopyToClipboard value={value} />
+          </DescriptionListDescription>
+        </DescriptionListGroup>,
+      );
+    });
+  return dl.length ? <DescriptionList>{dl}</DescriptionList> : <EmptyBox label={label} />;
+};
+ConfigMapData.displayName = 'ConfigMapData';
+
+export const SecretValue: FC<SecretValueProps> = ({ value, reveal, encoded = true, id }) => {
+  const { t } = useTranslation();
+  if (!value) {
+    return <span className="pf-v6-u-text-color-subtle">{t('public~No value')}</span>;
+  }
+
+  const decodedValue = encoded ? Base64.decode(value) : value;
+  const visibleValue = reveal ? decodedValue : <MaskedData />;
+  return <CopyToClipboard value={decodedValue} visibleValue={visibleValue} id={id} />;
+};
+SecretValue.displayName = 'SecretValue';
+
+const SecretDataRevealButton: FC<SecretDataRevealButtonProps> = ({ reveal, onClick }) => {
+  const { t } = useTranslation();
+  return (
+    <Button
+      type="button"
+      onClick={onClick}
+      variant="link"
+      className="pf-m-link--align-right"
+      data-test="reveal-values"
+    >
+      {reveal ? (
+        <>
+          <EyeSlashIcon className="co-icon-space-r" />
+          {t('public~Hide values')}
+        </>
+      ) : (
+        <>
+          <EyeIcon className="co-icon-space-r" />
+          {t('public~Reveal values')}
+        </>
+      )}
+    </Button>
+  );
+};
+
+export const SecretData: FC<SecretDataProps> = ({ data }) => {
+  const [reveal, setReveal] = useState(false);
+  const { t } = useTranslation();
+
+  const hasRevealableContent = useMemo(
+    () =>
+      data
+        ? Object.keys(data).some((k) => {
+            const isBinary = ITOB.isBinary(k, Buffer.from(data[k], 'base64'));
+            return !isBinary && data[k];
+          })
+        : false,
+    [data],
+  );
+
+  const dataDescriptionList = useMemo(() => {
+    return data
+      ? Object.keys(data)
+          .sort()
+          .map((k) => {
+            const isBinary = ITOB.isBinary(k, Buffer.from(data[k], 'base64'));
+            return (
+              <DescriptionListGroup key={k}>
+                <DescriptionListTerm i18n-not-translated="true" data-test="secret-data-term">
+                  {k}
+                </DescriptionListTerm>
+                <DescriptionListDescription>
+                  {isBinary ? (
+                    <DownloadBinaryButton label={k} value={data[k]} />
+                  ) : (
+                    <SecretValue value={data[k]} reveal={reveal} id={k} />
+                  )}
+                </DescriptionListDescription>
+              </DescriptionListGroup>
+            );
+          })
+      : [];
+  }, [data, reveal]);
+
+  return (
+    <>
+      <SectionHeading text={t('public~Data')}>
+        {dataDescriptionList.length && hasRevealableContent ? (
+          <SecretDataRevealButton reveal={reveal} onClick={() => setReveal(!reveal)} />
+        ) : null}
+      </SectionHeading>
+      {dataDescriptionList.length ? (
+        <DescriptionList data-test="secret-data">{dataDescriptionList}</DescriptionList>
+      ) : (
+        <EmptyBox label={t('public~Data')} />
+      )}
+    </>
+  );
+};
+SecretData.displayName = 'SecretData';
+
+type KeyValueData = {
+  [key: string]: string;
+};
+
+type DownloadBinaryButtonProps = {
+  value: string;
+  label: string;
+};
+
+type ConfigMapDataProps = {
+  data: KeyValueData;
+  label: string;
+};
+
+type DownloadValueProps = {
+  data: KeyValueData;
+};
+
+type SecretValueProps = {
+  value: string;
+  encoded?: boolean;
+  reveal: boolean;
+  id?: string;
+};
+
+type SecretDataRevealButtonProps = {
+  reveal: boolean;
+  onClick: () => void;
+};
+
+type SecretDataProps = {
+  data: KeyValueData;
+};

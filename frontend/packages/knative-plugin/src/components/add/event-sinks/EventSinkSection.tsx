@@ -1,0 +1,86 @@
+import type { FC, ReactElement } from 'react';
+import { useMemo } from 'react';
+import { ContentVariants, Content } from '@patternfly/react-core';
+import type { FormikValues } from 'formik';
+import { useFormikContext } from 'formik';
+import type { JSONSchema7 } from 'json-schema';
+import * as _ from 'lodash';
+import AppSection from '@console/dev-console/src/components/import/app/AppSection';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { ProjectModel } from '@console/internal/models';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import { descriptorsToUISchema } from '@console/operator-lifecycle-manager/src/components/operand/utils';
+import { DynamicFormField } from '@console/shared';
+import { useFormikValidationFix } from '@console/shared/src/hooks/useFormikValidationFix';
+import { EVENT_SINK_KAFKA_KIND } from '../../../const';
+import { formDescriptorData } from '../../../utils/create-eventsources-utils';
+import { EventSources } from '../import-types';
+import KafkaSinkSection from './KafkaSinkSection';
+import SourceSection from './SourceSection';
+
+interface EventSinkSectionProps {
+  namespace: string;
+  fullWidth?: boolean;
+  kameletSink?: K8sResourceKind;
+}
+
+const EventSinkSection: FC<EventSinkSectionProps> = ({
+  namespace,
+  fullWidth = false,
+  kameletSink,
+}) => {
+  const { values } = useFormikContext<FormikValues>();
+  const projectResource = { kind: ProjectModel.kind, prop: ProjectModel.id, isList: true };
+  const [data, loaded] = useK8sWatchResource<K8sResourceKind[]>(projectResource);
+  useFormikValidationFix(values);
+  const formSchema: JSONSchema7 = useMemo(
+    () => ({
+      type: 'object',
+      required: kameletSink?.spec?.definition?.required,
+      properties: kameletSink?.spec?.definition?.properties,
+    }),
+    [kameletSink],
+  );
+
+  if (!values.formData.type) {
+    return null;
+  }
+  const defaultFormSection = (
+    <>
+      <AppSection
+        project={values.formData.project}
+        noProjectsAvailable={loaded && _.isEmpty(data)}
+        extraMargin
+        subPath="formData"
+        fullWidth={fullWidth}
+      />
+    </>
+  );
+  let EventSink: ReactElement = null;
+  if (kameletSink && values.formData.type === EventSources.KameletBinding) {
+    EventSink = (
+      <>
+        <Content component={ContentVariants.h2}>{kameletSink.spec?.definition?.title}</Content>
+        <DynamicFormField
+          name="formData.data.KameletBinding.sink.properties"
+          schema={formSchema}
+          uiSchema={descriptorsToUISchema(formDescriptorData(formSchema.properties), formSchema)}
+          showAlert={false}
+        />
+        <SourceSection namespace={namespace} fullWidth={fullWidth} />
+      </>
+    );
+  } else if (values.formData.type === EVENT_SINK_KAFKA_KIND) {
+    EventSink = (
+      <KafkaSinkSection title={values.formData.type} fullWidth={fullWidth} namespace={namespace} />
+    );
+  }
+  return (
+    <>
+      {EventSink}
+      {defaultFormSection}
+    </>
+  );
+};
+
+export default EventSinkSection;

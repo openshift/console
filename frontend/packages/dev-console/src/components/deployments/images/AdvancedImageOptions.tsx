@@ -1,0 +1,88 @@
+import type { FC } from 'react';
+import { useMemo } from 'react';
+import { Button, ButtonVariant } from '@patternfly/react-core';
+import type { FormikValues } from 'formik';
+import { useFormikContext } from 'formik';
+import { useTranslation } from 'react-i18next';
+import { useCreateSecretModal } from '@console/dev-console/src/components/import/CreateSecretModal';
+import { SecretFormType } from '@console/internal/components/secrets/create-secret';
+import { ExpandCollapse } from '@console/internal/components/utils';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { SecretModel } from '@console/internal/models';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import { ResourceDropdownField } from '@console/shared/src';
+
+const AdvancedImageOptions: FC = () => {
+  const { t } = useTranslation();
+  const launchCreateSecretModal = useCreateSecretModal();
+  const {
+    setFieldValue,
+    values: {
+      formData: {
+        project: { name: namespace },
+      },
+    },
+  } = useFormikContext<FormikValues>();
+  const filterData = (item) => {
+    return (
+      item.type === 'kubernetes.io/dockercfg' || item.type === 'kubernetes.io/dockerconfigjson'
+    );
+  };
+  const handleSave = (name: string) => {
+    setFieldValue('formData.imagePullSecret', name);
+  };
+
+  const [secretsData, secretsLoaded, secretsLoadError] = useK8sWatchResource<K8sResourceKind[]>({
+    isList: true,
+    namespace,
+    kind: SecretModel.kind,
+  });
+
+  const resources = useMemo(
+    () => [
+      {
+        data: secretsData,
+        loaded: secretsLoaded,
+        loadError: secretsLoadError,
+        kind: SecretModel.kind,
+      },
+    ],
+    [secretsData, secretsLoaded, secretsLoadError],
+  );
+
+  return (
+    <ExpandCollapse
+      textExpanded={t('devconsole~Hide advanced image options')}
+      textCollapsed={t('devconsole~Show advanced image options')}
+    >
+      <ResourceDropdownField
+        name="formData.imagePullSecret"
+        label={t('devconsole~Pull Secret')}
+        helpText={t(
+          'devconsole~Secret for authentication when pulling image from a secured registry.',
+        )}
+        placeholder={t('devconsole~Select Secret name')}
+        resources={resources}
+        resourceFilter={filterData}
+        dataSelector={['metadata', 'name']}
+        dataTest="secrets-dropdown"
+        fullWidth
+      />
+      <Button
+        className="pf-m-link--align-left"
+        variant={ButtonVariant.link}
+        onClick={() =>
+          launchCreateSecretModal({
+            namespace,
+            save: handleSave,
+            formType: SecretFormType.image,
+          })
+        }
+      >
+        {t('devconsole~Create new Secret')}
+      </Button>
+    </ExpandCollapse>
+  );
+};
+
+export default AdvancedImageOptions;

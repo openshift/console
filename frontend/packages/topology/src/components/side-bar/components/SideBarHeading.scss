@@ -1,0 +1,6 @@
+.odc-topology-sidebar-alert,
+.dc-deprecation-sidebar-alert {
+  &:empty {
+    display: none;
+  }
+}

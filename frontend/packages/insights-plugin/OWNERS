@@ -1,0 +1,8 @@
+reviewers:
+  - gkarat
+  - tisnik
+approvers:
+  - gkarat
+  - tisnik
+labels:
+  - component/insights

@@ -1,0 +1,175 @@
+import type { FC } from 'react';
+import { useState, useCallback } from 'react';
+import { ButtonVariant, Button, Tooltip } from '@patternfly/react-core';
+import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
+import type { FormikValues } from 'formik';
+import { useField, useFormikContext } from 'formik';
+import { cloneDeep } from 'lodash';
+import { useTranslation } from 'react-i18next';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import TertiaryHeading from '@console/shared/src/components/heading/TertiaryHeading';
+import { getResourcesType } from '../../../edit-application/edit-application-utils';
+import { getStrategyData } from '../../utils/deployment-utils';
+import LifecycleHookForm from './LifecycleHookForm';
+import './LifecycleHookField.scss';
+
+interface LifecycleHookFieldProps {
+  lifecycleHookName: string;
+  resourceObj: K8sResourceKind;
+  dataAttribute: string;
+  title?: string;
+  subTitle?: string;
+}
+
+const LifecycleHookField: FC<LifecycleHookFieldProps> = ({
+  title,
+  subTitle,
+  dataAttribute,
+  lifecycleHookName,
+  resourceObj,
+}) => {
+  const { t } = useTranslation();
+  const {
+    setFieldValue,
+    values: {
+      formData: {
+        name: resName,
+        project: { name: resNamespace },
+        deploymentStrategy,
+      },
+    },
+    initialValues,
+  } = useFormikContext<FormikValues>();
+  const [{ value: lifecycleHookExist }] = useField<boolean>(
+    `formData.deploymentStrategy.${dataAttribute}.${lifecycleHookName}.exists`,
+  );
+  const [showForm, setShowForm] = useState(false);
+  const resourceType = getResourcesType(resourceObj);
+
+  const onSubmit = useCallback(() => {
+    setShowForm(false);
+    setFieldValue(`formData.deploymentStrategy.${dataAttribute}.${lifecycleHookName}.exists`, true);
+    setFieldValue(
+      `formData.deploymentStrategy.${dataAttribute}.${lifecycleHookName}.isAddingLch`,
+      false,
+    );
+    initialValues.formData.deploymentStrategy[dataAttribute][lifecycleHookName] =
+      deploymentStrategy[dataAttribute][lifecycleHookName];
+    initialValues.formData.deploymentStrategy.imageStreamData[lifecycleHookName] =
+      deploymentStrategy.imageStreamData[lifecycleHookName];
+  }, [
+    dataAttribute,
+    deploymentStrategy,
+    initialValues.formData.deploymentStrategy,
+    lifecycleHookName,
+    setFieldValue,
+  ]);
+
+  const onRemove = useCallback(() => {
+    const strategy = cloneDeep(deploymentStrategy);
+    strategy[dataAttribute][lifecycleHookName] = undefined;
+    const data = getStrategyData(
+      strategy.type,
+      { [dataAttribute]: strategy[dataAttribute] },
+      resName,
+      resNamespace,
+      resourceType,
+    );
+    initialValues.formData.deploymentStrategy[dataAttribute][lifecycleHookName] =
+      data[dataAttribute][lifecycleHookName];
+    initialValues.formData.deploymentStrategy.imageStreamData[lifecycleHookName] =
+      data.imageStreamData[lifecycleHookName];
+    setFieldValue(
+      `formData.deploymentStrategy.${dataAttribute}.${lifecycleHookName}`,
+      data[dataAttribute][lifecycleHookName],
+    );
+    setFieldValue(
+      `formData.deploymentStrategy.imageStreamData.${lifecycleHookName}`,
+      data.imageStreamData[lifecycleHookName],
+    );
+  }, [
+    dataAttribute,
+    deploymentStrategy,
+    initialValues.formData.deploymentStrategy,
+    lifecycleHookName,
+    resName,
+    resNamespace,
+    resourceType,
+    setFieldValue,
+  ]);
+
+  const onClose = useCallback(() => {
+    setShowForm(false);
+    setFieldValue(
+      `formData.deploymentStrategy.${dataAttribute}.${lifecycleHookName}`,
+      initialValues.formData.deploymentStrategy[dataAttribute][lifecycleHookName],
+    );
+    setFieldValue(
+      `formData.deploymentStrategy.imageStreamData.${lifecycleHookName}`,
+      initialValues.formData.deploymentStrategy.imageStreamData[lifecycleHookName],
+    );
+    setFieldValue(
+      `formData.deploymentStrategy.${dataAttribute}.${lifecycleHookName}.exists`,
+      lifecycleHookExist,
+    );
+    setFieldValue(
+      `formData.deploymentStrategy.${dataAttribute}.${lifecycleHookName}.isAddingLch`,
+      false,
+    );
+  }, [
+    dataAttribute,
+    initialValues.formData.deploymentStrategy,
+    lifecycleHookExist,
+    lifecycleHookName,
+    setFieldValue,
+  ]);
+
+  return (
+    <div>
+      <TertiaryHeading className="odc-lifecycle-hook-field__title">{title}</TertiaryHeading>
+      <div className="pf-v6-c-form__helper-text">{subTitle}</div>
+      {!showForm && (
+        <Button
+          className="pf-m-link--align-left"
+          variant={ButtonVariant.link}
+          onClick={() => {
+            setShowForm(true);
+            setFieldValue(
+              `formData.deploymentStrategy.${dataAttribute}.${lifecycleHookName}.isAddingLch`,
+              true,
+            );
+          }}
+          icon={!lifecycleHookExist && <PlusCircleIcon />}
+        >
+          {`${lifecycleHookExist ? t('devconsole~Edit') : t('devconsole~Add')} ${t(
+            'devconsole~{{lifecycleHookName}} lifecycle hook',
+            {
+              lifecycleHookName,
+            },
+          )}`}
+        </Button>
+      )}
+      {!showForm && lifecycleHookExist && (
+        <Tooltip content={t('devconsole~Remove')} position="right">
+          <Button
+            icon={<MinusCircleIcon />}
+            className="pf-m-plain--align-left"
+            variant={ButtonVariant.plain}
+            onClick={onRemove}
+          />
+        </Tooltip>
+      )}
+      {showForm && (
+        <LifecycleHookForm
+          dataAttribute={dataAttribute}
+          resourceObj={resourceObj}
+          lifecycleHook={lifecycleHookName}
+          onSubmit={onSubmit}
+          onClose={onClose}
+        />
+      )}
+    </div>
+  );
+};
+
+export default LifecycleHookField;

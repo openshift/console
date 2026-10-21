@@ -1,0 +1,6 @@
+// Assigning PF component specific variables globally so we can use
+:root {
+  --pf-v6-c-code-block__pre--FontFamily: var(--pf-v6-c-code-block__pre--FontFamily);
+  --pf-v6-c-code-block__pre--FontSize: var(--pf-t--global--font--size--sm);
+  --pf-v6-c-content--MarginBottom: var(--pf-t--global--spacer--md);
+}

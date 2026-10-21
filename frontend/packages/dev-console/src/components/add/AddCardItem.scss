@@ -1,0 +1,44 @@
+.odc-add-card-item {
+  .pf-v6-c-simple-list__item-link {
+    --pf-v6-c-simple-list__item-link--focus--FontWeight: normal;
+    --pf-v6-c-simple-list__item-link--active--FontWeight: normal;
+    --pf-v6-c-simple-list__item-link--hover--FontWeight: normal;
+  }
+
+  margin-top: var(--pf-t--global--spacer--lg);
+  margin-left: var(--odc-add-card-item-margin-horizontal);
+
+  &__icon {
+    height: var(--pf-t--global--font--size--lg);
+    max-width: var(--pf-t--global--spacer--lg);
+    min-width: var(--pf-t--global--spacer--md);
+    color: var(--pf-t--global--text--color--regular) !important;
+    // temporary fix since --pf-t--global--font--size--md is being computed to 14px instead of 16px
+    font-size: var(--pf-t--global--font--size--md);
+    margin-right: var(--pf-t--global--spacer--sm);
+  }
+
+  &__img-icon {
+    vertical-align: -0.125em;
+  }
+
+  &__title {
+    display: inline;
+    vertical-align: middle;
+    margin-left: var(--pf-t--global--spacer--sm);
+    // temporary fix since --pf-t--global--font--size--md is being computed to 14px instead of 16px
+    font-size: var(--pf-t--global--spacer--md) !important;
+  }
+
+  &__description {
+    margin: var(--pf-t--global--spacer--sm) 0 0 var(--pf-t--global--spacer--sm);
+    color: var(--pf-t--global--text--color--subtle);
+    // temporary fix since --pf-t--global--font--size--sm is being computed to 13px instead of 14px
+    font-size: var(--pf-t--global--font--size--md);
+  }
+
+  a {
+    padding-left: 0;
+    text-decoration: none;
+  }
+}

@@ -1,0 +1,73 @@
+[
+    {
+        "scope": "https://gitea.com:443",
+        "method": "GET",
+        "path": "/api/v1/repos/redhat-openshift/devconsole-git/branches",
+        "body": "",
+        "status": 200,
+        "response": [
+            {
+                "name": "master",
+                "commit": {
+                    "id": "901927aebf15c2eeeace75b2521f985726b7d3fb",
+                    "message": "fix: use custom error properly (via interface) (#32)\n\n",
+                    "url": "https://gitea.com/redhat-openshift/devconsole-git/commit/901927aebf15c2eeeace75b2521f985726b7d3fb",
+                    "author": {
+                        "name": "Matous Jobanek",
+                        "email": "mjobanek@redhat.com",
+                        "username": ""
+                    },
+                    "committer": {
+                        "name": "GitHub",
+                        "email": "noreply@github.com",
+                        "username": "gitty"
+                    },
+                    "verification": {
+                        "verified": false,
+                        "reason": "gpg.error.no_gpg_keys_found",
+                        "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsBcBAABCAAQBQJcyHWLCRBK7hj4Ov3rIwAAdHIIAI8BMLJFhbsO1A9iC9edPaAV\n0RDS2vC/FK3m703U7ouBslkaGE+oCjo7l88Dd87H15HVpE5IoLT4qvrJO3izG4mM\n9VAnslAWi7Snat6y56iPBNclyF/N1kVmVdSj26O7rqW3ZOSVPwfY/0MryzaEp1dp\nz+joiF3ZE2ALYc4APRnZH//E9Akel2n+AbGq3M3ok30/+xMsttwJPx5hoBtlDBeC\nEjmpzpqfYuqNGoR5VCKb75m4EVjflEn9/3N8hfhFD+H1qiTxGuEAvMXXuCADfPo4\nlQsnjVkPSapIeQ3zuP+fjQLO3eICY+OAay9JEb1ZL/AnKRMFzRbo565cBGMLVxQ=\n=ItOF\n-----END PGP SIGNATURE-----\n\n",
+                        "signer": null,
+                        "payload": "tree aec779f5a6cf3f7363adf51a5349cb75a05be4e0\nparent eed2bcf7e26707890dfe4c6ff014d8713d5bedf6\nauthor Matous Jobanek <mjobanek@redhat.com> 1556641163 +0200\ncommitter GitHub <noreply@github.com> 1556641163 +0200\n\nfix: use custom error properly (via interface) (#32)\n\n"
+                    },
+                    "timestamp": "2019-04-30T18:19:23+02:00",
+                    "added": null,
+                    "removed": null,
+                    "modified": null
+                },
+                "protected": false,
+                "required_approvals": 0,
+                "enable_status_check": false,
+                "status_check_contexts": [],
+                "user_can_push": false,
+                "user_can_merge": false,
+                "effective_branch_protection_name": ""
+            }
+        ],
+        "rawHeaders": [
+            "Date",
+            "Sat, 01 Jun 2024 14:45:05 GMT",
+            "Content-Type",
+            "application/json;charset=utf-8",
+            "Content-Length",
+            "1548",
+            "Connection",
+            "keep-alive",
+            "Access-Control-Allow-Origin",
+            "*",
+            "Access-Control-Expose-Headers",
+            "X-Total-Count",
+            "Cache-Control",
+            "max-age=0, private, must-revalidate, no-transform",
+            "Server",
+            "Caddy",
+            "Vary",
+            "Origin",
+            "X-Content-Type-Options",
+            "nosniff",
+            "X-Frame-Options",
+            "SAMEORIGIN",
+            "X-Total-Count",
+            "1"
+        ]
+    }
+]

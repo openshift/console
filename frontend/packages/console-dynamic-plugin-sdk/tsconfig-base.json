@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "es2021",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "jsx": "react-jsx",
+    "allowJs": true,
+    "noEmitOnError": true,
+    "declaration": true,
+    "experimentalDecorators": true,
+    "noUnusedLocals": true,
+    "skipLibCheck": true,
+    "lib": ["es2021", "dom"],
+    "typeRoots": ["../../node_modules/@types", "../../@types"],
+    "types": ["node", "console"]
+  }
+}

@@ -1,0 +1,13 @@
+apiVersion: console.openshift.io/v1beta1
+kind: ConsoleConfig
+servingInfo:
+  bindAddress: http://0.0.0.0:9000
+clusterInfo:
+  consoleBaseAddress: http://localhost:9000
+  masterPublicURL: https://127.0.0.1:8443
+auth:
+  clientID: console-oauth-client
+  clientSecretFile: examples/console-client-secret
+  issuerURL: https://127.0.0.1:8443
+customization:
+  branding: okd

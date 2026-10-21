@@ -1,0 +1,31 @@
+apiversion: v1
+kind: verifier-profile
+vendorType: partner
+version: v1.0
+annotations:
+  - "Digest"
+  - "OCPVersion"
+  - "LastCertifiedTimestamp"
+checks:
+    - name: v1.0/has-readme
+      type: Mandatory
+    - name: v1.0/is-helm-v3
+      type: Mandatory
+    - name: v1.0/contains-test
+      type: Mandatory
+    - name: v1.0/contains-values
+      type: Mandatory
+    - name: v1.0/contains-values-schema
+      type: Mandatory
+    - name: v1.0/has-kubeversion
+      type: Mandatory
+    - name: v1.0/not-contains-crds
+      type: Mandatory
+    - name: v1.0/helm-lint
+      type: Mandatory
+    - name: v1.0/not-contain-csi-objects
+      type: Mandatory
+    - name: v1.0/images-are-certified
+      type: Mandatory
+    - name: v1.0/chart-testing
+      type: Mandatory

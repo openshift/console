@@ -1,0 +1,79 @@
+apiVersion: v1
+entries:
+  ibm-oms-ent-prod-3--sample-repo-1:
+    - apiVersion: v2
+      appVersion: 10.0.0
+      created: "2020-07-15T16:32:34.663118186+05:30"
+      dependencies:
+        - alias: sch
+          name: ibm-sch
+          repository: '@sch'
+          version: 1.2.15
+      description: |-
+        IBM Order management Software Enterprise Edition v10 provides cross-channel order orchestration capabilities to enable intelligent brokering of orders across many disparate systems. It also provides a global view of inventory across the supply chain and enables business users to make changes to order process.
+
+        For additional details regarding install parameters check: http://ibm.biz/oms-helm-readme.
+
+        By installing this product you accept the license terms http://ibm.biz/oms-license and http://ibm.biz/oms-apps-license.
+      digest: f01226a974704ea84685d95ad48feae8666ea154254cdca888859430d5517961
+      icon: https://raw.githubusercontent.com/IBM/charts/master/logo/ibm-oms-logo.png
+      keywords:
+        - oms
+        - sterling
+        - yantra
+        - order
+        - fulfillment
+        - om
+        - amd64
+        - ppc64le
+        - framework
+        - Commercial
+        - RHOCP
+        - Other
+      kubeVersion: '>= 1.13.0 <= 1.15.0'
+      maintainers:
+        - name: IBM
+      name: ibm-oms-ent-prod
+      type: application
+      urls:
+        - https://redhat-developer.github.com/redhat-helm-charts/charts/ibm-oms-ent-prod-5.0.0.tgz
+      version: 5.0.0
+  ibm-oms-ent-prod-2--sample-repo-1:
+    - apiVersion: v2
+      appVersion: 10.0.0
+      created: "2020-07-15T16:32:34.663118186+05:30"
+      dependencies:
+        - alias: sch
+          name: ibm-sch
+          repository: '@sch'
+          version: 1.2.15
+      description: |-
+        IBM Order management Software Enterprise Edition v10 provides cross-channel order orchestration capabilities to enable intelligent brokering of orders across many disparate systems. It also provides a global view of inventory across the supply chain and enables business users to make changes to order process.
+
+        For additional details regarding install parameters check: http://ibm.biz/oms-helm-readme.
+
+        By installing this product you accept the license terms http://ibm.biz/oms-license and http://ibm.biz/oms-apps-license.
+      digest: f01226a974704ea84685d95ad48feae8666ea154254cdca888859430d5517961
+      icon: https://raw.githubusercontent.com/IBM/charts/master/logo/ibm-oms-logo.png
+      keywords:
+        - oms
+        - sterling
+        - yantra
+        - order
+        - fulfillment
+        - om
+        - amd64
+        - ppc64le
+        - framework
+        - Commercial
+        - RHOCP
+        - Other
+      kubeVersion: '>= 1.13.0 < 1.15.0'
+      maintainers:
+        - name: IBM
+      name: ibm-oms-ent-prod
+      type: application
+      urls:
+        - https://redhat-developer.github.com/redhat-helm-charts/charts/ibm-oms-ent-prod-5.0.0.tgz
+      version: 5.0.0
+generated: "2020-07-15T16:32:34.538582491+05:30"

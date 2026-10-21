@@ -1,0 +1,52 @@
+issuer: http://127.0.0.1:5556
+storage:
+  type: sqlite3
+  config:
+    file: examples/dex.db
+
+web:
+  http: 127.0.0.1:5556
+grpc:
+  addr: 127.0.0.1:5557
+
+logger:
+  level: debug
+
+frontend:
+  theme: 'tectonic'
+
+connectors:
+- type: mockCallback
+  id: mock-callback
+  name: Mock
+
+# Instead of reading from an external storage, use this list of clients.
+staticClients:
+- id: example-app
+  redirectURIs:
+  - 'http://127.0.0.1:5555/callback'
+  - 'http://localhost:9000/auth/callback'
+  - 'urn:ietf:wg:oauth:2.0:oob'
+  name: 'Example App'
+  secret: ZXhhbXBsZS1hcHAtc2VjcmV0
+
+# Let dex keep a list of passwords which can be used to login the user.
+enablePasswordDB: true
+
+# A static list of passwords to login the end user. By identifying here, dex
+# won't look in its undlying storage for passwords.
+staticPasswords:
+- email: "admin@example.com"
+  # bcrypt hash of the string "password"
+  hash: "JDJhJDE0JDh4TnlVZ3pzSmVuQm4ySlRPT2QvbmVGcUlnQzF4TEFVRFA3VlpTVzhDNWlkLnFPcmNlYUJX"
+  username: "admin"
+  userID: "08a8684b-db88-4b73-90a9-3cd1661f5466"
+  # Must match an existing group
+  groupnames:
+  - "group-1"
+
+# Note: The following directive only works with Eric's special dex (https://github.com/estroz/dex/tree/static-groups)
+# A static list of groups that a user can be a part of. By identifying here, dex
+# won't look in its underlying storage for passwords.
+staticGroups:
+- groupname: "group-1"

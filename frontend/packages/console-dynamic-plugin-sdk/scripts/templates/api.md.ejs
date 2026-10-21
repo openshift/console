@@ -1,0 +1,46 @@
+# OpenShift Console API
+
+<%# Table of contents _%>
+| API kind | Exposed APIs |
+| -------- | ------------ |
+<% declarationKinds.forEach((kind) => { _%>
+| <%- `${kind} (${apis.filter((api) => api.kind === kind).length})` %> | <%- apis.filter((api) => api.kind === kind).map((api) => `[${api.name}](#${api.name.toLocaleLowerCase()})`).join(', ') %> |
+<% }); _%>
+
+<%# Generate one section per API item _%>
+<% apis.forEach((api) => { _%>
+---
+
+## `<%- api.name %>`
+
+### Summary <%- api.doc.deprecated ? '[DEPRECATED]' : '' %>
+
+<%- printComments((api.doc.deprecated ? api.doc.deprecated : '') + api.doc.summary) || '(not available)' %>
+
+<% if (api.doc.example) { %>
+### Example
+
+<%- api.doc.example %>
+<% } %>
+
+<% if (api.doc.parameters?.length > 0) { %>
+### Parameters
+
+| Parameter Name | Description |
+| -------------- | ----------- |
+<% api.doc.parameters.forEach((param) => { _%>
+| `<%- param.name %>` | <%- removeNewLines(param.description) %> |
+<% }); _%>
+<% } %>
+
+<% if (api.doc.returns) { %>
+### Returns
+
+<%- printComments(api.doc.returns) %>
+<% } %>
+
+### Source
+
+[`<%- api.srcFilePath %>`](https://github.com/openshift/console/tree/<%- `${gitBranch}/${api.srcFilePath}` %>)
+
+<% }); _%>

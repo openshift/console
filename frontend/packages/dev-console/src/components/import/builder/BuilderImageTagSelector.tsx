@@ -1,0 +1,103 @@
+import type { FC } from 'react';
+import { useEffect } from 'react';
+import type { FormikValues } from 'formik';
+import { useFormikContext } from 'formik';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { ImportStrategy } from '@console/git-service/src';
+import { ResourceName } from '@console/internal/components/utils';
+import { ImageStreamTagModel } from '@console/internal/models';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import { DropdownField } from '@console/shared';
+import type { BuilderImage } from '../../../utils/imagestream-utils';
+import { getTagDataWithDisplayName, getPorts } from '../../../utils/imagestream-utils';
+import { useSafeK8s } from '../../../utils/safe-k8s-hook';
+import BuilderImageEnvironments from './BuilderImageEnvironments';
+import ImageStreamInfo from './ImageStreamInfo';
+
+export interface BuilderImageTagSelectorProps {
+  selectedBuilderImage: BuilderImage;
+  selectedImageTag: string;
+  showImageInfo?: boolean;
+}
+
+const BuilderImageTagSelector: FC<BuilderImageTagSelectorProps> = ({
+  selectedBuilderImage,
+  selectedImageTag,
+  showImageInfo = true,
+}) => {
+  const { t } = useTranslation();
+  const {
+    values: {
+      import: { showEditImportStrategy, selectedStrategy },
+    },
+    setFieldValue,
+    setFieldError,
+  } = useFormikContext<FormikValues>();
+  const {
+    name: imageName,
+    tags: imageTags,
+    displayName: imageDisplayName,
+    imageStreamNamespace,
+  } = selectedBuilderImage;
+
+  const tagItems = {};
+  _.each(
+    imageTags,
+    ({ name }) => (tagItems[name] = <ResourceName kind="ImageStreamTag" name={name} />),
+  );
+
+  const [imageTag, displayName] = getTagDataWithDisplayName(
+    imageTags,
+    selectedImageTag,
+    imageDisplayName,
+  );
+
+  const isServerlessFunctionStrategySelected =
+    selectedStrategy?.type === ImportStrategy.SERVERLESS_FUNCTION;
+
+  const k8sGet = useSafeK8s();
+
+  useEffect(() => {
+    setFieldValue('image.tagObj', imageTag);
+    k8sGet(ImageStreamTagModel, `${imageName}:${selectedImageTag}`, imageStreamNamespace)
+      .then((imageStreamTag: K8sResourceKind) => {
+        const ports = getPorts(imageStreamTag);
+        setFieldValue('image.ports', ports);
+      })
+      .catch((err) => setFieldError('image.ports', err.message));
+    // Find a way to use useSafeK8s hooks without adding it to the deps array.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedImageTag, setFieldValue, setFieldError, imageName, imageStreamNamespace, imageTag]);
+
+  return (
+    <>
+      <div
+        style={
+          !showEditImportStrategy && !isServerlessFunctionStrategySelected
+            ? { display: 'none' }
+            : {}
+        }
+      >
+        <DropdownField
+          name="image.tag"
+          label={t('devconsole~Builder Image version')}
+          items={tagItems}
+          title={tagItems[selectedImageTag]}
+          fullWidth
+          required
+        />
+      </div>
+      {imageTag && showImageInfo && <ImageStreamInfo displayName={displayName} tag={imageTag} />}
+      {!isServerlessFunctionStrategySelected && (
+        <BuilderImageEnvironments
+          name="image.imageEnv"
+          imageStreamName={imageName}
+          imageStreamTag={selectedImageTag}
+        />
+      )}
+    </>
+  );
+};
+
+export default BuilderImageTagSelector;

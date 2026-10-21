@@ -1,0 +1,36 @@
+FROM quay.io/openshift/origin-cli-artifacts:4.18 AS origincli
+
+FROM registry.ci.openshift.org/ocp/builder:rhel-9-golang-1.22-openshift-4.18 AS gobuilder
+
+ENV HOME=/go/src/github.com/openshift/console/
+RUN mkdir -p ${HOME}
+
+COPY go.mod go.sum build-downloads.sh ${HOME}
+COPY vendor/ ${HOME}vendor/
+COPY cmd/ /${HOME}cmd/
+COPY .git/ /${HOME}.git/
+
+
+WORKDIR ${HOME}
+RUN ./build-downloads.sh
+
+FROM registry.ci.openshift.org/ocp/4.18:base-rhel9
+RUN mkdir -p /opt/downloads
+
+COPY --from=gobuilder /go/src/github.com/openshift/console/bin/downloads /opt/downloads
+COPY --from=gobuilder /go/src/github.com/openshift/console/cmd/downloads/config/defaultArtifactsConfig.yaml /opt/downloads
+COPY --from=origincli /usr/share/openshift /usr/share/openshift
+
+WORKDIR /
+
+# doesn't require a root user.
+USER 1001
+CMD ["/opt/downloads/downloads",  "--config-path=/opt/downloads/defaultArtifactsConfig.yaml"]
+
+LABEL \
+        io.k8s.display-name="CLI Artifacts Downloads Server" \
+        io.k8s.description="This is a component of OpenShift Container Platform and provides a Golang server that serves 'oc' binaries for various platforms." \
+        maintainer="Marek Ziska <mziska@redhat.com>" \
+        License="Apache 2.0" \
+        vendor="Red Hat" \
+        io.openshift.tags="openshift,cli-artifacts" \

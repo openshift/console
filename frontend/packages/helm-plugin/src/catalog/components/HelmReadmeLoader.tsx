@@ -1,0 +1,57 @@
+import type { FC } from 'react';
+import { useState, useEffect } from 'react';
+import { Base64 } from 'js-base64';
+import { useTranslation } from 'react-i18next';
+import { MarkdownView } from '@console/shared/src/components/markdown/MarkdownView';
+import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
+
+type HelmReadmeLoaderProps = {
+  chartURL: string;
+  namespace: string;
+  chartIndexEntry: string;
+};
+
+const HelmReadmeLoader: FC<HelmReadmeLoaderProps> = ({ chartURL, namespace, chartIndexEntry }) => {
+  const { t } = useTranslation();
+  const [readme, setReadme] = useState<string>();
+  const [loaded, setLoaded] = useState<boolean>(false);
+
+  useEffect(() => {
+    let unmounted = false;
+
+    const fetchReadme = async () => {
+      let chartData;
+
+      try {
+        chartData = await coFetchJSON(
+          `/api/helm/chart?url=${encodeURIComponent(
+            chartURL,
+          )}&namespace=${namespace}&indexEntry=${encodeURIComponent(chartIndexEntry)}`,
+        );
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.warn('Error fetching helm chart details for readme', e);
+      }
+
+      const readmeFile = chartData?.files?.find((file) => file.name === 'README.md');
+      const readmeData = readmeFile?.data && Base64.decode(readmeFile?.data);
+
+      if (!unmounted) {
+        setLoaded(true);
+        readmeData && setReadme(`## ${t('helm-plugin~README')}\n${readmeData}`);
+      }
+    };
+
+    fetchReadme();
+
+    return () => {
+      unmounted = true;
+    };
+  }, [chartIndexEntry, chartURL, namespace, t]);
+
+  if (!loaded) return <div className="loading-skeleton--table" />;
+
+  return <MarkdownView content={readme} emptyMsg={t('helm-plugin~README not available')} />;
+};
+
+export default HelmReadmeLoader;

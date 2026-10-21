@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: example-pod
+  labels:
+    app: hello-openshift
+  namespace: aut-workloads-admin
+spec:
+  containers:
+    - name: hello-openshift
+      image: openshift/hello-openshift
+      ports:
+        - containerPort: 8080

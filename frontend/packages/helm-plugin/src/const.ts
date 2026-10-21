@@ -1,0 +1,4 @@
+export const FLAG_OPENSHIFT_HELM = 'OPENSHIFT_HELM';
+export const FLAG_HELM_CHARTS_CATALOG_TYPE = 'HELM_CHARTS_CATALOG_TYPE';
+export const HELM_CHART_CATALOG_TYPE_ID = 'HelmChart';
+export const HELM_CHART_ACTION_ID = 'helm';

@@ -1,0 +1,108 @@
+.dropdown__disabled {
+  color: var(--pf-t--global--text--color--disabled);
+  cursor: not-allowed;
+}
+
+.dropdown-menu--text-wrap {
+  max-width: 100%;
+  li {
+    a,
+    button {
+      @include co-break-word;
+      white-space: normal;
+    }
+  }
+}
+
+.co-namespace-bar {
+  border-bottom: var(--pf-t--global--border--width--divider--default) solid
+    var(--pf-t--global--border--color--default);
+  padding: 0 $pf-v6-global-gutter-x;
+  white-space: nowrap;
+
+  &__items {
+    align-items: center;
+    display: flex;
+
+    .pf-m-plain {
+      color: inherit;
+
+      &:hover,
+      &:focus {
+        text-decoration: none;
+      }
+    }
+  }
+}
+
+.co-namespace-bar--no-project {
+  padding-left: var(--pf-t--global--spacer--sm);
+  @media screen and (max-width: $pf-v6-global--breakpoint--xl) {
+    margin-left: -0.5rem;
+  }
+}
+
+.co-namespace-selector {
+  margin-right: 20px;
+  max-width: 60%;
+
+  .pf-v6-c-menu-toggle.pf-m-plain {
+    font-size: ($font-size-base + 1);
+    --pf-v6-c-menu-toggle--PaddingBottom: 7px;
+    --pf-v6-c-menu-toggle--PaddingLeft: 0;
+    --pf-v6-c-menu-toggle--PaddingRight: 0;
+
+    @media (min-width: $pf-v6-global--breakpoint--md) {
+      font-size: ($font-size-base + 2);
+      --pf-v6-c-menu-toggle--PaddingBottom: 9px;
+    }
+
+    &:not(:disabled) {
+      color: inherit;
+    }
+
+    &:disabled {
+      background: none;
+      color: var(--pf-t--global--text--color--disabled);
+    }
+
+    &__titlePrefix {
+      margin-right: 6px;
+    }
+  }
+}
+
+.pf-v6-c-dropdown .co-m-resource-icon {
+  margin-left: 2px;
+}
+
+.pf-v6-c-dropdown__content-wrap {
+  align-items: center;
+  display: flex;
+  flex: 1 1 auto;
+  justify-content: space-between;
+  min-width: 0;
+}
+
+.pf-v6-c-dropdown__menu {
+  list-style: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.pf-v6-c-menu-toggle {
+  max-width: 100%;
+}
+
+.pf-v6-c-menu-toggle .pf-c-dropdown__toggle-icon {
+  flex: 0 0 auto; // so arrow doesn't shrink
+}
+
+.pf-v6-c-dropdown__toggle-text {
+  overflow: hidden;
+  text-align: left;
+  text-overflow: ellipsis;
+  .co-resource-item__resource-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}

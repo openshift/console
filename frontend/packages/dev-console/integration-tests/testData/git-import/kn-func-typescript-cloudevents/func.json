@@ -1,0 +1,18 @@
+{
+  "name": "func.yaml",
+  "path": "func.yaml",
+  "sha": "a9a73b03d5b80a12919f514f070cbe0fc6316a80",
+  "size": 432,
+  "url": "https://api.github.com/repos/openshift-dev-console/kn-func-typescript-cloudevents/contents/func.yaml?ref=main",
+  "html_url": "https://github.com/openshift-dev-console/kn-func-typescript-cloudevents/blob/main/func.yaml",
+  "git_url": "https://api.github.com/repos/openshift-dev-console/kn-func-typescript-cloudevents/git/blobs/a9a73b03d5b80a12919f514f070cbe0fc6316a80",
+  "download_url": "https://raw.githubusercontent.com/openshift-dev-console/kn-func-typescript-cloudevents/main/func.yaml",
+  "type": "file",
+  "content": "c3BlY1ZlcnNpb246IDAuMzUuMApuYW1lOiBrbi1mdW5jLXR5cGVzY3JpcHQt\nY2xvdWRldmVudHMKcnVudGltZTogdHlwZXNjcmlwdApyZWdpc3RyeTogIiIK\naW1hZ2U6ICIiCmltYWdlRGlnZXN0OiAiIgppbnZva2U6IGNsb3VkZXZlbnQK\nYnVpbGQ6CiAgYnVpbGRwYWNrczogW10KICBidWlsZGVyOiBzMmkKICBidWls\nZEVudnM6CiAgLSBuYW1lOiBCUF9OT0RFX1JVTl9TQ1JJUFRTCiAgICB2YWx1\nZTogYnVpbGQKcnVuOgogIHZvbHVtZXM6IFtdCiAgZW52czogW10KZGVwbG95\nOgogIG5hbWVzcGFjZTogIiIKICByZW1vdGU6IGZhbHNlCiAgYW5ub3RhdGlv\nbnM6IHt9CiAgb3B0aW9uczoge30KICBsYWJlbHM6IFtdCiAgaGVhbHRoRW5k\ncG9pbnRzOgogICAgbGl2ZW5lc3M6IC9oZWFsdGgvbGl2ZW5lc3MKICAgIHJl\nYWRpbmVzczogL2hlYWx0aC9yZWFkaW5lc3MK\n",
+  "encoding": "base64",
+  "_links": {
+      "self": "https://api.github.com/repos/openshift-dev-console/kn-func-typescript-cloudevents/contents/func.yaml?ref=main",
+      "git": "https://api.github.com/repos/openshift-dev-console/kn-func-typescript-cloudevents/git/blobs/a9a73b03d5b80a12919f514f070cbe0fc6316a80",
+      "html": "https://github.com/openshift-dev-console/kn-func-typescript-cloudevents/blob/main/func.yaml"
+  }
+}

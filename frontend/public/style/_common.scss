@@ -1,0 +1,227 @@
+.co-divider {
+  margin-bottom: var(--pf-t--global--spacer--lg);
+  margin-top: var(--pf-t--global--spacer--lg);
+}
+
+.co-m-pane__body {
+  gap: 0;
+  &--section-heading {
+    padding-bottom: 0;
+  }
+  + .co-m-pane__body {
+    border-top: 1px solid var(--pf-t--global--border--color--default);
+  }
+}
+
+.co-m-pane__heading {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  &--baseline {
+    align-items: baseline;
+  }
+  &--logo {
+    align-items: center;
+  }
+}
+
+.co-m-pane__heading-badge {
+  @media (min-width: $screen-sm-min) {
+    margin-left: var(--pf-t--global--spacer--sm);
+  }
+}
+
+.co-m-pane__heading-owner {
+  display: block;
+  font-size: $font-size-base;
+  line-height: var(--pf-t--global--font--line-height--heading);
+  padding-top: var(--pf-t--global--spacer--sm);
+  span {
+    display: inline;
+  }
+}
+
+.cos-error-title {
+  color: var(--pf-t--global--color--status--danger--default);
+}
+
+.co-section-heading {
+  display: flex;
+  justify-content: space-between;
+  margin: 0 0 var(--pf-t--global--spacer--md) 0;
+}
+
+.co-table-container {
+  margin-bottom: var(----pf-t--global--spacer--lg);
+  overflow: auto;
+}
+
+.co-m-pane__dropdown {
+  margin-bottom: 20px;
+}
+
+.co-m-pane__explanation {
+  color: var(--pf-t--global--text--color--subtle);
+  margin-bottom: var(--pf-t--global--spacer--lg);
+}
+
+.co-m-pane__explanation--alt {
+  margin-bottom: var(--pf-t--global--spacer--md);
+}
+
+.co-m-pane__explanation code {
+  background-color: var(--pf-t--global--background--color--secondary--default);
+  color: var(--pf-t--global--text--color--subtle);
+}
+
+.co-pre-line {
+  white-space: pre-line;
+}
+
+.co-pre-wrap {
+  white-space: pre-wrap;
+}
+
+// Prevent iOS phones from zooming on form inputs
+@supports (-webkit-overflow-scrolling: touch) {
+  // Target mobile Safari
+  @media (max-width: $pf-v6-global--breakpoint--sm-max) {
+    // Target phones
+    input,
+    select,
+    .tag-item,
+    textarea {
+      font-size: 16px !important;
+    }
+  }
+}
+
+.co-error {
+  color: var(--pf-t--global--color--status--danger--default);
+  white-space: nowrap;
+}
+
+.co-break-word {
+  @include co-break-word;
+}
+
+.co-fullscreen {
+  // so that the background colour isn't black
+  background-color: var(--pf-t--global--background--color--secondary--default);
+}
+
+// Prefer `co-break-word` in most cases. `co-break-all` should generally be reserved for URLs and long,
+// unbroken identifiers.
+.co-break-all {
+  word-break: break-all;
+}
+
+// Prevent inline appended icons from wrapping separately without its associated text
+.co-icon-nowrap {
+  display: inline;
+  white-space: nowrap;
+}
+
+.co-icon-flex-child {
+  flex: 0 0 auto;
+  position: relative;
+  top: 0.125em;
+}
+
+.co-line-clamp {
+  @include co-line-clamp;
+}
+
+.co-sidebar-dismiss {
+  padding: 0 $pf-v6-global-gutter-x;
+}
+
+.co-legend {
+  border-bottom: 0;
+  font-weight: var(--pf-t--global--font--weight--body--bold);
+  font-size: $font-size-base;
+  margin-bottom: 5px;
+
+  &--nested {
+    margin-top: 10px;
+  }
+
+  + .radio {
+    margin-top: 0;
+  }
+}
+
+// Note: include .co-select-to-copy to enable single click selection of full text
+.co-truncate {
+  @include co-truncate;
+}
+
+.co-select-to-copy {
+  cursor: copy;
+  user-select: all;
+  -moz-user-select: all;
+  -webkit-user-select: all;
+}
+
+.co-nowrap {
+  white-space: nowrap;
+}
+
+.co-m-form-row {
+  margin-bottom: var(--pf-t--global--spacer--md);
+}
+
+.co-m-form-row:last-child {
+  margin-bottom: 0;
+}
+
+.co-m-form-col {
+  max-width: 600px;
+}
+
+.co-m-pane__body-group {
+  padding: 0 0 $pf-v6-global-gutter-y 0;
+}
+
+.co-m-loader {
+  min-width: 18px;
+}
+
+.co-overview-card__actions {
+  align-self: center !important;
+}
+
+.co-m-timeout-error {
+  margin-bottom: var(--pf-t--global--spacer--lg);
+  margin-top: var(--pf-t--global--spacer--md);
+  text-align: center;
+}
+
+.loading-box {
+  display: flex;
+  flex: 1 0 auto;
+  flex-direction: column;
+}
+
+@keyframes co-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+// fa-spin kept for backwards compatibility due to usage in dynamic plugins
+.co-spin,
+.fa-spin {
+  animation: co-spin 2s infinite linear;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+.co-svg-logo-text {
+  fill: var(--pf-t--global--text--color--regular);
+}

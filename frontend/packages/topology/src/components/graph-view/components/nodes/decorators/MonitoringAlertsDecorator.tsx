@@ -1,0 +1,74 @@
+import type { FC, MouseEvent } from 'react';
+import { useRef } from 'react';
+import { Tooltip, TooltipPosition } from '@patternfly/react-core';
+import type { Node } from '@patternfly/react-topology';
+import { SELECTION_EVENT } from '@patternfly/react-topology';
+import { useTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
+import type { Dispatch } from 'redux';
+import { selectOverviewDetailsTab } from '@console/internal/actions/ui';
+import { AlertSeverityIcon } from '@console/shared/src/components/alerts/AlertSeverityIcon';
+import {
+  getSeverityAlertType,
+  getFiringAlerts,
+  shouldHideMonitoringAlertDecorator,
+} from '@console/shared/src/utils/alert-utils';
+import Decorator from './Decorator';
+
+type DispatchProps = {
+  showMonitoringOverview?: () => void;
+};
+
+const dispatchToProps = (dispatch: Dispatch): DispatchProps => ({
+  showMonitoringOverview: () => dispatch(selectOverviewDetailsTab('Observe')),
+});
+
+interface MonitoringAlertsDecoratorProps {
+  element: Node;
+  radius: number;
+  x: number;
+  y: number;
+}
+
+type MonitoringAlertsDecoratorType = MonitoringAlertsDecoratorProps & DispatchProps;
+
+const MonitoringAlertsDecorator: FC<MonitoringAlertsDecoratorType> = ({
+  element,
+  radius,
+  x,
+  y,
+  showMonitoringOverview,
+}) => {
+  const ref = useRef();
+  const { t } = useTranslation();
+  const workloadData = element.getData().data;
+  const { monitoringAlerts } = workloadData;
+  const firingAlerts = getFiringAlerts(monitoringAlerts);
+  const severityAlertType = getSeverityAlertType(firingAlerts);
+
+  const showSidebar = (e: MouseEvent) => {
+    e.stopPropagation();
+    showMonitoringOverview();
+    element.getGraph().getController().fireEvent(SELECTION_EVENT, [element.getId()]);
+  };
+
+  if (shouldHideMonitoringAlertDecorator(severityAlertType)) return null;
+
+  const label = t('topology~Monitoring alert');
+  return (
+    <Tooltip triggerRef={ref} key="monitoringAlert" content={label} position={TooltipPosition.left}>
+      <g ref={ref}>
+        <Decorator x={x} y={y} radius={radius} onClick={showSidebar} ariaLabel={label}>
+          <g transform={`translate(-${radius / 2}, -${radius / 2})`}>
+            <AlertSeverityIcon severityAlertType={severityAlertType} fontSize={radius} />
+          </g>
+        </Decorator>
+      </g>
+    </Tooltip>
+  );
+};
+
+export default connect<null, DispatchProps, MonitoringAlertsDecoratorProps>(
+  null,
+  dispatchToProps,
+)(MonitoringAlertsDecorator);

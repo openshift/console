@@ -1,0 +1,50 @@
+import type { FC } from 'react';
+import { useRef } from 'react';
+import { Tooltip, TooltipPosition } from '@patternfly/react-core';
+import type { Node } from '@patternfly/react-topology';
+import { useTranslation } from 'react-i18next';
+import { resourcePathFromModel } from '@console/internal/components/utils';
+import { BuildModel } from '@console/internal/models';
+import { Status } from '@console/shared';
+import { useBuildConfigsWatcher } from '@console/shared/src/hooks/useBuildConfigsWatcher';
+import { getResource } from '../../../../../utils';
+import BuildDecoratorBubble from './BuildDecoratorBubble';
+
+interface BuildDecoratorProps {
+  element: Node;
+  radius: number;
+  x: number;
+  y: number;
+}
+
+const BuildDecorator: FC<BuildDecoratorProps> = ({ element, radius, x, y }) => {
+  const ref = useRef();
+  const { t } = useTranslation();
+  const resource = getResource(element);
+  const { buildConfigs } = useBuildConfigsWatcher(resource);
+  const build = buildConfigs?.[0]?.builds?.[0];
+
+  if (!build) {
+    return null;
+  }
+
+  const label = t('topology~Build {{status}}', { status: build.status?.phase });
+
+  const link = `${resourcePathFromModel(
+    BuildModel,
+    build.metadata.name,
+    build.metadata.namespace,
+  )}/logs`;
+
+  return (
+    <Tooltip triggerRef={ref} content={label} position={TooltipPosition.left}>
+      <g ref={ref}>
+        <BuildDecoratorBubble x={x} y={y} radius={radius} ariaLabel={label} href={link}>
+          <Status status={build.status.phase} iconOnly noTooltip />
+        </BuildDecoratorBubble>
+      </g>
+    </Tooltip>
+  );
+};
+
+export default BuildDecorator;

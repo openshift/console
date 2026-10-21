@@ -1,0 +1,177 @@
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { useState, useCallback } from 'react';
+import { Modal, ModalHeader, ModalBody, Button, FormGroup, Form } from '@patternfly/react-core';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
+import { useDeepCompareMemoize } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useDeepCompareMemoize';
+import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
+import { k8sPatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
+import { K8sResourceKind, K8sModel } from '../../module/k8s';
+import { NumberSpinner, NumberSpinnerProps } from '../utils/number-spinner';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
+import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
+
+export const ConfigureCountModal: OverlayComponent<ConfigureCountModalProps> = (props) => {
+  const {
+    buttonText,
+    buttonTextKey,
+    buttonTextVariables,
+    defaultValue,
+    labelKey,
+    path,
+    resource,
+    resourceKind,
+    opts,
+    title,
+    titleKey,
+    titleVariables,
+    message,
+    messageKey,
+    messageVariables,
+    closeOverlay,
+  } = props;
+  const getPath = path ? path.substring(1).replace('/', '.') : '';
+  const [value, setValue] = useState<number>(_.get(resource, getPath) ?? defaultValue);
+  const { t } = useTranslation();
+  const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
+
+  const submit = useCallback(
+    (e) => {
+      e.preventDefault();
+
+      const patch = [{ op: 'replace', path: path || '', value: _.toInteger(value) }];
+      const invalidateState = props.invalidateState || _.noop;
+
+      invalidateState(true, _.toInteger(value));
+      resourceKind &&
+        resource &&
+        handlePromise(
+          k8sPatchResource({
+            model: resourceKind,
+            resource,
+            data: patch,
+          }),
+        )
+          .then(() => closeOverlay())
+          .catch(() => {
+            invalidateState(false);
+          });
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [value, path, props.invalidateState, handlePromise, resourceKind, resource, opts, closeOverlay],
+  );
+
+  const messageVariablesSafe = { ...messageVariables };
+  if (labelKey) {
+    messageVariablesSafe.resourceKinds = String(t(labelKey, titleVariables));
+  }
+
+  const onValueChange: NumberSpinnerProps['onChange'] = (event) => {
+    const eventValue = (event.target as HTMLInputElement).value;
+    const numericValue = Number(eventValue);
+    if (!isNaN(numericValue)) {
+      setValue(numericValue);
+    }
+  };
+
+  return (
+    <Modal
+      isOpen
+      onClose={closeOverlay}
+      variant="small"
+      aria-labelledby="configure-count-modal-title"
+    >
+      <ModalHeader
+        title={titleKey ? (t(titleKey, titleVariables) as string) : title}
+        labelId="configure-count-modal-title"
+        description={messageKey ? t(messageKey, messageVariablesSafe) : message}
+      />
+      <ModalBody>
+        <Form id="configure-count-form">
+          <FormGroup>
+            <NumberSpinner
+              value={value}
+              onChange={onValueChange}
+              changeValueBy={(operation) => setValue(_.toInteger(value) + operation)}
+              autoFocus
+              required
+              min={0}
+            />
+          </FormGroup>
+        </Form>
+      </ModalBody>
+      <ModalFooterWithAlerts errorMessage={errorMessage}>
+        <Button
+          type="submit"
+          variant="primary"
+          isLoading={inProgress}
+          onClick={submit}
+          form="configure-count-form"
+        >
+          {buttonTextKey ? t(buttonTextKey, buttonTextVariables) : buttonText}
+        </Button>
+        <Button variant="link" onClick={closeOverlay} type="button">
+          {t('public~Cancel')}
+        </Button>
+      </ModalFooterWithAlerts>
+    </Modal>
+  );
+};
+
+/**
+ * Hook to launch the configure count modal using useOverlay
+ */
+export const useConfigureCountModal = (baseProps?: Partial<ConfigureCountModalProps>) => {
+  const launcher = useOverlay();
+  const memoizedBaseProps = useDeepCompareMemoize(baseProps);
+  return useCallback(
+    (overrideProps?: Partial<ConfigureCountModalProps>) => {
+      const mergedProps = {
+        ...memoizedBaseProps,
+        ...overrideProps,
+      };
+      launcher<ConfigureCountModalProps>(ConfigureCountModal, mergedProps);
+    },
+    [launcher, memoizedBaseProps],
+  );
+};
+
+export const configureJobParallelismModal = (props) => {
+  const mergedProps = _.assign(
+    {},
+    {
+      defaultValue: 1,
+      titleKey: 'public~Edit parallelism',
+      // t('public~{{resourceKinds}} create one or more pods and ensure that a specified number of them successfully terminate. When the specified number of completions is successfully reached, the job is complete.')
+      messageKey:
+        'public~{{resourceKinds}} create one or more pods and ensure that a specified number of them successfully terminate. When the specified number of completions is successfully reached, the job is complete.',
+      messageVariables: { resourceKinds: props.resourceKind.labelPlural },
+      path: '/spec/parallelism',
+      buttonTextKey: 'public~Save',
+    },
+    props,
+  );
+
+  // Return the props for the useOverlay pattern
+  return mergedProps;
+};
+
+export type ConfigureCountModalProps = {
+  message?: string;
+  messageKey?: string;
+  messageVariables?: Record<string, string>;
+  buttonText?: string;
+  buttonTextKey?: string;
+  buttonTextVariables?: Record<string, string>;
+  defaultValue?: number;
+  labelKey?: string;
+  path?: string;
+  resource?: K8sResourceKind;
+  resourceKind?: K8sModel;
+  opts?: { [key: string]: any };
+  title?: string;
+  titleKey?: string;
+  titleVariables?: { [key: string]: any };
+  invalidateState?: (isInvalid: boolean, count?: number) => void;
+  // Note: cancel and close are not needed with useOverlay pattern as closeOverlay is injected
+};

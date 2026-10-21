@@ -1,0 +1,45 @@
+@import '../../../topology-utils';
+
+.odc-application-group {
+  cursor: pointer;
+
+  .odc-m-drag-active & {
+    pointer-events: none;
+  }
+
+  .pf-topology__group__background {
+    fill: $group-node-fill-color;
+    fill-opacity: $group-node-fill-opacity;
+  }
+
+  &.is-filtered .pf-topology__group__background {
+    stroke: $filtered-stroke-color;
+  }
+  &.pf-m-highlight .pf-topology__group__background {
+    fill: var(--pf-t--color--gray--10);
+    stroke: $interactive-stroke-color;
+  }
+  &.pf-m-selected .pf-topology__group__background {
+    stroke: $selected-stroke-color;
+    fill: $selected-fill-color;
+  }
+}
+.odc-m-drag-active,
+.odc-m-filter-active {
+  .odc-application-group {
+    opacity: $de-emphasize-opacity;
+
+    &.pf-m-highlight,
+    &.pf-m-dragging {
+      opacity: 1;
+    }
+  }
+}
+
+.odc-m-filter-active:not(.odc-m-drag-active) {
+  .odc-application-group {
+    &.is-filtered {
+      opacity: 1;
+    }
+  }
+}

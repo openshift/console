@@ -1,0 +1,29 @@
+$co-icon-and-text-icon-lg: var(--pf-t--global--font--size--xl); // same as <Icon size="heading_2xl" />
+
+.co-icon-and-text {
+  align-items: baseline;
+  display: flex;
+
+  // fix bug where concurrent .pf-v6-c-label are misaligned vertically
+  .pf-v6-c-label__icon & {
+    display: block;
+  }
+}
+
+.co-icon-and-text__icon {
+  flex-shrink: 0;
+  margin-right: 5px;
+}
+
+.co-icon-and-text--lg {
+  display: block;
+
+  .co-icon-and-text__icon {
+    font-size: $co-icon-and-text-icon-lg;
+    margin-right: 1rem;
+  }
+}
+
+.co-dashboard-icon {
+  font-size: $co-icon-and-text-icon-lg;
+}

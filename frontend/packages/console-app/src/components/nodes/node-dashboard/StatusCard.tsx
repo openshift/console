@@ -1,0 +1,32 @@
+import type { FC } from 'react';
+import { useContext } from 'react';
+import { Card, CardHeader, CardTitle } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
+import { DashboardAlerts } from '@console/internal/components/dashboard/dashboards-page/cluster-dashboard/status-card';
+import { LoadingInline } from '@console/internal/components/utils/status-box';
+import NodeAlerts from './NodeAlerts';
+import { NodeDashboardContext } from './NodeDashboardContext';
+import NodeHealth from './NodeHealth';
+
+const StatusCard: FC = () => {
+  const { obj } = useContext(NodeDashboardContext);
+  const { t } = useTranslation();
+  return (
+    <Card data-test-id="status-card">
+      <CardHeader>
+        <CardTitle>{t('console-app~Status')}</CardTitle>
+      </CardHeader>
+      {obj ? (
+        <>
+          <NodeHealth />
+          <NodeAlerts />
+          <DashboardAlerts labelSelector={{ node: obj.metadata.name }} />
+        </>
+      ) : (
+        <LoadingInline />
+      )}
+    </Card>
+  );
+};
+
+export default StatusCard;

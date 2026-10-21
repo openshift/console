@@ -1,0 +1,57 @@
+import type { FC } from 'react';
+import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternfly/react-core';
+import type { FormikValues } from 'formik';
+import { useField, useFormikContext } from 'formik';
+import { RequestSizeInput } from '@console/internal/components/utils/request-size-input';
+import { useFormikValidationFix } from '../../hooks/useFormikValidationFix';
+import type { ResourceLimitFieldProps } from './field-types';
+import { getFieldId } from './field-utils';
+
+const ResourceLimitField: FC<ResourceLimitFieldProps> = ({
+  label,
+  unitName,
+  unitOptions,
+  helpText,
+  inputAriaLabel,
+  ...props
+}) => {
+  const [field, { touched, error }] = useField(props.name);
+  const [fieldUnit] = useField(unitName);
+  const { setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
+  const fieldId = getFieldId(props.name, 'resource-limit');
+  const isValid = !(touched && error);
+  const errorMessage = !isValid ? error : '';
+
+  useFormikValidationFix(field.value);
+
+  return (
+    <FormGroup fieldId={fieldId} label={label} isRequired={props.required}>
+      <RequestSizeInput
+        {...props}
+        ariaLabel={inputAriaLabel}
+        inputID={fieldId}
+        onChange={(val) => {
+          setFieldValue(props.name, val.value);
+          setFieldTouched(props.name, true);
+          setFieldValue(unitName, val.unit);
+        }}
+        dropdownUnits={unitOptions}
+        defaultRequestSizeUnit={fieldUnit.value}
+        defaultRequestSizeValue={field.value}
+        describedBy={`${fieldId}-helper`}
+      />
+
+      <FormHelperText>
+        <HelperText>
+          {!isValid ? (
+            <HelperTextItem variant="error">{errorMessage}</HelperTextItem>
+          ) : (
+            <HelperTextItem>{helpText}</HelperTextItem>
+          )}
+        </HelperText>
+      </FormHelperText>
+    </FormGroup>
+  );
+};
+
+export default ResourceLimitField;

@@ -1,0 +1,52 @@
+[
+    {
+        "scope": "https://gitea.com:443",
+        "method": "GET",
+        "path": "/api/v1/repos/redhat-openshift-dev/che/contents/devfile.yaml?ref=master",
+        "body": "",
+        "status": 200,
+        "response": {
+            "name": "devfile.yaml",
+            "path": "devfile.yaml",
+            "sha": "6339f7be17153797bb98b4969a919e27802ddc3a",
+            "last_commit_sha": "eb41975c70bcc4615c9431b3157e285fd92f55dd",
+            "type": "file",
+            "size": 507,
+            "encoding": "base64",
+            "content": "YXBpVmVyc2lvbjogMS4wLjAKbWV0YWRhdGE6CiAgbmFtZTogY2hlLXNlcnZlci1pbi1jaGUKY29tcG9uZW50czoKICAtIHR5cGU6IGRvY2tlcmltYWdlCiAgICBpbWFnZTogcXVheS5pby9lY2xpcHNlL2NoZS1qYXZhMTEtbWF2ZW46bmlnaHRseQogICAgYWxpYXM6IG1hdmVuCiAgICBtb3VudFNvdXJjZXM6IHRydWUKICAgIG1lbW9yeUxpbWl0OiAyR2kKICAgIHZvbHVtZXM6CiAgICAgIC0gbmFtZTogbWF2ZW4KICAgICAgICBjb250YWluZXJQYXRoOiAvaG9tZS91c2VyLy5tMgogIC0gdHlwZTogY2hlUGx1Z2luCiAgICBpZDogcmVkaGF0L2phdmExMS9sYXRlc3QKY29tbWFuZHM6CiAgLSBuYW1lOiBidWlsZCB3aXRob3V0IHRlc3RzCiAgICBhY3Rpb25zOgogICAgICAtIHR5cGU6IGV4ZWMKICAgICAgICBjb21wb25lbnQ6IG1hdmVuCiAgICAgICAgY29tbWFuZDogbXZuIGNsZWFuIGluc3RhbGwgLURza2lwVGVzdHMKICAgICAgICB3b3JrZGlyOiAke0NIRV9QUk9KRUNUU19ST09UfS9jaGUK",
+            "target": null,
+            "url": "https://gitea.com/api/v1/repos/redhat-openshift-dev/che/contents/devfile.yaml?ref=master",
+            "html_url": "https://gitea.com/redhat-openshift-dev/che/src/branch/master/devfile.yaml",
+            "git_url": "https://gitea.com/api/v1/repos/redhat-openshift-dev/che/git/blobs/6339f7be17153797bb98b4969a919e27802ddc3a",
+            "download_url": "https://gitea.com/redhat-openshift-dev/che/raw/branch/master/devfile.yaml",
+            "submodule_git_url": null,
+            "_links": {
+                "self": "https://gitea.com/api/v1/repos/redhat-openshift-dev/che/contents/devfile.yaml?ref=master",
+                "git": "https://gitea.com/api/v1/repos/redhat-openshift-dev/che/git/blobs/6339f7be17153797bb98b4969a919e27802ddc3a",
+                "html": "https://gitea.com/redhat-openshift-dev/che/src/branch/master/devfile.yaml"
+            }
+        },
+        "rawHeaders": [
+            "Date",
+            "Sat, 01 Jun 2024 14:45:08 GMT",
+            "Content-Type",
+            "application/json;charset=utf-8",
+            "Content-Length",
+            "1630",
+            "Connection",
+            "keep-alive",
+            "Access-Control-Allow-Origin",
+            "*",
+            "Cache-Control",
+            "max-age=0, private, must-revalidate, no-transform",
+            "Server",
+            "Caddy",
+            "Vary",
+            "Origin",
+            "X-Content-Type-Options",
+            "nosniff",
+            "X-Frame-Options",
+            "SAMEORIGIN"
+        ]
+    }
+]

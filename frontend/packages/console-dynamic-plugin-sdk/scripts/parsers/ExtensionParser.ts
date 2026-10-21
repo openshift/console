@@ -1,0 +1,38 @@
+import * as tsj from 'ts-json-schema-generator';
+import * as ts from 'typescript';
+import type { ExtensionTypeInfo } from '../utils/type-resolver';
+
+/**
+ * Console extension types are declared as type aliases `type Foo = Extension<T, P>`.
+ * This parser embeds type declaration for the specific `Extension<T, P>` type alias
+ * into the `Foo` type declaration, reducing complexity of the generated JSON schema.
+ */
+export class ExtensionParser implements tsj.SubNodeParser {
+  constructor(
+    private readonly annotationsReader: tsj.AnnotationsReader,
+    private readonly consoleExtensions: ExtensionTypeInfo[],
+    private readonly getMainParser: () => tsj.NodeParser,
+  ) {}
+
+  supportsNode(node: ts.Node) {
+    return (
+      ts.isTypeAliasDeclaration(node) &&
+      this.consoleExtensions.some(
+        (e) => e.name === node.name.text || node.name.text === 'CustomExtension',
+      )
+    );
+  }
+
+  createType(node: ts.TypeAliasDeclaration) {
+    let aliasType = this.getMainParser().createType(node.type, new tsj.Context(node.type));
+    const annotations = this.annotationsReader.getAnnotations(node) || {};
+
+    if (aliasType instanceof tsj.AnnotatedType) {
+      aliasType = new tsj.AnnotatedType(aliasType.getType(), annotations, false);
+    } else {
+      aliasType = new tsj.AnnotatedType(aliasType, annotations, false);
+    }
+
+    return new tsj.DefinitionType(node.name.text, aliasType);
+  }
+}

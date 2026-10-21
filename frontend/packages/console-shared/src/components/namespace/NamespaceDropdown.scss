@@ -1,0 +1,58 @@
+@import '../../../../../public/style/vars';
+
+.co-namespace-dropdown {
+  margin-right: 20px;
+  max-width: 60%;
+}
+
+.pf-v6-c-menu .pf-v6-c-menu__content.co-namespace-dropdown__menu-content {
+  overflow-y: auto !important;
+}
+
+.pf-v6-c-menu.co-namespace-dropdown__menu {
+  // Position is to ensure that the dropdown doesn't push content down when opened
+  // Especially on the /topology/ns/[namespace]?view=graph page
+  position: absolute;
+  z-index: 9999; // same as popper
+
+  // This allows the menu to be longer than the menu toggle
+  // Currently PatternFly does not support a min width on the menu component
+  --pf-v6-c-menu--MinWidth: 210px;
+  @media (min-width: $pf-v6-global--breakpoint--md) {
+    --pf-v6-c-menu--MinWidth: 325px;
+  }
+}
+
+// The .co-namespace-dropdown__menu-toggle styles are enabled to make the PatternFly
+// more closely match the custom DropDown based drop down.
+// These are displayed side by site in the Developer view > Topology view.active.
+// Once the custom DropDown component changes to the PatternFly component, these styles can be removed.
+.pf-v6-c-menu-toggle.co-namespace-dropdown__menu-toggle {
+  background-color: var(
+    --co-namespace-dropdown__menu-toggle--BackgroundColor,
+    inherit
+  ); // Button should inherit the same backgound as the co-namespace-bar
+  font-size: ($font-size-base + 1) !important;
+  padding: 2px 0 !important;
+  width: 100%;
+
+  @media (min-width: $pf-v6-global--breakpoint--md) {
+    font-size: ($font-size-base + 2) !important;
+    padding-bottom: 9px !important;
+    padding-top: 9px !important;
+  }
+
+  &::before,
+  &::after {
+    border-width: 0 !important;
+  }
+
+  &:not(:disabled) {
+    color: inherit;
+  }
+
+  &:disabled {
+    background: none;
+    color: var(--pf-t--global--text--color--disabled);
+  }
+}

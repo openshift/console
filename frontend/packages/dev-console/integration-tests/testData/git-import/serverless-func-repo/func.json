@@ -1,0 +1,18 @@
+{
+    "name": "func.yaml",
+    "path": "func.yaml",
+    "sha": "9336f0c8f3b0f5c37a55dc7e4e063fa99bfa4a29",
+    "size": 612,
+    "url": "https://api.github.com/repos/Lucifergene/serverless-func-repo/contents/func.yaml?ref=master",
+    "html_url": "https://github.com/Lucifergene/serverless-func-repo/blob/master/func.yaml",
+    "git_url": "https://api.github.com/repos/Lucifergene/serverless-func-repo/git/blobs/9336f0c8f3b0f5c37a55dc7e4e063fa99bfa4a29",
+    "download_url": "https://raw.githubusercontent.com/Lucifergene/serverless-func-repo/master/func.yaml",
+    "type": "file",
+    "content": "c3BlY1ZlcnNpb246IDAuMzQuMApuYW1lOiBoZWxsby1mdW5jLW5vZGUKcnVu\ndGltZTogbm9kZQpyZWdpc3RyeTogcXVheS5pby92aXJhal8xCmltYWdlOiBx\ndWF5LmlvL3ZpcmFqXzEvaGVsbG8tZnVuYy1ub2RlOmxhdGVzdAppbWFnZURp\nZ2VzdDogc2hhMjU2OmNiOTFjNmY4YThhODk3YTE0MjMxMjg4YjkwYWYzNWVm\nYTAwZmRhMjRjMzk5ZWQ5M2FmZGRlNThiYmNkOWI0Y2EKY3JlYXRlZDogMjAy\nMi0xMS0xNlQxNTozODozOC41MDIyNzUyNDQrMDU6MzAKaW52b2NhdGlvbjoK\nICBmb3JtYXQ6IGh0dHAKYnVpbGQ6CiAgYnVpbGRwYWNrczogW10KICBidWls\nZGVyOiBzMmkKICBidWlsZEVudnM6IAogIC0gbmFtZTogTVlfQlVJTERfS0VZ\nCiAgICB2YWx1ZTogdGVzdHMKcnVuOgogIHZvbHVtZXM6IFtdCiAgZW52czoK\nICAtIG5hbWU6IE1ZX0FQSV9LRVkKICAgIHZhbHVlOiAne3sgZW52OkFQSV9L\nRVkgfX0nCmRlcGxveToKICBuYW1lc3BhY2U6IHZpcmFqCiAgYW5ub3RhdGlv\nbnM6IHt9CiAgb3B0aW9uczoge30KICBsYWJlbHM6IFtdCiAgaGVhbHRoRW5k\ncG9pbnRzOgogICAgbGl2ZW5lc3M6IC9oZWFsdGgvbGl2ZW5lc3MKICAgIHJl\nYWRpbmVzczogL2hlYWx0aC9yZWFkaW5lc3MK\n",
+    "encoding": "base64",
+    "_links": {
+        "self": "https://api.github.com/repos/Lucifergene/serverless-func-repo/contents/func.yaml?ref=master",
+        "git": "https://api.github.com/repos/Lucifergene/serverless-func-repo/git/blobs/9336f0c8f3b0f5c37a55dc7e4e063fa99bfa4a29",
+        "html": "https://github.com/Lucifergene/serverless-func-repo/blob/master/func.yaml"
+    }
+}

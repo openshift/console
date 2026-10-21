@@ -1,0 +1,150 @@
+[
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "secscan.quay.redhat.com",
+        "version": "v1alpha1",
+        "kind": "ImageManifestVuln"
+      },
+      "flag": "SECURITY_LABELLER"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "secscan.quay.redhat.com",
+        "version": "v1alpha1",
+        "kind": "ImageManifestVuln"
+      },
+      "label": "ImageManifestVuln",
+      "labelPlural": "ImageManifestVuln",
+      "abbr": "IMV"
+    }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "id": "imagevulnerabilities",
+      "perspective": "admin",
+      "section": "administration",
+      "name": "Image Vulnerabilities",
+      "insertBefore": "customresourcedefinitions",
+      "model": {
+        "group": "secscan.quay.redhat.com",
+        "kind": "ImageManifestVuln",
+        "version": "v1alpha1"
+      },
+      "dataAttributes": {
+        "data-test-id": "imagemanifestvuln-header"
+      }
+    },
+    "flags": {
+      "required": ["SECURITY_LABELLER"]
+    }
+  },
+  {
+    "type": "console.tab/horizontalNav",
+    "properties": {
+      "model": {
+        "version": "v1",
+        "kind": "Pod"
+      },
+      "page": {
+        "name": "%container-security~Vulnerabilities%",
+        "href": "vulnerabilities"
+      },
+      "component": { "$codeRef": "containerSecurityComponent.ImageManifestVulnPodTab" }
+    },
+    "flags": {
+      "required": ["SECURITY_LABELLER"]
+    }
+  },
+  {
+    "type": "console.tab/horizontalNav",
+    "properties": {
+      "model": {
+        "group": "project.openshift.io",
+        "version": "v1",
+        "kind": "Project"
+      },
+      "page": {
+        "name": "%container-security~Vulnerabilities%",
+        "href": "vulnerabilities"
+      },
+      "component": { "$codeRef": "containerSecurityComponent.ProjectImageManifestVulnListPage" }
+    },
+    "flags": {
+      "required": ["SECURITY_LABELLER"]
+    }
+  },
+  {
+    "type": "console.tab/horizontalNav",
+    "properties": {
+      "model": {
+        "version": "v1",
+        "kind": "Namespace"
+      },
+      "page": {
+        "name": "%container-security~Vulnerabilities%",
+        "href": "vulnerabilities"
+      },
+      "component": { "$codeRef": "containerSecurityComponent.ProjectImageManifestVulnListPage" }
+    },
+    "flags": {
+      "required": ["SECURITY_LABELLER"]
+    }
+  },
+  {
+    "type": "console.page/resource/list",
+    "properties": {
+      "model": {
+        "group": "secscan.quay.redhat.com",
+        "version": "v1alpha1",
+        "kind": "ImageManifestVuln"
+      },
+      "component": { "$codeRef": "containerSecurityComponent.ImageManifestVulnPage" }
+    },
+    "flags": {
+      "required": ["SECURITY_LABELLER"]
+    }
+  },
+  {
+    "type": "console.page/resource/details",
+    "properties": {
+      "model": {
+        "group": "secscan.quay.redhat.com",
+        "version": "v1alpha1",
+        "kind": "ImageManifestVuln"
+      },
+      "component": { "$codeRef": "containerSecurityComponent.ImageManifestVulnDetailsPage" }
+    },
+    "flags": {
+      "required": ["SECURITY_LABELLER"]
+    }
+  },
+  {
+    "type": "console.dashboards/overview/health/resource",
+    "properties": {
+      "title": "Image Vulnerabilities",
+      "resources": {
+        "imageManifestVuln": {
+          "kind": "secscan.quay.redhat.com~v1alpha1~ImageManifestVuln",
+          "namespaced": true,
+          "isList": true
+        }
+      },
+      "healthHandler": {
+        "$codeRef": "summary.securityHealthHandler"
+      },
+      "popupTitle": "Image Vulnerabilities breakdown",
+      "popupComponent": {
+        "$codeRef": "summary.SecurityBreakdownPopup"
+      }
+    },
+    "flags": {
+      "required": ["SECURITY_LABELLER"]
+    }
+  }
+]

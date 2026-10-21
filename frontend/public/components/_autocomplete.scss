@@ -1,0 +1,19 @@
+.co-suggestion-box {
+  position: relative;
+  width: 100%;
+  z-index: var(--pf-t--global--z-index--sm);
+}
+
+.co-suggestion-box__suggestions {
+  background-color: var(--pf-t--global--background--color--floating--default);
+  display: flex;
+  flex-direction: column;
+  gap: var(--pf-t--global--spacer--gap--group--vertical);
+  position: absolute;
+  width: 100%;
+}
+
+.co-suggestion-box__suggestions--shadowed {
+  box-shadow: var(--pf-t--global--box-shadow--md);
+  padding: var(--pf-t--global--spacer--sm);
+}

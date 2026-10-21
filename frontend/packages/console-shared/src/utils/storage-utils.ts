@@ -1,0 +1,16 @@
+import type { StorageClassResourceKind } from '@console/internal/module/k8s/types';
+
+export const cephStorageProvisioners = [
+  'ceph.rook.io/block',
+  'cephfs.csi.ceph.com',
+  'rbd.csi.ceph.com',
+];
+
+const objectStorageProvisioners = ['noobaa.io/obc', 'ceph.rook.io/bucket'];
+
+// To check if the provisioner is OCS based
+export const isCephProvisioner = (scProvisioner: string): boolean =>
+  cephStorageProvisioners.some((provisioner: string) => scProvisioner?.includes(provisioner));
+
+export const isObjectSC = (sc: StorageClassResourceKind) =>
+  objectStorageProvisioners.some((provisioner: string) => sc.provisioner?.includes(provisioner));

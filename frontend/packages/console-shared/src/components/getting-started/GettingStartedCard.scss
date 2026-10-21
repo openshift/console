@@ -1,0 +1,38 @@
+.ocs-getting-started-card {
+  &__title-icon {
+    margin-right: var(--pf-t--global--spacer--sm);
+  }
+
+  &__list {
+    // Remove default list styles which are globally resetted in the PatternFly samples
+    // but not in the SimpleList. https://www.patternfly.org/v4/components/simple-list
+    > ul {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+
+      > li {
+        // Add spacing to the skeleton similar to the SimpleListItem
+        .pf-v6-c-skeleton {
+          margin: var(--pf-v6-c-simple-list__item-link--PaddingTop)
+            var(--pf-v6-c-simple-list__item-link--PaddingRight)
+            var(--pf-v6-c-simple-list__item-link--PaddingBottom)
+            var(--pf-v6-c-simple-list__item-link--PaddingLeft);
+        }
+      }
+    }
+
+    .pf-v6-c-simple-list__item-link {
+      color: var(--pf-t--global--text--color--regular);
+    }
+
+    p {
+      margin-bottom: 0 !important;
+    }
+  }
+
+  a > svg,
+  button > svg {
+    margin-left: var(--pf-t--global--spacer--sm);
+  }
+}

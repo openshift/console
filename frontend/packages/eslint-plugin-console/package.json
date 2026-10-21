@@ -1,0 +1,34 @@
+{
+  "name": "eslint-plugin-console",
+  "version": "0.0.0-fixed",
+  "description": "Console ESLint rules and configs.",
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint . --max-warnings 0 --format codeframe",
+    "prettier": "eslint --format codeframe . --fix",
+    "prettier-check": "eslint --print-config ./lib/config/prettier.js | eslint-config-prettier-check"
+  },
+  "dependencies": {
+    "@typescript-eslint/eslint-plugin": "5.62.0",
+    "@typescript-eslint/parser": "5.62.0",
+    "eslint": "6.7.2",
+    "eslint-config-airbnb": "18.0.1",
+    "eslint-config-airbnb-base": "14.0.0",
+    "eslint-config-prettier": "6.7.0",
+    "eslint-import-resolver-typescript": "2.0.0",
+    "eslint-plugin-cypress": "2.11.3",
+    "eslint-plugin-graphql": "^4.0.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jest": "23.1.1",
+    "eslint-plugin-json": "^2.0.1",
+    "eslint-plugin-jsx-a11y": "6.2.3",
+    "eslint-plugin-node": "10.0.0",
+    "eslint-plugin-prettier": "3.1.4",
+    "eslint-plugin-promise": "4.2.1",
+    "eslint-plugin-react": "7.17.0",
+    "eslint-plugin-react-hooks": "4.1.2",
+    "eslint-plugin-sort-class-members": "1.6.0",
+    "eslint-plugin-tsdoc": "^0.2.14",
+    "merge": "1.2.1"
+  }
+}

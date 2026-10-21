@@ -1,0 +1,160 @@
+import type { ReactNode, FC } from 'react';
+import { useState, useEffect } from 'react';
+import { css } from '@patternfly/react-styles';
+import * as _ from 'lodash';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
+import { NamespaceBarProps, useActivePerspective } from '@console/dynamic-plugin-sdk';
+import { ALL_NAMESPACES_KEY } from '@console/dynamic-plugin-sdk/src/constants';
+import {
+  ALL_APPLICATIONS_KEY,
+  FLAGS,
+  KEYBOARD_SHORTCUTS,
+} from '@console/shared/src/constants/common';
+import { NamespaceDropdown } from '@console/shared/src/components/namespace/NamespaceDropdown';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
+import { useFlag } from '@console/dynamic-plugin-sdk/src/utils/flags';
+import { k8sGet } from '@console/internal/module/k8s';
+import { setFlag } from '../actions/flags';
+import { NamespaceModel, ProjectModel } from '../models';
+import { flagPending } from '../reducers/features';
+import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
+import { useK8sWatchResource } from './utils/k8s-watch-hook';
+import type {
+  WatchK8sResultsObject,
+  K8sResourceCommon,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { useCreateNamespaceOrProjectModal } from '@console/shared/src/hooks/useCreateNamespaceOrProjectModal';
+import { setActiveApplication } from '../actions/ui';
+
+export type NamespaceBarDropdownsProps = {
+  children: ReactNode;
+  isDisabled: boolean;
+  namespace?: WatchK8sResultsObject<K8sResourceCommon[]>;
+  onNamespaceChange: (namespace: string) => void;
+  useProjects: boolean;
+};
+
+const getModel = (useProjects) => (useProjects ? ProjectModel : NamespaceModel);
+
+export const NamespaceBarDropdowns: FC<NamespaceBarDropdownsProps> = ({
+  children,
+  isDisabled,
+  namespace,
+  onNamespaceChange,
+  useProjects,
+}) => {
+  const { removeQueryArgument } = useQueryParamsMutator();
+  const createNamespaceOrProjectModal = useCreateNamespaceOrProjectModal();
+  const dispatch = useConsoleDispatch();
+  const [activeNamespace, setActiveNamespace] = useActiveNamespace();
+  const activePerspective = useActivePerspective()[0];
+  const [activeNamespaceError, setActiveNamespaceError] = useState(false);
+  const canListNS = useFlag(FLAGS.CAN_LIST_NS);
+  useEffect(() => {
+    if (namespace?.loaded) {
+      dispatch(setFlag(FLAGS.SHOW_OPENSHIFT_START_GUIDE, _.isEmpty(namespace.data)));
+    }
+  }, [dispatch, namespace?.data, namespace?.loaded]);
+
+  /* Check if the activeNamespace is present in the cluster */
+  useEffect(() => {
+    if (activePerspective === 'dev' && activeNamespace !== ALL_NAMESPACES_KEY) {
+      k8sGet(useProjects ? ProjectModel : NamespaceModel, activeNamespace)
+        .then(() => {
+          setActiveNamespace(activeNamespace);
+          setActiveNamespaceError(false);
+        })
+        .catch((err) => {
+          if (err?.response?.status === 403 && useProjects) {
+            k8sGet(NamespaceModel, activeNamespace)
+              .then(() => {
+                setActiveNamespace(activeNamespace);
+                setActiveNamespaceError(false);
+              })
+              .catch(() => {
+                /* This would redirect to "/all-namespaces" to show the Project List */
+                setActiveNamespace(ALL_NAMESPACES_KEY);
+                setActiveNamespaceError(true);
+              });
+          } else if (err?.response?.status === 404) {
+            /* This would redirect to "/all-namespaces" to show the Project List */
+            setActiveNamespace(ALL_NAMESPACES_KEY);
+            setActiveNamespaceError(true);
+          }
+        });
+    }
+  }, [activeNamespace, activePerspective, setActiveNamespace, activeNamespaceError, useProjects]);
+
+  if (flagPending(canListNS)) {
+    return null;
+  }
+
+  return (
+    <div className="co-namespace-bar__items" data-test-id="namespace-bar-dropdown">
+      <NamespaceDropdown
+        onSelect={(event, newNamespace) => {
+          onNamespaceChange?.(newNamespace);
+          setActiveNamespace(newNamespace);
+          removeQueryArgument('project-name');
+          activeNamespace !== newNamespace && dispatch(setActiveApplication(ALL_APPLICATIONS_KEY));
+        }}
+        onCreateNew={() => {
+          createNamespaceOrProjectModal({
+            onSubmit: (newProject) => {
+              setActiveNamespace(newProject.metadata.name);
+              removeQueryArgument('project-name');
+            },
+          });
+        }}
+        selected={!activeNamespaceError ? activeNamespace : ALL_NAMESPACES_KEY}
+        isProjects={getModel(useProjects).label === 'Project'}
+        disabled={isDisabled}
+        shortCut={KEYBOARD_SHORTCUTS.focusNamespaceDropdown}
+      />
+      {children}
+    </div>
+  );
+};
+
+export const NamespaceBar: FC<NamespaceBarProps & { hideProjects?: boolean }> = ({
+  onNamespaceChange,
+  isDisabled,
+  children,
+  hideProjects = false,
+}) => {
+  const useProjects = useConsoleSelector<boolean>(({ k8s }) =>
+    k8s.hasIn(['RESOURCES', 'models', ProjectModel.kind]),
+  );
+
+  const [namespaces, loaded, loadError] = useK8sWatchResource(
+    hideProjects
+      ? null
+      : {
+          kind: getModel(useProjects).kind,
+          isList: true,
+        },
+  );
+
+  return (
+    <div className={css('co-namespace-bar', { 'co-namespace-bar--no-project': hideProjects })}>
+      {hideProjects ? (
+        <div className="co-namespace-bar__items" data-test-id="namespace-bar-dropdown">
+          {children}
+        </div>
+      ) : (
+        // Data from useK8sWatchResource is not used directly by the NamespaceDropdown nor the children.
+        // Data is used to determine if the StartGuide should be shown.
+        // See NamespaceBarDropdowns_  above.
+        <NamespaceBarDropdowns
+          useProjects={useProjects}
+          isDisabled={isDisabled}
+          onNamespaceChange={onNamespaceChange}
+          namespace={{ data: namespaces as K8sResourceCommon[], loaded, loadError }}
+        >
+          {children}
+        </NamespaceBarDropdowns>
+      )}
+    </div>
+  );
+};

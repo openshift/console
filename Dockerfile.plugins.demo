@@ -1,0 +1,32 @@
+# This image is used for testing OpenShift Console dynamic plugin capabilities.
+#
+# See dynamic-demo-plugin/README.md for details.
+
+# Stage 0: build the demo plugin
+FROM quay.io/coreos/tectonic-console-builder:v29 AS build
+
+RUN mkdir -p /src/console
+COPY . /src/console
+
+WORKDIR /src/console/frontend
+RUN yarn install && yarn generate
+
+WORKDIR /src/console/dynamic-demo-plugin
+RUN yarn install && yarn build
+
+# Stage 1: build the target image
+FROM node:22
+
+COPY --from=build /src/console/dynamic-demo-plugin/dist /opt/console-plugin-demo/static
+COPY --from=build /src/console/dynamic-demo-plugin/node_modules /opt/console-plugin-demo/node_modules
+COPY --from=build /src/console/dynamic-demo-plugin/http-server.sh /opt/console-plugin-demo/http-server.sh
+
+LABEL io.k8s.display-name="OpenShift Console Demo Plugin" \
+      io.k8s.description="Sample OpenShift Console dynamic plugin used for testing purposes." \
+      io.openshift.tags="openshift" \
+      maintainer="Vojtech Szocs <vszocs@redhat.com>"
+
+USER 1001
+
+WORKDIR /opt/console-plugin-demo
+ENTRYPOINT [ "./http-server.sh", "./static" ]

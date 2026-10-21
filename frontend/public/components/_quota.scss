@@ -1,0 +1,13 @@
+.co-resource-quota-chart-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+}
+
+.co-resource-quota-icon {
+  padding-left: 34px;
+}
+
+.co-resource-quota-scope__description {
+  font-size: $font-size-small;
+}

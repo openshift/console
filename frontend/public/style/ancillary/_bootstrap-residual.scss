@@ -1,0 +1,18 @@
+// Residual css rules within codebase that pertain to Bootstrap
+.form-group {
+  margin-bottom: var(--pf-t--global--spacer--md);
+}
+
+.help-block {
+  display: block; // account for any element using help-block
+  margin-top: var(--pf-t--global--spacer--xs);
+}
+
+:where(:not([class*='pf-v6-c-'])) {
+  @at-root label#{&} {
+    display: inline-block;
+    max-width: 100%;
+    margin-bottom: var(--pf-t--global--spacer--xs);
+    font-weight: var(--pf-t--global--font--weight--body--bold);
+  }
+}

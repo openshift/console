@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "Running husky pre-commit hook..."
+cd frontend
+yarn run lint-staged
+

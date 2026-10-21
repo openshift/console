@@ -1,0 +1,48 @@
+.co-file-dropzone__textarea {
+  min-height: 300px;
+}
+
+.co-file-dropzone {
+  position: relative;
+
+  &__flex {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  .co-file-dropzone-container {
+    background: var(--pf-t--global--background--color--backdrop--default);
+    bottom: 0;
+    left: 0;
+    outline: var(--pf-t--global--border--width--extra-strong) dashed var(--pf-t--global--border--color--default);
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: var(--pf-t--global--z-index--2xl);
+  }
+}
+
+// For compatibility with MultipleFileUpload
+.pf-v6-c-multiple-file-upload {
+  & .co-file-dropzone-container {
+    display: none;
+    outline-offset: calc(-1 * var(--pf-t--global--border--width--extra-strong));
+  }
+
+  &.pf-m-drag-over .co-file-dropzone-container {
+    color: var(--pf-t--global--color--brand--default);
+    display: block;
+    outline-color: var(--pf-t--global--color--brand--default);
+  }
+}
+
+.co-file-dropzone__drop-text {
+  font-size: var(--pf-t--global--icon--size--font--body--lg);
+  font-weight: var(--pf-t--global--font--weight--body--bold);
+  left: 50%;
+  margin-right: -50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}

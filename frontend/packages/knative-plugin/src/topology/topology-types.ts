@@ -1,0 +1,70 @@
+import type { PodControllerOverviewItem } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import type { OverviewItem } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import type { TopologyDataObject } from '@console/topology/src/topology-types';
+import type { KnativeItem } from '../utils/get-knative-resources';
+
+export enum NodeType {
+  EventSource = 'event-source',
+  EventSink = 'event-sink',
+  KnService = 'knative-service',
+  Revision = 'knative-revision',
+  PubSub = 'event-pubsub',
+  SinkUri = 'sink-uri',
+  EventSourceKafka = 'event-source-kafka',
+  Kafka = 'knative-kafka',
+  KafkaSink = 'kafka-sink',
+}
+
+export enum EdgeType {
+  Traffic = 'revision-traffic',
+  EventSource = 'event-source-link',
+  EventSink = 'event-sink-link',
+  EventPubSubLink = 'event-pubsub-link',
+  EventSourceKafkaLink = 'event-source-kafka-link',
+}
+
+export enum KameletType {
+  Sink = 'Sink',
+  Source = 'Source',
+}
+
+export type RevK8sResourceKind = K8sResourceKind & {
+  resources?: { [key: string]: any };
+};
+
+export type Subscriber = {
+  kind: string;
+  name: string;
+  namespace: string;
+  data: {
+    kind: string;
+    name: string;
+    namespace: string;
+    filters: { key: string; value: string }[];
+  }[];
+};
+
+export type PubsubNodes = {
+  channels: {
+    apiVersion: string;
+    name: string;
+    kind: string;
+  }[];
+  brokers: string[];
+};
+
+export type KnativeServiceOverviewItem = OverviewItem &
+  KnativeItem & {
+    subscribers?: Subscriber[];
+    current?: PodControllerOverviewItem;
+    previous?: PodControllerOverviewItem;
+    isRollingOut?: boolean;
+  };
+
+export interface KnativeTopologyDataObject<O extends OverviewItem, D = {}>
+  extends TopologyDataObject<D> {
+  resources: O;
+}
+
+export type KnativeUtil = (dc: K8sResourceKind, props) => KnativeItem | undefined;

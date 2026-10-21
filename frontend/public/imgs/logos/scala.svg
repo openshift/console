@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Generator: Adobe Illustrator 20.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+
+<svg
+   version="1.1"
+   id="Layer_1"
+   x="0px"
+   y="0px"
+   viewBox="0 0 32 32"
+   xml:space="preserve"
+   sodipodi:docname="scala.svg"
+   width="32"
+   height="32"
+   inkscape:version="1.3.2 (091e20ef0f, 2023-11-25)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><defs
+   id="defs10" /><sodipodi:namedview
+   id="namedview10"
+   pagecolor="#ffffff"
+   bordercolor="#000000"
+   borderopacity="0.25"
+   inkscape:showpageshadow="2"
+   inkscape:pageopacity="0.0"
+   inkscape:pagecheckerboard="0"
+   inkscape:deskcolor="#d1d1d1"
+   showgrid="false"
+   inkscape:zoom="25.15625"
+   inkscape:cx="10.514286"
+   inkscape:cy="16"
+   inkscape:window-width="1728"
+   inkscape:window-height="1011"
+   inkscape:window-x="0"
+   inkscape:window-y="0"
+   inkscape:window-maximized="1"
+   inkscape:current-layer="Layer_1" />
+<style
+   type="text/css"
+   id="style1">
+	.st0{fill:url(#SVGID_1_);}
+	.st1{fill:url(#SVGID_2_);}
+	.st2{fill:url(#SVGID_3_);}
+	.st3{fill:url(#SVGID_4_);}
+	.st4{fill:url(#SVGID_5_);}
+</style>
+<g
+   id="g10"
+   transform="translate(5.5049981)">
+	
+		<linearGradient
+   id="SVGID_1_"
+   gradientUnits="userSpaceOnUse"
+   x1="-294.8078"
+   y1="410.36011"
+   x2="-294.79501"
+   y2="410.36011"
+   gradientTransform="matrix(1538,0,0,576.75,453415,-236654.25)">
+		<stop
+   offset="0"
+   style="stop-color:#4F4F4F"
+   id="stop1" />
+		<stop
+   offset="1"
+   style="stop-color:#000000"
+   id="stop2" />
+	</linearGradient>
+	<path
+   class="st0"
+   d="m 0.65,19.69 v 2.46 c 0,0.41 8.95,1.11 14.78,2.46 2.82,-0.65 4.91,-1.46 4.91,-2.46 v -2.46 c 0,-1 -2.09,-1.81 -4.91,-2.46 -5.82,1.35 -14.78,2.05 -14.78,2.46"
+   id="path2"
+   style="fill:url(#SVGID_1_)" />
+	
+		<linearGradient
+   id="SVGID_2_"
+   gradientUnits="userSpaceOnUse"
+   x1="-294.8078"
+   y1="411.6763"
+   x2="-294.79501"
+   y2="411.6763"
+   gradientTransform="matrix(1538,0,0,576.75,453415,-237423.25)">
+		<stop
+   offset="0"
+   style="stop-color:#4F4F4F"
+   id="stop3" />
+		<stop
+   offset="1"
+   style="stop-color:#000000"
+   id="stop4" />
+	</linearGradient>
+	<path
+   class="st1"
+   d="m 0.65,9.85 v 2.46 c 0,0.41 8.95,1.11 14.78,2.46 2.82,-0.65 4.91,-1.46 4.91,-2.46 V 9.85 c 0,-1 -2.09,-1.81 -4.91,-2.46 C 9.61,8.74 0.65,9.43 0.65,9.85"
+   id="path4"
+   style="fill:url(#SVGID_2_)" />
+	
+		<linearGradient
+   id="SVGID_3_"
+   gradientUnits="userSpaceOnUse"
+   x1="-294.8078"
+   y1="411.6109"
+   x2="-294.79501"
+   y2="411.6109"
+   gradientTransform="matrix(1538,0,0,961.25,453415,-395645)">
+		<stop
+   offset="0"
+   style="stop-color:#C40000"
+   id="stop5" />
+		<stop
+   offset="1"
+   style="stop-color:#FF0000"
+   id="stop6" />
+	</linearGradient>
+	<path
+   class="st2"
+   d="m 0.65,14.77 v 7.38 c 0,-0.62 19.69,-1.85 19.69,-4.92 V 9.85 c 0.01,3.07 -19.69,4.3 -19.69,4.92"
+   id="path6"
+   style="fill:url(#SVGID_3_)" />
+	
+		<linearGradient
+   id="SVGID_4_"
+   gradientUnits="userSpaceOnUse"
+   x1="-294.8078"
+   y1="412.4007"
+   x2="-294.79501"
+   y2="412.4007"
+   gradientTransform="matrix(1538,0,0,961.25,453415,-396414)">
+		<stop
+   offset="0"
+   style="stop-color:#C40000"
+   id="stop7" />
+		<stop
+   offset="1"
+   style="stop-color:#FF0000"
+   id="stop8" />
+	</linearGradient>
+	<path
+   class="st3"
+   d="m 0.65,4.92 v 7.38 c 0,-0.62 19.69,-1.85 19.69,-4.92 V 0 C 20.35,3.08 0.65,4.31 0.65,4.92"
+   id="path8"
+   style="fill:url(#SVGID_4_)" />
+	
+		<linearGradient
+   id="SVGID_5_"
+   gradientUnits="userSpaceOnUse"
+   x1="-294.8078"
+   y1="410.8212"
+   x2="-294.79501"
+   y2="410.8212"
+   gradientTransform="matrix(1538,0,0,961.25,453415,-394876)">
+		<stop
+   offset="0"
+   style="stop-color:#C40000"
+   id="stop9" />
+		<stop
+   offset="1"
+   style="stop-color:#FF0000"
+   id="stop10" />
+	</linearGradient>
+	<path
+   class="st4"
+   d="M 0.65,24.62 V 32 c 0,-0.62 19.69,-1.85 19.69,-4.92 V 19.7 C 20.35,22.77 0.65,24 0.65,24.62"
+   id="path10"
+   style="fill:url(#SVGID_5_)" />
+</g>
+</svg>

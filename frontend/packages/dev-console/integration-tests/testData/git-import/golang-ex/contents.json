@@ -1,0 +1,35 @@
+[
+    {
+      "name": "README.md",
+      "path": "README.md",
+      "sha": "c623c430d3097ac88a9bde7e218b2a214fd2685b",
+      "size": 1465,
+      "url": "https://api.github.com/repos/sclorg/golang-ex/contents/README.md?ref=master",
+      "html_url": "https://github.com/sclorg/golang-ex/blob/master/README.md",
+      "git_url": "https://api.github.com/repos/sclorg/golang-ex/git/blobs/c623c430d3097ac88a9bde7e218b2a214fd2685b",
+      "download_url": "https://raw.githubusercontent.com/sclorg/golang-ex/master/README.md",
+      "type": "file",
+      "_links": {
+        "self": "https://api.github.com/repos/sclorg/golang-ex/contents/README.md?ref=master",
+        "git": "https://api.github.com/repos/sclorg/golang-ex/git/blobs/c623c430d3097ac88a9bde7e218b2a214fd2685b",
+        "html": "https://github.com/sclorg/golang-ex/blob/master/README.md"
+      }
+    },
+    {
+      "name": "hello_openshift.go",
+      "path": "hello_openshift.go",
+      "sha": "911ac655b333b93eac641bd26a4331d3a070ca65",
+      "size": 707,
+      "url": "https://api.github.com/repos/sclorg/golang-ex/contents/hello_openshift.go?ref=master",
+      "html_url": "https://github.com/sclorg/golang-ex/blob/master/hello_openshift.go",
+      "git_url": "https://api.github.com/repos/sclorg/golang-ex/git/blobs/911ac655b333b93eac641bd26a4331d3a070ca65",
+      "download_url": "https://raw.githubusercontent.com/sclorg/golang-ex/master/hello_openshift.go",
+      "type": "file",
+      "_links": {
+        "self": "https://api.github.com/repos/sclorg/golang-ex/contents/hello_openshift.go?ref=master",
+        "git": "https://api.github.com/repos/sclorg/golang-ex/git/blobs/911ac655b333b93eac641bd26a4331d3a070ca65",
+        "html": "https://github.com/sclorg/golang-ex/blob/master/hello_openshift.go"
+      }
+    }
+  ]
+  

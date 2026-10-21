@@ -1,0 +1,36 @@
+import type { FC } from 'react';
+import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/lib-core';
+import { ExternalLinkWithCopy, ResourceLink } from '@console/internal/components/utils';
+import { ImageStreamModel } from '@console/internal/models';
+import { BUILD_OUTPUT_IMAGESTREAM_URL, BUILD_OUTPUT_QUAY_URL } from '../../const';
+import type { BuildSpec } from '../../types';
+
+type BuildOutputProps = {
+  buildSpec: BuildSpec;
+};
+
+const BuildOutput: FC<BuildOutputProps> = ({ buildSpec }) => {
+  const outputImage = buildSpec?.output?.image;
+
+  if (outputImage?.startsWith(BUILD_OUTPUT_IMAGESTREAM_URL)) {
+    let imageStreamName = outputImage?.split('/')?.pop();
+    if (imageStreamName?.includes(':')) {
+      imageStreamName = imageStreamName?.split(':')[0];
+    }
+    const imageStreamNamespace = outputImage?.split('/')[1];
+    return (
+      <ResourceLink
+        name={imageStreamName}
+        namespace={imageStreamNamespace}
+        groupVersionKind={getGroupVersionKindForModel(ImageStreamModel)}
+      />
+    );
+  }
+  if (outputImage?.startsWith(BUILD_OUTPUT_QUAY_URL)) {
+    const outputImageName = outputImage?.split('/')?.slice(1)?.join('/');
+    return <ExternalLinkWithCopy href={`https://${outputImage}`} text={outputImageName} />;
+  }
+  return <>{outputImage}</>;
+};
+
+export default BuildOutput;

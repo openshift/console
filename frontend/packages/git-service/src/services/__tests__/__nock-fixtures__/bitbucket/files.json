@@ -1,0 +1,104 @@
+[
+    {
+        "scope": "https://api.bitbucket.org:443",
+        "method": "GET",
+        "path": "/2.0/repositories/akshinde/testgitsource/src/HEAD/?pagelen=50",
+        "body": "",
+        "status": 200,
+        "response": {
+            "pagelen": 50,
+            "values": [
+                {
+                    "mimetype": null,
+                    "links": {
+                        "self": {
+                            "href": "https://api.bitbucket.org/2.0/repositories/akshinde/testgitsource/src/d9caa32fdae992d7a1fa042340eb1482455c2c74/README.md"
+                        },
+                        "meta": {
+                            "href": "https://api.bitbucket.org/2.0/repositories/akshinde/testgitsource/src/d9caa32fdae992d7a1fa042340eb1482455c2c74/README.md?format=meta"
+                        },
+                        "history": {
+                            "href": "https://api.bitbucket.org/2.0/repositories/akshinde/testgitsource/filehistory/d9caa32fdae992d7a1fa042340eb1482455c2c74/README.md"
+                        }
+                    },
+                    "escaped_path": "README.md",
+                    "path": "README.md",
+                    "commit": {
+                        "type": "commit",
+                        "hash": "d9caa32fdae992d7a1fa042340eb1482455c2c74",
+                        "links": {
+                            "self": {
+                                "href": "https://api.bitbucket.org/2.0/repositories/akshinde/testgitsource/commit/d9caa32fdae992d7a1fa042340eb1482455c2c74"
+                            },
+                            "html": {
+                                "href": "https://bitbucket.org/akshinde/testgitsource/commits/d9caa32fdae992d7a1fa042340eb1482455c2c74"
+                            }
+                        }
+                    },
+                    "attributes": [],
+                    "type": "commit_file",
+                    "size": 2622
+                }
+            ],
+            "page": 1
+        },
+        "rawHeaders": [
+            "Server",
+            "nginx",
+            "Vary",
+            "Authorization",
+            "Cache-Control",
+            "max-age=900",
+            "Content-Type",
+            "application/json; charset=utf-8",
+            "X-B3-TraceId",
+            "f8f1dab88bee08e6",
+            "X-Usage-Output-Ops",
+            "0",
+            "Access-Control-Expose-Headers",
+            "Accept-Ranges, Content-Encoding, Content-Length, Content-Type, ETag, Last-Modified",
+            "X-Dc-Location",
+            "Micros",
+            "Strict-Transport-Security",
+            "max-age=31536000; includeSubDomains; preload",
+            "Date",
+            "Mon, 10 May 2021 17:11:42 GMT",
+            "bbr1repopath",
+            "/data/c03/n02/p/vp1556/data/d-342/r-50531342",
+            "X-Usage-User-Time",
+            "0.032430",
+            "X-Usage-System-Time",
+            "0.005546",
+            "X-Served-By",
+            "39d9d03b6416",
+            "Access-Control-Allow-Origin",
+            "*",
+            "X-View-Name",
+            "bitbucket.apps.repo2.api.v20.src.SourceHandler",
+            "Accept-Ranges",
+            "bytes",
+            "ETag",
+            "\"aee8553631eac9ebe132774d7375d52e\"",
+            "X-Static-Version",
+            "8acaaa31d195",
+            "X-Accepted-OAuth-Scopes",
+            "repository",
+            "X-Render-Time",
+            "0.113063812256",
+            "Connection",
+            "keep-alive",
+            "X-Usage-Input-Ops",
+            "32",
+            "X-Request-Count",
+            "676",
+            "X-Frame-Options",
+            "SAMEORIGIN",
+            "X-Version",
+            "8acaaa31d195",
+            "X-Cache-Info",
+            "caching",
+            "Content-Length",
+            "928"
+        ]
+    }
+]

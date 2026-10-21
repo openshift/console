@@ -1,0 +1,20 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+  name: console-oauth-client
+parameters:
+  - name: OAUTH_SECRET
+    generate: expression
+    from: "[a-zA-Z0-9]{40}"
+  - name: REDIRECT_URL
+    value: http://localhost:9000/auth/callback
+    required: true
+objects:
+  - apiVersion: oauth.openshift.io/v1
+    kind: OAuthClient
+    metadata:
+      name: console-oauth-client
+    grantMethod: auto
+    secret: ${OAUTH_SECRET}
+    redirectURIs:
+    - ${REDIRECT_URL}

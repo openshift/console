@@ -1,0 +1,184 @@
+@import '../../../styles/skeleton-screen';
+@import '../../../../../../public/style/vars';
+
+.co-activity-card__body {
+  max-height: 30rem;
+  min-height: 10rem;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.co-activity-card__ongoing-body {
+  .co-activity-item__ongoing:last-of-type {
+    border-bottom: none;
+  }
+}
+
+.co-activity-card__ongoing-title {
+  border-bottom: var(--pf-t--global--border--width--divider--default) solid
+    var(--pf-t--global--border--color--default);
+  padding: 0.2rem var(--pf-v6-c-card--child--PaddingInlineEnd) 0.2rem
+    var(--pf-v6-c-card--child--PaddingInlineStart);
+}
+
+.co-activity-card__recent-accordion.pf-v6-c-accordion {
+  padding: 0.75rem 0;
+  h5 {
+    font-family: var(--pf-t--global--font--family--body);
+    font-size: var(--pf-v6-c-card__body--FontSize);
+    margin: 0;
+  }
+
+  .co-recent-item__content {
+    .pf-v6-c-accordion {
+      --pf-v6-c-accordion__expanded-content-body--PaddingRight: var(
+        --pf-v6-c-card--child--PaddingInlineEnd
+      );
+      --pf-v6-c-accordion__expanded-content-body--PaddingLeft: var(
+        --pf-v6-c-card--child--PaddingInlineStart
+      );
+    }
+    .pf-v6-c-accordion__expandable-content-body {
+      padding-inline-start: var(--pf-v6-c-card--child--PaddingInlineStart);
+      padding-inline-end: var(--pf-v6-c-card--child--PaddingInlineEnd);
+    }
+  }
+  .co-recent-item__toggle.pf-v6-c-accordion__toggle {
+    --pf-v6-c-accordion__toggle--PaddingRight: var(--pf-v6-c-card--child--PaddingInlineEnd);
+    --pf-v6-c-accordion__toggle--PaddingLeft: var(--pf-v6-c-card--child--PaddingInlineStart);
+
+    line-height: 18px; // so .co-m-resource-icon and text are on same baseline
+  }
+
+  .co-recent-item--warning {
+    border-left-color: var(--pf-v6-pf-t--global--icon--color--status--warning--default);
+  }
+
+  .pf-v6-c-accordion__toggle {
+    &,
+    &:active,
+    &:focus {
+      .pf-v6-c-accordion__toggle-text {
+        font-weight: var(--pf-t--global--font--weight--body--default) !important;
+      }
+    }
+  }
+}
+
+.co-activity-card__recent-actions svg {
+  vertical-align: -0.125rem !important;
+}
+
+.co-activity-card__recent-list {
+  padding-bottom: 0 !important;
+}
+
+.co-activity-card__recent-title {
+  border-bottom: var(--pf-t--global--border--width--divider--default) solid
+    var(--pf-t--global--border--color--default);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  padding: 0.2rem var(--pf-v6-c-card--child--PaddingInlineEnd) 0.2rem
+    var(--pf-v6-c-card--child--PaddingInlineStart);
+}
+
+.co-activity-item {
+  display: flex;
+}
+
+.co-activity-item__ongoing {
+  margin: 1rem var(--pf-v6-c-card--child--PaddingInlineEnd) 1rem
+    var(--pf-v6-c-card--child--PaddingInlineStart);
+}
+
+.co-activity-item__progress.pf-v6-c-progress {
+  --pf-v6-c-progress--GridGap: 0;
+
+  padding-bottom: 0.2rem;
+}
+
+.co-activity-item__icon {
+  padding-right: var(--pf-t--global--spacer--xs);
+}
+
+.co-recent-item__content-header {
+  display: flex;
+  justify-content: space-between;
+  white-space: pre;
+}
+
+.co-recent-item__content-message {
+  margin-top: 0.5rem;
+  word-wrap: break-word;
+}
+
+.co-recent-item__content-resourcelink {
+  display: block;
+  flex: 2 0 0;
+  white-space: nowrap;
+
+  .co-resource-item__resource-name {
+    font-size: $font-size-base;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+}
+
+.co-recent-item__icon {
+  height: 18px !important;
+  margin-right: var(--pf-t--global--spacer--xs);
+  min-width: 18px;
+}
+
+.co-recent-item__icon--warning {
+  font-size: 1.1rem;
+}
+
+.co-recent-item__title {
+  align-items: center;
+  display: flex;
+}
+
+.co-recent-item__title-message {
+  align-items: center;
+  display: flex;
+  overflow: hidden;
+}
+
+.co-recent-item__title-message-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.co-recent-item__title-timestamp {
+  min-width: 60px;
+  padding-right: 0.3rem;
+  text-align: left;
+}
+
+.skeleton-activity__dashboard {
+  animation: $skeleton-animation;
+  height: $skeleton-bone-height-1line;
+  margin-bottom: 1em;
+  opacity: 0;
+  width: 100%;
+  &::after {
+    background-repeat: no-repeat;
+    content: '';
+    display: block;
+    height: 100%;
+    width: 100%;
+  }
+  &:last-of-type {
+    margin-bottom: 0;
+  }
+}
+
+.skeleton-activity__dashboard::after {
+  background-image: $skeleton-activity-bone, $skeleton-activity-icon;
+
+  background-position: $skeleton-activity-position, $skeleton-activity-icon-position;
+
+  background-size: $skeleton-activity-size, $skeleton-activity-icon-size;
+}

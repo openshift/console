@@ -1,0 +1,5 @@
+{
+  // Used to generate doc links to source code on GitHub:
+  // https://github.com/openshift/console/tree/<git-branch>/<src-file-path>
+  "git-branch": "main"
+}

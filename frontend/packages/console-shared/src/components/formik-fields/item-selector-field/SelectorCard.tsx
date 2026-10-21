@@ -1,0 +1,48 @@
+import type { FC } from 'react';
+import { Card, CardBody, CardTitle } from '@patternfly/react-core';
+import { StarIcon } from '@patternfly/react-icons';
+import { css } from '@patternfly/react-styles';
+import './SelectorCard.scss';
+
+interface SelectorCardProps {
+  title: string;
+  iconUrl: string;
+  name: string;
+  selected?: boolean;
+  recommended?: boolean;
+  onChange: (name: string) => void;
+}
+
+const SelectorCard: FC<SelectorCardProps> = ({
+  title,
+  iconUrl,
+  name,
+  selected,
+  recommended = false,
+  onChange,
+}) => {
+  const classes = css('odc-selector-card', { 'is-selected': selected });
+  return (
+    <Card
+      component="button"
+      type="button"
+      className={classes}
+      onClick={() => onChange(name)}
+      data-test={`card ${name}`}
+    >
+      <CardTitle>
+        <img className="odc-selector-card__icon" src={iconUrl} alt="" />
+      </CardTitle>
+      <CardBody>
+        <span className="odc-selector-card__title">{title}</span>
+      </CardBody>
+      {recommended && (
+        <span className="odc-selector-card__recommended">
+          <StarIcon />
+        </span>
+      )}
+    </Card>
+  );
+};
+
+export default SelectorCard;

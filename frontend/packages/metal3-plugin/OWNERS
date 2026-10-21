@@ -1,0 +1,8 @@
+reviewers:
+  - rawagner
+  - jhadvig
+approvers:
+  - rawagner
+  - jhadvig
+labels:
+  - component/metal3

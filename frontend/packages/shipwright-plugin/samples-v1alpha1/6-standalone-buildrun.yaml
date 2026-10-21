@@ -1,0 +1,14 @@
+apiVersion: shipwright.io/v1alpha1
+kind: BuildRun
+metadata:
+  generateName: buildpack-nodejs-buildrun-
+spec:
+  buildSpec:
+    source:
+      url: https://github.com/shipwright-io/sample-nodejs
+      contextDir: source-build
+    strategy:
+      kind: BuildStrategy
+      name: buildpacks-v3
+    output:
+      image: image-registry.openshift-image-registry.svc:5000/christoph/buildpack-nodejs-build:latest

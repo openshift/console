@@ -1,0 +1,178 @@
+[
+  {
+    "type": "console.flag/hookProvider",
+    "properties": {
+      "handler": {
+        "$codeRef": "useOLMv1FlagProvider"
+      }
+    },
+    "flags": {
+      "required": ["TECH_PREVIEW"]
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "olm.operatorframework.io",
+        "version": "v1",
+        "kind": "ClusterCatalog"
+      },
+      "flag": "CLUSTER_CATALOG_API"
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "olm.operatorframework.io",
+        "version": "v1",
+        "kind": "ClusterExtension"
+      },
+      "flag": "CLUSTER_EXTENSION_API"
+    }
+  },
+  {
+    "type": "console.catalog/item-type",
+    "properties": {
+      "type": "operator",
+      "title": "%olm-v1~Operators%",
+      "catalogDescription": "%olm-v1~Browse for Operators provided by Operator Lifecycle Manager.%",
+      "typeDescription": "%olm-v1~**Operators** are software extensions to OpenShift that make use of custom resources to manage applications and their components. They are managed by Operator Lifecycle Manager.%",
+      "filters": [
+        {
+          "label": "%olm-v1~Source%",
+          "attribute": "source"
+        },
+        {
+          "label": "%olm-v1~Provider%",
+          "attribute": "provider"
+        },
+        {
+          "label": "%olm-v1~Capability level%",
+          "attribute": "capabilities"
+        },
+        {
+          "label": "%olm-v1~Infrastructure features%",
+          "attribute": "infrastructureFeatures"
+        },
+        {
+          "label": "%olm-v1~Valid subscription%",
+          "attribute": "validSubscription"
+        }
+      ]
+    },
+    "flags": {
+      "required": ["CLUSTER_CATALOG_API", "TECH_PREVIEW", "OLMV1_ENABLED"]
+    }
+  },
+  {
+    "type": "console.catalog/item-provider",
+    "properties": {
+      "catalogId": "dev-catalog",
+      "type": "operator",
+      "title": "%olm-v1~Operators%",
+      "provider": { "$codeRef": "useCatalogItems" }
+    },
+    "flags": {
+      "required": ["CLUSTER_CATALOG_API", "TECH_PREVIEW", "OLMV1_ENABLED"]
+    }
+  },
+  {
+    "type": "console.catalog/categories-provider",
+    "properties": {
+      "catalogId": "dev-catalog",
+      "type": "operator",
+      "provider": { "$codeRef": "useCatalogCategories" }
+    },
+    "flags": {
+      "required": ["CLUSTER_CATALOG_API", "TECH_PREVIEW", "OLMV1_ENABLED"]
+    }
+  },
+  {
+    "type": "console.user-preference/group",
+    "properties": {
+      "id": "olmv1-catalog",
+      "label": "%olm-v1~OLMv1 Catalog%"
+    },
+    "flags": {
+      "required": ["TECH_PREVIEW"]
+    }
+  },
+  {
+    "type": "console.user-preference/item",
+    "properties": {
+      "id": "console.olmv1.enabled",
+      "label": "%olm-v1~OLMv1 Catalog%",
+      "groupId": "olmv1-catalog",
+      "description": "%olm-v1~Enable the OLMv1 catalog experience. OLMv1 is a technology preview feature that provides an updated operator catalog interface.%",
+      "field": {
+        "type": "checkbox",
+        "userSettingsKey": "console.olmv1.enabled",
+        "label": "%olm-v1~Enable OLMv1 catalog%",
+        "trueValue": true,
+        "falseValue": false,
+        "defaultValue": true
+      }
+    },
+    "flags": {
+      "required": ["TECH_PREVIEW"]
+    }
+  },
+  {
+    "type": "console.resource/create",
+    "properties": {
+      "model": {
+        "group": "olm.operatorframework.io",
+        "version": "v1",
+        "kind": "ClusterExtension"
+      },
+      "component": {
+        "$codeRef": "CreateClusterExtension"
+      }
+    },
+    "flags": {
+      "required": ["CLUSTER_EXTENSION_API"]
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "olm.operatorframework.io",
+        "version": "v1",
+        "kind": "ClusterExtension"
+      },
+      "provider": { "$codeRef": "defaultActionsProvider.useDefaultActionsProvider" }
+    },
+    "flags": {
+      "required": ["CLUSTER_EXTENSION_API"]
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "installed-software",
+      "section": "ecosystem",
+      "name": "%olm-v1~Installed Software%",
+      "insertAfter": "developer-catalog",
+      "href": "/installed-software",
+      "namespaced": true,
+      "startsWith": ["installed-software"]
+    },
+    "flags": {
+      "required": ["TECH_PREVIEW", "OLMV1_ENABLED", "CLUSTER_EXTENSION_API"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": false,
+      "path": ["/installed-software/all-namespaces", "/installed-software/ns/:ns"],
+      "component": { "$codeRef": "installedSoftwarePage.default" }
+    },
+    "flags": {
+      "required": ["TECH_PREVIEW", "OLMV1_ENABLED", "CLUSTER_EXTENSION_API"]
+    }
+  }
+]

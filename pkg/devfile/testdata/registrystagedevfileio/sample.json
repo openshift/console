@@ -1,0 +1,113 @@
+[
+  {
+    "name": "nodejs-basic",
+    "displayName": "Basic Node.js",
+    "description": "A simple Hello World Node.js application",
+    "type": "sample",
+    "tags": [
+      "NodeJS",
+      "Express"
+    ],
+    "icon": "https://nodejs.org/static/images/logos/nodejs-new-pantone-black.svg",
+    "projectType": "nodejs",
+    "language": "nodejs",
+    "git": {
+      "remotes": {
+        "origin": "https://github.com/nodeshift-starters/devfile-sample.git"
+      }
+    },
+    "provider": "Red Hat"
+  },
+  {
+    "name": "code-with-quarkus",
+    "displayName": "Basic Quarkus",
+    "description": "A simple Hello World Java application using Quarkus",
+    "type": "sample",
+    "tags": [
+      "Java",
+      "Quarkus"
+    ],
+    "icon": "https://design.jboss.org/quarkus/logo/final/SVG/quarkus_icon_rgb_default.svg",
+    "projectType": "quarkus",
+    "language": "java",
+    "git": {
+      "remotes": {
+        "origin": "https://github.com/devfile-samples/devfile-sample-code-with-quarkus.git"
+      }
+    },
+    "provider": "Red Hat"
+  },
+  {
+    "name": "java-springboot-basic",
+    "displayName": "Basic Spring Boot",
+    "description": "A simple Hello World Java Spring Boot application using Maven",
+    "type": "sample",
+    "tags": [
+      "Java",
+      "Spring"
+    ],
+    "icon": "https://spring.io/images/projects/spring-edf462fec682b9d48cf628eaf9e19521.svg",
+    "projectType": "springboot",
+    "language": "java",
+    "git": {
+      "remotes": {
+        "origin": "https://github.com/devfile-samples/devfile-sample-java-springboot-basic.git"
+      }
+    },
+    "provider": "Red Hat"
+  },
+  {
+    "name": "python-basic",
+    "displayName": "Basic Python",
+    "description": "A simple Hello World application using Python",
+    "type": "sample",
+    "tags": [
+      "Python"
+    ],
+    "icon": "https://raw.githubusercontent.com/devfile-samples/devfile-stack-icons/main/python.svg",
+    "projectType": "python",
+    "language": "python",
+    "git": {
+      "remotes": {
+        "origin": "https://github.com/devfile-samples/devfile-sample-python-basic.git"
+      }
+    },
+    "provider": "Red Hat"
+  },
+  {
+    "name": "go-basic",
+    "displayName": "Basic Go",
+    "description": "A simple Hello World application using Go",
+    "type": "sample",
+    "tags": [
+      "Go"
+    ],
+    "icon": "https://go.dev/blog/go-brand/Go-Logo/SVG/Go-Logo_Blue.svg",
+    "projectType": "go",
+    "language": "go",
+    "git": {
+      "remotes": {
+        "origin": "https://github.com/devfile-samples/devfile-sample-go-basic.git"
+      }
+    },
+    "provider": "Red Hat"
+  },
+  {
+    "name": "dotnet60-basic",
+    "displayName": "Basic .NET 6.0",
+    "description": "A simple application using .NET 6.0",
+    "type": "sample",
+    "tags": [
+      "dotnet"
+    ],
+    "icon": "https://github.com/dotnet/brand/raw/main/logo/dotnet-logo.png",
+    "projectType": "dotnet",
+    "language": "dotnet",
+    "git": {
+      "remotes": {
+        "origin": "https://github.com/devfile-samples/devfile-sample-dotnet60-basic.git"
+      }
+    },
+    "provider": "Red Hat"
+  }
+]

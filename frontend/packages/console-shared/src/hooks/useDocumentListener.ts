@@ -1,0 +1,73 @@
+import { useState, useRef, useEffect } from 'react';
+import { isModalOpen } from '@console/internal/components/modals';
+import { KEYBOARD_SHORTCUTS } from '../constants/common';
+
+/**
+ * Use this hook for components that require visibility only
+ * when the user is actively interacting with the document.
+ */
+
+export enum KeyEventModes {
+  HIDE = 'HIDE',
+  FOCUS = 'FOCUS',
+}
+
+const textInputKeyHandler = {
+  [KEYBOARD_SHORTCUTS.blurFilterInput]: KeyEventModes.HIDE,
+  [KEYBOARD_SHORTCUTS.focusFilterInput]: KeyEventModes.FOCUS,
+};
+
+export const useDocumentListener = <T extends HTMLElement>(
+  keyEventMap: KeyEventMap = textInputKeyHandler,
+) => {
+  const [visible, setVisible] = useState(true);
+  const ref = useRef<T>(null);
+
+  const handleEvent = (e) => {
+    if (!ref?.current?.contains(e.target)) {
+      setVisible(false);
+    }
+  };
+
+  const handleKeyEvents = (e) => {
+    // Don't steal focus from a modal open on top of the page.
+    if (isModalOpen()) {
+      return;
+    }
+    const { nodeName } = e.target;
+    switch (keyEventMap[e.key]) {
+      case KeyEventModes.HIDE:
+        setVisible(false);
+        ref.current.blur();
+        break;
+      case KeyEventModes.FOCUS:
+        if (
+          document.activeElement !== ref.current &&
+          // Don't steal focus if the user types the focus shortcut in another text input.
+          nodeName !== 'INPUT' &&
+          nodeName !== 'TEXTAREA'
+        ) {
+          ref.current.focus();
+          e.preventDefault();
+        }
+        break;
+      default:
+        break;
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('click', handleEvent, true);
+    document.addEventListener('keydown', handleKeyEvents, true);
+    return () => {
+      document.removeEventListener('click', handleEvent, true);
+      document.removeEventListener('keydown', handleKeyEvents, true);
+    };
+  });
+
+  return { visible, setVisible, ref };
+};
+
+export type KeyEventMap = {
+  [key: string]: KeyEventModes;
+};

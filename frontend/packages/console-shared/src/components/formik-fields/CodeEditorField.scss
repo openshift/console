@@ -1,0 +1,19 @@
+@import '~@patternfly/patternfly/sass-utilities/index';
+@import '../../../../../public/style/vars';
+
+.osc-yaml-editor {
+  margin-right: calc($pf-v6-global-gutter-x * -1);
+
+  &__editor {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    height: 100%;
+    padding-right: $pf-v6-global-gutter-x;
+    position: relative;
+    width: 100%;
+  }
+  .co-p-has-sidebar__sidebar {
+    margin-top: calc(var(--pf-v6-c-page__main-section--RowGap) * -1);
+  }
+}

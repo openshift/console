@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test-vulnerability
+  namespace: aut-image-vulnerability
+spec:
+  selector:
+    matchLabels:
+      app: quarkus
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: quarkus
+    spec:
+      containers:
+        - name: quarkus
+          image: >-
+            quay.io/redhat-appstudio-qe/quarkus:7dd062e2e8cb4ba599185e48d628b65a
+          ports:
+            - containerPort: 8080

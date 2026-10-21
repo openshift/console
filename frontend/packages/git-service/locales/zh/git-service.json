@@ -1,0 +1,4 @@
+{
+  "Unable to find repository": "无法找到仓库",
+  "Repository path {{path}} does not match expected name {{name}}": "仓库路径 {{path}} 与预期的名称 {{name}} 不匹配"
+}

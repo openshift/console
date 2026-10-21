@@ -1,0 +1,182 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+labels:
+  app: httpd-example-test
+  app.openshift.io/runtime: apache
+  template: httpd-example-test
+message: |-
+  The following service(s) have been created in your project: ${NAME}.
+
+  For more information about using this template, including OpenShift considerations, see https://github.com/sclorg/httpd-ex/blob/master/README.md.
+metadata:
+  annotations:
+    description: An example Apache HTTP Server Test. See https://github.com/sclorg/httpd-ex/blob/master/README.md.
+    iconClass: https://example.com/icon/logo.png
+    openshift.io/display-name: Test Apache HTTP Server
+    openshift.io/documentation-url: https://github.com/sclorg/httpd-ex
+    openshift.io/long-description: Test! This template defines resources needed to develop
+      a static application served by Apache HTTP Server (httpd), including a build
+      configuration and application deployment configuration.
+    openshift.io/provider-display-name: Red Hat, Inc.
+    openshift.io/support-url: https://access.redhat.com
+    samples.operator.openshift.io/version: 4.20.0-0-2025-07-11-041818-test-ci-ln-cnh2ypk-latest
+    template.openshift.io/bindable: "false"
+  labels:
+    samples.operator.openshift.io/managed: "true"
+  name: httpd-example-test
+  namespace: openshift
+objects:
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      description: Exposes and load balances the application pods
+    name: ${NAME}
+  spec:
+    ports:
+    - name: web
+      port: 8080
+      targetPort: 8080
+    selector:
+      name: ${NAME}
+- apiVersion: route.openshift.io/v1
+  kind: Route
+  metadata:
+    name: ${NAME}
+  spec:
+    host: ${APPLICATION_DOMAIN}
+    to:
+      kind: Service
+      name: ${NAME}
+- apiVersion: image.openshift.io/v1
+  kind: ImageStream
+  metadata:
+    annotations:
+      description: Keeps track of changes in the application image
+    name: ${NAME}
+- apiVersion: build.openshift.io/v1
+  kind: BuildConfig
+  metadata:
+    annotations:
+      description: Defines how to build the application
+      template.alpha.openshift.io/wait-for-ready: "true"
+    name: ${NAME}
+  spec:
+    output:
+      to:
+        kind: ImageStreamTag
+        name: ${NAME}:latest
+    source:
+      contextDir: ${CONTEXT_DIR}
+      git:
+        ref: ${SOURCE_REPOSITORY_REF}
+        uri: ${SOURCE_REPOSITORY_URL}
+      type: Git
+    strategy:
+      sourceStrategy:
+        from:
+          kind: ImageStreamTag
+          name: httpd:${HTTPD_VERSION}
+          namespace: ${NAMESPACE}
+      type: Source
+    triggers:
+    - type: ImageChange
+    - type: ConfigChange
+    - github:
+        secret: ${GITHUB_WEBHOOK_SECRET}
+      type: GitHub
+    - generic:
+        secret: ${GENERIC_WEBHOOK_SECRET}
+      type: Generic
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      description: Defines how to deploy the application server
+      image.openshift.io/triggers: '[{"from":{"kind":"ImageStreamTag","name":"${NAME}:latest"},"fieldPath":
+        "spec.template.spec.containers[0].image"}]'
+      template.alpha.openshift.io/wait-for-ready: "true"
+    name: ${NAME}
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        name: ${NAME}
+    strategy:
+      type: RollingUpdate
+    template:
+      metadata:
+        labels:
+          name: ${NAME}
+        name: ${NAME}
+      spec:
+        containers:
+        - env: []
+          image: ' '
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 30
+            timeoutSeconds: 3
+          name: httpd-example
+          ports:
+          - containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 3
+            timeoutSeconds: 3
+          resources:
+            limits:
+              memory: ${MEMORY_LIMIT}
+parameters:
+- description: The name assigned to all of the frontend objects defined in this template.
+  displayName: Name
+  name: NAME
+  required: true
+  value: httpd-example
+- description: The OpenShift Namespace where the ImageStream resides.
+  displayName: Namespace
+  name: NAMESPACE
+  required: true
+  value: openshift
+- description: Version of HTTPD image to be used (2.4-el8 by default).
+  displayName: HTTPD Version
+  name: HTTPD_VERSION
+  required: true
+  value: 2.4-el8
+- description: Maximum amount of memory the container can use.
+  displayName: Memory Limit
+  name: MEMORY_LIMIT
+  required: true
+  value: 512Mi
+- description: The URL of the repository with your application source code.
+  displayName: Git Repository URL
+  name: SOURCE_REPOSITORY_URL
+  required: true
+  value: https://github.com/sclorg/httpd-ex.git
+- description: Set this to a branch name, tag or other ref of your repository if you
+    are not using the default branch.
+  displayName: Git Reference
+  name: SOURCE_REPOSITORY_REF
+- description: Set this to the relative path to your project if it is not in the root
+    of your repository.
+  displayName: Context Directory
+  name: CONTEXT_DIR
+- description: The exposed hostname that will route to the httpd service, if left
+    blank a value will be defaulted.
+  displayName: Application Hostname
+  name: APPLICATION_DOMAIN
+- description: Github trigger secret.  A difficult to guess string encoded as part
+    of the webhook URL.  Not encrypted.
+  displayName: GitHub Webhook Secret
+  from: '[a-zA-Z0-9]{40}'
+  generate: expression
+  name: GITHUB_WEBHOOK_SECRET
+- description: A secret string used to configure the Generic webhook.
+  displayName: Generic Webhook Secret
+  from: '[a-zA-Z0-9]{40}'
+  generate: expression
+  name: GENERIC_WEBHOOK_SECRET

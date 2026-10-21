@@ -1,0 +1,22 @@
+defaultArtifactsConfig:
+  - arch: amd64
+    operatingSystem: linux
+    path: /usr/share/openshift/linux_amd64/oc
+  - arch: amd64
+    operatingSystem: mac
+    path: /usr/share/openshift/mac/oc
+  - arch: amd64
+    operatingSystem: windows
+    path: /usr/share/openshift/windows/oc.exe
+  - arch: arm64
+    operatingSystem: linux
+    path: /usr/share/openshift/linux_arm64/oc
+  - arch: arm64
+    operatingSystem: mac
+    path: /usr/share/openshift/mac_arm64/oc
+  - arch: ppc64le
+    operatingSystem: linux
+    path: /usr/share/openshift/linux_ppc64le/oc
+  - arch: s390x
+    operatingSystem: linux
+    path: /usr/share/openshift/linux_s390x/oc

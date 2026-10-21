@@ -1,0 +1,94 @@
+import type { FC } from 'react';
+import { useState, useEffect } from 'react';
+import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternfly/react-core';
+import type { FormikValues } from 'formik';
+import { useFormikContext, useField } from 'formik';
+import { connect } from 'react-redux';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
+import { ErrorModal } from '@console/internal/components/modals/error-modal';
+import { ValueFromPair } from '@console/internal/components/utils/value-from-pair';
+import { SecretModel } from '@console/internal/models';
+import { k8sGet } from '@console/internal/module/k8s';
+import { getActiveNamespace } from '@console/internal/reducers/ui';
+import type { RootState } from '@console/internal/redux';
+import { getFieldId } from '@console/shared';
+import { useFormikValidationFix } from '@console/shared/src/hooks/useFormikValidationFix';
+
+interface SecretKeySelectorProps {
+  name: string;
+  label: string;
+  isRequired?: boolean;
+}
+
+interface StateProps {
+  namespace: string;
+}
+
+const SecretKeySelector: FC<SecretKeySelectorProps & StateProps> = ({
+  name,
+  label,
+  namespace,
+  isRequired = false,
+}) => {
+  const { setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
+  const [field, { touched, error }] = useField(name);
+  const [secrets, setSecrets] = useState({});
+  const launchModal = useOverlay();
+  const fieldId = getFieldId(name, 'secret-key-input');
+  const isValid = !(touched && error);
+
+  const getErrorMessage = (err: string | { name?: string; key?: string }): string => {
+    let errMsg = '';
+    if (typeof err === 'string') {
+      errMsg = err;
+    } else {
+      errMsg = err?.name || err?.key;
+    }
+    return errMsg;
+  };
+  const errorMessage = !isValid ? getErrorMessage(error) : '';
+
+  useFormikValidationFix(field.value);
+
+  useEffect(() => {
+    k8sGet(SecretModel, null, namespace)
+      .then((nsSecrets) => {
+        setSecrets(nsSecrets);
+      })
+      .catch((err) => {
+        if (err?.response?.status !== 403) {
+          launchModal(ErrorModal, { error: err?.message });
+        }
+      });
+  }, [namespace, launchModal]);
+
+  return (
+    <FormGroup fieldId={fieldId} label={label} isRequired={isRequired}>
+      <ValueFromPair
+        pair={{ secretKeyRef: field.value }}
+        secrets={secrets}
+        configMaps={{}}
+        onChange={(val) => {
+          setFieldValue(name, val.target.value.secretKeyRef);
+          setFieldTouched(name, true);
+        }}
+      />
+
+      {!isValid && (
+        <FormHelperText>
+          <HelperText>
+            <HelperTextItem variant="error">{errorMessage}</HelperTextItem>
+          </HelperText>
+        </FormHelperText>
+      )}
+    </FormGroup>
+  );
+};
+
+const mapStateToProps = (state: RootState): StateProps => ({
+  namespace: getActiveNamespace(state),
+});
+
+export default connect<StateProps, null, SecretKeySelectorProps>(mapStateToProps)(
+  SecretKeySelector,
+);

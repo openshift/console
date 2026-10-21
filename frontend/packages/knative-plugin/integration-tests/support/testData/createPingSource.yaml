@@ -1,0 +1,21 @@
+apiVersion: sources.knative.dev/v1
+kind: PingSource
+metadata:
+  name: ping-source-resource-event
+  namespace: aut-knative
+  labels:
+    app: ping-source
+    app.kubernetes.io/instance: ping-source
+    app.kubernetes.io/component: ping-source
+    app.kubernetes.io/name: ping-source
+    app.kubernetes.io/part-of: nodejs-ex-git-app
+  annotations:
+    openshift.io/generated-by: OpenShiftWebConsole
+spec:
+  data: Message
+  schedule: '* * * * *'
+  sink:
+    ref:
+      apiVersion: serving.knative.dev/v1
+      kind: Service
+      name: nodejs-ex-git

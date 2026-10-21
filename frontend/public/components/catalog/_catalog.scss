@@ -1,0 +1,240 @@
+@use '../../../public/style/vars';
+@use '../../../public/style/mixin/catalog-logo-background';
+
+$catalog-capability-level-icon-left: -20px;
+$catalog-capability-level-icon-top: 4px;
+$catalog-capability-level-inactive-color: var(--pf-t--global--text--color--disabled);
+$catalog-item-icon-size-lg: 40px;
+$catalog-item-icon-size-sm: 24px;
+
+.co-catalog-item-details {
+  align-items: flex-start;
+  display: flex;
+  margin: 0 0 10px;
+
+  &__description {
+    white-space: pre-wrap;
+  }
+
+  &__kind-label {
+    font-weight: var(--pf-t--global--font--weight--body--bold);
+  }
+
+  &__name {
+    margin-bottom: 10px;
+  }
+
+  &__provider,
+  &__tags {
+    margin-bottom: 5px;
+  }
+
+  &__tag {
+    color: var(--pf-t--global--text--color--subtle);
+    font-size: ($font-size-base - 1);
+    margin-right: 5px;
+    text-transform: uppercase;
+  }
+}
+
+.co-catalog-item-icon {
+  @include catalog-logo-background.catalog-logo-background();
+  margin-right: 15px;
+
+  &__bg {
+    align-items: center;
+    display: flex;
+    min-height: 40px;
+    min-width: 40px; // prevent Firefox from collapsing the img since it assigns base64 encoded svg without height and width values to 0 https://bugzilla.mozilla.org/show_bug.cgi?id=1328124 and https://jsbin.com/kuzovihumo/edit?js,console
+  }
+
+  &__icon {
+    font-size: $catalog-item-icon-size-sm;
+
+    &--large {
+      font-size: $catalog-item-icon-size-lg;
+    }
+  }
+
+  &__img {
+    max-height: $catalog-item-icon-size-sm;
+    max-width: $catalog-item-icon-size-sm;
+    width: 100%; // prevent image size collapse to 0
+
+    &[src$='.svg'] {
+      width: $catalog-item-icon-size-sm;
+    }
+
+    &--large {
+      max-height: $catalog-item-icon-size-lg;
+      max-width: $catalog-item-icon-size-lg;
+
+      &[src$='.svg'] {
+        width: $catalog-item-icon-size-lg;
+      }
+    }
+  }
+}
+
+.co-catalog-page {
+  border: 1px solid var(--pf-t--global--border--color--default);
+  border-radius: var(--pf-t--global--border--radius--medium);
+  padding-bottom: $pf-v6-global-gutter-y;
+  padding-top: $pf-v6-global-gutter-y;
+
+  &__alert {
+    margin: 0 $pf-v6-global-gutter-x $pf-v6-global-gutter-y;
+  }
+
+  &__content {
+    overflow: hidden;
+  }
+
+  &__group-title {
+    margin-bottom: var(--pf-t--global--spacer--sm);
+  }
+
+  &__header {
+    margin: 0 $pf-v6-global-gutter-x 0 25px;
+  }
+
+  &__num-items {
+    font-weight: var(--pf-t--global--font--weight--body--bold);
+  }
+
+  &__overlay--right {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    border-top-right-radius: 0;
+    bottom: 0;
+    right: 0;
+    top: 4.75rem; // --pf-v6-c-page__header--MinHeight
+  }
+
+  &__overlay-action {
+    align-items: baseline;
+    display: inline-flex !important;
+    margin: var(--pf-t--global--spacer--sm) var(--pf-t--global--spacer--sm) 0 0;
+    overflow-x: hidden;
+  }
+
+  &__overlay-action-label {
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__overlay-actions {
+    display: flex;
+    flex-wrap: wrap;
+    white-space: normal;
+  }
+
+  &__overlay-description {
+    white-space: pre-wrap;
+  }
+
+  &__tabs {
+    width: 220px;
+  }
+}
+
+.co-catalog-page__overlay.pf-v6-c-modal-box {
+  @media screen and (min-width: $screen-sm) {
+    --pf-v6-c-modal-box--Width: 600px;
+  }
+
+  @media screen and (min-width: $screen-md) {
+    --pf-v6-c-modal-box--Width: 900px;
+  }
+}
+
+.co-catalog-tile {
+  height: vars.$co-m-catalog-tile-height;
+  width: vars.$co-m-catalog-tile-width;
+  overflow: hidden; // prevent scrollbars within a card
+}
+
+.properties-side-panel-pf-property-value__capability-level {
+  color: $catalog-capability-level-inactive-color;
+  margin-bottom: 5px;
+  position: relative;
+
+  &--active {
+    color: inherit;
+
+    &::before {
+      display: none; // hide empty circle since icon is present
+    }
+  }
+
+  &::before {
+    // empty circle
+    border: 1px solid $catalog-capability-level-inactive-color;
+    border-radius: 10px;
+    content: '';
+    height: 14px;
+    left: $catalog-capability-level-icon-left;
+    position: absolute;
+    top: $catalog-capability-level-icon-top;
+    width: 14px;
+  }
+
+  &:not(:last-child)::after {
+    // pipe after circle
+    background: $catalog-capability-level-inactive-color;
+    content: '';
+    height: 6px;
+    left: -13px;
+    position: absolute;
+    top: 21px;
+    width: 1px;
+  }
+}
+
+.properties-side-panel-pf-property-value__capability-level-icon {
+  left: $catalog-capability-level-icon-left;
+  position: absolute;
+  top: $catalog-capability-level-icon-top;
+}
+
+.properties-side-panel-pf-property-value__capability-levels {
+  list-style: none;
+}
+
+.co-clusterserviceversion-link {
+  text-decoration: none;
+
+  .co-clusterserviceversion-logo__name__clusterserviceversion {
+    text-decoration: underline;
+  }
+}
+
+.co-clusterserviceversion-logo {
+  align-items: flex-start;
+  display: flex;
+  gap: var(--pf-t--global--spacer--md);
+}
+
+.co-clusterserviceversion-logo__icon {
+  @include catalog-logo-background();
+  align-items: center;
+  display: flex;
+  flex: 0 0 auto;
+  justify-content: center;
+  margin-bottom: var(--pf-t--global--spacer--xs);
+}
+
+.co-clusterserviceversion-logo__name {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.co-clusterserviceversion-logo__name__clusterserviceversion {
+  font-size: 15px !important;
+  margin-bottom: 5px !important;
+}
+
+.co-page-heading .co-clusterserviceversion-logo__name {
+  margin: var(--pf-t--global--spacer--sm) 0;
+}

@@ -1,0 +1,58 @@
+import * as _ from 'lodash';
+import type { FC } from 'react';
+import { SearchIcon } from '@patternfly/react-icons';
+import { Link } from 'react-router';
+import { useTranslation } from 'react-i18next';
+
+import { Selector as SelectorKind } from '../../module/k8s';
+import { selectorToString } from '@console/dynamic-plugin-sdk/src/utils/k8s';
+
+const Requirement: FC<RequirementProps> = ({ kind, requirements, namespace = '' }) => {
+  // Strip off any trailing '=' characters for valueless selectors
+  const requirementAsString = selectorToString(requirements).replace(/=,/g, ',').replace(/=$/g, '');
+  const requirementAsUrlEncodedString = encodeURIComponent(requirementAsString);
+
+  const to = namespace
+    ? `/search/ns/${namespace}?kind=${kind}&q=${requirementAsUrlEncodedString}`
+    : `/search/all-namespaces?kind=${kind}&q=${requirementAsUrlEncodedString}`;
+
+  return (
+    <div className="co-m-requirement">
+      <Link className={`co-m-requirement__link co-text-${kind.toLowerCase()}`} to={to}>
+        <SearchIcon className="co-m-requirement__icon co-icon-flex-child" />
+        <span className="co-m-requirement__label">{requirementAsString.replace(/,/g, ', ')}</span>
+      </Link>
+    </div>
+  );
+};
+Requirement.displayName = 'Requirement';
+
+export const Selector: FC<SelectorProps> = ({
+  kind = 'Pod',
+  selector = {},
+  namespace = undefined,
+}) => {
+  const { t } = useTranslation();
+  return (
+    <div className="co-m-selector">
+      {_.isEmpty(selector) ? (
+        <p className="pf-v6-u-text-color-subtle">{t('public~No selector')}</p>
+      ) : (
+        <Requirement kind={kind} requirements={selector} namespace={namespace} />
+      )}
+    </div>
+  );
+};
+Selector.displayName = 'Selector';
+
+type RequirementProps = {
+  kind: string;
+  requirements: SelectorKind;
+  namespace?: string;
+};
+
+type SelectorProps = {
+  kind?: string;
+  selector: SelectorKind;
+  namespace?: string;
+};

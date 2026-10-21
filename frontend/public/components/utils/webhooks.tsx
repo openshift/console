@@ -1,0 +1,246 @@
+import type { FC } from 'react';
+import { useState, useEffect } from 'react';
+import * as _ from 'lodash';
+import { Base64 } from 'js-base64';
+import { PasteIcon } from '@patternfly/react-icons';
+import { Button, AlertVariant } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
+
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { K8sResourceKind, k8sGet } from '../../module/k8s';
+import { ExpandableAlert } from './alerts';
+import { SectionHeading } from './headings';
+import { ResourceLink } from './resource-link';
+import { useAccessReview } from './rbac';
+import { SecretModel } from '../../models';
+import { ErrorModal } from '../modals/error-modal';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
+
+const kubeAPIServerURL = window.SERVER_FLAGS.kubeAPIServerURL || 'https://<api-server>';
+enum TriggerTypes {
+  Bitbucket = 'Bitbucket',
+  ConfigChange = 'ConfigChange',
+  Generic = 'Generic',
+  GitHub = 'GitHub',
+  GitLab = 'GitLab',
+  ImageChange = 'ImageChange',
+}
+const webhookTriggerTypes = new Set<TriggerTypes>([
+  TriggerTypes.Bitbucket,
+  TriggerTypes.Generic,
+  TriggerTypes.GitHub,
+  TriggerTypes.GitLab,
+]);
+const getTriggerProperty = (trigger: WebhookTrigger) => trigger.type.toLowerCase();
+
+const getTableColumnClasses = (canGetSecret: boolean) => {
+  if (canGetSecret) {
+    return [
+      'pf-v6-c-table__td',
+      'pf-v6-c-table__td pf-m-hidden pf-m-visible-on-xl pf-v6-u-w-50-on-xl  pf-m-break-word',
+      'pf-v6-c-table__td pf-m-hidden pf-m-visible-on-md',
+      'pf-v6-c-table__td',
+    ];
+  }
+  return [
+    'pf-v6-c-table__td pf-v6-u-w-16-on-md',
+    'pf-v6-c-table__td pf-v6-u-w-58-on-xl pf-m-break-word',
+    'pf-v6-c-table__td pf-m-hidden pf-m-visible-on-md pf-v6-u-w-25-on-md',
+    'pf-v6-c-table__td pf-m-hidden',
+  ];
+};
+
+export const WebhookTriggers: FC<WebhookTriggersProps> = (props) => {
+  const { t } = useTranslation();
+  const launchModal = useOverlay();
+  const { resource } = props;
+  const { name, namespace } = resource.metadata;
+  const { triggers } = resource.spec;
+  const canGetSecret = useAccessReview({
+    group: SecretModel.apiGroup,
+    resource: SecretModel.plural,
+    verb: 'get',
+    namespace,
+  });
+  const tableColumnClasses = getTableColumnClasses(canGetSecret);
+  const [webhookSecrets, setWebhookSecrets] = useState<K8sResourceKind[]>([]);
+  const [webhookTriggers, setWebhookTriggers] = useState<WebhookTrigger[]>([]);
+  const [secretNames, setSecretNames] = useState<string[]>([]);
+  const [secretErrors, setSecretErrors] = useState<string[]>([]);
+  const [isLoaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    setWebhookTriggers((previousTriggers) => {
+      const newTriggers = _.filter(triggers, ({ type }) => webhookTriggerTypes.has(type));
+      return _.isEqual(previousTriggers, newTriggers) ? previousTriggers : newTriggers;
+    });
+  }, [triggers]);
+
+  useEffect(() => {
+    const newSecretNames: string[] = _.uniq(
+      webhookTriggers.reduce((acc: string[], webhook: WebhookTrigger): string[] => {
+        const triggerProperty = getTriggerProperty(webhook);
+        const secretName = _.get(webhook, [triggerProperty, 'secretReference', 'name']);
+        return secretName ? [...acc, secretName] : acc;
+      }, []),
+    );
+    setSecretNames(newSecretNames);
+  }, [webhookTriggers]);
+
+  useEffect(() => {
+    if (!canGetSecret) {
+      return;
+    }
+    let errors: string[] = [];
+    Promise.all(
+      secretNames.map(
+        (webhookName: string): Promise<K8sResourceKind> => {
+          return k8sGet(SecretModel, webhookName, namespace).then(
+            (secret) => secret,
+            (error) => {
+              errors = [...errors, `Error: ${error.message}`];
+              launchModal(ErrorModal, { error: error.message });
+              return null;
+            },
+          );
+        },
+      ),
+    ).then((secrets) => {
+      setSecretErrors(errors);
+      setWebhookSecrets(_.compact(secrets));
+      setLoaded(true);
+    });
+  }, [secretNames, isLoaded, canGetSecret, namespace, launchModal]);
+
+  if (_.isEmpty(webhookTriggers)) {
+    return null;
+  }
+
+  const getWebhookURL = (trigger: WebhookTrigger, secret?: string) => {
+    const triggerProperty = getTriggerProperty(trigger);
+    return `${kubeAPIServerURL}/apis/build.openshift.io/v1/namespaces/${namespace}/buildconfigs/${name}/webhooks/${
+      secret ? secret : '<secret>'
+    }/${triggerProperty}`;
+  };
+
+  const getSecretReference = (trigger: WebhookTrigger) => {
+    const triggerProperty = getTriggerProperty(trigger);
+    const secretName = _.get(trigger, [triggerProperty, 'secretReference', 'name']);
+    if (!secretName) {
+      return <span className="pf-v6-u-text-color-subtle">No secret</span>;
+    }
+    const webhookSecret: K8sResourceKind = webhookSecrets.find(
+      (secret: K8sResourceKind) => secret.metadata.name === secretName,
+    );
+    if (!webhookSecret) {
+      return secretName;
+    }
+    return (
+      <ResourceLink kind="Secret" name={secretName} namespace={namespace} title={secretName} />
+    );
+  };
+
+  const copyWebhookToClipboard = (trigger: WebhookTrigger) => {
+    const triggerProperty = getTriggerProperty(trigger);
+
+    // In case of obsolete `secret` field on the trigger.
+    // https://github.com/openshift/api/blob/master/build/v1/types.go#L950
+    if (_.has(trigger, [triggerProperty, 'secret'])) {
+      const webhookSecret = _.get(trigger, [triggerProperty, 'secret']);
+      const url = getWebhookURL(trigger, webhookSecret);
+      navigator.clipboard.writeText(url);
+      return;
+    }
+
+    const secretName = _.get(trigger, [triggerProperty, 'secretReference', 'name']);
+    const webhookSecret: K8sResourceKind = webhookSecrets.find(
+      (secret: K8sResourceKind) => secret.metadata.name === secretName,
+    );
+    if (!_.has(webhookSecret, 'data.WebHookSecretKey')) {
+      launchModal(ErrorModal, {
+        error: t(
+          'public~Secret referenced in the {{triggerProperty}} webhook trigger does not contain "WebHookSecretKey" key. Webhook trigger won’t work due to the invalid secret reference',
+          { triggerProperty },
+        ),
+      });
+      return;
+    }
+    const webhookSecretValue = Base64.decode(webhookSecret.data.WebHookSecretKey);
+    const url = getWebhookURL(trigger, webhookSecretValue);
+    navigator.clipboard.writeText(url);
+  };
+
+  const getClipboardButton = (trigger: WebhookTrigger) => {
+    const triggerProperty = getTriggerProperty(trigger);
+    const plainSecret = _.get(trigger, [triggerProperty, 'secret']);
+    const secretReference = _.get(trigger, [triggerProperty, 'secretReference', 'name']);
+    const webhookSecret: K8sResourceKind = webhookSecrets.find(
+      (secret: K8sResourceKind) => secret.metadata.name === secretReference,
+    );
+    return webhookSecret || plainSecret ? (
+      <Button
+        icon={<PasteIcon />}
+        variant="link"
+        type="button"
+        onClick={() => copyWebhookToClipboard(trigger)}
+      >
+        &nbsp;
+        {t('public~Copy URL with Secret')}
+      </Button>
+    ) : null;
+  };
+
+  return (
+    <PaneBody>
+      {!_.isEmpty(secretErrors) && (
+        <ExpandableAlert
+          variant={AlertVariant.warning}
+          alerts={_.map(secretErrors, (error, i) => (
+            <div className="co-pre-line" key={i}>
+              {error}
+            </div>
+          ))}
+        />
+      )}
+      <SectionHeading text={t('public~Webhooks')} />
+      <div className="co-table-container">
+        <table className="pf-v6-c-table pf-m-compact pf-m-border-rows">
+          <thead className="pf-v6-c-table__thead">
+            <tr className="pf-v6-c-table__tr">
+              <th className={tableColumnClasses[0]}>{t('public~Type')}</th>
+              <th className={tableColumnClasses[1]}>{t('public~Webhook URL')}</th>
+              <th className={tableColumnClasses[2]}>{t('public~Secret')}</th>
+              <th className={tableColumnClasses[3]} />
+            </tr>
+          </thead>
+          <tbody>
+            {_.map(webhookTriggers, (trigger, i) => {
+              const webhookURL = getWebhookURL(trigger);
+              const secretReference = getSecretReference(trigger);
+              const clipboardButton = getClipboardButton(trigger);
+              return (
+                <tr className="pf-v6-c-table__tr" key={i}>
+                  <td className={tableColumnClasses[0]}>{trigger.type}</td>
+                  <td className={tableColumnClasses[1]}>{webhookURL || '-'}</td>
+                  <td className={tableColumnClasses[2]}>{secretReference}</td>
+                  <td className={tableColumnClasses[3]}>{clipboardButton}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </PaneBody>
+  );
+};
+
+export type WebhookTriggersProps = {
+  resource: K8sResourceKind;
+};
+
+export type WebhookTrigger = {
+  type: string;
+  [key: string]: any;
+};
+
+WebhookTriggers.displayName = 'WebhookTriggers';

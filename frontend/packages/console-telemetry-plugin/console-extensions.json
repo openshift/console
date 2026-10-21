@@ -1,0 +1,93 @@
+[
+  {
+    "type": "console.flag",
+    "properties": {
+      "handler": { "$codeRef": "detectTelemetry.detectTelemetry" }
+    }
+  },
+  {
+    "type": "console.telemetry/listener",
+    "properties": {
+      "listener": {
+        "$codeRef": "telemetryDebugListener.eventListener"
+      }
+    },
+    "flags": { "required": ["TELEMETRY_DEBUG"] }
+  },
+  {
+    "type": "console.telemetry/listener",
+    "properties": {
+      "listener": {
+        "$codeRef": "telemetryUsageListener.eventListener"
+      }
+    },
+    "flags": { "required": ["TELEMETRY"] }
+  },
+  {
+    "type": "console.telemetry/listener",
+    "properties": {
+      "listener": {
+        "$codeRef": "telemetrySegmentListener.eventListener"
+      }
+    },
+    "flags": { "required": ["TELEMETRY"] }
+  },
+  {
+    "type": "console.flag/hookProvider",
+    "properties": {
+      "handler": { "$codeRef": "useTelemetryProvider.useTelemetryProvider" }
+    }
+  },
+  {
+    "type": "console.cluster-configuration/group",
+    "properties": {
+      "id": "telemetry",
+      "label": "%console-telemetry-plugin~Telemetry%",
+      "insertAfter": "webTerminal"
+    },
+    "flags": { "required": ["TELEMETRY_ENABLED"] }
+  },
+  {
+    "type": "console.cluster-configuration/item",
+    "properties": {
+      "id": "telemetry.telemetryConfiguration",
+      "groupId": "telemetry",
+      "label": "%console-telemetry-plugin~Telemetry%",
+      "description": "%console-telemetry-plugin~Configure telemetry setting%",
+      "field": {
+        "type": "custom",
+        "component": { "$codeRef": "telemetryConfiguration" }
+      },
+      "readAccessReview": [
+        {
+          "group": "operator.openshift.io/v1",
+          "resource": "consoles",
+          "verb": "get",
+          "name": "cluster"
+        }
+      ],
+      "writeAccessReview": [
+        {
+          "group": "operator.openshift.io/v1",
+          "resource": "consoles",
+          "verb": "patch",
+          "name": "cluster"
+        }
+      ]
+    },
+    "flags": { "required": ["TELEMETRY_CLUSTER_CONFIGURATION"] }
+  },
+  {
+    "type": "console.user-preference/item",
+    "properties": {
+      "id": "console.telemetryAnalytics",
+      "groupId": "general",
+      "field": {
+        "type": "custom",
+        "component": { "$codeRef": "telemetryUserPreferenceDropdown" }
+      },
+      "insertAfter": "console.preferredCreateEditMethod"
+    },
+    "flags": { "required": ["TELEMETRY_USER_PREFERENCE"] }
+  }
+]

@@ -1,0 +1,365 @@
+[
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "primer.gitops.io",
+        "version": "v1alpha1",
+        "kind": "Export"
+      },
+      "flag": "ALLOW_EXPORT_APP"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "",
+        "version": "",
+        "kind": "application"
+      },
+      "label": "Application",
+      "labelPlural": "Applications",
+      "abbr": "A"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "primer.gitops.io",
+        "version": "v1alpha1",
+        "kind": "Export"
+      },
+      "label": "Export",
+      "labelPlural": "Exports",
+      "abbr": "E"
+    }
+  },
+  {
+    "type": "console.redux-reducer",
+    "properties": {
+      "scope": "devconsole",
+      "reducer": { "$codeRef": "reduxReducer" }
+    }
+  },
+  {
+    "type": "console.topology/component/factory",
+    "properties": {
+      "getFactory": { "$codeRef": "operatorsComponentFactory.getOperatorsComponentFactory" }
+    }
+  },
+  {
+    "type": "console.topology/data/factory",
+    "properties": {
+      "id": "operators-topology-motel-factory",
+      "priority": 500,
+      "resources": {
+        "clusterServiceVersions": {
+          "model": {
+            "group": "operators.coreos.com",
+            "version": "v1alpha1",
+            "kind": "ClusterServiceVersion"
+          },
+          "opts": {
+            "isList": true,
+            "namespaced": true,
+            "optional": true
+          }
+        }
+      },
+      "getDataModel": { "$codeRef": "operatorsDataTransformer.getOperatorTopologyDataModel" },
+      "getDataModelReconciler": { "$codeRef": "operatorsDataModelReconciler.operatorsDataModelReconciler"}
+    }
+  },
+  {
+    "type": "console.topology/decorator/provider",
+    "properties": {
+      "id": "edit-decorator",
+      "priority": 1000,
+      "quadrant": "lowerRight",
+      "decorator": { "$codeRef": "defaultDecorators.getEditDecorator" }
+    }
+  },
+  {
+    "type": "console.topology/decorator/provider",
+    "properties": {
+      "id": "url-decorator",
+      "priority": 1000,
+      "quadrant": "upperRight",
+      "decorator": { "$codeRef": "defaultDecorators.getUrlDecorator" }
+    }
+  },
+  {
+    "type": "console.topology/decorator/provider",
+    "properties": {
+      "id": "build-decorator",
+      "priority": 1000,
+      "quadrant": "lowerLeft",
+      "decorator": { "$codeRef": "defaultDecorators.getBuildDecorator" }
+    }
+  },
+  {
+    "type": "console.topology/decorator/provider",
+    "properties": {
+      "id": "alerts-decorator",
+      "priority": 1000,
+      "quadrant": "upperLeft",
+      "decorator": { "$codeRef": "defaultDecorators.getAlertsDecorator" }
+    }
+  },
+  {
+    "type": "console.topology/display/filters",
+    "properties": {
+      "getTopologyFilters": { "$codeRef": "operatorFilters.getTopologyFilters" },
+      "applyDisplayOptions": { "$codeRef": "operatorFilters.applyOperatorDisplayOptions" }
+    }
+  },
+  {
+    "type": "console.topology/details/tab",
+    "properties": {
+      "id": "topology-side-bar-tab-details",
+      "label": "%topology~Details%"
+    }
+  },
+  {
+    "type": "console.topology/details/tab",
+    "properties": {
+      "id": "topology-side-bar-tab-resource",
+      "label": "%topology~Resources%"
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "topology-tab-section-deployment-config",
+      "tab": "topology-side-bar-tab-details",
+      "provider": { "$codeRef": "DeploymentConfigSideBarDetails.useDeploymentConfigSideBarDetails" }
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "topology-tab-section-deployment",
+      "tab": "topology-side-bar-tab-details",
+      "provider": { "$codeRef": "DeploymentSideBarDetails.useDeploymentSideBarDetails" }
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "topology-tab-section-daemon-set",
+      "tab": "topology-side-bar-tab-details",
+      "provider": { "$codeRef": "DaemonSetSideBarDetails.useDaemonSetSideBarDetails" }
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "topology-tab-section-stateful-set",
+      "tab": "topology-side-bar-tab-details",
+      "provider": { "$codeRef": "StatefulSetSideBarDetails.useStatefulSetSideBarDetails" }
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "topology-tab-section-jobs",
+      "tab": "topology-side-bar-tab-details",
+      "provider": { "$codeRef": "JobSideBarDetails.useJobSideBarDetails" }
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "topology-tab-section-cron-jobs",
+      "tab": "topology-side-bar-tab-details",
+      "provider": { "$codeRef": "CronJobSideBarDetails.useCronJobSideBarDetails" }
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "topology-tab-section-pod",
+      "tab": "topology-side-bar-tab-details",
+      "provider": { "$codeRef": "PodSideBarDetails.usePodSideBarDetails" }
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "topology-tab-section-pods-overview",
+      "tab": "topology-side-bar-tab-resource",
+      "provider": { "$codeRef": "PodsTabSection.usePodsSideBarTabSection" }
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "topology-tab-section-vpa-overview",
+      "tab": "topology-side-bar-tab-resource",
+      "provider": { "$codeRef": "VpaTabSection.useVpaSideBarTabSection" }
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "topology-tab-section-jobs-overview",
+      "tab": "topology-side-bar-tab-resource",
+      "provider": { "$codeRef": "JobsTabSection.useJobsSideBarTabSection" }
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "topology-tab-section-builds-overview",
+      "tab": "topology-side-bar-tab-resource",
+      "provider": { "$codeRef": "BuildTabSection.useBuildsSideBarTabSection" }
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "topology-tab-section-network-overview",
+      "tab": "topology-side-bar-tab-resource",
+      "provider": { "$codeRef": "NetworkTabSection.useNetworkingSideBarTabSection" }
+    }
+  },
+  {
+    "type": "console.topology/details/resource-link",
+    "properties": {
+      "priority": 0,
+      "link": { "$codeRef": "WorkloadResourceLink.getWorkloadResourceLink" }
+    }
+  },
+  {
+    "type": "console.topology/adapter/pod",
+    "properties": {
+      "adapt": {
+        "$codeRef": "workloadUtils.podsAdapterForWorkloads"
+      }
+    }
+  },
+  {
+    "type": "console.topology/adapter/pod",
+    "properties": {
+      "adapt": {
+        "$codeRef": "workloadUtils.podsAdapterForCronJobWorkload"
+      }
+    }
+  },
+  {
+    "type": "console.topology/adapter/build",
+    "properties": {
+      "adapt": {
+        "$codeRef": "workloadUtils.buildsAdapterForWorkloads"
+      }
+    }
+  },
+  {
+    "type": "console.topology/adapter/network",
+    "properties": {
+      "adapt": {
+        "$codeRef": "workloadUtils.networkAdapterForWorkloads"
+      }
+    }
+  },
+  {
+    "type": "console.action/provider",
+    "properties": {
+      "contextId": "topology-actions",
+      "provider": { "$codeRef": "actions.useTopologyWorkloadActionProvider" }
+    }
+  },
+  {
+    "type": "console.topology/details/resource-alert",
+    "properties": {
+      "id": "health-check-alert",
+      "contentProvider": {
+        "$codeRef": "ResourceAlert.useHealthChecksAlert"
+      }
+    }
+  },
+  {
+    "type": "console.topology/details/resource-alert",
+    "properties": {
+      "id": "resource-quota-alert",
+      "contentProvider": {
+        "$codeRef": "ResourceAlert.useResourceQuotaAlert"
+      }
+    }
+  },
+  {
+    "type": "console.context-provider",
+    "properties": {
+      "provider": { "$codeRef": "exportAppContext.ExportAppContextProvider" },
+      "useValueHook": { "$codeRef": "exportAppContext.useExportAppFormToast" }
+    },
+    "flags": {
+      "required": ["ALLOW_EXPORT_APP"]
+    }
+  },
+  {
+    "type": "console.user-preference/item",
+    "properties": {
+      "id": "topology.preferredView",
+      "label": "%topology~Topology%",
+      "groupId": "general",
+      "description": "%topology~If a topology view is not selected, the console defaults to the last viewed.%",
+      "field": {
+        "type": "dropdown",
+        "userSettingsKey": "topology.preferredView",
+        "defaultValue": "latest",
+        "options": [
+          {
+            "value": "latest",
+            "label": "%topology~Last viewed%"
+          },
+          { "value": "graph", "label": "%topology~Graph%" },
+          { "value": "list", "label": "%topology~List%" }
+        ]
+      },
+      "insertBefore": "console.preferredCreateEditMethod",
+      "insertAfter": "console.preferredNamespace"
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "topology-tab-section-application",
+      "tab": "topology-side-bar-tab-resource",
+      "provider": { "$codeRef": "applicationResourceTabSection.useApplicationPanelResourceTabSection" }
+    }
+  },
+  {
+    "type": "console.topology/details/resource-link",
+    "properties": {
+      "priority": 100,
+      "link": { "$codeRef": "applicationResourceLink.getApplicationPanelResourceLink" }
+    }
+  },
+  {
+    "type": "console.topology/details/resource-link",
+    "properties": {
+      "priority": 10,
+      "link": { "$codeRef": "edgeResourceLink.getEdgeResourceLink" }
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "topology-tab-section-visual-connector",
+      "tab": "topology-side-bar-tab-resource",
+      "provider": {
+        "$codeRef": "resourceTabSection.useVisualConnectorResourceTabSection"
+      }
+    }
+  },
+  {
+    "type": "console.action/provider",
+    "properties": {
+      "contextId": "topology-actions",
+      "provider": { "$codeRef": "actions.useTopologyVisualConnectorActionProvider" }
+    }
+  }
+]

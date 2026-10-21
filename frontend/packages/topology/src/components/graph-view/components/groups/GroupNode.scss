@@ -1,0 +1,51 @@
+@import '../../../topology-utils';
+
+.odc-group-node {
+  &__title {
+    font-size: var(--pf-t--global--font--size--lg);
+    font-weight: var(--pf-t--global--font--weight--body--bold);
+  }
+  &__type-icon {
+    fill: var(--pf-t--global--icon--color--300);
+    font-size: var(--pf-t--global--font--size--md);
+  }
+  &__bg {
+    fill: $group-node-fill-color;
+    fill-opacity: $group-node-fill-opacity;
+    stroke: $group-node-stroke-color;
+    stroke-width: $group-node-stroke-width;
+    stroke-dasharray: $group-node-stroke-dasharray;
+  }
+  &.is-filtered &__bg {
+    stroke: $filtered-stroke-color;
+    stroke-width: $group-node-filtered-stroke-width;
+    stroke-dasharray: none;
+  }
+  &.pf-m-selected &__bg {
+    fill: $selected-fill-color;
+    stroke: $selected-stroke-color;
+    stroke-width: $group-node-selected-stroke-width;
+    stroke-dasharray: $group-node-stroke-dasharray;
+  }
+  &.pf-m-highlight &__bg {
+    fill: $group-node-fill-color;
+    stroke: $interactive-stroke-color;
+    stroke-dasharray: $group-node-stroke-dasharray;
+  }
+  &.pf-m-drop-target &__bg {
+    fill: $interactive-fill-color;
+    stroke: $interactive-stroke-color;
+    stroke-dasharray: $group-node-stroke-dasharray;
+  }
+}
+
+.odc-m-drag-active,
+.odc-m-filter-active {
+  .odc-group-node {
+    opacity: $de-emphasize-opacity;
+    &.pf-m-dragging,
+    &.pf-m-highlight {
+      opacity: 1;
+    }
+  }
+}

@@ -1,0 +1,56 @@
+import type { FC } from 'react';
+import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternfly/react-core';
+import type { FormikValues } from 'formik';
+import { useFormikContext, useField } from 'formik';
+import { SelectorInput } from '@console/internal/components/utils/selector-input';
+import type { FieldProps } from './field-types';
+import { getFieldId } from './field-utils';
+
+interface SelectorInputFieldProps extends FieldProps {
+  placeholder?: string;
+  label?: React.ReactNode;
+  helpText?: React.ReactNode;
+}
+
+/**
+ * Formik field wrapper around `SelectorInput` which renders a "tag editor" implemented with `react-tagsinput`.
+ *
+ * Values are saved as string dictionary (Record<string, string>).
+ */
+const SelectorInputField: FC<SelectorInputFieldProps> = ({
+  name,
+  label,
+  helpText,
+  required,
+  dataTest,
+  ...otherProps
+}) => {
+  const { setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
+  const [{ value }] = useField<string>(name);
+
+  const fieldId = getFieldId(name, 'selector');
+  const tags = SelectorInput.arrayify(value || '');
+  const onChange = (newValue: string[]) => {
+    setFieldValue(name, SelectorInput.objectify(newValue), false);
+    setFieldTouched(name, true, true);
+  };
+
+  return (
+    <FormGroup fieldId={fieldId} label={label} isRequired={required}>
+      <SelectorInput
+        onChange={onChange}
+        tags={tags}
+        inputProps={{ id: fieldId, 'data-test': dataTest }}
+        {...otherProps}
+      />
+
+      <FormHelperText>
+        <HelperText>
+          <HelperTextItem>{helpText}</HelperTextItem>
+        </HelperText>
+      </FormHelperText>
+    </FormGroup>
+  );
+};
+
+export default SelectorInputField;

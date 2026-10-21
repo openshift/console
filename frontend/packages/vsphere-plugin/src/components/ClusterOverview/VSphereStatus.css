@@ -1,0 +1,5 @@
+.plugin-vsphere-status-popup {
+    /* TODO: Let's simplify once fixed here: console-shared/src/components/dashboard/status-card/HealthItem.tsx#L58 */
+    max-width: 30rem !important;
+    width: 30rem;
+}

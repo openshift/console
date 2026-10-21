@@ -1,0 +1,104 @@
+import type { FC } from 'react';
+import { Children } from 'react';
+import type { gridItemSpanValueShape } from '@patternfly/react-core';
+import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternfly/react-core';
+import type { FormikValues } from 'formik';
+import { FieldArray, useFormikContext } from 'formik';
+import * as _ from 'lodash';
+import { useFormikValidationFix } from '../../../hooks/useFormikValidationFix';
+import SecondaryStatus from '../../status/SecondaryStatus';
+import type { MultiColumnFieldProps } from '../field-types';
+import { getSpans } from './multicolumn-field-utils';
+import MultiColumnFieldFooter from './MultiColumnFieldFooter';
+import MultiColumnFieldHeader from './MultiColumnFieldHeader';
+import MultiColumnFieldRow from './MultiColumnFieldRow';
+import './MultiColumnField.scss';
+
+const MultiColumnField: FC<MultiColumnFieldProps> = ({
+  children,
+  name,
+  label,
+  helpText,
+  required,
+  addLabel,
+  headers,
+  emptyValues,
+  emptyMessage,
+  isReadOnly,
+  disableDeleteRow,
+  tooltipDeleteRow,
+  disableAddRow,
+  hideAddRow,
+  tooltipAddRow,
+  spans,
+  complexFields,
+  rowRenderer,
+  ...props
+}) => {
+  const { values } = useFormikContext<FormikValues>();
+  const fieldValue = _.get(values, name, []);
+  const totalFieldCount: gridItemSpanValueShape = Children.count(
+    children,
+  ) as gridItemSpanValueShape;
+  const fieldSpans = spans || getSpans(totalFieldCount);
+  useFormikValidationFix(fieldValue);
+  return (
+    <FieldArray
+      name={name}
+      render={({ push, remove }) => {
+        return (
+          <FormGroup
+            data-test={props['data-test'] || 'multicolumn-field'}
+            fieldId={`form-multi-column-input-${name.replace(/\./g, '-')}-field`}
+            label={label}
+            isRequired={required}
+          >
+            {fieldValue.length < 1 ? (
+              emptyMessage && (
+                <div className="odc-multi-column-field__empty-message">
+                  <SecondaryStatus status={emptyMessage} />
+                </div>
+              )
+            ) : (
+              <MultiColumnFieldHeader headers={headers} spans={fieldSpans} />
+            )}
+            {fieldValue.length > 0 &&
+              fieldValue.map((value, index) => (
+                <MultiColumnFieldRow
+                  key={`${index.toString()}`} // There is no other usable value for key prop in this case.
+                  name={name}
+                  rowIndex={index}
+                  isReadOnly={isReadOnly}
+                  spans={fieldSpans}
+                  complexFields={complexFields}
+                  rowRenderer={rowRenderer}
+                  disableDeleteRow={disableDeleteRow}
+                  tooltipDeleteRow={tooltipDeleteRow}
+                  onDelete={() => remove(index)}
+                >
+                  {children}
+                </MultiColumnFieldRow>
+              ))}
+            {!isReadOnly && (
+              <MultiColumnFieldFooter
+                disableAddRow={disableAddRow}
+                hideAddRow={hideAddRow}
+                tooltipAddRow={tooltipAddRow}
+                addLabel={addLabel}
+                onAdd={() => push(emptyValues)}
+              />
+            )}
+
+            <FormHelperText>
+              <HelperText>
+                <HelperTextItem>{helpText}</HelperTextItem>
+              </HelperText>
+            </FormHelperText>
+          </FormGroup>
+        );
+      }}
+    />
+  );
+};
+
+export default MultiColumnField;

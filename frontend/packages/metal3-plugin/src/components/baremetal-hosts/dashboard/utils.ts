@@ -1,0 +1,110 @@
+import type { MachineKind, NodeKind } from '@console/internal/module/k8s';
+import type { StatusGroupMapper } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
+import { InventoryStatusGroup } from '@console/shared/src/components/dashboard/inventory-card/status-group';
+import { getName } from '@console/shared/src/selectors/common';
+import { getNodeMachineName } from '@console/shared/src/selectors/node';
+import { createBasicLookup } from '@console/shared/src/utils/utils';
+import {
+  HOST_ERROR_STATES,
+  HOST_POWER_STATUS_POWERING_OFF,
+  HOST_POWER_STATUS_POWERING_ON,
+  HOST_PROGRESS_STATES,
+  HOST_SUCCESS_STATES,
+} from '../../../constants';
+import {
+  getHostMachine,
+  getHostPowerStatus,
+  getNodeMaintenanceNodeName,
+  hasPowerManagement,
+  isDetached,
+} from '../../../selectors';
+import { getHostStatus } from '../../../status/host-status';
+import type { BareMetalHostKind } from '../../../types';
+import { getHostFilterStatus } from '../table-filters';
+
+export { BareMetalHostModel } from '../../../models';
+
+const BMH_STATUS_GROUP_MAPPER = {
+  [InventoryStatusGroup.NOT_MAPPED]: HOST_SUCCESS_STATES,
+  [InventoryStatusGroup.PROGRESS]: HOST_PROGRESS_STATES,
+  [InventoryStatusGroup.ERROR]: HOST_ERROR_STATES,
+  'node-maintenance': ['maintenance'],
+};
+
+export const getBMHStatusGroups: StatusGroupMapper = (
+  hosts: BareMetalHostKind[],
+  { machines, nodes, maintenances, kvAlphaMaintenances, kvBetaMaintenances },
+) => {
+  const groups = {
+    [InventoryStatusGroup.NOT_MAPPED]: {
+      statusIDs: ['ready', 'provisioned'],
+      count: 0,
+      filterType: 'host-status',
+    },
+    [InventoryStatusGroup.ERROR]: {
+      statusIDs: ['error'],
+      count: 0,
+      filterType: 'host-status',
+    },
+    [InventoryStatusGroup.PROGRESS]: {
+      statusIDs: ['registering', 'provisioning'],
+      count: 0,
+      filterType: 'host-status',
+    },
+    [InventoryStatusGroup.UNKNOWN]: {
+      statusIDs: ['other'],
+      count: 0,
+      filterType: 'host-status',
+    },
+    'node-maintenance': {
+      statusIDs: ['maintenance'],
+      count: 0,
+      filterType: 'host-status',
+    },
+  };
+
+  const maintenancesByNodeName = createBasicLookup(maintenances, getNodeMaintenanceNodeName);
+  const kvBetaMaintenancesByNodeName = createBasicLookup(
+    kvBetaMaintenances,
+    getNodeMaintenanceNodeName,
+  );
+  const kvAlphaMaintenancesByNodeName = createBasicLookup(
+    kvAlphaMaintenances,
+    getNodeMaintenanceNodeName,
+  );
+  const nodesByMachineName = createBasicLookup(nodes, getNodeMachineName);
+
+  hosts.forEach((host) => {
+    // TODO(jtomasek): replace this with createLookup once there is metal3.io/BareMetalHost annotation
+    // on machines
+    const machine = getHostMachine(host, machines as MachineKind[]);
+    const node = nodesByMachineName[getName(machine)] as NodeKind;
+    const nodeMaintenance =
+      maintenancesByNodeName[getName(node)] ||
+      kvBetaMaintenancesByNodeName[getName(node)] ||
+      kvAlphaMaintenancesByNodeName[getName(node)];
+    const bareMetalHostStatus = getHostStatus({ host, nodeMaintenance });
+
+    const status = getHostFilterStatus({
+      machine,
+      node,
+      host,
+      nodeMaintenance,
+      status: bareMetalHostStatus,
+    });
+    const group =
+      Object.keys(BMH_STATUS_GROUP_MAPPER).find((key) =>
+        BMH_STATUS_GROUP_MAPPER[key].includes(status),
+      ) || InventoryStatusGroup.NOT_MAPPED;
+    groups[group].count++;
+  });
+
+  return groups;
+};
+
+export const isBMHActivity = (resource: BareMetalHostKind) =>
+  [HOST_POWER_STATUS_POWERING_OFF, HOST_POWER_STATUS_POWERING_ON].includes(
+    getHostPowerStatus(resource),
+  ) &&
+  hasPowerManagement(resource) &&
+  !isDetached(resource);

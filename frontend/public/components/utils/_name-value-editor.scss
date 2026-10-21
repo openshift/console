@@ -1,0 +1,57 @@
+$drag-column-width: 28px;
+
+.pairs-list__action {
+  padding: 0;
+  width: $drag-column-width;
+}
+
+.pairs-list__action-icon {
+  background: transparent;
+  border: 0;
+  display: flex;
+  padding-left: $pf-v6-global-gutter-x !important;
+}
+
+.pairs-list__action-icon--reorder {
+  cursor: move;
+}
+
+.pairs-list__row-dragging {
+  background-color: var(--pf-t--global--background--color--secondary--default);
+  border: 1px dashed var(--pf-t--global--border--color--default);
+  border-radius: 4px;
+  height: 28px;
+  margin-left: 28px;
+  margin-bottom: 15px;
+  overflow: hidden;
+  padding-right: 100px;
+  width: calc(83.34% + 11px); /* sum of the widths of the input fields plus an offset for padding */
+  div {
+    opacity: 0; /* hides input boxes and other children so there's just a gray target */
+  }
+}
+
+.pairs-list__value-field,
+.pairs-list__name-field {
+  padding-right: 0;
+}
+
+.pairs-list__value-pair-field {
+  padding-right: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.pairs-list__value-ro-field {
+  flex-grow: 1;
+  padding-top: 5px;
+}
+
+.pairs-list__side-btn {
+  cursor: pointer;
+}
+
+.pairs-list__span-btns {
+  border: 0;
+  display: flex;
+}

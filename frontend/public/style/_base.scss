@@ -1,0 +1,35 @@
+// Base element styles.
+// Please DO NOT add rules of this type.
+
+//instead of &.foo
+//
+//
+// @at-root .foo#{&}
+
+:where(:not([class*='pf-v6-c-'])) {
+  @at-root fieldset#{&} {
+    border: 0;
+  }
+
+  @at-root input[type='number']#{&} {
+    -webkit-appearance: textfield;
+    appearance: textfield;
+    max-width: 100px;
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+    }
+  }
+
+  @at-root input[type='radio']#{&} {
+    margin-right: 7px;
+  }
+
+  @at-root :is(ul, ol)#{&} {
+    padding-left: 20px;
+  }
+
+  @at-root body {
+    background-color: var(--pf-t--global--background--color--secondary--default);
+  }
+}

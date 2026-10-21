@@ -1,0 +1,361 @@
+import { t } from '../../../../../__mocks__/i18next';
+import {
+  mockHelmReleases,
+  mockHelmChartData,
+  mockReleaseResources,
+  flattenedMockReleaseResources,
+  mockChartEntries,
+  mockRedhatHelmChartData,
+  mockHelmChartRepositories,
+  mockChartEntries1,
+} from '../../components/__tests__/helm-release-mock-data';
+import type { HelmChartMetaData, HelmRelease } from '../../types/helm-types';
+import { HelmReleaseStatus } from '../../types/helm-types';
+import {
+  SelectedReleaseStatuses,
+  releaseStatusReducer,
+  filterHelmReleasesByName,
+  filterHelmReleasesByStatus,
+  getChartURL,
+  getChartVersions,
+  flattenReleaseResources,
+  getChartReadme,
+  getChartEntriesByName,
+  loadHelmManifestResources,
+  getChartIndexEntry,
+  isGoingToTopology,
+} from '../helm-utils';
+
+describe('Helm Releases Utils', () => {
+  it('should return deployed or failed status for a helm release', () => {
+    const release = mockHelmReleases[0];
+    expect(releaseStatusReducer(release)).toEqual(HelmReleaseStatus.Deployed);
+  });
+
+  it('should return pending-install status for a helm release', () => {
+    const release = mockHelmReleases[2];
+    expect(releaseStatusReducer(release)).toEqual(HelmReleaseStatus.PendingInstall);
+  });
+
+  it('should return other for all other statuses for a helm release', () => {
+    const release = mockHelmReleases[3];
+    expect(releaseStatusReducer(release)).toEqual(HelmReleaseStatus.Other);
+  });
+
+  it('should return filtered release items with deployed and failed status for row filters', () => {
+    const filter = ['deployed', 'failed'];
+    const filteredReleases = filterHelmReleasesByStatus(mockHelmReleases, filter);
+    expect(filteredReleases.length).toEqual(2);
+    expect(filteredReleases[0].info.status).toBe(HelmReleaseStatus.Deployed);
+  });
+
+  it('should return filtered release items with pending-install status for row filters', () => {
+    const filter = ['pending-install'];
+    const filteredReleases = filterHelmReleasesByStatus(mockHelmReleases, filter);
+    expect(filteredReleases.length).toEqual(1);
+    expect(
+      SelectedReleaseStatuses.includes(filteredReleases[0].info.status as HelmReleaseStatus),
+    ).toBeTruthy();
+  });
+
+  it('should return filtered release items for text filter', () => {
+    const filteredReleases = filterHelmReleasesByName(mockHelmReleases, 'ghost');
+    expect(filteredReleases.length).toEqual(1);
+    expect(filteredReleases[0].name).toBe('ghost-test');
+  });
+
+  it('should return the helm chart url from ibm repo', () => {
+    const chartVersion = '1.0.2';
+    const chartRepoName = 'IBM Helm Repo';
+    const chartURL = getChartURL(mockHelmChartData, chartVersion, chartRepoName);
+    expect(chartURL).toBe(
+      'https://raw.githubusercontent.com/IBM/charts/master/repo/community/hazelcast-enterprise-1.0.2.tgz',
+    );
+  });
+
+  it('should return the helm chart url from redhat repo', () => {
+    const chartVersion = '1.0.1';
+    const chartRepoName = 'Red Hat Helm Repo';
+    const chartURL = getChartURL(mockHelmChartData, chartVersion, chartRepoName);
+    expect(chartURL).toBe(
+      'https://raw.githubusercontent.com/redhat-helm-charts/master/repo/stable/hazelcast-enterprise-1.0.1.tgz',
+    );
+  });
+
+  it('should return undefined for chart data with null urls', () => {
+    const data = [
+      { version: '1.0.0', repoName: 'repo', urls: null, name: 'test', apiVersion: 'v2' },
+    ] as HelmChartMetaData[];
+    expect(getChartURL(data, '1.0.0', 'repo')).toBeUndefined();
+  });
+
+  it('should return undefined for chart data with undefined urls', () => {
+    const data = [
+      { version: '1.0.0', repoName: 'repo', name: 'test', apiVersion: 'v2' },
+    ] as HelmChartMetaData[];
+    expect(getChartURL(data, '1.0.0', 'repo')).toBeUndefined();
+  });
+
+  it('should return undefined when no matching chart data is found', () => {
+    expect(getChartURL(mockHelmChartData, '99.99.99', 'nonexistent')).toBeUndefined();
+  });
+
+  it('should return the chart versions, concatenated with the App Version, available for the helm chart', () => {
+    const chartVersions = getChartVersions(mockHelmChartData, t);
+    expect(chartVersions).toEqual({
+      '1.0.1--IBM Helm Repo': '1.0.1 / App Version 3.10.5 (Provided by IBM Helm Repo)',
+      '1.0.1--Red Hat Helm Repo': '1.0.1 / App Version 3.10.5 (Provided by Red Hat Helm Repo)',
+      '1.0.2--IBM Helm Repo': '1.0.2 (Provided by IBM Helm Repo)',
+      '1.0.2--Red Hat Helm Repo': '1.0.2 (Provided by Red Hat Helm Repo)',
+      '1.0.3--IBM Helm Repo': '1.0.3 / App Version 3.12 (Provided by IBM Helm Repo)',
+    });
+  });
+
+  it('should exclude chart entries with null urls from chart versions', () => {
+    const chartData = [
+      {
+        version: '1.0.0',
+        repoName: 'repo',
+        urls: ['https://example.com/chart-1.0.0.tgz'],
+        name: 'chart',
+        apiVersion: 'v2',
+      },
+      { version: '2.0.0', repoName: 'repo', urls: null, name: 'chart', apiVersion: 'v2' },
+    ] as HelmChartMetaData[];
+    const chartVersions = getChartVersions(chartData, t);
+    expect(chartVersions).toEqual({
+      '1.0.0--repo': '1.0.0 (Provided by Repo)',
+    });
+  });
+
+  it('should exclude chart entries with empty urls from chart versions', () => {
+    const chartData = [
+      {
+        version: '1.0.0',
+        repoName: 'repo',
+        urls: ['https://example.com/chart-1.0.0.tgz'],
+        name: 'chart',
+        apiVersion: 'v2',
+      },
+      { version: '2.0.0', repoName: 'repo', urls: [], name: 'chart', apiVersion: 'v2' },
+    ] as HelmChartMetaData[];
+    const chartVersions = getChartVersions(chartData, t);
+    expect(chartVersions).toEqual({
+      '1.0.0--repo': '1.0.0 (Provided by Repo)',
+    });
+  });
+
+  it('should return chart entries by name from specific repo if repo name provided', () => {
+    const chartEntries = getChartEntriesByName(
+      mockChartEntries,
+      'hazelcast-enterprise',
+      'redhat-helm-repo',
+      mockHelmChartRepositories,
+    );
+    expect(chartEntries).toEqual(mockRedhatHelmChartData);
+  });
+
+  it('should return chart index entry', () => {
+    let chartIndexEntry = getChartIndexEntry(
+      mockChartEntries1,
+      'hazelcast-enterprise',
+      'ibm-helm-repo',
+    );
+    expect(chartIndexEntry).toEqual('ibm-hazelcast-enterprise--ibm-helm-repo');
+    chartIndexEntry = getChartIndexEntry(
+      mockChartEntries1,
+      'hazelcast-enterprise',
+      'IBM Helm Repo',
+    );
+    expect(chartIndexEntry).toEqual('ibm-hazelcast-enterprise--ibm-helm-repo');
+  });
+
+  it('should return chart entries by name from all repos if repo name not provided', () => {
+    const chartEntries = getChartEntriesByName(
+      mockChartEntries,
+      'hazelcast-enterprise',
+      '',
+      mockHelmChartRepositories,
+    );
+    expect(chartEntries).toEqual(mockHelmChartData);
+  });
+
+  it('should return empty array if wrong chart name or repo name provided', () => {
+    expect(
+      getChartEntriesByName(
+        mockChartEntries,
+        'hazelcast-enterprise',
+        'stable-helm-repo',
+        mockHelmChartRepositories,
+      ),
+    ).toEqual([]);
+    expect(
+      getChartEntriesByName(
+        mockChartEntries,
+        'hazelcast-enterprise-prod',
+        '',
+        mockHelmChartRepositories,
+      ),
+    ).toEqual([]);
+  });
+
+  it('should omit resources with no data and flatten them', () => {
+    expect(flattenReleaseResources(mockReleaseResources)).toEqual(flattenedMockReleaseResources);
+  });
+
+  it('should return the readme for the chart provided', () => {
+    expect(getChartReadme(mockHelmReleases[0].chart)).toEqual('example readme content');
+  });
+
+  it('should navigate to topology', () => {
+    let resources = [
+      {
+        apiVersion: 'v1',
+        kind: 'ServiceAccount',
+        metadata: {
+          name: 'example-account',
+        },
+      },
+      {
+        apiVersion: 'v1',
+        kind: 'StatefulSet',
+        metadata: {
+          name: 'example-d',
+        },
+      },
+    ];
+    expect(isGoingToTopology(resources)).toBe(true);
+
+    resources = [
+      {
+        apiVersion: 'v1',
+        kind: 'DaemonSet',
+        metadata: {
+          name: 'example-account',
+        },
+      },
+      {
+        apiVersion: 'v1',
+        kind: 'DeploymentConfig',
+        metadata: {
+          name: 'example-d',
+        },
+      },
+    ];
+    expect(isGoingToTopology(resources)).toBe(true);
+  });
+
+  it('should navigate to helm release details page', () => {
+    let resources = [
+      {
+        apiVersion: 'v1',
+        kind: 'ServiceAccount',
+        metadata: {
+          name: 'example-account',
+        },
+      },
+      {
+        apiVersion: 'v1',
+        kind: 'Secret',
+        metadata: {
+          name: 'example-d',
+        },
+      },
+    ];
+    expect(isGoingToTopology(resources)).toBe(false);
+
+    resources = [
+      {
+        apiVersion: 'v1',
+        kind: 'ConfigMap',
+        metadata: {
+          name: 'example-d',
+        },
+      },
+    ];
+    expect(isGoingToTopology(resources)).toBe(false);
+  });
+
+  describe('loadHelmManifestResources', () => {
+    it('should support an empty string', () => {
+      expect(loadHelmManifestResources({} as HelmRelease)).toEqual([]);
+    });
+
+    it('should filter out empty manifest values', () => {
+      expect(loadHelmManifestResources({ manifest: '\n---\n---\n' } as HelmRelease)).toEqual([]);
+    });
+
+    it('should support a single helm manifest', () => {
+      expect(
+        loadHelmManifestResources({
+          manifest: `
+# Comment
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: example-account
+`,
+        } as HelmRelease),
+      ).toEqual([
+        {
+          apiVersion: 'v1',
+          kind: 'ServiceAccount',
+          metadata: { name: 'example-account' },
+        },
+      ]);
+    });
+
+    it('should support multiple helm manifests', () => {
+      expect(
+        loadHelmManifestResources({
+          manifest: `
+# Comment
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: first-account
+---
+# Another comment
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: second-account
+`,
+        } as HelmRelease),
+      ).toEqual([
+        {
+          apiVersion: 'v1',
+          kind: 'ServiceAccount',
+          metadata: { name: 'first-account' },
+        },
+        {
+          apiVersion: 'v1',
+          kind: 'ServiceAccount',
+          metadata: { name: 'second-account' },
+        },
+      ]);
+    });
+
+    // https://bugzilla.redhat.com/show_bug.cgi?id=1866087
+    it('should support helm manifests with duplicated keys (invalid json)', () => {
+      expect(
+        loadHelmManifestResources({
+          manifest: `
+# Comment
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: first
+  name: second
+`,
+        } as HelmRelease),
+      ).toEqual([
+        {
+          apiVersion: 'v1',
+          kind: 'ServiceAccount',
+          metadata: { name: 'second' },
+        },
+      ]);
+    });
+  });
+});

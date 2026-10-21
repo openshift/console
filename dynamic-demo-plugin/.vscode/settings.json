@@ -1,0 +1,19 @@
+{
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "typescript.tsdk": "./node_modules/typescript/lib",
+  "search.exclude": {
+    "**/node_modules": true
+  },
+  "files.watcherExclude": {
+    "**/node_modules/**": true
+  },
+  "files.associations": {
+    "**/console-extensions.json": "jsonc"
+  },
+  "json.schemas": [
+    {
+      "fileMatch": ["**/console-extensions.json"],
+      "url": "../frontend/packages/console-dynamic-plugin-sdk/generated/schema/console-extensions.json"
+    }
+  ],
+}

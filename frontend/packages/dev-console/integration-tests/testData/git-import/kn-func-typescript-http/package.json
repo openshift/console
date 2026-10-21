@@ -1,0 +1,18 @@
+{
+    "name": "package.json",
+    "path": "package.json",
+    "sha": "3736c3a890ae67db07e77ec5b12fd22680d50faf",
+    "size": 1301,
+    "url": "https://api.github.com/repos/openshift-dev-console/kn-func-typescript-http/contents/package.json?ref=main",
+    "html_url": "https://github.com/openshift-dev-console/kn-func-typescript-http/blob/main/package.json",
+    "git_url": "https://api.github.com/repos/openshift-dev-console/kn-func-typescript-http/git/blobs/3736c3a890ae67db07e77ec5b12fd22680d50faf",
+    "download_url": "https://raw.githubusercontent.com/openshift-dev-console/kn-func-typescript-http/main/package.json",
+    "type": "file",
+    "content": "ewogICJuYW1lIjogImV2ZW50LWhhbmRsZXIiLAogICJ2ZXJzaW9uIjogIjAu\nMS4wIiwKICAiZGVzY3JpcHRpb24iOiAiVHlwZVNjcmlwdCBIVFRQIEhhbmRs\nZXIiLAogICJsaWNlbnNlIjogIkFwYWNoZS0yLjAiLAogICJyZXBvc2l0b3J5\nIjogewogICAgInR5cGUiOiAiZ2l0IiwKICAgICJ1cmwiOiAiIgogIH0sCiAg\nInNjcmlwdHMiOiB7CiAgICAiYnVpbGQiOiAibnB4IC1wIHR5cGVzY3JpcHQg\ndHNjIiwKICAgICJwcmV0ZXN0IjogIm5wbSBydW4gbGludCAmJiBucG0gcnVu\nIGJ1aWxkIiwKICAgICJ0ZXN0OnVuaXQiOiAidHMtbm9kZSBub2RlX21vZHVs\nZXMvdGFwZS9iaW4vdGFwZSB0ZXN0L3VuaXQudHMiLAogICAgInRlc3Q6aW50\nZWdyYXRpb24iOiAidHMtbm9kZSBub2RlX21vZHVsZXMvdGFwZS9iaW4vdGFw\nZSB0ZXN0L2ludGVncmF0aW9uLnRzIiwKICAgICJ0ZXN0IjogIm5wbSBydW4g\ndGVzdDp1bml0ICYmIG5wbSBydW4gdGVzdDppbnRlZ3JhdGlvbiIsCiAgICAi\nc3RhcnQiOiAiRlVOQ19MT0dfTEVWRUw9aW5mbyBmYWFzLWpzLXJ1bnRpbWUg\nLi9idWlsZC9pbmRleC5qcyIsCiAgICAibGludCI6ICJlc2xpbnQgXCJzcmMv\nKiovKi57anMsdHMsdHN4fVwiIFwidGVzdC8qKi8qLntqcyx0cyx0c3h9XCIg\nLS1xdWlldCIsCiAgICAiZGVidWciOiAibm9kZW1vbiAtLWluc3BlY3QgLi9u\nb2RlX21vZHVsZXMvZmFhcy1qcy1ydW50aW1lL2Jpbi9jbGkuanMgLi9idWls\nZC9pbmRleC5qcyIKICB9LAogICJkZXZEZXBlbmRlbmNpZXMiOiB7CiAgICAi\nQHR5cGVzL3RhcGUiOiAiXjQuMTMuMCIsCiAgICAiQHR5cGVzY3JpcHQtZXNs\naW50L2VzbGludC1wbHVnaW4iOiAiXjQuMjQuMCIsCiAgICAiQHR5cGVzY3Jp\ncHQtZXNsaW50L3BhcnNlciI6ICJeNC4yNC4wIiwKICAgICJlc2xpbnQiOiAi\nXjcuMjYuMCIsCiAgICAiZXNsaW50LWNvbmZpZy1wcmV0dGllciI6ICJeOC4z\nLjAiLAogICAgImVzbGludC1wbHVnaW4tcHJldHRpZXIiOiAiXjMuNC4wIiwK\nICAgICJub2RlbW9uIjogIl4yLjAuNCIsCiAgICAicHJldHRpZXIiOiAiXjIu\nMy4wIiwKICAgICJzdXBlcnRlc3QiOiAiXjYuMy4xIiwKICAgICJ0YXBlIjog\nIl40LjEzLjAiLAogICAgInRzLW5vZGUiOiAiXjkuMS4xIiwKICAgICJ0c2Qi\nOiAiXjAuMjQuMSIsCiAgICAidHNsaW50LWNvbmZpZy1wcmV0dGllciI6ICJe\nMS4xOC4wIiwKICAgICJ0eXBlc2NyaXB0IjogIl40LjIuNCIKICB9LAogICJk\nZXBlbmRlbmNpZXMiOiB7CiAgICAiQHR5cGVzL25vZGUiOiAiXjE2LjExLjEy\nIiwKICAgICJmYWFzLWpzLXJ1bnRpbWUiOiAiXjAuOS43IgogIH0KfQo=\n",
+    "encoding": "base64",
+    "_links": {
+        "self": "https://api.github.com/repos/openshift-dev-console/kn-func-typescript-http/contents/package.json?ref=main",
+        "git": "https://api.github.com/repos/openshift-dev-console/kn-func-typescript-http/git/blobs/3736c3a890ae67db07e77ec5b12fd22680d50faf",
+        "html": "https://github.com/openshift-dev-console/kn-func-typescript-http/blob/main/package.json"
+    }
+}

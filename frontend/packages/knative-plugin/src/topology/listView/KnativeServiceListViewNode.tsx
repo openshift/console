@@ -1,0 +1,45 @@
+import type { ReactNode, FC } from 'react';
+import type { Node } from '@patternfly/react-topology';
+import { observer } from '@patternfly/react-topology';
+import TypedResourceBadgeCell from '@console/topology/src/components/list-view/cells/TypedResourceBadgeCell';
+import TopologyListViewNode from '@console/topology/src/components/list-view/TopologyListViewNode';
+import { getResource, getResourceKind } from '@console/topology/src/utils';
+import { isServerlessFunction } from '../knative-topology-utils';
+
+interface KnativeServiceListViewNodeProps {
+  item: Node;
+  selectedIds: string[];
+  onSelect: (ids: string[]) => void;
+  children?: ReactNode;
+}
+
+const ObservedKnativeServiceListViewNode: FC<KnativeServiceListViewNodeProps> = ({
+  item,
+  selectedIds,
+  onSelect,
+  children,
+}) => {
+  const kind = getResourceKind(item);
+
+  const typeIconClass: string = isServerlessFunction(getResource(item))
+    ? 'icon-serverless-function'
+    : 'icon-knative';
+
+  const badgeCell = (
+    <TypedResourceBadgeCell key="type-icon" kind={kind} typeIconClass={typeIconClass} />
+  );
+
+  return (
+    <TopologyListViewNode
+      item={item}
+      selectedIds={selectedIds}
+      onSelect={onSelect}
+      badgeCell={badgeCell}
+    >
+      {children}
+    </TopologyListViewNode>
+  );
+};
+
+const KnativeServiceListViewNode = observer(ObservedKnativeServiceListViewNode);
+export { KnativeServiceListViewNode };

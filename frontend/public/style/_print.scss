@@ -1,0 +1,18 @@
+@media print {
+  * {
+    overflow: visible !important;
+  }
+  .co-m-resource-icon {
+    border: 1px solid grey;
+  }
+  .odc-topology-list-view__item-row {
+    padding: 8px 0 2px;
+  }
+  .odc-namespaced-page, .odc-namespaced-page__content {
+    height: 100%; 
+  }
+  .odc-topology-list-view__kind-row {
+    border-width: 1px !important;
+  }
+
+}

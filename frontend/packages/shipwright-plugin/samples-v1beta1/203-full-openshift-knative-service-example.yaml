@@ -1,0 +1,47 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  namespace: build-examples
+  name: sw-knative-service-example
+  labels:
+    app.kubernetes.io/part-of: sw-knative-service-example
+spec:
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: sw-knative-service-example
+    spec:
+      containers:
+        - name: container
+          image: >-
+            image-registry.openshift-image-registry.svc:5000/build-examples/sw-knative-service-example:latest
+---
+apiVersion: shipwright.io/v1beta1
+kind: Build
+metadata:
+  namespace: build-examples
+  name: sw-knative-service-example-build
+  labels:
+    app.kubernetes.io/part-of: sw-knative-service-example
+spec:
+  source:
+    type: Git
+    git:
+      url: https://github.com/shipwright-io/sample-nodejs
+    contextDir: source-build
+  strategy:
+    name: buildpacks-v3
+    kind: BuildStrategy
+  output:
+    image: image-registry.openshift-image-registry.svc:5000/build-examples/sw-knative-service-example
+---
+apiVersion: shipwright.io/v1beta1
+kind: BuildRun
+metadata:
+  namespace: build-examples
+  generateName: sw-knative-service-example-buildrun-
+  labels:
+    app.kubernetes.io/part-of: sw-knative-service-example
+spec:
+  build:
+    name: sw-knative-service-example-build

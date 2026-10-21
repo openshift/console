@@ -1,0 +1,355 @@
+import { Base64 } from 'js-base64';
+import { action, ActionType as Action } from 'typesafe-actions';
+import * as _ from 'lodash';
+
+// FIXME(alecmerdler): Do not `import store`
+import store from '../redux';
+import { OverviewItem } from '@console/shared/src/types/resource';
+import {
+  ALL_NAMESPACES_KEY,
+  LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY,
+} from '@console/shared/src/constants/common';
+import { K8sResourceKind, PodKind, NodeKind } from '../module/k8s';
+import { allModels } from '../module/k8s/k8s-models';
+import { detectFeatures } from './features';
+import { clearSSARFlags } from './flags';
+import { OverviewSpecialGroup } from '../components/overview/constants';
+import { setClusterID, setCreateProjectMessage, ActionType } from './common';
+import { subsClient, setForceHTTP } from '../graphql/client';
+import {
+  beginImpersonate,
+  endImpersonate,
+  getUser,
+  getImpersonate,
+} from '@console/dynamic-plugin-sdk';
+import {
+  MetricValuesByName,
+  NamespaceMetrics,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { DeprecatedOperatorWarning } from '@console/operator-lifecycle-manager/src/types';
+
+export type { NamespaceMetrics } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+export { ActionType } from './common';
+
+type MetricValuesByNamespace = {
+  [namespace: string]: MetricValuesByName;
+};
+
+export type PodMetrics = {
+  cpu: MetricValuesByNamespace;
+  memory: MetricValuesByNamespace;
+};
+
+export type NodeMetrics = {
+  cpu: MetricValuesByName;
+  totalCPU: MetricValuesByName;
+  pods: MetricValuesByName;
+  usedMemory: MetricValuesByName;
+  totalMemory: MetricValuesByName;
+  usedStorage: MetricValuesByName;
+  totalStorage: MetricValuesByName;
+  runningVms: MetricValuesByName;
+};
+
+export type PVCMetrics = {
+  usedCapacity?: MetricValuesByName;
+};
+
+export type PluginCSPViolations = {
+  [pluginName: string]: boolean;
+};
+
+// URL routes that can be namespaced
+let namespacedResources;
+
+export const getNamespacedResources = () => {
+  if (!namespacedResources) {
+    namespacedResources = new Set();
+    allModels().forEach((v, k) => {
+      if (!v.namespaced) {
+        return;
+      }
+      if (v.crd) {
+        namespacedResources.add(k);
+      }
+      if (!v.crd || v.legacyPluralURL) {
+        namespacedResources.add(v.plural);
+      }
+    });
+  }
+  return namespacedResources;
+};
+
+export const getActiveNamespace = (): string => store.getState().UI.get('activeNamespace');
+export const getActiveUserName = (): string => getUser(store.getState())?.username;
+
+export const getNamespaceMetric = (ns: K8sResourceKind, metric: string): number => {
+  const metrics = store.getState().UI.getIn(['metrics', 'namespace']);
+  return _.get(metrics, [metric, ns.metadata.name], 0);
+};
+
+export const getPodMetric = (pod: PodKind, metric: string): number => {
+  const metrics = store.getState().UI.getIn(['metrics', 'pod']);
+  return metrics?.[metric]?.[pod.metadata.namespace]?.[pod.metadata.name] ?? 0;
+};
+
+export const getNodeMetric = (node: NodeKind, metric: string): number => {
+  const metrics = store.getState().UI.getIn(['metrics', 'node']);
+  return metrics?.[metric]?.[node.metadata.name] ?? 0;
+};
+
+export const getPVCMetric = (pvc: K8sResourceKind, metric: string): number => {
+  const metrics = store.getState().UI.getIn(['metrics', 'pvc']);
+  return metrics?.[metric]?.[pvc.metadata.namespace]?.[pvc.metadata.name] ?? 0;
+};
+
+export const formatNamespaceRoute = (
+  activeNamespace,
+  originalPath,
+  location?,
+  forceList?: boolean,
+) => {
+  let path = originalPath.substr(window.SERVER_FLAGS.basePath.length);
+
+  let parts = path.split('/').filter((p) => p);
+  const prefix = parts.shift();
+
+  let previousNS;
+  if (parts[0] === 'all-namespaces') {
+    parts.shift();
+    previousNS = ALL_NAMESPACES_KEY;
+  } else if (parts[0] === 'ns') {
+    parts.shift();
+    previousNS = parts.shift();
+  }
+
+  if (!previousNS) {
+    return originalPath;
+  }
+
+  if (
+    (previousNS !== activeNamespace &&
+      (parts[1] !== 'new' || activeNamespace !== ALL_NAMESPACES_KEY)) ||
+    (activeNamespace === ALL_NAMESPACES_KEY && parts[1] === 'new') ||
+    forceList
+  ) {
+    // a given resource will not exist when we switch namespaces, so pop off the tail end
+    parts = parts.slice(0, 1);
+  }
+
+  const namespacePrefix =
+    activeNamespace === ALL_NAMESPACES_KEY ? 'all-namespaces' : `ns/${activeNamespace}`;
+
+  path = `/${prefix}/${namespacePrefix}`;
+  if (parts.length) {
+    path += `/${parts.join('/')}`;
+  }
+
+  if (location) {
+    // When namespace changes, reset page to 1 but preserve perPage preference
+    if (previousNS !== activeNamespace) {
+      const searchParams = new URLSearchParams(location.search);
+      searchParams.delete('page');
+      const search = searchParams.toString();
+      path += search ? `?${search}` : '';
+      path += location.hash;
+    } else {
+      path += `${location.search}${location.hash}`;
+    }
+  }
+
+  return path;
+};
+
+export const setCurrentLocation = (location: string) =>
+  action(ActionType.SetCurrentLocation, { location });
+
+export const setServiceLevel = (
+  serviceLevel: string,
+  daysRemaining: number = null,
+  clusterID: string = '',
+  trialDateEnd: string = null,
+  hasSecretAccess: boolean = false,
+) =>
+  action(ActionType.SetServiceLevel, {
+    serviceLevel,
+    daysRemaining,
+    clusterID,
+    trialDateEnd,
+    hasSecretAccess,
+  });
+
+export const setActiveApplication = (application: string) => {
+  return action(ActionType.SetActiveApplication, { application });
+};
+
+export const setActiveNamespace = (namespace: string = '') => {
+  namespace = namespace.trim();
+  // make it noop when new active namespace is the same
+  // otherwise users will get page refresh and cry about
+  // broken direct links and bookmarks
+  if (namespace !== getActiveNamespace()) {
+    // save last namespace in session storage (persisted only for current browser tab). Used to remember/restore if
+    // "All Projects" was selected when returning to the list view (typically from details view) via breadcrumb or
+    // sidebar navigation
+    sessionStorage.setItem(LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY, namespace);
+  }
+
+  return action(ActionType.SetActiveNamespace, { namespace });
+};
+
+/**
+ * Encodes a string for use in Kubernetes impersonation subprotocols.
+ * Subprotocols are comma-separated, so commas aren't allowed. Also "="
+ * and "/" aren't allowed, so we base64 encode and replace illegal chars.
+ */
+const encodeImpersonationValue = (value: string, textEncoder: TextEncoder): string => {
+  return Base64.encode(String.fromCharCode.apply(String, textEncoder.encode(value)))
+    .replace(/=/g, '_')
+    .replace(/\//g, '-');
+};
+
+export const startImpersonate = (kind: string, name: string, groups?: string[]) => async (
+  dispatch,
+  getState,
+) => {
+  const textEncoder = new TextEncoder();
+
+  const imp = getImpersonate(getState());
+  if ((imp?.name && imp.name !== name) || (imp?.kind && imp.kind !== kind)) {
+    // eslint-disable-next-line no-console
+    console.warn(`Impersonate race detected: ${name} vs ${imp.name} / ${kind} ${imp.kind}`);
+    return;
+  }
+
+  const encodedName = encodeImpersonationValue(name, textEncoder);
+
+  let subprotocols;
+  if (kind === 'User') {
+    subprotocols = [`Impersonate-User.${encodedName}`];
+  } else if (kind === 'Group') {
+    subprotocols = [`Impersonate-Group.${encodedName}`];
+  } else if (kind === 'UserWithGroups' && groups && groups.length > 0) {
+    // User with multiple groups impersonation
+    // Encode user subprotocol
+    subprotocols = [`Impersonate-User.${encodedName}`];
+    // Encode each group as a separate subprotocol
+    groups.forEach((group) => {
+      const encodedGroup = encodeImpersonationValue(group, textEncoder);
+      subprotocols.push(`Impersonate-Group.${encodedGroup}`);
+    });
+  }
+
+  dispatch(beginImpersonate(kind, name, subprotocols, groups));
+
+  // Close WebSocket to trigger reconnection with new impersonation headers
+  // Wait for the close to complete before proceeding
+  subsClient.close(false, true);
+
+  // Don't clear/refresh flags here - the App component's useLayoutEffect will handle it
+  // This ensures flags refresh happens in sync with React's render cycle
+};
+
+export const refreshFeaturesAfterImpersonation = () => (dispatch) => {
+  setForceHTTP(true);
+  dispatch(detectFeatures()).then(() => setForceHTTP(false));
+};
+export const stopImpersonate = () => (dispatch) => {
+  dispatch(endImpersonate());
+  subsClient.close(false, true);
+  setForceHTTP(true);
+  dispatch(clearSSARFlags());
+  dispatch(detectFeatures()).then(() => setForceHTTP(false));
+};
+export const sortList = (listId: string, field: string, func: string, orderBy: string) => {
+  // const url = new URL(window.location.href);
+  // const sp = new URLSearchParams(window.location.search);
+  // sp.set('orderBy', orderBy);
+  // sp.set('sortBy', column);
+  // history.replace(`${url.pathname}?${sp.toString()}${url.hash}`);
+
+  return action(ActionType.SortList, { listId, field, func, orderBy });
+};
+export const selectOverviewItem = (uid: string) => action(ActionType.SelectOverviewItem, { uid });
+export const selectOverviewDetailsTab = (tab: string) =>
+  action(ActionType.SelectOverviewDetailsTab, { tab });
+export const updateOverviewMetrics = (metrics: any) =>
+  action(ActionType.UpdateOverviewMetrics, { metrics });
+export const updateOverviewResources = (resources: OverviewItem[]) =>
+  action(ActionType.UpdateOverviewResources, { resources });
+export const updateTimestamps = (lastTick: number) =>
+  action(ActionType.UpdateTimestamps, { lastTick });
+export const dismissOverviewDetails = () => action(ActionType.DismissOverviewDetails);
+export const updateOverviewSelectedGroup = (group: OverviewSpecialGroup | string) =>
+  action(ActionType.UpdateOverviewSelectedGroup, { group });
+export const updateOverviewLabels = (labels: string[]) =>
+  action(ActionType.UpdateOverviewLabels, { labels });
+export const updateOverviewFilterValue = (value: string) =>
+  action(ActionType.UpdateOverviewFilterValue, { value });
+export const notificationDrawerToggleExpanded = () =>
+  action(ActionType.NotificationDrawerToggleExpanded);
+export const setPodMetrics = (podMetrics: PodMetrics) =>
+  action(ActionType.SetPodMetrics, { podMetrics });
+export const setNamespaceMetrics = (namespaceMetrics: NamespaceMetrics) =>
+  action(ActionType.SetNamespaceMetrics, { namespaceMetrics });
+export const setNodeMetrics = (nodeMetrics: NodeMetrics) =>
+  action(ActionType.SetNodeMetrics, { nodeMetrics });
+export const setPVCMetrics = (pvcMetrics: PVCMetrics) =>
+  action(ActionType.SetPVCMetrics, { pvcMetrics });
+export const setUtilizationDuration = (duration) =>
+  action(ActionType.SetUtilizationDuration, { duration });
+export const setUtilizationDurationSelectedKey = (key) =>
+  action(ActionType.SetUtilizationDurationSelectedKey, { key });
+export const setUtilizationDurationEndTime = (endTime) =>
+  action(ActionType.SetUtilizationDurationEndTime, { endTime });
+
+export const setShowOperandsInAllNamespaces = (value: boolean) => {
+  return action(ActionType.SetShowOperandsInAllNamespaces, { value });
+};
+export const setDeprecatedPackage = (value: DeprecatedOperatorWarning) => {
+  return action(ActionType.SetDeprecatedPackage, { value });
+};
+export const setDeprecatedChannel = (value: DeprecatedOperatorWarning) => {
+  return action(ActionType.SetDeprecatedChannel, { value });
+};
+export const setDeprecatedVersion = (value: DeprecatedOperatorWarning) => {
+  return action(ActionType.SetDeprecatedVersion, { value });
+};
+export const setPluginCSPViolations = (pluginName: string, hasViolation: boolean) => {
+  return action(ActionType.SetPluginCSPViolations, { pluginName, hasViolation });
+};
+
+// TODO(alecmerdler): Implement all actions using `typesafe-actions` and add them to this export
+const uiActions = {
+  setCurrentLocation,
+  setShowOperandsInAllNamespaces,
+  setActiveApplication,
+  setActiveNamespace,
+  sortList,
+  setCreateProjectMessage,
+  setClusterID,
+  selectOverviewItem,
+  selectOverviewDetailsTab,
+  setServiceLevel,
+  updateOverviewMetrics,
+  updateOverviewResources,
+  updateTimestamps,
+  dismissOverviewDetails,
+  updateOverviewSelectedGroup,
+  updateOverviewLabels,
+  updateOverviewFilterValue,
+  setPodMetrics,
+  setNamespaceMetrics,
+  setNodeMetrics,
+  setPVCMetrics,
+  notificationDrawerToggleExpanded,
+  setUtilizationDuration,
+  setUtilizationDurationSelectedKey,
+  setUtilizationDurationEndTime,
+  setDeprecatedPackage,
+  setDeprecatedChannel,
+  setDeprecatedVersion,
+  setPluginCSPViolations,
+};
+
+export type UIAction = Action<typeof uiActions>;

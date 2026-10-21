@@ -1,0 +1,19 @@
+.co-sysevent-icon {
+  background-color: var(--pf-t--global--background--color--primary--default);
+  border: var(--pf-t--global--border--width--extra-strong) solid var(--pf-t--global--color--nonstatus--gray--default);
+  border-radius: var(--pf-t--global--border--radius--400);
+  position: relative;
+  z-index: 10;
+  height: 18px;
+  width: 18px;
+}
+
+.co-sysevent--warning {
+  .co-sysevent-icon,
+  .co-sysevent__box {
+    border-color: var(--pf-t--global--border--color--status--warning--default);
+  }
+  .co-sysevent__icon-line {
+    background-color: var(--pf-t--global--border--color--status--warning--default);
+  }
+}

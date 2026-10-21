@@ -1,0 +1,172 @@
+import { forwardRef, useRef, useEffect, useImperativeHandle, useCallback, useState } from 'react';
+import { getResizeObserver } from '@patternfly/react-core';
+import { FitAddon } from '@xterm/addon-fit';
+import type { ITerminalOptions, ITerminalAddon } from '@xterm/xterm';
+import { Terminal as XTerminal } from '@xterm/xterm';
+import { useIsFullscreen } from '@console/shared/src/hooks/useFullscreen';
+
+const defaultOptions: ITerminalOptions = {
+  fontFamily: 'Red Hat Mono, monospace',
+  fontSize: 16,
+  cursorBlink: false,
+};
+
+export type ImperativeTerminalType = {
+  focus: () => void;
+  reset: () => void;
+  onDataReceived: (data: string) => void;
+  onConnectionClosed: (msg: string) => void;
+  loadAttachAddon: (addOn: ITerminalAddon) => void;
+};
+
+export interface TerminalProps {
+  onData: (data: string) => void;
+  onResize: (rows: number, cols: number) => void;
+  padding?: number;
+  options?: ITerminalOptions;
+  className?: string;
+}
+
+/**
+ * This component loads the entire `xterm` library with it.
+ * Use `AsyncComponent` on components that consume this one to dynamically
+ * load xterm only when used.
+ */
+export const Terminal = forwardRef<ImperativeTerminalType, TerminalProps>(
+  ({ onData, onResize, padding = 52, options = defaultOptions, className }, ref) => {
+    const terminal = useRef<XTerminal>();
+    const fitAddon = useRef<FitAddon>();
+    const terminalRef = useRef<HTMLDivElement>(null);
+    const isFullscreen = useIsFullscreen();
+
+    const [dimensions, setDimensions] = useState<Pick<CSSStyleDeclaration, 'width' | 'height'>>({
+      width: '0',
+      height: '0',
+    });
+
+    const handleResize = useCallback(() => {
+      const node = terminalRef.current;
+      if (!node) {
+        return;
+      }
+
+      const pageRect = document.getElementsByClassName('pf-v6-c-page')[0]?.getBoundingClientRect();
+      const bodyRect = document.body.getBoundingClientRect();
+      const nodeRect = node.getBoundingClientRect();
+
+      if (!pageRect) {
+        return;
+      }
+
+      const height = Math.floor(pageRect.bottom - (isFullscreen ? 0 : nodeRect.top) - padding);
+      const width = Math.floor(
+        bodyRect.width - (isFullscreen ? 0 : nodeRect.left) - (isFullscreen ? 10 : padding),
+      );
+
+      setDimensions({ width: `${width}px`, height: `${height}px` });
+    }, [isFullscreen, padding]);
+
+    useEffect(() => {
+      const term = new XTerminal({ ...options });
+
+      term.resize(80, 25);
+
+      const fit = new FitAddon();
+
+      terminal.current = term;
+      fitAddon.current = fit;
+
+      term.loadAddon(fit);
+
+      let unobserveResize: () => void;
+
+      if (terminalRef.current) {
+        term.open(terminalRef.current);
+        term.focus();
+        unobserveResize = getResizeObserver(
+          terminalRef.current,
+          () => {
+            if (!terminal.current) {
+              return;
+            }
+            // @ts-expect-error Guard: skip resize if xterm's render service hasn't initialized yet.
+            // ResizeObserver can fire before the internal dimensions are available.
+            if (!terminal.current._core?._renderService?.dimensions) {
+              return;
+            }
+            fit.fit();
+            onResize(terminal.current.rows, terminal.current.cols);
+            // @ts-expect-error The internal xterm textarea was not repositioned when the window was resized.
+            // See https://bugzilla.redhat.com/show_bug.cgi?id=1983220
+            // and https://github.com/xtermjs/xterm.js/issues/3390
+            terminal.current._core?._syncTextArea?.();
+          },
+          true,
+        );
+        handleResize();
+      }
+
+      window.addEventListener('resize', handleResize);
+      window.addEventListener('sidebar_toggle', handleResize);
+
+      return () => {
+        term.dispose();
+        unobserveResize?.();
+        window.removeEventListener('resize', handleResize);
+        window.removeEventListener('sidebar_toggle', handleResize);
+      };
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    useEffect(() => {
+      const term = terminal.current;
+      if (!term) {
+        return;
+      }
+      const dataListener = term.onData(onData);
+      const resizeListener = term.onResize(({ rows, cols }) => onResize(rows, cols));
+      return () => {
+        dataListener.dispose();
+        resizeListener.dispose();
+      };
+    }, [onData, onResize]);
+
+    useEffect(() => {
+      handleResize();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isFullscreen]);
+
+    useImperativeHandle(ref, () => ({
+      focus: () => {
+        terminal.current?.focus();
+      },
+      reset: () => {
+        if (!terminal.current) {
+          return;
+        }
+        terminal.current.reset();
+        terminal.current.clear();
+        terminal.current.options.disableStdin = false;
+      },
+      onDataReceived: (data: string) => {
+        terminal.current?.write(data);
+      },
+      onConnectionClosed: (msg: string) => {
+        if (!terminal.current) {
+          return;
+        }
+        if (isFullscreen) {
+          document.exitFullscreen();
+        }
+        terminal.current.write(`\x1b[31m${msg || 'disconnected'}\x1b[m\r\n`);
+        terminal.current.options.disableStdin = true;
+        terminal.current.refresh(0, terminal.current.rows - 1);
+      },
+      loadAttachAddon: (addOn: ITerminalAddon) => {
+        terminal.current?.loadAddon(addOn);
+      },
+    }));
+
+    return <div ref={terminalRef} className={className || 'co-terminal'} style={dimensions} />;
+  },
+);

@@ -1,0 +1,547 @@
+/**
+ * This file declares all extensions contributed by the plugin.
+ *
+ * Depending on extension 'type', the 'properties' object may contain code references, encoded
+ * as object literals { $codeRef: string }. The '$codeRef' value should be formatted as either
+ * 'moduleName.exportName' (referring to a named export) or 'moduleName' (referring to the
+ * 'default' export). Only the plugin's exposed modules may be used in code references.
+ */
+[
+  {
+    "type": "console.flag",
+    "properties": {
+      "handler": { "$codeRef": "barUtils.testHandler" }
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "flag": "EXAMPLE",
+      "model": {
+        "group": "kubevirt.io",
+        "version": "v1alpha3",
+        "kind": "ExampleModel"
+      }
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "kubevirt.io",
+        "version": "v1alpha3",
+        "kind": "ExampleModel"
+      },
+      "badge": "dev",
+      "color": "#DEADBEEF",
+      "label": "ExampleModel",
+      "labelPlural": "ExampleModels",
+      "abbr": "EM"
+    }
+  },
+  {
+    "type": "console.page/resource/list",
+    "properties": {
+      "model": {
+        "group": "kubevirt.io",
+        "version": "v1alpha3",
+        "kind": "ExampleModel"
+      },
+      "component": { "$codeRef": "stubPages.DummyResourceListPage" }
+    }
+  },
+  {
+    "type": "console.page/resource/details",
+    "properties": {
+      "model": {
+        "group": "kubevirt.io",
+        "version": "v1alpha3",
+        "kind": "ExampleModel"
+      },
+      "component": { "$codeRef": "stubPages.DummyResourceDetailsPage" }
+    }
+  },
+  {
+    "type": "console.telemetry/listener",
+    "properties": {
+      "listener": {
+        "$codeRef": "telemetry.eventListener"
+      }
+    }
+  },
+  {
+    "type": "console.perspective",
+    "properties": {
+      "id": "demo",
+      "name": "%plugin__console-demo-plugin~Demo%",
+      "icon": { "$codeRef": "perspective.icon" },
+      "landingPageURL": { "$codeRef": "perspective.getLandingPageURL" },
+      "importRedirectURL": { "$codeRef": "perspective.getImportRedirectURL" }
+    }
+  },
+  {
+    "type": "console.navigation/section",
+    "properties": {
+      "id": "admin-demo-section",
+      "perspective": "admin",
+      "name": "%plugin__console-demo-plugin~Demo Plugin%",
+      "dataAttributes": {
+        "data-test": "admin-demo-section"
+      }
+    }
+  },
+  {
+    "type": "console.navigation/section",
+    "properties": {
+      "id": "dev-demo-section",
+      "perspective": "dev",
+      "name": "%plugin__console-demo-plugin~Demo Plugin%"
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "path": "/example/nav",
+      "component": { "$codeRef": "navPage" }
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": ["/dynamic-route-1"],
+      "component": {
+        "$codeRef": "exampleNavs.DynamicPage1"
+      }
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "path": "/test-proxy-service",
+      "component": { "$codeRef": "exampleProxyPage.default" }
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "admin-dynamic-route-1",
+      "perspective": "admin",
+      "section": "admin-demo-section",
+      "name": "%plugin__console-demo-plugin~Dynamic Nav 1%",
+      "href": "/dynamic-route-1"
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "dev-dynamic-route-1",
+      "perspective": "dev",
+      "section": "dev-demo-section",
+      "name": "%plugin__console-demo-plugin~Dynamic Nav 1%",
+      "href": "/dynamic-route-1"
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "demo-dynamic-route-1",
+      "perspective": "demo",
+      "name": "%plugin__console-demo-plugin~Dynamic Nav 1%",
+      "href": "/dynamic-route-1"
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": ["/dynamic-route-2"],
+      "component": {
+        "$codeRef": "exampleNavs.DynamicPage2"
+      }
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "admin-dynamic-route-2",
+      "perspective": "admin",
+      "section": "admin-demo-section",
+      "name": "%plugin__console-demo-plugin~Dynamic Nav 2%",
+      "href": "/dynamic-route-2"
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "dev-dynamic-route-2",
+      "perspective": "dev",
+      "section": "dev-demo-section",
+      "name": "%plugin__console-demo-plugin~Dynamic Nav 2%",
+      "href": "/dynamic-route-2"
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "demo-dynamic-route-2",
+      "perspective": "demo",
+      "name": "%plugin__console-demo-plugin~Dynamic Nav 2%",
+      "href": "/dynamic-route-2"
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "path": "/test-consumer",
+      "component": { "$codeRef": "extensionConsumer.default" }
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "admin-test-consumer",
+      "perspective": "admin",
+      "section": "admin-demo-section",
+      "name": "%plugin__console-demo-plugin~Test Consumer%",
+      "href": "/test-consumer"
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "dev-test-consumer",
+      "perspective": "dev",
+      "section": "dev-demo-section",
+      "name": "%plugin__console-demo-plugin~Test Consumer%",
+      "href": "/test-consumer"
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "demo-test-consumer",
+      "perspective": "demo",
+      "name": "%plugin__console-demo-plugin~Test Consumer%",
+      "href": "/test-consumer"
+    }
+  },
+  {
+    "type": "console.tab/horizontalNav",
+    "properties": {
+      "model": {
+        "group": "project.openshift.io",
+        "version": "v1",
+        "kind": "Project"
+      },
+      "page": {
+        "name": "Demo Plugin",
+        "href": "demo-plugin"
+      },
+      "component": { "$codeRef": "projectTabContent" }
+    }
+  },
+  {
+    "type": "console.tab",
+    "properties": {
+      "contextId": "dev-console-observe",
+      "name": "Demo Logs",
+      "href": "/demo-logs",
+      "component": { "$codeRef": "exampleNavs.DynamicPage1" }
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "path": "/test-utility-consumer",
+      "component": { "$codeRef": "utilityConsumer.default" }
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "admin-test-utility-consumer",
+      "perspective": "admin",
+      "section": "admin-demo-section",
+      "name": "%plugin__console-demo-plugin~Test Utilities%",
+      "href": "/test-utility-consumer"
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "dev-test-utility-consumer",
+      "perspective": "dev",
+      "section": "dev-demo-section",
+      "name": "%plugin__console-demo-plugin~Test Utilities%",
+      "href": "/test-utility-consumer"
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "demo-test-utility-consumer",
+      "perspective": "demo",
+      "name": "%plugin__console-demo-plugin~Test Utilities%",
+      "href": "/test-utility-consumer"
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "test-list-page",
+      "perspective": "admin",
+      "section": "admin-demo-section",
+      "name": "%plugin__console-demo-plugin~List Page%",
+      "href": "/demo-list-page"
+    },
+    "flags": {
+      "required": ["OPENSHIFT"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "path": "/demo-list-page",
+      "component": { "$codeRef": "listPage" }
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "test-k8s-api",
+      "perspective": "admin",
+      "section": "admin-demo-section",
+      "name": "%plugin__console-demo-plugin~K8s API%",
+      "href": "/test-k8sapi"
+    },
+    "flags": {
+      "required": ["OPENSHIFT"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "path": "/test-k8sapi",
+      "component": { "$codeRef": "K8sAPIConsumer.default" }
+    }
+  },
+  {
+    "type": "console.cluster-overview/inventory-item",
+    "properties": {
+      "component": { "$codeRef": "clusterInventoryOverview.default" }
+    }
+  },
+  {
+    "type": "console.cluster-overview/utilization-item",
+    "properties": {
+      "title": "%plugin__console-demo-plugin~Foo item%",
+      "getUtilizationQuery": { "$codeRef": "clusterOverview.getUtilizationQuery" },
+      "humanize": { "$codeRef": "clusterOverview.humanize" }
+    }
+  },
+  {
+    "type": "console.cluster-overview/multiline-utilization-item",
+    "properties": {
+      "title": "%plugin__console-demo-plugin~Bar item%",
+      "getUtilizationQueries": { "$codeRef": "clusterOverview.getUtilizationQueries" },
+      "humanize": { "$codeRef": "clusterOverview.humanize" }
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "path": "/test-editor",
+      "component": { "$codeRef": "yamlEditor.default" }
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "path": "/test-events",
+      "component": { "$codeRef": "events.default" }
+    }
+  },
+  {
+    "type": "console.dashboards/tab",
+    "properties": {
+      "id": "demo-plugin-tab",
+      "navSection": "home",
+      "title": "%plugin__console-demo-plugin~Demo Dashboard%"
+    }
+  },
+  {
+    "type": "console.dashboards/card",
+    "properties": {
+      "tab": "demo-plugin-tab",
+      "position": "LEFT",
+      "component": { "$codeRef": "dashboardCard.default" }
+    }
+  },
+  {
+    "type": "console.dashboards/custom/overview/detail/item",
+    "properties": {
+      "title": "%plugin__console-demo-plugin~Custom Overview Detail Title%",
+      "component": { "$codeRef": "customOverviewDetailItem.default" },
+      "error": { "$codeRef": "customOverviewDetailItem.getError" },
+      "isLoading": { "$codeRef": "customOverviewDetailItem.isLoading" },
+      "valueClassName": "co-select-to-copy"
+    }
+  },
+  {
+    "type": "console.project-overview/inventory-item",
+    "properties": {
+      "component": { "$codeRef": "projectOverviewInventory.default" }
+    }
+  },
+  {
+    "type": "console.project-overview/utilization-item",
+    "properties": {
+      "title": "%plugin__console-demo-plugin~Foo item%",
+      "getUtilizationQuery": { "$codeRef": "projectOverview.getUtilizationQuery" },
+      "humanize": { "$codeRef": "clusterOverview.humanize" }
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "path": "/test-modal",
+      "component": { "$codeRef": "modalPage.TestModalPage" }
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "test-modal-page",
+      "perspective": "admin",
+      "section": "admin-demo-section",
+      "name": "%plugin__console-demo-plugin~Modal Launchers%",
+      "href": "/test-modal"
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "path": "/test-horizontalnav",
+      "component": { "$codeRef": "navPage.default" }
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "test-horizontalnav-page",
+      "perspective": "admin",
+      "section": "admin-demo-section",
+      "name": "%plugin__console-demo-plugin~Horizontal Nav%",
+      "href": "/test-horizontalnav"
+    }
+  },
+  {
+    "type": "console.create-project-modal",
+    "properties": {
+      "component": { "$codeRef": "createProjectModal" }
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "path": "/sample-error-boundary-page",
+      "component": { "$codeRef": "sampleErrorBoundaryPage.default" }
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "error-boundary-page",
+      "perspective": "admin",
+      "section": "admin-demo-section",
+      "name": "%plugin__console-demo-plugin~Sample Error Boundary Page%",
+      "href": "/sample-error-boundary-page"
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": false,
+      "path": ["/example-namespaced-page/ns/:ns", "/example-namespaced-page/all-namespaces"],
+      "component": {
+        "$codeRef": "exampleNamespacedPage.ExampleNamespacedPage"
+      }
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "namespaced": true,
+      "id": "demo-example-namespaced-page",
+      "perspective": "demo",
+      "name": "%plugin__console-demo-plugin~Example Namespaced Page%",
+      "href": "/example-namespaced-page"
+    }
+  },
+  {
+    "type": "console.dashboards/overview/health/url",
+    "properties": {
+      "title": "Foo system",
+      "url": "fooUrl",
+      "healthHandler": {
+        "$codeRef": "health.getFooHealthState"
+      }
+    }
+  },
+  {
+    "type": "console.dashboards/overview/health/prometheus",
+    "properties": {
+      "title": "Bar system",
+      "queries": ["barQuery"],
+      "healthHandler": {
+        "$codeRef": "health.getBarHealthState"
+      },
+      "additionalResource": {
+        "kind": "Node",
+        "isList": true,
+        "namespaced": false,
+        "prop": "nodes"
+      }
+    }
+  },
+  {
+    "type": "console.dashboards/overview/inventory/item",
+    "properties": {
+      "model": {
+        "group": "route.openshift.io",
+        "version": "v1",
+        "kind": "Route"
+      },
+      "mapper": { "$codeRef": "clusterInventoryOverview.getRouteStatusGroups" }
+    }
+  },
+  {
+    "type": "console.dashboards/overview/inventory/item/group",
+    "properties": {
+      "id": "demo-inventory-group",
+      "icon": { "$codeRef": "clusterInventoryOverview.DemoGroupIcon" }
+    }
+  },
+  {
+    "type": "console.dashboards/overview/activity/resource",
+    "properties": {
+      "k8sResource": {
+        "isList": true,
+        "kind": "Node",
+        "prop": "nodes"
+      },
+      "isActivity": { "$codeRef": "clusterActivityOverview.isActivity" },
+      "getTimestamp": { "$codeRef": "clusterActivityOverview.getTimestamp" },
+      "component": { "$codeRef": "clusterActivityOverview.DemoActivity" }
+    }
+  },
+  {
+    "type": "console.dashboards/overview/prometheus/activity/resource",
+    "properties": {
+      "queries": ["barQuery"],
+      "component": { "$codeRef": "clusterActivityOverview.DemoPrometheusActivity" },
+      "isActivity": { "$codeRef": "clusterActivityOverview.isAlwaysActivity" }
+    }
+  }
+]

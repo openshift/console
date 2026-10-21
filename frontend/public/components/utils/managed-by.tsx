@@ -1,0 +1,93 @@
+import type { FC } from 'react';
+import { useEffect, useState } from 'react';
+import { css } from '@patternfly/react-styles';
+import { Link } from 'react-router';
+import { useTranslation } from 'react-i18next';
+
+import { ResourceIcon } from './resource-icon';
+import { resourcePathFromModel, ResourceLink } from './resource-link';
+import {
+  K8sResourceCommon,
+  referenceForOwnerRef,
+  OwnerReference,
+  modelFor,
+  k8sList,
+} from '../../module/k8s';
+import { findOwner, matchOwnerAndCSV } from '../../module/k8s/managed-by';
+import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
+import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager';
+
+export const ManagedByOperatorResourceLink: FC<ManagerLinkProps> = ({
+  csvName,
+  namespace,
+  owner,
+  className,
+}) => {
+  const ownerGroupVersionKind = referenceForOwnerRef(owner);
+  const { apiGroup, kind, namespaced } = modelFor(ownerGroupVersionKind) ?? {};
+  const ownerIsCSV =
+    apiGroup === ClusterServiceVersionModel.apiGroup && kind === ClusterServiceVersionModel.kind;
+  const link = resourcePathFromModel(ClusterServiceVersionModel, csvName, namespace);
+  return (
+    <span className={className}>
+      {namespaced ? (
+        <>
+          <ResourceIcon kind={ownerGroupVersionKind} />
+          <Link
+            to={ownerIsCSV ? link : `${link}/${ownerGroupVersionKind}/${owner.name}`}
+            className="co-resource-item__resource-name"
+            data-test-operand-link={owner.name}
+            data-test={owner.name}
+          >
+            {owner.name}
+          </Link>
+        </>
+      ) : (
+        <ResourceLink kind={ownerGroupVersionKind} name={owner.name} />
+      )}
+    </span>
+  );
+};
+
+export const ManagedByOperatorLink: FC<ManagedByLinkProps> = ({ obj, className }) => {
+  const { t } = useTranslation();
+  const [data, setData] = useState<ClusterServiceVersionKind[] | undefined>(undefined);
+  const namespace = obj.metadata.namespace;
+  useEffect(() => {
+    if (!namespace) {
+      return;
+    }
+    k8sList(ClusterServiceVersionModel, { ns: namespace })
+      .then(setData)
+      .catch((e) => {
+        // eslint-disable-next-line no-console
+        console.error('Could not fetch CSVs', e);
+      });
+  }, [namespace, setData]);
+  const owner = findOwner(obj, data);
+  const csv = data && owner ? matchOwnerAndCSV(owner, data) : undefined;
+
+  return owner && csv ? (
+    <div className={css('co-m-pane__heading-owner', className)}>
+      {t('public~Managed by')}{' '}
+      <ManagedByOperatorResourceLink
+        className="co-resource-item"
+        namespace={namespace}
+        csvName={csv.metadata.name}
+        owner={owner}
+      />
+    </div>
+  ) : null;
+};
+
+type ManagedByLinkProps = {
+  className?: string;
+  obj: K8sResourceCommon;
+};
+
+type ManagerLinkProps = {
+  csvName: string;
+  namespace: string;
+  owner: OwnerReference;
+  className?: string;
+};

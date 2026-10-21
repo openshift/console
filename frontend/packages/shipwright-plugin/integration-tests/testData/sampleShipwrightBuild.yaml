@@ -1,0 +1,6 @@
+apiVersion: operator.shipwright.io/v1alpha1
+kind: ShipwrightBuild
+metadata:
+  name: shipwright-build
+spec:
+  targetNamespace: shipwright-build

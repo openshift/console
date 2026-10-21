@@ -1,0 +1,368 @@
+import type { FC, ReactNode, MouseEvent, CSSProperties, RefObject } from 'react';
+import * as _ from 'lodash';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
+import {
+  Divider,
+  SelectGroup,
+  SelectOption,
+  SelectList,
+  MenuSearch,
+  MenuSearchInput,
+  MenuToggle,
+  MenuToggleElement,
+  SearchInput,
+  Select,
+} from '@patternfly/react-core';
+import { css } from '@patternfly/react-styles';
+import { useTranslation } from 'react-i18next';
+
+export type ActionItem = {
+  actionKey: string;
+  actionTitle: string;
+};
+
+export type ConsoleSelectProps = {
+  /** Action items to be displayed at the top of the dropdown */
+  actionItems?: ActionItem[];
+  /** Whether the dropdown is open by default */
+  active?: boolean;
+  /** Aria label for the dropdown toggle */
+  ariaLabel?: string;
+  /** Filter function for autocomplete */
+  autocompleteFilter?: (text: string, item: any, key: string) => boolean;
+  /** Placeholder for the autocomplete search box */
+  autocompletePlaceholder?: string;
+  /** Class name for the menu toggle button */
+  buttonClassName?: string;
+  /** Class name for the dropdown wrapper */
+  className?: string;
+  /** Data test attribute for the menu toggle */
+  dataTest?: string;
+  /** aria-describedby attribute for the menu toggle */
+  describedBy?: string;
+  /** Whether the dropdown is disabled */
+  disabled?: boolean;
+  /** Header items to be displayed before the dropdown items */
+  headerBefore?: Record<string, string>;
+  /** Unique identifier for the dropdown */
+  id?: string;
+  /** Whether the dropdown should take full width */
+  isFullWidth?: boolean;
+  /** The items to be displayed in the dropdown */
+  items: Record<string, ReactNode>;
+  /** Class name for the dropdown menu */
+  menuClassName?: string;
+  /** Callback when an item is selected */
+  onChange?: (key: string, e: MouseEvent) => void;
+  /** Wether the dropdown is a required field */
+  required?: boolean;
+  /** The currently selected key */
+  selectedKey?: string;
+  /** Where to place spacers in the dropdown */
+  spacerBefore?: Set<string>;
+  /** Style for the dropdown */
+  style?: CSSProperties;
+  /** Title displayed in the dropdown toggle. Will always be shown regardless of state */
+  title?: ReactNode;
+  /** Prefix for the title in the dropdown toggle */
+  titlePrefix?: string;
+  /** User settings id prefix for bookmarks */
+  userPreferencePrefix?: string;
+  /** By default, the title prop is shown as the placeholder for when no item is selected. This prop forces the title to always be shown */
+  alwaysShowTitle?: boolean;
+  /** Whether to render the dropdown inline */
+  renderInline?: boolean;
+};
+
+const ConsoleSelectItem: FC<{
+  itemKey: string;
+  content: ReactNode;
+  selected: boolean;
+  isBookmarked?: boolean;
+}> = ({ itemKey, content, selected, isBookmarked }) => (
+  <SelectOption
+    data-test-dropdown-menu={itemKey}
+    data-test="console-select-item"
+    id={`${itemKey}-link`}
+    isFavorited={isBookmarked}
+    isSelected={selected}
+    itemId={itemKey}
+    key={itemKey}
+  >
+    {content}
+  </SelectOption>
+);
+
+/**
+ * A Select is a dropdown that indicates state.
+ *
+ * Due to this components complexity, prefer `@patternfly/react-templates` components when possible.
+ */
+export const ConsoleSelect: FC<ConsoleSelectProps> = ({
+  actionItems,
+  active,
+  ariaLabel,
+  autocompleteFilter,
+  autocompletePlaceholder,
+  buttonClassName,
+  className,
+  dataTest = 'console-select-menu-toggle',
+  describedBy,
+  disabled,
+  headerBefore = {},
+  id,
+  isFullWidth,
+  menuClassName,
+  onChange,
+  spacerBefore = new Set(),
+  style,
+  title,
+  alwaysShowTitle = false,
+  titlePrefix,
+  userPreferencePrefix,
+  renderInline = false,
+  ...props
+}) => {
+  const [expanded, setExpanded] = useState(active ?? false);
+  const [selectedKey, setSelectedKey] = useState<string>(props.selectedKey ?? '');
+  const [autocompleteText, setAutocompleteText] = useState<string>('');
+  const [items, setItems] = useState<Record<string, React.ReactNode>>(props.items);
+  const { t } = useTranslation();
+
+  /* Dropdown bookmark state and helpers */
+  // Should be undefined so that we don't save undefined-xxx.
+  const bookmarkUserPreferenceKey = userPreferencePrefix
+    ? `${userPreferencePrefix}.bookmarks`
+    : undefined;
+
+  const enableBookmarks = !!bookmarkUserPreferenceKey;
+
+  const [bookmarks, setBookmarks] = useUserPreference(bookmarkUserPreferenceKey, {}, true);
+
+  const onBookmark = useCallback(
+    (key: string, isBookmarked: boolean) => {
+      setBookmarks((oldBookmarks: Record<string, boolean>) => ({
+        ...oldBookmarks,
+        [key]: isBookmarked ? true : undefined,
+      }));
+    },
+    [setBookmarks],
+  );
+
+  /* Component refs */
+  const dropdownWrapperRef = useRef<HTMLDivElement>(null);
+
+  /* Event handlers */
+  const onClick = useCallback(
+    (e: MouseEvent, clickedKey: string) => {
+      onChange && onChange(clickedKey, e);
+
+      if (!actionItems || !_.some(actionItems, { actionKey: clickedKey })) {
+        setSelectedKey(clickedKey);
+      }
+
+      setExpanded(false);
+    },
+    [onChange, actionItems],
+  );
+
+  const applyTextFilter = useCallback(
+    (text: string, itemsToFilter: Record<string, ReactNode>) => {
+      let filteredItems = itemsToFilter;
+      if (autocompleteFilter && !_.isEmpty(text)) {
+        filteredItems = _.pickBy(itemsToFilter, (item, key) => autocompleteFilter(text, item, key));
+      }
+      setAutocompleteText(text);
+      setItems(filteredItems);
+    },
+    [autocompleteFilter],
+  );
+
+  // One-way prop→state sync. Do NOT include `selectedKey` in deps — it
+  // creates a feedback loop under React 18 createRoot where the effect
+  // reverts user selections before the prop update from onChange propagates.
+  useEffect(() => {
+    if (props.selectedKey !== undefined) {
+      setSelectedKey(props.selectedKey);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.selectedKey]);
+
+  useEffect(() => {
+    applyTextFilter(autocompleteText, props.items);
+  }, [props.items, applyTextFilter, autocompleteText]);
+
+  // Clear filter when opening dropdown
+  useEffect(() => {
+    if (expanded) {
+      applyTextFilter('', props.items);
+    }
+    // only want to run when `expanded` changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [expanded]);
+
+  /* Menu content */
+  const renderedActionItems = useMemo(() => {
+    if (!actionItems) {
+      return null;
+    }
+
+    return (
+      <>
+        {actionItems.map((ai) => (
+          <ConsoleSelectItem
+            key={`${ai.actionKey}-${ai.actionTitle}`}
+            itemKey={ai.actionKey}
+            content={ai.actionTitle}
+            selected={ai.actionKey === selectedKey}
+          />
+        ))}
+        <Divider key="action-items-divider" component="li" />
+      </>
+    );
+  }, [actionItems, selectedKey]);
+
+  const { rows, bookmarkRows } = useMemo(() => {
+    const accRows: ReactNode[] = [];
+    const accBookmarkRows: ReactNode[] = [];
+
+    Object.entries(items).forEach(([key, content]) => {
+      const selected = key === selectedKey;
+
+      if (enableBookmarks && bookmarks[key]) {
+        accBookmarkRows.push(
+          <ConsoleSelectItem
+            key={key}
+            itemKey={key}
+            content={content}
+            selected={selected}
+            isBookmarked
+          />,
+        );
+        return;
+      }
+
+      if (spacerBefore.has(key)) {
+        accRows.push(<Divider key={`divider-${key}`} component="li" />);
+      }
+
+      if (headerBefore[key]) {
+        accRows.push(
+          <li key={`${key}-header`}>
+            <div className="pf-v6-c-menu__group-title">{headerBefore[key]}</div>
+          </li>,
+        );
+      }
+
+      accRows.push(
+        <ConsoleSelectItem
+          key={key}
+          itemKey={key}
+          content={content}
+          selected={selected}
+          isBookmarked={enableBookmarks && bookmarks ? bookmarks[key] ?? false : undefined}
+        />,
+      );
+    });
+
+    return { rows: accRows, bookmarkRows: accBookmarkRows };
+  }, [bookmarks, enableBookmarks, headerBefore, items, selectedKey, spacerBefore]);
+
+  return (
+    <div className={className} ref={dropdownWrapperRef}>
+      <Select
+        isOpen={expanded}
+        onOpenChange={setExpanded}
+        onOpenChangeKeys={autocompleteFilter ? ['Escape'] : ['Escape', 'Tab']} // tab is used to access the search input
+        onSelect={onClick}
+        selected={selectedKey}
+        shouldFocusToggleOnSelect
+        toggle={(toggleRef: RefObject<MenuToggleElement>) => (
+          <MenuToggle
+            aria-describedby={describedBy}
+            aria-label={ariaLabel}
+            className={buttonClassName}
+            data-test={dataTest}
+            id={id}
+            isDisabled={disabled}
+            isExpanded={expanded}
+            isFullWidth={isFullWidth}
+            onClick={() => {
+              setExpanded((prev) => !prev);
+            }}
+            ref={toggleRef}
+          >
+            {titlePrefix && `${titlePrefix}: `}
+            {alwaysShowTitle ? title : selectedKey ? items[selectedKey] ?? title : title}
+          </MenuToggle>
+        )}
+        zIndex={9999}
+        popperProps={{
+          preventOverflow: menuClassName === 'prevent-overflow',
+          appendTo: renderInline ? 'inline' : undefined,
+        }}
+        isScrollable
+        style={style}
+        // Bookmarking is the only action, so we do not need to check the action
+        onActionClick={(e, itemId: string) => {
+          e.stopPropagation();
+          e.preventDefault();
+          onBookmark?.(itemId, !bookmarks[itemId]);
+        }}
+      >
+        {autocompleteFilter && (
+          <>
+            <MenuSearch>
+              <MenuSearchInput>
+                <SearchInput
+                  data-test="console-select-search-input"
+                  inputProps={{
+                    autoCapitalize: 'none',
+                    autoFocus: true,
+                  }}
+                  onChange={(_e, value) => applyTextFilter(value, props.items)}
+                  onClick={(e) => e.stopPropagation()}
+                  placeholder={autocompletePlaceholder}
+                  value={autocompleteText ?? ''}
+                />
+              </MenuSearchInput>
+            </MenuSearch>
+            <Divider />
+          </>
+        )}
+
+        <SelectList
+          className={css(menuClassName, { 'pf-v6-u-pt-0': autocompleteFilter })}
+          data-test="console-select-menu-list"
+        >
+          {!bookmarkRows.length && !renderedActionItems && !rows.length && autocompleteText && (
+            <SelectOption isDisabled data-test="console-select-no-results">
+              {t('public~No results found')}
+            </SelectOption>
+          )}
+
+          {bookmarkRows.length ? (
+            <>
+              <SelectGroup label="Favorites" labelHeadingLevel="h3">
+                {bookmarkRows}
+              </SelectGroup>
+              {renderedActionItems || rows.length ? (
+                <Divider key="bookmarks-divider" component="li" />
+              ) : null}
+            </>
+          ) : null}
+
+          {renderedActionItems || rows.length ? (
+            <>
+              {renderedActionItems}
+              {rows}
+            </>
+          ) : null}
+        </SelectList>
+      </Select>
+    </div>
+  );
+};
+
+ConsoleSelect.displayName = 'ConsoleSelect';

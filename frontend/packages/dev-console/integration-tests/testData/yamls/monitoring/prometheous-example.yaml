@@ -1,0 +1,76 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: aut-monitoring-alerts
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: prometheus-example-app
+  name: prometheus-example-app
+  namespace: aut-monitoring-alerts
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prometheus-example-app
+  template:
+    metadata:
+      labels:
+        app: prometheus-example-app
+    spec:
+      containers:
+      - image: quay.io/brancz/prometheus-example-app:v0.1.0
+        imagePullPolicy: IfNotPresent
+        name: prometheus-example-app
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: prometheus-example-app
+  name: prometheus-example-app
+  namespace: aut-monitoring-alerts
+spec:
+  ports:
+  - port: 8080
+    protocol: TCP
+    targetPort: 8080
+    name: web
+  selector:
+    app: prometheus-example-app
+  type: ClusterIP
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    k8s-app: prometheus-example-monitor
+  name: prometheus-example-monitor
+  namespace: aut-monitoring-alerts
+spec:
+  endpoints:
+  - interval: 30s
+    port: web
+    scheme: http
+  selector:
+    matchLabels:
+      app: prometheus-example-app
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: example-alert
+  namespace: aut-monitoring-alerts
+spec:
+  groups:
+  - name: example
+    rules:
+    - record: VersionRule
+      expr: version{job="prometheus-example-app"}
+    - alert: VersionAlert
+      expr: version{job="prometheus-example-app"} == 0
+      for: 1s
+      labels:
+        severity: critical

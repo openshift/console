@@ -1,0 +1,2788 @@
+[
+  {
+    "type": "console.perspective",
+    "properties": {
+      "id": "admin",
+      "default": true,
+      "name": "%console-app~Core platform%",
+      "icon": { "$codeRef": "perspective.icon" },
+      "landingPageURL": { "$codeRef": "perspective.getLandingPageURL" },
+      "importRedirectURL": { "$codeRef": "perspective.getImportRedirectURL" }
+    }
+  },
+  {
+    "type": "console.flag",
+    "properties": {
+      "handler": { "$codeRef": "detectIntegrationTest.handler" }
+    }
+  },
+  {
+    "type": "INTERNAL_DO_NOT_USE.guided-tour",
+    "properties": {
+      "perspective": "admin",
+      "tour": { "$codeRef": "getGuidedTour" }
+    },
+    "flags": {
+      "required": ["CONSOLE_CAPABILITY_GUIDEDTOUR_IS_ENABLED"],
+      "disallowed": ["INTEGRATION_TEST"]
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "console.openshift.io",
+        "version": "v1",
+        "kind": "ConsoleSample"
+      },
+      "flag": "CONSOLESAMPLE"
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "console.openshift.io",
+        "version": "v1",
+        "kind": "ConsoleQuickStart"
+      },
+      "flag": "CONSOLE_QUICKSTART"
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "flag": "OPENSHIFT_BUILD",
+      "model": {
+        "group": "build.openshift.io",
+        "version": "v1",
+        "kind": "Build"
+      }
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "flag": "OPENSHIFT_BUILDCONFIG",
+      "model": {
+        "group": "build.openshift.io",
+        "version": "v1",
+        "kind": "BuildConfig"
+      }
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "apps.openshift.io",
+        "version": "v1",
+        "kind": "DeploymentConfig"
+      },
+      "flag": "OPENSHIFT_DEPLOYMENTCONFIG"
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "image.openshift.io",
+        "version": "v1",
+        "kind": "ImageStream"
+      },
+      "flag": "OPENSHIFT_IMAGESTREAM"
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "template.openshift.io",
+        "version": "v1",
+        "kind": "Template"
+      },
+      "flag": "OPENSHIFT_TEMPLATE"
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "project.openshift.io",
+        "version": "v1",
+        "kind": "Project"
+      },
+      "flag": "OPENSHIFT_PROJECT"
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "flag": "OPENSHIFT_USER_API",
+      "model": {
+        "group": "user.openshift.io",
+        "version": "v1",
+        "kind": "User"
+      }
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "flag": "OPENSHIFT_GROUP_API",
+      "model": {
+        "group": "user.openshift.io",
+        "version": "v1",
+        "kind": "Group"
+      }
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "flag": "OPENSHIFT_OAUTH_API",
+      "model": {
+        "group": "config.openshift.io",
+        "version": "v1",
+        "kind": "OAuth"
+      }
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "console.openshift.io",
+        "version": "v1",
+        "kind": "ConsoleQuickStart"
+      },
+      "label": "ConsoleQuickStart",
+      "labelPlural": "ConsoleQuickStarts",
+      "abbr": "CQS"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "policy",
+        "version": "v1",
+        "kind": "PodDisruptionBudget"
+      },
+      "label": "%console-app~PodDisruptionBudget%",
+      "labelPlural": "%console-app~PodDisruptionBudgets%",
+      "abbr": "PDB"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "discovery.k8s.io",
+        "version": "v1",
+        "kind": "EndpointSlice"
+      },
+      "label": "EndpointSlice",
+      "labelPlural": "EndpointSlices",
+      "abbr": "EPS"
+    }
+  },
+  {
+    "type": "console.page/resource/list",
+    "properties": {
+      "model": {
+        "group": "snapshot.storage.k8s.io",
+        "version": "v1",
+        "kind": "VolumeSnapshotContent"
+      },
+      "component": { "$codeRef": "volumeSnapshotContent.default" }
+    },
+    "flags": {
+      "required": ["CAN_LIST_VSC"]
+    }
+  },
+  {
+    "type": "console.page/resource/details",
+    "properties": {
+      "model": {
+        "group": "snapshot.storage.k8s.io",
+        "version": "v1",
+        "kind": "VolumeSnapshotContent"
+      },
+      "component": { "$codeRef": "volumeSnapshotContentDetails.default" }
+    },
+    "flags": {
+      "required": ["CAN_LIST_VSC"]
+    }
+  },
+  {
+    "type": "console.tab/horizontalNav",
+    "properties": {
+      "model": {
+        "version": "v1",
+        "kind": "PersistentVolumeClaim"
+      },
+      "page": {
+        "name": "%console-app~VolumeSnapshots%",
+        "href": "volumesnapshots"
+      },
+      "component": { "$codeRef": "volumeSnapshotPage.VolumeSnapshotPVCPage" }
+    }
+  },
+  {
+    "type": "console.page/resource/details",
+    "properties": {
+      "model": {
+        "group": "operator.openshift.io",
+        "version": "v1",
+        "kind": "Console"
+      },
+      "component": { "$codeRef": "ConsoleOperatorConfig.ConsoleOperatorConfigDetailsPage" }
+    }
+  },
+  {
+    "type": "console.page/resource/details",
+    "properties": {
+      "model": {
+        "group": "config.openshift.io",
+        "version": "v1",
+        "kind": "OAuth"
+      },
+      "component": { "$codeRef": "oauthConfigDetailsPage" }
+    },
+    "flags": {
+      "required": ["OPENSHIFT_OAUTH_API"]
+    }
+  },
+  {
+    "type": "console.context-provider",
+    "properties": {
+      "provider": { "$codeRef": "tourContext.TourContextProvider" },
+      "useValueHook": { "$codeRef": "tourContext.useTourValuesForContext" }
+    }
+  },
+  {
+    "type": "console.context-provider",
+    "properties": {
+      "provider": { "$codeRef": "quickStartContext.QuickStartContextProvider" },
+      "useValueHook": { "$codeRef": "quickStartContext.useValuesForQuickStartContext" }
+    }
+  },
+  {
+    "type": "console.context-provider",
+    "properties": {
+      "provider": { "$codeRef": "fileUploadContext.FileUploadContextProvider" },
+      "useValueHook": { "$codeRef": "fileUploadContext.useValuesFileUploadContext" }
+    }
+  },
+  {
+    "type": "console.navigation/resource-cluster",
+    "properties": {
+      "id": "volumesnapshotcontents",
+      "section": "storage",
+      "name": "%console-app~VolumeSnapshotContents%",
+      "insertAfter": "volumesnapshotclasses",
+      "model": {
+        "group": "snapshot.storage.k8s.io",
+        "kind": "VolumeSnapshotContent",
+        "version": "v1"
+      }
+    },
+    "flags": {
+      "required": ["CAN_LIST_VSC"]
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "user.openshift.io",
+        "version": "v1",
+        "kind": "Group"
+      },
+      "provider": { "$codeRef": "groupProvider.useGroupActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "version": "v1",
+        "kind": "Secret"
+      },
+      "provider": { "$codeRef": "secretsProvider.useSecretsActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "apps",
+        "version": "v1",
+        "kind": "Deployment"
+      },
+      "provider": { "$codeRef": "deploymentProvider.useDeploymentActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "apps.openshift.io",
+        "version": "v1",
+        "kind": "DeploymentConfig"
+      },
+      "provider": { "$codeRef": "deploymentConfigProvider.useDeploymentConfigActionsProvider" }
+    },
+    "flags": {
+      "required": ["OPENSHIFT_DEPLOYMENTCONFIG"]
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "apps",
+        "version": "v1",
+        "kind": "StatefulSet"
+      },
+      "provider": { "$codeRef": "statefulSetProvider.useStatefulSetActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "apps",
+        "version": "v1",
+        "kind": "DaemonSet"
+      },
+      "provider": { "$codeRef": "daemonSetActionsProvider.useDaemonSetActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "batch",
+        "version": "v1",
+        "kind": "Job"
+      },
+      "provider": { "$codeRef": "jobProvider.useJobActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "batch",
+        "version": "v1",
+        "kind": "CronJob"
+      },
+      "provider": { "$codeRef": "cronJobProvider.useCronJobActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "version": "v1",
+        "kind": "Pod"
+      },
+      "provider": { "$codeRef": "podProvider.usePodActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "apps",
+        "version": "v1",
+        "kind": "ReplicaSet"
+      },
+      "provider": { "$codeRef": "replicaSetProvider.useReplicaSetActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "version": "v1",
+        "kind": "ReplicationController"
+      },
+      "provider": {
+        "$codeRef": "replicationControllersProvider.useReplicationControllerActionsProvider"
+      }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "version": "v1",
+        "kind": "PersistentVolumeClaim"
+      },
+      "provider": { "$codeRef": "persistentVolumeClaimsProvider.usePVCActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "version": "v1",
+        "kind": "VolumeSnapshot",
+        "group": "snapshot.storage.k8s.io"
+      },
+      "provider": { "$codeRef": "volumeSnapshotProvider.useVolumeSnapshotActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "version": "v1",
+        "kind": "VolumeAttributesClass",
+        "group": "storage.k8s.io"
+      },
+      "provider": {
+        "$codeRef": "volumeAttributesClassProvider.useVolumeAttributesClassActionsProvider"
+      }
+    },
+    "flags": {
+      "required": ["VAC_PLATFORM_SUPPORT"]
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "version": "v1",
+        "kind": "StorageClass",
+        "group": "storage.k8s.io"
+      },
+      "provider": { "$codeRef": "storageClassProvider.useStorageClassActions" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "version": "v1",
+        "kind": "VolumeSnapshotClass",
+        "group": "snapshot.storage.k8s.io"
+      },
+      "provider": { "$codeRef": "defaultProvider.useDefaultActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "version": "v1",
+        "kind": "RoleBinding",
+        "group": "rbac.authorization.k8s.io"
+      },
+      "provider": { "$codeRef": "bindingProvider.useBindingActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "version": "v1",
+        "kind": "ClusterRoleBinding",
+        "group": "rbac.authorization.k8s.io"
+      },
+      "provider": { "$codeRef": "bindingProvider.useBindingActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "version": "v1",
+        "kind": "Build",
+        "group": "build.openshift.io"
+      },
+      "provider": { "$codeRef": "buildProvider.useBuildActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "policy",
+        "version": "v1",
+        "kind": "PodDisruptionBudget"
+      },
+      "provider": {
+        "$codeRef": "podDisruptionBudgetProvider.usePodDisruptionBudgetActionsProvider"
+      }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "machine.openshift.io",
+        "version": "v1beta1",
+        "kind": "MachineSet"
+      },
+      "provider": { "$codeRef": "machineSetProvider.useMachineSetActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "monitoring.coreos.com",
+        "version": "v1",
+        "kind": "Prometheus"
+      },
+      "provider": { "$codeRef": "prometheusProvider.usePrometheusActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "",
+        "version": "v1",
+        "kind": "ResourceQuota"
+      },
+      "provider": { "$codeRef": "defaultProvider.useDefaultActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "quota.openshift.io",
+        "version": "v1",
+        "kind": "ClusterResourceQuota"
+      },
+      "provider": { "$codeRef": "defaultProvider.useDefaultActionsProvider" }
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": ["/quickstart/"],
+      "component": { "$codeRef": "QuickStartCatalogPageAsync.default" }
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": ["/user-preferences", "/user-preferences/:group"],
+      "component": { "$codeRef": "UserPreferencePage.default" }
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": ["/cluster-configuration", "/cluster-configuration/:group"],
+      "component": { "$codeRef": "ClusterConfigurationPage" }
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": ["/cluster-configuration", "/cluster-configuration/:group"],
+      "component": { "$codeRef": "ClusterConfigurationPage" }
+    }
+  },
+  {
+    "type": "console.flag/hookProvider",
+    "properties": {
+      "handler": { "$codeRef": "perspectiveStateProvider.useDeveloperPerspectiveStateProvider" }
+    }
+  },
+  {
+    "type": "console.cluster-configuration/group",
+    "properties": {
+      "id": "general",
+      "label": "%console-app~General%"
+    }
+  },
+  {
+    "type": "console.cluster-configuration/group",
+    "properties": {
+      "id": "projects",
+      "label": "%console-app~Projects%",
+      "insertAfter": "general"
+    }
+  },
+  {
+    "type": "console.cluster-configuration/group",
+    "properties": {
+      "id": "developer",
+      "label": "%console-app~Developer%",
+      "insertAfter": "projects"
+    },
+    "flags": {
+      "required": ["DEVELOPER_PERSPECTIVE"]
+    }
+  },
+  {
+    "type": "console.cluster-configuration/item",
+    "properties": {
+      "id": "console-app.customization.perspectives",
+      "groupId": "general",
+      "label": "%console-app~Perspectives%",
+      "description": "%console-app~Show or hide perspectives by enabling, disabling or adding access review checks.%",
+      "field": {
+        "type": "custom",
+        "component": { "$codeRef": "perspectiveConfiguration" }
+      },
+      "readAccessReview": [
+        {
+          "group": "operator.openshift.io/v1",
+          "resource": "consoles",
+          "verb": "get",
+          "name": "cluster"
+        }
+      ],
+      "writeAccessReview": [
+        {
+          "group": "operator.openshift.io/v1",
+          "resource": "consoles",
+          "verb": "patch",
+          "name": "cluster"
+        }
+      ]
+    }
+  },
+  {
+    "type": "console.cluster-configuration/item",
+    "properties": {
+      "id": "console-app.quick-start.QuickStartConfiguration",
+      "label": "%console-app~Quick Starts%",
+      "groupId": "general",
+      "description": "%console-app~Configure a list of Quick Starts that are not shown to users.%",
+      "field": {
+        "type": "custom",
+        "component": { "$codeRef": "quickStartConfiguration" }
+      },
+      "readAccessReview": [
+        {
+          "group": "operator.openshift.io/v1",
+          "resource": "consoles",
+          "verb": "get",
+          "name": "cluster"
+        },
+        {
+          "group": "console.openshift.io/v1",
+          "resource": "ConsoleQuickStart",
+          "verb": "list"
+        }
+      ],
+      "writeAccessReview": [
+        {
+          "group": "operator.openshift.io/v1",
+          "resource": "consoles",
+          "verb": "patch",
+          "name": "cluster"
+        }
+      ]
+    }
+  },
+  {
+    "type": "console.flag/hookProvider",
+    "properties": {
+      "handler": { "$codeRef": "usePerspectivesAvailable.usePerspectivesAvailable" }
+    }
+  },
+  {
+    "type": "console.flag/hookProvider",
+    "properties": {
+      "handler": { "$codeRef": "useNodeMgmtV1FlagProvider" }
+    },
+    "flags": {
+      "required": ["TECH_PREVIEW"]
+    }
+  },
+  {
+    "type": "console.user-preference/group",
+    "properties": {
+      "id": "general",
+      "label": "%console-app~General%"
+    }
+  },
+  {
+    "type": "console.user-preference/group",
+    "properties": {
+      "id": "language",
+      "label": "%console-app~Language%"
+    }
+  },
+  {
+    "type": "console.user-preference/group",
+    "properties": {
+      "id": "notifications",
+      "label": "%console-app~Notifications%"
+    }
+  },
+  {
+    "type": "console.user-preference/group",
+    "properties": {
+      "id": "applications",
+      "label": "%console-app~Applications%"
+    }
+  },
+  {
+    "type": "console.user-preference/group",
+    "properties": {
+      "id": "node-mgmt-v1",
+      "label": "%console-app~Node management%"
+    },
+    "flags": {
+      "required": ["TECH_PREVIEW"]
+    }
+  },
+  {
+    "type": "console.user-preference/item",
+    "properties": {
+      "id": "console.nodeMgmtV1.enabled",
+      "label": "%console-app~Node management%",
+      "groupId": "node-mgmt-v1",
+      "description": "%console-app~Enable node management enhancements. This is a technology preview feature.%",
+      "field": {
+        "type": "checkbox",
+        "userSettingsKey": "console.nodeMgmtV1.enabled",
+        "label": "%console-app~Enable node management enhancements%",
+        "trueValue": true,
+        "falseValue": false,
+        "defaultValue": true
+      }
+    },
+    "flags": {
+      "required": ["TECH_PREVIEW"]
+    }
+  },
+  {
+    "type": "console.user-preference/item",
+    "properties": {
+      "id": "console.theme",
+      "label": "%console-app~Theme%",
+      "groupId": "general",
+      "description": "%console-app~Console will appear as per the selected theme.%",
+      "field": {
+        "type": "dropdown",
+        "userSettingsKey": "console.theme",
+        "defaultValue": "systemDefault",
+        "options": [
+          {
+            "value": "systemDefault",
+            "label": "%console-app~System default%"
+          },
+          { "value": "light", "label": "%console-app~Light%" },
+          { "value": "dark", "label": "%console-app~Dark%" }
+        ]
+      }
+    }
+  },
+  {
+    "type": "console.user-preference/item",
+    "properties": {
+      "id": "console.preferredPerspective",
+      "label": "%console-app~Perspective%",
+      "groupId": "general",
+      "description": "%console-app~If a perspective is not selected, the console defaults to the last viewed.%",
+      "field": {
+        "type": "custom",
+        "component": { "$codeRef": "PreferredPerspectiveSelect" }
+      },
+      "insertAfter": "console.theme"
+    },
+    "flags": {
+      "required": ["FLAG_PERSPECTIVES_AVAILABLE"]
+    }
+  },
+  {
+    "type": "console.user-preference/item",
+    "properties": {
+      "id": "console.namespace.favorite",
+      "label": "%console-app~Project%",
+      "groupId": "general",
+      "description": "%console-app~If a project is not selected, the console defaults to the last viewed.%",
+      "field": {
+        "type": "custom",
+        "component": { "$codeRef": "NamespaceDropdown" }
+      },
+      "insertBefore": "topology.preferredView"
+    }
+  },
+  {
+    "type": "console.user-preference/item",
+    "properties": {
+      "id": "console.preferredCreateEditMethod",
+      "label": "%console-app~Create/Edit resource method%",
+      "groupId": "general",
+      "description": "%console-app~If both form and YAML are available, the console defaults to your selection.%",
+      "field": {
+        "type": "dropdown",
+        "userSettingsKey": "console.preferredCreateEditMethod",
+        "defaultValue": "latest",
+        "options": [
+          {
+            "value": "latest",
+            "label": "%console-app~Last viewed%"
+          },
+          { "value": "form", "label": "%console-app~Form%" },
+          { "value": "yaml", "label": "%console-app~YAML%" }
+        ]
+      },
+      "insertAfter": "topology.preferredView"
+    }
+  },
+  {
+    "type": "console.user-preference/item",
+    "properties": {
+      "id": "console.enableExactSearch",
+      "label": "%console-app~Search%",
+      "groupId": "general",
+      "description": "%console-app~Enable exact string match filtering on resources.%",
+      "field": {
+        "type": "checkbox",
+        "userSettingsKey": "console.enableExactSearch",
+        "label": "%console-app~Enable exact string match%",
+        "trueValue": true,
+        "falseValue": false,
+        "defaultValue": false
+      }
+    }
+  },
+  {
+    "type": "console.user-preference/item",
+    "properties": {
+      "id": "console.hideLightspeedButton",
+      "label": "%console-app~Lightspeed%",
+      "groupId": "general",
+      "description": "%console-app~Do not display the Lightspeed button.%",
+      "field": {
+        "type": "checkbox",
+        "userSettingsKey": "console.hideLightspeedButton",
+        "label": "%console-app~Hide Lightspeed%",
+        "trueValue": true,
+        "falseValue": false,
+        "defaultValue": false
+      },
+      "insertAfter": "console.preferredPerspective"
+    },
+    "flags": {
+      "required": [
+        "CONSOLE_CAPABILITY_LIGHTSPEEDBUTTON_IS_ENABLED",
+        "LIGHTSPEED_IS_AVAILABLE_TO_INSTALL"
+      ]
+    }
+  },
+  {
+    "type": "console.user-preference/item",
+    "properties": {
+      "id": "console.preferredLanguage",
+      "label": "%console-app~Language%",
+      "groupId": "language",
+      "description": "%console-app~Select the language you want to use for the console.%",
+      "field": {
+        "type": "custom",
+        "component": { "$codeRef": "LanguageDropdown" }
+      }
+    }
+  },
+  {
+    "type": "console.user-preference/item",
+    "properties": {
+      "id": "console.hideUserWorkloadNotifications",
+      "label": "%console-app~User workload notifications%",
+      "groupId": "notifications",
+      "description": "%console-app~Do not display notifications created by users for specific projects on the cluster overview page or notification drawer.%",
+      "field": {
+        "type": "checkbox",
+        "userSettingsKey": "console.hideUserWorkloadNotifications",
+        "label": "%console-app~Hide user workload notifications%",
+        "trueValue": true,
+        "falseValue": false,
+        "defaultValue": false
+      }
+    },
+    "flags": {
+      "required": ["PROMETHEUS", "MONITORING", "CAN_GET_NS"]
+    }
+  },
+  {
+    "type": "console.navigation/section",
+    "properties": {
+      "perspective": "admin",
+      "id": "home",
+      "name": "%console-app~Home%",
+      "dataAttributes": { "data-quickstart-id": "qs-nav-home", "data-tour-id": "tour-home-nav" }
+    }
+  },
+  {
+    "type": "console.navigation/section",
+    "properties": {
+      "id": "ecosystem",
+      "perspective": "admin",
+      "section": "ecosystem",
+      "name": "%console-app~Ecosystem%",
+      "insertAfter": "operators",
+      "dataAttributes": {
+        "data-quickstart-id": "qs-nav-ecosystem",
+        "data-tour-id": "tour-ecosystem-nav"
+      }
+    }
+  },
+  {
+    "type": "console.navigation/section",
+    "properties": {
+      "perspective": "admin",
+      "id": "workloads",
+      "name": "%console-app~Workloads%",
+      "dataAttributes": {
+        "data-quickstart-id": "qs-nav-workloads",
+        "data-tour-id": "tour-workloads-nav"
+      },
+      "insertAfter": "helm"
+    }
+  },
+  {
+    "type": "console.navigation/section",
+    "properties": {
+      "perspective": "admin",
+      "id": "networking",
+      "name": "%console-app~Networking%",
+      "dataAttributes": { "data-quickstart-id": "qs-nav-networking" },
+      "insertAfter": "workloads"
+    }
+  },
+  {
+    "type": "console.navigation/section",
+    "properties": {
+      "perspective": "admin",
+      "id": "storage",
+      "name": "%console-app~Storage%",
+      "dataAttributes": { "data-quickstart-id": "qs-nav-storage" }
+    }
+  },
+  {
+    "type": "console.navigation/section",
+    "properties": {
+      "perspective": "admin",
+      "id": "builds",
+      "name": "%console-app~Builds%",
+      "dataAttributes": { "data-quickstart-id": "qs-nav-builds" }
+    },
+    "flags": { "required": ["OPENSHIFT"] }
+  },
+  {
+    "type": "console.navigation/section",
+    "properties": {
+      "perspective": "admin",
+      "id": "compute",
+      "name": "%console-app~Compute%",
+      "dataAttributes": { "data-quickstart-id": "qs-nav-compute" }
+    },
+    "flags": { "required": ["CAN_LIST_NODE"] }
+  },
+  {
+    "type": "console.navigation/section",
+    "properties": {
+      "perspective": "admin",
+      "id": "usermanagement",
+      "name": "%console-app~User Management%",
+      "dataAttributes": { "data-quickstart-id": "qs-nav-usermanagement" }
+    }
+  },
+  {
+    "type": "console.navigation/section",
+    "properties": {
+      "perspective": "admin",
+      "id": "administration",
+      "name": "%console-app~Administration%",
+      "dataAttributes": { "data-quickstart-id": "qs-nav-administration" }
+    }
+  },
+  {
+    "type": "console.navigation/section",
+    "properties": {
+      "perspective": "admin",
+      "id": "observe",
+      "insertBefore": ["compute", "usermanagement"],
+      "name": "%console-app~Observe%",
+      "dataAttributes": {
+        "data-quickstart-id": "qs-nav-monitoring"
+      }
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "perspective": "admin",
+      "section": "home",
+      "id": "dashboards",
+      "name": "%console-app~Overview%",
+      "href": "/dashboards"
+    },
+    "flags": {
+      "required": ["CAN_GET_NS", "OPENSHIFT", "PROMETHEUS", "MONITORING"]
+    }
+  },
+  {
+    "type": "console.navigation/resource-cluster",
+    "properties": {
+      "perspective": "admin",
+      "section": "home",
+      "id": "projects",
+      "insertAfter": "dashboards",
+      "name": "%console-app~Projects%",
+      "model": {
+        "group": "project.openshift.io",
+        "version": "v1",
+        "kind": "Project"
+      }
+    },
+    "flags": { "required": ["OPENSHIFT"] }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "perspective": "admin",
+      "section": "home",
+      "id": "search",
+      "insertAfter": "projects",
+      "name": "%console-app~Search%",
+      "href": "/search",
+      "namespaced": true
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "perspective": "admin",
+      "section": "home",
+      "id": "explore",
+      "insertAfter": "search",
+      "name": "%console-app~API Explorer%",
+      "href": "/api-explorer",
+      "startsWith": ["api-resource"]
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "perspective": "admin",
+      "section": "home",
+      "id": "events",
+      "insertAfter": "explore",
+      "name": "%console-app~Events%",
+      "href": "/events",
+      "prefixNamespaced": true
+    }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "id": "operators",
+      "section": "ecosystem",
+      "name": "%console-app~Installed Operators%",
+      "insertAfter": "developer-catalog",
+      "model": {
+        "kind": "ClusterServiceVersion",
+        "version": "v1alpha1",
+        "group": "operators.coreos.com"
+      },
+      "startsWith": ["operators.coreos.com", "clusterserviceversions"]
+    },
+    "flags": {
+      "disallowed": ["OLMV1_ENABLED"]
+    }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "perspective": "admin",
+      "section": "workloads",
+      "id": "pods",
+      "insertAfter": "topology",
+      "name": "%console-app~Pods%",
+      "model": {
+        "version": "v1",
+        "kind": "Pod"
+      }
+    }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "perspective": "admin",
+      "section": "workloads",
+      "id": "deployments",
+      "insertAfter": "pods",
+      "name": "%console-app~Deployments%",
+      "model": {
+        "group": "apps",
+        "version": "v1",
+        "kind": "Deployment"
+      }
+    }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "perspective": "admin",
+      "section": "workloads",
+      "id": "deploymentconfigs",
+      "insertAfter": "deployments",
+      "name": "%console-app~DeploymentConfigs%",
+      "model": {
+        "group": "apps.openshift.io",
+        "version": "v1",
+        "kind": "DeploymentConfig"
+      }
+    },
+    "flags": { "required": ["OPENSHIFT_DEPLOYMENTCONFIG"] }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "perspective": "admin",
+      "section": "workloads",
+      "id": "statefulsets",
+      "insertAfter": ["deploymentconfigs", "deployments"],
+      "name": "%console-app~StatefulSets%",
+      "model": {
+        "group": "apps",
+        "version": "v1",
+        "kind": "StatefulSet"
+      }
+    }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "perspective": "admin",
+      "section": "workloads",
+      "id": "secrets",
+      "insertAfter": "statefulsets",
+      "name": "%console-app~Secrets%",
+      "model": {
+        "version": "v1",
+        "kind": "Secret"
+      }
+    }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "perspective": "admin",
+      "section": "workloads",
+      "id": "configmaps",
+      "insertAfter": "secrets",
+      "name": "%console-app~ConfigMaps%",
+      "model": {
+        "version": "v1",
+        "kind": "ConfigMap"
+      }
+    }
+  },
+  {
+    "type": "console.navigation/separator",
+    "properties": {
+      "perspective": "admin",
+      "section": "workloads",
+      "id": "WorkloadsSeparator",
+      "insertAfter": "configmaps",
+      "testID": "WorkloadsSeparator"
+    }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "perspective": "admin",
+      "section": "workloads",
+      "id": "cronjobs",
+      "insertAfter": "WorkloadsSeparator",
+      "name": "%console-app~CronJobs%",
+      "model": {
+        "group": "batch",
+        "version": "v1",
+        "kind": "CronJob"
+      }
+    }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "perspective": "admin",
+      "section": "workloads",
+      "id": "jobs",
+      "insertAfter": "cronjobs",
+      "name": "%console-app~Jobs%",
+      "model": {
+        "group": "batch",
+        "version": "v1",
+        "kind": "Job"
+      }
+    }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "perspective": "admin",
+      "section": "workloads",
+      "id": "daemonsets",
+      "insertAfter": "jobs",
+      "name": "%console-app~DaemonSets%",
+      "model": {
+        "group": "apps",
+        "version": "v1",
+        "kind": "DaemonSet"
+      }
+    }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "perspective": "admin",
+      "section": "workloads",
+      "id": "replicasets",
+      "insertAfter": "daemonsets",
+      "name": "%console-app~ReplicaSets%",
+      "model": {
+        "group": "apps",
+        "version": "v1",
+        "kind": "ReplicaSet"
+      }
+    }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "perspective": "admin",
+      "section": "workloads",
+      "id": "replicationcontrollers",
+      "insertAfter": "replicasets",
+      "name": "%console-app~ReplicationControllers%",
+      "model": {
+        "version": "v1",
+        "kind": "ReplicationController"
+      }
+    }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "perspective": "admin",
+      "section": "workloads",
+      "id": "horizontalpodautoscalers",
+      "insertAfter": "replicationcontrollers",
+      "name": "%console-app~HorizontalPodAutoscalers%",
+      "model": {
+        "group": "autoscaling",
+        "version": "v2",
+        "kind": "HorizontalPodAutoscaler"
+      }
+    }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "perspective": "admin",
+      "section": "workloads",
+      "id": "poddisruptionbudgets",
+      "insertAfter": "horizontalpodautoscalers",
+      "name": "%console-app~PodDisruptionBudgets%",
+      "model": {
+        "group": "policy",
+        "version": "v1",
+        "kind": "PodDisruptionBudget"
+      }
+    }
+  },
+  {
+    "type": "console.navigation/resource-cluster",
+    "properties": {
+      "perspective": "admin",
+      "section": "storage",
+      "id": "persistentvolumes",
+      "name": "%console-app~PersistentVolumes%",
+      "model": {
+        "version": "v1",
+        "kind": "PersistentVolume"
+      }
+    },
+    "flags": { "required": ["CAN_LIST_PV"] }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "perspective": "admin",
+      "section": "storage",
+      "id": "persistentvolumeclaims",
+      "insertAfter": "persistentvolumes",
+      "name": "%console-app~PersistentVolumeClaims%",
+      "model": {
+        "version": "v1",
+        "kind": "PersistentVolumeClaim"
+      }
+    }
+  },
+  {
+    "type": "console.navigation/resource-cluster",
+    "properties": {
+      "perspective": "admin",
+      "section": "storage",
+      "id": "storageclasses",
+      "insertAfter": "persistentvolumeclaims",
+      "name": "%console-app~StorageClasses%",
+      "model": {
+        "group": "storage.k8s.io",
+        "version": "v1",
+        "kind": "StorageClass"
+      }
+    }
+  },
+  {
+    "type": "console.navigation/resource-cluster",
+    "properties": {
+      "perspective": "admin",
+      "section": "storage",
+      "id": "volumeattributesclasses",
+      "insertAfter": "storageclasses",
+      "name": "%console-app~VolumeAttributesClasses%",
+      "model": {
+        "group": "storage.k8s.io",
+        "version": "v1",
+        "kind": "VolumeAttributesClass"
+      }
+    },
+    "flags": {
+      "required": ["VAC_PLATFORM_SUPPORT"]
+    }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "perspective": "admin",
+      "section": "storage",
+      "id": "volumesnapshots",
+      "insertAfter": "volumeattributesclasses",
+      "name": "%console-app~VolumeSnapshots%",
+      "model": {
+        "group": "snapshot.storage.k8s.io",
+        "version": "v1",
+        "kind": "VolumeSnapshot"
+      }
+    }
+  },
+  {
+    "type": "console.navigation/resource-cluster",
+    "properties": {
+      "perspective": "admin",
+      "section": "storage",
+      "id": "volumesnapshotclasses",
+      "insertAfter": "volumesnapshots",
+      "name": "%console-app~VolumeSnapshotClasses%",
+      "model": {
+        "group": "snapshot.storage.k8s.io",
+        "version": "v1",
+        "kind": "VolumeSnapshotClass"
+      }
+    }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "perspective": "admin",
+      "section": "builds",
+      "id": "buildconfigs",
+      "name": "%console-app~BuildConfigs%",
+      "model": {
+        "group": "build.openshift.io",
+        "version": "v1",
+        "kind": "BuildConfig"
+      }
+    },
+    "flags": { "required": ["OPENSHIFT_BUILDCONFIG"] }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "perspective": "admin",
+      "section": "builds",
+      "id": "builds",
+      "insertAfter": "buildconfigs",
+      "name": "%console-app~Builds%",
+      "model": {
+        "group": "build.openshift.io",
+        "version": "v1",
+        "kind": "Build"
+      }
+    },
+    "flags": { "required": ["OPENSHIFT_BUILD"] }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "config.openshift.io",
+        "version": "v1",
+        "kind": "OAuth"
+      },
+      "provider": { "$codeRef": "defaultProvider.useDefaultActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "snapshot.storage.k8s.io",
+        "version": "v1",
+        "kind": "VolumeSnapshotContent"
+      },
+      "provider": { "$codeRef": "defaultProvider.useDefaultActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "project.openshift.io",
+        "version": "v1",
+        "kind": "Project"
+      },
+      "provider": { "$codeRef": "projectProvider.useProjectActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "",
+        "version": "v1",
+        "kind": "Namespace"
+      },
+      "provider": { "$codeRef": "projectProvider.useNamespaceActionsProvider" }
+    }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "perspective": "admin",
+      "section": "builds",
+      "id": "imagestreams",
+      "insertAfter": "builds",
+      "name": "%console-app~ImageStreams%",
+      "startsWith": ["imagestreamtags"],
+      "model": {
+        "group": "image.openshift.io",
+        "version": "v1",
+        "kind": "ImageStream"
+      }
+    }
+  },
+  {
+    "type": "console.navigation/resource-cluster",
+    "properties": {
+      "perspective": "admin",
+      "section": "compute",
+      "id": "nodes",
+      "name": "%console-app~Nodes%",
+      "model": {
+        "version": "v1",
+        "kind": "Node"
+      }
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "perspective": "admin",
+      "section": "compute",
+      "id": "machines",
+      "insertAfter": "nodes",
+      "name": "%console-app~Machines%",
+      "href": "/k8s/ns/openshift-machine-api/machine.openshift.io~v1beta1~Machine"
+    },
+    "flags": { "required": ["CLUSTER_API"] }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "perspective": "admin",
+      "section": "compute",
+      "id": "machineautoscaler",
+      "insertAfter": "machinesets",
+      "name": "%console-app~MachineAutoscalers%",
+      "href": "/k8s/ns/openshift-machine-api/autoscaling.openshift.io~v1beta1~MachineAutoscaler"
+    },
+    "flags": { "required": ["MACHINE_AUTOSCALER"] }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "perspective": "admin",
+      "section": "compute",
+      "id": "machinehealthchecks",
+      "insertAfter": "machineautoscaler",
+      "name": "%console-app~MachineHealthChecks%",
+      "href": "/k8s/ns/openshift-machine-api/machine.openshift.io~v1beta1~MachineHealthCheck"
+    },
+    "flags": { "required": ["MACHINE_HEALTH_CHECK"] }
+  },
+  {
+    "type": "console.navigation/separator",
+    "properties": {
+      "perspective": "admin",
+      "section": "compute",
+      "id": "computeseparator",
+      "insertAfter": "machinehealthchecks",
+      "testID": "ComputeSeparator"
+    },
+    "flags": { "required": ["CLUSTER_API"] }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "perspective": "admin",
+      "section": "compute",
+      "id": "controlplanemachinesets",
+      "insertAfter": "computeseparator",
+      "name": "%console-app~ControlPlaneMachineSets%",
+      "href": "/k8s/ns/openshift-machine-api/machine.openshift.io~v1~ControlPlaneMachineSet"
+    },
+    "flags": { "required": ["CLUSTER_API"] }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "perspective": "admin",
+      "section": "compute",
+      "id": "machinesets",
+      "insertAfter": "controlplanemachinesets",
+      "name": "%console-app~MachineSets%",
+      "href": "/k8s/ns/openshift-machine-api/machine.openshift.io~v1beta1~MachineSet"
+    },
+    "flags": { "required": ["CLUSTER_API"] }
+  },
+  {
+    "type": "console.navigation/separator",
+    "properties": {
+      "perspective": "admin",
+      "section": "compute",
+      "id": "computeseparator2",
+      "insertAfter": "machinesets",
+      "testID": "ComputeSeparator2"
+    },
+    "flags": { "required": ["MACHINE_CONFIG"] }
+  },
+  {
+    "type": "console.navigation/resource-cluster",
+    "properties": {
+      "perspective": "admin",
+      "section": "compute",
+      "id": "machineconfigs",
+      "insertAfter": "computeseparator2",
+      "name": "%console-app~MachineConfigs%",
+      "model": {
+        "group": "machineconfiguration.openshift.io",
+        "version": "v1",
+        "kind": "MachineConfig"
+      }
+    },
+    "flags": { "required": ["MACHINE_CONFIG"] }
+  },
+  {
+    "type": "console.navigation/resource-cluster",
+    "properties": {
+      "perspective": "admin",
+      "section": "compute",
+      "id": "machineconfigpools",
+      "insertAfter": "machineconfigs",
+      "name": "%console-app~MachineConfigPools%",
+      "model": {
+        "group": "machineconfiguration.openshift.io",
+        "version": "v1",
+        "kind": "MachineConfigPool"
+      }
+    },
+    "flags": { "required": ["MACHINE_CONFIG"] }
+  },
+  {
+    "type": "console.navigation/resource-cluster",
+    "properties": {
+      "perspective": "admin",
+      "section": "usermanagement",
+      "id": "users",
+      "name": "%console-app~Users%",
+      "model": {
+        "group": "user.openshift.io",
+        "version": "v1",
+        "kind": "User"
+      }
+    },
+    "flags": { "required": ["OPENSHIFT", "OPENSHIFT_USER_API", "CAN_LIST_USERS"] }
+  },
+  {
+    "type": "console.navigation/resource-cluster",
+    "properties": {
+      "perspective": "admin",
+      "section": "usermanagement",
+      "id": "groups",
+      "insertAfter": "users",
+      "name": "%console-app~Groups%",
+      "model": {
+        "group": "user.openshift.io",
+        "version": "v1",
+        "kind": "Group"
+      }
+    },
+    "flags": { "required": ["OPENSHIFT", "OPENSHIFT_GROUP_API", "CAN_LIST_GROUPS"] }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "perspective": "admin",
+      "section": "usermanagement",
+      "id": "serviceaccounts",
+      "insertAfter": "groups",
+      "name": "%console-app~ServiceAccounts%",
+      "model": {
+        "version": "v1",
+        "kind": "ServiceAccount"
+      }
+    }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "perspective": "admin",
+      "section": "usermanagement",
+      "id": "roles",
+      "insertAfter": "serviceaccounts",
+      "name": "%console-app~Roles%",
+      "startsWith": ["clusterroles"],
+      "model": {
+        "group": "rbac.authorization.k8s.io",
+        "version": "v1",
+        "kind": "Role"
+      }
+    }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "perspective": "admin",
+      "section": "usermanagement",
+      "id": "rolebindings",
+      "insertAfter": "roles",
+      "name": "%console-app~RoleBindings%",
+      "startsWith": ["clusterrolebindings"],
+      "model": {
+        "group": "rbac.authorization.k8s.io",
+        "version": "v1",
+        "kind": "RoleBinding"
+      }
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "perspective": "admin",
+      "section": "administration",
+      "id": "clustersettings",
+      "name": "%console-app~Cluster Settings%",
+      "href": "/settings/cluster",
+      "startsWith": [
+        "settings/idp",
+        "config.openshift.io",
+        "settings/cluster/alertmanagerconfig",
+        "settings/cluster/alertmanageryaml"
+      ]
+    },
+    "flags": { "required": ["CLUSTER_VERSION"] }
+  },
+  {
+    "type": "console.navigation/resource-cluster",
+    "properties": {
+      "perspective": "admin",
+      "section": "administration",
+      "id": "namespaces",
+      "insertAfter": "clustersettings",
+      "name": "%console-app~Namespaces%",
+      "model": {
+        "version": "v1",
+        "kind": "Namespace"
+      }
+    },
+    "flags": { "required": ["CAN_LIST_NS"] }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "perspective": "admin",
+      "section": "administration",
+      "id": "resourcequotas",
+      "insertAfter": "namespaces",
+      "name": "%console-app~ResourceQuotas%",
+      "startsWith": ["clusterresourcequotas"],
+      "model": {
+        "version": "v1",
+        "kind": "ResourceQuota"
+      }
+    }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "perspective": "admin",
+      "section": "administration",
+      "id": "limitranges",
+      "insertAfter": "resourcequotas",
+      "name": "%console-app~LimitRanges%",
+      "model": {
+        "version": "v1",
+        "kind": "LimitRange"
+      }
+    }
+  },
+  {
+    "type": "console.navigation/resource-cluster",
+    "properties": {
+      "perspective": "admin",
+      "section": "administration",
+      "id": "customresourcedefinitions",
+      "insertAfter": "limitranges",
+      "name": "%console-app~CustomResourceDefinitions%",
+      "model": {
+        "group": "apiextensions.k8s.io",
+        "version": "v1",
+        "kind": "CustomResourceDefinition"
+      }
+    },
+    "flags": { "required": ["CAN_LIST_CRD"] }
+  },
+  {
+    "type": "console.dashboards/overview/health/url",
+    "properties": {
+      "title": "%console-app~Cluster%",
+      "url": "healthz",
+      "healthHandler": { "$codeRef": "k8sHealth.getK8sHealthState" },
+      "fetch": { "$codeRef": "k8sHealth.fetchK8sHealth" },
+      "additionalResource": {
+        "kind": "config.openshift.io~v1~ClusterVersion",
+        "namespaced": false,
+        "name": "version",
+        "isList": false,
+        "prop": "cv",
+        "optional": true
+      }
+    }
+  },
+  {
+    "type": "console.dashboards/overview/activity/resource",
+    "properties": {
+      "k8sResource": {
+        "isList": true,
+        "prop": "clusterVersion",
+        "kind": "ClusterVersion",
+        "namespaced": false
+      },
+      "isActivity": { "$codeRef": "dashboardsActivity.isClusterUpdateActivity" },
+      "getTimestamp": { "$codeRef": "dashboardsActivity.getClusterUpdateTimestamp" },
+      "component": { "$codeRef": "ClusterUpdateActivity.default" }
+    },
+    "flags": {
+      "required": ["CLUSTER_VERSION"]
+    }
+  },
+  {
+    "type": "console.dashboards/overview/inventory/item",
+    "properties": {
+      "model": { "$codeRef": "inventoryItems.NodeModel" },
+      "mapper": { "$codeRef": "inventoryItems.getNodeStatusGroups" }
+    }
+  },
+  {
+    "type": "console.dashboards/overview/inventory/item",
+    "properties": {
+      "model": { "$codeRef": "inventoryItems.PodModel" },
+      "mapper": { "$codeRef": "inventoryItems.getPodStatusGroups" }
+    }
+  },
+  {
+    "type": "console.dashboards/overview/inventory/item",
+    "properties": {
+      "model": { "$codeRef": "inventoryItems.StorageClassModel" }
+    }
+  },
+  {
+    "type": "console.dashboards/overview/inventory/item",
+    "properties": {
+      "model": { "$codeRef": "inventoryItems.PersistentVolumeClaimModel" },
+      "mapper": { "$codeRef": "inventoryItems.getPVCStatusGroups" }
+    }
+  },
+  {
+    "type": "console.dashboards/overview/health/prometheus",
+    "properties": {
+      "title": "%console-app~Control Plane%",
+      // The query used to compute the number of kube-apiserver instances that are up
+      // is a bit different than the ones used for the other control plane components
+      // because of how Kubernetes deal with the kube-apiserver Service endpoints.
+      // When a node is down, the kube-apiserver address on that node is removed from
+      // its Endpoint object which results in metrics for that kube-apiserver
+      // instance to not be scraped anymore. Meaning that the `up` timeserie for that
+      // kube-apiserver instance will not exist anymore and if we were to use the
+      // same query as the other components we will always see the kube-apiserver
+      // being 100% available when a node is down.  The solution to that problem is
+      // to rely on the number of kube-apiserver pods instead of the number of
+      // Prometheus targets it has.
+      "queries": [
+        // API_SERVERS_UP
+        "(sum(up{job=\"apiserver\",namespace=\"default\"} == 1) / count(kube_pod_labels{label_app=\"openshift-kube-apiserver\",label_apiserver=\"true\",namespace=\"openshift-kube-apiserver\"})) * 100",
+        // CONTROLLER_MANAGERS_UP
+        "(sum(up{job=\"kube-controller-manager\",namespace=\"openshift-kube-controller-manager\"} == 1) / count(up{job=\"kube-controller-manager\",namespace=\"openshift-kube-controller-manager\"})) * 100",
+        // SCHEDULERS_UP
+        "(sum(up{job=\"scheduler\",namespace=\"openshift-kube-scheduler\"} == 1) / count(up{job=\"scheduler\",namespace=\"openshift-kube-scheduler\"})) * 100",
+        // API_SERVER_REQUESTS_SUCCES
+        "(1 - (sum(rate(apiserver_request_total{code=~\"5..\"}[5m])) or vector(0))/ sum(rate(apiserver_request_total[5m]))) * 100"
+      ],
+      "healthHandler": {
+        "$codeRef": "k8sHealth.getControlPlaneHealth"
+      },
+      "popupComponent": {
+        "$codeRef": "ControlPlaneStatus.default"
+      },
+      "popupTitle": "%console-app~Control Plane status%",
+      "disallowedControlPlaneTopology": ["External"]
+    }
+  },
+  {
+    "type": "console.dashboards/overview/health/operator",
+    "properties": {
+      "title": "%console-app~Cluster operators%",
+      "resources": [
+        {
+          "kind": "config.openshift.io~v1~ClusterOperator",
+          "isList": true,
+          "namespaced": false,
+          "prop": "clusterOperators"
+        }
+      ],
+      "getOperatorsWithStatuses": {
+        "$codeRef": "k8sHealth.getClusterOperatorHealthStatus"
+      },
+      "operatorRowLoader": {
+        "$codeRef": "OperatorStatus.default"
+      },
+      "viewAllLink": "/settings/cluster/clusteroperators"
+    },
+    "flags": {
+      "required": ["CLUSTER_VERSION"]
+    }
+  },
+  {
+    "type": "console.dashboards/overview/health/resource",
+    "properties": {
+      "title": "%console-app~Dynamic Plugins%",
+      "resources": { "$codeRef": "DynamicPluginsPopover.dynamicPluginsResources" },
+      "healthHandler": { "$codeRef": "getDynamicPluginHealthState.getDynamicPluginHealthState" },
+      "popupComponent": { "$codeRef": "DynamicPluginsPopover" },
+      "popupTitle": "%console-app~Dynamic Plugin status%"
+    }
+  },
+  {
+    "type": "console.storage-class/provisioner",
+    "properties": {
+      "CSI": {
+        "title": "%console-app~AWS CSI%",
+        "provisioner": "ebs.csi.aws.com",
+        "allowVolumeExpansion": true,
+        "parameters": {
+          "type": {
+            "name": "%console-app~Type%",
+            "values": {
+              "gp3": "gp3",
+              "gp2": "gp2",
+              "io1": "io1",
+              "sc1": "sc1",
+              "st1": "st1",
+              "standard": "standard"
+            },
+            "hintText": "%console-app~Select AWS Type. Default is gp3%"
+          },
+          "iopsPerGB": {
+            "name": "%console-app~IOPS per GiB%",
+            "hintText": "%console-app~I/O operations per second per GiB%",
+            "validation": { "$codeRef": "storageProvisioners.validateAWSIopsPerGB" },
+            "visible": true
+          },
+          "fsType": {
+            "name": "%console-app~Filesystem Type%",
+            "hintText": "%console-app~Filesystem type to use during volume creation. Default is ext4.%",
+            "values": { "ext4": "ext4", "xfs": "xfs", "ext2": "ext2", "ext3": "ext3" }
+          },
+          "encrypted": {
+            "name": "%console-app~Encrypted%",
+            "type": "checkbox",
+            "format": { "$codeRef": "storageProvisioners.formatToString" }
+          },
+          "kmsKeyId": {
+            "name": "%console-app~KMS key ID%",
+            "hintText": "%console-app~The full Amazon resource name of the key to use when encrypting the volume%",
+            "visible": { "$codeRef": "storageProvisioners.isAWSKmsKeyIdVisible" }
+          }
+        }
+      }
+    }
+  },
+  {
+    "type": "console.storage-class/provisioner",
+    "properties": {
+      "OTHERS": {
+        "title": "%console-app~Local%",
+        "provisioner": "kubernetes.io/no-provisioner",
+        "documentationLink": { "$codeRef": "storageProvisionerDocs.LOCAL" },
+        "volumeBindingMode": "WaitForFirstConsumer"
+      }
+    }
+  },
+  {
+    "type": "console.storage-class/provisioner",
+    "properties": {
+      "OTHERS": {
+        "title": "%console-app~AWS Elastic Block Storage%",
+        "provisioner": "kubernetes.io/aws-ebs",
+        "allowVolumeExpansion": true,
+        "documentationLink": { "$codeRef": "storageProvisionerDocs.AWS_EBS" },
+        "parameters": {
+          "type": {
+            "name": "%console-app~Type%",
+            "values": { "io1": "io1", "gp2": "gp2", "sc1": "sc1", "st1": "st1" },
+            "hintText": "%console-app~Select AWS Type%"
+          },
+          "iopsPerGB": {
+            "name": "%console-app~IOPS per GiB%",
+            "hintText": "%console-app~I/O operations per second per GiB%",
+            "validation": { "$codeRef": "storageProvisioners.validateAWSIopsPerGB" },
+            "visible": { "$codeRef": "storageProvisioners.isAWSIopsPerGBVisible" }
+          },
+          "fsType": {
+            "name": "%console-app~Filesystem type%",
+            "hintText": "%console-app~Filesystem type to use during volume creation. Default is ext4.%"
+          },
+          "encrypted": {
+            "name": "%console-app~Encrypted%",
+            "type": "checkbox",
+            "format": { "$codeRef": "storageProvisioners.formatToString" }
+          },
+          "kmsKeyId": {
+            "name": "%console-app~KMS key ID%",
+            "hintText": "%console-app~The full Amazon resource name of the key to use when encrypting the volume%",
+            "visible": { "$codeRef": "storageProvisioners.isAWSKmsKeyIdVisible" }
+          }
+        }
+      }
+    }
+  },
+  {
+    "type": "console.storage-class/provisioner",
+    "properties": {
+      "OTHERS": {
+        "title": "%console-app~GCE PD%",
+        "provisioner": "kubernetes.io/gce-pd",
+        "allowVolumeExpansion": true,
+        "documentationLink": { "$codeRef": "storageProvisionerDocs.GCE" },
+        "parameters": {
+          "type": {
+            "name": "%console-app~Type%",
+            "values": {
+              "pd-standard": "pd-standard",
+              "pd-ssd": "pd-ssd"
+            },
+            "hintText": "%console-app~Select GCE type%"
+          },
+          "zone": {
+            "name": "%console-app~Zone%",
+            "validation": { "$codeRef": "storageProvisioners.validateGcePdZone" }
+          },
+          "zones": {
+            "name": "%console-app~Zones%",
+            "validation": { "$codeRef": "storageProvisioners.validateGcePdZones" }
+          },
+          "replication-type": {
+            "name": "%console-app~Replication type%",
+            "values": {
+              "none": "none",
+              "regional-pd": "regional-pd"
+            },
+            "hintText": "%console-app~Select Replication type%",
+            "validation": { "$codeRef": "storageProvisioners.validateGCEReplicationType" }
+          }
+        }
+      }
+    }
+  },
+  {
+    "type": "console.storage-class/provisioner",
+    "properties": {
+      "OTHERS": {
+        "title": "%console-app~Glusterfs%",
+        "provisioner": "kubernetes.io/glusterfs",
+        "allowVolumeExpansion": true,
+        "documentationLink": { "$codeRef": "storageProvisionerDocs.GLUSTERFS" },
+        "parameters": {
+          "resturl": {
+            "name": "%console-app~Gluster REST/Heketi URL%",
+            "required": true
+          },
+          "restuser": {
+            "name": "%console-app~Gluster REST/Heketi user%"
+          },
+          "secretNamespace": {
+            "name": "%console-app~Secret Namespace%"
+          },
+          "secretName": {
+            "name": "%console-app~Secret name%"
+          },
+          "clusterid": {
+            "name": "%console-app~Cluster ID%"
+          },
+          "gidMin": {
+            "name": "%console-app~GID min%",
+            "validation": { "$codeRef": "storageProvisioners.validateGlusterGidMin" }
+          },
+          "gidMax": {
+            "name": "%console-app~GID max%",
+            "validation": { "$codeRef": "storageProvisioners.validateGlusterGidMax" }
+          },
+          "volumetype": {
+            "name": "%console-app~Volume type%"
+          }
+        }
+      }
+    }
+  },
+  {
+    "type": "console.storage-class/provisioner",
+    "properties": {
+      "OTHERS": {
+        "title": "%console-app~OpenStack Cinder%",
+        "provisioner": "kubernetes.io/cinder",
+        "allowVolumeExpansion": true,
+        "documentationLink": { "$codeRef": "storageProvisionerDocs.OPENSTACK_CINDER" },
+        "parameters": {
+          "type": {
+            "name": "%console-app~Volume type%"
+          },
+          "availability": {
+            "name": "%console-app~Availability zone%"
+          }
+        }
+      }
+    }
+  },
+  {
+    "type": "console.storage-class/provisioner",
+    "properties": {
+      "OTHERS": {
+        "title": "%console-app~Azure File%",
+        "provisioner": "kubernetes.io/azure-file",
+        "allowVolumeExpansion": true,
+        "documentationLink": { "$codeRef": "storageProvisionerDocs.AZURE_FILE" },
+        "parameters": {
+          "skuName": {
+            "name": "%console-app~SKU name%",
+            "hintText": "%console-app~Azure storage account SKU tier%"
+          },
+          "location": {
+            "name": "%console-app~Location%",
+            "hintText": "%console-app~Azure storage account location%"
+          },
+          "storageAccount": {
+            "name": "%console-app~Azure storage account name%",
+            "hintText": "%console-app~Azure storage account name%"
+          }
+        }
+      }
+    }
+  },
+  {
+    "type": "console.storage-class/provisioner",
+    "properties": {
+      "OTHERS": {
+        "title": "%console-app~Azure Disk%",
+        "provisioner": "kubernetes.io/azure-disk",
+        "allowVolumeExpansion": true,
+        "documentationLink": { "$codeRef": "storageProvisionerDocs.AZURE_DISK" },
+        "parameters": {
+          "storageaccounttype": {
+            "name": "%console-app~Storage account type%",
+            "hintText": "%console-app~Storage account type%"
+          },
+          "kind": {
+            "name": "%console-app~Account kind%",
+            "values": { "shared": "shared", "dedicated": "dedicated", "managed": "managed" },
+            "hintText": "%console-app~Select account kind%"
+          }
+        }
+      }
+    }
+  },
+  {
+    "type": "console.storage-class/provisioner",
+    "properties": {
+      "OTHERS": {
+        "title": "%console-app~Quobyte%",
+        "provisioner": "kubernetes.io/quobyte",
+        "allowVolumeExpansion": false,
+        "documentationLink": { "$codeRef": "storageProvisionerDocs.QUOBYTE" },
+        "parameters": {
+          "quobyteAPIServer": {
+            "name": "%console-app~Quobyte API server%",
+            "hintText": "%console-app~Quobyte API server%"
+          },
+          "registry": {
+            "name": "%console-app~Registry address(es)%",
+            "hintText": "%console-app~Registry address(es)%"
+          },
+          "adminSecretName": {
+            "name": "%console-app~Admin secret name%",
+            "hintText": "%console-app~Admin secret name%"
+          },
+          "adminSecretNamespace": {
+            "name": "%console-app~Admin secret namespace%",
+            "hintText": "%console-app~Admin secret namespace%"
+          },
+          "user": {
+            "name": "%console-app~User%",
+            "hintText": "%console-app~User%"
+          },
+          "group": {
+            "name": "%console-app~Group%",
+            "hintText": "%console-app~Group%"
+          },
+          "quobyteConfig": {
+            "name": "%console-app~Quobyte configuration%",
+            "hintText": "%console-app~Quobyte configuration%"
+          },
+          "quobyteTenant": {
+            "name": "%console-app~Quobyte tenant%",
+            "hintText": "%console-app~Quobyte tenant ID used to create/delete the volume%"
+          }
+        }
+      }
+    }
+  },
+  {
+    "type": "console.storage-class/provisioner",
+    "properties": {
+      "OTHERS": {
+        "title": "%console-app~vSphere Volume%",
+        "provisioner": "kubernetes.io/vsphere-volume",
+        "allowVolumeExpansion": false,
+        "documentationLink": { "$codeRef": "storageProvisionerDocs.VSPHERE" },
+        "parameters": {
+          "diskformat": {
+            "name": "%console-app~Disk format%",
+            "values": {
+              "thin": "thin",
+              "zeroedthick": "zeroed thick",
+              "eagerzeroedthick": "eager zeroed thick"
+            },
+            "hintText": "%console-app~Select disk format%"
+          },
+          "datastore": {
+            "name": "%console-app~Datastore%",
+            "hintText": "%console-app~Datastore%"
+          }
+        },
+        "volumeBindingMode": "Immediate"
+      }
+    }
+  },
+  {
+    "type": "console.storage-class/provisioner",
+    "properties": {
+      "OTHERS": {
+        "title": "%console-app~Portworx Volume%",
+        "provisioner": "kubernetes.io/portworx-volume",
+        "allowVolumeExpansion": true,
+        "documentationLink": { "$codeRef": "storageProvisionerDocs.PORTWORX_VOLUME" },
+        "parameters": {
+          "fs": {
+            "name": "%console-app~Filesystem%",
+            "values": {
+              "none": "none",
+              "xfs": "xfs",
+              "ext4": "ext4"
+            },
+            "hintText": "%console-app~Select Filesystem%"
+          },
+          "block_size": {
+            "name": "%console-app~Block size%",
+            "hintText": "%console-app~Block size in Kb%",
+            "validation": { "$codeRef": "storageProvisioners.validatePortworxBlockSize" }
+          },
+          "repl": {
+            "name": "%console-app~Number of synchronous replicas to be provided in the form of replication factor%",
+            "hintText": "%console-app~Number of replicas%",
+            "validation": { "$codeRef": "storageProvisioners.validatePortworxReplicas" }
+          },
+          "io_priority": {
+            "name": "%console-app~I/O priority%",
+            "values": {
+              "high": "high",
+              "medium": "medium",
+              "low": "low"
+            },
+            "hintText": "%console-app~I/O priority%"
+          },
+          "snap_interval": {
+            "name": "%console-app~Snapshot interval%",
+            "hintText": "%console-app~Clock/time interval in minutes for when to trigger snapshots%",
+            "validation": { "$codeRef": "storageProvisioners.validatePortworxSnapshotInterval" },
+            "format": { "$codeRef": "storageProvisioners.formatToString" }
+          },
+          "aggregation_level": {
+            "name": "%console-app~Aggregation level%",
+            "hintText": "%console-app~The number of chunks the volume would be distributed into%",
+            "validation": { "$codeRef": "storageProvisioners.validatePortworxAggregationLevel" },
+            "format": { "$codeRef": "storageProvisioners.formatToString" }
+          },
+          "ephemeral": {
+            "name": "%console-app~Ephemeral%",
+            "type": "checkbox",
+            "format": { "$codeRef": "storageProvisioners.formatToString" }
+          }
+        }
+      }
+    }
+  },
+  {
+    "type": "console.storage-class/provisioner",
+    "properties": {
+      "OTHERS": {
+        "title": "ScaleIO",
+        "provisioner": "kubernetes.io/scaleio",
+        "allowVolumeExpansion": false,
+        "documentationLink": { "$codeRef": "storageProvisionerDocs.SCALEIO" },
+        "parameters": {
+          "gateway": {
+            "name": "%console-app~API gateway%",
+            "required": true,
+            "hintText": "%console-app~ScaleIO API gateway address%"
+          },
+          "system": {
+            "name": "%console-app~System name%",
+            "required": true,
+            "hintText": "%console-app~Name of the ScaleIO system%"
+          },
+          "protectionDomain": {
+            "name": "%console-app~Protection domain%",
+            "required": true,
+            "hintText": "%console-app~Name of the ScaleIO protection domain%"
+          },
+          "storagePool": {
+            "name": "%console-app~Storage pool%",
+            "required": true,
+            "hintText": "%console-app~Name of the volume storage pool%"
+          },
+          "storageMode": {
+            "name": "%console-app~Storage mode%",
+            "values": {
+              "thinProvisioned": "ThinProvisioned",
+              "thickProvisioned": "ThickProvisioned"
+            },
+            "hintText": "%console-app~Select storage provision mode%"
+          },
+          "secretRef": {
+            "name": "%console-app~Secret reference%",
+            "required": true,
+            "hintText": "%console-app~Reference to a configured Secret object%"
+          },
+          "readOnly": {
+            "name": "%console-app~Read Only%",
+            "type": "checkbox",
+            "format": { "$codeRef": "storageProvisioners.formatToString" }
+          },
+          "fsType": {
+            "name": "%console-app~Filesystem Type%",
+            "hintText": "%console-app~Filesystem to use for the volume%"
+          }
+        }
+      }
+    }
+  },
+  {
+    "type": "console.storage-class/provisioner",
+    "properties": {
+      "OTHERS": {
+        "title": "StorageOS",
+        "provisioner": "kubernetes.io/storageos",
+        "allowVolumeExpansion": false,
+        "documentationLink": { "$codeRef": "storageProvisionerDocs.STORAGEOS" },
+        "parameters": {
+          "pool": {
+            "name": "%console-app~Pool%",
+            "hintText": "%console-app~Name of the StorageOS distributed capacity pool from which to provision the volume%"
+          },
+          "description": {
+            "name": "%console-app~Description%",
+            "hintText": "%console-app~Description to assign to volumes that were created dynamically%"
+          },
+          "fsType": {
+            "name": "%console-app~Filesystem type%",
+            "hintText": "%console-app~Default filesystem type to request%"
+          },
+          "adminSecretName": {
+            "name": "%console-app~Admin secret name%",
+            "hintText": "%console-app~Name of the secret to use for obtaining the StorageOS API credentials%"
+          },
+          "adminSecretNamespace": {
+            "name": "%console-app~Admin secret namespace%",
+            "hintText": "%console-app~Namespace where the API configuration secret is located%",
+            "required": { "$codeRef": "storageProvisioners.isStorageOsAdminSecretNSRequired" }
+          }
+        }
+      }
+    }
+  },
+  {
+    "type": "console.node/status",
+    "properties": {
+      "title": "%console-app~Scheduling disabled%",
+      "PopoverContent": { "$codeRef": "SchedulableStatus.MarkAsSchedulablePopover" },
+      "isActive": { "$codeRef": "SchedulableStatus.isUnschedulableActive" }
+    }
+  },
+  {
+    "type": "console.node/status",
+    "properties": {
+      "title": "%console-app~Approval required%",
+      "PopoverContent": { "$codeRef": "CSRStatus.ServerCSRPopoverContent" },
+      "isActive": { "$codeRef": "CSRStatus.isCSRActive" },
+      "resources": {
+        "csrs": {
+          "groupVersionKind": {
+            "group": "certificates.k8s.io",
+            "kind": "CertificateSigningRequest",
+            "version": "v1"
+          },
+          "isList": true
+        }
+      }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "version": "v1",
+        "kind": "Node"
+      },
+      "provider": {
+        "$codeRef": "nodeActions.useNodeActions"
+      }
+    }
+  },
+  {
+    "type": "console.tab/horizontalNav",
+    "properties": {
+      "model": {
+        "group": "console.openshift.io",
+        "version": "v1",
+        "kind": "ConsolePlugin"
+      },
+      "page": {
+        "name": "%console-app~Plugin manifest%",
+        "href": "plugin-manifest"
+      },
+      "component": { "$codeRef": "ConsolePluginManifestPage.ConsolePluginManifestPage" }
+    }
+  },
+  {
+    "type": "console.resource/details-item",
+    "properties": {
+      "id": "plugin-display-name",
+      "model": {
+        "group": "console.openshift.io",
+        "version": "v1",
+        "kind": "ConsolePlugin"
+      },
+      "column": "left",
+      "title": "%console-app~Display Name%",
+      "path": "spec.displayName",
+      "sortWeight": 0
+    }
+  },
+  {
+    "type": "console.resource/details-item",
+    "properties": {
+      "id": "plugin-description",
+      "model": {
+        "group": "console.openshift.io",
+        "version": "v1",
+        "kind": "ConsolePlugin"
+      },
+      "column": "left",
+      "title": "%console-app~Description%",
+      "description": "%console-app~Information describing the plugin.%",
+      "component": { "$codeRef": "consolePluginDescriptionDetail" },
+      "sortWeight": 1
+    }
+  },
+  {
+    "type": "console.resource/details-item",
+    "properties": {
+      "id": "plugin-version",
+      "model": {
+        "group": "console.openshift.io",
+        "version": "v1",
+        "kind": "ConsolePlugin"
+      },
+      "column": "right",
+      "title": "%console-app~Version%",
+      "description": "%console-app~The specific update of the plugin.%",
+      "component": { "$codeRef": "consolePluginVersionDetail" },
+      "sortWeight": 0
+    }
+  },
+  {
+    "type": "console.resource/details-item",
+    "properties": {
+      "id": "plugin-status",
+      "model": {
+        "group": "console.openshift.io",
+        "version": "v1",
+        "kind": "ConsolePlugin"
+      },
+      "column": "right",
+      "title": "%console-app~Status%",
+      "description": "%console-app~The state of the plugin.%",
+      "component": { "$codeRef": "consolePluginStatusDetail" },
+      "sortWeight": 1
+    }
+  },
+  {
+    "type": "console.resource/details-item",
+    "properties": {
+      "id": "plugin-enabled",
+      "model": {
+        "group": "console.openshift.io",
+        "version": "v1",
+        "kind": "ConsolePlugin"
+      },
+      "column": "right",
+      "title": "%console-app~Enabled%",
+      "description": "%console-app~Whether or not the plugin renders in console.%",
+      "component": { "$codeRef": "consolePluginEnabledStatusDetail" },
+      "sortWeight": 2
+    }
+  },
+  {
+    "type": "console.resource/details-item",
+    "properties": {
+      "id": "plugin-csp",
+      "model": {
+        "group": "console.openshift.io",
+        "version": "v1",
+        "kind": "ConsolePlugin"
+      },
+      "column": "right",
+      "title": "%console-app~CSP Violations%",
+      "description": "%console-app~Whether or not the plugin might have violated the Console Content Security Policy.%",
+      "component": { "$codeRef": "consolePluginCSPStatusDetail" },
+      "sortWeight": 3
+    }
+  },
+  {
+    "type": "console.resource/details-item",
+    "properties": {
+      "id": "plugin-backend",
+      "model": {
+        "group": "console.openshift.io",
+        "version": "v1",
+        "kind": "ConsolePlugin"
+      },
+      "column": "right",
+      "title": "%console-app~Backend Service%",
+      "path": "spec.backend.service",
+      "component": { "$codeRef": "consolePluginBackendDetail" },
+      "sortWeight": 4
+    }
+  },
+  {
+    "type": "console.resource/details-item",
+    "properties": {
+      "id": "plugin-proxy",
+      "model": {
+        "group": "console.openshift.io",
+        "version": "v1",
+        "kind": "ConsolePlugin"
+      },
+      "column": "right",
+      "title": "%console-app~Proxy Services%",
+      "path": "spec.proxy",
+      "component": { "$codeRef": "consolePluginProxyDetail" },
+      "sortWeight": 5
+    }
+  },
+  {
+    "type": "console.flag/hookProvider",
+    "properties": {
+      "handler": { "$codeRef": "getConsoleOperatorConfigFlag" }
+    }
+  },
+  {
+    "type": "console.flag/hookProvider",
+    "properties": {
+      "handler": { "$codeRef": "vacPlatformSupport.useVACPlatformSupportProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "",
+        "version": "v1",
+        "kind": "ConfigMap"
+      },
+      "provider": { "$codeRef": "defaultProvider.useDefaultActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "machine.openshift.io",
+        "version": "v1",
+        "kind": "ControlPlaneMachineSet"
+      },
+      "provider": { "$codeRef": "defaultProvider.useDefaultActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "autoscaling",
+        "version": "v2",
+        "kind": "HorizontalPodAutoscaler"
+      },
+      "provider": { "$codeRef": "defaultProvider.useDefaultActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "image.openshift.io",
+        "version": "v1",
+        "kind": "ImageStreamTag"
+      },
+      "provider": { "$codeRef": "defaultProvider.useDefaultActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "image.openshift.io",
+        "version": "v1",
+        "kind": "ImageStream"
+      },
+      "provider": { "$codeRef": "defaultProvider.useDefaultActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "",
+        "version": "v1",
+        "kind": "LimitRange"
+      },
+      "provider": { "$codeRef": "defaultProvider.useDefaultActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "autoscaling.openshift.io",
+        "version": "v1beta1",
+        "kind": "MachineAutoscaler"
+      },
+      "provider": { "$codeRef": "defaultProvider.useDefaultActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "machineconfiguration.openshift.io",
+        "version": "v1",
+        "kind": "MachineConfig"
+      },
+      "provider": { "$codeRef": "defaultProvider.useDefaultActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "machine.openshift.io",
+        "version": "v1beta1",
+        "kind": "MachineHealthCheck"
+      },
+      "provider": { "$codeRef": "defaultProvider.useDefaultActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "machine.openshift.io",
+        "version": "v1beta1",
+        "kind": "Machine"
+      },
+      "provider": { "$codeRef": "defaultProvider.useDefaultActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "",
+        "version": "v1",
+        "kind": "PersistentVolume"
+      },
+      "provider": { "$codeRef": "defaultProvider.useDefaultActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "",
+        "version": "v1",
+        "kind": "ServiceAccount"
+      },
+      "provider": { "$codeRef": "defaultProvider.useDefaultActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "template.openshift.io",
+        "version": "v1",
+        "kind": "TemplateInstance"
+      },
+      "provider": { "$codeRef": "defaultProvider.useDefaultActionsProvider" }
+    }
+  },
+  {
+    "type": "console.flag",
+    "properties": {
+      "handler": { "$codeRef": "techPreviewFlag.handler" }
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "perspective": "admin",
+      "section": "administration",
+      "id": "consoleplugins",
+      "name": "%console-app~Dynamic Plugins%",
+      "href": "/k8s/cluster/operator.openshift.io~v1~Console/cluster/console-plugins"
+    },
+    "flags": { "required": ["CAN_GET_CONSOLE_OPERATOR_CONFIG"] }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "rbac.authorization.k8s.io",
+        "version": "v1",
+        "kind": "Role"
+      },
+      "provider": { "$codeRef": "roleProvider.useRoleActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "rbac.authorization.k8s.io",
+        "version": "v1",
+        "kind": "ClusterRole"
+      },
+      "provider": { "$codeRef": "roleProvider.useRoleActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "build.openshift.io",
+        "version": "v1",
+        "kind": "BuildConfig"
+      },
+      "provider": { "$codeRef": "buildConfigProvider.useBuildConfigActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "apiextensions.k8s.io",
+        "version": "v1",
+        "kind": "CustomResourceDefinition"
+      },
+      "provider": {
+        "$codeRef": "customResourceDefinitionProvider.useCustomResourceDefinitionActionsProvider"
+      }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "machineconfiguration.openshift.io",
+        "version": "v1",
+        "kind": "MachineConfigPool"
+      },
+      "provider": { "$codeRef": "machineConfigPoolProvider.useMachineConfigPoolActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "monitoring.coreos.com",
+        "version": "v1",
+        "kind": "ServiceMonitor"
+      },
+      "provider": { "$codeRef": "serviceMonitorProvider.useServiceMonitorActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "user.openshift.io",
+        "version": "v1",
+        "kind": "User"
+      },
+      "provider": { "$codeRef": "userProvider.useUserActionsProvider" }
+    }
+  }
+]

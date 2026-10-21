@@ -1,0 +1,197 @@
+.co-sysevent-stream {
+  padding: 60px 0 50px 0;
+  position: relative;
+}
+
+.co-sysevent-slide-in {
+  animation: co-sysevent-enter
+    var(--pf-t--global--motion--duration--slide-in--default)
+    var(--pf-t--global--motion--timing-function--accelerate);
+}
+
+@keyframes co-sysevent-enter {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.co-sysevent-stream__connection-error {
+  color: var(--pf-t--global--text--color--status--danger--default);
+}
+
+.co-sysevent-stream__timeline {
+  bottom: 30px;
+  position: absolute;
+  top: 35px;
+}
+
+.co-sysevent-stream__status {
+  display: flex;
+  justify-content: space-between;
+  position: absolute;
+  top: 9px;
+  left: 40px;
+  right: 4px;
+  @media (min-width: $screen-sm-min) {
+    padding-left: 25px;
+    left: 45px;
+    right: 0;
+  }
+}
+
+.co-sysevent-stream__timeline__end-message {
+  bottom: 0;
+  position: absolute;
+  transform: translateY(50%);
+  white-space: nowrap;
+  z-index: 1;
+  .co-sysevent-stream__timeline--empty & {
+    display: none;
+  }
+}
+
+.co-sysevent-stream__timeline__btn {
+  margin: 0;
+  transform: translate(0%, -100%);
+  margin-left: 2px;
+}
+
+.co-sysevent {
+  display: flex;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+
+.co-sysevent--transition {
+  padding-bottom: 15px;
+}
+
+.co-sysevent__box {
+  background-color: var(
+    --pf-t--global--background--color--primary--default
+  ); // prevent overlapping text if events overlap each other
+  border: var(--pf-t--global--border--width--divider--default) solid var(--pf-t--global--color--nonstatus--gray--default);
+  border-radius: var(--pf-t--global--border--radius--medium);
+  flex: none;
+  padding: 10px;
+  width: 100%;
+}
+
+.co-sysevent__count-and-actions {
+  align-items: flex-end;
+  display: flex;
+  flex-direction: column;
+}
+
+.co-sysevent__details {
+  column-gap: 8px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.co-sysevent__resourcelink {
+  display: block;
+  flex: 2 0 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.co-sysevent__subheader {
+  display: flex;
+  justify-content: space-between;
+  white-space: pre;
+  > *:not(:first-child) {
+    margin-left: 8px;
+  }
+}
+
+.co-sysevent__source {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.co-sysevent__timestamp {
+  flex: 1 0 0;
+  justify-content: flex-end;
+}
+
+.co-sysevent__message {
+  @include co-break-word;
+  margin-right: -11px; // align with edge if scrollable area is visible (sysevent_box padding + border)
+  margin-top: 10px;
+  max-height: 150px;
+  overflow-y: auto;
+  padding-right: 11px;
+  position: relative;
+}
+
+.co-sysevent__icon-box {
+  flex: 0 0 100px;
+  display: none;
+  position: relative;
+  .co-sysevent-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(calc(50% - 17px), calc(-50% + 1px));
+  }
+}
+
+.co-sysevent__icon-line {
+  background-color: var(
+    --pf-t--global--color--nonstatus--gray--default
+  ); // connector line that matches the .co-sysevent-stream__timeline and .co-sysevent__box border color
+  height: 3px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 50%;
+}
+
+@media (min-width: $pf-v6-global--breakpoint--xl) {
+  .co-sysevent {
+    flex-wrap: nowrap;
+    margin-left: -40px;
+  }
+
+  .co-sysevent__box {
+    flex: 1 2 auto;
+    border: var(--pf-t--global--border--width--regular) solid var(--pf-t--global--color--nonstatus--gray--default);
+    min-width: 0%; // necessary for wrapping since its a flex child
+  }
+
+  .co-sysevent__icon-box {
+    display: block;
+  }
+
+  .co-sysevent-stream {
+    padding-top: 50px;
+    padding-left: 5px;
+  }
+
+  .co-sysevent-stream__timeline {
+    border-bottom: var(--pf-t--global--border--width--extra-strong) solid
+      var(--pf-t--global--color--nonstatus--gray--default);
+    border-left: var(--pf-t--global--border--width--extra-strong) solid
+      var(--pf-t--global--color--nonstatus--gray--default);
+    margin-left: 10px;
+    &--empty {
+      border-color: transparent;
+    }
+  }
+
+  .co-sysevent-stream__timeline__btn {
+    transform: translate(-50%, -100%);
+    margin-left: -2px;
+  }
+
+  .co-sysevent-stream__timeline__end-message {
+    left: 57px;
+  }
+}

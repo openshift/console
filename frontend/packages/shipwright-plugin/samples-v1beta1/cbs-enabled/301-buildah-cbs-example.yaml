@@ -1,0 +1,75 @@
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: build-examples
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: buildah-cbs-example
+  namespace: build-examples
+  labels:
+    app.kubernetes.io/part-of: sw-buildah-deployment-app
+    app.kubernetes.io/instance: sw-buildah-deployment-app
+  annotations:
+    alpha.image.policy.openshift.io/resolve-names: '*'
+    app.openshift.io/route-disabled: 'false'
+    app.openshift.io/vcs-ref: ''
+    app.openshift.io/vcs-uri: 'https://github.com/shipwright-io/sample-go'
+    deployment.kubernetes.io/revision: '1'
+    openshift.io/generated-by: OpenShiftWebConsole
+spec:
+  selector:
+    matchLabels:
+      app: buildah-cbs-example
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: buildah-cbs-example
+    spec:
+      containers:
+        - name: container
+          image: >-
+            image-registry.openshift-image-registry.svc:5000/build-examples/buildah-cbs-example:latest
+---
+apiVersion: shipwright.io/v1beta1
+kind: Build
+metadata:
+  name: buildah-cbs-example
+  namespace: build-examples
+  labels:
+    app.kubernetes.io/part-of: sw-buildah-deployment-app
+    app.kubernetes.io/instance: sw-buildah-deployment-app
+  annotations:
+    app.openshift.io/vcs-ref: ''
+    app.openshift.io/vcs-uri: 'https://github.com/shipwright-io/sample-go'
+    openshift.io/generated-by: OpenShiftWebConsole
+spec:
+  source:
+    type: Git
+    git:
+      url: https://github.com/shipwright-io/sample-go
+    contextDir: docker-build
+  strategy:
+    name: buildah
+    kind: ClusterBuildStrategy
+  paramValues:
+    - name: dockerfile
+      value: Dockerfile
+  output:
+    image: image-registry.openshift-image-registry.svc:5000/build-examples/buildah-cbs-example:latest
+---
+apiVersion: shipwright.io/v1beta1
+kind: BuildRun
+metadata:
+  namespace: build-examples
+  name: buildah-cbs-example
+  labels:
+    app.kubernetes.io/part-of: sw-buildah-deployment-app
+    app.kubernetes.io/instance: sw-buildah-deployment-app
+spec:
+  build:
+    name: buildah-cbs-example
+---
+

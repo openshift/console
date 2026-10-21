@@ -1,0 +1,58 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+language: "en-US"
+inheritance: true
+
+tone_instructions: "Principal engineer reviewing OpenShift Console (React/TS/JS/Go). Focus: architecture, security (RBAC/SCC), performance, maintainability, backward-compatible APIs, testing/edge cases. Enforce K8s best practices, PatternFly, a11y/i18n."
+
+early_access: false
+reviews:
+  in_progress_fortune: false
+  profile: chill
+
+  request_changes_workflow: false
+  high_level_summary: true
+
+  poem: false
+  review_status: false
+  auto_review:
+    enabled: true
+    auto_incremental_review: false
+    drafts: false
+    ignore_title_keywords:
+      - WIP
+      - '[WIP]'
+      - do-not-merge
+      - work-in-progress
+    labels:
+      - '!do-not-merge/work-in-progress'
+
+  commit_status: true
+  fail_commit_status: false
+  collapse_walkthrough: true
+  changed_files_summary: false
+  sequence_diagrams: false
+  estimate_code_review_effort: false
+  assess_linked_issues: false
+  related_issues: false
+  related_prs: false
+  suggested_labels: false
+  review_details: true
+knowledge_base:
+  code_guidelines:
+    enabled: true
+    filePatterns:
+      - "AGENTS.md"
+      - "TESTING.md"
+      - "STYLEGUIDE.md"
+      - "CONTRIBUTING.md"
+      - "README.md"
+      - "INTERNATIONALIZATION.md"
+  linked_repositories:
+    - repository: "openshift/console-operator"
+      instructions: >-
+        Console operator manages console deployment.
+        pkg/serverconfig/types.go is synchronized with console-operator's
+        pkg/console/subresource/consoleserver/types.go - these structs MUST remain in sync.
+        Flag changes in console-operator that affect: ConsolePlugin CRD lifecycle,
+        plugin enablement config, console route/ingress configuration,
+        or operator-managed feature gates that console reads at runtime.

@@ -1,0 +1,22 @@
+.co-code {
+  background-color: var(--pf-t--global--background--color--secondary--default);
+  color: var(--pf-t--global--text--color--status--custom--default);
+  padding: 3px var(--pf-t--global--spacer--xs);
+}
+
+// Extend the co-pre and co-code rules to their html elements within iframe content
+.co-iframe {
+  // Only when <code> is a standalone element
+  :not(pre) > code {
+    @extend .co-code;
+  }
+  pre {
+    @extend .co-pre;
+  }
+}
+
+.co-pre {
+  background-color: var(--pf-t--global--background--color--secondary--default);
+  padding: var(--pf-t--global--spacer--md);
+  white-space: pre-wrap;
+}

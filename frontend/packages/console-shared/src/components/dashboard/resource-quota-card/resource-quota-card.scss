@@ -1,0 +1,15 @@
+@import '../../../styles/skeleton-screen';
+
+.skeleton-quota {
+  animation: $skeleton-animation;
+  background: $skeleton-color;
+  height: 30px;
+  opacity: 0;
+  &::after {
+    background-repeat: no-repeat;
+    content: "";
+    display: block;
+    height: 100%;
+    width: 100%;
+  }
+}

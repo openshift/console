@@ -1,0 +1,7 @@
+.odc-devfile-strategy-section {
+  &__error-alert {
+    // Extra margin to offset strategy selector button overlap
+    // at .odc-import-strategy-section__strategy-selector
+    margin: 3.2em 0;
+  }
+}

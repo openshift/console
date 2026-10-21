@@ -1,0 +1,12 @@
+.co-row-filter {
+  @media screen and (min-width: $pf-v6-global--breakpoint--md) {
+    border: var(--pf-t--global--border--width--regular) solid
+      var(--pf-t--global--border--color--default);
+    border-radius: var(--pf-t--global--border--radius--tiny);
+  }
+}
+
+.co-row-filter__items {
+  font-weight: var(--pf-t--global--font--weight--body--bold);
+  white-space: nowrap;
+}

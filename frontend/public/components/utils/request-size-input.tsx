@@ -1,0 +1,106 @@
+import type { FC, ReactEventHandler, ReactNode } from 'react';
+import { useState, useEffect } from 'react';
+import { ConsoleSelect } from '@console/internal/components/utils/console-select';
+import { useTranslation } from 'react-i18next';
+import { NumberSpinner } from './number-spinner';
+
+export const RequestSizeInput: FC<RequestSizeInputProps> = ({
+  ariaLabel,
+  children,
+  defaultRequestSizeUnit,
+  defaultRequestSizeValue,
+  describedBy,
+  dropdownUnits,
+  inputID,
+  isInputDisabled,
+  minValue,
+  name,
+  onChange,
+  placeholder,
+  required,
+  testID,
+}) => {
+  const parsedRequestSizeValue = parseInt(defaultRequestSizeValue, 10) || 0;
+  const defaultValue = Number.isFinite(parsedRequestSizeValue) ? parsedRequestSizeValue : null;
+  const [unit, setUnit] = useState<string>(defaultRequestSizeUnit);
+  const [value, setValue] = useState<number>(defaultValue);
+
+  const onValueChange: ReactEventHandler<HTMLInputElement> = (event) => {
+    setValue(parseInt(event.currentTarget.value, 10));
+    onChange({ value: event.currentTarget.value, unit });
+  };
+
+  const changeValueBy = (changeBy: number) => {
+    // When default defaultRequestSizeValue is not set, value becomes NaN and increment decrement buttons of NumberSpinner don't work.
+    const newValue = Number.isFinite(value) ? value + changeBy : 0 + changeBy;
+    setValue(newValue);
+    onChange({ value: newValue, unit });
+  };
+
+  const onUnitChange = (newUnit) => {
+    setUnit(newUnit);
+    onChange({ value, unit: newUnit });
+  };
+
+  useEffect(() => {
+    setUnit(defaultRequestSizeUnit);
+    setValue(defaultValue);
+  }, [defaultRequestSizeUnit, defaultValue]);
+
+  const { t } = useTranslation();
+  const inputName = `${name}Value`;
+  const dropdownName = `${name}Unit`;
+  return (
+    <div>
+      <div className="pf-v6-c-input-group">
+        <NumberSpinner
+          onChange={onValueChange}
+          changeValueBy={changeValueBy}
+          placeholder={placeholder}
+          aria-describedby={describedBy}
+          aria-label={ariaLabel}
+          name={inputName}
+          id={inputID}
+          data-test={testID}
+          required={required}
+          value={value}
+          min={minValue}
+          disabled={isInputDisabled}
+        />
+        <ConsoleSelect
+          title={dropdownUnits[defaultRequestSizeUnit]}
+          alwaysShowTitle
+          selectedKey={defaultRequestSizeUnit}
+          id={dropdownName}
+          className="request-size-input__unit"
+          items={dropdownUnits}
+          onChange={onUnitChange}
+          disabled={isInputDisabled}
+          required={required}
+          ariaLabel={t('public~Number of {{sizeUnit}}', {
+            sizeUnit: dropdownUnits[unit],
+          })}
+        />
+      </div>
+      {children}
+    </div>
+  );
+};
+
+export type RequestSizeInputProps = {
+  ariaLabel?: string;
+  placeholder?: string;
+  name: string;
+  onChange: Function;
+  required?: boolean;
+  dropdownUnits: any;
+  defaultRequestSizeUnit: string;
+  defaultRequestSizeValue: string;
+  describedBy?: string;
+  step?: number;
+  minValue?: number;
+  inputID?: string;
+  testID?: string;
+  isInputDisabled?: boolean;
+  children?: ReactNode;
+};

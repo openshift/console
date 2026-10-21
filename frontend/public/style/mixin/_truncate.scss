@@ -1,0 +1,6 @@
+// Generic mixin for text truncation. Note if it wraps an icon + text it will need display: block and white-space: nowrap; to keep the elements together and truncate.
+
+@mixin co-truncate() {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

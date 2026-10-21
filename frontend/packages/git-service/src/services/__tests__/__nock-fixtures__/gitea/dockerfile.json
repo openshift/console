@@ -1,0 +1,52 @@
+[
+    {
+        "scope": "https://gitea.com:443",
+        "method": "GET",
+        "path": "/api/v1/repos/redhat-openshift-dev/tutorial-react-docker/contents/Dockerfile?ref=master",
+        "body": "",
+        "status": 200,
+        "response": {
+            "name": "Dockerfile",
+            "path": "Dockerfile",
+            "sha": "10a955998cdf3fd078630dea8c4f0f1e1f53133a",
+            "last_commit_sha": "6219b02fb71016aa344342e12e491269cc84f200",
+            "type": "file",
+            "size": 302,
+            "encoding": "base64",
+            "content": "RlJPTSBub2RlOjkuNAoKIyBDcmVhdGUgYXBwIGRpcmVjdG9yeQpXT1JLRElSIC91c3Ivc3JjL2FwcAoKIyBFeHBvc2UgcG9ydCBmb3Igc2VydmljZQpFWFBPU0UgNTAwMAoKIyBJbnN0YWxsIGFuZCBjb25maWd1cmUgYHNlcnZlYC4KUlVOIG5wbSBpbnN0YWxsIC1nIHNlcnZlCgojIENvcHkgc291cmNlIGNvZGUgdG8gaW1hZ2UKQ09QWSAuIC4KCiMgSW5zdGFsbCBkZXBlbmRlbmNpZXMKUlVOIG5wbSBpbnN0YWxsCgojIEJ1aWxkIGFwcCBhbmQgc3RhcnQgc2VydmVyIGZyb20gc2NyaXB0CkNNRCBbIi91c3Ivc3JjL2FwcC9ydW4iXQo=",
+            "target": null,
+            "url": "https://gitea.com/api/v1/repos/redhat-openshift-dev/tutorial-react-docker/contents/Dockerfile?ref=master",
+            "html_url": "https://gitea.com/redhat-openshift-dev/tutorial-react-docker/src/branch/master/Dockerfile",
+            "git_url": "https://gitea.com/api/v1/repos/redhat-openshift-dev/tutorial-react-docker/git/blobs/10a955998cdf3fd078630dea8c4f0f1e1f53133a",
+            "download_url": "https://gitea.com/redhat-openshift-dev/tutorial-react-docker/raw/branch/master/Dockerfile",
+            "submodule_git_url": null,
+            "_links": {
+                "self": "https://gitea.com/api/v1/repos/redhat-openshift-dev/tutorial-react-docker/contents/Dockerfile?ref=master",
+                "git": "https://gitea.com/api/v1/repos/redhat-openshift-dev/tutorial-react-docker/git/blobs/10a955998cdf3fd078630dea8c4f0f1e1f53133a",
+                "html": "https://gitea.com/redhat-openshift-dev/tutorial-react-docker/src/branch/master/Dockerfile"
+            }
+        },
+        "rawHeaders": [
+            "Date",
+            "Sat, 01 Jun 2024 14:45:07 GMT",
+            "Content-Type",
+            "application/json;charset=utf-8",
+            "Content-Length",
+            "1470",
+            "Connection",
+            "keep-alive",
+            "Access-Control-Allow-Origin",
+            "*",
+            "Cache-Control",
+            "max-age=0, private, must-revalidate, no-transform",
+            "Server",
+            "Caddy",
+            "Vary",
+            "Origin",
+            "X-Content-Type-Options",
+            "nosniff",
+            "X-Frame-Options",
+            "SAMEORIGIN"
+        ]
+    }
+]

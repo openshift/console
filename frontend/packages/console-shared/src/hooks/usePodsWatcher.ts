@@ -1,0 +1,58 @@
+import { useMemo, useCallback, useEffect, useState } from 'react';
+import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import type { PodRCData } from '../types';
+import { getPodsDataForResource, getResourcesToWatchForPods } from '../utils/pod-resource-utils';
+import { useDebounceCallback } from './useDebounceCallback';
+import { useDeepCompareMemoize } from './useDeepCompareMemoize';
+
+/**
+ * Watches for all Pods for a kind and namespace.
+ * Kind and namespace is used from the given `resource` and can be overridden
+ * with the `kind` and `namespace` parameters.
+ */
+export const usePodsWatcher = (
+  resource: K8sResourceKind,
+  kind?: string,
+  namespace?: string,
+): { loaded: boolean; loadError: string; podData: PodRCData } => {
+  const [loaded, setLoaded] = useState<boolean>(false);
+  const [loadError, setLoadError] = useState<string>('');
+  const [podData, setPodData] = useState<PodRCData>(undefined);
+  const watchKind = kind || resource?.kind;
+  const watchNS = namespace || resource?.metadata.namespace;
+  const watchedResources = useMemo(
+    () => (watchKind ? getResourcesToWatchForPods(watchKind, watchNS) : {}),
+    [watchKind, watchNS],
+  );
+
+  const resources = useK8sWatchResources(watchedResources);
+
+  const updateResults = useCallback(
+    (watchedResource, updatedResources) => {
+      const errorKey = Object.keys(updatedResources).find((key) => updatedResources[key].loadError);
+      if (errorKey) {
+        setLoadError(updatedResources[errorKey].loadError);
+        return;
+      }
+      setLoadError('');
+      if (
+        Object.keys(updatedResources).length > 0 &&
+        Object.keys(updatedResources).every((key) => updatedResources[key].loaded)
+      ) {
+        const updatedPods = getPodsDataForResource(watchedResource, watchKind, updatedResources);
+        setPodData(updatedPods);
+        setLoaded(true);
+      }
+    },
+    [setLoadError, setLoaded, setPodData, watchKind],
+  );
+
+  const debouncedUpdateResources = useDebounceCallback(updateResults, 250);
+
+  useEffect(() => {
+    debouncedUpdateResources(resource, resources);
+  }, [debouncedUpdateResources, resources, resource]);
+
+  return useDeepCompareMemoize({ loaded, loadError, podData });
+};

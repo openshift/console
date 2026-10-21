@@ -1,0 +1,61 @@
+.co-cluster-configuration-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+
+  .pf-v6-c-empty-state {
+    background-color: var(--pf-t--global--background--color--primary--default);
+    flex: 1;
+    align-items: flex-start;
+  }
+
+  .pf-v6-c-tabs.pf-m-vertical {
+    background-color: var(--pf-t--global--background--color--primary--default);
+
+    @media (min-width: 769px) {
+      max-width: 100%;
+    }
+
+    @media (min-width: 992px) {
+      min-width: 220px;
+    }
+
+    @media (min-width: 1200px) {
+      max-width: 220px;
+    }
+  }
+
+  // Fix padding which is causes the buttons to show even when isVertical prop is true
+  .pf-v6-c-tabs__scroll-button {
+    display: none;
+  }
+}
+
+.co-cluster-configuration-page-content {
+  display: flex;
+  flex-direction: row;
+  background-color: var(--pf-t--global--background--color--primary--default);
+  min-height: 100%;
+  &__tabs {
+    @media (min-width: 769px) {
+      max-width: 100%;
+    }
+
+    @media (min-width: 992px) {
+      min-width: 220px;
+    }
+
+    @media (min-width: 1200px) {
+      max-width: 220px;
+    }
+  }
+  &__tab-content {
+    margin: var(--pf-t--global--spacer--lg);
+    max-width: 100%;
+  }
+
+  //workaround for patternfly bug which causes the buttons to show even when isVertical prop is true
+  .pf-v6-c-tabs__scroll-button {
+    display: none;
+  }
+}

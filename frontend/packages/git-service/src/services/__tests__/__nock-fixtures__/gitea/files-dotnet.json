@@ -1,0 +1,222 @@
+[
+    {
+        "scope": "https://gitea.com:443",
+        "method": "GET",
+        "path": "/api/v1/repos/redhat-openshift-dev/s2i-dotnetcore-ex/contents/app",
+        "body": "",
+        "status": 200,
+        "response": [
+            {
+                "name": "Controllers",
+                "path": "app/Controllers",
+                "sha": "911fbd98f07aee16b1c2a485c0cbf832678e753a",
+                "last_commit_sha": "f86015c9e41e9da6406ff381ec16eef80435275e",
+                "type": "dir",
+                "size": 0,
+                "encoding": null,
+                "content": null,
+                "target": null,
+                "url": "https://gitea.com/api/v1/repos/redhat-openshift-dev/s2i-dotnetcore-ex/contents/app/Controllers?ref=dotnet-8.0",
+                "html_url": "https://gitea.com/redhat-openshift-dev/s2i-dotnetcore-ex/src/branch/dotnet-8.0/app/Controllers",
+                "git_url": "https://gitea.com/api/v1/repos/redhat-openshift-dev/s2i-dotnetcore-ex/git/blobs/911fbd98f07aee16b1c2a485c0cbf832678e753a",
+                "download_url": null,
+                "submodule_git_url": null,
+                "_links": {
+                    "self": "https://gitea.com/api/v1/repos/redhat-openshift-dev/s2i-dotnetcore-ex/contents/app/Controllers?ref=dotnet-8.0",
+                    "git": "https://gitea.com/api/v1/repos/redhat-openshift-dev/s2i-dotnetcore-ex/git/blobs/911fbd98f07aee16b1c2a485c0cbf832678e753a",
+                    "html": "https://gitea.com/redhat-openshift-dev/s2i-dotnetcore-ex/src/branch/dotnet-8.0/app/Controllers"
+                }
+            },
+            {
+                "name": "Models",
+                "path": "app/Models",
+                "sha": "49c51ce817db28c5aa5b53a9537d96852758fcb3",
+                "last_commit_sha": "2703bfe7303d1528d0ddb44b419e3114e5cb9f43",
+                "type": "dir",
+                "size": 0,
+                "encoding": null,
+                "content": null,
+                "target": null,
+                "url": "https://gitea.com/api/v1/repos/redhat-openshift-dev/s2i-dotnetcore-ex/contents/app/Models?ref=dotnet-8.0",
+                "html_url": "https://gitea.com/redhat-openshift-dev/s2i-dotnetcore-ex/src/branch/dotnet-8.0/app/Models",
+                "git_url": "https://gitea.com/api/v1/repos/redhat-openshift-dev/s2i-dotnetcore-ex/git/blobs/49c51ce817db28c5aa5b53a9537d96852758fcb3",
+                "download_url": null,
+                "submodule_git_url": null,
+                "_links": {
+                    "self": "https://gitea.com/api/v1/repos/redhat-openshift-dev/s2i-dotnetcore-ex/contents/app/Models?ref=dotnet-8.0",
+                    "git": "https://gitea.com/api/v1/repos/redhat-openshift-dev/s2i-dotnetcore-ex/git/blobs/49c51ce817db28c5aa5b53a9537d96852758fcb3",
+                    "html": "https://gitea.com/redhat-openshift-dev/s2i-dotnetcore-ex/src/branch/dotnet-8.0/app/Models"
+                }
+            },
+            {
+                "name": "Program.cs",
+                "path": "app/Program.cs",
+                "sha": "07274680f693aef9a593e51aeb7ffddf33646804",
+                "last_commit_sha": "2703bfe7303d1528d0ddb44b419e3114e5cb9f43",
+                "type": "file",
+                "size": 643,
+                "encoding": null,
+                "content": null,
+                "target": null,
+                "url": "https://gitea.com/api/v1/repos/redhat-openshift-dev/s2i-dotnetcore-ex/contents/app/Program.cs?ref=dotnet-8.0",
+                "html_url": "https://gitea.com/redhat-openshift-dev/s2i-dotnetcore-ex/src/branch/dotnet-8.0/app/Program.cs",
+                "git_url": "https://gitea.com/api/v1/repos/redhat-openshift-dev/s2i-dotnetcore-ex/git/blobs/07274680f693aef9a593e51aeb7ffddf33646804",
+                "download_url": "https://gitea.com/redhat-openshift-dev/s2i-dotnetcore-ex/raw/branch/dotnet-8.0/app/Program.cs",
+                "submodule_git_url": null,
+                "_links": {
+                    "self": "https://gitea.com/api/v1/repos/redhat-openshift-dev/s2i-dotnetcore-ex/contents/app/Program.cs?ref=dotnet-8.0",
+                    "git": "https://gitea.com/api/v1/repos/redhat-openshift-dev/s2i-dotnetcore-ex/git/blobs/07274680f693aef9a593e51aeb7ffddf33646804",
+                    "html": "https://gitea.com/redhat-openshift-dev/s2i-dotnetcore-ex/src/branch/dotnet-8.0/app/Program.cs"
+                }
+            },
+            {
+                "name": "Properties",
+                "path": "app/Properties",
+                "sha": "de24c36a66a6d8cfe08d952dc026fb3c79992473",
+                "last_commit_sha": "f86015c9e41e9da6406ff381ec16eef80435275e",
+                "type": "dir",
+                "size": 0,
+                "encoding": null,
+                "content": null,
+                "target": null,
+                "url": "https://gitea.com/api/v1/repos/redhat-openshift-dev/s2i-dotnetcore-ex/contents/app/Properties?ref=dotnet-8.0",
+                "html_url": "https://gitea.com/redhat-openshift-dev/s2i-dotnetcore-ex/src/branch/dotnet-8.0/app/Properties",
+                "git_url": "https://gitea.com/api/v1/repos/redhat-openshift-dev/s2i-dotnetcore-ex/git/blobs/de24c36a66a6d8cfe08d952dc026fb3c79992473",
+                "download_url": null,
+                "submodule_git_url": null,
+                "_links": {
+                    "self": "https://gitea.com/api/v1/repos/redhat-openshift-dev/s2i-dotnetcore-ex/contents/app/Properties?ref=dotnet-8.0",
+                    "git": "https://gitea.com/api/v1/repos/redhat-openshift-dev/s2i-dotnetcore-ex/git/blobs/de24c36a66a6d8cfe08d952dc026fb3c79992473",
+                    "html": "https://gitea.com/redhat-openshift-dev/s2i-dotnetcore-ex/src/branch/dotnet-8.0/app/Properties"
+                }
+            },
+            {
+                "name": "Views",
+                "path": "app/Views",
+                "sha": "3983cb3d317fc5f4e78eb72d75061728b19efc9a",
+                "last_commit_sha": "f86015c9e41e9da6406ff381ec16eef80435275e",
+                "type": "dir",
+                "size": 0,
+                "encoding": null,
+                "content": null,
+                "target": null,
+                "url": "https://gitea.com/api/v1/repos/redhat-openshift-dev/s2i-dotnetcore-ex/contents/app/Views?ref=dotnet-8.0",
+                "html_url": "https://gitea.com/redhat-openshift-dev/s2i-dotnetcore-ex/src/branch/dotnet-8.0/app/Views",
+                "git_url": "https://gitea.com/api/v1/repos/redhat-openshift-dev/s2i-dotnetcore-ex/git/blobs/3983cb3d317fc5f4e78eb72d75061728b19efc9a",
+                "download_url": null,
+                "submodule_git_url": null,
+                "_links": {
+                    "self": "https://gitea.com/api/v1/repos/redhat-openshift-dev/s2i-dotnetcore-ex/contents/app/Views?ref=dotnet-8.0",
+                    "git": "https://gitea.com/api/v1/repos/redhat-openshift-dev/s2i-dotnetcore-ex/git/blobs/3983cb3d317fc5f4e78eb72d75061728b19efc9a",
+                    "html": "https://gitea.com/redhat-openshift-dev/s2i-dotnetcore-ex/src/branch/dotnet-8.0/app/Views"
+                }
+            },
+            {
+                "name": "app.csproj",
+                "path": "app/app.csproj",
+                "sha": "1b28a01c81c7c4d708d59ca52502ae76b6f2760c",
+                "last_commit_sha": "f86015c9e41e9da6406ff381ec16eef80435275e",
+                "type": "file",
+                "size": 210,
+                "encoding": null,
+                "content": null,
+                "target": null,
+                "url": "https://gitea.com/api/v1/repos/redhat-openshift-dev/s2i-dotnetcore-ex/contents/app/app.csproj?ref=dotnet-8.0",
+                "html_url": "https://gitea.com/redhat-openshift-dev/s2i-dotnetcore-ex/src/branch/dotnet-8.0/app/app.csproj",
+                "git_url": "https://gitea.com/api/v1/repos/redhat-openshift-dev/s2i-dotnetcore-ex/git/blobs/1b28a01c81c7c4d708d59ca52502ae76b6f2760c",
+                "download_url": "https://gitea.com/redhat-openshift-dev/s2i-dotnetcore-ex/raw/branch/dotnet-8.0/app/app.csproj",
+                "submodule_git_url": null,
+                "_links": {
+                    "self": "https://gitea.com/api/v1/repos/redhat-openshift-dev/s2i-dotnetcore-ex/contents/app/app.csproj?ref=dotnet-8.0",
+                    "git": "https://gitea.com/api/v1/repos/redhat-openshift-dev/s2i-dotnetcore-ex/git/blobs/1b28a01c81c7c4d708d59ca52502ae76b6f2760c",
+                    "html": "https://gitea.com/redhat-openshift-dev/s2i-dotnetcore-ex/src/branch/dotnet-8.0/app/app.csproj"
+                }
+            },
+            {
+                "name": "appsettings.Development.json",
+                "path": "app/appsettings.Development.json",
+                "sha": "0c208ae9181e5e5717e47ec1bd59368aebc6066e",
+                "last_commit_sha": "2703bfe7303d1528d0ddb44b419e3114e5cb9f43",
+                "type": "file",
+                "size": 119,
+                "encoding": null,
+                "content": null,
+                "target": null,
+                "url": "https://gitea.com/api/v1/repos/redhat-openshift-dev/s2i-dotnetcore-ex/contents/app/appsettings.Development.json?ref=dotnet-8.0",
+                "html_url": "https://gitea.com/redhat-openshift-dev/s2i-dotnetcore-ex/src/branch/dotnet-8.0/app/appsettings.Development.json",
+                "git_url": "https://gitea.com/api/v1/repos/redhat-openshift-dev/s2i-dotnetcore-ex/git/blobs/0c208ae9181e5e5717e47ec1bd59368aebc6066e",
+                "download_url": "https://gitea.com/redhat-openshift-dev/s2i-dotnetcore-ex/raw/branch/dotnet-8.0/app/appsettings.Development.json",
+                "submodule_git_url": null,
+                "_links": {
+                    "self": "https://gitea.com/api/v1/repos/redhat-openshift-dev/s2i-dotnetcore-ex/contents/app/appsettings.Development.json?ref=dotnet-8.0",
+                    "git": "https://gitea.com/api/v1/repos/redhat-openshift-dev/s2i-dotnetcore-ex/git/blobs/0c208ae9181e5e5717e47ec1bd59368aebc6066e",
+                    "html": "https://gitea.com/redhat-openshift-dev/s2i-dotnetcore-ex/src/branch/dotnet-8.0/app/appsettings.Development.json"
+                }
+            },
+            {
+                "name": "appsettings.json",
+                "path": "app/appsettings.json",
+                "sha": "10f68b8c8b4f796baf8ddeee7551b6a52b9437cc",
+                "last_commit_sha": "2703bfe7303d1528d0ddb44b419e3114e5cb9f43",
+                "type": "file",
+                "size": 142,
+                "encoding": null,
+                "content": null,
+                "target": null,
+                "url": "https://gitea.com/api/v1/repos/redhat-openshift-dev/s2i-dotnetcore-ex/contents/app/appsettings.json?ref=dotnet-8.0",
+                "html_url": "https://gitea.com/redhat-openshift-dev/s2i-dotnetcore-ex/src/branch/dotnet-8.0/app/appsettings.json",
+                "git_url": "https://gitea.com/api/v1/repos/redhat-openshift-dev/s2i-dotnetcore-ex/git/blobs/10f68b8c8b4f796baf8ddeee7551b6a52b9437cc",
+                "download_url": "https://gitea.com/redhat-openshift-dev/s2i-dotnetcore-ex/raw/branch/dotnet-8.0/app/appsettings.json",
+                "submodule_git_url": null,
+                "_links": {
+                    "self": "https://gitea.com/api/v1/repos/redhat-openshift-dev/s2i-dotnetcore-ex/contents/app/appsettings.json?ref=dotnet-8.0",
+                    "git": "https://gitea.com/api/v1/repos/redhat-openshift-dev/s2i-dotnetcore-ex/git/blobs/10f68b8c8b4f796baf8ddeee7551b6a52b9437cc",
+                    "html": "https://gitea.com/redhat-openshift-dev/s2i-dotnetcore-ex/src/branch/dotnet-8.0/app/appsettings.json"
+                }
+            },
+            {
+                "name": "wwwroot",
+                "path": "app/wwwroot",
+                "sha": "9607af1cc3a93368c51c62b3c68f1860757aa2b1",
+                "last_commit_sha": "f86015c9e41e9da6406ff381ec16eef80435275e",
+                "type": "dir",
+                "size": 0,
+                "encoding": null,
+                "content": null,
+                "target": null,
+                "url": "https://gitea.com/api/v1/repos/redhat-openshift-dev/s2i-dotnetcore-ex/contents/app/wwwroot?ref=dotnet-8.0",
+                "html_url": "https://gitea.com/redhat-openshift-dev/s2i-dotnetcore-ex/src/branch/dotnet-8.0/app/wwwroot",
+                "git_url": "https://gitea.com/api/v1/repos/redhat-openshift-dev/s2i-dotnetcore-ex/git/blobs/9607af1cc3a93368c51c62b3c68f1860757aa2b1",
+                "download_url": null,
+                "submodule_git_url": null,
+                "_links": {
+                    "self": "https://gitea.com/api/v1/repos/redhat-openshift-dev/s2i-dotnetcore-ex/contents/app/wwwroot?ref=dotnet-8.0",
+                    "git": "https://gitea.com/api/v1/repos/redhat-openshift-dev/s2i-dotnetcore-ex/git/blobs/9607af1cc3a93368c51c62b3c68f1860757aa2b1",
+                    "html": "https://gitea.com/redhat-openshift-dev/s2i-dotnetcore-ex/src/branch/dotnet-8.0/app/wwwroot"
+                }
+            }
+        ],
+        "rawHeaders": [
+            "Date",
+            "Sat, 01 Jun 2024 14:45:07 GMT",
+            "Content-Type",
+            "application/json;charset=utf-8",
+            "Transfer-Encoding",
+            "chunked",
+            "Connection",
+            "keep-alive",
+            "Access-Control-Allow-Origin",
+            "*",
+            "Cache-Control",
+            "max-age=0, private, must-revalidate, no-transform",
+            "Server",
+            "Caddy",
+            "Vary",
+            "Origin",
+            "X-Content-Type-Options",
+            "nosniff",
+            "X-Frame-Options",
+            "SAMEORIGIN"
+        ]
+    }
+]

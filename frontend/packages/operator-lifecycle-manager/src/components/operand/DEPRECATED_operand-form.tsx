@@ -1,0 +1,1223 @@
+// THIS COMPONENT IS DEPRECATED AND WILL BE REMOVED IN v4.6.
+
+import type { FC, ReactNode } from 'react';
+import { useState, useMemo, Fragment } from 'react';
+import {
+  Alert,
+  ActionGroup,
+  Button,
+  Switch,
+  Accordion,
+  Checkbox,
+  AccordionItem,
+  AccordionToggle,
+  AccordionContent,
+  DescriptionList,
+  DescriptionListGroup,
+  DescriptionListTerm,
+  DescriptionListDescription,
+  Grid,
+  GridItem,
+} from '@patternfly/react-core';
+import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
+import { css } from '@patternfly/react-styles';
+import * as Immutable from 'immutable';
+import type { JSONSchema6, JSONSchema6TypeName } from 'json-schema';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { useParams, useNavigate } from 'react-router';
+import { ConfigureUpdateStrategy } from '@console/internal/components/modals/configure-update-strategy-modal';
+import { RadioGroup } from '@console/internal/components/radio';
+import {
+  NumberSpinner,
+  SelectorInput,
+  ListDropdown,
+  useScrollToTopOnMount,
+} from '@console/internal/components/utils';
+import { ConsoleSelect } from '@console/internal/components/utils/console-select';
+import { ExpandCollapse } from '@console/internal/components/utils/expand-collapse';
+import type {
+  GroupVersionKind,
+  K8sResourceKind,
+  NodeAffinity as NodeAffinityType,
+} from '@console/internal/module/k8s';
+import {
+  ImagePullPolicy,
+  k8sCreate,
+  kindForReference,
+  modelFor,
+} from '@console/internal/module/k8s';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { MarkdownView } from '@console/shared/src/components/markdown/MarkdownView';
+import { useResourceConnectionHandler } from '@console/shared/src/hooks/useResourceConnectionHandler';
+import type { ProvidedAPI } from '../../types';
+import { ClusterServiceVersionLogo } from '../cluster-service-version-logo';
+import {
+  NodeAffinity,
+  PodAffinity,
+  DEFAULT_NODE_AFFINITY,
+  DEFAULT_POD_AFFINITY,
+} from '../descriptors/spec/affinity';
+import { ResourceRequirements } from '../descriptors/spec/resource-requirements';
+import type { Descriptor, StatusCapability } from '../descriptors/types';
+import { SpecCapability } from '../descriptors/types';
+import type { OperandFormProps } from './operand-form';
+
+/*
+ * Matches a path that contains an array index. Use Sting.match against an OperandField 'path'
+ * property to determine if it contains an array index. It will parse the path into three parts,
+ * [match, pathBeforeIndex, index, pathAfterIndex]. For example:
+ *
+ *   const [match, pathBeforeIndex, index, pathAfterIndex] =
+ *     'path.before[0].path.after'.match(ARRAY_INDEX_PATTERN);
+ *
+ *   console.log(match);
+ *   > 'path.before[0].path.after'
+ *
+ *   console.log(pathBeforeIndex);
+ *   > 'path.before'
+ *
+ *   console.log(index)
+ *   > '0'
+ *
+ *   console.log(pathAfterIndex)
+ *   > 'path.after'
+ *
+ */
+const ARRAY_INDEX_PATTERN = /^(.*)\[(\d+)\]\.?(.*)$/;
+
+// Regex for SpecCapability.arrayFieldGroup and SpecCapability.fieldGroup
+const ARRAY_FIELD_GROUP_PATTERN = _.escapeRegExp(SpecCapability.arrayFieldGroup);
+const FIELD_GROUP_PATTERN = _.escapeRegExp(SpecCapability.fieldGroup);
+
+/*
+ * Matches either field group or array field group SpecCapabilty. Use String.match against an
+ * OperandField.capability element to determine if it is a group descriptor and parse group type
+ * and name. For example:
+ *
+ *   const [match, groupType, name] = 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:groupName';
+ *
+ *   console.log(match);
+ *   > 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:groupName'
+ *
+ *   console.log(groupType);
+ *   > 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:'
+ *
+ *   console.log(name);
+ *   > 'groupName'
+ */
+const GROUP_PATTERN = new RegExp(`^(${FIELD_GROUP_PATTERN}|${ARRAY_FIELD_GROUP_PATTERN})(.*)$`);
+
+// Default max nesting depth the form should display
+const MAX_DEPTH = 1;
+
+const idFromPath = (path) => `DEPRECATED_root_${path.split('.').join('_')}`;
+
+/*
+ * Determines if a field contains a descriptor in it's capabilities. If only prefix is
+ * provided, this will return true if the field has ANY capability that starts with the prefix. If
+ * both prefix and suffix are provided, this will return true only if the field has a capability
+ * that matches the concatenation of prefix + suffix.
+ */
+const hasDescriptor = (field: OperandField, prefix: string, suffix: string = null): boolean => {
+  return suffix
+    ? _.includes(field.capabilities, `${prefix}${suffix}`)
+    : _.some(field.capabilities, (capability) => capability.startsWith(prefix));
+};
+
+/*
+ * Accepts an OperandField and returns a name and group type if that field is either a
+ * a field group or array field group. Returned as object to allow destructuring of needed values
+ * only.
+ */
+const parseGroupDescriptor = (
+  field: OperandField,
+): { groupName?: string; groupType?: string; regexMatch?: string } => {
+  const groupDescriptor = _.find(
+    field.capabilities,
+    (descriptor) =>
+      descriptor.startsWith(SpecCapability.fieldGroup) ||
+      descriptor.startsWith(SpecCapability.arrayFieldGroup),
+  );
+  const [regexMatch, groupType, groupName] = groupDescriptor.match(GROUP_PATTERN) || [];
+  return { regexMatch, groupName, groupType };
+};
+
+/*
+ * Splits a path string into path before the array index, the array index itself, and the path after
+ * the index. Returns as object to allow destructuring of needed values only.
+ */
+const parseArrayPath = (
+  path: string,
+): { index?: number; regexMatch?: string; pathBeforeIndex?: string; pathAfterIndex?: string } => {
+  const [regexMatch, pathBeforeIndex, index, pathAfterIndex] =
+    path.match(ARRAY_INDEX_PATTERN) || [];
+  return regexMatch
+    ? { index: _.parseInt(index), regexMatch, pathBeforeIndex, pathAfterIndex }
+    : { regexMatch };
+};
+
+/*
+ * If the path contains an array index, this function will return the path with the 'operation'
+ * callback return value in place of the existing array index. If no array index is in the path,
+ * the original path is returned.
+ */
+const modifyArrayFieldPathIndex = (
+  path: string,
+  operation: (index?: number) => string | number,
+): string => {
+  const { regexMatch, index, pathBeforeIndex, pathAfterIndex } = parseArrayPath(path);
+  return !regexMatch
+    ? path
+    : `${pathBeforeIndex}[${operation(index)}]${pathAfterIndex && `.${pathAfterIndex}`}`;
+};
+
+// Accepts a SpecCapbability[] array and returns an appropriate default value for that field
+const defaultValueFor = (capabilities: Capability[]): any => {
+  // String fields
+  if (
+    _.intersection(capabilities, [
+      SpecCapability.podCount,
+      SpecCapability.password,
+      SpecCapability.text,
+      SpecCapability.number,
+      SpecCapability.select,
+    ]).length > 0
+  ) {
+    return '';
+  }
+
+  if (capabilities.includes(SpecCapability.imagePullPolicy)) {
+    return ImagePullPolicy.IfNotPresent;
+  }
+
+  // Resource requirement fields
+  if (capabilities.includes(SpecCapability.resourceRequirements)) {
+    return Immutable.fromJS({
+      limits: {
+        cpu: '',
+        memory: '',
+        'ephemeral-storage': '',
+      },
+      requirements: {
+        cpu: '',
+        memory: '',
+        'ephemeral-storage': '',
+      },
+    });
+  }
+
+  // Update strategy
+  if (capabilities.includes(SpecCapability.updateStrategy)) {
+    return Immutable.fromJS({
+      type: 'RollingUpdate',
+      rollingUpdate: {
+        maxUnavailable: '',
+        maxSurge: '',
+      },
+    });
+  }
+
+  // Node and pod affinities
+  if (capabilities.includes(SpecCapability.nodeAffinity)) {
+    return Immutable.fromJS(DEFAULT_NODE_AFFINITY).setIn(
+      ['preferredDuringSchedulingIgnoredDuringExecution', 'weight'],
+      '',
+    );
+  }
+
+  if (
+    capabilities.includes(SpecCapability.podAffinity) ||
+    capabilities.includes(SpecCapability.podAntiAffinity)
+  ) {
+    return Immutable.fromJS(DEFAULT_POD_AFFINITY).setIn(
+      ['preferredDuringSchedulingIgnoredDuringExecution', 'weight'],
+      '',
+    );
+  }
+
+  // If none of these capabilities are present in the array, return null.
+  return null;
+};
+
+// Accepts an OpenAPI spec property and returns a corresponding SpecCapability[] array.
+const capabilitiesFor = (property: JSONSchema6): SpecCapability[] => {
+  if (property.enum) {
+    return _.map(
+      property.enum || [],
+      (option: string) => `${SpecCapability.select}${option}` as SpecCapability,
+    );
+  }
+  switch (property.type) {
+    case 'integer':
+      return [SpecCapability.number];
+    case 'boolean':
+      return [SpecCapability.booleanSwitch];
+    default:
+      return [SpecCapability.text];
+  }
+};
+
+/*
+ * Recursively traverses OpenAPI spec properties and flattens all nested properties into an
+ * OperandField[] array.
+ * If a resource instance is provided in the 'obj' argument, then array-type spec properties
+ * will be expanded into the appropriate number of fields.
+ * If a matching providedAPI descriptor exists, it will take precedence over the openAPI spec,
+ * except that the providedAPI x-descriptors will be unioned with OpenAPI capabilities.
+ */
+const flattenNestedProperties = (
+  property: JSONSchema6,
+  name: string,
+  providedAPI: ProvidedAPI,
+  obj: K8sResourceKind,
+  {
+    currentCapabilities = [],
+    currentPath = [],
+    fields = [],
+    required = false,
+  }: FlattenNestedPropertiesAccumulator,
+): OperandField[] => {
+  // Null check
+  if (!property) {
+    return fields;
+  }
+
+  const handleObjectProperty = (): OperandField[] =>
+    _.flatMap(property.properties, (nestedProperty, nestedPropertyName) =>
+      flattenNestedProperties(nestedProperty as JSONSchema6, nestedPropertyName, providedAPI, obj, {
+        currentCapabilities: [
+          ...currentCapabilities,
+          `${SpecCapability.fieldGroup}${name}` as SpecCapability,
+        ],
+        currentPath: [...currentPath, name],
+        fields,
+        required: (property?.required || []).includes(nestedPropertyName),
+      }),
+    );
+
+  const handleArrayProperty = (): OperandField[] => {
+    // Find the number of array elements that are already defined in the provided object
+    const n = _.get(obj, `spec.${currentPath.join('.')}${name}`, []).length || 1;
+
+    // Since _.times will return a multidimensional array of OperandFields (OperandField[][]), we
+    // need to flatten one level deeper than _.flatMap provides.
+    return _.flatMapDepth(
+      (property.items as JSONSchema6)?.properties ?? {},
+      (nestedProperty, nestedPropertyName) =>
+        // Repeat recursion (n) times so that the correct number of fields are created for
+        // existing values in obj. This ensures that further nested fields also get created.
+        _.times(n, (index) =>
+          flattenNestedProperties(
+            nestedProperty as JSONSchema6,
+            nestedPropertyName,
+            providedAPI,
+            obj,
+            {
+              currentCapabilities: [
+                ...currentCapabilities,
+                `${SpecCapability.arrayFieldGroup}${name}` as SpecCapability,
+              ],
+              currentPath: [...currentPath, `${name}[${index}]`], // Array field paths must include an index
+              fields,
+              required: (property?.required || []).includes(nestedPropertyName),
+            },
+          ),
+        ),
+      2,
+    );
+  };
+
+  const handleAtomicProperty = (): OperandField[] => {
+    const path = [...currentPath, name].join('.');
+
+    // ProvidedAPI should only have a single descriptor for each array field. Regardless of the
+    // index of this field, use the providedAPI.specDescriptor at index 0.
+    const providedAPIField = _.find(providedAPI?.specDescriptors, {
+      path: modifyArrayFieldPathIndex(path, () => 0),
+    });
+    return [
+      ...fields,
+      {
+        capabilities: _.union(
+          providedAPIField?.['x-descriptors'] || [],
+          currentCapabilities,
+          capabilitiesFor(property as JSONSchema6),
+        ),
+        description: providedAPIField?.description || property.description,
+        displayName: providedAPIField?.displayName || _.startCase(name),
+        path: `spec.${path}`,
+        required,
+        type: property.type,
+      } as OperandField,
+    ];
+  };
+
+  switch (property.type) {
+    // If this property is of 'object' type, return a flat map of its properties
+    case 'object':
+      return handleObjectProperty();
+
+    // If this property of is of 'array' type, return a flat map of its item's properties.
+    case 'array':
+      return handleArrayProperty();
+
+    // This property is not an array or object, so it can be mapped to a specific descriptor
+    default:
+      return handleAtomicProperty();
+  }
+};
+
+// Returns traversal depth of an OpenAPI spec property.
+const getPropertyDepth = (property: JSONSchema6, depth: number = 0): number => {
+  // If this property is not an array or object, we have reached the maximum depth
+  if (!property || !['object', 'array'].includes(property.type as string)) {
+    return depth;
+  }
+
+  // Return the maximum depth of the nested properties
+  return Math.max(
+    0,
+    ..._.map(
+      property?.properties || (property?.items as JSONSchema6)?.properties,
+      (nestedProperty) => getPropertyDepth(nestedProperty as JSONSchema6, depth + 1),
+    ),
+  );
+};
+
+/*
+ * Maps openAPI spec properties to OperandField[] array. This will return all fields with a traversal
+ * depth less than the 'depth' argument, and will combine matching providedAPI descriptors with the
+ * corresponding OpenAPI spec property in a way that providedAPI data will take precedence over
+ * openAPI spec properties.
+ */
+const fieldsForOpenAPI = (
+  schema: JSONSchema6,
+  providedAPI: ProvidedAPI,
+  obj: K8sResourceKind,
+  depth: number = MAX_DEPTH,
+): OperandField[] => {
+  return _.reduce(
+    schema?.properties || {},
+    (openAPIFieldsAccumulator: OperandField[], property: JSONSchema6, propertyName: string) => {
+      if (!property?.type || getPropertyDepth(property) > depth) {
+        return openAPIFieldsAccumulator;
+      }
+      return [
+        ...openAPIFieldsAccumulator,
+        ...flattenNestedProperties(property, propertyName, providedAPI, obj, {
+          required: (schema?.required || []).includes(propertyName),
+        }),
+      ];
+    },
+    [],
+  );
+};
+
+/*
+ * Convert a CRD specDescriptor to appropriate OperandField type. Expands obj array properties
+ * to the appropriate number of fields.
+ */
+const specDescriptorToFields = (
+  { description, displayName, path, 'x-descriptors': capabilities = [] }: Descriptor,
+  obj: K8sResourceKind,
+): OperandField[] => {
+  // Use regex to check path for an array index, and parse out the parts of the path before
+  // and after the array index.
+  const { regexMatch, pathBeforeIndex, pathAfterIndex } = parseArrayPath(path);
+
+  // If match exists, the field represents an element in an array field group, which means we
+  // need to create 'n' duplicates of this field, where 'n' is the number of
+  // elements in the corresponding array property of 'obj'. If n = 0, we only create one field.
+  if (regexMatch) {
+    const n = _.get(obj, _.toPath(`spec.${pathBeforeIndex}`), []).length || 1;
+    return _.flatten(
+      _.times(n, (index) => ({
+        path: `spec.${pathBeforeIndex}[${index}]${pathAfterIndex && `.${pathAfterIndex}`}`,
+        displayName,
+        description,
+        capabilities,
+        type: null,
+        required: null,
+      })),
+    );
+  }
+  return [
+    {
+      path: `spec.${path}`,
+      displayName,
+      description,
+      type: null,
+      required: null,
+      capabilities,
+    },
+  ];
+};
+
+const pathToArray = (path: string): (string | number)[] =>
+  _.map(_.toPath(path), (subPath) => {
+    return /^\d+$/.test(subPath) ? _.parseInt(subPath) : subPath;
+  });
+
+const FieldGroup: FC<FieldGroupProps> = ({ children, isExpanded = false, id, label }) => {
+  const [expanded, setExpanded] = useState<boolean>(isExpanded);
+
+  const onToggle = (event) => {
+    event.preventDefault();
+    setExpanded((current) => !current);
+  };
+
+  return (
+    <div id={`DEPRECATED_${id}_field-group`} className="co-dynamic-form__field-group">
+      <AccordionItem isExpanded={expanded}>
+        <AccordionToggle id={`DEPRECATED_${id}_accordion-toggle`} onClick={onToggle}>
+          <label htmlFor={`DEPRECATED_${id}_accordion-content`}>{label}</label>
+        </AccordionToggle>
+        <AccordionContent id={`DEPRECATED_${id}_accordion-content`}>{children}</AccordionContent>
+      </AccordionItem>
+    </div>
+  );
+};
+
+// Wrapper for individual operand form inputs
+const OperandFormInputGroup: FC<OperandFormInputGroupProps> = ({ field, input }) => {
+  const { description, displayName, path, required } = field;
+  const id = idFromPath(path);
+  return input ? (
+    <div
+      id={`DEPRECATED_${id}_field`}
+      className="form-group co-dynamic-form__form-group"
+      data-test-selector={path}
+    >
+      <label className={css('form-label', { 'co-required': required })} htmlFor={id}>
+        {displayName}
+      </label>
+      {input}
+      {description && (
+        <span id={`DEPRECATED_${id}__description`} className="help-block">
+          {description}
+        </span>
+      )}
+    </div>
+  ) : null;
+};
+
+// eslint-disable-next-line @typescript-eslint/naming-convention
+export const DEPRECATED_CreateOperandForm: FC<OperandFormProps> = ({
+  formData,
+  csv,
+  schema,
+  model,
+  onChange,
+  providedAPI,
+  next,
+}) => {
+  const postFormCallback = useResourceConnectionHandler();
+  const { t } = useTranslation();
+  const params = useParams();
+  const navigate = useNavigate();
+  const immutableFormData = Immutable.fromJS(formData);
+  const handleFormDataUpdate = (path: string, value: any): void => {
+    const { regexMatch, index, pathBeforeIndex, pathAfterIndex } = parseArrayPath(path);
+
+    // Immutable will not initialize a deep path as a List if it includes an integer, so we need to manually
+    // initialize non-existent array properties to a List instance before updating state at that path.
+    if (regexMatch && index === 0) {
+      const existing = immutableFormData.getIn([...pathToArray(pathBeforeIndex), 0]);
+      const item = Immutable.Map(existing || {}).setIn(pathToArray(pathAfterIndex), value);
+      const list = Immutable.List([item]);
+      onChange(immutableFormData.setIn(pathToArray(pathBeforeIndex), list).toJS());
+    }
+    onChange(immutableFormData.setIn(pathToArray(path), value).toJS());
+  };
+
+  const handleFormDataDelete = (path) => {
+    onChange(immutableFormData.deleteIn(pathToArray(path)).toJS());
+  };
+
+  // Map providedAPI spec descriptors and openAPI spec properties to OperandField[] array
+  const [fields, setFields] = useState<OperandField[]>(() => {
+    // Get fields from openAPI
+    const schemaFields = fieldsForOpenAPI(
+      schema?.properties?.spec as JSONSchema6,
+      providedAPI,
+      formData,
+    );
+
+    // Get fields from providedAPI that do not exist in the OpenAPI spec.
+    const descriptorFields = _.reduce(
+      providedAPI?.specDescriptors ?? [],
+      (providedAPIFieldsAccumulator, specDescriptor) => {
+        // If this field was already created, ignore it.
+        if (_.find(schemaFields, { path: `spec.${specDescriptor.path}` })) {
+          return providedAPIFieldsAccumulator;
+        }
+
+        // Add the field if it doesn't exist
+        return [
+          ...providedAPIFieldsAccumulator,
+          ...specDescriptorToFields(specDescriptor, formData),
+        ];
+      },
+      [],
+    );
+
+    // Concatenate all fields and return
+    return [...schemaFields, ...descriptorFields];
+  });
+
+  const labelTags = useMemo(() => {
+    const formValue = immutableFormData.getIn(['metadata', 'labels']);
+    return SelectorInput.arrayify(_.isFunction(formValue?.toJS) ? formValue.toJS() : {});
+  }, [immutableFormData]);
+
+  const [error, setError] = useState<string>();
+
+  // Group fields into advanced, arrayFieldGroup, fieldGroup, and normal fields for rendering.
+  // Note that arrayFieldGroup and fieldGroup fields are still flat after this. The memoized
+  // 'arrayFieldGroups' and 'fieldGroups' (below) further organizes these by their respective
+  // group descriptors to simplify rendering and state management.
+  const [
+    advancedFields = [],
+    arrayFields = [],
+    groupFields = [],
+    normalFields = [],
+  ]: OperandField[][] = useMemo(
+    (): OperandField[][] =>
+      _.reduce(
+        fields,
+        (
+          [
+            advancedFieldsAccumulator = [],
+            arrayFieldsAccumulator = [],
+            groupFieldsAccumulator = [],
+            normalFieldsAccumulator = [],
+          ],
+          field,
+        ) => {
+          if (hasDescriptor(field, SpecCapability.arrayFieldGroup)) {
+            return [
+              advancedFieldsAccumulator,
+              [...arrayFieldsAccumulator, field],
+              groupFieldsAccumulator,
+              normalFieldsAccumulator,
+            ];
+          }
+          if (hasDescriptor(field, SpecCapability.fieldGroup)) {
+            return [
+              advancedFieldsAccumulator,
+              arrayFieldsAccumulator,
+              [...groupFieldsAccumulator, field],
+              normalFieldsAccumulator,
+            ];
+          }
+          if (hasDescriptor(field, SpecCapability.advanced)) {
+            return [
+              [...advancedFieldsAccumulator, field],
+              arrayFieldsAccumulator,
+              groupFieldsAccumulator,
+              normalFieldsAccumulator,
+            ];
+          }
+          return [
+            advancedFieldsAccumulator,
+            arrayFieldsAccumulator,
+            groupFieldsAccumulator,
+            [...normalFieldsAccumulator, field],
+          ];
+        },
+        [],
+      ),
+    [fields],
+  );
+
+  // Create memoized arrayFieldGroups. Organizes arrayFields into a structure that is easy to map
+  // and render.
+  const arrayFieldGroups = useMemo(() => {
+    // Group all fields by group name
+    const groupedByName = _.groupBy(arrayFields, (field) => {
+      const { groupName } = parseGroupDescriptor(field);
+      return groupName;
+    });
+
+    // Map {groupName: string, fieldLists: OperandField[][]}, where OperandField is a nested array
+    // of the appropriate fields, grouped by index.
+    return _.map(groupedByName, (fieldsInGroup, groupName: string) => ({
+      groupName,
+      fieldLists: _.reduce(
+        fieldsInGroup,
+        (fieldListsAccumulator, field) => {
+          const { index, regexMatch } = parseArrayPath(field.path);
+          if (regexMatch) {
+            fieldListsAccumulator[index] = [...(fieldListsAccumulator[index] || []), field];
+          }
+          return fieldListsAccumulator;
+        },
+        [],
+      ),
+    }));
+  }, [arrayFields]);
+
+  // Create memoized fieldGroups. Map to array of fields grouped by fieldGroup name so that sorting
+  // is easy.
+  const fieldGroups = useMemo(() => {
+    const groupedByName = _.groupBy(groupFields, (field) => {
+      const { groupName } = parseGroupDescriptor(field);
+      return groupName;
+    });
+
+    return _.map(groupedByName, (fieldList, groupName) => ({
+      groupName,
+      fieldList,
+    }));
+  }, [groupFields]);
+
+  const getFormData = (path): any => immutableFormData.getIn(pathToArray(path));
+
+  const submit = (e) => {
+    e.preventDefault();
+    k8sCreate(
+      model,
+      model.namespaced
+        ? immutableFormData.setIn(['metadata', 'namespace'], params.ns).toJS()
+        : immutableFormData.toJS(),
+    )
+      .then((res) => postFormCallback(res))
+      .then(() => next && navigate(next))
+      .catch((err: Error) => setError(err.message || 'Unknown error.'));
+  };
+
+  // TODO(alecmerdler): Move this into a single `<SpecDescriptorInput>` entry component in the `descriptors/` directory
+  const inputFor = ({ capabilities, displayName, path, required }: OperandField) => {
+    const id = idFromPath(path);
+    const formDataValue = getFormData(path);
+    const currentValue = _.isNil(formDataValue) ? defaultValueFor(capabilities) : formDataValue;
+    if (capabilities.find((c) => c.startsWith(SpecCapability.fieldDependency))) {
+      const controlFieldInfoList = capabilities.filter((c) =>
+        c.startsWith(SpecCapability.fieldDependency),
+      );
+      const controlFieldPathList = _.uniq(
+        controlFieldInfoList
+          .map((c) => c.split(SpecCapability.fieldDependency)[1])
+          .reduce((infoList, info) => [info.split(':')[0], ...infoList], []),
+      );
+      const controlFieldPath =
+        _.isArray(controlFieldPathList) && controlFieldPathList.length === 1
+          ? controlFieldPathList[0]
+          : null;
+      const currentControlFieldValue = !_.isNil(getFormData(`spec.${controlFieldPath}`))
+        ? getFormData(`spec.${controlFieldPath}`).toString()
+        : null;
+      const expectedControlFieldValueList = controlFieldInfoList
+        .map((c) => c.split(SpecCapability.fieldDependency)[1])
+        .reduce((infoList, info) => [info.split(':')[1], ...infoList], []);
+
+      if (!expectedControlFieldValueList.includes(currentControlFieldValue)) {
+        return null;
+      }
+    }
+    if (capabilities.includes(SpecCapability.podCount)) {
+      return (
+        <NumberSpinner
+          id={id}
+          value={currentValue}
+          onChange={({ currentTarget: { value } }) =>
+            handleFormDataUpdate(path, _.toInteger(value))
+          }
+          changeValueBy={(operation) =>
+            handleFormDataUpdate(path, _.toInteger(currentValue) + operation)
+          }
+          autoFocus
+          required
+        />
+      );
+    }
+    if (capabilities.includes(SpecCapability.resourceRequirements)) {
+      const cpuLimitsPath = `limits.cpu`;
+      const memoryLimitsPath = `limits.memory`;
+      const storageLimitsPath = 'limits.ephemeral-storage';
+      const cpuRequestsPath = `requests.cpu`;
+      const memoryRequestsPath = `requests.memory`;
+      const storageRequestsPath = 'requests.ephemeral-storage';
+      return (
+        <DescriptionList className="pf-v6-u-ml-md">
+          <DescriptionListGroup>
+            <DescriptionListTerm>{t('olm~Limits')}</DescriptionListTerm>
+            <DescriptionListDescription>
+              <ResourceRequirements
+                cpu={currentValue.getIn?.(_.toPath(cpuLimitsPath))}
+                memory={currentValue.getIn?.(_.toPath(memoryLimitsPath))}
+                storage={currentValue.getIn?.(_.toPath(storageLimitsPath))}
+                onChangeCPU={(value) => handleFormDataUpdate(`${path}.${cpuLimitsPath}`, value)}
+                onChangeMemory={(value) =>
+                  handleFormDataUpdate(`${path}.${memoryLimitsPath}`, value)
+                }
+                onChangeStorage={(value) =>
+                  handleFormDataUpdate(`${path}.${storageLimitsPath}`, value)
+                }
+                path={`${id}.limits`}
+              />
+            </DescriptionListDescription>
+          </DescriptionListGroup>
+          <DescriptionListGroup>
+            <DescriptionListTerm>{t('olm~Requests')}</DescriptionListTerm>
+            <DescriptionListDescription>
+              <ResourceRequirements
+                cpu={currentValue.getIn?.(_.toPath(cpuRequestsPath))}
+                memory={currentValue.getIn?.(_.toPath(memoryRequestsPath))}
+                storage={currentValue.getIn?.(_.toPath(storageRequestsPath))}
+                onChangeCPU={(value) => handleFormDataUpdate(`${path}.${cpuRequestsPath}`, value)}
+                onChangeMemory={(value) =>
+                  handleFormDataUpdate(`${path}.${memoryRequestsPath}`, value)
+                }
+                onChangeStorage={(value) =>
+                  handleFormDataUpdate(`${path}.${storageRequestsPath}`, value)
+                }
+                path={`${id}.requests`}
+              />
+            </DescriptionListDescription>
+          </DescriptionListGroup>
+        </DescriptionList>
+      );
+    }
+    if (capabilities.includes(SpecCapability.password)) {
+      return (
+        <div className="pf-v6-c-form-control">
+          <input
+            id={id}
+            type="password"
+            onChange={({ currentTarget: { value } }) => handleFormDataUpdate(path, value)}
+            value={currentValue}
+          />
+        </div>
+      );
+    }
+    if (capabilities.some((c) => c.startsWith(SpecCapability.k8sResourcePrefix))) {
+      const groupVersionKind: GroupVersionKind = capabilities
+        .find((c) => c.startsWith(SpecCapability.k8sResourcePrefix))
+        .split(SpecCapability.k8sResourcePrefix)[1]
+        .replace('core~v1~', '');
+      const k8sModel = modelFor(groupVersionKind);
+      if (!k8sModel) {
+        // eslint-disable-next-line no-console
+        console.warn('[Legacy CreateOperandForm] Cluster does not have resource', groupVersionKind);
+      }
+      return k8sModel ? (
+        <ListDropdown
+          id={id}
+          resources={[
+            {
+              kind: groupVersionKind,
+              namespace: k8sModel.namespaced ? params?.ns : null,
+            },
+          ]}
+          desc={displayName}
+          placeholder={t('olm~Select {{item}}', { item: kindForReference(groupVersionKind) })}
+          onChange={(value) => handleFormDataUpdate(path, value)}
+          selectedKey={currentValue ? `${currentValue}-${k8sModel?.kind}` : null}
+        />
+      ) : null;
+    }
+    if (capabilities.includes(SpecCapability.checkbox)) {
+      return (
+        <Checkbox
+          id={id}
+          style={{ marginLeft: '10px' }}
+          isChecked={(_.isNil(currentValue) ? false : currentValue) as boolean}
+          data-checked-state={(_.isNil(currentValue) ? false : currentValue) as boolean}
+          label={displayName}
+          required={required}
+          onChange={(_event, value) => handleFormDataUpdate(path, value)}
+        />
+      );
+    }
+    if (capabilities.includes(SpecCapability.booleanSwitch)) {
+      return (
+        <Switch
+          key={id}
+          id={id}
+          isChecked={(_.isNil(currentValue) ? false : currentValue) as boolean}
+          onChange={(_event, value) => handleFormDataUpdate(path, value)}
+          label={t('public~True')}
+        />
+      );
+    }
+    if (capabilities.includes(SpecCapability.imagePullPolicy)) {
+      return (
+        <RadioGroup
+          id={id}
+          currentValue={currentValue}
+          items={_.values(ImagePullPolicy).map((policy) => ({
+            name: id,
+            value: policy,
+            label: policy,
+          }))}
+          onChange={({ currentTarget: { value } }) => handleFormDataUpdate(path, value)}
+        />
+      );
+    }
+    if (capabilities.includes(SpecCapability.updateStrategy)) {
+      const maxUnavailablePath = `rollingUpdate.maxUnavailable`;
+      const maxSurgePath = `rollingUpdate.maxSurge`;
+      return (
+        <ConfigureUpdateStrategy
+          strategyType={currentValue.get('type')}
+          maxUnavailable={currentValue.getIn(_.toPath(maxUnavailablePath))}
+          maxSurge={currentValue.getIn(_.toPath(maxSurgePath))}
+          onChangeStrategyType={(value) => handleFormDataUpdate(`${path}.type`, value)}
+          onChangeMaxUnavailable={(value) =>
+            handleFormDataUpdate(`${path}.${maxUnavailablePath}`, value)
+          }
+          onChangeMaxSurge={(value) => handleFormDataUpdate(`${path}.${maxSurgePath}`, value)}
+          replicas={1}
+          uid={id}
+        />
+      );
+    }
+    if (capabilities.includes(SpecCapability.text)) {
+      return (
+        <div className="pf-v6-c-form-control">
+          <input
+            key={id}
+            id={id}
+            type="text"
+            onChange={({ currentTarget: { value } }) => handleFormDataUpdate(path, value)}
+            value={currentValue}
+          />
+        </div>
+      );
+    }
+    if (capabilities.includes(SpecCapability.number)) {
+      return (
+        <div className="pf-v6-c-form-control">
+          <input
+            key={path}
+            id={id}
+            type="number"
+            onChange={({ currentTarget: { value } }) =>
+              handleFormDataUpdate(path, value !== '' ? _.toNumber(value) : '')
+            }
+            value={currentValue !== '' ? _.toNumber(currentValue) : ''}
+          />
+        </div>
+      );
+    }
+    if (capabilities.includes(SpecCapability.nodeAffinity)) {
+      return (
+        <div style={{ marginLeft: '15px' }}>
+          <NodeAffinity
+            affinity={currentValue.toJS() as NodeAffinityType}
+            onChange={(value) => handleFormDataUpdate(path, Immutable.fromJS(value))}
+            uid={id}
+          />
+        </div>
+      );
+    }
+    if (
+      capabilities.includes(SpecCapability.podAffinity) ||
+      capabilities.includes(SpecCapability.podAntiAffinity)
+    ) {
+      return (
+        <div style={{ marginLeft: '15px' }}>
+          <PodAffinity
+            affinity={currentValue.toJS()}
+            onChange={(value) => handleFormDataUpdate(path, Immutable.fromJS(value))}
+            uid={id}
+          />
+        </div>
+      );
+    }
+    if (capabilities.some((c) => c.startsWith(SpecCapability.select))) {
+      return (
+        <div>
+          <ConsoleSelect
+            id={id}
+            title={t('olm~Select {{item}}', { item: displayName })}
+            selectedKey={currentValue}
+            items={capabilities
+              .filter((c) => c.startsWith(SpecCapability.select))
+              .map((c) => c.split(SpecCapability.select)[1])
+              .reduce((all, option) => ({ [option]: option, ...all }), {})}
+            onChange={(value) => handleFormDataUpdate(path, value)}
+          />
+        </div>
+      );
+    }
+    return null;
+  };
+
+  /* Inserts an arrayFieldGroup at nextIndex. The fieldList argument is an array of fields
+   * representing a single element in an arrayFieldGroup. To add an arrayFieldGroup, we duplicate
+   * each field in this fieldList, replacing the array index in field.path with the nextIndex
+   * argument
+   */
+  const addArrayFieldGroup = (fieldLists: OperandField[][]) => {
+    // Duplicate each field in fieldList, creating the corresponding field and formValue at
+    // arrayFieldGroup[nextIndex]
+    const addedFields = _.reduce(
+      _.last(fieldLists),
+      (fieldAccumulator, field) => {
+        // Replace index of field with nextIndex
+        const path = modifyArrayFieldPathIndex(field.path, () => fieldLists.length);
+        return [...fieldAccumulator, { ...field, path }];
+      },
+      [],
+    );
+
+    setFields((currentFields) => [...currentFields, ...addedFields]);
+  };
+
+  // Removes fields corresponding to an  arrayFieldGroup index from the form
+  const removeArrayFieldGroup = (fieldLists: OperandField[][], indexToRemove: number) => {
+    // Flat array of fields in this arrayFieldGroup at index > removed.
+    const fieldsToLeftShift = _.flatten(
+      _.filter(fieldLists, (_unused, index) => index > indexToRemove),
+    );
+
+    // List of paths to be removed from fields list. Fields and values in fieldsToLeftShift
+    // will be replaced with left-shifted equivalents
+    const fieldPathsToRemove = _.map([...fieldLists[indexToRemove], ...fieldsToLeftShift], 'path');
+    const [regexMatch, formDataPathToRemove] =
+      (fieldPathsToRemove?.[0] || '').match(/^(.*\[\d+\]).*$/) || [];
+
+    const leftShiftedFields = _.reduce(
+      fieldsToLeftShift,
+      (fieldAccumulator, field) => {
+        const path = modifyArrayFieldPathIndex(field.path, (index) => index - 1);
+        return [...fieldAccumulator, { ...field, path }];
+      },
+      [],
+    );
+
+    // Remove arrayFieldGroup from fields and replace subsequent arrayFieldGroup fields with
+    // left-shifted ones.
+    setFields((currentFields) => {
+      return [
+        // Filter out all removed fields and fields that need to be left-shifted
+        ..._.filter(currentFields, (field) => !_.includes(fieldPathsToRemove, field.path)),
+        // Add new left-shifted fields
+        ...leftShiftedFields,
+      ];
+    });
+    regexMatch && handleFormDataDelete(formDataPathToRemove);
+  };
+
+  const renderArrayFieldGroups = () =>
+    _.map(_.sortBy(arrayFieldGroups, 'groupName'), ({ fieldLists, groupName }) => {
+      // If there is no name for this fieldGroup, or no fields associated with the group name, don't
+      // render anything
+      if (_.isEmpty(groupName) || _.isEmpty(fieldLists)) {
+        return null;
+      }
+
+      const groupDisplayName = _.startCase(groupName);
+      const singularGroupDisplayName = groupDisplayName.replace(/s$/, '');
+      const id = `root_spec_${groupName}`;
+      const isExpanded = !_.some(fieldLists, (fieldList) =>
+        _.some(fieldList, (f) => hasDescriptor(f, SpecCapability.advanced) && !f.required),
+      );
+
+      return (
+        <FieldGroup id={id} isExpanded={isExpanded} key={id} label={groupDisplayName}>
+          {_.map(fieldLists, (fieldList, index) => (
+            <Fragment key={`${groupName}-${index}`}>
+              {index > 0 && <hr />}
+              {fieldLists.length > 1 && (
+                <div className="co-array-field-group__remove">
+                  <Button
+                    icon={<MinusCircleIcon className="co-icon-space-r" />}
+                    type="button"
+                    className="co-array-field-group__remove-btn"
+                    onClick={() => removeArrayFieldGroup(fieldLists, index)}
+                    variant="link"
+                  >
+                    {t('olm~Remove {{item}}', { item: singularGroupDisplayName })}
+                  </Button>
+                </div>
+              )}
+              {_.map(fieldList, (field) => (
+                <OperandFormInputGroup key={field.path} field={field} input={inputFor(field)} />
+              ))}
+            </Fragment>
+          ))}
+          <div>
+            <Button
+              icon={<PlusCircleIcon className="co-icon-space-r" />}
+              type="button"
+              onClick={() => addArrayFieldGroup(fieldLists)}
+              variant="link"
+            >
+              {t('olm~Add {{item}}', { item: singularGroupDisplayName })}
+            </Button>
+          </div>
+        </FieldGroup>
+      );
+    });
+
+  const renderFieldGroups = () =>
+    _.map(_.sortBy(fieldGroups, 'groupName'), ({ fieldList, groupName }) => {
+      if (_.isEmpty(groupName) || _.isEmpty(fieldList)) {
+        return null;
+      }
+      const id = `root_spec_${groupName}`;
+      const isExpanded = !_.some(
+        fieldList,
+        (f) => f.capabilities.includes(SpecCapability.advanced) && !f.required,
+      );
+      return (
+        <FieldGroup key={id} id={id} isExpanded={isExpanded} label={_.startCase(groupName)}>
+          {_.map(fieldList, (field) => (
+            <OperandFormInputGroup key={field.path} field={field} input={inputFor(field)} />
+          ))}
+        </FieldGroup>
+      );
+    });
+
+  const renderNormalFields = () =>
+    _.map(normalFields, (field) => (
+      <OperandFormInputGroup key={field.path} field={field} input={inputFor(field)} />
+    ));
+
+  const renderAdvancedFields = () =>
+    advancedFields.length > 0 && (
+      <div>
+        <ExpandCollapse
+          textExpanded={t('olm~Advanced configuration')}
+          textCollapsed={t('olm~Advanced configuration')}
+        >
+          {_.map(advancedFields, (field) => (
+            <OperandFormInputGroup key={field.path} field={field} input={inputFor(field)} />
+          ))}
+        </ExpandCollapse>
+      </div>
+    );
+  useScrollToTopOnMount();
+
+  return (
+    <PaneBody>
+      <Grid hasGutter>
+        <GridItem md={4} lg={5} order={{ default: '0', lg: '1' }}>
+          {csv && providedAPI && (
+            <div style={{ marginBottom: '30px' }}>
+              <ClusterServiceVersionLogo
+                displayName={providedAPI.displayName}
+                icon={_.get(csv, 'spec.icon[0]')}
+                provider={_.get(csv, 'spec.provider')}
+              />
+              <MarkdownView content={providedAPI.description} />
+            </div>
+          )}
+        </GridItem>
+        <GridItem md={8} lg={7} order={{ default: '1', lg: '0' }}>
+          <Alert
+            isInline
+            className="co-alert co-break-word"
+            variant="info"
+            title={t(
+              'olm~Note: Some fields may not be represented in this form. Please select "YAML View" for full control of object creation.',
+            )}
+          />
+          <form className="co-dynamic-form" onSubmit={submit}>
+            <Accordion asDefinitionList={false} className="co-dynamic-form__accordion">
+              <div
+                id="DEPRECATED_root_metadata_name_field"
+                key="root_metadata_name_field"
+                className="form-group"
+              >
+                <label className="form-label co-required" htmlFor="DEPRECATED_root_metadata_name">
+                  {t('public~Name')}
+                </label>
+                <span className="pf-v6-c-form-control">
+                  <input
+                    type="text"
+                    onChange={({ target: { value } }) =>
+                      handleFormDataUpdate('metadata.name', value)
+                    }
+                    value={immutableFormData.getIn(['metadata', 'name']) || 'example'}
+                    id="DEPRECATED_root_metadata_name"
+                    required
+                  />
+                </span>
+              </div>
+              <div
+                id="DEPRECATED_root_metadata_labels_field"
+                key="root_metadata_labels_field"
+                className="form-group"
+              >
+                <label className="form-label" htmlFor="tags-input">
+                  {t('public~Labels')}
+                </label>
+                <SelectorInput
+                  onChange={(value) =>
+                    handleFormDataUpdate(
+                      'metadata.labels',
+                      Immutable.fromJS(SelectorInput.objectify(value)),
+                    )
+                  }
+                  tags={labelTags}
+                />
+              </div>
+              {renderArrayFieldGroups()}
+              {renderFieldGroups()}
+              {renderNormalFields()}
+              {renderAdvancedFields()}
+            </Accordion>
+            {error && (
+              <Alert
+                isInline
+                className="co-alert co-break-word co-alert--scrollable"
+                variant="danger"
+                title="Error"
+              >
+                {error}
+              </Alert>
+            )}
+            <div style={{ paddingBottom: '30px' }}>
+              <ActionGroup className="pf-v6-c-form">
+                <Button onClick={submit} type="submit" variant="primary">
+                  {t('public~Create')}
+                </Button>
+                <Button onClick={() => navigate(-1)} variant="secondary">
+                  {t('public~Cancel')}
+                </Button>
+              </ActionGroup>
+            </div>
+          </form>
+        </GridItem>
+      </Grid>
+    </PaneBody>
+  );
+};
+
+type Capability = SpecCapability | StatusCapability;
+
+/**
+ * Combines OLM descriptor with JSONSchema.
+ */
+type OperandField = {
+  path: string;
+  displayName: string;
+  description?: string;
+  type: JSONSchema6TypeName;
+  required: boolean;
+  capabilities: Capability[];
+};
+
+type FlattenNestedPropertiesAccumulator = {
+  currentCapabilities?: Capability[];
+  currentPath?: string[];
+  fields?: OperandField[];
+  required: boolean;
+};
+
+type OperandFormInputGroupProps = {
+  field: OperandField;
+  input: JSX.Element;
+};
+
+type FieldGroupProps = {
+  children?: ReactNode;
+  isExpanded?: boolean;
+  id: string;
+  label: string;
+};

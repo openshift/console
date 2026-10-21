@@ -1,0 +1,55 @@
+@import '../../../../../topology/src/components/topology-utils';
+
+.odc-eventing-pubsub {
+  outline: none;
+  cursor: pointer;
+
+  .odc-m-drag-active & {
+    pointer-events: none;
+  }
+
+  &__bg {
+    fill: var(--pf-t--global--background--color--primary--default);
+  }
+
+  &.is-filtered &__bg {
+    stroke-width: 2px;
+    stroke: $filtered-stroke-color;
+  }
+  &.pf-m-selected &__bg {
+    stroke-width: 2px;
+    stroke: $selected-stroke-color;
+  }
+  &.pf-m-highlight &__bg {
+    stroke: $interactive-stroke-color;
+  }
+  &.pt-m-drop-target &__bg {
+    fill: $interactive-fill-color;
+    stroke: $interactive-stroke-color;
+  }
+}
+
+.odc-m-drag-active,
+.odc-m-filter-active {
+  .odc-eventing-pubsub {
+    opacity: $de-emphasize-opacity;
+    &.pf-m-dragging,
+    &.pf-m-highlight {
+      opacity: 1;
+    }
+  }
+}
+
+.odc-m-filter-active:not(.odc-m-drag-active) {
+  .odc-eventing-pubsub {
+    &.is-filtered {
+      opacity: 1;
+    }
+  }
+}
+
+:root:where(.pf-v6-theme-dark) .odc-eventing-pubsub {
+  &--image {
+    filter: brightness(1.5) invert(1) hue-rotate(180deg) saturate(4);
+  }
+}

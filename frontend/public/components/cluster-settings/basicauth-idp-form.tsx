@@ -1,0 +1,254 @@
+import type { FC } from 'react';
+import { useState } from 'react';
+import * as _ from 'lodash';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router';
+import { ActionGroup, Button } from '@patternfly/react-core';
+
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { SecretModel, ConfigMapModel } from '../../models';
+import { IdentityProvider, k8sCreate, OAuthKind } from '../../module/k8s';
+import { ButtonBar } from '../utils/button-bar';
+import { AsyncComponent } from '../utils/async';
+import { addIDP, getOAuthResource as getOAuth, redirectToOAuthPage, mockNames } from './';
+import { IDPNameInput } from './idp-name-input';
+import { IDPCAFileInput } from './idp-cafile-input';
+
+export const DroppableFileInput = (props: any) => (
+  <AsyncComponent
+    loader={() => import('../utils/file-input').then((c) => c.DroppableFileInput)}
+    {...props}
+  />
+);
+export const AddBasicAuthPage: FC = () => {
+  const navigate = useNavigate();
+  const [inProgress, setInProgress] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [name, setName] = useState('basic-auth');
+  const [url, setUrl] = useState('');
+  const [caFileContent, setCaFileContent] = useState('');
+  const [certFileContent, setCertFileContent] = useState('');
+  const [keyFileContent, setKeyFileContent] = useState('');
+
+  const { t } = useTranslation();
+
+  const thenPromise = (res) => {
+    setInProgress(false);
+    setErrorMessage('');
+    return res;
+  };
+
+  const catchError = (error) => {
+    const err = error.message || t('public~An error occurred. Please try again.');
+    setInProgress(false);
+    setErrorMessage(err);
+    return Promise.reject(err);
+  };
+
+  const handlePromise = (promise) => {
+    setInProgress(true);
+
+    return promise.then(
+      (res) => thenPromise(res),
+      (error) => catchError(error),
+    );
+  };
+
+  const getOAuthResource = () => {
+    return handlePromise(getOAuth());
+  };
+
+  const createTLSSecret = () => {
+    if (!certFileContent) {
+      return Promise.resolve(null);
+    }
+
+    const secret = {
+      apiVersion: 'v1',
+      kind: 'Secret',
+      metadata: {
+        generateName: 'basic-auth-tls-',
+        namespace: 'openshift-config',
+      },
+      stringData: {
+        'tls.crt': certFileContent,
+        'tls.key': keyFileContent,
+      },
+    };
+
+    return handlePromise(k8sCreate(SecretModel, secret));
+  };
+
+  const createCAConfigMap = () => {
+    if (!caFileContent) {
+      return Promise.resolve(null);
+    }
+
+    const ca = {
+      apiVersion: 'v1',
+      kind: 'ConfigMap',
+      metadata: {
+        generateName: 'basic-auth-ca-',
+        namespace: 'openshift-config',
+      },
+      data: {
+        'ca.crt': caFileContent,
+      },
+    };
+
+    return handlePromise(k8sCreate(ConfigMapModel, ca));
+  };
+
+  const addBasicAuthIDP = (
+    oauth: OAuthKind,
+    secretName: string,
+    caName: string,
+    dryRun?: boolean,
+  ) => {
+    const idp: IdentityProvider = {
+      name,
+      type: 'BasicAuth',
+      mappingMethod: 'claim',
+      basicAuth: {
+        url,
+      },
+    };
+
+    if (caName) {
+      idp.basicAuth.ca = {
+        name: caName,
+      };
+    }
+
+    if (secretName) {
+      idp.basicAuth.tlsClientCert = {
+        name: secretName,
+      };
+      idp.basicAuth.tlsClientKey = {
+        name: secretName,
+      };
+    }
+
+    return handlePromise(addIDP(oauth, idp, dryRun));
+  };
+
+  const submit = (e) => {
+    e.preventDefault();
+    if (_.isEmpty(keyFileContent) !== _.isEmpty(certFileContent)) {
+      setErrorMessage(
+        t('public~Values for certificate and key should both be either excluded or provided.'),
+      );
+      return;
+    }
+    // Clear any previous errors.
+    setErrorMessage('');
+    getOAuthResource().then((oauth: OAuthKind) => {
+      const mockSecret = certFileContent ? mockNames.secret : '';
+      const mockCA = caFileContent ? mockNames.ca : '';
+      addBasicAuthIDP(oauth, mockSecret, mockCA, true)
+        .then(() => {
+          const promises = [createTLSSecret(), createCAConfigMap()];
+
+          Promise.all(promises)
+            .then(([tlsSecret, configMap]) => {
+              const caName = configMap ? configMap.metadata.name : '';
+              const secretName = tlsSecret ? tlsSecret.metadata.name : '';
+              return addBasicAuthIDP(oauth, secretName, caName);
+            })
+            .then(() => {
+              redirectToOAuthPage(navigate);
+            });
+        })
+        .catch((err) => {
+          setErrorMessage(err);
+        });
+    });
+  };
+
+  const title = t('public~Add Identity Provider: Basic Authentication');
+
+  return (
+    <div className="co-m-pane__form">
+      <DocumentTitle>{title}</DocumentTitle>
+      <PageHeading
+        title={title}
+        helpText={t(
+          'public~Basic authentication is a generic backend integration mechanism that allows users to authenticate with credentials validated against a remote identity provider.',
+        )}
+      />
+      <PaneBody>
+        <form onSubmit={submit} name="form">
+          <IDPNameInput value={name} onChange={(e) => setName(e.currentTarget.value)} />
+          <div className="form-group">
+            <label className="co-required" htmlFor="url">
+              {t('public~URL')}
+            </label>
+            <span className="pf-v6-c-form-control">
+              <input
+                type="url"
+                aria-label={t('public~URL')}
+                onChange={(e) => setUrl(e.currentTarget.value)}
+                value={url}
+                id="url"
+                aria-describedby="idp-url-help"
+                required
+              />
+            </span>
+            <p className="help-block" id="idp-url-help">
+              {t('public~The remote URL to connect to.')}
+            </p>
+          </div>
+          <IDPCAFileInput
+            id="ca-file-input"
+            value={caFileContent}
+            onChange={(c: string) => setCaFileContent(c)}
+          />
+          <div className="pf-v6-c-form" style={{ display: 'contents' }}>
+            <DroppableFileInput
+              onChange={(c: string) => setCertFileContent(c)}
+              inputFileData={certFileContent}
+              id="cert-file-input"
+              label={t('public~Certificate')}
+              filenamePlaceholder={t('public~PEM-encoded TLS client certificate file')}
+              textareaFieldHelpText={t(
+                'public~PEM-encoded TLS client certificate to present when connecting to the server.',
+              )}
+            />
+            <DroppableFileInput
+              onChange={(c: string) => setKeyFileContent(c)}
+              inputFileData={keyFileContent}
+              id="key-file-input"
+              label={t('public~Key')}
+              filenamePlaceholder={t('public~PEM-encoded TLS private key file')}
+              textareaFieldHelpText={t(
+                'public~PEM-encoded TLS private key for the client certificate. Required if certificate is specified.',
+              )}
+            />
+          </div>
+          <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>
+            <ActionGroup className="pf-v6-c-form">
+              <Button type="submit" variant="primary" data-test-id="add-idp">
+                {t('public~Add')}
+              </Button>
+              <Button type="button" variant="secondary" onClick={() => navigate(-1)}>
+                {t('public~Cancel')}
+              </Button>
+            </ActionGroup>
+          </ButtonBar>
+        </form>
+      </PaneBody>
+    </div>
+  );
+};
+
+export type AddBasicAuthPageState = {
+  name: string;
+  url: string;
+  caFileContent: string;
+  certFileContent: string;
+  keyFileContent: string;
+  inProgress: boolean;
+  errorMessage: string;
+};

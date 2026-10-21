@@ -1,0 +1,312 @@
+@use './vars';
+
+// Use this file to override styles from 3rd party dependencies
+
+$masthead-logo-max-height: 60px;
+
+.co-catalog-tile {
+  .catalog-tile-pf-icon {
+    font-size: unset !important;
+  }
+  .co-catalog--logo {
+    height: 100%;
+    max-width: 80px;
+    min-width: auto;
+    object-fit: contain;
+    width: 100%;
+  }
+  .catalog-tile-pf-icon {
+    @include catalog-logo-background(var(--pf-t--global--spacer--sm));
+    display: block;
+    height: 50px;
+    margin-bottom: calc(-1 * var(--pf-t--global--spacer--sm)); // Cancels bottom padding
+    margin-left: calc(-1 * var(--pf-t--global--spacer--sm)); // Align logo with left edge
+    margin-top: calc(-1 * var(--pf-t--global--spacer--sm)); // Align logo with top edge
+    max-width: 100%;
+    min-width: 50px; // prevent collapsed state before img loads
+    width: fit-content;
+    :where(.pf-v6-theme-dark) & {
+      // custom styling needed to provide extra padding on dark mode due to white background imgs
+      margin-left: 0;
+      margin-top: 0;
+    }
+  }
+  .pf-v6-c-card__actions {
+    gap: 0;
+    label {
+      margin-bottom: 0;
+    }
+  }
+  .pf-v6-c-card__selectable-actions .pf-v6-c-radio__label:hover {
+    --pf-v6-c-card--m-selectable--hover--BackgroundColor: var(
+      --pf-t--global--background--color--primary--default
+    );
+  }
+}
+
+.odc-catalog-tile {
+  // Get rid of weird stretching of catalog grid items
+  .pf-v6-c-card__header-main {
+    // When images are too wide, scale them instead of squishing
+    img {
+      object-fit: contain;
+    }
+  }
+}
+
+.catalog-item-header-pf-icon {
+  @include catalog-logo-background(var(--pf-t--global--spacer--sm));
+}
+
+.co-datalist-control label {
+  margin-bottom: 0; // Overrides Bootstrap label margin for DataListCheck's internal checkbox labels
+}
+
+.co-installed-operators .pf-v6-c-table tbody > tr > * {
+  vertical-align: top; // PF defaults to baseline which doesn't align correctly when Operator logos are within the table
+}
+
+// TODO: Remove when adopting PatternFly 6.5.0 - https://github.com/patternfly/patternfly-react/issues/12235
+// removes extra spacing between file input form groups when hideDefaultPreview is true
+.co-file-input .pf-v6-c-file-upload__file-details:empty {
+  display: none;
+}
+
+// custom PatternFly button variant for larger icons in an icon button with no text
+.co-xl-icon-button.pf-v6-c-button {
+  --co-button-icon-size: var(--pf-t--global--icon--size--xl);
+
+  // the height+padding of a PatternFly standard button.
+  --co-desired-button-size: #{vars.$co-button-height};
+
+  padding: calc((var(--co-desired-button-size) - var(--co-button-icon-size)) / 2);
+
+  .pf-v6-c-button__icon {
+    line-height: 0;
+  }
+
+  .pf-v6-svg {
+    height: var(--co-button-icon-size);
+    width: var(--co-button-icon-size);
+  }
+}
+
+// fix bug where monaco-aria-container is visible in Firefox but shouldn't be
+// bug occurs only if the suggestions overlay has been enabled
+.monaco-aria-container {
+  top: -999em;
+}
+
+// PatternFly overrides
+
+.pf-v6-c-alert--top-margin {
+  margin-top: var(--pf-t--global--spacer--lg);
+}
+
+.pf-v6-c-app-launcher__group-title {
+  // Reset font to RedHatText so it doesn't appear too bold
+  font-family: var(--pf-t--global--font--family--body);
+}
+
+// Allow text wrapping in banner for mobile
+.pf-v6-c-banner {
+  text-wrap: auto !important;
+}
+
+.pf-v6-c-button--align-right {
+  margin-left: auto !important;
+}
+
+.pf-v6-c-button.pf-v6-c-button--no-default-values {
+  --pf-v6-c-button--PaddingTop: 0;
+  --pf-v6-c-button--PaddingRight: 0;
+  --pf-v6-c-button--PaddingBottom: 0;
+  --pf-v6-c-button--PaddingLeft: 0;
+
+  border: 0;
+  font-size: unset;
+  font-weight: unset;
+  line-height: unset;
+  text-align: unset;
+  white-space: normal;
+}
+
+.pf-v6-c-button.pf-m-inline {
+  text-align: left; // override default .pf-v6-c-button text centering
+}
+
+.pf-v6-c-button.pf-m-link--align-left {
+  --pf-v6-c-button--PaddingLeft: 0;
+}
+
+.pf-v6-c-button.pf-m-link--align-right {
+  --pf-v6-c-button--PaddingRight: 0;
+}
+
+// Override label in _bootstrap-residual.scss
+.pf-v6-c-check__label {
+  margin-bottom: 0;
+}
+
+@media print {
+  .pf-v6-c-data-list__cell {
+    padding: 1px !important;
+  }
+}
+
+//set pf datalist item background to transparent
+.pf-v6-c-data-list__item--transparent-bg {
+  --pf-v6-c-data-list__item--BackgroundColor: transparent;
+}
+
+// Drawer
+.pf-v6-c-drawer__body {
+  height: 100%;
+  // (OCPBUGS-56628): A PF6 regression caused modals to not move when a drawer is open
+  position: relative;
+}
+
+.pf-v6-c-form--no-gap {
+  gap: 0;
+}
+
+.pf-v6-c-form__group-control--no-row-gap {
+  &,
+  & > .pf-v6-c-form__group-control.pf-m-inline {
+    row-gap: 0;
+  }
+}
+
+.pf-v6-c-masthead {
+  --pf-v6-c-masthead__logo--MaxHeight: $masthead-logo-max-height; // so that logos with three lines of text fit
+}
+
+.pf-v6-c-masthead__logo {
+  --pf-v6-c-masthead__logo--MaxHeight: #{$masthead-logo-max-height}; // Restore the max-height from PageHeader to maintain backwards compatibility
+  --pf-v6-c-masthead__logo--Width: auto; // Do not set a width to maintain backwards compatibility
+
+  img.pf-v6-c-brand {
+    max-height: #{$masthead-logo-max-height}; // Explicit image max height for browser compatibility
+  }
+}
+
+// PF components that calculate their correct height based on --pf-t--global--font--size--md: 1rem
+.pf-v6-c-modal-box,
+.pf-v6-c-switch {
+  --pf-t--global--font--size--md: 1rem;
+}
+
+// Page
+.pf-v6-c-page {
+  // Positions fullscreen terminal on top of mast header
+  &__main.default-overflow {
+    z-index: calc(var(--pf-v6-c-page__header--ZIndex) + 50);
+  }
+
+  .pf-v6-c-page__main-section--no-gap {
+    gap: 0; // do not use CSS variable as the value as it will cascade to all descendent .pf-v6-c-page__main-section
+  }
+}
+
+// specificity targeting form elements to override --pf-t--global--font--size--md
+.pf-v6-c-page {
+  .pf-v6-c-app-launcher,
+  .pf-v6-c-button,
+  .pf-v6-c-dropdown,
+  .pf-v6-c-dropdown__menu-item,
+  .pf-v6-c-menu-toggle,
+  .pf-v6-c-form-control {
+    // font-size: $font-size-base;
+    height: auto;
+  }
+
+  .pf-v6-l-stack {
+    font-size: $font-size-base;
+  }
+
+  .pf-v6-c-form-control.pf-m-success,
+  .pf-v6-c-form-control[aria-invalid='true'] {
+    --pf-t--global--font--size--md: #{$font-size-base};
+  }
+}
+
+.pf-v6-c-page__sidebar {
+  @media print {
+    display: none !important;
+  }
+}
+
+.pf-v6-c-wizard__nav-list > ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.table {
+  margin-bottom: 0;
+  &--layout-fixed {
+    table-layout: fixed;
+  }
+  td {
+    vertical-align: middle !important;
+  }
+  th {
+    font-weight: var(--pf-t--global--font--weight--body--bold);
+    padding-top: 0 !important;
+  }
+  thead > tr > th {
+    border-bottom: 0;
+  }
+  tr:last-child {
+    border-bottom: var(--pf-t--global--border--width--divider--default) solid
+      var(--pf-t--global--border--color--default);
+  }
+}
+
+.xterm .xterm-screen canvas {
+  // workaround bug where 1px white stripe appears atop terminal in Firefox for MacOS
+  // see https://github.com/xtermjs/xterm.js/issues/1974
+  border-right: 1px solid transparent;
+}
+
+button.pf-v6-c-dropdown__menu-item.pf-m-disabled {
+  // enables tooltips for disabled menu items
+  pointer-events: auto;
+}
+
+// Patternfly defaults to globally removing the list element bullets via ul {list-style:none} and selectively applies it using their List component via ul.pf-v6-c-list. We chose to override this because of the amount of ul elements in our codebase that expect the default to be ul {list-style:disc}
+ul {
+  list-style: disc;
+}
+// And here we explicitly remove it from PF components, except for the List and Content components.
+:where([class^='pf-']:not(.pf-v6-c-list, .pf-v6-c-content--ol, .pf-v6-c-content--ul)) {
+  @at-root :is(ul, ol)#{&} {
+    list-style: none !important;
+  }
+}
+
+.pfext-quick-start-content {
+  font-size: $font-size-base !important;
+}
+
+.properties-side-panel-pf-property-value {
+  .pf-v6-c-alert__title,
+  .pf-v6-c-menu__item-text,
+  .pf-v6-c-menu-toggle {
+    font-size: $font-size-base;
+  }
+}
+
+// should be unnecessary, but this looks like custom styling instead of PF styling
+:where(.pf-theme-dark) .pfext-quick-start-task__content .pfext-markdown-view pre code {
+  color: var(--pf-t--global--text--color--regular);
+  background-color: var(--pf-v6-global--palette--black-600);
+}
+
+// PF5 Popover component applies an new inline width:auto style that overrides it's own pf-v6-c-popover min-width: var(--pf-v6-c-popover--MinWidth). So the pf-v6-c-popover container is not a consistent size and can resize when additional content is loaded which causes the alignment to be incorrect.
+.pf-v6-c-popover {
+  min-width: var(--pf-v6-c-popover--MinWidth) !important;
+}
+
+.pf-v6-c-truncate--no-min-width {
+  --pf-v6-c-truncate--MinWidth: 0 !important;
+}

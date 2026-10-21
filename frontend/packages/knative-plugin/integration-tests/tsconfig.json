@@ -1,0 +1,8 @@
+{
+  "extends": "../../dev-console/integration-tests/tsconfig.json",
+  "include": [
+    "**/*.ts",
+    "./support/commands/index.ts",
+    "../../dev-console/integration-tests/support/pages/functions/knativeSubscriptions.ts"
+  ]
+}

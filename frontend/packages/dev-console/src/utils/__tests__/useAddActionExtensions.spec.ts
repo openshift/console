@@ -1,0 +1,103 @@
+import { renderHook } from '@testing-library/react';
+import type { AddAction, ResolvedExtension } from '@console/dynamic-plugin-sdk';
+import { useResolvedExtensions } from '@console/dynamic-plugin-sdk';
+import { useAddActionExtensions } from '../useAddActionExtensions';
+
+const useResolvedExtensionsMock = useResolvedExtensions as jest.Mock;
+
+jest.mock('@console/dynamic-plugin-sdk', () => {
+  return {
+    useResolvedExtensions: jest.fn(),
+  };
+});
+
+describe('useAddActionExtensions', () => {
+  const addAction1: ResolvedExtension<AddAction> = {
+    type: 'dev-console.add/action',
+    properties: {
+      id: 'action1',
+      label: 'Action 1',
+      description: 'A description for action 1',
+      href: '/action1',
+    },
+    pluginName: 'Plugin 1',
+    uid: '1234-1',
+  };
+  const addAction2: ResolvedExtension<AddAction> = {
+    type: 'dev-console.add/action',
+    properties: {
+      id: 'action2',
+      label: 'Action 2',
+      description: 'A description for action 2',
+      href: '/action2',
+    },
+    pluginName: 'Plugin 2',
+    uid: '1234-2',
+  };
+  const addAction3: ResolvedExtension<AddAction> = {
+    type: 'dev-console.add/action',
+    properties: {
+      id: 'action3',
+      label: 'Action 3',
+      description: 'A description for action 3',
+      href: '/action3',
+    },
+    pluginName: 'Plugin 3',
+    uid: '1234-3',
+  };
+
+  const addAction4: ResolvedExtension<AddAction> = {
+    type: 'dev-console.add/action',
+    properties: {
+      id: 'action4',
+      label: 'Action 4',
+      description: 'A description for action 4',
+      callback: jest.fn(),
+    },
+    pluginName: 'Plugin 3',
+    uid: '1234-3',
+  };
+
+  afterEach(() => {
+    delete window.SERVER_FLAGS.addPage;
+  });
+
+  it('return all actions if SERVER_FLAGS.addPage is not defined', () => {
+    useResolvedExtensionsMock.mockReturnValue([
+      [addAction1, addAction2, addAction3, addAction4],
+      true,
+    ]);
+    delete window.SERVER_FLAGS.addPage;
+
+    const { result } = renderHook(() => useAddActionExtensions());
+    const [addActionExtensions, resolved] = result.current;
+    expect(addActionExtensions).toEqual([addAction1, addAction2, addAction3, addAction4]);
+    expect(resolved).toEqual(true);
+  });
+
+  it('return all actions if SERVER_FLAGS.addPage customization is empty', () => {
+    useResolvedExtensionsMock.mockReturnValue([
+      [addAction1, addAction2, addAction3, addAction4],
+      true,
+    ]);
+    window.SERVER_FLAGS.addPage = '{}';
+
+    const { result } = renderHook(() => useAddActionExtensions());
+    const [addActionExtensions, resolved] = result.current;
+    expect(addActionExtensions).toEqual([addAction1, addAction2, addAction3, addAction4]);
+    expect(resolved).toEqual(true);
+  });
+
+  it('return filtered actions if SERVER_FLAGS.addPage contains some disabledActions', () => {
+    useResolvedExtensionsMock.mockReturnValue([
+      [addAction1, addAction2, addAction3, addAction4],
+      true,
+    ]);
+    window.SERVER_FLAGS.addPage = '{"disabledActions":["action2"]}';
+
+    const { result } = renderHook(() => useAddActionExtensions());
+    const [addActionExtensions, resolved] = result.current;
+    expect(addActionExtensions).toEqual([addAction1, addAction3, addAction4]);
+    expect(resolved).toEqual(true);
+  });
+});

@@ -1,0 +1,5 @@
+@import '../../../../../../public/style/mixin/catalog-logo-background';
+
+.odc-icon-bg {
+  @include catalog-logo-background();
+}

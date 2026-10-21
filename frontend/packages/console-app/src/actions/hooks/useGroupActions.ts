@@ -1,0 +1,70 @@
+import { useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router';
+import type { Action } from '@console/dynamic-plugin-sdk';
+import { getImpersonate } from '@console/dynamic-plugin-sdk';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
+import * as UIActions from '@console/internal/actions/ui';
+import { asAccessReview } from '@console/internal/components/utils/rbac';
+import { GroupModel } from '@console/internal/models';
+import type { GroupKind } from '@console/internal/module/k8s';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
+import AddGroupUsersModal from '../../components/modals/add-group-users-modal';
+
+/**
+ * Actions specific to Group resources.
+ */
+export const useGroupActions = (obj: GroupKind): Action[] => {
+  const { t } = useTranslation();
+  const dispatch = useConsoleDispatch();
+  const navigate = useNavigate();
+  const launchOverlay = useOverlay();
+  const impersonate = useConsoleSelector((state) => getImpersonate(state));
+
+  const startImpersonate = useCallback(
+    (kind: string, name: string) => dispatch(UIActions.startImpersonate(kind, name)),
+    [dispatch],
+  );
+
+  const stopImpersonate = useCallback(() => dispatch(UIActions.stopImpersonate()), [dispatch]);
+
+  const factory = useMemo(
+    () => ({
+      stopImpersonate: (): Action => ({
+        id: 'stop-impersonate',
+        label: t('public~Stop impersonating'),
+        cta: () => {
+          stopImpersonate();
+          navigate(window.SERVER_FLAGS.basePath);
+        },
+      }),
+      impersonate: (): Action => ({
+        id: 'impersonate-group',
+        label: t('public~Impersonate Group {{name}}', { name: obj?.metadata?.name }),
+        cta: () => {
+          startImpersonate('Group', obj?.metadata?.name);
+          navigate(window.SERVER_FLAGS.basePath);
+        },
+        accessReview: asAccessReview(GroupModel, obj, 'impersonate'),
+      }),
+      addUsers: (): Action => ({
+        id: 'add-users',
+        label: t('public~Add Users'),
+        cta: () => launchOverlay(AddGroupUsersModal, { group: obj }),
+        accessReview: asAccessReview(GroupModel, obj, 'patch'),
+      }),
+    }),
+    [navigate, obj, startImpersonate, stopImpersonate, t, launchOverlay],
+  );
+
+  return useMemo<Action[]>(() => {
+    // Guard against missing group name to prevent undefined values in impersonation
+    if (!obj?.metadata?.name) {
+      return [factory.addUsers()];
+    }
+    // Determine which impersonation action to show based on impersonation state
+    const impersonationAction = impersonate ? factory.stopImpersonate() : factory.impersonate();
+    return [impersonationAction, factory.addUsers()];
+  }, [impersonate, factory, obj?.metadata?.name]);
+};

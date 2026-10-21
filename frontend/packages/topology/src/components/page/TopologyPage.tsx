@@ -1,0 +1,146 @@
+import type { FC } from 'react';
+import { useMemo, useEffect, useCallback } from 'react';
+import { Trans, useTranslation } from 'react-i18next';
+import { useParams } from 'react-router';
+import NamespacedPage, {
+  NamespacedPageVariants,
+} from '@console/dev-console/src/components/NamespacedPage';
+import CreateProjectListPage, {
+  CreateAProjectButton,
+} from '@console/dev-console/src/components/projects/CreateProjectListPage';
+import { withStartGuide } from '@console/internal/components/start-guide';
+import { ErrorBoundaryFallbackPage, withFallback } from '@console/shared/src/components/error';
+import { useQueryParams } from '@console/shared/src/hooks/useQueryParams';
+import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
+import {
+  LAST_TOPOLOGY_OVERVIEW_OPEN_STORAGE_KEY,
+  TOPOLOGY_VIEW_CONFIG_USER_PREFERENCE_KEY,
+} from '../../const';
+import DataModelProvider from '../../data-transforms/DataModelProvider';
+import { TOPOLOGY_SEARCH_FILTER_KEY } from '../../filters';
+import { FilterProvider } from '../../filters/FilterProvider';
+import { TopologyViewType } from '../../topology-types';
+import { usePreferredTopologyView } from '../../user-preferences/usePreferredTopologyView';
+import TopologyDataRenderer from './TopologyDataRenderer';
+import TopologyPageToolbar from './TopologyPageToolbar';
+
+interface TopologyPageProps {
+  hideProjects?: boolean;
+  defaultViewType?: TopologyViewType;
+}
+
+type PageContentsProps = {
+  viewType: TopologyViewType;
+};
+
+const PageContents: FC<PageContentsProps> = ({ viewType }) => {
+  const { t } = useTranslation();
+  const { name: namespace } = useParams();
+
+  return namespace ? (
+    <TopologyDataRenderer viewType={viewType} />
+  ) : (
+    <CreateProjectListPage title={t('topology~Topology')}>
+      {(openProjectModal) => (
+        <Trans t={t} ns="topology">
+          Select a Project to view the topology
+          <CreateAProjectButton openProjectModal={openProjectModal} />.
+        </Trans>
+      )}
+    </CreateProjectListPage>
+  );
+};
+
+const PageContentsWithStartGuide = withStartGuide(PageContents);
+
+export const TopologyPage: FC<TopologyPageProps> = ({
+  hideProjects = false,
+  defaultViewType = TopologyViewType.graph,
+}) => {
+  const { getQueryArgument, setQueryArgument, removeQueryArgument } = useQueryParamsMutator();
+  const [preferredTopologyView, preferredTopologyViewLoaded] = usePreferredTopologyView();
+  const [topologyLastView, setTopologyLastView, isTopologyLastViewLoaded] = useUserPreference<
+    TopologyViewType
+  >(TOPOLOGY_VIEW_CONFIG_USER_PREFERENCE_KEY, defaultViewType);
+
+  const params = useParams();
+
+  const loaded: boolean = preferredTopologyViewLoaded && isTopologyLastViewLoaded;
+
+  const topologyViewState = useMemo((): TopologyViewType => {
+    if (!loaded) {
+      return null;
+    }
+
+    if (preferredTopologyView === 'latest') {
+      return topologyLastView;
+    }
+
+    return (preferredTopologyView || topologyLastView) as TopologyViewType;
+  }, [loaded, preferredTopologyView, topologyLastView]);
+
+  const namespace = params.name;
+  const queryParams = useQueryParams();
+  const viewType =
+    (queryParams.get('view') as TopologyViewType) || topologyViewState || defaultViewType;
+
+  useEffect(() => {
+    const lastOverviewOpen = JSON.parse(
+      sessionStorage.getItem(LAST_TOPOLOGY_OVERVIEW_OPEN_STORAGE_KEY) ?? '{}',
+    );
+    if (loaded && namespace in lastOverviewOpen && !getQueryArgument('selectId')) {
+      setQueryArgument('selectId', lastOverviewOpen[namespace]);
+    }
+  }, [loaded, namespace, getQueryArgument, setQueryArgument]);
+
+  useEffect(() => {
+    if (!queryParams.get('view') && loaded) {
+      setQueryArgument('view', topologyViewState || defaultViewType);
+    }
+  }, [defaultViewType, topologyViewState, queryParams, loaded, setQueryArgument]);
+
+  const onViewChange = useCallback(
+    (newViewType: TopologyViewType) => {
+      setQueryArgument('view', newViewType);
+      setTopologyLastView(newViewType);
+    },
+    [setTopologyLastView, setQueryArgument],
+  );
+
+  const handleNamespaceChange = (ns: string) => {
+    if (ns !== namespace) {
+      removeQueryArgument(TOPOLOGY_SEARCH_FILTER_KEY);
+    }
+  };
+
+  const namespacedPageVariant = namespace
+    ? viewType === TopologyViewType.graph
+      ? NamespacedPageVariants.default
+      : NamespacedPageVariants.light
+    : NamespacedPageVariants.light;
+
+  if (!viewType) {
+    return null;
+  }
+
+  return (
+    <FilterProvider>
+      <DataModelProvider namespace={namespace}>
+        <NamespacedPage
+          variant={namespacedPageVariant}
+          onNamespaceChange={handleNamespaceChange}
+          hideProjects={hideProjects}
+          toolbar={<TopologyPageToolbar viewType={viewType} onViewChange={onViewChange} />}
+          data-test-id={
+            viewType === TopologyViewType.graph ? 'topology-graph-page' : 'topology-list-page'
+          }
+        >
+          <PageContentsWithStartGuide viewType={viewType} />
+        </NamespacedPage>
+      </DataModelProvider>
+    </FilterProvider>
+  );
+};
+
+export default withFallback(TopologyPage, ErrorBoundaryFallbackPage);

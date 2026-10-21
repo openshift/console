@@ -1,0 +1,53 @@
+.co-app-launcher .pf-v6-c-menu__item-icon {
+  height: var(--pf-t--global--spacer--lg);
+  width: var(--pf-t--global--spacer--lg);
+}
+
+.co-cluster-menu {
+  max-width: 80vw;
+
+  @media (min-width: $pf-v6-global--breakpoint--md) {
+    max-width: 90vw;
+  }
+}
+
+.co-cluster-selector {
+  display: inline-grid !important;
+  grid-template-columns: 1fr auto;
+  max-width: 140px !important;
+
+  @media (min-width: 360px) {
+    max-width: 180px !important;
+  }
+
+  @media (min-width: $screen-xs) {
+    max-width: 300px !important;
+  }
+
+  @media (min-width: $screen-lg) {
+    max-width: 400px !important;
+  }
+}
+
+.co-masthead-button {
+  align-items: center !important;
+}
+
+.co-masthead-logo > div {
+  display: flex; // Fixes off-center logo in glass theme. div targets the wrapper react-svg makes
+}
+
+.co-user-menu {
+  max-width: 140px !important; // PF does not limit username length
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  @media (min-width: 855px) {
+    max-width: 225px !important;
+  }
+  @media (min-width: $screen-md-min) {
+    max-width: 275px !important;
+  }
+  @media (min-width: $screen-lg-min) {
+    max-width: 300px !important;
+  }
+}

@@ -1,0 +1,18 @@
+import type { FC, ReactNode, CSSProperties } from 'react';
+import { Title } from '@patternfly/react-core';
+import { css } from '@patternfly/react-styles';
+
+const SecondaryHeading: FC<SecondaryHeadingProps> = ({ children, className, ...props }) => (
+  <Title headingLevel="h2" className={css('co-section-heading', className)} {...props}>
+    {children}
+  </Title>
+);
+
+export type SecondaryHeadingProps = {
+  children: ReactNode;
+  className?: string;
+  id?: string;
+  style?: CSSProperties;
+};
+
+export default SecondaryHeading;

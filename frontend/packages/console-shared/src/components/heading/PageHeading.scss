@@ -1,0 +1,19 @@
+@use '../../../../../public/style/vars';
+
+.co-actions {
+  // ensure all actions are of the same height regardless of content
+  min-height: vars.$co-button-height;
+
+  > .pf-v6-c-action-list__group {
+    // remove extra spacing when a component is rendered but has no children
+    > div:empty {
+      display: none;
+    }
+  }
+}
+
+.co-page-heading {
+  .pf-v6-c-page__main-section {
+    --pf-v6-c-page__main-section--RowGap: var(--pf-t--global--spacer--md);
+  }
+}

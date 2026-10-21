@@ -1,0 +1,20 @@
+{
+  "Telemetry": "Télémétrie",
+  "Configure telemetry setting": "Configurer les paramètres de télémétrie",
+  "Opt-in": "Accepter",
+  "Opt-in to send telemetry events.": "Acceptez l’envoi d’événements de télémétrie.",
+  "Opt-out": "Refuser",
+  "Opt-out to send telemetry events.": "Refusez l’envoi d’événements de télémétrie.",
+  "Enforce": "Appliquer",
+  "Always send telemetry events.": "Envoyez toujours des événements de télémétrie.",
+  "Disabled": "Désactivé",
+  "Disable the telemetry in the cluster.": "Désactivez la télémétrie dans le cluster.",
+  "Select option": "Sélectionner une option",
+  "Analytics": "Analyses",
+  "As admin you can decide sending telemetry events to a pre-configured Red Hat proxy that can be forwarded to third-party services for analysis.": "En tant qu’administrateur, vous pouvez décider d’envoyer des événements de télémétrie à un proxy Red Hat préconfiguré qui peut être transmis à des services tiers pour analyse.",
+  "Accept": "Accepter",
+  "Send telemetry events.": "Envoyez des événements de télémétrie.",
+  "Deny": "Refuser",
+  "Do not send telemetry events.": "N’envoyez pas d’événements de télémétrie.",
+  "Select a option whether to send telemetry events or not.": "Sélectionnez une option pour envoyer ou non des événements de télémétrie."
+}

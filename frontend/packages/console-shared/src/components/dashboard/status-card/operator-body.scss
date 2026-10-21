@@ -1,0 +1,20 @@
+@import '../../../styles/skeleton-screen';
+
+.co-status__operator-skeleton {
+  animation: $skeleton-animation;
+  background: $skeleton-color;
+  height: 20px;
+  opacity: 0;
+  &::after {
+    background-repeat: no-repeat;
+    content: '';
+    display: block;
+    height: 100%;
+    width: 100%;
+  }
+  margin-bottom: var(--pf-t--global--spacer--xs);
+}
+
+.co-status__operator-detail {
+  font-weight: normal;
+}

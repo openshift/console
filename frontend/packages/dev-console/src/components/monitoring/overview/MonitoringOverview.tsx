@@ -1,0 +1,180 @@
+import type { FC } from 'react';
+import { useState, useMemo } from 'react';
+import {
+  Accordion,
+  AccordionItem,
+  AccordionToggle,
+  AccordionContent,
+  Split,
+  SplitItem,
+  Badge,
+  EmptyState,
+  EmptyStateBody,
+} from '@patternfly/react-core';
+import { InfoCircleIcon } from '@patternfly/react-icons';
+import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router';
+import type { Alert } from '@console/dynamic-plugin-sdk';
+import { useActivePerspective } from '@console/dynamic-plugin-sdk';
+import { sortEvents } from '@console/internal/components/events';
+import { LoadingBox } from '@console/internal/components/utils';
+import { DeploymentConfigModel } from '@console/internal/models';
+import type { K8sResourceKind, EventKind, PodKind } from '@console/internal/module/k8s';
+import { getFiringAlerts } from '@console/shared/src/utils/alert-utils';
+import WorkloadGraphs from './MonitoringMetrics';
+import MonitoringOverviewAlerts from './MonitoringOverviewAlerts';
+import MonitoringOverviewEvents from './MonitoringOverviewEvents';
+import './MonitoringOverview.scss';
+
+type MonitoringOverviewProps = {
+  resource: K8sResourceKind;
+  pods?: PodKind[];
+  resourceEvents?: {
+    data: EventKind[];
+    loaded: boolean;
+    loadError?: Error;
+  };
+  monitoringAlerts: Alert[];
+};
+
+const MonitoringOverview: FC<MonitoringOverviewProps> = (props) => {
+  const { t } = useTranslation();
+  const { resource, pods, resourceEvents, monitoringAlerts } = props;
+  const [perspective] = useActivePerspective();
+  const firingAlerts = getFiringAlerts(monitoringAlerts);
+  const [expanded, setExpanded] = useState([
+    'metrics',
+    ...(firingAlerts.length > 0 ? ['monitoring-alerts'] : []),
+  ]);
+
+  const resourceLink = useMemo(() => {
+    const params = new URLSearchParams({
+      namespace: resource?.metadata?.namespace,
+      type: resource?.kind?.toLowerCase(),
+    });
+
+    if (perspective === 'dev') {
+      params.set('dashboard', 'dashboard-k8s-resources-workloads-namespace');
+      return `/dev-monitoring/ns/${resource?.metadata?.namespace}?${params.toString()}`;
+    }
+
+    return `/monitoring/dashboards/dashboard-k8s-resources-workloads-namespace?${params.toString()}`;
+  }, [resource, perspective]);
+
+  if (
+    !resourceEvents ||
+    !resourceEvents.loaded ||
+    (pods && pods.find((pod) => !props[pod.metadata.uid] || !props[pod.metadata.uid].loaded))
+  ) {
+    return <LoadingBox />;
+  }
+
+  let events = [...resourceEvents.data];
+  if (pods) {
+    pods.forEach((pod) => {
+      const podData = props[pod.metadata.uid];
+      if (podData) {
+        events.push(...podData.data);
+      }
+    });
+  }
+
+  events = sortEvents(events);
+
+  const onToggle = (id: string) => {
+    const index = expanded.indexOf(id);
+    const newExpanded =
+      index >= 0
+        ? [...expanded.slice(0, index), ...expanded.slice(index + 1, expanded.length)]
+        : [...expanded, id];
+    setExpanded(newExpanded);
+  };
+
+  return (
+    <div className="odc-monitoring-overview">
+      <Accordion
+        asDefinitionList={false}
+        className="odc-monitoring-overview__metric-accordion"
+        headingLevel="h5"
+      >
+        {firingAlerts.length > 0 && (
+          <AccordionItem
+            isExpanded={expanded.includes('monitoring-alerts')}
+            id="monitoring-alerts-accordian-item"
+          >
+            <AccordionToggle
+              onClick={() => {
+                onToggle('monitoring-alerts');
+              }}
+              id="monitoring-alerts"
+              className="odc-monitoring-overview__alerts-toggle"
+            >
+              <Split>
+                <SplitItem>{t('devconsole~Alerts')}</SplitItem>
+                <SplitItem isFilled />
+                <SplitItem>
+                  <Badge>{monitoringAlerts.length}</Badge>
+                </SplitItem>
+              </Split>
+            </AccordionToggle>
+            <AccordionContent
+              className="odc-monitoring-overview__alerts-body"
+              id="monitoring-alerts-content"
+            >
+              <MonitoringOverviewAlerts alerts={firingAlerts} />
+            </AccordionContent>
+          </AccordionItem>
+        )}
+
+        <AccordionItem isExpanded={expanded.includes('metrics')} id="metrics-accordian-item">
+          <AccordionToggle
+            onClick={() => {
+              onToggle('metrics');
+            }}
+            id="metrics"
+          >
+            {t('devconsole~Metrics')}
+          </AccordionToggle>
+          <AccordionContent id="metrics-content">
+            {resource.kind === DeploymentConfigModel.kind ? (
+              <EmptyState
+                headingLevel="h2"
+                icon={InfoCircleIcon}
+                titleText={<>{t('devconsole~No metrics found')}</>}
+              >
+                <EmptyStateBody>
+                  {t('devconsole~Deployment Configuration metrics are not yet supported.')}
+                </EmptyStateBody>
+              </EmptyState>
+            ) : (
+              <>
+                <div className="odc-monitoring-overview__view-monitoring-dashboards">
+                  <Link to={resourceLink} data-test="observe-dashboards-link">
+                    {t('devconsole~View dashboards')}
+                  </Link>
+                </div>
+                <WorkloadGraphs resource={resource} />
+              </>
+            )}
+          </AccordionContent>
+        </AccordionItem>
+
+        <AccordionItem isExpanded={expanded.includes('all-events')} id="all-events-accordian-item">
+          <AccordionToggle
+            onClick={() => {
+              onToggle('all-events');
+            }}
+            id="all-events"
+          >
+            {t('devconsole~All events')}
+          </AccordionToggle>
+          <AccordionContent id="all-events-content">
+            <MonitoringOverviewEvents events={events} />
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
+    </div>
+  );
+};
+
+export default MonitoringOverview;

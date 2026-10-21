@@ -1,0 +1,30 @@
+@import '../style/vars';
+
+.co-detail-table {
+  $bracket-height: 48px;
+
+  // override PatternFly DescriptionList grid so that
+  // there can be more than three columns
+  display: flex;
+  flex-wrap: wrap;
+
+  @media (max-width: $screen-xs-max) {
+    flex-direction: column;
+  }
+
+  &__bracket {
+    width: 12px;
+    height: $bracket-height;
+    background: url('../imgs/bracket.svg') center center no-repeat;
+    background-size: 12px $bracket-height;
+    padding: 0 20px;
+  }
+
+  &__breakdown {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: $bracket-height - 1px;
+    text-align: left;
+  }
+}

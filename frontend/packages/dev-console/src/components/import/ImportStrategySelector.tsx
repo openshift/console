@@ -1,0 +1,161 @@
+import type { FC, ReactNode } from 'react';
+import { useCallback } from 'react';
+import { FormGroup, Grid, GridItem, Tooltip } from '@patternfly/react-core';
+import { Tile } from '@patternfly/react-core/deprecated';
+import { CubeIcon, GitAltIcon, LayerGroupIcon, StarIcon } from '@patternfly/react-icons';
+import type { FormikValues } from 'formik';
+import { useFormikContext } from 'formik';
+import { useTranslation } from 'react-i18next';
+import { useAccessReview } from '@console/dynamic-plugin-sdk/src';
+import { GitProvider, ImportStrategy } from '@console/git-service/src';
+import { getActiveNamespace } from '@console/internal/actions/ui';
+import { BuildStrategyType } from '@console/internal/components/utils/build-utils';
+import { FLAG_KNATIVE_SERVING_SERVICE } from '@console/knative-plugin/src/const';
+import { ServiceModel as ksvcModel } from '@console/knative-plugin/src/models';
+import { ServerlessBuildStrategyType } from '@console/knative-plugin/src/types';
+import { ServerlessFunctionIcon } from '@console/knative-plugin/src/utils/icons';
+import { getFieldId } from '@console/shared/src';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
+import { useFormikValidationFix } from '@console/shared/src/hooks/useFormikValidationFix';
+
+import './ImportStrategySelector.scss';
+
+const ImportStrategySelector: FC = () => {
+  const { t } = useTranslation();
+  const {
+    values: {
+      import: { recommendedStrategy, selectedStrategy },
+      build: { strategy },
+      git: { type },
+    },
+    setFieldValue,
+  } = useFormikContext<FormikValues>();
+  const fieldId = getFieldId('import.selectedStrategy', 'importStrategySelect');
+
+  type ItemListType = {
+    name: string;
+    type: ImportStrategy;
+    build: BuildStrategyType | ServerlessBuildStrategyType;
+    priority: number;
+    detectedFiles: string[];
+    icon: ReactNode;
+    isDisabled?: boolean;
+    disabledReason?: ReactNode;
+  };
+
+  const itemList: ItemListType[] = [
+    {
+      name: 'Devfile',
+      type: ImportStrategy.DEVFILE,
+      build: BuildStrategyType.Devfile,
+      priority: 2,
+      detectedFiles: [],
+      icon: <LayerGroupIcon />,
+      isDisabled: type === GitProvider.UNSURE,
+      disabledReason:
+        type === GitProvider.UNSURE
+          ? t('devconsole~Could not get Devfile for an unknown Git type')
+          : null,
+    },
+    {
+      name: 'Dockerfile',
+      type: ImportStrategy.DOCKERFILE,
+      build: BuildStrategyType.Docker,
+      priority: 1,
+      detectedFiles: [],
+      icon: <CubeIcon />,
+    },
+    {
+      name: 'Builder Image',
+      type: ImportStrategy.S2I,
+      build: BuildStrategyType.Source,
+      priority: 0,
+      detectedFiles: [],
+      icon: <GitAltIcon />,
+    },
+  ];
+
+  const [knativeServiceAccess] = useAccessReview({
+    group: ksvcModel.apiGroup,
+    resource: ksvcModel.plural,
+    namespace: getActiveNamespace(),
+    verb: 'create',
+  });
+
+  const canIncludeKnative = useFlag(FLAG_KNATIVE_SERVING_SERVICE) && knativeServiceAccess;
+
+  if (recommendedStrategy?.type === ImportStrategy.SERVERLESS_FUNCTION && canIncludeKnative) {
+    itemList.push({
+      name: 'Serverless Function',
+      type: ImportStrategy.SERVERLESS_FUNCTION,
+      build: ServerlessBuildStrategyType.ServerlessFunction,
+      priority: 3,
+      detectedFiles: [],
+      icon: <ServerlessFunctionIcon />,
+    });
+  }
+
+  const onSelect = useCallback(
+    (item) => {
+      setFieldValue('import.selectedStrategy.name', item.name);
+      setFieldValue('import.selectedStrategy.type', item.type);
+      setFieldValue('import.selectedStrategy.priority', item.priority);
+      setFieldValue('import.selectedStrategy.detectedFiles', item.detectedFiles);
+      setFieldValue('build.strategy', item.build);
+      setFieldValue('import.strategyChanged', false);
+    },
+    [setFieldValue],
+  );
+
+  useFormikValidationFix(strategy);
+
+  return (
+    <FormGroup fieldId={fieldId} label={t('devconsole~Import Strategy')}>
+      <Grid hasGutter>
+        {itemList.map((item) =>
+          item.disabledReason ? (
+            <Tooltip content={item.disabledReason}>
+              <GridItem span={4} key={item.name}>
+                <Tile
+                  className="odc-import-strategy-selector__tile"
+                  data-test={`import-strategy-${item.name}`}
+                  title={item.name}
+                  icon={item.icon}
+                  onClick={() => onSelect(item)}
+                  isSelected={selectedStrategy.type === item.type}
+                  isDisabled={item.isDisabled}
+                >
+                  {recommendedStrategy?.type === item.type && (
+                    <span className="odc-import-strategy-selector__recommended">
+                      <StarIcon />
+                    </span>
+                  )}
+                </Tile>
+              </GridItem>
+            </Tooltip>
+          ) : (
+            <GridItem span={4} key={item.name}>
+              <Tile
+                className="odc-import-strategy-selector__tile"
+                data-test={`import-strategy-${item.name}`}
+                title={item.name}
+                icon={item.icon}
+                onClick={() => onSelect(item)}
+                isSelected={selectedStrategy.type === item.type}
+                isDisabled={item.isDisabled}
+              >
+                {recommendedStrategy?.type === item.type && (
+                  <span className="odc-import-strategy-selector__recommended">
+                    <StarIcon />
+                  </span>
+                )}
+              </Tile>
+            </GridItem>
+          ),
+        )}
+      </Grid>
+    </FormGroup>
+  );
+};
+
+export default ImportStrategySelector;

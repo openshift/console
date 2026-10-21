@@ -1,0 +1,2112 @@
+[
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "operator.knative.dev",
+        "version": "v1alpha1",
+        "kind": "KnativeServing"
+      },
+      "flag": "KNATIVE_SERVING"
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "operator.knative.dev",
+        "version": "v1alpha1",
+        "kind": "KnativeEventing"
+      },
+      "flag": "KNATIVE_EVENTING"
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "operator.knative.dev",
+        "version": "v1beta1",
+        "kind": "KnativeServing"
+      },
+      "flag": "KNATIVE_SERVING"
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "operator.knative.dev",
+        "version": "v1beta1",
+        "kind": "KnativeEventing"
+      },
+      "flag": "KNATIVE_EVENTING"
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "serving.knative.dev",
+        "version": "v1",
+        "kind": "Configuration"
+      },
+      "flag": "KNATIVE_SERVING_CONFIGURATION"
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "serving.knative.dev",
+        "version": "v1",
+        "kind": "Revision"
+      },
+      "flag": "KNATIVE_SERVING_REVISION"
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "serving.knative.dev",
+        "version": "v1",
+        "kind": "Route"
+      },
+      "flag": "KNATIVE_SERVING_ROUTE"
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "serving.knative.dev",
+        "version": "v1",
+        "kind": "Service"
+      },
+      "flag": "KNATIVE_SERVING_SERVICE"
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "eventing.knative.dev",
+        "version": "v1",
+        "kind": "Broker"
+      },
+      "flag": "FLAG_KNATIVE_EVENTING_BROKER"
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "messaging.knative.dev",
+        "version": "v1",
+        "kind": "Channel"
+      },
+      "flag": "FLAG_KNATIVE_EVENTING_CHANNEL"
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "eventing.knative.dev",
+        "version": "v1",
+        "kind": "Trigger"
+      },
+      "flag": "FLAG_KNATIVE_EVENTING_TRIGGER"
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "messaging.knative.dev",
+        "version": "v1",
+        "kind": "Subscription"
+      },
+      "flag": "FLAG_KNATIVE_EVENTING_SUBSCRIPTION"
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "camel.apache.org",
+        "version": "v1alpha1",
+        "kind": "Kamelet"
+      },
+      "flag": "FLAG_CAMEL_KAMELETS"
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "eventing.knative.dev",
+        "version": "v1alpha1",
+        "kind": "KafkaSink"
+      },
+      "flag": "FLAG_KAFKA_SINK"
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "sources.knative.dev",
+        "version": "v1",
+        "kind": "PingSource"
+      },
+      "flag": "FLAG_EVENT_SOURCE_PING"
+    }
+  },
+  {
+    "type": "console.page/resource/list",
+    "properties": {
+      "model": {
+        "group": "serving.knative.dev",
+        "version": "v1",
+        "kind": "Revision"
+      },
+      "component": { "$codeRef": "RevisionsPage" }
+    },
+    "flags": {
+      "required": ["KNATIVE_SERVING", "KNATIVE_SERVING_SERVICE", "KNATIVE_SERVING_REVISION"]
+    }
+  },
+  {
+    "type": "console.page/resource/list",
+    "properties": {
+      "model": {
+        "group": "serving.knative.dev",
+        "version": "v1",
+        "kind": "Service"
+      },
+      "component": { "$codeRef": "ServicesPage" }
+    },
+    "flags": {
+      "required": ["KNATIVE_SERVING", "KNATIVE_SERVING_SERVICE"]
+    }
+  },
+  {
+    "type": "console.page/resource/list",
+    "properties": {
+      "model": {
+        "group": "serving.knative.dev",
+        "version": "v1",
+        "kind": "Route"
+      },
+      "component": { "$codeRef": "RoutesPage" }
+    },
+    "flags": {
+      "required": ["KNATIVE_SERVING", "KNATIVE_SERVING_SERVICE", "KNATIVE_SERVING_ROUTE"]
+    }
+  },
+  {
+    "type": "console.page/resource/details",
+    "properties": {
+      "model": {
+        "group": "serving.knative.dev",
+        "version": "v1",
+        "kind": "Revision"
+      },
+      "component": { "$codeRef": "RevisionDetailsPage" }
+    },
+    "flags": {
+      "required": ["KNATIVE_SERVING", "KNATIVE_SERVING_SERVICE", "KNATIVE_SERVING_REVISION"]
+    }
+  },
+  {
+    "type": "console.page/resource/details",
+    "properties": {
+      "model": {
+        "group": "serving.knative.dev",
+        "version": "v1",
+        "kind": "Route"
+      },
+      "component": { "$codeRef": "RouteDetailsPage" }
+    },
+    "flags": {
+      "required": ["KNATIVE_SERVING", "KNATIVE_SERVING_SERVICE", "KNATIVE_SERVING_ROUTE"]
+    }
+  },
+  {
+    "type": "console.page/resource/details",
+    "properties": {
+      "model": {
+        "group": "serving.knative.dev",
+        "version": "v1",
+        "kind": "Service"
+      },
+      "component": { "$codeRef": "ServiceDetailsPage" }
+    },
+    "flags": {
+      "required": ["KNATIVE_SERVING", "KNATIVE_SERVING_SERVICE"]
+    }
+  },
+  {
+    "type": "console.page/resource/details",
+    "properties": {
+      "model": {
+        "group": "operator.knative.dev",
+        "version": "v1alpha1",
+        "kind": "KnativeServing"
+      },
+      "component": { "$codeRef": "KnativeServingDetailsPage" }
+    },
+    "flags": {
+      "required": ["KNATIVE_SERVING"]
+    }
+  },
+  {
+    "type": "console.page/resource/list",
+    "properties": {
+      "model": {
+        "group": "eventing.knative.dev",
+        "version": "v1",
+        "kind": "Trigger"
+      },
+      "component": { "$codeRef": "TriggerListPage" }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING", "FLAG_KNATIVE_EVENTING_TRIGGER"]
+    }
+  },
+  {
+    "type": "console.page/resource/details",
+    "properties": {
+      "model": {
+        "group": "eventing.knative.dev",
+        "version": "v1",
+        "kind": "Trigger"
+      },
+      "component": { "$codeRef": "TriggerDetailsPage" }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING", "FLAG_KNATIVE_EVENTING_TRIGGER"]
+    }
+  },
+  {
+    "type": "console.page/resource/list",
+    "properties": {
+      "model": {
+        "group": "messaging.knative.dev",
+        "version": "v1",
+        "kind": "Subscription"
+      },
+      "component": { "$codeRef": "SubscriptionListPage" }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING", "FLAG_KNATIVE_EVENTING_SUBSCRIPTION"]
+    }
+  },
+  {
+    "type": "console.page/resource/details",
+    "properties": {
+      "model": {
+        "group": "messaging.knative.dev",
+        "version": "v1",
+        "kind": "Subscription"
+      },
+      "component": { "$codeRef": "SubscriptionDetailsPage" }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING", "FLAG_KNATIVE_EVENTING_SUBSCRIPTION"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": ["/event-source"],
+      "component": {
+        "$codeRef": "namespaceRedirect.NamespaceRedirect"
+      }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": ["/catalog/all-namespaces/eventsource", "/catalog/ns/:ns/eventsource"],
+      "component": {
+        "$codeRef": "EventSourcePage"
+      }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": ["/catalog/ns/:ns/eventsink"],
+      "component": {
+        "$codeRef": "EventSinkPage"
+      }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": ["/channel"],
+      "component": {
+        "$codeRef": "namespaceRedirect.NamespaceRedirect"
+      }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING", "FLAG_KNATIVE_EVENTING_CHANNEL"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": ["/channel/all-namespaces", "/channel/ns/:ns"],
+      "component": {
+        "$codeRef": "EventingChannelPage"
+      }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING", "FLAG_KNATIVE_EVENTING_CHANNEL"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": ["/broker/all-namespaces", "/broker/ns/:ns"],
+      "component": {
+        "$codeRef": "EventingBrokerPage"
+      }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING", "FLAG_KNATIVE_EVENTING_BROKER"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": ["/serving"],
+      "component": {
+        "$codeRef": "namespaceRedirect.NamespaceRedirect"
+      }
+    },
+    "flags": {
+      "required": ["KNATIVE_SERVING"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": ["/functions/all-namespaces", "/functions/ns/:ns"],
+      "component": {
+        "$codeRef": "FunctionsPage"
+      }
+    },
+    "flags": {
+      "required": ["KNATIVE_SERVING"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": ["/functions"],
+      "component": {
+        "$codeRef": "namespaceRedirect.NamespaceRedirect"
+      }
+    },
+    "flags": {
+      "required": ["KNATIVE_SERVING"]
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "functions",
+      "perspective": "dev",
+      "section": "resources",
+      "name": "%knative-plugin~Functions%",
+      "href": "/functions",
+      "namespaced": true,
+      "insertBefore": "builds",
+      "dataAttributes": {
+        "data-quickstart-id": "qs-nav-functions",
+        "data-test-id": "functions-details-header"
+      }
+    },
+    "flags": {
+      "required": ["KNATIVE_SERVING", "KNATIVE_SERVING_SERVICE"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": false,
+      "path": ["/functions/ns/:ns/:name"],
+      "model": {
+        "group": "serving.knative.dev",
+        "version": "v1",
+        "kind": "Service"
+      },
+      "component": { "$codeRef": "FunctionDetailsPage" }
+    },
+    "flags": {
+      "required": ["KNATIVE_SERVING", "KNATIVE_SERVING_SERVICE"]
+    }
+  },
+  {
+    "type": "console.catalog/item-type",
+    "properties": {
+      "type": "EventType",
+      "title": "%knative-plugin~Event Types%",
+      "catalogDescription": "%knative-plugin~​​Event Types available that can be consumed with Serverless Functions or regular Deployments.%",
+      "typeDescription": "%knative-plugin~​​**Event Types** available that can be consumed with Serverless Functions or regular Deployments.%",
+      "filters": [
+        {
+          "label": "%knative-plugin~Provider%",
+          "attribute": "provider"
+        }
+      ]
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
+    }
+  },
+  {
+    "type": "console.catalog/item-provider",
+    "properties": {
+      "catalogId": "dev-catalog",
+      "type": "EventType",
+      "title": "%knative-plugin~Event Types%",
+      "provider": { "$codeRef": "useEventTypeProvider" }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": false,
+      "path": ["/serving/all-namespaces", "/serving/ns/:ns"],
+      "component": {
+        "$codeRef": "ServingListPage"
+      }
+    },
+    "flags": {
+      "required": ["KNATIVE_SERVING"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": ["/eventing"],
+      "component": {
+        "$codeRef": "namespaceRedirect.NamespaceRedirect"
+      }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": false,
+      "path": ["/eventing/all-namespaces", "/eventing/ns/:ns"],
+      "component": {
+        "$codeRef": "EventingListPage"
+      }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": ["/knatify/ns/:ns"],
+      "component": {
+        "$codeRef": "CreateKnatifyPage"
+      }
+    },
+    "flags": {
+      "required": ["KNATIVE_SERVING_SERVICE"]
+    }
+  },
+  {
+    "type": "console.flag/hookProvider",
+    "properties": {
+      "handler": { "$codeRef": "useEventSourceProvider.useKnativeEventingProvider" }
+    }
+  },
+  {
+    "type": "console.flag/hookProvider",
+    "properties": {
+      "handler": { "$codeRef": "useEventSourceProvider.knativeEventingTypeProvider" }
+    }
+  },
+  {
+    "type": "dev-console.add/action",
+    "flags": {
+      "required": ["KNATIVE_EVENTING", "DEVELOPER_CATALOG", "FLAG_KNATIVE_EVENTING_ENABLED"]
+    },
+    "properties": {
+      "id": "knative-event-type",
+      "groupId": "eventing",
+      "href": "/catalog/ns/:namespace?catalogType=EventType",
+      "label": "%knative-plugin~Event Type%",
+      "description": "%knative-plugin~​​Event Types available that can be consumed with Serverless Functions or regular Deployments%",
+      "icon": { "$codeRef": "icons.eventSourceIconSVG" }
+    }
+  },
+  {
+    "type": "dev-console.add/action",
+    "flags": {
+      "required": [
+        "KNATIVE_EVENTING",
+        "DEVELOPER_CATALOG",
+        "KNATIVE_EVENT_SOURCE_CATALOG_TYPE",
+        "FLAG_KNATIVE_EVENTING_ENABLED"
+      ]
+    },
+    "properties": {
+      "id": "knative-event-source",
+      "groupId": "eventing",
+      "href": "/catalog/ns/:namespace?catalogType=EventSource&provider=[\"Red+Hat\"]",
+      "label": "%knative-plugin~Event Source%",
+      "description": "%knative-plugin~Create an Event source to register interest in a class of events from a particular system%",
+      "icon": { "$codeRef": "icons.eventSourceIconSVG" }
+    }
+  },
+  {
+    "type": "dev-console.add/action",
+    "flags": {
+      "required": [
+        "KNATIVE_EVENTING",
+        "DEVELOPER_CATALOG",
+        "KNATIVE_EVENT_SINK_CATALOG_TYPE",
+        "FLAG_KNATIVE_EVENTING_ENABLED"
+      ]
+    },
+    "properties": {
+      "id": "knative-event-sink",
+      "groupId": "eventing",
+      "href": "/catalog/ns/:namespace?catalogType=EventSink",
+      "label": "%knative-plugin~Event Sink%",
+      "description": "%knative-plugin~Create an Event sink to receive incoming events from a particular source%",
+      "icon": { "$codeRef": "icons.eventSinkIconSVG" }
+    }
+  },
+  {
+    "type": "dev-console.add/action",
+    "flags": {
+      "required": ["KNATIVE_SERVING", "KNATIVE_SERVING_SERVICE"]
+    },
+    "properties": {
+      "id": "create-serverless-function",
+      "groupId": "serverless-function",
+      "href": "/serverless-function/ns/:namespace",
+      "label": "%knative-plugin~Import from Git%",
+      "description": "%knative-plugin~Create and deploy stateless, Serverless functions%",
+      "icon": { "$codeRef": "icons.gitIconElement" },
+      "accessReview": [
+        {
+          "group": "serving.knative.dev",
+          "resource": "services",
+          "verb": "create"
+        }
+      ]
+    }
+  },
+  {
+    "type": "dev-console.add/action",
+    "properties": {
+      "id": "create-serverless-function-samples",
+      "groupId": "serverless-function",
+      "href": "/samples/ns/:namespace?sampleType=Serverless function",
+      "label": "%knative-plugin~Samples%",
+      "description": "%knative-plugin~Build from pre-built function sample code%",
+      "icon": { "$codeRef": "icons.samplesIconElement" },
+      "accessReview": [
+        { "group": "build.openshift.io", "resource": "buildconfigs", "verb": "create" },
+        { "group": "image.openshift.io", "resource": "imagestreams", "verb": "create" },
+        { "group": "apps.openshift.io", "resource": "deploymentconfigs", "verb": "create" },
+        { "group": "", "resource": "secrets", "verb": "create" },
+        { "group": "route.openshift.io", "resource": "routes", "verb": "create" },
+        { "group": "", "resource": "services", "verb": "create" },
+        {
+          "group": "serving.knative.dev",
+          "resource": "services",
+          "verb": "create"
+        }
+      ]
+    },
+    "flags": {
+      "required": [
+        "DEVELOPER_CATALOG",
+        "SAMPLE_CATALOG_TYPE",
+        "KNATIVE_SERVING",
+        "KNATIVE_SERVING_SERVICE"
+      ]
+    }
+  },
+  {
+    "type": "dev-console.add/action",
+    "flags": {
+      "required": ["KNATIVE_EVENTING", "FLAG_KNATIVE_EVENTING_BROKER"]
+    },
+    "properties": {
+      "id": "knative-eventing-broker",
+      "groupId": "eventing",
+      "href": "/broker/ns/:namespace",
+      "label": "%knative-plugin~Broker%",
+      "description": "%knative-plugin~Create a Broker to define an event mesh for collecting a pool of events and route those events based on attributes, through triggers%",
+      "icon": { "$codeRef": "icons.channelIconSVG" },
+      "accessReview": [{ "group": "eventing.knative.dev", "resource": "brokers", "verb": "create" }]
+    }
+  },
+  {
+    "type": "dev-console.add/action",
+    "flags": {
+      "required": ["KNATIVE_EVENTING", "FLAG_KNATIVE_EVENTING_CHANNEL"]
+    },
+    "properties": {
+      "id": "knative-eventing-channel",
+      "groupId": "eventing",
+      "href": "/channel/ns/:namespace",
+      "label": "%knative-plugin~Channel%",
+      "description": "%knative-plugin~Create a Knative Channel to create an event forwarding and persistence layer with in-memory and reliable implementations%",
+      "icon": { "$codeRef": "icons.channelIconSVG" },
+      "accessReview": [
+        { "group": "eventing.knative.dev", "resource": "channels", "verb": "create" }
+      ]
+    }
+  },
+  {
+    "type": "console.catalog/item-type",
+    "properties": {
+      "type": "EventSource",
+      "title": "%knative-plugin~Event Sources%",
+      "catalogDescription": "%knative-plugin~Event sources are objects that link to an event producer and an event sink or consumer. Cluster administrators can customize the content made available in the catalog.%",
+      "typeDescription": "%knative-plugin~**Event sources** are objects that link to an event producer and an event sink or consumer.%",
+      "filters": [
+        {
+          "label": "%knative-plugin~Provider%",
+          "attribute": "provider"
+        }
+      ]
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
+    }
+  },
+  {
+    "type": "console.catalog/item-provider",
+    "properties": {
+      "catalogId": "dev-catalog",
+      "type": "EventSource",
+      "title": "%knative-plugin~Event Sources%",
+      "provider": { "$codeRef": "useEventSourceProvider.useEventSourceProvider" }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
+    }
+  },
+  {
+    "type": "console.catalog/item-provider",
+    "properties": {
+      "catalogId": "dev-catalog",
+      "type": "EventSource",
+      "title": "%knative-plugin~Event Sources%",
+      "provider": { "$codeRef": "useKameletsProvider" }
+    },
+    "flags": {
+      "required": ["FLAG_CAMEL_KAMELETS"]
+    }
+  },
+  {
+    "type": "console.catalog/item-type",
+    "properties": {
+      "type": "EventSink",
+      "title": "%knative-plugin~Event Sinks%",
+      "catalogDescription": "%knative-plugin~​​Event sinks are resources that can receive incoming events from other resources. Cluster administrators can customize the content made available in the catalog.%",
+      "typeDescription": "%knative-plugin~​​**Event sinks** are resources that can receive incoming events from other resources.%",
+      "filters": [
+        {
+          "label": "%knative-plugin~Provider%",
+          "attribute": "provider"
+        }
+      ]
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
+    }
+  },
+  {
+    "type": "console.catalog/item-provider",
+    "properties": {
+      "catalogId": "dev-catalog",
+      "type": "EventSink",
+      "title": "%knative-plugin~Event Sinks%",
+      "provider": { "$codeRef": "useKameletsSinkProvider" }
+    },
+    "flags": {
+      "required": ["FLAG_CAMEL_KAMELETS"]
+    }
+  },
+  {
+    "type": "console.catalog/item-provider",
+    "properties": {
+      "catalogId": "dev-catalog",
+      "type": "EventSink",
+      "title": "%knative-plugin~Event Sinks%",
+      "provider": { "$codeRef": "useKafkaSinkProvider" }
+    },
+    "flags": {
+      "required": ["FLAG_KAFKA_SINK"]
+    }
+  },
+  {
+    "type": "console.global-config",
+    "properties": {
+      "id": "knative-serving",
+      "name": "knative-serving",
+      "model": {
+        "group": "operator.knative.dev",
+        "version": "v1beta1",
+        "kind": "KnativeServing"
+      },
+      "namespace": "knative-serving"
+    },
+    "flags": {
+      "required": ["KNATIVE_SERVING", "KNATIVE_SERVING_SERVICE"]
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "serverlessserving",
+      "perspective": "admin",
+      "section": "serverless",
+      "name": "%knative-plugin~Serving%",
+      "href": "/serving",
+      "namespaced": true
+    },
+    "flags": {
+      "required": ["KNATIVE_SERVING_SERVICE", "KNATIVE_SERVING_ROUTE", "KNATIVE_SERVING_REVISION"]
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "serverlesseventing",
+      "perspective": "admin",
+      "section": "serverless",
+      "name": "%knative-plugin~Eventing%",
+      "href": "/eventing",
+      "namespaced": true
+    },
+    "flags": {
+      "required": [
+        "KNATIVE_EVENTING",
+        "FLAG_KNATIVE_EVENTING_CHANNEL",
+        "FLAG_KNATIVE_EVENTING_BROKER"
+      ]
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "serverlessfunctions",
+      "perspective": "admin",
+      "section": "serverless",
+      "name": "%knative-plugin~Functions%",
+      "href": "/functions",
+      "namespaced": true,
+      "insertAfter": "serverlesseventing",
+      "dataAttributes": {
+        "data-test-id": "functions-details-header"
+      }
+    },
+    "flags": {
+      "required": ["KNATIVE_SERVING", "KNATIVE_SERVING_SERVICE"]
+    }
+  },
+  {
+    "type": "console.yaml-template",
+    "properties": {
+      "name": "default",
+      "model": {
+        "group": "serving.knative.dev",
+        "kind": "Service",
+        "version": "v1"
+      },
+      "template": {
+        "$codeRef": "yamlTemplates.defaultYamlTemplate"
+      }
+    },
+    "flags": {
+      "required": ["KNATIVE_SERVING", "KNATIVE_SERVING_SERVICE"]
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "apps",
+        "version": "v1",
+        "kind": "Deployment"
+      },
+      "provider": { "$codeRef": "actions.useMakeServerlessActionProvider" }
+    },
+    "flags": {
+      "required": ["KNATIVE_SERVING_SERVICE"]
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "apps.openshift.io",
+        "version": "v1",
+        "kind": "DeploymentConfig"
+      },
+      "provider": { "$codeRef": "actions.useMakeServerlessActionProvider" }
+    },
+    "flags": {
+      "required": ["KNATIVE_SERVING_SERVICE"]
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "messaging.knative.dev",
+        "version": "v1",
+        "kind": "Subscription"
+      },
+      "provider": { "$codeRef": "actions.useSinkPubSubActionProvider" }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING", "FLAG_KNATIVE_EVENTING_SUBSCRIPTION"]
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "eventing.knative.dev",
+        "version": "v1",
+        "kind": "Trigger"
+      },
+      "provider": { "$codeRef": "actions.useSinkPubSubActionProvider" }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING", "FLAG_KNATIVE_EVENTING_TRIGGER"]
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "eventing.knative.dev",
+        "version": "v1",
+        "kind": "Broker"
+      },
+      "provider": { "$codeRef": "actions.useBrokerActionProvider" }
+    },
+    "flags": {
+      "required": ["FLAG_KNATIVE_EVENTING_BROKER"]
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "messaging.knative.dev",
+        "version": "v1",
+        "kind": "Channel"
+      },
+      "provider": { "$codeRef": "actions.useChannelActionProvider" }
+    },
+    "flags": {
+      "required": ["FLAG_KNATIVE_EVENTING_CHANNEL"]
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "messaging.knative.dev",
+        "version": "v1",
+        "kind": "InMemoryChannel"
+      },
+      "provider": { "$codeRef": "actions.useChannelActionProvider" }
+    },
+    "flags": {
+      "required": ["FLAG_KNATIVE_EVENTING_CHANNEL"]
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "knative-plugin-tab-section-resource-pubsub",
+      "tab": "topology-side-bar-tab-resource",
+      "provider": {
+        "$codeRef": "knativePubsubTabSections.useResourceTabPubSubSectionForTopologySidebar"
+      }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
+    }
+  },
+  {
+    "type": "console.topology/component/factory",
+    "properties": {
+      "getFactory": {
+        "$codeRef": "knativeComponentFactory.getKnativeServingComponentFactory"
+      }
+    },
+    "flags": {
+      "required": ["KNATIVE_SERVING", "KNATIVE_SERVING_SERVICE"]
+    }
+  },
+  {
+    "type": "console.topology/component/factory",
+    "properties": {
+      "getFactory": {
+        "$codeRef": "knativeComponentFactory.getKnativeEventingComponentFactory"
+      }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
+    }
+  },
+  {
+    "type": "console.topology/display/filters",
+    "properties": {
+      "getTopologyFilters": { "$codeRef": "knativeFilters.getTopologyFilters" },
+      "applyDisplayOptions": { "$codeRef": "knativeFilters.applyKnativeDisplayOptions" }
+    },
+    "flags": {
+      "required": ["KNATIVE_SERVING", "KNATIVE_EVENTING"]
+    }
+  },
+  {
+    "type": "console.topology/create/connector",
+    "properties": {
+      "getCreateConnector": { "$codeRef": "createConnectorUtils.getCreateConnector" }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
+    }
+  },
+
+  {
+    "type": "console.topology/decorator/provider",
+    "properties": {
+      "id": "knative-service-route-decorator",
+      "priority": 100,
+      "quadrant": "upperRight",
+      "decorator": { "$codeRef": "getServiceRouteDecorator.getServiceRouteDecorator" }
+    },
+    "flags": {
+      "required": ["KNATIVE_SERVING_SERVICE"]
+    }
+  },
+  {
+    "type": "console.topology/decorator/provider",
+    "properties": {
+      "id": "revision-url-decorator",
+      "priority": 100,
+      "quadrant": "upperRight",
+      "decorator": { "$codeRef": "getRevisionRouteDecorator.getRevisionRouteDecorator" }
+    },
+    "flags": {
+      "required": ["KNATIVE_SERVING_SERVICE", "KNATIVE_SERVING_REVISION"]
+    }
+  },
+  {
+    "type": "console.tab/horizontalNav",
+    "properties": {
+      "model": {
+        "group": "messaging.knative.dev",
+        "version": "v1",
+        "kind": "Channel"
+      },
+      "page": {
+        "name": "%knative-plugin~Subscriptions%",
+        "href": "subscriptions"
+      },
+      "component": { "$codeRef": "ChannelSubscriptionTab" }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
+    }
+  },
+  {
+    "type": "console.tab/horizontalNav",
+    "properties": {
+      "model": {
+        "group": "eventing.knative.dev",
+        "version": "v1",
+        "kind": "Broker"
+      },
+      "page": {
+        "name": "%knative-plugin~Triggers%",
+        "href": "triggers"
+      },
+      "component": { "$codeRef": "BrokerTriggerTab" }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
+    }
+  },
+  {
+    "type": "console.tab/horizontalNav",
+    "properties": {
+      "model": {
+        "group": "messaging.knative.dev",
+        "version": "v1beta1",
+        "kind": "KafkaChannel"
+      },
+      "page": {
+        "name": "%knative-plugin~Subscriptions%",
+        "href": "subscriptions"
+      },
+      "component": { "$codeRef": "ChannelSubscriptionTab" }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
+    }
+  },
+  {
+    "type": "console.tab/horizontalNav",
+    "properties": {
+      "model": {
+        "group": "messaging.knative.dev",
+        "version": "v1",
+        "kind": "InMemoryChannel"
+      },
+      "page": {
+        "name": "%knative-plugin~Subscriptions%",
+        "href": "subscriptions"
+      },
+      "component": { "$codeRef": "ChannelSubscriptionTab" }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
+    }
+  },
+  {
+    "type": "console.action/provider",
+    "properties": {
+      "contextId": "topology-context-actions",
+      "provider": { "$codeRef": "actions.useTopologyActionsProvider" }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
+    }
+  },
+  {
+    "type": "console.action/filter",
+    "properties": {
+      "contextId": "topology-context-actions",
+      "filter": { "$codeRef": "actions.topologyServerlessActionsFilter" }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
+    }
+  },
+  {
+    "type": "console.action/provider",
+    "properties": {
+      "contextId": "topology-actions",
+      "provider": { "$codeRef": "actions.useModifyApplicationActionProvider" }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING", "KNATIVE_SERVING_SERVICE"]
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "topology-tab-section-ksvc-details",
+      "tab": "topology-side-bar-tab-details",
+      "provider": {
+        "$codeRef": "knativeCommonTabSections.useKnativeSidepanelDetailsTab"
+      }
+    },
+    "flags": {
+      "required": ["KNATIVE_SERVING_SERVICE", "KNATIVE_EVENTING"]
+    }
+  },
+  {
+    "type": "console.topology/adapter/pod",
+    "properties": {
+      "adapt": {
+        "$codeRef": "knativeCommonTabSections.getKnativeSidepanelPodsAdapterSection"
+      }
+    },
+    "flags": {
+      "required": ["KNATIVE_SERVING_SERVICE"]
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "topology-tab-section-ksvc-revision",
+      "tab": "topology-side-bar-tab-resource",
+      "insertAfter": "topology-tab-section-pods-overview",
+      "provider": {
+        "$codeRef": "knativeServiceTabSections.useKnativeSidepanelRevisionSection"
+      }
+    },
+    "flags": {
+      "required": ["KNATIVE_SERVING_SERVICE"]
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "topology-tab-section-knative-routes",
+      "tab": "topology-side-bar-tab-resource",
+      "insertAfter": "topology-tab-section-revision-deployment",
+      "insertBefore": "topology-tab-section-builds-overview",
+      "provider": {
+        "$codeRef": "knativeCommonTabSections.useKnativeSidepanelRoutesSection"
+      }
+    },
+    "flags": {
+      "required": ["KNATIVE_SERVING_SERVICE"]
+    }
+  },
+  {
+    "type": "console.topology/adapter/build",
+    "properties": {
+      "adapt": {
+        "$codeRef": "knativeServiceTabSections.getKnativeSidepanelBuildAdapterSection"
+      }
+    },
+    "flags": {
+      "required": ["KNATIVE_SERVING_SERVICE"]
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "topology-tab-section-eventsources",
+      "tab": "topology-side-bar-tab-resource",
+      "insertAfter": "topology-tab-section-builds-overview",
+      "provider": {
+        "$codeRef": "knativeCommonTabSections.useKnativeSidepanelEventSourcesSection"
+      }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "topology-tab-section-ksvc-subscriptions",
+      "tab": "topology-side-bar-tab-resource",
+      "insertAfter": "topology-tab-section-eventsources",
+      "provider": {
+        "$codeRef": "knativeServiceTabSections.useKnativeSidepanelSubscriptionsSection"
+      }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "topology-tab-section-ksvc-triggers",
+      "tab": "topology-side-bar-tab-resource",
+      "insertAfter": "topology-tab-section-ksvc-subscriptions",
+      "provider": {
+        "$codeRef": "knativeServiceTabSections.useKnativeSidepanelTriggersSection"
+      }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "topology-tab-section-ksvc-domain-mappings",
+      "tab": "topology-side-bar-tab-resource",
+      "insertAfter": "topology-tab-section-ksvc-triggers",
+      "provider": {
+        "$codeRef": "knativeServiceTabSections.useKnativeSidepanelDomainMappingsSection"
+      }
+    },
+    "flags": {
+      "required": ["KNATIVE_SERVING_SERVICE"]
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "serving.knative.dev",
+        "version": "v1",
+        "kind": "Service"
+      },
+      "provider": {
+        "$codeRef": "actions.useKnativeServiceActionsProvider"
+      }
+    },
+    "flags": {
+      "required": ["KNATIVE_SERVING_SERVICE"]
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "serving.knative.dev",
+        "version": "v1",
+        "kind": "Revision"
+      },
+      "provider": {
+        "$codeRef": "actions.useCommonActionsProvider"
+      }
+    },
+    "flags": {
+      "required": ["KNATIVE_SERVING_SERVICE"]
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "serving.knative.dev",
+        "version": "v1",
+        "kind": "Route"
+      },
+      "provider": {
+        "$codeRef": "actions.useCommonActionsProvider"
+      }
+    },
+    "flags": {
+      "required": ["KNATIVE_SERVING_SERVICE"]
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "topology-tab-section-revision-deployment",
+      "tab": "topology-side-bar-tab-resource",
+      "insertAfter": "topology-tab-section-pods-overview",
+      "provider": {
+        "$codeRef": "knativeRevisionTabSections.useKnativeSidepanelDeploymentSection"
+      }
+    },
+    "flags": {
+      "required": ["KNATIVE_SERVING_SERVICE"]
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "topology-tab-section-revision-configuration",
+      "tab": "topology-side-bar-tab-resource",
+      "insertAfter": "topology-tab-section-knative-routes",
+      "provider": {
+        "$codeRef": "knativeRevisionTabSections.useKnativeSidepanelConfigurationsSection"
+      }
+    },
+    "flags": {
+      "required": ["KNATIVE_SERVING_SERVICE"]
+    }
+  },
+  {
+    "type": "console.action/provider",
+    "properties": {
+      "contextId": "topology-actions",
+      "provider": { "$codeRef": "actions.useUriActionsProvider" }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
+    }
+  },
+  {
+    "type": "console.action/provider",
+    "properties": {
+      "contextId": "topology-actions",
+      "provider": { "$codeRef": "actions.useKnativeEventSinkActionProvider" }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
+    }
+  },
+  {
+    "type": "console.action/provider",
+    "properties": {
+      "contextId": "topology-actions",
+      "provider": { "$codeRef": "actions.useEventSourcesActionsProviderForTopology" }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
+    }
+  },
+  {
+    "type": "console.action/provider",
+    "properties": {
+      "contextId": "event-source-actions",
+      "provider": { "$codeRef": "actions.useEventSourcesActionsProvider" }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "topology-tab-section-eventsource-target",
+      "tab": "topology-side-bar-tab-resource",
+      "provider": {
+        "$codeRef": "knativeEventsourceTabSections.useKnativeSidepanelSinkSection"
+      }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "topology-tab-section-eventsource-associateddeployment",
+      "tab": "topology-side-bar-tab-resource",
+      "provider": {
+        "$codeRef": "knativeEventsourceTabSections.useKnativeSidepanelSinkAssociatedDeployment"
+      }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "topology-tab-section-eventsource-ownedeventsources",
+      "tab": "topology-side-bar-tab-resource",
+      "provider": {
+        "$codeRef": "knativeEventsourceTabSections.useKnativeSidepanelSinkEventSources"
+      }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
+    }
+  },
+  {
+    "type": "console.topology/details/resource-link",
+    "properties": {
+      "priority": 100,
+      "link": { "$codeRef": "knativeEventsourceTabSections.getKnativeURISinkResourceLink" }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
+    }
+  },
+  {
+    "type": "console.action/provider",
+    "properties": {
+      "contextId": "topology-actions",
+      "provider": { "$codeRef": "actions.useKnativeConnectorActionProvider" }
+    },
+    "flags": {
+      "required": ["KNATIVE_SERVING_SERVICE", "KNATIVE_SERVING_REVISION", "KNATIVE_EVENTING"]
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "topology-tab-section-kn-connector-resource",
+      "tab": "topology-side-bar-tab-resource",
+      "provider": {
+        "$codeRef": "knativeConnectorsTabSections.useKnativeConnectorSidepanelResourceSection"
+      }
+    },
+    "flags": {
+      "required": ["KNATIVE_SERVING_SERVICE", "KNATIVE_SERVING_REVISION", "KNATIVE_EVENTING"]
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "sources.knative.dev"
+      },
+      "color": "#7d1007"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "serving.knative.dev"
+      },
+      "color": "#005f60"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "camel.apache.org"
+      },
+      "color": "#7d1007"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "eventing.knative.dev"
+      },
+      "color": "#7d1007"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "kafka.strimzi.io"
+      },
+      "color": "#7d1007"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "messaging.knative.dev"
+      },
+      "color": "#7d1007"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "serving.knative.dev",
+        "version": "v1",
+        "kind": "Configuration"
+      },
+      "label": "%knative-plugin~Configuration%",
+      "labelPlural": "%knative-plugin~Configurations%",
+      "abbr": "CFG"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "operator.knative.dev",
+        "kind": "KnativeServing"
+      },
+      "color": "#005f60",
+      "label": "%knative-plugin~KnativeServing%",
+      "labelPlural": "%knative-plugin~KnativeServings%",
+      "abbr": "KS"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "operator.knative.dev",
+        "kind": "KnativeEventing"
+      },
+      "color": "#7d1007",
+      "label": "%knative-plugin~KnativeEventing%",
+      "labelPlural": "%knative-plugin~KnativeEventings%",
+      "abbr": "KE"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "serving.knative.dev",
+        "version": "v1",
+        "kind": "Revision"
+      },
+      "label": "%knative-plugin~Revision%",
+      "labelPlural": "%knative-plugin~Revisions%",
+      "abbr": "REV"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "serving.knative.dev",
+        "version": "v1",
+        "kind": "Route"
+      },
+      "label": "%knative-plugin~Route%",
+      "labelPlural": "%knative-plugin~Routes%",
+      "abbr": "RT"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "serving.knative.dev",
+        "version": "v1",
+        "kind": "Service"
+      },
+      "label": "%knative-plugin~Service%",
+      "labelPlural": "%knative-plugin~Services%",
+      "abbr": "KSVC"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "serving.knative.dev",
+        "version": "v1beta1",
+        "kind": "DomainMapping"
+      },
+      "label": "%knative-plugin~DomainMapping%",
+      "labelPlural": "%knative-plugin~DomainMappings%",
+      "abbr": "DM"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "sources.knative.dev",
+        "version": "v1",
+        "kind": "PingSource"
+      },
+      "label": "%knative-plugin~PingSource%",
+      "labelPlural": "%knative-plugin~PingSources%",
+      "abbr": "PS"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "sources.knative.dev",
+        "version": "v1",
+        "kind": "ContainerSource"
+      },
+      "label": "%knative-plugin~ContainerSource%",
+      "labelPlural": "%knative-plugin~ContainerSources%",
+      "abbr": "CS"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "sources.knative.dev",
+        "version": "v1",
+        "kind": "ApiServerSource"
+      },
+      "label": "%knative-plugin~ApiServerSource%",
+      "labelPlural": "%knative-plugin~ApiServerSources%",
+      "abbr": "AS"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "sources.knative.dev",
+        "version": "v1alpha1",
+        "kind": "CamelSource"
+      },
+      "label": "%knative-plugin~CamelSource%",
+      "labelPlural": "%knative-plugin~CamelSources%",
+      "abbr": "CS"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "sources.knative.dev",
+        "version": "v1beta1",
+        "kind": "KafkaSource"
+      },
+      "label": "%knative-plugin~KafkaSource%",
+      "labelPlural": "%knative-plugin~KafkaSources%",
+      "abbr": "KS"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "sources.knative.dev",
+        "version": "v1",
+        "kind": "SinkBinding"
+      },
+      "label": "%knative-plugin~SinkBinding%",
+      "labelPlural": "%knative-plugin~SinkBindings%",
+      "abbr": "SBS"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "messaging.knative.dev",
+        "version": "v1",
+        "kind": "Subscription"
+      },
+      "label": "%knative-plugin~Subscription%",
+      "labelPlural": "%knative-plugin~Subscriptions%",
+      "abbr": "S"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "messaging.knative.dev",
+        "version": "v1",
+        "kind": "InMemoryChannel"
+      },
+      "label": "%knative-plugin~InMemoryChannel%",
+      "labelPlural": "%knative-plugin~InMemoryChannels%",
+      "abbr": "IMC"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "messaging.knative.dev",
+        "version": "v1",
+        "kind": "Channel"
+      },
+      "label": "%knative-plugin~Channel%",
+      "labelPlural": "%knative-plugin~Channels%",
+      "abbr": "C"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "messaging.knative.dev",
+        "version": "v1beta1",
+        "kind": "KafkaChannel"
+      },
+      "label": "%knative-plugin~KafkaChannel%",
+      "labelPlural": "%knative-plugin~KafkaChannels%",
+      "abbr": "KC"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "eventing.knative.dev",
+        "version": "v1",
+        "kind": "Broker"
+      },
+      "label": "%knative-plugin~Broker%",
+      "labelPlural": "%knative-plugin~Brokers%",
+      "abbr": "B"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "eventing.knative.dev",
+        "version": "v1",
+        "kind": "Trigger"
+      },
+      "label": "%knative-plugin~Trigger%",
+      "labelPlural": "%knative-plugin~Triggers%",
+      "abbr": "T"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "camel.apache.org",
+        "version": "v1",
+        "kind": "Integration"
+      },
+      "label": "%knative-plugin~Integration%",
+      "labelPlural": "%knative-plugin~Integrations%",
+      "abbr": "I"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "kafka.strimzi.io",
+        "version": "v1beta2",
+        "kind": "Kafka"
+      },
+      "label": "%knative-plugin~Kafka%",
+      "labelPlural": "%knative-plugin~Kafkas%",
+      "abbr": "K"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "kafka.strimzi.io",
+        "version": "v1beta2",
+        "kind": "KafkaTopic"
+      },
+      "label": "%knative-plugin~KafkaTopic%",
+      "labelPlural": "%knative-plugin~KafkaTopics%",
+      "abbr": "KT"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "camel.apache.org",
+        "version": "v1alpha1",
+        "kind": "KameletBinding"
+      },
+      "label": "%knative-plugin~KameletBinding%",
+      "labelPlural": "%knative-plugin~KameletBindings%",
+      "abbr": "KB"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "camel.apache.org",
+        "version": "v1alpha1",
+        "kind": "Kamelet"
+      },
+      "label": "%knative-plugin~Kamelet%",
+      "labelPlural": "%knative-plugin~Kamelets%",
+      "abbr": "K"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "camel.apache.org",
+        "version": "v1",
+        "kind": "IntegrationPlatform"
+      },
+      "label": "%knative-plugin~IntegrationPlatform%",
+      "labelPlural": "%knative-plugin~IntegrationPlatforms%",
+      "abbr": "IP"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "eventing.knative.dev",
+        "version": "v1alpha1",
+        "kind": "KafkaSink"
+      },
+      "label": "%knative-plugin~KafkaSink%",
+      "labelPlural": "%knative-plugin~KafkaSinks%",
+      "abbr": "KS"
+    }
+  },
+  {
+    "type": "console.context-provider",
+    "properties": {
+      "provider": { "$codeRef": "eventingContext.EventingContextProvider" },
+      "useValueHook": { "$codeRef": "eventingContext.useValuesEventingContext" }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "topology-tab-section-kn-event-sink-details",
+      "tab": "topology-side-bar-tab-details",
+      "provider": {
+        "$codeRef": "knativeCommonTabSections.useKnativeSidePanelEventSinkDetailsTab"
+      }
+    },
+    "flags": {
+      "required": ["KNATIVE_SERVING_SERVICE", "KNATIVE_SERVING_REVISION", "KNATIVE_EVENTING"]
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "topology-tab-section-kn-event-sink-output-target",
+      "tab": "topology-side-bar-tab-resource",
+      "provider": {
+        "$codeRef": "knativeResourceTabSections.useKnativeSidepanelEventSinkSection"
+      }
+    },
+    "flags": {
+      "required": ["KNATIVE_SERVING_SERVICE", "KNATIVE_SERVING_REVISION", "KNATIVE_EVENTING"]
+    }
+  },
+  {
+    "type": "console.topology/adapter/pod",
+    "properties": {
+      "adapt": {
+        "$codeRef": "knativeResourceTabSections.getEventSinkPodsApdapter"
+      }
+    },
+    "flags": {
+      "required": ["KNATIVE_SERVING", "KNATIVE_EVENTING"]
+    }
+  },
+  {
+    "type": "console.topology/data/factory",
+    "properties": {
+      "id": "knative-kafka-sink-topology-data-factory",
+      "priority": "500",
+      "resources": {
+        "kafkasinks": {
+          "model": {
+            "group": "eventing.knative.dev",
+            "version": "v1alpha1",
+            "kind": "KafkaSink"
+          },
+          "opts": { "isList": true, "optional": true, "namespaced": true }
+        }
+      },
+      "workloadKeys": ["kafkasinks"],
+      "getDataModel": {
+        "$codeRef": "dataTransformer.getKafkaSinkKnativeTopologyData"
+      }
+    },
+    "flags": {
+      "required": ["FLAG_KAFKA_SINK"]
+    }
+  },
+  {
+    "type": "console.topology/component/factory",
+    "properties": {
+      "getFactory": {
+        "$codeRef": "knativeComponentFactory.getKafkaSinkComponentFactory"
+      }
+    },
+    "flags": {
+      "required": ["FLAG_KAFKA_SINK"]
+    }
+  },
+  {
+    "type": "console.topology/adapter/pod",
+    "properties": {
+      "adapt": {
+        "$codeRef": "knativeResourceTabSections.getEventSourcePodsApdapter"
+      }
+    },
+    "flags": {
+      "required": ["KNATIVE_SERVING", "KNATIVE_EVENTING"]
+    }
+  },
+  {
+    "type": "console.navigation/section",
+    "properties": {
+      "perspective": "admin",
+      "id": "serverless",
+      "name": "%knative-plugin~Serverless%",
+      "dataAttributes": { "data-quickstart-id": "qs-nav-serverless" },
+      "insertBefore": "networking",
+      "insertAfter": "virtualization"
+    },
+    "flags": {
+      "required": ["KNATIVE_SERVING", "KNATIVE_EVENTING"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": ["/catalog/ns/:ns/subscribe"],
+      "component": {
+        "$codeRef": "SubscribePage"
+      }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
+    }
+  },
+  {
+    "type": "dev-console.detailsPage/breadcrumbs",
+    "properties": {
+      "getModels": {
+        "$codeRef": "EventSourceBreadcrumbs.getEventSourceModelsForBreadcrumbs"
+      },
+      "breadcrumbsProvider": {
+        "$codeRef": "EventSourceBreadcrumbs.useEventSourceDetailPageBreadcrumbs"
+      }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
+    }
+  },
+  {
+    "type": "dev-console.detailsPage/breadcrumbs",
+    "properties": {
+      "getModels": {
+        "$codeRef": "fetchDynamicEventSourcesUtils.getChannelModels"
+      },
+      "breadcrumbsProvider": {
+        "$codeRef": "ChannelBreadcrumbs.useChannelDetailPageBreadcrumbs"
+      }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
+    }
+  },
+  {
+    "type": "dev-console.detailsPage/breadcrumbs",
+    "properties": {
+      "getModels": {
+        "$codeRef": "BrokerBreadcrumbs.getBrokerModel"
+      },
+      "breadcrumbsProvider": {
+        "$codeRef": "BrokerBreadcrumbs.useBrokerDetailPageBreadcrumbs"
+      }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
+    }
+  },
+  {
+    "type": "console.topology/data/factory",
+    "properties": {
+      "id": "knative-serving-topology-model-factory",
+      "priority": 100,
+      "resources": {
+        "revisions": {
+          "model": { "group": "serving.knative.dev", "version": "v1", "kind": "Revision" },
+          "opts": { "isList": true, "optional": true, "namespaced": true }
+        },
+        "configurations": {
+          "model": { "group": "serving.knative.dev", "version": "v1", "kind": "Configuration" },
+          "opts": { "isList": true, "optional": true, "namespaced": true }
+        },
+        "ksroutes": {
+          "model": { "group": "serving.knative.dev", "version": "v1", "kind": "Route" },
+          "opts": { "isList": true, "optional": true, "namespaced": true }
+        },
+        "ksservices": {
+          "model": { "group": "serving.knative.dev", "version": "v1", "kind": "Service" },
+          "opts": { "isList": true, "optional": true, "namespaced": true }
+        },
+        "domainmappings": {
+          "model": { "group": "serving.knative.dev", "version": "v1beta1", "kind": "DomainMapping" },
+          "opts": { "isList": true, "optional": true, "namespaced": true }
+        }
+      },
+      "workloadKeys": ["ksservices"],
+      "getDataModel": {
+        "$codeRef": "dataTransformer.getKnativeServingTopologyDataModel"
+      },
+      "isResourceDepicted": {
+        "$codeRef": "isKnativeResource.isKnativeResource"
+      }
+    },
+    "flags": {
+      "required": [
+        "KNATIVE_SERVING_CONFIGURATION",
+        "KNATIVE_SERVING",
+        "KNATIVE_SERVING_REVISION",
+        "KNATIVE_SERVING_ROUTE",
+        "KNATIVE_SERVING_SERVICE"
+      ]
+    }
+  },
+  {
+    "type": "console.topology/data/factory",
+    "properties": {
+      "id": "knative-eventing-topology-model-factory",
+      "priority": 100,
+      "resources": {
+        "$codeRef": "getKnativeResources.getKnativeEventingResources"
+      },
+      "workloadKeys": ["eventingsubscription"],
+      "getDataModel": {
+        "$codeRef": "dataTransformer.getKnativeEventingTopologyDataModel"
+      },
+      "isResourceDepicted": {
+        "$codeRef": "isKnativeResource.isKnativeResource"
+      }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING", "FLAG_KNATIVE_EVENTING_ENABLED"]
+    }
+  },
+  {
+    "type": "console.topology/data/factory",
+    "properties": {
+      "id": "knative-kamelets-topology-model-factory",
+      "priority": 100,
+      "resources": {
+        "integrations": {
+          "model": { "group": "camel.apache.org", "version": "v1", "kind": "Integration" },
+          "opts": { "isList": true, "optional": true, "namespaced": true }
+        },
+        "kameletbindings": {
+          "model": { "group": "camel.apache.org", "version": "v1alpha1", "kind": "KameletBinding" },
+          "opts": { "isList": true, "optional": true, "namespaced": true }
+        },
+        "domainmappings": {
+          "model": { "group": "serving.knative.dev", "version": "v1beta1", "kind": "DomainMapping" },
+          "opts": { "isList": true, "optional": true, "namespaced": true }
+        },
+        "kamelets": {
+          "model": { "group": "camel.apache.org", "version": "v1alpha1", "kind": "Kamelet" },
+          "opts": { "isList": true, "optional": true, "namespaced": true }
+        }
+      },
+      "workloadKeys": ["kameletbindings"],
+      "getDataModel": {
+        "$codeRef": "dataTransformer.getKnativeKameletsTopologyDataModel"
+      },
+      "isResourceDepicted": {
+        "$codeRef": "isKnativeResource.isKnativeResource"
+      }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING", "FLAG_CAMEL_KAMELETS"]
+    }
+  }
+]

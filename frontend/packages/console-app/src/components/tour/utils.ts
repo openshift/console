@@ -1,0 +1,17 @@
+import type { FlagsObject } from '@console/internal/reducers/features';
+import type { Step } from './type';
+
+/**
+ * filter utils
+ */
+
+export const filterTourBasedonPermissionAndFlag = (steps: Step[], flags: FlagsObject): Step[] =>
+  steps.reduce((acc: Step[], step: Step) => {
+    const { flags: stepFlags, access, selector } = step;
+    if (stepFlags && flags && stepFlags.filter((flag) => !flags[flag]).length > 0) return acc;
+    if (access && !access()) return acc;
+    // if the access and flag both check passes but the element is not present in the dom
+    if (selector && !document.querySelector(selector)) return acc;
+    acc.push(step);
+    return acc;
+  }, [] as Step[]);

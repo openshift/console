@@ -1,0 +1,17 @@
+@import '../../../../../public/style/vars';
+
+.ocs-synced-editor-field {
+  &__editor-toggle {
+    border-bottom: var(--pf-t--global--border--width--divider--default) solid
+      var(--pf-t--global--border--color--default);
+    border-top: var(--pf-t--global--border--width--divider--default) solid
+      var(--pf-t--global--border--color--default);
+    margin-left: calc($pf-v6-global-gutter-x * -1);
+    margin-right: calc($pf-v6-global-gutter-x * -1);
+    padding: var(--pf-t--global--spacer--sm) $pf-v6-global-gutter-x;
+
+    &.margin {
+      margin: var(--pf-t--global--spacer--md) 0;
+    }
+  }
+}

@@ -1,0 +1,65 @@
+@keyframes ocs-spotlight-expand {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    outline-offset: 21px;
+    outline-width: 12px;
+    opacity: 0;
+  }
+}
+
+@keyframes ocs-spotlight-fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes ocs-spotlight-fade-out {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@mixin ocs-spotlight-outline {
+  outline: 4px solid var(--pf-t--global--color--nonstatus--blue--default);
+  outline-offset: 4px;
+}
+
+.ocs-spotlight {
+  pointer-events: none;
+  position: absolute;
+  &__with-backdrop {
+    mix-blend-mode: hard-light;
+  }
+  &__element-highlight-noanimate {
+    border: var(--pf-t--global--border--width--extra-strong) solid var(--pf-t--global--color--nonstatus--blue--default); 
+    z-index: 9999;
+  }
+  &__element-highlight-animate {
+    animation: 0.4s ocs-spotlight-fade-in 0s ease-in-out,
+      5s ocs-spotlight-fade-out 12.8s ease-in-out;
+    animation-fill-mode: forwards;
+    pointer-events: none;
+    position: absolute;
+    opacity: 0;
+    @include ocs-spotlight-outline;
+    &::after {
+      animation-fill-mode: forwards;
+      animation: 1.2s ocs-spotlight-expand 1.6s ease-out;
+      bottom: 0;
+      content: '';
+      left: 0;
+      position: absolute;
+      right: 0;
+      top: 0;
+      @include ocs-spotlight-outline;
+    }
+  }
+}

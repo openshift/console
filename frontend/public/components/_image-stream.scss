@@ -1,0 +1,51 @@
+.co-example-docker-command__popover {
+  width: 600px;
+}
+
+.co-images-stream-tag-timeline {
+  font-size: 15px;
+  margin: $pf-v6-global-gutter-y $pf-v6-global-gutter-x;
+  padding-left: 0;
+  width: auto;
+  li {
+    height: auto;
+    list-style: none;
+    position: relative;
+  }
+}
+
+.co-images-stream-tag-timeline__circle-icon,
+.co-images-stream-tag-timeline__square-icon {
+  color: var(--pf-t--global--border--color--default);
+  left: 8px;
+  position: relative;
+}
+
+.co-images-stream-tag-timeline__info {
+  background-color: var(--pf-t--global--background--color--secondary--default);
+  border-radius: var(--pf-t--global--border--radius--medium);
+  line-height: 30px;
+  margin: 8px 0 24px 40px;
+  padding: 20px;
+  width: 100%;
+  & > div:first-of-type {
+    font-size: var(--pf-t--global--font--size--sm);
+    padding-bottom: 16px;
+  }
+}
+
+.co-images-stream-tag-timeline__item-row {
+  display: flex;
+  margin: 2px 0;
+}
+
+.co-images-stream-tag-timeline__line {
+  border: var(--pf-t--global--border--width--regular) solid
+    var(--pf-t--global--border--color--default);
+  left: 14px;
+  position: relative;
+}
+
+.co-images-stream-tag-timeline__timestamp {
+  margin-left: 35px;
+}

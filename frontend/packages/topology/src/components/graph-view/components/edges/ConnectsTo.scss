@@ -1,0 +1,11 @@
+.pf-topology__edge {
+  &.odc-connects-to {
+    &.odc-m-editable {
+      --edge__arrow--cursor: pointer;
+    }
+    cursor: pointer;
+    &.pf-m-dragging {
+      pointer-events: none;
+    }
+  }
+}

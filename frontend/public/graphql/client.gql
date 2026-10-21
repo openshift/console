@@ -1,0 +1,3 @@
+query URLQuery($url: String!) {
+  fetchURL(url: $url)
+}

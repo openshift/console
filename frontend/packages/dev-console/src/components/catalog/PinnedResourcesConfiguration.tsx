@@ -1,0 +1,344 @@
+import type { FC, ReactElement } from 'react';
+import { useState, useMemo, memo, useEffect } from 'react';
+import { FormHelperText, FormSection, Icon, Tooltip } from '@patternfly/react-core';
+import { DualListSelector } from '@patternfly/react-core/deprecated';
+import * as fuzzy from 'fuzzysearch';
+import type { Map as ImmutableMap } from 'immutable';
+import { Set as ImmutableSet } from 'immutable';
+import { useTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
+import type {
+  DiscoveryResources,
+  ExtensionK8sModel,
+  K8sKind,
+  K8sModel,
+} from '@console/dynamic-plugin-sdk/src/lib-core';
+import { ResourceIcon } from '@console/dynamic-plugin-sdk/src/lib-core';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import {
+  modelFor,
+  referenceForGroupVersionKind,
+  referenceForModel,
+} from '@console/internal/module/k8s';
+import type { RootState } from '@console/internal/redux';
+import { YellowExclamationTriangleIcon } from '@console/shared';
+import type { SaveStatusProps } from '@console/shared/src/components/cluster-configuration';
+import {
+  useDebounceCallback,
+  useConsoleOperatorConfig,
+  LoadError,
+  SaveStatus,
+  patchConsoleOperatorConfig,
+} from '@console/shared/src/components/cluster-configuration';
+import type {
+  Perspective,
+  PerspectivePinnedResource,
+} from '@console/shared/src/hooks/usePerspectives';
+import {
+  PerspectiveVisibilityState,
+  usePerspectives,
+} from '@console/shared/src/hooks/usePerspectives';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
+import './PinnedResourcesConfiguration.scss';
+
+// skip duplicate resources.
+const skipGroups = ImmutableSet([
+  // Prefer rbac.authorization.k8s.io/v1, which has the same resources.
+  'authorization.openshift.io',
+]);
+
+const skipResources = ImmutableSet([
+  // Prefer core/v1
+  'events.k8s.io/v1beta1.Event',
+]);
+
+type PerspectivesConsoleConfig = K8sResourceKind & {
+  spec: {
+    customization?: {
+      perspectives: Perspective[];
+    };
+  };
+};
+
+type DefaultPins = {
+  dev?: ExtensionK8sModel[];
+};
+
+type PinnedResourcesConfigurationProps = {
+  readonly: boolean;
+  groupVersionMap: DiscoveryResources['groupVersionMap'];
+  allK8sModels: ImmutableMap<string, K8sModel>;
+};
+
+const PinnedResourcesConfiguration: FC<PinnedResourcesConfigurationProps> = ({
+  readonly,
+  allK8sModels,
+  groupVersionMap,
+}) => {
+  const { t } = useTranslation();
+  const fireTelemetryEvent = useTelemetry();
+  const perspectiveExtensions = usePerspectives();
+  const [pinnedResources, setPinnedResources] = useState<PerspectivePinnedResource[]>();
+  const [perspectiveData, setPerspectiveData] = useState<Perspective[]>();
+  const [pinnedResourcesConfigured, setPinnedResourcesConfigured] = useState<
+    PerspectivePinnedResource[]
+  >();
+  const defaultPins: DefaultPins = useMemo(
+    () =>
+      perspectiveExtensions.reduce(
+        (acc, e) => ({
+          ...acc,
+          [e.properties.id]: (e.properties.defaultPins || []).map((gvk) => gvk),
+        }),
+        {},
+      ),
+    [perspectiveExtensions],
+  );
+
+  const resources = useMemo(() => {
+    return allK8sModels
+      ?.filter(({ apiGroup, apiVersion, kind, verbs }) => {
+        if (skipGroups.has(apiGroup) || skipResources.has(`${apiGroup}/${apiVersion}.${kind}`)) {
+          return false;
+        }
+
+        // Only show resources that can be listed.
+        if (!verbs?.some((v) => v === 'list')) {
+          return false;
+        }
+
+        // Only show preferred version for resources in the same API group.
+        const preferred = (m: K8sKind) =>
+          groupVersionMap?.[m.apiGroup]?.preferredVersion === m.apiVersion;
+
+        const sameGroupKind = (m: K8sKind) =>
+          m.kind === kind && m.apiGroup === apiGroup && m.apiVersion !== apiVersion;
+
+        return !allK8sModels.find((m) => sameGroupKind(m) && preferred(m));
+      })
+      .toOrderedMap()
+      .sortBy(({ kind, apiGroup }) => `${kind} ${apiGroup}`);
+  }, [allK8sModels, groupVersionMap]);
+
+  // Track duplicate names so we know when to show the group.
+  const kinds = resources.groupBy((m) => m.kind);
+  const isDup = (kind) => kinds.get(kind).size > 1;
+
+  type ItemProps = { title?: string; model?: K8sKind };
+
+  const Item = memo<ItemProps>(({ model }) => (
+    <div style={{ display: 'flex', alignItems: 'center' }}>
+      <span className="co-resource-item">
+        <span className="co-resource-icon--fixed-width">
+          <ResourceIcon kind={referenceForModel(model)} />
+        </span>
+        <span className="co-resource-item__resource-name">
+          <span>
+            {model.labelKey ? t(model.labelKey) : model.kind}
+            {model.badge && model.badge === 'Tech Preview' && (
+              <span className="co-resource-item__tech-dev-preview">{t('public~Tech Preview')}</span>
+            )}
+          </span>
+          {isDup(model.kind) && (
+            <div className="pf-v6-u-font-size-xs pf-v6-u-text-color-subtle co-truncate co-nowrap">
+              {model.apiGroup || 'core'}/{model.apiVersion}
+            </div>
+          )}
+        </span>
+      </span>
+    </div>
+  ));
+
+  const InvalidItem = memo<ItemProps>(({ title }) => (
+    <div style={{ display: 'flex', alignItems: 'center' }}>
+      <span className="co-resource-icon--fixed-width">
+        <Tooltip position="top" content={t('devconsole~Resource not found')}>
+          <Icon size="md">
+            <YellowExclamationTriangleIcon />
+          </Icon>
+        </Tooltip>
+      </span>
+      <span className="co-resource-item__resource-name">
+        <span>{title}</span>
+      </span>
+    </div>
+  ));
+
+  const [consoleConfig, consoleConfigLoaded, consoleConfigError] = useConsoleOperatorConfig<
+    PerspectivesConsoleConfig
+  >();
+
+  const [configuredPerspectives, setConfiguredPerspectives] = useState<Perspective[]>();
+  useEffect(() => {
+    if (consoleConfig && consoleConfigLoaded && !configuredPerspectives) {
+      const perspectiveDetails = consoleConfig?.spec?.customization?.perspectives;
+      const devPerspective = perspectiveDetails?.find((p) => p.id === 'dev');
+      let defaultPinnedResources = [];
+      if (!devPerspective || !devPerspective?.pinnedResources) {
+        if (defaultPins?.dev) {
+          const getModels = defaultPins?.dev.map((groupVersionKind) => {
+            const ref = groupVersionKind?.group
+              ? referenceForGroupVersionKind(groupVersionKind.group)(groupVersionKind.version)(
+                  groupVersionKind.kind,
+                )
+              : groupVersionKind.kind;
+            return modelFor(ref);
+          });
+          defaultPinnedResources = getModels?.map((resource) => {
+            return {
+              group: resource?.apiGroup ? resource?.apiGroup : '',
+              version: resource?.apiVersion,
+              resource: resource?.plural,
+            };
+          });
+        }
+        setPinnedResources(defaultPinnedResources);
+        setPinnedResourcesConfigured(defaultPinnedResources);
+      } else {
+        setPinnedResources(devPerspective.pinnedResources);
+        setPinnedResourcesConfigured(devPerspective.pinnedResources);
+        setConfiguredPerspectives(consoleConfig?.spec?.customization?.perspectives);
+      }
+    }
+  }, [configuredPerspectives, consoleConfig, consoleConfigLoaded, defaultPins]);
+
+  const items = useMemo(() => {
+    return resources
+      .map((model: K8sKind) => {
+        return <Item title={model.labelKey ? t(model.labelKey) : model.kind} model={model} />;
+      })
+      .toArray();
+  }, [resources, t, Item]);
+
+  const availableResources = useMemo<React.ReactElement<ItemProps>[]>(() => {
+    if (!consoleConfigLoaded) {
+      return [];
+    }
+    return items
+      ? items.filter(
+          (item) =>
+            !pinnedResources?.find(
+              (pinnedResource) =>
+                pinnedResource?.resource === item?.props?.model?.plural &&
+                (pinnedResource?.group === item?.props?.model?.apiGroup ||
+                  (!item?.props?.model?.apiGroup && pinnedResource?.group === '')) &&
+                pinnedResource?.version === item?.props?.model?.apiVersion,
+            ),
+        )
+      : [];
+  }, [consoleConfigLoaded, items, pinnedResources]);
+
+  const prePinnedResources = useMemo<React.ReactElement<ItemProps>[]>(() => {
+    if (!consoleConfigLoaded) {
+      return [];
+    }
+    let configuredResources = pinnedResources?.map((pinnedResource) => {
+      const itemForResource = items?.find(
+        (item) =>
+          pinnedResource?.resource === item?.props?.model?.plural &&
+          (pinnedResource?.group === item?.props?.model?.apiGroup ||
+            (!item?.props?.model?.apiGroup && pinnedResource?.group === '')) &&
+          pinnedResource?.version === item?.props?.model?.apiVersion,
+      );
+      return itemForResource || <InvalidItem title={pinnedResource?.resource} />;
+    });
+    configuredResources = configuredResources?.filter((element) => element !== undefined);
+    return configuredResources || [];
+  }, [consoleConfigLoaded, items, pinnedResources, InvalidItem]);
+
+  const [saveStatus, setSaveStatus] = useState<SaveStatusProps>();
+  const save = useDebounceCallback(() => {
+    fireTelemetryEvent('Console cluster configuration changed', {
+      customize: 'Pre-pinned navigation items',
+      pinnedResources,
+    });
+    setSaveStatus({ status: 'in-progress' });
+    const patch: PerspectivesConsoleConfig = {
+      spec: {
+        customization: {
+          perspectives: perspectiveData,
+        },
+      },
+    };
+
+    patchConsoleOperatorConfig(patch)
+      .then(() => {
+        setPinnedResourcesConfigured(pinnedResources);
+        setSaveStatus({ status: 'successful' });
+      })
+      .catch((error) => {
+        setPinnedResources(pinnedResourcesConfigured);
+        setSaveStatus({ status: 'error', error });
+      });
+  }, 2000);
+
+  const onListChange = (
+    _event,
+    newEnabledOptions: ReactElement<ItemProps>[],
+    newDisabledOptions: ReactElement<ItemProps>[],
+  ) => {
+    const validResources = newDisabledOptions.filter((item) => item?.props?.model);
+    const newPinnedResources = validResources?.map((resource) => {
+      return {
+        group: resource?.props?.model?.apiGroup ? resource?.props?.model?.apiGroup : '',
+        version: resource?.props?.model?.apiVersion,
+        resource: resource?.props?.model?.plural,
+      };
+    });
+    setPerspectiveData(() => {
+      const newConfiguredPerspectives = configuredPerspectives ? [...configuredPerspectives] : [];
+      const devPerspective = newConfiguredPerspectives?.find((p) => p.id === 'dev');
+      if (!devPerspective) {
+        newConfiguredPerspectives.push({
+          id: 'dev',
+          visibility: { state: PerspectiveVisibilityState.Enabled },
+          pinnedResources: newPinnedResources,
+        });
+      } else {
+        devPerspective.pinnedResources = newPinnedResources;
+      }
+      return newConfiguredPerspectives;
+    });
+
+    setPinnedResources(newPinnedResources);
+    setSaveStatus({ status: 'pending' });
+    save();
+  };
+
+  const filterOption = (option: ReactElement<ItemProps>, input: string): boolean => {
+    return fuzzy(input?.toLocaleLowerCase(), option?.props?.title.toLocaleLowerCase());
+  };
+
+  return (
+    <FormSection
+      title={t('devconsole~Pre-pinned navigation items')}
+      data-test="pinned-resource form-section"
+    >
+      <FormHelperText>
+        {t(
+          'devconsole~As admin you can change the pinned resources that are shown to users by default. Users can still override this configuration and add or reorder their pinned resources. As soon as a user changes the default settings, new default settings are no longer applied.',
+        )}
+      </FormHelperText>
+      <DualListSelector
+        availableOptionsTitle={t('devconsole~Available Resources')}
+        chosenOptionsTitle={t('devconsole~Pinned Resources')}
+        isSearchable
+        availableOptions={availableResources}
+        chosenOptions={prePinnedResources}
+        onListChange={onListChange}
+        filterOption={filterOption}
+        isDisabled={readonly || !consoleConfigLoaded || !!consoleConfigError}
+      />
+
+      <LoadError error={consoleConfigError} />
+      <SaveStatus {...saveStatus} />
+    </FormSection>
+  );
+};
+
+const mapStateToProps = (state: RootState) => ({
+  groupVersionMap: state.k8s.getIn(['RESOURCES', 'groupToVersionMap']),
+  allK8sModels: state.k8s.getIn(['RESOURCES', 'models']),
+});
+
+export default connect(mapStateToProps)(PinnedResourcesConfiguration);

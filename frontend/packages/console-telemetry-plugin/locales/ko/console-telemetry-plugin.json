@@ -1,0 +1,20 @@
+{
+  "Telemetry": "Telemetry",
+  "Configure telemetry setting": "Telemetry 설정 구성",
+  "Opt-in": "옵트인",
+  "Opt-in to send telemetry events.": "Telemetry 이벤트를 보내려면 옵트인합니다.",
+  "Opt-out": "옵트아웃",
+  "Opt-out to send telemetry events.": "Telemetry 이벤트를 보내려면 옵트아웃합니다.",
+  "Enforce": "적용",
+  "Always send telemetry events.": "항상 Telemetry 이벤트를 보냅니다.",
+  "Disabled": "비활성화됨",
+  "Disable the telemetry in the cluster.": "클러스터에서 Telemetry를 비활성화합니다.",
+  "Select option": "옵션 선택",
+  "Analytics": "분석",
+  "As admin you can decide sending telemetry events to a pre-configured Red Hat proxy that can be forwarded to third-party services for analysis.": "관리자는 분석을 위해 타사 서비스로 전달할 수 있는 사전 구성된 Red Hat 프록시로 Telemetry 이벤트를 보낼 수 있습니다.",
+  "Accept": "동의",
+  "Send telemetry events.": "Telemetry 이벤트를 보냅니다.",
+  "Deny": "거부",
+  "Do not send telemetry events.": "Telemetry 이벤트를 전송하지 마십시오.",
+  "Select a option whether to send telemetry events or not.": "Telemetry 이벤트를 보낼지 여부를 선택합니다."
+}

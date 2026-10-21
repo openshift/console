@@ -1,0 +1,13 @@
+.co-user-preference__form {
+    @media (min-width: 769px) {
+      max-width: 100%;
+    }
+  
+    @media (min-width: 992px) {
+      min-width: 650px;
+    }
+  
+    @media (min-width: 1200px) {
+      max-width: 50%;
+    }
+  }

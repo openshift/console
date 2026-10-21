@@ -1,0 +1,91 @@
+kind: Build
+apiVersion: build.openshift.io/v1
+metadata:
+  annotations:
+    openshift.io/build-config.name: fruits-app-1
+    openshift.io/build.number: '1'
+    openshift.io/build.pod-name: fruits-app-1-1-build
+  name: fruits-app-1-1
+  namespace: aut-form-edit-build-config
+  ownerReferences:
+    - apiVersion: build.openshift.io/v1
+      kind: BuildConfig
+      name: fruits-app-1
+      uid: 69bb984a-7ba8-48e9-b90b-be1dae5aad38
+      controller: true
+  labels:
+    app: fruits-app-1
+    app.kubernetes.io/instance: fruits-app-1
+    openshift.io/build-config.name: fruits-app-1
+    app.kubernetes.io/component: fruits-app-1
+    openshift.io/build.start-policy: Serial
+    buildconfig: fruits-app-1
+    app.openshift.io/runtime: java
+    app.kubernetes.io/name: fruits-app-1
+    app.openshift.io/runtime-version: openjdk-11-el7
+spec:
+  serviceAccount: builder
+  source:
+    type: Binary
+    binary:
+      asFile: fruits-app-1.0.0-SNAPSHOT-runner.jar
+  strategy:
+    type: Source
+    sourceStrategy:
+      from:
+        kind: DockerImage
+        name: >-
+          image-registry.openshift-image-registry.svc:5000/openshift/java@sha256:922ff4e248660350597fc7bd4b896df63169779bb8d21ec00d97a750a1cdfa1f
+      pullSecret:
+        name: builder-dockercfg-jjlfs
+  output:
+    to:
+      kind: ImageStreamTag
+      name: 'fruits-app-1:latest'
+    pushSecret:
+      name: builder-dockercfg-jjlfs
+  resources: {}
+  postCommit: {}
+  nodeSelector: null
+status:
+  output:
+    to:
+      imageDigest: 'sha256:da605b3ac4e0350944ecf39a8d8d8a5472e54a1150c3577d9c390adf9890975d'
+  config:
+    kind: BuildConfig
+    namespace: aut-form-edit-build-config
+    name: fruits-app-1
+  outputDockerImageReference: >-
+    image-registry.openshift-image-registry.svc:5000/aut-form-edit-build-config/fruits-app-1:latest
+  duration: 53000000000
+  stages:
+    - name: FetchInputs
+      durationMilliseconds: 506
+      steps:
+        - name: FetchGitSource
+          durationMilliseconds: 506
+    - name: PullImages
+      durationMilliseconds: 14461
+      steps:
+        - name: PullBaseImage
+          durationMilliseconds: 14461
+    - name: Build
+      durationMilliseconds: 13449
+      steps:
+        - name: DockerBuild
+          durationMilliseconds: 13449
+    - name: PushImage
+      durationMilliseconds: 8848
+      steps:
+        - name: PushImage
+          durationMilliseconds: 8848
+  conditions:
+    - type: New
+      status: 'False'
+    - type: Pending
+      status: 'False'
+    - type: Running
+      status: 'False'
+    - type: Complete
+      status: 'True'
+  phase: Complete

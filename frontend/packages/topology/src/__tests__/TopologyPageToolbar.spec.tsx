@@ -1,0 +1,127 @@
+import { useContext } from 'react';
+import { configure, render, screen } from '@testing-library/react';
+import * as FileUploadContextModule from '@console/app/src/components/file-upload/file-upload-context';
+import * as AddToProjectAccessModule from '@console/dev-console/src/utils/useAddToProjectAccess';
+import * as rbacModule from '@console/internal/components/utils/rbac';
+import { useIsMobile } from '@console/shared/src/hooks/useIsMobile';
+import TopologyPageToolbar from '../components/page/TopologyPageToolbar';
+import { ModelContext } from '../data-transforms/ModelContext';
+import { TopologyViewType } from '../topology-types';
+
+jest.mock('react', () => ({
+  ...jest.requireActual('react'),
+  useContext: jest.fn(),
+}));
+
+jest.mock('@console/shared/src/hooks/useConsoleSelector', () => ({
+  useConsoleSelector: jest.fn(),
+}));
+
+jest.mock('@console/shared/src/hooks/useConsoleDispatch', () => ({
+  useConsoleDispatch: jest.fn(),
+}));
+
+jest.mock('@console/shared/src/hooks/useIsMobile', () => ({
+  useIsMobile: jest.fn(),
+}));
+
+jest.mock('@console/internal/components/utils/rbac', () => ({
+  useAccessReview: jest.fn(),
+}));
+
+jest.mock('@console/dev-console/src/utils/useAddToProjectAccess', () => ({
+  useAddToProjectAccess: jest.fn(),
+}));
+
+jest.mock('@console/app/src/components/file-upload/file-upload-context', () => ({
+  FileUploadContext: { extensions: ['.yaml'] },
+}));
+
+const useAccessReviewMock = rbacModule.useAccessReview as jest.Mock;
+const useIsMobileMock = useIsMobile as jest.Mock;
+const useAddToProjectAccessMock = AddToProjectAccessModule.useAddToProjectAccess as jest.Mock;
+const useContextMock = useContext as jest.Mock;
+
+configure({ testIdAttribute: 'data-test-id' });
+
+describe('TopologyPageToolbar tests', () => {
+  const mockContext = {
+    isEmptyModel: false,
+    namespace: 'test-namespace',
+  };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    useAccessReviewMock.mockReturnValue(true);
+    useIsMobileMock.mockReturnValue(false);
+    useAddToProjectAccessMock.mockReturnValue(['import']);
+    useContextMock.mockImplementation((ctx) => {
+      if (ctx === FileUploadContextModule.FileUploadContext) {
+        return { extensions: ['.yaml'] };
+      }
+      if (ctx === ModelContext) {
+        return mockContext;
+      }
+      return {};
+    });
+  });
+
+  it('should render view shortcuts button on graph view', () => {
+    render(<TopologyPageToolbar viewType={TopologyViewType.graph} onViewChange={jest.fn()} />);
+    expect(screen.getByTestId('topology-view-shortcuts')).toBeInTheDocument();
+  });
+
+  it('should render view shortcuts button on list view', () => {
+    render(<TopologyPageToolbar viewType={TopologyViewType.list} onViewChange={jest.fn()} />);
+    expect(screen.getByTestId('topology-view-shortcuts')).toBeInTheDocument();
+  });
+
+  it('should show the topology icon when in list view (meaning switch to graph)', () => {
+    render(<TopologyPageToolbar viewType={TopologyViewType.list} onViewChange={jest.fn()} />);
+    expect(screen.getByLabelText('Graph view')).toBeInTheDocument();
+  });
+
+  it('should show the list icon when in graph view (meaning switch to list)', () => {
+    render(<TopologyPageToolbar viewType={TopologyViewType.graph} onViewChange={jest.fn()} />);
+    expect(screen.getByLabelText('List view')).toBeInTheDocument();
+  });
+
+  it('should not show toolbar when no namespace is set', () => {
+    useContextMock.mockImplementation((ctx) => {
+      if (ctx === FileUploadContextModule.FileUploadContext) {
+        return { extensions: [] };
+      }
+      if (ctx === ModelContext) {
+        return {
+          isEmptyModel: false,
+          namespace: undefined,
+        };
+      }
+      return {};
+    });
+
+    const { container } = render(
+      <TopologyPageToolbar viewType={TopologyViewType.graph} onViewChange={jest.fn()} />,
+    );
+    expect(container).toBeEmptyDOMElement();
+  });
+
+  it('should disable view switcher when model is empty', () => {
+    useContextMock.mockImplementation((ctx) => {
+      if (ctx === FileUploadContextModule.FileUploadContext) {
+        return { extensions: [] };
+      }
+      if (ctx === ModelContext) {
+        return {
+          isEmptyModel: true,
+          namespace: 'test-namespace',
+        };
+      }
+      return {};
+    });
+
+    render(<TopologyPageToolbar viewType={TopologyViewType.graph} onViewChange={jest.fn()} />);
+    const switcher = screen.getByTestId('topology-switcher-view');
+    expect(switcher).toBeDisabled();
+  });
+});

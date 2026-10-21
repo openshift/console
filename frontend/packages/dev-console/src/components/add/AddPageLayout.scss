@@ -1,0 +1,43 @@
+@import '../../../../../public/style/vars';
+
+.odc-add-page-layout {
+  &__hint-block {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+
+    &__text {
+      flex: auto;
+      margin-right: var(--pf-t--global--spacer--lg);
+      margin-bottom: var(--pf-t--global--spacer--md);
+    }
+
+    &__actions {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+
+      > * {
+        margin-right: var(--pf-t--global--spacer--lg);
+        margin-bottom: var(--pf-t--global--spacer--md);
+      }
+    }
+
+    &__details-switch {
+      &__loading-state {
+        display: flex;
+      }
+      &__text {
+        // Used font-size-base variable instead of --pf-t--global--font--size--sm, which is getting calculated to 13px instead of 14px
+        font-size: $font-size-base;
+        font-weight: normal;
+        align-items: center;
+      }
+    }
+  }
+
+  &__resource-quota-message-block {
+    margin-right: var(--pf-t--global--spacer--xl);
+  }
+}

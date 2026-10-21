@@ -1,0 +1,46 @@
+@import '../../../../../topology/src/components/topology-utils';
+
+.odc-event-source {
+  cursor: pointer;
+
+  .odc-m-drag-active & {
+    pointer-events: none;
+  }
+
+  &__bg {
+    fill: var(--pf-t--global--background--color--primary--default);
+  }
+
+  &.is-filtered &__bg {
+    stroke-width: 2px;
+    stroke: $filtered-stroke-color;
+  }
+  &.pf-m-selected &__bg {
+    stroke-width: 2px;
+    stroke: $selected-stroke-color;
+  }
+
+  &__svg-icon svg {
+    width: 100%;
+    height: 100%;
+    fill: var(--pf-topology__node__label__icon--Color);
+  }
+}
+
+.odc-m-drag-active,
+.odc-m-filter-active {
+  .odc-event-source {
+    opacity: $de-emphasize-opacity;
+    &.pf-m-dragging {
+      opacity: 1;
+    }
+  }
+}
+
+.odc-m-filter-active:not(.odc-m-drag-active) {
+  .odc-event-source {
+    &.is-filtered {
+      opacity: 1;
+    }
+  }
+}

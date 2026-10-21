@@ -1,0 +1,7 @@
+.maintenance-popover-pod-list {
+  &__list-item a {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}

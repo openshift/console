@@ -1,0 +1,17 @@
+apiversion: v1
+kind: verifier-profile
+vendorType: developer-console
+version: v1.0
+checks:
+    - name: v1.0/has-readme
+      type: Mandatory
+    - name: v1.0/is-helm-v3
+      type: Mandatory
+    - name: v1.0/contains-values
+      type: Mandatory
+    - name: v1.0/contains-values-schema
+      type: Mandatory
+    - name: v1.1/has-kubeversion
+      type: Mandatory
+    - name: v1.0/helm-lint
+      type: Mandatory

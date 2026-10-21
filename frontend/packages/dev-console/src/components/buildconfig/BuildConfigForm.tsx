@@ -1,0 +1,128 @@
+import type { FC } from 'react';
+import { useCallback } from 'react';
+import type { FormikProps } from 'formik';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import {
+  FlexForm,
+  FormBody,
+  FormFooter,
+  FormHeader,
+  SyncedEditorField,
+  CodeEditorField,
+} from '@console/shared/src';
+import { downloadYaml } from '@console/shared/src/components/editor/yaml-download-utils';
+import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
+import { safeJSToYAML } from '@console/shared/src/utils/yaml';
+import BuildConfigFormEditor from './BuildConfigFormEditor';
+import { convertBuildConfigToFormData, convertFormDataToYAML } from './form-utils';
+import type { BuildConfigFormikValues } from './form-utils/types';
+import type { BuildConfig } from './types';
+import { BuildConfigModel } from './types';
+
+const BuildConfigForm: FC<
+  FormikProps<BuildConfigFormikValues> & {
+    heading: string;
+    buildConfig: BuildConfig;
+    handleCancel: () => void;
+  }
+> = ({
+  heading,
+  buildConfig: watchedBuildConfig,
+  status,
+  isSubmitting,
+  dirty,
+  handleSubmit,
+  handleCancel,
+  setFieldValue,
+  setStatus,
+  setErrors,
+  errors,
+  values,
+}) => {
+  const { t } = useTranslation();
+  const [activeNamespace] = useActiveNamespace();
+
+  const isNew = !watchedBuildConfig?.metadata?.name;
+  const isStale =
+    !isNew && watchedBuildConfig?.metadata?.resourceVersion !== values.resourceVersion;
+
+  const namespace = watchedBuildConfig?.metadata?.namespace || activeNamespace;
+
+  const formEditor = <BuildConfigFormEditor namespace={namespace} />;
+  const yamlEditor = (
+    <CodeEditorField
+      name="yamlData"
+      model={BuildConfigModel}
+      showSamples={isNew}
+      onSave={handleSubmit}
+    />
+  );
+
+  const LAST_VIEWED_EDITOR_TYPE_USER_PREFERENCE_KEY = 'devconsole.buildConfigForm.editor.lastView';
+
+  const sanitizeToForm = (yamlbuildConfig: BuildConfig) =>
+    convertBuildConfigToFormData(yamlbuildConfig, values).formData;
+
+  const sanitizeToYaml = () => convertFormDataToYAML(values);
+
+  const onReload = useCallback(() => {
+    setStatus({ submitSuccess: '', submitError: '' });
+    setErrors({});
+    if (values.editorType === EditorType.Form) {
+      setFieldValue(
+        'formData',
+        convertBuildConfigToFormData(watchedBuildConfig, values).formData,
+        false,
+      );
+    }
+    setFieldValue('yamlData', safeJSToYAML(watchedBuildConfig, '', { skipInvalid: true }), false);
+    setFieldValue('resourceVersion', watchedBuildConfig?.metadata?.resourceVersion, true);
+    setFieldValue('formReloadCount', values.formReloadCount + 1);
+  }, [setErrors, setFieldValue, setStatus, values, watchedBuildConfig]);
+
+  return (
+    <FlexForm onSubmit={handleSubmit}>
+      <FormBody flexLayout>
+        <FormHeader title={heading} />
+        <SyncedEditorField
+          name="editorType"
+          formContext={{
+            name: 'formData',
+            editor: formEditor,
+            sanitizeTo: sanitizeToForm,
+          }}
+          yamlContext={{
+            name: 'yamlData',
+            editor: yamlEditor,
+            sanitizeTo: sanitizeToYaml,
+          }}
+          lastViewUserPreferenceKey={LAST_VIEWED_EDITOR_TYPE_USER_PREFERENCE_KEY}
+          noMargin
+        />
+      </FormBody>
+      <FormFooter
+        handleReset={isNew ? null : onReload}
+        errorMessage={status?.submitError}
+        successMessage={status?.submitSuccess}
+        showAlert={isStale}
+        infoTitle={t('devconsole~This object has been updated.')}
+        infoMessage={t('devconsole~Click reload to see the new version.')}
+        isSubmitting={isSubmitting}
+        submitLabel={isNew ? t('devconsole~Create') : t('devconsole~Save')}
+        disableSubmit={
+          (values.editorType === EditorType.YAML ? !dirty : !dirty || !_.isEmpty(errors)) ||
+          isSubmitting
+        }
+        handleCancel={handleCancel}
+        handleDownload={
+          values.editorType === EditorType.YAML && (() => downloadYaml(values.yamlData))
+        }
+        sticky
+      />
+    </FlexForm>
+  );
+};
+
+export default BuildConfigForm;

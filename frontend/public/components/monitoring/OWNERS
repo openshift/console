@@ -1,0 +1,15 @@
+reviewers:
+  - jgbernalp
+  - kyoto
+  - spadgett
+  - TheRealJon
+  - zhuje
+  - peteryurkovich
+approvers:
+  - jgbernalp
+  - kyoto
+  - spadgett
+  - zhuje
+  - peteryurkovich
+labels:
+  - component/monitoring

@@ -1,0 +1,10 @@
+.odc-monitoring-dashboard-graph {
+  margin-bottom: var(--pf-t--global--spacer--lg);
+  &:last-of-type {
+    margin-bottom: 0;
+  }
+  .query-browser__wrapper {
+    border: none;
+    padding: var(--pf-t--global--spacer--sm) 0 0;
+  }
+}

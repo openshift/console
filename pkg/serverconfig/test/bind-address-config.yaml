@@ -1,0 +1,4 @@
+apiVersion: console.openshift.io/v1
+kind: ConsoleConfig
+servingInfo:
+  bindAddress: http://localhost:9000

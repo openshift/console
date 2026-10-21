@@ -1,0 +1,12 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: shipwright-operator
+  namespace: openshift-operators
+spec:
+  channel: alpha
+  installPlanApproval: Automatic
+  name: shipwright-operator
+  source: community-operators
+  sourceNamespace: openshift-marketplace
+  startingCSV: shipwright-operator.v0.13.0

@@ -1,0 +1,18 @@
+.odc-topology-context-menu {
+  z-index: 1050;
+  &__kebab-wrapper.pf-v6-c-dropdown__menu-item {
+    --pf-v6-c-dropdown__menu-item--PaddingTop: 0;
+    --pf-v6-c-dropdown__menu-item--PaddingRight: 0;
+    --pf-v6-c-dropdown__menu-item--PaddingBottom: 0;
+    --pf-v6-c-dropdown__menu-item--PaddingLeft: 0;
+  }
+  .pf-v6-c-menu__list-item {
+    min-width: auto; // prevent topology content menu items from truncating: https://github.com/patternfly/react-topology/issues/293
+  }
+}
+
+:root:where(.pf-v6-theme-dark) .pf-v6-c-dropdown__menu-item-icon {
+  img {
+    filter: brightness(1.5) invert(1) hue-rotate(180deg) saturate(4);
+  }
+}

@@ -1,0 +1,18 @@
+@import '../../../../../public/style/mixin/catalog-logo-background';
+
+.odc-catalog-tile {
+  .catalog-tile-pf-icon {
+    @include catalog-logo-background();
+    max-width: 100px;
+    height: 40px;
+  }
+
+  > .catalog-tile-pf-body {
+    display: flex;
+    flex-direction: column;
+
+    > .catalog-tile-pf-description {
+      flex: 1 1 auto;
+    }
+  }
+}

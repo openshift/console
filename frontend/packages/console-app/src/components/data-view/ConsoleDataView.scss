@@ -1,0 +1,7 @@
+// Hide the filter category selector when there's only one filter.
+// We use CSS instead of TypeScript prop changes because PatternFly's
+// DataViewFilters component doesn't expose a prop to hide the category selector.
+// This CSS-only solution avoids forking or patching the upstream component.
+.co-console-data-view-single-filter .pf-v6-c-toolbar__group.pf-m-filter-group > *:first-child {
+  display: none !important;
+}

@@ -1,0 +1,4 @@
+{
+  "Unable to find repository": "저장소를 찾을 수 없습니다.",
+  "Repository path {{path}} does not match expected name {{name}}": "저장소 경로{{path}}은/는 예상 이름 {{name}}와/과 일치하지 않습니다"
+}

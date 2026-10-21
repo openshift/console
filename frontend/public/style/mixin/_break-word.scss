@@ -1,0 +1,12 @@
+// Generic mixin for break-word.
+// DESCRIPTION: Breaks long non-breaking strings within a div or flex container
+// An unbreakable "word" may be broken at an arbitrary point if there are no otherwise-acceptable break points in the line.
+// (1) https://bugzilla.mozilla.org/show_bug.cgi?id=1136818#c2
+// USAGE:
+// - DO choose to use this over `word-break: break-all` if at all possible, since break-all can break normal words in awkward places.
+
+@mixin co-break-word() {
+  min-width: 0; // required by FF and Edge
+  overflow-wrap: break-word; // new name as per the CSS3 spec
+  word-break: break-word; // required by FF and Edge
+}

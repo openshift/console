@@ -1,0 +1,19 @@
+@use '../../../../../public/style/vars';
+
+.co-cloud-shell-tab {
+  &__body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  &__header {
+    align-items: center;
+    display: flex;
+    flex-shrink: 0;
+    min-height: #{vars.$co-button-height};
+  }
+}

@@ -1,0 +1,45 @@
+apiVersion: v1
+entries:
+  ibm-cpq-prod--sample-repo-1:
+    - apiVersion: v2
+      appVersion: 10.0.0.6
+      created: "2020-07-15T16:32:34.607411698+05:30"
+      description: |-
+        IBM Sterling Configure, Price, Quote (CPQ) solution enables you to quickly configure, price, quote and order the right products and services.\n
+        To sell competitively in todayâ€™s multichannel environment, organizations need a way to easily manage product and service configuration and pricing rules that allow prospects, customers, sales staff, call center representatives and Business Partners to quickly find, configure and order the right products and services.\n
+        IBMÂ® Sterling Configure, Price, Quote solution automates every step of the configure, price and quote process to help organizations easily create Web storefronts, offer dynamic catalog and pricing information,  and direct customers and partners to find, configure and order the right products and services.\n
+        This enables you to transform how you sell complex products and services by removing the internal complexity of multi-tiered selling within your organization and with your partners.\n
+
+        Documentation\n
+        Additional information about installation can be found at https://ibm.biz/BdqqUS.
+
+        License\n
+        Sterling Configure Price Quote Software is licensed under https://ibm.biz/Bdqqgd which must be accepted during the install of the Product.
+      digest: 2d93c570ff47b27858901dacafc22fe64d868e9a8ecb4742867396f2912eded8
+      icon: https://raw.githubusercontent.com/IBM/charts/master/logo/ibm-oms-logo.png
+      keywords:
+        - cpq
+        - ifs
+        - sterling
+        - yantra
+        - order
+        - fulfillment
+        - om
+        - amd64
+        - framework
+        - Commercial
+        - RHOCP
+        - All items
+        - Languages
+        - Databases
+        - Middleware
+        - CI/CD
+        - Other
+      kubeVersion: '>=1.20.0-alpha.2'
+      maintainers:
+        - name: IBM
+      name: ibm-cpq-prod
+      urls:
+        - https://redhat-developer.github.com/redhat-helm-charts/charts/ibm-cpq-prod-2.0.0.tgz
+      version: 2.0.0
+generated: "2020-03-30T16:27:13.4275217-05:00"

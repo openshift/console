@@ -1,0 +1,518 @@
+[
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "shipwright.io"
+      },
+      "color": "#7c8fa4"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "shipwright.io",
+        "version": "v1alpha1",
+        "kind": "Build"
+      },
+      "color": "#7c8fa4",
+      "label": "%shipwright-plugin~Build%",
+      "labelPlural": "%shipwright-plugin~Builds%",
+      "abbr": "B"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "shipwright.io",
+        "version": "v1beta1",
+        "kind": "Build"
+      },
+      "color": "#7c8fa4",
+      "label": "%shipwright-plugin~Build%",
+      "labelPlural": "%shipwright-plugin~Builds%",
+      "abbr": "B"
+    }
+  },
+
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "shipwright.io",
+        "version": "v1alpha1",
+        "kind": "BuildRun"
+      },
+      "color": "#7c8fa4",
+      "label": "%shipwright-plugin~BuildRun%",
+      "labelPlural": "%shipwright-plugin~BuildRuns%",
+      "abbr": "BR"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "shipwright.io",
+        "version": "v1beta1",
+        "kind": "BuildRun"
+      },
+      "color": "#7c8fa4",
+      "label": "%shipwright-plugin~BuildRun%",
+      "labelPlural": "%shipwright-plugin~BuildRuns%",
+      "abbr": "BR"
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "shipwright.io",
+        "version": "v1alpha1",
+        "kind": "Build"
+      },
+      "flag": "SHIPWRIGHT_BUILD_V1ALPHA1"
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "shipwright.io",
+        "version": "v1beta1",
+        "kind": "Build"
+      },
+      "flag": "SHIPWRIGHT_BUILD"
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "shipwright.io",
+        "version": "v1alpha1",
+        "kind": "BuildRun"
+      },
+      "flag": "SHIPWRIGHT_BUILDRUN_V1ALPHA1"
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "shipwright.io",
+        "version": "v1beta1",
+        "kind": "BuildRun"
+      },
+      "flag": "SHIPWRIGHT_BUILDRUN"
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "shipwright.io",
+        "version": "v1alpha1",
+        "kind": "BuildStrategy"
+      },
+      "flag": "SHIPWRIGHT_BUILDSTRATEGY_V1ALPHA1"
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "shipwright.io",
+        "version": "v1beta1",
+        "kind": "BuildStrategy"
+      },
+      "flag": "SHIPWRIGHT_BUILDSTRATEGY"
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "shipwright.io",
+        "version": "v1alpha1",
+        "kind": "ClusterBuildStrategy"
+      },
+      "flag": "SHIPWRIGHT_CLUSTERBUILDSTRATEGY_V1ALPHA1"
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "shipwright.io",
+        "version": "v1beta1",
+        "kind": "ClusterBuildStrategy"
+      },
+      "flag": "SHIPWRIGHT_CLUSTERBUILDSTRATEGY"
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "shipwright-tablistpage",
+      "section": "builds",
+      "perspective": "admin",
+      "prefixNamespaced": true,
+      "href": "/shipwright.io",
+      "name": "%shipwright-plugin~Shipwright%"
+    },
+    "flags": {
+      "required": ["SHIPWRIGHT_BUILD"]
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "shipwright-tablistpage-2",
+      "section": "builds",
+      "perspective": "admin",
+      "prefixNamespaced": true,
+      "href": "/shipwright.io",
+      "name": "%shipwright-plugin~Shipwright%"
+    },
+    "flags": {
+      "required": ["SHIPWRIGHT_BUILD_V1ALPHA1"],
+      "disallowed": ["SHIPWRIGHT_BUILD"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": false,
+      "path": ["/k8s/all-namespaces/shipwright.io", "/k8s/ns/:ns/shipwright.io"],
+      "perspective": "admin",
+      "component": {
+        "$codeRef": "pages.ShipwrightTabListPage"
+      }
+    }
+  },
+  {
+    "type": "console.page/resource/list",
+    "properties": {
+      "model": {
+        "group": "shipwright.io",
+        "version": "v1alpha1",
+        "kind": "Build"
+      },
+      "component": { "$codeRef": "pages.BuildListPage" }
+    }
+  },
+  {
+    "type": "console.page/resource/list",
+    "properties": {
+      "model": {
+        "group": "shipwright.io",
+        "version": "v1beta1",
+        "kind": "Build"
+      },
+      "component": { "$codeRef": "pages.BuildListPage" }
+    }
+  },
+  {
+    "type": "console.page/resource/details",
+    "properties": {
+      "model": {
+        "group": "shipwright.io",
+        "version": "v1alpha1",
+        "kind": "Build"
+      },
+      "component": { "$codeRef": "pages.BuildDetailsPage" }
+    }
+  },
+  {
+    "type": "console.page/resource/details",
+    "properties": {
+      "model": {
+        "group": "shipwright.io",
+        "version": "v1beta1",
+        "kind": "Build"
+      },
+      "component": { "$codeRef": "pages.BuildDetailsPage" }
+    }
+  },
+  {
+    "type": "console.page/resource/details",
+    "properties": {
+      "model": {
+        "group": "shipwright.io",
+        "version": "v1alpha1",
+        "kind": "BuildStrategy"
+      },
+      "component": {
+        "$codeRef": "pages.BuildStrategyDetailsPage"
+      }
+    }
+  },
+  {
+    "type": "console.page/resource/details",
+    "properties": {
+      "model": {
+        "group": "shipwright.io",
+        "version": "v1beta1",
+        "kind": "BuildStrategy"
+      },
+      "component": {
+        "$codeRef": "pages.BuildStrategyDetailsPage"
+      }
+    }
+  },
+  {
+    "type": "console.page/resource/details",
+    "properties": {
+      "model": {
+        "group": "shipwright.io",
+        "version": "v1alpha1",
+        "kind": "ClusterBuildStrategy"
+      },
+      "component": {
+        "$codeRef": "pages.ClusterBuildStrategyDetailsPage"
+      }
+    }
+  },
+  {
+    "type": "console.page/resource/details",
+    "properties": {
+      "model": {
+        "group": "shipwright.io",
+        "version": "v1beta1",
+        "kind": "ClusterBuildStrategy"
+      },
+      "component": {
+        "$codeRef": "pages.ClusterBuildStrategyDetailsPage"
+      }
+    }
+  },
+  {
+    "type": "console.page/resource/list",
+    "properties": {
+      "model": {
+        "group": "shipwright.io",
+        "version": "v1alpha1",
+        "kind": "BuildRun"
+      },
+      "component": { "$codeRef": "pages.BuildRunListPage" }
+    },
+    "flags": {
+      "required": ["SHIPWRIGHT_BUILDRUN_V1ALPHA1"],
+      "disallowed": ["SHIPWRIGHT_BUILDRUN"]
+    }
+  },
+  {
+    "type": "console.page/resource/list",
+    "properties": {
+      "model": {
+        "group": "shipwright.io",
+        "version": "v1beta1",
+        "kind": "BuildRun"
+      },
+      "component": { "$codeRef": "pages.BuildRunListPage" }
+    },
+    "flags": {
+      "required": ["SHIPWRIGHT_BUILDRUN"]
+    }
+  },
+  {
+    "type": "console.page/resource/details",
+    "properties": {
+      "model": {
+        "group": "shipwright.io",
+        "version": "v1alpha1",
+        "kind": "BuildRun"
+      },
+      "component": { "$codeRef": "pages.BuildRunDetailsPage" }
+    },
+    "flags": {
+      "required": ["SHIPWRIGHT_BUILDRUN_V1ALPHA1"],
+      "disallowed": ["SHIPWRIGHT_BUILDRUN"]
+    }
+  },
+  {
+    "type": "console.page/resource/details",
+    "properties": {
+      "model": {
+        "group": "shipwright.io",
+        "version": "v1beta1",
+        "kind": "BuildRun"
+      },
+      "component": { "$codeRef": "pages.BuildRunDetailsPage" }
+    },
+    "flags": {
+      "required": ["SHIPWRIGHT_BUILDRUN"]
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "shipwright.io",
+        "version": "v1alpha1",
+        "kind": "Build"
+      },
+      "provider": { "$codeRef": "actions.useBuildActions" }
+    },
+    "flags": {
+      "required": ["SHIPWRIGHT_BUILD_V1ALPHA1"],
+      "disallowed": ["SHIPWRIGHT_BUILDRUN"]
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "shipwright.io",
+        "version": "v1beta1",
+        "kind": "Build"
+      },
+      "provider": { "$codeRef": "actions.useBuildActions" }
+    },
+    "flags": {
+      "required": ["SHIPWRIGHT_BUILDRUN"]
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "shipwright.io",
+        "version": "v1alpha1",
+        "kind": "BuildRun"
+      },
+      "provider": { "$codeRef": "actions.useBuildRunActions" }
+    },
+    "flags": {
+      "required": ["SHIPWRIGHT_BUILDRUN_V1ALPHA1"],
+      "disallowed": ["SHIPWRIGHT_BUILDRUN"]
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "shipwright.io",
+        "version": "v1beta1",
+        "kind": "BuildRun"
+      },
+      "provider": { "$codeRef": "actions.useBuildRunActions" }
+    },
+    "flags": {
+      "required": ["SHIPWRIGHT_BUILDRUN"]
+    }
+  },
+  {
+    "type": "console.topology/decorator/provider",
+    "properties": {
+      "id": "shipwright-buildruns-decorator",
+      "priority": 100,
+      "quadrant": "lowerLeft",
+      "decorator": { "$codeRef": "topology.getShipWrightBuildDecorator" }
+    },
+    "flags": {
+      "required": ["SHIPWRIGHT_BUILDRUN_V1ALPHA1"],
+      "disallowed": ["SHIPWRIGHT_BUILDRUN"]
+    }
+  },
+  {
+    "type": "console.topology/decorator/provider",
+    "properties": {
+      "id": "shipwright-buildruns-decorator",
+      "priority": 100,
+      "quadrant": "lowerLeft",
+      "decorator": { "$codeRef": "topology.getShipWrightBuildDecorator" }
+    },
+    "flags": {
+      "required": ["SHIPWRIGHT_BUILDRUN"]
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "topology-tab-section-shipwright-overview",
+      "tab": "topology-side-bar-tab-resource",
+      "insertAfter": "topology-tab-section-pods-overview",
+      "provider": {
+        "$codeRef": "topology.useBuildSideBarTabSection"
+      }
+    },
+    "flags": {
+      "required": ["SHIPWRIGHT_BUILDRUN_V1ALPHA1"],
+      "disallowed": ["SHIPWRIGHT_BUILDRUN"]
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "topology-tab-section-shipwright-overview",
+      "tab": "topology-side-bar-tab-resource",
+      "insertAfter": "topology-tab-section-pods-overview",
+      "provider": {
+        "$codeRef": "topology.useBuildSideBarTabSection"
+      }
+    },
+    "flags": {
+      "required": ["SHIPWRIGHT_BUILDRUN"]
+    }
+  },
+  {
+    "type": "console.topology/data/factory",
+    "properties": {
+      "id": "shipwright-topology-model-factory",
+      "priority": 800,
+      "resources": {
+        "builds": {
+          "model": { "kind": "Build", "group": "shipwright.io", "version": "v1alpha1" },
+          "opts": { "isList": true, "optional": true, "namespaced": true }
+        },
+        "buildRuns": {
+          "model": { "kind": "BuildRun", "group": "shipwright.io", "version": "v1alpha1" },
+          "opts": { "isList": true, "optional": true, "namespaced": true }
+        }
+      },
+      "getDataModelReconciler": { "$codeRef": "topology.getShipwrightDataModelReconcilor" }
+    },
+    "flags": {
+      "required": ["SHIPWRIGHT_BUILDRUN_V1ALPHA1"],
+      "disallowed": ["SHIPWRIGHT_BUILDRUN"]
+    }
+  },
+  {
+    "type": "console.topology/data/factory",
+    "properties": {
+      "id": "shipwright-topology-model-factory",
+      "priority": 800,
+      "resources": {
+        "builds": {
+          "model": { "kind": "Build", "group": "shipwright.io", "version": "v1beta1" },
+          "opts": { "isList": true, "optional": true, "namespaced": true }
+        },
+        "buildRuns": {
+          "model": { "kind": "BuildRun", "group": "shipwright.io", "version": "v1beta1" },
+          "opts": { "isList": true, "optional": true, "namespaced": true }
+        }
+      },
+      "getDataModelReconciler": { "$codeRef": "topology.getShipwrightDataModelReconcilor" }
+    },
+    "flags": {
+      "required": ["SHIPWRIGHT_BUILDRUN"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": [
+        "/k8s/ns/:ns/shipwright.io~v1beta1~Build/~new/form",
+        "/k8s/ns/:ns/shipwright.io~v1beta1~Build/:name/form"
+      ],
+      "component": {
+        "$codeRef": "pages.BuildFormPage"
+      }
+    }
+  }
+]

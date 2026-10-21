@@ -1,0 +1,38 @@
+.yaml-editor {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  height: 100%;
+  padding: $pf-v6-global-gutter-y $pf-v6-global-gutter-y;
+  position: relative;
+}
+
+.yaml-editor__buttons {
+  padding-top: $pf-v6-global-gutter-y;
+}
+
+// only used in packages and will be orphaned when packages move out
+.yaml-editor__header {
+  border-bottom: var(--pf-t--global--border--width--divider--default) solid
+    var(--pf-t--global--border--color--default);
+  padding: $pf-v6-global-gutter-y $pf-v6-global-gutter-x;
+}
+
+// only used in packages and will be orphaned when packages move out
+.yaml-editor__header-text {
+  margin: 0;
+}
+
+.yaml-editor__link {
+  display: inline-block;
+}
+
+.yaml-editor__links {
+  position: absolute;
+  top: 5px;
+  right: 0;
+  z-index: 1;
+  @media (max-width: $screen-sm-max) {
+    display: none;
+  }
+}

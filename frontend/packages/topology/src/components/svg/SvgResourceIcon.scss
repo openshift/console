@@ -1,0 +1,24 @@
+@import '../../../../../public/style/vars';
+
+.odc-resource-icon {
+  font-size: 80%;
+  fill: $color-container-dark;
+  text {
+    fill: var(--pf-t--color--white) !important;
+  }
+}
+.odc-resource-icon-service {
+  fill: $color-service-dark;
+}
+.odc-resource-icon-deployment,
+.odc-resource-icon-daemonset,
+.odc-resource-icon-deploymentconfig,
+.odc-resource-icon-job {
+  fill: $color-pod-overlord;
+}
+.odc-resource-icon-application {
+  fill: $color-application-dark;
+}
+.odc-resource-icon-pod {
+  fill: $color-pod-dark;
+}

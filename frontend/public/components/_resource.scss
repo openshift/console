@@ -1,0 +1,136 @@
+.co-m-resource-icon {
+  background-color: $color-container-dark;
+  border-radius: 20px;
+  color: var(--pf-t--color--white);
+  display: inline-block;
+  flex-shrink: 0;
+  font-size: $font-size-base;
+  line-height: 16px;
+  margin-right: 4px;
+  min-width: 18px;
+  padding: 1px 4px;
+  text-align: center;
+  white-space: nowrap;
+  &--lg {
+    font-size: ($font-size-base + 3);
+    line-height: 20px;
+    margin-right: 7px;
+    min-width: 24px;
+    padding: 0 7px;
+  }
+}
+
+.co-resource-icon--fixed-width {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  width: 54px;
+}
+
+.co-m-resource-application {
+  background-color: $color-application-dark;
+}
+
+.co-m-resource-clusterrole,
+.co-m-resource-role {
+  background-color: $color-rbac-role-dark;
+}
+
+.co-m-resource-clusterrolebinding,
+.co-m-resource-rolebinding {
+  background-color: $color-rbac-binding-dark;
+}
+
+.co-m-resource-daemonset,
+.co-m-resource-deployment,
+.co-m-resource-deploymentconfig,
+.co-m-resource-job,
+.co-m-resource-petset,
+.co-m-resource-replicaset,
+.co-m-resource-replicationcontroller {
+  background-color: $color-pod-overlord;
+}
+
+.co-m-resource-machine,
+.co-m-resource-machineautoscaler,
+.co-m-resource-machineclass,
+.co-m-resource-machineconfig,
+.co-m-resource-machineconfigpool,
+.co-m-resource-machinedeployment,
+.co-m-resource-machinehealthcheck,
+.co-m-resource-machineset,
+.co-m-resource-node,
+.co-m-resource-policy {
+  background-color: $color-node-dark;
+}
+
+.co-m-resource-alertrule,
+.co-m-resource-configmap {
+  background-color: $color-configmap-dark;
+}
+
+.co-m-resource-alert,
+.co-m-resource-container {
+  background-color: $color-container-dark;
+}
+
+.co-m-resource-pod {
+  background-color: $color-pod-dark;
+}
+
+.co-m-resource-namespace,
+.co-m-resource-project {
+  background-color: $color-namespace-dark;
+}
+
+.co-m-resource-secret {
+  background-color: $color-secret-dark;
+}
+
+.co-m-resource-alertmanager {
+  background-color: $color-alertmanager-dark;
+}
+
+.co-m-resource-service {
+  background-color: $color-service-dark;
+}
+
+.co-m-resource-serviceaccount {
+  background-color: $color-serviceaccount-dark;
+}
+
+.co-m-resource-ingress {
+  background-color: $color-ingress-dark;
+}
+
+.co-resource-item {
+  align-items: baseline;
+  display: flex;
+  min-width: 0; // required so co-break-word works
+  @include co-break-word;
+  &--inline {
+    display: inline-flex;
+    margin: 0 20px 0 0;
+  }
+  &--truncate {
+    white-space: nowrap;
+    .co-resource-item__resource-name {
+      line-height: normal;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+  &__help-text {
+    margin-left: 3px;
+    white-space: nowrap;
+  }
+  &__resource-name {
+    min-width: 0; // required so co-break-word works
+  }
+}
+
+.co-namespace-summary__description {
+  max-height: 15rem;
+  overflow-y: auto;
+  padding-right: var(--pf-t--global--spacer--sm);
+}

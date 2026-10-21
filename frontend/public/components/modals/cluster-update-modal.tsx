@@ -1,0 +1,383 @@
+import * as _ from 'lodash';
+import type { FormEvent, FormEventHandler } from 'react';
+import { useState, useEffect, useCallback, Fragment } from 'react';
+import { useTranslation } from 'react-i18next';
+import {
+  Alert,
+  Button,
+  Content,
+  ContentVariants,
+  Form,
+  FormGroup,
+  Modal,
+  ModalBody,
+  ModalHeader,
+  ModalVariant,
+  Radio,
+} from '@patternfly/react-core';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { DropdownWithSwitch } from '@console/shared/src/components/dropdown';
+
+import { ClusterVersionModel, MachineConfigPoolModel, NodeModel } from '../../models';
+import { FieldLevelHelp } from '../utils/field-level-help';
+import { LinkifyExternal } from '../utils/link';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
+import {
+  ClusterVersionKind,
+  getConditionUpgradeableFalse,
+  getDesiredClusterVersion,
+  getMCPsToPausePromises,
+  getNotRecommendedUpdateCondition,
+  getSortedAvailableUpdates,
+  getSortedNotRecommendedUpdates,
+  isMCPMaster,
+  isMCPPaused,
+  isMinorVersionNewer,
+  k8sPatch,
+  MachineConfigPoolKind,
+  NodeTypeNames,
+  referenceForModel,
+  sortMCPsByCreationTimestamp,
+} from '../../module/k8s';
+import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
+import { ModalComponentProps } from '@console/shared/src/types/modal';
+import {
+  ClusterNotUpgradeableAlert,
+  UpdateBlockedLabel,
+} from '../cluster-settings/cluster-settings';
+import { MachineConfigPoolsSelector } from '../machine-config-pools-selector';
+import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
+
+enum upgradeTypes {
+  Full = 'Full',
+  Partial = 'Partial',
+}
+
+const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
+  const { cancel, close, cv } = props;
+  const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
+  const clusterUpgradeableFalse = !!getConditionUpgradeableFalse(cv);
+  const availableSortedUpdates = getSortedAvailableUpdates(cv);
+  const notRecommendedSortedUpdates = getSortedNotRecommendedUpdates(cv);
+  const currentVersion = getDesiredClusterVersion(cv);
+  const currentMinorVersionPatchUpdate = availableSortedUpdates?.find(
+    (update) => !isMinorVersionNewer(currentVersion, update.version),
+  );
+  const [desiredVersion, setDesiredVersion] = useState(
+    (clusterUpgradeableFalse
+      ? currentMinorVersionPatchUpdate?.version
+      : availableSortedUpdates[0]?.version) || '',
+  );
+  const [machineConfigPools, machineConfigPoolsLoaded] = useK8sWatchResource<
+    MachineConfigPoolKind[]
+  >({
+    isList: true,
+    kind: referenceForModel(MachineConfigPoolModel),
+  });
+  const [error, setError] = useState('');
+  const [machineConfigPoolsToPause, setMachineConfigPoolsToPause] = useState<string[]>([]);
+  const [upgradeType, setUpgradeType] = useState<upgradeTypes>(upgradeTypes.Full);
+  const [includeNotRecommended, setIncludeNotRecommended] = useState(false);
+  const { t } = useTranslation();
+  useEffect(() => {
+    const initialMCPPausedValues = machineConfigPools
+      .filter((mcp) => !isMCPMaster(mcp) && isMCPPaused(mcp))
+      .map((mcp) => mcp.metadata.name);
+    setMachineConfigPoolsToPause(initialMCPPausedValues);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // only run the effect once so changes don't affect user input
+  const onSelectVersion = (event, selection) => {
+    event.preventDefault();
+    setDesiredVersion(selection);
+  };
+  const handleUpgradeTypeChange = (value: typeof upgradeType) => {
+    setUpgradeType(value);
+  };
+  const handleMCPSelectionChange = (event: FormEvent<HTMLInputElement>, checked: boolean) => {
+    const checkedItems = [...machineConfigPoolsToPause];
+    checked
+      ? checkedItems.push(event.currentTarget.id)
+      : _.pull(checkedItems, event.currentTarget.id);
+    setMachineConfigPoolsToPause(checkedItems);
+  };
+  const pauseableMCPs = machineConfigPools
+    .filter((mcp) => !isMCPMaster(mcp))
+    .sort(sortMCPsByCreationTimestamp);
+  const pausedMCPs = pauseableMCPs.filter((mcp) => isMCPPaused(mcp));
+  const desiredRecommendedUpdate = _.find(availableSortedUpdates, { version: desiredVersion });
+  const desiredNotRecommendedUpdate = _.find(notRecommendedSortedUpdates, {
+    release: { version: desiredVersion },
+  });
+  const desiredNotRecommendedUpdateConditions = getNotRecommendedUpdateCondition(
+    desiredNotRecommendedUpdate?.conditions,
+  );
+  const submit: FormEventHandler<HTMLFormElement> = useCallback(
+    (e) => {
+      e.preventDefault();
+      if (!desiredRecommendedUpdate && !desiredNotRecommendedUpdate) {
+        setError(
+          t(
+            'public~Version {{desiredVersion}} not found among the supported updates. Select another version.',
+            { desiredVersion },
+          ),
+        );
+        return;
+      }
+
+      // Clear any previous error message.
+      setError('');
+      let MCPsToPausePromises;
+      let MCPsToResumePromises;
+      if (upgradeType === upgradeTypes.Full) {
+        MCPsToPausePromises = [];
+        MCPsToResumePromises = getMCPsToPausePromises(pausedMCPs, false);
+      } else {
+        const MCPsToPause = pauseableMCPs.filter((mcp) =>
+          machineConfigPoolsToPause.find((m) => m === mcp.metadata.name),
+        );
+        const MCPsToResume = pauseableMCPs.filter((mcp) => !MCPsToPause.includes(mcp));
+        MCPsToPausePromises = getMCPsToPausePromises(MCPsToPause, true);
+        MCPsToResumePromises = getMCPsToPausePromises(MCPsToResume, false);
+      }
+      const patch = [
+        {
+          op: 'add',
+          path: '/spec/desiredUpdate',
+          value: desiredNotRecommendedUpdate
+            ? desiredNotRecommendedUpdate.release
+            : desiredRecommendedUpdate,
+        },
+      ];
+      handlePromise(
+        Promise.all([
+          k8sPatch(ClusterVersionModel, cv, patch),
+          ...MCPsToResumePromises,
+          ...MCPsToPausePromises,
+        ]),
+      )
+        .then(() => close())
+        .catch(() => {});
+    },
+    [
+      desiredRecommendedUpdate,
+      desiredNotRecommendedUpdate,
+      t,
+      desiredVersion,
+      upgradeType,
+      pausedMCPs,
+      pauseableMCPs,
+      machineConfigPoolsToPause,
+      handlePromise,
+      cv,
+      close,
+    ],
+  );
+  const dropdownItem = (version) => {
+    const isDisabled = clusterUpgradeableFalse && isMinorVersionNewer(currentVersion, version);
+    return {
+      isDisabled,
+      key: version,
+      title: isDisabled ? (
+        <>
+          {version} <UpdateBlockedLabel />
+        </>
+      ) : (
+        version
+      ),
+    };
+  };
+  const recommendedOptions = availableSortedUpdates.map(({ version }) => {
+    return dropdownItem(version);
+  });
+  const notRecommendedOptions = notRecommendedSortedUpdates.map(({ release: { version } }) => {
+    return dropdownItem(version);
+  });
+  const options = [
+    {
+      items: recommendedOptions,
+      key: 'recommended',
+      label: t('public~Recommended'),
+    },
+  ];
+  if (includeNotRecommended) {
+    options.unshift({
+      items: notRecommendedOptions,
+      key: 'notRecommended',
+      label: t('public~Have known issues'),
+    });
+  }
+
+  return (
+    <>
+      <ModalHeader
+        title={t('public~Update cluster')}
+        data-test-id="modal-title"
+        labelId="cluster-update-modal-title"
+      />
+      <ModalBody>
+        <Form id="cluster-update-form" onSubmit={submit}>
+          {clusterUpgradeableFalse && <ClusterNotUpgradeableAlert onCancel={cancel} cv={cv} />}
+          <FormGroup label={t('public~Current version')} fieldId="current-version">
+            <p>{currentVersion}</p>
+          </FormGroup>
+          <FormGroup label={t('public~Select new version')} fieldId="version-select">
+            <DropdownWithSwitch
+              isFullWidth
+              onSelect={onSelectVersion}
+              options={options}
+              selected={desiredVersion}
+              switchIsChecked={includeNotRecommended}
+              switchIsDisabled={notRecommendedOptions.length === 0}
+              switchLabel={
+                <>
+                  {t('public~Include versions with known issues')}
+                  <FieldLevelHelp>
+                    {t(
+                      'public~These versions are supported, but include known issues. Review the known issues before updating.',
+                    )}
+                  </FieldLevelHelp>
+                </>
+              }
+              switchLabelIsReversed
+              switchOnChange={(val) => setIncludeNotRecommended(val)}
+              toggleLabel={desiredVersion}
+            />
+            {desiredNotRecommendedUpdate && desiredNotRecommendedUpdateConditions?.message && (
+              <Alert
+                className="pf-v6-u-mt-sm"
+                isInline
+                title={t(
+                  'public~Updating this cluster to {{desiredVersion}} is supported, but includes known issues.  Review the known issues before updating.',
+                  { desiredVersion: desiredNotRecommendedUpdate.release.version },
+                )}
+                variant="info"
+                data-test="update-cluster-modal-not-recommended-alert"
+              >
+                <Content>
+                  <Content component={ContentVariants.p}>
+                    <LinkifyExternal>
+                      {desiredNotRecommendedUpdateConditions.message.split('\n').map((item) => (
+                        <Fragment key={item}>
+                          {item}
+                          <br />
+                        </Fragment>
+                      ))}
+                    </LinkifyExternal>
+                  </Content>
+                </Content>
+              </Alert>
+            )}
+          </FormGroup>
+          <FormGroup
+            label={
+              <>
+                {t('public~Update options')}
+                <FieldLevelHelp>
+                  {t(
+                    'public~Full cluster update allows you to update all your Nodes, but takes longer. Control plane only update allows you to pause worker and custom pool Nodes to accommodate your maintenance schedule.',
+                  )}
+                </FieldLevelHelp>
+              </>
+            }
+            role="radiogroup"
+          >
+            <Radio
+              isChecked={upgradeType === upgradeTypes.Full}
+              name={upgradeTypes.Full}
+              onChange={() => handleUpgradeTypeChange(upgradeTypes.Full)}
+              label={t('public~Full cluster update')}
+              id={upgradeTypes.Full}
+              value={upgradeTypes.Full}
+              description={t(
+                'public~{{master}}, {{worker}}, and custom pool {{resource}} are updated concurrently. This might take longer, so make sure to allocate enough time for maintenance.',
+                {
+                  master: NodeTypeNames.Master,
+                  worker: NodeTypeNames.Worker,
+                  resource: NodeModel.labelPlural,
+                },
+              )}
+              className="pf-v6-u-mb-sm"
+              body={
+                machineConfigPoolsLoaded &&
+                pausedMCPs.length > 0 &&
+                upgradeType === upgradeTypes.Full && (
+                  <Alert
+                    variant="warning"
+                    isInline
+                    isPlain
+                    title={t(
+                      'public~Paused {{worker}} or custom pool {{resource}} updates will be resumed. If you want to update only the control plane, select "Control plane only update" below.',
+                      { worker: NodeTypeNames.Worker, resource: NodeModel.label },
+                    )}
+                    data-test="update-cluster-modal-paused-nodes-warning"
+                  />
+                )
+              }
+              data-test="update-cluster-modal-full-update-radio"
+            />
+            <Radio
+              isChecked={upgradeType === upgradeTypes.Partial}
+              name={upgradeTypes.Partial}
+              onChange={() => handleUpgradeTypeChange(upgradeTypes.Partial)}
+              label={t('public~Control plane only update')}
+              id={upgradeTypes.Partial}
+              value={upgradeTypes.Partial}
+              description={t(
+                'public~Pause {{worker}} or custom pool {{resource}} updates to accommodate your maintenance schedule.',
+                { worker: NodeTypeNames.Worker, resource: NodeModel.label },
+              )}
+              className="pf-v6-u-mb-md"
+              body={
+                upgradeType === upgradeTypes.Partial && (
+                  <MachineConfigPoolsSelector
+                    machineConfigPools={pauseableMCPs}
+                    selected={machineConfigPoolsToPause}
+                    onChange={handleMCPSelectionChange}
+                  />
+                )
+              }
+              data-test="update-cluster-modal-partial-update-radio"
+            />
+          </FormGroup>
+        </Form>
+      </ModalBody>
+      <ModalFooterWithAlerts errorMessage={errorMessage || error}>
+        <Button
+          type="submit"
+          variant="primary"
+          isLoading={inProgress}
+          form="cluster-update-form"
+          data-test="confirm-action"
+          id="confirm-action"
+          isDisabled={
+            !desiredVersion ||
+            (upgradeType === upgradeTypes.Partial && machineConfigPoolsToPause.length === 0)
+          }
+        >
+          {t('public~Update')}
+        </Button>
+        <Button variant="link" onClick={cancel} type="button" data-test-id="modal-cancel-action">
+          {t('public~Cancel')}
+        </Button>
+      </ModalFooterWithAlerts>
+    </>
+  );
+};
+
+export const ClusterUpdateModalOverlay: OverlayComponent<ClusterUpdateModalProps> = (props) => {
+  return (
+    <Modal
+      isOpen
+      onClose={props.closeOverlay}
+      variant={ModalVariant.small}
+      aria-labelledby="cluster-update-modal-title"
+      data-test="update-cluster-modal"
+    >
+      <ClusterUpdateModal {...props} close={props.closeOverlay} cancel={props.closeOverlay} />
+    </Modal>
+  );
+};
+
+type ClusterUpdateModalProps = {
+  cv: ClusterVersionKind;
+} & ModalComponentProps;

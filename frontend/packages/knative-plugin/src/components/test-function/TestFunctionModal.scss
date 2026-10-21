@@ -1,0 +1,58 @@
+//Prevent layout shift when Advanced section is opened
+.pf-v6-c-modal-box__body {
+  scrollbar-gutter: stable;
+  padding-right: var(--pf-t--global--spacer--sm);
+
+  @-moz-document url-prefix() {
+    /* Firefox scrollbar fix */
+    padding-right: var(--pf-t--global--spacer--lg);
+  }
+}
+
+.pf-v6-c-modal-box__header {
+  padding-bottom: var(--pf-t--global--spacer--md);
+}
+
+.kn-test-sf-modal__editor {
+  @media screen and (max-width: 768px) {
+    margin-top: var(--pf-t--global--font--size--4xl);
+    margin-left: var(--pf-t--global--spacer--md);
+    margin-right: var(--pf-t--global--spacer--md);
+  }
+}
+
+.kn-test-sf-modal-request__custom-headers {
+  margin-top: var(--pf-t--global--spacer--xl);
+}
+
+.kn-test-sf-modal-response {
+  &__notification {
+    padding-bottom: var(--pf-t--global--font--size--xl);
+  }
+
+  &__headers {
+    margin-bottom: var(--pf-t--global--font--size--xl);
+  }
+
+  &__loading {
+    margin: 40% 48%;
+  }
+}
+
+.header-section {
+  color: var(--pf-t--global--text--color--regular);
+  border: var(--pf-t--global--border--width--divider--default) solid
+    var(--pf-t--global--border--color--default);
+  padding: var(--pf-t--global--spacer--md);
+}
+
+.header-row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: var(--pf-t--global--spacer--xs);
+}
+
+.header-name {
+  font-weight: bold;
+  margin-right: var(--pf-t--global--spacer--xs);
+}

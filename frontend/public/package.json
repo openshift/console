@@ -1,0 +1,6 @@
+{
+  "name": "@console/internal",
+  "version": "0.0.0-fixed",
+  "description": "Console code to be moved into appropriate packages",
+  "private": true
+}

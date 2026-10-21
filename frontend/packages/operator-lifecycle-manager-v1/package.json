@@ -1,0 +1,16 @@
+{
+  "name": "@console/operator-lifecycle-manager-v1",
+  "version": "0.0.0-fixed",
+  "description": "A management framework for extending Kubernetes with Operators",
+  "private": true,
+  "consolePlugin": {
+    "exposedModules": {
+      "useCatalogItems": "src/hooks/useCatalogItems.ts",
+      "useCatalogCategories": "src/hooks/useCatalogCategories.ts",
+      "useOLMv1FlagProvider": "src/hooks/useOLMv1FlagProvider.ts",
+      "CreateClusterExtension": "src/components/cluster-extension/CreateClusterExtension.tsx",
+      "defaultActionsProvider": "src/actions/providers/default-actions-provider.ts",
+      "installedSoftwarePage": "src/components/installed-software/InstalledSoftwarePage.tsx"
+    }
+  }
+}

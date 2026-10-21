@@ -1,0 +1,359 @@
+@import '~@console/shared/src/styles/skeleton-screen';
+
+$skeleton-detail-bone-height: $skeleton-bone-height-1line;
+$skeleton-detail-bone: linear-gradient($skeleton-color $skeleton-detail-bone-height, transparent 0);
+
+$skeleton-detail-position: 0 35px; // declared out of alpha order to be reused
+
+$skeleton-detail-data-position: $skeleton-detail-position;
+$skeleton-detail-data-size: 200px $skeleton-detail-bone-height;
+
+$skeleton-detail-label: linear-gradient(
+  $skeleton-color ($skeleton-detail-bone-height * 2),
+  transparent 0
+);
+$skeleton-detail-label-position: $skeleton-detail-position;
+$skeleton-detail-label-size: 90% 75px;
+
+$skeleton-detail-name-position: 0 15px;
+$skeleton-detail-name-size: 80px 15px;
+
+$skeleton-detail-resource-position: 30px 35px;
+$skeleton-detail-resource-size: 75%;
+$skeleton-detail-resource-icon: radial-gradient(
+  circle 12px at center,
+  $skeleton-color 100%,
+  transparent 0
+);
+$skeleton-detail-resource-icon-position: $skeleton-detail-position;
+$skeleton-detail-resource-icon-size: $skeleton-detail-bone-height $skeleton-detail-bone-height;
+
+// declared out of alpha order so they can be reused
+$skeleton-overview-tile-height: 71px;
+$skeleton-overview-tile-padding: 24px;
+
+$skeleton-overview-icon-size: 24px;
+$skeleton-overview-icon-position: 15px $skeleton-overview-tile-padding;
+$skeleton-overview-icon-bone: radial-gradient(
+  circle 12px at center,
+  $skeleton-color 100%,
+  transparent 0
+);
+
+$skeleton-overview-meta-height: 24px;
+$skeleton-overview-meta-position: 96% $skeleton-overview-tile-padding;
+$skeleton-overview-meta-bone: linear-gradient(
+  $skeleton-color $skeleton-overview-meta-height,
+  transparent 0
+);
+$skeleton-overview-meta-width: 75px;
+
+$skeleton-overview-tile-bone: linear-gradient(
+  $skeleton-color $skeleton-overview-tile-height,
+  transparent 0
+);
+
+$skeleton-overview-title-height: 24px;
+$skeleton-overview-title-position: 50px $skeleton-overview-tile-padding;
+$skeleton-overview-title-bone: linear-gradient(
+  $skeleton-color $skeleton-overview-title-height,
+  transparent 0
+);
+$skeleton-overview-title-width: 38%;
+
+$skeleton-tile-height: 240px; // height of catalog tiles
+$skeleton-tile-padding: 24px;
+$skeleton-tile-bone: linear-gradient($skeleton-color--300 $skeleton-tile-height, transparent 0);
+
+$skeleton-tile-logo-bone: radial-gradient(
+  circle 20px at center,
+  $skeleton-color 100%,
+  transparent 0
+);
+$skeleton-tile-logo-position: $skeleton-tile-padding $skeleton-tile-padding;
+$skeleton-tile-logo-size: 46px;
+
+$skeleton-tile-title-height: 32px;
+$skeleton-tile-title-position: $skeleton-tile-padding 75px;
+$skeleton-tile-title-width: 142px;
+$skeleton-tile-title-bone: linear-gradient(
+  $skeleton-color $skeleton-tile-title-height,
+  transparent 0
+);
+
+$skeleton-tile-desc-line-height: 14px;
+$skeleton-tile-desc-line-1-width: 168px;
+$skeleton-tile-desc-line-1-position: $skeleton-tile-padding 132px;
+$skeleton-tile-desc-line-2-width: 174px;
+$skeleton-tile-desc-line-2-position: $skeleton-tile-padding 152px;
+$skeleton-tile-desc-line-3-width: 185px;
+$skeleton-tile-desc-line-3-position: $skeleton-tile-padding 172px;
+$skeleton-tile-desc-line-4-width: 125px;
+$skeleton-tile-desc-line-4-position: $skeleton-tile-padding 192px;
+$skeleton-tile-desc-line-bone: linear-gradient(
+  $skeleton-color $skeleton-tile-desc-line-height,
+  transparent 0
+);
+
+@keyframes loading-skeleton {
+  0% {
+    opacity: 0.15;
+  }
+
+  25% {
+    opacity: 0.65;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+.loading-skeleton--catalog {
+  background: var(--pf-t--global--background--color--primary--default);
+  border: 1px solid var(--pf-t--global--border--color--default);
+  border-radius: var(--pf-t--global--border--radius--medium);
+  display: flex;
+  flex: 1;
+  height: 100%;
+  position: relative;
+  padding: $pf-v6-global-gutter-y 0;
+}
+
+.skeleton-catalog--grid {
+  align-content: flex-start;
+  display: flex;
+  flex-wrap: wrap;
+  margin: 75px 0 0 0;
+  padding: 30px 0 0 25px;
+  @media (min-width: $pf-v6-global--breakpoint--md) {
+    padding-left: 45px;
+  }
+  &::before {
+    content: '';
+    background: $skeleton-color;
+    display: block;
+    height: 40px;
+    position: absolute;
+    top: 52px;
+    width: 150px;
+  }
+}
+
+.skeleton-catalog--list {
+  display: none;
+  flex: 0 0 230px;
+
+  @media (min-width: $pf-v6-global--breakpoint--md) {
+    display: block;
+  }
+}
+
+.skeleton-catalog--list {
+  &::after {
+    background-image: linear-gradient($skeleton-color 18px, transparent 0);
+    background-size: 100% 30px;
+    content: '';
+    display: block;
+    height: 390px;
+    left: 15px;
+    position: absolute;
+    top: 20px;
+    width: 220px;
+  }
+}
+
+.skeleton-catalog--tile {
+  height: $skeleton-tile-height;
+  margin: 0 25px 25px 0;
+  width: $co-m-catalog-tile-width;
+  &:empty::after {
+    animation: $skeleton-animation;
+    border-radius: var(--pf-t--global--border--radius--medium);
+    content: '';
+    display: block;
+    height: 100%;
+    opacity: 0;
+    width: 100%;
+
+    background-image: $skeleton-tile-title-bone, $skeleton-tile-desc-line-bone,
+      $skeleton-tile-desc-line-bone, $skeleton-tile-desc-line-bone, $skeleton-tile-desc-line-bone,
+      $skeleton-tile-logo-bone, $skeleton-tile-bone;
+
+    background-position: $skeleton-tile-title-position, $skeleton-tile-desc-line-1-position,
+      $skeleton-tile-desc-line-2-position, $skeleton-tile-desc-line-3-position,
+      $skeleton-tile-desc-line-4-position, $skeleton-tile-logo-position, 0 0;
+
+    background-repeat: no-repeat;
+
+    background-size: $skeleton-tile-title-width $skeleton-tile-title-height,
+      $skeleton-tile-desc-line-1-width $skeleton-tile-desc-line-height,
+      $skeleton-tile-desc-line-2-width $skeleton-tile-desc-line-height,
+      $skeleton-tile-desc-line-3-width $skeleton-tile-desc-line-height,
+      $skeleton-tile-desc-line-4-width $skeleton-tile-desc-line-height,
+      $skeleton-tile-logo-size $skeleton-tile-logo-size, 100% 100%;
+  }
+}
+
+.skeleton-detail-view {
+  padding: $pf-v6-global-gutter-y $pf-v6-global-gutter-x;
+  height: 100%;
+  width: 100%;
+}
+
+.skeleton-detail-view--column {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  margin: 10px 0;
+  min-width: 311px;
+  width: 50%;
+}
+
+.skeleton-detail-view--grid {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.skeleton-detail-view--head::after {
+  animation: $skeleton-animation;
+  background: $skeleton-color;
+  content: '';
+  display: block;
+  height: 30px;
+  opacity: 0;
+  width: 230px;
+}
+
+.skeleton-detail-view--tile {
+  animation: $skeleton-animation;
+  height: 75px;
+  opacity: 0;
+  width: 95%;
+  &::after {
+    background-repeat: no-repeat;
+    content: '';
+    display: block;
+    height: 100%;
+    width: 100%;
+  }
+  &.skeleton-detail-view--tile-labels {
+    height: 100px;
+  }
+}
+
+.skeleton-detail-view--tile.skeleton-detail-view--tile-plain::after {
+  background-image: $skeleton-detail-bone, $skeleton-detail-bone;
+
+  background-size: $skeleton-detail-name-size, $skeleton-detail-data-size;
+
+  background-position: $skeleton-detail-name-position, $skeleton-detail-data-position;
+}
+
+.skeleton-detail-view--tile.skeleton-detail-view--tile-resource::after {
+  background-image: $skeleton-detail-bone, $skeleton-detail-bone, $skeleton-detail-resource-icon;
+
+  background-position: $skeleton-detail-name-position, $skeleton-detail-resource-position,
+    $skeleton-detail-resource-icon-position;
+
+  background-size: $skeleton-detail-name-size, $skeleton-detail-resource-size,
+    $skeleton-detail-resource-icon-size;
+}
+
+.skeleton-detail-view--tile.skeleton-detail-view--tile-labels::after {
+  background-image: $skeleton-detail-bone, $skeleton-detail-label;
+
+  background-position: $skeleton-detail-name-position, $skeleton-detail-label-position;
+
+  background-size: $skeleton-detail-name-size, $skeleton-detail-label-size;
+}
+
+.skeleton-overview {
+  align-content: flex-start;
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 40px;
+  position: relative;
+}
+
+.skeleton-overview--head {
+  margin: 4px 0 10px;
+  width: 100%;
+  &::after {
+    animation: $skeleton-animation;
+    background: $skeleton-color;
+    content: '';
+    display: block;
+    height: $skeleton-overview-title-height;
+    opacity: 0;
+    top: -30px;
+    width: 150px;
+  }
+}
+
+.skeleton-overview--tile {
+  height: $skeleton-overview-tile-height;
+  margin: 0 0 10px 0;
+  width: 100%;
+  &::after {
+    animation: $skeleton-animation;
+    content: '';
+    display: block;
+    height: 100%;
+    opacity: 0;
+    width: 100%;
+
+    background-image: $skeleton-overview-title-bone, $skeleton-overview-meta-bone,
+      $skeleton-overview-icon-bone, $skeleton-overview-tile-bone;
+
+    background-position: $skeleton-overview-title-position, $skeleton-overview-meta-position,
+      $skeleton-overview-icon-position, 0 0;
+
+    background-repeat: no-repeat;
+
+    background-size: $skeleton-overview-title-width $skeleton-overview-title-height,
+      $skeleton-overview-meta-width $skeleton-overview-meta-height,
+      $skeleton-overview-icon-size $skeleton-overview-icon-size, 100% 100%;
+  }
+}
+
+.loading-skeleton--table {
+  &::after,
+  &::before {
+    animation: $skeleton-animation;
+    content: '';
+    display: block;
+    opacity: 0;
+  }
+  // table rows
+  &::after {
+    background-image: linear-gradient(
+        var(--pf-t--global--border--color--default) 1px,
+        transparent 0px
+      ),
+      linear-gradient($skeleton-color 26px, transparent 26px);
+    background-size: 100% 46px, 50% 46px;
+    background-position: 50px 0%, 0px 10px;
+    min-height: 320px;
+  }
+  // table headings
+  &::before {
+    background-image: linear-gradient(
+      to right,
+      $skeleton-color,
+      $skeleton-color 75%,
+      transparent 75%,
+      transparent 25%
+    );
+    background-position: 0 0;
+    background-repeat: repeat-x;
+    background-size: 57% 40px;
+    height: 53px;
+    @media (min-width: $screen-sm-min) {
+      background-size: 21% 40px;
+    }
+    @media (min-width: $screen-sm-min) and (max-width: $screen-sm-max) {
+      background-size: 37% 40px;
+    }
+  }
+}

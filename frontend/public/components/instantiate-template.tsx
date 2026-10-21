@@ -1,0 +1,453 @@
+import type { FC, ReactEventHandler, FormEvent } from 'react';
+import { useState, useRef, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router';
+import * as _ from 'lodash';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import { css } from '@patternfly/react-styles';
+import {
+  ActionGroup,
+  Button,
+  Divider,
+  FormGroup,
+  TextInput,
+  HelperText,
+  HelperTextItem,
+  Tooltip,
+  TextArea,
+  InputGroup,
+  InputGroupItem,
+  Grid,
+  GridItem,
+} from '@patternfly/react-core';
+import { CompressIcon, ExpandIcon } from '@patternfly/react-icons';
+/* eslint-disable import/named */
+import { useTranslation } from 'react-i18next';
+
+import { ANNOTATIONS } from '@console/shared';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import { Perspective, isPerspective, useActivePerspective } from '@console/dynamic-plugin-sdk';
+import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
+import SecondaryHeading from '@console/shared/src/components/heading/SecondaryHeading';
+import {
+  getTemplateIcon,
+  getTemplateIconClass,
+  normalizeIconClass,
+} from './catalog/catalog-item-icon';
+import { ButtonBar } from './utils/button-bar';
+import { LoadError, LoadingBox } from './utils/status-box';
+import { NsDropdown } from './utils/list-dropdown';
+import { useK8sWatchResource } from './utils/k8s-watch-hook';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
+import { SecretModel, TemplateInstanceModel } from '../models';
+import {
+  K8sResourceKind,
+  TemplateKind,
+  TemplateInstanceKind,
+  TemplateParameter,
+} from '../module/k8s';
+import { k8sCreateResource, k8sUpdateResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
+
+const TemplateResourceDetails: FC<TemplateResourceDetailsProps> = ({ template }) => {
+  const resources = _.uniq(_.compact(_.map(template.objects, 'kind'))).sort();
+  if (_.isEmpty(resources)) {
+    return null;
+  }
+
+  return (
+    <>
+      <Divider className="co-divider" />
+      <p>The following resources will be created:</p>
+      <ul>
+        {resources.map((kind: string) => (
+          <li key={kind}>{kind}</li>
+        ))}
+      </ul>
+    </>
+  );
+};
+TemplateResourceDetails.displayName = 'TemplateResourceDetails';
+
+const TemplateInfo: FC<TemplateInfoProps> = ({ template }) => {
+  const { t } = useTranslation();
+  const annotations = template.metadata.annotations || {};
+  const { description } = annotations;
+  const displayName = annotations[ANNOTATIONS.displayName] || template.metadata.name;
+  const iconClass = getTemplateIconClass(template);
+  const imgURL = getTemplateIcon(template);
+  const tags = (annotations.tags || '').split(/\s*,\s*/);
+  const documentationURL = annotations[ANNOTATIONS.documentationURL];
+  const supportURL = annotations[ANNOTATIONS.supportURL];
+
+  return (
+    <div className="pf-v6-u-mb-md">
+      <div className="co-catalog-item-details">
+        <div className="co-catalog-item-icon">
+          <span className="co-catalog-item-icon__bg">
+            {imgURL ? (
+              <img
+                className="co-catalog-item-icon__img co-catalog-item-icon__img--large"
+                src={imgURL}
+                alt={displayName}
+                aria-hidden
+              />
+            ) : (
+              <span
+                className={css(
+                  'co-catalog-item-icon__icon co-catalog-item-icon__icon--large',
+                  normalizeIconClass(iconClass),
+                )}
+                aria-hidden
+              />
+            )}
+          </span>
+        </div>
+        <div>
+          <SecondaryHeading className="co-catalog-item-details__name">
+            {displayName}
+          </SecondaryHeading>
+          {!_.isEmpty(tags) && (
+            <p className="co-catalog-item-details__tags">
+              {_.map(tags, (tag, i) => (
+                <span className="co-catalog-item-details__tag" key={i}>
+                  {tag}
+                </span>
+              ))}
+            </p>
+          )}
+          {(documentationURL || supportURL) && (
+            <ul className="list-inline">
+              {documentationURL && (
+                <li className="co-break-word">
+                  <ExternalLink href={documentationURL} text={t('public~View documentation')} />
+                </li>
+              )}
+              {supportURL && (
+                <li className="co-break-word">
+                  <ExternalLink href={supportURL} text={t('public~Get support')} />
+                </li>
+              )}
+            </ul>
+          )}
+        </div>
+      </div>
+      {description && <p className="co-catalog-item-details__description">{description}</p>}
+      <TemplateResourceDetails template={template} />
+    </div>
+  );
+};
+TemplateInfo.displayName = 'TemplateInfo';
+
+const TemplateFormField: FC<TemplateFormFieldProps> = ({
+  name,
+  value,
+  displayName,
+  description,
+  onChange,
+  placeholder,
+  required,
+  helpID,
+}) => {
+  const [isTextArea, setIsTextArea] = useState(false);
+  const { t } = useTranslation('public');
+
+  const commonFormProps = {
+    'aria-describedby': helpID,
+    placeholder,
+    isRequired: required,
+    onChange,
+    value,
+    id: name,
+    name,
+  };
+
+  const toggleTooltipText = isTextArea
+    ? t('Compress to a single line of content. This may strip any new lines you have entered.')
+    : t(
+        'Expand to enter multiple lines of content. This is required if you need to include newline characters.',
+      );
+
+  const InputToggle = (
+    <Tooltip aria="none" aria-live="polite" content={toggleTooltipText}>
+      <Button
+        aria-label={toggleTooltipText}
+        onClick={() => setIsTextArea(!isTextArea)}
+        variant="control"
+      >
+        {isTextArea ? <CompressIcon /> : <ExpandIcon />}
+      </Button>
+    </Tooltip>
+  );
+
+  return (
+    <FormGroup label={displayName || name} isRequired={required} fieldId={name}>
+      <InputGroup>
+        <InputGroupItem isFill>
+          {isTextArea ? (
+            <TextArea resizeOrientation="vertical" {...commonFormProps} />
+          ) : (
+            <TextInput type="text" {...commonFormProps} />
+          )}
+        </InputGroupItem>
+        <InputGroupItem>{InputToggle}</InputGroupItem>
+      </InputGroup>
+      {description && (
+        <HelperText>
+          <HelperTextItem id={helpID}>{description}</HelperTextItem>
+        </HelperText>
+      )}
+    </FormGroup>
+  );
+};
+
+export const TemplateForm: FC<TemplateFormProps> = (props) => {
+  const { preselectedNamespace: ns = '', obj } = props;
+
+  const perspectiveExtensions = useExtensions<Perspective>(isPerspective);
+  const [activePerspective] = useActivePerspective();
+  const [namespace, setNamespace] = useState(ns);
+  const [parameters, setParameters] = useState([]);
+  const [inProgress, setInProgress] = useState(false);
+  const [error, setError] = useState('');
+  const isInitialLoad = useRef(true);
+
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isInitialLoad.current && obj.loaded) {
+      const object = (obj.data.parameters || []).reduce((acc, { name, value }) => {
+        acc[name] = value;
+        return acc;
+      }, {});
+      setParameters(object);
+      isInitialLoad.current = false;
+    }
+  }, [obj]);
+
+  const onParameterChanged: ReactEventHandler<HTMLInputElement> = (event) => {
+    const { name, value } = event.currentTarget;
+    setParameters((prevParams) => ({ ...prevParams, [name]: value }));
+  };
+
+  const createTemplateSecret = () => {
+    const secret = {
+      apiVersion: 'v1',
+      kind: 'Secret',
+      metadata: {
+        generateName: `${obj.data.metadata.name}-parameters-`,
+        namespace,
+      },
+      // Remove empty values.
+      stringData: parameters,
+    };
+    return k8sCreateResource({
+      model: SecretModel,
+      data: secret,
+    });
+  };
+
+  const createTemplateInstance = (secret: K8sResourceKind) => {
+    const instance: TemplateInstanceKind = {
+      apiVersion: 'template.openshift.io/v1',
+      kind: 'TemplateInstance',
+      metadata: {
+        generateName: `${obj.data.metadata.name}-`,
+        namespace,
+      },
+      spec: {
+        template: obj.data as TemplateKind,
+        secret: {
+          name: secret.metadata.name,
+        },
+      },
+    };
+    return k8sCreateResource({
+      model: TemplateInstanceModel,
+      data: instance,
+    });
+  };
+
+  const updatesecretOwnerRef = (secret: K8sResourceKind, templateInstance: K8sResourceKind) => {
+    const updatedSecret = {
+      ...secret,
+      metadata: {
+        ...secret.metadata,
+        ownerReferences: [
+          {
+            apiVersion: templateInstance.apiVersion,
+            kind: templateInstance.kind,
+            name: templateInstance.metadata.name,
+            uid: templateInstance.metadata.uid,
+          },
+        ],
+      },
+    };
+    return k8sUpdateResource({
+      model: SecretModel,
+      data: updatedSecret,
+      name: secret.metadata.name,
+      ns: secret.metadata.namespace,
+    });
+  };
+
+  const save = (event: FormEvent<EventTarget>) => {
+    event.preventDefault();
+    if (!namespace) {
+      setError('Please complete all fields.');
+      return;
+    }
+
+    setError('');
+    setInProgress(true);
+
+    createTemplateSecret()
+      .then((secret: K8sResourceKind) => {
+        return createTemplateInstance(secret).then(async (templateInstance: K8sResourceKind) => {
+          await updatesecretOwnerRef(secret, templateInstance);
+          const activeExtension = perspectiveExtensions.find(
+            (p) => p.properties.id === activePerspective,
+          );
+          const url = (await activeExtension.properties.importRedirectURL())(namespace);
+          // Navigate before clearing inProgress
+          navigate(url);
+        });
+      })
+      .catch((err) => {
+        setInProgress(false);
+        setError(err.message);
+      });
+  };
+
+  if (obj.loadError) {
+    return <LoadError label={t('public~Template')}>{obj.loadError.message}</LoadError>;
+  }
+
+  if (!obj.loaded) {
+    return <LoadingBox />;
+  }
+
+  if (!obj.data) {
+    return (
+      <LoadError label={t('public~Template')}>
+        {t('public~Template not found or invalid URL parameters.')}
+      </LoadError>
+    );
+  }
+
+  const template: TemplateKind = obj.data;
+  const params = template.parameters || [];
+
+  return (
+    <Grid hasGutter>
+      <GridItem md={7} order={{ default: '0', md: '1' }}>
+        <TemplateInfo template={template} />
+      </GridItem>
+      <GridItem md={5} order={{ default: '1', md: '0' }}>
+        <form className="pf-v6-c-form co-instantiate-template-form" onSubmit={save}>
+          <div className="form-group">
+            <label className="co-required" htmlFor="namespace">
+              {t('public~Namespace')}
+            </label>
+            <NsDropdown selectedKey={namespace} onChange={(v) => setNamespace(v)} id="namespace" />
+          </div>
+          {params.map(
+            ({
+              name,
+              displayName,
+              description,
+              required: requiredParam,
+              generate,
+            }: TemplateParameter) => {
+              const value = parameters[name] || '';
+              const helpID = description ? `${name}-help` : '';
+              const placeholder = generate ? t('public~(generated if empty)') : '';
+              // Only set required for parameters not generated.
+              const requiredInput = requiredParam && !generate;
+              return (
+                <TemplateFormField
+                  key={name}
+                  name={name}
+                  value={value}
+                  displayName={displayName}
+                  description={description}
+                  required={requiredInput}
+                  onChange={onParameterChanged}
+                  placeholder={placeholder}
+                  helpID={helpID}
+                />
+              );
+            },
+          )}
+          <ButtonBar className="co-instantiate-template-form__button-bar" errorMessage={error}>
+            <ActionGroup className="pf-v6-c-form">
+              <Button type="submit" variant="primary" isLoading={inProgress}>
+                {t('public~Create')}
+              </Button>
+              <Button type="button" variant="secondary" onClick={() => navigate(-1)}>
+                {t('public~Cancel')}
+              </Button>
+            </ActionGroup>
+          </ButtonBar>
+        </form>
+      </GridItem>
+    </Grid>
+  );
+};
+
+export const InstantiateTemplatePage: FC<{}> = () => {
+  const title = 'Instantiate Template';
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const templateName = searchParams.get('template');
+  const templateNamespace = searchParams.get('template-ns');
+  const preselectedNamespace = searchParams.get('preselected-ns');
+
+  const [template, loaded, loadError] = useK8sWatchResource(
+    templateName && templateNamespace
+      ? {
+          kind: 'Template',
+          name: templateName,
+          namespace: templateNamespace,
+          isList: false,
+        }
+      : null,
+  );
+
+  return (
+    <>
+      <DocumentTitle>{title}</DocumentTitle>
+      <PageHeading title={title} />
+      <PaneBody>
+        <TemplateForm
+          preselectedNamespace={preselectedNamespace}
+          obj={{ data: template, loaded, loadError }}
+        />
+      </PaneBody>
+    </>
+  );
+};
+
+type TemplateResourceDetailsProps = {
+  template: TemplateKind;
+};
+
+type TemplateInfoProps = {
+  template: TemplateKind;
+};
+
+type TemplateFormProps = {
+  obj: any;
+  preselectedNamespace: string;
+};
+
+type TemplateFormFieldProps = {
+  name: string;
+  value: string;
+  displayName: string;
+  description: string;
+  required: boolean;
+  onChange: ReactEventHandler;
+  placeholder: string;
+  helpID: string;
+};
