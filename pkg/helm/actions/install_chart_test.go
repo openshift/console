@@ -654,6 +654,15 @@ func TestIsChartURLWellFormed(t *testing.T) {
 		{"allow HTTP localhost tgz", "http://localhost/chart.tgz", true},
 		{"allow OCI single-label host", "oci://myregistry/chart", true},
 		{"allow HTTP single-label host with port", "http://myregistry:8080/chart.tgz", true},
+		{"allow RFC1918 10/8", "https://10.0.0.5/chart.tgz", true},
+		{"allow RFC1918 10/8 with port", "https://10.1.2.3:8443/charts/mychart-1.0.0.tgz", true},
+		{"allow RFC1918 172.16/12", "https://172.24.5.6/chart.tgz", true},
+		{"allow RFC1918 172.16/12 with port", "http://172.20.0.1:8080/charts/mychart.tar.gz", true},
+		{"allow RFC1918 192.168/16", "http://192.168.1.1/chart.tgz", true},
+		{"allow RFC1918 192.168/16 with port", "https://192.168.0.10:443/charts/mychart-1.0.0.tar.gz", true},
+		{"allow IPv6 tgz", "http://[::1]/chart.tgz", true},
+		{"allow IPv6 with port", "http://[2001:db8::1]:8443/charts/mychart.tar.gz", true},
+		{"allow OCI IPv6", "oci://[::1]/charts/mychart", true},
 
 		// Invalid: missing host or bad scheme/format
 		{"block OCI no host", "oci:///chart", false},
