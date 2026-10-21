@@ -8,7 +8,9 @@ import type {
 } from '@console/internal/module/k8s';
 import { getName } from './common';
 
-export const getMachineRole = (obj: MachineKind | MachineSetKind | MachineDeploymentKind): string => {
+export const getMachineRole = (
+  obj: MachineKind | MachineSetKind | MachineDeploymentKind,
+): string => {
   const labels = obj?.metadata?.labels;
   if (!labels) {
     return undefined;

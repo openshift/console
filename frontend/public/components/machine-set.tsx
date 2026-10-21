@@ -93,9 +93,7 @@ const NodesResource = {
 };
 
 const useMachineCountModal = ({ resource }: ConfigureCountModalProps) => {
-  const resourceKind = isClusterAPIResource(resource)
-    ? ClusterAPIMachineSetModel
-    : MachineSetModel;
+  const resourceKind = isClusterAPIResource(resource) ? ClusterAPIMachineSetModel : MachineSetModel;
   const launchModal = useConfigureCountModal({
     resourceKind,
     resource,
@@ -502,7 +500,7 @@ export const MachineSetPage: FC<MachineSetPageProps> = ({
     [mapMachineSets.data, capiMachineSets.data],
   );
   const loaded = mapMachineSets.loaded && (capiMachineSets.loaded || !!capiMachineSets.loadError);
-  const loadError = mapMachineSets.loadError;
+  const { loadError } = mapMachineSets;
 
   const createAccessReview = {
     groupVersionKind: referenceForModel(MachineSetModel),

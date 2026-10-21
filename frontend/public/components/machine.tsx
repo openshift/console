@@ -314,7 +314,7 @@ export const MachinePage: FC<MachinePageProps> = ({
   );
   const loaded = mapMachines.loaded && (capiMachines.loaded || !!capiMachines.loadError);
   // Ignore missing Cluster API CRDs; surface Machine API errors only.
-  const loadError = mapMachines.loadError;
+  const { loadError } = mapMachines;
 
   const createAccessReview = {
     groupVersionKind: referenceForModel(MachineModel),
