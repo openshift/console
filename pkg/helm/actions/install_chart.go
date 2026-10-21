@@ -13,7 +13,6 @@ import (
 	"github.com/openshift/console/pkg/helm/metrics"
 	"helm.sh/helm/v4/pkg/action"
 	chart "helm.sh/helm/v4/pkg/chart/v2"
-	"helm.sh/helm/v4/pkg/chart/v2/loader"
 	"helm.sh/helm/v4/pkg/kube"
 	"helm.sh/helm/v4/pkg/registry"
 	releasev1 "helm.sh/helm/v4/pkg/release/v1"
@@ -44,10 +43,12 @@ var (
 	svBuildOpt        = `(?:\+` + svBuild + `)?`
 	chartVersionRegex = regexp.MustCompile(`-(` + svVersionCore + svPrereleaseOpt + svBuildOpt + `)\.(?:tgz|tar\.gz)$`)
 
-	dnsLabel  = `[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?`
-	hostPort  = dnsLabel + `(?:\.` + dnsLabel + `)*\.?(?::\d+)?`
-	ociURLRe  = regexp.MustCompile(`(?i)^oci://` + hostPort)
-	httpURLRe = regexp.MustCompile(`(?i)^https?://` + hostPort + `/.+\.(?:tar\.gz|tgz)$`)
+	dnsLabel    = `[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?`
+	hostName    = dnsLabel + `(?:\.` + dnsLabel + `)*\.?`
+	ipv6Literal = `\[[0-9A-Fa-f:.]+\]`
+	hostPort    = `(?:` + hostName + `|` + ipv6Literal + `)(?::\d+)?`
+	ociURLRe    = regexp.MustCompile(`(?i)^oci://` + hostPort)
+	httpURLRe   = regexp.MustCompile(`(?i)^https?://` + hostPort + `/.+\.(?:tar\.gz|tgz)$`)
 )
 
 const (
@@ -60,9 +61,8 @@ type RegistryClientSetter interface {
 
 // IsChartURLWellFormed reports whether a chart URL is syntactically well-formed:
 // an oci://<registry>/<path> reference or an http(s)://<host>/<path>.tgz|tar.gz
-// archive URL, using RFC-compliant hostname labels. It is a format check only;
-// SSRF policy (allowed schemes, non-internal hosts, non-private IPs) is enforced
-// separately by validateChartURL.
+// archive URL. Hosts may be DNS names or IPv4/IPv6 addresses, including
+// private and cluster-local targets.
 func IsChartURLWellFormed(raw string) bool {
 	return ociURLRe.MatchString(raw) || httpURLRe.MatchString(raw)
 }
@@ -155,11 +155,11 @@ func InstallChart(ns, name, url string, vals map[string]interface{}, conf *actio
 	chartLocation = url
 
 	cmd.ChartPathOptions.Version = chartInfo.Version
-	cp, err = cmd.ChartPathOptions.LocateChart(chartLocation, settings)
+	cp, err = locateChart(&cmd.ChartPathOptions, chartLocation)
 	if err != nil {
-		return nil, fmt.Errorf("error locating chart: %v", err)
+		return nil, fmt.Errorf("error locating chart: %w", err)
 	}
-	ch, err := loader.Load(cp)
+	ch, err := loadLocatedChart(cp)
 	if err != nil {
 		return nil, err
 	}
@@ -245,11 +245,11 @@ func InstallChartAsync(ns, name, url string, vals map[string]interface{}, conf *
 	cmd.ReleaseName = name
 	chartLocation = url
 	cmd.ChartPathOptions.Version = chartInfo.Version
-	cp, err = cmd.ChartPathOptions.LocateChart(chartLocation, settings)
+	cp, err = locateChart(&cmd.ChartPathOptions, chartLocation)
 	if err != nil {
-		return nil, fmt.Errorf("error locating chart: %v", err)
+		return nil, fmt.Errorf("error locating chart: %w", err)
 	}
-	ch, err := loader.Load(cp)
+	ch, err := loadLocatedChart(cp)
 	if err != nil {
 		return nil, err
 	}
@@ -374,14 +374,11 @@ func InstallChartFromURL(ns, name, url string, vals map[string]interface{}, conf
 	}
 	cmd.ChartPathOptions.Version = version
 
-	cp, err := cmd.ChartPathOptions.LocateChart(url, settings)
+	cp, err := locateChart(&cmd.ChartPathOptions, url)
 	if err != nil {
-		if basicAuthSecretName == "" && (strings.Contains(err.Error(), "401") || strings.Contains(strings.ToLower(err.Error()), "unauthorized")) {
-			return nil, fmt.Errorf("error locating chart: %w; registry requires authentication - select a Secret with \"username\" and \"password\" keys for basic authentication", err)
-		}
-		return nil, fmt.Errorf("error locating chart: %v", err)
+		return nil, fmt.Errorf("error locating chart: %w", err)
 	}
-	ch, err := loader.Load(cp)
+	ch, err := loadLocatedChart(cp)
 	if err != nil {
 		return nil, err
 	}
