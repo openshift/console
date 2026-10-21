@@ -26,7 +26,11 @@ import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActio
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import PaneBodyGroup from '@console/shared/src/components/layout/PaneBodyGroup';
 import { DASH } from '@console/shared/src/constants/ui';
-import { getMachineAWSPlacement, getMachineRole } from '@console/shared/src/selectors/machine';
+import {
+  getMachineAWSPlacement,
+  getMachineRole,
+  isClusterAPIResource,
+} from '@console/shared/src/selectors/machine';
 import { getMachineSetInstanceType } from '@console/shared/src/selectors/machineSet';
 import {
   ClusterAPIMachineModel,
@@ -51,7 +55,7 @@ import { DetailsPage } from './factory/details';
 import ListPageCreate from './factory/ListPage/ListPageCreate';
 import ListPageHeader from './factory/ListPage/ListPageHeader';
 import { sortResourceByValue } from './factory/Table/sort';
-import { MachinePage } from './machine';
+import { getClusterAPIWatchError, MachinePage } from './machine';
 import { ResourceSummary } from './utils/details-page';
 import { SectionHeading } from './utils/headings';
 import { navFactory } from './utils/horizontal-nav';
@@ -62,9 +66,6 @@ import { LoadingBox } from './utils/status-box';
 import { convertToBaseValue, formatBytesAsGiB } from './utils/units';
 
 const CapacityResolverContext = createContext<CapacityResolverContextType | null>(null);
-
-const isClusterAPIResource = (obj: K8sResourceKind): boolean =>
-  obj?.apiVersion?.startsWith('cluster.x-k8s.io/') ?? false;
 
 const CPUCell: FC<{ obj: MachineSetKind }> = ({ obj }) => {
   const { t } = useTranslation('public');
@@ -223,7 +224,12 @@ const MachineCounts: FC<MachineCountsProps> = ({ resourceKind, resource }) => {
 };
 
 const MachineTabPage: FC<MachineTabPageProps> = ({ obj }) => (
-  <MachinePage namespace={obj.metadata.namespace} showTitle={false} selector={obj.spec.selector} />
+  <MachinePage
+    namespace={obj.metadata.namespace}
+    showTitle={false}
+    selector={obj.spec.selector}
+    matchClusterAPI={isClusterAPIResource(obj)}
+  />
 );
 
 const MachineSetDetails: FC<MachineSetDetailsProps> = ({ obj }) => {
@@ -439,8 +445,10 @@ const MachineSetList: FC<MachineSetListProps> = ({ data, loaded, loadError, ...p
 
   const capacityResolver = useCallback(
     (obj: MachineSetKind) => {
-      const machine = (machines ?? [])?.find((m) =>
-        new LabelSelector(obj.spec.selector).matches(m),
+      const machine = (machines ?? []).find(
+        (m) =>
+          isClusterAPIResource(m) === isClusterAPIResource(obj) &&
+          new LabelSelector(obj.spec.selector).matches(m),
       );
       const node = (nodes ?? []).find(
         (n) => machine && machine.status?.nodeRef?.uid === n.metadata.uid,
@@ -500,7 +508,7 @@ export const MachineSetPage: FC<MachineSetPageProps> = ({
     [mapMachineSets.data, capiMachineSets.data],
   );
   const loaded = mapMachineSets.loaded && (capiMachineSets.loaded || !!capiMachineSets.loadError);
-  const { loadError } = mapMachineSets;
+  const loadError = mapMachineSets.loadError || getClusterAPIWatchError(capiMachineSets.loadError);
 
   const createAccessReview = {
     groupVersionKind: referenceForModel(MachineSetModel),

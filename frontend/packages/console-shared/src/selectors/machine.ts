@@ -1,5 +1,6 @@
 import i18next from 'i18next';
 import type {
+  K8sResourceCommon,
   MachineAWSPlacement,
   MachineKind,
   MachineSetKind,
@@ -7,6 +8,9 @@ import type {
   NodeKind,
 } from '@console/internal/module/k8s';
 import { getName } from './common';
+
+export const isClusterAPIResource = (obj: K8sResourceCommon): boolean =>
+  obj?.apiVersion?.startsWith('cluster.x-k8s.io/') ?? false;
 
 export const getMachineRole = (
   obj: MachineKind | MachineSetKind | MachineDeploymentKind,

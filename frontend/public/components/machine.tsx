@@ -13,6 +13,7 @@ import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDa
 import NodeIPList from '@console/app/src/components/nodes/NodeIPList';
 import { ListPageBody } from '@console/dynamic-plugin-sdk';
 import type { ConsoleDataViewColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { NoModelError } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/k8s-watcher';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { Status } from '@console/shared/src/components/status/Status';
@@ -25,6 +26,7 @@ import {
   getMachineRole,
   getMachineZone,
   getMachinePhase,
+  isClusterAPIResource,
 } from '@console/shared/src/selectors/machine';
 import { ClusterAPIMachineModel, MachineModel } from '../models';
 import type { MachineKind, Selector } from '../module/k8s';
@@ -44,6 +46,15 @@ import { NodeLink, ResourceLink } from './utils/resource-link';
 import { LoadingBox } from './utils/status-box';
 
 export const machineReference = referenceForModel(MachineModel);
+
+// Ignore missing Cluster API CRDs / models; surface permission and other API errors.
+export const getClusterAPIWatchError = (err: unknown): unknown => {
+  const status = (err as { response?: { status?: number } })?.response?.status;
+  if (!err || err instanceof NoModelError || status === 404) {
+    return undefined;
+  }
+  return err;
+};
 
 const tableColumnInfo = [
   { id: 'name' },
@@ -283,6 +294,7 @@ export const MachinePage: FC<MachinePageProps> = ({
   hideLabelFilter,
   hideNameLabelFilters,
   hideColumnManagement,
+  matchClusterAPI,
 }) => {
   const watchedResources = useMemo(
     () => ({
@@ -308,13 +320,15 @@ export const MachinePage: FC<MachinePageProps> = ({
     capiMachines: MachineKind[];
   }>(watchedResources);
 
-  const machines = useMemo(
-    () => [...(mapMachines.data || []), ...(capiMachines.data || [])],
-    [mapMachines.data, capiMachines.data],
-  );
+  const machines = useMemo(() => {
+    const merged = [...(mapMachines.data || []), ...(capiMachines.data || [])];
+    if (matchClusterAPI === undefined) {
+      return merged;
+    }
+    return merged.filter((m) => isClusterAPIResource(m) === matchClusterAPI);
+  }, [mapMachines.data, capiMachines.data, matchClusterAPI]);
   const loaded = mapMachines.loaded && (capiMachines.loaded || !!capiMachines.loadError);
-  // Ignore missing Cluster API CRDs; surface Machine API errors only.
-  const { loadError } = mapMachines;
+  const loadError = mapMachines.loadError || getClusterAPIWatchError(capiMachines.loadError);
 
   const createAccessReview = {
     groupVersionKind: referenceForModel(MachineModel),
@@ -375,4 +389,6 @@ export type MachinePageProps = {
   hideLabelFilter?: boolean;
   hideNameLabelFilters?: boolean;
   hideColumnManagement?: boolean;
+  /** When set (MachineSet Machines tab), only show Machines from that API group. */
+  matchClusterAPI?: boolean;
 };
