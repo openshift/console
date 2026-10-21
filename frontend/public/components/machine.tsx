@@ -26,9 +26,9 @@ import {
   getMachineZone,
   getMachinePhase,
 } from '@console/shared/src/selectors/machine';
-import { MachineModel } from '../models';
+import { ClusterAPIMachineModel, MachineModel } from '../models';
 import type { MachineKind, Selector } from '../module/k8s';
-import { referenceForModel } from '../module/k8s';
+import { referenceFor, referenceForModel } from '../module/k8s';
 import { Conditions } from './conditions';
 import { ResourceEventStream } from './events';
 import { DetailsPage } from './factory/details';
@@ -39,7 +39,7 @@ import { DetailsItem } from './utils/details-item';
 import { ResourceSummary } from './utils/details-page';
 import { SectionHeading } from './utils/headings';
 import { navFactory } from './utils/horizontal-nav';
-import { useK8sWatchResource } from './utils/k8s-watch-hook';
+import { useK8sWatchResources } from './utils/k8s-watch-hook';
 import { NodeLink, ResourceLink } from './utils/resource-link';
 import { LoadingBox } from './utils/status-box';
 
@@ -65,6 +65,7 @@ const getDataViewRows = (
 ) =>
   data.map(({ obj }: { obj: MachineKind }) => {
     const { name, namespace } = obj.metadata;
+    const kindRef = referenceFor(obj) || machineReference;
     const nodeName = getMachineNodeName(obj);
     const region = getMachineRegion(obj);
     const zone = getMachineZone(obj);
@@ -72,7 +73,7 @@ const getDataViewRows = (
 
     const rowCells = {
       [tableColumnInfo[0].id]: {
-        cell: <ResourceLink kind={machineReference} name={name} namespace={namespace} />,
+        cell: <ResourceLink kind={kindRef} name={name} namespace={namespace} />,
       },
       [tableColumnInfo[1].id]: {
         cell: <ResourceLink kind="Namespace" name={namespace} />,
@@ -93,7 +94,7 @@ const getDataViewRows = (
         cell: zone || DASH,
       },
       [tableColumnInfo[7].id]: {
-        cell: <LazyActionMenu context={{ [machineReference]: obj }} />,
+        cell: <LazyActionMenu context={{ [kindRef]: obj }} />,
       },
     };
 
@@ -235,7 +236,7 @@ const useMachineColumns = (): {
       {
         title: t('Region'),
         id: tableColumnInfo[5].id,
-        sort: "metadata.labels['machine.openshift.io/region']",
+        sort: (data, direction) => data.sort(sortResourceByValue(direction, getMachineRegion)),
         props: {
           modifier: 'nowrap' as const,
         },
@@ -243,7 +244,7 @@ const useMachineColumns = (): {
       {
         title: t('Availability zone'),
         id: tableColumnInfo[6].id,
-        sort: "metadata.labels['machine.openshift.io/zone']",
+        sort: (data, direction) => data.sort(sortResourceByValue(direction, getMachineZone)),
         props: {
           modifier: 'nowrap' as const,
         },
@@ -283,12 +284,38 @@ export const MachinePage: FC<MachinePageProps> = ({
   hideNameLabelFilters,
   hideColumnManagement,
 }) => {
-  const [machines, loaded, loadError] = useK8sWatchResource<MachineKind[]>({
-    kind: referenceForModel(MachineModel),
-    isList: true,
-    selector,
-    namespace,
-  });
+  const watchedResources = useMemo(
+    () => ({
+      mapMachines: {
+        kind: referenceForModel(MachineModel),
+        isList: true,
+        selector,
+        namespace,
+      },
+      capiMachines: {
+        kind: referenceForModel(ClusterAPIMachineModel),
+        isList: true,
+        selector,
+        namespace,
+        optional: true,
+      },
+    }),
+    [namespace, selector],
+  );
+
+  const { mapMachines, capiMachines } = useK8sWatchResources<{
+    mapMachines: MachineKind[];
+    capiMachines: MachineKind[];
+  }>(watchedResources);
+
+  const machines = useMemo(
+    () => [...(mapMachines.data || []), ...(capiMachines.data || [])],
+    [mapMachines.data, capiMachines.data],
+  );
+  const loaded = mapMachines.loaded && (capiMachines.loaded || !!capiMachines.loadError);
+  // Ignore missing Cluster API CRDs; surface Machine API errors only.
+  const loadError = mapMachines.loadError;
+
   const createAccessReview = {
     groupVersionKind: referenceForModel(MachineModel),
     namespace: namespace || 'default',
@@ -319,10 +346,10 @@ export const MachinePage: FC<MachinePageProps> = ({
   );
 };
 
-export const MachineDetailsPage: FC = (props) => (
+export const MachineDetailsPage: FC<MachineDetailsPageProps> = (props) => (
   <DetailsPage
     {...props}
-    kind={machineReference}
+    kind={props.kind || machineReference}
     pages={[
       navFactory.details(MachineDetails),
       navFactory.editYaml(),
@@ -334,6 +361,11 @@ export const MachineDetailsPage: FC = (props) => (
 
 type MachineDetailsProps = {
   obj: MachineKind;
+};
+
+type MachineDetailsPageProps = {
+  kind?: string;
+  [key: string]: any;
 };
 
 export type MachinePageProps = {

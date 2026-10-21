@@ -8,17 +8,31 @@ import type {
 } from '@console/internal/module/k8s';
 import { getName } from './common';
 
-export const getMachineRole = (obj: MachineKind | MachineSetKind | MachineDeploymentKind): string =>
-  obj?.metadata?.labels?.['machine.openshift.io/cluster-api-machine-role'];
+export const getMachineRole = (obj: MachineKind | MachineSetKind | MachineDeploymentKind): string => {
+  const labels = obj?.metadata?.labels;
+  if (!labels) {
+    return undefined;
+  }
+  return (
+    labels['machine.openshift.io/cluster-api-machine-role'] ||
+    labels['cluster.x-k8s.io/role'] ||
+    Object.keys(labels)
+      .find((key) => key.startsWith('node-role.kubernetes.io/'))
+      ?.replace('node-role.kubernetes.io/', '')
+  );
+};
 
 export const getMachineInstanceType = (obj: MachineKind): string =>
-  obj?.metadata?.labels?.['machine.openshift.io/instance-type'];
+  obj?.metadata?.labels?.['machine.openshift.io/instance-type'] ||
+  obj?.metadata?.labels?.['node.kubernetes.io/instance-type'];
 
 export const getMachineRegion = (obj: MachineKind): string =>
-  obj?.metadata?.labels?.['machine.openshift.io/region'];
+  obj?.metadata?.labels?.['machine.openshift.io/region'] ||
+  obj?.metadata?.labels?.['topology.kubernetes.io/region'];
 
 export const getMachineZone = (obj: MachineKind): string =>
-  obj?.metadata?.labels?.['machine.openshift.io/zone'];
+  obj?.metadata?.labels?.['machine.openshift.io/zone'] ||
+  obj?.metadata?.labels?.['topology.kubernetes.io/zone'];
 
 // Machine sets don't have the region and zone labels. Use `providerSpec` if set.
 export const getMachineAWSPlacement = (
