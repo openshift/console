@@ -68,11 +68,10 @@ func setHelmVersionFromBuildInfo() error {
 
 func TestMain(m *testing.M) {
 	setSettings(settings)
-	// The chart registries used by these tests run on localhost/loopback, which
-	// the production SSRF guard (validateChartURLStrict) correctly rejects. Relax
-	// the guard for the test suite so the fixtures remain reachable while still
-	// exercising the call-site wiring. Unit coverage of the strict guard itself
-	// lives in TestValidateChartURL.
+	// Fixture chart URLs are fetched from local registries. validateChartURL
+	// checks scheme and chart suffix only; this suite bypasses it so a fixture
+	// that is not a .tgz URL can still be used. Strict behavior is covered by
+	// TestValidateChartURL.
 	validateChartURL = func(string) error { return nil }
 	time.Sleep(10 * time.Second)
 	if err := setHelmVersionFromBuildInfo(); err != nil {

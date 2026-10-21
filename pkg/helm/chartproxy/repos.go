@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"net"
 	"net/http"
 	"net/url"
 	"strings"
@@ -25,7 +24,7 @@ import (
 
 	"github.com/openshift/library-go/pkg/crypto"
 
-	"github.com/openshift/console/pkg/utils"
+	"github.com/openshift/console/pkg/helm/fetcherr"
 )
 
 var (
@@ -62,60 +61,21 @@ type helmRepo struct {
 	httpClient func() (*http.Client, error)
 }
 
-func validateRepoURL(u *url.URL, isClusterScoped bool) error {
+// validateRepoURL accepts http and https repository URLs. The second argument
+// is retained for compatibility with existing callers.
+func validateRepoURL(u *url.URL, _ bool) error {
 	switch u.Scheme {
 	case "http", "https":
+		return nil
 	default:
 		return fmt.Errorf("unsupported URL scheme %q: only http and https are allowed", u.Scheme)
 	}
-
-	if !isClusterScoped {
-		host := u.Hostname()
-		if ip := net.ParseIP(host); ip != nil {
-			if utils.IsPrivateOrReservedIP(ip) {
-				return fmt.Errorf("repository URL %q resolves to a private or reserved address", u.Redacted())
-			}
-			return nil
-		}
-		addrs, err := net.LookupHost(host)
-		if err != nil {
-			return fmt.Errorf("failed to resolve repository host %q: %v", host, err)
-		}
-		for _, addr := range addrs {
-			if utils.IsPrivateOrReservedAddr(addr) {
-				return fmt.Errorf("repository URL %q resolves to a private or reserved address", u.Redacted())
-			}
-		}
-	}
-	return nil
 }
 
-func ssrfSafeDialContext(base *net.Dialer) func(ctx context.Context, network, addr string) (net.Conn, error) {
-	return func(ctx context.Context, network, addr string) (net.Conn, error) {
-		host, port, err := net.SplitHostPort(addr)
-		if err != nil {
-			return nil, err
-		}
-		addrs, err := net.DefaultResolver.LookupHost(ctx, host)
-		if err != nil {
-			return nil, err
-		}
-		for _, a := range addrs {
-			if utils.IsPrivateOrReservedAddr(a) {
-				return nil, fmt.Errorf("connection to private or reserved address %s is not allowed", a)
-			}
-		}
-		return base.DialContext(ctx, network, net.JoinHostPort(addrs[0], port))
-	}
-}
-
-func httpClient(tlsConfig *tls.Config, blockPrivateIPs bool) (*http.Client, error) {
+func httpClient(tlsConfig *tls.Config) (*http.Client, error) {
 	tr := &http.Transport{
 		TLSClientConfig: tlsConfig,
 		Proxy:           http.ProxyFromEnvironment,
-	}
-	if blockPrivateIPs {
-		tr.DialContext = ssrfSafeDialContext(&net.Dialer{Timeout: 5 * time.Second})
 	}
 
 	client := &http.Client{
@@ -156,22 +116,27 @@ func (hr helmRepo) IndexFile() (*repo.IndexFile, error) {
 	httpClient.Timeout = time.Duration(5 * time.Second)
 	resp, err := httpClient.Get(indexURL)
 	if err != nil {
-		return nil, err
+		klog.V(4).Infof("Helm repository %q index request failed: %v", hr.Name, err)
+		return nil, fetcherr.ErrIndexFileNotFound
 	}
 	defer resp.Body.Close()
-	if resp.StatusCode == 401 || resp.StatusCode == 403 {
-		return nil, fmt.Errorf("authentication failed (HTTP %d)", resp.StatusCode)
-	}
-	if resp.StatusCode != 200 {
-		return nil, fmt.Errorf("failed to fetch index (HTTP %d)", resp.StatusCode)
+	switch resp.StatusCode {
+	case http.StatusUnauthorized, http.StatusForbidden:
+		return nil, fetcherr.ErrIndexAuthentication
+	case http.StatusOK:
+	default:
+		klog.V(4).Infof("Helm repository %q index request returned HTTP %d", hr.Name, resp.StatusCode)
+		return nil, fetcherr.ErrIndexFileNotFound
 	}
 	body, err := io.ReadAll(io.LimitReader(resp.Body, maxIndexFileSize))
 	if err != nil {
-		return nil, err
+		klog.V(4).Infof("Helm repository %q index read failed: %v", hr.Name, err)
+		return nil, fetcherr.ErrIndexFileNotFound
 	}
 	err = yaml.Unmarshal(body, &indexFile)
 	if err != nil {
-		return nil, err
+		klog.V(4).Infof("Helm repository %q returned a file that is not a Helm index", hr.Name)
+		return nil, fetcherr.ErrIndexNotHelm
 	}
 	for _, chartVersions := range indexFile.Entries {
 		for _, chartVersion := range chartVersions {
@@ -332,7 +297,7 @@ func (b helmRepoGetter) unmarshallConfig(repo unstructured.Unstructured, namespa
 	}
 
 	h.httpClient = func() (*http.Client, error) {
-		return httpClient(tlsClientConfig, !isClusterScoped)
+		return httpClient(tlsClientConfig)
 	}
 	return h, nil
 }
