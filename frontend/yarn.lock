@@ -12800,7 +12800,6 @@ __metadata:
     typesafe-actions: "npm:^5.1.0"
     typescript: "npm:5.9.3"
     use-sync-external-store: "npm:^1.7.0"
-    val-loader: "npm:^6.0.0"
     victory: "npm:^37.3.6"
     webpack: "npm:^5.100.0"
     yaml-ast-parser: "npm:^0.0.43"
@@ -16204,15 +16203,6 @@ __metadata:
     "@types/istanbul-lib-coverage": "npm:^2.0.1"
     convert-source-map: "npm:^2.0.0"
   checksum: 10c0/968bcf1c7c88c04df1ffb463c179558a2ec17aa49e49376120504958239d9e9dad5281aa05f2a78542b8557f2be0b0b4c325710262f3b838b40d703d5ed30c23
-  languageName: node
-  linkType: hard
-
-"val-loader@npm:^6.0.0":
-  version: 6.0.0
-  resolution: "val-loader@npm:6.0.0"
-  peerDependencies:
-    webpack: ^5.0.0
-  checksum: 10c0/cb4a281fa1cbd03e7c76fc24c769073a9d8d9f6cea844a2577571ec13d030ea3a17d5055341ccb883427d26c93611689a2c373906035e5b4efd182b68ec2354b
   languageName: node
   linkType: hard
 

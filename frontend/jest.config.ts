@@ -7,10 +7,11 @@ export default defineConfig({
     '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$':
       '<rootDir>/__mocks__/fileMock.ts',
     '\\.(css|less|scss)$': '<rootDir>/__mocks__/styleMock.ts',
+    '^\\.\\./get-local-plugins$': '<rootDir>/__mocks__/get-local-plugins.ts',
   },
   testEnvironment: 'jsdom',
   transform: {
-    'get-local-plugins\\.js$': './scripts/jest-transform-local-plugins.cjs',
+    '__mocks__/get-local-plugins\\.ts$': '<rootDir>/scripts/jest-transform-local-plugins.js',
     '^.+\\.(ts|tsx|js|mjs)$': [
       '@swc/jest',
       {

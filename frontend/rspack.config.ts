@@ -14,6 +14,7 @@ import {
   type SharedObject,
   sharing,
   SwcJsMinimizerRspackPlugin,
+  experiments,
 } from '@rspack/core';
 import { ReactRefreshRspackPlugin } from '@rspack/plugin-react-refresh';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
@@ -35,6 +36,7 @@ import {
   resolveDynamicModuleMaps,
 } from '@console/dynamic-plugin-sdk/src/webpack/DynamicModuleImportPlugin';
 import { ExtensionValidatorPlugin } from '@console/dynamic-plugin-sdk/src/webpack/ExtensionValidatorPlugin';
+import { getLocalPluginsModuleData } from '@console/plugin-sdk/src/codegen/local-plugins';
 import { resolvePluginPackages } from '@console/plugin-sdk/src/codegen/plugin-resolver';
 import { CircularDependencyPreset } from './webpack.circular-deps';
 
@@ -163,11 +165,6 @@ const config: Configuration = {
         // Disable tree shaking on modules shared with Console dynamic plugins
         test: sharedPluginModulesTest,
         sideEffects: true,
-      },
-      {
-        test: path.resolve(__dirname, 'get-local-plugins.js'),
-        loader: 'val-loader',
-        options: { pluginPackages },
       },
       {
         test: /(\.js)|(\.tsx?)$/,
@@ -330,6 +327,9 @@ const config: Configuration = {
           },
         },
       ],
+    }),
+    new experiments.VirtualModulesPlugin({
+      'get-local-plugins': getLocalPluginsModuleData(pluginPackages, 'esm').code,
     }),
     new NodePolyfillPlugin({
       additionalAliases: ['process'],

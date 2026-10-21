@@ -19,7 +19,7 @@
     "check-cycles": "CHECK_CYCLES=true yarn dev-once",
     "coverage": "jest --coverage .",
     "eslint": "node ./node_modules/.bin/eslint --max-warnings ${MAX_WARNINGS:-0} --color",
-    "lint": "NODE_OPTIONS=--max-old-space-size=4096 MAX_WARNINGS=267 yarn eslint --format ./scripts/eslint-exact-warnings.cjs .",
+    "lint": "NODE_OPTIONS=--max-old-space-size=4096 MAX_WARNINGS=267 yarn eslint --format ./scripts/eslint-exact-warnings.js .",
     "test": "LANG=en_US.UTF-8 jest",
     "debug-test": "node --inspect-brk node_modules/.bin/jest --runInBand",
     "test-playwright": "playwright test",
@@ -181,7 +181,6 @@
     "ts-checker-rspack-plugin": "^1.6.1",
     "ts-node": "10.9.2",
     "typescript": "5.9.3",
-    "val-loader": "^6.0.0",
     "webpack": "^5.100.0"
   },
   "engines": {

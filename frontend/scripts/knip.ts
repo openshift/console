@@ -226,6 +226,7 @@ const config: KnipConfig = {
     public: {
       project: ['**/*.{ts,tsx,json}'],
       ignore: ['locales/**/*'],
+      ignoreUnresolved: ['../get-local-plugins'], // virtual module that has no real source file
     },
 
     // Suppress SDK from knip checks as any code there could be used by a dynamic remote plugin
