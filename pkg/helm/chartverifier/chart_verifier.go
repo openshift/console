@@ -6,6 +6,8 @@ import (
 	reportSummary "github.com/redhat-certification/chart-verifier/pkg/chartverifier/reportsummary"
 	"github.com/redhat-certification/chart-verifier/pkg/chartverifier/verifier"
 	"helm.sh/helm/v4/pkg/action"
+
+	"github.com/openshift/console/pkg/helm/fetcherr"
 )
 
 func ChartVerifier(charturl string, values map[string]interface{}, conf *action.Configuration) (string, error) {
@@ -21,7 +23,7 @@ func ChartVerifier(charturl string, values map[string]interface{}, conf *action.
 	apiVerifier.SetString(verifier.RepositoryCache, repositoryCacheList)
 	verifier, verifierErr := apiVerifier.Run(charturl)
 	if verifierErr != nil {
-		return "", verifierErr
+		return "", fetcherr.SanitizeChartError(verifierErr)
 	}
 	report := verifier.GetReport()
 	reportSummaryObj := reportSummary.NewReportSummary()

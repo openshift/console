@@ -82,15 +82,6 @@ func TestHelmHandlers_HandleChartVerifier_RejectsInvalidURLs(t *testing.T) {
 		{"rejects empty chart_url", `{"chart_url":""}`},
 		{"rejects ftp scheme", `{"chart_url":"ftp://example.com/chart.tgz"}`},
 		{"rejects file scheme", `{"chart_url":"file:///etc/passwd"}`},
-		// SSRF: well-formed .tgz/OCI URLs whose host is private or
-		// cluster-internal must still be blocked before the verifier fetches
-		// them. These are caught by the SSRF guard, not the format check.
-		{"rejects loopback IP tgz", `{"chart_url":"http://127.0.0.1/chart.tgz"}`},
-		{"rejects private IP tgz", `{"chart_url":"https://10.0.0.5/chart.tgz"}`},
-		{"rejects link-local metadata IP tgz", `{"chart_url":"http://169.254.169.254/latest/chart.tgz"}`},
-		{"rejects cluster-internal svc tgz", `{"chart_url":"https://myrepo.default.svc/chart.tgz"}`},
-		{"rejects kubernetes.default OCI", `{"chart_url":"oci://kubernetes.default/charts/chart"}`},
-		{"rejects localhost OCI", `{"chart_url":"oci://localhost:5000/charts/chart"}`},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -103,6 +94,81 @@ func TestHelmHandlers_HandleChartVerifier_RejectsInvalidURLs(t *testing.T) {
 			handlers.HandleChartVerifier(&auth.User{}, response, request)
 			if response.Code != http.StatusBadRequest {
 				t.Errorf("expected status 400 but got %v", response.Code)
+			}
+		})
+	}
+}
+
+func TestHelmHandlers_HandleChartVerifier_SanitizesFetchErrors(t *testing.T) {
+	tests := []struct {
+		name string
+		err  error
+		want string
+		hide []string
+	}{
+		{
+			name: "connection refused",
+			err:  errors.New(`Get "http://10.0.0.1:9999/chart.tgz": dial tcp 10.0.0.1:9999: connect: connection refused`),
+			want: "chart file not found",
+			hide: []string{"10.0.0.1", "refused", "9999"},
+		},
+		{
+			name: "missing host",
+			err:  errors.New(`Get "https://missing.example/chart.tgz": dial tcp: lookup missing.example: no such host`),
+			want: "chart file not found",
+			hide: []string{"missing.example", "no such host"},
+		},
+		{
+			name: "non-chart payload",
+			err:  errors.New("cannot load Chart.yaml: yaml: unmarshal errors:\n  line 1: cannot unmarshal !!str `SECRET_PAYLOAD`"),
+			want: "retrieved file is not a Helm chart",
+			hide: []string{"SECRET_PAYLOAD", "unmarshal"},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			handlers := fakeVerifierHandler()
+			handlers.chartVerifier = fakeChartVerification("", tt.err)
+			request := httptest.NewRequest("POST", "/api/helm/verify", strings.NewReader(`{"chart_url":"https://10.0.0.5/chart.tgz"}`))
+			response := httptest.NewRecorder()
+			handlers.HandleChartVerifier(&auth.User{}, response, request)
+			if response.Code != http.StatusBadGateway {
+				t.Fatalf("expected status 502 but got %v: %s", response.Code, response.Body.String())
+			}
+			body := response.Body.String()
+			if !strings.Contains(body, tt.want) {
+				t.Fatalf("body %q does not contain %q", body, tt.want)
+			}
+			for _, hidden := range tt.hide {
+				if strings.Contains(body, hidden) {
+					t.Fatalf("body leaks %q: %s", hidden, body)
+				}
+			}
+		})
+	}
+}
+
+func TestHelmHandlers_HandleChartVerifier_AllowsPrivateNetworkURLs(t *testing.T) {
+	bodies := []string{
+		`{"chart_url":"http://127.0.0.1/chart.tgz"}`,
+		`{"chart_url":"https://10.0.0.5/chart.tgz"}`,
+		`{"chart_url":"http://169.254.169.254/latest/chart.tgz"}`,
+		`{"chart_url":"https://myrepo.default.svc/chart.tgz"}`,
+		`{"chart_url":"oci://kubernetes.default/charts/chart"}`,
+		`{"chart_url":"oci://localhost:5000/charts/chart"}`,
+		`{"chart_url":"http://[::1]/chart.tgz"}`,
+	}
+	for _, body := range bodies {
+		t.Run(body, func(t *testing.T) {
+			handlers := fakeVerifierHandler()
+			handlers.chartVerifier = fakeChartVerification("{}", nil)
+
+			request := httptest.NewRequest("POST", "/api/helm/verify", strings.NewReader(body))
+			response := httptest.NewRecorder()
+
+			handlers.HandleChartVerifier(&auth.User{}, response, request)
+			if response.Code != http.StatusOK {
+				t.Errorf("expected status 200 but got %v: %s", response.Code, response.Body.String())
 			}
 		})
 	}

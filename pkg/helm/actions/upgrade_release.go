@@ -12,7 +12,6 @@ import (
 	"helm.sh/helm/v4/pkg/action"
 	helmchart "helm.sh/helm/v4/pkg/chart"
 	chart "helm.sh/helm/v4/pkg/chart/v2"
-	"helm.sh/helm/v4/pkg/chart/v2/loader"
 	"helm.sh/helm/v4/pkg/kube"
 	releasev1 "helm.sh/helm/v4/pkg/release/v1"
 	kv1 "k8s.io/api/core/v1"
@@ -98,11 +97,11 @@ func UpgradeRelease(
 		}
 		chartLocation = chartUrl
 		client.ChartPathOptions.Version = chartInfo.Version
-		cp, err = client.ChartPathOptions.LocateChart(chartLocation, settings)
+		cp, err = locateChart(&client.ChartPathOptions, chartLocation)
 		if err != nil {
 			return nil, err
 		}
-		ch, err = loader.Load(cp)
+		ch, err = loadLocatedChart(cp)
 		if err != nil {
 			return nil, err
 		}
@@ -248,14 +247,11 @@ func UpgradeReleaseAsync(
 		}
 		chartLocation = chartUrl
 		client.ChartPathOptions.Version = chartInfo.Version
-		cp, err = client.ChartPathOptions.LocateChart(chartLocation, settings)
+		cp, err = locateChart(&client.ChartPathOptions, chartLocation)
 		if err != nil {
-			if auth_secret == "" && (strings.Contains(err.Error(), "401") || strings.Contains(strings.ToLower(err.Error()), "unauthorized")) {
-				return nil, fmt.Errorf("failed to upgrade helm release: %w; registry requires authentication - select a Secret with \"username\" and \"password\" keys for basic authentication", err)
-			}
 			return nil, err
 		}
-		ch, err = loader.Load(cp)
+		ch, err = loadLocatedChart(cp)
 		if err != nil {
 			return nil, err
 		}
