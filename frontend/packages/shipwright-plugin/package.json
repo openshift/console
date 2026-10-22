@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "coverage": "yarn test --coverage --collectCoverageFrom='[\"packages/shipwright-plugin/src/**\",\"!**/__tests__/**\",\"!packages/shipwright-plugin/src/test/**\"]'",
-    "lint": "yarn --cwd ../.. eslint packages/shipwright-plugin",
+    "lint": "yarn --cwd ../.. oxlint packages/shipwright-plugin",
     "test": "yarn --cwd ../.. test packages/shipwright-plugin"
   },
   "dependencies": {

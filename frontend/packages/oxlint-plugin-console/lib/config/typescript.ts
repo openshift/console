@@ -1,49 +1,26 @@
-module.exports = {
-  overrides: [
-    {
-      files: ['*.ts', '*.tsx'],
+import type { OxlintConfig } from 'oxlint';
+import { mergeRules } from './merge-rules.ts';
+import rules from './rules/typescript.ts';
 
-      parser: '@typescript-eslint/parser',
+// TypeScript preset (native typescript plugin rules). The
+// performance-related rules are disabled (they require type information):
+// https://github.com/typescript-eslint/typescript-eslint/issues/389
+const preset: OxlintConfig = {
+  plugins: ['typescript'],
 
-      parserOptions: {
-        ecmaVersion: 2018,
-      },
-
-      plugins: ['@typescript-eslint'],
-
-      settings: {
-        'import/parsers': {
-          '@typescript-eslint/parser': ['.ts', '.tsx'],
-        },
-        'import/resolver': {
-          typescript: {},
-        },
-      },
-
-      rules: require('merge')(require('./rules/typescript.ts'), {
-        // Performance issues with using `project` and specific rules with new parser:
-        // https://github.com/typescript-eslint/typescript-eslint/issues/389
-        '@typescript-eslint/await-thenable': 'off',
-        '@typescript-eslint/no-for-in-array': 'off',
-        '@typescript-eslint/no-unnecessary-qualifier': 'off',
-        '@typescript-eslint/no-unnecessary-type-assertion': 'off',
-        '@typescript-eslint/prefer-includes': 'off',
-        '@typescript-eslint/prefer-regexp-exec': 'off',
-        '@typescript-eslint/prefer-string-starts-ends-with': 'off',
-        '@typescript-eslint/promise-function-async': 'off',
-        '@typescript-eslint/require-array-sort-compare': 'off',
-        '@typescript-eslint/restrict-plus-operands': 'off',
-        '@typescript-eslint/unbound-method': 'off',
-      }),
-    },
-
-    {
-      files: ['*.tsx'],
-      rules: {
-        // Require a consistent member declaration order
-        // Off due to conflict with react ordering
-        '@typescript-eslint/member-ordering': 'off',
-      },
-    },
-  ],
+  rules: mergeRules(rules, {
+    'typescript/await-thenable': 'off',
+    'typescript/no-for-in-array': 'off',
+    'typescript/no-unnecessary-qualifier': 'off',
+    'typescript/no-unnecessary-type-assertion': 'off',
+    'typescript/prefer-includes': 'off',
+    'typescript/prefer-regexp-exec': 'off',
+    'typescript/prefer-string-starts-ends-with': 'off',
+    'typescript/promise-function-async': 'off',
+    'typescript/require-array-sort-compare': 'off',
+    'typescript/restrict-plus-operands': 'off',
+    'typescript/unbound-method': 'off',
+  }),
 };
+
+export default preset;

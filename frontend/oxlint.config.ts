@@ -1,27 +1,43 @@
-import * as path from 'path';
-import { FlatCompat } from '@eslint/eslintrc';
-import * as js from '@eslint/js';
-import * as tsParser from '@typescript-eslint/parser';
-import { defineConfig, globalIgnores } from 'eslint/config';
-
-const compat = new FlatCompat({
-  baseDirectory: import.meta.dirname,
-  recommendedConfig: js.configs.recommended,
-  allConfig: js.configs.all,
-});
+import { defineConfig } from 'oxlint';
+import configs from 'oxlint-plugin-console';
+import packageJson from './package.json' with { type: 'json' };
 
 const REPO_TOOLING = [
   'packages/console-plugin-sdk/src/codegen',
   'packages/console-plugin-sdk/src/webpack',
   'packages/console-dynamic-plugin-sdk/scripts',
   'packages/console-dynamic-plugin-sdk/src/webpack',
-  'packages/eslint-plugin-console/**',
+  'packages/oxlint-plugin-console/**',
   'scripts',
   'i18n-scripts',
 ];
 
-const config = defineConfig([
-  globalIgnores([
+const config = defineConfig({
+  // The default `correctness` category is disabled so that oxlint enforces
+  // exactly the rules from the oxlint-plugin-console presets, nothing more.
+  categories: { correctness: 'allow' },
+  plugins: [
+    ...new Set([
+      ...configs.reactTypescript.plugins,
+      ...configs.nodeTypescript.plugins,
+      ...configs.jest.plugins,
+    ]),
+  ],
+  extends: [
+    // test files (jest overlay; self-scoped like the former
+    // eslint-plugin-console jest config, e2e/ excluded)
+    configs.jest,
+  ],
+  settings: {
+    react: { version: packageJson.dependencies.react.replace(/^[^0-9]*/, '') },
+    // Must match the old eslint setup so the import-js rules resolve TS path
+    // aliases identically.
+    'import/resolver': {
+      node: { extensions: ['.js', '.jsx', '.json'] },
+      typescript: {},
+    },
+  },
+  ignorePatterns: [
     '**/dist/**',
     '**/generated/**',
     '**/node_modules/**',
@@ -30,23 +46,19 @@ const config = defineConfig([
     '__coverage__/**',
     'test-results/**',
     'yarn.lock',
-  ]),
-
-  {
-    linterOptions: {
-      reportUnusedDisableDirectives: 'off',
-    },
-  },
-
-  // frontend code
-  {
-    files: ['public/**/*.{ts,tsx}', 'packages/**/*.{ts,tsx}', '__tests__/**/*.{ts,tsx}'],
-    ignores: REPO_TOOLING.map((dir) => `${dir}/**`),
-    extends: compat.extends('plugin:console/react-typescript'),
-    languageOptions: {
+  ],
+  overrides: [
+    // frontend code
+    // (spreading the preset into the files-scoped override is the oxlint
+    // translation of the old
+    // `extends: compat.extends('plugin:console/react-typescript')` block)
+    {
+      files: ['public/**/*.{ts,tsx}', 'packages/**/*.{ts,tsx}', '__tests__/**/*.{ts,tsx}'],
+      excludeFiles: REPO_TOOLING.map((dir) => `${dir}/**`),
+      ...configs.reactTypescript,
       globals: {
         process: 'readonly',
-        React: true,
+        React: 'writable',
         JSX: 'readonly',
         NodeJS: 'readonly',
         Subject: 'readonly',
@@ -56,33 +68,23 @@ const config = defineConfig([
         RequestInit: 'readonly',
       },
     },
-  },
 
-  // JSON files (seperate to avoid type-aware linting JSON files, which is broken)
-  {
-    files: ['public/**/*.json', 'packages/**/*.json', 'e2e/**/*.json'],
-    extends: compat.extends('plugin:console/json'),
-  },
+    // JSON files are no longer linted: oxlint does not support JSON files,
+    // so the former plugin:console/json scope has no replacement.
 
-  // repo tooling
-  {
-    files: ['*.{ts,tsx}', ...REPO_TOOLING.map((dir) => `${dir}/**/*.{ts,tsx}`)],
-    extends: compat.extends('plugin:console/node-typescript'),
-  },
-
-  // e2e
-  {
-    files: ['e2e/**/*.{ts,tsx}'],
-    ignores: ['e2e/**/testData/**'],
-    extends: compat.extends('plugin:console/playwright'),
-    languageOptions: {
-      parser: tsParser,
-      parserOptions: {
-        project: './tsconfig.json',
-        tsconfigRootDir: path.join(import.meta.dirname, 'e2e'),
-      },
+    // repo tooling
+    {
+      files: ['./*.ts', './*.tsx', ...REPO_TOOLING.map((dir) => `${dir}/**/*.{ts,tsx}`)],
+      ...configs.nodeTypescript,
     },
-  },
-]);
+
+    // e2e
+    {
+      files: ['e2e/**/*.{ts,tsx}'],
+      excludeFiles: ['e2e/**/testData/**'],
+      ...configs.playwright,
+    },
+  ],
+});
 
 export default config;

@@ -1,20 +1,16 @@
-module.exports = {
-  plugins: ['playwright'],
-  extends: ['plugin:playwright/recommended'],
-  rules: {
-    'no-empty-pattern': 'off',
-    'no-restricted-syntax': [
-      'error',
-      {
-        selector: 'CallExpression[callee.property.name="waitFor"]',
-        message:
-          'Playwright actions (click, fill, check, clear) auto-wait for actionability. ' +
-          'Do not call waitFor() before an action on the same locator. ' +
-          'If this waitFor() is intentional (waiting for state without a subsequent action), ' +
-          'add // eslint-disable-next-line no-restricted-syntax',
-      },
-    ],
-    'playwright/no-conditional-in-test': 'off',
-    'playwright/no-skipped-test': ['error', { allowConditional: true }],
-  },
+import type { OxlintConfig } from 'oxlint';
+import rules from './rules/playwright.ts';
+
+// Playwright rules for the e2e scope: `playwright/*` rules run via
+// eslint-plugin-playwright (JS plugin); the no-restricted-syntax guard
+// (forbidding waitFor() before actions) comes from the eslint-js shim.
+// This is a flat preset that oxlint.config.ts scopes to the e2e tree.
+const preset: OxlintConfig = {
+  jsPlugins: [
+    'eslint-plugin-playwright',
+    'oxlint-plugin-console/lib/js-plugins/eslint-js-rules.ts',
+  ],
+  rules,
 };
+
+export default preset;

@@ -1,42 +1,25 @@
-module.exports = {
-  extends: ['plugin:console/base', 'airbnb'],
+import type { OxlintConfig } from 'oxlint';
+import { mergeRules } from './merge-rules.ts';
+import overrides from './rules/airbnb-base-overrides.ts';
+import airbnbReact from './rules/airbnb-react.ts';
+import reactHooks from './rules/react-hooks.ts';
+import react from './rules/react.ts';
 
-  parserOptions: {
-    ecmaFeatures: {
-      jsx: true,
-    },
-  },
+// React preset: the base preset plus airbnb's react + jsx-a11y defaults
+// (materialized in rules/airbnb-react.ts) and the merged rule files.
+const preset: OxlintConfig = {
+  plugins: ['react', 'jsx-a11y'],
 
   env: {
     browser: true,
   },
 
-  plugins: ['react-hooks'],
-
-  settings: {
-    react: {
-      version: 'detect',
-    },
-  },
-
-  rules: require('merge')(
-    require('./rules/react.ts'),
-    require('./rules/react-hooks.ts'),
-    require('./rules/airbnb-base-overrides.ts'),
-  ),
-
-  overrides: [
-    {
-      files: ['*.tsx'],
-      rules: {
-        // Disable JS specific rules
-        'react/default-props-match-prop-types': 'off',
-        // Prevent missing props validation in a React component definition
-        // Off due to false positives in typescript
-        'react/prop-types': 'off',
-        // React 17 doesn't require this anymore
-        'react/react-in-jsx-scope': 'off',
-      },
-    },
+  jsPlugins: [
+    { name: 'react-js', specifier: 'eslint-plugin-react' },
+    { name: 'react-hooks-js', specifier: 'eslint-plugin-react-hooks' },
   ],
+
+  rules: mergeRules(airbnbReact, react, reactHooks, overrides),
 };
+
+export default preset;
