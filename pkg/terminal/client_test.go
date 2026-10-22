@@ -75,6 +75,20 @@ func TestGetConfig(t *testing.T) {
 		}
 	})
 
+	t.Run("honors HTTP(S)_PROXY/NO_PROXY like the other off-cluster transports", func(t *testing.T) {
+		p := &Proxy{TLSClientConfig: &tls.Config{}, ClusterEndpoint: endpoint}
+
+		got, err := p.getConfig("token")
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+
+		transport := got.Transport.(*http.Transport)
+		if transport.Proxy == nil {
+			t.Error("expected the transport to honor proxy env vars, got no Proxy function")
+		}
+	})
+
 	t.Run("resolves to the https scheme despite TLS living in the Transport", func(t *testing.T) {
 		// Regression test: Host was previously set to ClusterEndpoint.Host
 		// (no scheme). client-go defaults a scheme-less host to http://

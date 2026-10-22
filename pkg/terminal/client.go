@@ -41,8 +41,20 @@ func (p *Proxy) getConfig(token string) (*rest.Config, error) {
 	return &rest.Config{
 		// Keep the scheme: client-go defaults a scheme-less host to http://
 		// when the rest.Config itself carries no CA data or Insecure flag.
-		Host:        p.ClusterEndpoint.String(),
-		Transport:   &http.Transport{TLSClientConfig: p.TLSClientConfig},
+		Host: p.ClusterEndpoint.String(),
+		Transport: &http.Transport{
+			TLSClientConfig: p.TLSClientConfig,
+			// Honor HTTP(S)_PROXY/NO_PROXY like the other off-cluster
+			// transports (pkg/proxy NewProxy, the plugins asset client),
+			// so the terminal also works behind an egress proxy.
+			// Deployments that set HTTP_PROXY to a tunnel into another
+			// network (e.g. the HyperShift control-plane-side bridge,
+			// whose HTTP_PROXY is a konnectivity socks5 tunnel into the
+			// guest service network) must NO_PROXY the API server host —
+			// which they already need for the k8s proxy transport, since
+			// it resolves the same endpoint through the same env vars.
+			Proxy: http.ProxyFromEnvironment,
+		},
 		BearerToken: token,
 	}, nil
 }
