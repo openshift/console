@@ -10,12 +10,20 @@ and documents every coverage gap found along the way.
 ## TL;DR
 
 A migration **without losing linting rule coverage is not possible today**.
-Oxlint covers **338 of 371 (91.1%)** enabled ESLint rules: 265 natively by
+Oxlint covers **338 of 370 (91.4%)** enabled ESLint rules: 265 natively by
 name, plus 73 (`playwright/*`, `testing-library/*`, `n/*`) by running the
 actual ESLint plugins through oxlint's JS plugin support. The remaining
-**33 rules (8.9%)** have no oxlint equivalent (plus one covered without its
+**32 rules (8.6%)** have no oxlint equivalent (plus one covered without its
 custom option), and several ported rules behave differently in practice
 (see [Divergences](#divergences)).
+
+Formatting is handled outside both linters: main migrated the repo to
+standalone [oxfmt](https://oxc.rs/docs/guide/usage/formatter.html)
+(`yarn prettier-all`, ~20x faster than prettier) and removed
+`prettier/prettier` from the ESLint config, so neither `yarn oxlint` nor
+`yarn eslint` enforces formatting. An earlier revision of this POC ran
+`format/oxfmt` (eslint-plugin-format) as a rule in both tools — that
+approach was dropped in favor of main's simpler standalone setup.
 
 The repo keeps ESLint as the authoritative linter. Oxlint is wired up as a
 fast pre-pass (`yarn oxlint`, ~2s vs ~15min for ESLint) with a translated
@@ -56,7 +64,7 @@ configuration in [`.oxlintrc.json`](../.oxlintrc.json).
 | e2e (playwright)          | `e2e/**`                                       | 34 (JS plugin)   |
 | jest/testing-library      | `**/__tests__/**`, `**/*.spec.*`               | 45 (overlay)     |
 
-## Gaps — rules with no oxlint equivalent (33)
+## Gaps — rules with no oxlint equivalent (32)
 
 ### Covered via JS plugins
 
@@ -71,8 +79,8 @@ The deprecated core rules `no-new-require`/`no-path-concat` (which airbnb
 enables everywhere and eslint-plugin-n supersedes) are also routed to the
 n plugin, which eliminated the native `node/no-path-concat` divergence.
 
-The e2e scope's only remaining gaps are `no-restricted-syntax` (the custom
-`waitFor()` guard) and `prettier/prettier`.
+The e2e scope's only remaining gap is `no-restricted-syntax` (the custom
+`waitFor()` guard).
 
 ### `eslint-plugin-react` (14)
 
@@ -112,11 +120,8 @@ one of the most-visible losses.
 - `react-hooks/config`, `react-hooks/gating` — the only two React Compiler
   rules without an oxlint counterpart (the other 14 compiler rules map to
   `react/*`).
-- `prettier/prettier` — runs fine through `eslint-plugin-prettier` as a
-  JS plugin (verified) but is intentionally not wired: it would duplicate
-  the authoritative ESLint rule and negate oxlint's speed. A separate
-  `prettier --check` (or oxfmt) step is the right replacement if ESLint
-  is ever dropped.
+- `prettier/prettier` — no longer applicable: main removed the rule when
+  it migrated the repo to standalone oxfmt.
 - `react/jsx-no-duplicate-props` is supported, but its
   `{ ignoreCase: true }` option had to be dropped (oxlint accepts no options).
 
@@ -136,7 +141,7 @@ same files. Results:
 | ESLint core rules (shim via `eslint/use-at-your-own-risk`) | mechanically yes, **not wired** | a local shim plugin re-exporting core rules works (`no-octal`, `lines-between-class-members` verified with exact location parity), but `eslint` is also reserved → shim rules are `eslint-core/*` → the 34 `// eslint-disable no-restricted-syntax` comments in e2e/ would resurface as 36 false positives |
 | `@typescript-eslint/naming-convention` | **no** | the rule requires `@typescript-eslint/parser` type information; oxlint's runtime cannot provide it (verified: the rule throws). Would need the experimental `oxlint-tsgolint` type-aware runtime (which console-plugin-template adopts) |
 | `react-hooks/config`, `react-hooks/gating` | **no** | the plugin loads but these compiler-infrastructure rules no-op outside the full React Compiler pipeline; ESLint reports zero findings for them today |
-| `eslint-plugin-prettier` | mechanically yes, **not wired by choice** | verified working (correct fixes, config pickup), but running prettier through the JS bridge duplicates the authoritative `prettier/prettier` ESLint rule and negates oxlint's speed; oxfmt / `prettier --check` is the right replacement if ESLint is ever dropped |
+| `prettier/prettier` | **superseded by main** | an `eslint-plugin-format`/`format/oxfmt` rule in both tools was prototyped here and worked (measured: ~+1s on oxlint vs ~+8.6s for the prettier backend), but main chose standalone oxfmt with no formatting rule in either linter — simpler and ~20x faster end to end |
 
 The blocking issue for react/import/core rules is **not** the JS plugin
 runtime — it is that aliased rule names break `eslint-disable` comment
@@ -187,7 +192,7 @@ ESLint must stay authoritative for those rules.
 ## Running
 
 ```sh
-yarn oxlint        # fast pre-pass (~2s), exact-warning ratchet (MAX_WARNINGS=480)
+yarn oxlint        # fast pre-pass (~3s), exact-warning ratchet (MAX_WARNINGS=476)
 yarn lint          # oxlint pre-pass + authoritative ESLint run (MAX_WARNINGS=267)
 ```
 
@@ -195,7 +200,7 @@ yarn lint          # oxlint pre-pass + authoritative ESLint run (MAX_WARNINGS=26
 oxlint enforces everything it supports in ~2s, ESLint remains authoritative
 for the rules oxlint lacks and for the React Compiler rules where oxlint
 under-reports. Both tools use exact-count warning ratchets
-(`scripts/oxlint-exact-warnings.cjs`, `scripts/eslint-exact-warnings.cjs`);
+(`scripts/oxlint-exact-warnings.cjs`, `scripts/eslint-exact-warnings.js`);
 when you fix warnings, lower the budgets in `package.json` in the same
 change.
 
@@ -206,7 +211,8 @@ change.
    to JS plugins); track
    <https://github.com/oxc-project/oxc/issues/481>.
 2. Resolve the divergences above (file issues upstream or fix the code).
-3. Replace `prettier/prettier` with an explicit `prettier --check` CI step.
+3. ~~Replace `prettier/prettier` with an explicit format-check CI step~~
+   (done on main: standalone oxfmt via `yarn prettier-all`).
 4. Flip the split the other way: use `eslint-plugin-oxlint` to disable the
    ESLint rules oxlint already runs, so ESLint only covers the leftovers,
    then drop ESLint once the remaining set is empty.
