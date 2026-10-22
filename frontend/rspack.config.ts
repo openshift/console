@@ -1,9 +1,10 @@
+import * as path from 'path';
 import {
+  type NormalModule,
   type Configuration,
   CopyRspackPlugin,
   CssExtractRspackPlugin,
   LightningCssMinimizerRspackPlugin,
-  NormalModule,
   NormalModuleReplacementPlugin,
   ProgressPlugin,
   type Provides,
@@ -13,13 +14,15 @@ import {
   type SharedObject,
   sharing,
   SwcJsMinimizerRspackPlugin,
+  experiments,
 } from '@rspack/core';
-import { TsCheckerRspackPlugin } from 'ts-checker-rspack-plugin';
 import { ReactRefreshRspackPlugin } from '@rspack/plugin-react-refresh';
+import HtmlWebpackPlugin from 'html-webpack-plugin';
 import * as _ from 'lodash';
-import * as path from 'path';
+import MonacoWebpackPlugin from 'monaco-editor-webpack-plugin';
+import NodePolyfillPlugin from 'node-polyfill-webpack-plugin';
 import * as semver from 'semver';
-
+import { TsCheckerRspackPlugin } from 'ts-checker-rspack-plugin';
 import {
   getSharedModuleMetadata,
   sharedPluginModules,
@@ -33,12 +36,9 @@ import {
   resolveDynamicModuleMaps,
 } from '@console/dynamic-plugin-sdk/src/webpack/DynamicModuleImportPlugin';
 import { ExtensionValidatorPlugin } from '@console/dynamic-plugin-sdk/src/webpack/ExtensionValidatorPlugin';
+import { getLocalPluginsModuleData } from '@console/plugin-sdk/src/codegen/local-plugins';
 import { resolvePluginPackages } from '@console/plugin-sdk/src/codegen/plugin-resolver';
 import { CircularDependencyPreset } from './webpack.circular-deps';
-
-const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
-const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const NODE_ENV = process.env.NODE_ENV || 'development';
 const HOT_RELOAD = process.env.HOT_RELOAD || 'true';
@@ -70,7 +70,7 @@ const sharedPluginModulesTest = getVendorModuleRegExp(
 );
 
 const dynamicModuleMaps = resolveDynamicModuleMaps(dynamicModulePackageSpecs, [
-  path.resolve(__dirname, 'node_modules'),
+  path.resolve(import.meta.dirname, 'node_modules'),
 ]);
 
 /**
@@ -126,7 +126,7 @@ const config: Configuration = {
     main: ['./public/components/app.tsx'],
   },
   output: {
-    path: path.resolve(__dirname, 'public/dist'),
+    path: path.resolve(import.meta.dirname, 'public/dist'),
     publicPath: 'static/',
     filename: '[name]-bundle.js',
     chunkFilename: '[name]-[chunkhash].js',
@@ -167,11 +167,6 @@ const config: Configuration = {
         sideEffects: true,
       },
       {
-        test: path.resolve(__dirname, 'get-local-plugins.js'),
-        loader: 'val-loader',
-        options: { pluginPackages },
-      },
-      {
         test: /(\.js)|(\.tsx?)$/,
         exclude: /node_modules\/(?!(bitbucket|ky|ini|@patternfly(-\S+)?)\/)/,
         type: 'javascript/auto',
@@ -182,14 +177,14 @@ const config: Configuration = {
             jsc: {
               parser: {
                 syntax: 'typescript',
-                tsx: true
+                tsx: true,
               },
               transform: {
                 react: {
                   runtime: 'automatic',
                   development: REACT_REFRESH,
                   refresh: REACT_REFRESH,
-                }
+                },
               },
               target: 'es2021',
             },
@@ -231,7 +226,7 @@ const config: Configuration = {
       },
       {
         test: /\.css$/,
-        include: path.resolve(__dirname, 'node_modules/monaco-editor'),
+        include: path.resolve(import.meta.dirname, 'node_modules/monaco-editor'),
         type: 'css',
       },
       {
@@ -242,7 +237,7 @@ const config: Configuration = {
         },
         rules: [
           {
-            include: path.resolve(__dirname, 'node_modules/monaco-editor'),
+            include: path.resolve(import.meta.dirname, 'node_modules/monaco-editor'),
             // Native CSS resolves Monaco's font URLs relative to the stylesheet.
             generator: { publicPath: './' },
           },
@@ -286,15 +281,14 @@ const config: Configuration = {
   plugins: [
     new ExtensionValidatorPlugin({ pluginPackages }),
     new DynamicModuleImportPlugin({
-      loader: require.resolve(
-        '@console/dynamic-plugin-sdk/src/webpack/loaders/dynamic-module-import-loader',
-      ),
+      loader:
+        require.resolve('@console/dynamic-plugin-sdk/src/webpack/loaders/dynamic-module-import-loader'),
       dynamicModuleMaps,
       moduleFilter: dynamicModuleImportTransformFilter,
     }),
     new sharing.SharePlugin({
       shared: getWebpackSharedModules(),
-      enhanced: false // retains webpack 5 SharePlugin behavior as opposed to MF 2.0
+      enhanced: false, // retains webpack 5 SharePlugin behavior as opposed to MF 2.0
     }),
     new sharing.ProvideSharedPlugin({
       provides: getProvidedDynamicModules(),
@@ -303,7 +297,7 @@ const config: Configuration = {
     new NormalModuleReplacementPlugin(/^lodash$/, 'lodash-es'),
     new TsCheckerRspackPlugin({
       typescript: {
-        configFile: path.resolve(__dirname, 'tsconfig.json'),
+        configFile: path.resolve(import.meta.dirname, 'tsconfig.json'),
         diagnosticOptions: { syntactic: true, semantic: true },
         memoryLimit: 4096,
       },
@@ -321,7 +315,7 @@ const config: Configuration = {
       chunksSortMode: 'auto',
     }),
     new MonacoWebpackPlugin({
-      languages: ['yaml', 'dockerfile', 'json', 'plaintext'],
+      languages: ['yaml', 'dockerfile', 'json'],
       globalAPI: true,
       customLanguages: [
         {
@@ -334,19 +328,22 @@ const config: Configuration = {
         },
       ],
     }),
+    new experiments.VirtualModulesPlugin({
+      'get-local-plugins': getLocalPluginsModuleData(pluginPackages, 'esm').code,
+    }),
     new NodePolyfillPlugin({
       additionalAliases: ['process'],
     }),
     new CopyRspackPlugin({
       patterns: [
-        { from: path.resolve(__dirname, './public/robots.txt'), to: 'robots.txt' },
+        { from: path.resolve(import.meta.dirname, './public/robots.txt'), to: 'robots.txt' },
         {
           from: 'packages/*/locales/**/*.json',
           to: ({ absoluteFilename }) => {
             const segments = absoluteFilename.split(path.sep);
             return segments.slice(segments.lastIndexOf('locales')).join(path.sep);
           },
-          context: path.resolve(__dirname),
+          context: path.resolve(import.meta.dirname),
         },
         {
           from: 'public/locales/**/*.json',
@@ -354,7 +351,7 @@ const config: Configuration = {
             const segments = absoluteFilename.split(path.sep);
             return segments.slice(segments.lastIndexOf('locales')).join(path.sep);
           },
-          context: path.resolve(__dirname),
+          context: path.resolve(import.meta.dirname),
         },
         { from: 'public/imgs', to: 'imgs' },
         { from: 'public/load-test.sw.js', to: 'load-test.sw.js' },
@@ -387,7 +384,7 @@ if (ANALYZE_BUNDLE === 'true') {
     config.plugins.push(
       new RsdoctorRspackPlugin({
         features: {
-          loader: false // doesn't work: "Load data failed, please try again"
+          loader: false, // doesn't work: "Load data failed, please try again"
         },
         output: {
           mode: 'brief',
@@ -403,12 +400,12 @@ if (ANALYZE_BUNDLE === 'true') {
         disableClientServer: true,
       }),
     );
-    } catch (err) {
+  } catch (err) {
     console.warn(
-        'Failed to load @rsdoctor/rspack-plugin. Bundle analysis will not be available.',
-        err,
-      );
-    }
+      'Failed to load @rsdoctor/rspack-plugin. Bundle analysis will not be available.',
+      err,
+    );
+  }
 
   // Only fail the build due to excess bundle size if running analyze.sh
   // This way, the other tests (frontend, e2e) can still provide feedback in CI

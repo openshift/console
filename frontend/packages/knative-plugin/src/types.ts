@@ -192,7 +192,10 @@ export type KafkaSourceKind = {
 } & EventSourceKind;
 
 export type AnySourceKind =
-  PingSourceKind | ApiServerSourceKind | ContainerSourceKind | KafkaSourceKind;
+  | PingSourceKind
+  | ApiServerSourceKind
+  | ContainerSourceKind
+  | KafkaSourceKind;
 
 export type KameletBindingKind = {
   spec: {

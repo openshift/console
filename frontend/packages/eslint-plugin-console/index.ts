@@ -20,19 +20,15 @@ module.exports = {
     // Add JSON linting (optional)
     json: require('./lib/config/json.ts'),
 
-    // Prettier must go last (optional)
-    prettier: require('./lib/config/prettier.ts'),
-
     // ...or use the pre-composed configurations representing common code archetypes (choose one):
 
-    // Common web preset: React, TypeScript, Prettier, Testing Library on tests
-    'react-typescript-prettier': {
+    // Common web preset: React, TypeScript, Testing Library on tests
+    'react-typescript': {
       extends: [
         'plugin:console/react',
         'plugin:console/typescript',
         'plugin:console/jest',
-        'plugin:console/json',
-        'plugin:console/prettier',
+        'prettier', // disables formatting rules that conflict with oxfmt
       ],
 
       rules: {
@@ -41,15 +37,14 @@ module.exports = {
       },
     },
 
-    // Common Node.js preset: TypeScript, Prettier
-    'node-typescript-prettier': {
+    // Common Node.js preset: TypeScript, Jest
+    'node-typescript': {
       extends: [
         'plugin:console/base',
         'plugin:console/typescript',
         'plugin:console/node',
         'plugin:console/jest',
-        'plugin:console/json',
-        'plugin:console/prettier',
+        'prettier', // disables formatting rules that conflict with oxfmt
       ],
       rules: {
         // TODO fix for monorepo support

@@ -9,7 +9,7 @@ describe('Gitea Service', () => {
   const nockBack = nock.back;
   nockBack.setMode('record');
 
-  nockBack.fixtures = `${__dirname}/__nock-fixtures__/gitea`;
+  nockBack.fixtures = `${import.meta.dirname}/__nock-fixtures__/gitea`;
 
   it('should return ok on existing public gitea repo', () => {
     const gitSource: GitSource = {
