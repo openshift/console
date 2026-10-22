@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-use-before-define, import/order */
+/* eslint-disable @typescript-eslint/no-use-before-define, import-js/order */
 import {
   useState,
   useRef,
@@ -362,7 +362,7 @@ const CaptureTelemetry = memo(() => {
       fireTelemetryEvent('identify', { perspective, user });
     }
     // Only trigger identify event when the user identifier changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [user?.uid || user?.username, fireTelemetryEvent]);
 
   // notify url change events

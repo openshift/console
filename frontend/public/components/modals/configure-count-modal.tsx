@@ -69,7 +69,7 @@ export const ConfigureCountModal: OverlayComponent<ConfigureCountModalProps> = (
             invalidateState(false);
           });
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
     [value, path, props.invalidateState, handlePromise, resourceKind, resource, opts, closeOverlay],
   );
 

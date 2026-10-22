@@ -802,7 +802,7 @@ export const ResourceLog: FC<ResourceLogProps> = ({
   useEffect(() => {
     window.dispatchEvent(new Event('resize'));
     // trigger resize event to prevent double scrollbar
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [firstRender, error, stale, hasTruncated, isFullscreen]);
 
   // Workaround for upstream PF LogViewer bug: scrollIntoView({ inline: 'center' }) propagates

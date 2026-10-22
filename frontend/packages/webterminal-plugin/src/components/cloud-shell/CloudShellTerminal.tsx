@@ -100,13 +100,13 @@ const CloudShellTerminalContent: FC<CloudShellTerminalContentProps> = ({
     }
     // Run this effect if the workspace name or namespace changes.
     // This effect should only be run once per workspace.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [
     operatorNamespace,
     unrecoverableErrorFound,
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
     workspace?.metadata?.name,
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
     workspace?.metadata?.namespace,
   ]);
 

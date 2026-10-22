@@ -388,7 +388,7 @@ export const ConsoleDataView = <
       : basicFilters;
 
     // Can't use data in the deps array as it will recompute the filters and will cause the selected category to reset
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [additionalFilterNodes, t, loaded]);
 
   return mock ? (

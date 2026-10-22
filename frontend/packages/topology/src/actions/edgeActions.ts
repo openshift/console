@@ -81,7 +81,7 @@ export const useMoveConnectorAction = (
       disabled: availableTargets.length <= 1,
       accessReview: asAccessReview(kindObj, resource, 'delete'),
     }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
     [availableTargets.length, kindObj, resource],
   );
 };
@@ -121,7 +121,7 @@ export const useDeleteConnectorAction = (
       accessReview: asAccessReview(kindObj, resource, 'delete'),
     }),
     // missing openConfirm dependency, that causes max depth exceeded error
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
     [kindObj, resource, t],
   );
 };

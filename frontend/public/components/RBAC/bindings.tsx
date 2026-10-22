@@ -469,7 +469,7 @@ const BaseEditRoleBinding: FC<BaseEditRoleBindingProps> = (props) => {
       ],
     });
     setData(obj);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, []);
 
   const getSubject = () => _.get(data, `subjects[${subjectIndex}]`);

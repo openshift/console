@@ -15,7 +15,7 @@ export class Navigation {
   async clickNavLink(section: string, link: string): Promise<void> {
     const sidebar = this.page.locator('#page-sidebar');
     const sectionButton = sidebar.getByRole('button', { name: section });
-    // eslint-disable-next-line no-restricted-syntax
+    // eslint-disable-next-line eslint-js/no-restricted-syntax
     await sectionButton.waitFor({ state: 'visible' });
     const expanded = await sectionButton.getAttribute('aria-expanded');
     if (expanded !== 'true') {

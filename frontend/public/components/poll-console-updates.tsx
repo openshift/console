@@ -39,7 +39,7 @@ export const PollConsoleUpdates = memo(() => {
   const [updateError, setUpdateError] = useState<Error>();
   const [newPlugins, setNewPlugins] = useState<CheckUpdatesApiResult['plugins']>(null);
   const [pluginManifestsData, setPluginManifestsData] = useState<RemotePluginManifest[]>();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks-js/exhaustive-deps
   const safeFetch = useCallback(useSafeFetch(), []);
   const tick = useCallback(() => {
     safeFetch(`${window.SERVER_FLAGS.basePath}api/check-updates`)
@@ -70,8 +70,8 @@ export const PollConsoleUpdates = memo(() => {
     prevUpdateDataRef.current = updateData;
     prevPluginManifestsDataRef.current = pluginManifestsData;
   });
-  const prevUpdateData = prevUpdateDataRef.current; // eslint-disable-line react-hooks/refs -- usePrevious pattern: reading previous render's value
-  const prevPluginManifestsData = prevPluginManifestsDataRef.current; // eslint-disable-line react-hooks/refs -- usePrevious pattern: reading previous render's value
+  const prevUpdateData = prevUpdateDataRef.current; // eslint-disable-line react-hooks-js/refs -- usePrevious pattern: reading previous render's value
+  const prevPluginManifestsData = prevPluginManifestsDataRef.current; // eslint-disable-line react-hooks-js/refs -- usePrevious pattern: reading previous render's value
   const stateInitialized = _.isEmpty(updateError) && !_.isEmpty(prevUpdateData);
   const pluginsAddedList = updateData?.plugins.filter((x) => !prevUpdateData?.plugins.includes(x));
   const pluginsRemovedList = prevUpdateData?.plugins.filter(

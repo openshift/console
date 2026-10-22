@@ -54,7 +54,7 @@ export class SecretsPage extends BasePage {
 
   async save(): Promise<void> {
     await this.robustClick(this.saveButton);
-    // eslint-disable-next-line no-restricted-syntax
+    // eslint-disable-next-line eslint-js/no-restricted-syntax
     await this.saveButton.waitFor({ state: 'detached', timeout: 30_000 });
   }
 

@@ -83,7 +83,7 @@ const BuildsTabListPage: FC = () => {
         navigate(`/builds/ns/${namespace}`, { replace: true });
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [namespace, preferredTabLoaded]);
 
   useEffect(() => {

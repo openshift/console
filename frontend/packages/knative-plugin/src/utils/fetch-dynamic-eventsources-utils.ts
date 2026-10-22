@@ -97,7 +97,7 @@ export const useEventSourceModels = (): EventSourcetData => {
     } else {
       setModelsData({ loaded: true, eventSourceModels: eventSourceData.eventSourceModels });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, []);
   return modelsData;
 };
@@ -188,7 +188,7 @@ export const useChannelModels = () => {
     } else {
       setModelsData({ loaded: true, eventSourceChannels: eventSourceData.eventSourceChannels });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, []);
   return modelsData;
 };
