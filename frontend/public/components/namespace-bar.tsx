@@ -11,6 +11,7 @@ import type {
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { useFlag } from '@console/dynamic-plugin-sdk/src/utils/flags';
 import { k8sGet } from '@console/internal/module/k8s';
+import { DefaultNamespaceWarning } from '@console/shared/src/components/namespace/DefaultNamespaceWarning';
 import { NamespaceDropdown } from '@console/shared/src/components/namespace/NamespaceDropdown';
 import { FLAGS, KEYBOARD_SHORTCUTS } from '@console/shared/src/constants/common';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
@@ -137,28 +138,31 @@ export const NamespaceBar: FC<NamespaceBarProps & { hideProjects?: boolean }> = 
   );
 
   return (
-    <div className={css('co-namespace-bar', { 'co-namespace-bar--no-project': hideProjects })}>
-      {hideProjects ? (
-        <div
-          className="co-namespace-bar__items"
-          data-test-id="namespace-bar-dropdown"
-          data-test="namespace-bar-dropdown"
-        >
-          {children}
-        </div>
-      ) : (
-        // Data from useK8sWatchResource is not used directly by the NamespaceDropdown nor the children.
-        // Data is used to determine if the StartGuide should be shown.
-        // See NamespaceBarDropdowns_  above.
-        <NamespaceBarDropdowns
-          useProjects={useProjects}
-          isDisabled={isDisabled}
-          onNamespaceChange={onNamespaceChange}
-          namespace={{ data: namespaces as K8sResourceCommon[], loaded, loadError }}
-        >
-          {children}
-        </NamespaceBarDropdowns>
-      )}
-    </div>
+    <>
+      <div className={css('co-namespace-bar', { 'co-namespace-bar--no-project': hideProjects })}>
+        {hideProjects ? (
+          <div
+            className="co-namespace-bar__items"
+            data-test-id="namespace-bar-dropdown"
+            data-test="namespace-bar-dropdown"
+          >
+            {children}
+          </div>
+        ) : (
+          // Data from useK8sWatchResource is not used directly by the NamespaceDropdown nor the children.
+          // Data is used to determine if the StartGuide should be shown.
+          // See NamespaceBarDropdowns_  above.
+          <NamespaceBarDropdowns
+            useProjects={useProjects}
+            isDisabled={isDisabled}
+            onNamespaceChange={onNamespaceChange}
+            namespace={{ data: namespaces as K8sResourceCommon[], loaded, loadError }}
+          >
+            {children}
+          </NamespaceBarDropdowns>
+        )}
+      </div>
+      {!hideProjects && !isDisabled && <DefaultNamespaceWarning isProject={useProjects} />}
+    </>
   );
 };

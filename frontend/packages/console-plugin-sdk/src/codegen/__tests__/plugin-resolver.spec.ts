@@ -12,11 +12,10 @@ import {
 } from '../plugin-resolver';
 
 jest.mock('read-pkg', () => ({
-  ...jest.requireActual('read-pkg'),
-  sync: jest.fn(),
+  readPackageSync: jest.fn(),
 }));
 
-const readPkgMock = readPkg.sync as jest.Mock;
+const readPkgMock = readPkg.readPackageSync as jest.Mock;
 
 describe('isPluginPackage', () => {
   it('returns false if package.consolePlugin is missing', () => {
@@ -168,9 +167,13 @@ describe('filterActivePluginPackages', () => {
 
 describe('getMonorepoRootDir', () => {
   beforeEach(() => {
-    // Reset the mock to use the real implementation for this test
+    // Reset the mock to read the real package.json files from disk for this test
+    // (read-pkg itself can't be required via jest.requireActual since it's ESM-only)
+    jest.clearAllMocks();
     readPkgMock.mockReset();
-    readPkgMock.mockImplementation(jest.requireActual('read-pkg').sync);
+    readPkgMock.mockImplementation(({ cwd }: { cwd: string }) =>
+      JSON.parse(fs.readFileSync(path.join(cwd, 'package.json'), 'utf8')),
+    );
   });
 
   it('returns the location of Console monorepo root package', () => {

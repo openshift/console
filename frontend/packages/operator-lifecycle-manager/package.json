@@ -18,6 +18,7 @@
       "filters": "src/utils/filters.ts",
       "install": "src/components/operator-install-page.tsx",
       "installPlan": "src/components/install-plan.tsx",
+      "operatorLifecycleColumns": "src/components/operator-lifecycle-columns.tsx",
       "operand": "src/components/operand/index.tsx",
       "operatorHubDetails": "src/components/operator-hub/operator-hub-details.tsx",
       "operatorHubSubscribe": "src/components/operator-hub/operator-hub-subscribe.tsx",

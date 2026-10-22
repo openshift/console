@@ -1,3 +1,4 @@
+import { createHash } from 'crypto';
 import * as fs from 'fs';
 import * as https from 'https';
 import * as net from 'net';
@@ -21,6 +22,18 @@ export function isNotFound(err: unknown): boolean {
     }
     const msg = err instanceof Error ? err.message : String(err);
     return msg.includes('404') || msg.includes('not found');
+  }
+  return false;
+}
+
+export function isAlreadyExists(err: unknown): boolean {
+  if (typeof err === 'object' && err !== null) {
+    const statusCode = (err as any).statusCode ?? (err as any).response?.statusCode;
+    if (statusCode === 409) {
+      return true;
+    }
+    const msg = err instanceof Error ? err.message : String(err);
+    return msg.includes('409') || msg.includes('already exists');
   }
   return false;
 }
@@ -284,7 +297,19 @@ export default class KubernetesClient {
     return true;
   }
 
-  async createNamespace(name: string, labels?: Record<string, string>): Promise<void> {
+  /**
+   * @param options.runLevelZero Label the namespace `openshift.io/run-level: 0`
+   *   (the default, for backwards compatibility). That label turns SCC
+   *   admission off for the namespace, so pods are never mutated to carry the
+   *   `seccompProfile` that the enforced `restricted` Pod Security level then
+   *   demands, and the API server rejects them. Pass `false` for namespaces
+   *   that have to run an ordinary workload.
+   */
+  async createNamespace(
+    name: string,
+    labels?: Record<string, string>,
+    { runLevelZero = true }: { runLevelZero?: boolean } = {},
+  ): Promise<void> {
     try {
       const { status } = await this.k8sApi.readNamespace({ name });
       if (status?.phase === 'Terminating') {
@@ -299,7 +324,10 @@ export default class KubernetesClient {
     }
     await this.k8sApi.createNamespace({
       body: {
-        metadata: { name, labels: { ...labels, 'openshift.io/run-level': '0' } },
+        metadata: {
+          name,
+          labels: { ...labels, ...(runLevelZero ? { 'openshift.io/run-level': '0' } : {}) },
+        },
       },
     });
   }
@@ -309,6 +337,39 @@ export default class KubernetesClient {
       await this.k8sApi.deleteNamespace({ name });
     } catch (err) {
       if (!isNotFound(err)) {
+        throw err;
+      }
+    }
+  }
+
+  /**
+   * Bind a ClusterRole to a user inside a namespace, so that a non-admin
+   * persona can see and use a namespace created by the (cluster-admin) test
+   * client. Without this the namespace exists but never appears in the user's
+   * project list. Deleting the namespace removes the RoleBinding with it.
+   */
+  async grantNamespaceAccess(
+    namespace: string,
+    username: string,
+    clusterRole = 'admin',
+  ): Promise<void> {
+    const body = {
+      apiVersion: 'rbac.authorization.k8s.io/v1',
+      kind: 'RoleBinding',
+      metadata: { name: `e2e-${clusterRole}-${username}`, namespace },
+      roleRef: { apiGroup: 'rbac.authorization.k8s.io', kind: 'ClusterRole', name: clusterRole },
+      subjects: [{ apiGroup: 'rbac.authorization.k8s.io', kind: 'User', name: username }],
+    };
+    try {
+      await this.coApi.createNamespacedCustomObject({
+        body,
+        group: 'rbac.authorization.k8s.io',
+        namespace,
+        plural: 'rolebindings',
+        version: 'v1',
+      });
+    } catch (err) {
+      if (!isAlreadyExists(err)) {
         throw err;
       }
     }
@@ -347,9 +408,49 @@ export default class KubernetesClient {
     );
   }
 
+  /**
+   * Name of the ConfigMap backing a user's console preferences. kubeadmin is
+   * stored under its own name; every other user is keyed by the SHA-256 of the
+   * username (see the console's user-settings backend).
+   */
+  static userSettingsConfigMapName(username: string): string {
+    return username === 'kubeadmin'
+      ? 'user-settings-kubeadmin'
+      : `user-settings-${createHash('sha256').update(username).digest('hex')}`;
+  }
+
+  /**
+   * Drop console preferences for a user. Preferences are cluster-side state
+   * that outlives a single spec, so a test that records a preference pointing
+   * at one of its own namespaces leaves later tests pointing at a namespace
+   * that no longer exists.
+   */
+  async clearUserSettings(username: string, keys: string[]): Promise<void> {
+    const namespace = 'openshift-console-user-settings';
+    const name = KubernetesClient.userSettingsConfigMapName(username);
+    try {
+      const existing = await this.k8sApi.readNamespacedConfigMap({ name, namespace });
+      const data = { ...((existing as any)?.data || {}) };
+      if (!keys.some((key) => key in data)) {
+        return;
+      }
+      keys.forEach((key) => delete data[key]);
+      // Replace rather than merge-patch: a merge patch cannot remove keys.
+      await this.k8sApi.replaceNamespacedConfigMap({
+        name,
+        namespace,
+        body: { ...(existing as any), data },
+      });
+    } catch (err) {
+      if (!isNotFound(err)) {
+        throw err;
+      }
+    }
+  }
+
   async setupConsoleUserSettings(username = 'kubeadmin', defaultNamespace?: string): Promise<void> {
     const namespace = 'openshift-console-user-settings';
-    const configMapName = `user-settings-${username}`;
+    const configMapName = KubernetesClient.userSettingsConfigMapName(username);
     const patchData: Record<string, string> = {
       'console.guidedTour': JSON.stringify({
         admin: { completed: true },

@@ -37,13 +37,15 @@ const DetachedPodExec: FC<DetachedPodExecProps> = ({
   const [wsOpen, setWsOpen] = useState(false);
   const [wsError, setWsError] = useState<string>();
   const [reconnecting, setReconnecting] = useState(false);
-  const ws = useRef<WSFactory>();
-  const terminal = useRef<ImperativeTerminalType>();
+  const ws = useRef<WSFactory>(undefined);
+  const terminal = useRef<ImperativeTerminalType>(undefined);
   const { t } = useTranslation('webterminal-plugin');
   const isOpenShift = useFlag(FLAGS.OPENSHIFT);
   const impersonate = useConsoleSelector(getImpersonate);
   const impersonateRef = useRef(impersonate);
-  impersonateRef.current = impersonate;
+  useEffect(() => {
+    impersonateRef.current = impersonate;
+  });
 
   const onData = useCallback((data: string): void => {
     ws.current?.send(`0${Base64.encode(data)}`);

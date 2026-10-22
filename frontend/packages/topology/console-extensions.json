@@ -69,7 +69,9 @@
         }
       },
       "getDataModel": { "$codeRef": "operatorsDataTransformer.getOperatorTopologyDataModel" },
-      "getDataModelReconciler": { "$codeRef": "operatorsDataModelReconciler.operatorsDataModelReconciler"}
+      "getDataModelReconciler": {
+        "$codeRef": "operatorsDataModelReconciler.operatorsDataModelReconciler"
+      }
     }
   },
   {
@@ -328,7 +330,9 @@
     "properties": {
       "id": "topology-tab-section-application",
       "tab": "topology-side-bar-tab-resource",
-      "provider": { "$codeRef": "applicationResourceTabSection.useApplicationPanelResourceTabSection" }
+      "provider": {
+        "$codeRef": "applicationResourceTabSection.useApplicationPanelResourceTabSection"
+      }
     }
   },
   {

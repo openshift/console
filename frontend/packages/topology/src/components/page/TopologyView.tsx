@@ -275,7 +275,7 @@ const ConnectedTopologyView: FC<ComponentProps> = ({
           <Topology
             model={filteredModel}
             namespace={namespace}
-            application={applicationRef.current}
+            application={applicationRef.current} // eslint-disable-line react-hooks/refs -- reads application filter inside useMemo for graph-view rendering
             onSelect={onSelect}
             setVisualization={setVisualization}
           />

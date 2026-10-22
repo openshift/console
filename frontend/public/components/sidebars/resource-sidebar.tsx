@@ -27,7 +27,7 @@ const ResourceSidebarWrapper: FC<{
 
   return (
     <div
-      className="co-p-has-sidebar__sidebar co-p-has-sidebar__sidebar--bordered pf-v6-u-display-none pf-v6-u-display-block-on-sm"
+      className="co-p-has-sidebar__sidebar co-p-has-sidebar__sidebar--bordered pf-v6-u-display-none pf-v6-u-display-block-on-lg"
       data-test="resource-sidebar"
     >
       <PaneBody className="co-p-has-sidebar__sidebar-body">

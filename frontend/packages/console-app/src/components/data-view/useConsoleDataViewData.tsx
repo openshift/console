@@ -7,16 +7,19 @@ import { SortByDirection } from '@patternfly/react-table';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router';
-import type { RowProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import type {
+  RowProps,
+  ConsoleDataViewColumn,
+  GetDataViewRows,
+  ResourceFilters,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { useActiveColumns } from '@console/internal/components/factory/Table/active-columns-hook';
 import { sortResourceByValue } from '@console/internal/components/factory/Table/sort';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
-import type { ConsoleDataViewColumn, GetDataViewRows, ResourceFilters } from './types';
 import { useConsoleDataViewSort, getSortByDirection } from './useConsoleDataViewSort';
 
-const isDataViewConfigurableColumn = <TData,>(
-  column: ConsoleDataViewColumn<TData>,
-): column is ConsoleDataViewColumn<TData> & { cell: ReactNode } => column?.cell !== undefined;
+type PreparedDataViewColumn<TData> = ConsoleDataViewColumn<TData> &
+  Extract<DataViewTh, { cell: ReactNode }>;
 
 export const useConsoleDataViewData = <
   TData,
@@ -27,8 +30,11 @@ export const useConsoleDataViewData = <
   filteredData,
   filters,
   getDataViewRows,
+  defaultSortColumnId,
+  defaultSortDirection,
   showNamespaceOverride,
   columnManagementID,
+  columnsResolved = true,
   customRowData,
   isResizable = true,
   selection,
@@ -37,18 +43,27 @@ export const useConsoleDataViewData = <
   filteredData: TData[];
   filters: TFilters;
   getDataViewRows: GetDataViewRows<TData, TCustomRowData>;
+  defaultSortColumnId?: string;
+  defaultSortDirection?: SortByDirection;
   showNamespaceOverride?: boolean;
   columnManagementID?: string;
+  columnsResolved?: boolean;
   customRowData?: TCustomRowData;
   isResizable?: boolean;
   selection?: {
-    selectedItems: Set<string>;
-    onSelectAll?: (isSelecting: boolean, filteredItems: TData[]) => void;
+    selectedIds: Set<string>;
+    onSelectAll: (isSelecting: boolean, filteredItems: TData[]) => void;
     getItemId: (item: TData) => string;
+    isSelectable?: (item: TData) => boolean;
   };
 }) => {
   const { t } = useTranslation('console-app');
   const [searchParams, setSearchParams] = useSearchParams();
+  const selectionEnabled = Boolean(selection);
+  const selectedIds = selection?.selectedIds;
+  const onSelectAll = selection?.onSelectAll;
+  const getItemId = selection?.getItemId;
+  const isSelectable = selection?.isSelectable;
   const prevFiltersRef = useRef(filters);
   const [activeNamespace] = useActiveNamespace();
   const prevNamespaceRef = useRef(activeNamespace);
@@ -81,22 +96,34 @@ export const useConsoleDataViewData = <
     prevNamespaceRef.current = currentNamespace;
   }, [filters, activeNamespace, pagination.page, setSearchParams]);
 
-  const [activeColumns] = useActiveColumns({
+  const [activeColumns, activeColumnsResolved] = useActiveColumns({
     columns,
     showNamespaceOverride,
     columnManagementID,
   });
 
-  const dataViewColumns = useMemo<ConsoleDataViewColumn<TData>[]>(() => {
+  const dataViewColumns = useMemo<PreparedDataViewColumn<TData>[]>(() => {
     // Calculate selection state across all filtered items
-    const totalCount = filteredData.length;
+    const totalCount = isSelectable
+      ? filteredData.filter(isSelectable).length
+      : filteredData.length;
 
-    return activeColumns.map(({ id, title, sort, props, resizableProps }, index) => {
+    return activeColumns.map(({ id, type, title, tooltip, sort, props, resizableProps }, index) => {
       // Filter out custom Console props that aren't valid PatternFly ThProps
       const headerProps: ThProps = {
         ...props,
         dataLabel: title,
       };
+
+      if (tooltip) {
+        headerProps.info = {
+          ...headerProps.info,
+          tooltip,
+          ariaLabel:
+            headerProps.info?.ariaLabel ??
+            t('More information about {{column}}', { column: title }),
+        };
+      }
 
       if (sort) {
         headerProps.sort = {
@@ -112,12 +139,12 @@ export const useConsoleDataViewData = <
       // Add select-all checkbox to selection column header
       // Note: onSelect handler is updated later with visibleItems via dataViewColumnsWithSortApplied
       // The checkbox state is determined by visible items only, not all items
-      if (id === 'select' && selection?.onSelectAll) {
+      if (id === 'select' && onSelectAll) {
         headerProps['data-test'] = 'select-all-header';
         headerProps.select = {
           onSelect: (_event: FormEvent<HTMLInputElement>, isSelecting: boolean) => {
             // This will be replaced with the actual handler in dataViewColumnsWithSortApplied
-            selection.onSelectAll(isSelecting, filteredData);
+            onSelectAll(isSelecting, filteredData);
           },
           isSelected: false, // Will be updated based on visible items
           isDisabled: totalCount === 0,
@@ -126,28 +153,39 @@ export const useConsoleDataViewData = <
 
       return {
         id,
+        type,
         title,
         sort,
         props: headerProps,
         resizableProps: isResizable ? resizableProps : undefined,
         cell: title ? (
           <span>{title}</span>
-        ) : (
+        ) : type === 'actions' ? (
           <span className="pf-v6-u-screen-reader">{t('Actions')}</span>
-        ),
-      } satisfies ConsoleDataViewColumn<TData>;
+        ) : null,
+      } satisfies PreparedDataViewColumn<TData>;
     });
-  }, [activeColumns, t, isResizable, selection, filteredData]);
+  }, [activeColumns, t, isResizable, isSelectable, onSelectAll, filteredData]);
+
+  // Resolved from the column id rather than taken as an index, so that hiding or reordering
+  // columns cannot silently point the default sort at a different column.
+  const defaultSortColumnIndex = useMemo(() => {
+    const index = dataViewColumns.findIndex(({ id }) => id === defaultSortColumnId);
+    return index === -1 ? undefined : index;
+  }, [dataViewColumns, defaultSortColumnId]);
 
   const { sortBy, onSort } = useConsoleDataViewSort<TData>({
     columns: dataViewColumns,
+    sortColumnIndex: defaultSortColumnIndex,
+    sortDirection: defaultSortDirection,
+    columnsResolved: columnsResolved && activeColumnsResolved,
   });
 
   const sortedData = useMemo(() => {
     const sortColumn = dataViewColumns[sortBy.index];
     const sortDirection = getSortByDirection(sortBy.direction);
 
-    if (!isDataViewConfigurableColumn(sortColumn)) {
+    if (!sortColumn) {
       return filteredData;
     }
 
@@ -177,19 +215,14 @@ export const useConsoleDataViewData = <
     );
 
   const visibleItems = transformedData.map((item) => item.obj);
-  const dataViewRows = getDataViewRows(transformedData, dataViewColumns);
+  const dataViewRows = getDataViewRows(transformedData, dataViewColumns).map((row) =>
+    row.map(({ cell, props }) => ({ cell: cell ?? null, props })),
+  );
 
   // Apply sort state and select-all handler updates to columns independently
-  const dataViewColumnsWithSortApplied = useMemo<DataViewTh[]>(
+  const dataViewColumnsWithSortApplied = useMemo<PreparedDataViewColumn<TData>[]>(
     () =>
       dataViewColumns.map((column) => {
-        if (!isDataViewConfigurableColumn(column)) {
-          return {
-            ...column,
-            cell: null,
-          };
-        }
-
         let updatedProps = column.props;
 
         if (column.sort !== undefined && column.props.sort) {
@@ -207,31 +240,54 @@ export const useConsoleDataViewData = <
           };
         }
 
-        if (column.id === 'select' && column.props.select && selection?.onSelectAll) {
-          const visibleSelectedCount = visibleItems.filter((item) =>
-            selection.selectedItems.has(selection.getItemId(item)),
+        if (
+          column.id === 'select' &&
+          column.props.select &&
+          selectionEnabled &&
+          selectedIds &&
+          getItemId &&
+          onSelectAll
+        ) {
+          const selectableVisibleItems = isSelectable
+            ? visibleItems.filter(isSelectable)
+            : visibleItems;
+          const visibleSelectedCount = selectableVisibleItems.filter((item) =>
+            selectedIds.has(getItemId(item)),
           ).length;
           const allVisibleSelected =
-            visibleItems.length > 0 && visibleSelectedCount === visibleItems.length;
+            selectableVisibleItems.length > 0 &&
+            visibleSelectedCount === selectableVisibleItems.length;
           const isIndeterminate =
-            visibleSelectedCount > 0 && visibleSelectedCount < visibleItems.length;
+            visibleSelectedCount > 0 && visibleSelectedCount < selectableVisibleItems.length;
 
           updatedProps = {
             ...updatedProps,
             select: {
               ...updatedProps.select,
               onSelect: (_event: FormEvent<HTMLInputElement>, isSelecting: boolean) => {
-                selection.onSelectAll(isSelecting, visibleItems);
+                onSelectAll(isSelecting, visibleItems);
               },
               isSelected: Boolean(allVisibleSelected),
               isIndeterminate,
+              isDisabled: selectableVisibleItems.length === 0,
             },
           };
         }
 
         return updatedProps !== column.props ? { ...column, props: updatedProps } : column;
       }),
-    [dataViewColumns, sortBy.index, sortBy.direction, onSort, selection, visibleItems],
+    [
+      dataViewColumns,
+      sortBy.index,
+      sortBy.direction,
+      onSort,
+      selectionEnabled,
+      selectedIds,
+      getItemId,
+      isSelectable,
+      onSelectAll,
+      visibleItems,
+    ],
   );
 
   return {

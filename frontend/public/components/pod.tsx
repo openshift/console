@@ -385,7 +385,7 @@ const Details: FC<PodDetailsProps> = ({ obj: pod }) => {
     pod.spec.containers,
     (sum, container) => {
       const { value } = units.dehumanize(_.get(container, 'resources.limits.cpu', 0), 'numeric');
-      return sum + value;
+      return sum + Number(value);
     },
     0,
   );
@@ -396,7 +396,7 @@ const Details: FC<PodDetailsProps> = ({ obj: pod }) => {
         _.get(container, 'resources.limits.memory', 0),
         'binaryBytesWithoutB',
       );
-      return sum + value;
+      return sum + Number(value);
     },
     0,
   );

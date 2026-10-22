@@ -8,7 +8,7 @@ Before generating or modifying code, always consult the relevant file(s) to ensu
 
 - **Monorepo:** `frontend/` (React + TypeScript, yarn workspaces), `pkg/` - Go backend code, `cmd/` - Go CLI commands
 - **Key packages:** `@console/dynamic-plugin-sdk` (public API), `@console/shared` (utils), `@console/internal` (`public` folder - core UI/k8s)
-- **Testing:** Jest (unit), Cypress (E2E), Go tests (backend). Read [TESTING.md](TESTING.md) for patterns and best practices. Use the `gen-rtl-test` skill for React Testing Library test generation.
+- **Testing:** Jest (unit), Playwright (E2E), Go tests (backend). Read [TESTING.md](TESTING.md) for patterns and best practices. Use the `gen-rtl-test` skill for React Testing Library test generation.
 
 ## Static plugins
 
@@ -105,13 +105,14 @@ go mod vendor && go mod tidy # Update Go dependencies
 
 ## Common pitfalls
 
-- **Barrel imports:** NEVER import from package index files (e.g., `@console/shared`) in new code, as they can create circular dependencies and slow builds. Import from specific file paths instead.
+- **Barrel files:** Barrel files (package index files that re-export other modules) create circular dependencies and slow builds. NEVER import from a barrel file or create a new one in new code — import from specific file paths instead.
 - **Public API breakage:** Always check `console-dynamic-plugin-sdk/src/api/internal-*.ts` before modifying anything in the SDK. External plugins depend on this API.
 - **Missing i18n keys:** Forgetting `yarn i18n` after adding translatable strings causes missing key warnings and E2E failures.
 - **Backticks in t():** The i18n parser cannot extract keys from template literals. Use single or double quotes.
 - **Deprecated imports in new code:** NEVER import from deprecated packages or use code which has the `@deprecated` TSdoc tag in new code.
 - **Absolute paths:** Never use absolute URLs or paths. The console runs behind a proxy under an arbitrary path.
 - **Custom CSS:** Exhaust PatternFly component options before writing custom SCSS. When necessary, use BEM with `co-` prefix.
+- **Bumping frontend dependencies:** If the target version already falls within the semver range declared by the dependent package(s) (i.e. `yarn.lock` is just pinned to an older resolution within that range), don't add/edit a `resolutions` field in `package.json`. Instead, regenerate just that portion of `yarn.lock` (e.g. `yarn up <package>`) so the existing range re-resolves. Only use `resolutions` when the desired version falls outside what any dependent's semver range allows.
 
 ## Reference files
 
@@ -131,6 +132,6 @@ These files are the single source of truth for architecture, coding standards, a
 - [Extension Types Reference](frontend/packages/console-dynamic-plugin-sdk/docs/console-extensions.md) - complete extension type definitions, naming conventions (`console.*`), and deprecation notices.
 - [Console API Documentation](frontend/packages/console-dynamic-plugin-sdk/docs/api.md) - React components, hooks, utilities, and TypeScript types exported by the SDK.
 
-## Playwright migration
+## Playwright E2E tests
 
-We are migrating Cypress e2e tests to Playwright. Use `/migrate-cypress` to convert test files and `/debug-test` to fix failing tests. Shared migration context (translation tables, structural rules, checklist) is in `.claude/migration-context.md`.
+E2E tests use Playwright. Tests live under `frontend/e2e/tests/` and are configured via `frontend/playwright.config.ts`. Use `/debug-test` to fix failing tests.

@@ -11,6 +11,14 @@ import (
 //   https://github.com/openshift/console-operator/blob/master/pkg/console/subresource/consoleserver/types.go
 // These structs need to remain in sync.
 
+// CSPMode controls whether the console reports or enforces Content Security Policy.
+type CSPMode string
+
+const (
+	CSPModeReportOnly CSPMode = "report-only"
+	CSPModeEnforce    CSPMode = "enforce"
+)
+
 // Config is the top-level console server cli configuration.
 type Config struct {
 	APIVersion            string `yaml:"apiVersion"`
@@ -50,6 +58,7 @@ type ServingInfo struct {
 	RedirectPort  int      `yaml:"redirectPort,omitempty"`
 	MinTLSVersion string   `yaml:"minTLSVersion,omitempty"`
 	CipherSuites  []string `yaml:"cipherSuites,omitempty"`
+	TLSGroups     []string `yaml:"tlsGroups,omitempty"`
 
 	// These fields are defined in `HTTPServingInfo`, but are not supported for console. Fail if any are specified.
 	// https://github.com/openshift/api/blob/0cb4131a7636e1ada6b2769edc9118f0fe6844c8/config/v1/types.go#L7-L38

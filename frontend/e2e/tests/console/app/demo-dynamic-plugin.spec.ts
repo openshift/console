@@ -208,7 +208,24 @@ interface ManifestResource {
         'OpenShift Pods List Page',
       );
       await listPage.filterByNameInput(podName);
-      await expect(page.getByTestId('resource-row').filter({ hasText: podName })).toBeVisible();
+      await expect(listPage.cells.filter({ hasText: podName }).first()).toBeVisible();
+    });
+
+    test('verifies PIXAA pod column tooltip and resizing', async ({ page }) => {
+      await consolePluginPage.navigateToDemoListPage();
+      await listPage.waitForRows();
+
+      await test.step('shows a tooltip describing PIXAA pods', async () => {
+        const infoButton = page.getByRole('button', { name: 'More information about PIXAA pod?' });
+        await infoButton.hover();
+        await expect(
+          page.getByRole('tooltip').filter({ hasText: 'A "PIXAA pod" has a lowercase name' }),
+        ).toBeVisible();
+      });
+
+      await test.step('resizes the PIXAA pod column', async () => {
+        await listPage.verifyColumnResizing('console-demo-plugin-pixaa-pod');
+      });
     });
 
     test('verifies K8s API nav item', async ({ page }) => {

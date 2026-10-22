@@ -35,8 +35,7 @@ func NewDevfileData(version string) (obj DevfileData, err error) {
 	// Fetch devfile struct type from map
 	devfileType, ok := apiVersionToDevfileStruct[supportedApiVersion(version)]
 	if !ok {
-		errMsg := fmt.Sprintf("devfile type not present for apiVersion '%s'", version)
-		return obj, fmt.Errorf(errMsg)
+		return obj, fmt.Errorf("devfile type not present for apiVersion '%s'", version)
 	}
 
 	return reflect.New(devfileType).Interface().(DevfileData), nil

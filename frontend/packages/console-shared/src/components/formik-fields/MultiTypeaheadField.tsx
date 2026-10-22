@@ -67,7 +67,7 @@ export const MultiTypeaheadField: FC<MultiTypeaheadFieldProps> = ({
   const [focusedItemIndex, setFocusedItemIndex] = useState<number | null>(null);
   const [activeItemId, setActiveItemId] = useState<string | null>(null);
   const [onCreation, setOnCreation] = useState<boolean>(false); // Boolean to refresh filter state after new option is created
-  const textInputRef = useRef<HTMLInputElement>();
+  const textInputRef = useRef<HTMLInputElement>(undefined);
 
   useFormikValidationFix(field.value);
 

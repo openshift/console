@@ -1,4 +1,4 @@
-/* eslint-disable camelcase, tsdoc/syntax */
+/* eslint-disable camelcase */
 import type { FC, Ref } from 'react';
 import { memo, useEffect, useReducer, useState } from 'react';
 import type { MenuToggleElement, SelectProps } from '@patternfly/react-core';

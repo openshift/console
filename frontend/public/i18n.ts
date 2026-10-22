@@ -1,0 +1,114 @@
+/* eslint-disable no-barrel-files/no-barrel-files */
+import i18n from 'i18next';
+import detector from 'i18next-browser-languagedetector';
+import httpBackend from 'i18next-http-backend';
+import Pseudo from 'i18next-pseudo/es';
+import { transformNamespace } from 'i18next-v4-format-converter';
+import { initReactI18next } from 'react-i18next';
+import { getLastLanguage } from '@console/app/src/components/user-preferences/language/getLastLanguage';
+import { IS_PRODUCTION } from '@console/shared/src/constants/common';
+import { addTestError } from '@console/shared/src/utils/test-errors';
+
+const params = new URLSearchParams(window.location.search);
+const pseudolocalizationEnabled = params.get('pseudolocalization') === 'true';
+const language = params.get('lng');
+
+let resolvedLoading: (value: boolean) => void;
+
+export const loading = new Promise<boolean>((resolve) => {
+  resolvedLoading = resolve;
+});
+
+export const init = () => {
+  i18n
+    .use(
+      new Pseudo({ enabled: pseudolocalizationEnabled, languageToPseudo: language, wrapped: true }),
+    )
+    // fetch json files
+    // learn more: https://github.com/i18next/i18next-http-backend
+    .use(httpBackend)
+    // detect user language
+    // learn more: https://github.com/i18next/i18next-browser-languageDetector
+    .use(detector)
+    // pass the i18n instance to react-i18next.
+    .use(initReactI18next)
+    // init i18next
+    // for all options read: https://www.i18next.com/overview/configuration-options
+    .init({
+      backend: {
+        loadPath: `${window.SERVER_FLAGS.basePath}locales/resource.json?lng={{lng}}&ns={{ns}}`,
+        parse: function (data: string, lng: string, ns: string) {
+          const parsed = JSON.parse(data);
+          // i18next-v4-format-converter functions differently for plurals in
+          // 'en' compared to other languages. Therefore, two conversions are
+          // needed: one in the correct language, then a second one in English
+          // to catch the missing plural cases.
+          if (ns?.startsWith('plugin__')) {
+            const firstTransform = transformNamespace(lng, parsed);
+            return transformNamespace('en', firstTransform);
+          }
+          return parsed;
+        },
+      },
+      showSupportNotice: false,
+      lng: getLastLanguage(),
+      fallbackLng: 'en',
+      load: 'languageOnly',
+      debug: process.env.NODE_ENV === 'development',
+      detection: { caches: [] },
+      contextSeparator: '~',
+      ns: [
+        'console-app',
+        'console-shared',
+        'console-telemetry-plugin',
+        'container-security',
+        'devconsole',
+        'git-service',
+        'helm-plugin',
+        'insights-plugin',
+        'knative-plugin',
+        'metal3-plugin',
+        'olm',
+        'olm-v1',
+        'shipwright-plugin',
+        'public',
+        'topology',
+        'vsphere-plugin',
+        'webterminal-plugin',
+        ...Array.from(new Set(window.SERVER_FLAGS.i18nNamespaces ?? [])),
+      ],
+      defaultNS: 'public',
+      nsSeparator: '~',
+      keySeparator: false,
+      postProcess: ['pseudo'],
+      interpolation: {
+        escapeValue: false, // not needed for react as it escapes by default
+      },
+      react: {
+        useSuspense: true,
+        transSupportBasicHtmlNodes: true, // allow <br/> and simple html elements in translations
+      },
+      saveMissing: true,
+      missingKeyHandler: function (lngs: readonly string[], ns: string, key: string) {
+        const formattedMessage = `Missing i18n key "${key}" in namespace "${ns}" and language "${lngs}".`;
+        addTestError(formattedMessage);
+        console.error(formattedMessage);
+      },
+    })
+    .then((value) => {
+      // Update loading promise and pass values and errors to the caller
+      resolvedLoading(true);
+      return value;
+    })
+    .catch((error) => {
+      resolvedLoading(false);
+      throw error;
+    });
+};
+
+if (!IS_PRODUCTION) {
+  // Expose i18next for debugging
+  window.i18n = i18n;
+}
+
+export default i18n;

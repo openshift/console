@@ -7,6 +7,7 @@ import { MockKnativeResources } from '../../../topology/__tests__/topology-knati
 import KSRoutesOverviewListItem from '../KSRoutesOverviewListItem';
 
 jest.mock('@patternfly/react-core', () => ({
+  ClipboardCopy: 'ClipboardCopy',
   ListItem: ({ children }: { children?: ReactNode }) => (
     <div data-test="mock-ListItem">{children}</div>
   ),
@@ -14,10 +15,6 @@ jest.mock('@patternfly/react-core', () => ({
   GridItem: ({ children }: { children?: ReactNode }) => (
     <div data-test="mock-GridItem">{children}</div>
   ),
-}));
-
-jest.mock('@patternfly/react-core/dist/dynamic/components/ClipboardCopy', () => ({
-  ClipboardCopy: 'ClipboardCopy',
 }));
 
 jest.mock('@console/internal/components/utils', () => ({

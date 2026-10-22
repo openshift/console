@@ -2,22 +2,15 @@ import type { FC } from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
-import type { RowFilter, WatchK8sResults } from '@console/dynamic-plugin-sdk';
-import { MultiListPage } from '@console/internal/components/factory';
-import { referenceForModel } from '@console/internal/module/k8s';
-import { Priority, priorityFor } from '../const';
+import type { WatchK8sResults } from '@console/dynamic-plugin-sdk';
+import { MultiListPage } from '@console/internal/components/factory/list-page';
+import { referenceForModel } from '@console/internal/module/k8s/k8s-ref';
 import { ImageManifestVulnModel } from '../models';
-import type { Feature, ImageManifestVuln, Vulnerability } from '../types';
-import { getVulnerabilityType, VulnerabilitiesType } from './image-vulnerability-utils';
+import type { ImageManifestVuln } from '../types';
 import ImageVulnerabilitiesTable from './ImageVulnerabilitiesTable';
 
 type ImageVulnerabilitiesListProps = {
   obj: ImageManifestVuln;
-};
-
-type ImageVuln = {
-  feature: Feature;
-  vulnerability: Vulnerability;
 };
 
 const ImageVulnerabilitiesList: FC<ImageVulnerabilitiesListProps> = (props) => {
@@ -28,37 +21,6 @@ const ImageVulnerabilitiesList: FC<ImageVulnerabilitiesListProps> = (props) => {
     },
   } = props;
   const { ns: namespace } = useParams();
-
-  const imageVulnerabilitiesRowFilters: RowFilter<ImageVuln>[] = [
-    {
-      filterGroupName: t('Type'),
-      items: [
-        { id: VulnerabilitiesType.appDependency, title: VulnerabilitiesType.appDependency },
-        { id: VulnerabilitiesType.baseImage, title: VulnerabilitiesType.baseImage },
-      ],
-      type: 'vulnerability-type',
-      reducer: (v) => getVulnerabilityType(v.vulnerability),
-      filter: (filter, vuln) =>
-        filter.selected?.includes(getVulnerabilityType(vuln.vulnerability)) ||
-        _.isEmpty(filter.selected),
-    },
-    {
-      filterGroupName: t('Severity'),
-      items: [
-        { id: Priority.Defcon1, title: Priority.Defcon1 },
-        { id: Priority.Critical, title: Priority.Critical },
-        { id: Priority.High, title: Priority.High },
-        { id: Priority.Medium, title: Priority.Medium },
-        { id: Priority.Low, title: Priority.Low },
-        { id: Priority.Negligible, title: Priority.Negligible },
-        { id: Priority.Unknown, title: Priority.Unknown },
-      ],
-      type: 'vulnerability-severity',
-      reducer: (v) => v.vulnerability.severity,
-      filter: (filter, vuln) =>
-        filter.selected?.includes(vuln.vulnerability.severity) || _.isEmpty(filter.selected),
-    },
-  ];
 
   return (
     <MultiListPage
@@ -75,23 +37,22 @@ const ImageVulnerabilitiesList: FC<ImageVulnerabilitiesListProps> = (props) => {
         },
       ]}
       title={t('Vulnerabilities')}
+      // Not sorted here: ConsoleDataView always applies its own sort, so any order set now is
+      // discarded. Severity ordering lives on the Severity column instead.
       flatten={(resources: WatchK8sResults<{ imageVulnerabilities: ImageManifestVuln }>) =>
-        _.sortBy(
-          _.flatten(
-            (resources?.imageVulnerabilities?.data?.spec?.features ?? []).map((feature) =>
-              (feature?.vulnerabilities ?? []).map((vulnerability) => ({ feature, vulnerability })),
-            ),
+        _.flatten(
+          (resources?.imageVulnerabilities?.data?.spec?.features ?? []).map((feature) =>
+            (feature?.vulnerabilities ?? []).map((vulnerability) => ({ feature, vulnerability })),
           ),
-          (v: ImageVuln) => priorityFor(v?.vulnerability?.severity).index,
         )
       }
       namespace={namespace}
       canCreate={false}
       showTitle
       textFilter="vulnerability"
-      rowFilters={imageVulnerabilitiesRowFilters}
       hideLabelFilter
       ListComponent={ImageVulnerabilitiesTable}
+      omitFilterToolbar
     />
   );
 };

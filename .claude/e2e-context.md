@@ -1,6 +1,6 @@
 # Playwright E2E Test Context
 
-Shared reference for writing, migrating, and debugging Playwright e2e tests in OpenShift Console. Used by `/gen-e2e-test`, `/migrate-cypress`, and `/debug-test` skills.
+Shared reference for writing, migrating, and debugging Playwright e2e tests in OpenShift Console. Used by `/gen-e2e-test` and `/debug-test` skills.
 
 ## High-Level Principles
 

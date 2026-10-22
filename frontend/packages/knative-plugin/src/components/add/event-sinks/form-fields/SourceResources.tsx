@@ -96,7 +96,7 @@ const SourceResources: FC<SourceResourcesProps> = ({ namespace, isMoveSink }) =>
     return result;
   }, [watchedResources, channelsLoaded, channels]);
 
-  const autocompleteFilter = (strText: string, item: ReactElement): boolean =>
+  const autocompleteFilter = (strText: string, item: ReactElement<{ name: string }>): boolean =>
     fuzzy(strText, item?.props?.name);
   const fieldId = getFieldId('source-name', 'dropdown');
   const onChange = useCallback(

@@ -20,7 +20,7 @@ const HelmReleaseStatusDecorator: FC<HelmReleaseStatusDecoratorProps> = ({
   x,
   y,
 }) => {
-  const ref = useRef();
+  const ref = useRef(undefined);
   const { t } = useTranslation('helm-plugin');
   const { data } = element.getData();
 

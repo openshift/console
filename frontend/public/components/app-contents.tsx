@@ -86,7 +86,7 @@ const InnerDefaultPage: FC<DefaultPageProps> = ({ flags }) => {
     getPerspectiveVisitedKey(activePerspective),
     false,
   );
-  const firstVisit = useRef<boolean>();
+  const firstVisit = useRef<boolean>(undefined);
 
   // First time thru, capture first visit status
   if (firstVisit.current == null && visitedLoaded) {

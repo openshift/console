@@ -76,6 +76,10 @@ export class TopologyPage extends BasePage {
     return this.graphSurface;
   }
 
+  getHighlightedNode(): Locator {
+    return this.highlightedNode;
+  }
+
   async clickStartBuilding(): Promise<void> {
     await this.robustClick(this.startBuildingLink);
   }
@@ -96,11 +100,18 @@ export class TopologyPage extends BasePage {
     await expect(this.highlightedNode.first()).toBeAttached({ timeout });
   }
 
+  async verifyWorkloadIcon(workloadName: string, iconUrl: string): Promise<void> {
+    await this.ensureGraphView();
+    await this.search(workloadName);
+    const icon = this.highlightedNode.first().getByTestId('base-node-handler').locator('image');
+    await expect(icon).toHaveAttribute('xlink:href', iconUrl);
+  }
+
   // PF Topology internal class — no data-test available; may break on PF upgrades
   async verifyGroupLabel(workloadName: string, groupName: string, timeout = 15_000): Promise<void> {
     await this.ensureGraphView();
     await this.search(workloadName);
-    const label = this.page.locator('g[class$="topology__group__label"]');
+    const label = this.page.locator('g[class*="topology__group__label"]');
     const textContent = label.locator('> text');
     await expect(textContent).toHaveText(groupName, { timeout });
   }
@@ -136,6 +147,29 @@ export class TopologyPage extends BasePage {
     const node = this.getNode(nodeName);
     await expect(node.first()).toBeVisible({ timeout: 30_000 });
     await node.first().click({ button: 'right' });
+  }
+
+  async openHelmReleaseContextMenu(releaseName: string): Promise<void> {
+    await this.ensureGraphView();
+    await this.search(releaseName);
+    await expect(this.highlightedNode.first()).toBeVisible({ timeout: 30_000 });
+
+    // PF Topology internal class — no data-test available; may break on PF upgrades
+    const helmReleaseGroup = this.page
+      .locator('[data-type="helm-release"] g.odc-base-node__label')
+      .filter({ hasText: releaseName })
+      .first();
+    await expect(helmReleaseGroup).toBeVisible({ timeout: 30_000 });
+
+    await expect(async () => {
+      await this.page.keyboard.press('Escape');
+      await helmReleaseGroup.click({ button: 'right' });
+      await expect(this.getContextMenuItem('Upgrade')).toBeVisible({ timeout: 5_000 });
+    }).toPass({ intervals: [1_000, 2_000, 5_000], timeout: 30_000 });
+  }
+
+  getContextMenuItem(action: string): Locator {
+    return this.page.getByRole('menuitem', { name: action });
   }
 
   async selectContextMenuAction(action: string): Promise<void> {

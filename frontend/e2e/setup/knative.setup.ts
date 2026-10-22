@@ -31,6 +31,7 @@ const isRetryableError = (err: unknown): boolean => {
 
 setup.describe.configure({ mode: 'serial' });
 
+// eslint-disable-next-line playwright/expect-expect
 setup('install OpenShift Serverless operator if not present', async ({}) => {
   setup.setTimeout(600_000);
 
@@ -62,7 +63,7 @@ setup('install OpenShift Serverless operator if not present', async ({}) => {
     // Namespace may not exist yet — proceed with installation
   }
 
-  // Install using oc apply — same approach as the Cypress tests.
+  // Install using oc apply, matching the legacy E2E setup.
   // Using oc apply ensures OLM creates deployments with proper seccompProfile
   // which is required on OCP 5.0 clusters with PodSecurity "restricted".
   console.log('Installing Serverless operator...');
@@ -110,6 +111,7 @@ setup('install OpenShift Serverless operator if not present', async ({}) => {
   }
 });
 
+// eslint-disable-next-line playwright/expect-expect
 setup('create KnativeServing and KnativeEventing instances', async ({}) => {
   setup.setTimeout(600_000);
 

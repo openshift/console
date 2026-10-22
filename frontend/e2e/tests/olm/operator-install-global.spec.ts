@@ -2,6 +2,7 @@ import { test, expect } from '../../fixtures';
 import { OperatorInstallPage } from '../../pages/operator-install-page';
 import { InstalledOperatorsPage } from '../../pages/installed-operators-page';
 import { OperatorDetailsPage, TestOperandProps } from '../../pages/operator-details-page';
+import { OLM_CLUSTER_STATE_LOCK } from '../../utils/locks';
 
 const testOperator = {
   name: 'Data Grid',
@@ -23,7 +24,7 @@ const globalNamespace = 'openshift-operators';
 
 test.describe(
   `Globally installing "${testOperator.name}" operator in ${globalNamespace}`,
-  { tag: ['@admin'] },
+  { tag: ['@admin'], lock: OLM_CLUSTER_STATE_LOCK },
   () => {
     test(`Globally installs ${testOperator.name} operator in ${globalNamespace} and creates ${testOperand.name} operand`, async ({
       page,

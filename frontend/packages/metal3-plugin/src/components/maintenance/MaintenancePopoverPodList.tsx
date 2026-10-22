@@ -1,36 +1,26 @@
 import type { FC } from 'react';
-import { List, AutoSizer } from 'react-virtualized';
+import { List, ListItem } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 import { ResourceLink } from '@console/internal/components/utils';
 import { PodModel } from '@console/internal/models';
 import { referenceForModel } from '@console/internal/module/k8s';
 import './MaintenancePopoverPodList.scss';
 
-const podRowRenderer =
-  (pods) =>
-  ({ key, index, style }) => {
-    const pod = pods[index];
-    return (
-      <div key={key} style={style} className="maintenance-popover-pod-list__list-item">
-        <ResourceLink kind={referenceForModel(PodModel)} name={pod} title={pod} />
-      </div>
-    );
-  };
-
 type MaintenancePopoverPodListProps = {
   pods: string[];
 };
-const MaintenancePopoverPodList: FC<MaintenancePopoverPodListProps> = ({ pods }) => (
-  <AutoSizer disableHeight>
-    {({ width }) => (
-      <List
-        width={width}
-        height={pods.length < 6 ? pods.length * 30 : 150}
-        rowCount={pods.length}
-        rowHeight={30}
-        rowRenderer={podRowRenderer(pods)}
-      />
-    )}
-  </AutoSizer>
-);
+
+const MaintenancePopoverPodList: FC<MaintenancePopoverPodListProps> = ({ pods }) => {
+  const { t } = useTranslation('metal3-plugin');
+  return (
+    <List isPlain className="maintenance-popover-pod-list" aria-label={t('Remaining workloads')}>
+      {pods.map((pod) => (
+        <ListItem key={pod} className="maintenance-popover-pod-list__list-item">
+          <ResourceLink kind={referenceForModel(PodModel)} name={pod} title={pod} />
+        </ListItem>
+      ))}
+    </List>
+  );
+};
 
 export default MaintenancePopoverPodList;

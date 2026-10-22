@@ -44,6 +44,7 @@ export interface ListDropdownProps {
   ) => void;
   id?: string;
   disabled?: boolean;
+  showDefaultWarning?: boolean;
 
   dataTest?: string;
   actionItems?: ActionItem[];
@@ -79,7 +80,8 @@ const InnerListDropdown: FC<ListDropdownInternalProps> = ({
   );
   const [title, setTitle] = useState<React.ReactNode>(loaded ? placeholder : <LoadingInline />);
 
-  const autocompleteFilter = (text: string, item: ReactElement) => fuzzy(text, item.props.name);
+  const autocompleteFilter = (text: string, item: ReactElement<{ name: string }>) =>
+    fuzzy(text, item.props.name);
 
   const handleOnChange = useCallback(
     (key: string) => {
@@ -135,7 +137,11 @@ const InnerListDropdown: FC<ListDropdownInternalProps> = ({
 
     setTitle(
       selectedItem ? (
-        <ResourceName kind={selectedItem.kindLabel} name={selectedItem.name} />
+        <ResourceName
+          kind={selectedItem.kindLabel}
+          name={selectedItem.name}
+          showDefaultWarning={props.showDefaultWarning}
+        />
       ) : (
         placeholder
       ),
@@ -147,6 +153,7 @@ const InnerListDropdown: FC<ListDropdownInternalProps> = ({
     dataFilter,
     props.selectedKey,
     props.selectedKeyKind,
+    props.showDefaultWarning,
     placeholder,
     desc,
     t,
@@ -157,10 +164,16 @@ const InnerListDropdown: FC<ListDropdownInternalProps> = ({
     const result = {};
     _.keys(items).forEach((key) => {
       const item = items[key];
-      result[key] = <ResourceName kind={item.kindLabel} name={item.name} />;
+      result[key] = (
+        <ResourceName
+          kind={item.kindLabel}
+          name={item.name}
+          showDefaultWarning={props.showDefaultWarning}
+        />
+      );
     });
     return result;
-  }, [items]);
+  }, [items, props.showDefaultWarning]);
 
   return (
     <div>

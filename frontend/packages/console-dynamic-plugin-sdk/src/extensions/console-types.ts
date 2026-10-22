@@ -1,11 +1,10 @@
 import type {
   ComponentType,
   ReactNode,
-  ReactText,
-  ReactNodeArray,
   SetStateAction,
   Dispatch,
   ElementType,
+  ReactElement,
 } from 'react';
 import type { K8sResourceCommon, ObjectMetadata } from '@openshift/api-types';
 import type {
@@ -15,12 +14,16 @@ import type {
 } from '@openshift/dynamic-plugin-sdk';
 import type { QuickStartContextValues } from '@patternfly/quickstarts';
 import type { CodeEditorProps as PfCodeEditorProps } from '@patternfly/react-code-editor';
+import type { ResponsiveActionProps } from '@patternfly/react-component-groups';
 import type { AlertVariant, ButtonProps } from '@patternfly/react-core';
+import type { DataViewTh } from '@patternfly/react-data-view/dist/esm/DataViewTable/DataViewTable';
 import type {
   ICell,
   OnSelect,
   SortByDirection,
   TableGridBreakpoint,
+  ThProps,
+  TdProps,
 } from '@patternfly/react-table';
 import type { TFunction } from 'i18next';
 import type * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
@@ -35,6 +38,7 @@ import type {
   PrometheusValue,
   Selector,
 } from '../api/common-types';
+import type { Action } from './actions';
 import type { CustomDataSource } from './dashboard-data-source';
 
 /* eslint-disable no-barrel-files/no-barrel-files */
@@ -411,8 +415,17 @@ export type RowProps<D, R extends any = {}> = {
   onSelect?: OnSelect;
 };
 
+/**
+ * @deprecated Used only by the deprecated `VirtualizedTable` component. Will be removed in a future release.
+ * @see VirtualizedTableProps
+ */
 export type OnRowsRendered = (params: any) => void;
 
+/**
+ * @deprecated Use `ConsoleDataViewProps` with `ConsoleDataView` instead. `VirtualizedTableProps` will be
+ * removed in a future release.
+ * @see ConsoleDataViewProps
+ */
 export type VirtualizedTableProps<D, R extends any = {}> = {
   data: D[];
   unfilteredData: D[];
@@ -437,10 +450,19 @@ export type VirtualizedTableProps<D, R extends any = {}> = {
   onRowsRendered?: OnRowsRendered;
 };
 
+/**
+ * @deprecated Use `ConsoleDataViewFC` with `ConsoleDataView` instead. `VirtualizedTableFC` will be removed
+ * in a future release.
+ * @see ConsoleDataViewFC
+ */
 export type VirtualizedTableFC = <D, R extends any = {}>(
   props: VirtualizedTableProps<D, R>,
-) => JSX.Element;
+) => ReactNode;
 
+/**
+ * @deprecated Used only by the deprecated `TableData` component, for rendering cells within the deprecated
+ * `VirtualizedTable`. Will be removed in a future release.
+ */
 export type TableDataProps = {
   id: string;
   activeColumnIDs: Set<string>;
@@ -457,6 +479,297 @@ export type UseActiveColumns = <D = any>({
   showNamespaceOverride: boolean;
   columnManagementID: string;
 }) => [TableColumn<D>[], boolean];
+
+/**
+ * Base filter state used by `ConsoleDataView` for its built-in name and label filters.
+ * Extend this type with `TFilters` to add custom filter fields for use with
+ * `additionalFilterNodes` and `matchesAdditionalFilters`. Both fields are optional since a
+ * `TFilters` that hides the built-in filters with `hideNameLabelFilters` has no need for them.
+ * @example
+ * ```ts
+ * interface PodFilters extends ResourceFilters {
+ *   status: string;
+ * }
+ * ```
+ */
+export interface ResourceFilters {
+  /**
+   * (optional) The current value of the name filter text input. Matched against the name
+   * returned by `getObjectMetadata` as well as, for Kubernetes resources, the
+   * `openshift.io/display-name` annotation.
+   */
+  name?: string;
+  /** (optional) The current value of the label filter text input, as a comma-separated list of `key=value` pairs, all of which must match. */
+  label?: string;
+}
+
+/**
+ * Metadata extracted from a data item, used by `ConsoleDataView`'s built-in name and label
+ * filters. Returned by the `getObjectMetadata` callback in `ConsoleDataViewProps`.
+ * @example
+ * ```ts
+ * const getObjectMetadata = (pdb: PodDisruptionBudgetKind): ResourceMetadata => ({
+ *   name: pdb.metadata.name,
+ *   labels: pdb.metadata.labels,
+ * });
+ * ```
+ */
+export interface ResourceMetadata {
+  /** The name to match against the name filter. */
+  name: string;
+  /** (optional) The labels to match against the label filter. */
+  labels?: { [key: string]: string };
+}
+
+/**
+ * Header props a `ConsoleDataViewColumn` may customize. Console owns the header content,
+ * sorting, selection, and responsive label. Use the column's `tooltip` for help content;
+ * `info` can customize its presentation. Explicit styling props override role defaults.
+ */
+export type ConsoleDataViewHeaderProps = Omit<
+  ThProps,
+  'children' | 'sort' | 'select' | 'dataLabel' | 'info'
+> & {
+  /** Presentation options for the help tooltip supplied by the column's `tooltip`. */
+  info?: Omit<NonNullable<ThProps['info']>, 'tooltip'>;
+};
+
+/** Column header options excluding the content and behaviors managed by Console. */
+export type ConsoleDataViewTh = Omit<
+  Partial<Extract<DataViewTh, { cell: ReactNode }>>,
+  'cell' | 'props'
+> & {
+  /** Header props. Row cell props are supplied separately by the cell renderer. */
+  props?: ConsoleDataViewHeaderProps;
+};
+
+/**
+ * Defines a single column for `ConsoleDataView`.
+ * @example
+ * ```ts
+ * const columns: ConsoleDataViewColumn<PodDisruptionBudgetKind>[] = [
+ *   {
+ *     id: 'name',
+ *     type: 'name',
+ *   },
+ * ];
+ * ```
+ */
+export interface ConsoleDataViewColumn<TData = unknown> extends ConsoleDataViewTh {
+  /** Unique identifier for the column, used to match up cells returned by `getDataViewRows`. */
+  id: string;
+  /** Applies built-in column behavior and header and row cell props. Name and namespace headers and row cells default to `modifier: 'nowrap'`. Explicit header props and row cell props override their respective defaults independently. An `actions` column uses resource action providers for a Kubernetes resource row when its row cell is omitted or has no `cell`; `cell: null` suppresses the default. A namespace column is hidden in a single project unless `showNamespaceOverride` is set, regardless of its ID. A name column is untoggleable through column management regardless of its ID, gets its `data-test` from the row name, and is offset automatically when a selection column is present. */
+  type?: 'name' | 'namespace' | 'actions' | 'selection' | 'sticky';
+  /** The column header text. Defaults to translated `Name` or `Namespace` for those column types, and an empty string for other types. Explicit titles, including an empty string, take precedence. An empty title does not affect visibility or imply an actions column; supply an accessible header label through `props['aria-label']` or `props.screenReaderText`. */
+  title?: string;
+  /** (optional) Content shown in a help tooltip beside the column header. */
+  tooltip?: ReactNode;
+  /** (optional) A dot-delimited property path to sort by, or a function that sorts the filtered data for this column. Defaults to `metadata.name` for `name` columns and `metadata.namespace` for `namespace` columns. Other column types are unsortable by default. Set `false` to disable sorting; custom row shapes can supply a different path or function. */
+  sort?: false | string | ((filteredData: TData[], sortDirection: SortByDirection) => TData[]);
+  /** (optional) Whether the column is initially visible before the user saves column preferences. Defaults to `true` for built-in columns and `false` for extension columns. Actions and selection columns always remain visible. */
+  defaultVisible?: boolean;
+}
+
+/** A cell matched to a `ConsoleDataViewColumn` by its ID, independently of array order. */
+export interface ConsoleDataViewCell {
+  /** The ID of the column this cell belongs to. */
+  id: string;
+  /** Cell content. Omit it for an `actions` column to use resource action providers; `null` suppresses the default. Other omitted content renders empty. */
+  cell?: ReactNode;
+  /** PatternFly row cell props */
+  props?: TdProps & { 'data-test'?: string };
+}
+
+/**
+ * A row of cells for `ConsoleDataView`, as returned by `GetDataViewRows`. Cells may be
+ * returned in any order; Console matches their IDs to the active columns. Return at most
+ * one cell per column ID. Unknown IDs are ignored and omitted cells render empty, except
+ * that an omitted `actions` cell uses resource action providers for Kubernetes resources.
+ */
+export type ConsoleDataViewRow = ConsoleDataViewCell[];
+
+/**
+ * Transforms a page of row data into `ConsoleDataView` table rows.
+ * @param data - The current page of row data, each entry wrapping a data item along with row-level metadata.
+ * @param columns - The active built-in columns to render. Console supplies selection and extension cells separately.
+ * @returns An array of rows, one per entry in `data`, each an array of cells matched to `columns` by ID. Cell order does not affect placement.
+ * @example
+ * ```tsx
+ * const getDataViewRows: GetDataViewRows<PodDisruptionBudgetKind> = (data, columns) =>
+ *   data.map(({ obj: pdb }) => {
+ *     const resourceKind = referenceForModel(PodDisruptionBudgetModel);
+ *     return columns.map(({ id }) => ({
+ *       id,
+ *       cell:
+ *         id === 'name' ? (
+ *           <ResourceLink kind={resourceKind} name={pdb.metadata.name} namespace={pdb.metadata.namespace} />
+ *         ) : (
+ *           DASH
+ *         ),
+ *     }));
+ *   });
+ * ```
+ */
+export type GetDataViewRows<TData, TCustomRowData = unknown> = (
+  data: RowProps<TData, TCustomRowData>[],
+  columns: ConsoleDataViewColumn<TData>[],
+) => ConsoleDataViewRow[];
+
+/** Selection state and operations supplied to a `ConsoleDataView` bulk action. */
+export interface ConsoleDataViewSelectionActions<TData> {
+  /** Selected items matching the table's current filters. */
+  matchingSelectedItems: TData[];
+  /** Clears every selection, including items hidden by the current filters. */
+  clearSelection: () => void;
+  /** Deselects the given item IDs, for example after a partially successful bulk action. */
+  deselect: (itemIds: string[]) => void;
+}
+
+/**
+ * Props for the `ConsoleDataView` component: a table for displaying, filtering, sorting, and
+ * paginating a list of resources, based on PatternFly's
+ * [Data view](https://www.patternfly.org/extensions/data-view/overview).
+ * @example
+ * ```tsx
+ * <ConsoleDataView<PodDisruptionBudgetKind>
+ *   id={PodDisruptionBudgetModel}
+ *   label={PodDisruptionBudgetModel.labelPlural}
+ *   data={data}
+ *   loaded={loaded}
+ *   columns={columns}
+ *   getDataViewRows={getDataViewRows}
+ * />
+ * ```
+ */
+export interface ConsoleDataViewProps<
+  TData,
+  TCustomRowData = unknown,
+  TFilters extends ResourceFilters = ResourceFilters,
+> {
+  /** A model, group/version/kind, or string ID used for column management, matching `console.dataview/table-column` extensions, and saving resizable column widths. */
+  id: K8sModel | K8sGroupVersionKind | string;
+  /** (optional) A label describing the type of resource displayed. Used in empty state messages and the table's `aria-label`. */
+  label?: string;
+  /** The array of data items to display in the table. */
+  data: TData[];
+  /** Flag indicating whether `data` has finished loading. */
+  loaded: boolean;
+  /** (optional) An error encountered while loading `data`. */
+  loadError?: unknown;
+  /** The column definitions for the table. */
+  columns: ConsoleDataViewColumn<TData>[];
+  /** (optional) Initial values for custom string or string-array fields added via `TFilters`, and/or the built-in name and label filters. Declare every custom key here, using `''` or `[]` for inactive filters, so it participates in URL synchronization and clearing. Strings use one URL parameter and arrays use repeated parameters. The name and label filters otherwise default to empty. */
+  initialFilters?: Partial<TFilters>;
+  /** (optional) Additional filter elements to render alongside the built-in name and label filters. */
+  additionalFilterNodes?: ReactNode[];
+  /** (optional) Extracts the name and labels used by the built-in filters from a data item. Defaults to reading `metadata.name` and `metadata.labels` from a Kubernetes resource. The name filter additionally matches the `openshift.io/display-name` annotation, if present, regardless of this callback. */
+  getObjectMetadata?: (obj: TData) => ResourceMetadata;
+  /** (optional) Determines whether a data item matches any custom filters beyond the built-in name and label filters. */
+  matchesAdditionalFilters?: (obj: TData, filters: TFilters) => boolean;
+  /** Transforms the filtered, sorted, and paginated data into table rows. Selection and extension cells are added automatically and their columns are not passed to this callback. See `GetDataViewRows`. */
+  getDataViewRows: GetDataViewRows<TData, TCustomRowData>;
+  /** (optional) Additional data made available to each row via `RowProps.rowData`. */
+  customRowData?: TCustomRowData;
+  /** (optional) The `id` of the column to sort by before the user picks one. Defaults to the first column, or the first sortable column when a checkbox column is present, and is ignored if no column has this id. A `sortBy` URL parameter takes precedence; checkbox tables accept only sortable URL targets. Note that `sortBy` names its column by translated title, not by id. */
+  defaultSortColumnId?: string;
+  /** (optional) The direction to sort by before the user picks one. Defaults to ascending. An `orderBy` URL parameter takes precedence. */
+  defaultSortDirection?: SortByDirection;
+  /** (optional) If true, columns with `type: 'namespace'` are kept active regardless of column management selections or the active namespace, instead of being hidden. Has no effect unless a namespace column is included in `columns`. */
+  showNamespaceOverride?: boolean;
+  /** (optional) Hides both the name and label filters. */
+  hideNameLabelFilters?: boolean;
+  /** (optional) Hides only the label filter, keeping the name filter. The label filter is also omitted while `loaded` is `false`. */
+  hideLabelFilter?: boolean;
+  /** (optional) Rendered in place of the table when `data` is empty, letting a consumer explain what is missing and how to create the first resource. Defaults to a generic "No {{label}} found" message. Note that this does not apply when the data is non-empty but the active filters match nothing; that case always renders the built-in in-table empty message. */
+  EmptyMsg?: ComponentType<unknown>;
+  /** (optional) Renders an empty placeholder instead of the table. */
+  mock?: boolean;
+  /** (optional) Enables resizing and saved widths for columns with a title, and shows a reset action. Defaults to `true`. */
+  isResizable?: boolean;
+  /** Additional ResponsiveAction props to render inside ResponsiveActions, alongside the built-in column management and reset-column-widths actions. */
+  additionalResponsiveActions?: (ResponsiveActionProps & { key: string })[];
+  /** Additional content to display in the actions toolbar outside ResponsiveActions. */
+  additionalToolbarContent?: ReactNode;
+  /** Enables row selection. Console adds the checkbox column and manages selected IDs. Reserve the column ID `select` for this column. Selections persist across the table's filters and pages, but are removed when their items leave `data`. When the selected items are Kubernetes resources of one model, Console includes actions from that model's `console.action/resource-provider` bulk providers. */
+  selection?: {
+    /** Function to extract unique ID from an item for selection tracking. */
+    getItemId: (item: TData) => string;
+    /** (optional) Excludes items from row and select-all checkboxes. Defaults to all items. */
+    isSelectable?: (item: TData) => boolean;
+    /** (optional) Returns table-specific bulk actions for `matchingSelectedItems`, the selected items matching the current filters. These are shown before contributed resource bulk actions. The menu is disabled when no items are selected and hidden if neither this callback nor a matching bulk provider supplies actions. */
+    getBulkActions?: (selection: ConsoleDataViewSelectionActions<TData>) => Action[];
+  };
+}
+
+/**
+ * The type of the `ConsoleDataView` component.
+ * @param props - See `ConsoleDataViewProps`.
+ */
+export type ConsoleDataViewFC = <
+  TData,
+  TCustomRowData = any,
+  TFilters extends ResourceFilters = ResourceFilters,
+>(
+  props: ConsoleDataViewProps<TData, TCustomRowData, TFilters>,
+) => ReactElement;
+
+// Swagger types
+// Note: These types are duplicated from @console/internal/module/k8s/swagger
+// to avoid circular dependency issues with the SDK package
+
+/**
+ * A single definition from a Kubernetes OpenAPI (Swagger) v2 schema document, describing the
+ * shape of a resource or one of its nested properties.
+ */
+export interface SwaggerDefinition {
+  /** (optional) All definitions in the document (including this one), present on the root definition returned by `definitionFor` so `$ref` values can be resolved. */
+  definitions?: SwaggerDefinitions;
+  /** (optional) Human-readable description of the resource or property, sourced from the Kubernetes API docs. */
+  description?: string;
+  /** (optional) The JSON schema type(s) of the property. */
+  type?: string[] | string;
+  /** (optional) The allowed string values, when the property is an enum. */
+  enum?: string[];
+  /** (optional) A JSON pointer, for example `#/definitions/io.k8s.api.core.v1.PodSpec`, to another definition. */
+  $ref?: string;
+  /** (optional) The definition for array items, when `type` is `array`. */
+  items?: SwaggerDefinition;
+  /** (optional) The names of required properties. */
+  required?: string[];
+  /** (optional) Definitions for each named property of the resource. */
+  properties?: {
+    [prop: string]: SwaggerDefinition;
+  };
+}
+
+/**
+ * A map of Kubernetes OpenAPI (Swagger) v2 definitions, keyed by fully-qualified definition
+ * name (for example `io.k8s.api.core.v1.Pod`).
+ */
+export interface SwaggerDefinitions {
+  [name: string]: SwaggerDefinition;
+}
+
+/**
+ * Looks up the OpenAPI (Swagger) schema definition for a given Kubernetes model.
+ *
+ * Results are memoized per model and never invalidated, so a call made before the OpenAPI
+ * schema has finished loading permanently caches a `null`/empty result for that model, even
+ * after the schema becomes available. Prefer calling this after data consumed via
+ * `useK8sModels` or a resource watch confirms the API is reachable, or in response to the
+ * `console_swagger_refresh` window event.
+ * @param model - The Kubernetes model to look up.
+ * @returns The `SwaggerDefinition` for the model, with its `definitions` property populated
+ * with every definition in the document so that `$ref` values can be resolved. Returns `null`
+ * if the OpenAPI schema has not been fetched yet, or an object with a populated `definitions`
+ * property but no other fields if the model's definition could not be found.
+ * @example
+ * ```ts
+ * const definition = definitionFor(PodModel);
+ * const specDescription = definition?.properties?.spec?.description;
+ * ```
+ */
+export type DefinitionFor = (model: K8sModel) => SwaggerDefinition | null;
 
 export type ListPageHeaderProps = {
   /** A badge that is displayed next to the title of the heading */
@@ -529,7 +842,7 @@ export type RowMatchFilter<R = any> = RowFilterBase<R> & {
 };
 
 export type RowReducerFilter<R = any> = RowFilterBase<R> & {
-  reducer: (obj: R) => ReactText;
+  reducer: (obj: R) => number | string;
 };
 
 export type RowFilter<R = any> = RowMatchFilter<R> | RowReducerFilter<R>;
@@ -856,7 +1169,7 @@ export type CodeEditorToolbarProps = {
   /** Whether to show a toolbar with shortcuts on top of the editor. */
   showShortcuts?: boolean;
   /** Toolbar links section on the left side of the editor */
-  toolbarLinks?: ReactNodeArray;
+  toolbarLinks?: readonly ReactNode[];
 };
 
 // Omit the ref as we have our own ref type, which is completely different
@@ -952,7 +1265,7 @@ export type UseAnnotationsModal = (resource: K8sResourceCommon) => () => void;
 export type UseDeleteModal = (
   resource: K8sResourceCommon,
   redirectTo?: To,
-  message?: JSX.Element,
+  message?: ReactNode,
   btnText?: ReactNode,
   deleteAllResources?: () => Promise<K8sResourceKind[]>,
 ) => () => void;

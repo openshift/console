@@ -1,4 +1,4 @@
-import type { FC, FormEvent, KeyboardEvent, Ref } from 'react';
+import type { FC, FormEvent, KeyboardEvent, ReactNode, Ref } from 'react';
 import { useState, useRef, useEffect, useMemo, Fragment } from 'react';
 import { CloseButton } from '@patternfly/react-component-groups';
 import type { MenuToggleElement, SelectOptionProps } from '@patternfly/react-core';
@@ -60,7 +60,7 @@ export const InnerResourceListDropdown: FC<ResourceListDropdownProps> = (props) 
   const [activeItemId, setActiveItemId] = useState<string | null>(null);
   const placeholderTextDefault = t('Resources');
   const [placeholder, setPlaceholder] = useState(placeholderTextDefault);
-  const textInputRef = useRef<HTMLInputElement>();
+  const textInputRef = useRef<HTMLInputElement>(undefined);
 
   const resources = useMemo(() => {
     if (!allModels) {
@@ -185,7 +185,9 @@ export const InnerResourceListDropdown: FC<ResourceListDropdownProps> = (props) 
             <span>
               {model.labelKey ? t(model.labelKey) : model.kind}
               {model.badge && model.badge === 'Tech Preview' && (
-                <span className="co-resource-item__tech-dev-preview">{t('Tech Preview')}</span>
+                <span className="co-resource-item__tech-dev-preview">
+                  {t('Technology Preview')}
+                </span>
               )}
             </span>
             {isDup(model.kind) && (
@@ -199,7 +201,7 @@ export const InnerResourceListDropdown: FC<ResourceListDropdownProps> = (props) 
     );
   });
 
-  const recentSearches: JSX.Element[] =
+  const recentSearches: ReactNode[] =
     !_.isEmpty(recentSelectedList(recentSelected)) &&
     recentSelectedList(recentSelected)
       .slice(0, RECENT_SEARCH_ITEMS)
@@ -222,7 +224,7 @@ export const InnerResourceListDropdown: FC<ResourceListDropdownProps> = (props) 
                     {model.labelKey ? t(model.labelKey) : model.kind}
                     {model.badge && model.badge === 'Tech Preview' && (
                       <span className="co-resource-item__tech-dev-preview">
-                        {t('Tech Preview')}
+                        {t('Technology Preview')}
                       </span>
                     )}
                   </span>
@@ -246,7 +248,7 @@ export const InnerResourceListDropdown: FC<ResourceListDropdownProps> = (props) 
   const NO_RESULTS = 'no results';
 
   const renderedOptions = () => {
-    const options: JSX.Element[] = [];
+    const options: ReactNode[] = [];
     if (!_.isEmpty(recentSelectedList(recentSelected)) && !!recentList) {
       options.push(
         <Tooltip position="right" content={t('Clear history')} key="clear-history">

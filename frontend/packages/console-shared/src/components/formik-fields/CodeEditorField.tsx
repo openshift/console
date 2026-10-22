@@ -38,7 +38,7 @@ export const CodeEditorField: FC<CodeEditorFieldProps> = ({
 }) => {
   const [field] = useField(name);
   const { setFieldValue } = useFormikContext<FormikValues>();
-  const editorRef = useRef();
+  const editorRef = useRef(undefined);
 
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
 

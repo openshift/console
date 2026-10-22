@@ -10,7 +10,7 @@ describe('Github Service', () => {
   const nockBack = nock.back;
   nockBack.setMode('record');
 
-  nockBack.fixtures = `${__dirname}/__nock-fixtures__/github`;
+  nockBack.fixtures = `${import.meta.dirname}/__nock-fixtures__/github`;
 
   it('should return ok on existing public github repo', () => {
     const gitSource: GitSource = {

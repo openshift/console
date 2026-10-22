@@ -49,8 +49,6 @@ test.describe('Roles and RoleBindings', { tag: ['@admin'] }, () => {
   });
 
   test('create Role and ClusterRole via YAML editor', async ({ page }) => {
-    const listPage = new ListPage(page);
-
     await test.step('Create Role via YAML editor', async () => {
       await page.goto(`/k8s/ns/${namespace}/roles`);
       await page.getByTestId('item-create').click();

@@ -3,6 +3,7 @@ import { OperatorInstallPage } from '../../pages/operator-install-page';
 import { InstalledOperatorsPage } from '../../pages/installed-operators-page';
 import { OperatorDetailsPage, TestOperandProps } from '../../pages/operator-details-page';
 import { generateTestNamespace } from '../../test-utils/test-namespace';
+import { OLM_CLUSTER_STATE_LOCK } from '../../utils/locks';
 
 const testOperator = {
   name: 'Data Grid',
@@ -24,7 +25,7 @@ const globalNamespace = 'openshift-operators';
 
 test.describe(
   `Single Namespace Operator Installation - ${testOperator.name}`,
-  { tag: ['@admin'] },
+  { tag: ['@admin'], lock: OLM_CLUSTER_STATE_LOCK },
   () => {
     test.describe.configure({ timeout: 300_000 });
 

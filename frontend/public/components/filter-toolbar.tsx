@@ -1,4 +1,4 @@
-import type { FC, Ref, MouseEvent, ChangeEvent, ReactText } from 'react';
+import type { FC, Ref, MouseEvent, ChangeEvent } from 'react';
 import { useState, useMemo, useCallback, useEffect, Fragment } from 'react';
 import type { MenuToggleElement, ToolbarLabel } from '@patternfly/react-core';
 import {
@@ -534,7 +534,7 @@ type RowMatchFilter<R = any> = RowFilterBase<R> & {
 };
 
 type RowReducerFilter<R = any> = RowFilterBase<R> & {
-  reducer: (obj: R) => ReactText;
+  reducer: (obj: R) => number | string;
 };
 
 export type RowFilter<R = any> = RowMatchFilter<R> | RowReducerFilter<R>;

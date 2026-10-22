@@ -1,5 +1,5 @@
 import { screen } from '@testing-library/react';
-import type { TableProps } from '@console/internal/components/factory';
+import type { ConsoleDataViewProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import RepositoriesList from '../RepositoriesList';
@@ -16,7 +16,6 @@ jest.mock('@console/internal/components/utils', () => ({
   LoadingBox: () => 'LoadingBox',
 }));
 
-const mockResetAllColumnWidths = jest.fn();
 const mockColumns = [
   { id: 'name', title: 'Name' },
   { id: 'repoUrl', title: 'Repo URL' },
@@ -25,27 +24,11 @@ const mockColumns = [
 jest.mock('../RepositoriesHeader', () => ({
   useRepositoriesColumns: () => ({
     columns: mockColumns,
-    resetAllColumnWidths: mockResetAllColumnWidths,
   }),
 }));
 
 jest.mock('../RepositoriesRow', () => ({
   getDataViewRows: jest.fn(),
-}));
-
-jest.mock('../../../models/helm', () => ({
-  HelmRepositoriesCombinedListModel: {
-    apiGroup: 'console.ui',
-    apiVersion: 'v1',
-    kind: 'HelmRepositoriesCombinedList',
-    id: 'helmrepositoriescombinedlist',
-    plural: 'helmrepositoriescombinedlists',
-    label: 'Helm Chart Repositories',
-    labelPlural: 'Helm Chart Repositories',
-    abbr: 'HCRL',
-    namespaced: false,
-    crd: true,
-  },
 }));
 
 const mockData: K8sResourceKind[] = [
@@ -63,17 +46,17 @@ const mockData: K8sResourceKind[] = [
   },
 ];
 
-const defaultProps: TableProps = {
+const defaultProps: Omit<
+  ConsoleDataViewProps<K8sResourceKind>,
+  'id' | 'columns' | 'getDataViewRows'
+> = {
   data: [],
   loaded: false,
-  Header: () => [],
-  'aria-label': 'Repositories',
 };
 
 describe('RepositoriesList', () => {
   beforeEach(() => {
     mockConsoleDataView.mockClear();
-    mockResetAllColumnWidths.mockClear();
   });
 
   it('should render ConsoleDataView with HelmChartRepositories label', () => {
@@ -120,13 +103,12 @@ describe('RepositoriesList', () => {
     );
   });
 
-  it('should pass columns and resetAllColumnWidths from useRepositoriesColumns', () => {
+  it('should pass columns from useRepositoriesColumns', () => {
     renderWithProviders(<RepositoriesList {...defaultProps} loaded />);
 
     expect(mockConsoleDataView).toHaveBeenCalledWith(
       expect.objectContaining({
         columns: mockColumns,
-        resetAllColumnWidths: mockResetAllColumnWidths,
       }),
     );
   });

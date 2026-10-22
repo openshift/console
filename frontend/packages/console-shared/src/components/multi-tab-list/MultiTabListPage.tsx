@@ -90,7 +90,7 @@ export const MultiTabListPage: FC<MultiTabListPageProps> = ({
                 <SimpleDropdown
                   toggleProps={{
                     variant: 'primary',
-                    // @ts-expect-error non-prop attribute is used for cypress
+                    // @ts-expect-error non-prop attribute is used for E2E tests
                     'data-test': 'tab-list-page-create',
                   }}
                   toggleContent={t('Create')}

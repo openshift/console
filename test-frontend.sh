@@ -73,10 +73,10 @@ run \
   'yarn run knip'
 
 run \
-  'gherkin-lint' \
-  'gherkin lint should pass as reported by yarn gherkin-lint' \
-  "Gherkin lint errors detected!" \
-  'yarn run gherkin-lint'
+  'oxfmt' \
+  'the code should be formatted correctly per yarn prettier-all' \
+  "Code is not pretty!" \
+  'yarn run prettier-all --check'
 
 run \
   'eslint' \

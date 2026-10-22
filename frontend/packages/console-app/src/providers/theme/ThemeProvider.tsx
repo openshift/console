@@ -1,6 +1,5 @@
 import type { FC, ReactNode } from 'react';
 import { createContext, useState, useCallback, useEffect, useMemo, useContext } from 'react';
-import { IS_OPENSHIFT_5 } from '@console/app/src/features/openshift5';
 import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 
 const THEME_USER_PREFERENCE_KEY = 'console.theme';
@@ -43,14 +42,11 @@ const updateColorContrastClass = (
 ): ProcessedContrast => {
   let resolvedContrast: ProcessedContrast = THEME_DEFAULT;
 
-  // Glass and contrast is an OCP 5-exclusive feature
-  if (IS_OPENSHIFT_5) {
-    if (contrast === THEME_SYSTEM_DEFAULT) {
-      resolvedContrast = contrastThemeMq.matches ? THEME_CONTRAST : THEME_GLASS;
-    }
-    if (contrast === THEME_CONTRAST || contrast === THEME_GLASS) {
-      resolvedContrast = contrast;
-    }
+  if (contrast === THEME_SYSTEM_DEFAULT) {
+    resolvedContrast = contrastThemeMq.matches ? THEME_CONTRAST : THEME_GLASS;
+  }
+  if (contrast === THEME_CONTRAST || contrast === THEME_GLASS) {
+    resolvedContrast = contrast;
   }
 
   htmlTagElement.classList.toggle(THEME_GLASS_CLASS, resolvedContrast === THEME_GLASS);

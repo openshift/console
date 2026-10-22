@@ -64,14 +64,14 @@ export const PollConsoleUpdates = memo(() => {
   }, [safeFetch]);
   usePoll(tick, URL_POLL_DEFAULT_DELAY);
 
-  const prevUpdateDataRef = useRef<CheckUpdatesApiResult>();
-  const prevPluginManifestsDataRef = useRef<RemotePluginManifest[]>();
+  const prevUpdateDataRef = useRef<CheckUpdatesApiResult>(undefined);
+  const prevPluginManifestsDataRef = useRef<RemotePluginManifest[]>(undefined);
   useEffect(() => {
     prevUpdateDataRef.current = updateData;
     prevPluginManifestsDataRef.current = pluginManifestsData;
   });
-  const prevUpdateData = prevUpdateDataRef.current;
-  const prevPluginManifestsData = prevPluginManifestsDataRef.current;
+  const prevUpdateData = prevUpdateDataRef.current; // eslint-disable-line react-hooks/refs -- usePrevious pattern: reading previous render's value
+  const prevPluginManifestsData = prevPluginManifestsDataRef.current; // eslint-disable-line react-hooks/refs -- usePrevious pattern: reading previous render's value
   const stateInitialized = _.isEmpty(updateError) && !_.isEmpty(prevUpdateData);
   const pluginsAddedList = updateData?.plugins.filter((x) => !prevUpdateData?.plugins.includes(x));
   const pluginsRemovedList = prevUpdateData?.plugins.filter(

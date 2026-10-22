@@ -29,9 +29,9 @@ Example CLI usage for download script: `yarn memsource-download -p 6sB6qwpbRkGCe
 in PO format in all the languages we currently support, so we can hand them off to the translation team.
 
 ## i18n-to-PO
-`i18n-to-po.js` is a utility for Memsource automation. It is used by `export-pos.sh` to
+`i18n-to-po.ts` is a utility for Memsource automation. It is used by `export-pos.sh` to
 export individual files.
 
 ## PO-to-i18n
-`po-to-i18n.js` is a utility for Memsource automation. It is used by the download script to
+`po-to-i18n.ts` is a utility for Memsource automation. It is used by the download script to
 correctly sort files into their original locations and convert them back into json format.

@@ -1,4 +1,3 @@
-import * as _ from 'lodash';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { referenceFor } from '@console/internal/module/k8s';
 import { useK8sModel } from '../hooks/useK8sModel';
@@ -14,43 +13,61 @@ export enum ResourceUtilizationQuery {
 }
 
 const podMetricsQueries = {
-  [ResourceUtilizationQuery.MEMORY]: _.template(
-    "sum(container_memory_working_set_bytes{pod='<%= name %>',container=''}) BY (pod)",
-  ),
-  [ResourceUtilizationQuery.CPU]: _.template("pod:container_cpu_usage:sum{pod='<%= name %>'}"),
-  [ResourceUtilizationQuery.FILESYSTEM]: _.template(
-    "pod:container_fs_usage_bytes:sum{pod='<%= name %>'}",
-  ),
-  [ResourceUtilizationQuery.NETWORK_IN]: _.template(
-    "pod_interface_network:container_network_receive_bytes:irate5m{pod='<%= name %>'}",
-  ),
-  [ResourceUtilizationQuery.NETWORK_OUT]: _.template(
-    "pod_interface_network:container_network_transmit_bytes_total:irate5m{pod='<%= name %>'}",
-  ),
-  [ResourceUtilizationQuery.QUOTA_LIMIT]: _.template(
-    "sum by (pod, resource) (kube_pod_resource_limit{resource='<%= resource %>',pod='<%= name %>'})",
-  ),
-  [ResourceUtilizationQuery.QUOTA_REQUEST]: _.template(
-    "sum by (pod, resource) (kube_pod_resource_request{resource='<%= resource %>',pod='<%= name %>'})",
-  ),
+  [ResourceUtilizationQuery.MEMORY]: ({ name = '' }: { name?: string }) =>
+    `sum(container_memory_working_set_bytes{pod='${name}',container=''}) BY (pod)`,
+  [ResourceUtilizationQuery.CPU]: ({ name = '' }: { name?: string }) =>
+    `pod:container_cpu_usage:sum{pod='${name}'}`,
+  [ResourceUtilizationQuery.FILESYSTEM]: ({ name = '' }: { name?: string }) =>
+    `pod:container_fs_usage_bytes:sum{pod='${name}'}`,
+  [ResourceUtilizationQuery.NETWORK_IN]: ({ name = '' }: { name?: string }) =>
+    `pod_interface_network:container_network_receive_bytes:irate5m{pod='${name}'}`,
+  [ResourceUtilizationQuery.NETWORK_OUT]: ({ name = '' }: { name?: string }) =>
+    `pod_interface_network:container_network_transmit_bytes_total:irate5m{pod='${name}'}`,
+  [ResourceUtilizationQuery.QUOTA_LIMIT]: ({
+    resource = '',
+    name = '',
+  }: {
+    resource?: string;
+    name?: string;
+  }) => `sum by (pod, resource) (kube_pod_resource_limit{resource='${resource}',pod='${name}'})`,
+  [ResourceUtilizationQuery.QUOTA_REQUEST]: ({
+    resource = '',
+    name = '',
+  }: {
+    resource?: string;
+    name?: string;
+  }) => `sum by (pod, resource) (kube_pod_resource_request{resource='${resource}',pod='${name}'})`,
 };
 
 const podControllerMetricsQueries = {
-  [ResourceUtilizationQuery.MEMORY]: _.template(
-    "sum(container_memory_working_set_bytes{container!=''} * on(pod) group_left(workload, workload_type) namespace_workload_pod:kube_pod_owner:relabel{workload='<%= name %>', workload_type='<%= type %>'}) by (pod)",
-  ),
-  [ResourceUtilizationQuery.CPU]: _.template(
-    "sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_irate{} * on(pod) group_left(workload, workload_type) namespace_workload_pod:kube_pod_owner:relabel{workload='<%= name %>', workload_type='<%= type %>'}) by (pod)",
-  ),
-  [ResourceUtilizationQuery.FILESYSTEM]: _.template(
-    "sum(pod:container_fs_usage_bytes:sum * on(pod) group_left(workload, workload_type) namespace_workload_pod:kube_pod_owner:relabel{workload='<%= name %>', workload_type='<%= type %>'}) by (pod)",
-  ),
-  [ResourceUtilizationQuery.NETWORK_IN]: _.template(
-    "sum(irate(container_network_receive_bytes_total[5m]) * on (pod) group_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{workload='<%= name %>', workload_type='<%= type %>'}) by (pod)",
-  ),
-  [ResourceUtilizationQuery.NETWORK_OUT]: _.template(
-    "sum(irate(container_network_transmit_bytes_total[5m]) * on (pod) group_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{workload='<%= name %>', workload_type='<%= type %>'}) by (pod)",
-  ),
+  [ResourceUtilizationQuery.MEMORY]: ({ name = '', type = '' }: { name?: string; type?: string }) =>
+    `sum(container_memory_working_set_bytes{container!=''} * on(pod) group_left(workload, workload_type) namespace_workload_pod:kube_pod_owner:relabel{workload='${name}', workload_type='${type}'}) by (pod)`,
+  [ResourceUtilizationQuery.CPU]: ({ name = '', type = '' }: { name?: string; type?: string }) =>
+    `sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_irate{} * on(pod) group_left(workload, workload_type) namespace_workload_pod:kube_pod_owner:relabel{workload='${name}', workload_type='${type}'}) by (pod)`,
+  [ResourceUtilizationQuery.FILESYSTEM]: ({
+    name = '',
+    type = '',
+  }: {
+    name?: string;
+    type?: string;
+  }) =>
+    `sum(pod:container_fs_usage_bytes:sum * on(pod) group_left(workload, workload_type) namespace_workload_pod:kube_pod_owner:relabel{workload='${name}', workload_type='${type}'}) by (pod)`,
+  [ResourceUtilizationQuery.NETWORK_IN]: ({
+    name = '',
+    type = '',
+  }: {
+    name?: string;
+    type?: string;
+  }) =>
+    `sum(irate(container_network_receive_bytes_total[5m]) * on (pod) group_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{workload='${name}', workload_type='${type}'}) by (pod)`,
+  [ResourceUtilizationQuery.NETWORK_OUT]: ({
+    name = '',
+    type = '',
+  }: {
+    name?: string;
+    type?: string;
+  }) =>
+    `sum(irate(container_network_transmit_bytes_total[5m]) * on (pod) group_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{workload='${name}', workload_type='${type}'}) by (pod)`,
 };
 
 const getPodMetricsQueries = (name: string): { [key: string]: string[] } => ({

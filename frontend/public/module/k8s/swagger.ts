@@ -1,5 +1,10 @@
 import * as _ from 'lodash';
 import type { K8sKind } from '@console/dynamic-plugin-sdk/src/api/common-types';
+import type {
+  DefinitionFor,
+  SwaggerDefinition,
+  SwaggerDefinitions,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { referenceForModel } from '@console/internal/module/k8s/k8s';
 import { coFetch } from '@console/shared/src/utils/console-fetch';
 
@@ -49,19 +54,22 @@ export const fetchSwagger = async (): Promise<SwaggerDefinitions> => {
   }
 };
 
-export const definitionFor = _.memoize((model: K8sKind): SwaggerDefinition => {
-  if (!swaggerDefinitions) {
-    return null;
-  }
-  const key = getDefinitionKey(model, swaggerDefinitions);
-  // Some schemas might use $ref to reference an external schmema. In order for $ref to resolve,
-  // the referenced schema must be defined in the `definitions` property of the
-  // referencing schema.
-  return {
-    definitions: swaggerDefinitions,
-    ...(swaggerDefinitions?.[key] ?? {}),
-  };
-}, referenceForModel);
+export const definitionFor: DefinitionFor = _.memoize(
+  (model: K8sKind): SwaggerDefinition | null => {
+    if (!swaggerDefinitions) {
+      return null;
+    }
+    const key = getDefinitionKey(model, swaggerDefinitions);
+    // Some schemas might use $ref to reference an external schmema. In order for $ref to resolve,
+    // the referenced schema must be defined in the `definitions` property of the
+    // referencing schema.
+    return {
+      definitions: swaggerDefinitions,
+      ...(swaggerDefinitions?.[key] ?? {}),
+    };
+  },
+  referenceForModel,
+);
 
 const getRef = (definition: SwaggerDefinition): string => {
   const ref = definition.$ref || _.get(definition, 'items.$ref');
@@ -127,23 +135,6 @@ export const getResourceDescription = _.memoize((kindObj: K8sKind): string => {
   const key = getDefinitionKey(kindObj, swaggerDefinitions);
   return _.get(swaggerDefinitions, [key, 'description']);
 }, referenceForModel);
-
-export type SwaggerDefinition = {
-  definitions?: SwaggerDefinitions;
-  description?: string;
-  type?: string[] | string;
-  enum?: string[];
-  $ref?: string;
-  items?: SwaggerDefinition;
-  required?: string[];
-  properties?: {
-    [prop: string]: SwaggerDefinition;
-  };
-};
-
-export type SwaggerDefinitions = {
-  [name: string]: SwaggerDefinition;
-};
 
 export type SwaggerAPISpec = {
   swagger: string;

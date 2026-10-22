@@ -1,14 +1,14 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import type { KnipConfig } from 'knip';
-import { resolvePluginPackages } from '@console/plugin-sdk/src/codegen/plugin-resolver';
-import { extensionsFile } from '@console/dynamic-plugin-sdk/src/constants';
-import { isEncodedCodeRef } from '@openshift/dynamic-plugin-sdk';
-import { parseJSONC } from '@console/dynamic-plugin-sdk/src/utils/jsonc';
-import type { ConsoleExtensionsJSON } from '@console/dynamic-plugin-sdk/src/schema/console-extensions';
 import { traverse, types as t, parseAsync } from '@babel/core';
+import { isEncodedCodeRef } from '@openshift/dynamic-plugin-sdk';
+import type { KnipConfig } from 'knip';
+import { extensionsFile } from '@console/dynamic-plugin-sdk/src/constants';
+import type { ConsoleExtensionsJSON } from '@console/dynamic-plugin-sdk/src/schema/console-extensions';
+import { parseJSONC } from '@console/dynamic-plugin-sdk/src/utils/jsonc';
+import { resolvePluginPackages } from '@console/plugin-sdk/src/codegen/plugin-resolver';
 
-const packagesDir = path.resolve(__dirname, '..', 'packages');
+const packagesDir = path.resolve(import.meta.dirname, '..', 'packages');
 
 /** Generate an import statement for a specific export from a module path. */
 const makeImport = (modulePath: string, exportName: string, id: number) =>
@@ -85,7 +85,7 @@ const packageWorkspaces = Object.fromEntries(
         `packages/${dir.name}`,
         {
           entry: hasExtensions ? [extensionsFile] : [],
-          project: ['src/**/*.{ts,tsx,js,jsx,json}'],
+          project: ['src/**/*.{ts,tsx,json}'],
         },
       ];
     }),
@@ -157,7 +157,9 @@ const compileScript = async (source: string, filename: string): Promise<string> 
         imports.push(
           makeImport(node.object.arguments[0].value, node.property.name, imports.length),
         );
-        removals.push([node.start!, node.end!]);
+        if (node.start && node.end) {
+          removals.push([node.start, node.end]);
+        }
       }
     },
 
@@ -186,8 +188,8 @@ const compileScript = async (source: string, filename: string): Promise<string> 
       for (const name of names) {
         imports.push(makeImport(mod, name, imports.length));
       }
-      if (names.length > 0) {
-        removals.push([node.start!, node.end!]);
+      if (names.length > 0 && node.start && node.end) {
+        removals.push([node.start, node.end]);
       }
     },
   });
@@ -214,8 +216,6 @@ const config: KnipConfig = {
   asyncCompilers: {
     ts: compileScript,
     tsx: compileScript,
-    js: compileScript,
-    jsx: compileScript,
   },
 
   workspaces: {
@@ -224,9 +224,9 @@ const config: KnipConfig = {
 
     // public/ is the @console/internal workspace (has its own package.json)
     public: {
-      entry: ['load-test.sw.js'],
-      project: ['**/*.{ts,tsx,js,jsx,json}'],
-      ignore: ['locales/**/*']
+      project: ['**/*.{ts,tsx,json}'],
+      ignore: ['locales/**/*'],
+      ignoreUnresolved: ['../get-local-plugins'], // virtual module that has no real source file
     },
 
     // Suppress SDK from knip checks as any code there could be used by a dynamic remote plugin
@@ -239,16 +239,14 @@ const config: KnipConfig = {
   },
 
   // Not shipped in production so we don't mind being loosey-goosey
-  ignoreWorkspaces: [
-    'packages/eslint-plugin-console',
-    'packages/integration-tests',
-    'packages/*/integration-tests',
-  ],
+  ignoreWorkspaces: ['packages/eslint-plugin-console'],
 
   ignoreDependencies: [
     '@console/.*', // cross-references via yarn workspaces
     'lodash', // remapped to lodash-es by NormalModuleReplacementPlugin
+    'lodash-es', // remapped to lodash by NormalModuleReplacementPlugin
     '@patternfly/patternfly', // imported via SCSS, which knip cannot trace
+    '@rjsf/validator-ajv8', // required at runtime by @rjsf/core, but not declared as its dependency
   ],
 
   ignore: ['**/__{tests,mocks}__/**'],
