@@ -1,16 +1,14 @@
-module.exports = {
-  parserOptions: {
-    ecmaVersion: 2018,
-  },
+// Node rules. `n/*` run via eslint-plugin-n (JS plugin); `node/*` are native.
+import type { OxlintConfig } from 'oxlint';
+import node from './rules/node.ts';
 
+const preset: OxlintConfig = {
   env: {
-    es6: true,
     node: true,
   },
 
-  plugins: ['n'],
+  jsPlugins: ['eslint-plugin-n'],
 
-  rules: require('merge')(require('./rules/node.ts'), {
-    'no-process-env': 'off',
-  }),
+  rules: node,
 };
+export default preset;

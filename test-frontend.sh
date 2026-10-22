@@ -79,9 +79,9 @@ run \
   'yarn run prettier-all --check'
 
 run \
-  'eslint' \
+  'oxlint' \
   'the linter should pass without any errors as reported by yarn lint' \
-  "ESLint errors detected!" \
+  "Oxlint errors detected!" \
   'yarn run lint'
 
 if [ "$OPENSHIFT_CI" = true ]; then

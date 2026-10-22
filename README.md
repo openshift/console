@@ -498,7 +498,7 @@ Currently this feature is behind feature gate.
 
 - [dev-console](./frontend/packages/dev-console/README.md)
 
-- [eslint-plugin-console](./frontend/packages/eslint-plugin-console/README.md)
+- [oxlint-plugin-console](./frontend/packages/oxlint-plugin-console/README.md)
 
 - [integration-tests](./frontend/packages/integration-tests/README.md)
 

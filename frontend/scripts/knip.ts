@@ -220,7 +220,11 @@ const config: KnipConfig = {
 
   workspaces: {
     // Disable auto-detected plugins that don't work at the moment
-    '.': { project: [], jest: false },
+    '.': {
+      project: [], // determines repo-level scripts are "unused"
+      jest: false, // surpressing @jest/transform unlisted dependency warning
+      oxlint: false, // cannot parse that oxlint dependencies are installed in oxlint-plugin-console
+    },
 
     // public/ is the @console/internal workspace (has its own package.json)
     public: {
@@ -239,7 +243,7 @@ const config: KnipConfig = {
   },
 
   // Not shipped in production so we don't mind being loosey-goosey
-  ignoreWorkspaces: ['packages/eslint-plugin-console'],
+  ignoreWorkspaces: ['packages/oxlint-plugin-console'],
 
   ignoreDependencies: [
     '@console/.*', // cross-references via yarn workspaces

@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "coverage": "yarn test --coverage --collectCoverageFrom='[\"packages/git-service/src/**\",\"!**/__tests__/**\"]'",
-    "lint": "yarn --cwd ../.. eslint packages/git-service",
+    "lint": "yarn --cwd ../.. oxlint packages/git-service",
     "test": "yarn --cwd ../.. test packages/git-service",
     "generate-types": "openapi-typescript openapi/gitea.yaml --output src/types/generated/gitea.d.ts"
   },

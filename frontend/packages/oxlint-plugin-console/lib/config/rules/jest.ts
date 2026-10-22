@@ -1,4 +1,15 @@
-module.exports = {
+import testingLibraryPlugin from 'eslint-plugin-testing-library';
+import type { OxlintConfig } from 'oxlint';
+
+// testing-library rules run via the eslint-plugin-testing-library JS plugin,
+// so its recommended ruleset can be spread directly (it stays in sync with
+// the plugin version). The jest/* rules run via oxlint's NATIVE jest plugin
+// instead — eslint-plugin-jest's recommended set cannot be spread blindly
+// because it may reference rules oxlint has not implemented natively, so
+// that list is hand-maintained and filtered to native coverage.
+export default {
+  ...testingLibraryPlugin.configs['flat/react'].rules,
+
   // Prefer explicit assertions over implicit ones
   'testing-library/prefer-explicit-assert': 'error',
 
@@ -42,4 +53,19 @@ module.exports = {
         'Do not use toThrowErrorMatchingInlineSnapshot(); assert on error message or type explicitly.',
     },
   ],
-};
+
+  // From plugin:jest/recommended, filtered to oxlint's native jest plugin
+  'jest/no-alias-methods': 'error',
+  'jest/no-conditional-expect': 'error',
+  'jest/no-deprecated-functions': 'error',
+  'jest/no-disabled-tests': 'warn',
+  'jest/no-done-callback': 'error',
+  'jest/no-export': 'error',
+  'jest/no-focused-tests': 'error',
+  'jest/no-interpolation-in-snapshots': 'error',
+  'jest/no-standalone-expect': 'warn',
+  'jest/valid-describe-callback': 'error',
+  'jest/valid-expect': 'error',
+  'jest/valid-expect-in-promise': 'error',
+  'jest/valid-title': 'error',
+} satisfies OxlintConfig['rules'];
