@@ -1,5 +1,5 @@
 import type { FC, ComponentType, CSSProperties } from 'react';
-import { Component, useState, useCallback, useEffect } from 'react';
+import { forwardRef, memo, useEffect, useState, useCallback } from 'react';
 import { css } from '@patternfly/react-styles';
 import * as _ from 'lodash';
 import {
@@ -19,26 +19,8 @@ const measurementCache = new CellMeasurerCache({
   fixedWidth: true,
 });
 
-class SysEvent extends Component<SysEventProps> {
-  shouldComponentUpdate(nextProps: SysEventProps) {
-    if (this.props.event.lastTimestamp !== nextProps.event.lastTimestamp) {
-      // Timestamps can be modified because events can be combined.
-      return true;
-    }
-    if (_.isEqual(this.props.style, nextProps.style)) {
-      return false;
-    }
-    return true;
-  }
-
-  componentWillUnmount() {
-    // TODO (kans): this is not correct, but don't memory leak :-/
-    seen.delete(this.props.event.metadata.uid);
-  }
-
-  render() {
-    const { EventComponent, index, style, event, className, list } = this.props;
-
+const SysEvent = forwardRef<HTMLDivElement, SysEventProps>(
+  ({ EventComponent, index, style, event, className, list }, ref) => {
     let shouldAnimate: boolean;
     const key = event.metadata.uid;
     // Only animate events if they're at the start of the list (first 6) and we haven't seen them before.
@@ -47,6 +29,15 @@ class SysEvent extends Component<SysEventProps> {
       shouldAnimate = true;
     }
 
+    useEffect(
+      () =>
+        // Don't memory-leak the seen set while streaming.
+        () => {
+          seen.delete(key);
+        },
+      [key],
+    );
+
     return (
       <div
         className={css(
@@ -54,13 +45,25 @@ class SysEvent extends Component<SysEventProps> {
           'co-sysevent--transition',
           className,
         )}
+        ref={ref}
         style={style}
       >
         <EventComponent event={event} list={list} cache={measurementCache} index={index} />
       </div>
     );
+  },
+);
+SysEvent.displayName = 'SysEvent';
+
+const arePropsEqual = (prev: SysEventProps, next: SysEventProps) => {
+  if (prev.event.lastTimestamp !== next.event.lastTimestamp) {
+    // Timestamps can be modified because events can be combined.
+    return false;
   }
-}
+  return _.isEqual(prev.style, next.style);
+};
+
+const MemoizedSysEvent = memo(SysEvent, arePropsEqual);
 
 export const EventStreamList: FC<EventStreamListProps> = ({
   events,
@@ -82,15 +85,12 @@ export const EventStreamList: FC<EventStreamListProps> = ({
         rowIndex={index}
         parent={parent}
       >
-        {({ measure }) => (
-          <SysEvent
+        {() => (
+          <MemoizedSysEvent
             className={className}
             event={events[index]}
             list={list}
             EventComponent={EventComponent}
-            onLoad={measure}
-            // eslint-disable-next-line no-restricted-globals
-            onEntered={print}
             key={key}
             style={style}
             index={index}
@@ -149,8 +149,6 @@ export type EventComponentProps = {
 type SysEventProps = {
   EventComponent: ComponentType<EventComponentProps>;
   event: EventKind;
-  onLoad: () => void;
-  onEntered: () => void;
   style: CSSProperties;
   index: number;
   className?: string;
