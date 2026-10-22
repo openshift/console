@@ -26,12 +26,7 @@
   ],
   "overrides": [
     {
-      "files": [
-        "public/**/*.ts",
-        "public/**/*.tsx",
-        "packages/**/*.ts",
-        "packages/**/*.tsx"
-      ],
+      "files": ["public/**/*.ts", "public/**/*.tsx", "packages/**/*.ts", "packages/**/*.tsx"],
       "excludeFiles": [
         "packages/console-plugin-sdk/src/codegen/**/*.ts",
         "packages/console-plugin-sdk/src/codegen/**/*.tsx",
@@ -51,9 +46,7 @@
       "env": {
         "browser": true
       },
-      "jsPlugins": [
-        "eslint-plugin-n"
-      ],
+      "jsPlugins": ["eslint-plugin-n"],
       "globals": {
         "process": "readonly",
         "React": true,
@@ -222,10 +215,7 @@
             "message": "Use the exponentiation operator (**) instead."
           }
         ],
-        "no-return-assign": [
-          "error",
-          "except-parens"
-        ],
+        "no-return-assign": ["error", "except-parens"],
         "typescript/return-await": "error",
         "no-script-url": "error",
         "no-self-assign": [
@@ -270,10 +260,7 @@
             "disallowRedundantWrapping": true
           }
         ],
-        "radix": [
-          "error",
-          "always"
-        ],
+        "radix": ["error", "always"],
         "vars-on-top": "error",
         "yoda": [
           "error",
@@ -287,10 +274,7 @@
         "no-async-promise-executor": "error",
         "no-await-in-loop": "error",
         "no-compare-neg-zero": "error",
-        "no-cond-assign": [
-          "error",
-          "always"
-        ],
+        "no-cond-assign": ["error", "always"],
         "no-constant-condition": [
           "error",
           {
@@ -309,10 +293,7 @@
         ],
         "no-empty-character-class": "error",
         "no-ex-assign": "error",
-        "no-extra-boolean-cast": [
-          "error",
-          {}
-        ],
+        "no-extra-boolean-cast": ["error", {}],
         "no-func-assign": "error",
         "no-import-assign": "error",
         "no-inner-declarations": [
@@ -322,10 +303,7 @@
             "blockScopedFunctions": "allow"
           }
         ],
-        "no-invalid-regexp": [
-          "error",
-          {}
-        ],
+        "no-invalid-regexp": ["error", {}],
         "no-irregular-whitespace": [
           "error",
           {
@@ -384,19 +362,12 @@
         "unicorn/no-new-buffer": "error",
         "n/no-new-require": "error",
         "n/no-path-concat": "error",
-        "max-nested-callbacks": [
-          "warn",
-          4
-        ],
+        "max-nested-callbacks": ["warn", 4],
         "new-cap": [
           "error",
           {
             "capIsNew": false,
-            "capIsNewExceptions": [
-              "Immutable.Map",
-              "Immutable.Set",
-              "Immutable.List"
-            ],
+            "capIsNewExceptions": ["Immutable.Map", "Immutable.Set", "Immutable.List"],
             "newIsCap": true,
             "newIsCapExceptions": [],
             "properties": true
@@ -423,14 +394,8 @@
             "defaultAssignment": false
           }
         ],
-        "one-var": [
-          "error",
-          "never"
-        ],
-        "operator-assignment": [
-          "error",
-          "always"
-        ],
+        "one-var": ["error", "never"],
+        "operator-assignment": ["error", "always"],
         "prefer-exponentiation-operator": "error",
         "no-delete-var": "error",
         "no-label-var": "error",
@@ -521,10 +486,7 @@
         "no-restricted-exports": [
           "error",
           {
-            "restrictedNamedExports": [
-              "default",
-              "then"
-            ]
+            "restrictedNamedExports": ["default", "then"]
           }
         ],
         "no-restricted-imports": [
@@ -537,43 +499,28 @@
               },
               {
                 "name": "react",
-                "importNames": [
-                  "default",
-                  "*"
-                ],
+                "importNames": ["default", "*"],
                 "message": "Use named imports instead."
               },
               {
                 "name": "react",
-                "importNames": [
-                  "act"
-                ],
+                "importNames": ["act"],
                 "message": "For consistency, import { act } from '@testing-library/react'"
               }
             ],
             "patterns": [
               {
-                "group": [
-                  "@patternfly/react-icons"
-                ],
+                "group": ["@patternfly/react-icons"],
                 "importNamePattern": "^(?!Rh|createIcon|GitAltIcon|TerminalIcon|GithubIcon|GitlabIcon|BitbucketIcon)",
                 "message": "Use RhMicron, RhUi, or RhStandard icon variants instead of Font Awesome icons."
               },
               {
-                "group": [
-                  "@patternfly/*/dist/js/**",
-                  "@patternfly/*/dist/cjs/**"
-                ],
+                "group": ["@patternfly/*/dist/js/**", "@patternfly/*/dist/cjs/**"],
                 "message": "Import from the package index instead of the CJS dist path."
               },
               {
-                "group": [
-                  "use-sync-external-store",
-                  "use-sync-external-store/shim"
-                ],
-                "importNames": [
-                  "useSyncExternalStore"
-                ],
+                "group": ["use-sync-external-store", "use-sync-external-store/shim"],
+                "importNames": ["useSyncExternalStore"],
                 "message": "Use the useSyncExternalStore shim from 'react' instead of importing the polyfill."
               }
             ]
@@ -594,10 +541,7 @@
           }
         ],
         "no-var": "warn",
-        "object-shorthand": [
-          "error",
-          "properties"
-        ],
+        "object-shorthand": ["error", "properties"],
         "prefer-arrow-callback": [
           "error",
           {
@@ -684,10 +628,7 @@
         "react/no-is-mounted": "error",
         "react/no-string-refs": "error",
         "react/no-unknown-property": "error",
-        "react/prefer-es6-class": [
-          "error",
-          "always"
-        ],
+        "react/prefer-es6-class": ["error", "always"],
         "react/require-render-return": "error",
         "react/self-closing-comp": [
           "error",
@@ -707,9 +648,7 @@
         "react/jsx-filename-extension": [
           "error",
           {
-            "extensions": [
-              ".tsx"
-            ]
+            "extensions": [".tsx"]
           }
         ],
         "react/jsx-no-comment-textnodes": "error",
@@ -737,22 +676,14 @@
           }
         ],
         "react/no-this-in-sfc": "error",
-        "react/jsx-fragments": [
-          "error",
-          "syntax"
-        ],
-        "react/state-in-constructor": [
-          "error",
-          "always"
-        ],
+        "react/jsx-fragments": ["error", "syntax"],
+        "react/state-in-constructor": ["error", "always"],
         "react/jsx-no-script-url": [
           "error",
           [
             {
               "name": "Link",
-              "props": [
-                "to"
-              ]
+              "props": ["to"]
             }
           ]
         ],
@@ -767,12 +698,7 @@
         "jsx-a11y/alt-text": [
           "error",
           {
-            "elements": [
-              "img",
-              "object",
-              "area",
-              "input[type=\"image\"]"
-            ],
+            "elements": ["img", "object", "area", "input[type=\"image\"]"],
             "img": [],
             "object": [],
             "area": [],
@@ -788,17 +714,9 @@
         "jsx-a11y/anchor-is-valid": [
           "error",
           {
-            "components": [
-              "Link"
-            ],
-            "specialLink": [
-              "to"
-            ],
-            "aspects": [
-              "noHref",
-              "invalidHref",
-              "preferButton"
-            ]
+            "components": ["Link"],
+            "specialLink": ["to"],
+            "aspects": ["noHref", "invalidHref", "preferButton"]
           }
         ],
         "jsx-a11y/aria-activedescendant-has-tabindex": "error",
@@ -815,19 +733,9 @@
         "jsx-a11y/control-has-associated-label": [
           "error",
           {
-            "labelAttributes": [
-              "label"
-            ],
+            "labelAttributes": ["label"],
             "controlComponents": [],
-            "ignoreElements": [
-              "audio",
-              "canvas",
-              "embed",
-              "input",
-              "textarea",
-              "tr",
-              "video"
-            ],
+            "ignoreElements": ["audio", "canvas", "embed", "input", "textarea", "tr", "video"],
             "ignoreRoles": [
               "grid",
               "listbox",
@@ -846,9 +754,7 @@
         "jsx-a11y/heading-has-content": [
           "error",
           {
-            "components": [
-              ""
-            ]
+            "components": [""]
           }
         ],
         "jsx-a11y/html-has-lang": "error",
@@ -881,19 +787,13 @@
         "jsx-a11y/no-distracting-elements": [
           "error",
           {
-            "elements": [
-              "marquee",
-              "blink"
-            ]
+            "elements": ["marquee", "blink"]
           }
         ],
         "jsx-a11y/no-interactive-element-to-noninteractive-role": [
           "error",
           {
-            "tr": [
-              "none",
-              "presentation"
-            ]
+            "tr": ["none", "presentation"]
           }
         ],
         "jsx-a11y/no-noninteractive-element-interactions": [
@@ -912,46 +812,18 @@
         "jsx-a11y/no-noninteractive-element-to-interactive-role": [
           "error",
           {
-            "ul": [
-              "listbox",
-              "menu",
-              "menubar",
-              "radiogroup",
-              "tablist",
-              "tree",
-              "treegrid"
-            ],
-            "ol": [
-              "listbox",
-              "menu",
-              "menubar",
-              "radiogroup",
-              "tablist",
-              "tree",
-              "treegrid"
-            ],
-            "li": [
-              "menuitem",
-              "option",
-              "row",
-              "tab",
-              "treeitem"
-            ],
-            "table": [
-              "grid"
-            ],
-            "td": [
-              "gridcell"
-            ]
+            "ul": ["listbox", "menu", "menubar", "radiogroup", "tablist", "tree", "treegrid"],
+            "ol": ["listbox", "menu", "menubar", "radiogroup", "tablist", "tree", "treegrid"],
+            "li": ["menuitem", "option", "row", "tab", "treeitem"],
+            "table": ["grid"],
+            "td": ["gridcell"]
           }
         ],
         "jsx-a11y/no-noninteractive-tabindex": [
           "error",
           {
             "tags": [],
-            "roles": [
-              "tabpanel"
-            ]
+            "roles": ["tabpanel"]
           }
         ],
         "jsx-a11y/no-redundant-roles": "error",
@@ -1042,9 +914,7 @@
         "no-empty-function": [
           "error",
           {
-            "allow": [
-              "arrowFunctions"
-            ]
+            "allow": ["arrowFunctions"]
           }
         ]
       }
@@ -1071,9 +941,7 @@
       "env": {
         "node": true
       },
-      "jsPlugins": [
-        "eslint-plugin-n"
-      ],
+      "jsPlugins": ["eslint-plugin-n"],
       "rules": {
         "array-callback-return": [
           "error",
@@ -1231,10 +1099,7 @@
             "message": "Use the exponentiation operator (**) instead."
           }
         ],
-        "no-return-assign": [
-          "error",
-          "except-parens"
-        ],
+        "no-return-assign": ["error", "except-parens"],
         "typescript/return-await": "error",
         "no-script-url": "error",
         "no-self-assign": [
@@ -1279,10 +1144,7 @@
             "disallowRedundantWrapping": true
           }
         ],
-        "radix": [
-          "error",
-          "always"
-        ],
+        "radix": ["error", "always"],
         "vars-on-top": "error",
         "yoda": [
           "error",
@@ -1296,10 +1158,7 @@
         "no-async-promise-executor": "error",
         "no-await-in-loop": "error",
         "no-compare-neg-zero": "error",
-        "no-cond-assign": [
-          "error",
-          "always"
-        ],
+        "no-cond-assign": ["error", "always"],
         "no-constant-condition": [
           "error",
           {
@@ -1318,10 +1177,7 @@
         ],
         "no-empty-character-class": "error",
         "no-ex-assign": "error",
-        "no-extra-boolean-cast": [
-          "error",
-          {}
-        ],
+        "no-extra-boolean-cast": ["error", {}],
         "no-func-assign": "error",
         "no-import-assign": "error",
         "no-inner-declarations": [
@@ -1331,10 +1187,7 @@
             "blockScopedFunctions": "allow"
           }
         ],
-        "no-invalid-regexp": [
-          "error",
-          {}
-        ],
+        "no-invalid-regexp": ["error", {}],
         "no-irregular-whitespace": [
           "error",
           {
@@ -1393,19 +1246,12 @@
         "unicorn/no-new-buffer": "error",
         "n/no-new-require": "error",
         "n/no-path-concat": "error",
-        "max-nested-callbacks": [
-          "warn",
-          4
-        ],
+        "max-nested-callbacks": ["warn", 4],
         "new-cap": [
           "error",
           {
             "capIsNew": false,
-            "capIsNewExceptions": [
-              "Immutable.Map",
-              "Immutable.Set",
-              "Immutable.List"
-            ],
+            "capIsNewExceptions": ["Immutable.Map", "Immutable.Set", "Immutable.List"],
             "newIsCap": true,
             "newIsCapExceptions": [],
             "properties": true
@@ -1432,14 +1278,8 @@
             "defaultAssignment": false
           }
         ],
-        "one-var": [
-          "error",
-          "never"
-        ],
-        "operator-assignment": [
-          "error",
-          "always"
-        ],
+        "one-var": ["error", "never"],
+        "operator-assignment": ["error", "always"],
         "prefer-exponentiation-operator": "error",
         "no-delete-var": "error",
         "no-label-var": "error",
@@ -1530,10 +1370,7 @@
         "no-restricted-exports": [
           "error",
           {
-            "restrictedNamedExports": [
-              "default",
-              "then"
-            ]
+            "restrictedNamedExports": ["default", "then"]
           }
         ],
         "no-useless-computed-key": [
@@ -1551,10 +1388,7 @@
           }
         ],
         "no-var": "warn",
-        "object-shorthand": [
-          "error",
-          "properties"
-        ],
+        "object-shorthand": ["error", "properties"],
         "prefer-arrow-callback": [
           "error",
           {
@@ -1673,28 +1507,13 @@
         "no-empty-function": [
           "error",
           {
-            "allow": [
-              "arrowFunctions"
-            ]
+            "allow": ["arrowFunctions"]
           }
         ],
-        "n/callback-return": [
-          "error",
-          [
-            "callback",
-            "cb",
-            "next"
-          ]
-        ],
-        "n/handle-callback-err": [
-          "error",
-          "^.*(e|E)rr(or)?$"
-        ],
+        "n/callback-return": ["error", ["callback", "cb", "next"]],
+        "n/handle-callback-err": ["error", "^.*(e|E)rr(or)?$"],
         "n/no-extraneous-require": "error",
-        "n/exports-style": [
-          "error",
-          "module.exports"
-        ],
+        "n/exports-style": ["error", "module.exports"],
         "n/prefer-global/buffer": "error",
         "n/prefer-global/console": "error",
         "n/prefer-global/process": "error",
@@ -1704,23 +1523,22 @@
         "n/prefer-global/url": "error",
         "n/no-deprecated-api": "error",
         "n/no-unpublished-bin": "error",
-        "n/no-unsupported-features/node-builtins": "error",
+        "n/no-unsupported-features/node-builtins": [
+          "error",
+          {
+            "version": ">=22.16.0",
+            "ignores": []
+          }
+        ],
         "n/hashbang": "error",
         "n/prefer-promises/dns": "error",
         "n/prefer-promises/fs": "error"
       }
     },
     {
-      "files": [
-        "e2e/**/*.ts",
-        "e2e/**/*.tsx"
-      ],
-      "excludeFiles": [
-        "e2e/**/testData/**"
-      ],
-      "jsPlugins": [
-        "eslint-plugin-playwright"
-      ],
+      "files": ["e2e/**/*.ts", "e2e/**/*.tsx"],
+      "excludeFiles": ["e2e/**/testData/**"],
+      "jsPlugins": ["eslint-plugin-playwright"],
       "rules": {
         "playwright/consistent-spacing-between-blocks": "warn",
         "playwright/expect-expect": "warn",
@@ -1765,29 +1583,18 @@
       }
     },
     {
-      "files": [
-        "e2e/setup/**/*.ts"
-      ],
+      "files": ["e2e/setup/**/*.ts"],
       "rules": {
         "playwright/expect-expect": "off"
       }
     },
     {
-      "files": [
-        "**/__tests__/**/*.ts",
-        "**/__tests__/**/*.tsx",
-        "**/*.spec.ts",
-        "**/*.spec.tsx"
-      ],
-      "excludeFiles": [
-        "e2e/**"
-      ],
+      "files": ["**/__tests__/**/*.ts", "**/__tests__/**/*.tsx", "**/*.spec.ts", "**/*.spec.tsx"],
+      "excludeFiles": ["e2e/**"],
       "env": {
         "jest": true
       },
-      "jsPlugins": [
-        "eslint-plugin-testing-library"
-      ],
+      "jsPlugins": ["eslint-plugin-testing-library"],
       "rules": {
         "testing-library/await-async-events": [
           "error",
@@ -1800,18 +1607,13 @@
         "testing-library/no-await-sync-events": [
           "error",
           {
-            "eventModules": [
-              "fire-event"
-            ]
+            "eventModules": ["fire-event"]
           }
         ],
         "testing-library/no-await-sync-queries": "error",
         "testing-library/no-container": "error",
         "testing-library/no-debugging-utils": "warn",
-        "testing-library/no-dom-import": [
-          "error",
-          "react"
-        ],
+        "testing-library/no-dom-import": ["error", "react"],
         "testing-library/no-global-regexp-flag-in-query": "error",
         "testing-library/no-manual-cleanup": "error",
         "testing-library/no-node-access": "error",

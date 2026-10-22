@@ -16,7 +16,7 @@ import { execFileSync } from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
 
-const ROOT = path.join(import.meta.dirname, '..');
+const ROOT = path.join(__dirname, '..');
 
 // Representative (virtual) files per ESLint scope. `--print-config` only needs
 // a path that matches the scope's file globs; the files do not have to exist.
