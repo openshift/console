@@ -39,11 +39,7 @@ const StartingMaintenancePopoverContent: FC<StartingMaintenancePopoverContentPro
 
   return (
     <>
-      <p>
-        {t(
-          "Node is entering maintenance. The cluster will automatically rebuild node's data 30 minutes after entering maintenance.",
-        )}
-      </p>
+      <p>{t('Node is entering maintenance.')}</p>
       <DescriptionList>
         <DescriptionListGroup>
           <DescriptionListTerm>{t('Maintenance reason:')}</DescriptionListTerm>
