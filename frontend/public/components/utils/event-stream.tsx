@@ -19,42 +19,6 @@ const measurementCache = new CellMeasurerCache({
   fixedWidth: true,
 });
 
-const SysEvent = forwardRef<HTMLDivElement, SysEventProps>(
-  ({ EventComponent, index, style, event, className, list }, ref) => {
-    let shouldAnimate: boolean;
-    const key = event.metadata.uid;
-    // Only animate events if they're at the start of the list (first 6) and we haven't seen them before.
-    if (!seen.has(key) && index < 6) {
-      seen.add(key);
-      shouldAnimate = true;
-    }
-
-    useEffect(
-      () =>
-        // Don't memory-leak the seen set while streaming.
-        () => {
-          seen.delete(key);
-        },
-      [key],
-    );
-
-    return (
-      <div
-        className={css(
-          { 'co-sysevent-slide-in': shouldAnimate },
-          'co-sysevent--transition',
-          className,
-        )}
-        ref={ref}
-        style={style}
-      >
-        <EventComponent event={event} list={list} cache={measurementCache} index={index} />
-      </div>
-    );
-  },
-);
-SysEvent.displayName = 'SysEvent';
-
 const arePropsEqual = (prev: SysEventProps, next: SysEventProps) => {
   if (prev.event.lastTimestamp !== next.event.lastTimestamp) {
     // Timestamps can be modified because events can be combined.
@@ -63,7 +27,47 @@ const arePropsEqual = (prev: SysEventProps, next: SysEventProps) => {
   return _.isEqual(prev.style, next.style);
 };
 
-const MemoizedSysEvent = memo(SysEvent, arePropsEqual);
+const SysEventContent = memo(
+  ({ EventComponent, event, list, index }: SysEventProps) => (
+    <EventComponent event={event} list={list} cache={measurementCache} index={index} />
+  ),
+  arePropsEqual,
+);
+
+const SysEvent = forwardRef<HTMLDivElement, SysEventProps>((props, ref) => {
+  const { event, index, style, className } = props;
+  let shouldAnimate: boolean;
+  const key = event.metadata.uid;
+  // Only animate events if they're at the start of the list (first 6) and we haven't seen them before.
+  if (!seen.has(key) && index < 6) {
+    seen.add(key);
+    shouldAnimate = true;
+  }
+
+  useEffect(
+    () =>
+      // Don't memory-leak the seen set while streaming.
+      () => {
+        seen.delete(key);
+      },
+    [key],
+  );
+
+  return (
+    <div
+      className={css(
+        { 'co-sysevent-slide-in': shouldAnimate },
+        'co-sysevent--transition',
+        className,
+      )}
+      ref={ref}
+      style={style}
+    >
+      <SysEventContent {...props} />
+    </div>
+  );
+});
+SysEvent.displayName = 'SysEvent';
 
 export const EventStreamList: FC<EventStreamListProps> = ({
   events,
@@ -86,7 +90,7 @@ export const EventStreamList: FC<EventStreamListProps> = ({
         parent={parent}
       >
         {() => (
-          <MemoizedSysEvent
+          <SysEvent
             className={className}
             event={events[index]}
             list={list}
