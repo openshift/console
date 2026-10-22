@@ -61,4 +61,27 @@ describe('EventStreamList', () => {
     expect(inner).not.toBeNull();
     expect((inner as HTMLElement).style.height).toBe(`${events.length * ROW_HEIGHT}px`);
   });
+
+  it('does not rerender row content when CellMeasurer recreates its ref', () => {
+    const events = [createEvent('event-1'), createEvent('event-2')];
+    const renderCount = { current: 0 };
+    const EventComponent = () => {
+      renderCount.current += 1;
+      return <div>event</div>;
+    };
+
+    const { rerender } = render(
+      <EventStreamList events={events} className="a" EventComponent={EventComponent} />,
+    );
+    const initialCount = renderCount.current;
+    expect(initialCount).toBeGreaterThan(0);
+
+    // Same events array, so the measurement cache is not cleared and row styles
+    // are unchanged. CellMeasurer still recreates its callback ref on each
+    // render, which must not defeat the memo on the row content — only the
+    // thin ref-forwarding wrapper re-renders.
+    rerender(<EventStreamList events={events} className="b" EventComponent={EventComponent} />);
+
+    expect(renderCount.current).toBe(initialCount);
+  });
 });
