@@ -84,4 +84,72 @@ describe('EventStreamList', () => {
 
     expect(renderCount.current).toBe(initialCount);
   });
+
+  it('does not rerender unchanged row content while streaming', () => {
+    const events = [createEvent('event-1'), createEvent('event-2')];
+    const renderCount = { current: 0 };
+    const EventComponent = () => {
+      renderCount.current += 1;
+      return <div>event</div>;
+    };
+
+    const { rerender } = render(
+      <EventStreamList events={events} EventComponent={EventComponent} />,
+    );
+    const initialCount = renderCount.current;
+    expect(initialCount).toBeGreaterThan(0);
+
+    // Simulate a streaming update: the same events in a new array. The effect
+    // clears the measurement cache and recomputes row heights, transiently
+    // rewriting row styles, which must not rerender unchanged row content.
+    rerender(<EventStreamList events={[...events]} EventComponent={EventComponent} />);
+
+    expect(renderCount.current).toBe(initialCount);
+  });
+
+  it('rerenders only row content whose event changed', () => {
+    const events = [createEvent('event-1'), createEvent('event-2')];
+    const renderCounts: Record<string, number> = {};
+    const EventComponent = ({ event }: { event: EventKind }) => {
+      const { name } = event.metadata;
+      renderCounts[name] = (renderCounts[name] ?? 0) + 1;
+      return <div>event</div>;
+    };
+
+    const { rerender } = render(
+      <EventStreamList events={events} EventComponent={EventComponent} />,
+    );
+    const initialCounts = { ...renderCounts };
+    expect(initialCounts['event-1']).toBeGreaterThan(0);
+
+    // Only the second event's lastTimestamp changes, so only its row content
+    // should rerender.
+    const updated = events.map((event, i) =>
+      i === 1 ? { ...event, lastTimestamp: '2026-10-21T12:00:00Z' } : event,
+    );
+    rerender(<EventStreamList events={updated} EventComponent={EventComponent} />);
+
+    expect(renderCounts['event-1']).toBe(initialCounts['event-1']);
+    expect(renderCounts['event-2']).toBe(initialCounts['event-2'] + 1);
+  });
+
+  it('keeps the slide-in class on animating rows across rerenders', () => {
+    const events = [createEvent('event-1'), createEvent('event-2')];
+
+    const { rerender } = render(
+      <EventStreamList events={events} EventComponent={() => <div>event</div>} />,
+    );
+
+    // eslint-disable-next-line testing-library/no-node-access
+    const firstRow = document.querySelector('.co-sysevent--transition');
+    expect(firstRow).not.toBeNull();
+    expect(firstRow.classList.contains('co-sysevent-slide-in')).toBe(true);
+
+    // CellMeasurer rerenders rows with a new ref on every pass; the animation
+    // decision must be stable for the mounted row rather than recomputed from
+    // the seen set, which would drop the class mid-animation.
+    rerender(<EventStreamList events={events} EventComponent={() => <div>event</div>} />);
+
+    expect(firstRow.classList.contains('co-sysevent-slide-in')).toBe(true);
+  });
 });
