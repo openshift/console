@@ -8224,9 +8224,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-console@workspace:packages/eslint-plugin-console":
+"eslint-plugin-console@workspace:packages/oxlint-plugin-console":
   version: 0.0.0-use.local
-  resolution: "eslint-plugin-console@workspace:packages/eslint-plugin-console"
+  resolution: "eslint-plugin-console@workspace:packages/oxlint-plugin-console"
   dependencies:
     "@typescript-eslint/eslint-plugin": "npm:^8.0.0"
     "@typescript-eslint/parser": "npm:^8.0.0"
