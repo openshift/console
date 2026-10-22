@@ -39,7 +39,9 @@ func (p *Proxy) getConfig(token string) (*rest.Config, error) {
 	// rest.InClusterConfig(), keeps that trust instead of discarding it
 	// (rest.InClusterConfig() also fails outright when running off-cluster).
 	return &rest.Config{
-		Host:        p.ClusterEndpoint.Host,
+		// Keep the scheme: client-go defaults a scheme-less host to http://
+		// when the rest.Config itself carries no CA data or Insecure flag.
+		Host:        p.ClusterEndpoint.String(),
 		Transport:   &http.Transport{TLSClientConfig: p.TLSClientConfig},
 		BearerToken: token,
 	}, nil

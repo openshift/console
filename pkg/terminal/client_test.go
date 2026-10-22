@@ -70,8 +70,27 @@ func TestGetConfig(t *testing.T) {
 		if got.BearerToken != "my-token" {
 			t.Errorf("expected BearerToken to be preserved, got %q", got.BearerToken)
 		}
-		if got.Host != endpoint.Host {
-			t.Errorf("expected Host %q, got %q", endpoint.Host, got.Host)
+		if got.Host != endpoint.String() {
+			t.Errorf("expected Host %q, got %q", endpoint.String(), got.Host)
+		}
+	})
+
+	t.Run("resolves to the https scheme despite TLS living in the Transport", func(t *testing.T) {
+		// Regression test: Host was previously set to ClusterEndpoint.Host
+		// (no scheme). client-go defaults a scheme-less host to http://
+		// when the rest.Config has no CA/cert data and Insecure is unset —
+		// none of which apply here, because the TLS trust is carried by the
+		// custom Transport instead. The terminal clients would then speak
+		// plain HTTP to the API server.
+		p := &Proxy{TLSClientConfig: &tls.Config{}, ClusterEndpoint: endpoint}
+
+		cs, err := p.createTypedClient("token")
+		if err != nil {
+			t.Fatalf("unexpected error building typed client: %v", err)
+		}
+		u := cs.CoreV1().RESTClient().Get().AbsPath("/healthz").URL()
+		if u.Scheme != "https" {
+			t.Errorf("expected requests to use the https scheme, got %q (URL: %s)", u.Scheme, u)
 		}
 	})
 }
