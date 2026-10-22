@@ -105,13 +105,13 @@ const RenderExtension: FC<RenderExtensionProps> = ({
 }) => {
   const forceRender = useForceRender();
   const markupRef = useRef<string>(null);
-  // eslint-disable-next-line react-hooks/refs -- Intentional render-time ref access: delays extension rendering by one cycle to let DOM update via dangerouslySetInnerHTML
+  // eslint-disable-next-line react-hooks-js/refs -- Intentional render-time ref access: delays extension rendering by one cycle to let DOM update via dangerouslySetInnerHTML
   const shouldRenderExtension = useCallback(() => {
     if (markupRef.current === markup) {
-      // eslint-disable-line react-hooks/refs -- delays extension rendering one cycle to let DOM update
+      // eslint-disable-line react-hooks-js/refs -- delays extension rendering one cycle to let DOM update
       return true;
     }
-    markupRef.current = markup; // eslint-disable-line react-hooks/refs -- tracks markup to detect changes across renders
+    markupRef.current = markup; // eslint-disable-line react-hooks-js/refs -- tracks markup to detect changes across renders
     return false;
   }, [markup]);
   /**
@@ -121,7 +121,7 @@ const RenderExtension: FC<RenderExtensionProps> = ({
    */
   useEffect(() => {
     renderExtension && forceRender();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [markup]);
   return (
     <>{shouldRenderExtension() ? renderExtension?.(docContext ?? document, selector) : null}</>
@@ -240,7 +240,7 @@ const IFrameMarkdownView: FC<InnerSyncMarkdownProps> = ({
           markup={markup}
           selector=""
           renderExtension={renderExtension}
-          docContext={frameRef.current?.contentDocument} // eslint-disable-line react-hooks/refs -- DOM ref read after load; iframe is mounted when loaded=true
+          docContext={frameRef.current?.contentDocument} // eslint-disable-line react-hooks-js/refs -- DOM ref read after load; iframe is mounted when loaded=true
         />
       )}
     </>

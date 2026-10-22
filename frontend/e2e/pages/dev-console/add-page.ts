@@ -197,7 +197,7 @@ export class ImportFromGitPage extends BasePage {
     const validatedIndicator = this.page.getByTestId('git-url-validated');
     const errorIndicator = this.page.getByTestId('git-url-error');
     try {
-      // eslint-disable-next-line no-restricted-syntax
+      // eslint-disable-next-line eslint-js/no-restricted-syntax
       await validatedIndicator.or(errorIndicator).first().waitFor({ timeout: 30_000 });
     } catch {
       // Validation may not always appear for non-standard git types

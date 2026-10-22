@@ -104,7 +104,7 @@ export const MultiTypeaheadField: FC<MultiTypeaheadFieldProps> = ({
     }
 
     setFilteredSelectOptions(newSelectOptions);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [inputValue, onCreation]);
 
   const setActiveAndFocusedItem = (itemIndex: number) => {

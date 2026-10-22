@@ -116,7 +116,7 @@ export const useTelemetry = () => {
       });
       telemetryEvents = [];
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [currentUserPreferenceTelemetryValue, userResourceIsLoaded]);
 
   return useCallback<TelemetryEventListener>(

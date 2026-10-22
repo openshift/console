@@ -106,7 +106,7 @@ export const SingleTypeaheadDropdown: FC<SingleTypeaheadDropdownProps> = ({
   useEffect(() => {
     setSelectOptions([...selectOptions, ..._.differenceBy(items, selectOptions, 'value')]);
     inputValue === '' && setFilteredSelectOptions(selectOptions);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [items]);
 
   useEffect(() => {
@@ -136,7 +136,7 @@ export const SingleTypeaheadDropdown: FC<SingleTypeaheadDropdownProps> = ({
     }
 
     setFilteredSelectOptions(newSelectOptions);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [filterValue]);
 
   const createItemId = (value: any) => `${ID_PREFIX}-option-${String(value).replace(' ', '-')}`;

@@ -186,7 +186,7 @@ export const GlobalConfigPage: FC = () => {
       isSubscribed = false;
     };
     // oauthMenuItems, editYAMLMenuItem, viewAPIExplorerMenuItem would cause infinite renders
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [clusterOperatorConfigResources, configResources, globalConfigs, t]);
   const visibleItems = items.filter(
     ({ label, description = '' }) =>

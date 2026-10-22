@@ -118,7 +118,7 @@ export class SelectorInput extends Component<SelectorInputProps, SelectorInputSt
     }
   }
 
-  // eslint-disable-next-line react/no-unused-class-component-methods
+  // eslint-disable-next-line react-js/no-unused-class-component-methods
   focus() {
     if (this.inputRef) {
       this.inputRef.focus();

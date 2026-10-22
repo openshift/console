@@ -301,7 +301,7 @@ const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
   useEffect(() => {
     setEnabledPlugins(isCatalogSourceTrusted(catalogSource) ? csvPlugins : []);
     // Use the JSON string directly from the annotation so the dependency is compared using string comparison
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [catalogSource, currentCSVDesc?.annotations?.['console.openshift.io/plugins']]);
 
   const manualSubscriptionsInNamespace = getManualSubscriptionsInNamespace(

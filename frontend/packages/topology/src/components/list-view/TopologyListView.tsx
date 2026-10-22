@@ -151,14 +151,14 @@ const ConnectedTopologyListView: FC<
       return newVisualization;
     };
 
-    // eslint-disable-next-line react-hooks/refs -- Lazy initialization: visualization must be available in the same render
+    // eslint-disable-next-line react-hooks-js/refs -- Lazy initialization: visualization must be available in the same render
     const visualizationRef = useRef<Visualization>(undefined);
     if (!visualizationRef.current) {
-      // eslint-disable-line react-hooks/refs -- lazy init: checks if visualization exists before creating
-      visualizationRef.current = createVisualization(); // eslint-disable-line react-hooks/refs -- lazy init: creates visualization synchronously on first render
+      // eslint-disable-line react-hooks-js/refs -- lazy init: checks if visualization exists before creating
+      visualizationRef.current = createVisualization(); // eslint-disable-line react-hooks-js/refs -- lazy init: creates visualization synchronously on first render
     }
 
-    const visualization = visualizationRef.current; // eslint-disable-line react-hooks/refs -- lazy init: reads synchronously created visualization
+    const visualization = visualizationRef.current; // eslint-disable-line react-hooks-js/refs -- lazy init: reads synchronously created visualization
 
     useEffect(() => {
       if (visualization) {
@@ -181,7 +181,7 @@ const ConnectedTopologyListView: FC<
         }
       }
       setVisualizationReady(true);
-      // eslint-disable-next-line react-hooks/exhaustive-deps
+      // eslint-disable-next-line react-hooks-js/exhaustive-deps
     }, [model, onSelect, visualization]);
 
     const nodes = visualization.getElements().filter((e) => isNode(e)) as Node[];
@@ -308,7 +308,7 @@ const ConnectedTopologyListView: FC<
         clearMetricsInterval();
         clearAlertsInterval();
       };
-      // eslint-disable-next-line react-hooks/exhaustive-deps
+      // eslint-disable-next-line react-hooks-js/exhaustive-deps
     }, [namespace, updateMetrics, updateMonitoringAlerts]);
 
     return (

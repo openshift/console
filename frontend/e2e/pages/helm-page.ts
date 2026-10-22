@@ -76,7 +76,7 @@ export class HelmPage extends BasePage {
   async clickKebabMenu(): Promise<void> {
     const kebabButton = this.page.getByTestId('kebab-button').first();
     await this.robustClick(kebabButton);
-    // eslint-disable-next-line no-restricted-syntax
+    // eslint-disable-next-line eslint-js/no-restricted-syntax
     await this.page.getByTestId('action-items').waitFor({ state: 'visible', timeout: 10_000 });
   }
 

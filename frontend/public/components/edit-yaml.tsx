@@ -403,7 +403,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
     }
 
     setOLSCode(olsCodeBlock?.value);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [olsCodeBlock, initialized, isCodeImportRedirect, editorMounted]);
 
   const handleError = (err, value = null) => {
@@ -741,7 +741,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
       saveAllCallback();
     }
     // removed callback functions from deps array to prevent stream of errors after save
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [saving, callbackCommand]);
 
   const download = () => {
@@ -794,7 +794,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
   if (displayResults) {
     return (
       <ImportYAMLResults
-        // eslint-disable-next-line react/jsx-no-bind
+        // eslint-disable-next-line react-js/jsx-no-bind
         createResources={createResources}
         displayResults={setDisplayResults}
         importResources={resourceObjects}

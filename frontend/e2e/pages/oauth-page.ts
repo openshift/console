@@ -69,7 +69,7 @@ export class OAuthPage extends BasePage {
   async removeIDP(idpName: string): Promise<void> {
     // First verify the IDP exists
     const kebabCell = this.getIDPKebabMenu(idpName);
-    // eslint-disable-next-line no-restricted-syntax
+    // eslint-disable-next-line eslint-js/no-restricted-syntax
     await kebabCell.waitFor({ state: 'visible', timeout: 5_000 }).catch(() => {
       throw new Error(`IDP "${idpName}" not found in the list - cannot remove`);
     });

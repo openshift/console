@@ -51,7 +51,7 @@ export async function testA11y(page: Page, target: string, selector?: string): P
     const loading = page.locator(LOADING_SELECTORS);
     const count = await loading.count().catch(() => 0);
     if (count > 0) {
-      // eslint-disable-next-line no-restricted-syntax
+      // eslint-disable-next-line eslint-js/no-restricted-syntax
       await loading.first().waitFor({ state: 'hidden', timeout: 5_000 });
     }
   } catch {

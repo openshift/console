@@ -219,7 +219,7 @@ export class ListPage extends BasePage {
     await this.robustClick(dropdownButton);
 
     const searchInput = this.page.getByRole('searchbox', { name: 'Select project...' });
-    // eslint-disable-next-line no-restricted-syntax
+    // eslint-disable-next-line eslint-js/no-restricted-syntax
     await searchInput.waitFor({ state: 'visible' });
 
     const systemSwitch = this.page.getByTestId('showSystemSwitch');
