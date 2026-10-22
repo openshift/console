@@ -3,6 +3,7 @@
   "version": "0.0.0-fixed",
   "description": "Console code shared between all packages",
   "private": true,
+  "type": "module",
   "scripts": {
     "test": "yarn --cwd ../.. test packages/console-shared"
   }

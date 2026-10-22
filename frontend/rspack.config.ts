@@ -70,7 +70,7 @@ const sharedPluginModulesTest = getVendorModuleRegExp(
 );
 
 const dynamicModuleMaps = resolveDynamicModuleMaps(dynamicModulePackageSpecs, [
-  path.resolve(__dirname, 'node_modules'),
+  path.resolve(import.meta.dirname, 'node_modules'),
 ]);
 
 /**
@@ -126,7 +126,7 @@ const config: Configuration = {
     main: ['./public/components/app.tsx'],
   },
   output: {
-    path: path.resolve(__dirname, 'public/dist'),
+    path: path.resolve(import.meta.dirname, 'public/dist'),
     publicPath: 'static/',
     filename: '[name]-bundle.js',
     chunkFilename: '[name]-[chunkhash].js',
@@ -226,7 +226,7 @@ const config: Configuration = {
       },
       {
         test: /\.css$/,
-        include: path.resolve(__dirname, 'node_modules/monaco-editor'),
+        include: path.resolve(import.meta.dirname, 'node_modules/monaco-editor'),
         type: 'css',
       },
       {
@@ -237,7 +237,7 @@ const config: Configuration = {
         },
         rules: [
           {
-            include: path.resolve(__dirname, 'node_modules/monaco-editor'),
+            include: path.resolve(import.meta.dirname, 'node_modules/monaco-editor'),
             // Native CSS resolves Monaco's font URLs relative to the stylesheet.
             generator: { publicPath: './' },
           },
@@ -297,7 +297,7 @@ const config: Configuration = {
     new NormalModuleReplacementPlugin(/^lodash$/, 'lodash-es'),
     new TsCheckerRspackPlugin({
       typescript: {
-        configFile: path.resolve(__dirname, 'tsconfig.json'),
+        configFile: path.resolve(import.meta.dirname, 'tsconfig.json'),
         diagnosticOptions: { syntactic: true, semantic: true },
         memoryLimit: 4096,
       },
@@ -336,14 +336,14 @@ const config: Configuration = {
     }),
     new CopyRspackPlugin({
       patterns: [
-        { from: path.resolve(__dirname, './public/robots.txt'), to: 'robots.txt' },
+        { from: path.resolve(import.meta.dirname, './public/robots.txt'), to: 'robots.txt' },
         {
           from: 'packages/*/locales/**/*.json',
           to: ({ absoluteFilename }) => {
             const segments = absoluteFilename.split(path.sep);
             return segments.slice(segments.lastIndexOf('locales')).join(path.sep);
           },
-          context: path.resolve(__dirname),
+          context: path.resolve(import.meta.dirname),
         },
         {
           from: 'public/locales/**/*.json',
@@ -351,7 +351,7 @@ const config: Configuration = {
             const segments = absoluteFilename.split(path.sep);
             return segments.slice(segments.lastIndexOf('locales')).join(path.sep);
           },
-          context: path.resolve(__dirname),
+          context: path.resolve(import.meta.dirname),
         },
         { from: 'public/imgs', to: 'imgs' },
         { from: 'public/load-test.sw.js', to: 'load-test.sw.js' },

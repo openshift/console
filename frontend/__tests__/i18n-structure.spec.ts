@@ -3,7 +3,7 @@ import { basename, resolve, sep } from 'path';
 import { sync as glob } from 'glob';
 import { NAMESPACE_EXCEPTIONS } from '../i18n-scripts/namespace-map';
 
-const FRONTEND_DIR = resolve(__dirname, '..');
+const FRONTEND_DIR = resolve(import.meta.dirname, '..');
 
 /** Returns the expected i18n namespace for a file path relative to the frontend directory. */
 const expectedNamespace = (file: string): string => {

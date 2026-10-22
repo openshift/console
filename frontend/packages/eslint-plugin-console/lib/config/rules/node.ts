@@ -11,7 +11,7 @@ module.exports = {
   'n/no-mixed-requires': 'off',
   // Disallow use of new operator with the require function
   'n/no-new-require': 'error',
-  // Disallow string concatenation with __dirname and __filename
+  // Disallow string concatenation with import.meta.dirname and __filename
   'n/no-path-concat': 'error',
   // Disallow process.exit()
   'n/no-process-exit': 'off',
@@ -58,7 +58,7 @@ module.exports = {
   // disallow unsupported ECMAScript syntax on the specified version
   'n/no-unsupported-features/es-syntax': 'off',
   // disallow unsupported Node.js built-in APIs on the specified version
-  'n/no-unsupported-features/node-builtins': 'error',
+  'n/no-unsupported-features/node-builtins': ['error', { version: '>=22.16.0', ignores: [] }],
   // If you turn this rule on, ESLint comes to address process.exit() as throw in code path analysis.
   'n/process-exit-as-throw': 'off',
   // Suggest correct usage of shebang.

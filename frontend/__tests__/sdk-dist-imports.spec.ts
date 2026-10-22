@@ -1,7 +1,7 @@
 import { existsSync, readdirSync, readFileSync } from 'fs';
 import { join, relative, resolve } from 'path';
 
-const DIST_DIR = resolve(__dirname, '../packages/console-dynamic-plugin-sdk/dist');
+const DIST_DIR = resolve(import.meta.dirname, '../packages/console-dynamic-plugin-sdk/dist');
 
 const getDistFiles = (root: string, extensions: string[]): string[] => {
   const results: string[] = [];

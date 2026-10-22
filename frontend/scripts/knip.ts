@@ -8,7 +8,7 @@ import type { ConsoleExtensionsJSON } from '@console/dynamic-plugin-sdk/src/sche
 import { parseJSONC } from '@console/dynamic-plugin-sdk/src/utils/jsonc';
 import { resolvePluginPackages } from '@console/plugin-sdk/src/codegen/plugin-resolver';
 
-const packagesDir = path.resolve(__dirname, '..', 'packages');
+const packagesDir = path.resolve(import.meta.dirname, '..', 'packages');
 
 /** Generate an import statement for a specific export from a module path. */
 const makeImport = (modulePath: string, exportName: string, id: number) =>

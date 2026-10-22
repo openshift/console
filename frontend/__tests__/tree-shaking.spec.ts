@@ -4,7 +4,7 @@ import { basename, join, resolve } from 'path';
 // eslint-disable-next-line no-restricted-imports
 import { WizardsOfTheCoastIcon } from '@patternfly/react-icons';
 
-const DIST_DIR = resolve(__dirname, '../public/dist');
+const DIST_DIR = resolve(import.meta.dirname, '../public/dist');
 
 const findFilesContaining = (files: string[], needle: string): string[] =>
   files.filter((f) => readFileSync(f, 'utf-8').includes(needle)).map((f) => basename(f));
