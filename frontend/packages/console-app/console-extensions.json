@@ -2554,7 +2554,7 @@
         "version": "v1",
         "kind": "ConfigMap"
       },
-      "provider": { "$codeRef": "defaultProvider.useDefaultActionsProvider" }
+      "provider": { "$codeRef": "configmapProvider.useConfigMapActionsProvider" }
     }
   },
   {

@@ -82,9 +82,15 @@ export const useBuildConfigActionsProvider = (providerArgs: {
 }): [Action[], boolean, boolean] => {
   const { buildConfig, latestBuild } = providerArgs;
   const [kindObj, inFlight] = useK8sModel(referenceFor(buildConfig ?? {}));
+
+  const editPath = useMemo(
+    () => (kindObj ? `${resourceObjPath(buildConfig, kindObj.kind)}/form` : undefined),
+    [kindObj, buildConfig],
+  );
+
   const startBuildAction = useStartBuildAction(buildConfig);
   const startLastBuildAction = useStartLastBuildAction(buildConfig, latestBuild);
-  const commonActions = useCommonResourceActions(kindObj, buildConfig);
+  const commonActions = useCommonResourceActions(kindObj, buildConfig, undefined, editPath);
   const actions = useMemo<Action[]>(
     () => [...startBuildAction, ...startLastBuildAction, ...commonActions],
     [startBuildAction, startLastBuildAction, commonActions],
