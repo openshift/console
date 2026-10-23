@@ -28,6 +28,14 @@ const arePropsEqual = (prev: SysEventContentProps, next: SysEventContentProps) =
     // when its lastTimestamp matches the event it replaces.
     return false;
   }
+  if (
+    prev.event.series?.count !== next.event.series?.count ||
+    prev.event.series?.lastObservedTime !== next.event.series?.lastObservedTime
+  ) {
+    // Combined events update series.count/lastObservedTime while their
+    // lastTimestamp stays unchanged.
+    return false;
+  }
   // `style` and `className` are applied by the SysEvent wrapper, which rerenders
   // with every CellMeasurer pass, so they are intentionally not compared here.
   // Comparing `style` would rerender unchanged rows while recomputeRowHeights()
