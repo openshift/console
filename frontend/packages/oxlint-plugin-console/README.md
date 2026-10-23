@@ -11,7 +11,7 @@ and where; this README documents both.
 Commands run from `frontend/`:
 
 - `yarn lint` — the lint gate: an exact-count warning ratchet
-  (`MAX_WARNINGS=556`) over `yarn oxlint`.
+  (`MAX_WARNINGS=267`) over `yarn oxlint`.
 - `yarn oxlint [path|--fix …]` — runs oxlint via
   `scripts/oxlint-exact-warnings.cjs`, which forwards all arguments, so
   `yarn oxlint <path>` lints just that path. `MAX_WARNINGS` is only set by
@@ -148,13 +148,14 @@ replacement — oxlint does not lint JSON files.
 
 ## Warning budget
 
-`MAX_WARNINGS=556` = 267 React Compiler findings (matching ESLint's ratchet
-exactly) + 289 legacy findings that ESLint did not report, kept as warnings:
-
-- 247 `import/no-named-as-default-member` — oxlint resolves `i18next`'s ESM
-  export map; eslint-plugin-import silently skipped these
-- 22 `oxc/no-barrel-file`, 18 downgraded misc., … (see the git history for
-  the original divergence analysis)
+`MAX_WARNINGS=267` — every remaining warning is a React Compiler finding,
+matching the ratchet ESLint maintained exactly. The 289 additional findings
+oxlint surfaced during the migration (oxlint resolves modules and counts
+nesting where ESLint silently skipped) were fixed in the follow-up commits
+on this branch rather than budgeted: 247
+`import/no-named-as-default-member` (i18next namespace imports), 22
+`oxc/no-barrel-file` (renamed per-file disables), and assorted misc.
+findings.
 
 Lower the budget in the same change that fixes warnings; the exact-count
 ratchet (`scripts/oxlint-exact-warnings.cjs`) fails on both regressions and
