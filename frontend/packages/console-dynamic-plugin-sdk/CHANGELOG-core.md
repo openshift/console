@@ -10,6 +10,13 @@ For current development version of Console, use `4.x.0-prerelease.n` packages.
 For older 1.x plugin SDK packages, refer to "OpenShift Console Versions vs SDK Versions" compatibility
 table in [Console dynamic plugins README](./README.md).
 
+## 5.1.0-prerelease.2 - TBD
+
+- Added optional `sortWeight` property to extension `console.catalog/item-type`, so a type can be ordered within the catalog's type list ([CONSOLE-5527], [#17355])
+- Added optional `placement` property to `CatalogItemBadge`, so a badge can render in the catalog item header below the catalog type label instead of the default footer ([CONSOLE-5527], [#17355])
+- Added optional `badge` property to extension `console.tab`, so a plugin can render a component beside a contributed tab label ([CONSOLE-5527], [#17355])
+- Changed `HorizontalNav` to order contributed default tabs before other tabs, with remaining tabs still ordered alphabetically ([CONSOLE-5527], [#17355])
+
 ## 5.1.0-prerelease.1 - 2026-10-16
 
 > [!IMPORTANT]
@@ -280,6 +287,7 @@ table in [Console dynamic plugins README](./README.md).
 [CONSOLE-5424]: https://issues.redhat.com/browse/CONSOLE-5424
 [CONSOLE-5438]: https://issues.redhat.com/browse/CONSOLE-5438
 [CONSOLE-5560]: https://issues.redhat.com/browse/CONSOLE-5560
+[CONSOLE-5527]: https://issues.redhat.com/browse/CONSOLE-5527
 [OCPBUGS-19048]: https://issues.redhat.com/browse/OCPBUGS-19048
 [OCPBUGS-30077]: https://issues.redhat.com/browse/OCPBUGS-30077
 [OCPBUGS-31355]: https://issues.redhat.com/browse/OCPBUGS-31355
