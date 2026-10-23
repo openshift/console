@@ -656,8 +656,7 @@ export default {
   // Warning rather than error: oxlint over-reports here (see the package README).
   'import/export': 'warn',
   'import/no-named-as-default': 'error',
-  // Warning rather than error: oxlint over-reports here (see the package README).
-  'import/no-named-as-default-member': 'warn',
+  'import/no-named-as-default-member': 'error',
   'import/no-mutable-exports': 'error',
   'import/no-commonjs': 'off',
   'import/no-amd': 'error',
