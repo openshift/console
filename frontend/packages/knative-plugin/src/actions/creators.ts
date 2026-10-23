@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import i18next from 'i18next';
+import * as i18next from 'i18next';
 import type { Action } from '@console/dynamic-plugin-sdk';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { LazyDeleteModalOverlay } from '@console/internal/components/modals';

@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { ButtonVariant } from '@patternfly/react-core';
 import type { Edge, Node } from '@patternfly/react-topology';
 import { isNode } from '@patternfly/react-topology';
-import i18next from 'i18next';
+import * as i18next from 'i18next';
 import { useTranslation } from 'react-i18next';
 import type { Action, K8sModel } from '@console/dynamic-plugin-sdk';
 import { asAccessReview } from '@console/internal/components/utils';
