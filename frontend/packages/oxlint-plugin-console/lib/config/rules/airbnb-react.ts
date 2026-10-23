@@ -319,8 +319,7 @@ export default {
       handlers: ['onClick', 'onMouseDown', 'onMouseUp', 'onKeyPress', 'onKeyDown', 'onKeyUp'],
     },
   ],
-  // Warning rather than error: oxlint over-reports here (see the package README).
-  'jsx-a11y/role-has-required-aria-props': 'warn',
+  'jsx-a11y/role-has-required-aria-props': 'error',
   'jsx-a11y/role-supports-aria-props': 'error',
   'jsx-a11y/scope': 'error',
   'jsx-a11y/tabindex-no-positive': 'error',
