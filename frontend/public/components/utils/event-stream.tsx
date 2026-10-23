@@ -23,6 +23,11 @@ const arePropsEqual = (prev: SysEventContentProps, next: SysEventContentProps) =
     // Timestamps can be modified because events can be combined.
     return false;
   }
+  if (prev.event.metadata.uid !== next.event.metadata.uid) {
+    // A different event can occupy an index once newer events stream in, even
+    // when its lastTimestamp matches the event it replaces.
+    return false;
+  }
   // `style` and `className` are applied by the SysEvent wrapper, which rerenders
   // with every CellMeasurer pass, so they are intentionally not compared here.
   // Comparing `style` would rerender unchanged rows while recomputeRowHeights()
@@ -55,14 +60,12 @@ const SysEvent = forwardRef<HTMLDivElement, SysEventProps>(
     const [shouldAnimate] = useState(() => !seen.has(key) && index < 6);
 
     useEffect(() => {
-      if (shouldAnimate) {
-        seen.add(key);
-      }
+      seen.add(key);
       // Don't memory-leak the seen set while streaming.
       return () => {
         seen.delete(key);
       };
-    }, [key, shouldAnimate]);
+    }, [key]);
 
     return (
       <div
@@ -107,7 +110,7 @@ export const EventStreamList: FC<EventStreamListProps> = ({
             event={events[index]}
             list={list}
             EventComponent={EventComponent}
-            key={key}
+            key={events[index].metadata.uid}
             style={style}
             index={index}
           />
