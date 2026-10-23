@@ -139,4 +139,27 @@ export class MastheadPage extends BasePage {
   async clickLogOut(): Promise<void> {
     await this.robustClick(this.logOutItem);
   }
+
+  /** Logs out and waits for the server response and redirect before another login. */
+  async logOut(): Promise<void> {
+    const consoleURL = this.page.url();
+    const logoutURL = await this.page.evaluate(
+      () => new URL(window.SERVER_FLAGS.logoutURL, window.location.href).href,
+    );
+    // The kubeadmin redirect can end at the OAuth root with an anonymous 403,
+    // so completing logout does not require a login form at the destination.
+    const [response] = await Promise.all([
+      this.page.waitForResponse(
+        (result) => result.url() === logoutURL && result.request().method() === 'POST',
+        { timeout: 60_000 },
+      ),
+      this.page.waitForURL((url) => url.href !== consoleURL, {
+        timeout: 60_000,
+        waitUntil: 'domcontentloaded',
+      }),
+      this.clickLogOut(),
+    ]);
+    expect(response.ok()).toBeTruthy();
+    await expect(this.userDropdownToggle).toBeHidden();
+  }
 }

@@ -48,6 +48,7 @@ const toToastNotification = (toast: ToastRenderOptions): ToastNotification => ({
   drawerGroup: toast.drawerGroup ?? DEFAULT_TOAST_DRAWER_GROUP,
 });
 
+/** Owns toast alerts and notification history, retaining minimization when persistent toasts update. */
 export const InternalToastProvider: FC<InternalToastProviderProps> = ({
   children,
   isNotificationDrawerExpanded = false,
@@ -58,8 +59,11 @@ export const InternalToastProvider: FC<InternalToastProviderProps> = ({
   const [toasts, setToasts] = useState<ToastRenderOptions[]>([]);
   const [notifications, setNotifications] = useState<ToastNotification[]>([]);
   const toastIdCounterRef = useRef(0);
+  const minimizedToastIds = useRef(new Set<string>());
 
+  /** Removes an alert and its minimization state while retaining notification history. */
   const removeToast = useCallback((id: string) => {
+    minimizedToastIds.current.delete(id);
     setToasts((state) => {
       const index = state.findIndex((toast) => toast.id === id);
       if (index !== -1) {
@@ -78,6 +82,7 @@ export const InternalToastProvider: FC<InternalToastProviderProps> = ({
     setToasts([]);
   }, []);
 
+  /** Adds or updates an alert and history entry without restoring a minimized persistent alert. */
   const addToast = useCallback(
     (toast: ToastOptions) => {
       const clone: ToastRenderOptions = normalizeToastOptions({
@@ -94,7 +99,7 @@ export const InternalToastProvider: FC<InternalToastProviderProps> = ({
         return next.slice(0, DEFAULT_MAX_NOTIFICATION_HISTORY);
       });
 
-      if (!isNotificationDrawerExpanded) {
+      if (!isNotificationDrawerExpanded && !minimizedToastIds.current.has(clone.id)) {
         setToasts((state) => {
           const index = state.findIndex((item) => item.id === clone.id);
           if (index !== -1) {
@@ -125,11 +130,13 @@ export const InternalToastProvider: FC<InternalToastProviderProps> = ({
     );
   }, []);
 
+  /** Hides a persistent alert while keeping its notification history available. */
   const minimizeToast = useCallback((id: string) => {
     let canMinimize = false;
     setToasts((state) => {
       const toast = state.find((item) => item.id === id);
       canMinimize = toast?.persistInDrawer === true;
+      if (canMinimize) minimizedToastIds.current.add(id);
       return canMinimize ? state.filter((item) => item.id !== id) : state;
     });
     if (canMinimize) {
@@ -153,7 +160,9 @@ export const InternalToastProvider: FC<InternalToastProviderProps> = ({
     [removeToast],
   );
 
+  /** Clears notification history and retained minimization state. */
   const clearAllNotifications = useCallback(() => {
+    minimizedToastIds.current.clear();
     setNotifications((state) => {
       state.forEach((notification) => notification.onClose?.());
       return [];
