@@ -1,3 +1,4 @@
+import { expect } from 'chai';
 import { checkErrors, testName } from '../../../integration-tests-cypress/support';
 import { nav } from '../../../integration-tests-cypress/views/nav';
 import { OPERATOR_HUB_LOAD_TIMEOUT, operatorHub } from '../views/operator-hub.view';
