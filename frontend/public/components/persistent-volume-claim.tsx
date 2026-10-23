@@ -14,7 +14,7 @@ import {
 import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
 import type { DataViewFilterOption } from '@patternfly/react-data-view/dist/esm/DataViewFilters';
 import type { TFunction } from 'i18next';
-import i18next from 'i18next';
+import * as i18next from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';

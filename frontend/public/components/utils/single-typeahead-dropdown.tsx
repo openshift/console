@@ -106,7 +106,7 @@ export const SingleTypeaheadDropdown: FC<SingleTypeaheadDropdownProps> = ({
   useEffect(() => {
     setSelectOptions([...selectOptions, ..._.differenceBy(items, selectOptions, 'value')]);
     inputValue === '' && setFilteredSelectOptions(selectOptions);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [items]);
 
   useEffect(() => {
@@ -136,7 +136,7 @@ export const SingleTypeaheadDropdown: FC<SingleTypeaheadDropdownProps> = ({
     }
 
     setFilteredSelectOptions(newSelectOptions);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [filterValue]);
 
   const createItemId = (value: any) => `${ID_PREFIX}-option-${String(value).replace(' ', '-')}`;
@@ -310,6 +310,7 @@ export const SingleTypeaheadDropdown: FC<SingleTypeaheadDropdownProps> = ({
       {...menuToggleProps}
     >
       <TextInputGroup isPlain>
+        {/* eslint-disable jsx-a11y/role-has-required-aria-props -- TextInputGroupMain maps isExpanded to aria-expanded on the rendered input */}
         <TextInputGroupMain
           value={inputValue}
           onClick={onInputClick}
@@ -332,6 +333,7 @@ export const SingleTypeaheadDropdown: FC<SingleTypeaheadDropdownProps> = ({
               : {}
           }
         />
+        {/* eslint-enable jsx-a11y/role-has-required-aria-props */}
         {!hideClearButton && (
           <TextInputGroupUtilities {...(!inputValue ? { style: { display: 'none' } } : {})}>
             <Button

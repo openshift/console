@@ -48,7 +48,7 @@ const RecentEventsBodyContent: FC<RecentEventsBodyContentProps> = ({
     if (paused && eventsData) {
       ref.current = eventsData;
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [paused]);
   if (!paused && eventsData) {
     ref.current = eventsData;

@@ -95,7 +95,7 @@ export const useTourStateForPerspective = (
       setTourLocalState((state) => ({ ...state, [perspective]: { completed: false } }));
     }
     // only run effect when the active perspective changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [perspective, loaded]);
   return [
     tourLocalState?.[perspective],

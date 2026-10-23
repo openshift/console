@@ -1,6 +1,8 @@
+import type { OxlintConfig } from 'oxlint';
+
 // see http://eslint.org/docs/rules/#nodejs and https://github.com/eslint-community/eslint-plugin-n
 
-module.exports = {
+export default {
   // Enforce return after a callback
   'n/callback-return': ['error', ['callback', 'cb', 'next']],
   // Disallow require() outside of the top-level module scope
@@ -69,4 +71,4 @@ module.exports = {
   'n/prefer-promises/fs': 'error',
   // Disallow expressions in require()
   'import/no-dynamic-require': 'off',
-};
+} satisfies OxlintConfig['rules'];

@@ -1,4 +1,4 @@
-import i18next from 'i18next';
+import * as i18next from 'i18next';
 import type { PipelineRunKind, PLRTaskRunData } from '@console/dev-console/src/types/pipeline';
 import type { K8sResourceCondition } from '@console/internal/module/k8s/types';
 import type { PLRTaskRunStep, TaskRunKind } from '../../types';

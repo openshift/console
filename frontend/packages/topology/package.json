@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "coverage": "yarn test --coverage --collectCoverageFrom='[\"packages/topology/src/**\",\"!**/__tests__/**\",\"!packages/topology/src/test/**\"]'",
-    "lint": "yarn --cwd ../.. eslint packages/topology",
+    "lint": "yarn --cwd ../.. oxlint packages/topology",
     "test": "yarn --cwd ../.. test packages/topology"
   },
   "dependencies": {

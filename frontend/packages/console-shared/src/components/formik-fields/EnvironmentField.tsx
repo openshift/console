@@ -60,7 +60,7 @@ export const EnvironmentField: FC<EnvironmentFieldProps> = ({
       setNameValue(environmentVariables);
     }
     // this effect only handles reload, so we disable dep on environmentVariables
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [values.formReloadCount]);
 
   useEffect(() => {

@@ -3,7 +3,7 @@ import { useState, useRef, useCallback, useEffect, useMemo } from 'react';
 import { Alert, ExpandableSection, Tooltip } from '@patternfly/react-core';
 import type { FormikValues } from 'formik';
 import { useFormikContext } from 'formik';
-import i18next from 'i18next';
+import * as i18next from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import {

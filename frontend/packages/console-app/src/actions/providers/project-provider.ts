@@ -23,7 +23,7 @@ const useDeleteAction = (kindObj: K8sModel, resource: K8sResourceKind) => {
       }),
     }),
     // missing launchDeleteModal dependency, that causes max depth exceeded error
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
     [kindObj, resource, t],
   );
   const action = useMemo(() => (!hidden ? [factory.delete()] : []), [factory, hidden]);

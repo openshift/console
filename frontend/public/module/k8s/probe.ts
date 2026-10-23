@@ -1,4 +1,4 @@
-import i18next from 'i18next';
+import * as i18next from 'i18next';
 import * as _ from 'lodash';
 import type {
   ContainerLifecycle,
@@ -23,18 +23,15 @@ const parsers = {
       return null;
     }
     // XXX: Kubernetes allows for named ports, but the URL spec says ports must be digits.
-    let scheme: string;
     let port: string;
-    let host: string;
     let hostname: string;
-    let rest: string[];
-    [scheme, ...rest] = str.split('://');
+    const [scheme, ...schemeParts] = str.split('://');
     if (!scheme) {
       return null;
     }
-    const hostAndPath = rest.join();
-    [host, ...rest] = hostAndPath.split('/');
-    const path = `/${rest.join()}`;
+    const hostAndPath = schemeParts.join();
+    const [host, ...hostParts] = hostAndPath.split('/');
+    const path = `/${hostParts.join()}`;
     [hostname, port] = host.split(':');
     if (_.isUndefined(port)) {
       if (scheme === 'http') {

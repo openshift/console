@@ -106,7 +106,7 @@ Create idiomatic Playwright e2e tests for OpenShift Console features following t
 
 4. **Validate code** (run from `frontend/`):
    - `cd frontend && npx tsc --noEmit -p e2e/tsconfig.json`: zero type errors
-   - `cd frontend && yarn eslint <generated-files>`: fix lint errors
+   - `cd frontend && yarn oxlint <generated-files>`: fix lint errors
 
 ### Phase 4: Verify
 

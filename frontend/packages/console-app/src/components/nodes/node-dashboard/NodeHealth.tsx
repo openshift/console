@@ -1,7 +1,7 @@
 import type { FC, ReactNode } from 'react';
 import { useContext, useEffect } from 'react';
 import { Gallery, GalleryItem, Alert, Stack, StackItem } from '@patternfly/react-core';
-import i18next from 'i18next';
+import * as i18next from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import type { WatchK8sResource, WatchK8sResult } from '@console/dynamic-plugin-sdk';

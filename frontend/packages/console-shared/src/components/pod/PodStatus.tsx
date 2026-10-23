@@ -82,7 +82,7 @@ const PodStatusBase: FC<PodStatusProps> = ({
       return { vData: updateVData, updateOnEnd: shouldUpdateOnEnd };
     }
     return { vData: prevVData.current, updateOnEnd: shouldUpdateOnEnd };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [data]);
   const truncTitle = title ? _.truncate(title, { length: MAX_POD_TITLE_LENGTH }) : undefined;
   const truncSubTitle = subTitle

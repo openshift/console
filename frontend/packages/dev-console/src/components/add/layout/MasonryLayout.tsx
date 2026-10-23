@@ -64,7 +64,7 @@ export const MasonryLayout: FC<MasonryLayoutProps> = ({
       observer();
     };
     // Only run once on mount - handleResize is stable but adding it would cause unnecessary re-subscriptions
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, []);
 
   const columns: ReactElement[] =

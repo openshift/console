@@ -1,4 +1,4 @@
-// eslint-disable-next-line @typescript-eslint/triple-slash-reference, spaced-comment
+// eslint-disable-next-line @typescript-eslint/triple-slash-reference, eslint-js/spaced-comment
 /// <reference types="@rspack/core/module" />
 
 const SHARED_SCOPE_NAME = 'default';

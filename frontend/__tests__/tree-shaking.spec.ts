@@ -38,9 +38,11 @@ describe('tree shaking', () => {
   const initialVendorChunks = initialJsFiles.filter((f) => basename(f).startsWith('vendor'));
 
   // Preconditions
-  expect(WizardsOfTheCoastIcon).toBeDefined();
-  expect(initialJsFiles.length).toBeGreaterThan(0);
-  expect(initialVendorChunks.length).toBeGreaterThan(0);
+  it('has initial vendor chunks to check', () => {
+    expect(WizardsOfTheCoastIcon).toBeDefined();
+    expect(initialJsFiles.length).toBeGreaterThan(0);
+    expect(initialVendorChunks.length).toBeGreaterThan(0);
+  });
 
   // PatternFly icons are tree-shakeable, but we've seen that sometimes a
   // CJS PatternFly icon import gets pulled in, which causes the entire icon set
