@@ -133,6 +133,38 @@ describe('EventStreamList', () => {
     expect(renderCounts['event-2']).toBe(initialCounts['event-2'] + 1);
   });
 
+  it('rerenders row content whose event series data changes', () => {
+    const events = [createEvent('event-1'), createEvent('event-2')];
+    const renderCounts: Record<string, number> = {};
+    const EventComponent = ({ event }: { event: EventKind }) => {
+      const { name } = event.metadata;
+      renderCounts[name] = (renderCounts[name] ?? 0) + 1;
+      return <div>event</div>;
+    };
+
+    const { rerender } = render(
+      <EventStreamList events={events} EventComponent={EventComponent} />,
+    );
+    const initialCounts = { ...renderCounts };
+    expect(initialCounts['event-1']).toBeGreaterThan(0);
+
+    // Combined events update series.count/lastObservedTime while their
+    // lastTimestamp stays unchanged, so only the updated row content should
+    // rerender.
+    const updated = events.map((event, i) =>
+      i === 1
+        ? {
+            ...event,
+            series: { count: 3, lastObservedTime: '2026-10-21T12:00:00Z' },
+          }
+        : event,
+    );
+    rerender(<EventStreamList events={updated} EventComponent={EventComponent} />);
+
+    expect(renderCounts['event-1']).toBe(initialCounts['event-1']);
+    expect(renderCounts['event-2']).toBe(initialCounts['event-2'] + 1);
+  });
+
   it('renders a replacement event at an existing index even when its lastTimestamp matches', () => {
     const events = [createEvent('event-1'), createEvent('event-2')];
     const EventComponent = ({ event }: { event: EventKind }) => <div>{event.metadata.name}</div>;
