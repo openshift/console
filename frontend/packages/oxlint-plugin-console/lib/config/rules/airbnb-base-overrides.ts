@@ -118,5 +118,5 @@ export default {
   'object-shorthand': ['error', 'properties'],
 
   // Require const for variables that are never reassigned after declared
-  'prefer-const': ['warn', { destructuring: 'all' }],
+  'prefer-const': ['error', { destructuring: 'all' }],
 } satisfies OxlintConfig['rules'];
