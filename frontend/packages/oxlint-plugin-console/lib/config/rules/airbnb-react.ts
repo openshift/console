@@ -63,8 +63,7 @@ export default {
   'react/no-danger': 'warn',
   'react-js/no-deprecated': ['error'],
   'react/no-did-mount-set-state': 'off',
-  // Warning rather than error: oxlint over-reports here (see the package README).
-  'react/no-did-update-set-state': 'warn',
+  'react/no-did-update-set-state': 'error',
   'react/no-will-update-set-state': 'error',
   'react/no-direct-mutation-state': 'off',
   'react/no-is-mounted': 'error',
