@@ -133,6 +133,24 @@ describe('EventStreamList', () => {
     expect(renderCounts['event-2']).toBe(initialCounts['event-2'] + 1);
   });
 
+  it('renders a replacement event at an existing index even when its lastTimestamp matches', () => {
+    const events = [createEvent('event-1'), createEvent('event-2')];
+    const EventComponent = ({ event }: { event: EventKind }) => <div>{event.metadata.name}</div>;
+
+    const { rerender } = render(
+      <EventStreamList events={events} EventComponent={EventComponent} />,
+    );
+    expect(screen.getByText('event-1')).toBeInTheDocument();
+
+    // A distinct event with the same lastTimestamp takes over index 0; the row
+    // must show the new event rather than the memoized previous content.
+    const replacement = { ...createEvent('event-3'), lastTimestamp: events[0].lastTimestamp };
+    rerender(<EventStreamList events={[replacement, events[1]]} EventComponent={EventComponent} />);
+
+    expect(screen.getByText('event-3')).toBeInTheDocument();
+    expect(screen.queryByText('event-1')).not.toBeInTheDocument();
+  });
+
   it('keeps the slide-in class on animating rows across rerenders', () => {
     const events = [createEvent('event-1'), createEvent('event-2')];
 
@@ -151,5 +169,55 @@ describe('EventStreamList', () => {
     rerender(<EventStreamList events={events} EventComponent={() => <div>event</div>} />);
 
     expect(firstRow.classList.contains('co-sysevent-slide-in')).toBe(true);
+  });
+
+  it('animates a new event streaming into an existing row index', () => {
+    const events = [createEvent('event-1'), createEvent('event-2')];
+
+    const { rerender } = render(
+      <EventStreamList events={events} EventComponent={() => <div>event</div>} />,
+    );
+
+    // eslint-disable-next-line testing-library/no-node-access
+    const firstRow = document.querySelector('.co-sysevent--transition');
+    expect(firstRow.classList.contains('co-sysevent-slide-in')).toBe(true);
+
+    // A new event streams in at the top; the row at index 0 is reused, so the
+    // animation decision must be recomputed for the new event's UID.
+    rerender(
+      <EventStreamList
+        events={[createEvent('event-0'), ...events]}
+        EventComponent={() => <div>event</div>}
+      />,
+    );
+
+    // eslint-disable-next-line testing-library/no-node-access
+    const newRow = document.querySelector('.co-sysevent--transition');
+    expect(newRow.classList.contains('co-sysevent-slide-in')).toBe(true);
+  });
+
+  it('does not re-animate an event that shifts to a new row index', () => {
+    const events = [createEvent('event-1'), createEvent('event-2')];
+
+    const { rerender } = render(
+      <EventStreamList events={events} EventComponent={() => <div>event</div>} />,
+    );
+
+    // eslint-disable-next-line testing-library/no-node-access
+    const firstRow = document.querySelector('.co-sysevent--transition');
+    expect(firstRow.classList.contains('co-sysevent-slide-in')).toBe(true);
+
+    // event-1 shifts from index 0 to index 1 when a new event streams in. It
+    // has already been seen, so its remounted row must not animate again.
+    rerender(
+      <EventStreamList
+        events={[createEvent('event-0'), ...events]}
+        EventComponent={() => <div>event</div>}
+      />,
+    );
+
+    // eslint-disable-next-line testing-library/no-node-access
+    const shiftedRow = document.querySelectorAll('.co-sysevent--transition')[1];
+    expect(shiftedRow.classList.contains('co-sysevent-slide-in')).toBe(false);
   });
 });
