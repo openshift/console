@@ -163,7 +163,7 @@ export default {
    */
   // Typescript allows const and let instead of var.
   'no-var': 'error',
-  'prefer-const': 'warn',
+  'prefer-const': 'error',
   // The spread operator/rest parameters should be preferred in Typescript.
   'prefer-rest-params': 'error',
   'prefer-spread': 'error',
