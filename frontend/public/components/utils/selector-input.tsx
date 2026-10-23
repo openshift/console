@@ -38,6 +38,8 @@ interface SelectorInputState {
   inputValue: string;
   isInputValid: boolean;
   tags: string[];
+  // Last value of the tags prop mirrored into state, used to detect prop changes
+  prevTags: string[];
 }
 
 interface RenderTagProps {
@@ -98,7 +100,19 @@ export class SelectorInput extends Component<SelectorInputProps, SelectorInputSt
       inputValue: '',
       isInputValid: true,
       tags: this.props.tags,
+      prevTags: this.props.tags,
     };
+  }
+
+  static getDerivedStateFromProps(
+    props: SelectorInputProps,
+    state: SelectorInputState,
+  ): Partial<SelectorInputState> | null {
+    // Sync state.tags when the tags prop changes; local edits in between are kept.
+    if (!_.isEqual(state.prevTags, props.tags)) {
+      return { tags: props.tags, prevTags: props.tags };
+    }
+    return null;
   }
 
   notifyValidationChange = (isValid: boolean) => {
@@ -107,11 +121,7 @@ export class SelectorInput extends Component<SelectorInputProps, SelectorInputSt
     }
   };
 
-  componentDidUpdate(prevProps: SelectorInputProps, prevState: SelectorInputState) {
-    if (!_.isEqual(prevProps.tags, this.props.tags)) {
-      this.setState({ tags: this.props.tags });
-    }
-
+  componentDidUpdate(_prevProps: SelectorInputProps, prevState: SelectorInputState) {
     // Call onValidationChange callback when isInputValid changes
     if (prevState.isInputValid !== this.state.isInputValid && this.props.onValidationChange) {
       this.notifyValidationChange(this.state.isInputValid);
