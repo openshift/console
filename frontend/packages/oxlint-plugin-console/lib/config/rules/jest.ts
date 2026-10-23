@@ -63,7 +63,7 @@ export default {
   'jest/no-export': 'error',
   'jest/no-focused-tests': 'error',
   'jest/no-interpolation-in-snapshots': 'error',
-  'jest/no-standalone-expect': 'warn',
+  'jest/no-standalone-expect': 'error',
   'jest/valid-describe-callback': 'error',
   'jest/valid-expect': 'error',
   'jest/valid-expect-in-promise': 'error',
