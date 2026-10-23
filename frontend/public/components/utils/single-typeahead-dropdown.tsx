@@ -310,6 +310,7 @@ export const SingleTypeaheadDropdown: FC<SingleTypeaheadDropdownProps> = ({
       {...menuToggleProps}
     >
       <TextInputGroup isPlain>
+        {/* eslint-disable jsx-a11y/role-has-required-aria-props -- TextInputGroupMain maps isExpanded to aria-expanded on the rendered input */}
         <TextInputGroupMain
           value={inputValue}
           onClick={onInputClick}
@@ -332,6 +333,7 @@ export const SingleTypeaheadDropdown: FC<SingleTypeaheadDropdownProps> = ({
               : {}
           }
         />
+        {/* eslint-enable jsx-a11y/role-has-required-aria-props */}
         {!hideClearButton && (
           <TextInputGroupUtilities {...(!inputValue ? { style: { display: 'none' } } : {})}>
             <Button
