@@ -102,6 +102,7 @@ describe('ExtensionValidator', () => {
           barModule: './bar',
         },
         (getProvidedExports) => {
+          // eslint-disable-next-line eslint-js/max-nested-callbacks -- intentional nesting depth in test scaffolding
           getProvidedExports.mockImplementation((m) =>
             m.rawRequest === './foo' ? ['fooExport'] : [],
           );
@@ -140,6 +141,7 @@ describe('ExtensionValidator', () => {
           fooModule: './foo',
         },
         (getProvidedExports) => {
+          // eslint-disable-next-line eslint-js/max-nested-callbacks -- intentional nesting depth in test scaffolding
           getProvidedExports.mockImplementation((m) =>
             m.rawRequest === './foo' ? ['fooExport'] : [],
           );
@@ -176,6 +178,7 @@ describe('ExtensionValidator', () => {
           fooModule: './foo',
         },
         (getProvidedExports) => {
+          // eslint-disable-next-line eslint-js/max-nested-callbacks -- intentional nesting depth in test scaffolding
           getProvidedExports.mockImplementation((m) =>
             m.rawRequest === './foo' ? ['fooExport'] : [],
           );
@@ -212,6 +215,7 @@ describe('ExtensionValidator', () => {
           fooModule: './foo',
         },
         (getProvidedExports) => {
+          // eslint-disable-next-line eslint-js/max-nested-callbacks -- intentional nesting depth in test scaffolding
           getProvidedExports.mockImplementation((m) =>
             m.rawRequest === './foo' ? ['fooExport'] : [],
           );
