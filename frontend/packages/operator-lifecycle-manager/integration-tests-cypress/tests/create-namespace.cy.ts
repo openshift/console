@@ -1,5 +1,6 @@
 import { checkErrors, testName } from '../../../integration-tests-cypress/support';
 import { modal } from '../../../integration-tests-cypress/views/modal';
+import { operatorHub } from '../views/operator-hub.view';
 
 describe('Create namespace from install operators', () => {
   before(() => {
@@ -22,6 +23,7 @@ describe('Create namespace from install operators', () => {
     const operatorName = 'Red Hat Integration - 3scale';
     cy.log('test namespace creation from dropdown');
     cy.visit(`/operatorhub/ns/${testName}`);
+    operatorHub.waitForLoaded();
     cy.byTestID('search-operatorhub').type(operatorName);
     cy.byTestID(operatorSelector).click();
     cy.byLegacyTestID('operator-install-btn').click({ force: true });
