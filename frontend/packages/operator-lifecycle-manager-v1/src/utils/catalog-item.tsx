@@ -1,4 +1,4 @@
-import type { CatalogItem } from '@console/dynamic-plugin-sdk';
+import type { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions/catalog';
 import { CapabilityLevel } from '@console/operator-lifecycle-manager/src/components/operator-hub/operator-hub-item-details';
 import {
   getClusterCatalogSource,
@@ -67,6 +67,7 @@ export const normalizeCatalogItem: NormalizeExtensionCatalogItem = (item) => {
     data: {
       latestVersion: version,
       categories,
+      lifecycleData: item.lifecycleData ?? null,
     },
     details: {
       properties: [

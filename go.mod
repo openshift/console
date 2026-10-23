@@ -3,6 +3,7 @@ module github.com/openshift/console
 go 1.26.0
 
 require (
+	github.com/blang/semver/v4 v4.0.0
 	github.com/cloudevents/sdk-go/v2 v2.16.2
 	github.com/coreos/go-oidc v2.5.0+incompatible
 	github.com/coreos/pkg v0.0.0-20240122114842-bbd7aa9bf6fb
@@ -27,7 +28,6 @@ require (
 	github.com/prometheus/common v0.72.0
 	github.com/redhat-certification/chart-verifier v0.0.0-20260617140039-1bf8aaca404e
 	github.com/stretchr/testify v1.12.1
-	golang.org/x/mod v0.41.0
 	golang.org/x/net v0.59.0
 	golang.org/x/oauth2 v0.37.0
 	google.golang.org/grpc v1.84.0
@@ -63,7 +63,6 @@ require (
 	github.com/antlr4-go/antlr/v4 v4.13.1 // indirect
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
-	github.com/blang/semver/v4 v4.0.0 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/chai2010/gettext-go v1.0.2 // indirect
 	github.com/clipperhouse/uax29/v2 v2.7.0 // indirect
@@ -212,6 +211,7 @@ require (
 	go.yaml.in/yaml/v3 v3.0.5 // indirect
 	golang.org/x/crypto v0.57.0 // indirect
 	golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f // indirect
+	golang.org/x/mod v0.41.0 // indirect
 	golang.org/x/sync v0.23.0 // indirect
 	golang.org/x/sys v0.48.0 // indirect
 	golang.org/x/term v0.46.0 // indirect

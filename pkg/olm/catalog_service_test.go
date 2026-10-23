@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 	"time"
 
@@ -20,8 +21,10 @@ import (
 type mockCatalogdClient struct {
 	packages         []declcfg.Package
 	bundles          []declcfg.Bundle
+	metas            []json.RawMessage
 	packageIconMap   map[string]*declcfg.Package // packageName -> package with icon
 	err              error
+	fetchCode        int
 	fetchPackageErr  error
 	fetchPackageCode int
 }
@@ -73,9 +76,22 @@ func (m *mockCatalogdClient) FetchAll(catalog, baseURL, ifNotModifiedSince strin
 	if m.err != nil {
 		return nil, m.err
 	}
+	if m.fetchCode != 0 {
+		return &http.Response{
+			StatusCode: m.fetchCode,
+			Status:     http.StatusText(m.fetchCode),
+			Body:       io.NopCloser(bytes.NewReader(nil)),
+		}, nil
+	}
 
 	var buf bytes.Buffer
 	encoder := json.NewEncoder(&buf)
+
+	for _, meta := range m.metas {
+		if err := encoder.Encode(meta); err != nil {
+			return nil, err
+		}
+	}
 
 	// Write packages - Meta.MarshalJSON expands the blob, so we create the structure directly
 	for _, pkg := range m.packages {
@@ -196,12 +212,31 @@ func TestUpdateCatalog(t *testing.T) {
 		})
 		require.NoError(t, err)
 		packages := []declcfg.Package{{Name: "test-package"}}
-		bundles := []declcfg.Bundle{{Name: "test-bundle", Package: "test-package", Properties: []property.Property{
+		bundles := []declcfg.Bundle{
 			{
-				Type:  property.TypeCSVMetadata,
-				Value: csvMetadata,
+				Name:    "test-bundle.v0.5.0",
+				Package: "test-package",
+				Properties: []property.Property{
+					{Type: property.TypePackage, Value: json.RawMessage(`{"packageName":"test-package","version":"0.5.0"}`)},
+				},
 			},
-		}}}
+			{
+				Name:    "test-bundle.v1.0.0",
+				Package: "test-package",
+				Properties: []property.Property{
+					{Type: property.TypeCSVMetadata, Value: csvMetadata},
+					{Type: property.TypePackage, Value: json.RawMessage(`{"packageName":"test-package","version":"1.0.0"}`)},
+				},
+			},
+			{
+				Name:    "test-bundle.v2.0.0",
+				Package: "test-package",
+				Properties: []property.Property{
+					{Type: property.TypeCSVMetadata, Value: csvMetadata},
+					{Type: property.TypePackage, Value: json.RawMessage(`{"packageName":"test-package","version":"2.0.0"}`)},
+				},
+			},
+		}
 		client := &mockCatalogdClient{
 			packages: packages,
 			bundles:  bundles,
@@ -219,7 +254,11 @@ func TestUpdateCatalog(t *testing.T) {
 
 		items, found := c.Get("olm:catalog:test-catalog:items")
 		assert.True(t, found)
-		assert.NotEmpty(t, items)
+		require.NotEmpty(t, items)
+		cachedItems, ok := items.(cachedCatalog)
+		require.True(t, ok)
+		assert.Equal(t, "2.0.0", cachedItems.items[0].Version)
+		assert.Nil(t, cachedItems.items[0].LifecycleData)
 		assert.NotNil(t, service.LastModified)
 	})
 
@@ -242,7 +281,7 @@ func TestUpdateCatalog(t *testing.T) {
 		c := cache.New(5*time.Minute, 10*time.Minute)
 		// Pre-populate cache with existing data
 		existingItems := []ConsoleCatalogItem{{Name: "existing-item", Catalog: "test-catalog"}}
-		c.Set(getCatalogItemsKey("test-catalog"), existingItems, cache.DefaultExpiration)
+		c.Set(getCatalogItemsKey("test-catalog"), newCachedCatalog(existingItems), cache.DefaultExpiration)
 		c.Set(getCatalogBaseURLKey("test-catalog"), "http://catalogd.test", cache.NoExpiration)
 		c.Set(getCatalogLastModifiedKey("test-catalog"), "Thu, 01 Jan 2026 00:00:00 GMT", cache.NoExpiration)
 
@@ -261,7 +300,7 @@ func TestUpdateCatalog(t *testing.T) {
 		// Verify existing cache data is still intact
 		items, found := c.Get(getCatalogItemsKey("test-catalog"))
 		assert.True(t, found, "cached items should be preserved on transient error")
-		assert.Equal(t, existingItems, items)
+		assert.Equal(t, newCachedCatalog(existingItems), items)
 
 		baseURL, found := c.Get(getCatalogBaseURLKey("test-catalog"))
 		assert.True(t, found, "cached baseURL should be preserved on transient error")
@@ -276,10 +315,193 @@ func TestUpdateCatalog(t *testing.T) {
 	})
 }
 
+func TestUpdateCatalogStatusResponses(t *testing.T) {
+	tests := []struct {
+		name      string
+		status    int
+		wantError bool
+		removed   bool
+	}{
+		{name: "not modified preserves the cached index", status: http.StatusNotModified},
+		{name: "not found removes the cached index", status: http.StatusNotFound, removed: true},
+		{name: "server error preserves the cached index", status: http.StatusInternalServerError, wantError: true},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			items := []ConsoleCatalogItem{{Name: "test-package", Catalog: "test-catalog"}}
+			lastModified := "Thu, 01 Jan 2026 00:00:00 GMT"
+			c := cache.New(cache.NoExpiration, 0)
+			c.Set(getCatalogItemsKey("test-catalog"), newCachedCatalog(items), cache.NoExpiration)
+			c.Set(getCatalogLastModifiedKey("test-catalog"), lastModified, cache.NoExpiration)
+			c.Set(getCatalogBaseURLKey("test-catalog"), "http://catalogd.test", cache.NoExpiration)
+			service := NewCatalogService(&http.Client{}, nil, c)
+			service.client = &mockCatalogdClient{fetchCode: tt.status}
+			service.index["test-catalog"] = struct{}{}
+			service.LastModified = lastModified
+
+			err := service.UpdateCatalog("test-catalog", "http://catalogd.test")
+			if tt.wantError {
+				require.ErrorContains(t, err, "catalogd request failed with status: 500")
+			} else {
+				require.NoError(t, err)
+			}
+			item, err := service.GetCatalogItem("test-catalog", "test-package")
+			require.NoError(t, err)
+			if tt.removed {
+				assert.Nil(t, item)
+				assert.NotContains(t, service.index, "test-catalog")
+				for _, key := range []string{getCatalogItemsKey("test-catalog"), getCatalogBaseURLKey("test-catalog"), getCatalogLastModifiedKey("test-catalog")} {
+					_, found := c.Get(key)
+					assert.False(t, found, "catalog entry %q should be removed", key)
+				}
+			} else {
+				assert.Equal(t, &items[0], item)
+				assert.Contains(t, service.index, "test-catalog")
+				assert.Equal(t, lastModified, service.LastModified)
+				validator, found := c.Get(getCatalogLastModifiedKey("test-catalog"))
+				require.True(t, found)
+				assert.Equal(t, lastModified, validator)
+			}
+		})
+	}
+}
+
+func TestUpdateCatalogInvalidVersions(t *testing.T) {
+	for _, version := range []string{"invalid", "v1.0.0", "1.0", ""} {
+		t.Run("rejects version "+version, func(t *testing.T) {
+			c := cache.New(5*time.Minute, 10*time.Minute)
+			existingItems := []ConsoleCatalogItem{{Name: "existing-item", Catalog: "test-catalog"}}
+			lastModified := "Thu, 01 Jan 2026 00:00:00 GMT"
+			c.Set(getCatalogItemsKey("test-catalog"), newCachedCatalog(existingItems), cache.NoExpiration)
+			c.Set(getCatalogLastModifiedKey("test-catalog"), lastModified, cache.NoExpiration)
+			c.Set(getCatalogBaseURLKey("test-catalog"), "http://catalogd.test", cache.NoExpiration)
+			service := &CatalogService{
+				cache:        c,
+				index:        map[string]struct{}{"test-catalog": {}},
+				LastModified: lastModified,
+				client: &mockCatalogdClient{
+					packages: []declcfg.Package{{Name: "test-package"}},
+					bundles: []declcfg.Bundle{{
+						Name:    "invalid-bundle",
+						Package: "test-package",
+						// Bundles without CSV metadata must also be validated.
+						Properties: []property.Property{property.MustBuildPackage("test-package", version)},
+					}},
+				},
+			}
+			err := service.UpdateCatalog("test-catalog", "http://new-catalogd.test")
+			require.ErrorContains(t, err, "invalid version")
+			items, found := c.Get(getCatalogItemsKey("test-catalog"))
+			require.True(t, found)
+			assert.Equal(t, newCachedCatalog(existingItems), items)
+			validator, found := c.Get(getCatalogLastModifiedKey("test-catalog"))
+			require.True(t, found)
+			assert.Equal(t, lastModified, validator)
+			baseURL, found := c.Get(getCatalogBaseURLKey("test-catalog"))
+			require.True(t, found)
+			assert.Equal(t, "http://catalogd.test", baseURL)
+			assert.Equal(t, lastModified, service.LastModified)
+			assert.Contains(t, service.index, "test-catalog")
+		})
+	}
+}
+
+func TestUpdateCatalogLifecycleData(t *testing.T) {
+	lifecycle := json.RawMessage(`{"schema":"io.openshift.operators.lifecycles.v1alpha1","package":"test-package","versions":[{"name":"1.0","platformCompatibility":[{"name":"openshift","versions":["4.18"]}],"phases":[{"name":"Full support","startDate":"2026-01-01","endDate":"2027-01-01"}]}],"extra":{"preserved":true}}`)
+	otherLifecycle := json.RawMessage(`{"schema":"io.openshift.operators.lifecycles.v1alpha1","package":"test-package","versions":[{"name":"2.0"}]}`)
+	client := &mockCatalogdClient{
+		packages: []declcfg.Package{{Name: "test-package"}, {Name: "without-lifecycle"}},
+		metas:    []json.RawMessage{lifecycle},
+	}
+	for _, pkg := range client.packages {
+		client.bundles = append(client.bundles, declcfg.Bundle{
+			Name:    pkg.Name + ".v1.0.0",
+			Package: pkg.Name,
+			Properties: []property.Property{
+				property.MustBuildPackage(pkg.Name, "1.0.0"),
+				{Type: property.TypeCSVMetadata, Value: json.RawMessage(`{}`)},
+			},
+		})
+	}
+	service := NewCatalogService(&http.Client{}, nil, cache.New(cache.NoExpiration, 0))
+	service.client = client
+	require.NoError(t, service.UpdateCatalog("test-catalog", ""))
+	client.metas = []json.RawMessage{otherLifecycle}
+	require.NoError(t, service.UpdateCatalog("other-catalog", ""))
+
+	for catalog, want := range map[string]json.RawMessage{"test-catalog": lifecycle, "other-catalog": otherLifecycle} {
+		t.Run(catalog, func(t *testing.T) {
+			items, err := service.GetCatalogItemsForCatalog(catalog)
+			require.NoError(t, err)
+			require.Len(t, items, 2)
+			assert.JSONEq(t, string(want), string(items[0].LifecycleData))
+			assert.Nil(t, items[1].LifecycleData)
+			item, err := service.GetCatalogItem(catalog, "test-package")
+			require.NoError(t, err)
+			require.NotNil(t, item)
+			assert.JSONEq(t, string(want), string(item.LifecycleData))
+		})
+	}
+	items, err := service.GetCatalogItems()
+	require.NoError(t, err)
+	require.Len(t, items, 4)
+
+	client.fetchCode = http.StatusNotModified
+	require.NoError(t, service.UpdateCatalog("test-catalog", ""))
+	item, err := service.GetCatalogItem("test-catalog", "test-package")
+	require.NoError(t, err)
+	require.NotNil(t, item)
+	assert.JSONEq(t, string(lifecycle), string(item.LifecycleData))
+
+	client.fetchCode = 0
+	require.NoError(t, service.UpdateCatalog("test-catalog", ""))
+	updatedItem, err := service.GetCatalogItem("test-catalog", "test-package")
+	require.NoError(t, err)
+	require.NotNil(t, updatedItem)
+	assert.JSONEq(t, string(otherLifecycle), string(updatedItem.LifecycleData))
+	assert.JSONEq(t, string(lifecycle), string(item.LifecycleData))
+
+	client.metas = nil
+	require.NoError(t, service.UpdateCatalog("test-catalog", ""))
+	updatedItem, err = service.GetCatalogItem("test-catalog", "test-package")
+	require.NoError(t, err)
+	require.NotNil(t, updatedItem)
+	assert.Nil(t, updatedItem.LifecycleData)
+}
+
+func TestUpdateCatalogInvalidLifecycleData(t *testing.T) {
+	lifecycle := json.RawMessage(`{"schema":"io.openshift.operators.lifecycles.v1alpha1","package":"test-package","versions":[{"name":"1.0"}]}`)
+	tests := []struct {
+		name      string
+		metas     []json.RawMessage
+		wantError string
+	}{
+		{name: "missing package", metas: []json.RawMessage{json.RawMessage(`{"schema":"io.openshift.operators.lifecycles.v1alpha1"}`)}, wantError: "missing its package name"},
+		{name: "duplicate package", metas: []json.RawMessage{lifecycle, lifecycle}, wantError: "multiple lifecycle records"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := cache.New(cache.NoExpiration, 0)
+			originalItem := ConsoleCatalogItem{Name: "test-package", LifecycleData: lifecycle}
+			c.Set(getCatalogItemsKey("test-catalog"), newCachedCatalog([]ConsoleCatalogItem{originalItem}), cache.NoExpiration)
+			service := NewCatalogService(&http.Client{}, nil, c)
+			service.client = &mockCatalogdClient{metas: tt.metas}
+
+			err := service.UpdateCatalog("test-catalog", "")
+
+			require.ErrorContains(t, err, tt.wantError)
+			item, err := service.GetCatalogItem("test-catalog", "test-package")
+			require.NoError(t, err)
+			require.NotNil(t, item)
+			assert.Equal(t, originalItem, *item)
+		})
+	}
+}
+
 func TestGetCatalogItems(t *testing.T) {
 	c := cache.New(5*time.Minute, 10*time.Minute)
 	items := []ConsoleCatalogItem{{Name: "test-item"}}
-	c.Set("olm:catalog:test-catalog:items", items, cache.DefaultExpiration)
+	c.Set(getCatalogItemsKey("test-catalog"), newCachedCatalog(items), cache.DefaultExpiration)
 
 	now := time.Now()
 	service := &CatalogService{
@@ -305,6 +527,217 @@ func TestGetCatalogItems(t *testing.T) {
 		assert.Nil(t, err)
 		assert.Equal(t, items, returnedItems)
 	})
+}
+
+func TestGetCatalogItemsForCatalog(t *testing.T) {
+	items := []ConsoleCatalogItem{{Name: "test-package", Catalog: "test-catalog"}}
+	otherItems := []ConsoleCatalogItem{{Name: "test-package", Catalog: "other-catalog"}}
+	tests := []struct {
+		name      string
+		entry     cache.Item
+		want      []ConsoleCatalogItem
+		wantError bool
+	}{
+		{name: "cached catalog", entry: cache.Item{Object: newCachedCatalog(items)}, want: items},
+		{name: "empty catalog", entry: cache.Item{Object: newCachedCatalog([]ConsoleCatalogItem{})}, want: []ConsoleCatalogItem{}},
+		{name: "nil items", entry: cache.Item{Object: newCachedCatalog(nil)}, want: []ConsoleCatalogItem{}},
+		{name: "missing catalog"},
+		{name: "expired catalog", entry: cache.Item{Object: newCachedCatalog(items), Expiration: time.Now().Add(-time.Hour).UnixNano()}},
+		{name: "malformed catalog", entry: cache.Item{Object: "invalid"}, wantError: true},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			entries := map[string]cache.Item{
+				getCatalogItemsKey("other-catalog"): {Object: newCachedCatalog(otherItems)},
+			}
+			if tt.entry.Object != nil {
+				entries[getCatalogItemsKey("test-catalog")] = tt.entry
+			}
+			c := cache.NewFrom(cache.NoExpiration, 0, entries)
+			service := NewCatalogService(&http.Client{}, nil, c)
+
+			returnedItems, err := service.GetCatalogItemsForCatalog("test-catalog")
+
+			if tt.wantError {
+				require.ErrorContains(t, err, "malformed cache content")
+			} else {
+				require.NoError(t, err)
+			}
+			assert.Equal(t, tt.want, returnedItems)
+			cachedOther, found := c.Get(getCatalogItemsKey("other-catalog"))
+			require.True(t, found)
+			assert.Equal(t, newCachedCatalog(otherItems), cachedOther)
+		})
+	}
+}
+
+func TestGetCatalogItem(t *testing.T) {
+	items := []ConsoleCatalogItem{
+		{Name: "first-package", Catalog: "test-catalog"},
+		{Name: "middle-package", Catalog: "test-catalog"},
+		{Name: "last-package", Catalog: "test-catalog"},
+	}
+	otherItems := []ConsoleCatalogItem{{Name: "first-package", Catalog: "other-catalog"}}
+	tests := []struct {
+		name        string
+		catalogName string
+		packageName string
+		want        *ConsoleCatalogItem
+		wantError   bool
+	}{
+		{name: "first package", catalogName: "test-catalog", packageName: "first-package", want: &items[0]},
+		{name: "middle package", catalogName: "test-catalog", packageName: "middle-package", want: &items[1]},
+		{name: "last package", catalogName: "test-catalog", packageName: "last-package", want: &items[2]},
+		{name: "same package in another catalog", catalogName: "other-catalog", packageName: "first-package", want: &otherItems[0]},
+		{name: "missing package", catalogName: "test-catalog", packageName: "missing-package"},
+		{name: "missing catalog", catalogName: "missing-catalog", packageName: "first-package"},
+		{name: "empty catalog", catalogName: "empty-catalog", packageName: "first-package"},
+		{name: "malformed cache", catalogName: "malformed-catalog", packageName: "first-package", wantError: true},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := cache.New(5*time.Minute, 10*time.Minute)
+			c.Set(getCatalogItemsKey("test-catalog"), newCachedCatalog(items), cache.NoExpiration)
+			c.Set(getCatalogItemsKey("other-catalog"), newCachedCatalog(otherItems), cache.NoExpiration)
+			c.Set(getCatalogItemsKey("empty-catalog"), newCachedCatalog([]ConsoleCatalogItem{}), cache.NoExpiration)
+			c.Set(getCatalogItemsKey("malformed-catalog"), "malformed cache content", cache.NoExpiration)
+			service := NewCatalogService(&http.Client{}, nil, c)
+
+			item, err := service.GetCatalogItem(tt.catalogName, tt.packageName)
+			if tt.wantError {
+				require.ErrorContains(t, err, "malformed cache content")
+			} else {
+				require.NoError(t, err)
+			}
+			assert.Equal(t, tt.want, item)
+		})
+	}
+}
+
+func TestGetCatalogItemsInvalidCache(t *testing.T) {
+	items := []ConsoleCatalogItem{{Name: "valid-package", Catalog: "valid-catalog"}}
+	tests := []struct {
+		name      string
+		entry     cache.Item
+		wantError string
+	}{
+		{name: "missing catalog", wantError: "cache miss"},
+		{name: "malformed catalog", entry: cache.Item{Object: "invalid"}, wantError: "malformed cache content"},
+		{
+			name:      "expired catalog",
+			entry:     cache.Item{Object: newCachedCatalog(items), Expiration: time.Now().Add(-time.Hour).UnixNano()},
+			wantError: "cache miss",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			entries := map[string]cache.Item{
+				getCatalogItemsKey("valid-catalog"): {Object: newCachedCatalog(items)},
+			}
+			if tt.entry.Object != nil {
+				entries[getCatalogItemsKey("invalid-catalog")] = tt.entry
+			}
+			c := cache.NewFrom(cache.NoExpiration, 0, entries)
+			c.Set(getCatalogBaseURLKey("invalid-catalog"), "http://catalogd.test", cache.NoExpiration)
+			c.Set(getCatalogLastModifiedKey("invalid-catalog"), "Thu, 01 Jan 2026 00:00:00 GMT", cache.NoExpiration)
+			service := NewCatalogService(&http.Client{}, nil, c)
+			service.index = map[string]struct{}{"invalid-catalog": {}, "valid-catalog": {}}
+
+			returnedItems, err := service.GetCatalogItems()
+			require.ErrorContains(t, err, tt.wantError)
+			assert.Nil(t, returnedItems)
+			assert.NotContains(t, service.index, "invalid-catalog")
+			for _, key := range []string{getCatalogItemsKey("invalid-catalog"), getCatalogBaseURLKey("invalid-catalog"), getCatalogLastModifiedKey("invalid-catalog")} {
+				value, found := c.Get(key)
+				assert.False(t, found, "invalid catalog entry %q should be removed", key)
+				assert.Nil(t, value)
+			}
+			returnedItems, err = service.GetCatalogItems()
+			require.NoError(t, err)
+			assert.Equal(t, items, returnedItems)
+		})
+	}
+}
+
+func TestProcessCatalogInvalidData(t *testing.T) {
+	tests := []struct {
+		name string
+		data string
+	}{
+		{name: "malformed JSON", data: `{"schema":`},
+		{name: "invalid package", data: `{"schema":"olm.package","name":"test","defaultChannel":42}`},
+		{name: "invalid bundle", data: `{"schema":"olm.bundle","name":"test.v1.0.0","package":"test","image":42}`},
+		{name: "missing package property", data: `{"schema":"olm.bundle","name":"test.v1.0.0","package":"test"}`},
+		{name: "invalid package property", data: `{"schema":"olm.bundle","name":"test.v1.0.0","package":"test","properties":[{"type":"olm.package","value":{"version":42}}]}`},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			service := &CatalogService{}
+			resp := &http.Response{Body: io.NopCloser(strings.NewReader(tt.data))}
+			t.Cleanup(func() { resp.Body.Close() })
+			packages, bundles, lifecycleData, err := service.processCatalog(resp)
+			require.Error(t, err)
+			assert.Nil(t, packages)
+			assert.Nil(t, bundles)
+			assert.Nil(t, lifecycleData)
+		})
+	}
+}
+
+func TestUpdateCatalogRebuildsPackageIndex(t *testing.T) {
+	client := &mockCatalogdClient{}
+	setPackages := func(version string, names ...string) {
+		client.packages = nil
+		client.bundles = nil
+		for _, name := range names {
+			client.packages = append(client.packages, declcfg.Package{Name: name})
+			client.bundles = append(client.bundles, declcfg.Bundle{
+				Name:    name + ".v" + version,
+				Package: name,
+				Properties: []property.Property{
+					property.MustBuildPackage(name, version),
+					{Type: property.TypeCSVMetadata, Value: json.RawMessage(`{}`)},
+				},
+			})
+		}
+	}
+	service := NewCatalogService(&http.Client{}, nil, cache.New(5*time.Minute, 10*time.Minute))
+	service.client = client
+
+	setPackages("1.0.0", "retained-package", "removed-package")
+	require.NoError(t, service.UpdateCatalog("test-catalog", ""))
+	originalItem, err := service.GetCatalogItem("test-catalog", "retained-package")
+	require.NoError(t, err)
+	require.NotNil(t, originalItem)
+	assert.Equal(t, "1.0.0", originalItem.Version)
+
+	// Move the retained package to a different position and replace another package.
+	setPackages("2.0.0", "added-package", "retained-package")
+	require.NoError(t, service.UpdateCatalog("test-catalog", ""))
+	items, err := service.GetCatalogItems()
+	require.NoError(t, err)
+	require.Len(t, items, 2)
+	assert.Equal(t, "added-package", items[0].Name)
+	assert.Equal(t, "retained-package", items[1].Name)
+	for i := range items {
+		item, err := service.GetCatalogItem("test-catalog", items[i].Name)
+		require.NoError(t, err)
+		require.NotNil(t, item)
+		assert.Equal(t, items[i], *item)
+		assert.Equal(t, "2.0.0", item.Version)
+	}
+	item, err := service.GetCatalogItem("test-catalog", "removed-package")
+	require.NoError(t, err)
+	assert.Nil(t, item)
+	assert.Equal(t, "1.0.0", originalItem.Version)
+
+	service.RemoveCatalog("test-catalog")
+	item, err = service.GetCatalogItem("test-catalog", "retained-package")
+	require.NoError(t, err)
+	assert.Nil(t, item)
+	items, err = service.GetCatalogItems()
+	require.NoError(t, err)
+	assert.Empty(t, items)
 }
 
 func TestGetPackageIcon(t *testing.T) {

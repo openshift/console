@@ -10,14 +10,14 @@ import (
 	"net/http"
 	"time"
 
-	"golang.org/x/mod/semver"
+	"github.com/blang/semver/v4"
+	"github.com/operator-framework/operator-registry/alpha/declcfg"
+	"github.com/operator-framework/operator-registry/alpha/property"
+	"github.com/patrickmn/go-cache"
 	utilerrors "k8s.io/apimachinery/pkg/util/errors"
 	klog "k8s.io/klog/v2"
 
 	"github.com/openshift/console/pkg/proxy"
-	"github.com/operator-framework/operator-registry/alpha/declcfg"
-	"github.com/operator-framework/operator-registry/alpha/property"
-	"github.com/patrickmn/go-cache"
 )
 
 const (
@@ -29,6 +29,8 @@ type CatalogServiceInterface interface {
 	UpdateCatalog(catalogName string, baseURL string) error
 	RemoveCatalog(catalogName string)
 	GetCatalogItems() ([]ConsoleCatalogItem, error)
+	GetCatalogItemsForCatalog(catalogName string) ([]ConsoleCatalogItem, error)
+	GetCatalogItem(catalogName, packageName string) (*ConsoleCatalogItem, error)
 }
 
 // catalogService orchestrates the fetching, caching, and polling of catalog data.
@@ -38,6 +40,22 @@ type CatalogService struct {
 	client CatalogdClientInterface
 
 	LastModified string
+}
+
+// cachedCatalog keeps the item list and package index in one cache entry.
+type cachedCatalog struct {
+	items          []ConsoleCatalogItem
+	indexByPackage map[string]int
+}
+
+func newCachedCatalog(items []ConsoleCatalogItem) cachedCatalog {
+	indexByPackage := make(map[string]int, len(items))
+	for i := range items {
+		if _, found := indexByPackage[items[i].Name]; !found {
+			indexByPackage[items[i].Name] = i
+		}
+	}
+	return cachedCatalog{items: items, indexByPackage: indexByPackage}
 }
 
 func getCatalogLastModifiedKey(catalog string) string {
@@ -215,13 +233,7 @@ func (s *CatalogService) UpdateCatalog(catalog string, baseURL string) error {
 		return fmt.Errorf("catalogd request failed with status: %d, %v", resp.StatusCode, resp.Status)
 	}
 
-	// update this catalog's last modified time from upstream
-	lastModified := resp.Header.Get("Last-Modified")
-	if lastModified != "" {
-		s.cache.Set(lastModifiedKey, lastModified, cache.NoExpiration)
-	}
-
-	packages, bundles, err := s.processCatalog(resp)
+	packages, bundles, lifecycleData, err := s.processCatalog(resp)
 	if err != nil {
 		// Don't remove cached data on processing errors. The reconciler will
 		// requeue and retry. Serving stale data is better than serving nothing.
@@ -232,8 +244,15 @@ func (s *CatalogService) UpdateCatalog(catalog string, baseURL string) error {
 	// update cache
 	klog.V(4).Infof("fetched %d packages and %d bundles from catalog %s", len(packages), len(bundles), catalog)
 	catalogItems := CreateConsoleCatalog(catalog, packages, bundles)
+	for i := range catalogItems {
+		catalogItems[i].LifecycleData = lifecycleData[catalogItems[i].Name]
+	}
 	klog.V(4).Infof("created %d console catalog items for catalog %s", len(catalogItems), catalog)
-	s.cache.Set(itemsKey, catalogItems, cacheExpiration)
+	lastModified := resp.Header.Get("Last-Modified")
+	if lastModified != "" {
+		s.cache.Set(lastModifiedKey, lastModified, cache.NoExpiration)
+	}
+	s.cache.Set(itemsKey, newCachedCatalog(catalogItems), cacheExpiration)
 	s.cache.Set(baseURLKey, baseURL, cache.NoExpiration)
 	s.index[catalog] = struct{}{}
 	s.LastModified = now
@@ -265,15 +284,15 @@ func (s *CatalogService) GetCatalogItems() (items []ConsoleCatalogItem, err erro
 			continue
 		}
 
-		catalogItems, ok := cacheContent.([]ConsoleCatalogItem)
+		cachedItems, ok := cacheContent.(cachedCatalog)
 		if !ok {
 			errs = append(errs, fmt.Errorf("malformed cache content for catalog %s", catalog))
 			s.RemoveCatalog(catalog)
 			continue
 		}
 
-		klog.V(4).Infof("appending %d catalog items from catalog %s", len(catalogItems), catalog)
-		allItems = append(allItems, catalogItems...)
+		klog.V(4).Infof("appending %d catalog items from catalog %s", len(cachedItems.items), catalog)
+		allItems = append(allItems, cachedItems.items...)
 	}
 
 	err = utilerrors.NewAggregate(errs)
@@ -286,9 +305,51 @@ func (s *CatalogService) GetCatalogItems() (items []ConsoleCatalogItem, err erro
 	return allItems, nil
 }
 
-func (s *CatalogService) processCatalog(resp *http.Response) ([]*declcfg.Package, []*declcfg.Bundle, error) {
+// GetCatalogItemsForCatalog returns the cached items for a single catalog.
+// It returns nil, with no error, if the catalog is not cached, and a non-nil
+// empty slice if the catalog is cached but contains no items.
+func (s *CatalogService) GetCatalogItemsForCatalog(catalogName string) ([]ConsoleCatalogItem, error) {
+	cacheContent, ok := s.cache.Get(getCatalogItemsKey(catalogName))
+	if !ok {
+		return nil, nil
+	}
+
+	catalog, ok := cacheContent.(cachedCatalog)
+	if !ok {
+		return nil, fmt.Errorf("malformed cache content for catalog %s", catalogName)
+	}
+	if catalog.items == nil {
+		return []ConsoleCatalogItem{}, nil
+	}
+	return catalog.items, nil
+}
+
+// GetCatalogItem returns the cached catalog item for the given catalog and package name.
+// It returns a nil item, with no error, if no matching item is found.
+func (s *CatalogService) GetCatalogItem(catalogName, packageName string) (*ConsoleCatalogItem, error) {
+	itemsKey := getCatalogItemsKey(catalogName)
+	cacheContent, ok := s.cache.Get(itemsKey)
+	if !ok {
+		return nil, nil
+	}
+
+	catalog, ok := cacheContent.(cachedCatalog)
+	if !ok {
+		return nil, fmt.Errorf("malformed cache content for catalog %s", catalogName)
+	}
+
+	i, found := catalog.indexByPackage[packageName]
+	if !found {
+		return nil, nil
+	}
+	return &catalog.items[i], nil
+}
+
+func (s *CatalogService) processCatalog(resp *http.Response) ([]*declcfg.Package, []*declcfg.Bundle, map[string]json.RawMessage, error) {
 	packages := []*declcfg.Package{}
 	latestBundles := make(map[string]*declcfg.Bundle)
+	latestVersions := make(map[string]semver.Version)
+	lifecycleData := make(map[string]json.RawMessage)
 	if err := declcfg.WalkMetasReader(resp.Body, func(meta *declcfg.Meta, err error) error {
 		if err != nil {
 			klog.V(4).Infof("error parsing catalog contents: %v", err)
@@ -308,8 +369,16 @@ func (s *CatalogService) processCatalog(resp *http.Response) ([]*declcfg.Package
 			bundle, err := s.processBundle(meta.Blob)
 			if err != nil {
 				klog.V(4).Infof("failed to process bundle: %v", err)
+				return err
 			}
-
+			version, err := getBundleVersion(bundle)
+			if err != nil {
+				return err
+			}
+			parsedVersion, err := semver.Parse(version)
+			if err != nil {
+				return fmt.Errorf("invalid version %q for bundle %q: %w", version, bundle.Name, err)
+			}
 			bundleHasMetadata := false
 			for _, p := range bundle.Properties {
 				if p.Type == property.TypeCSVMetadata {
@@ -318,33 +387,26 @@ func (s *CatalogService) processCatalog(resp *http.Response) ([]*declcfg.Package
 				}
 			}
 
-			// Only process bundles with metadata.
+			// Use the latest bundle with CSV metadata for the catalog card.
 			if bundleHasMetadata {
-				if existingBundle, ok := latestBundles[bundle.Package]; ok {
-					existingVersion, err := getBundleVersion(existingBundle)
-					if err != nil {
-						klog.V(4).Infof("failed to get existing bundle version: %v", err)
-						break
-					}
-
-					newVersion, err := getBundleVersion(bundle)
-					if err != nil {
-						klog.V(4).Infof("failed to get new bundle version: %v", err)
-						break
-					}
-
-					if semver.Compare(newVersion, existingVersion) > 0 {
-						latestBundles[bundle.Package] = bundle
-					}
-				} else {
+				if existingVersion, found := latestVersions[bundle.Package]; !found || parsedVersion.GT(existingVersion) {
 					latestBundles[bundle.Package] = bundle
+					latestVersions[bundle.Package] = parsedVersion
 				}
 			}
+		case lifecycleSchema:
+			if meta.Package == "" {
+				return fmt.Errorf("lifecycle record is missing its package name")
+			}
+			if _, found := lifecycleData[meta.Package]; found {
+				return fmt.Errorf("multiple lifecycle records for package %q", meta.Package)
+			}
+			lifecycleData[meta.Package] = meta.Blob
 		}
 		return nil
 	}); err != nil {
 		klog.V(4).Infof("error walking catalog contents: %v", err)
-		return nil, nil, err
+		return nil, nil, nil, err
 	}
 
 	bundles := []*declcfg.Bundle{}
@@ -352,7 +414,7 @@ func (s *CatalogService) processCatalog(resp *http.Response) ([]*declcfg.Package
 		bundles = append(bundles, bundle)
 	}
 
-	return packages, bundles, nil
+	return packages, bundles, lifecycleData, nil
 }
 
 func (s *CatalogService) processPackage(raw json.RawMessage) (*declcfg.Package, error) {
