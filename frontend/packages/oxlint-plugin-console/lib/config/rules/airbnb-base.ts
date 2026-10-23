@@ -653,8 +653,7 @@ export default {
   'import/named': 'error',
   'import/default': 'off',
   'import/namespace': 'off',
-  // Warning rather than error: oxlint over-reports here (see the package README).
-  'import/export': 'warn',
+  'import/export': 'error',
   'import/no-named-as-default': 'error',
   'import/no-named-as-default-member': 'error',
   'import/no-mutable-exports': 'error',
