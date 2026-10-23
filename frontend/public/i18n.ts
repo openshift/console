@@ -1,4 +1,4 @@
-/* eslint-disable no-barrel-files/no-barrel-files */
+/* eslint-disable oxc/no-barrel-file */
 import i18n from 'i18next';
 import detector from 'i18next-browser-languagedetector';
 import httpBackend from 'i18next-http-backend';

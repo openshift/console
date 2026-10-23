@@ -1,4 +1,4 @@
-/* eslint-disable no-barrel-files/no-barrel-files */
+/* eslint-disable oxc/no-barrel-file */
 import type { MachineHealthCheckKind } from '@openshift/api-types/dist/openshift/latest';
 import type { JSONSchema7 } from 'json-schema';
 import type {
