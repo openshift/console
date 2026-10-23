@@ -4,7 +4,9 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"net"
 	"net/http"
+	"net/http/httptest"
 	"net/url"
 	"os"
 	"os/exec"
@@ -23,6 +25,7 @@ import (
 	"sigs.k8s.io/yaml"
 
 	"github.com/openshift/console/pkg/helm/actions/fake"
+	"github.com/openshift/console/pkg/helm/fetcherr"
 	"github.com/stretchr/testify/require"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -80,52 +83,34 @@ func TestValidateRepoURL(t *testing.T) {
 			errContains: "unsupported URL scheme",
 		},
 		{
-			name:        "rejects loopback IPv4 for namespace-scoped",
-			rawURL:      "http://127.0.0.1/index.yaml",
-			wantErr:     true,
-			errContains: "private or reserved address",
+			name:    "allows loopback IPv4",
+			rawURL:  "http://127.0.0.1/index.yaml",
+			wantErr: false,
 		},
 		{
-			name:        "rejects loopback IPv6 for namespace-scoped",
-			rawURL:      "http://[::1]/index.yaml",
-			wantErr:     true,
-			errContains: "private or reserved address",
+			name:    "allows loopback IPv6",
+			rawURL:  "http://[::1]/index.yaml",
+			wantErr: false,
 		},
 		{
-			name:        "rejects RFC1918 10.x for namespace-scoped",
-			rawURL:      "http://10.0.0.1/index.yaml",
-			wantErr:     true,
-			errContains: "private or reserved address",
+			name:    "allows RFC1918 10.x",
+			rawURL:  "http://10.0.0.1/index.yaml",
+			wantErr: false,
 		},
 		{
-			name:        "rejects RFC1918 172.16.x for namespace-scoped",
-			rawURL:      "http://172.16.0.1/index.yaml",
-			wantErr:     true,
-			errContains: "private or reserved address",
+			name:    "allows RFC1918 172.16.x",
+			rawURL:  "http://172.16.0.1/index.yaml",
+			wantErr: false,
 		},
 		{
-			name:        "rejects RFC1918 192.168.x for namespace-scoped",
-			rawURL:      "http://192.168.1.1/index.yaml",
-			wantErr:     true,
-			errContains: "private or reserved address",
+			name:    "allows RFC1918 192.168.x",
+			rawURL:  "http://192.168.1.1/index.yaml",
+			wantErr: false,
 		},
 		{
-			name:        "rejects cloud metadata endpoint for namespace-scoped",
-			rawURL:      "http://169.254.169.254/latest/meta-data/",
-			wantErr:     true,
-			errContains: "private or reserved address",
-		},
-		{
-			name:        "rejects link-local for namespace-scoped",
-			rawURL:      "http://169.254.1.1/index.yaml",
-			wantErr:     true,
-			errContains: "private or reserved address",
-		},
-		{
-			name:        "rejects unspecified address for namespace-scoped",
-			rawURL:      "http://0.0.0.0/index.yaml",
-			wantErr:     true,
-			errContains: "private or reserved address",
+			name:    "allows link-local",
+			rawURL:  "http://169.254.1.1/index.yaml",
+			wantErr: false,
 		},
 		{
 			name:           "allows loopback for cluster-scoped",
@@ -779,7 +764,7 @@ func TestHelmRepoGetter_unmarshallConfig(t *testing.T) {
 				},
 			},
 			repoName:        "repo7",
-			wantsErrMsg:     "private or reserved address",
+			wantsErrMsg:     "Basic authentication requires HTTPS repository for security",
 			createSecret:    false,
 			createNamespace: true,
 			namespace:       "testing",
@@ -810,7 +795,7 @@ func TestHelmRepoGetter_unmarshallConfig(t *testing.T) {
 			clusterScoped:   false,
 		},
 		{
-			name: "reject namespace-scoped repo with private IP",
+			name: "allows namespace-scoped repo with private IP",
 			helmCRS: &unstructured.Unstructured{
 				Object: map[string]interface{}{
 					"apiVersion": "helm.openshift.io/v1beta1",
@@ -827,7 +812,7 @@ func TestHelmRepoGetter_unmarshallConfig(t *testing.T) {
 				},
 			},
 			repoName:        "repo-private-ip",
-			wantsErrMsg:     "private or reserved address",
+			wantsErrMsg:     "",
 			createSecret:    false,
 			createNamespace: true,
 			namespace:       "testing",
@@ -877,6 +862,99 @@ func TestHelmRepoGetter_unmarshallConfig(t *testing.T) {
 	require.NoError(t, err)
 	err = ExecuteScript("./testdata/cleanup.sh", false)
 	require.NoError(t, err)
+}
+
+func TestHelmRepo_IndexFileSanitizesFetchErrors(t *testing.T) {
+	t.Run("closed port matches a missing index", func(t *testing.T) {
+		ln, err := net.Listen("tcp", "127.0.0.1:0")
+		require.NoError(t, err)
+		addr := ln.Addr().String()
+		require.NoError(t, ln.Close())
+
+		u, err := url.Parse("http://" + addr + "/charts")
+		require.NoError(t, err)
+		repo := helmRepo{
+			Name: "closed",
+			URL:  u,
+			httpClient: func() (*http.Client, error) {
+				return &http.Client{Timeout: time.Second}, nil
+			},
+		}
+		_, err = repo.IndexFile()
+		require.ErrorIs(t, err, fetcherr.ErrIndexFileNotFound)
+		require.NotContains(t, err.Error(), "refused")
+		require.NotContains(t, err.Error(), addr)
+	})
+
+	t.Run("http 404 matches a missing index and drops the body", func(t *testing.T) {
+		const body = "SECRET_PAYLOAD not found"
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			http.Error(w, body, http.StatusNotFound)
+		}))
+		t.Cleanup(server.Close)
+
+		_, err := indexFromTestServer(t, server)
+		require.ErrorIs(t, err, fetcherr.ErrIndexFileNotFound)
+		require.NotContains(t, err.Error(), "SECRET_PAYLOAD")
+		require.NotContains(t, err.Error(), "404")
+	})
+
+	t.Run("authentication does not include status or body", func(t *testing.T) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("WWW-Authenticate", `Basic realm="SECRET_PAYLOAD"`)
+			http.Error(w, "SECRET_PAYLOAD", http.StatusUnauthorized)
+		}))
+		t.Cleanup(server.Close)
+
+		_, err := indexFromTestServer(t, server)
+		require.ErrorIs(t, err, fetcherr.ErrIndexAuthentication)
+		require.NotContains(t, err.Error(), "SECRET_PAYLOAD")
+		require.NotContains(t, err.Error(), "401")
+	})
+
+	t.Run("non-index body is not returned", func(t *testing.T) {
+		const body = "token: SECRET_PAYLOAD\n: not-yaml"
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusOK)
+			_, _ = w.Write([]byte(body))
+		}))
+		t.Cleanup(server.Close)
+
+		_, err := indexFromTestServer(t, server)
+		require.ErrorIs(t, err, fetcherr.ErrIndexNotHelm)
+		require.NotContains(t, err.Error(), "SECRET_PAYLOAD")
+		require.NotContains(t, err.Error(), "not-yaml")
+	})
+
+	t.Run("non-index document is not echoed", func(t *testing.T) {
+		const body = "kind: Secret\ndata:\n  token: SECRET_PAYLOAD\n"
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusOK)
+			_, _ = w.Write([]byte(body))
+		}))
+		t.Cleanup(server.Close)
+
+		index, err := indexFromTestServer(t, server)
+		require.NoError(t, err)
+		encoded, err := yaml.Marshal(index)
+		require.NoError(t, err)
+		require.NotContains(t, string(encoded), "SECRET_PAYLOAD")
+		require.Empty(t, index.Entries)
+	})
+}
+
+func indexFromTestServer(t *testing.T, server *httptest.Server) (*helmrepo.IndexFile, error) {
+	t.Helper()
+	u, err := url.Parse(server.URL)
+	require.NoError(t, err)
+	repo := helmRepo{
+		Name: "fixture",
+		URL:  u,
+		httpClient: func() (*http.Client, error) {
+			return server.Client(), nil
+		},
+	}
+	return repo.IndexFile()
 }
 
 func ExecuteScript(filepath string, waitForCompletion bool) error {
