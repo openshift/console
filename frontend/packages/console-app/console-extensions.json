@@ -1521,7 +1521,7 @@
       "id": "machines",
       "insertAfter": "nodes",
       "name": "%console-app~Machines%",
-      "href": "/k8s/ns/openshift-machine-api/machine.openshift.io~v1beta1~Machine"
+      "href": "/k8s/all-namespaces/machine.openshift.io~v1beta1~Machine"
     },
     "flags": { "required": ["CLUSTER_API"] }
   },
@@ -1580,7 +1580,7 @@
       "id": "machinesets",
       "insertAfter": "controlplanemachinesets",
       "name": "%console-app~MachineSets%",
-      "href": "/k8s/ns/openshift-machine-api/machine.openshift.io~v1beta1~MachineSet"
+      "href": "/k8s/all-namespaces/machine.openshift.io~v1beta1~MachineSet"
     },
     "flags": { "required": ["CLUSTER_API"] }
   },

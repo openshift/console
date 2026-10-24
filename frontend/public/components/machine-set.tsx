@@ -18,14 +18,27 @@ import { ListPageBody } from '@console/dynamic-plugin-sdk';
 import type { ConsoleDataViewColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import type { ConfigureCountModalProps } from '@console/internal/components/modals/configure-count-modal';
 import { useConfigureCountModal } from '@console/internal/components/modals/configure-count-modal';
-import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import {
+  useK8sWatchResource,
+  useK8sWatchResources,
+} from '@console/internal/components/utils/k8s-watch-hook';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import PaneBodyGroup from '@console/shared/src/components/layout/PaneBodyGroup';
 import { DASH } from '@console/shared/src/constants/ui';
-import { getMachineAWSPlacement, getMachineRole } from '@console/shared/src/selectors/machine';
+import {
+  getMachineAWSPlacement,
+  getMachineRole,
+  isClusterAPIResource,
+} from '@console/shared/src/selectors/machine';
 import { getMachineSetInstanceType } from '@console/shared/src/selectors/machineSet';
-import { MachineModel, MachineSetModel, NodeModel } from '../models';
+import {
+  ClusterAPIMachineModel,
+  ClusterAPIMachineSetModel,
+  MachineModel,
+  MachineSetModel,
+  NodeModel,
+} from '../models';
 import type {
   K8sKind,
   K8sResourceKind,
@@ -35,14 +48,14 @@ import type {
   NodeKind,
   Selector as SelectorType,
 } from '../module/k8s';
-import { referenceForModel, LabelSelector } from '../module/k8s';
+import { referenceFor, referenceForModel, LabelSelector } from '../module/k8s';
 import { MachinesCell } from './control-plane-machine-set';
 import { ResourceEventStream } from './events';
 import { DetailsPage } from './factory/details';
 import ListPageCreate from './factory/ListPage/ListPageCreate';
 import ListPageHeader from './factory/ListPage/ListPageHeader';
 import { sortResourceByValue } from './factory/Table/sort';
-import { MachinePage } from './machine';
+import { getClusterAPIWatchError, MachinePage } from './machine';
 import { ResourceSummary } from './utils/details-page';
 import { SectionHeading } from './utils/headings';
 import { navFactory } from './utils/horizontal-nav';
@@ -74,11 +87,6 @@ const MemoryCell: FC<{ obj: MachineSetKind }> = ({ obj }) => {
   return <span>{t('{{memory}} GiB', { memory })}</span>;
 };
 
-const MachinesResource = {
-  isList: true,
-  kind: referenceForModel(MachineModel),
-};
-
 const NodesResource = {
   isList: true,
   kind: NodeModel.kind,
@@ -86,13 +94,14 @@ const NodesResource = {
 };
 
 const useMachineCountModal = ({ resource }: ConfigureCountModalProps) => {
+  const resourceKind = isClusterAPIResource(resource) ? ClusterAPIMachineSetModel : MachineSetModel;
   const launchModal = useConfigureCountModal({
-    resourceKind: MachineSetModel,
+    resourceKind,
     resource,
     titleKey: 'public~Edit Machine count',
     // t('public~{{resourceKind}} maintain the proper number of healthy machines.')
     messageKey: 'public~{{resourceKind}} maintain the proper number of healthy machines.',
-    messageVariables: { resourceKind: MachineSetModel.labelPlural },
+    messageVariables: { resourceKind: resourceKind.labelPlural },
     path: '/spec/replicas',
     buttonTextKey: 'public~Save',
   });
@@ -104,6 +113,7 @@ const useMachineCountModal = ({ resource }: ConfigureCountModalProps) => {
 
 const machineReference = referenceForModel(MachineModel);
 const machineSetReference = referenceForModel(MachineSetModel);
+const clusterAPIMachineReference = referenceForModel(ClusterAPIMachineModel);
 
 // `spec.replicas` defaults to 1 if not specified. Make sure to differentiate between undefined and 0.
 const getDesiredReplicas = (machineSet: MachineSetKind | MachineDeploymentKind) =>
@@ -214,18 +224,27 @@ const MachineCounts: FC<MachineCountsProps> = ({ resourceKind, resource }) => {
 };
 
 const MachineTabPage: FC<MachineTabPageProps> = ({ obj }) => (
-  <MachinePage namespace={obj.metadata.namespace} showTitle={false} selector={obj.spec.selector} />
+  <MachinePage
+    namespace={obj.metadata.namespace}
+    showTitle={false}
+    selector={obj.spec.selector}
+    matchClusterAPI={isClusterAPIResource(obj)}
+  />
 );
 
 const MachineSetDetails: FC<MachineSetDetailsProps> = ({ obj }) => {
   const machineRole = getMachineRole(obj);
   const { availabilityZone, region } = getMachineAWSPlacement(obj);
   const instanceType = getMachineSetInstanceType(obj);
+  const resourceKind = isClusterAPIResource(obj) ? ClusterAPIMachineSetModel : MachineSetModel;
+  const relatedMachineRef = isClusterAPIResource(obj)
+    ? clusterAPIMachineReference
+    : machineReference;
   const { t } = useTranslation('public');
   return (
     <PaneBody>
       <SectionHeading text={t('MachineSet details')} />
-      <MachineCounts resourceKind={MachineSetModel} resource={obj} />
+      <MachineCounts resourceKind={resourceKind} resource={obj} />
       <Grid hasGutter>
         <GridItem md={6}>
           <ResourceSummary resource={obj}>
@@ -233,7 +252,7 @@ const MachineSetDetails: FC<MachineSetDetailsProps> = ({ obj }) => {
               <DescriptionListTerm>{t('Selector')}</DescriptionListTerm>
               <DescriptionListDescription>
                 <Selector
-                  kind={machineReference}
+                  kind={relatedMachineRef}
                   selector={obj.spec?.selector}
                   namespace={obj.metadata.namespace}
                 />
@@ -339,13 +358,14 @@ const getDataViewRows = (
 ) =>
   data.map(({ obj }: { obj: MachineSetKind }) => {
     const { name, namespace } = obj.metadata;
+    const kindRef = referenceFor(obj) || machineSetReference;
     const readyReplicas = getReadyReplicas(obj);
     const desiredReplicas = getDesiredReplicas(obj);
     const instanceType = getMachineSetInstanceType(obj);
 
     const rowCells = {
       [tableColumnInfo[0].id]: {
-        cell: <ResourceLink kind={machineSetReference} name={name} namespace={namespace} />,
+        cell: <ResourceLink kind={kindRef} name={name} namespace={namespace} />,
       },
       [tableColumnInfo[1].id]: {
         cell: <ResourceLink kind="Namespace" name={namespace} />,
@@ -355,7 +375,7 @@ const getDataViewRows = (
           <MachinesCell
             desiredReplicas={desiredReplicas}
             readyReplicas={readyReplicas}
-            path={resourcePath(machineSetReference, name, namespace)}
+            path={resourcePath(kindRef, name, namespace)}
           />
         ),
       },
@@ -369,7 +389,7 @@ const getDataViewRows = (
         cell: <MemoryCell obj={obj} />,
       },
       [tableColumnInfo[6].id]: {
-        cell: <LazyActionMenu context={{ [machineSetReference]: obj }} />,
+        cell: <LazyActionMenu context={{ [kindRef]: obj }} />,
       },
     };
 
@@ -402,13 +422,33 @@ const MachineSetListContent: FC<MachineSetListProps> = ({ data, loaded, loadErro
 };
 
 const MachineSetList: FC<MachineSetListProps> = ({ data, loaded, loadError, ...props }) => {
-  const [machines] = useK8sWatchResource<MachineKind[]>(MachinesResource);
+  const machineWatches = useK8sWatchResources<{
+    mapMachines: MachineKind[];
+    capiMachines: MachineKind[];
+  }>({
+    mapMachines: {
+      isList: true,
+      kind: referenceForModel(MachineModel),
+    },
+    capiMachines: {
+      isList: true,
+      kind: referenceForModel(ClusterAPIMachineModel),
+      optional: true,
+    },
+  });
   const [nodes] = useK8sWatchResource<NodeKind[]>(NodesResource);
+
+  const machines = useMemo(
+    () => [...(machineWatches.mapMachines.data || []), ...(machineWatches.capiMachines.data || [])],
+    [machineWatches.mapMachines.data, machineWatches.capiMachines.data],
+  );
 
   const capacityResolver = useCallback(
     (obj: MachineSetKind) => {
-      const machine = (machines ?? [])?.find((m) =>
-        new LabelSelector(obj.spec.selector).matches(m),
+      const machine = (machines ?? []).find(
+        (m) =>
+          isClusterAPIResource(m) === isClusterAPIResource(obj) &&
+          new LabelSelector(obj.spec.selector).matches(m),
       );
       const node = (nodes ?? []).find(
         (n) => machine && machine.status?.nodeRef?.uid === n.metadata.uid,
@@ -439,12 +479,37 @@ export const MachineSetPage: FC<MachineSetPageProps> = ({
   hideNameLabelFilters,
   hideColumnManagement,
 }) => {
-  const [machineSets, loaded, loadError] = useK8sWatchResource<MachineSetKind[]>({
-    isList: true,
-    kind: referenceForModel(MachineSetModel),
-    selector,
-    namespace,
-  });
+  const watchedResources = useMemo(
+    () => ({
+      mapMachineSets: {
+        isList: true,
+        kind: referenceForModel(MachineSetModel),
+        selector,
+        namespace,
+      },
+      capiMachineSets: {
+        isList: true,
+        kind: referenceForModel(ClusterAPIMachineSetModel),
+        selector,
+        namespace,
+        optional: true,
+      },
+    }),
+    [namespace, selector],
+  );
+
+  const { mapMachineSets, capiMachineSets } = useK8sWatchResources<{
+    mapMachineSets: MachineSetKind[];
+    capiMachineSets: MachineSetKind[];
+  }>(watchedResources);
+
+  const machineSets = useMemo(
+    () => [...(mapMachineSets.data || []), ...(capiMachineSets.data || [])],
+    [mapMachineSets.data, capiMachineSets.data],
+  );
+  const loaded = mapMachineSets.loaded && (capiMachineSets.loaded || !!capiMachineSets.loadError);
+  const loadError = mapMachineSets.loadError || getClusterAPIWatchError(capiMachineSets.loadError);
+
   const createAccessReview = {
     groupVersionKind: referenceForModel(MachineSetModel),
     namespace: namespace || 'default',
@@ -475,12 +540,12 @@ export const MachineSetPage: FC<MachineSetPageProps> = ({
   );
 };
 
-export const MachineSetDetailsPage: FC = (props) => (
+export const MachineSetDetailsPage: FC<MachineSetDetailsPageProps> = (props) => (
   <DetailsPage
     {...props}
-    kind={machineSetReference}
+    kind={props.kind || machineSetReference}
     customActionMenu={(_kindObj: K8sKind, obj: K8sResourceKind) => (
-      <LazyActionMenu context={{ [machineSetReference]: obj }} />
+      <LazyActionMenu context={{ [referenceFor(obj) || machineSetReference]: obj }} />
     )}
     pages={[
       navFactory.details(MachineSetDetails),
@@ -511,6 +576,11 @@ export type MachineTabPageProps = {
 
 type MachineSetDetailsProps = {
   obj: MachineSetKind;
+};
+
+type MachineSetDetailsPageProps = {
+  kind?: string;
+  [key: string]: any;
 };
 
 export type MachineSetPageProps = {
