@@ -18,7 +18,6 @@ import {
   EmptyStateActions,
   EmptyStateFooter,
 } from '@patternfly/react-core';
-import fuzzysearch from 'fuzzysearch';
 import { useTranslation } from 'react-i18next';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ProjectModel, NamespaceModel } from '@console/internal/models';
@@ -32,7 +31,7 @@ import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import { alphanumericCompare } from '@console/shared/src/utils/utils';
 import { DefaultNamespaceLabel } from './DefaultNamespaceWarning';
-import { isSystemNamespace } from './filters';
+import { isSystemNamespace, matchesNamespaceFilterText } from './filters';
 import NamespaceMenuToggle from './NamespaceMenuToggle';
 import './NamespaceDropdown.scss';
 
@@ -224,15 +223,15 @@ const NamespaceMenu: FC<{
     }
     const items = options.map((item) => {
       const { name } = item.metadata;
-      return { title: name, key: name };
+      return { title: name, key: name, metadata: item.metadata };
     });
     if (!items.some((option) => option.title === selected) && selected !== ALL_NAMESPACES_KEY) {
-      items.push({ title: selected, key: selected }); // Add current namespace if it isn't included
+      items.push({ title: selected, key: selected, metadata: undefined }); // Add current namespace if it isn't included
     }
     items.sort((a, b) => alphanumericCompare(a.title, b.title));
 
     if (canList) {
-      items.unshift({ title: allNamespacesTitle, key: ALL_NAMESPACES_KEY });
+      items.unshift({ title: allNamespacesTitle, key: ALL_NAMESPACES_KEY, metadata: undefined });
     }
     return items;
   }, [allNamespacesTitle, canList, options, optionsLoaded, selected]);
@@ -262,7 +261,7 @@ const NamespaceMenu: FC<{
 
   const isOptionShown = useCallback(
     (option, checkIsFavorite: boolean) => {
-      const containsFilterText = fuzzysearch(filterText.toLowerCase(), option.title.toLowerCase());
+      const containsFilterText = matchesNamespaceFilterText(filterText, option);
 
       if (checkIsFavorite) {
         return containsFilterText && isFavorite(option);
