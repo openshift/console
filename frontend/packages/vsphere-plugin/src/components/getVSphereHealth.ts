@@ -7,12 +7,34 @@ import type {
   PrometheusValue,
   SubsystemHealth,
 } from '@console/dynamic-plugin-sdk';
+import { dateTimeFormatter } from '@console/shared/src/utils/datetime';
 import type { ConfigMap } from '../resources/configMap';
 
 const getPrometheusMetricValue = (
   prometheusResult: PrometheusResult[],
   reason: string,
 ): PrometheusValue | undefined => prometheusResult.find((r) => r.metric.reason === reason)?.value;
+
+export const formatHealthWarningMessage = (
+  t: ConsoleTFunction,
+  message: string,
+  metricValue?: PrometheusValue,
+): string => {
+  const unixSeconds = metricValue?.[0];
+  if (unixSeconds === undefined || unixSeconds === null) {
+    return message;
+  }
+
+  const detectedAt = new Date(Number(unixSeconds) * 1000);
+  if (Number.isNaN(detectedAt.getTime())) {
+    return message;
+  }
+
+  return t('vsphere-plugin~{{message}} (Last detected {{timestamp}})', {
+    message,
+    timestamp: dateTimeFormatter().format(detectedAt),
+  });
+};
 
 export const getVSphereHealth = (
   t: ConsoleTFunction,
@@ -64,23 +86,32 @@ export const getVSphereHealth = (
   const invCreds = getPrometheusMetricValue(prometheusResult, 'InvalidCredentials');
 
   if (invCreds?.[0] && toInteger(invCreds?.[1]) > 0) {
-    // TODO: Add timestamp to the message but where to get it from?? It's not invCreds[0]
-
-    return { state: HealthState.WARNING, message: t('vsphere-plugin~Invalid credentials') };
+    return {
+      state: HealthState.WARNING,
+      message: formatHealthWarningMessage(t, t('vsphere-plugin~Invalid credentials'), invCreds),
+    };
   }
 
   const syncErr = getPrometheusMetricValue(prometheusResult, 'SyncError');
   if (toInteger(syncErr?.[1])) {
-    // TODO: Add timestamp to the message
-    return { state: HealthState.WARNING, message: t('vsphere-plugin~Synchronization failed') };
+    return {
+      state: HealthState.WARNING,
+      message: formatHealthWarningMessage(
+        t,
+        t('vsphere-plugin~Synchronization failed'),
+        syncErr,
+      ),
+    };
   }
 
   const anyFailingMetric = prometheusResult.find((r) => toInteger(r.value?.[1]) > 0);
   if (anyFailingMetric) {
-    // TODO: Add timestamp to the message
+    const reasonMessage = t('vsphere-plugin~Failing {{reason}}', {
+      reason: anyFailingMetric.metric.reason,
+    });
     return {
       state: HealthState.WARNING,
-      message: t('vsphere-plugin~Failing {{reason}}', { reason: anyFailingMetric.metric.reason }),
+      message: formatHealthWarningMessage(t, reasonMessage, anyFailingMetric.value),
     };
   }
 
