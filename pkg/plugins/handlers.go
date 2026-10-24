@@ -235,7 +235,8 @@ func (p *PluginsHandler) proxyPluginRequest(requestURL *url.URL, pluginName stri
 	}
 
 	newRequest.Header = originalRequest.Header.Clone()
-	for _, h := range []string{"Cookie", "X-CSRFToken"} {
+	// Assets must not receive user credentials, including middleware-injected Authorization.
+	for _, h := range []string{"Authorization", "Cookie", "X-CSRFToken"} {
 		newRequest.Header.Del(h)
 	}
 
