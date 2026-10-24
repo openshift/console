@@ -17,6 +17,7 @@ import (
 	"github.com/openshift/console/cmd/bridge/config/session"
 	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/auth/csrfverifier"
+	"github.com/openshift/console/pkg/auth/httpclient"
 	"github.com/openshift/console/pkg/auth/oauth2"
 	"github.com/openshift/console/pkg/auth/static"
 	"github.com/openshift/console/pkg/flags"
@@ -42,6 +43,8 @@ type AuthOptions struct {
 
 	InactivityTimeoutSeconds int
 	LogoutRedirect           string
+
+	Proxy *serverconfig.AuthProxy
 }
 
 type CompletedOptions struct {
@@ -62,6 +65,8 @@ type completedOptions struct {
 
 	InactivityTimeoutSeconds int
 	LogoutRedirectURL        *url.URL
+
+	Proxy *httpclient.ProxyConfig
 }
 
 func NewAuthOptions() *AuthOptions {
@@ -100,6 +105,12 @@ func (c *AuthOptions) ApplyConfig(config *serverconfig.Auth) {
 	if len(c.ExtraScopes) == 0 {
 		c.ExtraScopes = config.OIDCExtraScopes
 	}
+
+	c.Proxy = config.Proxy
+	if c.Proxy != nil && c.AuthType != flagvalues.AuthTypeOIDC {
+		klog.Warning("Ignoring auth.proxy because authType is not OIDC")
+		c.Proxy = nil
+	}
 }
 
 func (c *AuthOptions) Complete() (*CompletedOptions, error) {
@@ -126,6 +137,7 @@ func (c *AuthOptions) Complete() (*CompletedOptions, error) {
 		InactivityTimeoutSeconds: c.InactivityTimeoutSeconds,
 		OCLoginCommand:           c.OCLoginCommand,
 		StaticUserBearerToken:    c.StaticUserBearerToken,
+		Proxy:                    effectiveProxy(c.AuthType, c.Proxy),
 	}
 
 	if len(c.IssuerURL) > 0 {
@@ -159,6 +171,11 @@ func (c *AuthOptions) Complete() (*CompletedOptions, error) {
 
 func (c *AuthOptions) Validate() []error {
 	var errs []error
+	if proxy := effectiveProxy(c.AuthType, c.Proxy); proxy != nil {
+		if err := proxy.Validate(); err != nil {
+			errs = append(errs, err)
+		}
+	}
 
 	switch c.AuthType {
 	case flagvalues.AuthTypeOpenShift, flagvalues.AuthTypeOIDC:
@@ -214,9 +231,10 @@ func (c *AuthOptions) Validate() []error {
 }
 
 func (c *completedOptions) ApplyTo(
+	ctx context.Context,
 	srv *server.Server,
 	k8sEndpoint *url.URL,
-	caCertFilePath string,
+	authClients *httpclient.Clients,
 	sessionConfig *session.CompletedOptions,
 ) error {
 	srv.InactivityTimeout = c.InactivityTimeoutSeconds
@@ -229,10 +247,11 @@ func (c *completedOptions) ApplyTo(
 
 	var err error
 	srv.Authenticator, err = c.getAuthenticator(
+		ctx,
 		srv.BaseURL,
 		srv.AdditionalBaseURLs,
 		k8sEndpoint,
-		caCertFilePath,
+		authClients,
 		srv.InternalProxiedK8SClientConfig,
 		useSecureCookies,
 		sessionConfig,
@@ -249,10 +268,11 @@ func (c *completedOptions) ApplyTo(
 }
 
 func (c *completedOptions) getAuthenticator(
+	ctx context.Context,
 	baseURL *url.URL,
 	additionalBaseURLs []*url.URL,
 	k8sEndpoint *url.URL,
-	caCertFilePath string,
+	authClients *httpclient.Clients,
 	k8sClientConfig *rest.Config,
 	useSecureCookies bool,
 	sessionConfig *session.CompletedOptions,
@@ -274,7 +294,6 @@ func (c *completedOptions) getAuthenticator(
 	flags.FatalIfFailed(flags.ValidateFlagNotEmpty("base-address", baseURL.String()))
 
 	var (
-		err                      error
 		userAuthOIDCIssuerURL    *url.URL
 		authLoginErrorEndpoint   = proxy.SingleJoiningSlash(baseURL.Path, server.AuthLoginErrorEndpoint)
 		authLoginSuccessEndpoint = proxy.SingleJoiningSlash(baseURL.Path, server.AuthLoginSuccessEndpoint)
@@ -307,7 +326,7 @@ func (c *completedOptions) getAuthenticator(
 	oidcClientConfig := &oauth2.Config{
 		AuthSource:         authSource,
 		IssuerURL:          userAuthOIDCIssuerURL.String(),
-		IssuerCA:           c.CAFilePath,
+		IssuerClient:       authClients.Issuer,
 		ClientID:           c.ClientID,
 		ClientSecret:       oidcClientSecret,
 		RedirectURL:        proxy.SingleJoiningSlash(baseURL.String(), server.AuthLoginCallbackEndpoint),
@@ -315,9 +334,8 @@ func (c *completedOptions) getAuthenticator(
 		Scope:              scopes,
 		OCLoginCommand:     c.OCLoginCommand,
 
-		// Use the k8s CA file for OpenShift OAuth metadata discovery.
-		// This might be different than IssuerCA.
-		K8sCA: caCertFilePath,
+		// Use a separate client for OpenShift OAuth metadata discovery.
+		K8sClient: authClients.K8s,
 
 		ErrorURL:   authLoginErrorEndpoint,
 		SuccessURL: authLoginSuccessEndpoint,
@@ -338,10 +356,23 @@ func (c *completedOptions) getAuthenticator(
 		oidcClientConfig.LogoutRedirectOverride = c.LogoutRedirectURL.String()
 	}
 
-	authenticator, err := oauth2.NewOAuth2Authenticator(context.Background(), oidcClientConfig)
+	authenticator, err := oauth2.NewOAuth2Authenticator(ctx, oidcClientConfig)
 	if err != nil {
 		klog.Fatalf("Error initializing authenticator: %v", err)
 	}
 
 	return authenticator, nil
+}
+
+// effectiveProxy keeps component proxy routing and trust exclusive to external OIDC.
+func effectiveProxy(authType flagvalues.AuthType, proxy *serverconfig.AuthProxy) *httpclient.ProxyConfig {
+	if authType != flagvalues.AuthTypeOIDC || proxy == nil {
+		return nil
+	}
+	return &httpclient.ProxyConfig{
+		HTTPProxy:         proxy.HTTPProxy,
+		HTTPSProxy:        proxy.HTTPSProxy,
+		NoProxy:           append([]string(nil), proxy.NoProxy...),
+		TrustedCAFilePath: proxy.TrustedCAFilePath,
+	}
 }
