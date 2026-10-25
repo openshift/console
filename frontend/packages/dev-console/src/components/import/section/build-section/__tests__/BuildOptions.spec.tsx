@@ -12,11 +12,9 @@ jest.mock('../../../../../utils/shipwright-build-hook', () => ({
   useShipwrightBuilds: jest.fn(),
 }));
 
-jest.mock('../usePipelineAccessReview', () => {
-  return {
-    usePipelineAccessReview: jest.fn(),
-  };
-});
+jest.mock('../usePipelineAccessReview', () => ({
+  usePipelineAccessReview: jest.fn(),
+}));
 
 const spySWClusterBuildStrategy = shipwrightBuildHook.useClusterBuildStrategy as jest.Mock;
 const spyShipwrightBuilds = shipwrightBuildHook.useShipwrightBuilds as jest.Mock;

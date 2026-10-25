@@ -5,6 +5,7 @@ import { useParams } from 'react-router';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
+// eslint-disable-next-line import/no-cycle -- pre-existing cycle with the dev-console project list pages
 import CreateProjectListPage, {
   CreateAProjectButton,
 } from '@console/dev-console/src/components/projects/CreateProjectListPage';
@@ -61,9 +62,8 @@ export const TopologyPage: FC<TopologyPageProps> = ({
 }) => {
   const { getQueryArgument, setQueryArgument, removeQueryArgument } = useQueryParamsMutator();
   const [preferredTopologyView, preferredTopologyViewLoaded] = usePreferredTopologyView();
-  const [topologyLastView, setTopologyLastView, isTopologyLastViewLoaded] = useUserPreference<
-    TopologyViewType
-  >(TOPOLOGY_VIEW_CONFIG_USER_PREFERENCE_KEY, defaultViewType);
+  const [topologyLastView, setTopologyLastView, isTopologyLastViewLoaded] =
+    useUserPreference<TopologyViewType>(TOPOLOGY_VIEW_CONFIG_USER_PREFERENCE_KEY, defaultViewType);
 
   const params = useParams();
 

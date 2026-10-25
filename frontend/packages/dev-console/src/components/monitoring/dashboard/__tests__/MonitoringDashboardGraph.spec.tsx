@@ -1,9 +1,11 @@
 import type { ComponentProps } from 'react';
 import { screen } from '@testing-library/react';
+import { t } from 'i18next';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
-import { t } from '../../../../../../../__mocks__/i18next';
 import { monitoringDashboardQueries } from '../../queries';
 import { MonitoringDashboardGraph, GraphTypes } from '../MonitoringDashboardGraph';
+
+jest.mock('i18next');
 
 jest.mock('@console/shared/src/components/query-browser/QueryBrowser', () => ({
   QueryBrowser: ({ isStack }: { isStack: boolean }) => `QueryBrowser isStack=${isStack}`,

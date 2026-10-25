@@ -23,10 +23,7 @@ interface TopologyPageToolbarProps {
   onViewChange: (view: TopologyViewType) => void;
 }
 
-const TopologyPageToolbar: FC<TopologyPageToolbarProps> = observer(function TopologyPageToolbar({
-  viewType,
-  onViewChange,
-}) {
+const TopologyPageToolbar: FC<TopologyPageToolbarProps> = observer(({ viewType, onViewChange }) => {
   const { t } = useTranslation('topology');
   const isMobile = useIsMobile();
   const { extensions } = useContext<FileUploadContextType>(FileUploadContext);
@@ -72,8 +69,8 @@ const TopologyPageToolbar: FC<TopologyPageToolbarProps> = observer(function Topo
           variant="link"
           aria-label={viewChangeTooltipContent}
           className="pf-m-plain odc-topology__view-switcher"
-          data-test-id="topology-switcher-view"
           data-test="topology-switcher-view"
+          data-test-id="topology-switcher-view"
           isDisabled={isEmptyModel}
           onClick={() =>
             onViewChange(showGraphView ? TopologyViewType.list : TopologyViewType.graph)

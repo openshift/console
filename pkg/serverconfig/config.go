@@ -236,14 +236,6 @@ func addServingInfo(fs *flag.FlagSet, servingInfo *ServingInfo) (err error) {
 		return errors.New("servingInfo.namedCertificates are not supported")
 	}
 
-	if servingInfo.MinTLSVersion != "" {
-		return errors.New("servingInfo.minTLSVersion is not supported")
-	}
-
-	if len(servingInfo.CipherSuites) > 0 {
-		return errors.New("servingInfo.cipherSuites is not supported")
-	}
-
 	if servingInfo.MaxRequestsInFlight != 0 {
 		return errors.New("servingInfo.maxRequestsInFlight is not supported")
 	}

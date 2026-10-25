@@ -33,7 +33,7 @@ export const getOperatorGroupResource = (
       operatorBackedServiceKind;
     const csvName = operator.metadata.name;
     const operatorName =
-      ownerReference?.name ?? appGroup
+      (ownerReference?.name ?? appGroup)
         ? `${appGroup}:${operator.metadata.name}`
         : operator.metadata.name;
 

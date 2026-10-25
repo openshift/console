@@ -46,9 +46,7 @@ export const getRequestsWarning = (resource: K8sResourceKind): string | null => 
   return null;
 };
 
-const defaultHPAYAML = baseTemplates
-  .get(referenceForModel(HorizontalPodAutoscalerModel))
-  .get('default');
+const defaultHPAYAML = baseTemplates[referenceForModel(HorizontalPodAutoscalerModel)]?.default;
 
 const createScaleTargetRef = (resource: K8sResourceKind) => ({
   apiVersion: resource.apiVersion,
@@ -73,9 +71,7 @@ export const getFormData = (
 export const getYAMLData = (
   resource: K8sResourceKind,
   existingHPA?: HorizontalPodAutoscalerKind,
-): string => {
-  return safeJSToYAML(getFormData(resource, existingHPA));
-};
+): string => safeJSToYAML(getFormData(resource, existingHPA));
 
 export const getMetricByType = (
   hpa: HorizontalPodAutoscalerKind,
@@ -106,19 +102,17 @@ export const sanitizeHPAToForm = (
 export const sanityForSubmit = (
   targetResource: K8sResourceKind,
   hpa: HorizontalPodAutoscalerKind,
-): HorizontalPodAutoscalerKind => {
-  return {
-    ...hpa,
-    metadata: {
-      ...hpa.metadata,
-      namespace: targetResource.metadata.namespace,
-    },
-    spec: {
-      ...hpa.spec,
-      scaleTargetRef: createScaleTargetRef(targetResource),
-    },
-  };
-};
+): HorizontalPodAutoscalerKind => ({
+  ...hpa,
+  metadata: {
+    ...hpa.metadata,
+    namespace: targetResource.metadata.namespace,
+  },
+  spec: {
+    ...hpa.spec,
+    scaleTargetRef: createScaleTargetRef(targetResource),
+  },
+});
 
 export const hasCustomMetrics = (hpa?: HorizontalPodAutoscalerKind): boolean => {
   const metrics = hpa?.spec?.metrics;

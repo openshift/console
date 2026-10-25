@@ -1,17 +1,17 @@
 import type { FC } from 'react';
+import { RhUiBanIcon, RhUiPendingIcon, RhUiSyncIcon } from '@patternfly/react-icons';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
-import * as _ from 'lodash';
-import { RhUiBanIcon, RhUiPendingIcon, RhUiSyncIcon } from '@patternfly/react-icons';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
-import { resourcePath } from './utils/resource-link';
-import { fromNow } from './utils/datetime';
-import { K8sResourceKind } from '../module/k8s';
-import { getBuildNumber } from '../module/k8s/builds';
 import {
   GreenCheckCircleIcon,
   RedExclamationCircleIcon,
 } from '@console/shared/src/components/status/icons';
+import type { K8sResourceKind } from '../module/k8s';
+import { getBuildNumber } from '../module/k8s/builds';
+import { fromNow } from './utils/datetime';
+import { resourcePath } from './utils/resource-link';
 
 type BuildStageData = {
   id: string;
@@ -131,26 +131,22 @@ const BuildStageTimestamp: FC<BuildStageTimestampProps> = ({ timestamp }) => (
   </div>
 );
 
-const BuildStageName: FC<BuildStageNameProps> = ({ name }) => {
-  return (
-    <div title={name} className="build-pipeline__stage-name">
-      {name}
-    </div>
-  );
-};
+const BuildStageName: FC<BuildStageNameProps> = ({ name }) => (
+  <div title={name} className="build-pipeline__stage-name">
+    {name}
+  </div>
+);
 
-const BuildStage: FC<BuildStageProps> = ({ obj, stage }) => {
-  return (
-    <div className="build-pipeline__stage">
-      <div className="build-pipeline__stage-column">
-        <BuildStageName name={stage.name} />
-        <BuildAnimation status={stage.status} />
-        <JenkinsInputUrl obj={obj} stage={stage} />
-        <BuildStageTimestamp timestamp={stage.startTimeMillis.toString()} />
-      </div>
+const BuildStage: FC<BuildStageProps> = ({ obj, stage }) => (
+  <div className="build-pipeline__stage">
+    <div className="build-pipeline__stage-column">
+      <BuildStageName name={stage.name} />
+      <BuildAnimation status={stage.status} />
+      <JenkinsInputUrl obj={obj} stage={stage} />
+      <BuildStageTimestamp timestamp={stage.startTimeMillis.toString()} />
     </div>
-  );
-};
+  </div>
+);
 
 export const BuildPipeline: FC<BuildPipelineProps> = ({ obj }) => {
   const jenkinsStatus: any = getJenkinsStatus(obj);

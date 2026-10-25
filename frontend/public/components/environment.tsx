@@ -1,7 +1,5 @@
-import * as _ from 'lodash';
-import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import type { FC } from 'react';
-import { css } from '@patternfly/react-styles';
+import { useMemo, useState, useCallback, useEffect } from 'react';
 import {
   Alert,
   Button,
@@ -10,27 +8,24 @@ import {
   Flex,
   FlexItem,
 } from '@patternfly/react-core';
+import { css } from '@patternfly/react-styles';
+import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
-import { AccessReviewResourceAttributes, getImpersonate } from '@console/dynamic-plugin-sdk';
-import { useMemo, useState, useCallback, useEffect } from 'react';
+import type { AccessReviewResourceAttributes } from '@console/dynamic-plugin-sdk';
+import { getImpersonate } from '@console/dynamic-plugin-sdk';
 import TertiaryHeading from '@console/shared/src/components/heading/TertiaryHeading';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
-import {
-  k8sPatch,
-  k8sGet,
-  referenceFor,
-  referenceForOwnerRef,
-  K8sResourceKind,
-  EnvVar,
-} from '../module/k8s';
-import { AsyncComponent } from './utils/async';
-import { checkAccess } from './utils/rbac';
-import { ContainerSelect } from './utils/container-select';
-import { EnvFromPair, EnvType, NameValueEditorPair } from './utils/types';
-import { FieldLevelHelp } from './utils/field-level-help';
-import { LoadingBox, LoadingInline } from './utils/status-box';
-import { ResourceLink } from './utils/resource-link';
 import { ConfigMapModel, SecretModel } from '../models';
+import type { K8sResourceKind, EnvVar } from '../module/k8s';
+import { k8sPatch, k8sGet, referenceFor, referenceForOwnerRef } from '../module/k8s';
+import { AsyncComponent } from './utils/async';
+import { ContainerSelect } from './utils/container-select';
+import { FieldLevelHelp } from './utils/field-level-help';
+import { checkAccess } from './utils/rbac';
+import { ResourceLink } from './utils/resource-link';
+import { LoadingBox, LoadingInline } from './utils/status-box';
+import { EnvFromPair, EnvType, NameValueEditorPair } from './utils/types';
 
 /**
  * Set up an AsyncComponent to wrap the name-value-editor to allow on demand loading to reduce the
@@ -161,8 +156,8 @@ const envVarsToArray = (
   return [[env, envFrom]];
 };
 
-const getContainersObjectForDropdown = (containerArray?: Container[]) => {
-  return _.reduce(
+const getContainersObjectForDropdown = (containerArray?: Container[]) =>
+  _.reduce(
     containerArray,
     (result, elem, order) => {
       result[elem.name] = { ...elem, order };
@@ -170,14 +165,18 @@ const getContainersObjectForDropdown = (containerArray?: Container[]) => {
     },
     {},
   );
-};
 
 class CurrentEnvVars {
   currentEnvVars: EnvVarsState;
+
   rawEnvData: RawEnvData;
+
   isContainerArray: boolean;
+
   isCreate: boolean;
+
   hasInitContainers: boolean;
+
   state: { allowed: boolean };
 
   constructor(data?: RawEnvData, isContainerArray?: boolean, path?: string[]) {
@@ -218,9 +217,8 @@ class CurrentEnvVars {
     isContainerArray: boolean,
     path: string[],
   ): this {
-    const getNestedValue = (obj: K8sResourceKind | RawEnvData, pathArray: string[]): unknown => {
-      return pathArray.reduce((acc, key) => acc?.[key], obj);
-    };
+    const getNestedValue = (obj: K8sResourceKind | RawEnvData, pathArray: string[]): unknown =>
+      pathArray.reduce((acc, key) => acc?.[key], obj);
 
     if (isContainerArray) {
       const parentPath = path.slice(0, -1);
@@ -311,9 +309,7 @@ class CurrentEnvVars {
    * Return env var pairs in name value notation, and strip out pairs that have empty name and values.
    */
   _envVarsToNameVal(finalEnvPairs: unknown[]): EnvVar[] {
-    const isEmpty = (value) => {
-      return _.isObject(value) ? _.values(value).every(isEmpty) : !value;
-    };
+    const isEmpty = (value) => (_.isObject(value) ? _.values(value).every(isEmpty) : !value);
     return _.filter(finalEnvPairs, (finalEnvPair) => {
       const name = finalEnvPair[NameValueEditorPair.Name];
       const value = finalEnvPair[NameValueEditorPair.Value];
@@ -334,12 +330,12 @@ class CurrentEnvVars {
       (finalEnvPair) =>
         !_.isEmpty(finalEnvPair[EnvFromPair.Resource]) &&
         !finalEnvPair[EnvFromPair.Resource].configMapSecretRef,
-    ).map((finalPairForContainer) => {
-      return _.assign(
+    ).map((finalPairForContainer) =>
+      _.assign(
         { prefix: finalPairForContainer[EnvFromPair.Prefix] },
         finalPairForContainer[EnvFromPair.Resource],
-      );
-    });
+      ),
+    );
   }
 }
 
@@ -368,8 +364,7 @@ export const EnvironmentPage: FC<EnvironmentPageProps> = (props) => {
 
   const model = useConsoleSelector(
     (state) =>
-      state.k8s.getIn(['RESOURCES', 'models', referenceFor(obj)]) ||
-      state.k8s.getIn(['RESOURCES', 'models', obj?.kind]),
+      state.k8s.RESOURCES?.models?.[referenceFor(obj)] || state.k8s.RESOURCES?.models?.[obj?.kind],
   );
 
   const impersonate = useConsoleSelector((state) => getImpersonate(state));
@@ -413,7 +408,6 @@ export const EnvironmentPage: FC<EnvironmentPageProps> = (props) => {
     checkAccess(resourceAttributes, impersonate)
       .then((resp) => setAllowed(resp.status.allowed))
       .catch((e) => {
-        // eslint-disable-next-line no-console
         console.warn('Error while check edit access for environment variables', e);
       });
   }, [obj, model, impersonate, readOnly]);
@@ -446,10 +440,12 @@ export const EnvironmentPage: FC<EnvironmentPageProps> = (props) => {
           secrets: {},
         };
       }),
-    ]).then(([cmaps, secs]) => {
-      setConfigMaps(cmaps);
-      setSecrets(secs);
-    });
+    ])
+      .then(([cmaps, secs]) => {
+        setConfigMaps(cmaps);
+        setSecrets(secs);
+      })
+      .catch(() => {});
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   /**
@@ -505,11 +501,13 @@ export const EnvironmentPage: FC<EnvironmentPageProps> = (props) => {
 
       const patches = currentEnvVars.getPatches(envPath);
       const promise = k8sPatch(model, obj, patches);
-      handlePromise(promise).then((res) => {
-        setCurrentEnvVars(new CurrentEnvVars(res, currentEnvVars.isContainerArray, envPath));
-        setLocalErrorMessage(null);
-        setSuccess(t('Successfully updated the environment variables.'));
-      });
+      handlePromise(promise)
+        .then((res) => {
+          setCurrentEnvVars(new CurrentEnvVars(res, currentEnvVars.isContainerArray, envPath));
+          setLocalErrorMessage(null);
+          setSuccess(t('Successfully updated the environment variables.'));
+        })
+        .catch(() => {});
     },
     [currentEnvVars, envPath, model, obj, handlePromise, t],
   );
@@ -539,6 +537,7 @@ export const EnvironmentPage: FC<EnvironmentPageProps> = (props) => {
     />
   ) : null;
 
+  /* eslint-disable react/no-array-index-key */
   const owners = (obj?.metadata?.ownerReferences || []).map((o, i) => (
     <ResourceLink
       key={i}
@@ -549,6 +548,7 @@ export const EnvironmentPage: FC<EnvironmentPageProps> = (props) => {
       inline
     />
   ));
+  /* eslint-enable react/no-array-index-key */
   const containerVars = (
     <>
       {isReadOnly && !_.isEmpty(owners) && (
@@ -593,7 +593,7 @@ export const EnvironmentPage: FC<EnvironmentPageProps> = (props) => {
         updateParentData={updateEnvVars}
         nameString={t('Name')}
         readOnly={isReadOnly}
-        allowSorting={true}
+        allowSorting
         configMaps={configMaps}
         secrets={secrets}
         addConfigMapSecret={addConfigMapSecret}

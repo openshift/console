@@ -122,12 +122,24 @@ func WithSecurityHeaders(hdlr http.Handler) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// Prevent MIME sniffing (https://en.wikipedia.org/wiki/Content_sniffing)
 		w.Header().Set("X-Content-Type-Options", "nosniff")
+		// Isolate top-level documents from cross-origin opener references
+		w.Header().Set("Cross-Origin-Opener-Policy", "same-origin")
 		// Prevent clickjacking attacks involving iframes
 		w.Header().Set("X-Frame-Options", "DENY")
 		// Less information leakage about what domains we link to
 		w.Header().Set("X-DNS-Prefetch-Control", "off")
 		// Less information leakage about what domains we link to
 		w.Header().Set("Referrer-Policy", "strict-origin-when-cross-origin")
+		w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
+		w.Header().Set("Pragma", "no-cache")
+		hdlr.ServeHTTP(w, r)
+	}
+}
+
+func WithStaticCacheHeaders(hdlr http.Handler) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Cache-Control", "public, max-age=31536000, immutable")
+		w.Header().Del("Pragma")
 		hdlr.ServeHTTP(w, r)
 	}
 }

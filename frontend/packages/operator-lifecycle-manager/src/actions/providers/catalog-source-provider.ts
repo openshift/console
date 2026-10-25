@@ -48,10 +48,10 @@ export const useCatalogSourceActionsProvider = (catalogSource: CatalogSourceKind
   const [editAction, isReady] = useCommonActions(kindObj, catalogSource, [
     CommonActionCreator.Edit,
   ]);
-  const commonEditAction = useMemo(() => (isReady ? Object.values(editAction) : []), [
-    editAction,
-    isReady,
-  ]);
+  const commonEditAction = useMemo(
+    () => (isReady ? Object.values(editAction) : []),
+    [editAction, isReady],
+  );
   const isDefaultSource = useMemo(
     () =>
       DEFAULT_SOURCE_NAMESPACE === namespace &&

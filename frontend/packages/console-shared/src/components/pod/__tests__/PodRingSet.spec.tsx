@@ -21,8 +21,8 @@ jest.mock('../../../hooks/usePodsWatcher', () => ({
   usePodsWatcher: jest.fn(),
 }));
 
-const mockPodRing = (PodRing as unknown) as jest.Mock;
-const mockRhUiLongArrowRightIcon = (RhUiLongArrowRightIcon as unknown) as jest.Mock;
+const mockPodRing = PodRing as unknown as jest.Mock;
+const mockRhUiLongArrowRightIcon = RhUiLongArrowRightIcon as unknown as jest.Mock;
 
 describe('PodRingSet', () => {
   const usePodsWatcherMock = usePodsWatcherModule.usePodsWatcher as jest.Mock;

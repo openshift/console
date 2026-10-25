@@ -5,11 +5,9 @@ import { useAddActionExtensions } from '../useAddActionExtensions';
 
 const useResolvedExtensionsMock = useResolvedExtensions as jest.Mock;
 
-jest.mock('@console/dynamic-plugin-sdk', () => {
-  return {
-    useResolvedExtensions: jest.fn(),
-  };
-});
+jest.mock('@console/dynamic-plugin-sdk', () => ({
+  useResolvedExtensions: jest.fn(),
+}));
 
 describe('useAddActionExtensions', () => {
   const addAction1: ResolvedExtension<AddAction> = {

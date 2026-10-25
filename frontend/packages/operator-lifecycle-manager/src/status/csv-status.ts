@@ -26,12 +26,7 @@ export const subscriptionForCSV = (
   return (subscriptions ?? []).find((subscription) => {
     const subscriptionNamespace = subscription.metadata?.namespace || '';
     const installedCSV = subscription.status?.installedCSV || '';
-    return (
-      operatorNamespace &&
-      csvName &&
-      subscriptionNamespace === operatorNamespace &&
-      installedCSV === csvName
-    );
+    return subscriptionNamespace === operatorNamespace && installedCSV === csvName;
   });
 };
 

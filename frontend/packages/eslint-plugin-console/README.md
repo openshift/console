@@ -14,71 +14,25 @@ When extending multiple configurations, add to the list following the order outl
 | typescript       | Adds support for parsing TypeScript and TypeScript lint rule set (does not require typescriptParser) | ts       |
 | jest             | Jest lint rule set                                                                                   | extra    |
 | node             | Node lint rule set                                                                                   | extra    |
-| prettier         | Format with prettier                                                                                 | prettier |
 
 - Choose one `core`.
 - Choose one `ts`.
 - Choose one or more `extra`.
-- Choose to include `prettier` or not. This must go last.
 
 Alternatively, use one of the pre-composed configurations representing common code archetypes (choose one):
 
-| Config                    | Description                                    |
-| ------------------------- | ---------------------------------------------- |
-| react-typescript-prettier | Common web preset: React, TypeScript, Prettier |
-| node-typescript-prettier  | Common Node.js preset: TypeScript, Prettier    |
+| Config                    | Description                 |
+| ------------------------- | --------------------------- |
+| react-typescript | Common web preset: React, TypeScript |
+| node-typescript  | Common Node.js preset: TypeScript    |
 
 ## Examples
 
-By default, ESLint will look for configuration files in all parent folders up to the root directory.
-When using the configurations from this plugin, it's recommended too specify `"root": true` to stop this behavior.
+These configs are authored in the legacy (eslintrc) format, but are consumed
+from a flat config (`eslint.config.ts`) via `FlatCompat`.
 
-#### Standard TypeScript React Web Development
+The pre-composed presets are consumed using the `compat.extends()` helper, e.g.
+`compat.extends('plugin:console/react-typescript')`.
 
-```json
-{
-  "root": true,
-  "extends": [
-    "plugin:console/react",
-    "plugin:console/typescript",
-    "plugin:console/jest",
-    "plugin:console/prettier"
-  ]
-}
-```
-
-#### Standard Node Scripting
-
-```json
-{
-  "root": true,
-  "extends": [
-    "plugin:console/base",
-    "plugin:console/node",
-    "plugin:console/prettier"
-  ]
-}
-```
-
-#### Simple React with Jest
-
-```json
-{
-  "root": true,
-  "extends": [
-    "plugin:console/react",
-    "plugin:console/jest"
-  ]
-}
-```
-
-#### Simple JavaScript
-
-```json
-{
-  "root": true,
-  "extends": [
-    "plugin:console/base"
-  ]
-}
-```
+See this repo's [`eslint.config.ts`](../../eslint.config.ts) for a complete
+multi-scope example.

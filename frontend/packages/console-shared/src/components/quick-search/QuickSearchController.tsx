@@ -35,8 +35,8 @@ export const QuickSearchController: FC<QuickSearchControllerProps> = ({
 
   const isLimitedList = limitItemCount > 0;
   const searchCatalog = useCallback(
-    (searchTerm: string): QuickSearchData => {
-      return quickSearchProviders.reduce(
+    (searchTerm: string): QuickSearchData =>
+      quickSearchProviders.reduce(
         (acc, quickSearchProvider) => {
           const items = quickSearchProvider.loaded
             ? quickSearch(quickSearchProvider.items, searchTerm)
@@ -66,8 +66,7 @@ export const QuickSearchController: FC<QuickSearchControllerProps> = ({
           };
         },
         { filteredItems: [], viewAllLinks: [], catalogItemTypes: [] },
-      );
-    },
+      ),
     [isLimitedList, namespace, quickSearchProviders, t],
   );
 

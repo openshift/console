@@ -12,7 +12,8 @@ const hostnameRegex = /^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0
 const pathRegex = /^\/.*$/;
 const projectNameRegex = /^[a-z0-9]([-a-z0-9]*[a-z0-9])?$/;
 
-export const gitUrlRegex = /^((((ssh|git|https?:?):\/\/:?)(([^\s@]+@|[^@]:?)[-\w.]+(:\d\d+:?)?(\/[-\w.~/?[\]!$&'()*+,;=:@%]*:?)?:?))|([^\s@]+@[-\w.]+:[-\w.~/?[\]!$&'()*+,;=:@%]*?:?))$/;
+export const gitUrlRegex =
+  /^((((ssh|git|https?:?):\/\/:?)(([^\s@]+@|[^@]:?)[-\w.]+(:\d\d+:?)?(\/[-\w.~/?[\]!$&'()*+,;=:@%]*:?)?:?))|([^\s@]+@[-\w.]+:[-\w.~/?[\]!$&'()*+,;=:@%]*?:?))$/;
 
 const convertToSec = (value: number, unit: string): number => {
   switch (unit) {
@@ -173,9 +174,7 @@ export const serverlessValidationSchema = (t: TFunction) =>
             .test(
               'domainname-has-segements',
               t('devconsole~Domain name must consist of at least two segments separated by dots.'),
-              function (domainName: string) {
-                return domainName.split('.').length >= 2;
-              },
+              (domainName: string) => domainName.split('.').length >= 2,
             ),
         ),
       }),

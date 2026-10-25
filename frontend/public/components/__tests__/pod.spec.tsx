@@ -1,9 +1,8 @@
 import { screen } from '@testing-library/react';
-
+import * as ReactRouter from 'react-router';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { ContainerRow, PodDetailsList, PodsDetailsPage } from '../pod';
-import * as ReactRouter from 'react-router';
-import { testPodInstance } from '../../../__mocks__/k8sResourcesMocks';
+import { testPodInstance } from './data/k8sResourcesMocks';
 
 jest.mock('react-router', () => ({
   ...jest.requireActual('react-router'),

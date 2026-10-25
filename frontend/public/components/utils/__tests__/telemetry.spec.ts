@@ -7,8 +7,6 @@ describe('withoutSensitiveInformations', () => {
     state: null,
     hash: '',
     key: '',
-    // eslint-disable-next-line camelcase
-    unstable_mask: undefined,
   });
 
   it('should not touch urls does not match any special rule', () => {

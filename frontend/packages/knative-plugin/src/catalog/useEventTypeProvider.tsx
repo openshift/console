@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import type { CatalogItem, ExtensionHook } from '@console/dynamic-plugin-sdk';
 import { useAccessReview } from '@console/dynamic-plugin-sdk';
 import type { K8sResourceKind, K8sResourceCommon } from '@console/internal/module/k8s';
-import EventType from '../components/eventing/EventType';
+import { EventType } from '../components/eventing/EventType';
 import {
   EVENT_TYPE_NAME_PARAM,
   EVENT_TYPE_NAMESPACE_PARAM,
@@ -62,7 +62,7 @@ const normalizeEventType = (eventType: K8sResourceKind, t: TFunction): CatalogIt
     /* Add type and provider so that users can filter on event type, and provider name and namespace */
     name: `${eventType.spec.type} (${provider.metadata.namespace}/${provider.metadata.name})`,
     description: eventType.spec.description,
-    cta: { label: t('Subscribe'), href },
+    cta: { label: t('knative-plugin~Subscribe'), href },
     type: 'EventType',
     icon: { url: iconUrl },
     creationTimestamp: eventType.metadata.creationTimestamp,

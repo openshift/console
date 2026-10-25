@@ -3,72 +3,70 @@ import { GitProvider } from '@console/git-service/src/types/git';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import type { BuildFormikValues } from './types';
 
-export const getInitialBuildFormikValues = (namespace?: string): BuildFormikValues => {
-  return {
-    editorType: EditorType.Form,
-    git: {
-      url: '',
-      type: GitProvider.INVALID,
-      ref: '',
-      dir: '/',
-      showGitType: false,
-      secret: '',
-      isUrlValidating: false,
-    },
-    formData: {
-      name: '',
-      source: {
-        type: 'Git',
+export const getInitialBuildFormikValues = (namespace?: string): BuildFormikValues => ({
+  editorType: EditorType.Form,
+  git: {
+    url: '',
+    type: GitProvider.INVALID,
+    ref: '',
+    dir: '/',
+    showGitType: false,
+    secret: '',
+    isUrlValidating: false,
+  },
+  formData: {
+    name: '',
+    source: {
+      type: 'Git',
+      git: {
+        formType: 'edit',
+        name: '',
         git: {
-          formType: 'edit',
+          url: '',
+          type: GitProvider.INVALID,
+          ref: '',
+          dir: '/',
+          showGitType: false,
+          secret: '',
+          isUrlValidating: false,
+        },
+        image: {
+          selectedKey: '',
+          selected: '',
+          recommended: '',
+          tagObj: '',
+          couldNotRecommend: false,
+        },
+        application: {
+          selected: '',
+          selectedKey: '',
           name: '',
-          git: {
-            url: '',
-            type: GitProvider.INVALID,
-            ref: '',
-            dir: '/',
-            showGitType: false,
-            secret: '',
-            isUrlValidating: false,
-          },
-          image: {
-            selectedKey: '',
-            selected: '',
-            recommended: '',
-            tagObj: '',
-            couldNotRecommend: false,
-          },
-          application: {
-            selected: '',
-            selectedKey: '',
-            name: '',
-            isInContext: null,
-          },
-          build: {
-            strategy: BuildStrategyType.Source,
-          },
-          project: {
-            name: namespace,
-          },
+          isInContext: null,
+        },
+        build: {
+          strategy: BuildStrategyType.Source,
+        },
+        project: {
+          name: namespace,
         },
       },
-      build: {
-        strategy: '',
-        selectedBuildStrategy: undefined,
-        kind: '',
-      },
-      parameters: [],
-      volumes: [],
-      outputImage: {
-        image: '',
-        secret: '',
-      },
-
-      environmentVariables: [],
+    },
+    build: {
+      strategy: '',
+      selectedBuildStrategy: undefined,
+      kind: '',
+    },
+    parameters: [],
+    volumes: [],
+    outputImage: {
+      image: '',
+      secret: '',
     },
 
-    yamlData: '',
+    environmentVariables: [],
+  },
 
-    resourceVersion: undefined,
-  };
-};
+  yamlData: '',
+
+  resourceVersion: undefined,
+});

@@ -1,5 +1,4 @@
-import { Map as ImmutableMap } from 'immutable';
-import type { AdmissionWebhookWarning, CoreState } from '../../../redux-types';
+import type { CoreState } from '../../../redux-types';
 import { setUser, beginImpersonate, endImpersonate } from '../../actions/core';
 import { coreReducer } from '../core';
 import reducerTest from './utils/reducerTest';
@@ -7,9 +6,9 @@ import reducerTest from './utils/reducerTest';
 describe('Core Reducer', () => {
   const state: CoreState = {
     user: {},
-    admissionWebhookWarnings: ImmutableMap<string, AdmissionWebhookWarning>(),
+    admissionWebhookWarnings: {},
   };
-  const mockAdmissionWebhookWarnings = ImmutableMap({});
+  const mockAdmissionWebhookWarnings = {};
 
   it('set user', () => {
     const mockUser = {

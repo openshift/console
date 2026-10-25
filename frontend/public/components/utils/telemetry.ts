@@ -1,4 +1,4 @@
-import { Location } from 'react-router';
+import type { Location } from 'react-router';
 import { getBrandingDetails } from './branding';
 
 /**
@@ -8,7 +8,7 @@ import { getBrandingDetails } from './branding';
  * `/k8s/cluster/user.openshift.io~v1~User/a-user[...]`
  */
 export const withoutSensitiveInformations = (location: Location): Location => {
-  let pathname = location.pathname;
+  let { pathname } = location;
   if (pathname.startsWith('/k8s/cluster/user.openshift.io~v1~User/')) {
     pathname = pathname.replace(/User\/[^/]+/, 'User/removed-username');
   }
@@ -18,8 +18,6 @@ export const withoutSensitiveInformations = (location: Location): Location => {
     state: location.state,
     hash: location.hash,
     key: location.key,
-    // eslint-disable-next-line camelcase
-    unstable_mask: undefined,
   };
 };
 

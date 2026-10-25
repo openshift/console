@@ -1,7 +1,6 @@
 import { screen } from '@testing-library/react';
-
-import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { AreaChart } from '@console/internal/components/graphs/area';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 
 const MOCK_AREA_DATA = [
   [
@@ -43,9 +42,7 @@ describe('AreaChart', () => {
   });
 
   it('should show a loading state', () => {
-    renderWithProviders(
-      <AreaChart data={MOCK_LOADING_DATA} loading={true} title="Loading Chart" />,
-    );
+    renderWithProviders(<AreaChart data={MOCK_LOADING_DATA} loading title="Loading Chart" />);
 
     expect(screen.getByTestId('skeleton-chart')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Loading Chart' })).toBeVisible();

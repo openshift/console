@@ -1,42 +1,41 @@
-import type { FC, FormEvent, KeyboardEvent, Ref } from 'react';
+import type { FC, FormEvent, KeyboardEvent, ReactNode, Ref } from 'react';
 import { useState, useRef, useEffect, useMemo, Fragment } from 'react';
-import * as _ from 'lodash';
-import { connect } from 'react-redux';
-import { Map as ImmutableMap, Set as ImmutableSet } from 'immutable';
-import { css } from '@patternfly/react-styles';
 import { CloseButton } from '@patternfly/react-component-groups';
-import { useTranslation } from 'react-i18next';
-import { ResourceIcon } from './utils/resource-icon';
-import { K8sKind, K8sResourceKindReference, referenceForModel } from '../module/k8s';
-import { DiscoveryResources } from '@console/dynamic-plugin-sdk/src/api/common-types';
-import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
+import type { MenuToggleElement, SelectOptionProps } from '@patternfly/react-core';
 import {
   Button,
   Divider,
   MenuToggle,
-  MenuToggleElement,
   Select,
   SelectGroup,
   SelectList,
   SelectOption,
-  SelectOptionProps,
   TextInputGroup,
   TextInputGroupMain,
   TextInputGroupUtilities,
   Tooltip,
 } from '@patternfly/react-core';
 import { RhUiCloseIcon } from '@patternfly/react-icons';
+import { css } from '@patternfly/react-styles';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
+import type { DiscoveryResources } from '@console/dynamic-plugin-sdk/src/api/common-types';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
+import type { K8sKind, K8sResourceKindReference } from '../module/k8s';
+import { referenceForModel } from '../module/k8s';
+import { ResourceIcon } from './utils/resource-icon';
 
 const RECENT_SEARCH_ITEMS = 5;
 const MAX_VISIBLE_ITEMS = 250;
 
 // Blocklist known duplicate resources.
-const blocklistGroups = ImmutableSet([
+const blocklistGroups = new Set([
   // Prefer rbac.authorization.k8s.io/v1, which has the same resources.
   'authorization.openshift.io',
 ]);
 
-const blocklistResources = ImmutableSet([
+const blocklistResources = new Set([
   // Prefer core/v1
   'events.k8s.io/v1beta1.Event',
 ]);
@@ -46,7 +45,7 @@ const isVisible = (m: K8sKind) =>
   !blocklistResources.has(`${m.apiGroup}/${m.apiVersion}.${m.kind}`) &&
   (_.isEmpty(m.verbs) || _.includes(m.verbs, 'list'));
 
-export const ResourceListDropdown_: FC<ResourceListDropdownProps> = (props) => {
+export const InnerResourceListDropdown: FC<ResourceListDropdownProps> = (props) => {
   const { selected, onChange, recentList, allModels, groupToVersionMap, className } = props;
   const { t } = useTranslation('public');
   const [isOpen, setIsOpen] = useState(false);
@@ -61,18 +60,21 @@ export const ResourceListDropdown_: FC<ResourceListDropdownProps> = (props) => {
   const [activeItemId, setActiveItemId] = useState<string | null>(null);
   const placeholderTextDefault = t('Resources');
   const [placeholder, setPlaceholder] = useState(placeholderTextDefault);
-  const textInputRef = useRef<HTMLInputElement>();
+  const textInputRef = useRef<HTMLInputElement>(undefined);
 
   const resources = useMemo(() => {
+    if (!allModels) {
+      return [];
+    }
     // Pre-compute which group+kind combinations have a visible preferred version (O(n))
     const preferredGroupKinds = new Set<string>();
-    allModels.forEach((m) => {
+    Object.values(allModels).forEach((m) => {
       if (groupToVersionMap?.[m.apiGroup]?.preferredVersion === m.apiVersion && isVisible(m)) {
         preferredGroupKinds.add(`${m.kind}~${m.apiGroup}`);
       }
     });
 
-    return allModels
+    return Object.values(allModels)
       .filter((m) => {
         if (!isVisible(m)) {
           return false;
@@ -90,13 +92,12 @@ export const ResourceListDropdown_: FC<ResourceListDropdownProps> = (props) => {
 
         return true;
       })
-      .toOrderedMap()
-      .sortBy(({ kind, apiGroup }) => `${kind} ${apiGroup}`);
+      .sort((a, b) => `${a.kind} ${a.apiGroup}`.localeCompare(`${b.kind} ${b.apiGroup}`));
   }, [allModels, groupToVersionMap]);
 
   const initialSelectOptions = useMemo<ExtendedSelectOptionProps[]>(
     () =>
-      resources.toArray().map((resource) => {
+      resources.map((resource) => {
         const reference = referenceForModel(resource);
         return {
           value: reference,
@@ -110,21 +111,17 @@ export const ResourceListDropdown_: FC<ResourceListDropdownProps> = (props) => {
     [resources],
   );
 
-  const filterGroupVersionKind = (resourceList: string[]): string[] => {
-    return resourceList.filter((resource) => {
+  const filterGroupVersionKind = (resourceList: string[]): string[] =>
+    resourceList.filter((resource) => {
       const parts = resource.split('~');
       return parts.length === 3 && parts.every((part) => part.trim() !== '');
     });
-  };
-  const recentSelectedList = (data: string[] | string): string[] => {
-    return (
-      (data &&
-        data !== '[]' &&
-        data !== 'undefined' &&
-        JSON.parse(_.isString(data) ? data : JSON.stringify(data))) ??
-      []
-    );
-  };
+  const recentSelectedList = (data: string[] | string): string[] =>
+    (data &&
+      data !== '[]' &&
+      data !== 'undefined' &&
+      JSON.parse(_.isString(data) ? data : JSON.stringify(data))) ??
+    [];
 
   useEffect(() => {
     setSelectedOptions(selected);
@@ -160,8 +157,8 @@ export const ResourceListDropdown_: FC<ResourceListDropdownProps> = (props) => {
   }, [resources]);
 
   // Track duplicate names so we know when to show the group.
-  const kinds = useMemo(() => resources.groupBy((m) => m.kind), [resources]);
-  const isDup = (kind) => kinds.get(kind).size > 1;
+  const kinds = useMemo(() => _.groupBy(resources, (m) => m.kind), [resources]);
+  const isDup = (kind) => kinds[kind]?.length > 1;
 
   const visibleSelectOptions = selectOptions.slice(0, MAX_VISIBLE_ITEMS);
   const items = visibleSelectOptions.map((option: SelectOptionProps, index) => {
@@ -188,7 +185,9 @@ export const ResourceListDropdown_: FC<ResourceListDropdownProps> = (props) => {
             <span>
               {model.labelKey ? t(model.labelKey) : model.kind}
               {model.badge && model.badge === 'Tech Preview' && (
-                <span className="co-resource-item__tech-dev-preview">{t('Tech Preview')}</span>
+                <span className="co-resource-item__tech-dev-preview">
+                  {t('Technology Preview')}
+                </span>
               )}
             </span>
             {isDup(model.kind) && (
@@ -202,7 +201,7 @@ export const ResourceListDropdown_: FC<ResourceListDropdownProps> = (props) => {
     );
   });
 
-  const recentSearches: JSX.Element[] =
+  const recentSearches: ReactNode[] =
     !_.isEmpty(recentSelectedList(recentSelected)) &&
     recentSelectedList(recentSelected)
       .slice(0, RECENT_SEARCH_ITEMS)
@@ -225,7 +224,7 @@ export const ResourceListDropdown_: FC<ResourceListDropdownProps> = (props) => {
                     {model.labelKey ? t(model.labelKey) : model.kind}
                     {model.badge && model.badge === 'Tech Preview' && (
                       <span className="co-resource-item__tech-dev-preview">
-                        {t('Tech Preview')}
+                        {t('Technology Preview')}
                       </span>
                     )}
                   </span>
@@ -249,13 +248,14 @@ export const ResourceListDropdown_: FC<ResourceListDropdownProps> = (props) => {
   const NO_RESULTS = 'no results';
 
   const renderedOptions = () => {
-    const options: JSX.Element[] = [];
+    const options: ReactNode[] = [];
     if (!_.isEmpty(recentSelectedList(recentSelected)) && !!recentList) {
       options.push(
         <Tooltip position="right" content={t('Clear history')} key="clear-history">
           <CloseButton
             className="co-select-group-close-button"
             dataTestID="close-icon"
+            data-test="clear-history"
             onClick={onClear}
           />
         </Tooltip>,
@@ -280,7 +280,7 @@ export const ResourceListDropdown_: FC<ResourceListDropdownProps> = (props) => {
               <SelectOption
                 value={NO_RESULTS}
                 key="select-multi-typeahead-no-results"
-                isAriaDisabled={true}
+                isAriaDisabled
               >
                 {t('No results found')}
               </SelectOption>,
@@ -289,7 +289,7 @@ export const ResourceListDropdown_: FC<ResourceListDropdownProps> = (props) => {
           <SelectOption
             value="type-to-filter"
             key="select-multi-typeahead-type-to-filter"
-            isAriaDisabled={true}
+            isAriaDisabled
           >
             {t('Showing {{visible}} of {{total}} resources. Type to filter.', {
               visible: MAX_VISIBLE_ITEMS,
@@ -512,13 +512,13 @@ interface ExtendedSelectOptionProps extends SelectOptionProps {
 }
 
 const resourceListDropdownStateToProps = ({ k8s }) => ({
-  allModels: k8s.getIn(['RESOURCES', 'models']),
-  groupToVersionMap: k8s.getIn(['RESOURCES', 'groupToVersionMap']),
+  allModels: k8s.RESOURCES?.models,
+  groupToVersionMap: k8s.RESOURCES?.groupToVersionMap,
 });
 
 export const ResourceListDropdown = connect<ResourceListDropdownStateToProps>(
   resourceListDropdownStateToProps,
-)(ResourceListDropdown_);
+)(InnerResourceListDropdown);
 
 export type ResourceListDropdownProps = ResourceListDropdownStateToProps & {
   selected: K8sResourceKindReference[];
@@ -529,6 +529,6 @@ export type ResourceListDropdownProps = ResourceListDropdownStateToProps & {
 };
 
 type ResourceListDropdownStateToProps = {
-  allModels: ImmutableMap<K8sResourceKindReference, K8sKind>;
+  allModels: Record<K8sResourceKindReference, K8sKind>;
   groupToVersionMap: DiscoveryResources['groupVersionMap'];
 };

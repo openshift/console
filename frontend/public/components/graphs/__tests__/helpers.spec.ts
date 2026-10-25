@@ -1,5 +1,4 @@
 import { URL } from 'url';
-
 import { getPrometheusURL, PrometheusEndpoint } from '@console/internal/components/graphs/helpers';
 
 describe('getPrometheusURL()', () => {

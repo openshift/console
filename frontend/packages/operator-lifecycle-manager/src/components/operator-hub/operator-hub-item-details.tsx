@@ -179,14 +179,8 @@ const InstallingHint: FC<InstallingHintProps> = ({ subscription }) => {
 
 const OperatorHubItemDetailsHint: FC<OperatorHubItemDetailsHintProps> = (props) => {
   const { t } = useTranslation('olm');
-  const {
-    installed,
-    isInstalling,
-    catalogSource,
-    subscription,
-    latestVersion,
-    installedChannel,
-  } = props;
+  const { installed, isInstalling, catalogSource, subscription, latestVersion, installedChannel } =
+    props;
   if (isInstalling) {
     return (
       <StackItem>
@@ -244,12 +238,8 @@ export const OperatorDescription: FC<OperatorDescriptionProps> = ({
   packageManifest,
 }) => {
   const { t } = useTranslation('olm');
-  const {
-    deprecatedPackage,
-    deprecatedChannel,
-    deprecatedVersion,
-    setDeprecatedPackage,
-  } = useDeprecatedOperatorWarnings();
+  const { deprecatedPackage, deprecatedChannel, deprecatedVersion, setDeprecatedPackage } =
+    useDeprecatedOperatorWarnings();
   const deprecatedWarning =
     deprecatedPackage?.deprecation ||
     deprecatedChannel?.deprecation ||
@@ -267,7 +257,6 @@ export const OperatorDescription: FC<OperatorDescriptionProps> = ({
       clusterIsAzureWIF,
       clusterIsGCPWIF,
       onError: (error) => {
-        // eslint-disable-next-line no-console
         console.warn(
           `Error parsing infrastructure features from PackageManifest "${packageManifest?.metadata?.name}":`,
           error,
@@ -276,12 +265,13 @@ export const OperatorDescription: FC<OperatorDescriptionProps> = ({
     });
   }, [currentCSVDescription, clusterIsAWSSTS, clusterIsAzureWIF, clusterIsGCPWIF, packageManifest]);
 
-  const [isTokenAuth, isTokenAuthGCP] = useMemo(() => {
-    return [
+  const [isTokenAuth, isTokenAuthGCP] = useMemo(
+    () => [
       (infraFeatures ?? []).includes(InfrastructureFeature.TokenAuth),
       (infraFeatures ?? []).includes(InfrastructureFeature.TokenAuthGCP),
-    ];
-  }, [infraFeatures]);
+    ],
+    [infraFeatures],
+  );
 
   useEffect(() => {
     setDeprecatedPackage({ deprecation: packageManifestStatus?.deprecation });
@@ -400,7 +390,6 @@ export const OperatorHubItemDetails: FC<OperatorHubItemDetailsProps> = ({
       clusterIsAzureWIF,
       clusterIsGCPWIF,
       onError: (error) => {
-        // eslint-disable-next-line no-console
         console.warn(
           `Error parsing infrastructure features from PackageManifest "${obj?.metadata?.name}":`,
           error,
@@ -419,7 +408,6 @@ export const OperatorHubItemDetails: FC<OperatorHubItemDetailsProps> = ({
         url.searchParams.set('utm_source', 'openshift_console');
         return url.toString();
       } catch (error) {
-        // eslint-disable-next-line no-console
         console.error('Error while setting utm_source to support workflow URL', error.message);
       }
     }

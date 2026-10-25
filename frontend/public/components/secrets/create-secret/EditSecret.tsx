@@ -1,12 +1,12 @@
 import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
-import { StatusBox } from '@console/shared/src/components/status/StatusBox';
-import { K8sResourceKind } from '@console/internal/module/k8s';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import { StatusBox } from '@console/shared/src/components/status/StatusBox';
+import { SecretFormWrapper } from './SecretFormWrapper';
 import { SecretFormType } from './types';
 import { toSecretFormType } from './utils';
-import { SecretFormWrapper } from './SecretFormWrapper';
 
 export const EditSecret: FC<EditSecretProps> = ({ kind }) => {
   const { name, ns } = useParams();

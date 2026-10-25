@@ -25,13 +25,11 @@ const TopologyActions: FC<TopologyActionsProps> = ({ element }) => {
   }, [element, resource]);
   return (
     <ActionServiceProvider key={element.getId()} context={context}>
-      {({ actions, options, loaded }) => {
-        return (
-          loaded && (
-            <ActionMenu actions={actions} options={options} variant={ActionMenuVariant.DROPDOWN} />
-          )
-        );
-      }}
+      {({ actions, options, loaded }) =>
+        loaded && (
+          <ActionMenu actions={actions} options={options} variant={ActionMenuVariant.DROPDOWN} />
+        )
+      }
     </ActionServiceProvider>
   );
 };

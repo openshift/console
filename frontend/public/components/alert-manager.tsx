@@ -1,6 +1,5 @@
 import type { FC } from 'react';
 import { useMemo, Suspense, useCallback } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   Button,
   DescriptionList,
@@ -11,25 +10,26 @@ import {
   GridItem,
 } from '@patternfly/react-core';
 import { RhUiEditIcon } from '@patternfly/react-icons';
-import { DASH } from '@console/shared/src/constants/ui';
+import { useTranslation } from 'react-i18next';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
+import type {
+  ConsoleDataViewColumn,
+  GetDataViewRows,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { referenceForModel, K8sResourceKind, TableColumn } from '../module/k8s';
+import { DASH } from '@console/shared/src/constants/ui';
+import { AlertmanagerModel } from '../models';
+import type { K8sResourceKind } from '../module/k8s';
+import { referenceForModel } from '../module/k8s';
 import { DetailsPage } from './factory/details';
 import { ListPage } from './factory/list-page';
-import {
-  cellIsStickyProps,
-  getNameCellProps,
-  ConsoleDataView,
-} from '@console/app/src/components/data-view/ConsoleDataView';
-import { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import { useConfigureCountModal } from './modals/configure-count-modal';
+import { pluralize } from './utils/details-page';
 import { SectionHeading } from './utils/headings';
-import { LabelList } from './utils/label-list';
 import { navFactory } from './utils/horizontal-nav';
+import { LabelList } from './utils/label-list';
 import { ResourceLink } from './utils/resource-link';
 import { Selector } from './utils/selector';
-import { pluralize } from './utils/details-page';
-import { useConfigureCountModal } from './modals/configure-count-modal';
-import { AlertmanagerModel } from '../models';
 import { LoadingBox } from './utils/status-box';
 
 const Details: FC<DetailsProps> = (props) => {
@@ -124,8 +124,8 @@ const tableColumnInfo = [
   { id: 'nodeSelector' },
 ];
 
-const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) => {
-  return data.map(({ obj: alertManager }) => {
+const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) =>
+  data.map(({ obj: alertManager }) => {
     const { metadata, spec } = alertManager;
 
     const rowCells = {
@@ -138,7 +138,6 @@ const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) => {
             title={metadata.uid}
           />
         ),
-        props: getNameCellProps(metadata.name),
       },
       [tableColumnInfo[1].id]: {
         cell: (
@@ -160,40 +159,30 @@ const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) => {
       const cell = rowCells[id]?.cell || DASH;
       return {
         id,
-        props: rowCells[id]?.props,
         cell,
       };
     });
   });
-};
 
-const useAlertManagerColumns = (): TableColumn<K8sResourceKind>[] => {
+const useAlertManagerColumns = (): ConsoleDataViewColumn<K8sResourceKind>[] => {
   const { t } = useTranslation('public');
-  const columns = useMemo(() => {
-    return [
+  const columns = useMemo<ConsoleDataViewColumn<K8sResourceKind>[]>(
+    () => [
       {
-        title: t('Name'),
+        type: 'name' as const,
         id: tableColumnInfo[0].id,
-        sort: 'metadata.name',
-        props: {
-          ...cellIsStickyProps,
-          modifier: 'nowrap',
-        },
+        props: { hasRightBorder: false },
       },
       {
-        title: t('Namespace'),
+        type: 'namespace' as const,
         id: tableColumnInfo[1].id,
-        sort: 'metadata.namespace',
-        props: {
-          modifier: 'nowrap',
-        },
       },
       {
         title: t('Labels'),
         id: tableColumnInfo[2].id,
         sort: 'metadata.labels',
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
           width: 20,
         },
       },
@@ -202,7 +191,7 @@ const useAlertManagerColumns = (): TableColumn<K8sResourceKind>[] => {
         id: tableColumnInfo[3].id,
         sort: 'spec.version',
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
           width: 20,
         },
       },
@@ -211,11 +200,12 @@ const useAlertManagerColumns = (): TableColumn<K8sResourceKind>[] => {
         id: tableColumnInfo[4].id,
         sort: 'spec.nodeSelector',
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
-    ];
-  }, [t]);
+    ],
+    [t],
+  );
   return columns;
 };
 
@@ -226,12 +216,13 @@ const AlertManagersList: FC<AlertManagersListProps> = ({ data, loaded, ...props 
     <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView
         {...props}
+        isResizable={false}
+        id={AlertmanagerModel}
         label={AlertmanagerModel.labelPlural}
         data={data}
         loaded={loaded}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement={true}
       />
     </Suspense>
   );
@@ -243,7 +234,7 @@ export const AlertManagersPage = (props) => (
     ListComponent={AlertManagersList}
     canCreate={false}
     kind={kind}
-    omitFilterToolbar={true}
+    omitFilterToolbar
   />
 );
 

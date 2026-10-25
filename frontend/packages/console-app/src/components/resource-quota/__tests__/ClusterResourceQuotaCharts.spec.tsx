@@ -34,7 +34,7 @@ describe('ClusterResourceQuotaCharts', () => {
           used: usedResources,
         },
       },
-    } as ClusterResourceQuotaKind);
+    }) as ClusterResourceQuotaKind;
 
   it('should display "No quota" when no hard quotas are set', () => {
     const quota = createMockQuota({}, {});

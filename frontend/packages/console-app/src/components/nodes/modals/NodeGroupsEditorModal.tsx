@@ -65,7 +65,7 @@ const NodeGroupsEditorModal: OverlayComponent<NodeGroupsEditorModalProps> = ({
 }) => {
   const { t } = useTranslation('console-app');
   const [groupSelections, setGroupSelections] = useState<GroupSelection[]>([]);
-  const currentGroupSelections = useRef<GroupSelection[]>();
+  const currentGroupSelections = useRef<GroupSelection[]>(undefined);
   const [newGroupName, setNewGroupName] = useState<string>('');
   const [backgroundChange, setBackgroundChange] = useState<boolean>(false);
   const [inProgress, setInProgress] = useState<boolean>(false);
@@ -79,10 +79,10 @@ const NodeGroupsEditorModal: OverlayComponent<NodeGroupsEditorModalProps> = ({
     isList: true,
   });
 
-  const nodes = useMemo(() => (retrievedNodes?.length ? retrievedNodes : [node]), [
-    retrievedNodes,
-    node,
-  ]);
+  const nodes = useMemo(
+    () => (retrievedNodes?.length ? retrievedNodes : [node]),
+    [retrievedNodes, node],
+  );
 
   useEffect(() => {
     if (!nodesLoaded || nodesLoadError) {

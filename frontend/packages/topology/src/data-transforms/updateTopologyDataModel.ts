@@ -23,9 +23,8 @@ export const updateTopologyDataModel = (
     return '';
   };
 
-  const isLoaded = (key) => {
-    return resources[key].loaded || (resources[key].loadError && watchedResources[key].optional);
-  };
+  const isLoaded = (key) =>
+    resources[key].loaded || (resources[key].loadError && watchedResources[key].optional);
 
   const loadErrorKey = Object.keys(resources).find((key) => getLoadError(key));
   if (loadErrorKey) {

@@ -1,7 +1,6 @@
 import { screen } from '@testing-library/react';
-
-import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { CommandLineTools } from '@console/internal/components/command-line-tools';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 
 const obj = {
   data: [

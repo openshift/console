@@ -1,17 +1,15 @@
 import type { FC } from 'react';
 import { useContext } from 'react';
-import { useTranslation } from 'react-i18next';
 import { RhUiCheckClipboardIcon } from '@patternfly/react-icons';
-import { useCanClusterUpgrade } from '@console/shared/src/hooks/useCanClusterUpgrade';
-import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
-
+import { useTranslation } from 'react-i18next';
+import { TourActions, TourContext } from '@console/app/src/components/tour';
 import type { GettingStartedLink } from '@console/shared/src/components/getting-started/GettingStartedCard';
 import { GettingStartedCard } from '@console/shared/src/components/getting-started/GettingStartedCard';
-
-import { useIdentityProviderLink } from './cluster-setup-identity-provider-link';
-import { useAlertReceiverLink } from './cluster-setup-alert-receiver-link';
+import { useCanClusterUpgrade } from '@console/shared/src/hooks/useCanClusterUpgrade';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { documentationURLs, getDocumentationURL, isManaged } from '../../../../utils/documentation';
-import { TourActions, TourContext } from '@console/app/src/components/tour';
+import { useAlertReceiverLink } from './cluster-setup-alert-receiver-link';
+import { useIdentityProviderLink } from './cluster-setup-identity-provider-link';
 
 export const ClusterSetupGettingStartedCard: FC = () => {
   const { t } = useTranslation('public');
@@ -59,7 +57,7 @@ export const ClusterSetupGettingStartedCard: FC = () => {
         <RhUiCheckClipboardIcon color="var(--co-global--palette--blue-400)" aria-hidden="true" />
       }
       title={t('Set up your cluster')}
-      titleColor={'var(--co-global--palette--blue-400)'}
+      titleColor="var(--co-global--palette--blue-400)"
       description={t('Finish setting up your cluster with recommended configurations.')}
       links={links}
       moreLink={!isManaged() && moreLink}

@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { Content, ContentVariants, ModalVariant } from '@patternfly/react-core';
+import { Content, ContentVariants, ModalVariant, PopoverPosition } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import type { TourDataType } from '@console/app/src/components/tour';
 import AdminGuidedTourBanner from '../tour/AdminGuidedTourBanner';
@@ -33,7 +33,7 @@ const getGuidedTour = (): TourDataType => ({
   },
   steps: [
     {
-      placement: 'right',
+      placement: PopoverPosition.right,
       // t('console-app~Home')
       heading: '%console-app~Home%',
       // t('console-app~Here is where you can view all of your OpenShift environments, including your projects and inventory. You can also access APIs and software catalogs.')
@@ -42,7 +42,7 @@ const getGuidedTour = (): TourDataType => ({
       selector: getSelector('tour-home-nav'),
     },
     {
-      placement: 'right',
+      placement: PopoverPosition.right,
       // t('console-app~Software Catalog')
       heading: '%console-app~Software Catalog%',
       // t('console-app~Add shared applications, services, event sources, or source-to-image builders to your project. Cluster administrators can customize the content made available in the catalog.')
@@ -52,7 +52,7 @@ const getGuidedTour = (): TourDataType => ({
       expandableSelector: getSelector('tour-ecosystem-nav'),
     },
     {
-      placement: 'bottom',
+      placement: PopoverPosition.bottom,
       // t('console-app~Quick create')
       heading: '%console-app~Quick create%',
       // t('console-app~Create resources in just a few steps via Git, YAML,  or container images.')
@@ -61,14 +61,14 @@ const getGuidedTour = (): TourDataType => ({
       selector: getSelector('tour-quick-create-button'),
     },
     {
-      placement: 'bottom',
+      placement: PopoverPosition.bottom,
       // t('console-app~Help')
       heading: '%console-app~Help%',
       content: helpTourText,
       selector: getSelector('tour-help-button'),
     },
     {
-      placement: 'bottom',
+      placement: PopoverPosition.bottom,
       // t('console-app~User preferences')
       heading: '%console-app~User preferences%',
       content: userPreferencesTourText,

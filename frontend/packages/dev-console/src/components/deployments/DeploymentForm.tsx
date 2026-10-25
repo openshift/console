@@ -63,9 +63,8 @@ const EditDeploymentForm: FC<
     </>
   );
 
-  const sanitizeToForm = (yamlDeployment: K8sResourceKind) => {
-    return convertDeploymentToEditForm(yamlDeployment);
-  };
+  const sanitizeToForm = (yamlDeployment: K8sResourceKind) =>
+    convertDeploymentToEditForm(yamlDeployment);
 
   const sanitizeToYaml = () =>
     safeJSToYAML(convertEditFormToDeployment(formData, resource), 'yamlData', {
@@ -117,6 +116,7 @@ const EditDeploymentForm: FC<
         }
         handleCancel={handleCancel}
         handleDownload={editorType === EditorType.YAML && (() => downloadYaml(yamlData))}
+        namespace={resource.metadata.namespace}
         sticky
       />
     </FlexForm>

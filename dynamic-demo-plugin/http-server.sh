@@ -2,7 +2,7 @@
 
 set -u
 
-PUBLIC_PATH="$1"
+PUBLIC_PATH="$1/${BUNDLER:-webpack}"
 shift
 SERVER_OPTS="$@"
 

@@ -1,4 +1,4 @@
-import { Alert, PrometheusLabels } from '@console/dynamic-plugin-sdk';
+import type { Alert, PrometheusLabels } from '@console/dynamic-plugin-sdk';
 
 export type MonitoringResource = {
   abbr: string;

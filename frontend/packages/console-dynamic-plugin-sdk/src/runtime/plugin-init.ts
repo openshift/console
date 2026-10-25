@@ -7,6 +7,7 @@ import {
   monkeyPatchSharedScope,
 } from '@console/dynamic-plugin-sdk/src/runtime/plugin-shared-modules';
 import { dynamicPluginNames } from '@console/plugin-sdk/src/utils/allowed-plugins';
+import { IS_PRODUCTION } from '@console/shared/src/constants/common';
 import { addTestError } from '@console/shared/src/utils/test-errors';
 import { REMOTE_ENTRY_CALLBACK } from '../constants';
 import type { ErrorWithCause } from '../utils/error/custom-error';
@@ -80,7 +81,6 @@ const registerLegacyPluginEntryCallback = () => {
       ? pluginName.slice(0, pluginName.lastIndexOf('@'))
       : pluginName;
 
-    // eslint-disable-next-line no-console
     console.warn(
       `[WARNING] ${pluginName} was built for an older version of Console and may not work correctly in this version.`,
     );
@@ -88,42 +88,43 @@ const registerLegacyPluginEntryCallback = () => {
     window[REMOTE_ENTRY_CALLBACK](patchedPluginName, entryModule);
   };
 
-  // consoleLogger is suppressed in unit tests and in production
   consoleLogger.info(
-    `Legacy plugin entry callback "${previousConsoleCallbackName}" has been registered.`,
+    `Legacy plugin entry callback ${previousConsoleCallbackName} has been registered`,
   );
 };
 
 /**
- * Loads and enables all dynamic plugins listed in `dynamicPluginNames`.
+ * Loads and enables all Console dynamic plugins.
  *
- * Precondition: Application {@link PluginStore} must be initialized.
+ * Precondition: {@link PluginStore} must be initialized.
  */
 export const initConsolePlugins = _.once((pluginStore: PluginStore) => {
-  // Initialize dynamic plugin infrastructure
+  // Polyfill the legacy plugin entry callback function
   registerLegacyPluginEntryCallback();
 
-  // Initialize webpack share scope object and start loading plugins
+  // Initialize webpack share scope object and start loading dynamic plugins
   initSharedScope()
     .then(() => {
-      monkeyPatchSharedScope();
+      const scope = getSharedScope();
+
+      // Patch webpack share scope object for backwards compatibility
+      monkeyPatchSharedScope(scope);
+
+      if (!IS_PRODUCTION) {
+        // Expose webpack share scope object for debugging
+        window.pluginSharedScope = scope;
+      }
     })
     .then(() => {
+      // Load all dynamic (remote) plugins
       dynamicPluginNames.forEach((pluginName) => {
         loadAndEnablePlugin(pluginName, pluginStore, (errorMessage, errorCause) => {
-          // eslint-disable-next-line no-console
           console.error(..._.compact([errorMessage, errorCause]));
           addTestError(`${errorMessage}: ${String(errorCause)}`);
         });
       });
-
-      if (process.env.NODE_ENV !== 'production') {
-        // Expose webpack share scope object for debugging
-        window.webpackSharedScope = getSharedScope();
-      }
     })
     .catch((err) => {
-      // eslint-disable-next-line no-console
-      console.error('Failed to initialize webpack share scope for dynamic plugins', err);
+      console.error('Error while loading Console plugins', err);
     });
 });

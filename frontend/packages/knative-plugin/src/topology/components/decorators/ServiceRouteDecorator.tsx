@@ -13,7 +13,7 @@ type ServiceRouteDecoratorProps = {
 };
 
 const ServiceRouteDecorator: FC<ServiceRouteDecoratorProps> = ({ url, radius, x, y }) => {
-  const ref = useRef();
+  const ref = useRef(undefined);
   const { t } = useTranslation('knative-plugin');
   return (
     <Tooltip triggerRef={ref} key="route" content={t('Open URL')} position={TooltipPosition.right}>

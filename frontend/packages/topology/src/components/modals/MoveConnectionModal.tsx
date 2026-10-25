@@ -165,15 +165,14 @@ const MoveConnectionModal: FC<MoveConnectionModalProps> = (props) => {
   );
 
   const handleSubmit = useCallback(
-    (values, actions) => {
-      return handlePromise(onSubmit(values.target))
+    (values, actions) =>
+      handlePromise(onSubmit(values.target))
         .then(() => {
           close();
         })
         .catch((err) => {
           actions.setStatus({ submitError: err });
-        });
-    },
+        }),
     [handlePromise, onSubmit, close],
   );
 
@@ -209,8 +208,8 @@ const MoveConnectionModalProvider: OverlayComponent<MoveConnectionModalProps> = 
 
 export const useMoveConnectionModalLauncher = (props: MoveConnectionModalProps) => {
   const launcher = useOverlay();
-  return useCallback(() => launcher<MoveConnectionModalProps>(MoveConnectionModalProvider, props), [
-    launcher,
-    props,
-  ]);
+  return useCallback(
+    () => launcher<MoveConnectionModalProps>(MoveConnectionModalProvider, props),
+    [launcher, props],
+  );
 };

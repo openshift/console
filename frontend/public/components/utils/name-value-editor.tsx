@@ -1,8 +1,5 @@
 import { useCallback } from 'react';
 import type { FC, Key } from 'react';
-import * as _ from 'lodash';
-import type { DragDropSortProps, DraggableObject } from '@patternfly/react-drag-drop';
-import { DragDropSort } from '@patternfly/react-drag-drop';
 import {
   ActionList,
   ActionListGroup,
@@ -14,9 +11,11 @@ import {
   Tooltip,
 } from '@patternfly/react-core';
 import type { TextInputProps } from '@patternfly/react-core';
+import type { DragDropSortProps, DraggableObject } from '@patternfly/react-drag-drop';
+import { DragDropSort } from '@patternfly/react-drag-drop';
 import { RhUiMinusCircleIcon, RhUiAddCircleFillIcon } from '@patternfly/react-icons';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-
 import { NameValueEditorPair, EnvFromPair, EnvType } from './types';
 import { ValueFromPair } from './value-from-pair';
 import type { ValueFromPairProps, PairValue, RefChangeValue } from './value-from-pair';
@@ -291,6 +290,7 @@ export const NameValueEditor: FC<NameValueEditorProps> = ({
       const pairById = new Map(
         nameValuePairs.map((p) => [`pair-${p[NameValueEditorPair.Index]}`, p]),
       );
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const newPairs = newItems.map((item) => pairById.get(item.id as string)!);
       updateParentData({ nameValuePairs: newPairs }, nameValueId);
     },
@@ -333,16 +333,14 @@ export const NameValueEditor: FC<NameValueEditorProps> = ({
           </GridItem>
           <GridItem span={12}>
             <DragDropSort
-              items={nameValuePairs.map(
-                (pair, i): DraggableObject => ({
-                  id: `pair-${(pair[NameValueEditorPair.Index] as number) ?? i}`,
-                  props: {
-                    dragButtonAriaLabel: t('Drag to reorder'),
-                    className: 'pf-v6-u-display-flex pf-v6-u-align-items-center',
-                  },
-                  content: makePairElement(pair, i),
-                }),
-              )}
+              items={nameValuePairs.map((pair, i): DraggableObject => ({
+                id: `pair-${(pair[NameValueEditorPair.Index] as number) ?? i}`,
+                props: {
+                  dragButtonAriaLabel: t('Drag to reorder'),
+                  className: 'pf-v6-u-display-flex pf-v6-u-align-items-center',
+                },
+                content: makePairElement(pair, i),
+              }))}
               onDrop={handleDrop}
             >
               <div className="pairs-list__drag-container" />
@@ -383,7 +381,7 @@ export const NameValueEditor: FC<NameValueEditorProps> = ({
                   type="button"
                   variant="link"
                 >
-                  {addString ? addString : t('Add more')}
+                  {addString || t('Add more')}
                 </Button>
               </ActionListItem>
               {addConfigMapSecret && (
@@ -463,6 +461,7 @@ export const EnvFromEditor: FC<EnvFromEditorProps> = ({
   const handleDrop = useCallback<DragDropSortProps['onDrop']>(
     (_event, newItems) => {
       const pairById = new Map(nameValuePairs.map((p) => [`pair-${p[EnvFromPair.Index]}`, p]));
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const newPairs = newItems.map((item) => pairById.get(item.id as string)!);
       updateParentData({ nameValuePairs: newPairs }, nameValueId, EnvType.ENV_FROM);
     },
@@ -505,13 +504,11 @@ export const EnvFromEditor: FC<EnvFromEditorProps> = ({
           </GridItem>
           <GridItem span={12}>
             <DragDropSort
-              items={nameValuePairs.map(
-                (pair, i): DraggableObject => ({
-                  id: `pair-${(pair[EnvFromPair.Index] as number) ?? i}`,
-                  props: { className: 'pf-v6-u-display-flex pf-v6-u-align-items-center' },
-                  content: makeEnvFromElement(pair, i),
-                }),
-              )}
+              items={nameValuePairs.map((pair, i): DraggableObject => ({
+                id: `pair-${(pair[EnvFromPair.Index] as number) ?? i}`,
+                props: { className: 'pf-v6-u-display-flex pf-v6-u-align-items-center' },
+                content: makeEnvFromElement(pair, i),
+              }))}
               onDrop={handleDrop}
             >
               <div className="pairs-list__drag-container" />

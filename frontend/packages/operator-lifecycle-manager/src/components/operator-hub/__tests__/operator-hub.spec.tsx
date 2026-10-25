@@ -14,7 +14,7 @@ describe('OperatorHubItemDetails', () => {
 
   it('should display long description when provided', () => {
     const { rerender } = renderWithProviders(
-      <OperatorHubItemDetails updateChannel={''} updateVersion={''} {...operatorHubDetailsProps} />,
+      <OperatorHubItemDetails updateChannel="" updateVersion="" {...operatorHubDetailsProps} />,
     );
 
     // Initially, user sees no long description
@@ -23,8 +23,8 @@ describe('OperatorHubItemDetails', () => {
     // Rerender with item that has longDescription
     rerender(
       <OperatorHubItemDetails
-        updateChannel={''}
-        updateVersion={''}
+        updateChannel=""
+        updateVersion=""
         {...operatorHubDetailsProps}
         item={itemWithLongDescription}
       />,

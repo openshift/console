@@ -43,19 +43,12 @@ const ChannelForm: FC<FormikProps<FormikValues> & OwnProps> = ({
   channels,
 }) => {
   const LAST_VIEWED_EDITOR_TYPE_USER_PREFERENCE_KEY = 'knative.channelForm.editor.lastView';
-  const {
-    values,
-    setFieldValue,
-    setFieldTouched,
-    validateForm,
-    setErrors,
-    setStatus,
-  } = useFormikContext<FormikValues>();
+  const { values, setFieldValue, setFieldTouched, validateForm, setErrors, setStatus } =
+    useFormikContext<FormikValues>();
   const { t } = useTranslation('knative-plugin');
   useFormikValidationFix(values);
-  const [defaultConfiguredChannel, defaultConfiguredChannelLoaded] = useDefaultChannelConfiguration(
-    namespace,
-  );
+  const [defaultConfiguredChannel, defaultConfiguredChannelLoaded] =
+    useDefaultChannelConfiguration(namespace);
   const channelKind = getChannelKind(values.formData.type);
   const onTypeChange = useCallback(
     (item: string) => {
@@ -91,8 +84,8 @@ const ChannelForm: FC<FormikProps<FormikValues> & OwnProps> = ({
     [setErrors, setStatus, setFieldValue, setFieldTouched, values.formData, validateForm],
   );
 
-  const sanitizeToYaml = () => {
-    return safeJSToYAML(
+  const sanitizeToYaml = () =>
+    safeJSToYAML(
       getCatalogChannelData(values as YamlFormSyncData<AddChannelFormData>),
       'yamlData',
       {
@@ -100,7 +93,6 @@ const ChannelForm: FC<FormikProps<FormikValues> & OwnProps> = ({
         noRefs: true,
       },
     );
-  };
 
   const yamlEditor = <CodeEditorField name="yamlData" showSamples onSave={handleSubmit} />;
 

@@ -23,7 +23,7 @@ const createNavExtension = (id: string, perspective?: string): LoadedExtension<N
       href: `/${id}`,
       perspective,
     },
-  } as LoadedExtension<NavExtension>);
+  }) as LoadedExtension<NavExtension>;
 
 const createPerspective = (id: string, isDefault = false) => ({
   uid: `perspective-${id}`,

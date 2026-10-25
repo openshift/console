@@ -75,8 +75,8 @@ const CloudShellExec: FC<CloudShellExecProps> = ({
   const [wsError, setWsError] = useState<string>();
   const [wsReopening, setWsReopening] = useState<boolean>(false);
   const [customResource, setCustomResource] = useState<CloudShellResource>();
-  const ws = useRef<WSFactory>();
-  const terminal = useRef<ImperativeTerminalType>();
+  const ws = useRef<WSFactory>(undefined);
+  const terminal = useRef<ImperativeTerminalType>(undefined);
   const { t } = useTranslation('webterminal-plugin');
 
   const onData = (data: string): void => {
@@ -188,10 +188,9 @@ const CloudShellExec: FC<CloudShellExecProps> = ({
             if (!unmounted) setWsError(error);
           })
           .catch((e) => {
-            // eslint-disable-next-line no-console
             console.error('Cloud shell error', e);
           });
-      }) // eslint-disable-next-line no-console
+      })
       .onerror((evt) => console.error(`WS error?! ${evt}`));
 
     if (ws.current !== websocket) {

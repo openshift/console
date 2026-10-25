@@ -9,12 +9,13 @@ import (
 
 	"github.com/redhat-certification/chart-verifier/internal/chartverifier/utils"
 
-	"helm.sh/helm/v3/pkg/action"
-	"helm.sh/helm/v3/pkg/chart/loader"
-	"helm.sh/helm/v3/pkg/cli"
-	"helm.sh/helm/v3/pkg/cli/values"
-	"helm.sh/helm/v3/pkg/getter"
-	"helm.sh/helm/v3/pkg/strvals"
+	"helm.sh/helm/v4/pkg/action"
+	"helm.sh/helm/v4/pkg/chart/v2/loader"
+	"helm.sh/helm/v4/pkg/cli"
+	"helm.sh/helm/v4/pkg/cli/values"
+	"helm.sh/helm/v4/pkg/getter"
+	"helm.sh/helm/v4/pkg/kube"
+	"helm.sh/helm/v4/pkg/strvals"
 )
 
 type Helm struct {
@@ -29,10 +30,8 @@ func NewHelm(envSettings *cli.EnvSettings, args map[string]interface{}, timeout 
 	if timeout < 5*time.Minute {
 		helm.timeout = 5 * time.Minute
 	}
-	config := new(action.Configuration)
-	if err := config.Init(envSettings.RESTClientGetter(), envSettings.Namespace(), os.Getenv("HELM_DRIVER"), func(format string, v ...interface{}) {
-		utils.LogInfo(fmt.Sprintf(format, v))
-	}); err != nil {
+	config := action.NewConfiguration(action.ConfigurationSetLogger(utils.SlogHandler()))
+	if err := config.Init(envSettings.RESTClientGetter(), envSettings.Namespace(), os.Getenv("HELM_DRIVER")); err != nil {
 		return nil, err
 	}
 	helm.config = config
@@ -44,12 +43,12 @@ func (h Helm) Install(ctx context.Context, namespace, chart, release, valuesFile
 	client := action.NewInstall(h.config)
 	client.Namespace = namespace
 	client.ReleaseName = release
-	client.Wait = true
+	client.WaitStrategy = kube.StatusWatcherStrategy
 	// default timeout duration
 	// ref: https://helm.sh/docs/helm/helm_install
 	client.Timeout = h.timeout
 
-	cp, err := client.ChartPathOptions.LocateChart(chart, h.envSettings)
+	cp, err := client.LocateChart(chart, h.envSettings)
 	if err != nil {
 		utils.LogError(fmt.Sprintf("Error LocateChart: %v", err))
 		return err
@@ -117,7 +116,10 @@ func (h Helm) Test(ctx context.Context, namespace, release string) error {
 		return errors.New("Helm test error : timeout has expired, please consider increasing the timeout using the chart-verifier timeout flag")
 	}
 	// TODO: support filter
-	_, err := client.Run(release)
+	// TODO: client.Run returns a shutdown function as of helm/v4 that we should
+	// leverage to cleanup releases combined with our existing logic to clean up
+	// resources at the namespace level.
+	_, _, err := client.Run(release)
 	if err != nil {
 		utils.LogError(fmt.Sprintf("Execute helm test. error %v", err))
 		return err
@@ -130,6 +132,7 @@ func (h Helm) Test(ctx context.Context, namespace, release string) error {
 func (h Helm) Uninstall(namespace, release string) error {
 	utils.LogInfo(fmt.Sprintf("Execute helm uninstall. namespace: %s, release: %s", namespace, release))
 	client := action.NewUninstall(h.config)
+	client.WaitStrategy = kube.StatusWatcherStrategy
 	// TODO: support other options if required
 	_, err := client.Run(release)
 	if err != nil {
@@ -146,9 +149,9 @@ func (h Helm) Upgrade(ctx context.Context, namespace, chart, release string) err
 	client := action.NewUpgrade(h.config)
 	client.Namespace = namespace
 	client.ReuseValues = true
-	client.Wait = true
+	client.WaitStrategy = kube.StatusWatcherStrategy
 
-	cp, err := client.ChartPathOptions.LocateChart(chart, h.envSettings)
+	cp, err := client.LocateChart(chart, h.envSettings)
 	if err != nil {
 		utils.LogError(fmt.Sprintf("Error LocateChart: %v", err))
 		return err

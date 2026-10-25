@@ -33,7 +33,7 @@ const ApplicationSelector: FC<ApplicationSelectorProps> = ({
   const { t } = useTranslation('topology');
   const [applicationsAvailable, setApplicationsAvailable] = useState(true);
   // Initialize as undefined to detect the first load (even if empty)
-  const availableApplications = useRef<string[] | undefined>();
+  const availableApplications = useRef<string[] | undefined>(undefined);
   const projectsAvailable = !noProjectsAvailable;
 
   const [selectedKey, { touched, error }] = useField(
@@ -42,7 +42,7 @@ const ApplicationSelector: FC<ApplicationSelectorProps> = ({
   const [nameField] = useField(subPath ? `${subPath}.application.name` : 'application.name');
   const { setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
   const [applicationExists, setApplicationExists] = useState<boolean>(false);
-  const applicationNameInputRef = useRef<HTMLInputElement>();
+  const applicationNameInputRef = useRef<HTMLInputElement>(undefined);
   const fieldId = getFieldId('application-name', 'dropdown');
   const isValid = !(touched && error);
   const errorMessage = !isValid ? error : '';
@@ -144,8 +144,8 @@ const ApplicationSelector: FC<ApplicationSelectorProps> = ({
           name={nameField.name}
           ref={applicationNameInputRef}
           label={t('Application name')}
-          data-test-id="application-form-app-input"
           data-test="application-form-app-input"
+          data-test-id="application-form-app-input"
           helpText={inputHelpText}
           validated={applicationExists ? ValidatedOptions.warning : ValidatedOptions.default}
           onChange={handleAppChange}

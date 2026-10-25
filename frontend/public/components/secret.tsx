@@ -1,45 +1,36 @@
 import type { FC } from 'react';
-import * as _ from 'lodash';
 import { Suspense, useMemo } from 'react';
+import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { DetailsPage } from './factory/details';
-import { ListPage } from './factory/list-page';
-import { SecretData } from './configmap-and-secret-data';
-import { DASH } from '@console/shared/src/constants/ui';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
+import type {
+  ConsoleDataViewColumn,
+  GetDataViewRows,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
-import {
-  referenceFor,
-  SecretKind,
-  K8sModel,
-  K8sResourceKind,
-  referenceForModel,
-  TableColumn,
-} from '../module/k8s';
-import { SectionHeading } from './utils/headings';
-import { ResourceLink } from './utils/resource-link';
-import { ResourceSummary, detailsPage } from './utils/details-page';
-import { navFactory } from './utils/horizontal-nav';
-import { SecretFilterValues } from './secrets/create-secret/types';
-import { secretTypeFilterReducer } from './secrets/create-secret';
-import { useAddSecretToWorkloadModalLauncher } from './modals/add-secret-to-workload';
-import { DetailsItem } from './utils/details-item';
-import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import {
-  actionsCellProps,
-  getNameCellProps,
-  ConsoleDataView,
-  nameCellProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
-import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-import { GetDataViewRows } from '@console/app/src/components/data-view/types';
-import { LoadingBox } from './utils/status-box';
-import { sortResourceByValue } from './factory/Table/sort';
-import { sorts } from './factory/table';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { DASH } from '@console/shared/src/constants/ui';
 import { SecretModel } from '../models';
-import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
+import type { SecretKind, K8sModel, K8sResourceKind } from '../module/k8s';
+import { referenceFor, referenceForModel } from '../module/k8s';
+import { SecretData } from './configmap-and-secret-data';
+import { DetailsPage } from './factory/details';
+import { ListPage } from './factory/list-page';
+import { sorts } from './factory/table';
+import { sortResourceByValue } from './factory/Table/sort';
+import { useAddSecretToWorkloadModalLauncher } from './modals/add-secret-to-workload';
+import { secretTypeFilterReducer } from './secrets/create-secret';
+import { SecretFilterValues } from './secrets/create-secret/types';
+import { DetailsItem } from './utils/details-item';
+import { ResourceSummary, detailsPage } from './utils/details-page';
+import { SectionHeading } from './utils/headings';
+import { navFactory } from './utils/horizontal-nav';
+import { ResourceLink } from './utils/resource-link';
+import { LoadingBox } from './utils/status-box';
 
 const kindRef = referenceForModel(SecretModel);
 
@@ -52,8 +43,8 @@ const tableColumnInfo = [
   { id: 'actions' },
 ];
 
-const getDataViewRows: GetDataViewRows<SecretKind> = (data, columns) => {
-  return data.map(({ obj }) => {
+const getDataViewRows: GetDataViewRows<SecretKind> = (data, columns) =>
+  data.map(({ obj }) => {
     const { name, namespace } = obj.metadata;
     const resourceKind = referenceFor(obj);
     const context = { [resourceKind]: obj };
@@ -67,7 +58,6 @@ const getDataViewRows: GetDataViewRows<SecretKind> = (data, columns) => {
             namespace={namespace}
           />
         ),
-        props: getNameCellProps(name),
       },
       [tableColumnInfo[1].id]: {
         cell: <ResourceLink kind="Namespace" name={namespace} />,
@@ -83,7 +73,6 @@ const getDataViewRows: GetDataViewRows<SecretKind> = (data, columns) => {
       },
       [tableColumnInfo[5].id]: {
         cell: <LazyActionMenu context={context} />,
-        props: actionsCellProps,
       },
     };
 
@@ -91,12 +80,10 @@ const getDataViewRows: GetDataViewRows<SecretKind> = (data, columns) => {
       const cell = rowCells[id]?.cell || DASH;
       return {
         id,
-        props: rowCells[id]?.props,
         cell,
       };
     });
   });
-};
 
 const SecretDetails: FC<{ obj: SecretKind }> = ({ obj }) => {
   const { t } = useTranslation('public');
@@ -126,88 +113,65 @@ const SecretDetails: FC<{ obj: SecretKind }> = ({ obj }) => {
 };
 
 const useSecretsColumns = (): {
-  columns: TableColumn<SecretKind>[];
-  resetAllColumnWidths: () => void;
+  columns: ConsoleDataViewColumn<SecretKind>[];
 } => {
   const { t } = useTranslation('public');
-  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(SecretModel);
 
-  const columns = useMemo(() => {
-    return [
+  const columns = useMemo<ConsoleDataViewColumn<SecretKind>[]>(
+    () => [
       {
-        title: t('Name'),
+        type: 'name' as const,
         id: tableColumnInfo[0].id,
-        sort: 'metadata.name',
-        resizableProps: getResizableProps(tableColumnInfo[0].id),
-        props: {
-          ...nameCellProps,
-          modifier: 'nowrap',
-        },
       },
       {
-        title: t('Namespace'),
+        type: 'namespace' as const,
         id: tableColumnInfo[1].id,
-        sort: 'metadata.namespace',
-        resizableProps: getResizableProps(tableColumnInfo[1].id),
-        props: {
-          modifier: 'nowrap',
-        },
       },
       {
         title: t('Type'),
         id: tableColumnInfo[2].id,
         sort: 'type',
-        resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
         title: t('Size'),
         id: tableColumnInfo[3].id,
         sort: (data, direction) => data.sort(sortResourceByValue(direction, sorts.dataSize)),
-        resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
         title: t('Created'),
         id: tableColumnInfo[4].id,
         sort: 'metadata.creationTimestamp',
-        resizableProps: getResizableProps(tableColumnInfo[4].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
-      {
-        title: '',
-        id: tableColumnInfo[5].id,
-        props: {
-          ...actionsCellProps,
-        },
-      },
-    ];
-  }, [t, getResizableProps]);
+      { type: 'actions' as const, id: tableColumnInfo[5].id },
+    ],
+    [t],
+  );
 
-  return { columns, resetAllColumnWidths };
+  return { columns };
 };
 
 const SecretsList: FC<SecretsListProps> = ({ data, loaded, ...props }) => {
-  const { columns, resetAllColumnWidths } = useSecretsColumns();
+  const { columns } = useSecretsColumns();
 
   return (
     <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView
         {...props}
+        id={SecretModel}
         label={SecretModel.labelPlural}
         data={data}
         loaded={loaded}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement={true}
-        isResizable
-        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );
@@ -245,7 +209,7 @@ const SecretsPage: FC<SecretsPageProps> = (props) => {
     },
     {
       id: SecretFilterValues.sa,
-      title: t('Service Account Token'),
+      title: t('Service account token'),
     },
     {
       id: SecretFilterValues.opaque,
@@ -267,11 +231,11 @@ const SecretsPage: FC<SecretsPageProps> = (props) => {
       {...props}
       kind={kindRef}
       ListComponent={SecretsList}
-      canCreate={true}
+      canCreate
       rowFilters={filters}
       createButtonText={t('Create')}
       createProps={createProps}
-      omitFilterToolbar={true}
+      omitFilterToolbar
     />
   );
 };

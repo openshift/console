@@ -237,7 +237,7 @@ namespace. For example:
 ```
 
 Note that you will need to include a comment in a TypeScript file like the
-following for [i18next-parser](https://github.com/i18next/i18next-parser) to
+following for [i18next-cli](https://github.com/i18next/i18next-cli) to
 add the message from `console-extensions.json` to your message catalog.
 
 ```ts

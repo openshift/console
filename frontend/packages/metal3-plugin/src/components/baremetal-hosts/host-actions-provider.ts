@@ -109,10 +109,10 @@ const useSetNodeMaintenanceAction = (
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [host, t],
   );
-  const action = useMemo<Action[]>(() => (!hidden ? [factory.setNodeMaintenance()] : []), [
-    factory,
-    hidden,
-  ]);
+  const action = useMemo<Action[]>(
+    () => (!hidden ? [factory.setNodeMaintenance()] : []),
+    [factory, hidden],
+  );
   return action;
 };
 
@@ -140,10 +140,10 @@ const useRemoveNodeMaintenanceAction = (
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [host, t, nodeMaintenance],
   );
-  const action = useMemo<Action[]>(() => (!hidden ? [factory.removeNodeMaintenance()] : []), [
-    factory,
-    hidden,
-  ]);
+  const action = useMemo<Action[]>(
+    () => (!hidden ? [factory.removeNodeMaintenance()] : []),
+    [factory, hidden],
+  );
   return action;
 };
 
@@ -274,10 +274,10 @@ const useDeprovisionAction = (host, machine, machineSet, bmoEnabled) => {
     [machine, machineSet, t],
   );
 
-  const action = useMemo<Action[]>(() => (!hidden ? [factory.deprovision()] : []), [
-    factory,
-    hidden,
-  ]);
+  const action = useMemo<Action[]>(
+    () => (!hidden ? [factory.deprovision()] : []),
+    [factory, hidden],
+  );
   return action;
 };
 
@@ -317,10 +317,10 @@ export const useHostActionsProvider = (actionArgs) => {
     CommonActionCreator.ModifyLabels,
     CommonActionCreator.ModifyAnnotations,
   ] as const);
-  const commonActions = useMemo(() => (isReady ? Object.values(labelsAnnotationsActions) : []), [
-    labelsAnnotationsActions,
-    isReady,
-  ]);
+  const commonActions = useMemo(
+    () => (isReady ? Object.values(labelsAnnotationsActions) : []),
+    [labelsAnnotationsActions, isReady],
+  );
   const actions = useMemo(
     () => [
       ...setNodeMaintenanceAction,

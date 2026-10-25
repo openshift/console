@@ -182,7 +182,6 @@ const DeployImage: FC<Props> = ({ namespace, projects, activeApplication, contex
     resourceActions
       .then((resources) => postFormCallback(resources))
       .catch((err) => {
-        // eslint-disable-next-line no-console
         console.log('Failed to create or update image resources', err);
       });
 

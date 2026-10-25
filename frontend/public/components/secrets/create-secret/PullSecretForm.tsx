@@ -1,17 +1,12 @@
-import type { FC } from 'react';
-import { useState, MouseEvent as ReactMouseEvent } from 'react';
+import type { FC, MouseEvent as ReactMouseEvent } from 'react';
+import { useState } from 'react';
+import type { MenuToggleElement } from '@patternfly/react-core';
+import { Select, SelectOption, SelectList, MenuToggle, FormGroup } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { PullSecretCredentialsForm } from './PullSecretCredentialsForm';
 import { PullSecretUploadForm } from './PullSecretUploadForm';
-import { SecretSubFormProps, PullSecretAuthenticationType } from './types';
-import {
-  Select,
-  SelectOption,
-  SelectList,
-  MenuToggle,
-  MenuToggleElement,
-  FormGroup,
-} from '@patternfly/react-core';
+import type { SecretSubFormProps } from './types';
+import { PullSecretAuthenticationType } from './types';
 
 export const PullSecretForm: FC<SecretSubFormProps> = ({
   onChange,
@@ -73,12 +68,14 @@ export const PullSecretForm: FC<SecretSubFormProps> = ({
             <SelectList>
               <SelectOption
                 value={PullSecretAuthenticationType.credentials}
+                data-test="dropdown-menu-credentials"
                 data-test-dropdown-menu={PullSecretAuthenticationType.credentials}
               >
                 {t('Image registry credentials')}
               </SelectOption>
               <SelectOption
                 value={PullSecretAuthenticationType.config}
+                data-test="dropdown-menu-config-file"
                 data-test-dropdown-menu={PullSecretAuthenticationType.config}
               >
                 {t('Upload configuration file')}

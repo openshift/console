@@ -5,28 +5,29 @@ import (
 	"io"
 	"testing"
 
-	"helm.sh/helm/v3/pkg/action"
-	"helm.sh/helm/v3/pkg/chartutil"
-	kubefake "helm.sh/helm/v3/pkg/kube/fake"
-	"helm.sh/helm/v3/pkg/release"
-	"helm.sh/helm/v3/pkg/storage"
-	"helm.sh/helm/v3/pkg/storage/driver"
+	"helm.sh/helm/v4/pkg/action"
+	"helm.sh/helm/v4/pkg/chart/common"
+	kubefake "helm.sh/helm/v4/pkg/kube/fake"
+	releasecommon "helm.sh/helm/v4/pkg/release/common"
+	releasev1 "helm.sh/helm/v4/pkg/release/v1"
+	"helm.sh/helm/v4/pkg/storage"
+	"helm.sh/helm/v4/pkg/storage/driver"
 )
 
 func TestGetReleaseHistory(t *testing.T) {
 	tests := []struct {
 		name     string
-		release  release.Release
+		release  releasev1.Release
 		err      error
 		versions []int
 	}{
 		{
 			name: "existing release should return list of particular release history",
-			release: release.Release{
+			release: releasev1.Release{
 				Version: 1,
 				Name:    "valid-release",
-				Info: &release.Info{
-					Status: release.StatusDeployed,
+				Info: &releasev1.Info{
+					Status: releasecommon.StatusDeployed,
 				},
 			},
 			err:      nil,
@@ -41,8 +42,7 @@ func TestGetReleaseHistory(t *testing.T) {
 			actionConfig := &action.Configuration{
 				Releases:     store,
 				KubeClient:   &kubefake.PrintingKubeClient{Out: io.Discard},
-				Capabilities: chartutil.DefaultCapabilities,
-				Log:          func(format string, v ...interface{}) {},
+				Capabilities: common.DefaultCapabilities,
 			}
 
 			err := store.Create(&tt.release)
@@ -77,13 +77,13 @@ func TestGetReleaseHistory(t *testing.T) {
 func TestNonExistGetReleaseHistory(t *testing.T) {
 	tests := []struct {
 		name         string
-		release      release.Release
+		release      releasev1.Release
 		err          error
 		noOfVersions int
 	}{
 		{
 			name: "non exist release history should throw an error",
-			release: release.Release{
+			release: releasev1.Release{
 				Name: "invalid-release",
 			},
 			noOfVersions: 0,
@@ -97,8 +97,7 @@ func TestNonExistGetReleaseHistory(t *testing.T) {
 			actionConfig := &action.Configuration{
 				Releases:     store,
 				KubeClient:   &kubefake.PrintingKubeClient{Out: io.Discard},
-				Capabilities: chartutil.DefaultCapabilities,
-				Log:          func(format string, v ...interface{}) {},
+				Capabilities: common.DefaultCapabilities,
 			}
 
 			resp, err := GetReleaseHistory(tt.release.Name, actionConfig)

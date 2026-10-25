@@ -1,22 +1,25 @@
+import type { FC, Ref } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
+import type {
+  MenuToggleProps,
+  MenuToggleElement,
+  SelectProps,
+  SelectOptionProps,
+  TextInputGroupMainProps,
+} from '@patternfly/react-core';
 import {
   Button,
   MenuToggle,
-  MenuToggleProps,
-  MenuToggleElement,
   Select,
-  SelectProps,
   SelectList,
   SelectOption,
-  SelectOptionProps,
   TextInputGroup,
   TextInputGroupMain,
   TextInputGroupUtilities,
-  TextInputGroupMainProps,
 } from '@patternfly/react-core';
-import * as _ from 'lodash';
-import { FC, Ref, useState, useMemo, useEffect, useRef } from 'react';
-import { useTranslation } from 'react-i18next';
 import { RhUiCloseIcon } from '@patternfly/react-icons';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 
 export type SingleTypeaheadDropdownProps = {
   /** The items to display in the dropdown */
@@ -85,16 +88,16 @@ export const SingleTypeaheadDropdown: FC<SingleTypeaheadDropdownProps> = ({
   const { t } = useTranslation('public');
   const [isOpen, setIsOpen] = useState(false);
   const [selectOptions, setSelectOptions] = useState<SelectOptionProps[]>(items);
-  const selectedValue = useMemo(() => selectOptions.find((i) => i.value === selectedKey), [
-    selectOptions,
-    selectedKey,
-  ]);
+  const selectedValue = useMemo(
+    () => selectOptions.find((i) => i.value === selectedKey),
+    [selectOptions, selectedKey],
+  );
   const [inputValue, setInputValue] = useState<string>(String(selectedValue?.children) || '');
   const [filterValue, setFilterValue] = useState<string>('');
   const [filteredSelectOptions, setFilteredSelectOptions] = useState<SelectOptionProps[]>(items);
   const [focusedItemIndex, setFocusedItemIndex] = useState<number | null>(null);
   const [activeItemId, setActiveItemId] = useState<string | null>(null);
-  const textInputRef = useRef<HTMLInputElement>();
+  const textInputRef = useRef<HTMLInputElement>(undefined);
 
   const ID_PREFIX = _.uniqueId('select-typeahead-'); // for aria to work, ids have to be unique
   const NO_RESULTS = 'typeahead-dropdown__no-results';
@@ -289,14 +292,14 @@ export const SingleTypeaheadDropdown: FC<SingleTypeaheadDropdownProps> = ({
     onClear && onClear(selectedKey);
   };
 
-  const selectedItemWidth = useMemo(() => {
-    // font is hardcoded because canvas can't read the non-global CSS variables
-    return (
+  const selectedItemWidth = useMemo(
+    () =>
+      // font is hardcoded because canvas can't read the non-global CSS variables
       resizeToFit &&
       selectedValue &&
-      getTextWidth(String(selectedValue.children), '14px RedHatText')
-    );
-  }, [resizeToFit, selectedValue]);
+      getTextWidth(String(selectedValue.children), '14px RedHatText'),
+    [resizeToFit, selectedValue],
+  );
 
   const toggle = (toggleRef: Ref<MenuToggleElement>) => (
     <MenuToggle
@@ -359,10 +362,11 @@ export const SingleTypeaheadDropdown: FC<SingleTypeaheadDropdownProps> = ({
       <SelectList id={`${ID_PREFIX}-listbox`}>
         {filteredSelectOptions.map((v, k) => {
           const SelectOptionComponent =
-            v.value === CREATE_NEW ? SelectOption : OptionComponent ?? SelectOption;
+            v.value === CREATE_NEW ? SelectOption : (OptionComponent ?? SelectOption);
 
           return (
             <SelectOptionComponent
+              // eslint-disable-next-line react/no-array-index-key
               key={k}
               isSelected={selectedKey === v.value}
               isFocused={focusedItemIndex === k}
@@ -375,7 +379,7 @@ export const SingleTypeaheadDropdown: FC<SingleTypeaheadDropdownProps> = ({
           );
         })}
         {_.isEmpty(filteredSelectOptions) && filterValue && !enableCreateNew && (
-          <SelectOption isDisabled={true} isAriaDisabled={true} value={NO_RESULTS}>
+          <SelectOption isDisabled isAriaDisabled value={NO_RESULTS}>
             {t(`public~No results found`)}
           </SelectOption>
         )}

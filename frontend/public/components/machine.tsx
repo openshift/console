@@ -1,6 +1,22 @@
 import type { FC } from 'react';
 import { useMemo, Suspense } from 'react';
+import {
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+  Grid,
+  GridItem,
+} from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
+import NodeIPList from '@console/app/src/components/nodes/NodeIPList';
+import { ListPageBody } from '@console/dynamic-plugin-sdk';
+import type { ConsoleDataViewColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { Status } from '@console/shared/src/components/status/Status';
+import { DASH } from '@console/shared/src/constants/ui';
 import {
   getMachineAddresses,
   getMachineInstanceType,
@@ -10,42 +26,22 @@ import {
   getMachineZone,
   getMachinePhase,
 } from '@console/shared/src/selectors/machine';
-import { Status } from '@console/shared/src/components/status/Status';
-import { DASH } from '@console/shared/src/constants/ui';
-import { ListPageBody, TableColumn } from '@console/dynamic-plugin-sdk';
 import { MachineModel } from '../models';
-import { MachineKind, referenceForModel, Selector } from '../module/k8s';
+import type { MachineKind, Selector } from '../module/k8s';
+import { referenceForModel } from '../module/k8s';
 import { Conditions } from './conditions';
-import NodeIPList from '@console/app/src/components/nodes/NodeIPList';
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { ResourceEventStream } from './events';
 import { DetailsPage } from './factory/details';
-import ListPageHeader from './factory/ListPage/ListPageHeader';
 import ListPageCreate from './factory/ListPage/ListPageCreate';
+import ListPageHeader from './factory/ListPage/ListPageHeader';
+import { sortResourceByValue } from './factory/Table/sort';
 import { DetailsItem } from './utils/details-item';
-import { NodeLink, ResourceLink } from './utils/resource-link';
 import { ResourceSummary } from './utils/details-page';
 import { SectionHeading } from './utils/headings';
 import { navFactory } from './utils/horizontal-nav';
-import { LoadingBox } from './utils/status-box';
-import { ResourceEventStream } from './events';
 import { useK8sWatchResource } from './utils/k8s-watch-hook';
-import { sortResourceByValue } from './factory/Table/sort';
-import {
-  actionsCellProps,
-  getNameCellProps,
-  ConsoleDataView,
-  nameCellProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
-import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-import {
-  DescriptionList,
-  DescriptionListDescription,
-  DescriptionListGroup,
-  DescriptionListTerm,
-  Grid,
-  GridItem,
-} from '@patternfly/react-core';
-import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
+import { NodeLink, ResourceLink } from './utils/resource-link';
+import { LoadingBox } from './utils/status-box';
 
 export const machineReference = referenceForModel(MachineModel);
 
@@ -63,8 +59,11 @@ const tableColumnInfo = [
 const getMachineProviderState = (obj: MachineKind): string =>
   obj?.status?.providerStatus?.instanceState;
 
-const getDataViewRows = (data: { obj: MachineKind }[], columns: TableColumn<MachineKind>[]) => {
-  return data.map(({ obj }: { obj: MachineKind }) => {
+const getDataViewRows = (
+  data: { obj: MachineKind }[],
+  columns: ConsoleDataViewColumn<MachineKind>[],
+) =>
+  data.map(({ obj }: { obj: MachineKind }) => {
     const { name, namespace } = obj.metadata;
     const nodeName = getMachineNodeName(obj);
     const region = getMachineRegion(obj);
@@ -74,7 +73,6 @@ const getDataViewRows = (data: { obj: MachineKind }[], columns: TableColumn<Mach
     const rowCells = {
       [tableColumnInfo[0].id]: {
         cell: <ResourceLink kind={machineReference} name={name} namespace={namespace} />,
-        props: getNameCellProps(name),
       },
       [tableColumnInfo[1].id]: {
         cell: <ResourceLink kind="Namespace" name={namespace} />,
@@ -96,7 +94,6 @@ const getDataViewRows = (data: { obj: MachineKind }[], columns: TableColumn<Mach
       },
       [tableColumnInfo[7].id]: {
         cell: <LazyActionMenu context={{ [machineReference]: obj }} />,
-        props: actionsCellProps,
       },
     };
 
@@ -104,12 +101,10 @@ const getDataViewRows = (data: { obj: MachineKind }[], columns: TableColumn<Mach
       const cell = rowCells[id]?.cell || DASH;
       return {
         id,
-        props: rowCells[id]?.props,
         cell,
       };
     });
   });
-};
 
 const MachineDetails: FC<MachineDetailsProps> = ({ obj }: { obj: MachineKind }) => {
   const nodeName = getMachineNodeName(obj);
@@ -199,107 +194,82 @@ type MachineListProps = {
 };
 
 const useMachineColumns = (): {
-  columns: TableColumn<MachineKind>[];
-  resetAllColumnWidths: () => void;
+  columns: ConsoleDataViewColumn<MachineKind>[];
 } => {
   const { t } = useTranslation('public');
-  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(MachineModel);
 
-  const columns: TableColumn<MachineKind>[] = useMemo(() => {
-    return [
+  const columns: ConsoleDataViewColumn<MachineKind>[] = useMemo(
+    () => [
       {
-        title: t('Name'),
+        type: 'name' as const,
         id: tableColumnInfo[0].id,
-        sort: 'metadata.name',
-        resizableProps: getResizableProps(tableColumnInfo[0].id),
-        props: {
-          ...nameCellProps,
-          modifier: 'nowrap',
-        },
       },
       {
-        title: t('Namespace'),
+        type: 'namespace' as const,
         id: tableColumnInfo[1].id,
-        sort: 'metadata.namespace',
-        resizableProps: getResizableProps(tableColumnInfo[1].id),
-        props: {
-          modifier: 'nowrap',
-        },
       },
       {
         title: t('Node'),
         id: tableColumnInfo[2].id,
         sort: 'status.nodeRef.name',
-        resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
         title: t('Phase'),
         id: tableColumnInfo[3].id,
         sort: (data, direction) => data.sort(sortResourceByValue(direction, getMachinePhase)),
-        resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
         title: t('Provider state'),
         id: tableColumnInfo[4].id,
         sort: 'status.providerStatus.instanceState',
-        resizableProps: getResizableProps(tableColumnInfo[4].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
         title: t('Region'),
         id: tableColumnInfo[5].id,
         sort: "metadata.labels['machine.openshift.io/region']",
-        resizableProps: getResizableProps(tableColumnInfo[5].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
         title: t('Availability zone'),
         id: tableColumnInfo[6].id,
         sort: "metadata.labels['machine.openshift.io/zone']",
-        resizableProps: getResizableProps(tableColumnInfo[6].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
-      {
-        title: '',
-        id: tableColumnInfo[7].id,
-        props: {
-          ...actionsCellProps,
-        },
-      },
-    ];
-  }, [t, getResizableProps]);
+      { type: 'actions' as const, id: tableColumnInfo[7].id },
+    ],
+    [t],
+  );
 
-  return { columns, resetAllColumnWidths };
+  return { columns };
 };
 
 const MachineList: FC<MachineListProps> = ({ data, loaded, loadError, ...props }) => {
-  const { columns, resetAllColumnWidths } = useMachineColumns();
+  const { columns } = useMachineColumns();
 
   return (
     <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<MachineKind>
         {...props}
+        id={MachineModel}
         label={MachineModel.labelPlural}
         data={data}
         loaded={loaded}
         loadError={loadError}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement={true}
-        isResizable
-        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );

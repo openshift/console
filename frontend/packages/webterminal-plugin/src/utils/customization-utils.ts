@@ -73,26 +73,24 @@ export const updatedWebTerminalExec = (
   timeoutCheckBox: boolean,
   terminalExecResource: CloudShellComponent,
   csTimeout: string,
-): CloudShellResource => {
-  return {
-    ...webTerminalExec,
-    metadata: {
-      ...webTerminalExec?.metadata,
-      annotations: {
-        ...webTerminalExec?.metadata?.annotations,
-        'web-terminal.redhat.com/unmanaged-state': timeoutCheckBox ? 'true' : 'false',
-      },
+): CloudShellResource => ({
+  ...webTerminalExec,
+  metadata: {
+    ...webTerminalExec?.metadata,
+    annotations: {
+      ...webTerminalExec?.metadata?.annotations,
+      'web-terminal.redhat.com/unmanaged-state': timeoutCheckBox ? 'true' : 'false',
     },
-    spec: {
-      ...webTerminalExec?.spec,
-      components: getUpdatedComponentTimeout(
-        webTerminalExec?.spec?.components,
-        csTimeout,
-        terminalExecResource,
-      ),
-    },
-  };
-};
+  },
+  spec: {
+    ...webTerminalExec?.spec,
+    components: getUpdatedComponentTimeout(
+      webTerminalExec?.spec?.components,
+      csTimeout,
+      terminalExecResource,
+    ),
+  },
+});
 
 const getUpdatedComponentImage = (
   existingTerminalToolingComponents: CloudShellComponent[],
@@ -129,23 +127,21 @@ export const updatedWebTerminalTooling = (
   imageCheckBox: boolean,
   terminalToolingResource: CloudShellComponent,
   image: string,
-): CloudShellResource => {
-  return {
-    ...webTerminalTooling,
-    metadata: {
-      ...webTerminalTooling?.metadata,
-      annotations: {
-        ...webTerminalTooling?.metadata?.annotations,
-        'web-terminal.redhat.com/unmanaged-state': imageCheckBox ? 'true' : 'false',
-      },
+): CloudShellResource => ({
+  ...webTerminalTooling,
+  metadata: {
+    ...webTerminalTooling?.metadata,
+    annotations: {
+      ...webTerminalTooling?.metadata?.annotations,
+      'web-terminal.redhat.com/unmanaged-state': imageCheckBox ? 'true' : 'false',
     },
-    spec: {
-      ...webTerminalTooling?.spec,
-      components: getUpdatedComponentImage(
-        webTerminalTooling?.spec?.components,
-        image,
-        terminalToolingResource,
-      ),
-    },
-  };
-};
+  },
+  spec: {
+    ...webTerminalTooling?.spec,
+    components: getUpdatedComponentImage(
+      webTerminalTooling?.spec?.components,
+      image,
+      terminalToolingResource,
+    ),
+  },
+});

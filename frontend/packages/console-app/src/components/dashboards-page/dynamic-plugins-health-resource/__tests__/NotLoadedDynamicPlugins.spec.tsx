@@ -31,7 +31,7 @@ describe('NotLoadedDynamicPlugins', () => {
         name,
         version: '1.0.0',
       },
-    } as FailedPluginInfoEntry);
+    }) as FailedPluginInfoEntry;
 
   it('should render section label', () => {
     const plugins = [createMockPlugin('test-plugin')];

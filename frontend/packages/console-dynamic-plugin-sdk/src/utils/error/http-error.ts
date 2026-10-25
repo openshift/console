@@ -73,7 +73,10 @@ export class HttpError extends CustomError {
 }
 
 export class TimeoutError extends CustomError {
-  public constructor(public url: string, public ms: number) {
+  public constructor(
+    public url: string,
+    public ms: number,
+  ) {
     super(`Call to ${url} timed out after ${ms}ms.`);
   }
 }

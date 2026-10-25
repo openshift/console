@@ -1,76 +1,70 @@
-import { Component } from 'react';
-import * as Immutable from 'immutable';
+import type { FC } from 'react';
 import * as _ from 'lodash';
-
 import { setFlag } from '@console/internal/actions/flags';
-import { receivedResources } from '../../actions/k8s';
 import { FLAGS } from '@console/shared/src/constants/common';
-import {
-  featureReducer,
-  featureReducerName,
-  defaults,
-  getFlagsObject,
-  FeatureState,
-} from '../features';
+import { receivedResources } from '../../actions/k8s';
+import type { RootState } from '../../redux';
 import { connectToFlags, stateToFlagsObject } from '../connectToFlags';
-import { RootState } from '../../redux';
+import type { FeatureState } from '../features';
+import { featureReducer, featureReducerName, defaults, getFlagsObject } from '../features';
 
 describe('featureReducer', () => {
   it('returns default values if state is uninitialized', () => {
     const newState = featureReducer(null, null);
 
-    expect(newState).toEqual(
-      Immutable.Map({
-        AUTH_ENABLED: true,
-        PROMETHEUS: undefined,
-        OPENSHIFT: undefined,
-        MONITORING: false,
-        CAN_CREATE_NS: undefined,
-        CAN_GET_NS: undefined,
-        CAN_LIST_NS: undefined,
-        CAN_LIST_NODE: undefined,
-        CAN_LIST_PV: undefined,
-        CAN_LIST_CRD: undefined,
-        CAN_LIST_USERS: undefined,
-        CAN_LIST_GROUPS: undefined,
-        CAN_LIST_OPERATOR_GROUP: undefined,
-        CAN_LIST_PACKAGE_MANIFEST: undefined,
-        CAN_CREATE_PROJECT: undefined,
-        CAN_LIST_VSC: undefined,
-        CLUSTER_AUTOSCALER: undefined,
-        SHOW_OPENSHIFT_START_GUIDE: undefined,
-        CLUSTER_API: undefined,
-        CLUSTER_VERSION: undefined,
-        MACHINE_CONFIG: undefined,
-        MACHINE_AUTOSCALER: undefined,
-        MACHINE_HEALTH_CHECK: undefined,
-        CONSOLE_LINK: undefined,
-        CONSOLE_CLI_DOWNLOAD: undefined,
-        CONSOLE_NOTIFICATION: undefined,
-        CONSOLE_EXTERNAL_LOG_LINK: undefined,
-        CONSOLE_YAML_SAMPLE: undefined,
-        CONSOLE_QUICKSTART: undefined,
-        CONSOLE_CAPABILITY_LIGHTSPEEDBUTTON_IS_ENABLED: undefined,
-        CONSOLE_CAPABILITY_GETTINGSTARTEDBANNER_IS_ENABLED: undefined,
-        CONSOLE_CAPABILITY_GUIDEDTOUR_IS_ENABLED: undefined,
-        LIGHTSPEED_IS_AVAILABLE_TO_INSTALL: undefined,
-        DEVCONSOLE_PROXY: true,
-        VAC_PLATFORM_SUPPORT: undefined,
-      }),
-    );
+    expect(newState).toStrictEqual({
+      AUTH_ENABLED: true,
+      PROMETHEUS: undefined,
+      OPENSHIFT: undefined,
+      MONITORING: false,
+      CAN_CREATE_NS: undefined,
+      CAN_GET_NS: undefined,
+      CAN_LIST_NS: undefined,
+      CAN_LIST_NODE: undefined,
+      CAN_LIST_PV: undefined,
+      CAN_LIST_CRD: undefined,
+      CAN_LIST_USERS: undefined,
+      CAN_LIST_GROUPS: undefined,
+      CAN_LIST_OPERATOR_GROUP: undefined,
+      CAN_LIST_PACKAGE_MANIFEST: undefined,
+      CAN_CREATE_PROJECT: undefined,
+      CAN_LIST_VSC: undefined,
+      CLUSTER_AUTOSCALER: undefined,
+      SHOW_OPENSHIFT_START_GUIDE: undefined,
+      CLUSTER_API: undefined,
+      CLUSTER_VERSION: undefined,
+      MACHINE_CONFIG: undefined,
+      MACHINE_AUTOSCALER: undefined,
+      MACHINE_HEALTH_CHECK: undefined,
+      CONSOLE_LINK: undefined,
+      CONSOLE_CLI_DOWNLOAD: undefined,
+      CONSOLE_NOTIFICATION: undefined,
+      CONSOLE_EXTERNAL_LOG_LINK: undefined,
+      CONSOLE_YAML_SAMPLE: undefined,
+      CONSOLE_QUICKSTART: undefined,
+      CONSOLE_CAPABILITY_LIGHTSPEEDBUTTON_IS_ENABLED: undefined,
+      CONSOLE_CAPABILITY_GETTINGSTARTEDBANNER_IS_ENABLED: undefined,
+      CONSOLE_CAPABILITY_GUIDEDTOUR_IS_ENABLED: undefined,
+      LIGHTSPEED_IS_AVAILABLE_TO_INSTALL: undefined,
+      DEVCONSOLE_PROXY: true,
+      VAC_PLATFORM_SUPPORT: undefined,
+    });
   });
 
   it('returns updated state with new flags if `setFlag` action', () => {
     const action = setFlag(FLAGS.OPENSHIFT, true);
-    const initialState = Immutable.Map(defaults);
+    const initialState = { ...defaults };
     const newState = featureReducer(initialState, action);
 
-    expect(newState).toEqual(initialState.merge({ [action.payload.flag]: action.payload.value }));
+    expect(newState).toStrictEqual({
+      ...initialState,
+      [action.payload.flag]: action.payload.value,
+    });
   });
 
   it('returns state if not `setFlag` action', () => {
     const action = { type: 'OTHER_ACTION' } as any;
-    const initialState = Immutable.Map(defaults);
+    const initialState = { ...defaults };
     const newState = featureReducer(initialState, action);
 
     expect(newState).toEqual(initialState);
@@ -87,35 +81,30 @@ describe('featureReducer', () => {
       safeResources: [],
       groupVersionMap: {},
     });
-    const initialState = Immutable.Map(defaults);
+    const initialState = { ...defaults };
     const newState = featureReducer(initialState, action);
 
-    expect(newState).toEqual(
-      initialState.merge({
-        [FLAGS.PROMETHEUS]: false,
-        [FLAGS.CLUSTER_API]: false,
-        [FLAGS.MACHINE_CONFIG]: false,
-        [FLAGS.MACHINE_AUTOSCALER]: false,
-        [FLAGS.MACHINE_HEALTH_CHECK]: false,
-        [FLAGS.CONSOLE_LINK]: false,
-        [FLAGS.CONSOLE_CLI_DOWNLOAD]: false,
-        [FLAGS.CONSOLE_NOTIFICATION]: false,
-        [FLAGS.CONSOLE_EXTERNAL_LOG_LINK]: false,
-        [FLAGS.CONSOLE_YAML_SAMPLE]: false,
-        [FLAGS.CLUSTER_AUTOSCALER]: false,
-      }),
-    );
+    expect(newState).toStrictEqual({
+      ...initialState,
+      [FLAGS.PROMETHEUS]: false,
+      [FLAGS.CLUSTER_API]: false,
+      [FLAGS.MACHINE_CONFIG]: false,
+      [FLAGS.MACHINE_AUTOSCALER]: false,
+      [FLAGS.MACHINE_HEALTH_CHECK]: false,
+      [FLAGS.CONSOLE_LINK]: false,
+      [FLAGS.CONSOLE_CLI_DOWNLOAD]: false,
+      [FLAGS.CONSOLE_NOTIFICATION]: false,
+      [FLAGS.CONSOLE_EXTERNAL_LOG_LINK]: false,
+      [FLAGS.CONSOLE_YAML_SAMPLE]: false,
+      [FLAGS.CLUSTER_AUTOSCALER]: false,
+    });
   });
 });
 
 describe('connectToFlags', () => {
   type MyComponentProps = { propA: number; propB: boolean; flags: { [key: string]: boolean } };
 
-  class MyComponent extends Component<MyComponentProps> {
-    render() {
-      return <div>{this.props.propA}</div>;
-    }
-  }
+  const MyComponent: FC<MyComponentProps> = (props) => <div>{props.propA}</div>;
 
   it('returns a component which preserves needed props and removes `flags` prop', () => {
     const MyComponentWithFlags = connectToFlags<MyComponentProps>()(MyComponent);
@@ -127,11 +116,11 @@ describe('connectToFlags', () => {
 
 describe('stateToFlagsObject', () => {
   it('maps the desired flags to a new object', () => {
-    const featureState: FeatureState = Immutable.Map({
+    const featureState: FeatureState = {
       FOO: true,
       BAR: false,
       QUX: undefined,
-    });
+    };
 
     expect(
       _.isEqual(stateToFlagsObject(featureState, ['BAR', 'QUX']), {
@@ -152,11 +141,11 @@ describe('stateToFlagsObject', () => {
 
 describe('getFlagsObject', () => {
   it('maps the root state to feature sub-state as a new object', () => {
-    const featureState: FeatureState = Immutable.Map({
+    const featureState: FeatureState = {
       FOO: true,
       BAR: false,
       QUX: undefined,
-    });
+    };
 
     const rootState = {
       [featureReducerName]: featureState,

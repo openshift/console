@@ -175,7 +175,7 @@ export const InsightsPopup: FC<PrometheusHealthPopupProps> = ({ responses, k8sRe
           ) : (
             <div>
               <ExternalLink
-                href={`https://console.redhat.com/openshift/insights/advisor`}
+                href="https://console.redhat.com/openshift/insights/advisor"
                 text={t('View more in Red Hat Lightspeed Advisor')}
               />
             </div>

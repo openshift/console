@@ -5,7 +5,7 @@ import { safeDump, safeLoad } from 'js-yaml';
 import type { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useParams, useLocation, useNavigate } from 'react-router';
+import { createPath, useParams, useLocation, useNavigate } from 'react-router';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
@@ -33,6 +33,7 @@ import {
   isGoingToTopology,
 } from '../../../utils/helm-utils';
 import { getHelmActionValidationSchema } from '../../../utils/helm-validation-utils';
+import { NONE_SECRET_KEY } from '../url-chart/useBasicAuthSecretDropdown';
 import HelmChartMetaDescription from './HelmChartMetaDescription';
 import type { HelmInstallUpgradeFormData } from './HelmInstallUpgradeForm';
 import HelmInstallUpgradeForm from './HelmInstallUpgradeForm';
@@ -65,6 +66,7 @@ const HelmInstallUpgradePage: FC = () => {
   const [initialYamlData, setInitialYamlData] = useState<string>('');
   const [initialFormData, setInitialFormData] = useState<object>();
   const [initialFormSchema, setInitialFormSchema] = useState<JSONSchema7>();
+  const [initialBasicAuthSecretName, setInitialBasicAuthSecretName] = useState<string>('');
   const helmAction: HelmActionType = initialChartURL
     ? HelmActionType.Create
     : HelmActionType.Upgrade;
@@ -101,6 +103,9 @@ const HelmInstallUpgradePage: FC = () => {
       const valuesYAML = releaseValues || chartValues;
       const valuesJSON = (res?.config || chart?.values) ?? {};
       const valuesSchema = chart?.schema && JSON.parse(atob(chart?.schema));
+      const basicAuthSecretName =
+        chart?.metadata?.annotations?.['helm.openshift.io/auth-secret'] ?? '';
+      setInitialBasicAuthSecretName(basicAuthSecretName);
       setInitialYamlData(valuesYAML);
       setInitialFormData(valuesJSON);
       setInitialFormSchema(valuesSchema);
@@ -120,6 +125,8 @@ const HelmInstallUpgradePage: FC = () => {
     };
   }, [config.helmReleaseApi, helmAction]);
 
+  const isURLInstall = chartData?.metadata?.annotations?.installation === 'url_install';
+
   const initialValues: HelmInstallUpgradeFormData = {
     releaseName: initialReleaseName || helmChartName || '',
     chartURL: initialChartURL,
@@ -133,6 +140,8 @@ const HelmInstallUpgradePage: FC = () => {
     formData: initialFormData,
     formSchema: initialFormSchema,
     editorType: initialFormSchema ? EditorType.Form : EditorType.YAML,
+    basicAuthSecretName: initialBasicAuthSecretName,
+    isURLInstall,
   };
 
   const handleSubmit = (values, actions) => {
@@ -143,6 +152,7 @@ const HelmInstallUpgradePage: FC = () => {
       yamlData,
       formData,
       editorType,
+      basicAuthSecretName,
     }: HelmInstallUpgradeFormData = values;
     let valuesObj;
 
@@ -182,6 +192,14 @@ const HelmInstallUpgradePage: FC = () => {
       ...(chartURL ? { chart_url: chartURL } : {}), // eslint-disable-line @typescript-eslint/naming-convention
       ...(indexEntry ? { indexEntry } : { indexEntry: chartIndexEntry }),
       ...(valuesObj ? { values: valuesObj } : {}),
+      ...(values.isURLInstall
+        ? {
+            basic_auth_secret_name:
+              helmAction === HelmActionType.Create && basicAuthSecretName === NONE_SECRET_KEY
+                ? ''
+                : basicAuthSecretName,
+          }
+        : {}), // eslint-disable-line @typescript-eslint/naming-convention
     };
 
     return config
@@ -192,7 +210,7 @@ const HelmInstallUpgradePage: FC = () => {
         try {
           helmRelease = await fetchHelmRelease(namespace, releaseName);
         } catch (err) {
-          console.error('Could not fetch the helm release', err); // eslint-disable-line no-console
+          console.error('Could not fetch the helm release', err);
         }
         const resources = loadHelmManifestResources(helmRelease);
         if (isGoingToTopology(resources)) {
@@ -213,9 +231,9 @@ const HelmInstallUpgradePage: FC = () => {
 
   const handleNamespaceChange = (ns: string) => {
     if (ns === ALL_NAMESPACES_KEY) {
-      navigate(`/helm/all-namespaces`);
+      navigate(createPath({ pathname: '/helm/all-namespaces', search: location.search }));
     } else if (ns !== namespace) {
-      navigate(`/helm/ns/${ns}`);
+      navigate(createPath({ pathname: `/helm/ns/${ns}`, search: location.search }));
     }
   };
 

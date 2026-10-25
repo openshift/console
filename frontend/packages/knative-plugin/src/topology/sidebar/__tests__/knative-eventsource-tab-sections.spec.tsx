@@ -1,9 +1,7 @@
+import type { ReactElement } from 'react';
 import { OdcBaseNode } from '@console/topology/src/elements/OdcBaseNode';
 import type { OdcNodeModel } from '@console/topology/src/topology-types';
-import {
-  kameletBindingSinkRes,
-  knSinkDeployment,
-} from '../../__tests__/__mocks__/knativeResourcesData';
+import { kameletBindingSinkRes, knSinkDeployment } from '../../__tests__/data/knativeResourcesData';
 import { knativeServiceObj } from '../../__tests__/topology-knative-test-data';
 import { TYPE_EVENT_SOURCE } from '../../const';
 import { KameletType } from '../../topology-types';
@@ -47,7 +45,9 @@ describe('useKnativeSidepanelSinkAssociatedDeployment', () => {
     mockKnNode.setModel(knModel);
     const result = useKnativeSidepanelSinkAssociatedDeployment(mockKnNode);
     expect(result).toEqual([expect.any(Object), true, undefined]);
-    const topologySideBarTabSection = result[0];
+    const topologySideBarTabSection = result[0] as ReactElement<{
+      children: ReactElement<{ 'data-test': string }>;
+    }>;
     const eventSourceDeployments = topologySideBarTabSection.props.children;
     expect(eventSourceDeployments.props['data-test']).toEqual('event-source-deployments');
   });

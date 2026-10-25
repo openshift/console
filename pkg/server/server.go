@@ -1,7 +1,6 @@
 package server
 
 import (
-	"context"
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
@@ -28,10 +27,9 @@ import (
 	"github.com/openshift/console/pkg/crdschema"
 	devconsole "github.com/openshift/console/pkg/devconsole"
 	"github.com/openshift/console/pkg/devfile"
-	gql "github.com/openshift/console/pkg/graphql"
-	"github.com/openshift/console/pkg/graphql/resolver"
 	helmhandlerspkg "github.com/openshift/console/pkg/helm/handlers"
 	"github.com/openshift/console/pkg/knative"
+	"github.com/openshift/console/pkg/kubeconfig"
 	"github.com/openshift/console/pkg/middleware"
 	"github.com/openshift/console/pkg/olm"
 	"github.com/openshift/console/pkg/plugins"
@@ -43,9 +41,6 @@ import (
 	"github.com/openshift/console/pkg/usersettings"
 	"github.com/openshift/console/pkg/utils"
 	"github.com/openshift/console/pkg/version"
-
-	graphql "github.com/graph-gophers/graphql-go"
-	"github.com/rawagner/graphql-transport-ws/graphqlws"
 )
 
 // Public constants
@@ -61,6 +56,7 @@ const (
 	alertManagerProxyEndpoint             = "/api/alertmanager"
 	alertManagerTenancyProxyEndpoint      = "/api/alertmanager-tenancy"
 	alertmanagerUserWorkloadProxyEndpoint = "/api/alertmanager-user-workload"
+	apiDiscoveryEndpoint                  = "/api/api-discovery"
 	authLoginEndpoint                     = "/auth/login"
 	authLogoutEndpoint                    = "/api/console/logout"
 	catalogdEndpoint                      = "/api/catalogd/"
@@ -68,10 +64,10 @@ const (
 	devfileEndpoint                       = "/api/devfile/"
 	devfileSamplesEndpoint                = "/api/devfile/samples/"
 	gitopsEndpoint                        = "/api/gitops/"
-	graphQLEndpoint                       = "/api/graphql"
 	helmChartRepoProxyEndpoint            = "/api/helm/charts/"
 	indexPageTemplateName                 = "index.html"
 	k8sProxyEndpoint                      = "/api/kubernetes/"
+	kubeconfigEndpoint                    = "/api/kubeconfig"
 	knativeProxyEndpoint                  = "/api/console/knative/"
 	devConsoleEndpoint                    = "/api/dev-console/"
 	localesEndpoint                       = "/locales/resource.json"
@@ -117,7 +113,6 @@ type jsGlobals struct {
 	GOARCH                          string                     `json:"GOARCH"`
 	GOOS                            string                     `json:"GOOS"`
 	GrafanaPublicURL                string                     `json:"grafanaPublicURL"`
-	GraphQLBaseURL                  string                     `json:"graphqlBaseURL"`
 	I18nNamespaces                  []string                   `json:"i18nNamespaces"`
 	InactivityTimeout               int                        `json:"inactivityTimeout"`
 	KubeAdminLogoutURL              string                     `json:"kubeAdminLogoutURL"`
@@ -168,6 +163,7 @@ type Server struct {
 	ClusterManagementProxyConfig        *proxy.Config
 	CookieEncryptionKey                 []byte
 	CookieAuthenticationKey             []byte
+	CSPMode                             serverconfig.CSPMode
 	ContentSecurityPolicy               serverconfig.MultiKeyValue
 	ControlPlaneTopology                string
 	CopiedCSVsDisabled                  bool
@@ -194,6 +190,7 @@ type Server struct {
 	KnativeChannelCRDLister             ResourceLister
 	KnativeEventSourceCRDLister         ResourceLister
 	KubeAPIServerURL                    string // JS global only. Not used for proxying.
+	K8sCertPEM                          []byte // PEM-encoded CA bundle embedded into downloaded kubeconfig files.
 	KubeVersion                         string
 	LoadTestFactor                      int
 	MonitoringDashboardConfigMapLister  ResourceLister
@@ -335,7 +332,7 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 	handleFunc("/api/", notFoundHandler)
 
 	staticHandler := http.StripPrefix(proxy.SingleJoiningSlash(s.BaseURL.Path, "/static/"), disableDirectoryListing(http.FileServer(http.Dir(s.PublicDir))))
-	handle("/static/", middleware.WithGZIPEncoding(middleware.WithSecurityHeaders(staticHandler)))
+	handle("/static/", middleware.WithGZIPEncoding(middleware.WithStaticCacheHeaders(staticHandler)))
 
 	// Register robots.txt at the origin root so crawlers can find it at /robots.txt
 	// regardless of s.BaseURL.Path (e.g., /console/).
@@ -358,15 +355,24 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 		Checks: []health.Checkable{},
 	}.ServeHTTP)
 
-	handle(catalogdEndpoint, s.CatalogdHandler())
+	// catalogd only serves read-only catalog index data, so restrict the proxy
+	// to GET and HEAD. This also blocks state-changing methods (which are
+	// CSRF-exempt only for safe methods) from reaching the cluster-internal
+	// catalogd service.
+	handle(catalogdEndpoint, authHandler(middleware.AllowMethods(
+		[]string{http.MethodGet, http.MethodHead},
+		s.CatalogdHandler().ServeHTTP,
+	)))
 
 	handle(k8sProxyEndpoint, http.StripPrefix(
 		proxy.SingleJoiningSlash(s.BaseURL.Path, k8sProxyEndpoint),
 		authHandler(k8sProxy.ServeHTTP),
 	))
 
-	handleFunc(devfileEndpoint, devfile.DevfileHandler)
-	handleFunc(devfileSamplesEndpoint, devfile.DevfileSamplesHandler)
+	handle(apiDiscoveryEndpoint, middleware.WithGZIPEncoding(authHandler(apiDiscoveryHandler(k8sProxy))))
+
+	handleFunc(devfileEndpoint, authHandler(devfile.DevfileHandler))
+	handleFunc(devfileSamplesEndpoint, authHandler(devfile.DevfileSamplesHandler))
 
 	terminalProxy := terminal.NewProxy(
 		s.TerminalProxyTLSConfig,
@@ -376,36 +382,6 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 	handle(terminal.ProxyEndpoint, authHandlerWithUser(terminalProxy.HandleProxy))
 	handleFunc(terminal.AvailableEndpoint, terminalProxy.HandleProxyEnabled)
 	handleFunc(terminal.InstalledNamespaceEndpoint, terminalProxy.HandleTerminalInstalledNamespace)
-
-	graphQLSchema, err := os.ReadFile("pkg/graphql/schema.graphql")
-	if err != nil {
-		panic(err)
-	}
-	opts := []graphql.SchemaOpt{graphql.UseFieldResolvers(), graphql.DisableIntrospection()}
-	k8sResolver := resolver.K8sResolver{K8sProxy: k8sProxy}
-	rootResolver := resolver.RootResolver{K8sResolver: &k8sResolver}
-	schema := graphql.MustParseSchema(string(graphQLSchema), &rootResolver, opts...)
-	handler := graphqlws.NewHandler()
-	handler.InitPayload = resolver.InitPayload
-	graphQLHandler := handler.NewHandlerFunc(schema, gql.NewHttpHandler(schema))
-	handle("/api/graphql", authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
-		headers := map[string]interface{}{
-			"Authorization": fmt.Sprintf("Bearer %s", user.Token),
-		}
-		if impUser := r.Header.Get("Impersonate-User"); impUser != "" {
-			headers["Impersonate-User"] = impUser
-		}
-		if consoleGroups := r.Header.Get("X-Console-Impersonate-Groups"); consoleGroups != "" {
-			groups := strings.Split(consoleGroups, ",")
-			groups = append(groups, "system:authenticated")
-			headers["Impersonate-Group"] = groups
-		} else if impGroups := r.Header.Values("Impersonate-Group"); len(impGroups) > 0 {
-			impGroups = append(impGroups, "system:authenticated")
-			headers["Impersonate-Group"] = impGroups
-		}
-		ctx := context.WithValue(context.Background(), resolver.HeadersKey, headers)
-		graphQLHandler(w, r.WithContext(ctx))
-	}))
 
 	if s.prometheusProxyEnabled() {
 		// Only proxy requests to the Prometheus API, not the UI.
@@ -537,6 +513,11 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 
 	handle("/api/console/user-settings", authHandlerWithUser(userSettingHandler.HandleUserSettings))
 
+	// Kubeconfig download for ServiceAccounts and the current user
+	kubeConfigHandler := kubeconfig.NewKubeConfigHandler(s.AnonymousInternalProxiedK8SRT, k8sProxyURL, s.KubeAPIServerURL, s.K8sCertPEM)
+
+	handle(kubeconfigEndpoint, authHandlerWithUser(kubeConfigHandler.Handle))
+
 	// Helm
 	helmHandlers := helmhandlerspkg.New(k8sProxyURL, internalProxiedK8SRT, s)
 	verifierHandler := helmhandlerspkg.NewVerifierHandler(k8sProxyURL, internalProxiedK8SRT, s)
@@ -633,7 +614,16 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 	if len(s.Perspectives) > 0 {
 		err := json.Unmarshal([]byte(s.Perspectives), &config.Customization.Perspectives)
 		if err != nil {
-			klog.Errorf("Unable to parse perspective JSON: %v", err)
+			klog.Errorf("Unable to parse perspectives JSON: %v", err)
+		} else if len(config.Customization.Perspectives) > 0 {
+			klog.Infoln("Using console perspective overrides:")
+			grouped := make(map[string][]string)
+			for _, perspective := range config.Customization.Perspectives {
+				grouped[string(perspective.Visibility.State)] = append(grouped[string(perspective.Visibility.State)], perspective.ID)
+			}
+			for visibility, ids := range grouped {
+				klog.Infof(" - [%s]: %s\n", visibility, strings.Join(ids, ", "))
+			}
 		}
 	}
 
@@ -748,7 +738,11 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		klog.Fatalf("Error building Content Security Policy directives: %s", err)
 	}
-	w.Header().Set("Content-Security-Policy-Report-Only", strings.Join(cspDirectives, "; "))
+	headerName := "Content-Security-Policy-Report-Only"
+	if s.CSPMode == serverconfig.CSPModeEnforce {
+		headerName = "Content-Security-Policy"
+	}
+	w.Header().Set(headerName, strings.Join(cspDirectives, "; "))
 
 	jsg := &jsGlobals{
 		AddPage:                   s.AddPage,
@@ -770,7 +764,6 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		GOARCH:                    s.GOARCH,
 		GOOS:                      s.GOOS,
 		GrafanaPublicURL:          s.GrafanaPublicURL.String(),
-		GraphQLBaseURL:            proxy.SingleJoiningSlash(s.BaseURL.Path, graphQLEndpoint),
 		I18nNamespaces:            s.I18nNamespaces,
 		InactivityTimeout:         s.InactivityTimeout,
 		K8sMode:                   s.K8sMode,

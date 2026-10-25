@@ -1,45 +1,43 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import * as _ from 'lodash';
 import type { ComponentType, FC, ReactNode } from 'react';
 import { useEffect, useState, useMemo, useCallback } from 'react';
-import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
-import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
-import { useParams, useNavigate } from 'react-router';
 import { Button, Grid, GridItem } from '@patternfly/react-core';
+import { SimpleDropdown } from '@patternfly/react-templates';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { LinkTo } from '@console/shared/src/components/links/LinkTo';
-import { useDeepCompareMemoize } from '@console/shared/src/hooks/useDeepCompareMemoize';
-import { withFallback } from '@console/shared/src/components/error/fallbacks/withFallback';
-import { ErrorBoundaryFallbackPage } from '@console/shared/src/components/error/fallbacks/ErrorBoundaryFallbackPage';
-import {
-  ColumnLayout,
+import { useParams, useNavigate } from 'react-router';
+import type { Selector } from '@console/dynamic-plugin-sdk/src/api/common-types';
+import { filterList } from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
+import type {
   K8sResourceCommon,
   WatchK8sResource,
   WatchK8sResultsObject,
-} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import { filterList } from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { storagePrefix } from '../row-filter';
-import { ErrorPage404 } from '../error';
-import { K8sKind } from '../../module/k8s/types';
-import { getReferenceForModel as referenceForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
-import { Selector } from '@console/dynamic-plugin-sdk/src/api/common-types';
-import { useK8sWatchResources } from '../utils/k8s-watch-hook';
-import type {
   ResourcesObject,
   WatchK8sResourceWithProp,
   WatchK8sResults,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import { inject, kindObj } from '../utils/inject';
 import {
   makeQuery,
   makeReduxID,
   NoModelError,
 } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/k8s-watcher';
+import { getReferenceForModel as referenceForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
+import { ErrorBoundaryFallbackPage } from '@console/shared/src/components/error/fallbacks/ErrorBoundaryFallbackPage';
+import { withFallback } from '@console/shared/src/components/error/fallbacks/withFallback';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { LinkTo } from '@console/shared/src/components/links/LinkTo';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
+import { useDeepCompareMemoize } from '@console/shared/src/hooks/useDeepCompareMemoize';
+import type { K8sKind } from '../../module/k8s/types';
+import { ErrorPage404 } from '../error';
+import type { RowFilter } from '../filter-toolbar';
+import { FilterToolbar } from '../filter-toolbar';
+import { storagePrefix } from '../row-filter';
+import { inject, kindObj } from '../utils/inject';
+import { useK8sWatchResources } from '../utils/k8s-watch-hook';
 import { RequireCreatePermission } from '../utils/rbac';
-import { FilterToolbar, RowFilter } from '../filter-toolbar';
 import ListPageHeader from './ListPage/ListPageHeader';
-import { SimpleDropdown } from '@patternfly/react-templates';
 
 type CreateProps = {
   action?: string;
@@ -63,7 +61,6 @@ type ListPageWrapperProps<L = any, C = any> = {
   rowFilters?: RowFilter[];
   hideNameLabelFilters?: boolean;
   hideLabelFilter?: boolean;
-  columnLayout?: ColumnLayout;
   name?: string;
   watchedResources?: Record<string, WatchK8sResultsObject<K8sResourceCommon | K8sResourceCommon[]>>;
   loaded?: boolean;
@@ -74,7 +71,7 @@ type ListPageWrapperProps<L = any, C = any> = {
   namespace?: string;
   labelFilterPlaceholder?: string;
   label?: string;
-  staticFilters?: { key: string; value: string }[];
+  staticFilters?: { [key: string]: string } | { [key: string]: string }[];
   customData?: C;
   hideColumnManagement?: boolean;
   nameFilter?: string;
@@ -92,7 +89,6 @@ export const ListPageWrapper: FC<ListPageWrapperProps> = (props) => {
     labelFilterPlaceholder,
     hideNameLabelFilters,
     hideLabelFilter,
-    columnLayout,
     name,
     watchedResources,
     nameFilter,
@@ -112,9 +108,9 @@ export const ListPageWrapper: FC<ListPageWrapperProps> = (props) => {
       return undefined;
     }
     return memoizedIds.reduce((acc, id) => {
-      const idFilters = state.k8s.getIn([id, 'filters']);
+      const idFilters = state.k8s[id]?.filters;
       if (idFilters) {
-        idFilters.forEach((value, key) => {
+        Object.entries(idFilters).forEach(([key, value]) => {
           acc[key] = value;
         });
       }
@@ -134,7 +130,6 @@ export const ListPageWrapper: FC<ListPageWrapperProps> = (props) => {
       textFilter={textFilter}
       hideNameLabelFilters={hideNameLabelFilters}
       hideLabelFilter={hideLabelFilter}
-      columnLayout={columnLayout}
       uniqueFilterName={name}
       {...props}
     />
@@ -287,7 +282,7 @@ export const FireMan: FC<FireManProps & { filterList?: typeof filterList }> = (p
           toggleProps={{
             variant: 'primary',
             id: 'item-create',
-            // @ts-expect-error non-prop attribute is used for cypress
+            // @ts-expect-error non-prop attribute is used for E2E tests
             'data-test': 'item-create',
           }}
           toggleContent={createButtonText}
@@ -339,7 +334,7 @@ FireMan.displayName = 'FireMan';
 
 export type Flatten<
   F extends ResourcesObject = { [key: string]: K8sResourceCommon | K8sResourceCommon[] },
-  R = any
+  R = any,
 > = (resources: WatchK8sResults<F>) => R;
 
 export type ListPageProps<L = any, C = any> = PageCommonProps<L, C> & {
@@ -386,7 +381,6 @@ export const ListPage = withFallback<ListPageProps>((props) => {
     hideLabelFilter,
     hideNameLabelFilters,
     hideColumnManagement,
-    columnLayout,
     omitFilterToolbar,
     flatten = (_resources) => (_resources[name || kind]?.data ?? []) as K8sResourceCommon[],
   } = props;
@@ -461,7 +455,6 @@ export const ListPage = withFallback<ListPageProps>((props) => {
       hideLabelFilter={hideLabelFilter}
       hideNameLabelFilters={hideNameLabelFilters}
       hideColumnManagement={hideColumnManagement}
-      columnLayout={columnLayout}
       nameFilter={nameFilter}
       omitFilterToolbar={omitFilterToolbar}
     />
@@ -486,7 +479,6 @@ type PageCommonProps<L = any, C = any> = {
   badge?: ReactNode;
   hideNameLabelFilters?: boolean;
   hideLabelFilter?: boolean;
-  columnLayout?: ColumnLayout;
   hideColumnManagement?: boolean;
   labelFilterPlaceholder?: string;
   nameFilterPlaceholder?: string;
@@ -507,7 +499,7 @@ export type MultiListPageProps<L = any, C = any> = PageCommonProps<L, C> & {
   resources: (Omit<WatchK8sResourceWithProp, 'prop'> & {
     prop?: WatchK8sResourceWithProp['prop'];
   })[];
-  staticFilters?: { key: string; value: string }[];
+  staticFilters?: { [key: string]: string } | { [key: string]: string }[];
   nameFilter?: string;
   omitFilterToolbar?: boolean;
 };
@@ -539,7 +531,6 @@ export const MultiListPage: FC<MultiListPageProps> = (props) => {
     hideLabelFilter,
     hideNameLabelFilters,
     hideColumnManagement,
-    columnLayout,
     nameFilter,
     omitFilterToolbar,
   } = props;
@@ -563,28 +554,30 @@ export const MultiListPage: FC<MultiListPageProps> = (props) => {
     if (mock) {
       return {};
     }
-    return k8sResources.reduce((acc, r) => {
-      const key = r.prop || r.kind;
-      acc[key] = {
-        kind: r.kind,
-        groupVersionKind: r.groupVersionKind,
-        name: r.name,
-        namespace: r.namespace,
-        isList: r.isList,
-        selector: r.selector,
-        fieldSelector: r.fieldSelector,
-        limit: r.limit,
-        namespaced: r.namespaced,
-        optional: r.optional,
-        partialMetadata: r.partialMetadata,
-      };
-      return acc;
-    }, {} as Record<string, WatchK8sResource>);
+    return k8sResources.reduce(
+      (acc, r) => {
+        const key = r.prop || r.kind;
+        acc[key] = {
+          kind: r.kind,
+          groupVersionKind: r.groupVersionKind,
+          name: r.name,
+          namespace: r.namespace,
+          isList: r.isList,
+          selector: r.selector,
+          fieldSelector: r.fieldSelector,
+          limit: r.limit,
+          namespaced: r.namespaced,
+          optional: r.optional,
+          partialMetadata: r.partialMetadata,
+        };
+        return acc;
+      },
+      {} as Record<string, WatchK8sResource>,
+    );
   }, [k8sResources, mock]);
 
-  const watchedResources = useK8sWatchResources<
-    Record<string, K8sResourceCommon | K8sResourceCommon[]>
-  >(watchResources);
+  const watchedResources =
+    useK8sWatchResources<Record<string, K8sResourceCommon | K8sResourceCommon[]>>(watchResources);
 
   // Aggregate individual resource loading states into a single boolean
   const loaded = useMemo(() => {
@@ -603,10 +596,11 @@ export const MultiListPage: FC<MultiListPageProps> = (props) => {
 
   const loadError = useMemo(
     () =>
-      Object.values(watchedResources).find(
-        (r) => r.loadError && !(r.loadError instanceof NoModelError),
-      )?.loadError,
-    [watchedResources],
+      Object.entries(watchedResources).find(
+        ([key, r]) =>
+          r.loadError && !(r.loadError instanceof NoModelError) && !watchResources[key]?.optional,
+      )?.[1]?.loadError,
+    [watchedResources, watchResources],
   );
 
   const reduxIDs = useMemo(
@@ -649,7 +643,6 @@ export const MultiListPage: FC<MultiListPageProps> = (props) => {
         hideLabelFilter={hideLabelFilter}
         hideNameLabelFilters={hideNameLabelFilters}
         hideColumnManagement={hideColumnManagement}
-        columnLayout={columnLayout}
         nameFilterPlaceholder={nameFilterPlaceholder}
         labelFilterPlaceholder={labelFilterPlaceholder}
         nameFilter={nameFilter}

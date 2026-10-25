@@ -9,9 +9,9 @@ import {
   ModalVariant,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
+import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
-import { ModalComponentProps } from '@console/shared/src/types/modal';
+import type { ModalComponentProps } from '@console/shared/src/types/modal';
 
 export const ErrorModal: OverlayComponent<ErrorModalProps> = (props) => {
   const { t } = useTranslation('public');

@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { mockResources } from '../../__mocks__/import-toast-mock';
+import { mockResources } from '../../__tests__/data/import-toast-mock';
 import ImportToastContent from '../ImportToastContent';
 
 jest.mock('@console/shared/src/components/utils/routes', () => ({

@@ -1,13 +1,12 @@
 import { renderHook, waitFor } from '@testing-library/react';
 import { HttpError } from '@console/dynamic-plugin-sdk/src/utils/error/http-error';
+import { k8sListResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
 import { settleAllPromises } from '@console/dynamic-plugin-sdk/src/utils/promise';
-import { fetchK8s } from '@console/internal/graphql/client';
-import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { mockHelmChartRepositories } from '../../components/__tests__/helm-release-mock-data';
 import { FLAG_OPENSHIFT_HELM } from '../../const';
 import { HelmChartRepositoryModel, ProjectHelmChartRepositoryModel } from '../../models/helm';
-import { hasEnabledHelmCharts, useDetectHelmChartRepositories } from '../helm-detection-provider';
+import { useDetectHelmChartRepositories } from '../helm-detection-provider';
 
 const ns: string = 'ns';
 
@@ -19,52 +18,25 @@ jest.mock('@console/shared/src/hooks/useActiveNamespace', () => ({
   useActiveNamespace: jest.fn(),
 }));
 
-jest.mock('@console/internal/graphql/client', () => ({
-  ...jest.requireActual('@console/internal/graphql/client'),
-  fetchK8s: jest.fn(),
+jest.mock('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource', () => ({
+  ...jest.requireActual('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource'),
+  k8sListResource: jest.fn(),
 }));
 
 const settleAllPromisesMock = settleAllPromises as jest.Mock;
 const useActiveNamespaceMock = useActiveNamespace as jest.Mock;
-const fetchK8sMock = fetchK8s as jest.Mock;
-
-describe('hasEnabledHelmCharts', () => {
-  it('should return false if all chart repositories are disabled', () => {
-    const disabledHelmChartRepositories: K8sResourceKind[] = mockHelmChartRepositories.map(
-      (hcr) => ({ ...hcr, spec: { ...hcr.spec, disabled: true } }),
-    );
-    expect(hasEnabledHelmCharts(disabledHelmChartRepositories)).toBe(false);
-  });
-  it('should return true if any chart repository is not disabled', () => {
-    const helmChartRepositories: K8sResourceKind[] = mockHelmChartRepositories.map((hcr, index) => {
-      if (index === 0) {
-        return { ...hcr, spec: { ...hcr.spec, disabled: true } };
-      }
-      return hcr;
-    });
-    expect(hasEnabledHelmCharts(helmChartRepositories)).toBe(true);
-  });
-  it('should return false if helmChartRepositories is null or undefined', () => {
-    expect(hasEnabledHelmCharts(undefined)).toBe(false);
-  });
-  it('should return false if helmChartRepositories is an empty array', () => {
-    expect(hasEnabledHelmCharts([])).toBe(false);
-  });
-});
+const k8sListResourceMock = k8sListResource as jest.Mock;
 
 describe('useDetectHelmChartRepositories', () => {
   const setFeatureFlag = jest.fn();
-  const helmChartRepositoryList = {
-    items: mockHelmChartRepositories,
-  };
   // Dummy promise that resolves - actual return value doesn't matter since settleAllPromises is mocked
   const dummyPromise = Promise.resolve({});
 
   beforeEach(() => {
     jest.useFakeTimers();
     useActiveNamespaceMock.mockReturnValue([ns]);
-    // Default mock for fetchK8s - returns a resolved promise
-    fetchK8sMock.mockReturnValue(dummyPromise);
+    // Default mock for k8sListResource - returns a resolved promise
+    k8sListResourceMock.mockReturnValue(dummyPromise);
   });
 
   afterEach(() => {
@@ -76,19 +48,23 @@ describe('useDetectHelmChartRepositories', () => {
     jest.useRealTimers();
   });
 
-  it('should call fetchK8s with HelmChartRepositoryModel and ProjectHelmChartRepositoryModel', async () => {
+  it('should call k8sListResource with HelmChartRepositoryModel and ProjectHelmChartRepositoryModel', async () => {
     settleAllPromisesMock.mockReturnValue(
-      Promise.resolve([[helmChartRepositoryList, helmChartRepositoryList], [], []]),
+      Promise.resolve([[mockHelmChartRepositories, mockHelmChartRepositories], [], []]),
     );
     renderHook(() => useDetectHelmChartRepositories(setFeatureFlag));
-    expect(fetchK8sMock).toHaveBeenCalledTimes(2);
-    expect(fetchK8sMock.mock.calls[0]).toEqual([HelmChartRepositoryModel]);
-    expect(fetchK8sMock.mock.calls[1]).toEqual([ProjectHelmChartRepositoryModel, null, ns]);
+    expect(k8sListResourceMock).toHaveBeenCalledTimes(2);
+    expect(k8sListResourceMock.mock.calls[0]).toEqual([
+      { model: HelmChartRepositoryModel, queryParams: {} },
+    ]);
+    expect(k8sListResourceMock.mock.calls[1]).toEqual([
+      { model: ProjectHelmChartRepositoryModel, queryParams: { ns } },
+    ]);
   });
 
   it('should call setFeatureFlag with FLAG_OPENSHIFT_HELM flag and true if only cluster scoped helm chart repository is available', async () => {
     settleAllPromisesMock.mockReturnValue(
-      Promise.resolve([[helmChartRepositoryList, { items: [] }], [], []]),
+      Promise.resolve([[mockHelmChartRepositories, []], [], []]),
     );
     renderHook(() => useDetectHelmChartRepositories(setFeatureFlag));
     await waitFor(() => {
@@ -99,7 +75,7 @@ describe('useDetectHelmChartRepositories', () => {
 
   it('should call setFeatureFlag with FLAG_OPENSHIFT_HELM flag and true if only project scoped helm chart repository is available', async () => {
     settleAllPromisesMock.mockReturnValue(
-      Promise.resolve([[{ items: [] }, helmChartRepositoryList], [], []]),
+      Promise.resolve([[[], mockHelmChartRepositories], [], []]),
     );
     renderHook(() => useDetectHelmChartRepositories(setFeatureFlag));
     await waitFor(() => {
@@ -110,7 +86,7 @@ describe('useDetectHelmChartRepositories', () => {
 
   it('should call setFeatureFlag with FLAG_OPENSHIFT_HELM flag and true if both project and cluster scoped helm chart repositories are available', async () => {
     settleAllPromisesMock.mockReturnValue(
-      Promise.resolve([[helmChartRepositoryList, helmChartRepositoryList], [], []]),
+      Promise.resolve([[mockHelmChartRepositories, mockHelmChartRepositories], [], []]),
     );
     renderHook(() => useDetectHelmChartRepositories(setFeatureFlag));
     await waitFor(() => {
@@ -119,18 +95,54 @@ describe('useDetectHelmChartRepositories', () => {
     expect(setFeatureFlag.mock.calls[0]).toEqual([FLAG_OPENSHIFT_HELM, true]);
   });
 
-  it('should call setFeatureFlag with FLAG_OPENSHIFT_HELM flag and false if no CR helm chart repository is available', async () => {
+  it('should call setFeatureFlag with FLAG_OPENSHIFT_HELM flag and true if the APIs are reachable but no HelmChartRepository or ProjectHelmChartRepository instances exist', async () => {
+    settleAllPromisesMock.mockReturnValue(Promise.resolve([[[], []], [], []]));
+    renderHook(() => useDetectHelmChartRepositories(setFeatureFlag));
+    await waitFor(() => {
+      expect(setFeatureFlag).toHaveBeenCalledTimes(1);
+    });
+    expect(setFeatureFlag.mock.calls[0]).toEqual([FLAG_OPENSHIFT_HELM, true]);
+  });
+
+  it('should call setFeatureFlag with FLAG_OPENSHIFT_HELM flag and true if all existing helm chart repositories are disabled', async () => {
+    const disabledHelmChartRepositories = mockHelmChartRepositories.map((hcr) => ({
+      ...hcr,
+      spec: { ...hcr.spec, disabled: true },
+    }));
     settleAllPromisesMock.mockReturnValue(
-      Promise.resolve([[{ items: [] }, { items: [] }], [], []]),
+      Promise.resolve([[disabledHelmChartRepositories, []], [], []]),
     );
     renderHook(() => useDetectHelmChartRepositories(setFeatureFlag));
     await waitFor(() => {
       expect(setFeatureFlag).toHaveBeenCalledTimes(1);
     });
-    expect(setFeatureFlag.mock.calls[0]).toEqual([FLAG_OPENSHIFT_HELM, false]);
+    expect(setFeatureFlag.mock.calls[0]).toEqual([FLAG_OPENSHIFT_HELM, true]);
   });
 
-  it('should call setFeatureFlag with FLAG_OPENSHIFT_HELM flag and false if fetchK8s returns rejected promise for both cluster and project scoped helm chart repositories with atleast one of them being error 404', async () => {
+  it('should call setFeatureFlag with FLAG_OPENSHIFT_HELM flag and true if only one of the two requests succeeds', async () => {
+    // Exercise the real settleAllPromises/Promise.allSettled plumbing here instead of
+    // handing the hook a synthetic settlement tuple, so this test also catches
+    // regressions in settleAllPromises itself.
+    const { settleAllPromises: actualSettleAllPromises } = jest.requireActual(
+      '@console/dynamic-plugin-sdk/src/utils/promise',
+    );
+    settleAllPromisesMock.mockImplementation(actualSettleAllPromises);
+
+    const error404 = new HttpError('404', 404, {
+      status: 404,
+    } as Response);
+    k8sListResourceMock
+      .mockReturnValueOnce(Promise.resolve(mockHelmChartRepositories))
+      .mockReturnValueOnce(Promise.reject(error404));
+
+    renderHook(() => useDetectHelmChartRepositories(setFeatureFlag));
+    await waitFor(() => {
+      expect(setFeatureFlag).toHaveBeenCalledTimes(1);
+    });
+    expect(setFeatureFlag.mock.calls[0]).toEqual([FLAG_OPENSHIFT_HELM, true]);
+  });
+
+  it('should call setFeatureFlag with FLAG_OPENSHIFT_HELM flag and false if k8sListResource returns rejected promise for both cluster and project scoped helm chart repositories with atleast one of them being error 404', async () => {
     const error404 = new HttpError('404', 404, {
       status: 404,
     } as Response);
@@ -148,7 +160,7 @@ describe('useDetectHelmChartRepositories', () => {
     expect(setFeatureFlag.mock.calls[0]).toEqual([FLAG_OPENSHIFT_HELM, false]);
   });
 
-  it('should call setFeatureFlag with FLAG_OPENSHIFT_HELM flag and undefined if fetchK8s returns rejected promise for both cluster and project scoped helm chart repositories with none of them being error 404', async () => {
+  it('should call setFeatureFlag with FLAG_OPENSHIFT_HELM flag and undefined if k8sListResource returns rejected promise for both cluster and project scoped helm chart repositories with none of them being error 404', async () => {
     const error200 = new HttpError('200', 200, {
       status: 200,
     } as Response);
@@ -161,17 +173,17 @@ describe('useDetectHelmChartRepositories', () => {
     expect(setFeatureFlag.mock.calls[0]).toEqual([FLAG_OPENSHIFT_HELM, undefined]);
   });
 
-  it('should call fetchK8s every 10 seconds', async () => {
+  it('should call k8sListResource every 10 seconds', async () => {
     settleAllPromisesMock.mockReturnValue(
-      Promise.resolve([[helmChartRepositoryList, helmChartRepositoryList], [], []]),
+      Promise.resolve([[mockHelmChartRepositories, mockHelmChartRepositories], [], []]),
     );
     renderHook(() => useDetectHelmChartRepositories(setFeatureFlag));
-    expect(fetchK8sMock).toHaveBeenCalledTimes(2);
+    expect(k8sListResourceMock).toHaveBeenCalledTimes(2);
     jest.advanceTimersByTime(20 * 1000);
-    expect(fetchK8sMock).toHaveBeenCalledTimes(6);
+    expect(k8sListResourceMock).toHaveBeenCalledTimes(6);
   });
 
-  it('should not call fetchK8s every 10 seconds if fetchK8s returns rejected promise for both cluster and project scoped helm chart repositories', async () => {
+  it('should not call k8sListResource every 10 seconds if k8sListResource returns rejected promise for both cluster and project scoped helm chart repositories', async () => {
     const error404 = new HttpError('404', 404, {
       status: 404,
     } as Response);
@@ -182,9 +194,9 @@ describe('useDetectHelmChartRepositories', () => {
     settleAllPromisesMock.mockReturnValue(Promise.resolve([[], [error404, error200], []]));
     renderHook(() => useDetectHelmChartRepositories(setFeatureFlag));
     await waitFor(() => {
-      expect(fetchK8sMock).toHaveBeenCalledTimes(4);
+      expect(k8sListResourceMock).toHaveBeenCalledTimes(4);
     });
     jest.advanceTimersByTime(20 * 1000);
-    expect(fetchK8sMock).toHaveBeenCalledTimes(4);
+    expect(k8sListResourceMock).toHaveBeenCalledTimes(4);
   });
 });

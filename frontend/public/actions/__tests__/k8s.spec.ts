@@ -1,8 +1,7 @@
 import * as sdkK8sActions from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
-
-import * as k8sActions from '../k8s';
-import { CustomResourceDefinitionModel } from '../../models';
 import { makeReduxID } from '../../components/utils';
+import { CustomResourceDefinitionModel } from '../../models';
+import * as k8sActions from '../k8s';
 
 jest.mock('@console/internal/components/utils/rbac', () => ({
   checkAccess: jest
@@ -52,7 +51,6 @@ describe('startAPIDiscovery', () => {
       k8sActions.API_DISCOVERY_POLL_INTERVAL,
     );
 
-    // eslint-disable-next-line no-console
     expect(console.log).toHaveBeenCalledWith('API discovery method: Polling');
   });
 
@@ -68,7 +66,6 @@ describe('startAPIDiscovery', () => {
       CustomResourceDefinitionModel,
       expect.any(Function),
     );
-    // eslint-disable-next-line no-console
     expect(console.log).toHaveBeenCalledWith('API discovery method: Watching');
   });
 });

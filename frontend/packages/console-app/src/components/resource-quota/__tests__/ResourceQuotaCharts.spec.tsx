@@ -33,7 +33,7 @@ describe('ResourceQuotaCharts', () => {
         hard: hardResources,
         used: usedResources,
       },
-    } as ResourceQuotaKind);
+    }) as ResourceQuotaKind;
 
   it('should display "No quota" when no hard quotas are set', () => {
     const quota = createMockQuota({}, {});

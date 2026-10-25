@@ -1,20 +1,19 @@
 import type { FC, SyntheticEvent, KeyboardEvent, Ref } from 'react';
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import type { MenuToggleElement } from '@patternfly/react-core';
 import {
   InputGroup,
   InputGroupItem,
   MenuToggle,
-  MenuToggleElement,
   Select,
   SelectList,
   SelectOption,
 } from '@patternfly/react-core';
-
 import { RhUiFilterIcon } from '@patternfly/react-icons';
+import { useTranslation } from 'react-i18next';
 import { TextFilter } from './factory/text-filter';
 
-export enum searchFilterValues {
+export enum SearchFilterValues {
   // t('public~Label')
   Label = 'Label',
   // t('public~Name')
@@ -27,12 +26,13 @@ export const SearchFilterDropdown: FC<SearchFilterDropdownProps> = ({
   onChange,
 }) => {
   const [isOpen, setOpen] = useState(false);
-  const [selected, setSelected] = useState(searchFilterValues.Label);
+  // Default to filtering by Name to stay consistent with the other resource lists in the console.
+  const [selected, setSelected] = useState(SearchFilterValues.Name);
   const { t } = useTranslation('public');
 
   const onToggle = () => setOpen(!isOpen);
   const onSelect = (event: SyntheticEvent, value: string) => {
-    setSelected(value as searchFilterValues);
+    setSelected(value as SearchFilterValues);
     setOpen(false);
   };
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
@@ -46,11 +46,11 @@ export const SearchFilterDropdown: FC<SearchFilterDropdownProps> = ({
   };
 
   const selectItems = [
-    <SelectOption key="label-action" data-test="label-filter" value={searchFilterValues.Label}>
-      {t(searchFilterValues.Label)}
+    <SelectOption key="label-action" data-test="label-filter" value={SearchFilterValues.Label}>
+      {t(SearchFilterValues.Label)}
     </SelectOption>,
-    <SelectOption key="name-action" data-test="name-filter" value={searchFilterValues.Name}>
-      {t(searchFilterValues.Name)}
+    <SelectOption key="name-action" data-test="name-filter" value={SearchFilterValues.Name}>
+      {t(SearchFilterValues.Name)}
     </SelectOption>,
   ];
 
@@ -62,19 +62,17 @@ export const SearchFilterDropdown: FC<SearchFilterDropdownProps> = ({
           selected={selected}
           onSelect={onSelect}
           onOpenChange={(lala) => setOpen(lala)}
-          toggle={(toggleRef: Ref<MenuToggleElement>) => {
-            return (
-              <MenuToggle
-                ref={toggleRef}
-                isExpanded={isOpen}
-                onClick={onToggle}
-                icon={<RhUiFilterIcon />}
-                id="search-filter-toggle"
-              >
-                {t(selected)}
-              </MenuToggle>
-            );
-          }}
+          toggle={(toggleRef: Ref<MenuToggleElement>) => (
+            <MenuToggle
+              ref={toggleRef}
+              isExpanded={isOpen}
+              onClick={onToggle}
+              icon={<RhUiFilterIcon />}
+              id="search-filter-toggle"
+            >
+              {t(selected)}
+            </MenuToggle>
+          )}
           shouldFocusToggleOnSelect
         >
           <SelectList>{selectItems}</SelectList>
@@ -83,10 +81,10 @@ export const SearchFilterDropdown: FC<SearchFilterDropdownProps> = ({
       <InputGroupItem>
         <TextFilter
           onChange={handleInputValue}
-          placeholder={selected === searchFilterValues.Label ? 'app=frontend' : 'my-resource'}
+          placeholder={selected === SearchFilterValues.Label ? 'app=frontend' : 'my-resource'}
           name="search-filter-input"
           id="search-filter-input"
-          value={selected === searchFilterValues.Label ? labelFilterInput : nameFilterInput}
+          value={selected === SearchFilterValues.Label ? labelFilterInput : nameFilterInput}
           onKeyDown={handleKeyDown}
           aria-labelledby="search-filter-toggle"
         />

@@ -1,10 +1,10 @@
 import type { FC } from 'react';
-import { useTranslation } from 'react-i18next';
-import * as _ from 'lodash';
 import { css } from '@patternfly/react-styles';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import type { TemplateKind, PartialObjectMetadata } from '@console/internal/module/k8s';
 import { returnIfValidURL } from '@console/shared/src/utils/utils';
-
-import { TemplateKind, PartialObjectMetadata } from '@console/internal/module/k8s';
+import threeScaleImg from '../../imgs/logos/3scale.svg';
 import aerogearImg from '../../imgs/logos/aerogear.svg';
 import amqImg from '../../imgs/logos/amq.svg';
 import angularjsImg from '../../imgs/logos/angularjs.svg';
@@ -31,9 +31,9 @@ import elasticImg from '../../imgs/logos/elastic.svg';
 import erlangImg from '../../imgs/logos/erlang.svg';
 import fedoraImg from '../../imgs/logos/fedora.svg';
 import freebsdImg from '../../imgs/logos/freebsd.svg';
+import gitImg from '../../imgs/logos/git.svg';
 import giteaImg from '../../imgs/logos/gitea.svg';
 import githubImg from '../../imgs/logos/github.svg';
-import gitImg from '../../imgs/logos/git.svg';
 import gitlabImg from '../../imgs/logos/gitlab.svg';
 import glassfishImg from '../../imgs/logos/glassfish.svg';
 import goGopherImg from '../../imgs/logos/go-gopher.svg';
@@ -98,7 +98,6 @@ import ssoImg from '../../imgs/logos/sso.svg';
 import stackoverflowImg from '../../imgs/logos/stackoverflow.svg';
 import suseImg from '../../imgs/logos/suse.svg';
 import symfonyImg from '../../imgs/logos/symfony.svg';
-import threeScaleImg from '../../imgs/logos/3scale.svg';
 import tomcatImg from '../../imgs/logos/tomcat.svg';
 import ubuntuImg from '../../imgs/logos/ubuntu.svg';
 import vertxImg from '../../imgs/logos/vertx.svg';
@@ -217,39 +216,29 @@ const logos = new Map<string, any>()
   .set('icon-xamarin', xamarinImg)
   .set('icon-zend', zendImg);
 
-export const getIcons = (): { label: string; url: string }[] => {
-  return Array.from(logos.entries()).map(([iconClass, url]) => ({
+export const getIcons = (): { label: string; url: string }[] =>
+  Array.from(logos.entries()).map(([iconClass, url]) => ({
     label: iconClass.replace(/^icon-/, ''),
     url,
   }));
-};
 
 export const getIcon = (iconName: string) => {
   const url = logos.get(`icon-${iconName}`);
   return url ? { label: iconName, url } : null;
 };
 
-export const hasIcon = (iconName: string) => {
-  return logos.has(`icon-${iconName}`);
-};
+export const hasIcon = (iconName: string) => logos.has(`icon-${iconName}`);
 
-export const normalizeIconClass = (iconClass: string): string => {
-  return _.startsWith(iconClass, 'icon-') ? `font-icon ${iconClass}` : iconClass;
-};
+export const normalizeIconClass = (iconClass: string): string =>
+  _.startsWith(iconClass, 'icon-') ? `font-icon ${iconClass}` : iconClass;
 
-export const getImageForIconClass = (iconClass: string): string => {
-  return logos.get(iconClass);
-};
+export const getImageForIconClass = (iconClass: string): string => logos.get(iconClass);
 
-export const getImageStreamIcon = (tag: string): string => {
-  return _.get(tag, 'annotations.iconClass');
-};
+export const getImageStreamIcon = (tag: string): string => _.get(tag, 'annotations.iconClass');
 
 export const getTemplateIconClass = (
   template: TemplateKind | PartialObjectMetadata,
-): string | null => {
-  return _.get(template, 'metadata.annotations.iconClass') ?? null;
-};
+): string | null => _.get(template, 'metadata.annotations.iconClass') ?? null;
 
 export const getTemplateIcon = (template: TemplateKind | PartialObjectMetadata): string => {
   const iconClass = getTemplateIconClass(template);

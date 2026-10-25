@@ -6,9 +6,8 @@ export const useBuilderImageEnvironments = (
   imageStreamName: string,
   imageStreamTag: string,
 ): [ImageEnvironment[], boolean] => {
-  const [environmentExtensions, resolved] = useResolvedExtensions<ImportEnvironment>(
-    isImportEnvironment,
-  );
+  const [environmentExtensions, resolved] =
+    useResolvedExtensions<ImportEnvironment>(isImportEnvironment);
 
   const filteredExtensions = useMemo(
     () =>

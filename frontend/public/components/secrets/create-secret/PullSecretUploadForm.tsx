@@ -1,10 +1,10 @@
 import type { FC } from 'react';
 import { useState, useCallback } from 'react';
-import { useTranslation } from 'react-i18next';
 import { FormGroup } from '@patternfly/react-core';
-import { OnSecretChange, SecretStringData, SecretType } from './types';
+import { useTranslation } from 'react-i18next';
 import { AUTHS_KEY } from './const';
 import { DroppableFileInput } from './DropableFileInput';
+import type { OnSecretChange, SecretStringData, SecretType } from './types';
 import { getPullSecretFileName } from './utils';
 
 export const PullSecretUploadForm: FC<PullSecretUploadFormProps> = ({
@@ -61,7 +61,7 @@ export const PullSecretUploadForm: FC<PullSecretUploadFormProps> = ({
         textareaFieldHelpText={t(
           'File with credentials and other configuration for connecting to a secured image registry.',
         )}
-        isRequired={true}
+        isRequired
         errorMessage={parseError ? t('Configuration file should be in JSON format.') : undefined}
       />
     </FormGroup>

@@ -29,15 +29,7 @@ const pipelinesAccessTokenValidationSchema = (t: TFunction) =>
       .when('gitProvider', ([gitProvider], schema) =>
         gitProvider === GitProvider.BITBUCKET
           ? schema.shape({
-              user: yup
-                .string()
-                .matches(nameRegex, {
-                  message: t(
-                    'devconsole~Name must consist of lower-case letters, numbers and hyphens. It must start with a letter and end with a letter or number.',
-                  ),
-                  excludeEmptyString: true,
-                })
-                .required(t('devconsole~Required')),
+              user: yup.string().required(t('devconsole~Required')),
             })
           : schema,
       )
@@ -57,8 +49,8 @@ const pipelinesAccessTokenValidationSchema = (t: TFunction) =>
       ),
   });
 
-const importFlowRepositoryValidationSchema = (t: TFunction) => {
-  return yup.object().shape({
+const importFlowRepositoryValidationSchema = (t: TFunction) =>
+  yup.object().shape({
     repository: yup
       .object()
       .when(['pipelineType', 'pipelineEnabled'], ([pipelineType, pipelineEnabled], schema) =>
@@ -67,7 +59,6 @@ const importFlowRepositoryValidationSchema = (t: TFunction) => {
           : schema,
       ),
   });
-};
 
 export const validationSchema = (t: TFunction) =>
   yup.object().shape({
@@ -89,13 +80,10 @@ export const validationSchema = (t: TFunction) =>
     pipeline: importFlowPipelineTemplateValidationSchema,
   });
 
-const hasDomain = (url: string, domain: string): boolean => {
-  return (
-    url.startsWith(`https://${domain}/`) ||
-    url.startsWith(`https://www.${domain}/`) ||
-    url.includes(`@${domain}:`)
-  );
-};
+const hasDomain = (url: string, domain: string): boolean =>
+  url.startsWith(`https://${domain}/`) ||
+  url.startsWith(`https://www.${domain}/`) ||
+  url.includes(`@${domain}:`);
 
 export const detectGitType = (url: string): GitProvider => {
   if (!gitUrlRegex.test(url)) {

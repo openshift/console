@@ -23,11 +23,8 @@ const AdvancedImageOptions: FC = () => {
       },
     },
   } = useFormikContext<FormikValues>();
-  const filterData = (item) => {
-    return (
-      item.type === 'kubernetes.io/dockercfg' || item.type === 'kubernetes.io/dockerconfigjson'
-    );
-  };
+  const filterData = (item) =>
+    item.type === 'kubernetes.io/dockercfg' || item.type === 'kubernetes.io/dockerconfigjson';
   const handleSave = (name: string) => {
     setFieldValue('formData.imagePullSecret', name);
   };

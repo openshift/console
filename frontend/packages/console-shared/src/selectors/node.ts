@@ -26,12 +26,9 @@ export const getNodeMachineName = (node: NodeKind): string =>
 
 export const isNodeUnschedulable = (node: NodeKind): boolean => node?.spec?.unschedulable ?? false;
 
-export const isNodeReady = (node: NodeKind): boolean => {
-  return (
-    node?.status?.conditions?.some?.(({ type, status }) => type === 'Ready' && status === 'True') ??
-    false
-  );
-};
+export const isNodeReady = (node: NodeKind): boolean =>
+  node?.status?.conditions?.some?.(({ type, status }) => type === 'Ready' && status === 'True') ??
+  false;
 
 export const isWindowsNode = (node): boolean =>
   node?.metadata?.labels?.['node.openshift.io/os_id'] === 'Windows' ||
@@ -41,6 +38,4 @@ export const getNodeUptime = (node: NodeKind): string =>
   node?.status?.conditions?.find(({ type, status }) => type === 'Ready' && status === 'True')
     ?.lastTransitionTime;
 
-export const getNodeArchitecture = (node: NodeKind) => {
-  return node?.status?.nodeInfo?.architecture ?? '';
-};
+export const getNodeArchitecture = (node: NodeKind) => node?.status?.nodeInfo?.architecture ?? '';

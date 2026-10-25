@@ -1,48 +1,42 @@
 import type { FC } from 'react';
 import { useMemo, Suspense } from 'react';
-import * as _ from 'lodash';
-import { useTranslation } from 'react-i18next';
-
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { MachineHealthCheckModel, MachineModel } from '../models';
-import { K8sResourceKind, MachineHealthCheckKind } from '../module/k8s/types';
-import { referenceForModel } from '../module/k8s/k8s';
-import { DetailsPage } from './factory/details';
-import { ListPage } from './factory/list-page';
-import { DASH } from '@console/shared/src/constants/ui';
-import { DetailsItem } from './utils/details-item';
-import { ResourceSummary } from './utils/details-page';
-import { EmptyBox, LoadingBox } from './utils/status-box';
-import { ResourceLink } from './utils/resource-link';
-import { SectionHeading } from './utils/headings';
-import { Selector } from './utils/selector';
-import { navFactory } from './utils/horizontal-nav';
-import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
 import { Table, Thead, Tbody, Tr, Th, Td } from '@patternfly/react-table';
-import { TableColumn } from '@console/dynamic-plugin-sdk';
-import {
-  actionsCellProps,
-  getNameCellProps,
-  ConsoleDataView,
-  nameCellProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
-import { GetDataViewRows } from '@console/app/src/components/data-view/types';
-import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
+import type {
+  ConsoleDataViewColumn,
+  GetDataViewRows,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { DASH } from '@console/shared/src/constants/ui';
+import { MachineHealthCheckModel, MachineModel } from '../models';
+import { referenceForModel } from '../module/k8s/k8s';
+import type { K8sResourceKind, MachineHealthCheckKind } from '../module/k8s/types';
+import { DetailsPage } from './factory/details';
+import { ListPage } from './factory/list-page';
+import { DetailsItem } from './utils/details-item';
+import { ResourceSummary } from './utils/details-page';
+import { SectionHeading } from './utils/headings';
+import { navFactory } from './utils/horizontal-nav';
+import { ResourceLink } from './utils/resource-link';
+import { Selector } from './utils/selector';
+import { EmptyBox, LoadingBox } from './utils/status-box';
 
 const machineHealthCheckReference = referenceForModel(MachineHealthCheckModel);
 
 const tableColumnInfo = [{ id: 'name' }, { id: 'namespace' }, { id: 'created' }, { id: '' }];
 
-const getDataViewRows: GetDataViewRows<MachineHealthCheckKind> = (data, columns) => {
-  return data.map(({ obj }) => {
+const getDataViewRows: GetDataViewRows<MachineHealthCheckKind> = (data, columns) =>
+  data.map(({ obj }) => {
     const { name, namespace } = obj.metadata;
 
     const rowCells = {
       [tableColumnInfo[0].id]: {
         cell: <ResourceLink kind={machineHealthCheckReference} name={name} namespace={namespace} />,
-        props: getNameCellProps(name),
       },
       [tableColumnInfo[1].id]: {
         cell: <ResourceLink kind="Namespace" name={namespace} />,
@@ -52,7 +46,6 @@ const getDataViewRows: GetDataViewRows<MachineHealthCheckKind> = (data, columns)
       },
       [tableColumnInfo[3].id]: {
         cell: <LazyActionMenu context={{ [machineHealthCheckReference]: obj }} />,
-        props: actionsCellProps,
       },
     };
 
@@ -60,63 +53,40 @@ const getDataViewRows: GetDataViewRows<MachineHealthCheckKind> = (data, columns)
       const cell = rowCells[id]?.cell || DASH;
       return {
         id,
-        props: rowCells[id]?.props,
         cell,
       };
     });
   });
-};
 
 const useMachineHealthCheckColumns = (): {
-  columns: TableColumn<MachineHealthCheckKind>[];
-  resetAllColumnWidths: () => void;
+  columns: ConsoleDataViewColumn<MachineHealthCheckKind>[];
 } => {
   const { t } = useTranslation('public');
-  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(
-    MachineHealthCheckModel,
-  );
 
-  const columns: TableColumn<MachineHealthCheckKind>[] = useMemo(() => {
-    return [
+  const columns: ConsoleDataViewColumn<MachineHealthCheckKind>[] = useMemo(
+    () => [
       {
-        title: t('Name'),
+        type: 'name' as const,
         id: tableColumnInfo[0].id,
-        sort: 'metadata.name',
-        resizableProps: getResizableProps(tableColumnInfo[0].id),
-        props: {
-          ...nameCellProps,
-          modifier: 'nowrap',
-        },
       },
       {
-        title: t('Namespace'),
+        type: 'namespace' as const,
         id: tableColumnInfo[1].id,
-        sort: 'metadata.namespace',
-        resizableProps: getResizableProps(tableColumnInfo[1].id),
-        props: {
-          modifier: 'nowrap',
-        },
       },
       {
         title: t('Created'),
         id: tableColumnInfo[2].id,
         sort: 'metadata.creationTimestamp',
-        resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
-      {
-        title: '',
-        id: tableColumnInfo[3].id,
-        props: {
-          ...actionsCellProps,
-        },
-      },
-    ];
-  }, [t, getResizableProps]);
+      { type: 'actions' as const, id: tableColumnInfo[3].id },
+    ],
+    [t],
+  );
 
-  return { columns, resetAllColumnWidths };
+  return { columns };
 };
 
 const MachineHealthCheckList: FC<MachineHealthCheckListProps> = ({
@@ -125,21 +95,19 @@ const MachineHealthCheckList: FC<MachineHealthCheckListProps> = ({
   loadError,
   ...props
 }) => {
-  const { columns, resetAllColumnWidths } = useMachineHealthCheckColumns();
+  const { columns } = useMachineHealthCheckColumns();
 
   return (
     <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<MachineHealthCheckKind>
         {...props}
+        id={MachineHealthCheckModel}
         label={MachineHealthCheckModel.labelPlural}
         data={data}
         loaded={loaded}
         loadError={loadError}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement={true}
-        isResizable
-        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );
@@ -150,7 +118,7 @@ const UnhealthyConditionsTable: FC<{ obj: K8sResourceKind }> = ({ obj }) => {
   return _.isEmpty(obj.spec.unhealthyConditions) ? (
     <EmptyBox label={t('Unhealthy conditions')} />
   ) : (
-    <Table variant="compact" borders={true}>
+    <Table variant="compact" borders>
       <Thead>
         <Tr>
           <Th>{t('Type')}</Th>
@@ -159,8 +127,8 @@ const UnhealthyConditionsTable: FC<{ obj: K8sResourceKind }> = ({ obj }) => {
         </Tr>
       </Thead>
       <Tbody>
-        {obj.spec.unhealthyConditions.map(({ status, timeout, type }, i: number) => (
-          <Tr key={i}>
+        {obj.spec.unhealthyConditions.map(({ status, timeout, type }) => (
+          <Tr key={`${type}-${status}`}>
             <Td>{type}</Td>
             <Td>{status}</Td>
             <Td>{timeout}</Td>
@@ -215,8 +183,8 @@ export const MachineHealthCheckPage: FC<MachineHealthCheckPageProps> = (props) =
     {...props}
     ListComponent={MachineHealthCheckList}
     kind={machineHealthCheckReference}
-    canCreate={true}
-    omitFilterToolbar={true}
+    canCreate
+    omitFilterToolbar
   />
 );
 

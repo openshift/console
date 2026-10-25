@@ -1,8 +1,10 @@
+import { t } from 'i18next';
 import * as _ from 'lodash';
-import { t } from '../../../../../../__mocks__/i18next';
 import { getDefaultEventingData } from '../../../utils/__tests__/knative-serving-data';
 import { eventSourceValidationSchema } from '../eventSource-validation-utils';
 import { EventSources } from '../import-types';
+
+jest.mock('i18next');
 
 describe('Event Source ValidationUtils', () => {
   describe('ApiServerSource : Event Source Validation', () => {
@@ -29,12 +31,10 @@ describe('Event Source ValidationUtils', () => {
         .resolve({ value: mockData })
         .isValid(mockData)
         .then((valid) => expect(valid).toEqual(false));
-      await eventSourceValidationSchema(t)
-        .validate(mockData)
-        .catch((err) => {
-          expect(err.message).toBe('Required');
-          expect(err.type).toBe('required');
-        });
+      await expect(eventSourceValidationSchema(t).validate(mockData)).rejects.toMatchObject({
+        message: 'Required',
+        type: 'required',
+      });
     });
   });
 
@@ -56,12 +56,10 @@ describe('Event Source ValidationUtils', () => {
         .resolve({ value: mockData })
         .isValid(mockData)
         .then((valid) => expect(valid).toEqual(false));
-      await eventSourceValidationSchema(t)
-        .validate(mockData)
-        .catch((err) => {
-          expect(err.message).toBe('Required');
-          expect(err.type).toBe('min');
-        });
+      await expect(eventSourceValidationSchema(t).validate(mockData)).rejects.toMatchObject({
+        message: 'Required',
+        type: 'min',
+      });
     });
 
     it('should not throw error if net section is empty', async () => {
@@ -95,12 +93,12 @@ describe('Event Source ValidationUtils', () => {
         .resolve({ value: ContainerSourceData })
         .isValid(ContainerSourceData)
         .then((valid) => expect(valid).toEqual(false));
-      await eventSourceValidationSchema(t)
-        .validate(ContainerSourceData)
-        .catch((err) => {
-          expect(err.message).toBe('Required');
-          expect(err.type).toBe('required');
-        });
+      await expect(
+        eventSourceValidationSchema(t).validate(ContainerSourceData),
+      ).rejects.toMatchObject({
+        message: 'Required',
+        type: 'required',
+      });
     });
   });
 
@@ -122,12 +120,10 @@ describe('Event Source ValidationUtils', () => {
         .resolve({ value: mockData })
         .isValid(mockData)
         .then((valid) => expect(valid).toEqual(false));
-      await eventSourceValidationSchema(t)
-        .validate(mockData)
-        .catch((err) => {
-          expect(err.message).toBe('Required');
-          expect(err.type).toBe('required');
-        });
+      await expect(eventSourceValidationSchema(t).validate(mockData)).rejects.toMatchObject({
+        message: 'Required',
+        type: 'required',
+      });
     });
   });
 });

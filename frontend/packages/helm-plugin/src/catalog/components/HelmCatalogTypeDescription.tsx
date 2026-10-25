@@ -30,16 +30,14 @@ const LinkToCreatePHCR: FC = () => {
   return isAllowed ? createPHCR : null;
 };
 
-const HelmCatalogTypeDescription: FC = () => {
-  return (
-    <>
-      <Trans ns="helm-plugin">
-        Browse for charts that help manage complex installations and upgrades. Cluster
-        administrators can customize the content made available in the catalog.
-        <LinkToCreatePHCR />
-      </Trans>
-    </>
-  );
-};
+const HelmCatalogTypeDescription: FC = () => (
+  <>
+    <Trans ns="helm-plugin">
+      Browse for charts that help manage complex installations and upgrades. Cluster administrators
+      can customize the content made available in the catalog.
+      <LinkToCreatePHCR />
+    </Trans>
+  </>
+);
 
 export default HelmCatalogTypeDescription;

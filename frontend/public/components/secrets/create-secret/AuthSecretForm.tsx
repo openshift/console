@@ -1,17 +1,12 @@
-import type { FC } from 'react';
-import { useState, Ref, MouseEvent as ReactMouseEvent } from 'react';
+import type { FC, Ref, MouseEvent as ReactMouseEvent } from 'react';
+import { useState } from 'react';
+import type { MenuToggleElement } from '@patternfly/react-core';
+import { FormGroup, Select, SelectOption, SelectList, MenuToggle } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import {
-  FormGroup,
-  Select,
-  SelectOption,
-  SelectList,
-  MenuToggle,
-  MenuToggleElement,
-} from '@patternfly/react-core';
-import { SecretType, SecretSubFormProps, SecretStringData } from './types';
 import { BasicAuthSubform } from './BasicAuthSubform';
 import { SSHAuthSubform } from './SSHAuthSubform';
+import type { SecretSubFormProps, SecretStringData } from './types';
+import { SecretType } from './types';
 
 export const AuthSecretForm: FC<SecretSubFormProps> = ({
   onChange,
@@ -73,11 +68,16 @@ export const AuthSecretForm: FC<SecretSubFormProps> = ({
             <SelectList>
               <SelectOption
                 value={SecretType.basicAuth}
+                data-test="dropdown-menu-basic-auth"
                 data-test-dropdown-menu={SecretType.basicAuth}
               >
                 {t('Basic authentication')}
               </SelectOption>
-              <SelectOption value={SecretType.sshAuth} data-test-dropdown-menu={SecretType.sshAuth}>
+              <SelectOption
+                value={SecretType.sshAuth}
+                data-test="dropdown-menu-ssh-auth"
+                data-test-dropdown-menu={SecretType.sshAuth}
+              >
                 {t('SSH key')}
               </SelectOption>
             </SelectList>

@@ -8,11 +8,9 @@ import { useFlag } from '@console/shared/src/hooks/useFlag';
 const useFlagMock = useFlag as jest.Mock;
 const checkTerminalAvailableMock = checkTerminalAvailable as jest.Mock;
 
-jest.mock('../cloud-shell-utils', () => {
-  return {
-    checkTerminalAvailable: jest.fn<Promise<void>, []>(),
-  };
-});
+jest.mock('../cloud-shell-utils', () => ({
+  checkTerminalAvailable: jest.fn<Promise<void>, []>(),
+}));
 
 jest.mock('@console/shared/src/hooks/useFlag', () => {
   const originalModule = jest.requireActual('@console/shared/src/hooks/useFlag');

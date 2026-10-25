@@ -1,9 +1,8 @@
-import * as _ from 'lodash';
-import i18n from 'i18next';
 import { chart_color_orange_300 as requestedColor } from '@patternfly/react-tokens/dist/esm/chart_color_orange_300';
-
-import { PrometheusResponse, DataPoint, PrometheusResult } from '.';
+import i18n from 'i18next';
+import * as _ from 'lodash';
 import type { Humanize } from '../utils/types';
+import type { PrometheusResponse, DataPoint, PrometheusResult } from './types';
 
 const defaultXMutator: XMutator = (x) => new Date(x * 1000);
 const defaultYMutator: YMutator = (y) => parseFloat(y);
@@ -16,16 +15,17 @@ export const getRangeVectorStats: GetRangeStats = (
   yMutator,
 ) => {
   const results = response?.data?.result;
-  return results?.map((r, index) => {
-    return r?.values?.map(([x, y]) => {
-      return {
-        x: xMutator?.(x) ?? defaultXMutator(x),
-        y: yMutator?.(y) ?? defaultYMutator(y),
-        description: _.isFunction(description) ? description(r, index) : description,
-        symbol,
-      } as DataPoint<Date>;
-    });
-  });
+  return results?.map((r, index) =>
+    r?.values?.map(
+      ([x, y]) =>
+        ({
+          x: xMutator?.(x) ?? defaultXMutator(x),
+          y: yMutator?.(y) ?? defaultYMutator(y),
+          description: _.isFunction(description) ? description(r, index) : description,
+          symbol,
+        }) as DataPoint<Date>,
+    ),
+  );
 };
 
 export const getInstantVectorStats: GetInstantStats = (response, metric, humanize) => {

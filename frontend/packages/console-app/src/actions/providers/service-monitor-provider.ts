@@ -11,10 +11,10 @@ export const useServiceMonitorActionsProvider = (resource: K8sResourceKind) => {
     CommonActionCreator.Edit,
     CommonActionCreator.Delete,
   ] as const);
-  const serviceMonitorActions = useMemo(() => (isReady ? Object.values(actions) : []), [
-    actions,
-    isReady,
-  ]);
+  const serviceMonitorActions = useMemo(
+    () => (isReady ? Object.values(actions) : []),
+    [actions, isReady],
+  );
 
   return [serviceMonitorActions, !inFlight, false];
 };

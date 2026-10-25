@@ -1,13 +1,24 @@
 import type { FC } from 'react';
-import * as _ from 'lodash';
 import { useMemo, Suspense } from 'react';
+import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
+import type {
+  ConsoleDataViewColumn,
+  GetDataViewRows,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { ActionServiceProvider } from '@console/shared/src/components/actions/ActionServiceProvider';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { ActionMenu } from '@console/shared/src/components/actions/menu/ActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
-import { DetailsPage, ListPage, ListPageProps } from './factory';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { DASH } from '@console/shared/src/constants/ui';
+import { VolumeAttributesClassModel } from '../models';
+import type { VolumeAttributesClassKind, K8sGroupVersionKind } from '../module/k8s';
+import { referenceFor } from '../module/k8s';
+import type { ListPageProps } from './factory';
+import { DetailsPage, ListPage } from './factory';
 import {
   DetailsItem,
   LoadingBox,
@@ -17,24 +28,6 @@ import {
   detailsPage,
   navFactory,
 } from './utils';
-import {
-  VolumeAttributesClassKind,
-  TableColumn,
-  K8sGroupVersionKind,
-  referenceFor,
-} from '../module/k8s';
-import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
-import { VolumeAttributesClassModel } from '../models';
-import { DASH } from '@console/shared/src/constants/ui';
-import {
-  actionsCellProps,
-  getNameCellProps,
-  initialFiltersDefault,
-  ConsoleDataView,
-  nameCellProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
-import { GetDataViewRows } from '@console/app/src/components/data-view/types';
-import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 
 const [group, version] = VolumeAttributesClassModel.apiVersion.split('/');
 
@@ -47,58 +40,41 @@ const VolumeAttributesClassGVK: K8sGroupVersionKind = {
 const tableColumnInfo = [{ id: 'name' }, { id: 'driverName' }, { id: 'parameters' }, { id: '' }];
 
 const useVolumeAttributesClassColumns = (): {
-  columns: TableColumn<VolumeAttributesClassKind>[];
-  resetAllColumnWidths: () => void;
+  columns: ConsoleDataViewColumn<VolumeAttributesClassKind>[];
 } => {
   const { t } = useTranslation('public');
-  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(
-    VolumeAttributesClassModel,
-  );
 
-  const columns: TableColumn<VolumeAttributesClassKind>[] = useMemo(() => {
-    return [
+  const columns: ConsoleDataViewColumn<VolumeAttributesClassKind>[] = useMemo(
+    () => [
       {
-        title: t('Name'),
+        type: 'name' as const,
         id: tableColumnInfo[0].id,
-        sort: 'metadata.name',
-        resizableProps: getResizableProps(tableColumnInfo[0].id),
-        props: {
-          ...nameCellProps,
-          modifier: 'nowrap',
-        },
       },
       {
         title: t('Driver name'),
         id: tableColumnInfo[1].id,
         sort: 'driverName',
-        resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
         title: t('Parameters'),
         id: tableColumnInfo[2].id,
-        resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
-      {
-        title: '',
-        id: tableColumnInfo[3].id,
-        props: {
-          ...actionsCellProps,
-        },
-      },
-    ];
-  }, [t, getResizableProps]);
+      { type: 'actions' as const, id: tableColumnInfo[3].id },
+    ],
+    [t],
+  );
 
-  return { columns, resetAllColumnWidths };
+  return { columns };
 };
 
-const getDataViewRows: GetDataViewRows<VolumeAttributesClassKind, undefined> = (data, columns) => {
-  return data.map(({ obj }) => {
+const getDataViewRows: GetDataViewRows<VolumeAttributesClassKind, undefined> = (data, columns) =>
+  data.map(({ obj }) => {
     const { name } = obj.metadata;
     const parameterCount = Object.keys(obj?.parameters || {}).length;
 
@@ -109,7 +85,6 @@ const getDataViewRows: GetDataViewRows<VolumeAttributesClassKind, undefined> = (
             <ResourceLink groupVersionKind={VolumeAttributesClassGVK} name={name} />
           </span>
         ),
-        props: getNameCellProps(name),
       },
       [tableColumnInfo[1].id]: {
         cell: obj.driverName || DASH,
@@ -125,7 +100,6 @@ const getDataViewRows: GetDataViewRows<VolumeAttributesClassKind, undefined> = (
             }}
           />
         ),
-        props: actionsCellProps,
       },
     };
 
@@ -133,12 +107,10 @@ const getDataViewRows: GetDataViewRows<VolumeAttributesClassKind, undefined> = (
       const cell = rowCells[id]?.cell || DASH;
       return {
         id,
-        props: rowCells[id]?.props,
         cell,
       };
     });
   });
-};
 
 const VolumeAttributesClassList: FC<VolumeAttributesClassListProps> = ({
   data,
@@ -146,39 +118,34 @@ const VolumeAttributesClassList: FC<VolumeAttributesClassListProps> = ({
   loadError,
   ...restProps
 }) => {
-  const { columns, resetAllColumnWidths } = useVolumeAttributesClassColumns();
+  const { columns } = useVolumeAttributesClassColumns();
   const isLoaded = loaded !== undefined ? loaded : true;
 
   return (
     <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<VolumeAttributesClassKind>
         {...restProps}
+        id={VolumeAttributesClassModel}
         label={VolumeAttributesClassModel.labelPlural}
         data={data}
         loaded={isLoaded}
         loadError={loadError}
         columns={columns}
-        initialFilters={initialFiltersDefault}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement={true}
-        isResizable
-        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );
 };
 
-export const VolumeAttributesClassPage: FC<ListPageProps> = (props) => {
-  return (
-    <ListPage
-      {...props}
-      ListComponent={VolumeAttributesClassList}
-      kind={VolumeAttributesClassModel.kind}
-      canCreate={true}
-      omitFilterToolbar={true}
-    />
-  );
-};
+export const VolumeAttributesClassPage: FC<ListPageProps> = (props) => (
+  <ListPage
+    {...props}
+    ListComponent={VolumeAttributesClassList}
+    kind={VolumeAttributesClassModel.kind}
+    canCreate
+    omitFilterToolbar
+  />
+);
 
 const VolumeAttributesClassDetails: FC<VolumeAttributesClassDetailsProps> = ({ obj }) => {
   const { t } = useTranslation('public');

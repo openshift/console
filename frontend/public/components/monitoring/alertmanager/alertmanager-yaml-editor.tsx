@@ -1,19 +1,18 @@
 import type { FC } from 'react';
 import { useState, memo } from 'react';
-import * as _ from 'lodash';
-import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
-import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
-import { NavBar } from '@console/internal/components/utils/horizontal-nav';
 import { Alert, Content, ContentVariants, PageSection } from '@patternfly/react-core';
 import { safeLoad } from 'js-yaml';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { NavBar } from '@console/internal/components/utils/horizontal-nav';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
+import type { K8sResourceKind } from '../../../module/k8s';
 import { breadcrumbsForGlobalConfig } from '../../cluster-settings/global-config';
-
-import { K8sResourceKind } from '../../../module/k8s';
 import { AsyncComponent } from '../../utils/async';
+import { useK8sWatchResource } from '../../utils/k8s-watch-hook';
 import { StatusBox } from '../../utils/status-box';
 import { patchAlertmanagerConfig, getAlertmanagerYAML } from './alertmanager-utils';
-import { useK8sWatchResource } from '../../utils/k8s-watch-hook';
 
 const EditAlertmanagerYAML = (props) => (
   <AsyncComponent
@@ -42,18 +41,20 @@ const AlertmanagerYAMLEditor: FC<AlertmanagerYAMLEditorProps> = ({ obj: secret }
       setSuccessMsg('');
       return;
     }
-    patchAlertmanagerConfig(secret, yaml).then(
-      (newSecret) => {
-        setSuccessMsg(
-          `${newSecret.metadata.name} has been updated to version ${newSecret.metadata.resourceVersion}`,
-        );
-        setErrorMsg('');
-      },
-      (err) => {
-        setErrorMsg(err.message);
-        setSuccessMsg('');
-      },
-    );
+    patchAlertmanagerConfig(secret, yaml)
+      .then(
+        (newSecret) => {
+          setSuccessMsg(
+            `${newSecret.metadata.name} has been updated to version ${newSecret.metadata.resourceVersion}`,
+          );
+          setErrorMsg('');
+        },
+        (err) => {
+          setErrorMsg(err.message);
+          setSuccessMsg('');
+        },
+      )
+      .catch(() => {});
   };
 
   const { yaml: alertmanagerYAML, errorMessage: loadErrorMsg } = getAlertmanagerYAML(secret);

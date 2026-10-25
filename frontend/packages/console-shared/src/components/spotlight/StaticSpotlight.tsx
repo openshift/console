@@ -1,6 +1,6 @@
 import type { FC, CSSProperties } from 'react';
+import * as ReactDOM from 'react-dom';
 import { useBoundingClientRect } from '../../hooks/useBoundingClientRect';
-import Portal from '../popper/Portal';
 import './spotlight.scss';
 
 type StaticSpotlightProps = {
@@ -17,13 +17,14 @@ const StaticSpotlight: FC<StaticSpotlightProps> = ({ element }) => {
         width: clientRect.width,
       }
     : {};
-  return clientRect ? (
-    <Portal>
-      <div className="pf-v6-c-backdrop ocs-spotlight__with-backdrop">
-        <div className="ocs-spotlight ocs-spotlight__element-highlight-noanimate" style={style} />
-      </div>
-    </Portal>
-  ) : null;
+  return clientRect
+    ? ReactDOM.createPortal(
+        <div className="pf-v6-c-backdrop ocs-spotlight__with-backdrop">
+          <div className="ocs-spotlight ocs-spotlight__element-highlight-noanimate" style={style} />
+        </div>,
+        document.body,
+      )
+    : null;
 };
 
 export default StaticSpotlight;

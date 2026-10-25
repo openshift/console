@@ -48,6 +48,7 @@ const EditApplicationForm: FC<FormikProps<FormikValues> & EditApplicationFormPro
       <ModalHeader
         title={t('Edit application grouping')}
         labelId="edit-application-modal-title"
+        data-test="modal-title"
         data-test-id="modal-title"
       />
       <ModalBody>
@@ -73,7 +74,12 @@ const EditApplicationForm: FC<FormikProps<FormikValues> & EditApplicationFormPro
         >
           {t('Save')}
         </Button>
-        <Button variant="link" onClick={cancel} data-test-id="modal-cancel-action">
+        <Button
+          variant="link"
+          onClick={cancel}
+          data-test="modal-cancel-action"
+          data-test-id="modal-cancel-action"
+        >
           {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>

@@ -28,6 +28,5 @@ export type ImportEnvironment = Extension<
 
 // Type guards
 
-export const isImportEnvironment = (e: Extension): e is ImportEnvironment => {
-  return e.type === 'dev-console.import/environment';
-};
+export const isImportEnvironment = (e: Extension): e is ImportEnvironment =>
+  e.type === 'dev-console.import/environment';

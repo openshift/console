@@ -1,6 +1,5 @@
 import type { FormEventHandler } from 'react';
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   Button,
   Content,
@@ -16,22 +15,18 @@ import {
   ModalVariant,
   TextInput,
 } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 import * as semver from 'semver';
-
-import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
-import { ChannelDocLink } from '../cluster-settings/cluster-settings';
-import { ClusterVersionModel } from '../../models';
+import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
-import { isManaged } from '../utils/documentation';
-import { ModalComponentProps } from '@console/shared/src/types/modal';
-import {
-  ClusterVersionKind,
-  getAvailableClusterChannels,
-  getLastCompletedUpdate,
-  k8sPatch,
-} from '../../module/k8s';
-import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
+import type { ModalComponentProps } from '@console/shared/src/types/modal';
+import { ClusterVersionModel } from '../../models';
+import type { ClusterVersionKind } from '../../module/k8s';
+import { getAvailableClusterChannels, getLastCompletedUpdate, k8sPatch } from '../../module/k8s';
+import { ChannelDocLink } from '../cluster-settings/cluster-settings-utils';
+import { isManaged } from '../utils/documentation';
 
 const ClusterChannelModal = (props: ClusterChannelModalProps) => {
   const { cancel, close, cv } = props;
@@ -142,19 +137,17 @@ const ClusterChannelModal = (props: ClusterChannelModalProps) => {
   );
 };
 
-export const ClusterChannelModalOverlay: OverlayComponent<ClusterChannelModalProps> = (props) => {
-  return (
-    <Modal
-      isOpen
-      onClose={props.closeOverlay}
-      variant={ModalVariant.small}
-      data-test="channel-modal"
-      aria-labelledby="cluster-channel-modal-title"
-    >
-      <ClusterChannelModal {...props} close={props.closeOverlay} cancel={props.closeOverlay} />
-    </Modal>
-  );
-};
+export const ClusterChannelModalOverlay: OverlayComponent<ClusterChannelModalProps> = (props) => (
+  <Modal
+    isOpen
+    onClose={props.closeOverlay}
+    variant={ModalVariant.small}
+    data-test="channel-modal"
+    aria-labelledby="cluster-channel-modal-title"
+  >
+    <ClusterChannelModal {...props} close={props.closeOverlay} cancel={props.closeOverlay} />
+  </Modal>
+);
 
 type ClusterChannelModalProps = {
   cv: ClusterVersionKind;

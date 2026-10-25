@@ -17,7 +17,7 @@ let mockExtensions: (
 )[] = [];
 
 jest.mock('@console/dynamic-plugin-sdk/src/api/useResolvedExtensions', () => ({
-  useResolvedExtensions: (typeGuard) => [mockExtensions.filter(typeGuard), true],
+  useResolvedExtensions: (predicate) => [mockExtensions.filter(predicate), true],
 }));
 
 describe('useCatalogExtensions', () => {

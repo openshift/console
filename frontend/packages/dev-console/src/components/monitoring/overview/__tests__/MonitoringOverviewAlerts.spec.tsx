@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { mockAlerts } from '@console/shared/src/utils/__mocks__/alerts-and-rules-data';
+import { mockAlerts } from '@console/shared/src/utils/__tests__/data/alerts-and-rules-data';
 import { sortMonitoringAlerts } from '@console/shared/src/utils/alert-utils';
 import { InternalMonitoringOverviewAlerts as MonitoringOverviewAlerts } from '../MonitoringOverviewAlerts';
 

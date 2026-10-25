@@ -1,16 +1,15 @@
 import type { FC } from 'react';
-import * as _ from 'lodash';
-import { useTranslation } from 'react-i18next';
-
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { K8sResourceKind } from '../../module/k8s';
-import { SectionHeading } from './headings';
 import {
   DescriptionList,
   DescriptionListDescription,
   DescriptionListGroup,
   DescriptionListTerm,
 } from '@patternfly/react-core';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import type { K8sResourceKind } from '../../module/k8s';
+import { SectionHeading } from './headings';
 
 export const BuildHooks: FC<BuildHooksProps> = ({ resource }) => {
   const postCommitArgs = _.get(resource, 'spec.postCommit.args');

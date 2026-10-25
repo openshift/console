@@ -66,7 +66,6 @@ export const useChannelList = (namespace: string): ChannelListProps => {
           setAccessData({ loaded: true, channelList });
         })
         .catch((err) =>
-          // eslint-disable-next-line no-console
           console.warn('Error while checking create access for channels', err.message),
         );
     }

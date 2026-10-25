@@ -34,17 +34,16 @@ const BuildsOverview: FC<BuildsOverviewProps> = ({ item: { builds, buildRuns, ob
     ? referenceForModel(BuildRunModel)
     : referenceForModel(BuildRunModelV1Alpha1);
   const buildRunsforResource = resourceLabel
-    ? buildRuns.filter((buildRun) => {
-        return resourceLabel === buildRun.metadata?.labels?.[BUILDRUN_TO_RESOURCE_MAP_LABEL];
-      })
+    ? buildRuns.filter(
+        (buildRun) => resourceLabel === buildRun.metadata?.labels?.[BUILDRUN_TO_RESOURCE_MAP_LABEL],
+      )
     : [];
 
-  const buildsForResource = builds.filter((build) => {
-    return (
+  const buildsForResource = builds.filter(
+    (build) =>
       build.metadata?.labels?.[BUILDRUN_TO_RESOURCE_MAP_LABEL] ===
-      obj.metadata?.labels?.[BUILDRUN_TO_RESOURCE_MAP_LABEL]
-    );
-  });
+      obj.metadata?.labels?.[BUILDRUN_TO_RESOURCE_MAP_LABEL],
+  );
 
   if (!buildsForResource || !buildsForResource.length) {
     return null;

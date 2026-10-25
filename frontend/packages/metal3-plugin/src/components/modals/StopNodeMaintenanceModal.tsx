@@ -42,9 +42,9 @@ export const useStopNodeMaintenanceModal = () => {
       launchWarningModal({
         title: t('Stop maintenance'),
         children: (
-          <Trans t={t} ns="metal3-plugin">
-            Are you sure you want to stop maintenance <strong>{reasonLabel}</strong> on node{' '}
-            <strong>{nodeName}</strong>?
+          <Trans t={t} ns="metal3-plugin" values={{ reasonLabel, nodeName }}>
+            Are you sure you want to stop maintenance <strong>{{ reasonLabel }}</strong> on node{' '}
+            <strong>{{ nodeName }}</strong>?
           </Trans>
         ),
         confirmButtonLabel: t('Stop maintenance'),

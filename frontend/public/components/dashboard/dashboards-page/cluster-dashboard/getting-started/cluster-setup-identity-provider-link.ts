@@ -1,9 +1,7 @@
 import { useTranslation } from 'react-i18next';
-
-import type { GettingStartedLink } from '@console/shared/src/components/getting-started/GettingStartedCard';
-
-import { OAuthModel } from '@console/internal/models';
 import { resourcePathFromModel } from '@console/internal/components/utils/resource-link';
+import { OAuthModel } from '@console/internal/models';
+import type { GettingStartedLink } from '@console/shared/src/components/getting-started/GettingStartedCard';
 import { useCanEditIdentityProviders, useOAuthData } from '@console/shared/src/hooks/oauth';
 
 export const useIdentityProviderLink = (): GettingStartedLink | null => {

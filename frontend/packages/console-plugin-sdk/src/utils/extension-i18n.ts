@@ -6,11 +6,8 @@ import { deepForOwn } from '@console/dynamic-plugin-sdk/src/utils/object';
 
 const NS_SEPARATOR = '~';
 
-export const isTranslatableString = (value): value is string => {
-  return (
-    typeof value === 'string' && value.length > 2 && value.startsWith('%') && value.endsWith('%')
-  );
-};
+export const isTranslatableString = (value): value is string =>
+  typeof value === 'string' && value.length > 2 && value.startsWith('%') && value.endsWith('%');
 
 export const getTranslationKey = (value: string) =>
   isTranslatableString(value) ? value.substr(1, value.length - 2) : undefined;

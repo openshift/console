@@ -1,7 +1,7 @@
 /* eslint-disable no-barrel-files/no-barrel-files */
 import type { FC } from 'react';
 // import { UserPreferenceCustomField as CustomFieldType } from '@console/dynamic-plugin-sdk/src';
-import { ClusterConfigurationCustomField } from '@console/dynamic-plugin-sdk/src';
+import type { ClusterConfigurationCustomField as ClusterConfigurationCustomFieldType } from '@console/dynamic-plugin-sdk/src';
 import type { ResolvedCodeRefProperties } from '@console/dynamic-plugin-sdk/src/types';
 import { FormLayout } from '@console/shared/src/components/cluster-configuration/FormLayout';
 import { ErrorBoundaryInline } from '@console/shared/src/components/error/fallbacks/ErrorBoundaryInline';
@@ -9,7 +9,7 @@ import type { ResolvedClusterConfigurationItem } from './types';
 
 type ClusterConfigurationCustomFieldProps = {
   item: ResolvedClusterConfigurationItem;
-  field: ResolvedCodeRefProperties<ClusterConfigurationCustomField>;
+  field: ResolvedCodeRefProperties<ClusterConfigurationCustomFieldType>;
 };
 
 const ClusterConfigurationCustomField: FC<ClusterConfigurationCustomFieldProps> = ({

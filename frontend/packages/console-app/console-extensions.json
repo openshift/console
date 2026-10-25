@@ -697,15 +697,6 @@
     }
   },
   {
-    "type": "console.flag/hookProvider",
-    "properties": {
-      "handler": { "$codeRef": "useNodeMgmtV1FlagProvider" }
-    },
-    "flags": {
-      "required": ["TECH_PREVIEW"]
-    }
-  },
-  {
     "type": "console.user-preference/group",
     "properties": {
       "id": "general",
@@ -734,40 +725,10 @@
     }
   },
   {
-    "type": "console.user-preference/group",
-    "properties": {
-      "id": "node-mgmt-v1",
-      "label": "%console-app~Node management%"
-    },
-    "flags": {
-      "required": ["TECH_PREVIEW"]
-    }
-  },
-  {
-    "type": "console.user-preference/item",
-    "properties": {
-      "id": "console.nodeMgmtV1.enabled",
-      "label": "%console-app~Node management%",
-      "groupId": "node-mgmt-v1",
-      "description": "%console-app~Enable node management enhancements. This is a technology preview feature.%",
-      "field": {
-        "type": "checkbox",
-        "userSettingsKey": "console.nodeMgmtV1.enabled",
-        "label": "%console-app~Enable node management enhancements%",
-        "trueValue": true,
-        "falseValue": false,
-        "defaultValue": true
-      }
-    },
-    "flags": {
-      "required": ["TECH_PREVIEW"]
-    }
-  },
-  {
     "type": "console.user-preference/item",
     "properties": {
       "id": "console.theme",
-      "label": "%console-app~Theme%",
+      "label": "%console-app~Color scheme%",
       "groupId": "general",
       "description": "%console-app~Console will appear as per the selected theme.%",
       "field": {
@@ -820,9 +781,6 @@
         ]
       },
       "insertAfter": "console.theme"
-    },
-    "flags": {
-      "required": ["FLAG_OPENSHIFT_5"]
     }
   },
   {
@@ -1523,7 +1481,24 @@
         "version": "v1",
         "kind": "ImageStream"
       }
-    }
+    },
+    "flags": { "required": ["OPENSHIFT_BUILDCONFIG"] }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "perspective": "admin",
+      "section": "storage",
+      "id": "imagestreams-no-builds",
+      "name": "%console-app~ImageStreams%",
+      "startsWith": ["imagestreamtags"],
+      "model": {
+        "group": "image.openshift.io",
+        "version": "v1",
+        "kind": "ImageStream"
+      }
+    },
+    "flags": { "disallowed": ["OPENSHIFT_BUILDCONFIG"] }
   },
   {
     "type": "console.navigation/resource-cluster",
@@ -2428,7 +2403,21 @@
       },
       "provider": {
         "$codeRef": "nodeActions.useNodeActions"
+      },
+      "bulkProvider": {
+        "$codeRef": "nodeActions.useNodeBulkActionsProvider"
       }
+    }
+  },
+  {
+    "type": "console.page/resource/list",
+    "properties": {
+      "model": {
+        "group": "console.openshift.io",
+        "version": "v1",
+        "kind": "ConsolePlugin"
+      },
+      "component": { "$codeRef": "ConsolePluginsListPage.ConsolePluginsListPage" }
     }
   },
   {
@@ -2593,7 +2582,7 @@
         "version": "v1",
         "kind": "ConfigMap"
       },
-      "provider": { "$codeRef": "defaultProvider.useDefaultActionsProvider" }
+      "provider": { "$codeRef": "configmapProvider.useConfigMapActionsProvider" }
     }
   },
   {
@@ -2714,7 +2703,7 @@
         "version": "v1",
         "kind": "ServiceAccount"
       },
-      "provider": { "$codeRef": "defaultProvider.useDefaultActionsProvider" }
+      "provider": { "$codeRef": "serviceAccountProvider.useServiceAccountActionsProvider" }
     }
   },
   {

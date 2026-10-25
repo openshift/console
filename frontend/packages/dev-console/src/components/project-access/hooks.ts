@@ -16,13 +16,16 @@ export const useProjectAccessRoles = (): { data: Roles; loaded: boolean } => {
     if (!availableClusterRoles || !availableClusterRoles.length) {
       return {};
     }
-    return availableClusterRoles.reduce((acc, role) => {
-      acc[role] = {
-        kind: ClusterRoleModel.kind,
-        name: role,
-      };
-      return acc;
-    }, {} as Record<string, WatchK8sResource>);
+    return availableClusterRoles.reduce(
+      (acc, role) => {
+        acc[role] = {
+          kind: ClusterRoleModel.kind,
+          name: role,
+        };
+        return acc;
+      },
+      {} as Record<string, WatchK8sResource>,
+    );
   }, [availableClusterRoles]);
 
   const clusterRoles = useK8sWatchResources<Record<string, ClusterRoleKind>>(watchedClusterRoles);
@@ -34,7 +37,6 @@ export const useProjectAccessRoles = (): { data: Roles; loaded: boolean } => {
   const mappedRoles = availableClusterRoles.reduce((acc, role) => {
     const clusterRole = clusterRoles[role];
     if (clusterRole?.loadError?.response?.status === 404) {
-      // eslint-disable-next-line no-console
       console.warn(
         `ClusterRole ${role} could not be found and will not be shown in project access options.`,
       );

@@ -1,106 +1,130 @@
 import type { FC } from 'react';
 import { useMemo } from 'react';
-import { css } from '@patternfly/react-styles';
-import { sortable } from '@patternfly/react-table';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { useParams, Link } from 'react-router';
-import type { Flatten, Filter, RowFunctionArgs } from '@console/internal/components/factory';
-import { MultiListPage, Table, TableData } from '@console/internal/components/factory';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
+import type {
+  ConsoleDataViewColumn,
+  GetDataViewRows,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import type { Flatten } from '@console/internal/components/factory/list-page';
+import { MultiListPage } from '@console/internal/components/factory/list-page';
 import {
-  ConsoleEmptyState,
   ResourceLink,
   resourcePathFromModel,
-} from '@console/internal/components/utils';
-import i18n from '@console/internal/i18n';
+} from '@console/internal/components/utils/resource-link';
 import type { MatchExpression } from '@console/internal/module/k8s';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import { ConsoleEmptyState } from '@console/shared/src/components/empty-state/ConsoleEmptyState';
 import { OPERATOR_HUB_LABEL } from '@console/shared/src/constants/common';
 import { PackageManifestModel, CatalogSourceModel } from '../models';
 import type { PackageManifestKind, CatalogSourceKind } from '../types';
 import { ClusterServiceVersionLogo } from './cluster-service-version-logo';
+import { sortByValue } from './dataViewSortHelpers';
 import { visibilityLabel, iconFor, defaultChannelFor } from './index';
 
-const tableColumnClasses = [
-  '',
-  css('pf-m-hidden', 'pf-m-visible-on-lg'),
-  css('pf-m-hidden', 'pf-m-visible-on-lg'),
-  '',
-];
+/** The name shown for a PackageManifest is the display name of its default channel's CSV. */
+const displayNameFor = (packageManifest: PackageManifestKind): string =>
+  defaultChannelFor(packageManifest)?.currentCSVDesc?.displayName || packageManifest.metadata.name;
 
-export const PackageManifestTableHeader = () => [
-  {
-    title: i18n.t('public~Name'),
-    sortFunc: 'sortPackageManifestByDefaultChannelName',
-    transforms: [sortable],
-    props: { className: tableColumnClasses[0] },
-  },
-  {
-    title: i18n.t('public~Latest version'),
-    props: { className: tableColumnClasses[1] },
-  },
-  {
-    title: i18n.t('public~Created'),
-    sortField: 'metadata.creationTimestamp',
-    transforms: [sortable],
-    props: { className: tableColumnClasses[2] },
-  },
-];
+const getPackageManifestMetadata = (packageManifest: PackageManifestKind) => ({
+  name: displayNameFor(packageManifest),
+  labels: packageManifest.metadata?.labels,
+});
 
-export const PackageManifestTableHeaderWithCatalogSource = () => [
-  ...PackageManifestTableHeader(),
-  {
-    title: i18n.t('olm~CatalogSource'),
-    sortField: 'status.catalogSource',
-    transforms: [sortable],
-    props: { className: tableColumnClasses[3] },
-  },
-];
+/**
+ * Columns for the PackageManifest table. The CatalogSource column is only shown when the table is
+ * not already scoped to a single CatalogSource.
+ * @param hasCatalogSource - Whether the list is scoped to one CatalogSource.
+ */
+export const usePackageManifestColumns = (
+  hasCatalogSource: boolean,
+): {
+  columns: ConsoleDataViewColumn<PackageManifestKind>[];
+} => {
+  const { t } = useTranslation('olm');
+  const columns = useMemo(
+    () => [
+      {
+        type: 'name' as const,
+        id: 'name',
+        sort: sortByValue<PackageManifestKind>(displayNameFor),
+      },
+      {
+        id: 'latestVersion',
+        title: t('Latest version'),
+        props: { modifier: 'nowrap' as const },
+      },
+      {
+        id: 'created',
+        title: t('Created'),
+        sort: 'metadata.creationTimestamp',
+        props: { modifier: 'nowrap' as const },
+      },
+      // Displaying the CatalogSource is redundant when the list is already scoped to one.
+      ...(hasCatalogSource
+        ? []
+        : [
+            {
+              id: 'catalogsource',
+              title: t('CatalogSource'),
+              sort: 'status.catalogSource',
+              props: { modifier: 'nowrap' as const },
+            },
+          ]),
+    ],
+    [t, hasCatalogSource],
+  );
+  return { columns };
+};
 
-export const PackageManifestTableRow: FC<RowFunctionArgs<
-  PackageManifestKind,
-  { catalogSource: CatalogSourceKind }
->> = ({ obj: packageManifest, customData }) => {
-  const channel = defaultChannelFor(packageManifest);
-
-  const { displayName, version, provider } = channel?.currentCSVDesc;
-
-  return (
-    <>
-      <TableData className={tableColumnClasses[0]}>
-        <Link
-          to={resourcePathFromModel(
-            PackageManifestModel,
-            packageManifest.metadata.name,
-            packageManifest.metadata.namespace,
-          )}
-        >
-          <ClusterServiceVersionLogo
-            displayName={displayName}
-            icon={iconFor(packageManifest)}
-            provider={provider.name}
-          />
-        </Link>
-      </TableData>
-      <TableData className={tableColumnClasses[1]}>
-        {version} ({channel.name})
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>
-        <Timestamp timestamp={packageManifest.metadata.creationTimestamp} />
-      </TableData>
-      {!customData.catalogSource && (
-        <TableData className={tableColumnClasses[3]}>
+export const getPackageManifestDataViewRows: GetDataViewRows<PackageManifestKind> = (
+  data,
+  columns,
+) =>
+  data.map(({ obj: packageManifest }) => {
+    const channel = defaultChannelFor(packageManifest);
+    const { displayName, version, provider } = channel?.currentCSVDesc ?? {};
+    const rowCells = {
+      name: {
+        cell: (
+          <Link
+            to={resourcePathFromModel(
+              PackageManifestModel,
+              packageManifest.metadata.name,
+              packageManifest.metadata.namespace,
+            )}
+          >
+            <ClusterServiceVersionLogo
+              displayName={displayName}
+              icon={iconFor(packageManifest)}
+              provider={provider?.name}
+            />
+          </Link>
+        ),
+      },
+      latestVersion: {
+        cell: (
+          <>
+            {version} ({channel?.name})
+          </>
+        ),
+      },
+      created: { cell: <Timestamp timestamp={packageManifest.metadata.creationTimestamp} /> },
+      catalogsource: {
+        cell: (
           <ResourceLink
             kind={referenceForModel(CatalogSourceModel)}
             name={packageManifest.status?.catalogSource}
             namespace={packageManifest.status?.catalogSourceNamespace}
           />
-        </TableData>
-      )}
-    </>
-  );
-};
+        ),
+      },
+    };
+    return columns.map(({ id }) => ({ id, ...rowCells[id] }));
+  });
 
 const PackageManifestListEmptyMessage = () => {
   const { t } = useTranslation('olm');
@@ -111,26 +135,28 @@ const PackageManifestListEmptyMessage = () => {
   );
 };
 
-const PackageManifestList = (props: PackageManifestListProps) => {
-  const { customData } = props;
-
+const PackageManifestList: FC<PackageManifestListProps> = (props) => {
+  const { t } = useTranslation('olm');
   // If the CatalogSource is not present, display PackageManifests along with their CatalogSources (used in PackageManifest Search page)
-  const TableHeader = customData.catalogSource
-    ? PackageManifestTableHeader
-    : PackageManifestTableHeaderWithCatalogSource;
+  const hasCatalogSource = !!props.customData?.catalogSource;
+  const { columns } = usePackageManifestColumns(hasCatalogSource);
+
+  // ConsoleDataView has a generic empty body state, so keep the CatalogSource-specific wording by
+  // short-circuiting when nothing loaded at all. Filtering down to zero rows still uses the table.
+  if (props.loaded && !props.loadError && props.data?.length === 0) {
+    return <PackageManifestListEmptyMessage />;
+  }
 
   return (
-    <Table
+    <ConsoleDataView<PackageManifestKind>
       {...props}
-      aria-label="PackageManifests"
-      data-test="PackageManifestTable"
-      loaded={props.loaded}
+      id={PackageManifestModel}
+      label={t('PackageManifests')}
       data={props.data || []}
-      filters={props.filters}
-      Header={TableHeader}
-      Row={PackageManifestTableRow}
-      EmptyMsg={PackageManifestListEmptyMessage}
-      virtualize
+      loaded={props.loaded}
+      columns={columns}
+      getDataViewRows={getPackageManifestDataViewRows}
+      getObjectMetadata={getPackageManifestMetadata}
     />
   );
 };
@@ -164,7 +190,7 @@ export const PackageManifestsPage: FC<PackageManifestsPageProps> = (props) => {
       showTitle={false}
       helpText={helpText}
       ListComponent={PackageManifestList}
-      textFilter="packagemanifest-name"
+      omitFilterToolbar
       flatten={flatten}
       resources={[
         {
@@ -207,13 +233,9 @@ type PackageManifestListProps = {
   customData?: { catalogSource: CatalogSourceKind };
   namespace?: string;
   data: PackageManifestKind[];
-  filters?: Filter[];
   loaded: boolean;
   loadError?: string | Record<string, any>;
   showDetailsLink?: boolean;
 };
 
-PackageManifestTableHeader.displayName = 'PackageManifestTableHeader';
-PackageManifestTableHeaderWithCatalogSource.displayName =
-  'PackageManifestTableHeaderWithCatalogSource';
 PackageManifestList.displayName = 'PackageManifestList';

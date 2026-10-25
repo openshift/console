@@ -1,7 +1,7 @@
 import { Children, cloneElement, isValidElement } from 'react';
 import * as _ from 'lodash';
-
-import { modelFor, kindForReference, K8sResourceKindReference, K8sModel } from '../../module/k8s';
+import type { K8sResourceKindReference, K8sModel } from '../../module/k8s';
+import { modelFor, kindForReference } from '../../module/k8s';
 
 export const inject = (children: React.ReactNode, props: object) => {
   const safeProps = _.omit(props, ['children']);
@@ -25,7 +25,6 @@ const lastKind = new Set<K8sResourceKindReference>();
  */
 export const kindObj = (kind: K8sResourceKindReference): K8sModel => {
   if (kindForReference(kind) === kind && !lastKind.has(kind)) {
-    // eslint-disable-next-line no-console
     console.warn(
       `Attempting to get Kubernetes object model using string kind: ${kind}, which is not guaranteed to be unique!`,
     );
@@ -33,7 +32,6 @@ export const kindObj = (kind: K8sResourceKindReference): K8sModel => {
   }
   const model = modelFor(kind);
   if (!model) {
-    // eslint-disable-next-line no-console
     console.warn('kindObj: no model for kind', kind);
   }
 

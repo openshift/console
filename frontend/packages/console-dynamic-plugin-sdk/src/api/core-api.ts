@@ -39,7 +39,9 @@ import {
   UseResolvedExtensions,
   UseUserPreference,
   VirtualizedTableFC,
-  UseToast
+  UseToast,
+  ConsoleDataViewFC,
+  DefinitionFor,
 } from '../extensions/console-types';
 import { StatusPopupSectionProps, StatusPopupItemProps } from '../extensions/dashboard-types';
 
@@ -48,21 +50,37 @@ export * from './common-types';
 export * from './utils';
 
 /**
- * React hook for consuming Console extensions with resolved `CodeRef` properties.
- * This hook accepts the same argument(s) as `useExtensions` hook and returns an adapted list of extension instances, resolving all code references within each extension's properties.
- * Initially, the hook returns an empty array. Once the resolution is complete, the React component is re-rendered with the hook returning an adapted list of extensions.
- * When the list of matching extensions changes, the resolution is restarted. The hook will continue to return the previous result until the resolution completes.
- * The hook's result elements are guaranteed to be referentially stable across re-renders.
+ * React hook for consuming Console extensions containing code references.
+ *
+ * Initially, this hook returns a result tuple `[resolvedExtensions: [], resolved: false, errors: []]`.
+ *
+ * Once the resolution is complete, this hook re-renders the component with a result tuple containing
+ * all matching extensions that had their code references resolved successfully along with any errors
+ * that occurred during the process.
+ *
+ * When the list of matching extensions changes, the resolution is restarted. In such case, the hook
+ * will _not_ re-render the component with empty initial result since it's preferable to use existing
+ * state until the current resolution completes.
+ *
+ * The hook's result is guaranteed to be referentially stable across re-renders, assuming referential
+ * stability of the `predicate` parameter.
+ *
+ * @param predicate Predicate (type guard) to filter extensions of a specific type.
+ *
+ * @returns Tuple `[resolvedExtensions, resolved, errors]` containing a list of matching extensions,
+ * a boolean flag indicating whether the resolution is complete, and a list of errors detected during
+ * the resolution.
+ *
  * @example
  * ```ts
- * const [navItemExtensions, navItemsResolved] = useResolvedExtensions<NavItem>(isNavItem);
- * // process adapted extensions and render your component
+ * const Example = () => {
+ *   const [navItems, navItemsResolved] = useResolvedExtensions(isNavItem);
+ *   // process extensions and render your component
+ * };
  * ```
- * @param typeGuards A list of callbacks that each accept a dynamic plugin extension as an argument and return a boolean flag indicating whether or not the extension meets desired type constraints
- * @returns Tuple containing a list of adapted extension instances with resolved code references, a boolean flag indicating whether the resolution is complete, and a list of errors detected during the resolution.
  */
-export const useResolvedExtensions: UseResolvedExtensions = require('@console/dynamic-plugin-sdk/src/api/useResolvedExtensions')
-  .useResolvedExtensions;
+export const useResolvedExtensions: UseResolvedExtensions =
+  require('@console/dynamic-plugin-sdk/src/api/useResolvedExtensions').useResolvedExtensions;
 
 /**
  * A component that creates a Navigation bar for a page.
@@ -83,11 +101,104 @@ export const useResolvedExtensions: UseResolvedExtensions = require('@console/dy
  * }
  * ```
  */
-export const HorizontalNav: FC<HorizontalNavProps> = require('@console/internal/components/utils/horizontal-nav')
-  .HorizontalNavFacade;
+export const HorizontalNav: FC<HorizontalNavProps> =
+  require('@console/internal/components/utils/horizontal-nav').HorizontalNavFacade;
 
 /**
- * @deprecated Use PatternFly's [Data view](https://www.patternfly.org/extensions/data-view/overview) instead.
+ * A table component for displaying, filtering, sorting, and paginating a list of resources,
+ * based on PatternFly's [Data view](https://www.patternfly.org/extensions/data-view/overview).
+ * Includes built-in name and label filters, column management, and optional row selection.
+ * @param {K8sModel|K8sGroupVersionKind|string} id - A model, group/version/kind, or string ID used for column management, matching `console.dataview/table-column` extensions, and persisting resizable column widths.
+ * @param {string} [label] - (optional) A label describing the type of resource displayed. Used in empty state messages and the table's `aria-label`.
+ * @param {TData[]} data - The array of data items to display in the table.
+ * @param {boolean} loaded - Flag indicating whether `data` has finished loading.
+ * @param {*} [loadError] - (optional) An error encountered while loading `data`.
+ * @param {ConsoleDataViewColumn[]} columns - The column definitions for the table. Every column requires an ID. Name and namespace types default their translated title, metadata sort path, and nowrap header and row cell modifiers. Explicit values override the defaults; header and row cell props apply independently, and `sort: false` disables sorting. Actions and selection columns always remain visible; empty titles do not bypass visibility.
+ * @param {function} getDataViewRows - Transforms the filtered, sorted, and paginated data into rows of typed cells matched to columns by ID, independent of cell order. Unknown IDs are ignored and omitted cells render empty. Console supplies selection and extension cells separately. An omitted `actions` cell uses the resource action providers for a Kubernetes resource row; `cell: null` leaves it empty.
+ * @param {object} [initialFilters] - (optional) Initial values for custom string or string-array fields added via `TFilters`, and/or the built-in name and label filters. Declare every custom key here, using `''` or `[]` for inactive filters, so it participates in URL synchronization and clearing. Strings use one URL parameter and arrays use repeated parameters. The name and label filters otherwise default to empty.
+ * @param {ReactNode[]} [additionalFilterNodes] - (optional) Additional filter elements to render alongside the built-in name and label filters.
+ * @param {function} [getObjectMetadata] - (optional) Extracts the name and labels used by the built-in filters from a data item.
+ * @param {function} [matchesAdditionalFilters] - (optional) Determines whether a data item matches any custom filters.
+ * @param {*} [customRowData] - (optional) Additional data made available to each row.
+ * @param {string} [defaultSortColumnId] - (optional) The `id` of the column to sort by before the user picks one. Defaults to the first column, or the first sortable column when a checkbox column is present, and is ignored if no column has this id. A `sortBy` URL parameter takes precedence; checkbox tables accept only sortable URL targets. Note that `sortBy` names its column by translated title, not by id.
+ * @param {SortByDirection} [defaultSortDirection] - (optional) The direction to sort by before the user picks one. Defaults to ascending. An `orderBy` URL parameter takes precedence.
+ * @param {boolean} [showNamespaceOverride] - (optional) If true, columns with `type: 'namespace'` are kept active regardless of column management selections or the active namespace.
+ * @param {boolean} [hideNameLabelFilters] - (optional) Hides both the name and label filters.
+ * @param {boolean} [hideLabelFilter] - (optional) Hides only the label filter, keeping the name filter.
+ * @param {ComponentType<unknown>} [EmptyMsg] - (optional) Rendered in place of the table when `data` is empty, letting a consumer explain what is missing and how to create the first resource. Defaults to a generic "No {{label}} found" message. Note that this does not apply when the data is non-empty but the active filters match nothing; that case always renders the built-in in-table empty message.
+ * @param {boolean} [mock] - (optional) Renders an empty placeholder instead of the table.
+ * @param {boolean} [isResizable] - (optional) Enables resizing and saved widths for columns with a title, and shows a reset action. Defaults to `true`.
+ * @param {object[]} [additionalResponsiveActions] - (optional) Additional ResponsiveAction props to render inside ResponsiveActions, alongside the built-in column management and reset-column-widths actions.
+ * @param {ReactNode} [additionalToolbarContent] - (optional) Additional content to display in the actions toolbar outside ResponsiveActions.
+ * @param {object} [selection] - (optional) Enables managed checkbox selection with `getItemId`. `isSelectable` can disable rows. `getBulkActions` receives `matchingSelectedItems`, the selected items matching the current filters, plus `clearSelection` and `deselect` callbacks, and returns table-specific bulk actions as `Action[]`. Console also loads matching resource bulk providers for a single-model Kubernetes resource selection. Selection persists across pages and built-in filters and is removed when items leave `data`.
+ * @example
+ * ```tsx
+ * const columns: ConsoleDataViewColumn<PodDisruptionBudgetKind>[] = [
+ *   { id: 'name', type: 'name' },
+ *   { id: 'actions', type: 'actions' },
+ * ];
+ *
+ * const getDataViewRows: GetDataViewRows<PodDisruptionBudgetKind> = (data, columns) =>
+ *   data.map(({ obj: pdb }) => {
+ *     const resourceKind = referenceForModel(PodDisruptionBudgetModel);
+ *     return columns.map(({ id }) =>
+ *       id === 'actions'
+ *         ? { id }
+ *         : {
+ *             id,
+ *             cell: <ResourceLink kind={resourceKind} name={pdb.metadata.name} namespace={pdb.metadata.namespace} />,
+ *           },
+ *     );
+ *   });
+ *
+ * const PDBList: React.FC<Props> = ({ data, loaded }) => (
+ *   <ConsoleDataView<PodDisruptionBudgetKind>
+ *     id={PodDisruptionBudgetModel}
+ *     label="PodDisruptionBudgets"
+ *     data={data}
+ *     loaded={loaded}
+ *     columns={columns}
+ *     getDataViewRows={getDataViewRows}
+ *     selection={{
+ *       getItemId: (pdb) => `${pdb.metadata.namespace}/${pdb.metadata.name}`,
+ *       getBulkActions: ({ matchingSelectedItems, clearSelection }) => [
+ *         {
+ *           id: 'clear-selection',
+ *           label: 'Clear selection',
+ *           disabled: matchingSelectedItems.length === 0,
+ *           cta: clearSelection,
+ *         },
+ *       ],
+ *     }}
+ *   />
+ * );
+ * ```
+ */
+export const ConsoleDataView: ConsoleDataViewFC =
+  require('@console/app/src/components/data-view/ConsoleDataView').ConsoleDataView;
+
+/**
+ * Looks up the OpenAPI (Swagger) schema definition for a given Kubernetes model.
+ *
+ * Results are memoized per model and never invalidated, so a call made before the OpenAPI
+ * schema has finished loading permanently caches a `null`/empty result for that model, even
+ * after the schema becomes available.
+ * @param {K8sModel} model - The Kubernetes model to look up.
+ * @returns The `SwaggerDefinition` for the model, with its `definitions` property populated
+ * with every definition in the document so that `$ref` values can be resolved. Returns `null`
+ * if the OpenAPI schema has not been fetched yet, or an object with a populated `definitions`
+ * property but no other fields if the model's definition could not be found.
+ * @example
+ * ```ts
+ * const definition = definitionFor(PodModel);
+ * const specDescription = definition?.properties?.spec?.description;
+ * ```
+ */
+export const definitionFor: DefinitionFor =
+  require('@console/internal/module/k8s/swagger').definitionFor;
+
+/**
+ * @deprecated Use PatternFly's [Data view](https://www.patternfly.org/extensions/data-view/overview) or ConsoleDataView instead.
  * A component for making virtualized tables
  * @param {D} data - data for table
  * @param {boolean} loaded - flag indicating data is loaded
@@ -120,10 +231,11 @@ export const HorizontalNav: FC<HorizontalNavProps> = require('@console/internal/
  * }
  * ```
  */
-export const VirtualizedTable: VirtualizedTableFC = require('@console/internal/components/factory/Table/VirtualizedTable')
-  .default;
+export const VirtualizedTable: VirtualizedTableFC =
+  require('@console/internal/components/factory/Table/VirtualizedTable').default;
 
 /**
+ * @deprecated Use PatternFly's [Data view](https://www.patternfly.org/extensions/data-view/overview) or ConsoleDataView instead.
  * Component for displaying table data within a table row
  * @param {string} id - unique id for table
  * @param {Set<string>} activeColumnIDs - active columns
@@ -148,10 +260,11 @@ export const VirtualizedTable: VirtualizedTableFC = require('@console/internal/c
  * };
  * ```
  */
-export const TableData: FC<TableDataProps> = require('@console/internal/components/factory/Table/VirtualizedTable')
-  .TableData;
+export const TableData: FC<TableDataProps> =
+  require('@console/internal/components/factory/Table/VirtualizedTable').TableData;
 
 /**
+ * @deprecated Use ConsoleDataView instead which handles this internally.
  * A hook that provides a list of user-selected active TableColumns.
  * @param {Object} options - Which are passed as a key-value in the map
  * @param options.columns - An array of all available TableColumns
@@ -169,8 +282,8 @@ export const TableData: FC<TableDataProps> = require('@console/internal/componen
  *   return columnPreferenceLoaded ? <VirtualizedTable columns={activeColumns} {...otherProps} /> : null
  * ```
  */
-export const useActiveColumns: UseActiveColumns = require('@console/internal/components/factory/Table/active-columns-hook')
-  .useActiveColumns;
+export const useActiveColumns: UseActiveColumns =
+  require('@console/internal/components/factory/Table/active-columns-hook').useActiveColumns;
 
 /**
  * Component for generating a page header
@@ -191,8 +304,8 @@ export const useActiveColumns: UseActiveColumns = require('@console/internal/com
  * };
  * ```
  */
-export const ListPageHeader: FC<ListPageHeaderProps> = require('@console/internal/components/factory/ListPage/ListPageHeader')
-  .default;
+export const ListPageHeader: FC<ListPageHeaderProps> =
+  require('@console/internal/components/factory/ListPage/ListPageHeader').default;
 
 /**
  * Component for adding a create button for a specific resource kind that automatically generates a link to the create YAML for this resource.
@@ -210,8 +323,8 @@ export const ListPageHeader: FC<ListPageHeaderProps> = require('@console/interna
  * };
  * ```
  */
-export const ListPageCreate: FC<ListPageCreateProps> = require('@console/internal/components/factory/ListPage/ListPageCreate')
-  .default;
+export const ListPageCreate: FC<ListPageCreateProps> =
+  require('@console/internal/components/factory/ListPage/ListPageCreate').default;
 
 /**
  * Component for creating a stylized link.
@@ -231,8 +344,8 @@ export const ListPageCreate: FC<ListPageCreateProps> = require('@console/interna
  * };
  * ```
  */
-export const ListPageCreateLink: FC<ListPageCreateLinkProps> = require('@console/internal/components/factory/ListPage/ListPageCreate')
-  .ListPageCreateLink;
+export const ListPageCreateLink: FC<ListPageCreateLinkProps> =
+  require('@console/internal/components/factory/ListPage/ListPageCreate').ListPageCreateLink;
 
 /**
  * Component for creating button.
@@ -251,8 +364,8 @@ export const ListPageCreateLink: FC<ListPageCreateLinkProps> = require('@console
  * };
  * ```
  */
-export const ListPageCreateButton: FC<ListPageCreateButtonProps> = require('@console/internal/components/factory/ListPage/ListPageCreate')
-  .ListPageCreateButton;
+export const ListPageCreateButton: FC<ListPageCreateButtonProps> =
+  require('@console/internal/components/factory/ListPage/ListPageCreate').ListPageCreateButton;
 
 /**
  * Component for creating a dropdown wrapped with permissions check.
@@ -277,8 +390,8 @@ export const ListPageCreateButton: FC<ListPageCreateButtonProps> = require('@con
  * };
  * ```
  */
-export const ListPageCreateDropdown: FC<ListPageCreateDropdownProps> = require('@console/internal/components/factory/ListPage/ListPageCreate')
-  .ListPageCreateDropdown;
+export const ListPageCreateDropdown: FC<ListPageCreateDropdownProps> =
+  require('@console/internal/components/factory/ListPage/ListPageCreate').ListPageCreateDropdown;
 
 /**
  * @deprecated Use PatternFly's [Data view](https://www.patternfly.org/extensions/data-view/overview) instead.
@@ -318,8 +431,8 @@ export const ListPageCreateDropdown: FC<ListPageCreateDropdownProps> = require('
  *   )
  * ```
  */
-export const ListPageFilter: FC<ListPageFilterProps> = require('@console/internal/components/factory/ListPage/ListPageFilter')
-  .default;
+export const ListPageFilter: FC<ListPageFilterProps> =
+  require('@console/internal/components/factory/ListPage/ListPageFilter').default;
 
 /**
  * @deprecated Use PatternFly's [Data view](https://www.patternfly.org/extensions/data-view/overview) instead.
@@ -348,8 +461,8 @@ export const ListPageFilter: FC<ListPageFilterProps> = require('@console/interna
  *   )
  * ```
  */
-export const useListPageFilter: UseListPageFilter = require('@console/internal/components/factory/ListPage/filter-hook')
-  .useListPageFilter;
+export const useListPageFilter: UseListPageFilter =
+  require('@console/internal/components/factory/ListPage/filter-hook').useListPageFilter;
 
 /**
  * Component that creates a link to a specific resource type with an icon badge.
@@ -375,8 +488,8 @@ export const useListPageFilter: UseListPageFilter = require('@console/internal/c
  *   />
  * ```
  */
-export const ResourceLink: FC<ResourceLinkProps> = require('@console/internal/components/utils/resource-link')
-  .ResourceLink;
+export const ResourceLink: FC<ResourceLinkProps> =
+  require('@console/internal/components/utils/resource-link').ResourceLink;
 export { default as ResourceStatus } from '../app/components/utils/resource-status';
 
 /**
@@ -389,8 +502,8 @@ export { default as ResourceStatus } from '../app/components/utils/resource-stat
  * <ResourceIcon kind="Pod"/>
  * ```
  */
-export const ResourceIcon: FC<ResourceIconProps> = require('@console/internal/components/utils/resource-icon')
-  .ResourceIcon;
+export const ResourceIcon: FC<ResourceIconProps> =
+  require('@console/internal/components/utils/resource-icon').ResourceIcon;
 
 export {
   useK8sModel,
@@ -440,8 +553,8 @@ export {
  *   >
  * ```
  */
-export const StatusPopupSection: FC<StatusPopupSectionProps> = require('@console/shared/src/components/dashboard/status-card/StatusPopup')
-  .StatusPopupSection;
+export const StatusPopupSection: FC<StatusPopupSectionProps> =
+  require('@console/shared/src/components/dashboard/status-card/StatusPopup').StatusPopupSection;
 
 /**
  * Status element used in status popup. Used in in `StatusPopupSection`.
@@ -463,8 +576,8 @@ export const StatusPopupSection: FC<StatusPopupSectionProps> = require('@console
  * </StatusPopupSection>
  * ```
  */
-export const StatusPopupItem: FC<StatusPopupItemProps> = require('@console/shared/src/components/dashboard/status-card/StatusPopup')
-  .default;
+export const StatusPopupItem: FC<StatusPopupItemProps> =
+  require('@console/shared/src/components/dashboard/status-card/StatusPopup').default;
 
 /**
  * Creates a wrapper component for a dashboard.
@@ -477,8 +590,8 @@ export const StatusPopupItem: FC<StatusPopupItemProps> = require('@console/share
  *     </Overview>
  *```
  */
-export const Overview: FC<OverviewProps> = require('@console/shared/src/components/dashboard/Dashboard')
-  .default;
+export const Overview: FC<OverviewProps> =
+  require('@console/shared/src/components/dashboard/Dashboard').default;
 
 /**
  * Creates a grid of card elements for a dashboard. Used within `Overview`.
@@ -492,8 +605,8 @@ export const Overview: FC<OverviewProps> = require('@console/shared/src/componen
  *     </Overview>
  *```
  */
-export const OverviewGrid: FC<OverviewGridProps> = require('@console/shared/src/components/dashboard/DashboardGrid')
-  .default;
+export const OverviewGrid: FC<OverviewGridProps> =
+  require('@console/shared/src/components/dashboard/DashboardGrid').default;
 
 /**
  * Creates an inventory card item.
@@ -510,8 +623,8 @@ export const OverviewGrid: FC<OverviewGridProps> = require('@console/shared/src/
  *   )
  * ```
  */
-export const InventoryItem: FC<InventoryItemProps> = require('@console/shared/src/components/dashboard/inventory-card/InventoryCard')
-  .default;
+export const InventoryItem: FC<InventoryItemProps> =
+  require('@console/shared/src/components/dashboard/inventory-card/InventoryCard').default;
 
 /**
  * Creates a title for an inventory card item. Used within `InventoryItem`.
@@ -528,8 +641,8 @@ export const InventoryItem: FC<InventoryItemProps> = require('@console/shared/sr
  *   )
  * ```
  */
-export const InventoryItemTitle: FC<InventoryItemTitleProps> = require('@console/shared/src/components/dashboard/inventory-card/InventoryCard')
-  .InventoryItemTitle;
+export const InventoryItemTitle: FC<InventoryItemTitleProps> =
+  require('@console/shared/src/components/dashboard/inventory-card/InventoryCard').InventoryItemTitle;
 
 /**
  * Creates the body of an inventory card. Used within `InventoryCard` and can be used with `InventoryTitle`.
@@ -547,8 +660,8 @@ export const InventoryItemTitle: FC<InventoryItemTitleProps> = require('@console
  *   )
  * ```
  */
-export const InventoryItemBody: FC<InventoryItemBodyProps> = require('@console/shared/src/components/dashboard/inventory-card/InventoryCard')
-  .InventoryItemBody;
+export const InventoryItemBody: FC<InventoryItemBodyProps> =
+  require('@console/shared/src/components/dashboard/inventory-card/InventoryCard').InventoryItemBody;
 
 /**
  * Creates a count and icon for an inventory card with optional link address. Used within `InventoryItemBody`.
@@ -567,8 +680,8 @@ export const InventoryItemBody: FC<InventoryItemBodyProps> = require('@console/s
  *   )
  * ```
  */
-export const InventoryItemStatus: FC<InventoryItemStatusProps> = require('@console/shared/src/components/dashboard/inventory-card/InventoryCard')
-  .InventoryItemStatus;
+export const InventoryItemStatus: FC<InventoryItemStatusProps> =
+  require('@console/shared/src/components/dashboard/inventory-card/InventoryCard').InventoryItemStatus;
 
 /**
  * Creates a skeleton container for when an inventory card is loading. Used with `InventoryItem` and related components.
@@ -586,8 +699,8 @@ export const InventoryItemStatus: FC<InventoryItemStatusProps> = require('@conso
  * )
  * ```
  */
-export const InventoryItemLoading: FC = require('@console/shared/src/components/dashboard/inventory-card/InventoryCard')
-  .InventoryItemLoading;
+export const InventoryItemLoading: FC =
+  require('@console/shared/src/components/dashboard/inventory-card/InventoryCard').InventoryItemLoading;
 
 export { useFlag } from '../utils/flags';
 
@@ -612,9 +725,8 @@ export { useFlag } from '../utils/flags';
  * @param {YAMLEditorProps['onSave']} onSave - Callback called when the command `CTRL + S` / `CMD + S` is triggered.
  * @param {YAMLEditorRef} ref - React reference to `{ editor?: IStandaloneCodeEditor }`. Using the 'editor' property, you are able to access to all methods to control the editor. For more information, see https://microsoft.github.io/monaco-editor/docs.html#interfaces/editor.IStandaloneCodeEditor.html.
  */
-export const YAMLEditor: ForwardRefExoticComponent<
-  CodeEditorProps & RefAttributes<CodeEditorRef>
-> = require('@console/internal/components/AsyncCodeEditor').AsyncCodeEditor;
+export const YAMLEditor: ForwardRefExoticComponent<CodeEditorProps & RefAttributes<CodeEditorRef>> =
+  require('@console/internal/components/AsyncCodeEditor').AsyncCodeEditor;
 
 /**
  * A basic lazy loaded Code editor with hover help and completion.
@@ -637,9 +749,8 @@ export const YAMLEditor: ForwardRefExoticComponent<
  * @param {CodeEditorProps['onSave']} onSave - Callback called when the command CTRL / CMD + S is triggered.
  * @param {CodeEditorRef} ref - React reference to `{ editor?: IStandaloneCodeEditor }`. Using the 'editor' property, you are able to access to all methods to control the editor. For more information, visit https://microsoft.github.io/monaco-editor/docs.html#interfaces/editor.IStandaloneCodeEditor.html.
  */
-export const CodeEditor: ForwardRefExoticComponent<
-  CodeEditorProps & RefAttributes<CodeEditorRef>
-> = require('@console/internal/components/AsyncCodeEditor').AsyncCodeEditor;
+export const CodeEditor: ForwardRefExoticComponent<CodeEditorProps & RefAttributes<CodeEditorRef>> =
+  require('@console/internal/components/AsyncCodeEditor').AsyncCodeEditor;
 
 /**
  * A lazy loaded YAML editor for Kubernetes resources with hover help and completion.
@@ -660,13 +771,14 @@ export const CodeEditor: ForwardRefExoticComponent<
  * @param {ResourceYAMLEditorProps['initialResource']} initialResource - YAML/Object representing a resource to be shown by the editor. This prop is used only during the inital render.
  * @param {ResourceYAMLEditorProps['header']} header - Add a header on top of the YAML editor.
  * @param {ResourceYAMLEditorProps['onSave']} onSave - Callback for the Save button. Passing it will override the default update performed on the resource by the editor.
+ * @param {ResourceYAMLEditorProps['onCancel']} onCancel - Callback function to be called on cancel. Passing it will override the default behavior of the cancel button.
  * @param {ResourceYAMLEditorProps['readOnly']} readOnly - Sets the YAML editor to read-only mode.
  * @param {ResourceYAMLEditorProps['create']} create - Editor will be on creation mode. Create button will replace the Save and Cancel buttons. If no onSave method defined, the 'Create' button will trigger the creation of the defined resource. Default: false
  * @param {ResourceYAMLEditorProps['onChange']} onChange - Callback triggered at any editor change.
  * @param {ResourceYAMLEditorProps['hideHeader']} hideHeader - On creation mode the editor by default show an header that can be hided with this property
  */
-export const ResourceYAMLEditor: FC<ResourceYAMLEditorProps> = require('@console/internal/components/AsyncResourceYAMLEditor')
-  .AsyncResourceYAMLEditor;
+export const ResourceYAMLEditor: FC<ResourceYAMLEditorProps> =
+  require('@console/internal/components/AsyncResourceYAMLEditor').AsyncResourceYAMLEditor;
 
 /**
  * A component to show events related to a particular resource.
@@ -677,8 +789,8 @@ export const ResourceYAMLEditor: FC<ResourceYAMLEditorProps> = require('@console
  * ```
  * @param {K8sResourceCommon} resource - An object whose related events should be shown.
  */
-export const ResourceEventStream: FC<ResourceEventStreamProps> = require('@console/internal/components/events')
-  .WrappedResourceEventStream;
+export const ResourceEventStream: FC<ResourceEventStreamProps> =
+  require('@console/internal/components/events').WrappedResourceEventStream;
 
 /**
  * A component to change the document title of the page.
@@ -690,8 +802,8 @@ export const ResourceEventStream: FC<ResourceEventStreamProps> = require('@conso
  *
  * @param {DocumentTitleProps['string']} children - The title to display
  */
-export const DocumentTitle: FC<DocumentTitleProps> = require('@console/shared/src/components/document-title/DocumentTitle')
-  .DocumentTitle;
+export const DocumentTitle: FC<DocumentTitleProps> =
+  require('@console/shared/src/components/document-title/DocumentTitle').DocumentTitle;
 
 /**
  * Sets up a poll to Prometheus for a single query.
@@ -706,9 +818,8 @@ export const DocumentTitle: FC<DocumentTitleProps> = require('@console/shared/sr
  * @returns A tuple containing the query response, a boolean flag indicating whether the response has completed, and any errors encountered during the request or post-processing of the request
  */
 export const usePrometheusPoll: UsePrometheusPoll = (options) => {
-  const result = require('@console/internal/components/graphs/prometheus-poll-hook').usePrometheusPoll(
-    options,
-  );
+  const result =
+    require('@console/internal/components/graphs/prometheus-poll-hook').usePrometheusPoll(options);
   // unify order with the rest of API
   return [result[0], !result[2], result[1]];
 };
@@ -723,8 +834,8 @@ export const usePrometheusPoll: UsePrometheusPoll = (options) => {
  * @param {TimestampProps['omitSuffix']} omitSuffix - formats the date ommiting the suffix.
  * @param {TimestampProps['className']} className - additional class name for the component.
  */
-export const Timestamp: FC<TimestampProps> = require('@console/shared/src/components/datetime/Timestamp')
-  .Timestamp;
+export const Timestamp: FC<TimestampProps> =
+  require('@console/shared/src/components/datetime/Timestamp').Timestamp;
 
 export { useModal } from '../app/modal-support/useModal';
 export type { ModalComponent } from '../app/modal-support/ModalProvider';
@@ -752,8 +863,8 @@ export type { OverlayComponent } from '../app/modal-support/OverlayProvider';
  *    </ActionServiceProvider>
  * ```
  */
-export const ActionServiceProvider: FC<ActionServiceProviderProps> = require('@console/shared/src/components/actions/ActionServiceProvider')
-  .ActionServiceProvider;
+export const ActionServiceProvider: FC<ActionServiceProviderProps> =
+  require('@console/shared/src/components/actions/ActionServiceProvider').ActionServiceProvider;
 
 /**
  * A component that renders a horizontal toolbar with a namespace dropdown menu in the leftmost position. Additional components can be passed in as children and will be rendered to the right of the namespace dropdown. This component is designed to be used at the top of the page. It should be used on pages where the user needs to be able to change the active namespace, such as on pages with k8s resources.
@@ -774,8 +885,8 @@ export const ActionServiceProvider: FC<ActionServiceProviderProps> = require('@c
  *      ...
  * ```
  */
-export const NamespaceBar: FC<NamespaceBarProps> = require('@console/internal/components/namespace-bar')
-  .NamespaceBar;
+export const NamespaceBar: FC<NamespaceBarProps> =
+  require('@console/internal/components/namespace-bar').NamespaceBar;
 
 /**
  * Creates a full page ErrorBoundaryFallbackPage component to display the "Something wrong happened" message along with the stack trace and other helpful debugging information.
@@ -799,8 +910,8 @@ export const NamespaceBar: FC<NamespaceBarProps> = require('@console/internal/co
  *  )
  * ```
  */
-export const ErrorBoundaryFallbackPage: FC<ErrorBoundaryFallbackProps> = require('@console/shared/src/components/error/fallbacks/ErrorBoundaryFallbackPage')
-  .ErrorBoundaryFallbackPage;
+export const ErrorBoundaryFallbackPage: FC<ErrorBoundaryFallbackProps> =
+  require('@console/shared/src/components/error/fallbacks/ErrorBoundaryFallbackPage').ErrorBoundaryFallbackPage;
 
 /**
  * A component that renders a graph of the results from a Prometheus PromQL query along with controls for interacting with the graph.
@@ -836,8 +947,8 @@ export const ErrorBoundaryFallbackPage: FC<ErrorBoundaryFallbackProps> = require
  * />
  * ```
  */
-export const QueryBrowser: FC<QueryBrowserProps> = require('@console/shared/src/components/query-browser/QueryBrowser')
-  .QueryBrowser;
+export const QueryBrowser: FC<QueryBrowserProps> =
+  require('@console/shared/src/components/query-browser/QueryBrowser').QueryBrowser;
 
 /**
  * A hook that provides a callback to launch a modal for editing Kubernetes resource annotations.
@@ -853,8 +964,8 @@ export const QueryBrowser: FC<QueryBrowserProps> = require('@console/shared/src/
  * }
  * ```
  */
-export const useAnnotationsModal: UseAnnotationsModal = require('@console/shared/src/hooks/useAnnotationsModal')
-  .useAnnotationsModal;
+export const useAnnotationsModal: UseAnnotationsModal =
+  require('@console/shared/src/hooks/useAnnotationsModal').useAnnotationsModal;
 
 /**
  * A hook that provides a callback to launch a modal for deleting a resource.
@@ -874,8 +985,8 @@ export const useAnnotationsModal: UseAnnotationsModal = require('@console/shared
  * }
  * ```
  */
-export const useDeleteModal: UseDeleteModal = require('@console/shared/src/hooks/useDeleteModal')
-  .useDeleteModal;
+export const useDeleteModal: UseDeleteModal =
+  require('@console/shared/src/hooks/useDeleteModal').useDeleteModal;
 
 /**
  * A hook that provides a callback to launch a modal for editing Kubernetes resource labels.
@@ -904,8 +1015,8 @@ export const useDeleteModal: UseDeleteModal = require('@console/shared/src/hooks
  * }
  * ```
  */
-export const useLabelsModal: UseLabelsModal = require('@console/shared/src/hooks/useLabelsModal')
-  .useLabelsModal;
+export const useLabelsModal: UseLabelsModal =
+  require('@console/shared/src/hooks/useLabelsModal').useLabelsModal;
 
 /**
  * Hook that provides the currently active namespace and a callback for setting the active namespace.
@@ -925,8 +1036,8 @@ export const useLabelsModal: UseLabelsModal = require('@console/shared/src/hooks
  * }
  * ```
  */
-export const useActiveNamespace: UseActiveNamespace = require('@console/shared/src/hooks/useActiveNamespace')
-  .useActiveNamespace;
+export const useActiveNamespace: UseActiveNamespace =
+  require('@console/shared/src/hooks/useActiveNamespace').useActiveNamespace;
 
 /**
  * Hook that provides the value of a single user preference and a callback for updating it.
@@ -948,14 +1059,14 @@ export const useActiveNamespace: UseActiveNamespace = require('@console/shared/s
  * };
  * ```
  */
-export const useUserPreference: UseUserPreference = require('@console/shared/src/hooks/useUserPreference')
-  .useUserPreference;
+export const useUserPreference: UseUserPreference =
+  require('@console/shared/src/hooks/useUserPreference').useUserPreference;
 
 /**
  * @deprecated This hook has been renamed to {@link useUserPreference} for consistency.
  */
-export const useUserSettings: UseUserPreference = require('@console/shared/src/hooks/useUserPreference')
-  .useUserPreference;
+export const useUserSettings: UseUserPreference =
+  require('@console/shared/src/hooks/useUserPreference').useUserPreference;
 
 /**
  * Hook that provides the current quick start context values. This allows plugins to interop with Console
@@ -972,8 +1083,8 @@ export const useUserSettings: UseUserPreference = require('@console/shared/src/h
  * };
  * ```
  */
-export const useQuickStartContext: UseQuickStartContext = require('@console/shared/src/hooks/useQuickStartContext')
-  .useQuickStartContext;
+export const useQuickStartContext: UseQuickStartContext =
+  require('@console/shared/src/hooks/useQuickStartContext').useQuickStartContext;
 
 /**
  * Hook that provides the currently active perspective and a callback for setting the active perspective
@@ -993,12 +1104,14 @@ export const useQuickStartContext: UseQuickStartContext = require('@console/shar
  * }
  * ```
  */
-export const useActivePerspective: UseActivePerspective = require('@console/dynamic-plugin-sdk/src/perspective/useActivePerspective')
-  .default;
+export const useActivePerspective: UseActivePerspective =
+  require('@console/dynamic-plugin-sdk/src/perspective/useActivePerspective').default;
 
 /**
  * Hook that provides toast functionality for displaying alerts.
- * @returns A toast context object with an `addToast` function for adding a toast to the screen and a `removeToast` function for removing a toast from the screen.
+ * @returns A context object with an addToast function for adding a toast to the screen, a
+ * removeToast function for removing it from the screen, and a minimizeToast function for
+ * hiding a drawer-persisted toast from the screen while keeping it unread in the notification drawer.
  * @example
  * ```tsx
  * const Component: React.FC = (props) => {

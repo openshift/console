@@ -38,38 +38,40 @@ export const useDeploymentActionsProvider = (resource: DeploymentKind) => {
 
   const isReady = commonActionsReady || deploymentActionsReady;
 
-  const deploymentActions = useMemo<Action[]>(() => {
-    return !isReady
-      ? []
-      : [
-          ...(relatedHPAs?.length === 0 ? [commonActions.ModifyCount] : []),
-          ...hpaActions,
-          ...pdbActions,
-          deploymentActionsObject.PauseRollout,
-          deploymentActionsObject.RestartRollout,
-          getHealthChecksAction(kindObj, resource),
-          commonActions.AddStorage,
-          deploymentActionsObject.UpdateStrategy,
-          deploymentActionsObject.EditResourceLimits,
-          commonActions.ModifyLabels,
-          commonActions.ModifyAnnotations,
-          deploymentActionsObject.EditDeployment,
-          ...(resource.metadata?.annotations?.['openshift.io/generated-by'] ===
-          'OpenShiftWebConsole'
-            ? [deleteResourceAction]
-            : [commonActions.Delete]),
-        ];
-  }, [
-    hpaActions,
-    pdbActions,
-    kindObj,
-    relatedHPAs,
-    resource,
-    commonActions,
-    isReady,
-    deploymentActionsObject,
-    deleteResourceAction,
-  ]);
+  const deploymentActions = useMemo<Action[]>(
+    () =>
+      !isReady
+        ? []
+        : [
+            ...(relatedHPAs?.length === 0 ? [commonActions.ModifyCount] : []),
+            ...hpaActions,
+            ...pdbActions,
+            deploymentActionsObject.PauseRollout,
+            deploymentActionsObject.RestartRollout,
+            getHealthChecksAction(kindObj, resource),
+            commonActions.AddStorage,
+            deploymentActionsObject.UpdateStrategy,
+            deploymentActionsObject.EditResourceLimits,
+            commonActions.ModifyLabels,
+            commonActions.ModifyAnnotations,
+            deploymentActionsObject.EditDeployment,
+            ...(resource.metadata?.annotations?.['openshift.io/generated-by'] ===
+            'OpenShiftWebConsole'
+              ? [deleteResourceAction]
+              : [commonActions.Delete]),
+          ],
+    [
+      hpaActions,
+      pdbActions,
+      kindObj,
+      relatedHPAs,
+      resource,
+      commonActions,
+      isReady,
+      deploymentActionsObject,
+      deleteResourceAction,
+    ],
+  );
 
   return [deploymentActions, !inFlight, undefined];
 };

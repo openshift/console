@@ -62,13 +62,12 @@ export const MultiTypeaheadField: FC<MultiTypeaheadFieldProps> = ({
   const errorMessage = !isValid ? error : '';
 
   const [inputValue, setInputValue] = useState<string>('');
-  const [filteredSelectOptions, setFilteredSelectOptions] = useState<SelectOptionProps[]>(
-    initialSelectOptions,
-  );
+  const [filteredSelectOptions, setFilteredSelectOptions] =
+    useState<SelectOptionProps[]>(initialSelectOptions);
   const [focusedItemIndex, setFocusedItemIndex] = useState<number | null>(null);
   const [activeItemId, setActiveItemId] = useState<string | null>(null);
   const [onCreation, setOnCreation] = useState<boolean>(false); // Boolean to refresh filter state after new option is created
-  const textInputRef = useRef<HTMLInputElement>();
+  const textInputRef = useRef<HTMLInputElement>(undefined);
 
   useFormikValidationFix(field.value);
 

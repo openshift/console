@@ -44,14 +44,14 @@ const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
         {helperText && (
           <FormHelperText>
             <HelperText>
-              <HelperTextItem variant={'default'}>{helperText}</HelperTextItem>
+              <HelperTextItem variant="default">{helperText}</HelperTextItem>
             </HelperText>
           </FormHelperText>
         )}
         {hasError && (
           <FormHelperText>
             <HelperText>
-              <HelperTextItem icon={<RhUiErrorFillIcon />} variant={'error'}>
+              <HelperTextItem icon={<RhUiErrorFillIcon />} variant="error">
                 {meta.error}
               </HelperTextItem>
             </HelperText>

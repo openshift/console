@@ -118,8 +118,8 @@ const Subscribe: FC<SubscribeProps> = ({ source, target = { metadata: { name: ''
     yamlData: safeJSToYAML(yamlData, '', { skipInvalid: true }),
   };
 
-  const handleSubmit = (values: FormikValues, action: FormikHelpers<FormikValues>) => {
-    return k8sCreate(getResourceModel(), sanitizeResourceName(values.formData))
+  const handleSubmit = (values: FormikValues, action: FormikHelpers<FormikValues>) =>
+    k8sCreate(getResourceModel(), sanitizeResourceName(values.formData))
       .then((resource) => {
         action.setStatus({ subscriberAvailable: true, error: '' });
         navigate(`/topology/ns/${resource.metadata.namespace}`);
@@ -131,7 +131,6 @@ const Subscribe: FC<SubscribeProps> = ({ source, target = { metadata: { name: ''
           error: errMessage,
         });
       });
-  };
 
   const handleCancel = useCallback(() => navigate(-1), [navigate]);
 

@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { Stack, StackItem } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { PopoverStatus, NodeStatus } from '@console/dynamic-plugin-sdk';
+import { PopoverStatus } from '@console/dynamic-plugin-sdk';
 import { humanizeBinaryBytes, humanizeNumber } from '@console/internal/components/utils/units';
 import type { NodeKind } from '@console/internal/module/k8s';
 import ConsumerPopover from '@console/shared/src/components/dashboard/utilization-card/TopConsumerPopover';
@@ -31,11 +31,10 @@ const humanizeMap = Object.freeze({
 const isMonitoredCondition = (condition: Condition): boolean =>
   [Condition.DISK_PRESSURE, Condition.MEM_PRESSURE, Condition.PID_PRESSURE].includes(condition);
 
-const getDegradedStates = (node: NodeKind): Condition[] => {
-  return (node.status?.conditions ?? [])
+const getDegradedStates = (node: NodeKind): Condition[] =>
+  (node.status?.conditions ?? [])
     .filter(({ status, type }) => status === 'True' && isMonitoredCondition(type as Condition))
     .map(({ type }) => type as Condition);
-};
 
 type NodeStatusWithExtensionsProps = {
   node: NodeKind;
@@ -50,10 +49,10 @@ export const NodeStatusWithExtensions: FC<NodeStatusWithExtensionsProps> = ({
 }) => {
   const { t } = useTranslation('console-app');
 
-  const { popoverContent, secondaryStatuses } = useMemo(() => statusExtensions(node), [
-    statusExtensions,
-    node,
-  ]);
+  const { popoverContent, secondaryStatuses } = useMemo(
+    () => statusExtensions(node),
+    [statusExtensions, node],
+  );
 
   const mainStatus = <Status status={nodeStatus(node)} className={className} />;
 

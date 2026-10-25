@@ -1,8 +1,5 @@
 import type { FC } from 'react';
 import { useMemo, Suspense } from 'react';
-import * as _ from 'lodash';
-import { Link } from 'react-router';
-import { Trans, useTranslation } from 'react-i18next';
 import {
   Alert,
   Grid,
@@ -12,60 +9,54 @@ import {
   CardHeader,
   CardTitle,
 } from '@patternfly/react-core';
-
-import { ONE_HOUR, ONE_MINUTE } from '@console/shared/src/constants/time';
+import * as _ from 'lodash';
+import { Trans, useTranslation } from 'react-i18next';
+import { Link } from 'react-router';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import Status from '@console/dynamic-plugin-sdk/src/app/components/status/Status';
-import { usePrometheusGate } from '@console/shared/src/hooks/usePrometheusGate';
-import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
+import type {
+  ConsoleDataViewColumn,
+  GetDataViewRows,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
-import {
-  K8sResourceKindReference,
-  referenceFor,
-  referenceForModel,
-  K8sResourceKind,
-  K8sModel,
-  TableColumn,
-} from '../module/k8s';
+import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import { ONE_HOUR, ONE_MINUTE } from '@console/shared/src/constants/time';
+import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
+import { usePrometheusGate } from '@console/shared/src/hooks/usePrometheusGate';
+import { BuildConfigModel, BuildModel } from '../models';
+import type { K8sResourceKindReference, K8sResourceKind, K8sModel } from '../module/k8s';
+import { referenceFor, referenceForModel } from '../module/k8s';
 import { getBuildNumber } from '../module/k8s/builds';
+import { BuildLogs } from './build-logs';
+import { BuildPipeline, BuildPipelineLogLink } from './build-pipeline';
+import { ResourceEventStream } from './events';
 import { DetailsPage } from './factory/details';
 import { ListPage } from './factory/list-page';
-import {
-  actionsCellProps,
-  getNameCellProps,
-  ConsoleDataView,
-  nameCellProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
-import { GetDataViewRows } from '@console/app/src/components/data-view/types';
-import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import { Area } from './graphs';
 import { AsyncComponent } from './utils/async';
 import { BuildHooks } from './utils/build-hooks';
 import { BuildStrategy } from './utils/build-strategy';
-import { ConsoleEmptyState, LoadingBox } from './utils/status-box';
+import { BuildStrategyType, getStrategyType, displayDurationInWords } from './utils/build-utils';
+import { timeFormatter, timeFormatterWithSeconds } from './utils/datetime';
 import { DetailsItem } from './utils/details-item';
+import { ResourceSummary } from './utils/details-page';
 import {
   documentationURLs,
   getDocumentationURL,
   isManaged,
   isUpstream,
 } from './utils/documentation';
-import { humanizeBinaryBytes, humanizeCpuCores } from './utils/units';
+import { SectionHeading } from './utils/headings';
 import { navFactory } from './utils/horizontal-nav';
 import { ResourceLink, resourcePath } from './utils/resource-link';
-import { ResourceSummary } from './utils/details-page';
-import { SectionHeading } from './utils/headings';
-import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import { BuildPipeline, BuildPipelineLogLink } from './build-pipeline';
-import { BuildLogs } from './build-logs';
-import { ResourceEventStream } from './events';
-import { Area } from './graphs';
-import { BuildConfigModel, BuildModel } from '../models';
-import { timeFormatter, timeFormatterWithSeconds } from './utils/datetime';
-import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
-import { BuildStrategyType, getStrategyType, displayDurationInWords } from './utils/build-utils';
+import { ConsoleEmptyState, LoadingBox } from './utils/status-box';
+import { humanizeBinaryBytes, humanizeCpuCores } from './utils/units';
+
 const BuildsReference: K8sResourceKindReference = 'Build';
 
 export const BuildLogLink = ({ build }) => {
@@ -95,14 +86,18 @@ export const BuildNumberLink = ({ build }) => {
 const BuildMetrics = ({ obj }) => {
   const { t } = useTranslation('public');
   const podName = obj.metadata.annotations?.['openshift.io/build.pod-name'];
-  const endTime = obj.status.completionTimestamp
-    ? new Date(obj.status.completionTimestamp).getTime()
-    : Date.now();
+  const endTime = useMemo(
+    () =>
+      obj.status.completionTimestamp
+        ? new Date(obj.status.completionTimestamp).getTime()
+        : Date.now(),
+    [obj.status.completionTimestamp],
+  );
   const runTime = obj.status.startTimestamp
     ? endTime - new Date(obj.status.startTimestamp).getTime()
     : ONE_HOUR;
   const timespan = Math.max(runTime, ONE_MINUTE); // Minimum timespan of one minute
-  const namespace = obj.metadata.namespace;
+  const { namespace } = obj.metadata;
   const domain = useMemo(() => ({ x: [endTime - timespan, endTime] }), [endTime, timespan]);
   const areaProps = useMemo(
     () => ({
@@ -350,8 +345,8 @@ const tableColumnInfo = [
   { id: 'actions' },
 ];
 
-const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) => {
-  return data.map(({ obj }) => {
+const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) =>
+  data.map(({ obj }) => {
     const { name, namespace } = obj.metadata;
     const kindReference = referenceFor(obj);
     const context = { [kindReference]: obj };
@@ -359,7 +354,6 @@ const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) => {
     const rowCells = {
       [tableColumnInfo[0].id]: {
         cell: <ResourceLink kind={BuildsReference} name={name} namespace={namespace} />,
-        props: getNameCellProps(name),
       },
       [tableColumnInfo[1].id]: {
         cell: <ResourceLink kind="Namespace" name={namespace} />,
@@ -375,7 +369,6 @@ const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) => {
       },
       [tableColumnInfo[5].id]: {
         cell: <LazyActionMenu context={context} />,
-        props: actionsCellProps,
       },
     };
 
@@ -383,96 +376,71 @@ const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) => {
       const cell = rowCells[id]?.cell || '-';
       return {
         id,
-        props: rowCells[id]?.props,
         cell,
       };
     });
   });
-};
 
 const useBuildsColumns = (): {
-  columns: TableColumn<K8sResourceKind>[];
-  resetAllColumnWidths: () => void;
+  columns: ConsoleDataViewColumn<K8sResourceKind>[];
 } => {
   const { t } = useTranslation('public');
-  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(BuildModel);
 
-  const columns = useMemo(() => {
-    return [
+  const columns = useMemo<ConsoleDataViewColumn<K8sResourceKind>[]>(
+    () => [
       {
-        title: t('Name'),
+        type: 'name' as const,
         id: tableColumnInfo[0].id,
-        sort: 'metadata.name',
-        resizableProps: getResizableProps(tableColumnInfo[0].id),
-        props: {
-          ...nameCellProps,
-          modifier: 'nowrap',
-        },
       },
       {
-        title: t('Namespace'),
+        type: 'namespace' as const,
         id: tableColumnInfo[1].id,
-        sort: 'metadata.namespace',
-        resizableProps: getResizableProps(tableColumnInfo[1].id),
-        props: {
-          modifier: 'nowrap',
-        },
       },
       {
         title: t('Status'),
         id: tableColumnInfo[2].id,
         sort: 'status.phase',
-        resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
         title: t('Start time'),
         id: tableColumnInfo[3].id,
         sort: 'status.startTimestamp',
-        resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
         title: t('Duration'),
         id: tableColumnInfo[4].id,
         sort: 'status.duration',
-        resizableProps: getResizableProps(tableColumnInfo[4].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
-      {
-        title: '',
-        id: tableColumnInfo[5].id,
-        props: {
-          ...actionsCellProps,
-        },
-      },
-    ];
-  }, [t, getResizableProps]);
+      { type: 'actions' as const, id: tableColumnInfo[5].id },
+    ],
+    [t],
+  );
 
-  return { columns, resetAllColumnWidths };
+  return { columns };
 };
 
 const BuildsList: FC<BuildsListProps> = ({ data, loaded, ...props }) => {
-  const { columns, resetAllColumnWidths } = useBuildsColumns();
+  const { columns } = useBuildsColumns();
 
   return (
     <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView
         {...props}
+        id={BuildModel}
         label={BuildModel.labelPlural}
         data={data}
         loaded={loaded}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement={true}
-        isResizable
-        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );
@@ -504,7 +472,7 @@ export const BuildsPage: FC<BuildsPageProps> = (props) => {
           })),
         },
       ]}
-      omitFilterToolbar={true}
+      omitFilterToolbar
     />
   );
 };

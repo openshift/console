@@ -48,7 +48,7 @@ jest.mock('@console/dynamic-plugin-sdk/src/utils/k8s', () => ({
   k8sKill: (...args) => mockK8sKill(...args),
 }));
 
-describe(UninstallOperatorModal.name, () => {
+describe('UninstallOperatorModal', () => {
   let uninstallOperatorModalProps: UninstallOperatorModalProps;
 
   beforeEach(() => {

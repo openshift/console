@@ -3,7 +3,7 @@ import {
   knSinkDeployment,
   knSourceDeployment,
   modelsKnTopology,
-} from './__mocks__/knativeResourcesData';
+} from './data/knativeResourcesData';
 import { MockKnativeResources } from './topology-knative-test-data';
 
 describe('isKnativeResource', () => {

@@ -8,10 +8,13 @@ import (
 	"strings"
 	"testing"
 
-	"helm.sh/helm/v3/pkg/action"
-	"helm.sh/helm/v3/pkg/chart"
-	"helm.sh/helm/v3/pkg/release"
-	"helm.sh/helm/v3/pkg/repo"
+	"helm.sh/helm/v4/pkg/action"
+	chart "helm.sh/helm/v4/pkg/chart/v2"
+	release "helm.sh/helm/v4/pkg/release"
+	releasecommon "helm.sh/helm/v4/pkg/release/common"
+	releasev1 "helm.sh/helm/v4/pkg/release/v1"
+	repo "helm.sh/helm/v4/pkg/repo/v1"
+	"helm.sh/helm/v4/pkg/storage/driver"
 	kv1 "k8s.io/api/core/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -27,13 +30,13 @@ import (
 	"github.com/openshift/console/pkg/helm/chartproxy"
 )
 
-var fakeReleaseList = []*release.Release{
+var fakeReleaseList = []*releasev1.Release{
 	{
 		Name: "Test",
 	},
 }
 
-var fakeReleaseHistory = []*release.Release{
+var fakeReleaseHistory = []*releasev1.Release{
 	{
 		Name:    "test",
 		Version: 1,
@@ -49,7 +52,7 @@ var fakeSecret = kv1.Secret{
 		Name: "Test",
 	},
 }
-var fakeRelease = release.Release{
+var fakeRelease = releasev1.Release{
 	Name: "Test",
 }
 
@@ -66,8 +69,8 @@ func fakeHelmHandler() helmHandlers {
 	}
 }
 
-func fakeInstallChart(mockedRelease *release.Release, err error) func(ns string, name string, url string, values map[string]interface{}, conf *action.Configuration, client dynamic.Interface, coreClient corev1client.CoreV1Interface, fileCleanup bool, indexEntry string) (*release.Release, error) {
-	return func(ns string, name string, url string, values map[string]interface{}, conf *action.Configuration, cliet dynamic.Interface, coreClient corev1client.CoreV1Interface, fileCleanup bool, indexEntry string) (r *release.Release, er error) {
+func fakeInstallChart(mockedRelease *releasev1.Release, err error) func(ns string, name string, url string, values map[string]interface{}, conf *action.Configuration, client dynamic.Interface, coreClient corev1client.CoreV1Interface, fileCleanup bool, indexEntry string) (*releasev1.Release, error) {
+	return func(ns string, name string, url string, values map[string]interface{}, conf *action.Configuration, cliet dynamic.Interface, coreClient corev1client.CoreV1Interface, fileCleanup bool, indexEntry string) (r *releasev1.Release, er error) {
 		return mockedRelease, err
 	}
 }
@@ -78,8 +81,8 @@ func fakeInstallChartAsync(mockedSecret *kv1.Secret, err error) func(ns string, 
 	}
 }
 
-func fakeListReleases(mockedReleases []*release.Release, err error) func(conf *action.Configuration, isTopology bool) ([]*release.Release, error) {
-	return func(conf *action.Configuration, isTopology bool) (releases []*release.Release, er error) {
+func fakeListReleases(mockedReleases []*releasev1.Release, err error) func(conf *action.Configuration, isTopology bool) ([]*releasev1.Release, error) {
+	return func(conf *action.Configuration, isTopology bool) (releases []*releasev1.Release, er error) {
 		return mockedReleases, err
 	}
 }
@@ -90,8 +93,8 @@ func fakeGetManifest(mockedManifest string, err error) func(name string, url str
 	}
 }
 
-func fakeGetRelease(name string, t *testing.T, mockedRelease *release.Release, err error) func(releaseName string, conf *action.Configuration) (*release.Release, error) {
-	return func(releaseName string, conf *action.Configuration) (r *release.Release, er error) {
+func fakeGetRelease(name string, t *testing.T, mockedRelease *releasev1.Release, err error) func(releaseName string, conf *action.Configuration) (*releasev1.Release, error) {
+	return func(releaseName string, conf *action.Configuration) (r *releasev1.Release, er error) {
 		if name != releaseName {
 			t.Errorf("release name mismatch expected is %s, received %s", name, releaseName)
 		}
@@ -105,8 +108,8 @@ func mockedHelmGetChart(c *chart.Chart, e error) func(url string, conf *action.C
 	}
 }
 
-func fakeGetReleaseHistory(name string, fakeHistory []*release.Release, t *testing.T, err error) func(name string, conf *action.Configuration) ([]*release.Release, error) {
-	return func(n string, conf *action.Configuration) ([]*release.Release, error) {
+func fakeGetReleaseHistory(name string, fakeHistory []*releasev1.Release, t *testing.T, err error) func(name string, conf *action.Configuration) ([]*releasev1.Release, error) {
+	return func(n string, conf *action.Configuration) ([]*releasev1.Release, error) {
 		if name != n {
 			t.Errorf("release name mismatch expected is %s, received %s", n, name)
 		}
@@ -123,8 +126,8 @@ func fakeUninstallRelease(name string, t *testing.T, fakeResp *release.Uninstall
 	}
 }
 
-func fakeUpgradeRelease(name, ns string, t *testing.T, fakeRelease *release.Release, err error) func(ns, name, url string, vals map[string]interface{}, conf *action.Configuration, client dynamic.Interface, coreClient corev1client.CoreV1Interface, fileCleanUp bool, indexEntry string) (*release.Release, error) {
-	return func(namespace, n, url string, vals map[string]interface{}, conf *action.Configuration, client dynamic.Interface, coreClient corev1client.CoreV1Interface, fileCleanUp bool, indexEntry string) (*release.Release, error) {
+func fakeUpgradeRelease(name, ns string, t *testing.T, fakeRelease *releasev1.Release, err error) func(ns, name, url string, vals map[string]interface{}, conf *action.Configuration, client dynamic.Interface, coreClient corev1client.CoreV1Interface, fileCleanUp bool, indexEntry string) (*releasev1.Release, error) {
+	return func(namespace, n, url string, vals map[string]interface{}, conf *action.Configuration, client dynamic.Interface, coreClient corev1client.CoreV1Interface, fileCleanUp bool, indexEntry string) (*releasev1.Release, error) {
 		if namespace != ns {
 			t.Errorf("Namespace mismatch expected %s received %s", ns, namespace)
 		}
@@ -135,8 +138,8 @@ func fakeUpgradeRelease(name, ns string, t *testing.T, fakeRelease *release.Rele
 	}
 }
 
-func fakeUpgradeReleaseAsync(name, ns string, t *testing.T, fakeSecret *kv1.Secret, err error) func(ns, name, url string, vals map[string]interface{}, conf *action.Configuration, client dynamic.Interface, coreClient corev1client.CoreV1Interface, fileCleanUp bool, indexEntry string) (*kv1.Secret, error) {
-	return func(namespace, n, url string, vals map[string]interface{}, conf *action.Configuration, client dynamic.Interface, coreClient corev1client.CoreV1Interface, fileCleanUp bool, indexEntry string) (*kv1.Secret, error) {
+func fakeUpgradeReleaseAsync(name, ns string, t *testing.T, fakeSecret *kv1.Secret, err error) func(ns, name, url string, vals map[string]interface{}, conf *action.Configuration, client dynamic.Interface, coreClient corev1client.CoreV1Interface, fileCleanUp bool, indexEntry string, basicAuthSecretName string) (*kv1.Secret, error) {
+	return func(namespace, n, url string, vals map[string]interface{}, conf *action.Configuration, client dynamic.Interface, coreClient corev1client.CoreV1Interface, fileCleanUp bool, indexEntry string, basicAuthSecretName string) (*kv1.Secret, error) {
 		if namespace != ns {
 			t.Errorf("Namespace mismatch expected %s received %s", ns, namespace)
 		}
@@ -147,8 +150,8 @@ func fakeUpgradeReleaseAsync(name, ns string, t *testing.T, fakeSecret *kv1.Secr
 	}
 }
 
-func fakeRollbackRelease(name string, t *testing.T, rel *release.Release, err error) func(name string, revision int, conf *action.Configuration) (*release.Release, error) {
-	return func(n string, revision int, conf *action.Configuration) (*release.Release, error) {
+func fakeRollbackRelease(name string, t *testing.T, rel *releasev1.Release, err error) func(name string, revision int, conf *action.Configuration) (*releasev1.Release, error) {
+	return func(n string, revision int, conf *action.Configuration) (*releasev1.Release, error) {
 		if name != n {
 			t.Errorf("Release name mismatch expected is %s and received %s", name, n)
 		}
@@ -211,7 +214,7 @@ func TestHelmHandlers_HandleHelmList(t *testing.T) {
 	tests := []struct {
 		name             string
 		expectedResponse string
-		releaseList      []*release.Release
+		releaseList      []*releasev1.Release
 		error
 		httpStatusCode int
 	}{
@@ -255,7 +258,7 @@ func TestHelmHandlers_HandleHelmInstall(t *testing.T) {
 	tests := []struct {
 		name             string
 		expectedResponse string
-		installedRelease release.Release
+		installedRelease releasev1.Release
 		error
 		httpStatusCode int
 	}{
@@ -346,7 +349,7 @@ func TestHelmHandlers_HandleGetRelease(t *testing.T) {
 	tests := []struct {
 		name             string
 		expectedResponse string
-		release          *release.Release
+		release          *releasev1.Release
 		releaseName      string
 		error
 		httpStatusCode int
@@ -356,7 +359,7 @@ func TestHelmHandlers_HandleGetRelease(t *testing.T) {
 			error:            errors.New("unknown error occurred"),
 			httpStatusCode:   http.StatusBadGateway,
 			releaseName:      "Test",
-			expectedResponse: `{"error":"Failed to find helm release: unknown error occurred"}`,
+			expectedResponse: `{"error":"Failed to get helm release: unknown error occurred"}`,
 		},
 		{
 			name:             "Return the requested release serialized in JSON format",
@@ -405,7 +408,7 @@ func TestHelmHandlers_HandleGetChart(t *testing.T) {
 		},
 		{
 			name:             "Return chart info in json format",
-			expectedResponse: `{"metadata":{"name":"foo"},"lock":null,"templates":null,"values":null,"schema":null,"files":null}`,
+			expectedResponse: `{"metadata":{"name":"foo"},"lock":null,"templates":null,"values":null,"schema":null,"schemamodtime":"0001-01-01T00:00:00Z","files":null}`,
 			expectedChart: chart.Chart{
 				Metadata: &chart.Metadata{
 					Name: "foo",
@@ -442,7 +445,7 @@ func TestHelmHandlers_HandleGetReleaseHistory(t *testing.T) {
 	tests := []struct {
 		name                string
 		expectedResponse    string
-		history             []*release.Release
+		history             []*releasev1.Release
 		expectedContentType string
 		error
 		httpStatusCode int
@@ -452,7 +455,7 @@ func TestHelmHandlers_HandleGetReleaseHistory(t *testing.T) {
 			name:                "chart release history should error out when there is error from helm",
 			error:               errors.New("Chart path is invalid"),
 			expectedResponse:    `{"error":"Failed to list helm release history: Chart path is invalid"}`,
-			httpStatusCode:      http.StatusBadGateway,
+			httpStatusCode:      http.StatusBadRequest,
 			expectedContentType: "application/json",
 			releaseName:         "test",
 		},
@@ -511,7 +514,7 @@ func TestHelmHandlers_HandleHelmUninstallRelease(t *testing.T) {
 			name:                "Invalid chart uninstall release test",
 			error:               errors.New("Chart path is invalid"),
 			expectedResponse:    `{"error":"Failed to uninstall helm release: Chart path is invalid"}`,
-			httpStatusCode:      http.StatusBadGateway,
+			httpStatusCode:      http.StatusBadRequest,
 			expectedContentType: "application/json",
 			releaseName:         "test",
 			releaseNamespace:    "test-namespace",
@@ -562,7 +565,7 @@ func TestHelmHandlers_HandleHelmRollbackRelease(t *testing.T) {
 	tests := []struct {
 		name                string
 		expectedResponse    string
-		release             *release.Release
+		release             *releasev1.Release
 		expectedContentType string
 		body                string
 		releaseName         string
@@ -574,20 +577,20 @@ func TestHelmHandlers_HandleHelmRollbackRelease(t *testing.T) {
 			name:                "Invalid chart rollback release test",
 			error:               errors.New("Chart path is invalid"),
 			body:                `{"name": "test", "namespace":"test", "version":1}`,
-			expectedResponse:    `{"error":"Failed to rollback helm releases: Chart path is invalid"}`,
-			httpStatusCode:      http.StatusBadGateway,
+			expectedResponse:    `{"error":"Failed to rollback helm release: Chart path is invalid"}`,
+			httpStatusCode:      http.StatusBadRequest,
 			expectedContentType: "application/json",
 			releaseName:         "test",
 			releaseNamespace:    "test",
 		},
 		{
 			name:             "Valid chart rollback release test",
-			expectedResponse: `{"name":"test-release","info":{"first_deployed":"","last_deployed":"","deleted":"","status":"deployed"},"version":1}`,
+			expectedResponse: `{"name":"test-release","info":{"status":"deployed"},"version":1}`,
 			body:             `{"name": "test", "namespace":"test", "version":1}`,
-			release: &release.Release{
+			release: &releasev1.Release{
 				Name: "test-release",
-				Info: &release.Info{
-					Status: release.StatusDeployed,
+				Info: &releasev1.Info{
+					Status: releasecommon.StatusDeployed,
 				},
 				Version: 1,
 			},
@@ -603,7 +606,7 @@ func TestHelmHandlers_HandleHelmRollbackRelease(t *testing.T) {
 			body:                `{"name": "test", "namespace":"test", "version":"abc"}`,
 			expectedContentType: "application/json",
 			error:               errors.New(`{"error":"Failed to parse request: json: cannot unmarshal string into Go struct field HelmRequest.version of type int"}`),
-			httpStatusCode:      http.StatusBadGateway,
+			httpStatusCode:      http.StatusBadRequest,
 			releaseName:         "test",
 			releaseNamespace:    "test",
 		},
@@ -611,7 +614,7 @@ func TestHelmHandlers_HandleHelmRollbackRelease(t *testing.T) {
 			name:                "Non exist release rollback should return revision not found error",
 			error:               actions.ErrReleaseRevisionNotFound,
 			body:                `{"name": "test", "namespace":"test", "version":1}`,
-			expectedResponse:    `{"error":"Failed to rollback helm releases: revision not found for provided release"}`,
+			expectedResponse:    `{"error":"Failed to rollback helm release: revision not found for provided release"}`,
 			httpStatusCode:      http.StatusNotFound,
 			expectedContentType: "application/json",
 			releaseName:         "test",
@@ -648,7 +651,7 @@ func TestHelmHandlers_HandleHelmUpgradeRelease(t *testing.T) {
 		name                string
 		expectedResponse    string
 		expectedContentType string
-		release             *release.Release
+		release             *releasev1.Release
 		error
 		httpStatusCode  int
 		requestBody     string
@@ -659,7 +662,7 @@ func TestHelmHandlers_HandleHelmUpgradeRelease(t *testing.T) {
 			name:                "Invalid chart path upgrade release test",
 			error:               errors.New("Chart path is invalid"),
 			expectedResponse:    `{"error":"Failed to upgrade helm release: Chart path is invalid"}`,
-			httpStatusCode:      http.StatusBadGateway,
+			httpStatusCode:      http.StatusBadRequest,
 			expectedContentType: "application/json",
 			requestBody:         `{"name":"test", "namespace": "test-namespace", "version": 1}`,
 			releaseName:         "test",
@@ -678,7 +681,7 @@ func TestHelmHandlers_HandleHelmUpgradeRelease(t *testing.T) {
 		},
 		{
 			name:                "Upgrade of non exist release should return no revision found error",
-			expectedResponse:    `{"error":"Failed to rollback helm releases: revision not found for provided release"}`,
+			expectedResponse:    `{"error":"Failed to upgrade helm release: revision not found for provided release"}`,
 			release:             &fakeRelease,
 			expectedContentType: "application/json",
 			error:               actions.ErrReleaseRevisionNotFound,
@@ -913,7 +916,7 @@ func TestHelmHandlers_HandleHelmInstallAsync(t *testing.T) {
 			name:             "Error occurred",
 			expectedResponse: `{"error":"Failed to install helm chart: Chart path is invalid"}`,
 			error:            errors.New("Chart path is invalid"),
-			httpStatusCode:   http.StatusBadGateway,
+			httpStatusCode:   http.StatusBadRequest,
 		},
 		{
 			name:             "Successful install returns release info in JSON format",
@@ -960,7 +963,7 @@ func TestHelmHandlers_HandleHelmUpgradeReleaseAsync(t *testing.T) {
 			name:                "Invalid chart path upgrade release test",
 			error:               errors.New("Chart path is invalid"),
 			expectedResponse:    `{"error":"Failed to upgrade helm release: Chart path is invalid"}`,
-			httpStatusCode:      http.StatusBadGateway,
+			httpStatusCode:      http.StatusBadRequest,
 			expectedContentType: "application/json",
 			requestBody:         `{"name":"test", "namespace": "test-namespace", "version": 1}`,
 			releaseName:         "test",
@@ -979,7 +982,7 @@ func TestHelmHandlers_HandleHelmUpgradeReleaseAsync(t *testing.T) {
 		},
 		{
 			name:                "Upgrade of non exist release should return no revision found error",
-			expectedResponse:    `{"error":"Failed to rollback helm releases: revision not found for provided release"}`,
+			expectedResponse:    `{"error":"Failed to upgrade helm release: revision not found for provided release"}`,
 			secret:              &fakeSecret,
 			expectedContentType: "application/json",
 			error:               actions.ErrReleaseRevisionNotFound,
@@ -1027,7 +1030,7 @@ func TestHelmHandlers_HandleHelmUnInstallAsync(t *testing.T) {
 			name:             "Error occurred",
 			expectedResponse: `{"error":"Failed to install helm chart: Chart path is invalid"}`,
 			error:            errors.New("Chart path is invalid"),
-			httpStatusCode:   http.StatusBadGateway,
+			httpStatusCode:   http.StatusBadRequest,
 		},
 		{
 			name:             "Successful uninstall returns secret info",
@@ -1071,7 +1074,7 @@ func TestHelmHandlers_HandleHelmInstallAsyncNoRepo(t *testing.T) {
 			name:             "Invalid JSON request",
 			requestBody:      `{invalid}`,
 			expectedResponse: `{"error":"Failed to parse request: invalid character 'i' looking for beginning of object key string"}`,
-			httpStatusCode:   http.StatusBadGateway,
+			httpStatusCode:   http.StatusBadRequest,
 		},
 		{
 			name:             "Error occurred during chart install from URL",
@@ -1106,6 +1109,32 @@ func TestHelmHandlers_HandleHelmInstallAsyncNoRepo(t *testing.T) {
 			}
 			if response.Body.String() != tt.expectedResponse {
 				t.Errorf("response body not matching expected is %s and received is %s", tt.expectedResponse, response.Body.String())
+			}
+		})
+	}
+}
+
+func TestDetermineErrorStatusCode(t *testing.T) {
+	tests := []struct {
+		name     string
+		err      error
+		expected int
+	}{
+		{"actions ErrReleaseNotFound", actions.ErrReleaseNotFound, http.StatusNotFound},
+		{"driver ErrReleaseNotFound", driver.ErrReleaseNotFound, http.StatusNotFound},
+		{"actions ErrReleaseRevisionNotFound", actions.ErrReleaseRevisionNotFound, http.StatusNotFound},
+		{"driver ErrNoDeployedReleases", driver.ErrNoDeployedReleases, http.StatusNotFound},
+		{"wrapped driver ErrReleaseNotFound", fmt.Errorf("wrap: %w", driver.ErrReleaseNotFound), http.StatusNotFound},
+		{"invalid chart URL", fmt.Errorf("invalid chart URL: foo"), http.StatusBadRequest},
+		{"Chart path is invalid", errors.New("Chart path is invalid"), http.StatusBadRequest},
+		{"invalid revision", errors.New("Revision no. should be more than 0"), http.StatusBadRequest},
+		{"unknown error", errors.New("something broke"), http.StatusBadGateway},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := determineErrorStatusCode(tt.err)
+			if got != tt.expected {
+				t.Errorf("determineErrorStatusCode() = %d, want %d", got, tt.expected)
 			}
 		})
 	}

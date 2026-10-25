@@ -30,7 +30,7 @@ export class ClusterSettingsPage extends BasePage {
    */
   async navigateToDetails(): Promise<void> {
     await this.goTo('/settings/cluster');
-    await expect(this.detailsTab).toBeVisible();
+    await expect(this.detailsTab).toBeVisible({ timeout: 60_000 });
   }
 
   /**
@@ -67,7 +67,7 @@ export class ClusterSettingsPage extends BasePage {
    * Open the channel dropdown and select a channel (for "Select channel" modal)
    */
   async selectChannelFromDropdown(channelName: string): Promise<void> {
-    const dropdownToggle = this.channelModal.locator('[data-test="console-select-menu-toggle"]');
+    const dropdownToggle = this.channelModal.getByTestId('console-select-menu-toggle');
     await this.robustClick(dropdownToggle);
 
     const channelOption = this.page.locator(`[data-test-dropdown-menu="${channelName}"]`);

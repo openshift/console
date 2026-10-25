@@ -94,14 +94,14 @@ const RequestPane: FC<FormikProps<FormikValues>> = ({ setFieldValue, values }) =
         <FormLayout>
           <InputField
             type={TextInputTypes.text}
-            name={`request.type`}
+            name="request.type"
             label={t('Type')}
             data-test="request-type"
             placeholder="boson.fn"
           />
           <InputField
             type={TextInputTypes.text}
-            name={`request.source`}
+            name="request.source"
             label={t('Source')}
             data-test="request-source"
             placeholder="/boson/fn"

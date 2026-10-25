@@ -1,6 +1,4 @@
-const isHTMLElement = (n: Node): n is HTMLElement => {
-  return n.nodeType === Node.ELEMENT_NODE;
-};
+const isHTMLElement = (n: Node): n is HTMLElement => n.nodeType === Node.ELEMENT_NODE;
 
 export const getParentScrollableElement = (node: HTMLElement) => {
   let parentNode: Node = node;

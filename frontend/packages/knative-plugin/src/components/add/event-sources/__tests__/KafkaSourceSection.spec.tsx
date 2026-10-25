@@ -64,7 +64,7 @@ describe('KafkaSourceSection', () => {
     expect(screen.getByRole('heading', { name: title })).toBeInTheDocument();
   });
 
-  it('should render BootstrapServers and Topics fields with ', () => {
+  it('should render BootstrapServers and Topics fields with', () => {
     (useK8sWatchResources as jest.Mock).mockReturnValue({
       kafkas: { data: [], loaded: true },
       kafkatopics: { data: [], loaded: true },

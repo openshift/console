@@ -17,7 +17,7 @@ export const DOC_URL_SERVERLESS_FUNCTIONS_GETTING_STARTED = `${OPENSHIFT_SERVERL
 
 const KUBE_DOCS = 'https://kubernetes.io/docs/';
 
-type docURLs = {
+type DocURLs = {
   downstream: string;
   kube?: string;
   upstream: string;
@@ -93,6 +93,10 @@ export const documentationURLs = {
     upstream:
       'rest_api/policy_apis/poddisruptionbudget-policy-v1.html#poddisruptionbudget-policy-v1',
   },
+  securityContextConstraints: {
+    downstream: 'html/authentication_and_authorization/managing-pod-security-policies',
+    upstream: 'authentication/managing-security-context-constraints.html',
+  },
 };
 
 export const isUpstream = () => window.SERVER_FLAGS.branding === 'okd';
@@ -100,7 +104,7 @@ export const isUpstream = () => window.SERVER_FLAGS.branding === 'okd';
 export const isManaged = () =>
   window.SERVER_FLAGS.branding === 'rosa' || window.SERVER_FLAGS.branding === 'dedicated';
 
-export const getDocumentationURL = (docURLs: docURLs) =>
+export const getDocumentationURL = (docURLs: DocURLs) =>
   isUpstream()
     ? `${UPSTREAM_LATEST}${docURLs.upstream}`
     : `${window.SERVER_FLAGS.documentationBaseURL}${docURLs.downstream}`;

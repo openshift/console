@@ -27,25 +27,21 @@ export const useDevfileServer = (
 
   const { devfileContent, devfilePath } = devfile || {};
 
-  const devfileDataPromise = useMemo(async () => {
+  const devfileDataPromise = useMemo(() => {
     if (!name || !url || !devfileContent) {
-      return null;
+      return Promise.resolve(null);
     }
 
-    const newDevfileContent = await convertURItoInlineYAML(
-      devfileContent,
-      url,
-      ref,
-      dir,
-      type,
-      secretResource,
+    return convertURItoInlineYAML(devfileContent, url, ref, dir, type, secretResource).then(
+      (newDevfileContent) => ({
+        name,
+        git: { URL: url, ref, dir: prefixDotSlash(dir) },
+        devfile: {
+          devfileContent: newDevfileContent,
+          devfilePath: `${smartSlashDir}${devfilePath}`,
+        },
+      }),
     );
-
-    return {
-      name,
-      git: { URL: url, ref, dir: prefixDotSlash(dir) },
-      devfile: { devfileContent: newDevfileContent, devfilePath: `${smartSlashDir}${devfilePath}` },
-    };
   }, [name, url, devfileContent, ref, dir, type, secretResource, smartSlashDir, devfilePath]);
 
   useEffect(() => {
@@ -63,7 +59,6 @@ export const useDevfileServer = (
       try {
         devfileData = await devfileDataPromise;
       } catch (e) {
-        // eslint-disable-next-line no-console
         console.warn('Could not fetch devfile resource:', e);
         setError(e.message || t('Could not fetch devfile resources.'));
         return;
@@ -174,8 +169,8 @@ export const useSelectedDevfileSample = () => {
     };
   }, []);
 
-  return useMemo(() => devfileSamples?.find((sample) => sample.name === devfileName), [
-    devfileSamples,
-    devfileName,
-  ]);
+  return useMemo(
+    () => devfileSamples?.find((sample) => sample.name === devfileName),
+    [devfileSamples, devfileName],
+  );
 };

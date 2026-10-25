@@ -1,5 +1,4 @@
 import { screen } from '@testing-library/react';
-
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { UsageIcon, ResourceUsageRow, getACRQResourceUsage } from '../resource-quota';
 
@@ -85,15 +84,15 @@ describe('Check quota table columns by ResourceUsageRow', () => {
     apiVersion: 'v1',
     kind: 'ResourceQuota',
     metadata: { name: 'example', namespace: 'example' },
-    spec: { hard: { 'limits.cpu': 2 } },
-    status: { hard: { 'limits.cpu': 2 }, used: { 'limits.cpu': 1 } },
+    spec: { hard: { 'limits.cpu': '2' } },
+    status: { hard: { 'limits.cpu': '2' }, used: { 'limits.cpu': '1' } },
   };
 
   it('verifies resource quota information in table columns', () => {
     renderWithProviders(
       <table>
         <tbody>
-          <ResourceUsageRow resourceType={'limits.cpu'} quota={quota} />
+          <ResourceUsageRow resourceType="limits.cpu" quota={quota} />
         </tbody>
       </table>,
     );
@@ -116,15 +115,15 @@ describe('Check cluster quota table columns by ResourceUsageRow', () => {
     apiVersion: 'quota.openshift.io/v1',
     kind: 'ClusterResourceQuota',
     metadata: { name: 'example' },
-    spec: { quota: { hard: { 'limits.cpu': 2 } } },
-    status: { total: { hard: { 'limits.cpu': 2 }, used: { 'limits.cpu': 1 } } },
+    spec: { quota: { hard: { 'limits.cpu': '2' } } },
+    status: { total: { hard: { 'limits.cpu': '2' }, used: { 'limits.cpu': '1' } } },
   };
 
   it('verifies cluster resource quota information in table columns', () => {
     renderWithProviders(
       <table>
         <tbody>
-          <ResourceUsageRow resourceType={'limits.cpu'} quota={quota} />
+          <ResourceUsageRow resourceType="limits.cpu" quota={quota} />
         </tbody>
       </table>,
     );
@@ -148,19 +147,19 @@ describe('Check applied cluster quota table columns by ResourceUsageRow', () => 
     apiVersion: 'quota.openshift.io/v1',
     kind: 'AppliedClusterResourceQuota',
     metadata: { name: 'example' },
-    spec: { quota: { hard: { 'limits.cpu': 2 } } },
+    spec: { quota: { hard: { 'limits.cpu': '2' } } },
     status: {
       namespaces: [
         {
           namespace: 'test-namespace',
-          status: { used: { 'limits.cpu': 0 }, hard: { 'limits.cpu': 2 } },
+          status: { used: { 'limits.cpu': '0' }, hard: { 'limits.cpu': '2' } },
         },
         {
           namespace: 'test-namespace2',
-          status: { used: { 'limits.cpu': 1 }, hard: { 'limits.cpu': 2 } },
+          status: { used: { 'limits.cpu': '1' }, hard: { 'limits.cpu': '2' } },
         },
       ],
-      total: { hard: { 'limits.cpu': 2 }, used: { 'limits.cpu': 1 } },
+      total: { hard: { 'limits.cpu': '2' }, used: { 'limits.cpu': '1' } },
     },
   };
 
@@ -168,7 +167,7 @@ describe('Check applied cluster quota table columns by ResourceUsageRow', () => 
     renderWithProviders(
       <table>
         <tbody>
-          <ResourceUsageRow resourceType={'limits.cpu'} quota={quota} namespace="test-namespace" />
+          <ResourceUsageRow resourceType="limits.cpu" quota={quota} namespace="test-namespace" />
         </tbody>
       </table>,
     );
@@ -187,5 +186,87 @@ describe('Check applied cluster quota table columns by ResourceUsageRow', () => 
 
     // Verify the limit
     expect(screen.getByText('2')).toBeVisible();
+  });
+});
+
+describe('Check memory resource humanization in ResourceUsageRow', () => {
+  const memoryQuota = {
+    apiVersion: 'v1',
+    kind: 'ResourceQuota',
+    metadata: { name: 'example', namespace: 'example' },
+    spec: { hard: { 'requests.memory': '2147483648' } },
+    status: {
+      hard: { 'requests.memory': '2147483648' },
+      used: { 'requests.memory': '1073741824' },
+    },
+  };
+
+  it('displays memory values in human-readable format (GiB)', () => {
+    renderWithProviders(
+      <table>
+        <tbody>
+          <ResourceUsageRow resourceType="requests.memory" quota={memoryQuota} />
+        </tbody>
+      </table>,
+    );
+
+    // Verify the resource type
+    expect(screen.getByText('requests.memory')).toBeVisible();
+
+    // Verify memory values are humanized (1 GiB used, 2 GiB limit)
+    expect(screen.getByText('1 GiB')).toBeVisible();
+    expect(screen.getByText('2 GiB')).toBeVisible();
+  });
+
+  const storageQuota = {
+    apiVersion: 'v1',
+    kind: 'ResourceQuota',
+    metadata: { name: 'example', namespace: 'example' },
+    spec: { hard: { 'requests.storage': '10737418240' } },
+    status: {
+      hard: { 'requests.storage': '10737418240' },
+      used: { 'requests.storage': '5368709120' },
+    },
+  };
+
+  it('displays storage values in human-readable format (GiB)', () => {
+    renderWithProviders(
+      <table>
+        <tbody>
+          <ResourceUsageRow resourceType="requests.storage" quota={storageQuota} />
+        </tbody>
+      </table>,
+    );
+
+    // Verify the resource type
+    expect(screen.getByText('requests.storage')).toBeVisible();
+
+    // Verify storage values are humanized (5 GiB used, 10 GiB limit)
+    expect(screen.getByText('5 GiB')).toBeVisible();
+    expect(screen.getByText('10 GiB')).toBeVisible();
+  });
+
+  const memoryQuotaWithK8sQuantity = {
+    apiVersion: 'v1',
+    kind: 'ResourceQuota',
+    metadata: { name: 'example', namespace: 'example' },
+    spec: { hard: { 'requests.memory': '4Gi' } },
+    status: {
+      hard: { 'requests.memory': '4Gi' },
+      used: { 'requests.memory': '2Gi' },
+    },
+  };
+
+  it('displays Kubernetes quantity strings in human-readable format (GiB)', () => {
+    renderWithProviders(
+      <table>
+        <tbody>
+          <ResourceUsageRow resourceType="requests.memory" quota={memoryQuotaWithK8sQuantity} />
+        </tbody>
+      </table>,
+    );
+
+    expect(screen.getByText('2 GiB')).toBeVisible();
+    expect(screen.getByText('4 GiB')).toBeVisible();
   });
 });

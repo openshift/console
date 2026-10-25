@@ -1,18 +1,15 @@
 import * as path from 'path';
-import * as dotenv from 'dotenv';
-
-dotenv.config({ path: path.resolve(__dirname, 'e2e', '.env'), quiet: true });
-
 import { defineConfig, devices } from '@playwright/test';
-import { INTEGRATION_TEST_USER_AGENT } from './packages/console-shared/src/constants/common';
+import * as dotenv from 'dotenv';
+import { adminStorageState, developerStorageState } from './e2e/setup/login-helper';
+
+dotenv.config({ path: path.resolve(import.meta.dirname, 'e2e', '.env'), quiet: true });
 
 const isCI = !!process.env.OPENSHIFT_CI || !!process.env.CI;
-const chrome = { ...devices['Desktop Chrome'], userAgent: INTEGRATION_TEST_USER_AGENT };
+const chrome = { ...devices['Desktop Chrome'], userAgent: 'ConsoleIntegrationTestEnvironment' };
 const isDebug = process.env.DEBUG === '1' || process.env.DEBUG === 'true';
 const baseURL = process.env.WEB_CONSOLE_URL || 'http://localhost:9000';
 
-const adminStorageState = path.resolve(__dirname, 'e2e', '.auth', 'kubeadmin.json');
-const developerStorageState = path.resolve(__dirname, 'e2e', '.auth', 'developer.json');
 const hasDeveloper = !!process.env.BRIDGE_HTPASSWD_USERNAME;
 
 const packages = [
@@ -36,6 +33,7 @@ const chromeArgs = [
   '--no-sandbox',
   '--disable-setuid-sandbox',
   '--disable-background-networking',
+  '--disable-background-timer-throttling',
   '--disable-client-side-phishing-detection',
   '--disable-default-apps',
   '--disable-extensions',
@@ -49,7 +47,8 @@ export default defineConfig({
   testDir: './e2e/tests',
   testMatch: '**/*.spec.ts',
   forbidOnly: isCI,
-  retries: isCI ? 1 : 0,
+  globalTimeout: Number(process.env.GLOBAL_TIMEOUT_MS) || 0,
+  retries: isCI ? 2 : 0,
   timeout: 120_000,
   reporter: isCI
     ? [
@@ -57,15 +56,18 @@ export default defineConfig({
         [
           'junit',
           {
-            outputFile: path.resolve(__dirname, 'test-results', 'junit-results.xml'),
+            outputFile: path.resolve(import.meta.dirname, 'test-results', 'junit-results.xml'),
             includeRetries: true,
           },
         ],
-        ['html', { outputFolder: path.resolve(__dirname, 'playwright-report'), open: 'never' }],
+        [
+          'html',
+          { outputFolder: path.resolve(import.meta.dirname, 'playwright-report'), open: 'never' },
+        ],
         [
           './e2e/reporters/prow-junit-reporter.ts',
           {
-            outputFile: path.resolve(__dirname, 'test-results', 'prow-junit-results.xml'),
+            outputFile: path.resolve(import.meta.dirname, 'test-results', 'prow-junit-results.xml'),
           },
         ],
       ]
@@ -84,18 +86,18 @@ export default defineConfig({
     },
   },
 
-  workers: process.env.WORKERS ? parseInt(process.env.WORKERS, 10) : isCI ? 1 : undefined,
+  workers: process.env.WORKERS ? Number(process.env.WORKERS) || undefined : undefined,
 
   projects: [
     {
       name: 'cluster-setup',
-      testDir: path.resolve(__dirname, 'e2e', 'setup'),
+      testDir: path.resolve(import.meta.dirname, 'e2e', 'setup'),
       testMatch: 'cluster.setup.ts',
       teardown: 'teardown',
     },
     {
       name: 'admin-auth',
-      testDir: path.resolve(__dirname, 'e2e', 'setup'),
+      testDir: path.resolve(import.meta.dirname, 'e2e', 'setup'),
       testMatch: 'admin-auth.setup.ts',
       dependencies: ['cluster-setup'],
       use: {
@@ -108,7 +110,7 @@ export default defineConfig({
     },
     {
       name: 'developer-auth',
-      testDir: path.resolve(__dirname, 'e2e', 'setup'),
+      testDir: path.resolve(import.meta.dirname, 'e2e', 'setup'),
       testMatch: 'developer-auth.setup.ts',
       dependencies: ['cluster-setup'],
       use: {
@@ -121,15 +123,22 @@ export default defineConfig({
     },
     {
       name: 'teardown',
-      testDir: path.resolve(__dirname, 'e2e', 'setup'),
+      testDir: path.resolve(import.meta.dirname, 'e2e', 'setup'),
       testMatch: 'teardown.setup.ts',
+    },
+
+    {
+      name: 'knative-setup',
+      testDir: path.resolve(import.meta.dirname, 'e2e', 'setup'),
+      testMatch: 'knative.setup.ts',
+      dependencies: ['cluster-setup'],
     },
 
     ...packages.map((pkg) => ({
       name: pkg,
-      testDir: path.resolve(__dirname, 'e2e', 'tests', pkg),
+      testDir: path.resolve(import.meta.dirname, 'e2e', 'tests', pkg),
       testIgnore: '**/developer/**',
-      dependencies: ['admin-auth'],
+      dependencies: pkg === 'knative' ? ['admin-auth', 'knative-setup'] : ['admin-auth'],
       use: {
         ...chrome,
         storageState: adminStorageState,
@@ -138,7 +147,7 @@ export default defineConfig({
     ...(hasDeveloper
       ? devPackages.map((pkg) => ({
           name: `${pkg}-developer`,
-          testDir: path.resolve(__dirname, 'e2e', 'tests', pkg, 'developer'),
+          testDir: path.resolve(import.meta.dirname, 'e2e', 'tests', pkg, 'developer'),
           dependencies: ['developer-auth'],
           use: {
             ...chrome,

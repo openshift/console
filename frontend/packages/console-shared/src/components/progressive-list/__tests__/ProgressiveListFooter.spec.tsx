@@ -6,9 +6,9 @@ import { ProgressiveListFooter } from '../ProgressiveListFooter';
 // Mock scrollIntoView
 Element.prototype.scrollIntoView = jest.fn();
 
-const Footer: FC<{ children?: ReactNode }> = ({ children }) => {
-  return <div>Click on the names to access advanced options for {children}.</div>;
-};
+const Footer: FC<{ children?: ReactNode }> = ({ children }) => (
+  <div>Click on the names to access advanced options for {children}.</div>
+);
 
 describe('ProgressiveListFooter', () => {
   it('should return JSX element if items array is not empty', () => {

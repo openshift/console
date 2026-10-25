@@ -67,8 +67,8 @@ const RestartHostModal: OverlayComponent<RestartHostModalProps> = (props) => {
 
 export const useRestartHostModalLauncher = (props: RestartHostModalProps) => {
   const launcher = useOverlay();
-  return useCallback(() => launcher<RestartHostModalProps>(RestartHostModal, props), [
-    launcher,
-    props,
-  ]);
+  return useCallback(
+    () => launcher<RestartHostModalProps>(RestartHostModal, props),
+    [launcher, props],
+  );
 };

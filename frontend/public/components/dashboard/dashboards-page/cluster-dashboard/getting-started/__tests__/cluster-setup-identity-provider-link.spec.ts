@@ -1,8 +1,7 @@
 import { renderHook } from '@testing-library/react';
-import { useAccessReview } from '@console/internal/components/utils/rbac';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { OAuthKind } from '@console/internal/module/k8s';
-
+import { useAccessReview } from '@console/internal/components/utils/rbac';
+import type { OAuthKind } from '@console/internal/module/k8s';
 import { useIdentityProviderLink } from '../cluster-setup-identity-provider-link';
 
 jest.mock('@console/internal/components/utils/rbac', () => ({

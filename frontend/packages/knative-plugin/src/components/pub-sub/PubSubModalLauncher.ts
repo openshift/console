@@ -1,19 +1,11 @@
-import type { LaunchOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
-
-// Module-level reference for non-React contexts (topology connectors)
-// This gets synced via SyncPubSubModalLauncher component
-let launchPubSubModalRef: LaunchOverlay | null = null;
-
-export const setPubSubModalLauncher = (launcher: LaunchOverlay | null) => {
-  launchPubSubModalRef = launcher;
-};
+import { getLaunchPubSubModalRef } from './pub-sub-state';
 
 // Imperative API for non-React contexts (topology connectors)
 // Uses the launcher from OverlayProvider context to ensure proper accessibility
-export const addPubSubConnectionModal = (props) => {
-  return import('./PubSubController' /* webpackChunkName: "pub-sub-connectors" */).then((m) => {
+export const addPubSubConnectionModal = (props) =>
+  import('./PubSubController' /* webpackChunkName: "pub-sub-connectors" */).then((m) => {
+    const launchPubSubModalRef = getLaunchPubSubModalRef();
     if (!launchPubSubModalRef) {
-      // eslint-disable-next-line no-console
       console.error(
         'PubSub modal launcher not initialized. Make sure SyncPubSubModalLauncher is rendered in the topology component tree.',
       );
@@ -46,4 +38,3 @@ export const addPubSubConnectionModal = (props) => {
       });
     });
   });
-};

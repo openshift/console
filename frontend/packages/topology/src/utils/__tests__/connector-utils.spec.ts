@@ -34,9 +34,9 @@ describe('connector-utils', () => {
     });
 
     it('should return array of values if connects-to anotation as multiple value', () => {
-      expect(
-        edgesFromAnnotations({ 'app.openshift.io/connects-to': 'abcd, mock, value' }),
-      ).toEqual(['abcd', 'mock', 'value']);
+      expect(edgesFromAnnotations({ 'app.openshift.io/connects-to': 'abcd, mock, value' })).toEqual(
+        ['abcd', 'mock', 'value'],
+      );
     });
   });
 

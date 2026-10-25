@@ -1,81 +1,64 @@
-import * as _ from 'lodash';
 import type { ComponentProps, FC, ReactNode } from 'react';
 import { useMemo, useCallback } from 'react';
-import { JSONPath } from 'jsonpath-plus';
-import { useTranslation } from 'react-i18next';
 import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
-import { PageComponentProps } from '@console/dynamic-plugin-sdk/src/extensions/horizontal-nav-tabs';
-import { getGroupVersionKindForResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
+import { JSONPath } from 'jsonpath-plus';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { useCommonResourceActions } from '@console/app/src/actions/hooks/useCommonResourceActions';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
+import type { ResourceActionProvider, ResolvedExtension } from '@console/dynamic-plugin-sdk';
+import { isResourceActionProvider, useResolvedExtensions } from '@console/dynamic-plugin-sdk';
+import type {
+  ConsoleDataViewColumn,
+  ConsoleDataViewProps,
+  ConsoleDataViewRow,
+  RowProps,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import type { PageComponentProps } from '@console/dynamic-plugin-sdk/src/extensions/horizontal-nav-tabs';
 import { useK8sModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sModel';
-import { useDetailsItemExtensionsForResource } from '@console/shared/src/hooks/useDetailsItemExtensionsForResource';
+import { getGroupVersionKindForResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
+import { ActionMenu } from '@console/shared/src/components/actions/menu/ActionMenu';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
+import { AdditionalPrinterColumnValue } from '@console/shared/src/components/additional-printer-column/AdditionalPrinterColumnValue';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ExtensionDetailsItem } from '@console/shared/src/components/details-page/ExtensionDetailsItem';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { DASH } from '@console/shared/src/constants/ui';
+import { useCRDAdditionalPrinterColumns } from '@console/shared/src/hooks/useCRDAdditionalPrinterColumns';
+import { useDetailsItemExtensionsForResource } from '@console/shared/src/hooks/useDetailsItemExtensionsForResource';
+import type {
+  K8sResourceKind,
+  CRDAdditionalPrinterColumn,
+  ExtensionK8sGroupModel,
+} from '../module/k8s';
+import { referenceFor, referenceForExtensionModel } from '../module/k8s';
 import { Conditions } from './conditions';
 import { DetailsPage } from './factory/details';
 import { ListPage } from './factory/list-page';
-import type { TableProps } from './factory/table';
-import {
-  referenceFor,
-  K8sResourceKind,
-  CRDAdditionalPrinterColumn,
-  referenceForExtensionModel,
-  ExtensionK8sGroupModel,
-} from '../module/k8s';
 import { DetailsItem } from './utils/details-item';
-import { kindObj } from './utils/inject';
-import { navFactory } from './utils/horizontal-nav';
-import { ResourceLink } from './utils/resource-link';
 import { ResourceSummary } from './utils/details-page';
 import { SectionHeading } from './utils/headings';
+import { navFactory } from './utils/horizontal-nav';
+import { kindObj } from './utils/inject';
+import { ResourceLink } from './utils/resource-link';
 import { LoadingBox } from './utils/status-box';
-import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import { RowProps, TableColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import { useCRDAdditionalPrinterColumns } from '@console/shared/src/hooks/useCRDAdditionalPrinterColumns';
-import { AdditionalPrinterColumnValue } from '@console/shared/src/components/additional-printer-column/AdditionalPrinterColumnValue';
-import {
-  actionsCellProps,
-  cellIsStickyProps,
-  getNameCellProps,
-  ConsoleDataView,
-} from '@console/app/src/components/data-view/ConsoleDataView';
-import {
-  ConsoleDataViewColumn,
-  ConsoleDataViewRow,
-} from '@console/app/src/components/data-view/types';
-import { DASH } from '@console/shared/src/constants/ui';
-import {
-  isResourceActionProvider,
-  ResourceActionProvider,
-  useResolvedExtensions,
-  ResolvedExtension,
-} from '@console/dynamic-plugin-sdk';
-import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
-import { useCommonResourceActions } from '@console/app/src/actions/hooks/useCommonResourceActions';
-import { ActionMenu } from '@console/shared/src/components/actions/menu/ActionMenu';
-import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
 
 const tableColumnInfo = [{ id: 'name' }, { id: 'namespace' }, { id: 'created' }, { id: 'actions' }];
 
-const getPathArray = (path: string) => {
-  return JSONPath.toPathArray(path);
-};
+const getPathArray = (path: string) => JSONPath.toPathArray(path);
 
 const checkPathHasSpecialCharacter = (path: string) => {
   const pathArray = getPathArray(path);
   return pathArray.some((segment) => /[^a-zA-Z0-9]/.test(segment));
 };
 
-const checkColumnsForCreationTimestamp = (columns: CRDAdditionalPrinterColumn[]) => {
-  return columns.some((col) => col.jsonPath === '.metadata.creationTimestamp');
-};
+const checkColumnsForCreationTimestamp = (columns: CRDAdditionalPrinterColumn[]) =>
+  columns.some((col) => col.jsonPath === '.metadata.creationTimestamp');
 
-const checkAdditionalPrinterColumns = (columns: CRDAdditionalPrinterColumn[]) => {
-  return columns.length > 0;
-};
+const checkAdditionalPrinterColumns = (columns: CRDAdditionalPrinterColumn[]) => columns.length > 0;
 
-const getAdditionaPrinterColumnID = (column: CRDAdditionalPrinterColumn) => {
-  return `apc-${column.name}`;
-};
+const getAdditionaPrinterColumnID = (column: CRDAdditionalPrinterColumn) => `apc-${column.name}`;
 
 type ResourceActionsMenuProps = {
   resource: K8sResourceKind;
@@ -182,28 +165,30 @@ const getDataViewRows = (
   kinds: string[],
   resourceProviderExtensions: ResolvedExtension<ResourceActionProvider>[],
   resourceProviderExtensionsResolved: boolean,
-): ConsoleDataViewRow[] => {
-  return data.map(({ obj }) => {
+): ConsoleDataViewRow[] =>
+  data.map(({ obj }) => {
     const { name, namespace, creationTimestamp } = obj.metadata;
     const kind = referenceFor(obj) || kinds[0];
 
     const hasExtensionActions =
       resourceProviderExtensionsResolved && resourceProviderExtensions?.length > 0;
 
-    const additionalPrinterColumnsCells = additionalPrinterColumns.reduce((acc, col) => {
-      acc[getAdditionaPrinterColumnID(col)] = {
-        cell: <AdditionalPrinterColumnValue key={col.name} col={col} obj={obj} />,
-        props: {
-          'data-test': `additional-printer-column-data-${col.name}`,
-        },
-      };
-      return acc;
-    }, {} as Record<string, { cell: ReactNode; props?: any }>);
+    const additionalPrinterColumnsCells = additionalPrinterColumns.reduce(
+      (acc, col) => {
+        acc[getAdditionaPrinterColumnID(col)] = {
+          cell: <AdditionalPrinterColumnValue key={col.name} col={col} obj={obj} />,
+          props: {
+            'data-test': `additional-printer-column-data-${col.name}`,
+          },
+        };
+        return acc;
+      },
+      {} as Record<string, { cell: ReactNode; props?: any }>,
+    );
 
     const rowCells = {
       [tableColumnInfo[0].id]: {
         cell: <ResourceLink kind={kind} name={name} namespace={namespace} />,
-        props: getNameCellProps(name),
       },
       [tableColumnInfo[1].id]: {
         cell: <NamespaceCell namespace={namespace} />,
@@ -231,7 +216,6 @@ const getDataViewRows = (
             )}
           </>
         ),
-        props: actionsCellProps,
       },
     };
 
@@ -245,11 +229,10 @@ const getDataViewRows = (
       };
     });
   });
-};
 
 const useDefaultResourceColumns = <T extends K8sResourceKind>(
   additionalPrinterColumns: CRDAdditionalPrinterColumn[],
-): TableColumn<T>[] => {
+): ConsoleDataViewColumn<T>[] => {
   const { t } = useTranslation('public');
   const columns = useMemo(() => {
     const additionalPrinterColumnsHeaders = additionalPrinterColumns.map((col) => {
@@ -261,7 +244,7 @@ const useDefaultResourceColumns = <T extends K8sResourceKind>(
         id: getAdditionaPrinterColumnID(col),
         sort: pathHasSpecialCharacter ? undefined : path.replace(/^\./, ''),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
           'data-test': `additional-printer-column-header-${col.name}`,
         },
       };
@@ -269,24 +252,16 @@ const useDefaultResourceColumns = <T extends K8sResourceKind>(
 
     const baseColumns = [
       {
-        title: t('Name'),
+        type: 'name' as const,
         id: tableColumnInfo[0].id,
-        sort: 'metadata.name',
-        props: {
-          ...cellIsStickyProps,
-          modifier: 'nowrap',
-        },
+        props: { hasRightBorder: false },
       },
       {
-        title: t('Namespace'),
+        type: 'namespace' as const,
         id: tableColumnInfo[1].id,
-        sort: 'metadata.namespace',
-        props: {
-          modifier: 'nowrap',
-        },
       },
       ...additionalPrinterColumnsHeaders,
-    ];
+    ] as ConsoleDataViewColumn<T>[];
 
     if (!checkColumnsForCreationTimestamp(additionalPrinterColumns)) {
       baseColumns.push({
@@ -294,20 +269,17 @@ const useDefaultResourceColumns = <T extends K8sResourceKind>(
         id: tableColumnInfo[2].id,
         sort: 'metadata.creationTimestamp',
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
           'data-test': 'column-header-Created',
         },
-      });
+      } as ConsoleDataViewColumn<T>);
     }
 
     baseColumns.push({
-      title: '',
+      type: 'actions' as const,
       id: tableColumnInfo[3].id,
       sort: '',
-      props: {
-        ...cellIsStickyProps,
-        modifier: 'nowrap',
-      },
+      props: { hasLeftBorder: false, modifier: 'nowrap' as const },
     });
 
     return baseColumns;
@@ -316,13 +288,16 @@ const useDefaultResourceColumns = <T extends K8sResourceKind>(
   return columns;
 };
 
-export const DefaultList: FC<TableProps & { kinds: string[] }> = (props) => {
+export const DefaultList: FC<
+  Omit<ConsoleDataViewProps<K8sResourceKind>, 'id' | 'columns' | 'getDataViewRows'> & {
+    kinds: string[];
+  }
+> = (props) => {
   const { t } = useTranslation('public');
   const { kinds, data, loaded } = props;
   const [model] = useK8sModel(kinds[0]);
-  const [additionalPrinterColumns, additionalPrinterColumnsLoaded] = useCRDAdditionalPrinterColumns(
-    model,
-  );
+  const [additionalPrinterColumns, additionalPrinterColumnsLoaded] =
+    useCRDAdditionalPrinterColumns(model);
   const columns = useDefaultResourceColumns(
     additionalPrinterColumnsLoaded ? additionalPrinterColumns : [],
   );
@@ -332,9 +307,8 @@ export const DefaultList: FC<TableProps & { kinds: string[] }> = (props) => {
       referenceForExtensionModel(e.properties.model as ExtensionK8sGroupModel) === kinds[0],
     [kinds],
   );
-  const [resourceProviderExtensions, resourceProviderExtensionsResolved] = useResolvedExtensions<
-    ResourceActionProvider
-  >(resourceProviderGuard);
+  const [resourceProviderExtensions, resourceProviderExtensionsResolved] =
+    useResolvedExtensions<ResourceActionProvider>(resourceProviderGuard);
 
   const getAriaLabel = () => {
     // API discovery happens asynchronously. Avoid runtime errors if the model hasn't loaded.
@@ -351,6 +325,8 @@ export const DefaultList: FC<TableProps & { kinds: string[] }> = (props) => {
       ) : (
         <ConsoleDataView<K8sResourceKind>
           {...props}
+          isResizable={false}
+          id={model ?? kinds[0]}
           label={getAriaLabel()}
           data={data}
           loaded={loaded}
@@ -365,7 +341,6 @@ export const DefaultList: FC<TableProps & { kinds: string[] }> = (props) => {
               resourceProviderExtensionsResolved,
             )
           }
-          hideColumnManagement={true}
         />
       )}
     </>
@@ -378,7 +353,7 @@ export const DefaultPage: FC<Omit<ComponentProps<typeof ListPage>, 'ListComponen
     {...props}
     ListComponent={DefaultList}
     canCreate={props.canCreate ?? _.get(kindObj(props.kind), 'crd')}
-    omitFilterToolbar={true}
+    omitFilterToolbar
   />
 );
 DefaultPage.displayName = 'DefaultPage';
@@ -391,9 +366,8 @@ export const DefaultDetailsPage: FC<ComponentProps<typeof DetailsPage>> = (props
       referenceForExtensionModel(e.properties.model as ExtensionK8sGroupModel) === props.kind,
     [props.kind],
   );
-  const [resourceProviderExtensions, resourceProviderExtensionsResolved] = useResolvedExtensions<
-    ResourceActionProvider
-  >(resourceProviderGuard);
+  const [resourceProviderExtensions, resourceProviderExtensionsResolved] =
+    useResolvedExtensions<ResourceActionProvider>(resourceProviderGuard);
   const hasExtensionActions =
     resourceProviderExtensionsResolved && resourceProviderExtensions?.length > 0;
   return (

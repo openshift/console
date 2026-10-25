@@ -42,7 +42,7 @@ const hostStatusActions = (t: TFunction) => ({
           host.metadata.namespace,
         )}/edit?powerMgmt`}
       >
-        {t('Add credentials')}
+        {t('metal3-plugin~Add credentials')}
       </Link>
     </div>
   ),

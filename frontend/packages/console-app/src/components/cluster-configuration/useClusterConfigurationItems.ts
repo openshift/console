@@ -18,11 +18,13 @@ const useClusterConfigurationItems = (): [
   );
 
   // Sort
-  const sortedItems = useMemo(() => {
-    return orderExtensionBasedOnInsertBeforeAndAfter(
-      resolvedExtensions.map((resolvedExtension) => resolvedExtension.properties),
-    );
-  }, [resolvedExtensions]);
+  const sortedItems = useMemo(
+    () =>
+      orderExtensionBasedOnInsertBeforeAndAfter(
+        resolvedExtensions.map((resolvedExtension) => resolvedExtension.properties),
+      ),
+    [resolvedExtensions],
+  );
 
   // Filter based on permission checks
   const [canRead, updateCanRead] = useState<Record<string, boolean>>({});
@@ -36,7 +38,6 @@ const useClusterConfigurationItems = (): [
             updateCanRead((x) => ({ ...x, [item.id]: allowed }));
           })
           .catch((error) => {
-            // eslint-disable-next-line no-console
             console.warn(`readAccessReview check failed for "${item.id}"`, error);
           });
       }
@@ -48,28 +49,29 @@ const useClusterConfigurationItems = (): [
             updateCanWrite((x) => ({ ...x, [item.id]: allowed }));
           })
           .catch((error) => {
-            // eslint-disable-next-line no-console
             console.warn(`writeAccessReview check failed for "${item.id}"`, error);
           });
       }
     });
   }, [sortedItems]);
 
-  const filteredItems = useMemo<ResolvedClusterConfigurationItem[]>(() => {
-    return sortedItems
-      .filter((item) =>
-        item.readAccessReview?.length && item.readAccessReview.length > 0 ? canRead[item.id] : true,
-      )
-      .map((item) => {
-        return {
+  const filteredItems = useMemo<ResolvedClusterConfigurationItem[]>(
+    () =>
+      sortedItems
+        .filter((item) =>
+          item.readAccessReview?.length && item.readAccessReview.length > 0
+            ? canRead[item.id]
+            : true,
+        )
+        .map((item) => ({
           ...item,
           readonly:
             item.writeAccessReview?.length && item.writeAccessReview.length > 0
               ? !canWrite[item.id]
               : false,
-        };
-      });
-  }, [sortedItems, canRead, canWrite]);
+        })),
+    [sortedItems, canRead, canWrite],
+  );
 
   return [filteredItems, resolved, errors];
 };

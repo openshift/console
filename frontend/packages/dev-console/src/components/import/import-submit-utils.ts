@@ -625,7 +625,6 @@ const managePipelineResources = async (
       const triggerResources = await createTrigger(managedPipeline, git.detectedType);
       pipelineResources.push(...triggerResources);
     } catch (error) {
-      // eslint-disable-next-line no-console
       console.warn('Error occured while creating triggers', error);
     }
   }
@@ -658,7 +657,6 @@ const managePipelineResources = async (
       const pipelineRun = await createPipelineRunForImportFlow(managedPipeline);
       pipelineResources.push(pipelineRun);
     } catch (error) {
-      // eslint-disable-next-line no-console
       console.log('Failed to create PipelineRun for import flow', error);
       setPipelineNotStarted(managedPipeline.metadata.name, managedPipeline.metadata.namespace);
     }
@@ -1116,14 +1114,14 @@ export const getTelemetryImport = (values: GitImportFormData) => {
     values.application?.selectedKey === values.application?.name
       ? 'default'
       : values.application?.selectedKey === CREATE_APPLICATION_KEY && !!values.application?.name
-      ? 'custom'
-      : 'none';
+        ? 'custom'
+        : 'none';
   const resourceType =
     values.resources === Resources.Kubernetes
       ? 'Deployment'
       : values.resources === Resources.OpenShift
-      ? 'DeploymentConfig'
-      : values.resources === Resources.KnativeService && 'Knative Service';
+        ? 'DeploymentConfig'
+        : values.resources === Resources.KnativeService && 'Knative Service';
   const selStrategy = values.import?.selectedStrategy?.name;
   const telemetryImportData = {
     useRecommended: values.image?.recommended === values.image?.selected,

@@ -7,14 +7,14 @@ import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector
 export const useDeprecatedOperatorWarnings = () => {
   const dispatch = useConsoleDispatch();
 
-  const deprecatedPackage = useConsoleSelector<DeprecatedOperatorWarning>((state) =>
-    state.UI.getIn(['deprecatedOperator', 'package']),
+  const deprecatedPackage = useConsoleSelector<DeprecatedOperatorWarning>(
+    (state) => state.UI.deprecatedOperator?.package,
   );
-  const deprecatedChannel = useConsoleSelector<DeprecatedOperatorWarning>((state) =>
-    state.UI.getIn(['deprecatedOperator', 'channel']),
+  const deprecatedChannel = useConsoleSelector<DeprecatedOperatorWarning>(
+    (state) => state.UI.deprecatedOperator?.channel,
   );
-  const deprecatedVersion = useConsoleSelector<DeprecatedOperatorWarning>((state) =>
-    state.UI.getIn(['deprecatedOperator', 'version']),
+  const deprecatedVersion = useConsoleSelector<DeprecatedOperatorWarning>(
+    (state) => state.UI.deprecatedOperator?.version,
   );
 
   const setDeprecatedPackage = useCallback(

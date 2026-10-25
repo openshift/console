@@ -6,7 +6,7 @@ import { css } from '@patternfly/react-styles';
 const NamespaceMenuToggle = (props: {
   disabled: boolean;
   menu: ReactElement;
-  menuRef: RefObject<HTMLElement>;
+  menuRef: RefObject<HTMLElement | null>;
   isOpen: boolean;
   shortCut?: string;
   title: string;
@@ -86,7 +86,7 @@ const NamespaceMenuToggle = (props: {
         popper={menu}
         direction="down"
         position="left"
-        appendTo={containerRef.current}
+        appendTo={() => containerRef.current}
         isVisible={isOpen}
         enableFlip={false}
       />

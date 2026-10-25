@@ -1,4 +1,3 @@
-/* eslint-env node */
 import { TFunction } from 'i18next';
 
 const i18next = jest.requireActual('i18next');

@@ -3,10 +3,10 @@ import { Component as ReactComponent } from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
-import { getActiveNamespace } from '@console/internal/actions/ui';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { referenceForModel, referenceForGroupVersionKind } from '@console/internal/module/k8s';
 import { ConsoleEmptyState } from '@console/shared/src/components/empty-state/ConsoleEmptyState';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { OPERATOR_NAMESPACE_ANNOTATION } from '../const';
 import { OperatorGroupModel } from '../models';
 import type { OperatorGroupKind, SubscriptionKind, PackageManifestKind } from '../types';
@@ -21,10 +21,11 @@ export const operatorGroupFor = (obj: K8sResourceKind) =>
 
 const NoOperatorGroupMsg: FC = () => {
   const { t } = useTranslation('olm');
+  const [activeNamespace] = useActiveNamespace();
   const actions = [
     <Link
       key="create-operator-group"
-      to={`/ns/${getActiveNamespace()}/${referenceForModel(OperatorGroupModel)}/~new`}
+      to={`/ns/${activeNamespace}/${referenceForModel(OperatorGroupModel)}/~new`}
     >
       {t('Create an OperatorGroup for this Namespace')}
     </Link>,
@@ -40,8 +41,8 @@ const NoOperatorGroupMsg: FC = () => {
 
 export const requireOperatorGroup = <P extends RequireOperatorGroupProps>(
   Component: ComponentType<P>,
-) => {
-  return class RequireOperatorGroup extends ReactComponent<P> {
+) =>
+  class RequireOperatorGroup extends ReactComponent<P> {
     static WrappedComponent = Component;
 
     render() {
@@ -51,7 +52,6 @@ export const requireOperatorGroup = <P extends RequireOperatorGroupProps>(
       return namespaceEnabled ? <Component {...this.props} /> : <NoOperatorGroupMsg />;
     }
   } as ComponentClass<P> & { WrappedComponent: ComponentType<P> };
-};
 
 export type InstallModeSet = { type: InstallModeType; supported: boolean }[];
 
@@ -102,30 +102,32 @@ export const isGlobal = (obj: OperatorGroupKind) =>
  * Determines if a given Operator package has a `Subscription` that makes it available in the given namespace.
  * Finds any `Subscriptions` for the given package, matches them to their `OperatorGroup`, and checks if the `OperatorGroup` is targeting the given namespace or if it is global.
  */
-export const subscriptionFor = (allSubscriptions: SubscriptionKind[] = []) => (
-  allGroups: OperatorGroupKind[] = [],
-) => (pkg: PackageManifestKind) => (ns = '') => {
-  return allSubscriptions
-    .filter(
-      (sub) =>
-        sub.spec.name === pkg.status.packageName &&
-        sub.spec.source === pkg.status.catalogSource &&
-        sub.spec.sourceNamespace === pkg.status.catalogSourceNamespace,
-    )
-    .find((sub) =>
-      allGroups.some(
-        (og) =>
-          og.metadata.namespace === sub.metadata.namespace &&
-          (isGlobal(og) || og.status?.namespaces?.includes(ns)),
-      ),
-    );
-};
+export const subscriptionFor =
+  (allSubscriptions: SubscriptionKind[] = []) =>
+  (allGroups: OperatorGroupKind[] = []) =>
+  (pkg: PackageManifestKind) =>
+  (ns = '') =>
+    allSubscriptions
+      .filter(
+        (sub) =>
+          sub.spec.name === pkg.status.packageName &&
+          sub.spec.source === pkg.status.catalogSource &&
+          sub.spec.sourceNamespace === pkg.status.catalogSourceNamespace,
+      )
+      .find((sub) =>
+        allGroups.some(
+          (og) =>
+            og.metadata.namespace === sub.metadata.namespace &&
+            (isGlobal(og) || og.status?.namespaces?.includes(ns)),
+        ),
+      );
 
-export const installedFor = (allSubscriptions: SubscriptionKind[] = []) => (
-  allGroups: OperatorGroupKind[] = [],
-) => (pkg: PackageManifestKind) => (ns = '') => {
-  return !_.isNil(subscriptionFor(allSubscriptions)(allGroups)(pkg)(ns));
-};
+export const installedFor =
+  (allSubscriptions: SubscriptionKind[] = []) =>
+  (allGroups: OperatorGroupKind[] = []) =>
+  (pkg: PackageManifestKind) =>
+  (ns = '') =>
+    !_.isNil(subscriptionFor(allSubscriptions)(allGroups)(pkg)(ns));
 
 export const providedAPIsForOperatorGroup = (og: OperatorGroupKind) =>
   (og?.metadata?.annotations?.['olm.providedAPIs'] ?? '')

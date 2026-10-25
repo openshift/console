@@ -1,11 +1,6 @@
-/* eslint-disable camelcase, tsdoc/syntax */
+/* eslint-disable camelcase */
 import type { FC } from 'react';
-
 import { useMemo, memo, Suspense } from 'react';
-import * as _ from 'lodash';
-import { NavBar } from '@console/internal/components/utils/horizontal-nav';
-import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
-import { Link, useNavigate } from 'react-router';
 import {
   Alert,
   Button,
@@ -23,39 +18,36 @@ import {
   ButtonVariant,
 } from '@patternfly/react-core';
 import { RhUiEditIcon } from '@patternfly/react-icons';
-import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { breadcrumbsForGlobalConfig } from '../../cluster-settings/global-config';
-
-import { K8sResourceKind } from '../../../module/k8s';
-import { LazyAlertRoutingModalOverlay } from '../../modals';
-import { useWarningModal } from '@console/shared/src/hooks/useWarningModal';
+import { Link, useNavigate } from 'react-router';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
-import { Kebab } from '../../utils/kebab';
+import type {
+  ResourceFilters,
+  ConsoleDataViewColumn,
+  ConsoleDataViewRow,
+  ResourceMetadata,
+  RowProps,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { NavBar } from '@console/internal/components/utils/horizontal-nav';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { DASH } from '@console/shared/src/constants/ui';
+import { useWarningModal } from '@console/shared/src/hooks/useWarningModal';
+import type { K8sResourceKind } from '../../../module/k8s';
+import { breadcrumbsForGlobalConfig } from '../../cluster-settings/global-config';
+import { LazyAlertRoutingModalOverlay } from '../../modals';
 import { SectionHeading } from '../../utils/headings';
-import { StatusBox } from '../../utils/status-box';
 import { useK8sWatchResource } from '../../utils/k8s-watch-hook';
+import { Kebab } from '../../utils/kebab';
+import { StatusBox } from '../../utils/status-box';
 import {
   getAlertmanagerConfig,
   patchAlertmanagerConfig,
   receiverTypes,
 } from './alertmanager-utils';
-import {
-  actionsCellProps,
-  cellIsStickyProps,
-  getNameCellProps,
-  ConsoleDataView,
-} from '@console/app/src/components/data-view/ConsoleDataView';
-import {
-  ResourceFilters,
-  ConsoleDataViewColumn,
-  ConsoleDataViewRow,
-  ResourceMetadata,
-} from '@console/app/src/components/data-view/types';
-import { RowProps, TableColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import { DASH } from '@console/shared/src/constants/ui';
 
 export enum InitialReceivers {
   Critical = 'Critical',
@@ -123,7 +115,7 @@ const AlertRouting: FC<AlertRoutingProps> = ({ secret, config }) => {
   );
 };
 
-const getIntegrationTypes = (receiver: AlertmanagerReceiver): string[] => {
+const getIntegrationTypes = (receiver: AlertmanagerReceiver): string[] =>
   /* Given receiver = {
        "name": "team-X-pager",
        "email_configs": [...],
@@ -131,9 +123,7 @@ const getIntegrationTypes = (receiver: AlertmanagerReceiver): string[] => {
      };
      returns ['email_configs', 'pagerduty_configs']
   */
-  return _.filter(_.keys(receiver), (v) => _.endsWith(v, '_configs'));
-};
-
+  _.filter(_.keys(receiver), (v) => _.endsWith(v, '_configs'));
 /**
  * Recursive function which transverses routes and sub-routes to get labels and/or matchers for each receiver.
  * Each entry is a set of labels and/or matchers used to route alerts to a receiver
@@ -154,7 +144,7 @@ const getIntegrationTypes = (receiver: AlertmanagerReceiver): string[] => {
  *     "severity": "critical"
  *   }
  * }]
-}*/
+} */
 const getRoutingLabelsByReceivers = (
   routes: AlertmanagerRoute[],
   parentLabels: { [key: string]: string } = {},
@@ -184,9 +174,8 @@ const hasSimpleRoute = (
 ): boolean => {
   const routes = _.get(config, ['route', 'routes']);
   return (
-    _.filter(routes, (route) => {
-      return route.receiver === receiver.name && _.isUndefined(route.routes);
-    }).length > 0 || _.isEmpty(receiverRoutingLabels)
+    _.filter(routes, (route) => route.receiver === receiver.name && _.isUndefined(route.routes))
+      .length > 0 || _.isEmpty(receiverRoutingLabels)
   );
 };
 
@@ -201,7 +190,8 @@ const hasSimpleReceiver = (
 ): boolean => {
   if (receiverIntegrationTypes.length === 0) {
     return true;
-  } else if (receiverIntegrationTypes.length === 1) {
+  }
+  if (receiverIntegrationTypes.length === 1) {
     const receiverConfig = receiverIntegrationTypes[0]; // ex: 'pagerduty_configs'
     const numConfigs = _.get(receiver, receiverConfig)?.length; // 'pagerduty_configs' is array and may have multiple sets of properties
     return _.hasIn(receiverTypes, receiverConfig) && numConfigs <= 1; // known receiver type and a single set of props
@@ -236,7 +226,13 @@ const RoutingLabels: FC<RoutingLabelsProps> = ({ data }) => {
   const values = [...lbls, ...(matchers ?? [])];
   return values.length > 0 ? (
     <PfLabelGroup>
-      {values.map((value, i) => (value ? <PfLabel key={`label-${i}`}>{value}</PfLabel> : DASH))}
+      {values.map((value, i) =>
+        value ? ( // eslint-disable-next-line react/no-array-index-key
+          <PfLabel key={`label-${i}`}>{value}</PfLabel>
+        ) : (
+          DASH
+        ),
+      )}
     </PfLabelGroup>
   ) : null;
 };
@@ -292,8 +288,8 @@ const tableColumnInfo = [
 const getReceiverDataViewRows = (
   rowData: RowProps<AlertmanagerReceiver, ReceiverRowData>[],
   tableColumns: ConsoleDataViewColumn<AlertmanagerReceiver>[],
-): ConsoleDataViewRow[] => {
-  return rowData.map(({ obj: receiver, rowData: customData }) => {
+): ConsoleDataViewRow[] =>
+  rowData.map(({ obj: receiver, rowData: customData }) => {
     const {
       secret,
       config,
@@ -360,7 +356,6 @@ const getReceiverDataViewRows = (
     const rowCells = {
       [tableColumnInfo[0].id]: {
         cell: receiver.name,
-        props: getNameCellProps(receiver.name),
       },
       [tableColumnInfo[1].id]: {
         cell:
@@ -381,16 +376,13 @@ const getReceiverDataViewRows = (
       [tableColumnInfo[2].id]: {
         cell: isDefaultReceiver
           ? t('All (default receiver)')
-          : _.map(receiverRoutingLabels, (rte, i) => {
-              return <RoutingLabels data={rte} key={i} />;
-            }),
+          : _.map(receiverRoutingLabels, (rte, i) => <RoutingLabels data={rte} key={i} />),
         props: {
           'data-test': `data-view-cell-${receiver.name}-routing-labels`,
         },
       },
       [tableColumnInfo[3].id]: {
         cell: <Kebab options={receiverMenuItems(receiver.name)} />,
-        props: actionsCellProps,
       },
     };
 
@@ -403,51 +395,45 @@ const getReceiverDataViewRows = (
       };
     });
   });
-};
 
-const useReceiverColumns = (): TableColumn<AlertmanagerReceiver>[] => {
+const useReceiverColumns = (): ConsoleDataViewColumn<AlertmanagerReceiver>[] => {
   const { t } = useTranslation('public');
-  const columns = useMemo(() => {
-    return [
+  const columns = useMemo<ConsoleDataViewColumn<AlertmanagerReceiver>[]>(
+    () => [
       {
-        title: t('Name'),
+        type: 'name' as const,
         id: tableColumnInfo[0].id,
         sort: 'name',
-        props: {
-          ...cellIsStickyProps,
-          modifier: 'nowrap',
-        },
+        props: { hasRightBorder: false },
       },
       {
         title: t('Integration type'),
         id: tableColumnInfo[1].id,
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
         title: t('Routing labels'),
         id: tableColumnInfo[2].id,
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
-        title: '',
+        type: 'actions' as const,
         id: tableColumnInfo[3].id,
-        props: {
-          ...cellIsStickyProps,
-          modifier: 'nowrap',
-        },
+        props: { hasLeftBorder: false, modifier: 'nowrap' as const },
       },
-    ];
-  }, [t]);
+    ],
+    [t],
+  );
   return columns;
 };
 
-const getObjectMetadata = (receiver: AlertmanagerReceiver): ResourceMetadata => {
-  return { name: receiver.name };
-};
+const getObjectMetadata = (receiver: AlertmanagerReceiver): ResourceMetadata => ({
+  name: receiver.name,
+});
 
 const ReceiversTable: FC<ReceiversTableProps> = (props) => {
   const { secret, config, data } = props;
@@ -476,16 +462,17 @@ const ReceiversTable: FC<ReceiversTableProps> = (props) => {
   return (
     <Suspense fallback={<div className="loading-skeleton--table" />}>
       <ConsoleDataView<AlertmanagerReceiver, ReceiverRowData, ReceiverFilters>
+        isResizable={false}
+        id="console.ui~v1~AlertmanagerReceivers"
         label={t('Receivers')}
         data={data}
-        loaded={true}
+        loaded
         columns={columns}
         getObjectMetadata={getObjectMetadata}
         getDataViewRows={getReceiverDataViewRows}
         customRowData={customRowData}
-        hideColumnManagement={true}
         hideNameLabelFilters={false}
-        hideLabelFilter={true}
+        hideLabelFilter
       />
     </Suspense>
   );
@@ -636,7 +623,7 @@ type AlertmanagerConfigurationProps = {
   obj?: K8sResourceKind;
   onCancel?: () => void;
 };
-type labels = {
+type Labels = {
   [key: string]: string;
 };
 
@@ -646,8 +633,8 @@ export type AlertmanagerRoute = {
   groupWait?: string;
   groupInterval?: string;
   repeatInterval?: string;
-  match?: labels[];
-  match_re?: labels[];
+  match?: Labels[];
+  match_re?: Labels[];
   routes?: AlertmanagerRoute[];
   matchers?: string[];
 };

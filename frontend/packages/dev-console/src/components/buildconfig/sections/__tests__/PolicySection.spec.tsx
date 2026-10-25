@@ -1,10 +1,9 @@
 import type { FC, ReactNode } from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { FormikConfig } from 'formik';
 import { Formik } from 'formik';
-import { Provider } from 'react-redux';
-import store from '@console/internal/redux';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { BuildConfigRunPolicy } from '../../types';
 import type { PolicySectionFormData } from '../PolicySection';
 import PolicySection from '../PolicySection';
@@ -14,16 +13,14 @@ interface WrapperProps extends FormikConfig<PolicySectionFormData> {
 }
 
 const Wrapper: FC<WrapperProps> = ({ children, ...formikConfig }) => (
-  <Provider store={store}>
-    <Formik {...formikConfig}>
-      {(formikProps) => (
-        <form onSubmit={formikProps.handleSubmit}>
-          {children}
-          <input type="submit" value="Submit" />
-        </form>
-      )}
-    </Formik>
-  </Provider>
+  <Formik {...formikConfig}>
+    {(formikProps) => (
+      <form onSubmit={formikProps.handleSubmit}>
+        {children}
+        <input type="submit" value="Submit" />
+      </form>
+    )}
+  </Formik>
 );
 
 const initialValues: PolicySectionFormData = {
@@ -38,7 +35,7 @@ describe('PolicySectionFormData', () => {
   it('should render form', () => {
     const onSubmit = jest.fn();
 
-    render(
+    renderWithProviders(
       <Wrapper initialValues={initialValues} onSubmit={onSubmit}>
         <PolicySection />
       </Wrapper>,
@@ -56,7 +53,7 @@ describe('PolicySectionFormData', () => {
     const user = userEvent.setup();
     const onSubmit = jest.fn();
 
-    render(
+    renderWithProviders(
       <Wrapper initialValues={initialValues} onSubmit={onSubmit}>
         <PolicySection />
       </Wrapper>,
@@ -86,7 +83,7 @@ describe('PolicySectionFormData', () => {
     const user = userEvent.setup();
     const onSubmit = jest.fn();
 
-    render(
+    renderWithProviders(
       <Wrapper initialValues={initialValues} onSubmit={onSubmit}>
         <PolicySection />
       </Wrapper>,

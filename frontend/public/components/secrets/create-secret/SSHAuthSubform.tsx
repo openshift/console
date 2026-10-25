@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DroppableFileInput } from './DropableFileInput';
-import { SecretStringData } from './types';
+import type { SecretStringData } from './types';
 
 export const SSHAuthSubform: FC<SSHAuthSubformProps> = ({ onChange, stringData }) => {
   const { t } = useTranslation('public');
@@ -18,7 +18,7 @@ export const SSHAuthSubform: FC<SSHAuthSubformProps> = ({ onChange, stringData }
         'Drag and drop file with your private SSH key here or browse to upload it.',
       )}
       textareaFieldHelpText={t('Private SSH key file for Git authentication.')}
-      isRequired={true}
+      isRequired
     />
   );
 };

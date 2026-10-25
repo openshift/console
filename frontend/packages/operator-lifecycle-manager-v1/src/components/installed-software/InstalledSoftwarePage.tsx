@@ -47,15 +47,15 @@ const InstalledSoftwarePage: FC = () => {
     [ns, t],
   );
 
-  const pages = useMemo<Page[]>(() => [clusterExtensionsPage, clusterServiceVersionsPage], [
-    clusterExtensionsPage,
-    clusterServiceVersionsPage,
-  ]);
+  const pages = useMemo<Page[]>(
+    () => [clusterExtensionsPage, clusterServiceVersionsPage],
+    [clusterExtensionsPage, clusterServiceVersionsPage],
+  );
 
   return (
     <>
       <NamespaceBar />
-      <MultiTabListPage title={t('Installed Software')} pages={pages} />
+      <MultiTabListPage title={t('Installed software')} pages={pages} />
     </>
   );
 };

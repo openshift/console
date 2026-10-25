@@ -59,7 +59,8 @@ const getKnativeServiceDepResourceMock = knativeUtils.getKnativeServiceDepResour
 const submitTriggerMock = pipelineUtils.submitTrigger as jest.Mock;
 const createTriggerMock = pipelineUtils.createTrigger as jest.Mock;
 const createPipelineForImportFlowMock = pipelineUtils.createPipelineForImportFlow as jest.Mock;
-const createPipelineRunForImportFlowMock = pipelineUtils.createPipelineRunForImportFlow as jest.Mock;
+const createPipelineRunForImportFlowMock =
+  pipelineUtils.createPipelineRunForImportFlow as jest.Mock;
 const setPipelineNotStartedMock = pipelineUtils.setPipelineNotStarted as jest.Mock;
 const createOrUpdateImageStreamMock = submitUtils.createOrUpdateImageStream as jest.Mock;
 
@@ -232,20 +233,18 @@ describe('Import Submit Utils', () => {
       const mockData = _.cloneDeep(defaultData);
       mockData.pipeline.enabled = true;
 
-      createPipelineForImportFlowMock.mockImplementation((name, namespace) => {
-        return {
-          metadata: {
-            name,
-            namespace,
-            labels: { 'app.kubernetes.io/instance': name },
-          },
-          spec: {
-            params: [],
-            resources: [],
-            tasks: [],
-          },
-        };
-      });
+      createPipelineForImportFlowMock.mockImplementation((name, namespace) => ({
+        metadata: {
+          name,
+          namespace,
+          labels: { 'app.kubernetes.io/instance': name },
+        },
+        spec: {
+          params: [],
+          resources: [],
+          tasks: [],
+        },
+      }));
       createPipelineRunForImportFlowMock.mockImplementation(jest.fn()); // can't handle a no-arg spyOn invoke, stub
       createTriggerMock.mockImplementation(() => Promise.resolve([]));
 
@@ -312,7 +311,6 @@ describe('Import Submit Utils', () => {
       expect(errorLogger).toHaveBeenCalled();
 
       // re-enable logs for future tests
-      // eslint-disable-next-line no-console
       (console.warn as any).mockRestore();
     });
 
@@ -341,7 +339,6 @@ describe('Import Submit Utils', () => {
       expect(returnValue).toHaveLength(7);
 
       // re-enable logs for future tests
-      // eslint-disable-next-line no-console
       (console.log as any).mockRestore();
     });
 
@@ -425,7 +422,7 @@ describe('Import Submit Utils', () => {
       jest.clearAllMocks();
     });
 
-    it('return a Deployment with just one container which includes ports, env from Devfile container ', async () => {
+    it('return a Deployment with just one container which includes ports, env from Devfile container', async () => {
       const formData = sampleDevfileFormData;
       const returnValue = await createDevfileResources(formData, false, {}, '');
 
@@ -609,7 +606,7 @@ describe('Import Submit Utils', () => {
       expect(telGhScalingData).toEqual(true);
     });
 
-    it('getTelemetryImport should return appropriate data with useAdvancedOptionsRoute option as true if route advanced options are used', () => {
+    it('getTelemetryImport should return appropriate data with useAdvancedOptionsRoute option as true if route hostname is used', () => {
       const ghImportAdvData = {
         ...ghImportDefaultData,
         route: {

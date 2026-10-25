@@ -7,7 +7,13 @@ import { useFormikValidationFix } from '../../hooks/useFormikValidationFix';
 import type { DropdownFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
 
-export const DropdownField: FC<DropdownFieldProps> = ({ label, helpText, required, ...props }) => {
+export const DropdownField: FC<DropdownFieldProps> = ({
+  label,
+  helpText,
+  required,
+  dataTest,
+  ...props
+}) => {
   const [field, { touched, error }] = useField(props.name);
   const { setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
   const fieldId = getFieldId(props.name, 'dropdown');
@@ -22,6 +28,7 @@ export const DropdownField: FC<DropdownFieldProps> = ({ label, helpText, require
         {...props}
         items={props.items}
         id={fieldId}
+        dataTest={dataTest}
         selectedKey={field.value}
         isFullWidth={props.fullWidth}
         aria-describedby={helpText ? `${fieldId}-helper` : undefined}

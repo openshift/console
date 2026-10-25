@@ -2,12 +2,8 @@ import type { ReactNode } from 'react';
 import { render, screen } from '@testing-library/react';
 import * as Router from 'react-router';
 import { useEventSinkStatus } from '../../../hooks/useEventSinkStatus';
-import {
-  mockKameletSink,
-  mockNormalizedKafkaSink,
-  mockNormalizedSink,
-} from '../__mocks__/Kamelet-data';
 import EventSinkPage from '../EventSinkPage';
+import { mockKameletSink, mockNormalizedKafkaSink, mockNormalizedSink } from './data/Kamelet-data';
 
 jest.mock('../../../hooks/useEventSinkStatus', () => ({
   useEventSinkStatus: jest.fn(),
@@ -71,7 +67,6 @@ describe('EventSinkPage', () => {
       state: null,
       hash: '',
       key: 'default',
-      unstable_mask: undefined,
     });
   });
 
@@ -131,7 +126,6 @@ describe('EventSinkPage', () => {
       state: null,
       hash: '',
       key: 'default',
-      unstable_mask: undefined,
     });
     render(<EventSinkPage />);
     expect(screen.getByText('mock-EventSink')).toBeVisible();

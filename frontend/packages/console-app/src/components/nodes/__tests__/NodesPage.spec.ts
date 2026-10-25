@@ -7,7 +7,7 @@ const createNode = (name: string, internalIP: string): NodeKind =>
     status: {
       addresses: [{ type: 'InternalIP', address: internalIP }],
     },
-  } as NodeKind);
+  }) as NodeKind;
 
 describe('buildIPToHostnameMap', () => {
   it('maps InternalIP to node name', () => {

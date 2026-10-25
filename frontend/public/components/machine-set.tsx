@@ -1,17 +1,5 @@
 import type { FC } from 'react';
 import { createContext, useContext, useMemo, Suspense, useCallback } from 'react';
-import { getMachineAWSPlacement, getMachineRole } from '@console/shared/src/selectors/machine';
-import { getMachineSetInstanceType } from '@console/shared/src/selectors/machineSet';
-import { DASH } from '@console/shared/src/constants/ui';
-import { ListPageBody, TableColumn } from '@console/dynamic-plugin-sdk';
-import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import {
-  actionsCellProps,
-  getNameCellProps,
-  nameCellProps,
-  ConsoleDataView,
-} from '@console/app/src/components/data-view/ConsoleDataView';
-import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import {
   Tooltip,
   Button,
@@ -25,41 +13,44 @@ import {
 } from '@patternfly/react-core';
 import { RhUiEditIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
+import { ListPageBody } from '@console/dynamic-plugin-sdk';
+import type { ConsoleDataViewColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import type { ConfigureCountModalProps } from '@console/internal/components/modals/configure-count-modal';
+import { useConfigureCountModal } from '@console/internal/components/modals/configure-count-modal';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
-
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import PaneBodyGroup from '@console/shared/src/components/layout/PaneBodyGroup';
+import { DASH } from '@console/shared/src/constants/ui';
+import { getMachineAWSPlacement, getMachineRole } from '@console/shared/src/selectors/machine';
+import { getMachineSetInstanceType } from '@console/shared/src/selectors/machineSet';
 import { MachineModel, MachineSetModel, NodeModel } from '../models';
-import {
+import type {
   K8sKind,
   K8sResourceKind,
   MachineDeploymentKind,
   MachineSetKind,
   MachineKind,
   NodeKind,
-  referenceForModel,
   Selector as SelectorType,
-  LabelSelector,
 } from '../module/k8s';
-import { MachinePage } from './machine';
-import {
-  useConfigureCountModal,
-  ConfigureCountModalProps,
-} from '@console/internal/components/modals/configure-count-modal';
+import { referenceForModel, LabelSelector } from '../module/k8s';
+import { MachinesCell } from './control-plane-machine-set';
+import { ResourceEventStream } from './events';
 import { DetailsPage } from './factory/details';
-import { sortResourceByValue } from './factory/Table/sort';
-import ListPageHeader from './factory/ListPage/ListPageHeader';
 import ListPageCreate from './factory/ListPage/ListPageCreate';
-import { LoadingBox } from './utils/status-box';
-import { ResourceLink, resourcePath } from './utils/resource-link';
+import ListPageHeader from './factory/ListPage/ListPageHeader';
+import { sortResourceByValue } from './factory/Table/sort';
+import { MachinePage } from './machine';
 import { ResourceSummary } from './utils/details-page';
 import { SectionHeading } from './utils/headings';
-import { Selector } from './utils/selector';
 import { navFactory } from './utils/horizontal-nav';
 import { useAccessReview } from './utils/rbac';
+import { ResourceLink, resourcePath } from './utils/resource-link';
+import { Selector } from './utils/selector';
+import { LoadingBox } from './utils/status-box';
 import { convertToBaseValue, formatBytesAsGiB } from './utils/units';
-import { ResourceEventStream } from './events';
-import { MachinesCell } from './control-plane-machine-set';
 
 const CapacityResolverContext = createContext<CapacityResolverContextType | null>(null);
 
@@ -278,41 +269,27 @@ const MachineSetDetails: FC<MachineSetDetailsProps> = ({ obj }) => {
 };
 
 const useMachineSetColumns = (): {
-  columns: TableColumn<MachineSetKind>[];
-  resetAllColumnWidths: () => void;
+  columns: ConsoleDataViewColumn<MachineSetKind>[];
 } => {
   const { t } = useTranslation('public');
   const context = useContext(CapacityResolverContext);
-  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(MachineSetModel);
 
-  const columns: TableColumn<MachineSetKind>[] = useMemo(() => {
-    return [
+  const columns: ConsoleDataViewColumn<MachineSetKind>[] = useMemo(
+    () => [
       {
-        title: t('Name'),
+        type: 'name' as const,
         id: tableColumnInfo[0].id,
-        sort: 'metadata.name',
-        resizableProps: getResizableProps(tableColumnInfo[0].id),
-        props: {
-          ...nameCellProps,
-          modifier: 'nowrap',
-        },
       },
       {
-        title: t('Namespace'),
+        type: 'namespace' as const,
         id: tableColumnInfo[1].id,
-        sort: 'metadata.namespace',
-        resizableProps: getResizableProps(tableColumnInfo[1].id),
-        props: {
-          modifier: 'nowrap',
-        },
       },
       {
         title: t('Machines'),
         id: tableColumnInfo[2].id,
         sort: 'status.readyReplicas',
-        resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -320,9 +297,8 @@ const useMachineSetColumns = (): {
         id: tableColumnInfo[3].id,
         sort: (data, direction) =>
           data.sort(sortResourceByValue(direction, getMachineSetInstanceType)),
-        resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -332,9 +308,8 @@ const useMachineSetColumns = (): {
           ? (data, direction) =>
               data.sort(sortResourceByValue(direction, (obj) => context.capacityResolver(obj).cpu))
           : undefined,
-        resizableProps: getResizableProps(tableColumnInfo[4].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -346,29 +321,23 @@ const useMachineSetColumns = (): {
                 sortResourceByValue(direction, (obj) => context.capacityResolver(obj).memory),
               )
           : undefined,
-        resizableProps: getResizableProps(tableColumnInfo[5].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
-      {
-        title: '',
-        id: tableColumnInfo[6].id,
-        props: {
-          ...actionsCellProps,
-        },
-      },
-    ];
-  }, [t, context, getResizableProps]);
+      { type: 'actions' as const, id: tableColumnInfo[6].id },
+    ],
+    [t, context],
+  );
 
-  return { columns, resetAllColumnWidths };
+  return { columns };
 };
 
 const getDataViewRows = (
   data: { obj: MachineSetKind }[],
-  columns: TableColumn<MachineSetKind>[],
-) => {
-  return data.map(({ obj }: { obj: MachineSetKind }) => {
+  columns: ConsoleDataViewColumn<MachineSetKind>[],
+) =>
+  data.map(({ obj }: { obj: MachineSetKind }) => {
     const { name, namespace } = obj.metadata;
     const readyReplicas = getReadyReplicas(obj);
     const desiredReplicas = getDesiredReplicas(obj);
@@ -377,7 +346,6 @@ const getDataViewRows = (
     const rowCells = {
       [tableColumnInfo[0].id]: {
         cell: <ResourceLink kind={machineSetReference} name={name} namespace={namespace} />,
-        props: getNameCellProps(name),
       },
       [tableColumnInfo[1].id]: {
         cell: <ResourceLink kind="Namespace" name={namespace} />,
@@ -402,7 +370,6 @@ const getDataViewRows = (
       },
       [tableColumnInfo[6].id]: {
         cell: <LazyActionMenu context={{ [machineSetReference]: obj }} />,
-        props: actionsCellProps,
       },
     };
 
@@ -410,29 +377,25 @@ const getDataViewRows = (
       const cell = rowCells[id]?.cell || DASH;
       return {
         id,
-        props: rowCells[id]?.props,
         cell,
       };
     });
   });
-};
 
 const MachineSetListContent: FC<MachineSetListProps> = ({ data, loaded, loadError, ...props }) => {
-  const { columns, resetAllColumnWidths } = useMachineSetColumns();
+  const { columns } = useMachineSetColumns();
 
   return (
     <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<MachineSetKind>
         {...props}
+        id={MachineSetModel}
         label={MachineSetModel.labelPlural}
         data={data}
         loaded={loaded}
         loadError={loadError}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement={true}
-        isResizable
-        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );
@@ -444,9 +407,9 @@ const MachineSetList: FC<MachineSetListProps> = ({ data, loaded, loadError, ...p
 
   const capacityResolver = useCallback(
     (obj: MachineSetKind) => {
-      const machine = (machines ?? [])?.find((m) => {
-        return new LabelSelector(obj.spec.selector).matches(m);
-      });
+      const machine = (machines ?? [])?.find((m) =>
+        new LabelSelector(obj.spec.selector).matches(m),
+      );
       const node = (nodes ?? []).find(
         (n) => machine && machine.status?.nodeRef?.uid === n.metadata.uid,
       );
@@ -516,7 +479,7 @@ export const MachineSetDetailsPage: FC = (props) => (
   <DetailsPage
     {...props}
     kind={machineSetReference}
-    customActionMenu={(obj: K8sResourceKind) => (
+    customActionMenu={(_kindObj: K8sKind, obj: K8sResourceKind) => (
       <LazyActionMenu context={{ [machineSetReference]: obj }} />
     )}
     pages={[

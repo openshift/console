@@ -33,15 +33,13 @@ const getTransformedTopologyData = (mockData: TopologyDataResources) => {
   });
 };
 
-const getNodeById = (id: string, graphData: Model): NodeModel => {
-  return graphData.nodes.find((n) => n.id === id);
-};
+const getNodeById = (id: string, graphData: Model): NodeModel =>
+  graphData.nodes.find((n) => n.id === id);
 
-const getNodeByName = (name: string, graphData: Model): NodeModel => {
-  return graphData.nodes.find((n) => n.label === name);
-};
+const getNodeByName = (name: string, graphData: Model): NodeModel =>
+  graphData.nodes.find((n) => n.label === name);
 
-describe('operator data transformer ', () => {
+describe('operator data transformer', () => {
   let mockResources: TopologyDataResources;
   let filters;
 

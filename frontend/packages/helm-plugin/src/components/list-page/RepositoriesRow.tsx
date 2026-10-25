@@ -1,11 +1,9 @@
 import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getNameCellProps } from '@console/app/src/components/data-view/ConsoleDataView';
-import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
-import { LazyActionMenu } from '@console/dynamic-plugin-sdk/src/lib-internal';
+import type { GetDataViewRows } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { ResourceLink } from '@console/internal/components/utils';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import { referenceFor, referenceForModel } from '@console/internal/module/k8s';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { DASH } from '@console/shared/src/constants/ui';
@@ -29,11 +27,8 @@ const DisabledCell: FC<{ disabled?: boolean }> = ({ disabled }) => {
   return <>{disabled ? t('True') : t('False')}</>;
 };
 
-export const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) => {
-  return data.map(({ obj }) => {
-    const objReference = referenceFor(obj);
-    const context = { [objReference]: obj };
-
+export const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) =>
+  data.map(({ obj }) => {
     const rowCells = {
       [tableColumnInfo[0].id]: {
         cell: (
@@ -47,7 +42,6 @@ export const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns)
             namespace={obj.metadata?.namespace}
           />
         ),
-        props: getNameCellProps(obj.metadata.name),
       },
       [tableColumnInfo[1].id]: {
         cell: obj.spec?.name ?? DASH,
@@ -72,19 +66,14 @@ export const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns)
       [tableColumnInfo[5].id]: {
         cell: <Timestamp timestamp={obj.metadata.creationTimestamp} />,
       },
-      [tableColumnInfo[6].id]: {
-        cell: <LazyActionMenu context={context} />,
-      },
     };
 
     return columns.map(({ id }) => {
+      if (id === tableColumnInfo[6].id) return { id };
       const cell = rowCells[id]?.cell || DASH;
-      const props = rowCells[id]?.props || undefined;
       return {
         id,
-        props,
         cell,
       };
     });
   });
-};

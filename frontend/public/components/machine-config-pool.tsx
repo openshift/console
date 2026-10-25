@@ -1,7 +1,5 @@
-import * as _ from 'lodash';
 import type { FC } from 'react';
 import { useMemo, Suspense } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   Card,
   DescriptionList,
@@ -13,46 +11,41 @@ import {
   Tooltip,
 } from '@patternfly/react-core';
 import { RhUiPauseCircleIcon, RhUiSyncIcon } from '@patternfly/react-icons';
-import { TableColumn } from '@console/dynamic-plugin-sdk';
-
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import PaneBodyGroup from '@console/shared/src/components/layout/PaneBodyGroup';
-import {
-  actionsCellProps,
-  getNameCellProps,
-  ConsoleDataView,
-  nameCellProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
-import { GetDataViewRows } from '@console/app/src/components/data-view/types';
-import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-import { Conditions } from './conditions';
-import { MachineConfigPoolModel } from '../models';
-import { machineConfigReference, MachineConfigPage } from './machine-config';
-import {
-  K8sModel,
-  K8sResourceCondition,
-  K8sResourceConditionStatus,
-  MachineConfigPoolConditionType,
-  MachineConfigPoolKind,
-  referenceForModel,
-} from '../module/k8s';
-import { DetailsPage } from './factory/details';
-import { ListPage } from './factory/list-page';
-import { DASH } from '@console/shared/src/constants/ui';
-import { DetailsItem } from './utils/details-item';
-import { LoadingBox, LoadingInline } from './utils/status-box';
-import { navFactory } from './utils/horizontal-nav';
-import { ResourceLink } from './utils/resource-link';
-import { ResourceSummary } from './utils/details-page';
-import { SectionHeading } from './utils/headings';
-import { Selector } from './utils/selector';
-import { WorkloadPausedAlert } from './utils/workload-pause';
-import { ResourceEventStream } from './events';
-import { MachineConfigPoolsArePausedAlert } from './cluster-settings/cluster-settings';
-import { UpToDateMessage } from './cluster-settings/cluster-status';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
+import type {
+  ConsoleDataViewColumn,
+  GetDataViewRows,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import type { Action } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
-import { Action } from '@console/dynamic-plugin-sdk/src/lib-core';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import PaneBodyGroup from '@console/shared/src/components/layout/PaneBodyGroup';
+import { DASH } from '@console/shared/src/constants/ui';
+import { MachineConfigPoolModel } from '../models';
+import type { K8sModel, K8sResourceCondition, MachineConfigPoolKind } from '../module/k8s';
+import {
+  K8sResourceConditionStatus,
+  MachineConfigPoolConditionType,
+  referenceForModel,
+} from '../module/k8s';
+import { MachineConfigPoolsArePausedAlert } from './cluster-settings/cluster-settings';
+import { UpToDateMessage } from './cluster-settings/cluster-status';
+import { Conditions } from './conditions';
+import { ResourceEventStream } from './events';
+import { DetailsPage } from './factory/details';
+import { ListPage } from './factory/list-page';
+import { machineConfigReference, MachineConfigPage } from './machine-config';
+import { DetailsItem } from './utils/details-item';
+import { ResourceSummary } from './utils/details-page';
+import { SectionHeading } from './utils/headings';
+import { navFactory } from './utils/horizontal-nav';
+import { ResourceLink } from './utils/resource-link';
+import { Selector } from './utils/selector';
+import { LoadingBox, LoadingInline } from './utils/status-box';
+import { WorkloadPausedAlert } from './utils/workload-pause';
 
 const machineConfigPoolReference = referenceForModel(MachineConfigPoolModel);
 
@@ -126,7 +119,7 @@ const MachineConfigPoolCharacteristics: FC<MachineConfigPoolCharacteristicsProps
                 : '-'}
             </DescriptionListDescription>
           </DescriptionListGroup>
-          <DetailsItem label={t('Paused')} obj={obj} path={'spec.paused'}>
+          <DetailsItem label={t('Paused')} obj={obj} path="spec.paused">
             {obj.spec?.paused ? t('True') : t('False')}
           </DetailsItem>
         </>
@@ -278,21 +271,19 @@ const MachineConfigPoolUpdateStatus: FC<MachineConfigPoolUpdateStatusProps> = ({
   }
 };
 
-export const MachineConfigPoolDetailsPage: FC<any> = (props) => {
-  return (
-    <DetailsPage
-      {...props}
-      kind={machineConfigPoolReference}
-      customActionMenu={(k8sObj: K8sModel, obj: MachineConfigPoolKind) => (
-        <LazyActionMenu
-          context={{ [machineConfigPoolReference]: obj }}
-          variant={ActionMenuVariant.DROPDOWN}
-        />
-      )}
-      pages={pages}
-    />
-  );
-};
+export const MachineConfigPoolDetailsPage: FC<any> = (props) => (
+  <DetailsPage
+    {...props}
+    kind={machineConfigPoolReference}
+    customActionMenu={(k8sObj: K8sModel, obj: MachineConfigPoolKind) => (
+      <LazyActionMenu
+        context={{ [machineConfigPoolReference]: obj }}
+        variant={ActionMenuVariant.DROPDOWN}
+      />
+    )}
+    pages={pages}
+  />
+);
 
 const tableColumnInfo = [
   { id: 'name' },
@@ -303,72 +294,53 @@ const tableColumnInfo = [
 ];
 
 const useMachineConfigPoolColumns = (): {
-  columns: TableColumn<MachineConfigPoolKind>[];
-  resetAllColumnWidths: () => void;
+  columns: ConsoleDataViewColumn<MachineConfigPoolKind>[];
 } => {
   const { t } = useTranslation('public');
-  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(
-    MachineConfigPoolModel,
-  );
 
-  const columns: TableColumn<MachineConfigPoolKind>[] = useMemo(() => {
-    return [
+  const columns: ConsoleDataViewColumn<MachineConfigPoolKind>[] = useMemo(
+    () => [
       {
-        title: t('Name'),
+        type: 'name' as const,
         id: tableColumnInfo[0].id,
-        sort: 'metadata.name',
-        resizableProps: getResizableProps(tableColumnInfo[0].id),
-        props: {
-          ...nameCellProps,
-          modifier: 'nowrap',
-        },
       },
       {
         title: t('Configuration'),
         id: tableColumnInfo[1].id,
         sort: 'status.configuration.name',
-        resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
         title: t('Degraded'),
         id: tableColumnInfo[2].id,
-        resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
         title: t('Update status'),
         id: tableColumnInfo[3].id,
-        resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
-      {
-        title: '',
-        id: tableColumnInfo[4].id,
-        props: {
-          ...actionsCellProps,
-        },
-      },
-    ];
-  }, [t, getResizableProps]);
+      { type: 'actions' as const, id: tableColumnInfo[4].id },
+    ],
+    [t],
+  );
 
-  return { columns, resetAllColumnWidths };
+  return { columns };
 };
 
-const getDataViewRows: GetDataViewRows<MachineConfigPoolKind, Action[]> = (data, columns) => {
-  return data.map(({ obj }) => {
+const getDataViewRows: GetDataViewRows<MachineConfigPoolKind, Action[]> = (data, columns) =>
+  data.map(({ obj }) => {
     const { name } = obj.metadata;
 
     const rowCells = {
       [tableColumnInfo[0].id]: {
         cell: <ResourceLink kind={machineConfigPoolReference} name={name} />,
-        props: getNameCellProps(name),
       },
       [tableColumnInfo[1].id]: {
         cell: _.get(obj, 'status.configuration.name') ? (
@@ -389,7 +361,6 @@ const getDataViewRows: GetDataViewRows<MachineConfigPoolKind, Action[]> = (data,
       },
       [tableColumnInfo[4].id]: {
         cell: <LazyActionMenu context={{ [machineConfigPoolReference]: obj }} />,
-        props: actionsCellProps,
       },
     };
 
@@ -397,12 +368,10 @@ const getDataViewRows: GetDataViewRows<MachineConfigPoolKind, Action[]> = (data,
       const cell = rowCells[id]?.cell || DASH;
       return {
         id,
-        props: rowCells[id]?.props,
         cell,
       };
     });
   });
-};
 
 const MachineConfigPoolList: FC<MachineConfigPoolListProps> = ({
   data,
@@ -410,7 +379,7 @@ const MachineConfigPoolList: FC<MachineConfigPoolListProps> = ({
   loadError,
   ...props
 }) => {
-  const { columns, resetAllColumnWidths } = useMachineConfigPoolColumns();
+  const { columns } = useMachineConfigPoolColumns();
 
   return (
     <>
@@ -418,15 +387,13 @@ const MachineConfigPoolList: FC<MachineConfigPoolListProps> = ({
       <Suspense fallback={<LoadingBox />}>
         <ConsoleDataView<MachineConfigPoolKind, Action[]>
           {...props}
+          id={MachineConfigPoolModel}
           label={MachineConfigPoolModel.labelPlural}
           data={data}
           loaded={loaded}
           loadError={loadError}
           columns={columns}
           getDataViewRows={getDataViewRows}
-          hideColumnManagement={true}
-          isResizable
-          resetAllColumnWidths={resetAllColumnWidths}
         />
       </Suspense>
     </>
@@ -438,8 +405,8 @@ export const MachineConfigPoolPage: FC<any> = (props) => (
     {...props}
     ListComponent={MachineConfigPoolList}
     kind={machineConfigPoolReference}
-    canCreate={true}
-    omitFilterToolbar={true}
+    canCreate
+    omitFilterToolbar
   />
 );
 

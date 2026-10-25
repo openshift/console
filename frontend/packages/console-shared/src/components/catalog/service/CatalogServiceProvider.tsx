@@ -74,9 +74,9 @@ export const CatalogServiceProvider: FC<CatalogServiceProviderProps> = ({
         ? catalogProviderExtensions.some(({ uid }) => extItemsMap[uid] || extItemsErrorMap[uid])
         : catalogProviderExtensions.every(({ uid }) => extItemsMap[uid] || extItemsErrorMap[uid])));
 
-  const enabledCatalogProviderExtensions = catalogProviderExtensions.filter((item) => {
-    return !disabledSubCatalogs?.includes(item?.properties?.type);
-  });
+  const enabledCatalogProviderExtensions = catalogProviderExtensions.filter(
+    (item) => !disabledSubCatalogs?.includes(item?.properties?.type),
+  );
   const preCatalogItems = useMemo(() => {
     if (!loaded) {
       return [];
@@ -88,11 +88,14 @@ export const CatalogServiceProvider: FC<CatalogServiceProviderProps> = ({
           .filter((fe) => fe.properties.type === e.properties.type)
           .reduce((acc, ext) => acc.filter(ext.properties.filter), extItemsMap[e.uid] ?? []),
       ),
-    ).reduce((acc, item) => {
-      if (!item) return acc;
-      acc[item.uid] = item;
-      return acc;
-    }, {} as { [uid: string]: CatalogItem });
+    ).reduce(
+      (acc, item) => {
+        if (!item) return acc;
+        acc[item.uid] = item;
+        return acc;
+      },
+      {} as { [uid: string]: CatalogItem },
+    );
 
     return _.sortBy(Object.values(itemMap), 'name');
   }, [extItemsMap, loaded, enabledCatalogProviderExtensions, catalogFilterExtensions]);
@@ -129,9 +132,7 @@ export const CatalogServiceProvider: FC<CatalogServiceProviderProps> = ({
   }, []);
 
   const searchCatalog = useCallback(
-    (query: string) => {
-      return keywordCompare(query, catalogItems);
-    },
+    (query: string) => keywordCompare(query, catalogItems),
     [catalogItems],
   );
 
@@ -163,12 +164,13 @@ export const CatalogServiceProvider: FC<CatalogServiceProviderProps> = ({
     !loaded || failedCalls === 0
       ? null
       : failedCalls === totalCalls
-      ? new Error('failed loading catalog data')
-      : new IncompleteDataError(failedExtensions);
+        ? new Error('failed loading catalog data')
+        : new IncompleteDataError(failedExtensions);
 
-  const categories = useMemo(() => _.uniqBy(_.flatten(Object.values(categoryProviderMap)), 'id'), [
-    categoryProviderMap,
-  ]);
+  const categories = useMemo(
+    () => _.uniqBy(_.flatten(Object.values(categoryProviderMap)), 'id'),
+    [categoryProviderMap],
+  );
 
   const catalogService: CatalogService = {
     type: catalogType,

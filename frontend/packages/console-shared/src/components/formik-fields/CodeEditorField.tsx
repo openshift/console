@@ -38,13 +38,12 @@ export const CodeEditorField: FC<CodeEditorFieldProps> = ({
 }) => {
   const [field] = useField(name);
   const { setFieldValue } = useFormikContext<FormikValues>();
-  const editorRef = useRef();
+  const editorRef = useRef(undefined);
 
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
 
-  const [sampleResources, loaded, loadError] = useK8sWatchResource<K8sResourceCommon[]>(
-    SampleResource,
-  );
+  const [sampleResources, loaded, loadError] =
+    useK8sWatchResource<K8sResourceCommon[]>(SampleResource);
 
   const { samples, snippets } = useResourceSidebarSamples(model, {
     data: sampleResources,
@@ -59,13 +58,13 @@ export const CodeEditorField: FC<CodeEditorFieldProps> = ({
   const [templateExtensions] = useResolvedExtensions<YAMLTemplate>(isYAMLTemplate);
 
   const sanitizeYamlContent = useCallback(
-    (id: string = 'default', yaml: string = '', kind: string) => {
+    (id: string = 'default', yaml: string = '', kind: string = undefined) => {
       if (yaml) {
         return yaml;
       }
       const yamlByExtension: string = getYAMLTemplates(
         templateExtensions?.filter((e) => e.properties.model.kind === kind),
-      ).getIn([kind, id]);
+      )?.[kind]?.[id];
       return yamlByExtension?.trim() || '';
     },
     [templateExtensions],

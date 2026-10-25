@@ -24,9 +24,9 @@ jest.mock('@console/shared/src/components/links/ExternalLinkButton', () => ({
 }));
 
 jest.mock('@console/shared/src/components/links/LinkTo', () => ({
-  LinkTo: (to: string) => ({ children }: { children: React.ReactNode }) => (
-    <a href={to}>{children}</a>
-  ),
+  LinkTo:
+    (to: string) =>
+    ({ children }: { children: React.ReactNode }) => <a href={to}>{children}</a>,
 }));
 
 const mockUseAccessReview = useAccessReviewModule.useAccessReview as jest.Mock;

@@ -70,6 +70,7 @@ const DeploymentStrategySection: FC<DeploymentStrategySectionProps> = ({
       <DropdownField
         name="formData.deploymentStrategy.type"
         label={t('Strategy type')}
+        dataTest="deployment-strategy-type"
         items={getDeploymentStrategyItems(resourceType, t)}
         helpText={getDeploymentStrategyHelpText(resourceType, deploymentStrategy.type, t)}
         onChange={onChange}

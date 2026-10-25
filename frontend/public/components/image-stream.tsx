@@ -1,9 +1,5 @@
 import type { FC } from 'react';
 import { useMemo, Fragment, Suspense } from 'react';
-import { Trans, useTranslation } from 'react-i18next';
-import * as _ from 'lodash';
-import * as semver from 'semver';
-import { Table as PfTable, Thead, Tr, Th, Tbody, Td } from '@patternfly/react-table';
 import {
   AlertVariant,
   Button,
@@ -15,40 +11,38 @@ import {
   Popover,
 } from '@patternfly/react-core';
 import { RhUiQuestionMarkCircleFillIcon } from '@patternfly/react-icons';
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { Table as PfTable, Thead, Tr, Th, Tbody, Td } from '@patternfly/react-table';
+import * as _ from 'lodash';
+import { Trans, useTranslation } from 'react-i18next';
+import * as semver from 'semver';
 import {
-  K8sResourceKind,
-  K8sResourceKindReference,
-  referenceForModel,
-  TableColumn,
-} from '../module/k8s';
-import { DetailsPage } from './factory/details';
-import { ListPage } from './factory/list-page';
-import {
-  actionsCellProps,
-  getNameCellProps,
   ConsoleDataView,
-  nameCellProps,
   getLabelsColumnWidthStyleProp,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import { GetDataViewRows } from '@console/app/src/components/data-view/types';
-import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-
-import { ImageStreamModel } from '../models';
-import { DOC_URL_PODMAN } from './utils/documentation';
-import { CopyToClipboard } from './utils/copy-to-clipboard';
-import { ExpandableAlert } from './utils/alerts';
-import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
-import { SectionHeading } from './utils/headings';
-import { LabelList } from './utils/label-list';
-import { navFactory } from './utils/horizontal-nav';
-import { ResourceLink } from './utils/resource-link';
-import { ResourceSummary } from './utils/details-page';
-import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import { ImageStreamTimeline, getImageStreamTagName } from './image-stream-timeline';
-import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
-import { LoadingBox } from './utils/status-box';
+import type {
+  ConsoleDataViewColumn,
+  GetDataViewRows,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
+import { ImageStreamModel } from '../models';
+import type { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
+import { referenceForModel } from '../module/k8s';
+import { DetailsPage } from './factory/details';
+import { ListPage } from './factory/list-page';
+import { ImageStreamTimeline, getImageStreamTagName } from './image-stream-timeline';
+import { ExpandableAlert } from './utils/alerts';
+import { CopyToClipboard } from './utils/copy-to-clipboard';
+import { ResourceSummary } from './utils/details-page';
+import { DOC_URL_PODMAN } from './utils/documentation';
+import { SectionHeading } from './utils/headings';
+import { navFactory } from './utils/horizontal-nav';
+import { LabelList } from './utils/label-list';
+import { ResourceLink } from './utils/resource-link';
+import { LoadingBox } from './utils/status-box';
 
 const ImageStreamsReference: K8sResourceKindReference = 'ImageStream';
 const ImageStreamTagsReference: K8sResourceKindReference = 'ImageStreamTag';
@@ -74,8 +68,8 @@ const getBuilderTags = (imageStream: K8sResourceKind): any[] => {
 };
 
 // Sort tags in reverse order by semver, falling back to a string comparison if not a valid version.
-export const getBuilderTagsSortedByVersion = (imageStream: K8sResourceKind): any[] => {
-  return getBuilderTags(imageStream).sort(({ name: a }, { name: b }) => {
+export const getBuilderTagsSortedByVersion = (imageStream: K8sResourceKind): any[] =>
+  getBuilderTags(imageStream).sort(({ name: a }, { name: b }) => {
     const v1 = semver.coerce(a);
     const v2 = semver.coerce(b);
     if (!v1 && !v2) {
@@ -89,7 +83,6 @@ export const getBuilderTagsSortedByVersion = (imageStream: K8sResourceKind): any
     }
     return semver.rcompare(v1, v2);
   });
-};
 
 export const getMostRecentBuilderTag = (imageStream: K8sResourceKind) => {
   const tags = getBuilderTagsSortedByVersion(imageStream);
@@ -223,8 +216,8 @@ export const ExampleDockerCommandPopover: FC<ImageStreamManipulationHelpProps> =
 const ImageStreamsDetails: FC<ImageStreamsDetailsProps> = ({ obj: imageStream }) => {
   const { t } = useTranslation('public');
 
-  const getImportErrors = (): string[] => {
-    return _.transform(imageStream.status.tags, (acc, tag: any) => {
+  const getImportErrors = (): string[] =>
+    _.transform(imageStream.status.tags, (acc, tag: any) => {
       const importErrorCondition = _.find(
         tag.conditions,
         (condition) => condition.type === 'ImportSuccess' && condition.status === 'False',
@@ -237,7 +230,6 @@ const ImageStreamsDetails: FC<ImageStreamsDetailsProps> = ({ obj: imageStream })
           }),
         );
     });
-  };
 
   const imageRepository = _.get(imageStream, 'status.dockerImageRepository');
   const publicImageRepository = _.get(imageStream, 'status.publicDockerImageRepository');
@@ -274,9 +266,7 @@ const ImageStreamsDetails: FC<ImageStreamsDetailsProps> = ({ obj: imageStream })
               )}
               <DescriptionListGroup>
                 <DescriptionListTerm>{t('Image count')}</DescriptionListTerm>
-                <DescriptionListDescription>
-                  {imageCount ? imageCount : 0}
-                </DescriptionListDescription>
+                <DescriptionListDescription>{imageCount || 0}</DescriptionListDescription>
               </DescriptionListGroup>
             </ResourceSummary>
             <ExampleDockerCommandPopover imageStream={imageStream} />
@@ -344,14 +334,13 @@ const tableColumnInfo = [
   { id: 'actions' },
 ];
 
-const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) => {
-  return data.map(({ obj: imageStream }) => {
+const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) =>
+  data.map(({ obj: imageStream }) => {
     const { name, namespace, labels, creationTimestamp } = imageStream.metadata;
 
     const rowCells = {
       [tableColumnInfo[0].id]: {
         cell: <ResourceLink kind={ImageStreamsReference} name={name} namespace={namespace} />,
-        props: { ...getNameCellProps(name) },
       },
       [tableColumnInfo[1].id]: {
         cell: <ResourceLink kind="Namespace" name={namespace} />,
@@ -364,7 +353,6 @@ const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) => {
       },
       [tableColumnInfo[4].id]: {
         cell: <LazyActionMenu context={{ [referenceForModel(ImageStreamModel)]: imageStream }} />,
-        props: actionsCellProps,
       },
     };
 
@@ -372,91 +360,64 @@ const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) => {
       const cell = rowCells[id]?.cell || '-';
       return {
         id,
-        props: rowCells[id]?.props,
         cell,
       };
     });
   });
-};
 
 const useImageStreamColumns = (): {
-  columns: TableColumn<K8sResourceKind>[];
-  resetAllColumnWidths: () => void;
+  columns: ConsoleDataViewColumn<K8sResourceKind>[];
 } => {
   const { t } = useTranslation('public');
-  const { getResizableProps, getWidth, resetAllColumnWidths } = useColumnWidthSettings(
-    ImageStreamModel,
-  );
 
-  const columns: TableColumn<K8sResourceKind>[] = useMemo(() => {
+  const columns: ConsoleDataViewColumn<K8sResourceKind>[] = useMemo(() => {
     const labelsColumnId = tableColumnInfo[2].id;
     return [
       {
-        title: t('Name'),
+        type: 'name' as const,
         id: tableColumnInfo[0].id,
-        sort: 'metadata.name',
-        resizableProps: getResizableProps(tableColumnInfo[0].id),
-        props: {
-          ...nameCellProps,
-          modifier: 'nowrap',
-        },
       },
       {
-        title: t('Namespace'),
+        type: 'namespace' as const,
         id: tableColumnInfo[1].id,
-        sort: 'metadata.namespace',
-        resizableProps: getResizableProps(tableColumnInfo[1].id),
-        props: {
-          modifier: 'nowrap',
-        },
       },
       {
         title: t('Labels'),
         id: labelsColumnId,
         sort: 'metadata.labels',
-        resizableProps: getResizableProps(labelsColumnId),
         props: {
-          modifier: 'nowrap',
-          ...getLabelsColumnWidthStyleProp(getWidth(labelsColumnId)),
+          modifier: 'nowrap' as const,
+          ...getLabelsColumnWidthStyleProp(),
         },
       },
       {
         title: t('Created'),
         id: tableColumnInfo[3].id,
         sort: 'metadata.creationTimestamp',
-        resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
-      {
-        title: '',
-        id: tableColumnInfo[4].id,
-        props: {
-          ...actionsCellProps,
-        },
-      },
+      { type: 'actions' as const, id: tableColumnInfo[4].id },
     ];
-  }, [t, getResizableProps, getWidth]);
+  }, [t]);
 
-  return { columns, resetAllColumnWidths };
+  return { columns };
 };
 
 const ImageStreamsList: FC<ImageStreamsListProps> = ({ data, loaded, ...props }) => {
-  const { columns, resetAllColumnWidths } = useImageStreamColumns();
+  const { columns } = useImageStreamColumns();
 
   return (
     <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<K8sResourceKind>
         {...props}
+        id={ImageStreamModel}
         label={ImageStreamModel.labelPlural}
         data={data}
         loaded={loaded}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement={true}
-        isResizable
-        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );
@@ -472,8 +433,8 @@ export const ImageStreamsPage: FC<ImageStreamsPageProps> = (props) => {
       title={t('ImageStreams')}
       kind={kind}
       ListComponent={ImageStreamsList}
-      canCreate={true}
-      omitFilterToolbar={true}
+      canCreate
+      omitFilterToolbar
     />
   );
 };

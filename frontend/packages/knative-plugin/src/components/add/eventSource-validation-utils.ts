@@ -14,9 +14,7 @@ export const sinkTypeUriValidation = (t: TFunction) =>
     uri: yup
       .string()
       .max(2000, t('knative-plugin~Please enter a URI that is less then 2000 characters.'))
-      .test('validate-uri', t('knative-plugin~Invalid URI.'), function (value) {
-        return isValidUrl(value);
-      })
+      .test('validate-uri', t('knative-plugin~Invalid URI.'), (value) => isValidUrl(value))
       .required(t('knative-plugin~Required')),
   });
 

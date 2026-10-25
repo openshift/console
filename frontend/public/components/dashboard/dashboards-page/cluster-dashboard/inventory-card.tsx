@@ -1,23 +1,24 @@
 import { memo, useMemo, useState, useEffect } from 'react';
 import { Card, CardBody, CardHeader, CardTitle, Stack, StackItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import {
-  ResourceInventoryItem,
-  StatusGroupMapper,
-} from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
-import { ErrorBoundary } from '@console/shared/src/components/error/error-boundary';
-import { K8sKind, referenceForModel, K8sResourceCommon } from '../../../../module/k8s';
-import {
-  useResolvedExtensions,
+import type {
   DashboardsOverviewInventoryItem,
   DashboardsOverviewInventoryItemReplacement,
-  isDashboardsOverviewInventoryItem,
-  isDashboardsOverviewInventoryItemReplacement,
   ResolvedExtension,
   WatchK8sResources,
   ClusterOverviewInventoryItem,
+} from '@console/dynamic-plugin-sdk';
+import {
+  useResolvedExtensions,
+  isDashboardsOverviewInventoryItem,
+  isDashboardsOverviewInventoryItemReplacement,
   isClusterOverviewInventoryItem,
 } from '@console/dynamic-plugin-sdk';
+import type { StatusGroupMapper } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
+import { ResourceInventoryItem } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
+import { ErrorBoundary } from '@console/shared/src/components/error/error-boundary';
+import type { K8sKind, K8sResourceCommon } from '../../../../module/k8s';
+import { referenceForModel } from '../../../../module/k8s';
 import { useK8sWatchResource, useK8sWatchResources } from '../../../utils/k8s-watch-hook';
 
 const mergeItems = (
@@ -39,43 +40,38 @@ const ClusterInventoryItem = memo<ClusterInventoryItemProps>(
     const mainResource = useMemo(() => getWatchResource(model), [model]);
     const otherResources = useMemo(() => additionalResources || {}, [additionalResources]);
     const [mapper, setMapper] = useState<StatusGroupMapper>();
-    const [resourceData, resourceLoaded, resourceLoadError] = useK8sWatchResource<
-      K8sResourceCommon[]
-    >(mainResource);
+    const [resourceData, resourceLoaded, resourceLoadError] =
+      useK8sWatchResource<K8sResourceCommon[]>(mainResource);
     const resources = useK8sWatchResources(otherResources);
     useEffect(() => {
       mapperLoader &&
         mapperLoader()
           .then((res) => setMapper(() => res))
           .catch(() => {
-            // eslint-disable-next-line no-console
             console.error('Mapper does not exist in module');
           });
     }, [mapperLoader]);
 
-    const [
-      additionalResourcesData,
-      additionalResourcesLoaded,
-      additionalResourcesLoadError,
-    ] = useMemo(() => {
-      const resourcesData = {};
-      let resourcesLoaded = true;
-      let resourcesLoadError = false;
+    const [additionalResourcesData, additionalResourcesLoaded, additionalResourcesLoadError] =
+      useMemo(() => {
+        const resourcesData = {};
+        let resourcesLoaded = true;
+        let resourcesLoadError = false;
 
-      if (additionalResources) {
-        resourcesLoaded = Object.keys(additionalResources)
-          .filter((key) => !additionalResources[key].optional)
-          .every((key) => resources[key].loaded);
-        Object.keys(additionalResources).forEach((key) => {
-          resourcesData[key] = resources[key].data;
-        });
-        resourcesLoadError = Object.keys(additionalResources)
-          .filter((key) => !additionalResources[key].optional)
-          .some((key) => !!resources[key].loadError);
-      }
+        if (additionalResources) {
+          resourcesLoaded = Object.keys(additionalResources)
+            .filter((key) => !additionalResources[key].optional)
+            .every((key) => resources[key].loaded);
+          Object.keys(additionalResources).forEach((key) => {
+            resourcesData[key] = resources[key].data;
+          });
+          resourcesLoadError = Object.keys(additionalResources)
+            .filter((key) => !additionalResources[key].optional)
+            .some((key) => !!resources[key].loadError);
+        }
 
-      return [resourcesData, resourcesLoaded, resourcesLoadError];
-    }, [additionalResources, resources]);
+        return [resourcesData, resourcesLoaded, resourcesLoadError];
+      }, [additionalResources, resources]);
 
     return (
       <ResourceInventoryItem
@@ -104,10 +100,10 @@ export const InventoryCard = memo(() => {
     isClusterOverviewInventoryItem,
   );
 
-  const mergedItems = useMemo(() => mergeItems(itemExtensions, replacementExtensions), [
-    itemExtensions,
-    replacementExtensions,
-  ]);
+  const mergedItems = useMemo(
+    () => mergeItems(itemExtensions, replacementExtensions),
+    [itemExtensions, replacementExtensions],
+  );
 
   const { t } = useTranslation('public');
 

@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { Action } from '@console/dynamic-plugin-sdk';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
@@ -41,7 +42,7 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
   kind: K8sModel | undefined,
   resource: K8sResourceKind | undefined,
   filterActions?: T,
-  message?: JSX.Element,
+  message?: ReactNode,
   editPath?: string,
 ): [ActionObject<T>, boolean] => {
   const { t } = useTranslation('console-app');
@@ -87,16 +88,14 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
           }),
         accessReview: asAccessReview(kind as K8sModel, resource as K8sResourceKind, 'delete'),
       }),
-      [CommonActionCreator.Edit]: (): Action => {
-        return {
-          id: 'edit-resource',
-          label: t('Edit {{kind}}', { kind: kind?.kind }),
-          cta: {
-            href: actualEditPath,
-          },
-          accessReview: asAccessReview(kind as K8sModel, resource as K8sResourceKind, 'update'),
-        };
-      },
+      [CommonActionCreator.Edit]: (): Action => ({
+        id: 'edit-resource',
+        label: t('Edit {{kind}}', { kind: kind?.kind }),
+        cta: {
+          href: actualEditPath,
+        },
+        accessReview: asAccessReview(kind as K8sModel, resource as K8sResourceKind, 'update'),
+      }),
       [CommonActionCreator.ModifyLabels]: (): Action => ({
         id: 'edit-labels',
         label: t('Edit labels'),

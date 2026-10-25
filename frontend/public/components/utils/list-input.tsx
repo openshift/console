@@ -1,14 +1,15 @@
 import type { FormEvent } from 'react';
 import { Component } from 'react';
-import * as _ from 'lodash';
-import { css } from '@patternfly/react-styles';
 import { Button } from '@patternfly/react-core';
 import { RhUiAddCircleFillIcon, RhUiMinusCircleIcon } from '@patternfly/react-icons';
+import { css } from '@patternfly/react-styles';
+import * as _ from 'lodash';
 /* eslint-disable-next-line */
 import { withTranslation, WithTranslation } from 'react-i18next';
 
-class ListInput_ extends Component<ListInputProps, ListInputState> {
+class InnerListInput extends Component<ListInputProps, ListInputState> {
   private helpID: string = _.uniqueId('list-view-help-');
+
   constructor(props: ListInputProps) {
     super(props);
     this.state = {
@@ -106,7 +107,7 @@ class ListInput_ extends Component<ListInputProps, ListInputState> {
   }
 }
 
-export const ListInput = withTranslation()(ListInput_);
+export const ListInput = withTranslation()(InnerListInput);
 
 type ListInputState = {
   values: string[];

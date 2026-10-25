@@ -2,22 +2,18 @@ import type { FC } from 'react';
 import { useMemo } from 'react';
 import { Label } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import {
-  actionsCellProps,
-  cellIsStickyProps,
-  getNameCellProps,
-  ConsoleDataView,
-} from '@console/app/src/components/data-view/ConsoleDataView';
-import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import Status from '@console/dynamic-plugin-sdk/src/app/components/status/Status';
-import type { TableColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import type {
+  ConsoleDataViewColumn,
+  GetDataViewRows,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ResourceLink } from '@console/internal/components/utils/resource-link';
+import { ClusterExtensionModel } from '@console/internal/models';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DASH } from '@console/shared/src/constants/ui';
-import { ClusterExtensionModel } from '../../models';
 import type { ClusterExtensionKind } from '../../types';
 
 const tableColumnInfo = [
@@ -30,8 +26,8 @@ const tableColumnInfo = [
   { id: '' },
 ];
 
-const getDataViewRows: GetDataViewRows<ClusterExtensionKind> = (data, columns) => {
-  return data.map(({ obj }) => {
+const getDataViewRows: GetDataViewRows<ClusterExtensionKind> = (data, columns) =>
+  data.map(({ obj }) => {
     const name = obj.metadata?.name ?? '';
     const namespace = obj.spec?.namespace ?? '';
     const packageName = obj.spec?.source?.catalog?.packageName ?? '';
@@ -41,12 +37,10 @@ const getDataViewRows: GetDataViewRows<ClusterExtensionKind> = (data, columns) =
       obj.status?.conditions?.find((condition) => condition.type === 'Installed')?.reason || '';
 
     const resourceKind = referenceForModel(ClusterExtensionModel);
-    const context = { [resourceKind]: obj };
 
     const rowCells = {
       [tableColumnInfo[0].id]: {
         cell: <ResourceLink kind={resourceKind} name={name} />,
-        props: getNameCellProps(name),
       },
       [tableColumnInfo[1].id]: {
         cell: status ? <Status status={status} /> : DASH,
@@ -74,48 +68,39 @@ const getDataViewRows: GetDataViewRows<ClusterExtensionKind> = (data, columns) =
       [tableColumnInfo[5].id]: {
         cell: packageName || DASH,
       },
-      [tableColumnInfo[6].id]: {
-        cell: <LazyActionMenu context={context} />,
-        props: actionsCellProps,
-      },
     };
 
     return columns.map(({ id }) => {
+      if (id === tableColumnInfo[6].id) return { id };
       const cell = rowCells[id]?.cell || DASH;
       return {
         id,
-        props: rowCells[id]?.props,
         cell,
       };
     });
   });
-};
 
-const useClusterExtensionColumns = (): TableColumn<ClusterExtensionKind>[] => {
+const useClusterExtensionColumns = (): ConsoleDataViewColumn<ClusterExtensionKind>[] => {
   const { t } = useTranslation('olm-v1');
-  const columns = useMemo<TableColumn<ClusterExtensionKind>[]>(
+  const columns = useMemo<ConsoleDataViewColumn<ClusterExtensionKind>[]>(
     () => [
       {
-        title: t('Name'),
+        type: 'name' as const,
         id: tableColumnInfo[0].id,
-        sort: 'metadata.name',
-        props: {
-          ...cellIsStickyProps,
-          modifier: 'nowrap',
-        },
+        props: { hasRightBorder: false },
       },
       {
         title: t('Status'),
         id: tableColumnInfo[1].id,
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
         title: t('Version'),
         id: tableColumnInfo[2].id,
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -123,26 +108,21 @@ const useClusterExtensionColumns = (): TableColumn<ClusterExtensionKind>[] => {
         id: tableColumnInfo[3].id,
       },
       {
-        title: t('Namespace'),
+        type: 'namespace' as const,
         id: tableColumnInfo[4].id,
         sort: 'spec.namespace',
-        props: {
-          modifier: 'nowrap',
-        },
       },
       {
         title: t('Package'),
         id: tableColumnInfo[5].id,
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
-        title: '',
+        type: 'actions' as const,
         id: tableColumnInfo[6].id,
-        props: {
-          ...cellIsStickyProps,
-        },
+        props: { hasLeftBorder: false },
       },
     ],
     [t],
@@ -164,13 +144,14 @@ const ClusterExtensionListPage: FC = () => {
   return (
     <PaneBody>
       <ConsoleDataView<ClusterExtensionKind>
+        isResizable={false}
+        id={ClusterExtensionModel}
         label={t('ClusterExtensions')}
         data={clusterExtensions ?? []}
         loaded={loaded}
         loadError={loadError}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement
         showNamespaceOverride
       />
     </PaneBody>

@@ -1,4 +1,4 @@
-import type { FC } from 'react';
+import type { FC, ReactNode } from 'react';
 import { useRef, useMemo, memo } from 'react';
 import { Tooltip } from '@patternfly/react-core';
 import { RhUiQuestionMarkCircleFillIcon } from '@patternfly/react-icons';
@@ -58,8 +58,8 @@ const CustomTaskComponent: FC<CustomTaskProps> = ({
   const { t } = useTranslation('devconsole');
   const showStatusState: boolean = !!pipelineRunName;
   const visualName = name || _.get(task, ['metadata', 'name'], '');
-  const nameRef = useRef();
-  const pillRef = useRef();
+  const nameRef = useRef(undefined);
+  const pillRef = useRef(undefined);
 
   const path = `${resourcePathFromModel(
     CustomRunModelV1Beta1,
@@ -121,7 +121,7 @@ const CustomTaskComponent: FC<CustomTaskProps> = ({
               color: customTaskColor.value,
             }}
           >
-            {<RhUiQuestionMarkCircleFillIcon />}
+            <RhUiQuestionMarkCircleFillIcon />
           </svg>
         </>
       )}
@@ -158,11 +158,10 @@ const CustomTaskNode: FC<CustomTaskNodeProps> = ({ element, disableTooltip }) =>
     },
   };
 
-  const resourcesData: WatchK8sResults<WatchResource> = useK8sWatchResources<WatchResource>(
-    watchedResources,
-  );
+  const resourcesData: WatchK8sResults<WatchResource> =
+    useK8sWatchResources<WatchResource>(watchedResources);
 
-  const taskComponent: JSX.Element = (
+  const taskComponent: ReactNode = (
     <CustomTaskComponent
       pipelineRunName={pipelineRun?.metadata?.name}
       name={task.name || ''}

@@ -67,21 +67,19 @@ export const getUnionMemberTypes = (typeChecker: ts.TypeChecker, node: ts.Node) 
 export const getJSDoc = (node: ts.Node): ts.JSDoc[] =>
   tsu.canHaveJsDoc(node) ? tsu.getJsDoc(node) : [];
 
-export const hasDeprecationJSDoc = (node: ts.Declaration): boolean => {
-  return getJSDoc(node).some((d) => d.tags && d.tags.find((t) => t.tagName.text === 'deprecated'));
-};
+export const hasDeprecationJSDoc = (node: ts.Declaration): boolean =>
+  getJSDoc(node).some((d) => d.tags && d.tags.find((t) => t.tagName.text === 'deprecated'));
 
-const getCommentText = (comment: string | ts.NodeArray<ts.JSDocComment>): string => {
-  return typeof comment === 'string'
+const getCommentText = (comment: string | ts.NodeArray<ts.JSDocComment>): string =>
+  typeof comment === 'string'
     ? comment
     : comment
         .filter((c) => c.kind === ts.SyntaxKind.JSDocText)
         .map((c) => c.text)
         .join('\n');
-};
 
-export const getJSDocComments = (node: ts.Declaration): string[] => {
-  return _.compact(
+export const getJSDocComments = (node: ts.Declaration): string[] =>
+  _.compact(
     getJSDoc(node).map((d) => {
       if (d.tags) {
         return d.tags
@@ -92,6 +90,5 @@ export const getJSDocComments = (node: ts.Declaration): string[] => {
       return getCommentText(d.comment ?? '');
     }),
   );
-};
 
 export const printJSDocComments = (docComments: string[]) => docComments.join('\n\n').trim();

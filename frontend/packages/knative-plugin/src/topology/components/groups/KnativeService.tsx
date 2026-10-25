@@ -50,9 +50,10 @@ const KnativeService: FC<KnativeServiceProps & { children?: ReactNode }> = ({
   const badgeClassName = css('odc-resource-icon', {
     [`odc-resource-icon-${kindStr.toLowerCase()}`]: !kindColor,
   });
-  const dragSpec = useMemo(() => nodeDragSourceSpec(TYPE_KNATIVE_SERVICE, true, editAccess), [
-    editAccess,
-  ]);
+  const dragSpec = useMemo(
+    () => nodeDragSourceSpec(TYPE_KNATIVE_SERVICE, true, editAccess),
+    [editAccess],
+  );
   const dragProps = useMemo(() => ({ element }), [element]);
   const [{ dragging, regrouping }, dragNodeRef] = useDragNode(dragSpec, dragProps);
 

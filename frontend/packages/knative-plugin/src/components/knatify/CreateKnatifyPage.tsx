@@ -77,9 +77,8 @@ const CreateKnatifyPage: FC = () => {
     [namespace, kind, appName],
   );
 
-  const resources: WatchK8sResults<WatchedResources> = useK8sWatchResources<WatchedResources>(
-    watchedResources,
-  );
+  const resources: WatchK8sResults<WatchedResources> =
+    useK8sWatchResources<WatchedResources>(watchedResources);
 
   const isResourceLoaded =
     Object.keys(resources).length > 0 &&

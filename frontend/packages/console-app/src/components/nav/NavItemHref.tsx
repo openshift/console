@@ -23,11 +23,10 @@ export const NavItemHref: FC<NavItemHrefProps> = ({
 }) => {
   const [activeNamespace] = useActiveNamespace();
   const location = useLocation();
-  const isActive = useMemo(() => navItemHrefIsActive(location, href, startsWith), [
-    href,
-    location,
-    startsWith,
-  ]);
+  const isActive = useMemo(
+    () => navItemHrefIsActive(location, href, startsWith),
+    [href, location, startsWith],
+  );
   const to = useCallback(() => {
     if (namespaced) {
       return formatNamespacedRouteForHref(href, activeNamespace);

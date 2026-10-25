@@ -3,6 +3,7 @@ import { ActionGroup, Alert, Button, ButtonVariant, PageSection } from '@pattern
 import { RhUiDownloadIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { ButtonBar } from '@console/internal/components/utils/button-bar';
+import { DefaultNamespaceDeploymentWarning } from '../namespace/DefaultNamespaceWarning';
 import type { FormFooterProps } from './form-utils-types';
 
 import './FormFooter.scss';
@@ -21,6 +22,7 @@ export const FormFooter: FC<FormFooterProps> = ({
   errorMessage,
   successMessage,
   disableSubmit,
+  namespace,
   hideSubmit = false,
   showAlert,
   sticky,
@@ -69,6 +71,7 @@ export const FormFooter: FC<FormFooterProps> = ({
           {handleReset && (
             <Button
               type="button"
+              data-test="reset-button"
               data-test-id="reset-button"
               variant={ButtonVariant.secondary}
               onClick={handleReset}
@@ -100,6 +103,7 @@ export const FormFooter: FC<FormFooterProps> = ({
           )}
         </ActionGroup>
       </ButtonBar>
+      {namespace && <DefaultNamespaceDeploymentWarning namespace={namespace} />}
     </PageSection>
   );
 };

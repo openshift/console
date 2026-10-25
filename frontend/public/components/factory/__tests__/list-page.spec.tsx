@@ -1,15 +1,13 @@
-import type { FC } from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { TextFilter } from '@console/internal/components/factory/text-filter';
-import { getFilteredRows } from '@console/internal/components/factory/table-data-hook';
 import {
   ListPageWrapper,
   FireMan,
   MultiListPage,
 } from '@console/internal/components/factory/list-page';
-import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
+import { TextFilter } from '@console/internal/components/factory/text-filter';
 import * as k8sWatchHook from '@console/internal/components/utils/k8s-watch-hook';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 
 jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
   useK8sWatchResources: jest.fn(() => ({})),
@@ -152,52 +150,9 @@ describe('ListPageWrapper component', () => {
 
     expect(screen.getByText('List Content')).toBeVisible();
   });
-
-  it('filters visible items when user types in the search field', async () => {
-    const user = userEvent.setup();
-    const items = [
-      { metadata: { name: 'alpha-pod' } },
-      { metadata: { name: 'beta-pod' } },
-      { metadata: { name: 'gamma-node' } },
-    ];
-
-    const FilteredList: FC<{ data: any[]; filters: any }> = ({ data, filters }) => {
-      const filtered = getFilteredRows(filters, [], data);
-      return (
-        <ul>
-          {filtered.map((item) => (
-            <li key={item.metadata.name}>{item.metadata.name}</li>
-          ))}
-        </ul>
-      );
-    };
-
-    renderWithProviders(
-      <ListPageWrapper
-        {...defaultProps}
-        flatten={() => items}
-        ListComponent={FilteredList}
-        reduxIDs={['test-id']}
-        textFilter="name"
-      />,
-    );
-
-    expect(screen.getByText('alpha-pod')).toBeVisible();
-    expect(screen.getByText('beta-pod')).toBeVisible();
-    expect(screen.getByText('gamma-node')).toBeVisible();
-
-    const searchInput = screen.getByPlaceholderText('Search by name...');
-    await user.type(searchInput, 'alpha');
-
-    await waitFor(() => {
-      expect(screen.getByText('alpha-pod')).toBeVisible();
-      expect(screen.queryByText('beta-pod')).not.toBeInTheDocument();
-      expect(screen.queryByText('gamma-node')).not.toBeInTheDocument();
-    });
-  });
 });
 
-describe(' MultiListPage component', () => {
+describe('MultiListPage component', () => {
   beforeEach(() => {
     mockUseK8sWatchResources.mockClear();
   });
@@ -220,5 +175,59 @@ describe(' MultiListPage component', () => {
     expect(watchConfig?.Pod).toBeDefined();
     expect(watchConfig?.Pod?.kind).toBe('Pod');
     expect(watchConfig?.Pod?.name).toBe('example-pod');
+  });
+
+  it('does not treat errors from optional resources as fatal page errors', () => {
+    let receivedLoadError: unknown;
+    const ListComponent = (props: { loadError?: unknown }) => {
+      receivedLoadError = props.loadError;
+      return <div>List Content</div>;
+    };
+
+    mockUseK8sWatchResources.mockReturnValue({
+      Pod: { data: [{ kind: 'Pod' }], loaded: true, loadError: undefined },
+      CatalogSource: {
+        data: [],
+        loaded: true,
+        loadError: 'catalogsources.operators.coreos.com is forbidden',
+      },
+    });
+
+    renderWithProviders(
+      <MultiListPage
+        ListComponent={ListComponent}
+        resources={[
+          { kind: 'Pod', prop: 'Pod' },
+          { kind: 'CatalogSource', prop: 'CatalogSource', optional: true },
+        ]}
+        filterLabel="by name"
+      />,
+    );
+
+    expect(screen.getByText('List Content')).toBeVisible();
+    expect(receivedLoadError).toBeUndefined();
+  });
+
+  it('treats errors from non-optional resources as fatal page errors', () => {
+    let receivedLoadError: unknown;
+    const ListComponent = (props: { loadError?: unknown }) => {
+      receivedLoadError = props.loadError;
+      return <div>List Content</div>;
+    };
+
+    const forbiddenError = 'pods is forbidden';
+    mockUseK8sWatchResources.mockReturnValue({
+      Pod: { data: [], loaded: true, loadError: forbiddenError },
+    });
+
+    renderWithProviders(
+      <MultiListPage
+        ListComponent={ListComponent}
+        resources={[{ kind: 'Pod', prop: 'Pod' }]}
+        filterLabel="by name"
+      />,
+    );
+
+    expect(receivedLoadError).toBe(forbiddenError);
   });
 });

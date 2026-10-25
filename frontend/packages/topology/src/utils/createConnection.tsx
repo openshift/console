@@ -6,10 +6,9 @@ export const createConnection = (
   sourceNode: Node,
   targetNode: Node,
   replaceTargetNode: Node = null,
-): Promise<K8sResourceKind[] | K8sResourceKind> => {
-  return createTopologyResourceConnection(
+): Promise<K8sResourceKind[] | K8sResourceKind> =>
+  createTopologyResourceConnection(
     getResource(sourceNode),
     getResource(targetNode),
     replaceTargetNode ? getResource(replaceTargetNode) : null,
   );
-};

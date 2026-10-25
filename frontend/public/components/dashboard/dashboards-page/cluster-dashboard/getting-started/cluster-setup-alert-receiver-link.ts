@@ -1,14 +1,12 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-
-import type { GettingStartedLink } from '@console/shared/src/components/getting-started/GettingStartedCard';
-
-import { SecretModel } from '@console/internal/models';
-import { SecretKind } from '@console/internal/module/k8s';
-import { useAccessReview } from '@console/internal/components/utils/rbac';
-import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { getAlertmanagerConfig } from '@console/internal/components/monitoring/alertmanager/alertmanager-utils';
 import { numberOfIncompleteReceivers } from '@console/internal/components/monitoring/alertmanager/alertmanager-config';
+import { getAlertmanagerConfig } from '@console/internal/components/monitoring/alertmanager/alertmanager-utils';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { useAccessReview } from '@console/internal/components/utils/rbac';
+import { SecretModel } from '@console/internal/models';
+import type { SecretKind } from '@console/internal/module/k8s';
+import type { GettingStartedLink } from '@console/shared/src/components/getting-started/GettingStartedCard';
 
 const useCanEditAlertManagerConfigSecret = () =>
   useAccessReview({

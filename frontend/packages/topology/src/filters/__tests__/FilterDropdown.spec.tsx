@@ -13,7 +13,7 @@ jest.mock('@console/shared/src/hooks/useTelemetry', () => ({
   useTelemetry: () => {},
 }));
 
-describe(FilterDropdown.displayName, () => {
+describe('FilterDropdown', () => {
   let dropdownFilter: DisplayFilters;
   let onChange: () => void;
   beforeEach(() => {

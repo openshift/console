@@ -1,12 +1,61 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { ImpersonateUserModal } from '../impersonate-user-modal';
+import { ProjectModel } from '@console/dynamic-plugin-sdk/src/models';
+import type { GroupKind } from '../../../module/k8s';
 import { useK8sWatchResource } from '../../utils/k8s-watch-hook';
-import { GroupKind } from '../../../module/k8s';
+import { ImpersonateUserModal } from '../impersonate-user-modal';
 
 // Mock the k8s watch hook
 jest.mock('../../utils/k8s-watch-hook', () => ({
   useK8sWatchResource: jest.fn(),
+}));
+
+// Stub NsDropdown: emits a fixed namespace selection on click
+jest.mock('../../utils/list-dropdown', () => ({
+  NsDropdown: ({
+    selectedKey,
+    onChange,
+    dataTest,
+  }: {
+    selectedKey?: string;
+    dataTest?: string;
+    onChange: (key: string, kind?: string, resource?: { metadata: { name: string } }) => void;
+  }) => (
+    <button
+      type="button"
+      data-test={dataTest}
+      onClick={() => onChange('test-ns', 'Project', { metadata: { name: 'test-ns' } })}
+    >
+      {selectedKey || 'Select project'}
+    </button>
+  ),
+  useProjectOrNamespaceModel: () => [ProjectModel, true] as const,
+}));
+
+// Stub ResourceDropdown: emits a fixed service account selection on click
+jest.mock('@console/shared/src/components/dropdown/ResourceDropdown', () => ({
+  ResourceDropdown: ({
+    selectedKey,
+    onChange,
+    dataTest,
+    disabled,
+    placeholder,
+  }: {
+    selectedKey?: string | null;
+    dataTest?: string;
+    disabled?: boolean;
+    placeholder?: string;
+    onChange: (key: string, name?: string, resource?: { metadata: { name: string } }) => void;
+  }) => (
+    <button
+      type="button"
+      data-test={dataTest}
+      disabled={disabled}
+      onClick={() => onChange('builder', 'builder', { metadata: { name: 'builder' } })}
+    >
+      {selectedKey || placeholder}
+    </button>
+  ),
 }));
 
 const mockGroups: GroupKind[] = [
@@ -42,24 +91,41 @@ const mockGroups: GroupKind[] = [
   },
 ];
 
+const mockServiceAccounts = [
+  {
+    apiVersion: 'v1',
+    kind: 'ServiceAccount',
+    metadata: { name: 'builder', namespace: 'test-ns', uid: 'sa-1', resourceVersion: '1' },
+  },
+  {
+    apiVersion: 'v1',
+    kind: 'ServiceAccount',
+    metadata: { name: 'deployer', namespace: 'test-ns', uid: 'sa-2', resourceVersion: '1' },
+  },
+];
+
 describe('ImpersonateUserModal', () => {
   const mockOnClose = jest.fn();
   const mockOnImpersonate = jest.fn();
 
   beforeEach(() => {
     jest.clearAllMocks();
-    // Default mock: groups loaded successfully
-    (useK8sWatchResource as jest.Mock).mockReturnValue([mockGroups, true, null]);
+    // Default mock: groups and service accounts loaded successfully
+    (useK8sWatchResource as jest.Mock).mockImplementation((resource) => {
+      if (!resource) {
+        return [[], true, null];
+      }
+      if (resource.groupVersionKind?.kind === 'ServiceAccount') {
+        return [mockServiceAccounts, true, null];
+      }
+      return [mockGroups, true, null];
+    });
   });
 
   describe('Basic Rendering', () => {
     it('should render modal when open', () => {
       render(
-        <ImpersonateUserModal
-          isOpen={true}
-          onClose={mockOnClose}
-          onImpersonate={mockOnImpersonate}
-        />,
+        <ImpersonateUserModal isOpen onClose={mockOnClose} onImpersonate={mockOnImpersonate} />,
       );
 
       // Modal renders in a portal, so use screen queries
@@ -83,11 +149,7 @@ describe('ImpersonateUserModal', () => {
 
     it('should render username input field', () => {
       render(
-        <ImpersonateUserModal
-          isOpen={true}
-          onClose={mockOnClose}
-          onImpersonate={mockOnImpersonate}
-        />,
+        <ImpersonateUserModal isOpen onClose={mockOnClose} onImpersonate={mockOnImpersonate} />,
       );
 
       const usernameInput = screen.getByTestId('username-input');
@@ -97,11 +159,7 @@ describe('ImpersonateUserModal', () => {
 
     it('should render groups multi-select field', () => {
       render(
-        <ImpersonateUserModal
-          isOpen={true}
-          onClose={mockOnClose}
-          onImpersonate={mockOnImpersonate}
-        />,
+        <ImpersonateUserModal isOpen onClose={mockOnClose} onImpersonate={mockOnImpersonate} />,
       );
 
       expect(screen.getByPlaceholderText('Enter groups')).toBeInTheDocument();
@@ -112,11 +170,7 @@ describe('ImpersonateUserModal', () => {
     it('should allow typing username', async () => {
       const user = userEvent.setup();
       render(
-        <ImpersonateUserModal
-          isOpen={true}
-          onClose={mockOnClose}
-          onImpersonate={mockOnImpersonate}
-        />,
+        <ImpersonateUserModal isOpen onClose={mockOnClose} onImpersonate={mockOnImpersonate} />,
       );
 
       const usernameInput = screen.getByTestId('username-input') as HTMLInputElement;
@@ -129,7 +183,7 @@ describe('ImpersonateUserModal', () => {
     it('should pre-fill username when provided', () => {
       render(
         <ImpersonateUserModal
-          isOpen={true}
+          isOpen
           onClose={mockOnClose}
           onImpersonate={mockOnImpersonate}
           prefilledUsername="prefilleduser"
@@ -143,11 +197,11 @@ describe('ImpersonateUserModal', () => {
     it('should make username readonly when specified', () => {
       render(
         <ImpersonateUserModal
-          isOpen={true}
+          isOpen
           onClose={mockOnClose}
           onImpersonate={mockOnImpersonate}
           prefilledUsername="readonly-user"
-          isUsernameReadonly={true}
+          isUsernameReadonly
         />,
       );
 
@@ -157,11 +211,7 @@ describe('ImpersonateUserModal', () => {
 
     it('should show error when username is empty on submit', async () => {
       render(
-        <ImpersonateUserModal
-          isOpen={true}
-          onClose={mockOnClose}
-          onImpersonate={mockOnImpersonate}
-        />,
+        <ImpersonateUserModal isOpen onClose={mockOnClose} onImpersonate={mockOnImpersonate} />,
       );
 
       const submitButton = screen.getByTestId('impersonate-button');
@@ -176,32 +226,269 @@ describe('ImpersonateUserModal', () => {
       (useK8sWatchResource as jest.Mock).mockReturnValue([[], false, null]);
 
       render(
-        <ImpersonateUserModal
-          isOpen={true}
-          onClose={mockOnClose}
-          onImpersonate={mockOnImpersonate}
-        />,
+        <ImpersonateUserModal isOpen onClose={mockOnClose} onImpersonate={mockOnImpersonate} />,
       );
 
       // Groups should not be available yet
       expect(screen.getByPlaceholderText('Enter groups')).toBeInTheDocument();
     });
 
-    it('should show error alert when groups fail to load', () => {
-      const error = new Error('Failed to load groups');
+    it('should gracefully handle group load errors without showing error alert', () => {
+      const error = new Error('Model does not exist');
       (useK8sWatchResource as jest.Mock).mockReturnValue([[], false, error]);
 
       render(
-        <ImpersonateUserModal
-          isOpen={true}
-          onClose={mockOnClose}
-          onImpersonate={mockOnImpersonate}
-        />,
+        <ImpersonateUserModal isOpen onClose={mockOnClose} onImpersonate={mockOnImpersonate} />,
       );
 
-      // Check for alert with danger variant
-      const alerts = screen.getAllByText('Failed to load groups');
-      expect(alerts.length).toBeGreaterThan(0);
+      // Should NOT show error alert — free-form entry is available instead
+      expect(screen.queryByText('Failed to load groups')).not.toBeInTheDocument();
+      // Should show helper text for manual entry
+      expect(
+        screen.getByText('Type group names manually. Press Enter to add each group.'),
+      ).toBeInTheDocument();
+    });
+  });
+
+  describe('Free-form Group Entry', () => {
+    it('should add a group on Enter key press', async () => {
+      const user = userEvent.setup();
+      // Groups model unavailable
+      const error = new Error('Model does not exist');
+      (useK8sWatchResource as jest.Mock).mockReturnValue([[], true, error]);
+
+      render(
+        <ImpersonateUserModal isOpen onClose={mockOnClose} onImpersonate={mockOnImpersonate} />,
+      );
+
+      const groupInput = screen.getByPlaceholderText('Enter groups');
+      await user.click(groupInput);
+      await user.type(groupInput, 'my-custom-group{Enter}');
+
+      // Group chip should appear
+      await waitFor(() => {
+        expect(screen.getByText('my-custom-group')).toBeInTheDocument();
+      });
+    });
+
+    it('should add multiple free-form groups', async () => {
+      const user = userEvent.setup();
+      const error = new Error('Model does not exist');
+      (useK8sWatchResource as jest.Mock).mockReturnValue([[], true, error]);
+
+      render(
+        <ImpersonateUserModal isOpen onClose={mockOnClose} onImpersonate={mockOnImpersonate} />,
+      );
+
+      const groupInput = screen.getByPlaceholderText('Enter groups');
+      await user.click(groupInput);
+      await user.type(groupInput, 'group-a{Enter}');
+      await user.type(groupInput, 'group-b{Enter}');
+
+      await waitFor(() => {
+        expect(screen.getByText('group-a')).toBeInTheDocument();
+        expect(screen.getByText('group-b')).toBeInTheDocument();
+      });
+    });
+
+    it('should not add duplicate groups on Enter', async () => {
+      const user = userEvent.setup();
+      const error = new Error('Model does not exist');
+      (useK8sWatchResource as jest.Mock).mockReturnValue([[], true, error]);
+
+      render(
+        <ImpersonateUserModal isOpen onClose={mockOnClose} onImpersonate={mockOnImpersonate} />,
+      );
+
+      const groupInput = screen.getByPlaceholderText('Enter groups');
+      await user.click(groupInput);
+      await user.type(groupInput, 'my-group{Enter}');
+      await user.type(groupInput, 'my-group{Enter}');
+
+      await waitFor(() => {
+        // eslint-disable-next-line testing-library/no-node-access -- checking chip count
+        const chips = document.querySelectorAll('.pf-v6-c-label');
+        expect(chips.length).toBe(1);
+      });
+    });
+
+    it('should show "Create" option in dropdown for new group name', async () => {
+      const user = userEvent.setup();
+      render(
+        <ImpersonateUserModal isOpen onClose={mockOnClose} onImpersonate={mockOnImpersonate} />,
+      );
+
+      const groupInput = screen.getByPlaceholderText('Enter groups');
+      await user.click(groupInput);
+      await user.type(groupInput, 'new-custom-group');
+
+      await waitFor(() => {
+        expect(screen.getByText('Create "new-custom-group"')).toBeInTheDocument();
+      });
+    });
+
+    it('should add group via "Create" option click', async () => {
+      const user = userEvent.setup();
+      render(
+        <ImpersonateUserModal isOpen onClose={mockOnClose} onImpersonate={mockOnImpersonate} />,
+      );
+
+      const groupInput = screen.getByPlaceholderText('Enter groups');
+      await user.click(groupInput);
+      await user.type(groupInput, 'new-custom-group');
+
+      const createOption = await screen.findByText('Create "new-custom-group"');
+      await user.click(createOption);
+
+      await waitFor(() => {
+        // eslint-disable-next-line testing-library/no-node-access -- checking chip appearance
+        const chips = document.querySelectorAll('.pf-v6-c-label');
+        expect(chips.length).toBe(1);
+      });
+    });
+
+    it('should submit free-form groups with onImpersonate', async () => {
+      const user = userEvent.setup();
+      const error = new Error('Model does not exist');
+      (useK8sWatchResource as jest.Mock).mockReturnValue([[], true, error]);
+
+      render(
+        <ImpersonateUserModal isOpen onClose={mockOnClose} onImpersonate={mockOnImpersonate} />,
+      );
+
+      const usernameInput = screen.getByTestId('username-input');
+      await user.clear(usernameInput);
+      await user.type(usernameInput, 'testuser');
+
+      const groupInput = screen.getByPlaceholderText('Enter groups');
+      await user.click(groupInput);
+      await user.type(groupInput, 'oidc-admins{Enter}');
+      await user.type(groupInput, 'oidc-developers{Enter}');
+
+      const submitButton = screen.getByTestId('impersonate-button');
+      await user.click(submitButton);
+
+      await waitFor(() => {
+        expect(mockOnImpersonate).toHaveBeenCalledWith(
+          'testuser',
+          ['oidc-admins', 'oidc-developers'],
+          'User',
+        );
+      });
+    });
+
+    it('should not add a group via Enter when it case-insensitively matches an available group', async () => {
+      const user = userEvent.setup();
+      render(
+        <ImpersonateUserModal isOpen onClose={mockOnClose} onImpersonate={mockOnImpersonate} />,
+      );
+
+      const usernameInput = screen.getByTestId('username-input');
+      await user.clear(usernameInput);
+      await user.type(usernameInput, 'testuser');
+
+      // Type "Admins" (differs in case from available "admins" group)
+      const groupInput = screen.getByPlaceholderText('Enter groups');
+      await user.click(groupInput);
+      await user.type(groupInput, 'Admins{Enter}');
+
+      // Submit — "Admins" should NOT have been added as a free-form group
+      const submitButton = screen.getByTestId('impersonate-button');
+      await user.click(submitButton);
+
+      await waitFor(() => {
+        expect(mockOnImpersonate).toHaveBeenCalledWith('testuser', [], 'User');
+      });
+    });
+
+    it('should allow Select all to toggle correctly after adding a freeform group', async () => {
+      const user = userEvent.setup();
+      render(
+        <ImpersonateUserModal isOpen onClose={mockOnClose} onImpersonate={mockOnImpersonate} />,
+      );
+
+      // First select all API groups (known working pattern)
+      const groupInput = screen.getByPlaceholderText('Enter groups');
+      await user.click(groupInput);
+      expect(await screen.findByText('Select all')).toBeVisible();
+      await user.click(screen.getByText('Select all'));
+
+      // Add a freeform group via Create option
+      await user.type(groupInput, 'custom-freeform');
+      const createOption = await screen.findByText('Create "custom-freeform"');
+      await user.click(createOption);
+
+      // Verify freeform group chip appears
+      await waitFor(() => {
+        expect(screen.getByText('custom-freeform')).toBeInTheDocument();
+      });
+
+      // Submit and check all groups (freeform + API) are included
+      const usernameInput = screen.getByTestId('username-input');
+      await user.clear(usernameInput);
+      await user.type(usernameInput, 'testuser');
+      await user.click(screen.getByTestId('impersonate-button'));
+
+      await waitFor(() => {
+        expect(mockOnImpersonate).toHaveBeenCalledWith(
+          'testuser',
+          expect.arrayContaining(['custom-freeform', 'admins', 'developers', 'testers']),
+          'User',
+        );
+        expect(mockOnImpersonate.mock.calls[0][1]).toHaveLength(4);
+      });
+    });
+
+    it('should keep freeform group when removing API groups via chip close buttons', async () => {
+      const user = userEvent.setup();
+      render(
+        <ImpersonateUserModal isOpen onClose={mockOnClose} onImpersonate={mockOnImpersonate} />,
+      );
+
+      // Select an API group
+      const groupInput = screen.getByPlaceholderText('Enter groups');
+      await user.click(groupInput);
+      await user.click(await screen.findByText('admins'));
+
+      // Add a freeform group via Create option
+      await user.type(groupInput, 'custom-freeform');
+      const createOption = await screen.findByText('Create "custom-freeform"');
+      await user.click(createOption);
+
+      // Verify both chips exist
+      await waitFor(() => {
+        expect(screen.getByText('custom-freeform')).toBeInTheDocument();
+      });
+
+      // Remove the API group via chip close button
+      await user.click(screen.getByRole('button', { name: /close.*admins/i }));
+
+      // Submit — should only have freeform group
+      const usernameInput = screen.getByTestId('username-input');
+      await user.clear(usernameInput);
+      await user.type(usernameInput, 'testuser');
+      await user.click(screen.getByTestId('impersonate-button'));
+
+      await waitFor(() => {
+        expect(mockOnImpersonate).toHaveBeenCalledWith('testuser', ['custom-freeform'], 'User');
+      });
+    });
+
+    it('should show hint text when model unavailable and no text typed', async () => {
+      const user = userEvent.setup();
+      const error = new Error('Model does not exist');
+      (useK8sWatchResource as jest.Mock).mockReturnValue([[], true, error]);
+
+      render(
+        <ImpersonateUserModal isOpen onClose={mockOnClose} onImpersonate={mockOnImpersonate} />,
+      );
+
+      const groupInput = screen.getByPlaceholderText('Enter groups');
+      await user.click(groupInput);
+
+      await waitFor(() => {
+        expect(screen.getByText('Type a group name and press Enter')).toBeInTheDocument();
+      });
     });
   });
 
@@ -209,11 +496,7 @@ describe('ImpersonateUserModal', () => {
     it('should call onImpersonate with username only when no groups selected', async () => {
       const user = userEvent.setup();
       render(
-        <ImpersonateUserModal
-          isOpen={true}
-          onClose={mockOnClose}
-          onImpersonate={mockOnImpersonate}
-        />,
+        <ImpersonateUserModal isOpen onClose={mockOnClose} onImpersonate={mockOnImpersonate} />,
       );
 
       const usernameInput = screen.getByTestId('username-input');
@@ -224,18 +507,14 @@ describe('ImpersonateUserModal', () => {
       await user.click(submitButton);
 
       await waitFor(() => {
-        expect(mockOnImpersonate).toHaveBeenCalledWith('testuser', []);
+        expect(mockOnImpersonate).toHaveBeenCalledWith('testuser', [], 'User');
       });
     });
 
     it('should trim whitespace from username', async () => {
       const user = userEvent.setup();
       render(
-        <ImpersonateUserModal
-          isOpen={true}
-          onClose={mockOnClose}
-          onImpersonate={mockOnImpersonate}
-        />,
+        <ImpersonateUserModal isOpen onClose={mockOnClose} onImpersonate={mockOnImpersonate} />,
       );
 
       const usernameInput = screen.getByTestId('username-input');
@@ -246,18 +525,94 @@ describe('ImpersonateUserModal', () => {
       await user.click(submitButton);
 
       await waitFor(() => {
-        expect(mockOnImpersonate).toHaveBeenCalledWith('testuser', []);
+        expect(mockOnImpersonate).toHaveBeenCalledWith('testuser', [], 'User');
       });
+    });
+
+    it('should call onImpersonate with service account username and groups', async () => {
+      const user = userEvent.setup();
+      render(
+        <ImpersonateUserModal isOpen onClose={mockOnClose} onImpersonate={mockOnImpersonate} />,
+      );
+
+      await user.click(screen.getByTestId('impersonate-kind-service-account'));
+
+      // Select namespace and service account from the dropdowns
+      await user.click(screen.getByTestId('service-account-namespace-dropdown'));
+      await user.click(screen.getByTestId('service-account-name-dropdown'));
+
+      const groupInput = screen.getByPlaceholderText('Enter groups');
+      await user.click(groupInput);
+      await user.click(await screen.findByText('developers'));
+
+      await user.click(screen.getByTestId('impersonate-button'));
+
+      await waitFor(() => {
+        expect(mockOnImpersonate).toHaveBeenCalledWith(
+          'system:serviceaccount:test-ns:builder',
+          ['developers'],
+          'ServiceAccount',
+        );
+      });
+    });
+
+    it('should disable the service account name dropdown until a namespace is selected', async () => {
+      const user = userEvent.setup();
+      render(
+        <ImpersonateUserModal isOpen onClose={mockOnClose} onImpersonate={mockOnImpersonate} />,
+      );
+
+      await user.click(screen.getByTestId('impersonate-kind-service-account'));
+      expect(screen.getByTestId('service-account-name-dropdown')).toBeDisabled();
+
+      await user.click(screen.getByTestId('service-account-namespace-dropdown'));
+      expect(screen.getByTestId('service-account-name-dropdown')).toBeEnabled();
+    });
+
+    it('should clear the selected service account when the namespace changes', async () => {
+      const user = userEvent.setup();
+      render(
+        <ImpersonateUserModal isOpen onClose={mockOnClose} onImpersonate={mockOnImpersonate} />,
+      );
+
+      await user.click(screen.getByTestId('impersonate-kind-service-account'));
+      await user.click(screen.getByTestId('service-account-namespace-dropdown'));
+
+      const nameDropdown = screen.getByTestId('service-account-name-dropdown');
+      await user.click(nameDropdown);
+      expect(nameDropdown).toHaveTextContent('builder');
+
+      // Selecting the namespace again resets the previously selected service account
+      await user.click(screen.getByTestId('service-account-namespace-dropdown'));
+      expect(nameDropdown).toHaveTextContent('Select a service account');
+    });
+
+    it('should watch service accounts for the selected namespace only', async () => {
+      const user = userEvent.setup();
+      render(
+        <ImpersonateUserModal isOpen onClose={mockOnClose} onImpersonate={mockOnImpersonate} />,
+      );
+
+      await user.click(screen.getByTestId('impersonate-kind-service-account'));
+
+      // No cluster-wide watch before a namespace is chosen
+      expect(useK8sWatchResource).toHaveBeenLastCalledWith(null);
+
+      await user.click(screen.getByTestId('service-account-namespace-dropdown'));
+
+      expect(useK8sWatchResource).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          groupVersionKind: expect.objectContaining({ kind: 'ServiceAccount' }),
+          namespace: 'test-ns',
+          isList: true,
+        }),
+      );
     });
 
     it('should close modal after successful submission', async () => {
       const user = userEvent.setup();
       render(
-        <ImpersonateUserModal
-          isOpen={true}
-          onClose={mockOnClose}
-          onImpersonate={mockOnImpersonate}
-        />,
+        <ImpersonateUserModal isOpen onClose={mockOnClose} onImpersonate={mockOnImpersonate} />,
       );
 
       const usernameInput = screen.getByTestId('username-input');
@@ -277,11 +632,7 @@ describe('ImpersonateUserModal', () => {
     it('should call onClose when cancel button is clicked', async () => {
       const user = userEvent.setup();
       render(
-        <ImpersonateUserModal
-          isOpen={true}
-          onClose={mockOnClose}
-          onImpersonate={mockOnImpersonate}
-        />,
+        <ImpersonateUserModal isOpen onClose={mockOnClose} onImpersonate={mockOnImpersonate} />,
       );
 
       const cancelButton = screen.getByTestId('cancel-button');
@@ -293,11 +644,7 @@ describe('ImpersonateUserModal', () => {
     it('should reset form when modal is closed and reopened', async () => {
       const user = userEvent.setup();
       const { rerender } = render(
-        <ImpersonateUserModal
-          isOpen={true}
-          onClose={mockOnClose}
-          onImpersonate={mockOnImpersonate}
-        />,
+        <ImpersonateUserModal isOpen onClose={mockOnClose} onImpersonate={mockOnImpersonate} />,
       );
 
       // Enter username
@@ -316,11 +663,7 @@ describe('ImpersonateUserModal', () => {
 
       // Reopen modal
       rerender(
-        <ImpersonateUserModal
-          isOpen={true}
-          onClose={mockOnClose}
-          onImpersonate={mockOnImpersonate}
-        />,
+        <ImpersonateUserModal isOpen onClose={mockOnClose} onImpersonate={mockOnImpersonate} />,
       );
 
       // Username should be reset
@@ -334,7 +677,7 @@ describe('ImpersonateUserModal', () => {
       const longUsername = 'a'.repeat(100);
       render(
         <ImpersonateUserModal
-          isOpen={true}
+          isOpen
           onClose={mockOnClose}
           onImpersonate={mockOnImpersonate}
           prefilledUsername={longUsername}
@@ -348,7 +691,7 @@ describe('ImpersonateUserModal', () => {
     it('should handle special characters in username', () => {
       render(
         <ImpersonateUserModal
-          isOpen={true}
+          isOpen
           onClose={mockOnClose}
           onImpersonate={mockOnImpersonate}
           prefilledUsername="user@domain.com"
@@ -376,11 +719,7 @@ describe('ImpersonateUserModal', () => {
       ]);
 
       render(
-        <ImpersonateUserModal
-          isOpen={true}
-          onClose={mockOnClose}
-          onImpersonate={mockOnImpersonate}
-        />,
+        <ImpersonateUserModal isOpen onClose={mockOnClose} onImpersonate={mockOnImpersonate} />,
       );
 
       // Open dropdown and select all 5 groups
@@ -422,11 +761,7 @@ describe('ImpersonateUserModal', () => {
       ]);
 
       render(
-        <ImpersonateUserModal
-          isOpen={true}
-          onClose={mockOnClose}
-          onImpersonate={mockOnImpersonate}
-        />,
+        <ImpersonateUserModal isOpen onClose={mockOnClose} onImpersonate={mockOnImpersonate} />,
       );
 
       // Open dropdown and select all 8 groups
@@ -478,11 +813,7 @@ describe('ImpersonateUserModal', () => {
       ]);
 
       render(
-        <ImpersonateUserModal
-          isOpen={true}
-          onClose={mockOnClose}
-          onImpersonate={mockOnImpersonate}
-        />,
+        <ImpersonateUserModal isOpen onClose={mockOnClose} onImpersonate={mockOnImpersonate} />,
       );
 
       // Open dropdown and select all 7 groups
@@ -530,11 +861,7 @@ describe('ImpersonateUserModal', () => {
       ]);
 
       render(
-        <ImpersonateUserModal
-          isOpen={true}
-          onClose={mockOnClose}
-          onImpersonate={mockOnImpersonate}
-        />,
+        <ImpersonateUserModal isOpen onClose={mockOnClose} onImpersonate={mockOnImpersonate} />,
       );
 
       // Select all 6 groups

@@ -1,8 +1,8 @@
 import * as _ from 'lodash';
 import type { Alert } from '@console/dynamic-plugin-sdk';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import { mockAlerts } from '../__mocks__/alerts-and-rules-data';
 import { getResourceData, getWorkloadMonitoringAlerts } from '../resource-utils';
+import { mockAlerts } from './data/alerts-and-rules-data';
 
 declare global {
   namespace jest {
@@ -14,9 +14,7 @@ declare global {
 
 expect.extend({
   toHaveProperties(received, argument) {
-    const pass = argument.every((arg: string) => {
-      return _.has(received, arg);
-    });
+    const pass = argument.every((arg: string) => _.has(received, arg));
     if (pass) {
       return {
         message: () =>

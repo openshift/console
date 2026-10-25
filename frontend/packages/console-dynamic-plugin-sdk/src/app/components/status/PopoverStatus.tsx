@@ -42,24 +42,22 @@ const PopoverStatus: FC<PopoverStatusProps> = ({
   title,
   onHide,
   onShow,
-}) => {
-  return (
-    <Popover
-      position={PopoverPosition.right}
-      headerContent={hideHeader ? null : title}
-      bodyContent={children}
-      aria-label={title}
-      onHide={onHide}
-      onShow={onShow}
-      isVisible={isVisible}
-      shouldClose={shouldClose}
-      shouldOpen={shouldOpen}
-    >
-      <Button variant="link" isInline className="co-popover-status-button">
-        {statusBody}
-      </Button>
-    </Popover>
-  );
-};
+}) => (
+  <Popover
+    position={PopoverPosition.right}
+    headerContent={hideHeader ? null : title}
+    bodyContent={children}
+    aria-label={title}
+    onHide={onHide}
+    onShow={onShow}
+    isVisible={isVisible}
+    shouldClose={shouldClose}
+    shouldOpen={shouldOpen}
+  >
+    <Button variant="link" isInline className="co-popover-status-button">
+      {statusBody}
+    </Button>
+  </Popover>
+);
 
 export default PopoverStatus;

@@ -9,9 +9,8 @@ import { InputField } from '@console/shared/src/components/formik-fields/InputFi
 import { TextColumnField } from '@console/shared/src/components/formik-fields/text-column-field/TextColumnField';
 import type { BuildFormikValues, BuildParam, ModalParameter } from './types';
 
-const paramIsRequired = (param: BuildParam): boolean => {
-  return param.type === 'array' ? !param.defaults : !param.default;
-};
+const paramIsRequired = (param: BuildParam): boolean =>
+  param.type === 'array' ? !param.defaults : !param.default;
 
 type ParametersSectionProps = {
   autoCompleteValues?: string[];
@@ -21,57 +20,55 @@ type ParameterFieldsProps = {
   params: any[];
 };
 
-const ParameterFields: FC<ParameterFieldsProps> = ({ params }) => {
-  return (
-    <FieldArray
-      name="parameters"
-      key="parameters-row"
-      render={() =>
-        params.length > 0 && (
-          <FormSection fullWidth>
-            {params?.map((parameter: ModalParameter, index) => {
-              const name = `formData.parameters.${index}.value`;
-              const isRequired = paramIsRequired(parameter);
-              const input = (ref?) => (
-                <InputField
-                  ref={ref}
-                  name={name}
-                  type={TextInputTypes.text}
-                  label={parameter.name}
-                  helpText={parameter.description}
-                  autoComplete="off"
-                  required={isRequired}
-                />
-              );
-              return parameter.type === 'array' ? (
-                <TextColumnField
-                  name={name}
-                  label={parameter.name}
-                  helpText={parameter.description}
-                  addLabel={`Add ${parameter.name}`}
-                  data-test={`${parameter.name}-text-column-field`}
-                  key={parameter.name}
-                  required={isRequired}
-                >
-                  {({ name: arrayName, ...additionalProps }) => (
-                    <InputField
-                      name={arrayName}
-                      {...additionalProps}
-                      autoComplete="off"
-                      required={isRequired}
-                    />
-                  )}
-                </TextColumnField>
-              ) : (
-                <Fragment key={parameter.name}>{input()}</Fragment>
-              );
-            })}
-          </FormSection>
-        )
-      }
-    />
-  );
-};
+const ParameterFields: FC<ParameterFieldsProps> = ({ params }) => (
+  <FieldArray
+    name="parameters"
+    key="parameters-row"
+    render={() =>
+      params.length > 0 && (
+        <FormSection fullWidth>
+          {params?.map((parameter: ModalParameter, index) => {
+            const name = `formData.parameters.${index}.value`;
+            const isRequired = paramIsRequired(parameter);
+            const input = (ref?) => (
+              <InputField
+                ref={ref}
+                name={name}
+                type={TextInputTypes.text}
+                label={parameter.name}
+                helpText={parameter.description}
+                autoComplete="off"
+                required={isRequired}
+              />
+            );
+            return parameter.type === 'array' ? (
+              <TextColumnField
+                name={name}
+                label={parameter.name}
+                helpText={parameter.description}
+                addLabel={`Add ${parameter.name}`}
+                data-test={`${parameter.name}-text-column-field`}
+                key={parameter.name}
+                required={isRequired}
+              >
+                {({ name: arrayName, ...additionalProps }) => (
+                  <InputField
+                    name={arrayName}
+                    {...additionalProps}
+                    autoComplete="off"
+                    required={isRequired}
+                  />
+                )}
+              </TextColumnField>
+            ) : (
+              <Fragment key={parameter.name}>{input()}</Fragment>
+            );
+          })}
+        </FormSection>
+      )
+    }
+  />
+);
 
 const ParameterSection: FC<ParametersSectionProps> = () => {
   const { t } = useTranslation('shipwright-plugin');

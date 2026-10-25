@@ -5,10 +5,9 @@ const PSEUDO_LOCALIZED_PATTERN = /\[[^a-zA-Z]+\]/;
 
 async function isPseudoLocalized(text: string, context: string): Promise<void> {
   if (text.trim().length > 0) {
-    expect(
-      text,
-      `Expected pseudolocalized text in ${context}, got: "${text}"`,
-    ).toMatch(PSEUDO_LOCALIZED_PATTERN);
+    expect(text, `Expected pseudolocalized text in ${context}, got: "${text}"`).toMatch(
+      PSEUDO_LOCALIZED_PATTERN,
+    );
   }
 }
 

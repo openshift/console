@@ -355,9 +355,8 @@ type OperatorInstallStatusPageRouteParams = RouteParams<
 const OperatorInstallLogo = ({ subscription }) => {
   const { t } = useTranslation('olm');
   const notFound = t('Not found');
-  const { currentCSV, catalogNamespace, catalog, pkg } = useParams<
-    OperatorInstallStatusPageRouteParams
-  >();
+  const { currentCSV, catalogNamespace, catalog, pkg } =
+    useParams<OperatorInstallStatusPageRouteParams>();
   const [packageManifests, loaded, loadError] = useK8sWatchResource<PackageManifestKind[]>({
     groupVersionKind: {
       group: PackageManifestModel.apiGroup,

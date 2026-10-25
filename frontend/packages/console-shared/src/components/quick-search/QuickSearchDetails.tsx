@@ -33,43 +33,32 @@ const QuickSearchDetails: FC<QuickSearchDetailsProps> = ({
   const { removeQueryArgument } = useQueryParamsMutator();
   const fireTelemetryEvent = useTelemetry();
 
-  const defaultContentRenderer = (): ReactNode => {
-    return (
-      <>
-        <Title headingLevel="h4">{selectedItem.name}</Title>
-        {selectedItem.provider && (
-          <span className="ocs-quick-search-details__provider">
-            {t('Provided by {{provider}}', {
-              provider: selectedItem.provider,
-            })}
-          </span>
-        )}
-        {selectedItem.badges?.length > 0 ? (
-          <CatalogBadges badges={selectedItem.badges} />
-        ) : undefined}
-        <Button
-          variant={ButtonVariant.primary}
-          className="ocs-quick-search-details__form-button"
-          data-test="create-quick-search"
-          onClick={(e) => {
-            handleCta(
-              e,
-              selectedItem,
-              closeModal,
-              fireTelemetryEvent,
-              navigate,
-              removeQueryArgument,
-            );
-          }}
-        >
-          {selectedItem.cta.label}
-        </Button>
-        <Content className="ocs-quick-search-details__description">
-          {selectedItem.description}
-        </Content>
-      </>
-    );
-  };
+  const defaultContentRenderer = (): ReactNode => (
+    <>
+      <Title headingLevel="h4">{selectedItem.name}</Title>
+      {selectedItem.provider && (
+        <span className="ocs-quick-search-details__provider">
+          {t('Provided by {{provider}}', {
+            provider: selectedItem.provider,
+          })}
+        </span>
+      )}
+      {selectedItem.badges?.length > 0 ? <CatalogBadges badges={selectedItem.badges} /> : undefined}
+      <Button
+        variant={ButtonVariant.primary}
+        className="ocs-quick-search-details__form-button"
+        data-test="create-quick-search"
+        onClick={(e) => {
+          handleCta(e, selectedItem, closeModal, fireTelemetryEvent, navigate, removeQueryArgument);
+        }}
+      >
+        {selectedItem.cta.label}
+      </Button>
+      <Content className="ocs-quick-search-details__description">
+        {selectedItem.description}
+      </Content>
+    </>
+  );
 
   return (
     <div className="ocs-quick-search-details">

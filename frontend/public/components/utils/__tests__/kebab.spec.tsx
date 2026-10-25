@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { KebabItem, KebabItemAccessReview_ } from '../kebab';
+import { KebabItem, KebabItemAccessReviewBase } from '../kebab';
 import { useAccessReview } from '../rbac';
 
 jest.mock('../rbac', () => ({
@@ -41,7 +41,7 @@ describe('KebabItem', () => {
   });
 });
 
-describe('KebabItemAccessReview_', () => {
+describe('KebabItemAccessReviewBase', () => {
   const useAccessReviewOption = { ...mockOption, accessReview: {} };
   const mockImpersonate = {
     kind: 'dummy',
@@ -54,7 +54,7 @@ describe('KebabItemAccessReview_', () => {
     const trackOnClick = jest.fn();
     useAccessReviewMock.mockReturnValue(false);
     render(
-      <KebabItemAccessReview_
+      <KebabItemAccessReviewBase
         option={useAccessReviewOption}
         onClick={trackOnClick}
         impersonate={mockImpersonate}
@@ -69,7 +69,7 @@ describe('KebabItemAccessReview_', () => {
     const trackOnClick = jest.fn();
     useAccessReviewMock.mockReturnValue(true);
     render(
-      <KebabItemAccessReview_
+      <KebabItemAccessReviewBase
         option={useAccessReviewOption}
         onClick={trackOnClick}
         impersonate={mockImpersonate}

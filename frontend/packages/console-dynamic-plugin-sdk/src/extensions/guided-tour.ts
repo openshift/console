@@ -23,6 +23,4 @@ export type INTERNAL_DO_NOT_USE_GuidedTour = Extension<
 /** @hidden */
 export const INTERNAL_DO_NOT_USE_isGuidedTour = (
   e: Extension,
-): e is INTERNAL_DO_NOT_USE_GuidedTour => {
-  return e.type === 'INTERNAL_DO_NOT_USE.guided-tour';
-};
+): e is INTERNAL_DO_NOT_USE_GuidedTour => e.type === 'INTERNAL_DO_NOT_USE.guided-tour';

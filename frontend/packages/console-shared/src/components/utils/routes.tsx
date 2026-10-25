@@ -46,9 +46,8 @@ export const RouteLinkAndCopy: FC<RouteLinkAndCopyProps> = ({ route, className }
   );
 };
 
-const isWebRoute = (route: RouteKind): boolean => {
-  return !!getRouteHost(route, true) && _.get(route, 'spec.wildcardPolicy') !== 'Subdomain';
-};
+const isWebRoute = (route: RouteKind): boolean =>
+  !!getRouteHost(route, true) && _.get(route, 'spec.wildcardPolicy') !== 'Subdomain';
 
 const getRouteLabel = (route: RouteKind): string => {
   if (isWebRoute(route)) {

@@ -78,7 +78,7 @@ const StartNodeMaintenanceModal: OverlayComponent<StartNodeMaintenanceModalProps
           <StackItem>
             <Trans ns="metal3-plugin">
               If the node does not exit maintenance within <strong>30 minutes</strong>, the cluster
-              will automatically rebuild the node{"'"}s data using replicated copies
+              will automatically rebuild the node's data using replicated copies
             </Trans>
           </StackItem>
           <StackItem>

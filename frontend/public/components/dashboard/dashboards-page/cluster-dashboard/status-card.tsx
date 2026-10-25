@@ -1,15 +1,27 @@
 import type { FC, ReactNode } from 'react';
 import { useMemo } from 'react';
-import * as _ from 'lodash';
-import { connect } from 'react-redux';
-import { Map as ImmutableMap } from 'immutable';
-import { Link } from 'react-router';
-import { useTranslation } from 'react-i18next';
 import {
+  Gallery,
+  GalleryItem,
+  Card,
+  CardHeader,
+  CardTitle,
+  CardFooter,
+  Divider,
+} from '@patternfly/react-core';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
+import { Link } from 'react-router';
+import type {
   DashboardsOverviewHealthSubsystem,
   DashboardsOverviewHealthPrometheusSubsystem,
   DashboardsOverviewHealthURLSubsystem,
   DashboardsOverviewHealthOperator,
+  ResolvedExtension,
+  WatchK8sResource,
+} from '@console/dynamic-plugin-sdk';
+import {
   isDashboardsOverviewHealthSubsystem,
   isDashboardsOverviewHealthURLSubsystem,
   isDashboardsOverviewHealthPrometheusSubsystem,
@@ -17,62 +29,53 @@ import {
   isResolvedDashboardsOverviewHealthPrometheusSubsystem,
   isResolvedDashboardsOverviewHealthResourceSubsystem,
   isResolvedDashboardsOverviewHealthOperator,
-  ResolvedExtension,
   useResolvedExtensions,
-  WatchK8sResource,
 } from '@console/dynamic-plugin-sdk';
-import { Gallery, GalleryItem, Card, CardHeader, CardTitle } from '@patternfly/react-core';
-import { BlueArrowCircleUpIcon } from '@console/shared/src/components/status/icons';
-import { ALL_NAMESPACES_KEY, FLAGS } from '@console/shared/src/constants/common';
-import { useCanClusterUpgrade } from '@console/shared/src/hooks/useCanClusterUpgrade';
-
-import AlertsBody from '@console/shared/src/components/dashboard/status-card/AlertsBody';
-import HealthBody from '@console/shared/src/components/dashboard/status-card/HealthBody';
 import AlertItem, {
   StatusItem,
 } from '@console/shared/src/components/dashboard/status-card/AlertItem';
-import { alertURL } from '../../../monitoring/utils';
+import AlertsBody from '@console/shared/src/components/dashboard/status-card/AlertsBody';
+import HealthBody from '@console/shared/src/components/dashboard/status-card/HealthBody';
+import { BlueArrowCircleUpIcon } from '@console/shared/src/components/status/icons';
+import { ALL_NAMESPACES_KEY, FLAGS } from '@console/shared/src/constants/common';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
+import { useCanClusterUpgrade } from '@console/shared/src/hooks/useCanClusterUpgrade';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import {
-  ClusterVersionKind,
-  referenceForModel,
-  hasAvailableUpdates,
-  K8sKind,
-  ObjectMetadata,
-} from '../../../../module/k8s';
+  useNamespacedNotificationAlerts,
+  useNotificationAlerts,
+} from '@console/shared/src/hooks/useNotificationAlerts';
 import { ClusterVersionModel } from '../../../../models';
-import { RootState } from '../../../../redux';
+import type { ClusterVersionKind, K8sKind, ObjectMetadata } from '../../../../module/k8s';
+import { referenceForModel, hasAvailableUpdates } from '../../../../module/k8s';
+import type { RootState } from '../../../../redux';
+import { alertURL } from '../../../monitoring/utils';
+import { useK8sWatchResource } from '../../../utils/k8s-watch-hook';
 import {
   OperatorHealthItem,
   PrometheusHealthItem,
   URLHealthItem,
   ResourceHealthItem,
 } from './health-item';
-import { useK8sWatchResource } from '../../../utils/k8s-watch-hook';
-import { useFlag } from '@console/shared/src/hooks/useFlag';
-import {
-  useNamespacedNotificationAlerts,
-  useNotificationAlerts,
-} from '@console/shared/src/hooks/useNotificationAlerts';
-import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 
 const filterSubsystems = (
   subsystems: (
     | DashboardsOverviewHealthSubsystem
     | ResolvedExtension<DashboardsOverviewHealthSubsystem>
   )[],
-  k8sModels: ImmutableMap<string, K8sKind>,
+  k8sModels: Record<string, K8sKind>,
 ) =>
   subsystems.filter((s) => {
     if (
       isDashboardsOverviewHealthURLSubsystem(s) ||
       isDashboardsOverviewHealthPrometheusSubsystem(s)
     ) {
-      const subsystem = (s as unknown) as
+      const subsystem = s as unknown as
         | ResolvedExtension<DashboardsOverviewHealthPrometheusSubsystem>
         | ResolvedExtension<DashboardsOverviewHealthURLSubsystem>;
       return subsystem.properties.additionalResource &&
         !subsystem.properties.additionalResource.optional
-        ? !!k8sModels.get(subsystem.properties.additionalResource.kind)
+        ? !!k8sModels?.[subsystem.properties.additionalResource.kind]
         : true;
     }
     return true;
@@ -85,8 +88,11 @@ const cvResource: WatchK8sResource = {
   isList: false,
 };
 
+const MAX_ALERTS = 50;
+
 export const DashboardAlerts: FC<DashboardAlertsProps> = ({ labelSelector }) => {
   const { t } = useTranslation('public');
+  const [, setActiveNamespace] = useActiveNamespace();
   const hasCVResource = useFlag(FLAGS.CLUSTER_VERSION);
   const [alerts, , loadError] = useNotificationAlerts(labelSelector);
   const [cv, cvLoaded] = useK8sWatchResource<ClusterVersionKind>(
@@ -107,27 +113,48 @@ export const DashboardAlerts: FC<DashboardAlertsProps> = ({ labelSelector }) => 
           <Link to="/settings/cluster?showVersions">{t('Update cluster')}</Link>
         </StatusItem>
       )}
-      {alerts.map((alert) => (
+      {alerts.slice(0, MAX_ALERTS).map((alert) => (
         <AlertItem key={alertURL(alert, alert.rule.id)} alert={alert} />
       ))}
+      {alerts.length > MAX_ALERTS && (
+        <>
+          <Divider />
+          <CardFooter>
+            <Link to="/monitoring/alerts" onClick={() => setActiveNamespace(ALL_NAMESPACES_KEY)}>
+              {t('View all {{count}} alerts', { count: alerts.length })}
+            </Link>
+          </CardFooter>
+        </>
+      )}
     </AlertsBody>
   );
 };
 
 export const DashboardNamespacedAlerts: FC<DashboardNamespacedAlertsProps> = ({ namespace }) => {
+  const { t } = useTranslation('public');
   const [namespacedAlerts, , loadError] = useNamespacedNotificationAlerts(namespace);
 
   return (
     <AlertsBody error={!_.isEmpty(loadError)}>
-      {namespacedAlerts.map((alert) => (
+      {namespacedAlerts.slice(0, MAX_ALERTS).map((alert) => (
         <AlertItem key={alertURL(alert, alert.rule.id)} alert={alert} />
       ))}
+      {namespacedAlerts.length > MAX_ALERTS && (
+        <>
+          <Divider />
+          <CardFooter>
+            <Link to="/monitoring/alerts">
+              {t('View all {{count}} alerts', { count: namespacedAlerts.length })}
+            </Link>
+          </CardFooter>
+        </>
+      )}
     </AlertsBody>
   );
 };
 
 const mapStateToProps = (state: RootState) => ({
-  k8sModels: state.k8s.getIn(['RESOURCES', 'models']),
+  k8sModels: state.k8s.RESOURCES?.models,
 });
 export const StatusCard = connect<StatusCardProps>(mapStateToProps)(({ k8sModels }) => {
   const [subsystemExtensions] = useResolvedExtensions<DashboardsOverviewHealthSubsystem>(
@@ -135,9 +162,10 @@ export const StatusCard = connect<StatusCardProps>(mapStateToProps)(({ k8sModels
   );
   const [, setActiveNamespace] = useActiveNamespace();
 
-  const subsystems = useMemo(() => {
-    return filterSubsystems([...subsystemExtensions], k8sModels);
-  }, [subsystemExtensions, k8sModels]);
+  const subsystems = useMemo(
+    () => filterSubsystems([...subsystemExtensions], k8sModels),
+    [subsystemExtensions, k8sModels],
+  );
 
   const operatorSubsystemIndex = useMemo(
     () => subsystems.findIndex((e) => isResolvedDashboardsOverviewHealthOperator(e)),
@@ -172,9 +200,8 @@ export const StatusCard = connect<StatusCardProps>(mapStateToProps)(({ k8sModels
   });
 
   if (operatorSubsystemIndex !== -1) {
-    const operatorSubsystems: ResolvedExtension<
-      DashboardsOverviewHealthOperator
-    >['properties'][] = [];
+    const operatorSubsystems: ResolvedExtension<DashboardsOverviewHealthOperator>['properties'][] =
+      [];
     subsystems.forEach((e) => {
       if (isResolvedDashboardsOverviewHealthOperator(e)) {
         operatorSubsystems.push(e.properties);
@@ -212,13 +239,11 @@ export const StatusCard = connect<StatusCardProps>(mapStateToProps)(({ k8sModels
       </CardHeader>
       <HealthBody>
         <Gallery className="co-overview-status__health" hasGutter>
-          {healthItems.map((item) => {
-            return (
-              <GalleryItem key={item.title} data-test={item.title}>
-                {item.Component}
-              </GalleryItem>
-            );
-          })}
+          {healthItems.map((item) => (
+            <GalleryItem key={item.title} data-test={item.title}>
+              {item.Component}
+            </GalleryItem>
+          ))}
         </Gallery>
       </HealthBody>
       <DashboardAlerts />
@@ -227,7 +252,7 @@ export const StatusCard = connect<StatusCardProps>(mapStateToProps)(({ k8sModels
 });
 
 type StatusCardProps = {
-  k8sModels: ImmutableMap<string, K8sKind>;
+  k8sModels: Record<string, K8sKind>;
 };
 
 type DashboardAlertsProps = {

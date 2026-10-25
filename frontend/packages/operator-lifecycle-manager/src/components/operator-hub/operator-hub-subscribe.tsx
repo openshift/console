@@ -94,29 +94,26 @@ const InputField: FC<InputFieldProps> = ({
   ariaLabel,
   value,
   setValue,
-}) => {
-  return (
-    <div className="form-group">
-      <fieldset>
-        <label className="co-required">{label}</label>
-        <FieldLevelHelp>{helpText}</FieldLevelHelp>
-        <div>
-          <TextInput
-            autoFocus
-            placeholder={placeholder}
-            aria-label={ariaLabel}
-            type="text"
-            value={value}
-            onChange={(_event, val) => {
-              setValue(val);
-            }}
-            required
-          />
-        </div>
-      </fieldset>
-    </div>
-  );
-};
+}) => (
+  <div className="form-group">
+    <fieldset>
+      <label>{label}</label>
+      <FieldLevelHelp>{helpText}</FieldLevelHelp>
+      <div>
+        <TextInput
+          autoFocus
+          placeholder={placeholder}
+          aria-label={ariaLabel}
+          type="text"
+          value={value}
+          onChange={(_event, val) => {
+            setValue(val);
+          }}
+        />
+      </div>
+    </fieldset>
+  </div>
+);
 
 const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
   const packageManifest = props.packageManifest?.data?.[0];
@@ -124,8 +121,13 @@ const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
   const handleCancel = useCallback(() => navigate(-1), [navigate]);
   const [activeNamespace] = useActiveNamespace();
   const { name: pkgName } = packageManifest?.metadata ?? {};
-  const { provider, channels = [], packageName, catalogSource, catalogSourceNamespace } =
-    packageManifest?.status ?? {};
+  const {
+    provider,
+    channels = [],
+    packageName,
+    catalogSource,
+    catalogSourceNamespace,
+  } = packageManifest?.status ?? {};
 
   const { pathname: url } = useLocation();
   const [roleARNText, setRoleARNText] = useState('');
@@ -157,9 +159,8 @@ const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
   const [cannotResolve, setCannotResolve] = useState(false);
   const [suggestedNamespaceExists, setSuggestedNamespaceExists] = useState(false);
   const [suggestedNamespaceExistsInFlight, setSuggestedNamespaceExistsInFlight] = useState(true);
-  const [useSuggestedNSForSingleInstallMode, setUseSuggestedNSForSingleInstallMode] = useState(
-    true,
-  );
+  const [useSuggestedNSForSingleInstallMode, setUseSuggestedNSForSingleInstallMode] =
+    useState(true);
 
   const defaultEnableMonitoring =
     packageManifest?.metadata?.labels?.provider?.includes('Red Hat') &&
@@ -175,12 +176,8 @@ const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
   const [enabledPlugins, setEnabledPlugins] = useState<string[]>([]);
   const { t } = useTranslation('olm');
 
-  const {
-    deprecatedPackage,
-    deprecatedChannel,
-    deprecatedVersion,
-    setDeprecatedPackage,
-  } = useDeprecatedOperatorWarnings();
+  const { deprecatedPackage, deprecatedChannel, deprecatedVersion, setDeprecatedPackage } =
+    useDeprecatedOperatorWarnings();
   const deprecatedWarning =
     deprecatedPackage?.deprecation ||
     deprecatedChannel?.deprecation ||
@@ -218,14 +215,12 @@ const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
     currentCSVDesc.annotations?.['operatorframework.io/suggested-namespace'];
   const suggestedNamespaceTemplate =
     getSuggestedNamespaceTemplate(currentCSVDesc.annotations, {
-      // eslint-disable-next-line no-console
       onError: () => console.error('Could not parse JSON annotation.'),
     }) ?? {};
   const suggestedNamespaceTemplateName = suggestedNamespaceTemplate?.metadata?.name;
   const operatorRequestsMonitoring =
     currentCSVDesc.annotations?.['operatorframework.io/cluster-monitoring'] === 'true';
   const initializationResource = getInitializationResource(currentCSVDesc.annotations, {
-    // eslint-disable-next-line no-console
     onError: () => console.error('Operator Hub Subscribe: Could not get initialization resource.'),
   });
   const canPatchConsoleOperatorConfig = useAccessReview({
@@ -485,60 +480,37 @@ const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
     };
 
     switch (tokenizedAuth) {
-      case 'AWS':
-        subscription.spec.config = {
-          env: [
-            {
-              name: 'ROLEARN',
-              value: roleARNText,
-            },
-          ],
-        };
+      case 'AWS': {
+        const env = [{ name: 'ROLEARN', value: roleARNText }].filter((e) => e.value);
+        if (env.length > 0) {
+          subscription.spec.config = { env };
+        }
         break;
-      case 'Azure':
-        subscription.spec.config = {
-          env: [
-            {
-              name: 'CLIENTID',
-              value: azureClientId,
-            },
-            {
-              name: 'TENANTID',
-              value: azureTenantId,
-            },
-            {
-              name: 'SUBSCRIPTIONID',
-              value: azureSubscriptionId,
-            },
-            {
-              name: 'RESOURCEGROUP',
-              value: azureResourceGroup,
-            },
-          ],
-        };
+      }
+      case 'Azure': {
+        const env = [
+          { name: 'CLIENTID', value: azureClientId },
+          { name: 'TENANTID', value: azureTenantId },
+          { name: 'SUBSCRIPTIONID', value: azureSubscriptionId },
+          { name: 'RESOURCEGROUP', value: azureResourceGroup },
+        ].filter((e) => e.value);
+        if (env.length > 0) {
+          subscription.spec.config = { env };
+        }
         break;
-      case 'GCP':
-        subscription.spec.config = {
-          env: [
-            {
-              name: 'PROJECT_NUMBER',
-              value: gcpProjectNumber,
-            },
-            {
-              name: 'POOL_ID',
-              value: gcpPoolId,
-            },
-            {
-              name: 'PROVIDER_ID',
-              value: gcpProviderId,
-            },
-            {
-              name: 'SERVICE_ACCOUNT_EMAIL',
-              value: gcpServiceAcctEmail,
-            },
-          ],
-        };
+      }
+      case 'GCP': {
+        const env = [
+          { name: 'PROJECT_NUMBER', value: gcpProjectNumber },
+          { name: 'POOL_ID', value: gcpPoolId },
+          { name: 'PROVIDER_ID', value: gcpProviderId },
+          { name: 'SERVICE_ACCOUNT_EMAIL', value: gcpServiceAcctEmail },
+        ].filter((e) => e.value);
+        if (env.length > 0) {
+          subscription.spec.config = { env };
+        }
         break;
+      }
       default:
         break;
     }
@@ -589,106 +561,94 @@ const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
     subscriptionExists(selectedTargetNamespace) ||
     !namespaceSupports(selectedTargetNamespace)(selectedInstallMode) ||
     (selectedTargetNamespace && cannotResolve) ||
-    !_.isEmpty(conflictingProvidedAPIs(selectedTargetNamespace)) ||
-    (tokenizedAuth === 'AWS' && _.isEmpty(roleARNText)) ||
-    (tokenizedAuth === 'Azure' &&
-      [azureClientId, azureTenantId, azureSubscriptionId, azureResourceGroup].some((v) =>
-        _.isEmpty(v),
-      )) ||
-    (tokenizedAuth === 'GCP' &&
-      [gcpProjectNumber, gcpPoolId, gcpProviderId, gcpServiceAcctEmail].some((v) => _.isEmpty(v)));
+    !_.isEmpty(conflictingProvidedAPIs(selectedTargetNamespace));
 
-  const formError = () => {
-    return (
-      (error && (
-        <Alert
-          isInline
-          className="co-alert co-alert--scrollable"
-          variant="danger"
-          title={t('An error occurred')}
-        >
-          <div className="co-pre-line">{error}</div>
-        </Alert>
-      )) ||
-      (!namespaceSupports(selectedTargetNamespace)(selectedInstallMode) && (
-        <Alert
-          isInline
-          className="co-alert"
-          variant="danger"
-          title={t('Namespace does not support installation mode')}
-        >
-          {selectedInstallMode === InstallModeType.InstallModeTypeOwnNamespace &&
-          selectedTargetNamespace === globalNS ? (
-            <>
-              {t(
-                'The {{namespace}} Namespace is reserved for global Operators that watch all Namespaces. To install an Operator in a single Namespace, select a different Namespace where the operand should run.',
-                { namespace: selectedTargetNamespace },
-              )}
-            </>
-          ) : (
-            <>
-              {t(
-                'The OperatorGroup in the {{namespace}} Namespace does not support the {{mode}} installation mode. Select a different installation Namespace that supports this mode.',
-                {
-                  namespace: selectedTargetNamespace,
-                  mode:
-                    selectedInstallMode === InstallModeType.InstallModeTypeAllNamespaces
-                      ? ' global '
-                      : ' single-Namespace ',
-                },
-              )}
-            </>
-          )}
-        </Alert>
-      )) ||
-      (subscriptionExists(selectedTargetNamespace) && (
-        <Alert
-          isInline
-          className="co-alert"
-          variant="danger"
-          title={t('A Subscription for this Operator already exists in Namespace "{{namespace}}"', {
-            namespace: selectedTargetNamespace,
-          })}
-        >
-          <p>
-            <Trans t={t} ns="olm">
-              Remove the{' '}
-              <Link
-                to={resourcePathFromModel(SubscriptionModel, packageName, selectedTargetNamespace)}
-              >
-                existing Subscription
-              </Link>{' '}
-              in order to install this Operator in Namespace {'"'}
-              {{ selectedTargetNamespace }}
-              {'"'}
-            </Trans>
-          </p>
-        </Alert>
-      )) ||
-      (!_.isEmpty(conflictingProvidedAPIs(selectedTargetNamespace)) && (
-        <Alert isInline className="co-alert" variant="danger" title={t('Operator conflicts exist')}>
-          {t(
-            'Installing this Operator in the selected Namespace would cause conflicts with another Operator providing these APIs:',
-          )}
-          <ul>
-            {conflictingProvidedAPIs(selectedTargetNamespace).map((gvk) => (
-              <li key={gvk}>
-                <strong>{kindForReference(gvk)}</strong> <i>({apiVersionForReference(gvk)})</i>
-              </li>
-            ))}
-          </ul>
-        </Alert>
-      )) ||
-      (selectedTargetNamespace && cannotResolve && (
-        <Alert
-          isInline
-          className="co-alert"
-          variant="danger"
-          title={t('Operator not available for selected Namespaces')}
-        />
-      ))
-    );
-  };
+  const formError = () =>
+    (error && (
+      <Alert
+        isInline
+        className="co-alert co-alert--scrollable"
+        variant="danger"
+        title={t('An error occurred')}
+      >
+        <div className="co-pre-line">{error}</div>
+      </Alert>
+    )) ||
+    (!namespaceSupports(selectedTargetNamespace)(selectedInstallMode) && (
+      <Alert
+        isInline
+        className="co-alert"
+        variant="danger"
+        title={t('Namespace does not support installation mode')}
+      >
+        {selectedInstallMode === InstallModeType.InstallModeTypeOwnNamespace &&
+        selectedTargetNamespace === globalNS ? (
+          <>
+            {t(
+              'The {{namespace}} Namespace is reserved for global Operators that watch all Namespaces. To install an Operator in a single Namespace, select a different Namespace where the operand should run.',
+              { namespace: selectedTargetNamespace },
+            )}
+          </>
+        ) : (
+          <>
+            {t(
+              'The OperatorGroup in the {{namespace}} Namespace does not support the {{mode}} installation mode. Select a different installation Namespace that supports this mode.',
+              {
+                namespace: selectedTargetNamespace,
+                mode:
+                  selectedInstallMode === InstallModeType.InstallModeTypeAllNamespaces
+                    ? ' global '
+                    : ' single-Namespace ',
+              },
+            )}
+          </>
+        )}
+      </Alert>
+    )) ||
+    (subscriptionExists(selectedTargetNamespace) && (
+      <Alert
+        isInline
+        className="co-alert"
+        variant="danger"
+        title={t('A Subscription for this Operator already exists in Namespace "{{namespace}}"', {
+          namespace: selectedTargetNamespace,
+        })}
+      >
+        <p>
+          <Trans t={t} ns="olm">
+            Remove the{' '}
+            <Link
+              to={resourcePathFromModel(SubscriptionModel, packageName, selectedTargetNamespace)}
+            >
+              existing Subscription
+            </Link>{' '}
+            in order to install this Operator in Namespace "{{ selectedTargetNamespace }}"
+          </Trans>
+        </p>
+      </Alert>
+    )) ||
+    (!_.isEmpty(conflictingProvidedAPIs(selectedTargetNamespace)) && (
+      <Alert isInline className="co-alert" variant="danger" title={t('Operator conflicts exist')}>
+        {t(
+          'Installing this Operator in the selected Namespace would cause conflicts with another Operator providing these APIs:',
+        )}
+        <ul>
+          {conflictingProvidedAPIs(selectedTargetNamespace).map((gvk) => (
+            <li key={gvk}>
+              <strong>{kindForReference(gvk)}</strong> <i>({apiVersionForReference(gvk)})</i>
+            </li>
+          ))}
+        </ul>
+      </Alert>
+    )) ||
+    (selectedTargetNamespace && cannotResolve && (
+      <Alert
+        isInline
+        className="co-alert"
+        variant="danger"
+        title={t('Operator not available for selected Namespaces')}
+      />
+    ));
 
   const showMonitoringCheckbox =
     operatorRequestsMonitoring && _.startsWith(selectedTargetNamespace, 'openshift-');

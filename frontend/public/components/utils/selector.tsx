@@ -1,11 +1,10 @@
-import * as _ from 'lodash';
 import type { FC } from 'react';
 import { RhUiSearchIcon } from '@patternfly/react-icons';
-import { Link } from 'react-router';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-
-import { Selector as SelectorKind } from '../../module/k8s';
+import { Link } from 'react-router';
 import { selectorToString } from '@console/dynamic-plugin-sdk/src/utils/k8s';
+import type { Selector as SelectorKind } from '../../module/k8s';
 
 const Requirement: FC<RequirementProps> = ({ kind, requirements, namespace = '' }) => {
   // Strip off any trailing '=' characters for valueless selectors

@@ -45,20 +45,18 @@ export const useSubscriptionActions = (
         cta: () => uninstallOperatorModal(),
         accessReview: asAccessReview(model, obj, 'delete'),
       }),
-      [SubscriptionActionCreator.ViewClusterServiceVersion]: () => {
-        return {
-          id: 'view-cluster-service-version',
-          label: t('View ClusterServiceVersion...'),
-          cta: {
-            href: `/k8s/ns/${obj.metadata.namespace}/${ClusterServiceVersionModel.plural}/${installedCSV}`,
-          },
-          accessReview: asAccessReview(
-            ClusterServiceVersionModel,
-            { metadata: { namespace: obj.metadata.namespace, name: installedCSV } },
-            'get',
-          ),
-        };
-      },
+      [SubscriptionActionCreator.ViewClusterServiceVersion]: () => ({
+        id: 'view-cluster-service-version',
+        label: t('View ClusterServiceVersion...'),
+        cta: {
+          href: `/k8s/ns/${obj.metadata.namespace}/${ClusterServiceVersionModel.plural}/${installedCSV}`,
+        },
+        accessReview: asAccessReview(
+          ClusterServiceVersionModel,
+          { metadata: { namespace: obj.metadata.namespace, name: installedCSV } },
+          'get',
+        ),
+      }),
     }),
     [installedCSV, model, obj, t, uninstallOperatorModal],
   );

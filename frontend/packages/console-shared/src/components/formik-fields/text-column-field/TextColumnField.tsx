@@ -14,9 +14,10 @@ export const TextColumnField: FC<TextColumnFieldProps> = (props) => {
   const rowValues = field.value ?? [];
   const fieldId = getFieldId(name, 'single-column');
   const isValid = !(touched && error);
-  const getTextColumnProps = (colProps: TextColumnItemProps) => {
-    return { ...colProps, key: `${colProps.idx.toString()}` };
-  };
+  const getTextColumnProps = (colProps: TextColumnItemProps) => ({
+    ...colProps,
+    key: `${colProps.idx.toString()}`,
+  });
 
   return (
     <FieldArray
@@ -29,13 +30,11 @@ export const TextColumnField: FC<TextColumnFieldProps> = (props) => {
             isRequired={required}
             data-test={props['data-test'] || 'text-column-field'}
           >
-            {rowValues.map((v, idx) => {
-              return (
-                <TextColumnItem {...getTextColumnProps({ ...props, rowValues, idx, arrayHelpers })}>
-                  {children}
-                </TextColumnItem>
-              );
-            })}
+            {rowValues.map((v, idx) => (
+              <TextColumnItem {...getTextColumnProps({ ...props, rowValues, idx, arrayHelpers })}>
+                {children}
+              </TextColumnItem>
+            ))}
             {!isReadOnly && (
               <MultiColumnFieldFooter
                 addLabel={addLabel}

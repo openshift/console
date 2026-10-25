@@ -65,7 +65,7 @@ const RestorePVCModal: FC<RestorePVCModalProps> = ({ close, cancel, resource }) 
   const volumeSnapshotAnnotations = getAnnotations(resource);
   const snapshotBaseSize = convertToBaseValue(resource?.status?.restoreSize ?? '0');
   const snapshotHumanizedSize = humanizeBinaryBytesWithoutB(snapshotBaseSize);
-  const [requestedSize, setRequestedSize] = useState(snapshotHumanizedSize.value);
+  const [requestedSize, setRequestedSize] = useState(String(snapshotHumanizedSize.value));
   const [requestedUnit, setRequestedUnit] = useState(snapshotHumanizedSize.unit);
   const [pvcSC, setPVCStorageClass] = useState('');
   const requestedBytes = convertToBaseValue(requestedSize + requestedUnit);
@@ -75,9 +75,12 @@ const RestorePVCModal: FC<RestorePVCModalProps> = ({ close, cancel, resource }) 
   const namespace = getNamespace(resource);
   const snapshotName = getName(resource);
 
-  const [pvcResource, pvcResourceLoaded, pvcResourceLoadError] = useK8sGet<
-    PersistentVolumeClaimKind
-  >(PersistentVolumeClaimModel, resource?.spec?.source?.persistentVolumeClaimName, namespace);
+  const [pvcResource, pvcResourceLoaded, pvcResourceLoadError] =
+    useK8sGet<PersistentVolumeClaimKind>(
+      PersistentVolumeClaimModel,
+      resource?.spec?.source?.persistentVolumeClaimName,
+      namespace,
+    );
 
   const pvcStorageClassName = pvcResource?.spec?.storageClassName;
   const pvcNotFound = pvcResourceLoaded && !pvcResource;
@@ -271,12 +274,19 @@ const RestorePVCModal: FC<RestorePVCModalProps> = ({ close, cancel, resource }) 
           type="submit"
           variant="primary"
           form="restore-pvc-form"
+          data-test="confirm-action"
+          id="confirm-action"
           isLoading={inProgress}
           isDisabled={!pvcSC || !validSize || inProgress}
         >
           {t('Restore')}
         </Button>
-        <Button variant="link" onClick={cancel} data-test-id="modal-cancel-action">
+        <Button
+          variant="link"
+          onClick={cancel}
+          data-test="modal-cancel-action"
+          data-test-id="modal-cancel-action"
+        >
           {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>

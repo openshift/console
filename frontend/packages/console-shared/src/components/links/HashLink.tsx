@@ -11,15 +11,16 @@ export const HashLink: FC<HashLinkProps> = ({ smooth, onClick, to, ...rest }) =>
   const location = useLocation();
   const navigate = useNavigate();
   const observerRef = useRef<MutationObserver | null>(null);
-  const timeoutRef = useRef<ReturnType<typeof setTimeout>>();
+  const timeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);
   const scrollTargetRef = useRef<string | null>(null);
 
-  useEffect(() => {
-    return () => {
+  useEffect(
+    () => () => {
       observerRef.current?.disconnect();
       clearTimeout(timeoutRef.current);
-    };
-  }, []);
+    },
+    [],
+  );
 
   const scrollOptions = useMemo<ScrollIntoViewOptions | undefined>(
     () => (smooth ? { behavior: 'smooth' } : undefined),

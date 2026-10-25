@@ -1,8 +1,9 @@
-import type { FC, ReactElement, ComponentType } from 'react';
+import type { FC, ReactElement, ComponentType, LazyExoticComponent } from 'react';
 import { useMemo, lazy, useEffect, Suspense } from 'react';
 import type { RouteProps } from 'react-router';
 import { createPath, Route, useLocation } from 'react-router';
-import { RoutePage, isRoutePage } from '@console/dynamic-plugin-sdk/src/extensions/pages';
+import type { RoutePage as RoutePageType } from '@console/dynamic-plugin-sdk/src/extensions/pages';
+import { isRoutePage } from '@console/dynamic-plugin-sdk/src/extensions/pages';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk/src/perspective';
 import type { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
 import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
@@ -12,23 +13,34 @@ const isRoutePageExtensionActive: IsRouteExtensionActive = (extension, activePer
   (extension.properties.perspective ?? activePerspective) === activePerspective;
 
 // Cache lazy components by extension UID to prevent recreation on re-renders
-const lazyComponentCache = new Map<string, React.LazyExoticComponent<ComponentType<any>>>();
+const lazyComponentCache = new Map<string, LazyExoticComponent<ComponentType<unknown>>>();
+
+const getOrCreateLazyComponent = (
+  uid: string,
+  component: () => Promise<ComponentType<any>>,
+  pluginName: string,
+): LazyExoticComponent<ComponentType<unknown>> => {
+  if (!lazyComponentCache.has(uid)) {
+    lazyComponentCache.set(
+      uid,
+      lazy(async () => {
+        const Component = await component();
+        // Check falsy to determine if the component wasn't loaded
+        if (!Component) {
+          throw new Error(
+            `Plugin "${pluginName}" route component resolved to ${typeof Component} (extension ${uid})`,
+          );
+        }
+        return { default: Component };
+      }),
+    );
+  }
+  return lazyComponentCache.get(uid);
+};
 
 const LazyRoutePage: FC<LazyRoutePageProps> = ({ extension }) => {
   const { pluginName, uid, properties } = extension;
-  const { component } = properties;
-  const LazyComponent = useMemo(() => {
-    if (!lazyComponentCache.has(uid)) {
-      lazyComponentCache.set(
-        uid,
-        lazy(async () => {
-          const Component = await component();
-          return { default: Component };
-        }),
-      );
-    }
-    return lazyComponentCache.get(uid);
-  }, [uid, component]);
+  const LazyComponent = getOrCreateLazyComponent(uid, properties.component, pluginName);
 
   return (
     <Suspense fallback={<LoadingBox blame={`${pluginName}: ${extension.uid}`} />}>
@@ -84,7 +96,7 @@ export const mapExtensionToRoutes = (data: {
 };
 
 export const usePluginRoutes: UsePluginRoutes = () => {
-  const routePages = useExtensions<RoutePage>(isRoutePage);
+  const routePages = useExtensions<RoutePageType>(isRoutePage);
   const [activePerspective, setActivePerspective] = useActivePerspective();
 
   return useMemo(
@@ -115,7 +127,7 @@ export const usePluginRoutes: UsePluginRoutes = () => {
   );
 };
 
-type LoadedRoutePageExtension = LoadedExtension<RoutePage>;
+type LoadedRoutePageExtension = LoadedExtension<RoutePageType>;
 
 type SetActivePerspective = (perspective: string, next: string) => void;
 

@@ -10,6 +10,28 @@ For current development version of Console, use `4.x.0-prerelease.n` packages.
 For older 1.x plugin SDK packages, refer to "OpenShift Console Versions vs SDK Versions" compatibility
 table in [Console dynamic plugins README](./README.md).
 
+## 5.1.0-prerelease.1 - 2026-10-16
+
+- Add `ConsoleRemotePlugin` option `baseDir` to support multi-plugin builds ([OCPBUGS-111520], [#17002])
+- Fix "Shared module is not available for eager consumption" runtime errors related to dynamic modules ([OCPBUGS-127046], [#17318])
+- Update TSConfig for package build ([CONSOLE-5065], [#17140])
+- Dependency bumps for `read-pkg` ([CONSOLE-5065], [#17259])
+
+## 4.23.0 - 2026-10-16
+
+> Initial release for OCP Console 4.23.
+
+- Minimum compatible version of `@rspack/core` peer dependency increased to `2.1.10` ([OCPBUGS-109592], [#16978])
+
+## 4.23.0-prerelease.5 - 2026-08-04
+
+- Dependency bumps for `semver` and `glob` ([CONSOLE-5065], [#16115])
+
+## 4.23.0-prerelease.4 - 2026-07-14
+
+- Add support for building plugins with rspack ([CONSOLE-5423], [#16752])
+- `webpack` and `rspack` peer dependencies are now optional, but one of them must be installed ([CONSOLE-5423], [#16752])
+
 ## 4.23.0-prerelease.3 - 2026-07-07
 
 - `ConsoleRemotePlugin` shared dynamic module option `skipImportPrefixes` allows extending the default PatternFly module skip list to suppress build warnings ([OCPBUGS-88319], [#16585])
@@ -139,6 +161,7 @@ table in [Console dynamic plugins README](./README.md).
 [CONSOLE-5050]: https://issues.redhat.com/browse/CONSOLE-5050
 [CONSOLE-5065]: https://issues.redhat.com/browse/CONSOLE-5065
 [CONSOLE-5135]: https://issues.redhat.com/browse/CONSOLE-5135
+[CONSOLE-5423]: https://issues.redhat.com/browse/CONSOLE-5423
 [OCPBUGS-30762]: https://issues.redhat.com/browse/OCPBUGS-30762
 [OCPBUGS-30824]: https://issues.redhat.com/browse/OCPBUGS-30824
 [OCPBUGS-31901]: https://issues.redhat.com/browse/OCPBUGS-31901
@@ -154,6 +177,9 @@ table in [Console dynamic plugins README](./README.md).
 [OCPBUGS-83823]: https://issues.redhat.com/browse/OCPBUGS-83823
 [OCPBUGS-84338]: https://issues.redhat.com/browse/OCPBUGS-84338
 [OCPBUGS-88319]: https://issues.redhat.com/browse/OCPBUGS-88319
+[OCPBUGS-109592]: https://issues.redhat.com/browse/OCPBUGS-109592
+[OCPBUGS-111520]: https://issues.redhat.com/browse/OCPBUGS-111520
+[OCPBUGS-127046]: https://issues.redhat.com/browse/OCPBUGS-127046
 [#13188]: https://github.com/openshift/console/pull/13188
 [#13388]: https://github.com/openshift/console/pull/13388
 [#13521]: https://github.com/openshift/console/pull/13521
@@ -176,9 +202,16 @@ table in [Console dynamic plugins README](./README.md).
 [#15904]: https://github.com/openshift/console/pull/15904
 [#15934]: https://github.com/openshift/console/pull/15934
 [#15945]: https://github.com/openshift/console/pull/15945
+[#16115]: https://github.com/openshift/console/pull/16115
 [#16178]: https://github.com/openshift/console/pull/16178
 [#16182]: https://github.com/openshift/console/pull/16182
 [#16224]: https://github.com/openshift/console/pull/16224
 [#16340]: https://github.com/openshift/console/pull/16340
 [#16376]: https://github.com/openshift/console/pull/16376
 [#16585]: https://github.com/openshift/console/pull/16585
+[#16752]: https://github.com/openshift/console/pull/16752
+[#16978]: https://github.com/openshift/console/pull/16978
+[#17002]: https://github.com/openshift/console/pull/17002
+[#17140]: https://github.com/openshift/console/pull/17140
+[#17259]: https://github.com/openshift/console/pull/17259
+[#17318]: https://github.com/openshift/console/pull/17318

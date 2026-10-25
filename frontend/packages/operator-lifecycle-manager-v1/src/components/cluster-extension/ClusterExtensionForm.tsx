@@ -25,13 +25,16 @@ import { useNavigate } from 'react-router';
 import { k8sCreateResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { NsDropdown, resourcePathFromModel } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { NamespaceModel, ServiceAccountModel } from '@console/internal/models';
+import {
+  ClusterExtensionModel,
+  NamespaceModel,
+  ServiceAccountModel,
+} from '@console/internal/models';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import SwitchToYAMLAlert from '@console/shared/src/components/alerts/SwitchToYAMLAlert';
 import { SchemaFieldHelp } from '@console/shared/src/components/utils/SchemaFieldHelp';
 import { useTextInputModal } from '@console/shared/src/hooks/useTextInputModal';
 import { CATALOG_LABEL_KEY } from '../../const';
-import { ClusterExtensionModel } from '../../models';
 import { ServiceAccountDropdown } from './ServiceAccountDropdown';
 
 interface ClusterExtensionFormProps {
@@ -53,9 +56,10 @@ const ClusterExtensionForm: FC<ClusterExtensionFormProps> = ({ formData = {}, on
   const namespace = formData?.spec?.namespace || '';
   const serviceAccountName = formData?.spec?.serviceAccount?.name || '';
   const version = formData?.spec?.source?.catalog?.version || '';
-  const channels = useMemo(() => formData?.spec?.source?.catalog?.channels || [], [
-    formData?.spec?.source?.catalog?.channels,
-  ]);
+  const channels = useMemo(
+    () => formData?.spec?.source?.catalog?.channels || [],
+    [formData?.spec?.source?.catalog?.channels],
+  );
 
   // Extract catalogs from selector
   const catalogs = useMemo(() => {
@@ -629,7 +633,9 @@ const ClusterExtensionForm: FC<ClusterExtensionFormProps> = ({ formData = {}, on
           />
           <FormHelperText>
             <HelperText>
-              <HelperTextItem>{t('e.g., 1.2.3 or >1.2.3 <1.4.5')}</HelperTextItem>
+              <HelperTextItem>
+                {t('For example, 1.2.3 for an exact version, or >1.2.3 <1.4.5 for a range')}
+              </HelperTextItem>
             </HelperText>
           </FormHelperText>
         </FormGroup>
@@ -677,7 +683,7 @@ const ClusterExtensionForm: FC<ClusterExtensionFormProps> = ({ formData = {}, on
           </TextInputGroup>
           <FormHelperText>
             <HelperText>
-              <HelperTextItem>{t('e.g., stable, beta')}</HelperTextItem>
+              <HelperTextItem>{t('For example, stable, beta')}</HelperTextItem>
             </HelperText>
           </FormHelperText>
         </FormGroup>

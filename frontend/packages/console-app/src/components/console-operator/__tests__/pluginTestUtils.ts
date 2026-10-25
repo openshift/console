@@ -1,7 +1,11 @@
 import type {
-  PluginCustomProperties,
-  PluginLoaderInterface,
+  Extension,
+  LoadedExtension,
+  PluginManifest,
+  LocalPluginManifest,
   RemotePluginManifest,
+  PluginRuntimeMetadata,
+  PluginLoaderInterface,
 } from '@openshift/dynamic-plugin-sdk';
 import { TestPluginStore } from '@openshift/dynamic-plugin-sdk';
 
@@ -16,10 +20,18 @@ const noopPluginLoader: PluginLoaderInterface = {
   }),
 };
 
-type PluginManifestOptions = {
-  version?: string;
-  customProperties?: PluginCustomProperties;
-};
+type PluginManifestOptions = Partial<Pick<PluginRuntimeMetadata, 'version' | 'customProperties'>>;
+
+export const createLocalPluginManifest = (
+  name: string,
+  options: PluginManifestOptions = {},
+): LocalPluginManifest => ({
+  name,
+  version: options.version ?? '1.0.0',
+  extensions: [],
+  registrationMethod: 'local',
+  customProperties: options.customProperties,
+});
 
 export const createRemotePluginManifest = (
   name: string,
@@ -45,27 +57,46 @@ export const createTestPluginStore = (
   return pluginStore;
 };
 
+const getLoadedExtensions = <T extends Extension>(
+  pluginName: string,
+  extensions: T[],
+): LoadedExtension<T>[] =>
+  extensions.map((e, index) => ({
+    ...e,
+    pluginName,
+    uid: `${pluginName}[${index}]`,
+  }));
+
+export const addLoadedPluginFromManifest = (
+  store: TestPluginStore,
+  manifest: PluginManifest,
+  extensions: Extension[],
+  enablePlugin = true,
+) => {
+  store.addLoadedPlugin(manifest, getLoadedExtensions(manifest.name, extensions));
+
+  if (enablePlugin) {
+    store.enablePlugins([manifest.name]);
+  }
+};
+
 export const addLoadedPlugin = (
   store: TestPluginStore,
   name: string,
   options: PluginManifestOptions = {},
-): void => {
-  store.addLoadedPlugin(createRemotePluginManifest(name, options), []);
+) => {
+  addLoadedPluginFromManifest(store, createRemotePluginManifest(name, options), []);
 };
 
-export const addPendingPlugin = (store: TestPluginStore, name: string): void => {
+export const addPendingPlugin = (store: TestPluginStore, name: string) => {
   store.addPendingPlugin(createRemotePluginManifest(name));
 };
 
-export const addFailedPlugin = (
-  store: TestPluginStore,
-  name: string,
-  errorMessage: string,
-): void => {
+export const addFailedPlugin = (store: TestPluginStore, name: string, errorMessage: string) => {
   store.addFailedPlugin(createRemotePluginManifest(name), errorMessage);
 };
 
-export const addLoadedPluginWithoutVersion = (store: TestPluginStore, name: string): void => {
+export const addLoadedPluginWithoutVersion = (store: TestPluginStore, name: string) => {
   const manifest = createRemotePluginManifest(name);
   delete (manifest as { version?: string }).version;
   store.addLoadedPlugin(manifest, []);

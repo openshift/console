@@ -1,44 +1,7 @@
-import * as _ from 'lodash';
-import {
-  FC,
-  ReactElement,
-  ReactNode,
-  MouseEvent,
-  Ref,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
-import { useTranslation } from 'react-i18next';
-import i18next from 'i18next';
-import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
-import { Link, NavigateFunction, useNavigate } from 'react-router';
+import type { FC, ReactElement, ReactNode, MouseEvent, Ref } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { PluginInfoEntry } from '@openshift/dynamic-plugin-sdk';
-import { usePluginInfo } from '@console/plugin-sdk/src/api/usePluginInfo';
-import * as UIActions from '@console/internal/actions/ui';
-import { resourcePath } from '@console/internal/components/utils/resource-link';
-import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-
-import { getClusterID } from '@console/internal/module/k8s/cluster-settings';
-
-import {
-  ServiceLevelNotification,
-  useShowServiceLevelNotifications,
-} from '@console/internal/components/utils/service-level';
-import { alertURL } from '@console/internal/components/monitoring/utils';
-import {
-  BlueArrowCircleUpIcon,
-  RedExclamationCircleIcon,
-} from '@console/shared/src/components/status/icons';
-import { useCanClusterUpgrade } from '@console/shared/src/hooks/useCanClusterUpgrade';
-import {
-  getAlertDescription,
-  getAlertMessage,
-  getAlertName,
-  getAlertSeverity,
-  getAlertTime,
-} from '@console/shared/src/components/dashboard/status-card/alert-utils';
+import type { MenuToggleElement } from '@patternfly/react-core';
 import {
   Button,
   Dropdown,
@@ -50,7 +13,6 @@ import {
   EmptyStateFooter,
   EmptyStateVariant,
   MenuToggle,
-  MenuToggleElement,
   NotificationDrawer as PfNotificationDrawer,
   NotificationDrawerBody,
   NotificationDrawerGroup,
@@ -61,40 +23,65 @@ import {
   NotificationDrawerListItemBody,
   NotificationDrawerListItemHeader,
 } from '@patternfly/react-core';
-import { useClusterVersion } from '@console/shared/src/hooks/useClusterVersion';
-import {
-  Alert,
-  AlertAction,
-  AlertSeverity,
-  isAlertAction,
-  useResolvedExtensions,
-  ResolvedExtension,
-} from '@console/dynamic-plugin-sdk';
-import { ConsolePluginModel } from '../models';
-import {
-  ClusterVersionKind,
-  getNewerClusterVersionChannel,
-  getSimilarClusterVersionChannels,
-  getSortedAvailableUpdates,
-  referenceForModel,
-  splitClusterVersionChannel,
-  VersionUpdate,
-} from '../module/k8s';
-import { LinkifyExternal } from './utils/link';
-import { LabelSelector } from '@console/internal/module/k8s/label-selector';
-import { useNotificationAlerts } from '@console/shared/src/hooks/useNotificationAlerts';
+import { RhUiEllipsisVerticalIcon } from '@patternfly/react-icons';
+import i18next from 'i18next';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import type { NavigateFunction } from 'react-router';
+import { Link, useNavigate } from 'react-router';
+import type { Alert, AlertAction, ResolvedExtension } from '@console/dynamic-plugin-sdk';
+import { AlertSeverity, isAlertAction, useResolvedExtensions } from '@console/dynamic-plugin-sdk';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
-import { DEFAULT_TOAST_DRAWER_GROUP } from '@console/shared/src/components/toast/types';
-import { useNotificationHistory } from '@console/shared/src/components/toast/useNotificationHistory';
+import * as UIActions from '@console/internal/actions/ui';
+import { alertURL } from '@console/internal/components/monitoring/utils';
+import { resourcePath } from '@console/internal/components/utils/resource-link';
+import {
+  ServiceLevelNotification,
+  useShowServiceLevelNotifications,
+} from '@console/internal/components/utils/service-level';
+import { getClusterID } from '@console/internal/module/k8s/cluster-settings';
+import { LabelSelector } from '@console/internal/module/k8s/label-selector';
+import { usePluginInfo } from '@console/plugin-sdk/src/api/usePluginInfo';
+import {
+  getAlertDescription,
+  getAlertMessage,
+  getAlertName,
+  getAlertSeverity,
+  getAlertTime,
+} from '@console/shared/src/components/dashboard/status-card/alert-utils';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import {
+  BlueArrowCircleUpIcon,
+  RedExclamationCircleIcon,
+} from '@console/shared/src/components/status/icons';
 import {
   getCustomToastDrawerGroups,
   getToastDrawerGroupTitle,
   getToastNotificationsForGroup,
   groupToastNotifications,
 } from '@console/shared/src/components/toast/toastNotificationUtils';
+import { DEFAULT_TOAST_DRAWER_GROUP } from '@console/shared/src/components/toast/types';
+import { useNotificationHistory } from '@console/shared/src/components/toast/useNotificationHistory';
+import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
+import { useCanClusterUpgrade } from '@console/shared/src/hooks/useCanClusterUpgrade';
+import { useClusterVersion } from '@console/shared/src/hooks/useClusterVersion';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
+import { useNotificationAlerts } from '@console/shared/src/hooks/useNotificationAlerts';
+import { ConsolePluginModel } from '../models';
+import type { ClusterVersionKind, VersionUpdate } from '../module/k8s';
+import {
+  getNewerClusterVersionChannel,
+  getSimilarClusterVersionChannels,
+  getSortedAvailableUpdates,
+  referenceForModel,
+  splitClusterVersionChannel,
+} from '../module/k8s';
 import { ToastNotificationDrawerItems } from './notification-drawer-items';
+import { LinkifyExternal } from './utils/link';
 import { NotificationTypes } from './utils/types';
-import { RhUiEllipsisVerticalIcon } from '@patternfly/react-icons';
+
+const MAX_ALERTS_PER_GROUP = 50;
 
 const AlertErrorState: FC<AlertErrorProps> = ({ errorText }) => {
   const { t } = useTranslation('public');
@@ -256,6 +243,7 @@ export const NotificationDrawer: FC<NotificationDrawerProps> = ({
   drawerRef,
 }) => {
   const { t } = useTranslation('public');
+  const [, setActiveNamespace] = useActiveNamespace();
   const clusterID = getClusterID(useClusterVersion());
   const showServiceLevelNotification = useShowServiceLevelNotifications(clusterID);
   const pluginInfoEntries = usePluginInfo();
@@ -279,9 +267,10 @@ export const NotificationDrawer: FC<NotificationDrawerProps> = ({
     clearAllNotifications,
     markAllNotificationsRead,
   } = useNotificationHistory();
-  const groupedToastNotifications = useMemo(() => groupToastNotifications(toastNotifications), [
-    toastNotifications,
-  ]);
+  const groupedToastNotifications = useMemo(
+    () => groupToastNotifications(toastNotifications),
+    [toastNotifications],
+  );
   const otherAlertsToastNotifications = getToastNotificationsForGroup(
     groupedToastNotifications,
     DEFAULT_TOAST_DRAWER_GROUP,
@@ -297,11 +286,15 @@ export const NotificationDrawer: FC<NotificationDrawerProps> = ({
     toggleNotificationDrawer();
     navigate(location);
   };
+  const viewAllAlerts = () => {
+    setActiveNamespace(ALL_NAMESPACES_KEY);
+    itemOnClick('/monitoring/alerts');
+  };
 
-  const alertActionExtensionsMap = useMemo(() => getAlertActions(alertActionExtensions, navigate), [
-    alertActionExtensions,
-    navigate,
-  ]);
+  const alertActionExtensionsMap = useMemo(
+    () => getAlertActions(alertActionExtensions, navigate),
+    [alertActionExtensions, navigate],
+  );
 
   const canUpgrade = useCanClusterUpgrade();
   const updateList: ReactNode[] = getUpdateNotificationEntries(
@@ -314,11 +307,10 @@ export const NotificationDrawer: FC<NotificationDrawerProps> = ({
   const [criticalAlerts, nonCriticalAlerts] = useMemo(() => {
     const criticalAlertLabelSelector = new LabelSelector({ severity: AlertSeverity.Critical });
     return alerts.reduce<AlertAccumulator>(
-      ([criticalAlertAcc, nonCriticalAlertAcc], alert) => {
-        return criticalAlertLabelSelector.matchesLabels(alert.labels)
+      ([criticalAlertAcc, nonCriticalAlertAcc], alert) =>
+        criticalAlertLabelSelector.matchesLabels(alert.labels)
           ? [[...criticalAlertAcc, alert], nonCriticalAlertAcc]
-          : [criticalAlertAcc, [...nonCriticalAlertAcc, alert]];
-      },
+          : [criticalAlertAcc, [...nonCriticalAlertAcc, alert]],
       [[], []],
     );
   }, [alerts]);
@@ -384,12 +376,13 @@ export const NotificationDrawer: FC<NotificationDrawerProps> = ({
         aria-label={t('Notifications in the critical alerts group')}
       >
         {criticalAlerts.length > 0
-          ? criticalAlerts.map((alert, i) => {
+          ? criticalAlerts.slice(0, MAX_ALERTS_PER_GROUP).map((alert, i) => {
               const alertVariant = NotificationTypes[getAlertSeverity(alert)];
               const alertTime = getAlertTime(alert);
               return (
                 <NotificationDrawerListItem
                   variant={alertVariant}
+                  // eslint-disable-next-line react/no-array-index-key
                   key={`${i}_${alert.activeAt}`}
                   onClick={() => {
                     itemOnClick(alertURL(alert, alert.rule.id));
@@ -412,6 +405,14 @@ export const NotificationDrawer: FC<NotificationDrawerProps> = ({
               );
             })
           : emptyState}
+        {criticalAlerts.length > MAX_ALERTS_PER_GROUP && (
+          <NotificationDrawerListItem variant={NotificationTypes.info} onClick={viewAllAlerts}>
+            <NotificationDrawerListItemHeader
+              variant={NotificationTypes.info}
+              title={t('View all {{count}} alerts', { count: criticalAlerts.length })}
+            />
+          </NotificationDrawerListItem>
+        )}
       </NotificationDrawerList>
     </NotificationDrawerGroup>
   );
@@ -436,12 +437,13 @@ export const NotificationDrawer: FC<NotificationDrawerProps> = ({
             onMarkRead={markNotificationRead}
             onMarkUnread={markNotificationUnread}
           />
-          {nonCriticalAlerts.map((alert, i) => {
+          {nonCriticalAlerts.slice(0, MAX_ALERTS_PER_GROUP).map((alert, i) => {
             const alertVariant = NotificationTypes[getAlertSeverity(alert)];
             const alertTime = getAlertTime(alert);
             return (
               <NotificationDrawerListItem
                 variant={alertVariant}
+                // eslint-disable-next-line react/no-array-index-key
                 key={`${i}_${alert.activeAt}`}
                 onClick={() => {
                   itemOnClick(alertURL(alert, alert.rule.id));
@@ -463,6 +465,14 @@ export const NotificationDrawer: FC<NotificationDrawerProps> = ({
               </NotificationDrawerListItem>
             );
           })}
+          {nonCriticalAlerts.length > MAX_ALERTS_PER_GROUP && (
+            <NotificationDrawerListItem variant={NotificationTypes.info} onClick={viewAllAlerts}>
+              <NotificationDrawerListItemHeader
+                variant={NotificationTypes.info}
+                title={t('View all {{count}} alerts', { count: nonCriticalAlerts.length })}
+              />
+            </NotificationDrawerListItem>
+          )}
         </NotificationDrawerList>
       </NotificationDrawerGroup>
     ) : null;

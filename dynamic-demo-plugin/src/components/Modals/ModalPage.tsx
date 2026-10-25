@@ -18,8 +18,9 @@ import {
   useModal,
   useOverlay,
 } from '@openshift-console/dynamic-plugin-sdk';
-import './modal.scss';
 import { useTranslation } from 'react-i18next';
+
+import './modal.css';
 
 export const scResource = {
   kind: 'StorageClass',
@@ -54,22 +55,31 @@ const testComponentWithIDStyle: React.CSSProperties = {
 };
 
 const TEST_ID_1 = 'TEST_ID_1';
-const TestComponentWithID1 = ({ closeModal }) => (
-  <div style={{ ...testComponentWithIDStyle, top: '5rem' }}>
-    <p>Test Modal with ID "{TEST_ID_1}"</p>
-    <Button onClick={closeModal}>Close</Button>
-  </div>
-);
+const TestComponentWithID1 = ({ closeModal }) => {
+  const { t } = useTranslation('plugin__console-demo-plugin');
+  return (
+    <div style={{ ...testComponentWithIDStyle, top: '5rem' }}>
+      <p>{t('Test Modal with ID {{id}}', { id: TEST_ID_1 })}</p>
+      <Button onClick={closeModal}>{t('Close')}</Button>
+    </div>
+  );
+};
 
 const TEST_ID_2 = 'TEST_ID_2';
-const TestComponentWithID2 = ({ closeModal, ...rest }) => (
-  <div style={{ ...testComponentWithIDStyle, bottom: '5rem' }}>
-    <p>
-      Test Modal with ID "{TEST_ID_2}" and testProp "{rest.testProp}"
-    </p>
-    <Button onClick={closeModal}>Close</Button>
-  </div>
-);
+const TestComponentWithID2 = ({ closeModal, ...rest }) => {
+  const { t } = useTranslation('plugin__console-demo-plugin');
+  return (
+    <div style={{ ...testComponentWithIDStyle, bottom: '5rem' }}>
+      <p>
+        {t('Test Modal with ID {{id}} and testProp {{testProp}}', {
+          id: TEST_ID_2,
+          testProp: rest.testProp,
+        })}
+      </p>
+      <Button onClick={closeModal}>{t('Close')}</Button>
+    </div>
+  );
+};
 
 const LoadingComponent: React.FC = () => {
   const { t } = useTranslation('plugin__console-demo-plugin');
@@ -94,6 +104,8 @@ const TestOverlayComponent: OverlayComponent<TestOverlayComponentProps> = ({
   closeOverlay,
   heading = 'Default heading',
 }) => {
+  const { t } = useTranslation('plugin__console-demo-plugin');
+
   const [right] = React.useState(`${800 * Math.random()}px`);
   const [top] = React.useState(`${800 * Math.random()}px`);
 
@@ -110,7 +122,7 @@ const TestOverlayComponent: OverlayComponent<TestOverlayComponentProps> = ({
       }}
     >
       <h2>{heading}</h2>
-      <Button onClick={closeOverlay}>Close</Button>
+      <Button onClick={closeOverlay}>{t('Close')}</Button>
     </div>
   );
 };
@@ -191,19 +203,19 @@ export const TestModalPage: React.FC<{ closeComponent: any }> = () => {
       <Button onClick={onClick}>{t('Launch Modal')}</Button>
       <Button onClick={onAsyncClick}>{t('Launch Modal Asynchronously')}</Button>
       <Button onClick={onClickWithID1}>
-        {t('plugin__console-demo-plugin~Launch Modal with ID 1')}
+        {t('Launch Modal with ID 1')}
       </Button>
       <Button onClick={onClickWithID2}>
-        {t('plugin__console-demo-plugin~Launch Modal with ID 2')}
+        {t('Launch Modal with ID 2')}
       </Button>
       <Button onClick={onClickOverlayBasic}>
-        {t('plugin__console-demo-plugin~Launch overlay')}
+        {t('Launch overlay')}
       </Button>
       <Button onClick={onClickOverlayWithProps}>
-        {t('plugin__console-demo-plugin~Launch overlay with props')}
+        {t('Launch overlay with props')}
       </Button>
       <Button onClick={onClickOverlayModal}>
-        {t('plugin__console-demo-plugin~Launch overlay modal')}
+        {t('Launch overlay modal')}
       </Button>
     </Flex>
   );

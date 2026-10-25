@@ -113,10 +113,10 @@ describe('NodeTerminal', () => {
   });
 
   it('should show error with message when pod phase is Failed', async () => {
-    const failedPod = ({
+    const failedPod = {
       ...mockPod,
       status: { phase: 'Failed', message: 'ImagePullBackOff' },
-    } as unknown) as PodKind;
+    } as unknown as PodKind;
 
     setupPodCreation();
     (useK8sWatchResource as jest.Mock).mockImplementation((resource) =>
@@ -129,10 +129,10 @@ describe('NodeTerminal', () => {
   });
 
   it('should render terminal when pod is Running', async () => {
-    const runningPod = ({
+    const runningPod = {
       ...mockPod,
       status: { phase: 'Running' },
-    } as unknown) as PodKind;
+    } as unknown as PodKind;
 
     setupPodCreation();
     (useK8sWatchResource as jest.Mock).mockImplementation((resource) =>

@@ -1,7 +1,7 @@
-import { DetailsPageBreadCrumbsHook } from '@console/dynamic-plugin-sdk/src/extensions/breadcrumbs';
 import { useEffect } from 'react';
 import type { FC } from 'react';
-import { K8sKind } from '../../module/k8s';
+import type { DetailsPageBreadCrumbsHook } from '@console/dynamic-plugin-sdk/src/extensions/breadcrumbs';
+import type { K8sKind } from '../../module/k8s';
 
 type DetailsBreadcrumbResolverType = {
   useBreadcrumbs: DetailsPageBreadCrumbsHook;

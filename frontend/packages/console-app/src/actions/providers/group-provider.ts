@@ -11,10 +11,10 @@ export const useGroupActionsProvider = (resource: GroupKind): [Action[], boolean
   const groupSpecificActions = useGroupActions(resource);
   const commonActions = useCommonResourceActions(kindObj, resource);
 
-  const actions = useMemo<Action[]>(() => [...groupSpecificActions, ...commonActions], [
-    groupSpecificActions,
-    commonActions,
-  ]);
+  const actions = useMemo<Action[]>(
+    () => [...groupSpecificActions, ...commonActions],
+    [groupSpecificActions, commonActions],
+  );
 
   return [actions, !inFlight, false];
 };

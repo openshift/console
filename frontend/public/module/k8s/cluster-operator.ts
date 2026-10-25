@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { ClusterOperator, OperandVersion } from '.';
+import type { ClusterOperator, OperandVersion } from '.';
 
 export enum OperatorStatus {
   Available = 'Available',

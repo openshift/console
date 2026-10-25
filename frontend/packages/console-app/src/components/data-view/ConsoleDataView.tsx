@@ -1,6 +1,5 @@
 import type { FC, ReactNode } from 'react';
-import { useCallback, useMemo, useState, useEffect } from 'react';
-import './ConsoleDataView.scss';
+import { useCallback, useMemo, useState } from 'react';
 import {
   ResponsiveAction,
   ResponsiveActions,
@@ -24,25 +23,39 @@ import {
 import { RhUiColumnsIcon, RhUiUndoIcon } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
 import { InnerScrollContainer, Tbody, Td, Tr } from '@patternfly/react-table';
-import { Trans, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import type {
   ResourceFilters,
   ConsoleDataViewProps,
-} from '@console/dynamic-plugin-sdk/src/api/internal-types';
-import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
-import { LazyColumnManagementModalOverlay } from '@console/internal/components/modals';
+  GetDataViewRows,
+  K8sResourceCommon,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { EmptyBox } from '@console/shared/src/components/empty-state/EmptyBox';
 import { StatusBox } from '@console/shared/src/components/status/StatusBox';
 import { DataViewLabelFilter } from './DataViewLabelFilter';
+import { createSelectionCell, createSelectionColumn } from './dataViewSelectionHelpers';
 import { DataViewTextFilter } from './DataViewTextFilter';
+import { getConsoleDataViewID } from './getConsoleDataViewID';
+import { LazyConsoleDataViewColumnManagementModalOverlay } from './lazyConsoleDataViewColumnManagementModal';
+import {
+  getResourceReference,
+  getResourceReferenceForItems,
+  getMatchingSelectedResources,
+} from './resourceActions';
+import { ResourceBulkActionMenu } from './ResourceBulkActionMenu';
+import { useConsoleDataViewColumns } from './useConsoleDataViewColumns';
+import type { ConsoleDataViewColumnLayout } from './useConsoleDataViewColumns';
 import { useConsoleDataViewData } from './useConsoleDataViewData';
 import { useConsoleDataViewFilters } from './useConsoleDataViewFilters';
+import { useDataViewSelection } from './useDataViewSelection';
 
-export const initialFiltersDefault: ResourceFilters = { name: '', label: '' };
+import './ConsoleDataView.scss';
 
-const BodyLoading: FC<{ columns: number }> = ({ columns }) => {
-  return <SkeletonTableBody rowsCount={5} columnsCount={columns} />;
-};
+const BodyLoading: FC<{ columns: number }> = ({ columns }) => (
+  <SkeletonTableBody rowsCount={5} columnsCount={columns} />
+);
 
 const BodyEmpty: FC<{ label: string; colSpan: number }> = ({ label, colSpan }) => {
   const { t } = useTranslation('console-app');
@@ -63,41 +76,149 @@ const BodyEmpty: FC<{ label: string; colSpan: number }> = ({ label, colSpan }) =
 export const ConsoleDataView = <
   TData,
   TCustomRowData = any,
-  TFilters extends ResourceFilters = ResourceFilters
+  TFilters extends ResourceFilters = ResourceFilters,
 >({
   label,
   data,
   loaded,
   loadError,
   columns,
-  columnLayout,
-  columnManagementID,
-  initialFilters = initialFiltersDefault as TFilters,
+  id,
+  initialFilters,
   additionalFilterNodes,
   getObjectMetadata,
   matchesAdditionalFilters,
   getDataViewRows,
   customRowData,
+  defaultSortColumnId,
+  defaultSortDirection,
   showNamespaceOverride,
   hideNameLabelFilters,
   hideLabelFilter,
-  hideColumnManagement,
+  EmptyMsg,
   mock,
-  isResizable,
-  resetAllColumnWidths,
-  additionalActions,
-  customActions,
+  isResizable = true,
+  additionalResponsiveActions = [],
+  additionalToolbarContent,
   selection,
-  actionsBreakpoint = 'md',
 }: ConsoleDataViewProps<TData, TCustomRowData, TFilters>) => {
   const { t } = useTranslation('console-app');
   const launchModal = useOverlay();
   const [tableKey, setTableKey] = useState(0);
+  const resolvedID = getConsoleDataViewID(id);
+  const selectionEnabled = Boolean(selection);
+  const getItemId = selection?.getItemId;
+  const isSelectable = selection?.isSelectable;
+  const getBulkActions = selection?.getBulkActions;
+  const { selectedIds, onSelectItem, onSelectAll, clearSelection, deselect } = useDataViewSelection(
+    {
+      data,
+      getItemId,
+      isSelectable,
+    },
+  );
+  const tableColumns = useMemo(
+    () => (selectionEnabled ? [createSelectionColumn<TData>(), ...columns] : columns),
+    [columns, selectionEnabled],
+  );
+  const getRowsWithResourceActions = useCallback<GetDataViewRows<TData, TCustomRowData>>(
+    (rows, activeColumns) => {
+      const contentRows = getDataViewRows(rows, activeColumns);
+      const actionColumn = activeColumns.find(({ type }) => type === 'actions');
+      if (!actionColumn) return contentRows;
+
+      return contentRows.map((cells, rowIndex) => {
+        const actionCell = cells.find(({ id: columnID }) => columnID === actionColumn.id);
+        if (actionCell?.cell !== undefined) return cells;
+        const resource = rows[rowIndex]?.obj;
+        const resourceReference = getResourceReference(resource);
+        return [
+          ...cells.filter(({ id: columnID }) => columnID !== actionColumn.id),
+          {
+            ...actionCell,
+            id: actionColumn.id,
+            cell: resourceReference ? (
+              <LazyActionMenu context={{ [resourceReference]: resource }} />
+            ) : null,
+          },
+        ];
+      });
+    },
+    [getDataViewRows],
+  );
+  const getRowsWithSelection = useCallback<GetDataViewRows<TData, TCustomRowData>>(
+    (rows, activeColumns) => {
+      if (!selectionEnabled || !getItemId) {
+        return getRowsWithResourceActions(rows, activeColumns);
+      }
+      const selectionIndex = activeColumns.findIndex(({ id: columnID }) => columnID === 'select');
+      if (selectionIndex < 0) return getRowsWithResourceActions(rows, activeColumns);
+      const contentColumns = activeColumns.filter(({ id: columnID }) => columnID !== 'select');
+      const contentRows = getRowsWithResourceActions(rows, contentColumns);
+      return rows.map(({ obj }, rowIndex) => {
+        const itemId = getItemId(obj);
+        const cell = {
+          id: 'select',
+          ...createSelectionCell({
+            rowIndex,
+            itemId,
+            isSelected: selectedIds.has(itemId),
+            onSelect: onSelectItem,
+            disabled: isSelectable ? !isSelectable(obj) : false,
+          }),
+        };
+        const contentRow = contentRows[rowIndex];
+        return [...contentRow, cell];
+      });
+    },
+    [
+      getRowsWithResourceActions,
+      selectionEnabled,
+      getItemId,
+      isSelectable,
+      selectedIds,
+      onSelectItem,
+    ],
+  );
+  const managedColumnLayout = useMemo<ConsoleDataViewColumnLayout>(
+    () => ({
+      id: resolvedID,
+      type: label ?? resolvedID,
+      columns: tableColumns.map(({ id: columnID, type, title, defaultVisible }) => ({
+        id: columnID,
+        type,
+        title: title ?? '',
+        additional: defaultVisible === false,
+      })),
+      selectedColumns: new Set(),
+      showNamespaceOverride,
+    }),
+    [label, resolvedID, showNamespaceOverride, tableColumns],
+  );
+  const preparedTable = useConsoleDataViewColumns(
+    tableColumns,
+    managedColumnLayout,
+    resolvedID,
+    getRowsWithSelection,
+    getObjectMetadata,
+    isResizable,
+  );
+  const nonReorderableColumnIDs = useMemo(() => {
+    const managedColumnIDs = new Set(
+      preparedTable.columnLayout.columns.map(({ id: columnID }) => columnID),
+    );
+    return preparedTable.columns
+      .filter(({ id: columnID, props }) => managedColumnIDs.has(columnID) && props?.isStickyColumn)
+      .map(({ id: columnID }) => columnID);
+  }, [preparedTable.columnLayout.columns, preparedTable.columns]);
+  const { resetColumnWidths } = preparedTable;
+  const canResetColumnWidths =
+    isResizable && preparedTable.columns.some(({ resizableProps }) => resizableProps?.isResizable);
 
   const handleResetColumnWidths = useCallback(() => {
-    resetAllColumnWidths?.();
+    resetColumnWidths();
     setTableKey((k) => k + 1);
-  }, [resetAllColumnWidths]);
+  }, [resetColumnWidths]);
 
   const { filters, onSetFilters, clearAllFilters, filteredData } = useConsoleDataViewFilters<
     TData,
@@ -109,46 +230,80 @@ export const ConsoleDataView = <
     matchesAdditionalFilters,
   });
 
-  // Notify parent of filtered selected items when filters or selection changes
-  useEffect(() => {
-    if (selection?.onFilteredSelectionChange) {
-      const filteredSelectedItems = filteredData.filter((item) =>
-        selection.selectedItems.has(selection.getItemId(item)),
-      );
-      selection.onFilteredSelectionChange(filteredSelectedItems);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- the rule cannot statically verify optional chaining on `selection`; listing the full object would cause re-runs on every render
-  }, [
-    filteredData,
-    selection?.selectedItems,
-    selection?.getItemId,
-    selection?.onFilteredSelectionChange,
-  ]);
+  const selectableFilteredData = useMemo(
+    () => (isSelectable ? filteredData.filter(isSelectable) : filteredData),
+    [filteredData, isSelectable],
+  );
+  const matchingSelectedItems = useMemo(
+    () =>
+      selectionEnabled && getItemId
+        ? selectableFilteredData.filter((item) => selectedIds.has(getItemId(item)))
+        : [],
+    [selectableFilteredData, selectedIds, selectionEnabled, getItemId],
+  );
+  const bulkActions = useMemo(
+    () =>
+      getBulkActions?.({
+        matchingSelectedItems,
+        clearSelection,
+        deselect,
+      }),
+    [getBulkActions, matchingSelectedItems, clearSelection, deselect],
+  );
+  const matchingResourceSelection = useMemo(
+    () => getMatchingSelectedResources(matchingSelectedItems),
+    [matchingSelectedItems],
+  );
+  const bulkActionReference = useMemo(() => {
+    if (matchingSelectedItems.length > 0) return matchingResourceSelection?.reference;
+    return getResourceReferenceForItems(data, isSelectable);
+  }, [data, matchingSelectedItems.length, matchingResourceSelection, isSelectable]);
+  const getResourceId = useCallback(
+    (resource: K8sResourceCommon) => getItemId?.(resource as TData) ?? '',
+    [getItemId],
+  );
+  const selectionKey =
+    selectionEnabled && getItemId ? JSON.stringify(matchingSelectedItems.map(getItemId)) : '';
+  const selectionState = useMemo(
+    () =>
+      selectionEnabled && getItemId
+        ? { selectedIds, onSelectAll, getItemId, isSelectable }
+        : undefined,
+    [selectionEnabled, selectedIds, onSelectAll, getItemId, isSelectable],
+  );
 
   const { dataViewColumns, dataViewRows, pagination, visibleItems } = useConsoleDataViewData<
     TData,
     TCustomRowData,
     TFilters
   >({
-    columns,
+    columns: preparedTable.columns,
     filteredData,
     filters,
-    getDataViewRows,
+    getDataViewRows: preparedTable.getDataViewRows,
+    defaultSortColumnId,
+    defaultSortDirection,
     showNamespaceOverride,
-    columnManagementID,
+    columnManagementID: resolvedID,
     customRowData,
     isResizable,
-    selection,
+    columnsResolved: preparedTable.columnsResolved,
+    selection: selectionState,
   });
 
-  const bodyLoading = useMemo(() => <BodyLoading columns={dataViewColumns.length} />, [
-    dataViewColumns.length,
-  ]);
+  // PatternFly keys headers by index and only reads their widths on mount,
+  // so we re-render the table when column visibility or order changes.
+  const tableColumnsKey = JSON.stringify(dataViewColumns.map(({ id: columnId }) => columnId));
 
-  const bodyEmpty = useMemo(() => <BodyEmpty label={label} colSpan={dataViewColumns.length} />, [
-    dataViewColumns.length,
-    label,
-  ]);
+  const bodyLoading = useMemo(
+    () => <BodyLoading columns={dataViewColumns.length} />,
+    [dataViewColumns.length],
+  );
+
+  const bodyEmpty = useMemo(
+    () => <BodyEmpty label={label} colSpan={dataViewColumns.length} />,
+    [dataViewColumns.length, label],
+  );
 
   const activeState = useMemo(() => {
     if (!loaded) {
@@ -175,38 +330,38 @@ export const ConsoleDataView = <
 
   // Calculate whether to show the "select all" banner
   const bannerState = useMemo(() => {
-    if (!selection || !loaded || filteredData.length === 0) {
+    if (!selectionEnabled || !getItemId || !loaded || selectableFilteredData.length === 0) {
       return { show: false, allSelected: false };
     }
 
-    const allVisibleSelected = visibleItems.every((item) =>
-      selection.selectedItems.has(selection.getItemId(item)),
+    const selectableVisibleItems = isSelectable ? visibleItems.filter(isSelectable) : visibleItems;
+    const allVisibleSelected = selectableVisibleItems.every((item) =>
+      selectedIds.has(getItemId(item)),
     );
 
-    const visibleCount = visibleItems.length;
-    const totalCount = filteredData.length;
-    const selectedCount = filteredData.filter((item) =>
-      selection.selectedItems.has(selection.getItemId(item)),
-    ).length;
+    const visibleCount = selectableVisibleItems.length;
+    const totalCount = selectableFilteredData.length;
+    const selectedCount = matchingSelectedItems.length;
 
     // Show banner if all visible items are selected and there are more items than visible
     const shouldShow = allVisibleSelected && visibleCount > 0 && totalCount > visibleCount;
     const allSelected = selectedCount === totalCount;
 
     return { show: shouldShow, allSelected };
-  }, [selection, loaded, filteredData, visibleItems]);
+  }, [
+    selectionEnabled,
+    getItemId,
+    isSelectable,
+    loaded,
+    selectableFilteredData,
+    matchingSelectedItems.length,
+    selectedIds,
+    visibleItems,
+  ]);
 
   const handleSelectAllMatching = useCallback(() => {
-    if (selection?.onSelectAll) {
-      selection.onSelectAll(true, filteredData);
-    }
-  }, [selection, filteredData]);
-
-  const handleUnselectAll = useCallback(() => {
-    if (selection?.onSelectAll) {
-      selection.onSelectAll(false, filteredData);
-    }
-  }, [selection, filteredData]);
+    onSelectAll(true, selectableFilteredData);
+  }, [onSelectAll, selectableFilteredData]);
 
   const dataViewFilterNodes = useMemo<React.ReactNode[]>(() => {
     const basicFilters: ReactNode[] = [];
@@ -245,15 +400,21 @@ export const ConsoleDataView = <
       loaded={loaded}
       loadError={loadError}
       skeleton={<div className="loading-skeleton--table" />}
+      EmptyMsg={EmptyMsg}
     >
       <DataView
         activeState={activeState}
         className={css(dataViewFilterNodes.length === 1 && 'co-console-data-view-single-filter')}
+        data-test={`console-data-view-${resolvedID}`}
       >
         <DataViewToolbar
           filters={
             dataViewFilterNodes.length > 0 && (
-              <DataViewFilters values={filters} onChange={(_e, values) => onSetFilters(values)}>
+              <DataViewFilters
+                data-test="data-view-filters"
+                values={filters}
+                onChange={(_e, values) => onSetFilters(values)}
+              >
                 {dataViewFilterNodes}
               </DataViewFilters>
             )
@@ -261,26 +422,25 @@ export const ConsoleDataView = <
           clearAllFilters={clearAllFilters}
           actions={
             <>
-              <ResponsiveActions breakpoint={actionsBreakpoint}>
-                {!hideColumnManagement && (
-                  <ResponsiveAction
-                    isPersistent
-                    variant="plain"
-                    onClick={() =>
-                      launchModal(LazyColumnManagementModalOverlay, {
-                        columnLayout,
-                        noLimit: true,
-                      })
-                    }
-                    aria-label={t('Column management')}
-                    data-test="manage-columns"
-                  >
-                    <Tooltip content={t('Manage columns')} trigger="mouseenter">
-                      <RhUiColumnsIcon />
-                    </Tooltip>
-                  </ResponsiveAction>
-                )}
-                {isResizable && resetAllColumnWidths && (
+              <ResponsiveActions breakpoint="md">
+                <ResponsiveAction
+                  isPersistent
+                  variant="plain"
+                  onClick={() =>
+                    launchModal(LazyConsoleDataViewColumnManagementModalOverlay, {
+                      columnLayout: preparedTable.columnLayout,
+                      nonReorderableColumnIDs,
+                      noLimit: true,
+                    })
+                  }
+                  aria-label={t('Column management')}
+                  data-test="manage-columns"
+                >
+                  <Tooltip content={t('Manage columns')} trigger="mouseenter">
+                    <RhUiColumnsIcon />
+                  </Tooltip>
+                </ResponsiveAction>
+                {canResetColumnWidths && (
                   <ResponsiveAction
                     isPersistent
                     variant="plain"
@@ -293,9 +453,25 @@ export const ConsoleDataView = <
                     </Tooltip>
                   </ResponsiveAction>
                 )}
-                {additionalActions}
+                {additionalResponsiveActions.map((action) => (
+                  <ResponsiveAction key={action.key} {...action} />
+                ))}
               </ResponsiveActions>
-              {customActions}
+              {additionalToolbarContent}
+              {selection && (
+                <ResourceBulkActionMenu
+                  reference={bulkActionReference}
+                  matchingSelectedResources={
+                    matchingResourceSelection?.matchingSelectedResources ?? []
+                  }
+                  getResourceId={getResourceId}
+                  clearSelection={clearSelection}
+                  deselect={deselect}
+                  localActions={bulkActions}
+                  selectedCount={matchingSelectedItems.length}
+                  selectionKey={selectionKey}
+                />
+              )}
             </>
           }
           pagination={
@@ -313,8 +489,8 @@ export const ConsoleDataView = <
             className="pf-v6-u-mb-md"
             screenReaderText={
               bannerState.allSelected
-                ? t('You selected all {{count}} {{label}}.', {
-                    count: filteredData.length,
+                ? t('You selected all {{numberOf}} {{label}}.', {
+                    numberOf: selectableFilteredData.length,
                     label: label || t('items'),
                   })
                 : t('You selected all {{label}} on this page.', {
@@ -324,24 +500,22 @@ export const ConsoleDataView = <
           >
             {bannerState.allSelected ? (
               <>
-                <Trans ns="console-app" i18nKey="You selected all <1>{{count}}</1> {{label}}.">
-                  You selected all <strong>{{ count: filteredData.length }}</strong>{' '}
-                  {{ label: label || t('items') }}.
-                </Trans>{' '}
-                <Button variant="link" isInline onClick={handleUnselectAll}>
+                {t('You selected all {{numberOf}} {{label}}.', {
+                  numberOf: selectableFilteredData.length,
+                  label: label || t('items'),
+                })}{' '}
+                <Button variant="link" isInline onClick={clearSelection}>
                   {t('Clear all.')}
                 </Button>
               </>
             ) : (
               <>
-                <Trans ns="console-app" i18nKey="You selected all {{label}} on this page.">
-                  You selected all {{ label: label || t('items') }} on this page.
-                </Trans>{' '}
+                {t('You selected all {{label}} on this page.', { label: label || t('items') })}{' '}
                 <Button variant="link" isInline onClick={handleSelectAllMatching}>
-                  <Trans ns="console-app" i18nKey="Select all <1>{{count}}</1> {{label}}.">
-                    Select all <strong>{{ count: filteredData.length }}</strong>{' '}
-                    {{ label: label || t('items') }}.
-                  </Trans>
+                  {t('Select all {{numberOf}} {{label}}.', {
+                    numberOf: selectableFilteredData.length,
+                    label: label || t('items'),
+                  })}
                 </Button>
               </>
             )}
@@ -349,9 +523,8 @@ export const ConsoleDataView = <
         )}
         <InnerScrollContainer>
           <DataViewTable
-            key={tableKey}
+            key={`${resolvedID}-${tableKey}-${tableColumnsKey}`}
             aria-label={t(`public~{{label}} table`, { label })}
-            // @ts-expect-error - TODO(react18): CONSOLE-5040: Remove ConsoleDataViewColumn bodge
             columns={dataViewColumns}
             rows={dataViewRows}
             bodyStates={{ empty: bodyEmpty, loading: bodyLoading }}
@@ -373,59 +546,13 @@ export const ConsoleDataView = <
   );
 };
 
-const SELECTION_COLUMN_WIDTH = '45px';
-
-export const cellIsStickyProps = {
-  isStickyColumn: true,
-  stickyMinWidth: '0',
-};
-
-export const selectionColumnProps = {
-  ...cellIsStickyProps,
-  stickyLeftOffset: '0',
-};
-
-export const nameCellProps = {
-  ...cellIsStickyProps,
-  hasRightBorder: true,
-};
-
-/**
- * Returns name column props with appropriate offset based on whether bulk select is enabled.
- * Use this for column definitions.
- * @param hasRightBorder - Whether to include hasRightBorder (default: true)
- * @param withBulkSelect - Whether the table has bulk selection enabled (default: false)
- */
-export const getNameColumnProps = (hasRightBorder = true, withBulkSelect = false) => ({
-  ...cellIsStickyProps,
-  ...(hasRightBorder && { hasRightBorder: true }),
-  ...(withBulkSelect && { stickyLeftOffset: SELECTION_COLUMN_WIDTH }),
-});
-
-/**
- * Returns name cell props with appropriate offset based on whether bulk select is enabled.
- * Use this for row cell definitions.
- * @param name - The name to use in the data-test attribute
- * @param withBulkSelect - Whether the table has bulk selection enabled (default: false)
- */
-export const getNameCellProps = (name: string, withBulkSelect = false) => ({
-  ...getNameColumnProps(true, withBulkSelect),
-  'data-test': `data-view-cell-${name}-name`,
-});
-
-export const actionsCellProps = {
-  ...cellIsStickyProps,
-  hasLeftBorder: true,
-  isActionCell: true,
-};
-
 /**
  * Returns the style prop for a Labels column so it can be shared across tables.
- * @param width - Persisted or current width in pixels (e.g. from getWidth(columnId))
+ * @param width - (optional) Width in pixels; defaults to `defaultWidth`.
  * @param defaultWidth - Default width when no width is provided (default 200)
  * @returns Style object for the column's props.style
  */
-export const getLabelsColumnWidthStyleProp = (width: number | undefined, defaultWidth = 200) => ({
+export const getLabelsColumnWidthStyleProp = (width?: number, defaultWidth = 200) => ({
   style: {
     width: `${width ?? defaultWidth}px`,
   },

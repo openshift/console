@@ -95,18 +95,16 @@ const UpdateStrategyModal: FC<UpdateStrategyModalProps> = ({
   );
 };
 
-export const UpdateStrategyModalOverlay: OverlayComponent<UpdateStrategyModalProps> = (props) => {
-  return (
-    <Modal
-      variant={ModalVariant.small}
-      isOpen
-      onClose={props.closeOverlay}
-      aria-labelledby="update-strategy-modal-title"
-    >
-      <UpdateStrategyModal {...props} close={props.closeOverlay} cancel={props.closeOverlay} />
-    </Modal>
-  );
-};
+export const UpdateStrategyModalOverlay: OverlayComponent<UpdateStrategyModalProps> = (props) => (
+  <Modal
+    variant={ModalVariant.small}
+    isOpen
+    onClose={props.closeOverlay}
+    aria-labelledby="update-strategy-modal-title"
+  >
+    <UpdateStrategyModal {...props} close={props.closeOverlay} cancel={props.closeOverlay} />
+  </Modal>
+);
 
 UpdateStrategyModal.displayName = 'UpdateStrategyModal';
 

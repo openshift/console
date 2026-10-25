@@ -84,7 +84,6 @@ describe('UploadJarPage', () => {
       state: null,
       hash: '',
       key: 'default',
-      unstable_mask: undefined,
     });
   });
 

@@ -75,7 +75,7 @@ export const getNodeClientCSRs = (
 };
 export const getNodeServerCSR = (
   csrs: CertificateSigningRequestKind[] = [],
-  node: NodeKind,
+  node: NodeKind = undefined,
 ): CertificateSigningRequestKind => {
   const nodeCSRs = getNodeCSRs(csrs, `system:node:${node.metadata.name}`, false);
   if (!nodeCSRs.length || !isCSRPending(nodeCSRs[0])) {

@@ -71,15 +71,12 @@ const canDropPubSubSinkOnNode = (operation: string, edge: Edge, node: Node): boo
   operation === MOVE_PUB_SUB_CONNECTOR_OPERATION &&
   !node.getTargetEdges().find((e) => e.getSource() === edge.getSource());
 
-const isEventPubSubDroppable = (source: Node, target: Node) => {
-  return (
-    source.getType() === TYPE_EVENT_PUB_SUB &&
-    !source
-      .getSourceEdges()
-      .map((e) => e.getTarget())
-      .includes(target)
-  );
-};
+const isEventPubSubDroppable = (source: Node, target: Node) =>
+  source.getType() === TYPE_EVENT_PUB_SUB &&
+  !source
+    .getSourceEdges()
+    .map((e) => e.getTarget())
+    .includes(target);
 const getKnativeTooltip = (monitor): string => {
   switch (monitor.getOperation()?.type) {
     case CREATE_PUB_SUB_CONNECTOR_OPERATION: {
@@ -281,9 +278,7 @@ export const eventSourceTargetSpec: DropTargetSpec<
   { element: GraphElement }
 > = {
   accept: [NODE_DRAG_TYPE, EDGE_DRAG_TYPE, CREATE_CONNECTOR_DROP_TYPE],
-  canDrop: () => {
-    return false;
-  },
+  canDrop: () => false,
   collect: (monitor, props) => ({
     edgeDragging: nodesEdgeIsDragging(monitor, props),
   }),

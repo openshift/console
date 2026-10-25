@@ -1,9 +1,8 @@
-import type { ComponentType, FC } from 'react';
+import type { ComponentType, FC, ReactNode } from 'react';
 import { useEffect, useContext, useMemo } from 'react';
-import { Map as ImmutableMap } from 'immutable';
-import { useTranslation } from 'react-i18next';
 import { Stack, StackItem } from '@patternfly/react-core';
-import {
+import { useTranslation } from 'react-i18next';
+import type {
   ResolvedExtension,
   DashboardsOverviewHealthOperator,
   DashboardsOverviewHealthURLSubsystem,
@@ -25,19 +24,20 @@ import {
   HealthState,
   healthStateMessage,
 } from '@console/shared/src/components/dashboard/status-card/states';
-import { useDynamicK8sWatchResources } from '@console/shared/src/hooks/useDynamicK8sWatchResources';
 import { useDashboardResources } from '@console/shared/src/hooks/useDashboardResources';
-import { K8sKind } from '../../../../module/k8s';
-import { AsyncComponent, LazyLoader } from '../../../utils/async';
-import { resourcePath } from '../../../utils/resource-link';
-import { useK8sWatchResource, useK8sWatchResources } from '../../../utils/k8s-watch-hook';
-import { uniqueResource } from './utils';
+import { useDynamicK8sWatchResources } from '@console/shared/src/hooks/useDynamicK8sWatchResources';
 import { getPrometheusQueryResponse } from '../../../../actions/dashboards';
+import type { K8sKind } from '../../../../module/k8s';
+import type { LazyLoader } from '../../../utils/async';
+import { AsyncComponent } from '../../../utils/async';
+import { useK8sWatchResource, useK8sWatchResources } from '../../../utils/k8s-watch-hook';
+import { resourcePath } from '../../../utils/resource-link';
 import { ClusterDashboardContext } from './context';
+import { uniqueResource } from './utils';
 
 const OperatorRow: FC<
   OperatorRowProps & {
-    LoadingComponent: () => JSX.Element;
+    LoadingComponent: () => ReactNode;
     Component: ComponentType<OperatorRowProps> | LazyLoader<ComponentType<OperatorRowProps>>;
     key: string;
     isResolved: boolean;
@@ -150,19 +150,18 @@ export const OperatorHealthItem: FC<OperatorHealthItemProps> = ({ operatorSubsys
 export const URLHealthItem: FC<URLHealthItemProps> = ({ subsystem, models }) => {
   const { t } = useTranslation('public');
 
-  const urls = useMemo(() => [{ url: subsystem.url, fetch: subsystem.fetch }], [
-    subsystem.url,
-    subsystem.fetch,
-  ]);
+  const urls = useMemo(
+    () => [{ url: subsystem.url, fetch: subsystem.fetch }],
+    [subsystem.url, subsystem.fetch],
+  );
   const { urlResults } = useDashboardResources({ urls });
-  const modelExists =
-    subsystem.additionalResource && !!models.get(subsystem.additionalResource.kind);
+  const modelExists = subsystem.additionalResource && !!models?.[subsystem.additionalResource.kind];
   const [k8sData, k8sLoaded, k8sLoadError] = useK8sWatchResource(
     modelExists ? subsystem.additionalResource : null,
   );
 
-  const healthResult = urlResults.getIn([subsystem.url, 'data']);
-  const healthResultError = urlResults.getIn([subsystem.url, 'loadError']);
+  const healthResult = urlResults?.[subsystem.url]?.data;
+  const healthResultError = urlResults?.[subsystem.url]?.loadError;
 
   const k8sResult = modelExists
     ? { data: k8sData, loaded: k8sLoaded, loadError: k8sLoadError }
@@ -197,13 +196,13 @@ export const PrometheusHealthItem: FC<PrometheusHealthItemProps> = ({ subsystem,
   const { t } = useTranslation('public');
   const { infrastructure } = useContext(ClusterDashboardContext);
 
-  const prometheusQueries = useMemo(() => subsystem.queries.map((query) => ({ query })), [
-    subsystem.queries,
-  ]);
+  const prometheusQueries = useMemo(
+    () => subsystem.queries.map((query) => ({ query })),
+    [subsystem.queries],
+  );
   const { prometheusResults } = useDashboardResources({ prometheusQueries });
 
-  const modelExists =
-    subsystem.additionalResource && !!models.get(subsystem.additionalResource.kind);
+  const modelExists = subsystem.additionalResource && !!models?.[subsystem.additionalResource.kind];
   const [k8sData, k8sLoaded, k8sLoadError] = useK8sWatchResource(
     modelExists ? subsystem.additionalResource : null,
   );
@@ -256,18 +255,18 @@ export const ResourceHealthItem: FC<ResourceHealthItemProps> = ({ subsystem, nam
 
   const { title, resources, healthHandler, popupComponent: PopupComponent, popupTitle } = subsystem;
 
-  const resourcesWithNamespace: WatchK8sResources<ResourcesObject> = useMemo(() => {
-    return {
+  const resourcesWithNamespace: WatchK8sResources<ResourcesObject> = useMemo(
+    () => ({
       ...resources,
       ...(resources.imageManifestVuln && {
         imageManifestVuln: { ...resources.imageManifestVuln, namespace },
       }),
-    };
-  }, [resources, namespace]);
-
-  const resourcesResult: WatchK8sResults<ResourcesObject> = useK8sWatchResources(
-    resourcesWithNamespace,
+    }),
+    [resources, namespace],
   );
+
+  const resourcesResult: WatchK8sResults<ResourcesObject> =
+    useK8sWatchResources(resourcesWithNamespace);
   const healthState: SubsystemHealth = healthHandler?.(resourcesResult, t) ?? {
     state: HealthState.NOT_AVAILABLE,
     message: healthStateMessage(HealthState.NOT_AVAILABLE, t),
@@ -293,12 +292,12 @@ type OperatorHealthItemProps = {
 
 type URLHealthItemProps = {
   subsystem: ResolvedExtension<DashboardsOverviewHealthURLSubsystem<any>>['properties'];
-  models: ImmutableMap<string, K8sKind>;
+  models: Record<string, K8sKind>;
 };
 
 type PrometheusHealthItemProps = {
   subsystem: ResolvedExtension<DashboardsOverviewHealthPrometheusSubsystem>['properties'];
-  models: ImmutableMap<string, K8sKind>;
+  models: Record<string, K8sKind>;
 };
 
 type ResourceHealthItemProps = {

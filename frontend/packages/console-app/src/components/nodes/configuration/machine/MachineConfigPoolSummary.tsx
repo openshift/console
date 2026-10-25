@@ -50,7 +50,7 @@ const MachineConfigPoolSummary: FC<MachineConfigPoolSummaryProps> = ({ obj, load
             <DescriptionListTerm>{t('Max unavailable machines')}</DescriptionListTerm>
             <DescriptionListDescription>{maxUnavailable}</DescriptionListDescription>
           </DescriptionListGroup>
-          <DetailsItem label={t('Paused')} obj={obj} path={'spec.paused'}>
+          <DetailsItem label={t('Paused')} obj={obj} path="spec.paused">
             {obj?.spec?.paused ? t('True') : t('False')}
           </DetailsItem>
           <DetailsItem label={t('Node selector')} obj={obj} path="spec.nodeSelector">

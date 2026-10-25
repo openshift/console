@@ -1,10 +1,8 @@
 import { renderHook } from '@testing-library/react';
 import { Base64 } from 'js-base64';
-
-import { SecretKind } from '@console/internal/module/k8s';
-import { useAccessReview } from '@console/internal/components/utils/rbac';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-
+import { useAccessReview } from '@console/internal/components/utils/rbac';
+import type { SecretKind } from '@console/internal/module/k8s';
 import { useAlertReceiverLink } from '../cluster-setup-alert-receiver-link';
 
 jest.mock('@console/internal/components/utils/rbac', () => ({

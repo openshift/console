@@ -1,9 +1,9 @@
-import { Button, Popover } from '@patternfly/react-core';
 import type { FC, ReactNode } from 'react';
-import { useTranslation } from 'react-i18next';
-import { HashLink } from '@console/shared/src/components/links/HashLink';
-
+import { Button, Popover } from '@patternfly/react-core';
 import { RhUiSyncIcon } from '@patternfly/react-icons';
+import { useTranslation } from 'react-i18next';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
+import { HashLink } from '@console/shared/src/components/links/HashLink';
 import {
   BlueArrowCircleUpIcon,
   BlueInfoCircleIcon,
@@ -11,20 +11,20 @@ import {
   RedExclamationCircleIcon,
 } from '@console/shared/src/components/status/icons';
 import { ClusterVersionModel } from '../../models';
+import type { ClusterVersionKind } from '../../module/k8s';
 import {
   ClusterUpdateStatus,
   ClusterVersionConditionType,
-  ClusterVersionKind,
   getClusterUpdateStatus,
   getClusterVersionCondition,
   getDesiredClusterVersion,
   k8sPatch,
   K8sResourceConditionStatus,
 } from '../../module/k8s';
-import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
+import type { ErrorModalProps } from '../modals/error-modal';
+import { ErrorModal } from '../modals/error-modal';
 import { resourcePathFromModel } from '../utils/resource-link';
 import { truncateMiddle } from '../utils/truncate-middle';
-import { ErrorModal, ErrorModalProps } from '../modals/error-modal';
 
 export const ClusterVersionConditionsLink: FC<ClusterVersionConditionsLinkProps> = ({ cv }) => {
   const { t } = useTranslation('public');
@@ -50,15 +50,13 @@ const cancelUpdate = (
   );
 };
 
-const StatusMessagePopover: FC<CVStatusMessagePopoverProps> = ({ bodyContent, children }) => {
-  return (
-    <Popover bodyContent={truncateMiddle(bodyContent, { length: 256 })}>
-      <Button variant="link" isInline>
-        <span>{children}</span>
-      </Button>
-    </Popover>
-  );
-};
+const StatusMessagePopover: FC<CVStatusMessagePopoverProps> = ({ bodyContent, children }) => (
+  <Popover bodyContent={truncateMiddle(bodyContent, { length: 256 })}>
+    <Button variant="link" isInline>
+      <span>{children}</span>
+    </Button>
+  </Popover>
+);
 
 const InvalidMessage: FC<CVStatusMessageProps> = ({ cv }) => {
   const { t } = useTranslation('public');
@@ -129,18 +127,16 @@ export const UpdatingMessageText: FC<CVStatusMessageProps> = ({ cv }) => {
   return <>{t('Update to {{version}} in progress', { version })}</>;
 };
 
-const UpdatingMessage: FC<CVStatusMessageProps> = ({ cv, isFailing }) => {
-  return (
-    <>
-      <div data-test="cv-update-status-updating">
-        <RhUiSyncIcon className="co-spin co-icon-space-r" />
-        <UpdatingMessageText cv={cv} />
-      </div>
-      {isFailing && <FailingMessageText cv={cv} />}
-      <ClusterVersionConditionsLink cv={cv} />
-    </>
-  );
-};
+const UpdatingMessage: FC<CVStatusMessageProps> = ({ cv, isFailing }) => (
+  <>
+    <div data-test="cv-update-status-updating">
+      <RhUiSyncIcon className="co-spin co-icon-space-r" />
+      <UpdatingMessageText cv={cv} />
+    </div>
+    {isFailing && <FailingMessageText cv={cv} />}
+    <ClusterVersionConditionsLink cv={cv} />
+  </>
+);
 
 const ErrorRetrievingMessage: FC<CVStatusMessageProps> = ({ cv }) => {
   const retrievedUpdatesCondition = getClusterVersionCondition(
@@ -165,14 +161,12 @@ const ErrorRetrievingMessage: FC<CVStatusMessageProps> = ({ cv }) => {
   );
 };
 
-const FailingMessage: FC<CVStatusMessageProps> = ({ cv }) => {
-  return (
-    <>
-      <FailingMessageText cv={cv} />
-      <ClusterVersionConditionsLink cv={cv} />
-    </>
-  );
-};
+const FailingMessage: FC<CVStatusMessageProps> = ({ cv }) => (
+  <>
+    <FailingMessageText cv={cv} />
+    <ClusterVersionConditionsLink cv={cv} />
+  </>
+);
 
 export const UpToDateMessage: FC<{}> = () => {
   const { t } = useTranslation('public');

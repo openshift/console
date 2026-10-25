@@ -1,16 +1,18 @@
-import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { screen } from '@testing-library/react';
 import { safeDump } from 'js-yaml';
-
-import { CreateYAMLInner } from '../create-yaml';
-import { PodModel, ConfigMapModel } from '../../models';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
+import { PodModel, ConfigMapModel } from '../../models';
+import { CreateYAMLInner } from '../create-yaml';
+import { AsyncComponent } from '../utils/async';
 
 jest.mock('../utils/async', () => ({
-  AsyncComponent: ({ initialResource, header, create }) =>
-    `YAML Editor: ${header} (${create ? 'Create' : 'Edit'}) - Resource: ${JSON.stringify(
-      initialResource,
-    )}`,
+  AsyncComponent: jest.fn(
+    ({ initialResource, header, create }) =>
+      `YAML Editor: ${header} (${create ? 'Create' : 'Edit'}) - Resource: ${JSON.stringify(
+        initialResource,
+      )}`,
+  ),
 }));
 
 jest.mock('../utils/status-box', () => ({
@@ -29,6 +31,7 @@ describe('CreateYAMLInner', () => {
   const defaultParams = { ns: 'default', plural: 'pods' };
 
   const mockUseResolvedExtensions = useResolvedExtensions as jest.Mock;
+  const mockAsyncComponent = AsyncComponent as unknown as jest.Mock;
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -37,9 +40,7 @@ describe('CreateYAMLInner', () => {
 
   describe('Loading States', () => {
     it('verifies the loading box when kindsInFlight is true', async () => {
-      renderWithProviders(
-        <CreateYAMLInner params={defaultParams} kindsInFlight={true} kindObj={null} />,
-      );
+      renderWithProviders(<CreateYAMLInner params={defaultParams} kindsInFlight kindObj={null} />);
 
       expect(screen.getByText('Loading...')).toBeVisible();
       expect(screen.queryByText('YAML Editor:')).not.toBeInTheDocument();
@@ -140,6 +141,35 @@ describe('CreateYAMLInner', () => {
       expect(editorText).toContain('"metadata"');
       expect(editorText).toContain('"namespace":"default"');
       expect(editorText).toContain('"spec"');
+    });
+  });
+
+  describe('onCancel forwarding (OCPBUGS-70361)', () => {
+    it('forwards onCancel to the editor when provided', async () => {
+      const onCancel = jest.fn();
+
+      renderWithProviders(
+        <CreateYAMLInner
+          params={defaultParams}
+          kindsInFlight={false}
+          kindObj={PodModel}
+          onCancel={onCancel}
+        />,
+      );
+
+      expect(mockAsyncComponent).toHaveBeenCalledTimes(1);
+      const [asyncProps] = mockAsyncComponent.mock.calls[0];
+      expect(asyncProps.onCancel).toBe(onCancel);
+    });
+
+    it('leaves onCancel undefined when none is provided, so EditYAML falls back to its default cancel behavior', async () => {
+      renderWithProviders(
+        <CreateYAMLInner params={defaultParams} kindsInFlight={false} kindObj={PodModel} />,
+      );
+
+      expect(mockAsyncComponent).toHaveBeenCalledTimes(1);
+      const [asyncProps] = mockAsyncComponent.mock.calls[0];
+      expect(asyncProps.onCancel).toBeUndefined();
     });
   });
 });

@@ -1,14 +1,12 @@
 import { screen } from '@testing-library/react';
-
-import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
-import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
-import { useFlag } from '@console/shared/src/hooks/useFlag';
 import {
   GettingStartedShowState,
   useGettingStartedShowState,
 } from '@console/shared/src/components/getting-started/useGettingStartedShowState';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { expectTextsNotInDocument } from '../../../getting-started-test-utils';
-
 import { GettingStartedSection } from '../GettingStartedSection';
 
 jest.mock('../SampleGettingStartedCard', () => ({

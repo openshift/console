@@ -1,10 +1,6 @@
 import type { FC } from 'react';
-import { useMemo, useCallback, Suspense, useState, useEffect } from 'react';
-import * as _ from 'lodash';
-import i18next, { TFunction } from 'i18next';
-import { useTranslation } from 'react-i18next';
-import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
-import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
+import { useMemo, useCallback, Suspense, useState } from 'react';
+import { ChartDonut } from '@patternfly/react-charts/victory';
 import {
   Alert,
   AlertActionCloseButton,
@@ -17,55 +13,57 @@ import {
 } from '@patternfly/react-core';
 import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
 import type { DataViewFilterOption } from '@patternfly/react-data-view/dist/esm/DataViewFilters';
-import { ChartDonut } from '@patternfly/react-charts/victory';
-import {
-  actionsCellProps,
-  getNameCellProps,
-  initialFiltersDefault,
-  ConsoleDataView,
-  nameCellProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
-import { ResourceFilters, GetDataViewRows } from '@console/app/src/components/data-view/types';
-import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-import { TableColumn } from '@console/dynamic-plugin-sdk/src/lib-core';
-import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
+import type { TFunction } from 'i18next';
+import i18next from 'i18next';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
+import { useResolvedExtensions } from '@console/dynamic-plugin-sdk';
+import type {
+  ConsoleDataViewColumn,
+  ResourceFilters,
+  GetDataViewRows,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import type { PVCStatus, PVCAlert } from '@console/dynamic-plugin-sdk/src/extensions/pvc';
 import {
   isPVCAlert,
   isPVCCreateProp,
   isPVCStatus,
-  PVCStatus,
-  PVCAlert,
 } from '@console/dynamic-plugin-sdk/src/extensions/pvc';
-import { useResolvedExtensions } from '@console/dynamic-plugin-sdk';
-import { PersistentVolumeClaimKind, referenceFor } from '@console/internal/module/k8s';
+import type { PVCMetrics } from '@console/internal/actions/ui';
+import { setPVCMetrics } from '@console/internal/actions/ui';
+import { PersistentVolumeClaimModel, VolumeAttributesClassModel } from '@console/internal/models';
+import type { PersistentVolumeClaimKind } from '@console/internal/module/k8s';
+import { referenceFor } from '@console/internal/module/k8s';
+import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import { ActionServiceProvider } from '@console/shared/src/components/actions/ActionServiceProvider';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { ActionMenu } from '@console/shared/src/components/actions/menu/ActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { LoadingBox } from '@console/shared/src/components/loading/LoadingBox';
 import { Status } from '@console/shared/src/components/status/Status';
 import { FLAGS } from '@console/shared/src/constants/common';
-import { calculateRadius } from '@console/shared/src/utils/pod-utils';
+import { DASH } from '@console/shared/src/constants/ui';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { getNamespace, getName } from '@console/shared/src/selectors/common';
 import { getRequestedPVCSize } from '@console/shared/src/selectors/storage';
-import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
-import { useFlag } from '@console/shared/src/hooks/useFlag';
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { DASH } from '@console/shared/src/constants/ui';
+import { calculateRadius } from '@console/shared/src/utils/pod-utils';
 import { Conditions } from './conditions';
-import { DetailsPage, DetailsPageProps } from './factory/details';
-import { ListPage } from './factory/list-page';
-import { navFactory } from './utils/horizontal-nav';
-import { SectionHeading } from './utils/headings';
-import { ResourceLink } from './utils/resource-link';
-import { ResourceSummary } from './utils/details-page';
-import { Selector } from './utils/selector';
-import { humanizeBinaryBytes, convertToBaseValue } from './utils/units';
 import { ResourceEventStream } from './events';
-import { PVCMetrics, setPVCMetrics } from '@console/internal/actions/ui';
-import { PersistentVolumeClaimModel } from '@console/internal/models';
+import type { DetailsPageProps } from './factory/details';
+import { DetailsPage } from './factory/details';
+import { ListPage } from './factory/list-page';
 import { PrometheusEndpoint } from './graphs/helpers';
 import { usePrometheusPoll } from './graphs/prometheus-poll-hook';
-import { VolumeAttributesClassModel } from '../models';
+import { ResourceSummary } from './utils/details-page';
+import { SectionHeading } from './utils/headings';
+import { navFactory } from './utils/horizontal-nav';
+import { ResourceLink } from './utils/resource-link';
+import { Selector } from './utils/selector';
+import { humanizeBinaryBytes, convertToBaseValue } from './utils/units';
 
 const { kind } = PersistentVolumeClaimModel;
 
@@ -129,8 +127,8 @@ export const PVCStatusComponent: FC<PVCStatusProps> = ({ pvc }) => {
 const getDataViewRowsCreator: (
   t: TFunction,
   pvcMetrics: PVCMetrics,
-) => GetDataViewRows<PersistentVolumeClaimKind> = (t, pvcMetrics) => (data, columns) => {
-  return data.map(({ obj }) => {
+) => GetDataViewRows<PersistentVolumeClaimKind> = (t, pvcMetrics) => (data, columns) =>
+  data.map(({ obj }) => {
     const metrics = pvcMetrics?.usedCapacity?.[getNamespace(obj)]?.[getName(obj)];
     const [name, namespace] = [getName(obj), getNamespace(obj)];
     const totalCapacityMetric = convertToBaseValue(obj.status?.capacity?.storage);
@@ -141,7 +139,6 @@ const getDataViewRowsCreator: (
     const rowCells = {
       [tableColumnInfo[0].id]: {
         cell: <ResourceLink kind={kind} name={name} namespace={namespace} title={name} />,
-        props: getNameCellProps(name),
       },
       [tableColumnInfo[1].id]: {
         cell: <ResourceLink kind="Namespace" name={namespace} title={namespace} />,
@@ -179,92 +176,69 @@ const getDataViewRowsCreator: (
       },
       [tableColumnInfo[7].id]: {
         cell: <LazyActionMenu context={context} />,
-        props: actionsCellProps,
       },
     };
 
     return columns.map(({ id }) => {
       const cell = rowCells[id]?.cell || DASH;
-      const props = rowCells[id]?.props || undefined;
       return {
         id,
-        props,
         cell,
       };
     });
   });
-};
 
 const usePersistentVolumeClaimColumns = (): {
-  columns: TableColumn<PersistentVolumeClaimKind>[];
-  resetAllColumnWidths: () => void;
+  columns: ConsoleDataViewColumn<PersistentVolumeClaimKind>[];
 } => {
   const { t } = useTranslation('public');
-  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(
-    PersistentVolumeClaimModel,
-  );
 
-  const columns: TableColumn<PersistentVolumeClaimKind>[] = useMemo(
+  const columns: ConsoleDataViewColumn<PersistentVolumeClaimKind>[] = useMemo(
     () => [
       {
-        title: t('Name'),
-        sort: 'metadata.name',
+        type: 'name' as const,
         id: tableColumnInfo[0].id,
-        resizableProps: getResizableProps(tableColumnInfo[0].id),
-        props: { ...nameCellProps, modifier: 'nowrap' },
       },
       {
-        title: t('Namespace'),
-        sort: 'metadata.namespace',
+        type: 'namespace' as const,
         id: tableColumnInfo[1].id,
-        resizableProps: getResizableProps(tableColumnInfo[1].id),
-        props: { modifier: 'nowrap' },
       },
       {
         title: t('Status'),
         sort: 'status.phase',
         id: tableColumnInfo[2].id,
-        resizableProps: getResizableProps(tableColumnInfo[2].id),
-        props: { modifier: 'nowrap' },
+        props: { modifier: 'nowrap' as const },
       },
       {
         title: t('PersistentVolume'),
         sort: 'spec.volumeName',
         id: tableColumnInfo[3].id,
-        resizableProps: getResizableProps(tableColumnInfo[3].id),
-        props: { modifier: 'nowrap' },
+        props: { modifier: 'nowrap' as const },
       },
       {
         title: t('Capacity'),
         sort: 'pvcStorage',
         id: tableColumnInfo[4].id,
-        resizableProps: getResizableProps(tableColumnInfo[4].id),
-        props: { modifier: 'nowrap' },
+        props: { modifier: 'nowrap' as const },
       },
       {
         title: t('Used'),
         sort: 'pvcUsed',
         id: tableColumnInfo[5].id,
-        resizableProps: getResizableProps(tableColumnInfo[5].id),
-        props: { modifier: 'nowrap' },
+        props: { modifier: 'nowrap' as const },
       },
       {
         title: t('StorageClass'),
         sort: 'spec.storageClassName',
         id: tableColumnInfo[6].id,
-        resizableProps: getResizableProps(tableColumnInfo[6].id),
-        props: { modifier: 'nowrap' },
+        props: { modifier: 'nowrap' as const },
       },
-      {
-        title: '',
-        id: tableColumnInfo[7].id,
-        props: { ...actionsCellProps },
-      },
+      { type: 'actions' as const, id: tableColumnInfo[7].id },
     ],
-    [t, getResizableProps],
+    [t],
   );
 
-  return { columns, resetAllColumnWidths };
+  return { columns };
 };
 
 const PVCDetails: FC<PVCDetailsProps> = ({ obj: pvc }) => {
@@ -286,15 +260,12 @@ const PVCDetails: FC<PVCDetailsProps> = ({ obj: pvc }) => {
   const volumeMode = pvc?.spec?.volumeMode;
   const conditions = pvc?.status?.conditions;
 
-  // State to track dismissed alerts
-  const [isErrorAlertDismissed, setIsErrorAlertDismissed] = useState(false);
-  const [isInfoAlertDismissed, setIsInfoAlertDismissed] = useState(false);
-
-  // Reset alert dismiss states when PVC changes
-  useEffect(() => {
-    setIsErrorAlertDismissed(false);
-    setIsInfoAlertDismissed(false);
-  }, [pvc?.metadata?.uid]);
+  // Track which PVC uid the alert was dismissed for — automatically resets when PVC changes
+  const [errorAlertDismissedUid, setErrorAlertDismissedUid] = useState<string | undefined>();
+  const [infoAlertDismissedUid, setInfoAlertDismissedUid] = useState<string | undefined>();
+  const isErrorAlertDismissed =
+    !!pvc?.metadata?.uid && errorAlertDismissedUid === pvc?.metadata?.uid;
+  const isInfoAlertDismissed = !!pvc?.metadata?.uid && infoAlertDismissedUid === pvc?.metadata?.uid;
 
   const query =
     name && namespace
@@ -309,8 +280,10 @@ const PVCDetails: FC<PVCDetailsProps> = ({ obj: pvc }) => {
 
   const totalCapacityMetric = convertToBaseValue(storage);
   const totalRequestMetric = convertToBaseValue(requestedStorage);
-  const usedMetrics = response?.data?.result?.[0]?.value?.[1];
-  const availableMetrics = usedMetrics ? totalCapacityMetric - Number(usedMetrics) : null;
+  const usedMetricsRaw = response?.data?.result?.[0]?.value?.[1];
+  const usedMetrics = usedMetricsRaw != null ? Number(usedMetricsRaw) : undefined;
+  const availableMetrics =
+    usedMetrics != null && Number.isFinite(usedMetrics) ? totalCapacityMetric - usedMetrics : null;
   const totalCapacity = humanizeBinaryBytes(totalCapacityMetric);
   const availableCapacity = humanizeBinaryBytes(availableMetrics, undefined, totalCapacity.unit);
   const usedCapacity = humanizeBinaryBytes(usedMetrics, undefined, totalCapacity.unit);
@@ -322,12 +295,13 @@ const PVCDetails: FC<PVCDetailsProps> = ({ obj: pvc }) => {
 
   const totalCapacityString = `${Number(totalCapacity.value.toFixed(1))} ${totalCapacity.unit}`;
 
-  const donutData = usedMetrics
-    ? [
-        { x: i18next.t('public~Used'), y: usedCapacity.value },
-        { x: i18next.t('public~Available'), y: availableCapacity.value },
-      ]
-    : [{ x: i18next.t('public~Total'), y: totalCapacity.value }];
+  const donutData =
+    usedMetrics != null && Number.isFinite(usedMetrics)
+      ? [
+          { x: i18next.t('public~Used'), y: usedCapacity.value },
+          { x: i18next.t('public~Available'), y: availableCapacity.value },
+        ]
+      : [{ x: i18next.t('public~Total'), y: totalCapacity.value }];
 
   const [pvcAlertExtensions] = useResolvedExtensions<PVCAlert>(isPVCAlert);
 
@@ -348,7 +322,12 @@ const PVCDetails: FC<PVCDetailsProps> = ({ obj: pvc }) => {
             variant="danger"
             title={t('VolumeAttributesClass modification failed')}
             className="co-alert co-alert--margin-bottom-sm"
-            actionClose={<AlertActionCloseButton onClose={() => setIsErrorAlertDismissed(true)} />}
+            actionClose={
+              <AlertActionCloseButton
+                onClose={() => setErrorAlertDismissedUid(pvc?.metadata?.uid)}
+              />
+            }
+            data-test="vac-error-alert"
             data-test-id="vac-error-alert"
           >
             {t(
@@ -366,7 +345,11 @@ const PVCDetails: FC<PVCDetailsProps> = ({ obj: pvc }) => {
                 : t('VolumeAttributesClass modification in progress')
             }
             className="co-alert co-alert--margin-bottom-sm"
-            actionClose={<AlertActionCloseButton onClose={() => setIsInfoAlertDismissed(true)} />}
+            actionClose={
+              <AlertActionCloseButton
+                onClose={() => setInfoAlertDismissedUid(pvc?.metadata?.uid)}
+              />
+            }
           >
             {!currentVolumeAttributesClassName
               ? t('VolumeAttributesClass "{{target}}" is pending application.', {
@@ -399,7 +382,7 @@ const PVCDetails: FC<PVCDetailsProps> = ({ obj: pvc }) => {
               labels={({ datum }) => `${datum.y} ${totalCapacity.unit} ${datum.x}`}
               subTitle={availableMetrics ? t('Available') : t('Total')}
               title={availableMetrics ? availableCapacityString : totalCapacityString}
-              constrainToVisibleArea={true}
+              constrainToVisibleArea
             />
           </div>
         )}
@@ -418,7 +401,7 @@ const PVCDetails: FC<PVCDetailsProps> = ({ obj: pvc }) => {
             <DescriptionList>
               <DescriptionListGroup>
                 <DescriptionListTerm>{t('Status')}</DescriptionListTerm>
-                <DescriptionListDescription data-test-id="pvc-status">
+                <DescriptionListDescription data-test="pvc-status" data-test-id="pvc-status">
                   <PVCStatusComponent pvc={pvc} />
                 </DescriptionListDescription>
               </DescriptionListGroup>
@@ -436,14 +419,17 @@ const PVCDetails: FC<PVCDetailsProps> = ({ obj: pvc }) => {
                   </DescriptionListDescription>
                 </DescriptionListGroup>
               )}
-              {usedMetrics && _.isEmpty(loadError) && !loading && (
-                <DescriptionListGroup>
-                  <DescriptionListTerm>{t('Used')}</DescriptionListTerm>
-                  <DescriptionListDescription>
-                    {humanizeBinaryBytes(usedMetrics).string}
-                  </DescriptionListDescription>
-                </DescriptionListGroup>
-              )}
+              {usedMetrics != null &&
+                Number.isFinite(usedMetrics) &&
+                _.isEmpty(loadError) &&
+                !loading && (
+                  <DescriptionListGroup>
+                    <DescriptionListTerm>{t('Used')}</DescriptionListTerm>
+                    <DescriptionListDescription>
+                      {humanizeBinaryBytes(usedMetrics).string}
+                    </DescriptionListDescription>
+                  </DescriptionListGroup>
+                )}
               {!_.isEmpty(accessModes) && (
                 <DescriptionListGroup>
                   <DescriptionListTerm>{t('Access modes')}</DescriptionListTerm>
@@ -471,7 +457,10 @@ const PVCDetails: FC<PVCDetailsProps> = ({ obj: pvc }) => {
               {isVACSupported && volumeAttributesClassName !== currentVolumeAttributesClassName && (
                 <DescriptionListGroup>
                   <DescriptionListTerm>{t('Requested VolumeAttributesClass')}</DescriptionListTerm>
-                  <DescriptionListDescription data-test-id="pvc-requested-vac">
+                  <DescriptionListDescription
+                    data-test="pvc-requested-vac"
+                    data-test-id="pvc-requested-vac"
+                  >
                     {volumeAttributesClassName ? (
                       <ResourceLink
                         kind={referenceFor(VolumeAttributesClassModel)}
@@ -486,7 +475,10 @@ const PVCDetails: FC<PVCDetailsProps> = ({ obj: pvc }) => {
               {isVACSupported && !!currentVolumeAttributesClassName && (
                 <DescriptionListGroup>
                   <DescriptionListTerm>{t('VolumeAttributesClass')}</DescriptionListTerm>
-                  <DescriptionListDescription data-test-id="pvc-current-vac">
+                  <DescriptionListDescription
+                    data-test="pvc-current-vac"
+                    data-test-id="pvc-current-vac"
+                  >
                     <ResourceLink
                       kind={referenceFor(VolumeAttributesClassModel)}
                       name={currentVolumeAttributesClassName}
@@ -520,8 +512,8 @@ const PersistentVolumeClaimList: FC<PersistentVolumeClaimListProps> = ({
   ...props
 }) => {
   const { t } = useTranslation('public');
-  const { columns, resetAllColumnWidths } = usePersistentVolumeClaimColumns();
-  const pvcMetrics = useConsoleSelector<PVCMetrics>(({ UI }) => UI.getIn(['metrics', 'pvc']));
+  const { columns } = usePersistentVolumeClaimColumns();
+  const pvcMetrics = useConsoleSelector<PVCMetrics>(({ UI }) => UI.metrics?.pvc);
 
   const getDataViewRows = useMemo(() => getDataViewRowsCreator(t, pvcMetrics), [t, pvcMetrics]);
 
@@ -543,10 +535,7 @@ const PersistentVolumeClaimList: FC<PersistentVolumeClaimListProps> = ({
     [t],
   );
 
-  const initialFilters = useMemo<PersistentVolumeClaimFilters>(
-    () => ({ ...initialFiltersDefault, status: [] }),
-    [],
-  );
+  const initialFilters = useMemo<PersistentVolumeClaimFilters>(() => ({ status: [] }), []);
 
   const additionalFilterNodes = useMemo<React.ReactNode[]>(
     () => [
@@ -580,6 +569,7 @@ const PersistentVolumeClaimList: FC<PersistentVolumeClaimListProps> = ({
     <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<PersistentVolumeClaimKind>
         {...props}
+        id={PersistentVolumeClaimModel}
         label={t('PersistentVolumeClaims')}
         data={data}
         loaded={loaded}
@@ -588,9 +578,6 @@ const PersistentVolumeClaimList: FC<PersistentVolumeClaimListProps> = ({
         initialFilters={initialFilters}
         additionalFilterNodes={additionalFilterNodes}
         matchesAdditionalFilters={matchesAdditionalFilters}
-        hideColumnManagement
-        isResizable
-        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );
@@ -655,8 +642,8 @@ export const PersistentVolumeClaimsPage: FC<PersistentVolumeClaimsPageProps> = (
       title={t('PersistentVolumeClaims')}
       kind={kind}
       ListComponent={PersistentVolumeClaimList}
-      canCreate={true}
-      omitFilterToolbar={true}
+      canCreate
+      omitFilterToolbar
       createProps={createProps}
       customData={pvcMetrics}
     />

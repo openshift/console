@@ -1,17 +1,21 @@
 import type { FC } from 'react';
 import { Suspense } from 'react';
+import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
+import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
 import { ActionServiceProvider } from '@console/shared/src/components/actions/ActionServiceProvider';
 import { ActionMenu } from '@console/shared/src/components/actions/menu/ActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
-import { usePrometheusGate } from '@console/shared/src/hooks/usePrometheusGate';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { DeploymentKind, K8sResourceKind, referenceForModel } from '../module/k8s';
+import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
+import { usePrometheusGate } from '@console/shared/src/hooks/usePrometheusGate';
+import { StatefulSetModel } from '../models';
+import type { DeploymentKind, K8sResourceKind } from '../module/k8s';
+import { referenceForModel } from '../module/k8s';
 import { ResourceEventStream } from './events';
 import { DetailsPage } from './factory/details';
 import { ListPage } from './factory/list-page';
-
 import { AsyncComponent } from './utils/async';
 import { ContainerTable } from './utils/container-table';
 import { ResourceSummary, RuntimeClass } from './utils/details-page';
@@ -19,10 +23,6 @@ import { SectionHeading } from './utils/headings';
 import { navFactory, PodsComponent } from './utils/horizontal-nav';
 import { LoadingBox } from './utils/status-box';
 import { VolumesTable } from './volumes-table';
-import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
-import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
-import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
-import { StatefulSetModel } from '../models';
 import { useWorkloadColumns, getWorkloadDataViewRows } from './workload-table';
 
 const StatefulSetDetails: FC<StatefulSetDetailsProps> = ({ obj: ss }) => {
@@ -74,12 +74,13 @@ const EnvironmentTab: FC<EnvironmentTabProps> = (props) => (
 );
 
 const StatefulSetsList: FC<StatefulSetsListProps> = ({ data, loaded, ...props }) => {
-  const { columns, resetAllColumnWidths } = useWorkloadColumns<K8sResourceKind>(StatefulSetModel);
+  const { columns } = useWorkloadColumns<K8sResourceKind>();
 
   return (
     <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<K8sResourceKind>
         {...props}
+        id={StatefulSetModel}
         label={StatefulSetModel.labelPlural}
         data={data}
         loaded={loaded}
@@ -87,25 +88,20 @@ const StatefulSetsList: FC<StatefulSetsListProps> = ({ data, loaded, ...props })
         getDataViewRows={(dvData, dvColumns) =>
           getWorkloadDataViewRows(dvData, dvColumns, StatefulSetModel)
         }
-        hideColumnManagement={true}
-        isResizable
-        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );
 };
 
-export const StatefulSetsPage: FC<StatefulSetsPageProps> = (props) => {
-  return (
-    <ListPage
-      {...props}
-      kind={referenceForModel(StatefulSetModel)}
-      ListComponent={StatefulSetsList}
-      canCreate={true}
-      omitFilterToolbar={true}
-    />
-  );
-};
+export const StatefulSetsPage: FC<StatefulSetsPageProps> = (props) => (
+  <ListPage
+    {...props}
+    kind={referenceForModel(StatefulSetModel)}
+    ListComponent={StatefulSetsList}
+    canCreate
+    omitFilterToolbar
+  />
+);
 
 const StatefulSetPods: FC<StatefulSetPodsProps> = (props) => <PodsComponent {...props} showNodes />;
 

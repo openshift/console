@@ -9,23 +9,21 @@ const PaneBody: FC<PaneBodyProps> = ({
   sectionHeading,
   style,
   ...props
-}) => {
-  return (
-    <PageSection
-      className={css(
-        'co-m-pane__body',
-        { 'co-m-pane__body--section-heading': sectionHeading },
-        className,
-      )}
-      isFilled={fullHeight}
-      hasBodyWrapper={false}
-      style={style}
-      {...props}
-    >
-      {children}
-    </PageSection>
-  );
-};
+}) => (
+  <PageSection
+    className={css(
+      'co-m-pane__body',
+      { 'co-m-pane__body--section-heading': sectionHeading },
+      className,
+    )}
+    isFilled={fullHeight}
+    hasBodyWrapper={false}
+    style={style}
+    {...props}
+  >
+    {children}
+  </PageSection>
+);
 
 type PaneBodyProps = {
   children: ReactNode;

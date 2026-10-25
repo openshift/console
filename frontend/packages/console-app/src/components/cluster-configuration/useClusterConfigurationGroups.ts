@@ -16,11 +16,13 @@ const useClusterConfigurationGroups = (): [
     isClusterConfigurationGroup,
   );
 
-  const sortedGroups = useMemo(() => {
-    return orderExtensionBasedOnInsertBeforeAndAfter(
-      resolvedExtensions.map((resolvedExtension) => resolvedExtension.properties),
-    );
-  }, [resolvedExtensions]);
+  const sortedGroups = useMemo(
+    () =>
+      orderExtensionBasedOnInsertBeforeAndAfter(
+        resolvedExtensions.map((resolvedExtension) => resolvedExtension.properties),
+      ),
+    [resolvedExtensions],
+  );
 
   return [sortedGroups, resolved, errors];
 };

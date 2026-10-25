@@ -77,19 +77,19 @@ const CreateHelmChartRepositoryForm: FC<
         ? t('Edit ProjectHelmChartRepository')
         : t('Create ProjectHelmChartRepository')
       : existingRepo
-      ? t('Edit {{label}}', { label: existingRepo.kind })
-      : t('Create Helm Chart Repository');
+        ? t('Edit {{label}}', { label: existingRepo.kind })
+        : t('Create Helm Chart Repository');
 
   const formDescription =
     !showScopeType && formData.scope === ProjectHelmChartRepositoryModel.kind
       ? existingRepo
-        ? t('Update helm chart repository in the namespace.')
-        : t('Add helm chart repository in the namespace.')
+        ? t('Update Helm Chart repository in the namespace.')
+        : t('Add Helm Chart repository in the namespace.')
       : existingRepo
-      ? existingRepo.kind === ProjectHelmChartRepositoryModel.kind
-        ? t('Update helm chart repository in the namespace.')
-        : t('Update the helm chart repository.')
-      : t('Add helm chart repository.');
+        ? existingRepo.kind === ProjectHelmChartRepositoryModel.kind
+          ? t('Update Helm Chart repository in the namespace.')
+          : t('Update the Helm Chart repository.')
+        : t('Add Helm Chart repository.');
 
   return (
     <FlexForm onSubmit={handleSubmit}>

@@ -2,13 +2,13 @@ import type { FC } from 'react';
 import { RhUiFlagIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import * as semver from 'semver';
-import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
-import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
-import { useFlag } from '@console/shared/src/hooks/useFlag';
-import { useOpenShiftVersion } from '@console/shared/src/hooks/useClusterVersion';
+import { getDisabledAddActions } from '@console/dev-console/src/utils/useAddActionExtensions';
 import type { GettingStartedLink } from '@console/shared/src/components/getting-started/GettingStartedCard';
 import { GettingStartedCard } from '@console/shared/src/components/getting-started/GettingStartedCard';
-import { getDisabledAddActions } from '@console/dev-console/src/utils/useAddActionExtensions';
+import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
+import { useOpenShiftVersion } from '@console/shared/src/hooks/useClusterVersion';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 
 export const DeveloperFeaturesGettingStartedCard: FC = () => {
   const { t } = useTranslation('public');
@@ -54,7 +54,7 @@ export const DeveloperFeaturesGettingStartedCard: FC = () => {
       id="developer-features"
       icon={<RhUiFlagIcon color="var(--co-global--palette--orange-400)" aria-hidden="true" />}
       title={t('Explore new developer features')}
-      titleColor={'var(--co-global--palette--orange-400)'}
+      titleColor="var(--co-global--palette--orange-400)"
       description={t('Explore new features and resources within the developer perspective.')}
       links={links}
       moreLink={moreLink}

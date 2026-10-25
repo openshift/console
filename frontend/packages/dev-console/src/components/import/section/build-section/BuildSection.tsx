@@ -166,7 +166,7 @@ export const BuildSection: FC<BuildSectionProps> = ({ values, appResources }) =>
           )}
           {(
             selectedStrategy.type === ImportStrategy.SERVERLESS_FUNCTION
-              ? funcLoaded ?? false
+              ? (funcLoaded ?? false)
               : envsLoaded
           ) ? (
             <EnvironmentField

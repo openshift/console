@@ -135,8 +135,8 @@ export const estimateFarRemediationBoundsFromTemplate = (
     typeof retryRaw === 'number'
       ? retryRaw
       : typeof retryRaw === 'string'
-      ? parseInt(retryRaw, 10)
-      : 5;
+        ? parseInt(retryRaw, 10)
+        : 5;
   const safeRetry = Number.isFinite(retry) && retry > 0 ? retry : 5;
   const timeoutSeconds =
     parseDurationToSeconds(String(inner?.timeout ?? inner?.fenceTimeout)) ??
@@ -254,8 +254,8 @@ export const getRemediationDisplay = (
   const source = primaryMHC
     ? ({ prefix: 'MHC', check: primaryMHC } as const)
     : primaryNHC
-    ? ({ prefix: 'NHC', check: primaryNHC } as const)
-    : undefined;
+      ? ({ prefix: 'NHC', check: primaryNHC } as const)
+      : undefined;
   if (!source) {
     return DASH;
   }
@@ -267,8 +267,8 @@ export const getRemediationDisplay = (
   const baseRemediation = reboot
     ? t('console-app~auto-reboot')
     : source.prefix === 'MHC'
-    ? t('console-app~machine replacement')
-    : t('console-app~template remediation');
+      ? t('console-app~machine replacement')
+      : t('console-app~template remediation');
 
   const unhealthyConditions = source.check.spec?.unhealthyConditions ?? [];
   const maxTimeoutSeconds = getMaxTimeoutFromConditions(unhealthyConditions);

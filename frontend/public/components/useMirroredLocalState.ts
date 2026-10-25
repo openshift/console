@@ -37,18 +37,16 @@ const useMirroredLocalState = <S>({
         // We have url params, routed here with params
         setLocalState(externalState);
       }
-    } else {
+    } else if (!_.isEqual(externalState, localState)) {
       // We have local data so we have been initialized
-      if (!_.isEqual(externalState, localState)) {
-        // They are not equal, so we need to figure out who is right
-        if (_.isEmpty(externalState)) {
-          // Params are empty, so this means the component was not re-mounted but we lost params
-          onExternalChange(localState);
-        } else {
-          // Params are not empty -- this is a conflict of source of truth
-          // Possible reason would be a local code re-route on this page, accept URL as source of truth
-          setLocalState(externalState);
-        }
+      // They are not equal, so we need to figure out who is right
+      if (_.isEmpty(externalState)) {
+        // Params are empty, so this means the component was not re-mounted but we lost params
+        onExternalChange(localState);
+      } else {
+        // Params are not empty -- this is a conflict of source of truth
+        // Possible reason would be a local code re-route on this page, accept URL as source of truth
+        setLocalState(externalState);
       }
     }
   }, [localState, externalState, onExternalChange, defaultState]);

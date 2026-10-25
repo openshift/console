@@ -25,7 +25,6 @@ const (
 	wsLocalHost   = "ws://localhost:8080"
 	self          = "'self'"
 	data          = "data:"
-	unsafeEval    = "'unsafe-eval'"
 	unsafeInline  = "'unsafe-inline'"
 	none          = "'none'"
 	https         = "https:"
@@ -110,7 +109,10 @@ func BuildCSPDirectives(k8sMode string, pluginsCSP serverconfig.MultiKeyValue, i
 
 	imgSrcDirective = append(imgSrcDirective, data)
 	fontSrcDirective = append(fontSrcDirective, data)
-	scriptSrcDirective = append(scriptSrcDirective, []string{unsafeEval, nonce}...)
+	scriptSrcDirective = append(scriptSrcDirective, nonce)
+	// Monaco creates theme style elements and inline styles at runtime, so extracting its
+	// static CSS does not yet allow us to remove 'unsafe-inline' from style-src.
+	// See https://github.com/microsoft/monaco-editor/issues/271.
 	styleSrcDirective = append(styleSrcDirective, unsafeInline)
 
 	// Construct the full list of directives from the aggregated sources.

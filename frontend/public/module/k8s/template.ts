@@ -1,6 +1,5 @@
 import * as _ from 'lodash';
-
-import { TemplateInstanceKind } from '../../module/k8s';
+import type { TemplateInstanceKind } from '.';
 
 export const getTemplateInstanceStatus = (instance: TemplateInstanceKind) => {
   const conditions = _.get(instance, 'status.conditions');

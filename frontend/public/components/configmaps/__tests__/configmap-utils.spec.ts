@@ -70,12 +70,12 @@ describe('configmap-utils', () => {
   });
 
   describe('getConfigMapKeyValues', () => {
-    it('should return empty array for invalid values ', () => {
+    it('should return empty array for invalid values', () => {
       expect(getConfigMapKeyValues(null, '')).toEqual([]);
       expect(getConfigMapKeyValues(undefined, '')).toEqual([]);
     });
 
-    it('should return empty array for configmap without data or binaryData fields ', () => {
+    it('should return empty array for configmap without data or binaryData fields', () => {
       expect(
         getConfigMapKeyValues(
           {
@@ -216,10 +216,10 @@ describe('configmap-utils', () => {
         metadata: {
           ...sampleConfigMap.metadata,
           labels: {
-            ['test.label.one']: 'label1',
+            'test.label.one': 'label1',
           },
           annotations: {
-            ['test.annotation.one']: 'annotation1',
+            'test.annotation.one': 'annotation1',
           },
         },
       };

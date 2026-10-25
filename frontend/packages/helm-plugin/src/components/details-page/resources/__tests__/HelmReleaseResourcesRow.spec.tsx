@@ -1,5 +1,5 @@
 import { screen, configure } from '@testing-library/react';
-import type { ConsoleDataViewColumn } from '@console/app/src/components/data-view/types';
+import type { ConsoleDataViewColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import type { K8sResourceKind, RowProps } from '@console/internal/module/k8s';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { getDataViewRows, HelmReleaseResourceStatus } from '../HelmReleaseResourcesRow';
@@ -28,11 +28,11 @@ describe('getDataViewRows', () => {
     ];
 
     testColumns = [
-      { id: 'name', title: 'Name', cell: null },
-      { id: 'type', title: 'Type', cell: null },
-      { id: 'status', title: 'Status', cell: null },
-      { id: 'created', title: 'Created', cell: null },
-    ] as ConsoleDataViewColumn<K8sResourceKind>[];
+      { id: 'name', title: 'Name' },
+      { id: 'type', title: 'Type' },
+      { id: 'status', title: 'Status' },
+      { id: 'created', title: 'Created' },
+    ];
   });
 
   it('should return data view rows with correct structure', () => {

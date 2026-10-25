@@ -1,51 +1,49 @@
-import { sortable } from '@patternfly/react-table';
-import type { TFunction } from 'i18next';
-import { tableColumnClasses } from './revision-table';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import type { ConsoleDataViewColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import type { RevisionKind } from '../../types';
 
-const RevisionHeader = (t: TFunction) => () => {
-  return [
-    {
-      title: t('knative-plugin~Name'),
-      sortField: 'metadata.name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[0] },
-    },
-    {
-      id: 'namespace',
-      title: t('knative-plugin~Namespace'),
-      sortField: 'metadata.namespace',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[1] },
-    },
-    {
-      title: t('knative-plugin~Service'),
-      sortField: 'metadata.labels["serving.knative.dev/service"]',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[2] },
-    },
-    {
-      title: t('knative-plugin~Created'),
-      sortField: 'metadata.creationTimestamp',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[3] },
-    },
-    {
-      title: t('knative-plugin~Conditions'),
-      props: { className: tableColumnClasses[4] },
-    },
-    {
-      title: t('knative-plugin~Ready'),
-      props: { className: tableColumnClasses[5] },
-    },
-    {
-      title: t('knative-plugin~Reason'),
-      props: { className: tableColumnClasses[6] },
-    },
-    {
-      title: '',
-      props: { className: tableColumnClasses[7] },
-    },
-  ];
+export const useRevisionColumns = (): {
+  columns: ConsoleDataViewColumn<RevisionKind>[];
+} => {
+  const { t } = useTranslation('knative-plugin');
+  const columns = useMemo(
+    () => [
+      { type: 'name' as const, id: 'name' },
+      {
+        type: 'namespace' as const,
+        id: 'namespace',
+      },
+      {
+        id: 'service',
+        title: t('Service'),
+        sort: 'metadata.labels["serving.knative.dev/service"]',
+        props: { modifier: 'nowrap' as const },
+      },
+      {
+        id: 'created',
+        title: t('Created'),
+        sort: 'metadata.creationTimestamp',
+        props: { modifier: 'nowrap' as const },
+      },
+      {
+        id: 'conditions',
+        title: t('Conditions'),
+        props: { modifier: 'nowrap' as const },
+      },
+      {
+        id: 'ready',
+        title: t('Ready'),
+        props: { modifier: 'nowrap' as const },
+      },
+      {
+        id: 'reason',
+        title: t('Reason'),
+        props: { modifier: 'nowrap' as const },
+      },
+      { type: 'actions' as const, id: 'actions' },
+    ],
+    [t],
+  );
+  return { columns };
 };
-
-export default RevisionHeader;

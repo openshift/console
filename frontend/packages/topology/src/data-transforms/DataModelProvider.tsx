@@ -59,7 +59,6 @@ const DataModelProvider: FC<DataModelProviderProps> = ({ namespace, children }) 
                 uid: factory.uid,
               };
             } catch (error) {
-              // eslint-disable-next-line no-console
               console.error(
                 `Failed to resolve resources for topology factory "${factory.properties.id}" from extension "${factory.uid}":`,
                 error,

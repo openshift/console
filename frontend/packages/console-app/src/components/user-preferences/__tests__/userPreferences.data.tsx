@@ -93,20 +93,18 @@ export const mockUserPreferenceGroups: ResolvedUserPreferenceGroup[] = [
   userPreferenceGroupLanguage,
 ];
 
-export const mockUserPreferenceItemExtensions: ResolvedExtension<
-  UserPreferenceItem
->[] = mockUserPreferenceItems.map((userPreferenceItem) => ({
-  type: 'console.user-preference/item',
-  pluginName: '',
-  uid: '',
-  properties: userPreferenceItem,
-}));
+export const mockUserPreferenceItemExtensions: ResolvedExtension<UserPreferenceItem>[] =
+  mockUserPreferenceItems.map((userPreferenceItem) => ({
+    type: 'console.user-preference/item',
+    pluginName: '',
+    uid: '',
+    properties: userPreferenceItem,
+  }));
 
-export const mockUserPreferenceGroupExtensions: ResolvedExtension<
-  UserPreferenceGroup
->[] = mockUserPreferenceGroups.map((userPreferenceGroup) => ({
-  type: 'console.user-preference/group',
-  pluginName: '',
-  uid: '',
-  properties: userPreferenceGroup,
-}));
+export const mockUserPreferenceGroupExtensions: ResolvedExtension<UserPreferenceGroup>[] =
+  mockUserPreferenceGroups.map((userPreferenceGroup) => ({
+    type: 'console.user-preference/group',
+    pluginName: '',
+    uid: '',
+    properties: userPreferenceGroup,
+  }));

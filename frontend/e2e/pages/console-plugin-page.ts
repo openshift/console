@@ -7,15 +7,11 @@ export class ConsolePluginPage extends BasePage {
   private readonly pfCodeEditor = this.page.locator('.pf-v6-c-code-editor');
 
   async navigateToConsolePlugins(): Promise<void> {
-    await this.goTo(
-      '/k8s/cluster/operator.openshift.io~v1~Console/cluster/console-plugins',
-    );
+    await this.goTo('/k8s/cluster/operator.openshift.io~v1~Console/cluster/console-plugins');
   }
 
   async navigateToPluginDetails(pluginName: string): Promise<void> {
-    await this.goTo(
-      `/k8s/cluster/console.openshift.io~v1~ConsolePlugin/${pluginName}`,
-    );
+    await this.goTo(`/k8s/cluster/console.openshift.io~v1~ConsolePlugin/${pluginName}`);
   }
 
   async navigateToPluginManifest(pluginName: string): Promise<void> {
@@ -25,7 +21,7 @@ export class ConsolePluginPage extends BasePage {
   }
 
   getPluginNameCell(pluginName: string): Locator {
-    return this.page.getByTestId(`${pluginName}-name`);
+    return this.page.getByTestId(`data-view-cell-${pluginName}-name`);
   }
 
   getPluginStatusCell(pluginName: string): Locator {
@@ -52,6 +48,11 @@ export class ConsolePluginPage extends BasePage {
 
   async navigateToOverview(): Promise<void> {
     await this.goTo('/');
+  }
+
+  async openAboutModal(): Promise<void> {
+    await this.robustClick(this.page.getByTestId('help-dropdown-toggle'));
+    await this.robustClick(this.page.getByRole('menuitem', { name: 'About', exact: true }));
   }
 
   async navigateToDynamicRoute(id: string): Promise<void> {

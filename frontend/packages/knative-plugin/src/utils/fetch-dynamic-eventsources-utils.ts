@@ -75,7 +75,6 @@ export const fetchEventSourcesCrd = async () => {
     eventSourceData.eventSourceModels = allModels;
   } catch (err) {
     // show warning if there is an error fetching the CRDs
-    // eslint-disable-next-line no-console
     console.warn('Error fetching CRDs for dynamic event sources', err);
     eventSourceData.eventSourceModels = [];
   }
@@ -93,7 +92,6 @@ export const useEventSourceModels = (): EventSourcetData => {
         })
         .catch((err) => {
           setModelsData({ loaded: true, eventSourceModels: eventSourceData.eventSourceModels });
-          // eslint-disable-next-line no-console
           console.warn('Error fetching CRDs for dynamic event sources', err);
         });
     } else {
@@ -107,28 +105,23 @@ export const useEventSourceModels = (): EventSourcetData => {
 export const getEventSourceModels = (): K8sKind[] => eventSourceData.eventSourceModels;
 
 export const getChannelModels = (): K8sKind[] => eventSourceData.eventSourceChannels;
-export const getDynamicEventSourcesResourceList = (namespace: string, limit?: number) => {
-  return eventSourceData.eventSourceModels.map((model) => {
-    return {
-      isList: true,
-      kind: referenceForModel(model),
-      namespace,
-      prop: referenceForModel(model),
-      optional: true,
-      ...(limit && { limit }),
-    };
-  });
-};
+export const getDynamicEventSourcesResourceList = (namespace: string, limit?: number) =>
+  eventSourceData.eventSourceModels.map((model) => ({
+    isList: true,
+    kind: referenceForModel(model),
+    namespace,
+    prop: referenceForModel(model),
+    optional: true,
+    ...(limit && { limit }),
+  }));
 
-export const getDynamicEventSourceModel = (resourceRef: string): K8sKind => {
-  return eventSourceData.eventSourceModels.find(
+export const getDynamicEventSourceModel = (resourceRef: string): K8sKind =>
+  eventSourceData.eventSourceModels.find(
     (model: K8sKind) => referenceForModel(model) === resourceRef,
   );
-};
 
-export const getDynamicEventSourcesModelRefs = (): string[] => {
-  return eventSourceData.eventSourceModels.map((model: K8sKind) => referenceForModel(model));
-};
+export const getDynamicEventSourcesModelRefs = (): string[] =>
+  eventSourceData.eventSourceModels.map((model: K8sKind) => referenceForModel(model));
 
 export const isDynamicEventResourceKind = (resourceRef: string): boolean => {
   const index = eventSourceData.eventSourceModels.findIndex(
@@ -190,7 +183,6 @@ export const useChannelModels = () => {
         })
         .catch((err) => {
           setModelsData({ loaded: true, eventSourceChannels: eventSourceData.eventSourceChannels });
-          // eslint-disable-next-line no-console
           console.warn('Error fetching CRDs for dynamic event sources', err);
         });
     } else {
@@ -201,18 +193,15 @@ export const useChannelModels = () => {
   return modelsData;
 };
 
-export const getDynamicChannelResourceList = (namespace: string, limit?: number) => {
-  return eventSourceData.eventSourceChannels.map((model) => {
-    return {
-      isList: true,
-      kind: referenceForModel(model),
-      namespace,
-      prop: referenceForModel(model),
-      optional: true,
-      ...(limit && { limit }),
-    };
-  });
-};
+export const getDynamicChannelResourceList = (namespace: string, limit?: number) =>
+  eventSourceData.eventSourceChannels.map((model) => ({
+    isList: true,
+    kind: referenceForModel(model),
+    namespace,
+    prop: referenceForModel(model),
+    optional: true,
+    ...(limit && { limit }),
+  }));
 
 export const useChannelResourcesList = (): EventChannelData => {
   const [modelRefs, setModelRefs] = useState<EventChannelData>({
@@ -230,7 +219,6 @@ export const useChannelResourcesList = (): EventChannelData => {
         })
         .catch((err) => {
           setModelRefs({ channels: [], loaded: true });
-          // eslint-disable-next-line no-console
           console.warn('Error fetching CRDs for dynamic channel model refs', err);
         });
     } else {
@@ -245,14 +233,12 @@ export const useChannelResourcesList = (): EventChannelData => {
   return modelRefs;
 };
 
-export const getDynamicChannelModelRefs = (): string[] => {
-  return eventSourceData.eventSourceChannels.map((model: K8sKind) => referenceForModel(model));
-};
-export const getDynamicChannelModel = (resourceRef: string): K8sKind => {
-  return eventSourceData.eventSourceChannels.find(
+export const getDynamicChannelModelRefs = (): string[] =>
+  eventSourceData.eventSourceChannels.map((model: K8sKind) => referenceForModel(model));
+export const getDynamicChannelModel = (resourceRef: string): K8sKind =>
+  eventSourceData.eventSourceChannels.find(
     (model: K8sKind) => referenceForModel(model) === resourceRef,
   );
-};
 
 export const isEventingChannelResourceKind = (resourceRef: string): boolean => {
   const index = eventSourceData.eventSourceChannels.findIndex(

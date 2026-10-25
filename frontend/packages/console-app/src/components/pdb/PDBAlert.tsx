@@ -35,9 +35,8 @@ export const PDBAlert: FC<PDBAlertProps> = ({ namespace }) => {
   const [resources, loaded, loadError] = useK8sWatchResource<PodDisruptionBudgetKind[]>(resource);
 
   const { count: pdbCount, name: pdbName } = checkPodDisruptionBudgets(resources);
-  const getRedirectLink = () => {
-    return resourcePathFromModel(PodDisruptionBudgetModel, pdbName || null, namespace);
-  };
+  const getRedirectLink = () =>
+    resourcePathFromModel(PodDisruptionBudgetModel, pdbName || null, namespace);
 
   const onWarningLinkClick = () => {
     fireTelemetryEvent('PodDisruptionBudget Warning Label Clicked');

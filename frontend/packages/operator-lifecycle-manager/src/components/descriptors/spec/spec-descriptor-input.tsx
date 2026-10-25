@@ -1,4 +1,3 @@
-import * as Immutable from 'immutable';
 import {
   NodeAffinityField,
   PodAffinityField,
@@ -17,7 +16,7 @@ import {
 } from '@console/shared/src/components/dynamic-form/widgets';
 import { SpecCapability } from '../types';
 
-export const capabilityFieldMap = Immutable.Map({
+export const capabilityFieldMap: Record<string, any> = Object.freeze({
   [SpecCapability.nodeAffinity]: NodeAffinityField,
   [SpecCapability.podAffinity]: PodAffinityField,
   [SpecCapability.podAntiAffinity]: PodAffinityField,
@@ -25,7 +24,7 @@ export const capabilityFieldMap = Immutable.Map({
   [SpecCapability.updateStrategy]: UpdateStrategyField,
 });
 
-export const capabilityWidgetMap = Immutable.Map({
+export const capabilityWidgetMap: Record<string, any> = Object.freeze({
   [SpecCapability.hidden]: 'hidden',
   [SpecCapability.imagePullPolicy]: ImagePullPolicyWidget,
   [SpecCapability.booleanSwitch]: SwitchWidget,

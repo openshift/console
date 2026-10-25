@@ -1,5 +1,5 @@
 import type { ReactElement, FC } from 'react';
-import { useRef, useState, useMemo, memo } from 'react';
+import { useRef, useMemo, memo } from 'react';
 import { ChartDonut } from '@patternfly/react-charts/victory';
 import { Tooltip } from '@patternfly/react-core';
 import * as _ from 'lodash';
@@ -35,14 +35,11 @@ interface PodStatusProps {
 
 const { podStatusInnerRadius, podStatusOuterRadius } = calculateRadius(130); // default value of size is 130
 
-const podStatusIsNumeric = (podStatusValue: string) => {
-  return (
-    podStatusValue !== AllPodStatus.ScaledTo0 &&
-    podStatusValue !== AllPodStatus.AutoScaledTo0 &&
-    podStatusValue !== AllPodStatus.Idle &&
-    podStatusValue !== AllPodStatus.ScalingUp
-  );
-};
+const podStatusIsNumeric = (podStatusValue: string) =>
+  podStatusValue !== AllPodStatus.ScaledTo0 &&
+  podStatusValue !== AllPodStatus.AutoScaledTo0 &&
+  podStatusValue !== AllPodStatus.Idle &&
+  podStatusValue !== AllPodStatus.ScalingUp;
 
 const PodStatusBase: FC<PodStatusProps> = ({
   innerRadius = podStatusInnerRadius,
@@ -58,12 +55,11 @@ const PodStatusBase: FC<PodStatusProps> = ({
   subTitleComponent,
   data,
 }) => {
-  const ref = useRef();
-  const [updateOnEnd, setUpdateOnEnd] = useState<boolean>(false);
+  const ref = useRef(undefined);
   const forceUpdate = useForceUpdate();
   const prevVData = useRef<PodData[]>(null);
 
-  const vData = useMemo(() => {
+  const { vData, updateOnEnd } = useMemo(() => {
     const updateVData: PodData[] = podStatus.map((pod) => ({
       x: pod,
       y: _.sumBy(data, (d) => +(getPodStatus(d) === pod)) || 0,
@@ -79,21 +75,21 @@ const PodStatusBase: FC<PodStatusProps> = ({
 
     const prevDataPoints = _.size(_.filter(prevVData.current, (nextData) => nextData.y !== 0));
     const dataPoints = _.size(_.filter(updateVData, (nextData) => nextData.y !== 0));
-    setUpdateOnEnd(dataPoints === 1 && prevDataPoints > 1);
+    const shouldUpdateOnEnd = dataPoints === 1 && prevDataPoints > 1;
 
     if (!_.isEqual(prevVData.current, updateVData)) {
       prevVData.current = updateVData;
-      return updateVData;
+      return { vData: updateVData, updateOnEnd: shouldUpdateOnEnd };
     }
-    return prevVData.current;
+    return { vData: prevVData.current, updateOnEnd: shouldUpdateOnEnd };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
   const truncTitle = title ? _.truncate(title, { length: MAX_POD_TITLE_LENGTH }) : undefined;
   const truncSubTitle = subTitle
     ? _.truncate(subTitle, { length: MAX_POD_TITLE_LENGTH })
     : undefined;
-  const chartDonut = useMemo(() => {
-    return (
+  const chartDonut = useMemo(
+    () => (
       <ChartDonut
         ariaTitle={`${title}${subTitle && ` ${subTitle}`}`}
         animate={{
@@ -123,24 +119,25 @@ const PodStatusBase: FC<PodStatusProps> = ({
           },
         }}
       />
-    );
-  }, [
-    forceUpdate,
-    innerRadius,
-    outerRadius,
-    size,
-    standalone,
-    subTitle,
-    title,
-    truncSubTitle,
-    subTitleComponent,
-    truncTitle,
-    titleComponent,
-    updateOnEnd,
-    vData,
-    x,
-    y,
-  ]);
+    ),
+    [
+      forceUpdate,
+      innerRadius,
+      outerRadius,
+      size,
+      standalone,
+      subTitle,
+      title,
+      truncSubTitle,
+      subTitleComponent,
+      truncTitle,
+      titleComponent,
+      updateOnEnd,
+      vData,
+      x,
+      y,
+    ],
+  );
 
   if (!vData) {
     return null;
@@ -149,8 +146,8 @@ const PodStatusBase: FC<PodStatusProps> = ({
   if (showTooltip) {
     const tipContent = (
       <div className="odc-pod-status-tooltip">
-        {vData.map((d) => {
-          return d.y > 0 ? (
+        {vData.map((d) =>
+          d.y > 0 ? (
             <div key={d.x} className="odc-pod-status-tooltip__content">
               <span
                 className="odc-pod-status-tooltip__status-box"
@@ -163,8 +160,8 @@ const PodStatusBase: FC<PodStatusProps> = ({
               )}
               {d.x}
             </div>
-          ) : null;
-        })}
+          ) : null,
+        )}
       </div>
     );
     return (

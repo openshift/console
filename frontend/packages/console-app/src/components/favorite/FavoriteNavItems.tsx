@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useState, useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { NavExpandable, Button, FlexItem, Flex, Truncate } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
@@ -14,8 +14,6 @@ import './FavoriteNavItems.scss';
 export const FavoriteNavItems: FC = () => {
   const { t } = useTranslation('console-app');
   const triggerTelemetry = useTelemetry();
-  const [activeGroup, setActiveGroup] = useState('');
-  const [activeItem, setActiveItem] = useState('');
   const currentUrlPath = window.location.pathname;
 
   const [favorites, setFavorites, loaded] = useUserPreference<FavoritesType>(
@@ -24,25 +22,14 @@ export const FavoriteNavItems: FC = () => {
     true,
   );
 
-  useEffect(() => {
-    if (loaded && favorites) {
-      const currentFavorite = favorites.find((favorite) => favorite.url === currentUrlPath);
-      if (currentFavorite) {
-        setActiveGroup('favorites-group');
-        setActiveItem(`favorites-item-${currentFavorite.url}`);
-      } else {
-        setActiveItem('');
-      }
-    }
-  }, [loaded, favorites, currentUrlPath]);
+  const currentFavorite = loaded && favorites?.find((favorite) => favorite.url === currentUrlPath);
+  const activeGroup = currentFavorite ? 'favorites-group' : '';
+  const activeItem = currentFavorite ? `favorites-item-${currentFavorite.url}` : '';
 
   const navList = useMemo(() => {
     const handleUnfavorite = (favoriteUrl: string) => {
       const updatedFavorites = favorites?.filter((favorite) => favorite.url !== favoriteUrl);
       setFavorites(updatedFavorites);
-      if (activeItem === `favorites-item-${favoriteUrl}`) {
-        setActiveItem('');
-      }
       triggerTelemetry('remove-favorite-from-nav', {
         url: favoriteUrl,
       });

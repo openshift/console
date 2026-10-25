@@ -479,8 +479,7 @@ export const rules: PrometheusRulesResponse = {
     groups: [
       {
         name: 'kubernetes-system-kubelet',
-        file:
-          '/etc/prometheus/rules/prometheus-k8s-rulefiles-0/openshift-monitoring-prometheus-k8s-rules.yaml',
+        file: '/etc/prometheus/rules/prometheus-k8s-rulefiles-0/openshift-monitoring-prometheus-k8s-rules.yaml',
         rules: [
           {
             state: RuleStates.Firing,

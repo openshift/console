@@ -22,9 +22,9 @@ import { ConsoleLinkModel } from '@console/internal/models';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { requirementFromString } from '@console/internal/module/k8s/selector-requirement';
-import { getActiveNamespace } from '@console/internal/reducers/ui';
 import type { RootState } from '@console/internal/redux';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { useQueryParams } from '@console/shared/src/hooks/useQueryParams';
 import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
@@ -49,7 +49,6 @@ import './TopologyFilterBar.scss';
 type StateProps = {
   supportedFilters: string[];
   supportedKinds: { [key: string]: number };
-  namespace: string;
 };
 
 type OwnProps = {
@@ -67,9 +66,9 @@ const TopologyFilterBar: FC<TopologyFilterBarProps> = ({
   isDisabled,
   visualization,
   viewType,
-  namespace,
   setIsQuickSearchOpen,
 }) => {
+  const [namespace] = useActiveNamespace();
   const { setQueryArgument, removeQueryArgument, removeQueryArguments } = useQueryParamsMutator();
   const { t } = useTranslation('topology');
   const { filters, setTopologyFilters: onFiltersChange } = useContext(FilterContext);
@@ -237,13 +236,9 @@ const TopologyFilterBar: FC<TopologyFilterBarProps> = ({
   );
 };
 
-const mapStateToProps = (state: RootState): StateProps => {
-  const states = {
-    supportedFilters: getSupportedTopologyFilters(state),
-    supportedKinds: getSupportedTopologyKinds(state),
-    namespace: getActiveNamespace(state),
-  };
-  return states;
-};
+const mapStateToProps = (state: RootState): StateProps => ({
+  supportedFilters: getSupportedTopologyFilters(state),
+  supportedKinds: getSupportedTopologyKinds(state),
+});
 
 export default connect<StateProps>(mapStateToProps)(TopologyFilterBar);

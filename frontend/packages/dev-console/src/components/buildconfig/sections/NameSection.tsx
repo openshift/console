@@ -23,6 +23,7 @@ const NameSection: FC<{}> = () => {
         label={t('Name')}
         name="formData.name"
         type={TextInputTypes.text}
+        dataTest="form-name-input"
         isDisabled={!isNew}
         required
       />

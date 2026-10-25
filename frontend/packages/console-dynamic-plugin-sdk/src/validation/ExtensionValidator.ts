@@ -1,16 +1,18 @@
 import * as fs from 'fs';
 import * as path from 'path';
+import { isEncodedCodeRef, parseEncodedCodeRef } from '@openshift/dynamic-plugin-sdk';
 import * as _ from 'lodash';
 import type { Compilation, NormalModule, Module } from 'webpack';
 import type { ConsolePluginBuildMetadata } from '../build-types';
-import { isEncodedCodeRef, parseEncodedCodeRefValue } from '../coderefs/coderef-resolver';
 import type { Extension, EncodedCodeRef } from '../types';
 import { deepForOwn } from '../utils/object';
 import { BaseValidator } from './BaseValidator';
 
 type ExtensionCodeRefData = {
   index: number;
-  propToCodeRefValue: { [propName: string]: string };
+  propToEncodedCodeRef: {
+    [propName: string]: EncodedCodeRef;
+  };
 };
 
 /**
@@ -61,13 +63,13 @@ export const guessModuleFilePath = (
 
 export const collectCodeRefData = (extensions: Extension[]) =>
   extensions.reduce((acc, e, index) => {
-    const data: ExtensionCodeRefData = { index, propToCodeRefValue: {} };
+    const data: ExtensionCodeRefData = { index, propToEncodedCodeRef: {} };
 
     deepForOwn<EncodedCodeRef>(e.properties, isEncodedCodeRef, (ref, key) => {
-      data.propToCodeRefValue[key] = ref.$codeRef;
+      data.propToEncodedCodeRef[key] = ref;
     });
 
-    if (!_.isEmpty(data.propToCodeRefValue)) {
+    if (!_.isEmpty(data.propToEncodedCodeRef)) {
       acc.push(data);
     }
 
@@ -80,27 +82,30 @@ export const findWebpackModules = (
   pluginBasePath?: string,
 ) => {
   const webpackModules = Array.from(compilation.modules);
-  return Object.keys(exposedModules).reduce((acc, moduleName) => {
-    const absolutePath =
-      pluginBasePath &&
-      guessModuleFilePath(path.resolve(pluginBasePath, exposedModules[moduleName]));
+  return Object.keys(exposedModules).reduce(
+    (acc, moduleName) => {
+      const absolutePath =
+        pluginBasePath &&
+        guessModuleFilePath(path.resolve(pluginBasePath, exposedModules[moduleName]));
 
-    acc[moduleName] = webpackModules.find((m: NormalModule) => {
-      // @ts-expect-error rootModule is internal to webpack's ModuleConcatenationPlugin
-      const rootModule = m?.rootModule as NormalModule;
+      acc[moduleName] = webpackModules.find((m: NormalModule) => {
+        // @ts-expect-error rootModule is internal to webpack's ModuleConcatenationPlugin
+        const rootModule = m?.rootModule as NormalModule;
 
-      /* first strategy: check if the module name matches the rawRequest */
-      const rawRequest = m?.rawRequest || rootModule?.rawRequest;
-      const matchesRawRequest = rawRequest && rawRequest === exposedModules[moduleName];
+        /* first strategy: check if the module name matches the rawRequest */
+        const rawRequest = m?.rawRequest || rootModule?.rawRequest;
+        const matchesRawRequest = rawRequest && rawRequest === exposedModules[moduleName];
 
-      /* second strategy: check if the absolute path matches the resource */
-      const resource = m?.resource || rootModule?.resource;
-      const matchesAbsolutePath = resource && resource === absolutePath;
+        /* second strategy: check if the absolute path matches the resource */
+        const resource = m?.resource || rootModule?.resource;
+        const matchesAbsolutePath = resource && resource === absolutePath;
 
-      return matchesRawRequest || matchesAbsolutePath;
-    });
-    return acc;
-  }, {} as { [moduleName: string]: Module });
+        return matchesRawRequest || matchesAbsolutePath;
+      });
+      return acc;
+    },
+    {} as { [moduleName: string]: Module },
+  );
 };
 
 export class ExtensionValidator extends BaseValidator {
@@ -116,9 +121,9 @@ export class ExtensionValidator extends BaseValidator {
     // Each exposed module must have at least one code reference
     Object.keys(exposedModules).forEach((moduleName) => {
       const moduleReferenced = codeRefs.some((data) =>
-        Object.values(data.propToCodeRefValue).some((value) => {
-          const [parsedModuleName] = parseEncodedCodeRefValue(value);
-          return parsedModuleName && moduleName === parsedModuleName;
+        Object.values(data.propToEncodedCodeRef).some((ref) => {
+          const refData = parseEncodedCodeRef(ref);
+          return refData && refData.moduleName === moduleName;
         }),
       );
 
@@ -129,15 +134,16 @@ export class ExtensionValidator extends BaseValidator {
 
     // Each code reference must point to a valid webpack module export
     codeRefs.forEach((data) => {
-      Object.entries(data.propToCodeRefValue).forEach(([propName, codeRefValue]) => {
-        const [moduleName, exportName] = parseEncodedCodeRefValue(codeRefValue);
+      Object.entries(data.propToEncodedCodeRef).forEach(([propName, ref]) => {
         const errorTrace = `in extension [${data.index}] property '${propName}'`;
+        const refData = parseEncodedCodeRef(ref);
 
-        if (!moduleName || !exportName) {
-          this.result.addError(`Invalid code reference '${codeRefValue}' ${errorTrace}`);
+        if (!refData) {
+          this.result.addError(`Invalid code reference '${ref.$codeRef}' ${errorTrace}`);
           return;
         }
 
+        const { moduleName, exportName } = refData;
         const foundModule = webpackModules[moduleName];
 
         if (!foundModule) {

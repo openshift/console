@@ -13,5 +13,5 @@ export const useDefaultActionsProvider = (
 
   const actions = useMemo(() => [...commonActions], [commonActions]);
 
-  return [actions, !inFlight, (undefined as unknown) as Error];
+  return [actions, !inFlight, undefined as unknown as Error];
 };

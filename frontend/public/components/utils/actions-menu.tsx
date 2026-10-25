@@ -1,13 +1,15 @@
-import type { FC } from 'react';
-import { ImpersonateKind, impersonateStateToProps } from '@console/dynamic-plugin-sdk';
-import { Button, Dropdown, MenuToggle, MenuToggleElement } from '@patternfly/react-core';
+import type { FC, ReactNode, RefObject } from 'react';
+import { useEffect, useState } from 'react';
+import type { MenuToggleElement } from '@patternfly/react-core';
+import { Button, Dropdown, MenuToggle } from '@patternfly/react-core';
 import { some } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { useNavigate } from 'react-router';
-
-import { ReactNode, RefObject, useEffect, useState } from 'react';
-import { KebabItem, KebabItems, KebabOption } from './kebab';
+import { impersonateStateToProps } from '@console/dynamic-plugin-sdk';
+import type { ImpersonateKind } from '@console/dynamic-plugin-sdk';
+import type { KebabOption } from './kebab';
+import { KebabItem, KebabItems } from './kebab';
 import { checkAccess } from './rbac';
 
 type ActionsMenuProps = {
@@ -58,7 +60,7 @@ const ActionsMenuDropdown: FC<ActionsMenuDropdownProps> = ({ actions, title, act
         enableFlip: true,
         position: 'right',
       }}
-      toggle={(toggleRef: RefObject<MenuToggleElement>) => (
+      toggle={(toggleRef: RefObject<MenuToggleElement | null>) => (
         <MenuToggle
           ref={toggleRef}
           onClick={() => setIsActive(!active)}
@@ -75,36 +77,34 @@ const ActionsMenuDropdown: FC<ActionsMenuDropdownProps> = ({ actions, title, act
   );
 };
 
-export const ActionsMenu = connect(impersonateStateToProps)(
-  ({
-    actions,
-    impersonate,
-    title = undefined,
-  }: ActionsMenuProps & { impersonate?: ImpersonateKind }) => {
-    const [isVisible, setVisible] = useState(false);
+export const ActionsMenu = connect(impersonateStateToProps)(({
+  actions,
+  impersonate,
+  title = undefined,
+}: ActionsMenuProps & { impersonate?: ImpersonateKind }) => {
+  const [isVisible, setVisible] = useState(false);
 
-    // Check if any actions are visible when actions have access reviews.
-    useEffect(() => {
-      if (!actions.length) {
-        setVisible(false);
-        return;
+  // Check if any actions are visible when actions have access reviews.
+  useEffect(() => {
+    if (!actions.length) {
+      setVisible(false);
+      return;
+    }
+    const promises = actions.reduce((acc, action) => {
+      if (action.accessReview) {
+        acc.push(checkAccess(action.accessReview));
       }
-      const promises = actions.reduce((acc, action) => {
-        if (action.accessReview) {
-          acc.push(checkAccess(action.accessReview));
-        }
-        return acc;
-      }, []);
+      return acc;
+    }, []);
 
-      // Only need to resolve if all actions require access review
-      if (promises.length !== actions.length) {
-        setVisible(true);
-        return;
-      }
-      Promise.all(promises)
-        .then((results) => setVisible(some(results, 'status.allowed')))
-        .catch(() => setVisible(true));
-    }, [actions, impersonate, setVisible]);
-    return isVisible ? <ActionsMenuDropdown actions={actions} title={title} /> : null;
-  },
-);
+    // Only need to resolve if all actions require access review
+    if (promises.length !== actions.length) {
+      setVisible(true);
+      return;
+    }
+    Promise.all(promises)
+      .then((results) => setVisible(some(results, 'status.allowed')))
+      .catch(() => setVisible(true));
+  }, [actions, impersonate, setVisible]);
+  return isVisible ? <ActionsMenuDropdown actions={actions} title={title} /> : null;
+});

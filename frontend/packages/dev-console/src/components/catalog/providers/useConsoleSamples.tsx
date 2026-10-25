@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { CatalogItem, ConsoleTFunction } from '@console/dynamic-plugin-sdk';
@@ -34,10 +33,10 @@ export const normalizeConsoleSamples = (activeNamespace: string, t: ConsoleTFunc
             url: sample.spec.icon,
           }
         : sample.spec.icon
-        ? {
-            url: `data:image;base64,${sample.spec.icon}`,
-          }
-        : null,
+          ? {
+              url: `data:image;base64,${sample.spec.icon}`,
+            }
+          : null,
       cta: {
         label: createLabel,
         href,

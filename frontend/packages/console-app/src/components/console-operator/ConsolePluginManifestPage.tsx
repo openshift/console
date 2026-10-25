@@ -19,9 +19,10 @@ export const ConsolePluginManifestPage: FC<PageComponentProps> = ({ obj }) => {
     [pluginInfoEntries, pluginName],
   );
 
-  const manifestJSON = useMemo(() => {
-    return pluginManifest ? JSON.stringify(pluginManifest, null, 2) : '';
-  }, [pluginManifest]);
+  const manifestJSON = useMemo(
+    () => (pluginManifest ? JSON.stringify(pluginManifest, null, 2) : ''),
+    [pluginManifest],
+  );
 
   return (
     <PaneBody fullHeight>

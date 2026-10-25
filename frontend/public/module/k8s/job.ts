@@ -1,5 +1,5 @@
 import i18next from 'i18next';
-import { JobKind } from './types';
+import type { JobKind } from './types';
 
 export const getJobTypeAndCompletions = ({ spec }: JobKind) => {
   // if neither completions nor parallelism are defined, then it is a non-parallel job.

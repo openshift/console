@@ -1,4 +1,4 @@
-import { ConfigMap } from '../types';
+import type { ConfigMap } from '../types';
 
 export const sampleConfigMap: ConfigMap = {
   kind: 'ConfigMap',

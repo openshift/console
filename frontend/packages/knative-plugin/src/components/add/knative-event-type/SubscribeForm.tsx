@@ -52,15 +52,12 @@ const SubscribeForm: FC<Props> = ({
   const getResourceModel = () =>
     sourceKind === EventingBrokerModel.kind ? EventingTriggerModel : EventingSubscriptionModel;
 
-  const sanitizeToForm = (yamlbuild) => {
-    return convertYamlToForm(yamlbuild, values).formData;
-  };
+  const sanitizeToForm = (yamlbuild) => convertYamlToForm(yamlbuild, values).formData;
 
-  const sanitizeToYaml = () => {
-    return safeJSToYAML(convertFormToTriggerYaml(values), '', {
+  const sanitizeToYaml = () =>
+    safeJSToYAML(convertFormToTriggerYaml(values), '', {
       skipInvalid: true,
     });
-  };
 
   const formEditor = (
     <>

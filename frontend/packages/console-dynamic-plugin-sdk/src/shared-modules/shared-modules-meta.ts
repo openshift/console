@@ -53,7 +53,7 @@ export const sharedPluginModules = [
   'redux-thunk',
 ] as const;
 
-export type SharedModuleNames = typeof sharedPluginModules[number];
+export type SharedModuleNames = (typeof sharedPluginModules)[number];
 
 /**
  * Metadata associated with the shared modules.

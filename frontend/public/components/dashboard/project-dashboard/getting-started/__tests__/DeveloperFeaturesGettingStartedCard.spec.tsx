@@ -1,14 +1,12 @@
 import { screen, waitFor } from '@testing-library/react';
-
-import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import {
   expectExternalLinkAttributes,
   cleanupServerFlag,
 } from '../../../getting-started-test-utils';
-
 import { DeveloperFeaturesGettingStartedCard } from '../DeveloperFeaturesGettingStartedCard';
 
 jest.mock('@console/shared/src/hooks/useActiveNamespace', () => ({

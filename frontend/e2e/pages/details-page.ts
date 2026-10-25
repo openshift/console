@@ -33,6 +33,10 @@ export class DetailsPage extends BasePage {
     return this.page.getByTestId(`horizontal-link-${name}`);
   }
 
+  async navigateToDetailsPage(url: string): Promise<void> {
+    await this.goTo(url);
+  }
+
   async clickPageAction(actionName: string): Promise<void> {
     await this.robustClick(this.page.getByTestId('actions-menu-button'));
     await this.robustClick(this.page.getByTestId(actionName));
@@ -44,6 +48,27 @@ export class DetailsPage extends BasePage {
 
   async selectTab(name: string): Promise<void> {
     await this.navigateToTab(this.tab(name));
+  }
+
+  async clickDebugContainerFromLogs(): Promise<void> {
+    await this.robustClick(this.page.getByTestId('debug-container-link'));
+  }
+
+  async clickStatusButton(): Promise<void> {
+    await this.robustClick(this.page.getByTestId('popover-status-button'), {
+      timeout: 30_000,
+      force: true,
+    });
+  }
+
+  async clickDebugContainerLink(containerName: string): Promise<void> {
+    await this.robustClick(this.page.getByTestId(`popup-debug-container-link-${containerName}`), {
+      timeout: 30_000,
+    });
+  }
+
+  async waitForTerminalReady(timeout = 120_000): Promise<void> {
+    await expect(this.xtermViewport).toBeVisible({ timeout });
   }
 
   async clickKebabAction(actionId: string): Promise<void> {
@@ -71,5 +96,30 @@ export class DetailsPage extends BasePage {
     const resourceRow = this.getResourceByAction(actionName);
     const kebabButton = resourceRow.getByTestId('kebab-button');
     await this.robustClick(kebabButton);
+  }
+
+  getHeadingByName(name: string): Locator {
+    return this.page.getByRole('heading', { name, level: 1 });
+  }
+
+  async clickActionsMenuAction(actionName: string): Promise<void> {
+    await this.robustClick(this.page.getByRole('button', { name: 'Actions' }));
+    await this.robustClick(this.page.getByRole('menuitem', { name: actionName }));
+  }
+
+  async confirmDelete(): Promise<void> {
+    await this.robustClick(this.page.getByRole('button', { name: 'Delete', exact: true }));
+  }
+  getSectionHeader(text: string): Locator {
+    return this.page.getByTestId(`section-heading-${text}`);
+  }
+
+  getEmptyState(): Locator {
+    return this.page.getByTestId('console-empty-state');
+  }
+
+  async navigateToDetailsUrl(url: string): Promise<void> {
+    await this.goTo(url);
+    await this.waitForPageLoad();
   }
 }

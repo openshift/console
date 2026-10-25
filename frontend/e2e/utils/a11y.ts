@@ -6,9 +6,22 @@ import type { Result } from 'axe-core';
 
 const INCLUDED_IMPACTS = new Set(['serious', 'critical']);
 
+const LOADING_SELECTORS = [
+  '.pf-v6-c-spinner',
+  '.pf-c-spinner',
+  '.co-m-loader',
+  '[data-test="loading-indicator"]',
+  '[data-test="loading-box"]',
+  '.loading-skeleton',
+  '.skeleton-catalog--grid',
+  '[class*="skeleton"]',
+].join(', ');
+
 function formatViolations(violations: Result[], target: string): string {
   const lines: string[] = [
-    `${violations.length} accessibility violation${violations.length === 1 ? '' : 's'} ${violations.length === 1 ? 'was' : 'were'} detected for ${target}:`,
+    `${violations.length} accessibility violation${violations.length === 1 ? '' : 's'} ${
+      violations.length === 1 ? 'was' : 'were'
+    } detected for ${target}:`,
   ];
 
   violations.forEach((violation, index) => {
@@ -34,6 +47,17 @@ function formatViolations(violations: Result[], target: string): string {
 }
 
 export async function testA11y(page: Page, target: string, selector?: string): Promise<void> {
+  try {
+    const loading = page.locator(LOADING_SELECTORS);
+    const count = await loading.count().catch(() => 0);
+    if (count > 0) {
+      // eslint-disable-next-line no-restricted-syntax
+      await loading.first().waitFor({ state: 'hidden', timeout: 5_000 });
+    }
+  } catch {
+    // Loading indicators may have already disappeared - continue
+  }
+
   let builder = new AxeBuilder({ page }).disableRules('color-contrast');
 
   if (selector) {

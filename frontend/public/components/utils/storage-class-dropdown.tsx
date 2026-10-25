@@ -1,16 +1,16 @@
-import * as _ from 'lodash';
 import type { FC, ReactNode } from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import * as fuzzy from 'fuzzysearch';
-import { useTranslation } from 'react-i18next';
 import { css } from '@patternfly/react-styles';
+import * as fuzzy from 'fuzzysearch';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
-import { LoadingInline } from './status-box';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { ResourceName, ResourceIcon } from './resource-icon';
-import { isDefaultClass } from '../storage-class';
-import { StorageClassResourceKind } from '@console/internal/module/k8s';
 import { StorageClassModel } from '@console/internal/models';
+import type { StorageClassResourceKind } from '@console/internal/module/k8s';
+import { isDefaultClass } from '../storage-class';
+import { ResourceName, ResourceIcon } from './resource-icon';
+import { LoadingInline } from './status-box';
 
 export type StorageClassDropdownProps = {
   id?: string;
@@ -42,13 +42,12 @@ type StorageClassItem =
       name: string;
     };
 
-const getTitle = (storageClass: { kindLabel: string; name: string }): ReactNode => {
-  return storageClass.kindLabel ? (
+const getTitle = (storageClass: { kindLabel: string; name: string }): ReactNode =>
+  storageClass.kindLabel ? (
     <ResourceName kind="StorageClass" name={storageClass.name} />
   ) : (
     <span>{storageClass.name}</span>
   );
-};
 
 const StorageClassDropdownEntry = (props) => {
   const storageClassProperties = [
@@ -74,13 +73,11 @@ const StorageClassDropdownEntry = (props) => {
   );
 };
 
-const StorageClassDropdownNoStorageClassOption: FC<{ name: string }> = ({ name }) => {
-  return (
-    <span className="co-resource-item">
-      <span className="co-resource-item__resource-name">{name}</span>
-    </span>
-  );
-};
+const StorageClassDropdownNoStorageClassOption: FC<{ name: string }> = ({ name }) => (
+  <span className="co-resource-item">
+    <span className="co-resource-item__resource-name">{name}</span>
+  </span>
+);
 
 /* Creates a dropdown list of storage classes */
 export const StorageClassDropdown: FC<StorageClassDropdownProps> = ({
@@ -107,7 +104,9 @@ export const StorageClassDropdown: FC<StorageClassDropdownProps> = ({
   }, [selectedKeyProp]);
 
   const onChangeRef = useRef(onChangeProp);
-  onChangeRef.current = onChangeProp;
+  useEffect(() => {
+    onChangeRef.current = onChangeProp;
+  });
 
   // Process resources into sorted items and find default storage class
   const { items, defaultClass } = useMemo<{

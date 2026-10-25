@@ -63,7 +63,6 @@ const CreateProjectModal: ModalComponent = ({ closeModal }) => {
     handlePromise(createProject())
       .then(closeModal)
       .catch((err) => {
-        // eslint-disable-next-line no-console
         console.error(`Failed to create Project:`, err);
       });
   };

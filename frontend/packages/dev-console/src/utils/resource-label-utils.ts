@@ -46,24 +46,18 @@ export const getAppLabels = ({
   return labels;
 };
 
-export const getCommonAnnotations = () => {
-  return {
-    'openshift.io/generated-by': 'OpenShiftWebConsole',
-  };
-};
+export const getCommonAnnotations = () => ({
+  'openshift.io/generated-by': 'OpenShiftWebConsole',
+});
 
-export const getRouteAnnotations = () => {
-  return {
-    [ROUTE_DISABLED_ANNOTATION]: 'false',
-  };
-};
+export const getRouteAnnotations = () => ({
+  [ROUTE_DISABLED_ANNOTATION]: 'false',
+});
 
-export const getGitAnnotations = (gitURL: string, gitRef?: string) => {
-  return {
-    'app.openshift.io/vcs-uri': gitURL,
-    'app.openshift.io/vcs-ref': gitRef || '',
-  };
-};
+export const getGitAnnotations = (gitURL: string, gitRef?: string) => ({
+  'app.openshift.io/vcs-uri': gitURL,
+  'app.openshift.io/vcs-ref': gitRef || '',
+});
 
 export const getTriggerAnnotation = (
   containerName: string,
@@ -160,8 +154,8 @@ export const mergeData = (originalResource: K8sResourceKind, newResource: K8sRes
   return mergedData;
 };
 
-export const getTemplateLabels = (deployment: K8sResourceKind) => {
-  return _.reduce(
+export const getTemplateLabels = (deployment: K8sResourceKind) =>
+  _.reduce(
     deployment?.spec?.template?.metadata?.labels,
     (acc, value, key) => {
       if (!deployment.metadata?.labels?.hasOwnProperty(key)) {
@@ -171,4 +165,3 @@ export const getTemplateLabels = (deployment: K8sResourceKind) => {
     },
     {},
   );
-};

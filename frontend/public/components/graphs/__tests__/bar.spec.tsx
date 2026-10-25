@@ -1,7 +1,6 @@
 import { screen } from '@testing-library/react';
-
-import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { BarChart } from '@console/internal/components/graphs/bar';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 
 const MOCK_BAR_DATA = [
   { x: 'Category A', y: 100 },
@@ -32,7 +31,7 @@ describe('BarChart', () => {
   });
 
   it('should handle loading state', () => {
-    renderWithProviders(<BarChart title="Loading Chart" data={MOCK_LOADING_DATA} loading={true} />);
+    renderWithProviders(<BarChart title="Loading Chart" data={MOCK_LOADING_DATA} loading />);
 
     // Should show skeleton/loading state
     expect(screen.getByTestId('skeleton-chart')).toBeInTheDocument();

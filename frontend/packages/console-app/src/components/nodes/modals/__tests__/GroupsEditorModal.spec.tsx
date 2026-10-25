@@ -41,7 +41,7 @@ const createMockNode = (name: string, groups?: string): NodeKind =>
     },
     spec: {},
     status: {},
-  } as NodeKind);
+  }) as NodeKind;
 
 describe('GroupsEditorModal', () => {
   let user: ReturnType<typeof userEvent.setup>;
@@ -400,9 +400,7 @@ describe('GroupsEditorModal', () => {
       const saveButton = screen.getByRole('button', { name: 'Save' });
       await user.click(saveButton);
 
-      const detailsButton = await waitFor(() => {
-        return screen.getByRole('button', { name: 'Show details' });
-      });
+      const detailsButton = await screen.findByRole('button', { name: 'Show details' });
 
       await user.click(detailsButton);
 
@@ -412,7 +410,10 @@ describe('GroupsEditorModal', () => {
 
     it('disables Save button during submission', async () => {
       (k8sPatchResource as jest.Mock).mockImplementation(
-        () => new Promise((resolve) => setTimeout(resolve, 100)),
+        () =>
+          new Promise((resolve) => {
+            setTimeout(resolve, 100);
+          }),
       );
 
       renderWithProviders(<GroupsEditorModal closeOverlay={mockCloseOverlay} />);

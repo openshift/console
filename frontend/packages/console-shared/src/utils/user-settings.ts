@@ -25,7 +25,6 @@ export const createConfigMap = async (): Promise<ConfigMapKind> => {
     });
     return response.json();
   } catch (err) {
-    // eslint-disable-next-line no-console
     console.error('Could not create user settings ConfigMap', err);
     throw err;
   }
@@ -58,7 +57,6 @@ export const updateConfigMap = async (
     });
     return response.json();
   } catch (err) {
-    // eslint-disable-next-line no-console
     console.error('Could not update (patch) user settings ConfigMap', err);
     throw err;
   }
@@ -71,13 +69,10 @@ export const deserializeData = (data: string | null) => {
   try {
     return JSON.parse(data);
   } catch {
+    // Fallback for legacy values that were persisted as bare (non-JSON) strings
+    // before user setting values were always serialized to JSON.
     return data;
   }
 };
 
-export const seralizeData = <T>(data: T) => {
-  if (typeof data === 'string') {
-    return data;
-  }
-  return JSON.stringify(data);
-};
+export const serializeData = <T>(data: T) => JSON.stringify(data);

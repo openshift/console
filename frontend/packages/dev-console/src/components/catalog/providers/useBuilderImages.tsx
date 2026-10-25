@@ -25,7 +25,7 @@ import { ANNOTATIONS } from '@console/shared/src/constants/common';
 const normalizeBuilderImages = (
   builderImageStreams: K8sResourceKind[],
   activeNamespace: string = '',
-  t: TFunction,
+  t: TFunction = undefined,
 ): CatalogItem[] => {
   const normalizedBuilderImages = _.map(builderImageStreams, (imageStream) => {
     const uid = imageStream.metadata?.uid || '';
@@ -49,14 +49,14 @@ const normalizeBuilderImages = (
     const detailsProperties: CatalogItemDetailsProperty[] = [];
     if (sampleRepo) {
       detailsProperties.push({
-        label: t('Sample repository'),
+        label: t('devconsole~Sample repository'),
         value: <ExternalLink href={sampleRepo} className="co-break-all" text={sampleRepo} />,
       });
     }
 
     const imageStreamText = (
       <>
-        <p>{t('The following resources will be created:')}</p>
+        <p>{t('devconsole~The following resources will be created:')}</p>
         <ul>
           <li>
             <Trans ns="devconsole" t={t}>
@@ -139,9 +139,8 @@ const useBuilderImages: ExtensionHook<CatalogItem[]> = ({
     namespace: 'openshift',
     prop: 'imageStreams',
   };
-  const [imageStreams, loaded, loadedError] = useK8sWatchResource<K8sResourceKind[]>(
-    resourceSelector,
-  );
+  const [imageStreams, loaded, loadedError] =
+    useK8sWatchResource<K8sResourceKind[]>(resourceSelector);
 
   const builderImageStreams = useMemo(() => _.filter(imageStreams, isBuilder), [imageStreams]);
 

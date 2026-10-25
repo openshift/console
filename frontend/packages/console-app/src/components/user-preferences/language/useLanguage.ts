@@ -10,12 +10,13 @@ export const useLanguage = (preferredLanguage: string, preferredLanguageLoaded: 
   const { setResourceBundle } = useQuickStartContext();
 
   useEffect(() => {
-    const onLanguageChange = (lng: string) => {
+    const onLanguageChange = () => {
       if (setResourceBundle) {
         // Update language resource of quick starts components
-        const resourceBundle = i18n.getResourceBundle(lng, 'console-app');
-        const processedBundle = getProcessedResourceBundle(resourceBundle, lng);
-        setResourceBundle(processedBundle, lng);
+        const language = i18n.resolvedLanguage || 'en';
+        const resourceBundle = i18n.getResourceBundle(language, 'console-app') ?? {};
+        const processedBundle = getProcessedResourceBundle(resourceBundle, language);
+        setResourceBundle(processedBundle, language);
       }
     };
     const preferredLanguageInStorage: string = getLastLanguage();

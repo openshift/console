@@ -1,13 +1,13 @@
-import { useResolvedExtensions } from '@openshift/dynamic-plugin-sdk';
 import { render, screen } from '@testing-library/react';
+import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
 import { useFlag } from '@console/dynamic-plugin-sdk/src/utils/flags';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import type { NodeKind } from '@console/internal/module/k8s';
 import InventoryCard from '../InventoryCard';
 import { NodeDashboardContext } from '../NodeDashboardContext';
 
-jest.mock('@openshift/dynamic-plugin-sdk', () => ({
-  ...jest.requireActual('@openshift/dynamic-plugin-sdk'),
+jest.mock('@console/dynamic-plugin-sdk/src/api/useResolvedExtensions', () => ({
+  ...jest.requireActual('@console/dynamic-plugin-sdk/src/api/useResolvedExtensions'),
   useResolvedExtensions: jest.fn(),
 }));
 
@@ -53,8 +53,8 @@ describe('InventoryCard', () => {
     },
   };
 
-  const renderWithContext = (node: NodeKind = mockNode) => {
-    return render(
+  const renderWithContext = (node: NodeKind = mockNode) =>
+    render(
       <NodeDashboardContext.Provider
         value={{
           obj: node,
@@ -66,7 +66,6 @@ describe('InventoryCard', () => {
         <InventoryCard />
       </NodeDashboardContext.Provider>,
     );
-  };
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -138,7 +137,7 @@ describe('InventoryCard', () => {
     expect(screen.getByText('Extension Inventory Item')).toBeVisible();
   });
 
-  it('should use legacy pods path when FLAG_NODE_MGMT_V1 is disabled', () => {
+  it('should use legacy pods path when FLAG_OPENSHIFT_5 is disabled', () => {
     useFlagMock.mockReturnValue(false);
 
     renderWithContext();
@@ -150,7 +149,7 @@ describe('InventoryCard', () => {
     );
   });
 
-  it('should use workload pods path when FLAG_NODE_MGMT_V1 is enabled', () => {
+  it('should use workload pods path when FLAG_OPENSHIFT_5 is enabled', () => {
     useFlagMock.mockReturnValue(true);
 
     renderWithContext();

@@ -36,16 +36,16 @@ const getTemplateTypeLabel = (
   t: ReturnType<typeof useTranslation>['t'],
 ) => {
   if (!templateKind) {
-    return t('Unknown remediation');
+    return t('console-app~Unknown remediation');
   }
   switch (templateKind) {
     case 'SelfNodeRemediationTemplate':
-      return t('SNR - Self node remediation');
+      return t('console-app~SNR - Self node remediation');
     case 'FenceAgentsRemediationTemplate':
-      return t('FAR - Fence agents remediation');
+      return t('console-app~FAR - Fence agents remediation');
     case 'MachineDeletionRemediationTemplate':
     case 'Metal3RemediationTemplate':
-      return t('MDR - Metal3-driven remediation');
+      return t('console-app~MDR - Metal3-driven remediation');
     default:
       return templateKind;
   }

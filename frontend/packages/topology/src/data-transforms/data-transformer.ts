@@ -32,9 +32,9 @@ export const getTrafficConnectors = (
     const { data: targetTrafficNode } = filteredWorkload.find(
       (wrkld) => wrkld.data.id === data.target,
     );
-    const sourceResourceNode = resources.find((res) => {
-      return res.metadata.name === sourceTrafficNode[sourceTrafficNode.nodeType];
-    });
+    const sourceResourceNode = resources.find(
+      (res) => res.metadata.name === sourceTrafficNode[sourceTrafficNode.nodeType],
+    );
     const targetResourceNode = resources.find(
       (res) => res.metadata.name === targetTrafficNode[targetTrafficNode.nodeType],
     );

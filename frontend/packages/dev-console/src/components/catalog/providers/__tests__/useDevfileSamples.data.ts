@@ -71,8 +71,7 @@ export const expectedCatalogItems: CatalogItem[] = [
     tags: ['NodeJS', 'Express'],
     cta: {
       label: 'Create Devfile Sample',
-      href:
-        '/import/ns/test?formType=sample&importType=devfile&devfileName=nodejs-basic&git.repository=https%3A%2F%2Fgithub.com%2Fnodeshift-starters%2Fdevfile-sample.git',
+      href: '/import/ns/test?formType=sample&importType=devfile&devfileName=nodejs-basic&git.repository=https%3A%2F%2Fgithub.com%2Fnodeshift-starters%2Fdevfile-sample.git',
     },
     icon: { url: 'trimmed' },
   },
@@ -86,8 +85,7 @@ export const expectedCatalogItems: CatalogItem[] = [
     tags: ['Java', 'Quarkus'],
     cta: {
       label: 'Create Devfile Sample',
-      href:
-        '/import/ns/test?formType=sample&importType=devfile&devfileName=code-with-quarkus&git.repository=https%3A%2F%2Fgithub.com%2Fdevfile-samples%2Fdevfile-sample-code-with-quarkus.git',
+      href: '/import/ns/test?formType=sample&importType=devfile&devfileName=code-with-quarkus&git.repository=https%3A%2F%2Fgithub.com%2Fdevfile-samples%2Fdevfile-sample-code-with-quarkus.git',
     },
     icon: { url: 'trimmed' },
   },
@@ -101,8 +99,7 @@ export const expectedCatalogItems: CatalogItem[] = [
     tags: ['Java', 'Spring'],
     cta: {
       label: 'Create Devfile Sample',
-      href:
-        '/import/ns/test?formType=sample&importType=devfile&devfileName=java-springboot-basic&git.repository=https%3A%2F%2Fgithub.com%2Fdevfile-samples%2Fdevfile-sample-java-springboot-basic.git',
+      href: '/import/ns/test?formType=sample&importType=devfile&devfileName=java-springboot-basic&git.repository=https%3A%2F%2Fgithub.com%2Fdevfile-samples%2Fdevfile-sample-java-springboot-basic.git',
     },
     icon: { url: 'trimmed' },
   },
@@ -116,8 +113,7 @@ export const expectedCatalogItems: CatalogItem[] = [
     tags: ['Python'],
     cta: {
       label: 'Create Devfile Sample',
-      href:
-        '/import/ns/test?formType=sample&importType=devfile&devfileName=python-basic&git.repository=https%3A%2F%2Fgithub.com%2Fdevfile-samples%2Fdevfile-sample-python-basic.git',
+      href: '/import/ns/test?formType=sample&importType=devfile&devfileName=python-basic&git.repository=https%3A%2F%2Fgithub.com%2Fdevfile-samples%2Fdevfile-sample-python-basic.git',
     },
     icon: { url: 'trimmed' },
   },

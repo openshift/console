@@ -5,13 +5,14 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"os"
 	"os/exec"
 	"reflect"
 	"testing"
 	"time"
 
-	helmrepo "helm.sh/helm/v3/pkg/repo"
+	helmrepo "helm.sh/helm/v4/pkg/repo/v1"
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -41,6 +42,129 @@ func (f RoundTripFunc) RoundTrip(req *http.Request) (*http.Response, error) {
 func onlyResult(obj interface{}, err error) interface{} {
 	return obj
 }
+
+func TestValidateRepoURL(t *testing.T) {
+	tests := []struct {
+		name           string
+		rawURL         string
+		isClusterScope bool
+		wantErr        bool
+		errContains    string
+	}{
+		{
+			name:    "valid public HTTPS URL with IP",
+			rawURL:  "https://8.8.8.8/repo",
+			wantErr: false,
+		},
+		{
+			name:    "valid public HTTP URL with IP",
+			rawURL:  "http://8.8.8.8/repo",
+			wantErr: false,
+		},
+		{
+			name:        "rejects file scheme",
+			rawURL:      "file:///etc/passwd",
+			wantErr:     true,
+			errContains: "unsupported URL scheme",
+		},
+		{
+			name:        "rejects gopher scheme",
+			rawURL:      "gopher://evil.com",
+			wantErr:     true,
+			errContains: "unsupported URL scheme",
+		},
+		{
+			name:        "rejects ftp scheme",
+			rawURL:      "ftp://evil.com/repo",
+			wantErr:     true,
+			errContains: "unsupported URL scheme",
+		},
+		{
+			name:        "rejects loopback IPv4 for namespace-scoped",
+			rawURL:      "http://127.0.0.1/index.yaml",
+			wantErr:     true,
+			errContains: "private or reserved address",
+		},
+		{
+			name:        "rejects loopback IPv6 for namespace-scoped",
+			rawURL:      "http://[::1]/index.yaml",
+			wantErr:     true,
+			errContains: "private or reserved address",
+		},
+		{
+			name:        "rejects RFC1918 10.x for namespace-scoped",
+			rawURL:      "http://10.0.0.1/index.yaml",
+			wantErr:     true,
+			errContains: "private or reserved address",
+		},
+		{
+			name:        "rejects RFC1918 172.16.x for namespace-scoped",
+			rawURL:      "http://172.16.0.1/index.yaml",
+			wantErr:     true,
+			errContains: "private or reserved address",
+		},
+		{
+			name:        "rejects RFC1918 192.168.x for namespace-scoped",
+			rawURL:      "http://192.168.1.1/index.yaml",
+			wantErr:     true,
+			errContains: "private or reserved address",
+		},
+		{
+			name:        "rejects cloud metadata endpoint for namespace-scoped",
+			rawURL:      "http://169.254.169.254/latest/meta-data/",
+			wantErr:     true,
+			errContains: "private or reserved address",
+		},
+		{
+			name:        "rejects link-local for namespace-scoped",
+			rawURL:      "http://169.254.1.1/index.yaml",
+			wantErr:     true,
+			errContains: "private or reserved address",
+		},
+		{
+			name:        "rejects unspecified address for namespace-scoped",
+			rawURL:      "http://0.0.0.0/index.yaml",
+			wantErr:     true,
+			errContains: "private or reserved address",
+		},
+		{
+			name:           "allows loopback for cluster-scoped",
+			rawURL:         "http://127.0.0.1/index.yaml",
+			isClusterScope: true,
+			wantErr:        false,
+		},
+		{
+			name:           "allows private IP for cluster-scoped",
+			rawURL:         "http://10.0.0.1/index.yaml",
+			isClusterScope: true,
+			wantErr:        false,
+		},
+		{
+			name:           "file scheme rejected even for cluster-scoped",
+			rawURL:         "file:///etc/passwd",
+			isClusterScope: true,
+			wantErr:        true,
+			errContains:    "unsupported URL scheme",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			u, err := url.Parse(tt.rawURL)
+			require.NoError(t, err)
+			err = validateRepoURL(u, tt.isClusterScope)
+			if tt.wantErr {
+				require.Error(t, err)
+				if tt.errContains != "" {
+					require.ErrorContains(t, err, tt.errContains)
+				}
+			} else {
+				require.NoError(t, err)
+			}
+		})
+	}
+}
+
+func noopURLValidator(_ *url.URL, _ bool) error { return nil }
 
 func TestHelmRepoGetter_List(t *testing.T) {
 	tests := []struct {
@@ -110,8 +234,8 @@ func TestHelmRepoGetter_List(t *testing.T) {
 					return true, nil, errors.New(apiError.msg)
 				})
 			}
-			repoGetter := NewRepoGetter(client, nil)
-			repos, err := repoGetter.List(tt.namespace)
+			repoGetter := &helmRepoGetter{Client: client, validateURL: noopURLValidator}
+			repos, _, err := repoGetter.List(tt.namespace)
 			if err != nil {
 				t.Error(err)
 			}
@@ -136,11 +260,12 @@ func TestHelmRepoGetter_List(t *testing.T) {
 
 func TestHelmRepoGetter_ListErrors(t *testing.T) {
 	tests := []struct {
-		name             string
-		helmCRS          []*unstructured.Unstructured
-		expectedRepoName []string
-		apiErrors        []apiError
-		namespace        string
+		name                    string
+		helmCRS                 []*unstructured.Unstructured
+		expectedRepoName        []string
+		expectedConfigErrorRepo []string
+		apiErrors               []apiError
+		namespace               string
 	}{
 		{
 			name: "skip repo that refer non-existent config map",
@@ -179,7 +304,8 @@ func TestHelmRepoGetter_ListErrors(t *testing.T) {
 					},
 				},
 			},
-			expectedRepoName: []string{"repo2"},
+			expectedRepoName:        []string{"repo2"},
+			expectedConfigErrorRepo: []string{"repo1"},
 		},
 		{
 			name: "skip repo that refer config map that cannot be accessed",
@@ -225,7 +351,8 @@ func TestHelmRepoGetter_ListErrors(t *testing.T) {
 					msg:      "foo",
 				},
 			},
-			expectedRepoName: []string{"repo2"},
+			expectedRepoName:        []string{"repo2"},
+			expectedConfigErrorRepo: []string{"repo1"},
 		},
 		{
 			name: "skip repo that refer secret that cannot be accessed",
@@ -271,7 +398,8 @@ func TestHelmRepoGetter_ListErrors(t *testing.T) {
 					msg:      "foo",
 				},
 			},
-			expectedRepoName: []string{"repo2"},
+			expectedRepoName:        []string{"repo2"},
+			expectedConfigErrorRepo: []string{"repo1"},
 		},
 	}
 	for _, tt := range tests {
@@ -284,7 +412,7 @@ func TestHelmRepoGetter_ListErrors(t *testing.T) {
 				})
 			}
 			repoGetter := NewRepoGetter(client, coreClient.CoreV1())
-			repos, err := repoGetter.List(tt.namespace)
+			repos, configErrors, err := repoGetter.List(tt.namespace)
 			if err != nil {
 				t.Error(err)
 			}
@@ -294,6 +422,17 @@ func TestHelmRepoGetter_ListErrors(t *testing.T) {
 			for i, repoName := range tt.expectedRepoName {
 				if repoName != repos[i].Name {
 					t.Errorf("Expected %v but got %v", repoName, repos[i].Name)
+				}
+			}
+			if len(configErrors) != len(tt.expectedConfigErrorRepo) {
+				t.Fatalf("Expected %v config errors, but got %v", len(tt.expectedConfigErrorRepo), len(configErrors))
+			}
+			for i, expectedName := range tt.expectedConfigErrorRepo {
+				if configErrors[i].Name != expectedName {
+					t.Errorf("Expected config error repo %v but got %v", expectedName, configErrors[i].Name)
+				}
+				if configErrors[i].Error == "" {
+					t.Errorf("Expected non-empty error message for repo %v", expectedName)
 				}
 			}
 		})
@@ -337,7 +476,8 @@ func TestHelmRepo_IndexFile(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 
 			repoGetter := &helmRepoGetter{
-				Client: fake.K8sDynamicClient("helm.openshift.io/v1beta1", "HelmChartRepository", ""),
+				Client:      fake.K8sDynamicClient("helm.openshift.io/v1beta1", "HelmChartRepository", ""),
+				validateURL: validateRepoURL,
 			}
 			url := tt.url
 
@@ -499,7 +639,7 @@ func TestHelmRepoGetter_SkipDisabled(t *testing.T) {
 			client := fake.K8sDynamicClientFromCRs(tt.helmCRS...)
 			coreClient := k8sfake.NewSimpleClientset()
 			repoGetter := NewRepoGetter(client, coreClient.CoreV1())
-			repos, err := repoGetter.List(tt.namespace)
+			repos, _, err := repoGetter.List(tt.namespace)
 			if err != nil {
 				t.Error(err)
 			}
@@ -524,14 +664,15 @@ func TestHelmRepoGetter_unmarshallConfig(t *testing.T) {
 		panic(err)
 	}
 	tests := []struct {
-		name            string
-		helmCRS         *unstructured.Unstructured
-		repoName        string
-		wantsErrMsg     string
-		createSecret    bool
-		namespace       string
-		createNamespace bool
-		clusterScoped   bool
+		name             string
+		helmCRS          *unstructured.Unstructured
+		repoName         string
+		wantsErrMsg      string
+		createSecret     bool
+		namespace        string
+		createNamespace  bool
+		clusterScoped    bool
+		skipIPValidation bool
 	}{
 		{
 			name: "Namespace present",
@@ -554,12 +695,13 @@ func TestHelmRepoGetter_unmarshallConfig(t *testing.T) {
 					},
 				},
 			},
-			repoName:        "repo4",
-			wantsErrMsg:     "",
-			createSecret:    true,
-			namespace:       "testing",
-			createNamespace: true,
-			clusterScoped:   false,
+			repoName:         "repo4",
+			wantsErrMsg:      "",
+			createSecret:     true,
+			namespace:        "testing",
+			createNamespace:  true,
+			clusterScoped:    false,
+			skipIPValidation: true,
 		},
 		{
 			name: "Namespace not present",
@@ -581,11 +723,12 @@ func TestHelmRepoGetter_unmarshallConfig(t *testing.T) {
 					},
 				},
 			},
-			repoName:        "repo5",
-			wantsErrMsg:     "",
-			createSecret:    true,
-			createNamespace: false,
-			clusterScoped:   false,
+			repoName:         "repo5",
+			wantsErrMsg:      "",
+			createSecret:     true,
+			createNamespace:  false,
+			clusterScoped:    false,
+			skipIPValidation: true,
 		},
 		{
 			name: "HTTPS is required for cluster-scoped repositories using basic authentication",
@@ -636,7 +779,55 @@ func TestHelmRepoGetter_unmarshallConfig(t *testing.T) {
 				},
 			},
 			repoName:        "repo7",
-			wantsErrMsg:     "Basic authentication requires HTTPS repository for security",
+			wantsErrMsg:     "private or reserved address",
+			createSecret:    false,
+			createNamespace: true,
+			namespace:       "testing",
+			clusterScoped:   false,
+		},
+		{
+			name: "reject namespace-scoped repo with file:// URL",
+			helmCRS: &unstructured.Unstructured{
+				Object: map[string]interface{}{
+					"apiVersion": "helm.openshift.io/v1beta1",
+					"kind":       "ProjectHelmChartRepository",
+					"metadata": map[string]interface{}{
+						"namespace": "testing",
+						"name":      "repo-file-scheme",
+					},
+					"spec": map[string]interface{}{
+						"connectionConfig": map[string]interface{}{
+							"url": "file:///etc/passwd",
+						},
+					},
+				},
+			},
+			repoName:        "repo-file-scheme",
+			wantsErrMsg:     "unsupported URL scheme",
+			createSecret:    false,
+			createNamespace: true,
+			namespace:       "testing",
+			clusterScoped:   false,
+		},
+		{
+			name: "reject namespace-scoped repo with private IP",
+			helmCRS: &unstructured.Unstructured{
+				Object: map[string]interface{}{
+					"apiVersion": "helm.openshift.io/v1beta1",
+					"kind":       "ProjectHelmChartRepository",
+					"metadata": map[string]interface{}{
+						"namespace": "testing",
+						"name":      "repo-private-ip",
+					},
+					"spec": map[string]interface{}{
+						"connectionConfig": map[string]interface{}{
+							"url": "http://10.0.0.1/charts",
+						},
+					},
+				},
+			},
+			repoName:        "repo-private-ip",
+			wantsErrMsg:     "private or reserved address",
 			createSecret:    false,
 			createNamespace: true,
 			namespace:       "testing",
@@ -664,9 +855,14 @@ func TestHelmRepoGetter_unmarshallConfig(t *testing.T) {
 				secretSpec := &v1.Secret{Data: data, ObjectMeta: metav1.ObjectMeta{Name: "fooSecret", Namespace: tt.namespace}}
 				objs = append(objs, secretSpec)
 			}
+			validator := validateRepoURL
+			if tt.skipIPValidation {
+				validator = noopURLValidator
+			}
 			repoGetter := &helmRepoGetter{
-				Client:     fake.K8sDynamicClient("helm.openshift.io/v1beta1", "HelmChartRepository", ""),
-				CoreClient: k8sfake.NewSimpleClientset(objs...).CoreV1(),
+				Client:      fake.K8sDynamicClient("helm.openshift.io/v1beta1", "HelmChartRepository", ""),
+				CoreClient:  k8sfake.NewSimpleClientset(objs...).CoreV1(),
+				validateURL: validator,
 			}
 			_, err := repoGetter.unmarshallConfig(*tt.helmCRS, tt.namespace, tt.clusterScoped)
 			if tt.wantsErrMsg != "" {

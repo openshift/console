@@ -1,12 +1,13 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import * as _ from 'lodash';
 import { useLocation } from 'react-router';
-import {
+import { useExactSearch } from '@console/app/src/components/user-preferences/search/useExactSearch';
+import type {
   UseListPageFilter,
   FilterValue,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import { useExactSearch } from '@console/app/src/components/user-preferences/search/useExactSearch';
-import { getAllTableFilters, FilterMap } from '../table-filters';
+import type { FilterMap } from '../table-filters';
+import { getAllTableFilters } from '../table-filters';
 
 const filterData = <D>(
   data: D[],

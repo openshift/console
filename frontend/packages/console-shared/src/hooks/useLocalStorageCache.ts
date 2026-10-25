@@ -15,7 +15,6 @@ export const useLocalStorageCache = <T = any>(
       const records = serializedCache ? JSON.parse(serializedCache) : [];
       return records.filter((record: Timestamped<T>) => isFresh(record, expiration));
     } catch (e) {
-      // eslint-disable-next-line no-console
       console.warn(`Error parsing cached records from local storage at key ${key}. Resetting.`);
       return [];
     }
@@ -54,7 +53,6 @@ export const useLocalStorageCache = <T = any>(
         try {
           window.localStorage.setItem(key, updatedSerializedRecords);
         } catch (e) {
-          // eslint-disable-next-line no-console
           console.warn(`Error writing to local storage at key ${key}.`);
           return false;
         }
@@ -64,9 +62,10 @@ export const useLocalStorageCache = <T = any>(
     [getNewSerializedRecords, key],
   );
 
-  const getRecords = useCallback((): T[] => refreshCache().map(({ timestamp, ...rest }) => rest), [
-    refreshCache,
-  ]);
+  const getRecords = useCallback(
+    (): T[] => refreshCache().map(({ timestamp, ...rest }) => rest),
+    [refreshCache],
+  );
 
   return [getRecords, addRecord];
 };

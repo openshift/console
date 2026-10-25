@@ -19,13 +19,13 @@ const normalizeKafkaSink = (namespace: string, t: TFunction): CatalogItem[] => {
       name: label,
       description,
       provider,
-      cta: { label: t('Create Event Sink'), href },
+      cta: { label: t('knative-plugin~Create Event Sink'), href },
       type: 'EventSink',
       icon: { url: iconUrl },
       details: {
         properties: [
           {
-            label: t('Support'),
+            label: t('knative-plugin~Support'),
             value: support,
           },
         ],

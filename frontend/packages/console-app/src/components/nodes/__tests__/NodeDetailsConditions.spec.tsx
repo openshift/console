@@ -31,7 +31,7 @@ describe('NodeDetailsConditions', () => {
       status: {
         conditions,
       },
-    } as NodeKind);
+    }) as NodeKind;
 
   it('should render section heading', () => {
     const node = createMockNode([]);

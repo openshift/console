@@ -1,14 +1,13 @@
 import type { FC } from 'react';
-import { useTranslation } from 'react-i18next';
 import { Grid, GridItem, Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core';
-
+import { useTranslation } from 'react-i18next';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
 import { QueryBrowser } from '@console/shared/src/components/query-browser/QueryBrowser';
 import {
   ResourceUtilizationQuery,
   useResourceMetricsQueries,
 } from '@console/shared/src/promql/resource-metrics';
-import { K8sResourceKind } from '@console/internal/module/k8s';
 
 const ResourceMetricsDashboardCard: FC<ResourceMetricsDashboardCardProps> = (props) => (
   <Card className="resource-metrics-dashboard__card">

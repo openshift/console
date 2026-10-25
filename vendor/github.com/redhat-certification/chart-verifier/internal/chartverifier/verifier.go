@@ -17,11 +17,12 @@
 package chartverifier
 
 import (
+	"fmt"
 	"strings"
 	"time"
 
 	"github.com/spf13/viper"
-	helmcli "helm.sh/helm/v3/pkg/cli"
+	helmcli "helm.sh/helm/v4/pkg/cli"
 
 	"github.com/redhat-certification/chart-verifier/internal/chartverifier/checks"
 	"github.com/redhat-certification/chart-verifier/internal/chartverifier/profiles"
@@ -136,7 +137,7 @@ func (c *verifier) Verify(uri string) (*apiReport.Report, error) {
 			if len(c.publicKeys) == 1 && strings.Contains(r.Reason, checks.ChartSigned) {
 				publicKeyDigest, digestErr := tool.GetPublicKeyDigest(c.publicKeys[0])
 				if digestErr != nil {
-					return nil, err
+					return nil, fmt.Errorf("error getting public key digest: %w", digestErr)
 				}
 				result.SetPublicKeyDigest(publicKeyDigest)
 			}

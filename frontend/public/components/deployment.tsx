@@ -1,17 +1,5 @@
 import type { FC } from 'react';
-import { ActionServiceProvider } from '@console/shared/src/components/actions/ActionServiceProvider';
-import { ActionMenu } from '@console/shared/src/components/actions/menu/ActionMenu';
-import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
-import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
-import { Status } from '@console/shared/src/components/status/Status';
-import { usePrometheusGate } from '@console/shared/src/hooks/usePrometheusGate';
 import { Suspense } from 'react';
-import { useTranslation } from 'react-i18next';
-
-import { GetDataViewRows } from '@console/app/src/components/data-view/types';
-import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
-import { VerticalPodAutoscalerRecommendations } from '@console/app/src/components/vpa/VerticalPodAutoscalerRecommendations';
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import {
   DescriptionList,
   DescriptionListDescription,
@@ -20,21 +8,33 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
+import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
+import { VerticalPodAutoscalerRecommendations } from '@console/app/src/components/vpa/VerticalPodAutoscalerRecommendations';
+import type { GetDataViewRows } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { ActionServiceProvider } from '@console/shared/src/components/actions/ActionServiceProvider';
+import { ActionMenu } from '@console/shared/src/components/actions/menu/ActionMenu';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
+import { Status } from '@console/shared/src/components/status/Status';
+import { usePrometheusGate } from '@console/shared/src/hooks/usePrometheusGate';
 import { DeploymentModel } from '../models';
-import { DeploymentKind, referenceForModel } from '../module/k8s';
+import type { DeploymentKind } from '../module/k8s';
+import { referenceForModel } from '../module/k8s';
 import { Conditions } from './conditions';
 import { ResourceEventStream } from './events';
 import { DetailsPage } from './factory/details';
 import { ListPage } from './factory/list-page';
-import { ReplicaSetsPage } from './replicaset';
-import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
-import { LoadingBox } from './utils/status-box';
+import { ReplicaSetsPage } from './replica-set';
 import { AsyncComponent } from './utils/async';
 import { ContainerTable } from './utils/container-table';
 import { DetailsItem } from './utils/details-item';
 import { ResourceSummary, RuntimeClass } from './utils/details-page';
 import { SectionHeading } from './utils/headings';
 import { navFactory } from './utils/horizontal-nav';
+import { LoadingBox } from './utils/status-box';
 import { WorkloadPausedAlert } from './utils/workload-pause';
 import { VolumesTable } from './volumes-table';
 import { WorkloadTableHeader, getWorkloadDataViewRows, useWorkloadColumns } from './workload-table';
@@ -212,29 +212,25 @@ export const DeploymentsDetailsPage: FC = (props) => {
 };
 DeploymentsDetailsPage.displayName = 'DeploymentsDetailsPage';
 
-const DeploymentTableHeader = () => {
-  return WorkloadTableHeader();
-};
+const DeploymentTableHeader = () => WorkloadTableHeader();
 DeploymentTableHeader.displayName = 'DeploymentTableHeader';
 
-const getDataViewRows: GetDataViewRows<DeploymentKind> = (data, columns) => {
-  return getWorkloadDataViewRows(data, columns, DeploymentModel);
-};
+const getDataViewRows: GetDataViewRows<DeploymentKind> = (data, columns) =>
+  getWorkloadDataViewRows(data, columns, DeploymentModel);
 
 const DeploymentsList: FC<DeploymentsListProps> = ({ data, loaded, ...props }) => {
-  const { columns, resetAllColumnWidths } = useWorkloadColumns<DeploymentKind>(DeploymentModel);
+  const { columns } = useWorkloadColumns<DeploymentKind>();
 
   return (
     <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView
         {...props}
+        id={DeploymentModel}
         label={DeploymentModel.labelPlural}
         data={data}
         loaded={loaded}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        isResizable
-        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );
@@ -249,11 +245,11 @@ export const DeploymentsPage: FC<DeploymentsPageProps> = (props) => {
     <ListPage
       {...props}
       kind={kind}
-      canCreate={true}
+      canCreate
       createProps={createProps}
       ListComponent={DeploymentsList}
-      omitFilterToolbar={true}
-      hideColumnManagement={true}
+      omitFilterToolbar
+      hideColumnManagement
     />
   );
 };

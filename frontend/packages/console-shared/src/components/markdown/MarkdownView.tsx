@@ -13,7 +13,7 @@ import {
   THEME_GLASS,
   THEME_GLASS_CLASS,
   useTheme,
-} from '@console/internal/components/ThemeProvider';
+} from '@console/app/src/providers/theme/ThemeProvider';
 import { useForceRender } from '../../hooks/useForceRender';
 import { useResizeObserver } from '../../hooks/useResizeObserver';
 
@@ -105,11 +105,13 @@ const RenderExtension: FC<RenderExtensionProps> = ({
 }) => {
   const forceRender = useForceRender();
   const markupRef = useRef<string>(null);
+  // eslint-disable-next-line react-hooks/refs -- Intentional render-time ref access: delays extension rendering by one cycle to let DOM update via dangerouslySetInnerHTML
   const shouldRenderExtension = useCallback(() => {
     if (markupRef.current === markup) {
+      // eslint-disable-line react-hooks/refs -- delays extension rendering one cycle to let DOM update
       return true;
     }
-    markupRef.current = markup;
+    markupRef.current = markup; // eslint-disable-line react-hooks/refs -- tracks markup to detect changes across renders
     return false;
   }, [markup]);
   /**
@@ -160,14 +162,14 @@ const IFrameMarkdownView: FC<InnerSyncMarkdownProps> = ({
     [THEME_GLASS_CLASS]: contrast === THEME_GLASS,
   });
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const updateDimensions = useCallback(
-    _.debounce(() => {
-      const el = frameRef.current?.contentWindow?.document?.body?.firstElementChild;
-      if (el) {
-        setFrameHeight(el.scrollHeight + (exactHeight ? 0 : 15));
-      }
-    }, 100),
+  const updateDimensions = useMemo(
+    () =>
+      _.debounce(() => {
+        const el = frameRef.current?.contentWindow?.document?.body?.firstElementChild;
+        if (el) {
+          setFrameHeight(el.scrollHeight + (exactHeight ? 0 : 15));
+        }
+      }, 100),
     [exactHeight],
   );
 
@@ -236,9 +238,9 @@ const IFrameMarkdownView: FC<InnerSyncMarkdownProps> = ({
       {loaded && (
         <RenderExtension
           markup={markup}
-          selector={''}
+          selector=""
           renderExtension={renderExtension}
-          docContext={frameRef.current?.contentDocument}
+          docContext={frameRef.current?.contentDocument} // eslint-disable-line react-hooks/refs -- DOM ref read after load; iframe is mounted when loaded=true
         />
       )}
     </>

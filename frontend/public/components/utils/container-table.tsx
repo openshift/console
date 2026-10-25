@@ -1,8 +1,8 @@
 import type { FC } from 'react';
+import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { ContainerSpec } from '../../module/k8s';
-import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
+import type { ContainerSpec } from '../../module/k8s';
 
 const ContainerRow: FC<ContainerRowProps> = ({ container }) => {
   const resourceLimits = _.get(container, 'resources.limits');

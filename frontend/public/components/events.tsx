@@ -1,9 +1,5 @@
-import * as _ from 'lodash';
 import type { ComponentType, FC, ReactNode } from 'react';
 import { useEffect, useState, useMemo } from 'react';
-import { css } from '@patternfly/react-styles';
-import { Link, useParams } from 'react-router';
-import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import {
   Label,
   LabelGroup,
@@ -15,43 +11,46 @@ import {
   ToolbarItem,
   ToolbarContent,
 } from '@patternfly/react-core';
-
+import { css } from '@patternfly/react-styles';
+import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
+import { Link, useParams } from 'react-router';
+import type { CellMeasurerCache } from 'react-virtualized';
 import type { Action, MenuOption } from '@console/dynamic-plugin-sdk';
-
-import { ResourceListDropdown } from './resource-dropdown';
-import { TextFilter } from './factory/text-filter';
+import type {
+  K8sResourceCommon,
+  ResourceEventStreamProps,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { ConsoleSelect } from '@console/internal/components/utils/console-select';
+import { ActionServiceProvider } from '@console/shared/src/components/actions/ActionServiceProvider';
+import { ActionMenu } from '@console/shared/src/components/actions/menu/ActionMenu';
+import ActionMenuItem from '@console/shared/src/components/actions/menu/ActionMenuItem';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { FLAGS } from '@console/shared/src/constants/common';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
+import { EventModel, NodeModel } from '../models';
 import {
   apiGroupForReference,
   isGroupVersionKind,
   kindForReference,
   referenceFor,
 } from '../module/k8s';
+import type { EventInvolvedObject } from '../module/k8s/event';
+import type { EventKind } from '../module/k8s/types';
+import { TextFilter } from './factory/text-filter';
+import { ResourceListDropdown } from './resource-dropdown';
 import { withStartGuide } from './start-guide';
-import { EventModel, NodeModel } from '../models';
+import type { EventComponentProps } from './utils/event-stream';
+import { EventStreamList } from './utils/event-stream';
 import { useK8sWatchResource } from './utils/k8s-watch-hook';
-import { useFlag } from '@console/shared/src/hooks/useFlag';
-import { FLAGS } from '@console/shared/src/constants/common';
-import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
-import { ConsoleSelect } from '@console/internal/components/utils/console-select';
-import { Loading, ConsoleEmptyState } from './utils/status-box';
 import { ResourceIcon } from './utils/resource-icon';
 import { ResourceLink, resourcePathFromModel } from './utils/resource-link';
+import { Loading, ConsoleEmptyState } from './utils/status-box';
 import { TogglePlay } from './utils/toggle-play';
-import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import { EventStreamList, EventComponentProps } from './utils/event-stream';
-import { ActionMenu } from '@console/shared/src/components/actions/menu/ActionMenu';
-import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
-import { ActionServiceProvider } from '@console/shared/src/components/actions/ActionServiceProvider';
-import ActionMenuItem from '@console/shared/src/components/actions/menu/ActionMenuItem';
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import type { EventKind } from '../module/k8s/types';
-import type { EventInvolvedObject } from '../module/k8s/event';
-import type { CellMeasurerCache } from 'react-virtualized';
-import type {
-  K8sResourceCommon,
-  ResourceEventStreamProps,
-} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 
 const maxMessages = 500;
 
@@ -115,13 +114,8 @@ export const getLastTime = (event: EventKind): string | null | undefined => {
   return event.lastTimestamp || lastObservedTime || event.eventTime;
 };
 
-export const sortEvents = (events: EventKind[] | Record<string, EventKind>): EventKind[] => {
-  return _.orderBy(
-    events,
-    [getLastTime, getFirstTime, 'name'],
-    ['desc', 'desc', 'asc'],
-  ) as EventKind[];
-};
+export const sortEvents = (events: EventKind[] | Record<string, EventKind>): EventKind[] =>
+  _.orderBy(events, [getLastTime, getFirstTime, 'name'], ['desc', 'desc', 'asc']) as EventKind[];
 
 // Predicate function to filter by event "type" (normal, warning, or all)
 export const typeFilter = (eventType: string, event: EventKind): boolean => {
@@ -255,7 +249,7 @@ const Inner: FC<InnerProps> = ({ event, list, cache, index }) => {
                 <Trans ns="public">
                   <span className="pf-v6-u-font-size-xs pf-v6-u-text-color-subtle co-sysevent__count">
                     {{ eventCount: count }} times in the last{' '}
-                    <Timestamp timestamp={firstTime} simple={true} omitSuffix={true} />
+                    <Timestamp timestamp={firstTime} simple omitSuffix />
                   </span>
                 </Trans>
               )}
@@ -283,7 +277,8 @@ const Inner: FC<InnerProps> = ({ event, list, cache, index }) => {
             </div>
           </div>
         </div>
-        <div className="co-sysevent__message" tabIndex={0}>
+        {/* eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex */}
+        <div className="co-sysevent__message" role="group" tabIndex={0}>
           {message}
         </div>
       </div>
@@ -333,10 +328,11 @@ const filterEvents = (
 ): EventKind[] => {
   // Don't use `fuzzy` because it results in some surprising matches in long event messages.
   // Instead perform an exact substring match on each word in the text filter.
-  const words = _.uniq(_.toLower(textFilter).match(/\S+/g) ?? []).sort((a, b) => {
-    // Sort the longest words first.
-    return b.length - a.length;
-  });
+  const words = _.uniq(_.toLower(textFilter).match(/\S+/g) ?? []).sort(
+    (a, b) =>
+      // Sort the longest words first.
+      b.length - a.length,
+  );
 
   const textMatches = (obj: EventKind): boolean => {
     if (_.isEmpty(words)) {
@@ -401,9 +397,10 @@ const EventStream: FC<EventStreamProps> = ({
     return sortEvents(dataSource).slice(0, maxMessages);
   }, [pausedSnapshot, eventsData]);
 
-  const filteredEvents = useMemo(() => {
-    return filterEvents(sortedEvents, { kind, type, filter, textFilter }).slice(0, maxMessages);
-  }, [sortedEvents, kind, type, filter, textFilter]);
+  const filteredEvents = useMemo(
+    () => filterEvents(sortedEvents, { kind, type, filter, textFilter }).slice(0, maxMessages),
+    [sortedEvents, kind, type, filter, textFilter],
+  );
 
   const toggleStream = () => {
     setActive((prev) => {
@@ -556,20 +553,19 @@ export const EventsList: FC<EventsListProps> = (props) => {
                 categoryName={t('Resource')}
                 defaultIsOpen={false}
                 collapsedText={t('{{numRemaining}} more', {
+                  // eslint-disable-next-line no-template-curly-in-string
                   numRemaining: '${remaining}',
                 })}
                 expandedText={t('Show less')}
                 isClosable
                 onClick={clearSelection}
               >
-                {[...selected].map((chip) => {
-                  return (
-                    <Label variant="outline" key={chip} onClose={() => removeResource(chip)}>
-                      <ResourceIcon kind={chip} />
-                      {kindForReference(chip)}
-                    </Label>
-                  );
-                })}
+                {[...selected].map((chip) => (
+                  <Label variant="outline" key={chip} onClose={() => removeResource(chip)}>
+                    <ResourceIcon kind={chip} />
+                    {kindForReference(chip)}
+                  </Label>
+                ))}
               </LabelGroup>
             </ToolbarContent>
           )}
@@ -606,7 +602,7 @@ export const EventStreamPage = withStartGuide(
   },
 );
 
-const ResourceEventStream_: FC<InternalResourceEventStreamProps> = ({
+const InnerResourceEventStream: FC<InternalResourceEventStreamProps> = ({
   obj: {
     kind,
     metadata: { name, namespace, uid },
@@ -619,7 +615,7 @@ const ResourceEventStream_: FC<InternalResourceEventStreamProps> = ({
   />
 );
 
-export { ResourceEventStream_ as ResourceEventStream };
+export { InnerResourceEventStream as ResourceEventStream };
 
 export const ResourcesEventStream: FC<InternalResourcesEventStreamProps> = ({
   filters,
@@ -627,5 +623,5 @@ export const ResourcesEventStream: FC<InternalResourcesEventStreamProps> = ({
 }) => <EventStream filter={filters} resourceEventStream namespace={namespace} />;
 
 export const WrappedResourceEventStream: FC<ResourceEventStreamProps> = ({ resource }) => (
-  <ResourceEventStream_ obj={resource} />
+  <InnerResourceEventStream obj={resource} />
 );

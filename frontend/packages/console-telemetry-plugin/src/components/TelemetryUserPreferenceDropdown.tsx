@@ -49,7 +49,7 @@ const TelemetryAnalyticsSelect: FC<{
   const [isOpen, setIsOpen] = useState(false);
   const selection = options.find((option) => option.isSelected)?.value;
 
-  const toggle = (toggleRef: RefObject<MenuToggleElement>) => (
+  const toggle = (toggleRef: RefObject<MenuToggleElement | null>) => (
     <MenuToggle
       ref={toggleRef}
       onClick={() => setIsOpen(!isOpen)}
@@ -94,14 +94,12 @@ const TelemetryUserPreferenceDropdown: FC = () => {
   const { t } = useTranslation('console-telemetry-plugin');
   const fireTelemetryEvent = useTelemetry();
 
-  const [
-    currentUserPreferenceTelemetryValue,
-    setCurrentUserPreferenceTelemetryValue,
-  ] = useUserPreference<USER_TELEMETRY_ANALYTICS>(
-    PREFERRED_TELEMETRY_USER_PREFERENCE_KEY,
-    null,
-    true,
-  );
+  const [currentUserPreferenceTelemetryValue, setCurrentUserPreferenceTelemetryValue] =
+    useUserPreference<USER_TELEMETRY_ANALYTICS>(
+      PREFERRED_TELEMETRY_USER_PREFERENCE_KEY,
+      null,
+      true,
+    );
 
   const onChange = (selectedOption: TelemetryAnalyticsSelectOptions) => {
     fireTelemetryEvent('Telemetry user preference changes', {

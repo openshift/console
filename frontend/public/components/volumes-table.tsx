@@ -1,10 +1,18 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import type { FC } from 'react';
-import { Link } from 'react-router';
+import { useMemo } from 'react';
+import i18next from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import i18next from 'i18next';
-import {
+import { Link } from 'react-router';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
+import type {
+  ConsoleDataViewColumn,
+  GetDataViewRows,
+  ResourceMetadata,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { connectToModel } from '../kinds';
+import type {
   ContainerSpec,
   K8sKind,
   K8sResourceKind,
@@ -14,39 +22,32 @@ import {
   Volume,
   VolumeMount,
 } from '../module/k8s';
-import { asAccessReview } from './utils/rbac';
-import { EmptyBox } from './utils/status-box';
-import { Kebab, KebabOption } from './utils/kebab';
-import { ResourceIcon } from './utils/resource-icon';
-import { SectionHeading } from './utils/headings';
-import { VolumeType } from './utils/volume-type';
-import { Table } from './factory/table';
-import { sortable } from '@patternfly/react-table';
-import { connectToModel } from '../kinds';
 import { useRemoveModalLauncher } from './modals/remove-volume-modal';
-import { ModalCallback } from './modals/types';
-import { KEBAB_COLUMN_CLASS } from '@console/shared/src/components/actions/LazyActionMenu';
+import type { ModalCallback } from './modals/types';
+import { SectionHeading } from './utils/headings';
+import type { KebabOption } from './utils/kebab';
+import { Kebab } from './utils/kebab';
+import { asAccessReview } from './utils/rbac';
+import { ResourceIcon } from './utils/resource-icon';
+import { EmptyBox } from './utils/status-box';
+import { VolumeType } from './utils/volume-type';
 
 const removeVolume = (
   removeVolumeModal: ModalCallback,
   kind: K8sKind,
   obj: K8sResourceKind,
-): KebabOption => {
-  return {
-    // t('public~Remove volume')
-    labelKey: 'public~Remove volume',
-    callback: () => removeVolumeModal(),
-    accessReview: asAccessReview(kind, obj, 'patch'),
-  };
-};
+): KebabOption => ({
+  // t('public~Remove volume')
+  labelKey: 'public~Remove volume',
+  callback: () => removeVolumeModal(),
+  accessReview: asAccessReview(kind, obj, 'patch'),
+});
 
-const getPodTemplate = (resource: K8sResourceKind): PodTemplate => {
-  return resource.kind === 'Pod' ? (resource as PodKind) : resource.spec.template;
-};
+const getPodTemplate = (resource: K8sResourceKind): PodTemplate =>
+  resource.kind === 'Pod' ? (resource as PodKind) : resource.spec.template;
 
-const anyContainerWithVolumeMounts = (containers: ContainerSpec[]) => {
-  return !!_.findKey(containers, 'volumeMounts');
-};
+const anyContainerWithVolumeMounts = (containers: ContainerSpec[]) =>
+  !!_.findKey(containers, 'volumeMounts');
 
 const getRowVolumeData = (resource: K8sResourceKind): RowVolumeData[] => {
   const pod: PodTemplate = getPodTemplate(resource);
@@ -86,146 +87,133 @@ const ContainerLink: FC<ContainerLinkProps> = ({ name, pod }) => (
 );
 ContainerLink.displayName = 'ContainerLink';
 
-const volumeRowColumnClasses = [
-  'pf-v6-u-w-25-on-2xl',
-  'pf-v6-u-w-25-on-2xl',
-  'pf-m-hidden pf-m-visible-on-md',
-  'pf-m-hidden pf-m-visible-on-lg',
-  'pf-m-hidden pf-m-visible-on-lg',
-  'pf-m-hidden pf-m-visible-on-xl',
-  KEBAB_COLUMN_CLASS,
-];
+const useVolumeColumns = (): {
+  columns: ConsoleDataViewColumn<RowVolumeData>[];
+} => {
+  const { t } = useTranslation('public');
+  const columns = useMemo(
+    () => [
+      {
+        type: 'name' as const,
+        id: 'name',
+        sort: 'name',
+      },
+      {
+        id: 'mountPath',
+        title: t('Mount path'),
+        sort: 'mountPath',
+        props: { modifier: 'nowrap' as const },
+      },
+      {
+        id: 'subPath',
+        title: t('SubPath'),
+        sort: 'subPath',
+        props: { modifier: 'nowrap' as const },
+      },
+      {
+        id: 'type',
+        title: t('Type'),
+        props: { modifier: 'nowrap' as const },
+      },
+      {
+        id: 'permissions',
+        title: t('Permissions'),
+        sort: 'readOnly',
+        props: { modifier: 'nowrap' as const },
+      },
+      {
+        id: 'utilizedBy',
+        title: t('Utilized by'),
+        sort: 'container',
+        props: { modifier: 'nowrap' as const },
+      },
+      { type: 'actions' as const, id: 'actions' },
+    ],
+    [t],
+  );
+  return { columns };
+};
 
-const VolumesTableRows = ({ componentProps: { data } }) => {
-  return _.map(data, (volume: RowVolumeData) => {
+export const getVolumeDataViewRows: GetDataViewRows<RowVolumeData> = (data, columns) =>
+  data.map(({ obj: volume }) => {
     const { container, mountPath, name, readOnly, resource, subPath, volumeDetail } = volume;
     const pod = getPodTemplate(resource);
     const podVolume = pod.spec?.volumes?.find((v) => name === v.name);
     const podVolumeIsReadOnly = podVolume
       ? Object.values(podVolume).some((v) => v.readOnly === 'true')
       : false;
-    return [
-      {
-        title: name,
+    const rowCells = {
+      name: {
+        cell: name,
         props: {
-          className: volumeRowColumnClasses[0],
           'data-test': `volume-name-${name}`,
           'data-test-volume-name-for': name,
         },
       },
-      {
-        title: mountPath,
+      mountPath: {
+        cell: mountPath,
         props: {
-          className: volumeRowColumnClasses[1],
           'data-test': `mount-path-${name}`,
           'data-test-mount-path-for': name,
         },
       },
-      {
-        title: subPath || (
+      subPath: {
+        cell: subPath || (
           <span className="pf-v6-u-text-color-subtle">{i18next.t('public~No subpath')}</span>
         ),
-        props: {
-          className: volumeRowColumnClasses[2],
-        },
       },
-      {
-        title: <VolumeType volume={volumeDetail} namespace={resource.metadata.namespace} />,
-        props: {
-          className: volumeRowColumnClasses[3],
-        },
+      type: {
+        cell: <VolumeType volume={volumeDetail} namespace={resource.metadata.namespace} />,
+        // VolumeType renders a ResourceLink. Without nowrap on the cell itself the resource name
+        // breaks one character per line whenever the column is narrow.
+        props: { modifier: 'nowrap' as const },
       },
-      {
-        title:
+      permissions: {
+        cell:
           readOnly || podVolumeIsReadOnly
             ? i18next.t('public~Read-only')
             : i18next.t('public~Read/Write'),
-        props: {
-          className: volumeRowColumnClasses[4],
-        },
       },
-      {
-        title:
-          _.get(pod, 'kind') === 'Pod' ? (
+      utilizedBy: {
+        // `getPodTemplate` returns the resource itself for a Pod, and `spec.template` otherwise,
+        // so only a Pod's template can be linked to a container.
+        cell:
+          resource.kind === 'Pod' ? (
             <ContainerLink name={container} pod={pod as PodKind} />
           ) : (
             container
           ),
-        props: {
-          className: volumeRowColumnClasses[5],
-        },
       },
-      {
-        title: <VolumeKebab kind={resource.kind} resource={resource} rowVolumeData={volume} />,
-        props: {
-          className: volumeRowColumnClasses[6],
-        },
+      actions: {
+        cell: <VolumeKebab kind={resource.kind} resource={resource} rowVolumeData={volume} />,
       },
-    ];
+    };
+    return columns.map(({ id }) => ({ id, ...rowCells[id] }));
   });
-};
 
-export const VolumesTable = (props) => {
+const getObjectMetadata = (volume: RowVolumeData): ResourceMetadata => ({ name: volume.name });
+
+export const VolumesTable: FC<VolumesTableProps> = ({ resource, heading }) => {
   const { t } = useTranslation('public');
-  const { resource, ...tableProps } = props;
+  const { columns } = useVolumeColumns();
   const data: RowVolumeData[] = getRowVolumeData(resource);
   const pod: PodTemplate = getPodTemplate(resource);
-  const VolumesTableHeader = () => [
-    {
-      title: t('Name'),
-      sortField: 'name',
-      transforms: [sortable],
-      props: { className: volumeRowColumnClasses[0] },
-    },
-    {
-      title: t('Mount path'),
-      sortField: 'mountPath',
-      transforms: [sortable],
-      props: { className: volumeRowColumnClasses[1] },
-    },
-    {
-      title: t('SubPath'),
-      sortField: 'subPath',
-      transforms: [sortable],
-      props: { className: volumeRowColumnClasses[2] },
-    },
-    {
-      title: t('Type'),
-      props: { className: volumeRowColumnClasses[3] },
-    },
-    {
-      title: t('Permissions'),
-      sortField: 'readOnly',
-      transforms: [sortable],
-      props: { className: volumeRowColumnClasses[4] },
-    },
-    {
-      title: t('Utilized by'),
-      sortField: 'container',
-      transforms: [sortable],
-      props: { className: volumeRowColumnClasses[5] },
-    },
-    {
-      title: '',
-      props: { className: volumeRowColumnClasses[6] },
-    },
-  ];
 
   return (
     <>
-      {props.heading && <SectionHeading text={props.heading} />}
+      {heading && <SectionHeading text={heading} />}
       {_.isEmpty(pod.spec.volumes) && !anyContainerWithVolumeMounts(pod.spec.containers) ? (
         <EmptyBox label={t('Volumes')} />
       ) : (
-        <Table
-          {...tableProps}
-          aria-label={t('Volumes')}
-          loaded={true}
-          label={props.heading}
+        <ConsoleDataView<RowVolumeData>
+          id="console.ui~v1~VolumeTable"
+          label={t('Volumes')}
           data={data}
-          Header={VolumesTableHeader}
-          Rows={VolumesTableRows}
-          virtualize={false}
+          loaded
+          columns={columns}
+          getDataViewRows={getVolumeDataViewRows}
+          getObjectMetadata={getObjectMetadata}
+          hideLabelFilter
         />
       )}
     </>
@@ -258,6 +246,11 @@ const VolumeKebab = connectToModel((props: VolumeKebabProps) => {
     />
   );
 });
+
+type VolumesTableProps = {
+  resource: K8sResourceKind;
+  heading?: string;
+};
 
 type VolumeKebabProps = {
   kindObj: K8sKind;

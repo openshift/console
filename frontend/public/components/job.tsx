@@ -1,38 +1,5 @@
 import type { FC } from 'react';
 import { useMemo, Suspense } from 'react';
-import { Link } from 'react-router';
-import { useTranslation } from 'react-i18next';
-import { Status } from '@console/shared/src/components/status/Status';
-import { ActionServiceProvider } from '@console/shared/src/components/actions/ActionServiceProvider';
-import { ActionMenu } from '@console/shared/src/components/actions/menu/ActionMenu';
-import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
-import { DASH } from '@console/shared/src/constants/ui';
-import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import {
-  getJobTypeAndCompletions,
-  JobKind,
-  K8sResourceKind,
-  referenceFor,
-  referenceForModel,
-  TableColumn,
-} from '../module/k8s';
-import { Conditions } from './conditions';
-import { DetailsPage } from './factory/details';
-import { ListPage } from './factory/list-page';
-import { ContainerTable } from './utils/container-table';
-import { DetailsItem } from './utils/details-item';
-import { LabelList } from './utils/label-list';
-import { LoadingBox } from './utils/status-box';
-import { PodsComponent, navFactory } from './utils/horizontal-nav';
-import { ResourceLink } from './utils/resource-link';
-import { ResourceSummary } from './utils/details-page';
-import { SectionHeading } from './utils/headings';
-
-import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import { ResourceEventStream } from './events';
-import { JobModel } from '../models';
-import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
 import {
   DescriptionList,
   DescriptionListDescription,
@@ -41,18 +8,43 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router';
 import {
-  actionsCellProps,
-  getNameCellProps,
   ConsoleDataView,
-  nameCellProps,
   getLabelsColumnWidthStyleProp,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-import { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
+import type {
+  ConsoleDataViewColumn,
+  GetDataViewRows,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
-import { sortResourceByValue } from './factory/Table/sort';
+import { ActionServiceProvider } from '@console/shared/src/components/actions/ActionServiceProvider';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
+import { ActionMenu } from '@console/shared/src/components/actions/menu/ActionMenu';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { Status } from '@console/shared/src/components/status/Status';
+import { DASH } from '@console/shared/src/constants/ui';
+import { JobModel } from '../models';
+import type { JobKind, K8sResourceKind } from '../module/k8s';
+import { getJobTypeAndCompletions, referenceFor, referenceForModel } from '../module/k8s';
+import { Conditions } from './conditions';
+import { ResourceEventStream } from './events';
+import { DetailsPage } from './factory/details';
+import { ListPage } from './factory/list-page';
 import { sorts } from './factory/table';
+import { sortResourceByValue } from './factory/Table/sort';
+import { ContainerTable } from './utils/container-table';
+import { DetailsItem } from './utils/details-item';
+import { ResourceSummary } from './utils/details-page';
+import { SectionHeading } from './utils/headings';
+import { PodsComponent, navFactory } from './utils/horizontal-nav';
+import { LabelList } from './utils/label-list';
+import { ResourceLink } from './utils/resource-link';
+import { LoadingBox } from './utils/status-box';
 
 const kind = referenceForModel(JobModel);
 
@@ -78,8 +70,8 @@ const Completions: FC<CompletionsCellProps> = ({ obj, completions }) => {
   );
 };
 
-const getDataViewRows: GetDataViewRows<JobKind> = (data, columns) => {
-  return data.map(({ obj }) => {
+const getDataViewRows: GetDataViewRows<JobKind> = (data, columns) =>
+  data.map(({ obj }) => {
     const { name, namespace } = obj.metadata;
     const { type, completions } = getJobTypeAndCompletions(obj);
     const context = { [referenceFor(obj)]: obj };
@@ -93,7 +85,6 @@ const getDataViewRows: GetDataViewRows<JobKind> = (data, columns) => {
             namespace={namespace}
           />
         ),
-        props: getNameCellProps(name),
       },
       [tableColumnInfo[1].id]: {
         cell: <ResourceLink kind="Namespace" name={namespace} />,
@@ -112,7 +103,6 @@ const getDataViewRows: GetDataViewRows<JobKind> = (data, columns) => {
       },
       [tableColumnInfo[6].id]: {
         cell: <LazyActionMenu context={context} />,
-        props: actionsCellProps,
       },
     };
 
@@ -120,12 +110,10 @@ const getDataViewRows: GetDataViewRows<JobKind> = (data, columns) => {
       const cell = rowCells[id]?.cell || DASH;
       return {
         id,
-        props: rowCells[id]?.props,
         cell,
       };
     });
   });
-};
 
 const JobDetails: FC<JobsDetailsProps> = ({ obj: job }) => {
   const { t } = useTranslation('public');
@@ -233,41 +221,27 @@ const JobsDetailsPage: FC = (props) => {
   );
 };
 const useJobsColumns = (): {
-  columns: TableColumn<JobKind>[];
-  resetAllColumnWidths: () => void;
+  columns: ConsoleDataViewColumn<JobKind>[];
 } => {
   const { t } = useTranslation('public');
-  const { getResizableProps, getWidth, resetAllColumnWidths } = useColumnWidthSettings(JobModel);
 
-  const columns = useMemo(() => {
-    return [
+  const columns = useMemo<ConsoleDataViewColumn<JobKind>[]>(
+    () => [
       {
-        title: t('Name'),
+        type: 'name' as const,
         id: tableColumnInfo[0].id,
-        sort: 'metadata.name',
-        resizableProps: getResizableProps(tableColumnInfo[0].id),
-        props: {
-          ...nameCellProps,
-          modifier: 'nowrap',
-        },
       },
       {
-        title: t('Namespace'),
+        type: 'namespace' as const,
         id: tableColumnInfo[1].id,
-        sort: 'metadata.namespace',
-        resizableProps: getResizableProps(tableColumnInfo[1].id),
-        props: {
-          modifier: 'nowrap',
-        },
       },
       {
         title: t('Labels'),
         id: tableColumnInfo[2].id,
         sort: 'metadata.labels',
-        resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
-          modifier: 'nowrap',
-          ...getLabelsColumnWidthStyleProp(getWidth(tableColumnInfo[2].id)),
+          modifier: 'nowrap' as const,
+          ...getLabelsColumnWidthStyleProp(),
         },
       },
       {
@@ -275,9 +249,8 @@ const useJobsColumns = (): {
         id: tableColumnInfo[3].id,
         sort: (data, direction) =>
           data.sort(sortResourceByValue<JobKind>(direction, sorts.jobCompletionsSucceeded)),
-        resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -285,61 +258,46 @@ const useJobsColumns = (): {
         id: tableColumnInfo[4].id,
         sort: (data, direction) =>
           data.sort(sortResourceByValue<JobKind>(direction, sorts.jobType)),
-        resizableProps: getResizableProps(tableColumnInfo[4].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
         title: t('Created'),
         id: tableColumnInfo[5].id,
         sort: 'metadata.creationTimestamp',
-        resizableProps: getResizableProps(tableColumnInfo[5].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
-      {
-        title: '',
-        id: tableColumnInfo[6].id,
-        props: {
-          ...actionsCellProps,
-        },
-      },
-    ];
-  }, [t, getResizableProps, getWidth]);
+      { type: 'actions' as const, id: tableColumnInfo[6].id },
+    ],
+    [t],
+  );
 
-  return { columns, resetAllColumnWidths };
+  return { columns };
 };
 
 const JobsList: FC<JobsListProps> = ({ data, loaded, ...props }) => {
-  const { columns, resetAllColumnWidths } = useJobsColumns();
+  const { columns } = useJobsColumns();
 
   return (
     <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<JobKind>
         {...props}
+        id={JobModel}
         label={JobModel.labelPlural}
         data={data}
         loaded={loaded}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement={true}
-        isResizable
-        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );
 };
 
 const JobsPage: FC<JobsPageProps> = (props) => (
-  <ListPage
-    {...props}
-    kind={kind}
-    ListComponent={JobsList}
-    canCreate={true}
-    omitFilterToolbar={true}
-  />
+  <ListPage {...props} kind={kind} ListComponent={JobsList} canCreate omitFilterToolbar />
 );
 export { JobsList, JobsPage, JobsDetailsPage };
 

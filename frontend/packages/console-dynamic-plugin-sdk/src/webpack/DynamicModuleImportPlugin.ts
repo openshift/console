@@ -70,7 +70,6 @@ export const resolveDynamicModuleMaps = (
         .find((p) => fs.existsSync(p) && fs.statSync(p).isDirectory());
 
       if (!basePath) {
-        // eslint-disable-next-line no-console
         console.warn(`Cannot resolve base path for package ${pkgName}`);
         return acc;
       }
@@ -85,7 +84,6 @@ export const resolveDynamicModuleMaps = (
             throw new Error('Invalid dynamic module map object');
           }
 
-          // eslint-disable-next-line no-console
           console.info(
             `${chalk.bold(pkgName)} dynamic modules taken from ${chalk.green(dynamicModuleMap)}`,
           );
@@ -93,14 +91,12 @@ export const resolveDynamicModuleMaps = (
           acc[pkgName] = obj;
           return acc;
         } catch (e) {
-          // eslint-disable-next-line no-console
           console.warn(`Failed to parse ${chalk.bold(pkgName)} dynamic modules`, e);
         }
       }
 
       const obj = getDynamicModuleMap(basePath, dynamicModuleDir, indexModule, resolutionField);
 
-      // eslint-disable-next-line no-console
       console.info(
         `${chalk.bold(pkgName)} dynamic modules generated from ${chalk.green(dynamicModuleDir)}`,
       );

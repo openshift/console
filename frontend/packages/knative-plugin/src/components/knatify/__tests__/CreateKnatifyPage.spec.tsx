@@ -88,7 +88,6 @@ describe('CreateKnatifyPage', () => {
       state: null,
       hash: '',
       key: 'default',
-      unstable_mask: undefined,
     });
   });
 

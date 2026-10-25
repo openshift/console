@@ -1,8 +1,8 @@
 import { Alert, AlertActionLink } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-
-import { K8sKind, k8sPatch, k8sUpdate, K8sResourceKind } from '../../module/k8s/index';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
+import type { K8sKind, K8sResourceKind } from '../../module/k8s/index';
+import { k8sPatch, k8sUpdate } from '../../module/k8s/index';
 import { ErrorModal } from '../modals/error-modal';
 
 export const togglePaused = (model: K8sKind, obj: K8sResourceKind) => {

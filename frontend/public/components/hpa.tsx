@@ -1,41 +1,36 @@
 import type { FC } from 'react';
 import { useMemo, Suspense } from 'react';
-import * as _ from 'lodash';
-import { Table as PfTable, Th, Tr, Thead, Tbody, Td } from '@patternfly/react-table';
-import { Trans, useTranslation } from 'react-i18next';
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import {
-  K8sResourceKindReference,
-  HorizontalPodAutoscalerKind,
-  TableColumn,
-  referenceForModel,
-} from '../module/k8s';
-import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
-import { HorizontalPodAutoscalerModel } from '../models';
-import { Conditions } from './conditions';
-import { DetailsPage } from './factory/details';
-import { ListPage } from './factory/list-page';
-import { DetailsItem } from './utils/details-item';
-import { LabelList } from './utils/label-list';
-import { LoadingBox } from './utils/status-box';
-import { ResourceLink } from './utils/resource-link';
-import { ResourceSummary } from './utils/details-page';
-import { SectionHeading } from './utils/headings';
-import { navFactory } from './utils/horizontal-nav';
-import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import { ResourceEventStream } from './events';
 import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
+import { Table as PfTable, Th, Tr, Thead, Tbody, Td } from '@patternfly/react-table';
+import * as _ from 'lodash';
+import { Trans, useTranslation } from 'react-i18next';
 import {
-  actionsCellProps,
-  getNameCellProps,
-  nameCellProps,
   ConsoleDataView,
   getLabelsColumnWidthStyleProp,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import { GetDataViewRows } from '@console/app/src/components/data-view/types';
-import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-import { DASH } from '@console/shared/src/constants/ui';
+import type {
+  ConsoleDataViewColumn,
+  GetDataViewRows,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { DASH } from '@console/shared/src/constants/ui';
+import { HorizontalPodAutoscalerModel } from '../models';
+import type { K8sResourceKindReference, HorizontalPodAutoscalerKind } from '../module/k8s';
+import { referenceForModel } from '../module/k8s';
+import { Conditions } from './conditions';
+import { ResourceEventStream } from './events';
+import { DetailsPage } from './factory/details';
+import { ListPage } from './factory/list-page';
+import { DetailsItem } from './utils/details-item';
+import { ResourceSummary } from './utils/details-page';
+import { SectionHeading } from './utils/headings';
+import { navFactory } from './utils/horizontal-nav';
+import { LabelList } from './utils/label-list';
+import { ResourceLink } from './utils/resource-link';
+import { LoadingBox } from './utils/status-box';
 
 const HorizontalPodAutoscalersReference: K8sResourceKindReference = referenceForModel(
   HorizontalPodAutoscalerModel,
@@ -102,13 +97,10 @@ const MetricsTable: FC<MetricsTableProps> = ({ obj: hpa }) => {
     return <MetricsRow key={key} type={type} current={currentValue} target={targetValue} />;
   };
 
-  const resourceRow = (metric, current, key) => {
-    return resourceRowFn(metric, current, key, 'resource');
-  };
+  const resourceRow = (metric, current, key) => resourceRowFn(metric, current, key, 'resource');
 
-  const containerResourceRow = (metric, current, key) => {
-    return resourceRowFn(metric, current, key, 'containerResource');
-  };
+  const containerResourceRow = (metric, current, key) =>
+    resourceRowFn(metric, current, key, 'containerResource');
 
   const podRow = (metric, current, key) => {
     const { pods } = metric;
@@ -121,7 +113,7 @@ const MetricsTable: FC<MetricsTableProps> = ({ obj: hpa }) => {
 
   const objectRow = (metric, current, ns, key, scaleTarget) => {
     const { object } = metric;
-    const name = object.metric.name;
+    const { name } = object.metric;
     const type = (
       <Trans t={t} ns="public">
         {{ name }} on
@@ -173,6 +165,7 @@ const MetricsTable: FC<MetricsTableProps> = ({ obj: hpa }) => {
                 return containerResourceRow(metric, current, i);
               default:
                 return (
+                  // eslint-disable-next-line react/no-array-index-key
                   <Tr key={i}>
                     <Td width={50}>
                       {metric.type}{' '}
@@ -254,8 +247,8 @@ const tableColumnInfo = [
   { id: '' },
 ];
 
-const getDataViewRows: GetDataViewRows<HorizontalPodAutoscalerKind> = (data, columns) => {
-  return data.map(({ obj }) => {
+const getDataViewRows: GetDataViewRows<HorizontalPodAutoscalerKind> = (data, columns) =>
+  data.map(({ obj }) => {
     const { name, namespace } = obj.metadata;
 
     const rowCells = {
@@ -267,7 +260,6 @@ const getDataViewRows: GetDataViewRows<HorizontalPodAutoscalerKind> = (data, col
             namespace={namespace}
           />
         ),
-        props: getNameCellProps(name),
       },
       [tableColumnInfo[1].id]: {
         cell: <ResourceLink kind="Namespace" name={namespace} />,
@@ -295,7 +287,6 @@ const getDataViewRows: GetDataViewRows<HorizontalPodAutoscalerKind> = (data, col
         cell: (
           <LazyActionMenu context={{ [referenceForModel(HorizontalPodAutoscalerModel)]: obj }} />
         ),
-        props: actionsCellProps,
       },
     };
 
@@ -303,91 +294,65 @@ const getDataViewRows: GetDataViewRows<HorizontalPodAutoscalerKind> = (data, col
       const cell = rowCells[id]?.cell || DASH;
       return {
         id,
-        props: rowCells[id]?.props,
         cell,
       };
     });
   });
-};
 
 const useHorizontalPodAutoscalersColumns = (): {
-  columns: TableColumn<HorizontalPodAutoscalerKind>[];
-  resetAllColumnWidths: () => void;
+  columns: ConsoleDataViewColumn<HorizontalPodAutoscalerKind>[];
 } => {
   const { t } = useTranslation('public');
-  const { getResizableProps, getWidth, resetAllColumnWidths } = useColumnWidthSettings(
-    HorizontalPodAutoscalerModel,
-  );
 
-  const columns: TableColumn<HorizontalPodAutoscalerKind>[] = useMemo(() => {
-    return [
+  const columns: ConsoleDataViewColumn<HorizontalPodAutoscalerKind>[] = useMemo(
+    () => [
       {
-        title: t('Name'),
+        type: 'name' as const,
         id: tableColumnInfo[0].id,
-        sort: 'metadata.name',
-        resizableProps: getResizableProps(tableColumnInfo[0].id),
-        props: {
-          ...nameCellProps,
-          modifier: 'nowrap',
-        },
       },
       {
-        title: t('Namespace'),
+        type: 'namespace' as const,
         id: tableColumnInfo[1].id,
-        sort: 'metadata.namespace',
-        resizableProps: getResizableProps(tableColumnInfo[1].id),
-        props: {
-          modifier: 'nowrap',
-        },
       },
       {
         title: t('Labels'),
         id: tableColumnInfo[2].id,
         sort: 'metadata.labels',
-        resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
-          modifier: 'nowrap',
-          ...getLabelsColumnWidthStyleProp(getWidth(tableColumnInfo[2].id)),
+          modifier: 'nowrap' as const,
+          ...getLabelsColumnWidthStyleProp(),
         },
       },
       {
         title: t('Scale target'),
         id: tableColumnInfo[3].id,
         sort: 'spec.scaleTargetRef.name',
-        resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
         title: t('Min pods'),
         id: tableColumnInfo[4].id,
         sort: 'spec.minReplicas',
-        resizableProps: getResizableProps(tableColumnInfo[4].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
         title: t('Max pods'),
         id: tableColumnInfo[5].id,
         sort: 'spec.maxReplicas',
-        resizableProps: getResizableProps(tableColumnInfo[5].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
-      {
-        title: '',
-        id: tableColumnInfo[6].id,
-        props: {
-          ...actionsCellProps,
-        },
-      },
-    ];
-  }, [t, getResizableProps, getWidth]);
+      { type: 'actions' as const, id: tableColumnInfo[6].id },
+    ],
+    [t],
+  );
 
-  return { columns, resetAllColumnWidths };
+  return { columns };
 };
 
 const HorizontalPodAutoscalersList: FC<HorizontalPodAutoscalersListProps> = ({
@@ -395,20 +360,18 @@ const HorizontalPodAutoscalersList: FC<HorizontalPodAutoscalersListProps> = ({
   loaded,
   ...props
 }) => {
-  const { columns, resetAllColumnWidths } = useHorizontalPodAutoscalersColumns();
+  const { columns } = useHorizontalPodAutoscalersColumns();
 
   return (
     <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<HorizontalPodAutoscalerKind>
         {...props}
+        id={HorizontalPodAutoscalerModel}
         label={HorizontalPodAutoscalerModel.labelPlural}
         data={data}
         loaded={loaded}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement={true}
-        isResizable
-        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );
@@ -420,8 +383,8 @@ export const HorizontalPodAutoscalersPage: FC<HorizontalPodAutoscalersPageProps>
     {...props}
     kind={HorizontalPodAutoscalersReference}
     ListComponent={HorizontalPodAutoscalersList}
-    canCreate={true}
-    omitFilterToolbar={true}
+    canCreate
+    omitFilterToolbar
   />
 );
 HorizontalPodAutoscalersPage.displayName = 'HorizontalPodAutoscalersListPage';

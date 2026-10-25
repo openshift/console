@@ -21,7 +21,6 @@ import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { k8sGetResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { settleAllPromises } from '@console/dynamic-plugin-sdk/src/utils/promise';
-import { getActiveNamespace } from '@console/internal/actions/ui';
 import {
   LinkifyExternal,
   ResourceLink,
@@ -41,6 +40,7 @@ import {
 } from '@console/internal/module/k8s';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 import { CONSOLE_OPERATOR_CONFIG_NAME } from '@console/shared/src/constants/resource';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { useOperands } from '@console/shared/src/hooks/useOperands';
 import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 import type { ModalComponentProps } from '@console/shared/src/types/modal';
@@ -71,6 +71,7 @@ export const UninstallOperatorModal: FC<UninstallOperatorModalProps> = ({
 }) => {
   const { t } = useTranslation('olm');
   const navigate = useNavigate();
+  const [activeNamespace] = useActiveNamespace();
   const [
     handleOperatorUninstallPromise,
     operatorUninstallInProgress,
@@ -235,9 +236,9 @@ export const UninstallOperatorModal: FC<UninstallOperatorModalProps> = ({
       window.location.pathname.split('/').includes(subscription.metadata.name) ||
       window.location.pathname.split('/').includes(subscription?.status?.installedCSV)
     ) {
-      navigate(resourceListPathFromModel(ClusterServiceVersionModel, getActiveNamespace()));
+      navigate(resourceListPathFromModel(ClusterServiceVersionModel, activeNamespace));
     }
-  }, [close, navigate, subscription]);
+  }, [activeNamespace, close, navigate, subscription]);
 
   useEffect(() => {
     if (isSubmitFinished && !hasSubmitErrors) {
@@ -274,11 +275,13 @@ export const UninstallOperatorModal: FC<UninstallOperatorModalProps> = ({
       });
       // eslint-disable-next-line promise/catch-or-return
       settleAllPromises(operandDeletionPromises).then(([, , results]) => {
-        const operandErrors: OperandError[] = results.reduce((acc: OperandError[], curr, i) => {
-          return curr.status === 'rejected'
-            ? acc.concat({ operand: operands[i], errorMessage: curr.reason })
-            : acc;
-        }, []);
+        const operandErrors: OperandError[] = results.reduce(
+          (acc: OperandError[], curr, i) =>
+            curr.status === 'rejected'
+              ? acc.concat({ operand: operands[i], errorMessage: curr.reason })
+              : acc,
+          [],
+        );
         if (operandErrors.length) {
           setOperandDeletionErrors(operandErrors);
           setOperandsDeleteInProgress(false);
@@ -395,6 +398,7 @@ export const UninstallOperatorModal: FC<UninstallOperatorModalProps> = ({
       <ModalHeader
         title={t('Uninstall Operator?')}
         titleIconVariant="warning"
+        data-test="modal-title"
         data-test-id="modal-title"
         labelId="uninstall-operator-modal-title"
       />
@@ -445,7 +449,12 @@ export const UninstallOperatorModal: FC<UninstallOperatorModalProps> = ({
         >
           {isSubmitFinished ? t('OK') : t('Uninstall')}
         </Button>
-        <Button variant="link" onClick={cancel} data-test-id="modal-cancel-action">
+        <Button
+          variant="link"
+          onClick={cancel}
+          data-test="modal-cancel-action"
+          data-test-id="modal-cancel-action"
+        >
           {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>
@@ -659,11 +668,9 @@ const OperandErrorList: FC<OperandErrorListProps> = ({ operandErrors, csvName, c
   );
 };
 
-const UninstallOperatorModalOverlay: OverlayComponent<UninstallOperatorModalProps> = (props) => {
-  return (
-    <UninstallOperatorModal {...props} close={props.closeOverlay} cancel={props.closeOverlay} />
-  );
-};
+const UninstallOperatorModalOverlay: OverlayComponent<UninstallOperatorModalProps> = (props) => (
+  <UninstallOperatorModal {...props} close={props.closeOverlay} cancel={props.closeOverlay} />
+);
 
 export const useUninstallOperatorModal = (subscription: K8sResourceKind, csv?: K8sResourceKind) => {
   const launchModal = useOverlay();

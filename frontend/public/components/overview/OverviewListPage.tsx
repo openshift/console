@@ -1,7 +1,8 @@
 import type { FC } from 'react';
-import TopologyPage from '@console/topology/src/components/page/TopologyPage';
+// eslint-disable-next-line import/no-cycle -- pre-existing cycle with the dev-console project list pages
+import { TopologyPage } from '@console/topology/src/components/page/TopologyPage';
 import { TopologyViewType } from '@console/topology/src/topology-types';
 
-export const OverviewListPage: FC = () => {
-  return <TopologyPage hideProjects defaultViewType={TopologyViewType.list} />;
-};
+export const OverviewListPage: FC = () => (
+  <TopologyPage hideProjects defaultViewType={TopologyViewType.list} />
+);

@@ -37,7 +37,6 @@ const SAMPLE_SESSION = Math.random() < 0.2;
 // https://segment.com/docs/connections/sources/catalog/libraries/website/javascript/quickstart/#step-2-install-segment-to-your-site
 const initSegmentAnalytics = () => {
   if (TELEMETRY_DEBUG) {
-    // eslint-disable-next-line no-console
     console.info('Initialize Segment Analytics', {
       TELEMETRY_API_HOST,
       TELEMETRY_API_KEY,
@@ -51,7 +50,6 @@ const initSegmentAnalytics = () => {
     return;
   }
   if (analytics.invoked) {
-    // eslint-disable-next-line no-console
     console.error('Analytics snippet included twice');
     return;
   }
@@ -108,11 +106,9 @@ const initSegmentAnalytics = () => {
     options.integrations = { 'Segment.io': { apiHost: TELEMETRY_API_HOST } };
   }
   analytics.load(TELEMETRY_API_KEY, options);
-  analytics.page(); // Make the first page call to load the integrations
 };
 
 if (!SAMPLE_SESSION) {
-  // eslint-disable-next-line no-console
   console.debug('Analytics session is not being sampled, telemetry events will be ignored');
 }
 
@@ -124,9 +120,7 @@ if (analyticsEnabled) {
   initSegmentAnalytics();
 }
 
-export const getSegmentAnalytics: GetSegmentAnalytics = () => {
-  return {
-    analytics: (window as any).analytics,
-    analyticsEnabled,
-  };
-};
+export const getSegmentAnalytics: GetSegmentAnalytics = () => ({
+  analytics: (window as any).analytics,
+  analyticsEnabled,
+});

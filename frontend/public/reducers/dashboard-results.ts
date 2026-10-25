@@ -7,4 +7,4 @@ export enum RESULTS_TYPE {
 }
 
 export const isWatchActive = (state: DashboardsState, type: string, key: string): boolean =>
-  state.getIn([type, key, 'active']) > 0 || state.getIn([type, key, 'inFlight']);
+  state[type]?.[key]?.active > 0 || state[type]?.[key]?.inFlight;

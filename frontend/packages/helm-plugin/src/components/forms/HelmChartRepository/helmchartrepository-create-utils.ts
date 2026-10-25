@@ -8,20 +8,18 @@ import type {
   HelmChartRepositoryType,
 } from '../../../types/helm-types';
 
-export const convertToForm = (resource: HelmChartRepositoryType) => {
-  return {
-    scope: resource?.kind,
-    repoName: resource?.metadata?.name ?? '',
-    repoDisplayName: resource?.spec?.name ?? '',
-    ca: resource?.spec?.connectionConfig?.ca?.name ?? '',
-    disabled: resource?.spec?.disabled ?? false,
-    tlsClientConfig: resource?.spec?.connectionConfig?.tlsClientConfig?.name ?? '',
-    basicAuthConfig: resource?.spec?.connectionConfig?.basicAuthConfig?.name ?? '',
-    repoDescription: resource?.spec?.description ?? '',
-    repoUrl: resource?.spec?.connectionConfig?.url ?? '',
-    metadata: _.omit(resource?.metadata, ['name', 'namespace']) ?? {},
-  };
-};
+export const convertToForm = (resource: HelmChartRepositoryType) => ({
+  scope: resource?.kind,
+  repoName: resource?.metadata?.name ?? '',
+  repoDisplayName: resource?.spec?.name ?? '',
+  ca: resource?.spec?.connectionConfig?.ca?.name ?? '',
+  disabled: resource?.spec?.disabled ?? false,
+  tlsClientConfig: resource?.spec?.connectionConfig?.tlsClientConfig?.name ?? '',
+  basicAuthConfig: resource?.spec?.connectionConfig?.basicAuthConfig?.name ?? '',
+  repoDescription: resource?.spec?.description ?? '',
+  repoUrl: resource?.spec?.connectionConfig?.url ?? '',
+  metadata: _.omit(resource?.metadata, ['name', 'namespace']) ?? {},
+});
 
 export const convertToHelmChartRepository = (
   formValues: HelmChartRepositoryFormData,
@@ -70,6 +68,25 @@ export const convertToHelmChartRepository = (
   };
 
   return newResource;
+};
+
+const HTTPS_PROBE_TIMEOUT_MS = 3000;
+
+export const tryHttpsUpgrade = async (httpUrl: string): Promise<string | null> => {
+  if (typeof httpUrl !== 'string' || !httpUrl.startsWith('http://')) {
+    return null;
+  }
+  const httpsUrl = httpUrl.replace(/^http:\/\//, 'https://');
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), HTTPS_PROBE_TIMEOUT_MS);
+  try {
+    const response = await fetch(httpsUrl, { method: 'HEAD', signal: controller.signal });
+    return response.ok ? httpsUrl : null;
+  } catch {
+    return null;
+  } finally {
+    clearTimeout(timeoutId);
+  }
 };
 
 export const getDefaultResource = (

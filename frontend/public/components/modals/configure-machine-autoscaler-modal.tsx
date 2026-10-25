@@ -1,23 +1,20 @@
 import { useState, useCallback } from 'react';
+import { Modal, ModalHeader, ModalBody, Button, FormGroup, Form } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
-import { Modal, ModalHeader, ModalBody, Button, FormGroup, Form } from '@patternfly/react-core';
-import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
+import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
+import { k8sCreateResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
+import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 import { MachineAutoscalerModel } from '../../models';
+import type { K8sResourceKind } from '../../module/k8s';
 import { NumberSpinner } from '../utils/number-spinner';
 import { resourcePathFromModel } from '../utils/resource-link';
-import { K8sResourceKind } from '../../module/k8s';
-import { k8sCreateResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
-import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
-import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 
-export const ConfigureMachineAutoscalerModal: OverlayComponent<ConfigureMachineAutoscalerModalProps> = ({
-  machineSet,
-  closeOverlay,
-  close,
-  cancel: cancelProp,
-}) => {
+export const ConfigureMachineAutoscalerModal: OverlayComponent<
+  ConfigureMachineAutoscalerModalProps
+> = ({ machineSet, closeOverlay, close, cancel: cancelProp }) => {
   const navigate = useNavigate();
   const [minReplicas, setMinReplicas] = useState(1);
   const [maxReplicas, setMaxReplicas] = useState(12);
@@ -94,10 +91,15 @@ export const ConfigureMachineAutoscalerModal: OverlayComponent<ConfigureMachineA
     [createAutoscaler, handlePromise, navigate, closeOverlay, close],
   );
 
+  const { t } = useTranslation('public');
+
+  if (!machineSet?.metadata) {
+    return null;
+  }
+
   const {
     metadata: { name },
   } = machineSet;
-  const { t } = useTranslation('public');
 
   return (
     <Modal isOpen onClose={closeOverlay} variant="small">

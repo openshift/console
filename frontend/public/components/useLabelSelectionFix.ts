@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
-import useMirroredLocalState, { UseMirroredLocalStateReturn } from './useMirroredLocalState';
 import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
+import type { UseMirroredLocalStateReturn } from './useMirroredLocalState';
+import useMirroredLocalState from './useMirroredLocalState';
 
 /**
  * Handles a state management hack-fix around the label filters auto complete field.

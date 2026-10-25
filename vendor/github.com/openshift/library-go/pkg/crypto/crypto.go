@@ -20,8 +20,10 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"slices"
 	"sort"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 
@@ -30,19 +32,33 @@ import (
 	"k8s.io/apimachinery/pkg/util/sets"
 	"k8s.io/apiserver/pkg/authentication/user"
 	"k8s.io/client-go/util/cert"
+
+	configv1 "github.com/openshift/api/config/v1"
 )
 
-// TLS versions that are known to golang. Go 1.13 adds support for
-// TLS 1.3 that's opt-out with a build flag.
-var versions = map[string]uint16{
+// TLS configuration
+//
+// The OpenShift API defines TLS profiles using OpenSSL cipher suite names.
+// Go's crypto/tls uses IANA-standard cipher suite names (which happen to
+// match the Go constant names). This package bridges the two naming schemes:
+// OpenSSLToIANACipherSuites translates API-level OpenSSL names into the IANA
+// names that Go understands, silently dropping any cipher that Go's crypto/tls
+// cannot negotiate. This silent narrowing is by design: Go literally cannot
+// serve those ciphers, so listing them would be misleading.
+
+// goTLSVersions lists all TLS versions that Go's crypto/tls can negotiate.
+// Kept in sync with the crypto/tls package by TestConstantMaps.
+var goTLSVersions = map[string]uint16{
 	"VersionTLS10": tls.VersionTLS10,
 	"VersionTLS11": tls.VersionTLS11,
 	"VersionTLS12": tls.VersionTLS12,
 	"VersionTLS13": tls.VersionTLS13,
 }
 
-// TLS versions that are enabled.
-var supportedVersions = map[string]uint16{
+// enabledTLSVersions is the subset of goTLSVersions that OpenShift allows
+// in TLS configurations. Remove an entry here (not from goTLSVersions) to
+// phase out a version while still being able to parse legacy references.
+var enabledTLSVersions = map[string]uint16{
 	"VersionTLS10": tls.VersionTLS10,
 	"VersionTLS11": tls.VersionTLS11,
 	"VersionTLS12": tls.VersionTLS12,
@@ -52,7 +68,7 @@ var supportedVersions = map[string]uint16{
 // TLSVersionToNameOrDie given a tls version as an int, return its readable name
 func TLSVersionToNameOrDie(intVal uint16) string {
 	matches := []string{}
-	for key, version := range versions {
+	for key, version := range goTLSVersions {
 		if version == intVal {
 			matches = append(matches, key)
 		}
@@ -71,7 +87,7 @@ func TLSVersion(versionName string) (uint16, error) {
 	if len(versionName) == 0 {
 		return DefaultTLSVersion(), nil
 	}
-	if version, ok := versions[versionName]; ok {
+	if version, ok := goTLSVersions[versionName]; ok {
 		return version, nil
 	}
 	return 0, fmt.Errorf("unknown tls version %q", versionName)
@@ -84,20 +100,22 @@ func TLSVersionOrDie(versionName string) uint16 {
 	return version
 }
 
-// TLS versions that are known to golang, but may not necessarily be enabled.
+// GolangTLSVersions returns all TLS versions known to this Go build.
+//
+// Deprecated: Use ValidTLSVersions instead.
 func GolangTLSVersions() []string {
 	supported := []string{}
-	for k := range versions {
+	for k := range goTLSVersions {
 		supported = append(supported, k)
 	}
 	sort.Strings(supported)
 	return supported
 }
 
-// Returns the build enabled TLS versions.
+// ValidTLSVersions returns the TLS versions that OpenShift allows in configurations.
 func ValidTLSVersions() []string {
 	validVersions := []string{}
-	for k := range supportedVersions {
+	for k := range enabledTLSVersions {
 		validVersions = append(validVersions, k)
 	}
 	sort.Strings(validVersions)
@@ -110,16 +128,9 @@ func DefaultTLSVersion() uint16 {
 	return tls.VersionTLS12
 }
 
-// ciphersTLS13 copies golang 1.13 implementation, where TLS1.3 suites are not
-// configurable (cipherSuites field is ignored for TLS1.3 flows and all of the
-// below three - and none other - are used)
-var ciphersTLS13 = map[string]uint16{
-	"TLS_AES_128_GCM_SHA256":       tls.TLS_AES_128_GCM_SHA256,
-	"TLS_AES_256_GCM_SHA384":       tls.TLS_AES_256_GCM_SHA384,
-	"TLS_CHACHA20_POLY1305_SHA256": tls.TLS_CHACHA20_POLY1305_SHA256,
-}
-
-var ciphers = map[string]uint16{
+// goCipherSuites lists all cipher suites recognized by Go's crypto/tls, keyed
+// by IANA name. Kept in sync with the crypto/tls package by TestConstantMaps.
+var goCipherSuites = map[string]uint16{
 	"TLS_RSA_WITH_RC4_128_SHA":                      tls.TLS_RSA_WITH_RC4_128_SHA,
 	"TLS_RSA_WITH_3DES_EDE_CBC_SHA":                 tls.TLS_RSA_WITH_3DES_EDE_CBC_SHA,
 	"TLS_RSA_WITH_AES_128_CBC_SHA":                  tls.TLS_RSA_WITH_AES_128_CBC_SHA,
@@ -144,15 +155,21 @@ var ciphers = map[string]uint16{
 	"TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305":        tls.TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256,
 	"TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256":   tls.TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256,
 	"TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256": tls.TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256,
+	"TLS_AES_128_GCM_SHA256":                        tls.TLS_AES_128_GCM_SHA256,
+	"TLS_AES_256_GCM_SHA384":                        tls.TLS_AES_256_GCM_SHA384,
+	"TLS_CHACHA20_POLY1305_SHA256":                  tls.TLS_CHACHA20_POLY1305_SHA256,
 }
 
-// openSSLToIANACiphersMap maps OpenSSL cipher suite names to IANA names
-// ref: https://www.iana.org/assignments/tls-parameters/tls-parameters.xml
-var openSSLToIANACiphersMap = map[string]string{
-	// TLS 1.3 ciphers - not configurable in go 1.13, all of them are used in TLSv1.3 flows
-	//	"TLS_AES_128_GCM_SHA256":       "TLS_AES_128_GCM_SHA256",       // 0x13,0x01
-	//	"TLS_AES_256_GCM_SHA384":       "TLS_AES_256_GCM_SHA384",       // 0x13,0x02
-	//	"TLS_CHACHA20_POLY1305_SHA256": "TLS_CHACHA20_POLY1305_SHA256", // 0x13,0x03
+// openSSLToIANACiphers maps OpenSSL cipher suite names to IANA names for
+// every cipher that Go's crypto/tls can negotiate.
+// Ref: https://www.iana.org/assignments/tls-parameters/tls-parameters.xml
+// Ciphers defined in the API but absent from Go are tracked in
+// ciphersUnsupportedByGo (below) so tests detect when Go gains support.
+var openSSLToIANACiphers = map[string]string{
+	// TLS 1.3 ciphers - always negotiated by Go; not individually configurable.
+	"TLS_AES_128_GCM_SHA256":       "TLS_AES_128_GCM_SHA256",       // 0x13,0x01
+	"TLS_AES_256_GCM_SHA384":       "TLS_AES_256_GCM_SHA384",       // 0x13,0x02
+	"TLS_CHACHA20_POLY1305_SHA256": "TLS_CHACHA20_POLY1305_SHA256", // 0x13,0x03
 
 	// TLS 1.2
 	"ECDHE-ECDSA-AES128-GCM-SHA256": "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256",       // 0xC0,0x2B
@@ -167,6 +184,9 @@ var openSSLToIANACiphersMap = map[string]string{
 	"AES256-GCM-SHA384":             "TLS_RSA_WITH_AES_256_GCM_SHA384",               // 0x00,0x9D
 	"AES128-SHA256":                 "TLS_RSA_WITH_AES_128_CBC_SHA256",               // 0x00,0x3C
 
+	// Ciphers defined in the API but not supported by Go are listed in
+	// ciphersUnsupportedByGo below.
+
 	// TLS 1
 	"ECDHE-ECDSA-AES128-SHA": "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA", // 0xC0,0x09
 	"ECDHE-RSA-AES128-SHA":   "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA",   // 0xC0,0x13
@@ -174,9 +194,34 @@ var openSSLToIANACiphersMap = map[string]string{
 	"ECDHE-RSA-AES256-SHA":   "TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA",   // 0xC0,0x14
 
 	// SSL 3
-	"AES128-SHA":   "TLS_RSA_WITH_AES_128_CBC_SHA",  // 0x00,0x2F
-	"AES256-SHA":   "TLS_RSA_WITH_AES_256_CBC_SHA",  // 0x00,0x35
-	"DES-CBC3-SHA": "TLS_RSA_WITH_3DES_EDE_CBC_SHA", // 0x00,0x0A
+	"AES128-SHA":             "TLS_RSA_WITH_AES_128_CBC_SHA",        // 0x00,0x2F
+	"AES256-SHA":             "TLS_RSA_WITH_AES_256_CBC_SHA",        // 0x00,0x35
+	"DES-CBC3-SHA":           "TLS_RSA_WITH_3DES_EDE_CBC_SHA",       // 0x00,0x0A
+	"ECDHE-RSA-DES-CBC3-SHA": "TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA", // 0xC0,0x12
+}
+
+// ciphersUnsupportedByGo lists cipher suites that are defined in the OpenShift API
+// TLS profiles (from the Mozilla guidelines) but are not supported by Go's crypto/tls.
+// These are intentionally excluded from openSSLToIANACiphers and silently filtered
+// out during profile translation. The IANA names come from the IANA TLS Cipher Suite
+// Registry (https://www.iana.org/assignments/tls-parameters/) and are retained so
+// TestCiphersUnsupportedByGoAreActuallyUnsupported can detect if a future Go
+// release adds support.
+var ciphersUnsupportedByGo = map[string]string{
+	"ECDHE-ECDSA-AES256-SHA384": "TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384",
+	"ECDHE-RSA-AES256-SHA384":   "TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384",
+	"AES256-SHA256":             "TLS_RSA_WITH_AES_256_CBC_SHA256",
+}
+
+// tlsGroupToCurveID maps OpenShift API TLSGroup values to Go's tls.CurveID.
+var tlsGroupToCurveID = map[configv1.TLSGroup]tls.CurveID{
+	configv1.TLSGroupX25519:             tls.X25519,
+	configv1.TLSGroupSecP256r1:          tls.CurveP256,
+	configv1.TLSGroupSecP384r1:          tls.CurveP384,
+	configv1.TLSGroupSecP521r1:          tls.CurveP521,
+	configv1.TLSGroupX25519MLKEM768:     tls.X25519MLKEM768,
+	configv1.TLSGroupSecP256r1MLKEM768:  tls.SecP256r1MLKEM768,
+	configv1.TLSGroupSecP384r1MLKEM1024: tls.SecP384r1MLKEM1024,
 }
 
 // CipherSuitesToNamesOrDie given a list of cipher suites as ints, return their readable names
@@ -203,7 +248,7 @@ func CipherSuiteToNameOrDie(intVal uint16) string {
 	}
 
 	matches := []string{}
-	for key, version := range ciphers {
+	for key, version := range goCipherSuites {
 		if version == intVal {
 			matches = append(matches, key)
 		}
@@ -219,12 +264,8 @@ func CipherSuiteToNameOrDie(intVal uint16) string {
 }
 
 func CipherSuite(cipherName string) (uint16, error) {
-	if cipher, ok := ciphers[cipherName]; ok {
+	if cipher, ok := goCipherSuites[cipherName]; ok {
 		return cipher, nil
-	}
-
-	if _, ok := ciphersTLS13[cipherName]; ok {
-		return 0, fmt.Errorf("all golang TLSv1.3 ciphers are always used for TLSv1.3 flows")
 	}
 
 	return 0, fmt.Errorf("unknown cipher name %q", cipherName)
@@ -246,41 +287,53 @@ func CipherSuitesOrDie(cipherNames []string) []uint16 {
 }
 func ValidCipherSuites() []string {
 	validCipherSuites := []string{}
-	for k := range ciphers {
+	for k := range goCipherSuites {
 		validCipherSuites = append(validCipherSuites, k)
 	}
 	sort.Strings(validCipherSuites)
 	return validCipherSuites
 }
+
+// DefaultTLSProfileType is the intermediate profile type.
+const DefaultTLSProfileType = configv1.TLSProfileIntermediateType
+
+// DefaultCiphers returns the default cipher suites for TLS connections.
+//
+// RECOMMENDATION: Instead of relying on this function directly, consumers should respect
+// TLSSecurityProfile settings from one of the OpenShift API configuration resources:
+//   - For API servers: Use apiserver.config.openshift.io/cluster Spec.TLSSecurityProfile
+//   - For ingress controllers: Use operator.openshift.io/v1 IngressController Spec.TLSSecurityProfile
+//   - For kubelet: Use machineconfiguration.openshift.io/v1 KubeletConfig Spec.TLSSecurityProfile
+//
+// These API resources allow cluster administrators to choose between Old, Intermediate,
+// Modern, or Custom TLS profiles. Components should observe these settings.
 func DefaultCiphers() []uint16 {
-	// HTTP/2 mandates TLS 1.2 or higher with an AEAD cipher
-	// suite (GCM, Poly1305) and ephemeral key exchange (ECDHE, DHE) for
-	// perfect forward secrecy. Servers may provide additional cipher
-	// suites for backwards compatibility with HTTP/1.1 clients.
-	// See RFC7540, section 9.2 (Use of TLS Features) and Appendix A
-	// (TLS 1.2 Cipher Suite Black List).
+	// Aligned with intermediate profile of the 5.7 version of the Mozilla Server
+	// Side TLS guidelines found at: https://ssl-config.mozilla.org/guidelines/5.7.json
+	//
+	// Latest guidelines: https://ssl-config.mozilla.org/guidelines/latest.json
+	//
+	// This profile provides strong security with wide compatibility.
+	// It requires TLS 1.2+ and uses only AEAD cipher suites (GCM, ChaCha20-Poly1305)
+	// with ECDHE key exchange for perfect forward secrecy.
+	//
+	// All CBC-mode ciphers have been removed due to padding oracle vulnerabilities.
+	// All RSA key exchange ciphers have been removed due to lack of perfect forward secrecy.
+	//
+	// HTTP/2 compliance: All ciphers are compliant with RFC7540, section 9.2.
 	return []uint16{
+		// TLS 1.2 cipher suites with ECDHE + AEAD
 		tls.TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256,
 		tls.TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256,
 		tls.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
-		tls.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256, // required by http/2
+		tls.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256, // required by HTTP/2
 		tls.TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,
 		tls.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,
-		tls.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256, // forbidden by http/2, not flagged by http2isBadCipher() in go1.8
-		tls.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256,   // forbidden by http/2, not flagged by http2isBadCipher() in go1.8
-		tls.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA,    // forbidden by http/2
-		tls.TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA,    // forbidden by http/2
-		tls.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,      // forbidden by http/2
-		tls.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,      // forbidden by http/2
-		tls.TLS_RSA_WITH_AES_128_GCM_SHA256,         // forbidden by http/2
-		tls.TLS_RSA_WITH_AES_256_GCM_SHA384,         // forbidden by http/2
-		// the next one is in the intermediate suite, but go1.8 http2isBadCipher() complains when it is included at the recommended index
-		// because it comes after ciphers forbidden by the http/2 spec
-		// tls.TLS_RSA_WITH_AES_128_CBC_SHA256,
-		// tls.TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA, // forbidden by http/2, disabled to mitigate SWEET32 attack
-		// tls.TLS_RSA_WITH_3DES_EDE_CBC_SHA,       // forbidden by http/2, disabled to mitigate SWEET32 attack
-		tls.TLS_RSA_WITH_AES_128_CBC_SHA, // forbidden by http/2
-		tls.TLS_RSA_WITH_AES_256_CBC_SHA, // forbidden by http/2
+
+		// TLS 1.3 cipher suites (negotiated automatically, not configurable)
+		tls.TLS_AES_128_GCM_SHA256,
+		tls.TLS_AES_256_GCM_SHA384,
+		tls.TLS_CHACHA20_POLY1305_SHA256,
 	}
 }
 
@@ -299,18 +352,86 @@ func SecureTLSConfig(config *tls.Config) *tls.Config {
 
 // OpenSSLToIANACipherSuites maps input OpenSSL Cipher Suite names to their
 // IANA counterparts.
-// Unknown ciphers are left out.
+// Ciphers that Go's crypto/tls cannot negotiate are silently dropped and
+// logged at V(4).
 func OpenSSLToIANACipherSuites(ciphers []string) []string {
 	ianaCiphers := make([]string, 0, len(ciphers))
 
 	for _, c := range ciphers {
-		ianaCipher, found := openSSLToIANACiphersMap[c]
+		ianaCipher, found := openSSLToIANACiphers[c]
 		if found {
 			ianaCiphers = append(ianaCiphers, ianaCipher)
+		} else {
+			klog.V(4).Infof("Dropping cipher %q: not supported by Go's crypto/tls", c)
 		}
 	}
 
 	return ianaCiphers
+}
+
+// TLSGroupToCurveID returns the Go tls.CurveID for an OpenShift API TLSGroup
+// constant, or (0, false) if the group is not recognized.
+func TLSGroupToCurveID(group configv1.TLSGroup) (tls.CurveID, bool) {
+	id, ok := tlsGroupToCurveID[group]
+	return id, ok
+}
+
+// TLSGroupsToCurveIDs converts a slice of TLSGroup values to their tls.CurveID
+// codes. Returns the mapped curve IDs and a list of unrecognized groups.
+// Unrecognized groups are silently filtered — callers should log warnings.
+func TLSGroupsToCurveIDs(groups []configv1.TLSGroup) ([]tls.CurveID, []configv1.TLSGroup) {
+	var curves []tls.CurveID
+	var unrecognized []configv1.TLSGroup
+
+	for _, group := range groups {
+		id, ok := TLSGroupToCurveID(group)
+		if !ok {
+			unrecognized = append(unrecognized, group)
+			continue
+		}
+		curves = append(curves, id)
+	}
+
+	return curves, unrecognized
+}
+
+// TLSGroupsToCurvePreferences converts OpenShift TLS group names to the numeric
+// curve IDs accepted by Kubernetes SecureServingOptions. T permits both the
+// API's []TLSGroup and []string values stored in observed configuration.
+// Unrecognized groups are omitted from the curve preferences and returned to
+// the caller.
+func TLSGroupsToCurvePreferences[T ~string](groups []T) ([]int32, []T) {
+	tlsGroups := make([]configv1.TLSGroup, len(groups))
+	for i, group := range groups {
+		tlsGroups[i] = configv1.TLSGroup(group)
+	}
+
+	curveIDs, unrecognizedTLSGroups := TLSGroupsToCurveIDs(tlsGroups)
+	curvePreferences := make([]int32, len(curveIDs))
+	for i, curveID := range curveIDs {
+		curvePreferences[i] = int32(curveID)
+	}
+	// Preserve nil when every group is recognized, matching TLSGroupsToCurveIDs.
+	var unrecognizedGroups []T
+	if len(unrecognizedTLSGroups) > 0 {
+		unrecognizedGroups = make([]T, len(unrecognizedTLSGroups))
+		for i, group := range unrecognizedTLSGroups {
+			unrecognizedGroups[i] = T(group)
+		}
+	}
+	return curvePreferences, unrecognizedGroups
+}
+
+// ValidTLSGroups returns the recognized TLS group names, sorted alphabetically.
+func ValidTLSGroups() []configv1.TLSGroup {
+	groups := make([]configv1.TLSGroup, 0, len(tlsGroupToCurveID))
+	for g := range tlsGroupToCurveID {
+		groups = append(groups, g)
+	}
+	slices.SortFunc(groups, func(a, b configv1.TLSGroup) int {
+		return strings.Compare(string(a), string(b))
+	})
+	return groups
 }
 
 type TLSCertificateConfig struct {
@@ -371,7 +492,7 @@ func (c *TLSCertificateConfig) GetPEMBytes() ([]byte, []byte, error) {
 	if err != nil {
 		return nil, nil, err
 	}
-	keyBytes, err := encodeKey(c.Key)
+	keyBytes, err := EncodeKey(c.Key)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -393,7 +514,7 @@ func GetTLSCertificateConfig(certFile, keyFile string) (*TLSCertificateConfig, e
 	}
 	certs, err := cert.ParseCertsPEM(certPEMBlock)
 	if err != nil {
-		return nil, fmt.Errorf("Error reading %s: %s", certFile, err)
+		return nil, fmt.Errorf("error reading %s: %s", certFile, err)
 	}
 
 	keyPEMBlock, err := os.ReadFile(keyFile)
@@ -419,7 +540,7 @@ func GetTLSCertificateConfigFromBytes(certBytes, keyBytes []byte) (*TLSCertifica
 
 	certs, err := cert.ParseCertsPEM(certBytes)
 	if err != nil {
-		return nil, fmt.Errorf("Error reading cert: %s", err)
+		return nil, fmt.Errorf("error reading cert: %s", err)
 	}
 
 	keyPairCert, err := tls.X509KeyPair(certBytes, keyBytes)
@@ -432,8 +553,8 @@ func GetTLSCertificateConfigFromBytes(certBytes, keyBytes []byte) (*TLSCertifica
 }
 
 const (
-	DefaultCertificateLifetimeInDays   = 365 * 2 // 2 years
-	DefaultCACertificateLifetimeInDays = 365 * 5 // 5 years
+	DefaultCertificateLifetimeDuration   = time.Hour * 24 * 365 * 2 // 2 years
+	DefaultCACertificateLifetimeDuration = time.Hour * 24 * 365 * 5 // 5 years
 
 	// Default keys are 2048 bits
 	keyBits = 2048
@@ -553,11 +674,11 @@ func randomSerialNumber() int64 {
 
 // EnsureCA returns a CA, whether it was created (as opposed to pre-existing), and any error
 // if serialFile is empty, a RandomSerialGenerator will be used
-func EnsureCA(certFile, keyFile, serialFile, name string, expireDays int) (*CA, bool, error) {
+func EnsureCA(certFile, keyFile, serialFile, name string, lifetime time.Duration) (*CA, bool, error) {
 	if ca, err := GetCA(certFile, keyFile, serialFile); err == nil {
 		return ca, false, err
 	}
-	ca, err := MakeSelfSignedCA(certFile, keyFile, serialFile, name, expireDays)
+	ca, err := MakeSelfSignedCA(certFile, keyFile, serialFile, name, lifetime)
 	return ca, true, err
 }
 
@@ -597,10 +718,10 @@ func GetCAFromBytes(certBytes, keyBytes []byte) (*CA, error) {
 }
 
 // if serialFile is empty, a RandomSerialGenerator will be used
-func MakeSelfSignedCA(certFile, keyFile, serialFile, name string, expireDays int) (*CA, error) {
+func MakeSelfSignedCA(certFile, keyFile, serialFile, name string, lifetime time.Duration) (*CA, error) {
 	klog.V(2).Infof("Generating new CA for %s cert, and key in %s, %s", name, certFile, keyFile)
 
-	caConfig, err := MakeSelfSignedCAConfig(name, expireDays)
+	caConfig, err := MakeSelfSignedCAConfig(name, lifetime)
 	if err != nil {
 		return nil, err
 	}
@@ -628,31 +749,34 @@ func MakeSelfSignedCA(certFile, keyFile, serialFile, name string, expireDays int
 	}, nil
 }
 
-func MakeSelfSignedCAConfig(name string, expireDays int) (*TLSCertificateConfig, error) {
+func MakeSelfSignedCAConfig(name string, lifetime time.Duration) (*TLSCertificateConfig, error) {
 	subject := pkix.Name{CommonName: name}
-	return MakeSelfSignedCAConfigForSubject(subject, expireDays)
+	return MakeSelfSignedCAConfigForSubject(subject, lifetime)
 }
 
-func MakeSelfSignedCAConfigForSubject(subject pkix.Name, expireDays int) (*TLSCertificateConfig, error) {
-	var caLifetimeInDays = DefaultCACertificateLifetimeInDays
-	if expireDays > 0 {
-		caLifetimeInDays = expireDays
+func MakeSelfSignedCAConfigForSubject(subject pkix.Name, lifetime time.Duration) (*TLSCertificateConfig, error) {
+	if lifetime <= 0 {
+		lifetime = DefaultCACertificateLifetimeDuration
+		fmt.Fprintf(os.Stderr, "Validity period of the certificate for %q is unset, resetting to %s!\n", subject.CommonName, lifetime.String())
 	}
 
-	if caLifetimeInDays > DefaultCACertificateLifetimeInDays {
-		warnAboutCertificateLifeTime(subject.CommonName, DefaultCACertificateLifetimeInDays)
+	if lifetime > DefaultCACertificateLifetimeDuration {
+		warnAboutCertificateLifeTime(subject.CommonName, DefaultCACertificateLifetimeDuration)
 	}
-
-	caLifetime := time.Duration(caLifetimeInDays) * 24 * time.Hour
-	return makeSelfSignedCAConfigForSubjectAndDuration(subject, caLifetime)
+	return makeSelfSignedCAConfigForSubjectAndDuration(subject, time.Now, lifetime)
 }
 
 func MakeSelfSignedCAConfigForDuration(name string, caLifetime time.Duration) (*TLSCertificateConfig, error) {
 	subject := pkix.Name{CommonName: name}
-	return makeSelfSignedCAConfigForSubjectAndDuration(subject, caLifetime)
+	return makeSelfSignedCAConfigForSubjectAndDuration(subject, time.Now, caLifetime)
 }
 
-func makeSelfSignedCAConfigForSubjectAndDuration(subject pkix.Name, caLifetime time.Duration) (*TLSCertificateConfig, error) {
+func UnsafeMakeSelfSignedCAConfigForDurationAtTime(name string, currentTime func() time.Time, caLifetime time.Duration) (*TLSCertificateConfig, error) {
+	subject := pkix.Name{CommonName: name}
+	return makeSelfSignedCAConfigForSubjectAndDuration(subject, currentTime, caLifetime)
+}
+
+func makeSelfSignedCAConfigForSubjectAndDuration(subject pkix.Name, currentTime func() time.Time, caLifetime time.Duration) (*TLSCertificateConfig, error) {
 	// Create CA cert
 	rootcaPublicKey, rootcaPrivateKey, publicKeyHash, err := newKeyPairWithHash()
 	if err != nil {
@@ -661,7 +785,7 @@ func makeSelfSignedCAConfigForSubjectAndDuration(subject pkix.Name, caLifetime t
 	// AuthorityKeyId and SubjectKeyId should match for a self-signed CA
 	authorityKeyId := publicKeyHash
 	subjectKeyId := publicKeyHash
-	rootcaTemplate := newSigningCertificateTemplateForDuration(subject, caLifetime, time.Now, authorityKeyId, subjectKeyId)
+	rootcaTemplate := newSigningCertificateTemplateForDuration(subject, caLifetime, currentTime, authorityKeyId, subjectKeyId)
 	rootcaCert, err := signCertificate(rootcaTemplate, rootcaPublicKey, rootcaTemplate, rootcaPrivateKey)
 	if err != nil {
 		return nil, err
@@ -682,7 +806,7 @@ func MakeCAConfigForDuration(name string, caLifetime time.Duration, issuer *CA) 
 	authorityKeyId := issuer.Config.Certs[0].SubjectKeyId
 	subjectKeyId := publicKeyHash
 	signerTemplate := newSigningCertificateTemplateForDuration(pkix.Name{CommonName: name}, caLifetime, time.Now, authorityKeyId, subjectKeyId)
-	signerCert, err := issuer.signCertificate(signerTemplate, signerPublicKey)
+	signerCert, err := issuer.SignCertificate(signerTemplate, signerPublicKey)
 	if err != nil {
 		return nil, err
 	}
@@ -697,21 +821,21 @@ func MakeCAConfigForDuration(name string, caLifetime time.Duration, issuer *CA) 
 // (as opposed to pre-existing), and any error that might occur during the subCA
 // creation.
 // If serialFile is an empty string, a RandomSerialGenerator will be used.
-func (ca *CA) EnsureSubCA(certFile, keyFile, serialFile, name string, expireDays int) (*CA, bool, error) {
+func (ca *CA) EnsureSubCA(certFile, keyFile, serialFile, name string, lifetime time.Duration) (*CA, bool, error) {
 	if subCA, err := GetCA(certFile, keyFile, serialFile); err == nil {
 		return subCA, false, err
 	}
-	subCA, err := ca.MakeAndWriteSubCA(certFile, keyFile, serialFile, name, expireDays)
+	subCA, err := ca.MakeAndWriteSubCA(certFile, keyFile, serialFile, name, lifetime)
 	return subCA, true, err
 }
 
 // MakeAndWriteSubCA returns a new sub-CA configuration. New cert/key pair is generated
 // while using this function.
 // If serialFile is an empty string, a RandomSerialGenerator will be used.
-func (ca *CA) MakeAndWriteSubCA(certFile, keyFile, serialFile, name string, expireDays int) (*CA, error) {
+func (ca *CA) MakeAndWriteSubCA(certFile, keyFile, serialFile, name string, lifetime time.Duration) (*CA, error) {
 	klog.V(4).Infof("Generating sub-CA certificate in %s, key in %s, serial in %s", certFile, keyFile, serialFile)
 
-	subCAConfig, err := MakeCAConfigForDuration(name, time.Duration(expireDays)*time.Hour*24, ca)
+	subCAConfig, err := MakeCAConfigForDuration(name, lifetime, ca)
 	if err != nil {
 		return nil, err
 	}
@@ -741,24 +865,24 @@ func (ca *CA) MakeAndWriteSubCA(certFile, keyFile, serialFile, name string, expi
 	}, nil
 }
 
-func (ca *CA) EnsureServerCert(certFile, keyFile string, hostnames sets.String, expireDays int) (*TLSCertificateConfig, bool, error) {
+func (ca *CA) EnsureServerCert(certFile, keyFile string, hostnames sets.Set[string], lifetime time.Duration) (*TLSCertificateConfig, bool, error) {
 	certConfig, err := GetServerCert(certFile, keyFile, hostnames)
 	if err != nil {
-		certConfig, err = ca.MakeAndWriteServerCert(certFile, keyFile, hostnames, expireDays)
+		certConfig, err = ca.MakeAndWriteServerCert(certFile, keyFile, hostnames, lifetime)
 		return certConfig, true, err
 	}
 
 	return certConfig, false, nil
 }
 
-func GetServerCert(certFile, keyFile string, hostnames sets.String) (*TLSCertificateConfig, error) {
+func GetServerCert(certFile, keyFile string, hostnames sets.Set[string]) (*TLSCertificateConfig, error) {
 	server, err := GetTLSCertificateConfig(certFile, keyFile)
 	if err != nil {
 		return nil, err
 	}
 
 	cert := server.Certs[0]
-	certNames := sets.NewString()
+	certNames := sets.New[string]()
 	for _, ip := range cert.IPAddresses {
 		certNames.Insert(ip.String())
 	}
@@ -768,13 +892,13 @@ func GetServerCert(certFile, keyFile string, hostnames sets.String) (*TLSCertifi
 		return server, nil
 	}
 
-	return nil, fmt.Errorf("Existing server certificate in %s does not match required hostnames.", certFile)
+	return nil, fmt.Errorf("existing server certificate in %s does not match required hostnames", certFile)
 }
 
-func (ca *CA) MakeAndWriteServerCert(certFile, keyFile string, hostnames sets.String, expireDays int) (*TLSCertificateConfig, error) {
+func (ca *CA) MakeAndWriteServerCert(certFile, keyFile string, hostnames sets.Set[string], lifetime time.Duration) (*TLSCertificateConfig, error) {
 	klog.V(4).Infof("Generating server certificate in %s, key in %s", certFile, keyFile)
 
-	server, err := ca.MakeServerCert(hostnames, expireDays)
+	server, err := ca.MakeServerCert(hostnames, lifetime)
 	if err != nil {
 		return nil, err
 	}
@@ -788,17 +912,17 @@ func (ca *CA) MakeAndWriteServerCert(certFile, keyFile string, hostnames sets.St
 // if the extension attempt failed.
 type CertificateExtensionFunc func(*x509.Certificate) error
 
-func (ca *CA) MakeServerCert(hostnames sets.String, expireDays int, fns ...CertificateExtensionFunc) (*TLSCertificateConfig, error) {
+func (ca *CA) MakeServerCert(hostnames sets.Set[string], lifetime time.Duration, fns ...CertificateExtensionFunc) (*TLSCertificateConfig, error) {
 	serverPublicKey, serverPrivateKey, publicKeyHash, _ := newKeyPairWithHash()
 	authorityKeyId := ca.Config.Certs[0].SubjectKeyId
 	subjectKeyId := publicKeyHash
-	serverTemplate := newServerCertificateTemplate(pkix.Name{CommonName: hostnames.List()[0]}, hostnames.List(), expireDays, time.Now, authorityKeyId, subjectKeyId)
+	serverTemplate := newServerCertificateTemplate(pkix.Name{CommonName: sets.List(hostnames)[0]}, sets.List(hostnames), lifetime, time.Now, authorityKeyId, subjectKeyId)
 	for _, fn := range fns {
 		if err := fn(serverTemplate); err != nil {
 			return nil, err
 		}
 	}
-	serverCrt, err := ca.signCertificate(serverTemplate, serverPublicKey)
+	serverCrt, err := ca.SignCertificate(serverTemplate, serverPublicKey)
 	if err != nil {
 		return nil, err
 	}
@@ -809,17 +933,17 @@ func (ca *CA) MakeServerCert(hostnames sets.String, expireDays int, fns ...Certi
 	return server, nil
 }
 
-func (ca *CA) MakeServerCertForDuration(hostnames sets.String, lifetime time.Duration, fns ...CertificateExtensionFunc) (*TLSCertificateConfig, error) {
+func (ca *CA) MakeServerCertForDuration(hostnames sets.Set[string], lifetime time.Duration, fns ...CertificateExtensionFunc) (*TLSCertificateConfig, error) {
 	serverPublicKey, serverPrivateKey, publicKeyHash, _ := newKeyPairWithHash()
 	authorityKeyId := ca.Config.Certs[0].SubjectKeyId
 	subjectKeyId := publicKeyHash
-	serverTemplate := newServerCertificateTemplateForDuration(pkix.Name{CommonName: hostnames.List()[0]}, hostnames.List(), lifetime, time.Now, authorityKeyId, subjectKeyId)
+	serverTemplate := newServerCertificateTemplateForDuration(pkix.Name{CommonName: sets.List(hostnames)[0]}, sets.List(hostnames), lifetime, time.Now, authorityKeyId, subjectKeyId)
 	for _, fn := range fns {
 		if err := fn(serverTemplate); err != nil {
 			return nil, err
 		}
 	}
-	serverCrt, err := ca.signCertificate(serverTemplate, serverPublicKey)
+	serverCrt, err := ca.SignCertificate(serverTemplate, serverPublicKey)
 	if err != nil {
 		return nil, err
 	}
@@ -830,10 +954,10 @@ func (ca *CA) MakeServerCertForDuration(hostnames sets.String, lifetime time.Dur
 	return server, nil
 }
 
-func (ca *CA) EnsureClientCertificate(certFile, keyFile string, u user.Info, expireDays int) (*TLSCertificateConfig, bool, error) {
+func (ca *CA) EnsureClientCertificate(certFile, keyFile string, u user.Info, lifetime time.Duration) (*TLSCertificateConfig, bool, error) {
 	certConfig, err := GetClientCertificate(certFile, keyFile, u)
 	if err != nil {
-		certConfig, err = ca.MakeClientCertificate(certFile, keyFile, u, expireDays)
+		certConfig, err = ca.MakeClientCertificate(certFile, keyFile, u, lifetime)
 		return certConfig, true, err // true indicates we wrote the files.
 	}
 	return certConfig, false, nil
@@ -845,7 +969,7 @@ func GetClientCertificate(certFile, keyFile string, u user.Info) (*TLSCertificat
 		return nil, err
 	}
 
-	if subject := certConfig.Certs[0].Subject; subjectChanged(subject, userToSubject(u)) {
+	if subject := certConfig.Certs[0].Subject; subjectChanged(subject, UserToSubject(u)) {
 		return nil, fmt.Errorf("existing client certificate in %s was issued for a different Subject (%s)",
 			certFile, subject)
 	}
@@ -862,7 +986,7 @@ func subjectChanged(existing, expected pkix.Name) bool {
 		!reflect.DeepEqual(existing.Organization, expected.Organization)
 }
 
-func (ca *CA) MakeClientCertificate(certFile, keyFile string, u user.Info, expireDays int) (*TLSCertificateConfig, error) {
+func (ca *CA) MakeClientCertificate(certFile, keyFile string, u user.Info, lifetime time.Duration) (*TLSCertificateConfig, error) {
 	klog.V(4).Infof("Generating client cert in %s and key in %s", certFile, keyFile)
 	// ensure parent dirs
 	if err := os.MkdirAll(filepath.Dir(certFile), os.FileMode(0755)); err != nil {
@@ -873,8 +997,8 @@ func (ca *CA) MakeClientCertificate(certFile, keyFile string, u user.Info, expir
 	}
 
 	clientPublicKey, clientPrivateKey, _ := NewKeyPair()
-	clientTemplate := newClientCertificateTemplate(userToSubject(u), expireDays, time.Now)
-	clientCrt, err := ca.signCertificate(clientTemplate, clientPublicKey)
+	clientTemplate := NewClientCertificateTemplate(UserToSubject(u), lifetime, time.Now)
+	clientCrt, err := ca.SignCertificate(clientTemplate, clientPublicKey)
 	if err != nil {
 		return nil, err
 	}
@@ -883,7 +1007,7 @@ func (ca *CA) MakeClientCertificate(certFile, keyFile string, u user.Info, expir
 	if err != nil {
 		return nil, err
 	}
-	keyData, err := encodeKey(clientPrivateKey)
+	keyData, err := EncodeKey(clientPrivateKey)
 	if err != nil {
 		return nil, err
 	}
@@ -900,8 +1024,8 @@ func (ca *CA) MakeClientCertificate(certFile, keyFile string, u user.Info, expir
 
 func (ca *CA) MakeClientCertificateForDuration(u user.Info, lifetime time.Duration) (*TLSCertificateConfig, error) {
 	clientPublicKey, clientPrivateKey, _ := NewKeyPair()
-	clientTemplate := newClientCertificateTemplateForDuration(userToSubject(u), lifetime, time.Now)
-	clientCrt, err := ca.signCertificate(clientTemplate, clientPublicKey)
+	clientTemplate := NewClientCertificateTemplateForDuration(UserToSubject(u), lifetime, time.Now)
+	clientCrt, err := ca.SignCertificate(clientTemplate, clientPublicKey)
 	if err != nil {
 		return nil, err
 	}
@@ -910,7 +1034,7 @@ func (ca *CA) MakeClientCertificateForDuration(u user.Info, lifetime time.Durati
 	if err != nil {
 		return nil, err
 	}
-	keyData, err := encodeKey(clientPrivateKey)
+	keyData, err := EncodeKey(clientPrivateKey)
 	if err != nil {
 		return nil, err
 	}
@@ -935,7 +1059,7 @@ func (s sortedForDER) Less(i, j int) bool {
 	return l1 < l2
 }
 
-func userToSubject(u user.Info) pkix.Name {
+func UserToSubject(u user.Info) pkix.Name {
 	// Ok we are going to order groups in a peculiar way here to workaround a
 	// 2 bugs, 1 in golang (https://github.com/golang/go/issues/24254) which
 	// incorrectly encodes Multivalued RDNs and another in GNUTLS clients
@@ -961,7 +1085,7 @@ func userToSubject(u user.Info) pkix.Name {
 	}
 }
 
-func (ca *CA) signCertificate(template *x509.Certificate, requestKey crypto.PublicKey) (*x509.Certificate, error) {
+func (ca *CA) SignCertificate(template *x509.Certificate, requestKey crypto.PublicKey) (*x509.Certificate, error) {
 	// Increment and persist serial
 	serial, err := ca.SerialGenerator.Next(template)
 	if err != nil {
@@ -1019,17 +1143,15 @@ func newSigningCertificateTemplateForDuration(subject pkix.Name, caLifetime time
 }
 
 // Can be used for ListenAndServeTLS
-func newServerCertificateTemplate(subject pkix.Name, hosts []string, expireDays int, currentTime func() time.Time, authorityKeyId, subjectKeyId []byte) *x509.Certificate {
-	var lifetimeInDays = DefaultCertificateLifetimeInDays
-	if expireDays > 0 {
-		lifetimeInDays = expireDays
+func newServerCertificateTemplate(subject pkix.Name, hosts []string, lifetime time.Duration, currentTime func() time.Time, authorityKeyId, subjectKeyId []byte) *x509.Certificate {
+	if lifetime <= 0 {
+		lifetime = DefaultCertificateLifetimeDuration
+		fmt.Fprintf(os.Stderr, "Validity period of the certificate for %q is unset, resetting to %s!\n", subject.CommonName, lifetime.String())
 	}
 
-	if lifetimeInDays > DefaultCertificateLifetimeInDays {
-		warnAboutCertificateLifeTime(subject.CommonName, DefaultCertificateLifetimeInDays)
+	if lifetime > DefaultCertificateLifetimeDuration {
+		warnAboutCertificateLifeTime(subject.CommonName, DefaultCertificateLifetimeDuration)
 	}
-
-	lifetime := time.Duration(lifetimeInDays) * 24 * time.Hour
 
 	return newServerCertificateTemplateForDuration(subject, hosts, lifetime, currentTime, authorityKeyId, subjectKeyId)
 }
@@ -1102,29 +1224,27 @@ func CertsFromPEM(pemCerts []byte) ([]*x509.Certificate, error) {
 	}
 
 	if !ok {
-		return certs, errors.New("Could not read any certificates")
+		return certs, errors.New("could not read any certificates")
 	}
 	return certs, nil
 }
 
 // Can be used as a certificate in http.Transport TLSClientConfig
-func newClientCertificateTemplate(subject pkix.Name, expireDays int, currentTime func() time.Time) *x509.Certificate {
-	var lifetimeInDays = DefaultCertificateLifetimeInDays
-	if expireDays > 0 {
-		lifetimeInDays = expireDays
+func NewClientCertificateTemplate(subject pkix.Name, lifetime time.Duration, currentTime func() time.Time) *x509.Certificate {
+	if lifetime <= 0 {
+		lifetime = DefaultCertificateLifetimeDuration
+		fmt.Fprintf(os.Stderr, "Validity period of the certificate for %q is unset, resetting to %s!\n", subject.CommonName, lifetime.String())
 	}
 
-	if lifetimeInDays > DefaultCertificateLifetimeInDays {
-		warnAboutCertificateLifeTime(subject.CommonName, DefaultCertificateLifetimeInDays)
+	if lifetime > DefaultCertificateLifetimeDuration {
+		warnAboutCertificateLifeTime(subject.CommonName, DefaultCertificateLifetimeDuration)
 	}
 
-	lifetime := time.Duration(lifetimeInDays) * 24 * time.Hour
-
-	return newClientCertificateTemplateForDuration(subject, lifetime, currentTime)
+	return NewClientCertificateTemplateForDuration(subject, lifetime, currentTime)
 }
 
 // Can be used as a certificate in http.Transport TLSClientConfig
-func newClientCertificateTemplateForDuration(subject pkix.Name, lifetime time.Duration, currentTime func() time.Time) *x509.Certificate {
+func NewClientCertificateTemplateForDuration(subject pkix.Name, lifetime time.Duration, currentTime func() time.Time) *x509.Certificate {
 	return &x509.Certificate{
 		Subject: subject,
 
@@ -1140,8 +1260,8 @@ func newClientCertificateTemplateForDuration(subject pkix.Name, lifetime time.Du
 	}
 }
 
-func warnAboutCertificateLifeTime(name string, defaultLifetimeInDays int) {
-	defaultLifetimeInYears := defaultLifetimeInDays / 365
+func warnAboutCertificateLifeTime(name string, defaultLifetimeDuration time.Duration) {
+	defaultLifetimeInYears := defaultLifetimeDuration / 365 / 24
 	fmt.Fprintf(os.Stderr, "WARNING: Validity period of the certificate for %q is greater than %d years!\n", name, defaultLifetimeInYears)
 	fmt.Fprintln(os.Stderr, "WARNING: By security reasons it is strongly recommended to change this period and make it smaller!")
 }
@@ -1156,7 +1276,7 @@ func signCertificate(template *x509.Certificate, requestKey crypto.PublicKey, is
 		return nil, err
 	}
 	if len(certs) != 1 {
-		return nil, errors.New("Expected a single certificate")
+		return nil, errors.New("expected a single certificate")
 	}
 	return certs[0], nil
 }
@@ -1170,7 +1290,7 @@ func EncodeCertificates(certs ...*x509.Certificate) ([]byte, error) {
 	}
 	return b.Bytes(), nil
 }
-func encodeKey(key crypto.PrivateKey) ([]byte, error) {
+func EncodeKey(key crypto.PrivateKey) ([]byte, error) {
 	b := bytes.Buffer{}
 	switch key := key.(type) {
 	case *ecdsa.PrivateKey:
@@ -1186,7 +1306,7 @@ func encodeKey(key crypto.PrivateKey) ([]byte, error) {
 			return []byte{}, err
 		}
 	default:
-		return []byte{}, errors.New("Unrecognized key type")
+		return []byte{}, errors.New("unrecognized key type")
 
 	}
 	return b.Bytes(), nil
@@ -1204,7 +1324,7 @@ func writeCertificates(f io.Writer, certs ...*x509.Certificate) error {
 	return nil
 }
 func writeKeyFile(f io.Writer, key crypto.PrivateKey) error {
-	bytes, err := encodeKey(key)
+	bytes, err := EncodeKey(key)
 	if err != nil {
 		return err
 	}

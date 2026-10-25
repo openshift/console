@@ -1,5 +1,4 @@
 import * as _ from 'lodash';
-
 import {
   humanizeBinaryBytes,
   humanizeDecimalBytesPerSec,
@@ -10,7 +9,7 @@ import {
 
 export const formatNumber = (s: string, decimals = 2, format = 'short'): string => {
   const value = Number(s);
-  if (_.isNil(s) || isNaN(value)) {
+  if (_.isNil(s) || Number.isNaN(value)) {
     return s || '-';
   }
 

@@ -1,38 +1,38 @@
-import { sortable } from '@patternfly/react-table';
-import type { TFunction } from 'i18next';
-import { KEBAB_COLUMN_CLASS } from '@console/shared/src/components/actions/LazyActionMenu';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import type { ConsoleDataViewColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import type { EventBrokerKind } from '../../../types';
 
-const BrokerHeaders = (t: TFunction) => () => {
-  return [
-    {
-      title: t('knative-plugin~Name'),
-      sortField: 'metadata.name',
-      transforms: [sortable],
-    },
-    {
-      id: 'namespace',
-      title: t('knative-plugin~Namespace'),
-      sortField: 'metadata.namespace',
-      transforms: [sortable],
-    },
-    {
-      id: 'ready',
-      title: t('knative-plugin~Ready'),
-    },
-    {
-      id: 'condition',
-      title: t('knative-plugin~Conditions'),
-    },
-    {
-      title: t('knative-plugin~Created'),
-      sortField: 'metadata.creationTimestamp',
-      transforms: [sortable],
-    },
-    {
-      title: '',
-      props: { className: KEBAB_COLUMN_CLASS },
-    },
-  ];
+export const useBrokerColumns = (): {
+  columns: ConsoleDataViewColumn<EventBrokerKind>[];
+} => {
+  const { t } = useTranslation('knative-plugin');
+  const columns = useMemo(
+    () => [
+      { type: 'name' as const, id: 'name' },
+      {
+        type: 'namespace' as const,
+        id: 'namespace',
+      },
+      {
+        id: 'ready',
+        title: t('Ready'),
+        props: { modifier: 'nowrap' as const },
+      },
+      {
+        id: 'condition',
+        title: t('Conditions'),
+        props: { modifier: 'nowrap' as const },
+      },
+      {
+        id: 'created',
+        title: t('Created'),
+        sort: 'metadata.creationTimestamp',
+        props: { modifier: 'nowrap' as const },
+      },
+      { type: 'actions' as const, id: 'actions' },
+    ],
+    [t],
+  );
+  return { columns };
 };
-
-export default BrokerHeaders;

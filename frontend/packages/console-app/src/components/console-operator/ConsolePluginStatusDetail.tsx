@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import type { DetailsItemComponentProps } from '@console/dynamic-plugin-sdk/src/extensions/details-item';
 import { usePluginInfo } from '@console/plugin-sdk/src/api/usePluginInfo';
 import { DASH } from '@console/shared/src/constants/ui';
-import { ConsolePluginStatus } from './ConsoleOperatorConfig';
+import { ConsolePluginStatus } from './ConsolePluginStatus';
 
 const ConsolePluginStatusDetail: FC<DetailsItemComponentProps> = ({ obj }) => {
   const pluginInfoEntries = usePluginInfo();

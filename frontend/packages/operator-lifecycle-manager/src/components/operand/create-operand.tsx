@@ -1,5 +1,6 @@
 import type { FC } from 'react';
 import { useState, useMemo, useCallback } from 'react';
+import { createSchemaUtils } from '@rjsf/utils';
 import type { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -21,6 +22,7 @@ import {
   hasNoFields,
   prune,
 } from '@console/shared/src/components/dynamic-form/utils';
+import { dynamicFormValidator } from '@console/shared/src/components/dynamic-form/validator';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { SyncedEditor } from '@console/shared/src/components/synced-editor/SyncedEditor';
@@ -37,6 +39,7 @@ import { DEFAULT_K8S_SCHEMA } from './const';
 import { DEPRECATED_CreateOperandForm } from './DEPRECATED_operand-form';
 import { OperandForm } from './operand-form';
 import { OperandYAML } from './operand-yaml';
+import { useOperandCancel } from './use-operand-cancel';
 
 export const CreateOperand: FC<CreateOperandProps> = ({
   initialEditorType,
@@ -47,7 +50,7 @@ export const CreateOperand: FC<CreateOperandProps> = ({
   const { t } = useTranslation('olm');
   const params = useParams();
   const [model] = useK8sModel(params.plural);
-  const [crd] = useK8sWatchResource<CustomResourceDefinitionKind>(
+  const [crd, crdLoaded] = useK8sWatchResource<CustomResourceDefinitionKind>(
     model
       ? {
           kind: CustomResourceDefinitionModel.kind,
@@ -63,6 +66,7 @@ export const CreateOperand: FC<CreateOperandProps> = ({
 
   const [activePerspective] = useActivePerspective();
   const [helpText, setHelpText] = useState(formHelpText);
+  const onCancel = useOperandCancel(csv);
   const next =
     activePerspective === 'dev'
       ? '/topology'
@@ -97,9 +101,27 @@ export const CreateOperand: FC<CreateOperandProps> = ({
         ];
   }, [baseSchema]);
 
-  const sample = useMemo<K8sResourceKind>(() => exampleForModel(csv, model), [csv, model]);
+  const rawSample = useMemo<K8sResourceKind>(() => exampleForModel(csv, model), [csv, model]);
 
-  const pruneFunc = useCallback((data) => prune(data, sample), [sample]);
+  // Enrich the sample with CRD schema defaults so the YAML editor shows the same
+  // non-empty defaults as the Form-first path (e.g. logLevel: Normal). Pruning the
+  // enriched result against rawSample strips the empty scaffold objects and arrays
+  // that getDefaultFormState generates for optional nested fields (e.g.
+  // multiKueue.externalFrameworks: [{}]), which the API would reject as invalid.
+  const sample = useMemo<K8sResourceKind>(() => {
+    if (!schema || !rawSample) {
+      return rawSample;
+    }
+    try {
+      const schemaUtils = createSchemaUtils(dynamicFormValidator, schema);
+      const enriched = schemaUtils.getDefaultFormState(schema, rawSample) as K8sResourceKind;
+      return prune(enriched, rawSample);
+    } catch {
+      return rawSample;
+    }
+  }, [rawSample, schema]);
+
+  const pruneFunc = useCallback((data) => prune(data, rawSample), [rawSample]);
 
   const onChangeEditorType = useCallback(
     (newMethod) => {
@@ -116,8 +138,9 @@ export const CreateOperand: FC<CreateOperandProps> = ({
 
   const LAST_VIEWED_EDITOR_TYPE_USER_PREFERENCE_KEY = 'console.createOperandForm.editor.lastView';
 
+  // Wait for CRD before mounting SyncedEditor so sample is enriched, not raw data
   return (
-    <StatusBox loaded={loaded} loadError={loadError} data={csv}>
+    <StatusBox loaded={loaded && crdLoaded} loadError={loadError} data={csv}>
       <PageHeading
         title={t('Create {{item}}', { item: model.label })}
         badge={getBadgeFromType(model.badge)}
@@ -126,7 +149,7 @@ export const CreateOperand: FC<CreateOperandProps> = ({
       <SyncedEditor
         context={{
           formContext: { csv, model, next, schema, providedAPI },
-          yamlContext: { next },
+          yamlContext: { next, onCancel },
         }}
         FormEditor={FormComponent}
         initialData={sample}

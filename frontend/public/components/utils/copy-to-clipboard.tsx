@@ -1,12 +1,12 @@
 import type { ReactNode } from 'react';
 import { memo, useState } from 'react';
-import * as _ from 'lodash';
 import {
   ClipboardCopyButton,
   CodeBlock,
   CodeBlockAction,
   CodeBlockCode,
 } from '@patternfly/react-core';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 
 export const CopyToClipboard = memo<CopyToClipboardProps>(({ value, visibleValue, id = 'id' }) => {

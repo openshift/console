@@ -1,7 +1,5 @@
 import type { FC } from 'react';
 import { useMemo, Suspense } from 'react';
-import { Link } from 'react-router';
-import * as _ from 'lodash';
 import {
   Button,
   Content,
@@ -9,34 +7,30 @@ import {
   DescriptionListGroup,
   DescriptionListTerm,
 } from '@patternfly/react-core';
-
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { OAuthModel, UserModel } from '../models';
-import { K8sModel, referenceForModel, UserKind } from '../module/k8s';
-import { DetailsPage } from './factory/details';
-import { ListPage } from './factory/list-page';
-import { RoleBindingsPage } from './RBAC';
-import { ConsoleEmptyState, LoadingBox } from './utils/status-box';
-import { navFactory } from './utils/horizontal-nav';
-import { ResourceLink, resourcePathFromModel } from './utils/resource-link';
-import { ResourceSummary } from './utils/details-page';
-import { SectionHeading } from './utils/headings';
-import {
-  ConsoleDataView,
-  getNameCellProps,
-  actionsCellProps,
-  nameCellProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import type {
   ConsoleDataViewColumn,
   GetDataViewRows,
-} from '@console/app/src/components/data-view/types';
-import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-import { useCanEditIdentityProviders, useOAuthData } from '@console/shared/src/hooks/oauth';
-import { DASH } from '@console/shared/src/constants/ui';
-import { useTranslation } from 'react-i18next';
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { DASH } from '@console/shared/src/constants/ui';
+import { useCanEditIdentityProviders, useOAuthData } from '@console/shared/src/hooks/oauth';
+import { OAuthModel, UserModel } from '../models';
+import type { K8sModel, UserKind } from '../module/k8s';
+import { referenceForModel } from '../module/k8s';
+import { DetailsPage } from './factory/details';
+import { ListPage } from './factory/list-page';
+import { RoleBindingsPage } from './RBAC';
+import { ResourceSummary } from './utils/details-page';
+import { SectionHeading } from './utils/headings';
+import { navFactory } from './utils/horizontal-nav';
+import { ResourceLink, resourcePathFromModel } from './utils/resource-link';
+import { ConsoleEmptyState, LoadingBox } from './utils/status-box';
 
 const tableColumnInfo = [
   { id: 'name' },
@@ -45,12 +39,11 @@ const tableColumnInfo = [
   { id: 'actions' },
 ];
 
-const getDataViewRows: GetDataViewRows<UserKind> = (data, columns) => {
-  return data.map(({ obj: user }) => {
+const getDataViewRows: GetDataViewRows<UserKind> = (data, columns) =>
+  data.map(({ obj: user }) => {
     const rowCells = {
       [tableColumnInfo[0].id]: {
         cell: <ResourceLink kind={referenceForModel(UserModel)} name={user.metadata.name} />,
-        props: getNameCellProps(user.metadata.name),
       },
       [tableColumnInfo[1].id]: {
         cell: user.fullName || DASH,
@@ -60,21 +53,17 @@ const getDataViewRows: GetDataViewRows<UserKind> = (data, columns) => {
       },
       [tableColumnInfo[3].id]: {
         cell: <LazyActionMenu context={{ [referenceForModel(UserModel)]: user }} />,
-        props: actionsCellProps,
       },
     };
 
     return columns.map(({ id }) => {
       const cell = rowCells[id]?.cell || DASH;
-      const props = rowCells[id]?.props || undefined;
       return {
         id,
-        props,
         cell,
       };
     });
   });
-};
 
 const UsersHelpText = () => {
   const { t } = useTranslation('public');
@@ -128,58 +117,42 @@ const NoDataEmptyMsg = () => {
 
 const useUsersColumns = (): {
   columns: ConsoleDataViewColumn<UserKind>[];
-  resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation('public');
-  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(UserModel);
 
   const columns: ConsoleDataViewColumn<UserKind>[] = useMemo(
     () => [
       {
-        title: t('Name'),
+        type: 'name' as const,
         id: tableColumnInfo[0].id,
-        sort: 'metadata.name',
-        resizableProps: getResizableProps(tableColumnInfo[0].id),
-        props: {
-          ...nameCellProps,
-          modifier: 'nowrap',
-        },
       },
       {
         title: t('Full name'),
         id: tableColumnInfo[1].id,
         sort: 'fullName',
-        resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
         title: t('Identities'),
         id: tableColumnInfo[2].id,
         sort: 'identities[0]',
-        resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
-      {
-        title: '',
-        id: tableColumnInfo[3].id,
-        props: {
-          ...actionsCellProps,
-        },
-      },
+      { type: 'actions' as const, id: tableColumnInfo[3].id },
     ],
-    [t, getResizableProps],
+    [t],
   );
 
-  return { columns, resetAllColumnWidths };
+  return { columns };
 };
 
 const UserList: FC<UserListProps> = (props) => {
   const { t } = useTranslation('public');
-  const { columns, resetAllColumnWidths } = useUsersColumns();
+  const { columns } = useUsersColumns();
   const { data, loaded } = props;
 
   // Show custom empty state when no users exist
@@ -191,14 +164,12 @@ const UserList: FC<UserListProps> = (props) => {
     <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<UserKind>
         {...props}
+        id={UserModel}
         data={data}
         loaded={loaded}
         label={t('Users')}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement={true}
-        isResizable
-        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );
@@ -214,7 +185,7 @@ export const UserPage: FC<UserPageProps> = (props) => {
       kind={referenceForModel(UserModel)}
       ListComponent={UserList}
       canCreate={false}
-      omitFilterToolbar={true}
+      omitFilterToolbar
     />
   );
 };
@@ -251,25 +222,23 @@ const UserDetails: FC<UserDetailsProps> = ({ obj }) => {
   );
 };
 
-export const UserDetailsPage: FC = (props) => {
-  return (
-    <DetailsPage
-      {...props}
-      kind={referenceForModel(UserModel)}
-      customActionMenu={(k8sObj: K8sModel, obj: UserKind) => (
-        <LazyActionMenu
-          context={{ [referenceForModel(UserModel)]: obj }}
-          variant={ActionMenuVariant.DROPDOWN}
-        />
-      )}
-      pages={[
-        navFactory.details(UserDetails),
-        navFactory.editYaml(),
-        navFactory.roles(RoleBindingsTab),
-      ]}
-    />
-  );
-};
+export const UserDetailsPage: FC = (props) => (
+  <DetailsPage
+    {...props}
+    kind={referenceForModel(UserModel)}
+    customActionMenu={(k8sObj: K8sModel, obj: UserKind) => (
+      <LazyActionMenu
+        context={{ [referenceForModel(UserModel)]: obj }}
+        variant={ActionMenuVariant.DROPDOWN}
+      />
+    )}
+    pages={[
+      navFactory.details(UserDetails),
+      navFactory.editYaml(),
+      navFactory.roles(RoleBindingsTab),
+    ]}
+  />
+);
 
 type UserPageProps = {
   autoFocus?: boolean;

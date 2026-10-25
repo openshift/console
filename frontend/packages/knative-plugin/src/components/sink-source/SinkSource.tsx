@@ -23,9 +23,12 @@ const SinkSource: FC<SinkSourceProps> = ({ source, cancel, close }) => {
     spec,
   } = source;
   const isSinkRef = !!spec?.sink?.ref;
-  const { name: sinkName = '', apiVersion = '', kind = '', uri = '' } = isSinkRef
-    ? spec?.sink?.ref
-    : spec?.sink || {};
+  const {
+    name: sinkName = '',
+    apiVersion = '',
+    kind = '',
+    uri = '',
+  } = isSinkRef ? (spec?.sink?.ref ?? {}) : (spec?.sink ?? {});
   const initialValues = {
     formData: {
       sinkType: uri ? SinkType.Uri : SinkType.Resource,

@@ -3,8 +3,7 @@ import { useState, useMemo, memo, useEffect } from 'react';
 import { FormHelperText, FormSection, Icon, Tooltip } from '@patternfly/react-core';
 import { DualListSelector } from '@patternfly/react-core/deprecated';
 import * as fuzzy from 'fuzzysearch';
-import type { Map as ImmutableMap } from 'immutable';
-import { Set as ImmutableSet } from 'immutable';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import type {
@@ -28,24 +27,22 @@ import { SaveStatus } from '@console/shared/src/components/cluster-configuration
 import { useConsoleOperatorConfig } from '@console/shared/src/components/cluster-configuration/useConsoleOperatorConfig';
 import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
 import { useDebounceCallback } from '@console/shared/src/hooks/useDebounceCallback';
+import { usePerspectives } from '@console/shared/src/hooks/usePerspectives';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import type {
   Perspective,
   PerspectivePinnedResource,
-} from '@console/shared/src/hooks/usePerspectives';
-import {
-  PerspectiveVisibilityState,
-  usePerspectives,
-} from '@console/shared/src/hooks/usePerspectives';
-import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
+} from '@console/shared/src/utils/override-perspectives';
+import { PerspectiveVisibilityState } from '@console/shared/src/utils/override-perspectives';
 import './PinnedResourcesConfiguration.scss';
 
 // skip duplicate resources.
-const skipGroups = ImmutableSet([
+const skipGroups = new Set([
   // Prefer rbac.authorization.k8s.io/v1, which has the same resources.
   'authorization.openshift.io',
 ]);
 
-const skipResources = ImmutableSet([
+const skipResources = new Set([
   // Prefer core/v1
   'events.k8s.io/v1beta1.Event',
 ]);
@@ -65,7 +62,7 @@ type DefaultPins = {
 type PinnedResourcesConfigurationProps = {
   readonly: boolean;
   groupVersionMap: DiscoveryResources['groupVersionMap'];
-  allK8sModels: ImmutableMap<string, K8sModel>;
+  allK8sModels: Record<string, K8sModel>;
 };
 
 const PinnedResourcesConfiguration: FC<PinnedResourcesConfigurationProps> = ({
@@ -78,9 +75,8 @@ const PinnedResourcesConfiguration: FC<PinnedResourcesConfigurationProps> = ({
   const perspectiveExtensions = usePerspectives();
   const [pinnedResources, setPinnedResources] = useState<PerspectivePinnedResource[]>();
   const [perspectiveData, setPerspectiveData] = useState<Perspective[]>();
-  const [pinnedResourcesConfigured, setPinnedResourcesConfigured] = useState<
-    PerspectivePinnedResource[]
-  >();
+  const [pinnedResourcesConfigured, setPinnedResourcesConfigured] =
+    useState<PerspectivePinnedResource[]>();
   const defaultPins: DefaultPins = useMemo(
     () =>
       perspectiveExtensions.reduce(
@@ -93,34 +89,40 @@ const PinnedResourcesConfiguration: FC<PinnedResourcesConfigurationProps> = ({
     [perspectiveExtensions],
   );
 
-  const resources = useMemo(() => {
-    return allK8sModels
-      ?.filter(({ apiGroup, apiVersion, kind, verbs }) => {
-        if (skipGroups.has(apiGroup) || skipResources.has(`${apiGroup}/${apiVersion}.${kind}`)) {
-          return false;
-        }
+  const resources = useMemo(
+    () =>
+      allK8sModels
+        ? Object.values(allK8sModels)
+            .filter(({ apiGroup, apiVersion, kind, verbs }) => {
+              if (
+                skipGroups.has(apiGroup) ||
+                skipResources.has(`${apiGroup}/${apiVersion}.${kind}`)
+              ) {
+                return false;
+              }
 
-        // Only show resources that can be listed.
-        if (!verbs?.some((v) => v === 'list')) {
-          return false;
-        }
+              // Only show resources that can be listed.
+              if (!verbs?.some((v) => v === 'list')) {
+                return false;
+              }
 
-        // Only show preferred version for resources in the same API group.
-        const preferred = (m: K8sKind) =>
-          groupVersionMap?.[m.apiGroup]?.preferredVersion === m.apiVersion;
+              // Only show preferred version for resources in the same API group.
+              const preferred = (m: K8sKind) =>
+                groupVersionMap?.[m.apiGroup]?.preferredVersion === m.apiVersion;
 
-        const sameGroupKind = (m: K8sKind) =>
-          m.kind === kind && m.apiGroup === apiGroup && m.apiVersion !== apiVersion;
+              const sameGroupKind = (m: K8sKind) =>
+                m.kind === kind && m.apiGroup === apiGroup && m.apiVersion !== apiVersion;
 
-        return !allK8sModels.find((m) => sameGroupKind(m) && preferred(m));
-      })
-      .toOrderedMap()
-      .sortBy(({ kind, apiGroup }) => `${kind} ${apiGroup}`);
-  }, [allK8sModels, groupVersionMap]);
+              return !Object.values(allK8sModels).find((m) => sameGroupKind(m) && preferred(m));
+            })
+            .sort((a, b) => `${a.kind} ${a.apiGroup}`.localeCompare(`${b.kind} ${b.apiGroup}`))
+        : [],
+    [allK8sModels, groupVersionMap],
+  );
 
   // Track duplicate names so we know when to show the group.
-  const kinds = resources.groupBy((m) => m.kind);
-  const isDup = (kind) => kinds.get(kind).size > 1;
+  const kinds = useMemo(() => _.groupBy(resources, (m) => m.kind), [resources]);
+  const isDup = (kind) => kinds[kind]?.length > 1;
 
   type ItemProps = { title?: string; model?: K8sKind };
 
@@ -134,7 +136,7 @@ const PinnedResourcesConfiguration: FC<PinnedResourcesConfigurationProps> = ({
           <span>
             {model.labelKey ? t(model.labelKey) : model.kind}
             {model.badge && model.badge === 'Tech Preview' && (
-              <span className="co-resource-item__tech-dev-preview">{t('Tech Preview')}</span>
+              <span className="co-resource-item__tech-dev-preview">{t('Technology Preview')}</span>
             )}
           </span>
           {isDup(model.kind) && (
@@ -162,9 +164,8 @@ const PinnedResourcesConfiguration: FC<PinnedResourcesConfigurationProps> = ({
     </div>
   ));
 
-  const [consoleConfig, consoleConfigLoaded, consoleConfigError] = useConsoleOperatorConfig<
-    PerspectivesConsoleConfig
-  >();
+  const [consoleConfig, consoleConfigLoaded, consoleConfigError] =
+    useConsoleOperatorConfig<PerspectivesConsoleConfig>();
 
   const [configuredPerspectives, setConfiguredPerspectives] = useState<Perspective[]>();
   useEffect(() => {
@@ -182,13 +183,11 @@ const PinnedResourcesConfiguration: FC<PinnedResourcesConfigurationProps> = ({
               : groupVersionKind.kind;
             return modelFor(ref);
           });
-          defaultPinnedResources = getModels?.map((resource) => {
-            return {
-              group: resource?.apiGroup ? resource?.apiGroup : '',
-              version: resource?.apiVersion,
-              resource: resource?.plural,
-            };
-          });
+          defaultPinnedResources = getModels?.map((resource) => ({
+            group: resource?.apiGroup ? resource?.apiGroup : '',
+            version: resource?.apiVersion,
+            resource: resource?.plural,
+          }));
         }
         setPinnedResources(defaultPinnedResources);
         setPinnedResourcesConfigured(defaultPinnedResources);
@@ -200,13 +199,13 @@ const PinnedResourcesConfiguration: FC<PinnedResourcesConfigurationProps> = ({
     }
   }, [configuredPerspectives, consoleConfig, consoleConfigLoaded, defaultPins]);
 
-  const items = useMemo(() => {
-    return resources
-      .map((model: K8sKind) => {
-        return <Item title={model.labelKey ? t(model.labelKey) : model.kind} model={model} />;
-      })
-      .toArray();
-  }, [resources, t, Item]);
+  const items = useMemo(
+    () =>
+      resources.map((model: K8sKind) => (
+        <Item title={model.labelKey ? t(model.labelKey) : model.kind} model={model} />
+      )),
+    [resources, t, Item],
+  );
 
   const availableResources = useMemo<React.ReactElement<ItemProps>[]>(() => {
     if (!consoleConfigLoaded) {
@@ -276,13 +275,11 @@ const PinnedResourcesConfiguration: FC<PinnedResourcesConfigurationProps> = ({
     newDisabledOptions: ReactElement<ItemProps>[],
   ) => {
     const validResources = newDisabledOptions.filter((item) => item?.props?.model);
-    const newPinnedResources = validResources?.map((resource) => {
-      return {
-        group: resource?.props?.model?.apiGroup ? resource?.props?.model?.apiGroup : '',
-        version: resource?.props?.model?.apiVersion,
-        resource: resource?.props?.model?.plural,
-      };
-    });
+    const newPinnedResources = validResources?.map((resource) => ({
+      group: resource?.props?.model?.apiGroup ? resource?.props?.model?.apiGroup : '',
+      version: resource?.props?.model?.apiVersion,
+      resource: resource?.props?.model?.plural,
+    }));
     setPerspectiveData(() => {
       const newConfiguredPerspectives = configuredPerspectives ? [...configuredPerspectives] : [];
       const devPerspective = newConfiguredPerspectives?.find((p) => p.id === 'dev');
@@ -303,9 +300,8 @@ const PinnedResourcesConfiguration: FC<PinnedResourcesConfigurationProps> = ({
     save();
   };
 
-  const filterOption = (option: ReactElement<ItemProps>, input: string): boolean => {
-    return fuzzy(input?.toLocaleLowerCase(), option?.props?.title.toLocaleLowerCase());
-  };
+  const filterOption = (option: ReactElement<ItemProps>, input: string): boolean =>
+    fuzzy(input?.toLocaleLowerCase(), option?.props?.title.toLocaleLowerCase());
 
   return (
     <FormSection title={t('Pre-pinned navigation items')} data-test="pinned-resource form-section">
@@ -332,8 +328,8 @@ const PinnedResourcesConfiguration: FC<PinnedResourcesConfigurationProps> = ({
 };
 
 const mapStateToProps = (state: RootState) => ({
-  groupVersionMap: state.k8s.getIn(['RESOURCES', 'groupToVersionMap']),
-  allK8sModels: state.k8s.getIn(['RESOURCES', 'models']),
+  groupVersionMap: state.k8s.RESOURCES?.groupToVersionMap,
+  allK8sModels: state.k8s.RESOURCES?.models,
 });
 
 export default connect(mapStateToProps)(PinnedResourcesConfiguration);

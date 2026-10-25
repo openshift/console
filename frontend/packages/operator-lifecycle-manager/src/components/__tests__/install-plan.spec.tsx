@@ -2,17 +2,22 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as _ from 'lodash';
 import * as Router from 'react-router';
+import type { ConsoleDataViewColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import * as k8sResourceModule from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
-import { Table, MultiListPage, DetailsPage } from '@console/internal/components/factory';
+import { MultiListPage, DetailsPage } from '@console/internal/components/factory';
 import { useAccessReview } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
+import {
+  renderHookWithProviders,
+  renderWithProviders,
+} from '@console/shared/src/test-utils/unit-test-utils';
 import { testInstallPlan } from '../../../mocks';
 import { InstallPlanModel, ClusterServiceVersionModel, OperatorGroupModel } from '../../models';
 import type { InstallPlanKind } from '../../types';
 import { InstallPlanApproval } from '../../types';
 import {
-  InstallPlanTableRow,
+  getInstallPlanDataViewRows,
+  useInstallPlanColumns,
   InstallPlansList,
   InstallPlansPage,
   InstallPlanDetailsPage,
@@ -32,7 +37,6 @@ jest.mock('@console/internal/components/utils/rbac', () => ({
 
 jest.mock('@console/internal/components/factory', () => ({
   ...jest.requireActual('@console/internal/components/factory'),
-  Table: jest.fn(() => null),
   MultiListPage: jest.fn(() => null),
   DetailsPage: jest.fn(() => null),
 }));
@@ -43,14 +47,31 @@ jest.mock('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource', () => ({
 }));
 
 const k8sPatchMock = k8sResourceModule.k8sPatch as jest.Mock;
-const mockTable = Table as jest.Mock;
 const mockMultiListPage = MultiListPage as jest.Mock;
 const mockDetailsPage = DetailsPage as jest.Mock;
 const mockUseAccessReview = useAccessReview as jest.Mock;
 
-describe('InstallPlanTableRow', () => {
+const renderRow = (obj: InstallPlanKind, ids: string[]) => {
+  const columns: ConsoleDataViewColumn<InstallPlanKind>[] = ids.map((id) => ({ id, title: id }));
+  const [cells] = getInstallPlanDataViewRows(
+    [{ obj, activeColumnIDs: new Set(ids), rowData: undefined, index: 0 }],
+    columns,
+  );
+  return renderWithProviders(
+    <table>
+      <tbody>
+        <tr>
+          {cells.map(({ id, cell }) => (
+            <td key={id}>{cell}</td>
+          ))}
+        </tr>
+      </tbody>
+    </table>,
+  );
+};
+
+describe('getInstallPlanDataViewRows', () => {
   let installPlan: InstallPlanKind;
-  const columns = [];
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -62,81 +83,32 @@ describe('InstallPlanTableRow', () => {
   });
 
   it('renders install plan name with correct resource link', () => {
-    renderWithProviders(
-      <table>
-        <tbody>
-          <tr>
-            <InstallPlanTableRow obj={installPlan} columns={columns} />
-          </tr>
-        </tbody>
-      </table>,
-    );
-
+    renderRow(installPlan, ['name']);
     const installPlanLinks = screen.getAllByRole('link', { name: installPlan.metadata.name });
     // eslint-disable-next-line testing-library/no-node-access -- Multiple links with same name require href filtering
     const installPlanLink = installPlanLinks.find((link) =>
       link.getAttribute('href')?.includes('InstallPlan'),
     );
     expect(installPlanLink).toBeVisible();
-    expect(installPlanLink).toHaveAttribute('href', expect.stringContaining('InstallPlan'));
   });
 
   it('renders install plan namespace', () => {
-    renderWithProviders(
-      <table>
-        <tbody>
-          <tr>
-            <InstallPlanTableRow obj={installPlan} columns={columns} />
-          </tr>
-        </tbody>
-      </table>,
-    );
-
+    renderRow(installPlan, ['namespace']);
     expect(screen.getByText(installPlan.metadata.namespace)).toBeVisible();
   });
 
   it('renders install plan status', () => {
-    renderWithProviders(
-      <table>
-        <tbody>
-          <tr>
-            <InstallPlanTableRow obj={installPlan} columns={columns} />
-          </tr>
-        </tbody>
-      </table>,
-    );
-
-    const statusElement = screen.getByTestId('status-text');
-    expect(statusElement).toHaveTextContent(installPlan.status.phase);
+    renderRow(installPlan, ['status']);
+    expect(screen.getByTestId('status-text')).toHaveTextContent(installPlan.status.phase);
   });
 
   it('renders fallback status when status.phase is undefined', () => {
-    const installPlanWithoutStatus = { ...installPlan, status: null };
-
-    renderWithProviders(
-      <table>
-        <tbody>
-          <tr>
-            <InstallPlanTableRow obj={installPlanWithoutStatus} columns={columns} />
-          </tr>
-        </tbody>
-      </table>,
-    );
-
+    renderRow({ ...installPlan, status: null }, ['status']);
     expect(screen.getByText('Unknown')).toBeVisible();
   });
 
   it('renders CSV component name', () => {
-    renderWithProviders(
-      <table>
-        <tbody>
-          <tr>
-            <InstallPlanTableRow obj={installPlan} columns={columns} />
-          </tr>
-        </tbody>
-      </table>,
-    );
-
+    renderRow(installPlan, ['components']);
     const csvName = installPlan.spec.clusterServiceVersionNames[0];
     const csvLinks = screen.getAllByRole('link', { name: csvName });
     // eslint-disable-next-line testing-library/no-node-access -- Multiple links with same name require href filtering
@@ -145,44 +117,96 @@ describe('InstallPlanTableRow', () => {
     );
     expect(csvLink).toBeVisible();
   });
+
+  it('renders owning Subscriptions', () => {
+    renderRow(installPlan, ['subscriptions']);
+    const subscriptionRef = installPlan.metadata.ownerReferences.find(
+      (ref) => ref.kind === 'Subscription',
+    );
+    expect(screen.getByRole('link', { name: subscriptionRef.name })).toBeVisible();
+  });
+
+  it('renders None when no Subscription owns the InstallPlan', () => {
+    renderRow({ ...installPlan, metadata: { ...installPlan.metadata, ownerReferences: [] } }, [
+      'subscriptions',
+    ]);
+    expect(screen.getByText('None')).toBeVisible();
+  });
+
+  it('preserves the requested column order and omits inactive columns', () => {
+    renderRow(installPlan, ['namespace', 'name']);
+    const cells = screen.getAllByRole('cell');
+    expect(cells).toHaveLength(2);
+    expect(cells[0]).toHaveTextContent(installPlan.metadata.namespace);
+    expect(cells[1]).toHaveTextContent(installPlan.metadata.name);
+  });
+});
+
+describe('useInstallPlanColumns', () => {
+  it('uses standard column roles and titles the custom columns', () => {
+    const { result } = renderHookWithProviders(() => useInstallPlanColumns());
+    expect(result.current.columns[0]).toEqual(
+      expect.objectContaining({ id: 'name', type: 'name' }),
+    );
+    expect(result.current.columns[1]).toEqual(
+      expect.objectContaining({ id: 'namespace', type: 'namespace' }),
+    );
+    expect(result.current.columns.slice(2).map(({ title }) => title)).toEqual([
+      'Status',
+      'Components',
+      'Subscriptions',
+      undefined,
+    ]);
+  });
 });
 
 describe('InstallPlansList', () => {
+  const originalIntersectionObserver = window.IntersectionObserver;
+
+  beforeAll(() => {
+    Object.defineProperty(window, 'IntersectionObserver', {
+      configurable: true,
+      value: jest.fn().mockImplementation(() => ({
+        observe: jest.fn(),
+        unobserve: jest.fn(),
+      })),
+    });
+  });
+
+  afterAll(() => {
+    Object.defineProperty(window, 'IntersectionObserver', {
+      configurable: true,
+      value: originalIntersectionObserver,
+    });
+  });
+
   beforeEach(() => {
     jest.clearAllMocks();
-    mockTable.mockClear();
   });
 
   afterEach(() => {
     jest.restoreAllMocks();
   });
 
-  it('renders Table component with correct header titles', () => {
-    renderWithProviders(<InstallPlansList.WrappedComponent operatorGroup={null} />);
+  it('renders the default and custom column headings', () => {
+    renderWithProviders(
+      <InstallPlansList.WrappedComponent operatorGroup={null} data={[testInstallPlan]} loaded />,
+    );
 
-    expect(mockTable).toHaveBeenCalledTimes(1);
-    const [tableProps] = mockTable.mock.calls[0];
-
-    const headers = tableProps.Header({});
-    const headerTitles = headers.map((header) => header.title);
-
-    expect(headerTitles).toEqual([
-      'Name',
-      'Namespace',
-      'Status',
-      'Components',
-      'Subscriptions',
-      '',
-    ]);
+    expect(screen.getByRole('columnheader', { name: /^Name\b/ })).toBeVisible();
+    expect(screen.getByRole('columnheader', { name: /^Namespace\b/ })).toBeVisible();
+    expect(screen.getByRole('columnheader', { name: /^Status\b/ })).toBeVisible();
+    expect(screen.getByRole('columnheader', { name: /^Components\b/ })).toBeVisible();
+    expect(screen.getByRole('columnheader', { name: /^Subscriptions\b/ })).toBeVisible();
   });
 
-  it('provides custom empty message for table', () => {
-    renderWithProviders(<InstallPlansList.WrappedComponent operatorGroup={null} />);
+  it('renders the custom empty message instead of the table when no InstallPlans exist', () => {
+    renderWithProviders(
+      <InstallPlansList.WrappedComponent operatorGroup={null} data={[]} loaded />,
+    );
 
-    expect(mockTable).toHaveBeenCalledTimes(1);
-    const [tableProps] = mockTable.mock.calls[0];
-
-    expect(tableProps.EmptyMsg).toBeDefined();
+    expect(screen.queryByRole('grid')).not.toBeInTheDocument();
+    expect(screen.getByText('No InstallPlans found')).toBeVisible();
   });
 });
 
@@ -205,6 +229,7 @@ describe('InstallPlansPage', () => {
 
     expect(multiListPageProps.title).toEqual('InstallPlans');
     expect(multiListPageProps.showTitle).toBe(false);
+    expect(multiListPageProps.omitFilterToolbar).toBe(true);
     expect(multiListPageProps.ListComponent).toEqual(InstallPlansList);
   });
 

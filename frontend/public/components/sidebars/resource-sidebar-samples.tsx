@@ -1,20 +1,20 @@
-import * as _ from 'lodash';
 import type { FC } from 'react';
 import { useState } from 'react';
-import { Button, Level, LevelItem, List, ListItem, Title } from '@patternfly/react-core';
 import { Language } from '@patternfly/react-code-editor';
-import { BasicCodeEditor } from '@console/shared/src/components/editor/BasicCodeEditor';
+import { Button, Level, LevelItem, List, ListItem, Title } from '@patternfly/react-core';
 import {
   RhUiDownloadIcon,
   RhUiClipboardIcon,
   RhUiCaretDownIcon,
   RhUiCaretRightIcon,
 } from '@patternfly/react-icons';
-import { Sample } from '@console/shared/src/hooks/useResourceSidebarSamples';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-
 import type { WatchK8sResultsObject } from '@console/dynamic-plugin-sdk';
-import { K8sKind, K8sResourceKind, referenceFor } from '../../module/k8s';
+import { BasicCodeEditor } from '@console/shared/src/components/editor/BasicCodeEditor';
+import type { Sample } from '@console/shared/src/hooks/useResourceSidebarSamples';
+import type { K8sKind, K8sResourceKind } from '../../module/k8s';
+import { referenceFor } from '../../module/k8s';
 
 const ResourceSidebarSample: FC<ResourceSidebarSampleProps> = ({
   sample,
@@ -62,24 +62,22 @@ const ResourceSidebarSample: FC<ResourceSidebarSampleProps> = ({
 };
 
 const lineHeight = 18;
-const PreviewYAML = ({ maxPreviewLines = 20, yaml }) => {
-  return (
-    <div style={{ paddingTop: 10 }}>
-      <BasicCodeEditor
-        height={`${Math.min(yaml.split('\n').length, maxPreviewLines) * lineHeight}px`}
-        language={Language.yaml}
-        code={yaml}
-        options={{
-          lineHeight,
-          readOnly: true,
-          folding: false,
-          minimap: { enabled: false },
-          scrollBeyondLastLine: false,
-        }}
-      />
-    </div>
-  );
-};
+const PreviewYAML = ({ maxPreviewLines = 20, yaml }) => (
+  <div style={{ paddingTop: 10 }}>
+    <BasicCodeEditor
+      height={`${Math.min(yaml.split('\n').length, maxPreviewLines) * lineHeight}px`}
+      language={Language.yaml}
+      code={yaml}
+      options={{
+        lineHeight,
+        readOnly: true,
+        folding: false,
+        minimap: { enabled: false },
+        scrollBeyondLastLine: false,
+      }}
+    />
+  </div>
+);
 
 interface ResourceSidebarSnippetProps {
   snippet: Sample;
@@ -102,7 +100,6 @@ const ResourceSidebarSnippet: FC<ResourceSidebarSnippetProps> = ({
       try {
         callback(lazyYaml());
       } catch (error) {
-        // eslint-disable-next-line no-console
         console.warn(`Error while running lazy yaml snippet ${id} (${title})`, error);
       }
     }
@@ -169,38 +166,34 @@ interface ResourceSidebarSnippetsProps {
 export const ResourceSidebarSnippets: FC<ResourceSidebarSnippetsProps> = ({
   snippets,
   insertSnippetYaml,
-}) => {
-  return (
-    <List isPlain isBordered>
-      {_.map(_.sortBy(snippets, 'title'), (snippet) => (
-        <ResourceSidebarSnippet
-          key={snippet.id}
-          snippet={snippet}
-          insertSnippetYaml={insertSnippetYaml}
-        />
-      ))}
-    </List>
-  );
-};
+}) => (
+  <List isPlain isBordered>
+    {_.map(_.sortBy(snippets, 'title'), (snippet) => (
+      <ResourceSidebarSnippet
+        key={snippet.id}
+        snippet={snippet}
+        insertSnippetYaml={insertSnippetYaml}
+      />
+    ))}
+  </List>
+);
 
 export const ResourceSidebarSamples: FC<ResourceSidebarSamplesProps> = ({
   samples,
   loadSampleYaml,
   downloadSampleYaml,
-}) => {
-  return (
-    <List isPlain isBordered data-test="resource-samples-list">
-      {_.map(_.sortBy(samples, 'title'), (sample) => (
-        <ResourceSidebarSample
-          key={sample.id}
-          sample={sample}
-          loadSampleYaml={loadSampleYaml}
-          downloadSampleYaml={downloadSampleYaml}
-        />
-      ))}
-    </List>
-  );
-};
+}) => (
+  <List isPlain isBordered data-test="resource-samples-list">
+    {_.map(_.sortBy(samples, 'title'), (sample) => (
+      <ResourceSidebarSample
+        key={sample.id}
+        sample={sample}
+        loadSampleYaml={loadSampleYaml}
+        downloadSampleYaml={downloadSampleYaml}
+      />
+    ))}
+  </List>
+);
 
 export type LoadSampleYaml = (id: string, yaml: string, kind: string) => void;
 

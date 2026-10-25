@@ -1,7 +1,7 @@
-import { GroupVersionKind } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import * as _ from 'lodash';
+import type { GroupVersionKind } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { referenceForGroupVersionKind } from './k8s-ref';
-import { CustomResourceDefinitionKind } from './types';
+import type { CustomResourceDefinitionKind } from './types';
 
 const parseAPIVersion = (version: string) => {
   const parsed = /^v(\d+)(?:(alpha|beta)(\d+))?$/.exec(version);

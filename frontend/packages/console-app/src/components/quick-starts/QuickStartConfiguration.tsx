@@ -56,9 +56,8 @@ const QuickStartConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
   const [allQuickStarts, allQuickStartsLoaded, allQuickStartsError] = useQuickStarts(false);
 
   // Current configuration
-  const [consoleConfig, consoleConfigLoaded, consoleConfigError] = useConsoleOperatorConfig<
-    DisabledQuickStartsConsoleConfig
-  >();
+  const [consoleConfig, consoleConfigLoaded, consoleConfigError] =
+    useConsoleOperatorConfig<DisabledQuickStartsConsoleConfig>();
   const [disabled, setDisabled] = useState<string[]>();
   useEffect(() => {
     if (consoleConfig && consoleConfigLoaded && !disabled) {

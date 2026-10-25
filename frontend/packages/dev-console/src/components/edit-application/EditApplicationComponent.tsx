@@ -28,14 +28,11 @@ const EditApplicationComponent: FC<EditApplicationComponentProps> = (props) => {
     resources.editAppResource?.data?.metadata?.labels?.[NAME_LABEL] ||
     resources.editAppResource?.data?.metadata?.labels?.[INSTANCE_LABEL];
 
-  const filterAssociatedResource = (obj: K8sResourceKind) => {
-    return (
-      obj.metadata.name === appName ||
-      obj.metadata.name === appLabel ||
-      (appLabel && obj.metadata.labels?.[NAME_LABEL] === appLabel) ||
-      (appLabel && obj.metadata.labels?.[INSTANCE_LABEL] === appLabel)
-    );
-  };
+  const filterAssociatedResource = (obj: K8sResourceKind) =>
+    obj.metadata.name === appName ||
+    obj.metadata.name === appLabel ||
+    (appLabel && obj.metadata.labels?.[NAME_LABEL] === appLabel) ||
+    (appLabel && obj.metadata.labels?.[INSTANCE_LABEL] === appLabel);
 
   const getAssociatedResource = (resourcesObj: WatchK8sResultsObject<K8sResourceKind[]>) => {
     const associatedRes = resourcesObj.data?.find(filterAssociatedResource);

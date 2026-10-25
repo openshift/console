@@ -16,14 +16,8 @@ type GridProps = {
 };
 
 const Grid: FC<GridProps> = ({ height, width, scrollTop, items, children }) => {
-  const {
-    cache,
-    cellWidth,
-    cellMargin,
-    className,
-    overscanRowCount,
-    estimatedCellHeight,
-  } = useContext(CellMeasurementContext);
+  const { cache, cellWidth, cellMargin, className, overscanRowCount, estimatedCellHeight } =
+    useContext(CellMeasurementContext);
   const itemCount = items.length;
   const idealItemWidth = cellWidth + cellMargin;
   const columnCount = Math.max(1, Math.floor(width / idealItemWidth));

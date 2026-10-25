@@ -9,21 +9,18 @@ export enum Actions {
   topologyGraphModel = 'topologyGraphModel',
 }
 
-export const setSupportedTopologyFilters = (supportedFilters: string[]) => {
-  return action(Actions.supportedTopologyFilters, { supportedFilters });
-};
+export const setSupportedTopologyFilters = (supportedFilters: string[]) =>
+  action(Actions.supportedTopologyFilters, { supportedFilters });
 
-export const setSupportedTopologyKinds = (supportedKinds: { [key: string]: number }) => {
-  return action(Actions.supportedTopologyKinds, { supportedKinds });
-};
+export const setSupportedTopologyKinds = (supportedKinds: { [key: string]: number }) =>
+  action(Actions.supportedTopologyKinds, { supportedKinds });
 
-export const setTopologyGraphModel = (namespace: string, graphModel: GraphModel) => {
-  return action(Actions.topologyGraphModel, { namespace, graphModel });
-};
+export const setTopologyGraphModel = (namespace: string, graphModel: GraphModel) =>
+  action(Actions.topologyGraphModel, { namespace, graphModel });
 
 export const getTopologyGraphModel = (state: RootState, namespace: string): GraphModel => {
   const topology = state?.plugins?.devconsole?.topology;
-  return topology?.get('topologyGraphModel')?.[namespace];
+  return topology?.topologyGraphModel?.[namespace];
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars -- used in typeof for type export

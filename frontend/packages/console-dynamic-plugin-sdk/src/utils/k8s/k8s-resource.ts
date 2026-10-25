@@ -23,23 +23,21 @@ type AdapterFunc = <D extends BaseOptions>(
  * @param knownArgs  The list of arguments to be provided to underlying API in order.
  * @returns The function called with provided arguments.
  */
-const adapterFunc: AdapterFunc = (func: Function, knownArgs: string[]) => {
-  return (options) => {
-    const args = knownArgs.map((arg) => {
-      // forming opts to match underlying API signature if it's there in knownArgs
-      if (arg === 'opts') {
-        const { name, ns, path, queryParams } = options || {};
-        return {
-          ...(name && { name }),
-          ...(ns && { ns }),
-          ...(path && { path }),
-          ...(queryParams && { queryParams }),
-        };
-      }
-      return options[arg];
-    });
-    return func(...args);
-  };
+const adapterFunc: AdapterFunc = (func: Function, knownArgs: string[]) => (options) => {
+  const args = knownArgs.map((arg) => {
+    // forming opts to match underlying API signature if it's there in knownArgs
+    if (arg === 'opts') {
+      const { name, ns, path, queryParams } = options || {};
+      return {
+        ...(name && { name }),
+        ...(ns && { ns }),
+        ...(path && { path }),
+        ...(queryParams && { queryParams }),
+      };
+    }
+    return options[arg];
+  });
+  return func(...args);
 };
 
 /**
@@ -103,14 +101,13 @@ export const k8sCreate = <R extends K8sResourceCommon>(
   model: K8sModel,
   data: R,
   opts: Options = {},
-) => {
-  return coFetchJSON.post(
+) =>
+  coFetchJSON.post(
     resourceURL(model, Object.assign({ ns: data?.metadata?.namespace }, opts)),
     data,
     null,
     null,
   );
-};
 
 type OptionsCreate<R> = BaseOptions & {
   model: K8sModel;

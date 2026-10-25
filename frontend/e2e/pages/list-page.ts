@@ -1,6 +1,7 @@
 import { type Locator, expect } from '@playwright/test';
 
 import BasePage from './base-page';
+import { escapeRegExp } from '../utils/selector-utils';
 
 export class ListPage extends BasePage {
   private readonly pageHeading: Locator = this.page.getByTestId('page-heading').locator('h1');
@@ -34,6 +35,10 @@ export class ListPage extends BasePage {
     return this.singleFilterGroup.locator('.pf-v6-c-menu-toggle');
   }
 
+  async navigateToListPage(url: string): Promise<void> {
+    await this.goTo(url);
+  }
+
   cell(resourceName: string, cellName = 'name'): Locator {
     return this.page.getByTestId(`data-view-cell-${resourceName}-${cellName}`);
   }
@@ -59,7 +64,35 @@ export class ListPage extends BasePage {
   }
 
   async filterByNameInput(name: string): Promise<void> {
-    await this.nameFilter.fill(name);
+    await this.nameFilter.or(this.nameFilterInput).fill(name);
+  }
+
+  async verifyColumnResizing(columnId: string): Promise<void> {
+    const resizeButton = this.page.getByRole('button', {
+      name: `Resize ${columnId} column`,
+      exact: true,
+    });
+    const header = this.dataViewTable.getByRole('columnheader').filter({ has: resizeButton });
+    const getWidth = () =>
+      header.evaluate((element: HTMLElement) => parseFloat(element.style.minWidth));
+
+    await this.robustClick(this.page.getByTestId('reset-column-widths'));
+    const initialWidth = await getWidth();
+
+    for (let step = 0; step < 8; step++) {
+      await resizeButton.press('Shift+ArrowRight');
+    }
+    await expect.poll(getWidth).toBeGreaterThan(initialWidth);
+    const resizedWidth = await getWidth();
+    await this.page.reload();
+    await this.waitForRows();
+    // The persisted width depends on user settings (ConfigMap-backed on a real
+    // cluster), a separate async load from the table becoming visible, so this
+    // needs a longer timeout than the default 5s to avoid racing it in CI.
+    await expect.poll(getWidth, { timeout: 30_000 }).toBeCloseTo(resizedWidth, 0);
+
+    await this.robustClick(this.page.getByTestId('reset-column-widths'));
+    await expect.poll(getWidth).toBeCloseTo(initialWidth, 0);
   }
 
   getCell(resourceName: string, cellName = 'name'): Locator {
@@ -116,9 +149,7 @@ export class ListPage extends BasePage {
   }
 
   async clickResourceRowKebabAction(resourceName: string, actionName: string): Promise<void> {
-    const row = this.resourceRows
-      .filter({ hasText: resourceName })
-      .first();
+    const row = this.resourceRows.filter({ hasText: resourceName }).first();
     const kebab = row.getByTestId('kebab-button');
     await this.robustClick(kebab);
     await this.robustClick(this.page.getByTestId(actionName));
@@ -132,9 +163,7 @@ export class ListPage extends BasePage {
 
     if (await this.dataViewFilters.isVisible()) {
       await this.page.locator('.pf-v6-c-menu__list-item', { hasText: filterName }).click();
-      const checkboxFilter = this.page.locator(
-        '[data-ouia-component-id="DataViewCheckboxFilter"]',
-      );
+      const checkboxFilter = this.page.locator('[data-ouia-component-id="DataViewCheckboxFilter"]');
       await this.robustClick(checkboxFilter);
       const filterItem = this.page.locator(
         `[data-ouia-component-id="DataViewCheckboxFilter-filter-item-${checkboxLabel}"]`,
@@ -145,6 +174,19 @@ export class ListPage extends BasePage {
       const filterItem = this.page.locator(`[data-test-row-filter="${checkboxLabel}"]`);
       await this.robustClick(filterItem);
     }
+  }
+
+  async clickStatusButton(resourceName: string): Promise<void> {
+    const cell = this.getCell(resourceName);
+    const row = cell.locator('xpath=ancestor::tr');
+    const statusButton = row.getByTestId('popover-status-button');
+    await this.robustClick(statusButton, { timeout: 30_000, force: true });
+  }
+
+  async clickDebugContainerLink(containerName: string): Promise<void> {
+    await this.robustClick(this.page.getByTestId(`popup-debug-container-link-${containerName}`), {
+      timeout: 30_000,
+    });
   }
 
   async clickFirstRowLink(): Promise<void> {
@@ -186,14 +228,31 @@ export class ListPage extends BasePage {
     }
 
     await searchInput.fill(projectName);
-    const item = this.page.getByRole('menuitem', { name: projectName, exact: true });
+    const item = this.page
+      .getByTestId('namespace-dropdown-item-text')
+      .filter({ hasText: new RegExp(`^${escapeRegExp(projectName)}$`) });
     await this.robustClick(item);
   }
 
   async selectAllProjects(): Promise<void> {
     const dropdownButton = this.namespaceDropdown.getByRole('button');
     await this.robustClick(dropdownButton);
-    const item = this.page.getByRole('menuitem', { name: 'All Projects', exact: true });
+    const item = this.page
+      .getByTestId('namespace-dropdown-item-text')
+      .filter({ hasText: /^All Projects$/ });
     await this.robustClick(item);
+  }
+
+  async navigateToPodsList(): Promise<void> {
+    await this.goTo('/k8s/all-namespaces/pods');
+  }
+
+  async createProject(projectName: string): Promise<void> {
+    await this.robustClick(this.page.getByRole('button', { name: 'Create Project' }));
+    await expect(this.page.locator('h1', { hasText: 'Create Project' })).toBeVisible({
+      timeout: 20_000,
+    });
+    await this.page.getByTestId('input-name').fill(projectName);
+    await this.robustClick(this.page.getByRole('button', { name: 'Create', exact: true }));
   }
 }

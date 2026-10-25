@@ -88,8 +88,8 @@ const EditApplication: FC<EditApplicationProps> = ({
     return createOrUpdateDeployImageResources(values, false, 'update', appResources);
   };
 
-  const handleSubmit = (values, actions) => {
-    return updateResources(values)
+  const handleSubmit = (values, actions) =>
+    updateResources(values)
       .then(() => {
         actions.setStatus({ submitError: '' });
         handleRedirect(namespace, perspective, perspectiveExtensions, navigate);
@@ -97,7 +97,6 @@ const EditApplication: FC<EditApplicationProps> = ({
       .catch((err) => {
         actions.setStatus({ submitError: err.message });
       });
-  };
 
   useEffect(() => {
     let ignore = false;
@@ -107,10 +106,8 @@ const EditApplication: FC<EditApplicationProps> = ({
         ? normalizeBuilderImages(imageStreamsData)
         : {};
       if (appResources.buildConfig.loaded && appResources.buildConfig.data) {
-        const {
-          name: imageName,
-          namespace: imageNs,
-        } = appResources.buildConfig.data?.spec?.strategy.sourceStrategy.from;
+        const { name: imageName, namespace: imageNs } =
+          appResources.buildConfig.data?.spec?.strategy.sourceStrategy.from ?? {};
         const selectedImage = imageName?.split(':')[0];
         const builderImageExists = imageNs === 'openshift' && allBuilderImages?.[selectedImage];
         if (!builderImageExists) {

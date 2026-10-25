@@ -21,10 +21,8 @@ const useExtensionsMock = useExtensions as jest.Mock;
 const usePreferredPerspectiveMock = usePreferredPerspective as jest.Mock;
 
 describe('PreferredPerspectiveSelect', () => {
-  const {
-    id: preferredPerspectiveValue,
-    name: preferredPerspectiveLabel,
-  } = mockPerspectiveExtensions[1].properties;
+  const { id: preferredPerspectiveValue, name: preferredPerspectiveLabel } =
+    mockPerspectiveExtensions[1].properties;
 
   const setupMocks = (preferredPerspective?: string, loaded = true) => {
     useExtensionsMock.mockReturnValue(mockPerspectiveExtensions);

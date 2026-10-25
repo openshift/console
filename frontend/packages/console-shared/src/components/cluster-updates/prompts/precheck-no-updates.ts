@@ -1,14 +1,26 @@
+import type { VerifiedClusterVersionConditions } from '../cluster-version-helpers';
 import { getLanguageConstraint } from './shared/language-utils';
+import { securityConstraint, getConfidenceQualifiers } from './shared/security-utils';
+import { formatVerifiedConditions } from './shared/verified-conditions';
 
 /**
  * Pre-check prompt for clusters with no available updates
  * Verifies cluster health when already at latest version
  *
  * @param currentVersion - Current cluster version
+ * @param verified - ClusterVersion condition statuses read directly by the console
  * @returns Formatted prompt for OLS health verification
  */
-export const createPreCheckNoUpdatesPrompt = (currentVersion: string) => {
+export const createPreCheckNoUpdatesPrompt = (
+  currentVersion: string,
+  verified: VerifiedClusterVersionConditions,
+) => {
   const languageConstraint = getLanguageConstraint();
+  const confidenceQualifiers = getConfidenceQualifiers({
+    highConfidenceData: 'ClusterVersion + ClusterOperators',
+    highConfidenceQuality: 'conditions are unambiguous',
+    moderateConfidenceMissing: 'events, MCPs, nodes, alerts',
+  });
 
   return `# OpenShift Cluster Health Assessment
 
@@ -20,7 +32,15 @@ export const createPreCheckNoUpdatesPrompt = (currentVersion: string) => {
 - Assess ONLY the actual cluster state from tool call data
 - Distinguish between system health and user workload issues
 - Provide actionable recommendations for administrators
+<scope_definition>
+This assessment is scoped to upgrade readiness and update-service health ONLY.
+**IN SCOPE**: ClusterVersion conditions, ClusterOperator health affecting future upgrades, update service connectivity, cluster capabilities, version history, and Upgradeable/Failing conditions.
+**OUT OF SCOPE**: General application performance, user workload errors unrelated to upgrades, cosmetic issues, and operational recommendations that do not affect the cluster's ability to upgrade.
+Do not report issues that cannot be tied to a specific upgrade-blocking or upgrade-disrupting mechanism.
+</scope_definition>
 - ONLY OUTPUT the Summary and TL;DR sections
+${securityConstraint}
+${confidenceQualifiers}
 ${languageConstraint}
 </constraints>
 
@@ -29,7 +49,11 @@ Health assessment for OpenShift cluster running ${currentVersion} with no availa
 Focus on operational health and readiness for future updates.
 </context>
 
+${formatVerifiedConditions(verified)}
+
 <condition_checking_guide>
+NOTE: The {type, status} pairs below are a REFERENCE LEGEND showing how to interpret conditions in general — they are NOT this cluster's data. Never copy a status from this legend into your output. Read the ClusterVersion condition statuses from <verified_clusterversion_conditions> above, and read every other condition (ClusterOperators, nodes, etc.) from the tool call results.
+
 CRITICAL: Understanding Kubernetes/OpenShift Conditions
 
 Conditions have TWO important fields you MUST check:
@@ -93,7 +117,8 @@ Conditions have TWO important fields you MUST check:
 6. **Future Update Readiness Assessment** (Check BOTH type AND status):
  - Find condition where type="Upgradeable" (OPTIONAL - may not exist)
  * If found AND status="False": This IS an upgrade blocker - report reason
- * If status="True", missing, or status="Unknown": Future upgrades are allowed
+ * If status="True" or missing: Future upgrades are allowed
+ * If status="Unknown": Upgradeability is INDETERMINATE - do NOT report upgrades as allowed. Investigate the reason/message via tools and report with limited confidence that upgradeability could not be confirmed
  - Find condition where type="Failing"
  * If found AND status="True": Cluster issues that must be resolved
  * If status="False" or missing: No failing condition (healthy)
@@ -102,38 +127,38 @@ Conditions have TWO important fields you MUST check:
  - User workload PDB analysis for potential upgrade blockers
 
 7. **Operational Health and Recommendations**:
- - Identify issues that affect user applications
- - Focus on problems that cluster administrators can/should address
- - Provide specific, actionable guidance for maintaining cluster health
- - Distinguish from normal system maintenance activities
+ - Focus on issues that would block or disrupt a future cluster upgrade
+ - Provide specific, actionable guidance for maintaining upgrade readiness
+ - Do not flag general application issues unrelated to upgrades
  - Avoid recommendations for normal system behavior
 
 </health_assessment_requirements>
 
 <output_format>
 ## Summary
-**Overall Health Status**
+**Overall health status**
 [Assessment based on actual cluster state data]
-**System Component Status**
-- **Core Services**: [List core platform operators and their health status]
-- **Degraded Operators**: [Any operators with Available=False or Degraded=True]
-- **Progressing Operators**: [Operators currently updating or progressing]
+**System component status**
+- **Core services**: [List core platform operators and their health status]
+- **Degraded operators**: [Any operators with Available=False or Degraded=True]
+- **Progressing operators**: [Operators currently updating or progressing]
 - **Infrastructure**: [Overall cluster-level status and configuration]
-**Administrator Action Items**
+**Administrator action items**
 - **Immediate**: [Issues requiring prompt attention]
 - **Maintenance**: [Items to address during maintenance windows]
 - **Monitoring**: [Things to watch for trends]
-**Future Update Readiness**
+**Future update readiness**
 [Assessment of readiness for next OpenShift updates]
 
 ## TL;DR
-- **Overall Status**: [Healthy | Minor issues | Attention needed]
-- **System Health**: [Count of healthy vs degraded operators]
-- **Core Platform**: [Status of essential operators: console, authentication, ingress, etc.]
-- **Degraded Components**: [Count and names of any unhealthy operators]
-- **User Impact**: [Any operator issues affecting workloads]
-- **Action Items**: [Count of items needing administrator attention]
-- **Update Readiness**: [Ready | Operator issues need resolution]
-- **Next Review**: [Recommended reassessment timeframe]
+- **Overall status**: [Healthy | Minor issues | Attention needed]
+- **Data completeness**: [Complete | Partial | Limited]
+- **System health**: [Count of healthy vs degraded operators]
+- **Core platform**: [Status of essential operators: console, authentication, ingress, etc.]
+- **Degraded components**: [Count and names of any unhealthy operators]
+- **User impact**: [Any operator issues affecting workloads]
+- **Action items**: [Count of items needing administrator attention]
+- **Update readiness**: [Ready | Operator issues need resolution]
+- **Next review**: [Recommended reassessment timeframe]
 </output_format>`;
 };

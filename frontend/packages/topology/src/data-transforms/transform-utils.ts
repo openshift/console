@@ -337,10 +337,10 @@ export const getWorkloadResources: GetWorkloadResources = (
   resources,
   kindsMap,
   workloadTypes = WORKLOAD_TYPES,
-) => {
-  return _.flatten(
-    workloadTypes.map((resourceKind) => {
-      return resources[resourceKind]
+) =>
+  _.flatten(
+    workloadTypes.map((resourceKind) =>
+      resources[resourceKind]
         ? resources[resourceKind].data.map((res) => {
             const resKind = res.kind || kindsMap[resourceKind];
             let kind = resKind;
@@ -355,10 +355,9 @@ export const getWorkloadResources: GetWorkloadResources = (
               ...res,
             };
           })
-        : [];
-    }),
+        : [],
+    ),
   );
-};
 
 export const getBaseWatchedResources = (namespace?: string): WatchK8sResources<any> => {
   if (!namespace) {

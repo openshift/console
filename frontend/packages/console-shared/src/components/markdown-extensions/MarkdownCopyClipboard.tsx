@@ -1,8 +1,8 @@
 import type { FC } from 'react';
 import { useState, useMemo, useCallback } from 'react';
+import { Tooltip } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useEventListener } from '../../hooks/useEventListener';
-import { Tooltip } from '../Tooltip/Tooltip';
 import { MARKDOWN_COPY_BUTTON_ID, MARKDOWN_SNIPPET_ID } from './const';
 
 type CopyClipboardProps = {
@@ -16,9 +16,11 @@ const CopyClipboard: FC<CopyClipboardProps> = ({ element, rootSelector, docConte
   const [showSuccessContent, setShowSuccessContent] = useState<boolean>(false);
   const textToCopy = useMemo(() => {
     const copyTextId = element.getAttribute(MARKDOWN_COPY_BUTTON_ID);
-    return (docContext.querySelector(
-      `${rootSelector} [${MARKDOWN_SNIPPET_ID}="${copyTextId}"]`,
-    ) as HTMLElement).innerText;
+    return (
+      docContext.querySelector(
+        `${rootSelector} [${MARKDOWN_SNIPPET_ID}="${copyTextId}"]`,
+      ) as HTMLElement
+    ).innerText;
   }, [element, docContext, rootSelector]);
 
   useEventListener(
@@ -36,9 +38,9 @@ const CopyClipboard: FC<CopyClipboardProps> = ({ element, rootSelector, docConte
 
   return (
     <Tooltip
-      reference={() => element as HTMLElement}
+      triggerRef={() => element}
       content={showSuccessContent ? t('Successfully copied to clipboard!') : t('Copy to clipboard')}
-      onHide={() => {
+      onTooltipHidden={() => {
         setShowSuccessContent(false);
       }}
     />

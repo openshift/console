@@ -8,6 +8,7 @@ import {
 } from '@openshift-console/dynamic-plugin-sdk';
 import { Progress, ProgressSize } from '@patternfly/react-core';
 import { InProgressIcon } from '@patternfly/react-icons';
+import { useTranslation } from 'react-i18next';
 
 export const DemoActivity: React.FC<K8sActivityProps> = ({ resource }) => (
   <>
@@ -20,12 +21,15 @@ export const DemoActivity: React.FC<K8sActivityProps> = ({ resource }) => (
   </>
 );
 
-export const DemoPrometheusActivity: React.FC<PrometheusActivityProps> = () => (
-  <div>
-    <InProgressIcon />
-    Demo prometheus activity
-  </div>
-);
+export const DemoPrometheusActivity: React.FC<PrometheusActivityProps> = () => {
+  const { t } = useTranslation('plugin__console-demo-plugin');
+  return (
+    <div>
+      <InProgressIcon />
+      {t('Demo prometheus activity')}
+    </div>
+  );
+};
 
 export const isActivity = (resource: K8sResourceCommon) =>
   get(resource, ['metadata', 'labels', 'node-role.kubernetes.io/master']) === '';

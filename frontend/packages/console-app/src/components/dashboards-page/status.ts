@@ -8,7 +8,7 @@ import type {
   SubsystemHealth,
   GetOperatorStatusPriority,
 } from '@console/dynamic-plugin-sdk';
-import type { PrometheusResponse } from '@console/internal/components/graphs';
+import type { PrometheusResponse } from '@console/internal/components/graphs/types';
 import { humanizePercentage } from '@console/internal/components/utils/units';
 import type { ClusterVersionKind, ClusterOperator } from '@console/internal/module/k8s';
 import {
@@ -136,8 +136,7 @@ const getClusterOperatorStatusPriority: GetOperatorStatusPriority<ClusterOperato
 
 export const getClusterOperatorHealthStatus: GetOperatorsWithStatuses<ClusterOperator> = (
   resources,
-) => {
-  return (resources.clusterOperators.data as ClusterOperator[]).map((co) =>
+) =>
+  (resources.clusterOperators.data as ClusterOperator[]).map((co) =>
     getOperatorsStatus<ClusterOperator>([co], getClusterOperatorStatusPriority),
   );
-};

@@ -1,6 +1,14 @@
-import * as _ from 'lodash';
 import type { FC } from 'react';
 import { useState, useCallback, useMemo, Suspense } from 'react';
+import {
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+  Grid,
+  GridItem,
+} from '@patternfly/react-core';
+import { RhUiBanIcon } from '@patternfly/react-icons';
 import {
   SortByDirection,
   TableVariant,
@@ -11,60 +19,44 @@ import {
   Th,
   Tr,
 } from '@patternfly/react-table';
-import { RhUiBanIcon } from '@patternfly/react-icons';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
+import type {
+  ConsoleDataViewColumn,
+  GetDataViewRows,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import type { ResourceListPage } from '@console/dynamic-plugin-sdk/src/extensions/pages';
+import { isResourceListPage } from '@console/dynamic-plugin-sdk/src/extensions/pages';
+import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
+import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { GreenCheckCircleIcon } from '@console/shared/src/components/status/icons';
+import { DASH } from '@console/shared/src/constants/ui';
+import { CustomResourceDefinitionModel } from '../models';
+import type { CRDVersion, CustomResourceDefinitionKind, K8sModel } from '../module/k8s';
+import {
+  apiVersionCompare,
+  getLatestVersionForCRD,
+  referenceForCRD,
+  referenceForModel,
+} from '../module/k8s';
+import { Conditions } from './conditions';
+import { DefaultPage } from './default-resource';
 import { DetailsPage } from './factory/details';
 import { ListPage } from './factory/list-page';
 import { sortResourceByValue } from './factory/Table/sort';
+// eslint-disable-next-line import/no-cycle -- import to this module is dynamic
+import { getResourceListPages } from './list-pages';
 import { AsyncComponent } from './utils/async';
 import { DetailsItem } from './utils/details-item';
-import { EmptyBox, LoadingBox } from './utils/status-box';
-import { navFactory } from './utils/horizontal-nav';
-import { ResourceLink } from './utils/resource-link';
 import { ResourceSummary } from './utils/details-page';
 import { SectionHeading } from './utils/headings';
-import {
-  apiVersionCompare,
-  CRDVersion,
-  CustomResourceDefinitionKind,
-  getLatestVersionForCRD,
-  K8sModel,
-  referenceForCRD,
-  referenceForModel,
-  TableColumn,
-} from '../module/k8s';
-import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
-import { CustomResourceDefinitionModel } from '../models';
-import { Conditions } from './conditions';
-import { getResourceListPages } from './resource-pages';
-import { DefaultPage } from './default-resource';
-import { GreenCheckCircleIcon } from '@console/shared/src/components/status/icons';
-import { DASH } from '@console/shared/src/constants/ui';
-import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
-import {
-  ResourceListPage,
-  isResourceListPage,
-} from '@console/dynamic-plugin-sdk/src/extensions/pages';
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import {
-  DescriptionList,
-  DescriptionListDescription,
-  DescriptionListGroup,
-  DescriptionListTerm,
-  Grid,
-  GridItem,
-} from '@patternfly/react-core';
-import {
-  actionsCellProps,
-  getNameCellProps,
-  ConsoleDataView,
-  nameCellProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
-import { GetDataViewRows } from '@console/app/src/components/data-view/types';
-import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
-import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
+import { navFactory } from './utils/horizontal-nav';
+import { ResourceLink } from './utils/resource-link';
+import { EmptyBox, LoadingBox } from './utils/status-box';
 
 const isEstablished = (conditions: any[]) => {
   const condition = _.find(conditions, (c) => c.type === 'Established');
@@ -193,13 +185,13 @@ const Details: FC<{ obj: CustomResourceDefinitionKind }> = ({ obj: crd }) => {
 const Instances: FC<InstancesProps> = ({ obj, namespace }) => {
   const resourceListPageExtensions = useExtensions<ResourceListPage>(isResourceListPage);
   const crdKind = referenceForCRD(obj);
-  const componentLoader = getResourceListPages(resourceListPageExtensions).get(crdKind, () =>
-    Promise.resolve(DefaultPage),
-  );
+  const componentLoader =
+    getResourceListPages(resourceListPageExtensions).get(crdKind) ??
+    (() => Promise.resolve(DefaultPage));
   return (
     <AsyncComponent
       loader={componentLoader}
-      namespace={namespace ? namespace : undefined}
+      namespace={namespace || undefined}
       kind={crdKind}
       showTitle={false}
       autoFocus={false}
@@ -217,33 +209,23 @@ const tableColumnInfo = [
 ];
 
 const useCustomResourceDefinitionsColumns = (): {
-  columns: TableColumn<CustomResourceDefinitionKind>[];
-  resetAllColumnWidths: () => void;
+  columns: ConsoleDataViewColumn<CustomResourceDefinitionKind>[];
 } => {
   const { t } = useTranslation('public');
-  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(
-    CustomResourceDefinitionModel,
-  );
 
-  const columns: TableColumn<CustomResourceDefinitionKind>[] = useMemo(
+  const columns: ConsoleDataViewColumn<CustomResourceDefinitionKind>[] = useMemo(
     () => [
       {
-        title: t('Name'),
+        type: 'name' as const,
         id: tableColumnInfo[0].id,
         sort: 'spec.names.kind',
-        resizableProps: getResizableProps(tableColumnInfo[0].id),
-        props: {
-          ...nameCellProps,
-          modifier: 'nowrap',
-        },
       },
       {
         title: t('Group'),
         id: tableColumnInfo[1].id,
         sort: 'spec.group',
-        resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -253,40 +235,31 @@ const useCustomResourceDefinitionsColumns = (): {
           data.sort(
             sortResourceByValue<CustomResourceDefinitionKind>(direction, getLatestVersionForCRD),
           ),
-        resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
         title: t('Namespaced'),
         id: tableColumnInfo[3].id,
         sort: 'spec.scope',
-        resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
         title: t('Established'),
         id: tableColumnInfo[4].id,
-        resizableProps: getResizableProps(tableColumnInfo[4].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
-      {
-        title: '',
-        id: tableColumnInfo[5].id,
-        props: {
-          ...actionsCellProps,
-        },
-      },
+      { type: 'actions' as const, id: tableColumnInfo[5].id },
     ],
-    [t, getResizableProps],
+    [t],
   );
 
-  return { columns, resetAllColumnWidths };
+  return { columns };
 };
 
 const IsNamespaced: FC<{ obj: CustomResourceDefinitionKind }> = ({ obj }) => {
@@ -294,8 +267,8 @@ const IsNamespaced: FC<{ obj: CustomResourceDefinitionKind }> = ({ obj }) => {
   return <>{namespaced(obj) ? t('Yes') : t('No')}</>;
 };
 
-const getDataViewRows: GetDataViewRows<CustomResourceDefinitionKind> = (data, columns) => {
-  return data.map(({ obj }) => {
+const getDataViewRows: GetDataViewRows<CustomResourceDefinitionKind> = (data, columns) =>
+  data.map(({ obj }) => {
     const { name, namespace } = obj.metadata;
     const displayName = _.get(obj, 'spec.names.kind');
 
@@ -311,7 +284,7 @@ const getDataViewRows: GetDataViewRows<CustomResourceDefinitionKind> = (data, co
             />
           </span>
         ),
-        props: getNameCellProps(displayName),
+        props: { 'data-test': `data-view-cell-${displayName}-name` },
       },
       [tableColumnInfo[1].id]: {
         cell: obj.spec.group,
@@ -329,7 +302,6 @@ const getDataViewRows: GetDataViewRows<CustomResourceDefinitionKind> = (data, co
         cell: (
           <LazyActionMenu context={{ [referenceForModel(CustomResourceDefinitionModel)]: obj }} />
         ),
-        props: actionsCellProps,
       },
     };
 
@@ -342,27 +314,24 @@ const getDataViewRows: GetDataViewRows<CustomResourceDefinitionKind> = (data, co
       };
     });
   });
-};
 
 const CustomResourceDefinitionsList: FC<CustomResourceDefinitionsListProps> = ({
   data,
   loaded,
   ...props
 }) => {
-  const { columns, resetAllColumnWidths } = useCustomResourceDefinitionsColumns();
+  const { columns } = useCustomResourceDefinitionsColumns();
 
   return (
     <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<CustomResourceDefinitionKind>
         {...props}
+        id={CustomResourceDefinitionModel}
         label={CustomResourceDefinitionModel.labelPlural}
         data={data}
         loaded={loaded}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement={true}
-        isResizable
-        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );
@@ -373,35 +342,33 @@ export const CustomResourceDefinitionsPage: FC = (props) => (
     {...props}
     ListComponent={CustomResourceDefinitionsList}
     kind={kind}
-    canCreate={true}
-    omitFilterToolbar={true}
+    canCreate
+    omitFilterToolbar
   />
 );
 
-export const CustomResourceDefinitionsDetailsPage: FC = (props) => {
-  return (
-    <DetailsPage
-      {...props}
-      kind={referenceForModel(CustomResourceDefinitionModel)}
-      customActionMenu={(k8sObj: K8sModel, obj: CustomResourceDefinitionKind) => (
-        <LazyActionMenu
-          context={{ [referenceForModel(CustomResourceDefinitionModel)]: obj }}
-          variant={ActionMenuVariant.DROPDOWN}
-        />
-      )}
-      pages={[
-        navFactory.details(Details),
-        navFactory.editYaml(),
-        {
-          // t('public~Instances')
-          nameKey: 'public~Instances',
-          href: 'instances',
-          component: Instances,
-        },
-      ]}
-    />
-  );
-};
+export const CustomResourceDefinitionsDetailsPage: FC = (props) => (
+  <DetailsPage
+    {...props}
+    kind={referenceForModel(CustomResourceDefinitionModel)}
+    customActionMenu={(k8sObj: K8sModel, obj: CustomResourceDefinitionKind) => (
+      <LazyActionMenu
+        context={{ [referenceForModel(CustomResourceDefinitionModel)]: obj }}
+        variant={ActionMenuVariant.DROPDOWN}
+      />
+    )}
+    pages={[
+      navFactory.details(Details),
+      navFactory.editYaml(),
+      {
+        // t('public~Instances')
+        nameKey: 'public~Instances',
+        href: 'instances',
+        component: Instances,
+      },
+    ]}
+  />
+);
 
 type CustomResourceDefinitionsListProps = {
   data: CustomResourceDefinitionKind[];

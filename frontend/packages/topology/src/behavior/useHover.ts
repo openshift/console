@@ -31,7 +31,7 @@ export const useHover = <T extends Element>(
   }, dependencies);
 
   // The unset handle needs to be referred by listeners in different closures.
-  const unsetHandle = useRef<number>();
+  const unsetHandle = useRef<number>(undefined);
 
   const callbackRef = useCallbackRef(
     useCallback(
@@ -74,11 +74,14 @@ export const useHover = <T extends Element>(
               // This can happen with layers. Rendering a node to a new layer will unmount the old node
               // and remount a new node at the same location. This will prevent flickering and getting
               // stuck in a hover state.
-              unsetHandle.current = window.setTimeout(() => {
-                if (mountRef.current) {
-                  setHover(false);
-                }
-              }, Math.max(delayIn, delayOut));
+              unsetHandle.current = window.setTimeout(
+                () => {
+                  if (mountRef.current) {
+                    setHover(false);
+                  }
+                },
+                Math.max(delayIn, delayOut),
+              );
             }
           };
         }

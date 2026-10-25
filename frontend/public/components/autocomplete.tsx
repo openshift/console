@@ -1,21 +1,19 @@
 import type { ComponentProps, FC, SetStateAction, Dispatch, FormEvent } from 'react';
 import { useState, useEffect } from 'react';
+import { Label, SelectList } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
 import { useDocumentListener, KeyEventModes } from '@console/shared/src/hooks/useDocumentListener';
 import { getLabelsAsString } from '@console/shared/src/utils/label-filter';
-
 import { fuzzyCaseInsensitive } from './factory/table-filters';
 import { TextFilter } from './factory/text-filter';
-import { Label, SelectList } from '@patternfly/react-core';
 
 const MAX_SUGGESTIONS = 5;
 
-const labelParser = (resources: any[], labelPath: string): Set<string> => {
-  return resources.reduce((acc: Set<string>, resource: any) => {
+const labelParser = (resources: any[], labelPath: string): Set<string> =>
+  resources.reduce((acc: Set<string>, resource: any) => {
     getLabelsAsString(resource, labelPath).forEach((label) => acc.add(label));
     return acc;
   }, new Set<string>());
-};
 
 const suggestionBoxKeyHandler = {
   Escape: KeyEventModes.HIDE,
@@ -27,20 +25,18 @@ type SuggestionLineProps = {
   color: ComponentProps<typeof Label>['color'];
 };
 
-const SuggestionLine: FC<SuggestionLineProps> = ({ suggestion, onClick, color }) => {
-  return (
-    <div>
-      <Label
-        variant="outline"
-        onClick={() => onClick(suggestion)}
-        data-test="suggestion-line"
-        color={color}
-      >
-        {suggestion}
-      </Label>
-    </div>
-  );
-};
+const SuggestionLine: FC<SuggestionLineProps> = ({ suggestion, onClick, color }) => (
+  <div>
+    <Label
+      variant="outline"
+      onClick={() => onClick(suggestion)}
+      data-test="suggestion-line"
+      color={color}
+    >
+      {suggestion}
+    </Label>
+  </div>
+);
 
 type AutocompleteInputProps = {
   onSuggestionSelect: (selected: string) => void;

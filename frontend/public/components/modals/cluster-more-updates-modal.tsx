@@ -1,12 +1,13 @@
 import type { FC } from 'react';
-import { useTranslation } from 'react-i18next';
 import { Button, Modal, ModalBody, ModalHeader, ModalVariant } from '@patternfly/react-core';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
-
-import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
+import { useTranslation } from 'react-i18next';
+import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
+import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 import { isClusterExternallyManaged } from '@console/shared/src/hooks/useCanClusterUpgrade';
+import type { ModalComponentProps } from '@console/shared/src/types/modal';
+import type { ClusterVersionKind } from '../../module/k8s';
 import {
-  ClusterVersionKind,
   getConditionUpgradeableFalse,
   getLastCompletedUpdate,
   getReleaseNotesLink,
@@ -14,13 +15,11 @@ import {
   isMinorVersionNewer,
   showReleaseNotes,
 } from '../../module/k8s';
-import { ModalComponentProps } from '@console/shared/src/types/modal';
 import {
   ClusterNotUpgradeableAlert,
   UpdateBlockedLabel,
-} from '../cluster-settings/cluster-settings';
+} from '../cluster-settings/cluster-settings-utils';
 import { ReleaseNotesLink } from '../utils/release-notes-link';
-import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 
 const ClusterMoreUpdatesModal: FC<ClusterMoreUpdatesModalProps> = ({ cancel, cv }) => {
   const availableUpdates = getSortedAvailableUpdates(cv);
@@ -50,28 +49,26 @@ const ClusterMoreUpdatesModal: FC<ClusterMoreUpdatesModalProps> = ({ cancel, cv 
             </Tr>
           </Thead>
           <Tbody>
-            {moreAvailableUpdates.map((update) => {
-              return (
-                <Tr key={update.version}>
+            {moreAvailableUpdates.map((update) => (
+              <Tr key={update.version}>
+                <Td>
+                  {update.version}
+                  {clusterUpgradeableFalseAndNotExternallyManaged &&
+                    isMinorVersionNewer(getLastCompletedUpdate(cv), update.version) && (
+                      <UpdateBlockedLabel />
+                    )}
+                </Td>
+                {releaseNotes && (
                   <Td>
-                    {update.version}
-                    {clusterUpgradeableFalseAndNotExternallyManaged &&
-                      isMinorVersionNewer(getLastCompletedUpdate(cv), update.version) && (
-                        <UpdateBlockedLabel />
-                      )}
+                    {getReleaseNotesLink(update.version) ? (
+                      <ReleaseNotesLink version={update.version} />
+                    ) : (
+                      '-'
+                    )}
                   </Td>
-                  {releaseNotes && (
-                    <Td>
-                      {getReleaseNotesLink(update.version) ? (
-                        <ReleaseNotesLink version={update.version} />
-                      ) : (
-                        '-'
-                      )}
-                    </Td>
-                  )}
-                </Tr>
-              );
-            })}
+                )}
+              </Tr>
+            ))}
           </Tbody>
         </Table>
       </ModalBody>
@@ -91,19 +88,17 @@ const ClusterMoreUpdatesModal: FC<ClusterMoreUpdatesModalProps> = ({ cancel, cv 
 
 export const ClusterMoreUpdatesModalOverlay: OverlayComponent<ClusterMoreUpdatesModalProps> = (
   props,
-) => {
-  return (
-    <Modal
-      isOpen
-      onClose={props.closeOverlay}
-      variant={ModalVariant.small}
-      aria-labelledby="cluster-more-updates-modal-title"
-      data-test="more-updates-modal"
-    >
-      <ClusterMoreUpdatesModal {...props} cancel={props.closeOverlay} />
-    </Modal>
-  );
-};
+) => (
+  <Modal
+    isOpen
+    onClose={props.closeOverlay}
+    variant={ModalVariant.small}
+    aria-labelledby="cluster-more-updates-modal-title"
+    data-test="more-updates-modal"
+  >
+    <ClusterMoreUpdatesModal {...props} cancel={props.closeOverlay} />
+  </Modal>
+);
 
 export type ClusterMoreUpdatesModalProps = {
   cv: ClusterVersionKind;

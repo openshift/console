@@ -38,53 +38,65 @@ const WatchResource: FC<{ initResources: WatchK8sResources<{}> }> = ({ initResou
   return null;
 };
 
-beforeEach(() => {
-  // Init k8s redux store with just one model
-  store = createStore(combineReducers(SDKReducers), {}, applyMiddleware(thunk));
-  store.dispatch(
-    receivedResources({
-      models: [PodModel],
-      adminResources: [],
-      allResources: [],
-      configResources: [],
-      clusterOperatorConfigResources: [],
-      namespacedSet: null,
-      safeResources: [],
-      groupVersionMap: {},
-    }),
-  );
+describe('useK8sWatchResources', () => {
+  beforeEach(() => {
+    // Init k8s redux store with just one model
+    store = createStore(combineReducers(SDKReducers), {}, applyMiddleware(thunk));
+    store.dispatch(
+      receivedResources({
+        models: [PodModel],
+        adminResources: [],
+        allResources: [],
+        configResources: [],
+        clusterOperatorConfigResources: [],
+        namespacedSet: null,
+        safeResources: [],
+        groupVersionMap: {},
+      }),
+    );
 
-  jest.useFakeTimers({ legacyFakeTimers: true });
-  jest.resetAllMocks();
+    jest.useFakeTimers({ legacyFakeTimers: true });
+    jest.resetAllMocks();
 
-  k8sListMock.mockReturnValue(Promise.resolve(podList));
-  k8sGetMock.mockReturnValue(Promise.resolve(podData));
-  const wsMock = {
-    onclose: () => wsMock,
-    ondestroy: () => wsMock,
-    onbulkmessage: () => wsMock,
-    destroy: () => wsMock,
-  };
-  k8sWatchMock.mockReturnValue(wsMock);
-});
-
-afterEach(async () => {
-  // Ensure that there is no timer left which triggers a rerendering
-  await act(async () => {
-    jest.runAllTimers();
+    k8sListMock.mockReturnValue(Promise.resolve(podList));
+    k8sGetMock.mockReturnValue(Promise.resolve(podData));
+    const wsMock = {
+      onclose: () => wsMock,
+      ondestroy: () => wsMock,
+      onbulkmessage: () => wsMock,
+      destroy: () => wsMock,
+    };
+    k8sWatchMock.mockReturnValue(wsMock);
   });
 
-  // Ensure that there is no unexpected api calls
-  expect(k8sListMock).toHaveBeenCalledTimes(0);
-  expect(k8sGetMock).toHaveBeenCalledTimes(0);
-  expect(k8sWatchMock).toHaveBeenCalledTimes(0);
-  expect(resourceUpdate).toHaveBeenCalledTimes(0);
+  afterEach(async () => {
+    // Ensure that there is no timer left which triggers a rerendering
+    await act(async () => {
+      jest.runAllTimers();
+    });
 
-  jest.clearAllTimers();
-  jest.useRealTimers();
-});
+    // Guard: verify no unexpected API calls remain after each test
+    const unexpectedCalls: string[] = [];
+    if (k8sListMock.mock.calls.length > 0) {
+      unexpectedCalls.push(`k8sListMock called ${k8sListMock.mock.calls.length} time(s)`);
+    }
+    if (k8sGetMock.mock.calls.length > 0) {
+      unexpectedCalls.push(`k8sGetMock called ${k8sGetMock.mock.calls.length} time(s)`);
+    }
+    if (k8sWatchMock.mock.calls.length > 0) {
+      unexpectedCalls.push(`k8sWatchMock called ${k8sWatchMock.mock.calls.length} time(s)`);
+    }
+    if (resourceUpdate.mock.calls.length > 0) {
+      unexpectedCalls.push(`resourceUpdate called ${resourceUpdate.mock.calls.length} time(s)`);
+    }
+    if (unexpectedCalls.length > 0) {
+      throw new Error(`Unexpected API calls after test: ${unexpectedCalls.join(', ')}`);
+    }
 
-describe('useK8sWatchResource', () => {
+    jest.clearAllTimers();
+    jest.useRealTimers();
+  });
+
   it('should not fetch any data if watch parameter is empty', async () => {
     const initResources: WatchK8sResources<{}> = {};
     render(

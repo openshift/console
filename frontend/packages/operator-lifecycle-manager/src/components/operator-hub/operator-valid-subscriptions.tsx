@@ -13,7 +13,6 @@ export const OperatorValidSubscriptions: FC<OperatorValidSubscriptionsProps> = (
 
   const [validSubscription] = getValidSubscription(currentCSVAnnotations, {
     onError: (error) =>
-      // eslint-disable-next-line no-console
       console.warn(
         `Error parsing valid subscription from PackageManifest "${packageManifest.metadata.name}":`,
         error,

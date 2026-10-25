@@ -14,15 +14,11 @@ import type { DeploymentStrategy } from '../types/resource';
 
 export const podStatus = Object.keys(podColor);
 
-const isContainerFailedFilter = (containerStatus) => {
-  return containerStatus.state.terminated && containerStatus.state.terminated.exitCode !== 0;
-};
+const isContainerFailedFilter = (containerStatus) =>
+  containerStatus.state.terminated && containerStatus.state.terminated.exitCode !== 0;
 
-export const isContainerLoopingFilter = (containerStatus) => {
-  return (
-    containerStatus.state.waiting && containerStatus.state.waiting.reason === 'CrashLoopBackOff'
-  );
-};
+export const isContainerLoopingFilter = (containerStatus) =>
+  containerStatus.state.waiting && containerStatus.state.waiting.reason === 'CrashLoopBackOff';
 
 const numContainersReadyFilter = (pod) => {
   const {
@@ -146,22 +142,15 @@ export const isKnativeServing = (configRes: K8sResourceKind, properties: string)
  * check if the deployment/deploymentconfig is idled.
  * @param deploymentConfig
  */
-export const isIdled = (deploymentConfig: K8sResourceKind): boolean => {
-  return !!_.get(
-    deploymentConfig,
-    'metadata.annotations["idling.alpha.openshift.io/idled-at"]',
-    false,
-  );
-};
+export const isIdled = (deploymentConfig: K8sResourceKind): boolean =>
+  !!_.get(deploymentConfig, 'metadata.annotations["idling.alpha.openshift.io/idled-at"]', false);
 
-const getScalingUp = (dc: K8sResourceKind): ExtPodKind => {
-  return {
-    ..._.pick(dc, 'metadata'),
-    status: {
-      phase: AllPodStatus.ScalingUp,
-    },
-  };
-};
+const getScalingUp = (dc: K8sResourceKind): ExtPodKind => ({
+  ..._.pick(dc, 'metadata'),
+  status: {
+    phase: AllPodStatus.ScalingUp,
+  },
+});
 
 export const podDataInProgress = (
   dc: K8sResourceKind,

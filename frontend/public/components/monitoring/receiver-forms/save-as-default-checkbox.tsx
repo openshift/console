@@ -9,30 +9,28 @@ export const SaveAsDefaultCheckbox: FC<SaveAsDefaultCheckboxProps> = ({
   formValues,
   dispatchFormChange,
   tooltip,
-}) => {
-  return (
-    <FormGroup>
-      <Checkbox
-        label={
-          <>
-            {label}
-            <FieldLevelHelp>{tooltip}</FieldLevelHelp>
-          </>
-        }
-        isChecked={formValues[formField]}
-        isDisabled={disabled}
-        onChange={(_e, checked) =>
-          dispatchFormChange({
-            type: 'setFormValues',
-            payload: { [formField]: checked },
-          })
-        }
-        id={formField}
-        data-test="save-as-default"
-      />
-    </FormGroup>
-  );
-};
+}) => (
+  <FormGroup>
+    <Checkbox
+      label={
+        <>
+          {label}
+          <FieldLevelHelp>{tooltip}</FieldLevelHelp>
+        </>
+      }
+      isChecked={formValues[formField]}
+      isDisabled={disabled}
+      onChange={(_e, checked) =>
+        dispatchFormChange({
+          type: 'setFormValues',
+          payload: { [formField]: checked },
+        })
+      }
+      id={formField}
+      data-test="save-as-default"
+    />
+  </FormGroup>
+);
 
 type SaveAsDefaultCheckboxProps = {
   formField: string;

@@ -10,7 +10,10 @@ import {
   KNATIVE_EVENT_SOURCE_APIGROUP,
   EVENT_SOURCE_CAMEL_KIND,
 } from '../../const';
-import { mockServiceData, mockRevisions } from '../../utils/__mocks__/traffic-splitting-utils-mock';
+import {
+  mockServiceData,
+  mockRevisions,
+} from '../../utils/__tests__/data/traffic-splitting-utils-mock';
 import * as knativefetchutils from '../../utils/fetch-dynamic-eventsources-utils';
 import {
   getKnativeServiceData,
@@ -29,7 +32,7 @@ import {
   getDeploymentsForKamelet,
 } from '../knative-topology-utils';
 import { EdgeType, NodeType } from '../topology-types';
-import { modelsKnTopology } from './__mocks__/knativeResourcesData';
+import { modelsKnTopology } from './data/knativeResourcesData';
 import {
   MockKnativeResources,
   getEventSourceResponse,
@@ -52,7 +55,8 @@ jest.mock('../../utils/fetch-dynamic-eventsources-utils', () => ({
 }));
 
 const k8sUpdateMock = k8sResourceModule.k8sUpdate as jest.Mock;
-const getDynamicEventSourcesModelRefsMock = knativefetchutils.getDynamicEventSourcesModelRefs as jest.Mock;
+const getDynamicEventSourcesModelRefsMock =
+  knativefetchutils.getDynamicEventSourcesModelRefs as jest.Mock;
 
 describe('knative topology utils', () => {
   beforeEach(() => {
@@ -240,14 +244,13 @@ describe('Knative Topology Utils', () => {
     jest.clearAllMocks();
   });
 
-  it('should return rejected promise if source is not provided', () => {
-    return expect(
+  it('should return rejected promise if source is not provided', () =>
+    expect(
       createKnativeEventSourceSink(undefined, MockKnativeResources.ksservices.data[0]),
-    ).rejects.toBeUndefined();
-  });
+    ).rejects.toBeUndefined());
 
-  it('should return rejected promise if target is not provided', () => {
-    return expect(
+  it('should return rejected promise if target is not provided', () =>
+    expect(
       createKnativeEventSourceSink(
         getEventSourceResponse(
           KNATIVE_EVENT_SOURCE_APIGROUP_DEP,
@@ -256,53 +259,39 @@ describe('Knative Topology Utils', () => {
         ).data[0],
         undefined,
       ),
-    ).rejects.toBeUndefined();
-  });
+    ).rejects.toBeUndefined());
 
-  it('should return rejected promise if source equals target', () => {
-    return expect(
+  it('should return rejected promise if source equals target', () =>
+    expect(
       createKnativeEventSourceSink(
         MockKnativeResources.ksservices.data[0],
         MockKnativeResources.ksservices.data[0],
       ),
-    ).rejects.toBeUndefined();
-  });
+    ).rejects.toBeUndefined());
 
-  it('should move sink to the target knServcice', (done) => {
-    createKnativeEventSourceSink(
+  it('should move sink to the target knServcice', async () => {
+    const { data } = await createKnativeEventSourceSink(
       getEventSourceResponse(
         KNATIVE_EVENT_SOURCE_APIGROUP_DEP,
         'v1alpha1',
         EVENT_SOURCE_CRONJOB_KIND,
       ).data[0],
       MockKnativeResources.ksservices.data[0],
-    )
-      .then(({ data }) => {
-        expect(data.spec.sink.ref.name).toEqual('overlayimage');
-        expect(data.spec.sink.ref.kind).toEqual('service');
-        done();
-      })
-      .catch(() => {
-        done();
-      });
+    );
+    expect(data.spec.sink.ref.name).toEqual('overlayimage');
+    expect(data.spec.sink.ref.kind).toEqual('Service');
   });
 
-  it('should sink to the target sinkUri if the target is of type SinkUri', (done) => {
-    createKnativeEventSourceSink(
+  it('should sink to the target sinkUri if the target is of type SinkUri', async () => {
+    const { data } = await createKnativeEventSourceSink(
       getEventSourceResponse(
         KNATIVE_EVENT_SOURCE_APIGROUP_DEP,
         'v1alpha1',
         EVENT_SOURCE_CRONJOB_KIND,
       ).data[0],
       sinkUriObj,
-    )
-      .then(({ data }) => {
-        expect(data.spec.sink.uri).toEqual(sinkUriObj.spec?.sinkUri);
-        done();
-      })
-      .catch(() => {
-        done();
-      });
+    );
+    expect(data.spec.sink.uri).toEqual(sinkUriObj.spec?.sinkUri);
   });
 });
 

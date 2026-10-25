@@ -31,13 +31,13 @@ const normalizeKamelets = (
       description: spec?.definition?.description || '',
       provider,
       creationTimestamp: creationTimestamp || undefined,
-      cta: { label: t('Create Event Source'), href },
+      cta: { label: t('knative-plugin~Create Event Source'), href },
       type: 'EventSource',
       icon: { url: typeof iconUrl === 'string' ? iconUrl : '' },
       details: {
         properties: [
           {
-            label: t('Support'),
+            label: t('knative-plugin~Support'),
             value: getEventSourceSupport(k),
           },
         ],

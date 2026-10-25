@@ -2,6 +2,7 @@ import {
   renderWithProviders,
   verifyInputField,
 } from '@console/shared/src/test-utils/unit-test-utils';
+import { AddKeystonePage } from '../keystone-idp-form';
 import {
   verifyIDPAddAndCancelButtons,
   verifyPageTitleAndSubtitle,
@@ -9,7 +10,6 @@ import {
   mockData,
   setupFileReaderMock,
 } from './test-utils';
-import { AddKeystonePage } from '../../cluster-settings/keystone-idp-form';
 
 describe('Add Identity Provider: Keystone Authentication', () => {
   const renderPage = () => {

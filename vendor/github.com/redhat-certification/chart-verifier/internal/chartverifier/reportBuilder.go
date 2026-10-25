@@ -34,7 +34,8 @@ import (
 	"github.com/redhat-certification/chart-verifier/internal/chartverifier/utils"
 	apiReport "github.com/redhat-certification/chart-verifier/pkg/chartverifier/report"
 
-	helmchart "helm.sh/helm/v3/pkg/chart"
+	chartcommon "helm.sh/helm/v4/pkg/chart/common"
+	helmchart "helm.sh/helm/v4/pkg/chart/v2"
 )
 
 type ReportBuilder interface {
@@ -162,17 +163,17 @@ func (r *reportBuilder) Build() (*apiReport.Report, error) {
 	return apiReport, nil
 }
 
-type By func(p1, p2 *helmchart.File) bool
+type By func(p1, p2 *chartcommon.File) bool
 
 type fileSorter struct {
-	files []*helmchart.File
-	by    func(p1, p2 *helmchart.File) bool // Closure used in the Less method.
+	files []*chartcommon.File
+	by    func(p1, p2 *chartcommon.File) bool // Closure used in the Less method.
 }
 
 // If chart-verifier is run from within the helm chart directory
 // the output will be sent to the OutputDirectory and affect the digest.
 // This removes any verifier output files from the calculated digest
-func filterOutputDirectory(files []*helmchart.File) []*helmchart.File {
+func filterOutputDirectory(files []*chartcommon.File) []*chartcommon.File {
 	n := 0
 	for _, file := range files {
 		if !strings.Contains(file.Name, utils.OutputDirectory) {
@@ -183,7 +184,7 @@ func filterOutputDirectory(files []*helmchart.File) []*helmchart.File {
 	return files[:n]
 }
 
-func (by By) sort(files []*helmchart.File) {
+func (by By) sort(files []*chartcommon.File) {
 	fs := &fileSorter{
 		files: files,
 		by:    by, // The Sort method's receiver is the function (closure) that defines the sort order.
@@ -206,8 +207,8 @@ func (fs *fileSorter) Less(i, j int) bool {
 	return fs.by(fs.files[i], fs.files[j])
 }
 
-func GenerateSha(rawFiles []*helmchart.File) string {
-	name := func(f1, f2 *helmchart.File) bool {
+func GenerateSha(rawFiles []*chartcommon.File) string {
+	name := func(f1, f2 *chartcommon.File) bool {
 		return f1.Name < f2.Name
 	}
 
@@ -223,30 +224,40 @@ func GenerateSha(rawFiles []*helmchart.File) string {
 	return fmt.Sprintf("sha256:%x", chartSha.Sum(nil))
 }
 
+// openChartPackage opens the chart package byte stream at u as an [io.ReadCloser].
+func openChartPackage(u *url.URL) (io.ReadCloser, error) {
+	switch u.Scheme {
+	case "http", "https":
+		resp, err := http.Get(u.String())
+		if err != nil {
+			return nil, err
+		}
+		return resp.Body, nil
+	case "file", "":
+		if !strings.HasSuffix(u.Path, ".tgz") {
+			return nil, nil
+		}
+		return os.Open(u.Path)
+	default:
+		return nil, fmt.Errorf("scheme %q not supported", u.Scheme)
+	}
+}
+
+// GetPackageDigest returns a hex-encoded SHA256 hash of the chart package bytes at uri.
 func GetPackageDigest(uri string) string {
-	url, err := url.Parse(uri)
+	u, err := url.Parse(uri)
 	if err != nil {
 		return ""
 	}
-	var chartReader io.Reader
-	switch url.Scheme {
-	case "http", "https":
-		var chartGetResponse *http.Response
-		chartGetResponse, err = http.Get(url.String())
-		if err == nil {
-			chartReader = chartGetResponse.Body
-		}
-	case "file", "":
-		if strings.HasSuffix(url.Path, ".tgz") {
-			chartReader, _ = os.Open(url.Path)
-		}
-	default:
-		err = fmt.Errorf("scheme %q not supported", url.Scheme)
-	}
-	if err != nil || chartReader == nil {
+	rc, err := openChartPackage(u)
+	if err != nil {
 		return ""
 	}
-	return getDigest(chartReader)
+	if rc == nil {
+		return ""
+	}
+	defer rc.Close()
+	return getDigest(rc)
 }
 
 // Digest hashes a reader and returns a SHA256 digest.

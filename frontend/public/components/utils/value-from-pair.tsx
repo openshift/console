@@ -1,8 +1,7 @@
 import type { FC, ReactElement, ReactNode } from 'react';
-import * as _ from 'lodash';
 import * as fuzzy from 'fuzzysearch';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
 import { ResourceName } from './resource-icon';
 
@@ -28,10 +27,10 @@ import { ResourceName } from './resource-icon';
 //       divisor: 1 // 1 is default
 
 type K8sItemList = {
-  items?: Array<{
+  items?: {
     metadata: { name: string };
     data?: Record<string, string>;
-  }>;
+  }[];
 };
 
 type RefValue = {
@@ -154,7 +153,8 @@ const NameKeyDropdownPair: FC<NameKeyDropdownPairProps> = ({
   const cmItems: Record<string, ReactNode> = {};
   const secretItems: Record<string, ReactNode> = {};
   const saItems: Record<string, ReactNode> = {};
-  const nameAutocompleteFilter = (text: string, item: ReactElement) => fuzzy(text, item.props.name);
+  const nameAutocompleteFilter = (text: string, item: ReactElement<{ name: string }>) =>
+    fuzzy(text, item.props.name);
   const keyAutocompleteFilter = (text: string, item: string) => fuzzy(text, item);
   const keyTitle = _.isEmpty(pairKey) ? t('Select a key') : pairKey;
   const cmRefProperty = isKeyRef ? 'configMapKeyRef' : 'configMapRef';

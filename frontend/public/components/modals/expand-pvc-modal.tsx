@@ -1,6 +1,5 @@
-import { useState, useCallback, FC } from 'react';
-import { Trans, useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router';
+import type { FC } from 'react';
+import { useState, useCallback } from 'react';
 import {
   Button,
   Content,
@@ -12,21 +11,24 @@ import {
   ModalHeader,
   ModalVariant,
 } from '@patternfly/react-core';
-import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
-import { ModalComponentProps } from '@console/shared/src/types/modal';
+import { Trans, useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router';
+import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
+import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
+import { getRequestedPVCSize } from '@console/shared/src/selectors/storage';
+import type { ModalComponentProps } from '@console/shared/src/types/modal';
+import { k8sPatch, referenceFor } from '../../module/k8s';
+import type { K8sKind, K8sResourceKind } from '../../module/k8s';
 import { RequestSizeInput } from '../utils/request-size-input';
 import { resourceObjPath } from '../utils/resource-link';
 import { validate, convertToBaseValue, humanizeBinaryBytesWithoutB } from '../utils/units';
-import { k8sPatch, referenceFor, K8sKind, K8sResourceKind } from '../../module/k8s/';
-import { getRequestedPVCSize } from '@console/shared/src/selectors/storage';
-import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
-import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 
 // Modal for expanding persistent volume claims
 const ExpandPVCModal: FC<ExpandPVCModalProps> = ({ resource, kind, close, cancel }) => {
   const baseValue = convertToBaseValue(getRequestedPVCSize(resource));
   const defaultSize = validate.split(humanizeBinaryBytesWithoutB(baseValue).string);
-  const [requestSizeValue, setRequestSizeValue] = useState(defaultSize[0] || '');
+  const [requestSizeValue, setRequestSizeValue] = useState(String(defaultSize[0] || ''));
   const [requestSizeUnit, setRequestSizeUnit] = useState(defaultSize[1] || 'Gi');
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
 
@@ -49,10 +51,12 @@ const ExpandPVCModal: FC<ExpandPVCModalProps> = ({ resource, kind, close, cancel
         },
       ];
 
-      handlePromise(k8sPatch(kind, resource, patch)).then((res) => {
-        close();
-        navigate(resourceObjPath(res, referenceFor(res)));
-      });
+      handlePromise(k8sPatch(kind, resource, patch))
+        .then((res) => {
+          close();
+          navigate(resourceObjPath(res, referenceFor(res)));
+        })
+        .catch(() => {});
     },
     [requestSizeValue, requestSizeUnit, kind, resource, close, handlePromise, navigate],
   );

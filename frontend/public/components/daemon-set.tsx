@@ -1,5 +1,10 @@
 import type { FC } from 'react';
 import { Suspense } from 'react';
+import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
+import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
+import type { GetDataViewRows } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { ActionServiceProvider } from '@console/shared/src/components/actions/ActionServiceProvider';
 import { ActionMenu } from '@console/shared/src/components/actions/menu/ActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
@@ -7,32 +12,26 @@ import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { PodRing } from '@console/shared/src/components/pod/PodRing';
 import { usePodsWatcher } from '@console/shared/src/hooks/usePodsWatcher';
 import { usePrometheusGate } from '@console/shared/src/hooks/usePrometheusGate';
-import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
-import { useWorkloadColumns, getWorkloadDataViewRows } from './workload-table';
-import { GetDataViewRows } from '@console/app/src/components/data-view/types';
-import { useTranslation } from 'react-i18next';
-import { DaemonSetKind, K8sResourceKind, referenceForModel } from '../module/k8s';
+import { DaemonSetModel } from '../models';
+import type { DaemonSetKind, K8sResourceKind } from '../module/k8s';
+import { referenceForModel } from '../module/k8s';
+import { ResourceEventStream } from './events';
 import { DetailsPage } from './factory/details';
 import { ListPage } from './factory/list-page';
 import { AsyncComponent } from './utils/async';
 import { ContainerTable } from './utils/container-table';
 import { DetailsItem } from './utils/details-item';
 import { detailsPage, ResourceSummary } from './utils/details-page';
-import { navFactory, PodsComponent } from './utils/horizontal-nav';
-
-import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
-import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
-import { DaemonSetModel } from '../models';
-import { ResourceEventStream } from './events';
 import { SectionHeading } from './utils/headings';
+import { navFactory, PodsComponent } from './utils/horizontal-nav';
 import { LoadingBox, LoadingInline } from './utils/status-box';
 import { VolumesTable } from './volumes-table';
+import { useWorkloadColumns, getWorkloadDataViewRows } from './workload-table';
 
 const kind = referenceForModel(DaemonSetModel);
 
-const getDataViewRows: GetDataViewRows<DaemonSetKind> = (data, columns) => {
-  return getWorkloadDataViewRows(data, columns, DaemonSetModel);
-};
+const getDataViewRows: GetDataViewRows<DaemonSetKind> = (data, columns) =>
+  getWorkloadDataViewRows(data, columns, DaemonSetModel);
 
 export const DaemonSetDetailsList: FC<DaemonSetDetailsListProps> = ({ ds }) => {
   const { t } = useTranslation('public');
@@ -106,33 +105,25 @@ const EnvironmentTab: FC<EnvironmentTabProps> = (props) => (
 );
 
 const DaemonSetsList: FC<DaemonSetsListProps> = ({ data, loaded, ...props }) => {
-  const { columns, resetAllColumnWidths } = useWorkloadColumns<DaemonSetKind>(DaemonSetModel);
+  const { columns } = useWorkloadColumns<DaemonSetKind>();
 
   return (
     <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<DaemonSetKind>
         {...props}
+        id={DaemonSetModel}
         label={DaemonSetModel.labelPlural}
         data={data}
         loaded={loaded}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement={true}
-        isResizable
-        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );
 };
 
 export const DaemonSetsPage: FC<DaemonSetsPageProps> = (props) => (
-  <ListPage
-    canCreate={true}
-    ListComponent={DaemonSetsList}
-    kind={kind}
-    omitFilterToolbar={true}
-    {...props}
-  />
+  <ListPage canCreate ListComponent={DaemonSetsList} kind={kind} omitFilterToolbar {...props} />
 );
 
 const DaemonSetPods: FC<DaemonSetPodsProps> = (props) => <PodsComponent {...props} showNodes />;

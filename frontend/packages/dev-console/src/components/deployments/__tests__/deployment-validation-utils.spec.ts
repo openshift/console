@@ -1,7 +1,7 @@
 import { cloneDeep } from 'lodash';
-import { mockEditDeploymentData } from '../__mocks__/deployment-data';
 import { LifecycleAction } from '../deployment-strategy/utils/types';
 import { validationSchema } from '../utils/deployment-validation-utils';
+import { mockEditDeploymentData } from './deployment-data';
 
 describe('Validation Schema', () => {
   it('should validate the form data', async () => {
@@ -19,21 +19,17 @@ describe('Validation Schema', () => {
     await validationSchema()
       .isValid(mockData)
       .then((valid) => expect(valid).toEqual(false));
-    await validationSchema()
-      .validate(mockData)
-      .catch((err) => {
-        expect(err.errors).toEqual(['Required', 'Required']);
-      });
+    await expect(validationSchema().validate(mockData)).rejects.toMatchObject({
+      errors: ['Required', 'Required'],
+    });
     mockFormData.deploymentStrategy.rollingParams.pre.action = LifecycleAction.tagImages;
     mockData.formData = mockFormData;
     await validationSchema()
       .isValid(mockData)
       .then((valid) => expect(valid).toEqual(false));
-    await validationSchema()
-      .validate(mockData)
-      .catch((err) => {
-        expect(err.errors).toEqual(['Required', 'Required', 'Required']);
-      });
+    await expect(validationSchema().validate(mockData)).rejects.toMatchObject({
+      errors: ['Required', 'Required', 'Required'],
+    });
   });
 
   it('should throw error for required images section fields if empty', async () => {
@@ -45,21 +41,17 @@ describe('Validation Schema', () => {
     await validationSchema()
       .isValid(mockData)
       .then((valid) => expect(valid).toEqual(false));
-    await validationSchema()
-      .validate(mockData)
-      .catch((err) => {
-        expect(err.errors).toEqual(['Required', 'Required', 'Required', 'Required']);
-      });
+    await expect(validationSchema().validate(mockData)).rejects.toMatchObject({
+      errors: ['Required', 'Required', 'Required', 'Required'],
+    });
     mockFormData.fromImageStreamTag = false;
     mockFormData.imageName = '';
     mockData.formData = mockFormData;
     await validationSchema()
       .isValid(mockData)
       .then((valid) => expect(valid).toEqual(false));
-    await validationSchema()
-      .validate(mockData)
-      .catch((err) => {
-        expect(err.errors).toEqual(['Required']);
-      });
+    await expect(validationSchema().validate(mockData)).rejects.toMatchObject({
+      errors: ['Required'],
+    });
   });
 });

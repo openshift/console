@@ -1,7 +1,6 @@
-import * as _ from 'lodash';
 import i18next from 'i18next';
-
-import { ContainerSpec, ContainerStatus, PodKind } from './';
+import * as _ from 'lodash';
+import type { ContainerSpec, ContainerStatus, PodKind } from '.';
 
 // Parses the state from k8s container info field of a pod.
 // Returned object will always have a 'label' property,
@@ -63,6 +62,5 @@ const getPullPolicy = (container: ContainerSpec) => {
   return pullPolicy[container?.imagePullPolicy];
 };
 
-export const getPullPolicyLabel = (container: ContainerSpec): string => {
-  return getPullPolicy(container)?.label || '';
-};
+export const getPullPolicyLabel = (container: ContainerSpec): string =>
+  getPullPolicy(container)?.label || '';

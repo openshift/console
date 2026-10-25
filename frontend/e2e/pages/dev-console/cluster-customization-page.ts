@@ -1,0 +1,117 @@
+import type { Locator } from '@playwright/test';
+
+import { expect } from '../../fixtures';
+import BasePage from '../base-page';
+
+export class ClusterCustomizationPage extends BasePage {
+  async navigateToCustomize(): Promise<void> {
+    await this.goTo('/k8s/cluster/operator.openshift.io~v1~Console/cluster');
+    await this.robustClick(this.page.getByTestId('Customize'));
+  }
+
+  getHeading(): Locator {
+    return this.page.getByRole('heading', { name: 'Cluster configuration' });
+  }
+
+  getPerspectivesSection(): Locator {
+    return this.page.getByTestId('perspectives form-section');
+  }
+
+  getPerspectiveSectionItem(name: string): Locator {
+    return this.getPerspectivesSection().getByText(name);
+  }
+
+  getTab(name: string): Locator {
+    return this.page.getByRole('tab', { name });
+  }
+
+  getPrePinnedSection(): Locator {
+    return this.page.getByText('Pre-pinned navigation items');
+  }
+
+  getAvailableResources(): Locator {
+    return this.page.getByText('Available Resources');
+  }
+
+  getPinnedResources(): Locator {
+    return this.page.getByText('Pinned Resources', { exact: true });
+  }
+
+  getFormSection(name: 'catalog-types' | 'add-page'): Locator {
+    return this.page.getByTestId(`${name} form-section`);
+  }
+
+  private getSelector(name: 'catalog-types' | 'add-page'): Locator {
+    return this.page.getByTestId(`${name}-selector`);
+  }
+
+  private getSelectorPane(
+    name: 'catalog-types' | 'add-page',
+    list: 'available' | 'chosen',
+  ): Locator {
+    return this.getSelector(name).locator(
+      `#${name}-selector-list-${list === 'available' ? 'available' : 'chosen'}-pane`,
+    );
+  }
+
+  private async getPaneOrSelector(
+    name: 'catalog-types' | 'add-page',
+    list: 'available' | 'chosen',
+  ): Promise<Locator> {
+    const pane = this.getSelectorPane(name, list);
+    const searchName = list === 'available' ? 'Available search input' : 'Chosen search input';
+    if ((await pane.getByRole('textbox', { name: searchName }).count()) > 0) return pane;
+    const selector = this.getSelector(name);
+    return (await selector.getByRole('textbox', { name: searchName }).count()) > 0
+      ? selector
+      : this.getFormSection(name);
+  }
+
+  private async ensureFormSection(name: 'catalog-types' | 'add-page'): Promise<Locator> {
+    const section = this.getFormSection(name);
+    if (!(await section.isVisible().catch(() => false))) {
+      await this.robustClick(this.page.getByRole('tab', { name: 'Developer' }));
+    }
+    await expect(section).toBeVisible({ timeout: 30_000 });
+    return section;
+  }
+
+  async waitForItemInList(
+    name: 'catalog-types' | 'add-page',
+    item: string,
+    list: 'available' | 'chosen',
+  ): Promise<void> {
+    await this.ensureFormSection(name);
+    const searchName = list === 'available' ? 'Available search input' : 'Chosen search input';
+    const pane = await this.getPaneOrSelector(name, list);
+    const search = pane.getByRole('textbox', { name: searchName });
+    await search.fill(item);
+    await expect(pane.getByRole('option').filter({ hasText: item }).first()).toBeVisible({
+      timeout: 30_000,
+    });
+  }
+
+  async moveAvailableToChosen(name: 'catalog-types' | 'add-page', item: string): Promise<void> {
+    await this.ensureFormSection(name);
+    const pane = await this.getPaneOrSelector(name, 'available');
+    const search = pane.getByRole('textbox', { name: 'Available search input' });
+    await search.fill(item);
+    const option = pane.getByRole('option').filter({ hasText: item }).first();
+    const addButton = this.getFormSection(name).getByRole('button', { name: 'Add selected' });
+    await this.robustClick(option);
+    await expect(addButton).toBeEnabled({ timeout: 10_000 });
+    await this.robustClick(addButton);
+  }
+
+  async moveChosenToAvailable(name: 'catalog-types' | 'add-page', item: string): Promise<void> {
+    await this.ensureFormSection(name);
+    const pane = await this.getPaneOrSelector(name, 'chosen');
+    const search = pane.getByRole('textbox', { name: 'Chosen search input' });
+    await search.fill(item);
+    const option = pane.getByRole('option').filter({ hasText: item }).first();
+    const removeButton = this.getFormSection(name).getByRole('button', { name: 'Remove selected' });
+    await this.robustClick(option);
+    await expect(removeButton).toBeEnabled({ timeout: 10_000 });
+    await this.robustClick(removeButton);
+  }
+}

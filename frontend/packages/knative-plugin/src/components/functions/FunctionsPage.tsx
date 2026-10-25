@@ -16,7 +16,7 @@ import { PageHeading } from '@console/shared/src/components/heading/PageHeading'
 import { ServiceModel } from '../../models';
 import { ServiceTypeValue } from '../../types';
 import { CreateActionDropdown } from './CreateActionDropdown';
-import FunctionsList from './FunctionsList';
+import { FunctionsList } from './FunctionsList';
 import { GettingStartedSection } from './GettingStartedSection';
 import { KnativeServiceTypeContext } from './ServiceTypeContext';
 
@@ -37,6 +37,7 @@ const FunctionList: FC<{ namespace: string }> = (props) => {
         {...props}
         kind={referenceForModel(ServiceModel)}
         ListComponent={FunctionsList}
+        omitFilterToolbar
         selector={{ matchLabels: { 'function.knative.dev': 'true' } }}
       />
     </KnativeServiceTypeContext.Provider>
@@ -67,12 +68,10 @@ const FunctionsListPage: FC<ComponentProps<typeof ListPage>> = (props) => {
 
 const PageContentsWithStartGuide = withStartGuide(FunctionsListPage);
 
-const FunctionsPage: FC<ComponentProps<typeof ListPage>> = (props) => {
-  return (
-    <NamespacedPage variant={NamespacedPageVariants.light} hideApplications>
-      <PageContentsWithStartGuide {...props} />
-    </NamespacedPage>
-  );
-};
+const FunctionsPage: FC<ComponentProps<typeof ListPage>> = (props) => (
+  <NamespacedPage variant={NamespacedPageVariants.light} hideApplications>
+    <PageContentsWithStartGuide {...props} />
+  </NamespacedPage>
+);
 
 export default FunctionsPage;

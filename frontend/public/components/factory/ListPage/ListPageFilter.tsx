@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import * as _ from 'lodash';
-import { ListPageFilterProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import type { ListPageFilterProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { FilterToolbar } from '../../filter-toolbar';
 
 const ListPageFilter: FC<ListPageFilterProps> = ({

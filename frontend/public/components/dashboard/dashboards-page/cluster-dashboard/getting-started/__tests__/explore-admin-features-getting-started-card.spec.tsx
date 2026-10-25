@@ -1,7 +1,6 @@
 import { screen, waitFor } from '@testing-library/react';
-
-import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { expectExternalLinkAttributes } from '../../../../getting-started-test-utils';
 import { ExploreAdminFeaturesGettingStartedCard } from '../explore-admin-features-getting-started-card';
 

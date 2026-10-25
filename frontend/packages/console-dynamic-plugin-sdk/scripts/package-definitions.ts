@@ -130,13 +130,7 @@ export const getCorePackage: GetPackageDefinition = (
     dependencies: {
       ...parseDeps(
         rootPackage,
-        [
-          '@openshift/api-types',
-          '@openshift/dynamic-plugin-sdk',
-          'immutable',
-          'reselect',
-          'typesafe-actions',
-        ],
+        ['@openshift/api-types', '@openshift/dynamic-plugin-sdk', 'reselect', 'typesafe-actions'],
         missingDepCallback,
       ),
       ...parseDepsAs(rootPackage, { 'lodash-es': 'lodash' }, missingDepCallback),
@@ -170,7 +164,7 @@ export const getInternalPackage: GetPackageDefinition = (
     main: 'lib/lib-internal.js',
     ...commonManifestFields,
     dependencies: {
-      ...parseDeps(rootPackage, ['@openshift/dynamic-plugin-sdk', 'immutable'], missingDepCallback),
+      ...parseDeps(rootPackage, ['@openshift/dynamic-plugin-sdk'], missingDepCallback),
     },
   },
   filesToCopy: {
@@ -209,8 +203,13 @@ export const getWebpackPackage: GetPackageDefinition = (
       ...parseDepsAs(rootPackage, { 'lodash-es': 'lodash' }, missingDepCallback),
     },
     peerDependencies: {
+      '@rspack/core': `>=${getMinDepVersion(rootPackage, '@rspack/core', missingDepCallback)}`,
       typescript: `>=${getMinDepVersion(rootPackage, 'typescript', missingDepCallback)}`,
       webpack: `>=${getMinDepVersion(rootPackage, 'webpack', missingDepCallback)}`,
+    },
+    peerDependenciesMeta: {
+      '@rspack/core': { optional: true },
+      webpack: { optional: true },
     },
   },
   filesToCopy: {

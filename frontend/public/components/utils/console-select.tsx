@@ -1,7 +1,6 @@
 import type { FC, ReactNode, MouseEvent, CSSProperties, RefObject } from 'react';
-import * as _ from 'lodash';
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
-import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
+import type { MenuToggleElement } from '@patternfly/react-core';
 import {
   Divider,
   SelectGroup,
@@ -10,12 +9,13 @@ import {
   MenuSearch,
   MenuSearchInput,
   MenuToggle,
-  MenuToggleElement,
   SearchInput,
   Select,
 } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 
 export type ActionItem = {
   actionKey: string;
@@ -261,7 +261,7 @@ export const ConsoleSelect: FC<ConsoleSelectProps> = ({
           itemKey={key}
           content={content}
           selected={selected}
-          isBookmarked={enableBookmarks && bookmarks ? bookmarks[key] ?? false : undefined}
+          isBookmarked={enableBookmarks && bookmarks ? (bookmarks[key] ?? false) : undefined}
         />,
       );
     });
@@ -278,7 +278,7 @@ export const ConsoleSelect: FC<ConsoleSelectProps> = ({
         onSelect={onClick}
         selected={selectedKey}
         shouldFocusToggleOnSelect
-        toggle={(toggleRef: RefObject<MenuToggleElement>) => (
+        toggle={(toggleRef: RefObject<MenuToggleElement | null>) => (
           <MenuToggle
             aria-describedby={describedBy}
             aria-label={ariaLabel}
@@ -294,7 +294,7 @@ export const ConsoleSelect: FC<ConsoleSelectProps> = ({
             ref={toggleRef}
           >
             {titlePrefix && `${titlePrefix}: `}
-            {alwaysShowTitle ? title : selectedKey ? items[selectedKey] ?? title : title}
+            {alwaysShowTitle ? title : selectedKey ? (items[selectedKey] ?? title) : title}
           </MenuToggle>
         )}
         zIndex={9999}

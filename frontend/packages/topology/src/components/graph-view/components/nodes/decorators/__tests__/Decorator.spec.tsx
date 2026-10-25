@@ -4,13 +4,12 @@ import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-ut
 import { Decorator } from '../Decorator';
 
 describe('Decorator', () => {
-  const renderInSvg = (ui: React.ReactElement) => {
-    return renderWithProviders(
+  const renderInSvg = (ui: React.ReactElement) =>
+    renderWithProviders(
       <svg>
         <SVGDefsProvider>{ui}</SVGDefsProvider>
       </svg>,
     );
-  };
 
   it('should show anchors for external links', () => {
     renderInSvg(<Decorator x={0} y={0} radius={10} external href="http://test" />);

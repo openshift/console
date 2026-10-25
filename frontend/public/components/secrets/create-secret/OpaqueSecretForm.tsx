@@ -1,10 +1,10 @@
 import type { FC } from 'react';
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { Button, ActionGroup } from '@patternfly/react-core';
 import { RhUiAddCircleFillIcon } from '@patternfly/react-icons';
-import { SecretSubFormProps, OpaqueDataEntry } from './types';
+import { useTranslation } from 'react-i18next';
 import { OpaqueSecretFormEntry } from './OpaqueSecretFormEntry';
+import type { SecretSubFormProps, OpaqueDataEntry } from './types';
 import { opaqueSecretObjectToArray, newOpaqueSecretEntry, opaqueEntriesToObject } from './utils';
 
 export const OpaqueSecretForm: FC<SecretSubFormProps> = ({ onChange, base64StringData }) => {
@@ -36,20 +36,18 @@ export const OpaqueSecretForm: FC<SecretSubFormProps> = ({ onChange, base64Strin
 
   return (
     <>
-      {opaqueDataEntries.map((entry, index) => {
-        return (
-          <>
-            <OpaqueSecretFormEntry
-              key={entry.uid}
-              index={index}
-              entry={entry}
-              onChange={updateEntry}
-              removeEntry={removeEntry}
-              showRemoveButton={opaqueDataEntries.length > 1}
-            />
-          </>
-        );
-      })}
+      {opaqueDataEntries.map((entry, index) => (
+        <>
+          <OpaqueSecretFormEntry
+            key={entry.uid}
+            index={index}
+            entry={entry}
+            onChange={updateEntry}
+            removeEntry={removeEntry}
+            showRemoveButton={opaqueDataEntries.length > 1}
+          />
+        </>
+      ))}
       <ActionGroup className="pf-v6-u-m-0">
         <Button
           onClick={() => addEntry()}

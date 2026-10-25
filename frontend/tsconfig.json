@@ -1,16 +1,12 @@
 {
   "compilerOptions": {
     "skipLibCheck": true,
-    "baseUrl": ".",
     "module": "esnext",
-    "moduleResolution": "node",
-    "outDir": "./public/dist/build/",
+    "moduleResolution": "bundler",
+    "customConditions": ["browser"],
     "target": "es2021",
     "jsx": "react-jsx",
     "strict": false,
-    "allowJs": true,
-    "experimentalDecorators": true,
-    "sourceMap": true,
     "noUnusedLocals": true,
     "typeRoots": ["node_modules/@types", "@types"],
     "types": ["node", "jest", "console"],
@@ -27,7 +23,6 @@
       "@console/git-service/*": ["./packages/git-service/*"],
       "@console/helm-plugin/*": ["./packages/helm-plugin/*"],
       "@console/insights-plugin/*": ["./packages/insights-plugin/*"],
-      "@console/cypress-integration-tests/*": ["./packages/integration-tests/*"],
       "@console/knative-plugin/*": ["./packages/knative-plugin/*"],
       "@console/metal3-plugin/*": ["./packages/metal3-plugin/*"],
       "@console/operator-lifecycle-manager/*": ["./packages/operator-lifecycle-manager/*"],
@@ -46,5 +41,5 @@
     "**/integration-tests",
     "e2e"
   ],
-  "include": ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx", "**/*.json"]
+  "include": ["**/*.ts", "**/*.tsx", "**/*.json"]
 }

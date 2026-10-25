@@ -210,15 +210,14 @@ const getDomainMappingDeleteList = (
   ksvcName: string,
   allDomainMapping: K8sResourceKind[],
   selDomainMappingNames: string[],
-): DomainMappingResponse[] => {
-  return allDomainMapping
+): DomainMappingResponse[] =>
+  allDomainMapping
     .filter((dmRes) => dmRes.spec?.ref?.name === ksvcName)
     .filter((dmSvc) => !selDomainMappingNames?.includes(dmSvc.metadata.name))
     .map((dmDel) => ({
       action: DomainMappingResponseAction.Delete,
       resource: dmDel,
     }));
-};
 
 const formDomainMappingStruct = (
   name: string,
@@ -298,7 +297,6 @@ const getDomainMappingResources = (
       return domainMappingResources;
     })
     .catch((err) => {
-      // eslint-disable-next-line no-console
       console.log('Failed to get domain mapping resources', err);
       return domainMappingResources;
     });

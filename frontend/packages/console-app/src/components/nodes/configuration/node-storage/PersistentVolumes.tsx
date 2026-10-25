@@ -135,18 +135,15 @@ const PersistentVolumes: FC<PersistentVolumesProps> = ({ node }) => {
   const { t } = useTranslation('console-app');
   const [vms, vmsLoaded, anyVmsLoadError] = useWatchVirtualMachineInstances(node.metadata.name);
   const vmsLoadError = !vms?.length && anyVmsLoadError;
-  const [
-    persistentVolumes,
-    persistentVolumesLoaded,
-    persistentVolumesLoadError,
-  ] = useK8sWatchResource<PersistentVolumeKind[]>({
-    groupVersionKind: {
-      group: PersistentVolumeModel.apiGroup,
-      version: PersistentVolumeModel.apiVersion,
-      kind: PersistentVolumeModel.kind,
-    },
-    isList: true,
-  });
+  const [persistentVolumes, persistentVolumesLoaded, persistentVolumesLoadError] =
+    useK8sWatchResource<PersistentVolumeKind[]>({
+      groupVersionKind: {
+        group: PersistentVolumeModel.apiGroup,
+        version: PersistentVolumeModel.apiVersion,
+        kind: PersistentVolumeModel.kind,
+      },
+      isList: true,
+    });
   const [pvcs, pvcsLoaded, pvcsLoadError] = useAccessibleResources<PersistentVolumeClaimKind>({
     groupVersionKind: {
       group: PersistentVolumeClaimModel.apiGroup,
@@ -156,17 +153,16 @@ const PersistentVolumes: FC<PersistentVolumesProps> = ({ node }) => {
     isList: true,
     namespaced: true,
   });
-  const [dataVolumes, dataVolumesLoaded, anyDataVolumesLoadError] = useAccessibleResources<
-    K8sResourceCommon
-  >({
-    groupVersionKind: {
-      group: DataVolumeModel.apiGroup,
-      version: DataVolumeModel.apiVersion,
-      kind: DataVolumeModel.kind,
-    },
-    isList: true,
-    namespaced: true,
-  });
+  const [dataVolumes, dataVolumesLoaded, anyDataVolumesLoadError] =
+    useAccessibleResources<K8sResourceCommon>({
+      groupVersionKind: {
+        group: DataVolumeModel.apiGroup,
+        version: DataVolumeModel.apiVersion,
+        kind: DataVolumeModel.kind,
+      },
+      isList: true,
+      namespaced: true,
+    });
   const dataVolumesLoadError = !dataVolumes?.length && anyDataVolumesLoadError;
   const [pods, podsLoaded, anyPodsLoadError] = useAccessibleResources<PodKind>({
     groupVersionKind: {

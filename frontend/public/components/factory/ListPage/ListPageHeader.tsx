@@ -1,7 +1,7 @@
 import type { FC } from 'react';
-import { ListPageHeaderProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { PageSection } from '@patternfly/react-core';
+import type { ListPageHeaderProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 
 /**
  * `ListPageHeader` is a component that renders a header for a list page.

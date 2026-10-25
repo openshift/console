@@ -1,5 +1,5 @@
-import { useTranslation } from 'react-i18next';
 import { Checkbox, FormGroup } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 
 export const SendResolvedAlertsCheckbox = ({ formField, formValues, dispatchFormChange }) => {
   const { t } = useTranslation('public');

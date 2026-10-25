@@ -42,7 +42,7 @@ const mockErrorResources = {
 
 const errorResourceKeys = ['deployments', 'jobs'];
 
-describe('TopologyDataRetriever ', () => {
+describe('TopologyDataRetriever', () => {
   let mockWatchedResources;
   let mockExtensibleModel;
 

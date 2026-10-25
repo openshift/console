@@ -1,15 +1,14 @@
 import type { FC } from 'react';
 import { useMemo } from 'react';
-import * as semver from 'semver';
-import { useTranslation } from 'react-i18next';
 import { RhUiFlagIcon } from '@patternfly/react-icons';
+import { useTranslation } from 'react-i18next';
+import * as semver from 'semver';
+import { lightspeedOperatorURL } from '@console/app/src/components/lightspeed/Lightspeed';
+import type { GettingStartedLink } from '@console/shared/src/components/getting-started/GettingStartedCard';
+import { GettingStartedCard } from '@console/shared/src/components/getting-started/GettingStartedCard';
 import { FLAGS } from '@console/shared/src/constants/common';
 import { useOpenShiftVersion } from '@console/shared/src/hooks/useClusterVersion';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
-
-import type { GettingStartedLink } from '@console/shared/src/components/getting-started/GettingStartedCard';
-import { GettingStartedCard } from '@console/shared/src/components/getting-started/GettingStartedCard';
-import { lightspeedOperatorURL } from '@console/app/src/components/lightspeed/Lightspeed';
 import { DOC_URL_OPENSHIFT_WHATS_NEW } from '../../../../utils/documentation';
 
 export const ExploreAdminFeaturesGettingStartedCard: FC = () => {
@@ -28,8 +27,7 @@ export const ExploreAdminFeaturesGettingStartedCard: FC = () => {
         id: 'openshift-ai',
         title: t('OpenShift AI'),
         description: t('Build, deploy, and manage AI-enabled applications.'),
-        href:
-          '/catalog?catalogType=operator&keyword=openshift+ai&selectedId=rhods-operator-redhat-operators-openshift-marketplace',
+        href: '/catalog?catalogType=operator&keyword=openshift+ai&selectedId=rhods-operator-redhat-operators-openshift-marketplace',
       },
       {
         id: 'trusted-software-supply-chain',
@@ -70,7 +68,7 @@ export const ExploreAdminFeaturesGettingStartedCard: FC = () => {
       id="admin-features"
       icon={<RhUiFlagIcon color="var(--co-global--palette--orange-400)" aria-hidden="true" />}
       title={t('Explore new features and capabilities')}
-      titleColor={'var(--co-global--palette--orange-400)'}
+      titleColor="var(--co-global--palette--orange-400)"
       links={links}
       moreLink={moreLink}
     />

@@ -16,8 +16,8 @@ export const ClusterServiceVersionHeaderIcon: FC<ClusterServiceVersionHeaderIcon
   const imgSrc: string = _.isString(icon)
     ? icon
     : _.isEmpty(icon)
-    ? operatorLogo
-    : `data:${icon.mediatype};base64,${icon.base64data}`;
+      ? operatorLogo
+      : `data:${icon.mediatype};base64,${icon.base64data}`;
 
   return (
     <div className="co-clusterserviceversion-logo__icon">

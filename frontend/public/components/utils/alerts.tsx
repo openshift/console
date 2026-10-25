@@ -1,15 +1,8 @@
 import type { FC, ReactNode } from 'react';
 import { useState } from 'react';
+import type { AlertVariant } from '@patternfly/react-core';
+import { Alert, Button, Flex, FlexItem, List, ListItem } from '@patternfly/react-core';
 import * as _ from 'lodash';
-import {
-  Alert,
-  AlertVariant,
-  Button,
-  Flex,
-  FlexItem,
-  List,
-  ListItem,
-} from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 
 export const ExpandableAlert: FC<CustomAlertProps> = ({ alerts, variant }) => {

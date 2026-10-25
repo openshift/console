@@ -255,8 +255,8 @@ const PowerOffHostModal: OverlayComponent<PowerOffHostModalProps> = (props) => {
 
 export const usePowerOffHostModalLauncher = (props: PowerOffHostModalProps) => {
   const launcher = useOverlay();
-  return useCallback(() => launcher<PowerOffHostModalProps>(PowerOffHostModal, props), [
-    launcher,
-    props,
-  ]);
+  return useCallback(
+    () => launcher<PowerOffHostModalProps>(PowerOffHostModal, props),
+    [launcher, props],
+  );
 };

@@ -35,9 +35,9 @@ const Recommendations: FC<VerticalPodAutoscalerRecommendationsProps> = ({ obj })
   );
 };
 
-export const VerticalPodAutoscalerRecommendations: FC<VerticalPodAutoscalerRecommendationsProps> = ({
-  obj,
-}) => {
+export const VerticalPodAutoscalerRecommendations: FC<
+  VerticalPodAutoscalerRecommendationsProps
+> = ({ obj }) => {
   const { t } = useTranslation('console-app');
   const [vpas] = useK8sWatchResource<K8sResourceKind[]>({
     groupVersionKind: {

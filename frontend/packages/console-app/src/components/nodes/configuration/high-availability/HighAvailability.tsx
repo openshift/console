@@ -35,16 +35,10 @@ const HighAvailability: ComponentType<PageComponentProps<NodeKind>> = ({ obj: no
         }
       : undefined,
   );
-  const [
-    machineHealthChecks,
-    machineHealthChecksLoaded,
-    machineHealthChecksLoadError,
-  ] = useWatchMachineHealthChecks();
-  const [
-    nodeHealthChecks,
-    nodeHealthChecksLoaded,
-    nodeHealthChecksLoadError,
-  ] = useWatchNodeHealthChecks();
+  const [machineHealthChecks, machineHealthChecksLoaded, machineHealthChecksLoadError] =
+    useWatchMachineHealthChecks();
+  const [nodeHealthChecks, nodeHealthChecksLoaded, nodeHealthChecksLoadError] =
+    useWatchNodeHealthChecks();
 
   const matchingMachineHealthChecks = useMemo(() => {
     if (!machineHealthChecksLoaded || !hasMachineRef || machineLoadError || !machine) {

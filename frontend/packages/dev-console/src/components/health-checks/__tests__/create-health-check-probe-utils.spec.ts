@@ -108,7 +108,7 @@ describe('Create Health Check probe Utils', () => {
     expect(formData).toEqual(data);
   });
 
-  it('should convert resource health checks data to formData', () => {
+  it('should convert partial resource health checks data with HTTPS scheme to formData', () => {
     const readinessProbe = {
       httpGet: {
         scheme: 'HTTPS',

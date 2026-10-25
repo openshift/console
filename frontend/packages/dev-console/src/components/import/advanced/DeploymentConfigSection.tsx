@@ -49,7 +49,7 @@ const DeploymentConfigSection: FC<DeploymentConfigSectionProps> = ({
         />
       )}
       {(
-        selectedStrategy.type === ImportStrategy.SERVERLESS_FUNCTION ? funcLoaded ?? false : true
+        selectedStrategy.type === ImportStrategy.SERVERLESS_FUNCTION ? (funcLoaded ?? false) : true
       ) ? (
         <EnvironmentField
           name="deployment.env"

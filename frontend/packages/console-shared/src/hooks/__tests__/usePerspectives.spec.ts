@@ -1,19 +1,31 @@
 import { renderHook, waitFor } from '@testing-library/react';
 import { checkAccess } from '@console/dynamic-plugin-sdk/src/app/components/utils/rbac';
 import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
-import { usePerspectives, PerspectiveVisibilityState } from '../usePerspectives';
-import type { Perspective } from '../usePerspectives';
+import type { Perspective } from '@console/shared/src/utils/override-perspectives';
+import { PerspectiveVisibilityState } from '@console/shared/src/utils/override-perspectives';
+import { usePerspectives } from '../usePerspectives';
 
 const useExtensionsMock = useExtensions as jest.Mock;
+
+let mockOverridePerspectives: Perspective[];
+
+jest.mock('@console/shared/src/utils/override-perspectives', () => ({
+  ...jest.requireActual('@console/shared/src/utils/override-perspectives'),
+  get overridePerspectives() {
+    return mockOverridePerspectives;
+  },
+}));
 
 jest.mock('@console/plugin-sdk/src/api/useExtensions', () => ({ useExtensions: jest.fn() }));
 
 jest.mock('@console/dynamic-plugin-sdk/src/app/components/utils/rbac', () => ({
   checkAccess: jest.fn(),
 }));
+
 describe('usePerspectives', () => {
   beforeEach(() => {
-    window.SERVER_FLAGS.perspectives = undefined;
+    mockOverridePerspectives = undefined;
+
     useExtensionsMock.mockClear();
     useExtensionsMock.mockReturnValue([
       {
@@ -43,7 +55,7 @@ describe('usePerspectives', () => {
   });
 
   it('should return all the available perspectives if perspectives are not set in the server flags', async () => {
-    window.SERVER_FLAGS.perspectives = undefined;
+    mockOverridePerspectives = undefined;
 
     const { result } = renderHook(() => usePerspectives());
 
@@ -75,7 +87,7 @@ describe('usePerspectives', () => {
   });
 
   it('should return all the available perspectives if perspectives are not configured in the server flags', async () => {
-    window.SERVER_FLAGS.perspectives = '';
+    mockOverridePerspectives = undefined;
 
     const { result } = renderHook(() => usePerspectives());
 
@@ -107,7 +119,7 @@ describe('usePerspectives', () => {
   });
 
   it('should return only the enabled perspectives and the perspectives that satisfy the missing accessreview checks that are set in the server flags', async () => {
-    const perspectives: Perspective[] = [
+    mockOverridePerspectives = [
       {
         id: 'dev',
         visibility: {
@@ -135,7 +147,7 @@ describe('usePerspectives', () => {
         },
       },
     ];
-    window.SERVER_FLAGS.perspectives = JSON.stringify(perspectives);
+
     (checkAccess as jest.Mock).mockReturnValue(Promise.resolve({ status: { allowed: true } }));
     const { result } = renderHook(() => usePerspectives());
 
@@ -154,7 +166,7 @@ describe('usePerspectives', () => {
   });
 
   it('should return the admin perspective as default if all the perspectives are disabled', async () => {
-    const perspectives: Perspective[] = [
+    mockOverridePerspectives = [
       {
         id: 'dev',
         visibility: {
@@ -182,7 +194,7 @@ describe('usePerspectives', () => {
         },
       },
     ];
-    window.SERVER_FLAGS.perspectives = JSON.stringify(perspectives);
+
     (checkAccess as jest.Mock).mockReturnValue(Promise.resolve({ status: { allowed: true } }));
 
     const { result } = renderHook(() => usePerspectives());
@@ -201,7 +213,7 @@ describe('usePerspectives', () => {
   });
 
   it('should return only the enabled perspectives and the perspectives that satisfy the required accessreview checks that are set in the server flags', async () => {
-    const perspectives: Perspective[] = [
+    mockOverridePerspectives = [
       {
         id: 'dev',
         visibility: {
@@ -229,7 +241,7 @@ describe('usePerspectives', () => {
         },
       },
     ];
-    window.SERVER_FLAGS.perspectives = JSON.stringify(perspectives);
+
     (checkAccess as jest.Mock).mockReturnValue(Promise.resolve({ status: { allowed: true } }));
     const { result } = renderHook(() => usePerspectives());
 
@@ -256,7 +268,7 @@ describe('usePerspectives', () => {
   });
 
   it('should handle perspectives with accessReview checks', async () => {
-    const perspectives: Perspective[] = [
+    mockOverridePerspectives = [
       {
         id: 'dev',
         visibility: {
@@ -285,7 +297,7 @@ describe('usePerspectives', () => {
         },
       },
     ];
-    window.SERVER_FLAGS.perspectives = JSON.stringify(perspectives);
+
     (checkAccess as jest.Mock).mockReturnValue(Promise.resolve({ status: { allowed: true } }));
     const { result } = renderHook(() => usePerspectives());
 
@@ -304,7 +316,7 @@ describe('usePerspectives', () => {
   });
 
   it('should return only the enabled perspectives and the perspectives that satisfy the required accessreview checks that are set in the server flags for user with limited access', async () => {
-    const perspectives: Perspective[] = [
+    mockOverridePerspectives = [
       {
         id: 'dev',
         visibility: {
@@ -332,7 +344,7 @@ describe('usePerspectives', () => {
         },
       },
     ];
-    window.SERVER_FLAGS.perspectives = JSON.stringify(perspectives);
+
     (checkAccess as jest.Mock).mockReturnValue(Promise.resolve({ status: { allowed: false } }));
     const { result } = renderHook(() => usePerspectives());
 
@@ -351,7 +363,7 @@ describe('usePerspectives', () => {
   });
 
   it('should not return perspective when required accessreview check throws an error', async () => {
-    const perspectives: Perspective[] = [
+    mockOverridePerspectives = [
       {
         id: 'dev',
         visibility: {
@@ -379,7 +391,7 @@ describe('usePerspectives', () => {
         },
       },
     ];
-    window.SERVER_FLAGS.perspectives = JSON.stringify(perspectives);
+
     (checkAccess as jest.Mock).mockReturnValue(Promise.reject(new Error('Unexpected error')));
     const { result } = renderHook(() => usePerspectives());
 
@@ -398,7 +410,7 @@ describe('usePerspectives', () => {
   });
 
   it('should also return perspectives that are not configured', async () => {
-    const perspectives: Perspective[] = [
+    mockOverridePerspectives = [
       {
         id: 'dev',
         visibility: {
@@ -414,7 +426,7 @@ describe('usePerspectives', () => {
         },
       },
     ];
-    window.SERVER_FLAGS.perspectives = JSON.stringify(perspectives);
+
     (checkAccess as jest.Mock).mockReturnValue(Promise.resolve({ status: { allowed: true } }));
     const { result } = renderHook(() => usePerspectives());
 

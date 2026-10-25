@@ -1,5 +1,6 @@
 import type { FC, ComponentType, CSSProperties } from 'react';
 import { Component, useState, useCallback, useEffect } from 'react';
+import { css } from '@patternfly/react-styles';
 import * as _ from 'lodash';
 import {
   AutoSizer,
@@ -8,9 +9,7 @@ import {
   CellMeasurer,
   CellMeasurerCache,
 } from 'react-virtualized';
-import { css } from '@patternfly/react-styles';
-
-import { EventKind } from '../../module/k8s';
+import type { EventKind } from '../../module/k8s';
 import { WithScrollContainer } from './dom-utils';
 
 // Keep track of seen events so we only animate new ones.
@@ -56,7 +55,6 @@ class SysEvent extends Component<SysEventProps> {
           className,
         )}
         style={style}
-        role="row"
       >
         <EventComponent event={event} list={list} cache={measurementCache} index={index} />
       </div>
@@ -91,6 +89,7 @@ export const EventStreamList: FC<EventStreamListProps> = ({
             list={list}
             EventComponent={EventComponent}
             onLoad={measure}
+            // eslint-disable-next-line no-restricted-globals
             onEntered={print}
             key={key}
             style={style}

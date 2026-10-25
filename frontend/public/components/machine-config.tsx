@@ -1,8 +1,5 @@
-import * as _ from 'lodash';
 import type { FC } from 'react';
 import { useMemo, Suspense } from 'react';
-import { useTranslation } from 'react-i18next';
-import { TFunction } from 'i18next';
 import {
   Button,
   ButtonVariant,
@@ -16,31 +13,31 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
-import { BlueInfoCircleIcon, TableColumn } from '@console/dynamic-plugin-sdk';
+import type { TFunction } from 'i18next';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
+import { BlueInfoCircleIcon } from '@console/dynamic-plugin-sdk';
+import type {
+  ConsoleDataViewColumn,
+  GetDataViewRows,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DASH } from '@console/shared/src/constants/ui';
-import {
-  actionsCellProps,
-  getNameCellProps,
-  ConsoleDataView,
-  nameCellProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
-import { GetDataViewRows } from '@console/app/src/components/data-view/types';
-import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-
-import { MachineConfigKind, referenceForModel } from '../module/k8s';
 import { MachineConfigModel } from '../models';
+import type { MachineConfigKind } from '../module/k8s';
+import { referenceForModel } from '../module/k8s';
+import { ResourceEventStream } from './events';
 import { DetailsPage } from './factory/details';
 import { ListPage } from './factory/list-page';
 import { CopyToClipboard } from './utils/copy-to-clipboard';
-import { LoadingBox } from './utils/status-box';
-import { navFactory } from './utils/horizontal-nav';
-import { ResourceLink } from './utils/resource-link';
 import { ResourceSummary } from './utils/details-page';
 import { SectionHeading } from './utils/headings';
-import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import { ResourceEventStream } from './events';
-import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
+import { navFactory } from './utils/horizontal-nav';
+import { ResourceLink } from './utils/resource-link';
+import { LoadingBox } from './utils/status-box';
 
 export const machineConfigReference = referenceForModel(MachineConfigModel);
 
@@ -128,9 +125,9 @@ const pages = [
   navFactory.events(ResourceEventStream),
 ];
 
-export const MachineConfigDetailsPage: FC<any> = (props) => {
-  return <DetailsPage {...props} kind={machineConfigReference} pages={pages} />;
-};
+export const MachineConfigDetailsPage: FC<any> = (props) => (
+  <DetailsPage {...props} kind={machineConfigReference} pages={pages} />
+);
 
 const tableColumnInfo = [
   { id: 'name' },
@@ -141,14 +138,13 @@ const tableColumnInfo = [
   { id: '' },
 ];
 
-const getDataViewRows: GetDataViewRows<MachineConfigKind> = (data, columns) => {
-  return data.map(({ obj }) => {
+const getDataViewRows: GetDataViewRows<MachineConfigKind> = (data, columns) =>
+  data.map(({ obj }) => {
     const { name } = obj.metadata;
 
     const rowCells = {
       [tableColumnInfo[0].id]: {
         cell: <ResourceLink kind={machineConfigReference} name={name} />,
-        props: getNameCellProps(name),
       },
       [tableColumnInfo[1].id]: {
         cell: _.get(
@@ -161,7 +157,7 @@ const getDataViewRows: GetDataViewRows<MachineConfigKind> = (data, columns) => {
           DASH,
         ),
         props: {
-          modifier: 'breakWord',
+          modifier: 'breakWord' as const,
         },
       },
       [tableColumnInfo[2].id]: {
@@ -170,7 +166,7 @@ const getDataViewRows: GetDataViewRows<MachineConfigKind> = (data, columns) => {
       [tableColumnInfo[3].id]: {
         cell: _.get(obj, 'spec.osImageURL') || DASH,
         props: {
-          modifier: 'breakWord',
+          modifier: 'breakWord' as const,
         },
       },
       [tableColumnInfo[4].id]: {
@@ -178,7 +174,6 @@ const getDataViewRows: GetDataViewRows<MachineConfigKind> = (data, columns) => {
       },
       [tableColumnInfo[5].id]: {
         cell: <LazyActionMenu context={{ [machineConfigReference]: obj }} />,
-        props: actionsCellProps,
       },
     };
 
@@ -191,93 +186,72 @@ const getDataViewRows: GetDataViewRows<MachineConfigKind> = (data, columns) => {
       };
     });
   });
-};
 
 const useMachineConfigColumns = (): {
-  columns: TableColumn<MachineConfigKind>[];
-  resetAllColumnWidths: () => void;
+  columns: ConsoleDataViewColumn<MachineConfigKind>[];
 } => {
   const { t } = useTranslation('public');
-  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(MachineConfigModel);
 
-  const columns: TableColumn<MachineConfigKind>[] = useMemo(() => {
-    return [
+  const columns: ConsoleDataViewColumn<MachineConfigKind>[] = useMemo(
+    () => [
       {
-        title: t('Name'),
+        type: 'name' as const,
         id: tableColumnInfo[0].id,
-        sort: 'metadata.name',
-        resizableProps: getResizableProps(tableColumnInfo[0].id),
-        props: {
-          ...nameCellProps,
-          modifier: 'nowrap',
-        },
       },
       {
         title: t('Generated by controller'),
         id: tableColumnInfo[1].id,
-        sort:
-          "metadata.annotations['machineconfiguration.openshift.io/generated-by-controller-version']",
-        resizableProps: getResizableProps(tableColumnInfo[1].id),
+        sort: "metadata.annotations['machineconfiguration.openshift.io/generated-by-controller-version']",
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
         title: t('Ignition version'),
         id: tableColumnInfo[2].id,
         sort: 'spec.config.ignition.version',
-        resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
         title: t('OS image URL'),
         id: tableColumnInfo[3].id,
         sort: 'spec.osImageURL',
-        resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
         title: t('Created'),
         id: tableColumnInfo[4].id,
         sort: 'metadata.creationTimestamp',
-        resizableProps: getResizableProps(tableColumnInfo[4].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
-      {
-        title: '',
-        id: tableColumnInfo[5].id,
-        props: {
-          ...actionsCellProps,
-        },
-      },
-    ];
-  }, [t, getResizableProps]);
+      { type: 'actions' as const, id: tableColumnInfo[5].id },
+    ],
+    [t],
+  );
 
-  return { columns, resetAllColumnWidths };
+  return { columns };
 };
 
 const MachineConfigList: FC<MachineConfigListProps> = ({ data, loaded, loadError, ...props }) => {
-  const { columns, resetAllColumnWidths } = useMachineConfigColumns();
+  const { columns } = useMachineConfigColumns();
 
   return (
     <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<MachineConfigKind>
         {...props}
+        id={MachineConfigModel}
         label={MachineConfigModel.labelPlural}
         data={data}
         loaded={loaded}
         loadError={loadError}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement={true}
-        isResizable
-        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );
@@ -289,7 +263,7 @@ export const MachineConfigPage: FC<any> = ({ canCreate = true, ...rest }) => (
     canCreate={canCreate}
     ListComponent={MachineConfigList}
     kind={machineConfigReference}
-    omitFilterToolbar={true}
+    omitFilterToolbar
   />
 );
 

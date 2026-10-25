@@ -17,12 +17,10 @@ const SHOULD_DEPLOY_PLUGIN = !IS_LOCAL_DEV;
 async function skipIfModelUnavailable(page: import('@playwright/test').Page): Promise<void> {
   const errorHeading = page.getByRole('heading', { name: /Error loading/ });
   // eslint-disable-next-line no-restricted-syntax
-  const hasError = await errorHeading
-    .waitFor({ state: 'visible', timeout: 10_000 })
-    .then(
-      () => true,
-      () => false,
-    );
+  const hasError = await errorHeading.waitFor({ state: 'visible', timeout: 10_000 }).then(
+    () => true,
+    () => false,
+  );
   if (hasError) {
     test.skip(true, 'ConsolePlugin model not available in this environment');
   }
@@ -34,10 +32,8 @@ interface ManifestResource {
   spec?: Record<string, unknown>;
 }
 
-test.describe(
-  'Demo dynamic plugin',
-  { tag: ['@admin', '@dynamic-plugin'] },
-  () => {
+['webpack', 'rspack'].forEach((bundler) => {
+  test.describe(`Demo dynamic plugin [${bundler}]`, { tag: ['@admin', '@dynamic-plugin'] }, () => {
     test.describe.configure({ mode: 'serial' });
 
     let consolePluginPage: ConsolePluginPage;
@@ -75,13 +71,17 @@ test.describe(
           );
         }
 
-        const deploymentContainers = (
-          ((deployment.spec as Record<string, unknown>).template as Record<string, unknown>)
-            .spec as Record<string, unknown>
-        ).containers as Array<Record<string, unknown>>;
-        // eslint-disable-next-line no-console
+        const templateSpec = (
+          (deployment.spec as Record<string, unknown>).template as Record<string, unknown>
+        ).spec as Record<string, unknown>;
+        const deploymentContainers = templateSpec.containers as Array<Record<string, unknown>>;
+        deploymentContainers[0].env = [
+          ...((deploymentContainers[0].env as Array<Record<string, unknown>>) ?? []),
+          { name: 'BUNDLER', value: bundler },
+        ];
+
         console.log(
-          `Deploying ${PLUGIN_NAME} with image: ${deploymentContainers[0]?.image ?? 'unknown'}`,
+          `Deploying ${PLUGIN_NAME} [${bundler}] with image: ${deploymentContainers[0]?.image ?? 'unknown'}`,
         );
 
         await k8sClient.createNamespace(PLUGIN_NAME);
@@ -120,16 +120,12 @@ test.describe(
     test.afterAll(async ({ k8sClient }) => {
       if (SHOULD_DEPLOY_PLUGIN) {
         await k8sClient
-          .deleteClusterCustomResource(
-            'console.openshift.io',
-            'v1',
-            'consoleplugins',
-            PLUGIN_NAME,
-          )
+          .deleteClusterCustomResource('console.openshift.io', 'v1', 'consoleplugins', PLUGIN_NAME)
           .catch(() => {
             // May already be deleted by the UI test
           });
         await k8sClient.deleteNamespace(PLUGIN_NAME);
+        await k8sClient.waitForNamespaceDeleted(PLUGIN_NAME);
       }
     });
 
@@ -166,7 +162,7 @@ test.describe(
         // plugin as Loaded.
         await expect(async () => {
           await consolePluginPage.navigateToConsolePlugins();
-          await expect(page.getByTestId(`${PLUGIN_NAME}-name`)).toBeVisible();
+          await expect(page.getByTestId(`data-view-cell-${PLUGIN_NAME}-name`)).toBeVisible();
           await expect(page.getByTestId(`${PLUGIN_NAME}-status`)).toContainText('Loaded');
         }).toPass({ timeout: 300_000, intervals: [15_000] });
       });
@@ -212,7 +208,24 @@ test.describe(
         'OpenShift Pods List Page',
       );
       await listPage.filterByNameInput(podName);
-      await expect(page.getByTestId('resource-row').filter({ hasText: podName })).toBeVisible();
+      await expect(listPage.cells.filter({ hasText: podName }).first()).toBeVisible();
+    });
+
+    test('verifies PIXAA pod column tooltip and resizing', async ({ page }) => {
+      await consolePluginPage.navigateToDemoListPage();
+      await listPage.waitForRows();
+
+      await test.step('shows a tooltip describing PIXAA pods', async () => {
+        const infoButton = page.getByRole('button', { name: 'More information about PIXAA pod?' });
+        await infoButton.hover();
+        await expect(
+          page.getByRole('tooltip').filter({ hasText: 'A "PIXAA pod" has a lowercase name' }),
+        ).toBeVisible();
+      });
+
+      await test.step('resizes the PIXAA pod column', async () => {
+        await listPage.verifyColumnResizing('console-demo-plugin-pixaa-pod');
+      });
     });
 
     test('verifies K8s API nav item', async ({ page }) => {
@@ -223,9 +236,7 @@ test.describe(
       ).toBeVisible();
       for (const apiID of apiIDs) {
         await test.step(`K8s API: ${apiID}`, async () => {
-          await expect(
-            page.getByRole('button', { name: apiID, exact: true }),
-          ).toBeVisible();
+          await expect(page.getByRole('button', { name: apiID, exact: true })).toBeVisible();
         });
       }
     });
@@ -235,9 +246,7 @@ test.describe(
       await page.getByRole('button', { name: 'Dynamic Plugins' }).click();
       await expect(page.getByText('Loaded plugins')).toBeVisible();
       const popover = page.locator('.pf-v6-c-popover');
-      await expect(
-        popover.locator('a', { hasText: 'View all' }),
-      ).toHaveAttribute(
+      await expect(popover.locator('a', { hasText: 'View all' })).toHaveAttribute(
         'href',
         '/k8s/cluster/operator.openshift.io~v1~Console/cluster/console-plugins',
       );
@@ -245,8 +254,7 @@ test.describe(
 
     test('shows Dynamic Plugins in About modal', async ({ page }) => {
       await consolePluginPage.navigateToOverview();
-      await page.getByTestId('help-dropdown-toggle').click();
-      await page.getByText('About', { exact: true }).click();
+      await consolePluginPage.openAboutModal();
       await expect(page.locator('dt', { hasText: 'Dynamic plugins' })).toBeVisible();
       await expect(page.getByText('console-demo-plugin (0.0.0)')).toBeVisible();
       await page.getByRole('button', { name: 'Close Dialog' }).click();
@@ -256,9 +264,7 @@ test.describe(
       await consolePluginPage.navigateToProjects();
       await expect(page.getByRole('heading', { name: 'Projects' })).toBeVisible();
       await page.getByRole('button', { name: 'Create Project' }).click();
-      await expect(
-        page.getByText('This modal is created with an extension'),
-      ).toBeVisible();
+      await expect(page.getByText('This modal is created with an extension')).toBeVisible();
       await page.getByRole('button', { name: 'Cancel' }).click();
     });
 
@@ -266,9 +272,7 @@ test.describe(
       await consolePluginPage.navigateToPluginDetails(PLUGIN_NAME);
       await skipIfModelUnavailable(page);
       await expect(detailsPage.getPageHeading()).toContainText(PLUGIN_NAME);
-      await expect(
-        page.getByTestId('horizontal-link-Plugin manifest'),
-      ).toBeVisible();
+      await expect(page.getByTestId('horizontal-link-Plugin manifest')).toBeVisible();
     });
 
     test('navigates to manifest tab and displays read-only editor with JSON', async ({ page }) => {
@@ -276,9 +280,10 @@ test.describe(
       await expect(page).toHaveURL(/\/plugin-manifest/);
       await skipIfModelUnavailable(page);
 
-      await expect(
-        page.getByTestId('horizontal-link-Plugin manifest'),
-      ).toHaveAttribute('aria-selected', 'true');
+      await expect(page.getByTestId('horizontal-link-Plugin manifest')).toHaveAttribute(
+        'aria-selected',
+        'true',
+      );
 
       const codeEditor = consolePluginPage.getCodeEditor();
       const emptyBox = consolePluginPage.getEmptyBox();
@@ -292,12 +297,10 @@ test.describe(
 
       const codeEditor = consolePluginPage.getCodeEditor();
       // eslint-disable-next-line no-restricted-syntax
-      const hasEditor = await codeEditor
-        .waitFor({ state: 'visible', timeout: 5_000 })
-        .then(
-          () => true,
-          () => false,
-        );
+      const hasEditor = await codeEditor.waitFor({ state: 'visible', timeout: 5_000 }).then(
+        () => true,
+        () => false,
+      );
       test.skip(!hasEditor, 'Code editor not present — manifest not available');
 
       await expect(consolePluginPage.getReadOnlyCodeEditor()).toHaveClass(/pf-m-read-only/);
@@ -355,12 +358,12 @@ test.describe(
         // each retry to get fresh cookies from the new pod.
         await expect(async () => {
           await consolePluginPage.navigateToConsolePlugins();
-          await expect(page.getByTestId(`${PLUGIN_NAME}-name`)).toBeVisible();
-          const row = consolePluginPage.getPluginNameCell(PLUGIN_NAME).locator('xpath=ancestor::tr');
+          await expect(page.getByTestId(`data-view-cell-${PLUGIN_NAME}-name`)).toBeVisible();
+          const row = consolePluginPage
+            .getPluginNameCell(PLUGIN_NAME)
+            .locator('xpath=ancestor::tr');
           await expect(row.getByTestId('edit-console-plugin')).toContainText('Disabled');
-          await expect(
-            consolePluginPage.getPluginStatusCell(PLUGIN_NAME),
-          ).toContainText('-');
+          await expect(consolePluginPage.getPluginStatusCell(PLUGIN_NAME)).toContainText('-');
         }).toPass({ timeout: 300_000, intervals: [15_000] });
       });
 
@@ -372,5 +375,5 @@ test.describe(
         await modalPage.submit();
       });
     });
-  },
-);
+  });
+});

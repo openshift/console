@@ -1,42 +1,5 @@
 import type { FC } from 'react';
 import { Suspense } from 'react';
-import * as _ from 'lodash';
-import { Status } from '@console/shared/src/components/status/Status';
-import { ActionServiceProvider } from '@console/shared/src/components/actions/ActionServiceProvider';
-import { ActionMenu } from '@console/shared/src/components/actions/menu/ActionMenu';
-import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
-import { useTranslation } from 'react-i18next';
-import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import {
-  K8sKind,
-  K8sResourceKind,
-  K8sResourceKindReference,
-  referenceForModel,
-  DeploymentConfigKind,
-} from '../module/k8s';
-import { DeploymentConfigModel } from '../models';
-import { Conditions } from './conditions';
-import { ResourceEventStream } from './events';
-import { VolumesTable } from './volumes-table';
-import { DetailsPage } from './factory/details';
-import { ListPage } from './factory/list-page';
-import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
-import { GetDataViewRows } from '@console/app/src/components/data-view/types';
-import { LoadingBox } from './utils/status-box';
-
-import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
-import { AsyncComponent } from './utils/async';
-import { ContainerTable } from './utils/container-table';
-import { DetailsItem } from './utils/details-item';
-import { ResourceSummary, RuntimeClass } from './utils/details-page';
-import { SectionHeading } from './utils/headings';
-import { WorkloadPausedAlert } from './utils/workload-pause';
-import { navFactory } from './utils/horizontal-nav';
-import { getDocumentationURL, documentationURLs, isManaged } from './utils/documentation';
-import { ReplicationControllersPage } from './replication-controller';
-import { WorkloadTableHeader, useWorkloadColumns, getWorkloadDataViewRows } from './workload-table';
-import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
 import {
   Alert,
   DescriptionList,
@@ -46,6 +9,42 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
+import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
+import type { GetDataViewRows } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { ActionServiceProvider } from '@console/shared/src/components/actions/ActionServiceProvider';
+import { ActionMenu } from '@console/shared/src/components/actions/menu/ActionMenu';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
+import { Status } from '@console/shared/src/components/status/Status';
+import { DeploymentConfigModel } from '../models';
+import type {
+  K8sKind,
+  K8sResourceKind,
+  K8sResourceKindReference,
+  DeploymentConfigKind,
+} from '../module/k8s';
+import { referenceForModel } from '../module/k8s';
+import { Conditions } from './conditions';
+import { ResourceEventStream } from './events';
+import { DetailsPage } from './factory/details';
+import { ListPage } from './factory/list-page';
+import { ReplicationControllersPage } from './replication-controller';
+import { AsyncComponent } from './utils/async';
+import { ContainerTable } from './utils/container-table';
+import { DetailsItem } from './utils/details-item';
+import { ResourceSummary, RuntimeClass } from './utils/details-page';
+import { getDocumentationURL, documentationURLs, isManaged } from './utils/documentation';
+import { SectionHeading } from './utils/headings';
+import { navFactory } from './utils/horizontal-nav';
+import { LoadingBox } from './utils/status-box';
+import { WorkloadPausedAlert } from './utils/workload-pause';
+import { VolumesTable } from './volumes-table';
+import { WorkloadTableHeader, useWorkloadColumns, getWorkloadDataViewRows } from './workload-table';
 
 const DeploymentConfigsReference: K8sResourceKindReference = 'DeploymentConfig';
 
@@ -261,21 +260,17 @@ const DetailsActionMenu: FC<DetailsActionMenuProps> = ({ kindObj, obj }) => {
 
   return (
     <ActionServiceProvider context={context}>
-      {({ actions, options, loaded }) => {
-        return (
-          loaded && (
-            <ActionMenu actions={actions} options={options} variant={ActionMenuVariant.DROPDOWN} />
-          )
-        );
-      }}
+      {({ actions, options, loaded }) =>
+        loaded && (
+          <ActionMenu actions={actions} options={options} variant={ActionMenuVariant.DROPDOWN} />
+        )
+      }
     </ActionServiceProvider>
   );
 };
 
 export const DeploymentConfigsDetailsPage: FC = (props) => {
-  const customActionMenu = (kindObj, obj) => {
-    return <DetailsActionMenu kindObj={kindObj} obj={obj} />;
-  };
+  const customActionMenu = (kindObj, obj) => <DetailsActionMenu kindObj={kindObj} obj={obj} />;
   return (
     <DetailsPage
       {...props}
@@ -288,32 +283,25 @@ export const DeploymentConfigsDetailsPage: FC = (props) => {
 };
 DeploymentConfigsDetailsPage.displayName = 'DeploymentConfigsDetailsPage';
 
-const DeploymentConfigTableHeader = () => {
-  return WorkloadTableHeader();
-};
+const DeploymentConfigTableHeader = () => WorkloadTableHeader();
 DeploymentConfigTableHeader.displayName = 'DeploymentConfigTableHeader';
 
-const getDataViewRows: GetDataViewRows<DeploymentConfigKind> = (data, columns) => {
-  return getWorkloadDataViewRows(data, columns, DeploymentConfigModel);
-};
+const getDataViewRows: GetDataViewRows<DeploymentConfigKind> = (data, columns) =>
+  getWorkloadDataViewRows(data, columns, DeploymentConfigModel);
 
 const DeploymentConfigsList: FC<DeploymentConfigsListProps> = ({ data, loaded, ...props }) => {
-  const { columns, resetAllColumnWidths } = useWorkloadColumns<DeploymentConfigKind>(
-    DeploymentConfigModel,
-  );
+  const { columns } = useWorkloadColumns<DeploymentConfigKind>();
 
   return (
     <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView
         {...props}
+        id={DeploymentConfigModel}
         label={DeploymentConfigModel.labelPlural}
         data={data}
         loaded={loaded}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement={true}
-        isResizable
-        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );
@@ -329,9 +317,9 @@ export const DeploymentConfigsPage: FC<DeploymentConfigsPageProps> = (props) => 
       kind={DeploymentConfigsReference}
       ListComponent={DeploymentConfigsList}
       createProps={createProps}
-      canCreate={true}
+      canCreate
       helpAlert={<DeploymentConfigDeprecationAlert />}
-      omitFilterToolbar={true}
+      omitFilterToolbar
       {...props}
     />
   );

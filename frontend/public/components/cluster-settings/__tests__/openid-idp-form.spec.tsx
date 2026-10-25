@@ -1,5 +1,10 @@
 import { screen } from '@testing-library/react';
 import {
+  renderWithProviders,
+  verifyInputField,
+} from '@console/shared/src/test-utils/unit-test-utils';
+import { AddOpenIDIDPPage } from '../openid-idp-form';
+import {
   verifyIDPAddAndCancelButtons,
   verifyPageTitleAndSubtitle,
   verifyIDPFileFields,
@@ -7,11 +12,6 @@ import {
   mockData,
   setupFileReaderMock,
 } from './test-utils';
-import {
-  renderWithProviders,
-  verifyInputField,
-} from '@console/shared/src/test-utils/unit-test-utils';
-import { AddOpenIDIDPPage } from '../../cluster-settings/openid-idp-form';
 
 describe('Add Identity Provider: OpenID Connect', () => {
   const renderPage = () => {
@@ -99,7 +99,7 @@ describe('Add Identity Provider: OpenID Connect', () => {
     });
   });
 
-  it('should render the Name label, input element, and help text', async () => {
+  it('should render the Name claim label, input element, and help text', async () => {
     renderPage();
     await verifyIDPListInputFields({
       inputLabel: 'Name',

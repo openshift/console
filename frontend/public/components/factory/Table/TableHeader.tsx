@@ -1,8 +1,8 @@
 import type { FC } from 'react';
+import type { ISortBy, OnSelect, OnSort } from '@patternfly/react-table';
+import { Th, Thead, Tr } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
-import { ISortBy, OnSelect, OnSort, Th, Thead, Tr } from '@patternfly/react-table';
-import { TableColumn as InternalTableColumn } from '../table';
-import { TableColumn as SDKTableColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import type { TableColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 
 export const TableHeader: FC<TableHeaderProps> = ({
   allRowsSelected,
@@ -39,10 +39,19 @@ export const TableHeader: FC<TableHeaderProps> = ({
 
 TableHeader.displayName = 'TableHeader';
 
+type InternalTableColumn = {
+  title: string;
+  id?: string;
+  additional?: boolean;
+  sortFunc?: string;
+  sortField?: string;
+  props?: any;
+};
+
 type TableHeaderProps = {
   allRowsSelected?: boolean;
   canSelectAll?: boolean;
-  columns: InternalTableColumn[] | SDKTableColumn<any>[];
+  columns: InternalTableColumn[] | TableColumn<any>[];
   onSelect?: OnSelect;
   onSort?: OnSort;
   sortBy?: ISortBy;

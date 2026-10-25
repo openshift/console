@@ -19,5 +19,5 @@ import { GetSegmentAnalytics } from '../extensions/console-types';
  *
  * @see https://segment.com/docs/connections/sources/catalog/libraries/website/javascript/
  */
-export const getSegmentAnalytics: GetSegmentAnalytics = require('@console/dynamic-plugin-sdk/src/api/segment-analytics')
-  .getSegmentAnalytics;
+export const getSegmentAnalytics: GetSegmentAnalytics =
+  require('@console/dynamic-plugin-sdk/src/api/segment-analytics').getSegmentAnalytics;

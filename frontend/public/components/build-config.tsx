@@ -1,49 +1,41 @@
 import type { FC } from 'react';
 import { useMemo, Suspense } from 'react';
+import { Grid, GridItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
+import type {
+  ConsoleDataViewColumn,
+  GetDataViewRows,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import {
-  K8sModel,
-  K8sResourceKind,
-  K8sResourceKindReference,
-  referenceForModel,
-  TableColumn,
-} from '../module/k8s';
+import { Status } from '@console/shared/src/components/status/Status';
+import { DASH } from '@console/shared/src/constants/ui';
+import { BuildModel, BuildConfigModel } from '../models';
+import type { K8sModel, K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
+import { referenceForModel } from '../module/k8s';
+import { BuildsPage, BuildEnvironmentComponent, PipelineBuildStrategyAlert } from './build';
+import { ResourceEventStream } from './events';
 import { DetailsPage } from './factory/details';
-import { ListPage } from './factory/list-page';
 import type { DetailsPageProps } from './factory/details';
+import { ListPage } from './factory/list-page';
+import { sorts } from './factory/table';
+import { sortResourceByValue } from './factory/Table/sort';
 import { BuildHooks } from './utils/build-hooks';
 import { BuildStrategy } from './utils/build-strategy';
 import { BuildStrategyType, displayDurationInWords } from './utils/build-utils';
-import { navFactory } from './utils/horizontal-nav';
-import { ResourceLink } from './utils/resource-link';
 import { ResourceSummary } from './utils/details-page';
 import { SectionHeading } from './utils/headings';
-import { WebhookTriggers } from './utils/webhooks';
-import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import { BuildsPage, BuildEnvironmentComponent, PipelineBuildStrategyAlert } from './build';
-import { ResourceEventStream } from './events';
-import { BuildModel, BuildConfigModel } from '../models';
-import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import { navFactory } from './utils/horizontal-nav';
 import { useK8sWatchResource } from './utils/k8s-watch-hook';
-import { Status } from '@console/shared/src/components/status/Status';
-import { Grid, GridItem } from '@patternfly/react-core';
-import { DASH } from '@console/shared/src/constants/ui';
-import {
-  actionsCellProps,
-  getNameCellProps,
-  ConsoleDataView,
-  nameCellProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
-import { GetDataViewRows } from '@console/app/src/components/data-view/types';
-import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
+import { ResourceLink } from './utils/resource-link';
 import { LoadingBox } from './utils/status-box';
-import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
-import { sortResourceByValue } from './factory/Table/sort';
-import { sorts } from './factory/table';
-import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
-import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
+import { WebhookTriggers } from './utils/webhooks';
 
 const BuildConfigsReference: K8sResourceKindReference = referenceForModel(BuildConfigModel);
 
@@ -86,14 +78,13 @@ const pages = [
   navFactory.events(ResourceEventStream),
 ];
 
-const getLatestBuild = (builds) => {
-  return builds.reduce((latestBuild, currentBuild) => {
+const getLatestBuild = (builds) =>
+  builds.reduce((latestBuild, currentBuild) => {
     const latestBuildTime = new Date(latestBuild?.metadata?.creationTimestamp).getTime();
     const currentBuildTime = new Date(currentBuild.metadata.creationTimestamp).getTime();
 
     return currentBuildTime > latestBuildTime ? currentBuild : latestBuild;
   }, builds[0]);
-};
 
 export const BuildConfigsDetailsPage: FC<DetailsPageProps> = (props) => {
   const buildModel = referenceForModel(BuildModel);
@@ -135,8 +126,8 @@ const tableColumnInfo = [
   { id: 'actions' },
 ];
 
-const getDataViewRows: GetDataViewRows<BuildConfig> = (data, columns) => {
-  return data.map(({ obj }) => {
+const getDataViewRows: GetDataViewRows<BuildConfig> = (data, columns) =>
+  data.map(({ obj }) => {
     const { name, namespace } = obj.metadata;
     const latestBuild = obj?.latestBuild;
 
@@ -149,7 +140,6 @@ const getDataViewRows: GetDataViewRows<BuildConfig> = (data, columns) => {
             namespace={namespace}
           />
         ),
-        props: getNameCellProps(name),
       },
       [tableColumnInfo[1].id]: {
         cell: <ResourceLink kind="Namespace" name={namespace} />,
@@ -187,7 +177,6 @@ const getDataViewRows: GetDataViewRows<BuildConfig> = (data, columns) => {
             context={{ [referenceForModel(BuildConfigModel)]: { buildConfig: obj, latestBuild } }}
           />
         ),
-        props: actionsCellProps,
       },
     };
 
@@ -195,12 +184,10 @@ const getDataViewRows: GetDataViewRows<BuildConfig> = (data, columns) => {
       const cell = rowCells[id]?.cell || DASH;
       return {
         id,
-        props: rowCells[id]?.props,
         cell,
       };
     });
   });
-};
 
 const isBuildNewerThen = (newBuild: K8sResourceKind, prevBuild: K8sResourceKind | undefined) => {
   const prevCreationTime = new Date(prevBuild?.metadata?.creationTimestamp);
@@ -212,89 +199,66 @@ const isBuildNewerThen = (newBuild: K8sResourceKind, prevBuild: K8sResourceKind 
 const buildStrategy = (buildConfig: K8sResourceKind): BuildStrategyType =>
   buildConfig.spec.strategy.type;
 
-const getBuildStatus = (buildConfig: BuildConfig) => {
-  return buildConfig?.latestBuild?.status?.phase || 'Unknown';
-};
+const getBuildStatus = (buildConfig: BuildConfig) =>
+  buildConfig?.latestBuild?.status?.phase || 'Unknown';
 
 const useBuildConfigColumns = (): {
-  columns: TableColumn<BuildConfig>[];
-  resetAllColumnWidths: () => void;
+  columns: ConsoleDataViewColumn<BuildConfig>[];
 } => {
   const { t } = useTranslation('public');
-  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(BuildConfigModel);
 
-  const columns = useMemo(() => {
-    return [
+  const columns = useMemo<ConsoleDataViewColumn<BuildConfig>[]>(
+    () => [
       {
-        title: t('Name'),
+        type: 'name' as const,
         id: tableColumnInfo[0].id,
-        sort: 'metadata.name',
-        resizableProps: getResizableProps(tableColumnInfo[0].id),
-        props: {
-          ...nameCellProps,
-          modifier: 'nowrap',
-        },
       },
       {
-        title: t('Namespace'),
+        type: 'namespace' as const,
         id: tableColumnInfo[1].id,
-        sort: 'metadata.namespace',
-        resizableProps: getResizableProps(tableColumnInfo[1].id),
-        props: {
-          modifier: 'nowrap',
-        },
       },
       {
         title: t('Last run'),
         id: tableColumnInfo[2].id,
         sort: 'latestBuild.metadata.name',
-        resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
         title: t('Last run status'),
         id: tableColumnInfo[3].id,
         sort: 'latestBuild.status.phase',
-        resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
         title: t('Last run time'),
         id: tableColumnInfo[4].id,
         sort: 'latestBuild.metadata.creationTimestamp',
-        resizableProps: getResizableProps(tableColumnInfo[4].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
         title: t('Last run duration'),
         id: tableColumnInfo[5].id,
         sort: (data, direction) => data.sort(sortResourceByValue(direction, sorts.buildDuration)),
-        resizableProps: getResizableProps(tableColumnInfo[5].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
-      {
-        title: '',
-        id: tableColumnInfo[6].id,
-        props: {
-          ...actionsCellProps,
-        },
-      },
-    ];
-  }, [t, getResizableProps]);
+      { type: 'actions' as const, id: tableColumnInfo[6].id },
+    ],
+    [t],
+  );
 
-  return { columns, resetAllColumnWidths };
+  return { columns };
 };
 
 const BuildConfigsList: FC<BuildConfigsListProps> = ({ data, loaded, ...props }) => {
-  const { columns, resetAllColumnWidths } = useBuildConfigColumns();
+  const { columns } = useBuildConfigColumns();
   const buildModel = referenceForModel(BuildModel);
   const BUILDCONFIG_TO_BUILD_REFERENCE_LABEL = 'openshift.io/build-config.name';
   const [builds, buildsLoaded, buildsLoadError] = useK8sWatchResource<K8sResourceKind[]>({
@@ -337,14 +301,12 @@ const BuildConfigsList: FC<BuildConfigsListProps> = ({ data, loaded, ...props })
     <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView
         {...props}
+        id={BuildConfigModel}
         label={BuildConfigModel.labelPlural}
         data={buildResource}
         loaded={loaded}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement={true}
-        isResizable
-        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );
@@ -410,8 +372,8 @@ export const BuildConfigsPage: FC<BuildConfigsPageProps> = (props) => {
         createProps={createProps}
         filterLabel={props.filterLabel}
         rowFilters={filters}
-        omitFilterToolbar={true}
-        hideColumnManagement={true}
+        omitFilterToolbar
+        hideColumnManagement
       />
     </>
   );

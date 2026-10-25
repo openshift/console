@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { k8sGet, K8sKind, K8sResourceCommon } from '../../module/k8s';
+import type { K8sKind, K8sResourceCommon } from '../../module/k8s';
+import { k8sGet } from '../../module/k8s';
 
 export const useK8sGet = <R extends K8sResourceCommon = K8sResourceCommon>(
   kind: K8sKind,

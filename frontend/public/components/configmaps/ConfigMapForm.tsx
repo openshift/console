@@ -1,15 +1,16 @@
 import type { FC } from 'react';
 import { useState } from 'react';
+import type { FormikHelpers } from 'formik';
+import { Formik } from 'formik';
 import * as _ from 'lodash';
-import { Formik, FormikHelpers } from 'formik';
 import { useNavigate } from 'react-router';
 import { k8sCreateResource, k8sUpdateResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { safeYAMLToJS } from '@console/shared/src/utils/yaml';
 import { ConfigMapModel } from '../../models';
-import { ConfigMapFormEditor } from './ConfigMapFormEditor';
-import { ConfigMap, ConfigMapFormInitialValues } from './types';
 import { getConfigmapData, getConfigMapInitialValues, validationSchema } from './configmap-utils';
+import { ConfigMapFormEditor } from './ConfigMapFormEditor';
+import type { ConfigMap, ConfigMapFormInitialValues } from './types';
 
 interface ConfigMapProps {
   title: string;

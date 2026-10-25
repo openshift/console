@@ -1,9 +1,9 @@
-import { Alert } from '@console/dynamic-plugin-sdk';
 import * as _ from 'lodash';
-import { PROMETHEUS_TENANCY_BASE_PATH } from '../graphs';
+import type { Alert } from '@console/dynamic-plugin-sdk';
 import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
-import { getAlertsAndRules } from '../monitoring/utils';
+import { PROMETHEUS_TENANCY_BASE_PATH } from '../graphs/consts';
 import { getPrometheusURL, PrometheusEndpoint } from '../graphs/helpers';
+import { getAlertsAndRules } from '../monitoring/utils';
 
 export type MetricValuesByPod = {
   [podName: string]: number;
@@ -42,12 +42,9 @@ export const fetchOverviewMetrics = (
     });
   });
 
-  return Promise.all(promises).then((data) => {
-    return data.reduce(
-      (acc: OverviewMetrics, metric): OverviewMetrics => _.assign(acc, metric),
-      {},
-    );
-  });
+  return Promise.all(promises).then((data) =>
+    data.reduce((acc: OverviewMetrics, metric): OverviewMetrics => _.assign(acc, metric), {}),
+  );
 };
 
 export const fetchMonitoringAlerts = (namespace: string): Promise<Alert[]> => {

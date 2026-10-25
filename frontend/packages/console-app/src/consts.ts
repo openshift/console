@@ -9,8 +9,3 @@ export const FLAG_TECH_PREVIEW = 'TECH_PREVIEW';
 export const FLAG_OPENSHIFT_5 = 'FLAG_OPENSHIFT_5';
 
 export const ACM_PERSPECTIVE_ID = 'acm';
-/** User settings key for the node management v1 (node groups) toggle */
-export const NODE_MGMT_V1_ENABLED_USER_SETTING_KEY = 'console.nodeMgmtV1.enabled';
-
-/** Feature flag for node groups management UI (Nodes list + node details), gated by tech preview + user preference */
-export const FLAG_NODE_MGMT_V1 = 'NODE_MGMT_V1';

@@ -18,18 +18,11 @@ const SinkUriController: FC<SinkUriControllerProps> = ({ source, eventSourceList
 
 type Props = SinkUriControllerProps & ModalComponentProps;
 
-const SinkUriModalProvider: OverlayComponent<Props> = (props) => {
-  return (
-    <Modal
-      isOpen
-      onClose={props.closeOverlay}
-      variant="small"
-      aria-labelledby="sink-uri-modal-title"
-    >
-      <SinkUriController cancel={props.closeOverlay} close={props.closeOverlay} {...props} />
-    </Modal>
-  );
-};
+const SinkUriModalProvider: OverlayComponent<Props> = (props) => (
+  <Modal isOpen onClose={props.closeOverlay} variant="small" aria-labelledby="sink-uri-modal-title">
+    <SinkUriController cancel={props.closeOverlay} close={props.closeOverlay} {...props} />
+  </Modal>
+);
 
 export const useSinkUriModalLauncher = (props: Props) => {
   const launcher = useOverlay();

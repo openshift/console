@@ -1,24 +1,19 @@
 import type { FC } from 'react';
-import * as fuzzy from 'fuzzysearch';
 import { useEffect, useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { Alert } from '@patternfly/react-core';
-import { ConsoleSelect } from '@console/internal/components/utils/console-select';
-import { LoadingInline, ResourceName, ResourceIcon } from '.';
 import { css } from '@patternfly/react-styles';
-import { VolumeAttributesClassModel } from '../../models';
-import { VolumeAttributesClassKind } from '../../module/k8s';
-import { useFlag } from '@console/shared/src/hooks/useFlag';
-import { FLAGS } from '@console/shared/src/constants/common';
+import * as fuzzy from 'fuzzysearch';
+import { useTranslation } from 'react-i18next';
+import { ConsoleSelect } from '@console/internal/components/utils/console-select';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { FLAGS } from '@console/shared/src/constants/common';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
+import { VolumeAttributesClassModel } from '../../models';
+import type { VolumeAttributesClassKind } from '../../module/k8s';
+import { LoadingInline, ResourceName, ResourceIcon } from '.';
 
-const getTitle = (vac: VolumeAttributesClassDropdownItem): React.ReactNode => {
-  return vac.kindLabel ? (
-    <ResourceName kind={vac.kindLabel} name={vac.name} />
-  ) : (
-    <span>{vac.name}</span>
-  );
-};
+const getTitle = (vac: VolumeAttributesClassDropdownItem): React.ReactNode =>
+  vac.kindLabel ? <ResourceName kind={vac.kindLabel} name={vac.name} /> : <span>{vac.name}</span>;
 
 const VolumeAttributesClassDropdownEntry: FC<{
   kindLabel: string;
@@ -151,7 +146,7 @@ const VolumeAttributesClassDropdownInner: FC<VolumeAttributesClassDropdownInnerP
     }
   };
 
-  const autocompleteFilter = (text: string, item: React.ReactElement) =>
+  const autocompleteFilter = (text: string, item: React.ReactElement<{ name: string }>) =>
     fuzzy(text, item.props.name);
   const dropdownItems: Record<string, React.ReactNode> = {};
   Object.entries(state.items).forEach(([key, itemProps]) => {

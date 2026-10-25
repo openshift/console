@@ -4,27 +4,28 @@ import (
 	"io"
 	"testing"
 
-	"helm.sh/helm/v3/pkg/action"
-	"helm.sh/helm/v3/pkg/chart"
-	"helm.sh/helm/v3/pkg/chartutil"
-	kubefake "helm.sh/helm/v3/pkg/kube/fake"
-	"helm.sh/helm/v3/pkg/release"
-	"helm.sh/helm/v3/pkg/storage"
-	"helm.sh/helm/v3/pkg/storage/driver"
-	"helm.sh/helm/v3/pkg/time"
+	"helm.sh/helm/v4/pkg/action"
+	"helm.sh/helm/v4/pkg/chart/common"
+	chart "helm.sh/helm/v4/pkg/chart/v2"
+	kubefake "helm.sh/helm/v4/pkg/kube/fake"
+	releasecommon "helm.sh/helm/v4/pkg/release/common"
+	releasev1 "helm.sh/helm/v4/pkg/release/v1"
+	"helm.sh/helm/v4/pkg/storage"
+	"helm.sh/helm/v4/pkg/storage/driver"
+	"time"
 )
 
 func TestListReleases(t *testing.T) {
 	tests := []struct {
 		name    string
-		release release.Release
+		release releasev1.Release
 	}{
 		{
 			name: "list valid releases",
-			release: release.Release{
+			release: releasev1.Release{
 				Name:      "test",
 				Namespace: "test-namespace",
-				Info: &release.Info{
+				Info: &releasev1.Info{
 					FirstDeployed: time.Time{},
 					Status:        "deployed",
 				},
@@ -45,8 +46,7 @@ func TestListReleases(t *testing.T) {
 			actionConfig := &action.Configuration{
 				Releases:     store,
 				KubeClient:   &kubefake.PrintingKubeClient{Out: io.Discard},
-				Capabilities: chartutil.DefaultCapabilities,
-				Log:          func(format string, v ...interface{}) {},
+				Capabilities: common.DefaultCapabilities,
 			}
 			rels, err := ListReleases(actionConfig, true)
 			if err != nil {
@@ -61,7 +61,7 @@ func TestListReleases(t *testing.T) {
 			if rels[0].Namespace != "test-namespace" {
 				t.Error("Namespace isn't matching")
 			}
-			if rels[0].Info.Status != release.StatusDeployed {
+			if rels[0].Info.Status != releasecommon.StatusDeployed {
 				t.Error("Chart status should be deployed")
 			}
 			if rels[0].Chart.Metadata.Name != "influxdb" {

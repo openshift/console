@@ -1,3 +1,2 @@
-export const getFieldId = (fieldName: string, fieldType: string) => {
-  return `form-${fieldType}-${fieldName?.replace(/\./g, '-')}-field`;
-};
+export const getFieldId = (fieldName: string, fieldType: string) =>
+  `form-${fieldType}-${fieldName?.replace(/\./g, '-')}-field`;

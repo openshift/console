@@ -2,7 +2,8 @@ import { screen } from '@testing-library/react';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import TourStepComponent from '../TourStepComponent';
 
-jest.mock('@console/shared/src/components/popover/Popover', () => ({
+jest.mock('@patternfly/react-core', () => ({
+  ...jest.requireActual('@patternfly/react-core'),
   Popover: () => 'POPOVER_RENDERED',
 }));
 

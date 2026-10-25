@@ -10,23 +10,19 @@ import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
 import type { DataViewFilterOption } from '@patternfly/react-data-view/dist/esm/DataViewFilters';
 import { useTranslation } from 'react-i18next';
 import { useParams, Link } from 'react-router';
-import {
-  ConsoleDataView,
-  initialFiltersDefault,
-  actionsCellProps,
-  nameCellProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
-import type { ResourceFilters } from '@console/app/src/components/data-view/types';
-import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
+import type {
+  ConsoleDataViewColumn,
+  ResourceFilters,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { LoadingBox } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { SecretModel } from '@console/internal/models';
-import type { K8sResourceKind, TableColumn } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { isCatalogTypeEnabled } from '@console/shared/src/components/catalog/utils/catalog-utils';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { HELM_CHART_CATALOG_TYPE_ID } from '../../const';
-import { HelmReleaseModel } from '../../models/helm';
 import type { HelmRelease } from '../../types/helm-types';
 import {
   fetchHelmReleases,
@@ -40,99 +36,76 @@ import { getDataViewRows, tableColumnInfo } from './HelmReleaseListRow';
 type HelmReleaseFilters = ResourceFilters & { status: string[] };
 
 const useHelmReleasesColumns = (): {
-  columns: TableColumn<HelmRelease>[];
-  resetAllColumnWidths: () => void;
+  columns: ConsoleDataViewColumn<HelmRelease>[];
 } => {
   const { t } = useTranslation('helm-plugin');
-  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(HelmReleaseModel);
 
-  const columns = useMemo(
+  const columns = useMemo<ConsoleDataViewColumn<HelmRelease>[]>(
     () => [
       {
-        title: t('Name'),
+        type: 'name' as const,
         id: tableColumnInfo[0].id,
         sort: 'name',
-        resizableProps: getResizableProps(tableColumnInfo[0].id),
-        props: {
-          ...nameCellProps,
-          modifier: 'nowrap',
-        },
       },
       {
-        title: t('Namespace'),
+        type: 'namespace' as const,
         id: tableColumnInfo[1].id,
         sort: 'namespace',
-        resizableProps: getResizableProps(tableColumnInfo[1].id),
-        props: {
-          modifier: 'nowrap',
-        },
       },
       {
         title: t('Revision'),
         id: tableColumnInfo[2].id,
         sort: 'version',
-        resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
         title: t('Updated'),
         id: tableColumnInfo[3].id,
         sort: 'info.last_deployed',
-        resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
         title: t('Status'),
         id: tableColumnInfo[4].id,
         sort: 'info.status',
-        resizableProps: getResizableProps(tableColumnInfo[4].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
         title: t('Chart name'),
         id: tableColumnInfo[5].id,
         sort: 'chart.metadata.name',
-        resizableProps: getResizableProps(tableColumnInfo[5].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
         title: t('Chart version'),
         id: tableColumnInfo[6].id,
         sort: 'chart.metadata.version',
-        resizableProps: getResizableProps(tableColumnInfo[6].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
         title: t('App version'),
         id: tableColumnInfo[7].id,
         sort: 'chart.metadata.appVersion',
-        resizableProps: getResizableProps(tableColumnInfo[7].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
-      {
-        title: '',
-        id: tableColumnInfo[8].id,
-        props: {
-          ...actionsCellProps,
-        },
-      },
+      { type: 'actions' as const, id: tableColumnInfo[8].id },
     ],
-    [t, getResizableProps],
+    [t],
   );
 
-  return { columns, resetAllColumnWidths };
+  return { columns };
 };
 
 const getObjectMetadata = (release: HelmRelease) => ({
@@ -192,7 +165,7 @@ const HelmReleaseList: FC<{ mock?: boolean }> = ({ mock }) => {
           .catch((err) => {
             if (!destroyed) {
               setReleasesLoaded(true);
-              setLoadError(err.message || t('Unable to load Helm Releases'));
+              setLoadError(err.message || t('Unable to load Helm releases'));
             }
           });
       }
@@ -203,16 +176,18 @@ const HelmReleaseList: FC<{ mock?: boolean }> = ({ mock }) => {
     };
   }, [namespace, newCount, secretsLoadError, secretsLoaded, t]);
 
-  const { columns, resetAllColumnWidths } = useHelmReleasesColumns();
+  const { columns } = useHelmReleasesColumns();
 
-  const helmReleaseStatusFilterOptions = useMemo<DataViewFilterOption[]>(() => {
-    return SelectedReleaseStatuses.map((status) => ({
-      value: status,
-      label: HelmReleaseStatusLabels[status],
-    }));
-  }, []);
+  const helmReleaseStatusFilterOptions = useMemo<DataViewFilterOption[]>(
+    () =>
+      SelectedReleaseStatuses.map((status) => ({
+        value: status,
+        label: HelmReleaseStatusLabels[status],
+      })),
+    [],
+  );
 
-  const initialFilters = useMemo(() => ({ ...initialFiltersDefault, status: [] }), []);
+  const initialFilters = useMemo<HelmReleaseFilters>(() => ({ status: [] }), []);
 
   const additionalFilterNodes = useMemo<React.ReactNode[]>(
     () => [
@@ -240,7 +215,7 @@ const HelmReleaseList: FC<{ mock?: boolean }> = ({ mock }) => {
     [helmReleaseStatusFilterOptions],
   );
 
-  const isLoaded = secretsLoaded && releasesLoaded && newCount === secretsCountRef.current;
+  const isLoaded = secretsLoaded && releasesLoaded && newCount === secretsCountRef.current; // eslint-disable-line react-hooks/refs -- Reading previous count for loading state comparison
   const hasNoReleases = isLoaded && releases.length === 0 && !loadError && !secretsLoadError;
 
   const emptyState = () => {
@@ -253,7 +228,7 @@ const HelmReleaseList: FC<{ mock?: boolean }> = ({ mock }) => {
       <EmptyState
         headingLevel="h3"
         icon={HelmCatalogIcon}
-        titleText={<>{t('No Helm Releases found')}</>}
+        titleText={<>{t('No Helm releases found')}</>}
         variant={EmptyStateVariant.full}
       >
         <EmptyStateFooter>
@@ -271,14 +246,15 @@ const HelmReleaseList: FC<{ mock?: boolean }> = ({ mock }) => {
 
   return (
     <>
-      <DocumentTitle>{t('Helm Releases')}</DocumentTitle>
+      <DocumentTitle>{t('Helm releases')}</DocumentTitle>
       <PaneBody>
         <Suspense fallback={<LoadingBox />}>
           {!mock && hasNoReleases ? (
             emptyState()
           ) : (
             <ConsoleDataView<HelmRelease, { obj: HelmRelease }, HelmReleaseFilters>
-              label={t('Helm Releases')}
+              id="console.ui~v1~HelmRelease"
+              label={t('Helm releases')}
               data={releases}
               loaded={isLoaded}
               loadError={secretsLoadError || loadError}
@@ -289,9 +265,6 @@ const HelmReleaseList: FC<{ mock?: boolean }> = ({ mock }) => {
               matchesAdditionalFilters={matchesAdditionalFilters}
               getDataViewRows={getDataViewRows}
               hideLabelFilter
-              hideColumnManagement
-              isResizable
-              resetAllColumnWidths={resetAllColumnWidths}
               mock={mock}
             />
           )}

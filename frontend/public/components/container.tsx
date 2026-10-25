@@ -1,8 +1,5 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import type { FC } from 'react';
-import * as _ from 'lodash';
-import { Trans, useTranslation } from 'react-i18next';
-import { useParams, useLocation } from 'react-router';
 import {
   CodeBlock,
   CodeBlockCode,
@@ -14,9 +11,15 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
-import { Status } from '@console/shared/src/components/status/Status';
+import i18n from 'i18next';
+import * as _ from 'lodash';
+import { Trans, useTranslation } from 'react-i18next';
+import { useParams, useLocation } from 'react-router';
+import { getBreadcrumbPath } from '@console/internal/components/utils/breadcrumbs';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import {
+import { Status } from '@console/shared/src/components/status/Status';
+import type {
   ContainerLifecycle,
   ContainerLifecycleStage,
   ContainerPort,
@@ -28,24 +31,21 @@ import {
   ResourceList,
   VolumeMount,
 } from '../module/k8s';
-import * as k8sProbe from '../module/k8s/probe';
 import {
   getContainerRestartCount,
   getContainerState,
   getContainerStatus,
   getPullPolicyLabel,
 } from '../module/k8s/container';
-import { HorizontalNav } from './utils/horizontal-nav';
-import { ConsoleEmptyState, LoadingBox } from './utils/status-box';
-import { NodeLink, resourcePath, ResourceLink } from './utils/resource-link';
-import { ConnectedPageHeading, SectionHeading } from './utils/headings';
-import { ScrollToTopOnMount } from './utils/scroll-to-top-on-mount';
-import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import { getBreadcrumbPath } from '@console/internal/components/utils/breadcrumbs';
-import i18n from 'i18next';
+import * as k8sProbe from '../module/k8s/probe';
 import { ErrorPage404 } from './error';
 import { ContainerLastState } from './pod';
+import { ConnectedPageHeading, SectionHeading } from './utils/headings';
+import { HorizontalNav } from './utils/horizontal-nav';
 import { useK8sWatchResource } from './utils/k8s-watch-hook';
+import { NodeLink, resourcePath, ResourceLink } from './utils/resource-link';
+import { ScrollToTopOnMount } from './utils/scroll-to-top-on-mount';
+import { ConsoleEmptyState, LoadingBox } from './utils/status-box';
 
 const formatComputeResources = (resources: ResourceList) =>
   _.map(resources, (v, k) => `${k}: ${v}`).join(', ');
@@ -132,6 +132,7 @@ const Ports: FC<PortsProps> = ({ ports }) => {
       </thead>
       <tbody>
         {ports.map((p: ContainerPort, i: number) => (
+          // eslint-disable-next-line react/no-array-index-key
           <tr className="pf-v6-c-table__tr" key={i}>
             <td className="pf-v6-c-table__td">{p.name || '-'}</td>
             <td className="pf-v6-c-table__td">{p.containerPort}</td>
@@ -197,11 +198,14 @@ const Env: FC<EnvProps> = ({ env }) => {
     const v = e.valueFrom;
     if (_.has(v, 'fieldRef')) {
       return t('field: {{fieldPath}}', v.fieldRef);
-    } else if (_.has(v, 'resourceFieldRef')) {
+    }
+    if (_.has(v, 'resourceFieldRef')) {
       return t('resource: {{resource}}', v.resourceFieldRef);
-    } else if (_.has(v, 'configMapKeyRef')) {
+    }
+    if (_.has(v, 'configMapKeyRef')) {
       return t('config-map: {{name}}/{{key}}', v.configMapKeyRef);
-    } else if (_.has(v, 'secretKeyRef')) {
+    }
+    if (_.has(v, 'secretKeyRef')) {
       return t('secret: {{name}}/{{key}}', v.secretKeyRef);
     }
     return e.value;
@@ -216,8 +220,8 @@ const Env: FC<EnvProps> = ({ env }) => {
         </tr>
       </thead>
       <tbody className="pf-v6-c-table__tbody">
-        {env.map((e: EnvVar, i: number) => (
-          <tr className="pf-v6-c-table__tr" key={i}>
+        {env.map((e: EnvVar) => (
+          <tr className="pf-v6-c-table__tr" key={e.name}>
             <td className="pf-v6-c-table__td">{e.name}</td>
             <td className="pf-v6-c-table__td">{value(e)}</td>
           </tr>
@@ -487,7 +491,7 @@ export const ContainerDetails: FC<ContainerDetailsProps> = (props) => {
     return <LoadingBox />;
   }
 
-  const pod = props.pod;
+  const { pod } = props;
   const container = getContainer(pod, params.name);
 
   if (!container) {
@@ -513,7 +517,7 @@ export const ContainerDetails: FC<ContainerDetailsProps> = (props) => {
         obj={{ data: props.pod, loaded: props.loaded, loadError: props.loadError }}
       />
       <HorizontalNav
-        hideNav={true}
+        hideNav
         pages={[{ name: 'container', href: '', component: ContainerDetailsList }]}
         obj={{ data: props.pod, loaded: props.loaded }}
       />

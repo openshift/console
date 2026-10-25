@@ -1,6 +1,6 @@
 import type { ReactNode, FC } from 'react';
 import { useContext } from 'react';
-import type { ModalVariant } from '@patternfly/react-core';
+import type { ModalVariant, PopoverPosition } from '@patternfly/react-core';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk/src';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { TourActions } from './const';
@@ -12,7 +12,7 @@ type StepComponentProps = {
   heading: string;
   content: StepContentType;
   selector?: string;
-  placement?: string;
+  placement?: PopoverPosition;
   showStepBadge?: boolean;
   nextButtonText: string;
   backButtonText: string;
@@ -37,9 +37,11 @@ const StepComponent: FC<StepComponentProps> = ({
 }) => {
   const fireTelemetryEvent = useTelemetry();
   const [activePerspective] = useActivePerspective();
-  const { tourDispatch, totalSteps, tourState: { stepNumber: step } = {} } = useContext(
-    TourContext,
-  );
+  const {
+    tourDispatch,
+    totalSteps,
+    tourState: { stepNumber: step } = {},
+  } = useContext(TourContext);
   return (
     <TourStepComponent
       key={step}

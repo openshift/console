@@ -41,9 +41,8 @@ const BuildTabSection: FC<{
 export const useBuildsSideBarTabSection: DetailsTabSectionExtensionHook = (
   element: GraphElement,
 ) => {
-  const [buildAdapterExtensions, extensionsResolved] = useResolvedExtensions<BuildAdapter>(
-    isBuildAdapter,
-  );
+  const [buildAdapterExtensions, extensionsResolved] =
+    useResolvedExtensions<BuildAdapter>(isBuildAdapter);
   const buildAdapter = useMemo(
     () =>
       getDataFromAdapter<AdapterDataType<BuildConfigData>, BuildAdapter>(element, [

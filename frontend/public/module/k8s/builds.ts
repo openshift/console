@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
-
 import { BuildModel, BuildConfigModel } from '../../models';
-import { k8sCreate } from './';
+import { k8sCreate } from '.';
+
 const BUILD_NUMBER_ANNOTATION = 'openshift.io/build.number';
 
 export enum BuildPhase {
@@ -27,13 +27,10 @@ const createBuildRequest = (obj, model, subresource) => {
   return k8sCreate(model, req, opts);
 };
 
-export const startBuild = (buildConfig) => {
-  return createBuildRequest(buildConfig, BuildConfigModel, 'instantiate');
-};
+export const startBuild = (buildConfig) =>
+  createBuildRequest(buildConfig, BuildConfigModel, 'instantiate');
 
-export const cloneBuild = (build) => {
-  return createBuildRequest(build, BuildModel, 'clone');
-};
+export const cloneBuild = (build) => createBuildRequest(build, BuildModel, 'clone');
 
 export const getBuildNumber = (build) => {
   const buildNumber = _.get(build, ['metadata', 'annotations', BUILD_NUMBER_ANNOTATION]);

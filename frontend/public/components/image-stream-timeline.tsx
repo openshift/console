@@ -1,13 +1,11 @@
 import type { FC } from 'react';
-import * as _ from 'lodash';
-// Icons are purely decorative. Probably want to replace these with CSS in the future.
-// eslint-disable-next-line no-restricted-imports
+// eslint-disable-next-line no-restricted-imports -- Icons are purely decorative. Probably want to replace these with CSS in the future.
 import { CircleIcon, SquareIcon } from '@patternfly/react-icons';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-
-import { K8sResourceKindReference } from '../module/k8s';
-import { ResourceLink } from './utils/resource-link';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import type { K8sResourceKindReference } from '../module/k8s';
+import { ResourceLink } from './utils/resource-link';
 import { EmptyBox } from './utils/status-box';
 
 const ImageStreamTagsReference: K8sResourceKindReference = 'ImageStreamTag';
@@ -22,6 +20,7 @@ const ImageStreamTimelineItem: FC<ImageStreamTimelineItemProps> = ({
   linkToTag,
 }) => {
   const referenceAndSHA = _.split(tag.dockerImageReference, '@');
+  const { t } = useTranslation('public');
   return (
     <>
       <li>
@@ -30,7 +29,7 @@ const ImageStreamTimelineItem: FC<ImageStreamTimelineItemProps> = ({
             <CircleIcon />
           </span>
           <div className="co-images-stream-tag-timeline__timestamp">
-            <Timestamp timestamp={tag.created} simple={true} />
+            <Timestamp timestamp={tag.created} simple />
           </div>
         </div>
 
@@ -44,7 +43,9 @@ const ImageStreamTimelineItem: FC<ImageStreamTimelineItemProps> = ({
               title={tag.tag}
               linkTo={linkToTag}
             />
-            <div className="co-break-all">from {referenceAndSHA[0]}</div>
+            <div className="co-break-all">
+              {t('from {{reference}}', { reference: referenceAndSHA[0] })}
+            </div>
             <div className="co-break-all">{referenceAndSHA[1]}</div>
           </div>
         </div>
@@ -58,12 +59,9 @@ const isTagVersionLatest = (
   comparedTag: string,
   comparedTagPosition: number,
   orderedTagArray: TagMeta[],
-) => {
-  return (
-    comparedTagPosition ===
-    _.findIndex(orderedTagArray, (orderedTag: TagMeta) => orderedTag.tag === comparedTag)
-  );
-};
+) =>
+  comparedTagPosition ===
+  _.findIndex(orderedTagArray, (orderedTag: TagMeta) => orderedTag.tag === comparedTag);
 
 export const ImageStreamTimeline: FC<ImageStreamTimelineProps> = ({
   imageStreamTags,
@@ -75,26 +73,24 @@ export const ImageStreamTimeline: FC<ImageStreamTimelineProps> = ({
     return <EmptyBox label={t('Images')} />;
   }
   const tagsArray: TagMeta[] = _.flatten(
-    _.map(imageStreamTags, ({ tag, items }) => {
-      return _.map(items, ({ created, dockerImageReference }) => ({
+    _.map(imageStreamTags, ({ tag, items }) =>
+      _.map(items, ({ created, dockerImageReference }) => ({
         tag,
         created,
         dockerImageReference,
-      }));
-    }),
+      })),
+    ),
   );
   const orderedTagArray = _.orderBy(tagsArray, ['created'], ['desc']);
-  const timeline = _.map(orderedTagArray, (tag: TagMeta, i: number) => {
-    return (
-      <ImageStreamTimelineItem
-        key={tag.dockerImageReference}
-        tag={tag}
-        imageStreamName={imageStreamName}
-        imageStreamNamespace={imageStreamNamespace}
-        linkToTag={isTagVersionLatest(tag.tag, i, orderedTagArray)}
-      />
-    );
-  });
+  const timeline = _.map(orderedTagArray, (tag: TagMeta, i: number) => (
+    <ImageStreamTimelineItem
+      key={tag.dockerImageReference}
+      tag={tag}
+      imageStreamName={imageStreamName}
+      imageStreamNamespace={imageStreamNamespace}
+      linkToTag={isTagVersionLatest(tag.tag, i, orderedTagArray)}
+    />
+  ));
 
   return (
     <>

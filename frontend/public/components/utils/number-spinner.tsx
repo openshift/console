@@ -1,5 +1,6 @@
 import type { FC, HTMLProps } from 'react';
-import { ButtonProps, NumberInput } from '@patternfly/react-core';
+import type { ButtonProps } from '@patternfly/react-core';
+import { NumberInput } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 
 export const NumberSpinner: FC<NumberSpinnerProps> = ({

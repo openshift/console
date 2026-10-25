@@ -33,9 +33,8 @@ export const normalizeCatalogItem: NormalizeExtensionCatalogItem = (item) => {
     validSubscription,
     version,
   } = item;
-  const [validSubscriptions, validSubscriptionFilters] = validSubscriptionReducer(
-    validSubscription,
-  );
+  const [validSubscriptions, validSubscriptionFilters] =
+    validSubscriptionReducer(validSubscription);
   const normalizedInfrastructureFeatures = infrastructureFeatures?.reduce(
     (acc, feature) =>
       infrastructureFeatureMap[feature] ? [...acc, infrastructureFeatureMap[feature]] : acc,

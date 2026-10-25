@@ -21,17 +21,50 @@ const HPADetailsForm: FC = () => {
     },
   } = useFormikContext<HPAFormValues>();
 
-  const updateField = (type: SupportedMetricTypes) => (
-    _event: FormEvent<HTMLInputElement>,
-    value: string,
-  ) => {
-    const hpa: HorizontalPodAutoscalerKind = field.value;
-    const { metric, index } = getMetricByType(hpa, type);
-    const hpaMetrics = hpa.spec.metrics || [];
+  const updateField =
+    (type: SupportedMetricTypes) => (_event: FormEvent<HTMLInputElement>, value: string) => {
+      const hpa: HorizontalPodAutoscalerKind = field.value;
+      const { metric, index } = getMetricByType(hpa, type);
+      const hpaMetrics = hpa.spec.metrics || [];
 
-    // If field is undefined, remove metric
-    if (!value) {
-      const updatedMetrics = hpaMetrics.filter((_, i) => i !== index);
+      // If field is undefined, remove metric
+      if (!value) {
+        const updatedMetrics = hpaMetrics.filter((_, i) => i !== index);
+        setFieldValue(name, {
+          ...hpa,
+          spec: {
+            ...hpa.spec,
+            metrics: updatedMetrics,
+          },
+        });
+        return;
+      }
+
+      // Create or update metric
+      const numValue = parseInt(value, 10);
+      const updatedMetrics = [...hpaMetrics];
+      updatedMetrics[index] = metric
+        ? {
+            ...metric,
+            resource: {
+              ...metric.resource,
+              target: {
+                ...metric.resource.target,
+                averageUtilization: numValue,
+              },
+            },
+          }
+        : {
+            type: 'Resource',
+            resource: {
+              name: type,
+              target: {
+                type: 'Utilization',
+                averageUtilization: numValue,
+              },
+            },
+          };
+
       setFieldValue(name, {
         ...hpa,
         spec: {
@@ -39,42 +72,7 @@ const HPADetailsForm: FC = () => {
           metrics: updatedMetrics,
         },
       });
-      return;
-    }
-
-    // Create or update metric
-    const numValue = parseInt(value, 10);
-    const updatedMetrics = [...hpaMetrics];
-    updatedMetrics[index] = metric
-      ? {
-          ...metric,
-          resource: {
-            ...metric.resource,
-            target: {
-              ...metric.resource.target,
-              averageUtilization: numValue,
-            },
-          },
-        }
-      : {
-          type: 'Resource',
-          resource: {
-            name: type,
-            target: {
-              type: 'Utilization',
-              averageUtilization: numValue,
-            },
-          },
-        };
-
-    setFieldValue(name, {
-      ...hpa,
-      spec: {
-        ...hpa.spec,
-        metrics: updatedMetrics,
-      },
-    });
-  };
+    };
 
   return (
     <>

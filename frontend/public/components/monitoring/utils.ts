@@ -1,9 +1,7 @@
 import * as _ from 'lodash';
 import { murmur3 } from 'murmurhash-js';
-import {
+import type {
   Alert,
-  AlertSeverity,
-  AlertStates,
   PrometheusLabels,
   PrometheusRule,
   Rule,
@@ -11,8 +9,8 @@ import {
   PrometheusRulesResponse,
   PerspectiveType,
 } from '@console/dynamic-plugin-sdk';
-
-import { MonitoringResource } from './types';
+import { AlertSeverity, AlertStates } from '@console/dynamic-plugin-sdk';
+import type { MonitoringResource } from './types';
 
 const AlertResource: MonitoringResource = {
   kind: 'Alert',

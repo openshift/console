@@ -213,7 +213,7 @@ export const usePodRingLabel = (
   ownerKind: string,
   pods: ExtPodKind[],
   hpaControlledScaling: boolean = false,
-  t: TFunction,
+  t: TFunction = undefined,
   hpa?: HorizontalPodAutoscalerKind,
 ): PodRingLabelType => {
   const podRingLabelData = hpaControlledScaling

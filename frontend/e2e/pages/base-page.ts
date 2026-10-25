@@ -1,4 +1,8 @@
-import { type Locator, type Page, expect } from '@playwright/test';
+import type { Locator, Page } from '@playwright/test';
+
+import { expect } from '../fixtures';
+
+import type KubernetesClient from '../clients/kubernetes-client';
 
 export async function getEditorContent(page: Page): Promise<string> {
   await page.waitForFunction(
@@ -17,14 +21,77 @@ export async function setEditorContent(page: Page, content: string): Promise<voi
   await page.waitForFunction(() => (window as any).monaco?.editor?.getModels()?.[0], {
     timeout: 10_000,
   });
-  await page.evaluate((text) => {
-    (window as any).monaco.editor.getModels()[0].setValue(text);
-  }, content);
+  // Monaco can swap its model during initialisation, silently dropping an early
+  // setValue and leaving the editor empty — which then submits an empty
+  // definition. Set and verify with retries so the content is guaranteed to
+  // stick before the caller proceeds.
+  await expect(async () => {
+    await page.evaluate((text) => {
+      (window as any).monaco.editor.getModels()[0].setValue(text);
+    }, content);
+    const value = await page.evaluate(() =>
+      (window as any).monaco.editor.getModels()[0].getValue(),
+    );
+    expect(value.trim()).toBe(content.trim());
+  }).toPass({ timeout: 15_000, intervals: [300, 700, 1500] });
 }
 
 export async function warmupSPA(page: Page): Promise<void> {
-  await page.goto('/');
-  await expect(page.getByTestId('page-heading')).toBeVisible();
+  // Session recovery on OAuth redirect is handled by the guarded `page` fixture
+  // (e2e/fixtures/index.ts), which re-authenticates on any navigation — during
+  // warmup or mid-test — that gets bounced to the login page.
+  await expect(async () => {
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 60_000 });
+    await expect(page.locator('#page-sidebar')).toBeVisible({ timeout: 30_000 });
+  }).toPass({ intervals: [1_000, 2_000, 5_000], timeout: 90_000 });
+  await dismissQuickStartDrawer(page);
+}
+
+export async function dismissQuickStartDrawer(page: Page): Promise<void> {
+  const closeButton = page.getByRole('button', { name: 'Close drawer panel' });
+  try {
+    // eslint-disable-next-line no-restricted-syntax
+    await closeButton.waitFor({ state: 'visible', timeout: 5_000 });
+    await closeButton.click();
+  } catch {
+    // No quickstart drawer open — continue
+  }
+}
+
+export async function ensureDeveloperPerspective(
+  page: Page,
+  k8sClient: KubernetesClient,
+): Promise<boolean> {
+  const toggle = page.getByTestId('perspective-switcher-toggle');
+  await expect(toggle).toBeVisible();
+  const isSinglePerspective = (await toggle.getAttribute('id')) === 'only-one-perspective';
+  if (isSinglePerspective) {
+    await k8sClient.customObjectsApi.patchClusterCustomObject({
+      group: 'operator.openshift.io',
+      version: 'v1',
+      plural: 'consoles',
+      name: 'cluster',
+      body: [
+        {
+          op: 'add',
+          path: '/spec/customization/perspectives',
+          value: [{ id: 'dev', visibility: { state: 'Enabled' } }],
+        },
+      ],
+    });
+    await expect(async () => {
+      await page.reload();
+      await expect(toggle).not.toHaveAttribute('id', 'only-one-perspective');
+      await toggle.click();
+      const devOption = page
+        .getByTestId('perspective-switcher-menu-option')
+        .filter({ hasText: 'Developer' });
+      await expect(devOption).toBeVisible();
+      await page.keyboard.press('Escape');
+    }).toPass({ timeout: 60_000 });
+    return true;
+  }
+  return false;
 }
 
 export default abstract class BasePage {
@@ -64,6 +131,54 @@ export default abstract class BasePage {
   protected async retryOnError(): Promise<void> {
     await this.page.reload({ waitUntil: 'domcontentloaded' });
     await this.waitForLoadingComplete();
+  }
+
+  // Waits until the URL has stopped changing for stableForMs, polling every
+  // pollIntervalMs. Some flows (e.g. impersonating a user with almost no
+  // cluster access) trigger an app-level redirect (restoring the "last
+  // visited resource") some time after the page itself looks settled;
+  // proceeding too early — e.g. reading browser history to compute a
+  // relative navigation — races that redirect, which then fires later and
+  // silently steals focus away from wherever the caller has since navigated.
+  protected async waitForUrlStable(
+    timeoutMs = 10_000,
+    stableForMs = 1_500,
+    pollIntervalMs = 250,
+  ): Promise<void> {
+    const deadline = Date.now() + timeoutMs;
+    let lastUrl = this.page.url();
+    let stableSince = Date.now();
+    while (Date.now() < deadline) {
+      // eslint-disable-next-line playwright/no-wait-for-timeout
+      await this.page.waitForTimeout(pollIntervalMs);
+      const currentUrl = this.page.url();
+      if (currentUrl !== lastUrl) {
+        lastUrl = currentUrl;
+        stableSince = Date.now();
+        continue;
+      }
+      if (Date.now() - stableSince >= stableForMs) {
+        return;
+      }
+    }
+  }
+
+  protected async waitForDetailsActions(actionsButton: Locator, timeoutMs = 60_000): Promise<void> {
+    // Navigating right after impersonation teardown can race the SPA reload and
+    // abort API discovery, leaving the resource watch stuck on "Model does not
+    // exist" with no auto-retry. Recover by reloading until actions render.
+    await expect(async () => {
+      const modelError = await this.page
+        .getByText('Model does not exist')
+        .isVisible()
+        .catch(() => false);
+      if (modelError) {
+        await this.retryOnError();
+      } else {
+        // eslint-disable-next-line no-restricted-syntax
+        await actionsButton.waitFor({ state: 'visible', timeout: 5_000 });
+      }
+    }).toPass({ timeout: timeoutMs });
   }
 
   protected locator(
@@ -132,10 +247,9 @@ export default abstract class BasePage {
   }
 
   async waitForEditorReady(): Promise<void> {
-    await this.page.waitForFunction(
-      () => !!(window as any).monaco?.editor?.getModels()?.[0],
-      { timeout: 30_000 },
-    );
+    await this.page.waitForFunction(() => !!(window as any).monaco?.editor?.getModels()?.[0], {
+      timeout: 30_000,
+    });
   }
 
   async getEditorContent(): Promise<string> {
@@ -146,19 +260,49 @@ export default abstract class BasePage {
     await setEditorContent(this.page, content);
   }
 
+  getPerspectiveSwitcherToggle(): Locator {
+    return this.page.getByTestId('perspective-switcher-toggle');
+  }
+
+  getPinnedResourceItems(): Locator {
+    return this.page.getByTestId('draggable-pinned-resource-item');
+  }
+
+  getSyncedEditor(): Locator {
+    return this.page.getByTestId('synced-editor-field');
+  }
+
+  getEditorRadio(name: string): Locator {
+    return this.getSyncedEditor().getByRole('radio', { name });
+  }
+
+  async ensureFormView(formFieldLocator?: Locator): Promise<void> {
+    const syncedEditor = this.getSyncedEditor();
+    // eslint-disable-next-line no-restricted-syntax
+    await syncedEditor.waitFor({ state: 'visible', timeout: 60_000 });
+    const formRadio = this.getEditorRadio('Form view');
+    if (!(await formRadio.isChecked())) {
+      await formRadio.click();
+    }
+    if (formFieldLocator) {
+      // eslint-disable-next-line no-restricted-syntax
+      await formFieldLocator.waitFor({ state: 'visible', timeout: 30_000 });
+    }
+  }
+
   async switchPerspective(target: 'Developer' | 'Administrator'): Promise<void> {
     const labelMap: Record<string, string[]> = {
       Administrator: ['Administrator', 'Core platform'],
       Developer: ['Developer'],
     };
-    const toggle = this.page.locator('[data-test-id="perspective-switcher-toggle"]');
+    const toggle = this.page.getByTestId('perspective-switcher-toggle');
     const labels = labelMap[target] || [target];
     const currentText = (await toggle.textContent()) || '';
     if (labels.some((label) => currentText.includes(label))) {
       return;
     }
     await this.robustClick(toggle);
-    const menuOption = this.page.locator('[data-test-id="perspective-switcher-menu-option"]');
+    const menuOption = this.page.getByTestId('perspective-switcher-menu-option');
     for (const label of labels) {
       const option = menuOption.filter({ hasText: label });
       if ((await option.count()) > 0) {

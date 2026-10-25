@@ -1,4 +1,4 @@
-import type { Reducer, Dispatch, ReducerAction } from 'react';
+import type { Dispatch } from 'react';
 import { createContext, useCallback, useEffect, useReducer, useRef, useState } from 'react';
 import { pick, union, isEqual } from 'lodash';
 import { createSelector } from 'reselect';
@@ -46,11 +46,9 @@ export const tourReducer = (state: TourState, action: TourStateAction) => {
   }
 };
 
-type TourReducer = Reducer<TourState, TourStateAction>;
-
 type TourContextType = {
   tourState?: TourState;
-  tourDispatch?: Dispatch<ReducerAction<TourReducer>>;
+  tourDispatch?: Dispatch<TourStateAction>;
   tour?: TourDataType;
   totalSteps?: number;
   onComplete?: () => void;
@@ -103,9 +101,10 @@ export const useTourStateForPerspective = (
     tourLocalState?.[perspective],
     useCallback(
       (completed: boolean) => {
-        setTourLocalState((state) => {
-          return { ...state, [perspective]: { ...state[perspective], completed } };
-        });
+        setTourLocalState((state) => ({
+          ...state,
+          [perspective]: { ...state[perspective], completed },
+        }));
       },
       [perspective, setTourLocalState],
     ),
@@ -136,9 +135,8 @@ export const useTourValuesForContext = (): TourContextType => {
     (state) => getRequiredFlagsByTour(state, selectorSteps),
     isEqual,
   );
-  const [tourCompletionState, setTourCompletionState, loaded] = useTourStateForPerspective(
-    activePerspective,
-  );
+  const [tourCompletionState, setTourCompletionState, loaded] =
+    useTourStateForPerspective(activePerspective);
   const isIntegrationTest = window.navigator.userAgent === INTEGRATION_TEST_USER_AGENT;
   const completed = tourCompletionState?.completed || isIntegrationTest;
   const onComplete = () => {
@@ -146,7 +144,7 @@ export const useTourValuesForContext = (): TourContextType => {
       setTourCompletionState(true);
     }
   };
-  const [tourState, tourDispatch] = useReducer<TourReducer>(tourReducer, {
+  const [tourState, tourDispatch] = useReducer(tourReducer, {
     completedTour: completed,
     stepNumber: 0,
     startTour: !completed,

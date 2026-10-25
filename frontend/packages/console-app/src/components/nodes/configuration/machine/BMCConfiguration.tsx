@@ -111,10 +111,10 @@ const BMCConfigDetails: FC<BMCDetailsProps> = ({ bareMetalHost, isLoading }) => 
   const protocol = protocolRaw?.includes('redfish')
     ? 'Redfish'
     : protocolRaw?.includes('idrac')
-    ? 'iDRAC'
-    : protocolRaw
-    ? protocolRaw.toUpperCase()
-    : undefined;
+      ? 'iDRAC'
+      : protocolRaw
+        ? protocolRaw.toUpperCase()
+        : undefined;
   const manufacturer = bareMetalHost?.status?.hardware?.systemVendor?.manufacturer;
   const productName = bareMetalHost?.status?.hardware?.systemVendor?.productName;
   const hardwareType = [manufacturer, productName].filter(Boolean).join(' ');

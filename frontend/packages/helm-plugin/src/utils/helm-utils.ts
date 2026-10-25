@@ -56,17 +56,15 @@ export const releaseStatusReducer = (release: HelmRelease) => {
   return release.info.status;
 };
 
-export const filterHelmReleasesByStatus = (releases: HelmRelease[], filter: string | string[]) => {
-  return releases.filter((release: HelmRelease) => {
-    return OtherReleaseStatuses.includes(release.info.status)
+export const filterHelmReleasesByStatus = (releases: HelmRelease[], filter: string | string[]) =>
+  releases.filter((release: HelmRelease) =>
+    OtherReleaseStatuses.includes(release.info.status)
       ? filter.includes(HelmReleaseStatus.Other)
-      : filter.includes(release.info.status);
-  });
-};
+      : filter.includes(release.info.status),
+  );
 
-export const filterHelmReleasesByName = (releases: HelmRelease[], filter: string) => {
-  return releases.filter((release: HelmRelease) => fuzzy(filter, release.name));
-};
+export const filterHelmReleasesByName = (releases: HelmRelease[], filter: string) =>
+  releases.filter((release: HelmRelease) => fuzzy(filter, release.name));
 
 export const fetchHelmReleases = (
   namespace: string,
@@ -94,7 +92,7 @@ export const getChartURL = (
   const chartData: HelmChartMetaData = helmChartData.find(
     (obj) => obj.version === chartVersion && obj.repoName === chartRepoName,
   );
-  return chartData?.urls[0];
+  return chartData?.urls?.[0];
 };
 
 export const getChartRepositoryTitle = (
@@ -186,6 +184,9 @@ export const getChartVersions = (chartEntries: HelmChartMetaData[], t: TFunction
   const chartVersions = _.reduce(
     chartEntries,
     (obj, chart) => {
+      if (!chart.urls?.length) {
+        return obj;
+      }
       obj[`${chart.version}--${chart.repoName}`] = concatVersions(
         chart.version,
         chart.appVersion,
@@ -225,13 +226,13 @@ export const getHelmActionConfig = (
     case HelmActionType.Create:
       return {
         type: HelmActionType.Create,
-        title: t('helm-plugin~Create Helm Release'),
+        title: t('helm-plugin~Create Helm release'),
         subTitle: {
           form: t(
-            'helm-plugin~The Helm Release can be created by completing the form. Default values may be provided by the Helm chart authors.',
+            'helm-plugin~You can create a Helm release by completing the form. The Helm Chart authors might have provided default values.',
           ),
           yaml: t(
-            'helm-plugin~The Helm Release can be created by manually entering YAML or JSON definitions.',
+            'helm-plugin~You can create a Helm release by manually entering YAML or JSON definitions.',
           ),
         },
         helmReleaseApi: `/api/helm/chart?url=${encodeURIComponent(
@@ -243,7 +244,7 @@ export const getHelmActionConfig = (
     case HelmActionType.Upgrade:
       return {
         type: HelmActionType.Upgrade,
-        title: t('helm-plugin~Upgrade Helm Release'),
+        title: t('helm-plugin~Upgrade Helm release'),
         subTitle: {
           form: t(
             'helm-plugin~Upgrade by selecting a new chart version or manually changing the form values.',
@@ -260,7 +261,7 @@ export const getHelmActionConfig = (
     case HelmActionType.Rollback:
       return {
         type: HelmActionType.Rollback,
-        title: t('helm-plugin~Rollback Helm Release'),
+        title: t('helm-plugin~Rollback Helm release'),
         subTitle: ``,
         helmReleaseApi: `/api/helm/release/history?ns=${namespace}&name=${releaseName}`,
         fetch: coFetchJSON.patch,

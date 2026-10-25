@@ -28,15 +28,19 @@ export const normalizeHelmCharts = (
   chartEntries: HelmChartEntries,
   chartRepositories: K8sResourceKind[],
   activeNamespace: string = '',
-  t: TFunction,
-): CatalogItem[] => {
-  return _.reduce(
+  t: TFunction = undefined,
+): CatalogItem[] =>
+  _.reduce(
     chartEntries,
     (normalizedCharts, charts, key) => {
       const chartRepoName = key.split('--').pop();
       const chartRepositoryTitle = getChartRepositoryTitle(chartRepositories, chartRepoName);
 
       charts.forEach((chart: HelmChartMetaData) => {
+        if (!chart.urls?.length) {
+          return;
+        }
+
         const { name, created, version, appVersion, description, keywords, annotations } = chart;
 
         const annotatedName = annotations?.[CHART_NAME_ANNOTATION] ?? '';
@@ -62,7 +66,7 @@ export const normalizeHelmCharts = (
               <span style={{ verticalAlign: 'middle' }}>{displayName}</span>{' '}
               <Tooltip
                 content={t(
-                  'helm-plugin~This Helm Chart is provided by a trusted partner and has been verified for ease of integration.',
+                  'helm-plugin~A trusted partner provides this Helm Chart and has verified it for ease of integration.',
                 )}
               >
                 <img src={certifiedIcon} alt={t('helm-plugin~Certified')} />
@@ -90,7 +94,7 @@ export const normalizeHelmCharts = (
 
         const detailsProperties: CatalogItemDetailsProperty[] = [
           {
-            label: t('helm-plugin~Latest Chart version'),
+            label: t('helm-plugin~Latest chart version'),
             value: version,
           },
           {
@@ -171,13 +175,12 @@ export const normalizeHelmCharts = (
         };
 
         // group Helm chart with same name and different version together
-        const existingChartIndex = normalizedCharts.findIndex((currentChart) => {
-          return (
+        const existingChartIndex = normalizedCharts.findIndex(
+          (currentChart) =>
             (currentChart.attributes?.name === name &&
               currentChart.attributes?.chartRepositoryTitle === chartRepositoryTitle) ||
-            (currentChart.name === annotatedName && currentChart.provider === providerName)
-          );
-        });
+            (currentChart.name === annotatedName && currentChart.provider === providerName),
+        );
 
         if (existingChartIndex > -1) {
           const existingChart = normalizedCharts[existingChartIndex];
@@ -198,4 +201,3 @@ export const normalizeHelmCharts = (
     },
     [] as CatalogItem[],
   );
-};

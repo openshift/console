@@ -1,5 +1,6 @@
 import type { FC, ComponentType, ReactNode } from 'react';
 import { ListPage } from '@console/internal/components/factory';
+// eslint-disable-next-line import/no-cycle -- pre-existing cycle with the dev-console project list pages
 import { ProjectsTable } from '@console/internal/components/namespace';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import './ProjectListPage.scss';

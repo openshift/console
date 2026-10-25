@@ -12,6 +12,7 @@ import { FormHeader } from '@console/shared/src/components/form-utils/FormHeader
 import { InputField } from '@console/shared/src/components/formik-fields/InputField';
 import { ResourceDropdownField } from '@console/shared/src/components/formik-fields/ResourceDropdownField';
 import type { HelmURLChartFormData } from './types';
+import { useBasicAuthSecretDropdown, CREATE_SECRET_KEY } from './useBasicAuthSecretDropdown';
 import { useSecretResources } from './useSecretResources';
 
 interface HelmURLChartFormProps {
@@ -32,9 +33,14 @@ const HelmURLChartForm: FC<FormikProps<HelmURLChartFormData> & HelmURLChartFormP
   setFieldError,
 }) => {
   const { t } = useTranslation('helm-plugin');
+  const { handleSecretChange } = useBasicAuthSecretDropdown({
+    namespace,
+    currentSecretName: values.basicAuthSecretName,
+    setFieldValue,
+  });
 
-  const autocompleteFilter = (strText: string, item: any): boolean =>
-    fuzzy(strText, item?.props?.name);
+  const autocompleteFilter = (strText: string, item: any, key?: string): boolean =>
+    fuzzy(strText, item?.props?.name || (typeof item === 'string' ? item : key) || '');
 
   const secretResources = useSecretResources(namespace);
   const isNextDisabled = !isValid || !dirty || isSubmitting;
@@ -46,7 +52,10 @@ const HelmURLChartForm: FC<FormikProps<HelmURLChartFormData> & HelmURLChartFormP
     try {
       url = new URL(values.chartURL);
     } catch {
-      setFieldError('chartURL', t('Invalid chart URL format.'));
+      setFieldError(
+        'chartURL',
+        t('Invalid chart URL. Enter an OCI URL (oci://...) or an HTTPS .tar file URL.'),
+      );
       return;
     }
     const scheme = url.protocol;
@@ -86,9 +95,9 @@ const HelmURLChartForm: FC<FormikProps<HelmURLChartFormData> & HelmURLChartFormP
     >
       <FormBody flexLayout>
         <FormHeader
-          title={t('Install Helm chart from URL')}
+          title={t('Install Helm Chart from URL')}
           helpText={t(
-            'To install a Helm chart, enter the chart URL - Open Container Initiative (OCI) URL or HTTP/HTTPS tar file and version.',
+            'Enter an OCI registry URL or an HTTP/HTTPS .tar file URL and version to install the Helm Chart.',
           )}
           marginBottom="lg"
         />
@@ -100,7 +109,7 @@ const HelmURLChartForm: FC<FormikProps<HelmURLChartFormData> & HelmURLChartFormP
                 name="chartURL"
                 label={t('Chart URL')}
                 helpText={t(
-                  'The OCI URL or HTTP/HTTPS tar file for the Helm chart; for example - oci://registry.example.com/charts/mychart or https://example.com/chart-1.0.0.tgz.',
+                  'OCI URL or HTTP/HTTPS .tar file for the Helm Chart; for example, oci://registry.example.com/charts/mychart or https://example.com/chart-1.0.0.tgz.',
                 )}
                 placeholder="oci://registry.example.com/charts/mychart or https://example.com/chart-1.0.0.tgz"
                 required
@@ -135,11 +144,19 @@ const HelmURLChartForm: FC<FormikProps<HelmURLChartFormData> & HelmURLChartFormP
                 resources={secretResources}
                 dataSelector={['metadata', 'name']}
                 fullWidth
-                placeholder={t('Select a secret')}
+                placeholder={t('Select Secret')}
                 showBadge
                 autocompleteFilter={autocompleteFilter}
+                actionItems={[
+                  {
+                    actionTitle: t('Create Secret'),
+                    actionKey: CREATE_SECRET_KEY,
+                  },
+                ]}
+                onChange={handleSecretChange}
                 helpText={t(
-                  'A secret with "username" and "password" keys for OCI/HTTP(S) authentication',
+                  'Secret with "{{username}}" and "{{password}}" keys for OCI/HTTP(S) authentication.',
+                  { username: 'username', password: 'password' },
                 )}
               />
             </GridItem>

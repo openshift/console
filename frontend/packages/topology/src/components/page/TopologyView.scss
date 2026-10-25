@@ -21,13 +21,6 @@
     left: 0;
     right: 0;
   }
-  &__hint-background {
-    background-color: var(--pf-t--global--background--color--primary--default);
-    border: 1px solid var(--pf-t--global--border--color--disabled);
-    border-radius: 8px;
-    padding: var(--pf-t--global--spacer--xs) var(--pf-t--global--spacer--sm);
-    pointer-events: none;
-  }
 
   &__layout-group {
     display: flex;

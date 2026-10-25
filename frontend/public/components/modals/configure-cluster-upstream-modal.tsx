@@ -17,22 +17,22 @@ import {
   TextInput,
 } from '@patternfly/react-core';
 import { RhUiErrorFillIcon } from '@patternfly/react-icons';
-
-import { ClusterVersionModel } from '../../models';
-import { ClusterVersionKind, k8sPatch } from '../../module/k8s';
-import { ModalComponentProps } from '@console/shared/src/types/modal';
-import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
-import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
+import { useTranslation } from 'react-i18next';
+import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
+import { CLUSTER_VERSION_DEFAULT_UPSTREAM_SERVER_URL_PLACEHOLDER } from '@console/shared/src/constants/common';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
+import type { ModalComponentProps } from '@console/shared/src/types/modal';
+import { ClusterVersionModel } from '../../models';
+import type { ClusterVersionKind } from '../../module/k8s';
+import { k8sPatch } from '../../module/k8s';
 import {
   documentationURLs,
   getDocumentationURL,
   isManaged,
   isUpstream,
 } from '../utils/documentation';
-import { useTranslation } from 'react-i18next';
-import { CLUSTER_VERSION_DEFAULT_UPSTREAM_SERVER_URL_PLACEHOLDER } from '@console/shared/src/constants/common';
-import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 
 const ConfigureClusterUpstreamModal = (props: ConfigureClusterUpstreamModalProps) => {
   const { cv, close } = props;
@@ -51,7 +51,8 @@ const ConfigureClusterUpstreamModal = (props: ConfigureClusterUpstreamModalProps
         if (!customURL) {
           setInvalidCustomURL(true);
           return;
-        } else if (customURL === currentUpstream) {
+        }
+        if (customURL === currentUpstream) {
           close();
           return;
         }
@@ -113,7 +114,7 @@ const ConfigureClusterUpstreamModal = (props: ConfigureClusterUpstreamModalProps
                 !customSelected && (
                   <>
                     <TextInput
-                      id={'cluster-version-default-upstream-server-url'}
+                      id="cluster-version-default-upstream-server-url"
                       type="url"
                       readOnly
                       value={CLUSTER_VERSION_DEFAULT_UPSTREAM_SERVER_URL_PLACEHOLDER}
@@ -197,9 +198,9 @@ const ConfigureClusterUpstreamModal = (props: ConfigureClusterUpstreamModalProps
   );
 };
 
-export const ConfigureClusterUpstreamModalOverlay: OverlayComponent<ConfigureClusterUpstreamModalProps> = (
-  props,
-) => {
+export const ConfigureClusterUpstreamModalOverlay: OverlayComponent<
+  ConfigureClusterUpstreamModalProps
+> = (props) => {
   const [isOpen, setIsOpen] = useState(true);
   const handleClose = () => {
     setIsOpen(false);

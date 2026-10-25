@@ -116,9 +116,8 @@ const AddServerlessFunction: FC<AddServerlessFunctionProps> = ({ namespace, forA
       isList: true,
     },
   };
-  const resourcesData: WatchK8sResults<WatchResource> = useK8sWatchResources<WatchResource>(
-    watchedResources,
-  );
+  const resourcesData: WatchK8sResults<WatchResource> =
+    useK8sWatchResources<WatchResource>(watchedResources);
 
   const isResourceLoaded =
     Object.keys(resourcesData).length > 0 &&
@@ -174,7 +173,6 @@ const AddServerlessFunction: FC<AddServerlessFunctionProps> = ({ namespace, forA
         );
       })
       .catch((err) => {
-        // eslint-disable-next-line no-console
         console.warn('Error while submitting import form:', err);
         actions.setStatus({ submitError: err.message });
       });

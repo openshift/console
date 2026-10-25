@@ -13,7 +13,7 @@ const Footer = ({ children }) => {
     <Trans
       t={t}
       ns="webterminal-plugin"
-      defaults="Click on the names to access advanced options for <0></0>."
+      i18nKey="Click on the names to access advanced options for <0></0>."
       components={[children]}
     />
   );
@@ -43,14 +43,12 @@ const List: FC = () => {
   );
 };
 
-const CloudShellAdvancedSection: FC = () => {
-  return (
-    <FormSection style={{ marginTop: 'var(--pf-t--global--spacer--md)' }}>
-      <div>
-        <List />
-      </div>
-    </FormSection>
-  );
-};
+const CloudShellAdvancedSection: FC = () => (
+  <FormSection style={{ marginTop: 'var(--pf-t--global--spacer--md)' }}>
+    <div>
+      <List />
+    </div>
+  </FormSection>
+);
 
 export default CloudShellAdvancedSection;

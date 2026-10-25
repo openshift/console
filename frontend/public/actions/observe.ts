@@ -1,6 +1,6 @@
-import { action, ActionType as Action } from 'typesafe-actions';
-
-import { Rule } from '@console/dynamic-plugin-sdk';
+import type { ActionType as Action } from 'typesafe-actions';
+import { action } from 'typesafe-actions';
+import type { Rule } from '@console/dynamic-plugin-sdk';
 
 export enum ActionType {
   AlertingSetData = 'alertingSetData',

@@ -1,4 +1,3 @@
-import * as _ from 'lodash';
 import type { QueryWithDescription } from '../components/dashboard/utilization-card/UtilizationItem';
 
 export enum ProjectQueries {
@@ -19,48 +18,35 @@ export enum ProjectQueries {
 }
 
 const queries = {
-  [ProjectQueries.CPU_USAGE]: _.template(
-    `namespace:container_cpu_usage:sum{namespace='<%= project %>'}`,
-  ),
-  [ProjectQueries.CPU_REQUESTS]: _.template(
-    `sum(kube_pod_resource_request{resource="cpu", namespace="<%= project %>"}) by (namespace)`,
-  ),
-  [ProjectQueries.MEMORY_USAGE]: _.template(
-    `sum(container_memory_working_set_bytes{namespace='<%= project %>',container="",pod!=""}) BY (namespace)`,
-  ),
-  [ProjectQueries.MEMORY_REQUESTS]: _.template(
-    `sum(kube_pod_resource_request{resource="memory", namespace="<%= project %>"}) by (namespace)`,
-  ),
-  [ProjectQueries.POD_COUNT]: _.template(
-    `count(kube_running_pod_ready{namespace='<%= project %>'}) BY (namespace)`,
-  ),
-  [ProjectQueries.FILESYSTEM_USAGE]: _.template(
-    `sum(pod:container_fs_usage_bytes:sum{container="",pod!="",namespace='<%= project %>'}) BY (namespace)`,
-  ),
-  [ProjectQueries.NETWORK_IN_UTILIZATION]: _.template(
-    `sum(rate(container_network_receive_bytes_total{container="POD",pod!="",namespace='<%= project %>'}[5m])) BY (namespace)`,
-  ),
-  [ProjectQueries.NETWORK_OUT_UTILIZATION]: _.template(
-    `sum(rate(container_network_transmit_bytes_total{container="POD",pod!="",namespace='<%= project %>'}[5m])) BY (namespace)`,
-  ),
+  [ProjectQueries.CPU_USAGE]: ({ project = '' }: { project?: string }) =>
+    `namespace:container_cpu_usage:sum{namespace='${project}'}`,
+  [ProjectQueries.CPU_REQUESTS]: ({ project = '' }: { project?: string }) =>
+    `sum(kube_pod_resource_request{resource="cpu", namespace="${project}"}) by (namespace)`,
+  [ProjectQueries.MEMORY_USAGE]: ({ project = '' }: { project?: string }) =>
+    `sum(container_memory_working_set_bytes{namespace='${project}',container="",pod!=""}) BY (namespace)`,
+  [ProjectQueries.MEMORY_REQUESTS]: ({ project = '' }: { project?: string }) =>
+    `sum(kube_pod_resource_request{resource="memory", namespace="${project}"}) by (namespace)`,
+  [ProjectQueries.POD_COUNT]: ({ project = '' }: { project?: string }) =>
+    `count(kube_running_pod_ready{namespace='${project}'}) BY (namespace)`,
+  [ProjectQueries.FILESYSTEM_USAGE]: ({ project = '' }: { project?: string }) =>
+    `sum(pod:container_fs_usage_bytes:sum{container="",pod!="",namespace='${project}'}) BY (namespace)`,
+  [ProjectQueries.NETWORK_IN_UTILIZATION]: ({ project = '' }: { project?: string }) =>
+    `sum(rate(container_network_receive_bytes_total{container="POD",pod!="",namespace='${project}'}[5m])) BY (namespace)`,
+  [ProjectQueries.NETWORK_OUT_UTILIZATION]: ({ project = '' }: { project?: string }) =>
+    `sum(rate(container_network_transmit_bytes_total{container="POD",pod!="",namespace='${project}'}[5m])) BY (namespace)`,
 };
 
 const top25Queries = {
-  [ProjectQueries.PODS_BY_CPU]: _.template(
-    `topk(25, sort_desc(sum(avg_over_time(pod:container_cpu_usage:sum{container="",pod!="",namespace='<%= project %>'}[5m])) BY (pod, namespace)))`,
-  ),
-  [ProjectQueries.PODS_BY_MEMORY]: _.template(
-    `topk(25, sort_desc(sum(avg_over_time(container_memory_working_set_bytes{container="",pod!="",namespace='<%= project %>'}[5m])) BY (pod, namespace)))`,
-  ),
-  [ProjectQueries.PODS_BY_FILESYSTEM]: _.template(
-    `topk(25, sort_desc(sum(pod:container_fs_usage_bytes:sum{container="",pod!="",namespace='<%= project %>'}) BY (pod, namespace)))`,
-  ),
-  [ProjectQueries.PODS_BY_NETWORK_IN]: _.template(
-    `topk(25, sort_desc(sum(rate(container_network_receive_bytes_total{ container="POD", pod!= "", namespace = '<%= project %>'}[5m])) BY (namespace, pod)))`,
-  ),
-  [ProjectQueries.PODS_BY_NETWORK_OUT]: _.template(
-    `topk(25, sort_desc(sum(rate(container_network_transmit_bytes_total{ container="POD", pod!= "", namespace = '<%= project %>'}[5m])) BY (namespace, pod)))`,
-  ),
+  [ProjectQueries.PODS_BY_CPU]: ({ project = '' }: { project?: string }) =>
+    `topk(25, sort_desc(sum(avg_over_time(pod:container_cpu_usage:sum{container="",pod!="",namespace='${project}'}[5m])) BY (pod, namespace)))`,
+  [ProjectQueries.PODS_BY_MEMORY]: ({ project = '' }: { project?: string }) =>
+    `topk(25, sort_desc(sum(avg_over_time(container_memory_working_set_bytes{container="",pod!="",namespace='${project}'}[5m])) BY (pod, namespace)))`,
+  [ProjectQueries.PODS_BY_FILESYSTEM]: ({ project = '' }: { project?: string }) =>
+    `topk(25, sort_desc(sum(pod:container_fs_usage_bytes:sum{container="",pod!="",namespace='${project}'}) BY (pod, namespace)))`,
+  [ProjectQueries.PODS_BY_NETWORK_IN]: ({ project = '' }: { project?: string }) =>
+    `topk(25, sort_desc(sum(rate(container_network_receive_bytes_total{ container="POD", pod!= "", namespace = '${project}'}[5m])) BY (namespace, pod)))`,
+  [ProjectQueries.PODS_BY_NETWORK_OUT]: ({ project = '' }: { project?: string }) =>
+    `topk(25, sort_desc(sum(rate(container_network_transmit_bytes_total{ container="POD", pod!= "", namespace = '${project}'}[5m])) BY (namespace, pod)))`,
 };
 
 export const getMultilineQueries = (

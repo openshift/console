@@ -120,12 +120,10 @@ const TelemetryConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
   const fireTelemetryEvent = useTelemetry();
 
   // Current configuration
-  const [consoleConfig, consoleConfigLoaded, consoleConfigError] = useConsoleOperatorConfig<
-    TelemetryConsoleConfig
-  >();
-  const [configuredTelemetrySetting, setConfiguredTelemetrySetting] = useState<
-    CLUSTER_TELEMETRY_ANALYTICS
-  >();
+  const [consoleConfig, consoleConfigLoaded, consoleConfigError] =
+    useConsoleOperatorConfig<TelemetryConsoleConfig>();
+  const [configuredTelemetrySetting, setConfiguredTelemetrySetting] =
+    useState<CLUSTER_TELEMETRY_ANALYTICS>();
   useEffect(() => {
     if (consoleConfig && consoleConfigLoaded && !configuredTelemetrySetting) {
       setConfiguredTelemetrySetting(

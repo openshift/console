@@ -1,6 +1,4 @@
-import type { FC } from 'react';
-import { FormEvent } from 'react';
-import { useTranslation } from 'react-i18next';
+import type { FC, FormEvent } from 'react';
 import {
   FormGroup,
   TextInput,
@@ -8,7 +6,8 @@ import {
   HelperText,
   HelperTextItem,
 } from '@patternfly/react-core';
-import { SecretStringData } from './types';
+import { useTranslation } from 'react-i18next';
+import type { SecretStringData } from './types';
 
 export const BasicAuthSubform: FC<BasicAuthSubformProps> = ({ onChange, stringData }) => {
   const { t } = useTranslation('public');

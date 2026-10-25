@@ -34,18 +34,13 @@ const AddPageLayout: FC<AddPageLayoutProps> = ({ title }) => {
     setIsQuickSearchOpen(open);
   }, []);
   const addActionGroupExtensions = useExtensions<AddActionGroup>(isAddActionGroup);
-  const [
-    addActionExtensions,
-    addActionExtensionsResolved,
-    allAddActionsDisabled,
-  ] = useAddActionExtensions();
-  const [
-    filteredAddActionExtensions,
-    filteredAddActionExtensionsLoaded,
-  ] = useAccessFilterExtensions(
-    activeNamespace,
-    filterNamespaceScopedUrl(activeNamespace, addActionExtensions),
-  );
+  const [addActionExtensions, addActionExtensionsResolved, allAddActionsDisabled] =
+    useAddActionExtensions();
+  const [filteredAddActionExtensions, filteredAddActionExtensionsLoaded] =
+    useAccessFilterExtensions(
+      activeNamespace,
+      filterNamespaceScopedUrl(activeNamespace, addActionExtensions),
+    );
   const [showDetails, setShowDetails] = useShowAddCardItemDetails();
 
   const extensionsLoaded: boolean =

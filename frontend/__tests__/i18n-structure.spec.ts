@@ -1,15 +1,9 @@
-import { basename, resolve, sep } from 'path';
 import { readFileSync } from 'fs';
+import { basename, resolve, sep } from 'path';
 import { sync as glob } from 'glob';
+import { NAMESPACE_EXCEPTIONS } from '../i18n-scripts/namespace-map';
 
-const FRONTEND_DIR = resolve(__dirname, '..');
-
-/** Packages where the i18n namespace differs from the package directory name */
-const NAMESPACE_EXCEPTIONS: Record<string, string> = {
-  'dev-console': 'devconsole',
-  'operator-lifecycle-manager': 'olm',
-  'operator-lifecycle-manager-v1': 'olm-v1',
-};
+const FRONTEND_DIR = resolve(import.meta.dirname, '..');
 
 /** Returns the expected i18n namespace for a file path relative to the frontend directory. */
 const expectedNamespace = (file: string): string => {
@@ -50,6 +44,42 @@ describe('i18n structure', () => {
       expect(mismatches).toEqual([]);
     });
 
+    it('must have different values for _one and _other plural keys in EN', () => {
+      const enLocaleFiles = LOCALE_FILES.filter((file) => file.includes('/en/'));
+      const identical: string[] = [];
+
+      for (const file of enLocaleFiles) {
+        const raw = readFileSync(resolve(FRONTEND_DIR, file), 'utf-8');
+        const data = JSON.parse(raw);
+        const lines = raw.split('\n');
+
+        for (const [key, value] of Object.entries(data)) {
+          if (key.endsWith('_one')) {
+            const base = key.slice(0, -4);
+            const otherValue = data[`${base}_other`];
+            if (otherValue !== undefined && value === otherValue) {
+              const line = lines.findIndex((l) => l.includes(`"${key}"`)) + 1;
+              identical.push(`${file}:${line}: "${base}"`);
+            }
+          }
+        }
+      }
+
+      if (identical.length > 0) {
+        throw new Error(
+          [
+            'Found _one/_other pairs with identical values:',
+            '',
+            ...identical,
+            '',
+            'Hint: If the singular and plural forms are genuinely identical, use a',
+            'variable name other than "count" (e.g. "numberOf") to avoid i18next',
+            'plural resolution and use a single key instead of _one/_other pairs.',
+          ].join('\n'),
+        );
+      }
+    });
+
     it('must contain only one file per locale directory', () => {
       const dirCounts: Record<string, string[]> = {};
       for (const file of LOCALE_FILES) {
@@ -69,7 +99,7 @@ describe('i18n structure', () => {
   });
 
   describe('useTranslation namespace', () => {
-    const SOURCE_FILES = glob('{packages/*/src,public}/**/*.{ts,tsx,jsx}', {
+    const SOURCE_FILES = glob('{packages/*/src,public}/**/*.{ts,tsx}', {
       cwd: FRONTEND_DIR,
       ignore: [
         '**/__tests__/**',

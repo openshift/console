@@ -1,16 +1,12 @@
 import type { FC } from 'react';
 import { useState, useCallback } from 'react';
-import { ResourceYAMLEditorProps } from '@console/dynamic-plugin-sdk';
+import type { DropEvent, DropzoneErrorCode, MultipleFileUploadProps } from '@patternfly/react-core';
+import { MultipleFileUpload } from '@patternfly/react-core';
 import { isText } from 'istextorbinary';
-
-import { EditYAML, EditYAMLProps } from './edit-yaml';
-import {
-  DropEvent,
-  DropzoneErrorCode,
-  MultipleFileUpload,
-  MultipleFileUploadProps,
-} from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import type { ResourceYAMLEditorProps } from '@console/dynamic-plugin-sdk';
+import type { EditYAMLProps } from './edit-yaml';
+import { EditYAML } from './edit-yaml';
 import { units } from './utils/units';
 
 // Maximal file size, in bytes, that user can upload
@@ -111,12 +107,9 @@ export const DroppableEditYAML: FC<DroppableEditYAMLProps & EditYAMLProps> = ({
   const onDropRejected: MultipleFileUploadProps['dropzoneProps']['onDropRejected'] = useCallback(
     (rejections) => {
       setErrors(
-        rejections.map((rejection) => {
-          return getDropErrorMessage(
-            rejection.errors[0].code as DropzoneErrorCode,
-            rejection.file.name,
-          );
-        }),
+        rejections.map((rejection) =>
+          getDropErrorMessage(rejection.errors[0].code as DropzoneErrorCode, rejection.file.name),
+        ),
       );
     },
     [getDropErrorMessage],
@@ -169,6 +162,7 @@ export const ResourceYAMLEditor: FC<ResourceYAMLEditorProps> = ({
   initialResource,
   header,
   onSave,
+  onCancel,
   readOnly,
   create,
   onChange,
@@ -178,6 +172,7 @@ export const ResourceYAMLEditor: FC<ResourceYAMLEditorProps> = ({
     initialResource={initialResource}
     header={header}
     onSave={onSave}
+    onCancel={onCancel}
     readOnly={readOnly}
     create={create}
     onChange={onChange}

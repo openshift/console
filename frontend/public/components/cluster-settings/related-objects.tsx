@@ -1,27 +1,19 @@
 import type { FC } from 'react';
 import { useMemo, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  referenceForModel,
-  ClusterOperator,
-  ClusterOperatorObjectReference,
-  useModelFinder,
-} from '../../module/k8s';
-import { ResourceLink } from '../utils/resource-link';
-import { DASH } from '@console/shared/src/constants/ui';
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import {
-  getNameCellProps,
-  cellIsStickyProps,
-  ConsoleDataView,
-} from '@console/app/src/components/data-view/ConsoleDataView';
-import {
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
+import type {
   ResourceFilters,
   ConsoleDataViewColumn,
   ConsoleDataViewRow,
   ResourceMetadata,
-} from '@console/app/src/components/data-view/types';
-import { RowProps, TableColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+  RowProps,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { DASH } from '@console/shared/src/constants/ui';
+import { referenceForModel, useModelFinder } from '../../module/k8s';
+import type { ClusterOperator, ClusterOperatorObjectReference } from '../../module/k8s';
+import { ResourceLink } from '../utils/resource-link';
 
 const columnIds = [{ id: 'name' }, { id: 'resource' }, { id: 'group' }, { id: 'namespace' }];
 
@@ -44,8 +36,8 @@ type RelatedObjectsRowData = {
 const getRelatedObjectsDataViewRows = (
   rowData: RowProps<ClusterOperatorObjectReference, RelatedObjectsRowData>[],
   tableColumns: ConsoleDataViewColumn<ClusterOperatorObjectReference>[],
-): ConsoleDataViewRow[] => {
-  return rowData.map(({ obj, rowData: customData }) => {
+): ConsoleDataViewRow[] =>
+  rowData.map(({ obj, rowData: customData }) => {
     const { name, resource, namespace, group } = obj;
     const { findModel } = customData;
     const model = findModel(group, resource);
@@ -54,7 +46,6 @@ const getRelatedObjectsDataViewRows = (
     const rowCells = {
       [columnIds[0].id]: {
         cell: <ResourceObjectName gsv={gsv} name={name} namespace={namespace} />,
-        props: getNameCellProps(name),
       },
       [columnIds[1].id]: {
         cell: resource,
@@ -71,32 +62,27 @@ const getRelatedObjectsDataViewRows = (
       const cell = rowCells[id]?.cell || DASH;
       return {
         id,
-        props: rowCells[id]?.props,
         cell,
       };
     });
   });
-};
 
-const useRelatedObjectsColumns = (): TableColumn<ClusterOperatorObjectReference>[] => {
+const useRelatedObjectsColumns = (): ConsoleDataViewColumn<ClusterOperatorObjectReference>[] => {
   const { t } = useTranslation('public');
-  const columns = useMemo(() => {
-    return [
+  const columns = useMemo<ConsoleDataViewColumn<ClusterOperatorObjectReference>[]>(
+    () => [
       {
-        title: t('Name'),
+        type: 'name' as const,
         id: columnIds[0].id,
         sort: 'name',
-        props: {
-          ...cellIsStickyProps,
-          modifier: 'nowrap',
-        },
+        props: { hasRightBorder: false },
       },
       {
         title: t('Resource'),
         id: columnIds[1].id,
         sort: 'resource',
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -104,25 +90,23 @@ const useRelatedObjectsColumns = (): TableColumn<ClusterOperatorObjectReference>
         id: columnIds[2].id,
         sort: 'group',
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
-        title: t('Namespace'),
+        type: 'namespace' as const,
         id: columnIds[3].id,
         sort: 'namespace',
-        props: {
-          modifier: 'nowrap',
-        },
       },
-    ];
-  }, [t]);
+    ],
+    [t],
+  );
   return columns;
 };
 
-const getObjectMetadata = (object: ClusterOperatorObjectReference): ResourceMetadata => {
-  return { name: object.name };
-};
+const getObjectMetadata = (object: ClusterOperatorObjectReference): ResourceMetadata => ({
+  name: object.name,
+});
 
 const RelatedObjects: FC<RelatedObjectsProps> = ({ data }) => {
   const { findModel } = useModelFinder();
@@ -136,16 +120,17 @@ const RelatedObjects: FC<RelatedObjectsProps> = ({ data }) => {
   return (
     <Suspense fallback={<div className="loading-skeleton--table" />}>
       <ConsoleDataView<ClusterOperatorObjectReference, RelatedObjectsRowData, RelatedObjectsFilters>
+        isResizable={false}
+        id="console.ui~v1~ClusterOperatorRelatedObjects"
         label={t('Related objects')}
         data={data}
-        loaded={true}
+        loaded
         columns={columns}
         getObjectMetadata={getObjectMetadata}
         getDataViewRows={getRelatedObjectsDataViewRows}
         customRowData={customRowData}
-        hideColumnManagement={true}
         hideNameLabelFilters={false}
-        hideLabelFilter={true}
+        hideLabelFilter
       />
     </Suspense>
   );

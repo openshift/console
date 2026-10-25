@@ -48,9 +48,8 @@ export const podSetInnerRadius = (size: number, data?: PodRCData) => {
 
 export const PodSet = memo<PodSetProps>(({ size, data, x = 0, y = 0, showPodCount }) => {
   const { t } = useTranslation('topology');
-  const { podStatusOuterRadius, podStatusInnerRadius, podStatusStrokeWidth } = calculateRadius(
-    size,
-  );
+  const { podStatusOuterRadius, podStatusInnerRadius, podStatusStrokeWidth } =
+    calculateRadius(size);
   const { innerPodStatusOuterRadius, innerPodStatusInnerRadius } = calculateInnerPodStatusRadius(
     podStatusInnerRadius,
     podStatusStrokeWidth,

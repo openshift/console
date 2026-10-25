@@ -47,10 +47,10 @@ export const NavSection: FC<NavSectionProps> = ({ id, name, dataAttributes }) =>
     },
     [getK8sModelForExtension, location],
   );
-  const isActive = useMemo(() => navExtensions.some(navExtensionIsActive), [
-    navExtensions,
-    navExtensionIsActive,
-  ]);
+  const isActive = useMemo(
+    () => navExtensions.some(navExtensionIsActive),
+    [navExtensions, navExtensionIsActive],
+  );
   const hasChildren = navExtensions?.length > 0;
 
   // Section is empty

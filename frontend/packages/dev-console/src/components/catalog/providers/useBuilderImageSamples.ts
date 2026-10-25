@@ -34,7 +34,7 @@ const normalizeBuilderImages = (
     const creationTimestamp = imageStream.metadata?.creationTimestamp;
     const namespacePath = activeNamespace ? `/ns/${activeNamespace}` : '';
     const href = `/samples${namespacePath}/${name}/${imageStreamNS}`;
-    const createLabel = t('Create Builder Image Sample');
+    const createLabel = t('devconsole~Create Builder Image Sample');
     const type = 'BuilderImage';
 
     const item: CatalogItem = {
@@ -67,9 +67,8 @@ const useBuilderImageSamples: ExtensionHook<CatalogItem[]> = ({ namespace }) => 
     namespace: 'openshift',
     isList: true,
   };
-  const [imageStreams, loaded, loadedError] = useK8sWatchResource<K8sResourceKind[]>(
-    resourceSelector,
-  );
+  const [imageStreams, loaded, loadedError] =
+    useK8sWatchResource<K8sResourceKind[]>(resourceSelector);
 
   const normalizedBuilderImages = useMemo<CatalogItem[]>(() => {
     const filteredImageStreams = imageStreams.filter((imageStream) => {

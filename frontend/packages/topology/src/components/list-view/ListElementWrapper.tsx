@@ -16,28 +16,21 @@ interface ListElementWrapperProps {
 }
 
 // in a separate component so that changes to behaviors do not re-render children
-const ListElementComponent: FC<ListElementWrapperProps> = observer(function ListElementComponent({
-  item,
-  selectedIds,
-  onSelect,
-  children,
-}) {
-  const type = item.getType();
+const ListElementComponent: FC<ListElementWrapperProps> = observer(
+  ({ item, selectedIds, onSelect, children }) => {
+    const type = item.getType();
 
-  const Component = useMemo(() => listViewNodeComponentFactory(type), [type]);
-  return (
-    <Component key={item.getId()} item={item} selectedIds={selectedIds} onSelect={onSelect}>
-      {children}
-    </Component>
-  );
-});
+    const Component = useMemo(() => listViewNodeComponentFactory(type), [type]);
+    return (
+      <Component key={item.getId()} item={item} selectedIds={selectedIds} onSelect={onSelect}>
+        {children}
+      </Component>
+    );
+  },
+);
 
-const ListElementChildren: FC<ListElementWrapperProps> = observer(function ListElementChildren({
-  item,
-  selectedIds,
-  onSelect,
-}) {
-  return (
+const ListElementChildren: FC<ListElementWrapperProps> = observer(
+  ({ item, selectedIds, onSelect }) => (
     <>
       {item
         .getChildren()
@@ -54,23 +47,21 @@ const ListElementChildren: FC<ListElementWrapperProps> = observer(function ListE
           />
         ))}
     </>
-  );
-});
+  ),
+);
 
-const ListElementWrapper: FC<ListElementWrapperProps> = observer(function ListElementWrapper({
-  item,
-  selectedIds,
-  onSelect,
-}) {
-  if (!item.isVisible()) {
-    return null;
-  }
+const ListElementWrapper: FC<ListElementWrapperProps> = observer(
+  ({ item, selectedIds, onSelect }) => {
+    if (!item.isVisible()) {
+      return null;
+    }
 
-  return (
-    <ListElementComponent item={item} onSelect={onSelect} selectedIds={selectedIds}>
-      <ListElementChildren item={item} onSelect={onSelect} selectedIds={selectedIds} />
-    </ListElementComponent>
-  );
-});
+    return (
+      <ListElementComponent item={item} onSelect={onSelect} selectedIds={selectedIds}>
+        <ListElementChildren item={item} onSelect={onSelect} selectedIds={selectedIds} />
+      </ListElementComponent>
+    );
+  },
+);
 
 export default ListElementWrapper;

@@ -9,24 +9,20 @@ export const InputGroupField: FC<GroupInputProps> = ({
   afterInput,
   groupTextType,
   ...baseProps
-}) => {
-  return (
-    <BaseInputField {...baseProps}>
-      {(props) => {
-        return (
-          <InputGroup>
-            <InputGroupItem>{beforeInput}</InputGroupItem>
-            <InputGroupItem>
-              {groupTextType === GroupTextType.TextArea ? (
-                <TextArea {...props} />
-              ) : (
-                <TextInput {...props} />
-              )}
-            </InputGroupItem>
-            {afterInput}
-          </InputGroup>
-        );
-      }}
-    </BaseInputField>
-  );
-};
+}) => (
+  <BaseInputField {...baseProps}>
+    {(props) => (
+      <InputGroup>
+        <InputGroupItem>{beforeInput}</InputGroupItem>
+        <InputGroupItem>
+          {groupTextType === GroupTextType.TextArea ? (
+            <TextArea {...props} />
+          ) : (
+            <TextInput {...props} />
+          )}
+        </InputGroupItem>
+        {afterInput}
+      </InputGroup>
+    )}
+  </BaseInputField>
+);

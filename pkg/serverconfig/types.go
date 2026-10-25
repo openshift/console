@@ -11,6 +11,14 @@ import (
 //   https://github.com/openshift/console-operator/blob/master/pkg/console/subresource/consoleserver/types.go
 // These structs need to remain in sync.
 
+// CSPMode controls whether the console reports or enforces Content Security Policy.
+type CSPMode string
+
+const (
+	CSPModeReportOnly CSPMode = "report-only"
+	CSPModeEnforce    CSPMode = "enforce"
+)
+
 // Config is the top-level console server cli configuration.
 type Config struct {
 	APIVersion            string `yaml:"apiVersion"`
@@ -44,18 +52,19 @@ type ProxyService struct {
 
 // ServingInfo holds configuration for serving HTTP.
 type ServingInfo struct {
-	BindAddress  string `yaml:"bindAddress,omitempty"`
-	CertFile     string `yaml:"certFile,omitempty"`
-	KeyFile      string `yaml:"keyFile,omitempty"`
-	RedirectPort int    `yaml:"redirectPort,omitempty"`
+	BindAddress   string   `yaml:"bindAddress,omitempty"`
+	CertFile      string   `yaml:"certFile,omitempty"`
+	KeyFile       string   `yaml:"keyFile,omitempty"`
+	RedirectPort  int      `yaml:"redirectPort,omitempty"`
+	MinTLSVersion string   `yaml:"minTLSVersion,omitempty"`
+	CipherSuites  []string `yaml:"cipherSuites,omitempty"`
+	TLSGroups     []string `yaml:"tlsGroups,omitempty"`
 
 	// These fields are defined in `HTTPServingInfo`, but are not supported for console. Fail if any are specified.
 	// https://github.com/openshift/api/blob/0cb4131a7636e1ada6b2769edc9118f0fe6844c8/config/v1/types.go#L7-L38
 	BindNetwork           string        `yaml:"bindNetwork,omitempty"`
 	ClientCA              string        `yaml:"clientCA,omitempty"`
 	NamedCertificates     []interface{} `yaml:"namedCertificates,omitempty"`
-	MinTLSVersion         string        `yaml:"minTLSVersion,omitempty"`
-	CipherSuites          []string      `yaml:"cipherSuites,omitempty"`
 	MaxRequestsInFlight   int64         `yaml:"maxRequestsInFlight,omitempty"`
 	RequestTimeoutSeconds int64         `yaml:"requestTimeoutSeconds,omitempty"`
 }
@@ -100,8 +109,10 @@ type Auth struct {
 
 // Session holds configuration for web-session related configuration
 type Session struct {
-	CookieEncryptionKeyFile     string `yaml:"cookieEncryptionKeyFile,omitempty"`
-	CookieAuthenticationKeyFile string `yaml:"cookieAuthenticationKeyFile,omitempty"`
+	CookieEncryptionKeyFile             string `yaml:"cookieEncryptionKeyFile,omitempty"`
+	CookieAuthenticationKeyFile         string `yaml:"cookieAuthenticationKeyFile,omitempty"`
+	PreviousCookieEncryptionKeyFile     string `yaml:"previousCookieEncryptionKeyFile,omitempty"`
+	PreviousCookieAuthenticationKeyFile string `yaml:"previousCookieAuthenticationKeyFile,omitempty"`
 	// TODO: move InactivityTimeoutSeconds here
 }
 

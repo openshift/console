@@ -1,6 +1,4 @@
 import * as coFetchModule from '@console/shared/src/utils/console-fetch';
-import { resourcePathFromModel } from '../../../components/utils/resource-link';
-import { K8sKind } from '../../../module/k8s';
 import {
   ClusterOperatorModel,
   ClusterRoleModel,
@@ -8,6 +6,8 @@ import {
   PodModel,
   UserModel,
 } from '../../../models';
+import type { K8sKind } from '../../../module/k8s';
+import { resourcePathFromModel } from '../resource-link';
 
 jest.mock('@console/shared/src/utils/console-fetch', () => ({
   ...jest.requireActual('@console/shared/src/utils/console-fetch'),

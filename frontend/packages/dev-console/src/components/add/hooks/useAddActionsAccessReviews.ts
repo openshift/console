@@ -19,9 +19,8 @@ export const useAddActionsAccessReviews = (
   namespace: string,
   addActionExtensions: ResolvedExtension<AddAction>[],
 ): AddAccessReviewResults => {
-  const [namespacedAccessReviewResults, setNamespacedAccessReviewResults] = useState<
-    NamespacedAddAccessReviewResults
-  >({});
+  const [namespacedAccessReviewResults, setNamespacedAccessReviewResults] =
+    useState<NamespacedAddAccessReviewResults>({});
   const setAccessReviewResults = useCallback(
     (newResults: AddAccessReviewResults) => {
       setNamespacedAccessReviewResults((oldResults) => ({
@@ -59,7 +58,6 @@ export const useAddActionsAccessReviews = (
             });
           })
           .catch((e) => {
-            // eslint-disable-next-line no-console
             console.warn('SelfSubjectAccessReview failed', e);
             setAccessReviewResults({
               [id]: AccessReviewStatus.FAILED,

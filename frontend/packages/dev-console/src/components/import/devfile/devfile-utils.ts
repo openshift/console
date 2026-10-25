@@ -116,7 +116,7 @@ export const convertURItoInlineYAML = async (
 ) => {
   const devfileJSON = safeYAMLToJS(devfileContent) as Devfile;
   if (devfileJSON?.components?.length > 0) {
-    for (let component of devfileJSON?.components) {
+    for (let component of devfileJSON?.components ?? []) {
       // eslint-disable-next-line no-await-in-loop
       component = await getParsedComponent(component, url, ref, dir, type, secretResource);
     }

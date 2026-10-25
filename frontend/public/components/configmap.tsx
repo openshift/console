@@ -1,33 +1,31 @@
 import type { FC } from 'react';
-import * as _ from 'lodash';
 import { Suspense, useMemo } from 'react';
+import { Grid, GridItem } from '@patternfly/react-core';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
+import type {
+  ConsoleDataViewColumn,
+  GetDataViewRows,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { LoadingBox } from '@console/shared/src/components/loading/LoadingBox';
+import { DASH } from '@console/shared/src/constants/ui';
+import { ConfigMapModel } from '../models/index';
+import type { ConfigMapKind } from '../module/k8s';
+import { referenceForModel } from '../module/k8s';
+import { ConfigMapData, ConfigMapBinaryData } from './configmap-and-secret-data';
 import { DetailsPage } from './factory/details';
 import { ListPage } from './factory/list-page';
-import { ConfigMapData, ConfigMapBinaryData } from './configmap-and-secret-data';
-import { DASH } from '@console/shared/src/constants/ui';
+import { sorts } from './factory/table';
+import { sortResourceByValue } from './factory/Table/sort';
+import { ResourceSummary } from './utils/details-page';
 import { SectionHeading } from './utils/headings';
 import { navFactory } from './utils/horizontal-nav';
 import { ResourceLink } from './utils/resource-link';
-import { ResourceSummary } from './utils/details-page';
-import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import { ConfigMapModel } from '../models/index';
-import { Grid, GridItem } from '@patternfly/react-core';
-import { ConfigMapKind, referenceForModel, TableColumn } from '../module/k8s';
-import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
-import {
-  actionsCellProps,
-  getNameCellProps,
-  ConsoleDataView,
-  nameCellProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
-import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-import { GetDataViewRows } from '@console/app/src/components/data-view/types';
-import { LoadingBox } from '@console/shared/src/components/loading/LoadingBox';
-import { sortResourceByValue } from './factory/Table/sort';
-import { sorts } from './factory/table';
-import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 
 const kind = referenceForModel(ConfigMapModel);
 const tableColumnInfo = [
@@ -38,8 +36,8 @@ const tableColumnInfo = [
   { id: 'actions' },
 ];
 
-const getDataViewRows: GetDataViewRows<ConfigMapKind> = (data, columns) => {
-  return data.map(({ obj: configMap }) => {
+const getDataViewRows: GetDataViewRows<ConfigMapKind> = (data, columns) =>
+  data.map(({ obj: configMap }) => {
     const { name, namespace } = configMap.metadata;
 
     const rowCells = {
@@ -51,7 +49,6 @@ const getDataViewRows: GetDataViewRows<ConfigMapKind> = (data, columns) => {
             namespace={namespace}
           />
         ),
-        props: getNameCellProps(name),
       },
       [tableColumnInfo[1].id]: {
         cell: <ResourceLink kind="Namespace" name={namespace} />,
@@ -64,7 +61,6 @@ const getDataViewRows: GetDataViewRows<ConfigMapKind> = (data, columns) => {
       },
       [tableColumnInfo[4].id]: {
         cell: <LazyActionMenu context={{ [kind]: configMap }} />,
-        props: actionsCellProps,
       },
     };
 
@@ -72,88 +68,63 @@ const getDataViewRows: GetDataViewRows<ConfigMapKind> = (data, columns) => {
       const cell = rowCells[id]?.cell || DASH;
       return {
         id,
-        props: rowCells[id]?.props,
         cell,
       };
     });
   });
-};
 
 const useConfigMapsColumns = (): {
-  columns: TableColumn<ConfigMapKind>[];
-  resetAllColumnWidths: () => void;
+  columns: ConsoleDataViewColumn<ConfigMapKind>[];
 } => {
   const { t } = useTranslation('public');
-  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(ConfigMapModel);
 
-  const columns = useMemo(
+  const columns = useMemo<ConsoleDataViewColumn<ConfigMapKind>[]>(
     () => [
       {
-        title: t('Name'),
+        type: 'name' as const,
         id: tableColumnInfo[0].id,
-        sort: 'metadata.name',
-        resizableProps: getResizableProps(tableColumnInfo[0].id),
-        props: {
-          ...nameCellProps,
-          modifier: 'nowrap',
-        },
       },
       {
-        title: t('Namespace'),
+        type: 'namespace' as const,
         id: tableColumnInfo[1].id,
-        sort: 'metadata.namespace',
-        resizableProps: getResizableProps(tableColumnInfo[1].id),
-        props: {
-          modifier: 'nowrap',
-        },
       },
       {
         title: t('Size'),
         id: tableColumnInfo[2].id,
         sort: (data, direction) => data.sort(sortResourceByValue(direction, sorts.dataSize)),
-        resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
         title: t('Created'),
         id: tableColumnInfo[3].id,
         sort: 'metadata.creationTimestamp',
-        resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
-      {
-        title: '',
-        id: tableColumnInfo[4].id,
-        props: {
-          ...actionsCellProps,
-        },
-      },
+      { type: 'actions' as const, id: tableColumnInfo[4].id },
     ],
-    [t, getResizableProps],
+    [t],
   );
 
-  return { columns, resetAllColumnWidths };
+  return { columns };
 };
 
 const ConfigMaps: FC<ConfigMapsProps> = ({ data, loaded, ...props }) => {
-  const { columns, resetAllColumnWidths } = useConfigMapsColumns();
+  const { columns } = useConfigMapsColumns();
 
   return (
     <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<ConfigMapKind>
         {...props}
+        id={ConfigMapModel}
         label={ConfigMapModel.labelPlural}
         data={data}
         loaded={loaded}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement={true}
-        isResizable
-        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );
@@ -168,37 +139,35 @@ export const ConfigMapsPage: FC<ConfigMapsPageProps> = (props) => {
       {...props}
       kind={kind}
       ListComponent={ConfigMaps}
-      canCreate={true}
+      canCreate
       createProps={createProps}
-      omitFilterToolbar={true}
+      omitFilterToolbar
     />
   );
 };
 
 export const ConfigMapsDetailsPage: FC = (props) => {
   const { t } = useTranslation('public');
-  const ConfigMapDetails = ({ obj: configMap }: { obj: ConfigMapKind }) => {
-    return (
-      <>
-        <PaneBody>
-          <SectionHeading text={t('ConfigMap details')} />
-          <Grid hasGutter>
-            <GridItem md={6}>
-              <ResourceSummary resource={configMap} />
-            </GridItem>
-          </Grid>
-        </PaneBody>
-        <PaneBody>
-          <SectionHeading text={t('Data')} />
-          <ConfigMapData data={configMap.data} label={t('Data')} />
-        </PaneBody>
-        <PaneBody>
-          <SectionHeading text={t('Binary data')} />
-          <ConfigMapBinaryData data={configMap.binaryData} />
-        </PaneBody>
-      </>
-    );
-  };
+  const ConfigMapDetails = ({ obj: configMap }: { obj: ConfigMapKind }) => (
+    <>
+      <PaneBody>
+        <SectionHeading text={t('ConfigMap details')} />
+        <Grid hasGutter>
+          <GridItem md={6}>
+            <ResourceSummary resource={configMap} />
+          </GridItem>
+        </Grid>
+      </PaneBody>
+      <PaneBody>
+        <SectionHeading text={t('Data')} />
+        <ConfigMapData data={configMap.data} label={t('Data')} />
+      </PaneBody>
+      <PaneBody>
+        <SectionHeading text={t('Binary data')} />
+        <ConfigMapBinaryData data={configMap.binaryData} />
+      </PaneBody>
+    </>
+  );
 
   return (
     <DetailsPage

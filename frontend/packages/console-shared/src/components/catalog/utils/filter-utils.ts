@@ -7,9 +7,9 @@ import { CatalogSortOrder } from './types';
 const filterByGroup = (
   items: CatalogItem[],
   filters: CatalogFilters,
-): Record<string, CatalogItem[]> => {
+): Record<string, CatalogItem[]> =>
   // Filter items by each filter group
-  return _.reduce(
+  _.reduce(
     filters,
     (filtered, group, key) => {
       // Only apply active filters
@@ -37,8 +37,6 @@ const filterByGroup = (
     },
     {},
   );
-};
-
 export const filterByAttributes = (
   items: CatalogItem[],
   filters: CatalogFilters,
@@ -63,19 +61,16 @@ export const filterBySearchKeyword = (
   items: CatalogItem[],
   searchKeyword: string,
   sortOrder: CatalogSortOrder = CatalogSortOrder.RELEVANCE,
-): CatalogItem[] => {
-  return sortCatalogItems(items, sortOrder, searchKeyword);
-};
+): CatalogItem[] => sortCatalogItems(items, sortOrder, searchKeyword);
 
 export const filterByCategory = (
   items: CatalogItem[],
   categoryId: string,
   categorizedIds: Record<string, string[]>,
-): CatalogItem[] => {
-  return categoryId !== 'all'
+): CatalogItem[] =>
+  categoryId !== 'all'
     ? items.filter((item) => categorizedIds[categoryId]?.includes(item.uid))
     : items;
-};
 
 export const determineAvailableFilters = (
   initialFilters: CatalogFilters,
@@ -109,19 +104,22 @@ export const determineAvailableFilters = (
   return filters;
 };
 
-export const getActiveFilters = (attributeFilters, activeFilters): CatalogFilters => {
-  _.forOwn(attributeFilters, (filterValues, filterType) => {
-    // removing default and localstore filters if Filters are present over URL
-    _.each(_.keys(activeFilters[filterType]), (key) =>
-      _.set(activeFilters, [filterType, key, 'active'], false),
-    );
-    _.each(filterValues, (filterValue) => {
-      _.set(activeFilters, [filterType, filterValue, 'active'], true);
-    });
-  });
-
-  return activeFilters;
-};
+export const getActiveFilters = (attributeFilters, initialFilters): CatalogFilters =>
+  Object.entries(attributeFilters ?? {}).reduce<CatalogFilters>(
+    (acc, [filterType, filterValues]) => {
+      if (!acc[filterType]) return acc;
+      return {
+        ...acc,
+        [filterType]: Object.fromEntries(
+          Object.entries(acc[filterType]).map(([key, filter]) => [
+            key,
+            { ...filter, active: Array.isArray(filterValues) && filterValues.includes(key) },
+          ]),
+        ),
+      };
+    },
+    initialFilters,
+  );
 
 export const getFilterGroupCounts = (
   items: CatalogItem[],
@@ -157,9 +155,7 @@ export const getFilterGroupCounts = (
 export const getFilterSearchParam = (groupFilter: CatalogFilter): string => {
   const activeValues = _.reduce(
     _.keys(groupFilter),
-    (result, typeKey) => {
-      return groupFilter[typeKey].active ? result.concat(typeKey) : result;
-    },
+    (result, typeKey) => (groupFilter[typeKey].active ? result.concat(typeKey) : result),
     [],
   );
 

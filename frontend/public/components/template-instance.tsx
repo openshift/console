@@ -1,27 +1,5 @@
 import type { FC } from 'react';
 import { useMemo, useCallback, Suspense } from 'react';
-import * as _ from 'lodash';
-import { Table as PfTable, Th, Thead, Tr, Tbody, Td } from '@patternfly/react-table';
-import { useTranslation } from 'react-i18next';
-
-import { Status } from '@console/shared/src/components/status/Status';
-import { DASH } from '@console/shared/src/constants/ui';
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { DetailsPage } from './factory/details';
-import { ListPage } from './factory/list-page';
-import { sorts } from './factory/table';
-import { Conditions } from './conditions';
-import {
-  getTemplateInstanceStatus,
-  referenceFor,
-  referenceForModel,
-  TemplateInstanceKind,
-} from '../module/k8s';
-import { EmptyBox, LoadingBox } from './utils/status-box';
-import { navFactory } from './utils/horizontal-nav';
-import { ResourceLink } from './utils/resource-link';
-import { ResourceSummary } from './utils/details-page';
-import { SectionHeading } from './utils/headings';
 import {
   DescriptionList,
   DescriptionListDescription,
@@ -30,25 +8,36 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
-import {
-  actionsCellProps,
-  cellIsStickyProps,
-  getNameCellProps,
-  initialFiltersDefault,
-  ConsoleDataView,
-} from '@console/app/src/components/data-view/ConsoleDataView';
-import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
-import { TemplateInstanceModel } from '../models';
 import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
-import {
+import type { DataViewFilterOption } from '@patternfly/react-data-view/dist/esm/DataViewFilters';
+import { Table as PfTable, Th, Thead, Tr, Tbody, Td } from '@patternfly/react-table';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
+import type {
   ResourceFilters,
   ConsoleDataViewColumn,
   ConsoleDataViewRow,
-} from '@console/app/src/components/data-view/types';
-import type { DataViewFilterOption } from '@patternfly/react-data-view/dist/esm/DataViewFilters';
-import { RowProps, TableColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import { sortResourceByValue } from './factory/Table/sort';
+  RowProps,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { Status } from '@console/shared/src/components/status/Status';
+import { DASH } from '@console/shared/src/constants/ui';
+import { TemplateInstanceModel } from '../models';
+import type { TemplateInstanceKind } from '../module/k8s';
+import { getTemplateInstanceStatus, referenceFor, referenceForModel } from '../module/k8s';
+import { Conditions } from './conditions';
+import { DetailsPage } from './factory/details';
+import { ListPage } from './factory/list-page';
+import { sorts } from './factory/table';
+import { sortResourceByValue } from './factory/Table/sort';
+import { ResourceSummary } from './utils/details-page';
+import { SectionHeading } from './utils/headings';
+import { navFactory } from './utils/horizontal-nav';
+import { ResourceLink } from './utils/resource-link';
+import { EmptyBox, LoadingBox } from './utils/status-box';
 
 const templateInstanceReference = referenceForModel(TemplateInstanceModel);
 
@@ -57,8 +46,8 @@ const tableColumnInfo = [{ id: 'name' }, { id: 'namespace' }, { id: 'status' }, 
 const getTemplateInstanceDataViewRows = (
   rowData: RowProps<TemplateInstanceKind, TemplateInstanceRowData>[],
   tableColumns: ConsoleDataViewColumn<TemplateInstanceKind>[],
-): ConsoleDataViewRow[] => {
-  return rowData.map(({ obj }) => {
+): ConsoleDataViewRow[] =>
+  rowData.map(({ obj }) => {
     const { name, namespace } = obj.metadata;
     const status = getTemplateInstanceStatus(obj);
 
@@ -71,7 +60,6 @@ const getTemplateInstanceDataViewRows = (
             namespace={namespace}
           />
         ),
-        props: getNameCellProps(name),
       },
       [tableColumnInfo[1].id]: {
         cell: <ResourceLink kind="Namespace" name={namespace} />,
@@ -81,7 +69,6 @@ const getTemplateInstanceDataViewRows = (
       },
       [tableColumnInfo[3].id]: {
         cell: <LazyActionMenu context={{ [templateInstanceReference]: obj }} />,
-        props: actionsCellProps,
       },
     };
 
@@ -89,33 +76,23 @@ const getTemplateInstanceDataViewRows = (
       const cell = rowCells[id]?.cell || DASH;
       return {
         id,
-        props: rowCells[id]?.props,
         cell,
       };
     });
   });
-};
 
-const useTemplateInstanceColumns = (): TableColumn<TemplateInstanceKind>[] => {
+const useTemplateInstanceColumns = (): ConsoleDataViewColumn<TemplateInstanceKind>[] => {
   const { t } = useTranslation('public');
-  const columns = useMemo(() => {
-    return [
+  const columns = useMemo<ConsoleDataViewColumn<TemplateInstanceKind>[]>(
+    () => [
       {
-        title: t('Name'),
+        type: 'name' as const,
         id: tableColumnInfo[0].id,
-        sort: 'metadata.name',
-        props: {
-          ...cellIsStickyProps,
-          modifier: 'nowrap',
-        },
+        props: { hasRightBorder: false },
       },
       {
-        title: t('Namespace'),
+        type: 'namespace' as const,
         id: tableColumnInfo[1].id,
-        sort: 'metadata.namespace',
-        props: {
-          modifier: 'nowrap',
-        },
       },
       {
         title: t('Status'),
@@ -125,18 +102,17 @@ const useTemplateInstanceColumns = (): TableColumn<TemplateInstanceKind>[] => {
             sortResourceByValue<TemplateInstanceKind>(direction, sorts.getTemplateInstanceStatus),
           ),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
-        title: '',
+        type: 'actions' as const,
         id: tableColumnInfo[3].id,
-        props: {
-          ...cellIsStickyProps,
-        },
+        props: { hasLeftBorder: false },
       },
-    ];
-  }, [t]);
+    ],
+    [t],
+  );
   return columns;
 };
 
@@ -144,8 +120,8 @@ const TemplateInstanceList: FC<TemplateInstanceListProps> = ({ data, loaded, ...
   const { t } = useTranslation('public');
   const columns = useTemplateInstanceColumns();
 
-  const templateInstanceStatusFilterOptions = useMemo<DataViewFilterOption[]>(() => {
-    return [
+  const templateInstanceStatusFilterOptions = useMemo<DataViewFilterOption[]>(
+    () => [
       {
         value: 'Ready',
         label: t('Ready'),
@@ -158,10 +134,11 @@ const TemplateInstanceList: FC<TemplateInstanceListProps> = ({ data, loaded, ...
         value: 'Failed',
         label: t('Failed'),
       },
-    ];
-  }, [t]);
+    ],
+    [t],
+  );
 
-  const initialFilters = useMemo(() => ({ ...initialFiltersDefault, status: [] }), []);
+  const initialFilters = useMemo(() => ({ status: [] }), []);
 
   const additionalFilterNodes = useMemo<React.ReactNode[]>(
     () => [
@@ -186,6 +163,8 @@ const TemplateInstanceList: FC<TemplateInstanceListProps> = ({ data, loaded, ...
     <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<TemplateInstanceKind, TemplateInstanceRowData, TemplateInstanceFilters>
         {...props}
+        isResizable={false}
+        id={TemplateInstanceModel}
         label={TemplateInstanceModel.labelPlural}
         data={data}
         loaded={loaded}
@@ -194,7 +173,6 @@ const TemplateInstanceList: FC<TemplateInstanceListProps> = ({ data, loaded, ...
         additionalFilterNodes={additionalFilterNodes}
         matchesAdditionalFilters={matchesAdditionalFilters}
         getDataViewRows={getTemplateInstanceDataViewRows}
-        hideColumnManagement={true}
       />
     </Suspense>
   );
@@ -210,7 +188,7 @@ export const TemplateInstancePage: FC<TemplateInstancePageProps> = (props) => {
       kind="TemplateInstance"
       ListComponent={TemplateInstanceList}
       canCreate={false}
-      omitFilterToolbar={true}
+      omitFilterToolbar
     />
   );
 };

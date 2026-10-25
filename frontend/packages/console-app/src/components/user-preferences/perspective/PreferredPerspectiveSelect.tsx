@@ -42,11 +42,8 @@ const PreferrredPerspectiveSelect: FC = () => {
   const fireTelemetryEvent = useTelemetry();
   const lastViewed = t('Last viewed');
   const [isOpen, setIsOpen] = useState(false);
-  const [
-    preferredPerspectiveID,
-    setPreferredPerspectiveID,
-    preferredPerspectiveIDLoaded,
-  ] = usePreferredPerspective();
+  const [preferredPerspectiveID, setPreferredPerspectiveID, preferredPerspectiveIDLoaded] =
+    usePreferredPerspective();
   const preferredPerspective = usePerspectiveExtension(preferredPerspectiveID);
   const perspectives = usePerspectives();
 

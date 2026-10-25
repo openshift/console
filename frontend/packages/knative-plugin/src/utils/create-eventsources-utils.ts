@@ -27,12 +27,21 @@ import { EventSources, SinkType } from '../components/add/import-types';
 import { craftResourceKey } from '../components/pub-sub/pub-sub-utils';
 import { CAMEL_K_PROVIDER_ANNOTATION } from '../const';
 import { CamelKameletModel } from '../models';
+import type {
+  KafkaSourceKind,
+  KameletBindingKind,
+  PingSourceKind,
+  ApiServerSourceKind,
+  ContainerSourceKind,
+  EventSourceKind,
+  AnySourceKind,
+} from '../types';
 import { getEventSourceIcon } from './get-knative-icon';
 
 export const isKnownEventSource = (eventSource: string): boolean =>
   Object.keys(EventSources).includes(eventSource);
 
-export const getEventSourcesDepResource = (formData: EventSourceFormData): K8sResourceKind => {
+export const getEventSourcesDepResource = (formData: EventSourceFormData): AnySourceKind => {
   const {
     type,
     name,
@@ -47,7 +56,7 @@ export const getEventSourcesDepResource = (formData: EventSourceFormData): K8sRe
   const defaultLabel = getAppLabels({ name, applicationName });
   const eventSrcData = data[type];
   const { name: sinkName, kind: sinkKind, apiVersion: sinkApiVersion, uri: sinkUri } = sink;
-  const eventSourceResource: K8sResourceKind = {
+  const eventSourceResource: AnySourceKind = {
     apiVersion,
     kind: type,
     metadata: {
@@ -82,11 +91,11 @@ export const getEventSourcesDepResource = (formData: EventSourceFormData): K8sRe
 };
 
 export const isSecretKeyRefPresent = (dataObj: {
-  secretKeyRef: { name: string; key: string };
+  secretKeyRef?: { name?: string; key?: string };
 }): boolean => !!(dataObj?.secretKeyRef?.name || dataObj?.secretKeyRef?.key);
 
-export const getKafkaSourceResource = (formData: any): K8sResourceKind => {
-  const baseResource = getEventSourcesDepResource(formData);
+export const getKafkaSourceResource = (formData: EventSourceFormData): KafkaSourceKind => {
+  const baseResource = getEventSourcesDepResource(formData) as KafkaSourceKind;
   const { net } = baseResource.spec;
   baseResource.spec.net = {
     ...net,
@@ -104,7 +113,7 @@ export const getKafkaSourceResource = (formData: any): K8sResourceKind => {
         tls: { enable: true, caCert: {}, cert: {}, key: {} },
       }),
   };
-  return baseResource;
+  return baseResource satisfies KafkaSourceKind;
 };
 
 export const loadYamlData = <D extends { project?: { name: string } }>(
@@ -124,7 +133,7 @@ export const loadYamlData = <D extends { project?: { name: string } }>(
   return yamlDataObj;
 };
 
-export const getEventSourceResource = (formData: EventSourceFormData) => {
+export const getEventSourceResource = (formData: EventSourceFormData): EventSourceKind => {
   switch (formData.type) {
     case EventSources.KafkaSource:
       return getKafkaSourceResource(formData);
@@ -148,7 +157,7 @@ export const getEventSourceData = (source: string) => {
     [EventSources.PingSource]: {
       data: '',
       schedule: '',
-    },
+    } satisfies PingSourceKind['spec'],
     [EventSources.SinkBinding]: {
       subject: {
         apiVersion: '',
@@ -167,7 +176,7 @@ export const getEventSourceData = (source: string) => {
           kind: '',
         },
       ],
-    },
+    } satisfies ApiServerSourceKind['spec'],
     [EventSources.KafkaSource]: {
       bootstrapServers: [],
       topics: [],
@@ -185,7 +194,7 @@ export const getEventSourceData = (source: string) => {
           key: { secretKeyRef: { name: '', key: '' } },
         },
       },
-    },
+    } satisfies KafkaSourceKind['spec'],
     [EventSources.ContainerSource]: {
       template: {
         spec: {
@@ -198,13 +207,13 @@ export const getEventSourceData = (source: string) => {
             },
           ],
         },
-      },
+      } satisfies ContainerSourceKind['spec']['template'],
     },
   };
   return eventSourceData[source];
 };
 
-export const getKameletSourceData = (kameletData: K8sResourceKind) => ({
+export const getKameletSourceData = (kameletData: K8sResourceKind): KameletBindingKind['spec'] => ({
   source: {
     ref: {
       apiVersion: kameletData.apiVersion,
@@ -305,8 +314,8 @@ export const getEventSourceMetadata = (eventSourceModel: K8sKind, t): KnEventCat
 export const getEventSourceModelsWithAccess = (
   namespace: string,
   eventSourceModels: K8sKind[],
-): Promise<K8sKind>[] => {
-  return eventSourceModels.map((model) => {
+): Promise<K8sKind>[] =>
+  eventSourceModels.map((model) => {
     const { apiGroup, plural } = model;
     return checkAccess({
       group: apiGroup,
@@ -316,18 +325,16 @@ export const getEventSourceModelsWithAccess = (
     })
       .then((result) => (result.status.allowed ? model : null))
       .catch((e) => {
-        // eslint-disable-next-line no-console
         console.warn('Could not check access for event source models', e);
         return null;
       });
   });
-};
 
 export const getBootstrapServers = (kafkaResources: K8sResourceKind[]) => {
   const servers = kafkaResources?.reduce((acc, kafka) => {
     const listners = [
       ...(kafka?.status?.listeners
-        ? kafka.status.listeners.map((l) => l?.bootstrapServers?.split(','))?.flat()
+        ? kafka.status.listeners.map((l) => l?.bootstrapServers?.split(',') ?? []).flat()
         : []),
       ...(kafka?.status?.bootstrapServerHost ? [kafka.status.bootstrapServerHost] : []),
     ];
@@ -345,7 +352,6 @@ export const handleRedirect = async (
 ) => {
   const perspectiveData = perspectiveExtensions.find((item) => item.properties.id === perspective);
   if (!perspectiveData || !perspectiveData.properties?.importRedirectURL) {
-    // eslint-disable-next-line no-console
     console.warn(
       `Unable to redirect: perspective data not found or importRedirectURL missing for perspective: ${perspective}`,
     );
@@ -355,7 +361,6 @@ export const handleRedirect = async (
   try {
     const redirectURL = (await perspectiveData.properties.importRedirectURL())(project);
     if (!redirectURL) {
-      // eslint-disable-next-line no-console
       console.warn(
         `Skipping navigation: importRedirectURL returned empty/undefined for perspective ${perspective}`,
       );
@@ -363,7 +368,6 @@ export const handleRedirect = async (
     }
     navigate(redirectURL);
   } catch (error) {
-    // eslint-disable-next-line no-console
     console.error(`Failed to redirect for perspective ${perspective}:`, error);
   }
 };

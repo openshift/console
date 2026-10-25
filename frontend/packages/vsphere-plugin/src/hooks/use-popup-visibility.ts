@@ -16,8 +16,6 @@ export const usePopupVisibility = () => {
         setPopupVisibility('visible');
       };
     },
-    [
-      /* just once */
-    ],
+    [/* just once */],
   );
 };

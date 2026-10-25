@@ -46,9 +46,8 @@ const EditApplicationPage: FC = () => {
     [kind, appName, namespace],
   );
 
-  const [editResData, isEditResDataLoaded, editResDataLoadError] = useK8sWatchResource<
-    K8sResourceKind
-  >(watchedEditResource);
+  const [editResData, isEditResDataLoaded, editResDataLoadError] =
+    useK8sWatchResource<K8sResourceKind>(watchedEditResource);
 
   const watchedResources = useMemo(() => {
     const nameLabel =
@@ -108,9 +107,8 @@ const EditApplicationPage: FC = () => {
     };
   }, [namespace, appName, editResData, isEditResDataLoaded, editResDataLoadError]);
 
-  const resources: WatchK8sResults<WatchResource> = useK8sWatchResources<WatchResource>(
-    watchedResources,
-  );
+  const resources: WatchK8sResults<WatchResource> =
+    useK8sWatchResources<WatchResource>(watchedResources);
 
   const isResourcesLoaded =
     Object.keys(resources).length > 0 &&

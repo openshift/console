@@ -264,7 +264,7 @@ describe('OLS Update Workflow - Comprehensive Requirements Tests', () => {
   describe('Button Text - Table Requirements', () => {
     it('should have correct pre-check button text', () => {
       const buttonText = getUpdateButtonTranslationKey('pre-check');
-      expect(buttonText).toBe('public~Pre-check with AI');
+      expect(buttonText).toBe('public~Precheck your cluster with AI');
     });
 
     it('should have correct status button text', () => {

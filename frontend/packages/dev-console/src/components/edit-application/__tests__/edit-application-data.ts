@@ -4,7 +4,7 @@ import { ServiceModel } from '@console/knative-plugin/src/models';
 import { UNASSIGNED_KEY } from '@console/topology/src/const';
 import { healthChecksData } from '../../health-checks/__tests__/create-health-checks-probe-data';
 import { healthChecksProbeInitialData } from '../../health-checks/health-checks-probe-utils';
-import { serverlessInitialValues } from '../../import/__mocks__/serverless-mock';
+import { serverlessInitialValues } from '../../import/__tests__/data/serverless-mock';
 import type { DeployImageFormData, GitImportFormData } from '../../import/import-types';
 import { BuildOptions, Resources } from '../../import/import-types';
 import { PipelineType } from '../../pipeline-section/import-types';
@@ -143,8 +143,7 @@ export const appResources: AppResources = {
               imageTrigger: {
                 from: {
                   kind: 'DockerImage',
-                  name:
-                    'image-registry.openshift-image-registry.svc:5000/div/nationalparks-py@sha256:7d67c08b5b993d72533f9bb07b6429c5a2263de8b67cc1b0ae09d4c0b0d39f97',
+                  name: 'image-registry.openshift-image-registry.svc:5000/div/nationalparks-py@sha256:7d67c08b5b993d72533f9bb07b6429c5a2263de8b67cc1b0ae09d4c0b0d39f97',
                 },
               },
             },

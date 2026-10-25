@@ -4,13 +4,12 @@ import { MemoryRouter } from 'react-router';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import ApplicationGroupResource from '../ApplicationGroupResource';
 
-const renderComponent = (props: ComponentProps<typeof ApplicationGroupResource>) => {
-  return render(
+const renderComponent = (props: ComponentProps<typeof ApplicationGroupResource>) =>
+  render(
     <MemoryRouter>
       <ApplicationGroupResource {...props} />
     </MemoryRouter>,
   );
-};
 
 describe('<ApplicationGroupResource />', () => {
   it('should render component when resourcesData is present', () => {
