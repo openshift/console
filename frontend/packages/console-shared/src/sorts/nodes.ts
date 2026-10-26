@@ -15,11 +15,13 @@ const DEFAULT_CONTROL_PLANE_TAINT_KEYS = new Set([
   'node-role.kubernetes.io/master',
 ]);
 
+// Default control-plane and master taints are NoSchedule. NoExecute on those
+// keys is not part of that default and still blocks scheduling.
 const hasExtraBlockingTaint = (node: NodeKind): boolean =>
   node?.spec?.taints?.some(
     (taint) =>
-      (taint.effect === 'NoSchedule' || taint.effect === 'NoExecute') &&
-      !DEFAULT_CONTROL_PLANE_TAINT_KEYS.has(taint.key),
+      taint.effect === 'NoExecute' ||
+      (taint.effect === 'NoSchedule' && !DEFAULT_CONTROL_PLANE_TAINT_KEYS.has(taint.key)),
   ) ?? false;
 
 export const nodeMemory = (node: NodeKind): number => {

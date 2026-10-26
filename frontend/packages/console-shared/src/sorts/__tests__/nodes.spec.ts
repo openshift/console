@@ -66,6 +66,22 @@ describe('nodeReadiness', () => {
       'True|0|0',
     ],
     [
+      'control-plane NoExecute taint changes the key',
+      {
+        readyStatus: 'True',
+        taints: [taint('node-role.kubernetes.io/control-plane', 'NoExecute')],
+      },
+      'True|0|1',
+    ],
+    [
+      'master NoExecute taint changes the key',
+      {
+        readyStatus: 'True',
+        taints: [taint('node-role.kubernetes.io/master', 'NoExecute')],
+      },
+      'True|0|1',
+    ],
+    [
       'extra NoSchedule taint changes the key',
       {
         readyStatus: 'True',
