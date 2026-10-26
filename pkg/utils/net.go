@@ -61,13 +61,15 @@ func IsPrivateOrReservedAddr(s string) bool {
 	return IsPrivateOrReservedIP(net.ParseIP(s))
 }
 
-// ErrLoopbackTarget is returned when a chart or repository URL names localhost
-// or a loopback address. Private addresses are not loopback.
-var ErrLoopbackTarget = errors.New("URL must not target localhost or a loopback address")
+// ErrLoopbackTarget is returned when a chart or repository URL names localhost,
+// a loopback address, or an unspecified address (0.0.0.0 or ::). Private
+// addresses are allowed.
+var ErrLoopbackTarget = errors.New("URL must not target localhost, a loopback address, or an unspecified address")
 
-// HostTargetsLoopback reports whether host is localhost or a loopback address.
-// Literal addresses are checked directly. Other names are passed to lookup;
-// a lookup failure is not treated as loopback, and a nil lookup skips resolution.
+// HostTargetsLoopback reports whether host is localhost, a loopback address,
+// or an unspecified address. Literal addresses are checked directly. Other
+// names are passed to lookup; a lookup failure is not treated as a local
+// target, and a nil lookup skips resolution.
 func HostTargetsLoopback(host string, lookup func(string) ([]net.IP, error)) bool {
 	host = strings.TrimRight(strings.ToLower(strings.TrimSpace(host)), ".")
 	switch host {
@@ -78,7 +80,7 @@ func HostTargetsLoopback(host string, lookup func(string) ([]net.IP, error)) boo
 		return false
 	}
 	if ip := net.ParseIP(host); ip != nil {
-		return ip.IsLoopback()
+		return isLoopbackOrUnspecified(ip)
 	}
 	if lookup == nil {
 		return false
@@ -88,9 +90,13 @@ func HostTargetsLoopback(host string, lookup func(string) ([]net.IP, error)) boo
 		return false
 	}
 	for _, ip := range ips {
-		if ip != nil && ip.IsLoopback() {
+		if isLoopbackOrUnspecified(ip) {
 			return true
 		}
 	}
 	return false
+}
+
+func isLoopbackOrUnspecified(ip net.IP) bool {
+	return ip != nil && (ip.IsLoopback() || ip.IsUnspecified())
 }
