@@ -48,7 +48,6 @@ export default {
   // Augmenting configs: choose one or more
   jest,
   playwright,
-
   node,
 
   // ...or use the pre-composed configurations representing common code archetypes (choose one):

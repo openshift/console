@@ -4,10 +4,9 @@ import packageJson from './package.json' with { type: 'json' };
 
 const REPO_TOOLING = [
   'packages/console-plugin-sdk/src/codegen',
-  'packages/console-plugin-sdk/src/webpack',
   'packages/console-dynamic-plugin-sdk/scripts',
   'packages/console-dynamic-plugin-sdk/src/webpack',
-  'packages/oxlint-plugin-console/**',
+  'packages/oxlint-plugin-console',
   'scripts',
   'i18n-scripts',
 ];
@@ -69,16 +68,13 @@ const config = defineConfig({
       },
     },
 
-    // JSON files are no longer linted: oxlint does not support JSON files,
-    // so the former plugin:console/json scope has no replacement.
-
     // repo tooling
     {
       files: ['./*.ts', './*.tsx', ...REPO_TOOLING.map((dir) => `${dir}/**/*.{ts,tsx}`)],
       ...configs.nodeTypescript,
     },
 
-    // e2e
+    // e2e tests
     {
       files: ['e2e/**/*.{ts,tsx}'],
       excludeFiles: ['e2e/**/testData/**'],

@@ -11,8 +11,8 @@
  * command.
  *
  * A warning ceiling alone only fails when the count grows, so a stale
- * budget silently loosens the ratchet. This script instead fails unless
- * the count is exactly `MAX_WARNINGS`, forcing the budget to be lowered in
+ * budget silently loosens the exact warning count. This script instead fails
+ * unless the count is exactly `MAX_WARNINGS`, forcing the budget to be lowered in
  * the same change that removes warnings.
  *
  * When MAX_WARNINGS is not set the run only reports (and still fails on any
@@ -127,7 +127,7 @@ const main = async () => {
     console.error(
       `Found ${warnings.length} warning(s) but the count is ${maxWarnings}. Lower the MAX_WARNINGS value in the lint script in package.json to match the actual warning count.`,
     );
-    writeJunitXml(true, `Found ${warnings.length} warning(s) but the ratchet is ${maxWarnings}.`);
+    writeJunitXml(true, `Found ${warnings.length} warning(s) but the expected count is exactly ${maxWarnings} warning(s).`);
     process.exitCode = 1;
   } else {
     writeJunitXml(false);
