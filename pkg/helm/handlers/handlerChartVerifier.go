@@ -61,7 +61,8 @@ func (h *verifierHandlers) HandleChartVerifier(user *auth.User, w http.ResponseW
 		return
 	}
 	// ValidateChartURL repeats the scheme and filename check and rejects
-	// localhost and loopback. Private and cluster-local chart URLs are allowed.
+	// localhost, loopback, and unspecified addresses. Private and
+	// cluster-local chart URLs are allowed.
 	if err := actions.ValidateChartURL(req.ChartUrl); err != nil {
 		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: err.Error()})
 		return

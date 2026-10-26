@@ -102,6 +102,18 @@ func TestValidateRepoURL(t *testing.T) {
 			errContains: "loopback",
 		},
 		{
+			name:        "rejects unspecified IPv4",
+			rawURL:      "http://0.0.0.0/index.yaml",
+			wantErr:     true,
+			errContains: "unspecified",
+		},
+		{
+			name:        "rejects unspecified IPv6",
+			rawURL:      "http://[::]/index.yaml",
+			wantErr:     true,
+			errContains: "unspecified",
+		},
+		{
 			name:    "allows RFC1918 10.x",
 			rawURL:  "http://10.0.0.1/index.yaml",
 			wantErr: false,

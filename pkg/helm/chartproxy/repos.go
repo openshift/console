@@ -84,9 +84,9 @@ func repoTargetsLoopback(host string, lookup func(string) ([]net.IP, error)) boo
 	return utils.HostTargetsLoopback(host, lookup)
 }
 
-// validateRepoURL accepts http and https repository URLs and rejects localhost
-// and loopback targets. Private addresses are allowed. The second argument is
-// retained for compatibility with existing callers.
+// validateRepoURL accepts http and https repository URLs and rejects localhost,
+// loopback, and unspecified addresses. Private addresses are allowed. The
+// second argument is retained for compatibility with existing callers.
 func validateRepoURL(u *url.URL, _ bool) error {
 	switch u.Scheme {
 	case "http", "https":

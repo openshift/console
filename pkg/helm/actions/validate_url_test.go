@@ -29,6 +29,8 @@ func TestValidateChartURL(t *testing.T) {
 		{name: "kubernetes service tgz", url: "https://kubernetes.default.svc/x.tgz", wantErr: false},
 		{name: "unresolvable host tgz", url: "https://does-not-exist.example.com/x.tgz", wantErr: false},
 		{name: "ipv6 loopback tgz", url: "http://[::1]/x.tgz", wantErr: true, errHint: "loopback"},
+		{name: "unspecified ipv4 tgz", url: "http://0.0.0.0/x.tgz", wantErr: true, errHint: "unspecified"},
+		{name: "unspecified ipv6 tgz", url: "http://[::]/x.tgz", wantErr: true, errHint: "unspecified"},
 		{name: "empty", url: "", wantErr: true, errHint: "required"},
 		{name: "unsupported scheme file", url: "file:///etc/passwd", wantErr: true, errHint: "invalid chart URL"},
 		{name: "unsupported scheme gopher", url: "gopher://charts.example.com/x.tgz", wantErr: true, errHint: "invalid chart URL"},
