@@ -90,7 +90,7 @@ const useQueryParametersIfDefined = (handleSearch: (image: string) => void) => {
 
 const ImageSearch: FC = () => {
   const { t } = useTranslation('devconsole');
-  const inputRef = useRef<HTMLInputElement>();
+  const inputRef = useRef<HTMLInputElement>(undefined);
   const { values, setFieldValue, dirty, initialValues, touched } = useFormikContext<FormikValues>();
   const launchCreateSecretModal = useCreateSecretModal();
   const [newImageSecret, setNewImageSecret] = useState('');
@@ -223,7 +223,9 @@ const ImageSearch: FC = () => {
   // handleSearch changes on every render where its deps (touched, values.name,
   // etc.) change, which happens on every keystroke via resetFields().
   const handleSearchRef = useRef(handleSearch);
-  handleSearchRef.current = handleSearch;
+  useEffect(() => {
+    handleSearchRef.current = handleSearch;
+  });
 
   useEffect(() => {
     !dirty && values.searchTerm && handleSearchRef.current(values.searchTerm);

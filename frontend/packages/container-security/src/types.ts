@@ -47,3 +47,9 @@ export type ImageManifestVuln = {
 export type WatchImageVuln = {
   imageManifestVuln: ImageManifestVuln[];
 };
+
+/** A single vulnerability paired with the package it affects, as shown in the vulnerabilities table. */
+export type ImageVuln = {
+  feature: Feature;
+  vulnerability: Vulnerability;
+};

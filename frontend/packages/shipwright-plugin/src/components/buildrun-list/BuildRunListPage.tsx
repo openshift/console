@@ -43,6 +43,7 @@ const BuildRunListPage: FC<BuildRunListPageProps> = (props) => {
       kind={referenceForModel(buildRunModel)}
       ListComponent={BuildRunTable}
       rowFilters={filters}
+      omitFilterToolbar
       canCreate
       {...props}
     />

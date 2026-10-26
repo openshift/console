@@ -4,19 +4,14 @@ import { Grid, GridItem, ButtonVariant } from '@patternfly/react-core';
 import { Table, Thead, Tbody, Tr, Th, Td } from '@patternfly/react-table';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import {
-  ConsoleDataView,
-  getNameCellProps,
-  actionsCellProps,
-  nameCellProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import type {
   ConsoleDataViewColumn,
   GetDataViewRows,
-} from '@console/app/src/components/data-view/types';
-import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { k8sPatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DASH } from '@console/shared/src/constants/ui';
@@ -53,7 +48,6 @@ const getDataViewRows: GetDataViewRows<GroupKind> = (data, columns) =>
             title={metadata.uid}
           />
         ),
-        props: getNameCellProps(metadata.name),
       },
       [tableColumnInfo[1].id]: {
         cell: _.size(obj.users),
@@ -63,16 +57,13 @@ const getDataViewRows: GetDataViewRows<GroupKind> = (data, columns) =>
       },
       [tableColumnInfo[3].id]: {
         cell: <LazyActionMenu context={context} />,
-        props: actionsCellProps,
       },
     };
 
     return columns.map(({ id }) => {
       const cell = rowCells[id]?.cell || DASH;
-      const props = rowCells[id]?.props || undefined;
       return {
         id,
-        props,
         cell,
       };
     });
@@ -80,28 +71,19 @@ const getDataViewRows: GetDataViewRows<GroupKind> = (data, columns) =>
 
 const useGroupColumns = (): {
   columns: ConsoleDataViewColumn<GroupKind>[];
-  resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation('public');
-  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(GroupModel);
 
   const columns: ConsoleDataViewColumn<GroupKind>[] = useMemo(
     () => [
       {
-        title: t('Name'),
+        type: 'name' as const,
         id: tableColumnInfo[0].id,
-        sort: 'metadata.name',
-        resizableProps: getResizableProps(tableColumnInfo[0].id),
-        props: {
-          ...nameCellProps,
-          modifier: 'nowrap' as const,
-        },
       },
       {
         title: t('Users'),
         id: tableColumnInfo[1].id,
         sort: 'users.length',
-        resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
           modifier: 'nowrap' as const,
         },
@@ -110,42 +92,33 @@ const useGroupColumns = (): {
         title: t('Created'),
         id: tableColumnInfo[2].id,
         sort: 'metadata.creationTimestamp',
-        resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
           modifier: 'nowrap' as const,
         },
       },
-      {
-        title: '',
-        id: tableColumnInfo[3].id,
-        props: {
-          ...actionsCellProps,
-        },
-      },
+      { type: 'actions' as const, id: tableColumnInfo[3].id },
     ],
-    [t, getResizableProps],
+    [t],
   );
 
-  return { columns, resetAllColumnWidths };
+  return { columns };
 };
 
 const GroupList: FC<{ data: GroupKind[]; loaded: boolean }> = (props) => {
   const { data, loaded } = props;
   const { t } = useTranslation('public');
-  const { columns, resetAllColumnWidths } = useGroupColumns();
+  const { columns } = useGroupColumns();
 
   return (
     <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<GroupKind>
         {...props}
+        id={GroupModel}
         data={data}
         loaded={loaded}
         label={t('Groups')}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement
-        isResizable
-        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );
@@ -258,7 +231,10 @@ export const GroupDetailsPage: FC = (props) => (
     {...props}
     kind={referenceForModel(GroupModel)}
     customActionMenu={(_kindObj, data: K8sResourceKind) => (
-      <LazyActionMenu context={{ [referenceForModel(GroupModel)]: data }} />
+      <LazyActionMenu
+        context={{ [referenceForModel(GroupModel)]: data }}
+        variant={ActionMenuVariant.DROPDOWN}
+      />
     )}
     pages={[
       navFactory.details(GroupDetails),

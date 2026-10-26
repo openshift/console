@@ -15,8 +15,10 @@ import { RhUiEllipsisVerticalIcon } from '@patternfly/react-icons';
 export type ResponsiveActionDropdownProps = {
   /** Label for the action button (shown on desktop) */
   label: string;
-  /** Dropdown items to display */
-  children: ReactNode;
+  /** Dropdown items, or a renderer receiving a callback to close the dropdown after selecting a nested item. */
+  children: ReactNode | ((closeDropdown: () => void) => ReactNode);
+  /** Whether menu items can open nested flyout menus. */
+  containsFlyout?: boolean;
   /** Whether the dropdown is disabled */
   isDisabled?: boolean;
   /** Optional test ID for the toggle button */
@@ -31,7 +33,8 @@ export type ResponsiveActionDropdownProps = {
 
 type InternalDropdownProps = {
   label: string;
-  children: ReactNode;
+  children: ResponsiveActionDropdownProps['children'];
+  containsFlyout?: boolean;
   isDisabled?: boolean;
   'data-test'?: string;
   'aria-label'?: string;
@@ -45,6 +48,7 @@ type InternalDropdownProps = {
 const InternalDropdown: FC<InternalDropdownProps> = ({
   label,
   children,
+  containsFlyout,
   isDisabled,
   'data-test': dataTest,
   'aria-label': ariaLabel,
@@ -66,6 +70,7 @@ const InternalDropdown: FC<InternalDropdownProps> = ({
       isOpen={isOpen}
       onSelect={onSelect}
       onOpenChange={setIsOpen}
+      containsFlyout={containsFlyout}
       toggle={(toggleRef: Ref<MenuToggleElement>) => (
         <MenuToggle
           ref={toggleRef}
@@ -80,7 +85,7 @@ const InternalDropdown: FC<InternalDropdownProps> = ({
         </MenuToggle>
       )}
     >
-      <DropdownList>{children}</DropdownList>
+      <DropdownList>{typeof children === 'function' ? children(onSelect) : children}</DropdownList>
     </Dropdown>
   );
 };
@@ -106,6 +111,7 @@ const InternalDropdown: FC<InternalDropdownProps> = ({
 export const ResponsiveActionDropdown: FC<ResponsiveActionDropdownProps> = ({
   label,
   children,
+  containsFlyout = false,
   isDisabled = false,
   'data-test': dataTest,
   'aria-label': ariaLabel,
@@ -120,6 +126,7 @@ export const ResponsiveActionDropdown: FC<ResponsiveActionDropdownProps> = ({
         data-test={dataTest}
         aria-label={ariaLabel}
         variant={variant}
+        containsFlyout={containsFlyout}
       >
         {children}
       </InternalDropdown>

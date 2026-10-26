@@ -60,7 +60,7 @@ const ActionsMenuDropdown: FC<ActionsMenuDropdownProps> = ({ actions, title, act
         enableFlip: true,
         position: 'right',
       }}
-      toggle={(toggleRef: RefObject<MenuToggleElement>) => (
+      toggle={(toggleRef: RefObject<MenuToggleElement | null>) => (
         <MenuToggle
           ref={toggleRef}
           onClick={() => setIsActive(!active)}

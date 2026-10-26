@@ -29,7 +29,7 @@ export type HumanizeResult = {
 };
 
 export type Humanize = (
-  v: React.ReactText,
+  v: number | string,
   initialUnit?: string,
   preferredUnit?: string,
 ) => HumanizeResult;

@@ -129,7 +129,9 @@ export const ResourceDropdown: FC<ResourceDropdownProps> = ({
   const { t } = useTranslation('console-shared');
   const [selectedTitle, setSelectedTitle] = useState<ReactNode>(null);
   const onChangeRef = useRef(onChange);
-  onChangeRef.current = onChange;
+  useEffect(() => {
+    onChangeRef.current = onChange;
+  });
 
   const hasLoadedRef = useRef(false);
 

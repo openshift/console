@@ -1,10 +1,10 @@
 import { screen } from '@testing-library/react';
 import * as _ from 'lodash';
 import * as Router from 'react-router';
-import { Table, MultiListPage, DetailsPage } from '@console/internal/components/factory';
+import type { ConsoleDataViewColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { MultiListPage, DetailsPage } from '@console/internal/components/factory';
 import { ResourceLink } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import {
   testSubscription,
@@ -21,7 +21,7 @@ import {
 } from '../../models';
 import { SubscriptionState } from '../../types';
 import {
-  SubscriptionTableRow,
+  getSubscriptionDataViewRows,
   SubscriptionsList,
   SubscriptionsPage,
   SubscriptionDetails,
@@ -39,14 +39,8 @@ jest.mock('@console/internal/components/utils', () => ({
   ResourceLink: jest.fn(() => null),
 }));
 
-jest.mock('@console/shared/src/components/actions/LazyActionMenu', () => ({
-  ...jest.requireActual('@console/shared/src/components/actions/LazyActionMenu'),
-  LazyActionMenu: jest.fn(() => null),
-}));
-
 jest.mock('@console/internal/components/factory', () => ({
   ...jest.requireActual('@console/internal/components/factory'),
-  Table: jest.fn(() => null),
   MultiListPage: jest.fn(() => null),
   DetailsPage: jest.fn(() => null),
 }));
@@ -61,12 +55,34 @@ jest.mock('@console/internal/components/conditions', () => ({
 }));
 
 const mockResourceLink = ResourceLink as jest.Mock;
-const mockLazyActionMenu = LazyActionMenu as jest.Mock;
-const mockTable = Table as jest.Mock;
 const mockMultiListPage = MultiListPage as jest.Mock;
 const mockDetailsPage = DetailsPage as jest.Mock;
 
-describe('SubscriptionTableRow', () => {
+const renderRow = (obj, ids: string[]) => {
+  const columns: ConsoleDataViewColumn<any>[] = ids.map((id) => ({ id, title: id }));
+  const [cells] = getSubscriptionDataViewRows(
+    [{ obj, activeColumnIDs: new Set(ids), rowData: undefined, index: 0 }],
+    columns,
+  );
+  return renderWithProviders(
+    <table>
+      <tbody>
+        <tr>
+          {cells.map(({ id, cell }) => (
+            <td key={id}>{cell}</td>
+          ))}
+        </tr>
+      </tbody>
+    </table>,
+  );
+};
+
+describe('getSubscriptionDataViewRows', () => {
+  const subscription = {
+    ...testSubscription,
+    status: { installedCSV: 'testapp.v1.0.0' },
+  };
+
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -76,20 +92,7 @@ describe('SubscriptionTableRow', () => {
   });
 
   it('renders subscription name and namespace resource links', () => {
-    const subscription = {
-      ...testSubscription,
-      status: { installedCSV: 'testapp.v1.0.0' },
-    };
-
-    renderWithProviders(
-      <table>
-        <tbody>
-          <tr>
-            <SubscriptionTableRow obj={subscription} columns={[]} />
-          </tr>
-        </tbody>
-      </table>,
-    );
+    renderRow(subscription, ['name', 'namespace']);
 
     expect(mockResourceLink).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -109,47 +112,26 @@ describe('SubscriptionTableRow', () => {
     );
   });
 
-  it('renders action menu with subscription context', () => {
-    const subscription = {
-      ...testSubscription,
-      status: { installedCSV: 'testapp.v1.0.0' },
-    };
-
-    renderWithProviders(
-      <table>
-        <tbody>
-          <tr>
-            <SubscriptionTableRow obj={subscription} columns={[]} />
-          </tr>
-        </tbody>
-      </table>,
-    );
-
-    expect(mockLazyActionMenu).toHaveBeenCalledTimes(1);
-    const [actionMenuProps] = mockLazyActionMenu.mock.calls[0];
-    expect(actionMenuProps.context).toEqual({
-      [referenceForModel(SubscriptionModel)]: subscription,
-    });
-  });
-
   it('renders channel and approval strategy text', () => {
-    const subscription = {
-      ...testSubscription,
-      status: { installedCSV: 'testapp.v1.0.0' },
-    };
-
-    renderWithProviders(
-      <table>
-        <tbody>
-          <tr>
-            <SubscriptionTableRow obj={subscription} columns={[]} />
-          </tr>
-        </tbody>
-      </table>,
-    );
+    renderRow(subscription, ['channel', 'approval']);
 
     expect(screen.getByText(subscription.spec.channel)).toBeVisible();
     expect(screen.getByText('Automatic')).toBeVisible();
+  });
+
+  it('falls back to the default channel name when none is set', () => {
+    renderRow({ ...subscription, spec: { ...subscription.spec, channel: undefined } }, ['channel']);
+
+    expect(screen.getByRole('cell', { name: 'default' })).toBeVisible();
+  });
+
+  it('preserves the requested column order and omits inactive columns', () => {
+    renderRow(subscription, ['channel', 'approval']);
+
+    const cells = screen.getAllByRole('cell');
+    expect(cells).toHaveLength(2);
+    expect(cells[0]).toHaveTextContent(subscription.spec.channel);
+    expect(cells[1]).toHaveTextContent('Automatic');
   });
 });
 
@@ -200,7 +182,47 @@ describe('SubscriptionStatus', () => {
 });
 
 describe('SubscriptionsList', () => {
-  it('renders table with correct header titles', () => {
+  const originalIntersectionObserver = window.IntersectionObserver;
+
+  beforeAll(() => {
+    Object.defineProperty(window, 'IntersectionObserver', {
+      configurable: true,
+      value: jest.fn().mockImplementation(() => ({
+        observe: jest.fn(),
+        unobserve: jest.fn(),
+      })),
+    });
+  });
+
+  afterAll(() => {
+    Object.defineProperty(window, 'IntersectionObserver', {
+      configurable: true,
+      value: originalIntersectionObserver,
+    });
+  });
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('renders the default and custom column headings', () => {
+    renderWithProviders(
+      <SubscriptionsList.WrappedComponent
+        data={testSubscriptions}
+        loaded
+        {...{ [referenceForModel(ClusterServiceVersionModel)]: { data: [] } }}
+        operatorGroup={null}
+      />,
+    );
+
+    expect(screen.getByRole('columnheader', { name: /^Name\b/ })).toBeVisible();
+    expect(screen.getByRole('columnheader', { name: /^Namespace\b/ })).toBeVisible();
+    expect(screen.getByRole('columnheader', { name: /^Status\b/ })).toBeVisible();
+    expect(screen.getByRole('columnheader', { name: /^Update channel\b/ })).toBeVisible();
+    expect(screen.getByRole('columnheader', { name: /^Update approval\b/ })).toBeVisible();
+  });
+
+  it('renders the custom empty message instead of the table when no Subscriptions exist', () => {
     renderWithProviders(
       <SubscriptionsList.WrappedComponent
         data={[]}
@@ -210,18 +232,8 @@ describe('SubscriptionsList', () => {
       />,
     );
 
-    expect(mockTable).toHaveBeenCalledTimes(1);
-    const [tableProps] = mockTable.mock.calls[0];
-    const headerTitles = tableProps.Header().map((header) => header.title);
-
-    expect(headerTitles).toEqual([
-      'Name',
-      'Namespace',
-      'Status',
-      'Update channel',
-      'Update approval',
-      '',
-    ]);
+    expect(screen.queryByRole('grid')).not.toBeInTheDocument();
+    expect(screen.getByText('No Subscriptions found')).toBeVisible();
   });
 });
 
@@ -239,7 +251,7 @@ describe('SubscriptionsPage', () => {
       to: '/catalog?catalogType=operator',
     });
     expect(multiListPageProps.createButtonText).toEqual('Create Subscription');
-    expect(multiListPageProps.filterLabel).toEqual('Subscriptions by package');
+    expect(multiListPageProps.omitFilterToolbar).toBe(true);
     expect(multiListPageProps.resources).toEqual([
       {
         kind: referenceForModel(SubscriptionModel),

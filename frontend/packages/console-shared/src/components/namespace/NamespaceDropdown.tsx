@@ -31,6 +31,7 @@ import {
 import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import { alphanumericCompare } from '@console/shared/src/utils/utils';
+import { DefaultNamespaceLabel } from './DefaultNamespaceWarning';
 import { isSystemNamespace } from './filters';
 import NamespaceMenuToggle from './NamespaceMenuToggle';
 import './NamespaceDropdown.scss';
@@ -149,7 +150,8 @@ export const NamespaceGroup: FC<{
               isSelected={selectedKey === option.key}
               data-test="dropdown-menu-item-link"
             >
-              {option.title}
+              <span data-test="namespace-dropdown-item-text">{option.title}</span>
+              <DefaultNamespaceLabel isProject={isProjects} namespace={option.key} />
             </MenuItem>
           ))}
         </MenuList>

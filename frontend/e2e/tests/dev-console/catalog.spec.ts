@@ -1,8 +1,10 @@
 import { test, expect } from '../../fixtures';
+import { OperatorMigrationFixture } from '../../fixtures/operator-migration-fixture';
 import { warmupSPA } from '../../pages/base-page';
 import { CatalogPage } from '../../pages/catalog-page';
 import { AddPage } from '../../pages/dev-console/add-page';
 import { TopologyPage } from '../../pages/topology-page';
+import { OLM_CLUSTER_STATE_LOCK } from '../../utils/locks';
 
 /**
  * Migrated from:
@@ -21,12 +23,10 @@ import { TopologyPage } from '../../pages/topology-page';
 
 test.describe('Create Application from Catalog', { tag: ['@dev-console', '@smoke'] }, () => {
   const ns = `aut-addflow-catalog-${Date.now()}`;
-  let addPage: AddPage;
   let catalogPage: CatalogPage;
   let topologyPage: TopologyPage;
 
   test.beforeEach(async ({ page, k8sClient, cleanup }) => {
-    addPage = new AddPage(page);
     catalogPage = new CatalogPage(page);
     topologyPage = new TopologyPage(page);
     await k8sClient.createNamespace(ns);
@@ -175,44 +175,61 @@ test.describe('Software Catalog Page details', { tag: ['@dev-console', '@regress
   });
 });
 
-test.describe('Software Catalog operators', { tag: ['@dev-console', '@regression'] }, () => {
-  let catalogPage: CatalogPage;
+test.describe(
+  'Software Catalog operators',
+  { tag: ['@dev-console', '@regression'], lock: OLM_CLUSTER_STATE_LOCK },
+  () => {
+    let catalogPage: CatalogPage;
 
-  test.beforeEach(async ({ page }) => {
-    catalogPage = new CatalogPage(page);
-    await warmupSPA(page);
-  });
-
-  test('displays operator tiles in catalog', async ({ page }) => {
-    await test.step('Navigate to operator catalog', async () => {
-      await page.goto('/catalog/ns/default?catalogType=operator');
+    test.beforeEach(async ({ page, k8sClient, cleanup }) => {
+      catalogPage = new CatalogPage(page);
+      await warmupSPA(page);
+      const flags = await page.evaluate(() => window.SERVER_FLAGS);
+      if (flags.techPreview) {
+        // The OLM v1 catalog needs a serving ClusterCatalog. Keep our own real
+        // catalogs until cleanup instead of relying on another spec's fixtures.
+        test.setTimeout(660_000);
+        const fixture = new OperatorMigrationFixture(k8sClient, cleanup, flags.authDisabled);
+        await fixture.createCatalogs(
+          process.env.OLM_MIGRATION_SOURCE_CATALOG_IMAGE ||
+            'ghcr.io/logonoff/ocp-olm-catalog-fixtures:source-main',
+          process.env.OLM_MIGRATION_TARGET_CATALOG_IMAGE ||
+            'ghcr.io/logonoff/ocp-olm-catalog-fixtures:main',
+        );
+      }
     });
 
-    await test.step('Verify operator tiles are rendered', async () => {
-      await expect(page.locator('[data-test^="operator-"]').first()).toBeVisible({
-        timeout: 30_000,
+    test('displays operator tiles in catalog', async () => {
+      await test.step('Navigate to operator catalog', async () => {
+        await catalogPage.navigateToOperatorCatalog('default');
+      });
+
+      await test.step('Verify operator tiles are rendered', async () => {
+        await expect(catalogPage.getOperatorCards().first()).toBeVisible({
+          timeout: 30_000,
+        });
       });
     });
-  });
 
-  test('filters operator tiles by keyword', async ({ page }) => {
-    await test.step('Navigate to operator catalog', async () => {
-      await page.goto('/catalog/ns/default?catalogType=operator');
-    });
+    test('filters operator tiles by keyword', async ({ page }) => {
+      await test.step('Navigate to operator catalog', async () => {
+        await catalogPage.navigateToOperatorCatalog('default');
+      });
 
-    await test.step('Wait for tiles to render', async () => {
-      await expect(catalogPage.getCatalogTiles().first()).toBeVisible({ timeout: 30_000 });
-    });
+      await test.step('Wait for tiles to render', async () => {
+        await expect(catalogPage.getCatalogTiles().first()).toBeVisible({ timeout: 30_000 });
+      });
 
-    await test.step('Filter by non-matching keyword and verify no tiles shown', async () => {
-      await catalogPage.filterByKeyword('zzz-no-match-xyzzy');
-      await expect(catalogPage.getCatalogTiles()).toHaveCount(0);
-      await expect(page.getByText('No results found')).toBeVisible();
-    });
+      await test.step('Filter by non-matching keyword and verify no tiles shown', async () => {
+        await catalogPage.filterByKeyword('zzz-no-match-xyzzy');
+        await expect(catalogPage.getCatalogTiles()).toHaveCount(0);
+        await expect(page.getByText('No results found')).toBeVisible();
+      });
 
-    await test.step('Clear filter and verify tiles return', async () => {
-      await catalogPage.filterByKeyword('');
-      await expect(catalogPage.getCatalogTiles().first()).toBeVisible();
+      await test.step('Clear filter and verify tiles return', async () => {
+        await catalogPage.filterByKeyword('');
+        await expect(catalogPage.getCatalogTiles().first()).toBeVisible();
+      });
     });
-  });
-});
+  },
+);

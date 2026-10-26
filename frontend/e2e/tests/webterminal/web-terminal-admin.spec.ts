@@ -2,12 +2,9 @@ import type { Page } from '@playwright/test';
 
 import { test, expect } from '../../fixtures';
 import type KubernetesClient from '../../clients/kubernetes-client';
-import { getEditorContent, warmupSPA } from '../../pages/base-page';
+import { getEditorContent } from '../../pages/base-page';
 import { WebTerminalPage } from '../../pages/web-terminal-page';
-import {
-  ensureWebTerminalOperatorInstalled,
-  uninstallWebTerminalOperator,
-} from './utils/web-terminal-operator';
+import { ensureWebTerminalOperatorInstalled } from './utils/web-terminal-operator';
 
 const DEVWORKSPACE_GROUP = 'workspace.devfile.io';
 const DEVWORKSPACE_VERSION = 'v1alpha2';
@@ -79,10 +76,6 @@ test.describe('Web Terminal for Admin user', () => {
         await new Promise((resolve) => setTimeout(resolve, 2_000));
       }
     }
-  });
-
-  test.afterAll(async ({ k8sClient }) => {
-    await uninstallWebTerminalOperator(k8sClient);
   });
 
   test('open and close multiple terminal tabs', async ({ page }) => {

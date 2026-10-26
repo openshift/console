@@ -1,122 +1,109 @@
 import type { FC } from 'react';
-import { sortable, SortByDirection } from '@patternfly/react-table';
-import i18next from 'i18next';
+import { useMemo } from 'react';
+import { SortByDirection } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
-import type { TableProps, RowFunctionArgs } from '@console/internal/components/factory';
-import { Table, TableData } from '@console/internal/components/factory';
-import { ResourceLink } from '@console/internal/components/utils';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
+import type {
+  ConsoleDataViewColumn,
+  ConsoleDataViewProps,
+  GetDataViewRows,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { sortResourceByValue } from '@console/internal/components/factory/Table/sort';
+import { ResourceLink } from '@console/internal/components/utils/resource-link';
 import { referenceFor } from '@console/internal/module/k8s';
-import {
-  LazyActionMenu,
-  KEBAB_COLUMN_CLASS,
-} from '@console/shared/src/components/actions/LazyActionMenu';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import { BuildRunModel } from '../../models';
 import type { BuildRun } from '../../types';
 import BuildRunDuration, {
   getBuildRunDurationInSeconds,
 } from '../buildrun-duration/BuildRunDuration';
 import BuildRunStatus, { getBuildRunStatus } from '../buildrun-status/BuildRunStatus';
+import type { BuildRunStatusFilters } from '../useBuildRunStatusFilter';
+import { useBuildRunStatusFilter } from '../useBuildRunStatusFilter';
 
-const columnClassNames = [
-  '', // name
-  '', // namespace
-  'pf-m-hidden pf-m-visible-on-md', // status
-  'pf-m-hidden pf-m-visible-on-lg', // age
-  'pf-m-hidden pf-m-visible-on-xl', // duration
-  KEBAB_COLUMN_CLASS,
-];
-
-const BuildRunHeader = () => {
-  // This function is NOT called as component, so we can not use useTranslation here.
-  const t = i18next.t.bind(i18next);
-
-  return [
-    {
-      title: t('shipwright-plugin~Name'),
-      sortField: 'metadata.name',
-      transforms: [sortable],
-      props: { className: columnClassNames[0] },
-    },
-    {
-      id: 'namespace',
-      title: t('shipwright-plugin~Namespace'),
-      sortField: 'metadata.namespace',
-      transforms: [sortable],
-      props: { className: columnClassNames[1] },
-    },
-    {
-      title: t('shipwright-plugin~Status'),
-      sortFunc: 'status',
-      transforms: [sortable],
-      props: { className: columnClassNames[2] },
-    },
-    {
-      title: t('shipwright-plugin~Started'),
-      sortField: 'metadata.creationTimestamp',
-      transforms: [sortable],
-      props: { className: columnClassNames[3] },
-    },
-    {
-      title: t('shipwright-plugin~Duration'),
-      sortFunc: 'duration',
-      transforms: [sortable],
-      props: { className: columnClassNames[4] },
-    },
-    {
-      title: '',
-      props: { className: columnClassNames[5] },
-    },
-  ];
-};
-
-const BuildRunRow: FC<RowFunctionArgs<BuildRun>> = ({ obj: buildRun }) => {
-  const kindReference = referenceFor(buildRun);
-  const context = { [kindReference]: buildRun };
-
-  return (
-    <>
-      <TableData className={columnClassNames[0]}>
-        <ResourceLink
-          kind={kindReference}
-          name={buildRun.metadata.name}
-          namespace={buildRun.metadata.namespace}
-        />
-      </TableData>
-      <TableData className={columnClassNames[1]} columnID="namespace">
-        <ResourceLink kind="Namespace" name={buildRun.metadata.namespace} />
-      </TableData>
-      <TableData className={columnClassNames[2]}>
-        <BuildRunStatus buildRun={buildRun} />
-      </TableData>
-      <TableData className={columnClassNames[3]}>
-        <Timestamp timestamp={buildRun.metadata?.creationTimestamp} />
-      </TableData>
-      <TableData className={columnClassNames[4]}>
-        <BuildRunDuration buildRun={buildRun} />
-      </TableData>
-      <TableData className={columnClassNames[5]}>
-        <LazyActionMenu context={context} />
-      </TableData>
-    </>
-  );
-};
-
-export const BuildRunTable: FC<TableProps> = (props) => {
+const useBuildRunColumns = (): {
+  columns: ConsoleDataViewColumn<BuildRun>[];
+} => {
   const { t } = useTranslation('shipwright-plugin');
+  const columns = useMemo(
+    () => [
+      {
+        type: 'name' as const,
+        id: 'name',
+      },
+      {
+        type: 'namespace' as const,
+        id: 'namespace',
+      },
+      {
+        id: 'status',
+        title: t('Status'),
+        sort: (data, direction) => data.sort(sortResourceByValue(direction, getBuildRunStatus)),
+        props: { modifier: 'nowrap' as const },
+      },
+      {
+        id: 'started',
+        title: t('Started'),
+        sort: 'metadata.creationTimestamp',
+        props: { modifier: 'nowrap' as const },
+      },
+      {
+        id: 'duration',
+        title: t('Duration'),
+        sort: (data, direction) =>
+          data.sort(sortResourceByValue(direction, getBuildRunDurationInSeconds)),
+        props: { modifier: 'nowrap' as const },
+      },
+      { type: 'actions' as const, id: 'actions' },
+    ],
+    [t],
+  );
+  return { columns };
+};
+
+export const getBuildRunDataViewRows: GetDataViewRows<BuildRun> = (data, columns) =>
+  data.map(({ obj: buildRun }) => {
+    const kindReference = referenceFor(buildRun);
+    const rowCells = {
+      name: {
+        cell: (
+          <ResourceLink
+            kind={kindReference}
+            name={buildRun.metadata.name}
+            namespace={buildRun.metadata.namespace}
+          />
+        ),
+      },
+      namespace: { cell: <ResourceLink kind="Namespace" name={buildRun.metadata.namespace} /> },
+      status: { cell: <BuildRunStatus buildRun={buildRun} /> },
+      started: { cell: <Timestamp timestamp={buildRun.metadata?.creationTimestamp} /> },
+      duration: { cell: <BuildRunDuration buildRun={buildRun} /> },
+    };
+    return columns.map(({ id }) => ({ id, ...rowCells[id] }));
+  });
+
+type BuildRunTableProps = Omit<
+  ConsoleDataViewProps<BuildRun, unknown, BuildRunStatusFilters>,
+  'id' | 'columns' | 'getDataViewRows'
+>;
+
+export const BuildRunTable: FC<BuildRunTableProps> = (props) => {
+  const { t } = useTranslation('shipwright-plugin');
+  const { columns } = useBuildRunColumns();
+  const statusFilter = useBuildRunStatusFilter<BuildRun>(t('Status'), getBuildRunStatus);
 
   return (
-    <Table
+    <ConsoleDataView<BuildRun, unknown, BuildRunStatusFilters>
       {...props}
-      aria-label={t('BuildRuns')}
-      Header={BuildRunHeader}
-      Row={BuildRunRow}
-      customSorts={{
-        status: getBuildRunStatus,
-        duration: getBuildRunDurationInSeconds,
-      }}
-      defaultSortField="metadata.creationTimestamp"
-      defaultSortOrder={SortByDirection.desc}
-      virtualize
+      {...statusFilter}
+      id={BuildRunModel}
+      label={t('BuildRuns')}
+      data={props.data}
+      loaded={props.loaded}
+      columns={columns}
+      getDataViewRows={getBuildRunDataViewRows}
+      defaultSortColumnId="started"
+      defaultSortDirection={SortByDirection.desc}
     />
   );
 };

@@ -76,6 +76,7 @@ func (ic *informerCache) Get(ctx context.Context, key client.ObjectKey, out clie
 	if !started {
 		return &ErrCacheNotStarted{}
 	}
+
 	return cache.Reader.Get(ctx, key, out, opts...)
 }
 
@@ -137,7 +138,7 @@ func applyGetOptions(opts ...InformerGetOption) *internal.GetOptions {
 	for _, opt := range opts {
 		opt(cfg)
 	}
-	return (*internal.GetOptions)(cfg)
+	return cfg
 }
 
 // GetInformerForKind returns the informer for the GroupVersionKind. If no informer exists, one will be started.
@@ -200,7 +201,7 @@ func (ic *informerCache) NeedLeaderElection() bool {
 // The values may be anything. They will automatically be prefixed with the namespace of the
 // given object, if present. The objects passed are guaranteed to be objects of the correct type.
 func (ic *informerCache) IndexField(ctx context.Context, obj client.Object, field string, extractValue client.IndexerFunc) error {
-	informer, err := ic.GetInformer(ctx, obj)
+	informer, err := ic.GetInformer(ctx, obj, BlockUntilSynced(false))
 	if err != nil {
 		return err
 	}

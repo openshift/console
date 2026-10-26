@@ -5,15 +5,14 @@ import (
 	"fmt"
 	"sort"
 
+	v1 "github.com/operator-framework/api/pkg/operators/v1"
+	"github.com/operator-framework/api/pkg/operators/v1alpha1"
 	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
-	apierrors "k8s.io/apimachinery/pkg/api/errors"
+	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apimachinery/pkg/types"
 	"sigs.k8s.io/controller-runtime/pkg/client"
-
-	v1 "github.com/operator-framework/api/pkg/operators/v1"
-	"github.com/operator-framework/api/pkg/operators/v1alpha1"
 )
 
 // OperatorListOperands knows how to find and list custom resources given a package name and namespace.
@@ -28,7 +27,11 @@ func NewOperatorListOperands(cfg *Configuration) *OperatorListOperands {
 }
 
 func (o *OperatorListOperands) Run(ctx context.Context, packageName string) (*unstructured.UnstructuredList, error) {
-	result, err := o.listAll(ctx, packageName)
+	opKey := types.NamespacedName{
+		Name: fmt.Sprintf("%s.%s", packageName, o.config.Namespace),
+	}
+
+	result, err := o.listAll(ctx, opKey)
 	if err != nil {
 		return nil, err
 	}
@@ -37,16 +40,13 @@ func (o *OperatorListOperands) Run(ctx context.Context, packageName string) (*un
 }
 
 // FindOperator finds an operator object on-cluster provided a package and namespace.
-func (o *OperatorListOperands) findOperator(ctx context.Context, packageName string) (*v1.Operator, error) {
-	opKey := types.NamespacedName{
-		Name: fmt.Sprintf("%s.%s", packageName, o.config.Namespace),
-	}
-
+func (o *OperatorListOperands) findOperator(ctx context.Context, key types.NamespacedName) (*v1.Operator, error) {
 	operator := v1.Operator{}
-	err := o.config.Client.Get(ctx, opKey, &operator)
+
+	err := o.config.Client.Get(ctx, key, &operator)
 	if err != nil {
-		if apierrors.IsNotFound(err) {
-			return nil, fmt.Errorf("package %q not found in namespace %q", packageName, o.config.Namespace)
+		if k8serrors.IsNotFound(err) {
+			return nil, fmt.Errorf("package %s not found", key.Name)
 		}
 		return nil, err
 	}
@@ -132,8 +132,8 @@ func (o *OperatorListOperands) list(ctx context.Context, crdDesc v1alpha1.CRDDes
 }
 
 // ListAll wraps the above functions to provide a convenient command to go from package/namespace to custom resources.
-func (o *OperatorListOperands) listAll(ctx context.Context, packageName string) (*unstructured.UnstructuredList, error) {
-	operator, err := o.findOperator(ctx, packageName)
+func (o *OperatorListOperands) listAll(ctx context.Context, opKey types.NamespacedName) (*unstructured.UnstructuredList, error) {
+	operator, err := o.findOperator(ctx, opKey)
 	if err != nil {
 		return nil, err
 	}

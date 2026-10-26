@@ -162,8 +162,8 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
 
 export type DetailsPageProps = {
   obj?: WatchK8sResultsObject<K8sResourceKind>;
-  title?: string | JSX.Element;
-  titleFunc?: (obj: K8sResourceKind) => string | JSX.Element;
+  title?: string | ReactNode;
+  titleFunc?: (obj: K8sResourceKind) => string | ReactNode;
   menuActions?: KebabAction[] | KebabOptionsCreator;
   buttonActions?: any[];
   createRedirect?: boolean;

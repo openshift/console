@@ -47,7 +47,6 @@ var (
 			panic(fmt.Sprintf("failed to create default capabilities: %v", err))
 		}
 		return caps
-
 	}()
 )
 
@@ -157,7 +156,7 @@ func makeDefaultCapabilities() (*Capabilities, error) {
 
 	v, err := semver.NewVersion(vstr)
 	if err != nil {
-		return nil, fmt.Errorf("unable to parse k8s.io/client-go version %q: %v", vstr, err)
+		return nil, fmt.Errorf("unable to parse k8s.io/client-go version %q: %w", vstr, err)
 	}
 
 	kubeVersionMajor := v.Major() + 1
@@ -167,14 +166,13 @@ func makeDefaultCapabilities() (*Capabilities, error) {
 }
 
 func newCapabilities(kubeVersionMajor, kubeVersionMinor uint64) (*Capabilities, error) {
-
 	version := fmt.Sprintf("v%d.%d.0", kubeVersionMajor, kubeVersionMinor)
 	return &Capabilities{
 		KubeVersion: KubeVersion{
 			Version:           version,
 			normalizedVersion: version,
-			Major:             fmt.Sprintf("%d", kubeVersionMajor),
-			Minor:             fmt.Sprintf("%d", kubeVersionMinor),
+			Major:             strconv.FormatUint(kubeVersionMajor, 10),
+			Minor:             strconv.FormatUint(kubeVersionMinor, 10),
 		},
 		APIVersions: DefaultVersionSet,
 		HelmVersion: helmversion.Get(),

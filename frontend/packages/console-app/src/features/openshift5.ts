@@ -4,7 +4,7 @@ import { FLAG_OPENSHIFT_5 } from '../consts';
 
 const version = window.SERVER_FLAGS?.releaseVersion || '5.0.0-unknown';
 
-export const IS_OPENSHIFT_5 = gtr(coerce(version), '4.x', {
+const IS_OPENSHIFT_5 = gtr(coerce(version), '4.x', {
   includePrerelease: true,
   loose: true,
 });

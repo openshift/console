@@ -3,8 +3,8 @@ import { Suspense } from 'react';
 import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
-import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
+import type { GetDataViewRows } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { ActionServiceProvider } from '@console/shared/src/components/actions/ActionServiceProvider';
 import { ActionMenu } from '@console/shared/src/components/actions/menu/ActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
@@ -105,20 +105,18 @@ const EnvironmentTab: FC<EnvironmentTabProps> = (props) => (
 );
 
 const DaemonSetsList: FC<DaemonSetsListProps> = ({ data, loaded, ...props }) => {
-  const { columns, resetAllColumnWidths } = useWorkloadColumns<DaemonSetKind>(DaemonSetModel);
+  const { columns } = useWorkloadColumns<DaemonSetKind>();
 
   return (
     <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<DaemonSetKind>
         {...props}
+        id={DaemonSetModel}
         label={DaemonSetModel.labelPlural}
         data={data}
         loaded={loaded}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement
-        isResizable
-        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );

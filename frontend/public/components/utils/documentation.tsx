@@ -93,6 +93,10 @@ export const documentationURLs = {
     upstream:
       'rest_api/policy_apis/poddisruptionbudget-policy-v1.html#poddisruptionbudget-policy-v1',
   },
+  securityContextConstraints: {
+    downstream: 'html/authentication_and_authorization/managing-pod-security-policies',
+    upstream: 'authentication/managing-security-context-constraints.html',
+  },
 };
 
 export const isUpstream = () => window.SERVER_FLAGS.branding === 'okd';

@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import type { NotificationAlerts } from 'public/reducers/observe';
 import { useTranslation } from 'react-i18next';
 import { PrometheusEndpoint } from '@console/internal/components/graphs/helpers';
 import { getAlertsAndRules } from '@console/internal/components/monitoring/utils';
+import type { NotificationAlerts } from '@console/internal/reducers/observe';
 import {
   getAlertName,
   getAlertTime,

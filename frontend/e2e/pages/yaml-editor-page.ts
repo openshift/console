@@ -36,6 +36,10 @@ export class YamlEditorPage extends BasePage {
     return this.yamlError;
   }
 
+  getDefaultNamespaceDeploymentWarning(): Locator {
+    return this.page.getByTestId('default-namespace-deployment-warning');
+  }
+
   getMonacoEditor(): Locator {
     return this.page.locator('.monaco-editor').first();
   }
@@ -92,7 +96,7 @@ export class YamlEditorPage extends BasePage {
     await this.robustClick(this.getSettingsModal().locator('button[aria-label="Close"]'));
   }
 
-  async selectTheme(themeName: 'Dark' | 'Light' | 'Use theme setting'): Promise<void> {
+  async selectTheme(themeName: 'Dark' | 'Light' | 'Default'): Promise<void> {
     const themeSection = this.page.locator('#ConfigModalItem-color-theme');
     await this.robustClick(
       themeSection.locator('button[aria-labelledby="ConfigModalItem-color-theme-title"]'),

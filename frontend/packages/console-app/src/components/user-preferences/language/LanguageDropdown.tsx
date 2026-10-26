@@ -1,4 +1,4 @@
-import type { FC, Ref } from 'react';
+import type { FC, Ref, ReactNode } from 'react';
 import { useState, useMemo, useEffect } from 'react';
 import type { MenuToggleElement } from '@patternfly/react-core';
 import {
@@ -24,7 +24,7 @@ const LanguageDropdown: FC = () => {
   const fireTelemetryEvent = useTelemetry();
   const [preferredLanguage, setPreferredLanguage, preferredLanguageLoaded] = usePreferredLanguage();
   const [isOpen, setIsOpen] = useState(false);
-  const options: JSX.Element[] = useMemo(
+  const options: ReactNode[] = useMemo(
     () =>
       Object.keys(supportedLocales).map((language) => (
         <SelectOption key={language} value={language}>

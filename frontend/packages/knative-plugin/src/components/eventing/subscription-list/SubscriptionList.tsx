@@ -1,26 +1,38 @@
 import type { FC } from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { TableProps } from '@console/internal/components/factory';
-import { Table } from '@console/internal/components/factory';
-import getSubscriptionHeaders from './SubscriptionHeaders';
-import SubscriptionRow from './SubscriptionRow';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
+import type { ConsoleDataViewProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { EventingSubscriptionModel } from '../../../models';
+import type { EventSubscriptionKind } from '../../../types';
+import { useSubscriptionColumns } from './SubscriptionHeaders';
+import { getSubscriptionDataViewRows } from './SubscriptionRow';
 
-const SubscriptionList: FC<TableProps> = (props) => {
+type SubscriptionListProps = Omit<
+  ConsoleDataViewProps<EventSubscriptionKind>,
+  'id' | 'columns' | 'getDataViewRows'
+> & { customData?: { channel?: string } };
+
+export const SubscriptionList: FC<SubscriptionListProps> = (props) => {
   const { t } = useTranslation('knative-plugin');
-  const subscriptionData = props.customData?.channel
-    ? props.data.filter((obj) => obj.spec.channel.name === props.customData.channel)
-    : props.data;
-
+  const channel = props.customData?.channel;
+  const data = useMemo(
+    () =>
+      channel
+        ? props.data?.filter((obj: EventSubscriptionKind) => obj.spec.channel.name === channel)
+        : props.data,
+    [props.data, channel],
+  );
+  const { columns } = useSubscriptionColumns(!channel);
   return (
-    <Table
+    <ConsoleDataView<EventSubscriptionKind>
       {...props}
-      aria-label={t('Subscriptions')}
-      data={subscriptionData}
-      Header={getSubscriptionHeaders(t, !props.customData?.channel)}
-      Row={SubscriptionRow}
-      virtualize
+      id={EventingSubscriptionModel}
+      label={t('Subscriptions')}
+      data={data}
+      loaded={props.loaded}
+      columns={columns}
+      getDataViewRows={getSubscriptionDataViewRows}
     />
   );
 };
-
-export default SubscriptionList;

@@ -144,7 +144,7 @@ export const VSphereConnectionModal: FC<VSphereConnectionProps> = ({
 
   const models = useConnectionModels();
 
-  const { initValues, isLoaded, error: loadError } = useConnectionForm();
+  const { initValues, isLoaded, error: loadError } = useConnectionForm(cloudProviderConfig);
 
   const onClose = () => {
     setModalOpen(false);

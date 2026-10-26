@@ -1,6 +1,7 @@
 package server
 
 import (
+	"context"
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
@@ -29,6 +30,7 @@ import (
 	"github.com/openshift/console/pkg/devfile"
 	helmhandlerspkg "github.com/openshift/console/pkg/helm/handlers"
 	"github.com/openshift/console/pkg/knative"
+	"github.com/openshift/console/pkg/kubeconfig"
 	"github.com/openshift/console/pkg/middleware"
 	"github.com/openshift/console/pkg/olm"
 	"github.com/openshift/console/pkg/plugins"
@@ -66,6 +68,7 @@ const (
 	helmChartRepoProxyEndpoint            = "/api/helm/charts/"
 	indexPageTemplateName                 = "index.html"
 	k8sProxyEndpoint                      = "/api/kubernetes/"
+	kubeconfigEndpoint                    = "/api/kubeconfig"
 	knativeProxyEndpoint                  = "/api/console/knative/"
 	devConsoleEndpoint                    = "/api/dev-console/"
 	localesEndpoint                       = "/locales/resource.json"
@@ -161,6 +164,7 @@ type Server struct {
 	ClusterManagementProxyConfig        *proxy.Config
 	CookieEncryptionKey                 []byte
 	CookieAuthenticationKey             []byte
+	CSPMode                             serverconfig.CSPMode
 	ContentSecurityPolicy               serverconfig.MultiKeyValue
 	ControlPlaneTopology                string
 	CopiedCSVsDisabled                  bool
@@ -187,6 +191,7 @@ type Server struct {
 	KnativeChannelCRDLister             ResourceLister
 	KnativeEventSourceCRDLister         ResourceLister
 	KubeAPIServerURL                    string // JS global only. Not used for proxying.
+	K8sCertPEM                          []byte // PEM-encoded CA bundle embedded into downloaded kubeconfig files.
 	KubeVersion                         string
 	LoadTestFactor                      int
 	MonitoringDashboardConfigMapLister  ResourceLister
@@ -243,7 +248,12 @@ func (s *Server) gitopsProxyEnabled() bool {
 	return s.GitOpsProxyConfig != nil
 }
 
-func (s *Server) HTTPHandler() (http.Handler, error) {
+// HTTPHandler assembles Console routes with configured authentication, API proxying, and optional feature handlers.
+func (s *Server) HTTPHandler(contexts ...context.Context) (http.Handler, error) {
+	ctx := context.Background()
+	if len(contexts) > 0 && contexts[0] != nil {
+		ctx = contexts[0]
+	}
 	if s.Authenticator == nil {
 		return s.NoAuthConfiguredHandler(), nil
 	}
@@ -351,7 +361,14 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 		Checks: []health.Checkable{},
 	}.ServeHTTP)
 
-	handle(catalogdEndpoint, s.CatalogdHandler())
+	// catalogd only serves read-only catalog index data, so restrict the proxy
+	// to GET and HEAD. This also blocks state-changing methods (which are
+	// CSRF-exempt only for safe methods) from reaching the cluster-internal
+	// catalogd service.
+	handle(catalogdEndpoint, authHandler(middleware.AllowMethods(
+		[]string{http.MethodGet, http.MethodHead},
+		s.CatalogdHandler().ServeHTTP,
+	)))
 
 	handle(k8sProxyEndpoint, http.StripPrefix(
 		proxy.SingleJoiningSlash(s.BaseURL.Path, k8sProxyEndpoint),
@@ -360,8 +377,8 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 
 	handle(apiDiscoveryEndpoint, middleware.WithGZIPEncoding(authHandler(apiDiscoveryHandler(k8sProxy))))
 
-	handleFunc(devfileEndpoint, devfile.DevfileHandler)
-	handleFunc(devfileSamplesEndpoint, devfile.DevfileSamplesHandler)
+	handleFunc(devfileEndpoint, authHandler(devfile.DevfileHandler))
+	handleFunc(devfileSamplesEndpoint, authHandler(devfile.DevfileSamplesHandler))
 
 	terminalProxy := terminal.NewProxy(
 		s.TerminalProxyTLSConfig,
@@ -465,15 +482,26 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 		})),
 	)
 
+	olmTLSConfig := s.InternalProxiedK8SClientConfig.TLSClientConfig
+	if s.K8sProxyConfig.TLSClientConfig != nil {
+		olmTLSConfig.Insecure = s.K8sProxyConfig.TLSClientConfig.InsecureSkipVerify
+		olmTLSConfig.ServerName = s.K8sProxyConfig.TLSClientConfig.ServerName
+	}
+	migrationBackendConfig := rest.CopyConfig(s.InternalProxiedK8SClientConfig)
+	migrationBackendConfig.Transport = nil
+	migrationBackendConfig.TLSClientConfig = olmTLSConfig
 	olmHandler := olm.NewOLMHandler(
 		k8sProxyURL,
 		&http.Client{
 			Transport: internalProxiedK8SRT,
 		},
 		s.CatalogService,
+		olmTLSConfig,
+		s.Authenticator.IsStatic(),
+		&olm.MigrationBackendConfig{Config: migrationBackendConfig, Enabled: s.TechPreview, Context: ctx},
 	)
 
-	handle("/api/olm/", authHandler(olmHandler.ServeHTTP))
+	handle("/api/olm/", http.StripPrefix(strings.TrimSuffix(s.BaseURL.Path, "/"), authHandler(olmHandler.ServeHTTP)))
 
 	handle("/api/console/monitoring-dashboard-config", authHandler(s.handleMonitoringDashboardConfigmaps))
 	// Knative
@@ -501,6 +529,11 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 	userSettingHandler := usersettings.NewUserSettingsHandler(internalProxiedK8SClient, s.AnonymousInternalProxiedK8SRT, k8sProxyURL)
 
 	handle("/api/console/user-settings", authHandlerWithUser(userSettingHandler.HandleUserSettings))
+
+	// Kubeconfig download for ServiceAccounts and the current user
+	kubeConfigHandler := kubeconfig.NewKubeConfigHandler(s.AnonymousInternalProxiedK8SRT, k8sProxyURL, s.KubeAPIServerURL, s.K8sCertPEM)
+
+	handle(kubeconfigEndpoint, authHandlerWithUser(kubeConfigHandler.Handle))
 
 	// Helm
 	helmHandlers := helmhandlerspkg.New(k8sProxyURL, internalProxiedK8SRT, s)
@@ -722,7 +755,11 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		klog.Fatalf("Error building Content Security Policy directives: %s", err)
 	}
-	w.Header().Set("Content-Security-Policy-Report-Only", strings.Join(cspDirectives, "; "))
+	headerName := "Content-Security-Policy-Report-Only"
+	if s.CSPMode == serverconfig.CSPModeEnforce {
+		headerName = "Content-Security-Policy"
+	}
+	w.Header().Set(headerName, strings.Join(cspDirectives, "; "))
 
 	jsg := &jsGlobals{
 		AddPage:                   s.AddPage,

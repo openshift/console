@@ -146,7 +146,7 @@ const VolumeAttributesClassDropdownInner: FC<VolumeAttributesClassDropdownInnerP
     }
   };
 
-  const autocompleteFilter = (text: string, item: React.ReactElement) =>
+  const autocompleteFilter = (text: string, item: React.ReactElement<{ name: string }>) =>
     fuzzy(text, item.props.name);
   const dropdownItems: Record<string, React.ReactNode> = {};
   Object.entries(state.items).forEach(([key, itemProps]) => {

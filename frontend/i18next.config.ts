@@ -2,13 +2,13 @@ import { existsSync } from 'fs';
 import { join } from 'path';
 import { sync as glob } from 'glob';
 import { defineConfig } from 'i18next-cli';
-import { namespaceToDirName } from './i18n-scripts/namespace-map';
 import { ConsoleExtensionsI18nextCLIPlugin } from './i18n-scripts/ConsoleExtensionsI18nextCLIPlugin';
+import { namespaceToDirName } from './i18n-scripts/namespace-map';
 
 export default defineConfig({
   locales: ['en'],
   extract: {
-    input: '{public,packages/*}/**/*.{js,jsx,ts,tsx}',
+    input: '{public,packages/*}/**/*.{ts,tsx}',
     output: (language, ns) => {
       if (ns === 'public') {
         return join('public', 'locales', language, `${ns}.json`);
@@ -38,7 +38,7 @@ export default defineConfig({
     ],
   },
   lint: {
-    ignore: ['**/*.spec.{js,jsx,ts,tsx}', '**/__tests__/**'],
+    ignore: ['**/*.spec.{ts,tsx}', '**/__tests__/**'],
   },
   plugins: [
     ConsoleExtensionsI18nextCLIPlugin({

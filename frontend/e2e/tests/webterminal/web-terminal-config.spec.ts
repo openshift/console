@@ -1,19 +1,56 @@
 import { test, expect } from '../../fixtures';
 import { warmupSPA } from '../../pages/base-page';
 import { WebTerminalConfigPage } from '../../pages/web-terminal-config-page';
-import {
-  ensureWebTerminalOperatorInstalled,
-  uninstallWebTerminalOperator,
-} from './utils/web-terminal-operator';
+import { ensureWebTerminalOperatorInstalled } from './utils/web-terminal-operator';
 
 const TEST_IMAGE_805 =
   'registry.redhat.io/web-terminal/web-terminal-tooling-rhel8@sha256:9ff1f660fccd3a2f0515ba997d48ad87d2ba47c40b67062c74580bbea9446805';
 const TEST_IMAGE_806 =
   'registry.redhat.io/web-terminal/web-terminal-tooling-rhel8@sha256:9ff1f660fccd3a2f0515ba997d48ad87d2ba47c40b67062c74580bbea9446806';
 
+const TEMPLATE_GROUP = 'workspace.devfile.io';
+const TEMPLATE_VERSION = 'v1alpha2';
+const TEMPLATE_PLURAL = 'devworkspacetemplates';
+const OPERATOR_NAMESPACE = 'openshift-operators';
+const TEMPLATE_NAMES = ['web-terminal-tooling', 'web-terminal-exec'];
+
 test.describe('Customization of web terminal options', () => {
+  // The images above are synthetic digests, and saving them writes straight
+  // through to the cluster-wide DevWorkspaceTemplates every web terminal is
+  // built from -- both `spec` and the `web-terminal.redhat.com/unmanaged-state`
+  // annotation (see customization-utils.ts). Left behind, they make every
+  // later terminal — in this suite or any other — fail to start with "Failed
+  // to connect", so snapshot both up front and put them back afterwards.
+  const originalTemplateSpecs = new Map<string, { spec: unknown; annotations: unknown }>();
+
   test.beforeAll(async ({ k8sClient }) => {
     await ensureWebTerminalOperatorInstalled(k8sClient);
+    const snapshotErrors: string[] = [];
+    for (const name of TEMPLATE_NAMES) {
+      try {
+        const template = (await k8sClient.getCustomResource(
+          TEMPLATE_GROUP,
+          TEMPLATE_VERSION,
+          OPERATOR_NAMESPACE,
+          TEMPLATE_PLURAL,
+          name,
+        )) as { spec?: unknown; metadata?: { annotations?: unknown } };
+        if (!template?.spec) {
+          throw new Error(`DevWorkspaceTemplate ${name} has no spec`);
+        }
+        originalTemplateSpecs.set(name, {
+          spec: template.spec,
+          annotations: template.metadata?.annotations ?? {},
+        });
+      } catch (err) {
+        snapshotErrors.push(`${name}: ${err}`);
+      }
+    }
+    // Without a baseline for every template, cleanup can't fully restore
+    // cluster state, so refuse to let tests modify them in the first place.
+    if (snapshotErrors.length > 0) {
+      throw new Error(`Failed to snapshot DevWorkspaceTemplate(s):\n${snapshotErrors.join('\n')}`);
+    }
   });
 
   test.beforeEach(async ({ page }) => {
@@ -21,7 +58,27 @@ test.describe('Customization of web terminal options', () => {
   });
 
   test.afterAll(async ({ k8sClient }) => {
-    await uninstallWebTerminalOperator(k8sClient);
+    const restoreErrors: string[] = [];
+    for (const [name, { spec, annotations }] of originalTemplateSpecs) {
+      try {
+        await k8sClient.patchCustomResource(
+          TEMPLATE_GROUP,
+          TEMPLATE_VERSION,
+          OPERATOR_NAMESPACE,
+          TEMPLATE_PLURAL,
+          name,
+          [
+            { op: 'replace', path: '/spec', value: spec },
+            { op: 'add', path: '/metadata/annotations', value: annotations },
+          ],
+        );
+      } catch (err) {
+        restoreErrors.push(`${name}: ${err}`);
+      }
+    }
+    if (restoreErrors.length > 0) {
+      throw new Error(`Failed to restore DevWorkspaceTemplate(s):\n${restoreErrors.join('\n')}`);
+    }
   });
 
   test('navigate to Web Terminal Configuration page', async ({ page }) => {

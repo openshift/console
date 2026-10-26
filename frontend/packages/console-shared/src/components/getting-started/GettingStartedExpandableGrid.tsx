@@ -1,4 +1,4 @@
-import type { ReactNodeArray, ReactNode, FC } from 'react';
+import type { ReactNode, FC } from 'react';
 import {
   Button,
   Card,
@@ -15,7 +15,7 @@ import { GettingStartedShowState } from './useGettingStartedShowState';
 import './GettingStartedExpandableGrid.scss';
 
 interface GettingStartedExpandableGridProps {
-  children?: ReactNodeArray;
+  children?: readonly ReactNode[];
   isOpen?: boolean;
   setIsOpen?: (isOpen: boolean) => void;
   setShowState?: (showState: GettingStartedShowState) => void;

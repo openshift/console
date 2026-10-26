@@ -139,7 +139,7 @@ const baseListPages: Map<ResourceMapKey, ResourceMapValue> = new Map()
     import('./pod-list' /* webpackChunkName: "pod" */).then((m) => m.PodsPage),
   )
   .set(referenceForModel(ReplicaSetModel), () =>
-    import('./replicaset' /* webpackChunkName: "replicaset" */).then((m) => m.ReplicaSetsPage),
+    import('./replica-set' /* webpackChunkName: "replica-set" */).then((m) => m.ReplicaSetsPage),
   ) // TODO should be replica-set
   .set(referenceForModel(ReplicationControllerModel), () =>
     import('./replication-controller' /* webpackChunkName: "replication-controller" */).then(

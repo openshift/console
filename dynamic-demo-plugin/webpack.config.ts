@@ -19,18 +19,19 @@ const config: Configuration = {
   mode: 'development',
   context: path.resolve(__dirname, 'src'),
   entry: {},
+  ...(isRunningWebpack && { experiments: { css: true } }),
   output: {
     path: path.resolve(__dirname, 'dist', isRunningWebpack ? 'webpack' : 'rspack'),
     filename: '[name]-bundle.js',
     chunkFilename: '[name]-chunk.js',
   },
   resolve: {
-    extensions: ['.ts', '.tsx', '.js', '.jsx'],
+    extensions: ['.ts', '.tsx', '.js'],
   },
   module: {
     rules: [
       {
-        test: /\.(jsx?|tsx?)$/,
+        test: /\.(js|tsx?)$/,
         exclude: /node_modules/,
         use: [
           isRunningWebpack ? {
@@ -59,8 +60,8 @@ const config: Configuration = {
       },
       {
         test: /\.css$/,
-        use: isRunningWebpack ? ['style-loader', 'css-loader'] : 'builtin:lightningcss-loader',
-        ...(isRunningRspack && { type: 'css' }), // breaks webpack as it tries to use builtin css parser
+        ...(isRunningRspack && { use: 'builtin:lightningcss-loader' }),
+        type: 'css',
       },
       {
         test: /\.(png|jpg|jpeg|gif|svg|woff2?|ttf|eot|otf)(\?.*$|$)/,

@@ -64,16 +64,12 @@ export const WebhookTriggers: FC<WebhookTriggersProps> = (props) => {
   });
   const tableColumnClasses = getTableColumnClasses(canGetSecret);
   const [webhookSecrets, setWebhookSecrets] = useState<K8sResourceKind[]>([]);
-  const [webhookTriggers, setWebhookTriggers] = useState<WebhookTrigger[]>([]);
+  const webhookTriggers = useMemo(
+    () => _.filter(triggers, ({ type }) => webhookTriggerTypes.has(type)),
+    [triggers],
+  );
   const [secretErrors, setSecretErrors] = useState<string[]>([]);
   const [isLoaded, setLoaded] = useState(false);
-
-  useEffect(() => {
-    setWebhookTriggers((previousTriggers) => {
-      const newTriggers = _.filter(triggers, ({ type }) => webhookTriggerTypes.has(type));
-      return _.isEqual(previousTriggers, newTriggers) ? previousTriggers : newTriggers;
-    });
-  }, [triggers]);
 
   const secretNames = useMemo<string[]>(
     () =>

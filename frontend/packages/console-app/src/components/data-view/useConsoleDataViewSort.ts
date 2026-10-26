@@ -1,114 +1,87 @@
 import type { BaseSyntheticEvent } from 'react';
-import { useCallback, useState, useEffect, useRef } from 'react';
+import { useCallback, useEffect } from 'react';
 import type { ISortBy } from '@patternfly/react-table';
 import { SortByDirection } from '@patternfly/react-table';
-import * as _ from 'lodash';
 import { useSearchParams } from 'react-router';
-import type { ConsoleDataViewColumn } from './types';
+import type { ConsoleDataViewColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 
 export const getSortByDirection = (value: string): SortByDirection =>
   value === SortByDirection.desc.valueOf() ? SortByDirection.desc : SortByDirection.asc;
-
-const getColumnSortKey = <TData>(column?: ConsoleDataViewColumn<TData>): string | null =>
-  column?.id || column?.title || null;
-
-export const findSortColumnIndex = <TData>(
-  columns: ConsoleDataViewColumn<TData>[],
-  sortKey: string | null,
-): number => {
-  if (!sortKey || columns.length === 0) {
-    return -1;
-  }
-  const idIndex = columns.findIndex((column) => column.id === sortKey);
-  return idIndex >= 0 ? idIndex : columns.findIndex((column) => column.title === sortKey);
-};
 
 export const useConsoleDataViewSort = <TData>({
   columns,
   sortColumnIndex,
   sortDirection,
+  columnsResolved = true,
 }: {
   columns: ConsoleDataViewColumn<TData>[];
   sortColumnIndex?: number;
   sortDirection?: SortByDirection;
+  columnsResolved?: boolean;
 }) => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const selectedColumnKeyRef = useRef<string | null>(null);
 
-  // Initialize sort state from URL params or defaults
-  const getInitialSortState = useCallback<() => ISortBy>(() => {
-    const sortByParam = searchParams.get('sortBy');
-    const orderByParam = searchParams.get('orderBy');
+  const sortByParam = searchParams.get('sortBy');
+  const orderByParam = searchParams.get('orderBy');
+  const hasSelectionColumn = columns.some(({ type }) => type === 'selection');
+  const fallbackSortColumnIndex = hasSelectionColumn
+    ? columns.findIndex(({ type, sort }) => type !== 'selection' && Boolean(sort))
+    : 0;
+  const sortColumnIndexFromURL = sortByParam
+    ? columns.findIndex(
+        ({ title, type, sort }) =>
+          title === sortByParam && (!hasSelectionColumn || (type !== 'selection' && Boolean(sort))),
+      )
+    : -1;
+  const sortBy: ISortBy =
+    sortColumnIndexFromURL >= 0
+      ? {
+          index: sortColumnIndexFromURL,
+          direction: getSortByDirection(orderByParam),
+        }
+      : {
+          index: sortColumnIndex ?? fallbackSortColumnIndex,
+          direction: sortDirection ?? SortByDirection.asc,
+        };
 
-    const columnIndex = findSortColumnIndex(columns, sortByParam);
-
-    if (columnIndex >= 0) {
-      return {
-        index: columnIndex,
-        direction: getSortByDirection(orderByParam),
-      };
+  // Remove sort parameters for columns that are no longer visible or available.
+  useEffect(() => {
+    if (columnsResolved && sortByParam !== null && sortColumnIndexFromURL < 0) {
+      // Defer the rewrite so it preserves query updates from pagination on the same commit.
+      const timeout = setTimeout(() => {
+        setSearchParams(
+          () => {
+            // The setter's parameters are a render snapshot, so read the current URL.
+            const newParams = new URLSearchParams(window.location.search);
+            if (newParams.get('sortBy') === sortByParam) {
+              newParams.delete('sortBy');
+              newParams.delete('orderBy');
+            }
+            return newParams;
+          },
+          { replace: true },
+        );
+      });
+      return () => clearTimeout(timeout);
     }
-
-    return {
-      index: sortColumnIndex ?? 0,
-      direction: sortDirection ?? SortByDirection.asc,
-    };
-  }, [searchParams, columns, sortColumnIndex, sortDirection]);
-
-  const [sortBy, setSortBy] = useState<ISortBy>(getInitialSortState);
+    return undefined;
+  }, [columnsResolved, sortByParam, sortColumnIndexFromURL, setSearchParams]);
 
   const applySort = useCallback(
     (index: number, direction: SortByDirection) => {
       const sortColumn = columns[index];
-      const sortKey = getColumnSortKey(sortColumn);
 
-      if (sortColumn && sortKey) {
-        selectedColumnKeyRef.current = sortKey;
+      if (sortColumn) {
         setSearchParams((prev) => {
           const newParams = new URLSearchParams(prev);
-          newParams.set('sortBy', sortKey);
+          newParams.set('sortBy', sortColumn.title);
           newParams.set('orderBy', direction);
           return newParams;
         });
-
-        setSortBy({ index, direction });
       }
     },
     [columns, setSearchParams],
   );
-
-  // Update sort state when columns change or URL params change
-  useEffect(() => {
-    const newSortState = getInitialSortState();
-    const sortByParam = searchParams.get('sortBy');
-
-    if (sortByParam) {
-      selectedColumnKeyRef.current = getColumnSortKey(columns[newSortState.index]);
-      setSortBy((prevSortState) =>
-        _.isEqual(prevSortState, newSortState) ? prevSortState : newSortState,
-      );
-      return;
-    }
-
-    // Data refreshes rebuild `columns`. If the URL lost sortBy (or never had it after
-    // a same-route navigation), keep the selected column by id instead of snapping to Name.
-    const resolvedIndex = findSortColumnIndex(columns, selectedColumnKeyRef.current);
-    if (resolvedIndex >= 0) {
-      const preservedSortState: ISortBy = {
-        index: resolvedIndex,
-        direction: sortBy.direction ?? SortByDirection.asc,
-      };
-      setSortBy((prevSortState) =>
-        _.isEqual(prevSortState, preservedSortState) ? prevSortState : preservedSortState,
-      );
-      return;
-    }
-
-    selectedColumnKeyRef.current = getColumnSortKey(columns[newSortState.index]);
-    setSortBy((prevSortState) =>
-      _.isEqual(prevSortState, newSortState) ? prevSortState : newSortState,
-    );
-  }, [getInitialSortState, searchParams, columns, sortBy.direction]);
 
   const onSort = useCallback(
     (event: BaseSyntheticEvent, index: number, direction: SortByDirection) => {

@@ -1,7 +1,7 @@
+import * as fs from 'fs';
+import * as path from 'path';
 import type { Configuration, Compiler } from '@rspack/core';
 import { CircularCheckRspackPlugin } from '@rspack/core';
-import * as path from 'path';
-import * as fs from 'fs';
 import chalk from 'chalk';
 
 const HandleCyclesPluginName = 'HandleCyclesPlugin';
@@ -66,9 +66,8 @@ const getCycleStats = (cycles: DetectedCycle[]): string => {
   return lines.join('');
 };
 
-const getCycleEntries = (cycles: DetectedCycle[]): string => {
-  return cycles.map((c) => `${c.causedBy}\n  ${c.modulePaths.join('\n  ')}\n`).join('\n');
-};
+const getCycleEntries = (cycles: DetectedCycle[]): string =>
+  cycles.map((c) => `${c.causedBy}\n  ${c.modulePaths.join('\n  ')}\n`).join('\n');
 
 export class CircularDependencyPreset {
   constructor(private readonly options: PresetOptions) {}
@@ -97,7 +96,7 @@ export class CircularDependencyPreset {
             // write report
             const header = `rspack compilation ${compilation.getStats().hash}\n`;
 
-            const reportPath = path.resolve(__dirname, this.options.reportFile);
+            const reportPath = path.resolve(import.meta.dirname, this.options.reportFile);
             fs.writeFileSync(
               reportPath,
               [header, getCycleStats(cycles), getCycleEntries(cycles)].join('\n'),

@@ -7,34 +7,23 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import {
-  actionsCellProps,
   ConsoleDataView,
   getLabelsColumnWidthStyleProp,
-  getNameCellProps,
-  initialFiltersDefault,
-  nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
+import { ListPageBody } from '@console/dynamic-plugin-sdk';
 import type {
   ConsoleDataViewColumn,
   ConsoleDataViewRow,
   ResourceFilters,
-} from '@console/app/src/components/data-view/types';
-import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-import { ListPageBody } from '@console/dynamic-plugin-sdk';
-import type {
-  ColumnLayout,
   RowProps,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { Status } from '@console/shared/src/components/status/Status';
-import { COLUMN_MANAGEMENT_USER_PREFERENCE_KEY } from '@console/shared/src/constants/common';
 import { DASH } from '@console/shared/src/constants/ui';
 import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
 import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
-import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
-import type { TableColumnsType } from '@console/shared/src/types/tableColumn';
 import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
 import * as UIActions from '../actions/ui';
 import { PodModel } from '../models';
@@ -111,38 +100,23 @@ const tableColumnInfo = [
   { id: '' },
 ];
 
-const usePodsColumns = (
-  showNodes: boolean,
-): { columns: ConsoleDataViewColumn<PodKind>[]; resetAllColumnWidths: () => void } => {
+const usePodsColumns = (showNodes: boolean): { columns: ConsoleDataViewColumn<PodKind>[] } => {
   const { t } = useTranslation('public');
-  const { getResizableProps, getWidth, resetAllColumnWidths } = useColumnWidthSettings(PodModel);
 
   const columns = useMemo<ConsoleDataViewColumn<PodKind>[]>(
     () => [
       {
-        title: t('Name'),
+        type: 'name' as const,
         id: tableColumnInfo[0].id,
-        resizableProps: getResizableProps(tableColumnInfo[0].id),
-        sort: 'metadata.name',
-        props: {
-          ...nameCellProps,
-          modifier: 'nowrap' as const,
-        },
       },
       {
-        title: t('Namespace'),
+        type: 'namespace' as const,
         id: tableColumnInfo[1].id,
-        sort: 'metadata.namespace',
-        resizableProps: getResizableProps(tableColumnInfo[1].id),
-        props: {
-          modifier: 'nowrap' as const,
-        },
       },
       {
         title: t('Status'),
         id: tableColumnInfo[2].id,
         sort: (data, direction) => data.sort(sortResourceByValue(direction, podPhase)),
-        resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
           modifier: 'nowrap' as const,
         },
@@ -152,7 +126,6 @@ const usePodsColumns = (
         id: tableColumnInfo[3].id,
         sort: (data, direction) =>
           data.sort(sortResourceByValue(direction, (obj) => podReadiness(obj).readyCount)),
-        resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
           modifier: 'nowrap' as const,
         },
@@ -161,7 +134,6 @@ const usePodsColumns = (
         title: t('Restarts'),
         id: tableColumnInfo[4].id,
         sort: (data, direction) => data.sort(sortResourceByValue(direction, podRestarts)),
-        resizableProps: getResizableProps(tableColumnInfo[4].id),
         props: {
           modifier: 'nowrap' as const,
         },
@@ -170,7 +142,6 @@ const usePodsColumns = (
         title: showNodes ? t('Node') : t('Owner'),
         id: tableColumnInfo[5].id,
         sort: showNodes ? 'spec.nodeName' : 'metadata.ownerReferences[0].name',
-        resizableProps: getResizableProps(tableColumnInfo[5].id),
         props: {
           modifier: 'nowrap' as const,
         },
@@ -180,7 +151,6 @@ const usePodsColumns = (
         id: tableColumnInfo[6].id,
         sort: (data, direction) =>
           data.sort(sortResourceByValue(direction, (obj) => UIActions.getPodMetric(obj, 'memory'))),
-        resizableProps: getResizableProps(tableColumnInfo[6].id),
         props: {
           modifier: 'nowrap' as const,
         },
@@ -190,7 +160,6 @@ const usePodsColumns = (
         id: tableColumnInfo[7].id,
         sort: (data, direction) =>
           data.sort(sortResourceByValue(direction, (obj) => UIActions.getPodMetric(obj, 'cpu'))),
-        resizableProps: getResizableProps(tableColumnInfo[7].id),
         props: {
           modifier: 'nowrap' as const,
         },
@@ -199,7 +168,6 @@ const usePodsColumns = (
         title: t('Created'),
         id: tableColumnInfo[8].id,
         sort: 'metadata.creationTimestamp',
-        resizableProps: getResizableProps(tableColumnInfo[8].id),
         props: {
           modifier: 'nowrap' as const,
         },
@@ -208,53 +176,43 @@ const usePodsColumns = (
         title: t('Node'),
         id: tableColumnInfo[9].id,
         sort: 'spec.nodeName',
-        resizableProps: getResizableProps(tableColumnInfo[9].id),
         props: {
           modifier: 'nowrap' as const,
         },
-        additional: true,
+        defaultVisible: false,
       },
       {
         title: t('Labels'),
         id: tableColumnInfo[10].id,
         sort: 'metadata.labels',
-        resizableProps: getResizableProps(tableColumnInfo[10].id),
         props: {
           modifier: 'nowrap' as const,
-          ...getLabelsColumnWidthStyleProp(getWidth(tableColumnInfo[3].id)),
+          ...getLabelsColumnWidthStyleProp(),
         },
-        additional: true,
+        defaultVisible: false,
       },
       {
         title: t('IP address'),
         id: tableColumnInfo[11].id,
         sort: 'status.podIP',
-        resizableProps: getResizableProps(tableColumnInfo[11].id),
         props: {
           modifier: 'nowrap' as const,
         },
-        additional: true,
+        defaultVisible: false,
       },
       {
         title: t('Receiving Traffic'),
         id: tableColumnInfo[12].id,
-        resizableProps: getResizableProps(tableColumnInfo[12].id),
         props: {
           modifier: 'nowrap' as const,
         },
-        additional: true,
+        defaultVisible: false,
       },
-      {
-        title: '',
-        id: tableColumnInfo[13].id,
-        props: {
-          ...actionsCellProps,
-        },
-      },
+      { type: 'actions' as const, id: tableColumnInfo[13].id },
     ],
-    [t, showNodes, getResizableProps, getWidth],
+    [t, showNodes],
   );
-  return { columns, resetAllColumnWidths };
+  return { columns };
 };
 
 const Cores: FC<CoresProps> = ({ cores }) => {
@@ -410,7 +368,6 @@ const getPodDataViewRows = (
             namespace={namespace}
           />
         ),
-        props: getNameCellProps(name),
       },
       [tableColumnInfo[1].id]: {
         cell: <ResourceLink kind="Namespace" name={namespace} />,
@@ -454,7 +411,6 @@ const getPodDataViewRows = (
       },
       [tableColumnInfo[13].id]: {
         cell: <LazyActionMenu context={context} isDisabled={phase === 'Terminating'} />,
-        props: actionsCellProps,
       },
     };
 
@@ -462,7 +418,6 @@ const getPodDataViewRows = (
       const cell = rowCells[id]?.cell || DASH;
       return {
         id,
-        props: rowCells[id]?.props,
         cell,
       };
     });
@@ -477,34 +432,12 @@ export const PodList: FC<PodListProps> = ({
   mock,
   hideNameLabelFilters,
   hideLabelFilter,
-  hideColumnManagement,
-  selectedColumns,
   ...props
 }) => {
   const { t } = useTranslation('public');
-  const { columns, resetAllColumnWidths } = usePodsColumns(showNodes);
+  const { columns } = usePodsColumns(showNodes);
 
   const podMetrics = useConsoleSelector<UIActions.PodMetrics>(({ UI }) => UI.metrics?.pod);
-
-  const columnManagementID = referenceForModel(PodModel);
-
-  const columnLayout = useMemo<ColumnLayout>(
-    () => ({
-      id: columnManagementID,
-      type: t('Pod'),
-      columns: columns.map((col) => ({
-        id: col.id,
-        title: col.title,
-        additional: col.additional,
-      })),
-      selectedColumns:
-        selectedColumns?.[columnManagementID]?.length > 0
-          ? new Set(selectedColumns[columnManagementID])
-          : new Set(),
-      showNamespaceOverride,
-    }),
-    [columns, columnManagementID, selectedColumns, showNamespaceOverride, t],
-  );
 
   const podStatusFilterOptions = useMemo<DataViewFilterOption[]>(
     () => [
@@ -546,7 +479,7 @@ export const PodList: FC<PodListProps> = ({
     [t],
   );
 
-  const initialFilters = useMemo(() => ({ ...initialFiltersDefault, status: [] }), []);
+  const initialFilters = useMemo(() => ({ status: [] }), []);
 
   const additionalFilterNodes = useMemo<ReactNode[]>(
     () => [
@@ -583,8 +516,8 @@ export const PodList: FC<PodListProps> = ({
         loadError={loadError}
         mock={mock}
         columns={columns}
-        columnLayout={columnLayout}
-        columnManagementID={columnManagementID}
+        id={PodModel}
+        showNamespaceOverride={showNamespaceOverride}
         initialFilters={initialFilters}
         additionalFilterNodes={additionalFilterNodes}
         matchesAdditionalFilters={matchesAdditionalFilters}
@@ -593,9 +526,6 @@ export const PodList: FC<PodListProps> = ({
         }
         hideNameLabelFilters={hideNameLabelFilters}
         hideLabelFilter={hideLabelFilter}
-        hideColumnManagement={hideColumnManagement}
-        isResizable
-        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );
@@ -611,17 +541,11 @@ export const PodsPage: FC<PodPageProps> = ({
   fieldSelector,
   hideNameLabelFilters,
   hideLabelFilter,
-  hideColumnManagement,
   showNamespaceOverride,
   hideFavoriteButton,
 }) => {
   const { t } = useTranslation('public');
   const dispatch = useConsoleDispatch();
-  const [selectedColumns, , columnPreferenceLoaded] = useUserPreference<TableColumnsType>(
-    COLUMN_MANAGEMENT_USER_PREFERENCE_KEY,
-    undefined,
-    true,
-  );
 
   useEffect(() => {
     if (showMetrics && !mock) {
@@ -661,10 +585,6 @@ export const PodsPage: FC<PodPageProps> = ({
     namespace: namespace || 'default',
   };
 
-  if (!columnPreferenceLoaded) {
-    return null;
-  }
-
   return (
     <>
       <ListPageHeader title={showTitle ? t('Pods') : ''} hideFavoriteButton={hideFavoriteButton}>
@@ -685,8 +605,6 @@ export const PodsPage: FC<PodPageProps> = ({
           namespace={namespace}
           hideNameLabelFilters={hideNameLabelFilters}
           hideLabelFilter={hideLabelFilter}
-          hideColumnManagement={hideColumnManagement}
-          selectedColumns={selectedColumns}
         />
       </ListPageBody>
     </>
@@ -722,9 +640,7 @@ type PodListProps = {
   showNamespaceOverride?: boolean;
   hideNameLabelFilters?: boolean;
   hideLabelFilter?: boolean;
-  hideColumnManagement?: boolean;
   namespace?: string;
-  selectedColumns?: TableColumnsType;
 };
 
 type PodPageProps = {
@@ -737,7 +653,6 @@ type PodPageProps = {
   showNodes?: boolean;
   hideLabelFilter?: boolean;
   hideNameLabelFilters?: boolean;
-  hideColumnManagement?: boolean;
   showNamespaceOverride?: boolean;
   hideFavoriteButton?: boolean;
 };

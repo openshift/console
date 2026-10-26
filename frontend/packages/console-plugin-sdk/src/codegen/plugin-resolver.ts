@@ -3,7 +3,8 @@ import * as path from 'path';
 import * as findUp from 'find-up';
 import * as glob from 'glob';
 import * as _ from 'lodash';
-import * as readPkg from 'read-pkg';
+import type { NormalizedPackageJson } from 'read-pkg';
+import { readPackageSync } from 'read-pkg';
 
 export const consolePkgScope = '@console';
 
@@ -31,7 +32,7 @@ export const readPackages = (packageFiles: string[]) => {
   const pkgList: Package[] = packageFiles.map((file) => {
     const filePath = path.dirname(file);
     return {
-      ...readPkg.sync({ cwd: filePath, normalize: true }),
+      ...readPackageSync({ cwd: filePath, normalize: true }),
       _path: filePath,
     };
   });
@@ -61,7 +62,7 @@ export const getMonorepoRootDir = () =>
   findUp.sync(
     (currentDir) =>
       fs.existsSync(path.join(currentDir, 'package.json'))
-        ? readPkg.sync({ cwd: currentDir, normalize: true }).name === 'openshift-console' &&
+        ? readPackageSync({ cwd: currentDir, normalize: true }).name === 'openshift-console' &&
           currentDir
         : undefined,
     { cwd: __dirname, type: 'directory' },
@@ -99,9 +100,9 @@ export const resolvePluginPackages = (
   return pluginFilter(appPackage, pluginPackages);
 };
 
-export type Package = readPkg.NormalizedPackageJson & {
+export interface Package extends NormalizedPackageJson {
   _path: string;
-};
+}
 
 export type PluginPackage = Package & {
   consolePlugin: {

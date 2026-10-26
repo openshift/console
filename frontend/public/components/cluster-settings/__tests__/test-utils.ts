@@ -147,7 +147,8 @@ export const verifyIDPFileFields = async ({
   const fileInput = within(fileUpload)
     .getAllByDisplayValue('')
     .find((element) => element instanceof HTMLInputElement && element.type === 'file') as
-    HTMLInputElement | undefined;
+    | HTMLInputElement
+    | undefined;
   expect(fileInput).toBeDefined();
   if (!fileInput) {
     throw new Error(`Could not find file input for ${inputLabel}`);

@@ -122,6 +122,7 @@ export const ConfigMapFormEditor: FC<FormikProps<any> & ConfigMapFormEditorProps
         handleCancel={handleCancel}
         handleDownload={editorType === EditorType.YAML && (() => downloadYaml(yamlData))}
         sticky
+        namespace={formData.namespace}
       />
     </FlexForm>
   );

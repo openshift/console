@@ -44,7 +44,7 @@ const DropdownWithSwitchToggle: FC<DropdownWithSwitchToggleProps> = ({
   return (
     <div ref={containerRef}>
       <Popper
-        appendTo={containerRef.current}
+        appendTo={() => containerRef.current}
         direction="down"
         enableFlip={false}
         isVisible={isOpen}
@@ -73,7 +73,7 @@ type DropdownWithSwitchToggleProps = {
   isOpen: boolean;
   label: string;
   menu: ReactElement;
-  menuRef: RefObject<HTMLElement>;
+  menuRef: RefObject<HTMLElement | null>;
   onToggle: (state: boolean) => void;
 };
 

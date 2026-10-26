@@ -1,9 +1,9 @@
 import { screen } from '@testing-library/react';
 import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
-import { fakeVulnFor } from '../../../integration-tests/bad-pods';
 import { Priority } from '../../const';
 import { SecurityBreakdownPopup, securityHealthHandler } from '../summary';
+import { fakeVulnFor } from './bad-pods';
 
 const highVuln = fakeVulnFor(Priority.High);
 

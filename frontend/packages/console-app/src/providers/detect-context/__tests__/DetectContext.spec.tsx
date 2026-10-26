@@ -1,10 +1,15 @@
 import { render, screen } from '@testing-library/react';
 import { useLocation } from 'react-router';
 import { usePerspectives } from '@console/shared/src/hooks/usePerspectives';
+import { useCSPViolationDetector } from '../../../hooks/useCSPViolationDetector';
 import { DetectContext } from '../DetectContext';
 import { useValuesForPerspectiveContext } from '../useValuesForPerspectiveContext';
 
 const MockApp = () => <h1>App</h1>;
+
+jest.mock('../../../hooks/useCSPViolationDetector', () => ({
+  useCSPViolationDetector: jest.fn(),
+}));
 
 jest.mock('../PerspectiveDetector', () => ({
   __esModule: true,
@@ -61,6 +66,7 @@ describe('DetectContext', () => {
     useValuesForPerspectiveContextMock.mockClear();
     usePerspectivesMock.mockClear();
     useLocationMock.mockClear();
+    jest.mocked(useCSPViolationDetector).mockClear();
     useLocationMock.mockReturnValue({ pathname: '/test' });
   });
 
@@ -80,6 +86,7 @@ describe('DetectContext', () => {
 
     expect(screen.getByRole('heading', { name: 'App' })).toBeVisible();
     expect(screen.queryByText('PerspectiveDetector')).not.toBeInTheDocument();
+    expect(useCSPViolationDetector).toHaveBeenCalledWith('dev');
   });
 
   it('should render PerspectiveDetector when there is no active perspective', () => {
@@ -97,5 +104,30 @@ describe('DetectContext', () => {
 
     expect(screen.getByText('PerspectiveDetector')).toBeVisible();
     expect(screen.queryByRole('heading', { name: 'App' })).not.toBeInTheDocument();
+    expect(useCSPViolationDetector).toHaveBeenCalledWith(undefined);
+  });
+
+  it('updates the CSP detector when the detected perspective changes', () => {
+    const setPerspective = jest.fn();
+    useValuesForPerspectiveContextMock.mockReturnValue(['admin', setPerspective, true]);
+    usePerspectivesMock.mockReturnValue([
+      { properties: { id: 'admin' } },
+      { properties: { id: 'dev' } },
+    ]);
+    const { rerender } = render(
+      <DetectContext>
+        <MockApp />
+      </DetectContext>,
+    );
+    expect(useCSPViolationDetector).toHaveBeenLastCalledWith('admin');
+
+    useValuesForPerspectiveContextMock.mockReturnValue(['dev', setPerspective, true]);
+    rerender(
+      <DetectContext>
+        <MockApp />
+      </DetectContext>,
+    );
+
+    expect(useCSPViolationDetector).toHaveBeenLastCalledWith('dev');
   });
 });

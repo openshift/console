@@ -1,160 +1,96 @@
-import type { ReactNode } from 'react';
-import { SortByDirection } from '@patternfly/react-table';
+import type { FC, ReactNode } from 'react';
 import { act, renderHook } from '@testing-library/react';
-import { MemoryRouter, useSearchParams } from 'react-router';
-import type { ConsoleDataViewColumn } from '../types';
-import { findSortColumnIndex, useConsoleDataViewSort } from '../useConsoleDataViewSort';
+import { BrowserRouter } from 'react-router';
+import type { ConsoleDataViewColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { useConsoleDataViewSort } from '../useConsoleDataViewSort';
 
-const columns: ConsoleDataViewColumn<unknown>[] = [
-  { id: 'name', title: 'Name', sort: 'metadata.name', cell: 'Name' },
-  {
-    id: 'requester',
-    title: 'Requester',
-    sort: "metadata.annotations['openshift.io/requester']",
-    cell: 'Requester',
-  },
-  { id: 'created', title: 'Created', sort: 'metadata.creationTimestamp', cell: 'Created' },
-];
+const columns: ConsoleDataViewColumn[] = [{ id: 'name', title: 'Name' }];
 
-describe('findSortColumnIndex', () => {
-  it('matches a column by id', () => {
-    expect(findSortColumnIndex(columns, 'requester')).toBe(1);
+// Use the browser URL so updates before a router render are included in cleanup.
+const wrapper: FC<{ children: ReactNode }> = ({ children }) => (
+  <BrowserRouter>{children}</BrowserRouter>
+);
+
+const renderSort = (columnsResolved = true) =>
+  renderHook(() => useConsoleDataViewSort({ columns, columnsResolved }), { wrapper });
+
+describe('useConsoleDataViewSort cleanup', () => {
+  beforeEach(() => {
+    jest.useFakeTimers();
+    window.history.replaceState({}, '', '?sortBy=Missing&orderBy=desc&page=2');
   });
 
-  it('matches a column by title for existing URLs', () => {
-    expect(findSortColumnIndex(columns, 'Requester')).toBe(1);
+  afterEach(() => {
+    jest.clearAllTimers();
+    jest.useRealTimers();
+    window.history.replaceState({}, '', '/');
   });
 
-  it('returns -1 when the key is missing', () => {
-    expect(findSortColumnIndex(columns, null)).toBe(-1);
-    expect(findSortColumnIndex(columns, 'unknown')).toBe(-1);
+  it('should remove invalid sort parameters', () => {
+    renderSort();
+
+    act(() => jest.runOnlyPendingTimers());
+
+    expect(window.location.search).toBe('?page=2');
   });
 
-  it('prefers an id match over an earlier title with the same value', () => {
-    const collidingColumns: ConsoleDataViewColumn<unknown>[] = [
-      { id: 'name', title: 'created', sort: 'metadata.name', cell: 'Name' },
-      { id: 'created', title: 'Created', sort: 'metadata.creationTimestamp', cell: 'Created' },
-    ];
-    expect(findSortColumnIndex(collidingColumns, 'created')).toBe(1);
-  });
-});
-
-describe('useConsoleDataViewSort', () => {
-  const wrapper =
-    (initialEntry: string) =>
-    ({ children }: { children: ReactNode }) => (
-      <MemoryRouter initialEntries={[initialEntry]}>{children}</MemoryRouter>
+  it('should preserve pagination and filter updates made before cleanup', () => {
+    renderSort();
+    window.history.replaceState(
+      {},
+      '',
+      '?sortBy=Missing&orderBy=desc&page=3&perPage=20&name=pod&status=Running&status=Pending',
     );
 
-  const wrapperWithSearchControl = (initialEntry: string) => {
-    const searchParamsApi: { clearSortBy: () => void } = { clearSortBy: () => undefined };
+    act(() => jest.runOnlyPendingTimers());
 
-    const SearchParamsBridge = () => {
-      const [searchParams, setSearchParams] = useSearchParams();
-      searchParamsApi.clearSortBy = () => {
-        const next = new URLSearchParams(searchParams);
-        next.delete('sortBy');
-        setSearchParams(next, { replace: true });
-      };
-      return null;
-    };
-
-    return {
-      wrapper: ({ children }: { children: ReactNode }) => (
-        <MemoryRouter initialEntries={[initialEntry]}>
-          <SearchParamsBridge />
-          {children}
-        </MemoryRouter>
-      ),
-      clearSortBy: () => searchParamsApi.clearSortBy(),
-    };
-  };
-
-  it('restores sort from the sortBy query param after columns are rebuilt', () => {
-    const { result, rerender } = renderHook(
-      ({ cols }) => useConsoleDataViewSort({ columns: cols }),
-      {
-        wrapper: wrapper('/k8s/cluster/projects?sortBy=Requester&orderBy=asc'),
-        initialProps: { cols: columns },
-      },
+    expect(window.location.search).toBe(
+      '?page=3&perPage=20&name=pod&status=Running&status=Pending',
     );
-
-    expect(result.current.sortBy).toEqual({ index: 1, direction: SortByDirection.asc });
-
-    rerender({ cols: [...columns] });
-
-    expect(result.current.sortBy).toEqual({ index: 1, direction: SortByDirection.asc });
   });
 
-  it('keeps the current sort column when columns rebuild without a sortBy param', () => {
-    const { wrapper: testWrapper, clearSortBy } = wrapperWithSearchControl(
-      '/k8s/cluster/projects?sortBy=requester&orderBy=desc',
-    );
-    const { result, rerender } = renderHook(
-      ({ cols }) => useConsoleDataViewSort({ columns: cols }),
-      {
-        wrapper: testWrapper,
-        initialProps: { cols: columns },
-      },
-    );
+  it('should preserve a new valid sort selected before cleanup', () => {
+    renderSort();
+    window.history.replaceState({}, '', '?sortBy=Name&orderBy=asc&page=3');
 
-    expect(result.current.sortBy.index).toBe(1);
-    expect(result.current.sortBy.direction).toBe(SortByDirection.desc);
+    act(() => jest.runOnlyPendingTimers());
 
-    act(() => {
-      clearSortBy();
-    });
-
-    rerender({ cols: columns.map((c) => ({ ...c })) });
-
-    expect(result.current.sortBy.index).toBe(1);
-    expect(result.current.sortBy.direction).toBe(SortByDirection.desc);
+    expect(window.location.search).toBe('?sortBy=Name&orderBy=asc&page=3');
   });
 
-  it('follows the selected column id when columns are reordered without a sortBy param', () => {
-    const { wrapper: testWrapper, clearSortBy } = wrapperWithSearchControl(
-      '/k8s/cluster/projects?sortBy=requester&orderBy=desc',
-    );
-    const { result, rerender } = renderHook(
-      ({ cols }) => useConsoleDataViewSort({ columns: cols }),
-      {
-        wrapper: testWrapper,
-        initialProps: { cols: columns },
-      },
-    );
+  it('should retain valid sort parameters', () => {
+    window.history.replaceState({}, '', '?sortBy=Name&orderBy=desc&page=2');
+    renderSort();
 
-    expect(result.current.sortBy.index).toBe(1);
+    act(() => jest.runOnlyPendingTimers());
 
-    act(() => {
-      clearSortBy();
-    });
-
-    rerender({ cols: [columns[0], columns[2], columns[1]].map((c) => ({ ...c })) });
-
-    expect(result.current.sortBy.index).toBe(2);
-    expect(result.current.sortBy.direction).toBe(SortByDirection.desc);
+    expect(window.location.search).toBe('?sortBy=Name&orderBy=desc&page=2');
   });
 
-  it('falls back to the default sort when the selected column is removed and sortBy is absent', () => {
-    const { wrapper: testWrapper, clearSortBy } = wrapperWithSearchControl(
-      '/k8s/cluster/projects?sortBy=requester&orderBy=desc',
-    );
-    const { result, rerender } = renderHook(
-      ({ cols }) => useConsoleDataViewSort({ columns: cols }),
-      {
-        wrapper: testWrapper,
-        initialProps: { cols: columns },
-      },
-    );
+  it('should retain sort parameters until columns resolve', () => {
+    renderSort(false);
 
-    expect(result.current.sortBy.index).toBe(1);
+    act(() => jest.runOnlyPendingTimers());
 
-    act(() => {
-      clearSortBy();
-    });
-
-    rerender({ cols: [columns[0], columns[2]].map((c) => ({ ...c })) });
-
-    expect(result.current.sortBy).toEqual({ index: 0, direction: SortByDirection.asc });
+    expect(window.location.search).toBe('?sortBy=Missing&orderBy=desc&page=2');
   });
+
+  it.each([true, false])(
+    'should validate URL sortability only with a checkbox column (selection: %s)',
+    (hasSelection) => {
+      window.history.replaceState({}, '', '?sortBy=Status&orderBy=desc&page=2');
+      const tableColumns: ConsoleDataViewColumn[] = [
+        ...(hasSelection ? [{ id: 'select', type: 'selection' as const, title: '' }] : []),
+        { id: 'name', title: 'Name', sort: 'metadata.name' },
+        { id: 'status', title: 'Status' },
+      ];
+      renderHook(() => useConsoleDataViewSort({ columns: tableColumns }), { wrapper });
+
+      act(() => jest.runOnlyPendingTimers());
+
+      expect(window.location.search).toBe(
+        hasSelection ? '?page=2' : '?sortBy=Status&orderBy=desc&page=2',
+      );
+    },
+  );
 });

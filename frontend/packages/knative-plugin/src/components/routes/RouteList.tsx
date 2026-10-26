@@ -1,15 +1,26 @@
 import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { TableProps } from '@console/internal/components/factory';
-import { Table } from '@console/internal/components/factory';
-import RouteHeader from './RouteHeader';
-import RouteRow from './RouteRow';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
+import type { ConsoleDataViewProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { RouteModel } from '../../models';
+import type { RouteKind } from '../../types';
+import { useRouteColumns } from './RouteHeader';
+import { getRouteDataViewRows } from './RouteRow';
 
-const RouteList: FC<TableProps> = (props) => {
+type RouteListProps = Omit<ConsoleDataViewProps<RouteKind>, 'id' | 'columns' | 'getDataViewRows'>;
+
+export const RouteList: FC<RouteListProps> = (props) => {
   const { t } = useTranslation('knative-plugin');
+  const { columns } = useRouteColumns();
   return (
-    <Table {...props} aria-label={t('Routes')} Header={RouteHeader(t)} Row={RouteRow} virtualize />
+    <ConsoleDataView<RouteKind>
+      {...props}
+      id={RouteModel}
+      label={t('Routes')}
+      data={props.data}
+      loaded={props.loaded}
+      columns={columns}
+      getDataViewRows={getRouteDataViewRows}
+    />
   );
 };
-
-export default RouteList;

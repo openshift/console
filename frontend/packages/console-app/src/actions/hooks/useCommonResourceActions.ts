@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import type { ReactNode } from 'react';
 import type { Action } from '@console/dynamic-plugin-sdk';
 import type { K8sModel, K8sResourceKind } from '@console/internal/module/k8s';
 import { CommonActionCreator } from './types';
@@ -28,7 +29,7 @@ import { useCommonActions } from './useCommonActions';
 export const useCommonResourceActions = (
   kind: K8sModel | undefined,
   resource: K8sResourceKind | undefined,
-  message?: JSX.Element,
+  message?: ReactNode,
   editPath?: string,
 ): Action[] => {
   const [actions, isReady] = useCommonActions(

@@ -34,8 +34,8 @@ export interface TerminalProps {
  */
 export const Terminal = forwardRef<ImperativeTerminalType, TerminalProps>(
   ({ onData, onResize, padding = 52, options = defaultOptions, className }, ref) => {
-    const terminal = useRef<XTerminal>();
-    const fitAddon = useRef<FitAddon>();
+    const terminal = useRef<XTerminal>(undefined);
+    const fitAddon = useRef<FitAddon>(undefined);
     const terminalRef = useRef<HTMLDivElement>(null);
     const isFullscreen = useIsFullscreen();
 

@@ -56,6 +56,7 @@ export const SourceToImageForm: FC<
         disableSubmit={!dirty || !_.isEmpty(errors) || isSubmitting}
         resetLabel={t('Cancel')}
         sticky
+        namespace={values?.project?.name}
       />
     </form>
   );

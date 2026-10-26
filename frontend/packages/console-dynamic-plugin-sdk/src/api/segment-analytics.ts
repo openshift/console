@@ -106,7 +106,6 @@ const initSegmentAnalytics = () => {
     options.integrations = { 'Segment.io': { apiHost: TELEMETRY_API_HOST } };
   }
   analytics.load(TELEMETRY_API_KEY, options);
-  analytics.page(); // Make the first page call to load the integrations
 };
 
 if (!SAMPLE_SESSION) {

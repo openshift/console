@@ -17,12 +17,13 @@ func TestWithSecurityHeaders(t *testing.T) {
 	handler.ServeHTTP(rr, req)
 
 	expected := map[string]string{
-		"X-Content-Type-Options": "nosniff",
-		"X-Frame-Options":        "DENY",
-		"X-DNS-Prefetch-Control": "off",
-		"Referrer-Policy":        "strict-origin-when-cross-origin",
-		"Cache-Control":          "no-cache, no-store, must-revalidate",
-		"Pragma":                 "no-cache",
+		"X-Content-Type-Options":     "nosniff",
+		"Cross-Origin-Opener-Policy": "same-origin",
+		"X-Frame-Options":            "DENY",
+		"X-DNS-Prefetch-Control":     "off",
+		"Referrer-Policy":            "strict-origin-when-cross-origin",
+		"Cache-Control":              "no-cache, no-store, must-revalidate",
+		"Pragma":                     "no-cache",
 	}
 
 	for header, want := range expected {

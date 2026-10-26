@@ -12,8 +12,8 @@ test.describe('Cluster Settings upstream configuration modal', { tag: ['@admin']
     await test.step('Click upstream URL to open modal', async () => {
       const upstreamServerUrl = page.getByTestId('cv-upstream-server-url');
 
-      // Scroll to element and click
-      await upstreamServerUrl.scrollIntoViewIfNeeded();
+      // Wait for the element to be visible (auto-retries through re-renders)
+      // then click (Playwright's click auto-scrolls into view).
       await expect(upstreamServerUrl).toBeVisible();
       await upstreamServerUrl.click();
 

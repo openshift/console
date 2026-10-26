@@ -1,7 +1,7 @@
 ##################################################
 #
 # go backend build
-FROM registry.ci.openshift.org/ocp/builder:rhel-9-golang-1.26-openshift-5.0 AS gobuilder
+FROM registry.ci.openshift.org/ocp/builder:rhel-9-golang-1.26-openshift-5.1 AS gobuilder
 RUN mkdir -p /go/src/github.com/openshift/console/
 ADD . /go/src/github.com/openshift/console/
 WORKDIR /go/src/github.com/openshift/console/
@@ -15,15 +15,14 @@ FROM registry.ci.openshift.org/ocp/builder:rhel-9-base-nodejs-openshift-5.0 AS n
 ADD . .
 USER 0
 
-ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 \
-    CYPRESS_INSTALL_BINARY=0
+ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
 
 RUN container-entrypoint ./build-frontend.sh
 
 ##################################################
 #
 # actual base image for final product
-FROM registry.ci.openshift.org/ocp/5.0:base-rhel9
+FROM registry.ci.openshift.org/ocp/5.1:base-rhel9
 RUN mkdir -p /opt/bridge/bin
 COPY --from=gobuilder /go/src/github.com/openshift/console/bin/bridge /opt/bridge/bin
 COPY --from=nodebuilder /opt/app-root/src/frontend/public/dist /opt/bridge/static
