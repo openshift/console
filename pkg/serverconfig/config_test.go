@@ -238,6 +238,12 @@ func TestCliArgumentsOverridesEnvVariablesAndParsedConfig(t *testing.T) {
 	}
 }
 
+func TestGetDirectiveNameObjectSrc(t *testing.T) {
+	if got := getDirectiveName(string(consolev1.ObjectSrc)); got != "object-src" {
+		t.Fatalf("ObjectSrc directive name = %q, want object-src", got)
+	}
+}
+
 func TestSetFlagsFromConfig(t *testing.T) {
 	tests := []struct {
 		name               string
@@ -330,12 +336,13 @@ func TestSetFlagsFromConfig(t *testing.T) {
 				APIVersion: "console.openshift.io/v1",
 				Kind:       "ConsoleConfig",
 				ContentSecurityPolicy: map[consolev1.DirectiveType][]string{
-					"FontSrc":   {"value2", "value3"},
-					"ScriptSrc": {"value1"},
+					consolev1.FontSrc:   {"value2", "value3"},
+					consolev1.ObjectSrc: {"https://objects.example.com", "https://objects2.example.com"},
+					consolev1.ScriptSrc: {"value1"},
 				},
 			},
 			expectedFlagValues: map[string]string{
-				"content-security-policy": "font-src=value2 value3, script-src=value1",
+				"content-security-policy": "font-src=value2 value3, object-src=https://objects.example.com https://objects2.example.com, script-src=value1",
 			},
 			expectedError: nil,
 		},

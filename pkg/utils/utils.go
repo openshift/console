@@ -102,6 +102,8 @@ func BuildCSPDirectives(k8sMode string, pluginsCSP serverconfig.MultiKeyValue, i
 			styleSrcDirective = append(styleSrcDirective, sources)
 		case connectSrc:
 			connectSrcDirective = append(connectSrcDirective, sources)
+		case objectSrc:
+			objectSrcDirective = append(objectSrcDirective, sources)
 		default:
 			klog.Fatalf("invalid CSP directive: %s", directive)
 		}
@@ -129,6 +131,11 @@ func BuildCSPDirectives(k8sMode string, pluginsCSP serverconfig.MultiKeyValue, i
 		strings.Join(styleSrcDirective, " "),
 		strings.Join(connectSrcDirective, " "),
 		strings.Join(objectSrcDirective, " "),
+		// Keep these directives fixed rather than exposing them to plugins.
+		"media-src 'none'",
+		"child-src 'none'",
+		// The load-test service worker is served from the console's own origin.
+		"worker-src 'self'",
 		"frame-src 'none'",
 		"frame-ancestors 'none'",
 	}
