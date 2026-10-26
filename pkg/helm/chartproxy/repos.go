@@ -66,6 +66,24 @@ type helmRepo struct {
 // lookupRepoHost resolves a repository hostname. Tests may replace it.
 var lookupRepoHost = net.LookupIP
 
+// allowLoopbackTargets is false in production. Tests whose fixture registries
+// listen on localhost set it; production code must not.
+var allowLoopbackTargets bool
+
+// SetAllowLoopbackTargetsForTest allows localhost and loopback repository
+// targets for the rest of the process. The actions suite uses it so chartmuseum
+// and zot fixtures can be indexed. Production code must not call it.
+func SetAllowLoopbackTargetsForTest(allow bool) {
+	allowLoopbackTargets = allow
+}
+
+func repoTargetsLoopback(host string, lookup func(string) ([]net.IP, error)) bool {
+	if allowLoopbackTargets {
+		return false
+	}
+	return utils.HostTargetsLoopback(host, lookup)
+}
+
 // validateRepoURL accepts http and https repository URLs and rejects localhost
 // and loopback targets. Private addresses are allowed. The second argument is
 // retained for compatibility with existing callers.
@@ -75,7 +93,7 @@ func validateRepoURL(u *url.URL, _ bool) error {
 	default:
 		return fmt.Errorf("unsupported URL scheme %q: only http and https are allowed", u.Scheme)
 	}
-	if utils.HostTargetsLoopback(u.Hostname(), lookupRepoHost) {
+	if repoTargetsLoopback(u.Hostname(), lookupRepoHost) {
 		return utils.ErrLoopbackTarget
 	}
 	return nil
@@ -91,7 +109,7 @@ func httpClient(tlsConfig *tls.Config) (*http.Client, error) {
 			if err != nil {
 				return nil, err
 			}
-			if utils.HostTargetsLoopback(host, func(name string) ([]net.IP, error) {
+			if repoTargetsLoopback(host, func(name string) ([]net.IP, error) {
 				return net.DefaultResolver.LookupIP(ctx, "ip", name)
 			}) {
 				return nil, utils.ErrLoopbackTarget
@@ -106,7 +124,7 @@ func httpClient(tlsConfig *tls.Config) (*http.Client, error) {
 			if len(via) >= maxRedirects {
 				return fmt.Errorf("stopped after %d redirects", maxRedirects)
 			}
-			if utils.HostTargetsLoopback(req.URL.Hostname(), nil) {
+			if repoTargetsLoopback(req.URL.Hostname(), nil) {
 				return utils.ErrLoopbackTarget
 			}
 			if len(via) > 0 && via[0].URL.Scheme == "https" && req.URL.Scheme == "http" {
