@@ -30,10 +30,11 @@ const arePropsEqual = (prev: SysEventContentProps, next: SysEventContentProps) =
   }
   if (
     prev.event.series?.count !== next.event.series?.count ||
-    prev.event.series?.lastObservedTime !== next.event.series?.lastObservedTime
+    prev.event.series?.lastObservedTime !== next.event.series?.lastObservedTime ||
+    prev.event.count !== next.event.count
   ) {
-    // Combined events update series.count/lastObservedTime while their
-    // lastTimestamp stays unchanged.
+    // Combined events update series.count/lastObservedTime (events.k8s.io) or
+    // count (core/v1) while their lastTimestamp stays unchanged.
     return false;
   }
   // `style` and `className` are applied by the SysEvent wrapper, which rerenders
