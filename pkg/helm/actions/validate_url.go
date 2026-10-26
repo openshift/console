@@ -2,24 +2,31 @@ package actions
 
 import (
 	"fmt"
+	"net"
+	"net/url"
 	"strings"
+
+	"github.com/openshift/console/pkg/utils"
 )
 
-// validateChartURL checks the scheme and chart filename before a user-supplied
-// chart reference is handed to Helm. Private and cluster-local hosts are
-// allowed. It is a package-level variable so tests can skip the check;
+// validateChartURL checks the scheme, chart filename, and loopback target
+// before a user-supplied chart reference is handed to Helm. Private addresses
+// are allowed. It is a package-level variable so tests can skip the check;
 // production code must not reassign it.
 var validateChartURL = validateChartURLStrict
 
+// lookupChartHost resolves a chart URL hostname. Tests may replace it.
+var lookupChartHost = net.LookupIP
+
 // ValidateChartURL checks that a chart reference uses oci, http, or https and,
-// for http(s), names a .tgz or .tar.gz archive. It does not restrict the host.
+// for http(s), names a .tgz or .tar.gz archive. Localhost and loopback targets
+// are rejected. Other hosts, including private addresses, are allowed.
 func ValidateChartURL(raw string) error {
 	return validateChartURL(raw)
 }
 
 // validateChartURLStrict accepts an oci:// reference or an http(s) URL whose
-// path ends in .tgz or .tar.gz. Hostnames and IP addresses, including private
-// and cluster-local targets, are not filtered.
+// path ends in .tgz or .tar.gz, and rejects localhost and loopback targets.
 func validateChartURLStrict(raw string) error {
 	raw = strings.TrimSpace(raw)
 	if raw == "" {
@@ -27,6 +34,13 @@ func validateChartURLStrict(raw string) error {
 	}
 	if !IsChartURLWellFormed(raw) {
 		return fmt.Errorf("invalid chart URL: must be an oci:// reference or an http(s) URL whose path ends in .tgz or .tar.gz")
+	}
+	parsed, err := url.Parse(raw)
+	if err != nil {
+		return fmt.Errorf("invalid chart URL: %v", err)
+	}
+	if utils.HostTargetsLoopback(parsed.Hostname(), lookupChartHost) {
+		return utils.ErrLoopbackTarget
 	}
 	return nil
 }

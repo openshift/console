@@ -26,6 +26,7 @@ import (
 
 	"github.com/openshift/console/pkg/helm/actions/fake"
 	"github.com/openshift/console/pkg/helm/fetcherr"
+	"github.com/openshift/console/pkg/utils"
 	"github.com/stretchr/testify/require"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -83,14 +84,22 @@ func TestValidateRepoURL(t *testing.T) {
 			errContains: "unsupported URL scheme",
 		},
 		{
-			name:    "allows loopback IPv4",
-			rawURL:  "http://127.0.0.1/index.yaml",
-			wantErr: false,
+			name:        "rejects loopback IPv4",
+			rawURL:      "http://127.0.0.1/index.yaml",
+			wantErr:     true,
+			errContains: "loopback",
 		},
 		{
-			name:    "allows loopback IPv6",
-			rawURL:  "http://[::1]/index.yaml",
-			wantErr: false,
+			name:        "rejects loopback IPv6",
+			rawURL:      "http://[::1]/index.yaml",
+			wantErr:     true,
+			errContains: "loopback",
+		},
+		{
+			name:        "rejects localhost",
+			rawURL:      "http://localhost/index.yaml",
+			wantErr:     true,
+			errContains: "loopback",
 		},
 		{
 			name:    "allows RFC1918 10.x",
@@ -113,10 +122,11 @@ func TestValidateRepoURL(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name:           "allows loopback for cluster-scoped",
+			name:           "rejects loopback for cluster-scoped",
 			rawURL:         "http://127.0.0.1/index.yaml",
 			isClusterScope: true,
-			wantErr:        false,
+			wantErr:        true,
+			errContains:    "loopback",
 		},
 		{
 			name:           "allows private IP for cluster-scoped",
@@ -727,7 +737,7 @@ func TestHelmRepoGetter_unmarshallConfig(t *testing.T) {
 					},
 					"spec": map[string]interface{}{
 						"connectionConfig": map[string]interface{}{
-							"url": "http://localhost:9553",
+							"url": "http://10.1.2.3:9553",
 							"basicAuthConfig": map[string]interface{}{
 								"name":      "fooSecret",
 								"namespace": "testing",
@@ -754,7 +764,7 @@ func TestHelmRepoGetter_unmarshallConfig(t *testing.T) {
 					},
 					"spec": map[string]interface{}{
 						"connectionConfig": map[string]interface{}{
-							"url": "http://localhost:9553",
+							"url": "http://10.1.2.3:9553",
 							"basicAuthConfig": map[string]interface{}{
 								"name":      "fooSecret",
 								"namespace": "testing",
@@ -862,6 +872,28 @@ func TestHelmRepoGetter_unmarshallConfig(t *testing.T) {
 	require.NoError(t, err)
 	err = ExecuteScript("./testdata/cleanup.sh", false)
 	require.NoError(t, err)
+}
+
+func TestHTTPClientRejectsLoopback(t *testing.T) {
+	client, err := httpClient(nil)
+	require.NoError(t, err)
+
+	loopback, err := http.NewRequest(http.MethodGet, "http://127.0.0.1/index.yaml", nil)
+	require.NoError(t, err)
+	original, err := http.NewRequest(http.MethodGet, "http://charts.example.com/charts", nil)
+	require.NoError(t, err)
+	require.ErrorIs(t, client.CheckRedirect(loopback, []*http.Request{original}), utils.ErrLoopbackTarget)
+
+	private, err := http.NewRequest(http.MethodGet, "http://10.0.0.1/index.yaml", nil)
+	require.NoError(t, err)
+	require.NoError(t, client.CheckRedirect(private, []*http.Request{original}))
+
+	repoURL, err := url.Parse("http://127.0.0.1:1/charts")
+	require.NoError(t, err)
+	_, err = (helmRepo{Name: "loopback", URL: repoURL, httpClient: func() (*http.Client, error) {
+		return httpClient(nil)
+	}}).IndexFile()
+	require.ErrorIs(t, err, utils.ErrLoopbackTarget)
 }
 
 func TestHelmRepo_IndexFileSanitizesFetchErrors(t *testing.T) {
