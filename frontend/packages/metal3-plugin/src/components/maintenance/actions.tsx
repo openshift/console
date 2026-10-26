@@ -47,7 +47,7 @@ export const useNodeMaintenanceActions: ExtensionHook<Action[], NodeKind> = (res
     return [action];
     // missing startNodeMaintenanceModal and stopNodeMaintenanceModalLauncher dependencies,
     // that causes max depth exceeded error
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [maintenances, resource.metadata.name, t]);
 
   return [actions, loading, loadError];

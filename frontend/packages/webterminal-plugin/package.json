@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "coverage": "yarn test --coverage --collectCoverageFrom='[\"packages/webterminal-plugin/src/**\",\"!**/__tests__/**\",\"!packages/webterminal-plugin/src/test/**\"]'",
-    "lint": "yarn --cwd ../.. eslint packages/webterminal-plugin",
+    "lint": "yarn --cwd ../.. oxlint packages/webterminal-plugin",
     "test": "yarn --cwd ../.. test packages/webterminal-plugin"
   },
   "consolePlugin": {

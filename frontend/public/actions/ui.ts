@@ -21,7 +21,7 @@ import { setClusterID, setCreateProjectMessage, ActionType } from './common';
 import { detectFeatures } from './features';
 import { clearSSARFlags } from './flags';
 
-// eslint-disable-next-line no-barrel-files/no-barrel-files
+// eslint-disable-next-line oxc/no-barrel-file
 export type { NamespaceMetrics } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 
 type MetricValuesByNamespace = {

@@ -51,7 +51,7 @@ export const PodRing: FC<PodRingProps> = ({
     },
     // disabling exhaustive-deps because I do not want to add clickCount to
     // dependency array. I only want to trigger useEffect when `obj.spec.replicas` changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
     [obj.spec.replicas],
   );
 

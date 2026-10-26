@@ -50,7 +50,7 @@ export async function warmupSPA(page: Page): Promise<void> {
 export async function dismissQuickStartDrawer(page: Page): Promise<void> {
   const closeButton = page.getByRole('button', { name: 'Close drawer panel' });
   try {
-    // eslint-disable-next-line no-restricted-syntax
+    // eslint-disable-next-line eslint-js/no-restricted-syntax
     await closeButton.waitFor({ state: 'visible', timeout: 5_000 });
     await closeButton.click();
   } catch {
@@ -115,7 +115,7 @@ export default abstract class BasePage {
     try {
       const count = await loadingElements.count().catch(() => 0);
       if (count > 0) {
-        // eslint-disable-next-line no-restricted-syntax
+        // eslint-disable-next-line eslint-js/no-restricted-syntax
         await loadingElements.first().waitFor({ state: 'hidden', timeout: timeoutMs });
       }
     } catch {
@@ -175,7 +175,7 @@ export default abstract class BasePage {
       if (modelError) {
         await this.retryOnError();
       } else {
-        // eslint-disable-next-line no-restricted-syntax
+        // eslint-disable-next-line eslint-js/no-restricted-syntax
         await actionsButton.waitFor({ state: 'visible', timeout: 5_000 });
       }
     }).toPass({ timeout: timeoutMs });
@@ -209,7 +209,7 @@ export default abstract class BasePage {
     for (let attempt = 1; attempt <= retries; attempt++) {
       try {
         await this.waitForLoadingComplete(Math.min(attemptTimeout / 4, 3_000));
-        // eslint-disable-next-line no-restricted-syntax
+        // eslint-disable-next-line eslint-js/no-restricted-syntax
         await locator.waitFor({ state: 'visible', timeout: attemptTimeout });
         await locator.scrollIntoViewIfNeeded({ timeout: attemptTimeout / 3 });
 
@@ -278,14 +278,14 @@ export default abstract class BasePage {
 
   async ensureFormView(formFieldLocator?: Locator): Promise<void> {
     const syncedEditor = this.getSyncedEditor();
-    // eslint-disable-next-line no-restricted-syntax
+    // eslint-disable-next-line eslint-js/no-restricted-syntax
     await syncedEditor.waitFor({ state: 'visible', timeout: 60_000 });
     const formRadio = this.getEditorRadio('Form view');
     if (!(await formRadio.isChecked())) {
       await formRadio.click();
     }
     if (formFieldLocator) {
-      // eslint-disable-next-line no-restricted-syntax
+      // eslint-disable-next-line eslint-js/no-restricted-syntax
       await formFieldLocator.waitFor({ state: 'visible', timeout: 30_000 });
     }
   }

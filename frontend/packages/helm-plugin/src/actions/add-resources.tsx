@@ -1,4 +1,4 @@
-import i18next from 'i18next';
+import * as i18next from 'i18next';
 import type { Action } from '@console/dynamic-plugin-sdk/src';
 import { helmCatalogIconSVG } from '../utils/icons';
 

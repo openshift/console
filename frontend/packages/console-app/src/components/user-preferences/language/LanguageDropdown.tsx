@@ -65,7 +65,7 @@ const LanguageDropdown: FC = () => {
     }
     // run this hook only after resources have loaded
     // to set the using default language checkbox when the form loads
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [preferredLanguageLoaded]);
 
   return preferredLanguageLoaded ? (

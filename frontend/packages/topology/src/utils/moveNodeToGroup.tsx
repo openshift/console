@@ -1,5 +1,5 @@
 import type { Node } from '@patternfly/react-topology';
-import i18next from 'i18next';
+import * as i18next from 'i18next';
 import { Trans } from 'react-i18next';
 import { launchErrorModal } from '@console/shared/src/utils/error-modal-handler';
 import { launchWarningModal } from '@console/shared/src/utils/warning-modal-handler';

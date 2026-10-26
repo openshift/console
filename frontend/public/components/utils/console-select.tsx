@@ -186,7 +186,7 @@ export const ConsoleSelect: FC<ConsoleSelectProps> = ({
     if (props.selectedKey !== undefined) {
       setSelectedKey(props.selectedKey);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [props.selectedKey]);
 
   useEffect(() => {
@@ -199,7 +199,7 @@ export const ConsoleSelect: FC<ConsoleSelectProps> = ({
       applyTextFilter('', props.items);
     }
     // only want to run when `expanded` changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [expanded]);
 
   /* Menu content */

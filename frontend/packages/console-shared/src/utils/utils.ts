@@ -1,4 +1,4 @@
-import i18next from 'i18next';
+import * as i18next from 'i18next';
 import type { JSONSchema7 } from 'json-schema';
 import { startCase, toPath } from 'lodash';
 import type { WatchK8sResultsObject } from '@console/dynamic-plugin-sdk';

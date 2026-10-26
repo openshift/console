@@ -868,6 +868,7 @@ describe('OLS Cluster State Matrix - Complete Scenarios', () => {
         ];
 
         // 3 operators at target version, 1 updating (progressing), 1 pending
+        // eslint-disable-next-line eslint-js/max-nested-callbacks -- intentional nesting depth in test scaffolding
         const operators = baseOperators.map((op, i) => ({
           ...op,
           status: {

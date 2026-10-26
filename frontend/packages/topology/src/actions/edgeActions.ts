@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { ButtonVariant } from '@patternfly/react-core';
 import type { Edge, Node } from '@patternfly/react-topology';
 import { isNode } from '@patternfly/react-topology';
-import i18next from 'i18next';
+import * as i18next from 'i18next';
 import { useTranslation } from 'react-i18next';
 import type { Action, K8sModel } from '@console/dynamic-plugin-sdk';
 import { asAccessReview } from '@console/internal/components/utils';
@@ -81,7 +81,7 @@ export const useMoveConnectorAction = (
       disabled: availableTargets.length <= 1,
       accessReview: asAccessReview(kindObj, resource, 'delete'),
     }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
     [availableTargets.length, kindObj, resource],
   );
 };
@@ -121,7 +121,7 @@ export const useDeleteConnectorAction = (
       accessReview: asAccessReview(kindObj, resource, 'delete'),
     }),
     // missing openConfirm dependency, that causes max depth exceeded error
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
     [kindObj, resource, t],
   );
 };

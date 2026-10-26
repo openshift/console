@@ -94,6 +94,7 @@ describe('PrometheusGraphLink', () => {
             <p>{MOCK_CONTENT_TEXT}</p>
           </PrometheusGraphLink>,
         );
+        // eslint-disable-next-line eslint-js/max-nested-callbacks -- intentional nesting depth in test scaffolding
         act(() => {
           store.dispatch(setFlag(FLAGS.CAN_GET_NS, true));
         });

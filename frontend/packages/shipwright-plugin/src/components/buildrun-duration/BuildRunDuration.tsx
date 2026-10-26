@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import i18next from 'i18next';
+import * as i18next from 'i18next';
 import type { BuildRun } from '../../types';
 
 export const getDuration = (seconds: number, long?: boolean): string => {

@@ -24,7 +24,7 @@ import {
   Alert,
   MenuToggle,
 } from '@patternfly/react-core';
-import i18next from 'i18next';
+import * as i18next from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';

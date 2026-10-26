@@ -36,7 +36,7 @@ export class NamespaceBarPage extends BasePage {
 
   async openDropdown(): Promise<void> {
     await this.robustClick(this.namespaceBarDropdown.getByRole('button'));
-    // eslint-disable-next-line no-restricted-syntax -- waiting for the menu to render, no action follows
+    // eslint-disable-next-line eslint-js/no-restricted-syntax -- waiting for the menu to render, no action follows
     await this.dropdownMenu.waitFor({ state: 'visible' });
   }
 

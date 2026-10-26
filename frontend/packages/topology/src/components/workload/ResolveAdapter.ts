@@ -21,7 +21,7 @@ const ResolveAdapter = <D extends {}, T = {}>({
       onAdapterDataResolved(data);
     }
     // We do not want to run the effect every time onAdapterDataResolved changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [data]);
 
   return null;
