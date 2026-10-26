@@ -82,6 +82,9 @@ func TestHelmHandlers_HandleChartVerifier_RejectsInvalidURLs(t *testing.T) {
 		{"rejects empty chart_url", `{"chart_url":""}`},
 		{"rejects ftp scheme", `{"chart_url":"ftp://example.com/chart.tgz"}`},
 		{"rejects file scheme", `{"chart_url":"file:///etc/passwd"}`},
+		{"rejects ipv4 loopback", `{"chart_url":"http://127.0.0.1/chart.tgz"}`},
+		{"rejects ipv6 loopback", `{"chart_url":"http://[::1]/chart.tgz"}`},
+		{"rejects localhost", `{"chart_url":"oci://localhost:5000/charts/chart"}`},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -150,13 +153,12 @@ func TestHelmHandlers_HandleChartVerifier_SanitizesFetchErrors(t *testing.T) {
 
 func TestHelmHandlers_HandleChartVerifier_AllowsPrivateNetworkURLs(t *testing.T) {
 	bodies := []string{
-		`{"chart_url":"http://127.0.0.1/chart.tgz"}`,
 		`{"chart_url":"https://10.0.0.5/chart.tgz"}`,
 		`{"chart_url":"http://169.254.169.254/latest/chart.tgz"}`,
+		`{"chart_url":"https://172.24.5.6/chart.tgz"}`,
+		`{"chart_url":"https://192.168.1.1/chart.tgz"}`,
 		`{"chart_url":"https://myrepo.default.svc/chart.tgz"}`,
 		`{"chart_url":"oci://kubernetes.default/charts/chart"}`,
-		`{"chart_url":"oci://localhost:5000/charts/chart"}`,
-		`{"chart_url":"http://[::1]/chart.tgz"}`,
 	}
 	for _, body := range bodies {
 		t.Run(body, func(t *testing.T) {

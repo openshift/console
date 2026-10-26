@@ -1,8 +1,10 @@
 package utils
 
 import (
+	"errors"
 	"fmt"
 	"net"
+	"strings"
 )
 
 // privateOrReservedCIDRs are address ranges blocked for SSRF protection.
@@ -57,4 +59,38 @@ func IsPrivateOrReservedIP(ip net.IP) bool {
 // private or reserved. Strings that are not IP addresses return false.
 func IsPrivateOrReservedAddr(s string) bool {
 	return IsPrivateOrReservedIP(net.ParseIP(s))
+}
+
+// ErrLoopbackTarget is returned when a chart or repository URL names localhost
+// or a loopback address. Private addresses are not loopback.
+var ErrLoopbackTarget = errors.New("URL must not target localhost or a loopback address")
+
+// HostTargetsLoopback reports whether host is localhost or a loopback address.
+// Literal addresses are checked directly. Other names are passed to lookup;
+// a lookup failure is not treated as loopback, and a nil lookup skips resolution.
+func HostTargetsLoopback(host string, lookup func(string) ([]net.IP, error)) bool {
+	host = strings.TrimRight(strings.ToLower(strings.TrimSpace(host)), ".")
+	switch host {
+	case "localhost", "localhost.localdomain":
+		return true
+	}
+	if host == "" {
+		return false
+	}
+	if ip := net.ParseIP(host); ip != nil {
+		return ip.IsLoopback()
+	}
+	if lookup == nil {
+		return false
+	}
+	ips, err := lookup(host)
+	if err != nil {
+		return false
+	}
+	for _, ip := range ips {
+		if ip != nil && ip.IsLoopback() {
+			return true
+		}
+	}
+	return false
 }

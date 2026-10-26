@@ -62,7 +62,8 @@ type RegistryClientSetter interface {
 // IsChartURLWellFormed reports whether a chart URL is syntactically well-formed:
 // an oci://<registry>/<path> reference or an http(s)://<host>/<path>.tgz|tar.gz
 // archive URL. Hosts may be DNS names or IPv4/IPv6 addresses, including
-// private and cluster-local targets.
+// private and cluster-local targets. Localhost and loopback are well-formed
+// here but are rejected elsewhere.
 func IsChartURLWellFormed(raw string) bool {
 	return ociURLRe.MatchString(raw) || httpURLRe.MatchString(raw)
 }

@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"net"
 	"net/http"
 	"net/url"
 	"strings"
@@ -25,6 +26,7 @@ import (
 	"github.com/openshift/library-go/pkg/crypto"
 
 	"github.com/openshift/console/pkg/helm/fetcherr"
+	"github.com/openshift/console/pkg/utils"
 )
 
 var (
@@ -61,21 +63,41 @@ type helmRepo struct {
 	httpClient func() (*http.Client, error)
 }
 
-// validateRepoURL accepts http and https repository URLs. The second argument
-// is retained for compatibility with existing callers.
+// lookupRepoHost resolves a repository hostname. Tests may replace it.
+var lookupRepoHost = net.LookupIP
+
+// validateRepoURL accepts http and https repository URLs and rejects localhost
+// and loopback targets. Private addresses are allowed. The second argument is
+// retained for compatibility with existing callers.
 func validateRepoURL(u *url.URL, _ bool) error {
 	switch u.Scheme {
 	case "http", "https":
-		return nil
 	default:
 		return fmt.Errorf("unsupported URL scheme %q: only http and https are allowed", u.Scheme)
 	}
+	if utils.HostTargetsLoopback(u.Hostname(), lookupRepoHost) {
+		return utils.ErrLoopbackTarget
+	}
+	return nil
 }
 
 func httpClient(tlsConfig *tls.Config) (*http.Client, error) {
+	dialer := &net.Dialer{Timeout: 5 * time.Second}
 	tr := &http.Transport{
 		TLSClientConfig: tlsConfig,
 		Proxy:           http.ProxyFromEnvironment,
+		DialContext: func(ctx context.Context, network, addr string) (net.Conn, error) {
+			host, _, err := net.SplitHostPort(addr)
+			if err != nil {
+				return nil, err
+			}
+			if utils.HostTargetsLoopback(host, func(name string) ([]net.IP, error) {
+				return net.DefaultResolver.LookupIP(ctx, "ip", name)
+			}) {
+				return nil, utils.ErrLoopbackTarget
+			}
+			return dialer.DialContext(ctx, network, addr)
+		},
 	}
 
 	client := &http.Client{
@@ -83,6 +105,9 @@ func httpClient(tlsConfig *tls.Config) (*http.Client, error) {
 		CheckRedirect: func(req *http.Request, via []*http.Request) error {
 			if len(via) >= maxRedirects {
 				return fmt.Errorf("stopped after %d redirects", maxRedirects)
+			}
+			if utils.HostTargetsLoopback(req.URL.Hostname(), nil) {
+				return utils.ErrLoopbackTarget
 			}
 			if len(via) > 0 && via[0].URL.Scheme == "https" && req.URL.Scheme == "http" {
 				return errors.New("redirect from https to http is not allowed")
@@ -117,6 +142,9 @@ func (hr helmRepo) IndexFile() (*repo.IndexFile, error) {
 	resp, err := httpClient.Get(indexURL)
 	if err != nil {
 		klog.V(4).Infof("Helm repository %q index request failed: %v", hr.Name, err)
+		if errors.Is(err, utils.ErrLoopbackTarget) {
+			return nil, utils.ErrLoopbackTarget
+		}
 		return nil, fetcherr.ErrIndexFileNotFound
 	}
 	defer resp.Body.Close()

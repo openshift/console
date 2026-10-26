@@ -46,6 +46,43 @@ func TestIsPrivateOrReservedIP(t *testing.T) {
 	}
 }
 
+func TestHostTargetsLoopback(t *testing.T) {
+	lookup := func(host string) ([]net.IP, error) {
+		switch host {
+		case "loopback.example.com":
+			return []net.IP{net.ParseIP("127.0.0.1")}, nil
+		case "private.example.com":
+			return []net.IP{net.ParseIP("10.1.2.3")}, nil
+		default:
+			return nil, &net.DNSError{Err: "no such host", Name: host, IsNotFound: true}
+		}
+	}
+	tests := []struct {
+		host string
+		want bool
+	}{
+		{"localhost", true},
+		{"LOCALHOST.", true},
+		{"localhost.localdomain", true},
+		{"127.0.0.1", true},
+		{"127.255.255.254", true},
+		{"::1", true},
+		{"10.1.2.3", false},
+		{"172.24.5.6", false},
+		{"192.168.1.1", false},
+		{"169.254.169.254", false},
+		{"8.8.8.8", false},
+		{"loopback.example.com", true},
+		{"private.example.com", false},
+		{"missing.example.com", false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.host, func(t *testing.T) {
+			assert.Equal(t, tt.want, HostTargetsLoopback(tt.host, lookup))
+		})
+	}
+}
+
 func TestIsPrivateOrReservedAddr_nonIP(t *testing.T) {
 	assert.False(t, IsPrivateOrReservedAddr("example.com"))
 	assert.False(t, IsPrivateOrReservedAddr(""))
