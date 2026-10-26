@@ -85,6 +85,8 @@ func TestHelmHandlers_HandleChartVerifier_RejectsInvalidURLs(t *testing.T) {
 		{"rejects ipv4 loopback", `{"chart_url":"http://127.0.0.1/chart.tgz"}`},
 		{"rejects ipv6 loopback", `{"chart_url":"http://[::1]/chart.tgz"}`},
 		{"rejects localhost", `{"chart_url":"oci://localhost:5000/charts/chart"}`},
+		{"rejects unspecified ipv4", `{"chart_url":"http://0.0.0.0/chart.tgz"}`},
+		{"rejects unspecified ipv6", `{"chart_url":"http://[::]/chart.tgz"}`},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

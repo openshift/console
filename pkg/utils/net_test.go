@@ -51,6 +51,8 @@ func TestHostTargetsLoopback(t *testing.T) {
 		switch host {
 		case "loopback.example.com":
 			return []net.IP{net.ParseIP("127.0.0.1")}, nil
+		case "unspecified.example.com":
+			return []net.IP{net.ParseIP("0.0.0.0")}, nil
 		case "private.example.com":
 			return []net.IP{net.ParseIP("10.1.2.3")}, nil
 		default:
@@ -61,6 +63,9 @@ func TestHostTargetsLoopback(t *testing.T) {
 		host string
 		want bool
 	}{
+		{"0.0.0.0", true},
+		{"::", true},
+		{"unspecified.example.com", true},
 		{"localhost", true},
 		{"LOCALHOST.", true},
 		{"localhost.localdomain", true},
