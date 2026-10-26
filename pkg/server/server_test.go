@@ -64,6 +64,9 @@ func TestIndexHandlerCSPMode(t *testing.T) {
 				"img-src 'self' https: blob: data:",
 				"script-src 'self' console.redhat.com https://plugin.example.com 'nonce-",
 				"style-src 'self' 'unsafe-inline'",
+				"media-src 'none'",
+				"child-src 'none'",
+				"worker-src 'self'",
 				"report-uri https://reports.example.com/csp",
 			} {
 				if !strings.Contains(policy, directive) {

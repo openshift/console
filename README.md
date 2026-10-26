@@ -482,14 +482,23 @@ Example:
 ./bin/bridge --content-security-policy script-src='localhost:1234',font-src='localhost:2345 localhost:3456'
 ```
 
-List of configurable CSP directives is available in the [openshift/api repository](https://github.com/openshift/api/blob/master/console/v1/types_console_plugin.go#L102-L137).
+The configurable directives are defined in the [openshift/api repository](https://github.com/openshift/api/blob/master/console/v1/types_console_plugin.go). Console appends its defaults, including `frame-src 'none'`, `frame-ancestors 'none'`, and `object-src 'self'`. When Bridge runs off-cluster, it also adds `http://localhost:8080` to `object-src`.
 
-The list is extended automatically by the console server with following CSP directives:
-- `"frame-src 'none'"`
-- `"frame-ancestors 'none'"`
-- `"object-src 'none'"`
+Bridge always emits `media-src 'none'`, `child-src 'none'`, and `worker-src 'self'`. These directives are not configurable through `ConsolePlugin.spec.contentSecurityPolicy`. The same-origin `worker-src` source permits Console's `load-test.sw.js` service worker.
 
-Currently this feature is behind feature gate.
+Plugins can add object and embed resource sources with `ObjectSrc`:
+
+```yaml
+spec:
+  contentSecurityPolicy:
+    - directive: ObjectSrc
+      values:
+        - https://objects.example.com
+```
+
+Values from enabled plugins are merged into the single console-wide `object-src` directive and appended to the console defaults. The Bridge CSP mode (`report-only` or `enforce`) determines the response header and behavior; declaring `ObjectSrc` only adds allowed sources and does not enable enforcement.
+
+Before enabling an `ObjectSrc` declaration, deploy both the updated ConsolePlugin CRD and a Bridge version that recognizes `ObjectSrc`. An older Bridge cannot parse this configuration and may fail to start. Remove all `ObjectSrc` declarations and allow the operator to update the Console configuration before rolling back to an older Bridge.
 
 ## Frontend Packages
 - [console-dynamic-plugin-sdk](./frontend/packages/console-dynamic-plugin-sdk/README.md)
