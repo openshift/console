@@ -1,4 +1,4 @@
-/* eslint playwright/expect-expect: ["warn", { "assertFunctionNames": ["expect", "checkIneligibleOperator", "checkInterruption", "checkRollbackInterruption"] }] */
+/* eslint-disable playwright/expect-expect -- this spec asserts via the file-local checkIneligibleOperator/checkInterruption/checkRollbackInterruption helpers */
 import type { Browser, Page } from '@playwright/test';
 import type {
   MigrationOperator,

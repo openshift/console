@@ -19,7 +19,7 @@
     "check-cycles": "CHECK_CYCLES=true yarn dev-once",
     "coverage": "jest --coverage .",
     "oxlint": "node ./scripts/oxlint-exact-warnings.cjs",
-    "lint": "MAX_WARNINGS=267 yarn oxlint",
+    "lint": "MAX_WARNINGS=266 yarn oxlint",
     "test": "LANG=en_US.UTF-8 jest",
     "debug-test": "node --inspect-brk node_modules/.bin/jest --runInBand",
     "test-playwright": "playwright test",

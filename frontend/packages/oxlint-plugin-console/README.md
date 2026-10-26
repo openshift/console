@@ -11,7 +11,7 @@ and where; this README documents both.
 Commands run from `frontend/`:
 
 - `yarn lint` — the lint gate: an exact-count warning ratchet
-  (`MAX_WARNINGS=267`) over `yarn oxlint`.
+  (`MAX_WARNINGS=266`) over `yarn oxlint`.
 - `yarn oxlint [path|--fix …]` — runs oxlint via
   `scripts/oxlint-exact-warnings.cjs`, which forwards all arguments, so
   `yarn oxlint <path>` lints just that path. `MAX_WARNINGS` is only set by
@@ -119,8 +119,8 @@ aliases:
 The React Compiler rules (`react-hooks-js/*`) are the reference
 eslint-plugin-react-hooks implementation rather than oxlint's native ports,
 because the ports under-report (107 vs 154 `set-state-in-effect` findings,
-40 vs 82 `refs`, …). This preserves the exact 267-warning React Compiler
-ratchet that ESLint maintained.
+40 vs 82 `refs`, …). This preserves the React Compiler ratchet that ESLint
+maintained (266 after upstream fixes absorbed via rebase).
 
 The `eslint` package remains a dependency only as the source of the core
 rules re-exported by the shim (and as a peer dependency of the other JS
@@ -148,11 +148,12 @@ replacement — oxlint does not lint JSON files.
 
 ## Warning budget
 
-`MAX_WARNINGS=267` — every remaining warning is a React Compiler finding,
-matching the ratchet ESLint maintained exactly. The 289 additional findings
-oxlint surfaced during the migration (oxlint resolves modules and counts
-nesting where ESLint silently skipped) were fixed in the follow-up commits
-on this branch rather than budgeted: 247
+`MAX_WARNINGS=266` — every remaining warning is a React Compiler finding,
+matching the current ESLint ratchet on main exactly (main fixed one
+compiler warning that this branch absorbs via rebase). The 289 additional
+findings oxlint surfaced during the migration (oxlint resolves modules and
+counts nesting where ESLint silently skipped) were fixed in the follow-up
+commits on this branch rather than budgeted: 247
 `import/no-named-as-default-member` (i18next namespace imports), 22
 `oxc/no-barrel-file` (renamed per-file disables), and assorted misc.
 findings.
