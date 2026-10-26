@@ -2,6 +2,7 @@ package actions
 
 import (
 	"io"
+	"net"
 	"strings"
 	"testing"
 
@@ -24,20 +25,40 @@ func withStrictChartURLValidation(t *testing.T) {
 }
 
 func TestPrivateChartURLsPassFormatValidation(t *testing.T) {
+	prevLookup := lookupChartHost
+	lookupChartHost = func(host string) ([]net.IP, error) {
+		return nil, &net.DNSError{Err: "no such host", Name: host, IsNotFound: true}
+	}
+	t.Cleanup(func() { lookupChartHost = prevLookup })
+
 	allowed := []string{
 		"https://172.24.5.6/x.tgz",
 		"https://192.168.1.1/x.tgz",
 		"http://169.254.169.254/latest/meta-data/x.tgz",
-		"http://127.0.0.1/x.tgz",
 		"https://10.1.2.3/x.tgz",
 		"https://thanos-querier.openshift-monitoring.svc/x.tgz",
 		"https://kubernetes.default.svc/x.tgz",
-		"oci://localhost:5000/charts/chart",
-		"http://[::1]/chart.tgz",
 	}
 	for _, raw := range allowed {
 		t.Run(raw, func(t *testing.T) {
 			require.NoError(t, validateChartURLStrict(raw))
+		})
+	}
+}
+
+func TestLoopbackChartURLsRejected(t *testing.T) {
+	rejected := []string{
+		"http://127.0.0.1/x.tgz",
+		"http://127.0.0.2/x.tgz",
+		"http://localhost/x.tgz",
+		"oci://localhost:5000/charts/chart",
+		"http://[::1]/chart.tgz",
+	}
+	for _, raw := range rejected {
+		t.Run(raw, func(t *testing.T) {
+			err := validateChartURLStrict(raw)
+			require.Error(t, err)
+			require.ErrorContains(t, err, "loopback")
 		})
 	}
 }
