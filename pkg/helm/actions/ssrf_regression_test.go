@@ -53,6 +53,8 @@ func TestLoopbackChartURLsRejected(t *testing.T) {
 		"http://localhost/x.tgz",
 		"oci://localhost:5000/charts/chart",
 		"http://[::1]/chart.tgz",
+		"http://0.0.0.0/x.tgz",
+		"http://[::]/chart.tgz",
 	}
 	for _, raw := range rejected {
 		t.Run(raw, func(t *testing.T) {
