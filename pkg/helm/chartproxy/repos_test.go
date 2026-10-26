@@ -874,6 +874,20 @@ func TestHelmRepoGetter_unmarshallConfig(t *testing.T) {
 	require.NoError(t, err)
 }
 
+func TestSetAllowLoopbackTargetsForTest(t *testing.T) {
+	prev := allowLoopbackTargets
+	t.Cleanup(func() { allowLoopbackTargets = prev })
+
+	u, err := url.Parse("http://127.0.0.1/index.yaml")
+	require.NoError(t, err)
+
+	SetAllowLoopbackTargetsForTest(true)
+	require.NoError(t, validateRepoURL(u, false))
+
+	SetAllowLoopbackTargetsForTest(false)
+	require.ErrorIs(t, validateRepoURL(u, false), utils.ErrLoopbackTarget)
+}
+
 func TestHTTPClientRejectsLoopback(t *testing.T) {
 	client, err := httpClient(nil)
 	require.NoError(t, err)

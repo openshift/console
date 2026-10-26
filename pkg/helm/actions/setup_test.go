@@ -14,6 +14,8 @@ import (
 	"time"
 
 	"helm.sh/helm/v4/pkg/cli"
+
+	"github.com/openshift/console/pkg/helm/chartproxy"
 )
 
 const helmModulePath = "helm.sh/helm/v4"
@@ -69,11 +71,11 @@ func setHelmVersionFromBuildInfo() error {
 func TestMain(m *testing.M) {
 	setSettings(settings)
 	// The chart registries used by these tests run on localhost/loopback, which
-	// the production SSRF guard (validateChartURLStrict) correctly rejects. Relax
-	// the guard for the test suite so the fixtures remain reachable while still
-	// exercising the call-site wiring. Unit coverage of the strict guard itself
-	// lives in TestValidateChartURL.
+	// production checks reject. Relax both the chart URL guard and repository
+	// index checks so the fixtures remain reachable. Strict behavior is covered
+	// by TestValidateChartURL and the chartproxy repository URL tests.
 	validateChartURL = func(string) error { return nil }
+	chartproxy.SetAllowLoopbackTargetsForTest(true)
 	time.Sleep(10 * time.Second)
 	if err := setHelmVersionFromBuildInfo(); err != nil {
 		panic(err)
