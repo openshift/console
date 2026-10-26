@@ -456,7 +456,9 @@ To launch the server using the built image, you can run:
 docker run -p 8081:8081 downloadsserver:latest
 ```
 
-## ContentSecurityViolation Detection
+## Content Security Policy
+
+### Violation Detection
 
 The console application automatically reports CSP violations to telemetry. This detection and
 reporting logic attempts to parse a dynamic plugin name from the securitypolicyviolation event to
@@ -468,21 +470,17 @@ violation. If a plugin name is not determined in this way, an empty plugin name 
 Additionally, violation reporting is throttled to prevent spamming the telemetry service with
 repetitive data. Identical violations will not be reported more than once a day.
 
+### Configuring For Development
+
 Bridge defaults to `--csp-mode=report-only`, which emits the
 `Content-Security-Policy-Report-Only` HTTP header. Use `--csp-mode=enforce` to emit
 `Content-Security-Policy` HTTP header and block resources that violate the policy. Both modes
 use the same CSP directives. Restart Bridge with `--csp-mode=report-only` to roll back
 enforcement. Invalid mode values prevent startup.
 
-In case of local developement of the dynamic plugin, just pass needed CSP directives address to the console server, using the `--content-security-policy` flag.
+#### Supported directives
 
-Example:
-
-```
-./bin/bridge --content-security-policy script-src='localhost:1234',font-src='localhost:2345 localhost:3456'
-```
-
-The configurable directives are defined in the [openshift/api repository](https://github.com/openshift/api/blob/master/console/v1/types_console_plugin.go). Values from enabled plugins are merged into a single console-wide policy and appended to the defaults for each configurable directive.
+The configurable directives are defined in the [openshift/api repository](https://github.com/openshift/api/blob/master/console/v1/types_console_plugin.go). Values from enabled plugins are merged into a single console-wide policy and appended to the defaults for each configurable directive. Using an unsupported directive causes the server to exit with a fatal error.
 
 The `--content-security-policy` flag accepts comma-separated directive entries with space-separated source lists. Literal commas, semicolons, and line breaks within source values are rejected before a policy is emitted, because they could introduce additional policies, directives, or HTTP headers. URL paths that contain a comma or semicolon must encode it as `%2C` or `%3B`, respectively.
 
@@ -498,6 +496,14 @@ Bridge always emits the following directives in both on-cluster and off-cluster 
 These directives are not configurable through `ConsolePlugin.spec.contentSecurityPolicy` or the `--content-security-policy` flag. The same-origin `worker-src` source permits Console's `load-test.sw.js` service worker.
 
 These restrictions remain fixed until a concrete plugin use case justifies additional configuration. CSP mode controls whether violations are reported or blocked; it does not change the allowed sources.
+
+#### Practical example
+
+**Plugin loading scripts and enabling hot-reload from its dev server** (e.g., `http://localhost:9001`):
+
+```
+./bin/bridge --content-security-policy script-src='localhost:9001',connect-src='ws://localhost:9001'
+```
 
 ## Frontend Packages
 - [console-dynamic-plugin-sdk](./frontend/packages/console-dynamic-plugin-sdk/README.md)
