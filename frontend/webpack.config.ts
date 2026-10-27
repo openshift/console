@@ -102,6 +102,8 @@ const config: Configuration = {
     alias: {
       // Force CJS entry for htmlparser2 — Webpack 4 picks the ESM "module" field by default
       htmlparser2: path.resolve(__dirname, 'node_modules/htmlparser2/lib/index.js'),
+      'linkify-it$': path.resolve(__dirname, 'node_modules/linkify-it/build/index.cjs.js'),
+      'uc.micro$': path.resolve(__dirname, 'node_modules/uc.micro/build/index.cjs.js'),
     },
   },
   node: {
