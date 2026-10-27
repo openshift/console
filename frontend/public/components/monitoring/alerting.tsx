@@ -81,7 +81,7 @@ import { ActionsMenu } from '../utils/dropdown';
 import { Firehose } from '../utils/firehose';
 import { ActionButtons, BreadCrumbs, SectionHeading } from '../utils/headings';
 import { Kebab } from '../utils/kebab';
-import { ExternalLink, getURLSearchParams, LinkifyExternal } from '../utils/link';
+import { ExternalLink, getURLSearchParams } from '../utils/link';
 import { ResourceLink } from '../utils/resource-link';
 import { history } from '../utils/router';
 import { LoadingInline, StatusBox } from '../utils/status-box';
@@ -90,6 +90,7 @@ import { AlertmanagerConfigWrapper } from './alert-manager-config';
 import { AlertmanagerYAMLEditorWrapper } from './alert-manager-yaml-editor';
 import MonitoringDashboardsPage from './dashboards';
 import { Labels } from './labels';
+import { LinkifyExternalSafe } from './linkify-external';
 import { QueryBrowserPage, ToggleGraph } from './metrics';
 import { FormatSeriesTitle, QueryBrowser } from './query-browser';
 import { CreateSilence, EditSilence } from './silence-form';
@@ -611,7 +612,7 @@ const AlertMessage: React.FC<AlertMessageProps> = ({ alertText, labels, template
   return (
     <div className="co-alert-manager">
       <p>
-        <LinkifyExternal>{messageParts}</LinkifyExternal>
+        <LinkifyExternalSafe>{messageParts}</LinkifyExternalSafe>
       </p>
     </div>
   );
