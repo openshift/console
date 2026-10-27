@@ -5,6 +5,7 @@
   "singleQuote": true,
   "trailingComma": "all",
   "sortPackageJson": false,
+  "proseWrap": "always",
   "ignorePatterns": [
     "**/dist",
     "**/generated",

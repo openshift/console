@@ -30,7 +30,7 @@
     "test-playwright-developer": "playwright test --project=dev-console-developer --project=topology-developer --project=smoke-developer",
     "analyze": "ANALYZE_BUNDLE=true NODE_ENV=production NODE_OPTIONS=--max-old-space-size=8192 rspack --mode=production",
     "knip": "knip --config scripts/knip.ts",
-    "prettier-all": "oxfmt '**/*.{ts,tsx,js,json}'",
+    "prettier-all": "oxfmt '**/*.{ts,tsx,js,json,md}'",
     "ts-node": "ts-node -O '{\"module\":\"commonjs\"}'",
     "generate": "yarn --cwd packages/console-dynamic-plugin-sdk build",
     "generate-plugin-sdk-docs": "yarn --cwd packages/console-dynamic-plugin-sdk generate-doc",
@@ -188,7 +188,7 @@
     "node": ">=22.16.0"
   },
   "lint-staged": {
-    "*.{ts,tsx,json}": [
+    "*.{ts,tsx,json,md}": [
       "oxfmt --no-error-on-unmatched-pattern",
       "oxlint --fix --no-error-on-unmatched-pattern"
     ]
