@@ -13,11 +13,13 @@ interface OxlintPreset extends OxlintConfig {
   env: OxlintConfig['env'];
 }
 
-// Merge presets into one flat preset — the oxlint translation of the former
-// eslintrc `extends` composition that FlatCompat used to inline for
-// eslint.config.ts (oxlint overrides have no `extends` field, so composed
-// presets are flattened here and placed into files-scoped overrides by
-// oxlint.config.ts).
+/**
+ * Merges multiple {@link OxlintConfig} objects into a single {@link OxlintPreset} object.
+ *
+ * The oxlint translation of the former eslintrc `extends` composition that FlatCompat used to
+ * inline for eslint.config.ts (oxlint overrides have no `extends` field, so composed presets
+ * are flattened here and placed into files-scoped overrides by oxlint.config.ts).
+ */
 const mergePresets = (...presets: OxlintConfig[]): OxlintPreset => {
   const jsPlugins: NonNullable<OxlintConfig['jsPlugins']> = [];
   for (const preset of presets) {
@@ -41,8 +43,6 @@ export default {
   // Core configs: choose one
   base,
   react,
-
-  // TypeScript support: choose one
   typescript,
 
   // Augmenting configs: choose one or more
@@ -52,13 +52,10 @@ export default {
 
   // ...or use the pre-composed configurations representing common code archetypes (choose one):
 
-  // Common web preset: React, TypeScript (jest applies to test files via its
-  // own self-scoped preset)
+  /** Common web preset: React, TypeScript (jest applies to test files via its own self-scoped preset) */
   reactTypescript: mergePresets(base, react, typescript),
 
-  // Common Node.js preset: TypeScript, node. Tooling code may use require(),
-  // so the require-adjacent frontend rules are turned off (mirrors the former
-  // eslint-plugin-console node-typescript-prettier preset).
+  /** Common Node.js preset: TypeScript, node. Tooling code may use require(), so the require-adjacent frontend rules are turned off */
   nodeTypescript: mergePresets(base, typescript, node, {
     rules: {
       'no-restricted-imports': 'off',
