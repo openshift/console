@@ -101,6 +101,8 @@ const config: Configuration = {
     extensions: ['.glsl', '.ts', '.tsx', '.js', '.jsx'],
     alias: {
       htmlparser2: path.resolve(__dirname, 'node_modules/htmlparser2/lib/index.js'),
+      'linkify-it$': path.resolve(__dirname, 'node_modules/linkify-it/build/index.cjs.js'),
+      'uc.micro$': path.resolve(__dirname, 'node_modules/uc.micro/build/index.cjs.js'),
     },
   },
   node: {
