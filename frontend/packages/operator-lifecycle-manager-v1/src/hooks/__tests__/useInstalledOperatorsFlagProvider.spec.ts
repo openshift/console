@@ -4,7 +4,7 @@ import {
   FLAG_INSTALLED_OPERATORS,
   FLAG_OPERATOR_LIFECYCLE_MANAGER,
 } from '../../const';
-import useInstalledOperatorsFlagProvider from '../useInstalledOperatorsFlagProvider';
+import { useInstalledOperatorsFlagProvider } from '../useInstalledOperatorsFlagProvider';
 
 const mockUseFlag = jest.fn();
 jest.mock('@console/dynamic-plugin-sdk/src/utils/flags', () => ({
@@ -37,8 +37,8 @@ describe('useInstalledOperatorsFlagProvider', () => {
     },
   );
 
-  // The tabbed page is Tech Preview only, no matter which OLMs are installed.
-  it('should set the flag to false outside Tech Preview', () => {
+  // The tabbed page is Technology Preview only, no matter which OLMs are installed.
+  it('should set the flag to false outside Technology Preview', () => {
     setFlags({
       [FLAG_CLUSTER_EXTENSION_API]: true,
       [FLAG_OPERATOR_LIFECYCLE_MANAGER]: true,

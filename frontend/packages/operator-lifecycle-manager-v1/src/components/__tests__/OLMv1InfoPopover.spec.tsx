@@ -4,22 +4,25 @@ import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-ut
 import { OLMv1InfoPopover } from '../OLMv1InfoPopover';
 
 describe('OLMv1InfoPopover', () => {
-  it('should render an info trigger without Tech Preview framing', () => {
+  it('should name the info trigger after Operator Lifecycle Manager version 1', () => {
     renderWithProviders(<OLMv1InfoPopover />);
 
-    expect(screen.getByRole('button', { name: 'OLMv1 information' })).toBeInTheDocument();
-    expect(screen.queryByText('Tech Preview')).not.toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'About Operator Lifecycle Manager version 1' }),
+    ).toBeInTheDocument();
   });
 
-  it('should describe OLMv1 without Tech Preview framing when opened', async () => {
+  it('should explain OLMv1 Operator management and Technology Preview status when opened', async () => {
     const user = userEvent.setup();
     renderWithProviders(<OLMv1InfoPopover />);
 
-    await user.click(screen.getByRole('button', { name: 'OLMv1 information' }));
+    await user.click(
+      screen.getByRole('button', { name: 'About Operator Lifecycle Manager version 1' }),
+    );
 
     expect(
       await screen.findByText(
-        'Lets you use Next-Gen (OLMv1), a streamlined redesign of Classic (OLMv0). OLMv1 simplifies operator management with declarative APIs, enhanced security, and direct, GitOps-friendly control over upgrades.',
+        'Operator Lifecycle Manager version 1 is a redesign of Operator Lifecycle Manager version 0. It simplifies Operator management with declarative APIs and gives you direct, GitOps-friendly control over upgrades. Operator Lifecycle Manager version 1 is a Technology Preview feature. For production clusters, continue to use classic Operators.',
       ),
     ).toBeInTheDocument();
   });

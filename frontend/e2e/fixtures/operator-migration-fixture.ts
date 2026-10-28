@@ -565,7 +565,7 @@ export class OperatorMigrationFixture {
       .toBe(true);
   }
 
-  /** Waits for healthy Classic management and confirms target revisions and reference Secrets are removed. */
+  /** Waits for healthy OLMv0 management and confirms target revisions and reference Secrets are removed. */
   async expectRecovered(operator: MigrationOperator): Promise<void> {
     await expect
       .poll(
@@ -610,7 +610,7 @@ export class OperatorMigrationFixture {
       .toEqual({ revisions: 0, references: 0 });
   }
 
-  /** Verifies retained migration resources and reconciliation, including an archived handover revision. */
+  /** Verifies retained migration resources and reconciliation after revision handover. */
   async expectPreservedMigration(operator: MigrationOperator): Promise<void> {
     await expect(async () => {
       const objectSet = (await this.client.getClusterCustomResource(
@@ -622,11 +622,11 @@ export class OperatorMigrationFixture {
       const ready = objectSet.status?.conditions?.find(({ type }) => type === 'Ready');
       const succeeded = objectSet.status?.conditions?.find(({ type }) => type === 'Succeeded');
       const available = objectSet.status?.conditions?.find(({ type }) => type === 'Available');
-      if (objectSet.spec?.lifecycleState === 'Archived') {
-        // An archived revision no longer reports readiness. Require recorded
-        // rollout completion and an installed extension before accepting it.
+      if (objectSet.spec?.lifecycleState === 'Archived' || ready?.reason === 'Superseded') {
+        // The installed target can adopt the handover revision's objects before
+        // archiving it. completedAt records rollout success after readiness is lost.
         if (ready) {
-          expect(ready.reason).toBe('Archived');
+          expect(['Archived', 'Superseded']).toContain(ready.reason);
           expect(['False', 'Unknown']).toContain(ready.status);
           expect(objectSet.status.completedAt).toBeTruthy();
         } else {
@@ -1015,12 +1015,12 @@ export class OperatorMigrationFixture {
     return release;
   }
 
-  /** Confirms target deletion is pending and Classic management has not restarted. */
+  /** Confirms target deletion is pending and OLMv0 management has not restarted. */
   async expectHeldRollback(operator: MigrationOperator): Promise<void> {
     await expect
       .poll(async () => Boolean((await this.getExtension(operator)).metadata.deletionTimestamp), {
         timeout: 120_000,
-        message: 'Recovery must wait for target deletion before restoring Classic management',
+        message: 'Recovery must wait for target deletion before restoring OLMv0 management',
       })
       .toBe(true);
     await this.expectAbsent(
@@ -1530,7 +1530,7 @@ export const test = base.extend<{
         { timeout: 60_000, message: 'Console must load its server flags after login' },
       )
       .toBeDefined();
-    base.skip(!flags.techPreview, 'Operator migration requires a Tech Preview console');
+    base.skip(!flags.techPreview, 'Operator migration requires a Technology Preview console');
     const fixture = new OperatorMigrationFixture(k8sClient, cleanup, flags.authDisabled);
     try {
       await fixture.createCatalogs(source, target);

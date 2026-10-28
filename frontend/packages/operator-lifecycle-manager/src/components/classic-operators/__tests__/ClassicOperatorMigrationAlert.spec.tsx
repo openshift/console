@@ -12,8 +12,8 @@ describe('ClassicOperatorMigrationAlert', () => {
     mockUseFlag.mockReturnValue(true);
   });
 
-  // Next-Gen only exists in Tech Preview, so outside it there is nothing to migrate to.
-  it('should render nothing outside Tech Preview', () => {
+  // OLMv1 only exists in Technology Preview, so outside it there is nothing to migrate to.
+  it('should render nothing outside Technology Preview', () => {
     mockUseFlag.mockReturnValue(false);
 
     const { container } = renderWithProviders(<ClassicOperatorMigrationAlert />);
@@ -24,22 +24,25 @@ describe('ClassicOperatorMigrationAlert', () => {
   it('should render a warning alert', () => {
     renderWithProviders(<ClassicOperatorMigrationAlert />);
 
-    expect(screen.getByRole('heading', { name: /Next-Gen Operators/ })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /cluster extensions/ })).toBeInTheDocument();
+    expect(
+      screen.getByText(/Cluster extensions are a Technology Preview feature/),
+    ).toBeInTheDocument();
   });
 
-  // Not dismissible on purpose: the banner is the whole point of splitting Classic out.
+  // The migration warning stays visible while managing Classic Operators.
   it('should not offer a close button', () => {
     renderWithProviders(<ClassicOperatorMigrationAlert />);
 
     expect(screen.queryByRole('button', { name: /close/i })).not.toBeInTheDocument();
   });
 
-  it('should link to the Next-Gen Operators catalog type', () => {
+  it('should link to the Operators catalog filtered to OLMv1', () => {
     renderWithProviders(<ClassicOperatorMigrationAlert />);
 
-    expect(screen.getByRole('link', { name: /Next-Gen Operators/ })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: /Cluster extensions/ })).toHaveAttribute(
       'href',
-      '/catalog/all-namespaces?catalogType=operator-olmv1',
+      '/catalog/all-namespaces?catalogType=operator&operatorCatalog=%5B%22Cluster%20extensions%22%5D',
     );
   });
 });

@@ -283,7 +283,7 @@ export const OperatorDescription: FC<OperatorDescriptionProps> = ({
         <StackItem>
           <DismissableAlert title={t('Cluster in STS Mode')} variant={AlertVariant.warning}>
             {t(
-              'This cluster is using AWS Security Token Service to reach the cloud API. In order for this operator to take the actions it requires directly with the cloud API, you must provide a role ARN (with an attached policy) during installation. Please see the operator description for more details.',
+              'This cluster is using AWS Security Token Service to reach the cloud API. In order for this Operator to take the actions it requires directly with the cloud API, you must provide a role ARN (with an attached policy) during installation. Please see the Operator description for more details.',
             )}
           </DismissableAlert>
         </StackItem>
@@ -295,7 +295,7 @@ export const OperatorDescription: FC<OperatorDescriptionProps> = ({
             variant={AlertVariant.warning}
           >
             {t(
-              'This cluster is using Azure Workload Identity / Federated Identity to reach the cloud API. In order for this operator to take the actions it requires directly with the cloud API, provide the Client ID, Tenant ID, and Subscription ID during installation. See the operator description for more details.',
+              'This cluster is using Azure Workload Identity / Federated Identity to reach the cloud API. In order for this Operator to take the actions it requires directly with the cloud API, provide the Client ID, Tenant ID, and Subscription ID during installation. See the Operator description for more details.',
             )}
           </DismissableAlert>
         </StackItem>
@@ -307,7 +307,7 @@ export const OperatorDescription: FC<OperatorDescriptionProps> = ({
             variant={AlertVariant.warning}
           >
             {t(
-              'This cluster is using GCP Workload Identity / Federated Identity to reach the cloud API. In order for this operator to take the actions it requires directly with the cloud API, provide the Pool ID, Provider ID, and Service Account Email during installation. See the operator description for more details.',
+              'This cluster is using GCP Workload Identity / Federated Identity to reach the cloud API. In order for this Operator to take the actions it requires directly with the cloud API, provide the Pool ID, Provider ID, and Service Account Email during installation. See the Operator description for more details.',
             )}
           </DismissableAlert>
         </StackItem>

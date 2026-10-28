@@ -38,9 +38,13 @@ export class OperatorInstallPage extends BasePage {
 
   private async openInstallForm(operatorName: string, operatorCardTestID: string): Promise<void> {
     // Navigate first so the perspective toggle exists, then switch — Developer perspective shows a project selector not tiles.
-    await this.goTo('/catalog/all-namespaces?catalogType=operator-olmv0');
+    await this.goTo(
+      '/catalog/all-namespaces?catalogType=operator&operatorCatalog=%5B%22Classic%20Operators%22%5D',
+    );
     await this.switchPerspective('Administrator');
-    await this.goTo('/catalog/all-namespaces?catalogType=operator-olmv0');
+    await this.goTo(
+      '/catalog/all-namespaces?catalogType=operator&operatorCatalog=%5B%22Classic%20Operators%22%5D',
+    );
     await expect(this.catalogPage.getPageHeading()).toBeVisible({ timeout: 60_000 });
     await this.catalogPage.searchOperators(operatorName);
 

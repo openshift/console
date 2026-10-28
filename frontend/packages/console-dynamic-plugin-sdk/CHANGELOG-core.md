@@ -12,14 +12,15 @@ compatibility table in [Console dynamic plugins README](./README.md).
 
 ## 5.1.0-prerelease.2 - TBD
 
-- Added optional `sortWeight` property to extension `console.catalog/item-type`, so a type can be
-  ordered within the catalog's type list ([CONSOLE-5527], [#17355])
-- Added optional `placement` property to `CatalogItemBadge`, so a badge can render in the catalog
-  item header below the catalog type label instead of the default footer ([CONSOLE-5527], [#17355])
-- Added optional `badge` property to extension `console.tab`, so a plugin can render a component
-  beside a contributed tab label ([CONSOLE-5527], [#17355])
-- Changed `HorizontalNav` to order contributed default tabs before other tabs, with remaining tabs
-  still ordered alphabetically ([CONSOLE-5527], [#17355])
+- Added optional `sortWeight` property to extension `console.catalog/item-type`, so a plugin can
+  control where a type displays in the catalog's type list ([CONSOLE-5527], [#17355])
+- Added optional `badge` property to extension `console.tab`, so a plugin can display a component
+  next to a contributed tab label ([CONSOLE-5527], [#17355])
+- Changed `HorizontalNav` to order contributed default tabs before other tabs. `HorizontalNav` still
+  orders the remaining tabs alphabetically ([CONSOLE-5527], [#17355])
+- Added optional `filterType` property to `CatalogItemAttribute`, so catalog filters can render
+  single-select radio controls. Filters without `filterType` default to multiselect checkboxes
+  ([CONSOLE-5527], [#17389])
 
 ## 5.1.0-prerelease.1 - 2026-10-16
 
@@ -467,3 +468,4 @@ compatibility table in [Console dynamic plugins README](./README.md).
 [#17351]: https://github.com/openshift/console/pull/17351
 [#17363]: https://github.com/openshift/console/pull/17363
 [#17376]: https://github.com/openshift/console/pull/17376
+[#17389]: https://github.com/openshift/console/pull/17389

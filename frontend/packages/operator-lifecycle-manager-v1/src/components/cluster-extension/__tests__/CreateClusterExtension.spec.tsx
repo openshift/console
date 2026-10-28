@@ -1,6 +1,6 @@
 import { screen } from '@testing-library/react';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
-import CreateClusterExtension from '../CreateClusterExtension';
+import { CreateClusterExtension } from '../CreateClusterExtension';
 
 const mockSyncedEditor = jest.fn();
 const mockFormEditor = jest.fn();
@@ -18,8 +18,7 @@ jest.mock('../ClusterExtensionYAMLEditor', () => ({
 }));
 
 jest.mock('../ClusterExtensionForm', () => ({
-  __esModule: true,
-  default: (props) => {
+  ClusterExtensionForm: (props) => {
     mockFormEditor(props);
     return <div data-test="cluster-extension-form">Form Editor</div>;
   },
@@ -46,7 +45,7 @@ describe('CreateClusterExtension', () => {
 
     expect(
       screen.getByText(
-        'Create a ClusterExtension to add functionality to your cluster. Operator Lifecycle Manager v1 manages ClusterExtensions.',
+        'Create a ClusterExtension to add functionality to your cluster. Operator Lifecycle Manager version 1 manages ClusterExtensions.',
       ),
     ).toBeInTheDocument();
   });

@@ -130,7 +130,7 @@ export const CatalogSourceDetails: FC<CatalogSourceDetailsProps> = ({
               label={t('Availability')}
               obj={catalogSource}
               description={t(
-                'Denotes whether this CatalogSource provides operators to a specific namespace, or the entire cluster.',
+                'Denotes whether this CatalogSource provides Operators to a specific namespace, or the entire cluster.',
               )}
             >
               {catsrcNamespace}
@@ -247,7 +247,9 @@ const CreateSubscriptionFallback: FC = () => {
   const { t } = useTranslation('olm');
   return (
     <ConsoleEmptyState title={t('Package not found')}>
-      {t('Cannot create a Subscription to a non-existent package.')}
+      {t(
+        'Cannot create a Subscription because the package does not exist. Return to the software catalog and select an available Operator.',
+      )}
     </ConsoleEmptyState>
   );
 };
@@ -399,7 +401,7 @@ const DisabledPopover: FC<DisabledPopoverProps> = ({ operatorHub, sourceName }) 
     >
       <p>
         {t(
-          'Operators provided by this source will not appear in Software Catalog and any operators installed from this source will not receive updates until this source is re-enabled.',
+          'Operators provided by this source will not appear in Software Catalog and any Operators installed from this source will not receive updates until this source is re-enabled.',
         )}
       </p>
       {canPatchOperatorHub && (

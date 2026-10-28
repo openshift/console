@@ -14,17 +14,20 @@ export const OLMv1InfoPopover: FC = () => {
     <Content>
       <Content component={ContentVariants.p}>
         {t(
-          'Lets you use Next-Gen (OLMv1), a streamlined redesign of Classic (OLMv0). OLMv1 simplifies operator management with declarative APIs, enhanced security, and direct, GitOps-friendly control over upgrades.',
+          'Operator Lifecycle Manager version 1 is a redesign of Operator Lifecycle Manager version 0. It simplifies Operator management with declarative APIs and gives you direct, GitOps-friendly control over upgrades. Operator Lifecycle Manager version 1 is a Technology Preview feature. For production clusters, continue to use classic Operators.',
         )}
       </Content>
     </Content>
   );
 
   return (
-    <Popover aria-label={t('OLMv1 information')} bodyContent={popoverContent}>
+    <Popover
+      aria-label={t('About Operator Lifecycle Manager version 1')}
+      bodyContent={popoverContent}
+    >
       <Button
         icon={<RhUiQuestionMarkCircleIcon aria-hidden="true" />}
-        aria-label={t('OLMv1 information')}
+        aria-label={t('About Operator Lifecycle Manager version 1')}
         variant="link"
         isInline
       />

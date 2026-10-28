@@ -23,6 +23,7 @@ import {
   getActiveFilters,
   getFilterGroupCounts,
   getFilterSearchParam,
+  getSortedFilterKeys,
 } from '../utils/filter-utils';
 import type {
   CatalogFilterCounts,
@@ -84,15 +85,29 @@ export const CatalogView: FC<CatalogViewProps> = ({
 
     _.each(filterGroups, (filterGroup) => {
       const attributeFilterParam = queryParams.get(filterGroup);
+      let values: unknown;
       try {
-        _.set(attributeFilters, filterGroup, JSON.parse(attributeFilterParam));
+        values = JSON.parse(attributeFilterParam);
       } catch (e) {
         console.warn('could not update filters from url params: could not parse search params', e);
       }
+      const validValues = Array.isArray(values)
+        ? values.filter((value) => filters[filterGroup]?.[value])
+        : [];
+      const selectedValues =
+        filterGroupMap[filterGroup]?.filterType === 'radio'
+          ? validValues.length
+            ? validValues.slice(0, 1)
+            : getSortedFilterKeys(
+                filters[filterGroup] ?? {},
+                filterGroupMap[filterGroup]?.comparator,
+              ).slice(0, 1)
+          : values;
+      _.set(attributeFilters, filterGroup, selectedValues);
     });
 
     return getActiveFilters(attributeFilters, filters);
-  }, [filterGroups, filters, queryParams]);
+  }, [filterGroupMap, filterGroups, filters, queryParams]);
 
   const [filterGroupsShowAll, setFilterGroupsShowAll] = useState<Record<string, boolean>>({});
 
@@ -119,14 +134,15 @@ export const CatalogView: FC<CatalogViewProps> = ({
   );
 
   const handleFilterChange = useCallback(
-    (filterType, id, value) => {
-      const updatedFilterGroup = {
-        ...activeFilters[filterType],
-        [id]: { ...activeFilters[filterType]?.[id], active: value },
-      };
+    (filterType: string, id: string, value: boolean) => {
+      const exclusive = filterGroupMap[filterType]?.filterType === 'radio';
+      const updatedFilterGroup = _.mapValues(activeFilters[filterType], (filter, key) => ({
+        ...filter,
+        active: exclusive ? value && key === id : key === id ? value : filter.active,
+      }));
       updateURLParams(filterType, getFilterSearchParam(updatedFilterGroup), navigate);
     },
-    [activeFilters, navigate],
+    [activeFilters, filterGroupMap, navigate],
   );
 
   const handleSearchKeywordChange = useCallback(

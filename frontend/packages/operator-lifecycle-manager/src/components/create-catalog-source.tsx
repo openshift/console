@@ -79,13 +79,13 @@ export const CreateCatalogSource = () => {
       name: 'catalog-source-availability',
       value: AvailabilityValue.ALL_NAMESPACES,
       label: t('Cluster-wide CatalogSource'),
-      description: t('Catalog will be available in all namespaces'),
+      description: t('The catalog is available in all namespaces.'),
     },
     {
       name: 'catalog-source-availability',
       value: AvailabilityValue.SINGLE_NAMESPACE,
       label: t('Namespaced CatalogSource'),
-      description: t('Catalog will only be available in a single namespace'),
+      description: t('The catalog is available in only one namespace.'),
     },
   ];
 
@@ -96,7 +96,7 @@ export const CreateCatalogSource = () => {
       <PageHeading
         title={title}
         helpText={t(
-          'Create a CatalogSource in order to make operators available in Software Catalog.',
+          'Create a CatalogSource in order to make Operators available in Software Catalog.',
         )}
       />
       <PaneBody>

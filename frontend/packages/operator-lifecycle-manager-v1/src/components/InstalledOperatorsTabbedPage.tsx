@@ -10,7 +10,7 @@ type InstalledOperatorsTabbedPageProps = {
 };
 
 /**
- * Installed operators split across a Next-Gen (OLMv1) and a Classic (OLMv0) tab. Each plugin
+ * Installed operators split across an OLMv1 and a OLMv0 tab. Each plugin
  * contributes its tab through `console.tab` and gates it on its own API flag.
  */
 export const InstalledOperatorsTabbedPage: FC<InstalledOperatorsTabbedPageProps> = ({

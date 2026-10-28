@@ -129,9 +129,11 @@ const OperatorMigrationEligibilityCell: FC<{
   const summary =
     scan.reason ||
     (scan.status === 'AlreadyMigrated'
-      ? t('OLM v1 cluster extensions already manage this Operator.')
+      ? t('Operator Lifecycle Manager version 1 cluster extensions already manage this Operator.')
       : scan.eligible
-        ? t('You can migrate this Operator to OLM v1 cluster extensions.')
+        ? t(
+            'You can migrate this Operator to Operator Lifecycle Manager version 1 cluster extensions.',
+          )
         : t('Review the migration checks before continuing.'));
 
   return (

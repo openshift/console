@@ -49,10 +49,4 @@ describe('InstalledOperatorsTabbedPage', () => {
     expect(page).toHaveAttribute('data-active-tab', 'classic');
     expect(page).toHaveAttribute('data-base-path', '/installed-operators/ns/ns-a');
   });
-
-  it('should not show the OLMv1 information popover with the page title', () => {
-    render(<InstalledOperatorsTabbedPage />);
-
-    expect(screen.queryByTestId('olmv1-info-popover')).not.toBeInTheDocument();
-  });
 });

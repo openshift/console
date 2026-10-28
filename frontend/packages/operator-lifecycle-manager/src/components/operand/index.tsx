@@ -122,7 +122,9 @@ const OperandListEmptyMsg: FC<{ noAPIsFound?: boolean }> = ({ noAPIsFound }) => 
   const { t } = useTranslation('olm');
   return noAPIsFound ? (
     <ConsoleEmptyState title={t('No provided APIs defined')}>
-      {t('This application was not properly installed or configured.')}
+      {t(
+        'This application was not properly installed or configured. Review the Operator status and follow the Operator provider’s installation and configuration instructions.',
+      )}
     </ConsoleEmptyState>
   ) : (
     <ConsoleEmptyState title={t('No operands found')}>
