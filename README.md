@@ -495,7 +495,7 @@ These restrictions remain fixed until a concrete plugin use case justifies addit
 
 - [dev-console](./frontend/packages/dev-console/README.md)
 
-- [eslint-plugin-console](./frontend/packages/eslint-plugin-console/README.md)
+- [oxlint-plugin-console](./frontend/packages/oxlint-plugin-console/README.md)
 
 - [integration-tests](./frontend/packages/integration-tests/README.md)
 

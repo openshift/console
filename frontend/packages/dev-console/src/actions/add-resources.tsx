@@ -7,7 +7,7 @@ import {
   RhUiLaptopIcon,
   RhUiContainerIcon,
 } from '@patternfly/react-icons';
-import i18next from 'i18next';
+import * as i18next from 'i18next';
 import type { Action } from '@console/dynamic-plugin-sdk/src';
 import { ServerlessFunctionIcon } from '@console/knative-plugin/src/utils/icons';
 import { UNASSIGNED_KEY } from '@console/topology/src/const';

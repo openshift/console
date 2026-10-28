@@ -1,6 +1,6 @@
 import type { Node, Edge, GraphElement } from '@patternfly/react-topology';
 import * as GitUrlParse from 'git-url-parse';
-import i18next from 'i18next';
+import * as i18next from 'i18next';
 import * as _ from 'lodash';
 import type {
   GetTopologyResourceObject,

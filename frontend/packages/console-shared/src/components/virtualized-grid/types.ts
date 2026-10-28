@@ -1,4 +1,4 @@
-/* eslint-disable no-barrel-files/no-barrel-files */
+/* eslint-disable oxc/no-barrel-file */
 import type { GridCellProps } from 'react-virtualized';
 import type { VirtualizedGridItem } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 

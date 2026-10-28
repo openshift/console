@@ -61,6 +61,7 @@ func TestIndexHandlerCSPMode(t *testing.T) {
 				}
 			}
 			for _, directive := range []string{
+				"img-src 'self' https: blob: data:",
 				"script-src 'self' console.redhat.com https://plugin.example.com 'nonce-",
 				"style-src 'self' 'unsafe-inline'",
 				"object-src 'none'",

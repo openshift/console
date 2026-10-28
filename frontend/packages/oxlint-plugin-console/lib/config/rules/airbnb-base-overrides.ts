@@ -1,4 +1,6 @@
-module.exports = {
+import type { OxlintConfig } from 'oxlint';
+
+export default {
   // Enforce that class methods utilize this
   'class-methods-use-this': 'off',
 
@@ -20,7 +22,7 @@ module.exports = {
   'no-plusplus': 'off',
 
   // Disallow specified syntax
-  'no-restricted-syntax': 'off',
+  'eslint-js/no-restricted-syntax': 'off',
 
   // Disallow assignment in return statement
   'no-return-assign': ['error', 'except-parens'],
@@ -29,13 +31,23 @@ module.exports = {
   'import/prefer-default-export': 'off',
 
   // Require braces around all control flow bodies
-  curly: ['error', 'all'],
+  // Disabled by eslint-config-prettier in the former setup; formatting is
+  // now handled by oxfmt, so the rule would conflict with it.
+  curly: 'off',
 
-  // Require consistent return statements
-  'consistent-return': 'off',
+  // The following were disabled by eslint-config-prettier in the former
+  // setup; formatting is now handled by oxfmt, so the rules would conflict.
+  'no-unexpected-multiline': 'off',
+  'unicode-bom': 'off',
+
+  // Deprecated core rules superseded by eslint-plugin-n: the n/* versions
+  // run via JS plugins where needed (the node preset); the airbnb defaults
+  // stay off to match the former effective configuration.
+  'n/no-new-require': 'off',
+  'n/no-path-concat': 'off',
 
   // Require consistent use of this alias
-  'consistent-this': ['error', 'that'],
+  'eslint-js/consistent-this': ['error', 'that'],
 
   // Enforce a maximum depth that callbacks can be nested
   'max-nested-callbacks': ['error', 4],
@@ -50,7 +62,7 @@ module.exports = {
   'no-console': 'off',
 
   // Sort imports into groups
-  'import/order': [
+  'import-js/order': [
     'error',
     {
       groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'],
@@ -107,7 +119,4 @@ module.exports = {
 
   // Require const for variables that are never reassigned after declared
   'prefer-const': ['error', { destructuring: 'all' }],
-
-  // Disallow assignments that can lead to race conditions due to usage of `await` or `yield`
-  'require-atomic-updates': 'off',
-};
+} satisfies OxlintConfig['rules'];

@@ -67,8 +67,8 @@ For detailed plugin API review guidelines and workflow, use the `plugin-api-revi
 
 ```bash
 cd frontend && yarn install # Install frontend dependencies
-cd frontend && yarn eslint <path> # ESLint / prettier linting (must specify file path)
-cd frontend && yarn lint # ESLint / prettier linting (lints entire codebase)
+cd frontend && yarn oxlint <path> # oxlint linting (must specify file path)
+cd frontend && yarn lint # oxlint linting (lints entire codebase)
 cd frontend && yarn test [<path>] # Run frontend tests (can specify test path)
 cd frontend && yarn build # Production build
 cd frontend && yarn dev-once # Development build (no watch mode)

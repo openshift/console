@@ -1,3 +1,3 @@
-/* eslint-disable no-barrel-files/no-barrel-files */
+/* eslint-disable oxc/no-barrel-file */
 export { default as useBuildActions } from './actions/useBuildActions';
 export { default as useBuildRunActions } from './actions/useBuildRunActions';

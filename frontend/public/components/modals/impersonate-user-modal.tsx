@@ -340,6 +340,7 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
       isFullWidth
     >
       <TextInputGroup isPlain>
+        {/* eslint-disable jsx-a11y/role-has-required-aria-props -- TextInputGroupMain maps isExpanded to aria-expanded on the rendered input */}
         <TextInputGroupMain
           value={groupSearchFilter}
           onClick={() => setIsGroupSelectOpen(!isGroupSelectOpen)}
@@ -358,6 +359,7 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
           aria-controls="impersonate-groups-listbox"
           aria-describedby="groups-help-text"
         />
+        {/* eslint-enable jsx-a11y/role-has-required-aria-props */}
         <TextInputGroupUtilities>
           {groupSearchFilter && (
             <Button

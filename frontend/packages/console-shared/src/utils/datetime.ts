@@ -1,4 +1,4 @@
-import i18n from 'i18next';
+import * as i18n from 'i18next';
 import * as _ from 'lodash';
 import { getLastLanguage } from '@console/app/src/components/user-preferences/language/getLastLanguage';
 

@@ -1,4 +1,4 @@
-import i18next from 'i18next';
+import * as i18next from 'i18next';
 import * as _ from 'lodash';
 import { detectGitType } from '@console/dev-console/src/components/import/import-validation-utils';
 import type {
