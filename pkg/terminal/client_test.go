@@ -3,8 +3,12 @@ package terminal
 import (
 	"crypto/tls"
 	"crypto/x509"
+	"io"
+	"net"
 	"net/http"
+	"net/http/httptest"
 	"net/url"
+	"sync/atomic"
 	"testing"
 )
 
@@ -110,6 +114,56 @@ func TestGetConfig(t *testing.T) {
 		}
 		if got1.BearerToken != "token-1" || got2.BearerToken != "token-2" {
 			t.Errorf("expected bearer tokens to stay per-request, got %q and %q", got1.BearerToken, got2.BearerToken)
+		}
+	})
+
+	t.Run("reuses a single connection across requests and clients", func(t *testing.T) {
+		// Behavioural counterpart to the transport-identity test above: it
+		// asserts the property that actually matters (connection reuse)
+		// rather than the implementation that currently provides it. It
+		// also catches ways of losing reuse that keep a shared transport —
+		// DisableKeepAlives, a negative idle-connection limit, a fresh
+		// transport per call — without pinning any of them.
+		var newConns int32
+		server := httptest.NewUnstartedServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+			w.WriteHeader(http.StatusOK)
+		}))
+		server.Config.ConnState = func(_ net.Conn, state http.ConnState) {
+			if state == http.StateNew {
+				atomic.AddInt32(&newConns, 1)
+			}
+		}
+		server.StartTLS()
+		defer server.Close()
+
+		pool := x509.NewCertPool()
+		pool.AddCert(server.Certificate())
+		endpoint, err := url.Parse(server.URL)
+		if err != nil {
+			t.Fatalf("unexpected error parsing test server URL: %v", err)
+		}
+
+		p := &Proxy{TLSClientConfig: &tls.Config{RootCAs: pool}, ClusterEndpoint: endpoint}
+
+		// Build a client per request, as HandleProxy does.
+		for i := 0; i < 2; i++ {
+			cfg, err := p.getConfig("token")
+			if err != nil {
+				t.Fatalf("unexpected error: %v", err)
+			}
+			resp, err := (&http.Client{Transport: cfg.Transport}).Get(server.URL)
+			if err != nil {
+				t.Fatalf("unexpected error from test server: %v", err)
+			}
+			// The body must be drained for the connection to be reused.
+			if _, err := io.Copy(io.Discard, resp.Body); err != nil {
+				t.Fatalf("unexpected error reading body: %v", err)
+			}
+			resp.Body.Close()
+		}
+
+		if got := atomic.LoadInt32(&newConns); got != 1 {
+			t.Errorf("expected the requests to share one connection, got %d new connections", got)
 		}
 	})
 
