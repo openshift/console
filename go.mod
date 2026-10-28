@@ -14,7 +14,7 @@ require (
 	github.com/gorilla/securecookie v1.1.2
 	github.com/gorilla/sessions v1.4.0
 	github.com/gorilla/websocket v1.5.4-0.20250319132907-e064f32e3674
-	github.com/openshift/api v0.0.0-20261016191942-b21b742b40ce
+	github.com/openshift/api v0.0.0-20261002115817-f8795cdde518
 	github.com/openshift/client-go v0.0.0-20261001003915-dcaad1dc7fe8
 	github.com/openshift/library-go v0.0.0-20261001144932-192662696fc7
 	github.com/operator-framework/api v0.45.0

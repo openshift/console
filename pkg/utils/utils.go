@@ -18,7 +18,6 @@ const (
 	fontSrc       = "font-src"
 	scriptSrc     = "script-src"
 	styleSrc      = "style-src"
-	objectSrc     = "object-src"
 	connectSrc    = "connect-src"
 	consoleDot    = "console.redhat.com"
 	httpLocalHost = "http://localhost:8080"
@@ -70,7 +69,6 @@ func BuildCSPDirectives(k8sMode string, pluginsCSP serverconfig.MultiKeyValue, i
 	fontSrcDirective := []string{fontSrc, self}
 	scriptSrcDirective := []string{scriptSrc, self, consoleDot}
 	styleSrcDirective := []string{styleSrc, self}
-	objectSrcDirective := []string{objectSrc, self}
 	connectSrcDirective := []string{connectSrc, self, consoleDot}
 
 	// If running off-cluster, append the localhost sources to the default sources
@@ -81,7 +79,6 @@ func BuildCSPDirectives(k8sMode string, pluginsCSP serverconfig.MultiKeyValue, i
 		fontSrcDirective = append(fontSrcDirective, httpLocalHost)
 		scriptSrcDirective = append(scriptSrcDirective, []string{httpLocalHost, wsLocalHost}...)
 		styleSrcDirective = append(styleSrcDirective, httpLocalHost)
-		objectSrcDirective = append(objectSrcDirective, httpLocalHost)
 		connectSrcDirective = append(connectSrcDirective, httpLocalHost)
 	}
 
@@ -102,8 +99,6 @@ func BuildCSPDirectives(k8sMode string, pluginsCSP serverconfig.MultiKeyValue, i
 			styleSrcDirective = append(styleSrcDirective, sources)
 		case connectSrc:
 			connectSrcDirective = append(connectSrcDirective, sources)
-		case objectSrc:
-			objectSrcDirective = append(objectSrcDirective, sources)
 		default:
 			klog.Fatalf("invalid CSP directive: %s", directive)
 		}
@@ -130,8 +125,8 @@ func BuildCSPDirectives(k8sMode string, pluginsCSP serverconfig.MultiKeyValue, i
 		strings.Join(scriptSrcDirective, " "),
 		strings.Join(styleSrcDirective, " "),
 		strings.Join(connectSrcDirective, " "),
-		strings.Join(objectSrcDirective, " "),
 		// Keep these directives fixed rather than exposing them to plugins.
+		"object-src 'none'",
 		"media-src 'none'",
 		"child-src 'none'",
 		// The load-test service worker is served from the console's own origin.

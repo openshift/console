@@ -454,8 +454,6 @@ func getDirectiveName(directive string) string {
 		return "style-src"
 	case string(consolev1.ConnectSrc):
 		return "connect-src"
-	case string(consolev1.ObjectSrc):
-		return "object-src"
 	default:
 		klog.Infof("ignored invalid CSP directive: %s", directive)
 		return ""

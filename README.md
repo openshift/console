@@ -482,23 +482,11 @@ Example:
 ./bin/bridge --content-security-policy script-src='localhost:1234',font-src='localhost:2345 localhost:3456'
 ```
 
-The configurable directives are defined in the [openshift/api repository](https://github.com/openshift/api/blob/master/console/v1/types_console_plugin.go). Console appends its defaults, including `frame-src 'none'`, `frame-ancestors 'none'`, and `object-src 'self'`. When Bridge runs off-cluster, it also adds `http://localhost:8080` to `object-src`.
+The configurable directives are defined in the [openshift/api repository](https://github.com/openshift/api/blob/master/console/v1/types_console_plugin.go). Values from enabled plugins are merged into a single console-wide policy and appended to the defaults for each configurable directive.
 
-Bridge always emits `media-src 'none'`, `child-src 'none'`, and `worker-src 'self'`. These directives are not configurable through `ConsolePlugin.spec.contentSecurityPolicy`. The same-origin `worker-src` source permits Console's `load-test.sw.js` service worker.
+Bridge always emits `object-src 'none'`, `media-src 'none'`, `child-src 'none'`, `frame-src 'none'`, `frame-ancestors 'none'`, and `worker-src 'self'`, including when running off-cluster. These directives are not configurable through `ConsolePlugin.spec.contentSecurityPolicy` or the `--content-security-policy` flag. Under enforcement, `object-src 'none'` blocks resource loads through HTML `<object>` and `<embed>` elements, and `media-src 'none'` blocks audio and video resource loads. The same-origin `worker-src` source permits Console's `load-test.sw.js` service worker.
 
-Plugins can add object and embed resource sources with `ObjectSrc`:
-
-```yaml
-spec:
-  contentSecurityPolicy:
-    - directive: ObjectSrc
-      values:
-        - https://objects.example.com
-```
-
-Values from enabled plugins are merged into the single console-wide `object-src` directive and appended to the console defaults. The Bridge CSP mode (`report-only` or `enforce`) determines the response header and behavior; declaring `ObjectSrc` only adds allowed sources and does not enable enforcement.
-
-Before enabling an `ObjectSrc` declaration, deploy both the updated ConsolePlugin CRD and a Bridge version that recognizes `ObjectSrc`. An older Bridge cannot parse this configuration and may fail to start. Remove all `ObjectSrc` declarations and allow the operator to update the Console configuration before rolling back to an older Bridge.
+These restrictions remain fixed until a concrete plugin use case justifies additional configuration. CSP mode controls whether violations are reported or blocked; it does not change the allowed sources.
 
 ## Frontend Packages
 - [console-dynamic-plugin-sdk](./frontend/packages/console-dynamic-plugin-sdk/README.md)
