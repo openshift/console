@@ -442,6 +442,8 @@
   "Operator status": "Operator status",
   "Cluster inventory": "Cluster inventory",
   "A cluster version update is available": "A cluster version update is available",
+  "View all {{count}} alerts_one": "View {{count}} alert",
+  "View all {{count}} alerts_other": "View all {{count}} alerts",
   "View alerts": "View alerts",
   "Filter by Node type": "Filter by Node type",
   "Cluster utilization": "Cluster utilization",

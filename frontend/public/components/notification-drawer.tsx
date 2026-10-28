@@ -80,6 +80,10 @@ import { LabelSelector } from '@console/internal/module/k8s/label-selector';
 import { useNotificationAlerts } from '@console/shared/src/hooks/useNotificationAlerts';
 import { useModal } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { NotificationTypes } from './utils/types';
+import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
+
+const MAX_ALERTS_PER_GROUP = 50;
 
 const AlertErrorState: FC<AlertErrorProps> = ({ errorText }) => {
   const { t } = useTranslation();
@@ -241,6 +245,7 @@ export const NotificationDrawer: FC<NotificationDrawerProps> = ({
   drawerRef,
 }) => {
   const { t } = useTranslation();
+  const [, setActiveNamespace] = useActiveNamespace();
   const clusterID = getClusterID(useClusterVersion());
   const showServiceLevelNotification = useShowServiceLevelNotifications(clusterID);
   const pluginInfoEntries = usePluginInfo();
@@ -263,6 +268,10 @@ export const NotificationDrawer: FC<NotificationDrawerProps> = ({
   const itemOnClick = (location: string) => {
     toggleNotificationDrawer();
     navigate(location);
+  };
+  const viewAllAlerts = () => {
+    setActiveNamespace(ALL_NAMESPACES_KEY);
+    itemOnClick('/monitoring/alerts');
   };
 
   const alertActionExtensionsMap = useMemo(() => getAlertActions(alertActionExtensions, navigate), [
@@ -349,7 +358,7 @@ export const NotificationDrawer: FC<NotificationDrawerProps> = ({
         aria-label={t('public~Notifications in the critical alerts group')}
       >
         {criticalAlerts.length > 0
-          ? criticalAlerts.map((alert, i) => {
+          ? criticalAlerts.slice(0, MAX_ALERTS_PER_GROUP).map((alert, i) => {
               const alertVariant = NotificationTypes[getAlertSeverity(alert)];
               const alertTime = getAlertTime(alert);
               return (
@@ -377,6 +386,14 @@ export const NotificationDrawer: FC<NotificationDrawerProps> = ({
               );
             })
           : emptyState}
+        {criticalAlerts.length > MAX_ALERTS_PER_GROUP && (
+          <NotificationDrawerListItem variant={NotificationTypes.info} onClick={viewAllAlerts}>
+            <NotificationDrawerListItemHeader
+              variant={NotificationTypes.info}
+              title={t('public~View all {{count}} alerts', { count: criticalAlerts.length })}
+            />
+          </NotificationDrawerListItem>
+        )}
       </NotificationDrawerList>
     </NotificationDrawerGroup>
   );
@@ -395,7 +412,7 @@ export const NotificationDrawer: FC<NotificationDrawerProps> = ({
           isHidden={!isNonCriticalAlertExpanded}
           aria-label={t('public~Notifications in the other alerts group')}
         >
-          {nonCriticalAlerts.map((alert, i) => {
+          {nonCriticalAlerts.slice(0, MAX_ALERTS_PER_GROUP).map((alert, i) => {
             const alertVariant = NotificationTypes[getAlertSeverity(alert)];
             const alertTime = getAlertTime(alert);
             return (
@@ -422,6 +439,14 @@ export const NotificationDrawer: FC<NotificationDrawerProps> = ({
               </NotificationDrawerListItem>
             );
           })}
+          {nonCriticalAlerts.length > MAX_ALERTS_PER_GROUP && (
+            <NotificationDrawerListItem variant={NotificationTypes.info} onClick={viewAllAlerts}>
+              <NotificationDrawerListItemHeader
+                variant={NotificationTypes.info}
+                title={t('public~View all {{count}} alerts', { count: nonCriticalAlerts.length })}
+              />
+            </NotificationDrawerListItem>
+          )}
         </NotificationDrawerList>
       </NotificationDrawerGroup>
     ) : null;
