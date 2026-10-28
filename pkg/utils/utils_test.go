@@ -1,11 +1,7 @@
 package utils
 
 import (
-	"flag"
-	"os"
-	"path/filepath"
 	"reflect"
-	"strings"
 	"testing"
 
 	"github.com/openshift/console/pkg/serverconfig"
@@ -18,7 +14,7 @@ const (
 	onClusterFontSrc        = "font-src 'self'"
 	onClusterScriptSrc      = "script-src 'self' console.redhat.com"
 	onClusterStyleSrc       = "style-src 'self'"
-	onClusterObjectSrc      = "object-src 'self'"
+	onClusterObjectSrc      = "object-src 'none'"
 	onClusterConnectSrc     = "connect-src 'self' console.redhat.com"
 	offClusterBaseUri       = "base-uri 'self' http://localhost:8080 ws://localhost:8080"
 	offClusterDefaultSrc    = "default-src 'self' console.redhat.com http://localhost:8080 ws://localhost:8080"
@@ -26,7 +22,7 @@ const (
 	offClusterFontSrc       = "font-src 'self' http://localhost:8080"
 	offClusterScriptSrc     = "script-src 'self' console.redhat.com http://localhost:8080 ws://localhost:8080"
 	offClusterStyleSrc      = "style-src 'self' http://localhost:8080"
-	offClusterObjectSrc     = "object-src 'self' http://localhost:8080"
+	offClusterObjectSrc     = "object-src 'none'"
 	offClusterConnectSrc    = "connect-src 'self' console.redhat.com http://localhost:8080"
 	mediaSrcDirective       = "media-src 'none'"
 	childSrcDirective       = "child-src 'none'"
@@ -100,7 +96,6 @@ func TestBuildCSPDirectives(t *testing.T) {
 				"script-src":  "foo.bar foo.bar.baz",
 				"style-src":   "foo.bar foo.bar.baz",
 				"connect-src": "foo.bar.baz",
-				"object-src":  "https://objects.example.com https://objects2.example.com",
 			},
 			want: []string{
 				onClusterBaseUri,
@@ -110,7 +105,7 @@ func TestBuildCSPDirectives(t *testing.T) {
 				onClusterScriptSrc + " foo.bar foo.bar.baz 'nonce-foobar'",
 				onClusterStyleSrc + " foo.bar foo.bar.baz 'unsafe-inline'",
 				onClusterConnectSrc + " foo.bar.baz",
-				onClusterObjectSrc + " https://objects.example.com https://objects2.example.com",
+				onClusterObjectSrc,
 				mediaSrcDirective,
 				childSrcDirective,
 				workerSrcDirective,
@@ -153,7 +148,6 @@ func TestBuildCSPDirectives(t *testing.T) {
 				"script-src":  "foo.bar foo.bar.baz",
 				"style-src":   "foo.bar foo.bar.baz",
 				"connect-src": "foo.bar.baz",
-				"object-src":  "https://objects.example.com https://objects2.example.com",
 			},
 			want: []string{
 				offClusterBaseUri,
@@ -163,7 +157,7 @@ func TestBuildCSPDirectives(t *testing.T) {
 				offClusterScriptSrc + " foo.bar foo.bar.baz 'nonce-foobar'",
 				offClusterStyleSrc + " foo.bar foo.bar.baz 'unsafe-inline'",
 				offClusterConnectSrc + " foo.bar.baz",
-				offClusterObjectSrc + " https://objects.example.com https://objects2.example.com",
+				offClusterObjectSrc,
 				mediaSrcDirective,
 				childSrcDirective,
 				workerSrcDirective,
@@ -207,48 +201,5 @@ func TestBuildCSPDirectives(t *testing.T) {
 				t.Errorf("buildCSPDirectives() got = %v, want %v", got, tt.want)
 			}
 		})
-	}
-}
-
-func TestBuildCSPDirectivesFromObjectSrcConfig(t *testing.T) {
-	configFile := filepath.Join(t.TempDir(), "console-config.yaml")
-	content := []byte(`apiVersion: console.openshift.io/v1
-kind: ConsoleConfig
-contentSecurityPolicy:
-  ObjectSrc:
-    - https://objects.example.com
-    - https://objects2.example.com
-  ConnectSrc:
-    - https://api.example.com
-`)
-	if err := os.WriteFile(configFile, content, 0600); err != nil {
-		t.Fatal(err)
-	}
-	policy := serverconfig.MultiKeyValue{}
-	fs := flag.NewFlagSet("object-src-config", flag.ContinueOnError)
-	fs.Var(&policy, "content-security-policy", "")
-	if _, err := serverconfig.SetFlagsFromConfigFile(fs, configFile); err != nil {
-		t.Fatal(err)
-	}
-	wantPolicy := serverconfig.MultiKeyValue{
-		"object-src":  "https://objects.example.com https://objects2.example.com",
-		"connect-src": "https://api.example.com",
-	}
-	if !reflect.DeepEqual(policy, wantPolicy) {
-		t.Fatalf("parsed CSP = %#v, want %#v", policy, wantPolicy)
-	}
-	directives, err := BuildCSPDirectives("on-cluster", policy, "foobar", "")
-	if err != nil {
-		t.Fatal(err)
-	}
-	var objectDirectives []string
-	for _, directive := range directives {
-		if strings.HasPrefix(directive, "object-src ") {
-			objectDirectives = append(objectDirectives, directive)
-		}
-	}
-	wantObjects := []string{"object-src 'self' https://objects.example.com https://objects2.example.com"}
-	if !reflect.DeepEqual(objectDirectives, wantObjects) {
-		t.Fatalf("object directives = %#v, want %#v", objectDirectives, wantObjects)
 	}
 }

@@ -64,6 +64,7 @@ func TestIndexHandlerCSPMode(t *testing.T) {
 				"img-src 'self' https: blob: data:",
 				"script-src 'self' console.redhat.com https://plugin.example.com 'nonce-",
 				"style-src 'self' 'unsafe-inline'",
+				"object-src 'none'",
 				"media-src 'none'",
 				"child-src 'none'",
 				"worker-src 'self'",

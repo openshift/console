@@ -50,7 +50,7 @@ type ConsolePluginSpec struct {
 	// i18n is the configuration of plugin's localization resources.
 	// +optional
 	I18n ConsolePluginI18n `json:"i18n"`
-	// contentSecurityPolicy is an optional list of up to 5 Content-Security-Policy (CSP) directives for the plugin.
+	// contentSecurityPolicy is a list of Content-Security-Policy (CSP) directives for the plugin.
 	// Each directive specifies a list of values, appropriate for the given directive type,
 	// for example a list of remote endpoints for fetch directives such as ScriptSrc.
 	// Console web application uses CSP to detect and mitigate certain types of attacks,
@@ -61,20 +61,16 @@ type ConsolePluginSpec struct {
 	// from a cluster service.
 	// CSP violation reports can be viewed in the browser's console logs during development and
 	// testing of the plugin in the OpenShift web console.
-	// Available directive types are DefaultSrc, ScriptSrc, StyleSrc, ImgSrc, FontSrc, ConnectSrc and ObjectSrc.
-	// ObjectSrc specifies allowed sources for the <object> and <embed> elements. Its values are
-	// appended to the console's default object-src sources and merged with values from other enabled plugins.
-	// When omitted, the plugin contributes no CSP directives. The combined size of all directive values
-	// must be less than 8192 characters.
+	// Available directive types are DefaultSrc, ScriptSrc, StyleSrc, ImgSrc, FontSrc and ConnectSrc.
 	// Each of the available directives may be defined only once in the list.
-	// The value 'self' is automatically included in fetch directives by the OpenShift web console's backend.
-	// The object-src directive also includes the console's default 'self' source.
+	// The value 'self' is automatically included in all fetch directives by the OpenShift web
+	// console's backend.
 	// For more information about the CSP directives, see:
 	// https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
 	//
 	// The OpenShift web console server aggregates the CSP directives and values across
 	// its own default values and all enabled ConsolePlugin CRs, merging them into a single
-	// policy string that is sent to the browser via the configured CSP response header.
+	// policy string that is sent to the browser via `Content-Security-Policy` HTTP response header.
 	//
 	// Example:
 	//   ConsolePlugin A directives:
@@ -91,8 +87,8 @@ type ConsolePluginSpec struct {
 	//     font-src: https://font1.com/, https://font2.com/
 	//     img-src: https://img1.com/
 	//
-	//   OpenShift web console server CSP response header containing:
-	//     default-src 'self'; base-uri 'self'; script-src 'self' https://script1.com/ https://script2.com/ https://script3.com/; font-src 'self' https://font1.com/ https://font2.com/; img-src 'self' https://img1.com/; style-src 'self'; frame-src 'none'; object-src 'self'
+	//   OpenShift web console server CSP response header:
+	//     Content-Security-Policy: default-src 'self'; base-uri 'self'; script-src 'self' https://script1.com/ https://script2.com/ https://script3.com/; font-src 'self' https://font1.com/ https://font2.com/; img-src 'self' https://img1.com/; style-src 'self'; frame-src 'none'; object-src 'none'
 	//
 	// +kubebuilder:validation:MaxItems=5
 	// +kubebuilder:validation:XValidation:rule="self.map(x, x.values.map(y, y.size()).sum()).sum() < 8192",message="the total combined size of values of all directives must not exceed 8192 (8kb)"
@@ -104,7 +100,7 @@ type ConsolePluginSpec struct {
 
 // DirectiveType is an enumeration of OpenShift web console supported CSP directives.
 // LoadType is an enumeration of i18n loading types.
-// +kubebuilder:validation:Enum:="DefaultSrc";"ScriptSrc";"StyleSrc";"ImgSrc";"FontSrc";"ConnectSrc";"ObjectSrc"
+// +kubebuilder:validation:Enum:="DefaultSrc";"ScriptSrc";"StyleSrc";"ImgSrc";"FontSrc";"ConnectSrc"
 // +enum
 type DirectiveType string
 
@@ -133,13 +129,9 @@ const (
 	// For more information about the ConnectSrc directive, see:
 	// https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/connect-src
 	ConnectSrc DirectiveType = "ConnectSrc"
-	// ObjectSrc directive specifies valid sources for the <object> and <embed> elements.
-	// For more information about the ObjectSrc directive, see:
-	// https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Security-Policy/object-src
-	ObjectSrc DirectiveType = "ObjectSrc"
 )
 
-// CSPDirectiveValue is a single, non-empty value for a Content-Security-Policy directive.
+// CSPDirectiveValue is single value for a Content-Security-Policy directive.
 // Each directive value must have a maximum length of 1024 characters and must not contain
 // whitespace, commas (,), semicolons (;) or single quotes ('). The value '*' is not permitted.
 // +kubebuilder:validation:MinLength=1
@@ -153,8 +145,8 @@ type CSPDirectiveValue string
 
 // ConsolePluginCSP holds configuration for a specific CSP directive
 type ConsolePluginCSP struct {
-	// directive is required and specifies which Content-Security-Policy directive to configure.
-	// Available directive types are DefaultSrc, ScriptSrc, StyleSrc, ImgSrc, FontSrc, ConnectSrc and ObjectSrc.
+	// directive specifies which Content-Security-Policy directive to configure.
+	// Available directive types are DefaultSrc, ScriptSrc, StyleSrc, ImgSrc, FontSrc and ConnectSrc.
 	// DefaultSrc directive serves as a fallback for the other CSP fetch directives.
 	// For more information about the DefaultSrc directive, see:
 	// https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/default-src
@@ -173,15 +165,12 @@ type ConsolePluginCSP struct {
 	// ConnectSrc directive restricts the URLs which can be loaded using script interfaces.
 	// For more information about the ConnectSrc directive, see:
 	// https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/connect-src
-	// ObjectSrc directive specifies valid sources for the <object> and <embed> elements.
-	// For more information about the ObjectSrc directive, see:
-	// https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Security-Policy/object-src
 	// +required
 	Directive DirectiveType `json:"directive"`
-	// values is a required array of values to append to the console defaults for this directive.
+	// values defines an array of values to append to the console defaults for this directive.
 	// Each ConsolePlugin may define their own directives with their values. These will be set
 	// by the OpenShift web console's backend, as part of its Content-Security-Policy header.
-	// The array must contain between 1 and 16 unique values. Each directive value must have a maximum length
+	// The array can contain at most 16 values. Each directive value must have a maximum length
 	// of 1024 characters and must not contain whitespace, commas (,), semicolons (;) or single
 	// quotes ('). The value '*' is not permitted.
 	// Each value in the array must be unique.
