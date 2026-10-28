@@ -89,6 +89,30 @@ func TestGetConfig(t *testing.T) {
 		}
 	})
 
+	t.Run("shares one transport across requests, keeping tokens per-request", func(t *testing.T) {
+		// Regression test: getConfig built a fresh http.Transport per call,
+		// so every terminal request got a new connection pool — no
+		// connection reuse, and idle connections on the abandoned
+		// transports were never closed.
+		p := &Proxy{TLSClientConfig: &tls.Config{}, ClusterEndpoint: endpoint}
+
+		got1, err := p.getConfig("token-1")
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		got2, err := p.getConfig("token-2")
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+
+		if got1.Transport == nil || got1.Transport != got2.Transport {
+			t.Error("expected getConfig to reuse a single shared transport across calls")
+		}
+		if got1.BearerToken != "token-1" || got2.BearerToken != "token-2" {
+			t.Errorf("expected bearer tokens to stay per-request, got %q and %q", got1.BearerToken, got2.BearerToken)
+		}
+	})
+
 	t.Run("resolves to the https scheme despite TLS living in the Transport", func(t *testing.T) {
 		// Regression test: Host was previously set to ClusterEndpoint.Host
 		// (no scheme). client-go defaults a scheme-less host to http://

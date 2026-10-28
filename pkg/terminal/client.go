@@ -41,8 +41,21 @@ func (p *Proxy) getConfig(token string) (*rest.Config, error) {
 	return &rest.Config{
 		// Keep the scheme: client-go defaults a scheme-less host to http://
 		// when the rest.Config itself carries no CA data or Insecure flag.
-		Host: p.ClusterEndpoint.String(),
-		Transport: &http.Transport{
+		Host:        p.ClusterEndpoint.String(),
+		Transport:   p.clusterTransport(),
+		BearerToken: token,
+	}, nil
+}
+
+// clusterTransport builds (once) and returns the shared http.Transport for
+// the terminal's k8s clients. It depends only on the proxy's TLS config,
+// which is constant for the proxy's lifetime, and never on the per-request
+// bearer token, so a single transport — and with it a single connection
+// pool — is shared across requests and clients; building one per request
+// would break client transport caching and connection reuse.
+func (p *Proxy) clusterTransport() *http.Transport {
+	p.transportOnce.Do(func() {
+		p.transport = &http.Transport{
 			TLSClientConfig: p.TLSClientConfig,
 			// Honor HTTP(S)_PROXY/NO_PROXY like the other off-cluster
 			// transports (pkg/proxy NewProxy, the plugins asset client),
@@ -54,7 +67,7 @@ func (p *Proxy) getConfig(token string) (*rest.Config, error) {
 			// which they already need for the k8s proxy transport, since
 			// it resolves the same endpoint through the same env vars.
 			Proxy: http.ProxyFromEnvironment,
-		},
-		BearerToken: token,
-	}, nil
+		}
+	})
+	return p.transport
 }
