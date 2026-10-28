@@ -53,8 +53,8 @@ func RandomString(length int) (string, error) {
 	return encoding.EncodeToString(randomBytes)[:length], nil
 }
 
-// buildCSPDirectives takes the content security policy configuration from the server and constructs
-// a complete set of directives for the Content-Security-Policy-Report-Only header.
+// BuildCSPDirectives takes the content security policy configuration from the server and constructs
+// a complete set of directives for the configured Content-Security-Policy header mode.
 // The constructed directives will include the default sources and the supplied configuration.
 func BuildCSPDirectives(k8sMode string, pluginsCSP serverconfig.MultiKeyValue, indexPageScriptNonce string, cspReportingEndpoint string) ([]string, error) {
 	nonce := fmt.Sprintf("'nonce-%s'", indexPageScriptNonce)
@@ -87,6 +87,9 @@ func BuildCSPDirectives(k8sMode string, pluginsCSP serverconfig.MultiKeyValue, i
 	// the appropriate directive. The configuration is a string that is parsed into a map of directive types to sources.
 	// The sources are added to the existing sources for each type.
 	for directive, sources := range pluginsCSP {
+		if strings.ContainsAny(sources, ",;\r\n") {
+			return nil, fmt.Errorf("invalid CSP sources for %q: commas, semicolons, and line breaks are not allowed", directive)
+		}
 		switch directive {
 		case defaultSrc:
 			defaultSrcDirective = append(defaultSrcDirective, sources)
