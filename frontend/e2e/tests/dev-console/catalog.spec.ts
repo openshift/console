@@ -201,11 +201,13 @@ test.describe(
 
     test('displays operator tiles in catalog', async ({ page }) => {
       await test.step('Navigate to operator catalog', async () => {
-        await page.goto('/catalog/ns/default?catalogType=operator-olmv0');
+        await page.goto(
+          '/catalog/ns/default?catalogType=operator&operatorCatalog=%5B%22Classic%20Operators%22%5D',
+        );
       });
 
       await test.step('Verify operator tiles are rendered', async () => {
-        await expect(page.locator('[data-test^="operator-olmv0-"]').first()).toBeVisible({
+        await expect(page.locator('[data-test^="operator-"]').first()).toBeVisible({
           timeout: 30_000,
         });
       });
@@ -213,7 +215,9 @@ test.describe(
 
     test('filters operator tiles by keyword', async ({ page }) => {
       await test.step('Navigate to operator catalog', async () => {
-        await page.goto('/catalog/ns/default?catalogType=operator-olmv0');
+        await page.goto(
+          '/catalog/ns/default?catalogType=operator&operatorCatalog=%5B%22Classic%20Operators%22%5D',
+        );
       });
 
       await test.step('Wait for tiles to render', async () => {

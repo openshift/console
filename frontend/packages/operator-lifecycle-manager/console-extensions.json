@@ -175,7 +175,7 @@
       "columnData": {
         "id": "migrationEligibility",
         "title": "%olm~Migration status%",
-        "tooltip": "%olm~Indicates whether you can migrate the Operator to OLM v1 cluster extensions.%",
+        "tooltip": "%olm~Indicates whether you can migrate the Operator to Operator Lifecycle Manager version 1 cluster extensions.%",
         "defaultVisible": true,
         "props": { "modifier": "nowrap" }
       },
@@ -457,7 +457,7 @@
       "path": ["/operatorhub", "/catalog"],
       "exact": true,
       "component": {
-        "$codeRef": "CatalogRedirect"
+        "$codeRef": "CatalogRedirect.CatalogRedirect"
       }
     }
   },
@@ -466,58 +466,47 @@
     "properties": {
       "title": "%olm~Operators%",
       "catalogId": "dev-catalog",
-      "type": "operator-olmv0",
-      "provider": { "$codeRef": "useOperatorCatalogItems" }
+      "type": "operator",
+      "provider": { "$codeRef": "useOperatorCatalogItems.useOperatorCatalogItems" }
     },
     "flags": {
-      "required": ["OPERATOR_LIFECYCLE_MANAGER"],
-      "disallowed": ["TECH_PREVIEW"]
-    }
-  },
-  {
-    "type": "console.catalog/item-provider",
-    "properties": {
-      "title": "%olm~Classic Operators%",
-      "catalogId": "dev-catalog",
-      "type": "operator-olmv0",
-      "provider": { "$codeRef": "useOperatorCatalogItems" }
-    },
-    "flags": {
-      "required": ["OPERATOR_LIFECYCLE_MANAGER", "TECH_PREVIEW"]
+      "required": ["OPERATOR_LIFECYCLE_MANAGER"]
     }
   },
   {
     "type": "console.catalog/item-type",
     "properties": {
-      "type": "operator-olmv0",
+      "type": "operator",
       "title": "%olm~Operators%",
-      "catalogDescription": "%olm~Browse for Operators provided by Operator Lifecycle Manager.%",
-      "typeDescription": "%olm~**Operators** are software extensions to OpenShift that make use of custom resources to manage applications and their components. They are managed by Operator Lifecycle Manager.%",
+      "catalogDescription": "%olm~Browse Operators managed by Operator Lifecycle Manager.%",
+      "typeDescription": "%olm~**Operators** are software extensions to OpenShift that use custom resources to manage applications and their components. Operator Lifecycle Manager manages Operators.%",
       "sortFilterGroups": false
     },
     "flags": {
-      "required": ["OPERATOR_LIFECYCLE_MANAGER"],
-      "disallowed": ["TECH_PREVIEW"]
-    }
-  },
-  {
-    "type": "console.catalog/item-type",
-    "properties": {
-      "type": "operator-olmv0",
-      "title": "%olm~Classic Operators%",
-      "catalogDescription": "%olm~Browse for Operators managed by Classic Operator Lifecycle Manager (OLMv0).%",
-      "typeDescription": "%olm~**Operators** are software extensions to OpenShift that make use of custom resources to manage applications and their components. They are managed by Operator Lifecycle Manager.%",
-      "sortFilterGroups": false,
-      "sortWeight": 1
-    },
-    "flags": {
-      "required": ["OPERATOR_LIFECYCLE_MANAGER", "TECH_PREVIEW"]
+      "required": ["OPERATOR_LIFECYCLE_MANAGER"]
     }
   },
   {
     "type": "console.catalog/item-type-metadata",
     "properties": {
-      "type": "operator-olmv0",
+      "type": "operator",
+      "filters": [
+        {
+          "label": "%olm~Catalog%",
+          "attribute": "operatorCatalog",
+          "filterType": "radio",
+          "comparator": { "$codeRef": "filters.operatorCatalogComparator" }
+        }
+      ]
+    },
+    "flags": {
+      "required": ["TECH_PREVIEW"]
+    }
+  },
+  {
+    "type": "console.catalog/item-type-metadata",
+    "properties": {
+      "type": "operator",
       "filters": [
         {
           "label": "%olm~Source%",
@@ -559,16 +548,13 @@
           }
         }
       ]
-    },
-    "flags": {
-      "required": ["OPERATOR_LIFECYCLE_MANAGER"]
     }
   },
   {
     "type": "console.catalog/categories-provider",
     "properties": {
       "catalogId": "dev-catalog",
-      "type": "operator-olmv0",
+      "type": "operator",
       "provider": { "$codeRef": "useOperatorCatalogCategories" }
     },
     "flags": {
@@ -582,7 +568,7 @@
       "name": "%olm~Classic Operators%",
       "href": "classic",
       "component": {
-        "$codeRef": "classicInstalledOperatorsPage"
+        "$codeRef": "classicInstalledOperatorsPage.ClassicInstalledOperatorsPage"
       }
     },
     "flags": {

@@ -53,8 +53,8 @@ const acknowledgementFields: {
   checks: string[];
 }[] = [
   // t('I accept that this Operator runs in all namespaces after migration.')
-  // t('I understand that OLM v1 cluster extensions do not support OperatorCondition.')
-  // t('I accept that this Operator uses OLM (Classic) APIs that OLM v1 cluster extensions do not support.')
+  // t('I understand that cluster extensions do not support OperatorCondition, so the Operator cannot use it to block upgrades when it is not ready.')
+  // t('I accept that this Operator uses Operator Lifecycle Manager version 0 APIs that cluster extensions do not support, so features that depend on those APIs might stop working after migration.')
   // t('I accept that this Operator uses cluster-admin permissions after migration.')
   // t('I accept migrating this Operator before it reaches a healthy, up-to-date state.')
   {
@@ -64,13 +64,14 @@ const acknowledgementFields: {
   },
   {
     field: 'acknowledgeOperatorCondition',
-    label: 'I understand that OLM v1 cluster extensions do not support OperatorCondition.',
+    label:
+      'I understand that cluster extensions do not support OperatorCondition, so the Operator cannot use it to block upgrades when it is not ready.',
     checks: ['No OperatorCondition usage'],
   },
   {
     field: 'acknowledgeOLMv0APIAccess',
     label:
-      'I accept that this Operator uses OLM (Classic) APIs that OLM v1 cluster extensions do not support.',
+      'I accept that this Operator uses Operator Lifecycle Manager version 0 APIs that cluster extensions do not support, so features that depend on those APIs might stop working after migration.',
     checks: ['OLMv0-API RBAC'],
   },
   {
@@ -373,7 +374,7 @@ const OperatorMigrationConfirmModal: FC<OperatorMigrationConfirmModalProps> = ({
       onStepChange={resetRecoveryAcknowledgements}
       header={
         <WizardHeader
-          title={t('Migrate OLM (Classic) Operators to OLM v1 cluster extensions')}
+          title={t('Migrate Classic Operators to cluster extensions')}
           titleId="operator-migration-confirm-title"
           description={t('Check the migration plan, then review and start the migration.')}
           descriptionId="operator-migration-confirm-description"
@@ -579,7 +580,7 @@ const OperatorMigrationConfirmModal: FC<OperatorMigrationConfirmModalProps> = ({
             </Title>
             <Content component="p" className="pf-v6-u-mt-sm">
               {t(
-                'Migration transfers management to OLM v1 cluster extensions at the versions shown in the plan.',
+                'Migration transfers management to Operator Lifecycle Manager version 1 cluster extensions at the versions shown in the plan.',
               )}
             </Content>
           </StackItem>
@@ -593,7 +594,7 @@ const OperatorMigrationConfirmModal: FC<OperatorMigrationConfirmModalProps> = ({
           <StackItem>
             <Alert isInline variant={AlertVariant.warning} title={t('Prepare for manual recovery')}>
               {t(
-                'If migration fails, automatic rollback might not be possible after OLM v1 cluster extensions start managing the Operator. Before you continue, make sure you have a backup or recovery plan for the affected resources.',
+                'If migration fails, automatic rollback might not be possible after Operator Lifecycle Manager version 1 cluster extensions start managing the Operator. Before you continue, make sure you have a backup or recovery plan for the affected resources.',
               )}
               <Content component="p" className="pf-v6-u-mt-sm">
                 {t(

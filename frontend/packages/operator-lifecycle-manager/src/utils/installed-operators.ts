@@ -7,7 +7,7 @@ const isCSV = (
 ): obj is ClusterServiceVersionKind => obj.kind === ClusterServiceVersionModel.kind;
 
 /**
- * Produces the set of installed Classic operators: every ClusterServiceVersion, plus any
+ * Produces the set of installed Classic Operators: every ClusterServiceVersion, plus any
  * Subscription that has not yet produced one. A Subscription therefore only surfaces while
  * its install is in flight or stuck.
  */

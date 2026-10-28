@@ -2,8 +2,7 @@ import { test, expect } from '../../fixtures';
 import { CatalogPage } from '../../pages/catalog-page';
 import { OLM_CLUSTER_STATE_LOCK } from '../../utils/locks';
 
-// The OLMv0 catalog is its own type rather than a tab, so navigate straight to it. It is titled
-// "Classic Operators" under Tech Preview and plain "Operators" everywhere else.
+// Browse Classic Operators through the shared Operators catalog and OLM generation filter.
 test.describe(
   'OLMv0 Operators catalog filtering',
   { tag: ['@admin'], lock: OLM_CLUSTER_STATE_LOCK },

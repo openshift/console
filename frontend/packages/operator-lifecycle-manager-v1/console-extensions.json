@@ -25,51 +25,31 @@
     "type": "console.flag/hookProvider",
     "properties": {
       "handler": {
-        "$codeRef": "useInstalledOperatorsFlagProvider"
+        "$codeRef": "useInstalledOperatorsFlagProvider.useInstalledOperatorsFlagProvider"
       }
     }
   },
   {
     "type": "console.catalog/item-type",
     "properties": {
-      "type": "operator-olmv1",
-      "title": "%olm-v1~Next-Gen Operators%",
-      "catalogDescription": "%olm-v1~Browse for Operators managed by Next-Gen Operator Lifecycle Manager (OLMv1), a streamlined redesign that simplifies operator management with declarative APIs, enhanced security, and direct, GitOps-friendly control over upgrades.%",
-      "typeDescription": "%olm-v1~**Operators** are software extensions to OpenShift that make use of custom resources to manage applications and their components. They are managed by Next-Gen Operator Lifecycle Manager (OLMv1).%",
-      "filters": [
-        {
-          "label": "%olm-v1~Source%",
-          "attribute": "source"
-        },
-        {
-          "label": "%olm-v1~Provider%",
-          "attribute": "provider"
-        },
-        {
-          "label": "%olm-v1~Capability level%",
-          "attribute": "capabilities"
-        },
-        {
-          "label": "%olm-v1~Infrastructure features%",
-          "attribute": "infrastructureFeatures"
-        },
-        {
-          "label": "%olm-v1~Valid subscription%",
-          "attribute": "validSubscription"
-        }
-      ]
+      "type": "operator",
+      "title": "%olm~Operators%",
+      "catalogDescription": "%olm~Browse Operators managed by Operator Lifecycle Manager.%",
+      "typeDescription": "%olm~**Operators** are software extensions to OpenShift that use custom resources to manage applications and their components. Operator Lifecycle Manager manages Operators.%",
+      "sortFilterGroups": false
     },
     "flags": {
-      "required": ["CLUSTER_CATALOG_API", "TECH_PREVIEW"]
+      "required": ["CLUSTER_CATALOG_API", "TECH_PREVIEW"],
+      "disallowed": ["OPERATOR_LIFECYCLE_MANAGER"]
     }
   },
   {
     "type": "console.catalog/item-provider",
     "properties": {
       "catalogId": "dev-catalog",
-      "type": "operator-olmv1",
-      "title": "%olm-v1~Next-Gen Operators%",
-      "provider": { "$codeRef": "useCatalogItems" }
+      "type": "operator",
+      "title": "%olm-v1~Cluster extensions%",
+      "provider": { "$codeRef": "useCatalogItems.useCatalogItems" }
     },
     "flags": {
       "required": ["CLUSTER_CATALOG_API", "TECH_PREVIEW"]
@@ -79,8 +59,8 @@
     "type": "console.catalog/categories-provider",
     "properties": {
       "catalogId": "dev-catalog",
-      "type": "operator-olmv1",
-      "provider": { "$codeRef": "useCatalogCategories" }
+      "type": "operator",
+      "provider": { "$codeRef": "useCatalogCategories.useCatalogCategories" }
     },
     "flags": {
       "required": ["CLUSTER_CATALOG_API", "TECH_PREVIEW"]
@@ -95,7 +75,7 @@
         "kind": "ClusterExtension"
       },
       "component": {
-        "$codeRef": "CreateClusterExtension"
+        "$codeRef": "CreateClusterExtension.CreateClusterExtension"
       }
     },
     "flags": {
@@ -122,10 +102,10 @@
     "type": "console.tab",
     "properties": {
       "contextId": "installed-operators",
-      "name": "%olm-v1~Next-Gen Operators%",
+      "name": "%olm-v1~Cluster extensions%",
       "href": "",
       "component": {
-        "$codeRef": "clusterExtensionListPage"
+        "$codeRef": "clusterExtensionListPage.ClusterExtensionListPage"
       },
       "badge": {
         "$codeRef": "olmv1InfoPopover.OLMv1InfoPopover"
@@ -159,7 +139,7 @@
       }
     },
     "flags": {
-      "required": ["OPERATOR_LIFECYCLE_MANAGER", "TECH_PREVIEW"]
+      "required": ["INSTALLED_OPERATORS"]
     }
   },
   {
@@ -186,7 +166,7 @@
         "/installed-software/ns/:ns",
         "/installed-software"
       ],
-      "component": { "$codeRef": "installedSoftwareRedirect.default" }
+      "component": { "$codeRef": "installedSoftwareRedirect.InstalledSoftwareRedirect" }
     },
     "flags": {
       "required": ["CLUSTER_EXTENSION_API", "TECH_PREVIEW"]

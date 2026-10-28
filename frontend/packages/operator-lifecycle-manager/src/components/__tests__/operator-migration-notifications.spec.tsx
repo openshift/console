@@ -113,7 +113,9 @@ describe('OperatorMigrationNotifications', () => {
       await jest.advanceTimersByTimeAsync(3000);
     });
     expect(
-      await screen.findByText('operators/demo migrated to OLM v1 cluster extensions successfully.'),
+      await screen.findByText(
+        'operators/demo migrated to Operator Lifecycle Manager version 1 cluster extensions successfully.',
+      ),
     ).toBeVisible();
     expect(screen.getByRole('progressbar')).toHaveAttribute('aria-valuenow', '100');
   });
@@ -152,27 +154,21 @@ describe('OperatorMigrationNotifications', () => {
         'operators/demo migration failed. Review the error and verify the Operator status before you try migrating again. Error: Authorization expired',
       ),
     ).toBeVisible();
-    expect(
-      screen.getByRole('button', { name: 'Roll back to OLM (Classic) Operators' }),
-    ).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Roll back to Classic Operators' })).toBeVisible();
     expect(screen.getByText('Operator migration completed with errors')).toBeVisible();
     await user.click(screen.getByRole('button', { name: /^Close/ }));
     await act(async () => {
       await jest.advanceTimersByTimeAsync(10000);
     });
     expect(
-      screen.queryByRole('button', { name: 'Roll back to OLM (Classic) Operators' }),
+      screen.queryByRole('button', { name: 'Roll back to Classic Operators' }),
     ).not.toBeInTheDocument();
     expect(getOperatorMigrationJob).not.toHaveBeenCalled();
 
     unmount();
     renderNotifications();
-    await user.click(
-      await screen.findByRole('button', { name: 'Roll back to OLM (Classic) Operators' }),
-    );
-    expect(
-      screen.getByRole('dialog', { name: /Roll back to OLM \(Classic\) Operators/ }),
-    ).toBeVisible();
+    await user.click(await screen.findByRole('button', { name: 'Roll back to Classic Operators' }));
+    expect(screen.getByRole('dialog', { name: /Roll back to Classic Operators/ })).toBeVisible();
   });
 
   it('restores a job failure that occurred before any operator could run', async () => {
@@ -187,9 +183,13 @@ describe('OperatorMigrationNotifications', () => {
     renderNotifications();
 
     expect(await screen.findByText('Operator migration failed')).toBeVisible();
-    expect(screen.getByText('Migration job failed: Authorization expired')).toBeVisible();
     expect(
-      screen.queryByRole('button', { name: 'Roll back to OLM (Classic) Operators' }),
+      screen.getByText(
+        'Migration job failed. Review the error and the Operator results before you try again. Error: Authorization expired',
+      ),
+    ).toBeVisible();
+    expect(
+      screen.queryByRole('button', { name: 'Roll back to Classic Operators' }),
     ).not.toBeInTheDocument();
     expect(getOperatorMigrationJob).not.toHaveBeenCalled();
   });
@@ -223,7 +223,7 @@ describe('OperatorMigrationNotifications', () => {
 
     expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
     expect(
-      screen.queryByRole('button', { name: 'Roll back to OLM (Classic) Operators' }),
+      screen.queryByRole('button', { name: 'Roll back to Classic Operators' }),
     ).not.toBeInTheDocument();
     expect(getOperatorMigrationJob).not.toHaveBeenCalled();
   });
@@ -259,7 +259,7 @@ describe('OperatorMigrationNotifications', () => {
       ),
     ).toBeVisible();
     expect(screen.queryByText(/Original failure/)).not.toBeInTheDocument();
-    await user.click(screen.getByRole('button', { name: 'Roll back to OLM (Classic) Operators' }));
+    await user.click(screen.getByRole('button', { name: 'Roll back to Classic Operators' }));
     await user.click(screen.getByRole('checkbox'));
     await user.click(screen.getByRole('button', { name: 'Roll back' }));
     expect(startOperatorMigrationRollback).toHaveBeenCalledWith(failed.id, 'demo');
@@ -291,12 +291,16 @@ describe('OperatorMigrationNotifications', () => {
     renderNotifications();
 
     expect(
-      await screen.findByText('operators/demo migrated to OLM v1 cluster extensions successfully.'),
+      await screen.findByText(
+        'operators/demo migrated to Operator Lifecycle Manager version 1 cluster extensions successfully.',
+      ),
     ).toBeVisible();
     expect(screen.getByText('Operator migration in progress')).toBeVisible();
     expect(screen.getByRole('progressbar')).toHaveAttribute('aria-valuenow', '50');
     expect(
-      screen.queryByText('operators/second migrated to OLM v1 cluster extensions successfully.'),
+      screen.queryByText(
+        'operators/second migrated to Operator Lifecycle Manager version 1 cluster extensions successfully.',
+      ),
     ).not.toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: /^Close/ }));
 
@@ -304,7 +308,9 @@ describe('OperatorMigrationNotifications', () => {
       await jest.advanceTimersByTimeAsync(2000);
     });
     expect(
-      screen.queryByText('operators/demo migrated to OLM v1 cluster extensions successfully.'),
+      screen.queryByText(
+        'operators/demo migrated to Operator Lifecycle Manager version 1 cluster extensions successfully.',
+      ),
     ).not.toBeInTheDocument();
     expect(screen.getByRole('progressbar')).toHaveAttribute('aria-valuenow', '50');
 
@@ -313,11 +319,13 @@ describe('OperatorMigrationNotifications', () => {
     });
     expect(
       await screen.findByText(
-        'operators/second migrated to OLM v1 cluster extensions successfully.',
+        'operators/second migrated to Operator Lifecycle Manager version 1 cluster extensions successfully.',
       ),
     ).toBeVisible();
     expect(
-      screen.queryByText('operators/demo migrated to OLM v1 cluster extensions successfully.'),
+      screen.queryByText(
+        'operators/demo migrated to Operator Lifecycle Manager version 1 cluster extensions successfully.',
+      ),
     ).not.toBeInTheDocument();
     expect(screen.getByRole('progressbar')).toHaveAttribute('aria-valuenow', '100');
   });
@@ -349,17 +357,17 @@ describe('OperatorMigrationNotifications', () => {
 
     expect(
       await screen.findByText(
-        'operators/demo migration failed, and automatic rollback did not finish. Error: Target resources may be active',
+        'operators/demo migration failed, and automatic rollback did not finish. After the migration batch finishes, use the rollback action in the failure notification. Error: Target resources may be active',
       ),
     ).toBeVisible();
     expect(screen.getByText('Operator migration in progress')).toBeVisible();
     expect(
       screen.getByText(
-        'After this batch finishes, use the rollback action in the failure notification to restore OLM (Classic) Operator management.',
+        'After this batch finishes, use the rollback action in the failure notification to move the Operator back to Operator Lifecycle Manager version 0.',
       ),
     ).toBeVisible();
     expect(
-      screen.queryByRole('button', { name: 'Roll back to OLM (Classic) Operators' }),
+      screen.queryByRole('button', { name: 'Roll back to Classic Operators' }),
     ).not.toBeInTheDocument();
 
     await act(async () => {
@@ -367,15 +375,17 @@ describe('OperatorMigrationNotifications', () => {
     });
 
     expect(
-      await screen.findByRole('button', { name: 'Roll back to OLM (Classic) Operators' }),
+      await screen.findByRole('button', { name: 'Roll back to Classic Operators' }),
     ).toBeVisible();
     expect(
-      screen.getByText('operators/second migrated to OLM v1 cluster extensions successfully.'),
+      screen.getByText(
+        'operators/second migrated to Operator Lifecycle Manager version 1 cluster extensions successfully.',
+      ),
     ).toBeVisible();
     expect(screen.getByText('Operator migration completed with errors')).toBeVisible();
     expect(
       screen.getByText(
-        'To restore OLM (Classic) Operator management, select Roll back to OLM (Classic) Operators in this notification, review the rollback warning, and confirm rollback.',
+        'To move the Operator back to Operator Lifecycle Manager version 0, select Roll back to Classic Operators in this notification, review the rollback warning, and confirm rollback.',
       ),
     ).toBeVisible();
     expect(screen.queryByText(/After this batch finishes/)).not.toBeInTheDocument();
@@ -456,16 +466,12 @@ describe('OperatorMigrationNotifications', () => {
     });
     const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
     renderNotifications();
-    await user.click(
-      await screen.findByRole('button', { name: 'Roll back to OLM (Classic) Operators' }),
-    );
-    expect(
-      screen.getByRole('dialog', { name: /Roll back to OLM \(Classic\) Operators/ }),
-    ).toBeVisible();
+    await user.click(await screen.findByRole('button', { name: 'Roll back to Classic Operators' }));
+    expect(screen.getByRole('dialog', { name: /Roll back to Classic Operators/ })).toBeVisible();
     expect(screen.getByRole('button', { name: 'Roll back' })).toBeDisabled();
     await user.click(
       screen.getByRole('checkbox', {
-        name: 'I understand that rollback removes the migration resources and restores OLM (Classic) Operator management.',
+        name: 'I understand that rollback removes the migration resources and moves the Operator back to Operator Lifecycle Manager version 0.',
       }),
     );
     await user.click(screen.getByRole('button', { name: 'Roll back' }));
@@ -473,12 +479,12 @@ describe('OperatorMigrationNotifications', () => {
     expect(startOperatorMigrationRollback).toHaveBeenCalledWith(running.id, 'demo');
     expect(
       await screen.findByText(
-        'The console restored operators/demo to OLM (Classic) Operator management.',
+        'The console restored operators/demo to Operator Lifecycle Manager version 0.',
       ),
     ).toBeVisible();
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     expect(
-      screen.queryByRole('button', { name: 'Roll back to OLM (Classic) Operators' }),
+      screen.queryByRole('button', { name: 'Roll back to Classic Operators' }),
     ).not.toBeInTheDocument();
   });
 
@@ -501,10 +507,12 @@ describe('OperatorMigrationNotifications', () => {
     renderNotifications();
 
     expect(
-      await screen.findByText('operators/demo migrated to OLM v1 cluster extensions successfully.'),
+      await screen.findByText(
+        'operators/demo migrated to Operator Lifecycle Manager version 1 cluster extensions successfully.',
+      ),
     ).toBeVisible();
     expect(
-      screen.queryByRole('button', { name: 'Roll back to OLM (Classic) Operators' }),
+      screen.queryByRole('button', { name: 'Roll back to Classic Operators' }),
     ).not.toBeInTheDocument();
   });
 
@@ -527,9 +535,7 @@ describe('OperatorMigrationNotifications', () => {
     (startOperatorMigrationRollback as jest.Mock).mockRejectedValue(new Error('Access denied'));
     const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
     renderNotifications();
-    await user.click(
-      await screen.findByRole('button', { name: 'Roll back to OLM (Classic) Operators' }),
-    );
+    await user.click(await screen.findByRole('button', { name: 'Roll back to Classic Operators' }));
     await user.click(screen.getByRole('checkbox'));
     await user.click(screen.getByRole('button', { name: 'Roll back' }));
 
@@ -545,7 +551,9 @@ describe('OperatorMigrationNotifications', () => {
     renderNotifications();
 
     expect(await screen.findByText('Operator rollback in progress')).toBeVisible();
-    expect(screen.getByText('Restoring OLM (Classic) resources')).toBeVisible();
+    expect(
+      screen.getByText('Restoring Operator Lifecycle Manager version 0 resources'),
+    ).toBeVisible();
   });
 
   it('starts monitoring through context without duplicate polls', async () => {
@@ -582,7 +590,9 @@ describe('OperatorMigrationNotifications', () => {
     (getOperatorMigrationJob as jest.Mock).mockResolvedValue(progress);
     const { rerender } = renderNotifications();
     expect(await screen.findByText('Operator migration in progress')).toBeVisible();
-    expect(screen.getByText('Creating OLM v1 cluster extension resources')).toBeVisible();
+    expect(
+      screen.getByText('Creating Operator Lifecycle Manager version 1 cluster extension resources'),
+    ).toBeVisible();
     (useTranslation as jest.Mock).mockReturnValue({
       t: (key: string, values?: Record<string, string | number>) =>
         `Translated: ${translate(key, values)}`,
@@ -604,7 +614,9 @@ describe('OperatorMigrationNotifications', () => {
       screen.getByRole('progressbar', { name: 'Translated: 0 of 1 Operators processed' }),
     ).toBeVisible();
     expect(
-      screen.getByText('Translated: Creating OLM v1 cluster extension resources'),
+      screen.getByText(
+        'Translated: Creating Operator Lifecycle Manager version 1 cluster extension resources',
+      ),
     ).toBeVisible();
     expect(screen.queryByText('Upstream phase wording')).not.toBeInTheDocument();
     expect(getOperatorMigrationJobs).toHaveBeenCalledTimes(1);

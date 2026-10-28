@@ -8,8 +8,8 @@ jest.mock('@console/plugin-sdk/src/api/useExtensions', () => ({
 }));
 
 const pages = [
-  { href: '', name: 'Next-Gen Operators', component: () => null },
-  { href: 'classic', name: 'Classic Operators', component: () => null },
+  { href: '', name: 'Cluster extensions', component: () => null },
+  { href: 'classic', name: 'Classic operators', component: () => null },
 ];
 
 describe('NavBar', () => {
@@ -27,15 +27,15 @@ describe('NavBar', () => {
       </MemoryRouter>,
     );
 
-    expect(screen.getByRole('tab', { name: 'Next-Gen Operators' })).toHaveAttribute(
+    expect(screen.getByRole('tab', { name: 'Cluster extensions' })).toHaveAttribute(
       'href',
       '/installed-operators/ns/ns-a/',
     );
-    expect(screen.getByRole('tab', { name: 'Classic Operators' })).toHaveAttribute(
+    expect(screen.getByRole('tab', { name: 'Classic operators' })).toHaveAttribute(
       'href',
       '/installed-operators/ns/ns-a/classic',
     );
-    expect(screen.getByRole('tab', { name: 'Classic Operators' })).toHaveAttribute(
+    expect(screen.getByRole('tab', { name: 'Classic operators' })).toHaveAttribute(
       'aria-selected',
       'true',
     );
@@ -60,13 +60,13 @@ describe('HorizontalNav', () => {
       path: '/k8s/cluster/olm.operatorframework.io~v1~ClusterExtension',
       route: '/k8s/cluster/:kind',
       activeTab: '',
-      content: 'Next-Gen operator list',
+      content: 'Cluster extension list',
     },
     {
       path: '/installed-operators/all-namespaces',
       route: '/installed-operators/all-namespaces/*',
       activeTab: undefined,
-      content: 'Next-Gen operator list',
+      content: 'Cluster extension list',
     },
     {
       path: '/installed-operators/all-namespaces/classic',
@@ -77,8 +77,8 @@ describe('HorizontalNav', () => {
   ])('renders $content at $path', ({ path, route, activeTab, content }) => {
     (useExtensions as jest.Mock).mockReturnValue([]);
     const contentPages = [
-      { href: '', name: 'Next-Gen Operators', component: () => <>Next-Gen operator list</> },
-      { href: 'classic', name: 'Classic Operators', component: () => <>Classic operator list</> },
+      { href: '', name: 'Cluster extensions', component: () => <>Cluster extension list</> },
+      { href: 'classic', name: 'Classic operators', component: () => <>Classic operator list</> },
     ];
 
     render(
@@ -95,30 +95,30 @@ describe('HorizontalNav', () => {
     expect(screen.getByText(content)).toBeVisible();
     expect(
       screen.queryByText(
-        content === 'Classic operator list' ? 'Next-Gen operator list' : 'Classic operator list',
+        content === 'Classic operator list' ? 'Cluster extension list' : 'Classic operator list',
       ),
     ).not.toBeInTheDocument();
   });
 
   it('renders default tabs first and maps a contributed tab badge', async () => {
-    const NextGenBadge = () => <div data-test="olmv1-info-popover" />;
+    const OLMv1Badge = () => <div data-test="olmv1-info-popover" />;
     (useExtensions as jest.Mock).mockImplementation((predicate: (extension: unknown) => boolean) =>
       [
         {
           type: 'console.tab',
           properties: {
             contextId: 'installed-software',
-            name: 'Next-Gen Operators',
+            name: 'Cluster extensions',
             href: '',
             component: () => Promise.resolve(() => null),
-            badge: () => Promise.resolve(NextGenBadge),
+            badge: () => Promise.resolve(OLMv1Badge),
           },
         },
         {
           type: 'console.tab',
           properties: {
             contextId: 'installed-software',
-            name: 'Classic Operators',
+            name: 'Classic operators',
             href: 'classic',
             component: () => Promise.resolve(() => null),
           },
@@ -146,11 +146,11 @@ describe('HorizontalNav', () => {
 
     expect(screen.queryByTestId('loading-box')).not.toBeInTheDocument();
     const tabs = screen.getAllByRole('tab');
-    expect(tabs.map((tab) => tab.textContent)).toEqual(['Next-Gen Operators', 'Classic Operators']);
-    const nextGenTab = screen.getByRole('tab', { name: /Next-Gen Operators/ });
+    expect(tabs.map((tab) => tab.textContent)).toEqual(['Cluster extensions', 'Classic operators']);
+    const olmv1Tab = screen.getByRole('tab', { name: /Cluster extensions/ });
     const badge = await screen.findByTestId('olmv1-info-popover');
-    expect(nextGenTab).toBeInTheDocument();
-    expect(nextGenTab).toHaveAttribute('aria-selected', 'true');
+    expect(olmv1Tab).toBeInTheDocument();
+    expect(olmv1Tab).toHaveAttribute('aria-selected', 'true');
     expect(badge).toBeInTheDocument();
   });
 });

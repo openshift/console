@@ -73,7 +73,7 @@ function buildDeprecatedSubscription() {
 }
 
 function getOperatorDetailsUrl(channel = 'stable', version = LATEST_VERSION): string {
-  return `/catalog/ns/${OPERATOR_DETAILS_NAMESPACE}?catalogType=operator-olmv0&keyword=kia&selectedId=${selectedOperatorId}&channel=${channel}&version=${version}`;
+  return `/catalog/ns/${OPERATOR_DETAILS_NAMESPACE}?catalogType=operator&keyword=kia&selectedId=${selectedOperatorId}&channel=${channel}&version=${version}`;
 }
 
 function getInstallPageUrl(): string {

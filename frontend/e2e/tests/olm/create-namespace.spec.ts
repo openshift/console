@@ -17,8 +17,8 @@ test.describe(
       const catalogPage = new CatalogPage(page);
       const installPage = new OperatorInstallPage(page);
 
-      // Classic (OLMv0) Operators are their own catalog type, present on every cluster that runs
-      // OLMv0. On Tech Preview clusters they sit alongside Next-Gen (OLMv1) instead of being
+      // OLMv0 Operators are their own catalog type, present on every cluster that runs
+      // OLMv0. On Tech Preview clusters they sit alongside OLMv1 instead of being
       // replaced by it, so this flow is no longer Tech Preview sensitive.
       await catalogPage.navigateToOperatorCatalog('default');
 

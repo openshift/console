@@ -1,11 +1,11 @@
-import { t } from 'i18next';
-import type { CatalogItem } from '@console/dynamic-plugin-sdk';
+import type { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions/catalog';
 import { CapabilityLevel } from '@console/operator-lifecycle-manager/src/components/operator-hub/operator-hub-item-details';
 import {
   getClusterCatalogSource,
   infrastructureFeatureMap,
   validSubscriptionReducer,
 } from '@console/operator-lifecycle-manager/src/components/operator-hub/operator-hub-utils';
+import { OLMCatalogVersion, OPERATOR_TYPE } from '@console/operator-lifecycle-manager/src/const';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { PlainList } from '@console/shared/src/components/lists/PlainList';
@@ -52,6 +52,7 @@ export const normalizeCatalogItem: NormalizeExtensionCatalogItem = (item) => {
   const installUrl = `/k8s/cluster/olm.operatorframework.io~v1~ClusterExtension/~new?${installUrlParams.toString()}`;
   return {
     attributes: {
+      operatorCatalog: OLMCatalogVersion.OLMv1,
       keywords,
       source,
       provider,
@@ -59,14 +60,6 @@ export const normalizeCatalogItem: NormalizeExtensionCatalogItem = (item) => {
       capabilities,
       validSubscription: validSubscriptionFilters,
     },
-    badges: [
-      {
-        text: t('olm-v1~Next-Gen Operator'),
-        color: 'blue',
-        variant: 'filled',
-        placement: 'header',
-      },
-    ],
     creationTimestamp: createdAt,
     cta: {
       label: 'Install',
@@ -117,7 +110,7 @@ export const normalizeCatalogItem: NormalizeExtensionCatalogItem = (item) => {
     supportUrl: support,
     provider,
     tags,
-    type: 'operator-olmv1',
+    type: OPERATOR_TYPE,
     typeLabel: source,
     uid: id,
   };

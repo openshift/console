@@ -42,7 +42,10 @@ interface ClusterExtensionFormProps {
   onChange?: (data: K8sResourceKind) => void;
 }
 
-const ClusterExtensionForm: FC<ClusterExtensionFormProps> = ({ formData = {}, onChange }) => {
+export const ClusterExtensionForm: FC<ClusterExtensionFormProps> = ({
+  formData = {},
+  onChange,
+}) => {
   const { t } = useTranslation('olm-v1');
   const navigate = useNavigate();
   const textInputModal = useTextInputModal();
@@ -356,9 +359,12 @@ const ClusterExtensionForm: FC<ClusterExtensionFormProps> = ({ formData = {}, on
         navigate(resourcePathFromModel(ClusterExtensionModel, created.metadata.name));
       } catch (err) {
         setError(
-          t('An error occurred creating the ClusterExtension: {{error}}', {
-            error: err.toString(),
-          }),
+          t(
+            'An error occurred while creating the ClusterExtension. Review the error, resolve the issue, and try again. Error: {{error}}',
+            {
+              error: err.toString(),
+            },
+          ),
         );
       } finally {
         setIsSubmitting(false);
@@ -446,7 +452,7 @@ const ClusterExtensionForm: FC<ClusterExtensionFormProps> = ({ formData = {}, on
             <HelperText>
               <HelperTextItem>
                 {t(
-                  'Namespace for the operator controller, manifest, etc. A dedicated operator namespace is recommended.',
+                  'The namespace for the Operator controller and its resources. Use a dedicated namespace to isolate these resources from other Operators.',
                 )}
               </HelperTextItem>
             </HelperText>
@@ -533,7 +539,7 @@ const ClusterExtensionForm: FC<ClusterExtensionFormProps> = ({ formData = {}, on
             <HelperText>
               <HelperTextItem>
                 {t(
-                  'Service account must be in the selected namespace. A dedicated service account for the operator is recommended.',
+                  'The service account must be in the selected namespace. Use a dedicated service account to manage this Operator’s permissions independently.',
                 )}
               </HelperTextItem>
             </HelperText>
@@ -755,5 +761,3 @@ const ClusterExtensionForm: FC<ClusterExtensionFormProps> = ({ formData = {}, on
     </PageSection>
   );
 };
-
-export default ClusterExtensionForm;

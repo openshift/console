@@ -42,7 +42,7 @@ import { OperatorInfrastructureFeatures } from '../components/operator-hub/opera
 import { OperatorRepository } from '../components/operator-hub/operator-repository';
 import { OperatorSupport } from '../components/operator-hub/operator-support';
 import { OperatorValidSubscriptions } from '../components/operator-hub/operator-valid-subscriptions';
-import { OPERATOR_OLMV0_TYPE } from '../const';
+import { OLMCatalogVersion, OPERATOR_TYPE } from '../const';
 import { PackageManifestModel, SubscriptionModel } from '../models';
 import type { PackageManifestKind } from '../types';
 import { clusterServiceVersionFor } from '../utils/clusterserviceversions';
@@ -69,7 +69,7 @@ const onValidSubscriptionAnnotationError = (error: Error, pkg: PackageManifestKi
 
 const isSettled = (loaded: boolean, loadError: unknown) => loaded || !!loadError;
 
-const useOperatorCatalogItems: ExtensionHook<CatalogItem[], CatalogExtensionHookOptions> = (
+export const useOperatorCatalogItems: ExtensionHook<CatalogItem[], CatalogExtensionHookOptions> = (
   options,
 ) => {
   const { t } = useTranslation('olm');
@@ -203,7 +203,7 @@ const useOperatorCatalogItems: ExtensionHook<CatalogItem[], CatalogExtensionHook
         .map((c) => c.trim())
         .filter(Boolean);
       const imgUrl = iconFor(pkg);
-      const type = OPERATOR_OLMV0_TYPE;
+      const type = OPERATOR_TYPE;
 
       // Compute tokenizedAuth per operator based on its infrastructureFeatures
       // Only set tokenizedAuth if both the cluster supports it AND the operator supports it
@@ -254,17 +254,6 @@ const useOperatorCatalogItems: ExtensionHook<CatalogItem[], CatalogExtensionHook
             };
 
       const badges = [
-        // Outside Tech Preview there is no Next-Gen catalog to tell these apart from.
-        ...(techPreview
-          ? [
-              {
-                text: t('Classic Operator'),
-                color: 'grey',
-                variant: 'filled',
-                placement: 'header',
-              } as CatalogItemBadge,
-            ]
-          : []),
         ...(installed && !isInstalling
           ? [
               {
@@ -292,7 +281,7 @@ const useOperatorCatalogItems: ExtensionHook<CatalogItem[], CatalogExtensionHook
                 color: 'orange',
                 tooltip: techPreview
                   ? t(
-                      'olm~Classic operators are deprecated. Migrate to Next-Gen operators for continued support.',
+                      'Classic Operators are deprecated and will be replaced by cluster extensions. For production clusters, continue to use classic Operators. To find a cluster extension for testing, open the software catalog and select Cluster extensions in the Catalog filter. Cluster extensions are a Technology Preview feature.',
                     ) +
                     (pkg.status.deprecation?.message ? `\n${pkg.status.deprecation?.message}` : '')
                   : pkg.status.deprecation.message,
@@ -305,6 +294,7 @@ const useOperatorCatalogItems: ExtensionHook<CatalogItem[], CatalogExtensionHook
 
       return {
         attributes: {
+          operatorCatalog: OLMCatalogVersion.OLMv0,
           capabilities,
           infrastructureFeatures,
           installState,
@@ -479,5 +469,3 @@ const useOperatorCatalogItems: ExtensionHook<CatalogItem[], CatalogExtensionHook
 
   return [items, loaded, loadError];
 };
-
-export default useOperatorCatalogItems;
