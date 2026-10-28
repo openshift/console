@@ -146,6 +146,21 @@ export const VSphereConnectionForm = () => {
       >
         <TextField name="folder" />
       </FormGroup>
+      <FormGroup
+        label={t('Primary network')}
+        labelHelp={
+          <PopoverHelpButton
+            content={
+              <Trans t={t}>
+                Provide the <b>primary network</b> of the cluster.
+              </Trans>
+            }
+          />
+        }
+        fieldId="connection-network"
+      >
+        <TextField name="network" />
+      </FormGroup>
     </Form>
   );
 };
