@@ -753,7 +753,9 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		r.Header.Get("Test-CSP-Reporting-Endpoint"),
 	)
 	if err != nil {
-		klog.Fatalf("Error building Content Security Policy directives: %s", err)
+		klog.Errorf("Error building Content Security Policy directives: %s", err)
+		http.Error(w, "Unable to build Content Security Policy", http.StatusInternalServerError)
+		return
 	}
 	headerName := "Content-Security-Policy-Report-Only"
 	if s.CSPMode == serverconfig.CSPModeEnforce {
