@@ -1,6 +1,8 @@
 package server
 
 import (
+	"flag"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -104,16 +106,33 @@ func TestIndexHandlerRejectsInvalidCSP(t *testing.T) {
 		{"enforce", serverconfig.CSPModeEnforce},
 	} {
 		for _, source := range []struct {
-			name  string
-			value string
+			name     string
+			value    string
+			fromYAML bool
 		}{
-			{"semicolon", "https://plugin.example; object-src 'self'"},
-			{"comma", "https://plugin.example, object-src https:"},
-			{"carriage-return", "https://plugin.example\robject-src 'self'"},
-			{"line-feed", "https://plugin.example\nobject-src 'self'"},
-			{"crlf", "https://plugin.example\r\nContent-Security-Policy: object-src 'self'"},
+			{"semicolon", "https://plugin.example; object-src 'self'", false},
+			{"comma", "https://plugin.example, object-src https:", false},
+			{"carriage-return", "https://plugin.example\robject-src 'self'", false},
+			{"line-feed", "https://plugin.example\nobject-src 'self'", false},
+			{"crlf", "https://plugin.example\r\nContent-Security-Policy: object-src 'self'", false},
+			{"yaml-comma", "https://plugin.example/a,b", true},
+			{"yaml-comma-entry", "https://plugin.example,script-src=https://other.example", true},
 		} {
 			t.Run(mode.name+"/"+source.name, func(t *testing.T) {
+				csp := serverconfig.MultiKeyValue{"script-src": source.value}
+				if source.fromYAML {
+					filename := filepath.Join(t.TempDir(), "console-config.yaml")
+					content := fmt.Sprintf("apiVersion: console.openshift.io/v1\nkind: ConsoleConfig\ncontentSecurityPolicy:\n  ScriptSrc: [%q]\n", source.value)
+					if err := os.WriteFile(filename, []byte(content), 0600); err != nil {
+						t.Fatal(err)
+					}
+					csp = serverconfig.MultiKeyValue{}
+					fs := flag.NewFlagSet(t.Name(), flag.ContinueOnError)
+					fs.Var(&csp, "content-security-policy", "")
+					if _, err := serverconfig.SetFlagsFromConfigFile(fs, filename); err != nil {
+						t.Fatal(err)
+					}
+				}
 				s := &Server{
 					AlertManagerPublicURL: &url.URL{},
 					DocumentationBaseURL:  &url.URL{},
@@ -121,7 +140,7 @@ func TestIndexHandlerRejectsInvalidCSP(t *testing.T) {
 					PrometheusPublicURL:   &url.URL{},
 					ThanosPublicURL:       &url.URL{},
 					CSPMode:               mode.value,
-					ContentSecurityPolicy: serverconfig.MultiKeyValue{"script-src": source.value},
+					ContentSecurityPolicy: csp,
 					PublicDir:             publicDir,
 					BaseURL:               &url.URL{Path: "/console/"},
 					Authenticator:         passingAuthenticator{},
