@@ -17,6 +17,8 @@ export interface SelectorInputProps {
   autoFocus?: boolean;
   /** Additional props spread onto the underlying input element. */
   inputProps?: { [key: string]: unknown };
+  /** Keep tags and the input on one horizontally scrollable line. Defaults to false. */
+  isSingleLine?: boolean;
   labelClassName?: string;
   onChange: (tags: string[]) => void;
   onValidationChange?: (isValid: boolean) => void;
@@ -175,7 +177,7 @@ export class SelectorInput extends Component<SelectorInputProps, SelectorInputSt
     const { inputValue, isInputValid, tags } = this.state;
 
     // Keys that add tags: Enter
-    const addKeys = [13];
+    const addKeys = ['Enter'];
 
     // Backspace deletes tags, but not if there is text being edited in the input field
     const removeKeys = inputValue.length ? [] : [8];
@@ -208,7 +210,7 @@ export class SelectorInput extends Component<SelectorInputProps, SelectorInputSt
         <div className="co-tags-input">
           <TagsInput
             ref={this.setRef}
-            className="tags"
+            className={css('tags', { 'co-selector-input--single-line': this.props.isSingleLine })}
             value={tags}
             addKeys={addKeys}
             removeKeys={removeKeys}

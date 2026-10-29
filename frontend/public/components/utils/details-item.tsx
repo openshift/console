@@ -2,7 +2,6 @@ import type { FC, ReactNode, MouseEvent } from 'react';
 import {
   Breadcrumb,
   BreadcrumbItem,
-  Button,
   DescriptionListDescription,
   DescriptionListGroup,
   DescriptionListTermHelpText,
@@ -11,10 +10,12 @@ import {
   Split,
   SplitItem,
 } from '@patternfly/react-core';
-import { RhUiEditIcon } from '@patternfly/react-icons';
+import { Panel } from '@patternfly/react-core/dist/esm/components/Panel/Panel';
+import { PanelMain } from '@patternfly/react-core/dist/esm/components/Panel/PanelMain';
 import { css } from '@patternfly/react-styles';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { InlineEditButton } from '@console/shared/src/components/edit-button/InlineEditButton';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import type { K8sResourceKind } from '../../module/k8s';
 import { getPropertyDescription, referenceFor } from '../../module/k8s';
@@ -37,22 +38,6 @@ const PropertyPath: FC<{ kind: string; path: string | string[] }> = ({ kind, pat
     </Breadcrumb>
   );
 };
-
-const EditButton: FC<EditButtonProps> = (props) => (
-  <Button
-    icon={<RhUiEditIcon />}
-    iconPosition="end"
-    type="button"
-    variant="link"
-    isInline
-    onClick={props.onClick}
-    data-test={
-      props.testId ? `${props.testId}-details-item__edit-button` : 'details-item__edit-button'
-    }
-  >
-    {props.children}
-  </Button>
-);
 
 /**
  * A wrapper around PatternFly's `DescriptionListGroup`. This component
@@ -93,9 +78,13 @@ export const DetailsItem: FC<DetailsItemProps> = ({
                 headerContent={label}
                 {...(popoverContent && {
                   bodyContent: (
-                    <LinkifyExternal>
-                      <div className="co-pre-line">{popoverContent}</div>
-                    </LinkifyExternal>
+                    <Panel isScrollable hasNoBorder>
+                      <PanelMain maxHeight="min(30rem, 50vh)" role="region" aria-label={label}>
+                        <LinkifyExternal>
+                          <div className="co-pre-line">{popoverContent}</div>
+                        </LinkifyExternal>
+                      </PanelMain>
+                    </Panel>
                   ),
                 })}
                 {...(path && { footerContent: <PropertyPath kind={model?.kind} path={path} /> })}
@@ -112,9 +101,9 @@ export const DetailsItem: FC<DetailsItemProps> = ({
 
           {editable && editAsGroup && (
             <SplitItem>
-              <EditButton testId={label} onClick={onEdit}>
+              <InlineEditButton dataTest={label} onClick={onEdit}>
                 {t('Edit')}
-              </EditButton>
+              </InlineEditButton>
             </SplitItem>
           )}
         </Split>
@@ -127,9 +116,9 @@ export const DetailsItem: FC<DetailsItemProps> = ({
         data-test={`details-item-value__${label}`}
       >
         {editable && !editAsGroup ? (
-          <EditButton testId={label} onClick={onEdit}>
+          <InlineEditButton dataTest={label} onClick={onEdit}>
             {value}
-          </EditButton>
+          </InlineEditButton>
         ) : (
           value
         )}
@@ -153,12 +142,5 @@ export type DetailsItemProps = {
   valueClassName?: string;
 };
 
-type EditButtonProps = {
-  onClick: (e: MouseEvent<HTMLButtonElement>) => void;
-  testId?: string;
-  children?: ReactNode;
-};
-
 DetailsItem.displayName = 'DetailsItem';
 PropertyPath.displayName = 'PropertyPath';
-EditButton.displayName = 'EditButton';
