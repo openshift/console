@@ -100,8 +100,10 @@ type Auth struct {
 
 // Session holds configuration for web-session related configuration
 type Session struct {
-	CookieEncryptionKeyFile     string `yaml:"cookieEncryptionKeyFile,omitempty"`
-	CookieAuthenticationKeyFile string `yaml:"cookieAuthenticationKeyFile,omitempty"`
+	CookieEncryptionKeyFile             string `yaml:"cookieEncryptionKeyFile,omitempty"`
+	CookieAuthenticationKeyFile         string `yaml:"cookieAuthenticationKeyFile,omitempty"`
+	PreviousCookieEncryptionKeyFile     string `yaml:"previousCookieEncryptionKeyFile,omitempty"`
+	PreviousCookieAuthenticationKeyFile string `yaml:"previousCookieAuthenticationKeyFile,omitempty"`
 	// TODO: move InactivityTimeoutSeconds here
 }
 
