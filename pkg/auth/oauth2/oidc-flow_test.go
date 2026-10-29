@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"crypto/sha256"
+	"crypto/subtle"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
@@ -59,13 +60,15 @@ func (m *mockOIDCProvider) exchangeCode(w http.ResponseWriter, r *http.Request) 
 		clientID, clientSecret = r.PostForm.Get("client_id"), r.PostForm.Get("client_secret")
 	}
 	authorization, exists := m.codes[r.PostForm.Get("code")]
-	valid := exists && clientID == testClientID && clientSecret == testClientSecret &&
+	valid := exists && clientID == testClientID && len(clientSecret) == len(testClientSecret) &&
+		subtle.ConstantTimeCompare([]byte(clientSecret), []byte(testClientSecret)) == 1 &&
 		authorization.Get("client_id") == clientID && authorization.Get("redirect_uri") == r.PostForm.Get("redirect_uri")
 	if authorization.Get("code_challenge") != "" {
 		digest := sha256.Sum256([]byte(r.PostForm.Get("code_verifier")))
 		valid = valid && authorization.Get("code_challenge_method") == "S256" &&
 			validVerifier(r.PostForm.Get("code_verifier")) &&
-			base64.RawURLEncoding.EncodeToString(digest[:]) == authorization.Get("code_challenge")
+			len(authorization.Get("code_challenge")) == base64.RawURLEncoding.EncodedLen(sha256.Size) &&
+			subtle.ConstantTimeCompare([]byte(base64.RawURLEncoding.EncodeToString(digest[:])), []byte(authorization.Get("code_challenge"))) == 1
 	} else {
 		valid = valid && !m.requirePKCE && r.PostForm.Get("code_verifier") == ""
 	}
@@ -246,7 +249,9 @@ func TestOIDCDiscoveryErrorsAreSanitized(t *testing.T) {
 			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				w.Header().Set("Content-Type", "application/json")
 				w.WriteHeader(test.status)
-				fmt.Fprint(w, test.body)
+				if _, err := fmt.Fprint(w, test.body); err != nil {
+					t.Errorf("writing discovery test response: %v", err)
+				}
 			}))
 			defer server.Close()
 			_, err := discoverOIDCProvider(context.Background(), &oidcConfig{
@@ -606,14 +611,20 @@ func TestOIDCMockRejectsInvalidExchange(t *testing.T) {
 	provider, _, closeProvider := startMockProvider(t)
 	defer closeProvider()
 	provider.methods = json.RawMessage(`["S256"]`)
+	provider.requirePKCE = true
 	authenticator := newFlowAuthenticator(t, provider)
-	for _, mutation := range []string{"missing verifier", "wrong verifier", "wrong redirect", "wrong client"} {
+	for _, mutation := range []string{
+		"missing verifier", "wrong verifier", "wrong redirect", "wrong client",
+		"wrong secret", "missing secret", "short secret", "long secret",
+		"wrong challenge", "missing challenge", "short challenge", "long challenge",
+	} {
 		t.Run(mutation, func(t *testing.T) {
 			flow := beginOIDCFlow(t, authenticator, provider, "https://console.example.test/")
 			record := decodeFlow(t, authenticator, flow)
 			form := url.Values{"grant_type": {"authorization_code"}, "code": {flow.callback.Query().Get("code")},
 				"redirect_uri": {record.RedirectURI}, "code_verifier": {record.Verifier}}
 			clientID := testClientID
+			clientSecret := testClientSecret
 			switch mutation {
 			case "missing verifier":
 				form.Del("code_verifier")
@@ -623,10 +634,33 @@ func TestOIDCMockRejectsInvalidExchange(t *testing.T) {
 				form.Set("redirect_uri", "https://other.example.test/auth/callback")
 			case "wrong client":
 				clientID = "other"
+			case "wrong secret":
+				clientSecret = strings.Repeat("x", len(testClientSecret))
+			case "missing secret":
+				clientSecret = ""
+			case "short secret":
+				clientSecret = testClientSecret[:len(testClientSecret)-1]
+			case "long secret":
+				clientSecret = testClientSecret + "x"
+			case "wrong challenge", "missing challenge", "short challenge", "long challenge":
+				challenge := flow.authorization.Query().Get("code_challenge")
+				switch mutation {
+				case "wrong challenge":
+					challenge = strings.Repeat("a", len(challenge))
+				case "missing challenge":
+					challenge = ""
+				case "short challenge":
+					challenge = challenge[:len(challenge)-1]
+				case "long challenge":
+					challenge += "x"
+				}
+				provider.flowLock.Lock()
+				provider.codes[flow.callback.Query().Get("code")].Set("code_challenge", challenge)
+				provider.flowLock.Unlock()
 			}
 			request := httptest.NewRequest(http.MethodPost, provider.issuer+"/token", strings.NewReader(form.Encode()))
 			request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-			request.SetBasicAuth(clientID, testClientSecret)
+			request.SetBasicAuth(clientID, clientSecret)
 			response := httptest.NewRecorder()
 			provider.handleToken(response, request)
 			require.Equal(t, http.StatusBadRequest, response.Code)
