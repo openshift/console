@@ -160,6 +160,105 @@ func TestDiscoveryPKCEMode(t *testing.T) {
 	}
 }
 
+func TestTransactionCookie(t *testing.T) {
+	for _, test := range []struct {
+		name, redirect, cookiePath string
+		invalid                    bool
+	}{
+		{"root", "https://console.example.test/callback", "/", false},
+		{"prefix", "https://console.example.test/prefix/auth/callback", "/prefix/auth/", false},
+		{"escaped prefix", "https://console.example.test/prefix%20path/auth/callback", "/prefix%20path/auth/", false},
+		{"bad escape", "https://console.example.test/%zz", "", true},
+		{"bad host", "https://[", "", true},
+		{"control character", "https://console.example.test/\ncallback", "", true},
+	} {
+		t.Run(test.name, func(t *testing.T) {
+			for _, secure := range []bool{false, true} {
+				var cookie *http.Cookie
+				var err error
+				require.NotPanics(t, func() { cookie, err = transactionCookie("test-transaction", test.redirect, secure) })
+				if test.invalid {
+					require.EqualError(t, err, "invalid OIDC callback URL")
+					require.Nil(t, cookie)
+					continue
+				}
+				require.NoError(t, err)
+				require.Equal(t, &http.Cookie{Name: "test-transaction", Path: test.cookiePath,
+					HttpOnly: true, Secure: secure, SameSite: http.SameSiteLaxMode}, cookie)
+			}
+		})
+	}
+}
+
+func TestValidLoginState(t *testing.T) {
+	for _, test := range []struct {
+		name, state string
+		valid       bool
+	}{
+		{"valid", strings.Repeat("ab", 16), true},
+		{"empty", "", false},
+		{"short", strings.Repeat("a", 31), false},
+		{"long", strings.Repeat("a", 34), false},
+		{"uppercase", strings.Repeat("AB", 16), false},
+		{"nonhex", strings.Repeat("g", 32), false},
+	} {
+		t.Run(test.name, func(t *testing.T) {
+			require.Equal(t, test.valid, validLoginState(test.state))
+		})
+	}
+}
+
+func TestOIDCMalformedRedirectFailsClosed(t *testing.T) {
+	provider, _, closeProvider := startMockProvider(t)
+	defer closeProvider()
+	authenticator := newFlowAuthenticator(t, provider)
+	flow := beginOIDCFlow(t, authenticator, provider, "https://console.example.test/")
+	authenticator.redirectURL = "https://console.example.test/%zz"
+	authenticator.allowedRedirectHosts = nil
+	loginResponse := httptest.NewRecorder()
+	require.NotPanics(t, func() {
+		authenticator.LoginFunc(loginResponse, httptest.NewRequest(http.MethodGet, "https://console.example.test/", nil))
+	})
+	require.Equal(t, http.StatusSeeOther, loginResponse.Code)
+	require.Equal(t, "/error?error="+errorInternal+"&error_type=auth", loginResponse.Header().Get("Location"))
+	require.Empty(t, loginResponse.Result().Cookies())
+	var callbackResponse *httptest.ResponseRecorder
+	var success bool
+	require.NotPanics(t, func() { callbackResponse, success = finishOIDCFlow(authenticator, flow) })
+	require.False(t, success)
+	require.Equal(t, http.StatusSeeOther, callbackResponse.Code)
+	require.Equal(t, "/error?error="+errorInvalidState+"&error_type=auth", callbackResponse.Header().Get("Location"))
+	require.Empty(t, callbackResponse.Result().Cookies())
+	provider.flowLock.Lock()
+	defer provider.flowLock.Unlock()
+	require.Empty(t, provider.exchanges)
+}
+
+func TestOIDCDiscoveryErrorsAreSanitized(t *testing.T) {
+	for _, test := range []struct {
+		name, body, message string
+		status              int
+	}{
+		{"response body", "provider-sensitive-test-marker", "OIDC discovery failed", http.StatusServiceUnavailable},
+		{"issuer mismatch", `{"issuer":"provider-sensitive-test-marker"}`, "OIDC discovery failed", http.StatusOK},
+	} {
+		t.Run(test.name, func(t *testing.T) {
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				w.Header().Set("Content-Type", "application/json")
+				w.WriteHeader(test.status)
+				fmt.Fprint(w, test.body)
+			}))
+			defer server.Close()
+			_, err := discoverOIDCProvider(context.Background(), &oidcConfig{
+				issuerURL: server.URL, getClient: server.Client,
+			})
+			require.EqualError(t, err, test.message)
+			require.NotContains(t, err.Error(), "provider-sensitive-test-marker")
+			require.NotContains(t, err.Error(), server.URL)
+		})
+	}
+}
+
 func TestOIDCLoginModeMatrix(t *testing.T) {
 	for _, test := range []struct {
 		name, metadata          string
@@ -243,6 +342,9 @@ func TestOIDCInvalidTransactionsNeverExchange(t *testing.T) {
 		mutate func(*loginTransaction)
 	}{
 		{"state", func(record *loginTransaction) { record.State = strings.Repeat("0", 32) }},
+		{"state short", func(record *loginTransaction) { record.State = strings.Repeat("a", 31) }},
+		{"state uppercase", func(record *loginTransaction) { record.State = strings.Repeat("AB", 16) }},
+		{"state nonhex", func(record *loginTransaction) { record.State = strings.Repeat("g", 32) }},
 		{"version", func(record *loginTransaction) { record.Version++ }},
 		{"mode", func(record *loginTransaction) { record.Mode = "plain" }},
 		{"verifier missing", func(record *loginTransaction) { record.Verifier = "" }},
