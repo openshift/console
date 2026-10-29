@@ -61,9 +61,7 @@
   },
   "json.schemas": [
     {
-      "fileMatch": [
-        "**/console-extensions.json"
-      ],
+      "fileMatch": ["**/console-extensions.json"],
       "url": "./packages/console-dynamic-plugin-sdk/dist/webpack/schema/console-extensions.json"
     }
   ],
@@ -71,7 +69,7 @@
     "comments": "on",
     "strings": "on",
     "other": "on"
-  },
+  }
   // TODO support prettier + stylelint
   // "prettier.stylelintIntegration": true,
   // "css.validate": false,
