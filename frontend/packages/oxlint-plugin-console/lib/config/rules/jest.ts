@@ -4,7 +4,7 @@ import type { OxlintConfig } from 'oxlint';
 // testing-library rules run via the eslint-plugin-testing-library JS plugin,
 // so its recommended ruleset can be spread directly (it stays in sync with
 // the plugin version). The jest/* rules run via oxlint's NATIVE jest plugin
-// instead — eslint-plugin-jest's recommended set cannot be spread blindly
+// instead: eslint-plugin-jest's recommended set cannot be spread blindly
 // because it may reference rules oxlint has not implemented natively, so
 // that list is hand-maintained and filtered to native coverage.
 export default {
