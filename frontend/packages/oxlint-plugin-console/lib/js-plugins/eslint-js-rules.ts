@@ -6,7 +6,7 @@
  * Referenced as the `eslint-js` plugin (matching the naming convention of
  * the oxlint-plugin-eslint package, so switching to it later would be
  * drop-in); rules are configured as `eslint-js/<rule-name>`. Only rules
- * WITHOUT a native oxlint implementation belong here — see the package README.
+ * WITHOUT a native oxlint implementation belong here.
  *
  * The `eslint` package is the source of these rule implementations (and a
  * runtime peer dependency of the other JS plugins); ESLint itself is not

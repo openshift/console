@@ -5,12 +5,14 @@
   "singleQuote": true,
   "trailingComma": "all",
   "sortPackageJson": false,
+  "proseWrap": "always",
   "ignorePatterns": [
-    ".yarn",
-    "node_modules",
-    "public/dist",
+    "**/dist",
+    "**/generated",
     "**/locales",
+    ".yarn",
     "__nock-fixtures__",
-    "**/generated"
+    "node_modules",
+    "packages/console-dynamic-plugin-sdk/docs"
   ]
 }

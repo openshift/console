@@ -199,13 +199,13 @@ test.describe(
       }
     });
 
-    test('displays operator tiles in catalog', async () => {
+    test('displays operator tiles in catalog', async ({ page }) => {
       await test.step('Navigate to operator catalog', async () => {
-        await catalogPage.navigateToOperatorCatalog('default');
+        await page.goto('/catalog/ns/default?catalogType=operator-olmv0');
       });
 
       await test.step('Verify operator tiles are rendered', async () => {
-        await expect(catalogPage.getOperatorCards().first()).toBeVisible({
+        await expect(page.locator('[data-test^="operator-olmv0-"]').first()).toBeVisible({
           timeout: 30_000,
         });
       });
@@ -213,16 +213,21 @@ test.describe(
 
     test('filters operator tiles by keyword', async ({ page }) => {
       await test.step('Navigate to operator catalog', async () => {
-        await catalogPage.navigateToOperatorCatalog('default');
+        await page.goto('/catalog/ns/default?catalogType=operator-olmv0');
       });
 
       await test.step('Wait for tiles to render', async () => {
-        await expect(catalogPage.getCatalogTiles().first()).toBeVisible({ timeout: 30_000 });
+        await expect(catalogPage.getCatalogTiles().first()).toBeVisible({
+          timeout: 30_000,
+        });
       });
 
       await test.step('Filter by non-matching keyword and verify no tiles shown', async () => {
-        await catalogPage.filterByKeyword('zzz-no-match-xyzzy');
-        await expect(catalogPage.getCatalogTiles()).toHaveCount(0);
+        // Catalog data can finish loading and remount the input after the first tiles appear.
+        await expect(async () => {
+          await catalogPage.filterByKeyword('zzz-no-match-xyzzy');
+          await expect(catalogPage.getCatalogTiles()).toHaveCount(0);
+        }).toPass({ timeout: 30_000 });
         await expect(page.getByText('No results found')).toBeVisible();
       });
 

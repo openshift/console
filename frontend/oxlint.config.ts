@@ -22,17 +22,11 @@ const config = defineConfig({
       ...configs.jest.plugins,
     ]),
   ],
-  extends: [
-    // test files (jest overlay; self-scoped like the former
-    // eslint-plugin-console jest config, e2e/ excluded)
-    configs.jest,
-  ],
+  extends: [configs.jest],
   settings: {
     react: { version: packageJson.dependencies.react.replace(/^[^0-9]*/, '') },
-    // Must match the old eslint setup so the import-js rules resolve TS path
-    // aliases identically.
     'import/resolver': {
-      node: { extensions: ['.js', '.jsx', '.json'] },
+      node: { extensions: ['.js', '.json'] },
       typescript: {},
     },
   },
@@ -48,9 +42,6 @@ const config = defineConfig({
   ],
   overrides: [
     // frontend code
-    // (spreading the preset into the files-scoped override is the oxlint
-    // translation of the old
-    // `extends: compat.extends('plugin:console/react-typescript')` block)
     {
       files: ['public/**/*.{ts,tsx}', 'packages/**/*.{ts,tsx}', '__tests__/**/*.{ts,tsx}'],
       excludeFiles: REPO_TOOLING.map((dir) => `${dir}/**`),
