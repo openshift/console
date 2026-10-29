@@ -54,3 +54,26 @@ tags-input .tags .input {
 tags-input .tags .input.invalid-tag {
   color: var(--pf-t--global--text--color--status--danger--default);
 }
+
+.co-selector-input--single-line {
+  min-width: 0;
+  width: 100%;
+  padding: var(--pf-t--global--spacer--control--vertical--default)
+    var(--pf-t--global--spacer--control--horizontal--default);
+
+  .tags {
+    align-items: center;
+    flex-wrap: nowrap;
+    min-height: 0;
+    overflow-x: auto;
+  }
+
+  .co-label {
+    flex-shrink: 0;
+  }
+
+  .input {
+    flex: 1 0 10ch;
+    min-width: 10ch;
+  }
+}

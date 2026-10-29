@@ -3,6 +3,11 @@ import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import ClusterExtensionForm from '../ClusterExtensionForm';
 
+jest.mock('@console/dynamic-plugin-sdk/src/utils/k8s', () => ({
+  ...jest.requireActual('@console/dynamic-plugin-sdk/src/utils/k8s'),
+  k8sCreateResource: jest.fn(),
+}));
+
 jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
   useK8sWatchResource: jest.fn(() => [null, false]),
 }));
@@ -53,7 +58,7 @@ describe('ClusterExtensionForm', () => {
     expect(screen.getByLabelText('Package name')).toBeInTheDocument();
     expect(screen.getByText('Namespace')).toBeInTheDocument();
     expect(screen.getByText('Service Account')).toBeInTheDocument();
-    expect(screen.getByLabelText('Version or Version range')).toBeInTheDocument();
+    expect(screen.getByLabelText('Version or version range')).toBeInTheDocument();
     expect(screen.getByLabelText('Channels')).toBeInTheDocument();
     expect(screen.getByLabelText('Catalogs')).toBeInTheDocument();
   });
@@ -77,7 +82,7 @@ describe('ClusterExtensionForm', () => {
 
     expect(screen.getByLabelText('Name')).toHaveValue('test-extension');
     expect(screen.getByLabelText('Package name')).toHaveValue('test-package');
-    expect(screen.getByLabelText('Version or Version range')).toHaveValue('1.0.0');
+    expect(screen.getByLabelText('Version or version range')).toHaveValue('1.0.0');
   });
 
   it('should auto-generate namespace and service account names based on ClusterExtension name', async () => {
@@ -176,7 +181,7 @@ describe('ClusterExtensionForm', () => {
     const user = userEvent.setup();
     renderWithProviders(<ClusterExtensionForm formData={{}} onChange={mockOnChange} />);
 
-    const versionInput = screen.getByRole('textbox', { name: /Version or Version range/i });
+    const versionInput = screen.getByRole('textbox', { name: /Version or version range/i });
     await user.click(versionInput);
     await user.paste('1.2.3');
 
@@ -196,7 +201,7 @@ describe('ClusterExtensionForm', () => {
     });
   });
 
-  it('should add channel when Enter is pressed', async () => {
+  it('should add channel when tag input loses focus', async () => {
     const user = userEvent.setup();
     renderWithProviders(<ClusterExtensionForm formData={{}} onChange={mockOnChange} />);
 
@@ -204,7 +209,7 @@ describe('ClusterExtensionForm', () => {
     await user.click(channelInput);
     await user.clear(channelInput);
     await user.type(channelInput, 'stable');
-    await user.keyboard('{Enter}');
+    await user.tab();
 
     await waitFor(() => {
       expect(mockOnChange).toHaveBeenLastCalledWith(
@@ -221,7 +226,7 @@ describe('ClusterExtensionForm', () => {
     });
   });
 
-  it('should add catalog when Enter is pressed', async () => {
+  it('should add catalog when tag input loses focus', async () => {
     const user = userEvent.setup();
     renderWithProviders(<ClusterExtensionForm formData={{}} onChange={mockOnChange} />);
 
@@ -229,7 +234,7 @@ describe('ClusterExtensionForm', () => {
     await user.click(catalogInput);
     await user.clear(catalogInput);
     await user.type(catalogInput, 'redhat-operators');
-    await user.keyboard('{Enter}');
+    await user.tab();
 
     await waitFor(() => {
       expect(mockOnChange).toHaveBeenLastCalledWith(

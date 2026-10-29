@@ -1,4 +1,4 @@
-import { screen, waitFor } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { SelectorInput } from '../selector-input';
@@ -65,6 +65,31 @@ describe('SelectorInput', () => {
   });
 
   describe('validation', () => {
+    it('keeps input while Enter confirms an IME candidate', async () => {
+      const user = userEvent.setup();
+      renderWithProviders(<SelectorInput {...defaultProps} />);
+      const input = screen.getByRole('textbox');
+      await user.type(input, 'stable');
+
+      // userEvent does not support IME composition keyboard events.
+      act(() => {
+        input.dispatchEvent(
+          new KeyboardEvent('keydown', {
+            key: 'Enter',
+            keyCode: 13,
+            isComposing: true,
+            bubbles: true,
+          }),
+        );
+      });
+
+      expect(input).toHaveValue('stable');
+      expect(defaultProps.onChange).not.toHaveBeenCalled();
+      await user.keyboard('{Enter}');
+      expect(defaultProps.onChange).toHaveBeenCalledWith(['stable']);
+      expect(input).toHaveValue('');
+    });
+
     it('shows invalid state for malformed input and clears when corrected', async () => {
       const user = userEvent.setup();
       renderWithProviders(<SelectorInput {...defaultProps} />);
