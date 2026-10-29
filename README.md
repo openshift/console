@@ -486,7 +486,16 @@ The configurable directives are defined in the [openshift/api repository](https:
 
 The `--content-security-policy` flag accepts comma-separated directive entries with space-separated source lists. Literal commas, semicolons, and line breaks within source values are rejected before a policy is emitted, because they could introduce additional policies, directives, or HTTP headers. URL paths that contain a comma or semicolon must encode it as `%2C` or `%3B`, respectively.
 
-Bridge always emits `object-src 'none'`, `media-src 'none'`, `child-src 'none'`, `frame-src 'none'`, `frame-ancestors 'none'`, and `worker-src 'self'`, including when running off-cluster. These directives are not configurable through `ConsolePlugin.spec.contentSecurityPolicy` or the `--content-security-policy` flag. Under enforcement, `object-src 'none'` blocks resource loads through HTML `<object>` and `<embed>` elements, and `media-src 'none'` blocks audio and video resource loads. The same-origin `worker-src` source permits Console's `load-test.sw.js` service worker.
+Bridge always emits the following directives, including when running off-cluster:
+
+- `object-src 'none'`
+- `media-src 'none'`
+- `child-src 'none'`
+- `frame-src 'none'`
+- `frame-ancestors 'none'`
+- `worker-src 'self'`
+
+These directives are not configurable through `ConsolePlugin.spec.contentSecurityPolicy` or the `--content-security-policy` flag. The same-origin `worker-src` source permits Console's `load-test.sw.js` service worker.
 
 These restrictions remain fixed until a concrete plugin use case justifies additional configuration. CSP mode controls whether violations are reported or blocked; it does not change the allowed sources.
 
