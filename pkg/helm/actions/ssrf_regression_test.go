@@ -34,10 +34,13 @@ func TestPrivateChartURLsPassFormatValidation(t *testing.T) {
 	allowed := []string{
 		"https://172.24.5.6/x.tgz",
 		"https://192.168.1.1/x.tgz",
-		"http://169.254.169.254/latest/meta-data/x.tgz",
+		"http://169.254.1.1/x.tgz",
+		"http://[fe80::1]/x.tgz",
+		"https://100.64.0.1/x.tgz",
 		"https://10.1.2.3/x.tgz",
 		"https://thanos-querier.openshift-monitoring.svc/x.tgz",
-		"https://kubernetes.default.svc/x.tgz",
+		"https://kubernetes.openshift-console.svc/x.tgz",
+		"https://mypod.default.pod.cluster.local/x.tgz",
 	}
 	for _, raw := range allowed {
 		t.Run(raw, func(t *testing.T) {
@@ -54,7 +57,13 @@ func TestLoopbackChartURLsRejected(t *testing.T) {
 		"oci://localhost:5000/charts/chart",
 		"http://[::1]/chart.tgz",
 		"http://0.0.0.0/x.tgz",
+		"http://0.1.2.3/x.tgz",
 		"http://[::]/chart.tgz",
+		"http://169.254.169.254/latest/meta-data/x.tgz",
+		"https://kubernetes/x.tgz",
+		"oci://kubernetes.default/charts/chart",
+		"https://kubernetes.default.svc/x.tgz",
+		"https://kubernetes.default.svc.cluster.local/x.tgz",
 	}
 	for _, raw := range rejected {
 		t.Run(raw, func(t *testing.T) {

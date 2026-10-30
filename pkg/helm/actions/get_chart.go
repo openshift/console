@@ -22,7 +22,7 @@ func GetChart(url string, conf *action.Configuration, repositoryNamespace string
 		if err := validateChartURL(url); err != nil {
 			return nil, err
 		}
-		chartLocation, err := locateChart(&cmd.ChartPathOptions, url)
+		chartLocation, err := locateChart(&cmd.ChartPathOptions, cmd.GetRegistryClient(), url)
 		if err != nil {
 			return nil, err
 		}
@@ -55,7 +55,7 @@ func GetChart(url string, conf *action.Configuration, repositoryNamespace string
 	chartLocation = url
 
 	cmd.ChartPathOptions.Version = chartInfo.Version
-	chartPath, err = locateChart(&cmd.ChartPathOptions, chartLocation)
+	chartPath, err = locateChart(&cmd.ChartPathOptions, cmd.GetRegistryClient(), chartLocation)
 	if err != nil {
 		return nil, fmt.Errorf("error locating chart: %w", err)
 	}
@@ -87,11 +87,11 @@ func GetChartFromURL(url string, conf *action.Configuration, namespace string, c
 		if err != nil {
 			return nil, err
 		}
-		if err := applyBasicAuthFromUserCredentials(&cmd.ChartPathOptions, cmd, userCredentials); err != nil {
+		if _, err := applyBasicAuthFromUserCredentials(&cmd.ChartPathOptions, cmd, userCredentials); err != nil {
 			return nil, err
 		}
 	}
-	chartLocation, err := locateChart(&cmd.ChartPathOptions, url)
+	chartLocation, err := locateChart(&cmd.ChartPathOptions, cmd.GetRegistryClient(), url)
 	if err != nil {
 		return nil, fmt.Errorf("error getting chart from URL: %w", err)
 	}
