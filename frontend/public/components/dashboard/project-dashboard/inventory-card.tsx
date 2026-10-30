@@ -1,5 +1,13 @@
 import { useEffect, useContext, memo } from 'react';
-import { Card, CardBody, CardHeader, CardTitle, Stack, StackItem } from '@patternfly/react-core';
+import {
+  Card,
+  CardBody,
+  CardHeader,
+  CardTitle,
+  Stack,
+  StackItem,
+  Skeleton,
+} from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import type {
   DashboardsProjectOverviewInventoryItem,
@@ -16,29 +24,13 @@ import {
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import type { StatusGroupMapper } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
 import { ResourceInventoryItem } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
-import {
-  getPodStatusGroups,
-  getPVCStatusGroups,
-  getVSStatusGroups,
-} from '@console/shared/src/components/dashboard/inventory-card/utils';
+import { PrometheusInventoryItem } from '@console/shared/src/components/dashboard/inventory-card/PrometheusInventoryItem';
 import { ErrorBoundary } from '@console/shared/src/components/error/error-boundary';
 import { useDynamicK8sWatchResources } from '@console/shared/src/hooks/useDynamicK8sWatchResources';
+import { usePrometheusGate } from '@console/shared/src/hooks/usePrometheusGate';
 import { getName } from '@console/shared/src/selectors/common';
-import {
-  PodModel,
-  DeploymentModel,
-  DeploymentConfigModel,
-  PersistentVolumeClaimModel,
-  ServiceModel,
-  StatefulSetModel,
-  RouteModel,
-  ConfigMapModel,
-  SecretModel,
-  VolumeSnapshotModel,
-} from '../../../models';
 import type { K8sKind } from '../../../module/k8s';
 import { referenceForModel } from '../../../module/k8s';
-import { useAccessReview } from '../../utils/rbac';
 import { ProjectDashboardContext } from './project-dashboard-context';
 
 const createWatchResource = (
@@ -52,7 +44,7 @@ const createWatchResource = (
 });
 
 const ProjectInventoryItem = memo<ProjectInventoryItemProps>(
-  ({ projectName, model, mapper, additionalResources, additionalDynamicResources }) => {
+  ({ projectName, model, mapper, additionalDynamicResources }) => {
     const { watchResource, stopWatchResource, results: resources } = useDynamicK8sWatchResources();
 
     useEffect(() => {
@@ -63,41 +55,13 @@ const ProjectInventoryItem = memo<ProjectInventoryItemProps>(
       const resource = createWatchResource(model, projectName);
       const { prop, ...resourceConfig } = resource;
       watchResource(prop, resourceConfig);
-      if (additionalResources) {
-        additionalResources.forEach((r) => {
-          const { prop: key, ...config } = { ...r, namespace: projectName };
-          watchResource(key, config);
-        });
-      }
-
-      return () => {
-        stopWatchResource(resource.prop);
-        if (additionalResources) {
-          additionalResources.forEach((r) => stopWatchResource(r.prop));
-        }
-      };
-    }, [watchResource, stopWatchResource, projectName, model, additionalResources]);
+      return () => stopWatchResource(resource.prop);
+    }, [watchResource, stopWatchResource, projectName, model]);
 
     const resourceResult = resources.resource?.data;
     const resourceData = Array.isArray(resourceResult) ? resourceResult : [];
     const resourceLoaded = resources.resource?.loaded ?? false;
     const resourceLoadError = resources.resource?.loadError;
-
-    const additionalResourcesData = additionalResources
-      ? additionalResources.reduce<{ [key: string]: K8sResourceCommon[] }>((acc, r) => {
-          const data = resources[r.prop]?.data;
-          acc[r.prop] = Array.isArray(data) ? data : [];
-          return acc;
-        }, {})
-      : {};
-    const additionalResourcesLoaded = additionalResources
-      ? additionalResources
-          .filter((r) => !r.optional)
-          .every((r) => resources[r.prop]?.loaded ?? false)
-      : true;
-    const additionalResourcesLoadError = additionalResources
-      ? additionalResources.filter((r) => !r.optional).some((r) => !!resources[r.prop]?.loadError)
-      : false;
 
     const dynamicResources = useK8sWatchResources(additionalDynamicResources || {});
     const dynamicResourcesError = Object.values(dynamicResources).find(
@@ -111,13 +75,10 @@ const ProjectInventoryItem = memo<ProjectInventoryItemProps>(
       <StackItem>
         <ResourceInventoryItem
           kind={model}
-          isLoading={
-            !projectName || !resourceLoaded || !additionalResourcesLoaded || !dynamicResourcesLoaded
-          }
+          isLoading={!projectName || !resourceLoaded || !dynamicResourcesLoaded}
           namespace={projectName}
-          error={!!resourceLoadError || additionalResourcesLoadError || dynamicResourcesError}
+          error={!!resourceLoadError || !!dynamicResourcesError}
           resources={resourceData}
-          additionalResources={additionalResourcesData}
           mapper={mapper}
           dataTest="resource-inventory-item"
         />
@@ -127,21 +88,16 @@ const ProjectInventoryItem = memo<ProjectInventoryItemProps>(
 );
 
 export const InventoryCard = memo(() => {
-  const [itemExtensions] = useResolvedExtensions<DashboardsProjectOverviewInventoryItem>(
-    isDashboardsProjectOverviewInventoryItem,
-  );
+  const [itemExtensions, itemsResolved] =
+    useResolvedExtensions<DashboardsProjectOverviewInventoryItem>(
+      isDashboardsProjectOverviewInventoryItem,
+    );
   const [inventoryExtensions] = useResolvedExtensions<ProjectOverviewInventoryItem>(
     isProjectOverviewInventoryItem,
   );
-
+  const prometheusIsAvailable = usePrometheusGate();
   const { obj } = useContext(ProjectDashboardContext);
   const projectName = getName(obj);
-  const canListSecrets = useAccessReview({
-    group: SecretModel.apiGroup,
-    resource: SecretModel.plural,
-    namespace: projectName,
-    verb: 'list',
-  });
   const { t } = useTranslation('public');
 
   return (
@@ -151,37 +107,30 @@ export const InventoryCard = memo(() => {
       </CardHeader>
       <CardBody>
         <Stack hasGutter>
-          <ProjectInventoryItem projectName={projectName} model={DeploymentModel} />
-          <ProjectInventoryItem projectName={projectName} model={DeploymentConfigModel} />
-          <ProjectInventoryItem projectName={projectName} model={StatefulSetModel} />
-          <ProjectInventoryItem
-            projectName={projectName}
-            model={PodModel}
-            mapper={getPodStatusGroups}
-          />
-          <ProjectInventoryItem
-            projectName={projectName}
-            model={PersistentVolumeClaimModel}
-            mapper={getPVCStatusGroups}
-          />
-          <ProjectInventoryItem projectName={projectName} model={ServiceModel} />
-          <ProjectInventoryItem projectName={projectName} model={RouteModel} />
-          <ProjectInventoryItem projectName={projectName} model={ConfigMapModel} />
-          {canListSecrets && <ProjectInventoryItem projectName={projectName} model={SecretModel} />}
-          <ProjectInventoryItem
-            projectName={projectName}
-            model={VolumeSnapshotModel}
-            mapper={getVSStatusGroups}
-          />
-          {itemExtensions.map((item) => (
-            <ProjectInventoryItem
-              key={item.properties.model.kind}
-              projectName={projectName}
-              model={item.properties.model}
-              mapper={item.properties.mapper}
-              additionalDynamicResources={item.properties.additionalResources}
-            />
-          ))}
+          {!itemsResolved && <Skeleton screenreaderText={t('Loading')} />}
+          {itemExtensions.map((item) =>
+            item.properties.prometheus && prometheusIsAvailable !== false ? (
+              <StackItem key={item.uid}>
+                <PrometheusInventoryItem
+                  model={item.properties.model}
+                  namespace={projectName}
+                  query={() =>
+                    projectName ? item.properties.prometheus.getQuery(projectName) : ''
+                  }
+                  prometheusIsAvailable={prometheusIsAvailable}
+                  mapper={item.properties.prometheus.mapper}
+                />
+              </StackItem>
+            ) : (
+              <ProjectInventoryItem
+                key={item.uid}
+                projectName={projectName}
+                model={item.properties.model}
+                mapper={item.properties.mapper}
+                additionalDynamicResources={item.properties.additionalResources}
+              />
+            ),
+          )}
           {inventoryExtensions.map(({ uid, properties: { component: Component } }) => (
             <ErrorBoundary key={uid}>
               <StackItem>
@@ -199,7 +148,6 @@ type ProjectInventoryItemProps = {
   projectName: string;
   model: K8sKind;
   mapper?: StatusGroupMapper;
-  additionalResources?: (WatchK8sResource & { prop: string })[];
   additionalDynamicResources?: WatchK8sResources<{
     [key: string]: K8sResourceCommon[];
   }>;

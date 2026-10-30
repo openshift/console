@@ -95,21 +95,14 @@ export type K8sResourceKindReference = string;
 
 export type K8sGroupVersionKind = { group?: string; version: string; kind: string };
 
-enum InventoryStatusGroup {
-  WARN = 'WARN',
-  ERROR = 'ERROR',
-  PROGRESS = 'PROGRESS',
-  NOT_MAPPED = 'NOT_MAPPED',
-  UNKNOWN = 'UNKNOWN',
-}
-
-type StatusGroup = {
-  [key in InventoryStatusGroup | string]: {
+/** Inventory counts grouped by severity, with optional filters for resource list links. */
+export interface StatusGroup {
+  [key: string]: {
     filterType?: string;
     statusIDs: string[];
     count: number;
   };
-};
+}
 
 export type StatusGroupMapper<
   T extends K8sResourceCommon = K8sResourceCommon,

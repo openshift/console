@@ -12,6 +12,8 @@ compatibility table in [Console dynamic plugins README](./README.md).
 
 ## 5.1.0-prerelease.2 - TBD
 
+- Added an optional `prometheus` code reference to the dashboard inventory item extensions
+  ([CONSOLE-5146], [#17456])
 - Added optional `sortWeight` property to extension `console.catalog/item-type`, so a type can be
   ordered within the catalog's type list ([CONSOLE-5527], [#17355])
 - Added optional `placement` property to `CatalogItemBadge`, so a badge can render in the catalog
@@ -352,6 +354,7 @@ compatibility table in [Console dynamic plugins README](./README.md).
 [CONSOLE-5093]: https://issues.redhat.com/browse/CONSOLE-5093
 [CONSOLE-5108]: https://issues.redhat.com/browse/CONSOLE-5108
 [CONSOLE-5131]: https://issues.redhat.com/browse/CONSOLE-5131
+[CONSOLE-5146]: https://issues.redhat.com/browse/CONSOLE-5146
 [CONSOLE-5273]: https://issues.redhat.com/browse/CONSOLE-5273
 [CONSOLE-5315]: https://issues.redhat.com/browse/CONSOLE-5315
 [CONSOLE-5355]: https://issues.redhat.com/browse/CONSOLE-5355
@@ -467,3 +470,4 @@ compatibility table in [Console dynamic plugins README](./README.md).
 [#17351]: https://github.com/openshift/console/pull/17351
 [#17363]: https://github.com/openshift/console/pull/17363
 [#17376]: https://github.com/openshift/console/pull/17376
+[#17456]: https://github.com/openshift/console/pull/17456

@@ -1833,28 +1833,147 @@
   {
     "type": "console.dashboards/overview/inventory/item",
     "properties": {
-      "model": { "$codeRef": "inventoryItems.NodeModel" },
-      "mapper": { "$codeRef": "inventoryItems.getNodeStatusGroups" }
+      "model": {
+        "$codeRef": "inventoryItems.NodeModel"
+      },
+      "mapper": {
+        "$codeRef": "inventoryItems.getNodeStatusGroups"
+      },
+      "prometheus": { "$codeRef": "inventoryItems.clusterNodePrometheus" }
     }
   },
   {
     "type": "console.dashboards/overview/inventory/item",
     "properties": {
-      "model": { "$codeRef": "inventoryItems.PodModel" },
-      "mapper": { "$codeRef": "inventoryItems.getPodStatusGroups" }
+      "model": {
+        "$codeRef": "inventoryItems.PodModel"
+      },
+      "mapper": {
+        "$codeRef": "inventoryItems.getPodStatusGroups"
+      },
+      "prometheus": { "$codeRef": "inventoryItems.clusterPodPrometheus" }
     }
   },
   {
     "type": "console.dashboards/overview/inventory/item",
     "properties": {
-      "model": { "$codeRef": "inventoryItems.StorageClassModel" }
+      "model": {
+        "$codeRef": "inventoryItems.StorageClassModel"
+      },
+      "prometheus": { "$codeRef": "inventoryItems.clusterStorageClassPrometheus" }
     }
   },
   {
     "type": "console.dashboards/overview/inventory/item",
     "properties": {
-      "model": { "$codeRef": "inventoryItems.PersistentVolumeClaimModel" },
-      "mapper": { "$codeRef": "inventoryItems.getPVCStatusGroups" }
+      "model": {
+        "$codeRef": "inventoryItems.PersistentVolumeClaimModel"
+      },
+      "mapper": {
+        "$codeRef": "inventoryItems.getPVCStatusGroups"
+      },
+      "prometheus": { "$codeRef": "inventoryItems.clusterPVCPrometheus" }
+    }
+  },
+  {
+    "type": "console.dashboards/project/overview/item",
+    "properties": {
+      "model": {
+        "$codeRef": "inventoryItems.DeploymentModel"
+      },
+      "prometheus": { "$codeRef": "inventoryItems.projectDeploymentPrometheus" }
+    }
+  },
+  {
+    "type": "console.dashboards/project/overview/item",
+    "properties": {
+      "model": {
+        "$codeRef": "inventoryItems.DeploymentConfigModel"
+      },
+      "prometheus": { "$codeRef": "inventoryItems.projectDeploymentConfigPrometheus" }
+    }
+  },
+  {
+    "type": "console.dashboards/project/overview/item",
+    "properties": {
+      "model": {
+        "$codeRef": "inventoryItems.StatefulSetModel"
+      },
+      "prometheus": { "$codeRef": "inventoryItems.projectStatefulSetPrometheus" }
+    }
+  },
+  {
+    "type": "console.dashboards/project/overview/item",
+    "properties": {
+      "model": {
+        "$codeRef": "inventoryItems.PodModel"
+      },
+      "mapper": {
+        "$codeRef": "inventoryItems.getPodStatusGroups"
+      },
+      "prometheus": { "$codeRef": "inventoryItems.projectPodPrometheus" }
+    }
+  },
+  {
+    "type": "console.dashboards/project/overview/item",
+    "properties": {
+      "model": {
+        "$codeRef": "inventoryItems.PersistentVolumeClaimModel"
+      },
+      "mapper": {
+        "$codeRef": "inventoryItems.getPVCStatusGroups"
+      },
+      "prometheus": { "$codeRef": "inventoryItems.projectPVCPrometheus" }
+    }
+  },
+  {
+    "type": "console.dashboards/project/overview/item",
+    "properties": {
+      "model": {
+        "$codeRef": "inventoryItems.ServiceModel"
+      },
+      "prometheus": { "$codeRef": "inventoryItems.projectServicePrometheus" }
+    }
+  },
+  {
+    "type": "console.dashboards/project/overview/item",
+    "properties": {
+      "model": {
+        "$codeRef": "inventoryItems.RouteModel"
+      },
+      "prometheus": { "$codeRef": "inventoryItems.projectRoutePrometheus" }
+    }
+  },
+  {
+    "type": "console.dashboards/project/overview/item",
+    "properties": {
+      "model": {
+        "$codeRef": "inventoryItems.ConfigMapModel"
+      },
+      "prometheus": { "$codeRef": "inventoryItems.projectConfigMapPrometheus" }
+    }
+  },
+  {
+    "type": "console.dashboards/project/overview/item",
+    "properties": {
+      "model": {
+        "$codeRef": "inventoryItems.SecretModel"
+      },
+      "prometheus": { "$codeRef": "inventoryItems.projectSecretPrometheus" }
+    },
+    "flags": {
+      "required": ["CAN_LIST_SECRETS"]
+    }
+  },
+  {
+    "type": "console.dashboards/project/overview/item",
+    "properties": {
+      "model": {
+        "$codeRef": "inventoryItems.VolumeSnapshotModel"
+      },
+      "mapper": {
+        "$codeRef": "inventoryItems.getVSStatusGroups"
+      }
     }
   },
   {
@@ -2587,6 +2706,12 @@
     "type": "console.flag/hookProvider",
     "properties": {
       "handler": { "$codeRef": "vacPlatformSupport.useVACPlatformSupportProvider" }
+    }
+  },
+  {
+    "type": "console.flag/hookProvider",
+    "properties": {
+      "handler": { "$codeRef": "canListSecrets.useCanListSecrets" }
     }
   },
   {

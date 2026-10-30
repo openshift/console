@@ -16,7 +16,9 @@ import {
 } from '@console/dynamic-plugin-sdk';
 import type { StatusGroupMapper } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
 import { ResourceInventoryItem } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
+import { PrometheusInventoryItem } from '@console/shared/src/components/dashboard/inventory-card/PrometheusInventoryItem';
 import { ErrorBoundary } from '@console/shared/src/components/error/error-boundary';
+import { usePrometheusGate } from '@console/shared/src/hooks/usePrometheusGate';
 import type { K8sKind, K8sResourceCommon } from '../../../../module/k8s';
 import { referenceForModel } from '../../../../module/k8s';
 import { useK8sWatchResource, useK8sWatchResources } from '../../../utils/k8s-watch-hook';
@@ -91,6 +93,7 @@ export const InventoryCard = memo(() => {
   const [itemExtensions] = useResolvedExtensions<DashboardsOverviewInventoryItem>(
     isDashboardsOverviewInventoryItem,
   );
+  const prometheusIsAvailable = usePrometheusGate();
 
   const [replacementExtensions] = useResolvedExtensions<DashboardsOverviewInventoryItemReplacement>(
     isDashboardsOverviewInventoryItemReplacement,
@@ -115,12 +118,21 @@ export const InventoryCard = memo(() => {
       <CardBody>
         <Stack hasGutter>
           {mergedItems.map((item) => (
-            <StackItem key={item.properties.model.kind}>
-              <ClusterInventoryItem
-                model={item.properties.model}
-                resolvedMapper={item.properties.mapper}
-                additionalResources={item.properties.additionalResources}
-              />
+            <StackItem key={item.uid}>
+              {item.properties.prometheus && prometheusIsAvailable !== false ? (
+                <PrometheusInventoryItem
+                  model={item.properties.model}
+                  query={item.properties.prometheus.getQuery}
+                  prometheusIsAvailable={prometheusIsAvailable}
+                  mapper={item.properties.prometheus.mapper}
+                />
+              ) : (
+                <ClusterInventoryItem
+                  model={item.properties.model}
+                  resolvedMapper={item.properties.mapper}
+                  additionalResources={item.properties.additionalResources}
+                />
+              )}
             </StackItem>
           ))}
           {inventoryExtensions.map(({ uid, properties: { component: Component } }) => (
