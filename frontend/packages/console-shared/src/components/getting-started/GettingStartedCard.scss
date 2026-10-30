@@ -1,4 +1,8 @@
 .ocs-getting-started-card {
+  // Fill the full-height plain card so the links grow and the more link is
+  // kept at the bottom.
+  height: 100%;
+
   &__title-icon {
     margin-right: var(--pf-t--global--spacer--sm);
   }
