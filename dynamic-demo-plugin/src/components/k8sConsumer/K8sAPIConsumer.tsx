@@ -134,7 +134,9 @@ const K8sAPIConsumer: React.FC = () => {
     <>
       <DocumentTitle>{t('K8s API')}</DocumentTitle>
       <PageSection>
-        <Title headingLevel="h1" data-test="test-k8sapi-title">{t('K8s API from Dynamic Plugin SDK')}</Title>
+        <Title headingLevel="h1" data-test="test-k8sapi-title">
+          {t('K8s API from Dynamic Plugin SDK')}
+        </Title>
       </PageSection>
       <PageSection>
         <Stack hasGutter>
@@ -200,9 +202,7 @@ const K8sAPIConsumer: React.FC = () => {
 const ConsoleK8sAPIConsumer: React.FC<{ data: any }> = ({ data }) => {
   return (
     <CodeBlock>
-      <CodeBlockCode>
-        {JSON.stringify(data, null, 2)}
-      </CodeBlockCode>
+      <CodeBlockCode>{JSON.stringify(data, null, 2)}</CodeBlockCode>
     </CodeBlock>
   );
 };

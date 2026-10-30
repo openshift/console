@@ -74,9 +74,9 @@ run \
 
 run \
   'oxfmt' \
-  'the code should be formatted correctly per yarn prettier-all' \
+  'the code should be formatted correctly per yarn format-all' \
   "Code is not pretty!" \
-  'yarn run prettier-all --check'
+  'yarn run format-all --check'
 
 run \
   'oxlint' \

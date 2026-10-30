@@ -1,12 +1,12 @@
-import * as React from "react";
-import * as _ from "lodash";
-import { useTranslation } from "react-i18next";
+import * as React from 'react';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import {
   useResolvedExtensions,
   isModelFeatureFlag,
   ModelFeatureFlag,
   DocumentTitle,
-} from "@openshift-console/dynamic-plugin-sdk";
+} from '@openshift-console/dynamic-plugin-sdk';
 import {
   Card,
   CardBody,
@@ -18,20 +18,18 @@ import {
   PageSection,
   Title,
   Stack,
-} from "@patternfly/react-core";
+} from '@patternfly/react-core';
 
 const ExtensionConsumer: React.FC = () => {
-  const { t } = useTranslation("plugin__console-demo-plugin");
-  const [extensions] = useResolvedExtensions<ModelFeatureFlag>(
-    isModelFeatureFlag
-  );
+  const { t } = useTranslation('plugin__console-demo-plugin');
+  const [extensions] = useResolvedExtensions<ModelFeatureFlag>(isModelFeatureFlag);
 
   return extensions.length ? (
     <>
-      <DocumentTitle>{t("Test Consumer")}</DocumentTitle>
+      <DocumentTitle>{t('Test Consumer')}</DocumentTitle>
       <PageSection>
         <Title headingLevel="h1" data-test="test-consumer-title">
-          {t("Extensions of type Console.flag/Model")}
+          {t('Extensions of type Console.flag/Model')}
         </Title>
       </PageSection>
       <PageSection>
@@ -42,19 +40,19 @@ const ExtensionConsumer: React.FC = () => {
               <CardBody>
                 <DescriptionList>
                   <DescriptionListGroup>
-                    <DescriptionListTerm>{t("Group")}</DescriptionListTerm>
+                    <DescriptionListTerm>{t('Group')}</DescriptionListTerm>
                     <DescriptionListDescription>
                       {ext.properties.model.group}
                     </DescriptionListDescription>
                   </DescriptionListGroup>
                   <DescriptionListGroup>
-                    <DescriptionListTerm>{t("Version")}</DescriptionListTerm>
+                    <DescriptionListTerm>{t('Version')}</DescriptionListTerm>
                     <DescriptionListDescription>
                       {ext.properties.model.version}
                     </DescriptionListDescription>
                   </DescriptionListGroup>
                   <DescriptionListGroup>
-                    <DescriptionListTerm>{t("Kind")}</DescriptionListTerm>
+                    <DescriptionListTerm>{t('Kind')}</DescriptionListTerm>
                     <DescriptionListDescription>
                       {ext.properties.model.kind}
                     </DescriptionListDescription>

@@ -1,17 +1,19 @@
 import * as React from 'react';
-import { useTranslation } from "react-i18next";
-import { Button, Card, CardBody, CardTitle, PageSection, Title } from "@patternfly/react-core";
+import { useTranslation } from 'react-i18next';
+import { Button, Card, CardBody, CardTitle, PageSection, Title } from '@patternfly/react-core';
 import { DocumentTitle, ErrorBoundaryFallbackPage } from '@openshift-console/dynamic-plugin-sdk';
-import { DemoErrorBoundary }  from './DemoErrorBoundary';
+import { DemoErrorBoundary } from './DemoErrorBoundary';
 
 const BuggyComponent: React.FC = () => {
-    throw new Error('test error');
-}
+  throw new Error('test error');
+};
 
 const SampleErrorBoundaryPage: React.FC = () => {
-  const { t } = useTranslation("plugin__console-demo-plugin");
-  const [ isBuggyComponentRendered, setBuggyComponentRendered ] = React.useState(false);
-  const onClick = () => {setBuggyComponentRendered(!isBuggyComponentRendered)};
+  const { t } = useTranslation('plugin__console-demo-plugin');
+  const [isBuggyComponentRendered, setBuggyComponentRendered] = React.useState(false);
+  const onClick = () => {
+    setBuggyComponentRendered(!isBuggyComponentRendered);
+  };
 
   return (
     <DemoErrorBoundary FallbackComponent={ErrorBoundaryFallbackPage}>
@@ -21,10 +23,10 @@ const SampleErrorBoundaryPage: React.FC = () => {
       </PageSection>
       <PageSection>
         <Card>
-          <CardTitle>{t("Create an exception")}</CardTitle>
+          <CardTitle>{t('Create an exception')}</CardTitle>
           <CardBody>
-              <Button onClick={onClick}>{t('Launch buggy component')}</Button>
-              {isBuggyComponentRendered && <BuggyComponent/>}
+            <Button onClick={onClick}>{t('Launch buggy component')}</Button>
+            {isBuggyComponentRendered && <BuggyComponent />}
           </CardBody>
         </Card>
       </PageSection>
