@@ -34,29 +34,31 @@ const config: Configuration = {
         test: /\.(js|tsx?)$/,
         exclude: /node_modules/,
         use: [
-          isRunningWebpack ? {
-            loader: 'ts-loader',
-            options: {
-              configFile: path.resolve(__dirname, 'tsconfig.json'),
-            },
-          } : {
-            loader: 'builtin:swc-loader',
-            options: {
-              detectSyntax: 'auto',
-              jsc: {
-                transform: {
-                  react: {
-                    runtime: "automatic"
-                  }
+          isRunningWebpack
+            ? {
+                loader: 'ts-loader',
+                options: {
+                  configFile: path.resolve(__dirname, 'tsconfig.json'),
                 },
-                target: "es2021",
+              }
+            : {
+                loader: 'builtin:swc-loader',
+                options: {
+                  detectSyntax: 'auto',
+                  jsc: {
+                    transform: {
+                      react: {
+                        runtime: 'automatic',
+                      },
+                    },
+                    target: 'es2021',
+                  },
+                  sourceMaps: true,
+                  minify: true,
+                },
               },
-              sourceMaps: true,
-              minify: true
-            },
-          },
         ],
-        type: 'javascript/auto'
+        type: 'javascript/auto',
       },
       {
         test: /\.css$/,
