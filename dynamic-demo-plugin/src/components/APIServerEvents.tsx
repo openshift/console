@@ -24,9 +24,7 @@ const APIServerEvents: React.FC = () => {
       <PageSection>
         <Title headingLevel="h1">{t('API Server Events')}</Title>
       </PageSection>
-      <PageSection>
-        {loaded && !loadError && <ResourceEventStream resource={object} />}
-      </PageSection>
+      <PageSection>{loaded && !loadError && <ResourceEventStream resource={object} />}</PageSection>
     </>
   );
 };

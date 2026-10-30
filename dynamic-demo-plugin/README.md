@@ -6,9 +6,10 @@ This project emulates a standalone repository hosting a sample
 The purpose of the demo plugin is to exercise various Console plugin APIs which allows Console
 developers to detect plugin related issues through end-to-end or manual testing.
 
-If you're new to dynamic plugins, we suggest to clone the [Console plugin template][console-plugin-template]
-repo and follow its instructions on setting up a local plugin development environment. Refer to
-Console [plugins README][console-plugins-readme] for details on plugin development.
+If you're new to dynamic plugins, we suggest to clone the [Console plugin
+template][console-plugin-template] repo and follow its instructions on setting up a local plugin
+development environment. Refer to Console [plugins README][console-plugins-readme] for details on
+plugin development.
 
 ## Local development
 
@@ -27,8 +28,8 @@ Hit CTRL-C to stop the server
 ```
 
 The server runs on port 9001 with caching disabled and CORS enabled. Additional
-[server options](https://github.com/http-party/http-server#available-options) can be passed to
-the script, for example:
+[server options](https://github.com/http-party/http-server#available-options) can be passed to the
+script, for example:
 
 ```sh
 yarn http-server -a 127.0.0.1
@@ -36,19 +37,20 @@ yarn http-server -a 127.0.0.1
 
 In another terminal window, run:
 
-1. `oc login` (requires [oc](https://console.redhat.com/openshift/downloads) and an [OpenShift cluster](https://console.redhat.com/openshift/create))
-2. `yarn run start-console` (requires [Docker](https://www.docker.com) or [podman 3.2.0+](https://podman.io))
+1. `oc login` (requires [oc](https://console.redhat.com/openshift/downloads) and an
+   [OpenShift cluster](https://console.redhat.com/openshift/create))
+2. `yarn run start-console` (requires [Docker](https://www.docker.com) or
+   [podman 3.2.0+](https://podman.io))
 
-This will run the OpenShift console in a container connected to the cluster
-you've logged into. The plugin HTTP server runs on port 9001 with CORS enabled.
-Navigate to <http://localhost:9000> to see the running plugin.
+This will run the OpenShift console in a container connected to the cluster you've logged into. The
+plugin HTTP server runs on port 9001 with CORS enabled. Navigate to <http://localhost:9000> to see
+the running plugin.
 
 ### Running start-console with Apple silicon and podman
 
-If you are using podman on a Mac with Apple silicon, `yarn run start-console`
-might fail since it runs an amd64 image. You can workaround the problem with
-[qemu-user-static](https://github.com/multiarch/qemu-user-static) by running
-these commands:
+If you are using podman on a Mac with Apple silicon, `yarn run start-console` might fail since it
+runs an amd64 image. You can workaround the problem with
+[qemu-user-static](https://github.com/multiarch/qemu-user-static) by running these commands:
 
 ```bash
 podman machine ssh
@@ -58,13 +60,14 @@ systemctl reboot
 ```
 
 See the plugin development section in
-[Console Dynamic Plugins README](/frontend/packages/console-dynamic-plugin-sdk/README.md) for details
-on how to run Bridge using local plugins.
+[Console Dynamic Plugins README](/frontend/packages/console-dynamic-plugin-sdk/README.md) for
+details on how to run Bridge using local plugins.
 
 ## Deployment on cluster
 
-Console dynamic plugins are supposed to be deployed via [OLM operators](https://github.com/operator-framework).
-In case of demo plugin, we just apply a minimal OpenShift manifest which adds the necessary resources.
+Console dynamic plugins are supposed to be deployed via
+[OLM operators](https://github.com/operator-framework). In case of demo plugin, we just apply a
+minimal OpenShift manifest which adds the necessary resources.
 
 ```sh
 oc apply -f oc-manifest.yaml
@@ -79,8 +82,9 @@ a trusted CA certificate.
 
 Once deployed on the cluster, demo plugin must be enabled before it can be loaded by Console.
 
-To enable the plugin manually, edit [Console operator](https://github.com/openshift/console-operator)
-config and make sure the plugin's name is listed in the `spec.plugins` sequence (add one if missing):
+To enable the plugin manually, edit
+[Console operator](https://github.com/openshift/console-operator) config and make sure the plugin's
+name is listed in the `spec.plugins` sequence (add one if missing):
 
 ```sh
 oc edit console.operator.openshift.io cluster
@@ -96,24 +100,26 @@ spec:
 
 ## Proxy service
 
-In case the plugin needs to communicate with some in-cluster service, it can
-declare a service proxy in its `ConsolePlugin` resource using the
-`spec.proxy` array field. Each entry needs to specify an endpoint and
-alias of the proxy under the `endpoint` and `alias` fields. For the `Service` proxy type, the endpoint's `type` field will need to be set to `Service` and the `service` must include a `name`, `namespace` and `port`.
+In case the plugin needs to communicate with some in-cluster service, it can declare a service proxy
+in its `ConsolePlugin` resource using the `spec.proxy` array field. Each entry needs to specify an
+endpoint and alias of the proxy under the `endpoint` and `alias` fields. For the `Service` proxy
+type, the endpoint's `type` field will need to be set to `Service` and the `service` must include a
+`name`, `namespace` and `port`.
 
-Console backend exposes following endpoint in order to proxy the communication
-between plugin and the service:
+Console backend exposes following endpoint in order to proxy the communication between plugin and
+the service:
 `/api/proxy/plugin/<plugin-name>/<proxy-alias>/<request-path>?<optional-query-parameters>`
 
-An example proxy request path from `helm` plugin with a `helm-charts` service to list ten helm releases:
-`/api/proxy/plugin/helm/helm-charts/releases?limit=10`
+An example proxy request path from `helm` plugin with a `helm-charts` service to list ten helm
+releases: `/api/proxy/plugin/helm/helm-charts/releases?limit=10`
 
-Proxied request will use [service CA bundle](https://access.redhat.com/documentation/en-us/openshift_container_platform/4.9/html/security_and_compliance/certificate-types-and-descriptions#cert-types-service-ca-certificates) by default. The service must use HTTPS.
-If the service uses a custom service CA, the `caCertificate` field
-must contain the certificate bundle. In case the service proxy request
-needs to contain the logged-in user's OpenShift access token, the `authorization`
-field needs to be set to `UserToken`. The user's OpenShift access token will be
-then passed in the HTTP `Authorization` request header, for example:
+Proxied request will use
+[service CA bundle](https://access.redhat.com/documentation/en-us/openshift_container_platform/4.9/html/security_and_compliance/certificate-types-and-descriptions#cert-types-service-ca-certificates)
+by default. The service must use HTTPS. If the service uses a custom service CA, the `caCertificate`
+field must contain the certificate bundle. In case the service proxy request needs to contain the
+logged-in user's OpenShift access token, the `authorization` field needs to be set to `UserToken`.
+The user's OpenShift access token will be then passed in the HTTP `Authorization` request header,
+for example:
 
 `Authorization: Bearer sha256~kV46hPnEYhCWFnB85r5NrprAxggzgb6GOeLbgcKNsH0`
 
@@ -133,14 +139,14 @@ spec:
 # ...
 ```
 
-If the service proxy request shouldn't contain the logged-in user's
-OpenShift access token, set the `authorization` field to `None`.
+If the service proxy request shouldn't contain the logged-in user's OpenShift access token, set the
+`authorization` field to `None`.
 
 ### Local development
 
-In case of local developement of the dynamic plugin, just set up your
-HTTP server locally and pass its endpoint address in form of a service proxy
-entry to the console server in form of JSON, using the `--plugin-proxy` flag.
+In case of local developement of the dynamic plugin, just set up your HTTP server locally and pass
+its endpoint address in form of a service proxy entry to the console server in form of JSON, using
+the `--plugin-proxy` flag.
 
 Example:
 
@@ -148,8 +154,10 @@ Example:
  ./bin/bridge --plugin-proxy='{"services":[{"consoleAPIPath":"/api/proxy/namespace/serviceNamespace/service/serviceName:9991/","endpoint":"http://localhost:8080"}]}'
 ```
 
-The service proxy entry besides service `endpoint` contain also `consoleAPIPath`, so the console server knows which path is should expose and proxy to service endpoint.
-Note that the service `endpoint` needs to contain scheme and `consoleAPIPath` needs to contain trailing slash in order for request to be proxied correctly.
+The service proxy entry besides service `endpoint` contain also `consoleAPIPath`, so the console
+server knows which path is should expose and proxy to service endpoint. Note that the service
+`endpoint` needs to contain scheme and `consoleAPIPath` needs to contain trailing slash in order for
+request to be proxied correctly.
 
 ## Docker image
 
@@ -177,12 +185,11 @@ Update and apply `oc-manifest.yaml` to use a custom plugin image.
 
 ## i18n
 
-The demo plugin demonstrates how you can translate messages in a dynamic plugin
-with [react-i18next](https://react.i18next.com/). The i18n namespace must match
-the name of the `ConsolePlugin` resource with the `plugin__` prefix to avoid
-naming conflicts. For example, the demo plugin uses the
-`plugin__console-demo-plugin` namespace. You can use the `useTranslation` hook
-with this namespace as follows:
+The demo plugin demonstrates how you can translate messages in a dynamic plugin with
+[react-i18next](https://react.i18next.com/). The i18n namespace must match the name of the
+`ConsolePlugin` resource with the `plugin__` prefix to avoid naming conflicts. For example, the demo
+plugin uses the `plugin__console-demo-plugin` namespace. You can use the `useTranslation` hook with
+this namespace as follows:
 
 ```tsx
 conster Header: React.FC = () => {
@@ -191,12 +198,11 @@ conster Header: React.FC = () => {
 };
 ```
 
-To indicate whether the `ConsolePlugin` contains localization resources,
-set the `spec.i18n.loadType` field based on needed behavior. `Preload` will
-load all plugin's localization resources from the i18n namespace named
-after the dynamic plugin during loading. In this case, `plugin__console-demo-plugin`.
-If set to `Lazy`, the plugin's localization resources won't be preloaded.
-They will be lazy-loaded instead.
+To indicate whether the `ConsolePlugin` contains localization resources, set the
+`spec.i18n.loadType` field based on needed behavior. `Preload` will load all plugin's localization
+resources from the i18n namespace named after the dynamic plugin during loading. In this case,
+`plugin__console-demo-plugin`. If set to `Lazy`, the plugin's localization resources won't be
+preloaded. They will be lazy-loaded instead.
 
 ```yaml
 spec:
@@ -213,39 +219,37 @@ spec:
   proxy:
 ```
 
-The `v1alpha1` apiVersion of `ConsolePlugin` supports `console.openshift.io/use-i18n`
-annotation, which indicates whether the `ConsolePlugin` contains localization
-resources. If the annotation is set to `"true"`, the localization resources from
-the i18n namespace named after the dynamic plugin are preloaded. If the annotation
-is set to any other value or is missing on the `ConsolePlugin` resource, localization
-resources are not preloaded.
+The `v1alpha1` apiVersion of `ConsolePlugin` supports `console.openshift.io/use-i18n` annotation,
+which indicates whether the `ConsolePlugin` contains localization resources. If the annotation is
+set to `"true"`, the localization resources from the i18n namespace named after the dynamic plugin
+are preloaded. If the annotation is set to any other value or is missing on the `ConsolePlugin`
+resource, localization resources are not preloaded.
 
 For labels in `console-extensions.json`, you can use the format
-`%plugin__console-demo-plugin~My Label%`. Console will replace the value with
-the message for the current language from the `plugin__console-demo-plugin`
-namespace. For example:
+`%plugin__console-demo-plugin~My Label%`. Console will replace the value with the message for the
+current language from the `plugin__console-demo-plugin` namespace. For example:
 
 ```json
-  {
-    "type": "console.navigation/section",
-    "properties": {
-      "id": "admin-demo-section",
-      "perspective": "admin",
-      "name": "%plugin__console-demo-plugin~Demo Plugin%"
-    }
+{
+  "type": "console.navigation/section",
+  "properties": {
+    "id": "admin-demo-section",
+    "perspective": "admin",
+    "name": "%plugin__console-demo-plugin~Demo Plugin%"
   }
+}
 ```
 
-Note that you will need to include a comment in a TypeScript file like the
-following for [i18next-cli](https://github.com/i18next/i18next-cli) to
-add the message from `console-extensions.json` to your message catalog.
+Note that you will need to include a comment in a TypeScript file like the following for
+[i18next-cli](https://github.com/i18next/i18next-cli) to add the message from
+`console-extensions.json` to your message catalog.
 
 ```ts
 // t('plugin__console-demo-plugin~Demo Plugin')
 ```
 
-Running `yarn i18n` updates the JSON files in the `locales` folder of the
-dynamic plugin when adding or changing messages.
+Running `yarn i18n` updates the JSON files in the `locales` folder of the dynamic plugin when adding
+or changing messages.
 
 [console-plugin-template]: https://github.com/openshift/console-plugin-template
 [console-plugins-readme]: ../frontend/packages/console-dynamic-plugin-sdk/README.md

@@ -1,6 +1,6 @@
 {
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "typescript.tsdk": "./node_modules/typescript/lib",
+  "editor.defaultFormatter": "oxc.oxc-vscode",
+  "js/ts.tsdk.path": "./node_modules/typescript/lib",
   "search.exclude": {
     "**/node_modules": true
   },
