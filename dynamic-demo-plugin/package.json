@@ -12,7 +12,7 @@
     "start-console": "./start-console.sh",
     "http-server": "./http-server.sh dist",
     "i18n": "i18next-cli lint && i18next-cli extract",
-    "prettier-all": "oxfmt '**/*.{ts,tsx,js,json,md}'",
+    "format-all": "oxfmt '**/*.{ts,tsx,js,json,md}'",
     "ts-node": "NODE_OPTIONS='--preserve-symlinks' ts-node -O '{\"module\":\"commonjs\"}'"
   },
   "devDependencies": {
