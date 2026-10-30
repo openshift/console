@@ -13,7 +13,9 @@ declare global {
   namespace JSX {
     interface IntrinsicElements {
       // Custom element used as a styling hook for the tags input (see `_label.scss`)
-      'tags-input': DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>;
+      'tags-input': DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement> & {
+        class?: string;
+      };
     }
   }
 }
@@ -26,6 +28,8 @@ export interface SelectorInputProps {
   autoFocus?: boolean;
   /** Additional props spread onto the underlying input element. */
   inputProps?: { [key: string]: unknown };
+  /** Keep tags and the input on one horizontally scrollable line. Defaults to false. */
+  isSingleLine?: boolean;
   labelClassName?: string;
   onChange: (tags: string[]) => void;
   onValidationChange?: (isValid: boolean) => void;
@@ -184,7 +188,7 @@ export class SelectorInput extends Component<SelectorInputProps, SelectorInputSt
     const { inputValue, isInputValid, tags } = this.state;
 
     // Keys that add tags: Enter
-    const addKeys = [13];
+    const addKeys = ['Enter'];
 
     // Backspace deletes tags, but not if there is text being edited in the input field
     const removeKeys = inputValue.length ? [] : [8];
@@ -213,8 +217,15 @@ export class SelectorInput extends Component<SelectorInputProps, SelectorInputSt
     );
 
     return (
-      <div className="pf-v6-c-form-control">
-        <tags-input>
+      <div
+        className="pf-v6-c-form-control"
+        onKeyDownCapture={(event) => {
+          if (event.nativeEvent.isComposing) {
+            event.stopPropagation();
+          }
+        }}
+      >
+        <tags-input class={css({ 'co-selector-input--single-line': this.props.isSingleLine })}>
           <TagsInput
             ref={this.setRef}
             className="tags"

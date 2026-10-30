@@ -7,11 +7,6 @@ import {
   HelperText,
   HelperTextItem,
   Button,
-  TextInputGroup,
-  TextInputGroupMain,
-  TextInputGroupUtilities,
-  LabelGroup,
-  Label,
   Radio,
   Form,
   ActionGroup,
@@ -34,7 +29,10 @@ import type { K8sResourceKind } from '@console/internal/module/k8s';
 import SwitchToYAMLAlert from '@console/shared/src/components/alerts/SwitchToYAMLAlert';
 import { SchemaFieldHelp } from '@console/shared/src/components/utils/SchemaFieldHelp';
 import { useTextInputModal } from '@console/shared/src/hooks/useTextInputModal';
-import { CATALOG_LABEL_KEY } from '../../const';
+import { catalogNames, selectorForCatalogs } from './cluster-extension-catalog-selector';
+import { ClusterExtensionCatalogsField } from './ClusterExtensionCatalogsField';
+import { ClusterExtensionChannelsField } from './ClusterExtensionChannelsField';
+import { ClusterExtensionVersionField } from './ClusterExtensionVersionField';
 import { ServiceAccountDropdown } from './ServiceAccountDropdown';
 
 interface ClusterExtensionFormProps {
@@ -61,26 +59,8 @@ const ClusterExtensionForm: FC<ClusterExtensionFormProps> = ({ formData = {}, on
     [formData?.spec?.source?.catalog?.channels],
   );
 
-  // Extract catalogs from selector
-  const catalogs = useMemo(() => {
-    const selector = formData?.spec?.source?.catalog?.selector;
-    if (!selector) return [];
-
-    // Check matchLabels first
-    const catalogLabel = selector.matchLabels?.['olm.operatorframework.io/metadata.name'];
-    if (catalogLabel) return [catalogLabel];
-
-    // Check matchExpressions for 'In' operator
-    const matchExpr = selector.matchExpressions?.find(
-      (expr: any) =>
-        expr.key === 'olm.operatorframework.io/metadata.name' && expr.operator === 'In',
-    );
-    return matchExpr?.values || [];
-  }, [formData?.spec?.source?.catalog?.selector]);
-
-  // UI-only state (not part of formData)
-  const [channelInputValue, setChannelInputValue] = useState('');
-  const [catalogInputValue, setCatalogInputValue] = useState('');
+  const catalogSelector = formData?.spec?.source?.catalog?.selector;
+  const catalogs = useMemo(() => catalogNames(catalogSelector), [catalogSelector]);
 
   // Start with the auto-create radio button checked. Let useEffect hooks handle the rest.
   const [autoCreateNamespace, setAutoCreateNamespace] = useState(true);
@@ -200,110 +180,31 @@ const ClusterExtensionForm: FC<ClusterExtensionFormProps> = ({ formData = {}, on
   );
 
   const handleVersionChange = useCallback(
-    (_event: any, value: string) => {
+    (value: string) => {
       updateFormDataPath('spec.source.catalog.version', value || undefined);
     },
     [updateFormDataPath],
   );
 
-  const handleChannelInputChange = useCallback((_event: any, value: string) => {
-    setChannelInputValue(value);
-  }, []);
-
-  const handleChannelKeyDown = useCallback(
-    (event: React.KeyboardEvent<HTMLInputElement>) => {
-      const currentToken = channelInputValue.trim();
-      if (event.key === 'Enter' && currentToken) {
-        event.preventDefault();
-        if (!channels.includes(currentToken)) {
-          updateFormDataPath('spec.source.catalog.channels', [...channels, currentToken]);
-        }
-        setChannelInputValue('');
-      }
+  const handleChannelsChange = useCallback(
+    (values: string[]) => {
+      updateFormDataPath('spec.source.catalog.channels', values.length ? values : undefined);
     },
-    [channels, channelInputValue, updateFormDataPath],
+    [updateFormDataPath],
   );
 
-  const handleChannelRemove = useCallback(
-    (channelToRemove: string) => {
-      const newChannels = channels.filter((ch: string) => ch !== channelToRemove);
+  const handleCatalogsChange = useCallback(
+    (values: string[]) => {
       updateFormDataPath(
-        'spec.source.catalog.channels',
-        newChannels.length > 0 ? newChannels : undefined,
+        'spec.source.catalog.selector',
+        selectorForCatalogs(values, catalogSelector),
       );
     },
-    [channels, updateFormDataPath],
-  );
-
-  const handleCatalogInputChange = useCallback((_event: any, value: string) => {
-    setCatalogInputValue(value);
-  }, []);
-
-  const handleCatalogKeyDown = useCallback(
-    (event: React.KeyboardEvent<HTMLInputElement>) => {
-      const currentToken = catalogInputValue.trim();
-      if (event.key === 'Enter' && currentToken) {
-        event.preventDefault();
-        if (!catalogs.includes(currentToken)) {
-          const newCatalogs = [...catalogs, currentToken];
-          // Build catalog selector based on number of catalogs
-          let selector: any;
-          if (newCatalogs.length === 1) {
-            selector = {
-              matchLabels: {
-                [CATALOG_LABEL_KEY]: newCatalogs[0],
-              },
-            };
-          } else if (newCatalogs.length > 1) {
-            selector = {
-              matchExpressions: [
-                {
-                  key: CATALOG_LABEL_KEY,
-                  operator: 'In',
-                  values: newCatalogs,
-                },
-              ],
-            };
-          }
-
-          updateFormDataPath('spec.source.catalog.selector', selector);
-        }
-        setCatalogInputValue('');
-      }
-    },
-    [catalogs, catalogInputValue, updateFormDataPath],
-  );
-
-  const handleCatalogRemove = useCallback(
-    (catalogToRemove: string) => {
-      const newCatalogs = catalogs.filter((cat: string) => cat !== catalogToRemove);
-      // Build catalog selector based on number of catalogs
-      let selector: any;
-      if (newCatalogs.length === 1) {
-        selector = {
-          matchLabels: {
-            [CATALOG_LABEL_KEY]: newCatalogs[0],
-          },
-        };
-      } else if (newCatalogs.length > 1) {
-        selector = {
-          matchExpressions: [
-            {
-              key: CATALOG_LABEL_KEY,
-              operator: 'In',
-              values: newCatalogs,
-            },
-          ],
-        };
-      }
-
-      updateFormDataPath('spec.source.catalog.selector', selector || undefined);
-    },
-    [catalogs, updateFormDataPath],
+    [catalogSelector, updateFormDataPath],
   );
 
   const handleSubmit = useCallback(
-    async (event: React.FormEvent) => {
+    async (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();
       setIsSubmitting(true);
       setError(null);
@@ -414,7 +315,7 @@ const ClusterExtensionForm: FC<ClusterExtensionFormProps> = ({ formData = {}, on
               propertyPath="spec.source.catalog.packageName"
               headerContent={t('Package name')}
               ariaLabel={t('Package name help')}
-              fallbackDescription={t('Package name description')}
+              fallbackDescription={t('Name of the Operator package to install from a catalog.')}
             />
           }
         >
@@ -438,7 +339,7 @@ const ClusterExtensionForm: FC<ClusterExtensionFormProps> = ({ formData = {}, on
               propertyPath="spec.namespace"
               headerContent={t('Namespace')}
               ariaLabel={t('Namespace help')}
-              fallbackDescription={t('Namespace description')}
+              fallbackDescription={t('Namespace where the Operator is installed.')}
             />
           }
         >
@@ -446,7 +347,7 @@ const ClusterExtensionForm: FC<ClusterExtensionFormProps> = ({ formData = {}, on
             <HelperText>
               <HelperTextItem>
                 {t(
-                  'Namespace for the operator controller, manifest, etc. A dedicated operator namespace is recommended.',
+                  'Namespace for the Operator controller and manifests. A dedicated Operator namespace is recommended.',
                 )}
               </HelperTextItem>
             </HelperText>
@@ -525,7 +426,7 @@ const ClusterExtensionForm: FC<ClusterExtensionFormProps> = ({ formData = {}, on
               propertyPath="spec.serviceAccount.name"
               headerContent={t('Service Account')}
               ariaLabel={t('Service Account help')}
-              fallbackDescription={t('Service Account description')}
+              fallbackDescription={t('Name of the service account in the installation namespace.')}
             />
           }
         >
@@ -533,7 +434,7 @@ const ClusterExtensionForm: FC<ClusterExtensionFormProps> = ({ formData = {}, on
             <HelperText>
               <HelperTextItem>
                 {t(
-                  'Service account must be in the selected namespace. A dedicated service account for the operator is recommended.',
+                  'Service account must be in the selected namespace. A dedicated service account for the Operator is recommended.',
                 )}
               </HelperTextItem>
             </HelperText>
@@ -611,132 +512,21 @@ const ClusterExtensionForm: FC<ClusterExtensionFormProps> = ({ formData = {}, on
           </FormGroup>
         </FormGroup>
 
-        <FormGroup
-          label={t('Version or Version range')}
-          labelHelp={
-            <SchemaFieldHelp
-              model={ClusterExtensionModel}
-              propertyPath="spec.source.catalog.version"
-              headerContent={t('Version')}
-              ariaLabel={t('Version help')}
-              fallbackDescription={t('Version description')}
-            />
-          }
+        <ClusterExtensionVersionField
           fieldId="version"
-        >
-          <TextInput
-            type="text"
-            id="version"
-            value={version}
-            onChange={handleVersionChange}
-            aria-label={t('Version or Version range')}
-          />
-          <FormHelperText>
-            <HelperText>
-              <HelperTextItem>
-                {t('For example, 1.2.3 for an exact version, or >1.2.3 <1.4.5 for a range')}
-              </HelperTextItem>
-            </HelperText>
-          </FormHelperText>
-        </FormGroup>
-
-        <FormGroup
-          label={t('Channels')}
-          fieldId="channels"
-          labelHelp={
-            <SchemaFieldHelp
-              model={ClusterExtensionModel}
-              propertyPath="spec.source.catalog.channels"
-              headerContent={t('Channels')}
-              ariaLabel={t('Channels help')}
-              fallbackDescription={t('Channels description')}
-            />
-          }
-        >
-          <TextInputGroup>
-            <TextInputGroupMain
-              value={channelInputValue}
-              onChange={handleChannelInputChange}
-              onKeyDown={handleChannelKeyDown}
-              id="channel"
-              aria-label={t('Channels')}
-            >
-              <LabelGroup>
-                {channels.map((ch: string) => (
-                  <Label key={ch} onClose={() => handleChannelRemove(ch)} isCompact>
-                    {ch}
-                  </Label>
-                ))}
-              </LabelGroup>
-            </TextInputGroupMain>
-            {channels.length > 0 && (
-              <TextInputGroupUtilities>
-                <Button
-                  variant="plain"
-                  onClick={() => updateFormDataPath('spec.source.catalog.channels', undefined)}
-                  aria-label={t('Clear all channels')}
-                >
-                  {t('Clear all')}
-                </Button>
-              </TextInputGroupUtilities>
-            )}
-          </TextInputGroup>
-          <FormHelperText>
-            <HelperText>
-              <HelperTextItem>{t('For example, stable, beta')}</HelperTextItem>
-            </HelperText>
-          </FormHelperText>
-        </FormGroup>
-
-        <FormGroup
-          label={t('Catalogs')}
+          value={version}
+          onChange={handleVersionChange}
+        />
+        <ClusterExtensionChannelsField
+          fieldId="channel"
+          values={channels}
+          onChange={handleChannelsChange}
+        />
+        <ClusterExtensionCatalogsField
           fieldId="catalogs"
-          labelHelp={
-            <SchemaFieldHelp
-              model={ClusterExtensionModel}
-              propertyPath="spec.source.catalog.selector"
-              headerContent={t('Catalogs')}
-              ariaLabel={t('Catalogs help')}
-              fallbackDescription={t('Catalogs description')}
-            />
-          }
-        >
-          <TextInputGroup>
-            <TextInputGroupMain
-              value={catalogInputValue}
-              onChange={handleCatalogInputChange}
-              onKeyDown={handleCatalogKeyDown}
-              id="catalogs"
-              aria-label={t('Catalogs')}
-            >
-              <LabelGroup>
-                {catalogs.map((cat: string) => (
-                  <Label key={cat} onClose={() => handleCatalogRemove(cat)} isCompact>
-                    {cat}
-                  </Label>
-                ))}
-              </LabelGroup>
-            </TextInputGroupMain>
-            {catalogs.length > 0 && (
-              <TextInputGroupUtilities>
-                <Button
-                  variant="plain"
-                  onClick={() => updateFormDataPath('spec.source.catalog.selector', undefined)}
-                  aria-label={t('Clear all catalogs')}
-                >
-                  {t('Clear all')}
-                </Button>
-              </TextInputGroupUtilities>
-            )}
-          </TextInputGroup>
-          <FormHelperText>
-            <HelperText>
-              <HelperTextItem>
-                {t('Package will only be resolved from specified catalogs.')}
-              </HelperTextItem>
-            </HelperText>
-          </FormHelperText>
-        </FormGroup>
+          values={catalogs}
+          onChange={handleCatalogsChange}
+        />
         {error ? <Alert variant="danger" title={error} /> : null}
         <ActionGroup>
           <Button

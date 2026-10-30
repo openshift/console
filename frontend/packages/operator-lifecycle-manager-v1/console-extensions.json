@@ -119,6 +119,69 @@
     }
   },
   {
+    "type": "console.resource/details-item",
+    "properties": {
+      "id": "cluster-extension-catalogs",
+      "model": {
+        "group": "olm.operatorframework.io",
+        "version": "v1",
+        "kind": "ClusterExtension"
+      },
+      "column": "left",
+      "title": "%olm-v1~Catalogs%",
+      "path": "spec.source.catalog.selector",
+      "component": {
+        "$codeRef": "ClusterExtensionCatalogsUpdateModal.ClusterExtensionCatalogsUpdateModal"
+      },
+      "sortWeight": 0
+    },
+    "flags": {
+      "required": ["CLUSTER_EXTENSION_API"]
+    }
+  },
+  {
+    "type": "console.resource/details-item",
+    "properties": {
+      "id": "cluster-extension-channels",
+      "model": {
+        "group": "olm.operatorframework.io",
+        "version": "v1",
+        "kind": "ClusterExtension"
+      },
+      "column": "left",
+      "title": "%olm-v1~Channels%",
+      "path": "spec.source.catalog.channels",
+      "component": {
+        "$codeRef": "ClusterExtensionChannelsUpdateModal.ClusterExtensionChannelsUpdateModal"
+      },
+      "sortWeight": 1
+    },
+    "flags": {
+      "required": ["CLUSTER_EXTENSION_API"]
+    }
+  },
+  {
+    "type": "console.resource/details-item",
+    "properties": {
+      "id": "cluster-extension-version",
+      "model": {
+        "group": "olm.operatorframework.io",
+        "version": "v1",
+        "kind": "ClusterExtension"
+      },
+      "column": "left",
+      "title": "%olm-v1~Version%",
+      "path": "spec.source.catalog.version",
+      "component": {
+        "$codeRef": "ClusterExtensionVersionUpdateModal.ClusterExtensionVersionUpdateModal"
+      },
+      "sortWeight": 2
+    },
+    "flags": {
+      "required": ["CLUSTER_EXTENSION_API"]
+    }
+  },
+  {
     "type": "console.tab",
     "properties": {
       "contextId": "installed-operators",

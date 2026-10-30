@@ -105,6 +105,7 @@ go mod vendor && go mod tidy # Update Go dependencies
 
 ## Common pitfalls
 
+- **Named exports:** Use named exports instead of default exports in new code. Do not introduce `export default` or `export { ... as default }`. Preserve existing default exports when changing them would break public APIs or require unrelated refactoring.
 - **Barrel files:** Barrel files (package index files that re-export other modules) create circular dependencies and slow builds. NEVER import from a barrel file or create a new one in new code — import from specific file paths instead.
 - **Public API breakage:** Always check `console-dynamic-plugin-sdk/src/api/internal-*.ts` before modifying anything in the SDK. External plugins depend on this API.
 - **Missing i18n keys:** Forgetting `yarn i18n` after adding translatable strings causes missing key warnings and E2E failures.
