@@ -10,12 +10,17 @@ import * as _ from 'lodash';
 import { type PackageJson, readPackageSync } from 'read-pkg';
 import * as semver from 'semver';
 import type { Compiler, WebpackPluginInstance } from 'webpack';
-import type { ConsolePluginBuildMetadata, ConsolePluginPackageJSON } from '../build-types';
+import type {
+  ConsolePluginBuildMetadata,
+  ConsolePluginPackageJSON,
+  ConsolePluginSharedModuleVersions,
+} from '../build-types';
 import { extensionsFile, REMOTE_ENTRY_CALLBACK } from '../constants';
 import {
   sharedPluginModules,
   getSharedModuleMetadata,
-} from '../shared-modules/shared-modules-meta';
+} from '../shared-modules/console-shared-modules';
+import { sharedDynamicModules } from '../shared-modules/dynamic-shared-modules';
 import type { DynamicModuleMap } from '../utils/dynamic-module-parser';
 import { parseJSONC } from '../utils/jsonc';
 import { loadSchema } from '../utils/schema';
@@ -25,20 +30,17 @@ import { ValidationResult } from '../validation/ValidationResult';
 import type { DynamicModulePackageSpecs } from './DynamicModuleImportPlugin';
 import { DynamicModuleImportPlugin, resolveDynamicModuleMaps } from './DynamicModuleImportPlugin';
 
-// Resolve from process.cwd(), not this file's real path, so symlinked SDK installations work.
-// It should not be necessary to customize the process.cwd() resolution base path since module
-// bundlers typically use a hoisted top-level node_modules hierarchy.
-const loadVendorPackageJSON = (moduleName: string) =>
+// Resolve from baseDir if provided, fallback to using process.cwd() otherwise
+const loadJSON = <T = any>(filePath: string, baseDir = process.cwd()) =>
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-  require(
-    require.resolve(`${moduleName}/package.json`, {
-      paths: [process.cwd()],
-    }),
-  ) as PackageJson;
+  require(require.resolve(filePath, { paths: [baseDir] })) as T;
 
-const getVendorPackageVersion = (moduleName: string) => {
+const loadVendorPackageJSON = (moduleName: string, baseDir?: string) =>
+  loadJSON<PackageJson>(`${moduleName}/package.json`, baseDir);
+
+const getVendorPackageVersion = (moduleName: string, baseDir?: string) => {
   try {
-    return loadVendorPackageJSON(moduleName).version;
+    return loadVendorPackageJSON(moduleName, baseDir).version;
   } catch (e) {
     return undefined;
   }
@@ -52,30 +54,43 @@ const getPackageDependencies = (pkg: PackageJson) => ({
 const hasPackageDependency = (pkg: PackageJson, depName: string) =>
   Object.keys(getPackageDependencies(pkg)).includes(depName);
 
-const getPluginSDKPackagePeerDependencies = () =>
-  loadVendorPackageJSON('@openshift-console/dynamic-plugin-sdk').peerDependencies;
+const getSharedModuleVersions = (baseDir: string) => {
+  try {
+    return loadJSON<ConsolePluginSharedModuleVersions>(
+      '@openshift-console/dynamic-plugin-sdk/meta/shared-modules.json',
+      baseDir,
+    );
+  } catch (e) {
+    // Throw an error instead of falling back to using core SDK package's peerDependencies.
+    // @openshift-console/dynamic-plugin-sdk and @openshift-console/dynamic-plugin-sdk-webpack
+    // packages are expected to have matching version resolutions.
+    throw new Error(`Cannot parse meta/shared-modules.json: ${String(e)}`);
+  }
+};
 
 const getPatternFlyStyles = (baseDir: string) =>
   glob.sync(`${baseDir}/node_modules/@patternfly/react-styles/**/*.css`);
 
 /**
- * Get webpack shared module configuration to use by Console plugins.
+ * Get shared module configuration: Console provided shared modules and dynamic modules.
  *
- * This includes Console provided {@link sharedPluginModules} and shared dynamic modules
- * resolved from {@link dynamicModulePackageSpecs}.
+ * This is the plugin shared module configuration which includes:
+ * - {@link sharedPluginModules Console provided shared modules}
+ * - {@link dynamicModulePackageSpecs shared dynamic modules}
  *
  * @see https://webpack.js.org/plugins/module-federation-plugin/#sharing-hints
  */
 const getWebpackSharedModules = (
+  baseDir: string,
   pkg: ConsolePluginPackageJSON,
   dynamicModuleMaps: Record<string, DynamicModuleMap>,
 ): WebpackSharedObject => {
-  const sdkPkgDeps = getPluginSDKPackagePeerDependencies();
+  const sharedModuleVersions = getSharedModuleVersions(baseDir);
 
-  const consoleProvidedSharedModules = sharedPluginModules.reduce<WebpackSharedObject>(
+  const consoleProvidedModules = sharedPluginModules.reduce<WebpackSharedObject>(
     (acc, moduleName) => {
       const { singleton, allowFallback } = getSharedModuleMetadata(moduleName);
-      const providedVersionRange = sdkPkgDeps[moduleName];
+      const providedVersionRange = sharedModuleVersions.console[moduleName];
       const moduleConfig: WebpackSharedConfig = { singleton };
 
       if (!allowFallback) {
@@ -93,10 +108,10 @@ const getWebpackSharedModules = (
     {},
   );
 
-  const sharedDynamicModules = Object.entries(dynamicModuleMaps).reduce<WebpackSharedObject>(
+  const dynamicModules = Object.entries(dynamicModuleMaps).reduce<WebpackSharedObject>(
     (acc, [moduleName, dynamicModuleMap]) => {
       const pluginDeps = getPackageDependencies(pkg);
-      const moduleVersion = getVendorPackageVersion(moduleName);
+      const moduleVersion = getVendorPackageVersion(moduleName, baseDir);
       const moduleVersionRange = pluginDeps[moduleName];
       const moduleConfig: WebpackSharedConfig = {};
 
@@ -117,18 +132,20 @@ const getWebpackSharedModules = (
     {},
   );
 
-  return { ...consoleProvidedSharedModules, ...sharedDynamicModules };
+  return { ...consoleProvidedModules, ...dynamicModules };
 };
 
 /**
  * Perform (additional) build-time validation of Console plugin metadata.
  *
- * Note that `DynamicRemotePlugin` takes care of basic build metadata validation.
- * Therefore, this function only performs additional Console specific validations.
+ * Note that {@link DynamicRemotePlugin} takes care of basic build metadata validation.
+ * Therefore, this function only performs additional Console plugin specific validations.
  */
-const validateConsoleBuildMetadata = (metadata: ConsolePluginBuildMetadata) => {
+const validatePluginBuildMetadata = (metadata: ConsolePluginBuildMetadata) => {
   const result = new ValidationResult('Console plugin metadata');
+
   result.assertions.validDNSSubdomainName(metadata.name, 'metadata.name');
+
   return result;
 };
 
@@ -158,54 +175,57 @@ const getCompileTimeSharedModuleWarnings = (pkg: ConsolePluginPackageJSON): stri
   return warnings;
 };
 
-const validateConsoleProvidedSharedModules = (pkg: ConsolePluginPackageJSON) => {
-  const sdkPkgDeps = getPluginSDKPackagePeerDependencies();
+const validateSharedModuleVersions = (baseDir: string, pkg: ConsolePluginPackageJSON) => {
   const result = new ValidationResult('package.json');
+  const sharedModuleVersions = getSharedModuleVersions(baseDir);
 
-  sharedPluginModules.forEach((moduleName) => {
-    const { allowFallback } = getSharedModuleMetadata(moduleName);
+  const validateModuleVersion = (
+    moduleName: string,
+    allowedVersionRange: string,
+    getErrorMessage: (usedVersion: string) => string,
+  ) => {
+    const usedVersion = getVendorPackageVersion(moduleName, baseDir);
 
-    // Skip modules that allow a fallback version to be provided by the plugin.
-    // Also skip modules which are not explicitly listed in the plugin's dependencies.
-    if (allowFallback || !hasPackageDependency(pkg, moduleName)) {
-      return;
-    }
-
-    const providedVersionRange = sdkPkgDeps[moduleName];
-    const consumedVersion = getVendorPackageVersion(moduleName);
-
-    if (semver.validRange(providedVersionRange) && semver.valid(consumedVersion)) {
+    if (
+      hasPackageDependency(pkg, moduleName) &&
+      semver.validRange(allowedVersionRange) &&
+      semver.valid(usedVersion)
+    ) {
       result.assertThat(
-        semver.satisfies(consumedVersion, providedVersionRange),
-        `Console provides shared module ${moduleName} ${providedVersionRange} but plugin uses version ${consumedVersion}`,
+        semver.satisfies(usedVersion, allowedVersionRange),
+        getErrorMessage(usedVersion),
       );
     }
+  };
+
+  Object.entries(sharedModuleVersions.console).forEach(([moduleName, providedVersionRange]) => {
+    validateModuleVersion(
+      moduleName,
+      providedVersionRange,
+      (usedVersion) =>
+        `Console provides shared module ${moduleName} ${providedVersionRange} but plugin uses ${usedVersion}`,
+    );
+  });
+
+  Object.entries(sharedModuleVersions.dynamic).forEach(([moduleName, supportedVersionRange]) => {
+    validateModuleVersion(
+      moduleName,
+      supportedVersionRange,
+      (usedVersion) =>
+        `Console supports shared dynamic module ${moduleName} ${supportedVersionRange} but plugin uses ${usedVersion}`,
+    );
   });
 
   return result;
 };
 
 /**
- * PatternFly packages that support dynamic modules to be used with webpack module federation.
- *
- * Console provided {@link sharedPluginModules} should _NOT_ be listed here.
- */
-const dynamicModulePatternFlyPackages = [
-  '@patternfly/react-core',
-  '@patternfly/react-data-view',
-  '@patternfly/react-icons',
-  '@patternfly/react-table',
-  '@patternfly/react-templates',
-];
-
-/**
  * Default shared dynamic module package definitions.
  */
-export const dynamicModulePackageSpecs =
-  dynamicModulePatternFlyPackages.reduce<DynamicModulePackageSpecs>(
-    (acc, moduleName) => ({ ...acc, [moduleName]: {} }),
-    {},
-  );
+export const dynamicModulePackageSpecs = sharedDynamicModules.reduce<DynamicModulePackageSpecs>(
+  (acc, moduleName) => ({ ...acc, [moduleName]: {} }),
+  {},
+);
 
 export const dynamicModuleImportTransformFilter = (moduleRequest: string) => {
   const isCode = /\.(jsx?|tsx?)$/.test(moduleRequest);
@@ -216,7 +236,10 @@ export const dynamicModuleImportTransformFilter = (moduleRequest: string) => {
 
 export type ConsoleRemotePluginOptions = Partial<{
   /**
-   * Base directory for resolving relative paths when processing plugin assets.
+   * Base directory for resolving relative paths and modules when processing plugin assets.
+   *
+   * In a typical plugin project, it should not be necessary to provide an explicit `baseDir`
+   * unless the plugin's base resolution path differs from `process.cwd()` at build time.
    *
    * Must be an absolute path.
    *
@@ -271,12 +294,13 @@ export type ConsoleRemotePluginOptions = Partial<{
   validateExtensionIntegrity: boolean;
 
   /**
-   * Validate Console provided shared module dependencies?
+   * Validate shared module dependencies and their versions?
    *
-   * Console provided shared modules can be reflected as `dependencies` within the manifest of
-   * the `@openshift-console/dynamic-plugin-sdk` package. For each shared module where a fallback
-   * version is not allowed, check that the version consumed by the plugin satisfies the expected
-   * semver range as declared in the Console core SDK package manifest.
+   * The `@openshift-console/dynamic-plugin-sdk` package contains metadata about Console provided
+   * and shared dynamic modules, listed in `meta/shared-modules.json` file.
+   *
+   * This option controls whether to validate the usage of shared modules and their versions given
+   * the available metadata.
    *
    * @default true
    */
@@ -327,6 +351,9 @@ export type ConsoleRemotePluginOptions = Partial<{
      * ```ts
      * path.resolve(baseDir, 'node_modules')
      * ```
+     *
+     * @deprecated Use `baseDir` to specify a custom base resolution path and leave `modulePaths`
+     * undefined to ensure that dynamic module resolution uses the custom `baseDir`.
      */
     modulePaths: string[];
 
@@ -361,7 +388,7 @@ export type ConsoleRemotePluginOptions = Partial<{
 /**
  * Generates Console dynamic plugin remote container and related assets.
  *
- * Refer to {@link sharedPluginModules} for details on Console provided shared modules and their configuration.
+ * Refer to {@link getWebpackSharedModules} for details on plugin shared module configuration.
  */
 export class ConsoleRemotePlugin implements WebpackPluginInstance {
   private readonly adaptedOptions: Required<ConsoleRemotePluginOptions>;
@@ -394,23 +421,10 @@ export class ConsoleRemotePlugin implements WebpackPluginInstance {
     }
 
     if (this.adaptedOptions.validateSharedModules) {
-      validateConsoleProvidedSharedModules(this.pkg).report();
+      validateSharedModuleVersions(baseDir, this.pkg).report();
     }
 
-    validateConsoleBuildMetadata(this.adaptedOptions.pluginMetadata).report();
-
-    const overlapDependencyNames = _.intersection(
-      Object.keys(this.adaptedOptions.pluginMetadata.dependencies ?? {}),
-      Object.keys(this.adaptedOptions.pluginMetadata.optionalDependencies ?? {}),
-    );
-
-    if (overlapDependencyNames.length > 0) {
-      throw new Error(
-        `Detected overlap between dependencies and optionalDependencies: ${overlapDependencyNames.join(
-          ', ',
-        )}`,
-      );
-    }
+    validatePluginBuildMetadata(this.adaptedOptions.pluginMetadata).report();
 
     const resolvedModulePaths = this.adaptedOptions.sharedDynamicModuleSettings.modulePaths ?? [
       path.resolve(baseDir, 'node_modules'),
@@ -467,7 +481,7 @@ export class ConsoleRemotePlugin implements WebpackPluginInstance {
       }
     });
 
-    const sharedModules = getWebpackSharedModules(this.pkg, this.dynamicModuleMaps);
+    const sharedModules = getWebpackSharedModules(baseDir, this.pkg, this.dynamicModuleMaps);
 
     new DynamicRemotePlugin({
       pluginMetadata: {

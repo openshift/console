@@ -18,7 +18,7 @@ type SharedModuleMetadata = Partial<{
   allowFallback: boolean;
 
   /**
-   * If `true`, this module's implementation is aliased to another module.
+   * If `true`, this module's implementation is aliased to another module at runtime.
    *
    * Plugins should avoid using aliased modules due to risk of potential skew between
    * aliased vs actual module code.
@@ -36,7 +36,7 @@ type SharedModuleMetadata = Partial<{
 }>;
 
 /**
- * Modules shared between the Console application and its dynamic plugins.
+ * Shared modules provided by the Console application to its plugins.
  */
 export const sharedPluginModules = [
   '@openshift/dynamic-plugin-sdk',
@@ -53,12 +53,9 @@ export const sharedPluginModules = [
   'redux-thunk',
 ] as const;
 
-export type SharedModuleNames = (typeof sharedPluginModules)[number];
+type SharedModuleNames = (typeof sharedPluginModules)[number];
 
-/**
- * Metadata associated with the shared modules.
- */
-const sharedPluginModulesMetadata: Record<SharedModuleNames, SharedModuleMetadata> = {
+const sharedPluginModuleMetadata: Record<SharedModuleNames, SharedModuleMetadata> = {
   '@openshift/dynamic-plugin-sdk': {},
   '@openshift-console/dynamic-plugin-sdk': {},
   '@openshift-console/dynamic-plugin-sdk-internal': {},
@@ -74,7 +71,7 @@ const sharedPluginModulesMetadata: Record<SharedModuleNames, SharedModuleMetadat
 };
 
 /**
- * Retrieve full metadata for the given shared module.
+ * Get metadata for the given shared module.
  */
 export const getSharedModuleMetadata = (
   moduleName: SharedModuleNames,
@@ -84,6 +81,6 @@ export const getSharedModuleMetadata = (
     allowFallback = false,
     aliased = false,
     deprecated = false,
-  } = sharedPluginModulesMetadata[moduleName];
+  } = sharedPluginModuleMetadata[moduleName];
   return { singleton, allowFallback, aliased, deprecated };
 };

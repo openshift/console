@@ -26,3 +26,13 @@ export type ConsolePluginBuildMetadata = PluginBuildMetadata & ConsoleSupportedC
 export type ConsolePluginPackageJSON = PackageJson & {
   consolePlugin?: ConsolePluginBuildMetadata;
 };
+
+/**
+ * Describes the `meta/shared-modules.json` file containing shared modules and their supported versions.
+ */
+export interface ConsolePluginSharedModuleVersions {
+  /** Console provided shared modules: singleton no-fallback modules to be used by all plugins. */
+  console: PackageJson['dependencies'];
+  /** Shared dynamic modules: PatternFly packages that support `dist/dynamic` module structure. */
+  dynamic: PackageJson['dependencies'];
+};

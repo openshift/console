@@ -10,6 +10,13 @@ Console, use `4.x.0-prerelease.n` packages.
 For older 1.x plugin SDK packages, refer to "OpenShift Console Versions vs SDK Versions"
 compatibility table in [Console dynamic plugins README](./README.md).
 
+## 5.1.0-prerelease.2 - TBD
+
+- `ConsoleRemotePlugin` uses `meta/shared-modules.json` to validate shared module dependencies
+  ([CONSOLE-5065], [#17439])
+- `ConsoleRemotePlugin` shared dynamic module option `modulePaths` is now deprecated, prefer using
+  `baseDir` ([CONSOLE-5065], [#17439])
+
 ## 5.1.0-prerelease.1 - 2026-10-16
 
 - Add `ConsoleRemotePlugin` option `baseDir` to support multi-plugin builds ([OCPBUGS-111520],
@@ -234,3 +241,4 @@ compatibility table in [Console dynamic plugins README](./README.md).
 [#17140]: https://github.com/openshift/console/pull/17140
 [#17259]: https://github.com/openshift/console/pull/17259
 [#17318]: https://github.com/openshift/console/pull/17318
+[#17439]: https://github.com/openshift/console/pull/17439
