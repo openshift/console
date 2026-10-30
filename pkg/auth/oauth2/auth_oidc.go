@@ -23,7 +23,7 @@ type oauth2ConfigConstructor func(oauth2.Endpoint) *oauth2.Config
 type oidcAuth struct {
 	*oidcConfig
 
-	providerCache *asynccache.AsyncCache[*oidc.Provider]
+	providerCache *asynccache.AsyncCache[*oidcProviderSnapshot]
 
 	// This preserves the old logic of associating users with session keys
 	// and requires smart routing when running multiple backend instances.
@@ -50,11 +50,10 @@ type oidcConfig struct {
 
 func newOIDCAuth(ctx context.Context, sessionStore *sessions.CombinedSessionStore, c *oidcConfig, metrics *auth.Metrics) (*oidcAuth, error) {
 	// NewProvider attempts to do OIDC Discovery
-	providerCache, err := asynccache.NewAsyncCache[*oidc.Provider](
+	providerCache, err := asynccache.NewAsyncCache[*oidcProviderSnapshot](
 		ctx, 5*time.Minute,
-		func(cacheCtx context.Context) (*oidc.Provider, error) {
-			oidcCtx := oidc.ClientContext(cacheCtx, c.getClient())
-			return oidc.NewProvider(oidcCtx, c.issuerURL)
+		func(cacheCtx context.Context) (*oidcProviderSnapshot, error) {
+			return discoverOIDCProvider(cacheCtx, c)
 		},
 	)
 	if err != nil {
@@ -122,7 +121,7 @@ func (o *oidcAuth) refreshSession(ctx context.Context, w http.ResponseWriter, r 
 }
 
 func (o *oidcAuth) verify(ctx context.Context, rawIDToken string) (*oidc.IDToken, error) {
-	provider := o.providerCache.GetItem()
+	provider := o.providerCache.GetItem().provider
 	return provider.Verifier(&oidc.Config{ClientID: o.clientID}).Verify(ctx, rawIDToken)
 }
 
@@ -226,12 +225,12 @@ func (o *oidcAuth) LogoutRedirectURL() string {
 		EndSessionEndpoint string `json:"end_session_endpoint"`
 	}{}
 
-	provider := o.providerCache.GetItem()
+	provider := o.providerCache.GetItem().provider
 	provider.Claims(&sessionEndpoints)
 
 	return sessionEndpoints.EndSessionEndpoint
 }
 
 func (o *oidcAuth) oauth2Config() *oauth2.Config {
-	return o.oidcConfig.constructOAuth2Config(o.providerCache.GetItem().Endpoint())
+	return o.oidcConfig.constructOAuth2Config(o.providerCache.GetItem().provider.Endpoint())
 }

@@ -49,8 +49,18 @@ var (
 // It's also capable of signing tokens so that these can be used in testing and
 // verified against the key from the jwks_uri.
 type mockOIDCProvider struct {
-	issuer  string
-	privKey *rsa.PrivateKey
+	issuer            string
+	privKey           *rsa.PrivateKey
+	flowLock          sync.Mutex
+	methods           json.RawMessage
+	requirePKCE       bool
+	failExchange      bool
+	invalidIDToken    bool
+	discoveryStatus   int
+	discoveryRequests int
+	codes             map[string]url.Values
+	exchanges         []url.Values
+	refreshRequests   []url.Values
 }
 
 func newMockOIDCProvider(issuer *url.URL, privKey *rsa.PrivateKey) *mockOIDCProvider {
@@ -84,17 +94,24 @@ func (m *mockOIDCProvider) handleJWKS(w http.ResponseWriter, _ *http.Request) {
 }
 
 func (m *mockOIDCProvider) handleDiscovery(w http.ResponseWriter, r *http.Request) {
-	// https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfigurationRequest
+	m.flowLock.Lock()
+	defer m.flowLock.Unlock()
+	m.discoveryRequests++
+	if m.discoveryStatus != 0 {
+		http.Error(w, "discovery unavailable", m.discoveryStatus)
+		return
+	}
 	w.Header().Set("Content-Type", "application/json")
-	w.Write([]byte(fmt.Sprintf(`{
- "issuer": "%s",
- "authorization_endpoint": "%s/auth",
- "token_endpoint": "%s/token",
- "jwks_uri": "%s/keys"
-}`, m.issuer, m.issuer, m.issuer, m.issuer,
-	),
-	),
-	)
+	metadata := map[string]interface{}{
+		"issuer": m.issuer, "authorization_endpoint": m.issuer + "/auth",
+		"token_endpoint": m.issuer + "/token", "jwks_uri": m.issuer + "/keys",
+	}
+	if len(m.methods) > 0 {
+		metadata["code_challenge_methods_supported"] = m.methods
+	}
+	if err := json.NewEncoder(w).Encode(metadata); err != nil {
+		http.Error(w, "invalid discovery fixture", http.StatusInternalServerError)
+	}
 }
 
 func (m *mockOIDCProvider) handleToken(w http.ResponseWriter, r *http.Request) {
@@ -110,8 +127,11 @@ func (m *mockOIDCProvider) handleToken(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Form.Get("grant_type") {
 	case "authorization_code":
-		panic("not implemented")
+		m.exchangeCode(w, r)
 	case "refresh_token":
+		m.flowLock.Lock()
+		m.refreshRequests = append(m.refreshRequests, r.PostForm)
+		m.flowLock.Unlock()
 		clientID, clientSecret, ok := r.BasicAuth()
 		if !ok {
 			clientID, clientSecret = r.Form.Get("client_id"), r.Form.Get("client_secret")
@@ -208,6 +228,7 @@ func (m *mockOIDCProvider) signPayload(payload string) string {
 }
 
 func (m *mockOIDCProvider) attachEndpoints(server *http.ServeMux) error {
+	server.HandleFunc("/auth", m.authorizeCode)
 	server.HandleFunc("/token", m.handleToken)
 	server.HandleFunc("/keys", m.handleJWKS)
 	server.HandleFunc("/.well-known/openid-configuration", m.handleDiscovery)
