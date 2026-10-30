@@ -32,7 +32,6 @@ import {
   ResourceLink,
   ResourceSummary,
   SectionHeading,
-  detailsPage,
   navFactory,
 } from './utils';
 
@@ -231,10 +230,7 @@ export const VolumeAttributesClassDetailsPage: FC<VolumeAttributesClassDetailsPa
     );
   };
 
-  const pages = [
-    navFactory.details(detailsPage(VolumeAttributesClassDetails)),
-    navFactory.editYaml(),
-  ];
+  const pages = [navFactory.details(VolumeAttributesClassDetails), navFactory.editYaml()];
 
   return (
     <DetailsPage
