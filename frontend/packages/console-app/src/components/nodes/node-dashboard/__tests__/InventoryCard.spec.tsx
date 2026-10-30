@@ -1,192 +1,224 @@
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
+import type {
+  NodeKind,
+  PrometheusResponse,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import type { Extension, ResolvedExtension } from '@console/dynamic-plugin-sdk/src/types';
 import { useFlag } from '@console/dynamic-plugin-sdk/src/utils/flags';
-import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import type { NodeKind } from '@console/internal/module/k8s';
+import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sWatchResource';
+import { usePrometheusPoll } from '@console/internal/components/graphs/prometheus-poll-hook';
+import type { PodKind } from '@console/internal/module/k8s/types';
+import { usePrometheusGate } from '@console/shared/src/hooks/usePrometheusGate';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import InventoryCard from '../InventoryCard';
 import { NodeDashboardContext } from '../NodeDashboardContext';
 
 jest.mock('@console/dynamic-plugin-sdk/src/api/useResolvedExtensions', () => ({
-  ...jest.requireActual('@console/dynamic-plugin-sdk/src/api/useResolvedExtensions'),
   useResolvedExtensions: jest.fn(),
 }));
-
 jest.mock('@console/dynamic-plugin-sdk/src/utils/flags', () => ({
   useFlag: jest.fn(() => false),
 }));
+jest.mock('@console/internal/components/graphs/prometheus-poll-hook', () => ({
+  usePrometheusPoll: jest.fn(),
+}));
 
-jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
+jest.mock('@console/shared/src/hooks/usePrometheusGate', () => ({
+  usePrometheusGate: jest.fn(() => true),
+}));
+jest.mock('@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sWatchResource', () => ({
   useK8sWatchResource: jest.fn(),
 }));
 
-const mockResourceInventoryItem = jest.fn();
+const mockNode: NodeKind = {
+  apiVersion: 'v1',
+  kind: 'Node',
+  metadata: { name: 'test-node', uid: 'node-uid' },
+  spec: {},
+  status: { images: [{ names: ['image1'] }, { names: ['image2'] }] },
+};
+const card = (obj = mockNode) => (
+  <NodeDashboardContext.Provider
+    value={{
+      obj,
+      setCPULimit: () => {},
+      setMemoryLimit: () => {},
+      setHealthCheck: () => {},
+    }}
+  >
+    <InventoryCard />
+  </NodeDashboardContext.Provider>
+);
+const renderCard = () => renderWithProviders(card());
+const ExtensionInventoryItem = () => <span>Extension Inventory Item</span>;
+const extension: ResolvedExtension<Extension> = {
+  uid: 'test-inventory',
+  pluginName: 'test-plugin',
+  type: 'console.node/inventory-item',
+  properties: { priority: 80, component: ExtensionInventoryItem },
+};
 
-jest.mock('@console/shared/src/components/dashboard/inventory-card/InventoryItem', () => ({
-  InventoryItem: ({ title, count }: { title: string; count?: number }) => (
-    <div data-test-inventory-item={`${title}:${count ?? 0}`}>{`${title}: ${count ?? 0}`}</div>
-  ),
-  ResourceInventoryItem: (props: { basePath: string }) => {
-    mockResourceInventoryItem(props);
-    return <div data-test-inventory-item="pods">Pod Inventory</div>;
-  },
-}));
-
-const MockExtensionInventoryItem = jest.fn(() => (
-  <div data-test-inventory-item="extension">Extension Inventory Item</div>
-));
-
-const useResolvedExtensionsMock = useResolvedExtensions as jest.Mock;
-const useK8sWatchResourceMock = useK8sWatchResource as jest.Mock;
-const useFlagMock = useFlag as jest.Mock;
-
-describe('InventoryCard', () => {
-  const mockNode: NodeKind = {
-    apiVersion: 'v1',
-    kind: 'Node',
-    metadata: {
-      name: 'test-node',
-      uid: 'node-uid',
-    },
-    spec: {},
-    status: {
-      images: [{ names: ['image1'] }, { names: ['image2'] }],
+beforeEach(() => {
+  jest.clearAllMocks();
+  jest.mocked(usePrometheusGate).mockReturnValue(true);
+  jest.mocked(useK8sWatchResource).mockReturnValue([[], true, undefined]);
+  jest.mocked(useFlag).mockReturnValue(false);
+  jest.mocked(useResolvedExtensions).mockReturnValue([[], true, []]);
+  const counts: PrometheusResponse = {
+    status: 'success',
+    data: {
+      resultType: 'vector',
+      result: [{ metric: { status: 'Running' }, value: [0, '100'] }],
     },
   };
+  jest.mocked(usePrometheusPoll).mockImplementation(({ query }) => [
+    query.includes('group by (uid)')
+      ? {
+          status: 'success',
+          data: {
+            resultType: 'vector',
+            result: [
+              {
+                metric: { namespace: 'example', pod: 'test-pod', uid: 'pod-uid' },
+                value: [0, '1'],
+              },
+            ],
+          },
+        }
+      : counts,
+    undefined,
+    false,
+  ]);
+});
 
-  const renderWithContext = (node: NodeKind = mockNode) =>
-    render(
-      <NodeDashboardContext.Provider
-        value={{
-          obj: node,
-          setCPULimit: () => {},
-          setMemoryLimit: () => {},
-          setHealthCheck: () => {},
-        }}
-      >
-        <InventoryCard />
-      </NodeDashboardContext.Provider>,
-    );
+it('renders pod and image counts', () => {
+  renderCard();
+  expect(screen.getByText('Inventory')).toBeVisible();
+  expect(screen.getByRole('link', { name: '100 Pods' })).toBeVisible();
+  expect(screen.getByText('2 Images')).toBeVisible();
+});
 
-  beforeEach(() => {
-    jest.clearAllMocks();
-    useFlagMock.mockReturnValue(false);
-    useResolvedExtensionsMock.mockReturnValue([[], true]);
-    useK8sWatchResourceMock.mockReturnValue([[], true, undefined]);
-  });
+it.each([
+  [true, 1],
+  [undefined, 0],
+] as const)(
+  'shows the pod label without a false zero while monitoring is %s and data is loading',
+  (available, pollCount) => {
+    jest.mocked(usePrometheusGate).mockReturnValue(available);
+    jest.mocked(usePrometheusPoll).mockReturnValue([undefined, undefined, true]);
+    renderCard();
+    expect(screen.getByRole('link', { name: 'Pods' })).toBeVisible();
+    expect(screen.queryByText('0 Pods')).not.toBeInTheDocument();
+    expect(useK8sWatchResource).not.toHaveBeenCalled();
+    expect(usePrometheusPoll).toHaveBeenCalledTimes(pollCount);
+  },
+);
 
-  it('should render the inventory card with title', () => {
-    renderWithContext();
+it('shows unavailable on a monitoring error', () => {
+  jest.mocked(usePrometheusPoll).mockReturnValue([undefined, new Error('Forbidden'), false]);
+  renderCard();
+  expect(screen.getByText('Not available')).toBeVisible();
+  expect(screen.getByText('2 Images')).toBeVisible();
+});
 
-    expect(screen.getByText('Inventory')).toBeVisible();
-  });
+it('renders standard counts before extensions resolve', () => {
+  jest.mocked(useResolvedExtensions).mockReturnValue([[], false, []]);
+  renderCard();
+  expect(screen.getByRole('link', { name: '100 Pods' })).toBeVisible();
+});
 
-  it('should render Pod and Image inventory items', () => {
-    renderWithContext();
+it('renders plugin inventory items in priority order', () => {
+  jest
+    .mocked(useResolvedExtensions)
+    .mockImplementation((predicate) => [predicate(extension) ? [extension] : [], true, []]);
+  renderCard();
+  const pods = screen.getByRole('link', { name: '100 Pods' });
+  const plugin = screen.getByText('Extension Inventory Item');
+  const images = screen.getByText('2 Images');
+  expect(pods.compareDocumentPosition(plugin)).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
+  expect(plugin.compareDocumentPosition(images)).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
+});
 
-    expect(screen.getByText('Pod Inventory')).toBeVisible();
-    expect(screen.getByText('Image: 2')).toBeVisible();
-  });
+it('links to the legacy pod list', () => {
+  renderCard();
+  expect(screen.getByRole('link', { name: '100 Pods' })).toHaveAttribute(
+    'href',
+    '/k8s/cluster/nodes/test-node/pods',
+  );
+});
 
-  it('should watch pods for the current node', () => {
-    renderWithContext();
+it('links to the workload pod list in OpenShift 5', () => {
+  jest.mocked(useFlag).mockReturnValue(true);
+  renderCard();
+  expect(screen.getByRole('link', { name: '100 Pods' })).toHaveAttribute(
+    'href',
+    '/k8s/cluster/nodes/test-node/workload/pods',
+  );
+});
 
-    expect(useK8sWatchResourceMock).toHaveBeenCalledWith({
-      isList: true,
-      kind: 'Pod',
+it('scopes the Prometheus query to this node and does not watch pods', () => {
+  renderCard();
+  expect(usePrometheusPoll).toHaveBeenCalledWith(
+    expect.objectContaining({
+      query: expect.stringContaining('node="test-node"'),
+    }),
+  );
+  expect(usePrometheusPoll).toHaveBeenCalledWith(
+    expect.objectContaining({
+      query: expect.stringContaining('uid=~"pod-uid"'),
+    }),
+  );
+  expect(useK8sWatchResource).not.toHaveBeenCalled();
+});
+
+it('uses a node-scoped pod watch when monitoring is disabled', () => {
+  jest.mocked(usePrometheusGate).mockReturnValue(false);
+  const pods: PodKind[] = [
+    { metadata: { name: 'pod' }, spec: { containers: [] }, status: { phase: 'Running' } },
+  ];
+  jest.mocked(useK8sWatchResource).mockReturnValue([pods, true, undefined]);
+  renderCard();
+  expect(screen.getByRole('link', { name: '1 Pod' })).toBeVisible();
+  expect(usePrometheusPoll).not.toHaveBeenCalled();
+  expect(useK8sWatchResource).toHaveBeenCalledWith(
+    expect.objectContaining({
       fieldSelector: 'spec.nodeName=test-node',
-    });
-  });
+    }),
+  );
+});
 
-  it('should show loading state for pods when pods are not loaded', () => {
-    useK8sWatchResourceMock.mockReturnValue([[], false, undefined]);
-
-    renderWithContext();
-
-    expect(screen.getByText('Pod: 0')).toBeVisible();
-    expect(screen.queryByText('Pod Inventory')).not.toBeInTheDocument();
-  });
-
-  it('should render standard inventory items when extensions are not resolved', () => {
-    useResolvedExtensionsMock.mockReturnValue([[], false]);
-
-    renderWithContext();
-
-    expect(screen.getByText('Pod Inventory')).toBeVisible();
-    expect(screen.getByText('Image: 2')).toBeVisible();
-    expect(screen.queryByText('Extension Inventory Item')).not.toBeInTheDocument();
-  });
-
-  it('should render extension inventory items when extensions are resolved', () => {
-    useResolvedExtensionsMock.mockReturnValue([
-      [
+it('keeps the last count during pod churn but clears it when navigating to another node', () => {
+  let refreshing = false;
+  const counts: PrometheusResponse = {
+    status: 'success',
+    data: { resultType: 'vector', result: [{ metric: { status: 'Running' }, value: [0, '100'] }] },
+  };
+  jest.mocked(usePrometheusPoll).mockImplementation(({ query }) => {
+    if (query.includes('group by (uid)')) {
+      return [
         {
-          uid: 'extension-1',
-          type: 'console.node/inventory-item',
-          properties: {
-            priority: 80,
-            component: MockExtensionInventoryItem,
+          status: 'success',
+          data: {
+            resultType: 'vector',
+            result: [{ metric: { uid: refreshing ? 'new-uid' : 'old-uid' }, value: [0, '1'] }],
           },
         },
-      ],
-      true,
-    ]);
-
-    renderWithContext();
-
-    expect(MockExtensionInventoryItem).toHaveBeenCalled();
-    expect(screen.getByText('Extension Inventory Item')).toBeVisible();
+        undefined,
+        false,
+      ];
+    }
+    return refreshing ? [undefined, undefined, true] : [counts, undefined, false];
   });
-
-  it('should use legacy pods path when FLAG_OPENSHIFT_5 is disabled', () => {
-    useFlagMock.mockReturnValue(false);
-
-    renderWithContext();
-
-    expect(mockResourceInventoryItem).toHaveBeenCalledWith(
-      expect.objectContaining({
-        basePath: '/k8s/cluster/nodes/test-node/pods',
-      }),
-    );
-  });
-
-  it('should use workload pods path when FLAG_OPENSHIFT_5 is enabled', () => {
-    useFlagMock.mockReturnValue(true);
-
-    renderWithContext();
-
-    expect(mockResourceInventoryItem).toHaveBeenCalledWith(
-      expect.objectContaining({
-        basePath: '/k8s/cluster/nodes/test-node/workload/pods',
-      }),
-    );
-  });
-
-  it('should sort inventory items by priority from highest to lowest', () => {
-    useResolvedExtensionsMock.mockReturnValue([
-      [
-        {
-          uid: 'extension-1',
-          type: 'console.node/inventory-item',
-          properties: {
-            priority: 80,
-            component: MockExtensionInventoryItem,
-          },
-        },
-      ],
-      true,
-    ]);
-
-    renderWithContext();
-
-    const podInventory = screen.getByText('Pod Inventory');
-    const extensionInventory = screen.getByText('Extension Inventory Item');
-    const imageInventory = screen.getByText('Image: 2');
-
-    expect(podInventory.compareDocumentPosition(extensionInventory)).toBe(
-      Node.DOCUMENT_POSITION_FOLLOWING,
-    );
-    expect(extensionInventory.compareDocumentPosition(imageInventory)).toBe(
-      Node.DOCUMENT_POSITION_FOLLOWING,
-    );
-  });
+  const { rerender } = renderCard();
+  expect(screen.getByRole('link', { name: '100 Pods' })).toBeVisible();
+  refreshing = true;
+  rerender(card());
+  expect(screen.getByRole('link', { name: '100 Pods' })).toBeVisible();
+  expect(usePrometheusPoll).toHaveBeenCalledWith(
+    expect.objectContaining({ query: expect.stringContaining('uid=~"new-uid"') }),
+  );
+  rerender(card({ ...mockNode, metadata: { name: 'other-node' } }));
+  expect(screen.queryByRole('link', { name: '100 Pods' })).not.toBeInTheDocument();
+  expect(screen.getByRole('link', { name: 'Pods' })).toBeVisible();
 });

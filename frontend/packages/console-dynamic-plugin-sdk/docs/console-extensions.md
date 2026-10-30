@@ -488,9 +488,10 @@ Adds a resource tile to the overview inventory card.
 
 | Name | Value Type | Optional | Description |
 | ---- | ---------- | -------- | ----------- |
-| `model` | `CodeRef<T>` | no | The model for `resource` which will be fetched. Used to get the model's `label` or `abbr`. |
+| `model` | `CodeRef<T>` | no | Resource model used for labels, list links, and the Kubernetes resource watch. |
 | `mapper` | `CodeRef<StatusGroupMapper<T, R>>` | yes | Function which maps various statuses to groups. |
 | `additionalResources` | `CodeRef<WatchK8sResources<R>>` | yes | Additional resources which will be fetched and passed to the `mapper` function. |
+| `prometheus` | `CodeRef<{ getQuery: () => string; mapper: PrometheusStatusGroupMapper; }>` | yes | Code reference to a Prometheus data source for aggregate inventory counts and statuses.<br/>When configured, monitoring-enabled clusters use this instead of Kubernetes watches (which use the `mapper` and `additionalResources` properties). |
 
 ---
 
@@ -519,9 +520,10 @@ Replaces an overview inventory card.
 
 | Name | Value Type | Optional | Description |
 | ---- | ---------- | -------- | ----------- |
-| `model` | `CodeRef<T>` | no | The model for `resource` which will be fetched. Used to get the model's `label` or `abbr`. |
+| `model` | `CodeRef<T>` | no | Resource model used for labels, list links, and the Kubernetes resource watch. |
 | `mapper` | `CodeRef<StatusGroupMapper<T, R>>` | yes | Function which maps various statuses to groups. |
 | `additionalResources` | `CodeRef<WatchK8sResources<R>>` | yes | Additional resources which will be fetched and passed to the `mapper` function. |
+| `prometheus` | `CodeRef<{ getQuery: () => string; mapper: PrometheusStatusGroupMapper; }>` | yes | Code reference to a Prometheus data source for aggregate inventory counts and statuses.<br/>When configured, monitoring-enabled clusters use this instead of Kubernetes watches (which use the `mapper` and `additionalResources` properties). |
 
 ---
 
@@ -551,9 +553,10 @@ Adds a resource tile to the project overview inventory card.
 
 | Name | Value Type | Optional | Description |
 | ---- | ---------- | -------- | ----------- |
-| `model` | `CodeRef<T>` | no | The model for `resource` which will be fetched. Used to get the model's `label` or `abbr`. |
+| `model` | `CodeRef<T>` | no | Resource model used for labels, list links, and the Kubernetes resource watch. |
 | `mapper` | `CodeRef<StatusGroupMapper<T, R>>` | yes | Function which maps various statuses to groups. |
 | `additionalResources` | `CodeRef<WatchK8sResources<R>>` | yes | Additional resources which will be fetched and passed to the `mapper` function. |
+| `prometheus` | `CodeRef<{ getQuery: GetProjectQuery; mapper: PrometheusStatusGroupMapper; }>` | yes | Code reference to a Prometheus data source for aggregate inventory counts and statuses.<br/>When configured, monitoring-enabled clusters use this instead of Kubernetes watches (which use the `mapper` and `additionalResources` properties). |
 
 ---
 

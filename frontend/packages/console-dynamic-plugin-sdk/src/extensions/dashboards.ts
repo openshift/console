@@ -6,6 +6,7 @@ import type {
   PrometheusResponse,
   ResourcesObject,
   StatusGroupMapper,
+  StatusGroup,
   WatchK8sResources,
   WatchK8sResults,
   WatchK8sResourceWithProp,
@@ -22,6 +23,18 @@ import type {
   ResourceHealthHandler,
   URLHealthHandler,
 } from './dashboard-types';
+import type { GetProjectQuery } from './project-overview';
+
+/**
+ * Converts a successful Prometheus instant vector response into inventory groups.
+ * Include each resource in exactly one group; the sum of group counts is the total.
+ * Include healthy resources in NOT_MAPPED. Supply statusIDs and filterType to link
+ * status counts to filtered resource lists. Throw if the response cannot represent
+ * a valid inventory (for example, required metrics are unavailable).
+ * @param response - Successful response to the extension's instant query.
+ * @returns Inventory groups containing non-negative integer counts.
+ */
+export type PrometheusStatusGroupMapper = (response: PrometheusResponse) => StatusGroup;
 
 /** Adds a new dashboard tab, placed after the Overview tab. */
 export type DashboardsTab = Extension<
@@ -181,7 +194,7 @@ export type DashboardsProjectOverviewInventoryItem<
   R extends { [key: string]: K8sResourceCommon[] } = { [key: string]: K8sResourceCommon[] },
 > = Extension<
   'console.dashboards/project/overview/item',
-  DashboardsOverviewInventoryItemProperties<T, R> & {}
+  DashboardsOverviewInventoryItemProperties<T, R, GetProjectQuery> & {}
 >;
 
 /** Adds an activity to the Activity Card of Overview Dashboard where the triggering of activity is based on watching a K8s resource. */
@@ -301,14 +314,29 @@ export const isDashboardsOverviewHealthSubsystem = (
   isDashboardsOverviewHealthResourceSubsystem(e) ||
   isDashboardsOverviewHealthOperator(e);
 
+// Keep a type alias to satisfy the SDK's AnyObject constraint without adding an index signature.
 type DashboardsOverviewInventoryItemProperties<
   T extends K8sModel = K8sModel,
   R extends { [key: string]: K8sResourceCommon[] } = { [key: string]: K8sResourceCommon[] },
+  Q extends (...args: any[]) => string = () => string,
 > = {
-  /** The model for `resource` which will be fetched. Used to get the model's `label` or `abbr`. */
+  /** Resource model used for labels, list links, and the Kubernetes resource watch. */
   model: CodeRef<T>;
   /** Function which maps various statuses to groups. */
   mapper?: CodeRef<StatusGroupMapper<T, R>>;
   /** Additional resources which will be fetched and passed to the `mapper` function. */
   additionalResources?: CodeRef<WatchK8sResources<R>>;
+  /**
+   * Code reference to a Prometheus data source for aggregate inventory counts and statuses.
+   * When configured, monitoring-enabled clusters use this instead of Kubernetes watches (which use the `mapper` and `additionalResources` properties).
+   */
+  prometheus?: CodeRef<{
+    /**
+     * Builds an aggregated PromQL instant query. Cluster queries take no arguments.
+     * Project queries receive the selected namespace and must scope their selectors to it.
+     */
+    getQuery: Q;
+    /** Converts a successful instant vector response into inventory groups. */
+    mapper: PrometheusStatusGroupMapper;
+  }>;
 };
