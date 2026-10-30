@@ -169,19 +169,37 @@ export const getVolumeLocation = (volume: Volume) => {
 
 export const getRestartPolicyLabel = (pod: PodKind) => _.get(getRestartPolicy(pod), 'label', '');
 
+const isRestartableInitContainer = (pod: PodKind, containerName: string): boolean =>
+  pod.spec?.initContainers?.find(({ name }) => name === containerName)?.restartPolicy === 'Always';
+
+const sumRestarts = (statuses: ContainerStatus[]): number =>
+  statuses.reduce((restartCount, status) => restartCount + status.restartCount, 0);
+
+// This logic follows k8s printPod (at this writing, Kubernetes 1.33)
+// (See https://github.com/kubernetes/kubernetes/blob/release-1.33/pkg/printers/internalversion/printers.go)
 export const podRestarts = (pod: PodKind): number => {
   if (!pod || !pod.status) {
     return 0;
   }
-  const { initContainerStatuses = [], containerStatuses = [] } = pod.status;
+  const { initContainerStatuses = [], containerStatuses = [], conditions = [] } = pod.status;
+
   const isInitializing = initContainerStatuses.some(
-    ({ state }) => !state.terminated || state.terminated.exitCode !== 0,
+    (status) =>
+      status.state?.terminated?.exitCode !== 0 &&
+      !(isRestartableInitContainer(pod, status.name) && status.started),
   );
-  const toCheck = isInitializing ? initContainerStatuses : containerStatuses;
-  return toCheck.reduce(
-    (restartCount, status: ContainerStatus) => restartCount + status.restartCount,
-    0,
+  const isInitialized = conditions.some(
+    ({ type, status }) => type === 'Initialized' && status === 'True',
   );
+
+  if (isInitializing && !isInitialized) {
+    return sumRestarts(initContainerStatuses);
+  }
+
+  const sidecarStatuses = initContainerStatuses.filter(({ name }) =>
+    isRestartableInitContainer(pod, name),
+  );
+  return sumRestarts(containerStatuses) + sumRestarts(sidecarStatuses);
 };
 
 export const podReadiness = (pod: PodKind): { readyCount: number; totalContainers: number } => {
@@ -226,13 +244,12 @@ export const podPhase = (pod: PodKind): PodPhase => {
 
   _.each(pod.status.initContainerStatuses, (container: ContainerStatus, i: number) => {
     const { terminated, waiting } = container.state;
-    const initContainerSpec = pod.spec.initContainers.find((c) => c.name === container.name);
 
     if (terminated && terminated.exitCode === 0) {
       return true;
     }
 
-    if (initContainerSpec?.restartPolicy === 'Always' && container.started) {
+    if (isRestartableInitContainer(pod, container.name) && container.started) {
       return true;
     }
 
