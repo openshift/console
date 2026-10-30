@@ -41,7 +41,7 @@ var (
 var authPattern = regexp.MustCompile(`(?i)(?:status(?:\s+code)?\s+|: )(?:401|403)\b|unauthorized|forbidden|authentication failed|requires authentication`)
 
 // SanitizeChartLocateError classifies an error from resolving or downloading
-// a chart. Errors that are not fetch failures are returned unchanged.
+// a chart.
 func SanitizeChartLocateError(err error) error {
 	return SanitizeChartError(err)
 }
@@ -60,8 +60,9 @@ func SanitizeChartLoadError(err error) error {
 }
 
 // SanitizeChartError classifies a chart fetch or chart-verifier failure.
-// Helm and Kubernetes errors that occur after a chart has been loaded, such
-// as install failures, are returned unchanged.
+// Post-fetch Helm and Kubernetes errors are returned unchanged. Any other
+// unrecognized error is reported as a non-chart response, without its
+// original text.
 func SanitizeChartError(err error) error {
 	if err == nil {
 		return nil
@@ -80,10 +81,7 @@ func SanitizeChartError(err error) error {
 	if preserved, ok := safeChartStructureError(err); ok {
 		return preserved
 	}
-	if notAChart(lower) {
-		return ErrNotHelmChart
-	}
-	return err
+	return ErrNotHelmChart
 }
 
 func preserveFetchedChartError(lower string) bool {
@@ -97,7 +95,12 @@ func preserveFetchedChartError(lower string) bool {
 		strings.Contains(lower, "unsupported chart url"),
 		strings.Contains(lower, "chart url is required"),
 		strings.Contains(lower, "invalid chart url"),
-		strings.Contains(lower, "chart path is invalid"):
+		strings.Contains(lower, "chart path is invalid"),
+		strings.Contains(lower, "missing registry client"),
+		strings.HasPrefix(lower, "path ") && strings.Contains(lower, " not found"),
+		strings.Contains(lower, "can't create tls config"),
+		strings.Contains(lower, "content cache must be set"),
+		strings.Contains(lower, "not found in") && strings.Contains(lower, "index"):
 		return true
 	default:
 		return false
@@ -134,28 +137,6 @@ func inaccessible(lower string) bool {
 		strings.Contains(lower, "use of closed network connection"),
 		strings.HasSuffix(lower, ": eof"),
 		lower == "eof":
-		return true
-	default:
-		return false
-	}
-}
-
-func notAChart(lower string) bool {
-	switch {
-	case strings.Contains(lower, "chart.yaml"),
-		strings.Contains(lower, "not a helm chart"),
-		strings.Contains(lower, "not a valid chart"),
-		strings.Contains(lower, "does not appear to be"),
-		strings.Contains(lower, "gzip"),
-		strings.Contains(lower, "invalid header"),
-		strings.Contains(lower, "unexpected eof"),
-		strings.Contains(lower, "tar:"),
-		strings.Contains(lower, "yaml:"),
-		strings.Contains(lower, "unmarshal"),
-		strings.Contains(lower, "cannot load"),
-		strings.Contains(lower, "chart illegally"),
-		strings.Contains(lower, "no files in chart archive"),
-		strings.Contains(lower, "\n"):
 		return true
 	default:
 		return false

@@ -69,3 +69,28 @@ func TestSanitizeChartErrorPreservesPostFetchFailures(t *testing.T) {
 		t.Fatalf("got %q, want %q", got.Error(), version.Error())
 	}
 }
+
+func TestSanitizeChartErrorOmitsUnrecognizedPayload(t *testing.T) {
+	msg := "server replied: SECRET_PAYLOAD"
+	err := SanitizeChartError(errors.New(msg))
+	if err == nil || err.Error() != ErrNotHelmChart.Error() {
+		t.Fatalf("got %v, want %q", err, ErrNotHelmChart.Error())
+	}
+}
+
+func TestSanitizeChartErrorPreservesBodyFreeLocateFailures(t *testing.T) {
+	cases := []string{
+		`unable to lookup chart "oci://example.com/charts/a", missing registry client`,
+		`path "/charts/a.tgz" not found`,
+		`can't create TLS config for client: open ca.crt: no such file or directory`,
+		`content cache must be set`,
+	}
+	for _, msg := range cases {
+		t.Run(msg, func(t *testing.T) {
+			err := SanitizeChartError(errors.New(msg))
+			if err == nil || err.Error() != msg {
+				t.Fatalf("got %v, want %q", err, msg)
+			}
+		})
+	}
+}
