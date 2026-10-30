@@ -47,8 +47,6 @@ if [ ! -d node_modules ]; then
   yarn install
 fi
 
-# Run only the operator scenarios from catalog.spec.ts. Its Add page scenarios enable the
-# Developer perspective, which rolls out the console while the OLM tests are running.
 ./integration-tests/test-playwright.sh -- e2e/tests/olm/operator-lifecycle-metadata.spec.ts e2e/tests/olm/classic-operators-section.spec.ts e2e/tests/dev-console/catalog.spec.ts e2e/tests/olm/operator-migration.spec.ts "$@"
 
 popd

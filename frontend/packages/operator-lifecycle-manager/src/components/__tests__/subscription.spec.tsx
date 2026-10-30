@@ -253,7 +253,7 @@ describe('SubscriptionsPage', () => {
     expect(multiListPageProps.title).toEqual('Subscriptions');
     expect(multiListPageProps.canCreate).toBe(true);
     expect(multiListPageProps.createProps).toEqual({
-      to: '/catalog/all-namespaces?catalogType=operator-olmv0',
+      to: '/catalog/all-namespaces?catalogType=operator&operatorCatalog=%5B%22Classic%20Operators%22%5D',
     });
     expect(multiListPageProps.createButtonText).toEqual('Create Subscription');
     expect(multiListPageProps.omitFilterToolbar).toBe(true);
@@ -273,7 +273,7 @@ describe('SubscriptionsPage', () => {
     ]);
   });
 
-  // The alert self-gates on TECH_PREVIEW; assert the Tech Preview behaviour here.
+  // The alert self-gates on TECH_PREVIEW; assert the Technology Preview behaviour here.
   it('should warn that Classic Operators are being replaced from within the page heading', () => {
     renderWithProviders(<SubscriptionsPage namespace="default" />);
 

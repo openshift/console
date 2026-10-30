@@ -81,7 +81,7 @@ import { isPluginEnabled } from '@console/shared/src/utils/console-plugin';
 import {
   GLOBAL_OPERATOR_NAMESPACES,
   GLOBAL_COPIED_CSV_NAMESPACE,
-  CLASSIC_CATALOG_PATH,
+  OLMV0_CATALOG_PATH,
 } from '../const';
 import {
   ClusterServiceVersionModel,
@@ -322,10 +322,10 @@ const ConsolePluginStatus: FC<ConsolePluginStatusProps> = ({ csv, csvPlugins }) 
           <div>
             <p>
               {t(
-                'To let this operator provide a custom interface and run its own code in your console, enable its console plugin in the operator details.',
+                'To let this Operator add a custom interface and run its own code in your console, enable its console plugin on the Details tab of the Operator details page. Enable the plugin only if you trust its provider.',
               )}
             </p>
-            <Link to={resourceObjPath(csv, referenceFor(csv))}>{t('View operator details')}</Link>
+            <Link to={resourceObjPath(csv, referenceFor(csv))}>{t('View Operator details')}</Link>
           </div>
         }
         appendTo="inline"
@@ -428,7 +428,7 @@ const NoneText: FC = () => {
   return <span className="pf-v6-u-text-color-subtle">{t('None')}</span>;
 };
 
-/** Builds Installed Operators cells, including Tech Preview migration eligibility when enabled. */
+/** Builds Installed Operators cells, including Technology Preview migration eligibility when enabled. */
 const csvRowCells = (
   obj: ClusterServiceVersionKind,
   subscription: SubscriptionKind,
@@ -551,11 +551,10 @@ const CSVListNoDataEmptyMsg = () => {
   const { t } = useTranslation('olm');
   const [project] = useActiveNamespace();
   const techPreview = useFlag(FLAG_TECH_PREVIEW);
-  const noOperatorsInSingleNamespaceMessage = t(
-    'No Operators are available for project {{project}}.',
-    { project },
-  );
-  const noOperatorsInAllNamespacesMessage = t('No Operators are available.');
+  const isAllNamespaces = project === ALL_NAMESPACES_KEY;
+  const emptyStateMessage = isAllNamespaces
+    ? t('There are no Operators installed on the cluster.')
+    : t('There are no Operators installed in project {{project}}.', { project });
 
   const [canListPackageManifests] = useAccessReview({
     group: PackageManifestModel.apiGroup,
@@ -573,30 +572,28 @@ const CSVListNoDataEmptyMsg = () => {
 
   const detail = (
     <>
-      <div>
-        {project === ALL_NAMESPACES_KEY
-          ? noOperatorsInAllNamespacesMessage
-          : noOperatorsInSingleNamespaceMessage}
-      </div>
-      {hasOperatorHubAccess && (
+      <div>{emptyStateMessage}</div>
+      {hasOperatorHubAccess ? (
         <div>
-          {/* Outside Tech Preview there is only one operator catalog, so it keeps its generic name. */}
+          {/* Outside Technology Preview there is only one operator catalog, so it keeps its generic name. */}
           {techPreview ? (
             <Trans ns="olm">
               Discover and install Operators from the{' '}
-              <Link to={CLASSIC_CATALOG_PATH}>Classic Operators catalog</Link>.
+              <Link to={OLMV0_CATALOG_PATH}>Classic Operators catalog</Link>.
             </Trans>
           ) : (
             <Trans ns="olm">
               Discover and install Operators from the{' '}
-              <Link to={CLASSIC_CATALOG_PATH}>Software Catalog</Link>.
+              <Link to={OLMV0_CATALOG_PATH}>Software catalog</Link>.
             </Trans>
           )}
         </div>
+      ) : (
+        <div>{t('To install Operators, contact your cluster administrator.')}</div>
       )}
     </>
   );
-  return <ConsoleEmptyState title={t('No Operators found')}>{detail}</ConsoleEmptyState>;
+  return <ConsoleEmptyState title={t('No Operators installed')}>{detail}</ConsoleEmptyState>;
 };
 
 /** Renders the filtered Classic operator list with migration status, row actions, and bulk selection. */
@@ -934,7 +931,9 @@ const ClusterServiceVersionDetails: FC<ClusterServiceVersionDetailsProps> = (pro
                 {status.reason === CSVConditionReason.CSVReasonCopied ? (
                   <>
                     <Trans t={t} ns="olm">
-                      This Operator was copied from another namespace. For the reason it failed, see{' '}
+                      This Operator is a copy from another namespace, where it failed. It might not
+                      manage resources in this namespace correctly. To find and resolve the failure,
+                      see{' '}
                       <ResourceLink
                         name={metadata.name}
                         kind={referenceForModel(ClusterServiceVersionModel)}
@@ -1146,7 +1145,9 @@ export const CSVSubscription: FC<CSVSubscriptionProps> = ({ obj, customData, ...
     customData ?? {};
   const EmptyMsg = () => (
     <ConsoleEmptyState title={t('No Operator Subscription')}>
-      {t('This Operator will not receive updates.')}
+      {t(
+        'This Operator will not receive updates because it has no Subscription. To get updates, create a Subscription for this Operator from the software catalog.',
+      )}
     </ConsoleEmptyState>
   );
 

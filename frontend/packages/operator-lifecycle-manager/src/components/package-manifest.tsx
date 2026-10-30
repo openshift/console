@@ -21,7 +21,7 @@ import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ConsoleEmptyState } from '@console/shared/src/components/empty-state/ConsoleEmptyState';
 import { OPERATOR_HUB_LABEL } from '@console/shared/src/constants/common';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
-import { CLASSIC_CATALOG_PATH } from '../const';
+import { OLMV0_CATALOG_PATH } from '../const';
 import { PackageManifestModel, CatalogSourceModel } from '../models';
 import type { PackageManifestKind, CatalogSourceKind } from '../types';
 import { ClassicOperatorMigrationAlert } from './classic-operators/ClassicOperatorMigrationAlert';
@@ -172,18 +172,18 @@ export const PackageManifestsPage: FC<PackageManifestsPageProps> = (props) => {
 
   const flatten: Flatten = (resources) => _.get(resources.packageManifest, 'data', []);
 
-  // Outside Tech Preview there is only one operator catalog, so it keeps its generic name.
+  // Outside Technology Preview there is only one operator catalog, so it keeps its generic name.
   const helpText = techPreview ? (
     <Trans ns="olm">
-      Catalogs are groups of Operators you can make available on the cluster. Use the{' '}
-      <Link to={CLASSIC_CATALOG_PATH}>Classic Operators catalog</Link> to subscribe and grant
-      namespaces access to use installed Operators.
+      Catalogs are groups of Operators that you can make available on the cluster. Use the{' '}
+      <Link to={OLMV0_CATALOG_PATH}>Classic Operators catalog</Link> to subscribe to Operators and
+      to give namespaces access to installed Operators.
     </Trans>
   ) : (
     <Trans ns="olm">
-      Catalogs are groups of Operators you can make available on the cluster. Use the{' '}
-      <Link to={CLASSIC_CATALOG_PATH}>Software Catalog</Link> to subscribe and grant namespaces
-      access to use installed Operators.
+      Catalogs are groups of Operators that you can make available on the cluster. Use the{' '}
+      <Link to={OLMV0_CATALOG_PATH}>Software catalog</Link> to subscribe to Operators and to give
+      namespaces access to installed Operators.
     </Trans>
   );
 

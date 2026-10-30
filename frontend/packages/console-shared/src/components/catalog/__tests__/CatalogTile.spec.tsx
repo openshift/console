@@ -5,14 +5,14 @@ import { renderWithProviders } from '../../../test-utils/unit-test-utils';
 import { CatalogTile } from '../CatalogTile';
 
 const item: CatalogItem = {
-  uid: 'classic-operator-1',
-  type: 'operator-olmv0',
+  uid: 'example-operator-1',
+  type: 'operator',
   name: 'Test Operator',
   typeLabel: 'Red Hat',
   badges: [
-    { text: 'Classic Operator', color: 'grey', placement: 'header' },
+    { text: 'Custom badge', color: 'blue' },
     { text: 'Deprecated', color: 'orange' },
-    { text: 'Installed', color: 'green', placement: 'footer' },
+    { text: 'Installed', color: 'green' },
   ],
 };
 
@@ -20,42 +20,40 @@ const renderTile = (props: Partial<ComponentProps<typeof CatalogTile>> = {}) =>
   renderWithProviders(<CatalogTile item={item} catalogTypes={[]} {...props} />);
 
 describe('CatalogTile', () => {
-  it('should render the catalog type as a label in the tile header', () => {
+  it('should render the catalog type as a badge in the tile header', () => {
     renderTile();
 
-    expect(screen.getByTestId('catalog-type-label')).toHaveTextContent('Red Hat');
+    expect(screen.getByText('Red Hat')).toBeVisible();
   });
 
   it('should fall back to the catalog type title when the item has no type label', () => {
     renderTile({
       item: { ...item, typeLabel: undefined },
-      catalogTypes: [
-        { label: 'Classic Operators', value: 'operator-olmv0', description: 'Classic operators' },
-      ],
+      catalogTypes: [{ label: 'Operators', value: 'operator', description: 'Operators' }],
     });
 
-    expect(screen.getByTestId('catalog-type-label')).toHaveTextContent('Classic Operators');
+    expect(screen.getByText('Operators')).toBeVisible();
   });
 
-  it('should render header badges below the catalog type label and footer badges separately', () => {
+  it('should render custom and status badges together in the footer', () => {
     renderTile();
 
-    const header = within(screen.getByTestId('catalog-header-badges'));
-    expect(header.getByTestId('Classic Operator-badge')).toBeVisible();
-    expect(header.queryByTestId('Deprecated-badge')).toBeNull();
-    expect(header.queryByTestId('Installed-badge')).toBeNull();
-
     const footer = within(screen.getByTestId('catalog-badges'));
-    expect(footer.getByTestId('Deprecated-badge')).toBeVisible();
-    expect(footer.getByTestId('Installed-badge')).toBeVisible();
+    expect(footer.getByText('Custom badge')).toBeVisible();
+    expect(footer.getByText('Deprecated')).toBeVisible();
+    expect(footer.getByText('Installed')).toBeVisible();
+    expect(footer.queryByText('Red Hat')).not.toBeInTheDocument();
   });
 
-  it('should not render a footer badge group when every badge targets the header', () => {
-    renderTile({ item: { ...item, badges: [{ text: 'Next-Gen Operator', placement: 'header' }] } });
+  it('should render the custom badge in the footer', () => {
+    renderTile({ item: { ...item, badges: [{ text: 'Example badge', color: 'purple' }] } });
 
-    expect(
-      within(screen.getByTestId('catalog-header-badges')).getByTestId('Next-Gen Operator-badge'),
-    ).toBeVisible();
-    expect(screen.queryByTestId('catalog-badges')).toBeNull();
+    expect(within(screen.getByTestId('catalog-badges')).getByText('Example badge')).toBeVisible();
+  });
+
+  it('should omit the footer badge group when the item has no badges', () => {
+    renderTile({ item: { ...item, badges: [] } });
+
+    expect(screen.queryByTestId('catalog-badges')).not.toBeInTheDocument();
   });
 });

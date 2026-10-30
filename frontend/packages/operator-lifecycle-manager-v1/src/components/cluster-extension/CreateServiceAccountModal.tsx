@@ -40,7 +40,11 @@ export const CreateServiceAccountModal: OverlayComponent<CreateServiceAccountMod
   };
 
   const catchError = (error) => {
-    const err = error.message || t('An error occurred. Please try again.');
+    const err =
+      error.message ||
+      t(
+        'An error occurred. Try again. If the error continues, contact your cluster administrator.',
+      );
     setInProgress(false);
     setErrorMessage(err);
     return Promise.reject(err);

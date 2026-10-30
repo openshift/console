@@ -52,12 +52,14 @@ describe('OperatorMigrationEligibilityCell', () => {
       status: 'Eligible',
       eligible: true,
       label: 'Eligible',
-      message: 'You can migrate this Operator to OLM v1 cluster extensions.',
+      message:
+        'You can migrate this Operator to Operator Lifecycle Manager version 1 cluster extensions.',
     },
     {
       status: 'AlreadyMigrated',
       label: 'Already migrated',
-      message: 'OLM v1 cluster extensions already manage this Operator.',
+      message:
+        'Operator Lifecycle Manager version 1 cluster extensions already manage this Operator.',
     },
     {
       status: 'Conflict',

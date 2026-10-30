@@ -298,7 +298,11 @@ describe('CSVSubscription', () => {
     renderWithProviders(<CSVSubscription {...csvSubscriptionProps} />);
 
     expect(screen.getByText('No Operator Subscription')).toBeVisible();
-    expect(screen.getByText('This Operator will not receive updates.')).toBeVisible();
+    expect(
+      screen.getByText(
+        'This Operator will not receive updates because it has no Subscription. To get updates, create a Subscription for this Operator from the software catalog.',
+      ),
+    ).toBeVisible();
   });
 
   it('renders SubscriptionDetails when subscription exists', () => {

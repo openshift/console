@@ -1,8 +1,14 @@
 import * as _ from 'lodash';
 import type { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions';
+import { alphanumericCompare } from '@console/shared/src/utils/utils';
 import { sortCatalogItems } from './catalog-utils';
 import type { CatalogFilter, CatalogFilterCounts, CatalogFilters } from './types';
 import { CatalogSortOrder } from './types';
+
+export const getSortedFilterKeys = (
+  filterGroup: CatalogFilter,
+  comparator: (a: string, b: string) => number = alphanumericCompare,
+): string[] => Object.keys(filterGroup).sort(comparator);
 
 const filterByGroup = (
   items: CatalogItem[],

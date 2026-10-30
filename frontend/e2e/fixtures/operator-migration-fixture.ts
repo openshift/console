@@ -565,7 +565,7 @@ export class OperatorMigrationFixture {
       .toBe(true);
   }
 
-  /** Waits for healthy Classic management and confirms target revisions and reference Secrets are removed. */
+  /** Waits for healthy OLMv0 management and confirms target revisions and reference Secrets are removed. */
   async expectRecovered(operator: MigrationOperator): Promise<void> {
     await expect
       .poll(
@@ -1015,12 +1015,12 @@ export class OperatorMigrationFixture {
     return release;
   }
 
-  /** Confirms target deletion is pending and Classic management has not restarted. */
+  /** Confirms target deletion is pending and OLMv0 management has not restarted. */
   async expectHeldRollback(operator: MigrationOperator): Promise<void> {
     await expect
       .poll(async () => Boolean((await this.getExtension(operator)).metadata.deletionTimestamp), {
         timeout: 120_000,
-        message: 'Recovery must wait for target deletion before restoring Classic management',
+        message: 'Recovery must wait for target deletion before restoring OLMv0 management',
       })
       .toBe(true);
     await this.expectAbsent(
@@ -1530,7 +1530,7 @@ export const test = base.extend<{
         { timeout: 60_000, message: 'Console must load its server flags after login' },
       )
       .toBeDefined();
-    base.skip(!flags.techPreview, 'Operator migration requires a Tech Preview console');
+    base.skip(!flags.techPreview, 'Operator migration requires a Technology Preview console');
     const fixture = new OperatorMigrationFixture(k8sClient, cleanup, flags.authDisabled);
     try {
       await fixture.createCatalogs(source, target);

@@ -4,10 +4,10 @@ import { ClusterServiceVersionsPage } from '../clusterserviceversion';
 import { ClassicOperatorMigrationAlert } from './ClassicOperatorMigrationAlert';
 
 /**
- * Classic (OLMv0) tab of the Installed Operators page. The tabbed page owns the NamespaceBar and
+ * OLMv0 tab of the Installed Operators page. The tabbed page owns the NamespaceBar and
  * the page heading, so the list renders without its own title.
  */
-const ClassicInstalledOperatorsPage: FC = () => {
+export const ClassicInstalledOperatorsPage: FC = () => {
   const { ns } = useParams<{ ns?: string }>();
 
   return (
@@ -18,5 +18,3 @@ const ClassicInstalledOperatorsPage: FC = () => {
     />
   );
 };
-
-export default ClassicInstalledOperatorsPage;

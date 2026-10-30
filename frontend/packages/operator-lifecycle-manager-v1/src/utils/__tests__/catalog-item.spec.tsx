@@ -23,17 +23,10 @@ const baseItem = {
 } as unknown as OLMCatalogItem;
 
 describe('normalizeCatalogItem', () => {
-  it('should emit the operator-olmv1 catalog type', () => {
-    expect(normalizeCatalogItem(baseItem).type).toBe('operator-olmv1');
-  });
-
-  it('should badge the item as a Next-Gen Operator in the catalog item header', () => {
-    expect(normalizeCatalogItem(baseItem).badges).toEqual([
-      expect.objectContaining({
-        text: 'Next-Gen Operator',
-        color: 'blue',
-        placement: 'header',
-      }),
-    ]);
+  it('should emit the shared operator type with the Cluster extensions catalog filter', () => {
+    expect(normalizeCatalogItem(baseItem)).toMatchObject({
+      type: 'operator',
+      attributes: { operatorCatalog: 'Cluster extensions' },
+    });
   });
 });

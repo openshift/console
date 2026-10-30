@@ -1,7 +1,7 @@
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
-import ClusterExtensionForm from '../ClusterExtensionForm';
+import { ClusterExtensionForm } from '../ClusterExtensionForm';
 
 jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
   useK8sWatchResource: jest.fn(() => [null, false]),

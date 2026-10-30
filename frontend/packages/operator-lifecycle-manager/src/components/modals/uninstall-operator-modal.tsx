@@ -316,12 +316,12 @@ export const UninstallOperatorModal: FC<UninstallOperatorModalProps> = ({
           </>
         )}{' '}
         {t(
-          'If your Operator configured off-cluster resources, these will continue to run and require manual cleanup.',
+          'If your Operator configured off-cluster resources, those resources keep running. Follow the Operator provider’s cleanup instructions to remove them from the external service.',
         )}
       </p>
       {removePlugins && (
         <p>
-          {t('The console plugin provided by this operator will be disabled and removed.', {
+          {t('The console disables and removes the console plugins that this Operator provides.', {
             count: enabledPlugins.length,
           })}
         </p>
@@ -350,7 +350,7 @@ export const UninstallOperatorModal: FC<UninstallOperatorModalProps> = ({
           data-test="delete-all-operands"
           onChange={(_event, isChecked) => setDeleteOperands(isChecked)}
           name="delete-all-operands"
-          label={t('Delete all operand instances for this operator')}
+          label={t('Delete all operand instances for this Operator')}
           isChecked={deleteOperands}
         />
       </>
@@ -500,7 +500,7 @@ const OperandsLoadedErrorAlert: FC<{ operandsLoadedErrorMessage: string }> = ({
     <Alert variant="warning" className="co-alert" title={t('Cannot load Operands')} isInline>
       <p>
         {t(
-          'There was an error loading operands for this operator. Operands will need to be deleted manually.',
+          'An error occurred while loading operands for this Operator. Review the error, then delete the operands manually from their resource pages.',
         )}
       </p>
       <p>{operandsLoadedErrorMessage}</p>
@@ -535,7 +535,9 @@ const OperatorUninstallErrorAlert: FC<{ errorMessage: string }> = ({ errorMessag
   return (
     <Alert variant="danger" className="co-alert" title={t('Error uninstalling Operator')} isInline>
       <p>
-        {t('There was an error uninstalling the operator.')}
+        {t(
+          'An error occurred while uninstalling the Operator. Review the error, resolve the issue, and try uninstalling again.',
+        )}
         <br />
         {errorMessage}
       </p>
@@ -553,7 +555,7 @@ const OperandDeletionErrorAlert: FC<{
     <Alert variant="danger" className="co-alert" title={t('Error deleting Operands')} isInline>
       <p>
         {t(
-          'There were errors deleting the following Operands, they will need to be deleted manually:',
+          'The console could not delete the following operands. Review each error, then delete the operands manually from their resource pages:',
         )}
       </p>
       <OperandErrorList

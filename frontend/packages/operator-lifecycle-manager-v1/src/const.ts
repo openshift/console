@@ -1,6 +1,4 @@
 export const CATALOG_LABEL_KEY = 'olm.operatorframework.io/metadata.name';
-/** Software Catalog, pre-filtered to Next-Gen (OLMv1) operators. */
-export const NEXT_GEN_CATALOG_PATH = `/catalog/all-namespaces?catalogType=operator-olmv1`;
 
 /** Set by the `console.flag/model` extension for the OLMv1 ClusterCatalog CRD. */
 export const FLAG_CLUSTER_CATALOG_API = 'CLUSTER_CATALOG_API';
