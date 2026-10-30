@@ -18,7 +18,7 @@ import {
 } from '../module/k8s';
 import { SectionHeading } from './utils/headings';
 import { ResourceLink } from './utils/resource-link';
-import { ResourceSummary, detailsPage } from './utils/details-page';
+import { ResourceSummary } from './utils/details-page';
 import { navFactory } from './utils/horizontal-nav';
 import { SecretFilterValues } from './secrets/create-secret/types';
 import { secretTypeFilterReducer } from './secrets/create-secret';
@@ -302,7 +302,7 @@ const SecretsDetailsPage: FC<SecretDetailsPageProps> = (props) => {
       customActionMenu={(_kindModel: K8sModel, obj: K8sResourceKind) => (
         <LazyActionMenu context={{ [kindRef]: obj }} variant={ActionMenuVariant.DROPDOWN} />
       )}
-      pages={[navFactory.details(detailsPage(SecretDetails)), navFactory.editYaml()]}
+      pages={[navFactory.details(SecretDetails), navFactory.editYaml()]}
     />
   );
 };
