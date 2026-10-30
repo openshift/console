@@ -75,28 +75,28 @@ var allowLoopbackTargets bool
 // and zot fixtures can be indexed. Production code must not call it.
 func SetAllowLoopbackTargetsForTest(allow bool) {
 	allowLoopbackTargets = allow
+	utils.SetAllowLoopbackDialForTest(allow)
 }
 
-func repoTargetsLoopback(host string, lookup func(string) ([]net.IP, error)) bool {
+func repoHostDisallowed(host string, lookup func(string) ([]net.IP, error)) bool {
 	if allowLoopbackTargets {
 		return false
 	}
-	return utils.HostTargetsLoopback(host, lookup)
+	return utils.HostDisallowed(host, lookup)
 }
 
-// validateRepoURL accepts http and https repository URLs and rejects localhost,
-// loopback, and unspecified addresses. Private addresses are allowed. The
-// second argument is retained for compatibility with existing callers.
+// validateRepoURL accepts an http or https repository URL and rejects certain
+// addresses. The second argument is retained for compatibility with existing callers.
 func validateRepoURL(u *url.URL, _ bool) error {
 	switch u.Scheme {
 	case "http", "https":
+		if repoHostDisallowed(u.Hostname(), lookupRepoHost) {
+			return utils.ErrDisallowedHost
+		}
+		return nil
 	default:
 		return fmt.Errorf("unsupported URL scheme %q: only http and https are allowed", u.Scheme)
 	}
-	if repoTargetsLoopback(u.Hostname(), lookupRepoHost) {
-		return utils.ErrLoopbackTarget
-	}
-	return nil
 }
 
 func httpClient(tlsConfig *tls.Config) (*http.Client, error) {
@@ -104,17 +104,10 @@ func httpClient(tlsConfig *tls.Config) (*http.Client, error) {
 	tr := &http.Transport{
 		TLSClientConfig: tlsConfig,
 		Proxy:           http.ProxyFromEnvironment,
+		// Resolve once and connect to that address. A second lookup cannot move
+		// the connection onto localhost or an unspecified address.
 		DialContext: func(ctx context.Context, network, addr string) (net.Conn, error) {
-			host, _, err := net.SplitHostPort(addr)
-			if err != nil {
-				return nil, err
-			}
-			if repoTargetsLoopback(host, func(name string) ([]net.IP, error) {
-				return net.DefaultResolver.LookupIP(ctx, "ip", name)
-			}) {
-				return nil, utils.ErrLoopbackTarget
-			}
-			return dialer.DialContext(ctx, network, addr)
+			return utils.DialPinnedContext(ctx, dialer, network, addr)
 		},
 	}
 
@@ -124,8 +117,8 @@ func httpClient(tlsConfig *tls.Config) (*http.Client, error) {
 			if len(via) >= maxRedirects {
 				return fmt.Errorf("stopped after %d redirects", maxRedirects)
 			}
-			if repoTargetsLoopback(req.URL.Hostname(), nil) {
-				return utils.ErrLoopbackTarget
+			if repoHostDisallowed(req.URL.Hostname(), nil) {
+				return utils.ErrDisallowedHost
 			}
 			if len(via) > 0 && via[0].URL.Scheme == "https" && req.URL.Scheme == "http" {
 				return errors.New("redirect from https to http is not allowed")
@@ -160,8 +153,8 @@ func (hr helmRepo) IndexFile() (*repo.IndexFile, error) {
 	resp, err := httpClient.Get(indexURL)
 	if err != nil {
 		klog.V(4).Infof("Helm repository %q index request failed: %v", hr.Name, err)
-		if errors.Is(err, utils.ErrLoopbackTarget) {
-			return nil, utils.ErrLoopbackTarget
+		if errors.Is(err, utils.ErrDisallowedHost) {
+			return nil, utils.ErrDisallowedHost
 		}
 		return nil, fetcherr.ErrIndexFileNotFound
 	}
