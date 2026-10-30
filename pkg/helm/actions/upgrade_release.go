@@ -97,7 +97,7 @@ func UpgradeRelease(
 		}
 		chartLocation = chartUrl
 		client.ChartPathOptions.Version = chartInfo.Version
-		cp, err = locateChart(&client.ChartPathOptions, chartLocation)
+		cp, err = locateChart(&client.ChartPathOptions, conf.RegistryClient, chartLocation)
 		if err != nil {
 			return nil, err
 		}
@@ -235,19 +235,20 @@ func UpgradeReleaseAsync(
 				}
 			}
 		}
+		registryClient := conf.RegistryClient
 		if auth_secret != "" {
 			userCredentials, err := GetUserCredentials(coreClient, releaseNamespace, auth_secret)
 			if err != nil {
 				return nil, fmt.Errorf("failed to get user credentials Secret %s for release upgrade %s/%s: %v", auth_secret, releaseNamespace, releaseName, err)
-			} else {
-				if err := applyBasicAuthFromUserCredentials(&client.ChartPathOptions, client, userCredentials); err != nil {
-					return nil, fmt.Errorf("failed to apply auth from Secret %s for release upgrade %s/%s: %v", auth_secret, releaseNamespace, releaseName, err)
-				}
+			}
+			registryClient, err = applyBasicAuthFromUserCredentials(&client.ChartPathOptions, client, userCredentials)
+			if err != nil {
+				return nil, fmt.Errorf("failed to apply auth from Secret %s for release upgrade %s/%s: %v", auth_secret, releaseNamespace, releaseName, err)
 			}
 		}
 		chartLocation = chartUrl
 		client.ChartPathOptions.Version = chartInfo.Version
-		cp, err = locateChart(&client.ChartPathOptions, chartLocation)
+		cp, err = locateChart(&client.ChartPathOptions, registryClient, chartLocation)
 		if err != nil {
 			return nil, err
 		}

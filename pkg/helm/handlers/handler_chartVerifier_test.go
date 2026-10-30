@@ -87,6 +87,10 @@ func TestHelmHandlers_HandleChartVerifier_RejectsInvalidURLs(t *testing.T) {
 		{"rejects localhost", `{"chart_url":"oci://localhost:5000/charts/chart"}`},
 		{"rejects unspecified ipv4", `{"chart_url":"http://0.0.0.0/chart.tgz"}`},
 		{"rejects unspecified ipv6", `{"chart_url":"http://[::]/chart.tgz"}`},
+		{"rejects this network", `{"chart_url":"http://0.1.2.3/chart.tgz"}`},
+		{"rejects cloud metadata", `{"chart_url":"http://169.254.169.254/latest/chart.tgz"}`},
+		{"rejects kubernetes hostname", `{"chart_url":"oci://kubernetes.default/charts/chart"}`},
+		{"rejects kubernetes API service", `{"chart_url":"https://kubernetes.default.svc/chart.tgz"}`},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -156,11 +160,12 @@ func TestHelmHandlers_HandleChartVerifier_SanitizesFetchErrors(t *testing.T) {
 func TestHelmHandlers_HandleChartVerifier_AllowsPrivateNetworkURLs(t *testing.T) {
 	bodies := []string{
 		`{"chart_url":"https://10.0.0.5/chart.tgz"}`,
-		`{"chart_url":"http://169.254.169.254/latest/chart.tgz"}`,
+		`{"chart_url":"http://169.254.1.1/chart.tgz"}`,
+		`{"chart_url":"https://100.64.0.1/chart.tgz"}`,
 		`{"chart_url":"https://172.24.5.6/chart.tgz"}`,
 		`{"chart_url":"https://192.168.1.1/chart.tgz"}`,
 		`{"chart_url":"https://myrepo.default.svc/chart.tgz"}`,
-		`{"chart_url":"oci://kubernetes.default/charts/chart"}`,
+		`{"chart_url":"https://mypod.default.pod.cluster.local/chart.tgz"}`,
 	}
 	for _, body := range bodies {
 		t.Run(body, func(t *testing.T) {

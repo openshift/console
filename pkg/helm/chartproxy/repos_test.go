@@ -134,6 +134,45 @@ func TestValidateRepoURL(t *testing.T) {
 			wantErr: false,
 		},
 		{
+			name:    "allows ipv6 link-local",
+			rawURL:  "http://[fe80::1]/index.yaml",
+			wantErr: false,
+		},
+		{
+			name:    "allows CGNAT",
+			rawURL:  "http://100.64.0.1/index.yaml",
+			wantErr: false,
+		},
+		{
+			name:        "rejects cloud metadata",
+			rawURL:      "http://169.254.169.254/latest/meta-data",
+			wantErr:     true,
+			errContains: "metadata",
+		},
+		{
+			name:        "rejects this network",
+			rawURL:      "http://0.1.2.3/index.yaml",
+			wantErr:     true,
+			errContains: "0.0.0.0/8",
+		},
+		{
+			name:        "rejects kubernetes hostname",
+			rawURL:      "https://kubernetes.default/charts",
+			wantErr:     true,
+			errContains: "Kubernetes",
+		},
+		{
+			name:        "rejects kubernetes API service",
+			rawURL:      "https://kubernetes.default.svc.cluster.local/charts",
+			wantErr:     true,
+			errContains: "Kubernetes",
+		},
+		{
+			name:    "allows cluster service hostname",
+			rawURL:  "https://myrepo.default.svc.cluster.local/charts",
+			wantErr: false,
+		},
+		{
 			name:           "rejects loopback for cluster-scoped",
 			rawURL:         "http://127.0.0.1/index.yaml",
 			isClusterScope: true,
@@ -888,7 +927,7 @@ func TestHelmRepoGetter_unmarshallConfig(t *testing.T) {
 
 func TestSetAllowLoopbackTargetsForTest(t *testing.T) {
 	prev := allowLoopbackTargets
-	t.Cleanup(func() { allowLoopbackTargets = prev })
+	t.Cleanup(func() { SetAllowLoopbackTargetsForTest(prev) })
 
 	u, err := url.Parse("http://127.0.0.1/index.yaml")
 	require.NoError(t, err)
@@ -897,7 +936,7 @@ func TestSetAllowLoopbackTargetsForTest(t *testing.T) {
 	require.NoError(t, validateRepoURL(u, false))
 
 	SetAllowLoopbackTargetsForTest(false)
-	require.ErrorIs(t, validateRepoURL(u, false), utils.ErrLoopbackTarget)
+	require.ErrorIs(t, validateRepoURL(u, false), utils.ErrDisallowedHost)
 }
 
 func TestHTTPClientRejectsLoopback(t *testing.T) {
@@ -908,7 +947,7 @@ func TestHTTPClientRejectsLoopback(t *testing.T) {
 	require.NoError(t, err)
 	original, err := http.NewRequest(http.MethodGet, "http://charts.example.com/charts", nil)
 	require.NoError(t, err)
-	require.ErrorIs(t, client.CheckRedirect(loopback, []*http.Request{original}), utils.ErrLoopbackTarget)
+	require.ErrorIs(t, client.CheckRedirect(loopback, []*http.Request{original}), utils.ErrDisallowedHost)
 
 	private, err := http.NewRequest(http.MethodGet, "http://10.0.0.1/index.yaml", nil)
 	require.NoError(t, err)
@@ -919,7 +958,7 @@ func TestHTTPClientRejectsLoopback(t *testing.T) {
 	_, err = (helmRepo{Name: "loopback", URL: repoURL, httpClient: func() (*http.Client, error) {
 		return httpClient(nil)
 	}}).IndexFile()
-	require.ErrorIs(t, err, utils.ErrLoopbackTarget)
+	require.ErrorIs(t, err, utils.ErrDisallowedHost)
 }
 
 func TestHelmRepo_IndexFileSanitizesFetchErrors(t *testing.T) {

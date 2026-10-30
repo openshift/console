@@ -66,7 +66,7 @@ func RenderManifests(name string, url string, vals map[string]interface{}, conf 
 	} else {
 		chartLocation = chartInfo.Name
 	}
-	cp, err := locateChart(&client.ChartPathOptions, chartLocation)
+	cp, err := locateChart(&client.ChartPathOptions, client.GetRegistryClient(), chartLocation)
 	if err != nil {
 		return emptyResponse, err
 	}

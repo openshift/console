@@ -785,7 +785,7 @@ func TestApplyBasicAuthFromUserCredentials(t *testing.T) {
 		setter := &mockRegistryClientSetter{}
 		creds := &UserCredentials{Username: "admin", Password: "s3cret"}
 
-		err := applyBasicAuthFromUserCredentials(opts, setter, creds)
+		_, err := applyBasicAuthFromUserCredentials(opts, setter, creds)
 		require.NoError(t, err)
 		require.Equal(t, "admin", opts.Username)
 		require.Equal(t, "s3cret", opts.Password)
@@ -803,7 +803,7 @@ func TestApplyBasicAuthFromUserCredentials(t *testing.T) {
 		setter := &mockRegistryClientSetter{}
 		creds := &UserCredentials{Username: "admin", Password: "s3cret"}
 
-		err := applyBasicAuthFromUserCredentials(opts, setter, creds)
+		_, err := applyBasicAuthFromUserCredentials(opts, setter, creds)
 		require.Error(t, err)
 		require.ErrorContains(t, err, "failed to configure OCI registry client")
 		require.Nil(t, setter.client)

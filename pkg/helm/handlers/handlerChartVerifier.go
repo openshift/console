@@ -60,9 +60,8 @@ func (h *verifierHandlers) HandleChartVerifier(user *auth.User, w http.ResponseW
 		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: "invalid chart URL: must be oci:// or http(s)://*.tgz"})
 		return
 	}
-	// ValidateChartURL repeats the scheme and filename check and rejects
-	// localhost, loopback, and unspecified addresses. Private and
-	// cluster-local chart URLs are allowed.
+	// ValidateChartURL checks a chart reference before it is handed to Helm,
+	// rejecting a malformed reference and certain addresses.
 	if err := actions.ValidateChartURL(req.ChartUrl); err != nil {
 		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: err.Error()})
 		return

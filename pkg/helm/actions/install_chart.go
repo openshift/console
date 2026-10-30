@@ -156,7 +156,7 @@ func InstallChart(ns, name, url string, vals map[string]interface{}, conf *actio
 	chartLocation = url
 
 	cmd.ChartPathOptions.Version = chartInfo.Version
-	cp, err = locateChart(&cmd.ChartPathOptions, chartLocation)
+	cp, err = locateChart(&cmd.ChartPathOptions, cmd.GetRegistryClient(), chartLocation)
 	if err != nil {
 		return nil, fmt.Errorf("error locating chart: %w", err)
 	}
@@ -246,7 +246,7 @@ func InstallChartAsync(ns, name, url string, vals map[string]interface{}, conf *
 	cmd.ReleaseName = name
 	chartLocation = url
 	cmd.ChartPathOptions.Version = chartInfo.Version
-	cp, err = locateChart(&cmd.ChartPathOptions, chartLocation)
+	cp, err = locateChart(&cmd.ChartPathOptions, cmd.GetRegistryClient(), chartLocation)
 	if err != nil {
 		return nil, fmt.Errorf("error locating chart: %w", err)
 	}
@@ -316,15 +316,15 @@ func GetUserCredentials(coreClient corev1client.CoreV1Interface, ns, secretName 
 }
 
 // applyBasicAuthFromSecret sets cmd.Username and cmd.Password from a userCredentials and sets the registry client
-func applyBasicAuthFromUserCredentials(cmd *action.ChartPathOptions, setter RegistryClientSetter, userCredentials *UserCredentials) error {
+func applyBasicAuthFromUserCredentials(cmd *action.ChartPathOptions, setter RegistryClientSetter, userCredentials *UserCredentials) (*registry.Client, error) {
 	cmd.Username = userCredentials.Username
 	cmd.Password = userCredentials.Password
 	rc, err := GetOCIRegistry(false, false, userCredentials)
 	if err != nil {
-		return fmt.Errorf("failed to configure OCI registry client: %w", err)
+		return nil, fmt.Errorf("failed to configure OCI registry client: %w", err)
 	}
 	setter.SetRegistryClient(rc)
-	return nil
+	return rc, nil
 }
 
 // addAuthSecretAnnotation adds the auth secret reference to the release annotations via chart metadata.
@@ -360,7 +360,7 @@ func InstallChartFromURL(ns, name, url string, vals map[string]interface{}, conf
 		if err != nil {
 			return nil, err
 		}
-		if err := applyBasicAuthFromUserCredentials(&cmd.ChartPathOptions, cmd, userCredentials); err != nil {
+		if _, err := applyBasicAuthFromUserCredentials(&cmd.ChartPathOptions, cmd, userCredentials); err != nil {
 			return nil, err
 		}
 	}
@@ -375,7 +375,7 @@ func InstallChartFromURL(ns, name, url string, vals map[string]interface{}, conf
 	}
 	cmd.ChartPathOptions.Version = version
 
-	cp, err := locateChart(&cmd.ChartPathOptions, url)
+	cp, err := locateChart(&cmd.ChartPathOptions, cmd.GetRegistryClient(), url)
 	if err != nil {
 		return nil, fmt.Errorf("error locating chart: %w", err)
 	}
