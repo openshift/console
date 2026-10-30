@@ -90,11 +90,10 @@ func TestGetOCIRegistry_Success(t *testing.T) {
 
 	for _, tt := range tests {
 		newRegistryClient = func(options ...registry.ClientOption) (*registry.Client, error) {
-			expectedExtra := 0
+			// Debug is the baseline option. The pinned HTTP client is always
+			// present; TLS verification is configured on that client.
+			expectedExtra := 1
 			if tt.plainHTTP {
-				expectedExtra++
-			}
-			if tt.skipTLSVerify {
 				expectedExtra++
 			}
 			if tt.userCredentials != nil {
