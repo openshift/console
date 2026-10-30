@@ -12,6 +12,7 @@
     "start-console": "./start-console.sh",
     "http-server": "./http-server.sh dist",
     "i18n": "i18next-cli lint && i18next-cli extract",
+    "prettier-all": "oxfmt '**/*.{ts,tsx,js,json,md}'",
     "ts-node": "NODE_OPTIONS='--preserve-symlinks' ts-node -O '{\"module\":\"commonjs\"}'"
   },
   "devDependencies": {
@@ -31,6 +32,7 @@
     "i18next": "^25.8.18",
     "i18next-cli": "1.50.3",
     "js-yaml": "^4.1.1",
+    "oxfmt": "^0.75.0",
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "react-i18next": "~16.5.8",
