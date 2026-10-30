@@ -482,14 +482,22 @@ Example:
 ./bin/bridge --content-security-policy script-src='localhost:1234',font-src='localhost:2345 localhost:3456'
 ```
 
-List of configurable CSP directives is available in the [openshift/api repository](https://github.com/openshift/api/blob/master/console/v1/types_console_plugin.go#L102-L137).
+The configurable directives are defined in the [openshift/api repository](https://github.com/openshift/api/blob/master/console/v1/types_console_plugin.go). Values from enabled plugins are merged into a single console-wide policy and appended to the defaults for each configurable directive.
 
-The list is extended automatically by the console server with following CSP directives:
-- `"frame-src 'none'"`
-- `"frame-ancestors 'none'"`
-- `"object-src 'none'"`
+The `--content-security-policy` flag accepts comma-separated directive entries with space-separated source lists. Literal commas, semicolons, and line breaks within source values are rejected before a policy is emitted, because they could introduce additional policies, directives, or HTTP headers. URL paths that contain a comma or semicolon must encode it as `%2C` or `%3B`, respectively.
 
-Currently this feature is behind feature gate.
+Bridge always emits the following directives, including when running off-cluster:
+
+- `object-src 'none'`
+- `media-src 'none'`
+- `child-src 'none'`
+- `frame-src 'none'`
+- `frame-ancestors 'none'`
+- `worker-src 'self'`
+
+These directives are not configurable through `ConsolePlugin.spec.contentSecurityPolicy` or the `--content-security-policy` flag. The same-origin `worker-src` source permits Console's `load-test.sw.js` service worker.
+
+These restrictions remain fixed until a concrete plugin use case justifies additional configuration. CSP mode controls whether violations are reported or blocked; it does not change the allowed sources.
 
 ## Frontend Packages
 - [console-dynamic-plugin-sdk](./frontend/packages/console-dynamic-plugin-sdk/README.md)

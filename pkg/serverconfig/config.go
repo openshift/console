@@ -178,7 +178,9 @@ func SetFlagsFromConfig(fs *flag.FlagSet, config *Config) (err error) {
 		return err
 	}
 
-	addContentSecurityPolicy(fs, config.ContentSecurityPolicy)
+	if err := addContentSecurityPolicy(fs, config.ContentSecurityPolicy); err != nil {
+		return err
+	}
 	addTelemetry(fs, config.Telemetry)
 
 	return nil
@@ -424,20 +426,39 @@ func isAlreadySet(fs *flag.FlagSet, name string) bool {
 }
 
 func addContentSecurityPolicy(fs *flag.FlagSet, csp map[consolev1.DirectiveType][]string) error {
-	var directives []string
+	if len(csp) == 0 {
+		return nil
+	}
+	cspFlag := fs.Lookup("content-security-policy")
+	if cspFlag == nil {
+		return errors.New("content-security-policy flag is not registered")
+	}
+	sources, ok := cspFlag.Value.(*MultiKeyValue)
+	if !ok || sources == nil {
+		return errors.New("content-security-policy flag must use MultiKeyValue")
+	}
+	if *sources == nil {
+		*sources = MultiKeyValue{}
+	}
+	// Parse loads environment variables and CLI arguments before the config file.
+	// Keep those explicit sources ahead of YAML, while still merging other directives.
+	alreadySet := isAlreadySet(fs, "content-security-policy")
 	for cspDirectiveName, cspDirectiveValue := range csp {
 		directiveName := getDirectiveName(string(cspDirectiveName))
 		if directiveName == "" {
 			klog.Fatalf("invalid CSP directive: %s", cspDirectiveName)
 		}
 
-		directives = append(directives, fmt.Sprintf("%s=%s", directiveName, strings.Join(cspDirectiveValue, " ")))
+		if _, exists := (*sources)[directiveName]; alreadySet && exists {
+			continue
+		}
+		// Keep YAML values intact for BuildCSPDirectives to validate. The flag
+		// parser treats commas as entry separators, so it must not parse sources.
+		(*sources)[directiveName] = strings.Join(cspDirectiveValue, " ")
 	}
 
-	if len(directives) > 0 {
-		fs.Set("content-security-policy", strings.Join(directives, ", "))
-	}
-	return nil
+	// Mark the flag as set without serializing its values through the parser.
+	return fs.Set("content-security-policy", "")
 }
 
 func getDirectiveName(directive string) string {
