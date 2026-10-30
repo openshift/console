@@ -32,7 +32,7 @@ import { DetailsPage, DetailsPageProps } from './factory/details';
 import { ListPage } from './factory/list-page';
 import { DetailsItem } from './utils/details-item';
 import { ResourceLink } from './utils/resource-link';
-import { ResourceSummary, detailsPage } from './utils/details-page';
+import { ResourceSummary } from './utils/details-page';
 import { SectionHeading } from './utils/headings';
 import { navFactory } from './utils/horizontal-nav';
 import {
@@ -242,7 +242,7 @@ export const StorageClassPage: FC = ({ ...props }) => {
 };
 
 export const StorageClassDetailsPage: FC<DetailsPageProps> = (props) => {
-  const pages = [navFactory.details(detailsPage(StorageClassDetails)), navFactory.editYaml()];
+  const pages = [navFactory.details(StorageClassDetails), navFactory.editYaml()];
 
   const customActionMenu = (kindObj, obj) => {
     const resourceKind = referenceForModel(kindObj);
