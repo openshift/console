@@ -22,7 +22,6 @@ import {
   Kebab,
   KebabAction,
   ContainerTable,
-  detailsPage,
   LabelList,
   navFactory,
   PodsComponent,
@@ -256,7 +255,7 @@ export const DaemonSetsDetailsPage: React.FC = (props) => {
       kind={kind}
       customActionMenu={customActionMenu}
       pages={[
-        navFactory.details(detailsPage(DaemonSetDetails)),
+        navFactory.details(DaemonSetDetails),
         ...(prometheusIsAvailable ? [navFactory.metrics()] : []),
         navFactory.editYaml(),
         navFactory.pods(DaemonSetPods),

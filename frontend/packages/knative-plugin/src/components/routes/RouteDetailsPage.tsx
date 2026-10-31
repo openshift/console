@@ -7,7 +7,6 @@ import { Conditions } from '@console/internal/components/conditions';
 import { DetailsPage } from '@console/internal/components/factory';
 import {
   DetailsItem,
-  detailsPage,
   ExternalLinkWithCopy,
   navFactory,
   ResourceSummary,
@@ -78,7 +77,7 @@ const RouteDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (pr
   const params = useParams();
   const location = useLocation();
   const isAdminPerspective = useActivePerspective()[0] === 'admin';
-  const pages = [navFactory.details(detailsPage(RouteDetails)), navFactory.editYaml()];
+  const pages = [navFactory.details(RouteDetails), navFactory.editYaml()];
   const actionMenu = (kindObjData: K8sKind, obj: K8sResourceKind) => {
     const resourceKind = referenceForModel(kindObjData);
     const context = { [resourceKind]: obj };
