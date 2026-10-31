@@ -442,7 +442,13 @@ const LogControls: FC<LogControlsProps> = ({
             <ToolbarGroup variant="action-group-plain">
               <ToolbarItem>
                 <Tooltip content={t('View raw logs')}>
-                  <ExternalLinkButton component="button" onClick={handleRawLogs} variant="plain" />
+                  <ExternalLinkButton
+                    component="button"
+                    onClick={handleRawLogs}
+                    variant="plain"
+                    data-test="logs-view-raw"
+                    aria-label={t('View raw logs')}
+                  />
                 </Tooltip>
               </ToolbarItem>
               <ToolbarItem>
@@ -452,6 +458,8 @@ const LogControls: FC<LogControlsProps> = ({
                     href={currentLogURL}
                     download={getLogDownloadFilename(resource, containerName)}
                     icon={<RhUiDownloadIcon />}
+                    data-test="logs-download"
+                    aria-label={t('Download')}
                   />
                 </Tooltip>
               </ToolbarItem>
@@ -462,6 +470,8 @@ const LogControls: FC<LogControlsProps> = ({
                       variant="plain"
                       onClick={toggleFullscreen}
                       icon={isFullscreen ? <RhUiCompressIcon /> : <RhUiExpandIcon />}
+                      data-test={isFullscreen ? 'logs-collapse' : 'logs-expand'}
+                      aria-label={isFullscreen ? t('Collapse') : t('Expand')}
                     />
                   </Tooltip>
                 </ToolbarItem>
