@@ -3,12 +3,10 @@ package actions
 import (
 	"fmt"
 	"os"
-	"strings"
 
 	"github.com/openshift/api/helm/v1beta1"
 	"helm.sh/helm/v4/pkg/action"
 	chart "helm.sh/helm/v4/pkg/chart/v2"
-	"helm.sh/helm/v4/pkg/chart/v2/loader"
 
 	"k8s.io/client-go/dynamic"
 	corev1client "k8s.io/client-go/kubernetes/typed/core/v1"
@@ -24,11 +22,11 @@ func GetChart(url string, conf *action.Configuration, repositoryNamespace string
 		if err := validateChartURL(url); err != nil {
 			return nil, err
 		}
-		chartLocation, err := cmd.ChartPathOptions.LocateChart(url, settings)
+		chartLocation, err := locateChart(&cmd.ChartPathOptions, cmd.GetRegistryClient(), url)
 		if err != nil {
 			return nil, err
 		}
-		return loader.Load(chartLocation)
+		return loadLocatedChart(chartLocation)
 	}
 	chartInfo = getChartInfoFromIndexEntry(indexEntry, repositoryNamespace, url)
 	// Validate the URL before setting up authentication so a rejected URL
@@ -57,9 +55,9 @@ func GetChart(url string, conf *action.Configuration, repositoryNamespace string
 	chartLocation = url
 
 	cmd.ChartPathOptions.Version = chartInfo.Version
-	chartPath, err = cmd.ChartPathOptions.LocateChart(chartLocation, settings)
+	chartPath, err = locateChart(&cmd.ChartPathOptions, cmd.GetRegistryClient(), chartLocation)
 	if err != nil {
-		return nil, fmt.Errorf("error locating chart: %v", err)
+		return nil, fmt.Errorf("error locating chart: %w", err)
 	}
 	defer func() {
 		if filesCleanup == false {
@@ -69,7 +67,7 @@ func GetChart(url string, conf *action.Configuration, repositoryNamespace string
 			os.Remove(f.Name())
 		}
 	}()
-	return loader.Load(chartPath)
+	return loadLocatedChart(chartPath)
 }
 
 // GetChartFromURL loads a chart from an OCI or direct HTTP(S) URL. basicAuthSecretName names a
@@ -89,16 +87,13 @@ func GetChartFromURL(url string, conf *action.Configuration, namespace string, c
 		if err != nil {
 			return nil, err
 		}
-		if err := applyBasicAuthFromUserCredentials(&cmd.ChartPathOptions, cmd, userCredentials); err != nil {
+		if _, err := applyBasicAuthFromUserCredentials(&cmd.ChartPathOptions, cmd, userCredentials); err != nil {
 			return nil, err
 		}
 	}
-	chartLocation, err := cmd.ChartPathOptions.LocateChart(url, settings)
+	chartLocation, err := locateChart(&cmd.ChartPathOptions, cmd.GetRegistryClient(), url)
 	if err != nil {
-		if basicAuthSecretName == "" && (strings.Contains(err.Error(), "401") || strings.Contains(strings.ToLower(err.Error()), "unauthorized")) {
-			return nil, fmt.Errorf("error getting chart from URL: %w; registry requires authentication - select a Secret with \"username\" and \"password\" keys for basic authentication", err)
-		}
-		return nil, fmt.Errorf("error getting chart from URL: %v", err)
+		return nil, fmt.Errorf("error getting chart from URL: %w", err)
 	}
-	return loader.Load(chartLocation)
+	return loadLocatedChart(chartLocation)
 }

@@ -46,6 +46,64 @@ func TestIsPrivateOrReservedIP(t *testing.T) {
 	}
 }
 
+func TestHostDisallowed(t *testing.T) {
+	lookup := func(host string) ([]net.IP, error) {
+		switch host {
+		case "loopback.example.com":
+			return []net.IP{net.ParseIP("127.0.0.1")}, nil
+		case "unspecified.example.com":
+			return []net.IP{net.ParseIP("0.0.0.0")}, nil
+		case "private.example.com":
+			return []net.IP{net.ParseIP("10.1.2.3")}, nil
+		default:
+			return nil, &net.DNSError{Err: "no such host", Name: host, IsNotFound: true}
+		}
+	}
+	tests := []struct {
+		host string
+		want bool
+	}{
+		{"0.0.0.0", true},
+		{"0.0.0.1", true},
+		{"0.255.255.255", true},
+		{"::", true},
+		{"::2", true},
+		{"::ffff:0.0.0.1", true},
+		{"unspecified.example.com", true},
+		{"localhost", true},
+		{"LOCALHOST.", true},
+		{"localhost.localdomain", true},
+		{"kubernetes", true},
+		{"Kubernetes.Default.", true},
+		{"kubernetes.default.svc", true},
+		{"kubernetes.default.svc.cluster.local", true},
+		{"kubernetes.openshift-console.svc", false},
+		{"myrepo.default.svc.cluster.local", false},
+		{"mypod.default.pod.cluster.local", false},
+		{"127.0.0.1", true},
+		{"127.255.255.254", true},
+		{"::1", true},
+		{"10.1.2.3", false},
+		{"172.24.5.6", false},
+		{"192.168.1.1", false},
+		{"169.254.1.1", false},
+		{"169.254.169.254", true},
+		{"fd00:ec2::254", true},
+		{"fd00::1", false},
+		{"fe80::1", false},
+		{"100.64.0.1", false},
+		{"8.8.8.8", false},
+		{"loopback.example.com", true},
+		{"private.example.com", false},
+		{"missing.example.com", false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.host, func(t *testing.T) {
+			assert.Equal(t, tt.want, HostDisallowed(tt.host, lookup))
+		})
+	}
+}
+
 func TestIsPrivateOrReservedAddr_nonIP(t *testing.T) {
 	assert.False(t, IsPrivateOrReservedAddr("example.com"))
 	assert.False(t, IsPrivateOrReservedAddr(""))

@@ -25,6 +25,7 @@ import (
 
 	"github.com/openshift/library-go/pkg/crypto"
 
+	"github.com/openshift/console/pkg/helm/fetcherr"
 	"github.com/openshift/console/pkg/utils"
 )
 
@@ -47,6 +48,9 @@ const (
 	ErrorMessage     = "The following repositories seem to be invalid or unreachable: "
 	maxIndexFileSize = 10 << 20 // 10 MB
 	maxRedirects     = 10
+	// repoHostLookupTimeout bounds DNS while a repository hostname is validated.
+	// It is a separate deadline from the index file HTTP client timeout.
+	repoHostLookupTimeout = 5 * time.Second
 )
 
 type InvalidRepo struct {
@@ -62,60 +66,64 @@ type helmRepo struct {
 	httpClient func() (*http.Client, error)
 }
 
-func validateRepoURL(u *url.URL, isClusterScoped bool) error {
+// lookupRepoHost resolves a repository hostname with a bounded DNS lookup.
+// Tests may replace it.
+var lookupRepoHost = func(ctx context.Context, host string) ([]net.IP, error) {
+	return lookupRepoHostWithResolver(ctx, net.DefaultResolver, host)
+}
+
+func lookupRepoHostWithResolver(ctx context.Context, resolver *net.Resolver, host string) ([]net.IP, error) {
+	ctx, cancel := context.WithTimeout(ctx, repoHostLookupTimeout)
+	defer cancel()
+	return resolver.LookupIP(ctx, "ip", host)
+}
+
+// allowLoopbackTargets is false in production. Tests whose fixture registries
+// listen on localhost set it; production code must not.
+var allowLoopbackTargets bool
+
+// SetAllowLoopbackTargetsForTest allows localhost and loopback repository
+// targets for the rest of the process. The actions suite uses it so chartmuseum
+// and zot fixtures can be indexed. Production code must not call it.
+func SetAllowLoopbackTargetsForTest(allow bool) {
+	allowLoopbackTargets = allow
+	utils.SetAllowLoopbackDialForTest(allow)
+}
+
+func repoHostDisallowed(host string, lookup func(string) ([]net.IP, error)) bool {
+	if allowLoopbackTargets {
+		return false
+	}
+	return utils.HostDisallowed(host, lookup)
+}
+
+// validateRepoURL accepts an http or https repository URL and rejects certain
+// addresses.
+func validateRepoURL(ctx context.Context, u *url.URL) error {
 	switch u.Scheme {
 	case "http", "https":
+		if repoHostDisallowed(u.Hostname(), func(host string) ([]net.IP, error) {
+			return lookupRepoHost(ctx, host)
+		}) {
+			return utils.ErrDisallowedHost
+		}
+		return nil
 	default:
 		return fmt.Errorf("unsupported URL scheme %q: only http and https are allowed", u.Scheme)
 	}
-
-	if !isClusterScoped {
-		host := u.Hostname()
-		if ip := net.ParseIP(host); ip != nil {
-			if utils.IsPrivateOrReservedIP(ip) {
-				return fmt.Errorf("repository URL %q resolves to a private or reserved address", u.Redacted())
-			}
-			return nil
-		}
-		addrs, err := net.LookupHost(host)
-		if err != nil {
-			return fmt.Errorf("failed to resolve repository host %q: %v", host, err)
-		}
-		for _, addr := range addrs {
-			if utils.IsPrivateOrReservedAddr(addr) {
-				return fmt.Errorf("repository URL %q resolves to a private or reserved address", u.Redacted())
-			}
-		}
-	}
-	return nil
 }
 
-func ssrfSafeDialContext(base *net.Dialer) func(ctx context.Context, network, addr string) (net.Conn, error) {
-	return func(ctx context.Context, network, addr string) (net.Conn, error) {
-		host, port, err := net.SplitHostPort(addr)
-		if err != nil {
-			return nil, err
-		}
-		addrs, err := net.DefaultResolver.LookupHost(ctx, host)
-		if err != nil {
-			return nil, err
-		}
-		for _, a := range addrs {
-			if utils.IsPrivateOrReservedAddr(a) {
-				return nil, fmt.Errorf("connection to private or reserved address %s is not allowed", a)
-			}
-		}
-		return base.DialContext(ctx, network, net.JoinHostPort(addrs[0], port))
-	}
-}
-
-func httpClient(tlsConfig *tls.Config, blockPrivateIPs bool) (*http.Client, error) {
+func httpClient(tlsConfig *tls.Config) (*http.Client, error) {
+	dialer := &net.Dialer{Timeout: 5 * time.Second}
 	tr := &http.Transport{
 		TLSClientConfig: tlsConfig,
 		Proxy:           http.ProxyFromEnvironment,
-	}
-	if blockPrivateIPs {
-		tr.DialContext = ssrfSafeDialContext(&net.Dialer{Timeout: 5 * time.Second})
+		// Resolve once and connect to that address. A second lookup cannot move
+		// the connection onto localhost or an unspecified address; however, note
+		// that pinning does not defend against accesses via a malicious proxy.
+		DialContext: func(ctx context.Context, network, addr string) (net.Conn, error) {
+			return utils.DialPinnedContext(ctx, dialer, network, addr)
+		},
 	}
 
 	client := &http.Client{
@@ -123,6 +131,9 @@ func httpClient(tlsConfig *tls.Config, blockPrivateIPs bool) (*http.Client, erro
 		CheckRedirect: func(req *http.Request, via []*http.Request) error {
 			if len(via) >= maxRedirects {
 				return fmt.Errorf("stopped after %d redirects", maxRedirects)
+			}
+			if repoHostDisallowed(req.URL.Hostname(), nil) {
+				return utils.ErrDisallowedHost
 			}
 			if len(via) > 0 && via[0].URL.Scheme == "https" && req.URL.Scheme == "http" {
 				return errors.New("redirect from https to http is not allowed")
@@ -156,22 +167,30 @@ func (hr helmRepo) IndexFile() (*repo.IndexFile, error) {
 	httpClient.Timeout = time.Duration(5 * time.Second)
 	resp, err := httpClient.Get(indexURL)
 	if err != nil {
-		return nil, err
+		klog.V(4).Infof("Helm repository %q index request failed: %v", hr.Name, err)
+		if errors.Is(err, utils.ErrDisallowedHost) {
+			return nil, utils.ErrDisallowedHost
+		}
+		return nil, fetcherr.ErrIndexFileNotFound
 	}
 	defer resp.Body.Close()
-	if resp.StatusCode == 401 || resp.StatusCode == 403 {
-		return nil, fmt.Errorf("authentication failed (HTTP %d)", resp.StatusCode)
-	}
-	if resp.StatusCode != 200 {
-		return nil, fmt.Errorf("failed to fetch index (HTTP %d)", resp.StatusCode)
+	switch resp.StatusCode {
+	case http.StatusUnauthorized, http.StatusForbidden:
+		return nil, fetcherr.ErrIndexAuthentication
+	case http.StatusOK:
+	default:
+		klog.V(4).Infof("Helm repository %q index request returned HTTP %d", hr.Name, resp.StatusCode)
+		return nil, fetcherr.ErrIndexFileNotFound
 	}
 	body, err := io.ReadAll(io.LimitReader(resp.Body, maxIndexFileSize))
 	if err != nil {
-		return nil, err
+		klog.V(4).Infof("Helm repository %q index read failed: %v", hr.Name, err)
+		return nil, fetcherr.ErrIndexFileNotFound
 	}
 	err = yaml.Unmarshal(body, &indexFile)
 	if err != nil {
-		return nil, err
+		klog.V(4).Infof("Helm repository %q returned a file that is not a Helm index", hr.Name)
+		return nil, fetcherr.ErrIndexNotHelm
 	}
 	for _, chartVersions := range indexFile.Entries {
 		for _, chartVersion := range chartVersions {
@@ -194,7 +213,7 @@ type HelmRepoGetter interface {
 type helmRepoGetter struct {
 	Client      dynamic.Interface
 	CoreClient  corev1.CoreV1Interface
-	validateURL func(u *url.URL, isClusterScoped bool) error
+	validateURL func(ctx context.Context, u *url.URL) error
 }
 
 func (b helmRepoGetter) unmarshallConfig(repo unstructured.Unstructured, namespace string, isClusterScoped bool) (*helmRepo, error) {
@@ -216,7 +235,7 @@ func (b helmRepoGetter) unmarshallConfig(repo unstructured.Unstructured, namespa
 		return nil, err
 	}
 
-	if err := b.validateURL(h.URL, isClusterScoped); err != nil {
+	if err := b.validateURL(context.Background(), h.URL); err != nil {
 		return nil, err
 	}
 
@@ -332,7 +351,7 @@ func (b helmRepoGetter) unmarshallConfig(repo unstructured.Unstructured, namespa
 	}
 
 	h.httpClient = func() (*http.Client, error) {
-		return httpClient(tlsClientConfig, !isClusterScoped)
+		return httpClient(tlsClientConfig)
 	}
 	return h, nil
 }
