@@ -55,7 +55,19 @@
   .help-block {
     margin-bottom: var(--pf-t--global--spacer--sm);
     margin-top: 0;
+    padding-inline: var(--pf-t--global--spacer--md);
   }
+
+  .pf-v6-c-accordion__expandable-content-body,
+  .pf-v6-c-accordion__expanded-content-body {
+    padding-block: var(--pf-t--global--spacer--sm);
+    padding-inline: var(--pf-t--global--spacer--md);
+  }
+}
+
+.co-dynamic-form__field-group-content {
+  padding-block: var(--pf-t--global--spacer--sm);
+  padding-inline: var(--pf-t--global--spacer--md);
 }
 
 .co-dynamic-form__array-field-group-remove {
