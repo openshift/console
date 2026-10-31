@@ -75,7 +75,8 @@ const AboutModalItems: FC<AboutModalItemsProps> = ({ closeAboutModal }) => {
 
   const clusterID = getClusterID(clusterVersion);
   const channel: string = clusterVersion?.spec?.channel;
-  const openshiftVersion = getOpenShiftVersion(clusterVersion);
+  const openshiftVersion =
+    getOpenShiftVersion(clusterVersion) || window.SERVER_FLAGS.releaseVersion;
 
   return (
     <>
