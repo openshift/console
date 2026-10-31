@@ -28,6 +28,8 @@ import {
   MachineHealthCheckModel,
   MachineModel,
   MachineSetModel,
+  ClusterAPIMachineModel,
+  ClusterAPIMachineSetModel,
   NamespaceModel,
   NodeModel,
   PersistentVolumeClaimModel,
@@ -141,7 +143,15 @@ const baseDetailsPages: Map<ResourceMapKey, ResourceMapValue> = new Map()
   .set(referenceForModel(MachineModel), () =>
     import('./machine' /* webpackChunkName: "machine" */).then((m) => m.MachineDetailsPage),
   )
+  .set(referenceForModel(ClusterAPIMachineModel), () =>
+    import('./machine' /* webpackChunkName: "machine" */).then((m) => m.MachineDetailsPage),
+  )
   .set(referenceForModel(MachineSetModel), () =>
+    import('./machine-set' /* webpackChunkName: "machine-set" */).then(
+      (m) => m.MachineSetDetailsPage,
+    ),
+  )
+  .set(referenceForModel(ClusterAPIMachineSetModel), () =>
     import('./machine-set' /* webpackChunkName: "machine-set" */).then(
       (m) => m.MachineSetDetailsPage,
     ),
