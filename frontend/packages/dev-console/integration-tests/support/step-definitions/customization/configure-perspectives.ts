@@ -1,13 +1,5 @@
 import { Given, Then, When } from 'cypress-cucumber-preprocessor/steps';
-import { nav } from '@console/cypress-integration-tests/views/nav';
-import { switchPerspective } from '../../constants';
-import { app, perspective } from '../../pages';
-
-Given('user has logged in as admin user', () => {
-  cy.login();
-  perspective.switchTo(switchPerspective.Administrator);
-  nav.sidenav.switcher.shouldHaveText(switchPerspective.Administrator);
-});
+import { app } from '../../pages';
 
 Given('user is at Search page in Home section', () => {
   cy.get('[data-quickstart-id="qs-nav-home"]')

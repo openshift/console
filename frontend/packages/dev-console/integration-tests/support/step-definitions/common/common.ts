@@ -1,4 +1,4 @@
-import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
+import { Given, When, Then, After } from 'cypress-cucumber-preprocessor/steps';
 import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
 import { modal } from '@console/cypress-integration-tests/views/modal';
 import { switchPerspective, devNavigationMenu, adminNavigationMenu } from '../../constants';
@@ -89,6 +89,31 @@ When('user is at namespace {string}', (projectName: string) => {
   projectNameSpace.selectOrCreateProject(projectName);
 });
 
+Given('user has logged in as admin user', () => {
+  cy.login();
+  perspective.switchTo(switchPerspective.Administrator);
+});
+
 When('user refreshes the page', () => {
   cy.reload();
+});
+
+// Defensive teardown: re-enable the Developer perspective after any scenario
+// that disabled it. This prevents cascade failures where a crash in the
+// enable-dev-perspective feature leaves the perspective disabled for all
+// subsequent tests (e.g. add-flow-ci.feature).
+After(() => {
+  cy.exec(
+    `oc patch console.operator.openshift.io/cluster --type='merge' -p '{"spec":{"customization":{"perspectives":[{"id":"dev","visibility":{"state":"Enabled"}}]}}}'`,
+    { failOnNonZeroExit: false },
+  ).then((result) => {
+    cy.log('After hook: re-enabled Developer perspective');
+    cy.log(result.stdout);
+    if (result.stderr) {
+      cy.log(result.stderr);
+    }
+  });
+  cy.exec('oc rollout status -w deploy/console -n openshift-console', {
+    failOnNonZeroExit: false,
+  });
 });
