@@ -88,6 +88,8 @@ func TestHostDisallowed(t *testing.T) {
 		{"192.168.1.1", false},
 		{"169.254.1.1", false},
 		{"169.254.169.254", true},
+		{"fd00:ec2::254", true},
+		{"fd00::1", false},
 		{"fe80::1", false},
 		{"100.64.0.1", false},
 		{"8.8.8.8", false},
