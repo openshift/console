@@ -23,7 +23,8 @@ func SetAllowLoopbackDialForTest(allow bool) {
 
 // DialPinnedContext resolves addr once, refuses disallowed chart targets, and
 // connects to one of those resolved addresses. A later DNS answer cannot move
-// the connection onto a different address.
+// the connection onto a different address; however, note that pinning does
+// not defend against accesses via a malicious proxy.
 func DialPinnedContext(ctx context.Context, dialer *net.Dialer, network, addr string) (net.Conn, error) {
 	if dialer == nil {
 		dialer = &net.Dialer{}

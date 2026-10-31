@@ -48,6 +48,9 @@ const (
 	ErrorMessage     = "The following repositories seem to be invalid or unreachable: "
 	maxIndexFileSize = 10 << 20 // 10 MB
 	maxRedirects     = 10
+	// repoHostLookupTimeout bounds DNS while a repository hostname is validated.
+	// It is a separate deadline from the index file HTTP client timeout.
+	repoHostLookupTimeout = 5 * time.Second
 )
 
 type InvalidRepo struct {
@@ -63,8 +66,17 @@ type helmRepo struct {
 	httpClient func() (*http.Client, error)
 }
 
-// lookupRepoHost resolves a repository hostname. Tests may replace it.
-var lookupRepoHost = net.LookupIP
+// lookupRepoHost resolves a repository hostname with a bounded DNS lookup.
+// Tests may replace it.
+var lookupRepoHost = func(ctx context.Context, host string) ([]net.IP, error) {
+	return lookupRepoHostWithResolver(ctx, net.DefaultResolver, host)
+}
+
+func lookupRepoHostWithResolver(ctx context.Context, resolver *net.Resolver, host string) ([]net.IP, error) {
+	ctx, cancel := context.WithTimeout(ctx, repoHostLookupTimeout)
+	defer cancel()
+	return resolver.LookupIP(ctx, "ip", host)
+}
 
 // allowLoopbackTargets is false in production. Tests whose fixture registries
 // listen on localhost set it; production code must not.
@@ -86,11 +98,13 @@ func repoHostDisallowed(host string, lookup func(string) ([]net.IP, error)) bool
 }
 
 // validateRepoURL accepts an http or https repository URL and rejects certain
-// addresses. The second argument is retained for compatibility with existing callers.
-func validateRepoURL(u *url.URL, _ bool) error {
+// addresses.
+func validateRepoURL(ctx context.Context, u *url.URL) error {
 	switch u.Scheme {
 	case "http", "https":
-		if repoHostDisallowed(u.Hostname(), lookupRepoHost) {
+		if repoHostDisallowed(u.Hostname(), func(host string) ([]net.IP, error) {
+			return lookupRepoHost(ctx, host)
+		}) {
 			return utils.ErrDisallowedHost
 		}
 		return nil
@@ -105,7 +119,8 @@ func httpClient(tlsConfig *tls.Config) (*http.Client, error) {
 		TLSClientConfig: tlsConfig,
 		Proxy:           http.ProxyFromEnvironment,
 		// Resolve once and connect to that address. A second lookup cannot move
-		// the connection onto localhost or an unspecified address.
+		// the connection onto localhost or an unspecified address; however, note
+		// that pinning does not defend against accesses via a malicious proxy.
 		DialContext: func(ctx context.Context, network, addr string) (net.Conn, error) {
 			return utils.DialPinnedContext(ctx, dialer, network, addr)
 		},
@@ -198,7 +213,7 @@ type HelmRepoGetter interface {
 type helmRepoGetter struct {
 	Client      dynamic.Interface
 	CoreClient  corev1.CoreV1Interface
-	validateURL func(u *url.URL, isClusterScoped bool) error
+	validateURL func(ctx context.Context, u *url.URL) error
 }
 
 func (b helmRepoGetter) unmarshallConfig(repo unstructured.Unstructured, namespace string, isClusterScoped bool) (*helmRepo, error) {
@@ -220,7 +235,7 @@ func (b helmRepoGetter) unmarshallConfig(repo unstructured.Unstructured, namespa
 		return nil, err
 	}
 
-	if err := b.validateURL(h.URL, isClusterScoped); err != nil {
+	if err := b.validateURL(context.Background(), h.URL); err != nil {
 		return nil, err
 	}
 
