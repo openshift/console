@@ -34,6 +34,10 @@ var thisNetworkIPv4 *net.IPNet
 // and similar platforms. Chart files are not hosted there.
 var cloudMetadataIPv4 = net.IPv4(169, 254, 169, 254).To4()
 
+// cloudMetadataIPv6 is the AWS instance metadata address. Other addresses in
+// fd00::/8 are not this address.
+var cloudMetadataIPv6 = net.ParseIP("fd00:ec2::254")
+
 func init() {
 	for _, cidr := range privateOrReservedCIDRs {
 		_, block, err := net.ParseCIDR(cidr)
@@ -133,6 +137,9 @@ func isDisallowedHostIP(ip net.IP) bool {
 	}
 	if v4 := ip.To4(); v4 != nil {
 		return thisNetworkIPv4.Contains(v4) || v4.Equal(cloudMetadataIPv4)
+	}
+	if ip.Equal(cloudMetadataIPv6) {
+		return true
 	}
 	// Deprecated IPv4-compatible form (::a.b.c.d): 96 zero bits, then an IPv4
 	// address. Block that form when the embedded address is in 0.0.0.0/8.
