@@ -281,6 +281,7 @@
   "External container image": "External container image",
   "Fail the deployment if the hook fails.": "Fail the deployment if the hook fails.",
   "Failed": "Failed",
+  "Failed to import image": "Failed to import image",
   "Failure Policy": "Failure Policy",
   "Failure threshold": "Failure threshold",
   "Failure threshold must be greater than or equal to 1.": "Failure threshold must be greater than or equal to 1.",
