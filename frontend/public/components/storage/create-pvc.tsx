@@ -128,7 +128,15 @@ export const CreatePVCForm: FC<CreatePVCFormProps> = (props) => {
     // setting accessMode to default with the change to Storage Class selection
     setStorageClass(updatedStorageClass?.metadata?.name);
     setStorageProvisioner(provisioner);
+    // Clear VolumeAttributesClass when StorageClass changes, since the driver may differ
+    setVolumeAttributesClass('');
   };
+
+  const vacFilter = useCallback(
+    (vac: { driverName?: string }) =>
+      !storageProvisioner || !vac.driverName || vac.driverName === storageProvisioner,
+    [storageProvisioner],
+  );
 
   const handleVolumeAttributesClass = (updatedVolumeAttributesClassName) => {
     setVolumeAttributesClass(updatedVolumeAttributesClassName);
@@ -169,6 +177,7 @@ export const CreatePVCForm: FC<CreatePVCFormProps> = (props) => {
           describedBy="volumeattributesclass-dropdown-help"
           required={false}
           selectedKey={volumeAttributesClass}
+          filter={vacFilter}
         />
       </div>
       <label className="co-required" htmlFor="pvc-name">
