@@ -1,6 +1,7 @@
 package chartproxy
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"io"
@@ -49,11 +50,10 @@ func onlyResult(obj interface{}, err error) interface{} {
 
 func TestValidateRepoURL(t *testing.T) {
 	tests := []struct {
-		name           string
-		rawURL         string
-		isClusterScope bool
-		wantErr        bool
-		errContains    string
+		name        string
+		rawURL      string
+		wantErr     bool
+		errContains string
 	}{
 		{
 			name:    "valid public HTTPS URL with IP",
@@ -172,32 +172,12 @@ func TestValidateRepoURL(t *testing.T) {
 			rawURL:  "https://myrepo.default.svc.cluster.local/charts",
 			wantErr: false,
 		},
-		{
-			name:           "rejects loopback for cluster-scoped",
-			rawURL:         "http://127.0.0.1/index.yaml",
-			isClusterScope: true,
-			wantErr:        true,
-			errContains:    "loopback",
-		},
-		{
-			name:           "allows private IP for cluster-scoped",
-			rawURL:         "http://10.0.0.1/index.yaml",
-			isClusterScope: true,
-			wantErr:        false,
-		},
-		{
-			name:           "file scheme rejected even for cluster-scoped",
-			rawURL:         "file:///etc/passwd",
-			isClusterScope: true,
-			wantErr:        true,
-			errContains:    "unsupported URL scheme",
-		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			u, err := url.Parse(tt.rawURL)
 			require.NoError(t, err)
-			err = validateRepoURL(u, tt.isClusterScope)
+			err = validateRepoURL(context.Background(), u)
 			if tt.wantErr {
 				require.Error(t, err)
 				if tt.errContains != "" {
@@ -210,7 +190,44 @@ func TestValidateRepoURL(t *testing.T) {
 	}
 }
 
-func noopURLValidator(_ *url.URL, _ bool) error { return nil }
+func TestValidateRepoURLPropagatesContext(t *testing.T) {
+	prev := lookupRepoHost
+	t.Cleanup(func() { lookupRepoHost = prev })
+
+	type ctxKey struct{}
+	ctx := context.WithValue(context.Background(), ctxKey{}, "repo-lookup")
+	lookupRepoHost = func(got context.Context, host string) ([]net.IP, error) {
+		require.Equal(t, "repo-lookup", got.Value(ctxKey{}))
+		require.Equal(t, "charts.example.com", host)
+		return []net.IP{net.ParseIP("203.0.113.5")}, nil
+	}
+
+	u, err := url.Parse("https://charts.example.com/repo")
+	require.NoError(t, err)
+	require.NoError(t, validateRepoURL(ctx, u))
+}
+
+func TestLookupRepoHostHasOwnDeadline(t *testing.T) {
+	var got time.Duration
+	var hasDeadline bool
+	resolver := &net.Resolver{
+		PreferGo: true,
+		Dial: func(ctx context.Context, network, address string) (net.Conn, error) {
+			if deadline, ok := ctx.Deadline(); ok {
+				hasDeadline = true
+				got = time.Until(deadline)
+			}
+			return nil, errors.New("stopped")
+		},
+	}
+	_, err := lookupRepoHostWithResolver(context.Background(), resolver, "charts.example.com")
+	require.Error(t, err)
+	require.True(t, hasDeadline)
+	require.Greater(t, got, time.Duration(0))
+	require.LessOrEqual(t, got, repoHostLookupTimeout)
+}
+
+func noopURLValidator(_ context.Context, _ *url.URL) error { return nil }
 
 func TestHelmRepoGetter_List(t *testing.T) {
 	tests := []struct {
@@ -933,10 +950,10 @@ func TestSetAllowLoopbackTargetsForTest(t *testing.T) {
 	require.NoError(t, err)
 
 	SetAllowLoopbackTargetsForTest(true)
-	require.NoError(t, validateRepoURL(u, false))
+	require.NoError(t, validateRepoURL(context.Background(), u))
 
 	SetAllowLoopbackTargetsForTest(false)
-	require.ErrorIs(t, validateRepoURL(u, false), utils.ErrDisallowedHost)
+	require.ErrorIs(t, validateRepoURL(context.Background(), u), utils.ErrDisallowedHost)
 }
 
 func TestHTTPClientRejectsLoopback(t *testing.T) {
