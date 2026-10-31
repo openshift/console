@@ -3,6 +3,7 @@ import { useState, useEffect, useRef, useMemo, Suspense } from 'react';
 import { PageSection } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { Route, Routes, Navigate, useParams, useLocation, matchRoutes } from 'react-router';
+import { usePluginFlagsSettled } from '@console/app/src/hooks/usePluginFlagsSettled';
 import { usePluginRoutes } from '@console/app/src/hooks/usePluginRoutes';
 import type { Perspective } from '@console/dynamic-plugin-sdk';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
@@ -157,6 +158,9 @@ const AppContents: FC = () => {
     () => pluginInfoEntries.every((i) => i.status !== 'pending'),
     [pluginInfoEntries],
   );
+
+  const pluginFlagsSettled = usePluginFlagsSettled(pluginInfoEntries);
+  const showNotFound = allPluginsProcessed && pluginFlagsSettled;
 
   const contentRouter = (
     <Routes>
@@ -738,7 +742,7 @@ const AppContents: FC = () => {
       {inactivePluginPageRoutes}
       <Route path="/" element={<DefaultPage />} />
 
-      {allPluginsProcessed ? (
+      {showNotFound ? (
         <Route
           path="*"
           element={
