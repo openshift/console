@@ -13,7 +13,6 @@ import {
   ResourceLink,
   ResourceSummary,
   SectionHeading,
-  detailsPage,
   navFactory,
 } from './utils';
 import {
@@ -218,10 +217,7 @@ export const VolumeAttributesClassDetailsPage: React.FCC<VolumeAttributesClassDe
     );
   };
 
-  const pages = [
-    navFactory.details(detailsPage(VolumeAttributesClassDetails)),
-    navFactory.editYaml(),
-  ];
+  const pages = [navFactory.details(VolumeAttributesClassDetails), navFactory.editYaml()];
 
   return (
     <DetailsPage

@@ -16,7 +16,7 @@ import { ListPage } from './factory/list-page';
 import { AsyncComponent } from './utils/async';
 import { ContainerTable } from './utils/container-table';
 import { DetailsItem } from './utils/details-item';
-import { detailsPage, ResourceSummary } from './utils/details-page';
+import { ResourceSummary } from './utils/details-page';
 import { navFactory, PodsComponent } from './utils/horizontal-nav';
 
 import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
@@ -165,7 +165,7 @@ export const DaemonSetsDetailsPage: React.FCC = (props) => {
       kind={kind}
       customActionMenu={customActionMenu}
       pages={[
-        navFactory.details(detailsPage(DaemonSetDetails)),
+        navFactory.details(DaemonSetDetails),
         ...(prometheusIsAvailable ? [navFactory.metrics()] : []),
         navFactory.editYaml(),
         navFactory.pods(DaemonSetPods),

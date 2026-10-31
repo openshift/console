@@ -35,11 +35,6 @@ export const pluralize = (
   return includeCount ? `${i || 0} ${pluralized}` : pluralized;
 };
 
-export const detailsPage = <T extends {}>(Component: React.ComponentType<T>) =>
-  function DetailsPage(props: T) {
-    return <Component {...props} />;
-  };
-
 const getTolerationsPath = (obj: K8sResourceKind): string => {
   // FIXME: Is this correct for all types (jobs, cron jobs)? It would be better for the embedding page to pass in the path.
   return obj.kind === 'Pod' ? 'spec.tolerations' : 'spec.template.spec.tolerations';
