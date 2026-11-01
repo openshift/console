@@ -13,6 +13,7 @@ import type { ModalComponentProps } from '@console/shared/src/types/modal';
 import {
   getLimitsDataFromResource,
   getResourceLimitsData,
+  mergeManagedContainerResources,
 } from '@console/shared/src/utils/resource-utils';
 import ResourceLimitsModal from './ResourceLimitsModal';
 
@@ -33,7 +34,12 @@ const ResourceLimitsModalLauncher: FC<ResourceLimitsModalLauncherProps> = (props
     const {
       limits: { cpu, memory },
     } = values;
-    const resources = getResourceLimitsData({ cpu, memory });
+    const formResources = getResourceLimitsData({ cpu, memory });
+    const existingResources =
+      props.resource?.spec?.template?.spec?.containers?.[0]?.resources ?? {};
+    // Preserve unmanaged keys (e.g. ephemeral-storage) when replacing resources.
+    // See OCPBUGS-135948.
+    const resources = mergeManagedContainerResources(existingResources, formResources);
 
     return k8sPatch(props.model, props.resource, [
       {
