@@ -43,6 +43,11 @@ func TestValidateChartURL(t *testing.T) {
 		{name: "unsupported scheme file", url: "file:///etc/passwd", wantErr: true, errHint: "invalid chart URL"},
 		{name: "unsupported scheme gopher", url: "gopher://charts.example.com/x.tgz", wantErr: true, errHint: "invalid chart URL"},
 		{name: "missing archive suffix", url: "https://charts.example.com/index.yaml", wantErr: true, errHint: "invalid chart URL"},
+		{name: "tgz with query", url: "https://8.8.8.8/x.tgz?foo=bar", wantErr: false},
+		{name: "query suffix spoof", url: "https://8.8.8.8/secret?file=.tgz", wantErr: true, errHint: "invalid chart URL"},
+		{name: "fragment suffix spoof", url: "https://8.8.8.8/secret#.tar.gz", wantErr: true, errHint: "invalid chart URL"},
+		{name: "encoded dot before tgz", url: "https://8.8.8.8/a%2Etgz", wantErr: false},
+		{name: "encoded suffix in query", url: "https://8.8.8.8/secret?file=%2Etgz", wantErr: true, errHint: "invalid chart URL"},
 		{name: "internal address without suffix", url: "http://172.28.1.76:8849/nacos", wantErr: true, errHint: "invalid chart URL"},
 	}
 
