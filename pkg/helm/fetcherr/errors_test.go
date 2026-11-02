@@ -6,20 +6,23 @@ import (
 )
 
 func TestSanitizeChartErrorCollapsesHostProbes(t *testing.T) {
-	cases := []string{
-		`Get "https://missing.example/charts/a.tgz": dial tcp: lookup missing.example: no such host`,
-		`Get "https://10.0.0.1:8443/charts/a.tgz": dial tcp 10.0.0.1:8443: connect: connection refused`,
-		`Get "https://10.0.0.1:8443/charts/a.tgz": context deadline exceeded (Client.Timeout exceeded while awaiting headers)`,
-		`Get "https://192.168.1.9/charts/a.tgz": tls: failed to verify certificate: x509: certificate signed by unknown authority`,
-		`failed to fetch https://10.1.2.3:9443/charts/a.tgz : 404 Not Found`,
-		`failed to fetch https://10.1.2.3:9443/charts/a.tgz : 500 Internal Server Error`,
-		`chart not found: http://172.16.0.4/charts/a.tgz`,
-		`stopped after 10 redirects`,
-		`manifest unknown`,
+	cases := []struct {
+		name string
+		msg  string
+	}{
+		{"dns lookup failure", `Get "https://missing.example/charts/a.tgz": dial tcp: lookup missing.example: no such host`},
+		{"connection refused", `Get "https://10.0.0.1:8443/charts/a.tgz": dial tcp 10.0.0.1:8443: connect: connection refused`},
+		{"client timeout", `Get "https://10.0.0.1:8443/charts/a.tgz": context deadline exceeded (Client.Timeout exceeded while awaiting headers)`},
+		{"tls certificate error", `Get "https://192.168.1.9/charts/a.tgz": tls: failed to verify certificate: x509: certificate signed by unknown authority`},
+		{"http not found", `failed to fetch https://10.1.2.3:9443/charts/a.tgz : 404 Not Found`},
+		{"http server error", `failed to fetch https://10.1.2.3:9443/charts/a.tgz : 500 Internal Server Error`},
+		{"chart not found message", `chart not found: http://172.16.0.4/charts/a.tgz`},
+		{"redirect limit", `stopped after 10 redirects`},
+		{"manifest unknown", `manifest unknown`},
 	}
-	for _, msg := range cases {
-		t.Run(msg, func(t *testing.T) {
-			err := SanitizeChartError(errors.New(msg))
+	for _, tt := range cases {
+		t.Run(tt.name, func(t *testing.T) {
+			err := SanitizeChartError(errors.New(tt.msg))
 			if err == nil || err.Error() != ErrChartFileNotFound.Error() {
 				t.Fatalf("got %v, want %q", err, ErrChartFileNotFound.Error())
 			}
@@ -79,17 +82,20 @@ func TestSanitizeChartErrorOmitsUnrecognizedPayload(t *testing.T) {
 }
 
 func TestSanitizeChartErrorPreservesBodyFreeLocateFailures(t *testing.T) {
-	cases := []string{
-		`unable to lookup chart "oci://example.com/charts/a", missing registry client`,
-		`path "/charts/a.tgz" not found`,
-		`can't create TLS config for client: open ca.crt: no such file or directory`,
-		`content cache must be set`,
+	cases := []struct {
+		name string
+		msg  string
+	}{
+		{"missing registry client", `unable to lookup chart "oci://example.com/charts/a", missing registry client`},
+		{"path not found", `path "/charts/a.tgz" not found`},
+		{"tls config creation", `can't create TLS config for client: open ca.crt: no such file or directory`},
+		{"content cache unset", `content cache must be set`},
 	}
-	for _, msg := range cases {
-		t.Run(msg, func(t *testing.T) {
-			err := SanitizeChartError(errors.New(msg))
-			if err == nil || err.Error() != msg {
-				t.Fatalf("got %v, want %q", err, msg)
+	for _, tt := range cases {
+		t.Run(tt.name, func(t *testing.T) {
+			err := SanitizeChartError(errors.New(tt.msg))
+			if err == nil || err.Error() != tt.msg {
+				t.Fatalf("got %v, want %q", err, tt.msg)
 			}
 		})
 	}
