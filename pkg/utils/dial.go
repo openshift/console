@@ -21,6 +21,12 @@ func SetAllowLoopbackDialForTest(allow bool) {
 	allowLoopbackDial = allow
 }
 
+// LoopbackDialAllowed reports whether tests have disabled the loopback dial
+// restriction. Production leaves it false.
+func LoopbackDialAllowed() bool {
+	return allowLoopbackDial
+}
+
 // DialPinnedContext resolves addr once, refuses disallowed chart targets, and
 // connects to one of those resolved addresses. A later DNS answer cannot move
 // the connection onto a different address; however, note that pinning does
