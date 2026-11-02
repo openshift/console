@@ -1046,6 +1046,35 @@ func TestHTTPClientRejectsResolvedDisallowedHost(t *testing.T) {
 	require.NoError(t, err)
 }
 
+func TestHTTPClientRedirectKeepsIndexShape(t *testing.T) {
+	client, err := httpClient(nil)
+	require.NoError(t, err)
+
+	httpsOrig, err := http.NewRequest(http.MethodGet, "https://charts.example.com/index.yaml", nil)
+	require.NoError(t, err)
+	moved, err := http.NewRequest(http.MethodGet, "https://10.1.2.3/mirror/index.yaml?cache=1", nil)
+	require.NoError(t, err)
+	require.NoError(t, client.CheckRedirect(moved, []*http.Request{httpsOrig}))
+
+	secret, err := http.NewRequest(http.MethodGet, "https://10.1.2.3/secret", nil)
+	require.NoError(t, err)
+	require.EqualError(t, client.CheckRedirect(secret, []*http.Request{httpsOrig}), "invalid index URL")
+
+	spoof, err := http.NewRequest(http.MethodGet, "https://10.1.2.3/secret?x=/index.yaml", nil)
+	require.NoError(t, err)
+	require.EqualError(t, client.CheckRedirect(spoof, []*http.Request{httpsOrig}), "invalid index URL")
+
+	down, err := http.NewRequest(http.MethodGet, "http://10.1.2.3/index.yaml", nil)
+	require.NoError(t, err)
+	require.EqualError(t, client.CheckRedirect(down, []*http.Request{httpsOrig}), "redirect from https to http is not allowed")
+
+	httpOrig, err := http.NewRequest(http.MethodGet, "http://charts.example.com/index.yaml", nil)
+	require.NoError(t, err)
+	httpMoved, err := http.NewRequest(http.MethodGet, "http://10.1.2.3/other/index.yaml", nil)
+	require.NoError(t, err)
+	require.NoError(t, client.CheckRedirect(httpMoved, []*http.Request{httpOrig}))
+}
+
 func TestHelmRepo_IndexFileSanitizesFetchErrors(t *testing.T) {
 	t.Run("closed port matches a missing index", func(t *testing.T) {
 		ln, err := net.Listen("tcp", "127.0.0.1:0")

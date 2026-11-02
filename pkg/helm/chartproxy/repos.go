@@ -53,6 +53,8 @@ const (
 	repoHostLookupTimeout = 5 * time.Second
 )
 
+var errInvalidIndexURL = errors.New("invalid index URL")
+
 type InvalidRepo struct {
 	Name  string `json:"name"`
 	Error string `json:"error"`
@@ -157,6 +159,9 @@ func httpClient(tlsConfig *tls.Config) (*http.Client, error) {
 			if len(via) > 0 && via[0].URL.Scheme == "https" && req.URL.Scheme == "http" {
 				return errors.New("redirect from https to http is not allowed")
 			}
+			if utils.FetchShape(req.URL) != "index" {
+				return errInvalidIndexURL
+			}
 			if len(via) > 0 && req.URL.Host != via[0].URL.Host {
 				req.Header.Del("Authorization")
 			}
@@ -202,6 +207,9 @@ func (hr helmRepo) IndexFile() (*repo.IndexFile, error) {
 		klog.V(4).Infof("Helm repository %q index request failed: %v", hr.Name, err)
 		if errors.Is(err, utils.ErrDisallowedHost) {
 			return nil, utils.ErrDisallowedHost
+		}
+		if errors.Is(err, errInvalidIndexURL) {
+			return nil, errInvalidIndexURL
 		}
 		return nil, fetcherr.ErrIndexFileNotFound
 	}
