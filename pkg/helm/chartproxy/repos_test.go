@@ -502,6 +502,30 @@ func TestHelmRepoGetter_ListErrors(t *testing.T) {
 	}
 }
 
+func TestIndexFileURL(t *testing.T) {
+	tests := []struct {
+		raw  string
+		want string
+	}{
+		{raw: "https://example.com/charts", want: "https://example.com/charts/index.yaml"},
+		{raw: "https://example.com/charts/", want: "https://example.com/charts/index.yaml"},
+		{raw: "https://example.com/charts/index.yaml", want: "https://example.com/charts/index.yaml"},
+		{raw: "https://example.com/charts/index%2Eyaml", want: "https://example.com/charts/index%2Eyaml"},
+		{raw: "https://example.com/charts/index.yaml?foo=bar", want: "https://example.com/charts/index.yaml?foo=bar"},
+		{raw: "https://example.com/index.yaml#section", want: "https://example.com/index.yaml#section"},
+		{raw: "https://example.com/secret?x=/index.yaml", want: "https://example.com/secret/index.yaml?x=/index.yaml"},
+		{raw: "https://example.com/secret#/index.yaml", want: "https://example.com/secret/index.yaml#/index.yaml"},
+		{raw: "http://[2001:db8::1]/repo", want: "http://[2001:db8::1]/repo/index.yaml"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.raw, func(t *testing.T) {
+			u, err := url.Parse(tt.raw)
+			require.NoError(t, err)
+			require.Equal(t, tt.want, indexFileURL(u))
+		})
+	}
+}
+
 func TestHelmRepo_IndexFile(t *testing.T) {
 	tests := []struct {
 		name              string

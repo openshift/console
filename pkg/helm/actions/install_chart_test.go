@@ -657,12 +657,25 @@ func TestIsChartURLWellFormed(t *testing.T) {
 		{"allow RFC1918 192.168/16", "http://192.168.1.1/chart.tgz", true},
 		{"allow RFC1918 192.168/16 with port", "https://192.168.0.10:443/charts/mychart-1.0.0.tar.gz", true},
 		{"allow IPv6 with port", "http://[2001:db8::1]:8443/charts/mychart.tar.gz", true},
+		{"allow tgz with query", "https://example.com/charts/mychart-1.0.0.tgz?foo=bar", true},
+		{"allow tar.gz with query", "https://example.com/charts/mychart-1.0.0.tar.gz?foo=bar", true},
+		{"allow tgz with fragment", "https://example.com/charts/mychart-1.0.0.tgz#section", true},
+		{"allow tgz with query and fragment", "https://example.com/charts/mychart-1.0.0.tgz?foo=bar#section", true},
+		{"allow uppercase tgz with query", "https://example.com/charts/mychart-1.0.0.TGZ?x=1", true},
+		{"allow encoded dot before tgz", "https://example.com/a%2Etgz", true},
+		{"allow encoded dot before tar.gz", "https://example.com/charts/mychart%2Etar%2Egz", true},
+		{"allow encoded tgz with query", "https://example.com/a%2Etgz?foo=bar", true},
 
 		// Invalid: missing host or bad scheme/format
 		{"block OCI no host", "oci:///chart", false},
 		{"block empty string", "", false},
 		{"block ftp scheme", "ftp://example.com/chart.tgz", false},
 		{"block http without tgz", "http://example.com/charts/mychart", false},
+		{"block query suffix spoof", "https://example.com/charts/mychart?file=.tgz", false},
+		{"block fragment suffix spoof", "https://example.com/charts/mychart#.tgz", false},
+		{"block query tar.gz spoof", "https://example.com/secret?x=.tar.gz", false},
+		{"block fragment tar.gz spoof", "http://example.com/secret#.tar.gz", false},
+		{"block encoded suffix in query", "https://example.com/secret?file=%2Etgz", false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

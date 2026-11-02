@@ -61,11 +61,27 @@ type RegistryClientSetter interface {
 
 // IsChartURLWellFormed reports whether a chart URL is syntactically well-formed:
 // an oci://<registry>/<path> reference or an http(s)://<host>/<path>.tgz|tar.gz
-// archive URL. Hosts may be DNS names or IPv4/IPv6 addresses, including
-// private and cluster-local targets. Localhost and loopback are well-formed
-// here but are rejected elsewhere.
+// archive URL. The archive suffix is checked on the decoded path, so a query
+// string or fragment cannot satisfy it. Hosts may be DNS names or IPv4/IPv6
+// addresses, including private and cluster-local targets. Localhost and
+// loopback are well-formed here but are rejected elsewhere.
 func IsChartURLWellFormed(raw string) bool {
-	return ociURLRe.MatchString(raw) || httpURLRe.MatchString(raw)
+	return ociURLRe.MatchString(raw) || httpURLRe.MatchString(extractURL(raw))
+}
+
+// extractURL returns an http(s) URL with its query and fragment removed and
+// its path decoded.
+func extractURL(raw string) string {
+	u, err := url.Parse(raw)
+	if err != nil {
+		return ""
+	}
+	u.RawQuery = ""
+	u.Fragment = ""
+	u.ForceQuery = false
+	// Clearing RawPath causes the returned string to be decoded.
+	u.RawPath = ""
+	return u.String()
 }
 
 // chartVersionFromURL extracts the chart version from a chart URL.
