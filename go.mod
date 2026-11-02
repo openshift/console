@@ -14,8 +14,8 @@ require (
 	github.com/gorilla/securecookie v1.1.2
 	github.com/gorilla/sessions v1.4.0
 	github.com/gorilla/websocket v1.5.4-0.20250319132907-e064f32e3674
-	github.com/openshift/api v0.0.0-20261017003925-24b2699a9b32
-	github.com/openshift/client-go v0.0.0-20261006222332-348fc1ca8bb1
+	github.com/openshift/api v0.0.0-20261023091600-9809689a2448
+	github.com/openshift/client-go v0.0.0-20261026144452-41e357d76bc8
 	github.com/openshift/library-go v0.0.0-20261019145849-b3e46fec8a08
 	github.com/operator-framework/api v0.45.0
 	github.com/operator-framework/kubectl-operator v0.4.0
@@ -248,5 +248,5 @@ replace github.com/docker/docker => github.com/docker/docker v27.5.0+incompatibl
 
 replace github.com/docker/cli => github.com/docker/cli v27.5.0+incompatible
 
-// branch: httptransport-tls
-replace github.com/openshift/library-go => github.com/tchap/library-go v0.0.0-20261020121909-c5a2b10f39ea
+// branch: fix/https-proxy-http1
+replace github.com/openshift/library-go => github.com/jhadvig/library-go v0.0.0-20261102111257-a3bdbf75e6e6

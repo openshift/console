@@ -28,7 +28,7 @@ type Config struct {
 	clientCertificates []tls.Certificate
 	proxyConfigured    bool
 	proxyFunc          func(*http.Request) (*url.URL, error)
-	tlsProfileSet      bool
+	disableHTTP2       bool
 	tlsMinVersion      uint16
 	tlsCipherSuites    []uint16
 }
@@ -121,37 +121,43 @@ func WithClientCertificateFile(certFile, keyFile string) Option {
 
 // WithProxyFunc explicitly configures proxy resolution. A nil function
 // disables proxying altogether. If this option is omitted, the transport uses the standard
-// proxy environment variables. At most one proxy option may be supplied.
+// proxy environment variables. It may be supplied multiple times; the last one wins.
 func WithProxyFunc(proxyFunc func(*http.Request) (*url.URL, error)) Option {
 	return func(config *Config) error {
-		if config.proxyConfigured {
-			return errors.New("WithProxyFunc may only be specified once")
-		}
 		config.proxyConfigured = true
 		config.proxyFunc = proxyFunc
 		return nil
 	}
 }
 
-// WithTLSProfile configures the TLS version floor and the cipher suites the
-// transport offers. A zero minVersion or an empty cipherSuites list retains
-// the OpenShift default for that setting (libcrypto.DefaultTLSVersion /
-// libcrypto.DefaultCiphers). Cipher suites only apply to TLS 1.2 and below;
-// TLS 1.3 suites are not configurable in crypto/tls.
-//
-// The profile is reapplied whenever a CA content provider triggers a rebuild,
-// so it also holds for dynamically reloaded transports. Callers that observe
-// OpenShift's cluster-wide TLS settings should derive both arguments from the
-// applicable TLSSecurityProfile rather than hardcoding them. At most one
-// WithTLSProfile option may be supplied.
-func WithTLSProfile(minVersion uint16, cipherSuites []uint16) Option {
+// WithTLSMinVersion sets the minimum TLS version the transport offers.
+func WithTLSMinVersion(version uint16) Option {
 	return func(config *Config) error {
-		if config.tlsProfileSet {
-			return errors.New("WithTLSProfile may only be specified once")
+		if version == 0 {
+			return errors.New("WithTLSMinVersion requires a non-zero TLS version")
 		}
-		config.tlsProfileSet = true
-		config.tlsMinVersion = minVersion
+		config.tlsMinVersion = version
+		return nil
+	}
+}
+
+// WithTLSCipherSuites sets the cipher suites offered for TLS 1.2, 1.1, and 1.0 connection.
+// TLS 1.3 suites are not configurable in crypto/tls.
+func WithTLSCipherSuites(cipherSuites []uint16) Option {
+	return func(config *Config) error {
+		if len(cipherSuites) == 0 {
+			return errors.New("WithTLSCipherSuites requires at least one cipher suite")
+		}
 		config.tlsCipherSuites = append([]uint16(nil), cipherSuites...)
+		return nil
+	}
+}
+
+// WithDisableHTTP2 restricts the transport to HTTP/1.1, including after CA reload.
+// Use it when an HTTPS proxy advertises HTTP/2 but requires HTTP/1.1 CONNECT.
+func WithDisableHTTP2() Option {
+	return func(config *Config) error {
+		config.disableHTTP2 = true
 		return nil
 	}
 }
@@ -159,9 +165,8 @@ func WithTLSProfile(minVersion uint16, cipherSuites []uint16) Option {
 // NewRoundTripper constructs an outbound HTTP round tripper from the supplied
 // options. By default, it trusts the system certificate pool, honors the
 // standard proxy environment variables, and applies the OpenShift-wide TLS
-// defaults (minimum version and cipher suites) from libcrypto.DefaultTLSVersion
-// and libcrypto.DefaultCiphers. These defaults can be overridden with
-// WithTLSProfile.
+// defaults (minimum version and cipher suites) from pkg/crypto.DefaultTLSVersion
+// and pkg/crypto.DefaultCiphers.
 //
 // The concrete type of the returned http.RoundTripper is not part of the API.
 // When no CA content provider is supplied it is a static *http.Transport; when
@@ -213,11 +218,15 @@ func (config *Config) newHTTPTransport() (*http.Transport, error) {
 	if len(config.clientCertificates) > 0 {
 		tlsConfig.Certificates = append([]tls.Certificate(nil), config.clientCertificates...)
 	}
-	if config.tlsMinVersion != 0 {
+	if config.tlsMinVersion > 0 {
 		tlsConfig.MinVersion = config.tlsMinVersion
 	}
 	if len(config.tlsCipherSuites) > 0 {
 		tlsConfig.CipherSuites = append([]uint16(nil), config.tlsCipherSuites...)
+	}
+
+	if config.disableHTTP2 {
+		tlsConfig.NextProtos = []string{"http/1.1"}
 	}
 
 	transport := utilnet.SetTransportDefaults(&http.Transport{TLSClientConfig: tlsConfig})
