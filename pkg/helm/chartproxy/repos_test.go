@@ -994,12 +994,51 @@ func TestHTTPClientRejectsLoopback(t *testing.T) {
 	require.NoError(t, err)
 	require.NoError(t, client.CheckRedirect(private, []*http.Request{original}))
 
+	proxy := client.Transport.(*http.Transport).Proxy
+	_, err = proxy(loopback)
+	require.ErrorIs(t, err, utils.ErrDisallowedHost)
+	_, err = proxy(private)
+	require.NoError(t, err)
+
 	repoURL, err := url.Parse("http://127.0.0.1:1/charts")
 	require.NoError(t, err)
 	_, err = (helmRepo{Name: "loopback", URL: repoURL, httpClient: func() (*http.Client, error) {
 		return httpClient(nil)
 	}}).IndexFile()
 	require.ErrorIs(t, err, utils.ErrDisallowedHost)
+}
+
+func TestHTTPClientRejectsResolvedDisallowedHost(t *testing.T) {
+	prev := lookupRepoHost
+	t.Cleanup(func() { lookupRepoHost = prev })
+	lookupRepoHost = func(ctx context.Context, host string) ([]net.IP, error) {
+		switch host {
+		case "loop.example.com":
+			return []net.IP{net.ParseIP("127.0.0.1")}, nil
+		case "repo.example.com":
+			return []net.IP{net.ParseIP("10.1.2.3")}, nil
+		default:
+			return nil, &net.DNSError{Err: "no such host", Name: host, IsNotFound: true}
+		}
+	}
+
+	client, err := httpClient(nil)
+	require.NoError(t, err)
+	original, err := http.NewRequest(http.MethodGet, "http://charts.example.com/charts", nil)
+	require.NoError(t, err)
+	proxy := client.Transport.(*http.Transport).Proxy
+
+	disallowed, err := http.NewRequest(http.MethodGet, "http://loop.example.com/index.yaml", nil)
+	require.NoError(t, err)
+	require.ErrorIs(t, client.CheckRedirect(disallowed, []*http.Request{original}), utils.ErrDisallowedHost)
+	_, err = proxy(disallowed)
+	require.ErrorIs(t, err, utils.ErrDisallowedHost)
+
+	allowed, err := http.NewRequest(http.MethodGet, "http://repo.example.com/index.yaml", nil)
+	require.NoError(t, err)
+	require.NoError(t, client.CheckRedirect(allowed, []*http.Request{original}))
+	_, err = proxy(allowed)
+	require.NoError(t, err)
 }
 
 func TestHelmRepo_IndexFileSanitizesFetchErrors(t *testing.T) {
