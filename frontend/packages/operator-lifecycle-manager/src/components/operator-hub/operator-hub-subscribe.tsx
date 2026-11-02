@@ -61,7 +61,7 @@ import { PageHeading } from '@console/shared/src/components/heading/PageHeading'
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { CONSOLE_OPERATOR_CONFIG_NAME } from '@console/shared/src/constants/resource';
-import { OPERATOR_OLMV0_TYPE } from '../../const';
+import { OPERATOR_TYPE } from '../../const';
 import { SubscriptionModel, OperatorGroupModel, PackageManifestModel } from '../../models';
 import type { OperatorGroupKind, PackageManifestKind, SubscriptionKind } from '../../types';
 import { InstallPlanApproval, InstallModeType } from '../../types';
@@ -552,7 +552,12 @@ const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
       }
       navigateToInstallPage(currentCSVName);
     } catch (err) {
-      setError(err.message || t('Could not create Operator Subscription.'));
+      setError(
+        err.message ||
+          t(
+            'Could not create the Operator Subscription. Try again. If the error continues, contact your cluster administrator.',
+          ),
+      );
     }
   };
 
@@ -574,6 +579,11 @@ const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
         title={t('An error occurred')}
       >
         <div className="co-pre-line">{error}</div>
+        <p>
+          {t(
+            'Resolve the reported issue, then try again. If the error continues, contact your cluster administrator.',
+          )}
+        </p>
       </Alert>
     )) ||
     (!namespaceSupports(selectedTargetNamespace)(selectedInstallMode) && (
@@ -695,7 +705,7 @@ const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
             >
               <>
                 {t(
-                  'Please note that installing non-Red Hat operators into OpenShift namespaces and enabling monitoring voids user support. Enabling cluster monitoring for non-Red Hat operators can lead to malicious metrics data overriding existing cluster metrics.',
+                  'Please note that installing non-Red Hat Operators into OpenShift namespaces and enabling monitoring voids user support. Enabling cluster monitoring for non-Red Hat Operators can lead to malicious metrics data overriding existing cluster metrics.',
                 )}
                 {!isManaged() && (
                   <Trans ns="olm">
@@ -811,8 +821,8 @@ const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
         title={t('Install Operator')}
         breadcrumbs={[
           {
-            name: t('Software Catalog'),
-            path: `/catalog/ns/${activeNamespace}?catalogType=${OPERATOR_OLMV0_TYPE}&${search.toString()}`,
+            name: t('Software catalog'),
+            path: `/catalog/ns/${activeNamespace}?catalogType=${OPERATOR_TYPE}&${search.toString()}`,
           },
           { name: t('Operator Installation'), path: url },
         ]}
@@ -829,7 +839,7 @@ const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
             variant={AlertVariant.warning}
           >
             {t(
-              'This cluster is using AWS Security Token Service to reach the cloud API. In order for this operator to take the actions it requires directly with the cloud API, you will need to provide a role ARN (with an attached policy) during installation. Manual subscriptions are highly recommended as steps should be taken prior to upgrade to ensure that the permissions required by the next version are properly accounted for in the role. Please see the operator description for more details.',
+              'This cluster is using AWS Security Token Service to reach the cloud API. In order for this Operator to take the actions it requires directly with the cloud API, you will need to provide a role ARN (with an attached policy) during installation. Manual subscriptions are highly recommended as steps should be taken prior to upgrade to ensure that the permissions required by the next version are properly accounted for in the role. Please see the Operator description for more details.',
             )}
           </DismissableAlert>
         )}
@@ -840,7 +850,7 @@ const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
             variant={AlertVariant.warning}
           >
             {t(
-              'This cluster is using Azure Workload Identity / Federated Identity to reach the cloud API. In order for this operator to take the actions it requires directly with the cloud API, provide the Client ID, Tenant ID, and Subscription ID during installation. Manual subscriptions are highly recommended as steps should be taken before upgrade to ensure that the permissions required by the next version are properly accounted for in the role. See the operator description for more details.',
+              'This cluster is using Azure Workload Identity / Federated Identity to reach the cloud API. In order for this Operator to take the actions it requires directly with the cloud API, provide the Client ID, Tenant ID, and Subscription ID during installation. Manual subscriptions are highly recommended as steps should be taken before upgrade to ensure that the permissions required by the next version are properly accounted for in the role. See the Operator description for more details.',
             )}
           </DismissableAlert>
         )}
@@ -851,7 +861,7 @@ const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
             className="pf-v6-u-mb-md"
           >
             {t(
-              'This cluster is using GCP Workload Identity / Federated Identity to reach the cloud API. In order for this operator to take the actions it requires directly with the cloud API, provide the Pool ID, Provider ID, and Service Account Email during installation. Manual subscriptions are highly recommended as steps should be taken before upgrade to ensure that the permissions required by the next version are properly accounted for in the role. See the operator description for more details.',
+              'This cluster is using GCP Workload Identity / Federated Identity to reach the cloud API. In order for this Operator to take the actions it requires directly with the cloud API, provide the Pool ID, Provider ID, and Service Account Email during installation. Manual subscriptions are highly recommended as steps should be taken before upgrade to ensure that the permissions required by the next version are properly accounted for in the role. See the Operator description for more details.',
             )}
           </DismissableAlert>
         )}
@@ -862,7 +872,7 @@ const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
                 <div className="form-group">
                   <InputField
                     label={t('role ARN')}
-                    helpText={t('The role ARN required for the operator to access the cloud API.')}
+                    helpText={t('The role ARN required for the Operator to access the cloud API.')}
                     placeholder={t('role ARN')}
                     ariaLabel={t('role ARN')}
                     value={roleARNText}
@@ -875,7 +885,7 @@ const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
                   <InputField
                     label={t('Azure Client ID')}
                     helpText={t(
-                      'The Azure Client ID required for the operator to access the cloud API.',
+                      'The Azure Client ID required for the Operator to access the cloud API.',
                     )}
                     placeholder={t('Azure Client ID')}
                     ariaLabel={t('Azure Client ID')}
@@ -885,7 +895,7 @@ const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
                   <InputField
                     label={t('Azure Tenant ID')}
                     helpText={t(
-                      'The Azure Tenant ID required for the operator to access the cloud API.',
+                      'The Azure Tenant ID required for the Operator to access the cloud API.',
                     )}
                     placeholder={t('Azure Tenant ID')}
                     ariaLabel={t('Azure Tenant ID')}
@@ -896,7 +906,7 @@ const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
                   <InputField
                     label={t('Azure Subscription ID')}
                     helpText={t(
-                      'The Azure Subscription ID required for the operator to access the cloud API.',
+                      'The Azure Subscription ID required for the Operator to access the cloud API.',
                     )}
                     placeholder={t('Azure Subscription ID')}
                     ariaLabel={t('Azure Subscription ID')}
@@ -906,7 +916,7 @@ const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
                   <InputField
                     label={t('Azure Resource Group')}
                     helpText={t(
-                      'The Azure Resource Group required for the operator to access cloud resources.',
+                      'The Azure Resource Group required for the Operator to access cloud resources.',
                     )}
                     placeholder={t('Azure Resource Group')}
                     ariaLabel={t('Azure Resource Group')}
@@ -920,7 +930,7 @@ const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
                   <InputField
                     label={t('GCP Project Number')}
                     helpText={t(
-                      'The GCP Project Number required for the operator to access the cloud API.',
+                      'The GCP Project Number required for the Operator to access the cloud API.',
                     )}
                     placeholder={t('GCP Project Number')}
                     ariaLabel={t('GCP Project Number')}
@@ -930,7 +940,7 @@ const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
                   <InputField
                     label={t('GCP Pool ID')}
                     helpText={t(
-                      'The GCP Pool ID required for the operator to access the cloud API.',
+                      'The GCP Pool ID required for the Operator to access the cloud API.',
                     )}
                     placeholder={t('GCP Pool ID')}
                     ariaLabel={t('GCP Pool ID')}
@@ -940,7 +950,7 @@ const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
                   <InputField
                     label={t('GCP Provider ID')}
                     helpText={t(
-                      'The GCP Provider ID required for the operator to access the cloud API.',
+                      'The GCP Provider ID required for the Operator to access the cloud API.',
                     )}
                     placeholder={t('GCP Provider ID')}
                     ariaLabel={t('GCP Provider ID')}
@@ -950,7 +960,7 @@ const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
                   <InputField
                     label={t('Service Account Email')}
                     helpText={t(
-                      'The GCP Service Account Email required for the operator to access the cloud API.',
+                      'The GCP Service Account Email required for the Operator to access the cloud API.',
                     )}
                     placeholder={t('GCP Service Account Email')}
                     ariaLabel={t('GCP Service Account Email')}
@@ -1088,7 +1098,7 @@ const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
                         isInline
                         className="co-alert co-alert--margin-top"
                         variant="info"
-                        title={t('Will function as manual approval strategy')}
+                        title={t('This Subscription requires manual approval for each update')}
                       >
                         <NamespaceIncludesManualApproval
                           subscriptions={manualSubscriptionsInNamespace}
@@ -1101,15 +1111,14 @@ const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
                       isInline
                       className="co-alert co-alert--margin-top"
                       variant="info"
-                      title={t('Manual approval applies to all operators in a namespace')}
+                      title={t('Manual approval applies to all Operators in a namespace')}
                     >
                       <Trans ns="olm">
-                        Installing an operator with manual approval causes all operators installed
-                        in namespace <strong>{{ selectedTargetNamespace }}</strong> to function as
-                        manual approval strategy and will be updated altogether. Install operators
-                        into separate namespaces for handling their updates independently. To allow
-                        automatic approval, all operators installed in the namespace must use
-                        automatic approval strategy.
+                        Installing an Operator with manual approval causes all Operators installed
+                        in namespace <strong>{{ selectedTargetNamespace }}</strong> to require
+                        manual approval for updates. Install Operators into separate namespaces to
+                        manage their updates independently. To allow automatic approval, all
+                        Operators installed in the namespace must use automatic approval strategy.
                       </Trans>
                     </Alert>
                   )}

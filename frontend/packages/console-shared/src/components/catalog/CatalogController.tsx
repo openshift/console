@@ -217,11 +217,7 @@ export const CatalogController: FC<CatalogControllerProps> = ({
             hideSidebar={hideSidebar}
             sortFilterGroups={sortFilterGroups}
           />
-          <CatalogDetailsModal
-            item={selectedItem}
-            catalogTypes={catalogTypes}
-            onClose={closeDetailsPanel}
-          />
+          <CatalogDetailsModal item={selectedItem} onClose={closeDetailsPanel} />
         </StatusBox>
       </PageBody>
     </>

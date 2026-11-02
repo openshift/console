@@ -16,26 +16,35 @@ describe('ClusterExtensionEmptyState', () => {
   it('should render the same title as the Classic empty state', () => {
     renderWithProviders(<ClusterExtensionEmptyState />);
 
-    expect(screen.getByText('No Operators found')).toBeInTheDocument();
-    expect(screen.getByText('No Operators are available.')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'No Operators installed' })).toBeInTheDocument();
+    expect(
+      screen.getByText('This cluster does not have any Operators installed as cluster extensions.'),
+    ).toBeInTheDocument();
   });
 
-  it('should link to the Next-Gen Operators catalog', () => {
+  it('should link to the Cluster extensions catalog', () => {
     renderWithProviders(<ClusterExtensionEmptyState />);
 
-    expect(screen.getByRole('link', { name: /Next-Gen Operators catalog/ })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: /Cluster extensions catalog/ })).toHaveAttribute(
       'href',
-      '/catalog/all-namespaces?catalogType=operator-olmv1',
+      '/catalog/all-namespaces?catalogType=operator&operatorCatalog=%5B%22Cluster%20extensions%22%5D',
     );
   });
 
-  // Without the ClusterCatalog CRD the Next-Gen catalog type is not registered, so the link would 404.
+  // Cluster extensions require the ClusterCatalog API.
   it('should omit the catalog link when the ClusterCatalog API is unavailable', () => {
     mockUseFlag.mockReturnValue(false);
 
     renderWithProviders(<ClusterExtensionEmptyState />);
 
-    expect(screen.getByText('No Operators are available.')).toBeInTheDocument();
+    expect(
+      screen.getByText('This cluster does not have any Operators installed as cluster extensions.'),
+    ).toBeInTheDocument();
     expect(screen.queryByRole('link')).not.toBeInTheDocument();
+    expect(
+      screen.getByText(
+        'To install Operators as cluster extensions, enable Technology Preview and configure a ClusterCatalog. If you do not have permission to do this, contact your cluster administrator.',
+      ),
+    ).toBeInTheDocument();
   });
 });

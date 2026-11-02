@@ -1,15 +1,17 @@
 /* eslint-disable oxc/no-barrel-file */
 import type { FC, ChangeEvent } from 'react';
+import { useId } from 'react';
 import {
   FilterSidePanel,
   FilterSidePanelCategory,
   FilterSidePanelCategoryItem,
 } from '@patternfly/react-catalog-view-extension';
+import { Radio } from '@patternfly/react-core/dist/dynamic/components/Radio';
 import * as _ from 'lodash';
-import type { CatalogItemAttribute } from '@console/dynamic-plugin-sdk';
+import type { CatalogItemAttribute } from '@console/dynamic-plugin-sdk/src/extensions/catalog';
 import type { ResolvedCodeRefProperties } from '@console/dynamic-plugin-sdk/src/types';
 import { FieldLevelHelp } from '@console/internal/components/utils/field-level-help';
-import { alphanumericCompare } from '@console/shared/src/utils/utils';
+import { getSortedFilterKeys } from '../utils/filter-utils';
 import type {
   CatalogFilter,
   CatalogFilterCounts,
@@ -36,6 +38,7 @@ const CatalogFilters: FC<CatalogFiltersProps> = ({
   onShowAllToggle,
   sortFilterGroups,
 }) => {
+  const id = useId();
   const sortedActiveFilters = sortFilterGroups
     ? Object.keys(activeFilters)
         .sort()
@@ -51,6 +54,19 @@ const CatalogFilters: FC<CatalogFiltersProps> = ({
   const renderFilterItem = (filter: CatalogFilterItem, filterName: string, groupName: string) => {
     const { label, active } = filter;
     const count = filterGroupCounts[groupName]?.[filterName] ?? 0;
+    if (filterGroupMap[groupName]?.filterType === 'radio') {
+      return (
+        <Radio
+          key={filterName}
+          id={`${id}-${encodeURIComponent(groupName)}-${encodeURIComponent(filterName)}`}
+          name={`${id}-${groupName}`}
+          isChecked={active}
+          onChange={(_event, checked) => onFilterChange(groupName, filterName, checked)}
+          label={`${label} (${count})`}
+          data-test={`${groupName}-${_.kebabCase(filterName)}`}
+        />
+      );
+    }
     return (
       <FilterSidePanelCategoryItem
         key={filterName}
@@ -67,15 +83,12 @@ const CatalogFilters: FC<CatalogFiltersProps> = ({
   };
 
   const renderFilterGroup = (filterGroup: CatalogFilter, groupName: string) => {
-    const filterGroupKeys = Object.keys(filterGroup);
-    const filterGroupItemComparator = filterGroupMap[groupName]?.comparator ?? alphanumericCompare;
+    const filterGroupKeys = getSortedFilterKeys(filterGroup, filterGroupMap[groupName]?.comparator);
     if (filterGroupKeys.length > 0) {
-      const sortedFilterGroup = filterGroupKeys
-        .sort(filterGroupItemComparator || alphanumericCompare)
-        .reduce<CatalogFilter>((acc, filterName) => {
-          acc[filterName] = filterGroup[filterName];
-          return acc;
-        }, {});
+      const sortedFilterGroup = filterGroupKeys.reduce<CatalogFilter>((acc, filterName) => {
+        acc[filterName] = filterGroup[filterName];
+        return acc;
+      }, {});
       return (
         <FilterSidePanelCategory
           key={groupName}

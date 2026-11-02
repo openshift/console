@@ -69,22 +69,22 @@ export const useOperatorMigrationProgressText = () => {
             text = t('Collecting and checking Operator resources');
             break;
           case 'backup':
-            text = t('Backing up OLM (Classic) resources');
+            text = t('Backing up Operator Lifecycle Manager version 0 resources');
             break;
           case 'prepare':
             text = t('Preparing Operator for migration');
             break;
           case 'create':
-            text = t('Creating OLM v1 cluster extension resources');
+            text = t('Creating Operator Lifecycle Manager version 1 cluster extension resources');
             break;
           case 'cleanup':
-            text = t('Cleaning up OLM (Classic) resources');
+            text = t('Cleaning up Operator Lifecycle Manager version 0 resources');
             break;
           case 'scan':
-            text = t('Scanning all OLM (Classic) Subscriptions');
+            text = t('Scanning all Operator Lifecycle Manager version 0 Subscriptions');
             break;
           case 'rollback':
-            text = t('Restoring OLM (Classic) resources');
+            text = t('Restoring Operator Lifecycle Manager version 0 resources');
             break;
           default:
             text = t('Operator migration in progress');
@@ -108,7 +108,7 @@ export const useOperatorMigrationProgressText = () => {
           default:
             return job.progressEvent
               ? getOperatorMigrationProgressText(job.progressEvent)
-              : t('Restoring OLM (Classic) resources');
+              : t('Restoring Operator Lifecycle Manager version 0 resources');
         }
       }
       switch (job.status) {
@@ -117,7 +117,7 @@ export const useOperatorMigrationProgressText = () => {
         case 'Scanning':
           return job.progressEvent
             ? getOperatorMigrationProgressText(job.progressEvent)
-            : t('Scanning all OLM (Classic) Subscriptions');
+            : t('Scanning all Operator Lifecycle Manager version 0 Subscriptions');
         case 'CancelRequested':
           return t('Cancellation requested');
         case 'Cancelled':
@@ -126,8 +126,13 @@ export const useOperatorMigrationProgressText = () => {
           return t('One or more Operators failed. Review the results for each Operator.');
         case 'Failed':
           return job.message
-            ? t('Migration job failed: {{error}}', { error: job.message })
-            : t('Migration job failed');
+            ? t(
+                'Migration job failed. Review the error and the Operator results before you try again. Error: {{error}}',
+                { error: job.message },
+              )
+            : t(
+                'Migration job failed. Review the Operator results and resolve any issues before you try again.',
+              );
         case 'Succeeded':
           return job.items.every(({ status }) => status === 'Skipped')
             ? t('No eligible Operators to migrate')

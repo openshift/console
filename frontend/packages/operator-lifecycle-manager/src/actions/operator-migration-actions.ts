@@ -54,7 +54,7 @@ export const useOperatorMigrationResourceActions: ExtensionHook<
     return [
       {
         id: 'migrate-operator-to-olmv1',
-        label: t('Migrate to OLM v1 cluster extensions'),
+        label: t('Migrate to Operator Lifecycle Manager version 1 cluster extensions'),
         cta: () =>
           launchOverlay(OperatorMigrationConfirmModalOverlay, {
             operators: [target],
@@ -107,9 +107,12 @@ export const useOperatorMigrationBulkActions: BulkResourceActionHook = ({
     return [
       {
         id: 'bulk-migrate-operators-to-olmv1',
-        label: t('Migrate to OLM v1 cluster extensions ({{operators}})', {
-          operators: targets.length,
-        }),
+        label: t(
+          'Migrate to Operator Lifecycle Manager version 1 cluster extensions ({{operators}})',
+          {
+            operators: targets.length,
+          },
+        ),
         cta: () =>
           launchOverlay(OperatorMigrationConfirmModalOverlay, {
             operators: targets,

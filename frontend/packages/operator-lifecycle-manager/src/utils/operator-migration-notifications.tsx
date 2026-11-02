@@ -107,7 +107,7 @@ export const useOperatorMigrationToastCallbacks = (
         let content: ReactNode;
         if (job.operation === 'Rollback') {
           content = isSuccess
-            ? t('The console restored {{operator}} to OLM (Classic) Operator management.', {
+            ? t('The console restored {{operator}} to Operator Lifecycle Manager version 0.', {
                 operator,
               })
             : t(
@@ -118,12 +118,15 @@ export const useOperatorMigrationToastCallbacks = (
                 },
               );
         } else if (isSuccess) {
-          content = t('{{operator}} migrated to OLM v1 cluster extensions successfully.', {
-            operator,
-          });
+          content = t(
+            '{{operator}} migrated to Operator Lifecycle Manager version 1 cluster extensions successfully.',
+            {
+              operator,
+            },
+          );
         } else if (item.rolledBack) {
           content = t(
-            '{{operator}} migration failed. The console automatically restored OLM (Classic) Operator management. Resolve the error, then try migrating again. Error: {{error}}',
+            '{{operator}} migration failed. The console automatically moved the Operator back to Operator Lifecycle Manager version 0. Resolve the error, then try migrating again. Error: {{error}}',
             {
               operator,
               error: item.error || t('No error details were provided.'),
@@ -131,7 +134,7 @@ export const useOperatorMigrationToastCallbacks = (
           );
         } else if (item.rollbackAttempted) {
           content = t(
-            '{{operator}} migration failed, and automatic rollback did not finish. Error: {{error}}',
+            '{{operator}} migration failed, and automatic rollback did not finish. After the migration batch finishes, use the rollback action in the failure notification. Error: {{error}}',
             {
               operator,
               error: item.error || t('No error details were provided.'),
@@ -151,11 +154,11 @@ export const useOperatorMigrationToastCallbacks = (
           const recoveryAction =
             canOfferRollback(job, item) && onRollback
               ? t(
-                  'To restore OLM (Classic) Operator management, select Roll back to OLM (Classic) Operators in this notification, review the rollback warning, and confirm rollback.',
+                  'To move the Operator back to Operator Lifecycle Manager version 0, select Roll back to Classic Operators in this notification, review the rollback warning, and confirm rollback.',
                 )
               : onRollback && item.clusterExtensionName && isOperatorMigrationJobActive(job)
                 ? t(
-                    'After this batch finishes, use the rollback action in the failure notification to restore OLM (Classic) Operator management.',
+                    'After this batch finishes, use the rollback action in the failure notification to move the Operator back to Operator Lifecycle Manager version 0.',
                   )
                 : t('Use your backup or recovery plan to restore Operator management.');
           content = (
@@ -182,7 +185,7 @@ export const useOperatorMigrationToastCallbacks = (
             canOfferRollback(job, item) && onRollback
               ? [
                   {
-                    label: t('Roll back to OLM (Classic) Operators'),
+                    label: t('Roll back to Classic Operators'),
                     callback: () => onRollback(job, item),
                     dataTest: 'rollback-operator-migration',
                   },

@@ -132,7 +132,7 @@ const useClusterExtensionColumns = (): ConsoleDataViewColumn<ClusterExtensionKin
   return columns;
 };
 
-const ClusterExtensionListPage: FC = () => {
+export const ClusterExtensionListPage: FC = () => {
   const { t } = useTranslation('olm-v1');
   const [clusterExtensions, loaded, loadError] = useK8sWatchResource<ClusterExtensionKind[]>({
     kind: referenceForModel(ClusterExtensionModel),
@@ -147,7 +147,7 @@ const ClusterExtensionListPage: FC = () => {
       <ConsoleDataView<ClusterExtensionKind>
         isResizable={false}
         id={ClusterExtensionModel}
-        label={t('Next-Gen Operators')}
+        label={t('Cluster extensions')}
         data={clusterExtensions ?? []}
         loaded={loaded}
         loadError={loadError}
@@ -159,5 +159,3 @@ const ClusterExtensionListPage: FC = () => {
     </PaneBody>
   );
 };
-
-export default ClusterExtensionListPage;

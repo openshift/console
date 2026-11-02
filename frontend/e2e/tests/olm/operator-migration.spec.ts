@@ -57,7 +57,7 @@ const prepareInstalledTargetFailure = async (
     await migration.expectPreservedMigration(operator);
     if (successful) {
       await expect(migrationPage.getResult(successful.subscriptionName)).toContainText(
-        'migrated to OLM v1 cluster extensions successfully',
+        'migrated to Operator Lifecycle Manager version 1 cluster extensions successfully',
         { timeout: 300_000 },
       );
       await migration.expectMigrated(successful);
@@ -129,7 +129,7 @@ test.describe('Operator migration', { lock: OLM_CLUSTER_STATE_LOCK }, () => {
           await expect(migrationPage.getDialog()).toBeHidden();
           await expect(migrationPage.getProgress()).toBeVisible();
           await expect(migrationPage.getResult(operator.subscriptionName)).toContainText(
-            'migrated to OLM v1 cluster extensions successfully',
+            'migrated to Operator Lifecycle Manager version 1 cluster extensions successfully',
             { timeout: 300_000 },
           );
           await migration.expectMigrated(operator);
@@ -167,7 +167,7 @@ test.describe('Operator migration', { lock: OLM_CLUSTER_STATE_LOCK }, () => {
       migration.withReconciliationObservations(operator, operandNamespace, async () => {
         await migrationPage.startMigration();
         await expect(migrationPage.getResult(operator.subscriptionName)).toContainText(
-          'migrated to OLM v1 cluster extensions successfully',
+          'migrated to Operator Lifecycle Manager version 1 cluster extensions successfully',
           { timeout: 300_000 },
         );
         await migration.expectMigrated(operator);
@@ -205,7 +205,7 @@ test.describe('Operator migration', { lock: OLM_CLUSTER_STATE_LOCK }, () => {
       await migrationPage.startMigration();
       for (const operator of [first, second]) {
         await expect(migrationPage.getResult(operator.subscriptionName)).toContainText(
-          'migrated to OLM v1 cluster extensions successfully',
+          'migrated to Operator Lifecycle Manager version 1 cluster extensions successfully',
           { timeout: 300_000 },
         );
         await migration.expectMigrated(operator);
@@ -229,7 +229,7 @@ test.describe('Operator migration', { lock: OLM_CLUSTER_STATE_LOCK }, () => {
     await migration.withOperandContinuity([migrated], async () => {
       await migrationPage.startMigration();
       await expect(migrationPage.getResult(migrated.subscriptionName)).toContainText(
-        'migrated to OLM v1 cluster extensions successfully',
+        'migrated to Operator Lifecycle Manager version 1 cluster extensions successfully',
         { timeout: 300_000 },
       );
       await migration.expectMigrated(migrated);
@@ -246,7 +246,7 @@ test.describe('Operator migration', { lock: OLM_CLUSTER_STATE_LOCK }, () => {
     await migration.withOperandContinuity([migrated, eligible], async () => {
       await migrationPage.startMigration();
       await expect(migrationPage.getResult(eligible.subscriptionName)).toContainText(
-        'migrated to OLM v1 cluster extensions successfully',
+        'migrated to Operator Lifecycle Manager version 1 cluster extensions successfully',
         { timeout: 300_000 },
       );
       await migration.expectMigrated(eligible);
@@ -382,7 +382,7 @@ test.describe('Operator migration', { lock: OLM_CLUSTER_STATE_LOCK }, () => {
     await migration.withOperandContinuity([operator], async () => {
       await migrationPage.startMigration();
       await expect(migrationPage.getResult(operator.subscriptionName, 'failure')).toContainText(
-        'console automatically restored OLM (Classic) Operator management',
+        'console automatically moved the Operator back to Operator Lifecycle Manager version 0',
         { timeout: 300_000 },
       );
       await expect(migrationPage.getResult(operator.subscriptionName, 'failure')).toContainText(
@@ -398,7 +398,7 @@ test.describe('Operator migration', { lock: OLM_CLUSTER_STATE_LOCK }, () => {
     await migration.withOperandContinuity([operator], async () => {
       await migrationPage.startMigration();
       await expect(migrationPage.getResult(operator.subscriptionName)).toContainText(
-        'migrated to OLM v1 cluster extensions successfully',
+        'migrated to Operator Lifecycle Manager version 1 cluster extensions successfully',
         { timeout: 300_000 },
       );
       await migration.expectMigrated(operator);
@@ -424,13 +424,13 @@ test.describe('Operator migration', { lock: OLM_CLUSTER_STATE_LOCK }, () => {
         { timeout: 300_000 },
       );
       await expect(migrationPage.getResult(failed.subscriptionName, 'failure')).not.toContainText(
-        'console automatically restored OLM (Classic) Operator management',
+        'console automatically moved the Operator back to Operator Lifecycle Manager version 0',
       );
       await expect(migrationPage.getResult(failed.subscriptionName, 'failure')).toContainText(
         'target migration resources may be active',
       );
       await expect(migrationPage.getResult(successful.subscriptionName)).toContainText(
-        'migrated to OLM v1 cluster extensions successfully',
+        'migrated to Operator Lifecycle Manager version 1 cluster extensions successfully',
         { timeout: 300_000 },
       );
       await migration.expectMigrated(successful);
@@ -467,7 +467,7 @@ test.describe('Operator migration', { lock: OLM_CLUSTER_STATE_LOCK }, () => {
     await migration.withOperandContinuity([failed, successful], async () => {
       await migrationPage.startRollback();
       await expect(migrationPage.getRollbackResult(failed.subscriptionName)).toContainText(
-        'to OLM (Classic) Operator management',
+        'to Operator Lifecycle Manager version 0',
         { timeout: 300_000 },
       );
       await migration.expectRecovered(failed);
@@ -497,7 +497,7 @@ test.describe('Operator migration', { lock: OLM_CLUSTER_STATE_LOCK }, () => {
     await migration.withOperandContinuity([operator], async () => {
       await migrationPage.startRollback();
       await expect(migrationPage.getRollbackResult(operator.subscriptionName)).toContainText(
-        'to OLM (Classic) Operator management',
+        'to Operator Lifecycle Manager version 0',
         { timeout: 300_000 },
       );
       await migration.expectRecovered(operator);
@@ -520,7 +520,7 @@ test.describe('Operator migration', { lock: OLM_CLUSTER_STATE_LOCK }, () => {
     await migration.withOperandContinuity([operator], async () => {
       await migrationPage.startMigration();
       await expect(migrationPage.getResult(operator.subscriptionName)).toContainText(
-        'migrated to OLM v1 cluster extensions successfully',
+        'migrated to Operator Lifecycle Manager version 1 cluster extensions successfully',
         { timeout: 300_000 },
       );
       await migration.expectMigrated(operator);
@@ -566,7 +566,7 @@ test.describe('Operator migration', { lock: OLM_CLUSTER_STATE_LOCK }, () => {
       await migrationPage.openRollback(operator.subscriptionName, true);
       await migrationPage.startRollback();
       await expect(migrationPage.getRollbackResult(operator.subscriptionName)).toContainText(
-        'to OLM (Classic) Operator management',
+        'to Operator Lifecycle Manager version 0',
         { timeout: 300_000 },
       );
       await migration.expectRecovered(operator);
@@ -600,7 +600,7 @@ test.describe('Operator migration', { lock: OLM_CLUSTER_STATE_LOCK }, () => {
     await migration.withOperandContinuity([failed, successful], async () => {
       await migrationPage.startMigration();
       await expect(migrationPage.getResult(failed.subscriptionName, 'failure')).toContainText(
-        'console automatically restored OLM (Classic) Operator management',
+        'console automatically moved the Operator back to Operator Lifecycle Manager version 0',
         { timeout: 300_000 },
       );
       await expect(migrationPage.getResult(failed.subscriptionName, 'failure')).toContainText(
@@ -615,7 +615,7 @@ test.describe('Operator migration', { lock: OLM_CLUSTER_STATE_LOCK }, () => {
       );
       expect((await migration.getSubscription(failed)).spec).toEqual(originalSubscription.spec);
       await expect(migrationPage.getResult(successful.subscriptionName)).toContainText(
-        'migrated to OLM v1 cluster extensions successfully',
+        'migrated to Operator Lifecycle Manager version 1 cluster extensions successfully',
         { timeout: 300_000 },
       );
       await migration.expectMigrated(successful);
@@ -636,7 +636,7 @@ test.describe('Operator migration', { lock: OLM_CLUSTER_STATE_LOCK }, () => {
       await migrationPage.startMigration();
       // The original failed toast remains in the drawer; the retry has its own success result.
       await expect(migrationPage.getResult(failed.subscriptionName)).toContainText(
-        'migrated to OLM v1 cluster extensions successfully',
+        'migrated to Operator Lifecycle Manager version 1 cluster extensions successfully',
         { timeout: 300_000 },
       );
       await migration.expectMigrated(failed);
@@ -730,7 +730,7 @@ test.describe('Operator migration interruptions', { lock: OLM_CLUSTER_STATE_LOCK
         await release();
         for (const operator of [first, second]) {
           await expect(returnedPage.getResult(operator.subscriptionName)).toContainText(
-            'migrated to OLM v1 cluster extensions successfully',
+            'migrated to Operator Lifecycle Manager version 1 cluster extensions successfully',
             { timeout: 300_000 },
           );
           await migration.expectMigrated(operator);
@@ -870,7 +870,7 @@ test.describe('Operator rollback interruptions', { lock: OLM_CLUSTER_STATE_LOCK 
         await migration.expectHeldRollback(operator);
         await release();
         await expect(returnedPage.getRollbackResult(operator.subscriptionName)).toContainText(
-          'to OLM (Classic) Operator management',
+          'to Operator Lifecycle Manager version 0',
           { timeout: 300_000 },
         );
         await migration.expectRecovered(operator);

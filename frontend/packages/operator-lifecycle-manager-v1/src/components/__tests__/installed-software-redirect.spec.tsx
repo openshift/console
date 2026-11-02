@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter, Routes, Route, useLocation } from 'react-router';
-import InstalledSoftwareRedirect from '../installed-software-redirect';
+import { InstalledSoftwareRedirect } from '../installed-software-redirect';
 
 const CurrentLocation = () => {
   const { pathname, search, hash } = useLocation();
@@ -21,8 +21,8 @@ const renderAt = (path: string) =>
         />
         <Route path="/installed-software/ns/:ns/*" element={<InstalledSoftwareRedirect />} />
         <Route path="/installed-software/*" element={<InstalledSoftwareRedirect />} />
-        <Route path="/installed-operators/all-namespaces" element={<div>Next-Gen all</div>} />
-        <Route path="/installed-operators/ns/:ns" element={<div>Next-Gen ns</div>} />
+        <Route path="/installed-operators/all-namespaces" element={<div>OLMv1 all</div>} />
+        <Route path="/installed-operators/ns/:ns" element={<div>OLMv1 ns</div>} />
         <Route
           path="/installed-operators/all-namespaces/classic"
           element={<div>Classic all</div>}
@@ -50,19 +50,19 @@ describe('InstalledSoftwareRedirect', () => {
   it('should redirect /installed-software to /installed-operators/all-namespaces', () => {
     renderAt('/installed-software');
 
-    expect(screen.getByText('Next-Gen all')).toBeInTheDocument();
+    expect(screen.getByText('OLMv1 all')).toBeInTheDocument();
   });
 
   it('should redirect /installed-software/all-namespaces to /installed-operators/all-namespaces', () => {
     renderAt('/installed-software/all-namespaces');
 
-    expect(screen.getByText('Next-Gen all')).toBeInTheDocument();
+    expect(screen.getByText('OLMv1 all')).toBeInTheDocument();
   });
 
   it('should redirect /installed-software/ns/foo to /installed-operators/ns/foo', () => {
     renderAt('/installed-software/ns/foo');
 
-    expect(screen.getByText('Next-Gen ns')).toBeInTheDocument();
+    expect(screen.getByText('OLMv1 ns')).toBeInTheDocument();
   });
 
   it('should redirect /installed-software/ns/foo/olmv0-operators to /installed-operators/ns/foo/classic', () => {

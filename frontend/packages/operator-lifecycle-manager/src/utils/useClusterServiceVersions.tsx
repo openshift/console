@@ -31,8 +31,8 @@ const ExpandCollapseDescription: FC<ExpandCollapseDescriptionProps> = ({ childre
   };
   return (
     <ExpandCollapse
-      textExpanded={t('Hide operator description')}
-      textCollapsed={t('Show operator description')}
+      textExpanded={t('Hide Operator description')}
+      textCollapsed={t('Show Operator description')}
       onToggle={toggle}
     >
       {/** used an empty Fragment here because Expandable always expects a children, using null throws react warning */}

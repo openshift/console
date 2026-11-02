@@ -17,11 +17,12 @@ export type CatalogItemType = Extension<
     typeDescription?: string;
     /** Determine if filter groups should be sorted alphabetically. Defaults to true. */
     sortFilterGroups?: boolean;
-    /** Ordering weight for this type in the catalog's type list. Types are sorted by weight
-        ascending and then alphabetically by title, so a higher weight sinks the type towards
-        the bottom of the list. Defaults to 0. */
+    /** Ordering weight for this type in the catalog's type list. The console sorts types from
+        lowest to highest weight, and then alphabetically by title, so a higher weight places
+        the type lower in the list. Defaults to 0. */
     sortWeight?: number;
-    /** Custom filters specific to the catalog item.  */
+    /** Custom filters specific to the catalog item. Set a filter's `filterType` to `radio` for
+        single selection, or omit it for multiselect checkboxes. */
     filters?: CatalogItemAttribute[];
     /** Custom groupings specific to the catalog item. */
     groupings?: CatalogItemAttribute[];
@@ -35,7 +36,8 @@ export type CatalogItemTypeMetadata = Extension<
   {
     /** Type for the catalog item. */
     type: string;
-    /** Custom filters specific to the catalog item.  */
+    /** Custom filters specific to the catalog item. Set a filter's `filterType` to `radio` for
+        single selection, or omit it for multiselect checkboxes. */
     filters?: CatalogItemAttribute[];
     /** Custom groupings specific to the catalog item. */
     groupings?: CatalogItemAttribute[];
@@ -211,6 +213,10 @@ export type CatalogItemDetailsDescription = {
 export type CatalogItemAttribute = {
   label: string;
   attribute: string;
+  /** Filter control type. Defaults to `checkbox`. For radio facets, the console selects the first
+      available value in display order when the URL has no available selection. The console orders
+      values by `comparator`, or alphanumerically if you omit `comparator`. */
+  filterType?: 'checkbox' | 'radio';
   description?: string;
   comparator?: CodeRef<(a: string, b: string) => number>;
 };
@@ -221,12 +227,6 @@ export type CatalogItemBadge = {
   color?: 'blue' | 'teal' | 'green' | 'orange' | 'purple' | 'red' | 'grey';
   icon?: ReactNode;
   variant?: 'outline' | 'filled';
-  /**
-   * Where the badge renders on a catalog tile and in the catalog item details.
-   * `footer` (default) places it alongside the other badges below the description.
-   * `header` stacks it vertically under the catalog type label.
-   */
-  placement?: 'header' | 'footer';
 };
 
 export type CatalogItemMetadataProviderFunction = (item: CatalogItem) =>

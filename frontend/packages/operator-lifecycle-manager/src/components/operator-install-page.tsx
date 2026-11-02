@@ -90,7 +90,9 @@ const InstallFailedMessage: FC<InstallFailedMessageProps> = ({ namespace, csvNam
         {t('Operator installation failed')}
       </Title>
       <p>
-        {t('The operator did not install successfully.')}
+        {t(
+          'The Operator did not install successfully. Select View error to review and resolve the installation error.',
+        )}
         {hasInitializationResource && (
           <>
             &nbsp;
@@ -479,7 +481,12 @@ const OperatorInstallStatus: FC<OperatorInstallPageProps> = ({ resources }) => {
         title={t('Failed to load installation status')}
         className="pf-v6-u-mt-md"
       >
-        {loadError instanceof Error ? loadError.message : String(loadError)}
+        <p>{loadError instanceof Error ? loadError.message : String(loadError)}</p>
+        <p>
+          {t(
+            'Refresh the page to reload installation status. If the error continues, contact your cluster administrator.',
+          )}
+        </p>
       </Alert>
     );
   } else if (isStatusFailed) {

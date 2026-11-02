@@ -26,12 +26,16 @@ describe('useOperatorMigrationProgressText', () => {
       ['check', 'Checking readiness and compatibility', 'Check complete'],
       ['catalog', 'Determining target ClusterCatalog', 'Catalog complete'],
       ['collect', 'Collecting and checking Operator resources', 'Resource checks complete'],
-      ['backup', 'Backing up OLM (Classic) resources', 'Backup complete'],
+      ['backup', 'Backing up Operator Lifecycle Manager version 0 resources', 'Backup complete'],
       ['prepare', 'Preparing Operator for migration', 'Prepare complete'],
-      ['create', 'Creating OLM v1 cluster extension resources', 'Create complete'],
-      ['cleanup', 'Cleaning up OLM (Classic) resources', 'Cleanup complete'],
-      ['scan', 'Scanning all OLM (Classic) Subscriptions', 'Scan complete'],
-      ['rollback', 'Restoring OLM (Classic) resources', 'Rollback complete'],
+      [
+        'create',
+        'Creating Operator Lifecycle Manager version 1 cluster extension resources',
+        'Create complete',
+      ],
+      ['cleanup', 'Cleaning up Operator Lifecycle Manager version 0 resources', 'Cleanup complete'],
+      ['scan', 'Scanning all Operator Lifecycle Manager version 0 Subscriptions', 'Scan complete'],
+      ['rollback', 'Restoring Operator Lifecycle Manager version 0 resources', 'Rollback complete'],
     ].forEach(([step, expected, completed]) => {
       expect(
         result.current.getOperatorMigrationProgressText({
@@ -138,7 +142,7 @@ describe('useOperatorMigrationProgressText', () => {
     const { result, rerender } = renderHook(useOperatorMigrationProgressText);
     const progress = { step: 'create', status: 'started' };
     expect(result.current.getOperatorMigrationProgressText(progress)).toBe(
-      'Creating OLM v1 cluster extension resources',
+      'Creating Operator Lifecycle Manager version 1 cluster extension resources',
     );
     (useTranslation as jest.Mock).mockReturnValue({
       t: (key: string) => `Translated: ${key}`,
@@ -147,7 +151,7 @@ describe('useOperatorMigrationProgressText', () => {
     rerender();
 
     expect(result.current.getOperatorMigrationProgressText(progress)).toBe(
-      'Translated: Creating OLM v1 cluster extension resources',
+      'Translated: Creating Operator Lifecycle Manager version 1 cluster extension resources',
     );
     expect(
       result.current.getOperatorMigrationJobProgressText({ ...job, status: 'Cancelled' }),

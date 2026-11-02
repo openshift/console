@@ -147,7 +147,7 @@ describe('OperatorMigrationConfirmModal', () => {
 
     expect(
       screen.getByRole('dialog', {
-        name: 'Migrate OLM (Classic) Operators to OLM v1 cluster extensions',
+        name: 'Migrate Classic Operators to cluster extensions',
       }),
     ).toBeVisible();
     expect(screen.getByRole('button', { name: 'Review migration' })).toBeDisabled();
@@ -304,13 +304,14 @@ describe('OperatorMigrationConfirmModal', () => {
       },
       {
         field: 'acknowledgeOperatorCondition',
-        label: 'I understand that OLM v1 cluster extensions do not support OperatorCondition.',
+        label:
+          'I understand that cluster extensions do not support OperatorCondition, so the Operator cannot use it to block upgrades when it is not ready.',
         check: 'No OperatorCondition usage',
       },
       {
         field: 'acknowledgeOLMv0APIAccess',
         label:
-          'I accept that this Operator uses OLM (Classic) APIs that OLM v1 cluster extensions do not support.',
+          'I accept that this Operator uses Operator Lifecycle Manager version 0 APIs that cluster extensions do not support, so features that depend on those APIs might stop working after migration.',
         check: 'OLMv0-API RBAC',
       },
       {
@@ -436,7 +437,7 @@ describe('OperatorMigrationConfirmModal', () => {
     expect(await screen.findByText('Migration access denied.')).toBeVisible();
     expect(
       screen.getByRole('dialog', {
-        name: 'Migrate OLM (Classic) Operators to OLM v1 cluster extensions',
+        name: 'Migrate Classic Operators to cluster extensions',
       }),
     ).toBeVisible();
     expect(screen.getByRole('button', { name: 'Start migration' })).toBeEnabled();
@@ -472,12 +473,12 @@ describe('OperatorMigrationConfirmModal', () => {
 
     expect(
       await screen.findByText(
-        'operators/operator-one migrated to OLM v1 cluster extensions successfully.',
+        'operators/operator-one migrated to Operator Lifecycle Manager version 1 cluster extensions successfully.',
       ),
     ).toBeVisible();
     expect(
       screen.getByText(
-        'operators/operator-two migration failed. The console automatically restored OLM (Classic) Operator management. Resolve the error, then try migrating again. Error: Migration failed and was rolled back automatically.',
+        'operators/operator-two migration failed. The console automatically moved the Operator back to Operator Lifecycle Manager version 0. Resolve the error, then try migrating again. Error: Migration failed and was rolled back automatically.',
       ),
     ).toBeVisible();
     expect(screen.getByText('Operator migration completed with errors')).toBeVisible();

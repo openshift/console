@@ -164,7 +164,9 @@ export class OperatorMigrationPage extends BasePage {
           new URL(r.url()).pathname.endsWith('/api/olm/migration/dry-run'),
         { timeout: 300_000 },
       ),
-      this.robustClick(this.page.getByTestId('Migrate to OLM v1 cluster extensions')),
+      this.robustClick(
+        this.page.getByTestId('Migrate to Operator Lifecycle Manager version 1 cluster extensions'),
+      ),
     ]);
     if (!response.ok()) {
       throw new Error(`Migration plan request failed: ${await response.text()}`);
@@ -193,7 +195,9 @@ export class OperatorMigrationPage extends BasePage {
   async openSelectedMigration(count: number): Promise<void> {
     await this.robustClick(this.bulkActions);
     await this.robustClick(
-      this.page.getByTestId(`Migrate to OLM v1 cluster extensions (${count})`),
+      this.page.getByTestId(
+        `Migrate to Operator Lifecycle Manager version 1 cluster extensions (${count})`,
+      ),
     );
   }
 

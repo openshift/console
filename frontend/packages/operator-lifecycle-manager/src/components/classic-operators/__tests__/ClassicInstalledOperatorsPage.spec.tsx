@@ -1,6 +1,6 @@
 import { screen } from '@testing-library/react';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
-import ClassicInstalledOperatorsPage from '../ClassicInstalledOperatorsPage';
+import { ClassicInstalledOperatorsPage } from '../ClassicInstalledOperatorsPage';
 
 jest.mock('../../clusterserviceversion', () => ({
   ClusterServiceVersionsPage: ({ namespace, showTitle, helpAlert }) => (
@@ -15,7 +15,7 @@ jest.mock('react-router', () => ({
   useParams: () => ({ ns: 'ns-a' }),
 }));
 
-// The page only renders inside the Tech Preview tabbed page, where the alert is active.
+// The page only renders inside the Technology Preview tabbed page, where the alert is active.
 jest.mock('@console/shared/src/hooks/useFlag', () => ({
   useFlag: () => true,
 }));

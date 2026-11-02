@@ -54,7 +54,7 @@ import {
 import { WarningStatus } from '@console/shared/src/components/status/statuses';
 import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
 import { getName, getNamespace } from '@console/shared/src/selectors/common';
-import { CLASSIC_CATALOG_PATH } from '../const';
+import { OLMV0_CATALOG_PATH } from '../const';
 import {
   SubscriptionModel,
   ClusterServiceVersionModel,
@@ -272,7 +272,7 @@ export const SubscriptionsPage: FC<SubscriptionsPageProps> = (props) => {
       flatten={(resources) => _.get(resources.subscription, 'data', [])}
       title={t('Subscriptions')}
       canCreate
-      createProps={{ to: CLASSIC_CATALOG_PATH }}
+      createProps={{ to: OLMV0_CATALOG_PATH }}
       createButtonText={t('Create Subscription')}
       ListComponent={SubscriptionsList}
       omitFilterToolbar
@@ -291,7 +291,7 @@ const CatalogSourceHealthAlert = ({ health, source, sourceNamespace }) => {
         title={t('CatalogSource health unknown')}
       >
         {t(
-          'This operator cannot be updated. The health of CatalogSource "{{source}}" is unknown. It may have been disabled or removed from the cluster.',
+          'This Operator cannot receive updates because the health of CatalogSource "{{source}}" is unknown. Check that the CatalogSource exists and is enabled, then resolve any errors to resume updates.',
           { source },
         )}
         {source && sourceNamespace && (
@@ -308,9 +308,12 @@ const CatalogSourceHealthAlert = ({ health, source, sourceNamespace }) => {
   }
   return health.healthy ? null : (
     <Alert isInline className="co-alert" variant="warning" title={t('CatalogSource unhealthy')}>
-      {t('This operator cannot be updated. CatalogSource "{{source}}" is unhealthy.', {
-        source,
-      })}
+      {t(
+        'This Operator cannot receive updates because CatalogSource "{{source}}" is unhealthy. Check the CatalogSource status and resolve its errors to resume updates.',
+        {
+          source,
+        },
+      )}
       <ResourceLink
         displayName={t('View CatalogSource')}
         groupVersionKind={getGroupVersionKindForModel(CatalogSourceModel)}
@@ -641,7 +644,9 @@ const SubscriptionUpdates: FC<SubscriptionUpdatesProps> = ({
                 manualSubscriptionsInNamespace?.length > 0 && (
                   <div>
                     <Popover
-                      headerContent={<>{t('Functioning as manual approval strategy')}</>}
+                      headerContent={
+                        <>{t('This Subscription requires manual approval for each update')}</>
+                      }
                       bodyContent={
                         <NamespaceIncludesManualApproval
                           subscriptions={manualSubscriptionsInNamespace}
@@ -651,7 +656,7 @@ const SubscriptionUpdates: FC<SubscriptionUpdatesProps> = ({
                     >
                       <Button type="button" isInline variant="link">
                         <BlueInfoCircleIcon className="co-icon-space-r" />
-                        {t('Functioning as manual')}
+                        {t('Manual approval required')}
                       </Button>
                     </Popover>
                   </div>
