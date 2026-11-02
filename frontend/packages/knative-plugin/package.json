@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "coverage": "yarn test --coverage --collectCoverageFrom='[\"packages/knative-plugin/src/**\",\"!**/__tests__/**\"]'",
-    "lint": "yarn --cwd ../.. eslint packages/knative-plugin",
+    "lint": "yarn --cwd ../.. oxlint packages/knative-plugin",
     "test": "yarn --cwd ../.. test packages/knative-plugin"
   },
   "dependencies": {

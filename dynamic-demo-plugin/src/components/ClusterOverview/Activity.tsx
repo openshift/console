@@ -12,7 +12,11 @@ import { useTranslation } from 'react-i18next';
 
 export const DemoActivity: React.FC<K8sActivityProps> = ({ resource }) => (
   <>
-    <Progress size={ProgressSize.sm} value={30} title={`Demo activity for node ${resource.metadata?.name}`} />
+    <Progress
+      size={ProgressSize.sm}
+      value={30}
+      title={`Demo activity for node ${resource.metadata?.name}`}
+    />
     <ResourceLink
       kind="Node"
       name={resource.metadata?.name}

@@ -94,10 +94,8 @@ export const useCatalogExtensions = (
         (e): e is CatalogCategoriesProvider =>
           isCatalogCategoriesProvider(e) &&
           isEnabledType(e) &&
-          (!e.properties.catalogId ||
-            e.properties.catalogId === catalogId ||
-            !e.properties.type ||
-            e.properties.type === catalogType),
+          (!e.properties.catalogId || e.properties.catalogId === catalogId) &&
+          (!catalogType || !e.properties.type || e.properties.type === catalogType),
         [catalogId, catalogType, isEnabledType],
       ),
     );

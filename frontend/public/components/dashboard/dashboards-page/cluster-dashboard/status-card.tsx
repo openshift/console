@@ -60,7 +60,8 @@ import {
 
 const filterSubsystems = (
   subsystems: (
-    DashboardsOverviewHealthSubsystem | ResolvedExtension<DashboardsOverviewHealthSubsystem>
+    | DashboardsOverviewHealthSubsystem
+    | ResolvedExtension<DashboardsOverviewHealthSubsystem>
   )[],
   k8sModels: Record<string, K8sKind>,
 ) =>

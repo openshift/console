@@ -96,7 +96,7 @@ export class CircularDependencyPreset {
             // write report
             const header = `rspack compilation ${compilation.getStats().hash}\n`;
 
-            const reportPath = path.resolve(__dirname, this.options.reportFile);
+            const reportPath = path.resolve(import.meta.dirname, this.options.reportFile);
             fs.writeFileSync(
               reportPath,
               [header, getCycleStats(cycles), getCycleEntries(cycles)].join('\n'),

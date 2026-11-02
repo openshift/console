@@ -2,8 +2,9 @@ import type { Frame, Page, Response, Route } from '@playwright/test';
 import { test, expect } from '../../../fixtures';
 
 const CHECK_UPDATES_URL = '**/api/check-updates';
-const PLUGIN_NAME = 'console-demo-plugin';
-const PLUGIN_NAME2 = 'console-demo-plugin2';
+// Keep mocked manifests separate from plugins loaded by the console at startup.
+const PLUGIN_NAME = 'poll-console-updates-test-plugin';
+const PLUGIN_NAME2 = 'poll-console-updates-test-plugin2';
 const PLUGIN_MANIFEST_URL = `**/api/plugins/${PLUGIN_NAME}/plugin-manifest.json`;
 const PLUGIN_MANIFEST_URL2 = `**/api/plugins/${PLUGIN_NAME2}/plugin-manifest.json`;
 const HASH_DEFAULT = 'hash';

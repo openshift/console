@@ -1,4 +1,4 @@
-import i18next from 'i18next';
+import * as i18next from 'i18next';
 import * as _ from 'lodash';
 import type { Selector, Patch } from '@console/internal/module/k8s';
 import { k8sPatch } from '@console/internal/module/k8s';

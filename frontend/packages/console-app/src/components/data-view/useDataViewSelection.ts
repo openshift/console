@@ -17,7 +17,7 @@ export const useDataViewSelection = <T>({
       getItemId ? data.filter((item) => !isSelectable || isSelectable(item)).map(getItemId) : [],
     );
     // Removed resources must not reappear selected if the same ID later returns.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+    // eslint-disable-next-line react-hooks-js/set-state-in-effect
     setSelectedIds((current) => {
       const next = new Set([...current].filter((id) => validIds.has(id)));
       return next.size === current.size ? current : next;

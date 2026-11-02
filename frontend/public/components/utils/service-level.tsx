@@ -184,7 +184,7 @@ const useGetServiceLevel = (
       loadServiceLevel(clusterIDParam);
     }
     // only on clusterID change
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [clusterIDParam]);
 
   return {

@@ -5,7 +5,6 @@
     "module": "esnext",
     "moduleResolution": "node",
     "jsx": "react-jsx",
-    "experimentalDecorators": true,
     "noUnusedLocals": true,
     "skipLibCheck": true,
     "lib": ["es2021", "dom"]

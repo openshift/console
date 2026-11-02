@@ -87,7 +87,7 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
       .filter((mcp) => !isMCPMaster(mcp) && isMCPPaused(mcp))
       .map((mcp) => mcp.metadata.name);
     setMachineConfigPoolsToPause(initialMCPPausedValues);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, []); // only run the effect once so changes don't affect user input
   const onSelectVersion = (event, selection) => {
     event.preventDefault();

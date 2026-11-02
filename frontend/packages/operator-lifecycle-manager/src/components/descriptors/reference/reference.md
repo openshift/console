@@ -1,60 +1,71 @@
 # OLM Descriptor Reference
 
 #### [specDescriptors](#specDescriptors-1):
-  1. [podCount](#1-podcount)
-  2. [resourceRequirements](#2-resourcerequirements)
-  3. [k8sResourcePrefix](#3-k8sResourcePrefix)
-  4. [booleanSwitch](#4-booleanswitch)
-  5. [checkbox](#5-checkbox)
-  6. [text](#6-text)
-  7. [number](#7-number)
-  8. [password](#8-password)
-  9. [updateStrategy](#9-updatestrategy)
-  10. [imagePullPolicy](#10-imagepullpolicy)
-  11. [nodeAffinity](#11-nodeaffinity)
-  12. [podAffinity](#12-podaffinity)
-  13. [podAntiAffinity](#13-podantiaffinity)
-  14. [selector](#14-selector)
-  15. [_DEPRECATED_ fieldGroup](#fieldGroup)
-  16. [_DEPRECATED_ arrayFieldGroup](#arrayFieldGroup)
-  17. [select](#17-select)
-  18. [advanced](#18-advanced)
-  19. [endpointList](#19-endpointList)
-  20. [fieldDependency](#20-fielddependency)
-  21. [hidden](#21-hidden)
----------------------------------------
+
+1. [podCount](#1-podcount)
+2. [resourceRequirements](#2-resourcerequirements)
+3. [k8sResourcePrefix](#3-k8sResourcePrefix)
+4. [booleanSwitch](#4-booleanswitch)
+5. [checkbox](#5-checkbox)
+6. [text](#6-text)
+7. [number](#7-number)
+8. [password](#8-password)
+9. [updateStrategy](#9-updatestrategy)
+10. [imagePullPolicy](#10-imagepullpolicy)
+11. [nodeAffinity](#11-nodeaffinity)
+12. [podAffinity](#12-podaffinity)
+13. [podAntiAffinity](#13-podantiaffinity)
+14. [selector](#14-selector)
+15. [_DEPRECATED_ fieldGroup](#fieldGroup)
+16. [_DEPRECATED_ arrayFieldGroup](#arrayFieldGroup)
+17. [select](#17-select)
+18. [advanced](#18-advanced)
+19. [endpointList](#19-endpointList)
+20. [fieldDependency](#20-fielddependency)
+21. [hidden](#21-hidden)
+
+---
 
 #### [statusDescriptors](#statusDescriptors-1):
-  1. [podStatuses](#1-podStatuses)
-  2. [w3Link](#2-w3Link)
-  3. [conditions](#3-conditions)
-  4. [text](#4-text)
-  5. [k8sPhase](#5-k8sPhase)
-  6. [k8sPhaseReason](#6-k8sPhaseReason)
-  7. [k8sResourcePrefix](#7-k8sResourcePrefix)
----------------------------------------
+
+1. [podStatuses](#1-podStatuses)
+2. [w3Link](#2-w3Link)
+3. [conditions](#3-conditions)
+4. [text](#4-text)
+5. [k8sPhase](#5-k8sPhase)
+6. [k8sPhaseReason](#6-k8sPhaseReason)
+7. [k8sResourcePrefix](#7-k8sResourcePrefix)
+
+---
 
 #### [DEPRECATED Descriptors](#deprecated-descriptors-1)
-  15. [fieldGroup](#fieldGroup)
-  16. [arrayFieldGroup](#arrayFieldGroup)
 
+15. [fieldGroup](#fieldGroup)
+16. [arrayFieldGroup](#arrayFieldGroup)
 
 ## specDescriptors
-A specDescriptor is for describing the property of a `spec` field in your Custom Resource. Each entry should contain the following:
-* `displayName` - _The user-friendly name of the field_
-* `description` - _Concise information about what the field represents_
-* `path` - _The dot-delimited path of the field in the object_
-* `x-descriptors` (Optional) - _UI component information about the field capabilities_
 
-You can customize how a field is presented in the UI with a specDescriptor. Use a user-friendly `displayName` and concise `description` to overwrite the field name and potentially lengthy description of a field in the schema based on where the `path` is pointing to. This applies to any schema property and in any level of the nested structures.
+A specDescriptor is for describing the property of a `spec` field in your Custom Resource. Each
+entry should contain the following:
 
-The `x-descriptors` is used to determine which "capabilities" this descriptor has and which UI component to use on different views in the OpenShift Console.
+- `displayName` - _The user-friendly name of the field_
+- `description` - _Concise information about what the field represents_
+- `path` - _The dot-delimited path of the field in the object_
+- `x-descriptors` (Optional) - _UI component information about the field capabilities_
 
-For example, some `x-descriptors` also provides a "DISPLAY VIEW" that allows you to expose the specified schema property on Operand's Details view in the console as well as on the Creation Form. A canonical list of React UI `x-descriptors` for OpenShift can be found below.
+You can customize how a field is presented in the UI with a specDescriptor. Use a user-friendly
+`displayName` and concise `description` to overwrite the field name and potentially lengthy
+description of a field in the schema based on where the `path` is pointing to. This applies to any
+schema property and in any level of the nested structures.
+
+The `x-descriptors` is used to determine which "capabilities" this descriptor has and which UI
+component to use on different views in the OpenShift Console.
+
+For example, some `x-descriptors` also provides a "DISPLAY VIEW" that allows you to expose the
+specified schema property on Operand's Details view in the console as well as on the Creation Form.
+A canonical list of React UI `x-descriptors` for OpenShift can be found below.
 
 You can see more information on [Operand's Creation Forms](../../descriptors#create-operand-form).
-
-
 
 ### x-descriptors
 
@@ -62,7 +73,8 @@ You can see more information on [Operand's Creation Forms](../../descriptors#cre
 
 **x-descriptors**
 
-This descriptor allows you to specify the number of pods for your instance. See example from [[CSV] etcd Operator](https://github.com/operator-framework/community-operators/blob/master/community-operators/etcd/0.9.4/etcdoperator.v0.9.4.clusterserviceversion.yaml#L48-L52):
+This descriptor allows you to specify the number of pods for your instance. See example from [[CSV]
+etcd Operator][etcd-csv-l48]:
 
 ```yaml
 …
@@ -88,12 +100,12 @@ This descriptor allows you to specify the number of pods for your instance. See 
   </tr>
 </table>
 
-
 #### 2. resourceRequirements
 
 **x-descriptors**
 
-This descriptor allows you to specify the mini/max amount of compute resources required/allowed. See example from [[CSV] etcd Operator](https://github.com/operator-framework/community-operators/blob/master/community-operators/etcd/0.9.4/etcdoperator.v0.9.4.clusterserviceversion.yaml#L53-L58):
+This descriptor allows you to specify the mini/max amount of compute resources required/allowed. See
+example from [[CSV] etcd Operator][etcd-csv-l53]:
 
 ```yaml
 …
@@ -122,13 +134,13 @@ x-descriptors:
   </tr>
 </table>
 
-
 #### 3. k8sResourcePrefix
 
 **x-descriptors**
 
-This descriptor allows you to specify the prerequisite kubernetes object (e.g. _Secrets, ServiceAccount, Service, ConfigMap, Namespace, etc_) for your instance. See example from
-[[CSV] Couchbase Operator](https://github.com/operator-framework/community-operators/blob/1591b5e18d47129ed14e83ac2f9832d6cb41bb40/upstream-community-operators/couchbase-enterprise/1.2.2/manifests/couchbase-v1.2.2.clusterserviceversion.yaml#L100-L105):
+This descriptor allows you to specify the prerequisite kubernetes object (e.g. _Secrets,
+ServiceAccount, Service, ConfigMap, Namespace, etc_) for your instance. See example from [[CSV]
+Couchbase Operator][couchbase-csv-l100]:
 
 ```yaml
 …
@@ -165,12 +177,12 @@ x-descriptors:
   </tr>
 </table>
 
-
 #### 4. booleanSwitch
 
 **x-descriptors**
 
-This descriptor allows you to specify the _true_ or _false_ value for the configuration. See example from [[CSV] Eclipse Che Operator](https://github.com/operator-framework/community-operators/blob/master/community-operators/eclipse-che/7.8.0/eclipse-che.v7.8.0.clusterserviceversion.yaml#L78-L82):
+This descriptor allows you to specify the _true_ or _false_ value for the configuration. See example
+from [[CSV] Eclipse Che Operator][che-csv-l78]:
 
 ```yaml
 …
@@ -196,12 +208,12 @@ This descriptor allows you to specify the _true_ or _false_ value for the config
   </tr>
 </table>
 
-
 #### 5. checkbox
 
 **x-descriptors**
 
-This descriptor allows you to specify the _true_ or _false_ value for the configuration. See example for Business Automation Operator:
+This descriptor allows you to specify the _true_ or _false_ value for the configuration. See example
+for Business Automation Operator:
 
 ```yaml
 …
@@ -228,12 +240,12 @@ This descriptor allows you to specify the _true_ or _false_ value for the config
   </tr>
 </table>
 
-
 #### 6. text
 
 **x-descriptors**
 
-This descriptor allows you to specify a text input for a _string_ data type. See example from [[CSV] Portworx Operator](https://github.com/operator-framework/community-operators/blob/master/upstream-community-operators/portworx/1.1.0/portworxoperator.v1.1.0.clusterserviceversion.yaml#L243-L247):
+This descriptor allows you to specify a text input for a _string_ data type. See example from [[CSV]
+Portworx Operator][portworx-csv-l243]:
 
 ```yaml
 …
@@ -260,12 +272,12 @@ This descriptor allows you to specify a text input for a _string_ data type. See
   </tr>
 </table>
 
-
 #### 7. number
 
 **x-descriptors**
 
-This descriptor allows you to specify a number input for a _number_ data type. See example from [[CSV] KEDA Operator](https://github.com/operator-framework/community-operators/blob/master/community-operators/keda/2.3.0/manifests/keda.v2.3.0.clusterserviceversion.yaml#L269L273):
+This descriptor allows you to specify a number input for a _number_ data type. See example from
+[[CSV] KEDA Operator][keda-2-3-csv-l269]:
 
 ```yaml
 …
@@ -292,12 +304,12 @@ This descriptor allows you to specify a number input for a _number_ data type. S
   </tr>
 </table>
 
-
 #### 8. password
 
 **x-descriptors**
 
-This descriptor allows you to specify a text input for a _password_ data type. See example for Grafana Operator:
+This descriptor allows you to specify a text input for a _password_ data type. See example for
+Grafana Operator:
 
 ```yaml
 …
@@ -325,12 +337,12 @@ This descriptor allows you to specify a text input for a _password_ data type. S
   </tr>
 </table>
 
-
 #### 9. updateStrategy
 
 **x-descriptors**
 
-This descriptor allows you to specify the strategy of your pods being replaced when a new version of the deployment exist. See example for Portworx Operator:
+This descriptor allows you to specify the strategy of your pods being replaced when a new version of
+the deployment exist. See example for Portworx Operator:
 
 ```yaml
 …
@@ -357,12 +369,12 @@ This descriptor allows you to specify the strategy of your pods being replaced w
   </tr>
 </table>
 
-
 #### 10. imagePullPolicy
 
 **x-descriptors**
 
-This descriptor allows you to specify the policy for pulling your container image. See example from [[CSV] Appsody Operator](https://github.com/operator-framework/community-operators/blob/master/upstream-community-operators/appsody-operator/0.3.0/appsody-operator.v0.3.0.clusterserviceversion.yaml#L49-L53):
+This descriptor allows you to specify the policy for pulling your container image. See example from
+[[CSV] Appsody Operator][appsody-csv-l49]:
 
 ```yaml
 …
@@ -390,12 +402,12 @@ This descriptor allows you to specify the policy for pulling your container imag
   </tr>
 </table>
 
-
 #### 11. nodeAffinity
 
 **x-descriptors**
 
-This descriptor allows you to specify which nodes your pod is eligible to be scheduled on based on _labels on the node_. See example for Prometheus Operator:
+This descriptor allows you to specify which nodes your pod is eligible to be scheduled on based on
+_labels on the node_. See example for Prometheus Operator:
 
 ```yaml
 …
@@ -424,12 +436,12 @@ This descriptor allows you to specify which nodes your pod is eligible to be sch
   </tr>
 </table>
 
-
 #### 12. podAffinity
 
 **x-descriptors**
 
-This descriptor allows you to specify which nodes your pod is eligible to be scheduled based on _labels on pods_ that are already running on the node. See example for Prometheus Operator:
+This descriptor allows you to specify which nodes your pod is eligible to be scheduled based on
+_labels on pods_ that are already running on the node. See example for Prometheus Operator:
 
 ```yaml
 …
@@ -458,12 +470,12 @@ This descriptor allows you to specify which nodes your pod is eligible to be sch
   </tr>
 </table>
 
-
 #### 13. podAntiAffinity
 
 **x-descriptors**
 
-This descriptor allows you to specify which nodes your pod is eligible to be scheduled based on _labels on pods_ that are already running on the node. See example for Prometheus Operator:
+This descriptor allows you to specify which nodes your pod is eligible to be scheduled based on
+_labels on pods_ that are already running on the node. See example for Prometheus Operator:
 
 ```yaml
 …
@@ -492,12 +504,13 @@ This descriptor allows you to specify which nodes your pod is eligible to be sch
   </tr>
 </table>
 
-
 #### 14. selector
 
 **x-descriptors**
 
-This descriptor allows you to specify labels for identifying a set of objects via a _label selector_ (The label selector is the core grouping primitive in Kubernetes). See example from [[CSV] Prometheus Operator](https://github.com/operator-framework/community-operators/blob/master/upstream-community-operators/prometheus/0.27.0/prometheusoperator.0.27.0.clusterserviceversion.yaml#L41L45):
+This descriptor allows you to specify labels for identifying a set of objects via a _label selector_
+(The label selector is the core grouping primitive in Kubernetes). See example from [[CSV]
+Prometheus Operator][prometheus-csv-l41]:
 
 ```yaml
 …
@@ -525,21 +538,23 @@ This descriptor allows you to specify labels for identifying a set of objects vi
   </tr>
 </table>
 
-See Kubernetes doc for details in
-[resources-that-support-set-based-requirement](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#resources-that-support-set-based-requirements).
-
+See Kubernetes doc for details in [resources-that-support-set-based-requirement].
 
 #### 15. fieldGroup
-This x-descriptor has been __deprecated__. See the [entry in the deprecated](#fieldGroup) section.
+
+This x-descriptor has been **deprecated**. See the [entry in the deprecated](#fieldGroup) section.
 
 #### 16. arrayFieldGroup
-This x-descriptor has been __deprecated__. See the [entry in the deprecated](#arrayFieldGroup) section.
+
+This x-descriptor has been **deprecated**. See the [entry in the deprecated](#arrayFieldGroup)
+section.
 
 #### 17. select
 
 **x-descriptors**
 
-This descriptor allows you to specify a set of predefined options (e.g. `enum:` type) for a dropdownUI component. See example from [[CSV] Strimzi Apache Kafka Operator](https://github.com/operator-framework/community-operators/blob/master/community-operators/strimzi-kafka-operator/0.17.0/strimzi-cluster-operator.v0.17.0.clusterserviceversion.yaml#L343-L349):
+This descriptor allows you to specify a set of predefined options (e.g. `enum:` type) for a
+dropdownUI component. See example from [[CSV] Strimzi Apache Kafka Operator][strimzi-csv-l343]:
 
 ```yaml
 …
@@ -568,12 +583,13 @@ This descriptor allows you to specify a set of predefined options (e.g. `enum:` 
   </tr>
 </table>
 
-
 #### 18. advanced
 
 **x-descriptors**
 
-This descriptor allows you to specify fields as &quot;Advanced Configurations&quot; for any schema property. The advanced fields will be displayed within a collapsible section at the bottom of the parent schema structure.  See example for Business Automation Operator:
+This descriptor allows you to specify fields as &quot;Advanced Configurations&quot; for any schema
+property. The advanced fields will be displayed within a collapsible section at the bottom of the
+parent schema structure. See example for Business Automation Operator:
 
 ```yaml
 …
@@ -608,12 +624,13 @@ This descriptor allows you to specify fields as &quot;Advanced Configurations&qu
   </tr>
 </table>
 
-
 #### 19. endpointList
 
 **x-descriptors**
 
-This descriptor is created specifically for Prometheus Operator to specify a list of endpoints allowed for the ServiceMonitor it manages. See example from [[CSV] Prometheus Operator](https://github.com/operator-framework/community-operators/blob/master/upstream-community-operators/prometheus/0.27.0/prometheusoperator.0.27.0.clusterserviceversion.yaml#L82L86):
+This descriptor is created specifically for Prometheus Operator to specify a list of endpoints
+allowed for the ServiceMonitor it manages. See example from [[CSV] Prometheus
+Operator][prometheus-csv-l82]:
 
 ```yaml
 …
@@ -640,28 +657,34 @@ This descriptor is created specifically for Prometheus Operator to specify a lis
   </tr>
 </table>
 
-
 #### 20. fieldDependency
 
 **x-descriptors**
 
-This descriptor allows you to specify a field as the dependent of a Control Field and shows the Dependent Field when the current value of the Control Field is equal to the expected value:
+This descriptor allows you to specify a field as the dependent of a Control Field and shows the
+Dependent Field when the current value of the Control Field is equal to the expected value:
+
 ```yaml
 'urn:alm:descriptor:com.tectonic.ui:fieldDependency:CONTROL_FIELD_PATH:EXPECTED_VALUE'
 ```
 
 **Usage**
+
 1. Add &quot;fieldDependency&quot; to 'x-descriptors' array of the Dependent Field(s).
 2. Replace &quot;CONTROL_FIELD_PATH&quot; with the 'path' property of the Control Field object.
 3. Replace &quot;EXPECTED_VALUE&quot; with the actual expected value.
 
 **Requirements**
-1. The Dependent Field will be exposed right after the Control Field on the form (_ignores the rules mentioned in [Ordering of Form Fields](../../descriptors#ordering-of-form-fields)_).
+
+1. The Dependent Field will be exposed right after the Control Field on the form (_ignores the rules
+   mentioned in [Ordering of Form Fields](../../descriptors#ordering-of-form-fields)_).
 2. The Dependent Field doesn't have to be a &quot;leaf&quot; in the schema.
 
-The Dependent Field(s) will be displayed only when the current value of the Control Field is equal to the expected value.
+The Dependent Field(s) will be displayed only when the current value of the Control Field is equal
+to the expected value.
 
 **Example**
+
 ```yaml
 …
 - displayName: Enable Upgrades
@@ -701,12 +724,13 @@ The Dependent Field(s) will be displayed only when the current value of the Cont
   </tr>
 </table>
 
-
 #### 21. hidden
 
 **x-descriptors**
 
-This descriptor allows you to exclude non-user facing fields from the &quot;auto-generated creation form&quot; by specifying them as &quot;hidden&quot; schema fields. See example for Portworx Operator:
+This descriptor allows you to exclude non-user facing fields from the &quot;auto-generated creation
+form&quot; by specifying them as &quot;hidden&quot; schema fields. See example for Portworx
+Operator:
 
 ```yaml
 …
@@ -726,15 +750,19 @@ This descriptor allows you to exclude non-user facing fields from the &quot;auto
 ```
 
 **Usage**
-1. You can apply &quot;hidden&quot; to any schema property path (doesn't have to be a &quot;leaf&quot; in the schema). All the children properties, if any, will be hidden as well.
+
+1. You can apply &quot;hidden&quot; to any schema property path (doesn't have to be a
+   &quot;leaf&quot; in the schema). All the children properties, if any, will be hidden as well.
 2. The descriptor will hide the target property and all of its child fields.
 3. The field(s) will be hidden on the UI but can still be accessed through the YAML editor.
 
----------------------------------------
-
+---
 
 ## statusDescriptors
-A statusDescriptor is for describing the property of a `status` field in your Custom Resource. The structure of the statusDescriptors is similar to specDescriptors and includes the same fields. The only difference is the set of valid `x-descriptors` described below.
+
+A statusDescriptor is for describing the property of a `status` field in your Custom Resource. The
+structure of the statusDescriptors is similar to specDescriptors and includes the same fields. The
+only difference is the set of valid `x-descriptors` described below.
 
 ### x-descriptors
 
@@ -742,7 +770,9 @@ A statusDescriptor is for describing the property of a `status` field in your Cu
 
 **x-descriptors**
 
-This descriptor allows you to expose the status of pods for your instance. It expects the output format in the status block of your instance in:
+This descriptor allows you to expose the status of pods for your instance. It expects the output
+format in the status block of your instance in:
+
 ```yaml
 …
 status:
@@ -761,7 +791,7 @@ status:
 
 **Example**
 
-See example from [[CSV] 3Scale Operator](https://github.com/operator-framework/community-operators/blob/master/community-operators/3scale-community-operator/0.4.0/3scale-community-operator.v0.4.0.clusterserviceversion.yaml#L61-L65):
+See example from [[CSV] 3Scale Operator][threescale-csv-l61]:
 
 ```yaml
 …
@@ -818,7 +848,9 @@ status:
 
 **x-descriptors**
 
-This descriptor allows you to expose an external link of your instance. It expects the output format in the status block of your instance in:
+This descriptor allows you to expose an external link of your instance. It expects the output format
+in the status block of your instance in:
+
 ```yaml
 …
 status:
@@ -828,7 +860,7 @@ status:
 
 **Example**
 
-See example from [[CSV] Eclipse Che Operator](https://github.com/operator-framework/community-operators/blob/master/community-operators/eclipse-che/7.8.0/eclipse-che.v7.8.0.clusterserviceversion.yaml#L84-L88):
+See example from [[CSV] Eclipse Che Operator][che-csv-l84]:
 
 ```yaml
 …
@@ -868,7 +900,9 @@ status:
 
 **x-descriptors**
 
-This descriptor allows you to expose an array of PodConditions of your instance. It expects the output format in the status block of your instance in:
+This descriptor allows you to expose an array of PodConditions of your instance. It expects the
+output format in the status block of your instance in:
+
 ```yaml
 …
 status:
@@ -945,7 +979,7 @@ This descriptor allows you to expose the status field of your instance in plain 
 
 **Example**
 
-See example from [[CSV] Spark Operator](https://github.com/operator-framework/community-operators/blob/master/community-operators/spark-gcp/2.4.0/sparkoperator.v2.4.0.clusterserviceversion.yaml#L69-L73):
+See example from [[CSV] Spark Operator][spark-csv-l69]:
 
 ```yaml
 …
@@ -987,7 +1021,7 @@ This descriptor allows you to expose the status phase of your instance in plain 
 
 **Example**
 
-See example from [[CSV] KEDA Operator](https://github.com/operator-framework/community-operators/blob/master/community-operators/keda/1.4.1/manifests/keda.v1.4.1.clusterserviceversion.yaml#L129L133):
+See example from [[CSV] KEDA Operator][keda-1-4-csv-l129]:
 
 ```yaml
 …
@@ -1027,7 +1061,7 @@ This descriptor allows you to expose the phase reason of your instance in plain 
 
 **Example**
 
-See example from [[CSV] KEDA Operator](https://github.com/operator-framework/community-operators/blob/master/community-operators/keda/1.4.1/manifests/keda.v1.4.1.clusterserviceversion.yaml#L134L138):
+See example from [[CSV] KEDA Operator][keda-1-4-csv-l134]:
 
 ```yaml
 …
@@ -1068,7 +1102,7 @@ This descriptor allows you to expose a kubernetes object for your instance.
 
 **Example**
 
-See example from [[CSV] etcd Operator](https://github.com/operator-framework/community-operators/blob/master/community-operators/etcd/0.9.4/etcdoperator.v0.9.4.clusterserviceversion.yaml#L65-L69):
+See example from [[CSV] etcd Operator][etcd-csv-l65]:
 
 ```yaml
 …
@@ -1102,32 +1136,35 @@ status:
   </tr>
 </table>
 
----------------------------------------
+---
 
 ### DEPRECATED Descriptors
 
 #### Label
 
 **x-descriptors [DEPRECATED]**
+
 ```yaml
 …
 x-descriptors:
     - 'urn:alm:descriptor:com.tectonic.ui:label'
 …
 ```
-* Use [text](#6-text) specDescriptor instead for `string` data type input/output.
 
+- Use [text](#6-text) specDescriptor instead for `string` data type input/output.
 
 #### namespaceSelector
 
 **x-descriptors [DEPRECATED]**
+
 ```yaml
 …
 x-descriptors:
     'urn:alm:descriptor:com.tectonic.ui:namespaceSelector'
 …
 ```
-* Use [k8sResourcePrefix](#3-k8sResourcePrefix) specDescriptor instead to specify Namespace object.
+
+- Use [k8sResourcePrefix](#3-k8sResourcePrefix) specDescriptor instead to specify Namespace object.
 
 #### fieldGroup
 
@@ -1135,17 +1172,21 @@ x-descriptors:
 
 This x-descriptor is **NO longer necessary**.
 
-Starting from OCP 4.5, the field grouping of _object_ and _array_ structures are now schema-based and auto-generated for the Creation View.
+Starting from OCP 4.5, the field grouping of _object_ and _array_ structures are now schema-based
+and auto-generated for the Creation View.
 
-You can still overwrite the `displayName` and `description` for _objects_ and/or _arrays_ in the same way as individual fields. Simply use a [specDescriptors](#specDescriptors-1) directly against the _object/array_ (no `x-descriptors` are necessary).
+You can still overwrite the `displayName` and `description` for _objects_ and/or _arrays_ in the
+same way as individual fields. Simply use a [specDescriptors](#specDescriptors-1) directly against
+the _object/array_ (no `x-descriptors` are necessary).
 
 **Example**
 
 See an example for Portworx Operator. To customize the displayName and fields on the "stork" object:
-1. Add a specDescriptor to overwrite the `displayName` with `path` property of the "stork".
-2. Add a specDescriptor with [booleanSwitch](#4-booleanswitch) x-descriptor, and `path` property of "stork.enabled".
-3. Add a specDescriptor with [text](#6-text) x-descriptor,  and `path` property of "stork.image".
 
+1. Add a specDescriptor to overwrite the `displayName` with `path` property of the "stork".
+2. Add a specDescriptor with [booleanSwitch](#4-booleanswitch) x-descriptor, and `path` property of
+   "stork.enabled".
+3. Add a specDescriptor with [text](#6-text) x-descriptor, and `path` property of "stork.image".
 
 ```yaml
 …
@@ -1181,28 +1222,36 @@ See an example for Portworx Operator. To customize the displayName and fields on
   </tr>
 </table>
 
-
 #### arrayFieldGroup
 
 **x-descriptors [DEPRECATED]**
 
 This x-descriptor is **NO longer necessary**.
 
-Starting from OCP 4.5, the grouping of _object_ and _array_ structures are now schema-based and auto-generated in the Creation View.
+Starting from OCP 4.5, the grouping of _object_ and _array_ structures are now schema-based and
+auto-generated in the Creation View.
 
-You can still provide your own `displayName` and `description` for _objects_ and/or _arrays_ in the same way as individual fields. Simply use a [specDescriptor](#specDescriptors-1) directly against the _object/array_ (no `x-descriptors` are necessary).
+You can still provide your own `displayName` and `description` for _objects_ and/or _arrays_ in the
+same way as individual fields. Simply use a [specDescriptor](#specDescriptors-1) directly against
+the _object/array_ (no `x-descriptors` are necessary).
 
 **Example**
 
-See an example for Strimzi Operator. To customize the displayName and fields on the "overrides" (kafka.storage.overrides) array structure:
-1. Add a specDescriptor to overwrite the `displayName` with `path` property "kafka.storage.overrides".
+See an example for Strimzi Operator. To customize the displayName and fields on the "overrides"
+(kafka.storage.overrides) array structure:
 
-2. Add a specDescriptor with [number](#7-number) x-descriptor, and `path` property of "**kafka.storage.overrides[0].broker**".
+1. Add a specDescriptor to overwrite the `displayName` with `path` property
+   "kafka.storage.overrides".
+
+2. Add a specDescriptor with [number](#7-number) x-descriptor, and `path` property of
+   "**kafka.storage.overrides[0].broker**".
+
 <h6><small><b>Note:</b><i> Need to add the "array index notation" in the path property of the descriptor</i></small></h6>
 
-3. Add a specDescriptor with [text](#6-text) x-descriptor,  and `path` property of "**kafka.storage.overrides[0].class**".
-<h6><small><b>Note:</b><i> Need to add the "array index notation" in the path property of the descriptor</i></small></h6>
+3. Add a specDescriptor with [text](#6-text) x-descriptor, and `path` property of
+   "**kafka.storage.overrides[0].class**".
 
+<h6><small><b>Note:</b><i> Need to add the "array index notation" in the path property of the descriptor</i></small></h6>
 
 ```yaml
 …
@@ -1243,3 +1292,38 @@ See an example for Strimzi Operator. To customize the displayName and fields on 
       </td>
   </tr>
 </table>
+
+[etcd-csv-l48]:
+  https://github.com/operator-framework/community-operators/blob/master/community-operators/etcd/0.9.4/etcdoperator.v0.9.4.clusterserviceversion.yaml#L48-L52
+[etcd-csv-l53]:
+  https://github.com/operator-framework/community-operators/blob/master/community-operators/etcd/0.9.4/etcdoperator.v0.9.4.clusterserviceversion.yaml#L53-L58
+[etcd-csv-l65]:
+  https://github.com/operator-framework/community-operators/blob/master/community-operators/etcd/0.9.4/etcdoperator.v0.9.4.clusterserviceversion.yaml#L65-L69
+[couchbase-csv-l100]:
+  https://github.com/operator-framework/community-operators/blob/1591b5e18d47129ed14e83ac2f9832d6cb41bb40/upstream-community-operators/couchbase-enterprise/1.2.2/manifests/couchbase-v1.2.2.clusterserviceversion.yaml#L100-L105
+[che-csv-l78]:
+  https://github.com/operator-framework/community-operators/blob/master/community-operators/eclipse-che/7.8.0/eclipse-che.v7.8.0.clusterserviceversion.yaml#L78-L82
+[che-csv-l84]:
+  https://github.com/operator-framework/community-operators/blob/master/community-operators/eclipse-che/7.8.0/eclipse-che.v7.8.0.clusterserviceversion.yaml#L84-L88
+[portworx-csv-l243]:
+  https://github.com/operator-framework/community-operators/blob/master/upstream-community-operators/portworx/1.1.0/portworxoperator.v1.1.0.clusterserviceversion.yaml#L243-L247
+[keda-2-3-csv-l269]:
+  https://github.com/operator-framework/community-operators/blob/master/community-operators/keda/2.3.0/manifests/keda.v2.3.0.clusterserviceversion.yaml#L269L273
+[keda-1-4-csv-l129]:
+  https://github.com/operator-framework/community-operators/blob/master/community-operators/keda/1.4.1/manifests/keda.v1.4.1.clusterserviceversion.yaml#L129L133
+[keda-1-4-csv-l134]:
+  https://github.com/operator-framework/community-operators/blob/master/community-operators/keda/1.4.1/manifests/keda.v1.4.1.clusterserviceversion.yaml#L134L138
+[appsody-csv-l49]:
+  https://github.com/operator-framework/community-operators/blob/master/upstream-community-operators/appsody-operator/0.3.0/appsody-operator.v0.3.0.clusterserviceversion.yaml#L49-L53
+[prometheus-csv-l41]:
+  https://github.com/operator-framework/community-operators/blob/master/upstream-community-operators/prometheus/0.27.0/prometheusoperator.0.27.0.clusterserviceversion.yaml#L41L45
+[prometheus-csv-l82]:
+  https://github.com/operator-framework/community-operators/blob/master/upstream-community-operators/prometheus/0.27.0/prometheusoperator.0.27.0.clusterserviceversion.yaml#L82L86
+[strimzi-csv-l343]:
+  https://github.com/operator-framework/community-operators/blob/master/community-operators/strimzi-kafka-operator/0.17.0/strimzi-cluster-operator.v0.17.0.clusterserviceversion.yaml#L343-L349
+[threescale-csv-l61]:
+  https://github.com/operator-framework/community-operators/blob/master/community-operators/3scale-community-operator/0.4.0/3scale-community-operator.v0.4.0.clusterserviceversion.yaml#L61-L65
+[spark-csv-l69]:
+  https://github.com/operator-framework/community-operators/blob/master/community-operators/spark-gcp/2.4.0/sparkoperator.v2.4.0.clusterserviceversion.yaml#L69-L73
+[resources-that-support-set-based-requirement]:
+  https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#resources-that-support-set-based-requirements

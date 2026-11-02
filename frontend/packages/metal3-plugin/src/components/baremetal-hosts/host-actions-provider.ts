@@ -106,7 +106,7 @@ const useSetNodeMaintenanceAction = (
         accessReview: host && asAccessReview(NodeMaintenanceModel, host, 'update'),
       }),
     }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
     [host, t],
   );
   const action = useMemo<Action[]>(
@@ -137,7 +137,7 @@ const useRemoveNodeMaintenanceAction = (
     }),
     // Missing stopNodeMaintenanceModalLauncher dependency - intentionally excluded to prevent
     // infinite re-renders when used in action hooks.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
     [host, t, nodeMaintenance],
   );
   const action = useMemo<Action[]>(
@@ -201,7 +201,7 @@ const useRestartAction = (host, bmoEnabled) => {
         accessReview: host && asAccessReview(BareMetalHostModel, host, 'update'),
       }),
     }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
     [t],
   );
   const action = useMemo<Action[]>(() => (!hidden ? [factory.restart()] : []), [factory, hidden]);
@@ -227,7 +227,7 @@ const usePowerOffAction = (host, nodeName, status, bmoEnabled) => {
         accessReview: host && asAccessReview(BareMetalHostModel, host, 'update'),
       }),
     }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
     [host, nodeName, status, t],
   );
   const action = useMemo<Action[]>(() => (!hidden ? [factory.powerOff()] : []), [factory, hidden]);
@@ -270,7 +270,7 @@ const useDeprovisionAction = (host, machine, machineSet, bmoEnabled) => {
           : asAccessReview(MachineModel, machine, 'delete'),
       }),
     }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
     [machine, machineSet, t],
   );
 

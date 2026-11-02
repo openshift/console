@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { gettextToI18next } from 'i18next-conv';
-import * as minimist from 'minimist';
+import minimist from 'minimist';
 
 const save = (target: string) => (result: string) => {
   fs.writeFileSync(target, JSON.stringify(JSON.parse(result), null, 2));
@@ -14,21 +14,33 @@ const processFile = (fileName: string, language: string) => {
   let newFilePath;
   const [packageDir, newFileName] = path.basename(fileName, '.po').split('__');
   if (packageDir !== 'public') {
-    if (!fs.existsSync(path.join(__dirname, `./../packages/${packageDir}/locales/${language}`))) {
-      fs.mkdirSync(path.join(__dirname, `./../packages/${packageDir}/locales/${language}`), {
-        recursive: true,
-      });
+    if (
+      !fs.existsSync(
+        path.join(import.meta.dirname, `./../packages/${packageDir}/locales/${language}`),
+      )
+    ) {
+      fs.mkdirSync(
+        path.join(import.meta.dirname, `./../packages/${packageDir}/locales/${language}`),
+        {
+          recursive: true,
+        },
+      );
     }
     newFilePath = path.join(
-      __dirname,
+      import.meta.dirname,
       `./../packages/${packageDir}/locales/${language}/${newFileName}.json`,
     );
     console.log(`Saving packages/${packageDir}/locales/${language}/${newFileName}.json`);
   } else {
-    if (!fs.existsSync(path.join(__dirname, `../public/locales/${language}/`))) {
-      fs.mkdirSync(path.join(__dirname, `../public/locales/${language}/`), { recursive: true });
+    if (!fs.existsSync(path.join(import.meta.dirname, `../public/locales/${language}/`))) {
+      fs.mkdirSync(path.join(import.meta.dirname, `../public/locales/${language}/`), {
+        recursive: true,
+      });
     }
-    newFilePath = path.join(__dirname, `../public/locales/${language}/${newFileName}.json`);
+    newFilePath = path.join(
+      import.meta.dirname,
+      `../public/locales/${language}/${newFileName}.json`,
+    );
     console.log(`Saving public/locales/${language}/${newFileName}.json`);
   }
   gettextToI18next(language, fs.readFileSync(fileName))

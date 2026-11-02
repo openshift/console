@@ -446,7 +446,7 @@ export const EnvironmentPage: FC<EnvironmentPageProps> = (props) => {
         setSecrets(secs);
       })
       .catch(() => {});
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []); // eslint-disable-line react-hooks-js/exhaustive-deps
 
   /**
    * Callback for NVEditor update our state with new values

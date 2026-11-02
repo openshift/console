@@ -1,6 +1,6 @@
 import * as GitUrlParse from 'git-url-parse';
 import { Gitlab } from 'gitlab';
-import i18n from 'i18next';
+import * as i18n from 'i18next';
 import { Base64 } from 'js-base64';
 import { consoleFetchJSON } from '@console/dynamic-plugin-sdk/src/lib-core';
 import type { DevConsoleEndpointResponse } from '@console/shared/src/types/backend-api';

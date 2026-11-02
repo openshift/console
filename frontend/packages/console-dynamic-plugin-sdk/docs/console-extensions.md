@@ -246,6 +246,7 @@ This extension allows plugins to contribute a new type of catalog item. For exam
 | `catalogDescription` | `string \| CodeRef<ComponentType>` | yes | Description for the type specific catalog. |
 | `typeDescription` | `string` | yes | Description for the catalog item type. |
 | `sortFilterGroups` | `boolean` | yes | Determine if filter groups should be sorted alphabetically. Defaults to true. |
+| `sortWeight` | `number` | yes | Ordering weight for this type in the catalog's type list. Types are sorted by weight<br/>ascending and then alphabetically by title, so a higher weight sinks the type towards<br/>the bottom of the list. Defaults to 0. |
 | `filters` | `CatalogItemAttribute[]` | yes | Custom filters specific to the catalog item. |
 | `groupings` | `CatalogItemAttribute[]` | yes | Custom groupings specific to the catalog item. |
 
@@ -1112,6 +1113,7 @@ Adds a tab to a horizontal nav matching the `contextId`.
 | `name` | `string` | no | The display label of the tab |
 | `href` | `string` | no | The href appended to the existing URL |
 | `component` | `CodeRef<React.ComponentType<PageComponentProps<K8sResourceCommon>>>` | no | Tab content component. |
+| `badge` | `CodeRef<React.ComponentType<{}>>` | yes | Component rendered beside the tab label. |
 
 ---
 

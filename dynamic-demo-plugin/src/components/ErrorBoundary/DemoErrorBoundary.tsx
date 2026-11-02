@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { withTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
-import { ErrorBoundaryFallbackProps } from "@openshift-console/dynamic-plugin-sdk";
+import { ErrorBoundaryFallbackProps } from '@openshift-console/dynamic-plugin-sdk';
 
 type DemoErrorBoundaryState = {
   error: { message: string; stack: string; name: string };
@@ -16,7 +16,10 @@ type DemoErrorBoundaryProps = {
 
 const DefaultFallback: React.FC = () => <div />;
 
-class DemoErrorBoundaryWithTranslation extends React.Component<DemoErrorBoundaryProps, DemoErrorBoundaryState> {
+class DemoErrorBoundaryWithTranslation extends React.Component<
+  DemoErrorBoundaryProps,
+  DemoErrorBoundaryState
+> {
   constructor(props) {
     super(props);
     this.state = { error: null, errorInfo: null };
@@ -34,7 +37,14 @@ class DemoErrorBoundaryWithTranslation extends React.Component<DemoErrorBoundary
     const { error, errorInfo } = this.state;
     const FallbackComponent = this.props.FallbackComponent || DefaultFallback;
     if (error) {
-      return <FallbackComponent title={t('Oops something went wrong in your dynamic plugin')} errorMessage={error?.message} componentStack={errorInfo?.componentStack} stack={error?.stack} />;
+      return (
+        <FallbackComponent
+          title={t('Oops something went wrong in your dynamic plugin')}
+          errorMessage={error?.message}
+          componentStack={errorInfo?.componentStack}
+          stack={error?.stack}
+        />
+      );
     }
     return this.props.children;
   }

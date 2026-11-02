@@ -12,7 +12,7 @@ describe('Bitbucket Service', () => {
   const nockBack = nock.back;
   nockBack.setMode('record');
 
-  nockBack.fixtures = `${__dirname}/__nock-fixtures__/bitbucket`;
+  nockBack.fixtures = `${import.meta.dirname}/__nock-fixtures__/bitbucket`;
 
   it('should be able to detect existing public bitbucket repo', () => {
     const gitSource: GitSource = {

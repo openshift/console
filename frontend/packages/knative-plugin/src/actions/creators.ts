@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import i18next from 'i18next';
+import * as i18next from 'i18next';
 import type { Action } from '@console/dynamic-plugin-sdk';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { LazyDeleteModalOverlay } from '@console/internal/components/modals';
@@ -27,7 +27,7 @@ export const useSetTrafficDistributionAction = (kind: K8sKind, obj: K8sResourceK
       cta: trafficDistributionModalLauncher,
       accessReview: asAccessReview(kind, obj, 'update'),
     }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
     [kind.apiGroup, kind.plural, obj?.metadata?.name, obj?.metadata?.namespace],
   );
 };
@@ -46,7 +46,7 @@ export const useMoveSinkPubsubAction = (model: K8sKind, source: K8sResourceKind)
       cta: sinkPubsubModalLauncher,
       accessReview: asAccessReview(model, source, 'update'),
     }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
     [model, source],
   );
 };
@@ -60,7 +60,7 @@ export const useAddTriggerBrokerAction = (model: K8sKind, source: K8sResourceKin
       cta: pubSubModalLauncher,
       accessReview: asAccessReview(EventingTriggerModel, source, 'create'),
     }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
     [source],
   );
 };
@@ -77,7 +77,7 @@ export const useAddSubscriptionChannelAction = (
       cta: pubSubModalLauncher,
       accessReview: asAccessReview(EventingSubscriptionModel, source, 'create'),
     }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
     [source],
   );
 };
@@ -171,7 +171,7 @@ export const useDeleteRevisionAction = (model: K8sKind, revision: K8sResourceKin
       cta: deleteRevisionModalLauncher,
       accessReview: asAccessReview(model, revision, 'delete'),
     }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
     [model, revision],
   );
 };
@@ -195,7 +195,7 @@ export const useEditSinkUriAction = (
         verb: 'update',
       },
     }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
     [model?.apiGroup, model?.plural, resources],
   );
 };
@@ -211,7 +211,7 @@ export const useTestServerlessFunctionAction = (model: K8sKind, obj: K8sResource
       disabledTooltip: i18next.t('knative-plugin~Serverless function is not ready to test'),
       disabled: obj?.status?.conditions.some((cond) => cond.status !== 'True'),
     }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
     [obj?.status?.conditions],
   );
 };

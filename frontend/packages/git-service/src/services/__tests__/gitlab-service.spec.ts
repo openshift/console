@@ -10,7 +10,7 @@ describe('Gitlab Service', () => {
   const nockBack = nock.back;
   nockBack.setMode('record');
 
-  nockBack.fixtures = `${__dirname}/__nock-fixtures__/gitlab`;
+  nockBack.fixtures = `${import.meta.dirname}/__nock-fixtures__/gitlab`;
 
   it('should return ok on existing public gitlab repo', () => {
     const gitSource: GitSource = { url: 'https://gitlab.com/jpratik999/devconsole-git.git' };

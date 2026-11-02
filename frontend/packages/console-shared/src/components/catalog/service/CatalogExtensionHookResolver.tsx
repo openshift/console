@@ -22,13 +22,13 @@ export const CatalogExtensionHookResolver = <T,>({
   useEffect(() => {
     if (loaded) onValueResolved(value, id);
     // unnecessary to run effect again if the onValueResolved callback changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [id, loaded, value]);
 
   useEffect(() => {
     if (loadError && onValueError) onValueError(loadError, id);
     // unnecessary to run effect again if the onValueError callback changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [id, loadError]);
 
   return null;

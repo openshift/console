@@ -215,7 +215,7 @@ const ConnectedTopologyView: FC<ComponentProps> = ({
       });
     }
     // Only update on extension changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [displayFilterExtensionsResolved, displayFilterExtensions]);
 
   useEffect(() => {
@@ -247,7 +247,7 @@ const ConnectedTopologyView: FC<ComponentProps> = ({
       onFiltersChange(updatedFilters);
     }
     // Only clear kind filters on namespace change
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [namespace]);
 
   useEffect(() => {
@@ -275,7 +275,7 @@ const ConnectedTopologyView: FC<ComponentProps> = ({
           <Topology
             model={filteredModel}
             namespace={namespace}
-            application={applicationRef.current} // eslint-disable-line react-hooks/refs -- reads application filter inside useMemo for graph-view rendering
+            application={applicationRef.current} // eslint-disable-line react-hooks-js/refs -- reads application filter inside useMemo for graph-view rendering
             onSelect={onSelect}
             setVisualization={setVisualization}
           />

@@ -35,7 +35,7 @@ const TopologyDataRetriever: FC<TopologyDataRetrieverProps> = ({ trafficData }) 
   // Wipe the current model on a namespace change
   useEffect(() => {
     dataModelContext.model = null;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [namespace]);
 
   useEffect(() => {

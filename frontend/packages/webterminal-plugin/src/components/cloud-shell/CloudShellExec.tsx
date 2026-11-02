@@ -207,7 +207,7 @@ const CloudShellExec: FC<CloudShellExecProps> = ({
       unmounted = true;
       websocket.destroy();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [
     container,
     flags,

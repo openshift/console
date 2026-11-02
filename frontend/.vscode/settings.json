@@ -1,46 +1,12 @@
 {
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "typescript.preferences.preferTypeOnlyAutoImports": true,
-  "typescript.preferences.importModuleSpecifier": "project-relative",
-  "typescript.preferences.autoImportFileExcludePatterns": [
-    "./packages/console-shared/src/index.ts"
-  ],
-  "jest.jestCommandLine": "yarn test",
-  "jest.useJest30": true,
-  "jest.runMode": "deferred", // Too many unit tests to run the entire suite automatically
-  "[javascript][javascriptreact][typescript][typescriptreact]": {
-    "editor.codeActionsOnSave": {
-      "source.organizeImports": "never",
-      "source.sortImports": "never",
-      "source.fixAll.eslint": "explicit",
-      "source.fixAll.ts": "explicit"
-    }
-  },
-  "[json][jsonc][graphql]": {
-    "editor.formatOnSave": true
-  },
-  "eslint.validate": [
-    "javascript",
-    "javascriptreact",
-    "typescript",
-    "typescriptreact",
-    "json",
-    "graphql"
-  ],
-  "javascript.preferences.quoteStyle": "single",
-  "typescript.preferences.quoteStyle": "single",
-  "javascript.validate.enable": false,
-  "typescript.tsdk": "./node_modules/typescript/lib",
+  "oxc.enable": true,
   "search.exclude": {
     "**/node_modules": true,
-    "**/bower_components": true,
-    "**/.cache-loader": true,
     "**/public/dist": true,
     "**/.yarn/releases/**": true
   },
   "files.exclude": {
     "**/.git": true,
-    "**/.svn": true,
     "**/.hg": true,
     "**/CVS": true,
     "**/.DS_Store": true,
@@ -52,29 +18,63 @@
     "**/.git/subtree-cache/**": true,
     "**/node_modules/**": true,
     "**/.hg/store/**": true,
-    "**/bower_components": true,
-    "**/.cache-loader": true,
     "**/public/dist": true
   },
-  "files.associations": {
-    "**/console-extensions.json": "jsonc"
-  },
-  "json.schemas": [
-    {
-      "fileMatch": [
-        "**/console-extensions.json"
-      ],
-      "url": "./packages/console-dynamic-plugin-sdk/dist/webpack/schema/console-extensions.json"
-    }
-  ],
   "editor.quickSuggestions": {
     "comments": "on",
     "strings": "on",
     "other": "on"
   },
-  // TODO support prettier + stylelint
-  // "prettier.stylelintIntegration": true,
-  // "css.validate": false,
-  // "less.validate": false,
-  // "scss.validate": false,
+
+  // js/ts settings
+  "js/ts.preferences.preferTypeOnlyAutoImports": true,
+  "js/ts.preferences.importModuleSpecifier": "project-relative",
+  "js/ts.preferences.quoteStyle": "single",
+
+  // json settings
+  "files.associations": {
+    "**/console-extensions.json": "jsonc",
+    "**/*.md": "markdown"
+  },
+  "json.schemas": [
+    {
+      "fileMatch": ["**/console-extensions.json"],
+      "url": "./packages/console-dynamic-plugin-sdk/dist/webpack/schema/console-extensions.json"
+    }
+  ],
+
+  // unit test settings
+  "jest.jestCommandLine": "yarn test",
+  "jest.useJest30": true,
+  "jest.runMode": "deferred", // Too many unit tests to run the entire suite automatically
+
+  // seperate blocks are higher priority than a single block with multiple languages
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.format.oxc": "always", // run formatter first
+      "source.fixAll.oxc": "always" // run lint fixes after
+    }
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.format.oxc": "always", // run formatter first
+      "source.fixAll.oxc": "always" // run lint fixes after
+    }
+  },
+  "[markdown]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode",
+    "editor.formatOnSave": true
+  },
+  "[json]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode",
+    "editor.formatOnSave": true
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode",
+    "editor.formatOnSave": true
+  }
 }

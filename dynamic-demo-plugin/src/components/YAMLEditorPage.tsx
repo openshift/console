@@ -15,7 +15,7 @@ const EditorPage: React.FC = () => {
   const [data, setData] = React.useState(simpleYAML);
   const onSave = (content: string) => setData(yamlParser.load(content));
   return (
-    <PageSection isFilled hasBodyWrapper={false} padding={{default: 'noPadding'}}>
+    <PageSection isFilled hasBodyWrapper={false} padding={{ default: 'noPadding' }}>
       <React.Suspense fallback={<></>}>
         <ResourceYAMLEditor initialResource={data} header="Simple Pod" onSave={onSave} />
       </React.Suspense>

@@ -60,10 +60,10 @@ describe('GettingStartedSection', () => {
     );
 
     // Check that all three cards are present by looking for their mocked components
-    const contentContainer = screen.getByTestId('getting-started-content');
-    expect(contentContainer).toHaveTextContent('Sample getting started');
-    expect(contentContainer).toHaveTextContent('Quick start tutorials');
-    expect(contentContainer).toHaveTextContent('Developer features');
+    const gettingStarted = screen.getByTestId('getting-started');
+    expect(gettingStarted).toHaveTextContent('Sample getting started');
+    expect(gettingStarted).toHaveTextContent('Quick start tutorials');
+    expect(gettingStarted).toHaveTextContent('Developer features');
   });
 
   it('should render nothing when useFlag(FLAGS.OPENSHIFT) returns false', () => {

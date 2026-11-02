@@ -2,7 +2,7 @@ import type { FC } from 'react';
 import { useMemo } from 'react';
 import { css } from '@patternfly/react-styles';
 import { sortable } from '@patternfly/react-table';
-import i18next from 'i18next';
+import * as i18next from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import { getLabelsColumnWidthStyleProp } from '@console/app/src/components/data-view/ConsoleDataView';

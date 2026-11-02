@@ -1,0 +1,12 @@
+.kn-functions-getting-started-section {
+  // MultiContentCard renders every entry of its cards property in a flex item,
+  // including cards that intentionally render nothing (e.g. when the samples
+  // catalog is disabled or empty). Collapse those empty items so the remaining
+  // cards share the available space and keep a single divider between them.
+  // PatternFly 6 styles flex items through modifier classes on direct children
+  // of the flex container (there is no __item base class).
+  .pf-v6-l-flex > .pf-m-flex-1:empty,
+  .pf-v6-l-flex > .pf-m-flex-1:empty + .pf-v6-c-divider {
+    display: none;
+  }
+}

@@ -13,6 +13,9 @@ import type { MenuActions, MenuAction, SecondaryButtonAction } from './multi-tab
 interface MultiTabListPageProps {
   title: string;
   badge?: ReactNode;
+  contextId?: string;
+  activeTab?: string;
+  basePath?: string;
   menuActions?: MenuActions;
   pages: Page[];
   secondaryButtonAction?: SecondaryButtonAction;
@@ -22,6 +25,9 @@ interface MultiTabListPageProps {
 export const MultiTabListPage: FC<MultiTabListPageProps> = ({
   title,
   badge,
+  contextId,
+  activeTab,
+  basePath,
   pages,
   menuActions,
   secondaryButtonAction,
@@ -109,7 +115,13 @@ export const MultiTabListPage: FC<MultiTabListPageProps> = ({
           </>
         }
       />
-      <HorizontalNav pages={pages} noStatusBox />
+      <HorizontalNav
+        activeTab={activeTab}
+        basePath={basePath}
+        contextId={contextId}
+        pages={pages}
+        noStatusBox
+      />
     </PageTitleContext.Provider>
   );
 };

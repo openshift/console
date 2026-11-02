@@ -80,7 +80,7 @@ export class ClusterSettingsPage extends BasePage {
   async confirmAction(): Promise<void> {
     await this.robustClick(this.confirmActionButton);
     // Wait for modal to close
-    // eslint-disable-next-line no-restricted-syntax
+    // eslint-disable-next-line eslint-js/no-restricted-syntax
     await this.modalTitle.waitFor({ state: 'hidden', timeout: 10_000 }).catch(() => {
       // Modal may close quickly, ignore timeout
     });
@@ -170,7 +170,7 @@ export class ClusterSettingsPage extends BasePage {
     await this.robustClick(updateButton);
 
     // Wait for modal to appear
-    // eslint-disable-next-line no-restricted-syntax
+    // eslint-disable-next-line eslint-js/no-restricted-syntax
     await this.modalTitle.waitFor({ state: 'visible', timeout: 10_000 });
     await this.page.waitForFunction(
       () => {
@@ -181,7 +181,7 @@ export class ClusterSettingsPage extends BasePage {
     );
 
     const modal = this.page.getByTestId('update-cluster-modal');
-    // eslint-disable-next-line no-restricted-syntax
+    // eslint-disable-next-line eslint-js/no-restricted-syntax
     await modal.waitFor({ state: 'visible' });
     await expect(this.page.getByTestId('update-cluster-modal')).toBeVisible();
   }

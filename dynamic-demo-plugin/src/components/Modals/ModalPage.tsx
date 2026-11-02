@@ -202,21 +202,11 @@ export const TestModalPage: React.FC<{ closeComponent: any }> = () => {
       <DocumentTitle>{t('Modal Launchers')}</DocumentTitle>
       <Button onClick={onClick}>{t('Launch Modal')}</Button>
       <Button onClick={onAsyncClick}>{t('Launch Modal Asynchronously')}</Button>
-      <Button onClick={onClickWithID1}>
-        {t('Launch Modal with ID 1')}
-      </Button>
-      <Button onClick={onClickWithID2}>
-        {t('Launch Modal with ID 2')}
-      </Button>
-      <Button onClick={onClickOverlayBasic}>
-        {t('Launch overlay')}
-      </Button>
-      <Button onClick={onClickOverlayWithProps}>
-        {t('Launch overlay with props')}
-      </Button>
-      <Button onClick={onClickOverlayModal}>
-        {t('Launch overlay modal')}
-      </Button>
+      <Button onClick={onClickWithID1}>{t('Launch Modal with ID 1')}</Button>
+      <Button onClick={onClickWithID2}>{t('Launch Modal with ID 2')}</Button>
+      <Button onClick={onClickOverlayBasic}>{t('Launch overlay')}</Button>
+      <Button onClick={onClickOverlayWithProps}>{t('Launch overlay with props')}</Button>
+      <Button onClick={onClickOverlayModal}>{t('Launch overlay modal')}</Button>
     </Flex>
   );
 };

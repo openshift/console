@@ -48,7 +48,7 @@ export const useEditorType = (
     }
     // run this hook only after all resources have loaded
     // to set the lastView user setting when the form loads
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [resourceLoaded]);
 
   const loaded: boolean = resourceLoaded && (!!activeEditorType || !defaultValue);

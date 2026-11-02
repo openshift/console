@@ -271,7 +271,7 @@ const StorageClassFormInner: FC<StorageClassFormProps> = (props) => {
     }
 
     prevProps.current = props;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [props]);
 
   const updateNewStorage = (param: keyof Parameters, value, runValidation) => {
@@ -288,7 +288,7 @@ const StorageClassFormInner: FC<StorageClassFormProps> = (props) => {
     if (needValidate) {
       validateForm();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [newStorageClass]);
 
   const setParameterHandler = (param: keyof Parameters, event, checkbox) => {

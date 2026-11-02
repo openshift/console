@@ -2,7 +2,7 @@ import { renderHook, waitFor } from '@testing-library/react';
 import { checkTerminalAvailable } from '../cloud-shell-utils';
 import { useCloudShellAvailable } from '../useCloudShellAvailable';
 // Need to import useFlag after useCloudShellAvailable for the mock to work correctly. FInd out why?
-// eslint-disable-next-line import/order
+// eslint-disable-next-line import-js/order
 import { useFlag } from '@console/shared/src/hooks/useFlag';
 
 const useFlagMock = useFlag as jest.Mock;

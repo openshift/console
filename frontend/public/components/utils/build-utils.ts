@@ -1,4 +1,4 @@
-import i18next from 'i18next';
+import * as i18next from 'i18next';
 
 export const displayDurationInWords = (start: string, stop: string): string => {
   if (!start) {

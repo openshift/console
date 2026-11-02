@@ -24,7 +24,7 @@ import {
   NotificationDrawerListItemHeader,
 } from '@patternfly/react-core';
 import { RhUiEllipsisVerticalIcon } from '@patternfly/react-icons';
-import i18next from 'i18next';
+import * as i18next from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import type { NavigateFunction } from 'react-router';

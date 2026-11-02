@@ -186,7 +186,11 @@ type PipelineRunResource = PipelineRunReferenceResource | PipelineRunEmbeddedRes
 export type PipelineRunWorkspace = {
   name: string;
   [volumeType: string]:
-    VolumeTypeSecret | VolumeTypeConfigMaps | VolumeTypePVC | VolumeTypeClaim | {};
+    | VolumeTypeSecret
+    | VolumeTypeConfigMaps
+    | VolumeTypePVC
+    | VolumeTypeClaim
+    | {};
 };
 
 export type PipelineRunKind = K8sResourceCommon & {

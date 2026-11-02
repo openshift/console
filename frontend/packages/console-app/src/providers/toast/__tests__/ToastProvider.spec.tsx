@@ -680,6 +680,44 @@ describe('InternalToastProvider', () => {
     expect(notificationHistoryContext.notifications[0].isRead).toBe(false);
   });
 
+  it('keeps progress updates in history after a toast is minimized', async () => {
+    const user = userEvent.setup();
+    renderWithProviders(
+      <InternalToastProvider>
+        <TestComponent />
+      </InternalToastProvider>,
+    );
+    act(() => {
+      toastContext.addToast({
+        id: 'migration-progress',
+        variant: AlertVariant.info,
+        title: 'Migration in progress',
+        content: '0 of 2 operators processed',
+        persistInDrawer: true,
+        minimizable: true,
+        dismissible: false,
+        timeout: false,
+      });
+    });
+    await user.click(
+      await screen.findByRole('button', { name: 'Minimize alert: Migration in progress' }),
+    );
+    act(() => {
+      toastContext.addToast({
+        id: 'migration-progress',
+        variant: AlertVariant.info,
+        title: 'Migration in progress',
+        content: '1 of 2 operators processed',
+        persistInDrawer: true,
+        minimizable: true,
+        dismissible: false,
+        timeout: false,
+      });
+    });
+    expect(screen.queryByText('Migration in progress')).not.toBeInTheDocument();
+    expect(notificationHistoryContext.notifications[0].content).toBe('1 of 2 operators processed');
+  });
+
   it('should minimize a dismissible drawer-persisted toast via an explicit minimize action, alongside the close button', async () => {
     const user = userEvent.setup();
     const onClose = jest.fn();

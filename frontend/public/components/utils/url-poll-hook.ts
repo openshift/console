@@ -1,4 +1,4 @@
-/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react-hooks-js/exhaustive-deps */
 import { useCallback, useState } from 'react';
 import type { UseURLPoll } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { usePoll } from '@console/shared/src/hooks/usePoll';

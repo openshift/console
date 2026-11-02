@@ -163,7 +163,7 @@ export const useRemoveModalLauncher = (props: RemoveVolumeModalProps): ModalCall
       resource &&
       volume &&
       launcher<RemoveVolumeModalProps>(RemoveVolumeModalProvider, props),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
     [launcher, kind, resource, volume],
   );
 };

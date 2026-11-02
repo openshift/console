@@ -1,4 +1,4 @@
-import i18next from 'i18next';
+import * as i18next from 'i18next';
 import * as _ from 'lodash';
 import type { Action } from '@console/dynamic-plugin-sdk';
 import type { K8sResourceKind, K8sKind } from '@console/internal/module/k8s';

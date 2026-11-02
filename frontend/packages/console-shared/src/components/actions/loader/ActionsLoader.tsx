@@ -86,13 +86,13 @@ const ActionsLoader: FC<ActionsLoaderProps> = ({
   useEffect(() => {
     if (actionsLoaded) onActionsLoaded?.(actions);
     // We do not want to run the effect every time onActionsLoaded changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [actions, actionsLoaded]);
 
   useEffect(() => {
     if (loadError) onLoadError(loadError);
     // We do not want to run the effect every time onLoadError changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [loadError]);
 
   return (

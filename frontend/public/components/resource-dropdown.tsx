@@ -185,7 +185,9 @@ export const InnerResourceListDropdown: FC<ResourceListDropdownProps> = (props) 
             <span>
               {model.labelKey ? t(model.labelKey) : model.kind}
               {model.badge && model.badge === 'Tech Preview' && (
-                <span className="co-resource-item__tech-dev-preview">{t('Tech Preview')}</span>
+                <span className="co-resource-item__tech-dev-preview">
+                  {t('Technology Preview')}
+                </span>
               )}
             </span>
             {isDup(model.kind) && (
@@ -222,7 +224,7 @@ export const InnerResourceListDropdown: FC<ResourceListDropdownProps> = (props) 
                     {model.labelKey ? t(model.labelKey) : model.kind}
                     {model.badge && model.badge === 'Tech Preview' && (
                       <span className="co-resource-item__tech-dev-preview">
-                        {t('Tech Preview')}
+                        {t('Technology Preview')}
                       </span>
                     )}
                   </span>
@@ -455,6 +457,7 @@ export const InnerResourceListDropdown: FC<ResourceListDropdownProps> = (props) 
             isExpanded={isOpen}
           >
             <TextInputGroup isPlain>
+              {/* eslint-disable jsx-a11y/role-has-required-aria-props -- TextInputGroupMain maps isExpanded to aria-expanded on the rendered input */}
               <TextInputGroupMain
                 value={inputValue}
                 onClick={onInputClick}
@@ -469,6 +472,7 @@ export const InnerResourceListDropdown: FC<ResourceListDropdownProps> = (props) 
                 isExpanded={isOpen}
                 aria-controls="resource-dropdown-listbox"
               />
+              {/* eslint-enable jsx-a11y/role-has-required-aria-props */}
               <TextInputGroupUtilities {...(!inputValue ? { style: { display: 'none' } } : {})}>
                 <Button
                   icon={<RhUiCloseIcon aria-hidden />}

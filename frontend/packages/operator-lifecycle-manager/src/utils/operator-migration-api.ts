@@ -1,0 +1,188 @@
+import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
+
+export interface OperatorMigrationAcknowledgements {
+  acknowledgeWatchScopeChange?: boolean;
+  acknowledgeOperatorCondition?: boolean;
+  acknowledgeOLMv0APIAccess?: boolean;
+  acknowledgeScopedServiceAccount?: boolean;
+  acknowledgeNotSteadyState?: boolean;
+}
+
+export interface OperatorMigrationRequest extends OperatorMigrationAcknowledgements {
+  subscriptionName: string;
+  subscriptionNamespace: string;
+  clusterExtensionName?: string;
+  installNamespace?: string;
+}
+
+interface OperatorMigrationCheck {
+  name: string;
+  passed: boolean;
+  message: string;
+}
+
+export interface OperatorMigrationScan {
+  subscriptionName: string;
+  subscriptionNamespace: string;
+  clusterExtensionName?: string;
+  installedCSV?: string;
+  status: string;
+  eligible: boolean;
+  reason: string;
+  error?: string;
+  failedChecks?: OperatorMigrationCheck[];
+  warnings?: string[];
+}
+
+export interface OperatorMigrationPlan {
+  clusterExtensionName: string;
+  installNamespace: string;
+  packageName: string;
+  version: string;
+  channel?: string;
+  clusterCatalog: string;
+  clusterObjectSetName: string;
+  resources: { kind: string; count: number }[];
+  actions: string[];
+}
+
+export interface OperatorMigrationDryRunResponse {
+  operator: OperatorMigrationScan;
+  eligible: boolean;
+  plan?: OperatorMigrationPlan;
+  planningError?: string;
+}
+
+export interface OperatorMigrationProgress {
+  step: string;
+  status: string;
+  target?: string;
+  message?: string;
+  error?: string;
+}
+
+export interface OperatorMigrationJobItem {
+  subscriptionName: string;
+  subscriptionNamespace: string;
+  clusterExtensionName?: string;
+  status: 'Queued' | 'Checking' | 'Migrating' | 'Succeeded' | 'Failed' | 'Skipped' | string;
+  progress?: string;
+  progressEvent?: OperatorMigrationProgress;
+  reason?: string;
+  error?: string;
+  rollbackAttempted?: boolean;
+  rolledBack?: boolean;
+  recoveryRequired?: boolean;
+}
+
+export interface OperatorMigrationJob {
+  id: string;
+  operation?: 'Rollback';
+  sourceJobID?: string;
+  status: string;
+  message?: string;
+  progressEvent?: OperatorMigrationProgress;
+  continueOnError: boolean;
+  items: OperatorMigrationJobItem[];
+}
+
+/** Resolves migration APIs under the configured Console route prefix. */
+const migrationEndpoint = (path: string): string =>
+  `${window.SERVER_FLAGS.basePath}api/olm/migration/${path}`;
+// Planning queries every serving catalog, including over a local port forward.
+const MIGRATION_PLANNING_TIMEOUT = 5 * 60 * 1000;
+const SCAN_CACHE_TTL = 30 * 1000;
+export const OPERATOR_MIGRATION_SCAN_INVALIDATED_EVENT = 'olm-operator-migration-scan-invalidated';
+
+interface ScanCache {
+  data?: OperatorMigrationScan[];
+  error?: Error;
+  promise?: Promise<OperatorMigrationScan[]>;
+  timestamp: number;
+}
+
+let scanCache: ScanCache | undefined;
+
+/** Shares scan requests until expiry; invalidated requests cannot replace newer cache entries. */
+export const getOperatorMigrationScans = (): Promise<OperatorMigrationScan[]> => {
+  if (scanCache?.promise) {
+    return scanCache.promise;
+  }
+
+  if (scanCache && Date.now() - scanCache.timestamp < SCAN_CACHE_TTL) {
+    return scanCache.error
+      ? Promise.reject(scanCache.error)
+      : Promise.resolve(scanCache.data ?? []);
+  }
+
+  const entry: ScanCache = { timestamp: Date.now() };
+  const promise = coFetchJSON(
+    migrationEndpoint('operators'),
+    'GET',
+    {},
+    MIGRATION_PLANNING_TIMEOUT,
+  ).then(
+    (data: OperatorMigrationScan[]) => {
+      if (scanCache === entry) scanCache = { data, timestamp: Date.now() };
+      return data;
+    },
+    (error: Error) => {
+      if (scanCache === entry) scanCache = { error, timestamp: Date.now() };
+      throw error;
+    },
+  );
+  entry.promise = promise;
+  scanCache = entry;
+  return promise;
+};
+
+/** Discards cached scans and pending request ownership, then notifies scan consumers. */
+export const invalidateOperatorMigrationScans = (): void => {
+  scanCache = undefined;
+  window.dispatchEvent(new Event(OPERATOR_MIGRATION_SCAN_INVALIDATED_EVENT));
+};
+
+/** Requests a read-only migration plan with a timeout that accommodates real catalog discovery. */
+export const dryRunOperatorMigration = (
+  operator: OperatorMigrationRequest,
+): Promise<OperatorMigrationDryRunResponse> =>
+  coFetchJSON.post(
+    migrationEndpoint('dry-run'),
+    operator,
+    {},
+    MIGRATION_PLANNING_TIMEOUT,
+  ) as Promise<OperatorMigrationDryRunResponse>;
+
+/** Queues selected operators with required acknowledgments and returns the accepted durable job ID. */
+export const startOperatorMigration = (
+  operators: OperatorMigrationRequest[],
+): Promise<{ jobID: string; status: string }> =>
+  coFetchJSON.post(
+    migrationEndpoint('bulk'),
+    { operators, continueOnError: true },
+    {},
+    MIGRATION_PLANNING_TIMEOUT,
+  ) as Promise<{ jobID: string; status: string }>;
+
+/** Reads one owned durable migration or rollback job snapshot. */
+export const getOperatorMigrationJob = (jobID: string): Promise<OperatorMigrationJob> =>
+  coFetchJSON(
+    migrationEndpoint(`jobs/${encodeURIComponent(jobID)}`),
+    'GET',
+  ) as Promise<OperatorMigrationJob>;
+
+/** Lists the authenticated user's retained jobs and supports cancellation of discovery requests. */
+export const getOperatorMigrationJobs = (signal?: AbortSignal): Promise<OperatorMigrationJob[]> =>
+  coFetchJSON(migrationEndpoint('jobs'), 'GET', { signal }) as Promise<OperatorMigrationJob[]>;
+
+/** Queues acknowledged recovery of a failed operator in an owned, completed migration batch. */
+export const startOperatorMigrationRollback = (
+  jobID: string,
+  clusterExtensionName: string,
+): Promise<{ jobID: string; status: string }> =>
+  coFetchJSON.post(
+    migrationEndpoint('rollback'),
+    { jobID, clusterExtensionName, acknowledgeInstalled: true },
+    {},
+    MIGRATION_PLANNING_TIMEOUT,
+  ) as Promise<{ jobID: string; status: string }>;

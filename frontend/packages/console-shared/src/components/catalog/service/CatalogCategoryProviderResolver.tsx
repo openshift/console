@@ -19,7 +19,7 @@ const CatalogCategoryProviderResolver: FC<CatalogCategoryProviderResolverProps> 
   useEffect(() => {
     onValueResolved(value, id);
     // unnecessary to run effect again if the onValueResolved callback changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [id, value]);
 
   return null;

@@ -1,7 +1,7 @@
 import { existsSync, readdirSync, readFileSync } from 'fs';
 import { join, relative, resolve } from 'path';
 
-const DIST_DIR = resolve(__dirname, '../packages/console-dynamic-plugin-sdk/dist');
+const DIST_DIR = resolve(import.meta.dirname, '../packages/console-dynamic-plugin-sdk/dist');
 
 const getDistFiles = (root: string, extensions: string[]): string[] => {
   const results: string[] = [];
@@ -22,10 +22,12 @@ const getDistFiles = (root: string, extensions: string[]): string[] => {
 // Matches ES import/export statements with a @console/* module specifier.
 // Does NOT match require() calls -- those are resolved dynamically at runtime via
 // module federation and are expected in the dist output.
-const importFromConsoleRe = /\b(?:import|export)\s+(?:[\s\S]*?\s+)?from\s+['"](@console\/[^'"]*)['"]/g;
+const importFromConsoleRe =
+  /\b(?:import|export)\s+(?:[\s\S]*?\s+)?from\s+['"](@console\/[^'"]*)['"]/g;
 
 describe('dist files must not contain monorepo-specific imports', () => {
   if (!existsSync(DIST_DIR)) {
+    // eslint-disable-next-line jest/prefer-todo, jest/no-disabled-tests -- the test is done but has to be skipped if it can be run
     it.skip('dist directory not found, skipping SDK dist checks', () => {});
     return;
   }

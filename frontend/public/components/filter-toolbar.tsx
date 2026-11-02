@@ -334,7 +334,7 @@ export const FilterToolbar: FC<FilterToolbarProps> = ({
         applyFilters(key, { selected: [searchFiltersState[key]] });
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, []);
 
   /**
@@ -347,7 +347,7 @@ export const FilterToolbar: FC<FilterToolbarProps> = ({
       applyRowFilter(selectedRowFilters);
     }
     // Trigger the update only when we are initialized to sync the url params with the data
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [rowFiltersInitialized, labelSelectionInitialized]);
 
   const showSearchFilters = Object.keys(filterDropdownItems).length !== 0;

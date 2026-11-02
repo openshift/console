@@ -79,7 +79,7 @@ spec:
       while (Date.now() < deadline) {
         await kebab.click();
         try {
-          // eslint-disable-next-line no-restricted-syntax
+          // eslint-disable-next-line eslint-js/no-restricted-syntax
           await action.waitFor({ state: 'visible', timeout: 5_000 });
           found = true;
           break;

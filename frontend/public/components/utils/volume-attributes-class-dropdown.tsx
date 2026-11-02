@@ -121,7 +121,7 @@ const VolumeAttributesClassDropdownInner: FC<VolumeAttributesClassDropdownInnerP
     newState.items = sortedItems;
 
     setState((prevState) => ({ ...prevState, ...newState }));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [loaded, loadError, resources, filter, t, desc, noSelection]);
 
   useEffect(() => {

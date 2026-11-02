@@ -1,0 +1,23 @@
+{
+  "name": "oxlint-plugin-console",
+  "version": "0.0.0-fixed",
+  "description": "Console oxlint rules and presets.",
+  "type": "module",
+  "main": "index.ts",
+  "scripts": {
+    "lint": "oxlint . --max-warnings 0 --color",
+    "prettier": "oxfmt .",
+    "prettier-check": "oxfmt --check ."
+  },
+  "dependencies": {
+    "eslint": "^9.39.5",
+    "eslint-import-resolver-typescript": "^3.7.0",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-n": "^17.24.0",
+    "eslint-plugin-playwright": "^2.10.2",
+    "eslint-plugin-react": "^7.37.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-testing-library": "^7.16.2",
+    "lodash-es": "^4.18.1"
+  }
+}

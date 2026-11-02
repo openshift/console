@@ -42,6 +42,7 @@ import {
   OperatorHubModel,
 } from '../models';
 import type { CatalogSourceKind, PackageManifestKind, OperatorGroupKind } from '../types';
+import { ClassicOperatorMigrationAlert } from './classic-operators/ClassicOperatorMigrationAlert';
 import { requireOperatorGroup } from './operator-group';
 import type { OperatorHubKind } from './operator-hub';
 import { PackageManifestsPage } from './package-manifest';
@@ -159,7 +160,12 @@ export const CatalogSourceDetails: FC<CatalogSourceDetailsProps> = ({
 };
 
 const CatalogSourceOperatorsPage: FC<CatalogSourceOperatorsPageProps> = (props) => (
-  <PackageManifestsPage catalogSource={props.obj} showTitle={false} {...props} />
+  <PackageManifestsPage
+    catalogSource={props.obj}
+    showTitle={false}
+    showMigrationAlert={false}
+    {...props}
+  />
 );
 
 export const CatalogSourceDetailsPage: FC = (props) => {
@@ -169,6 +175,7 @@ export const CatalogSourceDetailsPage: FC = (props) => {
   return (
     <DetailsPage
       {...props}
+      helpAlert={<ClassicOperatorMigrationAlert />}
       namespace={params.ns}
       kind={referenceForModel(CatalogSourceModel)}
       customActionMenu={(kindObj: K8sModel, obj: K8sResourceKind) => (

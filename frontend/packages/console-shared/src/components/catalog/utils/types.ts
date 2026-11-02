@@ -48,6 +48,7 @@ export type CatalogType = {
   label: string;
   value: string;
   description: string;
+  sortWeight?: number;
 };
 
 export type CatalogService = {

@@ -1,10 +1,9 @@
-/* eslint-disable no-barrel-files/no-barrel-files */
+/* eslint-disable oxc/no-barrel-file */
 import type { MachineHealthCheckKind } from '@openshift/api-types/dist/openshift/latest';
 import type { JSONSchema7 } from 'json-schema';
 import type {
   Selector,
   MatchLabels,
-  K8sModel,
   K8sVerb,
 } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import type {
@@ -18,6 +17,7 @@ import type {
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import type { EventInvolvedObject } from './event';
 
+// eslint-disable-next-line import-js/export -- the local K8sResourceKind below intentionally shadows the SDK re-export (see its comment)
 export * from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 export * from '@console/dynamic-plugin-sdk/src/api/common-types';
 
@@ -64,6 +64,9 @@ export type Toleration = {
 
 // Generic, unknown kind. Avoid when possible since it allows any key in spec
 // or status, weakening type checking.
+// The local declaration intentionally shadows the SDK re-export above: its bare
+// spec index signature keeps kinds like QuotaKind assignable, which the SDK's
+// stricter selector-typed spec would break.
 export type K8sResourceKind = K8sResourceCommon & {
   spec?: {
     [key: string]: any;
@@ -748,12 +751,6 @@ export type MachineSetKind = {
   };
 } & K8sResourceCommon;
 
-export type Patch = {
-  op: string;
-  path: string;
-  value?: any;
-};
-
 type RollingUpdate = { maxUnavailable?: number | string; maxSurge?: number | string };
 export type DeploymentUpdateStrategy =
   | {
@@ -994,21 +991,9 @@ export type ResourceAccessReviewResponse = {
   groups: string[];
 } & K8sResourceCommon;
 
-export type UserInfo = {
-  uid?: string;
-  username?: string;
-  groups?: string[];
-  extra?: object;
-};
-
 export type GroupKind = {
   users: string[];
 } & K8sResourceCommon;
-
-/**
- * @deprecated migrated to new type K8sModel, use K8sModel from dynamic-plugin-sdk over K8sKind
- */
-export type K8sKind = K8sModel;
 
 export type ListKind<R extends K8sResourceCommon> = K8sResourceCommon & {
   items: R[];

@@ -1,4 +1,4 @@
-import i18next from 'i18next';
+import * as i18next from 'i18next';
 import type { K8sResourceCondition } from '@console/internal/module/k8s';
 import type { TaskRunStatus } from '../../types';
 import type { CombinedErrorDetails } from './log-snippet-types';

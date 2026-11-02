@@ -80,7 +80,7 @@ const ImageStreamDropdown: FC<{
 
   useEffect(() => {
     imageStream.image && onDropdownChange(imageStream.image);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [imageStream.image, isStreamsAvailable]);
 
   const watchSpec = useMemo(
@@ -121,7 +121,7 @@ const ImageStreamDropdown: FC<{
 
   useEffect(() => {
     reloadCount && imageStream.image && onDropdownChange(imageStream.image);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [reloadCount, isStreamsAvailable]);
 
   return (

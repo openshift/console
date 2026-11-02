@@ -1,4 +1,4 @@
-/* eslint-disable no-barrel-files/no-barrel-files */
+/* eslint-disable oxc/no-barrel-file */
 import i18n from 'i18next';
 import detector from 'i18next-browser-languagedetector';
 import httpBackend from 'i18next-http-backend';
@@ -20,6 +20,7 @@ export const loading = new Promise<boolean>((resolve) => {
 });
 
 export const init = () => {
+  // eslint-disable-next-line import-js/no-named-as-default-member -- the default instance is required here: it is configured, exposed on window and re-exported as the app's i18next singleton
   i18n
     .use(
       new Pseudo({ enabled: pseudolocalizationEnabled, languageToPseudo: language, wrapped: true }),

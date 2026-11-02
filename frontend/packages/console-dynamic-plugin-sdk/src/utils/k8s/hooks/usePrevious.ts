@@ -6,7 +6,7 @@ export const usePrevious = <P = any>(value: P, deps?: any[]): P => {
     () => {
       ref.current = value;
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
     deps || [value],
   );
   return ref.current;

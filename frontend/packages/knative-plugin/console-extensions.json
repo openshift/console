@@ -2032,7 +2032,11 @@
           "opts": { "isList": true, "optional": true, "namespaced": true }
         },
         "domainmappings": {
-          "model": { "group": "serving.knative.dev", "version": "v1beta1", "kind": "DomainMapping" },
+          "model": {
+            "group": "serving.knative.dev",
+            "version": "v1beta1",
+            "kind": "DomainMapping"
+          },
           "opts": { "isList": true, "optional": true, "namespaced": true }
         }
       },
@@ -2089,7 +2093,11 @@
           "opts": { "isList": true, "optional": true, "namespaced": true }
         },
         "domainmappings": {
-          "model": { "group": "serving.knative.dev", "version": "v1beta1", "kind": "DomainMapping" },
+          "model": {
+            "group": "serving.knative.dev",
+            "version": "v1beta1",
+            "kind": "DomainMapping"
+          },
           "opts": { "isList": true, "optional": true, "namespaced": true }
         },
         "kamelets": {

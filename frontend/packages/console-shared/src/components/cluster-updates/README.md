@@ -1,10 +1,12 @@
 # OLS Update Workflows
 
-This directory contains the OLS (OpenShift Lightspeed) integration for cluster update workflows in the OpenShift Console.
+This directory contains the OLS (OpenShift Lightspeed) integration for cluster update workflows in
+the OpenShift Console.
 
 ## Overview
 
-The OLS update workflows provide context-aware AI assistance for cluster updates by intelligently determining which prompt to show based on the cluster's current state.
+The OLS update workflows provide context-aware AI assistance for cluster updates by intelligently
+determining which prompt to show based on the cluster's current state.
 
 ## Architecture
 
@@ -22,24 +24,24 @@ The OLS update workflows provide context-aware AI assistance for cluster updates
 
 ## Cluster State Matrix
 
-The system handles 11 primary cluster states by examining ClusterVersion conditions, ClusterOperator health, and update availability.
+The system handles 11 primary cluster states by examining ClusterVersion conditions, ClusterOperator
+health, and update availability.
 
 ### Quick Reference
 
-| State | Conditions | Button | Prompt |
-|-------|-----------|--------|--------|
-| **Upgrade In Progress** | Progressing=True, no failures | Update status | Progress |
-| **Upgrade Failing** | Failing=True, Progressing=True | Update status | Troubleshoot |
-| **Upgrade Stalled** | Progressing=True, operator issues | Update status | Troubleshoot |
-| **Cluster Failing** | Failing=True, Progressing=False | Update status | Troubleshoot |
-| **Operator Issues** | Progressing=False, operator issues | Update status | Troubleshoot |
-| **Service Issues** | RetrievedUpdates=False or ReleaseAccepted=False | Update status | Troubleshoot |
-| **Ready for Update** | All healthy, updates available | Pre-check | Pre-check |
-| **Conditional Updates** | All healthy, only conditionalUpdates | Pre-check | Pre-check |
-| **No Updates** | All healthy, no updates | Pre-check | No updates |
-| **Specific Version** | All healthy, version selected | Pre-check | Specific version |
-| **Invalid** | Invalid=True | Update status | Troubleshoot |
-
+| State                   | Conditions                                      | Button        | Prompt           |
+| ----------------------- | ----------------------------------------------- | ------------- | ---------------- |
+| **Upgrade In Progress** | Progressing=True, no failures                   | Update status | Progress         |
+| **Upgrade Failing**     | Failing=True, Progressing=True                  | Update status | Troubleshoot     |
+| **Upgrade Stalled**     | Progressing=True, operator issues               | Update status | Troubleshoot     |
+| **Cluster Failing**     | Failing=True, Progressing=False                 | Update status | Troubleshoot     |
+| **Operator Issues**     | Progressing=False, operator issues              | Update status | Troubleshoot     |
+| **Service Issues**      | RetrievedUpdates=False or ReleaseAccepted=False | Update status | Troubleshoot     |
+| **Ready for Update**    | All healthy, updates available                  | Pre-check     | Pre-check        |
+| **Conditional Updates** | All healthy, only conditionalUpdates            | Pre-check     | Pre-check        |
+| **No Updates**          | All healthy, no updates                         | Pre-check     | No updates       |
+| **Specific Version**    | All healthy, version selected                   | Pre-check     | Specific version |
+| **Invalid**             | Invalid=True                                    | Update status | Troubleshoot     |
 
 ## Prompt Functions
 
@@ -50,6 +52,7 @@ Located in `prompts.ts`:
 **When used**: Upgrade in progress, no failures detected
 
 **What it does**:
+
 - Monitors upgrade progress (X of Y operators updated)
 - Calculates completion percentage and ETA
 - Tracks operator status (updated, updating, pending, failed)
@@ -64,6 +67,7 @@ Located in `prompts.ts`:
 **When used**: Any failure detected (cluster-level or operator-level)
 
 **What it does**:
+
 - Root cause analysis from ClusterVersion Failing condition
 - Identifies failed ClusterOperators with specific errors
 - Extracts error messages from pod logs
@@ -78,6 +82,7 @@ Located in `prompts.ts`:
 **When used**: Cluster healthy, updates available
 
 **What it does**:
+
 - Lists all available updates with channels and metadata
 - Assesses cluster upgrade readiness
 - Checks all ClusterOperator health
@@ -95,6 +100,7 @@ Located in `prompts.ts`:
 **When used**: User has selected a specific target version
 
 **What it does**:
+
 - Verifies target version is in availableUpdates
 - Extracts version-specific metadata (channels, release URL)
 - Checks for version-specific known issues
@@ -108,6 +114,7 @@ Located in `prompts.ts`:
 **When used**: No updates available (cluster fully updated)
 
 **What it does**:
+
 - Confirms cluster is running current version
 - Verifies update service connectivity (RetrievedUpdates=True)
 - Assesses overall cluster health
@@ -173,13 +180,14 @@ Conditions have TWO fields: `type` and `status`. You must check both!
 
 ```typescript
 // ❌ WRONG: Just checking the type
-const failing = conditions.find(c => c.type === 'Failing');
+const failing = conditions.find((c) => c.type === 'Failing');
 
 // ✅ CORRECT: Check both type AND status
-const failing = conditions.find(c => c.type === 'Failing' && c.status === 'True');
+const failing = conditions.find((c) => c.type === 'Failing' && c.status === 'True');
 ```
 
 **Examples**:
+
 - `{type: "Failing", status: "False"}` → Cluster is NOT failing (healthy)
 - `{type: "Failing", status: "True"}` → Cluster IS failing (problem)
 - `{type: "Available", status: "True"}` → Cluster IS available (healthy)
@@ -202,11 +210,11 @@ When showing progress, we provide accurate operator counts:
 
 ```typescript
 const operatorCounts = {
-  total: 28,           // Total operators
-  updated: 18,         // Operators at target version
-  updating: 7,         // Operators progressing toward target
-  pending: 3,          // Operators waiting to start
-  failed: 0,           // Operators with issues
+  total: 28, // Total operators
+  updated: 18, // Operators at target version
+  updating: 7, // Operators progressing toward target
+  pending: 3, // Operators waiting to start
+  failed: 0, // Operators with issues
 };
 ```
 
@@ -240,6 +248,7 @@ When adding new cluster states or modifying behavior:
 ### "Pre-check button shows when cluster is failing"
 
 Check that you're examining the `status` field:
+
 ```typescript
 // {type: "Failing", status: "False"} means NOT failing
 const failing = condition.status === 'True'; // Not just checking if condition exists
@@ -248,19 +257,22 @@ const failing = condition.status === 'True'; // Not just checking if condition e
 ### "Upgrade progress shows troubleshoot prompt"
 
 Check for operator issues:
+
 ```typescript
 // Even if Progressing=True, operator issues trigger troubleshoot
-const hasOperatorIssues = operators.some(op =>
-  op.status.conditions.find(c =>
-    (c.type === 'Available' && c.status === 'False') ||
-    (c.type === 'Degraded' && c.status === 'True')
-  )
+const hasOperatorIssues = operators.some((op) =>
+  op.status.conditions.find(
+    (c) =>
+      (c.type === 'Available' && c.status === 'False') ||
+      (c.type === 'Degraded' && c.status === 'True'),
+  ),
 );
 ```
 
 ### "No button appears"
 
 Verify cluster has conditions:
+
 ```typescript
 // Missing conditions defaults to pre-check
 const conditions = cv.status?.conditions || [];
@@ -278,28 +290,35 @@ type ConditionalUpdate = {
 ```
 
 The conditions typically have:
+
 - `type: "Recommended"`
 - `status: "False"` (indicating NOT recommended due to risks)
 - `message`: Contains the risk description and documentation URL
 
-**Current Behavior**: When `availableUpdates` is empty but `conditionalUpdates` exists, the system uses the "no updates" prompt. This could be enhanced to parse the conditions and explain the risks to users.
+**Current Behavior**: When `availableUpdates` is empty but `conditionalUpdates` exists, the system
+uses the "no updates" prompt. This could be enhanced to parse the conditions and explain the risks
+to users.
 
 **Example**:
+
 ```json
 {
   "release": { "version": "4.16.0", "image": "..." },
-  "conditions": [{
-    "type": "Recommended",
-    "status": "False",
-    "reason": "KnownIssue",
-    "message": "Clusters using OVN may experience network disruption. See https://access.redhat.com/solutions/7001234"
-  }]
+  "conditions": [
+    {
+      "type": "Recommended",
+      "status": "False",
+      "reason": "KnownIssue",
+      "message": "Clusters using OVN may experience network disruption. See https://access.redhat.com/solutions/7001234"
+    }
+  ]
 }
 ```
 
 ## Cluster State Detection API
 
-The `cluster-state-detector.ts` module provides a comprehensive, high-level API for detecting and categorizing cluster states.
+The `cluster-state-detector.ts` module provides a comprehensive, high-level API for detecting and
+categorizing cluster states.
 
 ### Core Functions
 
@@ -338,7 +357,8 @@ Determines if status workflow button should be shown.
 
 ### Predicates API
 
-The `predicates.ts` module exports comprehensive predicate functions for checking specific cluster and operator conditions. These predicates are the building blocks for cluster state detection.
+The `predicates.ts` module exports comprehensive predicate functions for checking specific cluster
+and operator conditions. These predicates are the building blocks for cluster state detection.
 
 #### ClusterVersion Predicates
 
@@ -371,35 +391,37 @@ The `constants.ts` module exports all condition type and status constants:
 
 ```typescript
 // ClusterVersion condition types
-CLUSTER_VERSION_CONDITION_AVAILABLE
-CLUSTER_VERSION_CONDITION_FAILING
-CLUSTER_VERSION_CONDITION_PROGRESSING
-CLUSTER_VERSION_CONDITION_RETRIEVED_UPDATES
-CLUSTER_VERSION_CONDITION_RELEASE_ACCEPTED
-CLUSTER_VERSION_CONDITION_INVALID
-CLUSTER_VERSION_CONDITION_UPGRADEABLE
+CLUSTER_VERSION_CONDITION_AVAILABLE;
+CLUSTER_VERSION_CONDITION_FAILING;
+CLUSTER_VERSION_CONDITION_PROGRESSING;
+CLUSTER_VERSION_CONDITION_RETRIEVED_UPDATES;
+CLUSTER_VERSION_CONDITION_RELEASE_ACCEPTED;
+CLUSTER_VERSION_CONDITION_INVALID;
+CLUSTER_VERSION_CONDITION_UPGRADEABLE;
 
 // ClusterOperator condition types
-CLUSTER_OPERATOR_CONDITION_AVAILABLE
-CLUSTER_OPERATOR_CONDITION_DEGRADED
-CLUSTER_OPERATOR_CONDITION_PROGRESSING
-CLUSTER_OPERATOR_CONDITION_UPGRADEABLE
+CLUSTER_OPERATOR_CONDITION_AVAILABLE;
+CLUSTER_OPERATOR_CONDITION_DEGRADED;
+CLUSTER_OPERATOR_CONDITION_PROGRESSING;
+CLUSTER_OPERATOR_CONDITION_UPGRADEABLE;
 
 // Condition status values
-CONDITION_STATUS_TRUE
-CONDITION_STATUS_FALSE
-CONDITION_STATUS_UNKNOWN
+CONDITION_STATUS_TRUE;
+CONDITION_STATUS_FALSE;
+CONDITION_STATUS_UNKNOWN;
 ```
 
 ### Intentionally Exported API
 
 Some exports may appear "unused" in linting tools but are intentionally part of the public API:
 
-- **Granular predicates** (`isOperatorDegraded`, `isOperatorUnavailable`, etc.) - Provide fine-grained checking for specific conditions
+- **Granular predicates** (`isOperatorDegraded`, `isOperatorUnavailable`, etc.) - Provide
+  fine-grained checking for specific conditions
 - **updateWorkflowConfigs** - Workflow configuration registry for introspection and testing
 - **All constants** - Complete set of condition types and statuses for comprehensive state detection
 
 These exports enable external code to:
+
 1. Implement custom cluster state logic
 2. Build additional UI components based on cluster conditions
 3. Create test fixtures with realistic cluster states
@@ -418,6 +440,12 @@ When modifying this code:
 
 ## References
 
-- [OpenShift ClusterVersion API](https://docs.openshift.com/container-platform/latest/rest_api/config_apis/clusterversion-config-openshift-io-v1.html)
-- [ClusterOperator API](https://docs.openshift.com/container-platform/latest/rest_api/config_apis/clusteroperator-config-openshift-io-v1.html)
-- [OLS Integration Design](https://issues.redhat.com/browse/CONSOLE-5118)
+- [OpenShift ClusterVersion API]
+- [ClusterOperator API]
+- [OLS Integration Design]
+
+[OpenShift ClusterVersion API]:
+  https://docs.openshift.com/container-platform/latest/rest_api/config_apis/clusterversion-config-openshift-io-v1.html
+[ClusterOperator API]:
+  https://docs.openshift.com/container-platform/latest/rest_api/config_apis/clusteroperator-config-openshift-io-v1.html
+[OLS Integration Design]: https://issues.redhat.com/browse/CONSOLE-5118

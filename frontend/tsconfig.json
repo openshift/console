@@ -4,12 +4,9 @@
     "module": "esnext",
     "moduleResolution": "bundler",
     "customConditions": ["browser"],
-    "outDir": "./public/dist/build/",
     "target": "es2021",
     "jsx": "react-jsx",
     "strict": false,
-    "experimentalDecorators": true,
-    "sourceMap": true,
     "noUnusedLocals": true,
     "typeRoots": ["node_modules/@types", "@types"],
     "types": ["node", "jest", "console"],
@@ -22,7 +19,6 @@
       "@console/telemetry-plugin/*": ["./packages/console-telemetry-plugin/*"],
       "@console/container-security/*": ["./packages/container-security/*"],
       "@console/dev-console/*": ["./packages/dev-console/*"],
-      "@console/eslint-plugin-console/*": ["./packages/eslint-plugin-console/*"],
       "@console/git-service/*": ["./packages/git-service/*"],
       "@console/helm-plugin/*": ["./packages/helm-plugin/*"],
       "@console/insights-plugin/*": ["./packages/insights-plugin/*"],
@@ -41,8 +37,10 @@
     "**/node_modules",
     "public/dist",
     "packages/console-dynamic-plugin-sdk/scripts",
+    "packages/oxlint-plugin-console",
+    "oxlint.config.ts",
     "**/integration-tests",
     "e2e"
   ],
-  "include": ["**/*.mts", "**/*.ts", "**/*.tsx", "**/*.json"]
+  "include": ["**/*.ts", "**/*.tsx", "**/*.json"]
 }

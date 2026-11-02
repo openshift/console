@@ -174,7 +174,7 @@ const DetachedPodExec: FC<DetachedPodExecProps> = ({
       unmounted = true;
       websocket.destroy();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [podName, namespace, containerName, command, isOpenShift, t, reconnecting]);
 
   if (wsError) {

@@ -1,5 +1,5 @@
 import type { Node } from '@patternfly/react-topology/src/types';
-import i18next from 'i18next';
+import * as i18next from 'i18next';
 import { launchErrorModal } from '@console/shared/src/utils/error-modal-handler';
 import { getResource } from '@console/topology/src/utils/topology-utils';
 import { addPubSubConnectionModal } from '../components/pub-sub/PubSubModalLauncher';

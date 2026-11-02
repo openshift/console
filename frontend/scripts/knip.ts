@@ -1,14 +1,14 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import type { KnipConfig } from 'knip';
-import { resolvePluginPackages } from '@console/plugin-sdk/src/codegen/plugin-resolver';
-import { extensionsFile } from '@console/dynamic-plugin-sdk/src/constants';
-import { isEncodedCodeRef } from '@openshift/dynamic-plugin-sdk';
-import { parseJSONC } from '@console/dynamic-plugin-sdk/src/utils/jsonc';
-import type { ConsoleExtensionsJSON } from '@console/dynamic-plugin-sdk/src/schema/console-extensions';
 import { traverse, types as t, parseAsync } from '@babel/core';
+import { isEncodedCodeRef } from '@openshift/dynamic-plugin-sdk';
+import type { KnipConfig } from 'knip';
+import { extensionsFile } from '@console/dynamic-plugin-sdk/src/constants';
+import type { ConsoleExtensionsJSON } from '@console/dynamic-plugin-sdk/src/schema/console-extensions';
+import { parseJSONC } from '@console/dynamic-plugin-sdk/src/utils/jsonc';
+import { resolvePluginPackages } from '@console/plugin-sdk/src/codegen/plugin-resolver';
 
-const packagesDir = path.resolve(__dirname, '..', 'packages');
+const packagesDir = path.resolve(import.meta.dirname, '..', 'packages');
 
 /** Generate an import statement for a specific export from a module path. */
 const makeImport = (modulePath: string, exportName: string, id: number) =>
@@ -157,7 +157,9 @@ const compileScript = async (source: string, filename: string): Promise<string> 
         imports.push(
           makeImport(node.object.arguments[0].value, node.property.name, imports.length),
         );
-        removals.push([node.start!, node.end!]);
+        if (node.start && node.end) {
+          removals.push([node.start, node.end]);
+        }
       }
     },
 
@@ -186,8 +188,8 @@ const compileScript = async (source: string, filename: string): Promise<string> 
       for (const name of names) {
         imports.push(makeImport(mod, name, imports.length));
       }
-      if (names.length > 0) {
-        removals.push([node.start!, node.end!]);
+      if (names.length > 0 && node.start && node.end) {
+        removals.push([node.start, node.end]);
       }
     },
   });
@@ -218,12 +220,17 @@ const config: KnipConfig = {
 
   workspaces: {
     // Disable auto-detected plugins that don't work at the moment
-    '.': { project: [], jest: false },
+    '.': {
+      project: [], // determines repo-level scripts are "unused"
+      jest: false, // surpressing @jest/transform unlisted dependency warning
+      oxlint: false, // cannot parse that oxlint dependencies are installed in oxlint-plugin-console
+    },
 
     // public/ is the @console/internal workspace (has its own package.json)
     public: {
       project: ['**/*.{ts,tsx,json}'],
-      ignore: ['locales/**/*']
+      ignore: ['locales/**/*'],
+      ignoreUnresolved: ['../get-local-plugins'], // virtual module that has no real source file
     },
 
     // Suppress SDK from knip checks as any code there could be used by a dynamic remote plugin
@@ -236,9 +243,7 @@ const config: KnipConfig = {
   },
 
   // Not shipped in production so we don't mind being loosey-goosey
-  ignoreWorkspaces: [
-    'packages/eslint-plugin-console',
-  ],
+  ignoreWorkspaces: ['packages/oxlint-plugin-console'],
 
   ignoreDependencies: [
     '@console/.*', // cross-references via yarn workspaces

@@ -1,7 +1,3 @@
-import * as path from 'path';
-
-import type { Browser } from '@playwright/test';
-
 import { test, expect } from '../../fixtures';
 import { CatalogPage } from '../../pages/catalog-page';
 import { DetailsPage } from '../../pages/details-page';
@@ -10,14 +6,6 @@ import { OperatorInstallPage } from '../../pages/operator-install-page';
 import { generateTestNamespace } from '../../test-utils/test-namespace';
 import { OLM_CLUSTER_STATE_LOCK } from '../../utils/locks';
 
-const BASE_URL = process.env.WEB_CONSOLE_URL || 'http://localhost:9000';
-const ADMIN_STORAGE_STATE = path.resolve(
-  import.meta.dirname,
-  '..',
-  '..',
-  '.auth',
-  'kubeadmin.json',
-);
 const CATALOG_SOURCE_NAMESPACE = 'openshift-marketplace';
 const OPERATOR_DETAILS_NAMESPACE = 'default';
 const INSTALLED_OPERATOR_NAME = 'Kiali Operator';
@@ -28,8 +16,6 @@ const DEPRECATED_VERSION = 'kiali-operator.v1.68.0';
 const DEPRECATED_VERSION_MESSAGE = `${DEPRECATED_VERSION} is deprecated`;
 const LATEST_VERSION = '1.83.0';
 const LATEST_VERSION_OPTION = 'kiali-operator.v1.83.0';
-const TECH_PREVIEW_SKIP_REASON =
-  'OLMv1 is active on techPreview clusters — OLMv0 OperatorHub catalog is unavailable';
 const SETUP_TIMEOUT = 360_000;
 const DEFAULT_DEPRECATED_OPERATOR_CATALOG_IMAGE =
   'quay.io/cajieh0/deprecation-catalog@sha256:0d49292bd51c36644aa703f18f777780af6bffd8748aa8f594111bde9639bcaa';
@@ -43,7 +29,6 @@ const subscriptionName = `kiali-${runId}`;
 const subscriptionNamespace = generateTestNamespace();
 const selectedOperatorId = `kiali-${catalogSourceName}-${CATALOG_SOURCE_NAMESPACE}`;
 
-let isTechPreview = false;
 let installedCsvName = DEPRECATED_VERSION;
 
 function buildDeprecatedCatalogSource() {
@@ -88,26 +73,11 @@ function buildDeprecatedSubscription() {
 }
 
 function getOperatorDetailsUrl(channel = 'stable', version = LATEST_VERSION): string {
-  return `/catalog/ns/${OPERATOR_DETAILS_NAMESPACE}?catalogType=operator&keyword=kia&selectedId=${selectedOperatorId}&channel=${channel}&version=${version}`;
+  return `/catalog/ns/${OPERATOR_DETAILS_NAMESPACE}?catalogType=operator-olmv0&keyword=kia&selectedId=${selectedOperatorId}&channel=${channel}&version=${version}`;
 }
 
 function getInstallPageUrl(): string {
   return `/operatorhub/subscribe?pkg=kiali&catalog=${catalogSourceName}&catalogNamespace=${CATALOG_SOURCE_NAMESPACE}&targetNamespace=undefined&channel=alpha&version=1.68.0`;
-}
-
-async function detectTechPreview(browser: Browser): Promise<boolean> {
-  const context = await browser.newContext({
-    ignoreHTTPSErrors: true,
-    storageState: ADMIN_STORAGE_STATE,
-  });
-
-  try {
-    const page = await context.newPage();
-    await page.goto(BASE_URL, { waitUntil: 'domcontentloaded', timeout: 60_000 });
-    return await page.evaluate(() => Boolean(window.SERVER_FLAGS?.techPreview));
-  } finally {
-    await context.close();
-  }
 }
 
 async function expectDeprecatedWarning(
@@ -124,13 +94,8 @@ test.describe(
   () => {
     test.describe.configure({ timeout: SETUP_TIMEOUT });
 
-    test.beforeAll(async ({ browser, k8sClient }) => {
+    test.beforeAll(async ({ k8sClient }) => {
       test.setTimeout(SETUP_TIMEOUT);
-
-      isTechPreview = await detectTechPreview(browser);
-      if (isTechPreview) {
-        return;
-      }
 
       await k8sClient.createCustomResource(
         'operators.coreos.com',
@@ -166,10 +131,6 @@ test.describe(
     });
 
     test.afterAll(async ({ k8sClient }) => {
-      if (isTechPreview) {
-        return;
-      }
-
       try {
         const [subscriptionCleanup, namespaceCleanup] = await Promise.allSettled([
           k8sClient.deleteCustomResource(
@@ -201,12 +162,9 @@ test.describe(
     });
 
     test('displays deprecated badge on operator tile in catalog', async ({ page }) => {
-      test.skip(isTechPreview, TECH_PREVIEW_SKIP_REASON);
-
       const catalogPage = new CatalogPage(page);
 
-      await catalogPage.navigateToSoftwareCatalog(OPERATOR_DETAILS_NAMESPACE);
-      await catalogPage.clickOperatorTab();
+      await catalogPage.navigateToOperatorCatalog(OPERATOR_DETAILS_NAMESPACE);
       await expect(catalogPage.getCatalogTiles().first()).toBeVisible({ timeout: 60_000 });
 
       await catalogPage.toggleSourceFilterByLabel(CATALOG_SOURCE_DISPLAY_NAME);
@@ -219,8 +177,6 @@ test.describe(
     });
 
     test('displays package deprecation warnings in operator details', async ({ page }) => {
-      test.skip(isTechPreview, TECH_PREVIEW_SKIP_REASON);
-
       const catalogPage = new CatalogPage(page);
       await catalogPage.navigateToPath(getOperatorDetailsUrl());
       await expect(catalogPage.getCatalogDeprecatedBadge()).toContainText(DEPRECATED_BADGE, {
@@ -234,8 +190,6 @@ test.describe(
     });
 
     test('displays channel deprecation warnings when selecting channel', async ({ page }) => {
-      test.skip(isTechPreview, TECH_PREVIEW_SKIP_REASON);
-
       const catalogPage = new CatalogPage(page);
       const installPage = new OperatorInstallPage(page);
       await catalogPage.navigateToPath(getOperatorDetailsUrl());
@@ -254,8 +208,6 @@ test.describe(
     });
 
     test('displays version deprecation warnings when selecting version', async ({ page }) => {
-      test.skip(isTechPreview, TECH_PREVIEW_SKIP_REASON);
-
       const catalogPage = new CatalogPage(page);
       const installPage = new OperatorInstallPage(page);
       await catalogPage.navigateToPath(getOperatorDetailsUrl());
@@ -274,8 +226,6 @@ test.describe(
     });
 
     test('displays all deprecation warnings on install page', async ({ page }) => {
-      test.skip(isTechPreview, TECH_PREVIEW_SKIP_REASON);
-
       const catalogPage = new CatalogPage(page);
       await catalogPage.navigateToPath(getInstallPageUrl());
       // The install/subscribe page shows the deprecation Alert (checked below) but does not
@@ -304,10 +254,6 @@ test.describe(
     test.describe('Installed Operator deprecation warnings', () => {
       test.beforeAll(async ({ k8sClient }) => {
         test.setTimeout(SETUP_TIMEOUT);
-
-        if (isTechPreview) {
-          return;
-        }
 
         await k8sClient.createNamespace(subscriptionNamespace);
         await k8sClient.waitForNamespaceReady(subscriptionNamespace);
@@ -444,8 +390,6 @@ test.describe(
       });
 
       test('displays deprecated badge on installed operators list', async ({ page }) => {
-        test.skip(isTechPreview, TECH_PREVIEW_SKIP_REASON);
-
         const installedOperatorsPage = new InstalledOperatorsPage(page);
         await installedOperatorsPage.navigateTo(subscriptionNamespace);
         await installedOperatorsPage.filterByName(INSTALLED_OPERATOR_NAME);
@@ -458,8 +402,6 @@ test.describe(
       });
 
       test('displays deprecation warnings on CSV details page', async ({ page }) => {
-        test.skip(isTechPreview, TECH_PREVIEW_SKIP_REASON);
-
         const catalogPage = new CatalogPage(page);
         const detailsPage = new DetailsPage(page);
         await detailsPage.navigateToDetailsPage(
@@ -488,8 +430,6 @@ test.describe(
       });
 
       test('displays deprecation warnings on CSV subscription tab', async ({ page }) => {
-        test.skip(isTechPreview, TECH_PREVIEW_SKIP_REASON);
-
         const catalogPage = new CatalogPage(page);
         const detailsPage = new DetailsPage(page);
         await detailsPage.navigateToDetailsPage(

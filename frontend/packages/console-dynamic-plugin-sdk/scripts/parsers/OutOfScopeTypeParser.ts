@@ -3,7 +3,9 @@ import * as tsj from 'ts-json-schema-generator';
 import * as ts from 'typescript';
 
 type ExternalReferenceNode =
-  ts.TypeReferenceNode | ts.ExpressionWithTypeArguments | ts.TypeQueryNode;
+  | ts.TypeReferenceNode
+  | ts.ExpressionWithTypeArguments
+  | ts.TypeQueryNode;
 
 const hasFlag = (type: ts.Type, flag: ts.TypeFlags) =>
   // eslint-disable-next-line no-bitwise

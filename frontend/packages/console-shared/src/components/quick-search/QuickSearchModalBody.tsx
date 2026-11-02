@@ -53,7 +53,7 @@ const QuickSearchModalBody: FC<QuickSearchModalBodyProps> = ({
       setCatalogTypes(catalogItemTypes);
       setViewAll(viewAllLinks);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [searchCatalog]);
 
   useEffect(() => {

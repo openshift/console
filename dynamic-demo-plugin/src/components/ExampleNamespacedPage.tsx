@@ -1,13 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
-import {
-  Card,
-  CardBody,
-  Flex,
-  PageSection,
-  Title,
-} from '@patternfly/react-core';
+import { Card, CardBody, Flex, PageSection, Title } from '@patternfly/react-core';
 import { DocumentTitle, NamespaceBar } from '@openshift-console/dynamic-plugin-sdk';
 
 const NamespacePageContent = ({ namespace }: { namespace?: string }) => {
@@ -28,8 +22,8 @@ const NamespacePageContent = ({ namespace }: { namespace?: string }) => {
               grow={{ default: 'grow' }}
               direction={{ default: 'column' }}
             >
-              <Title headingLevel='h1'>{t('Currently selected namespace')}</Title>
-              <Title headingLevel='h2'>{namespace}</Title>
+              <Title headingLevel="h1">{t('Currently selected namespace')}</Title>
+              <Title headingLevel="h2">{namespace}</Title>
             </Flex>
           </CardBody>
         </Card>

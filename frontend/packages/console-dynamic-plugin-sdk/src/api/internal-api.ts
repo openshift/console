@@ -25,62 +25,62 @@ import {
 export * from './internal-console-api';
 export * from './internal-topology-api';
 
-export const ActivityItem: FC<ActivityItemProps> = require('@console/shared/src/components/dashboard/activity-card/ActivityItem')
-  .default;
+export const ActivityItem: FC<ActivityItemProps> =
+  require('@console/shared/src/components/dashboard/activity-card/ActivityItem').default;
 
-export const ActivityBody: FC<ActivityBodyProps> = require('@console/shared/src/components/dashboard/activity-card/ActivityBody')
-  .default;
+export const ActivityBody: FC<ActivityBodyProps> =
+  require('@console/shared/src/components/dashboard/activity-card/ActivityBody').default;
 
-export const RecentEventsBody: FC<RecentEventsBodyProps> = require('@console/shared/src/components/dashboard/activity-card/ActivityBody')
-  .RecentEventsBody;
+export const RecentEventsBody: FC<RecentEventsBodyProps> =
+  require('@console/shared/src/components/dashboard/activity-card/ActivityBody').RecentEventsBody;
 
-export const OngoingActivityBody: FC<OngoingActivityBodyProps> = require('@console/shared/src/components/dashboard/activity-card/ActivityBody')
-  .OngoingActivityBody;
+export const OngoingActivityBody: FC<OngoingActivityBodyProps> =
+  require('@console/shared/src/components/dashboard/activity-card/ActivityBody').OngoingActivityBody;
 
-export const AlertsBody: FC<AlertsBodyProps> = require('@console/shared/src/components/dashboard/status-card/AlertsBody')
-  .default;
+export const AlertsBody: FC<AlertsBodyProps> =
+  require('@console/shared/src/components/dashboard/status-card/AlertsBody').default;
 
-export const AlertItem: FC<AlertItemProps> = require('@console/shared/src/components/dashboard/status-card/AlertItem')
-  .default;
+export const AlertItem: FC<AlertItemProps> =
+  require('@console/shared/src/components/dashboard/status-card/AlertItem').default;
 
-export const HealthItem: FC<HealthItemProps> = require('@console/shared/src/components/dashboard/status-card/HealthItem')
-  .default;
+export const HealthItem: FC<HealthItemProps> =
+  require('@console/shared/src/components/dashboard/status-card/HealthItem').default;
 
-export const HealthBody: FC = require('@console/shared/src/components/dashboard/status-card/HealthBody')
-  .default;
+export const HealthBody: FC =
+  require('@console/shared/src/components/dashboard/status-card/HealthBody').default;
 
-export const ResourceInventoryItem: FC<ResourceInventoryItemProps> = require('@console/shared/src/components/dashboard/inventory-card/InventoryItem')
-  .ResourceInventoryItem;
+export const ResourceInventoryItem: FC<ResourceInventoryItemProps> =
+  require('@console/shared/src/components/dashboard/inventory-card/InventoryItem').ResourceInventoryItem;
 
-export const UtilizationItem: FC<UtilizationItemProps> = require('@console/shared/src/components/dashboard/utilization-card/UtilizationItem')
-  .UtilizationItem;
+export const UtilizationItem: FC<UtilizationItemProps> =
+  require('@console/shared/src/components/dashboard/utilization-card/UtilizationItem').UtilizationItem;
 
-export const UtilizationBody: FC<UtilizationBodyProps> = require('@console/shared/src/components/dashboard/utilization-card/UtilizationBody')
-  .UtilizationBody;
+export const UtilizationBody: FC<UtilizationBodyProps> =
+  require('@console/shared/src/components/dashboard/utilization-card/UtilizationBody').UtilizationBody;
 
-export const UtilizationDurationDropdown: FC<UtilizationDurationDropdownProps> = require('@console/shared/src/components/dashboard/utilization-card/UtilizationDurationDropdown')
-  .UtilizationDurationDropdown;
+export const UtilizationDurationDropdown: FC<UtilizationDurationDropdownProps> =
+  require('@console/shared/src/components/dashboard/utilization-card/UtilizationDurationDropdown').UtilizationDurationDropdown;
 
-export const VirtualizedGrid: FC<VirtualizedGridProps> = require('@console/shared/src/components/virtualized-grid/VirtualizedGrid')
-  .VirtualizedGrid;
+export const VirtualizedGrid: FC<VirtualizedGridProps> =
+  require('@console/shared/src/components/virtualized-grid/VirtualizedGrid').VirtualizedGrid;
 
-export const LazyActionMenu: FC<LazyActionMenuProps> = require('@console/shared/src/components/actions/LazyActionMenu')
-  .LazyActionMenu;
+export const LazyActionMenu: FC<LazyActionMenuProps> =
+  require('@console/shared/src/components/actions/LazyActionMenu').LazyActionMenu;
 
-export const QuickStartsLoader: FC<QuickStartsLoaderProps> = require('@console/app/src/components/quick-starts/loader/QuickStartsLoader')
-  .QuickStartsLoader;
+export const QuickStartsLoader: FC<QuickStartsLoaderProps> =
+  require('@console/app/src/components/quick-starts/loader/QuickStartsLoader').QuickStartsLoader;
 
-export const useUtilizationDuration: UseUtilizationDuration = require('@console/shared/src/hooks/useUtilizationDuration')
-  .useUtilizationDuration;
+export const useUtilizationDuration: UseUtilizationDuration =
+  require('@console/shared/src/hooks/useUtilizationDuration').useUtilizationDuration;
 
-export const useDashboardResources: UseDashboardResources = require('@console/shared/src/hooks/useDashboardResources')
-  .useDashboardResources;
+export const useDashboardResources: UseDashboardResources =
+  require('@console/shared/src/hooks/useDashboardResources').useDashboardResources;
 
-export const useURLPoll: UseURLPoll = require('@console/internal/components/utils/url-poll-hook')
-  .useURLPoll;
+export const useURLPoll: UseURLPoll =
+  require('@console/internal/components/utils/url-poll-hook').useURLPoll;
 
-export const useLastNamespace: UseLastNamespace = require('@console/app/src/providers/detect-context/useLastNamespace')
-  .useLastNamespace;
+export const useLastNamespace: UseLastNamespace =
+  require('@console/app/src/providers/detect-context/useLastNamespace').useLastNamespace;
 
-export const getCSRFToken: GetCSRFToken = require('@console/shared/src/utils/console-fetch-utils')
-  .getCSRFToken;
+export const getCSRFToken: GetCSRFToken =
+  require('@console/shared/src/utils/console-fetch-utils').getCSRFToken;

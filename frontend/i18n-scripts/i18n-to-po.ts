@@ -1,15 +1,31 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { i18nextToPo } from 'i18next-conv';
-import * as minimist from 'minimist';
-import { deleteFile } from './common';
+import minimist from 'minimist';
+
+const loadJsonFile = (filePath: string) => {
+  try {
+    return JSON.parse(fs.readFileSync(filePath, 'utf8'));
+  } catch (e) {
+    console.error(`Failed to load JSON file ${filePath}:`, e);
+    return {};
+  }
+};
+
+const deleteFile = (filePath: string) => {
+  try {
+    fs.unlinkSync(filePath);
+  } catch (e) {
+    console.error(`Failed to delete file ${filePath}:`, e);
+  }
+};
 
 const save = (target: string) => (result: string) => {
   fs.writeFileSync(target, result);
 };
 
 const removeValues = (i18nFile: string, filePath: string) => {
-  const file = require(i18nFile);
+  const file = loadJsonFile(i18nFile);
 
   const updatedFile: { [key: string]: string } = {};
 
@@ -29,15 +45,17 @@ const consolidateWithExistingTranslations = (
   packageDir?: string,
 ) => {
   let existingTranslationsPath: string;
-  const englishFile = require(filePath);
+  const englishFile = loadJsonFile(filePath);
   const englishKeys = Object.keys(englishFile);
   if (packageDir) {
     existingTranslationsPath = `./../packages/${packageDir}/locales/${language}/${fileName}.json`;
   } else {
     existingTranslationsPath = `./../public/locales/${language}/${fileName}.json`;
   }
-  if (fs.existsSync(path.join(__dirname, existingTranslationsPath))) {
-    const existingTranslationsFile = require(path.join(__dirname, existingTranslationsPath));
+  if (fs.existsSync(path.join(import.meta.dirname, existingTranslationsPath))) {
+    const existingTranslationsFile = loadJsonFile(
+      path.join(import.meta.dirname, existingTranslationsPath),
+    );
     const existingKeys = Object.keys(existingTranslationsFile);
     const matchingKeys = englishKeys.filter((k) => existingKeys.indexOf(k) > -1);
 
@@ -53,22 +71,25 @@ const processFile = (fileName: string, packageDir: string | undefined, language:
   let tmpFile: string | undefined;
   if (packageDir) {
     const i18nFile = path.join(
-      __dirname,
+      import.meta.dirname,
       `./../packages/${packageDir}/locales/en/${fileName}.json`,
     );
 
     try {
       if (fs.existsSync(i18nFile)) {
-        fs.mkdirSync(path.join(__dirname, `./../packages/${packageDir}/locales/tmp`), {
+        fs.mkdirSync(path.join(import.meta.dirname, `./../packages/${packageDir}/locales/tmp`), {
           recursive: true,
         });
 
-        tmpFile = path.join(__dirname, `./../packages/${packageDir}/locales/tmp/${fileName}.json`);
+        tmpFile = path.join(
+          import.meta.dirname,
+          `./../packages/${packageDir}/locales/tmp/${fileName}.json`,
+        );
 
         removeValues(i18nFile, tmpFile);
         consolidateWithExistingTranslations(tmpFile, fileName, language, packageDir);
 
-        fs.mkdirSync(path.join(__dirname, `./../po-files/${language}`), {
+        fs.mkdirSync(path.join(import.meta.dirname, `./../po-files/${language}`), {
           recursive: true,
         });
         i18nextToPo(language, fs.readFileSync(tmpFile), {
@@ -79,7 +100,7 @@ const processFile = (fileName: string, packageDir: string | undefined, language:
           .then(
             save(
               path.join(
-                __dirname,
+                import.meta.dirname,
                 `./../po-files/${language}/${packageDir.split('/')[0]}__${path.basename(
                   fileName,
                 )}.po`,
@@ -92,18 +113,20 @@ const processFile = (fileName: string, packageDir: string | undefined, language:
       console.error(`Failed to processFile ${fileName} in ${packageDir}:`, err);
     }
   } else {
-    const i18nFile = path.join(__dirname, `./../public/locales/en/${fileName}.json`);
+    const i18nFile = path.join(import.meta.dirname, `./../public/locales/en/${fileName}.json`);
 
     try {
       if (fs.existsSync(i18nFile)) {
-        fs.mkdirSync(path.join(__dirname, './../public/locales/tmp'), { recursive: true });
+        fs.mkdirSync(path.join(import.meta.dirname, './../public/locales/tmp'), {
+          recursive: true,
+        });
 
-        tmpFile = path.join(__dirname, `./../public/locales/tmp/${fileName}.json`);
+        tmpFile = path.join(import.meta.dirname, `./../public/locales/tmp/${fileName}.json`);
 
         removeValues(i18nFile, tmpFile);
         consolidateWithExistingTranslations(tmpFile, fileName, language);
 
-        fs.mkdirSync(path.join(__dirname, `./../po-files/${language}`), {
+        fs.mkdirSync(path.join(import.meta.dirname, `./../po-files/${language}`), {
           recursive: true,
         });
         i18nextToPo(language, fs.readFileSync(tmpFile), {
@@ -114,7 +137,7 @@ const processFile = (fileName: string, packageDir: string | undefined, language:
           .then(
             save(
               path.join(
-                __dirname,
+                import.meta.dirname,
                 `./../po-files/${language}/public__${path.basename(fileName)}.po`,
               ),
             ),

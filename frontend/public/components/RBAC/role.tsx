@@ -10,7 +10,7 @@ import {
 } from '@patternfly/react-core';
 import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
 import * as fuzzy from 'fuzzysearch';
-import i18next from 'i18next';
+import * as i18next from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useParams } from 'react-router';

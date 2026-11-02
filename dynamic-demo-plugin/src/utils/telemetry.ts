@@ -31,8 +31,8 @@ const initSegment = () => {
       'setAnonymousId',
       'addDestinationMiddleware',
     ];
-    analytics.factory = function(e: string) {
-      return function() {
+    analytics.factory = function (e: string) {
+      return function () {
         let t = Array.prototype.slice.call(arguments);
         t.unshift(e);
         analytics.push(t);
@@ -43,11 +43,12 @@ const initSegment = () => {
       let key = analytics.methods[e];
       analytics[key] = analytics.factory(key);
     }
-    analytics.load = function(key: string, e: Event) {
+    analytics.load = function (key: string, e: Event) {
       const t = document.createElement('script');
       t.type = 'text/javascript';
       t.async = true;
-      t.src = 'https://cdn.segment.com/analytics.js/v1/' + encodeURIComponent(key) + '/analytics.min.js';
+      t.src =
+        'https://cdn.segment.com/analytics.js/v1/' + encodeURIComponent(key) + '/analytics.min.js';
       const n = document.getElementsByTagName('script')[0];
       if (n.parentNode) {
         n.parentNode.insertBefore(t, n);

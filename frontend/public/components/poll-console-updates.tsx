@@ -5,6 +5,7 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { settleAllPromises } from '@console/dynamic-plugin-sdk/src/utils/promise';
 import { URL_POLL_DEFAULT_DELAY } from '@console/internal/components/utils/url-poll-hook';
+import { CLASSIC_CATALOG_PATH } from '@console/operator-lifecycle-manager/src/const';
 import { useToast } from '@console/shared/src/components/toast/useToast';
 import { usePoll } from '@console/shared/src/hooks/usePoll';
 import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
@@ -39,7 +40,7 @@ export const PollConsoleUpdates = memo(() => {
   const [updateError, setUpdateError] = useState<Error>();
   const [newPlugins, setNewPlugins] = useState<CheckUpdatesApiResult['plugins']>(null);
   const [pluginManifestsData, setPluginManifestsData] = useState<RemotePluginManifest[]>();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks-js/exhaustive-deps
   const safeFetch = useCallback(useSafeFetch(), []);
   const tick = useCallback(() => {
     safeFetch(`${window.SERVER_FLAGS.basePath}api/check-updates`)
@@ -70,8 +71,8 @@ export const PollConsoleUpdates = memo(() => {
     prevUpdateDataRef.current = updateData;
     prevPluginManifestsDataRef.current = pluginManifestsData;
   });
-  const prevUpdateData = prevUpdateDataRef.current; // eslint-disable-line react-hooks/refs -- usePrevious pattern: reading previous render's value
-  const prevPluginManifestsData = prevPluginManifestsDataRef.current; // eslint-disable-line react-hooks/refs -- usePrevious pattern: reading previous render's value
+  const prevUpdateData = prevUpdateDataRef.current; // eslint-disable-line react-hooks-js/refs -- usePrevious pattern: reading previous render's value
+  const prevPluginManifestsData = prevPluginManifestsDataRef.current; // eslint-disable-line react-hooks-js/refs -- usePrevious pattern: reading previous render's value
   const stateInitialized = _.isEmpty(updateError) && !_.isEmpty(prevUpdateData);
   const pluginsAddedList = updateData?.plugins.filter((x) => !prevUpdateData?.plugins.includes(x));
   const pluginsRemovedList = prevUpdateData?.plugins.filter(
@@ -176,7 +177,7 @@ export const PollConsoleUpdates = memo(() => {
           label: t('Refresh web console'),
           callback: () => {
             if (window.location.pathname.includes('/operatorhub/subscribe')) {
-              window.location.href = '/catalog?catalogType=operator';
+              window.location.href = CLASSIC_CATALOG_PATH;
             } else {
               window.location.reload();
             }

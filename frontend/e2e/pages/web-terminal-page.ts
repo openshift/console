@@ -32,7 +32,7 @@ export class WebTerminalPage extends BasePage {
   async waitForTerminalIconVisible(maxRetries = 10): Promise<void> {
     await warmupSPA(this.page);
     try {
-      // eslint-disable-next-line no-restricted-syntax
+      // eslint-disable-next-line eslint-js/no-restricted-syntax
       await this.terminalIcon.waitFor({ state: 'visible', timeout: 30_000 });
       return;
     } catch {
@@ -41,7 +41,7 @@ export class WebTerminalPage extends BasePage {
     for (let attempt = 0; attempt < maxRetries; attempt++) {
       await this.page.reload();
       try {
-        // eslint-disable-next-line no-restricted-syntax
+        // eslint-disable-next-line eslint-js/no-restricted-syntax
         await this.terminalIcon.waitFor({ state: 'visible', timeout: 15_000 });
         return;
       } catch {
@@ -53,7 +53,7 @@ export class WebTerminalPage extends BasePage {
 
   async clickTerminalIcon(): Promise<void> {
     await this.robustClick(this.terminalIcon);
-    // eslint-disable-next-line no-restricted-syntax
+    // eslint-disable-next-line eslint-js/no-restricted-syntax
     await this.loadingBox.waitFor({ state: 'detached', timeout: 60_000 }).catch(() => {});
   }
 
@@ -64,7 +64,7 @@ export class WebTerminalPage extends BasePage {
 
   async closeTerminalDrawer(): Promise<void> {
     await this.robustClick(this.drawerCloseButton);
-    // eslint-disable-next-line no-restricted-syntax
+    // eslint-disable-next-line eslint-js/no-restricted-syntax
     await this.terminalContainer.waitFor({ state: 'hidden', timeout: 10_000 }).catch(() => {});
   }
 

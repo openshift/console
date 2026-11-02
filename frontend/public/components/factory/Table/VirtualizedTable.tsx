@@ -161,7 +161,7 @@ const VirtualizedTable: VirtualizedTableFC = ({
     return () => {
       window.removeEventListener('resize', handleResize);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, []);
 
   const onSort = useCallback(

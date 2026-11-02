@@ -134,7 +134,7 @@ export const ImportYAMLResults: FC<ImportYAMLResultsProps> = ({
         setInFlight(false);
       })
       .catch(() => {});
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, []);
 
   const onRetry = () => {

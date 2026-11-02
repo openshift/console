@@ -72,7 +72,7 @@ const DockerSection: FC = () => {
       }
       setFieldTouched('docker.dockerfilePath', true);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [recommendedStrategy, setFieldValue, strategies]);
 
   useEffect(() => {
@@ -87,7 +87,7 @@ const DockerSection: FC = () => {
             setFieldValue('image.ports', [...ports, { containerPort: port, protocol: 'TCP' }]);
         }
       });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [docker.dockerfilePath, url]);
 
   return (

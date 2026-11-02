@@ -3,7 +3,7 @@ import { createElement, useMemo, useEffect, useState } from 'react';
 import { ChartLabel } from '@patternfly/react-charts/victory';
 import { css } from '@patternfly/react-styles';
 import type { TFunction } from 'i18next';
-import i18next from 'i18next';
+import * as i18next from 'i18next';
 import * as _ from 'lodash';
 import type { ImpersonateKind } from '@console/dynamic-plugin-sdk';
 import { DaemonSetModel, PodModel, JobModel, CronJobModel } from '@console/internal/models';

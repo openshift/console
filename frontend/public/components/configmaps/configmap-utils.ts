@@ -1,5 +1,5 @@
 import type { FormikValues } from 'formik';
-import i18next from 'i18next';
+import * as i18next from 'i18next';
 import { Base64 } from 'js-base64';
 import * as _ from 'lodash';
 import * as yup from 'yup';

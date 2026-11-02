@@ -5,6 +5,7 @@ import {
   getRedHatPriority,
   sortCatalogItems,
   isCatalogTypeEnabled,
+  partitionBadgesByPlacement,
 } from '../catalog-utils';
 import { CatalogSortOrder } from '../types';
 
@@ -527,5 +528,30 @@ describe('isCatalogTypeEnabled - case-insensitive matching', () => {
     // Non-disabled types should return true
     expect(isCatalogTypeEnabled('Template')).toBe(true);
     expect(isCatalogTypeEnabled('template')).toBe(true);
+  });
+});
+
+describe('partitionBadgesByPlacement', () => {
+  it('should default badges without a placement to the footer', () => {
+    const [header, footer] = partitionBadgesByPlacement([{ text: 'Installed' }]);
+
+    expect(header).toEqual([]);
+    expect(footer).toEqual([{ text: 'Installed' }]);
+  });
+
+  it('should split badges by placement while preserving order', () => {
+    const [header, footer] = partitionBadgesByPlacement([
+      { text: 'Classic Operator', placement: 'header' },
+      { text: 'Installed' },
+      { text: 'Deprecated', placement: 'header' },
+      { text: 'Installing', placement: 'footer' },
+    ]);
+
+    expect(header.map(({ text }) => text)).toEqual(['Classic Operator', 'Deprecated']);
+    expect(footer.map(({ text }) => text)).toEqual(['Installed', 'Installing']);
+  });
+
+  it('should return empty groups when badges are undefined', () => {
+    expect(partitionBadgesByPlacement()).toEqual([[], []]);
   });
 });

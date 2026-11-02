@@ -42,7 +42,7 @@ const withContextMenu =
       // Only recompute when the context menu is opened (reference changes from null to a value)
       const memoizedActionContext = useMemo(
         () => (reference ? actionContext(element as E) : null),
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks-js/exhaustive-deps
         [!!reference],
       );
 

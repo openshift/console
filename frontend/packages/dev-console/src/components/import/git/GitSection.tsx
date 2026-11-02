@@ -629,7 +629,7 @@ const GitSection: FC<GitSectionProps> = ({
     }
 
     // Disable deps to load the samples only once when the component is loaded.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [canCreateKnativeServiceLoading]);
 
   return (

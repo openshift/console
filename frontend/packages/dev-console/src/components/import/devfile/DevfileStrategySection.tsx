@@ -111,14 +111,14 @@ const DevfileStrategySection: FC = () => {
       }
       setFieldTouched('devfile.devfilePath', true);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [recommendedStrategy, setFieldValue, strategies]);
 
   useEffect(() => {
     (importType === ImportTypes.devfile || selectedStrategy.type === ImportStrategy.DEVFILE) &&
       devfile.devfilePath &&
       handleDevfileChange();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [importType, devfile.devfilePath, selectedStrategy.type]);
 
   return (

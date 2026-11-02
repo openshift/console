@@ -88,7 +88,7 @@ export class YamlEditorPage extends BasePage {
 
   async openSettingsModal(): Promise<void> {
     await this.robustClick(this.page.locator('[aria-label="Editor settings"]'));
-    // eslint-disable-next-line no-restricted-syntax
+    // eslint-disable-next-line eslint-js/no-restricted-syntax
     await this.getSettingsModal().waitFor({ state: 'visible' });
   }
 

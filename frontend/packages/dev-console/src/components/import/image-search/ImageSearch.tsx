@@ -84,7 +84,7 @@ const useQueryParametersIfDefined = (handleSearch: (image: string) => void) => {
         });
     }
     // Disable deps to load the samples only once when the component is loaded.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, []);
 };
 
@@ -229,7 +229,7 @@ const ImageSearch: FC = () => {
 
   useEffect(() => {
     !dirty && values.searchTerm && handleSearchRef.current(values.searchTerm);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [dirty, values.searchTerm]);
 
   useEffect(() => {

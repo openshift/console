@@ -230,3 +230,52 @@ describe('useCatalogExtensions', () => {
     expect(extensions).toEqual([mockExtensions[1]]);
   });
 });
+
+// The OLMv0 catalog type is registered twice (Tech Preview and not), so its filters live on a
+// single console.catalog/item-type-metadata extension instead of being duplicated on both.
+describe('useCatalogExtensions item type metadata merging', () => {
+  it('should merge filters from a matching item-type-metadata into a filterless type', () => {
+    mockExtensions = [
+      {
+        type: 'console.catalog/item-type',
+        properties: { type: 'operator-olmv0', title: 'Operators' },
+      },
+      {
+        type: 'console.catalog/item-type-metadata',
+        properties: {
+          type: 'operator-olmv0',
+          filters: [{ label: 'Source', attribute: 'source' }],
+        },
+      },
+    ];
+    const { result } = renderHookWithProviders(() =>
+      useCatalogExtensions('dev-catalog', 'operator-olmv0'),
+    );
+
+    expect(result.current[0]).toHaveLength(1);
+    expect(result.current[0][0].properties.filters).toEqual([
+      { label: 'Source', attribute: 'source' },
+    ]);
+  });
+
+  it('should not merge metadata filters into a different type', () => {
+    mockExtensions = [
+      {
+        type: 'console.catalog/item-type',
+        properties: { type: 'operator-olmv1', title: 'Next-Gen Operators' },
+      },
+      {
+        type: 'console.catalog/item-type-metadata',
+        properties: {
+          type: 'operator-olmv0',
+          filters: [{ label: 'Source', attribute: 'source' }],
+        },
+      },
+    ];
+    const { result } = renderHookWithProviders(() =>
+      useCatalogExtensions('dev-catalog', 'operator-olmv1'),
+    );
+
+    expect(result.current[0][0].properties.filters).toBeUndefined();
+  });
+});

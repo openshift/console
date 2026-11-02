@@ -14,7 +14,7 @@ import {
   t_global_icon_color_status_warning_default as warningColor,
   t_global_icon_color_status_danger_default as dangerColor,
 } from '@patternfly/react-tokens';
-import i18n from 'i18next';
+import * as i18n from 'i18next';
 import * as _ from 'lodash';
 import type { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import { processFrame } from '@console/shared/src/graph-helper/data-utils';

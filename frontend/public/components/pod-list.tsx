@@ -563,7 +563,7 @@ export const PodsPage: FC<PodPageProps> = ({
       const id = setInterval(updateMetrics, 30 * 1000);
       return () => clearInterval(id);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [mock, namespace]);
 
   const [pods, loaded, loadError] = useK8sWatchResource<PodKind[]>(

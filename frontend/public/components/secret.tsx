@@ -26,7 +26,7 @@ import { useAddSecretToWorkloadModalLauncher } from './modals/add-secret-to-work
 import { secretTypeFilterReducer } from './secrets/create-secret';
 import { SecretFilterValues } from './secrets/create-secret/types';
 import { DetailsItem } from './utils/details-item';
-import { ResourceSummary, detailsPage } from './utils/details-page';
+import { ResourceSummary } from './utils/details-page';
 import { SectionHeading } from './utils/headings';
 import { navFactory } from './utils/horizontal-nav';
 import { ResourceLink } from './utils/resource-link';
@@ -267,7 +267,7 @@ const SecretsDetailsPage: FC<SecretDetailsPageProps> = (props) => {
       customActionMenu={(_kindModel: K8sModel, obj: K8sResourceKind) => (
         <LazyActionMenu context={{ [kindRef]: obj }} variant={ActionMenuVariant.DROPDOWN} />
       )}
-      pages={[navFactory.details(detailsPage(SecretDetails)), navFactory.editYaml()]}
+      pages={[navFactory.details(SecretDetails), navFactory.editYaml()]}
     />
   );
 };

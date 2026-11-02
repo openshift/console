@@ -10,7 +10,7 @@
 
       "Bash(yarn lint:*)",
       "Bash(yarn lint)",
-      "Bash(yarn eslint:*)",
+      "Bash(yarn oxlint:*)",
       "Bash(yarn prettier:*)",
       "Bash(yarn tsc)",
       "Bash(yarn type-check)",

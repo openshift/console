@@ -16,7 +16,7 @@ const SHOULD_DEPLOY_PLUGIN = !IS_LOCAL_DEV;
 
 async function skipIfModelUnavailable(page: import('@playwright/test').Page): Promise<void> {
   const errorHeading = page.getByRole('heading', { name: /Error loading/ });
-  // eslint-disable-next-line no-restricted-syntax
+  // eslint-disable-next-line eslint-js/no-restricted-syntax
   const hasError = await errorHeading.waitFor({ state: 'visible', timeout: 10_000 }).then(
     () => true,
     () => false,
@@ -296,7 +296,7 @@ interface ManifestResource {
       await skipIfModelUnavailable(page);
 
       const codeEditor = consolePluginPage.getCodeEditor();
-      // eslint-disable-next-line no-restricted-syntax
+      // eslint-disable-next-line eslint-js/no-restricted-syntax
       const hasEditor = await codeEditor.waitFor({ state: 'visible', timeout: 5_000 }).then(
         () => true,
         () => false,

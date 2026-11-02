@@ -69,7 +69,7 @@ const ProjectAccessForm: FC<ProjectAccessFormProps> = ({
     )
       ? setIsStaleInfo(true)
       : setIsStaleInfo(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [roleBindings]);
 
   const onReload = () => {

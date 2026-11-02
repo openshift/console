@@ -14,7 +14,7 @@ import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
 import { RhUiEditIcon } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
 import type { TFunction } from 'i18next';
-import i18next from 'i18next';
+import * as i18next from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';

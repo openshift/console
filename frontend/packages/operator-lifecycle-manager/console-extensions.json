@@ -1,5 +1,17 @@
 [
   {
+    "type": "console.context-provider",
+    "properties": {
+      "provider": {
+        "$codeRef": "operatorMigrationNotifications.OperatorMigrationNotificationsProvider"
+      },
+      "useValueHook": {
+        "$codeRef": "operatorMigrationNotifications.useOperatorMigrationNotifications"
+      }
+    },
+    "flags": { "required": ["TECH_PREVIEW"] }
+  },
+  {
     "type": "console.flag/model",
     "properties": {
       "model": {
@@ -150,6 +162,30 @@
         "kind": "Subscription"
       },
       "component": { "$codeRef": "subscriptions.SubscriptionsPage" }
+    }
+  },
+  {
+    "type": "console.dataview/table-column",
+    "properties": {
+      "table": {
+        "group": "operators.coreos.com",
+        "version": "v1alpha1",
+        "kind": "ClusterServiceVersion"
+      },
+      "columnData": {
+        "id": "migrationEligibility",
+        "title": "%olm~Migration status%",
+        "tooltip": "%olm~Indicates whether you can migrate the Operator to OLM v1 cluster extensions.%",
+        "defaultVisible": true,
+        "props": { "modifier": "nowrap" }
+      },
+      "getCellContent": {
+        "$codeRef": "operatorMigrationEligibility.getOperatorMigrationEligibilityCell"
+      },
+      "insertAfter": "status"
+    },
+    "flags": {
+      "required": ["TECH_PREVIEW"]
     }
   },
   {
@@ -430,21 +466,58 @@
     "properties": {
       "title": "%olm~Operators%",
       "catalogId": "dev-catalog",
-      "type": "operator",
+      "type": "operator-olmv0",
       "provider": { "$codeRef": "useOperatorCatalogItems" }
     },
     "flags": {
-      "disallowed": ["OLMV1_ENABLED"]
+      "required": ["OPERATOR_LIFECYCLE_MANAGER"],
+      "disallowed": ["TECH_PREVIEW"]
+    }
+  },
+  {
+    "type": "console.catalog/item-provider",
+    "properties": {
+      "title": "%olm~Classic Operators%",
+      "catalogId": "dev-catalog",
+      "type": "operator-olmv0",
+      "provider": { "$codeRef": "useOperatorCatalogItems" }
+    },
+    "flags": {
+      "required": ["OPERATOR_LIFECYCLE_MANAGER", "TECH_PREVIEW"]
     }
   },
   {
     "type": "console.catalog/item-type",
     "properties": {
-      "type": "operator",
+      "type": "operator-olmv0",
       "title": "%olm~Operators%",
       "catalogDescription": "%olm~Browse for Operators provided by Operator Lifecycle Manager.%",
       "typeDescription": "%olm~**Operators** are software extensions to OpenShift that make use of custom resources to manage applications and their components. They are managed by Operator Lifecycle Manager.%",
+      "sortFilterGroups": false
+    },
+    "flags": {
+      "required": ["OPERATOR_LIFECYCLE_MANAGER"],
+      "disallowed": ["TECH_PREVIEW"]
+    }
+  },
+  {
+    "type": "console.catalog/item-type",
+    "properties": {
+      "type": "operator-olmv0",
+      "title": "%olm~Classic Operators%",
+      "catalogDescription": "%olm~Browse for Operators managed by Classic Operator Lifecycle Manager (OLMv0).%",
+      "typeDescription": "%olm~**Operators** are software extensions to OpenShift that make use of custom resources to manage applications and their components. They are managed by Operator Lifecycle Manager.%",
       "sortFilterGroups": false,
+      "sortWeight": 1
+    },
+    "flags": {
+      "required": ["OPERATOR_LIFECYCLE_MANAGER", "TECH_PREVIEW"]
+    }
+  },
+  {
+    "type": "console.catalog/item-type-metadata",
+    "properties": {
+      "type": "operator-olmv0",
       "filters": [
         {
           "label": "%olm~Source%",
@@ -488,17 +561,32 @@
       ]
     },
     "flags": {
-      "disallowed": ["OLMV1_ENABLED"]
+      "required": ["OPERATOR_LIFECYCLE_MANAGER"]
     }
   },
   {
     "type": "console.catalog/categories-provider",
     "properties": {
       "catalogId": "dev-catalog",
+      "type": "operator-olmv0",
       "provider": { "$codeRef": "useOperatorCatalogCategories" }
     },
     "flags": {
-      "disallowed": ["OLMV1_ENABLED"]
+      "required": ["OPERATOR_LIFECYCLE_MANAGER"]
+    }
+  },
+  {
+    "type": "console.tab",
+    "properties": {
+      "contextId": "installed-operators",
+      "name": "%olm~Classic Operators%",
+      "href": "classic",
+      "component": {
+        "$codeRef": "classicInstalledOperatorsPage"
+      }
+    },
+    "flags": {
+      "required": ["OPERATOR_LIFECYCLE_MANAGER"]
     }
   },
   {
@@ -526,6 +614,21 @@
     },
     "flags": {
       "required": ["CAN_LIST_OPERATOR_GROUP"]
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "operators.coreos.com",
+        "version": "v1alpha1",
+        "kind": "ClusterServiceVersion"
+      },
+      "provider": { "$codeRef": "operatorMigrationActions.useOperatorMigrationResourceActions" },
+      "bulkProvider": { "$codeRef": "operatorMigrationActions.useOperatorMigrationBulkActions" }
+    },
+    "flags": {
+      "required": ["TECH_PREVIEW"]
     }
   },
   {

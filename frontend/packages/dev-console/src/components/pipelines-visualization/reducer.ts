@@ -7,7 +7,7 @@ import { chart_color_green_400 as successColor } from '@patternfly/react-tokens/
 import type { Graph, LayoutFactory } from '@patternfly/react-topology';
 import { DagreLayout, PipelineDagreLayout } from '@patternfly/react-topology';
 import type { GraphLabel } from 'dagre';
-import i18next from 'i18next';
+import * as i18next from 'i18next';
 import { ComputedStatus } from '@console/shipwright-plugin/src/components/logs/log-snippet-types';
 import { pipelineRunStatus } from '@console/shipwright-plugin/src/components/logs/logs-utils';
 import type { StatusMessage, StepStatus } from './types';

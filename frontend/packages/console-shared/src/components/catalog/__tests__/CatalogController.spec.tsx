@@ -82,4 +82,39 @@ describe('CatalogController', () => {
     });
     expect(screen.getByText('Default description')).toBeVisible();
   });
+
+  it('should sort types by weight and then alphabetically', async () => {
+    const itemType = (type: string, title: string, sortWeight?: number) => ({
+      pluginName: '@console/test-plugin',
+      properties: { type, title, ...(sortWeight ? { sortWeight } : {}) },
+      type: 'console.catalog/item-type' as const,
+      uid: `@console/test-plugin[${type}]`,
+    });
+    const item = (type: string) => ({ uid: `${type}-1`, type, name: type });
+
+    const catalogControllerProps: ComponentProps<typeof CatalogController> = {
+      type: '',
+      title: 'Software Catalog',
+      description: null,
+      catalogExtensions: [
+        itemType('operator-olmv0', 'Classic Operators', 1),
+        itemType('operator-olmv1', 'Next-Gen Operators'),
+        itemType('HelmChart', 'Helm Charts'),
+      ],
+      items: [item('operator-olmv0'), item('operator-olmv1'), item('HelmChart')],
+      itemsMap: {},
+      loaded: true,
+      loadError: null,
+      searchCatalog: jest.fn(),
+    };
+
+    renderWithProviders(<CatalogController {...catalogControllerProps} />);
+
+    const typeLinks = await screen.findAllByRole('link');
+    expect(typeLinks.map((link) => link.textContent)).toEqual([
+      'Helm Charts (1)',
+      'Next-Gen Operators (1)',
+      'Classic Operators (1)',
+    ]);
+  });
 });

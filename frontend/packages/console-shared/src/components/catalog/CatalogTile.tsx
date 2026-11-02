@@ -1,17 +1,13 @@
 import type { FC, MouseEvent } from 'react';
 import { isValidElement } from 'react';
-import {
-  CatalogTileBadge,
-  CatalogTile as PfCatalogTile,
-} from '@patternfly/react-catalog-view-extension';
-import { Badge } from '@patternfly/react-core';
+import { CatalogTile as PfCatalogTile } from '@patternfly/react-catalog-view-extension';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import type { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions';
 import { isModifiedEvent } from '../../utils/utils';
-import { CatalogBadges } from './CatalogBadges';
-import { getIconProps } from './utils/catalog-utils';
+import { CatalogBadges, CatalogHeaderBadges } from './CatalogBadges';
+import { getIconProps, partitionBadgesByPlacement } from './utils/catalog-utils';
 import type { CatalogType } from './utils/types';
 
 import './CatalogTile.scss';
@@ -30,11 +26,7 @@ export const CatalogTile: FC<CatalogTileProps> = ({ item, catalogTypes, onClick,
   const vendor = provider ? t('Provided by {{provider}}', { provider }) : null;
   const catalogType = _.find(catalogTypes, ['value', type]);
 
-  const typeBadges = [
-    <CatalogTileBadge>
-      <Badge isRead>{typeLabel ?? catalogType?.label}</Badge>
-    </CatalogTileBadge>,
-  ];
+  const [headerBadges, footerBadges] = partitionBadgesByPlacement(badges);
 
   const isDescriptionReactElement = isValidElement(description);
   return (
@@ -52,14 +44,20 @@ export const CatalogTile: FC<CatalogTileProps> = ({ item, catalogTypes, onClick,
       }}
       href={href}
       title={title || name}
-      badges={typeBadges}
+      badges={[
+        <CatalogHeaderBadges
+          key="header-badges"
+          typeLabel={typeLabel ?? catalogType?.label}
+          badges={headerBadges}
+        />,
+      ]}
       vendor={vendor}
       description={isDescriptionReactElement ? undefined : description}
       data-test={`${type}-${name}`}
       {...getIconProps(item)}
     >
       {isDescriptionReactElement ? description : undefined}
-      {badges?.length > 0 ? <CatalogBadges badges={badges} /> : undefined}
+      {footerBadges.length > 0 ? <CatalogBadges badges={footerBadges} /> : undefined}
     </PfCatalogTile>
   );
 };

@@ -19,7 +19,7 @@ export class DetailsPage extends BasePage {
 
   async waitForPageLoad(): Promise<void> {
     try {
-      // eslint-disable-next-line no-restricted-syntax
+      // eslint-disable-next-line eslint-js/no-restricted-syntax
       await this.skeletonLoader.waitFor({ state: 'detached', timeout: 30_000 });
     } catch {
       // Skeleton may have already disappeared

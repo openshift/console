@@ -24,7 +24,7 @@ import { referenceForGroupVersionKind, referenceForModel } from '../module/k8s/k
 import { pluginStore } from '../plugins';
 import type { RootState } from '../redux';
 
-export type { FeatureState }; // eslint-disable-line no-barrel-files/no-barrel-files -- TODO, rewrite imports
+export type { FeatureState }; // eslint-disable-line oxc/no-barrel-file -- TODO, rewrite imports
 
 export const defaults = _.mapValues(FLAGS, (flag) => {
   switch (flag) {

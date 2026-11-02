@@ -113,7 +113,7 @@ const PipelineVisualizationSurface: FC<PipelineVisualizationSurfaceProps> = ({
       }
       vis.fromModel(model);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [model, vis]);
 
   if (!vis) return null;

@@ -114,7 +114,7 @@ const HelmChartVersionDropdown: FC<HelmChartVersionDropdownProps> = ({
   useEffect(() => {
     setInitialYamlData(yamlData);
     setInitialFormData(formData);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, []);
 
   useEffect(() => {

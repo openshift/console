@@ -87,7 +87,10 @@ export type ActionFilter = Extension<
 >;
 
 export type SupportedActionExtensions =
-  ActionProvider | ResourceActionProvider | ActionGroup | ActionFilter;
+  | ActionProvider
+  | ResourceActionProvider
+  | ActionGroup
+  | ActionFilter;
 
 // Type Guards
 

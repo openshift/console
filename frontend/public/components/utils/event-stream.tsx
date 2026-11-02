@@ -1,7 +1,6 @@
 import type { FC, ComponentType, CSSProperties } from 'react';
-import { Component, useState, useCallback, useEffect } from 'react';
+import { forwardRef, memo, useCallback, useEffect, useState } from 'react';
 import { css } from '@patternfly/react-styles';
-import * as _ from 'lodash';
 import {
   AutoSizer,
   List as VirtualList,
@@ -19,33 +18,63 @@ const measurementCache = new CellMeasurerCache({
   fixedWidth: true,
 });
 
-class SysEvent extends Component<SysEventProps> {
-  shouldComponentUpdate(nextProps: SysEventProps) {
-    if (this.props.event.lastTimestamp !== nextProps.event.lastTimestamp) {
-      // Timestamps can be modified because events can be combined.
-      return true;
-    }
-    if (_.isEqual(this.props.style, nextProps.style)) {
-      return false;
-    }
-    return true;
+const arePropsEqual = (prev: SysEventContentProps, next: SysEventContentProps) => {
+  if (prev.event.lastTimestamp !== next.event.lastTimestamp) {
+    // Timestamps can be modified because events can be combined.
+    return false;
   }
-
-  componentWillUnmount() {
-    // TODO (kans): this is not correct, but don't memory leak :-/
-    seen.delete(this.props.event.metadata.uid);
+  if (prev.event.metadata.uid !== next.event.metadata.uid) {
+    // A different event can occupy an index once newer events stream in, even
+    // when its lastTimestamp matches the event it replaces.
+    return false;
   }
+  if (
+    prev.event.series?.count !== next.event.series?.count ||
+    prev.event.series?.lastObservedTime !== next.event.series?.lastObservedTime ||
+    prev.event.count !== next.event.count
+  ) {
+    // Combined events update series.count/lastObservedTime (events.k8s.io) or
+    // count (core/v1) while their lastTimestamp stays unchanged.
+    return false;
+  }
+  // `style` and `className` are applied by the SysEvent wrapper, which rerenders
+  // with every CellMeasurer pass, so they are intentionally not compared here.
+  // Comparing `style` would rerender unchanged rows while recomputeRowHeights()
+  // transiently rewrites row styles during streaming updates.
+  return (
+    prev.EventComponent === next.EventComponent &&
+    prev.index === next.index &&
+    prev.list === next.list
+  );
+};
 
-  render() {
-    const { EventComponent, index, style, event, className, list } = this.props;
+// CellMeasurer clones the element returned by its render prop and attaches a
+// new callback ref to it on every render. React only takes the memo bailout
+// when the ref is unchanged, so the memoized content must live in a separate
+// component that never receives CellMeasurer's ref. SysEvent below is the thin
+// ref-forwarding wrapper that CellMeasurer measures.
+const SysEventContent = memo(
+  ({ EventComponent, event, list, index }: SysEventContentProps) => (
+    <EventComponent event={event} list={list} cache={measurementCache} index={index} />
+  ),
+  arePropsEqual,
+);
 
-    let shouldAnimate: boolean;
+const SysEvent = forwardRef<HTMLDivElement, SysEventProps>(
+  ({ EventComponent, className, event, index, list, style }, ref) => {
     const key = event.metadata.uid;
-    // Only animate events if they're at the start of the list (first 6) and we haven't seen them before.
-    if (!seen.has(key) && index < 6) {
+    // Only animate events if they're at the start of the list (first 6) and we
+    // haven't seen them before. The decision is made once per mount so
+    // rerenders don't drop the class mid-animation.
+    const [shouldAnimate] = useState(() => !seen.has(key) && index < 6);
+
+    useEffect(() => {
       seen.add(key);
-      shouldAnimate = true;
-    }
+      // Don't memory-leak the seen set while streaming.
+      return () => {
+        seen.delete(key);
+      };
+    }, [key]);
 
     return (
       <div
@@ -54,13 +83,15 @@ class SysEvent extends Component<SysEventProps> {
           'co-sysevent--transition',
           className,
         )}
+        ref={ref}
         style={style}
       >
-        <EventComponent event={event} list={list} cache={measurementCache} index={index} />
+        <SysEventContent EventComponent={EventComponent} event={event} index={index} list={list} />
       </div>
     );
-  }
-}
+  },
+);
+SysEvent.displayName = 'SysEvent';
 
 export const EventStreamList: FC<EventStreamListProps> = ({
   events,
@@ -82,16 +113,13 @@ export const EventStreamList: FC<EventStreamListProps> = ({
         rowIndex={index}
         parent={parent}
       >
-        {({ measure }) => (
+        {() => (
           <SysEvent
             className={className}
             event={events[index]}
             list={list}
             EventComponent={EventComponent}
-            onLoad={measure}
-            // eslint-disable-next-line no-restricted-globals
-            onEntered={print}
-            key={key}
+            key={events[index].metadata.uid}
             style={style}
             index={index}
           />
@@ -146,13 +174,14 @@ export type EventComponentProps = {
   index: number;
 };
 
-type SysEventProps = {
+type SysEventContentProps = {
   EventComponent: ComponentType<EventComponentProps>;
   event: EventKind;
-  onLoad: () => void;
-  onEntered: () => void;
-  style: CSSProperties;
   index: number;
-  className?: string;
   list: VirtualList;
+};
+
+type SysEventProps = SysEventContentProps & {
+  className?: string;
+  style: CSSProperties;
 };

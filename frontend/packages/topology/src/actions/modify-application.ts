@@ -28,7 +28,7 @@ export const useGetModifyApplicationAction: GetModifyApplicationAction = (
         namespace: obj?.metadata?.namespace,
       },
     }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
     [insertBefore, kind, obj],
   );
 };

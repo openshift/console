@@ -27,7 +27,7 @@ export const useHover = <T extends Element>(
   useEffect(() => {
     setHover(false);
     // dynamic dependencies
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, dependencies);
 
   // The unset handle needs to be referred by listeners in different closures.

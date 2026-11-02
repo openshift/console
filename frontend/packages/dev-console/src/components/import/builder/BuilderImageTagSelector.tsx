@@ -67,7 +67,7 @@ const BuilderImageTagSelector: FC<BuilderImageTagSelectorProps> = ({
       })
       .catch((err) => setFieldError('image.ports', err.message));
     // Find a way to use useSafeK8s hooks without adding it to the deps array.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [selectedImageTag, setFieldValue, setFieldError, imageName, imageStreamNamespace, imageTag]);
 
   return (

@@ -131,7 +131,7 @@ const DebugTerminal: FC<DebugTerminalProps> = ({ podData, containerName }) => {
   const debugPodName = `${podData?.metadata?.name?.replace(/\./g, '-')}-debug-`;
   const podToCreate = useMemo(
     () => getDebugPod(debugPodName, podData, podContainerName),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
     [debugPodName, podContainerName],
   );
 

@@ -95,9 +95,7 @@
   },
   "allow_forking": true,
   "is_template": false,
-  "topics": [
-
-  ],
+  "topics": [],
   "visibility": "public",
   "forks": 407,
   "open_issues": 2,

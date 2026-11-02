@@ -104,7 +104,7 @@ export const MultiTypeaheadField: FC<MultiTypeaheadFieldProps> = ({
     }
 
     setFilteredSelectOptions(newSelectOptions);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [inputValue, onCreation]);
 
   const setActiveAndFocusedItem = (itemIndex: number) => {
@@ -273,6 +273,7 @@ export const MultiTypeaheadField: FC<MultiTypeaheadFieldProps> = ({
       status={isValid ? undefined : 'danger'}
     >
       <TextInputGroup isPlain>
+        {/* eslint-disable jsx-a11y/role-has-required-aria-props -- TextInputGroupMain maps isExpanded to aria-expanded on the rendered input */}
         <TextInputGroupMain
           value={inputValue}
           onClick={onInputClick}
@@ -309,6 +310,7 @@ export const MultiTypeaheadField: FC<MultiTypeaheadFieldProps> = ({
             ))}
           </LabelGroup>
         </TextInputGroupMain>
+        {/* eslint-enable jsx-a11y/role-has-required-aria-props */}
         {!hideClearButton && (
           <TextInputGroupUtilities
             {...(field.value.length === 0 ? { style: { display: 'none' } } : {})}

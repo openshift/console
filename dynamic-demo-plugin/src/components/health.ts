@@ -1,5 +1,9 @@
 import * as _ from 'lodash';
-import { PrometheusHealthHandler, URLHealthHandler, HealthState } from '@openshift-console/dynamic-plugin-sdk';
+import {
+  PrometheusHealthHandler,
+  URLHealthHandler,
+  HealthState,
+} from '@openshift-console/dynamic-plugin-sdk';
 
 export const getFooHealthState: URLHealthHandler<any> = () => ({ state: HealthState.OK });
 

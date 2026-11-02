@@ -134,5 +134,5 @@ If a test passes on re-run without any fix: it's flaky. Use MCP to identify the 
 - MCP first — always try browser tools before guessing at selectors
 - Fix in the right layer
 - Always use `--retries=0` during the cycle
-- Run `cd frontend && yarn eslint <fixed-files>` after fixes
+- Run `cd frontend && yarn oxlint <fixed-files>` after fixes
 - **DO NOT commit** — the user handles git operations

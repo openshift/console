@@ -4,7 +4,7 @@ import type { MenuToggleElement } from '@patternfly/react-core';
 import { Dropdown, DropdownItem, DropdownList, MenuToggle, Tooltip } from '@patternfly/react-core';
 import { RhUiEllipsisVerticalIcon } from '@patternfly/react-icons';
 import { ContextSubMenuItem } from '@patternfly/react-topology';
-import i18next from 'i18next';
+import * as i18next from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';

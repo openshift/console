@@ -1,4 +1,4 @@
-import i18next from 'i18next';
+import * as i18next from 'i18next';
 import * as _ from 'lodash';
 import type { ContainerSpec, ContainerStatus, PodKind } from '.';
 

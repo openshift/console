@@ -1,4 +1,4 @@
-import i18next from 'i18next';
+import * as i18next from 'i18next';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 
 export const getEventSourceSupport = (item: K8sResourceKind) => {

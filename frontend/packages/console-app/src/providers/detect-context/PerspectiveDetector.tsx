@@ -8,7 +8,8 @@ type DetectorProps = {
   setActivePerspective: (perspective: string, next: string) => void;
   perspectiveExtensions: Perspective[];
   detectors: (
-    undefined | ResolvedExtension<Perspective>['properties']['usePerspectiveDetection']
+    | undefined
+    | ResolvedExtension<Perspective>['properties']['usePerspectiveDetection']
   )[];
 };
 
