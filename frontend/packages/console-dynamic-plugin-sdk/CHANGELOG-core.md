@@ -12,6 +12,8 @@ compatibility table in [Console dynamic plugins README](./README.md).
 
 ## 5.1.0-prerelease.2 - TBD
 
+- Add `react-dom` and `react/jsx-runtime` as Console provided shared modules. ([CONSOLE-5571],
+  [#17462])
 - Added optional `sortWeight` property to extension `console.catalog/item-type`, so a plugin can
   control where a type displays in the catalog's type list ([CONSOLE-5527], [#17355])
 - Added optional `badge` property to extension `console.tab`, so a plugin can display a component
@@ -363,6 +365,7 @@ compatibility table in [Console dynamic plugins README](./README.md).
 [CONSOLE-5438]: https://issues.redhat.com/browse/CONSOLE-5438
 [CONSOLE-5560]: https://issues.redhat.com/browse/CONSOLE-5560
 [CONSOLE-5527]: https://issues.redhat.com/browse/CONSOLE-5527
+[CONSOLE-5571]: https://issues.redhat.com/browse/CONSOLE-5571
 [OCPBUGS-19048]: https://issues.redhat.com/browse/OCPBUGS-19048
 [OCPBUGS-30077]: https://issues.redhat.com/browse/OCPBUGS-30077
 [OCPBUGS-31355]: https://issues.redhat.com/browse/OCPBUGS-31355
@@ -469,3 +472,4 @@ compatibility table in [Console dynamic plugins README](./README.md).
 [#17363]: https://github.com/openshift/console/pull/17363
 [#17376]: https://github.com/openshift/console/pull/17376
 [#17389]: https://github.com/openshift/console/pull/17389
+[#17462]: https://github.com/openshift/console/pull/17462

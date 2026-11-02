@@ -87,8 +87,12 @@ const dynamicModuleMaps = resolveDynamicModuleMaps(dynamicModulePackageSpecs, [
  */
 const getWebpackSharedModules = (): Shared =>
   sharedPluginModules.reduce<SharedObject>((acc, moduleName) => {
-    const { singleton } = getSharedModuleMetadata(moduleName);
-    const moduleConfig: SharedConfig = { singleton, eager: true };
+    const { singleton, requiredVersion } = getSharedModuleMetadata(moduleName);
+    const moduleConfig: SharedConfig = {
+      singleton,
+      eager: true,
+      requiredVersion,
+    };
 
     moduleConfig.import = getSharedModuleImport(moduleName);
 

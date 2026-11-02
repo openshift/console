@@ -89,20 +89,23 @@ const parseDepsAs = (
 const parseSharedModuleDeps = (pkg: PackageJson, missingDepCallback: MissingDependencyCallback) =>
   parseDeps(
     pkg,
-    sharedPluginModules.filter((m) => {
-      const { allowFallback, aliased } = getSharedModuleMetadata(m);
+    sharedPluginModules
+      .filter((m) => {
+        const { allowFallback, aliased } = getSharedModuleMetadata(m);
 
-      return (
-        // Exclude Console plugin SDK shared modules.
-        !m.startsWith('@openshift-console/') &&
-        // This is a Console plugin SDK dependency and a shared module.
-        m !== '@openshift/dynamic-plugin-sdk' &&
-        // Exclude modules for which a plugin provided fallback version is disallowed.
-        // Also exclude modules whose implementation is aliased to another module.
-        !allowFallback &&
-        !aliased
-      );
-    }),
+        return (
+          // Exclude Console plugin SDK shared modules.
+          !m.startsWith('@openshift-console/') &&
+          // This is a Console plugin SDK dependency and a shared module.
+          m !== '@openshift/dynamic-plugin-sdk' &&
+          // Exclude modules for which a plugin provided fallback version is disallowed.
+          // Also exclude modules whose implementation is aliased to another module.
+          !allowFallback &&
+          !aliased
+        );
+      })
+      // Shared subpath modules use their parent package's dependency declaration.
+      .map((m) => (m.startsWith('react/') ? 'react' : m)),
     missingDepCallback,
   );
 

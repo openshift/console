@@ -74,7 +74,7 @@ const getWebpackSharedModules = (
 
   const consoleProvidedSharedModules = sharedPluginModules.reduce<WebpackSharedObject>(
     (acc, moduleName) => {
-      const { singleton, allowFallback } = getSharedModuleMetadata(moduleName);
+      const { singleton, allowFallback, requiredVersion } = getSharedModuleMetadata(moduleName);
       const providedVersionRange = sdkPkgDeps[moduleName];
       const moduleConfig: WebpackSharedConfig = { singleton };
 
@@ -82,7 +82,9 @@ const getWebpackSharedModules = (
         moduleConfig.import = false;
       }
 
-      if (semver.validRange(providedVersionRange)) {
+      if (requiredVersion === false) {
+        moduleConfig.requiredVersion = false;
+      } else if (semver.validRange(providedVersionRange)) {
         moduleConfig.requiredVersion = providedVersionRange;
       }
 

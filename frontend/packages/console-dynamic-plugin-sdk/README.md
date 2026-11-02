@@ -185,6 +185,8 @@ The following shared modules are provided by Console, without plugins providing 
 - `@openshift-console/dynamic-plugin-sdk-internal`
 - `@patternfly/react-topology`
 - `react`
+- `react-dom`
+- `react/jsx-runtime`
 - `react-i18next`
 - `react-redux`
 - `react-router`

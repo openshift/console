@@ -10,6 +10,11 @@ Console, use `4.x.0-prerelease.n` packages.
 For older 1.x plugin SDK packages, refer to "OpenShift Console Versions vs SDK Versions"
 compatibility table in [Console dynamic plugins README](./README.md).
 
+## 5.1.0-prerelease.2 - TBD
+
+- Add `react-dom` and `react/jsx-runtime` as Console provided shared modules. ([CONSOLE-5571],
+  [#17462])
+
 ## 5.1.0-prerelease.1 - 2026-10-16
 
 - Add `ConsoleRemotePlugin` option `baseDir` to support multi-plugin builds ([OCPBUGS-111520],
@@ -181,6 +186,7 @@ compatibility table in [Console dynamic plugins README](./README.md).
 [CONSOLE-5065]: https://issues.redhat.com/browse/CONSOLE-5065
 [CONSOLE-5135]: https://issues.redhat.com/browse/CONSOLE-5135
 [CONSOLE-5423]: https://issues.redhat.com/browse/CONSOLE-5423
+[CONSOLE-5571]: https://issues.redhat.com/browse/CONSOLE-5571
 [OCPBUGS-30762]: https://issues.redhat.com/browse/OCPBUGS-30762
 [OCPBUGS-30824]: https://issues.redhat.com/browse/OCPBUGS-30824
 [OCPBUGS-31901]: https://issues.redhat.com/browse/OCPBUGS-31901
@@ -234,3 +240,4 @@ compatibility table in [Console dynamic plugins README](./README.md).
 [#17140]: https://github.com/openshift/console/pull/17140
 [#17259]: https://github.com/openshift/console/pull/17259
 [#17318]: https://github.com/openshift/console/pull/17318
+[#17462]: https://github.com/openshift/console/pull/17462

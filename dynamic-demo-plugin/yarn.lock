@@ -52,7 +52,6 @@ __metadata:
     js-yaml: "npm:^4.1.1"
     oxfmt: "npm:^0.75.0"
     react: "npm:18.3.1"
-    react-dom: "npm:18.3.1"
     react-i18next: "npm:~16.5.8"
     react-router: "npm:~7.18.1"
     ts-loader: "npm:^9.6.2"
@@ -484,6 +483,7 @@ __metadata:
   peerDependencies:
     "@patternfly/react-topology": ~6.6.0
     react: ^18.3.1
+    react-dom: ^18.3.1
     react-i18next: ~16.5.8
     react-redux: ~9.2.0
     react-router: ~7.18.1
@@ -493,6 +493,8 @@ __metadata:
     "@patternfly/react-topology":
       optional: true
     react:
+      optional: true
+    react-dom:
       optional: true
     react-i18next:
       optional: true
@@ -3360,18 +3362,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@npm:18.3.1":
-  version: 18.3.1
-  resolution: "react-dom@npm:18.3.1"
-  dependencies:
-    loose-envify: "npm:^1.1.0"
-    scheduler: "npm:^0.23.2"
-  peerDependencies:
-    react: ^18.3.1
-  checksum: 10c0/a752496c1941f958f2e8ac56239172296fcddce1365ce45222d04a1947e0cc5547df3e8447f855a81d6d39f008d7c32eab43db3712077f09e3f67c4874973e85
-  languageName: node
-  linkType: hard
-
 "react-dropzone@npm:^14.3.5":
   version: 14.3.8
   resolution: "react-dropzone@npm:14.3.8"
@@ -3596,15 +3586,6 @@ __metadata:
   version: 2.1.2
   resolution: "safer-buffer@npm:2.1.2"
   checksum: 10c0/7e3c8b2e88a1841c9671094bbaeebd94448111dd90a81a1f606f3f67708a6ec57763b3b47f06da09fc6054193e0e6709e77325415dc8422b04497a8070fa02d4
-  languageName: node
-  linkType: hard
-
-"scheduler@npm:^0.23.2":
-  version: 0.23.2
-  resolution: "scheduler@npm:0.23.2"
-  dependencies:
-    loose-envify: "npm:^1.1.0"
-  checksum: 10c0/26383305e249651d4c58e6705d5f8425f153211aef95f15161c151f7b8de885f24751b377e4a0b3dd42cce09aad3f87a61dab7636859c0d89b7daf1a1e2a5c78
   languageName: node
   linkType: hard
 
