@@ -31,43 +31,49 @@ func TestPrivateChartURLsPassFormatValidation(t *testing.T) {
 	}
 	t.Cleanup(func() { lookupChartHost = prevLookup })
 
-	allowed := []string{
-		"https://172.24.5.6/x.tgz",
-		"https://192.168.1.1/x.tgz",
-		"http://169.254.1.1/x.tgz",
-		"http://[fe80::1]/x.tgz",
-		"https://100.64.0.1/x.tgz",
-		"https://10.1.2.3/x.tgz",
-		"https://thanos-querier.openshift-monitoring.svc/x.tgz",
-		"https://kubernetes.openshift-console.svc/x.tgz",
-		"https://mypod.default.pod.cluster.local/x.tgz",
+	allowed := []struct {
+		name string
+		raw  string
+	}{
+		{"rfc1918 172.16", "https://172.24.5.6/x.tgz"},
+		{"rfc1918 192.168", "https://192.168.1.1/x.tgz"},
+		{"link-local", "http://169.254.1.1/x.tgz"},
+		{"ipv6 link-local", "http://[fe80::1]/x.tgz"},
+		{"cgnat", "https://100.64.0.1/x.tgz"},
+		{"rfc1918 10", "https://10.1.2.3/x.tgz"},
+		{"cluster service", "https://thanos-querier.openshift-monitoring.svc/x.tgz"},
+		{"other namespace kubernetes service", "https://kubernetes.openshift-console.svc/x.tgz"},
+		{"pod dns name", "https://mypod.default.pod.cluster.local/x.tgz"},
 	}
-	for _, raw := range allowed {
-		t.Run(raw, func(t *testing.T) {
-			require.NoError(t, validateChartURLStrict(raw))
+	for _, tt := range allowed {
+		t.Run(tt.name, func(t *testing.T) {
+			require.NoError(t, validateChartURLStrict(tt.raw))
 		})
 	}
 }
 
 func TestLoopbackChartURLsRejected(t *testing.T) {
-	rejected := []string{
-		"http://127.0.0.1/x.tgz",
-		"http://127.0.0.2/x.tgz",
-		"http://localhost/x.tgz",
-		"oci://localhost:5000/charts/chart",
-		"http://[::1]/chart.tgz",
-		"http://0.0.0.0/x.tgz",
-		"http://0.1.2.3/x.tgz",
-		"http://[::]/chart.tgz",
-		"http://169.254.169.254/latest/meta-data/x.tgz",
-		"https://kubernetes/x.tgz",
-		"oci://kubernetes.default/charts/chart",
-		"https://kubernetes.default.svc/x.tgz",
-		"https://kubernetes.default.svc.cluster.local/x.tgz",
+	rejected := []struct {
+		name string
+		raw  string
+	}{
+		{"ipv4 loopback", "http://127.0.0.1/x.tgz"},
+		{"loopback range", "http://127.0.0.2/x.tgz"},
+		{"localhost", "http://localhost/x.tgz"},
+		{"localhost oci", "oci://localhost:5000/charts/chart"},
+		{"ipv6 loopback", "http://[::1]/chart.tgz"},
+		{"unspecified ipv4", "http://0.0.0.0/x.tgz"},
+		{"this network", "http://0.1.2.3/x.tgz"},
+		{"unspecified ipv6", "http://[::]/chart.tgz"},
+		{"cloud metadata", "http://169.254.169.254/latest/meta-data/x.tgz"},
+		{"kubernetes hostname", "https://kubernetes/x.tgz"},
+		{"kubernetes.default oci", "oci://kubernetes.default/charts/chart"},
+		{"kubernetes API service", "https://kubernetes.default.svc/x.tgz"},
+		{"kubernetes API service fqdn", "https://kubernetes.default.svc.cluster.local/x.tgz"},
 	}
-	for _, raw := range rejected {
-		t.Run(raw, func(t *testing.T) {
-			err := validateChartURLStrict(raw)
+	for _, tt := range rejected {
+		t.Run(tt.name, func(t *testing.T) {
+			err := validateChartURLStrict(tt.raw)
 			require.Error(t, err)
 			require.ErrorContains(t, err, "loopback")
 		})
