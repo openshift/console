@@ -208,23 +208,28 @@ func TestValidateRepoURLPropagatesContext(t *testing.T) {
 }
 
 func TestLookupRepoHostHasOwnDeadline(t *testing.T) {
-	var got time.Duration
-	var hasDeadline bool
+	deadlines := make(chan time.Duration, 1)
 	resolver := &net.Resolver{
 		PreferGo: true,
 		Dial: func(ctx context.Context, network, address string) (net.Conn, error) {
 			if deadline, ok := ctx.Deadline(); ok {
-				hasDeadline = true
-				got = time.Until(deadline)
+				select {
+				case deadlines <- time.Until(deadline):
+				default:
+				}
 			}
 			return nil, errors.New("stopped")
 		},
 	}
 	_, err := lookupRepoHostWithResolver(context.Background(), resolver, "charts.example.com")
 	require.Error(t, err)
-	require.True(t, hasDeadline)
-	require.Greater(t, got, time.Duration(0))
-	require.LessOrEqual(t, got, repoHostLookupTimeout)
+	select {
+	case got := <-deadlines:
+		require.Greater(t, got, time.Duration(0))
+		require.LessOrEqual(t, got, repoHostLookupTimeout)
+	default:
+		t.Fatal("lookup had no deadline")
+	}
 }
 
 func noopURLValidator(_ context.Context, _ *url.URL) error { return nil }
