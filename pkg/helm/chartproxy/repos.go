@@ -97,6 +97,18 @@ func repoHostDisallowed(host string, lookup func(string) ([]net.IP, error)) bool
 	return utils.HostDisallowed(host, lookup)
 }
 
+// repoRequestDisallowed reports whether the request URL names a disallowed
+// repository host. The proxy hook and redirect check use it because DialContext
+// connects to the proxy address when a proxy is configured.
+func repoRequestDisallowed(req *http.Request) bool {
+	if req == nil || req.URL == nil {
+		return false
+	}
+	return repoHostDisallowed(req.URL.Hostname(), func(host string) ([]net.IP, error) {
+		return lookupRepoHost(req.Context(), host)
+	})
+}
+
 // validateRepoURL accepts an http or https repository URL and rejects certain
 // addresses.
 func validateRepoURL(ctx context.Context, u *url.URL) error {
@@ -117,10 +129,17 @@ func httpClient(tlsConfig *tls.Config) (*http.Client, error) {
 	dialer := &net.Dialer{Timeout: 5 * time.Second}
 	tr := &http.Transport{
 		TLSClientConfig: tlsConfig,
-		Proxy:           http.ProxyFromEnvironment,
+		// Check the repository host here. When a proxy is configured, DialContext
+		// is invoked for the proxy address, not the repository host. Pinning does
+		// not stop a malicious proxy from connecting somewhere else.
+		Proxy: func(req *http.Request) (*url.URL, error) {
+			if repoRequestDisallowed(req) {
+				return nil, utils.ErrDisallowedHost
+			}
+			return http.ProxyFromEnvironment(req)
+		},
 		// Resolve once and connect to that address. A second lookup cannot move
-		// the connection onto localhost or an unspecified address; however, note
-		// that pinning does not defend against accesses via a malicious proxy.
+		// the connection onto localhost or an unspecified address.
 		DialContext: func(ctx context.Context, network, addr string) (net.Conn, error) {
 			return utils.DialPinnedContext(ctx, dialer, network, addr)
 		},
@@ -132,7 +151,7 @@ func httpClient(tlsConfig *tls.Config) (*http.Client, error) {
 			if len(via) >= maxRedirects {
 				return fmt.Errorf("stopped after %d redirects", maxRedirects)
 			}
-			if repoHostDisallowed(req.URL.Hostname(), nil) {
+			if repoRequestDisallowed(req) {
 				return utils.ErrDisallowedHost
 			}
 			if len(via) > 0 && via[0].URL.Scheme == "https" && req.URL.Scheme == "http" {
