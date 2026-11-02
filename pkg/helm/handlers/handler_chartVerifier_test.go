@@ -158,21 +158,24 @@ func TestHelmHandlers_HandleChartVerifier_SanitizesFetchErrors(t *testing.T) {
 }
 
 func TestHelmHandlers_HandleChartVerifier_AllowsPrivateNetworkURLs(t *testing.T) {
-	bodies := []string{
-		`{"chart_url":"https://10.0.0.5/chart.tgz"}`,
-		`{"chart_url":"http://169.254.1.1/chart.tgz"}`,
-		`{"chart_url":"https://100.64.0.1/chart.tgz"}`,
-		`{"chart_url":"https://172.24.5.6/chart.tgz"}`,
-		`{"chart_url":"https://192.168.1.1/chart.tgz"}`,
-		`{"chart_url":"https://myrepo.default.svc/chart.tgz"}`,
-		`{"chart_url":"https://mypod.default.pod.cluster.local/chart.tgz"}`,
+	tests := []struct {
+		name string
+		body string
+	}{
+		{"rfc1918 10", `{"chart_url":"https://10.0.0.5/chart.tgz"}`},
+		{"link-local", `{"chart_url":"http://169.254.1.1/chart.tgz"}`},
+		{"cgnat", `{"chart_url":"https://100.64.0.1/chart.tgz"}`},
+		{"rfc1918 172.16", `{"chart_url":"https://172.24.5.6/chart.tgz"}`},
+		{"rfc1918 192.168", `{"chart_url":"https://192.168.1.1/chart.tgz"}`},
+		{"cluster service", `{"chart_url":"https://myrepo.default.svc/chart.tgz"}`},
+		{"pod dns name", `{"chart_url":"https://mypod.default.pod.cluster.local/chart.tgz"}`},
 	}
-	for _, body := range bodies {
-		t.Run(body, func(t *testing.T) {
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
 			handlers := fakeVerifierHandler()
 			handlers.chartVerifier = fakeChartVerification("{}", nil)
 
-			request := httptest.NewRequest("POST", "/api/helm/verify", strings.NewReader(body))
+			request := httptest.NewRequest("POST", "/api/helm/verify", strings.NewReader(tt.body))
 			response := httptest.NewRecorder()
 
 			handlers.HandleChartVerifier(&auth.User{}, response, request)
