@@ -29,7 +29,9 @@ type namedFile struct {
 func New(issuerCAFile, k8sCAFile string, proxy *ProxyConfig) (*Clients, error) {
 	clients := &Clients{}
 
-	var opts []httptransport.Option
+	// HTTPS proxies require HTTP/1.1 CONNECT even when they advertise HTTP/2.
+	// Keep this option for environment proxies and every CA-triggered rebuild.
+	opts := []httptransport.Option{httptransport.WithDisableHTTP2()}
 	timeout := 5 * time.Second
 	var caFiles []namedFile
 	if len(issuerCAFile) > 0 {
