@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/tls"
 	"crypto/x509"
+	"errors"
 	"fmt"
 	"net"
 	"net/http"
@@ -178,7 +179,46 @@ func chartTransport(opts *action.ChartPathOptions) (*http.Transport, error) {
 	transport.DialContext = func(ctx context.Context, network, addr string) (net.Conn, error) {
 		return utils.DialPinnedContext(ctx, dialer, network, addr)
 	}
+	// Helm's client follows redirects before DialContext runs. Check the URL
+	// here, including each redirect: same fetch shape, no https-to-http
+	// downgrade, and a disallowed host is rejected.
+	proxy := transport.Proxy
+	if proxy == nil {
+		proxy = http.ProxyFromEnvironment
+	}
+	transport.Proxy = func(req *http.Request) (*url.URL, error) {
+		if err := validateChartFetchRequest(req); err != nil {
+			return nil, err
+		}
+		return proxy(req)
+	}
 	return transport, nil
+}
+
+const chartFetchLookupTimeout = 5 * time.Second
+
+func validateChartFetchRequest(req *http.Request) error {
+	if req == nil || req.URL == nil {
+		return errors.New("nil chart URL")
+	}
+	if utils.HTTPSDowngraded(req) {
+		return errors.New("redirect from https to http is not allowed")
+	}
+	if !utils.FetchShapePreserved(req) {
+		return errors.New("invalid chart URL")
+	}
+	if utils.LoopbackDialAllowed() {
+		return nil
+	}
+	ctx := req.Context()
+	if utils.HostDisallowed(req.URL.Hostname(), func(host string) ([]net.IP, error) {
+		ctx, cancel := context.WithTimeout(ctx, chartFetchLookupTimeout)
+		defer cancel()
+		return net.DefaultResolver.LookupIP(ctx, "ip", host)
+	}) {
+		return utils.ErrDisallowedHost
+	}
+	return nil
 }
 
 func chartTLSConfig(opts *action.ChartPathOptions) (*tls.Config, error) {
