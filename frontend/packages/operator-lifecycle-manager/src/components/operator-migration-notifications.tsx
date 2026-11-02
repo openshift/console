@@ -43,12 +43,12 @@ export const useOperatorMigrationNotifications: Awaited<
 > = () => {
   const launchOverlay = useOverlay();
   const { removeToast } = useToast();
-  const toasts = useRef<ReturnType<typeof useOperatorMigrationToastCallbacks>>();
+  const toasts = useRef<ReturnType<typeof useOperatorMigrationToastCallbacks>>(undefined);
   const execution = useRef<{
     controller: AbortController;
     monitors: Map<string, Promise<void>>;
     reported: Set<string>;
-  }>();
+  }>(undefined);
 
   /** Deduplicates job polling under the provider lifetime and forwards updates through current localized callbacks. */
   const monitorMigration = useCallback((job: OperatorMigrationJob): Promise<void> => {
