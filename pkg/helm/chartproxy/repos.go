@@ -154,16 +154,29 @@ func (hr helmRepo) OverwrittenRepoName() string {
 	return ""
 }
 
+// indexFileURL returns the repository index URL. /index.yaml is recognized on
+// the path, so a query string or fragment cannot supply it. A path that
+// already ends in /index.yaml is left unchanged.
+func indexFileURL(repoURL *url.URL) string {
+	u := *repoURL
+	if strings.HasSuffix(u.Path, "/index.yaml") {
+		return u.String()
+	}
+	if !strings.HasSuffix(u.Path, "/") {
+		u.Path += "/"
+	}
+	u.Path += "index.yaml"
+	u.RawPath = ""
+	return u.String()
+}
+
 func (hr helmRepo) IndexFile() (*repo.IndexFile, error) {
 	var indexFile repo.IndexFile
 	httpClient, err := hr.httpClient()
 	if err != nil {
 		return nil, err
 	}
-	indexURL := hr.URL.String()
-	if !strings.HasSuffix(indexURL, "/index.yaml") {
-		indexURL += "/index.yaml"
-	}
+	indexURL := indexFileURL(hr.URL)
 	httpClient.Timeout = time.Duration(5 * time.Second)
 	resp, err := httpClient.Get(indexURL)
 	if err != nil {
