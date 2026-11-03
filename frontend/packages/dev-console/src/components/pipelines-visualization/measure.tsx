@@ -1,5 +1,5 @@
-import type { FC, MutableRefObject } from 'react';
-import { useRef, useState, useCallback, useEffect } from 'react';
+import type { FC, RefCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { getResizeObserver } from '@patternfly/react-core';
 
 interface ContentRect {
@@ -10,7 +10,7 @@ interface ContentRect {
 }
 
 interface MeasuredComponentProps {
-  measureRef: MutableRefObject<HTMLDivElement | null>;
+  measureRef: RefCallback<HTMLDivElement>;
   contentRect: ContentRect;
 }
 
@@ -25,29 +25,37 @@ interface MeasureProps {
  * Limited clone of `react-measure` to measure the bounds of a component
  */
 const MeasureBounds: FC<MeasureProps> = ({ onResize, children }) => {
-  const measureRef = useRef<HTMLDivElement>(null);
+  // The measured node is tracked as state (set through a callback ref during
+  // commit) so that no ref value is handed to the render prop. `measureRef`
+  // is only meant to be attached to the DOM by children, e.g.
+  // `<div ref={measureRef}>`.
+  const [measureNode, setMeasureNode] = useState<HTMLDivElement | null>(null);
   const [contentRect, setContentRect] = useState<ContentRect>({
     bounds: { width: 0, height: 0 },
   });
 
   const updateRect = useCallback(() => {
-    const { width, height } = measureRef?.current?.getBoundingClientRect() ?? {
+    const { width, height } = measureNode?.getBoundingClientRect() ?? {
       width: 0,
       height: 0,
     };
     setContentRect({ bounds: { width, height } });
     onResize && onResize({ bounds: { width, height } });
-  }, [onResize]);
+  }, [onResize, measureNode]);
 
   useEffect(() => {
+    if (!measureNode) {
+      return;
+    }
+    // eslint-disable-next-line react-hooks-js/set-state-in-effect -- contentRect reflects DOM measurements (getBoundingClientRect) that are only available after the element is committed; this initial measurement plus the resize observer subscription is the component's whole purpose, and the setState re-renders with the measured bounds
     updateRect();
-    const resizeObserver = getResizeObserver(measureRef.current, updateRect, true);
+    const resizeObserver = getResizeObserver(measureNode, updateRect, true);
     return () => {
       resizeObserver();
     };
-  }, [updateRect]);
+  }, [updateRect, measureNode]);
 
-  return <>{children && children({ measureRef, contentRect })}</>;
+  return <>{children && children({ measureRef: setMeasureNode, contentRect })}</>;
 };
 
 export default MeasureBounds;
