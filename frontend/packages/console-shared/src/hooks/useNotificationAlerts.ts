@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import * as _ from 'lodash';
 import { HIDE_USER_WORKLOAD_NOTIFICATIONS_USER_PREFERENCE_KEY } from '@console/app/src/consts';
 import { useNamespacedNotificationAlertsPoller } from '@console/app/src/hooks/useNamespacedNotificationAlertsPoller';
@@ -46,9 +46,11 @@ export const useNotificationAlerts = (
     );
   }, [alerts, overrideMatchLabels, hideUserWorkloadNotifications]);
 
-  useEffect(() => {
-    setFilteredAlerts((current) => (_.isEqual(current, next) ? current : next));
-  }, [next]);
+  // The deep-equality check keeps the previous array identity to avoid
+  // re-renders in consumers.
+  if (!_.isEqual(filteredAlerts, next)) {
+    setFilteredAlerts(next);
+  }
   return [filteredAlerts, loaded, loadError];
 };
 
@@ -86,9 +88,11 @@ export const useNamespacedNotificationAlerts = (
     );
   }, [alerts, overrideMatchLabels, hideUserWorkloadNotifications, namespace]);
 
-  useEffect(() => {
-    setFilteredAlerts((current) => (_.isEqual(current, next) ? current : next));
-  }, [next]);
+  // The deep-equality check keeps the previous array identity to avoid
+  // re-renders in consumers.
+  if (!_.isEqual(filteredAlerts, next)) {
+    setFilteredAlerts(next);
+  }
 
   return [filteredAlerts, loaded, loadError];
 };
