@@ -1,5 +1,5 @@
 import type { FC, ReactNode } from 'react';
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import {
   Alert,
   Button,
@@ -274,11 +274,7 @@ export const NeedInstallPlanPermissions: FC<NeedInstallPlanPermissionsProps> = (
   const isOpenShift = useFlag(FLAGS.OPENSHIFT);
   const user = useConsoleSelector<UserInfo>(getUser);
 
-  const [username, setUsername] = useState(updateUser(isOpenShift, user));
-
-  useEffect(() => {
-    setUsername(updateUser(isOpenShift, user));
-  }, [isOpenShift, user]);
+  const username = updateUser(isOpenShift, user);
 
   const { t } = useTranslation('olm');
 
