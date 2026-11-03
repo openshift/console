@@ -1,5 +1,5 @@
 import type { FC, ReactElement } from 'react';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import type { QuickStart } from '@patternfly/quickstarts';
 import { FormSection } from '@patternfly/react-core';
 import { DualListSelector } from '@patternfly/react-core/deprecated';
@@ -59,11 +59,12 @@ const QuickStartConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
   const [consoleConfig, consoleConfigLoaded, consoleConfigError] =
     useConsoleOperatorConfig<DisabledQuickStartsConsoleConfig>();
   const [disabled, setDisabled] = useState<string[]>();
-  useEffect(() => {
-    if (consoleConfig && consoleConfigLoaded && !disabled) {
-      setDisabled(consoleConfig?.spec?.customization?.quickStarts?.disabled || []);
-    }
-  }, [consoleConfig, consoleConfigLoaded, disabled]);
+  // Initialize the disabled list from the console operator config once it has
+  // loaded; afterwards the list is owned by this component (edited via the
+  // dual list selector) and is never overwritten.
+  if (consoleConfig && consoleConfigLoaded && disabled === undefined) {
+    setDisabled(consoleConfig?.spec?.customization?.quickStarts?.disabled || []);
+  }
 
   // Calculate options
   const enabledOptions = useMemo<React.ReactElement<ItemProps>[]>(() => {
