@@ -31,7 +31,7 @@
   "Edit service account name": "Edit service account name",
   "Edit ServiceAccount Name": "Edit ServiceAccount Name",
   "Edit version": "Edit version",
-  "For example, 1.2.3 for an exact version, or >1.2.3 <1.4.5 for a range": "For example, 1.2.3 for an exact version, or >1.2.3 <1.4.5 for a range",
+  "For example: 1.2.3 for an exact version, or >1.2.3 <1.4.5 for a range": "For example: 1.2.3 for an exact version, or >1.2.3 <1.4.5 for a range",
   "For example: stable, beta": "For example: stable, beta",
   "Installed Operators": "Installed Operators",
   "Name": "Name",

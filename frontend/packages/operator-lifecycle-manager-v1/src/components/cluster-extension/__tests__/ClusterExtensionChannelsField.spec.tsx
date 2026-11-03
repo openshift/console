@@ -15,7 +15,7 @@ describe('ClusterExtensionChannelsField', () => {
     renderWithProviders(
       <ClusterExtensionChannelsField fieldId="channels" values={[]} onChange={jest.fn()} />,
     );
-    await verifyInputField({ inputLabel: 'Channels', helpText: 'For example, stable, beta' });
+    await verifyInputField({ inputLabel: 'Channels', helpText: 'For example: stable, beta' });
   });
 
   it('focuses input when clicking its visible label', async () => {

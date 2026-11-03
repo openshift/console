@@ -1,4 +1,4 @@
-import type { ChangeEvent } from 'react';
+import type { ChangeEvent, KeyboardEvent } from 'react';
 import { Component } from 'react';
 import { Label as PfLabel } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
@@ -148,6 +148,13 @@ export class SelectorInput extends Component<SelectorInputProps, SelectorInputSt
     this.setState({ inputValue, isInputValid: isValid });
   };
 
+  handleKeyDownCapture = (e: KeyboardEvent<HTMLDivElement>) => {
+    if (e.nativeEvent.isComposing) {
+      // Leave IME keys to the browser instead of adding or removing tags.
+      e.stopPropagation();
+    }
+  };
+
   handleChange = (tags: string[], changed: string[]) => {
     // The way we use TagsInput, there should only ever be one new tag in changed
     const newTag = changed[0];
@@ -206,7 +213,7 @@ export class SelectorInput extends Component<SelectorInputProps, SelectorInputSt
     );
 
     return (
-      <div className="pf-v6-c-form-control">
+      <div className="pf-v6-c-form-control" onKeyDownCapture={this.handleKeyDownCapture}>
         <div className="co-tags-input">
           <TagsInput
             ref={this.setRef}

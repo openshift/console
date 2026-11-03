@@ -47,7 +47,7 @@ export const ClusterExtensionVersionField: FC<VersionFieldProps> = ({
       <FormHelperText>
         <HelperText>
           <HelperTextItem>
-            {t('For example, 1.2.3 for an exact version, or >1.2.3 <1.4.5 for a range')}
+            {t('For example: 1.2.3 for an exact version, or >1.2.3 <1.4.5 for a range')}
           </HelperTextItem>
         </HelperText>
       </FormHelperText>
