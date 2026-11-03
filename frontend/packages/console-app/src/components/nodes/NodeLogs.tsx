@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { FC, Ref } from 'react';
 import type { MenuToggleElement, SelectProps } from '@patternfly/react-core';
 import {
@@ -195,7 +195,6 @@ const NodeLogs: FC<NodeLogsProps> = ({ obj: node }) => {
   const logQueryArgument = 'log';
 
   const [path, setPath] = useState(getQueryArgument(pathQueryArgument) || pathItems[0]);
-  const [logURL, setLogURL] = useState('');
   const [logFilenames, setLogFilenames] = useState([]);
   const [unit, setUnit] = useState(getQueryArgument(unitQueryArgument));
   const [logFilename, setLogFilename] = useState(getQueryArgument(logQueryArgument));
@@ -205,8 +204,6 @@ const NodeLogs: FC<NodeLogsProps> = ({ obj: node }) => {
   const [isPathOpen, setPathOpen] = useState(false);
   const [isFilenameOpen, setFilenameOpen] = useState(false);
   const [content, setContent] = useState('');
-  const [trimmedContent, setTrimmedContent] = useState('');
-  const [lineCount, setLineCount] = useState(0);
   const [isWrapLines, setWrapLines] = useUserPreference<boolean>(
     LOG_WRAP_LINES_USER_PREFERENCE_KEY,
     false,
@@ -262,36 +259,33 @@ const NodeLogs: FC<NodeLogsProps> = ({ obj: node }) => {
     [kind, name, ns, path],
   );
 
+  const logURL =
+    !path || isJournal ? getLogURL('', unit) : logFilename ? getLogURL(`/${logFilename}`) : '';
+
   useEffect(() => {
     if (!path || isJournal) {
-      const journalLogURL = getLogURL('', unit);
-      setLogURL(journalLogURL);
-    } else {
-      if (path && logFilename) {
-        const logFilenameURL = getLogURL(`/${logFilename}`);
-        setLogURL(logFilenameURL);
-      }
-      coFetch(getLogURL())
-        .then((response) => response.text())
-        .then((responseText) => {
-          const parser = new DOMParser();
-          const doc = parser.parseFromString(responseText, 'text/html');
-          const links = !isWindows
-            ? doc.querySelectorAll('a[href^="audit"]')
-            : doc.querySelectorAll('a');
-          const filenames = [];
-          for (const link of links) {
-            filenames.push(link.textContent);
-          }
-          setLogFilenames(filenames);
-          setLoadingFilenames(false);
-        })
-        .catch((e) => {
-          setLoadingLog(false);
-          setLoadingFilenames(false);
-          setError(t('Error fetching log filenames: {{message}}', { message: e.message }));
-        });
+      return;
     }
+    coFetch(getLogURL())
+      .then((response) => response.text())
+      .then((responseText) => {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(responseText, 'text/html');
+        const links = !isWindows
+          ? doc.querySelectorAll('a[href^="audit"]')
+          : doc.querySelectorAll('a');
+        const filenames = [];
+        for (const link of links) {
+          filenames.push(link.textContent);
+        }
+        setLogFilenames(filenames);
+        setLoadingFilenames(false);
+      })
+      .catch((e) => {
+        setLoadingLog(false);
+        setLoadingFilenames(false);
+        setError(t('Error fetching log filenames: {{message}}', { message: e.message }));
+      });
   }, [kind, name, ns, path, isJournal, isWindows, logFilename, getLogURL, t, unit]);
 
   useEffect(() => {
@@ -300,16 +294,16 @@ const NodeLogs: FC<NodeLogsProps> = ({ obj: node }) => {
     }
   }, [logURL, fetchLog]);
 
-  useEffect(() => {
+  const { trimmedContent, lineCount } = useMemo(() => {
     if (content.length > MAX_LINE_LENGTH) {
       const index = content.indexOf('\n', content.length - MAX_LINE_LENGTH);
       const newTrimmedContent = content.substr(index + 1);
-      setTrimmedContent(newTrimmedContent);
-      setLineCount(newTrimmedContent.split('\n').length);
-    } else {
-      setTrimmedContent('');
-      setLineCount(content.split('\n').length);
+      return {
+        trimmedContent: newTrimmedContent,
+        lineCount: newTrimmedContent.split('\n').length,
+      };
     }
+    return { trimmedContent: '', lineCount: content.split('\n').length };
   }, [content]);
 
   const onChangePath: SelectProps['onSelect'] = (event, newAPI: string) => {
@@ -338,7 +332,6 @@ const NodeLogs: FC<NodeLogsProps> = ({ obj: node }) => {
     setLogFilename(newFilename);
     setLoadingLog(true);
     setQueryArgument(logQueryArgument, newFilename);
-    setLogURL(getLogURL(`/${newFilename}`));
   };
   const onToggleFilename = () => setFilenameOpen(!isFilenameOpen);
   const errorExists = error.length > 0;
