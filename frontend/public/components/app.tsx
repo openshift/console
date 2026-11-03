@@ -106,8 +106,8 @@ const App: FC = () => {
 
   const isMobile = () => window.innerWidth < PF_BREAKPOINT_MD;
 
-  const [prevLocation, setPrevLocation] = useState(location);
-  const [prevParams, setPrevParams] = useState(params);
+  const prevLocation = useRef(location);
+  const prevParams = useRef(params);
 
   const [isMastheadStacked, setIsMastheadStacked] = useState(isMobile());
   const [isNavOpen, setIsNavOpen] = useState(isDesktop());
@@ -139,15 +139,15 @@ const App: FC = () => {
 
   useLayoutEffect(() => {
     // Prevent infinite loop in case React Router decides to destroy & recreate the component (changing key)
-    const oldLocation = _.omit(prevLocation, ['key']);
+    const oldLocation = _.omit(prevLocation.current, ['key']);
     const newLocation = _.omit(location, ['key']);
-    if (_.isEqual(newLocation, oldLocation) && _.isEqual(params, prevParams)) {
+    if (_.isEqual(newLocation, oldLocation) && _.isEqual(params, prevParams.current)) {
       return;
     }
     const { pathname } = location;
     store.dispatch(UIActions.setCurrentLocation(pathname));
-    setPrevLocation(location);
-    setPrevParams(params);
+    prevLocation.current = location;
+    prevParams.current = params;
   }, [location, params, prevLocation, prevParams]);
 
   const dispatch = useConsoleDispatch();
