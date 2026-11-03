@@ -1,5 +1,5 @@
 import type { FC, ReactNode } from 'react';
-import { useRef, useEffect, useState, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { Accordion, Button } from '@patternfly/react-core';
 import { RhUiPauseIcon, RhUiPlayIcon } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
@@ -43,17 +43,19 @@ const RecentEventsBodyContent: FC<RecentEventsBodyContentProps> = ({
   setPaused,
 }) => {
   const { t } = useTranslation('console-shared');
-  const ref = useRef<EventKind[]>([]);
-  useEffect(() => {
-    if (paused && eventsData) {
-      ref.current = eventsData;
-    }
-    // eslint-disable-next-line react-hooks-js/exhaustive-deps
-  }, [paused]);
-  if (!paused && eventsData) {
-    ref.current = eventsData;
+  // Snapshot of the events to keep displaying while the feed is paused,
+  // captured during render when `paused` flips on.
+  const [pausedEvents, setPausedEvents] = useState<{ isPaused: boolean; events: EventKind[] }>({
+    isPaused: false,
+    events: [],
+  });
+  if (paused !== pausedEvents.isPaused) {
+    setPausedEvents({
+      isPaused: paused,
+      events: paused ? (eventsData ?? pausedEvents.events) : pausedEvents.events,
+    });
   }
-  const currentEventsData = ref.current;
+  const currentEventsData = paused ? pausedEvents.events : (eventsData ?? pausedEvents.events);
   const [expanded, setExpanded] = useState<string[]>([]);
   const onToggle = useCallback(
     (uid: string) => {
