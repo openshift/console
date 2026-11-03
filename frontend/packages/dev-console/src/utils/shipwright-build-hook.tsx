@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useMemo } from 'react';
 import { ImportStrategy } from '@console/git-service/src/types/git';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
@@ -15,11 +15,6 @@ export interface AvailableBuildStrategies {
 }
 
 export const useClusterBuildStrategy = (): [AvailableBuildStrategies, boolean] => {
-  const [data, setData] = useState<AvailableBuildStrategies>({
-    s2i: false,
-    buildah: false,
-  });
-  const [loaded, setLoaded] = useState<boolean>(false);
   const [, s2iLoaded, s2iErr] = useK8sGet<K8sResourceKind>(
     ClusterBuildStrategyModel,
     ClusterBuildStrategy.S2I,
@@ -29,28 +24,17 @@ export const useClusterBuildStrategy = (): [AvailableBuildStrategies, boolean] =
     ClusterBuildStrategy.BUILDAH,
   );
 
-  useEffect(() => {
-    if (s2iLoaded && buildahLoaded) {
-      setLoaded(true);
-    }
-  }, [s2iLoaded, buildahLoaded]);
-
-  useEffect(() => {
-    if (loaded) {
-      if (!s2iErr) {
-        setData((prevData) => ({
-          ...prevData,
-          s2i: true,
-        }));
-      }
-      if (!buildahErr) {
-        setData((prevData) => ({
-          ...prevData,
-          buildah: true,
-        }));
-      }
-    }
-  }, [loaded, s2iErr, buildahErr]);
+  // Both strategies are fetched exactly once (constant name/namespace), so
+  // `loaded` and the availability map are derived directly from the fetch
+  // results. The map is memoized on the effective availability booleans so
+  // pending-state error churn does not recreate it.
+  const loaded = s2iLoaded && buildahLoaded;
+  const s2iAvailable = loaded && !s2iErr;
+  const buildahAvailable = loaded && !buildahErr;
+  const data: AvailableBuildStrategies = useMemo(
+    () => ({ s2i: s2iAvailable, buildah: buildahAvailable }),
+    [s2iAvailable, buildahAvailable],
+  );
 
   return [data, loaded];
 };
