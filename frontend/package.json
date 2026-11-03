@@ -184,6 +184,10 @@
     "typescript": "5.9.3",
     "webpack": "^5.100.0"
   },
+  "resolutions": {
+    "eslint-plugin-import/minimatch": "8.0.7",
+    "minimatch": "11.0.3"
+  },
   "engines": {
     "node": ">=22.16.0"
   },
