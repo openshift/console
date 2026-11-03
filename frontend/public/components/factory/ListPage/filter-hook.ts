@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import * as _ from 'lodash';
 import { useLocation } from 'react-router';
 import { useExactSearch } from '@console/app/src/components/user-preferences/search/useExactSearch';
@@ -27,13 +27,15 @@ export const useListPageFilter: UseListPageFilter = (data, rowFilters, staticFil
   const [isExactSearch] = useExactSearch();
   const location = useLocation();
 
-  useEffect(() => {
+  const [prevLocation, setPrevLocation] = useState<ReturnType<typeof useLocation> | null>(null);
+  if (prevLocation !== location) {
+    setPrevLocation(location);
     const params = new URLSearchParams(location.search);
     const name = params.get('name');
     if (!_.isNil(name) && name !== filter?.name?.selected?.[0]) {
       setFilter((state) => ({ ...state, name: { selected: [name] } }));
     }
-  }, [filter, location]);
+  }
 
   const onFilterChange = useCallback(
     (type, value) => setFilter((state) => ({ ...state, [type]: value })),
