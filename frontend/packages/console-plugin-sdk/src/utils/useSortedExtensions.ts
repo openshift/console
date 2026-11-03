@@ -44,9 +44,10 @@ export const useSortedExtensions = <TExtension extends Extension>(
     const currentUIDs = sorted.map((e) => e.uid).join(',');
 
     // Return previous result if the extensions haven't changed
+    // eslint-disable-next-line react-hooks-js/refs -- custom memoization: reads previous UIDs during render to keep the result referentially stable
     if (currentUIDs === prevUIDsRef.current) {
-      // eslint-disable-line react-hooks-js/refs -- compares previous UIDs for referential stability
-      return prevResultRef.current; // eslint-disable-line react-hooks-js/refs -- returns cached result when UIDs unchanged
+      // eslint-disable-next-line react-hooks-js/refs -- custom memoization: returns the cached result when UIDs are unchanged
+      return prevResultRef.current;
     }
 
     // Update refs and return new result
