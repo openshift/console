@@ -65,6 +65,7 @@ const DockerSection: FC = () => {
       if (dockerfileStrategy) {
         setFieldValue('import.selectedStrategy.detectedFiles', dockerfileStrategy.detectedFiles);
         setFieldValue('docker.dockerfilePath', dockerfileStrategy.detectedFiles?.[0]);
+        // eslint-disable-next-line react-hooks-js/set-state-in-effect -- handleDockerfileChange is async: setValidated runs in a promise continuation after the git service lookup resolves, not synchronously during this effect
         handleDockerfileChange();
         validated === ValidatedOptions.success
           ? setFieldValue('import.strategyChanged', true)
