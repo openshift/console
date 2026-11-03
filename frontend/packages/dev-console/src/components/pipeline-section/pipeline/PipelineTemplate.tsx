@@ -205,6 +205,7 @@ const PipelineTemplate: FC<PipelineTemplateProps> = ({ builderImages, existingPi
 
     fetchPipelineTemplate();
     if (!isPipelineAttached && !isPipelineTypeChanged) {
+      // eslint-disable-next-line react-hooks-js/set-state-in-effect -- pipeline-type detection is async work that belongs in this effect: setState runs from the awaited git-service continuation, and the synchronous short-circuit paths (no git URL / PAC disabled) only mirror the already-known result and set the one-time isPipelineTypeChanged latch
       handlePipelineTypeChange();
     }
     return () => {
