@@ -34,6 +34,7 @@ const TopologyDataRetriever: FC<TopologyDataRetrieverProps> = ({ trafficData }) 
 
   // Wipe the current model on a namespace change
   useEffect(() => {
+    // eslint-disable-next-line react-hooks-js/immutability -- the ModelContext value is a mutable MobX-backed model store by design (see ExtensibleModel); resetting its model on a namespace change is an intentional store mutation that cannot be derived during render
     dataModelContext.model = null;
     // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [namespace]);
