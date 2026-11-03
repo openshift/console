@@ -153,9 +153,9 @@ func WithTLSCipherSuites(cipherSuites []uint16) Option {
 	}
 }
 
-// WithDisableHTTP2 restricts the transport to HTTP/1.1, including after CA reload.
+// WithDisabledHTTP2 restricts the transport to HTTP/1.1, including after CA reload.
 // Use it when an HTTPS proxy advertises HTTP/2 but requires HTTP/1.1 CONNECT.
-func WithDisableHTTP2() Option {
+func WithDisabledHTTP2() Option {
 	return func(config *Config) error {
 		config.disableHTTP2 = true
 		return nil
