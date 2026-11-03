@@ -70,7 +70,6 @@ export const Terminal = forwardRef<ImperativeTerminalType, TerminalProps>(
       setDimensions({ width: `${width}px`, height: `${height}px` });
     }, [isFullscreen, padding]);
 
-
     useEffect(() => {
       const term = new XTerminal({ ...options });
 
