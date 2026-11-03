@@ -15723,10 +15723,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"immutable@npm:3.8.3":
-  version: 3.8.3
-  resolution: "immutable@npm:3.8.3"
-  checksum: 10c0/bafa7b8371b7622bc3d128cd9e6bba3a654b968f09a237929629f43ac26f7e974a5879cd38baad0c26f6f0628753968611bf832add7bf0c44d647bf4306a2988
+"immutable@npm:3.8.4":
+  version: 3.8.4
+  resolution: "immutable@npm:3.8.4"
+  checksum: 10c0/fffbd0bf4ecf6cfed6b3444d2da740f171dd7c228d913d2cc81fc2782c10df0f6f7d822c926d38dd5fb5d91fcfce5c5482a8027817f07a5ed870b057271a3b8a
   languageName: node
   linkType: hard
 
@@ -20747,7 +20747,7 @@ __metadata:
     i18next-parser: "npm:^6.5.0"
     i18next-pseudo: "npm:^2.2.0"
     i18next-v4-format-converter: "npm:^1.0.3"
-    immutable: "npm:^3.8.3"
+    immutable: "npm:^3.8.4"
     istextorbinary: "npm:^9.5.0"
     jasmine-console-reporter: "npm:2.x"
     jasmine-core: "npm:2.x"
