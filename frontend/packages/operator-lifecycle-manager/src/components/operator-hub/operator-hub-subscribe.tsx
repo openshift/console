@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   ActionGroup,
   Alert,
@@ -233,43 +233,52 @@ const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
   });
   const csvPlugins = getClusterServiceVersionPlugins(currentCSVDesc?.annotations);
 
-  const initializationResourceReference = useMemo(
-    () => (initializationResource ? referenceFor(initializationResource) : null),
-    [initializationResource],
-  );
+  const initializationResourceReference = initializationResource
+    ? referenceFor(initializationResource)
+    : null;
 
   const globalNS =
     (props.operatorGroup?.data || ([] as OperatorGroupKind[])).find(
       (og) => og.metadata.name === 'global-operators',
     )?.metadata?.namespace || 'openshift-operators';
 
-  let selectedTargetNamespace = targetNamespace || props.targetNamespace;
   const operatorSuggestedNamespace = suggestedNamespaceTemplateName || suggestedNamespace;
 
-  if (selectedInstallMode === InstallModeType.InstallModeTypeAllNamespaces) {
-    if (operatorSuggestedNamespace) {
-      selectedTargetNamespace = targetNamespace || operatorSuggestedNamespace;
-    } else {
-      selectedTargetNamespace = targetNamespace || globalNS;
-    }
-  }
-  if (
-    selectedInstallMode === InstallModeType.InstallModeTypeOwnNamespace &&
-    props.targetNamespace === globalNS
-  ) {
-    selectedTargetNamespace = targetNamespace || '';
-  }
+  const selectedTargetNamespace =
+    selectedInstallMode === InstallModeType.InstallModeTypeAllNamespaces
+      ? targetNamespace || operatorSuggestedNamespace || globalNS
+      : selectedInstallMode === InstallModeType.InstallModeTypeOwnNamespace &&
+          props.targetNamespace === globalNS
+        ? targetNamespace || ''
+        : targetNamespace || props.targetNamespace;
 
   const isSuggestedNamespaceSelected =
     operatorSuggestedNamespace && operatorSuggestedNamespace === selectedTargetNamespace;
   const showSuggestedNamespaceDetails =
     !suggestedNamespaceExistsInFlight && isSuggestedNamespaceSelected;
+
+  // When the suggested namespace changes (including on mount), preselect it
+  // and clear the in-flight flag; the namespace existence check is a server
+  // lookup and runs in the effect below. The previous-key state starts as
+  // `undefined` so the mount pass always runs, matching the old effect's
+  // unconditional reset when there is no suggested namespace.
+  const [prevSuggestedNamespace, setPrevSuggestedNamespace] = useState<string | null | undefined>(
+    undefined,
+  );
+  const suggestedNamespaceKey = operatorSuggestedNamespace ?? null;
+  if (prevSuggestedNamespace !== suggestedNamespaceKey) {
+    setPrevSuggestedNamespace(suggestedNamespaceKey);
+    if (suggestedNamespaceKey) {
+      setTargetNamespace(suggestedNamespaceKey);
+    } else {
+      setSuggestedNamespaceExistsInFlight(false);
+    }
+  }
+
   useEffect(() => {
     if (!operatorSuggestedNamespace) {
-      setSuggestedNamespaceExistsInFlight(false);
-      return;
+      return undefined;
     }
-    setTargetNamespace(operatorSuggestedNamespace);
     k8sGet(NamespaceModel, operatorSuggestedNamespace)
       .then(() => {
         setSuggestedNamespaceExists(true);
@@ -300,28 +309,46 @@ const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
     selectedTargetNamespace,
   ]);
 
-  useEffect(() => {
+  // Reset the enabled plugin list whenever the catalog source or the CSV's
+  // plugin annotation changes. The key uses the annotation's JSON string so
+  // it is compared by value; checkbox changes made in between are kept until
+  // the key changes again.
+  const [prevPluginsKey, setPrevPluginsKey] = useState<string | null>(null);
+  const pluginsKey = JSON.stringify([
+    catalogSource,
+    currentCSVDesc?.annotations?.['console.openshift.io/plugins'],
+  ]);
+  if (prevPluginsKey !== pluginsKey) {
+    setPrevPluginsKey(pluginsKey);
     setEnabledPlugins(isCatalogSourceTrusted(catalogSource) ? csvPlugins : []);
-    // Use the JSON string directly from the annotation so the dependency is compared using string comparison
-    // eslint-disable-next-line react-hooks-js/exhaustive-deps
-  }, [catalogSource, currentCSVDesc?.annotations?.['console.openshift.io/plugins']]);
+  }
 
   const manualSubscriptionsInNamespace = getManualSubscriptionsInNamespace(
     props.subscription.data,
     selectedTargetNamespace,
   );
 
-  useEffect(() => {
-    if (
+  // Force the approval strategy whenever one of these inputs changes; the
+  // user can still switch the strategy until an input changes again.
+  const [prevApprovalKey, setPrevApprovalKey] = useState<string | null>(null);
+  const approvalKey = JSON.stringify([
+    version,
+    currentLatestVersion,
+    manualSubscriptionsInNamespace?.length,
+    tokenizedAuth,
+  ]);
+  if (prevApprovalKey !== approvalKey) {
+    setPrevApprovalKey(approvalKey);
+    setApproval(
       version !== currentLatestVersion ||
-      manualSubscriptionsInNamespace?.length > 0 ||
-      tokenizedAuth === 'AWS' ||
-      tokenizedAuth === 'Azure' ||
-      tokenizedAuth === 'GCP'
-    ) {
-      setApproval(InstallPlanApproval.Manual);
-    } else setApproval(InstallPlanApproval.Automatic);
-  }, [version, currentLatestVersion, manualSubscriptionsInNamespace?.length, tokenizedAuth]);
+        manualSubscriptionsInNamespace?.length > 0 ||
+        tokenizedAuth === 'AWS' ||
+        tokenizedAuth === 'Azure' ||
+        tokenizedAuth === 'GCP'
+        ? InstallPlanApproval.Manual
+        : InstallPlanApproval.Automatic,
+    );
+  }
 
   const singleInstallMode = installModes.find(
     (m) => m.type === InstallModeType.InstallModeTypeOwnNamespace,
@@ -332,14 +359,11 @@ const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
   );
   const supportsGlobal = globalInstallMode && globalInstallMode.supported;
 
-  const navigateToInstallPage = useCallback(
-    (csvName: string) => {
-      navigate(
-        `/operatorhub/install/${catalogNamespace}/${catalog}/${pkg}/${csvName}/to/${selectedTargetNamespace}`,
-      );
-    },
-    [catalog, catalogNamespace, navigate, pkg, selectedTargetNamespace],
-  );
+  const navigateToInstallPage = (csvName: string) => {
+    navigate(
+      `/operatorhub/install/${catalogNamespace}/${catalog}/${pkg}/${csvName}/to/${selectedTargetNamespace}`,
+    );
+  };
 
   if (!supportsSingle && !supportsGlobal) {
     return (
