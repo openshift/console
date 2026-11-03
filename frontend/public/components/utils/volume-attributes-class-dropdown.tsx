@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Alert } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
 import * as fuzzy from 'fuzzysearch';
@@ -10,7 +10,7 @@ import { FLAGS } from '@console/shared/src/constants/common';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { VolumeAttributesClassModel } from '../../models';
 import type { VolumeAttributesClassKind } from '../../module/k8s';
-import { LoadingInline, ResourceName, ResourceIcon } from '.';
+import { ResourceName, ResourceIcon } from './resource-icon';
 
 const getTitle = (vac: VolumeAttributesClassDropdownItem): React.ReactNode =>
   vac.kindLabel ? <ResourceName kind={vac.kindLabel} name={vac.name} /> : <span>{vac.name}</span>;
@@ -44,8 +44,6 @@ const VolumeAttributesClassDropdownInner: FC<VolumeAttributesClassDropdownInnerP
   loaded,
   loadError,
   resources,
-  name,
-  desc,
   selectedKey: propsSelectedKey,
   dataTest,
   describedBy,
@@ -53,32 +51,26 @@ const VolumeAttributesClassDropdownInner: FC<VolumeAttributesClassDropdownInnerP
   hideClassName,
   onChange: onChangeCallback,
   filter,
-  noSelection = false,
 }) => {
   const { t } = useTranslation('public');
   const placeholderTitle = useMemo(
     () => <span className="pf-v6-u-text-color-subtle">{t('Select VolumeAttributesClass')}</span>,
     [t],
   );
-  const [state, setState] = useState<VolumeAttributesClassDropdownInnerState>({
-    items: {},
-    name,
-    selectedKey: propsSelectedKey,
-    title: <LoadingInline />,
-  });
 
-  useEffect(() => {
-    if (loadError) {
-      return;
-    }
-    if (!loaded) {
-      return;
+  // The dropdown is controlled by propsSelectedKey: reset the local selection
+  // when it diverges. Consumers update their selectedKey prop from the
+  // onChange callback.
+  const [selectedKey, setSelectedKey] = useState(propsSelectedKey);
+  if (selectedKey !== propsSelectedKey) {
+    setSelectedKey(propsSelectedKey);
+  }
+
+  const items = useMemo<{ [key: string]: VolumeAttributesClassDropdownItem }>(() => {
+    if (!loaded || loadError) {
+      return {};
     }
 
-    const newState: Partial<VolumeAttributesClassDropdownInnerState> = {
-      items: {},
-      title: undefined,
-    };
     let unorderedItems: Record<string, VolumeAttributesClassDropdownItem> = {};
     const vacData = resources?.VolumeAttributesClass?.data || [];
 
@@ -102,44 +94,21 @@ const VolumeAttributesClassDropdownInner: FC<VolumeAttributesClassDropdownInnerP
         }, {});
     }
 
-    const { selectedKey } = state;
-    if (!loaded || !selectedKey || !unorderedItems[selectedKey]) {
-      newState.title = placeholderTitle;
-    }
-
-    const selectedItem = unorderedItems[selectedKey];
-    if (selectedItem) {
-      newState.title = getTitle(selectedItem);
-    }
-
     const sortedItems: Record<string, VolumeAttributesClassDropdownItem> = {};
     Object.keys(unorderedItems)
       .sort()
       .forEach((key) => {
         sortedItems[key] = unorderedItems[key];
       });
-    newState.items = sortedItems;
+    return sortedItems;
+  }, [loaded, loadError, resources, filter]);
 
-    setState((prevState) => ({ ...prevState, ...newState }));
-    // eslint-disable-next-line react-hooks-js/exhaustive-deps
-  }, [loaded, loadError, resources, filter, t, desc, noSelection]);
-
-  useEffect(() => {
-    if (propsSelectedKey !== state.selectedKey) {
-      const { items } = state;
-      const title = items[propsSelectedKey] ? getTitle(items[propsSelectedKey]) : placeholderTitle;
-      setState((prevState) => ({ ...prevState, selectedKey: propsSelectedKey, title }));
-    }
-  }, [propsSelectedKey, state, placeholderTitle]);
+  const title = items[selectedKey] ? getTitle(items[selectedKey]) : placeholderTitle;
 
   const onChange = (key: string) => {
-    const vac = state.items?.[key];
+    const vac = items[key];
     if (vac) {
-      setState((prevState) => ({
-        ...prevState,
-        selectedKey: key,
-        title: getTitle(vac),
-      }));
+      setSelectedKey(key);
       if (onChangeCallback) {
         onChangeCallback(key, vac);
       }
@@ -149,11 +118,9 @@ const VolumeAttributesClassDropdownInner: FC<VolumeAttributesClassDropdownInnerP
   const autocompleteFilter = (text: string, item: React.ReactElement<{ name: string }>) =>
     fuzzy(text, item.props.name);
   const dropdownItems: Record<string, React.ReactNode> = {};
-  Object.entries(state.items).forEach(([key, itemProps]) => {
+  Object.entries(items).forEach(([key, itemProps]) => {
     dropdownItems[key] = <VolumeAttributesClassDropdownEntry {...itemProps} />;
   });
-
-  const { selectedKey } = state;
 
   return (
     <>
@@ -179,7 +146,7 @@ const VolumeAttributesClassDropdownInner: FC<VolumeAttributesClassDropdownInnerP
             autocompletePlaceholder={t('Select VolumeAttributesClass')}
             items={dropdownItems}
             selectedKey={selectedKey || ''}
-            title={state.title}
+            title={title}
             alwaysShowTitle
             onChange={onChange}
             id={id}
@@ -261,13 +228,6 @@ type VolumeAttributesClassDropdownItem = {
   driverName?: string;
   parameters?: { [key: string]: string };
   resource?: VolumeAttributesClassKind;
-};
-
-type VolumeAttributesClassDropdownInnerState = {
-  items: { [key: string]: VolumeAttributesClassDropdownItem };
-  name: string;
-  selectedKey: string;
-  title: React.ReactNode;
 };
 
 export type VolumeAttributesClassDropdownProps = Omit<
