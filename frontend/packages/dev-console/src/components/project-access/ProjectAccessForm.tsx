@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Form, TextInputTypes } from '@patternfly/react-core';
 import type { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
@@ -62,15 +62,19 @@ const ProjectAccessForm: FC<ProjectAccessFormProps> = ({
   const [isStaleInfo, setIsStaleInfo] = useState<boolean>(false);
   const disableSubmit = !dirty || !_.isEmpty(errors) || isSubmitting;
 
-  useEffect(() => {
-    !_.isEqual(
-      ignoreRoleBindingName(roleBindings.projectAccess),
-      ignoreRoleBindingName(initialValues.projectAccess),
-    )
-      ? setIsStaleInfo(true)
-      : setIsStaleInfo(false);
-    // eslint-disable-next-line react-hooks-js/exhaustive-deps
-  }, [roleBindings]);
+  // Detect when the live role bindings are updated after this form was
+  // initialized, so the user can be asked to reload the form. The banner is
+  // dismissed explicitly via onReload below.
+  const [prevRoleBindings, setPrevRoleBindings] = useState(roleBindings);
+  if (roleBindings !== prevRoleBindings) {
+    setPrevRoleBindings(roleBindings);
+    setIsStaleInfo(
+      !_.isEqual(
+        ignoreRoleBindingName(roleBindings.projectAccess),
+        ignoreRoleBindingName(initialValues.projectAccess),
+      ),
+    );
+  }
 
   const onReload = () => {
     handleReset();
