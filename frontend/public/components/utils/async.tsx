@@ -79,8 +79,8 @@ export const AsyncComponent = <C extends ComponentType>({
   // eslint-disable-next-line react-hooks-js/refs -- Synchronous lazy component initialization requires render-time ref access for custom loader comparison
   if (!sameLoader(loaderRef.current, loader)) {
     loaderRef.current = loader; // eslint-disable-line react-hooks-js/refs -- tracks current loader for comparison on next render
+    // eslint-disable-next-line react-hooks-js/refs -- creates the lazy component synchronously when the loader changes, matching the loaderRef write above
     lazyComponentRef.current = lazy(() =>
-      // eslint-disable-line react-hooks-js/refs -- creates lazy component synchronously when loader changes
       withRetry(loader)().then((module) => ({ default: module })),
     );
   }
