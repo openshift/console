@@ -62,8 +62,8 @@ export const useK8sWatchResources: UseK8sWatchResources = (initResources) => {
     const requiredModels = Object.values(resources).map((r) =>
       transformGroupVersionKindToReference(r.groupVersionKind || r.kind),
     );
+    // eslint-disable-next-line react-hooks-js/refs -- custom memoization: conditionally updates ref to avoid re-triggering watches
     k8sModelsRef.current = Object.fromEntries(
-      // eslint-disable-line react-hooks-js/refs -- custom memoization: conditionally updates ref to avoid re-triggering watches
       Object.entries(allK8sModels ?? {}).filter(
         ([, model]) =>
           requiredModels.includes(getReferenceForModel(model)) ||
@@ -79,7 +79,8 @@ export const useK8sWatchResources: UseK8sWatchResources = (initResources) => {
   }>(
     () =>
       modelsLoaded
-        ? Object.keys(resources).reduce((ids, key) => {
+        ? // eslint-disable-next-line react-hooks-js/refs -- reads the ref-backed memoized models map above; the useMemo factory runs synchronously during render by design
+          Object.keys(resources).reduce((ids, key) => {
             const modelReference = transformGroupVersionKindToReference(
               resources[key].groupVersionKind || resources[key].kind,
             );
