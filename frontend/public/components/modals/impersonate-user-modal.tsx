@@ -1,5 +1,5 @@
 import type { FC, KeyboardEvent, ReactNode, Ref, MouseEvent } from 'react';
-import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
+import { useState, useMemo, useCallback, useRef } from 'react';
 import type { MenuToggleElement } from '@patternfly/react-core';
 import {
   Button,
@@ -298,8 +298,10 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
     }
   };
 
-  // Reset form when modal opens with new prefilled username
-  useEffect(() => {
+  // Reset form when the modal opens with a new prefilled username.
+  const [lastResetKey, setLastResetKey] = useState({ isOpen, prefilledUsername });
+  if (lastResetKey.isOpen !== isOpen || lastResetKey.prefilledUsername !== prefilledUsername) {
+    setLastResetKey({ isOpen, prefilledUsername });
     if (isOpen) {
       setImpersonateKind('User');
       setUsername(prefilledUsername);
@@ -312,14 +314,16 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
       setGroupSearchFilter('');
       setShowAllGroups(false);
     }
-  }, [isOpen, prefilledUsername]);
+  }
 
   // Reset showAllGroups when selected groups drop to or below MAX_VISIBLE_CHIPS
-  useEffect(() => {
+  const [lastSelectedGroupsLength, setLastSelectedGroupsLength] = useState(selectedGroups.length);
+  if (lastSelectedGroupsLength !== selectedGroups.length) {
+    setLastSelectedGroupsLength(selectedGroups.length);
     if (selectedGroups.length <= MAX_VISIBLE_CHIPS) {
       setShowAllGroups(false);
     }
-  }, [selectedGroups.length]);
+  }
 
   const visibleGroups = showAllGroups ? selectedGroups : selectedGroups.slice(0, MAX_VISIBLE_CHIPS);
   const remainingCount = selectedGroups.length - MAX_VISIBLE_CHIPS;
