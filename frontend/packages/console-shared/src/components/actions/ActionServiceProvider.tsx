@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useState, useCallback, useMemo, useEffect } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import * as _ from 'lodash';
 import type {
   Action,
@@ -51,10 +51,13 @@ export const ActionServiceProvider: FC<ActionServiceProviderProps> = ({ context,
     [actions, actionsLoaded, loadError, options],
   );
 
-  // Update the state whenever the context from props changes.
-  useEffect(() => {
+  // Update the state whenever the context from props changes. Merging keeps
+  // scopes previously added via onContextChange.
+  const [prevMemoizedContext, setPrevMemoizedContext] = useState(memoizedContext);
+  if (memoizedContext !== prevMemoizedContext) {
+    setPrevMemoizedContext(memoizedContext);
     setContextMap((prevContext) => ({ ...prevContext, ...memoizedContext }));
-  }, [memoizedContext]);
+  }
 
   return (
     <>
