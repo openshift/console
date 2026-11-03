@@ -1,5 +1,5 @@
 import type { ReactElement, FC } from 'react';
-import { useRef, useMemo, memo } from 'react';
+import { useRef, useMemo, memo, useState } from 'react';
 import { ChartDonut } from '@patternfly/react-charts/victory';
 import { Tooltip } from '@patternfly/react-core';
 import * as _ from 'lodash';
@@ -57,9 +57,8 @@ const PodStatusBase: FC<PodStatusProps> = ({
 }) => {
   const ref = useRef(undefined);
   const forceUpdate = useForceUpdate();
-  const prevVData = useRef<PodData[]>(null);
 
-  const { vData, updateOnEnd } = useMemo(() => {
+  const computedVData: PodData[] = useMemo(() => {
     const updateVData: PodData[] = podStatus.map((pod) => ({
       x: pod,
       y: _.sumBy(data, (d) => +(getPodStatus(d) === pod)) || 0,
@@ -73,17 +72,27 @@ const PodStatusBase: FC<PodStatusProps> = ({
       );
     }
 
-    const prevDataPoints = _.size(_.filter(prevVData.current, (nextData) => nextData.y !== 0));
-    const dataPoints = _.size(_.filter(updateVData, (nextData) => nextData.y !== 0));
-    const shouldUpdateOnEnd = dataPoints === 1 && prevDataPoints > 1;
-
-    if (!_.isEqual(prevVData.current, updateVData)) {
-      prevVData.current = updateVData;
-      return { vData: updateVData, updateOnEnd: shouldUpdateOnEnd };
-    }
-    return { vData: prevVData.current, updateOnEnd: shouldUpdateOnEnd };
-    // eslint-disable-next-line react-hooks-js/exhaustive-deps
+    return updateVData;
   }, [data]);
+
+  // Keep a stable reference for the chart data across renders when the pod
+  // data is deep-equal, so the chart does not restart its animation on
+  // unrelated re-renders. Unlike the previous memo, `updateOnEnd` is not
+  // recomputed for deep-equal data updates, so an armed `onEnd` callback can
+  // fire once more after such an update; it cannot re-arm itself.
+  const [vDataState, setVDataState] = useState<{ vData: PodData[]; updateOnEnd: boolean }>(() => ({
+    vData: computedVData,
+    updateOnEnd: false,
+  }));
+  if (!_.isEqual(vDataState.vData, computedVData)) {
+    const prevDataPoints = _.size(_.filter(vDataState.vData, (nextData) => nextData.y !== 0));
+    const dataPoints = _.size(_.filter(computedVData, (nextData) => nextData.y !== 0));
+    setVDataState({
+      vData: computedVData,
+      updateOnEnd: dataPoints === 1 && prevDataPoints > 1,
+    });
+  }
+  const { vData, updateOnEnd } = vDataState;
   const truncTitle = title ? _.truncate(title, { length: MAX_POD_TITLE_LENGTH }) : undefined;
   const truncSubTitle = subTitle
     ? _.truncate(subTitle, { length: MAX_POD_TITLE_LENGTH })
@@ -93,7 +102,7 @@ const PodStatusBase: FC<PodStatusProps> = ({
       <ChartDonut
         ariaTitle={`${title}${subTitle && ` ${subTitle}`}`}
         animate={{
-          duration: prevVData.current ? ANIMATION_DURATION : 0,
+          duration: ANIMATION_DURATION,
           onEnd: updateOnEnd ? forceUpdate : undefined,
         }}
         standalone={standalone}
