@@ -1,0 +1,8 @@
+# See the OWNERS_ALIASES docs: https://git.k8s.io/community/contributors/guide/owners.md#owners_aliases
+
+aliases:
+  plugin-api-approvers:
+    - jhadvig
+    - logonoff
+    - spadgett
+    - vojtechszocs
