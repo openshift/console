@@ -90,7 +90,7 @@ export const PodConnect: FC<PodConnectProps> = ({
 
   const containers = useMemo(() => _.keyBy(_.get(obj, 'spec.containers', []), 'name'), [obj]);
 
-  const podName = useMemo(() => obj.metadata?.name || '', [obj?.metadata?.name]);
+  const podName = useMemo(() => obj.metadata?.name || '', [obj.metadata?.name]);
   const namespace = useMemo(() => obj.metadata?.namespace || 'default', [obj?.metadata?.namespace]);
   // We are being more specific with the dependency array here to avoid additional rerenders when other fields in obj changes
   // eslint-disable-next-line react-hooks-js/exhaustive-deps
