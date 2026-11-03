@@ -1,5 +1,5 @@
 import type { FC, MouseEvent } from 'react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -32,21 +32,25 @@ export const ExploreType: FC<ExploreTypeProps> = (props) => {
   const [drilldownHistory, setDrilldownHistory] = useState([]);
   const { kindObj, schema } = props;
   const { t } = useTranslation('public');
-  const [allDefinitions, setAllDefinitions] = useState<SwaggerDefinitions>(null);
+  const [swaggerDefinitions, setSwaggerDefinitions] = useState<SwaggerDefinitions>(null);
 
   useEffect(() => {
     if (kindObj) {
       fetchSwagger()
         .then((response) => {
-          setAllDefinitions(response);
+          setSwaggerDefinitions(response);
         })
         .catch((err) => {
           console.error('Could not fetch swagger definitions', err);
         });
-    } else if (schema) {
-      setAllDefinitions({ 'custom-schema': schema });
     }
-  }, [kindObj, schema]);
+  }, [kindObj]);
+
+  const customSchemaDefinitions = useMemo(
+    () => (schema ? { 'custom-schema': schema } : null),
+    [schema],
+  );
+  const allDefinitions = kindObj ? swaggerDefinitions : customSchemaDefinitions;
 
   if (!kindObj && !schema) {
     return null;
