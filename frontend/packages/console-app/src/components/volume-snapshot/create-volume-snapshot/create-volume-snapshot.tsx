@@ -1,5 +1,5 @@
 import type { FC, ReactEventHandler, FormEvent } from 'react';
-import { useState, useMemo, useCallback, useEffect } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import {
   Grid,
   GridItem,
@@ -204,11 +204,28 @@ const CreateSnapshotForm = (props: SnapshotResourceProps) => {
     [vscList],
   );
 
-  useEffect(() => {
-    const currentPVC = data.find((pvc) => pvc.metadata?.name === selectedPVCName);
-    setPVCObj(currentPVC || null);
+  const syncInputs = {
+    data,
+    selectedPVCName,
+    namespace,
+    loadError,
+    snapshotClassFilter,
+    getDefaultItem,
+  };
+  const [lastSyncInputs, setLastSyncInputs] = useState<typeof syncInputs | null>(null);
+  if (
+    !lastSyncInputs ||
+    lastSyncInputs.data !== data ||
+    lastSyncInputs.selectedPVCName !== selectedPVCName ||
+    lastSyncInputs.namespace !== namespace ||
+    lastSyncInputs.loadError !== loadError ||
+    lastSyncInputs.snapshotClassFilter !== snapshotClassFilter ||
+    lastSyncInputs.getDefaultItem !== getDefaultItem
+  ) {
+    setLastSyncInputs(syncInputs);
+    setPVCObj(data.find((pvc) => pvc.metadata?.name === selectedPVCName) || null);
     setSnapshotClassName(getDefaultItem(snapshotClassFilter));
-  }, [data, selectedPVCName, namespace, loadError, snapshotClassFilter, getDefaultItem]);
+  }
 
   const handleSnapshotName: ReactEventHandler<HTMLInputElement> = (event) =>
     setSnapshotName(event.currentTarget.value);
