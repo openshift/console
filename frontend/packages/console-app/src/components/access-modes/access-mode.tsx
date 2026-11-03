@@ -1,5 +1,5 @@
 import type { FC, Ref, CSSProperties } from 'react';
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import type { MenuToggleElement } from '@patternfly/react-core';
 import { FormGroup, Select, SelectOption, SelectList, MenuToggle } from '@patternfly/react-core';
 import * as _ from 'lodash';
@@ -42,16 +42,39 @@ export const AccessModeSelector: FC<AccessModeSelectorProps> = (props) => {
     : availableAccessModes;
   const volumeMode: string = pvcResource?.spec?.volumeMode ?? '';
 
-  const [allowedAccessModes, setAllowedAccessModes] = useState<string[]>();
+  const allowedAccessModes: string[] | undefined = loaded
+    ? getAccessModeForProvisioner(
+        provisioner,
+        ignoreReadOnly,
+        filterByVolumeMode ? volumeMode : undefined,
+      )
+    : undefined;
+
   const [accessMode, setAccessMode] = useState<string>();
 
-  const changeAccessMode = useCallback(
-    (mode: string) => {
-      setAccessMode(mode);
-      onChange(mode);
-    },
-    [onChange],
-  );
+  if (allowedAccessModes) {
+    if (!accessMode && allowedAccessModes.includes(pvcInitialAccessMode[0])) {
+      // To view the same access mode value of pvc
+      setAccessMode(pvcInitialAccessMode[0]);
+    } else if (
+      accessMode !== allowedAccessModes[0] &&
+      !allowedAccessModes.includes(accessMode ?? '')
+    ) {
+      // Old access mode will be disabled
+      setAccessMode(allowedAccessModes[0]);
+    }
+  }
+
+  // Notify the parent after commit: the parent form cannot be updated while
+  // this component renders. Only a selection change notifies, not an
+  // onChange identity change.
+  const lastNotifiedModeRef = useRef<string>();
+  useEffect(() => {
+    if (accessMode && accessMode !== lastNotifiedModeRef.current) {
+      onChange(accessMode);
+      lastNotifiedModeRef.current = accessMode;
+    }
+  }, [accessMode, onChange]);
 
   const [isOpen, setIsOpen] = useState(false);
   const [selected, setSelected] = useState<string>(
@@ -65,7 +88,7 @@ export const AccessModeSelector: FC<AccessModeSelectorProps> = (props) => {
   const onSelect = (_event: undefined, value: { val: string; label: string }) => {
     setIsOpen(!isOpen);
     setSelected(value.label);
-    changeAccessMode(value.val);
+    setAccessMode(value.val);
   };
   const selectOptions = getAccessModeOptions().map((option) => {
     const disabled = !allowedAccessModes?.includes(option.value);
@@ -95,31 +118,6 @@ export const AccessModeSelector: FC<AccessModeSelectorProps> = (props) => {
       {selected}
     </MenuToggle>
   );
-
-  useEffect(() => {
-    if (loaded) {
-      setAllowedAccessModes(
-        getAccessModeForProvisioner(
-          provisioner,
-          ignoreReadOnly,
-          filterByVolumeMode ? volumeMode : undefined,
-        ),
-      );
-    }
-  }, [filterByVolumeMode, ignoreReadOnly, loaded, provisioner, volumeMode]);
-
-  useEffect(() => {
-    // Make sure the default or already checked option button value is from any one of allowed the access mode
-    if (allowedAccessModes) {
-      if (!accessMode && allowedAccessModes.includes(pvcInitialAccessMode[0])) {
-        // To view the same access mode value of pvc
-        changeAccessMode(pvcInitialAccessMode[0]);
-      } else if (!allowedAccessModes.includes(accessMode ?? '')) {
-        // Old access mode will be disabled
-        changeAccessMode(allowedAccessModes[0]);
-      }
-    }
-  }, [accessMode, allowedAccessModes, changeAccessMode, pvcInitialAccessMode]);
 
   return (
     <FormGroup label={t('Access mode')} isRequired fieldId="access-mode" className={className}>
