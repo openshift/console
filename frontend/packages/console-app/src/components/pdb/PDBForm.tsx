@@ -77,8 +77,6 @@ const PDBForm: FC<PodDisruptionBudgetFormProps> = ({
   const [formValues, setFormValues] = useState(initialFormValues);
   const [error, setError] = useState('');
   const [inProgress, setInProgress] = useState(false);
-  const [requirement, setRequirement] = useState('');
-  const [isDisabled, setDisabled] = useState(true);
   const [labels, setLabels] = useState([]);
   const [matchingSelector, setMatchingSelector] = useState<PodDisruptionBudgetKind>(null);
   const [isOpen, setIsOpen] = useState(false);
@@ -91,6 +89,8 @@ const PDBForm: FC<PodDisruptionBudgetFormProps> = ({
   );
   const selectedRequirement = getSelectedRequirement(formValues.requirement, items);
 
+  const isDisabled = formValues.requirement === i18next.t('console-app~Requirement');
+
   const onFormValuesChange = useCallback(
     (values) => {
       setFormValues(values);
@@ -99,17 +99,15 @@ const PDBForm: FC<PodDisruptionBudgetFormProps> = ({
     [onChange, existingResource],
   );
 
+  // Re-initialize the form values from the existing resource when editing a
+  // PodDisruptionBudget whose name is missing from the form data (e.g. after
+  // the name was removed in the YAML editor).
   useEffect(() => {
-    setRequirement(formValues.requirement);
-
-    if (formValues.requirement !== i18next.t('console-app~Requirement')) {
-      setDisabled(false);
-    }
-
     if (!_.isEmpty(existingResource) && _.isEmpty(formValues.name)) {
+      // eslint-disable-next-line react-hooks-js/set-state-in-effect -- this reset must also notify the parent form via onChange (SyncedEditor's formData state), and a parent component cannot be updated while this component renders; deriving/resetting during render would either fire onChange during render or change what the parent is notified about
       onFormValuesChange(initialValuesFromK8sResource(existingResource));
     }
-  }, [existingResource, formValues, onFormValuesChange, requirement, items]);
+  }, [existingResource, formValues, onFormValuesChange]);
 
   const handleNameChange = (_event, value: string) =>
     onFormValuesChange({ ...formValues, name: value });
@@ -129,9 +127,7 @@ const PDBForm: FC<PodDisruptionBudgetFormProps> = ({
   };
 
   const handleAvailabilityRequirementKeyChange = (value: string) => {
-    setRequirement(value);
     setIsOpen(!isOpen);
-    setDisabled(false);
     onFormValuesChange({
       ...formValues,
       requirement: value,
@@ -140,7 +136,7 @@ const PDBForm: FC<PodDisruptionBudgetFormProps> = ({
     });
   };
   const handleAvailabilityRequirementValueChange = (_event, value: string | number) => {
-    onFormValuesChange({ ...formValues, [requirement]: value });
+    onFormValuesChange({ ...formValues, [formValues.requirement]: value });
   };
 
   const handleSubmit = (event: FormEvent) => {
