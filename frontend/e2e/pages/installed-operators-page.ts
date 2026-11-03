@@ -9,11 +9,12 @@ import BasePage from './base-page';
  * Installed OLMv0 Operators.
  *
  * Navigation goes through the ClusterServiceVersion list URL, which works on every cluster: on a
- * standard cluster it is the Installed Operators page, and under Technology Preview it redirects to the
- * Classic tab of the tabbed Installed Operators page. Either way the same list renders.
+ * standard cluster it is the Installed Operators page, and under Technology Preview it renders the
+ * Classic operators tab of the tabbed Installed Operators page. Either way the same list renders.
  */
 export class InstalledOperatorsPage extends BasePage {
   private readonly pageHeading = this.page.getByTestId('page-heading');
+  private readonly emptyState = this.page.getByTestId('console-empty-state');
   // ConsoleDataView renders its own name filter rather than ListPageFilter's, so accept either.
   private readonly nameFilterInput = this.page
     .getByTestId('name-filter-input')
@@ -136,14 +137,17 @@ export class InstalledOperatorsPage extends BasePage {
       timeout: 30_000,
     });
 
-    await this.filterByName(operatorName);
+    // Wait for the unfiltered list to load before asserting the operator is absent.
+    await expect(this.nameFilterInput.or(this.emptyState).first()).toBeVisible({
+      timeout: 30_000,
+    });
     // CSV/subscription deletion is not immediate: the row can linger past the
     // default 5s expect timeout while OLM finishes garbage collection.
     await expect(this.getOperatorRow(operatorName)).not.toBeAttached({ timeout: 60_000 });
   }
 
   /**
-   * Verify no operators exist in the current namespace (empty state)
+   * Verify no operators exist on the cluster (empty state)
    */
   async verifyNoOperatorsInstalled(): Promise<void> {
     await this.navigateToInstalledOperators();
@@ -154,8 +158,7 @@ export class InstalledOperatorsPage extends BasePage {
     });
 
     // Verify empty state appears
-    const emptyState = this.page.getByTestId('console-empty-state');
-    await expect(emptyState).toContainText('No Operators found');
+    await expect(this.emptyState).toContainText('No Operators installed');
   }
 
   /**
@@ -174,11 +177,10 @@ export class InstalledOperatorsPage extends BasePage {
     });
 
     // Wait for the page to be ready with either operators or the expected empty state.
-    const emptyState = this.page.getByTestId('console-empty-state');
-    await expect(this.nameFilterInput.or(emptyState).first()).toBeVisible({ timeout: 10_000 });
+    await expect(this.nameFilterInput.or(this.emptyState).first()).toBeVisible({ timeout: 10_000 });
 
-    if (await emptyState.isVisible()) {
-      await expect(emptyState).toContainText('No Operators found', { timeout: 10_000 });
+    if (await this.emptyState.isVisible()) {
+      await expect(this.emptyState).toContainText('No Operators installed', { timeout: 10_000 });
       return;
     }
 
