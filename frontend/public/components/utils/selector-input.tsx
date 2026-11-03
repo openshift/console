@@ -1,4 +1,4 @@
-import type { ChangeEvent, DetailedHTMLProps, HTMLAttributes } from 'react';
+import type { ChangeEvent } from 'react';
 import { Component } from 'react';
 import { Label as PfLabel } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
@@ -8,15 +8,6 @@ import type { MatchExpression } from '@console/dynamic-plugin-sdk/src/api/common
 import { selectorToString } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { split, selectorFromString } from '../../module/k8s/selector';
 import * as k8sSelectorRequirement from '../../module/k8s/selector-requirement';
-
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      // Custom element used as a styling hook for the tags input (see `_label.scss`)
-      'tags-input': DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>;
-    }
-  }
-}
 
 // Helpers for cleaning up tags by running them through the selector parser
 const cleanSelectorStr = (tag: string) => selectorToString(selectorFromString(tag));
@@ -201,7 +192,7 @@ export class SelectorInput extends Component<SelectorInputProps, SelectorInputSt
       ...(this.props.inputProps || {}),
     };
 
-    const renderTag = ({ tag, key, onRemove, getTagDisplayValue }: RenderTagProps): JSX.Element => (
+    const renderTag = ({ tag, key, onRemove, getTagDisplayValue }: RenderTagProps) => (
       <PfLabel
         className={css('co-label tag-item-content', this.props.labelClassName)}
         key={key}
@@ -214,7 +205,7 @@ export class SelectorInput extends Component<SelectorInputProps, SelectorInputSt
 
     return (
       <div className="pf-v6-c-form-control">
-        <tags-input>
+        <div className="co-tags-input">
           <TagsInput
             ref={this.setRef}
             className="tags"
@@ -226,7 +217,7 @@ export class SelectorInput extends Component<SelectorInputProps, SelectorInputSt
             onChange={this.handleChange}
             addOnBlur
           />
-        </tags-input>
+        </div>
       </div>
     );
   }

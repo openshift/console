@@ -27,12 +27,12 @@
   white-space: nowrap;
 }
 
-tags-input {
+.co-tags-input {
   min-width: 100%;
   padding: var(--pf-t--global--spacer--sm);
 }
 
-tags-input .tags {
+.co-tags-input .tags {
   align-content: flex-start;
   display: flex;
   flex-wrap: wrap;
@@ -44,13 +44,13 @@ tags-input .tags {
   }
 }
 
-tags-input .tags .input {
+.co-tags-input .tags .input {
   background: transparent;
   border: 1px solid transparent;
   flex-grow: 1;
   outline: none;
 }
 
-tags-input .tags .input.invalid-tag {
+.co-tags-input .tags .input.invalid-tag {
   color: var(--pf-t--global--text--color--status--danger--default);
 }

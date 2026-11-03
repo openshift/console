@@ -7,6 +7,14 @@ type SharedModuleMetadata = Partial<{
   singleton: boolean;
 
   /**
+   * If `undefined`, determine the required version from package dependencies.
+   * If `false`, disable required version checks for this module.
+   *
+   * @default undefined
+   */
+  requiredVersion: false | undefined;
+
+  /**
    * If `true`, plugins may provide their own fallback version of the module.
    *
    * The fallback module will be loaded when a matching module is not found within
@@ -44,6 +52,8 @@ export const sharedPluginModules = [
   '@openshift-console/dynamic-plugin-sdk-internal',
   '@patternfly/react-topology',
   'react',
+  'react-dom',
+  'react/jsx-runtime',
   'react-i18next',
   'react-redux',
   'react-router',
@@ -64,6 +74,8 @@ const sharedPluginModulesMetadata: Record<SharedModuleNames, SharedModuleMetadat
   '@openshift-console/dynamic-plugin-sdk-internal': {},
   '@patternfly/react-topology': {},
   react: {},
+  'react-dom': { requiredVersion: false }, // supresses build warning due to mobx-react-lite not including a version range for react-dom in its peerDependencies
+  'react/jsx-runtime': { requiredVersion: false }, // react/jsx-runtime is not a dependency in package.json
   'react-i18next': {},
   'react-redux': {},
   'react-router': {},
@@ -84,6 +96,7 @@ export const getSharedModuleMetadata = (
     allowFallback = false,
     aliased = false,
     deprecated = false,
+    requiredVersion = undefined,
   } = sharedPluginModulesMetadata[moduleName];
-  return { singleton, allowFallback, aliased, deprecated };
+  return { singleton, allowFallback, aliased, deprecated, requiredVersion };
 };
