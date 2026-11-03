@@ -249,4 +249,4 @@ replace github.com/docker/docker => github.com/docker/docker v27.5.0+incompatibl
 replace github.com/docker/cli => github.com/docker/cli v27.5.0+incompatible
 
 // branch: fix/https-proxy-http1
-replace github.com/openshift/library-go => github.com/jhadvig/library-go v0.0.0-20261102111257-a3bdbf75e6e6
+replace github.com/openshift/library-go => github.com/jhadvig/library-go v0.0.0-20261103105145-c3cdd39f47d2
