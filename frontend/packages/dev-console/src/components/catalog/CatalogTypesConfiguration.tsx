@@ -1,5 +1,5 @@
 import type { FC, ReactElement } from 'react';
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState } from 'react';
 import { FormHelperText, FormSection } from '@patternfly/react-core';
 import { DualListSelector } from '@patternfly/react-core/deprecated';
 import * as fuzzy from 'fuzzysearch';
@@ -65,11 +65,13 @@ const CatalogTypesConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
   const [consoleConfig, consoleConfigLoaded, consoleConfigError] =
     useConsoleOperatorConfig<SoftwareCatalogTypesConsoleConfig>();
   const [types, setTypes] = useState<Types>();
-  useEffect(() => {
-    if (consoleConfig && consoleConfigLoaded && !types) {
-      setTypes(consoleConfig?.spec?.customization?.developerCatalog?.types);
-    }
-  }, [consoleConfig, consoleConfigLoaded, types]);
+  // Config object the local types were last seeded from; an unset local value
+  // re-seeds when the config changes, user edits are never overwritten.
+  const [seededConfig, setSeededConfig] = useState<typeof consoleConfig>();
+  if (consoleConfig && consoleConfigLoaded && !types && seededConfig !== consoleConfig) {
+    setSeededConfig(consoleConfig);
+    setTypes(consoleConfig?.spec?.customization?.developerCatalog?.types);
+  }
 
   // Calculate options
   const [enabledOptions, disabledOptions] = useMemo<
