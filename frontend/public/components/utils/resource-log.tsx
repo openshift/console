@@ -509,7 +509,6 @@ export const ResourceLog: FC<ResourceLogProps> = ({
   const [hasTruncated, setHasTruncated] = useState(false);
   const [lines, setLines] = useState([]);
   const [isDownloading, setIsDownloading] = useState(false);
-  const [linesBehind, setLinesBehind] = useState(0);
   const [totalLineCount, setTotalLineCount] = useState(0);
   const [stale, setStale] = useState(false);
   const [status, setStatus] = useState(STREAM_LOADING);
@@ -523,10 +522,8 @@ export const ResourceLog: FC<ResourceLogProps> = ({
   const [showTruncatedAlert, setShowTruncatedAlert] = useState(true);
 
   const [logType, setLogType] = useState<LogTypeStatus>(LOG_TYPE_CURRENT);
-  const [hasPreviousLogs, setPreviousLogs] = useState(false);
 
   const previousResourceStatus = usePrevious(resourceStatus);
-  const previousTotalLineCount = usePrevious(totalLineCount);
   const linkURL = getResourceLogURL(resource, containerName, null, false, logType);
   const watchURL = getResourceLogURL(resource, containerName, null, true, logType);
   const imp = useConsoleSelector((state) => getImpersonate(state));
@@ -556,9 +553,22 @@ export const ResourceLog: FC<ResourceLogProps> = ({
   const timeoutIdRef = useRef(null);
   const countRef = useRef(0);
 
+  // `content` mirrors the streamed lines while the stream is active or at
+  // EOF; while paused, lines keep arriving but the last rendered text is
+  // kept until the stream resumes.
+  const streamedContent = useMemo(
+    () =>
+      (status === STREAM_ACTIVE || status === STREAM_EOF) && lines.length > 0
+        ? lines.join('\n')
+        : null,
+    [status, lines],
+  );
+  if (streamedContent !== null && streamedContent !== content) {
+    setContent(streamedContent);
+  }
+
   useEffect(() => {
     if ((status === STREAM_ACTIVE || status === STREAM_EOF) && lines.length > 0) {
-      setContent(lines.join('\n'));
       // setTimeout here to wait until the content is updated in the log viewer
       // so that make sure scroll to the real bottom
       setTimeout(() => {
@@ -569,35 +579,37 @@ export const ResourceLog: FC<ResourceLogProps> = ({
     }
   }, [status, lines]);
 
-  // Update lines behind while stream is paused, reset when unpaused
-  useEffect(() => {
-    if (status === STREAM_ACTIVE) {
-      setLinesBehind(0);
+  // Lines behind counts the lines that arrived while the stream is paused:
+  // the line count at the moment the stream paused is captured and the
+  // difference is derived.
+  const [pauseBaseLineCount, setPauseBaseLineCount] = useState<number | null>(null);
+  if (status === STREAM_PAUSED) {
+    if (pauseBaseLineCount === null) {
+      setPauseBaseLineCount(totalLineCount);
     }
-
-    if (status === STREAM_PAUSED) {
-      setLinesBehind(
-        (currentLinesBehind) => currentLinesBehind + (totalLineCount - previousTotalLineCount),
-      );
-    }
-  }, [status, totalLineCount, previousTotalLineCount]);
+  } else if (pauseBaseLineCount !== null) {
+    setPauseBaseLineCount(null);
+  }
+  const linesBehind = pauseBaseLineCount === null ? 0 : totalLineCount - pauseBaseLineCount;
 
   // Set back to viewing current log when switching containers
-  useEffect(() => {
+  const [lastLogContext, setLastLogContext] = useState({
+    kind: resource.kind,
+    containerName,
+  });
+  if (lastLogContext.kind !== resource.kind || lastLogContext.containerName !== containerName) {
+    setLastLogContext({ kind: resource.kind, containerName });
     if (resource.kind === 'Pod') {
       setLogType(LOG_TYPE_CURRENT);
     }
-  }, [resource.kind, containerName]);
+  }
 
-  // Check to see if previous log exists
-  useEffect(() => {
-    if (resource.kind === 'Pod') {
-      const container = resource.status?.containerStatuses?.find(
-        (pod) => pod.name === containerName,
-      );
-      setPreviousLogs(container?.restartCount > 0); // Assuming previous log is available if the container has been restarted at least once
-    }
-  }, [containerName, resource.kind, resource.status]);
+  // Check to see if previous log exists — assumed available once the
+  // container has restarted at least once.
+  const hasPreviousLogs =
+    resource.kind === 'Pod' &&
+    (resource.status?.containerStatuses?.find((pod) => pod.name === containerName)?.restartCount ??
+      0) > 0;
 
   const startWebSocket = useCallback(() => {
     // Handler for websocket onopen event
@@ -636,7 +648,6 @@ export const ResourceLog: FC<ResourceLogProps> = ({
     setHasTruncated(false);
     setLines([]);
     setTotalLineCount(0);
-    setLinesBehind(0);
     setContent('');
     setStale(false);
     setStatus(STREAM_LOADING);
@@ -658,6 +669,7 @@ export const ResourceLog: FC<ResourceLogProps> = ({
       !stale &&
       [LOG_SOURCE_RUNNING, LOG_SOURCE_TERMINATED, LOG_SOURCE_RESTARTING].includes(resourceStatus)
     ) {
+      // eslint-disable-next-line react-hooks-js/set-state-in-effect -- startWebSocket synchronously resets the stream state (lines, status, errors, …) before opening the new connection; that reset is inseparable from re-establishing this external websocket whenever the watch URL or stream options change
       startWebSocket();
     }
     return () => ws.current?.destroy();
@@ -684,15 +696,16 @@ export const ResourceLog: FC<ResourceLogProps> = ({
     }
   }, [externalLogLinkFlag, resource.kind, resource.metadata.namespace]);
 
-  // If container comes out of restarting state, currently displayed logs might be stale
-  useEffect(() => {
-    if (
-      previousResourceStatus === LOG_SOURCE_RESTARTING &&
-      resourceStatus !== LOG_SOURCE_RESTARTING
-    ) {
-      setStale(true);
-    }
-  }, [previousResourceStatus, resourceStatus]);
+  // If container comes out of restarting state, currently displayed logs
+  // might be stale. The condition only holds for the single render where
+  // the transition away from restarting is observed.
+  if (
+    previousResourceStatus === LOG_SOURCE_RESTARTING &&
+    resourceStatus !== LOG_SOURCE_RESTARTING &&
+    !stale
+  ) {
+    setStale(true);
+  }
 
   const onScroll = ({ scrollOffsetToBottom, scrollDirection, scrollUpdateWasRequested }) => {
     if (!scrollUpdateWasRequested && status !== STREAM_EOF) {
