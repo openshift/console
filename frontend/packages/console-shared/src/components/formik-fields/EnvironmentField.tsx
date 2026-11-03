@@ -34,6 +34,15 @@ export const EnvironmentField: FC<EnvironmentFieldProps> = ({
     [envs],
   );
   const [nameValue, setNameValue] = useState(environmentVariables);
+  // Reset the editor rows when the form is reloaded (formReloadCount changes).
+  // Object.is so a NaN count (undefined + 1) still compares equal to itself.
+  const [lastFormReloadCount, setLastFormReloadCount] = useState(values.formReloadCount);
+  if (!Object.is(values.formReloadCount, lastFormReloadCount)) {
+    setLastFormReloadCount(values.formReloadCount);
+    if (values.formReloadCount) {
+      setNameValue(environmentVariables);
+    }
+  }
   const [configMaps, setConfigMaps] = useState({});
   const [secrets, setSecrets] = useState({});
   const handleNameValuePairs = useCallback(
@@ -54,14 +63,6 @@ export const EnvironmentField: FC<EnvironmentFieldProps> = ({
     },
     [props.name, setFieldValue],
   );
-
-  useEffect(() => {
-    if (values.formReloadCount) {
-      setNameValue(environmentVariables);
-    }
-    // this effect only handles reload, so we disable dep on environmentVariables
-    // eslint-disable-next-line react-hooks-js/exhaustive-deps
-  }, [values.formReloadCount]);
 
   useEffect(() => {
     Promise.all([k8sGet(ConfigMapModel, null, namespace), k8sGet(SecretModel, null, namespace)])
