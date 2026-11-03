@@ -78,15 +78,19 @@ const CloudShellTerminalContent: FC<CloudShellTerminalContentProps> = ({
 
   const { t } = useTranslation('webterminal-plugin');
 
+  const defaultInitError = t('Failed to connect to your OpenShift command line terminal');
+
   const unrecoverableErrorFound = !operatorNamespace && namespaceLoadError;
 
   // wait until the web terminal is loaded.
-  // if the namespace has any problems loading then set the terminal into an unrecoverable state
-  useEffect(() => {
+  // if the namespace has any problems loading then set the terminal into an unrecoverable state.
+  const [prevNamespaceLoadError, setPrevNamespaceLoadError] = useState(namespaceLoadError);
+  if (prevNamespaceLoadError !== namespaceLoadError) {
+    setPrevNamespaceLoadError(namespaceLoadError);
     if (namespaceLoadError) {
       setInitError(namespaceLoadError);
     }
-  }, [namespaceLoadError]);
+  }
 
   // start the workspace if no unrecoverable errors were found
   useEffect(() => {
@@ -118,18 +122,29 @@ const CloudShellTerminalContent: FC<CloudShellTerminalContentProps> = ({
     }
   }, [loaded, loadError, workspaceNamespace, setNamespace]);
 
-  // clear the init data and error if the workspace changes and if the loading process isn't in an unrecoverable state
-  useEffect(() => {
+  // clear the init data and error if the workspace changes and if the loading process isn't in an unrecoverable state.
+  const [prevWorkspaceState, setPrevWorkspaceState] = useState({
+    unrecoverableErrorFound,
+    username,
+    workspaceName,
+    workspaceNamespace,
+  });
+  if (
+    prevWorkspaceState.unrecoverableErrorFound !== unrecoverableErrorFound ||
+    prevWorkspaceState.username !== username ||
+    prevWorkspaceState.workspaceName !== workspaceName ||
+    prevWorkspaceState.workspaceNamespace !== workspaceNamespace
+  ) {
+    setPrevWorkspaceState({ unrecoverableErrorFound, username, workspaceName, workspaceNamespace });
     if (!unrecoverableErrorFound) {
       setInitData(undefined);
       setInitError(undefined);
     }
-  }, [unrecoverableErrorFound, username, workspaceName, workspaceNamespace]);
+  }
 
   // initialize the terminal once it is Running
   useEffect(() => {
     let unmounted = false;
-    const defaultError = t('Failed to connect to your OpenShift command line terminal');
 
     if (workspacePhase === CLOUD_SHELL_PHASE.RUNNING) {
       initTerminal(username, workspaceName, workspaceNamespace)
@@ -146,27 +161,63 @@ const CloudShellTerminalContent: FC<CloudShellTerminalContentProps> = ({
                   setInitError(text);
                 })
                 .catch(() => {
-                  setInitError(defaultError);
+                  setInitError(defaultInitError);
                 });
               /* eslint-enable promise/no-nesting */
             } else {
-              setInitError(defaultError);
+              setInitError(defaultInitError);
             }
           }
         });
-    }
-    if (workspacePhase === CLOUD_SHELL_PHASE.FAILED) {
-      setInitError(defaultError);
-    }
-
-    if (workspacePhase === CLOUD_SHELL_PHASE.STARTING) {
-      setInitError(null);
     }
 
     return () => {
       unmounted = true;
     };
-  }, [username, workspaceName, workspaceNamespace, workspacePhase, t, terminalNumber]);
+  }, [
+    username,
+    workspaceName,
+    workspaceNamespace,
+    workspacePhase,
+    defaultInitError,
+    terminalNumber,
+  ]);
+
+  const [prevTerminalContext, setPrevTerminalContext] = useState({
+    username,
+    workspaceName,
+    workspaceNamespace,
+    // undefined sentinel: a workspace that is already FAILED when the terminal
+    // (re)mounts must surface its error on the first render, matching the old
+    // effect's mount run
+    workspacePhase: undefined as typeof workspacePhase,
+    t,
+    terminalNumber,
+  });
+  if (
+    prevTerminalContext.username !== username ||
+    prevTerminalContext.workspaceName !== workspaceName ||
+    prevTerminalContext.workspaceNamespace !== workspaceNamespace ||
+    prevTerminalContext.workspacePhase !== workspacePhase ||
+    prevTerminalContext.t !== t ||
+    prevTerminalContext.terminalNumber !== terminalNumber
+  ) {
+    setPrevTerminalContext({
+      username,
+      workspaceName,
+      workspaceNamespace,
+      workspacePhase,
+      t,
+      terminalNumber,
+    });
+    if (workspacePhase === CLOUD_SHELL_PHASE.FAILED) {
+      setInitError(defaultInitError);
+    }
+
+    if (workspacePhase === CLOUD_SHELL_PHASE.STARTING) {
+      setInitError(null);
+    }
+  }
 
   // failed to load the workspace
   if (loadError) {
