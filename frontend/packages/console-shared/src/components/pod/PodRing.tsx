@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Button, Split, SplitItem, Bullseye, Tooltip } from '@patternfly/react-core';
 import { RhUiCaretDownIcon, RhUiCaretUpIcon, RhUiAutomationIcon } from '@patternfly/react-icons';
 import * as _ from 'lodash';
@@ -43,17 +43,14 @@ export const PodRing: FC<PodRingProps> = ({
     impersonate,
   );
 
-  useEffect(
-    () => {
-      if (clickCount !== obj.spec.replicas) {
-        setClickCount(obj.spec.replicas);
-      }
-    },
-    // disabling exhaustive-deps because I do not want to add clickCount to
-    // dependency array. I only want to trigger useEffect when `obj.spec.replicas` changes
-    // eslint-disable-next-line react-hooks-js/exhaustive-deps
-    [obj.spec.replicas],
-  );
+  // Reset the pod count when the resource's replica count changes (e.g. the
+  // server confirms a scaling request or an external actor scales the
+  // resource).
+  const [prevReplicas, setPrevReplicas] = useState(obj.spec.replicas);
+  if (prevReplicas !== obj.spec.replicas) {
+    setPrevReplicas(obj.spec.replicas);
+    setClickCount(obj.spec.replicas);
+  }
 
   const handleScaling = _.debounce(
     (operation: number) => {
