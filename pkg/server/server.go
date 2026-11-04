@@ -333,7 +333,7 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 	handleFunc("/api/", notFoundHandler)
 
 	staticHandler := http.StripPrefix(proxy.SingleJoiningSlash(s.BaseURL.Path, "/static/"), disableDirectoryListing(http.FileServer(http.Dir(s.PublicDir))))
-	handle("/static/", middleware.WithGZIPEncoding(middleware.WithSecurityHeaders(staticHandler)))
+	handle("/static/", middleware.WithGZIPEncoding(middleware.WithStaticCacheHeaders(staticHandler)))
 
 	// Register robots.txt at the origin root so crawlers can find it at /robots.txt
 	// regardless of s.BaseURL.Path (e.g., /console/).
