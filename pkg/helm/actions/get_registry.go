@@ -46,8 +46,6 @@ func GetDefaultOCIRegistry() (*registry.Client, error) {
 	return GetOCIRegistry(false, false, nil)
 }
 
-const ociRegistryLookupTimeout = 5 * time.Second
-
 // ociTransport is the HTTP transport used for registry requests. The dial is
 // pinned to an address from one lookup. The destination is checked before a
 // proxy is selected, including after a redirect, because a configured proxy
@@ -75,21 +73,12 @@ func ociTransport(skipTLSVerify bool) *http.Transport {
 }
 
 // validateOCIRegistryRequest rejects a registry request whose host is
-// disallowed. Names other than literal addresses are resolved with a bounded
-// lookup.
+// disallowed.
 func validateOCIRegistryRequest(req *http.Request) error {
 	if req == nil || req.URL == nil {
 		return errors.New("nil registry URL")
 	}
-	if utils.LoopbackDialAllowed() {
-		return nil
-	}
-	ctx := req.Context()
-	if utils.HostDisallowed(req.URL.Hostname(), func(host string) ([]net.IP, error) {
-		ctx, cancel := context.WithTimeout(ctx, ociRegistryLookupTimeout)
-		defer cancel()
-		return net.DefaultResolver.LookupIP(ctx, "ip", host)
-	}) {
+	if utils.RequestHostDisallowed(req) {
 		return utils.ErrDisallowedHost
 	}
 	return nil
