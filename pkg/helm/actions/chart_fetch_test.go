@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/openshift/console/pkg/utils"
+	"github.com/openshift/console/pkg/helm/utils"
 	"github.com/stretchr/testify/require"
 )
 
