@@ -248,6 +248,20 @@ func (p *PluginsHandler) proxyPluginRequest(requestURL *url.URL, pluginName stri
 	}
 	defer resp.Body.Close()
 
+	// Plugin error pages can disclose server details, such as the software version.
+	// Return a generic error instead of forwarding the upstream error page.
+	if resp.StatusCode >= http.StatusBadRequest {
+		// Preserve protocol headers that clients need to handle the error.
+		for _, header := range []string{"Allow", "Content-Range", "Retry-After", "WWW-Authenticate"} {
+			for _, value := range resp.Header.Values(header) {
+				w.Header().Add(header, value)
+			}
+		}
+		klog.Errorf("GET request for %q plugin failed with status code %d", pluginName, resp.StatusCode)
+		serverutils.SendResponse(w, resp.StatusCode, serverutils.ApiError{Err: "failed to get resource from plugin"})
+		return
+	}
+
 	// filter unwanted headers from the response
 	proxy.FilterHeaders(resp)
 	// copy headers from the plugin's server response
