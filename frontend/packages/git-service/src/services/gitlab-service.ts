@@ -1,5 +1,5 @@
+import { Gitlab } from '@gitbeaker/rest';
 import * as GitUrlParse from 'git-url-parse';
-import { Gitlab } from 'gitlab';
 import * as i18n from 'i18next';
 import { Base64 } from 'js-base64';
 import { consoleFetchJSON } from '@console/dynamic-plugin-sdk/src/lib-core';
@@ -47,7 +47,7 @@ export class GitlabService extends BaseService {
     const token = this.getAuthProvider();
     this.client = new Gitlab({
       host: this.metadata.host,
-      token,
+      ...(token ? { token } : {}),
     });
     this.repo = null;
   }
@@ -162,7 +162,7 @@ export class GitlabService extends BaseService {
   }): Promise<RepoFileList> => {
     try {
       const projectID = await this.getProjectId();
-      const resp = await this.client.Repositories.tree(projectID, {
+      const resp = await this.client.Repositories.allRepositoryTrees(projectID, {
         ...(params?.specificPath
           ? { path: this.filePath(params.specificPath) }
           : { path: this.metadata.contextDir }),
@@ -181,7 +181,7 @@ export class GitlabService extends BaseService {
   getRepoLanguageList = async (): Promise<RepoLanguageList> => {
     try {
       const projectID = await this.getProjectId();
-      const resp = await this.client.Projects.languages(projectID);
+      const resp = await this.client.Projects.showLanguages(projectID);
       return { languages: Object.keys(resp) };
     } catch (e) {
       return { languages: [] };
@@ -254,7 +254,7 @@ export class GitlabService extends BaseService {
   isTektonFolderPresent = async (): Promise<boolean> => {
     try {
       const projectID = await this.getProjectId();
-      const resp = await this.client.Repositories.tree(projectID, {
+      const resp = await this.client.Repositories.allRepositoryTrees(projectID, {
         path: this.metadata.contextDir,
       });
       const tektonFolderPresent = resp.find(

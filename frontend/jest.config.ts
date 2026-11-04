@@ -34,7 +34,7 @@ export default defineConfig({
     ],
   },
   transformIgnorePatterns: [
-    '<rootDir>/node_modules/(?!(@patternfly(-\\S+)?|d3(-\\S+)?|delaunator|robust-predicates|internmap|lodash-es|istextorbinary|@console|@novnc|@spice-project|@popperjs|i18next(-\\S+)?|@babel/runtime|jsonpath-plus|nanoid|@rjsf|@x0k|git-url-parse|git-up|parse-url|protocols|sanitize-html|linkify-react|fuzzysearch|decode-uri-component)/.*)',
+    '<rootDir>/node_modules/(?!(@patternfly(-\\S+)?|d3(-\\S+)?|delaunator|robust-predicates|internmap|lodash-es|istextorbinary|@console|@novnc|@spice-project|@popperjs|i18next(-\\S+)?|@babel/runtime|jsonpath-plus|nanoid|@rjsf|@x0k|git-url-parse|git-up|parse-url|protocols|sanitize-html|linkify-react|fuzzysearch)/.*)',
   ],
   testPathIgnorePatterns: ['<rootDir>/node_modules/', '<rootDir>/public/dist', '<rootDir>/e2e'],
   modulePathIgnorePatterns: ['<rootDir>/public/dist', '<rootDir>/e2e'],
@@ -44,6 +44,8 @@ export default defineConfig({
     globalsCleanup: 'on',
   },
   setupFiles: [
+    './__mocks__/textEncoderDecoder.ts',
+    './__mocks__/transformStream.ts',
     './__mocks__/fetch.ts',
     './__mocks__/helmet.ts',
     './__mocks__/localStorage.ts',
@@ -51,9 +53,8 @@ export default defineConfig({
     './__mocks__/mutationObserver.ts',
     './__mocks__/resizeObserver.ts',
     './__mocks__/serverFlags.ts',
-    './__mocks__/structuredClone.ts',
-    './__mocks__/textEncoderDecoder.ts',
     './__mocks__/sharedScope.ts',
+    './__mocks__/structuredClone.ts',
   ],
   setupFilesAfterEnv: ['<rootDir>/setup-tests.ts'],
   coverageDirectory: '__coverage__',
