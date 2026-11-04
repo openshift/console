@@ -296,7 +296,7 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 	handleFunc("/api/", notFoundHandler)
 
 	staticHandler := http.StripPrefix(proxy.SingleJoiningSlash(s.BaseURL.Path, "/static/"), disableDirectoryListing(http.FileServer(http.Dir(s.PublicDir))))
-	handle("/static/", gzipHandler(securityHeadersMiddleware(staticHandler)))
+	handle("/static/", gzipHandler(staticCacheHeaders(staticHandler)))
 
 	if s.CustomLogoFile != "" {
 		handleFunc(customLogoEndpoint, func(w http.ResponseWriter, r *http.Request) {
