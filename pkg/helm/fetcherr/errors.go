@@ -59,19 +59,31 @@ func SanitizeChartLoadError(err error) error {
 	return ErrNotHelmChart
 }
 
+// requestURL matches an http(s) or oci URL. A quoted URL ends at its closing
+// quote. An unquoted URL ends at Helm's " : " separator or at the end of the
+// message, so a query may contain spaces.
+var requestURL = regexp.MustCompile(`"(?i:https?|oci)://[^"]*"|(?i:https?|oci)://.*?(?: : |$)`)
+
 // SanitizeChartError classifies a chart fetch or chart-verifier failure.
-// Post-fetch Helm and Kubernetes errors are returned unchanged. Any other
-// unrecognized error is reported as a non-chart response, without its
-// original text.
+// Post-fetch Helm and Kubernetes errors are returned unchanged. The request
+// URL is omitted before that decision, so a query cannot impersonate one of
+// those errors. Any other unrecognized error is reported as a non-chart
+// response, without its original text.
 func SanitizeChartError(err error) error {
 	if err == nil {
 		return nil
 	}
-	msg := err.Error()
-	lower := strings.ToLower(msg)
-	if preserveFetchedChartError(lower) {
+	if preserveFetchedChartError(strings.ToLower(omitRequestURLs(err.Error()))) {
 		return err
 	}
+	return classifyChartFailure(err)
+}
+
+// classifyChartFailure reports a chart retrieval failure without its original
+// text. Authentication and reachability are decided from the error with the
+// request URL removed.
+func classifyChartFailure(err error) error {
+	lower := strings.ToLower(omitRequestURLs(err.Error()))
 	if authPattern.MatchString(lower) {
 		return ErrChartAuthentication
 	}
@@ -82,6 +94,12 @@ func SanitizeChartError(err error) error {
 		return preserved
 	}
 	return ErrNotHelmChart
+}
+
+// omitRequestURLs removes request URLs from msg. The caller chooses those
+// URLs, so they are not part of the error's origin.
+func omitRequestURLs(msg string) string {
+	return requestURL.ReplaceAllString(msg, "")
 }
 
 func preserveFetchedChartError(lower string) bool {

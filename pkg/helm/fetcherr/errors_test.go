@@ -73,6 +73,20 @@ func TestSanitizeChartErrorPreservesPostFetchFailures(t *testing.T) {
 	}
 }
 
+func TestSanitizeChartErrorFetchQueryDoesNotExposeDetails(t *testing.T) {
+	dial := `Get "https://10.1.2.3/charts/a.tgz?x=install failure": dial tcp 10.1.2.3:443: connect: connection refused`
+	err := SanitizeChartError(errors.New(dial))
+	if err == nil || err.Error() != ErrChartFileNotFound.Error() {
+		t.Fatalf("got %v, want %q", err, ErrChartFileNotFound.Error())
+	}
+
+	fetched := `failed to fetch https://10.1.2.3/charts/a.tgz?x=not found in repo index : 500 Internal Server Error body=SECRET_PAYLOAD`
+	err = SanitizeChartError(errors.New(fetched))
+	if err == nil || err.Error() != ErrChartFileNotFound.Error() {
+		t.Fatalf("got %v, want %q", err, ErrChartFileNotFound.Error())
+	}
+}
+
 func TestSanitizeChartErrorOmitsUnrecognizedPayload(t *testing.T) {
 	msg := "server replied: SECRET_PAYLOAD"
 	err := SanitizeChartError(errors.New(msg))
