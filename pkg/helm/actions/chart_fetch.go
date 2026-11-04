@@ -24,7 +24,7 @@ import (
 	"k8s.io/klog/v2"
 
 	"github.com/openshift/console/pkg/helm/fetcherr"
-	"github.com/openshift/console/pkg/utils"
+	"github.com/openshift/console/pkg/helm/utils"
 )
 
 func locateChart(opts *action.ChartPathOptions, registryClient *registry.Client, location string) (string, error) {

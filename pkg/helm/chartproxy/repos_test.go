@@ -27,7 +27,7 @@ import (
 
 	"github.com/openshift/console/pkg/helm/actions/fake"
 	"github.com/openshift/console/pkg/helm/fetcherr"
-	"github.com/openshift/console/pkg/utils"
+	"github.com/openshift/console/pkg/helm/utils"
 	"github.com/stretchr/testify/require"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )

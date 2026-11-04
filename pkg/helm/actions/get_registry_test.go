@@ -14,7 +14,7 @@ import (
 	"helm.sh/helm/v4/pkg/storage"
 	"helm.sh/helm/v4/pkg/storage/driver"
 
-	"github.com/openshift/console/pkg/utils"
+	"github.com/openshift/console/pkg/helm/utils"
 )
 
 func TestGetDefaultOCIRegistry_Success(t *testing.T) {

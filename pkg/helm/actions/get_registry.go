@@ -12,7 +12,7 @@ import (
 
 	"helm.sh/helm/v4/pkg/registry"
 
-	"github.com/openshift/console/pkg/utils"
+	"github.com/openshift/console/pkg/helm/utils"
 )
 
 // newRegistryClient is a package-level variable to allow mocking in tests

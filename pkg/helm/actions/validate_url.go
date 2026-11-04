@@ -6,7 +6,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/openshift/console/pkg/utils"
+	"github.com/openshift/console/pkg/helm/utils"
 )
 
 // validateChartURL checks a user-supplied chart reference before it is handed
