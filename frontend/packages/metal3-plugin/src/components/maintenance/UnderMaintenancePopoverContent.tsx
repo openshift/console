@@ -26,11 +26,7 @@ const UnderMaintenancePopoverContent: FC<UnderMaintenancePopoverContentProps> = 
 
   return (
     <>
-      <p>
-        {t(
-          "metal3-plugin~Node is under maintenance. The cluster will automatically rebuild node's data 30 minutes after entering maintenance.",
-        )}
-      </p>
+      <p>{t('metal3-plugin~Node is under maintenance.')}</p>
       <DescriptionList>
         <DescriptionListGroup>
           <DescriptionListTerm>{t('metal3-plugin~Maintenance reason:')}</DescriptionListTerm>
