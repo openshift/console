@@ -3,6 +3,7 @@ package actions
 import (
 	"errors"
 	"io"
+	"net/http"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -12,6 +13,8 @@ import (
 	"helm.sh/helm/v4/pkg/registry"
 	"helm.sh/helm/v4/pkg/storage"
 	"helm.sh/helm/v4/pkg/storage/driver"
+
+	"github.com/openshift/console/pkg/utils"
 )
 
 func TestGetDefaultOCIRegistry_Success(t *testing.T) {
@@ -124,4 +127,39 @@ func TestGetOCIRegistry_NewClientError(t *testing.T) {
 	require.Error(t, err)
 	require.Contains(t, err.Error(), "failed to create registry client")
 	require.Contains(t, err.Error(), "mock registry client error")
+}
+
+func TestOCITransportRejectsDisallowedDestination(t *testing.T) {
+	prev := utils.LoopbackDialAllowed()
+	utils.SetAllowLoopbackDialForTest(false)
+	t.Cleanup(func() { utils.SetAllowLoopbackDialForTest(prev) })
+
+	require.EqualError(t, validateOCIRegistryRequest(nil), "nil registry URL")
+
+	proxy := ociTransport(false).Proxy
+	allowed, err := http.NewRequest(http.MethodGet, "https://10.1.2.3/v2/", nil)
+	require.NoError(t, err)
+	_, err = proxy(allowed)
+	require.NoError(t, err)
+
+	loop, err := http.NewRequest(http.MethodGet, "https://127.0.0.1/v2/", nil)
+	require.NoError(t, err)
+	_, err = proxy(loop)
+	require.ErrorIs(t, err, utils.ErrDisallowedHost)
+
+	metadata, err := http.NewRequest(http.MethodGet, "https://169.254.169.254/latest/meta-data/", nil)
+	require.NoError(t, err)
+	_, err = proxy(metadata)
+	require.ErrorIs(t, err, utils.ErrDisallowedHost)
+
+	kube, err := http.NewRequest(http.MethodGet, "https://kubernetes.default.svc/api", nil)
+	require.NoError(t, err)
+	_, err = proxy(kube)
+	require.ErrorIs(t, err, utils.ErrDisallowedHost)
+
+	redirected, err := http.NewRequest(http.MethodGet, "https://127.0.0.1/v2/", nil)
+	require.NoError(t, err)
+	redirected.Response = &http.Response{Request: allowed}
+	_, err = proxy(redirected)
+	require.ErrorIs(t, err, utils.ErrDisallowedHost)
 }
