@@ -48,9 +48,6 @@ const (
 	ErrorMessage     = "The following repositories seem to be invalid or unreachable: "
 	maxIndexFileSize = 10 << 20 // 10 MB
 	maxRedirects     = 10
-	// repoHostLookupTimeout bounds DNS while a repository hostname is validated.
-	// It is a separate deadline from the index file HTTP client timeout.
-	repoHostLookupTimeout = 5 * time.Second
 )
 
 var errInvalidIndexURL = errors.New("invalid index URL")
@@ -68,47 +65,17 @@ type helmRepo struct {
 	httpClient func() (*http.Client, error)
 }
 
-// lookupRepoHost resolves a repository hostname with a bounded DNS lookup.
-// Tests may replace it.
-var lookupRepoHost = func(ctx context.Context, host string) ([]net.IP, error) {
-	return lookupRepoHostWithResolver(ctx, net.DefaultResolver, host)
-}
-
-func lookupRepoHostWithResolver(ctx context.Context, resolver *net.Resolver, host string) ([]net.IP, error) {
-	ctx, cancel := context.WithTimeout(ctx, repoHostLookupTimeout)
-	defer cancel()
-	return resolver.LookupIP(ctx, "ip", host)
-}
-
 // allowLoopbackTargets is false in production. Tests whose fixture registries
 // listen on localhost set it; production code must not.
 var allowLoopbackTargets bool
 
-// SetAllowLoopbackTargetsForTest allows localhost and loopback repository
-// targets for the rest of the process. The actions suite uses it so chartmuseum
-// and zot fixtures can be indexed. Production code must not call it.
+// SetAllowLoopbackTargetsForTest allows localhost and loopback targets for the
+// rest of the process. It updates the dial flag that the shared host check
+// reads. The actions suite uses it so chartmuseum and zot fixtures can be
+// indexed. Production code must not call it.
 func SetAllowLoopbackTargetsForTest(allow bool) {
 	allowLoopbackTargets = allow
 	utils.SetAllowLoopbackDialForTest(allow)
-}
-
-func repoHostDisallowed(host string, lookup func(string) ([]net.IP, error)) bool {
-	if allowLoopbackTargets {
-		return false
-	}
-	return utils.HostDisallowed(host, lookup)
-}
-
-// repoRequestDisallowed reports whether the request URL names a disallowed
-// repository host. The proxy hook and redirect check use it because DialContext
-// connects to the proxy address when a proxy is configured.
-func repoRequestDisallowed(req *http.Request) bool {
-	if req == nil || req.URL == nil {
-		return false
-	}
-	return repoHostDisallowed(req.URL.Hostname(), func(host string) ([]net.IP, error) {
-		return lookupRepoHost(req.Context(), host)
-	})
 }
 
 // validateRepoURL accepts an http or https repository URL and rejects certain
@@ -116,9 +83,7 @@ func repoRequestDisallowed(req *http.Request) bool {
 func validateRepoURL(ctx context.Context, u *url.URL) error {
 	switch u.Scheme {
 	case "http", "https":
-		if repoHostDisallowed(u.Hostname(), func(host string) ([]net.IP, error) {
-			return lookupRepoHost(ctx, host)
-		}) {
+		if utils.HostDisallowedContext(ctx, u.Hostname()) {
 			return utils.ErrDisallowedHost
 		}
 		return nil
@@ -135,7 +100,7 @@ func httpClient(tlsConfig *tls.Config) (*http.Client, error) {
 		// is invoked for the proxy address, not the repository host. Pinning does
 		// not stop a malicious proxy from connecting somewhere else.
 		Proxy: func(req *http.Request) (*url.URL, error) {
-			if repoRequestDisallowed(req) {
+			if utils.RequestHostDisallowed(req) {
 				return nil, utils.ErrDisallowedHost
 			}
 			return http.ProxyFromEnvironment(req)
@@ -153,7 +118,7 @@ func httpClient(tlsConfig *tls.Config) (*http.Client, error) {
 			if len(via) >= maxRedirects {
 				return fmt.Errorf("stopped after %d redirects", maxRedirects)
 			}
-			if repoRequestDisallowed(req) {
+			if utils.RequestHostDisallowed(req) {
 				return utils.ErrDisallowedHost
 			}
 			if len(via) > 0 && via[0].URL.Scheme == "https" && req.URL.Scheme == "http" {

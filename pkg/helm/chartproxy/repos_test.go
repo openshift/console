@@ -191,45 +191,19 @@ func TestValidateRepoURL(t *testing.T) {
 }
 
 func TestValidateRepoURLPropagatesContext(t *testing.T) {
-	prev := lookupRepoHost
-	t.Cleanup(func() { lookupRepoHost = prev })
+	t.Cleanup(func() { utils.SetRequestHostLookupForTest(nil) })
 
 	type ctxKey struct{}
 	ctx := context.WithValue(context.Background(), ctxKey{}, "repo-lookup")
-	lookupRepoHost = func(got context.Context, host string) ([]net.IP, error) {
+	utils.SetRequestHostLookupForTest(func(got context.Context, host string) ([]net.IP, error) {
 		require.Equal(t, "repo-lookup", got.Value(ctxKey{}))
 		require.Equal(t, "charts.example.com", host)
 		return []net.IP{net.ParseIP("203.0.113.5")}, nil
-	}
+	})
 
 	u, err := url.Parse("https://charts.example.com/repo")
 	require.NoError(t, err)
 	require.NoError(t, validateRepoURL(ctx, u))
-}
-
-func TestLookupRepoHostHasOwnDeadline(t *testing.T) {
-	deadlines := make(chan time.Duration, 1)
-	resolver := &net.Resolver{
-		PreferGo: true,
-		Dial: func(ctx context.Context, network, address string) (net.Conn, error) {
-			if deadline, ok := ctx.Deadline(); ok {
-				select {
-				case deadlines <- time.Until(deadline):
-				default:
-				}
-			}
-			return nil, errors.New("stopped")
-		},
-	}
-	_, err := lookupRepoHostWithResolver(context.Background(), resolver, "charts.example.com")
-	require.Error(t, err)
-	select {
-	case got := <-deadlines:
-		require.Greater(t, got, time.Duration(0))
-		require.LessOrEqual(t, got, repoHostLookupTimeout)
-	default:
-		t.Fatal("lookup had no deadline")
-	}
 }
 
 func noopURLValidator(_ context.Context, _ *url.URL) error { return nil }
@@ -1014,9 +988,8 @@ func TestHTTPClientRejectsLoopback(t *testing.T) {
 }
 
 func TestHTTPClientRejectsResolvedDisallowedHost(t *testing.T) {
-	prev := lookupRepoHost
-	t.Cleanup(func() { lookupRepoHost = prev })
-	lookupRepoHost = func(ctx context.Context, host string) ([]net.IP, error) {
+	t.Cleanup(func() { utils.SetRequestHostLookupForTest(nil) })
+	utils.SetRequestHostLookupForTest(func(ctx context.Context, host string) ([]net.IP, error) {
 		switch host {
 		case "loop.example.com":
 			return []net.IP{net.ParseIP("127.0.0.1")}, nil
@@ -1025,7 +998,7 @@ func TestHTTPClientRejectsResolvedDisallowedHost(t *testing.T) {
 		default:
 			return nil, &net.DNSError{Err: "no such host", Name: host, IsNotFound: true}
 		}
-	}
+	})
 
 	client, err := httpClient(nil)
 	require.NoError(t, err)
