@@ -26,7 +26,7 @@ import (
 	"github.com/openshift/library-go/pkg/crypto"
 
 	"github.com/openshift/console/pkg/helm/fetcherr"
-	"github.com/openshift/console/pkg/utils"
+	"github.com/openshift/console/pkg/helm/utils"
 )
 
 var (
