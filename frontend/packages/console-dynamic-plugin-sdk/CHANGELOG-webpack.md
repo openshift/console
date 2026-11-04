@@ -12,8 +12,12 @@ compatibility table in [Console dynamic plugins README](./README.md).
 
 ## 5.1.0-prerelease.2 - TBD
 
-- Add `react-dom` and `react/jsx-runtime` as Console provided shared modules. ([CONSOLE-5571],
+- Add `react-dom` and `react/jsx-runtime` to Console provided shared modules ([CONSOLE-5571],
   [#17462])
+- `ConsoleRemotePlugin` uses `meta/shared-modules.json` to validate shared module dependencies
+  ([CONSOLE-5065], [#17439])
+- **Deprecated**: `ConsoleRemotePlugin` shared dynamic module option `modulePaths` is now
+  deprecated, prefer using `baseDir` ([CONSOLE-5065], [#17439])
 
 ## 5.1.0-prerelease.1 - 2026-10-16
 
@@ -240,4 +244,5 @@ compatibility table in [Console dynamic plugins README](./README.md).
 [#17140]: https://github.com/openshift/console/pull/17140
 [#17259]: https://github.com/openshift/console/pull/17259
 [#17318]: https://github.com/openshift/console/pull/17318
+[#17439]: https://github.com/openshift/console/pull/17439
 [#17462]: https://github.com/openshift/console/pull/17462

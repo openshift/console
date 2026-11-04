@@ -2,17 +2,11 @@ type SharedModuleMetadata = Partial<{
   /**
    * If `true`, only a single version of the module can be loaded at runtime.
    *
+   * @see https://webpack.js.org/plugins/module-federation-plugin/#singleton
+   *
    * @default true
    */
   singleton: boolean;
-
-  /**
-   * If `undefined`, determine the required version from package dependencies.
-   * If `false`, disable required version checks for this module.
-   *
-   * @default undefined
-   */
-  requiredVersion: false | undefined;
 
   /**
    * If `true`, plugins may provide their own fallback version of the module.
@@ -21,9 +15,21 @@ type SharedModuleMetadata = Partial<{
    * the Console share scope object. If the given module is declared as singleton
    * and is already loaded, the fallback module will not load.
    *
+   * @see https://webpack.js.org/plugins/module-federation-plugin/#import
+   *
    * @default false
    */
   allowFallback: boolean;
+
+  /**
+   * If not `false`, this module's required version will be determined from the given
+   * package.
+   *
+   * @see https://webpack.js.org/plugins/module-federation-plugin/#packagename
+   *
+   * @default false
+   */
+  requiredVersionFrom: SharedModuleNames | false;
 
   /**
    * If `true`, this module's implementation is aliased to another module.
@@ -36,6 +42,16 @@ type SharedModuleMetadata = Partial<{
   aliased: boolean;
 
   /**
+   * If not `false`, this module's implementation is part of another module.
+   *
+   * For example, using `react-jsx` transform requires the `react/jsx-runtime` shared
+   * module to be available at runtime.
+   *
+   * @default false
+   */
+  partOfModule: SharedModuleNames | false;
+
+  /**
    * A message describing the deprecation, if the module has been deprecated.
    *
    * @default false
@@ -44,7 +60,7 @@ type SharedModuleMetadata = Partial<{
 }>;
 
 /**
- * Modules shared between the Console application and its dynamic plugins.
+ * Shared modules provided by the Console application to its plugins.
  */
 export const sharedPluginModules = [
   '@openshift/dynamic-plugin-sdk',
@@ -63,19 +79,16 @@ export const sharedPluginModules = [
   'redux-thunk',
 ] as const;
 
-export type SharedModuleNames = (typeof sharedPluginModules)[number];
+type SharedModuleNames = (typeof sharedPluginModules)[number];
 
-/**
- * Metadata associated with the shared modules.
- */
-const sharedPluginModulesMetadata: Record<SharedModuleNames, SharedModuleMetadata> = {
+const sharedPluginModuleMetadata: Record<SharedModuleNames, SharedModuleMetadata> = {
   '@openshift/dynamic-plugin-sdk': {},
   '@openshift-console/dynamic-plugin-sdk': {},
   '@openshift-console/dynamic-plugin-sdk-internal': {},
   '@patternfly/react-topology': {},
   react: {},
-  'react-dom': { requiredVersion: false }, // supresses build warning due to mobx-react-lite not including a version range for react-dom in its peerDependencies
-  'react/jsx-runtime': { requiredVersion: false }, // react/jsx-runtime is not a dependency in package.json
+  'react-dom': { requiredVersionFrom: 'react' },
+  'react/jsx-runtime': { partOfModule: 'react' },
   'react-i18next': {},
   'react-redux': {},
   'react-router': {},
@@ -86,7 +99,7 @@ const sharedPluginModulesMetadata: Record<SharedModuleNames, SharedModuleMetadat
 };
 
 /**
- * Retrieve full metadata for the given shared module.
+ * Get metadata for the given shared module.
  */
 export const getSharedModuleMetadata = (
   moduleName: SharedModuleNames,
@@ -94,9 +107,18 @@ export const getSharedModuleMetadata = (
   const {
     singleton = true,
     allowFallback = false,
+    requiredVersionFrom = false,
     aliased = false,
+    partOfModule = false,
     deprecated = false,
-    requiredVersion = undefined,
-  } = sharedPluginModulesMetadata[moduleName];
-  return { singleton, allowFallback, aliased, deprecated, requiredVersion };
+  } = sharedPluginModuleMetadata[moduleName];
+
+  return {
+    singleton,
+    allowFallback,
+    requiredVersionFrom,
+    aliased,
+    partOfModule,
+    deprecated,
+  };
 };
