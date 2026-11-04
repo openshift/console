@@ -24,7 +24,7 @@ export const InlineEditButton: FC<InlineEditButtonProps> = ({
     isInline
     onClick={onClick}
     isDisabled={isDisabled}
-    data-test={dataTest}
+    data-test={dataTest ? `${dataTest}-details-item__edit-button` : 'details-item__edit-button'}
   >
     {children}
   </Button>

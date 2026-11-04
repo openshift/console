@@ -121,7 +121,7 @@ export const ClusterExtensionCatalogsUpdateModal: FC<
     <>
       {canPatch || accessReviewLoading ? (
         <InlineEditButton
-          dataTest={`${t('Catalogs')}-details-item__edit-button`}
+          dataTest="Catalogs"
           isDisabled={accessReviewLoading}
           onClick={() => setIsOpen(true)}
         >

@@ -115,7 +115,7 @@ export const ClusterExtensionChannelsUpdateModal: FC<
     <>
       {canPatch || accessReviewLoading ? (
         <InlineEditButton
-          dataTest={`${t('Channels')}-details-item__edit-button`}
+          dataTest="Channels"
           isDisabled={accessReviewLoading}
           onClick={() => setIsOpen(true)}
         >
