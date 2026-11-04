@@ -195,8 +195,6 @@ func chartTransport(opts *action.ChartPathOptions) (*http.Transport, error) {
 	return transport, nil
 }
 
-const chartFetchLookupTimeout = 5 * time.Second
-
 func validateChartFetchRequest(req *http.Request) error {
 	if req == nil || req.URL == nil {
 		return errors.New("nil chart URL")
@@ -207,15 +205,7 @@ func validateChartFetchRequest(req *http.Request) error {
 	if !utils.FetchShapePreserved(req) {
 		return errors.New("invalid chart URL")
 	}
-	if utils.LoopbackDialAllowed() {
-		return nil
-	}
-	ctx := req.Context()
-	if utils.HostDisallowed(req.URL.Hostname(), func(host string) ([]net.IP, error) {
-		ctx, cancel := context.WithTimeout(ctx, chartFetchLookupTimeout)
-		defer cancel()
-		return net.DefaultResolver.LookupIP(ctx, "ip", host)
-	}) {
+	if utils.RequestHostDisallowed(req) {
 		return utils.ErrDisallowedHost
 	}
 	return nil
