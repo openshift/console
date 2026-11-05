@@ -12,7 +12,6 @@ import {
   ResourceKebab,
   ResourceLink,
   ResourceSummary,
-  detailsPage,
   navFactory,
   resourceObjPath,
 } from './utils';
@@ -263,7 +262,7 @@ const SecretsDetailsPage = (props) => (
     {...props}
     buttonActions={actionButtons}
     menuActions={menuActions}
-    pages={[navFactory.details(detailsPage(SecretDetails)), navFactory.editYaml()]}
+    pages={[navFactory.details(SecretDetails), navFactory.editYaml()]}
   />
 );
 
