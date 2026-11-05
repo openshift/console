@@ -17,7 +17,6 @@ import {
   ResourceLink,
   ResourceSummary,
   SectionHeading,
-  detailsPage,
   navFactory,
 } from './utils';
 import {
@@ -172,7 +171,7 @@ export const StorageClassPage: React.FC<StorageClassPageProps> = (props) => {
   );
 };
 export const StorageClassDetailsPage: React.FC = (props) => {
-  const pages = [navFactory.details(detailsPage(StorageClassDetails)), navFactory.editYaml()];
+  const pages = [navFactory.details(StorageClassDetails), navFactory.editYaml()];
   const customActionMenu = (kindObj, obj) => {
     const resourceKind = referenceForModel(kindObj);
     const context = { [resourceKind]: obj };
