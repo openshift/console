@@ -11,6 +11,11 @@ describe('Gitea Service', () => {
 
   nockBack.fixtures = `${import.meta.dirname}/__nock-fixtures__/gitea`;
 
+  afterAll(() => {
+    nock.cleanAll();
+    nock.restore();
+  });
+
   it('should return ok on existing public gitea repo', () => {
     const gitSource: GitSource = {
       url: 'https://gitea.com/redhat-openshift/devconsole-git',

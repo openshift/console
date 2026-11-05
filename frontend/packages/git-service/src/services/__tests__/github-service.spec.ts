@@ -12,6 +12,11 @@ describe('Github Service', () => {
 
   nockBack.fixtures = `${import.meta.dirname}/__nock-fixtures__/github`;
 
+  afterAll(() => {
+    nock.cleanAll();
+    nock.restore();
+  });
+
   it('should return ok on existing public github repo', () => {
     const gitSource: GitSource = {
       url: 'https://github.com/redhat-developer/devconsole-git',
