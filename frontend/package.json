@@ -170,7 +170,6 @@
     "lint-staged": "^10.2.2",
     "minimist": "^1.2.8",
     "monaco-editor-webpack-plugin": "^7.1.1",
-    "node-fetch": "^2.3.0",
     "node-polyfill-webpack-plugin": "4.0.0",
     "oxfmt": "^0.75.0",
     "oxlint": "^1.88.0",
@@ -182,6 +181,7 @@
     "ts-checker-rspack-plugin": "^1.6.1",
     "ts-node": "10.9.2",
     "typescript": "5.9.3",
+    "undici": "^5.28.4",
     "webpack": "^5.100.0"
   },
   "engines": {

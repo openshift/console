@@ -1,8 +1,27 @@
-import fetch from 'node-fetch';
+import { fetch, Headers, Request, Response } from 'undici';
 
-// Polyfill window.fetch with node-fetch for nock v11 compatibility.
-// nock v11 can intercept node-fetch but not jsdom's native fetch.
+// jsdom does not implement the fetch API. Polyfill it with undici so that
+// tests can use fetch and nock can intercept the requests. The full surface
+// (fetch, Request, Response, Headers) is polyfilled from the same
+// implementation since clients such as @gitbeaker/rest construct Requests
+// and nock creates Responses from the globals.
 Object.defineProperty(window, 'fetch', {
   value: fetch,
   writable: true,
+  configurable: true,
+});
+Object.defineProperty(window, 'Request', {
+  value: Request,
+  writable: true,
+  configurable: true,
+});
+Object.defineProperty(window, 'Response', {
+  value: Response,
+  writable: true,
+  configurable: true,
+});
+Object.defineProperty(window, 'Headers', {
+  value: Headers,
+  writable: true,
+  configurable: true,
 });
