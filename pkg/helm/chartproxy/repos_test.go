@@ -940,9 +940,9 @@ func TestHelmRepoGetter_unmarshallConfig(t *testing.T) {
 			}
 		})
 	}
-	err := ExecuteScript("./testdata/chartmuseum-stop.sh", false)
+	err := ExecuteScript("./testdata/chartmuseum-stop.sh", true)
 	require.NoError(t, err)
-	err = ExecuteScript("./testdata/cleanup.sh", false)
+	err = ExecuteScript("./testdata/cleanup.sh", true)
 	require.NoError(t, err)
 }
 
