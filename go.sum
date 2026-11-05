@@ -718,8 +718,8 @@ github.com/jackc/fake v0.0.0-20150926172116-812a484cc733/go.mod h1:WrMFNQdiFJ80s
 github.com/jackc/pgx v3.2.0+incompatible/go.mod h1:0ZGrqGqkRlliWnWB4zKnWtjbSWbGkVEFm4TeybAXq+I=
 github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 h1:BQSFePA1RWJOlocH6Fxy8MmwDt+yVQYULKfN0RoTN8A=
 github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99/go.mod h1:1lJo3i6rXxKeerYnT8Nvf0QmHCRC1n8sfWVwXF2Frvo=
-github.com/jhadvig/library-go v0.0.0-20261103105145-c3cdd39f47d2 h1:7bXpDSjNitFkf62n6pPKFuhL84v9zqQ9q1t9yoBRVC8=
-github.com/jhadvig/library-go v0.0.0-20261103105145-c3cdd39f47d2/go.mod h1:SOmIJLGV4ubkJnA2rXH0M5davuY1QpattP3zotdIY3E=
+github.com/jhadvig/library-go v0.0.0-20261105122000-5c1428844808 h1:da0qr6R7RYByV+riUKm2uFDt3zGkj5XZwJpHx0fn5Ow=
+github.com/jhadvig/library-go v0.0.0-20261105122000-5c1428844808/go.mod h1:SOmIJLGV4ubkJnA2rXH0M5davuY1QpattP3zotdIY3E=
 github.com/jmespath/go-jmespath v0.0.0-20160202185014-0b12d6b521d8/go.mod h1:Nht3zPeWKUH0NzdCt2Blrr5ys8VGpn0CEB0cQHVjt7k=
 github.com/jmespath/go-jmespath v0.0.0-20160803190731-bd40a432e4c7/go.mod h1:Nht3zPeWKUH0NzdCt2Blrr5ys8VGpn0CEB0cQHVjt7k=
 github.com/jmespath/go-jmespath v0.0.0-20180206201540-c2b33e8439af/go.mod h1:Nht3zPeWKUH0NzdCt2Blrr5ys8VGpn0CEB0cQHVjt7k=
