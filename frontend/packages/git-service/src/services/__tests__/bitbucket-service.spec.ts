@@ -14,6 +14,11 @@ describe('Bitbucket Service', () => {
 
   nockBack.fixtures = `${import.meta.dirname}/__nock-fixtures__/bitbucket`;
 
+  afterAll(() => {
+    nock.cleanAll();
+    nock.restore();
+  });
+
   it('should be able to detect existing public bitbucket repo', () => {
     const gitSource: GitSource = {
       url: 'https://bitbucket.org/atlassian/confluence-react-components',
