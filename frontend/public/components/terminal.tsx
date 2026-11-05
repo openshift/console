@@ -56,9 +56,7 @@ export const Terminal = forwardRef<ImperativeTerminalType, TerminalProps>(
       const viewportHeight = document.documentElement.clientHeight;
       const viewportWidth = document.documentElement.clientWidth;
 
-      const height = Math.floor(
-        viewportHeight - (isFullscreen ? 0 : nodeRect.top) - padding,
-      );
+      const height = Math.floor(viewportHeight - (isFullscreen ? 0 : nodeRect.top) - padding);
       const width = Math.floor(
         viewportWidth - (isFullscreen ? 0 : nodeRect.left) - (isFullscreen ? 10 : padding),
       );
