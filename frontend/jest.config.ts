@@ -10,6 +10,7 @@ export default defineConfig({
     '^\\.\\./get-local-plugins$': '<rootDir>/__mocks__/get-local-plugins.ts',
   },
   testEnvironment: 'jsdom',
+  workerIdleMemoryLimit: '1GB', // workaround nodejs/node#63186 nodejs/node#66490 jestjs/jest#14605
   transform: {
     '__mocks__/get-local-plugins\\.ts$': '<rootDir>/scripts/jest-transform-local-plugins.js',
     '^.+\\.(ts|tsx|js|mjs)$': [
