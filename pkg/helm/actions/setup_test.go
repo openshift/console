@@ -86,20 +86,23 @@ func TestMain(m *testing.M) {
 
 func startTests(m *testing.M) (exitCode int) {
 	defer func() {
-		// Cleanup: log errors but don't fail — best-effort teardown
-		if _, err := ExecuteScript("./testdata/chartmuseum-stop.sh", false); err != nil {
+		// Wait for the stop scripts. They SIGKILL a fixture that is still
+		// running after SIGTERM, so its output pipes are closed before this
+		// process exits. go test fails the package when a child still holds
+		// those pipes.
+		if _, err := ExecuteScript("./testdata/chartmuseum-stop.sh", true); err != nil {
 			fmt.Fprintln(os.Stderr, "Warning: chartmuseum-stop.sh failed:", err)
 			exitCode = 1
 		}
-		if _, err := ExecuteScript("./testdata/zot-stop.sh", false); err != nil {
+		if _, err := ExecuteScript("./testdata/zot-stop.sh", true); err != nil {
 			fmt.Fprintln(os.Stderr, "Warning: zot-stop.sh failed:", err)
 			exitCode = 1
 		}
-		if _, err := ExecuteScript("./testdata/cleanupNonTls.sh", false); err != nil {
+		if _, err := ExecuteScript("./testdata/cleanupNonTls.sh", true); err != nil {
 			fmt.Fprintln(os.Stderr, "Warning: cleanupNonTls.sh failed:", err)
 			exitCode = 1
 		}
-		if _, err := ExecuteScript("./testdata/cleanup.sh", false); err != nil {
+		if _, err := ExecuteScript("./testdata/cleanup.sh", true); err != nil {
 			fmt.Fprintln(os.Stderr, "Warning: cleanup.sh failed:", err)
 			exitCode = 1
 		}
