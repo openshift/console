@@ -10,7 +10,7 @@ RUN ./build-backend.sh
 ##################################################
 #
 # nodejs frontend build
-FROM registry.ci.openshift.org/ocp/builder:rhel-9-base-nodejs-openshift-5.0 AS nodebuilder
+FROM registry.ci.openshift.org/ocp/builder:rhel-9-base-nodejs-openshift-5.1 AS nodebuilder
 
 ADD . .
 USER 0
