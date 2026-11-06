@@ -70,12 +70,14 @@ const StatusTitle = ({ build }: { build: K8sResourceKind }) => {
           Build <BuildNumberLink build={build} /> is running
         </Trans>
       );
-    default:
+    default: {
+      const phase = build.status.phase ? build.status.phase.toLowerCase() : t('unknown');
       return (
         <Trans t={t} ns="topology">
-          Build <BuildNumberLink build={build} /> is {build.status?.phase?.toLowerCase()}
+          Build <BuildNumberLink build={build} /> is {{ phase }}
         </Trans>
       );
+    }
   }
 };
 

@@ -87,13 +87,14 @@ export const ExportApplicationModal: FC<ExportApplicationModalProps> = (props) =
       });
       setExportAppToast(exportAppToastConfig);
     } catch (error) {
+      const errorMessage = error?.message || t('An error occurred while starting the export.');
       toast?.addToast({
         variant: AlertVariant.danger,
         title: t('Export application'),
         content: (
           <Trans t={t} ns="topology">
             Export of resources in <strong>{{ namespace }}</strong> has failed with error:{' '}
-            {error.message}
+            {{ errorMessage }}
           </Trans>
         ),
         dismissible: true,
