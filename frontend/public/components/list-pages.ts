@@ -226,7 +226,6 @@ const baseListPages: Map<ResourceMapKey, ResourceMapValue> = new Map()
     ),
   )
   .set(referenceForModel(CustomResourceDefinitionModel), () =>
-    // eslint-disable-next-line import/no-cycle
     import(
       './custom-resource-definition' /* webpackChunkName: "custom-resource-definition" */
     ).then((m) => m.CustomResourceDefinitionsPage),

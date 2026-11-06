@@ -1,4 +1,3 @@
-/* eslint-disable oxc/no-barrel-file */
 export type {
   PodRCData,
   ExtPodKind,

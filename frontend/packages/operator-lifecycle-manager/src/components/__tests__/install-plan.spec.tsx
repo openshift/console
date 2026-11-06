@@ -85,7 +85,6 @@ describe('getInstallPlanDataViewRows', () => {
   it('renders install plan name with correct resource link', () => {
     renderRow(installPlan, ['name']);
     const installPlanLinks = screen.getAllByRole('link', { name: installPlan.metadata.name });
-    // eslint-disable-next-line testing-library/no-node-access -- Multiple links with same name require href filtering
     const installPlanLink = installPlanLinks.find((link) =>
       link.getAttribute('href')?.includes('InstallPlan'),
     );
@@ -111,7 +110,6 @@ describe('getInstallPlanDataViewRows', () => {
     renderRow(installPlan, ['components']);
     const csvName = installPlan.spec.clusterServiceVersionNames[0];
     const csvLinks = screen.getAllByRole('link', { name: csvName });
-    // eslint-disable-next-line testing-library/no-node-access -- Multiple links with same name require href filtering
     const csvLink = csvLinks.find((link) =>
       link.getAttribute('href')?.includes('ClusterServiceVersion'),
     );

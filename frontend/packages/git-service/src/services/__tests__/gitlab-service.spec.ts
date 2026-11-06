@@ -310,7 +310,6 @@ describe('Gitlab Service', () => {
 
     const scope = nock('https://example.com/api/v4')
       .get('/projects/test%2Frepo')
-      // eslint-disable-next-line @typescript-eslint/naming-convention
       .reply(200, { path_with_namespace: 'test/repo' });
 
     const status = await gitService.isRepoReachable();
@@ -324,7 +323,6 @@ describe('Gitlab Service', () => {
 
     const scope = nock('http://example.com:3000/api/v4')
       .get('/projects/test%2Frepo')
-      // eslint-disable-next-line @typescript-eslint/naming-convention
       .reply(200, { path_with_namespace: 'test/repo' });
 
     const status = await gitService.isRepoReachable();

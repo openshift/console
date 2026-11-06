@@ -25,7 +25,6 @@ import { isPerspective, useActivePerspective } from '@console/dynamic-plugin-sdk
 import { k8sCreateResource, k8sUpdateResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
-/* eslint-disable import/named */
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import SecondaryHeading from '@console/shared/src/components/heading/SecondaryHeading';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';

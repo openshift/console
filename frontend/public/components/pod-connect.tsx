@@ -201,7 +201,6 @@ export const PodConnect: FC<PodConnectProps> = ({
         wsRef.current.destroy();
       }
     };
-    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [connect]);
 
   // Container change handler
