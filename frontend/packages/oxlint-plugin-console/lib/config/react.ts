@@ -19,7 +19,8 @@ const preset: OxlintConfig = {
     { name: 'react-hooks-js', specifier: 'eslint-plugin-react-hooks' },
   ],
 
-  rules: mergeRules(airbnbReact, react, reactHooks, overrides),
+  // Console-specific rule files layer after the airbnb overrides
+  rules: mergeRules(airbnbReact, overrides, react, reactHooks),
 };
 
 export default preset;
