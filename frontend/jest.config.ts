@@ -10,6 +10,9 @@ export default defineConfig({
     '^\\.\\./get-local-plugins$': '<rootDir>/__mocks__/get-local-plugins.ts',
   },
   testEnvironment: 'jsdom',
+  workerIdleMemoryLimit: '1GB', // workaround nodejs/node#63186 nodejs/node#66490 jestjs/jest#14605
+  workerGracefulExitTimeout: 2000,
+  haste: { forceNodeFilesystemAPI: true },
   transform: {
     '__mocks__/get-local-plugins\\.ts$': '<rootDir>/scripts/jest-transform-local-plugins.js',
     '^.+\\.(ts|tsx|js|mjs)$': [
@@ -33,9 +36,6 @@ export default defineConfig({
       } satisfies SwcOptions,
     ],
   },
-  transformIgnorePatterns: [
-    '<rootDir>/node_modules/(?!(@patternfly(-\\S+)?|d3(-\\S+)?|delaunator|robust-predicates|internmap|lodash-es|istextorbinary|@console|@novnc|@spice-project|@popperjs|i18next(-\\S+)?|@babel/runtime|jsonpath-plus|nanoid|@rjsf|@x0k|git-url-parse|git-up|parse-url|protocols|sanitize-html|linkify-react|fuzzysearch)/.*)',
-  ],
   testPathIgnorePatterns: ['<rootDir>/node_modules/', '<rootDir>/public/dist', '<rootDir>/e2e'],
   modulePathIgnorePatterns: ['<rootDir>/public/dist', '<rootDir>/e2e'],
   testRegex: '.*\\.spec\\.(ts|tsx)$',
@@ -48,9 +48,7 @@ export default defineConfig({
     './__mocks__/transformStream.ts',
     './__mocks__/fetch.ts',
     './__mocks__/helmet.ts',
-    './__mocks__/localStorage.ts',
     './__mocks__/matchMedia.ts',
-    './__mocks__/mutationObserver.ts',
     './__mocks__/resizeObserver.ts',
     './__mocks__/serverFlags.ts',
     './__mocks__/sharedScope.ts',
