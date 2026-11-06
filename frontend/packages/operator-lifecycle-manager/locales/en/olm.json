@@ -98,7 +98,7 @@
   "Checking migration": "Checking migration",
   "Checking readiness and compatibility": "Checking readiness and compatibility",
   "Classic Operators": "Classic Operators",
-  "Classic Operators are deprecated and will be replaced by cluster extensions. For production clusters, continue to use classic Operators. To find a cluster extension for testing, open the software catalog and select Cluster extensions in the Catalog filter. Cluster extensions are a Technology Preview feature.": "Classic Operators are deprecated and will be replaced by cluster extensions. For production clusters, continue to use classic Operators. To find a cluster extension for testing, open the software catalog and select Cluster extensions in the Catalog filter. Cluster extensions are a Technology Preview feature.",
+  "Classic Operators are deprecated and will be replaced by cluster extensions. For production clusters, continue to use classic Operators. To find a cluster extension for testing, open the software catalog and select Cluster extensions in the Catalog filter. Cluster extensions are a Technology Preview feature.{{ deprecationMessage }}": "Classic Operators are deprecated and will be replaced by cluster extensions. For production clusters, continue to use classic Operators. To find a cluster extension for testing, open the software catalog and select Cluster extensions in the Catalog filter. Cluster extensions are a Technology Preview feature.{{ deprecationMessage }}",
   "Cleaning up operand instances...": "Cleaning up operand instances...",
   "Cleaning up Operator Lifecycle Manager version 0 resources": "Cleaning up Operator Lifecycle Manager version 0 resources",
   "Cleanup complete": "Cleanup complete",
