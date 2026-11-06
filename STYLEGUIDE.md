@@ -2,7 +2,7 @@
 
 ## Directory and File Names
 
-- Use lowercase dash-separated names for all files (to avoid git issues with case-insensitive file systems)
+- Use lowercase dash-separated names for files, except React component files, which use PascalCase (to avoid git issues with case-insensitive file systems)
 - Exceptions are files which have their own naming conventions (eg Dockerfile, Makefile, README)
 
 ## Go
@@ -59,6 +59,14 @@
 - **i18n**: Use `useTranslation('namespace')` hook with `key` format for translation keys
 - **Error Handling**: Use ErrorBoundary components and graceful degradation patterns
 - **File Naming**: PascalCase for components, kebab-case for utilities, `*.spec.ts(x)` for tests
+
+### Component names and files
+
+- Give components descriptive names that identify their purpose and UI role, such as `ClusterExtensionCatalogsUpdateModal`, `ClusterExtensionChannelsField`, or `ClusterExtensionDetailsPage`.
+- When a file exports a single component, its filename MUST exactly match the component's PascalCase name, for example `ClusterExtensionCatalogsUpdateModal.tsx`. Exported types and private helper components do not change this rule.
+- Use the same descriptive component name for its exposed module key in `package.json`. Reference named exports explicitly in extension `$codeRef` values, for example `ClusterExtensionCatalogsUpdateModal.ClusterExtensionCatalogsUpdateModal`.
+- Name component test files after the component, for example `ClusterExtensionCatalogsUpdateModal.spec.tsx`. Tests covering several components may use a descriptive group name.
+- Apply these conventions to new components and explicitly requested refactoring. Preserve existing filenames and export conventions when touching components for unrelated story work; do not expand scope solely to meet these rules.
 
 ### Performance
 
