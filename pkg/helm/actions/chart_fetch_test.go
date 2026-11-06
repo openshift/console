@@ -1,6 +1,8 @@
 package actions
 
 import (
+	"context"
+	"net"
 	"net/http"
 	"testing"
 
@@ -69,4 +71,46 @@ func TestChartTransportRejectsRedirectShape(t *testing.T) {
 	chartFromIndex.Response = &http.Response{Request: index}
 	_, err = proxy(chartFromIndex)
 	require.EqualError(t, err, "invalid chart URL")
+}
+
+func TestChartTransportAllowsReleaseAssetRedirect(t *testing.T) {
+	prev := utils.LoopbackDialAllowed()
+	utils.SetAllowLoopbackDialForTest(false)
+	t.Cleanup(func() {
+		utils.SetAllowLoopbackDialForTest(prev)
+		utils.SetRequestHostLookupForTest(nil)
+	})
+	utils.SetRequestHostLookupForTest(func(context.Context, string) ([]net.IP, error) {
+		return []net.IP{net.ParseIP("8.8.8.8")}, nil
+	})
+
+	tr, err := chartTransport(nil)
+	require.NoError(t, err)
+	proxy := tr.Proxy
+
+	orig, err := http.NewRequest(http.MethodGet, "https://github.com/openshift-helm-charts/charts/releases/download/redhat-nodejs-0.0.2/redhat-nodejs-0.0.2.tgz", nil)
+	require.NoError(t, err)
+	asset, err := http.NewRequest(http.MethodGet, "https://release-assets.githubusercontent.com/github-production-release-asset/1/uuid?rscd=attachment%3B%20filename%3Dredhat-nodejs-0.0.2.tgz&response-content-disposition=attachment%3B%20filename%3Dredhat-nodejs-0.0.2.tgz", nil)
+	require.NoError(t, err)
+	asset.Response = &http.Response{Request: orig}
+	_, err = proxy(asset)
+	require.NoError(t, err)
+
+	provName, err := http.NewRequest(http.MethodGet, "https://release-assets.githubusercontent.com/github-production-release-asset/1/uuid?rscd=attachment%3B%20filename%3Dredhat-nodejs-0.0.2.tgz.prov", nil)
+	require.NoError(t, err)
+	provName.Response = &http.Response{Request: orig}
+	_, err = proxy(provName)
+	require.EqualError(t, err, "invalid chart URL")
+
+	elsewhere, err := http.NewRequest(http.MethodGet, "https://10.2.3.4/secret?rscd=attachment%3B%20filename%3Dredhat-nodejs-0.0.2.tgz", nil)
+	require.NoError(t, err)
+	elsewhere.Response = &http.Response{Request: orig}
+	_, err = proxy(elsewhere)
+	require.EqualError(t, err, "invalid chart URL")
+
+	down, err := http.NewRequest(http.MethodGet, "http://release-assets.githubusercontent.com/github-production-release-asset/1/uuid?rscd=attachment%3B%20filename%3Dredhat-nodejs-0.0.2.tgz", nil)
+	require.NoError(t, err)
+	down.Response = &http.Response{Request: orig}
+	_, err = proxy(down)
+	require.EqualError(t, err, "redirect from https to http is not allowed")
 }
