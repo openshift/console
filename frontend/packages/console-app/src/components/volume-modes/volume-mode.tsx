@@ -47,7 +47,7 @@ export const VolumeModeSelector: FC<VolumeModeSelectorProps> = (props) => {
   // Notify the parent after commit: the parent form cannot be updated while
   // this component is rendering. Only a selection change notifies, not an
   // onChange identity change.
-  const lastNotifiedModeRef = useRef<string>();
+  const lastNotifiedModeRef = useRef<string>(undefined);
   useEffect(() => {
     if (volumeMode && volumeMode !== lastNotifiedModeRef.current) {
       onChange(volumeMode);
