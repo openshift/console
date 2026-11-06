@@ -150,6 +150,3 @@ type DynamicFormProps = Omit<
   showAlert?: boolean;
   onCancel?: () => void;
 };
-
-export * from './types';
-export * from './const';

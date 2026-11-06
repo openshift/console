@@ -23,7 +23,7 @@ jest.mock('@console/internal/module/k8s', () => ({
 }));
 
 // Mock WSFactory
-jest.mock('@console/internal/module/ws-factory', () => ({
+jest.mock('@console/dynamic-plugin-sdk/src/utils/k8s/ws-factory', () => ({
   WSFactory: jest.fn().mockImplementation(() => ({
     onmessage: jest.fn().mockReturnThis(),
     onclose: jest.fn().mockReturnThis(),
