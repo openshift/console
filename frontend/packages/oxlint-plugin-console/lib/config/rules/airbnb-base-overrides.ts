@@ -21,9 +21,6 @@ export default {
   // Disallow the unary operators ++ and --
   'no-plusplus': 'off',
 
-  // Disallow specified syntax
-  'eslint-js/no-restricted-syntax': 'off',
-
   // Disallow assignment in return statement
   'no-return-assign': ['error', 'except-parens'],
 
@@ -86,9 +83,6 @@ export default {
       'newlines-between': 'never',
     },
   ],
-
-  // Legitimate use cases for require() exist, such as in the eslint config and in core-api.ts
-  'global-require': 'off',
 
   /* ------------------------ New Rules as of eslint-config-airbnb-base v14.0.0 -------------------------
 
