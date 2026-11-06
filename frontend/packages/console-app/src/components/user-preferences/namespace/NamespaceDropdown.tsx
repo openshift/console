@@ -11,12 +11,12 @@ import {
   MenuList,
 } from '@patternfly/react-core';
 import { RhStandardAlertIcon } from '@patternfly/react-icons';
-import fuzzysearch from 'fuzzysearch';
 import { useTranslation } from 'react-i18next';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { useProjectOrNamespaceModel } from '@console/internal/components/utils/list-dropdown';
 import { ProjectModel } from '@console/internal/models';
 import type { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
+import { matchesNamespaceFilterText } from '@console/shared/src/components/namespace/filters';
 import {
   Filter,
   Footer,
@@ -36,6 +36,11 @@ import './NamespaceDropdown.scss';
 type OptionItem = {
   title: string;
   key: string;
+  metadata?: {
+    name?: string;
+    annotations?: Record<string, string>;
+    labels?: Record<string, string>;
+  };
 };
 
 const NamespaceDropdown: FC = () => {
@@ -63,7 +68,7 @@ const NamespaceDropdown: FC = () => {
     }
     const items: OptionItem[] = options.map((item) => {
       const { name } = item.metadata || {};
-      return { title: name || '', key: name || '' };
+      return { title: name || '', key: name || '', metadata: item.metadata };
     });
     items.sort((a, b) => alphanumericCompare(a.title, b.title));
     return items;
@@ -71,12 +76,11 @@ const NamespaceDropdown: FC = () => {
 
   const loaded: boolean = model && preferredNamespaceLoaded && optionsLoaded;
 
-  const filteredOptions: OptionItem[] = useMemo(() => {
-    const lowerCaseFilterText = filterText.toLowerCase();
-    return optionItems.filter((option: OptionItem) =>
-      fuzzysearch(lowerCaseFilterText, option.title.toLowerCase()),
-    );
-  }, [optionItems, filterText]);
+  const filteredOptions: OptionItem[] = useMemo(
+    () =>
+      optionItems.filter((option: OptionItem) => matchesNamespaceFilterText(filterText, option)),
+    [optionItems, filterText],
+  );
 
   const lastViewedOption: OptionItem = {
     title: t('Last viewed'),
