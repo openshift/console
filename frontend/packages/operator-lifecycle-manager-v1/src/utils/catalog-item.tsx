@@ -69,6 +69,7 @@ export const normalizeCatalogItem: NormalizeExtensionCatalogItem = (item) => {
     data: {
       latestVersion: version,
       categories,
+      lifecycleData: item.lifecycleData ?? null,
     },
     details: {
       properties: [

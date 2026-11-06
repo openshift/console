@@ -8,7 +8,6 @@ import (
 
 	"github.com/operator-framework/operator-registry/alpha/declcfg"
 	"github.com/operator-framework/operator-registry/alpha/property"
-
 	"k8s.io/klog/v2"
 )
 
@@ -22,25 +21,26 @@ type CachedIcon struct {
 
 // ConsoleCatalogItem represents a single item in the catalog.
 type ConsoleCatalogItem struct {
-	ID                     string   `json:"id"`
-	Capabilities           string   `json:"capabilities,omitempty"`
-	Catalog                string   `json:"catalog"`
-	Categories             []string `json:"categories,omitempty"`
-	CreatedAt              string   `json:"createdAt,omitempty"`
-	Description            string   `json:"description,omitempty"`
-	DisplayName            string   `json:"displayName,omitempty"`
-	HasIcon                bool     `json:"hasIcon"`
-	Image                  string   `json:"image,omitempty"`
-	InfrastructureFeatures []string `json:"infrastructureFeatures,omitempty"`
-	Keywords               []string `json:"keywords,omitempty"`
-	MarkdownDescription    string   `json:"markdownDescription,omitempty"`
-	Name                   string   `json:"name"`
-	Provider               string   `json:"provider,omitempty"`
-	Repository             string   `json:"repository,omitempty"`
-	Source                 string   `json:"source,omitempty"`
-	Support                string   `json:"support,omitempty"`
-	ValidSubscription      []string `json:"validSubscription,omitempty"`
-	Version                string   `json:"version,omitempty"`
+	ID                     string          `json:"id"`
+	Capabilities           string          `json:"capabilities,omitempty"`
+	Catalog                string          `json:"catalog"`
+	Categories             []string        `json:"categories,omitempty"`
+	CreatedAt              string          `json:"createdAt,omitempty"`
+	Description            string          `json:"description,omitempty"`
+	DisplayName            string          `json:"displayName,omitempty"`
+	HasIcon                bool            `json:"hasIcon"`
+	Image                  string          `json:"image,omitempty"`
+	InfrastructureFeatures []string        `json:"infrastructureFeatures,omitempty"`
+	Keywords               []string        `json:"keywords,omitempty"`
+	MarkdownDescription    string          `json:"markdownDescription,omitempty"`
+	Name                   string          `json:"name"`
+	Provider               string          `json:"provider,omitempty"`
+	Repository             string          `json:"repository,omitempty"`
+	Source                 string          `json:"source,omitempty"`
+	Support                string          `json:"support,omitempty"`
+	ValidSubscription      []string        `json:"validSubscription,omitempty"`
+	Version                string          `json:"version,omitempty"`
+	LifecycleData          json.RawMessage `json:"lifecycleData"`
 }
 
 // TransformCatalog transforms the raw catalog data into a list of CatalogItems.
