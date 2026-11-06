@@ -68,7 +68,7 @@ export const AccessModeSelector: FC<AccessModeSelectorProps> = (props) => {
   // Notify the parent after commit: the parent form cannot be updated while
   // this component renders. Only a selection change notifies, not an
   // onChange identity change.
-  const lastNotifiedModeRef = useRef<string>();
+  const lastNotifiedModeRef = useRef<string>(undefined);
   useEffect(() => {
     if (accessMode && accessMode !== lastNotifiedModeRef.current) {
       onChange(accessMode);
