@@ -21,6 +21,9 @@ export default {
   // Disallow the unary operators ++ and --
   'no-plusplus': 'off',
 
+  // Disallow specified syntax (airbnb bans only; rules/react.ts selectors stay in effect)
+  'eslint-js/no-restricted-syntax': 'off',
+
   // Disallow assignment in return statement
   'no-return-assign': ['error', 'except-parens'],
 
