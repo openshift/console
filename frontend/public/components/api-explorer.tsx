@@ -689,8 +689,13 @@ const APIResourceAccessReview: FC<APIResourceTabProps> = ({
   }, [verb, filter, showUsers, showGroups, showServiceAccounts, pagination.page, setSearchParams]);
 
   // perform the access review
-  useEffect(() => {
+  const reviewKey = `${apiGroup}/${apiVersion}/${plural}/${namespace}/${verb}`;
+  const [prevReviewKey, setPrevReviewKey] = useState(reviewKey);
+  if (prevReviewKey !== reviewKey) {
+    setPrevReviewKey(reviewKey);
     setError(null);
+  }
+  useEffect(() => {
     const accessReviewModel = namespace
       ? LocalResourceAccessReviewsModel
       : ResourceAccessReviewsModel;

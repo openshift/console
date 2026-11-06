@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useRef, useState } from 'react';
+import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Alert,
   AlertVariant,
@@ -59,9 +59,6 @@ const GroupsEditorModal: OverlayComponent<ModalComponentProps> = ({ closeOverlay
   const { t } = useTranslation('console-app');
   const [selectedGroup, setSelectedGroup] = useState<string | undefined>();
   const [groupsByName, setGroupsByName] = useState<GroupNameMap>({});
-  const [nodeSelections, setNodeSelections] = useState<{ nodeName: string; selected: boolean }[]>(
-    [],
-  );
   const currentGroupsByName = useRef<GroupNameMap>(undefined);
   const [newGroupName, setNewGroupName] = useState<string>('');
   const [backgroundChange, setBackgroundChange] = useState<boolean>(false);
@@ -95,14 +92,14 @@ const GroupsEditorModal: OverlayComponent<ModalComponentProps> = ({ closeOverlay
     }
   }, [nodes, nodesLoaded, nodesLoadError]);
 
-  useEffect(() => {
-    setNodeSelections(
+  const nodeSelections = useMemo(
+    () =>
       nodeNames.map((nodeName) => ({
         nodeName,
         selected: !!selectedGroup && groupsByName[selectedGroup]?.includes(nodeName),
       })),
-    );
-  }, [groupsByName, nodeNames, selectedGroup]);
+    [nodeNames, selectedGroup, groupsByName],
+  );
 
   const handleNodeSelect = (event: React.FormEvent<HTMLInputElement>, checked: boolean) => {
     const target = event.currentTarget;

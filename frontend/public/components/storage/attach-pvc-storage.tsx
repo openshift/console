@@ -21,16 +21,13 @@ const AttachStorageForm: FC<AttachStorageFormProps> = (props) => {
   const [inProgress, setInProgress] = useState(false);
   const [useContainerSelector, setUseContainerSelector] = useState(false);
   const [claimName, setClaimName] = useState('');
-  const [volumeName, setVolumeName] = useState('');
   const [mountPath, setMountPath] = useState('');
   const [devicePath, setDevicePath] = useState('');
   const [subPath, setSubPath] = useState('');
   const [mountAsReadOnly, setMountAsReadOnly] = useState(false);
   const [selectedContainers, setSelectedContainers] = useState([]);
-  const [volumeAlreadyMounted, setVolumeAlreadyMounted] = useState(false);
   const [error, setError] = useState('');
   const [showCreatePVC, setShowCreatePVC] = useState('existing');
-  const [claimVolumeMode, setClaimVolumeMode] = useState('');
   const [newPVCObj, setNewPVCObj] = useState(null);
   const [selectedPVC, setSelectedPVC] = useState<PersistentVolumeClaimKind>(null);
 
@@ -55,24 +52,21 @@ const AttachStorageForm: FC<AttachStorageFormProps> = (props) => {
       .catch(() => {});
   }, [kindObj, resourceName, namespace]);
 
-  useEffect(() => {
-    // If the PVC or its name changes, check if there is already a volume with that name
-    const newClaimName =
-      showCreatePVC === 'existing' ? claimName : _.get(newPVCObj, 'metadata.name', '');
-    const volumes = _.get(obj, 'spec.template.spec.volumes');
-    const volume = _.find(volumes, {
-      persistentVolumeClaim: {
-        claimName: newClaimName,
-      },
-    }) as any;
-    const newVolumeName = volume ? volume.name : newClaimName;
-    const newVolumeAlreadyMounted = !!volume;
-    setVolumeName(newVolumeName);
-    setVolumeAlreadyMounted(newVolumeAlreadyMounted);
-    showCreatePVC === 'existing' && newClaimName.trim().length > 0
-      ? setClaimVolumeMode(selectedPVC.spec.volumeMode)
-      : setClaimVolumeMode(newPVCObj?.spec?.volumeMode);
-  }, [newPVCObj, obj, claimName, showCreatePVC, claimVolumeMode, selectedPVC, namespace]);
+  // If the PVC or its name changes, check if there is already a volume with that name.
+  const currentClaimName =
+    showCreatePVC === 'existing' ? claimName : _.get(newPVCObj, 'metadata.name', '');
+  const volumes = _.get(obj, 'spec.template.spec.volumes');
+  const mountedVolume = _.find(volumes, {
+    persistentVolumeClaim: {
+      claimName: currentClaimName,
+    },
+  }) as any;
+  const volumeName = mountedVolume ? mountedVolume.name : currentClaimName;
+  const volumeAlreadyMounted = !!mountedVolume;
+  const claimVolumeMode =
+    showCreatePVC === 'existing' && currentClaimName.trim().length > 0
+      ? selectedPVC.spec.volumeMode
+      : newPVCObj?.spec?.volumeMode;
 
   if (!kindObj || !_.includes(supportedKinds, kindObj.kind)) {
     setError('Unsupported kind.');

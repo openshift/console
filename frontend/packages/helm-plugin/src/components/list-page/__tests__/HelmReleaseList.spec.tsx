@@ -1,4 +1,4 @@
-import { screen, waitFor } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { fetchHelmReleases } from '../../../utils/helm-utils';
 import HelmReleaseList from '../HelmReleaseList';
@@ -99,8 +99,12 @@ const mockHelmRelease = {
   version: 1,
 };
 
+const secrets = (count: number) =>
+  Array.from({ length: count }, (_, i) => ({ metadata: { name: `secret-${i}` } }));
+
 describe('HelmReleaseList', () => {
   beforeEach(() => {
+    jest.clearAllMocks();
     mockUseParams.mockReturnValue({ ns: 'test-ns' });
   });
 
@@ -186,5 +190,159 @@ describe('HelmReleaseList', () => {
 
     expect(screen.getByTestId('console-data-view')).toBeVisible();
     expect(screen.queryByText('No Helm releases found')).not.toBeInTheDocument();
+  });
+
+  it('replaces an in-flight fetch when the secret count returns to a completed value', async () => {
+    // Regression test: N -> N+1 -> N within request latency. The in-flight
+    // request for N+1 is discarded by cleanup; the return to N must start a
+    // replacement fetch, not skip it because N was already completed.
+    let watchCount = 2;
+    mockUseK8sWatchResource.mockImplementation(() => [secrets(watchCount), true, null]);
+
+    const resolvers: ((releases: any[]) => void)[] = [];
+    (fetchHelmReleases as jest.Mock).mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          resolvers.push(resolve);
+        }),
+    );
+
+    const { rerender } = renderWithProviders(<HelmReleaseList />);
+    expect(fetchHelmReleases).toHaveBeenCalledTimes(1);
+
+    // Complete the fetch for count 2.
+    await act(async () => {
+      resolvers[0]([mockHelmRelease as any]);
+    });
+    await waitFor(() => {
+      expect(screen.getByTestId('data-count')).toHaveTextContent('1 releases');
+    });
+
+    // Watch count 2 -> 3: starts a second fetch, left pending.
+    watchCount = 3;
+    rerender(<HelmReleaseList />);
+    expect(fetchHelmReleases).toHaveBeenCalledTimes(2);
+
+    // Watch count 3 -> 2 before the second fetch resolves: the pending
+    // request is discarded and a replacement fetch for 2 must start.
+    watchCount = 2;
+    rerender(<HelmReleaseList />);
+    expect(fetchHelmReleases).toHaveBeenCalledTimes(3);
+
+    await act(async () => {
+      resolvers[2]([mockHelmRelease as any]);
+    });
+    await waitFor(() => {
+      expect(screen.getByTestId('data-count')).toHaveTextContent('1 releases');
+    });
+  });
+
+  it('does not refetch when the completed count is unchanged', async () => {
+    mockUseK8sWatchResource.mockImplementation(() => [secrets(2), true, null]);
+
+    const resolvers: ((releases: any[]) => void)[] = [];
+    (fetchHelmReleases as jest.Mock).mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          resolvers.push(resolve);
+        }),
+    );
+
+    const { rerender } = renderWithProviders(<HelmReleaseList />);
+    expect(fetchHelmReleases).toHaveBeenCalledTimes(1);
+
+    await act(async () => {
+      resolvers[0]([mockHelmRelease as any]);
+    });
+    await waitFor(() => {
+      expect(screen.getByTestId('data-count')).toHaveTextContent('1 releases');
+    });
+
+    // Unrelated re-render with the same count must not fetch again.
+    rerender(<HelmReleaseList />);
+    expect(fetchHelmReleases).toHaveBeenCalledTimes(1);
+  });
+
+  it('refetches after a watch error discards an in-flight request, with an unchanged count', async () => {
+    // Regression test: a watch error (or any dependency change) discards an
+    // in-flight fetch via cleanup; when the watch recovers with the same
+    // secret count, a replacement fetch must start.
+    let watchError: Error | undefined;
+    mockUseK8sWatchResource.mockImplementation(() => [secrets(2), true, watchError]);
+
+    const resolvers: ((releases: any[]) => void)[] = [];
+    (fetchHelmReleases as jest.Mock).mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          resolvers.push(resolve);
+        }),
+    );
+
+    const { rerender } = renderWithProviders(<HelmReleaseList />);
+    expect(fetchHelmReleases).toHaveBeenCalledTimes(1);
+
+    // Watch error appears while the first request is in flight.
+    watchError = new Error('watch failed');
+    rerender(<HelmReleaseList />);
+    expect(fetchHelmReleases).toHaveBeenCalledTimes(1);
+
+    // Watch recovers with the same count: a replacement fetch must start.
+    watchError = undefined;
+    rerender(<HelmReleaseList />);
+    expect(fetchHelmReleases).toHaveBeenCalledTimes(2);
+
+    await act(async () => {
+      resolvers[1]([mockHelmRelease as any]);
+    });
+    await waitFor(() => {
+      expect(screen.getByTestId('data-count')).toHaveTextContent('1 releases');
+    });
+  });
+
+  it('refetches when returning to a namespace after a round trip, with an unchanged count', async () => {
+    // Regression test: A loaded -> B (watch not loaded) -> A with the same
+    // secret count. The namespace change resets the completed count, so the
+    // stale request identity from the first namespace must not skip the
+    // replacement fetch on the return.
+    mockUseK8sWatchResource.mockImplementation(() => [secrets(2), true, null]);
+
+    const resolvers: ((releases: any[]) => void)[] = [];
+    (fetchHelmReleases as jest.Mock).mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          resolvers.push(resolve);
+        }),
+    );
+
+    // Namespace A: fetch completes and the list is loaded.
+    mockUseParams.mockReturnValue({ ns: 'ns-a' });
+    const { rerender } = renderWithProviders(<HelmReleaseList />);
+    expect(fetchHelmReleases).toHaveBeenCalledTimes(1);
+    await act(async () => {
+      resolvers[0]([mockHelmRelease as any]);
+    });
+    await waitFor(() => {
+      expect(screen.getByTestId('data-count')).toHaveTextContent('1 releases');
+    });
+
+    // Namespace B: the watch has not loaded yet, so no fetch starts.
+    mockUseParams.mockReturnValue({ ns: 'ns-b' });
+    mockUseK8sWatchResource.mockImplementation(() => [[], false, null]);
+    rerender(<HelmReleaseList />);
+    expect(fetchHelmReleases).toHaveBeenCalledTimes(1);
+
+    // Back to namespace A with the same count: a replacement fetch must
+    // start and the list must become loaded again.
+    mockUseParams.mockReturnValue({ ns: 'ns-a' });
+    mockUseK8sWatchResource.mockImplementation(() => [secrets(2), true, null]);
+    rerender(<HelmReleaseList />);
+    expect(fetchHelmReleases).toHaveBeenCalledTimes(2);
+
+    await act(async () => {
+      resolvers[1]([mockHelmRelease as any]);
+    });
+    await waitFor(() => {
+      expect(screen.getByTestId('data-count')).toHaveTextContent('1 releases');
+    });
   });
 });

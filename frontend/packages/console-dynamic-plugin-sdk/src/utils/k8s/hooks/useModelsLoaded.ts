@@ -15,8 +15,10 @@ export const useModelsLoaded = (): boolean => {
     ({ k8s }) => k8s.RESOURCES?.inFlight,
   );
 
+  // eslint-disable-next-line react-hooks-js/refs -- Intentional render-time latch (usePrevious-style): once the models have finished loading, they are considered loaded for the lifetime of this hook. The ref must be read and written during render so that the latched value is returned within the same render pass; a state-based latch would trigger an extra re-render in every useK8sWatchResource/useK8sWatchResources consumer.
   if (!ref.current && loaded && !inFlight) {
     ref.current = true;
   }
+  // eslint-disable-next-line react-hooks-js/refs -- Intentional render-time latch, see the comment above
   return ref.current;
 };

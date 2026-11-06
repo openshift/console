@@ -16,13 +16,18 @@ import ImageStream from './ImageStream';
 const ImageSearchSection: FC<{ disabled?: boolean }> = ({ disabled = false }) => {
   const { t } = useTranslation('devconsole');
   const { values, setFieldValue, initialValues } = useFormikContext<FormikValues>();
-  const [registry, setRegistry] = useState(values.registry);
 
-  const showSample = useRef(hasSampleQueryParameter()).current;
+  // Computed once per mount: the sample query parameter cannot change while
+  // this form is mounted.
+  const [showSample] = useState(hasSampleQueryParameter);
+
+  // Track the registry value last seen by the effect below so the search
+  // fields can be reset whenever the selected registry changes.
+  const prevRegistryRef = useRef(values.registry);
 
   useEffect(() => {
-    if (values.registry !== registry) {
-      setRegistry(values.registry);
+    if (values.registry !== prevRegistryRef.current) {
+      prevRegistryRef.current = values.registry;
       setFieldValue('searchTerm', initialValues.searchTerm);
       setFieldValue('isi', initialValues.isi);
       setFieldValue('imageStream', initialValues.imageStream);
@@ -31,7 +36,6 @@ const ImageSearchSection: FC<{ disabled?: boolean }> = ({ disabled = false }) =>
     initialValues.imageStream,
     initialValues.isi,
     initialValues.searchTerm,
-    registry,
     setFieldValue,
     values.registry,
   ]);

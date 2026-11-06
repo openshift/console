@@ -523,11 +523,14 @@ const ReceiverWrapper = memo<ReceiverFormsWrapperProps>(({ obj, ...props }) => {
   const { alertManagerBaseURL } = window.SERVER_FLAGS;
   const [alertmanagerGlobals, setAlertmanagerGlobals] = useState();
   const [loaded, setLoaded] = useState(false);
-  const [loadError, setLoadError] = useState<APIError>();
+  // The Alertmanager base URL is static for the lifetime of the app, so the
+  // missing-URL error can be computed once up front.
+  const [loadError, setLoadError] = useState<APIError>(() =>
+    alertManagerBaseURL ? undefined : { message: `Error alertManagerBaseURL not set` },
+  );
 
   useEffect(() => {
     if (!alertManagerBaseURL) {
-      setLoadError({ message: `Error alertManagerBaseURL not set` });
       return;
     }
     coFetchJSON(`${alertManagerBaseURL}/api/v2/status/`)

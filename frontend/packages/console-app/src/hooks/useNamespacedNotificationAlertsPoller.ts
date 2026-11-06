@@ -13,13 +13,16 @@ export const useNamespacedNotificationAlertsPoller = (namespace: string) => {
   const { t } = useTranslation('console-app');
   const [alerts, setAlerts] = useState<NotificationAlerts['data']>([]);
   const [loaded, setLoaded] = useState<NotificationAlerts['loaded']>(false);
-  const [loadError, setLoadError] = useState<NotificationAlerts['loadError']>(null);
+  // The Prometheus base URL is static for the lifetime of the app, so the
+  // missing-URL error is computed once up front.
+  const [loadError, setLoadError] = useState<NotificationAlerts['loadError']>(() =>
+    window.SERVER_FLAGS.prometheusTenancyBaseURL ? null : new Error(t('prometheusBaseURL not set')),
+  );
 
   useEffect(() => {
     const { prometheusTenancyBaseURL } = window.SERVER_FLAGS;
 
     if (!prometheusTenancyBaseURL) {
-      setLoadError(new Error(t('prometheusBaseURL not set')));
       return () => {};
     }
 
@@ -60,7 +63,10 @@ export const useNamespacedNotificationAlertsPoller = (namespace: string) => {
         clearTimeout(pollTimeout);
       }
     };
-  }, [namespace, t]);
+    // `t` is intentionally not a dependency: it is only used by the
+    // loadError initializer above, and a language change must not restart
+    // the alert polling.
+  }, [namespace]);
 
   return {
     alerts,

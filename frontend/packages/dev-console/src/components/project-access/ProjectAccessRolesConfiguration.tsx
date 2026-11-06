@@ -1,5 +1,5 @@
 import type { FC, ReactElement } from 'react';
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState } from 'react';
 import { FormSection } from '@patternfly/react-core';
 import { DualListSelector } from '@patternfly/react-core/deprecated';
 import * as fuzzy from 'fuzzysearch';
@@ -73,13 +73,11 @@ const ProjectAccessRolesConfiguration: FC<{ readonly: boolean }> = ({ readonly }
   const [consoleConfig, consoleConfigLoaded, consoleConfigError] =
     useConsoleOperatorConfig<SoftwareCatalogClusterRolesConfig>();
   const [selectedClusterRoles, setSelectedClusterRoles] = useState<string[]>();
-  useEffect(() => {
-    if (consoleConfig && consoleConfigLoaded && !selectedClusterRoles) {
-      setSelectedClusterRoles(
-        consoleConfig?.spec?.customization?.projectAccess?.availableClusterRoles || [],
-      );
-    }
-  }, [selectedClusterRoles, consoleConfig, consoleConfigLoaded]);
+  if (consoleConfig && consoleConfigLoaded && !selectedClusterRoles) {
+    setSelectedClusterRoles(
+      consoleConfig?.spec?.customization?.projectAccess?.availableClusterRoles || [],
+    );
+  }
 
   // Calculate options
   const availableOptions = useMemo<React.ReactElement<ItemProps>[]>(() => {

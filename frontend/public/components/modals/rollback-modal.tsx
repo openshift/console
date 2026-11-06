@@ -1,5 +1,5 @@
 import type { FC, FormEvent } from 'react';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import {
   Alert,
   Button,
@@ -53,7 +53,6 @@ const BaseRollbackModal: FC<RollbackModalProps> = (props) => {
     namespace: props.resource.metadata.namespace,
   };
   const [deployment, loaded, loadError] = useK8sWatchResource<K8sResourceKind>(deploymentResource);
-  const [deploymentError, setDeploymentError] = useState<string>();
 
   const submitDCRollback = () => {
     const dcVersion = getDeploymentConfigVersion(props.resource);
@@ -134,17 +133,12 @@ const BaseRollbackModal: FC<RollbackModalProps> = (props) => {
     return submitDeploymentRollback();
   };
 
-  useEffect(() => {
-    if (loaded && !loadError && deployment) {
-      if (deployment.spec.paused) {
-        setDeploymentError(
-          t('You cannot rollback a paused {{ deployType }}. You must resume it first.', {
-            deployType: isDCRollback ? DeploymentConfigModel.label : DeploymentModel.label,
-          }),
-        );
-      }
-    }
-  }, [deployment, isDCRollback, loadError, loaded, t]);
+  const deploymentError =
+    loaded && !loadError && deployment?.spec.paused
+      ? t('You cannot rollback a paused {{ deployType }}. You must resume it first.', {
+          deployType: isDCRollback ? DeploymentConfigModel.label : DeploymentModel.label,
+        })
+      : undefined;
 
   const renderRollbackBody = () => {
     if (props.resource.kind === ReplicationControllerModel.kind) {

@@ -1,5 +1,5 @@
 import type { FC, ReactNode } from 'react';
-import { createContext, useState, useCallback, useEffect, useMemo, useContext } from 'react';
+import { createContext, useState, useEffect, useMemo, useContext } from 'react';
 import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 
 const THEME_USER_PREFERENCE_KEY = 'console.theme';
@@ -30,29 +30,34 @@ type Theme = {
   contrast: ProcessedContrast;
 };
 
-const updateColorThemeClass = (htmlTagElement: HTMLElement, theme: string): ProcessedTheme => {
-  const isDarkTheme = theme === THEME_SYSTEM_DEFAULT ? darkThemeMq.matches : theme === THEME_DARK;
-  htmlTagElement.classList.toggle(THEME_DARK_CLASS, isDarkTheme);
-  return isDarkTheme ? THEME_DARK : THEME_LIGHT;
+const resolveColorTheme = (theme: string, systemPrefersDark: boolean): ProcessedTheme =>
+  theme === THEME_DARK || (theme === THEME_SYSTEM_DEFAULT && systemPrefersDark)
+    ? THEME_DARK
+    : THEME_LIGHT;
+
+const resolveColorContrast = (
+  contrast: string,
+  systemPrefersContrast: boolean,
+): ProcessedContrast => {
+  if (contrast === THEME_SYSTEM_DEFAULT) {
+    return systemPrefersContrast ? THEME_CONTRAST : THEME_GLASS;
+  }
+  if (contrast === THEME_CONTRAST || contrast === THEME_GLASS) {
+    return contrast;
+  }
+  return THEME_DEFAULT;
+};
+
+const updateColorThemeClass = (htmlTagElement: HTMLElement, theme: ProcessedTheme): void => {
+  htmlTagElement.classList.toggle(THEME_DARK_CLASS, theme === THEME_DARK);
 };
 
 const updateColorContrastClass = (
   htmlTagElement: HTMLElement,
-  contrast: string,
-): ProcessedContrast => {
-  let resolvedContrast: ProcessedContrast = THEME_DEFAULT;
-
-  if (contrast === THEME_SYSTEM_DEFAULT) {
-    resolvedContrast = contrastThemeMq.matches ? THEME_CONTRAST : THEME_GLASS;
-  }
-  if (contrast === THEME_CONTRAST || contrast === THEME_GLASS) {
-    resolvedContrast = contrast;
-  }
-
-  htmlTagElement.classList.toggle(THEME_GLASS_CLASS, resolvedContrast === THEME_GLASS);
-  htmlTagElement.classList.toggle(THEME_CONTRAST_CLASS, resolvedContrast === THEME_CONTRAST);
-
-  return resolvedContrast;
+  contrast: ProcessedContrast,
+): void => {
+  htmlTagElement.classList.toggle(THEME_GLASS_CLASS, contrast === THEME_GLASS);
+  htmlTagElement.classList.toggle(THEME_CONTRAST_CLASS, contrast === THEME_CONTRAST);
 };
 
 const ThemeContext = createContext<Theme>({
@@ -66,37 +71,32 @@ interface ThemeProviderProps {
 
 /** Hook to determine the theme to apply, based on user preference and system settings. */
 const useProcessedTheme = () => {
-  const localTheme = localStorage.getItem(THEME_LOCAL_STORAGE_KEY) as ProcessedTheme;
   const [theme, , themeLoaded] = useUserPreference(
     THEME_USER_PREFERENCE_KEY,
     THEME_SYSTEM_DEFAULT,
     true,
   );
-  const [processedTheme, setProcessedTheme] = useState<ProcessedTheme>(localTheme);
-
-  const applyTheme = useCallback((isDark: boolean) => {
-    const resolved = updateColorThemeClass(
-      document.documentElement,
-      isDark ? THEME_DARK : THEME_LIGHT,
-    );
-    setProcessedTheme(resolved);
-  }, []);
+  const [systemPrefersDark, setSystemPrefersDark] = useState(darkThemeMq.matches);
 
   useEffect(() => {
-    if (!themeLoaded) {
-      return;
+    const listener = (e: MediaQueryListEvent) => setSystemPrefersDark(e.matches);
+    darkThemeMq.addEventListener('change', listener);
+    return () => darkThemeMq.removeEventListener('change', listener);
+  }, []);
+
+  // Until the preference has loaded, fall back to the theme cached by the
+  // bootstrap script to avoid a flash of the wrong theme.
+  const processedTheme: ProcessedTheme = themeLoaded
+    ? resolveColorTheme(theme, systemPrefersDark)
+    : (localStorage.getItem(THEME_LOCAL_STORAGE_KEY) as ProcessedTheme);
+
+  useEffect(() => {
+    if (themeLoaded) {
+      updateColorThemeClass(document.documentElement, processedTheme);
     }
+  }, [processedTheme, themeLoaded]);
 
-    if (theme === THEME_SYSTEM_DEFAULT) {
-      applyTheme(darkThemeMq.matches);
-      const listener = (e: MediaQueryListEvent) => applyTheme(e.matches);
-      darkThemeMq.addEventListener('change', listener);
-      return () => darkThemeMq.removeEventListener('change', listener);
-    }
-
-    applyTheme(theme === THEME_DARK);
-  }, [applyTheme, theme, themeLoaded]);
-
+  // Cache the resolved theme for the bootstrap script's next full page load
   useEffect(() => {
     if (themeLoaded) {
       localStorage.setItem(THEME_LOCAL_STORAGE_KEY, processedTheme);
@@ -113,34 +113,32 @@ const useProcessedTheme = () => {
  * OCP 5.x: Default to 'glass' or 'contrast' based on system settings
  */
 const useProcessedContrast = () => {
-  const localContrast = localStorage.getItem(CONTRAST_LOCAL_STORAGE_KEY) as ProcessedContrast;
   const [theme, , themeLoaded] = useUserPreference(
     CONTRAST_USER_PREFERENCE_KEY,
     THEME_SYSTEM_DEFAULT,
     true,
   );
-  const [processedContrast, setProcessedContrast] = useState<ProcessedContrast>(localContrast);
-
-  const applyTheme = useCallback((contrastLevel: string) => {
-    const resolved = updateColorContrastClass(document.documentElement, contrastLevel);
-    setProcessedContrast(resolved);
-  }, []);
+  const [systemPrefersContrast, setSystemPrefersContrast] = useState(contrastThemeMq.matches);
 
   useEffect(() => {
-    if (!themeLoaded) {
-      return;
+    const listener = () => setSystemPrefersContrast(contrastThemeMq.matches);
+    contrastThemeMq.addEventListener('change', listener);
+    return () => contrastThemeMq.removeEventListener('change', listener);
+  }, []);
+
+  // Until the preference has loaded, fall back to the contrast level cached
+  // by the bootstrap script to avoid a flash of the wrong contrast.
+  const processedContrast: ProcessedContrast = themeLoaded
+    ? resolveColorContrast(theme, systemPrefersContrast)
+    : (localStorage.getItem(CONTRAST_LOCAL_STORAGE_KEY) as ProcessedContrast);
+
+  useEffect(() => {
+    if (themeLoaded) {
+      updateColorContrastClass(document.documentElement, processedContrast);
     }
+  }, [processedContrast, themeLoaded]);
 
-    if (theme === THEME_SYSTEM_DEFAULT) {
-      applyTheme(theme);
-      const listener = () => applyTheme(theme);
-      contrastThemeMq.addEventListener('change', listener);
-      return () => contrastThemeMq.removeEventListener('change', listener);
-    }
-
-    applyTheme(theme);
-  }, [applyTheme, theme, themeLoaded]);
-
+  // Cache the resolved contrast for the bootstrap script's next full page load
   useEffect(() => {
     if (themeLoaded) {
       localStorage.setItem(CONTRAST_LOCAL_STORAGE_KEY, processedContrast);

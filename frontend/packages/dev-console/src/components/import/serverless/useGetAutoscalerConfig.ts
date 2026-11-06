@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { ConfigMapModel } from '@console/internal/models';
 import type { ConfigMapKind } from '@console/internal/module/k8s';
@@ -9,7 +10,13 @@ export const useGetAutoscalerConfig = () => {
     'config-autoscaler',
     'knative-serving',
   );
-  // eslint-disable-next-line no-underscore-dangle
-  const config = configmapLoaded && !configmapError && safeYAMLToJS(configmap.data._example);
+  // The parsed config must keep a stable identity across re-renders: consumers
+  // (e.g. useUpdateKnScalingDefaultValues) track it by reference to detect
+  // changes, and safeYAMLToJS returns a fresh object on every call.
+  const config = useMemo(
+    // eslint-disable-next-line no-underscore-dangle
+    () => configmapLoaded && !configmapError && safeYAMLToJS(configmap.data._example),
+    [configmap, configmapLoaded, configmapError],
+  );
   return config;
 };

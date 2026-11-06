@@ -116,9 +116,31 @@ const ConnectedTopologyView: FC<ComponentProps> = ({
     isTopologyRelationshipProvider,
   );
 
-  const [topologyDecorators, setTopologyDecorators] = useState<{
-    [key: string]: TopologyDecorator[];
-  }>({});
+  const topologyDecorators = useMemo<{ [key: string]: TopologyDecorator[] }>(() => {
+    if (!extensionDecoratorsResolved) {
+      return {};
+    }
+    const allDecorators = extensionDecorators.reduce(
+      (acc, extensionDecorator) => {
+        const decorator: TopologyDecorator = extensionDecorator.properties;
+        if (!acc[decorator.quadrant]) {
+          acc[decorator.quadrant] = [];
+        }
+        acc[decorator.quadrant].push(decorator);
+        return acc;
+      },
+      {
+        [TopologyQuadrant.upperLeft]: [],
+        [TopologyQuadrant.upperRight]: [],
+        [TopologyQuadrant.lowerLeft]: [],
+        [TopologyQuadrant.lowerRight]: [],
+      },
+    );
+    Object.keys(allDecorators).forEach((key) =>
+      allDecorators[key].sort((a, b) => a.priority - b.priority),
+    );
+    return allDecorators;
+  }, [extensionDecorators, extensionDecoratorsResolved]);
   const [filtersLoaded, setFiltersLoaded] = useState<boolean>(false);
   const queryParams = useQueryParams();
 
@@ -173,31 +195,6 @@ const ConnectedTopologyView: FC<ComponentProps> = ({
   }, [visualization, graphData]);
 
   useEffect(() => {
-    if (extensionDecoratorsResolved) {
-      const allDecorators = extensionDecorators.reduce(
-        (acc, extensionDecorator) => {
-          const decorator: TopologyDecorator = extensionDecorator.properties;
-          if (!acc[decorator.quadrant]) {
-            acc[decorator.quadrant] = [];
-          }
-          acc[decorator.quadrant].push(decorator);
-          return acc;
-        },
-        {
-          [TopologyQuadrant.upperLeft]: [],
-          [TopologyQuadrant.upperRight]: [],
-          [TopologyQuadrant.lowerLeft]: [],
-          [TopologyQuadrant.lowerRight]: [],
-        },
-      );
-      Object.keys(allDecorators).forEach((key) =>
-        allDecorators[key].sort((a, b) => a.priority - b.priority),
-      );
-      setTopologyDecorators(allDecorators);
-    }
-  }, [extensionDecorators, extensionDecoratorsResolved]);
-
-  useEffect(() => {
     if (displayFilterExtensionsResolved) {
       const updateFilters = [...filters];
       displayFilterExtensions.forEach((extension) => {
@@ -229,6 +226,7 @@ const ConnectedTopologyView: FC<ComponentProps> = ({
         onSupportedKindsChange,
       );
       applicationRef.current = application;
+      // eslint-disable-next-line react-hooks-js/set-state-in-effect -- computing the filtered model runs updateModelFromFilters, which invokes the onSupportedFiltersChange/onSupportedKindsChange callbacks (redux dispatches) as side effects; those cannot run during render, so the model must be computed and stored in an effect
       setFilteredModel(newModel);
     }
   }, [

@@ -93,10 +93,14 @@ const PipelineTaskNode: FC<PipelineTaskNodeProps> = ({
     )
   );
 
-  const taskStatus = data.task?.status || {
+  // Derive the task status into a new object instead of mutating the node's
+  // `data` in place — React Compiler requires `data` (a useMemo dependency
+  // below) to stay immutable.
+  const baseTaskStatus = data.task?.status || {
     duration: '',
     reason: ComputedStatus.Idle,
   };
+  let taskStatusReason = baseTaskStatus.reason;
   if (
     pipelineRunStatus === ComputedStatus.Failed ||
     pipelineRunStatus === ComputedStatus.Cancelled
@@ -105,12 +109,13 @@ const PipelineTaskNode: FC<PipelineTaskNodeProps> = ({
       data.task?.status?.reason === ComputedStatus.Idle ||
       data.task?.status?.reason === ComputedStatus.Pending
     ) {
-      taskStatus.reason = ComputedStatus.Cancelled;
+      taskStatusReason = ComputedStatus.Cancelled;
     }
   }
   if (isSkipped) {
-    taskStatus.reason = ComputedStatus.Skipped;
+    taskStatusReason = ComputedStatus.Skipped;
   }
+  const taskStatus = { ...baseTaskStatus, reason: taskStatusReason };
 
   const stepStatusList: StepStatus[] = stepList.map((step) => createStepStatus(step, taskStatus));
   const { pipelineRun } = data;
@@ -123,18 +128,9 @@ const PipelineTaskNode: FC<PipelineTaskNodeProps> = ({
       ? `${succeededStepsCount}/${stepStatusList.length}`
       : null;
 
-  const passedData = useMemo(() => {
-    const newData = { ...data };
-    Object.keys(newData).forEach((key) => {
-      if (newData[key] === undefined) {
-        delete newData[key];
-      }
-    });
-    return newData;
-  }, [data]);
-
   const hasTaskIcon = !!(data.taskIconClass || data.taskIcon);
-  const tooltipContent = getTooltipContent(data.task?.status?.reason);
+  // Read the derived reason when the task has a status; otherwise fall back to undefined
+  const tooltipContent = getTooltipContent(data.task?.status ? taskStatus.reason : undefined);
   const whenDecorator = data.whenStatus ? (
     <WhenDecorator
       element={element}
@@ -163,6 +159,18 @@ const PipelineTaskNode: FC<PipelineTaskNodeProps> = ({
     data.status !== ComputedStatus.Cancelled &&
     data.status !== ComputedStatus.Skipped &&
     !!path;
+
+  // Keep the memoization as the last derivation: React Compiler cannot
+  // preserve it when `data`'s nested properties are read after the memo.
+  const passedData = useMemo(() => {
+    const newData = { ...data };
+    Object.keys(newData).forEach((key) => {
+      if (newData[key] === undefined) {
+        delete newData[key];
+      }
+    });
+    return newData;
+  }, [data]);
 
   const taskNode = (
     <TaskNode

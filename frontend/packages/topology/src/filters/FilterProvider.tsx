@@ -1,5 +1,5 @@
 import type { FC, ReactNode } from 'react';
-import { useState, useEffect, useCallback, createContext } from 'react';
+import { useState, useCallback, createContext } from 'react';
 import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import type { DisplayFilters } from '../topology-types';
 import { DEFAULT_TOPOLOGY_FILTERS } from './const';
@@ -44,12 +44,23 @@ const useFilterContextValues = (): [
   const [filtersLoaded, setFiltersLoaded] = useState<boolean>(false);
   const [filters, setFilters] = useState<DisplayFilters>([]);
 
-  useEffect(() => {
+  // Seed the filters from the persisted user preference once it loads. The
+  // `filtersLoaded` guard makes this a one-time seed, so later user selections
+  // are not overwritten.
+  const [prevAppliedFilters, setPrevAppliedFilters] = useState(appliedFilters);
+  // Initialized to false (not the mount value) so the seed condition is also
+  // evaluated on the first render: when the preference store was already
+  // loaded before this provider mounted (the common case via in-app
+  // navigation), there is no later transition to trigger it.
+  const [prevAppliedFiltersLoaded, setPrevAppliedFiltersLoaded] = useState(false);
+  if (prevAppliedFilters !== appliedFilters || prevAppliedFiltersLoaded !== appliedFiltersLoaded) {
+    setPrevAppliedFilters(appliedFilters);
+    setPrevAppliedFiltersLoaded(appliedFiltersLoaded);
     if (appliedFiltersLoaded && !filtersLoaded) {
       setFilters(getTopologyFilters(appliedFilters));
       setFiltersLoaded(true);
     }
-  }, [appliedFilters, appliedFiltersLoaded, filtersLoaded]);
+  }
 
   const setTopologyFilters = useCallback(
     (displayFilters: DisplayFilters) => {

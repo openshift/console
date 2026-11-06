@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState } from 'react';
 import type { GraphElement } from '@patternfly/react-topology';
 import type {
   AdapterDataType,
@@ -118,7 +118,6 @@ const usePodsAdapterForCronJobWorkloads = (resource: K8sResourceCommon): PodsAda
 
   const [pods, setPods] = useState([]);
   const [loaded, setLoaded] = useState<boolean>(false);
-  const [loadError, setLoadError] = useState<string>('');
   const watchedResources = useMemo(
     () => getResourcesToWatchForPods('CronJob', namespace),
     [namespace],
@@ -126,14 +125,18 @@ const usePodsAdapterForCronJobWorkloads = (resource: K8sResourceCommon): PodsAda
 
   const resources = useK8sWatchResources(watchedResources);
 
-  useEffect(() => {
-    const errorKey = Object.keys(resources).find((key) => resources[key].loadError);
-    if (errorKey) {
-      setLoadError(resources[errorKey].loadError);
-      return;
-    }
-    setLoadError('');
+  const errorKey = Object.keys(resources).find((key) => resources[key].loadError);
+  const loadError: string = errorKey ? resources[errorKey].loadError : '';
+
+  // Update the pods list only once all watched resources are loaded; `pods`
+  // and `loaded` keep their last value while the resources are reloading.
+  const [prevJobs, setPrevJobs] = useState<typeof jobs | null>(null);
+  const [prevResources, setPrevResources] = useState<typeof resources | null>(null);
+  if (prevJobs !== jobs || prevResources !== resources) {
+    setPrevJobs(jobs);
+    setPrevResources(resources);
     if (
+      !loadError &&
       Object.keys(resources).length > 0 &&
       Object.keys(resources).every((key) => resources[key].loaded)
     ) {
@@ -146,7 +149,7 @@ const usePodsAdapterForCronJobWorkloads = (resource: K8sResourceCommon): PodsAda
       setPods(updatedPods);
       setLoaded(true);
     }
-  }, [jobs, resources]);
+  }
   return { pods, loaded, loadError };
 };
 

@@ -4,9 +4,7 @@ import { NavItem } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
 import navStyles from '@patternfly/react-styles/css/components/Nav/nav';
 import type { ResourceNSNavItem } from '@console/dynamic-plugin-sdk';
-import { ALL_NAMESPACES_KEY } from '@console/dynamic-plugin-sdk/src/constants';
 import { referenceForExtensionModel } from '@console/internal/module/k8s';
-import { LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY } from '@console/shared/src/constants/common';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { useLocation } from '@console/shared/src/hooks/useLocation';
@@ -26,22 +24,20 @@ export const NavItemResource: FC<NavItemResourceProps> = ({
 }) => {
   const [activeNamespace] = useActiveNamespace();
   const location = useLocation();
-  const lastNamespace = sessionStorage.getItem(LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY);
   const resourceReference = referenceForExtensionModel(model);
   const [k8sModel] = useK8sModel(resourceReference);
   const isActive = useMemo(
     () => navItemResourceIsActive(location, k8sModel, startsWith),
     [k8sModel, location, startsWith],
   );
+  // No sessionStorage read here: the React Compiler caches render-time reads
+  // of external mutable state, and `activeNamespace` tracks the same value.
   const to = useCallback(
     () =>
       namespaced
-        ? formatNamespacedRouteForResource(
-            resourceReference,
-            lastNamespace === ALL_NAMESPACES_KEY ? lastNamespace : activeNamespace,
-          )
+        ? formatNamespacedRouteForResource(resourceReference, activeNamespace)
         : `/k8s/cluster/${resourceReference}`,
-    [namespaced, resourceReference, lastNamespace, activeNamespace],
+    [namespaced, resourceReference, activeNamespace],
   );
 
   if (!listItem) {

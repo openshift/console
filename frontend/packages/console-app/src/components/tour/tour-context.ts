@@ -1,5 +1,5 @@
 import type { Dispatch } from 'react';
-import { createContext, useCallback, useEffect, useReducer, useRef, useState } from 'react';
+import { createContext, useCallback, useEffect, useReducer, useState } from 'react';
 import { pick, union, isEqual } from 'lodash';
 import { createSelector } from 'reselect';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
@@ -150,22 +150,23 @@ export const useTourValuesForContext = (): TourContextType => {
     startTour: !completed,
   });
 
-  const [initializedWithLoadedData, setInitializedWithLoadedData] = useState(false);
-  const prevPerspective = useRef(activePerspective);
-  if (prevPerspective.current !== activePerspective) {
-    prevPerspective.current = activePerspective;
-    if (initializedWithLoadedData) {
-      setInitializedWithLoadedData(false);
-    }
+  // Initialize the tour state for the current perspective and completion
+  // status once the user preferences have loaded. The keyed state converges:
+  // after the initialization dispatch the condition no longer matches, so
+  // this runs at most once per (perspective, completed) change.
+  const [initializedFor, setInitializedFor] = useState<{
+    perspective: string;
+    completed: boolean;
+  }>();
+  if (
+    loaded &&
+    (initializedFor?.perspective !== activePerspective || initializedFor?.completed !== completed)
+  ) {
+    setInitializedFor({ perspective: activePerspective, completed });
+    tourDispatch({ type: TourActions.initialize, payload: { completed } });
   }
-  useEffect(() => {
-    if (loaded) {
-      tourDispatch({ type: TourActions.initialize, payload: { completed } });
-      setInitializedWithLoadedData(true);
-    }
-  }, [activePerspective, completed, loaded]);
 
-  if (!tour || !loaded || !initializedWithLoadedData) return { tour: null };
+  if (!tour || !loaded || !initializedFor) return { tour: null };
   const {
     properties: {
       tour: { intro, steps: unfilteredSteps, end },

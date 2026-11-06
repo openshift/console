@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import {
   ActionGroup,
   Alert,
@@ -170,17 +170,18 @@ export const CreateInitializationResourceButton: FC<InitializationResourceButton
   const dispatch = useConsoleDispatch();
   const reference = initializationResource ? referenceFor(initializationResource) : undefined;
   const [model, inFlight] = useK8sModel(reference);
-  const [apiRefreshed, setAPIRefreshed] = useState(false);
+  // One-time latch for the API discovery refresh
+  const apiRefreshedRef = useRef(false);
 
   // Trigger an API discovery refresh when the CRD model is missing so the
   // user doesn't have to wait for the next 60-second poll cycle.
   const modelMissing = !inFlight && !model && !!initializationResource;
   useEffect(() => {
-    if (!apiRefreshed && modelMissing) {
+    if (!apiRefreshedRef.current && modelMissing) {
       dispatch(getResources());
-      setAPIRefreshed(true);
+      apiRefreshedRef.current = true;
     }
-  }, [apiRefreshed, dispatch, modelMissing]);
+  }, [dispatch, modelMissing]);
 
   if (!initializationResource) {
     return null;

@@ -1,5 +1,5 @@
 import type { FC, FormEvent, KeyboardEvent, ReactNode, Ref } from 'react';
-import { useState, useRef, useEffect, useMemo, Fragment } from 'react';
+import { useState, useRef, useMemo, Fragment } from 'react';
 import { CloseButton } from '@patternfly/react-component-groups';
 import type { MenuToggleElement, SelectOptionProps } from '@patternfly/react-core';
 import {
@@ -59,8 +59,15 @@ export const InnerResourceListDropdown: FC<ResourceListDropdownProps> = (props) 
   const [focusedItemIndex, setFocusedItemIndex] = useState<number | null>(null);
   const [activeItemId, setActiveItemId] = useState<string | null>(null);
   const placeholderTextDefault = t('Resources');
-  const [placeholder, setPlaceholder] = useState(placeholderTextDefault);
   const textInputRef = useRef<HTMLInputElement>(undefined);
+
+  // Mirror the `selected` prop into state so the placeholder can update
+  // optimistically in onSelect before the prop round-trips.
+  const [prevSelected, setPrevSelected] = useState(selected);
+  if (prevSelected !== selected) {
+    setPrevSelected(selected);
+    setSelectedOptions(selected);
+  }
 
   const resources = useMemo(() => {
     if (!allModels) {
@@ -123,10 +130,6 @@ export const InnerResourceListDropdown: FC<ResourceListDropdownProps> = (props) 
       JSON.parse(_.isString(data) ? data : JSON.stringify(data))) ??
     [];
 
-  useEffect(() => {
-    setSelectedOptions(selected);
-  }, [selected]);
-
   const selectOptions = useMemo(() => {
     if (!inputValue) {
       return initialSelectOptions;
@@ -139,13 +142,13 @@ export const InnerResourceListDropdown: FC<ResourceListDropdownProps> = (props) 
     );
   }, [inputValue, initialSelectOptions]);
 
-  useEffect(() => {
-    setPlaceholder(
+  const placeholder = useMemo(
+    () =>
       selectedOptions.length > 0
         ? t('Resources ({{total}})', { total: selectedOptions.length })
         : placeholderTextDefault,
-    );
-  }, [placeholderTextDefault, selectedOptions, t]);
+    [placeholderTextDefault, selectedOptions, t],
+  );
 
   const createItemId = (value: any) => `resource-dropdown-${value.replace(' ', '-')}`;
 

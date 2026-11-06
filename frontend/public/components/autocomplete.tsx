@@ -1,5 +1,5 @@
 import type { ComponentProps, FC, SetStateAction, Dispatch, FormEvent } from 'react';
-import { useState, useEffect } from 'react';
+import { useMemo } from 'react';
 import { Label, SelectList } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
 import { useDocumentListener, KeyEventModes } from '@console/shared/src/hooks/useDocumentListener';
@@ -51,7 +51,6 @@ type AutocompleteInputProps = {
 };
 
 const AutocompleteInput: FC<AutocompleteInputProps> = (props) => {
-  const [suggestions, setSuggestions] = useState<string[]>();
   const { visible, setVisible, ref } = useDocumentListener<HTMLDivElement>(suggestionBoxKeyHandler);
   const {
     textValue,
@@ -86,16 +85,16 @@ const AutocompleteInput: FC<AutocompleteInputProps> = (props) => {
     setTextValue(input);
   };
 
-  useEffect(() => {
-    if (textValue && visible && showSuggestions) {
-      const processed = labelParser(data, labelPath);
-      // User input without whitespace
-      const processedText = textValue.trim().replace(/\s*=\s*/, '=');
-      const filtered = [...processed]
-        .filter((item) => fuzzyCaseInsensitive(processedText, item))
-        .slice(0, MAX_SUGGESTIONS);
-      setSuggestions(filtered);
+  const suggestions = useMemo(() => {
+    if (!textValue || !visible || !showSuggestions) {
+      return undefined;
     }
+    const processed = labelParser(data, labelPath);
+    // User input without whitespace
+    const processedText = textValue.trim().replace(/\s*=\s*/, '=');
+    return [...processed]
+      .filter((item) => fuzzyCaseInsensitive(processedText, item))
+      .slice(0, MAX_SUGGESTIONS);
   }, [visible, textValue, showSuggestions, data, labelPath]);
 
   return (

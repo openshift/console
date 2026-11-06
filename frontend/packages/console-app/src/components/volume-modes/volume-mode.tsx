@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useState, useMemo, useCallback, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { FormGroup, Radio } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
 import { useTranslation, Trans } from 'react-i18next';
@@ -34,27 +34,26 @@ export const VolumeModeSelector: FC<VolumeModeSelectorProps> = (props) => {
     [loaded, provisioner, accessMode],
   );
 
-  const changeVolumeMode = useCallback(
-    (mode: string) => {
-      setVolumeMode(mode);
-      onChange(mode);
-    },
-    [onChange],
-  );
-
-  useEffect(() => {
-    if (!allowedVolumeModes.length) {
-      return;
-    }
-    // Make sure the default or already checked radio button value is from any one of allowed the access mode
+  if (allowedVolumeModes.length) {
     if (!volumeMode && allowedVolumeModes.includes(pvcInitialVolumeMode)) {
       // To view the same volume mode value of pvc
-      changeVolumeMode(pvcInitialVolumeMode);
+      setVolumeMode(pvcInitialVolumeMode);
     } else if (!allowedVolumeModes.includes(volumeMode || '')) {
       // Old volume mode will be disabled
-      changeVolumeMode(allowedVolumeModes[0]);
+      setVolumeMode(allowedVolumeModes[0]);
     }
-  }, [volumeMode, allowedVolumeModes, onChange, pvcInitialVolumeMode, changeVolumeMode]);
+  }
+
+  // Notify the parent after commit: the parent form cannot be updated while
+  // this component is rendering. Only a selection change notifies, not an
+  // onChange identity change.
+  const lastNotifiedModeRef = useRef<string>();
+  useEffect(() => {
+    if (volumeMode && volumeMode !== lastNotifiedModeRef.current) {
+      onChange(volumeMode);
+      lastNotifiedModeRef.current = volumeMode;
+    }
+  }, [volumeMode, onChange]);
 
   return (
     <FormGroup
@@ -84,7 +83,7 @@ export const VolumeModeSelector: FC<VolumeModeSelectorProps> = (props) => {
               id={`volumeMode-${radio.value}`}
               name="volumeMode"
               {...radio}
-              onChange={(event) => changeVolumeMode(event.currentTarget.value)}
+              onChange={(event) => setVolumeMode(event.currentTarget.value)}
               isChecked={checked}
               data-checked-state={checked}
               isDisabled={!allowedVolumeModes.includes(radio.value)}

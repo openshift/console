@@ -74,6 +74,15 @@ export const FetchProgressModal: FC<FetchProgressModalProps> = ({
 
   const [bytesDownloaded, setBytesDownloaded] = useState(0);
 
+  // Reset the download progress whenever a new download starts
+  const [wasDownloading, setWasDownloading] = useState(isDownloading);
+  if (wasDownloading !== isDownloading) {
+    setWasDownloading(isDownloading);
+    if (isDownloading) {
+      setBytesDownloaded(0);
+    }
+  }
+
   const abortControllerRef = useRef<AbortController | null>(null);
 
   const addToastRef = useRef(toaster.addToast);
@@ -97,7 +106,6 @@ export const FetchProgressModal: FC<FetchProgressModalProps> = ({
   });
 
   const fetchData = useCallback(async () => {
-    setBytesDownloaded(0);
     abortControllerRef.current = new AbortController();
 
     try {
@@ -165,6 +173,7 @@ export const FetchProgressModal: FC<FetchProgressModalProps> = ({
 
   useEffect(() => {
     if (isDownloading) {
+      // eslint-disable-next-line react-hooks-js/set-state-in-effect -- the download must start when the isDownloading prop turns on; fetchData only calls setState from async continuations (fetch/reader callbacks), never synchronously
       fetchData();
     }
   }, [isDownloading, fetchData]);

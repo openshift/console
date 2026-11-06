@@ -1,5 +1,5 @@
 import type { ReactNode, FC, FormEvent } from 'react';
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { ModalBody, ModalHeader } from '@patternfly/react-core';
 import { useNavigate } from 'react-router';
 import type { CatalogItem } from '@console/dynamic-plugin-sdk';
@@ -35,51 +35,48 @@ const QuickSearchModalBody: FC<QuickSearchModalBodyProps> = ({
 }) => {
   const { getQueryArgument, setQueryArgument, removeQueryArgument } = useQueryParamsMutator();
   const navigate = useNavigate();
-  const [catalogItems, setCatalogItems] = useState<CatalogItem[]>(null);
-  const [catalogTypes, setCatalogTypes] = useState<CatalogType[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>(getQueryArgument('catalogSearch') || '');
   const [selectedItemId, setSelectedItemId] = useState<string>('');
   const [selectedItem, setSelectedItem] = useState<CatalogItem>(null);
-  const [viewAll, setViewAll] = useState<CatalogLinkData[]>(null);
   const [items, setItems] = useState<number>(limitItemCount);
   const ref = useRef<HTMLInputElement>(undefined);
   const fireTelemetryEvent = useTelemetry();
+
+  // Derive the search results from the search term and the catalog data, so that they also
+  // update when the catalog items finish loading (i.e. when `searchCatalog` changes)
+  const { catalogItems, catalogTypes, viewAll } = useMemo<{
+    catalogItems: CatalogItem[];
+    catalogTypes: CatalogType[];
+    viewAll: CatalogLinkData[];
+  }>(() => {
+    if (!searchTerm) {
+      return { catalogItems: null, catalogTypes: [], viewAll: null };
+    }
+    const { filteredItems, viewAllLinks, catalogItemTypes } = searchCatalog(searchTerm);
+    return {
+      catalogItems: filteredItems,
+      catalogTypes: catalogItemTypes,
+      viewAll: viewAllLinks,
+    };
+  }, [searchTerm, searchCatalog]);
+
+  const currentSelectedItemId = selectedItemId || catalogItems?.[0]?.uid;
+  const currentSelectedItem = selectedItem || catalogItems?.[0];
+
   const listCatalogItems = limitItemCount > 0 ? catalogItems?.slice(0, items) : catalogItems;
-
-  useEffect(() => {
-    if (searchTerm) {
-      const { filteredItems, viewAllLinks, catalogItemTypes } = searchCatalog(searchTerm);
-      setCatalogItems(filteredItems);
-      setCatalogTypes(catalogItemTypes);
-      setViewAll(viewAllLinks);
-    }
-    // eslint-disable-next-line react-hooks-js/exhaustive-deps
-  }, [searchCatalog]);
-
-  useEffect(() => {
-    if (catalogItems && !selectedItemId) {
-      setSelectedItemId(catalogItems[0]?.uid);
-      setSelectedItem(catalogItems[0]);
-    }
-  }, [catalogItems, selectedItemId]);
 
   const onSearch = useCallback(
     (_event: FormEvent<HTMLInputElement>, value: string) => {
       setSearchTerm(value);
       if (value) {
-        const { filteredItems, viewAllLinks, catalogItemTypes } = searchCatalog(value);
-        setCatalogItems(filteredItems);
-        setCatalogTypes(catalogItemTypes);
-        setViewAll(viewAllLinks);
         setQueryArgument('catalogSearch', value);
       } else {
-        setCatalogItems(null);
         removeQueryArgument('catalogSearch');
       }
       setSelectedItemId('');
       setSelectedItem(null);
     },
-    [searchCatalog, setQueryArgument, removeQueryArgument],
+    [setQueryArgument, removeQueryArgument],
   );
 
   const onCancel = useCallback(() => {
@@ -93,8 +90,8 @@ const QuickSearchModalBody: FC<QuickSearchModalBodyProps> = ({
   }, [closeModal, onSearch]);
 
   const getIndexOfSelectedItem = useCallback(
-    () => listCatalogItems?.findIndex((item) => item.uid === selectedItemId),
-    [listCatalogItems, selectedItemId],
+    () => listCatalogItems?.findIndex((item) => item.uid === currentSelectedItemId),
+    [listCatalogItems, currentSelectedItemId],
   );
 
   const onEnter = useCallback(
@@ -103,11 +100,18 @@ const QuickSearchModalBody: FC<QuickSearchModalBodyProps> = ({
       const activeViewAllLink = viewAll?.find((link) => link.catalogType === id);
       if (activeViewAllLink) {
         navigate(activeViewAllLink.to);
-      } else if (selectedItem) {
-        handleCta(e, selectedItem, closeModal, fireTelemetryEvent, navigate, removeQueryArgument);
+      } else if (currentSelectedItem) {
+        handleCta(
+          e,
+          currentSelectedItem,
+          closeModal,
+          fireTelemetryEvent,
+          navigate,
+          removeQueryArgument,
+        );
       }
     },
-    [closeModal, fireTelemetryEvent, selectedItem, viewAll, navigate, removeQueryArgument],
+    [closeModal, fireTelemetryEvent, currentSelectedItem, viewAll, navigate, removeQueryArgument],
   );
 
   const selectPrevious = useCallback(() => {
@@ -183,15 +187,15 @@ const QuickSearchModalBody: FC<QuickSearchModalBodyProps> = ({
         />
       </ModalHeader>
       <ModalBody className="pf-v6-u-p-md pf-v6-u-pt-0" style={{ minHeight: 0 }}>
-        {catalogItems && selectedItem && (
+        {catalogItems && currentSelectedItem && (
           <QuickSearchContent
             catalogItems={catalogItems}
             catalogItemTypes={catalogTypes}
             viewAll={viewAll}
             searchTerm={searchTerm}
-            selectedItemId={selectedItemId}
+            selectedItemId={currentSelectedItemId}
             closeModal={closeModal}
-            selectedItem={selectedItem}
+            selectedItem={currentSelectedItem}
             namespace={namespace}
             limitItemCount={limitItemCount}
             detailsRenderer={detailsRenderer}

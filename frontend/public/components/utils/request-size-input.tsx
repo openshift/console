@@ -1,5 +1,5 @@
 import type { FC, ReactEventHandler, ReactNode } from 'react';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
 import { NumberSpinner } from './number-spinner';
@@ -25,6 +25,16 @@ export const RequestSizeInput: FC<RequestSizeInputProps> = ({
   const [unit, setUnit] = useState<string>(defaultRequestSizeUnit);
   const [value, setValue] = useState<number>(defaultValue);
 
+  const [lastDefault, setLastDefault] = useState({
+    unit: defaultRequestSizeUnit,
+    value: defaultValue,
+  });
+  if (lastDefault.unit !== defaultRequestSizeUnit || lastDefault.value !== defaultValue) {
+    setLastDefault({ unit: defaultRequestSizeUnit, value: defaultValue });
+    setUnit(defaultRequestSizeUnit);
+    setValue(defaultValue);
+  }
+
   const onValueChange: ReactEventHandler<HTMLInputElement> = (event) => {
     setValue(parseInt(event.currentTarget.value, 10));
     onChange({ value: event.currentTarget.value, unit });
@@ -41,11 +51,6 @@ export const RequestSizeInput: FC<RequestSizeInputProps> = ({
     setUnit(newUnit);
     onChange({ value, unit: newUnit });
   };
-
-  useEffect(() => {
-    setUnit(defaultRequestSizeUnit);
-    setValue(defaultValue);
-  }, [defaultRequestSizeUnit, defaultValue]);
 
   const { t } = useTranslation('public');
   const inputName = `${name}Value`;

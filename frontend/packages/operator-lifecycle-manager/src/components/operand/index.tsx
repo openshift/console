@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useMemo, useState, useCallback, useEffect } from 'react';
+import { useMemo, useState, useCallback, useEffect, useRef } from 'react';
 import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
 import type { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
@@ -197,7 +197,8 @@ export const ProvidedAPIsPage = (props: ProvidedAPIsPageProps) => {
   const [models, inFlight] = useK8sModels();
   const navigate = useNavigate();
   const dispatch = useConsoleDispatch();
-  const [apiRefreshed, setAPIRefreshed] = useState(false);
+  // One-time latch for the API discovery refresh
+  const apiRefreshedRef = useRef(false);
 
   // Map APIs provided by this CSV to watch resources. Exclude APIs that do not have a model.
   const providedAPIs = providedAPIsForCSV(obj);
@@ -238,11 +239,11 @@ export const ProvidedAPIsPage = (props: ProvidedAPIsPageProps) => {
   const apiMightBeOutdated =
     !inFlight && Object.keys(watchedResources).length < providedAPIs.length;
   useEffect(() => {
-    if (!apiRefreshed && apiMightBeOutdated) {
+    if (!apiRefreshedRef.current && apiMightBeOutdated) {
       dispatch(getResources());
-      setAPIRefreshed(true);
+      apiRefreshedRef.current = true;
     }
-  }, [apiMightBeOutdated, apiRefreshed, dispatch]);
+  }, [apiMightBeOutdated, dispatch]);
 
   const createItems =
     providedAPIs.length > 1
@@ -373,17 +374,18 @@ export const ProvidedAPIPage = (props: ProvidedAPIPageProps) => {
   const resourceListPage = useResourceListPage(props.kind);
   const [namespace] = useActiveNamespace();
   const [k8sModel, inFlight] = useK8sModel(props.kind);
-  const [apiRefreshed, setAPIRefreshed] = useState(false);
+  // One-time latch for the API discovery refresh
+  const apiRefreshedRef = useRef(false);
   const dispatch = useConsoleDispatch();
 
   // Refresh API definitions if model is missing and the definitions have not already been refreshed.
   const apiMightBeOutdated = !inFlight && !k8sModel;
   useEffect(() => {
-    if (!apiRefreshed && apiMightBeOutdated) {
+    if (!apiRefreshedRef.current && apiMightBeOutdated) {
       dispatch(getResources());
-      setAPIRefreshed(true);
+      apiRefreshedRef.current = true;
     }
-  }, [dispatch, apiRefreshed, apiMightBeOutdated]);
+  }, [dispatch, apiMightBeOutdated]);
 
   if (inFlight && !k8sModel) {
     return null;

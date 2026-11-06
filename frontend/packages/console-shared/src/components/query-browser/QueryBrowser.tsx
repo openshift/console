@@ -1,5 +1,5 @@
 import type { FC, Ref, ReactNode, KeyboardEvent, MouseEvent } from 'react';
-import { memo, useState, useEffect, useCallback, useMemo, useLayoutEffect } from 'react';
+import { memo, useState, useEffect, useCallback, useMemo } from 'react';
 import {
   Chart,
   ChartArea,
@@ -111,9 +111,12 @@ const SpanControls = memo<SpanControlsProps>(
 
     const [isOpen, setIsOpen, , setClosed] = useBoolean(false);
 
-    useEffect(() => {
+    // Reset the text when the span prop changes (e.g. after zooming or resetting)
+    const [prevSpan, setPrevSpan] = useState(span);
+    if (prevSpan !== span) {
+      setPrevSpan(span);
       setText(formatPrometheusDuration(span));
-    }, [span]);
+    }
 
     const debouncedOnChange = useMemo(() => _.debounce(onChange, 400), [onChange]);
 
@@ -368,9 +371,16 @@ const Graph = memo<GraphProps>(
     const [xDomain, setXDomain] = useState(() => fixedXDomain || getXDomain(Date.now(), span));
 
     // Only update X-axis if the time range (fixedXDomain or span) or graph data (allSeries) change
-    useEffect(() => {
-      setXDomain(fixedXDomain || getXDomain(Date.now(), span));
-    }, [allSeries, span, fixedXDomain]);
+    const [prevGraphInputs, setPrevGraphInputs] = useState([allSeries, span, fixedXDomain]);
+    if (
+      prevGraphInputs[0] !== allSeries ||
+      prevGraphInputs[1] !== span ||
+      prevGraphInputs[2] !== fixedXDomain
+    ) {
+      setPrevGraphInputs([allSeries, span, fixedXDomain]);
+      // Pass an updater so that Date.now() is not evaluated directly during render
+      setXDomain(() => fixedXDomain || getXDomain(Date.now(), span));
+    }
 
     const domain = { x: xDomain, y: undefined };
 
@@ -705,7 +715,9 @@ const QueryBrowserWrapped: FC<QueryBrowserProps> = ({
   // Limit the number of samples so that the step size doesn't fall below minStep
   const maxSamplesForSpan = defaultSamples || getMaxSamplesForSpan(span);
 
-  const [xDomain, setXDomain] = useState<AxisDomain>();
+  const [xDomain, setXDomain] = useState<AxisDomain>(
+    fixedEndTime ? getXDomain(fixedEndTime, span) : undefined,
+  );
   const [error, setError] = useState<PrometheusAPIError>();
   const [isDatasetTooBig, setIsDatasetTooBig] = useState(false);
   const [graphData, setGraphData] = useState<Series[][]>(null);
@@ -723,25 +735,33 @@ const QueryBrowserWrapped: FC<QueryBrowserProps> = ({
   const canStack = _.sumBy(graphData, 'length') <= maxStacks;
 
   // If provided, `timespan` overrides any existing span setting
-  useEffect(() => {
+  const [prevTimespan, setPrevTimespan] = useState([timespan, defaultSamples]);
+  if (prevTimespan[0] !== timespan || prevTimespan[1] !== defaultSamples) {
+    setPrevTimespan([timespan, defaultSamples]);
     if (timespan) {
       setSpan(timespan);
       setSamples(defaultSamples || getMaxSamplesForSpan(timespan));
     }
-  }, [defaultSamples, timespan]);
+  }
 
-  useEffect(() => {
+  // Clear any existing graph data when the time range (fixedEndTime or span) changes
+  const [prevTimeRange, setPrevTimeRange] = useState([fixedEndTime, span]);
+  if (prevTimeRange[0] !== fixedEndTime || prevTimeRange[1] !== span) {
+    setPrevTimeRange([fixedEndTime, span]);
     setGraphData(null);
     if (fixedEndTime) {
       setXDomain(getXDomain(fixedEndTime, span));
     }
-  }, [fixedEndTime, span]);
+  }
 
-  useEffect(() => {
+  // Clear the fixed X domain when fixedEndTime is removed
+  const [prevFixedEndTime, setPrevFixedEndTime] = useState(fixedEndTime);
+  if (prevFixedEndTime !== fixedEndTime) {
+    setPrevFixedEndTime(fixedEndTime);
     if (!fixedEndTime) {
       setXDomain(undefined);
     }
-  }, [fixedEndTime]);
+  }
 
   // Clear any existing series data when the namespace is changed
   useEffect(() => {
@@ -860,7 +880,24 @@ const QueryBrowserWrapped: FC<QueryBrowserProps> = ({
     lastRequestTime,
   );
 
-  useLayoutEffect(() => setUpdating(true), [endTime, namespace, queriesKey, samples, span]);
+  // Show the loading indicator whenever the query inputs change
+  const [prevQueryInputs, setPrevQueryInputs] = useState({
+    endTime,
+    namespace,
+    queriesKey,
+    samples,
+    span,
+  });
+  if (
+    prevQueryInputs.endTime !== endTime ||
+    prevQueryInputs.namespace !== namespace ||
+    prevQueryInputs.queriesKey !== queriesKey ||
+    prevQueryInputs.samples !== samples ||
+    prevQueryInputs.span !== span
+  ) {
+    setPrevQueryInputs({ endTime, namespace, queriesKey, samples, span });
+    setUpdating(true);
+  }
 
   const onSpanChange = useCallback(
     (newSpan: number) => {

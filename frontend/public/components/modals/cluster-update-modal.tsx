@@ -1,5 +1,5 @@
 import type { FormEvent, FormEventHandler } from 'react';
-import { useState, useEffect, useCallback, Fragment } from 'react';
+import { useState, useCallback, useMemo, Fragment } from 'react';
 import {
   Alert,
   Button,
@@ -61,8 +61,10 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
   const availableSortedUpdates = getSortedAvailableUpdates(cv);
   const notRecommendedSortedUpdates = getSortedNotRecommendedUpdates(cv);
   const currentVersion = getDesiredClusterVersion(cv);
-  const currentMinorVersionPatchUpdate = availableSortedUpdates?.find(
-    (update) => !isMinorVersionNewer(currentVersion, update.version),
+  const currentMinorVersionPatchUpdate = useMemo(
+    () =>
+      availableSortedUpdates.find((update) => !isMinorVersionNewer(currentVersion, update.version)),
+    [availableSortedUpdates, currentVersion],
   );
   const [desiredVersion, setDesiredVersion] = useState(
     (clusterUpgradeableFalse
@@ -76,19 +78,18 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
     kind: referenceForModel(MachineConfigPoolModel),
   });
   const [error, setError] = useState('');
-  const [machineConfigPoolsToPause, setMachineConfigPoolsToPause] = useState<string[]>([]);
+  // Computed once from the first watch result so later watch changes don't
+  // affect user input.
+  const [machineConfigPoolsToPause, setMachineConfigPoolsToPause] = useState<string[]>(() =>
+    machineConfigPools
+      .filter((mcp) => !isMCPMaster(mcp) && isMCPPaused(mcp))
+      .map((mcp) => mcp.metadata.name),
+  );
   const [upgradeType, setUpgradeType] = useState<UpgradeTypes>(UpgradeTypes.Full);
   const [includeNotRecommended, setIncludeNotRecommended] = useState(false);
   const { t } = useTranslation('public');
   const isLightspeedAvailable = useFlag('LIGHTSPEED_PLUGIN');
 
-  useEffect(() => {
-    const initialMCPPausedValues = machineConfigPools
-      .filter((mcp) => !isMCPMaster(mcp) && isMCPPaused(mcp))
-      .map((mcp) => mcp.metadata.name);
-    setMachineConfigPoolsToPause(initialMCPPausedValues);
-    // eslint-disable-next-line react-hooks-js/exhaustive-deps
-  }, []); // only run the effect once so changes don't affect user input
   const onSelectVersion = (event, selection) => {
     event.preventDefault();
     setDesiredVersion(selection);
@@ -107,10 +108,14 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
     .filter((mcp) => !isMCPMaster(mcp))
     .sort(sortMCPsByCreationTimestamp);
   const pausedMCPs = pauseableMCPs.filter((mcp) => isMCPPaused(mcp));
-  const desiredRecommendedUpdate = _.find(availableSortedUpdates, { version: desiredVersion });
-  const desiredNotRecommendedUpdate = _.find(notRecommendedSortedUpdates, {
-    release: { version: desiredVersion },
-  });
+  const desiredRecommendedUpdate = useMemo(
+    () => availableSortedUpdates.find((update) => update.version === desiredVersion),
+    [availableSortedUpdates, desiredVersion],
+  );
+  const desiredNotRecommendedUpdate = useMemo(
+    () => notRecommendedSortedUpdates.find((update) => update.release?.version === desiredVersion),
+    [notRecommendedSortedUpdates, desiredVersion],
+  );
   const desiredNotRecommendedUpdateConditions = getNotRecommendedUpdateCondition(
     desiredNotRecommendedUpdate?.conditions,
   );

@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useRef, useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import type { FormikBag } from 'formik';
 import { Formik } from 'formik';
 import { safeLoad } from 'js-yaml';
@@ -29,14 +29,16 @@ const EditDeployment: FC<EditDeploymentProps> = ({ heading, resource, namespace,
   const navigate = useNavigate();
   const isNew = !name;
 
-  const initialValues = useRef({
+  // Computed once per mount: converting the resource for the form is
+  // expensive and the resource does not change while this page is mounted.
+  const [initialValues] = useState(() => ({
     editorType: EditorType.Form,
     yamlData: safeJSToYAML(resource, 'yamlData', {
       skipInvalid: true,
     }),
     formData: convertDeploymentToEditForm(resource),
     formReloadCount: 0,
-  });
+  }));
 
   const handleSubmit = (
     values: EditDeploymentFormikValues,
@@ -103,7 +105,7 @@ const EditDeployment: FC<EditDeploymentProps> = ({ heading, resource, namespace,
 
   return (
     <Formik
-      initialValues={initialValues.current}
+      initialValues={initialValues}
       onSubmit={handleSubmit}
       validationSchema={validationSchema()}
       enableReinitialize

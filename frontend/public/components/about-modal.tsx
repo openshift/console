@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import {
   Alert,
   AboutModal as PfAboutModal,
@@ -34,22 +34,19 @@ import {
 const DynamicPlugins: FC = () => {
   const { t } = useTranslation('public');
   const pluginInfoEntries = usePluginInfo();
-  const [items, setItems] = useState([]);
 
-  useEffect(() => {
+  const items = useMemo(() => {
     const loadedPlugins = pluginInfoEntries.filter((plugin) => plugin.status === 'loaded');
     const sortedLoadedPlugins = loadedPlugins.sort((a, b) =>
       a.manifest.name.localeCompare(b.manifest.name),
     );
 
-    setItems(
-      sortedLoadedPlugins?.map((plugin) => (
-        <Content
-          component="li"
-          key={`${plugin.manifest.name}-${plugin.manifest.version}`}
-        >{`${plugin.manifest.name} (${plugin.manifest.version})`}</Content>
-      )),
-    );
+    return sortedLoadedPlugins?.map((plugin) => (
+      <Content
+        component="li"
+        key={`${plugin.manifest.name}-${plugin.manifest.version}`}
+      >{`${plugin.manifest.name} (${plugin.manifest.version})`}</Content>
+    ));
   }, [pluginInfoEntries]);
 
   return items.length > 0 ? (

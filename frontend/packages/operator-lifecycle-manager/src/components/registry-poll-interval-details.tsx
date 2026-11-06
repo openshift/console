@@ -1,5 +1,5 @@
 import type { FC, FormEventHandler } from 'react';
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import {
   Button,
   Form,
@@ -64,12 +64,16 @@ export const RegistryPollIntervalDetailItem: FC<RegistryPollIntervalDetailItemPr
   // if the CatalogSource is managed, we can't edit the poll interval
   const managedBy = catalogSource.metadata?.annotations?.['operatorframework.io/managed-by'];
 
-  // reset value on modal open
-  useEffect(() => {
-    if (isModalOpen) {
+  // Reset the selection to the CatalogSource's current interval when the modal
+  // opens (and re-sync it if the interval changes while the modal is open)
+  const [prevResetKey, setPrevResetKey] = useState<string | false>(false);
+  const resetKey: string | false = isModalOpen ? pollInterval : false;
+  if (prevResetKey !== resetKey) {
+    setPrevResetKey(resetKey);
+    if (resetKey !== false) {
       setSelectedPollInterval(pollInterval);
     }
-  }, [pollInterval, isModalOpen]);
+  }
 
   const submit: FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();

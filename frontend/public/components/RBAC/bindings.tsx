@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useMemo, useCallback, useState, useEffect, Suspense } from 'react';
+import { useMemo, useCallback, useState, Suspense } from 'react';
 import {
   ActionGroup,
   Button,
@@ -435,10 +435,6 @@ const BaseEditRoleBinding: FC<BaseEditRoleBindingProps> = (props) => {
 
   const { fixed, saveButtonText } = props;
 
-  const [data, setData] = useState({} as any);
-  const [inProgress, setInProgress] = useState(false);
-  const [error, setError] = useState('');
-
   const subjectIndex = props.subjectIndex || 0;
 
   const existingData = {
@@ -449,8 +445,8 @@ const BaseEditRoleBinding: FC<BaseEditRoleBindingProps> = (props) => {
   const { subjectKind, subjectName } = fixed.subjectRef || {};
 
   // constructor/didmount
-  useEffect(() => {
-    const obj = _.defaultsDeep({}, _.omit(fixed, 'subjectRef'), existingData, {
+  const [data, setData] = useState(() =>
+    _.defaultsDeep({}, _.omit(fixed, 'subjectRef'), existingData, {
       apiVersion: 'rbac.authorization.k8s.io/v1',
       kind: 'RoleBinding',
       metadata: {
@@ -467,10 +463,10 @@ const BaseEditRoleBinding: FC<BaseEditRoleBindingProps> = (props) => {
             subjectKind === 'ServiceAccount' || !subjectKind ? '' : 'rbac.authorization.k8s.io',
         },
       ],
-    });
-    setData(obj);
-    // eslint-disable-next-line react-hooks-js/exhaustive-deps
-  }, []);
+    }),
+  );
+  const [inProgress, setInProgress] = useState(false);
+  const [error, setError] = useState('');
 
   const getSubject = () => _.get(data, `subjects[${subjectIndex}]`);
 
