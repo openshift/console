@@ -34,6 +34,15 @@ export const useEditorType = (
   };
 
   const [activeEditorType, setActiveEditorType] = useState<EditorType>(null);
+  // Initialize the active editor type from the user preferences once they have
+  // loaded.
+  const [prevResourceLoaded, setPrevResourceLoaded] = useState(false);
+  if (prevResourceLoaded !== resourceLoaded) {
+    setPrevResourceLoaded(resourceLoaded);
+    if (resourceLoaded) {
+      setActiveEditorType(getEditorType());
+    }
+  }
   const setEditorType = (type: EditorType) => {
     setActiveEditorType(type);
     setLastViewedEditorType(type);
@@ -44,7 +53,6 @@ export const useEditorType = (
       if (!lastViewedEditorType || lastViewedEditorType !== editorType) {
         setLastViewedEditorType(editorType);
       }
-      setActiveEditorType(editorType);
     }
     // run this hook only after all resources have loaded
     // to set the lastView user setting when the form loads

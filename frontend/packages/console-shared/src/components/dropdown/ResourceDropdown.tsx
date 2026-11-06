@@ -260,6 +260,7 @@ export const ResourceDropdown: FC<ResourceDropdownProps> = ({
       const selectedActionItem =
         actionItems && actionItems.find((ai) => selectedItem === ai.actionKey);
       const title = selectedActionItem ? selectedActionItem.actionTitle : name;
+      // eslint-disable-next-line react-hooks-js/set-state-in-effect -- title sync intentionally replicates the legacy UNSAFE_componentWillReceiveProps update cycle: it must fire on every items/selection change except the initial snapshot when mounted while already loaded (initiallyLoadedRef). Deriving the title during render instead would show it on that skipped mount snapshot and break the placeholder-on-mount behavior covered by ResourceDropdown.spec.tsx.
       setSelectedTitle(title);
       if (selectedItem !== prevSelectedKeyRef.current) {
         onChangeRef.current?.(selectedItem, name, resourceMap[selectedItem]);

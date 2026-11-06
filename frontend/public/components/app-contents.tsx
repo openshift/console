@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useState, useEffect, useRef, useMemo, Suspense } from 'react';
+import { useState, useEffect, useMemo, Suspense } from 'react';
 import { PageSection } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { Route, Routes, Navigate, useParams, useLocation, matchRoutes } from 'react-router';
@@ -86,11 +86,11 @@ const InnerDefaultPage: FC<DefaultPageProps> = ({ flags }) => {
     getPerspectiveVisitedKey(activePerspective),
     false,
   );
-  const firstVisit = useRef<boolean>(undefined);
-
-  // First time thru, capture first visit status
-  if (firstVisit.current == null && visitedLoaded) {
-    firstVisit.current = !visited;
+  // Capture whether this is the user's first visit the first time the
+  // preference loads.
+  const [firstVisit, setFirstVisit] = useState<boolean>(undefined);
+  if (firstVisit == null && visitedLoaded) {
+    setFirstVisit(!visited);
   }
 
   useEffect(() => {
@@ -110,7 +110,7 @@ const InnerDefaultPage: FC<DefaultPageProps> = ({ flags }) => {
   return (
     <DefaultPageRedirect
       flags={flags}
-      firstVisit={firstVisit.current}
+      firstVisit={firstVisit}
       url={perspective?.properties?.landingPageURL}
     />
   );

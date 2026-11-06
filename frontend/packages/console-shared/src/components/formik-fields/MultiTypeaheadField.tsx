@@ -1,5 +1,5 @@
 import type { FC, FormEvent, KeyboardEvent, Ref } from 'react';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useMemo } from 'react';
 import type { SelectOptionProps, MenuToggleElement } from '@patternfly/react-core';
 import {
   Label,
@@ -62,11 +62,8 @@ export const MultiTypeaheadField: FC<MultiTypeaheadFieldProps> = ({
   const errorMessage = !isValid ? error : '';
 
   const [inputValue, setInputValue] = useState<string>('');
-  const [filteredSelectOptions, setFilteredSelectOptions] =
-    useState<SelectOptionProps[]>(initialSelectOptions);
   const [focusedItemIndex, setFocusedItemIndex] = useState<number | null>(null);
   const [activeItemId, setActiveItemId] = useState<string | null>(null);
-  const [onCreation, setOnCreation] = useState<boolean>(false); // Boolean to refresh filter state after new option is created
   const textInputRef = useRef<HTMLInputElement>(undefined);
 
   useFormikValidationFix(field.value);
@@ -77,35 +74,29 @@ export const MultiTypeaheadField: FC<MultiTypeaheadFieldProps> = ({
 
   const createItemId = (value: any) => `${ID_PREFIX}-value-${value.replace(' ', '-')}`;
 
-  useEffect(() => {
-    let newSelectOptions: SelectOptionProps[] = initialSelectOptions;
-
-    // Filter menu items based on the text input value when one exists
-    if (inputValue) {
-      newSelectOptions = initialSelectOptions.filter((menuItem) =>
-        String(menuItem.children).toLowerCase().includes(inputValue.toLowerCase()),
-      );
-
-      // If no option matches the filter exactly, display creation option
-      if (isCreatable && !initialSelectOptions.some((option) => option.value === inputValue)) {
-        newSelectOptions = [
-          ...newSelectOptions,
-          {
-            children: t('Create new option "{{option}}"', { option: inputValue }),
-            value: CREATE_NEW,
-          },
-        ];
-      }
-
-      // Open the menu when the input value changes and the new value is not empty
-      if (!isOpen) {
-        setIsOpen(true);
-      }
+  // Filter menu items based on the text input value
+  const filteredSelectOptions: SelectOptionProps[] = useMemo(() => {
+    if (!inputValue) {
+      return initialSelectOptions;
     }
 
-    setFilteredSelectOptions(newSelectOptions);
-    // eslint-disable-next-line react-hooks-js/exhaustive-deps
-  }, [inputValue, onCreation]);
+    const matchingOptions = initialSelectOptions.filter((menuItem) =>
+      String(menuItem.children).toLowerCase().includes(inputValue.toLowerCase()),
+    );
+
+    // If no option matches the filter exactly, display creation option
+    if (isCreatable && !initialSelectOptions.some((option) => option.value === inputValue)) {
+      return [
+        ...matchingOptions,
+        {
+          children: t('Create new option "{{option}}"', { option: inputValue }),
+          value: CREATE_NEW,
+        },
+      ];
+    }
+
+    return matchingOptions;
+  }, [inputValue, initialSelectOptions, isCreatable, t]);
 
   const setActiveAndFocusedItem = (itemIndex: number) => {
     setFocusedItemIndex(itemIndex);
@@ -154,7 +145,6 @@ export const MultiTypeaheadField: FC<MultiTypeaheadFieldProps> = ({
         setInputValue('');
       }
 
-      setOnCreation(!onCreation);
       resetActiveAndFocusedItem();
     } else if (value) {
       const selections = field.value;
@@ -173,6 +163,9 @@ export const MultiTypeaheadField: FC<MultiTypeaheadFieldProps> = ({
 
   const onTextInputChange = (_event: FormEvent<HTMLInputElement>, value: string) => {
     setInputValue(value);
+    if (value && !isOpen) {
+      setIsOpen(true);
+    }
     resetActiveAndFocusedItem();
   };
 

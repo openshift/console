@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useMemo, useRef, useState, useEffect, useCallback, Suspense } from 'react';
+import { useMemo, useState, useEffect, useCallback, Suspense, useRef } from 'react';
 import {
   EmptyState,
   EmptyStateVariant,
@@ -116,10 +116,15 @@ const HelmReleaseList: FC<{ mock?: boolean }> = ({ mock }) => {
   const { t } = useTranslation('helm-plugin');
   const params = useParams();
   const namespace = params.ns;
-  const secretsCountRef = useRef<number>(0);
-  const [releasesLoaded, setReleasesLoaded] = useState<boolean>(false);
   const [loadError, setLoadError] = useState<string>();
   const [releases, setReleases] = useState<HelmRelease[]>([]);
+  // Secret count that the stored releases (or load error) belong to. It is
+  // compared against the live watch count so results are only shown as
+  // loaded when they match the secrets the watch currently reports.
+  const [fetchedCount, setFetchedCount] = useState<number>(0);
+  // Last count/namespace a fetch was started for; tracked separately from completed results.
+  const requestedCountRef = useRef<number>(0);
+  const requestedNamespaceRef = useRef<string>(null);
   const secretResource = useMemo(
     () => ({
       isList: true,
@@ -140,39 +145,72 @@ const HelmReleaseList: FC<{ mock?: boolean }> = ({ mock }) => {
   );
   const newCount = secretsData?.length ?? 0;
 
-  useEffect(() => {
-    setReleasesLoaded(false);
-    secretsCountRef.current = 0;
-  }, [namespace]);
+  const noReleases = secretsLoaded && !secretsLoadError && newCount === 0;
+
+  const [prevNamespace, setPrevNamespace] = useState(namespace);
+  if (prevNamespace !== namespace) {
+    setPrevNamespace(namespace);
+    setFetchedCount(0);
+  }
+  const [prevNoReleases, setPrevNoReleases] = useState(noReleases);
+  if (prevNoReleases !== noReleases) {
+    setPrevNoReleases(noReleases);
+    if (noReleases) {
+      // Nothing to fetch for an empty namespace; clear previous results so
+      // the empty state shows and a later secret triggers a fresh fetch.
+      setFetchedCount(0);
+      setReleases([]);
+      setLoadError(undefined);
+    }
+  }
 
   useEffect(() => {
-    let destroyed = false;
-    if (secretsLoaded && !secretsLoadError) {
-      if (newCount === 0) {
-        setLoadError(null);
-        setReleasesLoaded(true);
-        setReleases([]);
-      } else if (newCount !== secretsCountRef.current) {
-        setReleasesLoaded(false);
-        fetchHelmReleases(namespace, true)
-          .then((helmReleases) => {
-            if (!destroyed) {
-              setReleases(helmReleases);
-              setReleasesLoaded(true);
-              setLoadError(null);
-            }
-          })
-          .catch((err) => {
-            if (!destroyed) {
-              setReleasesLoaded(true);
-              setLoadError(err.message || t('Unable to load Helm releases'));
-            }
-          });
-      }
-      secretsCountRef.current = newCount;
+    // A request identity recorded for another namespace is stale: the
+    // namespace change reset fetchedCount, so returning to the earlier
+    // namespace must refetch even when the count matches.
+    if (requestedNamespaceRef.current !== namespace) {
+      requestedCountRef.current = 0;
+      requestedNamespaceRef.current = null;
     }
+    if (!secretsLoaded || secretsLoadError) {
+      return;
+    }
+    if (newCount === 0) {
+      // Empty namespace: forget the last request so later secrets trigger a fresh fetch.
+      requestedCountRef.current = 0;
+      return;
+    }
+    if (newCount === requestedCountRef.current && namespace === requestedNamespaceRef.current) {
+      return;
+    }
+    requestedCountRef.current = newCount;
+    requestedNamespaceRef.current = namespace;
+    let destroyed = false;
+    let completed = false;
+    fetchHelmReleases(namespace, true)
+      .then((helmReleases) => {
+        if (!destroyed) {
+          completed = true;
+          setFetchedCount(newCount);
+          setReleases(helmReleases);
+          setLoadError(undefined);
+        }
+      })
+      .catch((err) => {
+        if (!destroyed) {
+          completed = true;
+          setFetchedCount(newCount);
+          setLoadError(err.message || t('Unable to load Helm releases'));
+        }
+      });
     return () => {
       destroyed = true;
+      // A request discarded in flight never recorded its result; clear its
+      // identity so the same count/namespace fetches again after recovery.
+      if (!completed) {
+        requestedCountRef.current = 0;
+        requestedNamespaceRef.current = null;
+      }
     };
   }, [namespace, newCount, secretsLoadError, secretsLoaded, t]);
 
@@ -215,7 +253,7 @@ const HelmReleaseList: FC<{ mock?: boolean }> = ({ mock }) => {
     [helmReleaseStatusFilterOptions],
   );
 
-  const isLoaded = secretsLoaded && releasesLoaded && newCount === secretsCountRef.current; // eslint-disable-line react-hooks-js/refs -- Reading previous count for loading state comparison
+  const isLoaded = secretsLoaded && (noReleases || newCount === fetchedCount);
   const hasNoReleases = isLoaded && releases.length === 0 && !loadError && !secretsLoadError;
 
   const emptyState = () => {

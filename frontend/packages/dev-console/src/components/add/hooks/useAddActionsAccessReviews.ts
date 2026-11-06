@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import type { AddAction, ResolvedExtension } from '@console/dynamic-plugin-sdk';
 import { checkAccess } from '@console/internal/components/utils';
 import type { SelfSubjectAccessReviewKind } from '@console/internal/module/k8s';
@@ -33,20 +33,30 @@ export const useAddActionsAccessReviews = (
     },
     [namespace, setNamespacedAccessReviewResults],
   );
-  useEffect(() => {
-    const newAddActions = addActionExtensions.filter(
-      ({ properties: { id } }) => !namespacedAccessReviewResults[namespace]?.[id],
-    );
-    if (newAddActions.length === 0) {
-      return;
-    }
-    const newResults = newAddActions.reduce((acc, { properties: { id, accessReview } }) => {
+
+  const currentResults = namespacedAccessReviewResults[namespace];
+  const newResults = addActionExtensions.reduce((acc, { properties: { id, accessReview } }) => {
+    if (!currentResults?.[id]) {
       acc[id] = accessReview ? AccessReviewStatus.LOADING : AccessReviewStatus.ALLOWED;
-      return acc;
-    }, {} as AddAccessReviewResults);
+    }
+    return acc;
+  }, {} as AddAccessReviewResults);
+  if (Object.keys(newResults).length > 0) {
     setAccessReviewResults(newResults);
-    newAddActions.forEach(({ properties: { id, accessReview } }) => {
-      if (accessReview) {
+  }
+
+  // Track the reviews already sent to the API so re-running the effect (for
+  // example when another action's review resolves) does not fetch them again.
+  const requestedReviewsRef = useRef<Set<string>>(new Set());
+  useEffect(() => {
+    addActionExtensions.forEach(({ properties: { id, accessReview } }) => {
+      const reviewKey = `${namespace}/${id}`;
+      if (
+        accessReview &&
+        namespacedAccessReviewResults[namespace]?.[id] === AccessReviewStatus.LOADING &&
+        !requestedReviewsRef.current.has(reviewKey)
+      ) {
+        requestedReviewsRef.current.add(reviewKey);
         const promises = accessReview.map((resourceAttributes) =>
           checkAccess({ ...resourceAttributes, namespace }),
         );

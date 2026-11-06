@@ -108,8 +108,6 @@ export const useAccessReview = (
   impersonate?: ImpersonateKind,
   noCheckForEmptyGroupAndResource?: boolean,
 ): [boolean, boolean] => {
-  const [loading, setLoading] = useState(true);
-  const [isAllowed, setAllowed] = useState(false);
   // Destructure the attributes to pass them as dependencies to `useEffect`,
   // which doesn't do deep comparison of object dependencies.
   const {
@@ -122,18 +120,39 @@ export const useAccessReview = (
   } = resourceAttributes;
   const impersonateKey = getImpersonateKey(impersonate);
   const skipCheck = noCheckForEmptyGroupAndResource && !group && !resource;
-  useEffect(() => {
+  const [loading, setLoading] = useState(!skipCheck);
+  const [isAllowed, setAllowed] = useState(false);
+
+  // Reset the review state when `skipCheck` changes so that a skipped check
+  // never reports stale results from a previous access review.
+  const [prevSkipCheck, setPrevSkipCheck] = useState(skipCheck);
+  if (prevSkipCheck !== skipCheck) {
+    setPrevSkipCheck(skipCheck);
     if (skipCheck) {
       setAllowed(false);
       setLoading(false);
+    } else {
+      setLoading(true);
+    }
+  }
+
+  useEffect(() => {
+    if (skipCheck) {
       return;
     }
+    let cancelled = false;
     checkAccessInternal(group, resource, subresource, verb, name, namespace, impersonateKey)
       .then((result: SelfSubjectAccessReviewKind) => {
+        if (cancelled) {
+          return;
+        }
         setAllowed(result.status.allowed);
         setLoading(false);
       })
       .catch((e) => {
+        if (cancelled) {
+          return;
+        }
         console.warn('SelfSubjectAccessReview failed', e);
         // Default to enabling the action if the access review fails so that we
         // don't incorrectly block users from actions they can perform. The server
@@ -141,6 +160,9 @@ export const useAccessReview = (
         setAllowed(true);
         setLoading(false);
       });
+    return () => {
+      cancelled = true;
+    };
   }, [
     setLoading,
     setAllowed,

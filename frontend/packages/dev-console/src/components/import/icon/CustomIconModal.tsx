@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
   Button,
   DropzoneErrorCode,
@@ -70,17 +70,23 @@ export const CustomIconModal: FC<CustomIconModalProps> = ({
   const [url, setUrl] = useState(customIcon);
   const [uploadError, setUploadError] = useState<DropzoneErrorCode | null>(null);
 
-  const handleModalToggle = () => {
-    setModalOpen(!isModalOpen);
-  };
-
-  // Sync state of custom icon whenever the modal opens
-  useEffect(() => {
+  // Sync state of custom icon whenever the modal opens (or the icon changes
+  // while it is open).
+  const [syncedModalState, setSyncedModalState] = useState({
+    isModalOpen,
+    customIcon,
+  });
+  if (syncedModalState.isModalOpen !== isModalOpen || syncedModalState.customIcon !== customIcon) {
+    setSyncedModalState({ isModalOpen, customIcon });
     if (isModalOpen) {
       setUrl(customIcon);
       setUploadError(null);
     }
-  }, [isModalOpen, customIcon]);
+  }
+
+  const handleModalToggle = () => {
+    setModalOpen(!isModalOpen);
+  };
 
   const validUrl = !url || (URL.canParse(url) && url.length < MAX_ANNOTATION_LENGTH);
 

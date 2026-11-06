@@ -1,5 +1,5 @@
 import type { FormEvent } from 'react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { ToolbarFilter } from '@patternfly/react-core';
 import { useSearchParams } from 'react-router';
 import { TextFilter } from '@console/internal/components/factory/text-filter';
@@ -23,9 +23,11 @@ export const DataViewTextFilter = ({
   const [inputText, setInputText] = useState(searchParams.get(filterId) ?? '');
 
   // Sync local state with URL changes
-  useEffect(() => {
+  const [lastSyncedParams, setLastSyncedParams] = useState({ searchParams, filterId });
+  if (lastSyncedParams.searchParams !== searchParams || lastSyncedParams.filterId !== filterId) {
+    setLastSyncedParams({ searchParams, filterId });
     setInputText(searchParams.get(filterId) ?? '');
-  }, [searchParams, filterId]);
+  }
 
   const handleChange = (_event: FormEvent<HTMLInputElement>, value: string) => {
     setInputText(value);

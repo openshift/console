@@ -1,5 +1,5 @@
 import type { ReactNode, ReactElement, FC } from 'react';
-import { useMemo, Fragment } from 'react';
+import { useMemo, Fragment, useEffect } from 'react';
 import type { GraphElement } from '@patternfly/react-topology';
 import { isEdge } from '@patternfly/react-topology';
 import { observer } from 'mobx-react';
@@ -37,6 +37,14 @@ const TabBarTabHookResolver: FC<TabBarTabHookResolverProps> = ({
 }) => {
   const { t } = useTranslation('topology');
 
+  const deprecatedSectionIds = useMemo(
+    () =>
+      tabSectionExtensions
+        .filter(({ provider, section }) => !provider && section)
+        .map(({ id }) => id),
+    [tabSectionExtensions],
+  );
+
   // resolving hooks in loop since number of extensions will remain the same
   // TODO: Render each hook in its own child component...
   const resolvedTabSections = tabSectionExtensions.reduce<ResolvedTabSections>(
@@ -50,12 +58,6 @@ const TabBarTabHookResolver: FC<TabBarTabHookResolverProps> = ({
         }
         [contentElement] = hookResult;
       } else if (section) {
-        if (!blamedDeprecatedPlugins[rest.id]) {
-          blamedDeprecatedPlugins[rest.id] = true;
-          console.warn(
-            `TabSectionExtension "${rest.id}" should be updated from section to provider (hook)`,
-          );
-        }
         // Fallback to deprecated section
         contentElement = section(graphElement, renderNullNoop);
       }
@@ -72,6 +74,19 @@ const TabBarTabHookResolver: FC<TabBarTabHookResolverProps> = ({
     },
     {},
   );
+
+  // Warn once per deprecated `section` extension. The blame map is
+  // module-level, so each extension is only reported once per session.
+  useEffect(() => {
+    deprecatedSectionIds.forEach((id) => {
+      if (!blamedDeprecatedPlugins[id]) {
+        blamedDeprecatedPlugins[id] = true;
+        console.warn(
+          `TabSectionExtension "${id}" should be updated from section to provider (hook)`,
+        );
+      }
+    });
+  }, [deprecatedSectionIds]);
 
   const [tabs, tabsLoaded] = useMemo(() => {
     if (Object.keys(resolvedTabSections).length === 0) return [[], true];

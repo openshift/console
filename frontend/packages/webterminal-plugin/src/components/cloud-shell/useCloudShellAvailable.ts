@@ -6,6 +6,17 @@ import { checkTerminalAvailable } from './cloud-shell-utils';
 export const useCloudShellAvailable = () => {
   const [terminalAvailable, setTerminalAvailable] = useState(false);
   const flagEnabled = useFlag(FLAG_DEVWORKSPACE);
+
+  // Reset the availability result when the flag is disabled so a stale
+  // `true` from a previous check is not reported if the flag is re-enabled.
+  const [prevFlagEnabled, setPrevFlagEnabled] = useState(flagEnabled);
+  if (prevFlagEnabled !== flagEnabled) {
+    setPrevFlagEnabled(flagEnabled);
+    if (!flagEnabled) {
+      setTerminalAvailable(false);
+    }
+  }
+
   useEffect(() => {
     let mounted = true;
     if (flagEnabled) {
@@ -20,8 +31,6 @@ export const useCloudShellAvailable = () => {
             setTerminalAvailable(false);
           }
         });
-    } else {
-      setTerminalAvailable(false);
     }
     return () => {
       mounted = false;

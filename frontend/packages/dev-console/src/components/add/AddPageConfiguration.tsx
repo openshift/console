@@ -1,5 +1,5 @@
 import type { FC, ReactElement } from 'react';
-import { isValidElement, useState, useEffect, useMemo } from 'react';
+import { isValidElement, useState, useMemo } from 'react';
 import { FormHelperText, FormSection } from '@patternfly/react-core';
 import { DualListSelector } from '@patternfly/react-core/deprecated';
 import * as fuzzy from 'fuzzysearch';
@@ -60,11 +60,9 @@ const AddPageConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
   const [consoleConfig, consoleConfigLoaded, consoleConfigError] =
     useConsoleOperatorConfig<SoftwareCatalogAddPageConfig>();
   const [disabled, setDisabled] = useState<string[]>();
-  useEffect(() => {
-    if (consoleConfig && consoleConfigLoaded && !disabled) {
-      setDisabled(consoleConfig?.spec?.customization?.addPage?.disabledActions || []);
-    }
-  }, [consoleConfig, consoleConfigLoaded, disabled]);
+  if (consoleConfig && consoleConfigLoaded && !disabled) {
+    setDisabled(consoleConfig?.spec?.customization?.addPage?.disabledActions || []);
+  }
 
   // Calculate options
   const enabledOptions = useMemo<React.ReactElement<ItemProps>[]>(() => {

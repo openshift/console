@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useState, useMemo, useEffect, useCallback, Suspense } from 'react';
+import { useState, useMemo, useCallback, Suspense } from 'react';
 import {
   DescriptionList,
   DescriptionListDescription,
@@ -490,12 +490,14 @@ export const RolesPage: FC<RolesPageProps> = ({ namespace, mock, showTitle }) =>
   const { t } = useTranslation('public');
   const location = useLocation();
 
-  // Track which filter is selected from URL params
-  const [selectedFilters, setSelectedFilters] = useState(() => {
-    const params = new URLSearchParams(location.search);
-    const filterParam = params.get('rowFilter-role-kind');
-    return filterParam ? filterParam.split(',') : [];
-  });
+  // Track which filter is selected from URL params. The identity is keyed on
+  // the parsed parameter so unrelated URL changes (e.g. table sorting) don't
+  // produce a new array and churn the downstream watch-resource memos.
+  const filterParam = useMemo(
+    () => new URLSearchParams(location.search).get('rowFilter-role-kind'),
+    [location.search],
+  );
+  const selectedFilters = useMemo(() => (filterParam ? filterParam.split(',') : []), [filterParam]);
 
   const createNS = namespace || 'default';
   const accessReview = {
@@ -523,20 +525,6 @@ export const RolesPage: FC<RolesPageProps> = ({ namespace, mock, showTitle }) =>
 
     return resourcesList;
   }, [selectedFilters]);
-
-  // Update state when URL params change
-  useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const filterParam = params.get('rowFilter-role-kind');
-    const newFilters = filterParam ? filterParam.split(',') : [];
-
-    const sortedNew = [...newFilters].sort();
-    const sortedSelected = [...selectedFilters].sort();
-
-    if (!_.isEqual(sortedNew, sortedSelected)) {
-      setSelectedFilters(newFilters);
-    }
-  }, [location.search, selectedFilters]);
 
   return (
     <MultiListPage

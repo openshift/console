@@ -73,7 +73,9 @@ const CloudShellExec: FC<CloudShellExecProps> = ({
   const fireTelemetryEvent = useTelemetry();
   const [wsOpen, setWsOpen] = useState<boolean>(false);
   const [wsError, setWsError] = useState<string>();
-  const [wsReopening, setWsReopening] = useState<boolean>(false);
+  // Incremented when the user reconnects after an error, forcing the
+  // websocket effect below to re-run.
+  const [reconnectCount, setReconnectCount] = useState<number>(0);
   const [customResource, setCustomResource] = useState<CloudShellResource>();
   const ws = useRef<WSFactory>(undefined);
   const terminal = useRef<ImperativeTerminalType>(undefined);
@@ -201,8 +203,6 @@ const CloudShellExec: FC<CloudShellExecProps> = ({
         currentTerminal.onConnectionClosed(t('connecting to {{container}}', { container }));
     }
 
-    setWsReopening(false);
-
     return () => {
       unmounted = true;
       websocket.destroy();
@@ -214,11 +214,11 @@ const CloudShellExec: FC<CloudShellExecProps> = ({
     impersonate,
     namespace,
     podname,
+    reconnectCount,
     shcommand,
     t,
     workspaceName,
     workspaceModel,
-    wsReopening,
   ]);
 
   if (wsError) {
@@ -235,8 +235,8 @@ const CloudShellExec: FC<CloudShellExecProps> = ({
                 });
                 if (customResource && customResource.status.phase !== 'Running') {
                   startWorkspace(customResource);
-                } else if (!wsReopening) {
-                  setWsReopening(true);
+                } else {
+                  setReconnectCount((count) => count + 1);
                 }
                 setWsError(undefined);
               }}

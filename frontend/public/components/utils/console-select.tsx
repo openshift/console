@@ -1,5 +1,5 @@
 import type { FC, ReactNode, MouseEvent, CSSProperties, RefObject } from 'react';
-import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import { useState, useCallback, useRef, useMemo } from 'react';
 import type { MenuToggleElement } from '@patternfly/react-core';
 import {
   Divider,
@@ -127,7 +127,6 @@ export const ConsoleSelect: FC<ConsoleSelectProps> = ({
   const [expanded, setExpanded] = useState(active ?? false);
   const [selectedKey, setSelectedKey] = useState<string>(props.selectedKey ?? '');
   const [autocompleteText, setAutocompleteText] = useState<string>('');
-  const [items, setItems] = useState<Record<string, React.ReactNode>>(props.items);
   const { t } = useTranslation('public');
 
   /* Dropdown bookmark state and helpers */
@@ -167,40 +166,32 @@ export const ConsoleSelect: FC<ConsoleSelectProps> = ({
     [onChange, actionItems],
   );
 
-  const applyTextFilter = useCallback(
-    (text: string, itemsToFilter: Record<string, ReactNode>) => {
-      let filteredItems = itemsToFilter;
-      if (autocompleteFilter && !_.isEmpty(text)) {
-        filteredItems = _.pickBy(itemsToFilter, (item, key) => autocompleteFilter(text, item, key));
-      }
-      setAutocompleteText(text);
-      setItems(filteredItems);
-    },
-    [autocompleteFilter],
-  );
+  /*
+   * One-way prop→state sync for the selected key. Only a *changed, defined*
+   * `selectedKey` prop overwrites the local selection, so user selections are
+   * never reverted before the parent's onChange update propagates.
+   */
+  const [lastPropSelectedKey, setLastPropSelectedKey] = useState(props.selectedKey);
+  if (props.selectedKey !== undefined && lastPropSelectedKey !== props.selectedKey) {
+    setLastPropSelectedKey(props.selectedKey);
+    setSelectedKey(props.selectedKey);
+  }
 
-  // One-way prop→state sync. Do NOT include `selectedKey` in deps — it
-  // creates a feedback loop under React 18 createRoot where the effect
-  // reverts user selections before the prop update from onChange propagates.
-  useEffect(() => {
-    if (props.selectedKey !== undefined) {
-      setSelectedKey(props.selectedKey);
+  const items = useMemo(() => {
+    if (autocompleteFilter && !_.isEmpty(autocompleteText)) {
+      return _.pickBy(props.items, (item, key) => autocompleteFilter(autocompleteText, item, key));
     }
-    // eslint-disable-next-line react-hooks-js/exhaustive-deps
-  }, [props.selectedKey]);
-
-  useEffect(() => {
-    applyTextFilter(autocompleteText, props.items);
-  }, [props.items, applyTextFilter, autocompleteText]);
+    return props.items;
+  }, [props.items, autocompleteFilter, autocompleteText]);
 
   // Clear filter when opening dropdown
-  useEffect(() => {
+  const [lastExpanded, setLastExpanded] = useState(expanded);
+  if (lastExpanded !== expanded) {
+    setLastExpanded(expanded);
     if (expanded) {
-      applyTextFilter('', props.items);
+      setAutocompleteText('');
     }
-    // only want to run when `expanded` changes
-    // eslint-disable-next-line react-hooks-js/exhaustive-deps
-  }, [expanded]);
+  }
 
   /* Menu content */
   const renderedActionItems = useMemo(() => {
@@ -321,7 +312,7 @@ export const ConsoleSelect: FC<ConsoleSelectProps> = ({
                     autoCapitalize: 'none',
                     autoFocus: true,
                   }}
-                  onChange={(_e, value) => applyTextFilter(value, props.items)}
+                  onChange={(_e, value) => setAutocompleteText(value)}
                   onClick={(e) => e.stopPropagation()}
                   placeholder={autocompletePlaceholder}
                   value={autocompleteText ?? ''}

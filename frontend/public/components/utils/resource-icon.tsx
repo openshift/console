@@ -8,25 +8,14 @@ import type { K8sResourceKindReference } from '../../module/k8s';
 import { kindToAbbr } from '../../module/k8s/get-resources';
 import { modelFor } from '../../module/k8s/k8s-models';
 
-const MEMO = {};
-
-export const ResourceIcon: FC<ResourceIconProps> = ({ className, groupVersionKind, kind }) => {
-  // if no kind or groupVersionKind, return null so an empty icon isn't rendered
-  if (!kind && !groupVersionKind) {
-    return null;
-  }
-  const kindReference = kind || getReference(groupVersionKind);
-  const memoKey = className ? `${kindReference}/${className}` : kindReference;
-  if (MEMO[memoKey]) {
-    return MEMO[memoKey];
-  }
+const renderResourceIcon = (kindReference: string, className?: string) => {
   const kindObj = modelFor(kindReference);
   const kindStr = kindObj?.kind ?? kindReference;
   const backgroundColor = _.get(kindObj, 'color', undefined);
   const klass = css(`co-m-resource-icon co-m-resource-${kindStr.toLowerCase()}`, className);
   const iconLabel = (kindObj && kindObj.abbr) || kindToAbbr(kindStr);
 
-  const rendered = (
+  return (
     <>
       <span className="pf-v6-u-screen-reader">{kindStr}</span>
       <span className={klass} title={kindStr} style={{ backgroundColor }}>
@@ -34,11 +23,27 @@ export const ResourceIcon: FC<ResourceIconProps> = ({ className, groupVersionKin
       </span>
     </>
   );
-  if (kindObj) {
-    MEMO[memoKey] = rendered;
-  }
+};
 
-  return rendered;
+const memoizedResourceIcon = _.memoize(
+  renderResourceIcon,
+  (kindReference: string, className?: string) =>
+    className ? `${kindReference}/${className}` : kindReference,
+);
+
+export const ResourceIcon: FC<ResourceIconProps> = ({ className, groupVersionKind, kind }) => {
+  // if no kind or groupVersionKind, return null so an empty icon isn't rendered
+  if (!kind && !groupVersionKind) {
+    return null;
+  }
+  const kindReference = kind || getReference(groupVersionKind);
+  // Only the rendering of known kinds is cached — a model for an unknown
+  // kind may still load, which changes how the icon renders.
+  const kindObj = modelFor(kindReference);
+
+  return kindObj
+    ? memoizedResourceIcon(kindReference, className)
+    : renderResourceIcon(kindReference, className);
 };
 
 export type ResourceNameProps = {

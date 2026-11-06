@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useMemo, useCallback } from 'react';
+import { useMemo, useCallback, useState } from 'react';
 import type { ChartAreaProps } from '@patternfly/react-charts/victory';
 import {
   Chart,
@@ -206,7 +206,13 @@ export const Area: FC<AreaProps> = ({
   timespan = DEFAULT_PROMETHEUS_TIMESPAN,
   ...rest
 }) => {
-  const endTime = useMemo(() => endTimeProp ?? Date.now(), [endTimeProp]);
+  const [endTime, setEndTime] = useState(() => endTimeProp ?? Date.now());
+  const [prevEndTimeProp, setPrevEndTimeProp] = useState(endTimeProp);
+  if (prevEndTimeProp !== endTimeProp) {
+    setPrevEndTimeProp(endTimeProp);
+    // Pass an updater so that Date.now() is not evaluated directly during render
+    setEndTime(() => endTimeProp ?? Date.now());
+  }
   const prometheusPollProps = {
     endpoint: PrometheusEndpoint.QUERY_RANGE,
     endTime,

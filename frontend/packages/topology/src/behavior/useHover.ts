@@ -8,6 +8,9 @@ import { useCallbackRef } from '@patternfly/react-topology';
 
 const EMPTY: any[] = [];
 
+const areDependenciesEqual = (a: any[], b: any[]): boolean =>
+  a.length === b.length && a.every((value, i) => Object.is(value, b[i]));
+
 export const useHover = <T extends Element>(
   delayIn: number = 200,
   delayOut: number = 200,
@@ -24,11 +27,13 @@ export const useHover = <T extends Element>(
     [],
   );
 
-  useEffect(() => {
-    setHover(false);
-    // dynamic dependencies
-    // eslint-disable-next-line react-hooks-js/exhaustive-deps
-  }, dependencies);
+  const [prevDependencies, setPrevDependencies] = useState<any[]>(dependencies);
+  if (!areDependenciesEqual(prevDependencies, dependencies)) {
+    setPrevDependencies(dependencies);
+    if (hover) {
+      setHover(false);
+    }
+  }
 
   // The unset handle needs to be referred by listeners in different closures.
   const unsetHandle = useRef<number>(undefined);

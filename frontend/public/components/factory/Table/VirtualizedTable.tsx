@@ -95,17 +95,33 @@ const VirtualizedTable: VirtualizedTableFC = ({
   const { t } = useTranslation('public');
   const navigate = useNavigate();
   const columnShift = onSelect ? 1 : 0; // shift indexes by 1 if select provided
-  const [sortBy, setSortBy] = useState<{
-    index: number;
-    direction: SortByDirection;
-  }>({ index: sortColumnIndex || columnShift, direction: sortDirection || SortByDirection.asc });
-
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
   const columns = useMemo(() => {
     const colIDs = allColumns.map((c) => c.id);
     return allColumns.filter((col) => isColumnVisible(windowWidth, col, colIDs));
   }, [windowWidth, allColumns]);
+
+  // Initialize the sort from the `sortBy`/`orderBy` URL query parameters,
+  // falling back to the sort props.
+  const [sortBy, setSortBy] = useState<{
+    index: number;
+    direction: SortByDirection;
+  }>(() => {
+    const sp = new URLSearchParams(window.location.search);
+    const columnIndex = _.findIndex(columns, { title: sp.get('sortBy') });
+    if (columnIndex > -1) {
+      const sortOrder =
+        sp.get('orderBy') === SortByDirection.desc.valueOf()
+          ? SortByDirection.desc
+          : SortByDirection.asc;
+      return { index: columnIndex + columnShift, direction: sortOrder };
+    }
+    return {
+      index: sortColumnIndex || columnShift,
+      direction: sortDirection || SortByDirection.asc,
+    };
+  });
 
   const applySort = useCallback(
     (index, direction) => {
@@ -142,26 +158,11 @@ const VirtualizedTable: VirtualizedTableFC = ({
   useEffect(() => {
     const handleResize = _.debounce(() => setWindowWidth(window.innerWidth), 100);
 
-    const sp = new URLSearchParams(window.location.search);
-    const columnIndex = _.findIndex(columns, { title: sp.get('sortBy') });
-
-    if (columnIndex > -1) {
-      const sortOrder =
-        sp.get('orderBy') === SortByDirection.desc.valueOf()
-          ? SortByDirection.desc
-          : SortByDirection.asc;
-      setSortBy({
-        index: columnIndex + columnShift,
-        direction: sortOrder,
-      });
-    }
-
     // re-render after resize
     window.addEventListener('resize', handleResize);
     return () => {
       window.removeEventListener('resize', handleResize);
     };
-    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, []);
 
   const onSort = useCallback(

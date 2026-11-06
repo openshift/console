@@ -35,11 +35,15 @@ const useCloudShellWorkspace = (
   const [noNamespaceFound, setNoNamespaceFound] = useState<boolean>(false);
 
   // sync defaultNamespace to namespace
-  useEffect(() => {
+  const [prevDefaultNamespace, setPrevDefaultNamespace] = useState(defaultNamespace);
+  if (prevDefaultNamespace !== defaultNamespace) {
+    setPrevDefaultNamespace(defaultNamespace);
     setNamespace(defaultNamespace);
     // a new namespace means we can start a new search
-    defaultNamespace && setNoNamespaceFound(false);
-  }, [defaultNamespace, setNamespace, setNoNamespaceFound]);
+    if (defaultNamespace) {
+      setNoNamespaceFound(false);
+    }
+  }
 
   const [canListWorkspaces, loadingAccessReview] = useAccessReview2({
     group: workspaceModel.apiGroup,

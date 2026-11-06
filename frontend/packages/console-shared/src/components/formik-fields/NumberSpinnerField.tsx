@@ -36,12 +36,12 @@ export const NumberSpinnerField: FC<NumberSpinnerFieldProps> = ({
       field.onChange(event);
       setFieldValue(
         props.name,
-        props?.setOutputAsIntegerFlag
+        props.setOutputAsIntegerFlag
           ? _.toInteger(event.currentTarget.value)
           : event.currentTarget.value,
       );
     },
-    [field, props.name, setFieldValue, props?.setOutputAsIntegerFlag],
+    [field, props.name, setFieldValue, props.setOutputAsIntegerFlag],
   );
 
   return (

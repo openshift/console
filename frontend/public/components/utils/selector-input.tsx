@@ -1,4 +1,4 @@
-import type { ChangeEvent } from 'react';
+import type { ChangeEvent, KeyboardEvent } from 'react';
 import { Component } from 'react';
 import { Label as PfLabel } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
@@ -17,6 +17,8 @@ export interface SelectorInputProps {
   autoFocus?: boolean;
   /** Additional props spread onto the underlying input element. */
   inputProps?: { [key: string]: unknown };
+  /** Keep tags and the input on one horizontally scrollable line. Defaults to false. */
+  isSingleLine?: boolean;
   labelClassName?: string;
   onChange: (tags: string[]) => void;
   onValidationChange?: (isValid: boolean) => void;
@@ -146,6 +148,13 @@ export class SelectorInput extends Component<SelectorInputProps, SelectorInputSt
     this.setState({ inputValue, isInputValid: isValid });
   };
 
+  handleKeyDownCapture = (e: KeyboardEvent<HTMLDivElement>) => {
+    if (e.nativeEvent.isComposing) {
+      // Leave IME keys to the browser instead of adding or removing tags.
+      e.stopPropagation();
+    }
+  };
+
   handleChange = (tags: string[], changed: string[]) => {
     // The way we use TagsInput, there should only ever be one new tag in changed
     const newTag = changed[0];
@@ -175,7 +184,7 @@ export class SelectorInput extends Component<SelectorInputProps, SelectorInputSt
     const { inputValue, isInputValid, tags } = this.state;
 
     // Keys that add tags: Enter
-    const addKeys = [13];
+    const addKeys = ['Enter'];
 
     // Backspace deletes tags, but not if there is text being edited in the input field
     const removeKeys = inputValue.length ? [] : [8];
@@ -204,8 +213,12 @@ export class SelectorInput extends Component<SelectorInputProps, SelectorInputSt
     );
 
     return (
-      <div className="pf-v6-c-form-control">
-        <div className="co-tags-input">
+      <div className="pf-v6-c-form-control" onKeyDownCapture={this.handleKeyDownCapture}>
+        <div
+          className={css('co-tags-input', {
+            'co-selector-input--single-line': this.props.isSingleLine,
+          })}
+        >
           <TagsInput
             ref={this.setRef}
             className="tags"

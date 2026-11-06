@@ -1,5 +1,5 @@
 import type { FC, Ref } from 'react';
-import { useState, useMemo, useEffect, useRef } from 'react';
+import { useState, useMemo, useRef } from 'react';
 import type {
   MenuToggleProps,
   MenuToggleElement,
@@ -92,9 +92,10 @@ export const SingleTypeaheadDropdown: FC<SingleTypeaheadDropdownProps> = ({
     () => selectOptions.find((i) => i.value === selectedKey),
     [selectOptions, selectedKey],
   );
-  const [inputValue, setInputValue] = useState<string>(String(selectedValue?.children) || '');
+  const [inputValue, setInputValue] = useState<string>(
+    selectedValue?.children ?? selectedValue?.value ?? '',
+  );
   const [filterValue, setFilterValue] = useState<string>('');
-  const [filteredSelectOptions, setFilteredSelectOptions] = useState<SelectOptionProps[]>(items);
   const [focusedItemIndex, setFocusedItemIndex] = useState<number | null>(null);
   const [activeItemId, setActiveItemId] = useState<string | null>(null);
   const textInputRef = useRef<HTMLInputElement>(undefined);
@@ -103,41 +104,37 @@ export const SingleTypeaheadDropdown: FC<SingleTypeaheadDropdownProps> = ({
   const NO_RESULTS = 'typeahead-dropdown__no-results';
   const CREATE_NEW = 'typeahead-dropdown__create-new';
 
-  useEffect(() => {
+  // Merge newly provided items into the option list when the items prop
+  // changes.
+  const [prevItems, setPrevItems] = useState(items);
+  if (prevItems !== items) {
+    setPrevItems(items);
     setSelectOptions([...selectOptions, ..._.differenceBy(items, selectOptions, 'value')]);
-    inputValue === '' && setFilteredSelectOptions(selectOptions);
-    // eslint-disable-next-line react-hooks-js/exhaustive-deps
-  }, [items]);
+  }
 
-  useEffect(() => {
-    let newSelectOptions: SelectOptionProps[] = selectOptions;
-
-    // Filter menu items based on the text input value when one exists
-    if (filterValue) {
-      newSelectOptions = selectOptions.filter((menuItem) =>
-        String(menuItem.children).toLowerCase().includes(filterValue.toLowerCase()),
-      );
-
-      // If no option matches the filter exactly, display creation option
-      if (enableCreateNew && !selectOptions.some((option) => option.value === inputValue)) {
-        newSelectOptions = [
-          ...newSelectOptions,
-          {
-            children: t('Create new option "{{option}}"', { option: inputValue }),
-            value: CREATE_NEW,
-          },
-        ];
-      }
-
-      // Open the menu when the input value changes and the new value is not empty
-      if (!isOpen) {
-        setIsOpen(true);
-      }
+  const filteredSelectOptions = useMemo<SelectOptionProps[]>(() => {
+    if (!filterValue) {
+      return selectOptions;
     }
 
-    setFilteredSelectOptions(newSelectOptions);
-    // eslint-disable-next-line react-hooks-js/exhaustive-deps
-  }, [filterValue]);
+    // Filter menu items based on the text input value when one exists
+    let newSelectOptions = selectOptions.filter((menuItem) =>
+      String(menuItem.children).toLowerCase().includes(filterValue.toLowerCase()),
+    );
+
+    // If no option matches the filter exactly, display creation option
+    if (enableCreateNew && !selectOptions.some((option) => option.value === inputValue)) {
+      newSelectOptions = [
+        ...newSelectOptions,
+        {
+          children: t('Create new option "{{option}}"', { option: inputValue }),
+          value: CREATE_NEW,
+        },
+      ];
+    }
+
+    return newSelectOptions;
+  }, [selectOptions, filterValue, enableCreateNew, inputValue, t]);
 
   const createItemId = (value: any) => `${ID_PREFIX}-option-${String(value).replace(' ', '-')}`;
 
@@ -187,13 +184,19 @@ export const SingleTypeaheadDropdown: FC<SingleTypeaheadDropdownProps> = ({
     }
   };
 
-  useEffect(() => {
+  const [prevSelectedValue, setPrevSelectedValue] = useState(selectedValue);
+  if (prevSelectedValue !== selectedValue) {
+    setPrevSelectedValue(selectedValue);
     setInputValue(selectedValue?.children ?? selectedValue?.value ?? '');
-  }, [selectedValue]);
+  }
 
   const onTextInputChange: TextInputGroupMainProps['onChange'] = (_e, value) => {
     setInputValue(value);
     setFilterValue(value);
+    // Open the menu when the input value changes and the new value is not empty
+    if (value && !isOpen) {
+      setIsOpen(true);
+    }
     onInputChange && onInputChange(value);
 
     resetActiveAndFocusedItem();

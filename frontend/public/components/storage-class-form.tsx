@@ -1,5 +1,5 @@
 import type { FC, FormEvent } from 'react';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { ActionGroup, Button, Checkbox } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
 import * as fuzzy from 'fuzzysearch';
@@ -55,6 +55,48 @@ type StorageProvisionerMap = {
   [provisioner: string]: ProvisionerDetails;
 };
 
+const EMPTY_EXTENSIONS: [ResolvedExtension<StorageClassProvisioner>[], boolean, any[]] = [
+  [],
+  false,
+  [],
+];
+
+const defaultProvisionerObj: ProvisionerDetails = {
+  title: '',
+  provisioner: '',
+  parameters: {},
+  allowVolumeExpansion: () => true,
+};
+
+// Accepts a list of CSIDrivers and checks whether each driver matches a
+// provisioner listed in the given CSI provisioner map. If yes, returns the
+// provisioner with parameters that need to be filled by the user; otherwise
+// the driver gets a default provisioner entry.
+const csiProvisionerMap = (
+  csiDrivers: K8sResourceKind[],
+  csiTypes: StorageProvisionerMap,
+): StorageProvisionerMap => {
+  const csiEntries: StorageProvisionerMap = {};
+  const csiListedProvisioner: string[] = Object.keys(csiTypes);
+  csiDrivers.forEach((csiDriver: K8sResourceKind) => {
+    for (const provisioner of csiListedProvisioner) {
+      const csiDriverName = getName(csiDriver);
+      const hasProvisioner = csiDriverName.includes(provisioner);
+      if (hasProvisioner) {
+        const provisionerData = _.cloneDeep(csiTypes[provisioner]);
+        provisionerData.provisioner = csiDriverName;
+        csiEntries[csiDriverName] = provisionerData;
+        break;
+      }
+      const provisionerData = _.cloneDeep(defaultProvisionerObj);
+      provisionerData.title = csiDriverName;
+      provisionerData.provisioner = csiDriverName;
+      csiEntries[csiDriverName] = provisionerData;
+    }
+  });
+  return csiEntries;
+};
+
 const StorageClassFormInner: FC<StorageClassFormProps> = (props) => {
   const { t } = useTranslation('public');
   const navigate = useNavigate();
@@ -83,35 +125,46 @@ const StorageClassFormInner: FC<StorageClassFormProps> = (props) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [fieldErrors, setFieldErrors] = useState<{ [k: string]: any }>({ parameters: {} });
+  const [previousName, setPreviousName] = useState('');
 
-  const [needValidate, setNeedValidate] = useState(false);
+  const [extensions, extensionsLoaded] = props.extensions ?? EMPTY_EXTENSIONS;
 
-  const resources = useRef<{ [k: string]: any }>(undefined);
-  const previousName = useRef('');
-
-  const defaultProvisionerObj: ProvisionerDetails = {
-    title: '',
-    provisioner: '',
-    parameters: {},
-    allowVolumeExpansion: () => true,
-  };
-
-  const storageTypes = useRef<{ [driverName: string]: ProvisionerDetails }>({});
-
-  const CSIStorageTypes = useRef<StorageProvisionerMap>({});
-  const defaultStorageTypes = useRef<StorageProvisionerMap>({});
-
-  const getExtensions = (extensions) => {
+  const { defaultStorageTypes, csiStorageTypes } = useMemo(() => {
+    const defaults: StorageProvisionerMap = {};
+    const csi: StorageProvisionerMap = {};
     extensions.forEach((ext: ResolvedStorageClassProvisioner) => {
       if (isCSIProvisionerExtension(ext)) {
-        CSIStorageTypes.current[ext.properties.CSI.provisioner] = { ...ext.properties.CSI };
+        csi[ext.properties.CSI.provisioner] = { ...ext.properties.CSI };
       } else {
-        defaultStorageTypes.current[ext.properties.OTHERS.provisioner] = {
-          ...ext.properties.OTHERS,
-        };
+        defaults[ext.properties.OTHERS.provisioner] = { ...ext.properties.OTHERS };
       }
     });
-  };
+    return { defaultStorageTypes: defaults, csiStorageTypes: csi };
+  }, [extensions]);
+
+  // Provisioners offered by the form: plugin-provided defaults plus one entry
+  // per installed CSIDriver.
+  const storageTypes: StorageProvisionerMap = useMemo(() => {
+    if (!extensionsLoaded) {
+      return {};
+    }
+    const types = _.cloneDeep(defaultStorageTypes);
+    const csiLoaded = props.resources?.csi?.loaded;
+    // making sure csi provisioners are added to "storageTypes" (if loaded) before running "validateForm"
+    if (csiLoaded) {
+      const csiData = (props.resources?.csi?.data || []) as K8sResourceKind[];
+      // CSI entries replace any same-keyed plugin-provided entries wholesale,
+      // matching the original ref-cache behavior.
+      Object.assign(types, csiProvisionerMap(csiData, csiStorageTypes));
+    }
+    return types;
+  }, [
+    extensionsLoaded,
+    defaultStorageTypes,
+    csiStorageTypes,
+    props.resources?.csi?.loaded,
+    props.resources?.csi?.data,
+  ]);
 
   const reclaimPolicies = {
     Retain: t('Retain'),
@@ -123,90 +176,75 @@ const StorageClassFormInner: FC<StorageClassFormProps> = (props) => {
     WaitForFirstConsumer: t('WaitForFirstConsumer'),
   };
 
-  // Accepts a list of CSI provisioners and it checks if the
-  // provisioner is listed in CSIStorageTypes object
-  // if yes then return the provisioner with parameters that
-  // needs to be filled by user.
-  const csiProvisionerMap = (csiDrivers: K8sResourceKind[]) => {
-    const csiListedProvisioner: string[] = Object.keys(CSIStorageTypes.current);
-    csiDrivers.forEach((csiDriver: K8sResourceKind) => {
-      for (const provisioner of csiListedProvisioner) {
-        const csiDriverName = getName(csiDriver);
-        const hasProvisioner = csiDriverName.includes(provisioner);
-        if (hasProvisioner) {
-          const provisionerData = _.cloneDeep(CSIStorageTypes.current[provisioner]);
-          provisionerData.provisioner = csiDriverName;
-          storageTypes.current[csiDriverName] = provisionerData;
-          break;
-        }
-        const provisionerData = _.cloneDeep(defaultProvisionerObj);
-        provisionerData.title = csiDriverName;
-        provisionerData.provisioner = csiDriverName;
-        storageTypes.current[csiDriverName] = provisionerData;
-      }
-    });
-  };
-
-  const validateName = () => {
-    const updatedName = newStorageClass.name;
-    const nameUpdated = updatedName !== previousName.current;
+  const validateName = (formState = newStorageClass) => {
+    const updatedName = formState.name;
+    const nameUpdated = updatedName !== previousName;
     const returnVal = {
       error: null,
       nameIsValid: true,
     };
 
-    if (nameUpdated) {
-      if (updatedName.trim().length === 0) {
+    if (updatedName.trim().length === 0) {
+      // The message only shows once the field has been edited, not for a pristine form.
+      returnVal.nameIsValid = false;
+      if (nameUpdated) {
         returnVal.error = t('Storage name is required');
-        returnVal.nameIsValid = false;
-      } else if (resources.current) {
-        _.each(resources.current.data, (storageClass) => {
-          if (storageClass.metadata.name === updatedName.toLowerCase()) {
-            returnVal.error = t('Storage name must be unique');
-            returnVal.nameIsValid = false;
-          }
-        });
       }
-      previousName.current = updatedName;
+    } else if (props.resources?.sc?.loaded) {
+      // Always re-check uniqueness against the current watch data: a watch
+      // tick can land between keystrokes, and skipping the check when the
+      // name is unchanged would clear a shown duplicate-name error.
+      const scData = (props.resources?.sc?.data || []) as K8sResourceKind[];
+      _.each(scData, (storageClass) => {
+        if (storageClass.metadata.name === updatedName.toLowerCase()) {
+          returnVal.error = t('Storage name must be unique');
+          returnVal.nameIsValid = false;
+        }
+      });
+    }
+    if (nameUpdated) {
+      setPreviousName(updatedName);
     }
 
     return returnVal;
   };
 
-  const validateParameters = () => {
-    const params = newStorageClass.parameters;
+  const validateParameters = (formState = newStorageClass) => {
+    const params = formState.parameters;
     const allParamsValid = !_.some(params, ({ validationMsg }) => validationMsg !== null);
     return allParamsValid;
   };
 
-  const paramIsRequired = (paramKey, params = newStorageClass.parameters) => {
+  const paramIsRequired = (paramKey, formState = newStorageClass) => {
     const requiredParam = _.get(
-      storageTypes.current[newStorageClass.type],
+      storageTypes[formState.type],
       ['parameters', paramKey, 'required'],
       null,
     );
     let isRequired = false;
     if (requiredParam) {
-      isRequired = _.isFunction(requiredParam) ? requiredParam(params) : requiredParam;
+      isRequired = _.isFunction(requiredParam)
+        ? requiredParam(formState.parameters)
+        : requiredParam;
     }
 
     return isRequired;
   };
 
-  const allRequiredFieldsFilled = () => {
-    if (newStorageClass.name.trim().length === 0) {
+  const allRequiredFieldsFilled = (formState = newStorageClass) => {
+    if (formState.name.trim().length === 0) {
       return false;
     }
 
-    const { type: storageType, parameters: userEnteredParams } = newStorageClass;
+    const { type: storageType, parameters: userEnteredParams } = formState;
 
     if (storageType === null) {
       return false;
     }
 
-    const allParamsForType = storageTypes.current[storageType]?.parameters;
+    const allParamsForType = storageTypes[storageType]?.parameters;
 
-    const requiredKeys = _.keys(allParamsForType).filter((key) => paramIsRequired(key));
+    const requiredKeys = _.keys(allParamsForType).filter((key) => paramIsRequired(key, formState));
     const allReqdFieldsEntered = _.every(requiredKeys, (key) => {
       const value = _.get(userEnteredParams, [key, 'value']);
       return !_.isEmpty(value);
@@ -215,7 +253,7 @@ const StorageClassFormInner: FC<StorageClassFormProps> = (props) => {
     return allReqdFieldsEntered;
   };
 
-  const validateForm = () => {
+  const validateForm = (formState = newStorageClass) => {
     // Clear error messages from previous validation attempts first
     setError(null);
     setFieldErrors({});
@@ -223,56 +261,25 @@ const StorageClassFormInner: FC<StorageClassFormProps> = (props) => {
     const errs: { [k: string]: any } = {};
     let successful = true;
 
-    const nameValidation = validateName();
+    const nameValidation = validateName(formState);
     if (!nameValidation.nameIsValid) {
       errs.nameValidationMsg = nameValidation.error;
       successful = false;
     }
 
-    if (newStorageClass.type === null) {
+    if (formState.type === null) {
       successful = false;
-    } else if (!validateParameters()) {
+    } else if (!validateParameters(formState)) {
       successful = false;
     }
 
-    if (!allRequiredFieldsFilled()) {
+    if (!allRequiredFieldsFilled(formState)) {
       successful = false;
     }
 
     setFieldErrors(errs);
     setValidationSuccessful(successful);
   };
-
-  const prevProps = useRef(props);
-
-  useEffect(() => {
-    const [extensions, extensionsLoaded] = props.extensions;
-    if (extensionsLoaded && !_.isEqual(props.extensions, prevProps.current.extensions)) {
-      getExtensions(extensions);
-    }
-    if (props !== prevProps.current && extensionsLoaded) {
-      storageTypes.current = _.cloneDeep(defaultStorageTypes.current);
-      const loaded = props.resources?.sc?.loaded;
-      const csiLoaded = props.resources?.csi?.loaded;
-      const scData = (props.resources?.sc?.data || []) as K8sResourceKind[];
-      const csiData = (props.resources?.csi?.data || []) as K8sResourceKind[];
-      // making sure csi provisioners are added to "storageTypes" (if loaded) before running "validateForm"
-      if (csiLoaded) {
-        csiProvisionerMap(csiData);
-      }
-      if (loaded) {
-        resources.current = {
-          data: scData,
-          loadError: props.resources?.sc?.loadError,
-          loaded,
-        };
-        validateForm();
-      }
-    }
-
-    prevProps.current = props;
-    // eslint-disable-next-line react-hooks-js/exhaustive-deps
-  }, [props]);
 
   const updateNewStorage = (param: keyof Parameters, value, runValidation) => {
     const newParams = {
@@ -281,15 +288,10 @@ const StorageClassFormInner: FC<StorageClassFormProps> = (props) => {
     };
 
     setNewStorageClass(newParams);
-    setNeedValidate(runValidation);
-  };
-
-  useEffect(() => {
-    if (needValidate) {
-      validateForm();
+    if (runValidation) {
+      validateForm(newParams);
     }
-    // eslint-disable-next-line react-hooks-js/exhaustive-deps
-  }, [newStorageClass]);
+  };
 
   const setParameterHandler = (param: keyof Parameters, event, checkbox) => {
     const newParams = { ...newStorageClass.parameters };
@@ -304,7 +306,7 @@ const StorageClassFormInner: FC<StorageClassFormProps> = (props) => {
     _.forOwn(newParams, (value, key) => {
       if (newParams.hasOwnProperty(key)) {
         const validation = _.get(
-          storageTypes.current[newStorageClass.type],
+          storageTypes[newStorageClass.type],
           ['parameters', key, 'validation'],
           null,
         );
@@ -320,7 +322,7 @@ const StorageClassFormInner: FC<StorageClassFormProps> = (props) => {
   };
 
   const addDefaultParams = () => {
-    const defaultParams = storageTypes.current?.[newStorageClass?.type]?.parameters ?? {};
+    const defaultParams = storageTypes[newStorageClass?.type]?.parameters ?? {};
     const hiddenParmas = {};
     _.each(defaultParams, (values, param) => {
       const isVisible = _.isFunction(values?.visible)
@@ -367,8 +369,8 @@ const StorageClassFormInner: FC<StorageClassFormProps> = (props) => {
     const dataParameters = _.pickBy(
       _.mapValues(newStorageClassBeforeCreation.parameters, (value, key) => {
         let finalValue = value.value;
-        if (storageTypes.current[type]?.parameters[key]?.format) {
-          finalValue = storageTypes.current[type].parameters[key].format(value.value);
+        if (storageTypes[type]?.parameters[key]?.format) {
+          finalValue = storageTypes[type].parameters[key].format(value.value);
         }
         return finalValue;
       }),
@@ -394,7 +396,7 @@ const StorageClassFormInner: FC<StorageClassFormProps> = (props) => {
         name,
         annotations,
       },
-      provisioner: storageTypes.current[type].provisioner,
+      provisioner: storageTypes[type].provisioner,
       parameters: dataParameters,
     };
 
@@ -406,14 +408,14 @@ const StorageClassFormInner: FC<StorageClassFormProps> = (props) => {
       data.volumeBindingMode = volumeBindingMode;
     }
 
-    const allowVolumeExpansion = storageTypes.current?.[type]?.allowVolumeExpansion;
+    const allowVolumeExpansion = storageTypes[type]?.allowVolumeExpansion;
     const shouldAllowVolumeExpansion = _.isFunction(allowVolumeExpansion)
       ? allowVolumeExpansion(newStorageClass.parameters)
       : allowVolumeExpansion;
     if (shouldAllowVolumeExpansion) {
       data.allowVolumeExpansion = expansion;
     }
-    const { mutator } = storageTypes.current[type];
+    const { mutator } = storageTypes[type];
     if (_.isFunction(mutator)) {
       data = mutator(data);
     }
@@ -430,7 +432,7 @@ const StorageClassFormInner: FC<StorageClassFormProps> = (props) => {
   };
 
   const getProvisionerElements = () => {
-    const parameters = storageTypes.current[newStorageClass.type]?.parameters;
+    const parameters = storageTypes[newStorageClass.type]?.parameters;
 
     const dynamicContent = _.map(parameters, (parameter, key) => {
       const paramId = `storage-class-provisioner-${_.kebabCase(_.get(parameter, 'name', key))}`;
@@ -520,7 +522,7 @@ const StorageClassFormInner: FC<StorageClassFormProps> = (props) => {
         </div>
       );
     });
-    const documentationLink = storageTypes.current[newStorageClass.type]?.documentationLink;
+    const documentationLink = storageTypes[newStorageClass.type]?.documentationLink;
     return (
       <>
         {!_.isEmpty(parameters) && dynamicContent}
@@ -553,13 +555,32 @@ const StorageClassFormInner: FC<StorageClassFormProps> = (props) => {
     newStorageClass.reclaim === null ? reclaimPolicies.Delete : newStorageClass.reclaim;
   const volumeBindingModeKey =
     newStorageClass.volumeBindingMode || volumeBindingModes.WaitForFirstConsumer;
-  const allowVolumeExpansion = storageTypes.current?.[newStorageClass.type]?.allowVolumeExpansion;
+  const allowVolumeExpansion = storageTypes[newStorageClass.type]?.allowVolumeExpansion;
   const expansionFlag =
     newStorageClass.type &&
     (_.isFunction(allowVolumeExpansion)
       ? allowVolumeExpansion(newStorageClass.parameters)
       : allowVolumeExpansion);
   const allowExpansion = expansionFlag ? newStorageClass.expansion : false;
+
+  const scLoaded = !!props.resources?.sc?.loaded;
+  const scData = props.resources?.sc?.data;
+  const [lastValidated, setLastValidated] = useState<{
+    scLoaded: boolean;
+    scData: typeof scData;
+    storageTypes: typeof storageTypes;
+  } | null>(null);
+  if (
+    !lastValidated ||
+    scLoaded !== lastValidated.scLoaded ||
+    scData !== lastValidated.scData ||
+    storageTypes !== lastValidated.storageTypes
+  ) {
+    setLastValidated({ scLoaded, scData, storageTypes });
+    if (scLoaded && extensionsLoaded) {
+      validateForm();
+    }
+  }
 
   return (
     <div className="co-m-pane__form">
@@ -653,7 +674,7 @@ const StorageClassFormInner: FC<StorageClassFormProps> = (props) => {
               title={t('Select Provisioner')}
               autocompleteFilter={autocompleteFilter}
               autocompletePlaceholder={t('Select Provisioner')}
-              items={_.mapValues(storageTypes.current, 'provisioner')}
+              items={_.mapValues(storageTypes, 'provisioner')}
               isFullWidth
               menuClassName="dropdown-menu--text-wrap"
               selectedKey={newStorageClass.type}

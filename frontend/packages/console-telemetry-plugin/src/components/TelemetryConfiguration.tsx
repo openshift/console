@@ -1,5 +1,5 @@
 import type { FC, Ref } from 'react';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import type { MenuToggleElement } from '@patternfly/react-core';
 import {
   FormHelperText,
@@ -124,13 +124,24 @@ const TelemetryConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
     useConsoleOperatorConfig<TelemetryConsoleConfig>();
   const [configuredTelemetrySetting, setConfiguredTelemetrySetting] =
     useState<CLUSTER_TELEMETRY_ANALYTICS>();
-  useEffect(() => {
+  // Initialize the telemetry selection from the console operator config once
+  // it loads, before the user has made a selection.
+  const [prevConsoleConfig, setPrevConsoleConfig] = useState<{
+    config: typeof consoleConfig;
+    loaded: boolean;
+  } | null>(null);
+  if (
+    !prevConsoleConfig ||
+    prevConsoleConfig.config !== consoleConfig ||
+    prevConsoleConfig.loaded !== consoleConfigLoaded
+  ) {
+    setPrevConsoleConfig({ config: consoleConfig, loaded: consoleConfigLoaded });
     if (consoleConfig && consoleConfigLoaded && !configuredTelemetrySetting) {
       setConfiguredTelemetrySetting(
         consoleConfig?.metadata?.annotations?.['telemetry.console.openshift.io/STATE'],
       );
     }
-  }, [configuredTelemetrySetting, consoleConfig, consoleConfigLoaded]);
+  }
 
   // Save the latest changes
   const [saveStatus, setSaveStatus] = useState<SaveStatusProps>();

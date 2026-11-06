@@ -101,6 +101,7 @@ const AddBareMetalHost: FC<AddBareMetalHostProps> = ({ namespace, name, enablePo
   const [reload, setReload] = useState<boolean>(false);
   useEffect(() => {
     if (reload) {
+      // eslint-disable-next-line react-hooks-js/set-state-in-effect -- reload must stay true through one committed render so Formik's enableReinitialize and the usePrevious dependencies observe it; clearing it during render would skip that committed render entirely, breaking the form reload
       setReload(false);
     }
   }, [reload, setReload]);

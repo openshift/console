@@ -59,8 +59,10 @@ const HelmChartVersionDropdown: FC<HelmChartVersionDropdownProps> = ({
   } = useFormikContext<FormikValues>();
   const [helmChartVersions, setHelmChartVersions] = useState({});
   const [helmChartEntries, setHelmChartEntries] = useState<HelmChartMetaData[]>([]);
-  const [initialYamlData, setInitialYamlData] = useState<string>('');
-  const [initialFormData, setInitialFormData] = useState<object>();
+  // Baseline values captured when the form mounts, used to detect whether
+  // the user modified the YAML or form data before changing the chart version.
+  const [initialYamlData, setInitialYamlData] = useState<string>(yamlData);
+  const [initialFormData, setInitialFormData] = useState<object>(formData);
   const [helmChartRepos, setHelmChartRepos] = useState<HelmChartEntries>({});
   const resourceSelector: WatchK8sResource = {
     isList: true,
@@ -110,12 +112,6 @@ const HelmChartVersionDropdown: FC<HelmChartVersionDropdownProps> = ({
       ouiaId: 'HelmChangeChartVersionConfirmation',
     });
   };
-
-  useEffect(() => {
-    setInitialYamlData(yamlData);
-    setInitialFormData(formData);
-    // eslint-disable-next-line react-hooks-js/exhaustive-deps
-  }, []);
 
   useEffect(() => {
     let ignore = false;

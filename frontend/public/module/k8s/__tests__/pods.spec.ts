@@ -1,4 +1,5 @@
 import { podPhase, podPhaseFilterReducer, podReadiness, podRestarts } from '../pods';
+import type { PodKind } from '../types';
 
 describe('podPhase', () => {
   let pod;
@@ -56,6 +57,36 @@ describe('podPhase', () => {
     ];
     const phase: string = podPhase(pod);
     expect(phase).toEqual('Unschedulable');
+  });
+
+  it('does not report initializing for a started native sidecar', () => {
+    pod.spec = {
+      initContainers: [{ name: 'istio-proxy', restartPolicy: 'Always' }],
+      containers: [{ name: 'httpd' }],
+    };
+    pod.status.initContainerStatuses = [
+      { name: 'istio-proxy', started: true, ready: true, state: { running: {} } },
+    ];
+    pod.status.containerStatuses = [
+      { name: 'httpd', state: { waiting: { reason: 'CrashLoopBackOff' } } },
+    ];
+
+    expect(podPhase(pod)).toEqual('CrashLoopBackOff');
+  });
+
+  it('reports initializing while an ordinary init container is unfinished', () => {
+    pod.spec = {
+      initContainers: [{ name: 'setup' }],
+      containers: [{ name: 'httpd' }],
+    };
+    pod.status.initContainerStatuses = [
+      { name: 'setup', state: { waiting: { reason: 'PodInitializing' } } },
+    ];
+    pod.status.containerStatuses = [
+      { name: 'httpd', state: { waiting: { reason: 'CrashLoopBackOff' } } },
+    ];
+
+    expect(podPhase(pod)).toEqual('Init:0/1');
   });
 });
 
@@ -244,5 +275,132 @@ describe('podRestarts', () => {
     const restartCount = podRestarts(pod);
 
     expect(restartCount).toBe(3);
+  });
+
+  it('returns 0 if the status arrays are empty', () => {
+    pod.status.initContainerStatuses = [];
+    pod.status.containerStatuses = [];
+
+    expect(podRestarts(pod)).toBe(0);
+  });
+
+  it('counts app container restarts when the pod has no init containers', () => {
+    delete pod.status.initContainerStatuses;
+
+    expect(podRestarts(pod)).toBe(3);
+  });
+
+  describe('native sidecars', () => {
+    const running = { running: { startedAt: '2026-09-14T12:00:00Z' } };
+    const completed = { terminated: { exitCode: 0 } };
+    const failed = { terminated: { exitCode: 1 } };
+    const crashLoopBackOff = { waiting: { reason: 'CrashLoopBackOff' } };
+    const podInitializing = { waiting: { reason: 'PodInitializing' } };
+
+    // Spec order and count deliberately differ from the status arrays, so sidecars match by name.
+    const sidecarPod = ({ initContainerStatuses, containerStatuses, conditions = [] }) =>
+      ({
+        spec: {
+          initContainers: [
+            { name: 'envoy', restartPolicy: 'Always' },
+            { name: 'setup' },
+            { name: 'istio-proxy', restartPolicy: 'Always' },
+          ],
+          containers: [{ name: 'httpd' }],
+        },
+        status: { phase: 'Running', conditions, initContainerStatuses, containerStatuses },
+      }) as PodKind;
+
+    it('adds native sidecar restarts to app container restarts', () => {
+      const sidecar = sidecarPod({
+        initContainerStatuses: [
+          { name: 'istio-proxy', restartCount: 2, started: true, ready: true, state: running },
+        ],
+        containerStatuses: [{ name: 'httpd', restartCount: 3, state: crashLoopBackOff }],
+      });
+
+      expect(podRestarts(sidecar)).toBe(5);
+    });
+
+    it('sums restarts across multiple native sidecars', () => {
+      const sidecar = sidecarPod({
+        initContainerStatuses: [
+          { name: 'envoy', restartCount: 1, started: true, ready: true, state: running },
+          { name: 'istio-proxy', restartCount: 2, started: true, ready: true, state: running },
+        ],
+        containerStatuses: [{ name: 'httpd', restartCount: 3 }],
+      });
+
+      expect(podRestarts(sidecar)).toBe(6);
+    });
+
+    it('excludes completed ordinary init containers after initialization', () => {
+      const sidecar = sidecarPod({
+        initContainerStatuses: [
+          { name: 'setup', restartCount: 9, state: completed },
+          { name: 'istio-proxy', restartCount: 2, started: true, ready: true, state: running },
+        ],
+        containerStatuses: [{ name: 'httpd', restartCount: 3 }],
+      });
+
+      expect(podRestarts(sidecar)).toBe(5);
+    });
+
+    it('counts only init container restarts while a native sidecar has not started', () => {
+      const sidecar = sidecarPod({
+        initContainerStatuses: [
+          { name: 'istio-proxy', restartCount: 1, started: false, state: podInitializing },
+        ],
+        containerStatuses: [{ name: 'httpd', restartCount: 4 }],
+      });
+
+      expect(podRestarts(sidecar)).toBe(1);
+    });
+
+    it('counts only init container restarts while an ordinary init container is unfinished', () => {
+      const sidecar = sidecarPod({
+        initContainerStatuses: [
+          { name: 'setup', restartCount: 4, state: failed },
+          { name: 'istio-proxy', restartCount: 2, started: true, ready: true, state: running },
+        ],
+        containerStatuses: [{ name: 'httpd', restartCount: 3 }],
+      });
+
+      expect(podRestarts(sidecar)).toBe(6);
+    });
+
+    it('counts app container restarts once the pod is Initialized, even if a sidecar stopped', () => {
+      const sidecar = sidecarPod({
+        conditions: [{ type: 'Initialized', status: 'True' }],
+        initContainerStatuses: [
+          { name: 'istio-proxy', restartCount: 2, started: false, state: podInitializing },
+        ],
+        containerStatuses: [{ name: 'httpd', restartCount: 5 }],
+      });
+
+      expect(podRestarts(sidecar)).toBe(7);
+    });
+
+    it('ignores an Initialized condition that is not True', () => {
+      const sidecar = sidecarPod({
+        conditions: [{ type: 'Initialized', status: 'False' }],
+        initContainerStatuses: [
+          { name: 'istio-proxy', restartCount: 2, started: false, state: podInitializing },
+        ],
+        containerStatuses: [{ name: 'httpd', restartCount: 5 }],
+      });
+
+      expect(podRestarts(sidecar)).toBe(2);
+    });
+
+    it('counts app container restarts once Initialized is True, even with an unfinished ordinary init container', () => {
+      const sidecar = sidecarPod({
+        conditions: [{ type: 'Initialized', status: 'True' }],
+        initContainerStatuses: [{ name: 'setup', restartCount: 4, state: failed }],
+        containerStatuses: [{ name: 'httpd', restartCount: 3 }],
+      });
+
+      expect(podRestarts(sidecar)).toBe(3);
+    });
   });
 });
