@@ -95,21 +95,14 @@ export type K8sResourceKindReference = string;
 
 export type K8sGroupVersionKind = { group?: string; version: string; kind: string };
 
-enum InventoryStatusGroup {
-  WARN = 'WARN',
-  ERROR = 'ERROR',
-  PROGRESS = 'PROGRESS',
-  NOT_MAPPED = 'NOT_MAPPED',
-  UNKNOWN = 'UNKNOWN',
-}
-
-type StatusGroup = {
-  [key in InventoryStatusGroup | string]: {
+/** Inventory counts grouped by severity, with optional filters for resource list links. */
+export interface StatusGroup {
+  [key: string]: {
     filterType?: string;
     statusIDs: string[];
     count: number;
   };
-};
+}
 
 export type StatusGroupMapper<
   T extends K8sResourceCommon = K8sResourceCommon,
@@ -156,6 +149,12 @@ export type PrometheusPollProps = {
   namespace?: string;
   /** Prometheus query, polling is skipped when empty or undefined */
   query?: string;
+  /**
+   * Allow sending the query as a form-encoded POST body when it does not fit in a URL.
+   * Use only on admin-only dashboards: the monitoring API's RBAC proxy maps POST to the
+   * "create" verb, which view-only users are not granted.
+   */
+  usePost?: boolean;
   /** A search parameter */
   timeout?: string;
   /** A vector-query search parameter */

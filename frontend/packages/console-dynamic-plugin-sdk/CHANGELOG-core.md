@@ -16,6 +16,8 @@ compatibility table in [Console dynamic plugins README](./README.md).
   [#17462])
 - Provide `meta/shared-modules.json` containing shared modules and their supported versions
   ([CONSOLE-5065], [#17439])
+- Added an optional `prometheus` code reference to the `console.dashboards/overview/inventory/item`
+  and `console.dashboards/project/overview/item` extensions ([CONSOLE-5146], [#17456])
 - Added optional `sortWeight` property to extension `console.catalog/item-type`, so a plugin can
   control where a type displays in the catalog's type list ([CONSOLE-5527], [#17355])
 - Added optional `badge` property to extension `console.tab`, so a plugin can display a component
@@ -357,6 +359,7 @@ compatibility table in [Console dynamic plugins README](./README.md).
 [CONSOLE-5093]: https://issues.redhat.com/browse/CONSOLE-5093
 [CONSOLE-5108]: https://issues.redhat.com/browse/CONSOLE-5108
 [CONSOLE-5131]: https://issues.redhat.com/browse/CONSOLE-5131
+[CONSOLE-5146]: https://issues.redhat.com/browse/CONSOLE-5146
 [CONSOLE-5273]: https://issues.redhat.com/browse/CONSOLE-5273
 [CONSOLE-5315]: https://issues.redhat.com/browse/CONSOLE-5315
 [CONSOLE-5355]: https://issues.redhat.com/browse/CONSOLE-5355
@@ -475,4 +478,5 @@ compatibility table in [Console dynamic plugins README](./README.md).
 [#17376]: https://github.com/openshift/console/pull/17376
 [#17389]: https://github.com/openshift/console/pull/17389
 [#17439]: https://github.com/openshift/console/pull/17439
+[#17456]: https://github.com/openshift/console/pull/17456
 [#17462]: https://github.com/openshift/console/pull/17462
