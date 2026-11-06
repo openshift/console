@@ -23,7 +23,9 @@ const preset: OxlintConfig = {
     'oxlint-plugin-console/lib/js-plugins/eslint-js-rules.ts',
   ],
 
-  rules: mergeRules(airbnbBase, promise, overrides, { 'oxc/no-barrel-file': 'error' }),
+  rules: mergeRules(airbnbBase, promise, overrides, {
+    'oxc/no-barrel-file': ['error', { threshold: 0 }],
+  }),
 };
 
 export default preset;

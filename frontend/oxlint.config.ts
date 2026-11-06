@@ -23,6 +23,11 @@ const config = defineConfig({
     ]),
   ],
   extends: [configs.jest],
+  options: {
+    reportUnusedDisableDirectives: 'error',
+    denyWarnings: true,
+    maxWarnings: 0,
+  },
   settings: {
     react: { version: packageJson.dependencies.react.replace(/^[^0-9]*/, '') },
     'import/resolver': {
