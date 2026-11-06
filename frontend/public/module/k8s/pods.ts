@@ -1,4 +1,3 @@
-/* eslint-disable oxc/no-barrel-file */
 import * as i18next from 'i18next';
 import * as _ from 'lodash';
 import type { PodPhase } from '@console/dynamic-plugin-sdk/src/extensions/console-types';

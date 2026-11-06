@@ -176,10 +176,9 @@ const CreateConnectorWidget: FC<CreateConnectorWidgetProps> = observer((props) =
     return null;
   }
 
-  // eslint-disable-next-line react-hooks-js/refs -- Hints must be captured synchronously during drag render to avoid stale references in drop handler
   if (dragging) {
     // store the latest hints
-    hintsRef.current = hints; // eslint-disable-line react-hooks-js/refs -- captures hints synchronously during drag render
+    hintsRef.current = hints;
   }
 
   const dragEvent = prompt ? prompt.event : event;
@@ -221,7 +220,7 @@ const CreateConnectorWidget: FC<CreateConnectorWidgetProps> = observer((props) =
         startPoint={startPoint}
         endPoint={endPoint}
         dragging={dragging}
-        hints={hintsRef.current || []} // eslint-disable-line react-hooks-js/refs -- reads synchronously captured hints for drop handler
+        hints={hintsRef.current || []}
         hover={hover}
       />
       <path

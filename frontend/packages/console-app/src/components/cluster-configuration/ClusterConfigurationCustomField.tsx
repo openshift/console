@@ -1,4 +1,3 @@
-/* eslint-disable oxc/no-barrel-file */
 import type { FC } from 'react';
 // import { UserPreferenceCustomField as CustomFieldType } from '@console/dynamic-plugin-sdk/src';
 import type { ClusterConfigurationCustomField as ClusterConfigurationCustomFieldType } from '@console/dynamic-plugin-sdk/src';

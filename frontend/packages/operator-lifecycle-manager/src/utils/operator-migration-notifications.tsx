@@ -243,7 +243,6 @@ export const useOperatorMigrationToastCallbacks = (
 const wait = (milliseconds: number, signal?: AbortSignal): Promise<void> =>
   new Promise<void>((resolve) => {
     // The abort callback closes over the handle assigned below.
-    // eslint-disable-next-line prefer-const
     let timer: number;
     /** Clears the polling delay and abort listener before resolving the wait. */
     const done = () => {

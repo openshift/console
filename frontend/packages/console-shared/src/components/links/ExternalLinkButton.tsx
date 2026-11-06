@@ -1,4 +1,3 @@
-/* eslint-disable oxc/no-barrel-file */
 import type { FC } from 'react';
 import type { ExternalLinkButtonProps } from '@patternfly/react-component-groups';
 import { ExternalLinkButton as PfExternalLinkButton } from '@patternfly/react-component-groups';

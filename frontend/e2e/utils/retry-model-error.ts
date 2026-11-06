@@ -13,7 +13,6 @@ export async function retryOnModelNotFound(page: Page, maxRetries = 3): Promise<
     await page.reload({ waitUntil: 'load' });
   }
 
-  // eslint-disable-next-line eslint-js/no-restricted-syntax
   if (await errorLocator.isVisible().catch(() => false)) {
     throw new Error(`"Model does not exist" persisted after ${maxRetries} reload attempts`);
   }

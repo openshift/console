@@ -109,7 +109,6 @@ const PipelineVisualizationSurface: FC<PipelineVisualizationSurfaceProps> = ({
       const graph = storedGraphModel.current;
       vis.fromModel(graph ? { ...model, graph } : model);
     }
-    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [model, vis]);
 
   if (!vis) return null;

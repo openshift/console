@@ -1,4 +1,3 @@
-/* eslint-disable oxc/no-barrel-file */
 /**
  * @file Entrypoint for the `@openshift-console/dynamic-plugin-sdk-webpack` package published to npmjs.
  *

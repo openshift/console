@@ -21,7 +21,6 @@ import { setClusterID, setCreateProjectMessage, ActionType } from './common';
 import { detectFeatures } from './features';
 import { clearSSARFlags } from './flags';
 
-// eslint-disable-next-line oxc/no-barrel-file
 export type { NamespaceMetrics } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 
 type MetricValuesByNamespace = {
@@ -248,7 +247,6 @@ export const setPluginCSPViolations = (pluginName: string, hasViolation: boolean
   action(ActionType.SetPluginCSPViolations, { pluginName, hasViolation });
 
 // TODO(alecmerdler): Implement all actions using `typesafe-actions` and add them to this export
-// eslint-disable-next-line @typescript-eslint/no-unused-vars -- used in typeof for type export
 const uiActions = {
   setCurrentLocation,
   setShowOperandsInAllNamespaces,

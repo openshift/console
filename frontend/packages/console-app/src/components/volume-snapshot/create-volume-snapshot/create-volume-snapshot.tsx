@@ -293,7 +293,6 @@ const CreateSnapshotForm = (props: SnapshotResourceProps) => {
                 </Trans>
               </p>
             ) : (
-              /* eslint-disable jsx-a11y/label-has-associated-control */
               <>
                 <label className="co-required" htmlFor="claimName">
                   {t('PersistentVolumeClaim')}

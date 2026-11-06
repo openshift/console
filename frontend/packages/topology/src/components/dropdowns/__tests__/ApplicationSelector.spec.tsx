@@ -33,7 +33,6 @@ describe('ApplicationSelector', () => {
   const mockUseField = jest.spyOn(formik, 'useField');
 
   beforeEach(() => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (mockUseField as jest.Mock).mockImplementation((name: string): any => {
       const fieldProps = {
         value: name.includes('selectedKey') ? CREATE_APPLICATION_KEY : '',

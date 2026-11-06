@@ -23,7 +23,6 @@ export const getTopologyGraphModel = (state: RootState, namespace: string): Grap
   return topology?.topologyGraphModel?.[namespace];
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars -- used in typeof for type export
 const actions = {
   setSupportedTopologyFilters,
   setSupportedTopologyKinds,
