@@ -1,5 +1,5 @@
 import { TestPluginStore } from '@openshift/dynamic-plugin-sdk';
-import { screen, waitForElementToBeRemoved } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import type { Perspective } from '@console/shared/src/utils/override-perspectives';
@@ -132,7 +132,9 @@ describe('NavHeader', () => {
       const options = screen.getAllByRole('option');
       await user.click(options[0]);
 
-      await waitForElementToBeRemoved(listbox);
+      await waitFor(() => {
+        expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
+      });
     });
   });
 
