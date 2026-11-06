@@ -676,7 +676,7 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
         isSection: true,
         actions: [
           {
-            label: t('Import YAML'),
+            label: t('Create from YAML'),
             component: LinkTo(getImportYAMLPath()),
           },
           {
