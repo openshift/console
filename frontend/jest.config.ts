@@ -11,6 +11,8 @@ export default defineConfig({
   },
   testEnvironment: 'jsdom',
   workerIdleMemoryLimit: '1GB', // workaround nodejs/node#63186 nodejs/node#66490 jestjs/jest#14605
+  workerGracefulExitTimeout: 2000,
+  haste: { forceNodeFilesystemAPI: true },
   transform: {
     '__mocks__/get-local-plugins\\.ts$': '<rootDir>/scripts/jest-transform-local-plugins.js',
     '^.+\\.(ts|tsx|js|mjs)$': [
@@ -46,9 +48,7 @@ export default defineConfig({
     './__mocks__/transformStream.ts',
     './__mocks__/fetch.ts',
     './__mocks__/helmet.ts',
-    './__mocks__/localStorage.ts',
     './__mocks__/matchMedia.ts',
-    './__mocks__/mutationObserver.ts',
     './__mocks__/resizeObserver.ts',
     './__mocks__/serverFlags.ts',
     './__mocks__/sharedScope.ts',
