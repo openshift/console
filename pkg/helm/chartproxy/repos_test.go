@@ -1048,6 +1048,30 @@ func TestHTTPClientRedirectKeepsIndexShape(t *testing.T) {
 	require.NoError(t, client.CheckRedirect(httpMoved, []*http.Request{httpOrig}))
 }
 
+func TestHTTPClientAllowsReleaseAssetIndex(t *testing.T) {
+	t.Cleanup(func() { utils.SetRequestHostLookupForTest(nil) })
+	utils.SetRequestHostLookupForTest(func(context.Context, string) ([]net.IP, error) {
+		return []net.IP{net.ParseIP("8.8.8.8")}, nil
+	})
+
+	client, err := httpClient(nil)
+	require.NoError(t, err)
+	original, err := http.NewRequest(http.MethodGet, "https://charts.example.com/index.yaml", nil)
+	require.NoError(t, err)
+
+	asset, err := http.NewRequest(http.MethodGet, "https://release-assets.githubusercontent.com/github-production-release-asset/1/uuid?rscd=attachment%3B%20filename%3Dindex.yaml", nil)
+	require.NoError(t, err)
+	require.NoError(t, client.CheckRedirect(asset, []*http.Request{original}))
+
+	chart, err := http.NewRequest(http.MethodGet, "https://release-assets.githubusercontent.com/github-production-release-asset/1/uuid?rscd=attachment%3B%20filename%3Da.tgz", nil)
+	require.NoError(t, err)
+	require.EqualError(t, client.CheckRedirect(chart, []*http.Request{original}), "invalid index URL")
+
+	elsewhere, err := http.NewRequest(http.MethodGet, "https://10.1.2.3/secret?rscd=attachment%3B%20filename%3Dindex.yaml", nil)
+	require.NoError(t, err)
+	require.EqualError(t, client.CheckRedirect(elsewhere, []*http.Request{original}), "invalid index URL")
+}
+
 func TestHelmRepo_IndexFileSanitizesFetchErrors(t *testing.T) {
 	t.Run("closed port matches a missing index", func(t *testing.T) {
 		ln, err := net.Listen("tcp", "127.0.0.1:0")
