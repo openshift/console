@@ -216,7 +216,7 @@ export class SelectorInput extends Component<SelectorInputProps, SelectorInputSt
       <div className="pf-v6-c-form-control" onKeyDownCapture={this.handleKeyDownCapture}>
         <div
           className={css('co-tags-input', {
-            'co-selector-input--single-line': this.props.isSingleLine,
+            'co-tags-input--single-line': this.props.isSingleLine,
           })}
         >
           <TagsInput
