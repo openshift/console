@@ -14,7 +14,6 @@ import { PluginStoreProvider } from '@openshift/dynamic-plugin-sdk';
 import { Flex, Page, SkipToContent } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { createRoot } from 'react-dom/client';
-import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { Provider } from 'react-redux';
 import { BrowserRouter, useParams, useLocation, Routes, Route } from 'react-router';
@@ -477,18 +476,16 @@ if ('serviceWorker' in navigator) {
 
 root.render(
   <Suspense fallback={<LoadingBox blame="Root suspense" />}>
+    <title>{productName}</title>
     <Provider store={store}>
       <PluginStoreProvider store={pluginStore}>
         <UserPreferenceProvider>
           <ThemeProvider>
-            <HelmetProvider>
-              <Helmet titleTemplate={`%s · ${productName}`} defaultTitle={productName} />
-              <ToastProvider>
-                <PollConsoleUpdates />
-                <AdmissionWebhookWarningNotifications />
-                <AppRouter />
-              </ToastProvider>
-            </HelmetProvider>
+            <ToastProvider>
+              <PollConsoleUpdates />
+              <AdmissionWebhookWarningNotifications />
+              <AppRouter />
+            </ToastProvider>
           </ThemeProvider>
         </UserPreferenceProvider>
       </PluginStoreProvider>

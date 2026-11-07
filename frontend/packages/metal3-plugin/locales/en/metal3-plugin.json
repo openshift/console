@@ -12,7 +12,7 @@
   "Applications may be temporarily disrupted.": "Applications may be temporarily disrupted.",
   "Are you sure you want to delete {{name}} machine and scale down its machine set?": "Are you sure you want to delete {{name}} machine and scale down its machine set?",
   "Are you sure you want to delete {{name}} machine?": "Are you sure you want to delete {{name}} machine?",
-  "Are you sure you want to stop maintenance <1>{{reasonLabel}}</1> on node <4>{{nodeName}}</4>?": "Are you sure you want to stop maintenance <1>{{reasonLabel}}</1> on node <4>{{nodeName}}</4>?",
+  "Are you sure you want to stop maintenance <strong>{{reasonLabel}}</strong> on node <strong>{{nodeName}}</strong>?": "Are you sure you want to stop maintenance <strong>{{reasonLabel}}</strong> on node <strong>{{nodeName}}</strong>?",
   "Available": "Available",
   "Bare Metal Host": "Bare Metal Host",
   "Bare Metal Host Details": "Bare Metal Host Details",

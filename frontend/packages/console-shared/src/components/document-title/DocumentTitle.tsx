@@ -1,12 +1,12 @@
 import type { FC } from 'react';
-import { Helmet } from 'react-helmet-async';
 import type { DocumentTitleProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { getBrandingDetails } from '@console/internal/components/utils/branding';
+
+const { productName } = getBrandingDetails();
 
 /**
  * A component to change the document title of the page.
  */
 export const DocumentTitle: FC<DocumentTitleProps> = ({ children }) => (
-  <Helmet>
-    <title>{String(children)}</title>
-  </Helmet>
+  <title>{`${String(children)} · ${productName}`}</title>
 );

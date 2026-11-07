@@ -64,7 +64,7 @@ describe('NodeDashboard', () => {
             expect.objectContaining({ Card: expect.any(Function) }),
           ]),
         }),
-        expect.any(Object),
+        undefined,
       );
     });
   });
@@ -85,7 +85,7 @@ describe('NodeDashboard', () => {
             expect.objectContaining({ Card: expect.any(Function) }),
           ]),
         }),
-        expect.any(Object),
+        undefined,
       );
     });
   });
@@ -106,7 +106,7 @@ describe('NodeDashboard', () => {
             expect.objectContaining({ Card: expect.any(Function) }),
           ]),
         }),
-        expect.any(Object),
+        undefined,
       );
     });
   });

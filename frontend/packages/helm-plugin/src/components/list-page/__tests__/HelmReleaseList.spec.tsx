@@ -117,7 +117,7 @@ describe('HelmReleaseList', () => {
 
     renderWithProviders(<HelmReleaseList />);
 
-    expect(screen.getAllByText('Helm releases')).toHaveLength(2);
+    expect(document.title).toBe('Helm releases');
     expect(screen.getByTestId('data-view-label')).toHaveTextContent('Helm releases');
   });
 

@@ -3,7 +3,6 @@ import { PureComponent, useContext, memo, useMemo, Suspense } from 'react';
 import { Tabs, Tab, TabTitleText } from '@patternfly/react-core';
 import type { TFunction } from 'i18next';
 import * as _ from 'lodash';
-import { Helmet } from 'react-helmet-async';
 /* eslint-disable import/named */
 import type { WithTranslation } from 'react-i18next';
 import { useTranslation, withTranslation } from 'react-i18next';
@@ -30,6 +29,7 @@ import type { K8sResourceKind, K8sResourceCommon } from '../../module/k8s';
 import { referenceFor, referenceForExtensionModel } from '../../module/k8s/k8s';
 import { PodsPage } from '../pod-list';
 import { AsyncComponent } from './async';
+import { getBrandingDetails } from './branding';
 import { ResourceMetricsDashboard } from './resource-metrics';
 import { EmptyBox, LoadingBox, StatusBox } from './status-box';
 
@@ -179,6 +179,8 @@ export const navFactory: NavFactory = {
 
 const TabBadgeFallback: FC = () => null;
 
+const { productName } = getBrandingDetails();
+
 export const NavBar: FC<NavBarProps> = ({ pages, activeTab, basePath }) => {
   const { t } = useTranslation('public');
   const { telemetryPrefix, titlePrefix } = useContext(PageTitleContext);
@@ -224,13 +226,11 @@ export const NavBar: FC<NavBarProps> = ({ pages, activeTab, basePath }) => {
   const labelId = activePage?.nameKey?.split('~')[1] || activePage?.name || 'Details';
   return (
     <>
-      <Helmet>
-        <title data-telemetry={telemetryPrefix ? `${telemetryPrefix} · ${labelId}` : labelId}>
-          {titlePrefix
-            ? `${titlePrefix} · ${activePage?.nameKey ? t(activePage.nameKey) : activePage?.name}`
-            : `${activePage?.nameKey ? t(activePage.nameKey) : activePage?.name}`}
-        </title>
-      </Helmet>
+      <title data-telemetry={telemetryPrefix ? `${telemetryPrefix} · ${labelId}` : labelId}>
+        {titlePrefix
+          ? `${titlePrefix} · ${activePage?.nameKey ? t(activePage.nameKey) : activePage?.name} · ${productName}`
+          : `${activePage?.nameKey ? t(activePage.nameKey) : activePage?.name} · ${productName}`}
+      </title>
       {tabs}
     </>
   );
