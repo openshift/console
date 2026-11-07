@@ -131,7 +131,6 @@ const InnerListDropdown: FC<ListDropdownInternalProps> = ({
         ? getKey(props.selectedKey, props.selectedKeyKind)
         : selectedKey;
 
-    // eslint-disable-next-line react-hooks-js/set-state-in-effect -- same watch-data sync as setItems above; also freezes the selection while a load error is shown
     setSelectedKey(newSelectedKey);
   }, [loadError, resources, dataFilter, props.selectedKey, props.selectedKeyKind, selectedKey]);
 

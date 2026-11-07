@@ -1,4 +1,3 @@
-/* eslint-disable oxc/no-barrel-file */
 import type { FC } from 'react';
 import { Grid, GridItem, ListItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';

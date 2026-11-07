@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { RhUiAddCircleFillIcon } from '@patternfly/react-icons';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import * as semver from 'semver';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { useOpenShiftVersion } from '@console/shared/src/hooks/useClusterVersion';
@@ -75,17 +75,17 @@ const SearchTourText: FC = () => {
         )}
       </p>
       <p>
-        {t(
-          'Add frequently accessed resources to your side navigation for quick access. Look for the',
-        )}{' '}
-        <span
-          style={{
-            color: 'var(--pf-t--global--icon--color--brand--default)',
-          }}
-        >
-          <RhUiAddCircleFillIcon /> {t('Add to navigation')}
-        </span>{' '}
-        {t('link next to your search result.')}
+        <Trans t={t} ns="devconsole">
+          Add frequently accessed resources to your side navigation for quick access. Look for the{' '}
+          <span
+            style={{
+              color: 'var(--pf-t--global--icon--color--brand--default)',
+            }}
+          >
+            <RhUiAddCircleFillIcon /> {{ addToNavigation: t('Add to navigation') }}
+          </span>{' '}
+          link next to your search result.
+        </Trans>
       </p>
     </>
   );

@@ -6,7 +6,7 @@
   "Default data store": "Default data store",
   "Degraded": "Degraded",
   "Delayed propagation of configuration": "Delayed propagation of configuration",
-  "Enter the name of the vSphere data center that contains the virtual machines currently backing-up the cluster.": "Enter the name of the vSphere data center that contains the virtual machines currently backing-up the cluster.",
+  "Enter the name of the vSphere data center that contains the virtual machines currently backing-up the cluster.<br/><strong>Warning: Updating this value once the configuration has been saved will detach any existing PersistentVolumes.</strong>": "Enter the name of the vSphere data center that contains the virtual machines currently backing-up the cluster.<br/><strong>Warning: Updating this value once the configuration has been saved will detach any existing PersistentVolumes.</strong>",
   "Enter the name of the vSphere vCenter cluster where OpenShift Container Platform is installed.": "Enter the name of the vSphere vCenter cluster where OpenShift Container Platform is installed.",
   "Enter the network address of the vCenter server. It can either be a domain name or IP address": "Enter the network address of the vCenter server. It can either be a domain name or IP address",
   "Enter the vSphere vCenter password. The password will be stored in a Secret in the kube-system namespace for this cluster. An incorrect password will render the cluster nodes unschedulable (known issue: OCPBUGS-2353).": "Enter the vSphere vCenter password. The password will be stored in a Secret in the kube-system namespace for this cluster. An incorrect password will render the cluster nodes unschedulable (known issue: OCPBUGS-2353).",
@@ -30,7 +30,6 @@
   "Monitored operators": "Monitored operators",
   "No errors reported": "No errors reported",
   "Not configured yet": "Not configured yet",
-  "Note, that existing resources (like already bound PVCs) might get broken by these changes.": "Note, that existing resources (like already bound PVCs) might get broken by these changes.",
   "Operator": "Operator",
   "Password": "Password",
   "Pending": "Pending",
@@ -45,7 +44,7 @@
   "Status": "Status",
   "Storage": "Storage",
   "Synchronization failed": "Synchronization failed",
-  "The configuration process updates operator statuses and reboots nodes. This process typically takes about an hour. Existing resources such as previously bound Persistent Volume Claims might become disconnected.": "The configuration process updates operator statuses and reboots nodes. This process typically takes about an hour. Existing resources such as previously bound Persistent Volume Claims might become disconnected.",
+  "The configuration process updates operator statuses and reboots nodes. This process typically takes about an hour. Existing resources such as previously bound Persistent Volume Claims might become disconnected.<br/>Note, that existing resources (like already bound PVCs) might get broken by these changes.": "The configuration process updates operator statuses and reboots nodes. This process typically takes about an hour. Existing resources such as previously bound Persistent Volume Claims might become disconnected.<br/>Note, that existing resources (like already bound PVCs) might get broken by these changes.",
   "The following content was expected to be defined in the configMap: {{ expectedValues }}": "The following content was expected to be defined in the configMap: {{ expectedValues }}",
   "The vSphere Connection check is failing.": "The vSphere Connection check is failing.",
   "Unexpected error": "Unexpected error",
@@ -58,6 +57,5 @@
   "vSphere connection": "vSphere connection",
   "vSphere connection configuration": "vSphere connection configuration",
   "vSphere Problem Detector (can be outdated)": "vSphere Problem Detector (can be outdated)",
-  "Warning: Updating this value once the configuration has been saved will detach any existing PersistentVolumes.": "Warning: Updating this value once the configuration has been saved will detach any existing PersistentVolumes.",
   "Warning: Updating this value will break any existing PersistentVolumes.": "Warning: Updating this value will break any existing PersistentVolumes."
 }

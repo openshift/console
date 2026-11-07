@@ -223,7 +223,6 @@ export class GithubService extends BaseService {
         ...(this.metadata.defaultBranch ? { ref: this.metadata.defaultBranch } : {}),
       });
       if (resp.status === 200) {
-        // eslint-disable-next-line dot-notation
         return Buffer.from(resp.data['content'], 'base64').toString();
       }
       return null;

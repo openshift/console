@@ -35,7 +35,6 @@ import type { ClusterServiceVersionKind, ProvidedAPI } from '../../types';
 import { useClusterServiceVersion } from '../../utils/useClusterServiceVersion';
 import ModelStatusBox from '../model-status-box';
 import { DEFAULT_K8S_SCHEMA } from './const';
-// eslint-disable-next-line @typescript-eslint/naming-convention
 import { DEPRECATED_CreateOperandForm } from './DEPRECATED_operand-form';
 import { OperandForm } from './operand-form';
 import { OperandYAML } from './operand-yaml';
@@ -93,8 +92,7 @@ export const CreateOperand: FC<CreateOperandProps> = ({
       getSchemaErrors(baseSchema).length ||
       hasNoFields((baseSchema?.properties?.spec ?? {}) as JSONSchema7);
     return useFallback
-      ? // eslint-disable-next-line @typescript-eslint/naming-convention
-        [baseSchema, DEPRECATED_CreateOperandForm]
+      ? [baseSchema, DEPRECATED_CreateOperandForm]
       : [
           _.defaultsDeep({}, DEFAULT_K8S_SCHEMA, _.omit(baseSchema, 'properties.status')),
           OperandForm,

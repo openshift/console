@@ -38,7 +38,6 @@ export const useSortedExtensions = <TExtension extends Extension>(
   const prevResultRef = useRef<LoadedExtension<TExtension>[]>([]);
   const prevUIDsRef = useRef<string>('');
 
-  // eslint-disable-next-line react-hooks-js/refs -- Custom memoization with UID-based comparison for referential stability
   return useMemo(() => {
     const sorted = sortExtensionsByPluginOrder(extensions);
     const currentUIDs = sorted.map((e) => e.uid).join(',');

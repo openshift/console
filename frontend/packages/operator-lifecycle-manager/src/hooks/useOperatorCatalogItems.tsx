@@ -281,9 +281,13 @@ export const useOperatorCatalogItems: ExtensionHook<CatalogItem[], CatalogExtens
                 color: 'orange',
                 tooltip: techPreview
                   ? t(
-                      'Classic Operators are deprecated and will be replaced by cluster extensions. For production clusters, continue to use classic Operators. To find a cluster extension for testing, open the software catalog and select Cluster extensions in the Catalog filter. Cluster extensions are a Technology Preview feature.',
-                    ) +
-                    (pkg.status.deprecation?.message ? `\n${pkg.status.deprecation?.message}` : '')
+                      'Classic Operators are deprecated and will be replaced by cluster extensions. For production clusters, continue to use classic Operators. To find a cluster extension for testing, open the software catalog and select Cluster extensions in the Catalog filter. Cluster extensions are a Technology Preview feature.{{ deprecationMessage }}',
+                      {
+                        deprecationMessage: pkg.status.deprecation?.message
+                          ? ` \n${pkg.status.deprecation?.message}`
+                          : '',
+                      },
+                    )
                   : pkg.status.deprecation.message,
                 variant: 'outline',
                 icon: <RhUiErrorFillIcon />,

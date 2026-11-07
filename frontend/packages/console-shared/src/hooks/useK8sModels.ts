@@ -1,2 +1,1 @@
-/* eslint-disable oxc/no-barrel-file */
 export { useK8sModels } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks';

@@ -46,10 +46,4 @@ force aliases:
 The `eslint` package remains a dependency only as the source of the core rules re-exported by the
 shim (and as a peer dependency of the other JS plugins); ESLint is not used as a linter.
 
-## Warning budget
-
-This repo is currently undergoing a staged migration to enable React compiler. A exact warning count
-is defined in `package.json` and enforced in CI. When oxlint warnings are fixed, the warning count
-is expected to be lowered in the same PR, while the warning count is never expected to be raised.
-
 [oxlint]: https://oxc.rs/docs/guide/usage/linter.html

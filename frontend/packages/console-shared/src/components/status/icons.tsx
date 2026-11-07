@@ -1,4 +1,3 @@
-/* eslint-disable oxc/no-barrel-file */
 import type { FC } from 'react';
 import { Icon } from '@patternfly/react-core';
 import {

@@ -37,6 +37,7 @@ import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { useTheme } from '@console/app/src/providers/theme/ThemeProvider';
 import { getImpersonate } from '@console/dynamic-plugin-sdk';
+import { WSFactory } from '@console/dynamic-plugin-sdk/src/utils/k8s/ws-factory';
 import { ConsoleExternalLogLinkModel, ProjectModel } from '@console/internal/models';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { ExternalLinkButton } from '@console/shared/src/components/links/ExternalLinkButton';
@@ -56,7 +57,6 @@ import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import type { K8sResourceKind, PodKind } from '../../module/k8s';
 import { modelFor, resourceURL, k8sGet, k8sList } from '../../module/k8s';
 import { isWindowsPod } from '../../module/k8s/pods';
-import { WSFactory } from '../../module/ws-factory';
 import { resourcePath } from './resource-link';
 import { TogglePlay } from './toggle-play';
 import useToggleLineBuffer from './useToggleLineBuffer';
@@ -815,7 +815,6 @@ export const ResourceLog: FC<ResourceLogProps> = ({
   useEffect(() => {
     window.dispatchEvent(new Event('resize'));
     // trigger resize event to prevent double scrollbar
-    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [firstRender, error, stale, hasTruncated, isFullscreen]);
 
   // Workaround for upstream PF LogViewer bug: scrollIntoView({ inline: 'center' }) propagates

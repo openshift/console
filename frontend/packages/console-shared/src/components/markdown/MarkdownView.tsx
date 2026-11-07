@@ -105,12 +105,11 @@ const RenderExtension: FC<RenderExtensionProps> = ({
 }) => {
   const forceRender = useForceRender();
   const markupRef = useRef<string>(null);
-  // eslint-disable-next-line react-hooks-js/refs -- Intentional render-time ref access: delays extension rendering by one cycle to let DOM update via dangerouslySetInnerHTML
   const shouldRenderExtension = useCallback(() => {
     if (markupRef.current === markup) {
       return true;
     }
-    markupRef.current = markup; // eslint-disable-line react-hooks-js/refs -- tracks markup to detect changes across renders
+    markupRef.current = markup;
     return false;
   }, [markup]);
   /**

@@ -14,7 +14,6 @@ export const useGetAutoscalerConfig = () => {
   // (e.g. useUpdateKnScalingDefaultValues) track it by reference to detect
   // changes, and safeYAMLToJS returns a fresh object on every call.
   const config = useMemo(
-    // eslint-disable-next-line no-underscore-dangle
     () => configmapLoaded && !configmapError && safeYAMLToJS(configmap.data._example),
     [configmap, configmapLoaded, configmapError],
   );

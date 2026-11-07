@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
-
-// eslint-disable-next-line oxc/no-barrel-file
 export { ALL_NAMESPACES_KEY } from '@console/dynamic-plugin-sdk/src/constants';
 
 export const CONST = Object.freeze({

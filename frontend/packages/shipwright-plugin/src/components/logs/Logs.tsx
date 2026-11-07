@@ -4,10 +4,10 @@ import { Alert } from '@patternfly/react-core';
 import { Base64 } from 'js-base64';
 import { throttle } from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { WSFactory } from '@console/dynamic-plugin-sdk/src/utils/k8s/ws-factory';
 import { LOG_SOURCE_TERMINATED } from '@console/internal/components/utils';
 import type { PodKind, ContainerSpec } from '@console/internal/module/k8s';
 import { resourceURL, modelFor } from '@console/internal/module/k8s';
-import { WSFactory } from '@console/internal/module/ws-factory';
 import { coFetchText } from '@console/shared/src/utils/console-fetch';
 import './Logs.scss';
 

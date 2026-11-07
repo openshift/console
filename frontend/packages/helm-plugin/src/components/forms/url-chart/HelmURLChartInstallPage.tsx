@@ -167,10 +167,10 @@ const HelmURLChartInstallPage: FunctionComponent = () => {
     const payload = {
       namespace,
       name: releaseName,
-      chart_url: fullChartURL, // eslint-disable-line @typescript-eslint/naming-convention
-      ...(chartVersion ? { chart_version: chartVersion } : {}), // eslint-disable-line @typescript-eslint/naming-convention
+      chart_url: fullChartURL,
+      ...(chartVersion ? { chart_version: chartVersion } : {}),
       ...(valuesObj ? { values: valuesObj } : {}),
-      ...(basicAuthSecretName ? { basic_auth_secret_name: basicAuthSecretName } : {}), // eslint-disable-line @typescript-eslint/naming-convention
+      ...(basicAuthSecretName ? { basic_auth_secret_name: basicAuthSecretName } : {}),
       noRepo: true,
     };
 

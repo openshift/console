@@ -6,12 +6,12 @@ import {
   DescriptionListGroup,
   DescriptionListTermHelpText,
   DescriptionListTermHelpTextButton,
+  Panel,
+  PanelMain,
   Popover,
   Split,
   SplitItem,
 } from '@patternfly/react-core';
-import { Panel } from '@patternfly/react-core/dist/esm/components/Panel/Panel';
-import { PanelMain } from '@patternfly/react-core/dist/esm/components/Panel/PanelMain';
 import { css } from '@patternfly/react-styles';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';

@@ -1,4 +1,3 @@
-/* eslint-disable oxc/no-barrel-file */
 import type { FC } from 'react';
 import { useMemo } from 'react';
 import { Stack, StackItem } from '@patternfly/react-core';

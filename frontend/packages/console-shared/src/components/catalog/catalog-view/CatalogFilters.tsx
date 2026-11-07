@@ -1,4 +1,3 @@
-/* eslint-disable oxc/no-barrel-file */
 import type { FC, ChangeEvent } from 'react';
 import { useId } from 'react';
 import {
