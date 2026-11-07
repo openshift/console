@@ -18,23 +18,26 @@ export const usePodsForRevisions = (
   const [pods, setPods] = useState<PodControllerOverviewItem[]>([]);
   const revisions = useDeepCompareMemoize(Array.isArray(revisionIds) ? revisionIds : [revisionIds]);
   const watchedResources = useMemo(
-    () => ({
-      deployments: {
-        isList: true,
-        kind: 'Deployment',
-        namespace,
-      },
-      replicaSets: {
-        isList: true,
-        kind: 'ReplicaSet',
-        namespace,
-      },
-      pods: {
-        isList: true,
-        kind: 'Pod',
-        namespace,
-      },
-    }),
+    () =>
+      namespace
+        ? {
+            deployments: {
+              isList: true,
+              kind: 'Deployment',
+              namespace,
+            },
+            replicaSets: {
+              isList: true,
+              kind: 'ReplicaSet',
+              namespace,
+            },
+            pods: {
+              isList: true,
+              kind: 'Pod',
+              namespace,
+            },
+          }
+        : {},
     [namespace],
   );
 

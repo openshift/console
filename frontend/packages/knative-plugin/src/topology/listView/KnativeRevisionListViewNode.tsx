@@ -27,7 +27,10 @@ const ObservedKnativeRevisionListViewNode: FC<KnativeRevisionListViewNodeProps> 
 }) => {
   const resource = getTopologyResourceObject(item.getData());
   const metrics = useOverviewMetrics();
-  const { loaded, pods } = usePodsForRevisions(resource.metadata.uid, resource.metadata.namespace);
+  const { loaded, pods } = usePodsForRevisions(
+    resource?.metadata?.uid,
+    resource?.metadata?.namespace,
+  );
   const podData = useMemo(() => {
     if (!loaded) {
       return null;

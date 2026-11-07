@@ -6,15 +6,19 @@ import { usePodsWatcher } from '@console/shared/src/hooks/usePodsWatcher';
 import { getPodMetricStats } from './metricStats';
 import { useOverviewMetrics } from './useOverviewMetrics';
 
-export const useMetricStats = (resource: K8sResourceKind): MetricStats => {
+export const useMetricStats = (resource: K8sResourceKind | null): MetricStats => {
   const metrics = useOverviewMetrics();
-  const { podData, loaded } = usePodsWatcher(resource, resource.kind, resource.metadata.namespace);
+  const { podData, loaded } = usePodsWatcher(
+    resource,
+    resource?.kind,
+    resource?.metadata?.namespace,
+  );
   const memoryStats = useMemo(() => {
-    if (_.isEmpty(metrics) || !loaded) {
+    if (!resource || _.isEmpty(metrics) || !loaded) {
       return null;
     }
     return getPodMetricStats(metrics, podData);
-  }, [loaded, metrics, podData]);
+  }, [resource, loaded, metrics, podData]);
 
   return memoryStats;
 };
