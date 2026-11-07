@@ -714,6 +714,35 @@ export const getResourceLimitsData = (limitsData: LimitsData) => ({
   }),
 });
 
+/** Resource names managed by Edit resource limits / ResourceLimitSection forms. */
+export const MANAGED_CONTAINER_RESOURCE_NAMES = ['cpu', 'memory'] as const;
+
+type ResourceList = { [name: string]: string };
+
+/**
+ * Merge form-managed cpu/memory into existing container resources while preserving
+ * unmanaged keys such as ephemeral-storage and hugepages-*.
+ * Form values fully replace managed keys (including clearing when omitted).
+ */
+export const mergeManagedContainerResources = (
+  existingResources: { limits?: ResourceList; requests?: ResourceList } = {},
+  formResources: { limits?: ResourceList; requests?: ResourceList } = {},
+) => {
+  const mergeSection = (existing: ResourceList = {}, form: ResourceList = {}) => {
+    const preserved = _.omit(existing, MANAGED_CONTAINER_RESOURCE_NAMES);
+    const merged = { ...preserved, ...form };
+    return Object.keys(merged).length > 0 ? merged : undefined;
+  };
+
+  const limits = mergeSection(existingResources.limits, formResources.limits);
+  const requests = mergeSection(existingResources.requests, formResources.requests);
+
+  return {
+    ...(limits && { limits }),
+    ...(requests && { requests }),
+  };
+};
+
 export const getResourceData = (res: string) => {
   const resourcesRegEx = /^[0-9]*|[a-zA-Z]*/g;
   return res.match(resourcesRegEx);

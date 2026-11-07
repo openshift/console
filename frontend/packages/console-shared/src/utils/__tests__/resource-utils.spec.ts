@@ -1,7 +1,11 @@
 import * as _ from 'lodash';
 import type { Alert } from '@console/dynamic-plugin-sdk';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import { getResourceData, getWorkloadMonitoringAlerts } from '../resource-utils';
+import {
+  getResourceData,
+  getWorkloadMonitoringAlerts,
+  mergeManagedContainerResources,
+} from '../resource-utils';
 import { mockAlerts } from './data/alerts-and-rules-data';
 
 declare global {
@@ -71,5 +75,73 @@ describe('TransformResourceData', () => {
     [limit, unit] = getResourceData('2Gi');
     expect(limit).toBe('2');
     expect(unit).toBe('Gi');
+  });
+});
+
+describe('mergeManagedContainerResources', () => {
+  it('preserves ephemeral-storage when updating cpu and memory', () => {
+    const existing = {
+      limits: {
+        cpu: '1',
+        memory: '4Gi',
+        'ephemeral-storage': '400Mi',
+      },
+      requests: {
+        cpu: '500m',
+        memory: '2Gi',
+        'ephemeral-storage': '200Mi',
+      },
+    };
+    const formResources = {
+      limits: {
+        cpu: '2',
+        memory: '4Gi',
+      },
+      requests: {
+        cpu: '500m',
+        memory: '2Gi',
+      },
+    };
+
+    expect(mergeManagedContainerResources(existing, formResources)).toEqual({
+      limits: {
+        cpu: '2',
+        memory: '4Gi',
+        'ephemeral-storage': '400Mi',
+      },
+      requests: {
+        cpu: '500m',
+        memory: '2Gi',
+        'ephemeral-storage': '200Mi',
+      },
+    });
+  });
+
+  it('replaces managed keys from the form and preserves unmanaged keys', () => {
+    const existing = {
+      limits: {
+        cpu: '1',
+        'hugepages-2Mi': '1Gi',
+      },
+      requests: {
+        cpu: '500m',
+        'hugepages-2Mi': '1Gi',
+      },
+    };
+    const formResources = {
+      limits: {
+        memory: '2Gi',
+      },
+    };
+
+    expect(mergeManagedContainerResources(existing, formResources)).toEqual({
+      limits: {
+        memory: '2Gi',
+        'hugepages-2Mi': '1Gi',
+      },
+      requests: {
+        'hugepages-2Mi': '1Gi',
+      },
+    });
   });
 });
