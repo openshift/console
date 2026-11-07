@@ -74,13 +74,14 @@ const getPluginNameFromDocumentRoute = (
   return matchingPluginNames.size === 1 ? [...matchingPluginNames][0] : null;
 };
 
-const sameHostname = (a: string, b: string): boolean => {
+export const sameHostname = (a: string, b: string): boolean => {
   // SecurityPolicyViolationEvent URIs can be tokens such as "inline" or
   // "eval", not necessarily absolute URLs.
+  if (a === b) {
+    return true;
+  }
   try {
-    const urlA = new URL(a);
-    const urlB = new URL(b);
-    return urlA.hostname === urlB.hostname;
+    return new URL(a).hostname === new URL(b).hostname;
   } catch {
     return false;
   }
