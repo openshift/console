@@ -55,6 +55,7 @@ type OAuth2Authenticator struct {
 	scopes       []string
 
 	loginMethod
+	oidcTransactions *loginTransactions
 
 	redirectURL   string
 	errorURL      string
@@ -240,6 +241,14 @@ func NewOAuth2Authenticator(ctx context.Context, config *Config) (*OAuth2Authent
 			return nil, err
 		}
 	case AuthSourceOIDC:
+		redirect, parseErr := url.Parse(c.RedirectURL)
+		if parseErr != nil || redirect.Host == "" || (redirect.Scheme != "https" && redirect.Scheme != "http") {
+			return nil, fmt.Errorf("invalid OIDC callback URI")
+		}
+		a.oidcTransactions, err = newLoginTransactions(authConfig)
+		if err != nil {
+			return nil, err
+		}
 		var prevKeys [][]byte
 		if len(c.PreviousCookieAuthenticationKey) > 0 && len(c.PreviousCookieEncryptionKey) > 0 {
 			prevKeys = [][]byte{c.PreviousCookieAuthenticationKey, c.PreviousCookieEncryptionKey}
@@ -282,7 +291,10 @@ func (a *OAuth2Authenticator) oauth2ConfigConstructor(endpointConfig oauth2.Endp
 // to use the given host, if that host is in the allowed set. Otherwise it
 // returns the default config with the original redirect URL.
 func (a *OAuth2Authenticator) oauth2ConfigForHost(host string) *oauth2.Config {
-	cfg := a.oauth2Config()
+	return a.configForHost(a.oauth2Config(), host)
+}
+
+func (a *OAuth2Authenticator) configForHost(cfg *oauth2.Config, host string) *oauth2.Config {
 	if host == "" || !a.allowedRedirectHosts[host] {
 		return cfg
 	}
@@ -320,6 +332,10 @@ func (a *OAuth2Authenticator) LoginFunc(w http.ResponseWriter, r *http.Request) 
 	if a.metrics != nil {
 		a.metrics.LoginRequested()
 	}
+	if a.oidcTransactions != nil {
+		a.oidcLogin(w, r)
+		return
+	}
 
 	var randData [16]byte
 	if _, err := io.ReadFull(rand.Reader, randData[:]); err != nil {
@@ -352,6 +368,10 @@ func (a *OAuth2Authenticator) LogoutFunc(w http.ResponseWriter, r *http.Request)
 // Requests with unexpected params are redirected to the root route.
 func (a *OAuth2Authenticator) CallbackFunc(fn func(loginInfo sessions.LoginJSON, successURL string, w http.ResponseWriter)) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if a.oidcTransactions != nil {
+			a.oidcCallback(w, r, fn)
+			return
+		}
 		q := r.URL.Query()
 		qErr := q.Get("error")
 		qErrDesc := q.Get("error_description")
