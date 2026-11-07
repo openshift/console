@@ -456,7 +456,9 @@ To launch the server using the built image, you can run:
 docker run -p 8081:8081 downloadsserver:latest
 ```
 
-## ContentSecurityViolation Detection
+## Content Security Policy
+
+### Violation Detection
 
 The console application automatically reports CSP violations to telemetry. This detection and
 reporting logic attempts to parse a dynamic plugin name from the securitypolicyviolation event to
@@ -468,28 +470,33 @@ violation. If a plugin name is not determined in this way, an empty plugin name 
 Additionally, violation reporting is throttled to prevent spamming the telemetry service with
 repetitive data. Identical violations will not be reported more than once a day.
 
+### Configuring For Development
+
 Bridge defaults to `--csp-mode=report-only`, which emits the
 `Content-Security-Policy-Report-Only` HTTP header. Use `--csp-mode=enforce` to emit
 `Content-Security-Policy` HTTP header and block resources that violate the policy. Both modes
 use the same CSP directives. Restart Bridge with `--csp-mode=report-only` to roll back
 enforcement. Invalid mode values prevent startup.
 
-In case of local developement of the dynamic plugin, just pass needed CSP directives address to the console server, using the `--content-security-policy` flag.
+#### Supported directives
 
-Example:
+The accepted CSP directive types mirror those defined in the
+[openshift/api repository](https://github.com/openshift/api/blob/master/console/v1/types_console_plugin.go#L101-L132).
+Using a directive not in that list causes the server to exit with a fatal error.
+
+The following directives are always appended by the console server and cannot be
+overridden:
+- `object-src 'none'`
+- `frame-src 'none'`
+- `frame-ancestors 'none'`
+
+#### Practical example
+
+**Plugin loading scripts and enabling hot-reload from its dev server** (e.g., `http://localhost:9001`):
 
 ```
-./bin/bridge --content-security-policy script-src='localhost:1234',font-src='localhost:2345 localhost:3456'
+./bin/bridge --content-security-policy script-src='localhost:9001',connect-src='ws://localhost:9001'
 ```
-
-List of configurable CSP directives is available in the [openshift/api repository](https://github.com/openshift/api/blob/master/console/v1/types_console_plugin.go#L102-L137).
-
-The list is extended automatically by the console server with following CSP directives:
-- `"frame-src 'none'"`
-- `"frame-ancestors 'none'"`
-- `"object-src 'none'"`
-
-Currently this feature is behind feature gate.
 
 ## Frontend Packages
 - [console-dynamic-plugin-sdk](./frontend/packages/console-dynamic-plugin-sdk/README.md)
