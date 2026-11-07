@@ -1,10 +1,13 @@
 package chartproxy
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"io"
+	"net"
 	"net/http"
+	"net/http/httptest"
 	"net/url"
 	"os"
 	"os/exec"
@@ -23,6 +26,8 @@ import (
 	"sigs.k8s.io/yaml"
 
 	"github.com/openshift/console/pkg/helm/actions/fake"
+	"github.com/openshift/console/pkg/helm/fetcherr"
+	"github.com/openshift/console/pkg/helm/utils"
 	"github.com/stretchr/testify/require"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -45,11 +50,10 @@ func onlyResult(obj interface{}, err error) interface{} {
 
 func TestValidateRepoURL(t *testing.T) {
 	tests := []struct {
-		name           string
-		rawURL         string
-		isClusterScope bool
-		wantErr        bool
-		errContains    string
+		name        string
+		rawURL      string
+		wantErr     bool
+		errContains string
 	}{
 		{
 			name:    "valid public HTTPS URL with IP",
@@ -80,78 +84,100 @@ func TestValidateRepoURL(t *testing.T) {
 			errContains: "unsupported URL scheme",
 		},
 		{
-			name:        "rejects loopback IPv4 for namespace-scoped",
+			name:        "rejects loopback IPv4",
 			rawURL:      "http://127.0.0.1/index.yaml",
 			wantErr:     true,
-			errContains: "private or reserved address",
+			errContains: "loopback",
 		},
 		{
-			name:        "rejects loopback IPv6 for namespace-scoped",
+			name:        "rejects loopback IPv6",
 			rawURL:      "http://[::1]/index.yaml",
 			wantErr:     true,
-			errContains: "private or reserved address",
+			errContains: "loopback",
 		},
 		{
-			name:        "rejects RFC1918 10.x for namespace-scoped",
-			rawURL:      "http://10.0.0.1/index.yaml",
+			name:        "rejects localhost",
+			rawURL:      "http://localhost/index.yaml",
 			wantErr:     true,
-			errContains: "private or reserved address",
+			errContains: "loopback",
 		},
 		{
-			name:        "rejects RFC1918 172.16.x for namespace-scoped",
-			rawURL:      "http://172.16.0.1/index.yaml",
-			wantErr:     true,
-			errContains: "private or reserved address",
-		},
-		{
-			name:        "rejects RFC1918 192.168.x for namespace-scoped",
-			rawURL:      "http://192.168.1.1/index.yaml",
-			wantErr:     true,
-			errContains: "private or reserved address",
-		},
-		{
-			name:        "rejects cloud metadata endpoint for namespace-scoped",
-			rawURL:      "http://169.254.169.254/latest/meta-data/",
-			wantErr:     true,
-			errContains: "private or reserved address",
-		},
-		{
-			name:        "rejects link-local for namespace-scoped",
-			rawURL:      "http://169.254.1.1/index.yaml",
-			wantErr:     true,
-			errContains: "private or reserved address",
-		},
-		{
-			name:        "rejects unspecified address for namespace-scoped",
+			name:        "rejects unspecified IPv4",
 			rawURL:      "http://0.0.0.0/index.yaml",
 			wantErr:     true,
-			errContains: "private or reserved address",
+			errContains: "unspecified",
 		},
 		{
-			name:           "allows loopback for cluster-scoped",
-			rawURL:         "http://127.0.0.1/index.yaml",
-			isClusterScope: true,
-			wantErr:        false,
+			name:        "rejects unspecified IPv6",
+			rawURL:      "http://[::]/index.yaml",
+			wantErr:     true,
+			errContains: "unspecified",
 		},
 		{
-			name:           "allows private IP for cluster-scoped",
-			rawURL:         "http://10.0.0.1/index.yaml",
-			isClusterScope: true,
-			wantErr:        false,
+			name:    "allows RFC1918 10.x",
+			rawURL:  "http://10.0.0.1/index.yaml",
+			wantErr: false,
 		},
 		{
-			name:           "file scheme rejected even for cluster-scoped",
-			rawURL:         "file:///etc/passwd",
-			isClusterScope: true,
-			wantErr:        true,
-			errContains:    "unsupported URL scheme",
+			name:    "allows RFC1918 172.16.x",
+			rawURL:  "http://172.16.0.1/index.yaml",
+			wantErr: false,
+		},
+		{
+			name:    "allows RFC1918 192.168.x",
+			rawURL:  "http://192.168.1.1/index.yaml",
+			wantErr: false,
+		},
+		{
+			name:    "allows link-local",
+			rawURL:  "http://169.254.1.1/index.yaml",
+			wantErr: false,
+		},
+		{
+			name:    "allows ipv6 link-local",
+			rawURL:  "http://[fe80::1]/index.yaml",
+			wantErr: false,
+		},
+		{
+			name:    "allows CGNAT",
+			rawURL:  "http://100.64.0.1/index.yaml",
+			wantErr: false,
+		},
+		{
+			name:        "rejects cloud metadata",
+			rawURL:      "http://169.254.169.254/latest/meta-data",
+			wantErr:     true,
+			errContains: "metadata",
+		},
+		{
+			name:        "rejects this network",
+			rawURL:      "http://0.1.2.3/index.yaml",
+			wantErr:     true,
+			errContains: "0.0.0.0/8",
+		},
+		{
+			name:        "rejects kubernetes hostname",
+			rawURL:      "https://kubernetes.default/charts",
+			wantErr:     true,
+			errContains: "Kubernetes",
+		},
+		{
+			name:        "rejects kubernetes API service",
+			rawURL:      "https://kubernetes.default.svc.cluster.local/charts",
+			wantErr:     true,
+			errContains: "Kubernetes",
+		},
+		{
+			name:    "allows cluster service hostname",
+			rawURL:  "https://myrepo.default.svc.cluster.local/charts",
+			wantErr: false,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			u, err := url.Parse(tt.rawURL)
 			require.NoError(t, err)
-			err = validateRepoURL(u, tt.isClusterScope)
+			err = validateRepoURL(context.Background(), u)
 			if tt.wantErr {
 				require.Error(t, err)
 				if tt.errContains != "" {
@@ -164,7 +190,23 @@ func TestValidateRepoURL(t *testing.T) {
 	}
 }
 
-func noopURLValidator(_ *url.URL, _ bool) error { return nil }
+func TestValidateRepoURLPropagatesContext(t *testing.T) {
+	t.Cleanup(func() { utils.SetRequestHostLookupForTest(nil) })
+
+	type ctxKey struct{}
+	ctx := context.WithValue(context.Background(), ctxKey{}, "repo-lookup")
+	utils.SetRequestHostLookupForTest(func(got context.Context, host string) ([]net.IP, error) {
+		require.Equal(t, "repo-lookup", got.Value(ctxKey{}))
+		require.Equal(t, "charts.example.com", host)
+		return []net.IP{net.ParseIP("203.0.113.5")}, nil
+	})
+
+	u, err := url.Parse("https://charts.example.com/repo")
+	require.NoError(t, err)
+	require.NoError(t, validateRepoURL(ctx, u))
+}
+
+func noopURLValidator(_ context.Context, _ *url.URL) error { return nil }
 
 func TestHelmRepoGetter_List(t *testing.T) {
 	tests := []struct {
@@ -435,6 +477,30 @@ func TestHelmRepoGetter_ListErrors(t *testing.T) {
 					t.Errorf("Expected non-empty error message for repo %v", expectedName)
 				}
 			}
+		})
+	}
+}
+
+func TestIndexFileURL(t *testing.T) {
+	tests := []struct {
+		raw  string
+		want string
+	}{
+		{raw: "https://example.com/charts", want: "https://example.com/charts/index.yaml"},
+		{raw: "https://example.com/charts/", want: "https://example.com/charts/index.yaml"},
+		{raw: "https://example.com/charts/index.yaml", want: "https://example.com/charts/index.yaml"},
+		{raw: "https://example.com/charts/index%2Eyaml", want: "https://example.com/charts/index%2Eyaml"},
+		{raw: "https://example.com/charts/index.yaml?foo=bar", want: "https://example.com/charts/index.yaml?foo=bar"},
+		{raw: "https://example.com/index.yaml#section", want: "https://example.com/index.yaml#section"},
+		{raw: "https://example.com/secret?x=/index.yaml", want: "https://example.com/secret/index.yaml?x=/index.yaml"},
+		{raw: "https://example.com/secret#/index.yaml", want: "https://example.com/secret/index.yaml#/index.yaml"},
+		{raw: "http://[2001:db8::1]/repo", want: "http://[2001:db8::1]/repo/index.yaml"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.raw, func(t *testing.T) {
+			u, err := url.Parse(tt.raw)
+			require.NoError(t, err)
+			require.Equal(t, tt.want, indexFileURL(u))
 		})
 	}
 }
@@ -742,7 +808,7 @@ func TestHelmRepoGetter_unmarshallConfig(t *testing.T) {
 					},
 					"spec": map[string]interface{}{
 						"connectionConfig": map[string]interface{}{
-							"url": "http://localhost:9553",
+							"url": "http://10.1.2.3:9553",
 							"basicAuthConfig": map[string]interface{}{
 								"name":      "fooSecret",
 								"namespace": "testing",
@@ -769,7 +835,7 @@ func TestHelmRepoGetter_unmarshallConfig(t *testing.T) {
 					},
 					"spec": map[string]interface{}{
 						"connectionConfig": map[string]interface{}{
-							"url": "http://localhost:9553",
+							"url": "http://10.1.2.3:9553",
 							"basicAuthConfig": map[string]interface{}{
 								"name":      "fooSecret",
 								"namespace": "testing",
@@ -779,7 +845,7 @@ func TestHelmRepoGetter_unmarshallConfig(t *testing.T) {
 				},
 			},
 			repoName:        "repo7",
-			wantsErrMsg:     "private or reserved address",
+			wantsErrMsg:     "Basic authentication requires HTTPS repository for security",
 			createSecret:    false,
 			createNamespace: true,
 			namespace:       "testing",
@@ -810,7 +876,7 @@ func TestHelmRepoGetter_unmarshallConfig(t *testing.T) {
 			clusterScoped:   false,
 		},
 		{
-			name: "reject namespace-scoped repo with private IP",
+			name: "allows namespace-scoped repo with private IP",
 			helmCRS: &unstructured.Unstructured{
 				Object: map[string]interface{}{
 					"apiVersion": "helm.openshift.io/v1beta1",
@@ -827,7 +893,7 @@ func TestHelmRepoGetter_unmarshallConfig(t *testing.T) {
 				},
 			},
 			repoName:        "repo-private-ip",
-			wantsErrMsg:     "private or reserved address",
+			wantsErrMsg:     "",
 			createSecret:    false,
 			createNamespace: true,
 			namespace:       "testing",
@@ -873,10 +939,230 @@ func TestHelmRepoGetter_unmarshallConfig(t *testing.T) {
 			}
 		})
 	}
-	err := ExecuteScript("./testdata/chartmuseum-stop.sh", false)
+	err := ExecuteScript("./testdata/chartmuseum-stop.sh", true)
 	require.NoError(t, err)
-	err = ExecuteScript("./testdata/cleanup.sh", false)
+	err = ExecuteScript("./testdata/cleanup.sh", true)
 	require.NoError(t, err)
+}
+
+func TestSetAllowLoopbackTargetsForTest(t *testing.T) {
+	prev := allowLoopbackTargets
+	t.Cleanup(func() { SetAllowLoopbackTargetsForTest(prev) })
+
+	u, err := url.Parse("http://127.0.0.1/index.yaml")
+	require.NoError(t, err)
+
+	SetAllowLoopbackTargetsForTest(true)
+	require.NoError(t, validateRepoURL(context.Background(), u))
+
+	SetAllowLoopbackTargetsForTest(false)
+	require.ErrorIs(t, validateRepoURL(context.Background(), u), utils.ErrDisallowedHost)
+}
+
+func TestHTTPClientRejectsLoopback(t *testing.T) {
+	client, err := httpClient(nil)
+	require.NoError(t, err)
+
+	loopback, err := http.NewRequest(http.MethodGet, "http://127.0.0.1/index.yaml", nil)
+	require.NoError(t, err)
+	original, err := http.NewRequest(http.MethodGet, "http://charts.example.com/charts", nil)
+	require.NoError(t, err)
+	require.ErrorIs(t, client.CheckRedirect(loopback, []*http.Request{original}), utils.ErrDisallowedHost)
+
+	private, err := http.NewRequest(http.MethodGet, "http://10.0.0.1/index.yaml", nil)
+	require.NoError(t, err)
+	require.NoError(t, client.CheckRedirect(private, []*http.Request{original}))
+
+	proxy := client.Transport.(*http.Transport).Proxy
+	_, err = proxy(loopback)
+	require.ErrorIs(t, err, utils.ErrDisallowedHost)
+	_, err = proxy(private)
+	require.NoError(t, err)
+
+	repoURL, err := url.Parse("http://127.0.0.1:1/charts")
+	require.NoError(t, err)
+	_, err = (helmRepo{Name: "loopback", URL: repoURL, httpClient: func() (*http.Client, error) {
+		return httpClient(nil)
+	}}).IndexFile()
+	require.ErrorIs(t, err, utils.ErrDisallowedHost)
+}
+
+func TestHTTPClientRejectsResolvedDisallowedHost(t *testing.T) {
+	t.Cleanup(func() { utils.SetRequestHostLookupForTest(nil) })
+	utils.SetRequestHostLookupForTest(func(ctx context.Context, host string) ([]net.IP, error) {
+		switch host {
+		case "loop.example.com":
+			return []net.IP{net.ParseIP("127.0.0.1")}, nil
+		case "repo.example.com":
+			return []net.IP{net.ParseIP("10.1.2.3")}, nil
+		default:
+			return nil, &net.DNSError{Err: "no such host", Name: host, IsNotFound: true}
+		}
+	})
+
+	client, err := httpClient(nil)
+	require.NoError(t, err)
+	original, err := http.NewRequest(http.MethodGet, "http://charts.example.com/charts", nil)
+	require.NoError(t, err)
+	proxy := client.Transport.(*http.Transport).Proxy
+
+	disallowed, err := http.NewRequest(http.MethodGet, "http://loop.example.com/index.yaml", nil)
+	require.NoError(t, err)
+	require.ErrorIs(t, client.CheckRedirect(disallowed, []*http.Request{original}), utils.ErrDisallowedHost)
+	_, err = proxy(disallowed)
+	require.ErrorIs(t, err, utils.ErrDisallowedHost)
+
+	allowed, err := http.NewRequest(http.MethodGet, "http://repo.example.com/index.yaml", nil)
+	require.NoError(t, err)
+	require.NoError(t, client.CheckRedirect(allowed, []*http.Request{original}))
+	_, err = proxy(allowed)
+	require.NoError(t, err)
+}
+
+func TestHTTPClientRedirectKeepsIndexShape(t *testing.T) {
+	client, err := httpClient(nil)
+	require.NoError(t, err)
+
+	httpsOrig, err := http.NewRequest(http.MethodGet, "https://charts.example.com/index.yaml", nil)
+	require.NoError(t, err)
+	moved, err := http.NewRequest(http.MethodGet, "https://10.1.2.3/mirror/index.yaml?cache=1", nil)
+	require.NoError(t, err)
+	require.NoError(t, client.CheckRedirect(moved, []*http.Request{httpsOrig}))
+
+	secret, err := http.NewRequest(http.MethodGet, "https://10.1.2.3/secret", nil)
+	require.NoError(t, err)
+	require.EqualError(t, client.CheckRedirect(secret, []*http.Request{httpsOrig}), "invalid index URL")
+
+	spoof, err := http.NewRequest(http.MethodGet, "https://10.1.2.3/secret?x=/index.yaml", nil)
+	require.NoError(t, err)
+	require.EqualError(t, client.CheckRedirect(spoof, []*http.Request{httpsOrig}), "invalid index URL")
+
+	down, err := http.NewRequest(http.MethodGet, "http://10.1.2.3/index.yaml", nil)
+	require.NoError(t, err)
+	require.EqualError(t, client.CheckRedirect(down, []*http.Request{httpsOrig}), "redirect from https to http is not allowed")
+
+	httpOrig, err := http.NewRequest(http.MethodGet, "http://charts.example.com/index.yaml", nil)
+	require.NoError(t, err)
+	httpMoved, err := http.NewRequest(http.MethodGet, "http://10.1.2.3/other/index.yaml", nil)
+	require.NoError(t, err)
+	require.NoError(t, client.CheckRedirect(httpMoved, []*http.Request{httpOrig}))
+}
+
+func TestHTTPClientAllowsReleaseAssetIndex(t *testing.T) {
+	t.Cleanup(func() { utils.SetRequestHostLookupForTest(nil) })
+	utils.SetRequestHostLookupForTest(func(context.Context, string) ([]net.IP, error) {
+		return []net.IP{net.ParseIP("8.8.8.8")}, nil
+	})
+
+	client, err := httpClient(nil)
+	require.NoError(t, err)
+	original, err := http.NewRequest(http.MethodGet, "https://charts.example.com/index.yaml", nil)
+	require.NoError(t, err)
+
+	asset, err := http.NewRequest(http.MethodGet, "https://release-assets.githubusercontent.com/github-production-release-asset/1/uuid?rscd=attachment%3B%20filename%3Dindex.yaml", nil)
+	require.NoError(t, err)
+	require.NoError(t, client.CheckRedirect(asset, []*http.Request{original}))
+
+	chart, err := http.NewRequest(http.MethodGet, "https://release-assets.githubusercontent.com/github-production-release-asset/1/uuid?rscd=attachment%3B%20filename%3Da.tgz", nil)
+	require.NoError(t, err)
+	require.EqualError(t, client.CheckRedirect(chart, []*http.Request{original}), "invalid index URL")
+
+	elsewhere, err := http.NewRequest(http.MethodGet, "https://10.1.2.3/secret?rscd=attachment%3B%20filename%3Dindex.yaml", nil)
+	require.NoError(t, err)
+	require.EqualError(t, client.CheckRedirect(elsewhere, []*http.Request{original}), "invalid index URL")
+}
+
+func TestHelmRepo_IndexFileSanitizesFetchErrors(t *testing.T) {
+	t.Run("closed port matches a missing index", func(t *testing.T) {
+		ln, err := net.Listen("tcp", "127.0.0.1:0")
+		require.NoError(t, err)
+		addr := ln.Addr().String()
+		require.NoError(t, ln.Close())
+
+		u, err := url.Parse("http://" + addr + "/charts")
+		require.NoError(t, err)
+		repo := helmRepo{
+			Name: "closed",
+			URL:  u,
+			httpClient: func() (*http.Client, error) {
+				return &http.Client{Timeout: time.Second}, nil
+			},
+		}
+		_, err = repo.IndexFile()
+		require.ErrorIs(t, err, fetcherr.ErrIndexFileNotFound)
+		require.NotContains(t, err.Error(), "refused")
+		require.NotContains(t, err.Error(), addr)
+	})
+
+	t.Run("http 404 matches a missing index and drops the body", func(t *testing.T) {
+		const body = "SECRET_PAYLOAD not found"
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			http.Error(w, body, http.StatusNotFound)
+		}))
+		t.Cleanup(server.Close)
+
+		_, err := indexFromTestServer(t, server)
+		require.ErrorIs(t, err, fetcherr.ErrIndexFileNotFound)
+		require.NotContains(t, err.Error(), "SECRET_PAYLOAD")
+		require.NotContains(t, err.Error(), "404")
+	})
+
+	t.Run("authentication does not include status or body", func(t *testing.T) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("WWW-Authenticate", `Basic realm="SECRET_PAYLOAD"`)
+			http.Error(w, "SECRET_PAYLOAD", http.StatusUnauthorized)
+		}))
+		t.Cleanup(server.Close)
+
+		_, err := indexFromTestServer(t, server)
+		require.ErrorIs(t, err, fetcherr.ErrIndexAuthentication)
+		require.NotContains(t, err.Error(), "SECRET_PAYLOAD")
+		require.NotContains(t, err.Error(), "401")
+	})
+
+	t.Run("non-index body is not returned", func(t *testing.T) {
+		const body = "token: SECRET_PAYLOAD\n: not-yaml"
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusOK)
+			_, _ = w.Write([]byte(body))
+		}))
+		t.Cleanup(server.Close)
+
+		_, err := indexFromTestServer(t, server)
+		require.ErrorIs(t, err, fetcherr.ErrIndexNotHelm)
+		require.NotContains(t, err.Error(), "SECRET_PAYLOAD")
+		require.NotContains(t, err.Error(), "not-yaml")
+	})
+
+	t.Run("non-index document is not echoed", func(t *testing.T) {
+		const body = "kind: Secret\ndata:\n  token: SECRET_PAYLOAD\n"
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusOK)
+			_, _ = w.Write([]byte(body))
+		}))
+		t.Cleanup(server.Close)
+
+		index, err := indexFromTestServer(t, server)
+		require.NoError(t, err)
+		encoded, err := yaml.Marshal(index)
+		require.NoError(t, err)
+		require.NotContains(t, string(encoded), "SECRET_PAYLOAD")
+		require.Empty(t, index.Entries)
+	})
+}
+
+func indexFromTestServer(t *testing.T, server *httptest.Server) (*helmrepo.IndexFile, error) {
+	t.Helper()
+	u, err := url.Parse(server.URL)
+	require.NoError(t, err)
+	repo := helmRepo{
+		Name: "fixture",
+		URL:  u,
+		httpClient: func() (*http.Client, error) {
+			return server.Client(), nil
+		},
+	}
+	return repo.IndexFile()
 }
 
 func ExecuteScript(filepath string, waitForCompletion bool) error {
