@@ -862,6 +862,42 @@ export const MachineSetModel: K8sKind = {
   crd: true,
 };
 
+// Upstream Cluster API resources (OpenShift Tech Preview / CAPI workers)
+// https://github.com/kubernetes-sigs/cluster-api
+export const ClusterAPIMachineModel: K8sKind = {
+  label: 'Machine',
+  // t('public~Machine')
+  labelKey: 'public~Machine',
+  labelPlural: 'Machines',
+  // t('public~Machines')
+  labelPluralKey: 'public~Machines',
+  apiVersion: 'v1beta2',
+  apiGroup: 'cluster.x-k8s.io',
+  plural: 'machines',
+  abbr: 'M',
+  namespaced: true,
+  kind: 'Machine',
+  id: 'clusterapimachine',
+  crd: true,
+};
+
+export const ClusterAPIMachineSetModel: K8sKind = {
+  label: 'MachineSet',
+  // t('public~MachineSet')
+  labelKey: 'public~MachineSet',
+  labelPlural: 'MachineSets',
+  // t('public~MachineSet')
+  labelPluralKey: 'public~MachineSet',
+  apiVersion: 'v1beta2',
+  apiGroup: 'cluster.x-k8s.io',
+  plural: 'machinesets',
+  abbr: 'MS',
+  namespaced: true,
+  kind: 'MachineSet',
+  id: 'clusterapimachineset',
+  crd: true,
+};
+
 export const ControlPlaneMachineSetModel: K8sKind = {
   label: 'ControlPlaneMachineSet',
   // t('public~ControlPlaneMachineSet')
