@@ -957,6 +957,9 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
                     id="cancel"
                     data-test="cancel"
                     onClick={() => {
+		      if (isFullscreen) {
+			toggleFullscreen();
+		      }	
                       onCancel();
                       dispatch(closeOLS());
                     }}
