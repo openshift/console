@@ -28,7 +28,6 @@
     "test-playwright-admin": "playwright test --project=smoke --project=console --project=dev-console --project=helm --project=knative --project=olm --project=topology --project=webterminal",
     "test-playwright-developer": "playwright test --project=dev-console-developer --project=topology-developer --project=smoke-developer",
     "analyze": "ANALYZE_BUNDLE=true NODE_ENV=production NODE_OPTIONS=--max-old-space-size=8192 rspack --mode=production",
-    "knip": "knip --config scripts/knip.ts",
     "format-all": "oxfmt '**/*.{ts,tsx,js,json,md}'",
     "ts-node": "ts-node -O '{\"module\":\"commonjs\"}'",
     "generate": "yarn --cwd packages/console-dynamic-plugin-sdk build",

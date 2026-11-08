@@ -74,6 +74,7 @@ cd frontend && yarn test [<path>] # Run frontend tests (can specify test path)
 cd frontend && yarn build # Production build
 cd frontend && yarn dev-once # Development build (no watch mode)
 cd frontend && yarn i18n # Update i18n keys
+cd frontend && yarn knip # Check dead code and unused dependencies
 go mod vendor && go mod tidy # Update Go dependencies
 ./build-frontend.sh # Production build of frontend
 ./build-backend.sh # Build backend Go code
