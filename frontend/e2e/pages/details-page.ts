@@ -6,6 +6,10 @@ export class DetailsPage extends BasePage {
   private readonly pageHeading = this.page.getByTestId('page-heading');
   private readonly resourceTitle = this.page.getByTestId('resource-title');
   private readonly skeletonLoader = this.page.getByTestId('skeleton-detail-view');
+  private readonly toastDismissButton = this.page
+    .getByTestId('toast-notifications')
+    .getByRole('button', { name: /^(Close|Minimize) / })
+    .first();
   readonly nodeTerminalError: Locator = this.page.getByTestId('node-terminal-error');
   readonly xtermViewport: Locator = this.page.locator('.xterm-viewport');
 
@@ -38,8 +42,13 @@ export class DetailsPage extends BasePage {
   }
 
   async clickPageAction(actionName: string): Promise<void> {
-    await this.robustClick(this.page.getByTestId('actions-menu-button'));
-    await this.robustClick(this.page.getByTestId(actionName));
+    // Persistent notifications can cover the details actions. Dismiss them
+    // before clicking so a forced click cannot hit a notification instead.
+    while (await this.toastDismissButton.isVisible()) {
+      await this.toastDismissButton.click();
+    }
+    await this.robustClick(this.page.getByTestId('actions-menu-button'), { retries: 1 });
+    await this.robustClick(this.page.getByTestId(actionName), { retries: 1 });
   }
 
   getBreadcrumb(index: number): Locator {

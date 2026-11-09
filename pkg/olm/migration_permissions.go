@@ -26,7 +26,7 @@ func prepareMigrationExecutionPermissions(ctx context.Context, migrator *migrati
 	read := []string{"get", "list", "watch"}
 	write := []string{"get", "update", "patch", "delete"}
 	clusterRules := []rbacv1.PolicyRule{
-		migrationRule("olm.operatorframework.io", []string{"clusterextensions", "clusterobjectsets", "clustercatalogs"}, read, nil),
+		migrationRule("olm.operatorframework.io", []string{"clusterextensions", "clusterobjectsets", "clusterobjectdeployments", "clustercatalogs"}, read, nil),
 		migrationRule("apiextensions.k8s.io", []string{"customresourcedefinitions"}, read, nil),
 		migrationRule("operators.coreos.com", []string{"operators", "clusterserviceversions"}, read, nil),
 		migrationRule("operators.coreos.com", []string{"subscriptions"}, []string{"list"}, nil),
@@ -69,10 +69,11 @@ func prepareMigrationExecutionPermissions(ctx context.Context, migrator *migrati
 			migrationRule("", []string{"namespaces"}, []string{"get", "update", "patch"}, []string{opts.SubscriptionNamespace, opts.InstallNamespace, prepared.SystemNamespace}),
 			migrationRule("operators.coreos.com", []string{"operators"}, []string{"delete"}, []string{info.PackageName + "." + opts.SubscriptionNamespace}),
 			migrationRule("operators.coreos.com", []string{"clusterserviceversions"}, []string{"delete"}, []string{info.BundleName}),
-			migrationRule("olm.operatorframework.io", []string{"clusterextensions", "clusterobjectsets"}, []string{"create"}, nil),
+			migrationRule("olm.operatorframework.io", []string{"clusterextensions", "clusterobjectsets", "clusterobjectdeployments"}, []string{"create"}, nil),
 			migrationRule("olm.operatorframework.io", []string{"clusterextensions"}, write, []string{opts.ClusterExtensionName}),
 			migrationRule("olm.operatorframework.io", []string{"clusterobjectsets"}, write, []string{opts.ClusterExtensionName + "-1"}),
 		)
+		clusterRules = append(clusterRules, migrationRule("olm.operatorframework.io", []string{"clusterobjectdeployments"}, write, []string{opts.ClusterExtensionName}))
 		if opts.AcknowledgeNamespaceDelete {
 			clusterRules = append(clusterRules, migrationRule("", []string{"namespaces"}, []string{"delete"}, []string{opts.SubscriptionNamespace}))
 		}

@@ -291,19 +291,7 @@ func (c *migrationCoordinator) advanceJournal(ctx context.Context, m *migration.
 			}
 			next = "cos"
 		case "cos":
-			var cos ocv1.ClusterObjectSet
-			err := m.Client.Get(ctx, client.ObjectKey{Name: opts.ClusterExtensionName + "-1"}, &cos)
-			if apierrors.IsNotFound(err) {
-				err = m.CreateClusterObjectSet(ctx, opts, &j.Info)
-			} else if err == nil {
-				if err = verifyMigrationTarget(&cos, j); err == nil {
-					err = m.WaitForCOSSucceeded(ctx, cos.Name)
-				}
-				if err == nil {
-					err = m.WaitForClusterObjectSetAvailable(ctx, cos.Name)
-				}
-			}
-			if err != nil {
+			if err := resumeMigrationRevision(ctx, m, j); err != nil {
 				return err
 			}
 			next = "ce"
@@ -371,7 +359,11 @@ func (c *migrationCoordinator) advanceJournal(ctx context.Context, m *migration.
 				if err := markOperatorMigrationRecoveryRequired(ctx, m.Client, checkpoint); err != nil {
 					return err
 				}
-				if targetErr == nil || extensionErr == nil {
+				deployment, deploymentErr := migrationDeployment(ctx, m.Client, opts.ClusterExtensionName)
+				if deploymentErr != nil {
+					return deploymentErr
+				}
+				if targetErr == nil || extensionErr == nil || deployment != nil {
 					j.RollbackError = "target migration resources may be active; migration halted and requires explicit recovery"
 				} else if err := (&OLMHandler{}).rollbackFromOperatorMigrationCheckpoint(ctx, m.Client, checkpoint, &j.Recovery, true); err != nil {
 					j.RollbackError = err.Error()
@@ -525,32 +517,40 @@ type migrationExecutionClient struct {
 	sourceSubscription    *operatorsv1alpha1.Subscription
 	rollbackSourceID      string
 	rollbackTargetName    string
+	rollbackDeploymentUID types.UID
 	rollbackTargetUID     types.UID
 	rollbackRevisionUIDs  map[string]types.UID
 	rollbackReferenceUIDs map[string]types.UID
 }
 
-// Get projects current ClusterObjectSet readiness into the legacy conditions required by the migration library, without writing status.
+// Get prevents stale readiness from satisfying a resumed migration's handoff.
+// completedAt remains historical proof of completion, including after archival.
 func (c *migrationExecutionClient) Get(ctx context.Context, key client.ObjectKey, object client.Object, options ...client.GetOption) error {
 	if err := c.Client.Get(ctx, key, object, options...); err != nil {
 		return err
 	}
-	cos, ok := object.(*ocv1.ClusterObjectSet)
+	revision, ok := object.(*ocv1.ClusterObjectSet)
 	if !ok {
 		return nil
 	}
-	ready := meta.FindStatusCondition(cos.Status.Conditions, "Ready")
+	ready := meta.FindStatusCondition(revision.Status.Conditions, ocv1.ClusterObjectSetTypeReady)
 	if ready == nil {
 		return nil
 	}
-	condition := *ready
-	if ready.ObservedGeneration != cos.Generation || cos.DeletionTimestamp != nil || cos.Spec.LifecycleState == ocv1.ClusterObjectSetLifecycleStateArchived {
-		condition.Status = metav1.ConditionUnknown
-		condition.Reason = "Reconciling"
+	if ready.ObservedGeneration == revision.Generation && ready.Reason == ocv1.ReasonBlocked {
+		// The library's completion waiter still reports Blocked through the
+		// legacy condition. Project that diagnostic without changing stored status
+		// or preventing recovery code from reading and deleting the revision.
+		blocked := *ready
+		blocked.Type = "Succeeded"
+		meta.SetStatusCondition(&revision.Status.Conditions, blocked)
 	}
-	for _, legacyType := range []string{ocv1.ClusterObjectSetTypeSucceeded, ocv1.ClusterObjectSetTypeAvailable} {
-		condition.Type = legacyType
-		meta.SetStatusCondition(&cos.Status.Conditions, condition)
+	current := ready.ObservedGeneration == revision.Generation && revision.DeletionTimestamp == nil && revision.Spec.LifecycleState != ocv1.ClusterObjectSetLifecycleStateArchived
+	for i := range revision.Status.Conditions {
+		condition := &revision.Status.Conditions[i]
+		if !current || condition.Type != ocv1.ClusterObjectSetTypeReady && (condition.Type == "Succeeded" || condition.Type == "Available") {
+			condition.Status = metav1.ConditionUnknown
+		}
 	}
 	return nil
 }
@@ -613,23 +613,6 @@ func (c *migrationExecutionClient) Create(ctx context.Context, object client.Obj
 	if err := c.checkLease(ctx); err != nil {
 		return errMigrationSuspended
 	}
-	if cos, ok := object.(*ocv1.ClusterObjectSet); ok {
-		// The library's API version predates spec.group. Send it unstructured
-		// so the controller can adopt the revision under the extension's group.
-		data, err := runtime.DefaultUnstructuredConverter.ToUnstructured(cos)
-		if err != nil {
-			return err
-		}
-		revision := &unstructured.Unstructured{Object: data}
-		revision.SetGroupVersionKind(ocv1.GroupVersion.WithKind(ocv1.ClusterObjectSetKind))
-		if err := unstructured.SetNestedField(revision.Object, cos.Labels[migration.LabelOwnerName], "spec", "group"); err != nil {
-			return err
-		}
-		if err := c.Create(ctx, revision, options...); err != nil {
-			return err
-		}
-		return runtime.DefaultUnstructuredConverter.FromUnstructured(revision.Object, cos)
-	}
 	a := object.GetAnnotations()
 	if a == nil {
 		a = map[string]string{}
@@ -661,6 +644,12 @@ func (c *migrationExecutionClient) Create(ctx context.Context, object client.Obj
 		actual, ok := existing.(*unstructured.Unstructured)
 		compatible = ok && desired.GroupVersionKind() == ocv1.GroupVersion.WithKind(ocv1.ClusterObjectSetKind) &&
 			reflect.DeepEqual(desired.Object["spec"], actual.Object["spec"])
+	case *ocv1.ClusterObjectSet:
+		actual, ok := existing.(*ocv1.ClusterObjectSet)
+		compatible = ok && reflect.DeepEqual(desired.Spec, actual.Spec)
+	case *ocv1.ClusterObjectDeployment:
+		actual, ok := existing.(*ocv1.ClusterObjectDeployment)
+		compatible = ok && reflect.DeepEqual(desired.Spec, actual.Spec)
 	case *ocv1.ClusterExtension:
 		actual, ok := existing.(*ocv1.ClusterExtension)
 		compatible = ok && reflect.DeepEqual(desired.Spec, actual.Spec)
@@ -698,6 +687,13 @@ func (c *migrationExecutionClient) replaceCompletedCheckpoint(ctx context.Contex
 		}
 		return createErr
 	}
+	deployment, err := migrationDeployment(ctx, c.Client, current.ClusterExtensionName)
+	if err != nil {
+		return err
+	}
+	if deployment != nil {
+		return createErr
+	}
 	var initial ocv1.ClusterObjectSet
 	if err := c.Client.Get(ctx, client.ObjectKey{Name: previous.ClusterObjectSetName}, &initial); !apierrors.IsNotFound(err) {
 		if err != nil {
@@ -706,11 +702,13 @@ func (c *migrationExecutionClient) replaceCompletedCheckpoint(ctx context.Contex
 		return createErr
 	}
 	var revisions ocv1.ClusterObjectSetList
-	if err := c.Client.List(ctx, &revisions, client.MatchingLabels{migration.LabelOwnerName: current.ClusterExtensionName}); err != nil {
+	if err := c.Client.List(ctx, &revisions); err != nil {
 		return err
 	}
-	if len(revisions.Items) != 0 {
-		return createErr
+	for _, revision := range revisions.Items {
+		if revision.Spec.Group == current.ClusterExtensionName || revision.Labels[migration.LabelOwnerName] == current.ClusterExtensionName {
+			return createErr
+		}
 	}
 	// Preserve the observed resource version so a competing execution or state
 	// update cannot be overwritten. A lost update response is resolved by the
@@ -723,34 +721,6 @@ func (c *migrationExecutionClient) replaceCompletedCheckpoint(ctx context.Contex
 func (c *migrationExecutionClient) Update(ctx context.Context, object client.Object, options ...client.UpdateOption) error {
 	if err := c.checkLease(ctx); err != nil {
 		return errMigrationSuspended
-	}
-	if cos, ok := object.(*ocv1.ClusterObjectSet); ok {
-		data, err := runtime.DefaultUnstructuredConverter.ToUnstructured(cos)
-		if err != nil {
-			return err
-		}
-		revision := &unstructured.Unstructured{Object: data}
-		revision.SetGroupVersionKind(ocv1.GroupVersion.WithKind(ocv1.ClusterObjectSetKind))
-		current := &unstructured.Unstructured{}
-		current.SetGroupVersionKind(revision.GroupVersionKind())
-		if err := c.Client.Get(ctx, client.ObjectKeyFromObject(cos), current); err != nil {
-			return err
-		}
-		// Typed reads drop fields unknown to the pinned API. Preserve the live
-		// immutable group without replacing the caller's resource version.
-		group, found, err := unstructured.NestedString(current.Object, "spec", "group")
-		if err != nil {
-			return err
-		}
-		if found {
-			if err := unstructured.SetNestedField(revision.Object, group, "spec", "group"); err != nil {
-				return err
-			}
-		}
-		if err := c.Update(ctx, revision, options...); err != nil {
-			return err
-		}
-		return runtime.DefaultUnstructuredConverter.FromUnstructured(revision.Object, cos)
 	}
 	return c.Client.Update(ctx, object, options...)
 }
@@ -779,7 +749,7 @@ func (c *migrationExecutionClient) Delete(ctx context.Context, object client.Obj
 	}
 	if c.rollbackSourceID != "" {
 		switch object.(type) {
-		case *ocv1.ClusterObjectSet, *ocv1.ClusterExtension, *corev1.Secret:
+		case *ocv1.ClusterObjectDeployment, *ocv1.ClusterObjectSet, *ocv1.ClusterExtension, *corev1.Secret:
 			owned := object.GetAnnotations()[migrationExecutionAnnotation] == c.rollbackSourceID
 			if revision, ok := object.(*ocv1.ClusterObjectSet); ok && !owned {
 				owned = c.ownsRollbackRevision(revision)
@@ -800,7 +770,7 @@ func (c *migrationExecutionClient) Delete(ctx context.Context, object client.Obj
 	}
 	if c.preserveTargets {
 		switch object.(type) {
-		case *ocv1.ClusterObjectSet, *ocv1.ClusterExtension:
+		case *ocv1.ClusterObjectDeployment, *ocv1.ClusterObjectSet, *ocv1.ClusterExtension:
 			return fmt.Errorf("preserving migration target %s for checkpoint recovery", object.GetName())
 		}
 	}
@@ -809,14 +779,17 @@ func (c *migrationExecutionClient) Delete(ctx context.Context, object client.Obj
 
 // ownsRollbackRevision accepts orphaned revisions only when their identity was verified before orphaning.
 func (c *migrationExecutionClient) ownsRollbackRevision(revision *ocv1.ClusterObjectSet) bool {
-	if revision.Annotations[migrationExecutionAnnotation] != "" || c.rollbackTargetUID == "" ||
-		revision.UID == "" || revision.Labels[migration.LabelOwnerName] != c.rollbackTargetName {
+	if revision.Annotations[migrationExecutionAnnotation] != "" || (c.rollbackTargetUID == "" && c.rollbackDeploymentUID == "") ||
+		revision.UID == "" || (revision.Spec.Group != "" && revision.Spec.Group != c.rollbackTargetName ||
+		revision.Labels[migration.LabelOwnerName] != "" && revision.Labels[migration.LabelOwnerName] != c.rollbackTargetName ||
+		revision.Spec.Group == "" && revision.Labels[migration.LabelOwnerName] == "") {
 		return false
 	}
 	owner := metav1.GetControllerOf(revision)
 	if owner != nil {
-		return owner.APIVersion == ocv1.GroupVersion.String() && owner.Kind == "ClusterExtension" &&
-			owner.Name == c.rollbackTargetName && owner.UID == c.rollbackTargetUID
+		return owner.APIVersion == ocv1.GroupVersion.String() && owner.Name == c.rollbackTargetName &&
+			(owner.Kind == "ClusterExtension" && owner.UID == c.rollbackTargetUID ||
+				owner.Kind == ocv1.ClusterObjectDeploymentKind && owner.UID == c.rollbackDeploymentUID)
 	}
 	return len(revision.OwnerReferences) == 0 && c.rollbackRevisionUIDs[revision.Name] == revision.UID
 }
@@ -824,7 +797,7 @@ func (c *migrationExecutionClient) ownsRollbackRevision(revision *ocv1.ClusterOb
 // ownsRollbackReference accepts controller-created reference Secrets only through verified revision or saved Secret UIDs.
 func (c *migrationExecutionClient) ownsRollbackReference(secret *corev1.Secret) bool {
 	revision := secret.Labels[migration.LabelRevisionName]
-	if secret.Annotations[migrationExecutionAnnotation] != "" || secret.UID == "" || c.rollbackTargetUID == "" ||
+	if secret.Annotations[migrationExecutionAnnotation] != "" || secret.UID == "" || (c.rollbackTargetUID == "" && c.rollbackDeploymentUID == "") ||
 		secret.Type != corev1.SecretType(migration.SecretTypeObjectData) ||
 		secret.Labels[migration.LabelOwnerName] != c.rollbackTargetName || c.rollbackRevisionUIDs[revision] == "" {
 		return false

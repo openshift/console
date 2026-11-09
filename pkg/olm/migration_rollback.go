@@ -104,15 +104,15 @@ func prepareRollbackExecutionPermissions(ctx context.Context, kubeClient client.
 	read := []string{"get", "list", "watch"}
 	clusterRules := []rbacv1.PolicyRule{
 		migrationRule("", []string{"namespaces"}, []string{"get"}, []string{snapshot.Namespace.Name}),
-		migrationRule("olm.operatorframework.io", []string{"clusterextensions", "clusterobjectsets"}, read, nil),
-		migrationRule("olm.operatorframework.io", []string{"clusterextensions"}, []string{"delete"}, []string{snapshot.ClusterExtensionName}),
+		migrationRule("olm.operatorframework.io", []string{"clusterextensions", "clusterobjectsets", "clusterobjectdeployments"}, read, nil),
+		migrationRule("olm.operatorframework.io", []string{"clusterextensions", "clusterobjectdeployments"}, []string{"delete"}, []string{snapshot.ClusterExtensionName}),
 	}
-	var sets ocv1.ClusterObjectSetList
-	if err := kubeClient.List(ctx, &sets, client.MatchingLabels{migration.LabelOwnerName: snapshot.ClusterExtensionName}); err != nil {
+	sets, err := migrationRevisions(ctx, kubeClient, snapshot.ClusterExtensionName)
+	if err != nil {
 		return nil, err
 	}
 	names := []string{snapshot.ClusterObjectSetName}
-	for _, set := range sets.Items {
+	for _, set := range sets {
 		names = append(names, set.Name)
 	}
 	clusterRules = append(clusterRules, migrationRule("olm.operatorframework.io", []string{"clusterobjectsets"}, []string{"delete"}, names))
@@ -378,23 +378,27 @@ func bindRollbackTarget(ctx context.Context, guard *migrationExecutionClient, ro
 		}
 		rollback.TargetUID = extension.UID
 		guard.rollbackTargetName, guard.rollbackTargetUID = extension.Name, extension.UID
-		var revisions ocv1.ClusterObjectSetList
-		if err := guard.List(ctx, &revisions, client.MatchingLabels{migration.LabelOwnerName: extension.Name}); err != nil {
-			return err
-		}
-		for i := range revisions.Items {
-			revision := &revisions.Items[i]
-			if revision.Annotations[migrationExecutionAnnotation] == rollback.SourceJobID {
-				if revision.UID != "" {
-					guard.rollbackRevisionUIDs[revision.Name] = revision.UID
-				}
-				continue
+	}
+	guard.rollbackTargetName, guard.rollbackTargetUID = rollback.Snapshot.ClusterExtensionName, rollback.TargetUID
+	if _, err := bindMigrationDeployment(ctx, guard, checkpoint, &rollback.Snapshot, &extension); err != nil {
+		return err
+	}
+	revisions, err := migrationRevisions(ctx, guard, rollback.Snapshot.ClusterExtensionName)
+	if err != nil {
+		return err
+	}
+	for i := range revisions {
+		revision := &revisions[i]
+		if revision.Annotations[migrationExecutionAnnotation] == rollback.SourceJobID {
+			if revision.UID != "" {
+				guard.rollbackRevisionUIDs[revision.Name] = revision.UID
 			}
-			if !guard.ownsRollbackRevision(revision) {
-				return rollbackConflict("rollback revision belongs to another execution")
-			}
-			guard.rollbackRevisionUIDs[revision.Name] = revision.UID
+			continue
 		}
+		if !guard.ownsRollbackRevision(revision) {
+			return rollbackConflict("rollback revision belongs to another execution")
+		}
+		guard.rollbackRevisionUIDs[revision.Name] = revision.UID
 	}
 	guard.rollbackTargetName, guard.rollbackTargetUID = rollback.Snapshot.ClusterExtensionName, rollback.TargetUID
 	var references corev1.SecretList
@@ -428,7 +432,7 @@ func bindRollbackTarget(ctx context.Context, guard *migrationExecutionClient, ro
 		}
 		referenceUIDs = string(encoded)
 	}
-	if rollback.TargetUID != "" && (savedUID == "" || checkpoint.Annotations[rollbackRevisionUIDsAnnotation] != revisionUIDs || checkpoint.Annotations[rollbackReferenceUIDsAnnotation] != referenceUIDs) {
+	if (rollback.TargetUID != "" || guard.rollbackDeploymentUID != "") && (savedUID == "" || checkpoint.Annotations[rollbackRevisionUIDsAnnotation] != revisionUIDs || checkpoint.Annotations[rollbackReferenceUIDsAnnotation] != referenceUIDs) {
 		checkpoint.Annotations[rollbackTargetUIDAnnotation] = string(rollback.TargetUID)
 		checkpoint.Annotations[rollbackRevisionUIDsAnnotation] = revisionUIDs
 		checkpoint.Annotations[rollbackReferenceUIDsAnnotation] = referenceUIDs

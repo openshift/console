@@ -110,6 +110,7 @@
   "Cluster wide": "Cluster wide",
   "Cluster-wide CatalogSource": "Cluster-wide CatalogSource",
   "ClusterExtension": "ClusterExtension",
+  "ClusterObjectDeployment": "ClusterObjectDeployment",
   "ClusterObjectSet": "ClusterObjectSet",
   "ClusterServiceVersion": "ClusterServiceVersion",
   "ClusterServiceVersion details": "ClusterServiceVersion details",

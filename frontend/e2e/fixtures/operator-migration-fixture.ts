@@ -28,6 +28,14 @@ interface Resource {
     deletionTimestamp?: string;
     finalizers?: string[];
     annotations?: Record<string, string>;
+    labels?: Record<string, string>;
+    ownerReferences?: {
+      apiVersion: string;
+      kind: string;
+      name: string;
+      uid: string;
+      controller?: boolean;
+    }[];
   };
   spec?: {
     namespace?: string;
@@ -58,6 +66,22 @@ export class OperatorMigrationFixture {
   private readonly operators: MigrationOperator[] = [];
   private readonly jobs = new Set<string>();
   private readonly rollbackHolds = new Set<() => Promise<void>>();
+
+  /** Detects the revision manager API used by this cluster. */
+  private async hasDeploymentAPI(): Promise<boolean> {
+    try {
+      await this.client.getClusterCustomResource(
+        'apiextensions.k8s.io',
+        'v1',
+        'customresourcedefinitions',
+        'clusterobjectdeployments.olm.operatorframework.io',
+      );
+      return true;
+    } catch (error) {
+      if (isNotFound(error)) return false;
+      throw error;
+    }
+  }
 
   /** Creates isolated catalog identifiers and shares cleanup and authentication configuration. */
   constructor(
@@ -154,6 +178,14 @@ export class OperatorMigrationFixture {
       'v1',
       'clusterextensions',
     );
+    if (await this.hasDeploymentAPI()) {
+      this.cleanup.trackClusterCustomResource(
+        subscriptionName,
+        TARGET_GROUP,
+        'v1',
+        'clusterobjectdeployments',
+      );
+    }
     this.cleanup.trackClusterCustomResource(
       `${subscriptionName}-1`,
       TARGET_GROUP,
@@ -600,14 +632,28 @@ export class OperatorMigrationFixture {
           const references = await this.client.coreV1Api.listSecretForAllNamespaces({
             labelSelector,
           });
-          return { revisions: revisions.items.length, references: references.items.length };
+          let deployments = 0;
+          if (await this.hasDeploymentAPI()) {
+            const result = (await this.client.customObjectsApi.listClusterCustomObject({
+              group: TARGET_GROUP,
+              version: 'v1',
+              plural: 'clusterobjectdeployments',
+              labelSelector,
+            })) as { items: Resource[] };
+            deployments = result.items.length;
+          }
+          return {
+            revisions: revisions.items.length,
+            references: references.items.length,
+            deployments,
+          };
         },
         {
           timeout: 60_000,
           message: 'Recovery must remove all migration revisions and reference Secrets',
         },
       )
-      .toEqual({ revisions: 0, references: 0 });
+      .toEqual({ revisions: 0, references: 0, deployments: 0 });
   }
 
   /** Verifies retained migration resources and reconciliation after revision handover. */
@@ -619,6 +665,30 @@ export class OperatorMigrationFixture {
         'clusterobjectsets',
         `${operator.subscriptionName}-1`,
       )) as Resource;
+      if (await this.hasDeploymentAPI()) {
+        const deployment = (await this.client.getClusterCustomResource(
+          TARGET_GROUP,
+          'v1',
+          'clusterobjectdeployments',
+          operator.subscriptionName,
+        )) as Resource;
+        expect(deployment.metadata.labels?.['apps.kubernetes.io/managed-by']).toBe(
+          'operator-controller',
+        );
+        expect(objectSet.metadata.labels?.['apps.kubernetes.io/managed-by']).toBe(
+          'object-controller',
+        );
+        expect(objectSet.metadata.ownerReferences).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({
+              kind: 'ClusterObjectDeployment',
+              name: deployment.metadata.name,
+              uid: deployment.metadata.uid,
+              controller: true,
+            }),
+          ]),
+        );
+      }
       const ready = objectSet.status?.conditions?.find(({ type }) => type === 'Ready');
       const succeeded = objectSet.status?.conditions?.find(({ type }) => type === 'Succeeded');
       const available = objectSet.status?.conditions?.find(({ type }) => type === 'Available');

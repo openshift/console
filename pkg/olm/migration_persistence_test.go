@@ -153,6 +153,9 @@ func TestMigrationLibraryWaitsForCurrentClusterObjectSetReadinessWithoutChanging
 	} {
 		t.Run(tt.name, func(t *testing.T) {
 			cos := &ocv1.ClusterObjectSet{ObjectMeta: metav1.ObjectMeta{Name: "demo-1", Generation: 2}, Spec: ocv1.ClusterObjectSetSpec{LifecycleState: ocv1.ClusterObjectSetLifecycleStateActive}, Status: ocv1.ClusterObjectSetStatus{Conditions: tt.conditions}}
+			if tt.name == "current Ready" {
+				cos.Status.CompletedAt = metav1.Now()
+			}
 			if tt.archived {
 				cos.Spec.LifecycleState = ocv1.ClusterObjectSetLifecycleStateArchived
 			}
@@ -181,7 +184,7 @@ func TestMigrationLibraryWaitsForCurrentClusterObjectSetReadinessWithoutChanging
 	}
 }
 
-func TestResumingHandoffUsesReadyCondition(t *testing.T) {
+func TestResumingHandoffUsesCompletedAtAndReadyCondition(t *testing.T) {
 	ctx := context.Background()
 	id := "0123456789abcdef0123456789abcdef"
 	opts := migration.Options{SubscriptionName: "demo", SubscriptionNamespace: "operators", ClusterExtensionName: "demo", InstallNamespace: "operators", SystemNamespace: "operator-controller"}
@@ -189,6 +192,7 @@ func TestResumingHandoffUsesReadyCondition(t *testing.T) {
 	cos := &ocv1.ClusterObjectSet{ObjectMeta: metav1.ObjectMeta{Name: "demo-1", Generation: 1, Annotations: annotations}, Status: ocv1.ClusterObjectSetStatus{Conditions: []metav1.Condition{{Type: "Ready", Status: metav1.ConditionTrue, ObservedGeneration: 1, Reason: "AllObjectsReady"}}}}
 	extension := &ocv1.ClusterExtension{ObjectMeta: metav1.ObjectMeta{Name: "demo", Annotations: annotations}, Status: ocv1.ClusterExtensionStatus{Conditions: []metav1.Condition{{Type: "Installed", Status: metav1.ConditionTrue}}}}
 	checkpoint := &corev1.Secret{ObjectMeta: metav1.ObjectMeta{Name: operatorMigrationCheckpointSecretName("demo"), Namespace: "operator-controller", Annotations: annotations}, Data: map[string][]byte{operatorMigrationCheckpointStateKey: []byte(operatorMigrationCheckpointInProgress)}}
+	cos.Status.CompletedAt = metav1.Now()
 	kubeClient := newMigrationTestClient(t, cos, extension, checkpoint)
 	c := &migrationCoordinator{client: kubeClient, identity: "replacement"}
 	namespace, _ := migrationJobNamespace(id)

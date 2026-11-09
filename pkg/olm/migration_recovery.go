@@ -17,6 +17,7 @@ import (
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
+	"k8s.io/apimachinery/pkg/api/meta"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/apimachinery/pkg/util/wait"
@@ -83,15 +84,16 @@ type operatorMigrationDeploymentBackup struct {
 }
 
 type operatorMigrationRecoverySnapshot struct {
-	ClusterExtensionName string                                `json:"clusterExtensionName"`
-	ClusterObjectSetName string                                `json:"clusterObjectSetName"`
-	SubscriptionRef      string                                `json:"subscriptionRef"`
-	SubscriptionSpec     operatorsv1alpha1.SubscriptionSpec    `json:"subscriptionSpec"`
-	InstalledCSV         string                                `json:"installedCSV,omitempty"`
-	InstalledCSVUID      types.UID                             `json:"installedCSVUID,omitempty"`
-	Namespace            operatorMigrationNamespaceBackup      `json:"namespace"`
-	OperatorGroup        *operatorMigrationOperatorGroupBackup `json:"operatorGroup,omitempty"`
-	Deployments          []operatorMigrationDeploymentBackup   `json:"deployments,omitempty"`
+	UseClusterObjectDeployment bool                                  `json:"useClusterObjectDeployment,omitempty"`
+	ClusterExtensionName       string                                `json:"clusterExtensionName"`
+	ClusterObjectSetName       string                                `json:"clusterObjectSetName"`
+	SubscriptionRef            string                                `json:"subscriptionRef"`
+	SubscriptionSpec           operatorsv1alpha1.SubscriptionSpec    `json:"subscriptionSpec"`
+	InstalledCSV               string                                `json:"installedCSV,omitempty"`
+	InstalledCSVUID            types.UID                             `json:"installedCSVUID,omitempty"`
+	Namespace                  operatorMigrationNamespaceBackup      `json:"namespace"`
+	OperatorGroup              *operatorMigrationOperatorGroupBackup `json:"operatorGroup,omitempty"`
+	Deployments                []operatorMigrationDeploymentBackup   `json:"deployments,omitempty"`
 }
 
 type operatorMigrationRecoveryConflict struct {
@@ -143,10 +145,11 @@ func captureOperatorMigrationSnapshot(ctx context.Context, migrator *migration.M
 		return nil, fmt.Errorf("get source namespace for migration recovery backup: %w", err)
 	}
 	snapshot := &operatorMigrationRecoverySnapshot{
-		ClusterExtensionName: opts.ClusterExtensionName,
-		ClusterObjectSetName: opts.ClusterExtensionName + "-1",
-		SubscriptionRef:      opts.SubscriptionNamespace + "/" + opts.SubscriptionName,
-		SubscriptionSpec:     *backup.Subscription.Spec.DeepCopy(),
+		UseClusterObjectDeployment: opts.UseClusterObjectDeployment,
+		ClusterExtensionName:       opts.ClusterExtensionName,
+		ClusterObjectSetName:       opts.ClusterExtensionName + "-1",
+		SubscriptionRef:            opts.SubscriptionNamespace + "/" + opts.SubscriptionName,
+		SubscriptionSpec:           *backup.Subscription.Spec.DeepCopy(),
 		Namespace: operatorMigrationNamespaceBackup{
 			Name:        namespace.Name,
 			Labels:      maps.Clone(namespace.Labels),
@@ -275,6 +278,24 @@ func listOperatorMigrationRecoveryConflicts(ctx context.Context, kubeClient clie
 			Reason:               fmt.Sprintf("partial migration: ClusterObjectSet %s exists without its ClusterExtension; roll back the partial migration", objectSet.Name),
 		}
 	}
+	var deployments ocv1.ClusterObjectDeploymentList
+	if err := kubeClient.List(ctx, &deployments); err != nil {
+		if !apierrors.IsNotFound(err) && !meta.IsNoMatchError(err) {
+			return nil, fmt.Errorf("list ClusterObjectDeployments for migration recovery scan: %w", err)
+		}
+	}
+	for _, deployment := range deployments.Items {
+		ref := deployment.Annotations[migration.MigratedFromSubscriptionAnnotation]
+		if ref == "" {
+			continue
+		}
+		if _, hasExtension := annotatedSubscriptions[ref]; !hasExtension {
+			conflicts[ref] = operatorMigrationRecoveryConflict{
+				ClusterExtensionName: deployment.Name,
+				Reason:               fmt.Sprintf("partial migration: ClusterObjectDeployment %s exists without its ClusterExtension; roll back the partial migration", deployment.Name),
+			}
+		}
+	}
 	systemNamespace, err := discoverOperatorMigrationSystemNamespace(ctx, kubeClient)
 	if err != nil {
 		return nil, err
@@ -372,12 +393,41 @@ func (o *OLMHandler) rollbackFromOperatorMigrationCheckpoint(ctx context.Context
 		return err
 	}
 
+	_, err := bindMigrationDeployment(ctx, kubeClient, checkpoint, snapshot, &extension)
+	if err != nil {
+		return err
+	}
+	// Verify revision ownership before stopping either target controller.
+	if guard, ok := kubeClient.(*migrationExecutionClient); ok && guard.rollbackSourceID != "" {
+		revisions, err := migrationRevisions(ctx, kubeClient, snapshot.ClusterExtensionName)
+		if err != nil {
+			return err
+		}
+		for i := range revisions {
+			if revisions[i].Annotations[migrationExecutionAnnotation] != guard.rollbackSourceID && !guard.ownsRollbackRevision(&revisions[i]) {
+				return rollbackConflict("rollback revision belongs to another execution")
+			}
+		}
+	}
 	// Stop target reconciliation before removing revisions or restoring Classic management.
 	if extensionExists {
 		if err := kubeClient.Delete(ctx, &extension, client.PropagationPolicy(metav1.DeletePropagationOrphan)); err != nil && !apierrors.IsNotFound(err) {
 			return fmt.Errorf("delete ClusterExtension %s: %w", extension.Name, err)
 		}
 		if err := waitForOperatorMigrationDeletion(ctx, kubeClient, &extension); err != nil {
+			return err
+		}
+	}
+	// A final in-flight extension reconciliation may have created a deployment.
+	deployment, err := bindMigrationDeployment(ctx, kubeClient, checkpoint, snapshot, &extension)
+	if err != nil {
+		return err
+	}
+	if deployment != nil {
+		if err := kubeClient.Delete(ctx, deployment, client.PropagationPolicy(metav1.DeletePropagationOrphan)); err != nil && !apierrors.IsNotFound(err) {
+			return err
+		}
+		if err := waitForOperatorMigrationDeletion(ctx, kubeClient, deployment); err != nil {
 			return err
 		}
 	}
@@ -498,10 +548,11 @@ func ensureOperatorMigrationGroup(ctx context.Context, kubeClient client.Client,
 
 // deleteOperatorMigrationRevisions orphan-deletes target revisions, waits for their removal, and removes matching reference Secrets.
 func deleteOperatorMigrationRevisions(ctx context.Context, kubeClient client.Client, snapshot *operatorMigrationRecoverySnapshot, systemNamespace string) error {
-	var revisions ocv1.ClusterObjectSetList
-	if err := kubeClient.List(ctx, &revisions, client.MatchingLabels{migration.LabelOwnerName: snapshot.ClusterExtensionName}); err != nil {
+	items, err := migrationRevisions(ctx, kubeClient, snapshot.ClusterExtensionName)
+	if err != nil {
 		return fmt.Errorf("list ClusterObjectSets for rollback: %w", err)
 	}
+	revisions := ocv1.ClusterObjectSetList{Items: items}
 	revisionNames := map[string]struct{}{snapshot.ClusterObjectSetName: {}}
 	if guard, ok := kubeClient.(*migrationExecutionClient); ok && guard.rollbackSourceID != "" {
 		// A previous recovery attempt may have removed revisions before reference
@@ -525,8 +576,11 @@ func deleteOperatorMigrationRevisions(ctx context.Context, kubeClient client.Cli
 	if getErr == nil {
 		owner := initial.Labels[migration.LabelOwnerName]
 		ref := initial.Annotations[migration.MigratedFromSubscriptionAnnotation]
-		if owner == "" && ref == "" {
+		if owner == "" && ref == "" && initial.Spec.Group != snapshot.ClusterExtensionName {
 			return fmt.Errorf("ClusterObjectSet %s has no migration ownership metadata", initial.Name)
+		}
+		if initial.Spec.Group != "" && initial.Spec.Group != snapshot.ClusterExtensionName {
+			return fmt.Errorf("ClusterObjectSet %s belongs to another group %q", initial.Name, initial.Spec.Group)
 		}
 		if owner != "" && owner != snapshot.ClusterExtensionName {
 			return fmt.Errorf("ClusterObjectSet %s belongs to another extension %q", initial.Name, owner)
@@ -547,13 +601,45 @@ func deleteOperatorMigrationRevisions(ctx context.Context, kubeClient client.Cli
 			return err
 		}
 	}
+	if snapshot.UseClusterObjectDeployment || deploymentIdentityKnown(kubeClient) {
+		emptyObservations := 0
+		if err := wait.PollUntilContextTimeout(ctx, time.Second, 2*time.Minute, true, func(ctx context.Context) (bool, error) {
+			deployment, err := migrationDeployment(ctx, kubeClient, snapshot.ClusterExtensionName)
+			if err != nil {
+				return false, err
+			}
+			if deployment != nil {
+				return false, rollbackConflict("a target deployment still exists; refusing to restore OLMv0 management")
+			}
+			remaining, err := migrationRevisions(ctx, kubeClient, snapshot.ClusterExtensionName)
+			if err != nil {
+				return false, err
+			}
+			if len(remaining) == 0 {
+				emptyObservations++
+				return emptyObservations >= 2, nil
+			}
+			emptyObservations = 0
+			for i := range remaining {
+				revisionNames[remaining[i].Name] = struct{}{}
+				if err := kubeClient.Delete(ctx, &remaining[i], client.PropagationPolicy(metav1.DeletePropagationOrphan)); client.IgnoreNotFound(err) != nil {
+					return false, err
+				}
+			}
+			return false, nil
+		}); err != nil {
+			return err
+		}
+	}
 	var secrets corev1.SecretList
 	if err := kubeClient.List(ctx, &secrets, client.InNamespace(systemNamespace), client.MatchingLabels{migration.LabelOwnerName: snapshot.ClusterExtensionName}); err != nil {
 		return fmt.Errorf("list ClusterObjectSet ref Secrets for %s: %w", snapshot.ClusterExtensionName, err)
 	}
 	for i := range secrets.Items {
 		secret := &secrets.Items[i]
-		if _, found := revisionNames[secret.Labels[migration.LabelRevisionName]]; !found {
+		guard, delegated := kubeClient.(*migrationExecutionClient)
+		ownedReference := delegated && guard.rollbackSourceID != "" && secret.Type == corev1.SecretType(migration.SecretTypeObjectData) && secret.Annotations[migrationExecutionAnnotation] == guard.rollbackSourceID
+		if _, found := revisionNames[secret.Labels[migration.LabelRevisionName]]; !found && !ownedReference {
 			continue
 		}
 		if err := kubeClient.Delete(ctx, secret); err != nil && !apierrors.IsNotFound(err) {
