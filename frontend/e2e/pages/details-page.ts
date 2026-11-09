@@ -41,6 +41,7 @@ export class DetailsPage extends BasePage {
     await this.goTo(url);
   }
 
+  /** Dismisses overlapping notifications before opening and selecting a details-page action. */
   async clickPageAction(actionName: string): Promise<void> {
     // Persistent notifications can cover the details actions. Dismiss them
     // before clicking so a forced click cannot hit a notification instead.

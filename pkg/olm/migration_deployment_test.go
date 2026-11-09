@@ -19,6 +19,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client/interceptor"
 )
 
+// migrationDeploymentStatus builds completed rollout conditions for the supplied generation.
 func migrationDeploymentStatus(generation int64) ocv1.ClusterObjectDeploymentStatus {
 	return ocv1.ClusterObjectDeploymentStatus{Conditions: []metav1.Condition{
 		{Type: ocv1.ClusterObjectDeploymentTypeProgressing, Status: metav1.ConditionFalse, Reason: ocv1.ClusterObjectDeploymentReasonNewClusterObjectSetProgressed, ObservedGeneration: generation},
@@ -26,6 +27,7 @@ func migrationDeploymentStatus(generation int64) ocv1.ClusterObjectDeploymentSta
 	}}
 }
 
+// TestResumeMigrationDeployment verifies current rollout readiness, terminal failures, and execution ownership on resume.
 func TestResumeMigrationDeployment(t *testing.T) {
 	for _, tt := range []struct {
 		name, reason string
@@ -73,6 +75,7 @@ func TestResumeMigrationDeployment(t *testing.T) {
 	}
 }
 
+// TestLibrarySelectsMigrationManager verifies CRD discovery selects the deployment or legacy revision API.
 func TestLibrarySelectsMigrationManager(t *testing.T) {
 	for _, cod := range []bool{false, true} {
 		name := "legacy revision"
@@ -116,6 +119,7 @@ func TestLibrarySelectsMigrationManager(t *testing.T) {
 	}
 }
 
+// TestRollbackDeploymentPersistsOwnershipAcrossRetries verifies saved deployment and revision identities survive interrupted cleanup.
 func TestRollbackDeploymentPersistsOwnershipAcrossRetries(t *testing.T) {
 	for _, adopted := range []bool{false, true} {
 		name := "before extension creation"
@@ -165,6 +169,7 @@ func TestRollbackDeploymentPersistsOwnershipAcrossRetries(t *testing.T) {
 	}
 }
 
+// TestRollbackRejectsForeignDeploymentAndRevisionsBeforeStoppingControllers prevents recovery from deleting another execution's targets.
 func TestRollbackRejectsForeignDeploymentAndRevisionsBeforeStoppingControllers(t *testing.T) {
 	for _, foreignDeployment := range []bool{false, true} {
 		name := "foreign revision controller"
@@ -198,7 +203,7 @@ func TestRollbackRejectsForeignDeploymentAndRevisionsBeforeStoppingControllers(t
 	}
 }
 
-// A restart between controller deletions must retain the verified extension identity.
+// TestRollbackDeploymentResumesAfterExtensionDeletion verifies recovery retains the extension identity between controller deletions.
 func TestRollbackDeploymentResumesAfterExtensionDeletion(t *testing.T) {
 	for _, tt := range []struct {
 		name       string
@@ -256,6 +261,7 @@ func TestRollbackDeploymentResumesAfterExtensionDeletion(t *testing.T) {
 	}
 }
 
+// TestMigrationDeploymentPlan verifies plans identify the selected revision manager and its rollout action.
 func TestMigrationDeploymentPlan(t *testing.T) {
 	for _, deployment := range []bool{false, true} {
 		plan := newOperatorMigrationPlan(migration.Options{ClusterExtensionName: "demo"}, &migration.MigrationInfo{UseClusterObjectDeployment: deployment})

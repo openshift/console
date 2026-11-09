@@ -132,6 +132,7 @@ func TestResumingHandoffUsesExistingClusterObjectSetAndExtension(t *testing.T) {
 	}
 }
 
+// TestMigrationLibraryWaitsForCurrentClusterObjectSetReadinessWithoutChangingStatus verifies stale, archived, deleting, and blocked revisions cannot satisfy the library waiters.
 func TestMigrationLibraryWaitsForCurrentClusterObjectSetReadinessWithoutChangingStatus(t *testing.T) {
 	for _, tt := range []struct {
 		name       string
@@ -184,6 +185,7 @@ func TestMigrationLibraryWaitsForCurrentClusterObjectSetReadinessWithoutChanging
 	}
 }
 
+// TestResumingHandoffUsesCompletedAtAndReadyCondition verifies a completed, ready revision permits resumed handoff to the extension.
 func TestResumingHandoffUsesCompletedAtAndReadyCondition(t *testing.T) {
 	ctx := context.Background()
 	id := "0123456789abcdef0123456789abcdef"
