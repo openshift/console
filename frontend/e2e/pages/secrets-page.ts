@@ -66,12 +66,13 @@ export class SecretsPage extends BasePage {
       await this.saveButton.waitFor({ state: 'detached', timeout: 30_000 });
     } catch (e) {
       // If the save button did not detach, check whether the form is
-      // showing a server-side error so the test fails with the real
-      // message instead of a generic timeout.
+      // showing an error alert so the test fails with a clear diagnostic
+      // instead of a generic timeout. The alert text is intentionally not
+      // included in the thrown error; inspect the Playwright trace or
+      // screenshot for the alert details.
       const errorAlert = this.page.locator('.pf-v6-c-alert.pf-m-danger');
       if (await errorAlert.isVisible().catch(() => false)) {
-        const text = await errorAlert.textContent().catch(() => '(unable to read error text)');
-        throw new Error(`Save failed with form error: ${text}`);
+        throw new Error('Save failed: form displayed an error alert.');
       }
       throw e;
     }
