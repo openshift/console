@@ -3,19 +3,23 @@ package olm
 import (
 	"context"
 	"fmt"
-	"reflect"
 	"strings"
 	"time"
 
 	ocv1 "github.com/operator-framework/operator-controller/api/v1"
 	admissionv1 "k8s.io/api/admissionregistration/v1"
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/equality"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/wait"
+	"k8s.io/klog/v2"
+	"k8s.io/utils/ptr"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
+// rollbackRevisionPolicyName versions both admission Specs. Change the suffix
+// whenever either Spec changes; installed guards are never updated in place.
 const rollbackRevisionPolicyName = "console-olm-migration-rollback-v1"
 const rollbackRevisionPolicyMessage = "revision group is outside this migration's delegated target"
 
@@ -75,15 +79,45 @@ func requireRollbackRevisionPolicy(ctx context.Context, kubeClient client.Client
 		matches := false
 		switch desired := expected.(type) {
 		case *admissionv1.ValidatingAdmissionPolicy:
-			matches = reflect.DeepEqual(desired.Spec, actual.(*admissionv1.ValidatingAdmissionPolicy).Spec)
+			current := actual.(*admissionv1.ValidatingAdmissionPolicy).Spec
+			matches = current.ParamKind == nil && len(current.AuditAnnotations) == 0 &&
+				ptr.Deref(current.FailurePolicy, admissionv1.Fail) == admissionv1.Fail &&
+				rollbackPolicyMatchesResources(desired.Spec.MatchConstraints, current.MatchConstraints) &&
+				equality.Semantic.DeepEqual(desired.Spec.MatchConditions, current.MatchConditions) &&
+				equality.Semantic.DeepEqual(desired.Spec.Variables, current.Variables) &&
+				equality.Semantic.DeepEqual(desired.Spec.Validations, current.Validations)
 		case *admissionv1.ValidatingAdmissionPolicyBinding:
-			matches = reflect.DeepEqual(desired.Spec, actual.(*admissionv1.ValidatingAdmissionPolicyBinding).Spec)
+			current := actual.(*admissionv1.ValidatingAdmissionPolicyBinding).Spec
+			matches = current.PolicyName == desired.Spec.PolicyName && current.ParamRef == nil &&
+				rollbackPolicyMatchesResources(desired.Spec.MatchResources, current.MatchResources) &&
+				equality.Semantic.DeepEqual(desired.Spec.ValidationActions, current.ValidationActions)
 		}
 		if !matches {
 			return fmt.Errorf("rollback revision admission guard has an unexpected configuration")
 		}
 	}
 	return nil
+}
+
+// rollbackPolicyMatchesResources accepts API defaults while rejecting selectors, exclusions, or rules that weaken coverage.
+func rollbackPolicyMatchesResources(desired, current *admissionv1.MatchResources) bool {
+	if desired == nil {
+		desired = &admissionv1.MatchResources{}
+	}
+	if current == nil {
+		current = &admissionv1.MatchResources{}
+	}
+	selector := func(value *metav1.LabelSelector) *metav1.LabelSelector {
+		if value == nil {
+			return &metav1.LabelSelector{}
+		}
+		return value
+	}
+	return ptr.Deref(desired.MatchPolicy, admissionv1.Equivalent) == ptr.Deref(current.MatchPolicy, admissionv1.Equivalent) &&
+		equality.Semantic.DeepEqual(selector(desired.NamespaceSelector), selector(current.NamespaceSelector)) &&
+		equality.Semantic.DeepEqual(selector(desired.ObjectSelector), selector(current.ObjectSelector)) &&
+		equality.Semantic.DeepEqual(desired.ResourceRules, current.ResourceRules) &&
+		equality.Semantic.DeepEqual(desired.ExcludeResourceRules, current.ExcludeResourceRules)
 }
 
 // ensureRollbackRevisionPolicy installs the fixed guard using the caller's authorization, never backend credentials.
@@ -103,6 +137,7 @@ func ensureRollbackRevisionPolicy(ctx context.Context, kubeClient client.Client)
 
 // verifyRollbackRevisionPolicy waits for admission and RBAC propagation before a job becomes discoverable.
 // The empty probe manages no workloads, and every worker delete is a server-side dry run.
+// If caller cleanup is forbidden, its Namespace owner reference permits garbage collection at job cleanup.
 func verifyRollbackRevisionPolicy(ctx context.Context, caller, worker client.Client, namespace *corev1.Namespace) error {
 	probe := &ocv1.ClusterObjectSet{
 		ObjectMeta: metav1.ObjectMeta{Name: namespace.Name + "-probe", OwnerReferences: []metav1.OwnerReference{{APIVersion: "v1", Kind: "Namespace", Name: namespace.Name, UID: namespace.UID}}},
@@ -114,7 +149,9 @@ func verifyRollbackRevisionPolicy(ctx context.Context, caller, worker client.Cli
 	defer func() {
 		cleanupCtx, cancel := context.WithTimeout(context.WithoutCancel(ctx), 10*time.Second)
 		defer cancel()
-		_ = caller.Delete(cleanupCtx, probe, client.Preconditions{UID: &probe.UID}, client.PropagationPolicy(metav1.DeletePropagationOrphan))
+		if err := caller.Delete(cleanupCtx, probe, client.Preconditions{UID: &probe.UID}, client.PropagationPolicy(metav1.DeletePropagationOrphan)); client.IgnoreNotFound(err) != nil {
+			klog.Warningf("OLM rollback admission probe %s cleanup failed: error category=%s", probe.Name, migrationErrorCategory(err))
+		}
 	}()
 	return wait.PollUntilContextTimeout(ctx, 250*time.Millisecond, 30*time.Second, true, func(ctx context.Context) (bool, error) {
 		if err := requireRollbackRevisionPolicy(ctx, caller); err != nil {

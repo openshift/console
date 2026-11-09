@@ -1,7 +1,9 @@
 package olm
 
 import (
+	"bytes"
 	"context"
+	"crypto/sha256"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -26,11 +28,99 @@ import (
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime/schema"
+	"k8s.io/klog/v2"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/client/interceptor"
 
 	"github.com/openshift/console/pkg/auth"
 )
+
+// TestRollbackRevisionPolicyVersion pins both v1 Specs so changing enforcement requires a new shared name.
+func TestRollbackRevisionPolicyVersion(t *testing.T) {
+	objects := rollbackRevisionPolicyObjects()
+	policy := objects[0].(*admissionv1.ValidatingAdmissionPolicy)
+	binding := objects[1].(*admissionv1.ValidatingAdmissionPolicyBinding)
+	require.Equal(t, "console-olm-migration-rollback-v1", policy.Name)
+	require.Equal(t, policy.Name, binding.Name)
+	require.Equal(t, policy.Name, binding.Spec.PolicyName)
+	specs, err := json.Marshal([]interface{}{policy.Spec, binding.Spec})
+	require.NoError(t, err)
+	assert.Equal(t, "25e511c4fc37118e0b5c31757ba8334b4e7d5e5f444a8fb0ed6d46b382a59650", fmt.Sprintf("%x", sha256.Sum256(specs)), "version the policy name when either admission Spec changes")
+}
+
+// TestRollbackProbeCleanupLogsRedactedFailures reports cleanup problems without logging customer-controlled error data.
+func TestRollbackProbeCleanupLogsRedactedFailures(t *testing.T) {
+	for _, tt := range []struct {
+		name, category string
+		err            error
+	}{
+		{name: "success"},
+		{name: "already removed", err: apierrors.NewNotFound(ocv1.GroupVersion.WithResource("clusterobjectsets").GroupResource(), "probe")},
+		{name: "forbidden", category: "forbidden", err: apierrors.NewForbidden(ocv1.GroupVersion.WithResource("clusterobjectsets").GroupResource(), "customer-resource", errors.New("https://user:password@private.example?token=secret"))},
+		{name: "timeout", category: "timeout", err: context.DeadlineExceeded},
+		{name: "unprintable", category: "unexpected", err: migrationUnprintableError{}},
+	} {
+		t.Run(tt.name, func(t *testing.T) {
+			state := klog.CaptureState()
+			defer state.Restore()
+			var output bytes.Buffer
+			klog.SetOutput(&output)
+			klog.LogToStderr(false)
+			kubeClient := newMigrationTestClient(t, rollbackRevisionPolicyObjects()...)
+			caller := interceptor.NewClient(kubeClient.(client.WithWatch), interceptor.Funcs{Delete: func(ctx context.Context, cl client.WithWatch, object client.Object, options ...client.DeleteOption) error {
+				if tt.err != nil {
+					return tt.err
+				}
+				return cl.Delete(ctx, object, options...)
+			}})
+			worker := interceptor.NewClient(kubeClient.(client.WithWatch), interceptor.Funcs{Delete: func(context.Context, client.WithWatch, client.Object, ...client.DeleteOption) error {
+				return apierrors.NewForbidden(ocv1.GroupVersion.WithResource("clusterobjectsets").GroupResource(), "probe", errors.New(rollbackRevisionPolicyName+": "+rollbackRevisionPolicyMessage))
+			}})
+			namespace := &corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: migrationJobNamespacePrefix + "0123456789abcdef0123456789abcdef", UID: "namespace-uid"}}
+			require.NoError(t, verifyRollbackRevisionPolicy(context.Background(), caller, worker, namespace))
+			klog.Flush()
+			if tt.category == "" {
+				assert.Empty(t, output.String())
+			} else {
+				assert.Contains(t, output.String(), "OLM rollback admission probe "+namespace.Name+"-probe cleanup failed: error category="+tt.category)
+				assert.True(t, strings.HasPrefix(output.String(), "W"), "cleanup errors must be warnings")
+			}
+			for _, sensitive := range []string{"customer-resource", "private.example", "password", "token=secret"} {
+				assert.NotContains(t, output.String(), sensitive)
+			}
+			if tt.category != "" {
+				var probes ocv1.ClusterObjectSetList
+				require.NoError(t, kubeClient.List(context.Background(), &probes))
+				require.Len(t, probes.Items, 1)
+				assert.Equal(t, []metav1.OwnerReference{{APIVersion: "v1", Kind: "Namespace", Name: namespace.Name, UID: namespace.UID}}, probes.Items[0].OwnerReferences, "failed direct cleanup must retain the namespace GC fallback")
+			}
+		})
+	}
+}
+
+// TestRollbackRevisionPolicyDefaults accepts equivalent defaulted and empty representations without changing installed Specs.
+func TestRollbackRevisionPolicyDefaults(t *testing.T) {
+	objects := rollbackRevisionPolicyObjects()
+	policy := objects[0].(*admissionv1.ValidatingAdmissionPolicy)
+	policy.Spec.FailurePolicy = nil // Defaults to Fail.
+	policy.Spec.AuditAnnotations = []admissionv1.AuditAnnotation{}
+	policy.Spec.MatchConstraints.MatchPolicy = nil // Defaults to Equivalent.
+	policy.Spec.MatchConstraints.NamespaceSelector = nil
+	policy.Spec.MatchConstraints.ObjectSelector = &metav1.LabelSelector{MatchLabels: map[string]string{}, MatchExpressions: []metav1.LabelSelectorRequirement{}}
+	policy.Spec.MatchConstraints.ExcludeResourceRules = []admissionv1.NamedRuleWithOperations{}
+	policy.Spec.MatchConstraints.ResourceRules[0].ResourceNames = []string{}
+	binding := objects[1].(*admissionv1.ValidatingAdmissionPolicyBinding)
+	equivalent := admissionv1.Equivalent
+	binding.Spec.MatchResources = &admissionv1.MatchResources{
+		MatchPolicy: &equivalent, NamespaceSelector: &metav1.LabelSelector{}, ObjectSelector: &metav1.LabelSelector{},
+	}
+	kubeClient := newMigrationTestClient(t, objects...)
+	require.NoError(t, requireRollbackRevisionPolicy(context.Background(), kubeClient))
+	require.NoError(t, ensureRollbackRevisionPolicy(context.Background(), kubeClient))
+	var actual admissionv1.ValidatingAdmissionPolicy
+	require.NoError(t, kubeClient.Get(context.Background(), client.ObjectKey{Name: policy.Name}, &actual))
+	assert.Nil(t, actual.Spec.FailurePolicy, "verification must not rewrite an installed policy")
+}
 
 // TestRollbackPolicySetupDeniedDoesNotPublishWork refuses recovery before allocating execution credentials if the caller cannot install enforcement.
 func TestRollbackPolicySetupDeniedDoesNotPublishWork(t *testing.T) {
@@ -228,6 +318,23 @@ func TestRollbackRevisionPolicyRejectsModifiedGuard(t *testing.T) {
 		}},
 		{name: "skip workers", change: func(objects []client.Object) []client.Object {
 			objects[0].(*admissionv1.ValidatingAdmissionPolicy).Spec.MatchConditions[0].Expression = "false"
+			return objects
+		}},
+		{name: "binding selector", change: func(objects []client.Object) []client.Object {
+			objects[1].(*admissionv1.ValidatingAdmissionPolicyBinding).Spec.MatchResources = &admissionv1.MatchResources{ObjectSelector: &metav1.LabelSelector{MatchLabels: map[string]string{"skip": "workers"}}}
+			return objects
+		}},
+		{name: "excluded revisions", change: func(objects []client.Object) []client.Object {
+			policy := objects[0].(*admissionv1.ValidatingAdmissionPolicy)
+			policy.Spec.MatchConstraints.ExcludeResourceRules = policy.Spec.MatchConstraints.ResourceRules
+			return objects
+		}},
+		{name: "no revision rules", change: func(objects []client.Object) []client.Object {
+			objects[0].(*admissionv1.ValidatingAdmissionPolicy).Spec.MatchConstraints.ResourceRules = nil
+			return objects
+		}},
+		{name: "different binding", change: func(objects []client.Object) []client.Object {
+			objects[1].(*admissionv1.ValidatingAdmissionPolicyBinding).Spec.PolicyName = "other"
 			return objects
 		}},
 		{name: "job owned", change: func(objects []client.Object) []client.Object {
