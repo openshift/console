@@ -60,10 +60,20 @@ describe('segment-analytics telemetry gating (OCPBUGS-51368)', () => {
   it('still enables telemetry when an explicit SEGMENT_JS_URL is set without a host', () => {
     const { TELEMETRY_DISABLED } = loadModule({
       SEGMENT_PUBLIC_API_KEY: 'key',
+      SEGMENT_API_HOST: 'console.redhat.com/connections/api/v1',
       SEGMENT_JS_URL:
         'https://console.redhat.com/connections/cdn/analytics.js/v1/key/analytics.min.js',
     });
     expect(TELEMETRY_DISABLED).toBe(false);
+  });
+
+  it('disables telemetry when no API host is set, so events do not reach Segment directly', () => {
+    const { TELEMETRY_DISABLED } = loadModule({
+      SEGMENT_PUBLIC_API_KEY: 'key',
+      SEGMENT_JS_HOST: 'console.redhat.com/connections/cdn',
+      // no SEGMENT_API_HOST: the Segment SDK would otherwise default to api.segment.io
+    });
+    expect(TELEMETRY_DISABLED).toBe(true);
   });
 
   it('disables telemetry when no API key is present', () => {

@@ -9,7 +9,9 @@ const TELEMETRY_API_KEY =
   window.SERVER_FLAGS.telemetry?.SEGMENT_PUBLIC_API_KEY ||
   '';
 
-// Segment "apiHost" parameter, should be like "api.segment.io/v1"
+// Segment "apiHost" parameter, should be like "api.segment.io/v1". Required for telemetry:
+// without it the Segment SDK sends events to its default api.segment.io host, so telemetry is
+// disabled (see TELEMETRY_DISABLED) rather than letting events reach Segment directly.
 const TELEMETRY_API_HOST = window.SERVER_FLAGS.telemetry?.SEGMENT_API_HOST || '';
 
 // Segment JS host. Required for telemetry; there is deliberately no default. Console must not
@@ -29,6 +31,7 @@ const TELEMETRY_JS_URL =
 export const TELEMETRY_DISABLED =
   !TELEMETRY_API_KEY ||
   !TELEMETRY_JS_URL ||
+  !TELEMETRY_API_HOST ||
   window.SERVER_FLAGS.telemetry?.DISABLED === 'true' ||
   window.SERVER_FLAGS.telemetry?.DEVSANDBOX_DISABLED === 'true' ||
   window.SERVER_FLAGS.telemetry?.TELEMETER_CLIENT_DISABLED === 'true';
