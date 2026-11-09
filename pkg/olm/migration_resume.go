@@ -516,6 +516,7 @@ type migrationExecutionClient struct {
 	additionalLeaseCheck  func(context.Context) error
 	sourceSubscription    *operatorsv1alpha1.Subscription
 	rollbackSourceID      string
+	rollbackPolicy        bool
 	rollbackTargetName    string
 	rollbackDeploymentUID types.UID
 	rollbackTargetUID     types.UID
@@ -737,6 +738,11 @@ func (c *migrationExecutionClient) Patch(ctx context.Context, object client.Obje
 func (c *migrationExecutionClient) Delete(ctx context.Context, object client.Object, options ...client.DeleteOption) error {
 	if err := c.checkLease(ctx); err != nil {
 		return errMigrationSuspended
+	}
+	if _, revision := object.(*ocv1.ClusterObjectSet); revision && c.rollbackPolicy {
+		if err := requireRollbackRevisionPolicy(ctx, c.Client); err != nil {
+			return err
+		}
 	}
 	uid := object.GetUID()
 	if _, subscription := object.(*operatorsv1alpha1.Subscription); subscription && c.sourceSubscription != nil {

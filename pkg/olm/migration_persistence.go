@@ -166,6 +166,11 @@ func (o *OLMHandler) createDurableMigrationJob(ctx context.Context, migrator *mi
 	if err != nil {
 		return nil, err
 	}
+	if request.Rollback != nil && request.Rollback.RevisionPolicy {
+		if err := ensureRollbackRevisionPolicy(ctx, migrator.Client); err != nil {
+			return nil, err
+		}
+	}
 	permissions = append(permissions, migrationBackendPermissions(namespaceName, backend)...)
 	namespace := &corev1.Namespace{ObjectMeta: metav1.ObjectMeta{
 		Name:        namespaceName,
@@ -234,6 +239,25 @@ func (o *OLMHandler) createDurableMigrationJob(ctx context.Context, migrator *mi
 	}
 	if err := migrator.Client.Update(ctx, state); err != nil {
 		return nil, fmt.Errorf("save migration authorization deadline: %w", err)
+	}
+	if request.Rollback != nil && request.Rollback.RevisionPolicy {
+		// Use the caller for bootstrap reads; the backend's new RoleBinding may
+		// not have propagated yet. The probe itself uses only the worker token.
+		var credentials corev1.Secret
+		if err := migrator.Client.Get(ctx, client.ObjectKey{Name: migrationCredentialsSecretName, Namespace: namespace.Name}, &credentials); err != nil {
+			return nil, err
+		}
+		config, err := migrationCredentialConfig(migrator.RESTConfig, &credentials)
+		if err != nil {
+			return nil, err
+		}
+		worker, err := newMigrationClient(config)
+		if err != nil {
+			return nil, err
+		}
+		if err := verifyRollbackRevisionPolicy(ctx, migrator.Client, worker.Client, namespace); err != nil {
+			return nil, fmt.Errorf("verify rollback revision admission guard: %w", err)
+		}
 	}
 	index := &corev1.ConfigMap{ObjectMeta: metav1.ObjectMeta{
 		Name: namespace.Name, Namespace: migrationIndexNamespace,

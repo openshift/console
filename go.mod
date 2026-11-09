@@ -11,6 +11,7 @@ require (
 	github.com/devfile/registry-support/index/generator v0.0.0-20261002021000-21a67e3d75df
 	github.com/devfile/registry-support/registry-library v0.0.0-20261002021000-21a67e3d75df
 	github.com/golang/mock v1.7.0-rc.1
+	github.com/google/cel-go v0.31.0
 	github.com/gorilla/securecookie v1.1.2
 	github.com/gorilla/sessions v1.4.0
 	github.com/gorilla/websocket v1.5.4-0.20250319132907-e064f32e3674
@@ -120,7 +121,6 @@ require (
 	github.com/gofrs/flock v0.13.0 // indirect
 	github.com/golang/groupcache v0.0.0-20241129210726-2c02b8208cf8 // indirect
 	github.com/google/btree v1.1.3 // indirect
-	github.com/google/cel-go v0.31.0 // indirect
 	github.com/google/gnostic-models v0.7.1 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/gorilla/mux v1.8.1 // indirect

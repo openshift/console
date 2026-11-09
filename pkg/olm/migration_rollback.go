@@ -32,6 +32,8 @@ type operatorMigrationRollbackJob struct {
 	TargetUID           types.UID                         `json:"targetUID,omitempty"`
 	Snapshot            operatorMigrationRecoverySnapshot `json:"snapshot"`
 	Restored            bool                              `json:"restored,omitempty"`
+	// RevisionPolicy requires admission to enforce the target boundary for future revisions.
+	RevisionPolicy bool `json:"revisionPolicy,omitempty"`
 }
 
 const rollbackTargetUIDAnnotation = "console.openshift.io/operator-migration-rollback-target-uid"
@@ -114,6 +116,27 @@ func prepareRollbackExecutionPermissions(ctx context.Context, kubeClient client.
 	names := []string{snapshot.ClusterObjectSetName}
 	for _, set := range sets {
 		names = append(names, set.Name)
+	}
+	deployment, err := migrationDeployment(ctx, kubeClient, snapshot.ClusterExtensionName)
+	if err != nil {
+		return nil, err
+	}
+	deploymentKnown := snapshot.UseClusterObjectDeployment || deployment != nil
+	if !deploymentKnown {
+		var checkpoint corev1.Secret
+		if err := kubeClient.Get(ctx, client.ObjectKey{Namespace: rollback.CheckpointNamespace, Name: rollback.CheckpointName}, &checkpoint); err != nil {
+			return nil, err
+		}
+		deploymentKnown = checkpoint.Annotations[rollbackDeploymentUIDAnnotation] != ""
+	}
+	if deploymentKnown {
+		// Future revision names are not known yet. Admission checks the worker's
+		// exact-name ClusterExtension delete grant for each revision's group.
+		// This is not an ownership-UID boundary; see README.md for the security
+		// review required before merging this authorization mechanism.
+		rollback.RevisionPolicy = true
+		names = nil
+		clusterRules = append(clusterRules, migrationRule("admissionregistration.k8s.io", []string{"validatingadmissionpolicies", "validatingadmissionpolicybindings"}, []string{"get"}, []string{rollbackRevisionPolicyName}))
 	}
 	clusterRules = append(clusterRules, migrationRule("olm.operatorframework.io", []string{"clusterobjectsets"}, []string{"delete"}, names))
 	_, subName, _ := splitSubscriptionRef(snapshot.SubscriptionRef)
@@ -306,6 +329,12 @@ func (c *migrationCoordinator) completeSourceRecovery(ctx context.Context, rollb
 
 // executeRollback preserves the backup until resource restoration has a durable completion checkpoint.
 func executeRollback(ctx context.Context, guard *migrationExecutionClient, rollback *operatorMigrationRollbackJob, saveRestored func() error) error {
+	guard.rollbackPolicy = rollback.RevisionPolicy
+	if rollback.RevisionPolicy {
+		if err := requireRollbackRevisionPolicy(ctx, guard.Client); err != nil {
+			return err
+		}
+	}
 	var checkpoint corev1.Secret
 	err := guard.Get(ctx, client.ObjectKey{Namespace: rollback.CheckpointNamespace, Name: rollback.CheckpointName}, &checkpoint)
 	if apierrors.IsNotFound(err) && rollback.Restored {
