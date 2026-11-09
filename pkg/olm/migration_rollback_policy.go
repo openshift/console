@@ -140,9 +140,10 @@ func ensureRollbackRevisionPolicy(ctx context.Context, kubeClient client.Client)
 // If caller cleanup is forbidden, its Namespace owner reference permits garbage collection at job cleanup.
 func verifyRollbackRevisionPolicy(ctx context.Context, caller, worker client.Client, namespace *corev1.Namespace) error {
 	probe := &ocv1.ClusterObjectSet{
-		ObjectMeta: metav1.ObjectMeta{Name: namespace.Name + "-probe", OwnerReferences: []metav1.OwnerReference{{APIVersion: "v1", Kind: "Namespace", Name: namespace.Name, UID: namespace.UID}}},
+		ObjectMeta: metav1.ObjectMeta{OwnerReferences: []metav1.OwnerReference{{APIVersion: "v1", Kind: "Namespace", Name: namespace.Name, UID: namespace.UID}}},
 		Spec:       ocv1.ClusterObjectSetSpec{Group: "rollback-probe-" + strings.TrimPrefix(namespace.Name, migrationJobNamespacePrefix), Revision: 1, LifecycleState: ocv1.ClusterObjectSetLifecycleStateActive, CollisionProtection: ocv1.CollisionProtectionPrevent},
 	}
+	probe.Name = fmt.Sprintf("%s-%d", probe.Spec.Group, probe.Spec.Revision)
 	if err := caller.Create(ctx, probe); err != nil {
 		return fmt.Errorf("create rollback admission probe: %w", err)
 	}

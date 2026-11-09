@@ -82,7 +82,7 @@ func TestRollbackProbeCleanupLogsRedactedFailures(t *testing.T) {
 			if tt.category == "" {
 				assert.Empty(t, output.String())
 			} else {
-				assert.Contains(t, output.String(), "OLM rollback admission probe "+namespace.Name+"-probe cleanup failed: error category="+tt.category)
+				assert.Contains(t, output.String(), "OLM rollback admission probe rollback-probe-0123456789abcdef0123456789abcdef-1 cleanup failed: error category="+tt.category)
 				assert.True(t, strings.HasPrefix(output.String(), "W"), "cleanup errors must be warnings")
 			}
 			for _, sensitive := range []string{"customer-resource", "private.example", "password", "token=secret"} {
@@ -366,7 +366,13 @@ func TestRollbackRevisionPolicyRejectsModifiedGuard(t *testing.T) {
 func TestRollbackRevisionPolicyProbe(t *testing.T) {
 	for _, enforced := range []bool{false, true} {
 		t.Run(fmt.Sprintf("enforced=%t", enforced), func(t *testing.T) {
-			caller := newMigrationTestClient(t, rollbackRevisionPolicyObjects()...)
+			kubeClient := newMigrationTestClient(t, rollbackRevisionPolicyObjects()...)
+			caller := interceptor.NewClient(kubeClient.(client.WithWatch), interceptor.Funcs{Create: func(ctx context.Context, cl client.WithWatch, object client.Object, options ...client.CreateOption) error {
+				probe, ok := object.(*ocv1.ClusterObjectSet)
+				require.True(t, ok)
+				require.Equal(t, fmt.Sprintf("%s-%d", probe.Spec.Group, probe.Spec.Revision), probe.Name, "the probe must satisfy ClusterObjectSet CRD name validation")
+				return cl.Create(ctx, object, options...)
+			}})
 			attempts := 0
 			worker := interceptor.NewClient(caller.(client.WithWatch), interceptor.Funcs{Delete: func(_ context.Context, _ client.WithWatch, object client.Object, options ...client.DeleteOption) error {
 				assert.Equal(t, []string{metav1.DryRunAll}, (&client.DeleteOptions{}).ApplyOptions(options).DryRun)
