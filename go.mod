@@ -14,9 +14,9 @@ require (
 	github.com/gorilla/securecookie v1.1.2
 	github.com/gorilla/sessions v1.4.0
 	github.com/gorilla/websocket v1.5.4-0.20250319132907-e064f32e3674
-	github.com/openshift/api v0.0.0-20261002115817-f8795cdde518
-	github.com/openshift/client-go v0.0.0-20261001003915-dcaad1dc7fe8
-	github.com/openshift/library-go v0.0.0-20261001144932-192662696fc7
+	github.com/openshift/api v0.0.0-20261107000926-248dd91956ce
+	github.com/openshift/client-go v0.0.0-20261027103500-48133ed95dad
+	github.com/openshift/library-go v0.0.0-20261109153404-875016c9e2f8
 	github.com/operator-framework/api v0.45.0
 	github.com/operator-framework/kubectl-operator v0.4.0
 	github.com/operator-framework/library-olm v0.0.0-20261019143039-d7f9c14d41ff
@@ -39,6 +39,7 @@ require (
 	k8s.io/api v0.37.1
 	k8s.io/apiextensions-apiserver v0.37.1
 	k8s.io/apimachinery v0.37.1
+	k8s.io/apiserver v0.37.1
 	k8s.io/cli-runtime v0.37.1
 	k8s.io/client-go v0.37.1
 	k8s.io/klog/v2 v2.140.0
@@ -225,7 +226,6 @@ require (
 	gopkg.in/go-jose/go-jose.v2 v2.6.3 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/warnings.v0 v0.1.2 // indirect
-	k8s.io/apiserver v0.37.1 // indirect
 	k8s.io/component-base v0.37.1 // indirect
 	k8s.io/klog v1.0.0 // indirect
 	k8s.io/kube-openapi v0.0.0-20260721132016-d427ff9ee9ad // indirect
