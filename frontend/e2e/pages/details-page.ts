@@ -54,17 +54,23 @@ export class DetailsPage extends BasePage {
     await this.robustClick(this.page.getByTestId('debug-container-link'));
   }
 
-  async clickStatusButton(): Promise<void> {
+  async clickStatusButton(timeout = 30_000): Promise<void> {
     await this.robustClick(this.page.getByTestId('popover-status-button'), {
-      timeout: 30_000,
+      timeout,
       force: true,
     });
   }
 
   async clickDebugContainerLink(containerName: string): Promise<void> {
-    await this.robustClick(this.page.getByTestId(`popup-debug-container-link-${containerName}`), {
-      timeout: 30_000,
-    });
+    const debugLink = this.page.getByTestId(`popup-debug-container-link-${containerName}`);
+    // A re-render can close the status popover before the debug link is clicked.
+    await expect(async () => {
+      if (!(await debugLink.isVisible())) {
+        await this.clickStatusButton(10_000);
+      }
+      await expect(debugLink).toBeVisible({ timeout: 5_000 });
+      await debugLink.click({ timeout: 5_000 });
+    }).toPass({ timeout: 30_000 });
   }
 
   async waitForTerminalReady(timeout = 120_000): Promise<void> {
