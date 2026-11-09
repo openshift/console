@@ -1,4 +1,3 @@
-/* eslint-disable oxc/no-barrel-file */
 // re-export for convenience
 export type {
   OdcNodeModel,

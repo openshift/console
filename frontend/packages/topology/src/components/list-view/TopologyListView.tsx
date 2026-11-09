@@ -151,14 +151,12 @@ const ConnectedTopologyListView: FC<
       return newVisualization;
     };
 
-    // eslint-disable-next-line react-hooks-js/refs -- Lazy initialization: visualization must be available in the same render
     const visualizationRef = useRef<Visualization>(undefined);
     if (!visualizationRef.current) {
-      // eslint-disable-line react-hooks-js/refs -- lazy init: checks if visualization exists before creating
-      visualizationRef.current = createVisualization(); // eslint-disable-line react-hooks-js/refs -- lazy init: creates visualization synchronously on first render
+      visualizationRef.current = createVisualization();
     }
 
-    const visualization = visualizationRef.current; // eslint-disable-line react-hooks-js/refs -- lazy init: reads synchronously created visualization
+    const visualization = visualizationRef.current;
 
     useEffect(() => {
       if (visualization) {

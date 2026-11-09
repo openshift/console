@@ -160,8 +160,6 @@ export const SecretFormWrapper: FC<BaseEditSecretProps> = (props) => {
   };
 
   const renderBody = () => (
-    // eslint-disable-next-line @typescript-eslint/no-use-before-define
-
     <Form>
       <FormGroup label={t('Secret name')} isRequired fieldId="secret-name">
         <TextInput

@@ -36,7 +36,6 @@ const RowMemo = memo<
     style: React.CSSProperties;
   }
 >(
-  // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
   ({ Row, isScrolling, style, ...props }) => <Row {...props} />,
   (_, nextProps) => {
     if (nextProps.isScrolling) {

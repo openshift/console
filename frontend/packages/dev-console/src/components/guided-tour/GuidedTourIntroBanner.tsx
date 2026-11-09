@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-no-undef */
 import type { FC } from 'react';
 import { memo } from 'react';
 

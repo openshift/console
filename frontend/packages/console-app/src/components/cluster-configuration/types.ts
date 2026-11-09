@@ -1,4 +1,3 @@
-/* eslint-disable oxc/no-barrel-file */
 import type {
   ResolvedExtension,
   ClusterConfigurationGroup,

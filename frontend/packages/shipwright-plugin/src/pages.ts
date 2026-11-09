@@ -1,4 +1,3 @@
-/* eslint-disable oxc/no-barrel-file */
 export { default as BuildListPage } from './components/build-list/BuildListPage';
 export { default as BuildRunListPage } from './components/buildrun-list/BuildRunListPage';
 export { default as BuildDetailsPage } from './components/build-details/BuildDetailsPage';

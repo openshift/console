@@ -1101,7 +1101,6 @@ const RolesPage: FC<{ obj: K8sResourceKind }> = ({ obj: { metadata } }) => (
 const WorkloadsListPage: FC = (props) => (
   <AsyncComponent
     loader={() =>
-      // eslint-disable-next-line import/no-cycle -- import to this module is dynamic
       import('./overview' /* webpackChunkName: "overview" */).then((c) => c.OverviewListPage)
     }
     {...props}

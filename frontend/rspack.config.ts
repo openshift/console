@@ -114,7 +114,6 @@ const getWebpackSharedModules = (): Shared =>
 const getProvidedDynamicModules = (): Provides<false> =>
   Object.entries(dynamicModuleMaps).reduce<ProvidesObject<false>>(
     (acc, [moduleName, dynamicModuleMap]) => {
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const moduleVersion = require(`${moduleName}/package.json`).version;
       const version = semver.valid(moduleVersion) ? moduleVersion : undefined;
 

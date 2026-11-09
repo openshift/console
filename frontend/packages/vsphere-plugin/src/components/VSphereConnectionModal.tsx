@@ -16,7 +16,7 @@ import {
 } from '@patternfly/react-core';
 import { Formik, useFormikContext } from 'formik';
 import { isEqual } from 'lodash';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import * as Yup from 'yup';
 import type { SubsystemHealth } from '@console/dynamic-plugin-sdk';
 import { HealthState } from '@console/dynamic-plugin-sdk';
@@ -86,13 +86,13 @@ const VSphereConnectionModalAlert: FC<VSphereConnectionModalAlertProps> = ({ hea
 
   return (
     <Alert variant={AlertVariant.info} isInline title={t('Delayed propagation of configuration')}>
-      {t(
-        'The configuration process updates operator statuses and reboots nodes. This process typically takes about an hour. Existing resources such as previously bound Persistent Volume Claims might become disconnected.',
-      )}
-      <br />
-      {t(
-        'Note, that existing resources (like already bound PVCs) might get broken by these changes.',
-      )}
+      <Trans t={t} ns="vsphere-plugin">
+        The configuration process updates operator statuses and reboots nodes. This process
+        typically takes about an hour. Existing resources such as previously bound Persistent Volume
+        Claims might become disconnected.
+        <br />
+        Note, that existing resources (like already bound PVCs) might get broken by these changes.
+      </Trans>
     </Alert>
   );
 };
@@ -161,7 +161,10 @@ export const VSphereConnectionModal: FC<VSphereConnectionProps> = ({
       if (e instanceof PersistError) {
         setError({ title: e.message, message: e.detail });
       } else {
-        setError({ title: t('An error occured.'), message: getErrorMessage(t, e) });
+        setError({
+          title: t('An error occured.'),
+          message: getErrorMessage(t, e),
+        });
       }
     }
   };

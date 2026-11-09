@@ -3,8 +3,6 @@ import { PureComponent, useContext, memo, useMemo, Suspense } from 'react';
 import { Tabs, Tab, TabTitleText } from '@patternfly/react-core';
 import type { TFunction } from 'i18next';
 import * as _ from 'lodash';
-import { Helmet } from 'react-helmet-async';
-/* eslint-disable import/named */
 import type { WithTranslation } from 'react-i18next';
 import { useTranslation, withTranslation } from 'react-i18next';
 import { Routes, Route, useParams, Navigate, useLocation, useNavigate } from 'react-router';
@@ -23,6 +21,7 @@ import {
 } from '@console/dynamic-plugin-sdk/src/extensions/horizontal-nav-tabs';
 import { useDeepCompareMemoize } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useDeepCompareMemoize';
 import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { ErrorBoundaryPage } from '@console/shared/src/components/error/fallbacks/ErrorBoundaryPage';
 import PageBody from '@console/shared/src/components/layout/PageBody';
 import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
@@ -224,13 +223,13 @@ export const NavBar: FC<NavBarProps> = ({ pages, activeTab, basePath }) => {
   const labelId = activePage?.nameKey?.split('~')[1] || activePage?.name || 'Details';
   return (
     <>
-      <Helmet>
-        <title data-telemetry={telemetryPrefix ? `${telemetryPrefix} · ${labelId}` : labelId}>
-          {titlePrefix
-            ? `${titlePrefix} · ${activePage?.nameKey ? t(activePage.nameKey) : activePage?.name}`
-            : `${activePage?.nameKey ? t(activePage.nameKey) : activePage?.name}`}
-        </title>
-      </Helmet>
+      <DocumentTitle
+        __internal_data_telemetry={telemetryPrefix ? `${telemetryPrefix} · ${labelId}` : labelId}
+      >
+        {titlePrefix
+          ? `${titlePrefix} · ${activePage?.nameKey ? t(activePage.nameKey) : activePage?.name}`
+          : `${activePage?.nameKey ? t(activePage.nameKey) : activePage?.name}`}
+      </DocumentTitle>
       {tabs}
     </>
   );

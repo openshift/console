@@ -108,9 +108,7 @@ const CloudShellTerminalContent: FC<CloudShellTerminalContentProps> = ({
   }, [
     operatorNamespace,
     unrecoverableErrorFound,
-    // eslint-disable-next-line react-hooks-js/exhaustive-deps
     workspace?.metadata?.name,
-    // eslint-disable-next-line react-hooks-js/exhaustive-deps
     workspace?.metadata?.namespace,
   ]);
 

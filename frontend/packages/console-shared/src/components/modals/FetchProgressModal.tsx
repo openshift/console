@@ -119,7 +119,6 @@ export const FetchProgressModal: FC<FetchProgressModalProps> = ({
 
       try {
         // Stream reading requires an indefinite loop that exits when done is true
-        // eslint-disable-next-line no-constant-condition
         while (true) {
           // Sequential reads are required; each chunk depends on the previous read completing
           // eslint-disable-next-line no-await-in-loop

@@ -139,7 +139,6 @@ export const createRepositoryResources = async (
       url: gitUrl,
       ...(secretRef || gitHost !== 'github.com'
         ? {
-            // eslint-disable-next-line @typescript-eslint/naming-convention
             git_provider: {
               ...(!gitProviderTypesHosts.includes(gitHost) ? { url: gitHost } : {}),
               ...(gitHost === 'bitbucket.org'
@@ -153,7 +152,6 @@ export const createRepositoryResources = async (
                       name: secretRef?.metadata?.name,
                       key: 'provider.token',
                     },
-                    // eslint-disable-next-line @typescript-eslint/naming-convention
                     webhook_secret: {
                       name: secretRef?.metadata?.name,
                       key: 'webhook.secret',

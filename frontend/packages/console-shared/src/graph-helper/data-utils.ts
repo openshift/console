@@ -1,4 +1,3 @@
-/* eslint-disable oxc/no-barrel-file */
 import * as _ from 'lodash';
 import { ByteDataTypes } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import type { DataPoint } from '@console/internal/components/graphs/types';

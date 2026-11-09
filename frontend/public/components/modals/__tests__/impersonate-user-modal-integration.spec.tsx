@@ -173,7 +173,6 @@ describe('ImpersonateUserModal Integration Tests', () => {
       await user.click(developersOption);
 
       // Verify group chip appears
-      // eslint-disable-next-line testing-library/no-node-access -- PatternFly chips don't have accessible test IDs
       await waitFor(() => {
         // eslint-disable-next-line testing-library/no-node-access -- PatternFly chips don't have accessible test IDs
         const chips = document.querySelectorAll('.pf-v6-c-label');
