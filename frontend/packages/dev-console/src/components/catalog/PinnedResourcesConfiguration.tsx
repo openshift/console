@@ -65,6 +65,55 @@ type PinnedResourcesConfigurationProps = {
   allK8sModels: Record<string, K8sModel>;
 };
 
+type ItemProps = { title?: string; model?: K8sKind; showGroup?: boolean };
+
+// Module-level so the component identity is stable across renders. Components
+// defined in the render body get a new identity every render, which breaks
+// memoization and is unsafe under the React Compiler.
+const Item = memo<ItemProps>(({ model, showGroup }) => {
+  const { t } = useTranslation('devconsole');
+  return (
+    <div style={{ display: 'flex', alignItems: 'center' }}>
+      <span className="co-resource-item">
+        <span className="co-resource-icon--fixed-width">
+          <ResourceIcon kind={referenceForModel(model)} />
+        </span>
+        <span className="co-resource-item__resource-name">
+          <span>
+            {model.labelKey ? t(model.labelKey) : model.kind}
+            {model.badge && model.badge === 'Tech Preview' && (
+              <span className="co-resource-item__tech-dev-preview">{t('Technology Preview')}</span>
+            )}
+          </span>
+          {showGroup && (
+            <div className="pf-v6-u-font-size-xs pf-v6-u-text-color-subtle co-truncate co-nowrap">
+              {model.apiGroup || 'core'}/{model.apiVersion}
+            </div>
+          )}
+        </span>
+      </span>
+    </div>
+  );
+});
+
+const InvalidItem = memo<ItemProps>(({ title }) => {
+  const { t } = useTranslation('devconsole');
+  return (
+    <div style={{ display: 'flex', alignItems: 'center' }}>
+      <span className="co-resource-icon--fixed-width">
+        <Tooltip position="top" content={t('Resource not found')}>
+          <Icon size="md">
+            <YellowExclamationTriangleIcon />
+          </Icon>
+        </Tooltip>
+      </span>
+      <span className="co-resource-item__resource-name">
+        <span>{title}</span>
+      </span>
+    </div>
+  );
+});
+
 const PinnedResourcesConfiguration: FC<PinnedResourcesConfigurationProps> = ({
   readonly,
   allK8sModels,
@@ -124,46 +173,6 @@ const PinnedResourcesConfiguration: FC<PinnedResourcesConfigurationProps> = ({
   const kinds = useMemo(() => _.groupBy(resources, (m) => m.kind), [resources]);
   const isDup = (kind) => kinds[kind]?.length > 1;
 
-  type ItemProps = { title?: string; model?: K8sKind };
-
-  const Item = memo<ItemProps>(({ model }) => (
-    <div style={{ display: 'flex', alignItems: 'center' }}>
-      <span className="co-resource-item">
-        <span className="co-resource-icon--fixed-width">
-          <ResourceIcon kind={referenceForModel(model)} />
-        </span>
-        <span className="co-resource-item__resource-name">
-          <span>
-            {model.labelKey ? t(model.labelKey) : model.kind}
-            {model.badge && model.badge === 'Tech Preview' && (
-              <span className="co-resource-item__tech-dev-preview">{t('Technology Preview')}</span>
-            )}
-          </span>
-          {isDup(model.kind) && (
-            <div className="pf-v6-u-font-size-xs pf-v6-u-text-color-subtle co-truncate co-nowrap">
-              {model.apiGroup || 'core'}/{model.apiVersion}
-            </div>
-          )}
-        </span>
-      </span>
-    </div>
-  ));
-
-  const InvalidItem = memo<ItemProps>(({ title }) => (
-    <div style={{ display: 'flex', alignItems: 'center' }}>
-      <span className="co-resource-icon--fixed-width">
-        <Tooltip position="top" content={t('Resource not found')}>
-          <Icon size="md">
-            <YellowExclamationTriangleIcon />
-          </Icon>
-        </Tooltip>
-      </span>
-      <span className="co-resource-item__resource-name">
-        <span>{title}</span>
-      </span>
-    </div>
-  ));
-
   const [consoleConfig, consoleConfigLoaded, consoleConfigError] =
     useConsoleOperatorConfig<PerspectivesConsoleConfig>();
 
@@ -217,9 +226,14 @@ const PinnedResourcesConfiguration: FC<PinnedResourcesConfigurationProps> = ({
   const items = useMemo(
     () =>
       resources.map((model: K8sKind) => (
-        <Item title={model.labelKey ? t(model.labelKey) : model.kind} model={model} />
+        <Item
+          title={model.labelKey ? t(model.labelKey) : model.kind}
+          model={model}
+          showGroup={isDup(model.kind)}
+        />
       )),
-    [resources, t, Item],
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps -- isDup derives from kinds, which derives from resources
+    [resources, t],
   );
 
   const availableResources = useMemo<React.ReactElement<ItemProps>[]>(() => {
@@ -256,7 +270,7 @@ const PinnedResourcesConfiguration: FC<PinnedResourcesConfigurationProps> = ({
     });
     configuredResources = configuredResources?.filter((element) => element !== undefined);
     return configuredResources || [];
-  }, [consoleConfigLoaded, items, pinnedResources, InvalidItem]);
+  }, [consoleConfigLoaded, items, pinnedResources]);
 
   const [saveStatus, setSaveStatus] = useState<SaveStatusProps>();
   const save = useDebounceCallback(() => {
