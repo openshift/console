@@ -12,11 +12,23 @@ export const t = ((key: string, interpolation: Record<string, string>) => {
   return result;
 }) as TFunction;
 
+// Spreading the i18next instance drops EventEmitter methods from its prototype, but
+// react-i18next's useTranslation subscribes to them (i18n.on / i18n.store.on) on mount.
+const on = jest.fn();
+const off = jest.fn();
+const store = { on, off };
+
 module.exports = {
   ...i18next,
+  on,
+  off,
+  store,
   t,
   default: {
     ...i18next.default,
+    on,
+    off,
+    store,
     use() {
       return this;
     },

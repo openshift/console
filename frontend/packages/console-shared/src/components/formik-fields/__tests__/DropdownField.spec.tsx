@@ -22,7 +22,7 @@ describe('DropdownField', () => {
       expect.objectContaining({
         autocompleteFilter: mockFilterFn,
       }),
-      {},
+      undefined,
     );
   });
 });

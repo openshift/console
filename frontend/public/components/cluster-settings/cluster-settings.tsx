@@ -782,7 +782,7 @@ const detectOperatorIssues = (
 // Helper function to parse and improve error messages for better user experience
 const parseUpdateFailureMessage = (
   rawMessage: string,
-  t: (key: string, options?: { [key: string]: string | number }) => string,
+  t: ReturnType<typeof useTranslation>['t'],
   cv?: ClusterVersionKind,
   clusterOperators?: ClusterOperator[],
 ): { title: string; message: string; operatorDetails?: string } => {
@@ -1113,7 +1113,7 @@ interface AlertContentProps {
   desiredVersion: string;
   showPreCheck: boolean;
   cv: ClusterVersionKind;
-  t: (key: string, options?: { [key: string]: string | number }) => string;
+  t: ReturnType<typeof useTranslation>['t'];
 }
 
 const UpdateAlertContent: FC<AlertContentProps> = ({
