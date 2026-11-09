@@ -107,6 +107,9 @@ export class YamlEditorPage extends BasePage {
   async setFontSize(size: number): Promise<void> {
     const input = this.getFontSizeInput();
     await input.fill(String(size));
+    // PF6 NumberInput commits its value on blur.
+    await input.evaluate((el) => el.blur());
+    await expect(input).toHaveValue(String(size));
   }
 
   async showSidebar(): Promise<void> {
