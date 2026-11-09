@@ -112,12 +112,18 @@ func bindMigrationDeployment(ctx context.Context, kubeClient client.Client, chec
 		return nil, err
 	}
 	saved := types.UID(checkpoint.Annotations[rollbackDeploymentUIDAnnotation])
+	extensionUID := extension.UID
+	if extensionUID == "" {
+		// Orphan deletion can leave this owner reference after the extension is
+		// gone. Only an identity verified before deletion authorizes recovery.
+		extensionUID = types.UID(checkpoint.Annotations[rollbackTargetUIDAnnotation])
+	}
 	if deployment != nil {
 		if deployment.UID == "" || saved != "" && saved != deployment.UID || deployment.Annotations[migrationExecutionAnnotation] != checkpoint.Annotations[migrationExecutionAnnotation] ||
 			deployment.Annotations[migration.MigratedFromSubscriptionAnnotation] != snapshot.SubscriptionRef {
 			return nil, rollbackConflict("rollback deployment belongs to another execution")
 		}
-		if owner := metav1.GetControllerOf(deployment); owner != nil && (owner.APIVersion != ocv1.GroupVersion.String() || owner.Kind != ocv1.ClusterExtensionKind || owner.Name != extension.Name || owner.UID != extension.UID || extension.UID == "") {
+		if owner := metav1.GetControllerOf(deployment); owner != nil && (owner.APIVersion != ocv1.GroupVersion.String() || owner.Kind != ocv1.ClusterExtensionKind || owner.Name != snapshot.ClusterExtensionName || owner.UID != extensionUID || extensionUID == "") {
 			return nil, rollbackConflict("rollback deployment is controlled by another extension")
 		}
 		saved = deployment.UID

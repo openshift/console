@@ -198,6 +198,64 @@ func TestRollbackRejectsForeignDeploymentAndRevisionsBeforeStoppingControllers(t
 	}
 }
 
+// A restart between controller deletions must retain the verified extension identity.
+func TestRollbackDeploymentResumesAfterExtensionDeletion(t *testing.T) {
+	for _, tt := range []struct {
+		name       string
+		forgetUID  bool
+		foreignUID bool
+	}{
+		{name: "verified deleted extension"},
+		{name: "missing extension identity", forgetUID: true},
+		{name: "different extension owner", foreignUID: true},
+	} {
+		t.Run(tt.name, func(t *testing.T) {
+			ctx := context.Background()
+			kubeClient, job, checkpoint, snapshot := seedFailedRollback(t)
+			snapshot.UseClusterObjectDeployment = true
+			annotations := map[string]string{migrationExecutionAnnotation: job.ID, migration.MigratedFromSubscriptionAnnotation: snapshot.SubscriptionRef}
+			extension := &ocv1.ClusterExtension{ObjectMeta: metav1.ObjectMeta{Name: "demo", UID: "extension-uid", Annotations: annotations}}
+			require.NoError(t, kubeClient.Create(ctx, extension))
+			deployment := &ocv1.ClusterObjectDeployment{ObjectMeta: metav1.ObjectMeta{Name: "demo", UID: "deployment-uid", Annotations: annotations,
+				OwnerReferences: []metav1.OwnerReference{*metav1.NewControllerRef(extension, ocv1.GroupVersion.WithKind(ocv1.ClusterExtensionKind))}}}
+			require.NoError(t, kubeClient.Create(ctx, deployment))
+			rollback := &operatorMigrationRollbackJob{SourceJobID: job.ID, CheckpointName: checkpoint.Name, CheckpointNamespace: checkpoint.Namespace, CheckpointUID: checkpoint.UID, Snapshot: *snapshot}
+			guard := rollbackTestGuard(t, kubeClient, job.ID)
+			interrupted := errors.New("deployment deletion interrupted")
+			guard.Client = interceptor.NewClient(kubeClient.(client.WithWatch), interceptor.Funcs{Delete: func(ctx context.Context, cl client.WithWatch, object client.Object, options ...client.DeleteOption) error {
+				if _, ok := object.(*ocv1.ClusterObjectDeployment); ok {
+					return interrupted
+				}
+				return cl.Delete(ctx, object, options...)
+			}})
+			require.ErrorIs(t, executeRollback(ctx, guard, rollback, func() error { t.Fatal("unfinished rollback"); return nil }), interrupted)
+			require.True(t, apierrors.IsNotFound(kubeClient.Get(ctx, client.ObjectKeyFromObject(extension), &ocv1.ClusterExtension{})))
+			require.NoError(t, kubeClient.Get(ctx, client.ObjectKeyFromObject(checkpoint), checkpoint))
+			require.Equal(t, string(extension.UID), checkpoint.Annotations[rollbackTargetUIDAnnotation])
+			if tt.forgetUID {
+				delete(checkpoint.Annotations, rollbackTargetUIDAnnotation)
+				require.NoError(t, kubeClient.Update(ctx, checkpoint))
+			}
+			if tt.foreignUID {
+				deployment.OwnerReferences[0].UID = "foreign-extension-uid"
+				require.NoError(t, kubeClient.Update(ctx, deployment))
+			}
+			rollback.TargetUID = "" // Only checkpoint state survives the interrupted execution.
+			replacement := rollbackTestGuard(t, kubeClient, job.ID)
+			err := bindRollbackTarget(ctx, replacement, rollback, checkpoint)
+			if tt.forgetUID || tt.foreignUID {
+				require.True(t, apierrors.IsConflict(err), "%v", err)
+				require.NoError(t, kubeClient.Get(ctx, client.ObjectKeyFromObject(deployment), &ocv1.ClusterObjectDeployment{}))
+				return
+			}
+			require.NoError(t, err)
+			require.NoError(t, (&OLMHandler{}).rollbackFromOperatorMigrationCheckpoint(ctx, replacement, checkpoint, snapshot, true))
+			require.True(t, apierrors.IsNotFound(kubeClient.Get(ctx, client.ObjectKeyFromObject(deployment), &ocv1.ClusterObjectDeployment{})))
+			require.NoError(t, kubeClient.Get(ctx, client.ObjectKey{Name: "demo", Namespace: "operators"}, &operatorsv1alpha1.Subscription{}))
+		})
+	}
+}
+
 func TestMigrationDeploymentPlan(t *testing.T) {
 	for _, deployment := range []bool{false, true} {
 		plan := newOperatorMigrationPlan(migration.Options{ClusterExtensionName: "demo"}, &migration.MigrationInfo{UseClusterObjectDeployment: deployment})
