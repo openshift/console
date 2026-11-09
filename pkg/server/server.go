@@ -743,6 +743,7 @@ func (s *Server) handleKnativeChannelCRDs(w http.ResponseWriter, r *http.Request
 	s.KnativeChannelCRDLister.HandleResources(w, r)
 }
 
+// indexHandler renders Console with a per-request CSP nonce or rejects invalid policy configuration with HTTP 500.
 func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 	if serverutils.IsUnsupportedBrowser(r) {
 		serverutils.SendUnsupportedBrowserResponse(w, s.Branding)
@@ -769,7 +770,9 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 	if s.CSPMode == serverconfig.CSPModeEnforce {
 		headerName = "Content-Security-Policy"
 	}
-	w.Header().Set(headerName, strings.Join(cspDirectives, "; "))
+	cspHeaderValue := strings.Join(cspDirectives, "; ")
+	w.Header().Set(headerName, cspHeaderValue)
+	klog.V(4).Infof("%s: %s", headerName, cspHeaderValue)
 
 	jsg := &jsGlobals{
 		AddPage:                   s.AddPage,

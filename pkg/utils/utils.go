@@ -56,6 +56,7 @@ func RandomString(length int) (string, error) {
 // BuildCSPDirectives takes the content security policy configuration from the server and constructs
 // a complete set of directives for the configured Content-Security-Policy header mode.
 // The constructed directives will include the default sources and the supplied configuration.
+// Sources containing policy, directive, or header separators return an error without a partial policy.
 func BuildCSPDirectives(k8sMode string, pluginsCSP serverconfig.MultiKeyValue, indexPageScriptNonce string, cspReportingEndpoint string) ([]string, error) {
 	nonce := fmt.Sprintf("'nonce-%s'", indexPageScriptNonce)
 

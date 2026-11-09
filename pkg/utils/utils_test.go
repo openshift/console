@@ -32,6 +32,7 @@ const (
 	frameAncestorsDirective = "frame-ancestors 'none'"
 )
 
+// TestBuildCSPDirectives checks default and configured sources in both cluster modes.
 func TestBuildCSPDirectives(t *testing.T) {
 	tests := []struct {
 		name                  string
@@ -205,20 +206,24 @@ func TestBuildCSPDirectives(t *testing.T) {
 	}
 }
 
+// TestBuildCSPDirectivesRejectsDirectiveInjection rejects directive and header separators without a partial policy.
 func TestBuildCSPDirectivesRejectsDirectiveInjection(t *testing.T) {
 	for _, directive := range []string{"default-src", "script-src", "style-src", "img-src", "font-src", "connect-src"} {
-		for _, source := range []string{
-			"https://plugin.example; object-src 'self'",
-			"https://plugin.example; media-src 'self'",
-			"https://plugin.example; child-src 'self'",
-			"https://plugin.example; worker-src blob:",
-			"https://plugin.example;",
-			"https://plugin.example\r\nContent-Security-Policy: object-src 'self'",
-			"https://plugin.example\nobject-src 'self'",
+		for _, test := range []struct {
+			name   string
+			source string
+		}{
+			{"semicolon-object-src", "https://plugin.example; object-src 'self'"},
+			{"semicolon-media-src", "https://plugin.example; media-src 'self'"},
+			{"semicolon-child-src", "https://plugin.example; child-src 'self'"},
+			{"semicolon-worker-src", "https://plugin.example; worker-src blob:"},
+			{"trailing-semicolon", "https://plugin.example;"},
+			{"crlf-header", "https://plugin.example\r\nContent-Security-Policy: object-src 'self'"},
+			{"line-feed-directive", "https://plugin.example\nobject-src 'self'"},
 		} {
-			t.Run(directive+"/"+source, func(t *testing.T) {
+			t.Run(directive+"/"+test.name, func(t *testing.T) {
 				config := serverconfig.MultiKeyValue{}
-				if err := config.Set(directive + "=" + source); err != nil {
+				if err := config.Set(directive + "=" + test.source); err != nil {
 					t.Fatal(err)
 				}
 				policy, err := BuildCSPDirectives("on-cluster", config, "nonce", "")
@@ -233,6 +238,7 @@ func TestBuildCSPDirectivesRejectsDirectiveInjection(t *testing.T) {
 	}
 }
 
+// TestBuildCSPDirectivesPreservesValidSources accepts CSP keywords and URL-encoded separators.
 func TestBuildCSPDirectivesPreservesValidSources(t *testing.T) {
 	config := serverconfig.MultiKeyValue{}
 	if err := config.Set("script-src=https://plugin.example 'unsafe-eval',connect-src=https://api.example/path%3Bsegment%2Cpart https://backup.example"); err != nil {
@@ -257,6 +263,7 @@ func TestBuildCSPDirectivesPreservesValidSources(t *testing.T) {
 	}
 }
 
+// TestBuildCSPDirectivesRejectsMultiplePolicies rejects literal policy separators in direct map inputs.
 func TestBuildCSPDirectivesRejectsMultiplePolicies(t *testing.T) {
 	for _, directive := range []string{"default-src", "script-src", "style-src", "img-src", "font-src", "connect-src"} {
 		t.Run(directive, func(t *testing.T) {

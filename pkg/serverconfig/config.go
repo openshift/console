@@ -425,6 +425,7 @@ func isAlreadySet(fs *flag.FlagSet, name string) bool {
 	return alreadySet
 }
 
+// addContentSecurityPolicy merges YAML directives below explicit flag values without reparsing source separators.
 func addContentSecurityPolicy(fs *flag.FlagSet, csp map[consolev1.DirectiveType][]string) error {
 	if len(csp) == 0 {
 		return nil

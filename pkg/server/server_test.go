@@ -1,6 +1,7 @@
 package server
 
 import (
+	"bytes"
 	"flag"
 	"fmt"
 	"net/http"
@@ -12,10 +13,13 @@ import (
 	"strings"
 	"testing"
 
+	"k8s.io/klog/v2"
+
 	"github.com/openshift/console/pkg/auth/csrfverifier"
 	"github.com/openshift/console/pkg/serverconfig"
 )
 
+// TestIndexHandlerCSPMode verifies header selection, nonces, and verbosity-gated policy logging.
 func TestIndexHandlerCSPMode(t *testing.T) {
 	publicDir := t.TempDir()
 	if err := os.WriteFile(filepath.Join(publicDir, "index.html"), []byte(`<script nonce="[[ .ScriptNonce ]]">window.SERVER_FLAGS = [[ .ServerFlags ]];</script>`), 0600); err != nil {
@@ -23,15 +27,28 @@ func TestIndexHandlerCSPMode(t *testing.T) {
 	}
 	var baseline string
 	for _, test := range []struct {
-		name   string
-		mode   serverconfig.CSPMode
-		header string
+		name      string
+		mode      serverconfig.CSPMode
+		header    string
+		verbosity string
 	}{
-		{"default", "", "Content-Security-Policy-Report-Only"},
-		{"report-only", serverconfig.CSPModeReportOnly, "Content-Security-Policy-Report-Only"},
-		{"enforce", serverconfig.CSPModeEnforce, "Content-Security-Policy"},
+		{"default", "", "Content-Security-Policy-Report-Only", "0"},
+		{"report-only", serverconfig.CSPModeReportOnly, "Content-Security-Policy-Report-Only", "0"},
+		{"enforce", serverconfig.CSPModeEnforce, "Content-Security-Policy", "0"},
+		{"report-only-debug", serverconfig.CSPModeReportOnly, "Content-Security-Policy-Report-Only", "4"},
+		{"enforce-debug", serverconfig.CSPModeEnforce, "Content-Security-Policy", "4"},
 	} {
 		t.Run(test.name, func(t *testing.T) {
+			state := klog.CaptureState()
+			defer state.Restore()
+			fs := flag.NewFlagSet(t.Name(), flag.ContinueOnError)
+			klog.InitFlags(fs)
+			if err := fs.Set("v", test.verbosity); err != nil {
+				t.Fatal(err)
+			}
+			var logs bytes.Buffer
+			klog.SetOutput(&logs)
+			klog.LogToStderr(false)
 			s := &Server{
 				AlertManagerPublicURL: &url.URL{},
 				DocumentationBaseURL:  &url.URL{},
@@ -56,6 +73,10 @@ func TestIndexHandlerCSPMode(t *testing.T) {
 			policy := rec.Header().Get(test.header)
 			if policy == "" {
 				t.Fatalf("missing %s header", test.header)
+			}
+			klog.Flush()
+			if logged := strings.Contains(logs.String(), policy); logged != (test.verbosity == "4") {
+				t.Errorf("policy logged = %t at verbosity %s", logged, test.verbosity)
 			}
 			for _, header := range []string{"Content-Security-Policy", "Content-Security-Policy-Report-Only"} {
 				if header != test.header && rec.Header().Get(header) != "" {
@@ -92,6 +113,7 @@ func TestIndexHandlerCSPMode(t *testing.T) {
 	}
 }
 
+// TestIndexHandlerRejectsInvalidCSP checks rejection without HTML or a partial header, followed by a valid request.
 func TestIndexHandlerRejectsInvalidCSP(t *testing.T) {
 	publicDir := t.TempDir()
 	if err := os.WriteFile(filepath.Join(publicDir, "index.html"), []byte(`<script nonce="[[ .ScriptNonce ]]">window.SERVER_FLAGS = [[ .ServerFlags ]];</script>`), 0600); err != nil {
@@ -117,6 +139,10 @@ func TestIndexHandlerRejectsInvalidCSP(t *testing.T) {
 			{"crlf", "https://plugin.example\r\nContent-Security-Policy: object-src 'self'", false},
 			{"yaml-comma", "https://plugin.example/a,b", true},
 			{"yaml-comma-entry", "https://plugin.example,script-src=https://other.example", true},
+			{"yaml-semicolon", "https://plugin.example; object-src 'self'", true},
+			{"yaml-carriage-return", "https://plugin.example\robject-src 'self'", true},
+			{"yaml-line-feed", "https://plugin.example\nobject-src 'self'", true},
+			{"yaml-crlf", "https://plugin.example\r\nContent-Security-Policy: object-src 'self'", true},
 		} {
 			t.Run(mode.name+"/"+source.name, func(t *testing.T) {
 				csp := serverconfig.MultiKeyValue{"script-src": source.value}

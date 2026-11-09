@@ -486,7 +486,7 @@ The configurable directives are defined in the [openshift/api repository](https:
 
 The `--content-security-policy` flag accepts comma-separated directive entries with space-separated source lists. Literal commas, semicolons, and line breaks within source values are rejected before a policy is emitted, because they could introduce additional policies, directives, or HTTP headers. URL paths that contain a comma or semicolon must encode it as `%2C` or `%3B`, respectively.
 
-Bridge always emits the following directives, including when running off-cluster:
+Bridge always emits the following directives in both on-cluster and off-cluster modes:
 
 - `object-src 'none'`
 - `media-src 'none'`

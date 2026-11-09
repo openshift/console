@@ -86,13 +86,17 @@ func TestCallingMultiKeyValueSetterMultipleTimes(t *testing.T) {
 	}
 }
 
+// TestCSPConfigPreservesSources keeps YAML values intact until policy validation, including on a nil map.
 func TestCSPConfigPreservesSources(t *testing.T) {
-	for _, source := range []string{
-		"https://plugin.example.com/a,b",
-		"https://plugin.example.com,script-src=https://other.example.com",
-		"https://plugin.example.com/a%2Cb%3Bc",
+	for _, test := range []struct {
+		name   string
+		source string
+	}{
+		{"literal-comma", "https://plugin.example.com/a,b"},
+		{"comma-separated-entry", "https://plugin.example.com,script-src=https://other.example.com"},
+		{"encoded-separators", "https://plugin.example.com/a%2Cb%3Bc"},
 	} {
-		t.Run(source, func(t *testing.T) {
+		t.Run(test.name, func(t *testing.T) {
 			fs := flag.NewFlagSet(t.Name(), flag.ContinueOnError)
 			var csp MultiKeyValue
 			fs.Var(&csp, "content-security-policy", "")
@@ -100,29 +104,33 @@ func TestCSPConfigPreservesSources(t *testing.T) {
 				APIVersion: "console.openshift.io/v1",
 				Kind:       "ConsoleConfig",
 				ContentSecurityPolicy: map[consolev1.DirectiveType][]string{
-					consolev1.ScriptSrc: {source, "'self'"},
+					consolev1.ScriptSrc: {test.source, "'self'"},
 				},
 			}
 			if err := SetFlagsFromConfig(fs, config); err != nil {
 				t.Fatal(err)
 			}
-			if want := (MultiKeyValue{"script-src": source + " 'self'"}); !reflect.DeepEqual(csp, want) {
+			if want := (MultiKeyValue{"script-src": test.source + " 'self'"}); !reflect.DeepEqual(csp, want) {
 				t.Fatalf("configured sources were changed: got %v, want %v", csp, want)
 			}
 		})
 	}
 }
 
+// TestCSPConfigPrecedence checks CLI-over-environment-over-YAML precedence while retaining other directives.
 func TestCSPConfigPrecedence(t *testing.T) {
 	for _, test := range []struct {
-		name string
-		env  string
-		cli  string
-		want string
+		name    string
+		env     string
+		cli     string
+		want    string
+		font    string
+		connect string
 	}{
-		{"config", "", "", "https://yaml.example.com"},
-		{"environment", "script-src=https://env.example.com", "", "https://env.example.com"},
-		{"cli", "script-src=https://env.example.com", "script-src=https://cli.example.com", "https://cli.example.com"},
+		{"config", "", "", "https://yaml.example.com", "https://fonts.example.com", ""},
+		{"environment", "script-src=https://env.example.com", "", "https://env.example.com", "https://fonts.example.com", ""},
+		{"cli", "script-src=https://env.example.com", "script-src=https://cli.example.com", "https://cli.example.com", "https://fonts.example.com", ""},
+		{"mixed directives", "script-src=https://env.example.com,connect-src=https://connect.example.com", "font-src=https://cli-fonts.example.com", "https://env.example.com", "https://cli-fonts.example.com", "https://connect.example.com"},
 	} {
 		t.Run(test.name, func(t *testing.T) {
 			filename := filepath.Join(t.TempDir(), "console-config.yaml")
@@ -149,8 +157,11 @@ contentSecurityPolicy:
 			}
 			want := MultiKeyValue{
 				"script-src": test.want,
-				"font-src":   "https://fonts.example.com",
+				"font-src":   test.font,
 				"img-src":    "https://images.example.com",
+			}
+			if test.connect != "" {
+				want["connect-src"] = test.connect
 			}
 			if !reflect.DeepEqual(csp, want) {
 				t.Fatalf("unexpected effective sources: got %v, want %v", csp, want)
@@ -159,6 +170,7 @@ contentSecurityPolicy:
 	}
 }
 
+// TestCSPConfigRejectsIncompatibleFlag prevents silently losing CSP configuration when the flag is misregistered.
 func TestCSPConfigRejectsIncompatibleFlag(t *testing.T) {
 	for _, name := range []string{"missing", "wrong type"} {
 		t.Run(name, func(t *testing.T) {
