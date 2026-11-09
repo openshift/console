@@ -25,6 +25,8 @@ type GeneratedPackage = {
   filesToCopy?: FilesToCopy;
   /** Additional files to write to the package output directory. */
   filesToWrite?: FilesToWrite;
+  /** Markdown files in the package output directory to update i.e. rewrite local file links. */
+  markdownFilesToUpdate?: string[];
 };
 
 type MissingDependencyCallback = (name: string) => void;
@@ -179,6 +181,7 @@ export const getCorePackage: GetPackageDefinition = (
       ),
     },
   ],
+  markdownFilesToUpdate: ['README.md', 'CHANGELOG.md'],
 });
 
 export const getInternalPackage: GetPackageDefinition = (
@@ -200,6 +203,7 @@ export const getInternalPackage: GetPackageDefinition = (
   filesToCopy: {
     ...commonFiles,
   },
+  markdownFilesToUpdate: ['README.md'],
 });
 
 export const getWebpackPackage: GetPackageDefinition = (
@@ -247,4 +251,5 @@ export const getWebpackPackage: GetPackageDefinition = (
     'generated/schema': 'schema',
     'CHANGELOG-webpack.md': 'CHANGELOG.md',
   },
+  markdownFilesToUpdate: ['README.md', 'CHANGELOG.md'],
 });

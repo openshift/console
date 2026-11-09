@@ -4,9 +4,18 @@ import * as fs from 'fs-extra';
 import * as _ from 'lodash';
 import type { PackageJson } from 'read-pkg';
 import { readPackageSync } from 'read-pkg';
+import { parseJSONC } from '../src/utils/jsonc';
 import type { FilesToCopy, FilesToWrite } from './package-definitions';
 import { getCorePackage, getInternalPackage, getWebpackPackage } from './package-definitions';
+import { rewriteRelativePathLinks } from './utils/markdown';
 import { resolvePath, relativePath } from './utils/path';
+
+const gitBranch = parseJSONC('console-meta.jsonc')['git-branch'];
+
+const getRepoFilePath = (file: string) => path.relative(resolvePath('../../..'), file);
+
+const getConsoleRepoURL = (file: string) =>
+  `https://github.com/openshift/console/tree/${gitBranch}/${getRepoFilePath(file)}`;
 
 const writePackageManifest = (manifest: PackageJson, outDir: string) => {
   const outPath = resolvePath(`${outDir}/package.json`);
@@ -29,6 +38,17 @@ const writeFiles = (files: FilesToWrite) => {
   });
 };
 
+const updateMarkdownFiles = (files: string[]) => {
+  files.map(resolvePath).forEach((filePath) => {
+    if (fs.existsSync(filePath)) {
+      let content = fs.readFileSync(filePath, 'utf-8');
+      content = rewriteRelativePathLinks(content, (p) => getConsoleRepoURL(p));
+      fs.writeFileSync(filePath, content);
+      console.log(chalk.green(relativePath(filePath)));
+    }
+  });
+};
+
 const sdkPackage = readPackageSync({ normalize: false });
 const rootPackage = readPackageSync({ cwd: resolvePath('../..'), normalize: false });
 
@@ -45,9 +65,13 @@ if (missingDepNames.size > 0) {
 }
 
 outPackages.forEach((pkg) => {
-  console.log(`Generating assets for package ${chalk.bold(pkg.manifest.name)}`);
+  console.log(`Generating assets: ${chalk.bold(pkg.manifest.name)}`);
 
   writePackageManifest(pkg.manifest, pkg.outDir);
   copyFiles(_.mapValues(pkg.filesToCopy, (dest) => `${pkg.outDir}/${dest}`));
   writeFiles((pkg.filesToWrite ?? []).map((f) => ({ ...f, path: `${pkg.outDir}/${f.path}` })));
+
+  console.log(`Updating assets: ${chalk.bold(pkg.manifest.name)}`);
+
+  updateMarkdownFiles((pkg.markdownFilesToUpdate ?? []).map((f) => `${pkg.outDir}/${f}`));
 });
