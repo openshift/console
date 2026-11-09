@@ -36,7 +36,7 @@
   "apiVersion": "apiVersion",
   "application/json": "application/json",
   "application/yaml": "application/yaml",
-  "Are you sure you want to delete <2>{{name}}</2> from <5>{{serviceName}}</5> in namespace <8>{{namespace}}</8>?": "Are you sure you want to delete <2>{{name}}</2> from <5>{{serviceName}}</5> in namespace <8>{{namespace}}</8>?",
+  "Are you sure you want to delete <2>{{name}}</2> from <5>{{serviceName}}</5> in namespace <strong>{{namespace}}</strong>?": "Are you sure you want to delete <2>{{name}}</2> from <5>{{serviceName}}</5> in namespace <strong>{{namespace}}</strong>?",
   "argument": "argument",
   "Arguments": "Arguments",
   "Arguments passed to the Container": "Arguments passed to the Container",

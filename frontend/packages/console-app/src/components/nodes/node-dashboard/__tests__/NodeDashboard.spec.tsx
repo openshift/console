@@ -57,7 +57,7 @@ describe('NodeDashboard', () => {
             expect.objectContaining({ Card: expect.any(Function) }),
           ]),
         }),
-        expect.any(Object),
+        undefined,
       );
     });
 
@@ -69,7 +69,7 @@ describe('NodeDashboard', () => {
           mainCards: expect.any(Array),
           leftCards: expect.any(Array),
         }),
-        expect.any(Object),
+        undefined,
       );
       const props = jest.mocked(DashboardGridModule.default).mock.calls[0][0];
       expect(props.rightCards).toBeUndefined();
