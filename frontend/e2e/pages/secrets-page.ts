@@ -67,9 +67,7 @@ export class SecretsPage extends BasePage {
     } catch (e) {
       // If the save button did not detach, check whether the form is
       // showing an error alert so the test fails with a clear diagnostic
-      // instead of a generic timeout. The alert text is intentionally not
-      // included in the thrown error; inspect the Playwright trace or
-      // screenshot for the alert details.
+      // instead of a generic timeout.
       const errorAlert = this.page.locator('.pf-v6-c-alert.pf-m-danger');
       if (await errorAlert.isVisible().catch(() => false)) {
         throw new Error('Save failed: form displayed an error alert.');
