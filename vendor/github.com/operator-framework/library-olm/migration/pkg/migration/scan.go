@@ -410,6 +410,27 @@ func (m *Migrator) RollbackClusterExtension(ctx context.Context, ceName string, 
 		return fmt.Errorf("checking existing Subscription %s/%s before rollback: %w", ns, name, err)
 	}
 
+	cod, err := m.rollbackDeployment(ctx, &ce)
+	if err != nil {
+		return err
+	}
+	// Reject revision conflicts before stopping either controller. Repeat these
+	// checks after stopping the COD because in-flight reconciliation can add revisions.
+	var preflightRevisions ocv1.ClusterObjectSetList
+	if err := m.listMigrationRevisions(ctx, &ce, &preflightRevisions); err != nil {
+		return fmt.Errorf("failed to list ClusterObjectSets for rollback: %w", err)
+	}
+	var preflightCOS ocv1.ClusterObjectSet
+	if err := m.Client.Get(ctx, client.ObjectKey{Name: fmt.Sprintf("%s-1", ceName)}, &preflightCOS); err == nil {
+		if err := m.validateRollbackRevision(ctx, &preflightCOS, &ce); err != nil {
+			return err
+		}
+	} else if client.IgnoreNotFound(err) != nil {
+		return fmt.Errorf("failed to get migration ClusterObjectSet: %w", err)
+	}
+	if err := m.rememberRollbackDeployment(ctx, &ce, cod); err != nil {
+		return err
+	}
 	m.progress(ProgressEvent{Step: ProgressStepRollback, Status: ProgressStarted, Message: fmt.Sprintf("Rolling back ClusterExtension %s", ceName)})
 
 	// Stop further operator-controller reconciliation before collecting the
@@ -418,12 +439,17 @@ func (m *Migrator) RollbackClusterExtension(ctx context.Context, ceName string, 
 	if err := m.beginRollbackDeletion(ctx, &ce); err != nil {
 		return err
 	}
+	if err := wait.PollUntilContextTimeout(ctx, time.Second, 2*time.Minute, true, func(ctx context.Context) (bool, error) {
+		return m.stopRollbackDeployment(ctx, &ce)
+	}); err != nil {
+		return fmt.Errorf("waiting for rollback ClusterObjectDeployment removal: %w", err)
+	}
 
 	// Snapshot every revision after CE deletion starts. The controller creates
 	// catalog revisions after the initial migration revision, and orphan
 	// propagation leaves those revisions alive unless rollback removes them too.
 	var revisions ocv1.ClusterObjectSetList
-	if err := m.Client.List(ctx, &revisions, client.MatchingLabels{LabelOwnerName: ceName}); err != nil {
+	if err := m.listMigrationRevisions(ctx, &ce, &revisions); err != nil {
 		return fmt.Errorf("failed to list ClusterObjectSets for rollback: %w", err)
 	}
 	// Preserve support for old migration revisions without the owner label.
@@ -441,8 +467,8 @@ func (m *Migrator) RollbackClusterExtension(ctx context.Context, ceName string, 
 		return fmt.Errorf("failed to get migration ClusterObjectSet: %w", getErr)
 	}
 	if getErr == nil && !foundMigrationRevision {
-		if owner := cos.Labels[LabelOwnerName]; owner != "" && owner != ceName {
-			return fmt.Errorf("migration ClusterObjectSet %s belongs to another extension %q", cosName, owner)
+		if err := m.validateRollbackRevision(ctx, &cos, &ce); err != nil {
+			return err
 		}
 		revisions.Items = append(revisions.Items, cos)
 	}
@@ -728,6 +754,7 @@ func (m *Migrator) Gather(ctx context.Context, opts Options) (*MigrationInfo, er
 		return nil, err
 	}
 	info.SystemNamespace = prepared.SystemNamespace
+	info.UseClusterObjectDeployment = prepared.UseClusterObjectDeployment
 	return info, nil
 }
 

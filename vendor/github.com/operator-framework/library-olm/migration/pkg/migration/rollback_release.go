@@ -262,8 +262,16 @@ func (m *Migrator) waitForRollbackRevisionsRemoved(ctx context.Context, ce *ocv1
 	emptyObservations := 0
 	var pending string
 	err := wait.PollUntilContextTimeout(ctx, time.Second, 2*time.Minute, true, func(ctx context.Context) (bool, error) {
+		stopped, err := m.stopRollbackDeployment(ctx, ce)
+		if err != nil {
+			return false, err
+		}
+		if !stopped {
+			emptyObservations = 0
+			return false, nil
+		}
 		var revisions ocv1.ClusterObjectSetList
-		if err := m.Client.List(ctx, &revisions, client.MatchingLabels{LabelOwnerName: ce.Name}); err != nil {
+		if err := m.listMigrationRevisions(ctx, ce, &revisions); err != nil {
 			return false, err
 		}
 		migrationName := ce.Name + "-1"
@@ -281,8 +289,8 @@ func (m *Migrator) waitForRollbackRevisionsRemoved(ctx context.Context, ce *ocv1
 				return false, err
 			}
 			if err == nil {
-				if owner := migrationRevision.Labels[LabelOwnerName]; owner != "" && owner != ce.Name {
-					return false, fmt.Errorf("migration ClusterObjectSet %s belongs to another extension %q", migrationName, owner)
+				if err := m.validateRollbackRevision(ctx, &migrationRevision, ce); err != nil {
+					return false, err
 				}
 				revisions.Items = append(revisions.Items, migrationRevision)
 			}

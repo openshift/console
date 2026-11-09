@@ -25,22 +25,40 @@ import (
 const (
 	ClusterObjectSetKind = "ClusterObjectSet"
 
+	// ClusterObjectSetMaxRevision is the largest revision whose canonical name fits
+	// in a 63-character label value with a 52-character group and a separating hyphen.
+	// Keep the revision validation maximum below in sync with this value.
+	ClusterObjectSetMaxRevision int64 = 9999999999
+
 	// Condition Types
-	ClusterObjectSetTypeAvailable   = "Available"
-	ClusterObjectSetTypeProgressing = "Progressing"
-	ClusterObjectSetTypeSucceeded   = "Succeeded"
+	ClusterObjectSetTypeReady = "Ready"
 
 	// Condition Reasons
-	ClusterObjectSetReasonArchived        = "Archived"
-	ClusterObjectSetReasonBlocked         = "Blocked"
-	ClusterObjectSetReasonProbeFailure    = "ProbeFailure"
-	ClusterObjectSetReasonProbesSucceeded = "ProbesSucceeded"
-	ClusterObjectSetReasonReconciling     = "Reconciling"
-	ClusterObjectSetReasonRetrying        = "Retrying"
+	ClusterObjectSetReasonPending              = "Pending"
+	ClusterObjectSetReasonArchived             = "Archived"
+	ClusterObjectSetReasonArchiving            = "Archiving"
+	ClusterObjectSetReasonObjectsNotReady      = "ObjectsNotReady"
+	ClusterObjectSetReasonSuperseded           = "Superseded"
+	ClusterObjectSetReasonObjectCollision      = "ObjectCollision"
+	ClusterObjectSetReasonPreconditionsNotMet  = "PreconditionsNotMet"
+	ClusterObjectSetReasonInvalidSpecification = "InvalidSpecification"
+	ClusterObjectSetReasonAllObjectsReady      = "AllObjectsReady"
 )
 
 // ClusterObjectSetSpec defines the desired state of ClusterObjectSet.
 type ClusterObjectSetSpec struct {
+	// group is a required, immutable identifier that links related revisions together.
+	// All revisions sharing the same group form an ordered sequence, regardless of owner references.
+	// The value must be 1 to 52 characters long, start with a lowercase letter,
+	// contain only lowercase letters, digits or hyphens, and end with a letter or digit.
+	//
+	// +required
+	// +kubebuilder:validation:MinLength=1
+	// +kubebuilder:validation:MaxLength=52
+	// +kubebuilder:validation:XValidation:rule=`self.matches('^[a-z]([a-z0-9-]*[a-z0-9])?$')`,message="group must start with a lowercase letter, contain only lowercase letters, digits or hyphens, and end with a letter or digit"
+	// +kubebuilder:validation:XValidation:rule="self == oldSelf",message="group is immutable"
+	Group string `json:"group,omitempty"`
+
 	// lifecycleState specifies the lifecycle state of the ClusterObjectSet.
 	//
 	// When set to "Active", the revision is actively managed and reconciled.
@@ -59,17 +77,17 @@ type ClusterObjectSetSpec struct {
 	// +kubebuilder:validation:XValidation:rule="oldSelf == 'Active' || oldSelf == 'Archived' && oldSelf == self", message="cannot un-archive"
 	LifecycleState ClusterObjectSetLifecycleState `json:"lifecycleState,omitempty"`
 
-	// revision is a required, immutable sequence number representing a specific revision
-	// of the parent ClusterExtension.
+	// revision is a required, immutable sequence number identifying a specific
+	// ClusterObjectSet within a sequence of related revisions.
 	//
-	// The revision field must be a positive integer.
-	// Each ClusterObjectSet belonging to the same parent ClusterExtension must have a unique revision number.
-	// The revision number must always be the previous revision number plus one, or 1 for the first revision.
+	// The revision field must be an integer from 1 to 9999999999, inclusive.
+	// Each ClusterObjectSet in the same group must have a unique revision number.
 	//
 	// +required
 	// +kubebuilder:validation:Minimum:=1
+	// +kubebuilder:validation:Maximum:=9999999999
 	// +kubebuilder:validation:XValidation:rule="self == oldSelf", message="revision is immutable"
-	Revision int64 `json:"revision"`
+	Revision int64 `json:"revision,omitempty"`
 
 	// phases is an optional, immutable list of phases that group objects to be applied together.
 	//
@@ -94,18 +112,7 @@ type ClusterObjectSetSpec struct {
 	// +listType=map
 	// +listMapKey=name
 	// +optional
-	Phases []ClusterObjectSetPhase `json:"phases,omitempty"`
-
-	// progressDeadlineMinutes is an optional field that defines the maximum period
-	// of time in minutes after which an installation should be considered failed and
-	// require manual intervention. This functionality is disabled when no value
-	// is provided. The minimum period is 10 minutes, and the maximum is 720 minutes (12 hours).
-	//
-	// +kubebuilder:validation:Minimum:=10
-	// +kubebuilder:validation:Maximum:=720
-	// +optional
-	// <opcon:experimental>
-	ProgressDeadlineMinutes int32 `json:"progressDeadlineMinutes,omitempty"`
+	Phases []ClusterObjectSetPhase `json:"phases,omitempty"` //nolint:kubeapilinter
 
 	// progressionProbes is an optional field which provides the ability to define custom readiness probes
 	// for objects defined within spec.phases. As documented in that field, most kubernetes-native objects
@@ -119,6 +126,10 @@ type ClusterObjectSetSpec struct {
 	//
 	// The maximum number of probes is 20.
 	//
+	// Once set, even if empty, the progressionProbes field is immutable, as it is
+	// part of the immutable content of a revision.
+	//
+	// +kubebuilder:validation:XValidation:rule="self == oldSelf || oldSelf.size() == 0", message="progressionProbes is immutable"
 	// +kubebuilder:validation:MinItems=1
 	// +kubebuilder:validation:MaxItems=20
 	// +listType=atomic
@@ -126,13 +137,11 @@ type ClusterObjectSetSpec struct {
 	// <opcon:experimental>
 	ProgressionProbes []ProgressionProbe `json:"progressionProbes,omitempty"`
 
-	// collisionProtection specifies the default collision protection strategy for all objects
-	// in this revision. Individual phases or objects can override this value.
+	// collisionProtection is a required field that specifies the default collision protection
+	// strategy for all objects in this revision. Individual phases or objects can override this value.
 	//
-	// When set, this value is used as the default for any phase or object that does not
-	// explicitly specify its own collisionProtection.
-	//
-	// The resolution order is: object > phase > spec
+	// This value is used as the default for any phase or object that does not explicitly specify
+	// its own collisionProtection. The resolution order is: object > phase > spec.
 	//
 	// +required
 	// +kubebuilder:validation:Enum=Prevent;IfNoController;None
@@ -368,12 +377,13 @@ type ClusterObjectSetPhase struct {
 	// +kubebuilder:validation:MinLength=1
 	// +kubebuilder:validation:MaxLength=63
 	// +kubebuilder:validation:XValidation:rule=`!format.dns1123Label().validate(self).hasValue()`,message="the value must consist of only lowercase alphanumeric characters and hyphens, and must start and end with an alphanumeric character."
-	Name string `json:"name"`
+	Name string `json:"name,omitempty"`
 
 	// objects is a required list of all Kubernetes objects that belong to this phase.
 	//
 	// All objects in this list are applied to the cluster in no particular order. The maximum number of objects per phase is 50.
 	// +required
+	// +listType=atomic
 	// +kubebuilder:validation:MaxItems=50
 	Objects []ClusterObjectSetObject `json:"objects"`
 
@@ -449,7 +459,7 @@ type ObjectSourceRef struct {
 	// +required
 	// +kubebuilder:validation:MinLength=1
 	// +kubebuilder:validation:MaxLength=253
-	Name string `json:"name"`
+	Name string `json:"name,omitempty"`
 
 	// namespace is the namespace of the referenced Secret.
 	// When empty, defaults to the OLM system namespace during ref resolution.
@@ -465,7 +475,7 @@ type ObjectSourceRef struct {
 	// +required
 	// +kubebuilder:validation:MinLength=1
 	// +kubebuilder:validation:MaxLength=253
-	Key string `json:"key"`
+	Key string `json:"key,omitempty"`
 }
 
 // CollisionProtection specifies if and how ownership collisions are prevented.
@@ -486,31 +496,45 @@ const (
 )
 
 // ClusterObjectSetStatus defines the observed state of a ClusterObjectSet.
+//
+// The completedAt removal guard lives here at the parent level because a
+// field-level transition rule is skipped when the field is absent from an
+// update, which would otherwise allow the timestamp to be cleared and re-set.
+//
+// +kubebuilder:validation:XValidation:rule="!has(oldSelf.completedAt) || has(self.completedAt)",message="completedAt cannot be removed once set"
 type ClusterObjectSetStatus struct {
 	// conditions is an optional list of status conditions describing the state of the
 	// ClusterObjectSet.
 	//
-	// The Progressing condition represents whether the revision is actively rolling out:
-	//   - When status is True and reason is RollingOut, the ClusterObjectSet rollout is actively making progress and is in transition.
-	//   - When status is True and reason is Retrying, the ClusterObjectSet has encountered an error that could be resolved on subsequent reconciliation attempts.
-	//   - When status is True and reason is Succeeded, the ClusterObjectSet has reached the desired state.
-	//   - When status is False and reason is Blocked, the ClusterObjectSet has encountered an error that requires manual intervention for recovery.
-	//   - When status is False and reason is Archived, the ClusterObjectSet is archived and not being actively reconciled.
+	// The Ready condition represents the state of the revision.
+	// True means all objects are at the desired state; False means one or more
+	// objects are not at the desired state; Unknown is the initial state, before
+	// the first reconciliation has evaluated the revision.
+	//   - Unknown with reason Pending: the revision has not yet been evaluated (initial state, set when the condition is first created).
+	//   - True with reason AllObjectsReady: the revision has rolled out and all objects are at the desired state.
+	//   - False with reason ObjectsNotReady: one or more objects are still being applied or have not yet passed their readiness probes during rollout.
+	//   - False with reason Superseded: one or more objects have been adopted by a newer revision of the object set.
+	//   - False with reason ObjectCollision: one or more objects are controlled by another owner, or are unowned while collision protection prevents adoption, so this revision cannot take ownership of them.
+	//   - False with reason PreconditionsNotMet: a precondition for applying the revision is not yet satisfied (a referenced Secret is mutable or has invalid or changed content, or a preflight dry-run was rejected, e.g. an immutable field, a conflicting object, or RBAC/dependency CRDs not yet propagated); the revision keeps retrying and recovers once the precondition is met.
+	//   - False with reason InvalidSpecification: the revision spec is invalid (a malformed revision/phase object or progression probe) and requires a spec change to proceed.
+	//   - False with reason Archiving: the revision is being archived and its owned objects are still being torn down.
+	//   - False with reason Archived: the revision has been archived and its objects have been torn down.
 	//
-	// The Available condition represents whether the revision has been successfully rolled out and is available:
-	//   - When status is True and reason is ProbesSucceeded, the ClusterObjectSet has been successfully rolled out and all objects pass their readiness probes.
-	//   - When status is False and reason is ProbeFailure, one or more objects are failing their readiness probes during rollout.
-	//   - When status is Unknown and reason is Reconciling, the ClusterObjectSet has encountered an error that prevented it from observing the probes.
-	//   - When status is Unknown and reason is Archived, the ClusterObjectSet has been archived and its objects have been torn down.
-	//   - When status is Unknown and reason is Migrated, the ClusterObjectSet was migrated from an existing release and object status probe results have not yet been observed.
-	//
-	// The Succeeded condition represents whether the revision has successfully completed its rollout:
-	//   - When status is True and reason is Succeeded, the ClusterObjectSet has successfully completed its rollout. This condition is set once and persists even if the revision later becomes unavailable.
+	// Rollout completion is recorded separately by status.completedAt.
 	//
 	// +listType=map
 	// +listMapKey=type
 	// +optional
-	Conditions []metav1.Condition `json:"conditions,omitempty"`
+	// +patchStrategy=merge
+	// +patchMergeKey=type
+	Conditions []metav1.Condition `json:"conditions,omitempty" patchStrategy:"merge" patchMergeKey:"type"` //nolint:kubeapilinter // This CRD uses structural list-map validation, not protobuf serialization.
+
+	// objectCounts reports aggregate object counts across all phases.
+	// Values are sums of the per-phase counts in observedPhases.
+	// It is omitted until counts have been computed; when present, all count
+	// fields are reported (including zeros).
+	// +optional
+	ObjectCounts ObjectCounts `json:"objectCounts,omitzero"`
 
 	// observedPhases records the content hashes of resolved phases
 	// at first successful reconciliation. This is used to detect if
@@ -518,15 +542,23 @@ type ClusterObjectSetStatus struct {
 	// different content. Each entry covers all fully-resolved object
 	// manifests within a phase, making it source-agnostic.
 	//
-	// +kubebuilder:validation:XValidation:rule="self == oldSelf || oldSelf.size() == 0",message="observedPhases is immutable"
 	// +kubebuilder:validation:MaxItems=20
 	// +listType=map
 	// +listMapKey=name
 	// +optional
-	ObservedPhases []ObservedPhase `json:"observedPhases,omitempty"`
+	ObservedPhases []ObservedPhase `json:"observedPhases,omitempty"` //nolint:kubeapilinter
+
+	// completedAt is the timestamp at which the revision was first observed to be
+	// ready, meaning it had successfully rolled out and all of its objects passed
+	// their probes. It is set once and is immutable thereafter.
+	//
+	// +kubebuilder:validation:XValidation:rule="self == oldSelf || oldSelf == null",message="completedAt is immutable, once set"
+	// +optional
+	CompletedAt metav1.Time `json:"completedAt,omitzero"`
 }
 
 // ObservedPhase records the observed content digest of a resolved phase.
+// +kubebuilder:validation:XValidation:rule="!has(oldSelf.completedAt) || has(self.completedAt)",message="completedAt cannot be removed once set"
 type ObservedPhase struct {
 	// name is the phase name matching a phase in spec.phases.
 	//
@@ -534,33 +566,226 @@ type ObservedPhase struct {
 	// +kubebuilder:validation:MinLength=1
 	// +kubebuilder:validation:MaxLength=63
 	// +kubebuilder:validation:XValidation:rule=`!format.dns1123Label().validate(self).hasValue()`,message="the value must consist of only lowercase alphanumeric characters and hyphens, and must start and end with an alphanumeric character."
-	Name string `json:"name"`
+	Name string `json:"name,omitempty"`
+
+	// status is the current state of this phase in the rollout. Must be one of
+	// InvalidSpecification, PreconditionsNotMet, Pending, Reconciling,
+	// Stabilizing, Ready, Unknown, Superseded, Archiving, or Archived.
+	// +required
+	Status PhaseStatus `json:"status,omitempty"`
+
+	// completedAt is the timestamp when this phase first became Ready.
+	// Set once and never modified. Nil means the phase has never been
+	// Ready.
+	// +optional
+	// +kubebuilder:validation:XValidation:rule="self == oldSelf || oldSelf == null",message="completedAt is immutable, once set"
+	CompletedAt metav1.Time `json:"completedAt,omitzero"`
+
+	// message is a phase-level message providing context about the
+	// current status (e.g. a validation error for InvalidSpecification
+	// phases, or a summary for Pending phases). At most 1024 characters;
+	// longer messages are truncated by the controller.
+	// +kubebuilder:validation:MinLength=1
+	// +kubebuilder:validation:MaxLength=1024
+	// +optional
+	Message string `json:"message,omitempty"`
 
 	// digest is the digest of the phase's resolved object content
 	// at first successful resolution, in the format "<algorithm>:<hex>".
 	//
 	// +required
+	// +kubebuilder:validation:XValidation:rule="self == oldSelf || oldSelf.size() == 0",message="digest is immutable"
 	// +kubebuilder:validation:MinLength=1
 	// +kubebuilder:validation:MaxLength=256
 	// +kubebuilder:validation:XValidation:rule=`self.matches('^[a-z0-9]+:[a-f0-9]+$')`,message="digest must be in the format '<algorithm>:<hex>'"
-	Digest string `json:"digest"`
+	Digest string `json:"digest,omitempty"`
+
+	// objectCounts reports the number of objects in this phase by state.
+	// +optional
+	ObjectCounts ObjectCounts `json:"objectCounts,omitzero"`
+
+	// lastTransitionTime is the last time the phase transitioned from one status to another.
+	// +required
+	// +kubebuilder:validation:Type=string
+	// +kubebuilder:validation:Format=date-time
+	LastTransitionTime metav1.Time `json:"lastTransitionTime,omitzero"`
+
+	// objectDetails lists objects in this phase that are not yet
+	// complete. For Reconciling, Pending, and Stabilizing phases, this
+	// includes probe failures, collisions, creation/update errors, and
+	// any other condition preventing completion. For Archiving phases,
+	// this lists objects still awaiting deletion. Each entry identifies
+	// the object and carries failure messages. Empty when status is
+	// Ready, Superseded, Archived, or Unknown. The list may contain at
+	// most 50 entries, matching the maximum number of objects per phase.
+	// +kubebuilder:validation:MaxItems=50
+	// +listType=atomic
+	// +optional
+	ObjectDetails []ObjectStatus `json:"objectDetails,omitempty"`
 }
+
+// ObjectCounts reports the number of objects in a ClusterObjectSet or phase by state.
+type ObjectCounts struct {
+	// total is the number of objects in this phase.
+	// +required
+	// +kubebuilder:validation:Minimum:=0
+	// +kubebuilder:validation:Maximum:=1000
+	Total *int64 `json:"total,omitempty"`
+
+	// present is the number of objects in this phase that exist on the
+	// cluster and are owned by this object set, or another in the same group.
+	// During reconcile, this counts objects that the controller has found or
+	// created. During teardown, this decrements toward zero as objects are deleted.
+	// +required
+	// +kubebuilder:validation:Minimum:=0
+	// +kubebuilder:validation:Maximum:=1000
+	Present *int64 `json:"present,omitempty"`
+
+	// synced is the number of objects in this phase whose cluster state
+	// matches the desired state. Set to zero during teardown.
+	// +required
+	// +kubebuilder:validation:Minimum:=0
+	// +kubebuilder:validation:Maximum:=1000
+	Synced *int64 `json:"synced,omitempty"`
+
+	// ready is the number of objects in this phase that are synced
+	// and pass their assertions.
+	// +required
+	// +kubebuilder:validation:Minimum:=0
+	// +kubebuilder:validation:Maximum:=1000
+	Ready *int64 `json:"ready,omitempty"`
+}
+
+// ObjectStatus identifies a managed object and its failure messages.
+type ObjectStatus struct {
+	// group is the API group of the object (empty string for core
+	// resources). At most 253 characters (DNS subdomain max).
+	// +kubebuilder:validation:MaxLength=253
+	// +optional
+	Group string `json:"group,omitempty"`
+
+	// version is the API version of the object. Must be between 1 and
+	// 63 characters.
+	// +kubebuilder:validation:MinLength=1
+	// +kubebuilder:validation:MaxLength=63
+	// +required
+	Version string `json:"version,omitempty"`
+
+	// kind is the kind of the object. Must be between 1 and 63
+	// characters.
+	// +kubebuilder:validation:MinLength=1
+	// +kubebuilder:validation:MaxLength=63
+	// +required
+	Kind string `json:"kind,omitempty"`
+
+	// namespace is the namespace of the object. Empty for cluster-scoped
+	// resources. At most 253 characters (DNS subdomain max).
+	// +kubebuilder:validation:MaxLength=253
+	// +optional
+	Namespace string `json:"namespace,omitempty"`
+
+	// name is the name of the object. Must be between 1 and 253
+	// characters (DNS subdomain max).
+	// +kubebuilder:validation:MinLength=1
+	// +kubebuilder:validation:MaxLength=253
+	// +required
+	Name string `json:"name,omitempty"`
+
+	// messages lists the failure reasons for this object. The maximum
+	// of 18 entries accounts for up to 16 assertion probe failures,
+	// one collision message, and one message to note truncation if necessary.
+	// Each message is at most 1024 characters; longer messages are truncated
+	// by the controller.
+	// +kubebuilder:validation:MaxItems=18
+	// +kubebuilder:validation:items:MaxLength=1024
+	// +listType=atomic
+	// +optional
+	Messages []string `json:"messages,omitempty"`
+}
+
+// PhaseStatus describes the current state of a phase in the rollout.
+//
+// +kubebuilder:validation:Enum=InvalidSpecification;PreconditionsNotMet;Pending;Reconciling;Stabilizing;Ready;Unknown;Superseded;Archiving;Archived
+type PhaseStatus string
+
+const (
+	// PhaseStatusInvalidSpecification indicates the phase failed preflight validation
+	// in a permanent way that requires a spec change to resolve (e.g. a schema
+	// violation, cross-phase object duplication, or an invalid phase name).
+	PhaseStatusInvalidSpecification PhaseStatus = "InvalidSpecification"
+
+	// PhaseStatusPreconditionsNotMet indicates the phase failed a recoverable preflight
+	// dry-run check — for example, RBAC permissions or a dependency CRD that has not
+	// yet propagated to the cluster. The controller retries automatically; no spec
+	// change is required.
+	PhaseStatusPreconditionsNotMet PhaseStatus = "PreconditionsNotMet"
+
+	// PhaseStatusPending indicates the phase is not being actively
+	// reconciled, but the controller has checked and some objects do not
+	// match the desired state.
+	PhaseStatusPending PhaseStatus = "Pending"
+
+	// PhaseStatusReconciling indicates the controller is actively applying
+	// objects in this phase and not all objects are synced yet.
+	PhaseStatusReconciling PhaseStatus = "Reconciling"
+
+	// PhaseStatusStabilizing indicates all objects in this phase are
+	// synced but some assertions are not yet passing. The controller is
+	// not actively writing; it is waiting for other controllers or
+	// external actions to bring the objects into the expected state.
+	PhaseStatusStabilizing PhaseStatus = "Stabilizing"
+
+	// PhaseStatusReady indicates all objects in this phase are synced
+	// and pass their assertions.
+	PhaseStatusReady PhaseStatus = "Ready"
+
+	// PhaseStatusUnknown indicates this phase was not evaluated during
+	// the most recent reconcile.
+	PhaseStatusUnknown PhaseStatus = "Unknown"
+
+	// PhaseStatusSuperseded indicates all objects in this phase have been
+	// adopted by a newer revision.
+	PhaseStatusSuperseded PhaseStatus = "Superseded"
+
+	// PhaseStatusArchiving indicates the controller is actively deleting
+	// objects in this phase.
+	PhaseStatusArchiving PhaseStatus = "Archiving"
+
+	// PhaseStatusArchived indicates all objects in this phase have
+	// been deleted from the cluster.
+	PhaseStatusArchived PhaseStatus = "Archived"
+)
+
+// TODO(COD): Update the archival description below when archival decisions move
+// to ClusterObjectDeployment reconciliation.
 
 // +genclient
 // +genclient:nonNamespaced
 // +kubebuilder:object:root=true
 // +kubebuilder:resource:scope=Cluster
 // +kubebuilder:subresource:status
-// +kubebuilder:printcolumn:name="Available",type=string,JSONPath=`.status.conditions[?(@.type=='Available')].status`
-// +kubebuilder:printcolumn:name="Progressing",type=string,JSONPath=`.status.conditions[?(@.type=='Progressing')].status`
+// +kubebuilder:validation:XValidation:rule="self.metadata.name == '%s-%d'.format([self.spec.group, self.spec.revision])",message="metadata.name must be <spec.group>-<spec.revision>"
+// +kubebuilder:selectablefield:JSONPath=`.spec.group`
+// +kubebuilder:printcolumn:name="Group",type=string,JSONPath=`.spec.group`
+// +kubebuilder:printcolumn:name="Revision",type=integer,JSONPath=`.spec.revision`
+// +kubebuilder:printcolumn:name="Ready",type=string,JSONPath=`.status.conditions[?(@.type=='Ready')].status`
+// +kubebuilder:printcolumn:name="Reason",type=string,JSONPath=`.status.conditions[?(@.type=='Ready')].reason`
+// +kubebuilder:printcolumn:name="#Total",type=integer,JSONPath=`.status.objectCounts.total`
+// +kubebuilder:printcolumn:name="#Present",type=integer,JSONPath=`.status.objectCounts.present`
+// +kubebuilder:printcolumn:name="#Synced",type=integer,JSONPath=`.status.objectCounts.synced`
+// +kubebuilder:printcolumn:name="#Ready",type=integer,JSONPath=`.status.objectCounts.ready`
 // +kubebuilder:printcolumn:name=Age,type=date,JSONPath=`.metadata.creationTimestamp`
 
-// ClusterObjectSet represents an immutable snapshot of Kubernetes objects
-// for a specific version of a ClusterExtension. Each revision contains objects
-// organized into phases that roll out sequentially. The same object can only be managed by a single revision
-// at a time. Ownership of objects is transitioned from one revision to the next as the extension is upgraded
-// or reconfigured. Once the latest revision has rolled out successfully, previous active revisions are archived for
-// posterity.
+// ClusterObjectSet represents an immutable snapshot of Kubernetes objects to
+// apply and manage on the cluster. Each revision contains objects organized into
+// phases that roll out sequentially. The same object can only be managed by a
+// single revision at a time. Ownership of objects is transitioned from one revision
+// to the next as new revisions are rolled out. Once the latest revision has rolled
+// out successfully, previous active revisions are archived for posterity.
+// Set metadata.name explicitly to <spec.group>-<spec.revision>, using decimal
+// notation without leading zeros. This ensures revision uniqueness within a group.
+// Name generation through metadata.generateName is not supported.
+// +kubebuilder:validation:XValidation:rule="!has(oldSelf.status) || has(self.status)",message="status cannot be removed once set"
 type ClusterObjectSet struct {
 	metav1.TypeMeta `json:",inline"`
 
@@ -570,12 +795,14 @@ type ClusterObjectSet struct {
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
 	// spec defines the desired state of the ClusterObjectSet.
-	// +optional
-	Spec ClusterObjectSetSpec `json:"spec,omitempty"`
+	// +required
+	Spec ClusterObjectSetSpec `json:"spec,omitzero"`
 
 	// status is optional and defines the observed state of the ClusterObjectSet.
+	// Cannot be removed once set; this is to prevent immutable fields such as completedAt
+	// from being cleared by an update which omits the status.
 	// +optional
-	Status ClusterObjectSetStatus `json:"status,omitempty"`
+	Status ClusterObjectSetStatus `json:"status,omitzero"`
 }
 
 // +kubebuilder:object:root=true
