@@ -123,8 +123,8 @@ export default abstract class BasePage {
     }
   }
 
-  protected async goTo(url: string): Promise<void> {
-    await this.page.goto(url, { timeout: 90_000 });
+  protected async goTo(url: string, timeout = 90_000): Promise<void> {
+    await this.page.goto(url, { timeout });
     await this.waitForLoadingComplete();
   }
 
