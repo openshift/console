@@ -34,7 +34,7 @@ type oidcAuth struct {
 }
 
 type oidcConfig struct {
-	getClient                       func() *http.Client
+	issuerClient                    *http.Client
 	issuerURL                       string
 	logoutRedirectOverride          string
 	clientID                        string
@@ -53,7 +53,7 @@ func newOIDCAuth(ctx context.Context, sessionStore *sessions.CombinedSessionStor
 	providerCache, err := asynccache.NewAsyncCache[*oidc.Provider](
 		ctx, 5*time.Minute,
 		func(cacheCtx context.Context) (*oidc.Provider, error) {
-			oidcCtx := oidc.ClientContext(cacheCtx, c.getClient())
+			oidcCtx := oidc.ClientContext(cacheCtx, c.issuerClient)
 			return oidc.NewProvider(oidcCtx, c.issuerURL)
 		},
 	)
@@ -106,7 +106,7 @@ func (o *oidcAuth) refreshSession(ctx context.Context, w http.ResponseWriter, r 
 
 	tokenRefreshHandling = auth.TokenRefreshFull
 	newTokens, err := oauthConfig.TokenSource(
-		context.WithValue(ctx, oauth2.HTTPClient, o.getClient()), // supply our client with custom trust
+		context.WithValue(ctx, oauth2.HTTPClient, o.issuerClient), // supply our client with custom trust
 		&oauth2.Token{RefreshToken: cookieRefreshToken},
 	).Token()
 	if err != nil {
