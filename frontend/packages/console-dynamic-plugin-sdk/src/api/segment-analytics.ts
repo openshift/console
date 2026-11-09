@@ -12,18 +12,23 @@ const TELEMETRY_API_KEY =
 // Segment "apiHost" parameter, should be like "api.segment.io/v1"
 const TELEMETRY_API_HOST = window.SERVER_FLAGS.telemetry?.SEGMENT_API_HOST || '';
 
-// Segment JS host, defaults to "cdn.segment.com" if not defined
-const TELEMETRY_JS_HOST = window.SERVER_FLAGS.telemetry?.SEGMENT_JS_HOST || 'cdn.segment.com';
+// Segment JS host. Required for telemetry; there is deliberately no default. Console must not
+// load analytics directly from Segment, so when the host is not configured telemetry is
+// disabled (see TELEMETRY_DISABLED) instead of falling back to a Segment-hosted CDN.
+const TELEMETRY_JS_HOST = window.SERVER_FLAGS.telemetry?.SEGMENT_JS_HOST || '';
 
-// Segment analytics.min.js script URL
+// Segment analytics.min.js script URL. Empty when neither an explicit URL nor a JS host is
+// configured, which disables telemetry below rather than defaulting to a Segment host.
 const TELEMETRY_JS_URL =
   window.SERVER_FLAGS.telemetry?.SEGMENT_JS_URL ||
-  `https://${TELEMETRY_JS_HOST}/analytics.js/v1/${encodeURIComponent(
-    TELEMETRY_API_KEY,
-  )}/analytics.min.js`;
+  (TELEMETRY_JS_HOST &&
+    `https://${TELEMETRY_JS_HOST}/analytics.js/v1/${encodeURIComponent(
+      TELEMETRY_API_KEY,
+    )}/analytics.min.js`);
 
 export const TELEMETRY_DISABLED =
   !TELEMETRY_API_KEY ||
+  !TELEMETRY_JS_URL ||
   window.SERVER_FLAGS.telemetry?.DISABLED === 'true' ||
   window.SERVER_FLAGS.telemetry?.DEVSANDBOX_DISABLED === 'true' ||
   window.SERVER_FLAGS.telemetry?.TELEMETER_CLIENT_DISABLED === 'true';
