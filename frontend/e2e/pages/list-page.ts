@@ -203,6 +203,8 @@ export class ListPage extends BasePage {
     const safeFlags = pattern.flags.replace(/[gy]/g, '');
     const safePattern = new RegExp(pattern.source, safeFlags);
     const links = this.dataViewCells.locator('a');
+    // eslint-disable-next-line eslint-js/no-restricted-syntax
+    await links.first().waitFor({ state: 'visible', timeout: 30_000 });
     const count = await links.count();
     for (let i = 0; i < count; i++) {
       const text = await links.nth(i).textContent();
