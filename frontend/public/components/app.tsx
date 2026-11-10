@@ -90,9 +90,6 @@ coFetch(`${window.SERVER_FLAGS.basePath}api/kubernetes/api`, {
   .then(() => document.documentElement.classList.remove('co-auth-pending'))
   .catch(() => {});
 
-// TODO: remove when upgrading to @xterm/xterm 7.0.0 - github.com/openshift/console/issues/16486
-delete process.title;
-
 initI18n();
 
 const App: FC = () => {
