@@ -342,6 +342,7 @@ const config: Configuration = {
       // Only the polyfills actually used by the browser bundle; see CONSOLE-4360
       excludeAliases: [
         'assert',
+        'buffer',
         'constants',
         'crypto',
         'events',

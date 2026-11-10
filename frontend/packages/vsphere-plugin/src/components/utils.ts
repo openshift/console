@@ -1,8 +1,8 @@
-import { Buffer } from 'buffer';
+import { Base64 } from 'js-base64';
 import type { ConsoleTFunction } from '@console/dynamic-plugin-sdk';
 
-export const encodeBase64 = (data: string) => Buffer.from(data).toString('base64');
-export const decodeBase64 = (data: string) => Buffer.from(data, 'base64').toString('ascii');
+export const encodeBase64 = (data: string) => Base64.encode(data);
+export const decodeBase64 = (data: string) => Base64.decode(data);
 
 export const parseKeyValue = (config: string, delimiter = '='): { [key: string]: string } => {
   const lines = config.split('\n');
