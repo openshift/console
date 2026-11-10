@@ -44,7 +44,17 @@ type AuthOptions struct {
 	InactivityTimeoutSeconds int
 	LogoutRedirect           string
 
+	// Proxy is the resolved auth.proxy configuration. It is nil when neither the
+	// config file nor any CLI flag provides it, which allows environment fallback.
+	// A non-nil empty value explicitly disables proxying. Populated by ApplyConfig.
 	Proxy *serverconfig.AuthProxy
+
+	// CLI flags for Proxy. They track whether they were explicitly set, even to
+	// an empty value, so that "absent" and "explicitly empty" stay distinct.
+	httpProxy   optionalString
+	httpsProxy  optionalString
+	noProxy     optionalStringSlice
+	proxyCAFile optionalString
 }
 
 type CompletedOptions struct {
@@ -83,6 +93,11 @@ func (c *AuthOptions) AddFlags(fs *flag.FlagSet) {
 	fs.StringVar(&c.OCLoginCommand, "user-auth-oidc-oc-login-command", "", "External OIDC OC login command which will be displayed in the console 'Copy Login Command' dialog.")
 	fs.StringVar(&c.StaticUserBearerToken, "k8s-auth-bearer-token", "", "DEV ONLY. Static user token to be used when authentication is disabled. Can only be used with --user-auth=\"disabled\".")
 
+	fs.Var(&c.httpProxy, "user-auth-oidc-http-proxy", "Proxy URL for plain HTTP OIDC traffic. Setting any --user-auth-oidc-*-proxy flag, even to an empty value, disables the environment proxy fallback for OIDC traffic. Only used with --user-auth=oidc.")
+	fs.Var(&c.httpsProxy, "user-auth-oidc-https-proxy", "Proxy URL for HTTPS OIDC traffic. Setting an empty value explicitly disables proxying for HTTPS. Only used with --user-auth=oidc.")
+	fs.Var(&c.noProxy, "user-auth-oidc-no-proxy", "Comma-separated list of hosts, domains or CIDRs for which OIDC traffic bypasses the proxy. Only used with --user-auth=oidc.")
+	fs.Var(&c.proxyCAFile, "user-auth-oidc-proxy-ca-file", "Path to a PEM file with the CA bundle used to trust the OIDC proxy. Only used with --user-auth=oidc.")
+
 	fs.Var(&c.ExtraScopes, "user-auth-oidc-token-scopes", "Comma-separated list of extra scopes to request ID tokens with")
 
 	fs.IntVar(&c.InactivityTimeoutSeconds, "inactivity-timeout", 0, "Number of seconds, after which user will be logged out if inactive. Ignored if less than 300 seconds (5 minutes).")
@@ -106,11 +121,36 @@ func (c *AuthOptions) ApplyConfig(config *serverconfig.Auth) {
 		c.ExtraScopes = config.OIDCExtraScopes
 	}
 
-	c.Proxy = config.Proxy
+	c.Proxy = c.resolveProxy(config.Proxy)
 	if c.Proxy != nil && c.AuthType != flagvalues.AuthTypeOIDC {
 		klog.Warning("Ignoring auth.proxy because authType is not OIDC")
 		c.Proxy = nil
 	}
+}
+
+// resolveProxy merges the CLI flags over the config file, field by field.
+// It returns nil only if neither source specifies a proxy configuration.
+func (c *AuthOptions) resolveProxy(fromConfig *serverconfig.AuthProxy) *serverconfig.AuthProxy {
+	authProxy := fromConfig.DeepCopy()
+	ensure := func() *serverconfig.AuthProxy {
+		if authProxy == nil {
+			authProxy = &serverconfig.AuthProxy{}
+		}
+		return authProxy
+	}
+	if c.httpProxy.IsSet {
+		ensure().HTTPProxy = c.httpProxy.Value
+	}
+	if c.httpsProxy.IsSet {
+		ensure().HTTPSProxy = c.httpsProxy.Value
+	}
+	if c.noProxy.IsSet {
+		ensure().NoProxy = append([]string(nil), c.noProxy.Values...)
+	}
+	if c.proxyCAFile.IsSet {
+		ensure().TrustedCAFilePath = c.proxyCAFile.Value
+	}
+	return authProxy
 }
 
 func (c *AuthOptions) Complete() (*CompletedOptions, error) {
