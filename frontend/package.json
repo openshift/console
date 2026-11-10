@@ -78,6 +78,7 @@
     "formik": "^2.1.5",
     "fuzzysearch": "^1.0.3",
     "git-url-parse": "^11.4.0",
+    "hash.js": "^1.1.5",
     "i18next": "^25.8.18",
     "i18next-browser-languagedetector": "^8.2.1",
     "i18next-conv": "16.0.0",

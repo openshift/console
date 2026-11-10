@@ -340,7 +340,24 @@ const config: Configuration = {
     new NodePolyfillPlugin({
       additionalAliases: ['process'],
       // Only the polyfills actually used by the browser bundle; see CONSOLE-4360
-      excludeAliases: ['constants', 'fs', 'http', 'https', 'os', 'sys', 'timers', 'tty', 'zlib'],
+      excludeAliases: [
+        'assert',
+        'constants',
+        'crypto',
+        'events',
+        'fs',
+        'http',
+        'https',
+        'os',
+        'stream',
+        'string_decoder',
+        'sys',
+        'timers',
+        'tty',
+        'util',
+        'vm',
+        'zlib',
+      ],
     }),
     new CopyRspackPlugin({
       patterns: [
