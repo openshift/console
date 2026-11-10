@@ -93,7 +93,7 @@ export const useK8sWatchResources: UseK8sWatchResources = (initResources) => {
     }
   }
 
-  const k8sModels = k8sModelsRef.current; // eslint-disable-line react-hooks-js/refs -- custom memoization: reads memoized models map
+  const k8sModels = k8sModelsRef.current;
 
   const reduxIDs = useMemo<{
     [key: string]: ReturnType<GetIDAndDispatch<OpenShiftReduxRootState>> & { noModel: boolean };

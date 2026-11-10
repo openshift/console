@@ -41,14 +41,12 @@ import type {
 import type { Action } from './actions';
 import type { CustomDataSource } from './dashboard-data-source';
 
-/* eslint-disable oxc/no-barrel-file */
 export type {
   ManagedFieldsEntry,
   OwnerReference,
   ObjectMetadata,
   K8sResourceCommon,
 } from '@openshift/api-types';
-/* eslint-enable oxc/no-barrel-file */
 
 export type ObjectReference = {
   kind?: string;

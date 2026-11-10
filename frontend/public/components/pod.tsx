@@ -207,7 +207,6 @@ const PodContainerTable: FC<PodContainerTableProps> = ({ heading, containers, po
 };
 
 const getNetworkName = (result: PrometheusResult) =>
-  // eslint-disable-next-line camelcase
   result?.metric?.network_name || 'unnamed interface';
 
 // TODO update to use QueryBrowser for each graph

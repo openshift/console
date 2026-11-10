@@ -32,7 +32,6 @@ import { DynamicModuleImportPlugin, resolveDynamicModuleMaps } from './DynamicMo
 
 // Resolve from baseDir if provided, fallback to using process.cwd() otherwise
 const loadJSON = <T = any>(filePath: string, baseDir = process.cwd()) =>
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
   require(require.resolve(filePath, { paths: [baseDir] })) as T;
 
 const loadVendorPackageJSON = (moduleName: string, baseDir?: string) =>

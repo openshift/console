@@ -97,7 +97,6 @@ const initSegmentAnalytics = () => {
     if (n.parentNode) {
       n.parentNode.insertBefore(t, n);
     }
-    // eslint-disable-next-line no-underscore-dangle
     analytics._loadOptions = e;
   };
   analytics.SNIPPET_VERSION = '4.13.1';

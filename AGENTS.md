@@ -8,6 +8,7 @@ Before generating or modifying code, always consult the relevant file(s) to ensu
 
 - **Monorepo:** `frontend/` (React + TypeScript, yarn workspaces), `pkg/` - Go backend code, `cmd/` - Go CLI commands
 - **Key packages:** `@console/dynamic-plugin-sdk` (public API), `@console/shared` (utils), `@console/internal` (`public` folder - core UI/k8s)
+- **Linting:** oxlint and oxfmt. Always use the scripts in `frontend/package.json` instead of `npx <tool>` to ensure correct versions and configurations.
 - **Testing:** Jest (unit), Playwright (E2E), Go tests (backend). Read [TESTING.md](TESTING.md) for patterns and best practices. Use the `gen-rtl-test` skill for React Testing Library test generation.
 
 ## Static plugins
@@ -73,6 +74,7 @@ cd frontend && yarn test [<path>] # Run frontend tests (can specify test path)
 cd frontend && yarn build # Production build
 cd frontend && yarn dev-once # Development build (no watch mode)
 cd frontend && yarn i18n # Update i18n keys
+cd frontend && yarn knip # Check dead code and unused dependencies
 go mod vendor && go mod tidy # Update Go dependencies
 ./build-frontend.sh # Production build of frontend
 ./build-backend.sh # Build backend Go code

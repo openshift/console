@@ -229,7 +229,6 @@ const ImageSearch: FC = () => {
 
   useEffect(() => {
     !dirty && values.searchTerm && handleSearchRef.current(values.searchTerm);
-    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [dirty, values.searchTerm]);
 
   useEffect(() => {

@@ -33,9 +33,9 @@ export default {
       ],
       patterns: [
         {
-          group: ['@patternfly/react-icons'],
-          importNamePattern:
-            '^(?!Rh|createIcon|GitAltIcon|TerminalIcon|GithubIcon|GitlabIcon|BitbucketIcon)',
+          group: ['@patternfly/react-icons', '@patternfly/react-icons/**'],
+          allowImportNamePattern:
+            '^(Rh|createIcon|GitAltIcon|TerminalIcon|GithubIcon|GitlabIcon|BitbucketIcon)',
           message: 'Use RhMicron, RhUi, or RhStandard icon variants instead of Font Awesome icons.',
         },
         {

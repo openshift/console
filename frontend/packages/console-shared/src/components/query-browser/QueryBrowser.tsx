@@ -277,7 +277,6 @@ const TooltipWrapped: FC<TooltipProps> = ({ activePoints, center, height, style,
     if (_.isEmpty(series.labels)) {
       return '{}';
     }
-    // eslint-disable-next-line no-underscore-dangle
     const name = series.labels.__name__ ?? '';
     const otherLabels = _.intersection(allSeriesSorted, Object.keys(series.labels));
     return `${name}{${otherLabels.map((l) => `${l}=${series.labels[l]}`).join(',')}}`;

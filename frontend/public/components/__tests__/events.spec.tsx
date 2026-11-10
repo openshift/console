@@ -83,7 +83,6 @@ describe('Event utility functions', () => {
     });
 
     it('treats events without type property as normal type', () => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
       const { type: _ignored, ...eventWithoutType } = createMockEvent(
         'ns',
         'event',

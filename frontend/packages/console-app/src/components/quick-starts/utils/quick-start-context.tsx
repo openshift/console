@@ -1,4 +1,3 @@
-/* eslint-disable oxc/no-barrel-file */
 import { useCallback } from 'react';
 import type { QuickStartContextValues } from '@patternfly/quickstarts';
 import {

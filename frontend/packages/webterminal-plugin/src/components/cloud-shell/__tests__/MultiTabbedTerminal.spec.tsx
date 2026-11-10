@@ -45,7 +45,6 @@ const clickMultipleTimes = async (
   times: number,
 ) => {
   for (let i = 0; i < times; i++) {
-    // eslint-disable-next-line no-await-in-loop
     const element = getElement();
     if (!element) break;
     // eslint-disable-next-line no-await-in-loop

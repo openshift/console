@@ -1,4 +1,3 @@
-/* eslint-disable camelcase */
 import type { FC } from 'react';
 import { ChartDonut } from '@patternfly/react-charts/victory';
 import { css } from '@patternfly/react-styles';

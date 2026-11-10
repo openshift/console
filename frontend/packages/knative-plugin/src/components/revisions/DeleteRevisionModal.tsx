@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { Alert, Button, Form, ModalBody, ModalHeader } from '@patternfly/react-core';
 import type { FormikProps, FormikValues } from 'formik';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 import { KNATIVE_SERVING_LABEL } from '../../const';
@@ -22,6 +22,7 @@ const DeleteRevisionModal: FC<Props> = (props) => {
   const { t } = useTranslation('knative-plugin');
   const { deleteRevision, handleSubmit, isSubmitting, status, showTraffic, cancel } = props;
   const serviceName = deleteRevision.metadata.labels[KNATIVE_SERVING_LABEL];
+  const { namespace } = deleteRevision.metadata;
 
   return (
     <>
@@ -34,10 +35,12 @@ const DeleteRevisionModal: FC<Props> = (props) => {
       <ModalBody>
         <Form id="delete-revision-form" onSubmit={handleSubmit} className="pf-v6-u-mr-md">
           <p>
-            {t('Are you sure you want to delete ')}
-            <strong className="co-break-word">{deleteRevision.metadata.name}</strong> {t('from ')}{' '}
-            <strong className="co-break-word">{serviceName}</strong> {t('in namespace ')}{' '}
-            <strong>{deleteRevision.metadata.namespace}</strong>?
+            <Trans t={t} ns="knative-plugin">
+              Are you sure you want to delete{' '}
+              <strong className="co-break-word">{{ name: deleteRevision.metadata.name }}</strong>{' '}
+              from <strong className="co-break-word">{{ serviceName }}</strong> in namespace{' '}
+              <strong>{{ namespace }}</strong>?
+            </Trans>
           </p>
           {showTraffic && (
             <>

@@ -4,10 +4,10 @@ import { Button, EmptyState, EmptyStateBody, EmptyStateFooter } from '@patternfl
 import { Base64 } from 'js-base64';
 import { useTranslation } from 'react-i18next';
 import { getImpersonate } from '@console/dynamic-plugin-sdk';
+import { WSFactory } from '@console/dynamic-plugin-sdk/src/utils/k8s/ws-factory';
 import { PodModel } from '@console/internal/models';
 import { takeDetachedWebSocket } from '@console/internal/module/detached-ws-registry';
 import { resourceURL } from '@console/internal/module/k8s';
-import { WSFactory } from '@console/internal/module/ws-factory';
 import { FLAGS } from '@console/shared/src/constants/common';
 import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { useFlag } from '@console/shared/src/hooks/useFlag';

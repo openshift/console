@@ -1,4 +1,3 @@
-/* eslint-disable camelcase */
 import { Base64 } from 'js-base64';
 import { safeLoad, safeDump } from 'js-yaml';
 import * as _ from 'lodash';

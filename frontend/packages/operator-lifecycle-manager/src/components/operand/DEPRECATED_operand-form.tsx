@@ -499,7 +499,6 @@ const OperandFormInputGroup: FC<OperandFormInputGroupProps> = ({ field, input })
   ) : null;
 };
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
 export const DEPRECATED_CreateOperandForm: FC<OperandFormProps> = ({
   formData,
   csv,

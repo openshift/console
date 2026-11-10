@@ -417,7 +417,6 @@ export const PodAffinity: FC<PodAffinityProps> = ({ affinity, onChange, uid = ''
         <DescriptionListDescription>
           {_.map(requiredRules, (podAffinityTerm, ruleIndex) => (
             // Have to use array index in the key bc any other unique id whould have to use editable fields.
-            // eslint-disable-next-line react/no-array-index-key
             <PodAffinityRule
               key={`${uid}-pod-affinity-required-${ruleIndex}`}
               rule={{ podAffinityTerm }}

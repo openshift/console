@@ -4,7 +4,6 @@ import { coFetchJSON, coFetch } from '@console/shared/src/utils/console-fetch';
 import { getRandomChars } from '@console/shared/src/utils/utils';
 import { v1alpha1WorkspaceModel, WorkspaceModel } from '../../../models';
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
 type v1alpha1Component = {
   plugin: {
     name?: string;
@@ -12,7 +11,6 @@ type v1alpha1Component = {
   };
 };
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
 type v1alpha2Component = {
   name: string;
   plugin: {
@@ -36,13 +34,11 @@ export type CloudShellResource = K8sResourceKind & {
   };
 };
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
 type v1alpha1CloudShellStatusResource = {
   phase: string;
   ideUrl: string;
 };
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
 type v1alpha2CloudShellStatusResource = {
   phase: string;
   mainUrl: string;
