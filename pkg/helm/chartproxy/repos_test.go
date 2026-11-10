@@ -483,21 +483,22 @@ func TestHelmRepoGetter_ListErrors(t *testing.T) {
 
 func TestIndexFileURL(t *testing.T) {
 	tests := []struct {
+		name string
 		raw  string
 		want string
 	}{
-		{raw: "https://example.com/charts", want: "https://example.com/charts/index.yaml"},
-		{raw: "https://example.com/charts/", want: "https://example.com/charts/index.yaml"},
-		{raw: "https://example.com/charts/index.yaml", want: "https://example.com/charts/index.yaml"},
-		{raw: "https://example.com/charts/index%2Eyaml", want: "https://example.com/charts/index%2Eyaml"},
-		{raw: "https://example.com/charts/index.yaml?foo=bar", want: "https://example.com/charts/index.yaml?foo=bar"},
-		{raw: "https://example.com/index.yaml#section", want: "https://example.com/index.yaml#section"},
-		{raw: "https://example.com/secret?x=/index.yaml", want: "https://example.com/secret/index.yaml?x=/index.yaml"},
-		{raw: "https://example.com/secret#/index.yaml", want: "https://example.com/secret/index.yaml#/index.yaml"},
-		{raw: "http://[2001:db8::1]/repo", want: "http://[2001:db8::1]/repo/index.yaml"},
+		{name: "appends index to a path without a slash", raw: "https://example.com/charts", want: "https://example.com/charts/index.yaml"},
+		{name: "appends index to a path with a trailing slash", raw: "https://example.com/charts/", want: "https://example.com/charts/index.yaml"},
+		{name: "leaves an existing index unchanged", raw: "https://example.com/charts/index.yaml", want: "https://example.com/charts/index.yaml"},
+		{name: "leaves an encoded index suffix unchanged", raw: "https://example.com/charts/index%2Eyaml", want: "https://example.com/charts/index%2Eyaml"},
+		{name: "preserves a query on an existing index", raw: "https://example.com/charts/index.yaml?foo=bar", want: "https://example.com/charts/index.yaml?foo=bar"},
+		{name: "preserves a fragment on an existing index", raw: "https://example.com/index.yaml#section", want: "https://example.com/index.yaml#section"},
+		{name: "appends index when the suffix is only in the query", raw: "https://example.com/secret?x=/index.yaml", want: "https://example.com/secret/index.yaml?x=/index.yaml"},
+		{name: "appends index when the suffix is only in the fragment", raw: "https://example.com/secret#/index.yaml", want: "https://example.com/secret/index.yaml#/index.yaml"},
+		{name: "appends index to an IPv6 repository path", raw: "http://[2001:db8::1]/repo", want: "http://[2001:db8::1]/repo/index.yaml"},
 	}
 	for _, tt := range tests {
-		t.Run(tt.raw, func(t *testing.T) {
+		t.Run(tt.name, func(t *testing.T) {
 			u, err := url.Parse(tt.raw)
 			require.NoError(t, err)
 			require.Equal(t, tt.want, indexFileURL(u))
