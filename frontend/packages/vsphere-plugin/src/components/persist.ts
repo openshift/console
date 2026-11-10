@@ -509,7 +509,12 @@ const getPersistInfrastructureOp = async (
   if (values.network) {
     vCenterDomainCfg.topology.networks = [values.network];
   }
-  vCenterDomainCfg.topology.folder = values.folder;
+  // Folder is optional, so we need to handle the case where it's unset
+  if (values.folder) {
+    vCenterDomainCfg.topology.folder = values.folder;
+  } else {
+    delete vCenterDomainCfg.topology.folder;
+  }
 
   vCenterDomainCfg.topology.resourcePool = getInfrastructureResourcePoolPath(
     values,
