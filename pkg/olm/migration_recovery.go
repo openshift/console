@@ -638,10 +638,13 @@ func deleteOperatorMigrationRevisions(ctx context.Context, kubeClient client.Cli
 	for i := range secrets.Items {
 		secret := &secrets.Items[i]
 		guard, delegated := kubeClient.(*migrationExecutionClient)
-		ownedReference := delegated && guard.rollbackSourceID != "" && secret.Type == corev1.SecretType(migration.SecretTypeObjectData) && secret.Annotations[migrationExecutionAnnotation] == guard.rollbackSourceID
-		if _, found := revisionNames[secret.Labels[migration.LabelRevisionName]]; !found && !ownedReference {
+		packedReference := delegated && guard.rollbackSourceID != "" && secret.Type == corev1.SecretType(migration.SecretTypeObjectData) &&
+			(secret.Annotations[migrationExecutionAnnotation] == guard.rollbackSourceID || secret.Labels[migration.LabelRevisionName] == "")
+		if _, found := revisionNames[secret.Labels[migration.LabelRevisionName]]; !found && !packedReference {
 			continue
 		}
+		// The execution client verifies extension or saved Secret UIDs before
+		// deleting unlabelled packed references, including after orphaning.
 		if err := kubeClient.Delete(ctx, secret); err != nil && !apierrors.IsNotFound(err) {
 			return fmt.Errorf("delete ClusterObjectSet ref Secret %s/%s: %w", secret.Namespace, secret.Name, err)
 		}

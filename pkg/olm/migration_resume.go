@@ -800,17 +800,21 @@ func (c *migrationExecutionClient) ownsRollbackRevision(revision *ocv1.ClusterOb
 	return len(revision.OwnerReferences) == 0 && c.rollbackRevisionUIDs[revision.Name] == revision.UID
 }
 
-// ownsRollbackReference accepts controller-created reference Secrets only through verified revision or saved Secret UIDs.
+// ownsRollbackReference accepts packed Secrets through verified extension, revision, or saved Secret UIDs.
 func (c *migrationExecutionClient) ownsRollbackReference(secret *corev1.Secret) bool {
 	revision := secret.Labels[migration.LabelRevisionName]
 	if secret.Annotations[migrationExecutionAnnotation] != "" || secret.UID == "" || (c.rollbackTargetUID == "" && c.rollbackDeploymentUID == "") ||
 		secret.Type != corev1.SecretType(migration.SecretTypeObjectData) ||
-		secret.Labels[migration.LabelOwnerName] != c.rollbackTargetName || c.rollbackRevisionUIDs[revision] == "" {
+		secret.Labels[migration.LabelOwnerName] != c.rollbackTargetName || revision != "" && c.rollbackRevisionUIDs[revision] == "" {
 		return false
 	}
 	owner := metav1.GetControllerOf(secret)
 	if owner != nil {
-		return owner.APIVersion == ocv1.GroupVersion.String() && owner.Kind == "ClusterObjectSet" &&
+		if owner.Kind == ocv1.ClusterExtensionKind {
+			return revision == "" && c.rollbackTargetUID != "" && owner.APIVersion == ocv1.GroupVersion.String() &&
+				owner.Name == c.rollbackTargetName && owner.UID == c.rollbackTargetUID
+		}
+		return revision != "" && owner.APIVersion == ocv1.GroupVersion.String() && owner.Kind == "ClusterObjectSet" &&
 			owner.Name == revision && owner.UID == c.rollbackRevisionUIDs[revision]
 	}
 	return len(secret.OwnerReferences) == 0 && c.rollbackReferenceUIDs[secret.Namespace+"/"+secret.Name] == secret.UID

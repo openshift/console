@@ -436,8 +436,10 @@ func bindRollbackTarget(ctx context.Context, guard *migrationExecutionClient, ro
 	}
 	for i := range references.Items {
 		secret := &references.Items[i]
+		revision := secret.Labels[migration.LabelRevisionName]
 		if secret.Annotations[migrationExecutionAnnotation] == rollback.SourceJobID ||
-			guard.rollbackRevisionUIDs[secret.Labels[migration.LabelRevisionName]] == "" {
+			revision != "" && guard.rollbackRevisionUIDs[revision] == "" ||
+			revision == "" && secret.Type != corev1.SecretType(migration.SecretTypeObjectData) {
 			continue
 		}
 		if !guard.ownsRollbackReference(secret) {
