@@ -12,7 +12,7 @@ import { k8sPatch } from '@console/internal/module/k8s';
 import type { ModalComponentProps } from '@console/shared/src/types/modal';
 import {
   getLimitsDataFromResource,
-  getResourceLimitsData,
+  mergeResourceLimitsData,
 } from '@console/shared/src/utils/resource-utils';
 import ResourceLimitsModal from './ResourceLimitsModal';
 
@@ -33,7 +33,11 @@ const ResourceLimitsModalLauncher: FC<ResourceLimitsModalLauncherProps> = (props
     const {
       limits: { cpu, memory },
     } = values;
-    const resources = getResourceLimitsData({ cpu, memory });
+    // Merge the edited CPU/memory into the container's existing resources so
+    // that keys the form does not model (e.g. ephemeral-storage, hugepages)
+    // are preserved rather than dropped. See OCPBUGS-135948.
+    const existingResources = props.resource?.spec?.template?.spec?.containers?.[0]?.resources;
+    const resources = mergeResourceLimitsData({ cpu, memory }, existingResources);
 
     return k8sPatch(props.model, props.resource, [
       {

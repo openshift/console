@@ -713,6 +713,65 @@ export const getResourceLimitsData = (limitsData: LimitsData) => ({
   }),
 });
 
+// Merges the CPU/memory values from the Edit resource limits form into the
+// container's existing `resources` object instead of replacing it wholesale.
+// This preserves resource keys the form does not model (e.g. ephemeral-storage,
+// hugepages, extended resources) so they are not dropped on save.
+// See https://issues.redhat.com/browse/OCPBUGS-135948
+export const mergeResourceLimitsData = (
+  limitsData: LimitsData,
+  existingResources: {
+    limits?: { [key: string]: string };
+    requests?: { [key: string]: string };
+  } = {},
+) => {
+  const merged = _.cloneDeep(existingResources);
+
+  const applyValue = (section: 'limits' | 'requests', key: 'cpu' | 'memory', value?: string) => {
+    if (value) {
+      merged[section] = { ...(merged[section] ?? {}), [key]: value };
+    } else if (merged[section]) {
+      delete merged[section][key];
+    }
+  };
+
+  applyValue(
+    'limits',
+    'cpu',
+    limitsData.cpu.limit ? `${limitsData.cpu.limit}${limitsData.cpu.limitUnit}` : undefined,
+  );
+  applyValue(
+    'limits',
+    'memory',
+    limitsData.memory.limit
+      ? `${limitsData.memory.limit}${limitsData.memory.limitUnit}`
+      : undefined,
+  );
+  applyValue(
+    'requests',
+    'cpu',
+    limitsData.cpu.request ? `${limitsData.cpu.request}${limitsData.cpu.requestUnit}` : undefined,
+  );
+  applyValue(
+    'requests',
+    'memory',
+    limitsData.memory.request
+      ? `${limitsData.memory.request}${limitsData.memory.requestUnit}`
+      : undefined,
+  );
+
+  // Drop limits/requests sections that have become empty so the resources
+  // object stays clean.
+  if (merged.limits && _.isEmpty(merged.limits)) {
+    delete merged.limits;
+  }
+  if (merged.requests && _.isEmpty(merged.requests)) {
+    delete merged.requests;
+  }
+
+  return merged;
+};
+
 export const getResourceData = (res: string) => {
   const resourcesRegEx = /^[0-9]*|[a-zA-Z]*/g;
   return res.match(resourcesRegEx);
