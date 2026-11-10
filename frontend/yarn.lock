@@ -5925,15 +5925,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"binaryextensions@npm:^6.11.0":
-  version: 6.11.0
-  resolution: "binaryextensions@npm:6.11.0"
-  dependencies:
-    editions: "npm:^6.21.0"
-  checksum: 10c0/7cd07215d2ba9722cc2c378de554e294e2577ee8b53e8e3715abf1f3e0f23db75851c9820dc34c117a3d44a778360cc28d4800e4802cdb9bc20774b71f3f5202
-  languageName: node
-  linkType: hard
-
 "bn.js@npm:^4.0.0, bn.js@npm:^4.1.0, bn.js@npm:^4.11.9":
   version: 4.12.0
   resolution: "bn.js@npm:4.12.0"
@@ -7677,15 +7668,6 @@ __metadata:
   version: 0.2.0
   resolution: "eastasianwidth@npm:0.2.0"
   checksum: 10c0/26f364ebcdb6395f95124fda411f63137a4bfb5d3a06453f7f23dfe52502905bd84e0488172e0f9ec295fdc45f05c23d5d91baf16bd26f0fe9acd777a188dc39
-  languageName: node
-  linkType: hard
-
-"editions@npm:^6.21.0":
-  version: 6.21.0
-  resolution: "editions@npm:6.21.0"
-  dependencies:
-    version-range: "npm:^4.13.0"
-  checksum: 10c0/b5d3f44987b8a31ffd5cad12421de0d6fe5e57c6d85e5ea3601fbcfde4fc7d52bb76620c652fe74a303dfe54de8abc84733a230a2823512abb8006d78b0bfeba
   languageName: node
   linkType: hard
 
@@ -10312,17 +10294,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"istextorbinary@npm:^9.5.0":
-  version: 9.5.0
-  resolution: "istextorbinary@npm:9.5.0"
-  dependencies:
-    binaryextensions: "npm:^6.11.0"
-    editions: "npm:^6.21.0"
-    textextensions: "npm:^6.11.0"
-  checksum: 10c0/76ed0355b48ceb351301ade26824f136be9436a1a31432b37191e591e868a081d6953fb7b5faa964681a24cad0435863635618354c5d440c79b65b75a9d788c5
-  languageName: node
-  linkType: hard
-
 "iterator.prototype@npm:^1.1.5":
   version: 1.1.5
   resolution: "iterator.prototype@npm:1.1.5"
@@ -12547,7 +12518,6 @@ __metadata:
     i18next-http-backend: "npm:^4.0.2"
     i18next-pseudo: "npm:^2.2.1"
     i18next-v4-format-converter: "npm:^1.1.2"
-    istextorbinary: "npm:^9.5.0"
     jest: "npm:^30.5.2"
     jest-cli: "npm:^30.5.2"
     jest-environment-jsdom: "npm:^30.5.2"
@@ -15363,15 +15333,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"textextensions@npm:^6.11.0":
-  version: 6.11.0
-  resolution: "textextensions@npm:6.11.0"
-  dependencies:
-    editions: "npm:^6.21.0"
-  checksum: 10c0/6077ca91af65d8067007973635d9e22c712c08cc06004cf2fa91f221239f0a833ededa18bf977131b45649be4a34fe44a7d1cb7b3f6c6c49d5677a197a10b0e0
-  languageName: node
-  linkType: hard
-
 "theming@npm:^3.3.0":
   version: 3.3.0
   resolution: "theming@npm:3.3.0"
@@ -16068,13 +16029,6 @@ __metadata:
   version: 1.1.2
   resolution: "vary@npm:1.1.2"
   checksum: 10c0/f15d588d79f3675135ba783c91a4083dcd290a2a5be9fcb6514220a1634e23df116847b1cc51f66bfb0644cf9353b2abb7815ae499bab06e46dd33c1a6bf1f4f
-  languageName: node
-  linkType: hard
-
-"version-range@npm:^4.13.0":
-  version: 4.14.0
-  resolution: "version-range@npm:4.14.0"
-  checksum: 10c0/f9aab9c3b6e572dad1fb02df50cc8cf1a28be66ed2bc45e0d32d863d03d08d46cab154b6f9ed3eb7c404e12ae21a3b3231ba424798dbb339e9095a2d107ed50d
   languageName: node
   linkType: hard
 

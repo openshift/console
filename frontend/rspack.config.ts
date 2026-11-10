@@ -341,6 +341,7 @@ const config: Configuration = {
       additionalAliases: ['process'],
       // Only the polyfills actually used by the browser bundle; see CONSOLE-4360
       excludeAliases: [
+        'Buffer',
         'assert',
         'buffer',
         'constants',
@@ -350,6 +351,7 @@ const config: Configuration = {
         'http',
         'https',
         'os',
+        'path',
         'stream',
         'string_decoder',
         'sys',
