@@ -117,6 +117,15 @@ type AuthProxy struct {
 	TrustedCAFilePath string   `yaml:"trustedCAFilePath,omitempty"`
 }
 
+func (proxy *AuthProxy) DeepCopy() *AuthProxy {
+	if proxy == nil {
+		return nil
+	}
+	out := *proxy
+	out.NoProxy = append([]string(nil), proxy.NoProxy...)
+	return &out
+}
+
 // Session holds configuration for web-session related configuration
 type Session struct {
 	CookieEncryptionKeyFile             string `yaml:"cookieEncryptionKeyFile,omitempty"`
