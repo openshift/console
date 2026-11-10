@@ -84,6 +84,12 @@ describe('isAWSSTSCluster', () => {
     const result = isAWSSTSCluster(cloudcreds, infra, auth);
     expect(result).toEqual(false);
   });
+  it('should return false if auth is unavailable', () => {
+    const cloudcreds = { spec: { credentialsMode: 'Manual' } } as CloudCredentialKind;
+    const infra = { status: { platform: 'AWS' } } as InfrastructureKind;
+    const result = isAWSSTSCluster(cloudcreds, infra, undefined);
+    expect(result).toEqual(false);
+  });
 });
 
 describe('isAzureWIFCluster', () => {
@@ -119,6 +125,12 @@ describe('isAzureWIFCluster', () => {
     const result = isAzureWIFCluster(cloudcreds, infra, auth);
     expect(result).toEqual(false);
   });
+  it('should return false if auth is unavailable', () => {
+    const cloudcreds = { spec: { credentialsMode: 'Manual' } } as CloudCredentialKind;
+    const infra = { status: { platform: 'Azure' } } as InfrastructureKind;
+    const result = isAzureWIFCluster(cloudcreds, infra, undefined);
+    expect(result).toEqual(false);
+  });
 });
 
 describe('isGCPWIFCluster', () => {
@@ -152,6 +164,12 @@ describe('isGCPWIFCluster', () => {
     const infra = { status: { platform: 'GCP' } } as InfrastructureKind;
     const auth = { spec: { serviceAccountIssuer: '' } } as AuthenticationKind;
     const result = isGCPWIFCluster(cloudcreds, infra, auth);
+    expect(result).toEqual(false);
+  });
+  it('should return false if auth is unavailable', () => {
+    const cloudcreds = { spec: { credentialsMode: 'Manual' } } as CloudCredentialKind;
+    const infra = { status: { platform: 'GCP' } } as InfrastructureKind;
+    const result = isGCPWIFCluster(cloudcreds, infra, undefined);
     expect(result).toEqual(false);
   });
 });

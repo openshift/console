@@ -48,7 +48,7 @@ export const isAWSSTSCluster = (
   return (
     cloudcreds?.spec?.credentialsMode === 'Manual' &&
     infra?.status?.platform === 'AWS' &&
-    auth?.spec?.serviceAccountIssuer !== ''
+    !!auth?.spec?.serviceAccountIssuer
   );
 };
 
@@ -60,7 +60,7 @@ export const isAzureWIFCluster = (
   return (
     cloudcreds?.spec?.credentialsMode === 'Manual' &&
     infra?.status?.platform === 'Azure' &&
-    auth?.spec?.serviceAccountIssuer !== ''
+    !!auth?.spec?.serviceAccountIssuer
   );
 };
 
@@ -72,7 +72,7 @@ export const isGCPWIFCluster = (
   return (
     cloudcreds?.spec?.credentialsMode === 'Manual' &&
     infra?.status?.platform === 'GCP' &&
-    auth?.spec?.serviceAccountIssuer !== ''
+    !!auth?.spec?.serviceAccountIssuer
   );
 };
 
