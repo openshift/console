@@ -339,6 +339,8 @@ const config: Configuration = {
     }),
     new NodePolyfillPlugin({
       additionalAliases: ['process'],
+      // Only the polyfills actually used by the browser bundle; see CONSOLE-4360
+      excludeAliases: ['constants', 'fs', 'http', 'https', 'os', 'sys', 'timers', 'tty', 'zlib'],
     }),
     new CopyRspackPlugin({
       patterns: [
