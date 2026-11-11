@@ -6,12 +6,15 @@ import { GetSegmentAnalytics } from '../extensions/console-types';
  *
  * This API is meant to be used by Red Hat plugins only.
  *
- * Console application takes care of loading the analytics.min.js script.
+ * The client is initialized at module load time. `analytics.load()` is
+ * asynchronous, but `@segment/analytics-next` buffers calls made before load
+ * completes. Check `analyticsEnabled` before sending events.
  *
  * `analyticsEnabled` is `false` when telemetry is disabled cluster-wide, when
- * this browser tab was not selected for the 20% Segment sample, or both. The
- * sample decision is stored in sessionStorage for the tab to survive reloads
- * and SSO redirects.
+ * this browser tab was not selected for the 20% Segment sample, when a
+ * configured CDN override is invalid, or when initialization fails. A failed
+ * `load()` also clears `analytics`. The sample decision is stored in
+ * sessionStorage for the tab so it survives reloads and SSO redirects.
  *
  * @example
  * ```ts

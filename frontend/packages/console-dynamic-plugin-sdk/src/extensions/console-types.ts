@@ -38,6 +38,7 @@ import type {
   PrometheusValue,
   Selector,
 } from '../api/common-types';
+import type { SegmentAnalyticsClient } from '../api/segment-analytics';
 import type { Action } from './actions';
 import type { CustomDataSource } from './dashboard-data-source';
 
@@ -271,8 +272,7 @@ export type UseResolvedExtensions = <E extends Extension>(
 ) => [LoadedAndResolvedExtension<E>[], boolean, any[]];
 
 export type GetSegmentAnalytics = () => {
-  // TODO: use proper Segment Analytics API type
-  analytics: Record<string, (...args: any) => any>;
+  analytics: SegmentAnalyticsClient | undefined;
   analyticsEnabled: boolean;
 };
 
