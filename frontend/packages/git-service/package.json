@@ -13,7 +13,7 @@
     "@gitbeaker/rest": "^43.8.0",
     "@octokit/rest": "^16.30.1",
     "docker-file-parser": "^1.0.4",
-    "git-url-parse": "^11.1.2"
+    "git-url-parse": "^16.1.0"
   },
   "devDependencies": {
     "nock": "^14.0.17",

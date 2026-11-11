@@ -15,7 +15,6 @@ import {
   ModalVariant,
   ButtonVariant,
 } from '@patternfly/react-core';
-import { isBinary } from 'istextorbinary';
 import { Base64 } from 'js-base64';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -24,6 +23,7 @@ import { DocumentTitle } from '@console/shared/src/components/document-title/Doc
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
+import { decodeBase64Text } from '@console/shared/src/utils/text-or-binary';
 import { SecretModel } from '../../../models';
 import type { K8sResourceKind } from '../../../module/k8s';
 import { k8sCreate, k8sUpdate, referenceFor } from '../../../module/k8s';
@@ -61,10 +61,10 @@ export const SecretFormWrapper: FC<BaseEditSecretProps> = (props) => {
   const [error, setError] = useState();
   const [stringData, setStringData] = useState(
     Object.entries(props.obj?.data ?? {}).reduce<Record<string, string>>((acc, [key, value]) => {
-      if (isBinary(null, Buffer.from(value, 'base64'))) {
-        return acc;
+      const text = decodeBase64Text(value);
+      if (text !== null) {
+        acc[key] = text;
       }
-      acc[key] = value ? Base64.decode(value) : '';
       return acc;
     }, {}),
   );
@@ -72,7 +72,7 @@ export const SecretFormWrapper: FC<BaseEditSecretProps> = (props) => {
   const binaryData = useMemo(
     () =>
       Object.entries(props.obj?.data ?? {}).reduce<Record<string, string>>((acc, [key, value]) => {
-        if (isBinary(null, Buffer.from(value, 'base64'))) {
+        if (decodeBase64Text(value) === null) {
           acc[key] = value;
         }
         return acc;

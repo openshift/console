@@ -22,6 +22,12 @@ describe('tree shaking', () => {
     .filter((f) => f.endsWith('.js'))
     .map((f) => join(DIST_DIR, f));
 
+  // Minified bundle code does not contain package names, so bundled modules
+  // are detected via the source maps, which list them by path.
+  const sourceMapFiles = readdirSync(DIST_DIR)
+    .filter((f) => f.endsWith('.js.map'))
+    .map((f) => join(DIST_DIR, f));
+
   const indexHtml = new DOMParser().parseFromString(
     readFileSync(join(DIST_DIR, 'index.html'), 'utf-8'),
     'text/html',
@@ -42,6 +48,7 @@ describe('tree shaking', () => {
     expect(WizardsOfTheCoastIcon).toBeDefined();
     expect(initialJsFiles.length).toBeGreaterThan(0);
     expect(initialVendorChunks.length).toBeGreaterThan(0);
+    expect(sourceMapFiles.length).toBeGreaterThan(0);
   });
 
   // PatternFly icons are tree-shakeable, but we've seen that sometimes a
@@ -50,6 +57,18 @@ describe('tree shaking', () => {
   it('should not bundle unused PatternFly icons (WizardsOfTheCoastIcon)', () => {
     expect(findFilesContaining(bundleFiles, 'WizardsOfTheCoastIcon')).toEqual([]);
   }, 10000); // possibly could take longer due to slow IO
+
+  // Terminal coloring libraries are build-time dependencies; they must never
+  // end up in the browser bundle. supports-color reads process.platform and
+  // process.env.TERM unguarded at module evaluation, which crashed the
+  // console at startup when NodePolyfillPlugin stopped masking it.
+  it.each(['chalk', 'supports-color'])(
+    'should not bundle build-time dependencies like %s',
+    (library) => {
+      expect(findFilesContaining(sourceMapFiles, `node_modules/${library}/`)).toEqual([]);
+    },
+    10000,
+  ); // possibly could take longer due to slow IO
 
   // These large libraries should only be loaded as-needed using AsyncComponent
   it.each(['@xterm/xterm', 'monaco-editor', '@octokit/rest'])(

@@ -1,7 +1,7 @@
-import { isBinary } from 'istextorbinary';
 import { Base64 } from 'js-base64';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { decodeBase64, isBinary } from '@console/shared/src/utils/text-or-binary';
 import { WebHookSecretKey } from './const';
 import type {
   PullSecretCredential,
@@ -214,7 +214,7 @@ export const opaqueSecretObjectToArray = (
   return Object.entries(base64StringData).map(([key, value]) => ({
     key,
     value,
-    isBinary_: isBinary(null, Buffer.from(value || '', 'base64')),
+    isBinary_: isBinary(decodeBase64(value)),
     uid: _.uniqueId(),
   }));
 };

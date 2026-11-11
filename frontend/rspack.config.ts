@@ -20,7 +20,6 @@ import { ReactRefreshRspackPlugin } from '@rspack/plugin-react-refresh';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import * as _ from 'lodash';
 import MonacoWebpackPlugin from 'monaco-editor-webpack-plugin';
-import NodePolyfillPlugin from 'node-polyfill-webpack-plugin';
 import * as semver from 'semver';
 import { TsCheckerRspackPlugin } from 'ts-checker-rspack-plugin';
 import {
@@ -336,9 +335,6 @@ const config: Configuration = {
     }),
     new experiments.VirtualModulesPlugin({
       'get-local-plugins': getLocalPluginsModuleData(pluginPackages, 'esm').code,
-    }),
-    new NodePolyfillPlugin({
-      additionalAliases: ['process'],
     }),
     new CopyRspackPlugin({
       patterns: [
