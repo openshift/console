@@ -12,6 +12,24 @@ compatibility table in [Console dynamic plugins README](./README.md).
 
 ## 5.1.0-prerelease.2 - TBD
 
+- Replace the hand-rolled Segment snippet with `@segment/analytics-next` (`AnalyticsBrowser`). The
+  library is bundled into the Console frontend and initialized at module load time ([CONSOLE-5475])
+- **Type change**: `GetSegmentAnalytics` now types `analytics` as
+  `SegmentAnalyticsClient | undefined` (`AnalyticsBrowser`) instead of `Record<string, ...>`
+  ([CONSOLE-5475])
+- **Dependency**: `@openshift-console/dynamic-plugin-sdk` now lists `@segment/analytics-next` as a
+  runtime dependency ([CONSOLE-5475])
+- **Configuration**: add `SEGMENT_CDN_URL` as the preferred way to override Segment's CDN endpoint.
+  `SEGMENT_JS_HOST` and `SEGMENT_JS_URL` remain supported for backward compatibility but are
+  deprecated ([CONSOLE-5475])
+- **Deprecated**: `SEGMENT_JS_URL` and `SEGMENT_JS_HOST` as CDN configuration. `SEGMENT_JS_URL`
+  values that do not match the `/analytics.js/v1` path pattern are no longer used; configure
+  `SEGMENT_CDN_URL` instead ([CONSOLE-5475])
+- Leave Segment's `initialPageview` option unset. `@segment/analytics-next` sends a page event
+  during `load()` only when that option is true, and the previous snippet did not send one either.
+  Page events continue to come from Console's telemetry flow ([CONSOLE-5475])
+- **Behavior change**: if Segment initialization fails, clear `analytics` and set `analyticsEnabled`
+  to `false` ([CONSOLE-5475])
 - Add `react-dom` and `react/jsx-runtime` as Console provided shared modules ([CONSOLE-5571],
   [#17462])
 - Provide `meta/shared-modules.json` containing shared modules and their supported versions
