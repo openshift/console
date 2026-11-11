@@ -4,6 +4,14 @@ import { useTranslation } from 'react-i18next';
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
 import { NumberSpinner } from './number-spinner';
 
+const parseRequestSizeValue = (raw: string | number): number | null => {
+  if (raw === '' || raw === null || raw === undefined) {
+    return null;
+  }
+  const parsed = typeof raw === 'number' ? raw : Number.parseFloat(raw);
+  return Number.isFinite(parsed) ? parsed : null;
+};
+
 export const RequestSizeInput: FC<RequestSizeInputProps> = ({
   ariaLabel,
   children,
@@ -18,10 +26,11 @@ export const RequestSizeInput: FC<RequestSizeInputProps> = ({
   onChange,
   placeholder,
   required,
+  step = 'any',
   testID,
 }) => {
-  const parsedRequestSizeValue = parseInt(defaultRequestSizeValue, 10) || 0;
-  const defaultValue = Number.isFinite(parsedRequestSizeValue) ? parsedRequestSizeValue : null;
+  const parsedRequestSizeValue = parseRequestSizeValue(defaultRequestSizeValue);
+  const defaultValue = parsedRequestSizeValue ?? 0;
   const [unit, setUnit] = useState<string>(defaultRequestSizeUnit);
   const [value, setValue] = useState<number>(defaultValue);
 
@@ -36,8 +45,13 @@ export const RequestSizeInput: FC<RequestSizeInputProps> = ({
   }
 
   const onValueChange: ReactEventHandler<HTMLInputElement> = (event) => {
-    setValue(parseInt(event.currentTarget.value, 10));
-    onChange({ value: event.currentTarget.value, unit });
+    const raw = event.currentTarget.value;
+    const parsed = parseRequestSizeValue(raw);
+    // Prefer parsed decimals (e.g. 1.5). Empty/invalid input falls back to 0 so the
+    // controlled spinner and parent onChange stay in sync (avoids submitting bare "Gi").
+    const nextValue = parsed ?? 0;
+    setValue(nextValue);
+    onChange({ value: raw === '' || parsed === null ? nextValue : raw, unit });
   };
 
   const changeValueBy = (changeBy: number) => {
@@ -55,6 +69,7 @@ export const RequestSizeInput: FC<RequestSizeInputProps> = ({
   const { t } = useTranslation('public');
   const inputName = `${name}Value`;
   const dropdownName = `${name}Unit`;
+  const numericStep = typeof step === 'number' ? step : 1;
   return (
     <div>
       <div className="pf-v6-c-input-group">
@@ -71,6 +86,8 @@ export const RequestSizeInput: FC<RequestSizeInputProps> = ({
           value={value}
           min={minValue}
           disabled={isInputDisabled}
+          step={step}
+          stepAmount={numericStep}
         />
         <ConsoleSelect
           title={dropdownUnits[defaultRequestSizeUnit]}
@@ -96,13 +113,14 @@ export type RequestSizeInputProps = {
   ariaLabel?: string;
   placeholder?: string;
   name: string;
-  onChange: Function;
+  onChange: (data: { value: string | number; unit: string }) => void;
   required?: boolean;
   dropdownUnits: any;
   defaultRequestSizeUnit: string;
   defaultRequestSizeValue: string;
   describedBy?: string;
-  step?: number;
+  /** HTML/PatternFly step; use `'any'` (default) to allow fractional sizes such as 1.5Gi. */
+  step?: number | 'any';
   minValue?: number;
   inputID?: string;
   testID?: string;
