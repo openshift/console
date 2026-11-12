@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 #
 # Prow / CI entrypoint for Playwright E2E tech-preview tests against a live OpenShift cluster.
-# Runs OLM tests that require Tech Preview to be enabled, including:
-# - Operator catalog items display test (OLMv1 path active on Tech Preview clusters)
-# - Operator lifecycle metadata test (requires OLMLifecycleAndCompatibility feature gate)
+# Runs the tests tagged @techpreview in the spec sources (test/test.describe `tag` option).
+#
+# The main e2e job (test-prow-e2e.sh) excludes these tests via --grep-invert @techpreview.
 #
 # Run from the openshift/console repository root.
 #
@@ -47,6 +47,6 @@ if [ ! -d node_modules ]; then
   yarn install
 fi
 
-./integration-tests/test-playwright.sh -- e2e/tests/olm/operator-lifecycle-metadata.spec.ts e2e/tests/olm/classic-operators-section.spec.ts e2e/tests/dev-console/catalog.spec.ts e2e/tests/olm/operator-migration.spec.ts "$@"
+./integration-tests/test-playwright.sh -- --grep @techpreview "$@"
 
 popd

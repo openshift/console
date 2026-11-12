@@ -1530,7 +1530,6 @@ export const test = base.extend<{
         { timeout: 60_000, message: 'Console must load its server flags after login' },
       )
       .toBeDefined();
-    base.skip(!flags.techPreview, 'Operator migration requires a Technology Preview console');
     const fixture = new OperatorMigrationFixture(k8sClient, cleanup, flags.authDisabled);
     try {
       await fixture.createCatalogs(source, target);
