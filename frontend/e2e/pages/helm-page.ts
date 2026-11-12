@@ -28,7 +28,7 @@ export class HelmPage extends BasePage {
   private readonly yamlViewRadio = this.page.locator('#form-radiobutton-editorType-yaml-field');
   private readonly chartVersionDropdown = this.page.locator('#form-dropdown-chartVersion-field');
   private readonly createDropdown = this.page.getByTestId('tab-list-page-create');
-  private readonly helmReleasesTab = this.page.getByRole('tab', { name: 'Helm Releases' });
+  private readonly helmReleasesTab = this.page.getByRole('tab', { name: 'Helm releases' });
   private readonly repositoriesTab = this.page.getByRole('tab', { name: 'Repositories' });
 
   async navigateToHelmReleases(namespace: string): Promise<void> {
