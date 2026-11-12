@@ -269,7 +269,7 @@ describe('useCatalogExtensions item type metadata merging', () => {
     mockExtensions = [
       {
         type: 'console.catalog/item-type',
-        properties: { type: 'HelmChart', title: 'Helm Charts' },
+        properties: { type: 'HelmChart', title: 'Helm charts' },
       },
       {
         type: 'console.catalog/item-type-metadata',

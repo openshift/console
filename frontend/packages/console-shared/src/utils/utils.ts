@@ -82,8 +82,8 @@ export const alphanumericCompare = (a: string, b: string): number =>
   });
 
 const translationForResourceKind = {
-  // t('console-shared~Helm Release')
-  HelmRelease: `console-shared~Helm Release`,
+  // t('console-shared~Helm release')
+  HelmRelease: `console-shared~Helm release`,
 };
 
 export const labelForNodeKind = (kindString: string) => {
