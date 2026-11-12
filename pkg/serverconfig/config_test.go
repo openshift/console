@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"math/rand"
 	"os"
+	"path/filepath"
 	"reflect"
 	"testing"
 
@@ -82,6 +83,112 @@ func TestCallingMultiKeyValueSetterMultipleTimes(t *testing.T) {
 	}
 	if !reflect.DeepEqual(expected, actual) {
 		t.Errorf("Data does not match expectation:\n%v\nbut got\n%v", expected, actual)
+	}
+}
+
+// TestCSPConfigPreservesSources keeps YAML values intact until policy validation, including on a nil map.
+func TestCSPConfigPreservesSources(t *testing.T) {
+	for _, test := range []struct {
+		name   string
+		source string
+	}{
+		{"literal-comma", "https://plugin.example.com/a,b"},
+		{"comma-separated-entry", "https://plugin.example.com,script-src=https://other.example.com"},
+		{"encoded-separators", "https://plugin.example.com/a%2Cb%3Bc"},
+	} {
+		t.Run(test.name, func(t *testing.T) {
+			fs := flag.NewFlagSet(t.Name(), flag.ContinueOnError)
+			var csp MultiKeyValue
+			fs.Var(&csp, "content-security-policy", "")
+			config := &Config{
+				APIVersion: "console.openshift.io/v1",
+				Kind:       "ConsoleConfig",
+				ContentSecurityPolicy: map[consolev1.DirectiveType][]string{
+					consolev1.ScriptSrc: {test.source, "'self'"},
+				},
+			}
+			if err := SetFlagsFromConfig(fs, config); err != nil {
+				t.Fatal(err)
+			}
+			if want := (MultiKeyValue{"script-src": test.source + " 'self'"}); !reflect.DeepEqual(csp, want) {
+				t.Fatalf("configured sources were changed: got %v, want %v", csp, want)
+			}
+		})
+	}
+}
+
+// TestCSPConfigPrecedence checks CLI-over-environment-over-YAML precedence while retaining other directives.
+func TestCSPConfigPrecedence(t *testing.T) {
+	for _, test := range []struct {
+		name    string
+		env     string
+		cli     string
+		want    string
+		font    string
+		connect string
+	}{
+		{"config", "", "", "https://yaml.example.com", "https://fonts.example.com", ""},
+		{"environment", "script-src=https://env.example.com", "", "https://env.example.com", "https://fonts.example.com", ""},
+		{"cli", "script-src=https://env.example.com", "script-src=https://cli.example.com", "https://cli.example.com", "https://fonts.example.com", ""},
+		{"mixed directives", "script-src=https://env.example.com,connect-src=https://connect.example.com", "font-src=https://cli-fonts.example.com", "https://env.example.com", "https://cli-fonts.example.com", "https://connect.example.com"},
+	} {
+		t.Run(test.name, func(t *testing.T) {
+			filename := filepath.Join(t.TempDir(), "console-config.yaml")
+			if err := os.WriteFile(filename, []byte(`apiVersion: console.openshift.io/v1
+kind: ConsoleConfig
+contentSecurityPolicy:
+  ScriptSrc: [https://yaml.example.com]
+  FontSrc: [https://fonts.example.com]
+`), 0600); err != nil {
+				t.Fatal(err)
+			}
+			prefix := "TEST_CSP_PRECEDENCE"
+			t.Setenv(prefix+"_CONTENT_SECURITY_POLICY", test.env)
+			fs := flag.NewFlagSet(t.Name(), flag.ContinueOnError)
+			fs.String("config", "", "")
+			csp := MultiKeyValue{"img-src": "https://images.example.com"}
+			fs.Var(&csp, "content-security-policy", "")
+			args := []string{"--config", filename}
+			if test.cli != "" {
+				args = append(args, "--content-security-policy", test.cli)
+			}
+			if _, err := Parse(fs, args, prefix); err != nil {
+				t.Fatal(err)
+			}
+			want := MultiKeyValue{
+				"script-src": test.want,
+				"font-src":   test.font,
+				"img-src":    "https://images.example.com",
+			}
+			if test.connect != "" {
+				want["connect-src"] = test.connect
+			}
+			if !reflect.DeepEqual(csp, want) {
+				t.Fatalf("unexpected effective sources: got %v, want %v", csp, want)
+			}
+		})
+	}
+}
+
+// TestCSPConfigRejectsIncompatibleFlag prevents silently losing CSP configuration when the flag is misregistered.
+func TestCSPConfigRejectsIncompatibleFlag(t *testing.T) {
+	for _, name := range []string{"missing", "wrong type"} {
+		t.Run(name, func(t *testing.T) {
+			fs := flag.NewFlagSet(t.Name(), flag.ContinueOnError)
+			if name == "wrong type" {
+				fs.String("content-security-policy", "", "")
+			}
+			config := &Config{
+				APIVersion: "console.openshift.io/v1",
+				Kind:       "ConsoleConfig",
+				ContentSecurityPolicy: map[consolev1.DirectiveType][]string{
+					consolev1.ScriptSrc: {"https://plugin.example.com"},
+				},
+			}
+			if err := SetFlagsFromConfig(fs, config); err == nil {
+				t.Fatal("silently ignored CSP configuration with an incompatible flag")
+			}
+		})
 	}
 }
 
