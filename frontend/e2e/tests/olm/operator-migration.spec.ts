@@ -68,7 +68,7 @@ const prepareInstalledTargetFailure = async (
   }
 };
 
-test.describe('Operator migration', { lock: OLM_CLUSTER_STATE_LOCK }, () => {
+test.describe('Operator migration', { tag: ['@techpreview'], lock: OLM_CLUSTER_STATE_LOCK }, () => {
   test.setTimeout(900_000);
 
   test('migrates one operator after a read-only plan review and keeps its operand running', async ({
@@ -649,303 +649,319 @@ test.describe('Operator migration', { lock: OLM_CLUSTER_STATE_LOCK }, () => {
 
 // These interruptions use a real fixture-scoped admission policy to hold the
 // ClusterExtension status pending. The migration API is never intercepted.
-test.describe('Operator migration interruptions', { lock: OLM_CLUSTER_STATE_LOCK }, () => {
-  // Logout must not revoke the saved session shared by other workers.
-  test.use({ storageState: { cookies: [], origins: [] } });
-  test.setTimeout(900_000);
-  const options = {
-    annotation: {
-      type: 'no-auto-reauth',
-      description: 'Authentication changes are part of this test',
-    },
-  };
-  const checkInterruption = async (
-    interruption: 'refresh' | 'new browser' | 'logout and login' | 'backend replacement',
-    {
-      migration,
-      migrationPage,
-      page,
-      browser,
-      baseURL,
-    }: {
-      migration: OperatorMigrationFixture;
-      migrationPage: OperatorMigrationPage;
-      page: Page;
-      browser: Browser;
-      baseURL?: string;
-    },
-  ) => {
-    if (interruption === 'logout and login') {
-      test.skip(migration.authDisabled, 'Logout requires an authenticated Console');
-    }
-    if (interruption === 'backend replacement') {
-      test.skip(
-        ['localhost', '127.0.0.1', '::1'].includes(new URL(baseURL).hostname),
-        'Use the cluster Console route: deleting pods cannot restart a locally served backend',
+test.describe(
+  'Operator migration interruptions',
+  { tag: ['@techpreview'], lock: OLM_CLUSTER_STATE_LOCK },
+  () => {
+    // Logout must not revoke the saved session shared by other workers.
+    test.use({ storageState: { cookies: [], origins: [] } });
+    test.setTimeout(900_000);
+    const options = {
+      annotation: {
+        type: 'no-auto-reauth',
+        description: 'Authentication changes are part of this test',
+      },
+    };
+    const checkInterruption = async (
+      interruption: 'refresh' | 'new browser' | 'logout and login' | 'backend replacement',
+      {
+        migration,
+        migrationPage,
+        page,
+        browser,
+        baseURL,
+      }: {
+        migration: OperatorMigrationFixture;
+        migrationPage: OperatorMigrationPage;
+        page: Page;
+        browser: Browser;
+        baseURL?: string;
+      },
+    ) => {
+      if (interruption === 'logout and login') {
+        test.skip(migration.authDisabled, 'Logout requires an authenticated Console');
+      }
+      if (interruption === 'backend replacement') {
+        test.skip(
+          ['localhost', '127.0.0.1', '::1'].includes(new URL(baseURL).hostname),
+          'Use the cluster Console route: deleting pods cannot restart a locally served backend',
+        );
+      }
+      const first = await migration.install(PACKAGES.first);
+      const second = await migration.install(PACKAGES.second);
+      await migrationPage.navigateToOperators();
+      await migrationPage.openBulkMigration([first.packageName, second.packageName]);
+      await migrationPage.reviewMigration();
+      await migrationPage.acknowledgeRecovery();
+      const release = await migration.holdMigration(first);
+      await migration.withOperandContinuity([first, second], async () => {
+        await migrationPage.startMigration();
+        await migration.expectHeldMigration(first);
+        await expect(migrationPage.getProgress()).toContainText('0 of 2 Operators processed');
+        let returnedPage = migrationPage;
+        let replacementBrowser: Browser | undefined;
+        try {
+          if (interruption === 'new browser') {
+            await page.goto('about:blank');
+            replacementBrowser = await browser.browserType().launch({
+              ...test.info().project.use.launchOptions,
+              channel: test.info().project.use.channel,
+            });
+            const context = await replacementBrowser.newContext({
+              baseURL,
+              ignoreHTTPSErrors: true,
+              viewport: { width: 1920, height: 1080 },
+            });
+            const freshPage = await context.newPage();
+            await loginFromEnv(freshPage, 'admin', baseURL);
+            returnedPage = new OperatorMigrationPage(freshPage);
+          } else if (interruption === 'logout and login') {
+            const masthead = new MastheadPage(page);
+            await masthead.openUserDropdown();
+            await masthead.logOut();
+            await loginFromEnv(page, 'admin', baseURL);
+          } else if (interruption === 'backend replacement') {
+            await migration.restartConsolePods();
+            await page.reload();
+            await loginFromEnv(page, 'admin', baseURL);
+          } else {
+            await migrationPage.minimizeProgress();
+            await page.reload();
+          }
+          await expect(returnedPage.getProgress()).toBeVisible({ timeout: 90_000 });
+          await expect(returnedPage.getProgress()).toContainText('0 of 2 Operators processed');
+          await release();
+          for (const operator of [first, second]) {
+            await expect(returnedPage.getResult(operator.subscriptionName)).toContainText(
+              'migrated to Operator Lifecycle Manager version 1 cluster extensions successfully',
+              { timeout: 300_000 },
+            );
+            await migration.expectMigrated(operator);
+          }
+          await expect(returnedPage.getProgress()).toContainText('2 of 2 Operators processed');
+        } finally {
+          await replacementBrowser?.close();
+          if (interruption === 'new browser') await page.goto('/');
+        }
+      });
+    };
+
+    test(
+      'restores progress and continues the batch after refresh',
+      options,
+      async ({ migration, migrationPage, page, browser, baseURL }) => {
+        await checkInterruption('refresh', { migration, migrationPage, page, browser, baseURL });
+      },
+    );
+
+    test(
+      'restores progress and continues the batch after new browser',
+      options,
+      async ({ migration, migrationPage, page, browser, baseURL }) => {
+        await checkInterruption('new browser', {
+          migration,
+          migrationPage,
+          page,
+          browser,
+          baseURL,
+        });
+      },
+    );
+
+    test(
+      'restores progress and continues the batch after logout and login',
+      options,
+      async ({ migration, migrationPage, page, browser, baseURL }) => {
+        await checkInterruption('logout and login', {
+          migration,
+          migrationPage,
+          page,
+          browser,
+          baseURL,
+        });
+      },
+    );
+
+    test(
+      'restores progress and continues the batch after backend replacement',
+      options,
+      async ({ migration, migrationPage, page, browser, baseURL }) => {
+        await checkInterruption('backend replacement', {
+          migration,
+          migrationPage,
+          page,
+          browser,
+          baseURL,
+        });
+      },
+    );
+  },
+);
+
+// Recovery interruption is held with a fixture finalizer on the real failed target.
+test.describe(
+  'Operator rollback interruptions',
+  { tag: ['@techpreview'], lock: OLM_CLUSTER_STATE_LOCK },
+  () => {
+    // Logout must not revoke the saved session shared by other workers.
+    test.use({ storageState: { cookies: [], origins: [] } });
+    test.setTimeout(900_000);
+    const options = {
+      annotation: {
+        type: 'no-auto-reauth',
+        description: 'Authentication changes are part of this test',
+      },
+    };
+    const checkRollbackInterruption = async (
+      interruption: 'refresh' | 'new browser' | 'logout and login' | 'backend replacement',
+      {
+        migration,
+        migrationPage,
+        page,
+        browser,
+        baseURL,
+      }: {
+        migration: OperatorMigrationFixture;
+        migrationPage: OperatorMigrationPage;
+        page: Page;
+        browser: Browser;
+        baseURL?: string;
+      },
+    ) => {
+      if (interruption === 'logout and login')
+        test.skip(migration.authDisabled, 'Logout requires an authenticated Console');
+      if (interruption === 'backend replacement')
+        test.skip(
+          ['localhost', '127.0.0.1', '::1'].includes(new URL(baseURL).hostname),
+          'Use the cluster Console route to restart the backend',
+        );
+      const { operator, originalSubscription } = await prepareInstalledTargetFailure(
+        migration,
+        migrationPage,
       );
-    }
-    const first = await migration.install(PACKAGES.first);
-    const second = await migration.install(PACKAGES.second);
-    await migrationPage.navigateToOperators();
-    await migrationPage.openBulkMigration([first.packageName, second.packageName]);
-    await migrationPage.reviewMigration();
-    await migrationPage.acknowledgeRecovery();
-    const release = await migration.holdMigration(first);
-    await migration.withOperandContinuity([first, second], async () => {
-      await migrationPage.startMigration();
-      await migration.expectHeldMigration(first);
-      await expect(migrationPage.getProgress()).toContainText('0 of 2 Operators processed');
-      let returnedPage = migrationPage;
+      const release = await migration.holdRollback(operator);
       let replacementBrowser: Browser | undefined;
       try {
-        if (interruption === 'new browser') {
-          await page.goto('about:blank');
-          replacementBrowser = await browser.browserType().launch({
-            ...test.info().project.use.launchOptions,
-            channel: test.info().project.use.channel,
-          });
-          const context = await replacementBrowser.newContext({
-            baseURL,
-            ignoreHTTPSErrors: true,
-            viewport: { width: 1920, height: 1080 },
-          });
-          const freshPage = await context.newPage();
-          await loginFromEnv(freshPage, 'admin', baseURL);
-          returnedPage = new OperatorMigrationPage(freshPage);
-        } else if (interruption === 'logout and login') {
-          const masthead = new MastheadPage(page);
-          await masthead.openUserDropdown();
-          await masthead.logOut();
-          await loginFromEnv(page, 'admin', baseURL);
-        } else if (interruption === 'backend replacement') {
-          await migration.restartConsolePods();
-          await page.reload();
-          await loginFromEnv(page, 'admin', baseURL);
-        } else {
-          await migrationPage.minimizeProgress();
-          await page.reload();
-        }
-        await expect(returnedPage.getProgress()).toBeVisible({ timeout: 90_000 });
-        await expect(returnedPage.getProgress()).toContainText('0 of 2 Operators processed');
-        await release();
-        for (const operator of [first, second]) {
-          await expect(returnedPage.getResult(operator.subscriptionName)).toContainText(
-            'migrated to Operator Lifecycle Manager version 1 cluster extensions successfully',
+        await migrationPage.openRollback(operator.subscriptionName);
+        await migration.withOperandContinuity([operator], async () => {
+          await migrationPage.startRollback();
+          await migration.expectHeldRollback(operator);
+          await expect(migrationPage.getRollbackProgress()).toContainText(
+            '0 of 1 Operators processed',
+          );
+          let returnedPage = migrationPage;
+          if (interruption === 'new browser') {
+            await page.goto('about:blank');
+            replacementBrowser = await browser.browserType().launch({
+              ...test.info().project.use.launchOptions,
+              channel: test.info().project.use.channel,
+            });
+            const context = await replacementBrowser.newContext({
+              baseURL,
+              ignoreHTTPSErrors: true,
+              viewport: { width: 1920, height: 1080 },
+            });
+            const freshPage = await context.newPage();
+            await loginFromEnv(freshPage, 'admin', baseURL);
+            returnedPage = new OperatorMigrationPage(freshPage);
+          } else if (interruption === 'logout and login') {
+            const masthead = new MastheadPage(page);
+            await masthead.openUserDropdown();
+            await masthead.logOut();
+            await loginFromEnv(page, 'admin', baseURL);
+          } else if (interruption === 'backend replacement') {
+            await migration.restartConsolePods();
+            await page.reload();
+            await loginFromEnv(page, 'admin', baseURL);
+          } else {
+            await page.reload();
+          }
+          await expect(returnedPage.getRollbackProgress()).toBeVisible({ timeout: 90_000 });
+          await expect(returnedPage.getRollbackProgress()).toContainText(
+            '0 of 1 Operators processed',
+          );
+          await migration.expectHeldRollback(operator);
+          await release();
+          await expect(returnedPage.getRollbackResult(operator.subscriptionName)).toContainText(
+            'to Operator Lifecycle Manager version 0',
             { timeout: 300_000 },
           );
-          await migration.expectMigrated(operator);
-        }
-        await expect(returnedPage.getProgress()).toContainText('2 of 2 Operators processed');
+          await migration.expectRecovered(operator);
+          await migration.expectAbsent(
+            TARGET_GROUP,
+            'v1',
+            'clusterobjectsets',
+            `${operator.subscriptionName}-1`,
+          );
+          expect((await migration.getSubscription(operator)).spec).toEqual(
+            originalSubscription.spec,
+          );
+          await migration.createOperand(operator, 'after-interrupted-rollback');
+          await expect(returnedPage.getRollbackProgress()).toContainText(
+            '1 of 1 Operators processed',
+          );
+        });
       } finally {
+        await release();
         await replacementBrowser?.close();
         if (interruption === 'new browser') await page.goto('/');
       }
-    });
-  };
+    };
 
-  test(
-    'restores progress and continues the batch after refresh',
-    options,
-    async ({ migration, migrationPage, page, browser, baseURL }) => {
-      await checkInterruption('refresh', { migration, migrationPage, page, browser, baseURL });
-    },
-  );
-
-  test(
-    'restores progress and continues the batch after new browser',
-    options,
-    async ({ migration, migrationPage, page, browser, baseURL }) => {
-      await checkInterruption('new browser', { migration, migrationPage, page, browser, baseURL });
-    },
-  );
-
-  test(
-    'restores progress and continues the batch after logout and login',
-    options,
-    async ({ migration, migrationPage, page, browser, baseURL }) => {
-      await checkInterruption('logout and login', {
-        migration,
-        migrationPage,
-        page,
-        browser,
-        baseURL,
-      });
-    },
-  );
-
-  test(
-    'restores progress and continues the batch after backend replacement',
-    options,
-    async ({ migration, migrationPage, page, browser, baseURL }) => {
-      await checkInterruption('backend replacement', {
-        migration,
-        migrationPage,
-        page,
-        browser,
-        baseURL,
-      });
-    },
-  );
-});
-
-// Recovery interruption is held with a fixture finalizer on the real failed target.
-test.describe('Operator rollback interruptions', { lock: OLM_CLUSTER_STATE_LOCK }, () => {
-  // Logout must not revoke the saved session shared by other workers.
-  test.use({ storageState: { cookies: [], origins: [] } });
-  test.setTimeout(900_000);
-  const options = {
-    annotation: {
-      type: 'no-auto-reauth',
-      description: 'Authentication changes are part of this test',
-    },
-  };
-  const checkRollbackInterruption = async (
-    interruption: 'refresh' | 'new browser' | 'logout and login' | 'backend replacement',
-    {
-      migration,
-      migrationPage,
-      page,
-      browser,
-      baseURL,
-    }: {
-      migration: OperatorMigrationFixture;
-      migrationPage: OperatorMigrationPage;
-      page: Page;
-      browser: Browser;
-      baseURL?: string;
-    },
-  ) => {
-    if (interruption === 'logout and login')
-      test.skip(migration.authDisabled, 'Logout requires an authenticated Console');
-    if (interruption === 'backend replacement')
-      test.skip(
-        ['localhost', '127.0.0.1', '::1'].includes(new URL(baseURL).hostname),
-        'Use the cluster Console route to restart the backend',
-      );
-    const { operator, originalSubscription } = await prepareInstalledTargetFailure(
-      migration,
-      migrationPage,
+    test(
+      'restores rollback progress and finishes recovery after refresh',
+      options,
+      async ({ migration, migrationPage, page, browser, baseURL }) => {
+        await checkRollbackInterruption('refresh', {
+          migration,
+          migrationPage,
+          page,
+          browser,
+          baseURL,
+        });
+      },
     );
-    const release = await migration.holdRollback(operator);
-    let replacementBrowser: Browser | undefined;
-    try {
-      await migrationPage.openRollback(operator.subscriptionName);
-      await migration.withOperandContinuity([operator], async () => {
-        await migrationPage.startRollback();
-        await migration.expectHeldRollback(operator);
-        await expect(migrationPage.getRollbackProgress()).toContainText(
-          '0 of 1 Operators processed',
-        );
-        let returnedPage = migrationPage;
-        if (interruption === 'new browser') {
-          await page.goto('about:blank');
-          replacementBrowser = await browser.browserType().launch({
-            ...test.info().project.use.launchOptions,
-            channel: test.info().project.use.channel,
-          });
-          const context = await replacementBrowser.newContext({
-            baseURL,
-            ignoreHTTPSErrors: true,
-            viewport: { width: 1920, height: 1080 },
-          });
-          const freshPage = await context.newPage();
-          await loginFromEnv(freshPage, 'admin', baseURL);
-          returnedPage = new OperatorMigrationPage(freshPage);
-        } else if (interruption === 'logout and login') {
-          const masthead = new MastheadPage(page);
-          await masthead.openUserDropdown();
-          await masthead.logOut();
-          await loginFromEnv(page, 'admin', baseURL);
-        } else if (interruption === 'backend replacement') {
-          await migration.restartConsolePods();
-          await page.reload();
-          await loginFromEnv(page, 'admin', baseURL);
-        } else {
-          await page.reload();
-        }
-        await expect(returnedPage.getRollbackProgress()).toBeVisible({ timeout: 90_000 });
-        await expect(returnedPage.getRollbackProgress()).toContainText(
-          '0 of 1 Operators processed',
-        );
-        await migration.expectHeldRollback(operator);
-        await release();
-        await expect(returnedPage.getRollbackResult(operator.subscriptionName)).toContainText(
-          'to Operator Lifecycle Manager version 0',
-          { timeout: 300_000 },
-        );
-        await migration.expectRecovered(operator);
-        await migration.expectAbsent(
-          TARGET_GROUP,
-          'v1',
-          'clusterobjectsets',
-          `${operator.subscriptionName}-1`,
-        );
-        expect((await migration.getSubscription(operator)).spec).toEqual(originalSubscription.spec);
-        await migration.createOperand(operator, 'after-interrupted-rollback');
-        await expect(returnedPage.getRollbackProgress()).toContainText(
-          '1 of 1 Operators processed',
-        );
-      });
-    } finally {
-      await release();
-      await replacementBrowser?.close();
-      if (interruption === 'new browser') await page.goto('/');
-    }
-  };
 
-  test(
-    'restores rollback progress and finishes recovery after refresh',
-    options,
-    async ({ migration, migrationPage, page, browser, baseURL }) => {
-      await checkRollbackInterruption('refresh', {
-        migration,
-        migrationPage,
-        page,
-        browser,
-        baseURL,
-      });
-    },
-  );
+    test(
+      'restores rollback progress and finishes recovery after a new browser',
+      options,
+      async ({ migration, migrationPage, page, browser, baseURL }) => {
+        await checkRollbackInterruption('new browser', {
+          migration,
+          migrationPage,
+          page,
+          browser,
+          baseURL,
+        });
+      },
+    );
 
-  test(
-    'restores rollback progress and finishes recovery after a new browser',
-    options,
-    async ({ migration, migrationPage, page, browser, baseURL }) => {
-      await checkRollbackInterruption('new browser', {
-        migration,
-        migrationPage,
-        page,
-        browser,
-        baseURL,
-      });
-    },
-  );
+    test(
+      'restores rollback progress and finishes recovery after logout and login',
+      options,
+      async ({ migration, migrationPage, page, browser, baseURL }) => {
+        await checkRollbackInterruption('logout and login', {
+          migration,
+          migrationPage,
+          page,
+          browser,
+          baseURL,
+        });
+      },
+    );
 
-  test(
-    'restores rollback progress and finishes recovery after logout and login',
-    options,
-    async ({ migration, migrationPage, page, browser, baseURL }) => {
-      await checkRollbackInterruption('logout and login', {
-        migration,
-        migrationPage,
-        page,
-        browser,
-        baseURL,
-      });
-    },
-  );
-
-  test(
-    'restores rollback progress and finishes recovery after backend replacement',
-    options,
-    async ({ migration, migrationPage, page, browser, baseURL }) => {
-      await checkRollbackInterruption('backend replacement', {
-        migration,
-        migrationPage,
-        page,
-        browser,
-        baseURL,
-      });
-    },
-  );
-});
+    test(
+      'restores rollback progress and finishes recovery after backend replacement',
+      options,
+      async ({ migration, migrationPage, page, browser, baseURL }) => {
+        await checkRollbackInterruption('backend replacement', {
+          migration,
+          migrationPage,
+          page,
+          browser,
+          baseURL,
+        });
+      },
+    );
+  },
+);

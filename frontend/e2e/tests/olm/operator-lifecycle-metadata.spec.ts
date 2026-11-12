@@ -44,7 +44,7 @@ const webTerminalSubscription = {
 
 test.describe(
   'Operator lifecycle metadata',
-  { tag: ['@admin'], lock: OLM_CLUSTER_STATE_LOCK },
+  { tag: ['@admin', '@techpreview'], lock: OLM_CLUSTER_STATE_LOCK },
   () => {
     let operatorVersion: string;
     let operatorDisplayName: string;

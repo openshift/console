@@ -107,14 +107,6 @@ test.describe(
     test('forces project selection when all namespaces URL is accessed [A-12-TC01]', async ({
       page,
     }) => {
-      // TechPreview clusters run only a limited set of tests via test-prow-e2e-techpreview.sh
-      // and do not enable the Developer perspective. CatalogPage.tsx only shows the project selection
-      // message when isDevPerspective is true (see: `showCreateProjectListPage = isDevPerspective &&
-      // isAllNamespaces`), so this test would always fail on TechPreview. Skip it there; it is
-      // covered by the standard e2e suite where the Developer perspective is available.
-      const isTechPreview = await page.evaluate(() => window.SERVER_FLAGS.techPreview);
-      test.skip(isTechPreview, 'Developer perspective is not enabled on TechPreview clusters');
-
       await test.step('Navigate to catalog all namespaces', async () => {
         await catalogPage.navigateToAllNamespacesCatalog();
       });
@@ -177,7 +169,7 @@ test.describe('Software Catalog Page details', { tag: ['@dev-console', '@regress
 
 test.describe(
   'Software Catalog operators',
-  { tag: ['@dev-console', '@regression'], lock: OLM_CLUSTER_STATE_LOCK },
+  { tag: ['@dev-console', '@regression', '@techpreview'], lock: OLM_CLUSTER_STATE_LOCK },
   () => {
     let catalogPage: CatalogPage;
 

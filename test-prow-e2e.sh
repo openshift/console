@@ -6,10 +6,12 @@
 #   ./test-prow-e2e.sh [e2e|release|smoke|login|olmFull] [arguments passed to: playwright test ...]
 #
 # Scenarios (first argument; default: e2e):
-#   e2e, release  — full Playwright suite (all projects)
+#   e2e, release  — full Playwright suite (all projects, excluding @techpreview tests)
 #   smoke         — Playwright smoke project; no Prow job, kept for manual runs
 #   login         — multi-user htpasswd login spec
-#   olmFull       — OLM project
+#   olmFull       — OLM project (excluding @techpreview tests)
+#
+# Tests tagged @techpreview only run in test-prow-e2e-techpreview.sh.
 #
 # Environment (typical Prow / installer):
 #   ARTIFACT_DIR, INSTALLER_DIR, KUBEADMIN_PASSWORD_FILE
@@ -66,7 +68,7 @@ fi
 # `--` ends this script's flags before Playwright's own (test-playwright.sh only parses -c).
 case "$SCENARIO" in
   e2e | release)
-    ./integration-tests/test-playwright.sh "$@"
+    ./integration-tests/test-playwright.sh -- --grep-invert @techpreview "$@"
     ;;
   smoke)
     ./integration-tests/test-playwright.sh -- --project=smoke "$@"
@@ -76,7 +78,7 @@ case "$SCENARIO" in
       --project=console e2e/tests/console/app/auth-multiuser-login.spec.ts "$@"
     ;;
   olmFull)
-    ./integration-tests/test-playwright.sh -- --project=olm "$@"
+    ./integration-tests/test-playwright.sh -- --project=olm --grep-invert @techpreview "$@"
     ;;
   *)
     echo "error: unknown scenario '$SCENARIO' (use: e2e, release, smoke, login, or olmFull)" >&2
