@@ -35,17 +35,17 @@ import (
 	"github.com/openshift/console/pkg/auth"
 )
 
-// TestRollbackRevisionPolicyVersion pins both v1 Specs so changing enforcement requires a new shared name.
+// TestRollbackRevisionPolicyVersion pins both v2 Specs so changing enforcement requires a new shared name.
 func TestRollbackRevisionPolicyVersion(t *testing.T) {
 	objects := rollbackRevisionPolicyObjects()
 	policy := objects[0].(*admissionv1.ValidatingAdmissionPolicy)
 	binding := objects[1].(*admissionv1.ValidatingAdmissionPolicyBinding)
-	require.Equal(t, "console-olm-migration-rollback-v1", policy.Name)
+	require.Equal(t, "console-olm-migration-rollback-v2", policy.Name)
 	require.Equal(t, policy.Name, binding.Name)
 	require.Equal(t, policy.Name, binding.Spec.PolicyName)
 	specs, err := json.Marshal([]interface{}{policy.Spec, binding.Spec})
 	require.NoError(t, err)
-	assert.Equal(t, "25e511c4fc37118e0b5c31757ba8334b4e7d5e5f444a8fb0ed6d46b382a59650", fmt.Sprintf("%x", sha256.Sum256(specs)), "version the policy name when either admission Spec changes")
+	assert.Equal(t, "45e827343ffe275dcb69b0ff7416f0805f554a665f7daee6061a12d1093dc379", fmt.Sprintf("%x", sha256.Sum256(specs)), "version the policy name when either admission Spec changes")
 }
 
 // TestRollbackProbeCleanupLogsRedactedFailures reports cleanup problems without logging customer-controlled error data.
@@ -83,6 +83,7 @@ func TestRollbackProbeCleanupLogsRedactedFailures(t *testing.T) {
 				assert.Empty(t, output.String())
 			} else {
 				assert.Contains(t, output.String(), "OLM rollback admission probe rollback-probe-0123456789abcdef0123456789abcdef-1 cleanup failed: error category="+tt.category)
+				assert.Contains(t, output.String(), "Ask a cluster administrator to investigate if the probe remains after cleanup.")
 				assert.True(t, strings.HasPrefix(output.String(), "W"), "cleanup errors must be warnings")
 			}
 			for _, sensitive := range []string{"customer-resource", "private.example", "password", "token=secret"} {
@@ -341,6 +342,12 @@ func TestRollbackRevisionPolicyRejectsModifiedGuard(t *testing.T) {
 			objects[0].SetOwnerReferences([]metav1.OwnerReference{{APIVersion: "v1", Kind: "Namespace", Name: "job", UID: "job-uid"}})
 			return objects
 		}},
+		{name: "deletion in progress", change: func(objects []client.Object) []client.Object {
+			now := metav1.Now()
+			objects[0].SetDeletionTimestamp(&now)
+			objects[0].SetFinalizers([]string{"test-finalizer"})
+			return objects
+		}},
 	} {
 		t.Run(tt.name, func(t *testing.T) {
 			objects := rollbackRevisionPolicyObjects()
@@ -354,6 +361,12 @@ func TestRollbackRevisionPolicyRejectsModifiedGuard(t *testing.T) {
 				require.NoError(t, ensureRollbackRevisionPolicy(context.Background(), kubeClient))
 			} else {
 				require.Error(t, err)
+				if tt.name == "deletion in progress" {
+					require.ErrorContains(t, err, "Wait for deletion to finish")
+				}
+				if tt.name == "job owned" {
+					require.ErrorContains(t, err, "install a persistent guard")
+				}
 				guard := rollbackTestGuard(t, kubeClient, "source-job")
 				err = executeRollback(context.Background(), guard, &operatorMigrationRollbackJob{RevisionPolicy: true}, func() error { t.Fatal("must not restore without enforcement"); return nil })
 				require.ErrorContains(t, err, "admission guard")

@@ -76,7 +76,7 @@ func waitForMigrationDeployment(ctx context.Context, kubeClient client.Client, e
 			return false, err
 		}
 		if current == nil || current.UID != expected.UID || current.Generation != expected.Generation || current.DeletionTimestamp != nil {
-			return false, fmt.Errorf("migration ClusterObjectDeployment %s was replaced, changed or deleted", expected.Name)
+			return false, fmt.Errorf("ClusterObjectDeployment %s no longer matches the migration. Another process might have replaced, changed, or deleted it. Review the deployment and migration failure notification with your cluster administrator.", expected.Name)
 		}
 		progress := meta.FindStatusCondition(current.Status.Conditions, ocv1.ClusterObjectDeploymentTypeProgressing)
 		available := meta.FindStatusCondition(current.Status.Conditions, ocv1.ClusterObjectDeploymentTypeAvailable)
@@ -84,7 +84,7 @@ func waitForMigrationDeployment(ctx context.Context, kubeClient client.Client, e
 			return false, nil
 		}
 		if progress.Reason != ocv1.ClusterObjectDeploymentReasonNewClusterObjectSetProgressed {
-			return false, fmt.Errorf("ClusterObjectDeployment %s rollout failed (%s): %s", current.Name, progress.Reason, progress.Message)
+			return false, fmt.Errorf("ClusterObjectDeployment %s rollout failed (%s). Review its status and resolve the reported issue before retrying recovery: %s", current.Name, progress.Reason, progress.Message)
 		}
 		return available != nil && available.ObservedGeneration == current.Generation && available.Status == metav1.ConditionTrue, nil
 	})
@@ -121,10 +121,10 @@ func bindMigrationDeployment(ctx context.Context, kubeClient client.Client, chec
 	if deployment != nil {
 		if deployment.UID == "" || saved != "" && saved != deployment.UID || deployment.Annotations[migrationExecutionAnnotation] != checkpoint.Annotations[migrationExecutionAnnotation] ||
 			deployment.Annotations[migration.MigratedFromSubscriptionAnnotation] != snapshot.SubscriptionRef {
-			return nil, rollbackConflict("rollback deployment belongs to another execution")
+			return nil, rollbackConflict("The rollback deployment does not match this migration job. Ask a cluster administrator to verify the deployment and recovery checkpoint before retrying rollback.")
 		}
 		if owner := metav1.GetControllerOf(deployment); owner != nil && (owner.APIVersion != ocv1.GroupVersion.String() || owner.Kind != ocv1.ClusterExtensionKind || owner.Name != snapshot.ClusterExtensionName || owner.UID != extensionUID || extensionUID == "") {
-			return nil, rollbackConflict("rollback deployment is controlled by another extension")
+			return nil, rollbackConflict("Another controller manages the rollback deployment. Ask a cluster administrator to verify its ownership before retrying rollback.")
 		}
 		saved = deployment.UID
 		if checkpoint.Annotations == nil {

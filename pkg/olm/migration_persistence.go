@@ -256,7 +256,7 @@ func (o *OLMHandler) createDurableMigrationJob(ctx context.Context, migrator *mi
 			return nil, err
 		}
 		if err := verifyRollbackRevisionPolicy(ctx, migrator.Client, worker.Client, namespace); err != nil {
-			return nil, fmt.Errorf("verify rollback revision admission guard: %w", err)
+			return nil, fmt.Errorf("Cannot verify the rollback revision admission guard. Ask a cluster administrator to check the guard and your rollback permissions, then retry rollback: %w", err)
 		}
 	}
 	index := &corev1.ConfigMap{ObjectMeta: metav1.ObjectMeta{

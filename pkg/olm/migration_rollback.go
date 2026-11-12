@@ -132,8 +132,8 @@ func prepareRollbackExecutionPermissions(ctx context.Context, kubeClient client.
 	if deploymentKnown {
 		// Future revision names are not known yet. Admission checks the worker's
 		// exact-name ClusterExtension delete grant for each revision's group.
-		// This is not an ownership-UID boundary; see README.md for the security
-		// review required before merging this authorization mechanism.
+		// This is not an ownership-UID boundary; changes to this authorization
+		// mechanism require security review as described in README.md.
 		rollback.RevisionPolicy = true
 		names = nil
 		clusterRules = append(clusterRules, migrationRule("admissionregistration.k8s.io", []string{"validatingadmissionpolicies", "validatingadmissionpolicybindings"}, []string{"get"}, []string{rollbackRevisionPolicyName}))
@@ -425,7 +425,7 @@ func bindRollbackTarget(ctx context.Context, guard *migrationExecutionClient, ro
 			continue
 		}
 		if !guard.ownsRollbackRevision(revision) {
-			return rollbackConflict("rollback revision belongs to another execution")
+			return rollbackConflict("This rollback revision does not match the migration job. Ask a cluster administrator to verify the revision and recovery checkpoint before retrying rollback.")
 		}
 		guard.rollbackRevisionUIDs[revision.Name] = revision.UID
 	}

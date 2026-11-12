@@ -20,8 +20,8 @@ import (
 
 // rollbackRevisionPolicyName versions both admission Specs. Change the suffix
 // whenever either Spec changes; installed guards are never updated in place.
-const rollbackRevisionPolicyName = "console-olm-migration-rollback-v1"
-const rollbackRevisionPolicyMessage = "revision group is outside this migration's delegated target"
+const rollbackRevisionPolicyName = "console-olm-migration-rollback-v2"
+const rollbackRevisionPolicyMessage = "This migration job cannot delete revisions for another cluster extension. Check the selected operator before retrying rollback."
 
 const rollbackRevisionTargetExpression = `
 has(oldObject.spec) && has(oldObject.spec.group) && oldObject.spec.group != ''
@@ -71,10 +71,13 @@ func requireRollbackRevisionPolicy(ctx context.Context, kubeClient client.Client
 	for _, expected := range rollbackRevisionPolicyObjects() {
 		actual := expected.DeepCopyObject().(client.Object)
 		if err := kubeClient.Get(ctx, client.ObjectKeyFromObject(expected), actual); err != nil {
-			return fmt.Errorf("read rollback revision admission guard: %w", err)
+			return fmt.Errorf("Cannot read the rollback revision admission guard. Check admission policy read permissions, then retry rollback: %w", err)
 		}
-		if actual.GetDeletionTimestamp() != nil || len(actual.GetOwnerReferences()) != 0 {
-			return fmt.Errorf("rollback revision admission guard is being removed")
+		if actual.GetDeletionTimestamp() != nil {
+			return fmt.Errorf("Deletion of the rollback revision admission guard is in progress. Wait for deletion to finish, then retry rollback to install the guard again.")
+		}
+		if len(actual.GetOwnerReferences()) != 0 {
+			return fmt.Errorf("The rollback revision admission guard has an owner that could remove it. Ask a cluster administrator to install a persistent guard before retrying rollback.")
 		}
 		matches := false
 		switch desired := expected.(type) {
@@ -93,7 +96,7 @@ func requireRollbackRevisionPolicy(ctx context.Context, kubeClient client.Client
 				equality.Semantic.DeepEqual(desired.Spec.ValidationActions, current.ValidationActions)
 		}
 		if !matches {
-			return fmt.Errorf("rollback revision admission guard has an unexpected configuration")
+			return fmt.Errorf("The rollback revision admission guard has an unexpected configuration. Ask a cluster administrator to verify the guard before retrying rollback.")
 		}
 	}
 	return nil
@@ -126,10 +129,10 @@ func ensureRollbackRevisionPolicy(ctx context.Context, kubeClient client.Client)
 		current := object.DeepCopyObject().(client.Object)
 		if err := kubeClient.Get(ctx, client.ObjectKeyFromObject(object), current); apierrors.IsNotFound(err) {
 			if err := kubeClient.Create(ctx, object); err != nil && !apierrors.IsAlreadyExists(err) {
-				return fmt.Errorf("install rollback revision admission guard: %w", err)
+				return fmt.Errorf("Cannot install the rollback revision admission guard. Ask a cluster administrator to check your admission policy create permissions, then retry rollback: %w", err)
 			}
 		} else if err != nil {
-			return fmt.Errorf("read rollback revision admission guard: %w", err)
+			return fmt.Errorf("Cannot read the rollback revision admission guard. Check admission policy read permissions, then retry rollback: %w", err)
 		}
 	}
 	return requireRollbackRevisionPolicy(ctx, kubeClient)
@@ -145,13 +148,13 @@ func verifyRollbackRevisionPolicy(ctx context.Context, caller, worker client.Cli
 	}
 	probe.Name = fmt.Sprintf("%s-%d", probe.Spec.Group, probe.Spec.Revision)
 	if err := caller.Create(ctx, probe); err != nil {
-		return fmt.Errorf("create rollback admission probe: %w", err)
+		return fmt.Errorf("Cannot create the rollback admission probe. Check ClusterObjectSet create permissions, then retry rollback: %w", err)
 	}
 	defer func() {
 		cleanupCtx, cancel := context.WithTimeout(context.WithoutCancel(ctx), 10*time.Second)
 		defer cancel()
 		if err := caller.Delete(cleanupCtx, probe, client.Preconditions{UID: &probe.UID}, client.PropagationPolicy(metav1.DeletePropagationOrphan)); client.IgnoreNotFound(err) != nil {
-			klog.Warningf("OLM rollback admission probe %s cleanup failed: error category=%s", probe.Name, migrationErrorCategory(err))
+			klog.Warningf("OLM rollback admission probe %s cleanup failed: error category=%s. Namespace garbage collection removes the empty probe at job cleanup. Ask a cluster administrator to investigate if the probe remains after cleanup.", probe.Name, migrationErrorCategory(err))
 		}
 	}()
 	return wait.PollUntilContextTimeout(ctx, 250*time.Millisecond, 30*time.Second, true, func(ctx context.Context) (bool, error) {

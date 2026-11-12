@@ -846,7 +846,7 @@ func TestRecoveryCannotAssociateAReplacedCSV(t *testing.T) {
 	kubeClient := newMigrationTestClient(t, subscription, csv)
 	snapshot := &operatorMigrationRecoverySnapshot{InstalledCSV: csv.Name, InstalledCSVUID: "original"}
 	err := restoreOperatorMigrationCSVReference(ctx, kubeClient, client.ObjectKeyFromObject(subscription), snapshot)
-	require.ErrorContains(t, err, "was replaced")
+	require.ErrorContains(t, err, "Another process replaced ClusterServiceVersion")
 	var restored operatorsv1alpha1.Subscription
 	require.NoError(t, kubeClient.Get(ctx, client.ObjectKeyFromObject(subscription), &restored))
 	assert.Empty(t, restored.Status.InstalledCSV)

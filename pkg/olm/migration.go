@@ -482,7 +482,7 @@ func newOperatorMigrationPlan(opts migration.Options, info *migration.MigrationI
 	}
 	revisionAction := fmt.Sprintf("Create ClusterObjectSet %s-1 and wait for its resources to become ready.", opts.ClusterExtensionName)
 	if info.UseClusterObjectDeployment {
-		revisionAction = fmt.Sprintf("Create ClusterObjectDeployment %s and wait for its current rollout to complete and become available.", opts.ClusterExtensionName)
+		revisionAction = fmt.Sprintf("Create ClusterObjectDeployment %s and wait until its current rollout completes and the deployment is available.", opts.ClusterExtensionName)
 	}
 	actions = append(actions,
 		revisionAction,

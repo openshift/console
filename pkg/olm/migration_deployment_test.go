@@ -268,7 +268,7 @@ func TestMigrationDeploymentPlan(t *testing.T) {
 		if deployment {
 			assert.Equal(t, "demo", plan.ClusterObjectDeploymentName)
 			assert.Empty(t, plan.ClusterObjectSetName)
-			assert.Contains(t, plan.Actions, "Create ClusterObjectDeployment demo and wait for its current rollout to complete and become available.")
+			assert.Contains(t, plan.Actions, "Create ClusterObjectDeployment demo and wait until its current rollout completes and the deployment is available.")
 		} else {
 			assert.Equal(t, "demo-1", plan.ClusterObjectSetName)
 			assert.Empty(t, plan.ClusterObjectDeploymentName)
