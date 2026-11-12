@@ -1,4 +1,4 @@
-import { createHash } from 'crypto';
+import * as hash from 'hash.js';
 import { resourceURL } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { ConfigMapModel } from '@console/internal/models';
 import type { ConfigMapKind } from '@console/internal/module/k8s/types';
@@ -13,9 +13,7 @@ export const hashUsernameForSettings = (name: string, uid?: string): string | nu
   if (name === 'kube:admin' && !uid) {
     return 'kubeadmin';
   }
-  const hash = createHash('sha256');
-  hash.update(name);
-  return hash.digest('hex');
+  return hash.sha256().update(name).digest('hex');
 };
 
 export const createConfigMap = async (): Promise<ConfigMapKind> => {

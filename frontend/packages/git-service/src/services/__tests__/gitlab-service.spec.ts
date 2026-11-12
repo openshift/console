@@ -363,12 +363,16 @@ describe('Gitlab Service', () => {
       expect(metadata.host).toBe('http://gitlab.example.com:8080');
     });
 
-    it('should default to HTTPS for SSH URLs and preserve port', () => {
+    it('should treat scp-style URLs without a port as owner paths', () => {
+      // scp-style syntax has no port component; git-url-parse 16 treats
+      // `git@host:2222/owner/repo.git` as owner "2222/owner". Use the
+      // ssh:// form to specify a port, see the test below.
       const gitSource: GitSource = { url: 'git@gitlab.example.com:2222/owner/repo.git' };
       const gitService = new GitlabService(gitSource);
       const metadata = gitService.getRepoMetadata();
 
-      expect(metadata.host).toBe('https://gitlab.example.com:2222');
+      expect(metadata.host).toBe('https://gitlab.example.com');
+      expect(metadata.owner).toBe('2222/owner');
     });
 
     it('should default to HTTPS for git:// protocol URLs', () => {

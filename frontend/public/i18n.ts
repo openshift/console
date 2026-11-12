@@ -54,7 +54,7 @@ export const init = () => {
       lng: getLastLanguage(),
       fallbackLng: 'en',
       load: 'languageOnly',
-      debug: process.env.NODE_ENV === 'development',
+      debug: !IS_PRODUCTION,
       detection: { caches: [] },
       contextSeparator: '~',
       ns: [
