@@ -2,13 +2,11 @@ import type { ComponentType, FC } from 'react';
 import { useMemo, useContext } from 'react';
 import { Card, CardBody, CardHeader, CardTitle, Stack, StackItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { FLAG_OPENSHIFT_5 } from '@console/app/src/consts';
 import { PrometheusEndpoint } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
 import type { NodeKind } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import type { NodeInventoryExtensionItem } from '@console/dynamic-plugin-sdk/src/extensions/node';
 import { isNodeInventoryItem } from '@console/dynamic-plugin-sdk/src/extensions/node';
-import { useFlag } from '@console/dynamic-plugin-sdk/src/utils/flags';
 import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sWatchResource';
 import { usePrometheusPoll } from '@console/internal/components/graphs/prometheus-poll-hook';
 import { resourcePathFromModel } from '@console/internal/components/utils/resource-link';
@@ -104,12 +102,9 @@ const PrometheusNodePods: FC<NodePodsProps> = ({ nodeName, basePath }) => {
 
 const NodePodInventoryItem: ComponentType<{ obj: NodeKind }> = ({ obj }) => {
   const nodeName = getName(obj);
-  const isOpenShift5 = useFlag(FLAG_OPENSHIFT_5);
   const prometheusIsAvailable = usePrometheusGate();
 
-  const basePath = isOpenShift5
-    ? `${resourcePathFromModel(NodeModel, nodeName)}/${WORKLOAD_PAGE_ID}/pods`
-    : `${resourcePathFromModel(NodeModel, nodeName)}/pods`;
+  const basePath = `${resourcePathFromModel(NodeModel, nodeName)}/${WORKLOAD_PAGE_ID}?activeTab=pods`;
 
   return (
     <StackItem>

@@ -141,20 +141,11 @@ describe('InventoryCard', () => {
     expect(plugin.compareDocumentPosition(images)).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
   });
 
-  it('links to the legacy pod list', () => {
+  it('links to the workload pod list', () => {
     renderCard();
     expect(screen.getByRole('link', { name: '100 Pods' })).toHaveAttribute(
       'href',
-      '/k8s/cluster/nodes/test-node/pods',
-    );
-  });
-
-  it('links to the workload pod list in OpenShift 5', () => {
-    jest.mocked(useFlag).mockReturnValue(true);
-    renderCard();
-    expect(screen.getByRole('link', { name: '100 Pods' })).toHaveAttribute(
-      'href',
-      '/k8s/cluster/nodes/test-node/workload/pods',
+      '/k8s/cluster/nodes/test-node/workload?activeTab=pods',
     );
   });
 
