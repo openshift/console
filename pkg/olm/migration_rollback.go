@@ -133,7 +133,7 @@ func prepareRollbackExecutionPermissions(ctx context.Context, kubeClient client.
 		// Future revision names are not known yet. Admission checks the worker's
 		// exact-name ClusterExtension delete grant for each revision's group.
 		// This is not an ownership-UID boundary; changes to this authorization
-		// mechanism require security review as described in README.md.
+		// mechanism require security review.
 		rollback.RevisionPolicy = true
 		names = nil
 		clusterRules = append(clusterRules, migrationRule("admissionregistration.k8s.io", []string{"validatingadmissionpolicies", "validatingadmissionpolicybindings"}, []string{"get"}, []string{rollbackRevisionPolicyName}))
