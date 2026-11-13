@@ -384,6 +384,9 @@ func TestRollbackRevisionPolicyProbe(t *testing.T) {
 				probe, ok := object.(*ocv1.ClusterObjectSet)
 				require.True(t, ok)
 				require.Equal(t, fmt.Sprintf("%s-%d", probe.Spec.Group, probe.Spec.Revision), probe.Name, "the probe must satisfy ClusterObjectSet CRD name validation")
+				phases, err := json.Marshal(probe.Spec.Phases)
+				require.NoError(t, err)
+				require.JSONEq(t, `[{"name":"probe","objects":[]}]`, string(phases), "the CRD requires a phase with a non-null objects list; the probe must manage no workloads")
 				return cl.Create(ctx, object, options...)
 			}})
 			attempts := 0
