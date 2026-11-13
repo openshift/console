@@ -131,22 +131,23 @@ func determinePhase(gk schema.GroupKind) Phase {
 	return phase
 }
 
+// compareObjects orders inline manifests by resource identity within a migration phase.
 func compareObjects(a, b ocv1ac.ClusterObjectSetObjectApplyConfiguration) int {
 	var aGVK, bGVK schema.GroupVersionKind
-	if a.Object != nil {
-		aGVK = a.Object.GroupVersionKind()
+	if a.Type != nil && *a.Type == ocv1.ObjectTypeInlineManifest && a.InlineManifest != nil {
+		aGVK = a.InlineManifest.GroupVersionKind()
 	}
-	if b.Object != nil {
-		bGVK = b.Object.GroupVersionKind()
+	if b.Type != nil && *b.Type == ocv1.ObjectTypeInlineManifest && b.InlineManifest != nil {
+		bGVK = b.InlineManifest.GroupVersionKind()
 	}
 	var aNs, bNs, aName, bName string
-	if a.Object != nil {
-		aNs = a.Object.GetNamespace()
-		aName = a.Object.GetName()
+	if a.Type != nil && *a.Type == ocv1.ObjectTypeInlineManifest && a.InlineManifest != nil {
+		aNs = a.InlineManifest.GetNamespace()
+		aName = a.InlineManifest.GetName()
 	}
-	if b.Object != nil {
-		bNs = b.Object.GetNamespace()
-		bName = b.Object.GetName()
+	if b.Type != nil && *b.Type == ocv1.ObjectTypeInlineManifest && b.InlineManifest != nil {
+		bNs = b.InlineManifest.GetNamespace()
+		bName = b.InlineManifest.GetName()
 	}
 	return cmp.Or(
 		cmp.Compare(aGVK.Group, bGVK.Group),
@@ -164,8 +165,8 @@ func PhaseSort(unsortedObjs []ocv1ac.ClusterObjectSetObjectApplyConfiguration) [
 
 	for _, obj := range unsortedObjs {
 		var gk schema.GroupKind
-		if obj.Object != nil {
-			gk = obj.Object.GroupVersionKind().GroupKind()
+		if obj.Type != nil && *obj.Type == ocv1.ObjectTypeInlineManifest && obj.InlineManifest != nil {
+			gk = obj.InlineManifest.GroupVersionKind().GroupKind()
 		}
 		phase := determinePhase(gk)
 		phaseMap[phase] = append(phaseMap[phase], obj)

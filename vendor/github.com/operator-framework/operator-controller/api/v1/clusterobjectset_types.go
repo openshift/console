@@ -46,6 +46,8 @@ const (
 )
 
 // ClusterObjectSetSpec defines the desired state of ClusterObjectSet.
+// +kubebuilder:validation:XValidation:rule="!has(oldSelf.phases) || has(self.phases)",message="phases cannot be removed once set"
+// +kubebuilder:validation:XValidation:rule="!has(oldSelf.progressionProbes) || has(self.progressionProbes)",message="progressionProbes cannot be removed once set"
 type ClusterObjectSetSpec struct {
 	// group is a required, immutable identifier that links related revisions together.
 	// All revisions sharing the same group form an ordered sequence, regardless of owner references.
@@ -73,7 +75,6 @@ type ClusterObjectSetSpec struct {
 	// new revision has been completely rolled out.
 	//
 	// +required
-	// +kubebuilder:validation:Enum=Active;Archived
 	// +kubebuilder:validation:XValidation:rule="oldSelf == 'Active' || oldSelf == 'Archived' && oldSelf == self", message="cannot un-archive"
 	LifecycleState ClusterObjectSetLifecycleState `json:"lifecycleState,omitempty"`
 
@@ -89,7 +90,7 @@ type ClusterObjectSetSpec struct {
 	// +kubebuilder:validation:XValidation:rule="self == oldSelf", message="revision is immutable"
 	Revision int64 `json:"revision,omitempty"`
 
-	// phases is an optional, immutable list of phases that group objects to be applied together.
+	// phases is a required, immutable list of phases that group objects to be applied together.
 	//
 	// Objects are organized into phases based on their Group-Kind. Common phases include:
 	//   - namespaces: Namespace objects
@@ -103,16 +104,17 @@ type ClusterObjectSetSpec struct {
 	// All objects in a phase are applied in no particular order.
 	// The revision progresses to the next phase only after all objects in the current phase pass their readiness probes.
 	//
-	// Once set, even if empty, the phases field is immutable.
+	// Once set, the phases field is immutable.
 	//
 	// Each phase in the list must have a unique name. The maximum number of phases is 20.
 	//
 	// +kubebuilder:validation:XValidation:rule="self == oldSelf || oldSelf.size() == 0", message="phases is immutable"
+	// +kubebuilder:validation:MinItems=1
 	// +kubebuilder:validation:MaxItems=20
 	// +listType=map
 	// +listMapKey=name
-	// +optional
-	Phases []ClusterObjectSetPhase `json:"phases,omitempty"` //nolint:kubeapilinter
+	// +required
+	Phases []ClusterObjectSetPhase `json:"phases,omitempty"`
 
 	// progressionProbes is an optional field which provides the ability to define custom readiness probes
 	// for objects defined within spec.phases. As documented in that field, most kubernetes-native objects
@@ -126,7 +128,7 @@ type ClusterObjectSetSpec struct {
 	//
 	// The maximum number of probes is 20.
 	//
-	// Once set, even if empty, the progressionProbes field is immutable, as it is
+	// Once set, the progressionProbes field is immutable, as it is
 	// part of the immutable content of a revision.
 	//
 	// +kubebuilder:validation:XValidation:rule="self == oldSelf || oldSelf.size() == 0", message="progressionProbes is immutable"
@@ -144,7 +146,6 @@ type ClusterObjectSetSpec struct {
 	// its own collisionProtection. The resolution order is: object > phase > spec.
 	//
 	// +required
-	// +kubebuilder:validation:Enum=Prevent;IfNoController;None
 	// +kubebuilder:validation:XValidation:rule="self == oldSelf",message="collisionProtection is immutable"
 	CollisionProtection CollisionProtection `json:"collisionProtection,omitempty"`
 }
@@ -163,7 +164,7 @@ type ProgressionProbe struct {
 	Selector ObjectSelector `json:"selector,omitzero"`
 
 	// assertions is a required list of checks which will run against the objects selected by the selector. If
-	// one or more assertions fail then the phase within which the object lives will be not be considered
+	// one or more assertions fail then the phase within which the object lives will not be considered
 	// 'Ready', blocking rollout of all subsequent phases.
 	//
 	// +kubebuilder:validation:MinItems=1
@@ -192,7 +193,11 @@ type ObjectSelector struct {
 	// <opcon:experimental>
 	Type SelectorType `json:"type,omitempty"`
 
-	// groupKind specifies the group and kind of objects to select.
+	// groupKind specifies the group and kind of objects to select. Note that this selector
+	// has a limitation in that it does not discriminate based on the version of the object;
+	// until this gap is closed users of this selector should take into account the possibility
+	// of different versions of the same groupKind not being able to pass assertions in the
+	// same way.
 	//
 	// Required when type is "GroupKind".
 	//
@@ -349,6 +354,7 @@ type FieldValueProbe struct {
 }
 
 // ClusterObjectSetLifecycleState specifies the lifecycle state of the ClusterObjectSet.
+// +kubebuilder:validation:Enum=Active;Archived
 type ClusterObjectSetLifecycleState string
 
 const (
@@ -393,39 +399,67 @@ type ClusterObjectSetPhase struct {
 	// When set, this value is used as the default for any object in this phase that does not
 	// explicitly specify its own collisionProtection.
 	//
-	// When omitted, we use .spec.collistionProtection as the default for any object in this phase that does not
-	// explicitly specify its own collisionProtection.
+	// When omitted, objects in this phase that do not specify their own collisionProtection inherit the
+	// enclosing spec default: the ClusterObjectSet's .spec.collisionProtection or, for a
+	// ClusterObjectDeployment, the .spec.template.spec.collisionProtection.
 	//
 	// +optional
-	// +kubebuilder:validation:Enum=Prevent;IfNoController;None
 	CollisionProtection CollisionProtection `json:"collisionProtection,omitempty"`
 }
+
+// ObjectType defines the type of objects provided in the Objects set.
+// +kubebuilder:validation:Enum=InlineManifest;SecretReference
+type ObjectType string
+
+const (
+	ObjectTypeInlineManifest  ObjectType = "InlineManifest"
+	ObjectTypeSecretReference ObjectType = "SecretReference"
+)
 
 // ClusterObjectSetObject represents a Kubernetes object to be applied as part
 // of a phase, along with its collision protection settings.
 //
-// Exactly one of object or ref must be set.
+// Exactly one of inlineManifest or secretRef must be set.
 //
-// +kubebuilder:validation:ExactlyOneOf={object,ref}
+// +union
+// +kubebuilder:validation:XValidation:rule="self.type == 'InlineManifest' ?has(self.inlineManifest) : !has(self.inlineManifest)",message="inlineManifest is required when type is InlineManifest, and forbidden otherwise"
+// +kubebuilder:validation:XValidation:rule="self.type == 'SecretReference' ?has(self.secretRef) : !has(self.secretRef)",message="secretRef is required when type is SecretReference, and forbidden otherwise"
 type ClusterObjectSetObject struct {
-	// object is an optional embedded Kubernetes object to be applied.
+	// type is a required field which specifies the type of object to use.
 	//
-	// Exactly one of object or ref must be set.
+	// The allowed object types are "InlineManifest" and "SecretReference".
+	//
+	// When set to "InlineManifest", object manifests are supplied inline, as valid Kubernetes resources with apiVersion, kind, and metadata fields.
+	// When set to "SecretReference", objects are supplied as references to a Secret that holds the serialized object manifest.
+	//
+	// +unionDiscriminator
+	// +required
+	// <opcon:experimental>
+	Type ObjectType `json:"type,omitempty"`
+
+	// inlineManifest is an optional embedded Kubernetes object to be applied.
+	//
+	// Exactly one of inlineManifest or secretRef must be set.
 	//
 	// This object must be a valid Kubernetes resource with apiVersion, kind, and metadata fields.
 	//
 	// +kubebuilder:validation:EmbeddedResource
 	// +kubebuilder:pruning:PreserveUnknownFields
+	// +kubebuilder:validation:XValidation:rule="has(self.apiVersion) && has(self.kind) && has(self.metadata)",message="inlineManifest must be a valid Kubernetes resource with apiVersion, kind, and metadata"
+	// +kubebuilder:validation:XValidation:rule="self.apiVersion != '' && self.kind != ''",message="apiVersion and kind must be non-empty"
+	// +kubebuilder:validation:XValidation:rule="has(self.metadata.name) && self.metadata.name != ''",message="metadata.name is required"
+	// +unionMember
 	// +optional
-	Object unstructured.Unstructured `json:"object,omitzero"`
+	InlineManifest unstructured.Unstructured `json:"inlineManifest,omitempty,omitzero"`
 
-	// ref is an optional reference to a Secret that holds the serialized
+	// secretRef is an optional reference to a Secret that holds the serialized
 	// object manifest.
 	//
-	// Exactly one of object or ref must be set.
+	// Exactly one of inlineManifest or secretRef must be set.
 	//
+	// +unionMember
 	// +optional
-	Ref ObjectSourceRef `json:"ref,omitzero"`
+	SecretRef SecretSourceRef `json:"secretRef,omitzero"`
 
 	// collisionProtection controls whether the operator can adopt and modify objects
 	// that already exist on the cluster.
@@ -447,25 +481,27 @@ type ClusterObjectSetObject struct {
 	// When omitted, the value is inherited from the phase, then spec.
 	//
 	// +optional
-	// +kubebuilder:validation:Enum=Prevent;IfNoController;None
 	CollisionProtection CollisionProtection `json:"collisionProtection,omitempty"`
 }
 
-// ObjectSourceRef references content within a Secret that contains a
+// SecretSourceRef references content within a Secret that contains a
 // serialized object manifest.
-type ObjectSourceRef struct {
+type SecretSourceRef struct {
 	// name is the name of the referenced Secret.
 	//
 	// +required
 	// +kubebuilder:validation:MinLength=1
 	// +kubebuilder:validation:MaxLength=253
+	// +kubebuilder:validation:XValidation:rule=`!format.dns1123Subdomain().validate(self).hasValue()`,message="the value must consist of only lowercase alphanumeric characters, hyphens, and dots, and must start and end with an alphanumeric character."
 	Name string `json:"name,omitempty"`
 
 	// namespace is the namespace of the referenced Secret.
 	// When empty, defaults to the OLM system namespace during ref resolution.
 	//
 	// +optional
+	// +kubebuilder:validation:MinLength=1
 	// +kubebuilder:validation:MaxLength=63
+	// +kubebuilder:validation:XValidation:rule=`!format.dns1123Label().validate(self).hasValue()`,message="the value must consist of only lowercase alphanumeric characters and hyphens, and must start and end with an alphanumeric character."
 	Namespace string `json:"namespace,omitempty"`
 
 	// key is the data key within the referenced Secret containing the
@@ -475,10 +511,12 @@ type ObjectSourceRef struct {
 	// +required
 	// +kubebuilder:validation:MinLength=1
 	// +kubebuilder:validation:MaxLength=253
+	// +kubebuilder:validation:XValidation:rule=`self.matches('^[-._a-zA-Z0-9]+$')`,message="must consist only of alphanumeric characters, '-', '_', or '.'"
 	Key string `json:"key,omitempty"`
 }
 
 // CollisionProtection specifies if and how ownership collisions are prevented.
+// +kubebuilder:validation:Enum=Prevent;IfNoController;None
 type CollisionProtection string
 
 const (
@@ -530,7 +568,7 @@ type ClusterObjectSetStatus struct {
 	Conditions []metav1.Condition `json:"conditions,omitempty" patchStrategy:"merge" patchMergeKey:"type"` //nolint:kubeapilinter // This CRD uses structural list-map validation, not protobuf serialization.
 
 	// objectCounts reports aggregate object counts across all phases.
-	// Values are sums of the per-phase counts in observedPhases.
+	// Values are sums across all observed phases.
 	// It is omitted until counts have been computed; when present, all count
 	// fields are reported (including zeros).
 	// +optional
@@ -546,7 +584,7 @@ type ClusterObjectSetStatus struct {
 	// +listType=map
 	// +listMapKey=name
 	// +optional
-	ObservedPhases []ObservedPhase `json:"observedPhases,omitempty"` //nolint:kubeapilinter
+	ObservedPhases []ObservedPhase `json:"observedPhases,omitempty"`
 
 	// completedAt is the timestamp at which the revision was first observed to be
 	// ready, meaning it had successfully rolled out and all of its objects passed
@@ -554,7 +592,7 @@ type ClusterObjectSetStatus struct {
 	//
 	// +kubebuilder:validation:XValidation:rule="self == oldSelf || oldSelf == null",message="completedAt is immutable, once set"
 	// +optional
-	CompletedAt metav1.Time `json:"completedAt,omitzero"`
+	CompletedAt metav1.Time `json:"completedAt,omitempty,omitzero"`
 }
 
 // ObservedPhase records the observed content digest of a resolved phase.
@@ -579,7 +617,7 @@ type ObservedPhase struct {
 	// Ready.
 	// +optional
 	// +kubebuilder:validation:XValidation:rule="self == oldSelf || oldSelf == null",message="completedAt is immutable, once set"
-	CompletedAt metav1.Time `json:"completedAt,omitzero"`
+	CompletedAt metav1.Time `json:"completedAt,omitempty,omitzero"`
 
 	// message is a phase-level message providing context about the
 	// current status (e.g. a validation error for InvalidSpecification
@@ -592,6 +630,7 @@ type ObservedPhase struct {
 
 	// digest is the digest of the phase's resolved object content
 	// at first successful resolution, in the format "<algorithm>:<hex>".
+	// Currently, sha256 is the only supported algorithm.
 	//
 	// +required
 	// +kubebuilder:validation:XValidation:rule="self == oldSelf || oldSelf.size() == 0",message="digest is immutable"
@@ -600,15 +639,11 @@ type ObservedPhase struct {
 	// +kubebuilder:validation:XValidation:rule=`self.matches('^[a-z0-9]+:[a-f0-9]+$')`,message="digest must be in the format '<algorithm>:<hex>'"
 	Digest string `json:"digest,omitempty"`
 
-	// objectCounts reports the number of objects in this phase by state.
-	// +optional
-	ObjectCounts ObjectCounts `json:"objectCounts,omitzero"`
-
 	// lastTransitionTime is the last time the phase transitioned from one status to another.
 	// +required
 	// +kubebuilder:validation:Type=string
 	// +kubebuilder:validation:Format=date-time
-	LastTransitionTime metav1.Time `json:"lastTransitionTime,omitzero"`
+	LastTransitionTime metav1.Time `json:"lastTransitionTime,omitempty,omitzero"`
 
 	// objectDetails lists objects in this phase that are not yet
 	// complete. For Reconciling, Pending, and Stabilizing phases, this
@@ -624,15 +659,15 @@ type ObservedPhase struct {
 	ObjectDetails []ObjectStatus `json:"objectDetails,omitempty"`
 }
 
-// ObjectCounts reports the number of objects in a ClusterObjectSet or phase by state.
+// ObjectCounts reports the number of objects in a ClusterObjectSet by state.
 type ObjectCounts struct {
-	// total is the number of objects in this phase.
+	// total is the number of objects in this object set.
 	// +required
 	// +kubebuilder:validation:Minimum:=0
 	// +kubebuilder:validation:Maximum:=1000
 	Total *int64 `json:"total,omitempty"`
 
-	// present is the number of objects in this phase that exist on the
+	// present is the number of objects in this object set that exist on the
 	// cluster and are owned by this object set, or another in the same group.
 	// During reconcile, this counts objects that the controller has found or
 	// created. During teardown, this decrements toward zero as objects are deleted.
@@ -641,14 +676,14 @@ type ObjectCounts struct {
 	// +kubebuilder:validation:Maximum:=1000
 	Present *int64 `json:"present,omitempty"`
 
-	// synced is the number of objects in this phase whose cluster state
+	// synced is the number of objects in this object set whose cluster state
 	// matches the desired state. Set to zero during teardown.
 	// +required
 	// +kubebuilder:validation:Minimum:=0
 	// +kubebuilder:validation:Maximum:=1000
 	Synced *int64 `json:"synced,omitempty"`
 
-	// ready is the number of objects in this phase that are synced
+	// ready is the number of objects in this object set that are synced
 	// and pass their assertions.
 	// +required
 	// +kubebuilder:validation:Minimum:=0
@@ -660,27 +695,26 @@ type ObjectCounts struct {
 type ObjectStatus struct {
 	// group is the API group of the object (empty string for core
 	// resources). At most 253 characters (DNS subdomain max).
+	// +kubebuilder:validation:MinLength=1
 	// +kubebuilder:validation:MaxLength=253
+	// +kubebuilder:validation:XValidation:rule=`!format.dns1123Subdomain().validate(self).hasValue()`,message="the value must be a valid DNS subdomain: lowercase alphanumeric characters, hyphens, and dots, starting and ending with an alphanumeric character."
 	// +optional
 	Group string `json:"group,omitempty"`
 
-	// version is the API version of the object. Must be between 1 and
-	// 63 characters.
-	// +kubebuilder:validation:MinLength=1
-	// +kubebuilder:validation:MaxLength=63
-	// +required
-	Version string `json:"version,omitempty"`
-
-	// kind is the kind of the object. Must be between 1 and 63
+	// resource is the lowercase, plural resource type of the object
+	// (for example, "pods" or "configmaps"). Must be between 1 and 63
 	// characters.
 	// +kubebuilder:validation:MinLength=1
 	// +kubebuilder:validation:MaxLength=63
+	// +kubebuilder:validation:XValidation:rule=`!format.dns1035Label().validate(self).hasValue()`,message="the value must consist of only lowercase alphanumeric characters and hyphens, must start with a letter, and must end with an alphanumeric character."
 	// +required
-	Kind string `json:"kind,omitempty"`
+	Resource string `json:"resource,omitempty"`
 
 	// namespace is the namespace of the object. Empty for cluster-scoped
 	// resources. At most 253 characters (DNS subdomain max).
+	// +kubebuilder:validation:MinLength=1
 	// +kubebuilder:validation:MaxLength=253
+	// +kubebuilder:validation:XValidation:rule=`!format.dns1123Label().validate(self).hasValue()`,message="the value must consist of only lowercase alphanumeric characters and hyphens, and must start and end with an alphanumeric character."
 	// +optional
 	Namespace string `json:"namespace,omitempty"`
 
@@ -688,6 +722,7 @@ type ObjectStatus struct {
 	// characters (DNS subdomain max).
 	// +kubebuilder:validation:MinLength=1
 	// +kubebuilder:validation:MaxLength=253
+	// +kubebuilder:validation:XValidation:rule=`self != "." && self != ".." && !self.contains("/") && !self.contains("%")`,message="name must be a valid object name: it may not be '.' or '..' or contain '/' or '%'"
 	// +required
 	Name string `json:"name,omitempty"`
 
@@ -697,6 +732,7 @@ type ObjectStatus struct {
 	// Each message is at most 1024 characters; longer messages are truncated
 	// by the controller.
 	// +kubebuilder:validation:MaxItems=18
+	// +kubebuilder:validation:items:MinLength=1
 	// +kubebuilder:validation:items:MaxLength=1024
 	// +listType=atomic
 	// +optional

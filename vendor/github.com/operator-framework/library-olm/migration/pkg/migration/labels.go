@@ -48,7 +48,7 @@ const (
 	MigratedFromCatalogSourceAnnotation = "olm.operatorframework.io/migrated-from-catalogsource"
 
 	// cosWaitPollInterval / cosWaitTimeout control how long to wait for a
-	// ClusterObjectSet to reach Succeeded=True.
+	// ClusterObjectSet to set status.completedAt.
 	cosWaitPollInterval = 5 * time.Second
 	cosWaitTimeout      = 5 * time.Minute
 

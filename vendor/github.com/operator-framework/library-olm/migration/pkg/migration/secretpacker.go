@@ -48,16 +48,16 @@ type secretPacker struct {
 type packResult struct {
 	// Secrets to be created before the COS.
 	Secrets []corev1.Secret
-	// Refs maps (phaseIndex, objectIndex) to the ObjectSourceRef that replaces the inline object.
-	Refs map[[2]int]ocv1.ObjectSourceRef
+	// Refs maps (phaseIndex, objectIndex) to the SecretSourceRef that replaces the inline object.
+	Refs map[[2]int]ocv1.SecretSourceRef
 }
 
 // pack takes COS phases with inline objects and produces:
 //  1. A set of immutable Secrets containing the serialized objects.
-//  2. A mapping from (phaseIdx, objIdx) to the corresponding ObjectSourceRef.
+//  2. A mapping from (phaseIdx, objIdx) to the corresponding SecretSourceRef.
 func (p *secretPacker) pack(phases []*ocv1ac.ClusterObjectSetPhaseApplyConfiguration) (*packResult, error) {
 	result := &packResult{
-		Refs: make(map[[2]int]ocv1.ObjectSourceRef),
+		Refs: make(map[[2]int]ocv1.SecretSourceRef),
 	}
 
 	type pendingRef struct {
@@ -77,7 +77,7 @@ func (p *secretPacker) pack(phases []*ocv1ac.ClusterObjectSetPhaseApplyConfigura
 		}
 		secret := p.newSecret(currentData)
 		for _, pr := range currentPending {
-			result.Refs[pr.pos] = ocv1.ObjectSourceRef{
+			result.Refs[pr.pos] = ocv1.SecretSourceRef{
 				Name:      secret.Name,
 				Namespace: p.SystemNamespace,
 				Key:       pr.key,
@@ -91,11 +91,23 @@ func (p *secretPacker) pack(phases []*ocv1ac.ClusterObjectSetPhaseApplyConfigura
 
 	for phaseIdx, phase := range phases {
 		for objIdx, obj := range phase.Objects {
-			if obj.Object == nil {
-				continue // already a ref
+			// The generated apply configuration uses *ObjectType to represent an
+			// unset field; the API object's Type field is a non-pointer ObjectType.
+			if obj.Type == nil {
+				return nil, fmt.Errorf("object in phase %d index %d has no type", phaseIdx, objIdx)
+			}
+			switch *obj.Type {
+			case ocv1.ObjectTypeSecretReference:
+				continue
+			case ocv1.ObjectTypeInlineManifest:
+				if obj.InlineManifest == nil {
+					return nil, fmt.Errorf("inline object in phase %d index %d has no manifest", phaseIdx, objIdx)
+				}
+			default:
+				return nil, fmt.Errorf("object in phase %d index %d has unsupported type %q", phaseIdx, objIdx, *obj.Type)
 			}
 
-			data, err := json.Marshal(obj.Object)
+			data, err := json.Marshal(obj.InlineManifest)
 			if err != nil {
 				return nil, fmt.Errorf("serializing object in phase %d index %d: %w", phaseIdx, objIdx, err)
 			}

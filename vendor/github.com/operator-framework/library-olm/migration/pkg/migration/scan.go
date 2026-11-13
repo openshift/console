@@ -753,6 +753,9 @@ func (m *Migrator) Gather(ctx context.Context, opts Options) (*MigrationInfo, er
 	if err != nil {
 		return nil, err
 	}
+	if err := m.validateMigrationRevision(ctx, prepared, info); err != nil {
+		return nil, err
+	}
 	info.SystemNamespace = prepared.SystemNamespace
 	info.UseClusterObjectDeployment = prepared.UseClusterObjectDeployment
 	return info, nil

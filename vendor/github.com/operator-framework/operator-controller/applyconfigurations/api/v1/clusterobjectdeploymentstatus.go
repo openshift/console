@@ -33,7 +33,7 @@ type ClusterObjectDeploymentStatusApplyConfiguration struct {
 	// rollout is incomplete, or False with reason NewClusterObjectSetProgressed after
 	// completion. Completion remains recorded even if the completed revision later
 	// becomes unhealthy. Progressing is False with reason ProgressDeadlineExceeded when
-	// the latest revision does not roll out within spec.template.spec.progressDeadlineMinutes.
+	// the latest revision does not roll out within spec.progressDeadlineMinutes.
 	// Progressing is False with reason InvalidSpecification when spec.template.metadata
 	// contains labels or annotations that are not valid for the resulting
 	// ClusterObjectSet; no new revision is created until the metadata is corrected.
