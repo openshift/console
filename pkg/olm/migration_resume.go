@@ -535,23 +535,8 @@ func (c *migrationExecutionClient) Get(ctx context.Context, key client.ObjectKey
 		return nil
 	}
 	ready := meta.FindStatusCondition(revision.Status.Conditions, ocv1.ClusterObjectSetTypeReady)
-	if ready == nil {
-		return nil
-	}
-	if ready.ObservedGeneration == revision.Generation && ready.Reason == ocv1.ReasonBlocked {
-		// The library's completion waiter still reports Blocked through the
-		// legacy condition. Project that diagnostic without changing stored status
-		// or preventing recovery code from reading and deleting the revision.
-		blocked := *ready
-		blocked.Type = "Succeeded"
-		meta.SetStatusCondition(&revision.Status.Conditions, blocked)
-	}
-	current := ready.ObservedGeneration == revision.Generation && revision.DeletionTimestamp == nil && revision.Spec.LifecycleState != ocv1.ClusterObjectSetLifecycleStateArchived
-	for i := range revision.Status.Conditions {
-		condition := &revision.Status.Conditions[i]
-		if !current || condition.Type != ocv1.ClusterObjectSetTypeReady && (condition.Type == "Succeeded" || condition.Type == "Available") {
-			condition.Status = metav1.ConditionUnknown
-		}
+	if ready != nil && (ready.ObservedGeneration != revision.Generation || revision.DeletionTimestamp != nil || revision.Spec.LifecycleState == ocv1.ClusterObjectSetLifecycleStateArchived) {
+		ready.Status = metav1.ConditionUnknown
 	}
 	return nil
 }

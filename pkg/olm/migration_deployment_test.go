@@ -2,6 +2,7 @@ package olm
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"testing"
 	"time"
@@ -15,9 +16,73 @@ import (
 	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/client/interceptor"
 )
+
+// TestLibraryBuildsTypedMigrationObjects verifies serialized staging objects use the current SecretReference union.
+func TestLibraryBuildsTypedMigrationObjects(t *testing.T) {
+	for _, deployment := range []bool{false, true} {
+		name := "ClusterObjectSet"
+		if deployment {
+			name = "ClusterObjectDeployment"
+		}
+		t.Run(name, func(t *testing.T) {
+			objects := []client.Object{}
+			if deployment {
+				objects = append(objects, &apiextensionsv1.CustomResourceDefinition{
+					ObjectMeta: metav1.ObjectMeta{Name: "clusterobjectdeployments.olm.operatorframework.io"},
+					Status:     apiextensionsv1.CustomResourceDefinitionStatus{Conditions: []apiextensionsv1.CustomResourceDefinitionCondition{{Type: apiextensionsv1.Established, Status: apiextensionsv1.ConditionTrue}}},
+				})
+			}
+			kubeClient := newMigrationTestClient(t, objects...)
+			stop := errors.New("stop before rollout")
+			var captured client.Object
+			runner := interceptor.NewClient(kubeClient.(client.WithWatch), interceptor.Funcs{Create: func(ctx context.Context, cl client.WithWatch, object client.Object, options ...client.CreateOption) error {
+				switch object.(type) {
+				case *ocv1.ClusterObjectSet, *ocv1.ClusterObjectDeployment:
+					captured = object.DeepCopyObject().(client.Object)
+					return stop
+				default:
+					return cl.Create(ctx, object, options...)
+				}
+			}})
+			info := &migration.MigrationInfo{CollectedObjects: []unstructured.Unstructured{{Object: map[string]interface{}{
+				"apiVersion": "v1", "kind": "ConfigMap", "metadata": map[string]interface{}{"name": "demo", "namespace": "operators"},
+				"data": map[string]interface{}{"key": "value"},
+			}}}}
+			err := migration.NewMigrator(runner, nil).CreateClusterObjectSet(context.Background(), migration.Options{
+				SubscriptionName: "demo", SubscriptionNamespace: "operators", InstallNamespace: "operators", SystemNamespace: "system", ClusterExtensionName: "demo",
+			}, info)
+			require.ErrorIs(t, err, stop)
+			require.NotNil(t, captured)
+			encoded, err := json.Marshal(captured)
+			require.NoError(t, err)
+			var payload map[string]interface{}
+			require.NoError(t, json.Unmarshal(encoded, &payload))
+			path := []string{"spec", "phases"}
+			if deployment {
+				path = []string{"spec", "template", "spec", "phases"}
+			}
+			phases, found, err := unstructured.NestedSlice(payload, path...)
+			require.NoError(t, err)
+			require.True(t, found)
+			require.Len(t, phases, 1)
+			entries := phases[0].(map[string]interface{})["objects"].([]interface{})
+			require.Len(t, entries, 1)
+			entry := entries[0].(map[string]interface{})
+			require.Equal(t, string(ocv1.ObjectTypeSecretReference), entry["type"])
+			reference := entry["secretRef"].(map[string]interface{})
+			require.NotEmpty(t, reference["name"])
+			require.NotEmpty(t, reference["key"])
+			require.Equal(t, "system", reference["namespace"])
+			for _, obsolete := range []string{"object", "ref", "objectRef", "inlineManifest"} {
+				require.NotContains(t, entry, obsolete)
+			}
+		})
+	}
+}
 
 // migrationDeploymentStatus builds completed rollout conditions for the supplied generation.
 func migrationDeploymentStatus(generation int64) ocv1.ClusterObjectDeploymentStatus {

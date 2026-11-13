@@ -107,7 +107,7 @@ func TestResumingHandoffUsesExistingClusterObjectSetAndExtension(t *testing.T) {
 			id := "0123456789abcdef0123456789abcdef"
 			opts := migration.Options{SubscriptionName: "demo", SubscriptionNamespace: "operators", ClusterExtensionName: "demo", InstallNamespace: "operators", SystemNamespace: "operator-controller"}
 			annotations := map[string]string{migrationExecutionAnnotation: id, migration.MigratedFromSubscriptionAnnotation: "operators/demo"}
-			cos := &ocv1.ClusterObjectSet{ObjectMeta: metav1.ObjectMeta{Name: "demo-1", Annotations: annotations}, Status: ocv1.ClusterObjectSetStatus{Conditions: []metav1.Condition{{Type: "Succeeded", Status: metav1.ConditionTrue}, {Type: "Available", Status: metav1.ConditionTrue}}}}
+			cos := &ocv1.ClusterObjectSet{ObjectMeta: metav1.ObjectMeta{Name: "demo-1", Annotations: annotations}, Status: ocv1.ClusterObjectSetStatus{CompletedAt: metav1.Now(), Conditions: []metav1.Condition{{Type: ocv1.ClusterObjectSetTypeReady, Status: metav1.ConditionTrue}}}}
 			extension := &ocv1.ClusterExtension{ObjectMeta: metav1.ObjectMeta{Name: "demo", Annotations: annotations}, Status: ocv1.ClusterExtensionStatus{Conditions: []metav1.Condition{{Type: "Installed", Status: metav1.ConditionTrue}}}}
 			checkpoint := &corev1.Secret{ObjectMeta: metav1.ObjectMeta{Name: operatorMigrationCheckpointSecretName("demo"), Namespace: "operator-controller", Annotations: annotations}, Data: map[string][]byte{operatorMigrationCheckpointStateKey: []byte(operatorMigrationCheckpointInProgress)}}
 			kubeClient := newMigrationTestClient(t, cos, extension, checkpoint)
@@ -132,29 +132,31 @@ func TestResumingHandoffUsesExistingClusterObjectSetAndExtension(t *testing.T) {
 	}
 }
 
-// TestMigrationLibraryWaitsForCurrentClusterObjectSetReadinessWithoutChangingStatus verifies stale, archived, deleting, and blocked revisions cannot satisfy the library waiters.
+// TestMigrationLibraryWaitsForCurrentClusterObjectSetReadinessWithoutChangingStatus verifies completion history never bypasses current handoff readiness.
 func TestMigrationLibraryWaitsForCurrentClusterObjectSetReadinessWithoutChangingStatus(t *testing.T) {
 	for _, tt := range []struct {
 		name       string
 		conditions []metav1.Condition
 		archived   bool
 		deleting   bool
+		completed  bool
 		ready      bool
-		blocked    bool
+		invalid    bool
 	}{
-		{name: "current Ready", conditions: []metav1.Condition{{Type: "Ready", Status: metav1.ConditionTrue, ObservedGeneration: 2, Reason: "AllObjectsReady"}}, ready: true},
-		{name: "legacy conditions", conditions: []metav1.Condition{{Type: "Succeeded", Status: metav1.ConditionTrue}, {Type: "Available", Status: metav1.ConditionTrue}}, ready: true},
+		{name: "current Ready", conditions: []metav1.Condition{{Type: "Ready", Status: metav1.ConditionTrue, ObservedGeneration: 2, Reason: "AllObjectsReady"}}, completed: true, ready: true},
+		{name: "legacy conditions", conditions: []metav1.Condition{{Type: "Succeeded", Status: metav1.ConditionTrue}, {Type: "Available", Status: metav1.ConditionTrue}}},
+		{name: "legacy conditions with completion", conditions: []metav1.Condition{{Type: "Succeeded", Status: metav1.ConditionTrue}, {Type: "Available", Status: metav1.ConditionTrue}}, completed: true},
 		{name: "rollout incomplete", conditions: []metav1.Condition{{Type: "Ready", Status: metav1.ConditionFalse, ObservedGeneration: 2, Reason: "RollingOut"}}},
 		{name: "readiness unknown", conditions: []metav1.Condition{{Type: "Ready", Status: metav1.ConditionUnknown, ObservedGeneration: 2, Reason: "Reconciling"}}},
-		{name: "stale readiness", conditions: []metav1.Condition{{Type: "Ready", Status: metav1.ConditionTrue, ObservedGeneration: 1, Reason: "AllObjectsReady"}}},
+		{name: "stale readiness", conditions: []metav1.Condition{{Type: "Ready", Status: metav1.ConditionTrue, ObservedGeneration: 1, Reason: "AllObjectsReady"}}, completed: true},
 		{name: "stale legacy success", conditions: []metav1.Condition{{Type: "Ready", Status: metav1.ConditionFalse, ObservedGeneration: 2, Reason: "RollingOut"}, {Type: "Succeeded", Status: metav1.ConditionTrue}, {Type: "Available", Status: metav1.ConditionTrue}}},
-		{name: "archived revision", conditions: []metav1.Condition{{Type: "Ready", Status: metav1.ConditionTrue, ObservedGeneration: 2, Reason: "AllObjectsReady"}}, archived: true},
-		{name: "deletion pending", conditions: []metav1.Condition{{Type: "Ready", Status: metav1.ConditionTrue, ObservedGeneration: 2, Reason: "AllObjectsReady"}}, deleting: true},
-		{name: "blocked revision", conditions: []metav1.Condition{{Type: "Ready", Status: metav1.ConditionFalse, ObservedGeneration: 2, Reason: "Blocked", Message: "fixture validation failed"}}, blocked: true},
+		{name: "archived revision", conditions: []metav1.Condition{{Type: "Ready", Status: metav1.ConditionTrue, ObservedGeneration: 2, Reason: "AllObjectsReady"}}, archived: true, completed: true},
+		{name: "deletion pending", conditions: []metav1.Condition{{Type: "Ready", Status: metav1.ConditionTrue, ObservedGeneration: 2, Reason: "AllObjectsReady"}}, deleting: true, completed: true},
+		{name: "invalid specification", conditions: []metav1.Condition{{Type: "Ready", Status: metav1.ConditionFalse, ObservedGeneration: 2, Reason: ocv1.ClusterObjectSetReasonInvalidSpecification, Message: "fixture validation failed"}}, invalid: true},
 	} {
 		t.Run(tt.name, func(t *testing.T) {
 			cos := &ocv1.ClusterObjectSet{ObjectMeta: metav1.ObjectMeta{Name: "demo-1", Generation: 2}, Spec: ocv1.ClusterObjectSetSpec{LifecycleState: ocv1.ClusterObjectSetLifecycleStateActive}, Status: ocv1.ClusterObjectSetStatus{Conditions: tt.conditions}}
-			if tt.name == "current Ready" {
+			if tt.completed {
 				cos.Status.CompletedAt = metav1.Now()
 			}
 			if tt.archived {
@@ -170,11 +172,18 @@ func TestMigrationLibraryWaitsForCurrentClusterObjectSetReadinessWithoutChanging
 			ctx, cancel := context.WithTimeout(context.Background(), 50*time.Millisecond)
 			defer cancel()
 			err := m.WaitForCOSSucceeded(ctx, cos.Name)
+			if tt.completed {
+				require.NoError(t, err)
+			} else if tt.invalid {
+				require.ErrorContains(t, err, "fixture validation failed")
+			} else {
+				require.ErrorIs(t, err, context.DeadlineExceeded)
+			}
+			readyCtx, cancelReady := context.WithTimeout(context.Background(), 50*time.Millisecond)
+			defer cancelReady()
+			err = m.WaitForClusterObjectSetAvailable(readyCtx, cos.Name)
 			if tt.ready {
 				require.NoError(t, err)
-				require.NoError(t, m.WaitForClusterObjectSetAvailable(ctx, cos.Name))
-			} else if tt.blocked {
-				require.ErrorContains(t, err, "fixture validation failed")
 			} else {
 				require.ErrorIs(t, err, context.DeadlineExceeded)
 			}
@@ -490,7 +499,7 @@ func TestReinstalledOperatorMigrationReplacesOnlyItsCompletedCheckpoint(t *testi
 				}
 				// Simulate ready handover targets after the source managers are removed.
 				annotations := map[string]string{migrationExecutionAnnotation: id, migration.MigratedFromSubscriptionAnnotation: "operators/demo"}
-				if err := cl.Create(ctx, &ocv1.ClusterObjectSet{ObjectMeta: metav1.ObjectMeta{Name: "demo-1", Annotations: annotations}, Status: ocv1.ClusterObjectSetStatus{Conditions: []metav1.Condition{{Type: "Succeeded", Status: metav1.ConditionTrue}, {Type: "Available", Status: metav1.ConditionTrue}}}}); err != nil {
+				if err := cl.Create(ctx, &ocv1.ClusterObjectSet{ObjectMeta: metav1.ObjectMeta{Name: "demo-1", Annotations: annotations}, Status: ocv1.ClusterObjectSetStatus{CompletedAt: metav1.Now(), Conditions: []metav1.Condition{{Type: ocv1.ClusterObjectSetTypeReady, Status: metav1.ConditionTrue}}}}); err != nil {
 					return err
 				}
 				return cl.Create(ctx, &ocv1.ClusterExtension{ObjectMeta: metav1.ObjectMeta{Name: "demo", Annotations: annotations}, Status: ocv1.ClusterExtensionStatus{Conditions: []metav1.Condition{{Type: "Installed", Status: metav1.ConditionTrue}}}})
@@ -641,7 +650,7 @@ func TestResumeAfterSourceSubscriptionWasDeleted(t *testing.T) {
 	opts := migration.Options{SubscriptionName: "demo", SubscriptionNamespace: "operators", ClusterExtensionName: "demo", InstallNamespace: "operators", SystemNamespace: "system"}
 	annotations := map[string]string{migrationExecutionAnnotation: id, migration.MigratedFromSubscriptionAnnotation: "operators/demo"}
 	csv := &operatorsv1alpha1.ClusterServiceVersion{ObjectMeta: metav1.ObjectMeta{Name: "demo.v1.0.0", Namespace: "operators", UID: "csv-original"}}
-	cos := &ocv1.ClusterObjectSet{ObjectMeta: metav1.ObjectMeta{Name: "demo-1", Annotations: annotations}, Status: ocv1.ClusterObjectSetStatus{Conditions: []metav1.Condition{{Type: "Succeeded", Status: metav1.ConditionTrue}, {Type: "Available", Status: metav1.ConditionTrue}}}}
+	cos := &ocv1.ClusterObjectSet{ObjectMeta: metav1.ObjectMeta{Name: "demo-1", Annotations: annotations}, Status: ocv1.ClusterObjectSetStatus{CompletedAt: metav1.Now(), Conditions: []metav1.Condition{{Type: ocv1.ClusterObjectSetTypeReady, Status: metav1.ConditionTrue}}}}
 	extension := &ocv1.ClusterExtension{ObjectMeta: metav1.ObjectMeta{Name: "demo", Annotations: annotations}, Status: ocv1.ClusterExtensionStatus{Conditions: []metav1.Condition{{Type: "Installed", Status: metav1.ConditionTrue}}}}
 	checkpoint := &corev1.Secret{ObjectMeta: metav1.ObjectMeta{Name: operatorMigrationCheckpointSecretName("demo"), Namespace: "system", Annotations: annotations}, Data: map[string][]byte{operatorMigrationCheckpointStateKey: []byte(operatorMigrationCheckpointInProgress)}}
 	kubeClient := newMigrationTestClient(t, csv, cos, extension, checkpoint)
