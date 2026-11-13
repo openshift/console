@@ -8,7 +8,12 @@ import { k8sBasePath } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s';
 import type { K8sModel } from '@console/internal/module/k8s';
 import { FLAGS } from '@console/shared/src/constants/common';
 import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
-import { GroupModel, UserModel, VolumeSnapshotContentModel } from '../models';
+import {
+  GroupModel,
+  UserModel,
+  VolumeGroupSnapshotContentModel,
+  VolumeSnapshotContentModel,
+} from '../models';
 
 export enum ActionType {
   SetFlag = 'setFlag',
@@ -137,6 +142,14 @@ export const ssarChecks = [
     resourceAttributes: {
       group: VolumeSnapshotContentModel.apiGroup,
       resource: VolumeSnapshotContentModel.plural,
+      verb: 'list',
+    },
+  },
+  {
+    flag: FLAGS.CAN_LIST_VGSC,
+    resourceAttributes: {
+      group: VolumeGroupSnapshotContentModel.apiGroup,
+      resource: VolumeGroupSnapshotContentModel.plural,
       verb: 'list',
     },
   },

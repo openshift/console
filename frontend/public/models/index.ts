@@ -1217,6 +1217,57 @@ export const VolumeSnapshotContentModel: K8sKind = {
   crd: true,
 };
 
+export const VolumeGroupSnapshotModel: K8sKind = {
+  label: 'VolumeGroupSnapshot',
+  // t('public~VolumeGroupSnapshot')
+  labelKey: 'public~VolumeGroupSnapshot',
+  apiVersion: 'v1',
+  apiGroup: 'groupsnapshot.storage.k8s.io',
+  plural: 'volumegroupsnapshots',
+  abbr: 'VGS',
+  namespaced: true,
+  kind: 'VolumeGroupSnapshot',
+  id: 'volumegroupsnapshot',
+  labelPlural: 'VolumeGroupSnapshots',
+  // t('public~VolumeGroupSnapshots')
+  labelPluralKey: 'public~VolumeGroupSnapshots',
+  crd: true,
+};
+
+export const VolumeGroupSnapshotClassModel: K8sKind = {
+  label: 'VolumeGroupSnapshotClass',
+  // t('public~VolumeGroupSnapshotClass')
+  labelKey: 'public~VolumeGroupSnapshotClass',
+  apiVersion: 'v1',
+  apiGroup: 'groupsnapshot.storage.k8s.io',
+  plural: 'volumegroupsnapshotclasses',
+  abbr: 'VGSC',
+  namespaced: false,
+  kind: 'VolumeGroupSnapshotClass',
+  id: 'volumegroupsnapshotclass',
+  labelPlural: 'VolumeGroupSnapshotClasses',
+  // t('public~VolumeGroupSnapshotClasses')
+  labelPluralKey: 'public~VolumeGroupSnapshotClasses',
+  crd: true,
+};
+
+export const VolumeGroupSnapshotContentModel: K8sKind = {
+  label: 'VolumeGroupSnapshotContent',
+  // t('public~VolumeGroupSnapshotContent')
+  labelKey: 'public~VolumeGroupSnapshotContent',
+  apiVersion: 'v1',
+  apiGroup: 'groupsnapshot.storage.k8s.io',
+  plural: 'volumegroupsnapshotcontents',
+  abbr: 'VGSC',
+  namespaced: false,
+  kind: 'VolumeGroupSnapshotContent',
+  id: 'volumegroupsnapshotcontent',
+  labelPlural: 'VolumeGroupSnapshotContents',
+  // t('public~VolumeGroupSnapshotContents')
+  labelPluralKey: 'public~VolumeGroupSnapshotContents',
+  crd: true,
+};
+
 export const ConsolePluginModel: K8sKind = {
   label: 'ConsolePlugin',
   // t('public~ConsolePlugin')

@@ -1067,6 +1067,82 @@ export type VolumeSnapshotClassKind = K8sResourceCommon & {
   driver: string;
 };
 
+export type VolumeGroupSnapshotLabelSelector = {
+  matchLabels?: {
+    [key: string]: string;
+  };
+  matchExpressions?: {
+    key: string;
+    operator: string;
+    values?: string[];
+  }[];
+};
+
+export type VolumeGroupSnapshotStatus = {
+  boundVolumeGroupSnapshotContentName?: string;
+  readyToUse?: boolean;
+  creationTime?: string;
+  error?: {
+    message?: string;
+    time?: string;
+  };
+};
+
+export type VolumeGroupSnapshotKind = K8sResourceCommon & {
+  spec: {
+    volumeGroupSnapshotClassName?: string;
+    source: {
+      selector?: VolumeGroupSnapshotLabelSelector;
+      volumeGroupSnapshotContentName?: string;
+    };
+  };
+  status?: VolumeGroupSnapshotStatus;
+};
+
+export type VolumeSnapshotHandlePair = {
+  volumeHandle: string;
+  snapshotHandle: string;
+};
+
+export type VolumeGroupSnapshotContentStatus = {
+  readyToUse?: boolean;
+  creationTime?: string;
+  volumeGroupSnapshotHandle?: string;
+  volumeSnapshotHandlePairList?: VolumeSnapshotHandlePair[];
+  error?: {
+    message?: string;
+    time?: string;
+  };
+};
+
+export type VolumeGroupSnapshotContentKind = K8sResourceCommon & {
+  spec: {
+    deletionPolicy: 'Delete' | 'Retain';
+    driver: string;
+    volumeGroupSnapshotClassName?: string;
+    volumeGroupSnapshotRef: {
+      name: string;
+      namespace: string;
+    };
+    source: {
+      volumeHandles?: string[];
+      groupSnapshotHandles?: {
+        volumeGroupSnapshotHandle: string;
+        volumeSnapshotHandles: string[];
+      };
+    };
+  };
+  status?: VolumeGroupSnapshotContentStatus;
+};
+
+export type VolumeGroupSnapshotClassKind = K8sResourceCommon & {
+  deletionPolicy: 'Delete' | 'Retain';
+  driver: string;
+  parameters?: {
+    [key: string]: string;
+  };
+};
+
 export type PersistentVolumeClaimKind = K8sResourceCommon & {
   spec: {
     accessModes: string[];

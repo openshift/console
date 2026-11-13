@@ -37,6 +37,10 @@ export enum VolumeSnapshotActionCreator {
   RestorePVC = 'RestorePVC',
 }
 
+export enum VolumeGroupSnapshotActionCreator {
+  RestorePVCs = 'RestorePVCs',
+}
+
 export enum BuildActionCreator {
   CloneBuild = 'CloneBuild',
   CancelBuild = 'CancelBuild',
