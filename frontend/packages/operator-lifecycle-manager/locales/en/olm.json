@@ -291,6 +291,7 @@
   "Migration blocked for {{operator}}": "Migration blocked for {{operator}}",
   "Migration completed": "Migration completed",
   "Migration failed": "Migration failed",
+  "Migration in progress": "Migration in progress",
   "Migration job canceled": "Migration job canceled",
   "Migration job completed": "Migration job completed",
   "Migration job failed. Review the error and the Operator results before you try again. Error: {{error}}": "Migration job failed. Review the error and the Operator results before you try again. Error: {{error}}",

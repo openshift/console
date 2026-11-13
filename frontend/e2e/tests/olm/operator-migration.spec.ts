@@ -698,6 +698,9 @@ test.describe(
         await migrationPage.startMigration();
         await migration.expectHeldMigration(first);
         await expect(migrationPage.getProgress()).toContainText('0 of 2 Operators processed');
+        await expect(migrationPage.getStatus(second.packageName)).toContainText(
+          'Migration in progress',
+        );
         let returnedPage = migrationPage;
         let replacementBrowser: Browser | undefined;
         try {
@@ -730,6 +733,10 @@ test.describe(
           }
           await expect(returnedPage.getProgress()).toBeVisible({ timeout: 90_000 });
           await expect(returnedPage.getProgress()).toContainText('0 of 2 Operators processed');
+          await returnedPage.navigateToOperators();
+          await expect(returnedPage.getStatus(second.packageName)).toContainText(
+            'Migration in progress',
+          );
           await release();
           for (const operator of [first, second]) {
             await expect(returnedPage.getResult(operator.subscriptionName)).toContainText(
