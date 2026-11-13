@@ -162,10 +162,18 @@ func FetchShapePreserved(req *http.Request) bool {
 	return FetchShape(orig.URL) == shape
 }
 
+// MaxRedirects is the longest redirect chain the repository client follows.
+// The chart client uses net/http's default Client, whose limit is also 10,
+// so this value has to stay equal to that default. OriginalRequest walks
+// this many hops. A shorter walk would compare a later hop with an
+// intermediate request.
+const MaxRedirects = 10
+
 // OriginalRequest returns the first request in req's redirect chain.
+// The walk stops after MaxRedirects hops.
 func OriginalRequest(req *http.Request) *http.Request {
 	orig := req
-	for hops := 0; orig != nil && orig.Response != nil && orig.Response.Request != nil && hops < 10; hops++ {
+	for hops := 0; orig != nil && orig.Response != nil && orig.Response.Request != nil && hops < MaxRedirects; hops++ {
 		orig = orig.Response.Request
 	}
 	return orig
