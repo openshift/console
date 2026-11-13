@@ -6,6 +6,7 @@ import (
 	"sort"
 	"strings"
 
+	operatorsv1alpha1 "github.com/operator-framework/api/pkg/operators/v1alpha1"
 	"github.com/operator-framework/operator-registry/alpha/declcfg"
 	"github.com/operator-framework/operator-registry/alpha/property"
 
@@ -76,6 +77,17 @@ func CreateCatalogItem(catalogName string, pkg *declcfg.Package, bundle *declcfg
 		return nil
 	}
 
+	compatible, incompatibilityReason := isOLMv1Compatible(bundle, csvMetadata)
+	if !compatible {
+		klog.V(4).Infof(
+			"skipping OLMv1-incompatible bundle %q in catalog %q: %s",
+			bundle.Name,
+			catalogName,
+			incompatibilityReason,
+		)
+		return nil
+	}
+
 	item := &ConsoleCatalogItem{
 		ID:      fmt.Sprintf("%s/%s/%s", catalogName, pkg.Name, bundle.Name),
 		Name:    pkg.Name,
@@ -98,6 +110,34 @@ func CreateCatalogItem(catalogName string, pkg *declcfg.Package, bundle *declcfg
 	withValidSubscription(item, csvMetadata)
 	withVersion(item, bundle)
 	return item
+}
+
+func isOLMv1Compatible(bundle *declcfg.Bundle, csvMetadata *property.CSVMetadata) (bool, string) {
+	if csvMetadata == nil {
+		return false, "missing CSV metadata"
+	}
+
+	supportsAllNamespaces := false
+	for _, installMode := range csvMetadata.InstallModes {
+		if installMode.Type == operatorsv1alpha1.InstallModeTypeAllNamespaces && installMode.Supported {
+			supportsAllNamespaces = true
+			break
+		}
+	}
+	if !supportsAllNamespaces {
+		return false, "does not support the AllNamespaces install mode"
+	}
+
+	for _, bundleProperty := range bundle.Properties {
+		switch bundleProperty.Type {
+		case property.TypePackageRequired:
+			return false, fmt.Sprintf("declares a %s property", property.TypePackageRequired)
+		case property.TypeGVKRequired:
+			return false, fmt.Sprintf("declares a %s property", property.TypeGVKRequired)
+		}
+	}
+
+	return true, ""
 }
 
 func getCSVMetadata(bundle *declcfg.Bundle) (*property.CSVMetadata, error) {
