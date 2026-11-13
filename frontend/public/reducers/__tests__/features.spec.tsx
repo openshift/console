@@ -29,6 +29,7 @@ describe('featureReducer', () => {
       CAN_LIST_PACKAGE_MANIFEST: undefined,
       CAN_CREATE_PROJECT: undefined,
       CAN_LIST_VSC: undefined,
+      CAN_LIST_VGSC: undefined,
       CLUSTER_AUTOSCALER: undefined,
       SHOW_OPENSHIFT_START_GUIDE: undefined,
       CLUSTER_API: undefined,
