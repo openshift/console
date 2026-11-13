@@ -4,10 +4,6 @@ import { NodeModel } from '@console/internal/models';
 import type { NodeKind } from '@console/internal/module/k8s';
 import { NodeDetailsPage } from '../NodeDetailsPage';
 
-jest.mock('@console/shared/src/hooks/useFlag', () => ({
-  useFlag: jest.fn(() => false),
-}));
-
 jest.mock('@console/shared/src/selectors/node', () => ({
   isWindowsNode: jest.fn(() => false),
 }));
@@ -34,30 +30,14 @@ jest.mock('../NodeDetails', () => ({
   default: () => null,
 }));
 
-jest.mock('../NodeLogs', () => ({
-  __esModule: true,
-  default: () => null,
-}));
-
 jest.mock('../NodeTerminal', () => ({
   __esModule: true,
   default: () => null,
 }));
 
-jest.mock('@console/internal/components/events', () => ({
-  ResourceEventStream: () => null,
-}));
-
-jest.mock('@console/internal/components/pod-list', () => ({
-  PodsPage: () => null,
-}));
-
 jest.mock('@console/internal/components/utils/horizontal-nav', () => ({
   navFactory: {
     editYaml: jest.fn(() => ({ href: 'yaml', nameKey: 'YAML' })),
-    pods: jest.fn(() => ({ href: 'pods', nameKey: 'Pods' })),
-    logs: jest.fn(() => ({ href: 'logs', nameKey: 'Logs' })),
-    events: jest.fn(() => ({ href: 'events', nameKey: 'Events' })),
     terminal: jest.fn(() => ({ href: 'terminal', nameKey: 'Terminal' })),
   },
 }));
@@ -76,16 +56,13 @@ const mockNode: NodeKind = {
 };
 
 describe('NodeDetailsPage', () => {
-  let useFlag: jest.Mock;
   let isWindowsNode: jest.Mock;
   let DetailsPage: jest.Mock;
 
   beforeEach(async () => {
-    const flagModule = await import('@console/shared/src/hooks/useFlag');
     const nodeModule = await import('@console/shared/src/selectors/node');
     const factoryModule = await import('@console/internal/components/factory');
 
-    useFlag = flagModule.useFlag as jest.Mock;
     isWindowsNode = nodeModule.isWindowsNode as jest.Mock;
     DetailsPage = factoryModule.DetailsPage as jest.Mock;
   });
@@ -94,8 +71,7 @@ describe('NodeDetailsPage', () => {
     jest.clearAllMocks();
   });
 
-  it('should include health tab when FLAG_OPENSHIFT_5 is enabled', () => {
-    useFlag.mockReturnValue(true);
+  it('should include health tab', () => {
     isWindowsNode.mockReturnValue(false);
 
     render(<NodeDetailsPage kind={NodeModel.kind} />);
@@ -108,21 +84,7 @@ describe('NodeDetailsPage', () => {
     expect(healthTab.nameKey).toBe('console-app~Health');
   });
 
-  it('should not include health tab when FLAG_OPENSHIFT_5 is disabled', () => {
-    useFlag.mockReturnValue(false);
-    isWindowsNode.mockReturnValue(false);
-
-    render(<NodeDetailsPage kind={NodeModel.kind} />);
-
-    const call = DetailsPage.mock.calls[0][0];
-    const pages = call.pagesFor(mockNode);
-
-    const healthTab = pages.find((page) => page.href === 'health');
-    expect(healthTab).toBeUndefined();
-  });
-
   it('should include terminal tab for non-Windows nodes', () => {
-    useFlag.mockReturnValue(true);
     isWindowsNode.mockReturnValue(false);
 
     render(<NodeDetailsPage kind={NodeModel.kind} />);
@@ -135,7 +97,6 @@ describe('NodeDetailsPage', () => {
   });
 
   it('should not include terminal tab for Windows nodes', () => {
-    useFlag.mockReturnValue(true);
     isWindowsNode.mockReturnValue(true);
 
     render(<NodeDetailsPage kind={NodeModel.kind} />);
@@ -147,8 +108,7 @@ describe('NodeDetailsPage', () => {
     expect(terminalTab).toBeUndefined();
   });
 
-  it('should include configuration and workload tabs when FLAG_OPENSHIFT_5 enabled', () => {
-    useFlag.mockReturnValue(true);
+  it('should include configuration and workload tabs but not events and logs tabs', () => {
     isWindowsNode.mockReturnValue(false);
 
     render(<NodeDetailsPage kind={NodeModel.kind} />);
@@ -168,29 +128,7 @@ describe('NodeDetailsPage', () => {
     expect(logsTab).toBeUndefined();
   });
 
-  it('should include events and logs tabs when FLAG_OPENSHIFT_5 disabled', () => {
-    useFlag.mockReturnValue(false);
-    isWindowsNode.mockReturnValue(false);
-
-    render(<NodeDetailsPage kind={NodeModel.kind} />);
-
-    const call = DetailsPage.mock.calls[0][0];
-    const pages = call.pagesFor(mockNode);
-
-    const configTab = pages.find((page) => page.href === 'configuration');
-    const healthTab = pages.find((page) => page.href === 'health');
-    const eventsTab = pages.find((page) => page.href === 'events');
-    const logsTab = pages.find((page) => page.href === 'logs');
-
-    expect(eventsTab).toBeDefined();
-    expect(logsTab).toBeDefined();
-
-    expect(configTab).toBeUndefined();
-    expect(healthTab).toBeUndefined();
-  });
-
   it('should render DetailsPage component with correct props', () => {
-    useFlag.mockReturnValue(true);
     isWindowsNode.mockReturnValue(false);
 
     render(<NodeDetailsPage kind={NodeModel.kind} />);

@@ -8,7 +8,6 @@ import {
   ConsoleDataView,
   getLabelsColumnWidthStyleProp,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import { FLAG_OPENSHIFT_5 } from '@console/app/src/consts';
 import type { K8sModel } from '@console/dynamic-plugin-sdk/src/api/core-api';
 import {
   getGroupVersionKindForResource,
@@ -160,7 +159,6 @@ const kind = 'Node';
 
 const useNodesColumns = (
   vmsEnabled: boolean,
-  isOpenShift5: boolean,
 ): { columns: ConsoleDataViewColumn<NodeRowItem>[] } => {
   const { t } = useTranslation('console-app');
   const isAdmin = useFlag(FLAGS.CAN_LIST_NS);
@@ -179,18 +177,14 @@ const useNodesColumns = (
           modifier: 'nowrap' as const,
         },
       },
-      ...(isOpenShift5
-        ? [
-            {
-              title: t('Groups'),
-              id: nodeColumnInfo.groups.id,
-              sort: 'groups',
-              props: {
-                modifier: 'nowrap' as const,
-              },
-            },
-          ]
-        : []),
+      {
+        title: t('Groups'),
+        id: nodeColumnInfo.groups.id,
+        sort: 'groups',
+        props: {
+          modifier: 'nowrap' as const,
+        },
+      },
       {
         title: t('Machine set'),
         id: nodeColumnInfo.machineOwner.id,
@@ -340,7 +334,7 @@ const useNodesColumns = (
       },
       { type: 'actions' as const, id: nodeColumnInfo.actions.id },
     ],
-    [t, isOpenShift5, vmsEnabled, isAdmin],
+    [t, vmsEnabled, isAdmin],
   );
 
   return { columns };
@@ -614,7 +608,6 @@ type NodeListProps = {
   vmsEnabled: boolean;
   hideNameLabelFilters?: boolean;
   hideLabelFilter?: boolean;
-  isOpenShift5?: boolean;
 };
 
 const isSelectableNode = (item: NodeRowItem) => !isCSRResource(item);
@@ -629,10 +622,9 @@ const NodeList: FC<NodeListProps> = ({
   vmsEnabled,
   hideNameLabelFilters,
   hideLabelFilter,
-  isOpenShift5 = false,
 }) => {
   const { t } = useTranslation('console-app');
-  const { columns } = useNodesColumns(vmsEnabled, isOpenShift5);
+  const { columns } = useNodesColumns(vmsEnabled);
   const nodeMetrics = useConsoleSelector<NodeMetrics>(({ UI }) => UI.metrics?.node);
   const statusExtensions = useNodeStatusExtensions();
   const selection = useMemo(
@@ -762,17 +754,13 @@ const NodeList: FC<NodeListProps> = ({
         placeholder={t('Filter by roles')}
         options={nodeRoleFilterOptions}
       />,
-      ...(isOpenShift5
-        ? [
-            <DataViewCheckboxFilter
-              key="groups"
-              filterId="groups"
-              title={t('Groups')}
-              placeholder={t('Filter by groups')}
-              options={nodeGroupFilterOptions}
-            />,
-          ]
-        : []),
+      <DataViewCheckboxFilter
+        key="groups"
+        filterId="groups"
+        title={t('Groups')}
+        placeholder={t('Filter by groups')}
+        options={nodeGroupFilterOptions}
+      />,
       <DataViewCheckboxFilter
         key="architecture"
         filterId="architecture"
@@ -803,7 +791,6 @@ const NodeList: FC<NodeListProps> = ({
       nodeArchitectureFilterOptions,
       machineSetFilterOptions,
       machineConfigPoolFilterOptions,
-      isOpenShift5,
     ],
   );
 
@@ -929,7 +916,6 @@ const useWatchResourcesIfAllowed = <R extends K8sResourceCommon[]>(
 export const NodesPage: FC<NodesPageProps> = ({ selector }) => {
   const dispatch = useConsoleDispatch();
   const { t } = useTranslation('console-app');
-  const isOpenShift5 = useFlag(FLAG_OPENSHIFT_5);
 
   const [nodes, nodesLoaded, nodesLoadError] = useK8sWatchResource<NodeKind[]>({
     groupVersionKind: {
@@ -1058,7 +1044,6 @@ export const NodesPage: FC<NodesPageProps> = ({ selector }) => {
           controlPlaneMachineSets={controlPlaneMachineSets}
           machineConfigPools={machineConfigPools}
           vmsEnabled={isKubevirtPluginActive}
-          isOpenShift5={isOpenShift5}
         />
       </ListPageBody>
     </>
