@@ -57,6 +57,10 @@ func RandomString(length int) (string, error) {
 // a complete set of directives for the configured Content-Security-Policy header mode.
 // The constructed directives will include the default sources and the supplied configuration.
 // Sources containing policy, directive, or header separators return an error without a partial policy.
+//
+// NOTE: When changing the directives emitted here, also update the example CSP header
+// in the openshift/api repo at console/v1/types_console_plugin.go so that the
+// documentation stays in sync with the actual server behaviour.
 func BuildCSPDirectives(k8sMode string, pluginsCSP serverconfig.MultiKeyValue, indexPageScriptNonce string, cspReportingEndpoint string) ([]string, error) {
 	nonce := fmt.Sprintf("'nonce-%s'", indexPageScriptNonce)
 
