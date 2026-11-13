@@ -372,7 +372,9 @@
     "shell-quote": "^1.8.4",
     "immutable": "3.8.3",
     "htmlparser2": "9.1.0",
-    "linkify-it": "^5.0.2"
+    "linkify-it": "^5.0.2",
+    "uri-js@npm:^4.4.1": "patch:uri-js@npm%3A4.4.1#~/.yarn/patches/uri-js-npm-4.4.1-66d11cbcaf.patch",
+    "uri-js@npm:^4.2.2": "patch:uri-js@npm%3A4.4.1#~/.yarn/patches/uri-js-npm-4.4.1-66d11cbcaf.patch"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,json,gql,graphql}": "eslint --color --fix"
