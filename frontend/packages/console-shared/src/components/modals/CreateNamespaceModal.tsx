@@ -189,6 +189,7 @@ export const CreateNamespaceModal: OverlayComponent<CreateProjectModalProps> = (
               onChange={(_event, value) => setName(value)}
               value={name}
               isRequired
+              autoFocus
             />
           </FormGroup>
           <FormGroup label={t('Labels')}>
