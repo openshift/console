@@ -43,7 +43,7 @@ describe('NodeWorkload', () => {
       expect.objectContaining({
         obj: mockNode,
       }),
-      expect.any(Object),
+      undefined,
     );
   });
 
@@ -54,7 +54,7 @@ describe('NodeWorkload', () => {
       expect.objectContaining({
         pageId: 'workload',
       }),
-      expect.any(Object),
+      undefined,
     );
   });
 

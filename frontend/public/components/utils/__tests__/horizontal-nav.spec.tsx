@@ -1,4 +1,5 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router';
 import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import { HorizontalNav, NavBar } from '../horizontal-nav';
@@ -38,6 +39,42 @@ describe('NavBar', () => {
     expect(screen.getByRole('tab', { name: 'Classic operators' })).toHaveAttribute(
       'aria-selected',
       'true',
+    );
+  });
+
+  it('should not disable the tab underline transition when switching tabs', async () => {
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter initialEntries={['/test-ns']}>
+        <Routes>
+          <Route path="/*" element={<NavBar pages={pages} />} />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    // PatternFly Tabs applies pf-m-initializing-accent (transition duration 0) while it
+    // measures the underline position; wait for the initial mount measurement to settle.
+    // Class query is intentional: this asserts PatternFly's internal animation state,
+    // which has no user-visible equivalent in jsdom.
+    const clusterTab = screen.getByRole('tab', { name: 'Cluster extensions' });
+    // eslint-disable-next-line testing-library/no-node-access -- asserts PatternFly's internal animation class, which has no Testing Library query
+    const tabsRoot = clusterTab.closest('.pf-v6-c-tabs');
+    await waitFor(() => expect(tabsRoot).not.toHaveClass('pf-m-initializing-accent'));
+
+    // React 19 flushes Tab's title-identity effect in the same commit as the tab switch;
+    // if it re-measures, pf-m-initializing-accent lands together with the new underline
+    // position and the underline jumps instead of animating. The class is removed by a
+    // 0 ms timeout, so track whether it ever appears rather than its final state.
+    const classLog: string[] = [];
+    const observer = new MutationObserver(() => {
+      classLog.push(tabsRoot.className);
+    });
+    observer.observe(tabsRoot, { attributes: true, attributeFilter: ['class'] });
+
+    await user.click(screen.getByRole('tab', { name: 'Classic operators' }));
+
+    expect(classLog.some((className) => className.includes('pf-m-initializing-accent'))).toBe(
+      false,
     );
   });
 });

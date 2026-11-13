@@ -1,41 +1,45 @@
-import type { ReactElement } from 'react';
 import { render } from '@testing-library/react';
-import { Helmet } from 'react-helmet-async';
 import { DocumentTitle } from '../DocumentTitle';
 
-jest.mock('react-helmet-async', () => ({
-  Helmet: jest.fn(() => null),
-}));
+// window.SERVER_FLAGS.branding is unset in tests, so branding falls back to OKD
+const productName = 'OKD';
 
-const mockedHelmet = Helmet as unknown as jest.Mock;
-
-const titleElements = (): ReactElement[] =>
-  mockedHelmet.mock.calls.map(([{ children }]) => children as ReactElement);
-
-afterEach(() => mockedHelmet.mockClear());
+const documentTitle = (): HTMLTitleElement => {
+  // eslint-disable-next-line testing-library/no-node-access -- React 19 hoists <title> to <head>, outside the reach of Testing Library queries
+  const title = document.head.querySelector('title');
+  expect(title).not.toBeNull();
+  return title as HTMLTitleElement;
+};
 
 describe('DocumentTitle', () => {
+  it('renders the page title with the product name suffix', () => {
+    render(<DocumentTitle>Project details</DocumentTitle>);
+    expect(documentTitle()).toHaveTextContent(`Project details · ${productName}`);
+  });
+
   it('applies the telemetry attribute when the internal prop is supplied', () => {
     render(
       <DocumentTitle __internal_data_telemetry="Project · Details">
         Project · Details
       </DocumentTitle>,
     );
-    expect(titleElements()[0].props['data-telemetry']).toBe('Project · Details');
+    const title = documentTitle();
+    expect(title).toHaveAttribute('data-telemetry', 'Project · Details');
+    expect(title).toHaveTextContent(`Project · Details · ${productName}`);
   });
 
-  it('omits the telemetry attribute when not supplied so Helmet keeps the navigation label', () => {
-    render(
-      <>
-        <DocumentTitle __internal_data_telemetry="Project · Details">
-          Project · Details
-        </DocumentTitle>
-        <DocumentTitle>Project details</DocumentTitle>
-      </>,
+  it('omits the telemetry attribute when not supplied', () => {
+    const { unmount } = render(
+      <DocumentTitle __internal_data_telemetry="Project · Details">
+        Project · Details
+      </DocumentTitle>,
     );
-    const titles = titleElements();
-    expect(titles).toHaveLength(2);
-    expect(titles[0].props['data-telemetry']).toBe('Project · Details');
-    expect(titles[1].props).not.toHaveProperty('data-telemetry');
+    expect(documentTitle()).toHaveAttribute('data-telemetry', 'Project · Details');
+
+    unmount();
+    render(<DocumentTitle>Project details</DocumentTitle>);
+    const title = documentTitle();
+    expect(title).not.toHaveAttribute('data-telemetry');
+    expect(title).toHaveTextContent(`Project details · ${productName}`);
   });
 });

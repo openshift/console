@@ -132,7 +132,7 @@ describe('getPackageManifestDataViewRows', () => {
     expect(() => renderRow(noChannels, ['name', 'latestVersion'])).not.toThrow();
     expect(mockClusterServiceVersionLogo).toHaveBeenCalledWith(
       expect.objectContaining({ displayName: undefined, provider: undefined }),
-      expect.anything(),
+      undefined,
     );
   });
 });

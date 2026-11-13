@@ -1,4 +1,5 @@
 import 'i18next';
+import 'react-i18next/augment-react';
 
 declare module 'i18next' {
   /** @see https://www.i18next.com/overview/typescript#custom-type-options */

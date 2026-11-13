@@ -7,10 +7,6 @@ import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-ut
 import BuildConfigFormPage from '../BuildConfigFormPage';
 import type { BuildConfig } from '../types';
 
-jest.mock('react-helmet-async', () => ({
-  Helmet: () => null,
-}));
-
 jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
   useK8sWatchResource: jest.fn(),
 }));
