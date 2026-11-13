@@ -223,7 +223,7 @@ export class GithubService extends BaseService {
         ...(this.metadata.defaultBranch ? { ref: this.metadata.defaultBranch } : {}),
       });
       if (resp.status === 200) {
-        return Buffer.from(resp.data['content'], 'base64').toString();
+        return Base64.decode(resp.data['content']);
       }
       return null;
     } catch (e) {

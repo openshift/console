@@ -1,7 +1,6 @@
 import { test, expect } from '../../fixtures';
 import { warmupSPA } from '../../pages/base-page';
 import { CatalogPage } from '../../pages/catalog-page';
-import { isTechPreview } from '../../utils/tech-preview';
 import { OperatorMigrationFixture } from '../../fixtures/operator-migration-fixture';
 import { OLM_CLUSTER_STATE_LOCK } from '../../utils/locks';
 
@@ -27,44 +26,43 @@ test.describe('Classic Operators', { tag: ['@admin'], lock: OLM_CLUSTER_STATE_LO
     });
   });
 
-  test('filters operators by lifecycle version under Technology Preview', async ({
-    page,
-    k8sClient,
-    cleanup,
-  }) => {
-    test.skip(!(await isTechPreview(page)), 'Cluster extensions are Technology Preview only');
-    test.setTimeout(660_000);
-    const flags = await page.evaluate(() => window.SERVER_FLAGS);
-    const fixture = new OperatorMigrationFixture(k8sClient, cleanup, flags.authDisabled);
-    await fixture.createCatalogs(
-      process.env.OLM_MIGRATION_SOURCE_CATALOG_IMAGE ||
-        'ghcr.io/logonoff/ocp-olm-catalog-fixtures:source-main',
-      process.env.OLM_MIGRATION_TARGET_CATALOG_IMAGE ||
-        'ghcr.io/logonoff/ocp-olm-catalog-fixtures:main',
-    );
+  test(
+    'filters operators by lifecycle version under Technology Preview',
+    { tag: ['@techpreview'] },
+    async ({ page, k8sClient, cleanup }) => {
+      test.setTimeout(660_000);
+      const flags = await page.evaluate(() => window.SERVER_FLAGS);
+      const fixture = new OperatorMigrationFixture(k8sClient, cleanup, flags.authDisabled);
+      await fixture.createCatalogs(
+        process.env.OLM_MIGRATION_SOURCE_CATALOG_IMAGE ||
+          'ghcr.io/logonoff/ocp-olm-catalog-fixtures:source-main',
+        process.env.OLM_MIGRATION_TARGET_CATALOG_IMAGE ||
+          'ghcr.io/logonoff/ocp-olm-catalog-fixtures:main',
+      );
 
-    await page.goto('/catalog/all-namespaces?catalogType=operator');
-    await expect(page.getByTestId('search-catalog')).toBeVisible({
-      timeout: CATALOG_READY_TIMEOUT,
-    });
+      await page.goto('/catalog/all-namespaces?catalogType=operator');
+      await expect(page.getByTestId('search-catalog')).toBeVisible({
+        timeout: CATALOG_READY_TIMEOUT,
+      });
 
-    const olmv0Filter = page.getByRole('radio', { name: /Classic Operators/ });
-    const olmv1Filter = page.getByRole('radio', { name: /Cluster extensions/ });
-    await expect(olmv0Filter).toBeVisible();
-    await expect(olmv1Filter).toBeVisible();
-    await expect(olmv1Filter).toBeChecked();
-    await expect(page.getByRole('radio').first()).toHaveAccessibleName(/Cluster extensions/);
+      const olmv0Filter = page.getByRole('radio', { name: /Classic Operators/ });
+      const olmv1Filter = page.getByRole('radio', { name: /Cluster extensions/ });
+      await expect(olmv0Filter).toBeVisible();
+      await expect(olmv1Filter).toBeVisible();
+      await expect(olmv1Filter).toBeChecked();
+      await expect(page.getByRole('radio').first()).toHaveAccessibleName(/Cluster extensions/);
 
-    await olmv0Filter.check();
-    await expect(page.getByTestId('classic-operator-migration-alert')).toBeVisible();
+      await olmv0Filter.check();
+      await expect(page.getByTestId('classic-operator-migration-alert')).toBeVisible();
 
-    await olmv1Filter.check();
-    await expect(page.getByTestId('classic-operator-migration-alert')).toBeHidden();
-    await expect(olmv0Filter).not.toBeChecked();
+      await olmv1Filter.check();
+      await expect(page.getByTestId('classic-operator-migration-alert')).toBeHidden();
+      await expect(olmv0Filter).not.toBeChecked();
 
-    await olmv0Filter.check();
-    await expect(olmv1Filter).not.toBeChecked();
-  });
+      await olmv0Filter.check();
+      await expect(olmv1Filter).not.toBeChecked();
+    },
+  );
 
   test('redirects /operatorhub to the shared Operators catalog', async ({ page }) => {
     await page.goto('/operatorhub');
@@ -79,33 +77,31 @@ test.describe('Classic Operators', { tag: ['@admin'], lock: OLM_CLUSTER_STATE_LO
     await expect(new CatalogPage(page).getCatalogHeading()).toHaveText('Operators');
   });
 
-  test('shows the migration warning in the details panel under Technology Preview', async ({
-    page,
-  }) => {
-    test.skip(!(await isTechPreview(page)), 'The migration warning is Technology Preview only');
+  test(
+    'shows the migration warning in the details panel under Technology Preview',
+    { tag: ['@techpreview'] },
+    async ({ page }) => {
+      await page.goto(
+        '/catalog/all-namespaces?catalogType=operator&operatorCatalog=%5B%22Classic%20Operators%22%5D',
+      );
+      await expect(page.getByTestId('search-catalog')).toBeVisible({
+        timeout: CATALOG_READY_TIMEOUT,
+      });
 
-    await page.goto(
-      '/catalog/all-namespaces?catalogType=operator&operatorCatalog=%5B%22Classic%20Operators%22%5D',
-    );
-    await expect(page.getByTestId('search-catalog')).toBeVisible({
-      timeout: CATALOG_READY_TIMEOUT,
-    });
+      // CatalogTile renders data-test as `${type}-${name}`.
+      const firstOperatorCard = page.locator('[data-test^="operator-"]').first();
+      await expect(firstOperatorCard).toBeVisible({ timeout: CATALOG_READY_TIMEOUT });
 
-    // CatalogTile renders data-test as `${type}-${name}`.
-    const firstOperatorCard = page.locator('[data-test^="operator-"]').first();
-    await expect(firstOperatorCard).toBeVisible({ timeout: CATALOG_READY_TIMEOUT });
-
-    await firstOperatorCard.click();
-    await expect(
-      page.getByRole('dialog').getByTestId('classic-operator-migration-alert'),
-    ).toBeVisible({
-      timeout: 10_000,
-    });
-  });
+      await firstOperatorCard.click();
+      await expect(
+        page.getByRole('dialog').getByTestId('classic-operator-migration-alert'),
+      ).toBeVisible({
+        timeout: 10_000,
+      });
+    },
+  );
 
   test('hides the migration warning outside Technology Preview', async ({ page }) => {
-    test.skip(await isTechPreview(page), 'Skipping, only needed outside Technology Preview');
-
     await page.goto(
       '/catalog/all-namespaces?catalogType=operator&operatorCatalog=%5B%22Classic%20Operators%22%5D',
     );
@@ -121,82 +117,77 @@ test.describe('Classic Operators', { tag: ['@admin'], lock: OLM_CLUSTER_STATE_LO
     await expect(page.getByTestId('classic-operator-migration-alert')).toBeHidden();
   });
 
-  test('defaults Installed Operators to the Cluster extensions tab', async ({ page }) => {
-    test.skip(
-      !(await isTechPreview(page)),
-      'The tabbed Installed Operators page is Technology Preview',
-    );
+  test(
+    'defaults Installed Operators to the Cluster extensions tab',
+    { tag: ['@techpreview'] },
+    async ({ page }) => {
+      await page.goto('/installed-operators/all-namespaces');
 
-    await page.goto('/installed-operators/all-namespaces');
+      await expect(
+        page
+          .getByTestId('page-heading')
+          .getByRole('heading', { name: 'Installed Operators', exact: true }),
+      ).toBeVisible({ timeout: CATALOG_READY_TIMEOUT });
+      const tabs = page.getByRole('tab');
+      await expect(tabs.first()).toContainText('Cluster extensions');
+      await expect(tabs.first()).toHaveAttribute('aria-selected', 'true');
+      await expect(
+        page.getByRole('button', { name: 'About Operator Lifecycle Manager version 1' }),
+      ).toBeVisible();
+    },
+  );
 
-    await expect(
-      page
-        .getByTestId('page-heading')
-        .getByRole('heading', { name: 'Installed Operators', exact: true }),
-    ).toBeVisible({ timeout: CATALOG_READY_TIMEOUT });
-    const tabs = page.getByRole('tab');
-    await expect(tabs.first()).toContainText('Cluster extensions');
-    await expect(tabs.first()).toHaveAttribute('aria-selected', 'true');
-    await expect(
-      page.getByRole('button', { name: 'About Operator Lifecycle Manager version 1' }),
-    ).toBeVisible();
-  });
+  test(
+    'shows the migration warning on the Classic Installed Operators tab',
+    { tag: ['@techpreview'] },
+    async ({ page }) => {
+      await page.goto('/installed-operators/all-namespaces/classic');
+      await expect(page.getByTestId('classic-operator-migration-alert')).toBeVisible({
+        timeout: CATALOG_READY_TIMEOUT,
+      });
+    },
+  );
 
-  test('shows the migration warning on the Classic Installed Operators tab', async ({ page }) => {
-    test.skip(!(await isTechPreview(page)), 'The Installed Operators page is Technology Preview');
+  test(
+    'serves the ClusterServiceVersion list URL as the Classic tab under Technology Preview',
+    { tag: ['@techpreview'] },
+    async ({ page }) => {
+      await page.goto('/k8s/all-namespaces/operators.coreos.com~v1alpha1~ClusterServiceVersion');
 
-    await page.goto('/installed-operators/all-namespaces/classic');
-    await expect(page.getByTestId('classic-operator-migration-alert')).toBeVisible({
-      timeout: CATALOG_READY_TIMEOUT,
-    });
-  });
+      await expect(page).toHaveURL(
+        /\/k8s\/all-namespaces\/operators\.coreos\.com~v1alpha1~ClusterServiceVersion/,
+      );
+      await expect(page.getByRole('tab', { name: 'Classic Operators' })).toHaveAttribute(
+        'aria-selected',
+        'true',
+        { timeout: CATALOG_READY_TIMEOUT },
+      );
+      await expect(page.getByTestId('classic-operator-migration-alert')).toBeVisible({
+        timeout: CATALOG_READY_TIMEOUT,
+      });
+    },
+  );
 
-  test('serves the ClusterServiceVersion list URL as the Classic tab under Technology Preview', async ({
-    page,
-  }) => {
-    test.skip(
-      !(await isTechPreview(page)),
-      'The tabbed Installed Operators page is Technology Preview',
-    );
+  test(
+    'serves the ClusterExtension list URL as the OLMv1 tab under Technology Preview',
+    { tag: ['@techpreview'] },
+    async ({ page }) => {
+      await page.goto('/k8s/cluster/olm.operatorframework.io~v1~ClusterExtension');
 
-    await page.goto('/k8s/all-namespaces/operators.coreos.com~v1alpha1~ClusterServiceVersion');
-
-    await expect(page).toHaveURL(
-      /\/k8s\/all-namespaces\/operators\.coreos\.com~v1alpha1~ClusterServiceVersion/,
-    );
-    await expect(page.getByRole('tab', { name: 'Classic Operators' })).toHaveAttribute(
-      'aria-selected',
-      'true',
-      { timeout: CATALOG_READY_TIMEOUT },
-    );
-    await expect(page.getByTestId('classic-operator-migration-alert')).toBeVisible({
-      timeout: CATALOG_READY_TIMEOUT,
-    });
-  });
-
-  test('serves the ClusterExtension list URL as the OLMv1 tab under Technology Preview', async ({
-    page,
-  }) => {
-    test.skip(
-      !(await isTechPreview(page)),
-      'The tabbed Installed Operators page is Technology Preview',
-    );
-
-    await page.goto('/k8s/cluster/olm.operatorframework.io~v1~ClusterExtension');
-
-    await expect(page).toHaveURL(/\/k8s\/cluster\/olm\.operatorframework\.io~v1~ClusterExtension/);
-    await expect(page.getByRole('tab', { name: 'Cluster extensions' })).toHaveAttribute(
-      'aria-selected',
-      'true',
-      { timeout: CATALOG_READY_TIMEOUT },
-    );
-  });
+      await expect(page).toHaveURL(
+        /\/k8s\/cluster\/olm\.operatorframework\.io~v1~ClusterExtension/,
+      );
+      await expect(page.getByRole('tab', { name: 'Cluster extensions' })).toHaveAttribute(
+        'aria-selected',
+        'true',
+        { timeout: CATALOG_READY_TIMEOUT },
+      );
+    },
+  );
 
   test('keeps the ClusterServiceVersion list URL in place outside Technology Preview', async ({
     page,
   }) => {
-    test.skip(await isTechPreview(page), 'Technology Preview redirects this URL');
-
     await page.goto('/k8s/all-namespaces/operators.coreos.com~v1alpha1~ClusterServiceVersion');
 
     await expect(page).toHaveURL(

@@ -1,4 +1,5 @@
 import type { GetSegmentAnalytics } from '../extensions/console-types';
+import { isSessionSampled } from './segment-utils';
 
 // Segment API key. Must be present for telemetry to be enabled.
 // When running in DevSandbox mode, prefer the DevSandbox-specific key.
@@ -9,29 +10,34 @@ const TELEMETRY_API_KEY =
   window.SERVER_FLAGS.telemetry?.SEGMENT_PUBLIC_API_KEY ||
   '';
 
-// Segment "apiHost" parameter, should be like "api.segment.io/v1"
+// Segment "apiHost" parameter, should be like "api.segment.io/v1". Required for telemetry:
+// without it the Segment SDK sends events to its default api.segment.io host, so telemetry is
+// disabled (see TELEMETRY_DISABLED) rather than letting events reach Segment directly.
 const TELEMETRY_API_HOST = window.SERVER_FLAGS.telemetry?.SEGMENT_API_HOST || '';
 
-// Segment JS host, defaults to "cdn.segment.com" if not defined
-const TELEMETRY_JS_HOST = window.SERVER_FLAGS.telemetry?.SEGMENT_JS_HOST || 'cdn.segment.com';
+// Segment JS host. Required for telemetry; there is deliberately no default. Console must not
+// load analytics directly from Segment, so when the host is not configured telemetry is
+// disabled (see TELEMETRY_DISABLED) instead of falling back to a Segment-hosted CDN.
+const TELEMETRY_JS_HOST = window.SERVER_FLAGS.telemetry?.SEGMENT_JS_HOST || '';
 
-// Segment analytics.min.js script URL
+// Segment analytics.min.js script URL. Empty when neither an explicit URL nor a JS host is
+// configured, which disables telemetry below rather than defaulting to a Segment host.
 const TELEMETRY_JS_URL =
   window.SERVER_FLAGS.telemetry?.SEGMENT_JS_URL ||
-  `https://${TELEMETRY_JS_HOST}/analytics.js/v1/${encodeURIComponent(
-    TELEMETRY_API_KEY,
-  )}/analytics.min.js`;
+  (TELEMETRY_JS_HOST &&
+    `https://${TELEMETRY_JS_HOST}/analytics.js/v1/${encodeURIComponent(
+      TELEMETRY_API_KEY,
+    )}/analytics.min.js`);
 
 export const TELEMETRY_DISABLED =
   !TELEMETRY_API_KEY ||
+  !TELEMETRY_JS_URL ||
+  !TELEMETRY_API_HOST ||
   window.SERVER_FLAGS.telemetry?.DISABLED === 'true' ||
   window.SERVER_FLAGS.telemetry?.DEVSANDBOX_DISABLED === 'true' ||
   window.SERVER_FLAGS.telemetry?.TELEMETER_CLIENT_DISABLED === 'true';
 
 export const TELEMETRY_DEBUG = window.SERVER_FLAGS.telemetry?.DEBUG === 'true';
-
-// Sample 20% of sessions
-const SAMPLE_SESSION = Math.random() < 0.2;
 
 // TODO: replace this copy-pasted Segment init snippet with proper use of Segment package
 // https://segment.com/docs/connections/sources/catalog/libraries/website/javascript/quickstart/#step-2-install-segment-to-your-site
@@ -107,11 +113,14 @@ const initSegmentAnalytics = () => {
   analytics.load(TELEMETRY_API_KEY, options);
 };
 
+// Check whether the session is sampled and therefore we are sending telemetry
+// data to Segment.
+const SAMPLE_SESSION = !TELEMETRY_DISABLED && isSessionSampled();
 if (!SAMPLE_SESSION) {
   console.debug('Analytics session is not being sampled, telemetry events will be ignored');
 }
 
-const analyticsEnabled = !TELEMETRY_DISABLED && SAMPLE_SESSION;
+const analyticsEnabled = SAMPLE_SESSION;
 
 // Initialize Segment Analytics as soon as possible, outside of React useEffect.
 // This ensures that analytics.load method is invoked before any other methods.
