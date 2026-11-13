@@ -124,31 +124,10 @@ type ClusterObjectDeploymentTemplateMetadata struct {
 
 // ClusterObjectDeploymentTemplateSpec contains mutable ClusterObjectSet content.
 type ClusterObjectDeploymentTemplateSpec struct {
-	// phases is an ordered list of 1 to 20 uniquely named phases. Each phase contains
-	// at most 50 objects, each expressed either as an inlineManifest (an embedded
-	// Kubernetes object) or a secretRef (a reference to an immutable Secret holding
-	// a serialized manifest). Phase, object, and probe order participate in template identity.
-	// +required
-	// +kubebuilder:validation:MinItems=1
-	// +kubebuilder:validation:MaxItems=20
-	// +listType=map
-	// +listMapKey=name
-	Phases []ClusterObjectSetPhase `json:"phases,omitempty"` // These are ordered groups of objects, not an enum describing lifecycle state.
-
-	// progressionProbes supplies custom readiness probes for objects in every phase.
-	// The same selector and assertion semantics as ClusterObjectSet.spec.progressionProbes apply.
-	// When set, must contain 1 to 20 probes.
-	// +optional
-	// +kubebuilder:validation:MinItems=1
-	// +kubebuilder:validation:MaxItems=20
-	// +listType=atomic
-	ProgressionProbes []ProgressionProbe `json:"progressionProbes,omitempty"`
-
-	// collisionProtection is the required default collision protection strategy for all objects
-	// in the revision. Individual phases or objects may override this value.
-	// The resolution order is: object > phase > spec.
-	// +required
-	CollisionProtection CollisionProtection `json:"collisionProtection,omitempty"`
+	// ClusterObjectSetContent holds the mutable revision content that is
+	// propagated to each ClusterObjectSet created from this template. Changes
+	// to these fields create a new revision; existing revisions remain immutable.
+	ClusterObjectSetContent `json:",inline"`
 }
 
 // ClusterObjectDeploymentStatus reports rollout progress.

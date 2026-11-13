@@ -13,6 +13,7 @@ import (
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/util/validation"
 	"k8s.io/apimachinery/pkg/util/wait"
+	"k8s.io/client-go/util/retry"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	operatorsv1alpha1 "github.com/operator-framework/api/pkg/operators/v1alpha1"
@@ -501,6 +502,11 @@ func (m *Migrator) RollbackClusterExtension(ctx context.Context, ceName string, 
 	restoredSub.Name = name
 	restoredSub.Namespace = ns
 	restoredSub.Spec = &subSpec
+	snapshotJSON, err := json.Marshal(ownedObjects)
+	if err != nil {
+		return fmt.Errorf("encode remigration resource identities: %w", err)
+	}
+	restoredSub.Annotations = map[string]string{rollbackReleaseSnapshotAnnotation: string(snapshotJSON)}
 	if err := m.Client.Create(ctx, restoredSub); err != nil {
 		if !apierrors.IsAlreadyExists(err) {
 			return fmt.Errorf("failed to restore Subscription %s/%s: %w", ns, name, err)
@@ -512,6 +518,28 @@ func (m *Migrator) RollbackClusterExtension(ctx context.Context, ceName string, 
 		if current.DeletionTimestamp != nil || current.Spec == nil || !apiequality.Semantic.DeepEqual(*current.Spec, subSpec) {
 			return fmt.Errorf("existing Subscription %s/%s does not match migration backup", ns, name)
 		}
+	}
+
+	// Persist verified identities before removing the CE backup, including on retry.
+	if err := retry.RetryOnConflict(retry.DefaultRetry, func() error {
+		var restored operatorsv1alpha1.Subscription
+		if err := m.Client.Get(ctx, subKey, &restored); err != nil {
+			return err
+		}
+		if restored.DeletionTimestamp != nil || restored.Spec == nil || !apiequality.Semantic.DeepEqual(*restored.Spec, subSpec) {
+			return fmt.Errorf("restored Subscription %s/%s changed before saving remigration identities", ns, name)
+		}
+		if restored.Annotations[rollbackReleaseSnapshotAnnotation] == string(snapshotJSON) {
+			return nil
+		}
+		before := restored.DeepCopy()
+		if restored.Annotations == nil {
+			restored.Annotations = map[string]string{}
+		}
+		restored.Annotations[rollbackReleaseSnapshotAnnotation] = string(snapshotJSON)
+		return m.Client.Patch(ctx, &restored, client.MergeFromWithOptions(before, client.MergeFromWithOptimisticLock{}))
+	}); err != nil {
+		return fmt.Errorf("save remigration resource identities: %w", err)
 	}
 
 	if err := m.finishRollbackDeletion(ctx, ceName); err != nil {

@@ -46,8 +46,11 @@ const (
 )
 
 // ClusterObjectSetSpec defines the desired state of ClusterObjectSet.
-// +kubebuilder:validation:XValidation:rule="!has(oldSelf.phases) || has(self.phases)",message="phases cannot be removed once set"
-// +kubebuilder:validation:XValidation:rule="!has(oldSelf.progressionProbes) || has(self.progressionProbes)",message="progressionProbes cannot be removed once set"
+// The content fields (phases, progressionProbes, collisionProtection) are
+// immutable from creation and may only be changed by creating a new revision.
+// +kubebuilder:validation:XValidation:rule="self.phases == oldSelf.phases",message="phases is immutable"
+// +kubebuilder:validation:XValidation:rule="has(self.progressionProbes) == has(oldSelf.progressionProbes) && (!has(self.progressionProbes) || self.progressionProbes == oldSelf.progressionProbes)",message="progressionProbes is immutable"
+// +kubebuilder:validation:XValidation:rule="self.collisionProtection == oldSelf.collisionProtection",message="collisionProtection is immutable"
 type ClusterObjectSetSpec struct {
 	// group is a required, immutable identifier that links related revisions together.
 	// All revisions sharing the same group form an ordered sequence, regardless of owner references.
@@ -90,25 +93,23 @@ type ClusterObjectSetSpec struct {
 	// +kubebuilder:validation:XValidation:rule="self == oldSelf", message="revision is immutable"
 	Revision int64 `json:"revision,omitempty"`
 
-	// phases is a required, immutable list of phases that group objects to be applied together.
-	//
-	// Objects are organized into phases based on their Group-Kind. Common phases include:
-	//   - namespaces: Namespace objects
-	//   - policies: ResourceQuota, LimitRange, NetworkPolicy objects
-	//   - rbac: ServiceAccount, Role, RoleBinding, ClusterRole, ClusterRoleBinding objects
-	//   - crds: CustomResourceDefinition objects
-	//   - storage: PersistentVolume, PersistentVolumeClaim, StorageClass objects
-	//   - deploy: Deployment, StatefulSet, DaemonSet, Service, ConfigMap, Secret objects
-	//   - publish: Ingress, APIService, Route, Webhook objects
+	// ClusterObjectSetContent holds the immutable revision content shared with
+	// the ClusterObjectDeployment template. Immutability of these fields is
+	// enforced at the ClusterObjectSetSpec level, not here, so that the same
+	// structure can be embedded mutably in a ClusterObjectDeployment template.
+	ClusterObjectSetContent `json:",inline"`
+}
+
+// ClusterObjectSetContent holds the revision content shared between
+// ClusterObjectSet.spec and a ClusterObjectDeployment's template spec.
+type ClusterObjectSetContent struct {
+	// phases is a required list of phases that group objects to be applied together.
 	//
 	// All objects in a phase are applied in no particular order.
 	// The revision progresses to the next phase only after all objects in the current phase pass their readiness probes.
 	//
-	// Once set, the phases field is immutable.
-	//
 	// Each phase in the list must have a unique name. The maximum number of phases is 20.
 	//
-	// +kubebuilder:validation:XValidation:rule="self == oldSelf || oldSelf.size() == 0", message="phases is immutable"
 	// +kubebuilder:validation:MinItems=1
 	// +kubebuilder:validation:MaxItems=20
 	// +listType=map
@@ -117,7 +118,7 @@ type ClusterObjectSetSpec struct {
 	Phases []ClusterObjectSetPhase `json:"phases,omitempty"`
 
 	// progressionProbes is an optional field which provides the ability to define custom readiness probes
-	// for objects defined within spec.phases. As documented in that field, most kubernetes-native objects
+	// for objects defined within phases. As documented in that field, most kubernetes-native objects
 	// within the phases already have some kind of readiness check built-in, but this field allows for checks
 	// which are tailored to the objects being rolled out - particularly custom resources.
 	//
@@ -128,10 +129,6 @@ type ClusterObjectSetSpec struct {
 	//
 	// The maximum number of probes is 20.
 	//
-	// Once set, the progressionProbes field is immutable, as it is
-	// part of the immutable content of a revision.
-	//
-	// +kubebuilder:validation:XValidation:rule="self == oldSelf || oldSelf.size() == 0", message="progressionProbes is immutable"
 	// +kubebuilder:validation:MinItems=1
 	// +kubebuilder:validation:MaxItems=20
 	// +listType=atomic
@@ -140,13 +137,12 @@ type ClusterObjectSetSpec struct {
 	ProgressionProbes []ProgressionProbe `json:"progressionProbes,omitempty"`
 
 	// collisionProtection is a required field that specifies the default collision protection
-	// strategy for all objects in this revision. Individual phases or objects can override this value.
+	// strategy for all objects in this content. Individual phases or objects can override this value.
 	//
 	// This value is used as the default for any phase or object that does not explicitly specify
-	// its own collisionProtection. The resolution order is: object > phase > spec.
+	// its own collisionProtection. The resolution order is: object > phase > content.
 	//
 	// +required
-	// +kubebuilder:validation:XValidation:rule="self == oldSelf",message="collisionProtection is immutable"
 	CollisionProtection CollisionProtection `json:"collisionProtection,omitempty"`
 }
 

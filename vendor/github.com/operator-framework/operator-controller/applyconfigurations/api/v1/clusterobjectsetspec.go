@@ -26,6 +26,8 @@ import (
 // with apply.
 //
 // ClusterObjectSetSpec defines the desired state of ClusterObjectSet.
+// The content fields (phases, progressionProbes, collisionProtection) are
+// immutable from creation and may only be changed by creating a new revision.
 type ClusterObjectSetSpecApplyConfiguration struct {
 	// group is a required, immutable identifier that links related revisions together.
 	// All revisions sharing the same group form an ordered sequence, regardless of owner references.
@@ -51,47 +53,11 @@ type ClusterObjectSetSpecApplyConfiguration struct {
 	// The revision field must be an integer from 1 to 9999999999, inclusive.
 	// Each ClusterObjectSet in the same group must have a unique revision number.
 	Revision *int64 `json:"revision,omitempty"`
-	// phases is a required, immutable list of phases that group objects to be applied together.
-	//
-	// Objects are organized into phases based on their Group-Kind. Common phases include:
-	// - namespaces: Namespace objects
-	// - policies: ResourceQuota, LimitRange, NetworkPolicy objects
-	// - rbac: ServiceAccount, Role, RoleBinding, ClusterRole, ClusterRoleBinding objects
-	// - crds: CustomResourceDefinition objects
-	// - storage: PersistentVolume, PersistentVolumeClaim, StorageClass objects
-	// - deploy: Deployment, StatefulSet, DaemonSet, Service, ConfigMap, Secret objects
-	// - publish: Ingress, APIService, Route, Webhook objects
-	//
-	// All objects in a phase are applied in no particular order.
-	// The revision progresses to the next phase only after all objects in the current phase pass their readiness probes.
-	//
-	// Once set, the phases field is immutable.
-	//
-	// Each phase in the list must have a unique name. The maximum number of phases is 20.
-	Phases []ClusterObjectSetPhaseApplyConfiguration `json:"phases,omitempty"`
-	// progressionProbes is an optional field which provides the ability to define custom readiness probes
-	// for objects defined within spec.phases. As documented in that field, most kubernetes-native objects
-	// within the phases already have some kind of readiness check built-in, but this field allows for checks
-	// which are tailored to the objects being rolled out - particularly custom resources.
-	//
-	// Probes defined within the progressionProbes list will apply to every phase in the revision. However, the probes will only
-	// execute against phase objects which are a match for the provided selector type. For instance, a probe using a GroupKind selector
-	// for ConfigMaps will automatically be considered to have passed for any non-ConfigMap object, but will halt any phase containing
-	// a ConfigMap if that particular object does not pass the probe check.
-	//
-	// The maximum number of probes is 20.
-	//
-	// Once set, the progressionProbes field is immutable, as it is
-	// part of the immutable content of a revision.
-	//
-	// <opcon:experimental>
-	ProgressionProbes []ProgressionProbeApplyConfiguration `json:"progressionProbes,omitempty"`
-	// collisionProtection is a required field that specifies the default collision protection
-	// strategy for all objects in this revision. Individual phases or objects can override this value.
-	//
-	// This value is used as the default for any phase or object that does not explicitly specify
-	// its own collisionProtection. The resolution order is: object > phase > spec.
-	CollisionProtection *apiv1.CollisionProtection `json:"collisionProtection,omitempty"`
+	// ClusterObjectSetContent holds the immutable revision content shared with
+	// the ClusterObjectDeployment template. Immutability of these fields is
+	// enforced at the ClusterObjectSetSpec level, not here, so that the same
+	// structure can be embedded mutably in a ClusterObjectDeployment template.
+	ClusterObjectSetContentApplyConfiguration `json:""`
 }
 
 // ClusterObjectSetSpecApplyConfiguration constructs a declarative configuration of the ClusterObjectSetSpec type for use with
@@ -132,7 +98,7 @@ func (b *ClusterObjectSetSpecApplyConfiguration) WithPhases(values ...*ClusterOb
 		if values[i] == nil {
 			panic("nil value passed to WithPhases")
 		}
-		b.Phases = append(b.Phases, *values[i])
+		b.ClusterObjectSetContentApplyConfiguration.Phases = append(b.ClusterObjectSetContentApplyConfiguration.Phases, *values[i])
 	}
 	return b
 }
@@ -145,7 +111,7 @@ func (b *ClusterObjectSetSpecApplyConfiguration) WithProgressionProbes(values ..
 		if values[i] == nil {
 			panic("nil value passed to WithProgressionProbes")
 		}
-		b.ProgressionProbes = append(b.ProgressionProbes, *values[i])
+		b.ClusterObjectSetContentApplyConfiguration.ProgressionProbes = append(b.ClusterObjectSetContentApplyConfiguration.ProgressionProbes, *values[i])
 	}
 	return b
 }
@@ -154,6 +120,6 @@ func (b *ClusterObjectSetSpecApplyConfiguration) WithProgressionProbes(values ..
 // and returns the receiver, so that objects can be built by chaining "With" function invocations.
 // If called multiple times, the CollisionProtection field is set to the value of the last call.
 func (b *ClusterObjectSetSpecApplyConfiguration) WithCollisionProtection(value apiv1.CollisionProtection) *ClusterObjectSetSpecApplyConfiguration {
-	b.CollisionProtection = &value
+	b.ClusterObjectSetContentApplyConfiguration.CollisionProtection = &value
 	return b
 }
