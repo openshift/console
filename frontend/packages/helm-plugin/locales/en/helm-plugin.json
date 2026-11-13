@@ -101,7 +101,7 @@
   "{{chartVersion}} provided by {{provider}}": "{{chartVersion}} provided by {{provider}}",
   "Change chart version?": "Change chart version?",
   "Are you sure you want to change the chart version from <2>{{currentVersion}}</2> to <4>{{newVersion}}</4>? ": "Are you sure you want to change the chart version from <2>{{currentVersion}}</2> to <4>{{newVersion}}</4>? ",
-  "All data entered for version <1>{{currentVersion}}</1> will be reset": "All data entered for version <1>{{currentVersion}}</1> will be reset",
+  "Values from your current release are merged with the new chart's defaults. Review the YAML or form before upgrading.": "Values from your current release are merged with the new chart's defaults. Review the YAML or form before upgrading.",
   "Proceed": "Proceed",
   "Cancel": "Cancel",
   "Select the version to upgrade to.": "Select the version to upgrade to.",
