@@ -126,7 +126,7 @@ export const MigrationPlanDetails: FC<{ plan: OperatorMigrationPlan; displayName
                   : t('ClusterObjectSet')}
               </DescriptionListTerm>
               <DescriptionListDescription>
-                {plan.clusterObjectDeploymentName || plan.clusterObjectSetName}
+                {plan.clusterObjectDeploymentName || plan.clusterObjectSetName || DASH}
               </DescriptionListDescription>
             </DescriptionListGroup>
           </DescriptionList>

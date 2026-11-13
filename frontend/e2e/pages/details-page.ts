@@ -47,8 +47,8 @@ export class DetailsPage extends BasePage {
     while (await this.toastDismissButton.isVisible()) {
       await this.toastDismissButton.click();
     }
-    await this.robustClick(this.page.getByTestId('actions-menu-button'), { retries: 1 });
-    await this.robustClick(this.page.getByTestId(actionName), { retries: 1 });
+    await this.robustClick(this.page.getByTestId('actions-menu-button'));
+    await this.robustClick(this.page.getByTestId(actionName));
   }
 
   getBreadcrumb(index: number): Locator {

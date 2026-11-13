@@ -40,6 +40,8 @@ interface Resource {
   spec?: {
     namespace?: string;
     lifecycleState?: string;
+    group?: string;
+    revision?: number;
     source?: { catalog?: { packageName?: string } };
   };
   status?: {
@@ -659,12 +661,7 @@ export class OperatorMigrationFixture {
   /** Verifies retained migration resources and reconciliation after revision handover. */
   async expectPreservedMigration(operator: MigrationOperator): Promise<void> {
     await expect(async () => {
-      const objectSet = (await this.client.getClusterCustomResource(
-        TARGET_GROUP,
-        'v1',
-        'clusterobjectsets',
-        `${operator.subscriptionName}-1`,
-      )) as Resource;
+      let objectSet: Resource;
       if (await this.hasDeploymentAPI()) {
         const deployment = (await this.client.getClusterCustomResource(
           TARGET_GROUP,
@@ -675,6 +672,31 @@ export class OperatorMigrationFixture {
         expect(deployment.metadata.labels?.['apps.kubernetes.io/managed-by']).toBe(
           'operator-controller',
         );
+        const revisions = (await this.client.customObjectsApi.listClusterCustomObject({
+          group: TARGET_GROUP,
+          version: 'v1',
+          plural: 'clusterobjectsets',
+        })) as { items: Resource[] };
+        // Archived handover revisions can be pruned by revisionHistoryLimit.
+        // Validate the current active revision controlled by this deployment.
+        const active = revisions.items
+          .filter(
+            (revision) =>
+              !revision.metadata.deletionTimestamp &&
+              revision.spec?.group === deployment.metadata.name &&
+              revision.spec?.lifecycleState === 'Active' &&
+              revision.metadata.ownerReferences?.some(
+                (owner) =>
+                  owner.apiVersion === `${TARGET_GROUP}/v1` &&
+                  owner.kind === 'ClusterObjectDeployment' &&
+                  owner.name === deployment.metadata.name &&
+                  owner.uid === deployment.metadata.uid &&
+                  owner.controller,
+              ),
+          )
+          .sort((first, second) => (second.spec.revision ?? 0) - (first.spec.revision ?? 0));
+        expect(active.length).toBeGreaterThan(0);
+        [objectSet] = active;
         expect(objectSet.metadata.labels?.['apps.kubernetes.io/managed-by']).toBe(
           'object-controller',
         );
@@ -688,6 +710,13 @@ export class OperatorMigrationFixture {
             }),
           ]),
         );
+      } else {
+        objectSet = (await this.client.getClusterCustomResource(
+          TARGET_GROUP,
+          'v1',
+          'clusterobjectsets',
+          `${operator.subscriptionName}-1`,
+        )) as Resource;
       }
       const ready = objectSet.status?.conditions?.find(({ type }) => type === 'Ready');
       const succeeded = objectSet.status?.conditions?.find(({ type }) => type === 'Succeeded');
