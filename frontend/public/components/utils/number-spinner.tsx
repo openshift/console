@@ -9,6 +9,8 @@ export const NumberSpinner: FC<NumberSpinnerProps> = ({
   min,
   max,
   value,
+  step,
+  stepAmount = 1,
   'aria-label': ariaLabel,
   ...inputProps
 }) => {
@@ -20,11 +22,12 @@ export const NumberSpinner: FC<NumberSpinnerProps> = ({
         min={min}
         max={max}
         value={value}
-        onMinus={() => changeValueBy(-1)}
+        step={typeof step === 'number' ? step : undefined}
+        onMinus={() => changeValueBy(-stepAmount)}
         onChange={inputProps.onChange}
-        onPlus={() => changeValueBy(1)}
+        onPlus={() => changeValueBy(stepAmount)}
         inputAriaLabel={ariaLabel}
-        inputProps={{ ...inputProps }}
+        inputProps={{ ...inputProps, ...(step !== undefined ? { step } : {}) }}
         className={className}
         minusBtnAriaLabel={t('Decrement')}
         minusBtnProps={{ 'data-test-id': 'Decrement', 'data-test': 'Decrement' } as ButtonProps}
@@ -42,4 +45,8 @@ export type NumberSpinnerProps = {
   changeValueBy: (operation: number) => void;
   min?: number;
   max?: number;
-} & HTMLProps<HTMLInputElement>;
+  /** Native input step (`'any'` allows decimals). */
+  step?: number | 'any';
+  /** Amount applied by +/- buttons when `step` is `'any'` or omitted. */
+  stepAmount?: number;
+} & Omit<HTMLProps<HTMLInputElement>, 'step'>;
