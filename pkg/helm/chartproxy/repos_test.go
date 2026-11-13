@@ -1040,6 +1040,8 @@ func TestHTTPClientRedirectKeepsIndexShape(t *testing.T) {
 
 	down, err := http.NewRequest(http.MethodGet, "http://10.1.2.3/index.yaml", nil)
 	require.NoError(t, err)
+	// HTTPSDowngraded walks Response.Request back to the first request.
+	down.Response = &http.Response{Request: httpsOrig}
 	require.EqualError(t, client.CheckRedirect(down, []*http.Request{httpsOrig}), "redirect from https to http is not allowed")
 
 	httpOrig, err := http.NewRequest(http.MethodGet, "http://charts.example.com/index.yaml", nil)

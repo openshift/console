@@ -47,7 +47,6 @@ const (
 	warning          = "console-warning"
 	ErrorMessage     = "The following repositories seem to be invalid or unreachable: "
 	maxIndexFileSize = 10 << 20 // 10 MB
-	maxRedirects     = 10
 )
 
 var errInvalidIndexURL = errors.New("invalid index URL")
@@ -115,13 +114,13 @@ func httpClient(tlsConfig *tls.Config) (*http.Client, error) {
 	client := &http.Client{
 		Transport: tr,
 		CheckRedirect: func(req *http.Request, via []*http.Request) error {
-			if len(via) >= maxRedirects {
-				return fmt.Errorf("stopped after %d redirects", maxRedirects)
+			if len(via) >= utils.MaxRedirects {
+				return fmt.Errorf("stopped after %d redirects", utils.MaxRedirects)
 			}
 			if utils.RequestHostDisallowed(req) {
 				return utils.ErrDisallowedHost
 			}
-			if len(via) > 0 && via[0].URL.Scheme == "https" && req.URL.Scheme == "http" {
+			if utils.HTTPSDowngraded(req) {
 				return errors.New("redirect from https to http is not allowed")
 			}
 			if utils.FetchShape(req.URL) != "index" {
