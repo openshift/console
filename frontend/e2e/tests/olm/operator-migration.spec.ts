@@ -69,10 +69,6 @@ const prepareInstalledTargetFailure = async (
 };
 
 test.describe('Operator migration', { tag: ['@techpreview'], lock: OLM_CLUSTER_STATE_LOCK }, () => {
-  test.skip(
-    true,
-    'operator-controller#3126 made type required on revision objects; the pinned library-olm emits the old format and migrations roll back (library-olm#93 pending)',
-  );
   test.setTimeout(900_000);
 
   test('migrates one operator after a read-only plan review and keeps its operand running', async ({
@@ -657,10 +653,6 @@ test.describe(
   'Operator migration interruptions',
   { tag: ['@techpreview'], lock: OLM_CLUSTER_STATE_LOCK },
   () => {
-    test.skip(
-      true,
-      'operator-controller#3126 made type required on revision objects; the pinned library-olm emits the old format and migrations roll back (library-olm#93 pending)',
-    );
     // Logout must not revoke the saved session shared by other workers.
     test.use({ storageState: { cookies: [], origins: [] } });
     test.setTimeout(900_000);
@@ -811,10 +803,6 @@ test.describe(
   'Operator rollback interruptions',
   { tag: ['@techpreview'], lock: OLM_CLUSTER_STATE_LOCK },
   () => {
-    test.skip(
-      true,
-      'operator-controller#3126 made type required on revision objects; the pinned library-olm emits the old format and migrations roll back (library-olm#93 pending)',
-    );
     // Logout must not revoke the saved session shared by other workers.
     test.use({ storageState: { cookies: [], origins: [] } });
     test.setTimeout(900_000);
