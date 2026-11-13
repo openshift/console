@@ -65,12 +65,14 @@ const AttachStorageForm: FC<AttachStorageFormProps> = (props) => {
   const volumeAlreadyMounted = !!mountedVolume;
   const claimVolumeMode =
     showCreatePVC === 'existing' && currentClaimName.trim().length > 0
-      ? selectedPVC.spec.volumeMode
+      ? selectedPVC?.spec?.volumeMode
       : newPVCObj?.spec?.volumeMode;
 
   if (!kindObj || !_.includes(supportedKinds, kindObj.kind)) {
-    setError('Unsupported kind.');
-    return;
+    // The form is only reachable for supported kinds; render nothing otherwise.
+    // Note: no setState here — updating state during render is unsafe under the
+    // React Compiler and the value was never displayed (early return above).
+    return null;
   }
 
   const handleShowCreatePVCChange: ReactEventHandler<HTMLInputElement> = (event) => {
@@ -105,7 +107,7 @@ const AttachStorageForm: FC<AttachStorageFormProps> = (props) => {
   };
 
   const validateMountPaths = (path: string) => {
-    const existingMountPaths = getMountPaths(obj.spec.template);
+    const existingMountPaths = getMountPaths(obj?.spec?.template);
     const err = existingMountPaths.includes(path) ? 'Mount path is already in use.' : '';
     setError(err);
   };
@@ -118,7 +120,7 @@ const AttachStorageForm: FC<AttachStorageFormProps> = (props) => {
   };
 
   const getDevicePaths = (podTemplate: PodTemplate): string[] => {
-    const containers: ContainerSpec[] = podTemplate?.spec?.containers;
+    const containers: ContainerSpec[] = podTemplate?.spec?.containers ?? [];
     return containers.reduce((acc: string[], container: ContainerSpec) => {
       if (!isContainerSelected(container)) {
         return acc;
@@ -129,7 +131,7 @@ const AttachStorageForm: FC<AttachStorageFormProps> = (props) => {
   };
 
   const validateDevicePath = (path: string) => {
-    const existingDevicePaths = getDevicePaths(obj.spec.template);
+    const existingDevicePaths = getDevicePaths(obj?.spec?.template);
     if (existingDevicePaths.includes(path)) {
       setError(t('Device path is already in use.'));
     }
@@ -392,7 +394,7 @@ const AttachStorageForm: FC<AttachStorageFormProps> = (props) => {
             {t('(use all containers)')}
           </Button>
           <ContainerSelector
-            containers={obj.spec.template.spec.containers}
+            containers={obj?.spec?.template?.spec?.containers ?? []}
             selected={selectedContainers}
             onChange={handleContainerSelectionChange}
           />

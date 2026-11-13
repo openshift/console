@@ -12129,6 +12129,7 @@ __metadata:
     pluralize: "npm:^8.0.0"
     pvutils: "npm:^1.1.5"
     react: "npm:^18.3.1"
+    react-compiler-runtime: "npm:1.0.0"
     react-dom: "npm:^18.3.1"
     react-helmet-async: "npm:^2.0.5"
     react-i18next: "npm:~16.5.8"
@@ -13168,6 +13169,15 @@ __metadata:
   version: 8.3.0
   resolution: "rate-limiter-flexible@npm:8.3.0"
   checksum: 10c0/30b0aad1128b5a5cff44b289c6083be6ee782389015c1a93f854b1f07a682e539fcd48a3b983c828271b8f8ade3c930055edc2cf376915a3300a0d572d911244
+  languageName: node
+  linkType: hard
+
+"react-compiler-runtime@npm:1.0.0":
+  version: 1.0.0
+  resolution: "react-compiler-runtime@npm:1.0.0"
+  peerDependencies:
+    react: ^17.0.0 || ^18.0.0 || ^19.0.0 || ^0.0.0-experimental
+  checksum: 10c0/e081192380ae32d18bebaf341071ae8aecf80f4401b188f80e4b77e8d8995bb4c7175b8c3f75e8307019eac2015edf45c7999f788dcfcd99fdbe2ba9a2d465a4
   languageName: node
   linkType: hard
 
