@@ -20,13 +20,13 @@ require (
 	github.com/openshift/library-go v0.0.0-20261001144932-192662696fc7
 	github.com/operator-framework/api v0.46.0
 	github.com/operator-framework/kubectl-operator v0.4.0
-	github.com/operator-framework/library-olm v0.0.0-20261113135832-6e388d0b9362
-	github.com/operator-framework/operator-controller v1.12.1-0.20261111152305-9dd683afa190
+	github.com/operator-framework/library-olm v0.0.0-20261113171603-483f71a4c19d
+	github.com/operator-framework/operator-controller v1.12.1-0.20261113164318-dae9b613163a
 	github.com/operator-framework/operator-lifecycle-manager v0.22.0
 	github.com/operator-framework/operator-registry v1.74.0
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/prometheus/client_golang v1.25.0
-	github.com/prometheus/common v0.73.0
+	github.com/prometheus/common v0.73.1
 	github.com/redhat-certification/chart-verifier v0.0.0-20260617140039-1bf8aaca404e
 	github.com/stretchr/testify v1.12.1
 	golang.org/x/mod v0.42.0
@@ -132,7 +132,6 @@ require (
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/hashicorp/go-retryablehttp v0.7.8 // indirect
-	github.com/hashicorp/go-uuid v1.0.3 // indirect
 	github.com/hashicorp/go-version v1.8.0 // indirect
 	github.com/helm/chart-testing/v3 v3.10.1 // indirect
 	github.com/huandu/xstrings v1.5.0 // indirect
@@ -169,7 +168,7 @@ require (
 	github.com/opdev/getocprange v0.0.0-20260608195748-56b0b7806c21 // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/opencontainers/image-spec v1.1.1 // indirect
-	github.com/pandatix/go-abnf v0.5.1 // indirect
+	github.com/pandatix/go-abnf v0.5.3 // indirect
 	github.com/pelletier/go-toml/v2 v2.4.3 // indirect
 	github.com/peterbourgon/diskv v2.0.1+incompatible // indirect
 	github.com/pjbgf/sha1cd v0.6.0 // indirect
@@ -190,7 +189,7 @@ require (
 	github.com/spf13/afero v1.15.0 // indirect
 	github.com/spf13/cast v1.10.0 // indirect
 	github.com/spf13/cobra v1.10.2 // indirect
-	github.com/spf13/pflag v1.0.10 // indirect
+	github.com/spf13/pflag v1.1.0 // indirect
 	github.com/spf13/viper v1.21.0 // indirect
 	github.com/subosito/gotenv v1.6.0 // indirect
 	github.com/tetratelabs/wabin v0.0.0-20230304001439-f6f874872834 // indirect

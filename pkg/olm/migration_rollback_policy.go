@@ -145,11 +145,13 @@ func verifyRollbackRevisionPolicy(ctx context.Context, caller, worker client.Cli
 	probe := &ocv1.ClusterObjectSet{
 		ObjectMeta: metav1.ObjectMeta{OwnerReferences: []metav1.OwnerReference{{APIVersion: "v1", Kind: "Namespace", Name: namespace.Name, UID: namespace.UID}}},
 		Spec: ocv1.ClusterObjectSetSpec{
-			Group:               "rollback-probe-" + strings.TrimPrefix(namespace.Name, migrationJobNamespacePrefix),
-			Revision:            1,
-			LifecycleState:      ocv1.ClusterObjectSetLifecycleStateActive,
-			CollisionProtection: ocv1.CollisionProtectionPrevent,
-			Phases:              []ocv1.ClusterObjectSetPhase{{Name: "probe", Objects: []ocv1.ClusterObjectSetObject{}}},
+			Group:          "rollback-probe-" + strings.TrimPrefix(namespace.Name, migrationJobNamespacePrefix),
+			Revision:       1,
+			LifecycleState: ocv1.ClusterObjectSetLifecycleStateActive,
+			ClusterObjectSetContent: ocv1.ClusterObjectSetContent{
+				CollisionProtection: ocv1.CollisionProtectionPrevent,
+				Phases:              []ocv1.ClusterObjectSetPhase{{Name: "probe", Objects: []ocv1.ClusterObjectSetObject{}}},
+			},
 		},
 	}
 	probe.Name = fmt.Sprintf("%s-%d", probe.Spec.Group, probe.Spec.Revision)
