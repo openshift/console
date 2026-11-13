@@ -57,6 +57,9 @@ export const getSharedScope = () => {
  *
  * - add `react-router-dom-v5-compat` module aliased to `react-router`
  * - add `react-router-dom` module aliased to `react-router`
+ *
+ * TODO cleanup: remove this function when doing Console plugin runtime breaking changes
+ * along with removing corresponding shared module configs in console-shared-modules.ts
  */
 export const monkeyPatchSharedScope = (scope: ReturnType<typeof getSharedScope>) => {
   if (!Object.keys(scope).includes('react-router')) {

@@ -71,6 +71,10 @@ const loadAndEnablePlugin = async (
  * to the default option used by `DynamicRemotePlugin` to reflect this change.
  *
  * Plugins built with the new callback function do not need this shim.
+ *
+ * TODO cleanup: remove support for legacy plugin entry callback, which means Console
+ * will no longer load plugins built with `@openshift-console/dynamic-plugin-sdk-webpack`
+ * version 4.21.x or older.
  */
 const registerLegacyPluginEntryCallback = () => {
   /** Used in @openshift-console/dynamic-plugin-sdk-webpack 1.0.0 - 4.21.x */
