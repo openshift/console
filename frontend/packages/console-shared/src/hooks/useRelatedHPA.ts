@@ -35,5 +35,21 @@ export const useRelatedHPA = (
     return undefined; // similar to .find(() => false)
   }, [hpas, loaded, error, workloadAPI, workloadKind, workloadName]);
 
-  return [matchingHpa, loaded, error];
+  // The topology renders one PodSet (via PodRing) per workload, and each one watches
+  // the whole namespace HPA list through the shared, network-deduped watch above.
+  // getReduxData rebuilds that list on every HPA watch event, so `matchingHpa` is a
+  // brand-new object reference on every event even when this workload's HPA did not
+  // change. That re-rendered all N memoized PodStatus SVGs on every event and froze
+  // the browser main thread in large namespaces (OCPBUGS-114039). Keep the previous
+  // reference as long as the matched HPA is unchanged (same uid + resourceVersion),
+  // so an unrelated HPA event no longer re-renders this node.
+  const uid = matchingHpa?.metadata?.uid;
+  const resourceVersion = matchingHpa?.metadata?.resourceVersion;
+  // Intentionally keyed on the HPA identity (uid + resourceVersion) rather than on
+  // matchingHpa, so the returned reference stays stable while the matched HPA's
+  // content is unchanged.
+  // eslint-disable-next-line react-hooks-js/exhaustive-deps
+  const stableHpa = useMemo<HorizontalPodAutoscalerKind>(() => matchingHpa, [uid, resourceVersion]);
+
+  return [stableHpa, loaded, error];
 };
