@@ -433,7 +433,7 @@ const DevPluginsPage: FC<ConsoleOperatorConfigPageProps> = (props) => {
   return <ConsolePluginsTable obj={props.obj} isListPage={props.isListPage} rows={rows} loaded />;
 };
 
-const useConsolePluginRows = (enabledPlugins: string[]) => {
+const useConsolePluginRows = (enabledPlugins: string[], pluginsConfiguredByBridge: boolean) => {
   const pluginInfo = usePluginInfo();
   const [consolePlugins, consolePluginsLoaded] = useK8sWatchResource<ConsolePluginKind[]>({
     isList: true,
@@ -451,8 +451,10 @@ const useConsolePluginRows = (enabledPlugins: string[]) => {
 
     return consolePlugins.map((plugin) => {
       const pluginName = plugin?.metadata?.name;
-      const enabled = enabledPlugins.includes(pluginName);
       const info = pluginInfoByName.get(pluginName);
+      const enabled = pluginsConfiguredByBridge
+        ? info?.status === 'loaded' && info.enabled
+        : enabledPlugins.includes(pluginName);
 
       if (info?.status === 'loaded') {
         return {
@@ -472,17 +474,25 @@ const useConsolePluginRows = (enabledPlugins: string[]) => {
         errorMessage: info?.status === 'failed' ? info.errorMessage : undefined,
       };
     });
-  }, [consolePluginsLoaded, consolePlugins, pluginInfo, enabledPlugins, cspViolations]);
+  }, [
+    consolePluginsLoaded,
+    consolePlugins,
+    pluginInfo,
+    enabledPlugins,
+    pluginsConfiguredByBridge,
+    cspViolations,
+  ]);
 
   return { rows, loaded: consolePluginsLoaded };
 };
 
 const PluginsPage: FC<ConsoleOperatorConfigPageProps> = (props) => {
+  const { pluginsConfiguredByBridge } = useConsoleOperatorConfigData();
   const enabledPlugins = useMemo(
     () => props?.obj?.spec?.plugins ?? [],
     [props?.obj?.spec?.plugins],
   );
-  const { rows, loaded } = useConsolePluginRows(enabledPlugins);
+  const { rows, loaded } = useConsolePluginRows(enabledPlugins, pluginsConfiguredByBridge);
 
   return (
     <ConsolePluginsTable

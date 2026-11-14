@@ -10,6 +10,8 @@ import { referenceForModel } from '@console/internal/module/k8s';
 import { usePluginInfo } from '@console/plugin-sdk/src/api/usePluginInfo';
 import { StatusPopupSection } from '@console/shared/src/components/dashboard/status-card/StatusPopup';
 import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
+import { FLAG_CONSOLE_OPERATOR_CONFIG } from '../../../consts';
 import NotLoadedDynamicPlugins from './NotLoadedDynamicPlugins';
 
 const DynamicPluginsPopover: FC<DynamicPluginsPopoverProps> = ({ consolePlugins }) => {
@@ -29,6 +31,11 @@ const DynamicPluginsPopover: FC<DynamicPluginsPopoverProps> = ({ consolePlugins 
   );
   const enabledPlugins = loadedPlugins.filter((plugin) => plugin.enabled === true);
   const developmentMode = window.SERVER_FLAGS.k8sMode === 'off-cluster';
+  // Without the console operator's config API, list the ConsolePlugin resources instead.
+  const pluginsListURL =
+    useFlag(FLAG_CONSOLE_OPERATOR_CONFIG) === false
+      ? `/k8s/cluster/${referenceForModel(ConsolePluginModel)}`
+      : `/k8s/cluster/${referenceForModel(ConsoleOperatorConfigModel)}/cluster/console-plugins`;
 
   return (
     <Stack hasGutter>
@@ -63,13 +70,7 @@ const DynamicPluginsPopover: FC<DynamicPluginsPopoverProps> = ({ consolePlugins 
               title={t('One or more plugins might have Content Security Policy violations.')}
             />
           )}
-          <Link
-            to={`/k8s/cluster/${referenceForModel(
-              ConsoleOperatorConfigModel,
-            )}/cluster/console-plugins`}
-          >
-            {t('View all')}
-          </Link>
+          <Link to={pluginsListURL}>{t('View all')}</Link>
         </StatusPopupSection>
       </StackItem>
     </Stack>

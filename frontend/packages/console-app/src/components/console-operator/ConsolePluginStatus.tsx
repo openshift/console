@@ -18,6 +18,8 @@ import {
 } from '@console/shared/src/components/status/icons';
 import { Status } from '@console/shared/src/components/status/Status';
 import { CONSOLE_OPERATOR_CONFIG_NAME } from '@console/shared/src/constants/resource';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
+import { FLAG_CONSOLE_OPERATOR_CONFIG } from '../../consts';
 
 export const developmentMode = window.SERVER_FLAGS.k8sMode === 'off-cluster';
 
@@ -38,9 +40,28 @@ export const useConsoleOperatorConfigData = () => {
     name: CONSOLE_OPERATOR_CONFIG_NAME,
   });
 
+  // Without the console operator's config API (a cluster without the console operator), the
+  // bridge's --plugins flag decides which plugins load, as in development mode. There is then no
+  // config to read or patch, and the bridge's plugin info says which plugins are enabled.
+  const consoleOperatorConfigMissing = useFlag(FLAG_CONSOLE_OPERATOR_CONFIG) === false;
+  const pluginsConfiguredByBridge = developmentMode || consoleOperatorConfigMissing;
+
   return useMemo(
-    () => ({ consoleOperatorConfig, consoleOperatorConfigLoaded, canPatchConsoleOperatorConfig }),
-    [consoleOperatorConfig, consoleOperatorConfigLoaded, canPatchConsoleOperatorConfig],
+    () => ({
+      consoleOperatorConfig: consoleOperatorConfigMissing ? undefined : consoleOperatorConfig,
+      consoleOperatorConfigLoaded,
+      canPatchConsoleOperatorConfig: consoleOperatorConfigMissing
+        ? false
+        : canPatchConsoleOperatorConfig,
+      pluginsConfiguredByBridge,
+    }),
+    [
+      consoleOperatorConfig,
+      consoleOperatorConfigLoaded,
+      canPatchConsoleOperatorConfig,
+      consoleOperatorConfigMissing,
+      pluginsConfiguredByBridge,
+    ],
   );
 };
 

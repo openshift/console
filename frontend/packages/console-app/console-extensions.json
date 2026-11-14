@@ -41,6 +41,28 @@
     "type": "console.flag/model",
     "properties": {
       "model": {
+        "group": "operator.openshift.io",
+        "version": "v1",
+        "kind": "Console"
+      },
+      "flag": "CONSOLE_OPERATOR_CONFIG"
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "console.openshift.io",
+        "version": "v1",
+        "kind": "ConsolePlugin"
+      },
+      "flag": "CONSOLE_PLUGIN"
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
         "group": "console.openshift.io",
         "version": "v1",
         "kind": "ConsoleQuickStart"
@@ -2715,7 +2737,21 @@
       "name": "%console-app~Dynamic Plugins%",
       "href": "/k8s/cluster/operator.openshift.io~v1~Console/cluster/console-plugins"
     },
-    "flags": { "required": ["CAN_GET_CONSOLE_OPERATOR_CONFIG"] }
+    "flags": { "required": ["CAN_GET_CONSOLE_OPERATOR_CONFIG", "CONSOLE_OPERATOR_CONFIG"] }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "perspective": "admin",
+      "section": "administration",
+      "id": "consoleplugins-without-operator",
+      "name": "%console-app~Dynamic Plugins%",
+      "href": "/k8s/cluster/console.openshift.io~v1~ConsolePlugin"
+    },
+    "flags": {
+      "required": ["CAN_GET_CONSOLE_OPERATOR_CONFIG", "CONSOLE_PLUGIN"],
+      "disallowed": ["CONSOLE_OPERATOR_CONFIG"]
+    }
   },
   {
     "type": "console.action/resource-provider",

@@ -148,4 +148,32 @@ describe('ConsolePluginEnabledStatusDetail', () => {
 
     expect(screen.getByText('test-plugin: Disabled')).toBeVisible();
   });
+
+  it('should take the enabled status from the bridge when there is no console operator config', () => {
+    renderComponent(
+      'test-plugin',
+      (store) => {
+        addLoadedPlugin(store, 'test-plugin');
+      },
+      {
+        consoleOperatorConfig: undefined,
+        consoleOperatorConfigLoaded: true,
+        canPatchConsoleOperatorConfig: false,
+        pluginsConfiguredByBridge: true,
+      },
+    );
+
+    expect(screen.getByText('test-plugin: Enabled')).toBeVisible();
+  });
+
+  it('should display disabled status for a plugin the bridge does not load', () => {
+    renderComponent('test-plugin', () => {}, {
+      consoleOperatorConfig: undefined,
+      consoleOperatorConfigLoaded: true,
+      canPatchConsoleOperatorConfig: false,
+      pluginsConfiguredByBridge: true,
+    });
+
+    expect(screen.getByText('test-plugin: Disabled')).toBeVisible();
+  });
 });
