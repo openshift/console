@@ -2,6 +2,17 @@
 
 Newest first. One entry per work package from `FORK.md`.
 
+## WP7: Ceph dashboard link
+
+- `royal-road/deploy/crds/00_consolelinks.crd.yaml` from openshift/api at the console's `go.mod` pin.
+- `royal-road/deploy/ceph-dashboard-consolelink.yaml`: an `ApplicationMenu` ConsoleLink ("Storage" › "Ceph dashboard", placeholder URL), plus read-only RBAC so non-admin users see it.
+- No storage-sidebar plugin: the application menu link is enough (decision recorded in `royal-road/deploy/README.md`).
+
+## WP5 (item 2): ProjectHelmChartRepository CRD
+
+- `royal-road/deploy/crds/00_projecthelmchartrepositories.crd.yaml` from openshift/api at the console's `go.mod` pin. Without it the Helm pages still worked, but every Helm page polled a 404, and the bridge logged an error on each chart index request.
+- Core patch (helm-plugin): the Helm detection provider listed ProjectHelmChartRepositories at `.../namespaces/#ALL_NS#/...` when "All namespaces" was selected. The `#` truncates the URL, so the request 404'd every 10 seconds whether or not the CRD exists. It now lists across all namespaces.
+
 ## WP2: Known gating fixes
 
 - Home > Overview (`/dashboards`) no longer requires the `OPENSHIFT` flag. It still requires `CAN_GET_NS`, `PROMETHEUS` (the `monitoring.coreos.com` `Prometheus` CRD exists) and `MONITORING` (the bridge has Thanos proxies configured).
