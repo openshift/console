@@ -1,0 +1,48 @@
+# Recording rules that the console's core pages query but that only OpenShift's
+# cluster-monitoring-operator defines. Without them, pod, namespace and node
+# utilization graphs (pod details, pod list, project and cluster dashboards,
+# node dashboard) show "No datapoints found".
+#
+# Source: openshift/cluster-monitoring-operator release-4.22,
+# assets/cluster-monitoring-operator/prometheus-rule.yaml. Expressions are
+# copied unchanged, except the two pod_interface_network rules: upstream joins
+# them with pod_network_name_info from OpenShift's network-metrics-daemon, which
+# does not exist with Calico, so the join would drop every series. Without it
+# the graphs show the interfaces as "unnamed interface".
+#
+# The other recording rules core queries (namespace_workload_pod:kube_pod_owner:relabel,
+# node_namespace_pod_container:container_cpu_usage_seconds_total:sum_irate,
+# instance:node_num_cpu:sum, instance:node_network_*_excluding_lo:rate1m) come
+# from the kube-prometheus mixins and ship with victoria-metrics-k8s-stack's
+# default rules, so they are not repeated here.
+#
+# Format: VMRule for the VictoriaMetrics operator. The spec is identical to a
+# PrometheusRule spec if your stack uses prometheus-operator CRDs instead.
+# Unit test: royal-road/deploy/monitoring/console-recording-rules.test.yaml.
+apiVersion: operator.victoriametrics.com/v1beta1
+kind: VMRule
+metadata:
+  name: console-recording-rules
+  namespace: <monitoring-namespace>
+spec:
+  groups:
+  - name: console-openshift-general.rules
+    rules:
+    - expr: sum(rate(container_cpu_usage_seconds_total{container="",pod!=""}[5m])) BY (pod, namespace)
+      record: pod:container_cpu_usage:sum
+    - expr: sum(container_fs_usage_bytes{pod!=""}) BY (pod, namespace)
+      record: pod:container_fs_usage_bytes:sum
+    - expr: sum(rate(container_cpu_usage_seconds_total{container!="POD",container!=""}[5m])) BY (namespace)
+      record: namespace:container_cpu_usage:sum
+    - expr: sum by(namespace,pod, interface) (irate(container_network_receive_bytes_total{pod!=""}[5m]))
+      record: pod_interface_network:container_network_receive_bytes:irate5m
+    - expr: sum by(namespace,pod, interface) (irate(container_network_transmit_bytes_total{pod!=""}[5m]))
+      record: pod_interface_network:container_network_transmit_bytes_total:irate5m
+  - name: console-kube-prometheus-node-recording.rules
+    rules:
+    - expr: sum(rate(node_cpu_seconds_total{mode!="idle",mode!="iowait",mode!="steal"}[3m])) BY (instance)
+      record: instance:node_cpu:rate:sum
+    - expr: sum(rate(node_network_receive_bytes_total[3m])) BY (instance)
+      record: instance:node_network_receive_bytes:rate:sum
+    - expr: sum(rate(node_network_transmit_bytes_total[3m])) BY (instance)
+      record: instance:node_network_transmit_bytes:rate:sum

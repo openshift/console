@@ -1,0 +1,75 @@
+# promtool unit test for console-recording-rules.yaml. Run:
+#   royal-road/deploy/monitoring/test-recording-rules.sh
+# Each expr below is a query the console frontend sends (pod.tsx,
+# promql/cluster-dashboard.ts, promql/project-dashboard.ts, node-dashboard/queries.ts).
+rule_files:
+  - rules.yaml
+evaluation_interval: 1m
+tests:
+  - interval: 1m
+    input_series:
+      # cAdvisor: pod-level cgroup (container="") and one container, 1 CPU-second per second.
+      - series: 'container_cpu_usage_seconds_total{namespace="demo",pod="web-1",container=""}'
+        values: '0+60x10'
+      - series: 'container_cpu_usage_seconds_total{namespace="demo",pod="web-1",container="nginx"}'
+        values: '0+60x10'
+      - series: 'container_fs_usage_bytes{namespace="demo",pod="web-1",container="nginx"}'
+        values: '1000x10'
+      - series: 'container_network_receive_bytes_total{namespace="demo",pod="web-1",interface="eth0"}'
+        values: '0+600x10'
+      - series: 'container_network_transmit_bytes_total{namespace="demo",pod="web-1",interface="eth0"}'
+        values: '0+1200x10'
+      # node-exporter, instance relabeled to the node name.
+      - series: 'node_cpu_seconds_total{instance="node-a",cpu="0",mode="user"}'
+        values: '0+30x10'
+      - series: 'node_cpu_seconds_total{instance="node-a",cpu="0",mode="idle"}'
+        values: '0+30x10'
+      - series: 'node_network_receive_bytes_total{instance="node-a",device="eth0"}'
+        values: '0+60x10'
+      - series: 'node_network_transmit_bytes_total{instance="node-a",device="eth0"}'
+        values: '0+120x10'
+    promql_expr_test:
+      # pod.tsx CPU
+      - expr: pod:container_cpu_usage:sum{pod='web-1',namespace='demo'}
+        eval_time: 10m
+        exp_samples:
+          - labels: 'pod:container_cpu_usage:sum{namespace="demo",pod="web-1"}'
+            value: 1
+      # project/cluster dashboards add container="" (matches the absent label)
+      - expr: sum(pod:container_fs_usage_bytes:sum{container="",pod!="",namespace='demo'}) BY (namespace)
+        eval_time: 10m
+        exp_samples:
+          - labels: '{namespace="demo"}'
+            value: 1000
+      - expr: namespace:container_cpu_usage:sum{namespace='demo'}
+        eval_time: 10m
+        exp_samples:
+          - labels: 'namespace:container_cpu_usage:sum{namespace="demo"}'
+            value: 1
+      # pod.tsx network graphs (no network_name label: "unnamed interface")
+      - expr: pod_interface_network:container_network_receive_bytes:irate5m{pod='web-1', namespace='demo'}
+        eval_time: 10m
+        exp_samples:
+          - labels: 'pod_interface_network:container_network_receive_bytes:irate5m{namespace="demo",pod="web-1",interface="eth0"}'
+            value: 10
+      - expr: pod_interface_network:container_network_transmit_bytes_total:irate5m{pod='web-1', namespace='demo'}
+        eval_time: 10m
+        exp_samples:
+          - labels: 'pod_interface_network:container_network_transmit_bytes_total:irate5m{namespace="demo",pod="web-1",interface="eth0"}'
+            value: 20
+      # node dashboard
+      - expr: instance:node_cpu:rate:sum{instance='node-a'}
+        eval_time: 10m
+        exp_samples:
+          - labels: 'instance:node_cpu:rate:sum{instance="node-a"}'
+            value: 0.5
+      - expr: instance:node_network_receive_bytes:rate:sum{instance='node-a'}
+        eval_time: 10m
+        exp_samples:
+          - labels: 'instance:node_network_receive_bytes:rate:sum{instance="node-a"}'
+            value: 1
+      - expr: instance:node_network_transmit_bytes:rate:sum{instance='node-a'}
+        eval_time: 10m
+        exp_samples:
+          - labels: 'instance:node_network_transmit_bytes:rate:sum{instance="node-a"}'
+            value: 2
