@@ -101,6 +101,7 @@ export const ConsoleDataView = <
   additionalResponsiveActions = [],
   additionalToolbarContent,
   selection,
+  NoDataEmptyMsg,
 }: ConsoleDataViewProps<TData, TCustomRowData, TFilters>) => {
   const { t } = useTranslation('console-app');
   const launchModal = useOverlay();
@@ -397,6 +398,8 @@ export const ConsoleDataView = <
     <StatusBox
       label={label}
       data={data}
+      unfilteredData={data}
+      NoDataEmptyMsg={NoDataEmptyMsg}
       loaded={loaded}
       loadError={loadError}
       skeleton={<div className="loading-skeleton--table" />}
