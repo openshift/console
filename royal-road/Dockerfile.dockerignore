@@ -1,0 +1,8 @@
+# BuildKit uses this file instead of the root .dockerignore when building
+# with -f royal-road/Dockerfile.
+.git
+.github
+**/node_modules
+frontend/public/dist
+frontend/.cache
+bin
