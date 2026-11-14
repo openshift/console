@@ -2,6 +2,13 @@
 
 Newest first. One entry per work package from `FORK.md`.
 
+## Lightspeed AI assistant
+
+- `royal-road/deploy/lightspeed/`: OpenShift Lightspeed without the operator, in namespace `openshift-lightspeed`. OLS (public image pinned by digest) talks to a GPUStack model over chat completions (`openai` provider with `use_responses_api: false`) and calls a read-only kubernetes-mcp-server (v0.1.3) with the user's own token. HTTPS from the bridge to OLS uses a namespace-local cert-manager CA passed to the bridge in `BRIDGE_PLUGIN_PROXY` (`plugin-proxy.sh` prints the value). NetworkPolicies admit only console → OLS/plugin and OLS → MCP; an optional policy also restricts OLS egress. Cluster-admins can use it with no binding; `optional/query-access-binding.yaml` widens access. README covers apply order, the bridge env values and rollback.
+- `royal-road/plugins/lightspeed-service/rr_ols_shim.py`, mounted from a ConfigMap: OLS exits without OpenShift's ClusterVersion and returns 500 to every user without a TokenReview UID (all Dex users). The shim sets a fixed cluster ID and derives a UUIDv5 from the username. Unit tests, and `.github/workflows/royal-road-lightspeed-service.yml` also checks the patches still apply to the pinned OLS image.
+- `royal-road/plugins/lightspeed-console-plugin/` builds openshift/lightspeed-console `main` (the build for console 4.22+) on public images; `.github/workflows/royal-road-lightspeed-plugin.yml` pushes `ghcr.io/royal-road/lightspeed-console-plugin`. No patches.
+- `royal-road/deploy/crds/ols.openshift.io_olsconfigs.yaml` (lightspeed-operator) and an inert `OLSConfig/cluster` turn on core's "Ask OpenShift Lightspeed" button in the YAML editor. CRD verdict added to FORK.md.
+- Verified on kind with the console image running in-cluster with Dex OIDC and the real GPUStack model: streamed answer, tool call, 403 for non-admins, tools forbidden by the user's own RBAC, YAML editor button, NetworkPolicies.
 ## Pipelines plugin: Tekton pages via openshift-pipelines/console-plugin
 
 - `royal-road/plugins/pipelines-console-plugin/` builds openshift-pipelines/console-plugin from `release-5.0` (pinned commit in `upstream.env`) with three patches, on public images: `node:22` to build, `ubi9/nginx-126` to serve plain HTTP on 8080. Upstream publishes images only for `main` and its operator branches.
