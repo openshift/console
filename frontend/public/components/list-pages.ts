@@ -22,6 +22,8 @@ import {
   MachineHealthCheckModel,
   MachineModel,
   MachineSetModel,
+  ClusterAPIMachineModel,
+  ClusterAPIMachineSetModel,
   ControlPlaneMachineSetModel,
   NamespaceModel,
   NodeModel,
@@ -122,12 +124,18 @@ const baseListPages: Map<ResourceMapKey, ResourceMapValue> = new Map()
   .set(referenceForModel(MachineModel), () =>
     import('./machine' /* webpackChunkName: "machine" */).then((m) => m.MachinePage),
   )
+  .set(referenceForModel(ClusterAPIMachineModel), () =>
+    import('./machine' /* webpackChunkName: "machine" */).then((m) => m.MachinePage),
+  )
   .set(referenceForModel(MachineHealthCheckModel), () =>
     import('./machine-health-check' /* webpackChunkName: "machine-health-check" */).then(
       (m) => m.MachineHealthCheckPage,
     ),
   )
   .set(referenceForModel(MachineSetModel), () =>
+    import('./machine-set' /* webpackChunkName: "machine-set" */).then((m) => m.MachineSetPage),
+  )
+  .set(referenceForModel(ClusterAPIMachineSetModel), () =>
     import('./machine-set' /* webpackChunkName: "machine-set" */).then((m) => m.MachineSetPage),
   )
   .set(referenceForModel(ControlPlaneMachineSetModel), () =>
