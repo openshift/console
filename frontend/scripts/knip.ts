@@ -247,6 +247,7 @@ const config: KnipConfig = {
     '@console/.*', // cross-references via yarn workspaces
     'lodash', // remapped to lodash-es by NormalModuleReplacementPlugin
     '@patternfly/patternfly', // imported via SCSS, which knip cannot trace
+    '@rjsf/validator-ajv8', // required at runtime by @rjsf/core, but not declared as its dependency
   ],
 
   ignore: ['**/__{tests,mocks}__/**'],
