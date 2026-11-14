@@ -1,0 +1,51 @@
+# Namespace and RBAC the console's user-settings backend needs.
+#
+# The bridge stores each user's preferences in a ConfigMap in
+# openshift-console-user-settings (the name is hard-coded in
+# pkg/usersettings/handlers.go). On OpenShift the console-operator creates this
+# namespace and the Role below. Without it, every useUserPreference hook in the
+# frontend POSTs /api/console/user-settings, gets 404 "namespaces
+# openshift-console-user-settings not found", and falls back to localStorage:
+# about 30 failing requests (and as many bridge error logs) per page load, and
+# preferences do not follow the user across browsers.
+#
+# Copied from openshift/console-operator release-4.22,
+# manifests/03-rbac-role-ns-openshift-console-user-settings.yaml, with the
+# subject pointed at our console ServiceAccount. The bridge uses this
+# ServiceAccount (its own token, not the user's) to create the per-user
+# ConfigMap, Role and RoleBinding; the user then reads and patches only their
+# own ConfigMap.
+#
+# Alternative without cluster changes: BRIDGE_USER_SETTINGS_LOCATION=localstorage
+# (upstream marks the flag "DEV ONLY"; preferences then stay in the browser).
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: openshift-console-user-settings
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: console-user-settings-admin
+  namespace: openshift-console-user-settings
+rules:
+- apiGroups: [rbac.authorization.k8s.io]
+  resources: [roles, rolebindings]
+  verbs: [get, list, watch, create, update, delete, patch]
+- apiGroups: [""]
+  resources: [configmaps]
+  verbs: [get, list, watch, create, update, delete, patch]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: console-user-settings-admin
+  namespace: openshift-console-user-settings
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: console-user-settings-admin
+subjects:
+- kind: ServiceAccount
+  name: <console-serviceaccount>
+  namespace: <console-namespace>
