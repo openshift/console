@@ -45,6 +45,9 @@ const HOT_RELOAD = process.env.HOT_RELOAD || 'true';
 const CHECK_CYCLES = process.env.CHECK_CYCLES || 'false';
 const ANALYZE_BUNDLE = process.env.ANALYZE_BUNDLE || 'false';
 const REACT_REFRESH = process.env.REACT_REFRESH === 'true';
+// Keep function and class names through minification, so component and stack traces
+// on the error page name real functions. Opt-in: it makes the bundles larger.
+const KEEP_NAMES = process.env.CONSOLE_KEEP_NAMES === '1';
 const WDS_PORT = 8080;
 
 /* Helpers */
@@ -269,7 +272,16 @@ const config: Configuration = {
     },
     runtimeChunk: 'single',
     minimizer: [
-      new SwcJsMinimizerRspackPlugin(),
+      new SwcJsMinimizerRspackPlugin(
+        KEEP_NAMES
+          ? {
+              minimizerOptions: {
+                compress: { keep_fnames: true, keep_classnames: true },
+                mangle: { keep_fnames: true, keep_classnames: true },
+              },
+            }
+          : undefined,
+      ),
       new LightningCssMinimizerRspackPlugin({
         minimizerOptions: {
           targets: 'last 10 versions, not dead',
