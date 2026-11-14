@@ -1,0 +1,105 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kanadaj <kanadaj@royalroad.com>
+Date: Sat, 14 Nov 2026 17:26:28 +0000
+Subject: [PATCH] Hide Routes when the route.openshift.io API is absent
+
+Routes need the OpenShift router and the route.openshift.io API. On plain
+Kubernetes the Routes nav item and pages were registered unconditionally,
+so the Networking section offered a Routes link that led to a 404 page.
+
+Add a console.flag/model extension for the Route model and require it on
+every Routes extension, the same way NADs are gated on their flags.
+---
+ src/utils/flags/consts.ts    |  1 +
+ src/views/routes/manifest.ts | 21 +++++++++++++++++++++
+ 2 files changed, 22 insertions(+)
+
+diff --git a/src/utils/flags/consts.ts b/src/utils/flags/consts.ts
+index 80dc302..0eb09fe 100644
+--- a/src/utils/flags/consts.ts
++++ b/src/utils/flags/consts.ts
+@@ -1,3 +1,4 @@
+ export const FLAG_NET_ATTACH_DEF = 'NET_ATTACH_DEF';
+ export const FLAG_KUBEVIRT = 'KUBEVIRT_DYNAMIC';
+ export const FLAG_UDN_ENABLED = 'FLAG_UDN_ENABLED';
++export const FLAG_ROUTE = 'NETWORKING_CONSOLE_PLUGIN_ROUTE';
+diff --git a/src/views/routes/manifest.ts b/src/views/routes/manifest.ts
+index 1e88edd..0618de0 100644
+--- a/src/views/routes/manifest.ts
++++ b/src/views/routes/manifest.ts
+@@ -1,4 +1,5 @@
+ import {
++  ModelFeatureFlag,
+   ResourceDetailsPage,
+   ResourceListPage,
+   ResourceNSNavItem,
+@@ -10,14 +11,29 @@ import {
+   EncodedExtension,
+ } from '@openshift-console/dynamic-plugin-sdk-webpack';
+ 
++import { FLAG_ROUTE } from '../../utils/flags/consts';
++
+ const RouteExtensionModel = {
+   group: 'route.openshift.io',
+   kind: 'Route',
+   version: 'v1',
+ };
+ 
++// Routes need the route.openshift.io API, which only OpenShift serves. Gate
++// every Routes extension on the model being present, so clusters without it
++// get no Routes nav item or pages instead of a broken one.
++const routeFlags = { required: [FLAG_ROUTE] };
++
+ export const RoutesExtensions: EncodedExtension[] = [
+   {
++    properties: {
++      flag: FLAG_ROUTE,
++      model: RouteExtensionModel,
++    },
++    type: 'console.flag/model',
++  } as EncodedExtension<ModelFeatureFlag>,
++  {
++    flags: routeFlags,
+     properties: {
+       component: { $codeRef: 'RoutesList' },
+       model: RouteExtensionModel,
+@@ -25,6 +41,7 @@ export const RoutesExtensions: EncodedExtension[] = [
+     type: 'console.page/resource/list',
+   } as EncodedExtension<ResourceListPage>,
+   {
++    flags: routeFlags,
+     properties: {
+       dataAttributes: {
+         'data-quickstart-id': 'qs-nav-nads',
+@@ -38,6 +55,7 @@ export const RoutesExtensions: EncodedExtension[] = [
+     type: 'console.navigation/resource-ns',
+   } as EncodedExtension<ResourceNSNavItem>,
+   {
++    flags: routeFlags,
+     properties: {
+       model: RouteExtensionModel,
+       name: 'default',
+@@ -48,6 +66,7 @@ export const RoutesExtensions: EncodedExtension[] = [
+     type: 'console.yaml-template',
+   } as EncodedExtension<YAMLTemplate>,
+   {
++    flags: routeFlags,
+     properties: {
+       component: { $codeRef: 'RouteDetails' },
+       model: RouteExtensionModel,
+@@ -55,6 +74,7 @@ export const RoutesExtensions: EncodedExtension[] = [
+     type: 'console.page/resource/details',
+   } as EncodedExtension<ResourceDetailsPage>,
+   {
++    flags: routeFlags,
+     properties: {
+       component: {
+         $codeRef: 'RouteFormPage',
+@@ -67,6 +87,7 @@ export const RoutesExtensions: EncodedExtension[] = [
+     type: 'console.page/route',
+   } as EncodedExtension<RoutePage>,
+   {
++    flags: routeFlags,
+     properties: {
+       component: {
+         $codeRef: 'EditRoute',

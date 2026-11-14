@@ -1,0 +1,33 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kanadaj <kanadaj@royalroad.com>
+Date: Sat, 14 Nov 2026 17:40:31 +0000
+Subject: [PATCH 2/2] Link Ingress create and edit pages by group/version/kind
+
+Core no longer ships a static Ingress model, so console routes can't
+resolve the plain plural 'ingresses'. getResourceURL built
+/k8s/ns/<ns>/ingresses/~new for the Create Ingress button and
+.../ingresses/<name>/yaml for the Edit action, and both showed
+'404: Page Not Found'.
+
+Mark IngressModel as crd: true, as MultiNetworkPolicyModel already is,
+so getResourceURL uses the networking.k8s.io~v1~Ingress reference, which
+core resolves through API discovery.
+---
+ src/utils/models/index.ts | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/src/utils/models/index.ts b/src/utils/models/index.ts
+index faeebb5..abdeb86 100644
+--- a/src/utils/models/index.ts
++++ b/src/utils/models/index.ts
+@@ -146,6 +146,10 @@ export const IngressModel: K8sModel = {
+   abbr: 'I',
+   apiGroup: 'networking.k8s.io',
+   apiVersion: 'v1',
++  // Core has no static Ingress model since Ingresses moved to this plugin, so
++  // the plain plural URL (/k8s/ns/<ns>/ingresses/...) resolves to a 404 page.
++  // crd: true makes getResourceURL use networking.k8s.io~v1~Ingress instead.
++  crd: true,
+   id: 'ingress',
+   kind: 'Ingress',
+   label: 'Ingress',
