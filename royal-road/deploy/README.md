@@ -430,7 +430,10 @@ exists, controller or not.
    The name before `=` must be `pipelines-console-plugin`, the name the
    plugin's `plugin-manifest.json` declares. The trailing `/` is required. No
    `ConsolePlugin` resource and no `BRIDGE_PLUGIN_PROXY` entry are needed.
-4. Roll out the console. Check that
+4. If the ConsolePlugin CRD is installed (see [Dynamic Plugins page](#dynamic-plugins-page)),
+   apply [`pipelines-consoleplugin.yaml`](pipelines-consoleplugin.yaml) so the
+   plugin is listed there.
+5. Roll out the console. Check that
    `https://<console-host>/api/plugins/pipelines-console-plugin/plugin-manifest.json`
    returns JSON and that **Pipelines** appears in the sidebar.
 

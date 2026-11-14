@@ -1,0 +1,22 @@
+# ConsolePlugin for the pipelines plugin, for display on Administration >
+# Dynamic Plugins (see README.md, "Dynamic Plugins page"). It loads nothing;
+# BRIDGE_PLUGINS does. Kept out of consoleplugins.yaml because the pipelines
+# plugin isn't part of the cutover: apply this when you add
+# pipelines-console-plugin to BRIDGE_PLUGINS, or it is listed as Disabled.
+#
+# Requires crds/90_consoleplugins.crd.yaml. Replace <console-namespace> with the
+# namespace of the Service from pipelines-console-plugin.yaml. metadata.name must
+# equal the plugin name in BRIDGE_PLUGINS.
+apiVersion: console.openshift.io/v1
+kind: ConsolePlugin
+metadata:
+  name: pipelines-console-plugin
+spec:
+  displayName: Pipelines console plugin
+  backend:
+    type: Service
+    service:
+      name: pipelines-console-plugin
+      namespace: <console-namespace>
+      port: 8080
+      basePath: /
