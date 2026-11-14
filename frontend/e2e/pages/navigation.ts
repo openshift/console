@@ -1,4 +1,6 @@
-import { Page } from '@playwright/test';
+import type { Page } from '@playwright/test';
+
+import { expect } from '../fixtures';
 
 export class Navigation {
   constructor(private page: Page) {}
@@ -7,21 +9,35 @@ export class Navigation {
     await this.page.goto('/');
     const sidebar = this.page.locator('#page-sidebar');
     const sectionButton = sidebar.getByRole('button', { name: section });
-    await sectionButton.click();
-    await sidebar.getByRole('link', { name: link }).click();
+    const navLink = sidebar.getByRole('link', { name: link });
+
+    // The sidebar re-renders while dynamic plugins load, detaching nav links.
+    await expect(async () => {
+      const expanded = await sectionButton.getAttribute('aria-expanded');
+      if (expanded !== 'true') {
+        await sectionButton.click({ timeout: 10_000 });
+      }
+      await navLink.click({ timeout: 10_000 });
+    }).toPass({ intervals: [1_000, 2_000, 5_000], timeout: 60_000 });
+
     await this.page.waitForLoadState('domcontentloaded');
   }
 
   async clickNavLink(section: string, link: string): Promise<void> {
     const sidebar = this.page.locator('#page-sidebar');
     const sectionButton = sidebar.getByRole('button', { name: section });
-    // eslint-disable-next-line eslint-js/no-restricted-syntax
-    await sectionButton.waitFor({ state: 'visible' });
-    const expanded = await sectionButton.getAttribute('aria-expanded');
-    if (expanded !== 'true') {
-      await sectionButton.click();
-    }
-    await sidebar.getByRole('link', { name: link }).click();
+    const navLink = sidebar.getByRole('link', { name: link });
+
+    await expect(async () => {
+      // eslint-disable-next-line eslint-js/no-restricted-syntax
+      await sectionButton.waitFor({ state: 'visible', timeout: 10_000 });
+      const expanded = await sectionButton.getAttribute('aria-expanded');
+      if (expanded !== 'true') {
+        await sectionButton.click({ timeout: 10_000 });
+      }
+      await navLink.click({ timeout: 10_000 });
+    }).toPass({ intervals: [1_000, 2_000, 5_000], timeout: 60_000 });
+
     await this.page.waitForLoadState('domcontentloaded');
   }
 

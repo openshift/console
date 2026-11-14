@@ -73,8 +73,12 @@ export class ListPage extends BasePage {
       exact: true,
     });
     const header = this.dataViewTable.getByRole('columnheader').filter({ has: resizeButton });
+    // style.minWidth can be empty after a column-width reset.
     const getWidth = () =>
-      header.evaluate((element: HTMLElement) => parseFloat(element.style.minWidth));
+      header.evaluate((el: HTMLElement) => {
+        const w = parseFloat(el.style.minWidth);
+        return Number.isNaN(w) ? el.getBoundingClientRect().width : w;
+      });
 
     await this.robustClick(this.page.getByTestId('reset-column-widths'));
     const initialWidth = await getWidth();
@@ -92,7 +96,8 @@ export class ListPage extends BasePage {
     await expect.poll(getWidth, { timeout: 30_000 }).toBeCloseTo(resizedWidth, 0);
 
     await this.robustClick(this.page.getByTestId('reset-column-widths'));
-    await expect.poll(getWidth).toBeCloseTo(initialWidth, 0);
+    // The reset also persists user settings asynchronously.
+    await expect.poll(getWidth, { timeout: 30_000 }).toBeCloseTo(initialWidth, 0);
   }
 
   getCell(resourceName: string, cellName = 'name'): Locator {
@@ -198,6 +203,8 @@ export class ListPage extends BasePage {
     const safeFlags = pattern.flags.replace(/[gy]/g, '');
     const safePattern = new RegExp(pattern.source, safeFlags);
     const links = this.dataViewCells.locator('a');
+    // eslint-disable-next-line eslint-js/no-restricted-syntax
+    await links.first().waitFor({ state: 'visible', timeout: 30_000 });
     const count = await links.count();
     for (let i = 0; i < count; i++) {
       const text = await links.nth(i).textContent();

@@ -1,5 +1,7 @@
 import type { Locator } from '@playwright/test';
 
+import { expect } from '../fixtures';
+
 import BasePage from './base-page';
 
 /**
@@ -35,9 +37,14 @@ export class NamespaceBarPage extends BasePage {
   }
 
   async openDropdown(): Promise<void> {
-    await this.robustClick(this.namespaceBarDropdown.getByRole('button'));
-    // eslint-disable-next-line eslint-js/no-restricted-syntax -- waiting for the menu to render, no action follows
-    await this.dropdownMenu.waitFor({ state: 'visible' });
+    // The toggle click can be lost while the component hydrates.
+    await expect(async () => {
+      const isOpen = await this.dropdownMenu.isVisible().catch(() => false);
+      if (!isOpen) {
+        await this.namespaceBarDropdown.getByRole('button').click({ timeout: 5_000 });
+      }
+      await expect(this.dropdownMenu).toBeVisible({ timeout: 5_000 });
+    }).toPass({ timeout: 30_000 });
   }
 
   /** The dropdown hides system namespaces behind a toggle; turn it on. */

@@ -29,7 +29,10 @@ export class AlertmanagerPage extends BasePage {
 
   async navigateToYAMLPage(): Promise<void> {
     await this.goTo('/settings/cluster/alertmanageryaml');
-    await expect(this.page.getByRole('button', { name: 'Copy code to clipboard' })).toBeVisible();
+    // Monaco can take longer than 5s to initialize under CI load.
+    await expect(this.page.getByRole('button', { name: 'Copy code to clipboard' })).toBeVisible({
+      timeout: 15_000,
+    });
   }
 
   async navigateToEditReceiver(receiverName: string): Promise<void> {

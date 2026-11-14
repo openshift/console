@@ -30,9 +30,10 @@ test.describe('Source secrets', () => {
     await test.step('Create basic source secret', async () => {
       await secretsPage.navigateToCreateSourceSecret(namespace);
       await expect(secretsPage.getPageHeading()).toContainText('Create source secret');
-      await secretsPage.enterSecretName(secretName);
+      // Async form initialization can re-render and clear an earlier name.
       await page.getByTestId('secret-username').fill(username);
       await page.getByTestId('secret-password').fill(password);
+      await secretsPage.enterSecretName(secretName);
       await secretsPage.save();
     });
 
@@ -83,8 +84,8 @@ test.describe('Source secrets', () => {
     await test.step('Create SSH source secret', async () => {
       await secretsPage.navigateToCreateSourceSecret(namespace);
       await expect(secretsPage.getPageHeading()).toContainText('Create source secret');
-      await secretsPage.enterSecretName(secretName);
       await secretsPage.selectAuthType('ssh-auth');
+      await secretsPage.enterSecretName(secretName);
       await secretsPage.getFileInputTextarea().fill(sshKey);
       await secretsPage.save();
     });

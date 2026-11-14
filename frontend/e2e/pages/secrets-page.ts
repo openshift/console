@@ -165,8 +165,15 @@ export class SecretsPage extends BasePage {
   }
 
   async selectAuthType(type: string): Promise<void> {
-    await this.robustClick(this.authTypeToggle);
-    await this.robustClick(this.page.getByTestId(`dropdown-menu-${type}`));
+    const menuItem = this.page.getByTestId(`dropdown-menu-${type}`);
+    // A re-render can close the auth-type dropdown before its item is clicked.
+    await expect(async () => {
+      if (!(await menuItem.isVisible().catch(() => false))) {
+        await this.authTypeToggle.click({ timeout: 5_000 });
+      }
+      await expect(menuItem).toBeVisible({ timeout: 5_000 });
+      await menuItem.click({ timeout: 5_000 });
+    }).toPass({ timeout: 30_000 });
   }
 
   async checkSecretData(expected: Record<string, unknown>, jsonOutput = false): Promise<void> {
