@@ -42,7 +42,9 @@ export const getAlertsAndRules = (
         r.query,
         ..._.map(r.labels, (k, v) => `${k}=${v}`),
       ].join(',');
-      return { ...r, id: String(murmur3(key, 'monitoring-salt')) };
+      // Prometheus always sends `alerts` (an empty list for an inactive rule); other
+      // Prometheus-compatible rule APIs such as VictoriaMetrics' vmalert omit it.
+      return { ...r, alerts: r.alerts ?? [], id: String(murmur3(key, 'monitoring-salt')) };
     };
 
     return _.filter(g.rules, { type: 'alerting' }).map(addID);
