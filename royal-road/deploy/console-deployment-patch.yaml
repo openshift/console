@@ -1,6 +1,8 @@
 # Strategic-merge patch that switches an existing console Deployment (running
-# the stock quay.io/openshift/origin-console image) to this fork and loads the
-# plugins. Everything else on the Deployment (OIDC, service CA, cookie keys,
+# the stock quay.io/openshift/origin-console image) to this fork, loads the
+# plugins, and replaces the OKD logo and name with Kubernetes ones (needs the
+# console-branding ConfigMap from console-branding-configmap.yaml in the same
+# namespace). Everything else on the Deployment (OIDC, service CA, cookie keys,
 # BRIDGE_BASE_ADDRESS, BRIDGE_BRANDING) stays as it is.
 #
 #   kubectl -n <console-namespace> patch deployment <console-deployment> \
@@ -20,9 +22,24 @@ spec:
             # Order here is the load order unless BRIDGE_PLUGINS_ORDER is set.
             - name: BRIDGE_PLUGINS
               value: networking-console-plugin=http://networking-console-plugin.<console-namespace>.svc.cluster.local:8080/,monitoring-plugin=http://monitoring-plugin.<console-namespace>.svc.cluster.local:9443/
+            # Branding (README.md, "Branding"). Theme=path pairs, comma-separated.
+            - name: BRIDGE_CUSTOM_PRODUCT_NAME
+              value: Kubernetes
+            - name: BRIDGE_CUSTOM_LOGO_FILES
+              value: Light=/var/logo/console-branding/kubernetes-horizontal-color.svg,Dark=/var/logo/console-branding/kubernetes-horizontal-white-text.svg
+            - name: BRIDGE_CUSTOM_FAVICON_FILES
+              value: Light=/var/logo/console-branding/kubernetes-icon-color.svg,Dark=/var/logo/console-branding/kubernetes-icon-color.svg
+          volumeMounts:
+            - name: console-branding
+              mountPath: /var/logo/console-branding
+              readOnly: true
           readinessProbe:
             httpGet:
               path: /health
               port: 9000
             periodSeconds: 10
             failureThreshold: 3
+      volumes:
+        - name: console-branding
+          configMap:
+            name: console-branding

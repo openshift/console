@@ -19,18 +19,20 @@ proxy defaults are unchanged, so the existing env carries over as is.
 3. **Apply the CRDs and the resources that use them** (see [CRDs](#crds)),
    then [`monitoring/console-recording-rules.yaml`](monitoring/console-recording-rules.yaml)
    (see [Recording rules](#recording-rules)). Apply
+   [`console-branding-configmap.yaml`](console-branding-configmap.yaml) in
+   the console namespace (see [Branding](#branding)). Apply
    [`user-settings.yaml`](user-settings.yaml) only if the
    `openshift-console-user-settings` namespace and the console's write access
    to it don't exist yet (see [User settings](#user-settings)).
 4. **Switch the console Deployment** to `ghcr.io/royal-road/console:<sha>`
    with [`console-deployment-patch.yaml`](console-deployment-patch.yaml). It
-   changes the image, adds `BRIDGE_PLUGINS` and a `/health` readiness probe,
-   and keeps every other setting.
+   changes the image, adds `BRIDGE_PLUGINS`, the Kubernetes branding and a
+   `/health` readiness probe, and keeps every other setting.
 5. **Verify**: sign in through OIDC; check the Networking menu (Services,
    Ingresses, NetworkPolicies, no Routes), Observe (alerts, metrics,
    dashboards, targets), Home › Overview with the Kubernetes version, the Helm
    releases list across all namespaces, and the application menu's Ceph
-   dashboard link. Check the bridge log for repeated errors.
+   dashboard link, and the Kubernetes logo and tab title. Check the bridge log for repeated errors.
 6. **Keep the old 2021 console Deployment running** until parity is
    confirmed, then retire it.
 
@@ -84,6 +86,67 @@ if one is required. It is not: the application menu link covers the need,
 core already lists StorageClasses, PVCs and VolumeSnapshots in the sidebar,
 and the generic CRD pages cover `CephBlockPool`, `CephFilesystem` and
 `CephObjectStore`.
+
+## Branding
+
+The masthead, the About modal, the browser tab title and the favicon show
+Kubernetes instead of OKD. This is bridge configuration only; no code change.
+
+1. Apply [`console-branding-configmap.yaml`](console-branding-configmap.yaml)
+   in the console namespace. It holds the Kubernetes logos from
+   [cncf/artwork](https://github.com/cncf/artwork) (source commit and the one
+   change made to them are in the file header).
+2. Patch the console Deployment with
+   [`console-deployment-patch.yaml`](console-deployment-patch.yaml), or add
+   this to the console container yourself:
+
+   ```yaml
+   env:
+     - name: BRIDGE_CUSTOM_PRODUCT_NAME
+       value: Kubernetes
+     - name: BRIDGE_CUSTOM_LOGO_FILES
+       value: Light=/var/logo/console-branding/kubernetes-horizontal-color.svg,Dark=/var/logo/console-branding/kubernetes-horizontal-white-text.svg
+     - name: BRIDGE_CUSTOM_FAVICON_FILES
+       value: Light=/var/logo/console-branding/kubernetes-icon-color.svg,Dark=/var/logo/console-branding/kubernetes-icon-color.svg
+   volumeMounts:
+     - name: console-branding
+       mountPath: /var/logo/console-branding
+       readOnly: true
+   # and on the Pod:
+   volumes:
+     - name: console-branding
+       configMap:
+         name: console-branding
+   ```
+
+Keep `BRIDGE_BRANDING=okd`. The bridge accepts only Red Hat product names
+there, and `okd` is the one without Red Hat artwork (the About modal shows no
+Red Hat logo or OpenShift description once a custom logo or product name is
+set). The bridge checks at startup that each logo file exists, and serves the
+files at `/custom-logo?type=Masthead|Favicon&theme=Light|Dark`.
+
+| Setting | Where it shows |
+|---|---|
+| `BRIDGE_CUSTOM_PRODUCT_NAME` | Browser tab title (`Pods · Kubernetes`), the `application-name` meta tag, the About modal heading, the logo's alt text |
+| `BRIDGE_CUSTOM_LOGO_FILES` | Masthead and About modal. `Light` and `Dark` follow the user's console theme |
+| `BRIDGE_CUSTOM_FAVICON_FILES` | Browser tab icon. `Light` and `Dark` follow the browser's color scheme. The frontend swaps it in after it starts, so the OKD icon shows for a moment on a full page load |
+
+**Why "Kubernetes".** The masthead logo already reads "kubernetes", so the
+tab title and About modal match it, and the About modal reads as "Kubernetes,
+Kubernetes version v1.x". It is short in tab titles, where the product name
+follows the page name. "Kubernetes Console" would be more precise but repeats
+what the tab already says and doesn't match the logo.
+
+**Logo license.** The CNCF artwork is published under the Linux Foundation
+[trademark usage guidelines](https://www.linuxfoundation.org/legal/trademark-usage).
+Using the unaltered logo to identify the Kubernetes cluster the console manages
+fits them. Don't use it in a way that suggests the Linux Foundation or CNCF
+endorses the console.
+
+**Seen on kind:** a one-time `400` for `/custom-logo?type=Masthead&theme=`
+on each page load. The frontend asks once before it knows the theme, then
+asks again with `theme=Light` or `theme=Dark` and gets the logo. Upstream
+behavior, harmless.
 
 ## Monitoring endpoints
 
