@@ -117,3 +117,21 @@ Brings back the Networking menu (Services, Ingresses, NetworkPolicies) with [ope
 **Routes.** `route.openshift.io` stays absent on this cluster (FORK.md, OpenShift CRD policy). Our build hides the Routes nav item and pages when that API is missing.
 
 **NetworkPolicy permissions.** The bridge calls the API with each user's own token, so users see and create only what their RBAC allows. The plugin Pod needs no ServiceAccount permissions (`automountServiceAccountToken: false`).
+
+## User settings
+
+Apply `user-settings.yaml`. Replace `<console-namespace>` and
+`<console-serviceaccount>` with the console Deployment's ServiceAccount. It
+creates the `openshift-console-user-settings` namespace and the Role the bridge
+needs to store each user's preferences there. Without it, the console still
+works, but every page load sends about 30 failing `POST /api/console/user-settings`
+calls, and preferences stay in the browser's localStorage. No console restart is
+needed.
+
+## Recording rules
+
+Apply `monitoring/console-recording-rules.yaml`, a VMRule. Replace
+`<monitoring-namespace>` with a namespace the VictoriaMetrics operator watches.
+It adds the OpenShift-only recording rules behind the pod, pod-list, project,
+cluster and node utilization graphs. Test it with
+`monitoring/test-recording-rules.sh` (needs `promtool` and `yq`).
