@@ -144,8 +144,7 @@ func main() {
 	fStatuspageID := fs.String("statuspage-id", "", "Unique ID assigned by statuspage.io page that provides status info.")
 	fDocumentationBaseURL := fs.String("documentation-base-url", "", "The base URL for documentation links.")
 
-	fAlertmanagerUserWorkloadHost := fs.String("alermanager-user-workload-host", openshiftAlertManagerHost, "Location of the Alertmanager service for user-defined alerts.")
-	fAlertmanagerTenancyHost := fs.String("alermanager-tenancy-host", openshiftAlertManagerTenancyHost, "Location of the tenant-aware Alertmanager service.")
+	fMonitoringHosts := addMonitoringHostFlags(fs)
 	fAlermanagerPublicURL := fs.String("alermanager-public-url", "", "Public URL of the cluster's AlertManager server.")
 	fGrafanaPublicURL := fs.String("grafana-public-url", "", "Public URL of the cluster's Grafana server.")
 	fPrometheusPublicURL := fs.String("prometheus-public-url", "", "Public URL of the cluster's Prometheus server.")
@@ -353,8 +352,8 @@ func main() {
 		ControlPlaneTopology:         *fControlPlaneTopology,
 		StatuspageID:                 *fStatuspageID,
 		DocumentationBaseURL:         documentationBaseURL,
-		AlertManagerUserWorkloadHost: *fAlertmanagerUserWorkloadHost,
-		AlertManagerTenancyHost:      *fAlertmanagerTenancyHost,
+		AlertManagerUserWorkloadHost: *fMonitoringHosts.alertManagerUserWorkload,
+		AlertManagerTenancyHost:      *fMonitoringHosts.alertManagerTenancy,
 		AlertManagerPublicURL:        alertManagerPublicURL,
 		GrafanaPublicURL:             grafanaPublicURL,
 		PrometheusPublicURL:          prometheusPublicURL,
@@ -471,37 +470,7 @@ func main() {
 				Endpoint:        &url.URL{Scheme: "https", Host: catalogdHost},
 			}
 
-			srv.ThanosProxyConfig = &proxy.Config{
-				TLSClientConfig: serviceProxyTLSConfig,
-				HeaderBlacklist: srv.ProxyHeaderDenyList,
-				Endpoint:        &url.URL{Scheme: "https", Host: openshiftThanosHost, Path: "/api"},
-			}
-			srv.ThanosTenancyProxyConfig = &proxy.Config{
-				TLSClientConfig: serviceProxyTLSConfig,
-				HeaderBlacklist: srv.ProxyHeaderDenyList,
-				Endpoint:        &url.URL{Scheme: "https", Host: openshiftThanosTenancyHost, Path: "/api"},
-			}
-			srv.ThanosTenancyProxyForRulesConfig = &proxy.Config{
-				TLSClientConfig: serviceProxyTLSConfig,
-				HeaderBlacklist: srv.ProxyHeaderDenyList,
-				Endpoint:        &url.URL{Scheme: "https", Host: openshiftThanosTenancyForRulesHost, Path: "/api"},
-			}
-
-			srv.AlertManagerProxyConfig = &proxy.Config{
-				TLSClientConfig: serviceProxyTLSConfig,
-				HeaderBlacklist: srv.ProxyHeaderDenyList,
-				Endpoint:        &url.URL{Scheme: "https", Host: openshiftAlertManagerHost, Path: "/api"},
-			}
-			srv.AlertManagerUserWorkloadProxyConfig = &proxy.Config{
-				TLSClientConfig: serviceProxyTLSConfig,
-				HeaderBlacklist: srv.ProxyHeaderDenyList,
-				Endpoint:        &url.URL{Scheme: "https", Host: *fAlertmanagerUserWorkloadHost, Path: "/api"},
-			}
-			srv.AlertManagerTenancyProxyConfig = &proxy.Config{
-				TLSClientConfig: serviceProxyTLSConfig,
-				HeaderBlacklist: srv.ProxyHeaderDenyList,
-				Endpoint:        &url.URL{Scheme: "https", Host: *fAlertmanagerTenancyHost, Path: "/api"},
-			}
+			setMonitoringProxyConfigs(srv, fMonitoringHosts, serviceProxyTLSConfig)
 			srv.TerminalProxyTLSConfig = serviceProxyTLSConfig
 			srv.PluginsProxyTLSConfig = serviceProxyTLSConfig
 
