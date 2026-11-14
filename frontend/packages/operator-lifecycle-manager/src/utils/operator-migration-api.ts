@@ -41,7 +41,8 @@ export interface OperatorMigrationPlan {
   version: string;
   channel?: string;
   clusterCatalog: string;
-  clusterObjectSetName: string;
+  clusterObjectSetName?: string;
+  clusterObjectDeploymentName?: string;
   resources: { kind: string; count: number }[];
   actions: string[];
 }

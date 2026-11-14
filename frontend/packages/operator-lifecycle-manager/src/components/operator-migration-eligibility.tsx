@@ -1,11 +1,12 @@
 import type { FC, ReactElement } from 'react';
 import { useEffect, useState } from 'react';
 import { Status, IconStatus } from '@patternfly/react-component-groups/dist/dynamic/Status';
-import { Button, Content, Popover } from '@patternfly/react-core';
+import { Button, Content, Panel, PanelMain, Popover } from '@patternfly/react-core';
 import {
   RhUiCheckCircleFillIcon,
   RhUiErrorFillIcon,
   RhUiInformationFillIcon,
+  RhUiInProgressIcon,
 } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import type { GetDataViewCell } from '@console/dynamic-plugin-sdk/src/extensions/dataview';
@@ -17,6 +18,7 @@ import {
   OPERATOR_MIGRATION_SCAN_INVALIDATED_EVENT,
   type OperatorMigrationScan,
 } from '../utils/operator-migration-api';
+import { useMigrationNotifications } from './operator-migration-notifications';
 
 type InstalledOperator = ClusterServiceVersionKind | SubscriptionKind;
 
@@ -75,10 +77,23 @@ const OperatorMigrationEligibilityCell: FC<{
   subscriptionNamespace: string;
 }> = ({ subscriptionName, subscriptionNamespace }) => {
   const { t } = useTranslation('olm');
+  const { migratingOperators } = useMigrationNotifications();
   const { scan, loading, error } = useOperatorMigrationScan(
     subscriptionNamespace,
     subscriptionName,
   );
+
+  if (migratingOperators.has(`${subscriptionNamespace}/${subscriptionName}`)) {
+    return (
+      <span data-test="operator-migration-status">
+        <Status
+          status={IconStatus.info}
+          icon={<RhUiInProgressIcon />}
+          label={t('Migration in progress')}
+        />
+      </span>
+    );
+  }
 
   if (loading) {
     return <span>{t('Scanning...')}</span>;
@@ -141,18 +156,25 @@ const OperatorMigrationEligibilityCell: FC<{
       aria-label={t('Migration status for {{operator}}', { operator: subscriptionName })}
       headerContent={statusText}
       bodyContent={
-        <>
-          <Content component="p">{summary}</Content>
-          {failedChecks.length > 0 && (
-            <Content component="ul" className="pf-v6-u-mt-sm">
-              {failedChecks.map(({ name, message }) => (
-                <Content component="li" key={name}>
-                  <strong>{name}:</strong> {message}
-                </Content>
-              ))}
-            </Content>
-          )}
-        </>
+        <Panel isScrollable hasNoBorder>
+          <PanelMain
+            maxHeight="min(30rem, 50vh)"
+            role="region"
+            aria-label={t('Migration status for {{operator}}', { operator: subscriptionName })}
+            tabIndex={0}
+          >
+            <Content component="p">{summary}</Content>
+            {failedChecks.length > 0 && (
+              <Content component="ul" className="pf-v6-u-mt-sm">
+                {failedChecks.map(({ name, message }) => (
+                  <Content component="li" key={name}>
+                    <strong>{name}:</strong> {message}
+                  </Content>
+                ))}
+              </Content>
+            )}
+          </PanelMain>
+        </Panel>
       }
     >
       <Button

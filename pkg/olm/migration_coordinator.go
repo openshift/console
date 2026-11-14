@@ -442,12 +442,20 @@ func (c *migrationCoordinator) executionConfig(namespace string) (*rest.Config, 
 		}
 		return nil, err
 	}
+	return migrationCredentialConfig(c.config, &secret)
+}
+
+// migrationCredentialConfig uses only the bounded execution credential and the API server's connection settings.
+func migrationCredentialConfig(connection *rest.Config, secret *corev1.Secret) (*rest.Config, error) {
+	if connection == nil {
+		return nil, fmt.Errorf("Cannot connect to the migration job because the Console backend has no cluster connection configuration. Ask a cluster administrator to check the Console backend configuration before retrying.")
+	}
 	expires, err := time.Parse(time.RFC3339Nano, string(secret.Data["expires"]))
 	token := string(secret.Data["token"])
 	if err != nil || token == "" || !time.Now().Before(expires) {
 		return nil, errMigrationCredentialsExpired
 	}
-	config := rest.AnonymousClientConfig(c.config)
+	config := rest.AnonymousClientConfig(connection)
 	config.Timeout = 10 * time.Second
 	config.WrapTransport = func(rt http.RoundTripper) http.RoundTripper {
 		return migrationTokenTransport{base: rt, token: func(ctx context.Context) (string, error) {

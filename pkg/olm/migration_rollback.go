@@ -32,6 +32,8 @@ type operatorMigrationRollbackJob struct {
 	TargetUID           types.UID                         `json:"targetUID,omitempty"`
 	Snapshot            operatorMigrationRecoverySnapshot `json:"snapshot"`
 	Restored            bool                              `json:"restored,omitempty"`
+	// RevisionPolicy requires admission to enforce the target boundary for future revisions.
+	RevisionPolicy bool `json:"revisionPolicy,omitempty"`
 }
 
 const rollbackTargetUIDAnnotation = "console.openshift.io/operator-migration-rollback-target-uid"
@@ -104,16 +106,37 @@ func prepareRollbackExecutionPermissions(ctx context.Context, kubeClient client.
 	read := []string{"get", "list", "watch"}
 	clusterRules := []rbacv1.PolicyRule{
 		migrationRule("", []string{"namespaces"}, []string{"get"}, []string{snapshot.Namespace.Name}),
-		migrationRule("olm.operatorframework.io", []string{"clusterextensions", "clusterobjectsets"}, read, nil),
-		migrationRule("olm.operatorframework.io", []string{"clusterextensions"}, []string{"delete"}, []string{snapshot.ClusterExtensionName}),
+		migrationRule("olm.operatorframework.io", []string{"clusterextensions", "clusterobjectsets", "clusterobjectdeployments"}, read, nil),
+		migrationRule("olm.operatorframework.io", []string{"clusterextensions", "clusterobjectdeployments"}, []string{"delete"}, []string{snapshot.ClusterExtensionName}),
 	}
-	var sets ocv1.ClusterObjectSetList
-	if err := kubeClient.List(ctx, &sets, client.MatchingLabels{migration.LabelOwnerName: snapshot.ClusterExtensionName}); err != nil {
+	sets, err := migrationRevisions(ctx, kubeClient, snapshot.ClusterExtensionName)
+	if err != nil {
 		return nil, err
 	}
 	names := []string{snapshot.ClusterObjectSetName}
-	for _, set := range sets.Items {
+	for _, set := range sets {
 		names = append(names, set.Name)
+	}
+	deployment, err := migrationDeployment(ctx, kubeClient, snapshot.ClusterExtensionName)
+	if err != nil {
+		return nil, err
+	}
+	deploymentKnown := snapshot.UseClusterObjectDeployment || deployment != nil
+	if !deploymentKnown {
+		var checkpoint corev1.Secret
+		if err := kubeClient.Get(ctx, client.ObjectKey{Namespace: rollback.CheckpointNamespace, Name: rollback.CheckpointName}, &checkpoint); err != nil {
+			return nil, err
+		}
+		deploymentKnown = checkpoint.Annotations[rollbackDeploymentUIDAnnotation] != ""
+	}
+	if deploymentKnown {
+		// Future revision names are not known yet. Admission checks the worker's
+		// exact-name ClusterExtension delete grant for each revision's group.
+		// This is not an ownership-UID boundary; changes to this authorization
+		// mechanism require security review.
+		rollback.RevisionPolicy = true
+		names = nil
+		clusterRules = append(clusterRules, migrationRule("admissionregistration.k8s.io", []string{"validatingadmissionpolicies", "validatingadmissionpolicybindings"}, []string{"get"}, []string{rollbackRevisionPolicyName}))
 	}
 	clusterRules = append(clusterRules, migrationRule("olm.operatorframework.io", []string{"clusterobjectsets"}, []string{"delete"}, names))
 	_, subName, _ := splitSubscriptionRef(snapshot.SubscriptionRef)
@@ -306,6 +329,12 @@ func (c *migrationCoordinator) completeSourceRecovery(ctx context.Context, rollb
 
 // executeRollback preserves the backup until resource restoration has a durable completion checkpoint.
 func executeRollback(ctx context.Context, guard *migrationExecutionClient, rollback *operatorMigrationRollbackJob, saveRestored func() error) error {
+	guard.rollbackPolicy = rollback.RevisionPolicy
+	if rollback.RevisionPolicy {
+		if err := requireRollbackRevisionPolicy(ctx, guard.Client); err != nil {
+			return err
+		}
+	}
 	var checkpoint corev1.Secret
 	err := guard.Get(ctx, client.ObjectKey{Namespace: rollback.CheckpointNamespace, Name: rollback.CheckpointName}, &checkpoint)
 	if apierrors.IsNotFound(err) && rollback.Restored {
@@ -378,23 +407,27 @@ func bindRollbackTarget(ctx context.Context, guard *migrationExecutionClient, ro
 		}
 		rollback.TargetUID = extension.UID
 		guard.rollbackTargetName, guard.rollbackTargetUID = extension.Name, extension.UID
-		var revisions ocv1.ClusterObjectSetList
-		if err := guard.List(ctx, &revisions, client.MatchingLabels{migration.LabelOwnerName: extension.Name}); err != nil {
-			return err
-		}
-		for i := range revisions.Items {
-			revision := &revisions.Items[i]
-			if revision.Annotations[migrationExecutionAnnotation] == rollback.SourceJobID {
-				if revision.UID != "" {
-					guard.rollbackRevisionUIDs[revision.Name] = revision.UID
-				}
-				continue
+	}
+	guard.rollbackTargetName, guard.rollbackTargetUID = rollback.Snapshot.ClusterExtensionName, rollback.TargetUID
+	if _, err := bindMigrationDeployment(ctx, guard, checkpoint, &rollback.Snapshot, &extension); err != nil {
+		return err
+	}
+	revisions, err := migrationRevisions(ctx, guard, rollback.Snapshot.ClusterExtensionName)
+	if err != nil {
+		return err
+	}
+	for i := range revisions {
+		revision := &revisions[i]
+		if revision.Annotations[migrationExecutionAnnotation] == rollback.SourceJobID {
+			if revision.UID != "" {
+				guard.rollbackRevisionUIDs[revision.Name] = revision.UID
 			}
-			if !guard.ownsRollbackRevision(revision) {
-				return rollbackConflict("rollback revision belongs to another execution")
-			}
-			guard.rollbackRevisionUIDs[revision.Name] = revision.UID
+			continue
 		}
+		if !guard.ownsRollbackRevision(revision) {
+			return rollbackConflict("This rollback revision does not match the migration job. Ask a cluster administrator to verify the revision and recovery checkpoint before retrying rollback.")
+		}
+		guard.rollbackRevisionUIDs[revision.Name] = revision.UID
 	}
 	guard.rollbackTargetName, guard.rollbackTargetUID = rollback.Snapshot.ClusterExtensionName, rollback.TargetUID
 	var references corev1.SecretList
@@ -403,8 +436,10 @@ func bindRollbackTarget(ctx context.Context, guard *migrationExecutionClient, ro
 	}
 	for i := range references.Items {
 		secret := &references.Items[i]
+		revision := secret.Labels[migration.LabelRevisionName]
 		if secret.Annotations[migrationExecutionAnnotation] == rollback.SourceJobID ||
-			guard.rollbackRevisionUIDs[secret.Labels[migration.LabelRevisionName]] == "" {
+			revision != "" && guard.rollbackRevisionUIDs[revision] == "" ||
+			revision == "" && secret.Type != corev1.SecretType(migration.SecretTypeObjectData) {
 			continue
 		}
 		if !guard.ownsRollbackReference(secret) {
@@ -428,7 +463,7 @@ func bindRollbackTarget(ctx context.Context, guard *migrationExecutionClient, ro
 		}
 		referenceUIDs = string(encoded)
 	}
-	if rollback.TargetUID != "" && (savedUID == "" || checkpoint.Annotations[rollbackRevisionUIDsAnnotation] != revisionUIDs || checkpoint.Annotations[rollbackReferenceUIDsAnnotation] != referenceUIDs) {
+	if (rollback.TargetUID != "" || guard.rollbackDeploymentUID != "") && (savedUID == "" || checkpoint.Annotations[rollbackRevisionUIDsAnnotation] != revisionUIDs || checkpoint.Annotations[rollbackReferenceUIDsAnnotation] != referenceUIDs) {
 		checkpoint.Annotations[rollbackTargetUIDAnnotation] = string(rollback.TargetUID)
 		checkpoint.Annotations[rollbackRevisionUIDsAnnotation] = revisionUIDs
 		checkpoint.Annotations[rollbackReferenceUIDsAnnotation] = referenceUIDs

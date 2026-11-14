@@ -19,9 +19,16 @@ package v1
 const (
 	TypeInstalled   = "Installed"
 	TypeProgressing = "Progressing"
+	// TypeAvailable is the ClusterExtension condition that surfaces the health of the
+	// full set of managed objects across all active revisions. This condition may flap
+	// during upgrades and configuration changes.
+	TypeAvailable = "Available"
 
 	// Installed reasons
 	ReasonAbsent = "Absent"
+
+	// Available reasons
+	ReasonProbesSucceeded = "ProbesSucceeded"
 
 	// Progressing reasons
 	ReasonRollingOut           = "RollingOut"
