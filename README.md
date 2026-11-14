@@ -72,6 +72,9 @@ the full integration test suite.
 
 #### OpenShift (with authentication)
 
+For direct external OpenID Connect authentication, see
+[PKCE behavior and operational considerations](docs/oidc-pkce.md).
+
 If you need to work on the backend code for authentication or you need to test
 different users, you can set up authentication in your development environment.
 Registering an OpenShift OAuth client requires administrative privileges for
