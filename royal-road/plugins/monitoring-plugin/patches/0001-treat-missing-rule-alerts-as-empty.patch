@@ -1,0 +1,15 @@
+diff --git a/web/src/shared/utils/utils.ts b/web/src/shared/utils/utils.ts
+index 73ed612b..2ffd7360 100644
+--- a/web/src/shared/utils/utils.ts
++++ b/web/src/shared/utils/utils.ts
+@@ -82,7 +82,9 @@ export const getAlertsAndRules = (
+         r.query,
+         ..._.map(r.labels, (k, v) => `${k}=${v}`),
+       ].join(',');
+-      return { ...r, id: String(murmur3(key, 'monitoring-salt')) };
++      // Prometheus always sends `alerts` (an empty list for an inactive rule); other
++      // Prometheus-compatible rule APIs such as VictoriaMetrics' vmalert omit it.
++      return { ...r, alerts: r.alerts ?? [], id: String(murmur3(key, 'monitoring-salt')) };
+     };
+ 
+     return _.filter(g.rules, { type: 'alerting' }).map(addID);
