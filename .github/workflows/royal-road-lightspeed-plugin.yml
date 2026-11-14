@@ -1,0 +1,60 @@
+name: royal-road-lightspeed-plugin
+
+# Builds openshift/lightspeed-console (the Lightspeed chat plugin) from the
+# upstream commit pinned in royal-road/plugins/lightspeed-console-plugin/upstream.env,
+# with our patches, on public base images. Upstream publishes no tagged image
+# (see the directory's README.md).
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - royal-road/plugins/lightspeed-console-plugin/**
+      - .github/workflows/royal-road-lightspeed-plugin.yml
+  pull_request:
+    paths:
+      - royal-road/plugins/lightspeed-console-plugin/**
+      - .github/workflows/royal-road-lightspeed-plugin.yml
+  workflow_dispatch:
+
+concurrency:
+  group: royal-road-lightspeed-plugin-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  IMAGE: ghcr.io/${{ github.repository_owner }}/lightspeed-console-plugin
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Version
+        id: version
+        run: echo "short_sha=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: docker/build-push-action@v6
+        with:
+          context: royal-road/plugins/lightspeed-console-plugin
+          push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+          tags: |
+            ${{ env.IMAGE }}:${{ steps.version.outputs.short_sha }}
+            ${{ env.IMAGE }}:main
+          cache-from: type=gha,scope=lightspeed-console-plugin
+          cache-to: type=gha,mode=max,scope=lightspeed-console-plugin
