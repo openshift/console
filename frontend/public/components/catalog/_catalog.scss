@@ -135,6 +135,23 @@ $catalog-item-icon-size-sm: 24px;
 
   &__tabs {
     width: 220px;
+
+    // OCPBUGS-76377: PF6 VerticalTabs/FilterSidePanel use a larger default row gap than 4.21
+    .vertical-tabs-pf {
+      row-gap: 0;
+    }
+
+    .vertical-tabs-pf-tab {
+      margin-bottom: 0;
+    }
+
+    .vertical-tabs-pf-tab > a {
+      padding-block: var(--pf-t--global--spacer--xs);
+    }
+
+    .filter-panel-pf-category-item {
+      margin-top: var(--pf-t--global--spacer--xs);
+    }
   }
 }
 
