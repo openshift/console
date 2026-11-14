@@ -1,0 +1,31 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kanadaj <kanadaj@royalroad.com>
+Date: Sat, 14 Nov 2026 22:46:44 +0000
+Subject: [PATCH] Don't crash the PipelineRun Logs tab while the PipelineRun
+ loads
+
+The details page can render the Logs tab once with obj undefined. Every
+other read of obj in PipelineRunLogs uses optional chaining, but the
+Pod watch built obj.metadata.namespace, so the tab intermittently showed
+"Cannot read properties of undefined (reading 'metadata')" (two of three
+loads of a finished PipelineRun on a kind cluster).
+
+Backport of the same line from upstream main (b9e1cd7, "cve: manual
+cherry-pick of SRVKP-13295"); drop this patch once release-5.0 has it.
+---
+ src/components/pipelineRuns-details/PipelineRunLogs.tsx | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/components/pipelineRuns-details/PipelineRunLogs.tsx b/src/components/pipelineRuns-details/PipelineRunLogs.tsx
+index 06fc033..e56ea56 100644
+--- a/src/components/pipelineRuns-details/PipelineRunLogs.tsx
++++ b/src/components/pipelineRuns-details/PipelineRunLogs.tsx
+@@ -178,7 +178,7 @@ const PipelineRunLogs: FC<PipelineRunLogsProps> = ({
+     podName && {
+       name: podName,
+       kind: 'Pod',
+-      namespace: obj.metadata.namespace,
++      namespace: obj?.metadata?.namespace,
+       isList: false,
+     };
+   const waitingForPods = obj && activeRun?.kind === 'TaskRun' && !resources;

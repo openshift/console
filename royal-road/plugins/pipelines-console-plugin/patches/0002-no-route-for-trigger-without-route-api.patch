@@ -1,0 +1,123 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kanadaj <kanadaj@royalroad.com>
+Date: Sat, 14 Nov 2026 21:53:19 +0000
+Subject: [PATCH 2/2] Only create a Route for a new trigger when the Route API
+ exists
+
+Add Trigger creates the TriggerTemplate and EventListener, then always
+creates a route.openshift.io Route for the EventListener's Service. On
+Kubernetes without the OpenShift router that API doesn't exist, so every
+new trigger ended with an "Error Exposing Route" dialog even though the
+trigger itself was created.
+
+Add a console.flag/model for route.openshift.io/v1 Route and skip the
+Route when the flag is off. On OpenShift the model exists, so nothing
+changes there.
+---
+ console-extensions.json                           | 11 +++++++++++
+ src/components/start-pipeline/AddTriggerModal.tsx | 13 ++++++++++---
+ src/components/start-pipeline/submit-utils.ts     |  7 ++++++-
+ src/consts.ts                                     |  2 ++
+ 4 files changed, 29 insertions(+), 4 deletions(-)
+
+diff --git a/console-extensions.json b/console-extensions.json
+index 6bc172a..f22617b 100644
+--- a/console-extensions.json
++++ b/console-extensions.json
+@@ -41,6 +41,17 @@
+       "flag": "OPENSHIFT_PIPELINE_AS_CODE"
+     }
+   },
++  {
++    "type": "console.flag/model",
++    "properties": {
++      "model": {
++        "group": "route.openshift.io",
++        "version": "v1",
++        "kind": "Route"
++      },
++      "flag": "PIPELINES_CONSOLE_PLUGIN_ROUTE"
++    }
++  },
+   {
+     "type": "console.yaml-template",
+     "properties": {
+diff --git a/src/components/start-pipeline/AddTriggerModal.tsx b/src/components/start-pipeline/AddTriggerModal.tsx
+index c8c7082..99370ff 100644
+--- a/src/components/start-pipeline/AddTriggerModal.tsx
++++ b/src/components/start-pipeline/AddTriggerModal.tsx
+@@ -15,11 +15,11 @@ import { AddTriggerFormValues, PipelineKind } from '../../types';
+ import { convertPipelineToModalData } from './utils';
+ import { OverlayComponent } from '@openshift-console/dynamic-plugin-sdk';
+ import { useGetActiveUser, usePipelinePVC } from '../hooks/hooks';
+-import { TRIGGER_BINDING_EMPTY } from '../../consts';
++import { FLAG_PIPELINES_ROUTE, TRIGGER_BINDING_EMPTY } from '../../consts';
+ import AddTriggerForm from './AddTriggerForm';
+ import { submitTrigger } from './submit-utils';
+ import { addTriggerSchema } from './validation-utils';
+-import { useOverlay } from '@openshift-console/dynamic-plugin-sdk';
++import { useFlag, useOverlay } from '@openshift-console/dynamic-plugin-sdk';
+ 
+ export type AddTriggerModalProps = {
+   pipeline: PipelineKind;
+@@ -36,6 +36,7 @@ const AddTriggerModal: OverlayComponent<AddTriggerModalProps> = ({
+     pipeline.metadata?.namespace,
+   );
+   const launchOverlay = useOverlay();
++  const routeAPIAvailable = useFlag(FLAG_PIPELINES_ROUTE);
+ 
+   const initialValues: AddTriggerFormValues = useMemo(() => {
+     if (!pipelinePVCLoaded) return;
+@@ -49,7 +50,13 @@ const AddTriggerModal: OverlayComponent<AddTriggerModalProps> = ({
+   }, [pipeline, pipelinePVC, pipelinePVCLoaded]);
+ 
+   const handleSubmit = (values: AddTriggerFormValues, actions) => {
+-    return submitTrigger(pipeline, values, currentUser, launchOverlay)
++    return submitTrigger(
++      pipeline,
++      values,
++      currentUser,
++      launchOverlay,
++      routeAPIAvailable,
++    )
+       .then(() => {
+         closeOverlay();
+       })
+diff --git a/src/components/start-pipeline/submit-utils.ts b/src/components/start-pipeline/submit-utils.ts
+index f46053e..29e09ca 100644
+--- a/src/components/start-pipeline/submit-utils.ts
++++ b/src/components/start-pipeline/submit-utils.ts
+@@ -68,6 +68,7 @@ export const submitTrigger = async (
+   formValues: AddTriggerFormValues,
+   currentUser: string,
+   launchOverlay?: any,
++  exposeEventListener = true,
+ ): Promise<K8sResourceKind[]> => {
+   const { triggerBinding } = formValues;
+   const thisNamespace = pipeline.metadata.namespace;
+@@ -118,7 +119,11 @@ export const submitTrigger = async (
+     return Promise.reject(err);
+   }
+ 
+-  exposeRoute(eventListener.metadata.name, thisNamespace, launchOverlay);
++  // Routes need the OpenShift router. Without route.openshift.io, expose the
++  // EventListener's Service yourself (for example with an Ingress).
++  if (exposeEventListener) {
++    exposeRoute(eventListener.metadata.name, thisNamespace, launchOverlay);
++  }
+ 
+   return Promise.resolve(resources);
+ };
+diff --git a/src/consts.ts b/src/consts.ts
+index 87dd65c..d6f6e33 100644
+--- a/src/consts.ts
++++ b/src/consts.ts
+@@ -169,6 +169,8 @@ export const DEFAULT_WORKSPACE_ANNOTATION = 'tekton.dev/default-workspace';
+ export const chainsSignedAnnotation = 'chains.tekton.dev/signed';
+ export const preferredNameAnnotation = 'pipeline.openshift.io/preferredName';
+ export const FLAG_OPENSHIFT_PIPELINE_AS_CODE = 'OPENSHIFT_PIPELINE_AS_CODE';
++// Set when the cluster serves route.openshift.io (not on plain Kubernetes).
++export const FLAG_PIPELINES_ROUTE = 'PIPELINES_CONSOLE_PLUGIN_ROUTE';
+ export const FLAG_OPENSHIFT_PIPELINE_APPROVAL_TASK =
+   'OPENSHIFT_PIPELINE_APPROVAL_TASK';
+ export const PAC_INFO = 'pipelines-as-code-info';

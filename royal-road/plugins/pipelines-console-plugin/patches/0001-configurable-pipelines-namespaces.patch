@@ -1,0 +1,159 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kanadaj <kanadaj@royalroad.com>
+Date: Sat, 14 Nov 2026 21:52:55 +0000
+Subject: [PATCH 1/2] Make the Pipelines namespaces configurable at build time
+
+The plugin hard-codes openshift-pipelines, the namespace the OpenShift
+Pipelines operator installs into. Clusters that install Tekton from the
+upstream release YAMLs keep their shared Task library and Pipelines-as-Code
+elsewhere, so the pipeline builder offered no cluster resolver Tasks and
+the PaC pages looked in the wrong namespace.
+
+PIPELINE_NAMESPACE (PaC secret and configuration) and
+CLUSTER_RESOLVER_TASK_NAMESPACE (Tasks the builder offers through the
+cluster resolver, and the default namespace of cluster resolver
+references without one) can now be set at build time. Both default to
+openshift-pipelines, so OpenShift builds are unchanged.
+---
+ src/components/pipeline-builder/hooks.ts  |  4 ++--
+ src/components/pipeline-builder/utils.ts  |  8 ++++----
+ src/components/pipelines-details/utils.ts |  6 +++---
+ src/consts.ts                             | 10 +++++++++-
+ webpack.config.ts                         | 11 ++++++++++-
+ 5 files changed, 28 insertions(+), 11 deletions(-)
+
+diff --git a/src/components/pipeline-builder/hooks.ts b/src/components/pipeline-builder/hooks.ts
+index 162f9e6..94452c5 100644
+--- a/src/components/pipeline-builder/hooks.ts
++++ b/src/components/pipeline-builder/hooks.ts
+@@ -2,7 +2,7 @@ import { useK8sWatchResources } from '@openshift-console/dynamic-plugin-sdk';
+ import { FormikTouched, useFormikContext } from 'formik';
+ import { useEffect, useRef } from 'react';
+ import { useTranslation } from 'react-i18next';
+-import { PIPELINE_NAMESPACE } from '../../consts';
++import { CLUSTER_RESOLVER_TASK_NAMESPACE } from '../../consts';
+ import { TaskModel } from '../../models';
+ import { PipelineTask, TaskKind } from '../../types';
+ import { AddNodeDirection } from '../pipeline-topology/const';
+@@ -63,7 +63,7 @@ export const useFormikFetchAndSaveTasks = (
+     clusterResolverTasks: {
+       kind: getReferenceForModel(TaskModel),
+       isList: true,
+-      namespace: PIPELINE_NAMESPACE,
++      namespace: CLUSTER_RESOLVER_TASK_NAMESPACE,
+     },
+   });
+   const namespacedTaskData = namespacedTasks.loaded
+diff --git a/src/components/pipeline-builder/utils.ts b/src/components/pipeline-builder/utils.ts
+index 35b1b1d..cba3560 100644
+--- a/src/components/pipeline-builder/utils.ts
++++ b/src/components/pipeline-builder/utils.ts
+@@ -7,8 +7,8 @@ import {
+ import { FormikErrors } from 'formik';
+ import * as _ from 'lodash';
+ import {
++  CLUSTER_RESOLVER_TASK_NAMESPACE,
+   DEFAULT_WORKSPACE_ANNOTATION,
+-  PIPELINE_NAMESPACE,
+   VolumeTypes,
+ } from '../../consts';
+ import { PipelineModel, TaskModel } from '../../models';
+@@ -369,15 +369,15 @@ export const convertResourceToTask = (
+   const kind = resource.kind ?? TaskModel.kind;
+   let taskRef;
+   if (
+-    resource.metadata.namespace === PIPELINE_NAMESPACE &&
+-    namespace !== PIPELINE_NAMESPACE
++    resource.metadata.namespace === CLUSTER_RESOLVER_TASK_NAMESPACE &&
++    namespace !== CLUSTER_RESOLVER_TASK_NAMESPACE
+   ) {
+     taskRef = {
+       resolver: 'cluster',
+       params: [
+         { name: 'kind', value: 'task' },
+         { name: 'name', value: resource.metadata.name },
+-        { name: 'namespace', value: PIPELINE_NAMESPACE },
++        { name: 'namespace', value: CLUSTER_RESOLVER_TASK_NAMESPACE },
+       ],
+     };
+   } else {
+diff --git a/src/components/pipelines-details/utils.ts b/src/components/pipelines-details/utils.ts
+index 1c87bd1..664bea4 100644
+--- a/src/components/pipelines-details/utils.ts
++++ b/src/components/pipelines-details/utils.ts
+@@ -1,6 +1,6 @@
+ import _ from 'lodash';
+ import { useTranslation } from 'react-i18next';
+-import { PIPELINE_NAMESPACE } from '../../consts';
++import { CLUSTER_RESOLVER_TASK_NAMESPACE } from '../../consts';
+ import {
+   PipelineKind,
+   PipelineTask,
+@@ -50,7 +50,7 @@ export const getPipelineTaskLinks = (
+             resourceKind: getSafeTaskResourceKind(task.taskRef.kind),
+             name: nameParam,
+             qualifier: task.name,
+-            namespace: namespaceParam ?? PIPELINE_NAMESPACE,
++            namespace: namespaceParam ?? CLUSTER_RESOLVER_TASK_NAMESPACE,
+             resourceApiVersion: version,
+           };
+         }
+@@ -83,7 +83,7 @@ export const getPipelineTaskLinks = (
+             resourceKind: getSafeTaskResourceKind(task.pipelineRef.kind),
+             name: nameParam,
+             qualifier: task.name,
+-            namespace: namespaceParam ?? PIPELINE_NAMESPACE,
++            namespace: namespaceParam ?? CLUSTER_RESOLVER_TASK_NAMESPACE,
+             resourceApiVersion: version,
+           };
+         }
+diff --git a/src/consts.ts b/src/consts.ts
+index 110c36e..87dd65c 100644
+--- a/src/consts.ts
++++ b/src/consts.ts
+@@ -172,7 +172,15 @@ export const FLAG_OPENSHIFT_PIPELINE_AS_CODE = 'OPENSHIFT_PIPELINE_AS_CODE';
+ export const FLAG_OPENSHIFT_PIPELINE_APPROVAL_TASK =
+   'OPENSHIFT_PIPELINE_APPROVAL_TASK';
+ export const PAC_INFO = 'pipelines-as-code-info';
+-export const PIPELINE_NAMESPACE = 'openshift-pipelines';
++// Namespace OpenShift Pipelines is installed in (Pipelines-as-Code secret and
++// configuration). Override with the PIPELINE_NAMESPACE build-time variable.
++export const PIPELINE_NAMESPACE =
++  process.env.PIPELINE_NAMESPACE || 'openshift-pipelines';
++// Namespace whose Tasks the pipeline builder offers through the cluster
++// resolver, and the default namespace of cluster resolver references without
++// one. Override with the CLUSTER_RESOLVER_TASK_NAMESPACE build-time variable.
++export const CLUSTER_RESOLVER_TASK_NAMESPACE =
++  process.env.CLUSTER_RESOLVER_TASK_NAMESPACE || PIPELINE_NAMESPACE;
+ export const PIPELINERUN_TEMPLATE_NAMESPACE = 'openshift';
+ export const PAC_TEMPLATE_DEFAULT = 'pipelines-as-code-pipelinerun-generic';
+ 
+diff --git a/webpack.config.ts b/webpack.config.ts
+index 2d5148e..7e54138 100644
+--- a/webpack.config.ts
++++ b/webpack.config.ts
+@@ -2,7 +2,10 @@
+ 
+ import { ConsoleRemotePlugin } from '@openshift-console/dynamic-plugin-sdk-webpack';
+ import * as path from 'path';
+-import { Configuration as WebpackConfiguration } from 'webpack';
++import {
++  Configuration as WebpackConfiguration,
++  EnvironmentPlugin,
++} from 'webpack';
+ import { Configuration as WebpackDevServerConfiguration } from 'webpack-dev-server';
+ 
+ const CopyWebpackPlugin = require('copy-webpack-plugin');
+@@ -147,6 +150,12 @@ const config: Configuration = {
+   },
+   plugins: [
+     new ConsoleRemotePlugin(),
++    // Build-time namespace overrides for clusters where Tekton isn't installed
++    // by the OpenShift Pipelines operator (see src/consts.ts).
++    new EnvironmentPlugin({
++      PIPELINE_NAMESPACE: '',
++      CLUSTER_RESOLVER_TASK_NAMESPACE: '',
++    }),
+     new CopyWebpackPlugin({
+       patterns: [{ from: path.resolve(__dirname, 'locales'), to: 'locales' }],
+     }),
