@@ -1,0 +1,90 @@
+# openshift-pipelines/console-plugin (Tekton) for the Royal Road console.
+#
+# Placeholders:
+#   <console-namespace>  namespace of the console Deployment
+#   <sha>                image tag from .github/workflows/royal-road-pipelines-plugin.yml
+#
+# The plugin is static files only. The bridge fetches them from this Service and
+# proxies them to the browser; API calls go through the bridge's own proxy, so
+# the plugin needs no ServiceAccount permissions.
+#
+# Plain HTTP inside the cluster: on OpenShift the Pipelines operator serves the
+# plugin over TLS with a certificate from the service CA, which this cluster
+# doesn't have. The files are public UI code with no secrets, so the bridge
+# reaches them over HTTP on the cluster network. See README.md, "Pipelines plugin".
+#
+# Only deploy this together with a working Tekton install (Pipelines, and
+# Triggers for the Triggers pages): the plugin shows its Pipelines section
+# whenever the tekton.dev Pipeline CRD exists, even with no controller running.
+#
+# Load it in the console Deployment by appending to BRIDGE_PLUGINS. The name
+# before "=" must be pipelines-console-plugin, the name in the plugin's
+# manifest; the bridge serves it under /api/plugins/<name>/.
+#   - name: BRIDGE_PLUGINS
+#     value: <other plugins>,pipelines-console-plugin=http://pipelines-console-plugin.<console-namespace>.svc.cluster.local:8080/
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pipelines-console-plugin
+  namespace: <console-namespace>
+  labels:
+    app.kubernetes.io/name: pipelines-console-plugin
+    app.kubernetes.io/part-of: console
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: pipelines-console-plugin
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: pipelines-console-plugin
+        app.kubernetes.io/part-of: console
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: pipelines-console-plugin
+          image: ghcr.io/royal-road/pipelines-console-plugin:<sha>
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /plugin-manifest.json
+              port: http
+          livenessProbe:
+            httpGet:
+              path: /plugin-manifest.json
+              port: http
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              memory: 128Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ALL]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pipelines-console-plugin
+  namespace: <console-namespace>
+  labels:
+    app.kubernetes.io/name: pipelines-console-plugin
+    app.kubernetes.io/part-of: console
+spec:
+  selector:
+    app.kubernetes.io/name: pipelines-console-plugin
+  ports:
+    - name: http
+      port: 8080
+      targetPort: http
+      protocol: TCP

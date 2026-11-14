@@ -399,3 +399,64 @@ with `--k8s-mode-off-cluster-thanos` and `--k8s-mode-off-cluster-alertmanager`.
 | Dashboards | Works: example dashboard with variable, single stat, graph and table panels. |
 | Targets | Works: 12 targets with ServiceMonitor and namespace links. |
 | Non-admin tenancy | Routing checked: a ServiceAccount with `view` in one namespace gets every plugin request on `/api/prometheus-tenancy` and `/api/alertmanager-tenancy` with `namespace=<ns>`. With a prom-label-proxy as the tenancy target, it saw only that namespace's series, rules and silences. Off-cluster, all tenancy paths go to the one URL given by the `--k8s-mode-off-cluster-*` flags, so the in-cluster `:9092` routing and its RBAC check remain for the production check above. |
+
+## Pipelines plugin
+
+[openshift-pipelines/console-plugin](https://github.com/openshift-pipelines/console-plugin)
+provides the Tekton pages (Pipelines, PipelineRuns, Tasks, TaskRuns, Triggers,
+the pipeline builder, logs, and PipelineRun decorators in Topology). Console
+5.0 removed them from core. The image is built from the pinned `release-5.0`
+commit with our patches by `.github/workflows/royal-road-pipelines-plugin.yml`
+(see `royal-road/plugins/pipelines-console-plugin/README.md`).
+
+It is **not part of the cutover**. Deploy it once Tekton has a working control
+plane: the Pipelines section appears whenever the `tekton.dev` Pipeline CRD
+exists, controller or not.
+
+### Deploy
+
+1. Check the build defaults against the cluster (build args, see the plugin
+   README): shared Tasks for the pipeline builder in `tekton-catalog`,
+   Pipelines-as-Code in `pipelines-as-code`. Rebuild with `--build-arg` if
+   either differs.
+2. Replace the placeholders in `pipelines-console-plugin.yaml` and apply it.
+3. Append the plugin to `BRIDGE_PLUGINS` in the console Deployment:
+
+   ```yaml
+   - name: BRIDGE_PLUGINS
+     value: <existing plugins>,pipelines-console-plugin=http://pipelines-console-plugin.<console-namespace>.svc.cluster.local:8080/
+   ```
+
+   The name before `=` must be `pipelines-console-plugin`, the name the
+   plugin's `plugin-manifest.json` declares. The trailing `/` is required. No
+   `ConsolePlugin` resource and no `BRIDGE_PLUGIN_PROXY` entry are needed.
+4. Roll out the console. Check that
+   `https://<console-host>/api/plugins/pipelines-console-plugin/plugin-manifest.json`
+   returns JSON and that **Pipelines** appears in the sidebar.
+
+**Plain HTTP**, for the same reasons as the networking plugin (above).
+
+**Permissions.** Everything goes through the bridge with the user's token.
+Users who open the pipeline builder need `list`/`watch` on `tasks.tekton.dev`
+in `tekton-catalog` to see the shared Tasks there (for example a RoleBinding to
+the `view` ClusterRole or a narrower Role). The cluster resolver reads them
+with its own ServiceAccount when the PipelineRun starts.
+
+**EventListeners.** There is no Route API, so **Add Trigger** creates the
+TriggerTemplate and EventListener but no Route (patch 0002). Expose the
+`el-<name>` Service with an Ingress to receive webhooks.
+
+### Production checks
+
+- Leftover operator objects: `TektonConfig/config` is read only to detect a
+  multi-cluster hub. If a `tektonresults.operator.tekton.dev/result` object
+  exists, the plugin turns on its Tekton Results features and calls the
+  bridge's `/api/dev-console/tekton-results/*`, which targets
+  `tekton-results-api-service.openshift-pipelines` unless the TektonResult CR
+  says otherwise. Check with
+  `kubectl get tektonresults.operator.tekton.dev result`, and delete it if
+  Results isn't actually installed.
+- The Overview page charts need the `tekton_pipelines_controller_*` metrics
+  scraped into the monitoring stack and reachable through the tenancy proxy.
+- Without internet egress from the console Pod, the builder's ArtifactHub
+  results are empty; catalog and namespace Tasks still show.
