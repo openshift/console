@@ -3,12 +3,19 @@
 # FORK.md ("Verification environment"):
 #   - the only OpenShift CRD production has: helmchartrepositories.helm.openshift.io
 #   - Rook CRDs (no operator), so storage-related flags behave as in production
+#   - the prometheus-operator Prometheus CRD, which production also has
 #   - a few Helm releases with several upgrades each, so superseded revisions exist
 #   - a cluster-admin ServiceAccount for running the bridge off-cluster
 #
 # Usage: royal-road/dev/kind-up.sh [name]
 # Writes the kubeconfig to ${KIND_KUBECONFIG:-/tmp/kind-<name>.kubeconfig} and
 # never touches ~/.kube/config. Re-running against an existing cluster is safe.
+#
+# Each kind node runs systemd, which stores keys in the kernel keyring of the
+# user that owns Docker. Where that user is unprivileged on the host (rootless
+# Docker, unprivileged LXC), the default kernel.keys.maxbytes=20000 fits only a
+# few clusters; new containers then fail to start. Raise it on the host, e.g.
+#   sysctl -w kernel.keys.maxkeys=20000 kernel.keys.maxbytes=2000000
 #
 # Extra CRDs from royal-road/deploy/crds/ are NOT installed here; work packages
 # that add them apply them explicitly so "with and without" can be compared.
@@ -20,6 +27,7 @@ export KUBECONFIG=${KIND_KUBECONFIG:-/tmp/kind-${NAME}.kubeconfig}
 # openshift/api commit the console vendors (go.mod replace directive).
 OPENSHIFT_API_SHA=6ab113cb736829b0cb17174b9b26d355e4cda3a0
 ROOK_VERSION=v1.21.2
+PROMETHEUS_OPERATOR_VERSION=v0.86.2
 HELM_RELEASES=${HELM_RELEASES:-6}   # releases per namespace
 HELM_UPGRADES=${HELM_UPGRADES:-5}   # upgrades per release
 
@@ -42,6 +50,10 @@ kubectl apply --server-side -f \
   "https://raw.githubusercontent.com/openshift/api/${OPENSHIFT_API_SHA}/helm/v1beta1/zz_generated.crd-manifests/00_helmchartrepositories.crd.yaml"
 kubectl apply --server-side -f \
   "https://raw.githubusercontent.com/rook/rook/${ROOK_VERSION}/deploy/examples/crds.yaml"
+# Production runs prometheus-operator; the console's PROMETHEUS flag (which
+# gates the Overview dashboard) checks for this CRD.
+kubectl apply --server-side -f \
+  "https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/${PROMETHEUS_OPERATOR_VERSION}/example/prometheus-operator-crd/monitoring.coreos.com_prometheuses.yaml"
 
 # Cluster-admin identity for the bridge (BRIDGE_USER_AUTH=disabled).
 kubectl -n kube-system get sa console-dev >/dev/null 2>&1 ||
