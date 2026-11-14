@@ -2,6 +2,13 @@
 
 Newest first. One entry per work package from `FORK.md`.
 
+## Logs from VictoriaLogs: logging-view-plugin and vl-tenancy-proxy
+
+- `royal-road/plugins/logging-view-plugin/` builds openshift/logging-view-plugin from `release-coo-ocp-4.22` (pinned commit) with four patches that make it read VictoriaLogs: a `vlogs` label schema (`namespace`, `pod`, `container`, `level`) as default, LogsQL instead of LogQL, VictoriaLogs' `/select/logsql` endpoints (query, hits histogram, stats graphs, field values, live tail), and no audit tenant or Loki ruler alert sources. Observe › Logs (admin and developer) and the Pod "Aggregated Logs" tab work.
+- `vl-tenancy-proxy` (Go, in the same image) takes the user's token from the bridge's plugin proxy, checks it with a TokenReview and `get pods/log` SubjectAccessReviews, and adds the allowed namespaces and the tenant (application / infrastructure) to every query as VictoriaLogs `extra_stream_filters`. Client-sent extra filters and tenant headers are dropped; endpoints that ignore extra filters are not reachable.
+- `royal-road/deploy/logging-view-plugin.yaml` (Deployment with both containers, RBAC, NetworkPolicies) and the "Logging plugin" section of `royal-road/deploy/README.md` with the `BRIDGE_PLUGINS` and `BRIDGE_PLUGIN_PROXY` values. `.github/workflows/royal-road-logging-view-plugin.yml` pushes `ghcr.io/royal-road/logging-view-plugin`.
+- Verified on kind with VictoriaLogs v1.53.0 and Alloy-labelled logs in three namespaces; a namespace-limited ServiceAccount sees only its namespace.
+
 ## Lightspeed AI assistant
 
 - `royal-road/deploy/lightspeed/`: OpenShift Lightspeed without the operator, in namespace `openshift-lightspeed`. OLS (public image pinned by digest) talks to a GPUStack model over chat completions (`openai` provider with `use_responses_api: false`) and calls a read-only kubernetes-mcp-server (v0.1.3) with the user's own token. HTTPS from the bridge to OLS uses a namespace-local cert-manager CA passed to the bridge in `BRIDGE_PLUGIN_PROXY` (`plugin-proxy.sh` prints the value). NetworkPolicies admit only console → OLS/plugin and OLS → MCP; an optional policy also restricts OLS egress. Cluster-admins can use it with no binding; `optional/query-access-binding.yaml` widens access. README covers apply order, the bridge env values and rollback.
