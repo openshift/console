@@ -66,7 +66,7 @@ type helmHandlers struct {
 	installChartAsync     func(string, string, string, map[string]interface{}, *action.Configuration, dynamic.Interface, corev1client.CoreV1Interface, bool, string) (*kv1.Secret, error)
 	installChart          func(string, string, string, map[string]interface{}, *action.Configuration, dynamic.Interface, corev1client.CoreV1Interface, bool, string) (*releasev1.Release, error)
 	installChartFromURL   func(string, string, string, map[string]interface{}, *action.Configuration, corev1client.CoreV1Interface, string, string) (*kv1.Secret, error)
-	listReleases          func(*action.Configuration, bool) ([]*releasev1.Release, error)
+	listReleases          func(*action.Configuration, string, bool) ([]*releasev1.Release, error)
 	upgradeReleaseAsync   func(string, string, string, map[string]interface{}, *action.Configuration, dynamic.Interface, corev1client.CoreV1Interface, bool, string, string) (*kv1.Secret, error)
 	upgradeRelease        func(string, string, string, map[string]interface{}, *action.Configuration, dynamic.Interface, corev1client.CoreV1Interface, bool, string) (*releasev1.Release, error)
 	uninstallRelease      func(string, *action.Configuration) (*releasecommon.UninstallReleaseResponse, error)
@@ -192,7 +192,7 @@ func (h *helmHandlers) HandleHelmList(user *auth.User, w http.ResponseWriter, r 
 	}
 
 	conf := h.getActionConfigurations(h.ApiServerHost, ns, user.Token, &h.Transport)
-	resp, err := h.listReleases(conf, limitInfo)
+	resp, err := h.listReleases(conf, ns, limitInfo)
 	if err != nil {
 		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: fmt.Sprintf("Failed to list helm releases: %v", err)})
 		return
