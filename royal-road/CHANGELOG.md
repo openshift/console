@@ -2,6 +2,13 @@
 
 Newest first. One entry per work package from `FORK.md`.
 
+## WP6: Triage the old fork's fixes
+
+- `royal-road/WP6-TRIAGE.md` gives a verdict and evidence for every Royal Road commit on `legacy/kubernetes-console-2022`.
+- `royal-road/deploy/user-settings.yaml`: the `openshift-console-user-settings` namespace and the console-operator's Role, bound to the console ServiceAccount. Without them, every page load makes about 30 failing `POST /api/console/user-settings` calls, and preferences stay in the browser.
+- `royal-road/deploy/monitoring/console-recording-rules.yaml`: eight recording rules that core's pod, namespace, cluster and node graphs query, which only OpenShift's monitoring stack defines. Packaged as a VMRule, with a promtool unit test. The pod network rules drop OpenShift's `pod_network_name_info` join.
+- Core patch: `CAN_CREATE_PROJECT` is set to `false` when the project API returns 404. Before, the flag stayed pending on Kubernetes, which left the User Preferences "Project" field and every namespace dropdown (`NsDropdown`) loading forever.
+
 ## WP3: Networking via networking-console-plugin
 
 - `royal-road/plugins/networking-console-plugin/` builds openshift/networking-console-plugin from `release-5.0` (pinned commit in `upstream.env`) with our patches. It uses public images: `node:22` to build, `ubi9/nginx-126` to serve plain HTTP on 8080. No published image matches 5.0; OKD's payload build is a pre-release from August 2026 with no stable tag.
