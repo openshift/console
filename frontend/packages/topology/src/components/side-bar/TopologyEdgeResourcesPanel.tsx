@@ -27,9 +27,7 @@ const TopologyEdgeResourcesPanel: FC<TopologyEdgeResourcesPanelProps> = ({ edge 
   const target = getResource(edge.getTarget());
   const data = edge.getData();
   const resources = [source, target];
-  const {
-    metadata: { namespace },
-  } = resources[1];
+  const namespace = target?.metadata?.namespace;
 
   return (
     <div className="overview__sidebar-pane-body">
