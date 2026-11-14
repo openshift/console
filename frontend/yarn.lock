@@ -1580,7 +1580,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jridgewell/trace-mapping@npm:^0.3.12, @jridgewell/trace-mapping@npm:^0.3.23, @jridgewell/trace-mapping@npm:^0.3.24, @jridgewell/trace-mapping@npm:^0.3.25, @jridgewell/trace-mapping@npm:^0.3.28":
+"@jridgewell/trace-mapping@npm:^0.3.12, @jridgewell/trace-mapping@npm:^0.3.23, @jridgewell/trace-mapping@npm:^0.3.24, @jridgewell/trace-mapping@npm:^0.3.25, @jridgewell/trace-mapping@npm:^0.3.28, @jridgewell/trace-mapping@npm:^0.3.31":
   version: 0.3.31
   resolution: "@jridgewell/trace-mapping@npm:0.3.31"
   dependencies:
@@ -12484,6 +12484,7 @@ __metadata:
   dependencies:
     "@axe-core/playwright": "npm:^4.11.3"
     "@babel/core": "npm:^7.29.7"
+    "@jridgewell/trace-mapping": "npm:^0.3.31"
     "@kubernetes/client-node": "npm:^1.4.0"
     "@monaco-editor/react": "npm:^4.7.0"
     "@openshift/api-types": "npm:^1.0.0"
