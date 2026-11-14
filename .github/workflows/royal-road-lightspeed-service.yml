@@ -1,0 +1,46 @@
+name: royal-road-lightspeed-service
+
+# Checks the shim that runs OpenShift Lightspeed Service on plain Kubernetes
+# (royal-road/plugins/lightspeed-service/): unit tests, the generated
+# ConfigMap is in sync with the .py file, and the shim's patches still apply
+# to the OLS image pinned in royal-road/deploy/lightspeed/42-ols.yaml.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - royal-road/plugins/lightspeed-service/**
+      - royal-road/deploy/lightspeed/41-ols-shim-configmap.yaml
+      - royal-road/deploy/lightspeed/42-ols.yaml
+      - .github/workflows/royal-road-lightspeed-service.yml
+  pull_request:
+    paths:
+      - royal-road/plugins/lightspeed-service/**
+      - royal-road/deploy/lightspeed/41-ols-shim-configmap.yaml
+      - royal-road/deploy/lightspeed/42-ols.yaml
+      - .github/workflows/royal-road-lightspeed-service.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  shim:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Unit tests
+        run: python3 -m unittest discover -v -s royal-road/plugins/lightspeed-service
+
+      - name: ConfigMap matches rr_ols_shim.py
+        run: royal-road/plugins/lightspeed-service/render-configmap.sh --check
+
+      - name: Patches apply to the pinned OLS image
+        run: |
+          image=$(grep -oE 'quay.io/openshift-lightspeed/lightspeed-service-api@sha256:[0-9a-f]{64}' royal-road/deploy/lightspeed/42-ols.yaml)
+          echo "OLS image: $image"
+          docker run --rm --entrypoint python \
+            -v "$PWD/royal-road/plugins/lightspeed-service:/rr-shim:ro" \
+            "$image" /rr-shim/rr_ols_shim.py --check
