@@ -112,7 +112,7 @@ export const DetailsCard = memo(() => {
     }
     const fetchK8sVersion = async () => {
       try {
-        const response = await fetch('version');
+        const response = await fetch('/api/kubernetes/version');
         const version = await response.json();
         setK8sVersion(version);
       } catch (error) {
