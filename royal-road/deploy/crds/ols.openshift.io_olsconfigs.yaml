@@ -1,0 +1,2498 @@
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.19.0
+  name: olsconfigs.ols.openshift.io
+spec:
+  group: ols.openshift.io
+  names:
+    kind: OLSConfig
+    listKind: OLSConfigList
+    plural: olsconfigs
+    singular: olsconfig
+  scope: Cluster
+  versions:
+  - name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        description: Red Hat OpenShift Lightspeed instance. OLSConfig is the Schema
+          for the olsconfigs API
+        properties:
+          apiVersion:
+            description: |-
+              APIVersion defines the versioned schema of this representation of an object.
+              Servers should convert recognized schemas to the latest internal value, and
+              may reject unrecognized values.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+            type: string
+          kind:
+            description: |-
+              Kind is a string value representing the REST resource this object represents.
+              Servers may infer this from the endpoint the client submits requests to.
+              Cannot be updated.
+              In CamelCase.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: OLSConfigSpec defines the desired state of OLSConfig
+            properties:
+              agenticOLS:
+                description: Agentic OLS settings for inter-operator sandbox handoff
+                  to the agentic operator.
+                properties:
+                  agenticSandboxConfig:
+                    description: |-
+                      AgenticSandboxConfig overrides for the composed sandbox PodSpec (resources, tolerations, nodeSelector).
+                      Replicas are ignored and always treated as 1; sandbox pod count is managed by the agentic operator.
+                    properties:
+                      nodeSelector:
+                        additionalProperties:
+                          type: string
+                        description: Node selector constraints
+                        type: object
+                      replicas:
+                        default: 1
+                        description: |-
+                          Defines the number of desired pods. Default: "1"
+                          Note: Replicas are configurable for APIContainer and MCP server (mcpServer).
+                          For PostgreSQL, Console, Agentic Console, Alerts Adapter, OTEL Collector, and
+                          Agentic Sandbox (spec.agenticOLS.agenticSandboxConfig), the number of replicas is always set to 1.
+                        format: int32
+                        minimum: 0
+                        type: integer
+                      resources:
+                        description: |-
+                          Resource requirements (CPU, memory)
+                          Uses standard corev1.ResourceRequirements
+                        properties:
+                          claims:
+                            description: |-
+                              Claims lists the names of resources, defined in spec.resourceClaims,
+                              that are used by this container.
+
+                              This field depends on the
+                              DynamicResourceAllocation feature gate.
+
+                              This field is immutable. It can only be set for containers.
+                            items:
+                              description: ResourceClaim references one entry in PodSpec.ResourceClaims.
+                              properties:
+                                name:
+                                  description: |-
+                                    Name must match the name of one entry in pod.spec.resourceClaims of
+                                    the Pod where this field is used. It makes that resource available
+                                    inside a container.
+                                  type: string
+                                request:
+                                  description: |-
+                                    Request is the name chosen for a request in the referenced claim.
+                                    If empty, everything from the claim is made available, otherwise
+                                    only the result of this request.
+                                  type: string
+                              required:
+                              - name
+                              type: object
+                            type: array
+                            x-kubernetes-list-map-keys:
+                            - name
+                            x-kubernetes-list-type: map
+                          limits:
+                            additionalProperties:
+                              anyOf:
+                              - type: integer
+                              - type: string
+                              pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                              x-kubernetes-int-or-string: true
+                            description: |-
+                              Limits describes the maximum amount of compute resources allowed.
+                              More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+                            type: object
+                          requests:
+                            additionalProperties:
+                              anyOf:
+                              - type: integer
+                              - type: string
+                              pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                              x-kubernetes-int-or-string: true
+                            description: |-
+                              Requests describes the minimum amount of compute resources required.
+                              If Requests is omitted for a container, it defaults to Limits if that is explicitly specified,
+                              otherwise to an implementation-defined value. Requests cannot exceed Limits.
+                              More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+                            type: object
+                        type: object
+                      tolerations:
+                        description: |-
+                          Tolerations for pod scheduling
+                          Uses standard corev1.Toleration
+                        items:
+                          description: |-
+                            The pod this Toleration is attached to tolerates any taint that matches
+                            the triple <key,value,effect> using the matching operator <operator>.
+                          properties:
+                            effect:
+                              description: |-
+                                Effect indicates the taint effect to match. Empty means match all taint effects.
+                                When specified, allowed values are NoSchedule, PreferNoSchedule and NoExecute.
+                              type: string
+                            key:
+                              description: |-
+                                Key is the taint key that the toleration applies to. Empty means match all taint keys.
+                                If the key is empty, operator must be Exists; this combination means to match all values and all keys.
+                              type: string
+                            operator:
+                              description: |-
+                                Operator represents a key's relationship to the value.
+                                Valid operators are Exists, Equal, Lt, and Gt. Defaults to Equal.
+                                Exists is equivalent to wildcard for value, so that a pod can
+                                tolerate all taints of a particular category.
+                                Lt and Gt perform numeric comparisons (requires feature gate TaintTolerationComparisonOperators).
+                              type: string
+                            tolerationSeconds:
+                              description: |-
+                                TolerationSeconds represents the period of time the toleration (which must be
+                                of effect NoExecute, otherwise this field is ignored) tolerates the taint. By default,
+                                it is not set, which means tolerate the taint forever (do not evict). Zero and
+                                negative values will be treated as 0 (evict immediately) by the system.
+                              format: int64
+                              type: integer
+                            value:
+                              description: |-
+                                Value is the taint value the toleration matches to.
+                                If the operator is Exists, the value should be empty, otherwise just a regular string.
+                              type: string
+                          type: object
+                        type: array
+                    type: object
+                  sandboxMode:
+                    allOf:
+                    - enum:
+                      - bare-pod
+                      - sandbox-claim
+                    - enum:
+                      - bare-pod
+                      - sandbox-claim
+                    default: bare-pod
+                    description: |-
+                      sandboxMode selects bare Pods vs Agent Sandbox API claims.
+                      Default: bare-pod when absent. When agenticOLS is omitted entirely, the operator
+                      treats sandbox mode as bare-pod.
+                    type: string
+                  terminalTTL:
+                    description: |-
+                      TerminalTTL is the optional retention ceiling for terminal AgenticRuns, in whole days.
+                      The agentic operator supplies the fallback when this field is absent.
+                    format: int32
+                    minimum: 1
+                    type: integer
+                type: object
+              audit:
+                description: Audit log and trace export configuration for the OTEL
+                  Collector.
+                properties:
+                  logging:
+                    description: |-
+                      logging enables audit log storage in PostgreSQL via the Collector.
+                      Default: true when absent.
+                    type: boolean
+                  tracingEndpoint:
+                    description: |-
+                      tracingEndpoint is the trace export backend (e.g. "jaeger:4317").
+                      The Collector forwards traces here when set. TLS is always used.
+                    maxLength: 253
+                    type: string
+                type: object
+              featureGates:
+                description: |-
+                  Feature Gates holds list of features to be enabled explicitly, otherwise they are disabled by default.
+                  possible values: MCPServer, ToolFiltering
+                items:
+                  enum:
+                  - MCPServer
+                  - ToolFiltering
+                  type: string
+                type: array
+              llm:
+                description: LLMSpec defines the desired state of the large language
+                  model (LLM).
+                properties:
+                  providers:
+                    items:
+                      description: ProviderSpec defines the desired state of LLM provider.
+                      properties:
+                        apiVersion:
+                          description: API Version for Azure OpenAI provider
+                          type: string
+                        credentialKey:
+                          description: |-
+                            Secret key name for provider credentials (defaults to "apitoken" if not set).
+                            Specifies which key inside credentialsSecretRef to read the credential value from.
+                            The credential value is exposed to the app server container as env var {PROVIDER_NAME}_API_KEY
+                            (derived from the provider name, not this field). This field only controls which secret data key is read.
+                          type: string
+                        credentialsSecretRef:
+                          description: The name of the secret object that stores API
+                            provider credentials
+                          properties:
+                            name:
+                              default: ""
+                              description: |-
+                                Name of the referent.
+                                This field is effectively required, but due to backwards compatibility is
+                                allowed to be empty. Instances of this type with an empty value here are
+                                almost certainly wrong.
+                                More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                              type: string
+                          type: object
+                          x-kubernetes-map-type: atomic
+                        deploymentName:
+                          description: Deployment name for Azure OpenAI provider
+                          type: string
+                        fakeProviderMCPToolCall:
+                          description: Fake Provider MCP Tool Call
+                          type: boolean
+                        googleVertexAnthropicConfig:
+                          description: Google Vertex Anthropic Config
+                          properties:
+                            location:
+                              description: Server region location
+                              type: string
+                            projectID:
+                              description: Google Cloud project ID
+                              type: string
+                          type: object
+                        googleVertexConfig:
+                          description: Google Vertex Config
+                          properties:
+                            location:
+                              description: Server region location
+                              type: string
+                            projectID:
+                              description: Google Cloud project ID
+                              type: string
+                          type: object
+                        models:
+                          description: List of models from the provider
+                          items:
+                            description: ModelSpec defines the LLM model to use and
+                              its parameters.
+                            properties:
+                              contextWindowSize:
+                                description: Defines the model's context window size,
+                                  in tokens. The default is 128k tokens.
+                                minimum: 1024
+                                type: integer
+                              name:
+                                description: Model name
+                                maxLength: 253
+                                minLength: 1
+                                type: string
+                              parameters:
+                                description: Model API parameters
+                                properties:
+                                  maxTokensForResponse:
+                                    description: Max tokens for response. The default
+                                      is 2048 tokens.
+                                    type: integer
+                                  reasoningConfig:
+                                    description: |-
+                                      Reasoning configuration for the model (provider-agnostic freeform config).
+                                      The service and provider API validate the contents.
+                                    type: object
+                                    x-kubernetes-preserve-unknown-fields: true
+                                  temperature:
+                                    description: |-
+                                      Optional sampling temperature. When unset, the service does not specify a temperature.
+                                      Explicit zero is passed through. Must be non-negative and finite.
+                                    minimum: 0
+                                    type: number
+                                  toolBudgetRatio:
+                                    default: 0.5
+                                    description: Ratio of context window size allocated
+                                      for tool token budget. Must be between 0.1 and
+                                      0.5. The default is 0.5.
+                                    maximum: 0.5
+                                    minimum: 0.1
+                                    type: number
+                                type: object
+                              url:
+                                description: Model API URL
+                                pattern: ^https?://.*$
+                                type: string
+                            required:
+                            - name
+                            type: object
+                          maxItems: 50
+                          type: array
+                        name:
+                          description: Provider name
+                          maxLength: 253
+                          minLength: 1
+                          type: string
+                        projectID:
+                          description: Watsonx Project ID
+                          type: string
+                        tlsSecurityProfile:
+                          description: TLS Security Profile used by connection to
+                            provider
+                          properties:
+                            custom:
+                              description: |-
+                                custom is a user-defined TLS security profile. Be extremely careful using a custom
+                                profile as invalid configurations can be catastrophic.
+
+                                The supported groups list for this profile is empty by default.
+
+                                An example custom profile looks like this:
+
+                                  minTLSVersion: VersionTLS11
+                                  ciphers:
+                                    - ECDHE-ECDSA-CHACHA20-POLY1305
+                                    - ECDHE-RSA-CHACHA20-POLY1305
+                                    - ECDHE-RSA-AES128-GCM-SHA256
+                                    - ECDHE-ECDSA-AES128-GCM-SHA256
+                              nullable: true
+                              properties:
+                                ciphers:
+                                  description: |-
+                                    ciphers is used to specify the cipher algorithms that are negotiated
+                                    during the TLS handshake. Operators may remove entries that their operands
+                                    do not support. For example, to use only ECDHE-RSA-AES128-GCM-SHA256 (yaml):
+
+                                      ciphers:
+                                        - ECDHE-RSA-AES128-GCM-SHA256
+
+                                    TLS 1.3 cipher suites (e.g. TLS_AES_128_GCM_SHA256) are not configurable
+                                    and are always enabled when TLS 1.3 is negotiated.
+                                  items:
+                                    type: string
+                                  type: array
+                                  x-kubernetes-list-type: atomic
+                                groups:
+                                  description: |-
+                                    groups is an optional, ordered field used to specify the supported groups (formerly known as
+                                    elliptic curves) that are used during the TLS handshake.  The order of the groups represents
+                                    a suggested preference, with the most preferred group first. Note that not all platform
+                                    components honor the ordering: Go-based components use Go's internal preference order and
+                                    treat this list as a filter of allowed groups rather than an ordered preference.
+                                    Operators may remove entries their operands do not support.
+
+                                    When omitted, this means no opinion and the platform is left to choose reasonable defaults which are
+                                    subject to change over time and may be different per platform component depending on the underlying TLS
+                                    libraries they use. If specified, the list must contain at least one and at most 7 groups,
+                                    and each group must be unique.
+
+                                    For example, to use X25519 and secp256r1 (yaml):
+
+                                      groups:
+                                        - X25519
+                                        - secp256r1
+                                  items:
+                                    description: |-
+                                      TLSGroup is a supported group identifier that can be used in TLSProfile.Groups.
+                                      There is a one-to-one mapping between these names and the group IDs defined
+                                      in Go's crypto/tls package based on IANA's "TLS Supported Groups" registry:
+                                      https://www.iana.org/assignments/tls-parameters/tls-parameters.xhtml#tls-parameters-8
+                                      Note that X25519MLKEM768 is a post-quantum hybrid group that is not
+                                      FIPS-approved and should be ignored by components running in FIPS mode.
+                                    enum:
+                                    - X25519
+                                    - secp256r1
+                                    - secp384r1
+                                    - secp521r1
+                                    - X25519MLKEM768
+                                    - SecP256r1MLKEM768
+                                    - SecP384r1MLKEM1024
+                                    type: string
+                                  maxItems: 7
+                                  minItems: 1
+                                  type: array
+                                  x-kubernetes-list-type: set
+                                minTLSVersion:
+                                  description: |-
+                                    minTLSVersion is used to specify the minimal version of the TLS protocol
+                                    that is negotiated during the TLS handshake. For example, to use TLS
+                                    versions 1.1, 1.2 and 1.3 (yaml):
+
+                                      minTLSVersion: VersionTLS11
+                                  enum:
+                                  - VersionTLS10
+                                  - VersionTLS11
+                                  - VersionTLS12
+                                  - VersionTLS13
+                                  type: string
+                              type: object
+                            intermediate:
+                              description: |-
+                                intermediate is a TLS profile for use when you do not need compatibility with
+                                legacy clients and want to remain highly secure while being compatible with
+                                most clients currently in use.
+
+                                The supported groups list includes by default the following groups
+                                in suggested preference order (ordering may not be honored by all implementations):
+                                X25519MLKEM768, X25519, secp256r1, secp384r1.
+
+                                This profile is equivalent to a Custom profile specified as:
+                                  minTLSVersion: VersionTLS12
+                                  ciphers:
+                                    - TLS_AES_128_GCM_SHA256
+                                    - TLS_AES_256_GCM_SHA384
+                                    - TLS_CHACHA20_POLY1305_SHA256
+                                    - ECDHE-ECDSA-AES128-GCM-SHA256
+                                    - ECDHE-RSA-AES128-GCM-SHA256
+                                    - ECDHE-ECDSA-AES256-GCM-SHA384
+                                    - ECDHE-RSA-AES256-GCM-SHA384
+                                    - ECDHE-ECDSA-CHACHA20-POLY1305
+                                    - ECDHE-RSA-CHACHA20-POLY1305
+                              nullable: true
+                              type: object
+                            modern:
+                              description: |-
+                                modern is a TLS security profile for use with clients that support TLS 1.3 and
+                                do not need backward compatibility for older clients.
+                                The supported groups list includes by default the following groups
+                                in suggested preference order (ordering may not be honored by all implementations):
+                                X25519MLKEM768, X25519, secp256r1, secp384r1.
+                                This profile is equivalent to a Custom profile specified as:
+                                  minTLSVersion: VersionTLS13
+                                  ciphers:
+                                    - TLS_AES_128_GCM_SHA256
+                                    - TLS_AES_256_GCM_SHA384
+                                    - TLS_CHACHA20_POLY1305_SHA256
+                              nullable: true
+                              type: object
+                            old:
+                              description: |-
+                                old is a TLS profile for use when services need to be accessed by very old
+                                clients or libraries and should be used only as a last resort.
+
+                                The supported groups list includes by default the following groups
+                                in suggested preference order (ordering may not be honored by all implementations):
+                                X25519MLKEM768, X25519, secp256r1, secp384r1.
+
+                                This profile is equivalent to a Custom profile specified as:
+                                  minTLSVersion: VersionTLS10
+                                  ciphers:
+                                    - TLS_AES_128_GCM_SHA256
+                                    - TLS_AES_256_GCM_SHA384
+                                    - TLS_CHACHA20_POLY1305_SHA256
+                                    - ECDHE-ECDSA-AES128-GCM-SHA256
+                                    - ECDHE-RSA-AES128-GCM-SHA256
+                                    - ECDHE-ECDSA-AES256-GCM-SHA384
+                                    - ECDHE-RSA-AES256-GCM-SHA384
+                                    - ECDHE-ECDSA-CHACHA20-POLY1305
+                                    - ECDHE-RSA-CHACHA20-POLY1305
+                                    - ECDHE-ECDSA-AES128-SHA256
+                                    - ECDHE-RSA-AES128-SHA256
+                                    - ECDHE-ECDSA-AES128-SHA
+                                    - ECDHE-RSA-AES128-SHA
+                                    - ECDHE-ECDSA-AES256-SHA384
+                                    - ECDHE-RSA-AES256-SHA384
+                                    - ECDHE-ECDSA-AES256-SHA
+                                    - ECDHE-RSA-AES256-SHA
+                                    - AES128-GCM-SHA256
+                                    - AES256-GCM-SHA384
+                                    - AES128-SHA256
+                                    - AES256-SHA256
+                                    - AES128-SHA
+                                    - AES256-SHA
+                                    - DES-CBC3-SHA
+                              nullable: true
+                              type: object
+                            type:
+                              description: |-
+                                type is one of Old, Intermediate, Modern or Custom. Custom provides the
+                                ability to specify individual TLS security profile parameters.
+
+                                The cipher and groups lists in these profiles are based on version 5.8 of the
+                                Mozilla Server Side TLS configuration guidelines.
+                                See: https://ssl-config.mozilla.org/guidelines/5.8.json
+
+                                The groups are listed in suggested preference order, with the most preferred group first.
+                                Note that not all platform components honor the ordering: Go-based components use Go's
+                                internal preference order and treat this list as a filter of allowed groups rather than
+                                an ordered preference.
+                                Note that X25519MLKEM768 is a post-quantum hybrid group that is not
+                                FIPS-approved and should be ignored by components running in FIPS mode.
+
+                                The profiles are intent based, so they may change over time as new ciphers are
+                                developed and existing ciphers are found to be insecure. Depending on
+                                precisely which ciphers are available to a process, the list may be reduced.
+                              enum:
+                              - Old
+                              - Intermediate
+                              - Modern
+                              - Custom
+                              type: string
+                          type: object
+                        type:
+                          description: Provider type
+                          enum:
+                          - azure_openai
+                          - bam
+                          - openai
+                          - watsonx
+                          - rhoai_vllm
+                          - rhelai_vllm
+                          - fake_provider
+                          - google_vertex
+                          - google_vertex_anthropic
+                          - bedrock
+                          - anthropic
+                          type: string
+                        url:
+                          description: Provider API URL
+                          pattern: ^https?://.*$
+                          type: string
+                      required:
+                      - credentialsSecretRef
+                      - models
+                      - name
+                      - type
+                      type: object
+                      x-kubernetes-validations:
+                      - message: '''deploymentName'' must be specified for ''azure_openai''
+                          provider'
+                        rule: self.type != "azure_openai" || self.deploymentName !=
+                          ""
+                      - message: '''projectID'' must be specified for ''watsonx''
+                          provider'
+                        rule: self.type != "watsonx" || self.projectID != ""
+                      - message: credentialKey must not be empty or whitespace
+                        rule: '!has(self.credentialKey) || !self.credentialKey.matches(''^[
+                          \t\n\r\v\f]*$'')'
+                      - message: googleVertexConfig is required for google_vertex
+                          provider
+                        rule: self.type != "google_vertex" || has(self.googleVertexConfig)
+                      - message: googleVertexAnthropicConfig is required for google_vertex_anthropic
+                          provider
+                        rule: self.type != "google_vertex_anthropic" || has(self.googleVertexAnthropicConfig)
+                      - message: googleVertexConfig may only be set when type is google_vertex
+                        rule: self.type == "google_vertex" || !has(self.googleVertexConfig)
+                      - message: googleVertexAnthropicConfig may only be set when
+                          type is google_vertex_anthropic
+                        rule: self.type == "google_vertex_anthropic" || !has(self.googleVertexAnthropicConfig)
+                    maxItems: 10
+                    type: array
+                    x-kubernetes-list-map-keys:
+                    - name
+                    x-kubernetes-list-type: map
+                required:
+                - providers
+                type: object
+              mcpServers:
+                description: MCP Server settings
+                items:
+                  description: |-
+                    MCPServerConfig defines the streamlined configuration for an MCP server
+                    This configuration only supports HTTP/HTTPS transport
+                  properties:
+                    headers:
+                      description: |-
+                        Headers to send to the MCP server
+                        Each header can reference a secret or use a special source (kubernetes token, client token)
+                      items:
+                        description: MCPHeader defines a header to send to the MCP
+                          server
+                        properties:
+                          name:
+                            description: Name of the header (e.g., "Authorization",
+                              "X-API-Key")
+                            minLength: 1
+                            pattern: ^[A-Za-z0-9-]+$
+                            type: string
+                          valueFrom:
+                            description: Source of the header value
+                            properties:
+                              secretRef:
+                                description: |-
+                                  Reference to a secret containing the header value.
+                                  Required when Type is "secret".
+                                  The secret must exist in the operator's namespace.
+                                properties:
+                                  name:
+                                    default: ""
+                                    description: |-
+                                      Name of the referent.
+                                      This field is effectively required, but due to backwards compatibility is
+                                      allowed to be empty. Instances of this type with an empty value here are
+                                      almost certainly wrong.
+                                      More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                                    type: string
+                                type: object
+                                x-kubernetes-map-type: atomic
+                              type:
+                                description: Type specifies the source type for the
+                                  header value
+                                enum:
+                                - secret
+                                - kubernetes
+                                - client
+                                type: string
+                            required:
+                            - type
+                            type: object
+                            x-kubernetes-validations:
+                            - message: secretRef with non-empty name is required when
+                                type is 'secret'
+                              rule: 'self.type == ''secret'' ? has(self.secretRef)
+                                && size(self.secretRef.name) > 0 : true'
+                            - message: secretRef must not be set when type is 'kubernetes'
+                                or 'client'
+                              rule: 'self.type != ''secret'' ? !has(self.secretRef)
+                                : true'
+                        required:
+                        - name
+                        - valueFrom
+                        type: object
+                      maxItems: 20
+                      type: array
+                    name:
+                      description: Name of the MCP server
+                      type: string
+                    timeout:
+                      default: 5
+                      description: Timeout for the MCP server in seconds, default
+                        is 5
+                      type: integer
+                    url:
+                      description: URL of the MCP server (HTTP/HTTPS)
+                      pattern: ^https?://.*$
+                      type: string
+                  required:
+                  - name
+                  - url
+                  type: object
+                maxItems: 20
+                type: array
+              ols:
+                description: |-
+                  OLSSpec defines the desired state of OLS deployment.
+
+                  OKP (Offline Knowledge Portal) / Solr hybrid RAG is operator-managed, not configured on this CR:
+                    - Enabled by default. The operator deploys the RHOKP sidecar and writes ols_config.solr_hybrid
+                      into olsconfig.yaml (Solr URL, hybrid tuning, and related keys use operator defaults).
+                    - The app-server pod receives OCP_CLUSTER_VERSION for Solr chunk_filter_query resolution.
+                    - OCP documentation is retrieved via the search_openshift_documentation tool (Solr hybrid), not
+                      direct prompt RAG. BYOK content remains on spec.rag (FAISS indexes).
+                    - Set byokRAGOnly to disable OKP: no RHOKP sidecar, no solr_hybrid section, and no built-in
+                      OCP documentation retrieval—only BYOK FAISS indexes from spec.rag are used.
+                properties:
+                  additionalCAConfigMapRef:
+                    description: Additional CA certificates for TLS communication
+                      between OLS service and LLM Provider
+                    properties:
+                      name:
+                        default: ""
+                        description: |-
+                          Name of the referent.
+                          This field is effectively required, but due to backwards compatibility is
+                          allowed to be empty. Instances of this type with an empty value here are
+                          almost certainly wrong.
+                          More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                        type: string
+                    type: object
+                    x-kubernetes-map-type: atomic
+                  auditEventsEnabled:
+                    description: |-
+                      auditEventsEnabled controls structured compliance audit JSON events on stdout.
+                      Default: true when absent. Does not affect collector storage (see spec.audit).
+                    type: boolean
+                  byokRAGOnly:
+                    description: Only use BYOK RAG sources. Disables OKP (RHOKP sidecar,
+                      solr_hybrid config, and built-in OCP documentation retrieval).
+                    type: boolean
+                  conversationCache:
+                    description: Conversation cache settings
+                    properties:
+                      postgres:
+                        description: PostgresSpec defines the desired state of Postgres.
+                        properties:
+                          maxConnections:
+                            default: 2000
+                            description: 'Postgres maxconnections. Default: "2000"'
+                            maximum: 262143
+                            minimum: 1
+                            type: integer
+                          sharedBuffers:
+                            default: 256MB
+                            description: Postgres sharedbuffers
+                            type: string
+                            x-kubernetes-int-or-string: true
+                        type: object
+                      type:
+                        default: postgres
+                        description: 'Conversation cache type. Default: "postgres"'
+                        enum:
+                        - postgres
+                        type: string
+                    type: object
+                  credentialHotReload:
+                    default: false
+                    description: |-
+                      Enable in-process credential hot-reload for LLM provider secrets.
+                      When true, the operator will not restart the app-server when LLM credential
+                      secret data is rotated — the service re-reads credentials from disk on each request.
+                      IMPORTANT: Requires lightspeed-service with get_credentials() hot-reload support
+                      (service PR #2955 / RFE-9380). If enabled with an older service image, rotated
+                      credentials (including revoked keys) will remain stale until the pod is manually restarted.
+                    type: boolean
+                  defaultModel:
+                    description: Default model for usage
+                    maxLength: 253
+                    type: string
+                  defaultProvider:
+                    description: Default provider for usage
+                    maxLength: 253
+                    type: string
+                  deployment:
+                    description: OLS deployment settings
+                    properties:
+                      agenticConsole:
+                        description: Agentic console plugin container settings.
+                        properties:
+                          nodeSelector:
+                            additionalProperties:
+                              type: string
+                            description: Node selector constraints
+                            type: object
+                          replicas:
+                            default: 1
+                            description: |-
+                              Defines the number of desired pods. Default: "1"
+                              Note: Replicas are configurable for APIContainer and MCP server (mcpServer).
+                              For PostgreSQL, Console, Agentic Console, Alerts Adapter, OTEL Collector, and
+                              Agentic Sandbox (spec.agenticOLS.agenticSandboxConfig), the number of replicas is always set to 1.
+                            format: int32
+                            minimum: 0
+                            type: integer
+                          resources:
+                            description: |-
+                              Resource requirements (CPU, memory)
+                              Uses standard corev1.ResourceRequirements
+                            properties:
+                              claims:
+                                description: |-
+                                  Claims lists the names of resources, defined in spec.resourceClaims,
+                                  that are used by this container.
+
+                                  This field depends on the
+                                  DynamicResourceAllocation feature gate.
+
+                                  This field is immutable. It can only be set for containers.
+                                items:
+                                  description: ResourceClaim references one entry
+                                    in PodSpec.ResourceClaims.
+                                  properties:
+                                    name:
+                                      description: |-
+                                        Name must match the name of one entry in pod.spec.resourceClaims of
+                                        the Pod where this field is used. It makes that resource available
+                                        inside a container.
+                                      type: string
+                                    request:
+                                      description: |-
+                                        Request is the name chosen for a request in the referenced claim.
+                                        If empty, everything from the claim is made available, otherwise
+                                        only the result of this request.
+                                      type: string
+                                  required:
+                                  - name
+                                  type: object
+                                type: array
+                                x-kubernetes-list-map-keys:
+                                - name
+                                x-kubernetes-list-type: map
+                              limits:
+                                additionalProperties:
+                                  anyOf:
+                                  - type: integer
+                                  - type: string
+                                  pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                  x-kubernetes-int-or-string: true
+                                description: |-
+                                  Limits describes the maximum amount of compute resources allowed.
+                                  More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+                                type: object
+                              requests:
+                                additionalProperties:
+                                  anyOf:
+                                  - type: integer
+                                  - type: string
+                                  pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                  x-kubernetes-int-or-string: true
+                                description: |-
+                                  Requests describes the minimum amount of compute resources required.
+                                  If Requests is omitted for a container, it defaults to Limits if that is explicitly specified,
+                                  otherwise to an implementation-defined value. Requests cannot exceed Limits.
+                                  More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+                                type: object
+                            type: object
+                          tolerations:
+                            description: |-
+                              Tolerations for pod scheduling
+                              Uses standard corev1.Toleration
+                            items:
+                              description: |-
+                                The pod this Toleration is attached to tolerates any taint that matches
+                                the triple <key,value,effect> using the matching operator <operator>.
+                              properties:
+                                effect:
+                                  description: |-
+                                    Effect indicates the taint effect to match. Empty means match all taint effects.
+                                    When specified, allowed values are NoSchedule, PreferNoSchedule and NoExecute.
+                                  type: string
+                                key:
+                                  description: |-
+                                    Key is the taint key that the toleration applies to. Empty means match all taint keys.
+                                    If the key is empty, operator must be Exists; this combination means to match all values and all keys.
+                                  type: string
+                                operator:
+                                  description: |-
+                                    Operator represents a key's relationship to the value.
+                                    Valid operators are Exists, Equal, Lt, and Gt. Defaults to Equal.
+                                    Exists is equivalent to wildcard for value, so that a pod can
+                                    tolerate all taints of a particular category.
+                                    Lt and Gt perform numeric comparisons (requires feature gate TaintTolerationComparisonOperators).
+                                  type: string
+                                tolerationSeconds:
+                                  description: |-
+                                    TolerationSeconds represents the period of time the toleration (which must be
+                                    of effect NoExecute, otherwise this field is ignored) tolerates the taint. By default,
+                                    it is not set, which means tolerate the taint forever (do not evict). Zero and
+                                    negative values will be treated as 0 (evict immediately) by the system.
+                                  format: int64
+                                  type: integer
+                                value:
+                                  description: |-
+                                    Value is the taint value the toleration matches to.
+                                    If the operator is Exists, the value should be empty, otherwise just a regular string.
+                                  type: string
+                              type: object
+                            type: array
+                        type: object
+                      alertsAdapter:
+                        description: Alerts adapter deployment and runtime config
+                          reference.
+                        properties:
+                          configMapRef:
+                            description: |-
+                              ConfigMapRef enables the alerts adapter when set and references a user-managed ConfigMap
+                              in the operator namespace. When unset, reconciliation is skipped and managed operand
+                              resources are removed. The operator does not create or validate ConfigMap data. When the
+                              referenced ConfigMap exists, it is mounted read-only at /etc/alerts-adapter; when absent,
+                              no config volume is mounted. The adapter reads config.yaml from that path and uses
+                              built-in defaults when the file is missing or invalid.
+                            properties:
+                              name:
+                                default: ""
+                                description: |-
+                                  Name of the referent.
+                                  This field is effectively required, but due to backwards compatibility is
+                                  allowed to be empty. Instances of this type with an empty value here are
+                                  almost certainly wrong.
+                                  More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                                type: string
+                            type: object
+                            x-kubernetes-map-type: atomic
+                          nodeSelector:
+                            additionalProperties:
+                              type: string
+                            description: Node selector constraints
+                            type: object
+                          replicas:
+                            default: 1
+                            description: |-
+                              Defines the number of desired pods. Default: "1"
+                              Note: Replicas are configurable for APIContainer and MCP server (mcpServer).
+                              For PostgreSQL, Console, Agentic Console, Alerts Adapter, OTEL Collector, and
+                              Agentic Sandbox (spec.agenticOLS.agenticSandboxConfig), the number of replicas is always set to 1.
+                            format: int32
+                            minimum: 0
+                            type: integer
+                          resources:
+                            description: |-
+                              Resource requirements (CPU, memory)
+                              Uses standard corev1.ResourceRequirements
+                            properties:
+                              claims:
+                                description: |-
+                                  Claims lists the names of resources, defined in spec.resourceClaims,
+                                  that are used by this container.
+
+                                  This field depends on the
+                                  DynamicResourceAllocation feature gate.
+
+                                  This field is immutable. It can only be set for containers.
+                                items:
+                                  description: ResourceClaim references one entry
+                                    in PodSpec.ResourceClaims.
+                                  properties:
+                                    name:
+                                      description: |-
+                                        Name must match the name of one entry in pod.spec.resourceClaims of
+                                        the Pod where this field is used. It makes that resource available
+                                        inside a container.
+                                      type: string
+                                    request:
+                                      description: |-
+                                        Request is the name chosen for a request in the referenced claim.
+                                        If empty, everything from the claim is made available, otherwise
+                                        only the result of this request.
+                                      type: string
+                                  required:
+                                  - name
+                                  type: object
+                                type: array
+                                x-kubernetes-list-map-keys:
+                                - name
+                                x-kubernetes-list-type: map
+                              limits:
+                                additionalProperties:
+                                  anyOf:
+                                  - type: integer
+                                  - type: string
+                                  pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                  x-kubernetes-int-or-string: true
+                                description: |-
+                                  Limits describes the maximum amount of compute resources allowed.
+                                  More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+                                type: object
+                              requests:
+                                additionalProperties:
+                                  anyOf:
+                                  - type: integer
+                                  - type: string
+                                  pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                  x-kubernetes-int-or-string: true
+                                description: |-
+                                  Requests describes the minimum amount of compute resources required.
+                                  If Requests is omitted for a container, it defaults to Limits if that is explicitly specified,
+                                  otherwise to an implementation-defined value. Requests cannot exceed Limits.
+                                  More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+                                type: object
+                            type: object
+                          tolerations:
+                            description: |-
+                              Tolerations for pod scheduling
+                              Uses standard corev1.Toleration
+                            items:
+                              description: |-
+                                The pod this Toleration is attached to tolerates any taint that matches
+                                the triple <key,value,effect> using the matching operator <operator>.
+                              properties:
+                                effect:
+                                  description: |-
+                                    Effect indicates the taint effect to match. Empty means match all taint effects.
+                                    When specified, allowed values are NoSchedule, PreferNoSchedule and NoExecute.
+                                  type: string
+                                key:
+                                  description: |-
+                                    Key is the taint key that the toleration applies to. Empty means match all taint keys.
+                                    If the key is empty, operator must be Exists; this combination means to match all values and all keys.
+                                  type: string
+                                operator:
+                                  description: |-
+                                    Operator represents a key's relationship to the value.
+                                    Valid operators are Exists, Equal, Lt, and Gt. Defaults to Equal.
+                                    Exists is equivalent to wildcard for value, so that a pod can
+                                    tolerate all taints of a particular category.
+                                    Lt and Gt perform numeric comparisons (requires feature gate TaintTolerationComparisonOperators).
+                                  type: string
+                                tolerationSeconds:
+                                  description: |-
+                                    TolerationSeconds represents the period of time the toleration (which must be
+                                    of effect NoExecute, otherwise this field is ignored) tolerates the taint. By default,
+                                    it is not set, which means tolerate the taint forever (do not evict). Zero and
+                                    negative values will be treated as 0 (evict immediately) by the system.
+                                  format: int64
+                                  type: integer
+                                value:
+                                  description: |-
+                                    Value is the taint value the toleration matches to.
+                                    If the operator is Exists, the value should be empty, otherwise just a regular string.
+                                  type: string
+                              type: object
+                            type: array
+                        type: object
+                      api:
+                        description: API container settings.
+                        properties:
+                          nodeSelector:
+                            additionalProperties:
+                              type: string
+                            description: Node selector constraints
+                            type: object
+                          replicas:
+                            default: 1
+                            description: |-
+                              Defines the number of desired pods. Default: "1"
+                              Note: Replicas are configurable for APIContainer and MCP server (mcpServer).
+                              For PostgreSQL, Console, Agentic Console, Alerts Adapter, OTEL Collector, and
+                              Agentic Sandbox (spec.agenticOLS.agenticSandboxConfig), the number of replicas is always set to 1.
+                            format: int32
+                            minimum: 0
+                            type: integer
+                          resources:
+                            description: |-
+                              Resource requirements (CPU, memory)
+                              Uses standard corev1.ResourceRequirements
+                            properties:
+                              claims:
+                                description: |-
+                                  Claims lists the names of resources, defined in spec.resourceClaims,
+                                  that are used by this container.
+
+                                  This field depends on the
+                                  DynamicResourceAllocation feature gate.
+
+                                  This field is immutable. It can only be set for containers.
+                                items:
+                                  description: ResourceClaim references one entry
+                                    in PodSpec.ResourceClaims.
+                                  properties:
+                                    name:
+                                      description: |-
+                                        Name must match the name of one entry in pod.spec.resourceClaims of
+                                        the Pod where this field is used. It makes that resource available
+                                        inside a container.
+                                      type: string
+                                    request:
+                                      description: |-
+                                        Request is the name chosen for a request in the referenced claim.
+                                        If empty, everything from the claim is made available, otherwise
+                                        only the result of this request.
+                                      type: string
+                                  required:
+                                  - name
+                                  type: object
+                                type: array
+                                x-kubernetes-list-map-keys:
+                                - name
+                                x-kubernetes-list-type: map
+                              limits:
+                                additionalProperties:
+                                  anyOf:
+                                  - type: integer
+                                  - type: string
+                                  pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                  x-kubernetes-int-or-string: true
+                                description: |-
+                                  Limits describes the maximum amount of compute resources allowed.
+                                  More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+                                type: object
+                              requests:
+                                additionalProperties:
+                                  anyOf:
+                                  - type: integer
+                                  - type: string
+                                  pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                  x-kubernetes-int-or-string: true
+                                description: |-
+                                  Requests describes the minimum amount of compute resources required.
+                                  If Requests is omitted for a container, it defaults to Limits if that is explicitly specified,
+                                  otherwise to an implementation-defined value. Requests cannot exceed Limits.
+                                  More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+                                type: object
+                            type: object
+                          tolerations:
+                            description: |-
+                              Tolerations for pod scheduling
+                              Uses standard corev1.Toleration
+                            items:
+                              description: |-
+                                The pod this Toleration is attached to tolerates any taint that matches
+                                the triple <key,value,effect> using the matching operator <operator>.
+                              properties:
+                                effect:
+                                  description: |-
+                                    Effect indicates the taint effect to match. Empty means match all taint effects.
+                                    When specified, allowed values are NoSchedule, PreferNoSchedule and NoExecute.
+                                  type: string
+                                key:
+                                  description: |-
+                                    Key is the taint key that the toleration applies to. Empty means match all taint keys.
+                                    If the key is empty, operator must be Exists; this combination means to match all values and all keys.
+                                  type: string
+                                operator:
+                                  description: |-
+                                    Operator represents a key's relationship to the value.
+                                    Valid operators are Exists, Equal, Lt, and Gt. Defaults to Equal.
+                                    Exists is equivalent to wildcard for value, so that a pod can
+                                    tolerate all taints of a particular category.
+                                    Lt and Gt perform numeric comparisons (requires feature gate TaintTolerationComparisonOperators).
+                                  type: string
+                                tolerationSeconds:
+                                  description: |-
+                                    TolerationSeconds represents the period of time the toleration (which must be
+                                    of effect NoExecute, otherwise this field is ignored) tolerates the taint. By default,
+                                    it is not set, which means tolerate the taint forever (do not evict). Zero and
+                                    negative values will be treated as 0 (evict immediately) by the system.
+                                  format: int64
+                                  type: integer
+                                value:
+                                  description: |-
+                                    Value is the taint value the toleration matches to.
+                                    If the operator is Exists, the value should be empty, otherwise just a regular string.
+                                  type: string
+                              type: object
+                            type: array
+                        type: object
+                      console:
+                        description: Console container settings.
+                        properties:
+                          nodeSelector:
+                            additionalProperties:
+                              type: string
+                            description: Node selector constraints
+                            type: object
+                          replicas:
+                            default: 1
+                            description: |-
+                              Defines the number of desired pods. Default: "1"
+                              Note: Replicas are configurable for APIContainer and MCP server (mcpServer).
+                              For PostgreSQL, Console, Agentic Console, Alerts Adapter, OTEL Collector, and
+                              Agentic Sandbox (spec.agenticOLS.agenticSandboxConfig), the number of replicas is always set to 1.
+                            format: int32
+                            minimum: 0
+                            type: integer
+                          resources:
+                            description: |-
+                              Resource requirements (CPU, memory)
+                              Uses standard corev1.ResourceRequirements
+                            properties:
+                              claims:
+                                description: |-
+                                  Claims lists the names of resources, defined in spec.resourceClaims,
+                                  that are used by this container.
+
+                                  This field depends on the
+                                  DynamicResourceAllocation feature gate.
+
+                                  This field is immutable. It can only be set for containers.
+                                items:
+                                  description: ResourceClaim references one entry
+                                    in PodSpec.ResourceClaims.
+                                  properties:
+                                    name:
+                                      description: |-
+                                        Name must match the name of one entry in pod.spec.resourceClaims of
+                                        the Pod where this field is used. It makes that resource available
+                                        inside a container.
+                                      type: string
+                                    request:
+                                      description: |-
+                                        Request is the name chosen for a request in the referenced claim.
+                                        If empty, everything from the claim is made available, otherwise
+                                        only the result of this request.
+                                      type: string
+                                  required:
+                                  - name
+                                  type: object
+                                type: array
+                                x-kubernetes-list-map-keys:
+                                - name
+                                x-kubernetes-list-type: map
+                              limits:
+                                additionalProperties:
+                                  anyOf:
+                                  - type: integer
+                                  - type: string
+                                  pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                  x-kubernetes-int-or-string: true
+                                description: |-
+                                  Limits describes the maximum amount of compute resources allowed.
+                                  More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+                                type: object
+                              requests:
+                                additionalProperties:
+                                  anyOf:
+                                  - type: integer
+                                  - type: string
+                                  pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                  x-kubernetes-int-or-string: true
+                                description: |-
+                                  Requests describes the minimum amount of compute resources required.
+                                  If Requests is omitted for a container, it defaults to Limits if that is explicitly specified,
+                                  otherwise to an implementation-defined value. Requests cannot exceed Limits.
+                                  More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+                                type: object
+                            type: object
+                          tolerations:
+                            description: |-
+                              Tolerations for pod scheduling
+                              Uses standard corev1.Toleration
+                            items:
+                              description: |-
+                                The pod this Toleration is attached to tolerates any taint that matches
+                                the triple <key,value,effect> using the matching operator <operator>.
+                              properties:
+                                effect:
+                                  description: |-
+                                    Effect indicates the taint effect to match. Empty means match all taint effects.
+                                    When specified, allowed values are NoSchedule, PreferNoSchedule and NoExecute.
+                                  type: string
+                                key:
+                                  description: |-
+                                    Key is the taint key that the toleration applies to. Empty means match all taint keys.
+                                    If the key is empty, operator must be Exists; this combination means to match all values and all keys.
+                                  type: string
+                                operator:
+                                  description: |-
+                                    Operator represents a key's relationship to the value.
+                                    Valid operators are Exists, Equal, Lt, and Gt. Defaults to Equal.
+                                    Exists is equivalent to wildcard for value, so that a pod can
+                                    tolerate all taints of a particular category.
+                                    Lt and Gt perform numeric comparisons (requires feature gate TaintTolerationComparisonOperators).
+                                  type: string
+                                tolerationSeconds:
+                                  description: |-
+                                    TolerationSeconds represents the period of time the toleration (which must be
+                                    of effect NoExecute, otherwise this field is ignored) tolerates the taint. By default,
+                                    it is not set, which means tolerate the taint forever (do not evict). Zero and
+                                    negative values will be treated as 0 (evict immediately) by the system.
+                                  format: int64
+                                  type: integer
+                                value:
+                                  description: |-
+                                    Value is the taint value the toleration matches to.
+                                    If the operator is Exists, the value should be empty, otherwise just a regular string.
+                                  type: string
+                              type: object
+                            type: array
+                        type: object
+                      dataCollector:
+                        description: Data Collector container settings.
+                        properties:
+                          resources:
+                            description: |-
+                              Resource requirements (CPU, memory)
+                              Uses standard corev1.ResourceRequirements
+                            properties:
+                              claims:
+                                description: |-
+                                  Claims lists the names of resources, defined in spec.resourceClaims,
+                                  that are used by this container.
+
+                                  This field depends on the
+                                  DynamicResourceAllocation feature gate.
+
+                                  This field is immutable. It can only be set for containers.
+                                items:
+                                  description: ResourceClaim references one entry
+                                    in PodSpec.ResourceClaims.
+                                  properties:
+                                    name:
+                                      description: |-
+                                        Name must match the name of one entry in pod.spec.resourceClaims of
+                                        the Pod where this field is used. It makes that resource available
+                                        inside a container.
+                                      type: string
+                                    request:
+                                      description: |-
+                                        Request is the name chosen for a request in the referenced claim.
+                                        If empty, everything from the claim is made available, otherwise
+                                        only the result of this request.
+                                      type: string
+                                  required:
+                                  - name
+                                  type: object
+                                type: array
+                                x-kubernetes-list-map-keys:
+                                - name
+                                x-kubernetes-list-type: map
+                              limits:
+                                additionalProperties:
+                                  anyOf:
+                                  - type: integer
+                                  - type: string
+                                  pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                  x-kubernetes-int-or-string: true
+                                description: |-
+                                  Limits describes the maximum amount of compute resources allowed.
+                                  More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+                                type: object
+                              requests:
+                                additionalProperties:
+                                  anyOf:
+                                  - type: integer
+                                  - type: string
+                                  pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                  x-kubernetes-int-or-string: true
+                                description: |-
+                                  Requests describes the minimum amount of compute resources required.
+                                  If Requests is omitted for a container, it defaults to Limits if that is explicitly specified,
+                                  otherwise to an implementation-defined value. Requests cannot exceed Limits.
+                                  More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+                                type: object
+                            type: object
+                        type: object
+                      database:
+                        description: Database container settings.
+                        properties:
+                          nodeSelector:
+                            additionalProperties:
+                              type: string
+                            description: Node selector constraints
+                            type: object
+                          replicas:
+                            default: 1
+                            description: |-
+                              Defines the number of desired pods. Default: "1"
+                              Note: Replicas are configurable for APIContainer and MCP server (mcpServer).
+                              For PostgreSQL, Console, Agentic Console, Alerts Adapter, OTEL Collector, and
+                              Agentic Sandbox (spec.agenticOLS.agenticSandboxConfig), the number of replicas is always set to 1.
+                            format: int32
+                            minimum: 0
+                            type: integer
+                          resources:
+                            description: |-
+                              Resource requirements (CPU, memory)
+                              Uses standard corev1.ResourceRequirements
+                            properties:
+                              claims:
+                                description: |-
+                                  Claims lists the names of resources, defined in spec.resourceClaims,
+                                  that are used by this container.
+
+                                  This field depends on the
+                                  DynamicResourceAllocation feature gate.
+
+                                  This field is immutable. It can only be set for containers.
+                                items:
+                                  description: ResourceClaim references one entry
+                                    in PodSpec.ResourceClaims.
+                                  properties:
+                                    name:
+                                      description: |-
+                                        Name must match the name of one entry in pod.spec.resourceClaims of
+                                        the Pod where this field is used. It makes that resource available
+                                        inside a container.
+                                      type: string
+                                    request:
+                                      description: |-
+                                        Request is the name chosen for a request in the referenced claim.
+                                        If empty, everything from the claim is made available, otherwise
+                                        only the result of this request.
+                                      type: string
+                                  required:
+                                  - name
+                                  type: object
+                                type: array
+                                x-kubernetes-list-map-keys:
+                                - name
+                                x-kubernetes-list-type: map
+                              limits:
+                                additionalProperties:
+                                  anyOf:
+                                  - type: integer
+                                  - type: string
+                                  pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                  x-kubernetes-int-or-string: true
+                                description: |-
+                                  Limits describes the maximum amount of compute resources allowed.
+                                  More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+                                type: object
+                              requests:
+                                additionalProperties:
+                                  anyOf:
+                                  - type: integer
+                                  - type: string
+                                  pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                  x-kubernetes-int-or-string: true
+                                description: |-
+                                  Requests describes the minimum amount of compute resources required.
+                                  If Requests is omitted for a container, it defaults to Limits if that is explicitly specified,
+                                  otherwise to an implementation-defined value. Requests cannot exceed Limits.
+                                  More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+                                type: object
+                            type: object
+                          tolerations:
+                            description: |-
+                              Tolerations for pod scheduling
+                              Uses standard corev1.Toleration
+                            items:
+                              description: |-
+                                The pod this Toleration is attached to tolerates any taint that matches
+                                the triple <key,value,effect> using the matching operator <operator>.
+                              properties:
+                                effect:
+                                  description: |-
+                                    Effect indicates the taint effect to match. Empty means match all taint effects.
+                                    When specified, allowed values are NoSchedule, PreferNoSchedule and NoExecute.
+                                  type: string
+                                key:
+                                  description: |-
+                                    Key is the taint key that the toleration applies to. Empty means match all taint keys.
+                                    If the key is empty, operator must be Exists; this combination means to match all values and all keys.
+                                  type: string
+                                operator:
+                                  description: |-
+                                    Operator represents a key's relationship to the value.
+                                    Valid operators are Exists, Equal, Lt, and Gt. Defaults to Equal.
+                                    Exists is equivalent to wildcard for value, so that a pod can
+                                    tolerate all taints of a particular category.
+                                    Lt and Gt perform numeric comparisons (requires feature gate TaintTolerationComparisonOperators).
+                                  type: string
+                                tolerationSeconds:
+                                  description: |-
+                                    TolerationSeconds represents the period of time the toleration (which must be
+                                    of effect NoExecute, otherwise this field is ignored) tolerates the taint. By default,
+                                    it is not set, which means tolerate the taint forever (do not evict). Zero and
+                                    negative values will be treated as 0 (evict immediately) by the system.
+                                  format: int64
+                                  type: integer
+                                value:
+                                  description: |-
+                                    Value is the taint value the toleration matches to.
+                                    If the operator is Exists, the value should be empty, otherwise just a regular string.
+                                  type: string
+                              type: object
+                            type: array
+                        type: object
+                      mcpServer:
+                        description: MCP server deployment settings.
+                        properties:
+                          nodeSelector:
+                            additionalProperties:
+                              type: string
+                            description: Node selector constraints
+                            type: object
+                          replicas:
+                            default: 1
+                            description: |-
+                              Defines the number of desired pods. Default: "1"
+                              Note: Replicas are configurable for APIContainer and MCP server (mcpServer).
+                              For PostgreSQL, Console, Agentic Console, Alerts Adapter, OTEL Collector, and
+                              Agentic Sandbox (spec.agenticOLS.agenticSandboxConfig), the number of replicas is always set to 1.
+                            format: int32
+                            minimum: 0
+                            type: integer
+                          resources:
+                            description: |-
+                              Resource requirements (CPU, memory)
+                              Uses standard corev1.ResourceRequirements
+                            properties:
+                              claims:
+                                description: |-
+                                  Claims lists the names of resources, defined in spec.resourceClaims,
+                                  that are used by this container.
+
+                                  This field depends on the
+                                  DynamicResourceAllocation feature gate.
+
+                                  This field is immutable. It can only be set for containers.
+                                items:
+                                  description: ResourceClaim references one entry
+                                    in PodSpec.ResourceClaims.
+                                  properties:
+                                    name:
+                                      description: |-
+                                        Name must match the name of one entry in pod.spec.resourceClaims of
+                                        the Pod where this field is used. It makes that resource available
+                                        inside a container.
+                                      type: string
+                                    request:
+                                      description: |-
+                                        Request is the name chosen for a request in the referenced claim.
+                                        If empty, everything from the claim is made available, otherwise
+                                        only the result of this request.
+                                      type: string
+                                  required:
+                                  - name
+                                  type: object
+                                type: array
+                                x-kubernetes-list-map-keys:
+                                - name
+                                x-kubernetes-list-type: map
+                              limits:
+                                additionalProperties:
+                                  anyOf:
+                                  - type: integer
+                                  - type: string
+                                  pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                  x-kubernetes-int-or-string: true
+                                description: |-
+                                  Limits describes the maximum amount of compute resources allowed.
+                                  More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+                                type: object
+                              requests:
+                                additionalProperties:
+                                  anyOf:
+                                  - type: integer
+                                  - type: string
+                                  pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                  x-kubernetes-int-or-string: true
+                                description: |-
+                                  Requests describes the minimum amount of compute resources required.
+                                  If Requests is omitted for a container, it defaults to Limits if that is explicitly specified,
+                                  otherwise to an implementation-defined value. Requests cannot exceed Limits.
+                                  More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+                                type: object
+                            type: object
+                          tolerations:
+                            description: |-
+                              Tolerations for pod scheduling
+                              Uses standard corev1.Toleration
+                            items:
+                              description: |-
+                                The pod this Toleration is attached to tolerates any taint that matches
+                                the triple <key,value,effect> using the matching operator <operator>.
+                              properties:
+                                effect:
+                                  description: |-
+                                    Effect indicates the taint effect to match. Empty means match all taint effects.
+                                    When specified, allowed values are NoSchedule, PreferNoSchedule and NoExecute.
+                                  type: string
+                                key:
+                                  description: |-
+                                    Key is the taint key that the toleration applies to. Empty means match all taint keys.
+                                    If the key is empty, operator must be Exists; this combination means to match all values and all keys.
+                                  type: string
+                                operator:
+                                  description: |-
+                                    Operator represents a key's relationship to the value.
+                                    Valid operators are Exists, Equal, Lt, and Gt. Defaults to Equal.
+                                    Exists is equivalent to wildcard for value, so that a pod can
+                                    tolerate all taints of a particular category.
+                                    Lt and Gt perform numeric comparisons (requires feature gate TaintTolerationComparisonOperators).
+                                  type: string
+                                tolerationSeconds:
+                                  description: |-
+                                    TolerationSeconds represents the period of time the toleration (which must be
+                                    of effect NoExecute, otherwise this field is ignored) tolerates the taint. By default,
+                                    it is not set, which means tolerate the taint forever (do not evict). Zero and
+                                    negative values will be treated as 0 (evict immediately) by the system.
+                                  format: int64
+                                  type: integer
+                                value:
+                                  description: |-
+                                    Value is the taint value the toleration matches to.
+                                    If the operator is Exists, the value should be empty, otherwise just a regular string.
+                                  type: string
+                              type: object
+                            type: array
+                        type: object
+                      otelCollector:
+                        description: OTEL Collector deployment settings.
+                        properties:
+                          nodeSelector:
+                            additionalProperties:
+                              type: string
+                            description: Node selector constraints
+                            type: object
+                          replicas:
+                            default: 1
+                            description: |-
+                              Defines the number of desired pods. Default: "1"
+                              Note: Replicas are configurable for APIContainer and MCP server (mcpServer).
+                              For PostgreSQL, Console, Agentic Console, Alerts Adapter, OTEL Collector, and
+                              Agentic Sandbox (spec.agenticOLS.agenticSandboxConfig), the number of replicas is always set to 1.
+                            format: int32
+                            minimum: 0
+                            type: integer
+                          resources:
+                            description: |-
+                              Resource requirements (CPU, memory)
+                              Uses standard corev1.ResourceRequirements
+                            properties:
+                              claims:
+                                description: |-
+                                  Claims lists the names of resources, defined in spec.resourceClaims,
+                                  that are used by this container.
+
+                                  This field depends on the
+                                  DynamicResourceAllocation feature gate.
+
+                                  This field is immutable. It can only be set for containers.
+                                items:
+                                  description: ResourceClaim references one entry
+                                    in PodSpec.ResourceClaims.
+                                  properties:
+                                    name:
+                                      description: |-
+                                        Name must match the name of one entry in pod.spec.resourceClaims of
+                                        the Pod where this field is used. It makes that resource available
+                                        inside a container.
+                                      type: string
+                                    request:
+                                      description: |-
+                                        Request is the name chosen for a request in the referenced claim.
+                                        If empty, everything from the claim is made available, otherwise
+                                        only the result of this request.
+                                      type: string
+                                  required:
+                                  - name
+                                  type: object
+                                type: array
+                                x-kubernetes-list-map-keys:
+                                - name
+                                x-kubernetes-list-type: map
+                              limits:
+                                additionalProperties:
+                                  anyOf:
+                                  - type: integer
+                                  - type: string
+                                  pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                  x-kubernetes-int-or-string: true
+                                description: |-
+                                  Limits describes the maximum amount of compute resources allowed.
+                                  More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+                                type: object
+                              requests:
+                                additionalProperties:
+                                  anyOf:
+                                  - type: integer
+                                  - type: string
+                                  pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                  x-kubernetes-int-or-string: true
+                                description: |-
+                                  Requests describes the minimum amount of compute resources required.
+                                  If Requests is omitted for a container, it defaults to Limits if that is explicitly specified,
+                                  otherwise to an implementation-defined value. Requests cannot exceed Limits.
+                                  More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+                                type: object
+                            type: object
+                          tolerations:
+                            description: |-
+                              Tolerations for pod scheduling
+                              Uses standard corev1.Toleration
+                            items:
+                              description: |-
+                                The pod this Toleration is attached to tolerates any taint that matches
+                                the triple <key,value,effect> using the matching operator <operator>.
+                              properties:
+                                effect:
+                                  description: |-
+                                    Effect indicates the taint effect to match. Empty means match all taint effects.
+                                    When specified, allowed values are NoSchedule, PreferNoSchedule and NoExecute.
+                                  type: string
+                                key:
+                                  description: |-
+                                    Key is the taint key that the toleration applies to. Empty means match all taint keys.
+                                    If the key is empty, operator must be Exists; this combination means to match all values and all keys.
+                                  type: string
+                                operator:
+                                  description: |-
+                                    Operator represents a key's relationship to the value.
+                                    Valid operators are Exists, Equal, Lt, and Gt. Defaults to Equal.
+                                    Exists is equivalent to wildcard for value, so that a pod can
+                                    tolerate all taints of a particular category.
+                                    Lt and Gt perform numeric comparisons (requires feature gate TaintTolerationComparisonOperators).
+                                  type: string
+                                tolerationSeconds:
+                                  description: |-
+                                    TolerationSeconds represents the period of time the toleration (which must be
+                                    of effect NoExecute, otherwise this field is ignored) tolerates the taint. By default,
+                                    it is not set, which means tolerate the taint forever (do not evict). Zero and
+                                    negative values will be treated as 0 (evict immediately) by the system.
+                                  format: int64
+                                  type: integer
+                                value:
+                                  description: |-
+                                    Value is the taint value the toleration matches to.
+                                    If the operator is Exists, the value should be empty, otherwise just a regular string.
+                                  type: string
+                              type: object
+                            type: array
+                        type: object
+                      rhokp:
+                        description: RHOKP standalone deployment settings (Solr /
+                          OKP).
+                        properties:
+                          nodeSelector:
+                            additionalProperties:
+                              type: string
+                            description: Node selector constraints
+                            type: object
+                          replicas:
+                            default: 1
+                            description: |-
+                              Defines the number of desired pods. Default: "1"
+                              Note: Replicas are configurable for APIContainer and MCP server (mcpServer).
+                              For PostgreSQL, Console, Agentic Console, Alerts Adapter, OTEL Collector, and
+                              Agentic Sandbox (spec.agenticOLS.agenticSandboxConfig), the number of replicas is always set to 1.
+                            format: int32
+                            minimum: 0
+                            type: integer
+                          resources:
+                            description: |-
+                              Resource requirements (CPU, memory)
+                              Uses standard corev1.ResourceRequirements
+                            properties:
+                              claims:
+                                description: |-
+                                  Claims lists the names of resources, defined in spec.resourceClaims,
+                                  that are used by this container.
+
+                                  This field depends on the
+                                  DynamicResourceAllocation feature gate.
+
+                                  This field is immutable. It can only be set for containers.
+                                items:
+                                  description: ResourceClaim references one entry
+                                    in PodSpec.ResourceClaims.
+                                  properties:
+                                    name:
+                                      description: |-
+                                        Name must match the name of one entry in pod.spec.resourceClaims of
+                                        the Pod where this field is used. It makes that resource available
+                                        inside a container.
+                                      type: string
+                                    request:
+                                      description: |-
+                                        Request is the name chosen for a request in the referenced claim.
+                                        If empty, everything from the claim is made available, otherwise
+                                        only the result of this request.
+                                      type: string
+                                  required:
+                                  - name
+                                  type: object
+                                type: array
+                                x-kubernetes-list-map-keys:
+                                - name
+                                x-kubernetes-list-type: map
+                              limits:
+                                additionalProperties:
+                                  anyOf:
+                                  - type: integer
+                                  - type: string
+                                  pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                  x-kubernetes-int-or-string: true
+                                description: |-
+                                  Limits describes the maximum amount of compute resources allowed.
+                                  More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+                                type: object
+                              requests:
+                                additionalProperties:
+                                  anyOf:
+                                  - type: integer
+                                  - type: string
+                                  pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                  x-kubernetes-int-or-string: true
+                                description: |-
+                                  Requests describes the minimum amount of compute resources required.
+                                  If Requests is omitted for a container, it defaults to Limits if that is explicitly specified,
+                                  otherwise to an implementation-defined value. Requests cannot exceed Limits.
+                                  More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+                                type: object
+                            type: object
+                          tolerations:
+                            description: |-
+                              Tolerations for pod scheduling
+                              Uses standard corev1.Toleration
+                            items:
+                              description: |-
+                                The pod this Toleration is attached to tolerates any taint that matches
+                                the triple <key,value,effect> using the matching operator <operator>.
+                              properties:
+                                effect:
+                                  description: |-
+                                    Effect indicates the taint effect to match. Empty means match all taint effects.
+                                    When specified, allowed values are NoSchedule, PreferNoSchedule and NoExecute.
+                                  type: string
+                                key:
+                                  description: |-
+                                    Key is the taint key that the toleration applies to. Empty means match all taint keys.
+                                    If the key is empty, operator must be Exists; this combination means to match all values and all keys.
+                                  type: string
+                                operator:
+                                  description: |-
+                                    Operator represents a key's relationship to the value.
+                                    Valid operators are Exists, Equal, Lt, and Gt. Defaults to Equal.
+                                    Exists is equivalent to wildcard for value, so that a pod can
+                                    tolerate all taints of a particular category.
+                                    Lt and Gt perform numeric comparisons (requires feature gate TaintTolerationComparisonOperators).
+                                  type: string
+                                tolerationSeconds:
+                                  description: |-
+                                    TolerationSeconds represents the period of time the toleration (which must be
+                                    of effect NoExecute, otherwise this field is ignored) tolerates the taint. By default,
+                                    it is not set, which means tolerate the taint forever (do not evict). Zero and
+                                    negative values will be treated as 0 (evict immediately) by the system.
+                                  format: int64
+                                  type: integer
+                                value:
+                                  description: |-
+                                    Value is the taint value the toleration matches to.
+                                    If the operator is Exists, the value should be empty, otherwise just a regular string.
+                                  type: string
+                              type: object
+                            type: array
+                        type: object
+                    type: object
+                  guardrails:
+                    description: Guardrails configuration for untrusted model inputs
+                      and outputs.
+                    properties:
+                      toolResultInspection:
+                        description: ToolResultInspection configures inspection of
+                          tool results before model use.
+                        properties:
+                          enabled:
+                            description: |-
+                              Enabled controls whether tool results are inspected before model use.
+                              Defaults to true when omitted.
+                            type: boolean
+                        type: object
+                    type: object
+                  imagePullSecrets:
+                    description: Pull secrets for BYOK RAG images from image registries
+                      requiring authentication
+                    items:
+                      description: |-
+                        LocalObjectReference contains enough information to let you locate the
+                        referenced object inside the same namespace.
+                      properties:
+                        name:
+                          default: ""
+                          description: |-
+                            Name of the referent.
+                            This field is effectively required, but due to backwards compatibility is
+                            allowed to be empty. Instances of this type with an empty value here are
+                            almost certainly wrong.
+                            More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                          type: string
+                      type: object
+                      x-kubernetes-map-type: atomic
+                    type: array
+                  introspectionEnabled:
+                    description: |-
+                      Enable introspection features (e.g. built-in OpenShift MCP server).
+                      Default: true when absent. Explicit false disables introspection.
+                    type: boolean
+                  logLevel:
+                    default: INFO
+                    description: 'Log level. Valid options are DEBUG, INFO, WARNING,
+                      ERROR and CRITICAL. Default: "INFO".'
+                    enum:
+                    - DEBUG
+                    - INFO
+                    - WARNING
+                    - ERROR
+                    - CRITICAL
+                    type: string
+                  maxIterations:
+                    default: 5
+                    description: 'Maximum number of iterations for agent execution.
+                      Default: 5'
+                    minimum: 1
+                    type: integer
+                  mcpKubeServerConfig:
+                    description: MCP Kubernetes server configuration
+                    properties:
+                      timeout:
+                        default: 60
+                        description: Timeout for the MCP Kube server in seconds, default
+                          is 60
+                        minimum: 5
+                        type: integer
+                    type: object
+                  proxyConfig:
+                    description: Proxy settings for connecting to external servers,
+                      such as LLM providers.
+                    properties:
+                      proxyCACertificate:
+                        description: |-
+                          The configmap and key holding proxy CA certificate.
+                          The key is optional and defaults to "proxy-ca.crt" for backward compatibility.
+                          If you use a different key name in your ConfigMap, specify it in the Key field of ProxyCACertConfigMapRef.
+                        properties:
+                          key:
+                            default: proxy-ca.crt
+                            description: |-
+                              Key in the ConfigMap that contains the proxy CA certificate.
+                              Defaults to "proxy-ca.crt" if not specified.
+                            type: string
+                          name:
+                            default: ""
+                            description: |-
+                              Name of the referent.
+                              This field is effectively required, but due to backwards compatibility is
+                              allowed to be empty. Instances of this type with an empty value here are
+                              almost certainly wrong.
+                              More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                            type: string
+                        type: object
+                        x-kubernetes-map-type: atomic
+                      proxyURL:
+                        description: |-
+                          Proxy URL, e.g. https://proxy.example.com:8080
+                          If not specified, the cluster wide proxy will be used, through env var "https_proxy".
+                        pattern: ^https?://.*$
+                        type: string
+                    type: object
+                  queryFilters:
+                    description: Query filters
+                    items:
+                      description: QueryFiltersSpec defines filters to manipulate
+                        questions/queries.
+                      properties:
+                        name:
+                          description: Filter name.
+                          type: string
+                        pattern:
+                          description: Filter pattern.
+                          type: string
+                        replaceWith:
+                          description: Replacement for the matched pattern.
+                          type: string
+                      type: object
+                    type: array
+                  querySystemPrompt:
+                    description: Custom system prompt for LLM queries. If not specified,
+                      uses the default OpenShift Lightspeed prompt.
+                    type: string
+                  quotaHandlersConfig:
+                    description: LLM Token Quota Configuration
+                    properties:
+                      enableTokenHistory:
+                        description: Enable token history
+                        type: boolean
+                      limitersConfig:
+                        description: Token quota limiters
+                        items:
+                          description: LimiterConfig defines settings for a token
+                            quota limiter
+                          properties:
+                            initialQuota:
+                              description: Initial value of the token quota
+                              minimum: 0
+                              type: integer
+                            name:
+                              description: Name of the limiter
+                              type: string
+                            period:
+                              description: |-
+                                Period of time the token quota is for
+                                Examples: "1 hour", "30 minutes", "2 days", "1 h", "30 min", "2 d"
+                                Accepts singular (e.g., "1 second") or plural (e.g., "2 seconds") forms
+                                Supported units: second(s), minute(s), hour(s), day(s), month(s), year(s) or s, min, h, d, m, y
+                              pattern: ^(1\s+(second|minute|hour|day|month|year|s|min|h|d|m|y)|([2-9][0-9]*|[1-9][0-9]{2,})\s+(seconds|minutes|hours|days|months|years|s|min|h|d|m|y))$
+                              type: string
+                            quotaIncrease:
+                              description: Token quota increase step
+                              minimum: 0
+                              type: integer
+                            type:
+                              description: Type of the limiter
+                              enum:
+                              - cluster_limiter
+                              - user_limiter
+                              type: string
+                          required:
+                          - initialQuota
+                          - name
+                          - period
+                          - quotaIncrease
+                          - type
+                          type: object
+                        type: array
+                    type: object
+                  rag:
+                    description: BYOK RAG databases (bring-your-own container images
+                      with FAISS vector indexes).
+                    items:
+                      description: RAGSpec defines a BYOK RAG database (container
+                        image and index path).
+                      properties:
+                        image:
+                          description: The URL of the container image to use as a
+                            BYOK RAG source
+                          type: string
+                        indexID:
+                          default: ""
+                          description: The Index ID of the BYOK RAG database. Only
+                            needed if there are multiple indices in the database.
+                          type: string
+                        indexPath:
+                          default: /rag/vector_db
+                          description: The path to the BYOK RAG database inside of
+                            the container image
+                          type: string
+                      required:
+                      - image
+                      type: object
+                    type: array
+                  storage:
+                    description: Persistent Storage Configuration
+                    properties:
+                      class:
+                        description: Storage class of the requested volume
+                        type: string
+                      size:
+                        anyOf:
+                        - type: integer
+                        - type: string
+                        description: Size of the requested volume
+                        pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                        x-kubernetes-int-or-string: true
+                    type: object
+                  tlsConfig:
+                    description: TLS configuration of the Lightspeed backend's HTTPS
+                      endpoint
+                    properties:
+                      keyCertSecretRef:
+                        description: |-
+                          KeyCertSecretRef references a Secret containing TLS certificate and key.
+                          The Secret must contain the following keys:
+                            - tls.crt: Server certificate (PEM format) - REQUIRED
+                            - tls.key: Private key (PEM format) - REQUIRED
+                            - ca.crt: CA certificate for console proxy trust (PEM format) - OPTIONAL
+
+                          If ca.crt is not provided, the OpenShift Console proxy will use the default system trust store.
+                        properties:
+                          name:
+                            default: ""
+                            description: |-
+                              Name of the referent.
+                              This field is effectively required, but due to backwards compatibility is
+                              allowed to be empty. Instances of this type with an empty value here are
+                              almost certainly wrong.
+                              More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                            type: string
+                        type: object
+                        x-kubernetes-map-type: atomic
+                    type: object
+                  tlsSecurityProfile:
+                    description: TLS Security Profile used by API endpoints
+                    properties:
+                      custom:
+                        description: |-
+                          custom is a user-defined TLS security profile. Be extremely careful using a custom
+                          profile as invalid configurations can be catastrophic.
+
+                          The supported groups list for this profile is empty by default.
+
+                          An example custom profile looks like this:
+
+                            minTLSVersion: VersionTLS11
+                            ciphers:
+                              - ECDHE-ECDSA-CHACHA20-POLY1305
+                              - ECDHE-RSA-CHACHA20-POLY1305
+                              - ECDHE-RSA-AES128-GCM-SHA256
+                              - ECDHE-ECDSA-AES128-GCM-SHA256
+                        nullable: true
+                        properties:
+                          ciphers:
+                            description: |-
+                              ciphers is used to specify the cipher algorithms that are negotiated
+                              during the TLS handshake. Operators may remove entries that their operands
+                              do not support. For example, to use only ECDHE-RSA-AES128-GCM-SHA256 (yaml):
+
+                                ciphers:
+                                  - ECDHE-RSA-AES128-GCM-SHA256
+
+                              TLS 1.3 cipher suites (e.g. TLS_AES_128_GCM_SHA256) are not configurable
+                              and are always enabled when TLS 1.3 is negotiated.
+                            items:
+                              type: string
+                            type: array
+                            x-kubernetes-list-type: atomic
+                          groups:
+                            description: |-
+                              groups is an optional, ordered field used to specify the supported groups (formerly known as
+                              elliptic curves) that are used during the TLS handshake.  The order of the groups represents
+                              a suggested preference, with the most preferred group first. Note that not all platform
+                              components honor the ordering: Go-based components use Go's internal preference order and
+                              treat this list as a filter of allowed groups rather than an ordered preference.
+                              Operators may remove entries their operands do not support.
+
+                              When omitted, this means no opinion and the platform is left to choose reasonable defaults which are
+                              subject to change over time and may be different per platform component depending on the underlying TLS
+                              libraries they use. If specified, the list must contain at least one and at most 7 groups,
+                              and each group must be unique.
+
+                              For example, to use X25519 and secp256r1 (yaml):
+
+                                groups:
+                                  - X25519
+                                  - secp256r1
+                            items:
+                              description: |-
+                                TLSGroup is a supported group identifier that can be used in TLSProfile.Groups.
+                                There is a one-to-one mapping between these names and the group IDs defined
+                                in Go's crypto/tls package based on IANA's "TLS Supported Groups" registry:
+                                https://www.iana.org/assignments/tls-parameters/tls-parameters.xhtml#tls-parameters-8
+                                Note that X25519MLKEM768 is a post-quantum hybrid group that is not
+                                FIPS-approved and should be ignored by components running in FIPS mode.
+                              enum:
+                              - X25519
+                              - secp256r1
+                              - secp384r1
+                              - secp521r1
+                              - X25519MLKEM768
+                              - SecP256r1MLKEM768
+                              - SecP384r1MLKEM1024
+                              type: string
+                            maxItems: 7
+                            minItems: 1
+                            type: array
+                            x-kubernetes-list-type: set
+                          minTLSVersion:
+                            description: |-
+                              minTLSVersion is used to specify the minimal version of the TLS protocol
+                              that is negotiated during the TLS handshake. For example, to use TLS
+                              versions 1.1, 1.2 and 1.3 (yaml):
+
+                                minTLSVersion: VersionTLS11
+                            enum:
+                            - VersionTLS10
+                            - VersionTLS11
+                            - VersionTLS12
+                            - VersionTLS13
+                            type: string
+                        type: object
+                      intermediate:
+                        description: |-
+                          intermediate is a TLS profile for use when you do not need compatibility with
+                          legacy clients and want to remain highly secure while being compatible with
+                          most clients currently in use.
+
+                          The supported groups list includes by default the following groups
+                          in suggested preference order (ordering may not be honored by all implementations):
+                          X25519MLKEM768, X25519, secp256r1, secp384r1.
+
+                          This profile is equivalent to a Custom profile specified as:
+                            minTLSVersion: VersionTLS12
+                            ciphers:
+                              - TLS_AES_128_GCM_SHA256
+                              - TLS_AES_256_GCM_SHA384
+                              - TLS_CHACHA20_POLY1305_SHA256
+                              - ECDHE-ECDSA-AES128-GCM-SHA256
+                              - ECDHE-RSA-AES128-GCM-SHA256
+                              - ECDHE-ECDSA-AES256-GCM-SHA384
+                              - ECDHE-RSA-AES256-GCM-SHA384
+                              - ECDHE-ECDSA-CHACHA20-POLY1305
+                              - ECDHE-RSA-CHACHA20-POLY1305
+                        nullable: true
+                        type: object
+                      modern:
+                        description: |-
+                          modern is a TLS security profile for use with clients that support TLS 1.3 and
+                          do not need backward compatibility for older clients.
+                          The supported groups list includes by default the following groups
+                          in suggested preference order (ordering may not be honored by all implementations):
+                          X25519MLKEM768, X25519, secp256r1, secp384r1.
+                          This profile is equivalent to a Custom profile specified as:
+                            minTLSVersion: VersionTLS13
+                            ciphers:
+                              - TLS_AES_128_GCM_SHA256
+                              - TLS_AES_256_GCM_SHA384
+                              - TLS_CHACHA20_POLY1305_SHA256
+                        nullable: true
+                        type: object
+                      old:
+                        description: |-
+                          old is a TLS profile for use when services need to be accessed by very old
+                          clients or libraries and should be used only as a last resort.
+
+                          The supported groups list includes by default the following groups
+                          in suggested preference order (ordering may not be honored by all implementations):
+                          X25519MLKEM768, X25519, secp256r1, secp384r1.
+
+                          This profile is equivalent to a Custom profile specified as:
+                            minTLSVersion: VersionTLS10
+                            ciphers:
+                              - TLS_AES_128_GCM_SHA256
+                              - TLS_AES_256_GCM_SHA384
+                              - TLS_CHACHA20_POLY1305_SHA256
+                              - ECDHE-ECDSA-AES128-GCM-SHA256
+                              - ECDHE-RSA-AES128-GCM-SHA256
+                              - ECDHE-ECDSA-AES256-GCM-SHA384
+                              - ECDHE-RSA-AES256-GCM-SHA384
+                              - ECDHE-ECDSA-CHACHA20-POLY1305
+                              - ECDHE-RSA-CHACHA20-POLY1305
+                              - ECDHE-ECDSA-AES128-SHA256
+                              - ECDHE-RSA-AES128-SHA256
+                              - ECDHE-ECDSA-AES128-SHA
+                              - ECDHE-RSA-AES128-SHA
+                              - ECDHE-ECDSA-AES256-SHA384
+                              - ECDHE-RSA-AES256-SHA384
+                              - ECDHE-ECDSA-AES256-SHA
+                              - ECDHE-RSA-AES256-SHA
+                              - AES128-GCM-SHA256
+                              - AES256-GCM-SHA384
+                              - AES128-SHA256
+                              - AES256-SHA256
+                              - AES128-SHA
+                              - AES256-SHA
+                              - DES-CBC3-SHA
+                        nullable: true
+                        type: object
+                      type:
+                        description: |-
+                          type is one of Old, Intermediate, Modern or Custom. Custom provides the
+                          ability to specify individual TLS security profile parameters.
+
+                          The cipher and groups lists in these profiles are based on version 5.8 of the
+                          Mozilla Server Side TLS configuration guidelines.
+                          See: https://ssl-config.mozilla.org/guidelines/5.8.json
+
+                          The groups are listed in suggested preference order, with the most preferred group first.
+                          Note that not all platform components honor the ordering: Go-based components use Go's
+                          internal preference order and treat this list as a filter of allowed groups rather than
+                          an ordered preference.
+                          Note that X25519MLKEM768 is a post-quantum hybrid group that is not
+                          FIPS-approved and should be ignored by components running in FIPS mode.
+
+                          The profiles are intent based, so they may change over time as new ciphers are
+                          developed and existing ciphers are found to be insecure. Depending on
+                          precisely which ciphers are available to a process, the list may be reduced.
+                        enum:
+                        - Old
+                        - Intermediate
+                        - Modern
+                        - Custom
+                        type: string
+                    type: object
+                  toolFilteringConfig:
+                    description: Tool filtering configuration for hybrid RAG retrieval.
+                      If not specified, all tools are used.
+                    properties:
+                      alpha:
+                        default: 0.8
+                        description: Weight for dense vs sparse retrieval (1.0 = full
+                          dense, 0.0 = full sparse)
+                        type: number
+                      threshold:
+                        default: 0.01
+                        description: Minimum similarity threshold for filtering results
+                        type: number
+                      topK:
+                        default: 10
+                        description: Number of tools to retrieve
+                        maximum: 50
+                        minimum: 1
+                        type: integer
+                    type: object
+                    x-kubernetes-validations:
+                    - message: alpha must be between 0.0 and 1.0
+                      rule: self.alpha >= 0.0 && self.alpha <= 1.0
+                    - message: threshold must be between 0.0 and 1.0
+                      rule: self.threshold >= 0.0 && self.threshold <= 1.0
+                  toolOutputRedaction:
+                    default: true
+                    description: |-
+                      ToolOutputRedaction controls whether sensitive values in tool output are redacted.
+                      Defaults to true when omitted. This setting is independent of guardrail inspection.
+                    type: boolean
+                  toolsApprovalConfig:
+                    description: Tool execution approval configuration. Controls whether
+                      tool calls require user approval before execution.
+                    properties:
+                      approvalTimeout:
+                        default: 600
+                        description: Timeout in seconds for waiting for user approval
+                        minimum: 1
+                        type: integer
+                      approvalType:
+                        default: tool_annotations
+                        description: |-
+                          Approval strategy for tool execution.
+                          'never' - tools execute without approval
+                          'always' - all tool calls require approval
+                          'tool_annotations' - approval based on per-tool annotations
+                        enum:
+                        - never
+                        - always
+                        - tool_annotations
+                        type: string
+                    type: object
+                  userDataCollection:
+                    description: User data collection switches
+                    properties:
+                      feedbackDisabled:
+                        type: boolean
+                      transcriptsDisabled:
+                        type: boolean
+                    type: object
+                required:
+                - defaultModel
+                - defaultProvider
+                type: object
+              olsDataCollector:
+                description: OLSDataCollectorSpec defines allowed OLS data collector
+                  configuration.
+                properties:
+                  logLevel:
+                    default: INFO
+                    description: 'Log level. Valid options are DEBUG, INFO, WARNING,
+                      ERROR and CRITICAL. Default: "INFO".'
+                    enum:
+                    - DEBUG
+                    - INFO
+                    - WARNING
+                    - ERROR
+                    - CRITICAL
+                    type: string
+                type: object
+            required:
+            - llm
+            - ols
+            type: object
+            x-kubernetes-validations:
+            - message: defaultProvider must match a configured LLM provider
+              rule: (self.llm.providers.size() == 0 && self.ols.defaultProvider ==
+                "" && self.ols.defaultModel == "") || self.llm.providers.exists(provider,
+                provider.name == self.ols.defaultProvider)
+            - message: defaultModel must match a model on the default provider
+              rule: (self.llm.providers.size() == 0 && self.ols.defaultProvider ==
+                "" && self.ols.defaultModel == "") || self.llm.providers.exists(provider,
+                provider.name == self.ols.defaultProvider && provider.models.exists(model,
+                model.name == self.ols.defaultModel))
+          status:
+            description: OLSConfigStatus defines the observed state of OLS deployment.
+            properties:
+              conditions:
+                description: |-
+                  Conditions represent the state of individual components
+                  Always populated after first reconciliation
+                items:
+                  description: Condition contains details for one aspect of the current
+                    state of this API Resource.
+                  properties:
+                    lastTransitionTime:
+                      description: |-
+                        lastTransitionTime is the last time the condition transitioned from one status to another.
+                        This should be when the underlying condition changed.  If that is not known, then using the time when the API field changed is acceptable.
+                      format: date-time
+                      type: string
+                    message:
+                      description: |-
+                        message is a human readable message indicating details about the transition.
+                        This may be an empty string.
+                      maxLength: 32768
+                      type: string
+                    observedGeneration:
+                      description: |-
+                        observedGeneration represents the .metadata.generation that the condition was set based upon.
+                        For instance, if .metadata.generation is currently 12, but the .status.conditions[x].observedGeneration is 9, the condition is out of date
+                        with respect to the current state of the instance.
+                      format: int64
+                      minimum: 0
+                      type: integer
+                    reason:
+                      description: |-
+                        reason contains a programmatic identifier indicating the reason for the condition's last transition.
+                        Producers of specific condition types may define expected values and meanings for this field,
+                        and whether the values are considered a guaranteed API.
+                        The value should be a CamelCase string.
+                        This field may not be empty.
+                      maxLength: 1024
+                      minLength: 1
+                      pattern: ^[A-Za-z]([A-Za-z0-9_,:]*[A-Za-z0-9_])?$
+                      type: string
+                    status:
+                      description: status of the condition, one of True, False, Unknown.
+                      enum:
+                      - "True"
+                      - "False"
+                      - Unknown
+                      type: string
+                    type:
+                      description: type of condition in CamelCase or in foo.example.com/CamelCase.
+                      maxLength: 316
+                      pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              diagnosticInfo:
+                description: |-
+                  DiagnosticInfo provides detailed troubleshooting information when deployments fail.
+                  Each entry contains pod-level error details for a specific component.
+                  This array is automatically populated when deployments fail and cleared when they recover.
+                  Only present during deployment failures.
+                items:
+                  description: PodDiagnostic describes a pod-level issue
+                  properties:
+                    containerName:
+                      description: |-
+                        ContainerName is the container within the pod that failed
+                        Empty if the issue is at the pod level (e.g., scheduling)
+                      type: string
+                    exitCode:
+                      description: ExitCode for terminated containers (only set for
+                        container failures)
+                      format: int32
+                      type: integer
+                    failedComponent:
+                      description: |-
+                        FailedComponent identifies which component this diagnostic relates to,
+                        using the same type as the Conditions field (e.g., "ApiReady", "CacheReady", "AlertsAdapterReady")
+                        This allows easy correlation between condition status and diagnostic details.
+                      type: string
+                    lastUpdated:
+                      description: LastUpdated is the timestamp when this diagnostic
+                        was collected
+                      format: date-time
+                      type: string
+                    message:
+                      description: Message provides detailed error information from
+                        Kubernetes
+                      type: string
+                    podName:
+                      description: PodName is the name of the pod with issues
+                      type: string
+                    reason:
+                      description: |-
+                        Reason is the failure reason
+                        Examples: ImagePullBackOff, CrashLoopBackOff, Unschedulable, OOMKilled
+                      type: string
+                    type:
+                      allOf:
+                      - enum:
+                        - ContainerWaiting
+                        - ContainerTerminated
+                        - PodScheduling
+                        - PodCondition
+                      - enum:
+                        - ContainerWaiting
+                        - ContainerTerminated
+                        - PodScheduling
+                        - PodCondition
+                      description: Type indicates the diagnostic type
+                      type: string
+                  required:
+                  - failedComponent
+                  - lastUpdated
+                  - message
+                  - podName
+                  - reason
+                  - type
+                  type: object
+                type: array
+              overallStatus:
+                description: |-
+                  OverallStatus provides a high-level summary of the entire system's health.
+                  Aggregates all component conditions into a single status value.
+                  - Ready: All components are healthy
+                  - NotReady: At least one component is not ready (check conditions for details)
+                  Always set after first reconciliation
+                enum:
+                - Ready
+                - NotReady
+                type: string
+            required:
+            - conditions
+            type: object
+        required:
+        - spec
+        type: object
+        x-kubernetes-validations:
+        - message: .metadata.name must be 'cluster'
+          rule: self.metadata.name == 'cluster'
+    served: true
+    storage: true
+    subresources:
+      status: {}
