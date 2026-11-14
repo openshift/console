@@ -32,7 +32,8 @@ proxy defaults are unchanged, so the existing env carries over as is.
    Ingresses, NetworkPolicies, no Routes), Observe (alerts, metrics,
    dashboards, targets), Home › Overview with the Kubernetes version, the Helm
    releases list across all namespaces, and the application menu's Ceph
-   dashboard link, and the Kubernetes logo and tab title. Check the bridge log for repeated errors.
+   dashboard link, the Kubernetes logo and tab title, and Administration ›
+   Dynamic Plugins. Check the bridge log for repeated errors.
 6. **Keep the old 2021 console Deployment running** until parity is
    confirmed, then retire it.
 
@@ -53,13 +54,16 @@ can be created.
    kubectl apply -f royal-road/deploy/crds/
    kubectl wait --for=condition=Established \
      crd/projecthelmchartrepositories.helm.openshift.io \
-     crd/consolelinks.console.openshift.io
+     crd/consolelinks.console.openshift.io \
+     crd/consoleplugins.console.openshift.io
    ```
 
 2. Resources that use them, after replacing the placeholders:
 
    ```sh
+   kubectl apply -f royal-road/deploy/console-extensions-reader.yaml
    kubectl apply -f royal-road/deploy/ceph-dashboard-consolelink.yaml
+   kubectl apply -f royal-road/deploy/consoleplugins.yaml
    ```
 
 No console restart is needed. The frontend detects the new APIs on the next
@@ -68,11 +72,13 @@ in the masthead) shows a **Storage › Ceph dashboard** entry. The Helm pages
 stop requesting the missing `projecthelmchartrepositories` API, and the
 bridge stops logging `Error listing namespace helm chart repositories`.
 
-The frontend reads ConsoleLinks with each user's own token, and installing the
-CRD grants nobody read access. `ceph-dashboard-consolelink.yaml` therefore
-also binds a read-only `console-extensions-reader` ClusterRole to
-`system:authenticated`, which matches what the console-operator does on
-OpenShift. Without it only cluster-admins see the link.
+The frontend reads ConsoleLinks and ConsolePlugins with each user's own
+token, and installing a CRD grants nobody read access.
+`console-extensions-reader.yaml` binds a read-only `console-extensions-reader`
+ClusterRole to `system:authenticated`, which matches what the console-operator
+does on OpenShift. Without it only cluster-admins see the link. (Earlier
+versions of `ceph-dashboard-consolelink.yaml` carried this ClusterRole with
+`consolelinks` only; applying the new file updates it in place.)
 
 Non-admin access to Helm chart repositories is separate and unchanged here:
 reading `helmchartrepositories` and `projecthelmchartrepositories` still
@@ -147,6 +153,42 @@ endorses the console.
 on each page load. The frontend asks once before it knows the theme, then
 asks again with `theme=Light` or `theme=Dark` and gets the logo. Upstream
 behavior, harmless.
+
+## Dynamic Plugins page
+
+Administration › Dynamic Plugins lists the loaded plugins with version,
+description, load status, enabled state and CSP violations, and links each to
+a details page with its manifest. The Overview's Status card shows the same
+under **Dynamic Plugins**.
+
+Upstream, the page is a tab on the console operator's config
+(`consoles.operator.openshift.io/cluster`), and enable/disable writes
+`spec.plugins` there. This cluster can't have that resource
+([OpenShift CRD policy](../../FORK.md#openshift-crd-policy)), so the stock
+console shows "Model does not exist". Our build changes that:
+
+- Without `consoles.operator.openshift.io`, the nav item opens the
+  ConsolePlugin list (`/k8s/cluster/console.openshift.io~v1~ConsolePlugin`)
+  instead. It needs the ConsolePlugin CRD; without the CRD the nav item is
+  hidden.
+- The **Enabled** column says whether the bridge loads the plugin
+  (`BRIDGE_PLUGINS`), and the enable/disable controls are gone: there is no
+  config to edit. Change `BRIDGE_PLUGINS` to enable or disable a plugin.
+- As upstream, the nav item shows for users who may `get`
+  `consoles.operator.openshift.io`. Here that means cluster-admins (a `*`
+  rule), since the resource doesn't exist.
+
+To set it up, apply the CRD `crds/90_consoleplugins.crd.yaml`, then
+[`console-extensions-reader.yaml`](console-extensions-reader.yaml) and
+[`consoleplugins.yaml`](consoleplugins.yaml) (see [CRDs](#crds)). No console
+restart is needed. `consoleplugins.yaml` has one ConsolePlugin per
+`BRIDGE_PLUGINS` entry. Their names must match, and they don't load anything.
+When you add a plugin to `BRIDGE_PLUGINS`, add a ConsolePlugin for it, or it
+loads but isn't listed. A ConsolePlugin that `BRIDGE_PLUGINS` doesn't name is
+listed as Disabled with no status.
+
+**Create ConsolePlugin** stays on the page. A new ConsolePlugin is listed, but
+the plugin only loads once it is in `BRIDGE_PLUGINS`.
 
 ## Monitoring endpoints
 

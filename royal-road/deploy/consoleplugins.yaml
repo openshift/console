@@ -1,0 +1,42 @@
+# ConsolePlugin resources that describe the plugins the bridge loads through
+# BRIDGE_PLUGINS. They let Administration > Dynamic Plugins and the Overview's
+# Dynamic Plugins status list the plugins with their version, load status and
+# CSP violations, and give each one a details page with its manifest.
+#
+# They do not load anything: on this cluster BRIDGE_PLUGINS decides which
+# plugins load, and the console reads these resources for display only. Keep
+# the two in sync. A plugin in BRIDGE_PLUGINS without a ConsolePlugin is
+# loaded but not listed; a ConsolePlugin without a BRIDGE_PLUGINS entry is
+# listed as Disabled.
+#
+# Requires crds/90_consoleplugins.crd.yaml. Replace <console-namespace> with
+# the console's namespace (the Services from networking-console-plugin.yaml
+# and monitoring-plugin.yaml). The metadata.name must equal the plugin name in
+# BRIDGE_PLUGINS.
+apiVersion: console.openshift.io/v1
+kind: ConsolePlugin
+metadata:
+  name: networking-console-plugin
+spec:
+  displayName: Networking console plugin
+  backend:
+    type: Service
+    service:
+      name: networking-console-plugin
+      namespace: <console-namespace>
+      port: 8080
+      basePath: /
+---
+apiVersion: console.openshift.io/v1
+kind: ConsolePlugin
+metadata:
+  name: monitoring-plugin
+spec:
+  displayName: Monitoring plugin
+  backend:
+    type: Service
+    service:
+      name: monitoring-plugin
+      namespace: <console-namespace>
+      port: 9443
+      basePath: /

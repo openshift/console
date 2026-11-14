@@ -9,6 +9,7 @@ reads these resources, and no OpenShift controller has to act on them.
 |---|---|---|
 | `00_projecthelmchartrepositories.crd.yaml` | `helm/v1beta1/zz_generated.crd-manifests/` | Helm backend and frontend (namespace-scoped chart repositories) |
 | `00_consolelinks.crd.yaml` | `console/v1/zz_generated.crd-manifests/` | Masthead menus and namespace dashboard links (`FLAGS.CONSOLE_LINK`) |
+| `90_consoleplugins.crd.yaml` | `console/v1/zz_generated.crd-manifests/` | Administration › Dynamic Plugins and the Overview's Dynamic Plugins status. Display only: `BRIDGE_PLUGINS` still decides what loads |
 
 Production already has `helmchartrepositories.helm.openshift.io`. It is not
 shipped here.
@@ -30,7 +31,8 @@ commit:
 # raw.githubusercontent.com accepts it.
 SHA=$(go mod edit -json | jq -r '.Replace[] | select(.Old.Path=="github.com/openshift/api") | .New.Version' | sed 's/.*-//')
 for f in helm/v1beta1/zz_generated.crd-manifests/00_projecthelmchartrepositories.crd.yaml \
-         console/v1/zz_generated.crd-manifests/00_consolelinks.crd.yaml; do
+         console/v1/zz_generated.crd-manifests/00_consolelinks.crd.yaml \
+         console/v1/zz_generated.crd-manifests/90_consoleplugins.crd.yaml; do
   curl -fsSL -o "royal-road/deploy/crds/$(basename "$f")" \
     "https://raw.githubusercontent.com/openshift/api/$SHA/$f"
 done

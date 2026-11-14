@@ -1,0 +1,28 @@
+# Read-only access to the console.openshift.io resources the frontend reads
+# with each user's own token. Installing a CRD grants nobody read access, so
+# without this only cluster-admins see ConsoleLinks (application menu) and the
+# ConsolePlugin list behind the Overview's Dynamic Plugins status. The
+# console-operator grants the same through a ClusterRole of this name on
+# OpenShift (it also lists console.openshift.io kinds this cluster doesn't
+# install). Apply it after the CRDs in crds/.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: console-extensions-reader
+rules:
+  - apiGroups: ["console.openshift.io"]
+    resources: ["consolelinks", "consoleplugins"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: console-extensions-reader
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: console-extensions-reader
+subjects:
+  - apiGroup: rbac.authorization.k8s.io
+    kind: Group
+    name: system:authenticated
