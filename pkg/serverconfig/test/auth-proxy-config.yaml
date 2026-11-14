@@ -1,0 +1,17 @@
+auth:
+  authType: oidc
+  oidcIssuer: https://idp.example.com
+  oauthEndpointCAFile: /var/auth-server-ca/ca-bundle.crt
+  proxy:
+    httpProxy: http://proxy.example.com:3128
+    httpsProxy: http://proxy.example.com:3128
+    noProxy:
+    - .cluster.local
+    - .cluster.local.
+    - .svc
+    - .svc.
+    - 127.0.0.1
+    - idp.internal.example.com
+    - localhost
+    - localhost.
+    trustedCAFilePath: /var/auth-proxy-ca/ca-bundle.crt

@@ -282,9 +282,7 @@ func Test_oidcAuth_login(t *testing.T) {
 				context.Background(),
 				sessions.NewSessionStore(authnKey, encryptionKey, true, "/"),
 				&oidcConfig{
-					getClient: func() *http.Client {
-						return http.DefaultClient
-					},
+					issuerClient:          http.DefaultClient,
 					issuerURL:             providerURL.String(),
 					clientID:              testClientID,
 					secureCookies:         true,
@@ -396,9 +394,7 @@ func Test_oidcAuth_refreshSession(t *testing.T) {
 				context.Background(),
 				sessions.NewSessionStore(authnKey, encryptionKey, true, "/"),
 				&oidcConfig{
-					getClient: func() *http.Client {
-						return http.DefaultClient
-					},
+					issuerClient:          http.DefaultClient,
 					issuerURL:             providerURL.String(),
 					clientID:              testClientID,
 					secureCookies:         true,
@@ -530,9 +526,7 @@ func Test_oidcAuth_getLoginState(t *testing.T) {
 				context.Background(),
 				sessions.NewSessionStore(authnKey, encryptionKey, true, "/"),
 				&oidcConfig{
-					getClient: func() *http.Client {
-						return http.DefaultClient
-					},
+					issuerClient:          http.DefaultClient,
 					issuerURL:             providerURL.String(),
 					clientID:              testClientID,
 					secureCookies:         true,
@@ -627,9 +621,7 @@ func Test_oidcAuth_logout(t *testing.T) {
 				context.Background(),
 				sessions.NewSessionStore(authnKey, encryptionKey, true, "/"),
 				&oidcConfig{
-					getClient: func() *http.Client {
-						return http.DefaultClient
-					},
+					issuerClient:           http.DefaultClient,
 					issuerURL:              providerURL.String(),
 					logoutRedirectOverride: tt.logoutRedirectOverride,
 					clientID:               testClientID,
@@ -775,9 +767,7 @@ func Test_oidcAuth_logoutRedirectURLWithIDTokenHint(t *testing.T) {
 				context.Background(),
 				sessions.NewSessionStore(authnKey, encryptionKey, true, "/"),
 				&oidcConfig{
-					getClient: func() *http.Client {
-						return http.DefaultClient
-					},
+					issuerClient:           http.DefaultClient,
 					issuerURL:              providerURL.String(),
 					logoutRedirectOverride: tt.logoutRedirectOverride,
 					clientID:               testClientID,
@@ -876,9 +866,7 @@ func BenchmarkRefreshSession(b *testing.B) {
 				context.Background(),
 				sessions.NewSessionStore(authnKey, encryptionKey, true, "/"),
 				&oidcConfig{
-					getClient: func() *http.Client {
-						return http.DefaultClient
-					},
+					issuerClient:          http.DefaultClient,
 					issuerURL:             providerURL.String(),
 					clientID:              testClientID,
 					secureCookies:         true,
