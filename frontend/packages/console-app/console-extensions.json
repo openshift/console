@@ -1029,7 +1029,7 @@
       "href": "/dashboards"
     },
     "flags": {
-      "required": ["CAN_GET_NS", "OPENSHIFT", "PROMETHEUS", "MONITORING"]
+      "required": ["CAN_GET_NS", "PROMETHEUS", "MONITORING"]
     }
   },
   {
