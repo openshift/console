@@ -2,6 +2,11 @@
 
 Newest first. One entry per work package from `FORK.md`.
 
+## Readable error page traces
+
+- `CONSOLE_KEEP_NAMES=1` (set in `royal-road/Dockerfile`) keeps function and class names in the minified bundles, so React component traces name real components. JS grows from 14.29 MB to 15.30 MB raw (+7.1%) and from 4.05 MB to 4.19 MB gzip (+3.6%). Unset, the build is unchanged from upstream.
+- The error details modal maps component and stack trace locations to source files with the source maps the console already serves. A switch shows the raw traces, and the copy button copies both. If a map can't be fetched, the raw trace is shown.
+
 ## Fix: alerting rules without an `alerts` list
 
 - VictoriaMetrics' rules API omits `alerts` on inactive alerting rules (Prometheus sends `[]`). Core's `getAlertsAndRules` and monitoring-plugin's copy of it now treat the missing field as an empty list. Before, Topology crashed with "Cannot read properties of undefined (reading 'forEach')" once metrics were reachable.
