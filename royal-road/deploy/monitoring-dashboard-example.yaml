@@ -1,0 +1,71 @@
+# Example legacy dashboard for Observe > Dashboards (monitoring-plugin,
+# feature "legacy-dashboards").
+#
+# The bridge lists ConfigMaps in namespace openshift-config-managed with label
+# console.openshift.io/dashboard=true (/api/console/monitoring-dashboard-config),
+# using its own ServiceAccount. Each ConfigMap holds one Grafana-format
+# dashboard JSON (first data key). Add the label
+# console.openshift.io/odc-dashboard=true to also show it in the per-namespace
+# (developer) dashboards view.
+#
+# The namespace and the RBAC it needs are in monitoring-plugin.yaml.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dashboard-cluster-overview
+  namespace: openshift-config-managed
+  labels:
+    console.openshift.io/dashboard: "true"
+    console.openshift.io/odc-dashboard: "true"
+data:
+  cluster-overview.json: |-
+    {
+      "title": "Cluster overview",
+      "tags": [],
+      "templating": {
+        "list": [
+          {
+            "name": "namespace",
+            "label": "Namespace",
+            "type": "query",
+            "query": "label_values(kube_pod_info, namespace)",
+            "refresh": 2,
+            "includeAll": false
+          }
+        ]
+      },
+      "rows": [
+        {
+          "title": "Pods",
+          "panels": [
+            {
+              "title": "Running pods",
+              "type": "singlestat",
+              "span": 3,
+              "targets": [{"expr": "sum(kube_pod_status_phase{namespace=\"$namespace\",phase=\"Running\"})"}]
+            },
+            {
+              "title": "CPU usage by pod",
+              "type": "graph",
+              "span": 9,
+              "targets": [{"expr": "sum by (pod) (rate(container_cpu_usage_seconds_total{namespace=\"$namespace\",container!=\"\"}[5m]))", "legendFormat": "{{pod}}"}]
+            }
+          ]
+        },
+        {
+          "title": "Scrape targets",
+          "panels": [
+            {
+              "title": "Targets up",
+              "type": "table",
+              "span": 12,
+              "targets": [{"expr": "sum by (job) (up)", "format": "table", "instant": true, "refId": "A"}],
+              "styles": [
+                {"pattern": "job", "alias": "Job", "type": "string"},
+                {"pattern": "Value #A", "alias": "Up", "type": "number", "decimals": 0}
+              ]
+            }
+          ]
+        }
+      ]
+    }

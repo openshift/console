@@ -1,0 +1,121 @@
+# openshift/monitoring-plugin: Observe > Alerting, Metrics, Dashboards, Targets.
+# See "Monitoring plugin" in README.md for how it fits together.
+#
+# Placeholders:
+#   <console-namespace>        namespace of the console (bridge) Deployment
+#   <console-serviceaccount>   ServiceAccount the bridge runs as
+#   <monitoring-plugin-sha>    image tag (short commit SHA of royal-road/console
+#                              main), or "main"
+#
+# The bridge loads the plugin with:
+#   BRIDGE_PLUGINS=monitoring-plugin=http://monitoring-plugin.<console-namespace>.svc.cluster.local:9443/
+# (comma-separate it from other plugins). No BRIDGE_PLUGIN_PROXY entry is
+# needed: the four features enabled here call the bridge's own
+# /api/prometheus, /api/prometheus-tenancy, /api/alertmanager and
+# /api/alertmanager-tenancy proxies, not a plugin backend.
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: monitoring-plugin
+  namespace: <console-namespace>
+  labels:
+    app.kubernetes.io/name: monitoring-plugin
+    app.kubernetes.io/part-of: console
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: monitoring-plugin
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: monitoring-plugin
+        app.kubernetes.io/part-of: console
+    spec:
+      # The plugin backend only serves static files; it needs no API access.
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: monitoring-plugin
+          image: ghcr.io/royal-road/monitoring-plugin:<monitoring-plugin-sha>
+          # The image's entrypoint enables alerting,metrics,legacy-dashboards,targets
+          # and serves plain HTTP on 9443 (no -cert/-key). Plain HTTP stays inside
+          # the cluster: only the bridge fetches plugin assets and serves them to
+          # browsers under /api/plugins/monitoring-plugin/.
+          ports:
+            - name: http
+              containerPort: 9443
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              memory: 128Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: monitoring-plugin
+  namespace: <console-namespace>
+  labels:
+    app.kubernetes.io/name: monitoring-plugin
+    app.kubernetes.io/part-of: console
+spec:
+  selector:
+    app.kubernetes.io/name: monitoring-plugin
+  ports:
+    - name: http
+      port: 9443
+      targetPort: http
+      protocol: TCP
+---
+# Observe > Dashboards reads dashboard ConfigMaps from this namespace through
+# the bridge's ServiceAccount (see monitoring-dashboard-example.yaml). On
+# OpenShift the cluster-monitoring-operator fills it; here we create it and
+# put our own dashboards in it.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: openshift-config-managed
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: console-monitoring-dashboards-reader
+  namespace: openshift-config-managed
+rules:
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: console-monitoring-dashboards-reader
+  namespace: openshift-config-managed
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: console-monitoring-dashboards-reader
+subjects:
+  - kind: ServiceAccount
+    name: <console-serviceaccount>
+    namespace: <console-namespace>
