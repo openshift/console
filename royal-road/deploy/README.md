@@ -4,6 +4,40 @@ Example manifests and instructions for the owner to apply through the
 infrastructure repository. Agents do not apply anything from this directory
 to the production cluster. Values such as URLs and hostnames are placeholders.
 
+## Cutover from the stock console
+
+The first rollout replaces `quay.io/openshift/origin-console:4.22` with this
+fork (based on `release-5.0`), so it is also a 4.22 → 5.0 upgrade. Every
+bridge flag the stock Deployment sets still exists in 5.0, and the monitoring
+proxy defaults are unchanged, so the existing env carries over as is.
+
+1. **Back up** the live console Deployment, Service and Ingress.
+2. **Deploy the plugins** in the console namespace:
+   [`networking-console-plugin.yaml`](networking-console-plugin.yaml) and
+   [`monitoring-plugin.yaml`](monitoring-plugin.yaml). Wait for both
+   Deployments to be ready. Nothing loads them yet.
+3. **Apply the CRDs and the resources that use them** (see [CRDs](#crds)),
+   then [`monitoring/console-recording-rules.yaml`](monitoring/console-recording-rules.yaml)
+   (see [Recording rules](#recording-rules)). Apply
+   [`user-settings.yaml`](user-settings.yaml) only if the
+   `openshift-console-user-settings` namespace and the console's write access
+   to it don't exist yet (see [User settings](#user-settings)).
+4. **Switch the console Deployment** to `ghcr.io/royal-road/console:<sha>`
+   with [`console-deployment-patch.yaml`](console-deployment-patch.yaml). It
+   changes the image, adds `BRIDGE_PLUGINS` and a `/health` readiness probe,
+   and keeps every other setting.
+5. **Verify**: sign in through OIDC; check the Networking menu (Services,
+   Ingresses, NetworkPolicies, no Routes), Observe (alerts, metrics,
+   dashboards, targets), Home › Overview with the Kubernetes version, the Helm
+   releases list across all namespaces, and the application menu's Ceph
+   dashboard link. Check the bridge log for repeated errors.
+6. **Keep the old 2021 console Deployment running** until parity is
+   confirmed, then retire it.
+
+**Rollback:** set the image back to `quay.io/openshift/origin-console:4.22`
+and remove `BRIDGE_PLUGINS` (or restore the backup). The plugins, CRDs and
+recording rules are inert for the stock console and can stay.
+
 ## CRDs
 
 `crds/` holds OpenShift CRDs that only the console reads (see

@@ -2,6 +2,12 @@
 
 Newest first. One entry per work package from `FORK.md`.
 
+## WP8: Deployment hand-off
+
+- `royal-road/deploy/README.md` starts with the cutover order: plugins, CRDs and the resources that use them, then the console Deployment switch, verification, and rollback. The 2021 console keeps running until parity is confirmed.
+- `royal-road/deploy/console-deployment-patch.yaml` switches an existing stock console Deployment to this image, adds `BRIDGE_PLUGINS` for both plugins and a `/health` readiness probe, and leaves every other setting alone.
+- `royal-road/dev/run-bridge.sh` gives the bridge its own ServiceAccount token file and trusts the kind API server's CA, so dashboards and user settings work off-cluster.
+
 ## WP4: Observe pages via monitoring-plugin (part B)
 
 - `royal-road/plugins/monitoring-plugin/` builds openshift/monitoring-plugin from `release-5.0` (pinned commit in `upstream.env`) on public images: `node:22` and `golang:1.26` to build, `ubi9/ubi-minimal` to run. No published image matches 5.0: quay.io only has development tags, and upstream's Dockerfiles need Red Hat registry credentials. No patches are needed.

@@ -235,6 +235,14 @@ In `in-cluster` mode the bridge sets up its monitoring proxies in `cmd/bridge/ma
 
 | WP | State |
 |---|---|
-| WP0–WP8 | Not started |
+| WP0 | Done: `royal-road-image` workflow (PR #1) |
+| WP1 | Done: `royal-road/Dockerfile` (PR #1) |
+| WP2 | Done (PR #3) |
+| WP3 | Done: plugin built from pinned upstream + 2 patches (PR #5) |
+| WP4 | Done: part A host flags (PR #2), part B monitoring-plugin (PR #9). In-cluster tenancy (9092/9093) to be confirmed on production |
+| WP5 | Done: listing skips superseded revisions (PR #8), CRD + all-namespaces fix (PR #6) |
+| WP6 | Done: `royal-road/WP6-TRIAGE.md`, 3 fixes (PR #7) |
+| WP7 | Done: ConsoleLink in the application menu, no sidebar plugin (PR #6) |
+| WP8 | Done: cutover steps in `royal-road/deploy/README.md` |
 
 Update this table as work packages land.

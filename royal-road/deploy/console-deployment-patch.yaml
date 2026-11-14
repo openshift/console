@@ -1,0 +1,28 @@
+# Strategic-merge patch that switches an existing console Deployment (running
+# the stock quay.io/openshift/origin-console image) to this fork and loads the
+# plugins. Everything else on the Deployment (OIDC, service CA, cookie keys,
+# BRIDGE_BASE_ADDRESS, BRIDGE_BRANDING) stays as it is.
+#
+#   kubectl -n <console-namespace> patch deployment <console-deployment> \
+#     --type strategic --patch-file royal-road/deploy/console-deployment-patch.yaml
+#
+# The container name must match the Deployment's container; check it with
+#   kubectl -n <console-namespace> get deploy <console-deployment> \
+#     -o jsonpath='{.spec.template.spec.containers[*].name}'
+spec:
+  template:
+    spec:
+      containers:
+        - name: <console-container>
+          image: ghcr.io/royal-road/console:<sha>
+          env:
+            # Comma-separated name=url pairs; the trailing / is required.
+            # Order here is the load order unless BRIDGE_PLUGINS_ORDER is set.
+            - name: BRIDGE_PLUGINS
+              value: networking-console-plugin=http://networking-console-plugin.<console-namespace>.svc.cluster.local:8080/,monitoring-plugin=http://monitoring-plugin.<console-namespace>.svc.cluster.local:9443/
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 9000
+            periodSeconds: 10
+            failureThreshold: 3
