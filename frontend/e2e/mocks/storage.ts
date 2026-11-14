@@ -257,6 +257,105 @@ export const getVACFixtures = (suffix: string) => {
   };
 };
 
+// --- VolumeGroupSnapshot fixtures ---
+
+export const getVGSFixtures = (suffix: string, groupSnapshotStorageClassName: string) => {
+  const names = {
+    TEST_PVC_A: `vgs-testpvc-a-${suffix}`,
+    TEST_PVC_B: `vgs-testpvc-b-${suffix}`,
+    TEST_PVC_MIXED_A: `vgs-mixed-pvc-a-${suffix}`,
+    TEST_PVC_MIXED_B: `vgs-mixed-pvc-b-${suffix}`,
+    TEST_FAKE_STORAGECLASS_A: `vgs-fake-sc-a-${suffix}`,
+    TEST_FAKE_STORAGECLASS_B: `vgs-fake-sc-b-${suffix}`,
+    TEST_DEPLOYMENT: `vgs-tester-deployment-${suffix}`,
+  };
+
+  const makePVC = (name: string, storageClassName: string, labels: Record<string, string>) => ({
+    apiVersion: 'v1',
+    kind: 'PersistentVolumeClaim',
+    metadata: { name, labels },
+    spec: {
+      storageClassName,
+      accessModes: ['ReadWriteOnce'],
+      resources: { requests: { storage: '1Gi' } },
+    },
+  });
+
+  return {
+    ...names,
+    // Two PVCs on the same StorageClass/provisioner, for the happy-path group snapshot.
+    // The caller discovers groupSnapshotStorageClassName from an existing
+    // VolumeGroupSnapshotClass on the cluster (see findGroupSnapshotCapableStorageClass),
+    // since not every StorageClass's CSI driver actually implements group snapshots.
+    PVC_SAME_PROVISIONER_A: makePVC(names.TEST_PVC_A, groupSnapshotStorageClassName, {
+      'vgs-test': 'true',
+    }),
+    PVC_SAME_PROVISIONER_B: makePVC(names.TEST_PVC_B, groupSnapshotStorageClassName, {
+      'vgs-test': 'true',
+    }),
+    // Two PVCs on two throwaway StorageClasses with distinct fake provisioners, so the
+    // create form's mixed-provisioner validation is exercised without depending on any
+    // real StorageClass existing on the cluster. Neither needs to be Bound: the
+    // validation only inspects the matched PVCs' declared StorageClass/provisioner.
+    PVC_MIXED_FAKE_PROVISIONER_A: makePVC(names.TEST_PVC_MIXED_A, names.TEST_FAKE_STORAGECLASS_A, {
+      'vgs-mixed-test': 'true',
+    }),
+    PVC_MIXED_FAKE_PROVISIONER_B: makePVC(names.TEST_PVC_MIXED_B, names.TEST_FAKE_STORAGECLASS_B, {
+      'vgs-mixed-test': 'true',
+    }),
+    FAKE_STORAGE_CLASS_A: {
+      apiVersion: 'storage.k8s.io/v1',
+      kind: 'StorageClass',
+      metadata: { name: names.TEST_FAKE_STORAGECLASS_A },
+      provisioner: 'csi.fake-a.example.com',
+    },
+    FAKE_STORAGE_CLASS_B: {
+      apiVersion: 'storage.k8s.io/v1',
+      kind: 'StorageClass',
+      metadata: { name: names.TEST_FAKE_STORAGECLASS_B },
+      provisioner: 'csi.fake-b.example.com',
+    },
+    getDeployment: (namespace: string, pvcNames: string[]) => ({
+      apiVersion: 'apps/v1',
+      kind: 'Deployment',
+      metadata: { name: names.TEST_DEPLOYMENT, namespace },
+      spec: {
+        replicas: 1,
+        selector: { matchLabels: { app: names.TEST_DEPLOYMENT } },
+        template: {
+          metadata: { labels: { app: names.TEST_DEPLOYMENT } },
+          spec: {
+            securityContext: {
+              runAsNonRoot: true,
+              seccompProfile: { type: 'RuntimeDefault' },
+            },
+            containers: [
+              {
+                name: 'busybox',
+                image: 'busybox',
+                imagePullPolicy: 'IfNotPresent',
+                securityContext: {
+                  allowPrivilegeEscalation: false,
+                  capabilities: { drop: ['ALL'] },
+                },
+                command: ['sh', '-c', 'echo Container is Running ; sleep 3600'],
+                volumeMounts: pvcNames.map((pvcName, i) => ({
+                  name: `vol-${i}`,
+                  mountPath: `/data-${i}`,
+                })),
+              },
+            ],
+            volumes: pvcNames.map((pvcName, i) => ({
+              name: `vol-${i}`,
+              persistentVolumeClaim: { claimName: pvcName },
+            })),
+          },
+        },
+      },
+    }),
+  };
+};
+
 export async function isAwsPlatform(
   k8sClient: import('../clients/kubernetes-client').default,
 ): Promise<boolean> {
@@ -267,4 +366,37 @@ export async function isAwsPlatform(
     'cluster',
   )) as any;
   return infra?.status?.platformStatus?.type === 'AWS';
+}
+
+/**
+ * Finds a StorageClass whose provisioner matches the driver of an existing
+ * VolumeGroupSnapshotClass. Group-snapshot support depends on the CSI driver/
+ * snapshot-controller sidecar having the CSIVolumeGroupSnapshot feature gate
+ * enabled, which isn't implied by the CRDs being installed or by any particular
+ * platform, so this discovers a combination the cluster has actually been
+ * configured with rather than assuming one.
+ */
+export async function findGroupSnapshotCapableStorageClass(
+  k8sClient: import('../clients/kubernetes-client').default,
+): Promise<{ storageClassName: string; vgsClassName: string } | null> {
+  const vgsClasses = (await k8sClient.listClusterCustomResources(
+    'groupsnapshot.storage.k8s.io',
+    'v1',
+    'volumegroupsnapshotclasses',
+  )) as { metadata: { name: string }; driver: string }[];
+  if (vgsClasses.length === 0) {
+    return null;
+  }
+  const storageClasses = (await k8sClient.listClusterCustomResources(
+    'storage.k8s.io',
+    'v1',
+    'storageclasses',
+  )) as { metadata: { name: string }; provisioner: string }[];
+  for (const vgsClass of vgsClasses) {
+    const storageClass = storageClasses.find((sc) => sc.provisioner === vgsClass.driver);
+    if (storageClass) {
+      return { storageClassName: storageClass.metadata.name, vgsClassName: vgsClass.metadata.name };
+    }
+  }
+  return null;
 }
