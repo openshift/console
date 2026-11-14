@@ -1,0 +1,1202 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kanadaj <kanadaj@royalroad.com>
+Date: Sat, 14 Nov 2026 23:38:07 +0000
+Subject: [PATCH 2/4] Generate LogsQL instead of LogQL
+
+VictoriaLogs does not serve LogQL. Replace the LogQL query model with a
+small LogsQL one: the stream selector stays a { label="value" } filter
+(valid LogsQL), the content filter becomes a substring filter
+*"text"*, and the severity filter a case-insensitive match on the level
+field. Filters the user typed and pipes after the first | are kept as
+written. The tenant is no longer part of the query: the tenancy proxy
+applies it from the request path.
+---
+ web/src/__tests__/attribute-filters.spec.ts   | 503 ++----------------
+ .../__tests__/error-message-forbidden.spec.ts |   8 +-
+ web/src/__tests__/logsql-query.spec.ts        |  32 ++
+ web/src/attribute-filters.tsx                 | 177 ++----
+ web/src/components/error-message-utils.ts     |   5 +-
+ web/src/components/logs-query-input.tsx       |   8 +-
+ web/src/hooks/useLogs.ts                      |   6 +-
+ web/src/logsql-query.ts                       | 217 ++++++++
+ 8 files changed, 362 insertions(+), 594 deletions(-)
+ create mode 100644 web/src/__tests__/logsql-query.spec.ts
+ create mode 100644 web/src/logsql-query.ts
+
+diff --git a/web/src/__tests__/attribute-filters.spec.ts b/web/src/__tests__/attribute-filters.spec.ts
+index d2c8796..bc667e9 100644
+--- a/web/src/__tests__/attribute-filters.spec.ts
++++ b/web/src/__tests__/attribute-filters.spec.ts
+@@ -5,15 +5,15 @@ jest.mock('@openshift-console/dynamic-plugin-sdk', () => ({
+ 
+ import {
+   filtersFromQuery,
+-  getContentPipelineStage,
++  getContentFilter,
+   getK8sMatcherFromSet,
+   getMatchersFromFilters,
+   getNamespaceMatcher,
+-  getSeverityFilterPipelineStage,
++  getSeverityFilter,
+   queryFromFilters,
+ } from '../attribute-filters';
+ import { AttributeList, Filters } from '../components/filters/filter.types';
+-import { LabelMatcher, PipelineStage } from '../logql-query';
++import { LabelMatcher } from '../logsql-query';
+ import { Schema } from '../logs.types';
+ import { getStreamLabelsFromSchema, ResourceLabel } from '../parse-resources';
+ 
+@@ -149,24 +149,6 @@ describe('Attribute filters', () => {
+     );
+   });
+ 
+-  it('should get content pipeline stage from filters', () => {
+-    [
+-      {
+-        filters: {},
+-        expected: undefined,
+-      },
+-      {
+-        filters: {
+-          content: new Set(['my search query']),
+-        },
+-        expected: { operator: '|=', value: '`my search query`' },
+-      },
+-    ].forEach(({ filters, expected }) => {
+-      const pipeline = getContentPipelineStage(filters);
+-      expect(pipeline).toEqual(expected);
+-    });
+-  });
+-
+   test('getSelectorFromSet', () => {
+     [
+       {
+@@ -242,463 +224,84 @@ describe('Attribute filters', () => {
+     );
+   });
+ 
+-  test('getSeverityFilterPipeline', () => {
+-    [
+-      {
+-        filters: undefined,
+-        expected: undefined,
+-      },
+-      {
+-        filters: {},
+-        expected: undefined,
+-      },
+-      {
+-        filters: { severity: undefined },
+-        expected: undefined,
+-      },
+-      {
+-        filters: {
+-          severity: new Set(['error']),
+-        },
+-        expected: { operator: '|', value: 'level=~"error|err|eror"' },
+-      },
+-      {
+-        filters: {
+-          severity: new Set(['error', 'info']),
+-        },
+-        expected: {
+-          operator: '|',
+-          value: 'level=~"error|err|eror|info|inf|information|notice"',
+-        },
+-      },
+-      {
+-        filters: {
+-          severity: new Set(['error', 'info', 'unknown']),
+-        },
+-        expected: {
+-          operator: '|',
+-          value:
+-            'level="unknown" or level="" or level=~"error|err|eror|info|inf|information|notice"',
+-        },
+-      },
+-      {
+-        filters: {
+-          severity: new Set(['error', 'info', 'unknown']),
+-        },
+-        schema: Schema.otel,
+-        expected: {
+-          operator: '|',
+-          value:
+-            'severity_text="unknown" or severity_text="" or severity_text=~"error|err|eror|info|inf|information|notice"',
+-        },
+-      },
+-      {
+-        filters: {
+-          severity: new Set(['unknown']),
+-        },
+-        expected: {
+-          operator: '|',
+-          value: 'level="unknown" or level=""',
+-        },
+-      },
+-    ].forEach(
+-      ({
+-        filters,
+-        expected,
+-        schema,
+-      }: {
+-        filters: Filters | undefined;
+-        expected: PipelineStage | undefined;
+-        schema?: Schema;
+-      }) => {
+-        const pipeline = getSeverityFilterPipelineStage({ filters, schema: schema ?? Schema.viaq });
+-        expect(pipeline).toEqual(expected);
+-      },
++  it('should get the content filter from filters', () => {
++    expect(getContentFilter({})).toBeUndefined();
++    expect(getContentFilter({ content: new Set(['my search "query"']) })).toEqual(
++      '*"my search \\"query\\""*',
++    );
++  });
++
++  test('getSeverityFilter', () => {
++    expect(getSeverityFilter(undefined)).toBeUndefined();
++    expect(getSeverityFilter({ severity: new Set() })).toBeUndefined();
++    expect(getSeverityFilter({ severity: new Set(['error']) })).toEqual(
++      'level:~"(?i)^(error|err|eror)$"',
++    );
++    expect(getSeverityFilter({ severity: new Set(['error', 'unknown']) })).toEqual(
++      'level:~"(?i)^(error|err|eror|unknown|)$"',
+     );
+   });
+ 
+   test('filtersFromQuery', () => {
++    const attributes = availableAttributes(Schema.vlogs);
+     [
++      { query: undefined, expectedFilters: {} },
++      { query: '*', expectedFilters: {} },
+       {
+-        query: undefined,
+-        expectedFilters: {},
+-      },
+-      {
+-        query: '{',
+-        expectedFilters: {},
+-      },
+-      {
+-        query: '{ foo="var" }',
+-        expectedFilters: {},
++        query: '{ namespace=~"ns-1|ns-2", pod="pod-1" }',
++        expectedFilters: { namespace: new Set(['ns-1', 'ns-2']), pod: new Set(['pod-1']) },
+       },
+       {
+-        query: '{ kubernetes_pod_name }',
++        query: '{ namespace!="ns-1" }',
+         expectedFilters: {},
+       },
+-      {
+-        query: '{ kubernetes_pod_name= }',
+-        expectedFilters: {},
+-      },
+-      {
+-        query: '{ kubernetes_pod_name=" }',
+-        expectedFilters: {},
+-      },
+-      {
+-        query: '{ kubernetes_pod_name="a-pod }',
+-        expectedFilters: {},
+-      },
+-      {
+-        query: '{ kubernetes_pod_name="a-pod" }',
+-        expectedFilters: { pod: new Set(['a-pod']) },
+-      },
+-      {
+-        query: '{ kubernetes_pod_name=~"a-pod|b-pod" }',
+-        expectedFilters: { pod: new Set(['a-pod', 'b-pod']) },
+-      },
+-      {
+-        query: '{ kubernetes_pod_name=~`a-pod|b-pod` }',
+-        expectedFilters: { pod: new Set(['a-pod', 'b-pod']) },
+-      },
+-      {
+-        query:
+-          '{ kubernetes_pod_name=~"a-pod|b-pod", kubernetes_namespace_name=~"ns-1|ns-2", label="test" } |=`some line content` | other="filter" | level="inf"',
+-        expectedFilters: {
+-          pod: new Set(['a-pod', 'b-pod']),
+-          namespace: new Set(['ns-1', 'ns-2']),
+-          content: new Set([`some line content`]),
+-          severity: new Set(['info']),
+-        },
+-      },
+-      {
+-        query: '{ kubernetes_pod_name=~"a-pod|b-pod", ',
+-        expectedFilters: {
+-          pod: new Set(['a-pod', 'b-pod']),
+-        },
+-      },
+-      {
+-        query: '{ kubernetes_pod_name=~"a-pod|b-pod" } |',
+-        expectedFilters: {
+-          pod: new Set(['a-pod', 'b-pod']),
+-        },
+-      },
+-      {
+-        query: '{ kubernetes_pod_name=~"a-pod|b-pod" } |=',
+-        expectedFilters: {
+-          content: new Set(['']),
+-          pod: new Set(['a-pod', 'b-pod']),
+-        },
+-      },
+-      {
+-        query: '{ kubernetes_pod_name=~"a-pod|b-pod" } |=`some line',
+-        expectedFilters: {
+-          content: new Set(['']),
+-          pod: new Set(['a-pod', 'b-pod']),
+-        },
+-      },
+-      {
+-        query: '{ kubernetes_pod_name=~"a-pod|b-pod" } |=`some line` |',
+-        expectedFilters: {
+-          content: new Set([`some line`]),
+-          pod: new Set(['a-pod', 'b-pod']),
+-        },
+-      },
+-      {
+-        query:
+-          '{ kubernetes_pod_name=~"a-pod|b-pod", kubernetes_namespace_name=~"ns-1|ns-2", label="test", kubernetes_container_name="container-1" } |=`some line content` | other="filter" | level="err|eror" or level="unknown" or level=""',
+-        expectedFilters: {
+-          pod: new Set(['a-pod', 'b-pod']),
+-          namespace: new Set(['ns-1', 'ns-2']),
+-          container: new Set(['container-1']),
+-          content: new Set([`some line content`]),
+-          severity: new Set(['error', 'unknown']),
+-        },
+-      },
+-      {
+-        query:
+-          '{ k8s_pod_name=~"a-pod|b-pod", k8s_namespace_name=~"ns-1|ns-2", label="test", k8s_container_name="container-1" } |=`some line content` | other="filter" | severity_text="err|eror" or severity_text="unknown" or severity_text=""',
+-        schema: Schema.otel,
+-        expectedFilters: {
+-          pod: new Set(['a-pod', 'b-pod']),
+-          namespace: new Set(['ns-1', 'ns-2']),
+-          container: new Set(['container-1']),
+-          content: new Set([`some line content`]),
+-          severity: new Set(['error', 'unknown']),
+-        },
+-      },
+-      {
+-        query:
+-          '{ kubernetes_pod_name=~"a-pod|b-pod", kubernetes_namespace_name=~"ns-1|ns-2", label="test", kubernetes_container_name="container-1" } |=`some line content` | other="filter" | level',
+-        expectedFilters: {
+-          pod: new Set(['a-pod', 'b-pod']),
+-          namespace: new Set(['ns-1', 'ns-2']),
+-          container: new Set(['container-1']),
+-          content: new Set([`some line content`]),
+-        },
+-      },
+-      {
+-        query:
+-          '{ kubernetes_pod_name=~"a-pod|b-pod", kubernetes_namespace_name=~"ns-1|ns-2", label="test", kubernetes_container_name="container-1" } |=`"some line content"` | other="filter" | level',
+-        expectedFilters: {
+-          pod: new Set(['a-pod', 'b-pod']),
+-          namespace: new Set(['ns-1', 'ns-2']),
+-          container: new Set(['container-1']),
+-          content: new Set([`"some line content"`]),
+-        },
+-      },
+-      {
+-        query:
+-          '{ kubernetes_pod_name=~"a-pod|b-pod", kubernetes_namespace_name=~"ns-1|ns-2", label="test", kubernetes_container_name="container-1" } |=`"some-line-content"` | other="filter" | level',
+-        expectedFilters: {
+-          pod: new Set(['a-pod', 'b-pod']),
+-          namespace: new Set(['ns-1', 'ns-2']),
+-          container: new Set(['container-1']),
+-          content: new Set([`"some-line-content"`]),
+-        },
+-      },
+       {
+         query:
+-          '{ k8s_pod_name=~"a-pod|b-pod", k8s_namespace_name=~"ns-1|ns-2", label="test", k8s_container_name="container-1" } |=`"some-line-content"` | other="filter" | level',
++          '{ pod="pod-1" } other *"some text"* level:~"(?i)^(warn|warning|wrn|wrning|unknown|)$" | stats count()',
+         expectedFilters: {
+-          pod: new Set(['a-pod', 'b-pod']),
+-          namespace: new Set(['ns-1', 'ns-2']),
+-          container: new Set(['container-1']),
+-          content: new Set([`"some-line-content"`]),
++          pod: new Set(['pod-1']),
++          content: new Set(['some text']),
++          severity: new Set(['warning', 'unknown']),
+         },
+-        schema: Schema.otel,
+       },
+-    ].forEach(
+-      ({
+-        query,
++    ].forEach(({ query, expectedFilters }) => {
++      expect(filtersFromQuery({ query, attributes, schema: Schema.vlogs })).toEqual(
+         expectedFilters,
+-        schema,
+-      }: {
+-        query: string | undefined;
+-        expectedFilters: Filters;
+-        schema?: Schema;
+-      }) => {
+-        const filters = filtersFromQuery({
+-          query,
+-          attributes: availableAttributes(schema ?? Schema.viaq),
+-          schema: schema ?? Schema.viaq,
+-        });
+-        expect(filters).toEqual(expectedFilters);
+-      },
+-    );
++      );
++    });
+   });
+ 
+   test('query from filters', () => {
++    const attributes = availableAttributes(Schema.vlogs);
+     [
++      { existingQuery: '*', filters: undefined, expected: '*' },
++      { existingQuery: '*', filters: {}, expected: '*' },
+       {
+-        initialQuery: '{ kubernetes_pod_name=~"a-pod|b-pod" }',
+-        // If a regex is provided as a value, the operator must be =~
+-        filters: {
+-          pod: new Set(['.*etcd.*']),
+-        },
+-        expectedQuery: '{ kubernetes_pod_name=~".*etcd.*" } | json',
+-      },
+-      {
+-        initialQuery: '{ kubernetes_pod_name=~"a-pod|b-pod" }',
+-        // Single dots are not considered regex as they are valid DNS names:
+-        // https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+-        filters: {
+-          pod: new Set(['openshift.pod']),
+-        },
+-        expectedQuery: '{ kubernetes_pod_name="openshift.pod" } | json',
+-      },
+-      {
+-        initialQuery: '{ kubernetes_pod_name=~"a-pod|b-pod" } | json',
+-        // A regex including a dot must have a quantifier (* or + or ?)
+-        // as regex match in LogQL is fully anchored
+-        // https://grafana.com/docs/loki/latest/query/log_queries/#log-stream-selector
+-        filters: {
+-          pod: new Set(['openshift.*pod']),
+-        },
+-        expectedQuery: '{ kubernetes_pod_name=~"openshift.*pod" } | json',
+-      },
+-      {
+-        initialQuery: '{ kubernetes_pod_name=~"a-pod|b-pod" }',
+-        // A regex including a dot must have a quantifier (* or + or ?)
+-        // as regex match in LogQL is fully anchored
+-        // https://grafana.com/docs/loki/latest/query/log_queries/#log-stream-selector
+-        filters: {
+-          pod: new Set(['openshift.+pod']),
+-        },
+-        expectedQuery: '{ kubernetes_pod_name=~"openshift.+pod" } | json',
+-      },
+-      {
+-        initialQuery: '{ kubernetes_pod_name=~"a-pod|b-pod" }',
+-        // A regex including a dot must have a quantifier (* or + or ?)
+-        // as regex match in LogQL is fully anchored
+-        // https://grafana.com/docs/loki/latest/query/log_queries/#log-stream-selector
+-        filters: {
+-          pod: new Set(['openshift.?pod']),
+-        },
+-        expectedQuery: '{ kubernetes_pod_name=~"openshift.?pod" } | json',
+-      },
+-      {
+-        initialQuery: '{ kubernetes_pod_name=~"a-pod|b-pod" }',
++        existingQuery: '*',
+         filters: {
+-          pod: new Set(['ns-1']),
+-        },
+-        expectedQuery: '{ kubernetes_pod_name="ns-1" } | json',
+-      },
+-      {
+-        initialQuery:
+-          '{ kubernetes_pod_name=~"a-pod|b-pod", kubernetes_namespace_name=~"ns-1|ns-2", label="test", kubernetes_container_name="container-1" } |="some line content" | other="filter" | level="err|eror" or level="unknown" or level=""',
+-        filters: undefined,
+-        expectedQuery:
+-          '{ kubernetes_pod_name=~"a-pod|b-pod", kubernetes_namespace_name=~"ns-1|ns-2", label="test", kubernetes_container_name="container-1" } |= "some line content" | other="filter" | level="err|eror" or level="unknown" or level=""',
+-      },
+-      {
+-        initialQuery:
+-          '{ kubernetes_pod_name=~`a-pod|b-pod`, kubernetes_namespace_name=~`ns-1|ns-2`, label=`test`, kubernetes_container_name=`container-1` } |=`some line content` | other=`filter` | level=`err|eror` or level=`unknown` or level=``',
+-        filters: undefined,
+-        expectedQuery:
+-          '{ kubernetes_pod_name=~`a-pod|b-pod`, kubernetes_namespace_name=~`ns-1|ns-2`, label=`test`, kubernetes_container_name=`container-1` } |= `some line content` | other=`filter` | level=`err|eror` or level=`unknown` or level=``',
+-      },
+-      {
+-        initialQuery:
+-          '{ kubernetes_pod_name=~"a-pod|b-pod", kubernetes_namespace_name=~"ns-1|ns-2", label="test", kubernetes_container_name="container-1" } | json |="some line content" | other="filter" | level="err|eror" or level="unknown" or level=""',
+-        filters: {},
+-        expectedQuery: '{ label="test" } | json | other="filter"',
+-      },
+-      {
+-        initialQuery:
+-          '{ kubernetes_pod_name=~"a-pod|b-pod", kubernetes_namespace_name=~"ns-1|ns-2", label="test", kubernetes_container_name="container-1" } | json |="some line content" | other="filter" | level="err|eror" or level="unknown" or level=""',
+-        filters: {
+-          namespace: new Set(['namespace-3']),
+-        },
+-        expectedQuery:
+-          '{ kubernetes_namespace_name="namespace-3", label="test" } | json | other="filter"',
+-      },
+-      {
+-        initialQuery:
+-          '{ kubernetes_pod_name=~"a-pod|b-pod", kubernetes_namespace_name=~"ns-1|ns-2", label="test", kubernetes_container_name="container-1" } | json |="some line content" | other="filter" | level="err|eror" or level="unknown" or level=""',
+-        filters: {
+-          namespace: new Set(['namespace-3', 'namespace-4']),
+-          severity: new Set(['unknown', 'error']),
+-        },
+-        expectedQuery:
+-          '{ kubernetes_namespace_name=~"namespace-3|namespace-4", label="test" } | json | other="filter" | level="unknown" or level="" or level=~"error|err|eror"',
+-      },
+-      {
+-        initialQuery:
+-          '{ kubernetes_pod_name=~"a-pod|b-pod", kubernetes_namespace_name=~"ns-1|ns-2", label="test", kubernetes_container_name="container-1" } |="some line content" | other="filter" |  level="unknown" or level="" or level=~"err|error|eror"',
+-        filters: {
+-          namespace: new Set(['namespace-3', 'namespace-4']),
+-          content: new Set(['new line filter']),
+-          severity: new Set(['error', 'unknown']),
+-        },
+-        expectedQuery:
+-          '{ kubernetes_namespace_name=~"namespace-3|namespace-4", label="test" } |= `new line filter` | json | other="filter" | level="unknown" or level="" or level=~"error|err|eror"',
+-      },
+-      {
+-        initialQuery:
+-          '{ kubernetes_pod_name=~"a-pod|b-pod", kubernetes_namespace_name=~"ns-1|ns-2", label="test", kubernetes_container_name="container-1" } |="some line content" | other="filter" | level=~"err|error|eror" or level="unknown" or level=""',
+-        filters: {
+-          namespace: new Set(['namespace-3', 'namespace-4']),
+-          content: new Set(['new line filter']),
++          namespace: new Set(['ns-1', 'ns-2']),
++          content: new Set(['timeout']),
+           severity: new Set(['error']),
+         },
+-        expectedQuery:
+-          '{ kubernetes_namespace_name=~"namespace-3|namespace-4", label="test" } |= `new line filter` | json | other="filter" | level=~"error|err|eror"',
+-      },
+-      {
+-        initialQuery:
+-          '{ kubernetes_pod_name=~"a-pod|b-pod", kubernetes_namespace_name=~"ns-1|ns-2", label="test", kubernetes_container_name="container-1" } |="some line content" | other="filter" | level=~"err|error|eror" or level="unknown" or level=""',
+-        filters: {
+-          namespace: new Set(['namespace-3', 'namespace-4']),
+-          content: new Set(['new line filter']),
+-          severity: new Set(['error', 'info']),
+-          pod: new Set(['some-pod']),
+-        },
+-        expectedQuery:
+-          '{ kubernetes_pod_name="some-pod", kubernetes_namespace_name=~"namespace-3|namespace-4", label="test" } |= `new line filter` | json | other="filter" | level=~"error|err|eror|info|inf|information|notice"',
++        expected: '{ namespace=~"ns-1|ns-2" } *"timeout"* level:~"(?i)^(error|err|eror)$"',
+       },
+       {
+-        initialQuery:
+-          '{ kubernetes_pod_name=~"a-pod|b-pod", kubernetes_namespace_name=~"ns-1|ns-2", label="test", kubernetes_container_name="container-1" } |="some line content" | other="filter" | level=~"err|error|eror" or level="unknown" or level=""',
+-        filters: {
+-          namespace: new Set(['namespace-3', 'namespace-4']),
+-          content: new Set(['new line filter']),
+-          severity: new Set<string>(),
+-          pod: new Set(['some-pod']),
+-        },
+-        expectedQuery:
+-          '{ kubernetes_pod_name="some-pod", kubernetes_namespace_name=~"namespace-3|namespace-4", label="test" } |= `new line filter` | json | other="filter"',
++        // the user's own filters and pipes are kept; ours are replaced
++        existingQuery:
++          '{ namespace="ns-1", pod="p" } foo *"old"* level:~"(?i)^(info)$" | stats by (level) count()',
++        filters: { namespace: new Set(['ns-2']), content: new Set(['new']) },
++        expected: '{ namespace="ns-2" } foo *"new"* | stats by (level) count()',
+       },
+       {
+-        initialQuery:
+-          '{ kubernetes_pod_name=~"a-pod|b-pod", kubernetes_namespace_name=~"ns-1|ns-2", label="test", kubernetes_container_name="container-1" } |="some line content" | other="filter" | level=~"err|error|eror" or level="unknown" or level=""',
+-        filters: {
+-          namespace: new Set(['namespace-3', 'namespace-4']),
+-          content: new Set<string>(),
+-          severity: new Set<string>(),
+-          pod: new Set(['some-pod']),
+-        },
+-        expectedQuery:
+-          '{ kubernetes_pod_name="some-pod", kubernetes_namespace_name=~"namespace-3|namespace-4", label="test" } | json | other="filter"',
++        // a top-level `or` is grouped so our filters apply to both sides
++        existingQuery: 'a or b',
++        filters: { content: new Set(['x']) },
++        expected: '(a or b) *"x"*',
+       },
+-      {
+-        initialQuery:
+-          '{ kubernetes_pod_name=~"a-pod|b-pod", kubernetes_namespace_name=~"ns-1|ns-2", label="test", kubernetes_container_name="container-1" } |="some line content" | other="filter" | level=~"err|error|eror" or level="unknown" or level=""',
+-        filters: {
+-          namespace: new Set(['namespace-3', 'namespace-4']),
+-          content: new Set<string>(),
+-          severity: new Set<string>(),
+-          pod: new Set<string>(),
+-        },
+-        expectedQuery:
+-          '{ kubernetes_namespace_name=~"namespace-3|namespace-4", label="test" } | json | other="filter"',
+-      },
+-      // Add otel labels keeping the viaq labels
+-      {
+-        initialQuery:
+-          '{ kubernetes_pod_name=~"a-pod|b-pod", kubernetes_namespace_name=~"ns-1|ns-2", label="test", kubernetes_container_name="container-1" } |="some line content" | other="filter" | level=~"err|error|eror" or level="unknown" or level=""',
+-        filters: {
+-          namespace: new Set(['namespace-3', 'namespace-4']),
+-          content: new Set<string>(),
+-          severity: new Set<string>(),
+-          pod: new Set<string>(),
+-        },
+-        schema: Schema.otel,
+-        expectedQuery:
+-          '{ kubernetes_pod_name=~"a-pod|b-pod", kubernetes_namespace_name=~"ns-1|ns-2", label="test", kubernetes_container_name="container-1", k8s_namespace_name=~"namespace-3|namespace-4" } | other="filter" | level=~"err|error|eror" or level="unknown" or level=""',
+-      },
+-      {
+-        initialQuery:
+-          '{ kubernetes_pod_name=~`a-pod|b-pod`, kubernetes_namespace_name=~`ns-1|ns-2`, label=`test`, kubernetes_container_name=`container-1` } |=`some line content` | other="filter" | level=~"err|error|eror" or level="unknown" or level=""',
+-        filters: {
+-          namespace: new Set(['namespace-3', 'namespace-4']),
+-          content: new Set<string>(),
+-          severity: new Set<string>(),
+-          pod: new Set<string>(),
+-        },
+-        schema: Schema.otel,
+-        expectedQuery:
+-          '{ kubernetes_pod_name=~`a-pod|b-pod`, kubernetes_namespace_name=~`ns-1|ns-2`, label=`test`, kubernetes_container_name=`container-1`, k8s_namespace_name=~"namespace-3|namespace-4" } | other="filter" | level=~"err|error|eror" or level="unknown" or level=""',
+-      },
+-    ].forEach(
+-      ({
+-        initialQuery,
+-        filters,
+-        expectedQuery,
+-        schema,
+-      }: {
+-        initialQuery: string;
+-        filters?: Filters;
+-        expectedQuery: string;
+-        schema?: Schema;
+-      }) => {
+-        expect(
+-          queryFromFilters({
+-            existingQuery: initialQuery,
+-            filters,
+-            attributes: availableAttributes(schema ?? Schema.viaq),
+-            schema: schema ?? Schema.viaq,
+-          }),
+-        ).toEqual(expectedQuery);
+-      },
+-    );
++    ].forEach(({ existingQuery, filters, expected }) => {
++      expect(
++        queryFromFilters({ existingQuery, filters, attributes, schema: Schema.vlogs }),
++      ).toEqual(expected);
++    });
+   });
+ });
+diff --git a/web/src/__tests__/error-message-forbidden.spec.ts b/web/src/__tests__/error-message-forbidden.spec.ts
+index 980a99d..68c418e 100644
+--- a/web/src/__tests__/error-message-forbidden.spec.ts
++++ b/web/src/__tests__/error-message-forbidden.spec.ts
+@@ -97,11 +97,9 @@ describe('queryHasNamespaceFilter (executed-query namespace scope for OU-578)',
+   });
+ 
+   it('detects a compound query where every selector is namespace-scoped', () => {
+-    expect(
+-      queryHasNamespaceFilter(
+-        'sum(rate({ kubernetes_namespace_name="a" }[5m])) or sum(rate({ kubernetes_namespace_name="b" }[5m]))',
+-      ),
+-    ).toBe(true);
++    expect(queryHasNamespaceFilter('{ namespace="a" } or { namespace="b" } | stats count()')).toBe(
++      true,
++    );
+   });
+ 
+   it('returns false for a compound query where one selector is unscoped', () => {
+diff --git a/web/src/__tests__/logsql-query.spec.ts b/web/src/__tests__/logsql-query.spec.ts
+new file mode 100644
+index 0000000..131da68
+--- /dev/null
++++ b/web/src/__tests__/logsql-query.spec.ts
+@@ -0,0 +1,32 @@
++import { LogsQLQuery } from '../logsql-query';
++
++describe('LogsQLQuery', () => {
++  it('parses the stream selector, filters and pipes', () => {
++    const query = new LogsQLQuery(
++      '_stream:{namespace="a", pod=~"b|c", container in ("x","y")} error *"t i"* level:~"(?i)^(err)$" | stats by (level) count()',
++    );
++    expect(query.streamSelector).toEqual([
++      { label: 'namespace', operator: '=', value: '"a"' },
++      { label: 'pod', operator: '=~', value: '"b|c"' },
++      { label: 'container', operator: 'in', value: '("x","y")' },
++    ]);
++    expect(query.filters.map(({ kind }) => kind)).toEqual(['other', 'content', 'level']);
++    expect(query.pipes).toEqual('stats by (level) count()');
++    expect(query.hasStatsPipe()).toBe(true);
++  });
++
++  it('keeps a | inside quotes and parentheses', () => {
++    const query = new LogsQLQuery('"a | b" (x or y) | limit 5');
++    expect(query.filters.map(({ text }) => text)).toEqual(['"a | b"', '(x or y)']);
++    expect(query.pipes).toEqual('limit 5');
++    expect(query.hasStatsPipe()).toBe(false);
++  });
++
++  it('round-trips a query and collects every selector', () => {
++    const query = new LogsQLQuery('{ namespace="a" } or { namespace="b" }');
++    expect(query.streamSelectors).toHaveLength(2);
++    expect(query.streamSelector).toEqual([]);
++    expect(query.toString()).toEqual('({ namespace="a" } or { namespace="b" })');
++    expect(new LogsQLQuery('').toString()).toEqual('*');
++  });
++});
+diff --git a/web/src/attribute-filters.tsx b/web/src/attribute-filters.tsx
+index 5789ad2..024dc79 100644
+--- a/web/src/attribute-filters.tsx
++++ b/web/src/attribute-filters.tsx
+@@ -1,7 +1,7 @@
+ import { K8sResourceCommon } from '@openshift-console/dynamic-plugin-sdk';
+ import { cancellableFetch } from './cancellable-fetch';
+ import { Attribute, AttributeList, Filters, Option } from './components/filters/filter.types';
+-import { LabelMatcher, LogQLQuery, PipelineStage } from './logql-query';
++import { LabelMatcher, LEVEL_FIELD, LogsQLQuery, quoteLogsQL } from './logsql-query';
+ import { Config, Schema, SeriesResponse } from './logs.types';
+ import { executeLabelValue, executeSeries } from './loki-client';
+ import { getStreamLabelsFromSchema, ResourceLabel } from './parse-resources';
+@@ -552,8 +552,6 @@ export const queryFromFilters = ({
+   existingQuery,
+   filters,
+   attributes,
+-  tenant,
+-  schema,
+ }: {
+   existingQuery: string;
+   filters?: Filters;
+@@ -561,51 +559,17 @@ export const queryFromFilters = ({
+   tenant?: string;
+   schema: Schema;
+ }): string => {
+-  const query = new LogQLQuery(existingQuery);
+-
+-  const streamLabels = getStreamLabelsFromSchema(schema);
+-  const tenantLabel = streamLabels[ResourceLabel.LogType];
+-  const severityLabel = streamLabels[ResourceLabel.Severity];
++  // The tenant is not part of a LogsQL query: the tenancy proxy applies it from
++  // the request path.
++  const query = new LogsQLQuery(existingQuery);
+ 
+   if (!filters) {
+     return query.toString();
+   }
+ 
+-  if (tenant) {
+-    query.addSelectorMatcher({
+-      label: tenantLabel,
+-      operator: '=',
+-      value: `"${tenant}"`,
+-    });
+-  }
+-
+-  const contentPipelineStage = getContentPipelineStage(filters);
+-
+-  if (contentPipelineStage) {
+-    query.removePipelineStage({ operator: '|=' }).addPipelineStage(contentPipelineStage, {
+-      placement: 'start',
+-    });
+-  }
+-
+-  if (filters?.content === undefined || filters.content.size === 0) {
+-    query.removePipelineStage({ operator: '|=' });
+-  }
+-
+-  const severityPipelineStage = getSeverityFilterPipelineStage({ filters, schema });
+-
+-  if (severityPipelineStage) {
+-    query
+-      .removePipelineStage({}, { matchLabel: `${severityLabel}` })
+-      .addPipelineStage(severityPipelineStage, {
+-        placement: 'end',
+-      });
+-  }
+-
+-  if (filters?.severity === undefined || filters.severity.size === 0) {
+-    query.removePipelineStage({}, { matchLabel: `${severityLabel}` });
+-  }
+-
+-  query.addSelectorMatcher(getMatchersFromFilters({ filters, schema }));
++  query.setFilter('content', getContentFilter(filters));
++  query.setFilter('level', getSeverityFilter(filters));
++  query.addSelectorMatcher(getMatchersFromFilters({ filters, schema: Schema.vlogs }));
+ 
+   attributes.forEach(({ id, label }) => {
+     if (label) {
+@@ -616,59 +580,53 @@ export const queryFromFilters = ({
+     }
+   });
+ 
+-  // Remove the tenant label matcher if the query has other selectors
+-  if (tenant && query.streamSelector.filter((a) => a.label !== tenantLabel).length > 0) {
+-    query.removeSelectorMatcher({ label: tenantLabel });
+-  }
+-
+-  if (schema === Schema.viaq) {
+-    query.addPipelineStage({ operator: '|', value: 'json' }, { placement: 'start' });
+-  }
+-
+   return query.toString();
+ };
+ 
+ export const filtersFromQuery = ({
+   query,
+   attributes,
+-  schema,
+ }: {
+   query?: string;
+   attributes: AttributeList;
+   schema: Schema;
+ }): Filters => {
+   const filters: Filters = {};
+-  const logQLQuery = new LogQLQuery(query ?? '');
+-
+-  const streamLabels = getStreamLabelsFromSchema(schema);
+-  const severityLabel = streamLabels[ResourceLabel.Severity];
++  const logsQLQuery = new LogsQLQuery(query ?? '');
+ 
+   for (const { label, id } of attributes) {
+     if (label && label.length > 0) {
+-      for (const selector of logQLQuery.streamSelector) {
+-        if (selector.label === label && selector.value) {
++      for (const selector of logsQLQuery.streamSelector) {
++        if (
++          selector.label === label &&
++          selector.value &&
++          ['=', '=~'].includes(selector.operator ?? '')
++        ) {
+           filters[id] = new Set(removeQuoteWrapper(selector.value).split('|'));
+         }
+       }
+     }
+   }
+ 
+-  for (const pipelineStage of logQLQuery.pipeline) {
+-    if (
+-      pipelineStage.operator === '|' &&
+-      pipelineStage.labelsInFilter?.every(({ label }) => label === `${severityLabel}`) &&
+-      !filters.severity
+-    ) {
+-      const severityValues: Array<Severity> = pipelineStage.labelsInFilter
+-        .map(({ value }) => (value ? removeQuoteWrapper(value) : ''))
+-        .flatMap((value) => value.split('|'))
+-        .map(severityFromString)
+-        .filter(notUndefined);
+-      if (severityValues.length > 0) {
+-        filters.severity = new Set(severityValues);
+-      }
+-    } else if (pipelineStage.operator === '|=' && !filters.content) {
+-      filters.content = new Set([removeQuoteWrapper(pipelineStage.value)]);
++  const levelFilter = logsQLQuery.getFilter('level');
++  const levels = levelFilter?.text.match(/\^\((.*)\)\$"$/)?.[1];
++  if (levels !== undefined) {
++    const severityValues = levels
++      .split('|')
++      .map((value) => (value === '' ? 'unknown' : severityFromString(value)))
++      .filter(notUndefined);
++    if (severityValues.length > 0) {
++      filters.severity = new Set(severityValues);
++    }
++  }
++
++  const contentFilter = logsQLQuery.getFilter('content');
++  if (contentFilter) {
++    const quoted = contentFilter.text.slice(1, -1);
++    try {
++      filters.content = new Set([quoted.startsWith('"') ? JSON.parse(quoted) : quoted]);
++    } catch {
++      filters.content = new Set([quoted]);
+     }
+   }
+ 
+@@ -711,11 +669,11 @@ export const queryWithNamespace = ({
+   namespace?: string;
+   schema: Schema;
+ }) => {
+-  const logQLQuery = new LogQLQuery(query ?? '');
++  const logsQLQuery = new LogsQLQuery(query ?? '');
+ 
+-  logQLQuery.addSelectorMatcher(getNamespaceMatcher({ namespace, schema }));
++  logsQLQuery.addSelectorMatcher(getNamespaceMatcher({ namespace, schema }));
+ 
+-  return logQLQuery.toString();
++  return logsQLQuery.toString();
+ };
+ 
+ export const getK8sMatcherFromSet = (
+@@ -781,64 +739,27 @@ export const getMatchersFromFilters = ({
+   return matchers.filter(notUndefined);
+ };
+ 
+-export const getContentPipelineStage = (filters?: Filters): PipelineStage | undefined => {
+-  if (!filters) {
+-    return undefined;
+-  }
+-
+-  const content = filters.content;
+-
+-  if (!content) {
+-    return undefined;
+-  }
++// Substring match on the log message, like LogQL's |= filter.
++export const getContentFilter = (filters?: Filters): string | undefined => {
++  const [textValue] = filters?.content ?? [];
+ 
+-  const [textValue] = content;
+-
+-  if (textValue === undefined) {
+-    return undefined;
+-  }
+-
+-  return { operator: '|=', value: `\`${textValue}\`` };
++  return textValue ? `*${quoteLogsQL(textValue)}*` : undefined;
+ };
+ 
+-export const getSeverityFilterPipelineStage = ({
+-  filters,
+-  schema,
+-}: {
+-  filters?: Filters;
+-  schema: Schema;
+-}): PipelineStage | undefined => {
+-  if (!filters) {
+-    return undefined;
+-  }
+-
+-  const severity = filters.severity;
+-
+-  const labels = getStreamLabelsFromSchema(schema);
+-  const severityLabel = labels.Severity;
++// Case-insensitive match of the level field against every spelling of the
++// selected severities; "unknown" also matches logs without a level.
++export const getSeverityFilter = (filters?: Filters): string | undefined => {
++  const severity = filters?.severity;
+ 
+-  if (!severity) {
++  if (!severity || severity.size === 0) {
+     return undefined;
+   }
+ 
+-  const unknownFilter = severity.has('unknown')
+-    ? `${severityLabel}="unknown" or ${severityLabel}=""`
+-    : '';
+-
+-  const severityFilters = Array.from(severity).flatMap((group: string | undefined) => {
+-    if (group === 'unknown' || group === undefined) {
+-      return [];
+-    }
+-
+-    return severityAbbreviations[group as Severity];
+-  });
+-
+-  const levelsfilter =
+-    severityFilters.length > 0 ? `${severityLabel}=~"${severityFilters.join('|')}"` : '';
+-
+-  const allFilters = [unknownFilter, levelsfilter].filter(notEmptyString);
++  const levels = Array.from(severity).flatMap((group: string) =>
++    group === 'unknown' ? ['unknown', ''] : (severityAbbreviations[group as Severity] ?? []),
++  );
+ 
+-  return allFilters.length > 0 ? { operator: '|', value: allFilters.join(' or ') } : undefined;
++  return `${LEVEL_FIELD}:~${quoteLogsQL(`(?i)^(${levels.join('|')})$`)}`;
+ };
+ 
+ const getPodAttributeOptions = (
+diff --git a/web/src/components/error-message-utils.ts b/web/src/components/error-message-utils.ts
+index dcdd9ec..16d0b83 100644
+--- a/web/src/components/error-message-utils.ts
++++ b/web/src/components/error-message-utils.ts
+@@ -1,4 +1,4 @@
+-import { LabelMatcher, LogQLQuery } from '../logql-query';
++import { LabelMatcher, LogsQLQuery } from '../logsql-query';
+ import { ResourceLabel, ResourceToStreamLabels } from '../parse-resources';
+ import { removeQuoteWrapper } from '../value-utils';
+ 
+@@ -9,6 +9,7 @@ export type ForbiddenKind = 'none' | 'namespace-selected' | 'no-namespace' | 'au
+ const NAMESPACE_LABELS = [
+   ResourceToStreamLabels[ResourceLabel.Namespace].otel,
+   ResourceToStreamLabels[ResourceLabel.Namespace].viaq,
++  ResourceToStreamLabels[ResourceLabel.Namespace].vlogs,
+ ];
+ 
+ // != / !~ exclude one namespace but admit all others, so they don't scope the query.
+@@ -57,7 +58,7 @@ export const queryHasNamespaceFilter = (query: string | undefined, tenant?: stri
+     return false;
+   }
+ 
+-  const parsedQuery = new LogQLQuery(query);
++  const parsedQuery = new LogsQLQuery(query);
+ 
+   return (
+     parsedQuery.streamSelectors.length > 0 &&
+diff --git a/web/src/components/logs-query-input.tsx b/web/src/components/logs-query-input.tsx
+index 1b5eace..3c3f2c3 100644
+--- a/web/src/components/logs-query-input.tsx
++++ b/web/src/components/logs-query-input.tsx
+@@ -1,6 +1,5 @@
+ import { Alert, Form, FormAlert, FormGroup, TextArea } from '@patternfly/react-core';
+ import { useTranslation } from 'react-i18next';
+-import { LogQLQuery } from '../logql-query';
+ import { TestIds } from '../test-ids';
+ import { ExecuteQueryButton } from './execute-query-button';
+ import './logs-query-input.css';
+@@ -39,11 +38,8 @@ export const LogsQueryInput: FC<LogsQueryInputProps> = ({
+ 
+   useEffect(() => {
+     setInternalValue(value);
+-    const parsedQuery = new LogQLQuery(value);
+-
+-    // show invalid message only when query is empty for application tenant,
+-    // audit and infrastructure don't necessarily need a stream selector
+-    setIsValid(tenant === 'application' ? parsedQuery.streamSelector.length > 0 : true);
++    // LogsQL accepts any filter (even `*`) without a stream selector
++    setIsValid(value.trim().length > 0);
+   }, [value, tenant]);
+ 
+   const handleOnChange = (text: string) => {
+diff --git a/web/src/hooks/useLogs.ts b/web/src/hooks/useLogs.ts
+index 0ac1db8..dd7d8dd 100644
+--- a/web/src/hooks/useLogs.ts
++++ b/web/src/hooks/useLogs.ts
+@@ -23,7 +23,7 @@ import { intervalFromTimeRange, numericTimeRange, timeRangeFromDuration } from '
+ import { getPaginationRange, msToNs } from '../value-utils';
+ 
+ import { queryHasNamespaceFilter } from '../components/error-message-utils';
+-import { LogQLQuery } from '../logql-query';
++import { LogsQLQuery } from '../logsql-query';
+ import { LogsContext } from './LogsConfigProvider';
+ import { useContext, useReducer, useRef } from 'react';
+ 
+@@ -587,8 +587,8 @@ export const useLogs = (
+ 
+       // Volume API only accepts labels, so have to extract them from the query.
+       // Only grabs the data within the { }
+-      const logQLQuery = new LogQLQuery(query);
+-      query = `{ ${logQLQuery.streamSelector
++      const logsQLQuery = new LogsQLQuery(query);
++      query = `{ ${logsQLQuery.streamSelector
+         .map(
+           ({ label, operator, value }) =>
+             `${label}${operator !== undefined ? operator : ''}${value !== undefined ? value : ''}`,
+diff --git a/web/src/logsql-query.ts b/web/src/logsql-query.ts
+new file mode 100644
+index 0000000..ba7ea4c
+--- /dev/null
++++ b/web/src/logsql-query.ts
+@@ -0,0 +1,217 @@
++// A small model of the VictoriaLogs LogsQL queries this plugin builds:
++//
++//   { namespace="a", pod=~"b|c" } <other filters> <content filter> <level filter> | <pipes>
++//
++// It parses the stream selector into label matchers, keeps every other top-level
++// filter verbatim, recognises the content and level filters the plugin writes,
++// and leaves the pipes after the first top-level `|` untouched.
++// See https://docs.victoriametrics.com/victorialogs/logsql/
++
++export type LabelMatcher = {
++  label?: string;
++  operator?: string;
++  value?: string;
++};
++
++export type LogsQLFilterKind = 'content' | 'level' | 'other';
++
++export type LogsQLFilter = {
++  kind: LogsQLFilterKind;
++  // the filter as written in the query
++  text: string;
++};
++
++export const LEVEL_FIELD = 'level';
++
++const LABEL = /([A-Za-z_][\w.]*|"(?:[^"\\]|\\.)*")/.source;
++const OPERATOR = /(=~|!~|!=|=|not_in|in)/.source;
++const VALUE = /("(?:[^"\\]|\\.)*"|`[^`]*`|\([^)]*\))/.source;
++const MATCHER_REGEX = new RegExp(`\\s*${LABEL}\\s*${OPERATOR}\\s*${VALUE}\\s*,?`, 'y');
++
++// Splits `text` at top-level whitespace, keeping quoted strings and parenthesised
++// groups together. Stops at the first top-level `|` and returns the rest as pipes.
++const tokenize = (text: string): { tokens: Array<string>; pipes: string } => {
++  const tokens: Array<string> = [];
++  let current = '';
++  let depth = 0;
++  let quote: string | undefined;
++
++  for (let i = 0; i < text.length; i++) {
++    const char = text[i];
++
++    if (quote) {
++      current += char;
++      if (char === '\\' && quote !== '`' && i + 1 < text.length) {
++        current += text[++i];
++      } else if (char === quote) {
++        quote = undefined;
++      }
++      continue;
++    }
++
++    if (char === '"' || char === "'" || char === '`') {
++      quote = char;
++      current += char;
++    } else if (char === '(' || char === '{') {
++      depth++;
++      current += char;
++    } else if (char === ')' || char === '}') {
++      depth = Math.max(0, depth - 1);
++      current += char;
++    } else if (depth === 0 && char === '|') {
++      if (current) tokens.push(current);
++      return { tokens, pipes: text.slice(i + 1).trim() };
++    } else if (depth === 0 && /\s/.test(char)) {
++      if (current) tokens.push(current);
++      current = '';
++    } else {
++      current += char;
++    }
++  }
++
++  if (current) tokens.push(current);
++
++  return { tokens, pipes: '' };
++};
++
++const parseSelector = (selector: string): Array<LabelMatcher> => {
++  const body = selector
++    .replace(/^_stream:/, '')
++    .trim()
++    .slice(1, -1);
++  const matchers: Array<LabelMatcher> = [];
++  MATCHER_REGEX.lastIndex = 0;
++  let match: RegExpExecArray | null;
++
++  while (MATCHER_REGEX.lastIndex < body.length && (match = MATCHER_REGEX.exec(body)) !== null) {
++    matchers.push({ label: match[1], operator: match[2], value: match[3] });
++  }
++
++  return matchers;
++};
++
++const isSelector = (token: string) => /^(_stream:)?\{.*\}$/s.test(token);
++
++const filterKind = (token: string): LogsQLFilterKind => {
++  if (token.startsWith(`${LEVEL_FIELD}:`)) {
++    return 'level';
++  }
++  if (/^\*(".*"|[^\s"*]+)\*$/s.test(token)) {
++    return 'content';
++  }
++  return 'other';
++};
++
++export const matcherToString = ({ label, operator, value }: LabelMatcher) =>
++  `${label}${operator !== undefined ? operator : ''}${value !== undefined ? value : ''}`;
++
++export class LogsQLQuery {
++  streamSelector: Array<LabelMatcher> = [];
++  // every stream selector in the query, including the first one
++  streamSelectors: Array<Array<LabelMatcher>> = [];
++  filters: Array<LogsQLFilter> = [];
++  pipes = '';
++
++  constructor(query: string) {
++    const { tokens, pipes } = tokenize(query.trim());
++    // With a top-level `or` no single selector applies to the whole query, so
++    // none is taken out for editing; the filters are kept as written.
++    const hasTopLevelOr = tokens.some((token) => token.toLowerCase() === 'or');
++
++    for (const token of tokens) {
++      if (isSelector(token)) {
++        this.streamSelectors.push(parseSelector(token));
++        if (this.streamSelectors.length === 1 && !hasTopLevelOr) {
++          this.streamSelector = this.streamSelectors[0];
++          continue;
++        }
++      }
++      if (token === '*') {
++        continue;
++      }
++      this.filters.push({ kind: filterKind(token), text: token });
++    }
++
++    this.pipes = pipes;
++  }
++
++  removeSelectorMatcher = (matcherToRemove: Partial<LabelMatcher>) => {
++    this.streamSelector = this.streamSelector.filter(
++      (matcher) => !matcherToRemove.label || matcher.label !== matcherToRemove.label,
++    );
++
++    return this;
++  };
++
++  addSelectorMatcher = (matchers?: LabelMatcher | Array<LabelMatcher>) => {
++    if (!matchers) {
++      return this;
++    }
++
++    const matchersArray = Array.isArray(matchers) ? matchers : [matchers];
++
++    matchersArray.forEach((matcher) => {
++      const existingSelectorIndex = this.streamSelector.findIndex(
++        ({ label }) => matcher.label === label,
++      );
++
++      if (existingSelectorIndex !== -1) {
++        this.streamSelector[existingSelectorIndex] = matcher;
++      } else {
++        this.streamSelector.push(matcher);
++      }
++    });
++
++    return this;
++  };
++
++  getFilter = (kind: LogsQLFilterKind): LogsQLFilter | undefined =>
++    this.filters.find((filter) => filter.kind === kind);
++
++  // Replaces the filter of `kind` (content or level) with `text`, or removes it
++  // when `text` is undefined.
++  setFilter = (kind: Exclude<LogsQLFilterKind, 'other'>, text?: string) => {
++    this.filters = this.filters.filter((filter) => filter.kind !== kind);
++
++    if (text) {
++      this.filters.push({ kind, text });
++    }
++
++    return this;
++  };
++
++  hasStatsPipe = () => /(^|\|)\s*stats\b/.test(this.pipes);
++
++  toString = () => {
++    const parts: Array<string> = [];
++
++    if (this.streamSelector.length > 0) {
++      parts.push(`{ ${this.streamSelector.map(matcherToString).join(', ')} }`);
++    }
++
++    const others = this.filters.filter(({ kind }) => kind === 'other').map(({ text }) => text);
++    // `a or b` binds looser than the implicit AND between filters, so group the
++    // user's own filters before adding ours.
++    const hasTopLevelOr = others.some((text) => text.toLowerCase() === 'or');
++    if (others.length > 0) {
++      parts.push(hasTopLevelOr ? `(${others.join(' ')})` : others.join(' '));
++    }
++
++    for (const kind of ['content', 'level'] as const) {
++      const filter = this.getFilter(kind);
++      if (filter) {
++        parts.push(filter.text);
++      }
++    }
++
++    const query = parts.length > 0 ? parts.join(' ') : '*';
++
++    return this.pipes ? `${query} | ${this.pipes}` : query;
++  };
++}
++
++// Quotes a value as a LogsQL string literal.
++export const quoteLogsQL = (value: string) => JSON.stringify(value);
++
++const REGEX_SPECIAL_CHARS = /[.*+?^${}()|[\]\\]/g;
++export const escapeRegex = (value: string) => value.replace(REGEX_SPECIAL_CHARS, '\\$&');

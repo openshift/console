@@ -1,0 +1,95 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kanadaj <kanadaj@royalroad.com>
+Date: Sat, 14 Nov 2026 23:38:07 +0000
+Subject: [PATCH 4/4] Drop the audit tenant and the Loki ruler alert sources
+
+There are no audit logs in VictoriaLogs, and it has no Loki ruler: the
+alerting rule sources and charts would only add failing requests to the
+monitoring plugin's Alerting pages.
+---
+ web/console-extensions.json | 46 -------------------------------------
+ web/package.json            |  5 +---
+ web/src/tenants.ts          |  4 +++-
+ 3 files changed, 4 insertions(+), 51 deletions(-)
+
+diff --git a/web/console-extensions.json b/web/console-extensions.json
+index 8cf5761..e630504 100644
+--- a/web/console-extensions.json
++++ b/web/console-extensions.json
+@@ -40,51 +40,5 @@
+       "href": "logs",
+       "component": { "$codeRef": "LogsDevPage" }
+     }
+-  },
+-  {
+-    "type": "console.alerts/rules-source",
+-    "properties": {
+-      "id": "user",
+-      "contextId": "observe-alerting",
+-      "getAlertingRules": { "$codeRef": "getUserAlertingRules" }
+-    }
+-  },
+-  {
+-    "type": "console.alerts/rules-source",
+-    "properties": {
+-      "id": "user",
+-      "contextId": "dev-observe-alerting",
+-      "getAlertingRules": { "$codeRef": "getUserAlertingRules" }
+-    }
+-  },
+-  {
+-    "type": "console.alerts/rules-chart",
+-    "properties": {
+-      "sourceId": "user",
+-      "chart": { "$codeRef": "LogsAlertMetrics" }
+-    }
+-  },
+-  {
+-    "type": "console.alerts/rules-source",
+-    "properties": {
+-      "id": "platform",
+-      "contextId": "observe-alerting",
+-      "getAlertingRules": { "$codeRef": "getPlatformAlertingRules" }
+-    }
+-  },
+-  {
+-    "type": "console.alerts/rules-source",
+-    "properties": {
+-      "id": "platform",
+-      "contextId": "dev-observe-alerting",
+-      "getAlertingRules": { "$codeRef": "getPlatformAlertingRules" }
+-    }
+-  },
+-  {
+-    "type": "console.alerts/rules-chart",
+-    "properties": {
+-      "sourceId": "platform",
+-      "chart": { "$codeRef": "LogsAlertMetrics" }
+-    }
+   }
+ ]
+diff --git a/web/package.json b/web/package.json
+index 5b7e52d..b69a07e 100644
+--- a/web/package.json
++++ b/web/package.json
+@@ -88,10 +88,7 @@
+     "exposedModules": {
+       "LogsPage": "./pages/logs-page",
+       "LogsDetailPage": "./pages/logs-detail-page",
+-      "LogsDevPage": "./pages/logs-dev-page",
+-      "getUserAlertingRules": "./getUserAlertingRules",
+-      "getPlatformAlertingRules": "./getPlatformAlertingRules",
+-      "LogsAlertMetrics": "./components/alerts/logs-alerts-metrics"
++      "LogsDevPage": "./pages/logs-dev-page"
+     },
+     "dependencies": {
+       "@console/pluginAPI": "*"
+diff --git a/web/src/tenants.ts b/web/src/tenants.ts
+index 57de7cc..af644a9 100644
+--- a/web/src/tenants.ts
++++ b/web/src/tenants.ts
+@@ -1 +1,3 @@
+-export const TENANTS = ['application', 'infrastructure', 'audit'];
++// Namespaces matching the LokiStack infrastructure pattern (kube-*, openshift*, default)
++// form the infrastructure tenant; the tenancy proxy applies it. There are no audit logs.
++export const TENANTS = ['application', 'infrastructure'];

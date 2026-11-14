@@ -1,0 +1,230 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kanadaj <kanadaj@royalroad.com>
+Date: Sat, 14 Nov 2026 23:38:07 +0000
+Subject: [PATCH 1/4] Add a vlogs schema for VictoriaLogs stream fields
+
+Grafana Alloy ships pod logs to VictoriaLogs with the stream fields
+namespace, pod, container and level (alloy-modules log-levels), not the
+ViaQ or OTel names. Make that the default schema, match levels
+case-insensitively with the spellings the log-levels module extracts
+(klog, zerolog, common words), and start from the LogsQL query `*`.
+---
+ web/src/attribute-filters.tsx         |  2 +-
+ web/src/backend-client.ts             |  2 +-
+ web/src/components/logs-histogram.tsx |  2 +-
+ web/src/hooks/useURLState.ts          |  4 ++++
+ web/src/logs.types.ts                 |  5 ++++-
+ web/src/parse-resources.tsx           | 28 ++++++++++++++++++++++++++-
+ web/src/severity.ts                   | 25 +++++++++++++++++++-----
+ web/src/value-utils.ts                |  3 +++
+ 8 files changed, 61 insertions(+), 10 deletions(-)
+
+diff --git a/web/src/attribute-filters.tsx b/web/src/attribute-filters.tsx
+index 103dd55..5789ad2 100644
+--- a/web/src/attribute-filters.tsx
++++ b/web/src/attribute-filters.tsx
+@@ -635,7 +635,7 @@ export const filtersFromQuery = ({
+ }: {
+   query?: string;
+   attributes: AttributeList;
+-  schema: Schema.viaq | Schema.otel;
++  schema: Schema;
+ }): Filters => {
+   const filters: Filters = {};
+   const logQLQuery = new LogQLQuery(query ?? '');
+diff --git a/web/src/backend-client.ts b/web/src/backend-client.ts
+index a7a45b9..ee08cb0 100644
+--- a/web/src/backend-client.ts
++++ b/web/src/backend-client.ts
+@@ -9,7 +9,7 @@ let throttleTimeout: NodeJS.Timeout | null = null;
+ export const defaultConfig: Config = {
+   isStreamingEnabledInDefaultPage: false,
+   logsLimit: 100,
+-  schema: SchemaConfig.viaq,
++  schema: SchemaConfig.vlogs,
+ };
+ 
+ export const getConfig = async (): Promise<Config> => {
+diff --git a/web/src/components/logs-histogram.tsx b/web/src/components/logs-histogram.tsx
+index 1900690..d0ae76c 100644
+--- a/web/src/components/logs-histogram.tsx
++++ b/web/src/components/logs-histogram.tsx
+@@ -72,7 +72,7 @@ const resultHasAbreviation = (
+   if (schema == Schema.otel) {
+     return !!result.severity_text && abbreviation.includes(result.severity_text);
+   }
+-  return !!result.level && abbreviation.includes(result.level);
++  return !!result.level && abbreviation.includes(result.level.toLowerCase());
+ };
+ 
+ const aggregateMetricsLogData = (response?: QueryRangeResponse, schema?: Schema): HistogramData => {
+diff --git a/web/src/hooks/useURLState.ts b/web/src/hooks/useURLState.ts
+index 6ecee64..59d3ee2 100644
+--- a/web/src/hooks/useURLState.ts
++++ b/web/src/hooks/useURLState.ts
+@@ -49,6 +49,10 @@ export const defaultQueryFromTenant = ({
+   tenant?: string;
+   schema: Schema;
+ }) => {
++  if (schema === Schema.vlogs) {
++    // LogsQL needs no stream selector; the tenant is applied by the tenancy proxy.
++    return '*';
++  }
+   const logType = ResourceToStreamLabels[ResourceLabel.LogType];
+   return `{ ${schema === Schema.otel ? logType.otel : logType.viaq}="${tenant}" }${schema === Schema.viaq ? ' | json' : ''}`;
+ };
+diff --git a/web/src/logs.types.ts b/web/src/logs.types.ts
+index 49320a3..0f87df3 100644
+--- a/web/src/logs.types.ts
++++ b/web/src/logs.types.ts
+@@ -1,14 +1,17 @@
+ export enum SchemaConfig {
+   viaq = 'viaq',
+   otel = 'otel',
++  vlogs = 'vlogs',
+   select = 'select', // allows dropdown to appear to select either viaq of otel
+ }
+ 
+ export enum Schema {
+   viaq = 'viaq',
+   otel = 'otel',
++  // VictoriaLogs fed by Grafana Alloy: stream fields namespace, pod, container, level
++  vlogs = 'vlogs',
+ }
+-export const DEFAULT_SCHEMA = Schema.viaq;
++export const DEFAULT_SCHEMA = Schema.vlogs;
+ 
+ export type Config = {
+   useTenantInHeader?: boolean;
+diff --git a/web/src/parse-resources.tsx b/web/src/parse-resources.tsx
+index 6d12f44..bf9667e 100644
+--- a/web/src/parse-resources.tsx
++++ b/web/src/parse-resources.tsx
+@@ -29,33 +29,54 @@ export const getViaqLabels = (): Record<ResourceLabel | 'Schema', string> => {
+   } as Record<ResourceLabel | 'Schema', string>;
+ };
+ 
++export const getVlogsLabels = (): Record<ResourceLabel | 'Schema', string> => {
++  const vlogsMap = Object.fromEntries(
++    Object.entries(ResourceToStreamLabels).map(([key, value]) => [key, value.vlogs]),
++  );
++  return {
++    ...vlogsMap,
++    Schema: Schema.vlogs, // manually add Schema key
++  } as Record<ResourceLabel | 'Schema', string>;
++};
++
+ export const getStreamLabelsFromSchema = (schema: Schema) => {
+   if (schema == Schema.otel) {
+     return getOtelLabels();
+   }
++  if (schema == Schema.vlogs) {
++    return getVlogsLabels();
++  }
+   return getViaqLabels();
+ };
+ 
+-export const ResourceToStreamLabels: Record<ResourceLabel, { otel: string; viaq: string }> = {
++export const ResourceToStreamLabels: Record<
++  ResourceLabel,
++  { otel: string; viaq: string; vlogs: string }
++> = {
+   [ResourceLabel.Container]: {
+     otel: 'k8s_container_name',
+     viaq: 'kubernetes_container_name',
++    vlogs: 'container',
+   },
+   [ResourceLabel.Namespace]: {
+     otel: 'k8s_namespace_name',
+     viaq: 'kubernetes_namespace_name',
++    vlogs: 'namespace',
+   },
+   [ResourceLabel.Pod]: {
+     otel: 'k8s_pod_name',
+     viaq: 'kubernetes_pod_name',
++    vlogs: 'pod',
+   },
+   [ResourceLabel.Severity]: {
+     otel: 'severity_text',
+     viaq: 'level',
++    vlogs: 'level',
+   },
+   [ResourceLabel.LogType]: {
+     otel: 'openshift_log_type',
+     viaq: 'log_type',
++    vlogs: 'log_type',
+   },
+ };
+ 
+@@ -71,6 +92,11 @@ const parse = (data: Record<string, string>, resourceLabel: ResourceLabel) => {
+       kind: resourceLabel,
+       name: data[resource.viaq],
+     };
++  } else if (data[resource.vlogs]) {
++    return {
++      kind: resourceLabel,
++      name: data[resource.vlogs],
++    };
+   } else {
+     return undefined;
+   }
+diff --git a/web/src/severity.ts b/web/src/severity.ts
+index 8ea8922..1560b66 100644
+--- a/web/src/severity.ts
++++ b/web/src/severity.ts
+@@ -1,13 +1,28 @@
+ export type Severity =
+   'critical' | 'error' | 'warning' | 'info' | 'debug' | 'trace' | 'unknown' | 'other';
+ 
++// Lower-case spellings of each severity. Besides the ViaQ ones this covers the
++// levels Grafana Alloy's log-levels module extracts (klog, zerolog and common
++// words, as written in the log line); matching is case-insensitive.
+ export const severityAbbreviations: Record<Severity, Array<string>> = {
+-  critical: ['critical', 'emerg', 'fatal', 'alert', 'crit'],
++  critical: [
++    'critical',
++    'emerg',
++    'fatal',
++    'alert',
++    'crit',
++    'crt',
++    'crtical',
++    'emergency',
++    'ftl',
++    'panic',
++    'pnc',
++  ],
+   error: ['error', 'err', 'eror'],
+-  debug: ['debug', 'dbug'],
++  debug: ['debug', 'dbug', 'debu', 'dbg'],
+   info: ['info', 'inf', 'information', 'notice'],
+-  trace: ['trace'],
+-  warning: ['warn', 'warning'],
++  trace: ['trace', 'trc'],
++  warning: ['warn', 'warning', 'wrn', 'wrning'],
+   unknown: ['unknown'],
+   other: [''],
+ };
+@@ -16,7 +31,7 @@ export const severityFromString = (
+   severityText: string | undefined | null,
+ ): Severity | undefined => {
+   for (const [group, abbreviations] of Object.entries(severityAbbreviations)) {
+-    if (severityText && abbreviations.includes(severityText)) {
++    if (severityText && abbreviations.includes(severityText.toLowerCase())) {
+       return group as Severity;
+     }
+   }
+diff --git a/web/src/value-utils.ts b/web/src/value-utils.ts
+index bd58227..aeb5d76 100644
+--- a/web/src/value-utils.ts
++++ b/web/src/value-utils.ts
+@@ -131,6 +131,9 @@ export const getSchema = (value: string | null | undefined | SchemaConfig): Sche
+     case Schema.viaq:
+     case SchemaConfig.viaq:
+       return Schema.viaq;
++    case Schema.vlogs:
++    case SchemaConfig.vlogs:
++      return Schema.vlogs;
+ 
+     default:
+       return DEFAULT_SCHEMA;

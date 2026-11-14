@@ -1,0 +1,644 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kanadaj <kanadaj@royalroad.com>
+Date: Sat, 14 Nov 2026 23:38:07 +0000
+Subject: [PATCH 3/4] Query VictoriaLogs instead of the Loki API
+
+Call VictoriaLogs' /select/logsql endpoints (query, hits,
+stats_query_range, stream_field_values, streams, tail) under the same
+/api/logs/v1/<tenant> prefix and convert the responses into the Loki
+shapes the pages render: JSON lines become streams, hits become the
+histogram and volume matrices, and a query with a stats pipe is charted
+like a LogQL metric query. Live tail reads the streamed tail response
+instead of a Loki websocket.
+---
+ web/src/__tests__/loki-client-vlogs.spec.ts |  50 +++
+ web/src/cancellable-fetch.ts                |  13 +-
+ web/src/hooks/useLogs.ts                    |   4 +-
+ web/src/loki-client.ts                      | 388 ++++++++++++--------
+ 4 files changed, 308 insertions(+), 147 deletions(-)
+ create mode 100644 web/src/__tests__/loki-client-vlogs.spec.ts
+
+diff --git a/web/src/__tests__/loki-client-vlogs.spec.ts b/web/src/__tests__/loki-client-vlogs.spec.ts
+new file mode 100644
+index 0000000..333195f
+--- /dev/null
++++ b/web/src/__tests__/loki-client-vlogs.spec.ts
+@@ -0,0 +1,50 @@
++jest.mock('@openshift-console/dynamic-plugin-sdk', () => ({
++  consoleFetch: jest.fn(),
++  consoleFetchJSON: jest.fn(),
++}));
++
++import {
++  hitsToMatrix,
++  logLinesToStreams,
++  nsToVLTime,
++  parseStreamLabels,
++  vlTimeToNs,
++} from '../loki-client';
++
++describe('VictoriaLogs responses', () => {
++  it('converts timestamps without losing nanoseconds', () => {
++    expect(nsToVLTime('1794699000123456789')).toEqual('1794699000.123456789');
++    expect(vlTimeToNs('2026-11-14T23:31:04.476174903Z')).toEqual('1794699064476174903');
++    expect(vlTimeToNs('2026-11-14T23:31:04Z')).toEqual('1794699064000000000');
++  });
++
++  it('turns JSON lines into one stream per line, newest first', () => {
++    const text = [
++      '{"_msg":"old","_time":"2026-11-14T23:31:04Z","_stream":"{}","namespace":"a","level":"INFO"}',
++      '{"_msg":"new","_time":"2026-11-14T23:31:05Z","_stream_id":"1","namespace":"a"}',
++      '',
++    ].join('\n');
++    const result = logLinesToStreams(text, 'backward');
++    expect(result.result).toEqual([
++      { stream: { namespace: 'a' }, values: [['1794699065000000000', 'new']] },
++      { stream: { namespace: 'a', level: 'INFO' }, values: [['1794699064000000000', 'old']] },
++    ]);
++    expect(logLinesToStreams(text, 'forward').result[0].values[0][1]).toEqual('old');
++  });
++
++  it('turns hits into a matrix', () => {
++    expect(
++      hitsToMatrix({
++        hits: [{ fields: { level: 'ERR' }, timestamps: ['2026-11-14T22:33:00Z'], values: [3] }],
++      }).data.result,
++    ).toEqual([{ metric: { level: 'ERR' }, values: [[1794695580, '3']] }]);
++  });
++
++  it('parses stream labels', () => {
++    expect(parseStreamLabels('{container="web",namespace="team-a",msg="a \\"q\\""}')).toEqual({
++      container: 'web',
++      namespace: 'team-a',
++      msg: 'a "q"',
++    });
++  });
++});
+diff --git a/web/src/cancellable-fetch.ts b/web/src/cancellable-fetch.ts
+index 43ac5a8..47b7836 100644
+--- a/web/src/cancellable-fetch.ts
++++ b/web/src/cancellable-fetch.ts
+@@ -1,4 +1,4 @@
+-import { consoleFetchJSON } from '@openshift-console/dynamic-plugin-sdk';
++import { consoleFetch, consoleFetchJSON } from '@openshift-console/dynamic-plugin-sdk';
+ 
+ export type CancellableFetch<T> = {
+   request: () => Promise<T>;
+@@ -32,6 +32,8 @@ export const cancellableFetch = <T>(
+   url: string,
+   init?: RequestInit,
+   timeout?: number,
++  // 'text' returns the body unparsed, for VictoriaLogs' JSON-lines responses
++  responseType: 'json' | 'text' = 'json',
+ ): CancellableFetch<T> => {
+   const abortController = new AbortController();
+   const abort = () => abortController.abort();
+@@ -49,7 +51,14 @@ export const cancellableFetch = <T>(
+ 
+       let result: T;
+ 
+-      if (method.toUpperCase() === 'POST') {
++      if (responseType === 'text') {
++        const response = await consoleFetch(
++          url,
++          { ...options, method },
++          requestTimeout > 0 ? requestTimeout : undefined,
++        );
++        result = (await response.text()) as T;
++      } else if (method.toUpperCase() === 'POST') {
+         result = await consoleFetchJSON.post(
+           url,
+           init?.body,
+diff --git a/web/src/hooks/useLogs.ts b/web/src/hooks/useLogs.ts
+index dd7d8dd..c164861 100644
+--- a/web/src/hooks/useLogs.ts
++++ b/web/src/hooks/useLogs.ts
+@@ -1,4 +1,3 @@
+-import { WSFactory } from '@openshift-console/dynamic-plugin-sdk/lib/utils/k8s/ws-factory';
+ import {
+   Config,
+   Direction,
+@@ -14,6 +13,7 @@ import {
+   executeHistogramQuery,
+   executeQueryRange,
+   executeVolumeRange,
++  LiveTail,
+   throwResponseError,
+   toQueryRangeResponse,
+   toRecord,
+@@ -288,7 +288,7 @@ export const useLogs = (
+   const logsAbort = useRef<() => void | undefined>();
+   const histogramAbort = useRef<() => void | undefined>();
+   const volumeAbort = useRef<() => void | undefined>();
+-  const ws = useRef<WSFactory | null>();
++  const ws = useRef<LiveTail | null>();
+   const logsContext = useContext(LogsContext);
+ 
+   if (logsContext === undefined) {
+diff --git a/web/src/loki-client.ts b/web/src/loki-client.ts
+index cb1a38e..e78c06f 100644
+--- a/web/src/loki-client.ts
++++ b/web/src/loki-client.ts
+@@ -1,4 +1,3 @@
+-import { WSFactory } from '@openshift-console/dynamic-plugin-sdk/lib/utils/k8s/ws-factory';
+ import { queryWithNamespace } from './attribute-filters';
+ import { CancellableFetch, cancellableFetch } from './cancellable-fetch';
+ import {
+@@ -10,10 +9,13 @@ import {
+   RulesResponse,
+   Schema,
+   SeriesResponse,
++  StreamLogData,
++  StreamsResult,
+   VolumeRangeResponse,
+ } from './logs.types';
++import { LogsQLQuery } from './logsql-query';
+ import { getStreamLabelsFromSchema, ResourceLabel } from './parse-resources';
+-import { durationFromTimestamp, getSchema } from './value-utils';
++import { durationFromTimestamp, getSchema, notUndefined } from './value-utils';
+ 
+ const LOKI_ENDPOINT = '/api/proxy/plugin/logging-view-plugin/backend';
+ 
+@@ -59,8 +61,6 @@ type LokiTailQueryParams = {
+   schema: Schema;
+ };
+ 
+-const MAX_RANGE_REQUEST_NS = 21_600_000_000_000n; // 6 hours in nanoseconds
+-
+ export const isRecord = (response: unknown): response is Record<string, unknown> =>
+   typeof response === 'object' && response !== null && !Array.isArray(response);
+ 
+@@ -136,6 +136,102 @@ export const getFetchConfig = ({
+   };
+ };
+ 
++// VictoriaLogs' query API (https://docs.victoriametrics.com/victorialogs/querying/),
++// reached through the tenancy proxy at `${endpoint}/select/logsql/...`. The
++// responses are converted to the Loki shapes the rest of the plugin renders.
++
++// Label and series lookups have no time range in the UI; look at the last 6
++// hours, as Loki does by default.
++const LOOKUP_RANGE_NS = 21_600_000_000_000n;
++
++// VictoriaLogs takes Unix timestamps with up to nanosecond fractions.
++export const nsToVLTime = (ns: string | bigint): string => {
++  const value = BigInt(ns);
++  const seconds = value / 1_000_000_000n;
++  const fraction = value % 1_000_000_000n;
++  return `${seconds}.${String(fraction).padStart(9, '0')}`;
++};
++
++const lookupStart = () => nsToVLTime(BigInt(Date.now()) * 1_000_000n - LOOKUP_RANGE_NS);
++
++// RFC 3339 with up to nanosecond precision, as in VictoriaLogs' _time field.
++export const vlTimeToNs = (time: string): string => {
++  const match = time.match(/^(.*?)(?:\.(\d+))?(Z|[+-]\d\d:\d\d)$/);
++  if (!match) {
++    return String(BigInt(Date.parse(time)) * 1_000_000n);
++  }
++  const [, base, fraction = '', zone] = match;
++  const ms = Date.parse(`${base}${zone}`);
++  return String(BigInt(ms) * 1_000_000n + BigInt(fraction.padEnd(9, '0').slice(0, 9)));
++};
++
++const VL_INTERNAL_FIELDS = ['_msg', '_time', '_stream', '_stream_id'];
++
++// One stream per log line keeps VictoriaLogs' ordering in the table.
++export const logLinesToStreams = (text: string, direction?: Direction): StreamsResult => {
++  const entries = text
++    .split('\n')
++    .filter((line) => line.trim().length > 0)
++    .map((line) => JSON.parse(line) as Record<string, string>)
++    .map((entry) => {
++      const stream: Record<string, string> = {};
++      for (const [key, value] of Object.entries(entry)) {
++        if (!VL_INTERNAL_FIELDS.includes(key)) {
++          stream[key] = String(value);
++        }
++      }
++      return { ns: vlTimeToNs(entry._time ?? ''), msg: entry._msg ?? '', stream };
++    });
++
++  entries.sort((a, b) => {
++    const diff = BigInt(a.ns) - BigInt(b.ns);
++    const order = diff === 0n ? 0 : diff > 0n ? 1 : -1;
++    return direction === 'forward' ? order : -order;
++  });
++
++  return {
++    resultType: 'streams',
++    result: entries.map(({ ns, msg, stream }) => ({ stream, values: [[ns, msg]] })),
++  };
++};
++
++type HitsResponse = {
++  hits?: Array<{
++    fields: Record<string, string>;
++    timestamps: Array<string>;
++    values: Array<number>;
++  }>;
++};
++
++export const hitsToMatrix = (response: HitsResponse): QueryRangeResponse<MatrixResult> => ({
++  status: 'success',
++  data: {
++    resultType: 'matrix',
++    stats: {},
++    result: (response.hits ?? []).map(({ fields, timestamps, values }) => ({
++      metric: fields,
++      values: timestamps.map((time, i) => [Date.parse(time) / 1000, String(values[i])]),
++    })),
++  },
++});
++
++// Parses `{a="b",c="d"}` as VictoriaLogs returns stream labels.
++export const parseStreamLabels = (stream: string): Record<string, string> => {
++  const labels: Record<string, string> = {};
++  for (const match of stream.matchAll(/([^{}=,\s]+)="((?:[^"\\]|\\.)*)"/g)) {
++    labels[match[1]] = JSON.parse(`"${match[2]}"`);
++  }
++  return labels;
++};
++
++const mapFetch = <T, U>(fetch: CancellableFetch<T>, map: (value: T) => U): CancellableFetch<U> => ({
++  request: () => fetch.request().then(map),
++  abort: fetch.abort,
++});
++
++// Duration in VictoriaLogs syntax ("1h5m"), at least one second.
++const stepFromMs = (ms: number) => durationFromTimestamp(Math.max(1000, ms)).replace(/\s+/g, '');
++
+ export const executeLabelValue = ({
+   query,
+   labelName,
+@@ -149,16 +245,15 @@ export const executeLabelValue = ({
+ }): CancellableFetch<LabelValueResponse> => {
+   const { endpoint, requestInit, timeout } = getFetchConfig({ config, tenant });
+ 
+-  const params: Record<string, string> = {};
+-
+-  if (query) {
+-    params.query = query;
+-  }
++  const params = { query: query || '*', field: labelName, start: lookupStart() };
+ 
+-  return cancellableFetch<LabelValueResponse>(
+-    `${endpoint}/loki/api/v1/label/${labelName}/values?${new URLSearchParams(params)}`,
+-    requestInit,
+-    timeout,
++  return mapFetch(
++    cancellableFetch<{ values?: Array<{ value: string }> }>(
++      `${endpoint}/select/logsql/stream_field_values?${new URLSearchParams(params)}`,
++      requestInit,
++      timeout,
++    ),
++    (response) => ({ data: (response.values ?? []).map(({ value }) => value) }),
+   );
+ };
+ 
+@@ -173,16 +268,15 @@ export const executeSeries = ({
+ }): CancellableFetch<SeriesResponse> => {
+   const { endpoint, requestInit, timeout } = getFetchConfig({ config, tenant });
+ 
+-  const params: Record<string, string> = {};
++  const params = { query: match.join(' or ') || '*', start: lookupStart() };
+ 
+-  for (const m of match) {
+-    params['match[]'] = m;
+-  }
+-
+-  return cancellableFetch<SeriesResponse>(
+-    `${endpoint}/loki/api/v1/series?${new URLSearchParams(params)}`,
+-    requestInit,
+-    timeout,
++  return mapFetch(
++    cancellableFetch<{ values?: Array<{ value: string }> }>(
++      `${endpoint}/select/logsql/streams?${new URLSearchParams(params)}`,
++      requestInit,
++      timeout,
++    ),
++    (response) => ({ data: (response.values ?? []).map(({ value }) => parseStreamLabels(value)) }),
+   );
+ };
+ 
+@@ -201,27 +295,47 @@ export const executeQueryRange = ({
+     namespace,
+     schema,
+   });
+-
+-  const params: Record<string, string> = {
+-    query: extendedQuery,
+-    start: startNs,
+-    end: endNs,
+-    limit: String(config?.logsLimit ?? 100),
+-  };
+-
+-  if (direction) {
+-    params.direction = direction;
++  const { endpoint, requestInit, timeout } = getFetchConfig({ config, tenant });
++  const limit = String(config?.logsLimit ?? 100);
++  const start = nsToVLTime(startNs);
++  const end = nsToVLTime(endNs);
++
++  // A `| stats` query is a metric query: chart it like a LogQL metric query.
++  if (new LogsQLQuery(extendedQuery).hasStatsPipe()) {
++    const rangeMs = Number((BigInt(endNs) - BigInt(startNs)) / 1_000_000n);
++    const params = { query: extendedQuery, start, end, step: stepFromMs(rangeMs / 100) };
++
++    return mapFetch(
++      cancellableFetch<QueryRangeResponse<MatrixResult>>(
++        `${endpoint}/select/logsql/stats_query_range?${new URLSearchParams(params)}`,
++        requestInit,
++        timeout,
++      ),
++      (response) => ({ ...response, data: { ...response.data, stats: {} } }),
++    );
+   }
+ 
+-  const { endpoint, requestInit, timeout } = getFetchConfig({ config, tenant });
++  // `limit` returns the newest entries; the oldest ones need an explicit sort.
++  const params: Record<string, string> =
++    direction === 'forward'
++      ? { query: `${extendedQuery} | sort by (_time) | limit ${limit}`, start, end }
++      : { query: extendedQuery, start, end, limit };
+ 
+-  return cancellableFetch<QueryRangeResponse>(
+-    `${endpoint}/loki/api/v1/query_range?${new URLSearchParams(params)}`,
+-    requestInit,
+-    timeout,
++  return mapFetch(
++    cancellableFetch<string>(
++      `${endpoint}/select/logsql/query?${new URLSearchParams(params)}`,
++      requestInit,
++      timeout,
++      'text',
++    ),
++    (text) => ({
++      status: 'success',
++      data: { ...logLinesToStreams(text, direction), stats: {} },
++    }),
+   );
+ };
+ 
++// Log volume per stream field of the query's selector (namespace by default).
+ export const executeVolumeRange = ({
+   query,
+   startNs,
+@@ -236,40 +350,33 @@ export const executeVolumeRange = ({
+     namespace,
+     schema,
+   });
++  const selectorLabels = new LogsQLQuery(extendedQuery).streamSelector
++    .map(({ label }) => label)
++    .filter(notUndefined);
++  const fields = selectorLabels.length > 0 ? selectorLabels : ['namespace'];
++  const rangeMs = Number((BigInt(endNs) - BigInt(startNs)) / 1_000_000n);
+ 
+-  const params: Record<string, string> = {
++  const params = new URLSearchParams({
+     query: extendedQuery,
+-    start: startNs,
+-    end: endNs,
+-  };
++    start: nsToVLTime(startNs),
++    end: nsToVLTime(endNs),
++    step: stepFromMs(rangeMs / 100),
++  });
++  fields.forEach((field) => params.append('field', field));
+ 
+   const { endpoint, requestInit, timeout } = getFetchConfig({ config, tenant });
+ 
+-  return cancellableFetch<VolumeRangeResponse>(
+-    `${endpoint}/loki/api/v1/index/volume_range?${new URLSearchParams(params)}`,
+-    requestInit,
+-    timeout,
++  return mapFetch(
++    cancellableFetch<HitsResponse>(
++      `${endpoint}/select/logsql/hits?${params}`,
++      requestInit,
++      timeout,
++    ),
++    hitsToMatrix,
+   );
+ };
+ 
+-const splitQueryRange = (startNs: string, endNs: string): string[][] => {
+-  const start = BigInt(startNs);
+-  const end = BigInt(endNs);
+-  const ranges: string[][] = [];
+-  let currentStart = start;
+-  let currentEnd = start + MAX_RANGE_REQUEST_NS;
+-
+-  while (currentEnd < end) {
+-    ranges.push([String(currentStart), String(currentEnd)]);
+-    currentStart = currentEnd;
+-    currentEnd = currentEnd + MAX_RANGE_REQUEST_NS;
+-  }
+-
+-  ranges.push([String(currentStart), String(end)]);
+-
+-  return ranges;
+-};
+-
++// Log counts per level and interval, from VictoriaLogs' hits endpoint.
+ export const executeHistogramQuery = ({
+   query,
+   startNs,
+@@ -280,7 +387,6 @@ export const executeHistogramQuery = ({
+   namespace,
+   schema,
+ }: HistogramQuerParams): CancellableFetch<QueryRangeResponse<MatrixResult>> => {
+-  const intervalString = durationFromTimestamp(interval);
+   const labels = getStreamLabelsFromSchema(schema);
+   const labelSeverity = labels[ResourceLabel.Severity];
+ 
+@@ -290,114 +396,110 @@ export const executeHistogramQuery = ({
+     schema,
+   });
+ 
+-  // eslint-disable-next-line max-len
+-  const histogramQuery = `sum by (${labelSeverity}) (count_over_time(${extendedQuery} [${intervalString}]))`;
+-
+   const params = {
+-    query: histogramQuery,
+-    start: startNs,
+-    end: endNs,
+-    step: intervalString,
++    query: extendedQuery,
++    start: nsToVLTime(startNs),
++    end: nsToVLTime(endNs),
++    step: stepFromMs(interval),
++    field: labelSeverity,
+   };
+ 
+   const { endpoint, requestInit, timeout } = getFetchConfig({ config, tenant });
+ 
+-  const timeRangeNs = BigInt(endNs) - BigInt(startNs);
+-
+-  // for large time ranges, split the query into multiple smaller queries
+-  if (timeRangeNs > MAX_RANGE_REQUEST_NS) {
+-    const ranges = splitQueryRange(startNs, endNs);
+-
+-    const queries: Array<CancellableFetch<QueryRangeResponse<MatrixResult>>> = [];
++  return mapFetch(
++    cancellableFetch<HitsResponse>(
++      `${endpoint}/select/logsql/hits?${new URLSearchParams(params)}`,
++      requestInit,
++      timeout,
++    ),
++    hitsToMatrix,
++  );
++};
+ 
+-    for (const range of ranges) {
+-      const [rangeStart, rangeEnd] = range;
+-      const rangeParams = {
+-        ...params,
+-        start: rangeStart,
+-        end: rangeEnd,
+-      };
+-      const subQuery = cancellableFetch<QueryRangeResponse<MatrixResult>>(
+-        `${endpoint}/loki/api/v1/query_range?${new URLSearchParams(rangeParams)}`,
+-        requestInit,
+-        timeout,
+-      );
++type TailMessage = { streams: Array<StreamLogData> };
+ 
+-      queries.push(subQuery);
+-    }
++// Live tailing over VictoriaLogs' /select/logsql/tail, a long-lived JSON-lines
++// response, with the subset of WSFactory's interface useLogs needs.
++export class LiveTail {
++  private abortController = new AbortController();
++  private messageHandlers: Array<(data: TailMessage) => void> = [];
++  private errorHandlers: Array<(error: unknown) => void> = [];
+ 
+-    return {
+-      request: async () => {
+-        const responses = [];
+-        // execute the queries sequentially
+-        for (const subQuery of queries) {
+-          const response = await subQuery.request();
+-          responses.push(response);
+-        }
++  constructor(url: string) {
++    this.read(url);
++  }
+ 
+-        return responses.reduce((acc, response) => {
+-          if (Object.keys(acc).length == 0) {
+-            return response;
+-          }
++  onmessage(handler: (data: TailMessage) => void) {
++    this.messageHandlers.push(handler);
++    return this;
++  }
+ 
+-          // if any of the responses is not successful, skip it
+-          if (response.status !== 'success') {
+-            return acc;
+-          }
++  onerror(handler: (error: unknown) => void) {
++    this.errorHandlers.push(handler);
++    return this;
++  }
+ 
+-          acc.data.result = acc.data.result.concat(response.data.result);
++  destroy() {
++    this.abortController.abort();
++    this.messageHandlers = [];
++    this.errorHandlers = [];
++  }
+ 
+-          return acc;
+-        }, {} as QueryRangeResponse<MatrixResult>);
+-      },
+-      abort: () => {
+-        for (const subQuery of queries) {
+-          subQuery.abort();
++  private async read(url: string) {
++    try {
++      const response = await fetch(url, {
++        credentials: 'same-origin',
++        signal: this.abortController.signal,
++      });
++      if (!response.ok || !response.body) {
++        throw new Error(`Live tail failed: ${response.status} ${await response.text()}`);
++      }
++      const reader = response.body.getReader();
++      const decoder = new TextDecoder();
++      let buffered = '';
++      for (;;) {
++        const { done, value } = await reader.read();
++        if (done) {
++          return;
+         }
+-      },
+-    };
++        buffered += decoder.decode(value, { stream: true });
++        const lastNewline = buffered.lastIndexOf('\n');
++        if (lastNewline === -1) {
++          continue;
++        }
++        const complete = buffered.slice(0, lastNewline);
++        buffered = buffered.slice(lastNewline + 1);
++        const { result } = logLinesToStreams(complete, 'forward');
++        if (result.length > 0) {
++          this.messageHandlers.forEach((handler) => handler({ streams: result }));
++        }
++      }
++    } catch (error) {
++      if (!(error instanceof Error && error.name === 'AbortError')) {
++        this.errorHandlers.forEach((handler) => handler(error));
++      }
++    }
+   }
+-
+-  return cancellableFetch<QueryRangeResponse<MatrixResult>>(
+-    `${endpoint}/loki/api/v1/query_range?${new URLSearchParams(params)}`,
+-    requestInit,
+-    timeout,
+-  );
+-};
++}
+ 
+ export const connectToTailSocket = ({
+   query,
+-  startNs,
+   config,
+   tenant,
+   namespace,
+   schema,
+-}: LokiTailQueryParams) => {
++}: LokiTailQueryParams): LiveTail => {
+   const extendedQuery = queryWithNamespace({
+     query,
+     namespace,
+     schema,
+   });
+ 
+-  const params: Record<string, string> = {
+-    query: extendedQuery,
+-    limit: String(config?.logsLimit ?? 200),
+-  };
+-
+-  if (startNs) {
+-    params.start = startNs;
+-  }
+-
+   const { endpoint } = getFetchConfig({ config, tenant });
+ 
+-  const url = `${endpoint}/loki/api/v1/tail?${new URLSearchParams(params)}`;
+-
+-  return new WSFactory(url, {
+-    host: 'auto',
+-    path: url,
+-    subprotocols: ['json'],
+-    jsonParse: true,
+-  });
++  return new LiveTail(
++    `${endpoint}/select/logsql/tail?${new URLSearchParams({ query: extendedQuery })}`,
++  );
+ };
+ 
+ export const getRules = ({
