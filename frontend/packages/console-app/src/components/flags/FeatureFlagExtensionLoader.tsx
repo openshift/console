@@ -16,6 +16,7 @@ import type { ResolvedExtension } from '@console/dynamic-plugin-sdk/src/types';
 import { setFlag, updateModelFlags } from '@console/internal/actions/flags';
 import type { OnChange } from '@console/plugin-sdk/src/utils/useCompareExtensions';
 import { useCompareExtensions } from '@console/plugin-sdk/src/utils/useCompareExtensions';
+import { ErrorBoundary } from '@console/shared/src/components/error/error-boundary';
 import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
 import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { FeatureFlagExtensionHookResolver } from './FeatureFlagExtensionHookResolver';
@@ -136,12 +137,17 @@ export const FeatureFlagExtensionLoader: FC = () => {
             properties: { handler },
             uid,
           } = nf;
+          // hookProvider handlers are React hooks, so they cannot be wrapped in
+          // try/catch (Rules of Hooks). console.flag handlers already catch
+          // errors; without a boundary here a throw unmounts the whole app
+          // (FeatureFlagExtensionLoader sits outside the page ErrorBoundary).
           return (
-            <FeatureFlagExtensionHookResolver
-              key={uid}
-              handler={handler}
-              setFeatureFlag={featureFlagController}
-            />
+            <ErrorBoundary key={uid}>
+              <FeatureFlagExtensionHookResolver
+                handler={handler}
+                setFeatureFlag={featureFlagController}
+              />
+            </ErrorBoundary>
           );
         })}
       </>
