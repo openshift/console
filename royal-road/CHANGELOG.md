@@ -2,6 +2,14 @@
 
 Newest first. One entry per work package from `FORK.md`.
 
+## WP4: Observe pages via monitoring-plugin (part B)
+
+- `royal-road/plugins/monitoring-plugin/` builds openshift/monitoring-plugin from `release-5.0` (pinned commit in `upstream.env`) on public images: `node:22` and `golang:1.26` to build, `ubi9/ubi-minimal` to run. No published image matches 5.0: quay.io only has development tags, and upstream's Dockerfiles need Red Hat registry credentials. No patches are needed.
+- The plugin's Go backend serves the static bundle and patches the manifest for the enabled features (`alerting,metrics,legacy-dashboards,targets`). It hard-codes no Thanos or Alertmanager host. The frontend uses the bridge's `/api/prometheus{,-tenancy}` and `/api/alertmanager{,-tenancy}` proxies, so no `BRIDGE_PLUGIN_PROXY` is needed.
+- `.github/workflows/royal-road-monitoring-plugin.yml` pushes `ghcr.io/royal-road/monitoring-plugin:<short-sha>` and `:main` on `main`.
+- `royal-road/deploy/monitoring-plugin.yaml` adds the Deployment and Service (plain HTTP on 9443), the `openshift-config-managed` namespace, and a Role that lets the bridge read dashboard ConfigMaps there. `monitoring-dashboard-example.yaml` is a sample dashboard. The `## Monitoring plugin` section of `royal-road/deploy/README.md` covers the `BRIDGE_PLUGINS` value, the endpoints each page calls, tenancy, the `prometheus="openshift-monitoring/k8s"` label the Alerting pages' default "Platform" filter needs, and the checks left for production.
+- Verified on kind: alerts, silences (create through the bridge, list), alerting rules, metrics query, dashboards and targets. A namespace-scoped user's requests go to the tenancy paths with `namespace=<ns>`.
+
 ## WP5: Faster Helm release listing
 
 - `/api/helm/releases` no longer decodes superseded release Secrets. It lists Secrets with `status!=superseded` and decodes only the highest revision of each release, then applies Helm's `action.List` as before. The JSON is unchanged.
