@@ -2,6 +2,12 @@
 
 Newest first. One entry per work package from `FORK.md`.
 
+## WP5: Faster Helm release listing
+
+- `/api/helm/releases` no longer decodes superseded release Secrets. It lists Secrets with `status!=superseded` and decodes only the highest revision of each release, then applies Helm's `action.List` as before. The JSON is unchanged.
+- On kind with 600 release Secrets (90% superseded), the all-namespaces list went from about 263 ms to 34 ms (`limitInfo=true`) and from 268 ms to 42 ms (full releases).
+- Topology still fetches full releases.
+
 ## WP6: Triage the old fork's fixes
 
 - `royal-road/WP6-TRIAGE.md` gives a verdict and evidence for every Royal Road commit on `legacy/kubernetes-console-2022`.
