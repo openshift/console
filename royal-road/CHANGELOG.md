@@ -2,6 +2,14 @@
 
 Newest first. One entry per work package from `FORK.md`.
 
+## Pipelines plugin: Tekton pages via openshift-pipelines/console-plugin
+
+- `royal-road/plugins/pipelines-console-plugin/` builds openshift-pipelines/console-plugin from `release-5.0` (pinned commit in `upstream.env`) with three patches, on public images: `node:22` to build, `ubi9/nginx-126` to serve plain HTTP on 8080. Upstream publishes images only for `main` and its operator branches.
+- Patch 0001 makes the hard-coded `openshift-pipelines` namespace a build argument. It is split in two: `CLUSTER_RESOLVER_TASK_NAMESPACE` (shared Tasks the pipeline builder offers through the cluster resolver; ours: `tekton-catalog`) and `PIPELINE_NAMESPACE` (Pipelines-as-Code; ours: `pipelines-as-code`). Patch 0002 stops **Add Trigger** from creating a Route when `route.openshift.io` is absent. Patch 0003 backports upstream's fix for an intermittent crash of the PipelineRun Logs tab. All three are candidates for upstream.
+- `.github/workflows/royal-road-pipelines-plugin.yml` pushes `ghcr.io/royal-road/pipelines-console-plugin:<short-sha>` and `:main` on `main`.
+- `royal-road/deploy/pipelines-console-plugin.yaml` and the `## Pipelines plugin` section of `royal-road/deploy/README.md` cover the Deployment, the Service and the `BRIDGE_PLUGINS` value (`pipelines-console-plugin=...`). It isn't part of the cutover: deploy it once Tekton has a control plane again.
+- Verified on kind with Tekton Pipelines v1.18.0 and Triggers v0.38.0: lists, details, logs, the builder (catalog Tasks from `tekton-catalog`, saved as cluster resolver references), Triggers, Add Trigger, and topology. Without the Tekton CRDs the plugin adds nothing.
+
 ## Readable error page traces
 
 - `CONSOLE_KEEP_NAMES=1` (set in `royal-road/Dockerfile`) keeps function and class names in the minified bundles, so React component traces name real components. JS grows from 14.29 MB to 15.30 MB raw (+7.1%) and from 4.05 MB to 4.19 MB gzip (+3.6%). Unset, the build is unchanged from upstream.
