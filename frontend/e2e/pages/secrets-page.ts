@@ -41,7 +41,14 @@ export class SecretsPage extends BasePage {
   }
 
   async enterSecretName(name: string): Promise<void> {
-    await this.secretNameInput.fill(name);
+    // The create-secret form can re-render after initial mount (async data
+    // loading, namespace initialisation) and discard the filled value from
+    // the controlled input.  Fill-and-verify with retries so the name is
+    // guaranteed to stick before the caller proceeds.
+    await expect(async () => {
+      await this.secretNameInput.fill(name);
+      await expect(this.secretNameInput).toHaveValue(name, { timeout: 2_000 });
+    }).toPass({ timeout: 10_000 });
   }
 
   async fillSecretKey(key: string, index = 0): Promise<void> {
@@ -54,8 +61,19 @@ export class SecretsPage extends BasePage {
 
   async save(): Promise<void> {
     await this.robustClick(this.saveButton);
-    // eslint-disable-next-line eslint-js/no-restricted-syntax
-    await this.saveButton.waitFor({ state: 'detached', timeout: 30_000 });
+    try {
+      // eslint-disable-next-line eslint-js/no-restricted-syntax
+      await this.saveButton.waitFor({ state: 'detached', timeout: 30_000 });
+    } catch (e) {
+      // If the save button did not detach, check whether the form is
+      // showing an error alert so the test fails with a clear diagnostic
+      // instead of a generic timeout.
+      const errorAlert = this.page.locator('.pf-v6-c-alert.pf-m-danger');
+      if (await errorAlert.isVisible().catch(() => false)) {
+        throw new Error('Save failed: form displayed an error alert.');
+      }
+      throw e;
+    }
   }
 
   async addKeyValue(key: string, value: string): Promise<void> {

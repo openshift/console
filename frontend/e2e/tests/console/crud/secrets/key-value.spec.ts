@@ -102,10 +102,13 @@ test.describe('Create key/value secrets', () => {
 
     await test.step('Create secret with ascii file', async () => {
       await secretsPage.navigateToCreateGenericSecret(namespace);
+      await expect(secretsPage.getPageHeading()).toContainText('Create key/value secret');
       await secretsPage.enterSecretName(secretName);
       await secretsPage.fillSecretKey(SECRET_KEY);
       await secretsPage.uploadFile(fixturePath(ASCII_FILENAME));
-      await expect(secretsPage.getFileInputTextarea()).toContainText(asciiContent);
+      await expect(secretsPage.getFileInputTextarea()).toContainText(asciiContent, {
+        timeout: 15_000,
+      });
       await expect(secretsPage.getBinaryAlert()).not.toBeAttached();
       await secretsPage.save();
     });
@@ -135,10 +138,13 @@ test.describe('Create key/value secrets', () => {
 
     await test.step('Create secret with unicode file', async () => {
       await secretsPage.navigateToCreateGenericSecret(namespace);
+      await expect(secretsPage.getPageHeading()).toContainText('Create key/value secret');
       await secretsPage.enterSecretName(secretName);
       await secretsPage.fillSecretKey(SECRET_KEY);
       await secretsPage.uploadFile(fixturePath(UNICODE_FILENAME));
-      await expect(secretsPage.getFileInputTextarea()).toContainText(unicodeContent);
+      await expect(secretsPage.getFileInputTextarea()).toContainText(unicodeContent, {
+        timeout: 15_000,
+      });
       await expect(secretsPage.getBinaryAlert()).not.toBeAttached();
       await secretsPage.save();
     });
