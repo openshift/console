@@ -2,6 +2,10 @@
 
 Newest first. One entry per work package from `FORK.md`.
 
+## Fix: alerting rules without an `alerts` list
+
+- VictoriaMetrics' rules API omits `alerts` on inactive alerting rules (Prometheus sends `[]`). Core's `getAlertsAndRules` and monitoring-plugin's copy of it now treat the missing field as an empty list. Before, Topology crashed with "Cannot read properties of undefined (reading 'forEach')" once metrics were reachable.
+
 ## Kubernetes branding and the Dynamic Plugins page
 
 - Branding by configuration only: `royal-road/deploy/console-branding-configmap.yaml` holds the CNCF Kubernetes logos (masthead light and dark, favicon), and `console-deployment-patch.yaml` mounts it and sets `BRIDGE_CUSTOM_LOGO_FILES`, `BRIDGE_CUSTOM_FAVICON_FILES` and `BRIDGE_CUSTOM_PRODUCT_NAME=Kubernetes`. `BRIDGE_BRANDING` stays `okd`. The two masthead SVGs get a `width`/`height` on the root element; with only a `viewBox` they render 0×0 in the masthead.
