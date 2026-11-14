@@ -55,7 +55,8 @@ can be created.
    kubectl wait --for=condition=Established \
      crd/projecthelmchartrepositories.helm.openshift.io \
      crd/consolelinks.console.openshift.io \
-     crd/consoleplugins.console.openshift.io
+     crd/consoleplugins.console.openshift.io \
+     crd/olsconfigs.ols.openshift.io
    ```
 
 2. Resources that use them, after replacing the placeholders:
@@ -92,6 +93,14 @@ if one is required. It is not: the application menu link covers the need,
 core already lists StorageClasses, PVCs and VolumeSnapshots in the sidebar,
 and the generic CRD pages cover `CephBlockPool`, `CephFilesystem` and
 `CephObjectStore`.
+
+## Lightspeed
+
+The AI assistant (chat panel and YAML editor button), backed by GPUStack, is
+a separate stack in the `openshift-lightspeed` namespace. It is optional and
+independent of the cutover above. See [`lightspeed/README.md`](lightspeed/README.md)
+for the manifests, apply order, the `BRIDGE_PLUGINS` and
+`BRIDGE_PLUGIN_PROXY` values, and rollback.
 
 ## Branding
 

@@ -1,0 +1,68 @@
+# RBAC for Lightspeed.
+#
+# OLS authenticates every request with a TokenReview of the caller's token
+# (the console user's OIDC token, injected by the bridge plugin proxy) and
+# authorizes it with a SubjectAccessReview for the non-resource URL
+# /ols-access, verb get. Tools run on the MCP server with the same user token,
+# so the user's own RBAC applies to them; neither ServiceAccount can read
+# cluster resources.
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: lightspeed-app-server
+  namespace: openshift-lightspeed
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: lightspeed-app-server-auth
+rules:
+  - apiGroups: [authentication.k8s.io]
+    resources: [tokenreviews]
+    verbs: [create]
+  - apiGroups: [authorization.k8s.io]
+    resources: [subjectaccessreviews]
+    verbs: [create]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: lightspeed-app-server-auth
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: lightspeed-app-server-auth
+subjects:
+  - kind: ServiceAccount
+    name: lightspeed-app-server
+    namespace: openshift-lightspeed
+---
+# No RBAC on purpose: the MCP server acts with the caller's forwarded token.
+# Its own token is only used for start-up and API discovery (50-mcp-server.yaml).
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: kubernetes-mcp-server
+  namespace: openshift-lightspeed
+---
+# Who may use the assistant: OLS asks for `get` on the non-resource URL
+# /ols-access. Users without it get "not authorized" (HTTP 403) in the chat
+# panel. cluster-admin already allows every non-resource URL, so cluster-admins
+# need no binding. To let others in, bind this ClusterRole to them with
+# optional/query-access-binding.yaml.
+#
+# The second rule lets the same users read the inert OLSConfig "cluster"
+# (90-olsconfig.yaml). Core shows the "Ask OpenShift Lightspeed" button in the
+# YAML editor only to users who can read it, so the button appears for exactly
+# the users who can chat. Without the OLSConfig CRD the rule matches nothing.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: lightspeed-query-access
+rules:
+  - nonResourceURLs: [/ols-access]
+    verbs: [get]
+  - apiGroups: [ols.openshift.io]
+    resources: [olsconfigs]
+    resourceNames: [cluster]
+    verbs: [get]

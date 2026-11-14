@@ -1,0 +1,60 @@
+# Optional: restrict OLS egress to what it needs. Apply after the rest of the
+# directory, then check the chat still answers and uses tools.
+#
+#   DNS             kube-system pods labelled k8s-app=kube-dns, 53/UDP+TCP
+#   kube-apiserver  TokenReview and SubjectAccessReview on every request
+#   MCP server      tool calls, 8080
+#   GPUStack        the LLM, <gpustack-port>
+#
+# Placeholders:
+#   <apiserver-cidr>      each control-plane node address as a /32 (one
+#                         ipBlock entry per node). Calico evaluates egress to
+#                         the `kubernetes` Service after DNAT, so the
+#                         Service's ClusterIP is not enough.
+#   <apiserver-port>      the API server's port on those nodes (often 6443).
+#   <gpustack-namespace>  namespace of the GPUStack Service.
+#   <gpustack-port>       the Service's target port (the pod port), for the
+#                         same DNAT reason.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: lightspeed-app-server-egress
+  namespace: openshift-lightspeed
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: lightspeed-app-server
+  policyTypes: [Egress]
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+          podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+      ports:
+        - port: 53
+          protocol: UDP
+        - port: 53
+          protocol: TCP
+    - to:
+        - ipBlock:
+            cidr: <apiserver-cidr>
+      ports:
+        - port: <apiserver-port>
+          protocol: TCP
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: kubernetes-mcp-server
+      ports:
+        - port: 8080
+          protocol: TCP
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: <gpustack-namespace>
+      ports:
+        - port: <gpustack-port>
+          protocol: TCP

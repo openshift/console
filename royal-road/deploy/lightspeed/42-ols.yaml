@@ -1,0 +1,143 @@
+# OpenShift Lightspeed Service (OLS), the chat backend, without the operator.
+#
+# Needs: 10-rbac.yaml, 20-tls.yaml (the Secret lightspeed-app-server-tls),
+# 40-ols-config.yaml, 41-ols-shim-configmap.yaml, and the Secret
+# lightspeed-gpustack (key apikey; see README.md).
+#
+# The image is upstream's public build of openshift/lightspeed-service `main`
+# (no release tags), pinned by digest: rr_ols_shim.py patches private names,
+# so check every bump (README.md, "Upgrading OLS").
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lightspeed-app-server
+  namespace: openshift-lightspeed
+  labels:
+    app.kubernetes.io/name: lightspeed-app-server
+    app.kubernetes.io/part-of: lightspeed
+spec:
+  # One replica: the conversation cache is in memory (40-ols-config.yaml).
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: lightspeed-app-server
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: lightspeed-app-server
+        app.kubernetes.io/part-of: lightspeed
+    spec:
+      serviceAccountName: lightspeed-app-server
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: ols
+          # lightspeed-service main @ 77e4fcb4, built 2026-11-14.
+          image: quay.io/openshift-lightspeed/lightspeed-service-api@sha256:63924c0ebfe6e8765a65d2f29257fbde6376f884c1994951e1a0dfa1807a43c0
+          # Instead of the image's `python runner.py`; see rr_ols_shim.py.
+          command: [python, /rr-shim/rr_ols_shim.py]
+          env:
+            - name: OLS_CONFIG_FILE
+              value: /etc/ols/olsconfig.yaml
+            # runner.py writes a CA bundle here from the system CAs plus every
+            # *.crt/*.pem in the other directories under /etc/certs/. To trust
+            # a private CA for GPUStack, mount it at /etc/certs/gpustack-ca/.
+            - name: SSL_CERT_FILE
+              value: /etc/certs/bundle/ca-bundle.crt
+            - name: RR_UID_FALLBACK
+              value: "1"
+          ports:
+            - name: https
+              containerPort: 8443
+          # /readiness also checks that the LLM answers, so the pod turns
+          # unready while GPUStack is down; /liveness only checks the process.
+          readinessProbe:
+            httpGet:
+              path: /readiness
+              port: https
+              scheme: HTTPS
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /liveness
+              port: https
+              scheme: HTTPS
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 3
+          startupProbe:
+            httpGet:
+              path: /liveness
+              port: https
+              scheme: HTTPS
+            periodSeconds: 5
+            failureThreshold: 60
+          resources:
+            # About 0.9 GiB resident after a few chats with tools on kind.
+            requests:
+              cpu: 200m
+              memory: 1Gi
+            limits:
+              memory: 2Gi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: [ALL]
+          volumeMounts:
+            - name: config
+              mountPath: /etc/ols
+              readOnly: true
+            - name: shim
+              mountPath: /rr-shim
+              readOnly: true
+            - name: apikey
+              mountPath: /etc/apikeys/gpustack
+              readOnly: true
+            - name: tls
+              mountPath: /etc/certs/lightspeed-tls
+              readOnly: true
+            - name: cert-bundle
+              mountPath: /etc/certs/bundle
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: config
+          configMap:
+            name: olsconfig
+        - name: shim
+          configMap:
+            name: rr-ols-shim
+        - name: apikey
+          secret:
+            secretName: lightspeed-gpustack
+        - name: tls
+          secret:
+            secretName: lightspeed-app-server-tls
+        - name: cert-bundle
+          emptyDir: {}
+        - name: tmp
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: lightspeed-app-server
+  namespace: openshift-lightspeed
+  labels:
+    app.kubernetes.io/name: lightspeed-app-server
+    app.kubernetes.io/part-of: lightspeed
+spec:
+  selector:
+    app.kubernetes.io/name: lightspeed-app-server
+  ports:
+    - name: https
+      port: 8443
+      targetPort: https

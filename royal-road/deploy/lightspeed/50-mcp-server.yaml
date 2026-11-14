@@ -1,0 +1,116 @@
+# Read-only Kubernetes MCP server (containers/kubernetes-mcp-server), the
+# tools OLS offers the model: list/get pods, resources, events, logs, Helm
+# releases, namespaces.
+#
+# Every tool call runs with the console user's own token: OLS forwards it
+# (`Authorization: kubernetes` in 40-ols-config.yaml), and the server passes
+# it to kube-apiserver unchanged. require_oauth with skip_jwt_verification
+# rejects requests without a token instead of falling back to the server's own
+# identity. The server still needs its ServiceAccount token to start in-cluster
+# mode and to watch API discovery; that ServiceAccount has no RBAC beyond
+# what every authenticated identity gets. The NetworkPolicy in
+# 70-networkpolicy.yaml admits only OLS.
+#
+# read_only registers only tools marked read-only, and denied_resources keeps
+# Secrets and RBAC objects out of answers even for users who can read them.
+# Neither replaces RBAC: what a user can read is what their token allows.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kubernetes-mcp-server
+  namespace: openshift-lightspeed
+data:
+  config.toml: |
+    port = "8080"
+    stateless = true
+    read_only = true
+    toolsets = ["core", "helm"]
+    require_oauth = true
+    skip_jwt_verification = true
+    cluster_auth_mode = "passthrough"
+    cluster_provider_strategy = "in-cluster"
+
+    [[denied_resources]]
+    group = ""
+    version = "v1"
+    kind = "Secret"
+
+    [[denied_resources]]
+    group = "rbac.authorization.k8s.io"
+    version = "v1"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kubernetes-mcp-server
+  namespace: openshift-lightspeed
+  labels:
+    app.kubernetes.io/name: kubernetes-mcp-server
+    app.kubernetes.io/part-of: lightspeed
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: kubernetes-mcp-server
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: kubernetes-mcp-server
+        app.kubernetes.io/part-of: lightspeed
+    spec:
+      serviceAccountName: kubernetes-mcp-server
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: mcp
+          # v0.1.3 (multi-arch index).
+          image: quay.io/containers/kubernetes_mcp_server@sha256:6347155616c49c78512114500688b50d275ddde7597b6a38cefe6f40a8c42c16
+          args: [--config, /etc/mcp/config.toml]
+          ports:
+            - name: http
+              containerPort: 8080
+          readinessProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 20m
+              memory: 64Mi
+            limits:
+              memory: 512Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: [ALL]
+          volumeMounts:
+            - name: config
+              mountPath: /etc/mcp
+              readOnly: true
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: config
+          configMap:
+            name: kubernetes-mcp-server
+        - name: tmp
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kubernetes-mcp-server
+  namespace: openshift-lightspeed
+  labels:
+    app.kubernetes.io/name: kubernetes-mcp-server
+    app.kubernetes.io/part-of: lightspeed
+spec:
+  selector:
+    app.kubernetes.io/name: kubernetes-mcp-server
+  ports:
+    - name: http
+      port: 8080
+      targetPort: http

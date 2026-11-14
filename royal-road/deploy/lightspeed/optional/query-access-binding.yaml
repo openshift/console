@@ -1,0 +1,21 @@
+# Optional: widen Lightspeed access beyond cluster-admins.
+#
+# Replace <lightspeed-users-group> with the group as kube-apiserver sees it:
+# the Dex groups claim value, including the groups prefix from the API
+# server's OIDC settings (--oidc-groups-prefix or the AuthenticationConfiguration
+# claimMappings.groups.prefix) if one is set. Group or User subjects both work.
+#
+# Tools still run with each user's own RBAC, so a user who can't list pods
+# gets "forbidden" from the pods tools, not other users' data.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: lightspeed-query-access
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: lightspeed-query-access
+subjects:
+  - apiGroup: rbac.authorization.k8s.io
+    kind: Group
+    name: <lightspeed-users-group>

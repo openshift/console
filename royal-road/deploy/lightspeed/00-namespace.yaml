@@ -1,0 +1,10 @@
+# Namespace for the Lightspeed stack: OLS (the chat backend), the read-only
+# Kubernetes MCP server it calls for tools, and the console plugin.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: openshift-lightspeed
+  annotations:
+    rrl.infrastructure/agent-created: "true"
+  labels:
+    app.kubernetes.io/part-of: lightspeed

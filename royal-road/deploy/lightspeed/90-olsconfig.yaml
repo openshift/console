@@ -1,0 +1,20 @@
+# Inert OLSConfig. Console core shows the "Ask OpenShift Lightspeed" button in
+# the YAML editor toolbar only to users who can GET olsconfigs/cluster
+# (frontend/packages/console-shared/src/hooks/useOLSConfig.ts); the button
+# opens the plugin's chat with the editor content attached.
+#
+# No operator reads this object. OLS is configured by 40-ols-config.yaml, not
+# by this resource. Requires ../crds/ols.openshift.io_olsconfigs.yaml; read
+# access comes from the lightspeed-query-access ClusterRole (10-rbac.yaml).
+apiVersion: ols.openshift.io/v1alpha1
+kind: OLSConfig
+metadata:
+  name: cluster
+  annotations:
+    royalroad.com/note: Inert. Lights up the console's YAML editor button; OLS reads its config from the olsconfig ConfigMap in openshift-lightspeed.
+spec:
+  llm:
+    providers: []
+  ols:
+    defaultProvider: ""
+    defaultModel: ""

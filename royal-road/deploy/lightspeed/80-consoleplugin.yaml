@@ -1,0 +1,29 @@
+# Lists the Lightspeed plugin on Administration > Dynamic Plugins, like
+# ../consoleplugins.yaml does for the other plugins. Display only:
+# BRIDGE_PLUGINS loads the plugin and BRIDGE_PLUGIN_PROXY sets up the OLS
+# route; the proxy section here just documents that route. Requires
+# ../crds/90_consoleplugins.crd.yaml. The name must equal the plugin name in
+# BRIDGE_PLUGINS, which must be lightspeed-console-plugin (the plugin
+# hard-codes /api/proxy/plugin/lightspeed-console-plugin/ols).
+apiVersion: console.openshift.io/v1
+kind: ConsolePlugin
+metadata:
+  name: lightspeed-console-plugin
+spec:
+  displayName: Lightspeed
+  backend:
+    type: Service
+    service:
+      name: lightspeed-console-plugin
+      namespace: openshift-lightspeed
+      port: 8080
+      basePath: /
+  proxy:
+    - alias: ols
+      authorization: UserToken
+      endpoint:
+        type: Service
+        service:
+          name: lightspeed-app-server
+          namespace: openshift-lightspeed
+          port: 8443

@@ -1,0 +1,102 @@
+# OLS configuration (what the lightspeed-operator would generate on OpenShift).
+#
+# Placeholders: <gpustack-service>, <gpustack-namespace>, <gpustack-port> in
+# the provider URL (GPUStack's in-cluster OpenAI-compatible base URL, ending in
+# /v1). The model name is the GPUStack model/route name.
+#
+# Provider: type `openai` with use_responses_api: false. OLS then uses
+# LangChain's ChatOpenAI against POST {url}/chat/completions, the most widely
+# implemented OpenAI-compatible endpoint, and the one SGLang's tool-call parser
+# serves (finish_reason tool_calls). The `openai` type's default is the
+# Responses API (/v1/responses), whose streaming and tool-call events
+# OpenAI-compatible servers implement less completely. `rhoai_vllm` would also
+# use chat completions, but adds vLLM sampling defaults (top_p 0.95,
+# frequency_penalty 1.03) that OLS then drops again with a warning on every
+# request.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: olsconfig
+  namespace: openshift-lightspeed
+data:
+  olsconfig.yaml: |
+    llm_providers:
+      - name: gpustack
+        type: openai
+        url: http://<gpustack-service>.<gpustack-namespace>.svc:<gpustack-port>/v1
+        # File with the API key (Secret lightspeed-gpustack, key apikey).
+        credentials_path: /etc/apikeys/gpustack/apikey
+        models:
+          - name: lightspeed
+            options:
+              use_responses_api: false
+            context_window_size: 32768
+            parameters:
+              max_tokens_for_response: 4096
+    ols_config:
+      default_provider: gpustack
+      default_model: lightspeed
+      system_prompt_path: /etc/ols/system-prompt.txt
+      # One replica, so the in-memory cache is enough. History is lost when
+      # the pod restarts; the plugin keeps none across page reloads anyway.
+      conversation_cache:
+        type: memory
+        memory:
+          max_entries: 1000
+      authentication_config:
+        module: k8s
+      tls_config:
+        tls_certificate_path: /etc/certs/lightspeed-tls/tls.crt
+        tls_key_path: /etc/certs/lightspeed-tls/tls.key
+      logging_config:
+        app_log_level: info
+        lib_log_level: warning
+        uvicorn_log_level: info
+      # Nothing is stored for or sent to Red Hat.
+      user_data_collection:
+        feedback_disabled: true
+        transcripts_disabled: true
+      # Enabled (the default) writes an OTLP-JSON span to stdout for every
+      # request, health probes included, with the user's question and the
+      # tool output. Cluster access by tools is already in the kube-apiserver
+      # audit log under the user's own name.
+      audit:
+        logging: Disabled
+    mcp_servers:
+      - name: kubernetes
+        url: http://kubernetes-mcp-server.openshift-lightspeed.svc:8080/mcp
+        timeout: 30
+        headers:
+          # Special value: forward the caller's own token, so tools run with
+          # the console user's RBAC.
+          Authorization: kubernetes
+  # Replaces OLS's built-in prompt, which presents the assistant as an
+  # OpenShift expert and steers answers to `oc` and OpenShift-only APIs.
+  system-prompt.txt: |
+    # ROLE
+    You are "Lightspeed", an AI assistant built into the web console of a
+    Kubernetes cluster. You are a friendly, precise technical expert on
+    Kubernetes and the cloud-native tools that run on it (Helm, cert-manager,
+    ingress-nginx, Prometheus-compatible monitoring, Rook-Ceph, Calico, and
+    similar).
+
+    # THE CLUSTER
+    - This is upstream Kubernetes (kubeadm), not OpenShift. OpenShift-only APIs
+      such as Routes, Projects, DeploymentConfigs, BuildConfigs, ImageStreams,
+      ClusterVersion and Operators/OLM do not exist here. Use Ingress, Namespace,
+      Deployment and other upstream resources instead, and kubectl and helm
+      instead of oc.
+    - If tools are available, use them to look at the live state of the
+      cluster before answering questions about specific resources, and say
+      what you looked at. Tools run with the user's own permissions; if one
+      returns "forbidden", tell the user they lack access rather than guessing.
+
+    # INSTRUCTIONS
+    - Use the provided context and chat history as your primary source of truth.
+    - Do not invent resource names, field names, flags or command output. If you
+      are not sure, say so.
+    - Prefer short answers with concrete commands or YAML. Explain the risk of
+      any command that changes or deletes something.
+    - Do not include URLs unless they are in the provided context.
+    - Politely decline questions that are not about Kubernetes, software
+      operations or this cluster.

@@ -1,0 +1,73 @@
+# TLS for bridge -> OLS (requires cert-manager).
+#
+# OLS receives users' bearer tokens, so it serves HTTPS on 8443. A
+# namespace-local CA signs its serving certificate:
+#
+#   lightspeed-selfsigned (Issuer) -> lightspeed-ca (Certificate, 10 years)
+#   lightspeed-ca (Issuer)         -> lightspeed-app-server-tls (Certificate, 1 year)
+#
+# The bridge trusts this CA only for the OLS proxy route: the CA certificate
+# goes into BRIDGE_PLUGIN_PROXY's caCertificate (see plugin-proxy.sh). It does
+# not touch BRIDGE_SERVICE_CA_FILE, so nothing else the bridge proxies changes.
+#
+# Renewal: cert-manager renews the serving certificate 30 days before expiry
+# and updates the Secret, but OLS reads it only at start-up. Restart OLS in
+# that window (`kubectl -n openshift-lightspeed rollout restart
+# deploy/lightspeed-app-server`), or let a reloader do it. The CA is stable for
+# 10 years, so BRIDGE_PLUGIN_PROXY does not change on renewal.
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: lightspeed-selfsigned
+  namespace: openshift-lightspeed
+spec:
+  selfSigned: {}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: lightspeed-ca
+  namespace: openshift-lightspeed
+spec:
+  isCA: true
+  commonName: lightspeed-ca
+  secretName: lightspeed-ca
+  duration: 87600h # 10 years
+  renewBefore: 720h
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+    rotationPolicy: Never
+  issuerRef:
+    kind: Issuer
+    name: lightspeed-selfsigned
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: lightspeed-ca
+  namespace: openshift-lightspeed
+spec:
+  ca:
+    secretName: lightspeed-ca
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: lightspeed-app-server-tls
+  namespace: openshift-lightspeed
+spec:
+  secretName: lightspeed-app-server-tls
+  duration: 8760h # 1 year
+  renewBefore: 720h
+  dnsNames:
+    - lightspeed-app-server.openshift-lightspeed.svc
+    - lightspeed-app-server.openshift-lightspeed.svc.cluster.local
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+    rotationPolicy: Always
+  usages: [server auth, digital signature, key encipherment]
+  issuerRef:
+    kind: Issuer
+    name: lightspeed-ca

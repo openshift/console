@@ -1,0 +1,69 @@
+# Ingress policies for the Lightspeed namespace. Replace <console-namespace>
+# with the namespace of the console Deployment (the bridge).
+#
+#   bridge (console namespace) -> OLS :8443        (chat, through BRIDGE_PLUGIN_PROXY)
+#   bridge (console namespace) -> plugin :8080     (static plugin assets)
+#   OLS                        -> MCP server :8080 (tool calls)
+#
+# Everything else into these pods is dropped. Kubelet probes are not affected:
+# Calico (and kindnet) always admit traffic from the pod's own node.
+# Egress is left open here; optional/ols-egress-networkpolicy.yaml restricts
+# OLS egress too, but needs the API server's addresses.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: lightspeed-app-server
+  namespace: openshift-lightspeed
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: lightspeed-app-server
+  policyTypes: [Ingress]
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: <console-namespace>
+      ports:
+        - port: 8443
+          protocol: TCP
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: lightspeed-console-plugin
+  namespace: openshift-lightspeed
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: lightspeed-console-plugin
+  policyTypes: [Ingress]
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: <console-namespace>
+      ports:
+        - port: 8080
+          protocol: TCP
+---
+# The MCP server accepts any bearer token and acts with it, so only OLS may
+# reach it.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: kubernetes-mcp-server
+  namespace: openshift-lightspeed
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: kubernetes-mcp-server
+  policyTypes: [Ingress]
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: lightspeed-app-server
+      ports:
+        - port: 8080
+          protocol: TCP
