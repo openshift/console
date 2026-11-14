@@ -3,6 +3,7 @@ import type { SetFeatureFlag } from '@console/dynamic-plugin-sdk';
 import { k8sListResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
 import { settleAllPromises } from '@console/dynamic-plugin-sdk/src/utils/promise';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
+import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { usePoll } from '@console/shared/src/hooks/usePoll';
 import { FLAG_OPENSHIFT_HELM } from '../const';
@@ -19,7 +20,9 @@ export const useDetectHelmChartRepositories = (setFeatureFlag: SetFeatureFlag) =
       }) as Promise<K8sResourceKind[]>,
       k8sListResource<K8sResourceKind>({
         model: ProjectHelmChartRepositoryModel,
-        queryParams: { ns: namespace },
+        // ALL_NAMESPACES_KEY ('#ALL_NS#') is not a namespace; in a URL its '#' starts a
+        // fragment, so the request would go to `.../namespaces/` and always 404.
+        queryParams: namespace === ALL_NAMESPACES_KEY ? {} : { ns: namespace },
       }) as Promise<K8sResourceKind[]>,
     ];
     settleAllPromises(helmChartRepos)

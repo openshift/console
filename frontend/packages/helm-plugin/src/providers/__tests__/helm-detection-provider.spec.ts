@@ -2,6 +2,7 @@ import { renderHook, waitFor } from '@testing-library/react';
 import { HttpError } from '@console/dynamic-plugin-sdk/src/utils/error/http-error';
 import { k8sListResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
 import { settleAllPromises } from '@console/dynamic-plugin-sdk/src/utils/promise';
+import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { mockHelmChartRepositories } from '../../components/__tests__/helm-release-mock-data';
 import { FLAG_OPENSHIFT_HELM } from '../../const';
@@ -59,6 +60,17 @@ describe('useDetectHelmChartRepositories', () => {
     ]);
     expect(k8sListResourceMock.mock.calls[1]).toEqual([
       { model: ProjectHelmChartRepositoryModel, queryParams: { ns } },
+    ]);
+  });
+
+  it('should list ProjectHelmChartRepositories in all namespaces when all namespaces are selected', async () => {
+    useActiveNamespaceMock.mockReturnValue([ALL_NAMESPACES_KEY]);
+    settleAllPromisesMock.mockReturnValue(
+      Promise.resolve([[mockHelmChartRepositories, mockHelmChartRepositories], [], []]),
+    );
+    renderHook(() => useDetectHelmChartRepositories(setFeatureFlag));
+    expect(k8sListResourceMock.mock.calls[1]).toEqual([
+      { model: ProjectHelmChartRepositoryModel, queryParams: {} },
     ]);
   });
 
