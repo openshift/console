@@ -14,8 +14,10 @@ proxy defaults are unchanged, so the existing env carries over as is.
 1. **Back up** the live console Deployment, Service and Ingress.
 2. **Deploy the plugins** in the console namespace:
    [`networking-console-plugin.yaml`](networking-console-plugin.yaml) and
-   [`monitoring-plugin.yaml`](monitoring-plugin.yaml). Wait for both
-   Deployments to be ready. Nothing loads them yet.
+   [`monitoring-plugin.yaml`](monitoring-plugin.yaml), and for logs
+   [`logging-view-plugin.yaml`](logging-view-plugin.yaml) (see
+   [Logging plugin](#logging-plugin)). Wait for the Deployments to be ready.
+   Nothing loads them yet.
 3. **Apply the CRDs and the resources that use them** (see [CRDs](#crds)),
    then [`monitoring/console-recording-rules.yaml`](monitoring/console-recording-rules.yaml)
    (see [Recording rules](#recording-rules)). Apply
@@ -472,3 +474,58 @@ TriggerTemplate and EventListener but no Route (patch 0002). Expose the
   scraped into the monitoring stack and reachable through the tenancy proxy.
 - Without internet egress from the console Pod, the builder's ArtifactHub
   results are empty; catalog and namespace Tasks still show.
+
+## Logging plugin
+
+Observe › Logs (admin and developer perspectives) and the Pod "Aggregated Logs" tab, reading VictoriaLogs, from [openshift/logging-view-plugin](https://github.com/openshift/logging-view-plugin) with our patches and `vl-tenancy-proxy`. The build, the patches and the proxy's design are described in `royal-road/plugins/logging-view-plugin/README.md`.
+
+It expects logs shipped like Grafana Alloy's `loki.write` to VictoriaLogs' Loki push API (`/insert/loki/api/v1/push`): stream fields `namespace`, `pod`, `container`, and `level` from alloy-modules' log-levels module. `deployment` / `statefulset` fields are kept but not used by the UI.
+
+### Deploy
+
+1. Apply `logging-view-plugin.yaml` after filling in the placeholders listed at its top: the console namespace and a label on the console pods, the image tag pushed by `.github/workflows/royal-road-logging-view-plugin.yml` (`:main` follows `main`), VictoriaLogs' URL, and VictoriaLogs' namespace and pod label. It creates:
+   - a ServiceAccount bound to `system:auth-delegator` (TokenReview, SubjectAccessReview) and allowed to list namespaces;
+   - a Deployment with two containers from the same image: `plugin` (static files and `/config`, port 9002) and `vl-tenancy-proxy` (port 8080);
+   - a Service with both ports;
+   - a NetworkPolicy so that only the console pods reach either port;
+   - a NetworkPolicy in VictoriaLogs' namespace that lets the proxy reach VictoriaLogs on 9428. NetworkPolicies add up, so if VictoriaLogs already has an ingress policy that lists its writers (Alloy) and readers (Grafana, ...), this one only adds the proxy. If VictoriaLogs has no ingress policy yet, this one isolates it: list the writers and other readers too, or ingestion stops. You can instead add the proxy as one more `from` entry in the existing policy and skip this object.
+2. Add the plugin and its proxy to the console Deployment's container env:
+
+   ```yaml
+   - name: BRIDGE_PLUGINS
+     value: <other plugins>,logging-view-plugin=http://logging-view-plugin.<console-namespace>.svc.cluster.local:9002/
+   - name: BRIDGE_PLUGIN_PROXY
+     value: '{"services":[{"consoleAPIPath":"/api/proxy/plugin/logging-view-plugin/backend/","endpoint":"http://logging-view-plugin.<console-namespace>.svc.cluster.local:8080","authorize":true}]}'
+   ```
+
+   `consoleAPIPath` must be exactly that: the plugin calls `/api/proxy/plugin/logging-view-plugin/backend/api/logs/v1/<tenant>/select/logsql/...`. `"authorize": true` makes the bridge send the signed-in user's token, which the proxy checks; without it every request gets 401.
+3. Roll out the console. Check that `https://<console-host>/api/plugins/logging-view-plugin/config` returns `{"schema":"vlogs",...}` and that Observe › Logs shows log lines.
+
+### Tenants and access
+
+- **Tenant dropdown:** `application` (namespaces not matching `openshift-.*|openshift|default|kube-.*`, plus logs without a `namespace`) and `infrastructure` (the matching ones), as on a LokiStack. The proxy applies it; it isn't part of the query. There is no audit tenant.
+- **Who sees what:** users allowed `get pods/log` cluster-wide (cluster-admin, `cluster-reader`-like ClusterRoleBindings) see all namespaces. Everyone else sees the namespaces where they may `get pods/log` (the `view`, `edit` and `admin` roles grant it). Access is re-checked every 30 s.
+- **Query language:** LogsQL. The filter bar writes `{ namespace="a", pod=~"b|c" } *"text"* level:~"(?i)^(error|err|eror)$"`; any LogsQL typed in "Show Query" works, and a query ending in `| stats ...` is drawn as a graph.
+
+### Production checks after deploying
+
+- A Dex user with `view` in one namespace: Observe › Logs (developer perspective) shows that namespace; the admin page's `application` tenant shows only that namespace; another namespace's page shows "No datapoints found". The proxy logs one line per query with the user, tenant and scope (`all namespaces` or `N namespaces`).
+- Live tail (the ▶ button) streams new lines through the ingress. If it stalls, check that ingress-nginx doesn't buffer the console's responses (`proxy-buffering`) and that its read timeout allows long responses.
+- JSON log lines: VictoriaLogs' Loki ingestion parses JSON lines into fields and takes the message only from `_msg`, so lines like `{"level":"info","msg":"..."}` show "missing _msg field" (also in Grafana). Adding `?_msg_field=msg,message,_msg` to Alloy's push URL fixes that at ingestion; it is a VictoriaLogs/Alloy setting, not part of this plugin.
+
+### Verified on kind
+
+kind cluster with VictoriaLogs v1.53.0 (production's version), `logging-view-plugin.yaml` applied with `dev/kind-demo.sh`, about 3,600 lines over two hours pushed with `dev/push-logs.py` (Alloy's labels, klog/zerolog/logfmt/JSON lines, raw level spellings) across `team-a`, `team-b` and `kube-system`, and the console image run off-cluster with `BRIDGE_PLUGINS` and `BRIDGE_PLUGIN_PROXY`.
+
+| Check | Result |
+|---|---|
+| Observe › Logs, histogram, results | Works (`query`, `hits` by level). |
+| Tenant dropdown | `application` → team-a, team-b; `infrastructure` → kube-system. |
+| Severity filter | `level:~"(?i)^(...)$"`, chips round-trip from the URL, histogram colours by severity. |
+| Content filter | `*"deadline"*` substring match. |
+| `| stats by (namespace) count()` | Drawn as a metrics graph (`stats_query_range`). |
+| Pod › Aggregated Logs | Works, scoped to `{ pod="...", namespace="..." }`. |
+| Developer perspective › Observe › Logs | Works, scoped to the namespace. |
+| Live tail | Streams through bridge and proxy (`/select/logsql/tail`). |
+| Tenancy | A ServiceAccount with `view` in team-a (bridge run with its token, and directly at the proxy): only team-a, nothing in `infrastructure`, including with `{namespace="team-b"}` in the query, a client-sent `extra_stream_filters`, a `union` subquery, `stream_field_values` and an `AccountID` header. No token or an invalid token: 401. `query_time_range`: 404. Cluster-admin: all namespaces. |
+| NetworkPolicies | A pod in another namespace can't reach the proxy or VictoriaLogs; a pod with the console label reaches the proxy; the proxy reaches VictoriaLogs. |

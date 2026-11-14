@@ -1,0 +1,259 @@
+# openshift/logging-view-plugin reading VictoriaLogs: Observe > Logs (admin and
+# developer perspectives) and the Pod "Aggregated Logs" tab. One pod runs the
+# plugin (static files + /config, port 9002) and vl-tenancy-proxy (port 8080)
+# from the same image. See "Logging plugin" in README.md.
+#
+# Placeholders:
+#   <console-namespace>         namespace of the console (bridge) Deployment
+#   <console-pod-label-key>     a label on the console pods, and its value:
+#   <console-pod-label-value>     only those pods may reach this pod
+#   <logging-view-plugin-sha>   image tag (short commit SHA of royal-road/console
+#                               main), or "main"
+#   <victorialogs-url>          VictoriaLogs base URL, e.g.
+#                               http://victorialogs.<victorialogs-namespace>.svc:9428
+#   <victorialogs-namespace>    namespace of the VictoriaLogs pod, and a label on
+#   <victorialogs-label-key>      that pod with its value (for the NetworkPolicy
+#   <victorialogs-label-value>    at the end)
+#
+# The bridge loads the plugin and proxies its queries, with the user's token,
+# to the tenancy proxy:
+#   BRIDGE_PLUGINS=logging-view-plugin=http://logging-view-plugin.<console-namespace>.svc.cluster.local:9002/
+#   BRIDGE_PLUGIN_PROXY={"services":[{"consoleAPIPath":"/api/proxy/plugin/logging-view-plugin/backend/","endpoint":"http://logging-view-plugin.<console-namespace>.svc.cluster.local:8080","authorize":true}]}
+# (comma-separate the BRIDGE_PLUGINS entry from the other plugins).
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: logging-view-plugin
+  namespace: <console-namespace>
+  labels:
+    app.kubernetes.io/name: logging-view-plugin
+    app.kubernetes.io/part-of: console
+---
+# TokenReview and SubjectAccessReview, as for kube-rbac-proxy.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: logging-view-plugin-auth-delegator
+  labels:
+    app.kubernetes.io/name: logging-view-plugin
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: system:auth-delegator
+subjects:
+  - kind: ServiceAccount
+    name: logging-view-plugin
+    namespace: <console-namespace>
+---
+# Listing namespaces, to check a non-admin user's access in each.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: logging-view-plugin-namespace-reader
+  labels:
+    app.kubernetes.io/name: logging-view-plugin
+rules:
+  - apiGroups: [""]
+    resources: ["namespaces"]
+    verbs: ["list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: logging-view-plugin-namespace-reader
+  labels:
+    app.kubernetes.io/name: logging-view-plugin
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: logging-view-plugin-namespace-reader
+subjects:
+  - kind: ServiceAccount
+    name: logging-view-plugin
+    namespace: <console-namespace>
+---
+# Served to the frontend at /api/plugins/logging-view-plugin/config.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: logging-view-plugin-config
+  namespace: <console-namespace>
+  labels:
+    app.kubernetes.io/name: logging-view-plugin
+data:
+  config.yaml: |
+    schema: vlogs
+    logsLimit: 100
+    timeout: 60s
+    # live tail (VictoriaLogs /select/logsql/tail) on Observe > Logs too
+    isStreamingEnabledInDefaultPage: true
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: logging-view-plugin
+  namespace: <console-namespace>
+  labels:
+    app.kubernetes.io/name: logging-view-plugin
+    app.kubernetes.io/part-of: console
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: logging-view-plugin
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: logging-view-plugin
+        app.kubernetes.io/part-of: console
+    spec:
+      serviceAccountName: logging-view-plugin
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        # Plain HTTP stays inside the cluster: only the bridge fetches the
+        # plugin's assets and serves them under /api/plugins/logging-view-plugin/.
+        - name: plugin
+          image: ghcr.io/royal-road/logging-view-plugin:<logging-view-plugin-sha>
+          args: ["-plugin-config-path", "/etc/plugin/config.yaml"]
+          ports:
+            - name: http
+              containerPort: 9002
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+          volumeMounts:
+            - name: config
+              mountPath: /etc/plugin
+              readOnly: true
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              memory: 128Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+        # Receives the bridge's plugin-proxy requests with the user's bearer
+        # token, restricts them to the namespaces the user may read pod logs in,
+        # and forwards them to VictoriaLogs' /select/logsql endpoints.
+        - name: vl-tenancy-proxy
+          image: ghcr.io/royal-road/logging-view-plugin:<logging-view-plugin-sha>
+          command: ["/opt/app-root/vl-tenancy-proxy"]
+          args:
+            - -listen=:8080
+            - -upstream=<victorialogs-url>
+            - -namespace-field=namespace
+          ports:
+            - name: proxy
+              containerPort: 8080
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: proxy
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: proxy
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              memory: 128Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+      volumes:
+        - name: config
+          configMap:
+            name: logging-view-plugin-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: logging-view-plugin
+  namespace: <console-namespace>
+  labels:
+    app.kubernetes.io/name: logging-view-plugin
+    app.kubernetes.io/part-of: console
+spec:
+  selector:
+    app.kubernetes.io/name: logging-view-plugin
+  ports:
+    - name: http
+      port: 9002
+      targetPort: http
+      protocol: TCP
+    - name: proxy
+      port: 8080
+      targetPort: proxy
+      protocol: TCP
+---
+# Only the console may reach the plugin and the proxy. Kubelet probes come from
+# the node and are not affected.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: logging-view-plugin-ingress
+  namespace: <console-namespace>
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: logging-view-plugin
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              <console-pod-label-key>: <console-pod-label-value>
+      ports:
+        - port: 9002
+          protocol: TCP
+        - port: 8080
+          protocol: TCP
+---
+# Lets the proxy reach VictoriaLogs. NetworkPolicies add up: if VictoriaLogs
+# already has an ingress policy listing its writers (Alloy) and readers, this
+# adds the proxy to it without changing the others. Without any ingress policy
+# on VictoriaLogs everything may reach it anyway, and this policy would turn
+# on isolation for it: then list the writers (Alloy) and other readers too, or
+# ingestion stops.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: victorialogs-from-logging-view-plugin
+  namespace: <victorialogs-namespace>
+spec:
+  podSelector:
+    matchLabels:
+      <victorialogs-label-key>: <victorialogs-label-value>
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: <console-namespace>
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: logging-view-plugin
+      ports:
+        - port: 9428
+          protocol: TCP
