@@ -94,3 +94,26 @@ env:
 
 Off-cluster mode is unaffected; it keeps using `--k8s-mode-off-cluster-thanos`
 and `--k8s-mode-off-cluster-alertmanager`.
+
+## Networking plugin
+
+Brings back the Networking menu (Services, Ingresses, NetworkPolicies) with [openshift/networking-console-plugin](https://github.com/openshift/networking-console-plugin). The build is described in `royal-road/plugins/networking-console-plugin/README.md`.
+
+1. Apply `networking-console-plugin.yaml` after filling in:
+   - `<console-namespace>`: the console's namespace
+   - `<sha>`: an image tag pushed by `.github/workflows/royal-road-networking-plugin.yml` (`:main` follows `main`)
+2. Add the plugin to the console Deployment's container env:
+
+   ```yaml
+   - name: BRIDGE_PLUGINS
+     value: networking-console-plugin=http://networking-console-plugin.<console-namespace>.svc.cluster.local:8080/
+   ```
+
+   `BRIDGE_PLUGINS` is the env form of `--plugins`. It takes a comma-separated list of `name=url` pairs; other plugins are added to the same value. The trailing `/` is required. No `ConsolePlugin` resource or CRD is needed: the bridge reads plugins from this setting.
+3. Roll out the console. Check that `https://<console-host>/api/plugins/networking-console-plugin/plugin-manifest.json` returns JSON, and that **Networking** appears in the sidebar.
+
+**Plain HTTP, no TLS.** The upstream chart serves the plugin over TLS with a certificate from OpenShift's service CA, which this cluster doesn't have. The plugin is static, public UI code; only the bridge fetches it, over the cluster network, and the browser gets it from the bridge over the console's own HTTPS. So the Service serves plain HTTP on 8080. To use TLS later, mount a cert-manager certificate into nginx and switch the URL to `https://`. In `in-cluster` mode the bridge verifies plugin certificates against `BRIDGE_SERVICE_CA_FILE`, so the issuing CA must be in that file. There is no separate plugin CA flag.
+
+**Routes.** `route.openshift.io` stays absent on this cluster (FORK.md, OpenShift CRD policy). Our build hides the Routes nav item and pages when that API is missing.
+
+**NetworkPolicy permissions.** The bridge calls the API with each user's own token, so users see and create only what their RBAC allows. The plugin Pod needs no ServiceAccount permissions (`automountServiceAccountToken: false`).
