@@ -1,7 +1,55 @@
 # Deploying the Royal Road console
 
-Example manifests and instructions for the owner. Agents do not apply anything
-from this directory to the production cluster.
+Example manifests and instructions for the owner to apply through the
+infrastructure repository. Agents do not apply anything from this directory
+to the production cluster. Values such as URLs and hostnames are placeholders.
+
+## CRDs
+
+`crds/` holds OpenShift CRDs that only the console reads (see
+[`crds/README.md`](crds/README.md) for the source and pin). Apply them before
+any resource that uses them. A CRD must be `Established` before its resources
+can be created.
+
+1. CRDs:
+
+   ```sh
+   kubectl apply -f royal-road/deploy/crds/
+   kubectl wait --for=condition=Established \
+     crd/projecthelmchartrepositories.helm.openshift.io \
+     crd/consolelinks.console.openshift.io
+   ```
+
+2. Resources that use them, after replacing the placeholders:
+
+   ```sh
+   kubectl apply -f royal-road/deploy/ceph-dashboard-consolelink.yaml
+   ```
+
+No console restart is needed. The frontend detects the new APIs on the next
+page load: `FLAGS.CONSOLE_LINK` turns on and the application menu (grid icon
+in the masthead) shows a **Storage › Ceph dashboard** entry. The Helm pages
+stop requesting the missing `projecthelmchartrepositories` API, and the
+bridge stops logging `Error listing namespace helm chart repositories`.
+
+The frontend reads ConsoleLinks with each user's own token, and installing the
+CRD grants nobody read access. `ceph-dashboard-consolelink.yaml` therefore
+also binds a read-only `console-extensions-reader` ClusterRole to
+`system:authenticated`, which matches what the console-operator does on
+OpenShift. Without it only cluster-admins see the link.
+
+Non-admin access to Helm chart repositories is separate and unchanged here:
+reading `helmchartrepositories` and `projecthelmchartrepositories` still
+needs RBAC like any other resource.
+
+### Storage sidebar link: not needed
+
+The Ceph dashboard link lives in the application menu. FORK.md (WP7) allows a
+`royal-road-console-plugin` for a link in the **Storage** sidebar section only
+if one is required. It is not: the application menu link covers the need,
+core already lists StorageClasses, PVCs and VolumeSnapshots in the sidebar,
+and the generic CRD pages cover `CephBlockPool`, `CephFilesystem` and
+`CephObjectStore`.
 
 ## Monitoring endpoints
 

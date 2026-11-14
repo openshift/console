@@ -1,0 +1,39 @@
+# Adds "Ceph dashboard" to the console's application menu (the grid icon in the
+# masthead), under a "Storage" section. Requires the ConsoleLink CRD from
+# crds/00_consolelinks.crd.yaml. Replace the placeholder URL with the Ceph mgr
+# dashboard's public address before applying.
+apiVersion: console.openshift.io/v1
+kind: ConsoleLink
+metadata:
+  name: ceph-dashboard
+spec:
+  location: ApplicationMenu
+  text: Ceph dashboard
+  href: https://ceph-dashboard.example.com
+  applicationMenu:
+    section: Storage
+---
+# The frontend lists ConsoleLinks with the user's own token. Without this,
+# only cluster-admins see the link. On OpenShift the console-operator grants
+# the same read access through a ClusterRole of this name.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: console-extensions-reader
+rules:
+  - apiGroups: ["console.openshift.io"]
+    resources: ["consolelinks"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: console-extensions-reader
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: console-extensions-reader
+subjects:
+  - apiGroup: rbac.authorization.k8s.io
+    kind: Group
+    name: system:authenticated
