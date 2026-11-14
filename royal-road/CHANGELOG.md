@@ -2,6 +2,13 @@
 
 Newest first. One entry per work package from `FORK.md`.
 
+## WP3: Networking via networking-console-plugin
+
+- `royal-road/plugins/networking-console-plugin/` builds openshift/networking-console-plugin from `release-5.0` (pinned commit in `upstream.env`) with our patches. It uses public images: `node:22` to build, `ubi9/nginx-126` to serve plain HTTP on 8080. No published image matches 5.0; OKD's payload build is a pre-release from August 2026 with no stable tag.
+- `.github/workflows/royal-road-networking-plugin.yml` pushes `ghcr.io/royal-road/networking-console-plugin:<short-sha>` and `:main` on `main`.
+- Patch 0001 hides Routes unless `route.openshift.io` exists (`console.flag/model`). Patch 0002 fixes the 404 on **Create Ingress** and **Edit Ingress** (plural URL with no static Ingress model in core). Both are candidates for upstream.
+- `royal-road/deploy/networking-console-plugin.yaml` and the `## Networking plugin` section of `royal-road/deploy/README.md` cover the Deployment, the Service, and the `BRIDGE_PLUGINS` value. It runs over plain HTTP in-cluster because there is no service CA.
+
 ## WP7: Ceph dashboard link
 
 - `royal-road/deploy/crds/00_consolelinks.crd.yaml` from openshift/api at the console's `go.mod` pin.
