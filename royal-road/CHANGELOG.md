@@ -2,6 +2,12 @@
 
 Newest first. One entry per work package from `FORK.md`.
 
+## Kubernetes branding and the Dynamic Plugins page
+
+- Branding by configuration only: `royal-road/deploy/console-branding-configmap.yaml` holds the CNCF Kubernetes logos (masthead light and dark, favicon), and `console-deployment-patch.yaml` mounts it and sets `BRIDGE_CUSTOM_LOGO_FILES`, `BRIDGE_CUSTOM_FAVICON_FILES` and `BRIDGE_CUSTOM_PRODUCT_NAME=Kubernetes`. `BRIDGE_BRANDING` stays `okd`. The two masthead SVGs get a `width`/`height` on the root element; with only a `viewBox` they render 0×0 in the masthead.
+- Administration › Dynamic Plugins no longer shows "Model does not exist". `royal-road/deploy/crds/90_consoleplugins.crd.yaml` (openshift/api, same pin) and `consoleplugins.yaml` describe the plugins `BRIDGE_PLUGINS` loads. `console-extensions-reader.yaml` replaces the ClusterRole that was in `ceph-dashboard-consolelink.yaml` and adds read access to `consoleplugins`.
+- Core patch: when `consoles.operator.openshift.io` is absent, the Dynamic Plugins nav item and the Overview popover's "View all" open the ConsolePlugin list, the Enabled state comes from the bridge's plugin list, and the enable/disable and bulk controls are hidden (they would patch the missing operator config). Without the ConsolePlugin CRD the nav item is hidden.
+
 ## WP8: Deployment hand-off
 
 - `royal-road/deploy/README.md` starts with the cutover order: plugins, CRDs and the resources that use them, then the console Deployment switch, verification, and rollback. The 2021 console keeps running until parity is confirmed.
