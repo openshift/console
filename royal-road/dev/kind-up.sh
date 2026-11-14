@@ -40,6 +40,12 @@ kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 featureGates:
   KubeletInUserNamespace: true
+# Don't give every pod container its own session keyring; that eats the
+# keyring quota described above.
+containerdConfigPatches:
+  - |-
+    [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]
+      NoNewKeyring = true
 EOF
 else
   kind export kubeconfig --name "$NAME" --kubeconfig "$KUBECONFIG"

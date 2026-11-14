@@ -31,6 +31,10 @@ BRIDGE_K8S_AUTH_BEARER_TOKEN=$(kubectl -n kube-system create token console-dev -
 export BRIDGE_K8S_AUTH_BEARER_TOKEN
 export BRIDGE_LISTEN=${LISTEN:-http://localhost:9000}
 export BRIDGE_PUBLIC_DIR=$PUBLIC_DIR
+# The Helm backend reads Helm's client config; keep the host user's
+# ~/.config/helm (repositories, cache) out of the bridge.
+helm_home=${HELM_HOME_DIR:-/tmp/run-bridge-helm-${NAME}}
+export HELM_CONFIG_HOME=$helm_home/config HELM_CACHE_HOME=$helm_home/cache HELM_DATA_HOME=$helm_home/data
 
 echo "bridge -> $BRIDGE_K8S_MODE_OFF_CLUSTER_ENDPOINT on $BRIDGE_LISTEN"
 exec "$BRIDGE_BIN" "$@"
