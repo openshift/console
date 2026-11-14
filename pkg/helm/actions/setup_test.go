@@ -14,6 +14,8 @@ import (
 	"time"
 
 	"helm.sh/helm/v4/pkg/cli"
+
+	"github.com/openshift/console/pkg/helm/chartproxy"
 )
 
 const helmModulePath = "helm.sh/helm/v4"
@@ -69,11 +71,11 @@ func setHelmVersionFromBuildInfo() error {
 func TestMain(m *testing.M) {
 	setSettings(settings)
 	// The chart registries used by these tests run on localhost/loopback, which
-	// the production SSRF guard (validateChartURLStrict) correctly rejects. Relax
-	// the guard for the test suite so the fixtures remain reachable while still
-	// exercising the call-site wiring. Unit coverage of the strict guard itself
-	// lives in TestValidateChartURL.
+	// production checks reject. Relax both the chart URL guard and repository
+	// index checks so the fixtures remain reachable. Strict behavior is covered
+	// by TestValidateChartURL and the chartproxy repository URL tests.
 	validateChartURL = func(string) error { return nil }
+	chartproxy.SetAllowLoopbackTargetsForTest(true)
 	time.Sleep(10 * time.Second)
 	if err := setHelmVersionFromBuildInfo(); err != nil {
 		panic(err)
@@ -84,20 +86,23 @@ func TestMain(m *testing.M) {
 
 func startTests(m *testing.M) (exitCode int) {
 	defer func() {
-		// Cleanup: log errors but don't fail — best-effort teardown
-		if _, err := ExecuteScript("./testdata/chartmuseum-stop.sh", false); err != nil {
+		// Wait for the stop scripts. They SIGKILL a fixture that is still
+		// running after SIGTERM, so its output pipes are closed before this
+		// process exits. go test fails the package when a child still holds
+		// those pipes.
+		if _, err := ExecuteScript("./testdata/chartmuseum-stop.sh", true); err != nil {
 			fmt.Fprintln(os.Stderr, "Warning: chartmuseum-stop.sh failed:", err)
 			exitCode = 1
 		}
-		if _, err := ExecuteScript("./testdata/zot-stop.sh", false); err != nil {
+		if _, err := ExecuteScript("./testdata/zot-stop.sh", true); err != nil {
 			fmt.Fprintln(os.Stderr, "Warning: zot-stop.sh failed:", err)
 			exitCode = 1
 		}
-		if _, err := ExecuteScript("./testdata/cleanupNonTls.sh", false); err != nil {
+		if _, err := ExecuteScript("./testdata/cleanupNonTls.sh", true); err != nil {
 			fmt.Fprintln(os.Stderr, "Warning: cleanupNonTls.sh failed:", err)
 			exitCode = 1
 		}
-		if _, err := ExecuteScript("./testdata/cleanup.sh", false); err != nil {
+		if _, err := ExecuteScript("./testdata/cleanup.sh", true); err != nil {
 			fmt.Fprintln(os.Stderr, "Warning: cleanup.sh failed:", err)
 			exitCode = 1
 		}
