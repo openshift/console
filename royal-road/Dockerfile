@@ -19,8 +19,11 @@ RUN ./build-backend.sh
 #
 # nodejs frontend build
 FROM docker.io/library/node:22 AS nodebuilder
+# CONSOLE_KEEP_NAMES keeps function and class names in the minified bundles, so
+# the error page's component and stack traces are readable.
 ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 \
-    COREPACK_ENABLE_DOWNLOAD_PROMPT=0
+    COREPACK_ENABLE_DOWNLOAD_PROMPT=0 \
+    CONSOLE_KEEP_NAMES=1
 RUN corepack enable
 WORKDIR /opt/app-root/src
 COPY . .
