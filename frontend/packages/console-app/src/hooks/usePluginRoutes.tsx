@@ -76,6 +76,14 @@ const RoutePage: FC<RoutePageProps> = ({ extension, activePerspective, setActive
 };
 
 /**
+ * Returns the React Router v7 path pattern for a Console route page extension path.
+ *
+ * Console keeps the pre-v7 matching behavior, so non-exact paths also match sub-paths.
+ */
+export const getExtensionRoutePath = (path: string, exact?: boolean) =>
+  `${path}${exact ? '' : '/*'}`;
+
+/**
  * Converts Console route page extension data to React Router v7 route components.
  */
 export const mapExtensionToRoutes = (data: {
@@ -90,7 +98,7 @@ export const mapExtensionToRoutes = (data: {
   return routePaths.map((currentPath) => (
     <Route
       key={`${uid}/${currentPath}`}
-      path={`${currentPath}${exact ? '' : '/*'}`}
+      path={getExtensionRoutePath(currentPath, exact)}
       element={getElement(currentPath)}
     />
   ));
