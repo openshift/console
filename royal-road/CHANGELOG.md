@@ -2,6 +2,11 @@
 
 Newest first. One entry per work package from `FORK.md`.
 
+## WP2: Known gating fixes
+
+- Home > Overview (`/dashboards`) no longer requires the `OPENSHIFT` flag. It still requires `CAN_GET_NS`, `PROMETHEUS` (the `monitoring.coreos.com` `Prometheus` CRD exists) and `MONITORING` (the bridge has Thanos proxies configured).
+- The cluster dashboard's Details card fetches the Kubernetes version from `/api/kubernetes/version`. The relative `version` URL resolved to `/version`, which the bridge answers with the console's HTML page, so the card always showed "Not available".
+
 ## WP4: Observe menu and configurable monitoring endpoints
 
 - Part A (core patch): the in-cluster Thanos and Alertmanager proxy hosts are configurable through `--thanos-host`, `--thanos-tenancy-host`, `--thanos-tenancy-for-rules-host` and `--alertmanager-host` (`BRIDGE_THANOS_HOST` and so on). The defaults are the old hard-coded hosts. A unit test in `cmd/bridge/monitoring_test.go` checks the defaults and the overrides. The env vars are documented in `royal-road/deploy/README.md`.
