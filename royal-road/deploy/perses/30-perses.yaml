@@ -1,0 +1,142 @@
+# The Perses server, created through the perses-operator. The spec mirrors
+# what COO 1.5.2's UIPlugin reconciler creates for `monitoring.perses.enabled`
+# (pkg/controllers/uiplugin/monitoring.go, newPerses):
+#   - Kubernetes authentication: the bearer token on each request (the
+#     console forwards the signed-in user's token) is checked with a
+#     TokenReview; sign-up and Perses' own users are off.
+#   - Kubernetes authorization: SubjectAccessReviews, see 21-user-roles.yaml.
+#   - File database on the operator's default PVC (1 GiB, default
+#     StorageClass; set spec.storage.pvcTemplate to change it).
+#     PersesDashboard/PersesDatasource objects are the source of truth for
+#     everything in Git; the operator pushes them into Perses. Dashboards
+#     created or edited in the console UI live only in this database.
+#   - TLS from cert-manager instead of the service CA.
+# Image: quay.io/openshift-observability-ui/perses:v0.54.0, the image COO 1.5.2
+# defaults to (Red Hat's rhobs/perses build; image revision label 8def05a),
+# multi-arch index digest.
+#
+# Encryption key: Perses encrypts its stored datasource secrets with
+# security.encryption_key, which defaults to a constant compiled into Perses
+# (COO does not set it either). Our datasource secrets hold only CA
+# certificates, no credentials. If you ever add credentials to a datasource,
+# set encryption_key_file from a provisioned Secret first.
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: perses
+---
+# Perses validates users' tokens (TokenReview) and checks their permissions
+# (SubjectAccessReview): the same delegation kube-rbac-proxy uses.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: perses-system-auth-delegator
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: system:auth-delegator
+subjects:
+  - kind: ServiceAccount
+    name: perses
+    namespace: perses
+---
+# COO's perses-cr minus the OpenShift SCC rule and minus write access to
+# perses.dev objects: this Perses build never reads or writes the CRs (the
+# operator does), it only lists namespaces to build each user's project list.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: perses-server
+rules:
+  - apiGroups: [""]
+    resources: ["namespaces"]
+    verbs: ["get", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: perses-server
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: perses-server
+subjects:
+  - kind: ServiceAccount
+    name: perses
+    namespace: perses
+---
+apiVersion: perses.dev/v1alpha2
+kind: Perses
+metadata:
+  name: perses
+  labels:
+    app.kubernetes.io/name: perses
+    app.kubernetes.io/component: perses
+spec:
+  image: quay.io/openshift-observability-ui/perses:v0.54.0@sha256:64eaee7b1ba59f38988af21f43ce58a4051eda118469011b4ad11496d1201c25
+  containerPort: 8080
+  serviceAccountName: perses
+  config:
+    # readonly, cookie and enable_native are required by the CRD schema; COO
+    # gets them implicitly from Go zero values. Cookies are unused here
+    # (no Perses login), every request carries a bearer token.
+    security:
+      readonly: false
+      enable_auth: true
+      cookie:
+        secure: true
+      authorization:
+        provider:
+          kubernetes:
+            enable: true
+      authentication:
+        disable_sign_up: true
+        providers:
+          enable_native: false
+          kubernetes:
+            enable: true
+    database:
+      file:
+        folder: /perses
+        extension: yaml
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 65534
+    fsGroup: 65534
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      memory: 512Mi
+  tls:
+    enable: true
+    # Server certificate (mounted at /tls).
+    userCert:
+      type: secret
+      name: perses-tls
+      namespace: perses
+      certPath: tls.crt
+      privateKeyPath: tls.key
+    # Mounted at /ca. Datasources reference CA files in here
+    # (40-datasources.yaml): it holds the CA of the Prometheus-compatible
+    # endpoint the datasources query.
+    caCert:
+      type: configmap
+      name: perses-upstream-ca
+      namespace: perses
+      certPath: ca.crt
+  # How the perses-operator reaches this server: HTTPS, its own
+  # ServiceAccount token (Perses authorizes it like any user, through the
+  # perses-operator ClusterRole), and the CA from the issued certificate.
+  client:
+    kubernetesAuth:
+      enable: true
+    tls:
+      enable: true
+      caCert:
+        type: secret
+        name: perses-tls
+        namespace: perses
+        certPath: ca.crt

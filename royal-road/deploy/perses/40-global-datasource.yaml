@@ -1,0 +1,40 @@
+# Cluster-wide Prometheus datasource, the default for dashboards in any
+# namespace that has no default datasource of its own. COO 1.5.2 creates the
+# equivalent (thanos-querier :9091 with the service CA).
+#
+# Perses proxies the browser's queries to this URL. The request keeps the
+# Authorization header the console's plugin proxy set, i.e. the signed-in
+# user's own token: the datasource has no secret of its own, so Perses never
+# substitutes a credential. Whether the user may query all metrics is
+# decided by the endpoint (port 9091 of thanos-querier), exactly as for the
+# console's own /api/prometheus proxy. Using this datasource at all also
+# needs `get persesglobaldatasources`, which only cluster-admin has
+# (21-user-roles.yaml).
+#
+# The CA file is the perses-upstream-ca ConfigMap mounted at /ca
+# (30-perses.yaml).
+apiVersion: perses.dev/v1alpha2
+kind: PersesGlobalDatasource
+metadata:
+  name: thanos-querier
+spec:
+  config:
+    display:
+      name: Cluster metrics (all namespaces)
+    default: true
+    plugin:
+      kind: PrometheusDatasource
+      spec:
+        proxy:
+          kind: HTTPProxy
+          spec:
+            url: https://thanos-querier.openshift-monitoring.svc:9091
+            # Perses-side secret the operator creates from `client` below
+            # (name: <datasource>-secret). It holds only the CA path.
+            secret: thanos-querier-secret
+  client:
+    tls:
+      enable: true
+      caCert:
+        type: file
+        certPath: /ca/ca.crt

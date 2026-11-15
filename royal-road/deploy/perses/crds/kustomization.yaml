@@ -1,0 +1,32 @@
+# Perses CRDs exactly as Cluster Observability Operator 1.5.2 ships them
+# (rhobs/observability-operator, tag v1.5.2, deploy/perses/crds/).
+# v1alpha2 is the storage version; v1alpha1 is still served and converted by
+# the perses-operator's webhook. On OpenShift OLM wires that webhook up; here
+# the patch below points it at our Service and cert-manager's CA injector
+# fills in caBundle from the webhook Certificate.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - perses.dev_perses.yaml
+  - perses.dev_persesdashboards.yaml
+  - perses.dev_persesdatasources.yaml
+  - perses.dev_persesglobaldatasources.yaml
+patches:
+  - target:
+      kind: CustomResourceDefinition
+      group: apiextensions.k8s.io
+    patch: |-
+      - op: add
+        path: /metadata/annotations/cert-manager.io~1inject-ca-from
+        value: perses/perses-operator-webhook
+      - op: add
+        path: /spec/conversion
+        value:
+          strategy: Webhook
+          webhook:
+            clientConfig:
+              service:
+                namespace: perses
+                name: perses-operator-conversion-webhook
+                path: /convert
+            conversionReviewVersions: ["v1"]

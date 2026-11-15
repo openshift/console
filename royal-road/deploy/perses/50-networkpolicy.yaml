@@ -1,0 +1,62 @@
+# Perses holds every viewer's bearer token for the length of a request and
+# forwards it to the datasource URL. Anyone who may edit a dashboard can put a
+# datasource (and its URL) inside the dashboard, and the unsaved-datasource
+# proxy endpoint takes any URL. Without an egress fence, a namespace editor
+# could make a cluster-admin's token go to a host of their choosing.
+# This policy makes the only reachable upstreams the thanos-querier pods and
+# the API server (TokenReview, SubjectAccessReview, namespace list).
+#
+# Ingress: the console (plugin proxy) and the perses-operator only.
+#
+# Placeholders:
+#   <console-namespace>   namespace of the console (bridge) Deployment
+#   <apiserver-cidr>      the kube-apiserver endpoint addresses as seen from pods
+#                         (`kubectl get endpointslices -n default -l
+#                         kubernetes.io/service-name=kubernetes`), e.g. a /32
+#                         per control-plane node; repeat the ipBlock per node
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: perses
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/instance: perses
+      app.kubernetes.io/managed-by: perses-operator
+  policyTypes: ["Ingress", "Egress"]
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: <console-namespace>
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: perses-operator
+      ports:
+        - protocol: TCP
+          port: 8080
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+    - to:
+        - ipBlock:
+            cidr: <apiserver-cidr>
+      ports:
+        - protocol: TCP
+          port: 6443
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: openshift-monitoring
+      ports:
+        - protocol: TCP
+          port: 9091
+        - protocol: TCP
+          port: 9092

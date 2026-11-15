@@ -1,0 +1,136 @@
+# Who sees what in Perses.
+#
+# Perses runs with its Kubernetes authorization provider: every API call is a
+# SubjectAccessReview for the caller on the matching perses.dev resource in the
+# namespace (Perses "project" == Kubernetes namespace):
+#   read dashboards        get     persesdashboards        in <ns>
+#   create/edit/delete     create/patch/delete persesdashboards in <ns>
+#   use a project datasource  get  persesdatasources       in <ns>
+#   use a global datasource   get  persesglobaldatasources (cluster-wide)
+#   Perses secrets         the same verb on core "secrets" in <ns>
+# The project list a user sees is the set of namespaces where one of these
+# checks passes.
+#
+# These are COO 1.5.2's six viewer/editor ClusterRoles (deploy/perses/*_role.yaml)
+# plus aggregation labels, so the built-in namespace roles grant them:
+#   view  -> read dashboards and datasources in the namespace
+#   edit  -> also create/edit/delete dashboards
+#   admin -> also create/edit/delete datasources
+# Global datasources are deliberately NOT aggregated: only cluster-admin (and
+# whoever is bound to persesglobaldatasource-viewer-role) can use them. They
+# query the cluster-wide endpoint; see ../README.md, "Perses dashboards",
+# "Security model".
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: persesdashboard-viewer-role
+  labels:
+    app.kubernetes.io/part-of: perses-operator
+    rbac.authorization.k8s.io/aggregate-to-view: "true"
+    rbac.authorization.k8s.io/aggregate-to-edit: "true"
+    rbac.authorization.k8s.io/aggregate-to-admin: "true"
+rules:
+  - apiGroups: ["perses.dev"]
+    resources: ["persesdashboards"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["perses.dev"]
+    resources: ["persesdashboards/status"]
+    verbs: ["get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: persesdashboard-editor-role
+  labels:
+    app.kubernetes.io/part-of: perses-operator
+    rbac.authorization.k8s.io/aggregate-to-edit: "true"
+    rbac.authorization.k8s.io/aggregate-to-admin: "true"
+rules:
+  - apiGroups: ["perses.dev"]
+    resources: ["persesdashboards"]
+    verbs: ["create", "delete", "get", "list", "patch", "update", "watch"]
+  - apiGroups: ["perses.dev"]
+    resources: ["persesdashboards/status"]
+    verbs: ["get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: persesdatasource-viewer-role
+  labels:
+    app.kubernetes.io/part-of: perses-operator
+    rbac.authorization.k8s.io/aggregate-to-view: "true"
+    rbac.authorization.k8s.io/aggregate-to-edit: "true"
+    rbac.authorization.k8s.io/aggregate-to-admin: "true"
+rules:
+  - apiGroups: ["perses.dev"]
+    resources: ["persesdatasources"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["perses.dev"]
+    resources: ["persesdatasources/status"]
+    verbs: ["get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: persesdatasource-editor-role
+  labels:
+    app.kubernetes.io/part-of: perses-operator
+    rbac.authorization.k8s.io/aggregate-to-admin: "true"
+rules:
+  - apiGroups: ["perses.dev"]
+    resources: ["persesdatasources"]
+    verbs: ["create", "delete", "get", "list", "patch", "update", "watch"]
+  - apiGroups: ["perses.dev"]
+    resources: ["persesdatasources/status"]
+    verbs: ["get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: persesglobaldatasource-viewer-role
+  labels:
+    app.kubernetes.io/part-of: perses-operator
+rules:
+  - apiGroups: ["perses.dev"]
+    resources: ["persesglobaldatasources"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["perses.dev"]
+    resources: ["persesglobaldatasources/status"]
+    verbs: ["get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: persesglobaldatasource-editor-role
+  labels:
+    app.kubernetes.io/part-of: perses-operator
+rules:
+  - apiGroups: ["perses.dev"]
+    resources: ["persesglobaldatasources"]
+    verbs: ["create", "delete", "get", "list", "patch", "update", "watch"]
+  - apiGroups: ["perses.dev"]
+    resources: ["persesglobaldatasources/status"]
+    verbs: ["get"]
+---
+# Namespace datasources query thanos-querier's tenancy port (9092), whose
+# kube-rbac-proxy runs a SubjectAccessReview on pods.metrics.k8s.io in
+# ?namespace= with the verb taken from the HTTP method. The console sends GET
+# (verb get, granted to view/edit/admin by metrics-server's
+# system:aggregated-metrics-reader). Perses' Prometheus client sends POST
+# for queries, which kube-rbac-proxy checks as verb create. The metrics API
+# serves no create, so granting the verb unlocks nothing but this check.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: perses-tenancy-query
+  labels:
+    app.kubernetes.io/part-of: perses
+    rbac.authorization.k8s.io/aggregate-to-view: "true"
+    rbac.authorization.k8s.io/aggregate-to-edit: "true"
+    rbac.authorization.k8s.io/aggregate-to-admin: "true"
+rules:
+  - apiGroups: ["metrics.k8s.io"]
+    resources: ["pods"]
+    verbs: ["create"]

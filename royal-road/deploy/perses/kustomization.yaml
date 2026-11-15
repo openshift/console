@@ -1,0 +1,20 @@
+# Perses for the monitoring-console-plugin's Observe > Dashboards (Perses),
+# without the Cluster Observability Operator. See ../README.md, "Perses
+# dashboards".
+#
+# Before applying: replace the placeholders in 50-networkpolicy.yaml and
+# create ConfigMap perses/perses-upstream-ca ("Deploy", step 1).
+# Not included: namespace-datasource.example.yaml (one per namespace with
+# dashboards) and monitoring-console-plugin.yaml (console namespace).
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: perses
+resources:
+  - 00-namespace.yaml
+  - crds
+  - 10-certificates.yaml
+  - 20-perses-operator.yaml
+  - 21-user-roles.yaml
+  - 30-perses.yaml
+  - 40-global-datasource.yaml
+  - 50-networkpolicy.yaml
