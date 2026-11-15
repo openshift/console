@@ -4,8 +4,7 @@
 #   clone-infra       royal-road/infrastructure (private; credentials as a workspace)
 #   discover          versions running in the cluster -> fingerprint; is
 #                     <image>:<fingerprint> in the registry already?
-#   index             only if not: Task lightspeed-docs-index
-#   image             only if not: buildah (tekton-catalog) FROM scratch + index, push
+#   index             only if not: Task lightspeed-docs-index (builds and pushes)
 #   rollout-new       point OLS at the image just pushed
 #   rollout-existing  or at the existing image for this fingerprint (a no-op
 #                     when OLS already uses it)
@@ -100,6 +99,9 @@ spec:
         - {name: URL, value: $(params.console-url)}
         - {name: REVISION, value: $(params.console-revision)}
         - {name: SUBDIRECTORY, value: console}
+        # The task's default (/home/git) isn't the image user's home
+        # (/home/tekton), so ssh would not find the deploy key.
+        - {name: USER_HOME, value: /home/tekton}
       workspaces:
         - {name: output, workspace: source}
 
@@ -114,6 +116,9 @@ spec:
         - {name: URL, value: $(params.infra-url)}
         - {name: REVISION, value: $(params.infra-revision)}
         - {name: SUBDIRECTORY, value: infrastructure}
+        # The task's default (/home/git) isn't the image user's home
+        # (/home/tekton), so ssh would not find the deploy key.
+        - {name: USER_HOME, value: /home/tekton}
       workspaces:
         - {name: output, workspace: source}
         - {name: basic-auth, workspace: infra-basic-auth}
@@ -141,6 +146,8 @@ spec:
       params:
         - {name: profile, value: $(params.profile)}
         - {name: fingerprint, value: $(tasks.discover.results.FINGERPRINT)}
+        - {name: image, value: $(params.image)}
+        - {name: tls-verify, value: $(params.tls-verify)}
         - {name: infra-commit, value: $(tasks.clone-infra.results.COMMIT)}
         - {name: console-commit, value: $(tasks.clone-console.results.COMMIT)}
         - {name: embedder, value: $(params.embedder)}
@@ -150,35 +157,16 @@ spec:
       workspaces:
         - {name: source, workspace: source}
         - {name: embeddings-key, workspace: embeddings-key}
-
-    - name: image
-      runAfter: [index]
-      when:
-        - {input: $(tasks.discover.results.EXISTS), operator: in, values: ["false"]}
-      taskRef:
-        resolver: cluster
-        params:
-          - {name: kind, value: task}
-          - {name: name, value: buildah}
-          - {name: namespace, value: tekton-catalog}
-      params:
-        - {name: IMAGE, value: "$(params.image):$(tasks.discover.results.FINGERPRINT)"}
-        # relative to the workspace root, not to CONTEXT
-        - {name: DOCKERFILE, value: console/royal-road/deploy/lightspeed/docs/Containerfile}
-        - {name: CONTEXT, value: work/image}
-        - {name: TLS_VERIFY, value: $(params.tls-verify)}
-      workspaces:
-        - {name: source, workspace: source}
         - {name: dockerconfig, workspace: dockerconfig}
 
     - name: rollout-new
-      runAfter: [image]
+      runAfter: [index]
       when:
         - {input: $(params.rollout), operator: in, values: ["true"]}
       taskRef:
         name: lightspeed-docs-rollout
       params:
-        - {name: reference, value: "$(params.image):$(tasks.discover.results.FINGERPRINT)@$(tasks.image.results.IMAGE_DIGEST)"}
+        - {name: reference, value: "$(params.image):$(tasks.discover.results.FINGERPRINT)@$(tasks.index.results.IMAGE_DIGEST)"}
         - {name: fingerprint, value: $(tasks.discover.results.FINGERPRINT)}
         - {name: discovered-at, value: $(tasks.discover.results.DISCOVERED_AT)}
         - {name: namespace, value: $(params.ols-namespace)}

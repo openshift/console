@@ -2,9 +2,9 @@
 # ServiceAccounts, the daily schedule, and (for Pipelines-as-Code) the
 # Repository of the infrastructure repository.
 #
-# PSA baseline: the buildah Task from tekton-catalog runs as root with the
-# default capabilities (allowed by baseline; it builds FROM scratch with no
-# RUN step). Everything else here runs as UID 65532.
+# PSA baseline. The Tasks here run as UID 65532 with no privileges; baseline
+# rather than restricted because tekton-catalog's git-clone sets no
+# securityContext of its own.
 apiVersion: v1
 kind: Namespace
 metadata:

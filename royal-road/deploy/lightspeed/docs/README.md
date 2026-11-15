@@ -10,7 +10,7 @@ the next daily run sees the new version and rebuilds.
 ```
 daily CronJob ─┐                       ┌─ index exists ─────────────────────────┐
 PaC push (*.md)┴─> clone ─> discover ──┤                                         ├─> rollout: patch OLS's
-                    console   versions  └─ new ─> index ─> image (buildah, push) ┘   image volume, wait Ready,
+                    console   versions  └─ new ─> index ─> OCI layout ─> skopeo push┘   image volume, wait Ready,
                     infra     fingerprint          (OLS image)   <image>:fp-<hash>   restore the old one if not
 ```
 
@@ -97,7 +97,7 @@ model's 384-token input.
 | `build_corpus.py` | Fetched trees → Markdown with `title`/`url` front matter; Hugo shortcodes removed; `SOURCES.md`, `manifest.json`. |
 | `build_index.py` | Chunks, runs the secret gate, embeds, writes the FAISS indexes. |
 | `secret_gate.py` | Credential patterns, run on every chunk. |
-| `Containerfile` | `FROM scratch` + the index files. |
+| `make_oci.py` | Writes the index directory as a one-layer OCI layout (no container engine, reproducible digest); skopeo pushes it. |
 | `kustomization.yaml` | Everything below plus the ConfigMap: `kubectl apply --server-side -k royal-road/deploy/lightspeed/docs`. |
 | `tekton/00-namespace.yaml` | Namespace `lightspeed-docs` (PSA baseline). |
 | `tekton/10-rbac.yaml` | ServiceAccounts `lightspeed-docs-builder` (no API token) and `lightspeed-docs-scheduler` (create PipelineRuns here). |
@@ -165,6 +165,16 @@ Upstream refs are tags where projects tag their docs; branch-based docs
 Velero `main`) are fetched at whatever commit the branch has when a build
 runs, and that commit is recorded in `/manifest.json` and `/SOURCES.md` of the
 image. Branch updates alone don't trigger a rebuild.
+
+## Image
+
+The image holds only files (`/royal-road`, `/upstream`, `/manifest.json`,
+`/SOURCES.md`), so no container engine builds it: `make_oci.py` writes a
+one-layer OCI layout (files sorted, owner 0:0, mtime 0, fixed gzip header) and
+`skopeo copy` pushes it, both unprivileged. Buildah was the first choice and
+fails on PSA-restricted production nodes (`remount /: permission denied` when
+applying the layer). The same content always gives the same digest, so two
+runs that build the same fingerprint push the same image.
 
 ## Rollout
 
@@ -263,7 +273,7 @@ about a minute (two shallow clones, discovery, a registry lookup).
 ## Apply
 
 Prerequisites: Tekton Pipelines with the cluster resolver and the shared
-library in namespace `tekton-catalog` (`git-clone`, `buildah`); a default pod
+library in namespace `tekton-catalog` (`git-clone`); a default pod
 template with `fsGroup: 65532` (the Tasks run as UID 65532); OLS from
 `../` (the `docs-index` volume and `reference_content`); Kubernetes ≥ 1.36
 for image volumes.
@@ -271,7 +281,7 @@ for image volumes.
 1. Secrets in namespace `lightspeed-docs` (through your secret flow; shapes
    in `tekton/examples/`):
    - `lightspeed-docs-harbor-push`: a registry robot that can pull and push
-     `<project>/lightspeed-docs-index` (discover reads, buildah pushes).
+     `<project>/lightspeed-docs-index` (discover looks the tag up, the index Task's skopeo step pushes).
    - `lightspeed-docs-infra-ssh`: read-only deploy key of the infrastructure
      repository, for scheduled and manual runs.
    - `lightspeed-docs-embeddings` (key `apikey`): API key of the embeddings

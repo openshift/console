@@ -13,6 +13,7 @@ import yaml
 import build_corpus as bc
 import discover
 import embeddings as emb
+import make_oci
 import secret_gate
 
 HERE = Path(__file__).resolve().parent
@@ -127,6 +128,43 @@ class Discovery(unittest.TestCase):
                                              "namespace": "lightspeed-docs"})())
         self.assertEqual(buf.getvalue(), (HERE / "tekton/15-discovery-rbac.yaml").read_text(),
                          "run: discover.py rbac --sources sources.yaml > tekton/15-discovery-rbac.yaml")
+
+
+class Oci(unittest.TestCase):
+    def build(self, src, out):
+        import subprocess
+        import sys
+
+        subprocess.run([sys.executable, str(HERE / "make_oci.py"), src, out, "--label", "a=b"],
+                       check=True, capture_output=True)
+        import json
+
+        return json.loads((Path(out) / "index.json").read_text())["manifests"][0]["digest"]
+
+    def test_layout_is_reproducible_and_complete(self):
+        import gzip
+        import io
+        import json
+        import os
+        import tarfile
+
+        with tempfile.TemporaryDirectory() as d:
+            src = Path(d, "src")
+            (src / "royal-road").mkdir(parents=True)
+            (src / "royal-road" / "docstore.json").write_text("{}")
+            (src / "manifest.json").write_text("{}")
+            first = self.build(str(src), f"{d}/a")
+            os.utime(src / "manifest.json", (0, 12345))  # mtimes must not matter
+            self.assertEqual(first, self.build(str(src), f"{d}/b"))
+            blobs = Path(d, "a", "blobs", "sha256")
+            manifest = json.loads((blobs / first.split(":")[1]).read_text())
+            layer = (blobs / manifest["layers"][0]["digest"].split(":")[1]).read_bytes()
+            with tarfile.open(fileobj=io.BytesIO(gzip.decompress(layer))) as t:
+                names = t.getnames()
+                self.assertTrue(all(m.uid == 0 and m.mtime == 0 for m in t.getmembers()))
+            self.assertEqual(names, ["manifest.json", "royal-road", "royal-road/docstore.json"])
+            config = json.loads((blobs / manifest["config"]["digest"].split(":")[1]).read_text())
+            self.assertEqual(config["config"]["Labels"], {"a": "b"})
 
 
 class SecretGate(unittest.TestCase):
