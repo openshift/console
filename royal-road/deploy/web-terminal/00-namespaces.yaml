@@ -1,0 +1,22 @@
+# web-terminal: the DevWorkspace Operator, the Web Terminal Operator (which
+# keeps the web-terminal-tooling and web-terminal-exec DevWorkspaceTemplates
+# here), their catalogs, and the routing controller.
+#
+# openshift-terminal: the console puts every cluster-admin's terminal here
+# (pkg/terminal refuses cluster-admin terminals anywhere else, so a
+# terminal holding an admin token never lands in a namespace that less
+# privileged users can edit). The console would create it on first use;
+# creating it here gives it the annotation.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: web-terminal
+  annotations:
+    rrl.infrastructure/agent-created: "true"
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: openshift-terminal
+  annotations:
+    rrl.infrastructure/agent-created: "true"

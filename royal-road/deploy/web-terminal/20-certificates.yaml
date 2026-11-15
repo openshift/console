@@ -1,0 +1,68 @@
+# cert-manager objects that stand in for the OpenShift service CA.
+#
+# 1. The DevWorkspace Operator's webhook server. On Kubernetes the operator
+#    expects cert-manager to fill the Secret named by its WEBHOOK_SECRET_NAME
+#    (devworkspace-webhookserver-tls in the OLM bundle), and it annotates its
+#    webhook configurations with cert-manager.io/inject-ca-from pointing at
+#    this Certificate. Same objects as the operator's own Kubernetes
+#    manifests (deploy/deployment/kubernetes), with the OLM secret name.
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: devworkspace-controller-selfsigned-issuer
+  namespace: web-terminal
+spec:
+  selfSigned: {}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: devworkspace-controller-serving-cert
+  namespace: web-terminal
+spec:
+  secretName: devworkspace-webhookserver-tls
+  dnsNames:
+    - devworkspace-webhookserver.web-terminal.svc
+    - devworkspace-webhookserver.web-terminal.svc.cluster.local
+  issuerRef:
+    kind: Issuer
+    name: devworkspace-controller-selfsigned-issuer
+---
+# 2. The CA that signs each terminal's serving certificate. The console
+#    bridge connects to https://<workspace>-service.<ns>.svc:4444 and only
+#    trusts the CAs in BRIDGE_SERVICE_CA_FILE, so this CA's certificate must
+#    be added to that bundle (README: "Console").
+#
+#    A self-signed root kept in the cert-manager namespace (cert-manager's
+#    default cluster resource namespace; change both if yours differs).
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: web-terminal-selfsigned
+spec:
+  selfSigned: {}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: web-terminal-ca
+  namespace: cert-manager
+spec:
+  isCA: true
+  commonName: web-terminal-ca
+  secretName: web-terminal-ca
+  duration: 87600h # 10 years; rotating it means updating the bridge's CA bundle
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+  issuerRef:
+    kind: ClusterIssuer
+    name: web-terminal-selfsigned
+---
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: web-terminal-ca
+spec:
+  ca:
+    secretName: web-terminal-ca
