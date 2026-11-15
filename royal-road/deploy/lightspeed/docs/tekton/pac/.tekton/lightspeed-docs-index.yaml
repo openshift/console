@@ -1,0 +1,50 @@
+# Copy to the root of royal-road/infrastructure as
+# .tekton/lightspeed-docs-index.yaml. Pipelines-as-Code then rebuilds the
+# Lightspeed documentation index on every push to main that changes a
+# Markdown file. The PipelineRun runs in the Repository's namespace
+# (lightspeed-docs, pac/repository.yaml), and the Pipeline it names is
+# installed there (30-pipeline.yaml), so PaC leaves the reference to Tekton.
+apiVersion: tekton.dev/v1
+kind: PipelineRun
+metadata:
+  name: lightspeed-docs-index
+  annotations:
+    # files.all lists every changed path of the push (added, modified,
+    # deleted, renamed).
+    pipelinesascode.tekton.dev/on-cel-expression: >-
+      event == "push" && target_branch == "main" &&
+      files.all.exists(f, f.endsWith(".md"))
+    pipelinesascode.tekton.dev/max-keep-runs: "5"
+    # A newer push supersedes a running build.
+    pipelinesascode.tekton.dev/cancel-in-progress: "true"
+  labels:
+    app.kubernetes.io/part-of: lightspeed
+    lightspeed-docs/trigger: push
+spec:
+  pipelineRef:
+    name: lightspeed-docs-index
+  params:
+    - name: infra-url
+      value: "{{ repo_url }}"
+    - name: infra-revision
+      value: "{{ revision }}"
+  taskRunTemplate:
+    serviceAccountName: lightspeed-docs-builder
+  timeouts:
+    pipeline: 2h
+  workspaces:
+    - name: source
+      volumeClaimTemplate:
+        spec:
+          accessModes: [ReadWriteOnce]
+          resources:
+            requests:
+              storage: 4Gi
+    - name: dockerconfig
+      secret:
+        secretName: lightspeed-docs-harbor-push
+    # Repository-scoped token Secret PaC creates for each run
+    # (secret-auto-create), with .gitconfig and .git-credentials.
+    - name: infra-basic-auth
+      secret:
+        secretName: "{{ git_auth_secret }}"

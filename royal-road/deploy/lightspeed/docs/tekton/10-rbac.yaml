@@ -1,0 +1,42 @@
+# lightspeed-docs-builder: runs the PipelineRuns. It needs no Kubernetes API
+# access; credentials come in as workspaces (Harbor push Secret, git
+# credentials).
+#
+# lightspeed-docs-scheduler: the weekly CronJob (40-schedule.yaml). It may
+# only create PipelineRuns in this namespace.
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: lightspeed-docs-builder
+  namespace: lightspeed-docs
+automountServiceAccountToken: false
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: lightspeed-docs-scheduler
+  namespace: lightspeed-docs
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: lightspeed-docs-scheduler
+  namespace: lightspeed-docs
+rules:
+  - apiGroups: [tekton.dev]
+    resources: [pipelineruns]
+    verbs: [create]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: lightspeed-docs-scheduler
+  namespace: lightspeed-docs
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: lightspeed-docs-scheduler
+subjects:
+  - kind: ServiceAccount
+    name: lightspeed-docs-scheduler
+    namespace: lightspeed-docs

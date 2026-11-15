@@ -1,0 +1,17 @@
+# Namespace for the documentation index build: the Pipeline, its Task, its
+# ServiceAccounts, the weekly schedule, and (for Pipelines-as-Code) the
+# Repository of the infrastructure repository.
+#
+# PSA baseline: the buildah Task from tekton-catalog runs as root with the
+# default capabilities (allowed by baseline; it builds FROM scratch with no
+# RUN step). Everything else here runs as UID 65532.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: lightspeed-docs
+  annotations:
+    rrl.infrastructure/agent-created: "true"
+  labels:
+    app.kubernetes.io/part-of: lightspeed
+    pod-security.kubernetes.io/enforce: baseline
+    pod-security.kubernetes.io/warn: baseline

@@ -1,0 +1,117 @@
+# Pipeline lightspeed-docs-index: clone -> index -> image -> push.
+#
+#   clone-console  royal-road/console (scripts, sources.yaml, Royal Road console docs)
+#   clone-infra    royal-road/infrastructure (private; credentials as a workspace)
+#   index          Task lightspeed-docs-index (20-task.yaml)
+#   image          buildah (tekton-catalog) FROM scratch + the index -> push
+#
+# git-clone and buildah come from the shared library in namespace
+# tekton-catalog through the cluster resolver.
+#
+# Workspaces:
+#   source            scratch space, one PVC per run (volumeClaimTemplate, 4Gi)
+#   dockerconfig      Secret (kubernetes.io/dockerconfigjson) that can push
+#                     <image>; see examples/harbor-push-secret.example.yaml
+#   infra-basic-auth  optional: .gitconfig + .git-credentials for HTTPS clones
+#                     (Pipelines-as-Code binds its {{ git_auth_secret }} here)
+#   infra-ssh         optional: .ssh directory with a read-only deploy key
+#                     (the weekly schedule); see examples/infra-deploy-key.example.yaml
+apiVersion: tekton.dev/v1
+kind: Pipeline
+metadata:
+  name: lightspeed-docs-index
+  namespace: lightspeed-docs
+  labels:
+    app.kubernetes.io/part-of: lightspeed
+spec:
+  description: Builds the Lightspeed documentation index image and pushes it.
+  params:
+    - name: infra-url
+      default: https://github.com/royal-road/infrastructure
+    - name: infra-revision
+      default: main
+    - name: console-url
+      default: https://github.com/royal-road/console
+    - name: console-revision
+      default: main
+    - name: image
+      description: Repository to push to; the tag is <yyyymmdd>-<infrastructure sha>.
+      default: core.harbor.k8s.rr.zone/console/lightspeed-docs-index
+    - name: profile
+      description: full, or smoke (a few files per source).
+      default: full
+    - name: tls-verify
+      default: "true"
+  workspaces:
+    - name: source
+    - name: dockerconfig
+    - name: infra-basic-auth
+      optional: true
+    - name: infra-ssh
+      optional: true
+  results:
+    - name: IMAGE_URL
+      value: $(tasks.image.results.IMAGE_URL)
+    - name: IMAGE_DIGEST
+      value: $(tasks.image.results.IMAGE_DIGEST)
+    - name: TAG
+      value: $(tasks.index.results.TAG)
+  tasks:
+    - name: clone-console
+      taskRef:
+        resolver: cluster
+        params:
+          - {name: kind, value: task}
+          - {name: name, value: git-clone}
+          - {name: namespace, value: tekton-catalog}
+      params:
+        - {name: URL, value: $(params.console-url)}
+        - {name: REVISION, value: $(params.console-revision)}
+        - {name: SUBDIRECTORY, value: console}
+      workspaces:
+        - {name: output, workspace: source}
+
+    - name: clone-infra
+      taskRef:
+        resolver: cluster
+        params:
+          - {name: kind, value: task}
+          - {name: name, value: git-clone}
+          - {name: namespace, value: tekton-catalog}
+      params:
+        - {name: URL, value: $(params.infra-url)}
+        - {name: REVISION, value: $(params.infra-revision)}
+        - {name: SUBDIRECTORY, value: infrastructure}
+      workspaces:
+        - {name: output, workspace: source}
+        - {name: basic-auth, workspace: infra-basic-auth}
+        - {name: ssh-directory, workspace: infra-ssh}
+
+    - name: index
+      runAfter: [clone-console, clone-infra]
+      taskRef:
+        name: lightspeed-docs-index
+      params:
+        - {name: profile, value: $(params.profile)}
+        - {name: infra-commit, value: $(tasks.clone-infra.results.COMMIT)}
+        - {name: console-commit, value: $(tasks.clone-console.results.COMMIT)}
+      workspaces:
+        - {name: source, workspace: source}
+
+    - name: image
+      runAfter: [index]
+      taskRef:
+        resolver: cluster
+        params:
+          - {name: kind, value: task}
+          - {name: name, value: buildah}
+          - {name: namespace, value: tekton-catalog}
+      params:
+        - {name: IMAGE, value: "$(params.image):$(tasks.index.results.TAG)"}
+        # relative to the workspace root, not to CONTEXT
+        - {name: DOCKERFILE, value: console/royal-road/deploy/lightspeed/docs/Containerfile}
+        - {name: CONTEXT, value: work/image}
+        - {name: TLS_VERIFY, value: $(params.tls-verify)}
+      workspaces:
+        - {name: source, workspace: source}
+        - {name: dockerconfig, workspace: dockerconfig}

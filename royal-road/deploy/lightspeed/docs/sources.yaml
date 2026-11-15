@@ -1,0 +1,329 @@
+# Documentation indexed for Lightspeed (OLS "bring your own knowledge").
+#
+# build_corpus.py reads this file. Each source becomes Markdown files with
+# `title` and `url` front matter under corpus/<index>/<source>/, and
+# build_index.py turns each index directory into one FAISS index.
+#
+# Indexes, in the order OLS loads them (ols_config.reference_content.indexes):
+#   royal-road  our own docs. Rebuilt from the branch head on every run; links
+#               point at the branch (blob/main/...), so they always open the
+#               current file. Secret gate: a match fails the build.
+#   upstream    public product docs, pinned to the commit of the version
+#               production runs. Secret gate: report only (example keys and
+#               tokens in public docs are not ours).
+# OLS multiplies the scores of every index after the first by 0.95, so on a
+# tie our docs win.
+#
+# Source fields:
+#   index        royal-road | upstream
+#   repo         clone URL (fetch.tsv); for royal-road sources the pipeline
+#                clones it with git-clone instead, see checkout
+#   checkout     royal-road sources: directory (relative to the pipeline
+#                workspace) the pipeline cloned the repository into
+#   commit       upstream sources: the commit fetched (ref says what it is)
+#   ref          tag or branch the commit belongs to (documentation only for
+#                upstream; the branch for royal-road links)
+#   root         directory inside the repository the globs are relative to
+#   include      glob list (fnmatch, ** spans directories); default ["**/*.md"]
+#   exclude      glob list, applied after include
+#   smoke        include list used with --profile smoke (small kind test)
+#   url          how a file maps to a link:
+#                  github: https://github.com/<repo>/blob/<commit|ref>/<path>
+#                  site:   base + path without .md; _index.md, index.md and
+#                          README.md map to their directory; lowercase: true
+#                          lowercases the path; a `url:` or `slug:` front
+#                          matter key wins; patterns: {glob: template} for
+#                          pages that are anchors of another page (template
+#                          fields: stem and front matter strings)
+#   hugo         true: expand {{% content "x.md" %}} includes, drop pages
+#                that are never rendered on their own (headless, render:
+#                never, draft), and replace other shortcodes with their text
+#   title        prefix for every document title, so the model and the
+#                citation say which product and version a page is about
+#   license      SPDX id, recorded in SOURCES.md inside the image
+version: 1
+sources:
+  # --- Royal Road -----------------------------------------------------------
+  - name: infrastructure
+    index: royal-road
+    repo: https://github.com/royal-road/infrastructure
+    checkout: infrastructure
+    ref: main
+    title: Royal Road infrastructure
+    license: LicenseRef-RoyalRoad-Proprietary
+    url: {type: github, at: ref}
+    include: ["**/*.md"]
+    exclude:
+      # gitignored, never meant for Git; excluded again in case a file was
+      # force-added
+      - agent-backups/**
+      - local/**
+      - local-secrets/**
+      - .audit/**
+      # research notes (benchmarks, attack experiments): not operating docs
+      - "**/research/**"
+      - research/**
+
+  - name: console
+    index: royal-road
+    repo: https://github.com/royal-road/console
+    checkout: console
+    ref: main
+    title: Royal Road console
+    license: Apache-2.0
+    url: {type: github, at: ref}
+    include:
+      - FORK.md
+      - royal-road/CHANGELOG.md
+      - royal-road/WP6-TRIAGE.md
+      - royal-road/**/README.md
+    smoke:
+      - FORK.md
+      - royal-road/deploy/lightspeed/README.md
+      - royal-road/deploy/lightspeed/docs/README.md
+
+  # --- Upstream -------------------------------------------------------------
+  - name: kubernetes
+    index: upstream
+    repo: https://github.com/kubernetes/website
+    ref: release-1.36
+    commit: 1de955ebabe7e17da1ebb4f582635491227f4157
+    root: content/en/docs
+    title: Kubernetes 1.36
+    license: CC-BY-4.0
+    attribution: "Kubernetes Documentation, © The Kubernetes Authors, https://kubernetes.io/docs/, CC BY 4.0. Converted to plain Markdown (Hugo shortcodes removed) and split into chunks."
+    url:
+      type: site
+      base: "https://v1-36.docs.kubernetes.io/docs/"
+      patterns:
+        # glossary terms are entries on one page
+        "reference/glossary/*.md": "reference/glossary/?all=true#term-{id}"
+    hugo: true
+    include:
+      - concepts/**
+      - tasks/**
+      - tutorials/**
+      - setup/**
+      - reference/access-authn-authz/**
+      - reference/labels-annotations-taints/**
+      - reference/networking/**
+      - reference/node/**
+      - reference/scheduling/**
+      - reference/using-api/**
+      - reference/debug-cluster/**
+      - reference/glossary/**
+      - reference/kubectl/*.md
+      - reference/kubectl/generated/kubectl_*/_index.md
+    exclude:
+      # generated per-flag pages; the _index of each command is enough
+      - reference/kubectl/generated/kubectl_*/kubectl_*_*.md
+    smoke:
+      - concepts/workloads/pods/_index.md
+      - concepts/services-networking/service.md
+      - concepts/configuration/configmap.md
+      - tasks/debug/debug-application/debug-pods.md
+
+  - name: tekton-pipelines
+    index: upstream
+    repo: https://github.com/tektoncd/pipeline
+    ref: v1.15.5
+    commit: 7c7d6de97aae26ba2de1bc0d2f6765c6ff6b49e0
+    root: docs
+    title: Tekton Pipelines v1.15
+    license: Apache-2.0
+    url: {type: github, at: commit}
+    exclude:
+      - developers/**
+      - pipeline-api.md
+      - deprecations.md
+    smoke:
+      - tasks.md
+      - pipelineruns.md
+
+  - name: tekton-triggers
+    index: upstream
+    repo: https://github.com/tektoncd/triggers
+    ref: v0.37.2
+    commit: 799a5fbb9c5856ca758594efef572c1675af83c8
+    root: docs
+    title: Tekton Triggers v0.37
+    license: Apache-2.0
+    url: {type: github, at: commit}
+    exclude:
+      - triggers-api.md
+    smoke: []
+
+  - name: pipelines-as-code
+    index: upstream
+    repo: https://github.com/tektoncd/pipelines-as-code
+    ref: v0.54.0
+    commit: bb2df3052556e2c7516eb1146a02e3ece5c4f252
+    root: docs/content/docs
+    title: Pipelines-as-Code v0.54
+    license: Apache-2.0
+    url: {type: github, at: commit}
+    hugo: true
+    exclude:
+      - dev/**
+    smoke:
+      - guide/authoringprs.md
+
+  - name: rook
+    index: upstream
+    repo: https://github.com/rook/rook
+    ref: v1.20.3
+    commit: 3b678364c85fcc6380419a467629244c194c5e5c
+    root: Documentation
+    title: Rook v1.20
+    license: Apache-2.0
+    url: {type: site, base: "https://rook.io/docs/rook/v1.20/"}
+    include:
+      - Getting-Started/**
+      - Storage-Configuration/**
+      - CRDs/**
+      - Troubleshooting/**
+      - Upgrade/**
+      - Helm-Charts/**
+    exclude:
+      - "**/*.gotmpl.md"
+    smoke: []
+
+  - name: cert-manager
+    index: upstream
+    repo: https://github.com/cert-manager/website
+    # The site keeps one current docs tree; production runs v1.20.
+    ref: master
+    commit: f01388b8aaae8d6c390c1648fd29d4a30810eb40
+    root: content/docs
+    title: cert-manager
+    license: Apache-2.0
+    url: {type: site, base: "https://cert-manager.io/docs/"}
+    include:
+      - README.md
+      - concepts/**
+      - configuration/**
+      - usage/**
+      - troubleshooting/**
+      - faq/**
+      - devops-tips/**
+      - installation/**
+      - trust/**
+    smoke: []
+
+  - name: victoriametrics
+    index: upstream
+    repo: https://github.com/VictoriaMetrics/VictoriaMetrics
+    ref: v1.156.0
+    commit: 0c1bf87a0c9843c30566df0c0aa6593466425ac5
+    root: docs
+    title: VictoriaMetrics v1.156
+    license: Apache-2.0
+    url: {type: site, base: "https://docs.victoriametrics.com/", lowercase: true}
+    hugo: true
+    include:
+      - victoriametrics/**
+      - guides/**
+    exclude:
+      - victoriametrics/changelog/**
+      - "**/CHANGELOG*.md"
+      - victoriametrics/Articles.md
+      - victoriametrics/CaseStudies.md
+      - victoriametrics/CONTRIBUTING.md
+      - victoriametrics/Release-Guide.md
+      - victoriametrics/LTS-releases.md
+      - "**/*_flags.md"
+    smoke: []
+
+  - name: victoriametrics-operator
+    index: upstream
+    repo: https://github.com/VictoriaMetrics/operator
+    ref: v0.75.2
+    commit: 61d1fd3209bfe1819ad4f6e48dcd7f74f51e228c
+    root: docs
+    title: VictoriaMetrics operator v0.75
+    license: Apache-2.0
+    url: {type: site, base: "https://docs.victoriametrics.com/operator/", lowercase: true}
+    hugo: true
+    exclude:
+      - CHANGELOG.md
+      - api.md
+      - release-guide.md
+      - templates/**
+    smoke: []
+
+  - name: victorialogs
+    index: upstream
+    repo: https://github.com/VictoriaMetrics/VictoriaLogs
+    ref: v1.53.0
+    commit: 915d91904bf7f5be66ab00f88947ae7fc1431acc
+    root: docs
+    title: VictoriaLogs v1.53
+    license: Apache-2.0
+    url: {type: site, base: "https://docs.victoriametrics.com/", lowercase: true}
+    hugo: true
+    exclude:
+      - "**/CHANGELOG.md"
+      - "**/changelog/**"
+      - victorialogs/Articles.md
+      - victorialogs/Release-Guide.md
+      - victorialogs/Roadmap.md
+      - "**/*_flags.md"
+    smoke: []
+
+  - name: victoriatraces
+    index: upstream
+    repo: https://github.com/VictoriaMetrics/VictoriaTraces
+    ref: v0.9.4
+    commit: f96aa3dd58fc2ef7711806ff4371d829a4a00471
+    root: docs
+    title: VictoriaTraces v0.9
+    license: Apache-2.0
+    url: {type: site, base: "https://docs.victoriametrics.com/", lowercase: true}
+    hugo: true
+    exclude:
+      - "**/changelog/**"
+      - "**/roadmap.md"
+      - "**/*_flags.md"
+    smoke: []
+
+  - name: velero
+    index: upstream
+    repo: https://github.com/vmware-tanzu/velero
+    # Versioned docs live in site/content/docs/<version> on main.
+    ref: main
+    commit: 48b876fe2db639b56a84643bd8fb312049bf9cd5
+    root: site/content/docs/v1.18
+    title: Velero v1.18
+    license: Apache-2.0
+    url: {type: site, base: "https://velero.io/docs/v1.18/"}
+    hugo: true
+    exclude:
+      - img/**
+      - contributions/**
+      - code-standards.md
+      - build-from-source.md
+      - development.md
+      - release-instructions.md
+      - website-guidelines.md
+    smoke: []
+
+  - name: istio
+    index: upstream
+    repo: https://github.com/istio/istio.io
+    ref: release-1.30
+    commit: 4607fcb53aa597ac72bd710c959c2c3bf94cf08c
+    root: content/en/docs
+    title: Istio 1.30
+    license: Apache-2.0
+    url: {type: site, base: "https://istio.io/v1.30/docs/"}
+    hugo: true
+    include:
+      - overview/**
+      - concepts/**
+      - ambient/**
+      - ops/**
+      - setup/**
+      - tasks/traffic-management/**
+      - tasks/security/**
+      - tasks/observability/**
+    smoke: []

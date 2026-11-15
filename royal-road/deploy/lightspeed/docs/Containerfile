@@ -1,0 +1,10 @@
+# Lightspeed documentation index: data only, no OS, no shell. OLS mounts it as
+# an image volume at /rag (royal-road/deploy/lightspeed/42-ols.yaml).
+# Built by the lightspeed-docs-index Pipeline; the build context is the
+# directory build_index.py wrote (royal-road/, upstream/, manifest.json,
+# SOURCES.md).
+FROM scratch
+COPY . /
+LABEL org.opencontainers.image.title="lightspeed-docs-index" \
+      org.opencontainers.image.description="OLS BYOK FAISS indexes (all-mpnet-base-v2): Royal Road docs and pinned upstream docs. See /SOURCES.md for sources and licenses." \
+      org.opencontainers.image.source="https://github.com/royal-road/console/tree/main/royal-road/deploy/lightspeed/docs"
