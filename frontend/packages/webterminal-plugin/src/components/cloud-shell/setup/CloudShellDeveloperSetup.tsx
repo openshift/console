@@ -4,11 +4,12 @@ import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { getUser } from '@console/dynamic-plugin-sdk';
-import { ProjectRequestModel } from '@console/internal/models';
+import { NamespaceModel, ProjectRequestModel } from '@console/internal/models';
 import type { K8sKind } from '@console/internal/module/k8s';
 import { k8sCreate } from '@console/internal/module/k8s';
 import type { RootState } from '@console/internal/redux';
-import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
+import { ALL_NAMESPACES_KEY, FLAGS } from '@console/shared/src/constants/common';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { newCloudShellWorkSpace, createCloudShellResourceName } from '../cloud-shell-utils';
 import type { CloudShellSetupFormData } from './cloud-shell-setup-utils';
 import {
@@ -48,6 +49,7 @@ const CloudShellDeveloperSetup: FC<Props> = ({
     },
   };
   const { t } = useTranslation('webterminal-plugin');
+  const isOpenShift = useFlag(FLAGS.OPENSHIFT);
 
   const handleSubmit = async (values: CloudShellSetupFormData, actions) => {
     const createNamespace = values.namespace === CREATE_NAMESPACE_KEY;
@@ -58,7 +60,7 @@ const CloudShellDeveloperSetup: FC<Props> = ({
     );
     try {
       if (createNamespace) {
-        await k8sCreate(ProjectRequestModel, {
+        await k8sCreate(isOpenShift ? ProjectRequestModel : NamespaceModel, {
           metadata: {
             name: namespace,
           },
