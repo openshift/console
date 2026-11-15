@@ -120,6 +120,10 @@ data:
       then search_issues for its unresolved issues, newest first, and
       get_issue_details for the top one. Name the issues you found, with their
       event counts and when they were last seen.
+    - Link every Sentry issue you name to this console's issue page, using its
+      organization slug and short ID, for example
+      [SHOP-API-1A](/sentry/my-org/issues/SHOP-API-1A). These links are the
+      exception to the rule about URLs below.
 
     # DOCUMENTATION
     - Retrieved documents may be added to this prompt. Each starts with a line

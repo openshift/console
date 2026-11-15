@@ -288,7 +288,10 @@ help here.
 6. With the Sentry tools: ask "Why is <app> erroring?" for an app that
    reports to Sentry. The answer names Sentry issues (for example
    `<PROJECT>-123`) with event counts, and shows `find_projects` and
-   `search_issues` tool chips next to the pod tools.
+   `search_issues` tool chips next to the pod tools. With sentry-plugin
+   (royal-road/console-plugins) installed, the issue IDs link to its issue
+   page, `/sentry/<org>/issues/<short-id>`, which cluster-admins can open
+   without a workload.
 
 ## Rollback
 
@@ -373,3 +376,4 @@ real GPUStack `lightspeed` route. The token was a real read-only token.
 | "Why is <app> erroring?" for a test Deployment named like a real application (cluster-admin) | 25 s. Calls: `pods_list`, `find_projects` (matched the Deployment to its project, whose slug is spelt differently), `search_issues`, `pods_log`, `get_issue_details`, `events_list`. The answer said the pods were healthy and listed the project's real unresolved issues with event counts and last-seen times. Same in the console chat panel. |
 | API key | Without `X-API-Key`: 401. With it: 200. OLS's key mount holds only `mcp-api-key`. |
 | NetworkPolicy | OLS → sentry-mcp allowed; a pod in `default` → sentry-mcp blocked. sentry-mcp → sentry-web:9000 allowed; → the public Sentry host and the npm registry blocked. |
+| Issue links (with sentry-plugin) | The answer linked `/sentry/royal-road/issues/<short-id>`; clicking it opened sentry-plugin's issue page in the console. |
