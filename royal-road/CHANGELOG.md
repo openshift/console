@@ -2,6 +2,12 @@
 
 Newest first. One entry per work package from `FORK.md`.
 
+## Tekton Results for the pipelines plugin
+
+- Core patch: the bridge's `/api/dev-console/tekton-results/*` proxy took its CA from `/var/serving-cert/tls.crt` (OpenShift's service CA) and, off-cluster, its host from a `route.openshift.io` Route. New flags `--tekton-results-ca-file` / `BRIDGE_TEKTON_RESULTS_CA_FILE` (same default) and `--tekton-results-api-host` / `BRIDGE_TEKTON_RESULTS_API_HOST` (empty: unchanged lookup). Unit test for both. Candidate for upstream.
+- `royal-road/deploy/README.md` ("Tekton Results"): how the plugin detects Results (per user, needs read on `tektonresults.operator.tekton.dev`, which the operator's Helm chart does not grant), the proxy address and CA, the Results API's SubjectAccessReview and the aggregated roles, and the user-settings namespace the PipelineRuns list depends on. The plugin README points there.
+- Verified on kind: Tekton operator Helm chart 0.81.3 with Results v0.20.0 (CloudNativePG database, cert-manager certificate, file logs), console in-cluster with the CA flag and the pipelines plugin: pruned runs listed and their logs shown, Overview without "Data is incomplete", a `view`-only user allowed in its namespace and refused elsewhere, and `x509: certificate signed by unknown authority` without the right CA.
+
 ## Fix: Control Plane status on kubeadm
 
 - The Overview's Control Plane item queried OpenShift-only namespaces, so API Servers, Controller Managers and Schedulers showed "Unknown". The queries now match on the job (and kubeadm's `kube-system/kube-apiserver-<node>` pods for the API server count).
