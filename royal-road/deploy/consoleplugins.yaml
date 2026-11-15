@@ -40,3 +40,28 @@ spec:
       namespace: <console-namespace>
       port: 9443
       basePath: /
+---
+# Observe > Dashboards (Perses). Optional: only with perses/ deployed (see
+# README.md, "Perses dashboards").
+apiVersion: console.openshift.io/v1
+kind: ConsolePlugin
+metadata:
+  name: monitoring-console-plugin
+spec:
+  displayName: Monitoring console plugin (Perses dashboards)
+  backend:
+    type: Service
+    service:
+      name: monitoring-console-plugin
+      namespace: <console-namespace>
+      port: 9443
+      basePath: /
+  proxy:
+    - alias: perses
+      authorization: UserToken
+      endpoint:
+        type: Service
+        service:
+          name: perses
+          namespace: perses
+          port: 8080
