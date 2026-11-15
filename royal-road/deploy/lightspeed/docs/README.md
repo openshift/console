@@ -161,6 +161,15 @@ If you apply `../42-ols.yaml` with server-side apply after the pipeline has
 taken over the reference, apply reports a conflict on that field instead of
 silently going back; leave the field to the pipeline.
 
+Concurrent runs (the schedule, a push, a manual run): the CronJob creates no
+run while one is in progress. Each run's discover Task records its time, and
+the rollout writes it to the Deployment annotation
+`lightspeed-docs/discovered-at`; a run never replaces an index chosen by a
+later discovery, and a rollout that another run replaced while it was waiting
+fails as superseded. Two runs that discover the same fingerprint at the same
+time can still both build it; the second push replaces the tag with an
+equivalent image.
+
 ## Secret gate
 
 The index is read by an LLM and stored in a registry, so the build fails if
@@ -206,15 +215,17 @@ Full profile, production versions (2026-11-15):
 | Index | Documents | Chunks | Size on disk | Embedding time |
 |---|---|---|---|---|
 | royal-road | 42 | 976 | 6.4 MB | 304 s |
-| upstream | 1,448 | 14,859 | FULL_UPSTREAM_SIZE | FULL_UPSTREAM_TIME |
+| upstream | 1,448 | 14,859 | 95.8 MB | 4,717 s |
 
-Measured on a shared 12-core host under heavy load (8 threads, about 3 chunks
-per second); a dedicated 4-CPU pod is expected to be several times faster.
-Corpus: 0.97 MB of Royal Road Markdown, 15 MB upstream. Peak memory of the
-index step: about 1.6 GiB (limit 4 GiB). OLS with the full index:
-FULL_OLS_MEMORY. The Task requests 2 CPUs (limit 4) for embedding; the other
-steps are small. A run whose fingerprint exists takes about a minute (two
-shallow clones, discovery, a registry lookup).
+Image: 102 MB (uncompressed). Measured with the same scripts and image in
+Docker on a shared 12-core host under heavy load (8 threads, about 3 chunks
+per second, 84 minutes in total); a pod with dedicated CPUs should be several
+times faster, and the run timeout is 2 h. Corpus: 0.97 MB of Royal Road
+Markdown, 15 MB upstream. Peak memory of the index step: about 1.6 GiB (limit
+4 GiB). OLS with the full index loaded: 1.1 GB resident (loads in about 1 s;
+a retrieval takes 35–340 ms on CPU). The Task requests 2 CPUs (limit 4) for
+embedding; the other steps are small. A run whose fingerprint exists takes
+about a minute (two shallow clones, discovery, a registry lookup).
 
 ## Apply
 
@@ -283,17 +294,21 @@ Royal Road infra docs subset: README, LEDGER, Tekton READMEs).
 | Check | Result |
 |---|---|
 | First run, OLS on the placeholder reference | discover: Kubernetes 1.36.1 (`/version`), Tekton 1.15.5 (controller image), Rook 1.20.3 (operator image), PaC not installed → skipped. Built `fp-c8f6c737…`, gitleaks and gate clean, pushed; rollout patched OLS from `<docs-index-image>` to the digest; OLS logged "All indexes are loaded" and turned Ready. 8 min 38 s. |
+| Rollback | Rollout Task with a digest that doesn't exist, timeout 2 min: pod `ImagePullBackOff`, Task restored the previous reference and failed. |
+| Ordering | Rollout Task with a discovery time older than the Deployment's: "leaving it", no change. |
+| Overlap | Found on kind: with the schedule every 5 min a second run started during a build, built the same fingerprint again, and a rollout reported the other run's success. Fixed (section Rollout); afterwards a CronJob job created during a run logged "1 lightspeed-docs run(s) in progress; skipping". |
+| Full index | Built from the full profile (production versions), pushed to the kind registry, rolled with the rollout Task: OLS 1.1 GB, Ready. |
 | Daily schedule, nothing changed | CronJob (temporarily every 5 min) created the run; same fingerprint, image found → index and image skipped, rollout "already uses …", OLS pod not restarted. 77 s. |
 | Rook operator image v1.20.3 → v1.21.2 | Next scheduled run: new fingerprint `fp-4414f57a…`, fetched rook `v1.21.2`, built, pushed, rolled OLS onto it; previous digest in `lightspeed-docs/previous-index`. 7 min 13 s, no manual step. |
 | RBAC | discover read only the named Deployments; rollout needed only get/list/watch/patch on the one Deployment (`rollout status` works with `resourceNames`). |
-| Questions (real model) | See the PR description: Kubernetes, the infrastructure ledger, the Tekton library, Rook upgrade after the bump; `referenced_documents` link to the versioned pages. |
+| Questions (real model) | See the PR description: Kubernetes, the infrastructure ledger, the Tekton library, Rook upgrade after the bump, Harbor and VictoriaLogs on the full index; `referenced_documents` link to the versioned pages. |
 
 ## Not verified
 
 - Production Harbor (push with a robot account, image volume pull with the
   namespace pull Secret, retention rule), Pipelines-as-Code with the GitHub
   App on the infrastructure repository, the SSH deploy-key clone.
-- The rollback branch of the rollout Task (a broken index); it is the same
-  patch with the previous reference.
-- A full-profile build inside the cluster (measured with the same scripts in
-  Docker, see above).
+- A full-profile build inside the cluster (built with the same scripts and
+  image in Docker, then rolled out on kind, see above).
+- The console panel in a browser: verified through OLS's API (the plugin
+  renders the same `referenced_documents`).
