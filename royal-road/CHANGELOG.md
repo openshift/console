@@ -2,6 +2,13 @@
 
 Newest first. One entry per work package from `FORK.md`.
 
+## Lightspeed: Sentry tools
+
+- `royal-road/deploy/lightspeed/55-sentry-mcp.yaml`: getsentry's Sentry MCP server, so the assistant can read Sentry issues and events next to the cluster state ("why is my-app erroring?"). It runs with one read-only service token (internal integration: `org:read`, `project:read`, `event:read`) from the Secret `lightspeed-sentry`, only the server's read-only `inspect` skill, and only 8 of its tools. OLS authenticates with an API key file; NetworkPolicies admit only OLS and allow egress only to sentry-web. Lightspeed users (cluster-admins by default) all see the same Sentry data; the README records that access model.
+- `royal-road/plugins/sentry-mcp/`: the image. `@sentry/mcp-server` 0.49.0 speaks stdio only, so `supergateway` 4.2.2 serves it over streamable HTTP; both pinned in `package-lock.json`. `.github/workflows/royal-road-sentry-mcp.yml` pushes `ghcr.io/royal-road/sentry-mcp`.
+- `40-ols-config.yaml` adds the `sentry` MCP server and a system-prompt paragraph on combining workload state with Sentry issues. `42-ols.yaml` mounts the API key from an optional volume: without the Secret OLS runs as before.
+- Verified on kind against the real self-hosted Sentry and GPUStack: tool calls, real issue titles in the console chat, API key, NetworkPolicies.
+
 ## Lightspeed documentation (BYOK RAG)
 
 - `royal-road/deploy/lightspeed/docs/`: OLS answers from two FAISS indexes (`ols_config.reference_content`): our docs (git-tracked Markdown of royal-road/infrastructure, `FORK.md`, `royal-road/**/README.md`, `CHANGELOG.md`, `WP6-TRIAGE.md`) and upstream docs (Kubernetes, Tekton Pipelines/Triggers, Pipelines-as-Code, Rook, cert-manager, VictoriaMetrics/operator/Logs/Traces, Velero, Istio) **at the versions the cluster runs**. Every chunk carries its title and a link (versioned upstream page, or the GitHub file), which OLS returns as `referenced_documents`; the system prompt makes the model prefer our docs for questions about this cluster and cite them.
