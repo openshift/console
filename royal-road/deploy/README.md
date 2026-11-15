@@ -464,12 +464,67 @@ TriggerTemplate and EventListener but no Route (patch 0002). Expose the
 
 - Leftover operator objects: `TektonConfig/config` is read only to detect a
   multi-cluster hub. If a `tektonresults.operator.tekton.dev/result` object
-  exists, the plugin turns on its Tekton Results features and calls the
-  bridge's `/api/dev-console/tekton-results/*`, which targets
-  `tekton-results-api-service.openshift-pipelines` unless the TektonResult CR
-  says otherwise. Check with
-  `kubectl get tektonresults.operator.tekton.dev result`, and delete it if
-  Results isn't actually installed.
+  exists but Results isn't actually installed, delete it (see below); otherwise
+  the plugin turns on its Results features and every call fails.
+
+### Tekton Results
+
+With [Tekton Results](https://github.com/tektoncd/results) installed, the plugin
+lists pruned PipelineRuns and TaskRuns (archive icon), opens their details and
+logs, and fills Overview and Metrics from Results summaries instead of showing
+"Data is incomplete. To see the full view, please enable Tekton results."
+
+How it connects:
+
+1. **Detection, per user.** The plugin GETs
+   `tektonresults.operator.tekton.dev/result` with the signed-in user's token.
+   Users who can't read it get the Kubernetes-only pages and the banner. The
+   Tekton operator's release manifests bind ClusterRole `tekton-result-read-role`
+   (get/list/watch `tektonresults`) to `system:authenticated`; its Helm chart
+   does not, so create that binding yourself when the operator came from Helm.
+2. **Proxy.** The plugin calls the bridge's
+   `/api/dev-console/tekton-results/{get,summary,logs}`. In-cluster, the bridge
+   sends the request with the user's token to
+   `https://tekton-results-api-service.<spec.targetNamespace>.svc.cluster.local:<spec.server_port, 8080>`
+   (`spec.tls_hostname_override` replaces the host), read from that same
+   resource with the console's ServiceAccount, which therefore needs get on
+   `tektonresults` too.
+3. **TLS.** The bridge verifies the Results API certificate with
+   `--tekton-results-ca-file` (`BRIDGE_TEKTON_RESULTS_CA_FILE`), default
+   `/var/serving-cert/tls.crt`: the service CA on OpenShift. Off OpenShift,
+   point it at the CA that signed the Results API certificate, for example a
+   ConfigMap with cert-manager's `ca.crt`:
+
+   ```yaml
+   env:
+     - name: BRIDGE_TEKTON_RESULTS_CA_FILE
+       value: /var/tekton-results-ca/ca.crt
+   volumeMounts:
+     - {name: tekton-results-ca, mountPath: /var/tekton-results-ca, readOnly: true}
+   volumes:
+     - {name: tekton-results-ca, configMap: {name: tekton-results-ca}}
+   ```
+
+   With the wrong CA every call fails with `x509: certificate signed by
+   unknown authority` (the bridge log shows it; the plugin shows empty
+   history). `--tekton-results-api-host` (`BRIDGE_TEKTON_RESULTS_API_HOST`,
+   `host:port`) overrides the address, in-cluster and off-cluster (where the
+   bridge otherwise looks for a `route.openshift.io` Route).
+4. **Authorization.** The Results API checks each request with a
+   SubjectAccessReview on `results.tekton.dev` (`results`, `records`, `logs`,
+   `summary`) in the run's namespace. Upstream's ClusterRoles aggregate read
+   access into `view` and `edit` and full access into `admin`, so whoever can
+   view a namespace sees its history.
+5. **User settings.** The PipelineRuns list waits for the user's date-range
+   preference; without the `openshift-console-user-settings` namespace
+   ([user-settings.yaml](user-settings.yaml)) it never queries Results.
+
+Checked on kind with the Tekton operator (Helm chart 0.81.3, Results v0.20.0,
+CloudNativePG database, cert-manager certificate) and the console in-cluster:
+pruned runs listed with their logs, Overview without the banner, a user with
+`view` in one namespace allowed there and refused elsewhere, and the banner
+back when that user can't read the TektonResult resource.
+
 - The Overview page charts need the `tekton_pipelines_controller_*` metrics
   scraped into the monitoring stack and reachable through the tenancy proxy.
 - Without internet egress from the console Pod, the builder's ArtifactHub
