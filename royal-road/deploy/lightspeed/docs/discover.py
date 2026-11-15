@@ -33,6 +33,8 @@ import json
 import re
 import sys
 import time
+import urllib.request
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 import yaml
@@ -40,7 +42,8 @@ import yaml
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from build_corpus import includes_for, select_files  # noqa: E402
 
-TOOL_FILES = ("build_corpus.py", "build_index.py", "embeddings.py", "secret_gate.py", "discover.py", "make_oci.py")
+TOOL_FILES = ("build_corpus.py", "build_index.py", "embeddings.py", "secret_gate.py", "discover.py", "make_oci.py",
+              "mdx.py")
 DEFAULT_VERSION_RE = r"^v?(?P<major>\d+)\.(?P<minor>\d+)\.(?P<patch>\d+)"
 KINDS = {"Deployment": "deployments", "StatefulSet": "statefulsets", "DaemonSet": "daemonsets"}
 TEMPLATED = ("ref", "fallback_ref", "root", "title")
@@ -91,24 +94,51 @@ class Cluster:
         return None
 
 
-def discover_version(cluster: Cluster, source: dict) -> tuple[str, str] | None:
-    """(version string, where it came from), or None if not running here."""
+def week_start(now: datetime | None = None) -> datetime:
+    """Monday 00:00 UTC of the current ISO week."""
+    now = now or datetime.now(timezone.utc)
+    return (now - timedelta(days=now.weekday())).replace(hour=0, minute=0, second=0, microsecond=0)
+
+
+def weekly_commit(repo_url: str, branch: str, now: datetime | None = None) -> tuple[str, str, str]:
+    """For unversioned docs: the last commit on `branch` before this week's
+    Monday 00:00 UTC. Returns (version YYYY.WW.0, commit, description), so the
+    fingerprint changes at most once a week and every build of a week fetches
+    the same commit."""
+    start = week_start(now)
+    owner_repo = re.sub(r"^https://github\.com/|\.git$", "", repo_url)
+    url = (f"https://api.github.com/repos/{owner_repo}/commits?sha={branch}"
+           f"&until={start.strftime('%Y-%m-%dT%H:%M:%SZ')}&per_page=1")
+    req = urllib.request.Request(url, headers={"Accept": "application/vnd.github+json",
+                                               "User-Agent": "lightspeed-docs-discover"})
+    with urllib.request.urlopen(req, timeout=30) as r:
+        sha = json.load(r)[0]["sha"]
+    year, week, _ = start.isocalendar()
+    return f"{year}.{week}.0", sha, f"{branch} @ {sha[:12]}, last commit before {start:%Y-%m-%d}"
+
+
+def discover_version(cluster: Cluster, source: dict) -> tuple[str, str, dict] | None:
+    """(version string, where it came from, extra template fields), or None if
+    not running here."""
     for ref in source.get("discover", []):
         if ref.get("kubernetes") == "version":
-            return cluster.kubernetes_version(), "/version"
+            return cluster.kubernetes_version(), "/version", {}
+        if ref.get("weekly_commit"):
+            version, sha, where = weekly_commit(source["repo"], ref["weekly_commit"])
+            return version, where, {"commit": sha}
         if any(is_placeholder(ref.get(k, "")) for k in ("namespace", "name")):
             continue
         image = cluster.workload_image(ref)
         if image:
-            return image_tag(image), f"{ref['kind']} {ref['namespace']}/{ref['name']} {image.split('@')[0]}"
+            return image_tag(image), f"{ref['kind']} {ref['namespace']}/{ref['name']} {image.split('@')[0]}", {}
     return None
 
 
-def render(source: dict, version: str) -> dict:
+def render(source: dict, version: str, extra: dict | None = None) -> dict:
     m = re.match(source.get("version_regex", DEFAULT_VERSION_RE), version)
     if not m:
         raise SystemExit(f"{source['name']}: version {version!r} does not match {source.get('version_regex', DEFAULT_VERSION_RE)}")
-    fields = {"version": version.lstrip("v"), **m.groupdict()}
+    fields = {"version": version.lstrip("v"), **m.groupdict(), **(extra or {})}
     out = copy.deepcopy(source)
     out.pop("discover", None)
     out["discovered_version"] = fields["version"]
@@ -146,8 +176,8 @@ def cmd_resolve(args: argparse.Namespace) -> None:
         if found is None:
             print(f"{s['name']:<26} not running here: skipped")
             continue
-        version, where = found
-        r = render(s, version)
+        version, where, extra = found
+        r = render(s, version, extra)
         versions[s["name"]] = r["discovered_version"]
         resolved.append(r)
         print(f"{s['name']:<26} {r['discovered_version']:<12} ref {r['ref']:<16} ({where})")

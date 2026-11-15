@@ -140,11 +140,14 @@ spec:
           mkdir -p upstream
           : > fetched.tsv
           while IFS="$tab" read -r name repo ref fallback path; do
+            echo "fetch $name $ref: $path"
             [ -n "$name" ] || continue
             d="upstream/$name"
             git init -q "$d"
             git -C "$d" remote add origin "$repo"
-            git -C "$d" sparse-checkout set --no-cone "$path"
+            # one or more directories, space-separated (build_corpus.py sparse_paths)
+            # shellcheck disable=SC2086
+            git -C "$d" sparse-checkout set --no-cone $path
             if git -C "$d" fetch -q --depth 1 --filter=blob:none origin "$ref"; then
               used=$ref
             elif [ "$fallback" != "-" ] && git -C "$d" fetch -q --depth 1 --filter=blob:none origin "$fallback"; then

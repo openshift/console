@@ -32,6 +32,10 @@ from pathlib import Path
 
 import yaml
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from mdx import Converter, title_from  # noqa: E402
+
+DOC_SUFFIXES = (".md", ".mdx")
 INDEX_ORDER = ("royal-road", "upstream")
 DIR_PAGES = {"_index", "index", "readme"}
 
@@ -66,8 +70,8 @@ def select_files(root: Path, include: list[str], exclude: list[str]) -> list[str
     inc = [glob_to_regex(p) for p in include]
     exc = [glob_to_regex(p) for p in exclude]
     picked = []
-    for path in sorted(root.rglob("*.md")):
-        if not path.is_file() or ".git" in path.parts:
+    for path in sorted(root.rglob("*")):
+        if path.suffix not in DOC_SUFFIXES or not path.is_file() or ".git" in path.parts:
             continue
         rel = path.relative_to(root).as_posix()
         if any(r.match(rel) for r in inc) and not any(r.match(rel) for r in exc):
@@ -198,7 +202,7 @@ def doc_url(source: dict, rel: str, meta: dict, commit: str) -> str:
     if isinstance(meta.get("url"), str) and meta["url"].startswith("/"):
         scheme_host = re.match(r"^(https?://[^/]+)", base).group(1)
         return scheme_host + meta["url"].rstrip("/") + "/"
-    stem = rel[: -len(".md")]
+    stem = rel.rsplit(".", 1)[0]
     parts = stem.split("/")
     if parts[-1].lower() in DIR_PAGES:
         parts = parts[:-1]
@@ -226,14 +230,35 @@ def load_sources(path: Path, profile: str) -> list[dict]:
     return sources
 
 
+def sparse_paths(source: dict, profile: str) -> list[str]:
+    """Directories to check out: the fixed prefix of every include glob (so a
+    source with a few subtrees of a large repository fetches only those),
+    plus `extra_sparse` (e.g. the partials MDX pages include)."""
+    root = source.get("root", "").strip("/")
+    prefixes = set()
+    for glob in includes_for(source, profile):
+        fixed = []
+        for part in glob.split("/"):
+            if any(c in part for c in "*?["):
+                break
+            fixed.append(part)
+        if fixed and fixed[-1].endswith(DOC_SUFFIXES):
+            fixed = fixed[:-1]
+        prefixes.add("/".join(fixed))
+    if "" in prefixes:
+        prefixes = {""}
+    paths = sorted("/" + "/".join(p for p in (root, prefix) if p) + "/" for prefix in prefixes)
+    paths += [f"/{p.strip('/')}/" for p in source.get("extra_sparse", [])]
+    return [p.replace("//", "/") for p in paths]
+
+
 def cmd_plan(args: argparse.Namespace) -> None:
     lines = []
     for s in load_sources(Path(args.sources), args.profile):
         if s["index"] != "upstream":
             continue
-        root = s.get("root", "").strip("/")
         lines.append("\t".join([s["name"], s["repo"], s["ref"], s.get("fallback_ref", "-"),
-                                 "/" + root + "/" if root else "/"]))
+                                 " ".join(sparse_paths(s, args.profile))]))
     Path(args.out).write_text("\n".join(lines) + "\n")
     print(f"{len(lines)} upstream sources to fetch -> {args.out}")
 
@@ -267,8 +292,15 @@ def cmd_corpus(args: argparse.Namespace) -> None:
         if not files:
             sys.exit(f"{s['name']}: no files selected; check include/exclude")
         written, total = 0, 0
+        mdx_cfg = s.get("mdx")
+        converter = Converter(tree / mdx_cfg["partials"], mdx_cfg["site"]) if mdx_cfg else None
         for rel in files:
             meta, body = parse((root / rel).read_text(encoding="utf-8", errors="replace"))
+            if converter:
+                if meta.get("external_link") or (meta.get("sidebar") or {}).get("hidden") is True and not body.strip():
+                    continue
+                body = converter.page(body, rel.split("/")[0])
+                meta["title"] = title_from(meta)
             if s.get("hugo") and not_rendered(meta):
                 continue
             if s.get("hugo"):

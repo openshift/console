@@ -96,6 +96,7 @@ model's 384-token input.
 | `discover.py` | Reads the versions from the cluster, renders `sources.yaml` for them, computes the fingerprint. `discover.py rbac` generates `tekton/15-discovery-rbac.yaml`. |
 | `build_corpus.py` | Fetched trees → Markdown with `title`/`url` front matter; Hugo shortcodes removed; `SOURCES.md`, `manifest.json`. |
 | `build_index.py` | Chunks, runs the secret gate, embeds, writes the FAISS indexes. |
+| `mdx.py` | Starlight MDX (developers.cloudflare.com) to Markdown: partials inlined, components rendered as text, links made absolute. |
 | `secret_gate.py` | Credential patterns, run on every chunk. |
 | `make_oci.py` | Writes the index directory as a one-layer OCI layout (no container engine, reproducible digest); skopeo pushes it. |
 | `kustomization.yaml` | Everything below plus the ConfigMap: `kubectl apply --server-side -k royal-road/deploy/lightspeed/docs`. |
@@ -133,6 +134,16 @@ a docs root, a title and a URL base:
 | VictoriaTraces | StatefulSet (placeholders) | VictoriaMetrics/VictoriaTraces `v0.9.4` | `docs.victoriametrics.com` |
 | Velero | `velero/velero` | vmware-tanzu/velero `main`, `site/content/docs/v1.18` | `velero.io/docs/v1.18/` |
 | Istio | `istio-system/istiod` | istio/istio.io `release-1.30` | `istio.io/v1.30/docs/` |
+| Cloudflare | none (SaaS, unversioned): `weekly_commit` | cloudflare/cloudflare-docs `production`, last commit before Monday 00:00 UTC | `developers.cloudflare.com` |
+
+**Unversioned docs (Cloudflare).** There is no version to discover and the
+docs repository gets dozens of commits a day; fingerprinting the branch head
+would rebuild every day. `{weekly_commit: production}` pins the last commit
+before the current ISO week's Monday 00:00 UTC (one GitHub API call), so the
+fingerprint changes once a week and every build of a week, whatever triggered
+it, indexes the same commit. The commit is in `/manifest.json` and
+`/SOURCES.md`. Only the included subtrees and the partials are fetched
+(sparse checkout from the include globs).
 
 A component that isn't found (Deployment absent, or `discover` entries still
 holding `<placeholders>`) is skipped: no docs for what the cluster doesn't
@@ -238,6 +249,7 @@ again in `sources.yaml` in case something was force-added.
 | Source | License | Subset |
 |---|---|---|
 | kubernetes/website `content/en/docs` | **CC BY 4.0** (attribution in `/SOURCES.md` of the image) | concepts, tasks, tutorials, setup, selected reference (no generated API/flag pages) |
+| cloudflare/cloudflare-docs `src/content/docs` | **CC BY 4.0** (attribution in `/SOURCES.md`) | DNS, SSL/TLS (incl. Authenticated Origin Pulls, Origin CA; not Keyless SSL), Cache, Rules (origin, configuration, transform, redirect, cache rules; not Snippets/Cloud Connector), Ruleset Engine, WAF, DDoS, Bots, Challenges, Turnstile, Load Balancing, Tunnel, Zero Trust Access and identity providers, GraphQL analytics, fundamentals (concepts, reference, API, security). Not Workers, R2, Pages, KV, D1 and other developer platform products (none in use: no Workers scripts or routes on any zone, no R2 in the infrastructure repo), Cloudflare WAN, Gateway, devices, email security. |
 | tektoncd/pipeline, tektoncd/triggers `docs/` | Apache-2.0 | all but developer docs and generated API |
 | tektoncd/pipelines-as-code `docs/content/docs` | Apache-2.0 | all but `dev/` |
 | rook/rook `Documentation/` | Apache-2.0 | getting started, storage configuration, CRDs, troubleshooting, upgrade, Helm charts |

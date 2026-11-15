@@ -29,6 +29,9 @@
 #                {kind: Deployment|StatefulSet|DaemonSet, namespace, name,
 #                container} (that container's image tag). Not found: the source
 #                is skipped. Names with <...> are unset placeholders (skipped).
+#                {weekly_commit: <branch>} for unversioned docs: the last commit
+#                on the branch before this ISO week's Monday 00:00 UTC (GitHub
+#                API); version YYYY.WW.0, template field {commit}.
 #                discover.py rbac turns these entries into the read-only Roles
 #                (tekton/15-discovery-rbac.yaml).
 #   version_regex  named groups major/minor/patch; default ^v?X.Y.Z
@@ -48,6 +51,9 @@
 #                          matter key wins; patterns: {glob: template} for
 #                          pages that are anchors of another page (template
 #                          fields: stem and front matter strings)
+#   mdx          Starlight MDX (mdx.py): {partials: <dir of <Render> partials>,
+#                site: <base for site-relative links>}
+#   extra_sparse directories fetched besides the include subtrees
 #   hugo         true: expand {{% content "x.md" %}} includes, drop pages
 #                that are never rendered on their own (headless, render:
 #                never, draft), and replace other shortcodes with their text
@@ -367,3 +373,58 @@ sources:
       - tasks/security/**
       - tasks/observability/**
     smoke: []
+
+  # Unversioned: the docs site always shows `production`. Discovery pins the
+  # last commit before this ISO week's Monday 00:00 UTC (weekly_commit), so
+  # the fingerprint changes at most weekly and all builds of a week index the
+  # same commit. Scope: products the zones use or are being evaluated (DNS,
+  # SSL/TLS incl. Authenticated Origin Pulls and Origin CA, Cache, Rules incl.
+  # Origin Rules, WAF, DDoS, Bots, Turnstile, Load Balancing, Tunnel, Access,
+  # GraphQL analytics, fundamentals). Left out: Workers, R2, Pages, KV and the
+  # other developer platform products (no Workers scripts or routes on any
+  # zone, no R2 in this repo), Keyless SSL and Snippets/Cloud Connector (not
+  # on our plans), Cloudflare WAN, Gateway, devices and email security.
+  - name: cloudflare
+    index: upstream
+    repo: https://github.com/cloudflare/cloudflare-docs
+    discover:
+      - {weekly_commit: production}
+    ref: "{commit}"
+    root: src/content/docs
+    title: Cloudflare
+    license: CC-BY-4.0
+    attribution: "Cloudflare Developer Documentation, © Cloudflare, Inc., https://developers.cloudflare.com/ (github.com/cloudflare/cloudflare-docs), CC BY 4.0. Converted from MDX to Markdown (components rendered as text, partials inlined) and split into chunks."
+    url: {type: site, base: "https://developers.cloudflare.com/"}
+    mdx: {partials: src/content/partials, site: "https://developers.cloudflare.com"}
+    extra_sparse: [src/content/partials]
+    include:
+      - dns/**
+      - ssl/**
+      - cache/**
+      - rules/**
+      - ruleset-engine/**
+      - waf/**
+      - ddos-protection/**
+      - bots/**
+      - turnstile/**
+      - cloudflare-challenges/**
+      - load-balancing/**
+      - tunnel/**
+      - cloudflare-one/networks/connectors/cloudflare-tunnel/**
+      - cloudflare-one/access-controls/**
+      - cloudflare-one/integrations/identity-providers/**
+      - analytics/graphql-api/**
+      - analytics/account-and-zone-analytics/**
+      - analytics/*.mdx
+      - fundamentals/concepts/**
+      - fundamentals/reference/**
+      - fundamentals/api/**
+      - fundamentals/security/**
+    exclude:
+      - "**/changelog*"
+      - ssl/keyless-ssl/**
+      - rules/snippets/**
+      - rules/cloud-connector/**
+    smoke:
+      - ssl/origin-configuration/authenticated-origin-pull/**
+      - rules/origin-rules/**

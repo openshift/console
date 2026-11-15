@@ -4,6 +4,7 @@ Run inside the pinned OLS image (it has PyYAML; CI does this):
   python -m unittest discover -s royal-road/deploy/lightspeed/docs
 """
 
+import json
 import tempfile
 import unittest
 from pathlib import Path
@@ -14,6 +15,7 @@ import build_corpus as bc
 import discover
 import embeddings as emb
 import make_oci
+import mdx
 import secret_gate
 
 HERE = Path(__file__).resolve().parent
@@ -110,7 +112,7 @@ class Discovery(unittest.TestCase):
     def test_every_upstream_source_renders(self):
         for s in yaml.safe_load((HERE / "sources.yaml").read_text())["sources"]:
             if s["index"] == "upstream":
-                r = discover.render(s, "v1.2.3")
+                r = discover.render(s, "v1.2.3", {"commit": "c" * 40})
                 self.assertNotIn("{", r["ref"] + r.get("root", "") + r["title"] + r["url"].get("base", ""), s["name"])
 
     def test_placeholders_are_skipped(self):
@@ -165,6 +167,79 @@ class Oci(unittest.TestCase):
             self.assertEqual(names, ["manifest.json", "royal-road", "royal-road/docstore.json"])
             config = json.loads((blobs / manifest["config"]["digest"].split(":")[1]).read_text())
             self.assertEqual(config["config"]["Labels"], {"a": "b"})
+
+
+class Mdx(unittest.TestCase):
+    def convert(self, body, partials=None):
+        return mdx.Converter(partials, "https://developers.cloudflare.com").page(body, "ssl")
+
+    def test_components_admonitions_links(self):
+        body = (
+            'import { Render, Tabs, TabItem, Details } from "~/components";\n\n'
+            "Intro with a [link](/ssl/concepts/) and <GlossaryTooltip term=\"x\">a term</GlossaryTooltip>.\n\n"
+            ":::caution[Warning]\nBe careful.\n:::\n\n"
+            '<Tabs> <TabItem label="API">\n\n'
+            '<APIRequest path="/zones/{zone_id}/purge_cache" method="POST" json={{ "files": ["a/>b"] }} />\n\n'
+            "</TabItem> </Tabs>\n"
+            '<Details header="OpenSSL example">\ninside\n</Details>\n'
+            "Replace <ZONE_ID> with yours. {/* hidden */}<DashButton url=\"/?to=x\" />\n"
+            "```js\nimport x from \"y\";\nconst a = <Foo />;\n```\n"
+        )
+        out = self.convert(body)
+        self.assertNotIn("import {", out)
+        self.assertIn("[link](https://developers.cloudflare.com/ssl/concepts/)", out)
+        self.assertIn("a term", out)
+        self.assertIn("**Warning:**", out)
+        self.assertIn("**API**", out)
+        self.assertIn("POST https://api.cloudflare.com/client/v4/zones/{zone_id}/purge_cache", out)
+        self.assertIn('"files": ["a/>b"]', out)
+        self.assertIn("**OpenSSL example**", out)
+        self.assertIn("<ZONE_ID>", out)  # ALL_CAPS placeholders are text
+        self.assertNotIn("DashButton", out)
+        self.assertNotIn("hidden", out)
+        self.assertIn('import x from "y";\nconst a = <Foo />;', out)  # code untouched
+
+    def test_partials_are_inlined(self):
+        with tempfile.TemporaryDirectory() as d:
+            Path(d, "ssl").mkdir()
+            Path(d, "ssl", "note.mdx").write_text("---\nparams: [x]\n---\nShared text {props.x}.\n")
+            out = self.convert('<Render file="note" product="ssl" />\n<Render file="missing" />', Path(d))
+            self.assertIn("Shared text .", out)
+            self.assertNotIn("Render", out)
+
+    def test_title_from_head(self):
+        self.assertEqual(mdx.title_from({"title": "Short", "head": [{"tag": "title", "content": "Long title"}]}),
+                         "Long title")
+        self.assertEqual(mdx.title_from({"title": "Short"}), "Short")
+
+
+class Sparse(unittest.TestCase):
+    def test_include_prefixes(self):
+        src = {"root": "src/content/docs", "include": ["dns/**", "analytics/*.mdx", "ssl/a/b.mdx"],
+               "extra_sparse": ["src/content/partials"]}
+        self.assertEqual(bc.sparse_paths(src, "full"), [
+            "/src/content/docs/analytics/", "/src/content/docs/dns/", "/src/content/docs/ssl/a/",
+            "/src/content/partials/"])
+        self.assertEqual(bc.sparse_paths({"root": "docs"}, "full"), ["/docs/"])
+
+    def test_weekly_commit_is_stable_within_a_week(self):
+        from datetime import datetime, timezone
+        from unittest import mock
+
+        seen = []
+
+        def fake(req, timeout):
+            seen.append(req.full_url)
+            import io
+            return io.BytesIO(json.dumps([{"sha": "a" * 40}]).encode())
+
+        with mock.patch.object(discover.urllib.request, "urlopen", fake):
+            for day in (16, 18, 22):  # Mon, Wed, Sun of ISO week 47 of 2026
+                v, sha, _ = discover.weekly_commit("https://github.com/o/r", "production",
+                                                   datetime(2026, 11, day, 12, tzinfo=timezone.utc))
+                self.assertEqual((v, sha), ("2026.47.0", "a" * 40))
+        self.assertTrue(all("until=2026-11-16T00:00:00Z" in u and "repos/o/r/commits?sha=production" in u
+                            for u in seen))
 
 
 class SecretGate(unittest.TestCase):
