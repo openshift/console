@@ -46,8 +46,7 @@ spec:
     - name: console-revision
       default: main
     - name: image
-      description: Repository to push to; the tag is the fingerprint (fp-<20 hex>).
-      default: core.harbor.k8s.rr.zone/console/lightspeed-docs-index
+      description: Repository to push to, e.g. <registry>/<project>/lightspeed-docs-index; the tag is the fingerprint (fp-<20 hex>).
     - name: profile
       description: full, or smoke (a few files per source).
       default: full

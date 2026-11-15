@@ -255,6 +255,9 @@ for image volumes.
    the pipeline owns the reference. (On a fresh install you can instead apply
    OLS with the placeholder and run with rollout on: OLS waits with
    `InvalidImageName` until the run patches it.)
+   Replace `<registry>/<project>` in the PipelineRun templates
+   (`tekton/40-schedule.yaml`, `tekton/pac/.tekton/`, `tekton/examples/`) with
+   your private registry project.
 4. Pipelines-as-Code: apply `tekton/pac/repository.yaml` and commit
    `tekton/pac/.tekton/lightspeed-docs-index.yaml` to the infrastructure
    repository as `.tekton/lightspeed-docs-index.yaml`. Pushes to `main` that

@@ -24,6 +24,8 @@ spec:
   pipelineRef:
     name: lightspeed-docs-index
   params:
+    - name: image
+      value: "<registry>/<project>/lightspeed-docs-index"
     - name: infra-url
       value: "{{ repo_url }}"
     - name: infra-revision

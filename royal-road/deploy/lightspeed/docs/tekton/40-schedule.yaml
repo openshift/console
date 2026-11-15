@@ -37,6 +37,7 @@ data:
         name: lightspeed-docs-index
       params:
         - {name: infra-url, value: "git@github.com:royal-road/infrastructure.git"}
+        - {name: image, value: "<registry>/<project>/lightspeed-docs-index"}
       taskRunTemplate:
         serviceAccountName: lightspeed-docs-builder
       taskRunSpecs:
