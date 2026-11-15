@@ -80,7 +80,9 @@ spec:
       command: [sh, -ec]
       args:
         - |
-          rm -rf work && mkdir -p work
+          # Every step's workingDir is the workspace root: Tekton would
+          # create any other workingDir as root before the steps run.
+          rm -rf work && mkdir work
           python "$TOOLS/build_corpus.py" plan --sources "$SOURCES" --profile "$PROFILE" --out work/fetch.tsv
       computeResources:
         requests: {cpu: 100m, memory: 256Mi}
@@ -88,10 +90,11 @@ spec:
 
     - name: fetch
       image: $(params.git-image)
-      workingDir: $(workspaces.source.path)/work
+      workingDir: $(workspaces.source.path)
       command: [sh, -ec]
       args:
         - |
+          cd work
           tab=`printf '\t'`
           mkdir -p upstream
           while IFS="$tab" read -r name repo commit path; do
@@ -111,7 +114,7 @@ spec:
 
     - name: corpus
       image: $(params.ols-image)
-      workingDir: $(workspaces.source.path)/work
+      workingDir: $(workspaces.source.path)
       env:
         - name: INFRA_COMMIT
           value: $(params.infra-commit)
@@ -120,6 +123,7 @@ spec:
       command: [sh, -ec]
       args:
         - |
+          cd work
           python "$TOOLS/build_corpus.py" corpus --sources "$SOURCES" --profile "$PROFILE" \
             --upstream-dir upstream --checkout-root "$WS" --out corpus \
             --commit "infrastructure=$INFRA_COMMIT" --commit "console=$CONSOLE_COMMIT"
@@ -130,22 +134,23 @@ spec:
 
     - name: gitleaks
       image: $(params.gitleaks-image)
-      workingDir: $(workspaces.source.path)/work
+      workingDir: $(workspaces.source.path)
       command: [gitleaks]
-      args: [dir, corpus/royal-road, --no-banner, --redact, --exit-code, "1"]
+      args: [dir, work/corpus/royal-road, --no-banner, --redact, --exit-code, "1"]
       computeResources:
         requests: {cpu: 100m, memory: 128Mi}
         limits: {memory: 512Mi}
 
     - name: index
       image: $(params.ols-image)
-      workingDir: $(workspaces.source.path)/work
+      workingDir: $(workspaces.source.path)
       env:
         - name: INFRA_COMMIT
           value: $(params.infra-commit)
       command: [sh, -ec]
       args:
         - |
+          cd work
           python "$TOOLS/build_index.py" --corpus corpus --out image \
             --commit "$INFRA_COMMIT" --tag-file "$(results.TAG.path)"
           du -sh image image/*

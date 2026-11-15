@@ -166,7 +166,7 @@ sources:
     exclude:
       - dev/**
     smoke:
-      - guide/authoringprs.md
+      - guides/event-matching/cel-expressions.md
 
   - name: rook
     index: upstream
