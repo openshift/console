@@ -584,3 +584,131 @@ kind cluster with VictoriaLogs v1.53.0 (production's version), `logging-view-plu
 | Live tail | Streams through bridge and proxy (`/select/logsql/tail`). |
 | Tenancy | A ServiceAccount with `view` in team-a (bridge run with its token, and directly at the proxy): only team-a, nothing in `infrastructure`, including with `{namespace="team-b"}` in the query, a client-sent `extra_stream_filters`, a `union` subquery, `stream_field_values` and an `AccountID` header. No token or an invalid token: 401. `query_time_range`: 404. Cluster-admin: all namespaces. |
 | NetworkPolicies | A pod in another namespace can't reach the proxy or VictoriaLogs; a pod with the console label reaches the proxy; the proxy reaches VictoriaLogs. |
+
+## Perses dashboards
+
+Observe › **Dashboards (Perses)** (`/monitoring/v2/dashboards`) is the
+`perses-dashboards` feature of openshift/monitoring-plugin. On OpenShift the
+Cluster Observability Operator (COO) installs it for a `UIPlugin` of type
+Monitoring with `perses.enabled`. Here the same pieces are plain manifests:
+`monitoring-console-plugin.yaml` and `perses/` (kustomize). The legacy
+Observe › Dashboards page (`monitoring-plugin`, ConfigMaps in
+`openshift-config-managed`) stays as it is.
+
+### Versions
+
+The set COO **1.5.2** runs on consoles 4.22 and newer, all public quay.io
+images pinned by digest: monitoring-console-plugin v1.0.0, perses-operator
+v0.4.0, Perses v0.54.0, CRDs from `deploy/perses/crds/` at tag v1.5.2.
+COO 1.4's plugin (v0.5.3) uses react-router 5 and fails on this console with
+`(0, r.useHistory) is not a function`; COO 1.5 added a separate plugin build
+for consoles ≥ 4.22 (react-router 7, like `release-5.0`).
+
+We run COO's published plugin image unchanged next to our `monitoring-plugin`,
+as COO does on OpenShift. It is built with
+`CONSOLE_PLUGIN_NAME=monitoring-console-plugin`, which is what the Perses
+pages expect: their API path is hard-coded to
+`/api/proxy/plugin/monitoring-console-plugin/perses/` and their i18n namespace
+to `plugin__monitoring-console-plugin`. Adding `perses-dashboards` to our own
+`monitoring-plugin` would need patches for both, so no build change.
+
+### Why not run COO itself
+
+Tried on kind with the upstream operator image (main, 2026-11-13) and
+`--openshift.enabled=true` (the UIPlugin controller only runs with it). It
+needed, one failure at a time: `config.openshift.io` `APIServer/cluster` (it
+exits without OpenShift's TLS profile), `ClusterVersion/version` with a
+populated status (it picks plugin images by OpenShift version), a service-CA
+serving certificate for itself, OLM's `Subscription` and prometheus-operator
+CRDs, and service-CA secrets for every plugin it deploys. It registers plugins
+by patching `consoles.operator.openshift.io/cluster`, which our bridge does
+not read (`BRIDGE_PLUGINS` does that). `config.openshift.io` and
+`operator.openshift.io` are not allowed by FORK.md's CRD policy, and the rest
+would be stubs for objects only OpenShift maintains. The manifests here are
+what its reconciler creates (`pkg/controllers/uiplugin/monitoring.go`), with
+cert-manager instead of the service CA.
+
+### What runs
+
+| Object | Notes |
+|---|---|
+| `perses/crds/` | `perses.dev` CRDs; v1alpha1 is converted by the operator's webhook (cert-manager injects the CA). |
+| `perses/10-certificates.yaml` | namespace-local cert-manager CA; certificates for Perses and the webhook. |
+| `perses/20-perses-operator.yaml` | COO's ClusterRole verbatim (its `config.openshift.io/apiservers` rule is unused here). |
+| `perses/21-user-roles.yaml` | COO's viewer/editor roles, aggregated: `view` reads dashboards and datasources, `edit` edits dashboards, `admin` edits datasources. Global datasources: cluster-admin only. Plus `create pods.metrics.k8s.io` for view/edit/admin (see below). |
+| `perses/30-perses.yaml` | `Perses` CR: Kubernetes authentication (TokenReview) and authorization (SubjectAccessReview), file database on a 1 GiB PVC, TLS. |
+| `perses/40-global-datasource.yaml` | `thanos-querier:9091`, no credentials of its own. |
+| `perses/namespace-datasource.example.yaml` | one per namespace with dashboards: `thanos-querier:9092/?namespace=<ns>`, the namespace's default. |
+| `perses/50-networkpolicy.yaml` | Perses ingress from the console and the operator only; egress to thanos-querier 9091/9092, the API server and DNS only. |
+
+### Security model
+
+- A Perses project is a Kubernetes namespace. Each API call is a
+  SubjectAccessReview for the signed-in user on `persesdashboards` /
+  `persesdatasources` / `persesglobaldatasources` in that namespace, so the
+  project list and dashboard access follow the user's Kubernetes RBAC.
+- Perses has no metrics credential. Its datasource proxy forwards the
+  user's own bearer token (the bridge's plugin proxy sets it), and
+  thanos-querier decides: 9092 runs kube-rbac-proxy (may the user `get
+  pods.metrics.k8s.io` in `?namespace=`?) and prom-label-proxy (adds
+  `namespace="<ns>"` to every query), so a namespace user sees only their
+  namespace's series whatever the dashboard's PromQL says. 9091 is reached
+  only through the global datasource, which only cluster-admin may use.
+- Perses' Prometheus client sends queries as POST, which kube-rbac-proxy
+  checks as verb `create`. `21-user-roles.yaml` grants
+  `create pods.metrics.k8s.io` through the aggregated roles; the metrics API
+  has no create, so the grant opens nothing else.
+- Anyone who may edit a dashboard can put a datasource with any URL into it,
+  and viewers' tokens are sent there. On kind, without the NetworkPolicy, a
+  cluster-admin opening such a dashboard sent their token to an outside
+  host; with it, the request times out. Keep `50-networkpolicy.yaml`.
+- The tenancy port's prom-label-proxy must run with `--enable-label-apis`:
+  without it `/api/v1/labels` and `/api/v1/label/<name>/values` return 404 and
+  every `label_values()` dashboard variable is empty for namespace users.
+  OpenShift's tenancy proxy sets it.
+
+### Deploy
+
+1. Create the CA ConfigMap the datasources verify thanos-querier with
+   (key `ca.crt`; the CA of the certificate thanos-querier serves):
+   `kubectl -n perses create configmap perses-upstream-ca --from-file=ca.crt=<file>`
+   (create the `perses` namespace first, or apply `perses/00-namespace.yaml`).
+2. Fill the placeholders in `perses/50-networkpolicy.yaml`, then
+   `kubectl apply --server-side -k royal-road/deploy/perses/`. CRDs must be
+   established before the CRs: if the first apply reports "no matches for
+   kind", run it again. Wait for `kubectl -n perses get perses perses` to be
+   `Available`.
+3. Add `--enable-label-apis` to the tenancy prom-label-proxy.
+4. Apply `monitoring-console-plugin.yaml`, and add it to the console:
+   - `BRIDGE_PLUGINS`: append
+     `monitoring-console-plugin=http://monitoring-console-plugin.<console-namespace>.svc.cluster.local:9443/`
+   - `BRIDGE_PLUGIN_PROXY`: `perses/plugin-proxy.sh "<current value>"` prints
+     the value with the Perses route added (TLS, the `perses-ca` CA,
+     `authorize: true`).
+   - optionally the `monitoring-console-plugin` entry of `consoleplugins.yaml`.
+5. Apply a `namespace-datasource.example.yaml` copy per namespace that gets
+   dashboards, then the `PersesDashboard`s. Check
+   `kubectl get persesdashboards -A`: every one `Available=True` (the Perses
+   server validates them on sync).
+
+### Verified on kind
+
+kind with cert-manager, a thanos-querier stand-in (VictoriaMetrics single
+v1.156.0 scraping kubelet/cAdvisor, kube-state-metrics, node-exporter; 9091
+kube-rbac-proxy v0.21.2; 9092 kube-rbac-proxy → prom-label-proxy v0.16.2 with
+`--enable-label-apis`, as production should be), the console image running
+in-cluster twice with `BRIDGE_USER_AUTH=disabled` (a cluster-admin
+ServiceAccount; a ServiceAccount with `edit` in `team-a` and `view` in
+`royal-road`), both monitoring plugins, and 29 dashboards migrated from
+Grafana and the console's dashboard ConfigMaps.
+
+| Check | Result |
+|---|---|
+| Observe › Dashboards (Perses) | Listed under Observe next to Dashboards; list, project filter, dashboard view, time range, variables. |
+| Dashboards sync | 29/29 `PersesDashboard`s `Available=True`. |
+| Cluster-admin | All projects; global and namespace datasources; cluster dashboards with data. |
+| Namespace user | Only the `royal-road` dashboards; `openshift-monitoring`: "No Perses Project Available"; global datasources 403; another namespace's datasource 403; queries and `label_values` return only `royal-road` series; Edit disabled with `view`. |
+| Datasource proxy | GET and POST queries, `labels`, `label/<n>/values`, `series` through 9092 as the user; same through 9091 as cluster-admin. |
+| NetworkPolicy | Dashboard with an embedded datasource pointing outside: blocked (timeout); without the policy the admin's token reached the outside host. |
+| Legacy dashboards | Observe › Dashboards (ConfigMaps) unchanged. |
+| COO operator | Evaluated and not used, see above. |
