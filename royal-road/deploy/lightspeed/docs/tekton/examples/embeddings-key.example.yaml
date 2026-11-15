@@ -1,0 +1,16 @@
+# Shape only. DO NOT APPLY IN PRODUCTION: create the Secret through the
+# infrastructure secret flow.
+#
+# API key of the embeddings service for the index build (embedder gpustack).
+# On GPUStack: a dedicated key with scope inference, restricted to the
+# docs-embeddings route only.
+#
+#   kubectl -n lightspeed-docs create secret generic lightspeed-docs-embeddings --from-file=apikey=/dev/stdin
+apiVersion: v1
+kind: Secret
+metadata:
+  name: lightspeed-docs-embeddings
+  namespace: lightspeed-docs
+type: Opaque
+stringData:
+  apikey: <api key>

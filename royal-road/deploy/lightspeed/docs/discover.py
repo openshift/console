@@ -40,7 +40,7 @@ import yaml
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from build_corpus import includes_for, select_files  # noqa: E402
 
-TOOL_FILES = ("build_corpus.py", "build_index.py", "secret_gate.py", "discover.py", "Containerfile")
+TOOL_FILES = ("build_corpus.py", "build_index.py", "embeddings.py", "secret_gate.py", "discover.py", "Containerfile")
 DEFAULT_VERSION_RE = r"^v?(?P<major>\d+)\.(?P<minor>\d+)\.(?P<patch>\d+)"
 KINDS = {"Deployment": "deployments", "StatefulSet": "statefulsets", "DaemonSet": "daemonsets"}
 TEMPLATED = ("ref", "fallback_ref", "root", "title")

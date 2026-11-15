@@ -12,6 +12,7 @@ import yaml
 
 import build_corpus as bc
 import discover
+import embeddings as emb
 import secret_gate
 
 HERE = Path(__file__).resolve().parent
@@ -146,6 +147,94 @@ class SecretGate(unittest.TestCase):
                      "--from-file=password=/dev/stdin", "api_key: REPLACE_ME", "password: changeme",
                      "Authorization: Bearer $TOKEN", "secretName: my-secret", "password: {{ .Values.pw }}"):
             self.assertEqual(self.rules(text), set(), text)
+
+
+class Embeddings(unittest.TestCase):
+    @staticmethod
+    def fake(texts):
+        """Deterministic 768-d vectors from the text (stand-in for a model)."""
+        import hashlib
+        out = []
+        for t in texts:
+            h = hashlib.sha256(t.encode()).digest()
+            out.append([((h[i % 32] + i) % 97) - 48.0 for i in range(emb.DIMENSION)])
+        return out
+
+    class Remote:
+        def __init__(self, fn):
+            self.fn = fn
+
+        def embed(self, texts):
+            return [emb.normalise(v) for v in self.fn(texts)]
+
+    def texts(self, n=60):
+        return [f"chunk {i} " + "x" * (i % 17) for i in range(n)]
+
+    def test_sample_is_deterministic_and_includes_long_chunks(self):
+        texts = self.texts(500)
+        a, b = emb.sample_texts(texts, 200), emb.sample_texts(list(texts), 200)
+        self.assertEqual(a, b)
+        self.assertEqual(len(set(a)), 200)
+        longest = max(range(len(texts)), key=lambda i: len(texts[i]))
+        self.assertIn(longest, a)
+
+    def test_gate_passes_identical_vectors(self):
+        r = emb.parity_gate(self.fake, self.Remote(self.fake), self.texts(), size=50)
+        self.assertTrue(r["passed"])
+        self.assertAlmostEqual(r["min_cos"], 1.0, places=6)
+
+    def test_gate_fails_on_drift(self):
+        def drift(texts):
+            return [[x + (7.0 if i % 3 == 0 else 0.0) for i, x in enumerate(v)] for v in self.fake(texts)]
+        r = emb.parity_gate(self.fake, self.Remote(drift), self.texts(), size=50)
+        self.assertFalse(r["passed"])
+        self.assertLess(r["min_cos"], 0.999)
+
+    def test_remote_retries_then_succeeds(self):
+        import http.server
+        import json as j
+        import threading
+
+        calls = []
+
+        class H(http.server.BaseHTTPRequestHandler):
+            def log_message(self, *a):
+                pass
+
+            def do_POST(self):
+                body = j.loads(self.rfile.read(int(self.headers["Content-Length"])))
+                calls.append(self.headers["Authorization"])
+                if len(calls) == 1:
+                    self.send_response(503)
+                    self.end_headers()
+                    return
+                data = [{"index": i, "embedding": [1.0] + [0.0] * (emb.DIMENSION - 1)} for i, _ in enumerate(body["input"])]
+                out = j.dumps({"data": data}).encode()
+                self.send_response(200)
+                self.send_header("Content-Length", str(len(out)))
+                self.end_headers()
+                self.wfile.write(out)
+
+        srv = http.server.HTTPServer(("127.0.0.1", 0), H)
+        threading.Thread(target=srv.serve_forever, daemon=True).start()
+        try:
+            r = emb.RemoteEmbedder(f"http://127.0.0.1:{srv.server_port}/v1", "m", "k", batch_size=2, concurrency=1)
+            emb.time.sleep, real = (lambda s: None), emb.time.sleep
+            try:
+                vs = r.embed(["a", "b", "c"])
+            finally:
+                emb.time.sleep = real
+            self.assertEqual(len(vs), 3)
+            self.assertEqual(r.stats["retries"], 1)
+            self.assertTrue(all(c == "Bearer k" for c in calls))
+        finally:
+            srv.shutdown()
+
+    def test_remote_rejects_wrong_dimension(self):
+        r = emb.RemoteEmbedder("http://unused/v1", "m", "k")
+        r._post = lambda texts: (_ for _ in ()).throw(emb.RemoteError("bad response"))
+        with self.assertRaises(emb.RemoteError):
+            r.embed(["a"])
 
 
 if __name__ == "__main__":

@@ -50,6 +50,39 @@ mismatch possible. Upstream's BYOK tool
 nested buildah from an image on `registry.redhat.io`; `build_index.py` is
 based on its `generate_embeddings_tool.py` (Apache-2.0).
 
+### Embeddings on a GPU (GPUStack)
+
+By default (`embedder: gpustack`) the index step sends the chunks to an
+OpenAI-compatible `/v1/embeddings` that serves **the same weights** (GPUStack
+model `docs-embeddings`), so a full build takes minutes instead of over an
+hour. Vectors are only usable if they equal what OLS computes locally, so
+`embeddings.py` gates every build:
+
+- a fixed sample (200 chunks, the 10% longest included, plus 20 typical
+  questions) is embedded both locally in the OLS image and remotely;
+- every remote vector needs cosine ≥ 0.999 with its local twin, and for every
+  question the top-5 chunks (same chunks, same order) must be identical for
+  local question × local chunks and local question × remote chunks (what OLS
+  computes with a GPU-built index), and remote × remote;
+- on failure, or if the service errors after retries, the build falls back to
+  CPU, unless the CPU estimate (measured on the sample) exceeds
+  `cpu-budget-minutes` (default 100, the pipeline timeout is 2 h): then it
+  fails. `embedder: cpu` skips the remote path entirely.
+
+The result is recorded in `/manifest.json` of the image (`embeddings`: used,
+parity report, timings).
+
+The serving side must run sentence-transformers' math: exact GeLU, mean
+pooling, L2 normalisation, 384-token truncation, fp32 without TF32. Verified
+choice: **Infinity** (`michaelf34/infinity`, torch engine) started with
+`--dtype float32 --no-bettertransformer --pooling-method mean` and a wrapper
+that turns TF32 back off (Infinity enables it at import). Its CPU build gave
+cosine 1.000000 and identical rankings against the OLS image; on the GPU the
+same. **Not** Hugging Face text-embeddings-inference: it always replaces exact
+GeLU with the tanh approximation (TEI PR #753); on this model that gave cosine
+0.9999 but swapped near-tied top-5 results for 3 of 20 questions, so the gate
+rejects it. vLLM has no MPNet support.
+
 Each chunk starts with a line `Source: <title> > <section> <URL>`: OLS gives
 the model only the chunk text, so this is how the model knows where a chunk
 comes from and can cite it. Chunks are 320 tokens (+ that line), under the
@@ -241,6 +274,9 @@ for image volumes.
      `<project>/lightspeed-docs-index` (discover reads, buildah pushes).
    - `lightspeed-docs-infra-ssh`: read-only deploy key of the infrastructure
      repository, for scheduled and manual runs.
+   - `lightspeed-docs-embeddings` (key `apikey`): API key of the embeddings
+     service, allowed only for its model; and set `embeddings-url` in the
+     PipelineRun templates. Without them, runs embed on CPU.
    - OLS pulls the image too: add the registry's pull Secret to
      `imagePullSecrets` of `../42-ols.yaml` (commented there).
 2. `kubectl apply --server-side -k royal-road/deploy/lightspeed/docs`

@@ -26,6 +26,8 @@ spec:
   params:
     - name: image
       value: "<registry>/<project>/lightspeed-docs-index"
+    - name: embeddings-url
+      value: "<embeddings-base-url>"
     - name: infra-url
       value: "{{ repo_url }}"
     - name: infra-revision
@@ -52,6 +54,9 @@ spec:
     - name: sources-config
       configMap:
         name: lightspeed-docs-sources
+    - name: embeddings-key
+      secret:
+        secretName: lightspeed-docs-embeddings
     # Repository-scoped token Secret PaC creates for each run
     # (secret-auto-create), with .gitconfig and .git-credentials.
     - name: infra-basic-auth

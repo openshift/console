@@ -38,6 +38,7 @@ data:
       params:
         - {name: infra-url, value: "git@github.com:royal-road/infrastructure.git"}
         - {name: image, value: "<registry>/<project>/lightspeed-docs-index"}
+        - {name: embeddings-url, value: "<embeddings-base-url>"}
       taskRunTemplate:
         serviceAccountName: lightspeed-docs-builder
       taskRunSpecs:
@@ -60,6 +61,9 @@ data:
         - name: sources-config
           configMap:
             name: lightspeed-docs-sources
+        - name: embeddings-key
+          secret:
+            secretName: lightspeed-docs-embeddings
         - name: infra-ssh
           secret:
             secretName: lightspeed-docs-infra-ssh

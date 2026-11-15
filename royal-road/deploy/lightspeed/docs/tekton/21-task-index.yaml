@@ -14,6 +14,12 @@
 #   gitleaks  over the Royal Road corpus; any finding fails the run (gitleaks)
 #   index     chunk, secret gate, embed, persist -> work/image      (OLS image)
 #
+# Embedding: `embedder: gpustack` (default) sends the chunks to an
+# OpenAI-compatible /v1/embeddings serving the same all-mpnet-base-v2 weights
+# (GPUStack model docs-embeddings), after a parity gate against the local
+# model; if the gate or the service fails it falls back to CPU, unless that
+# would exceed cpu-budget-minutes. `embedder: cpu` embeds locally only.
+#
 # The Python steps run in the OLS image that serves the index, so llama-index,
 # FAISS and the embedding model match what OLS loads. Pin `ols-image` to the
 # digest in royal-road/deploy/lightspeed/42-ols.yaml.
@@ -29,6 +35,10 @@ spec:
   description: Builds the OLS BYOK documentation indexes (Royal Road + upstream docs).
   workspaces:
     - name: source
+    - name: embeddings-key
+      description: Secret with key `apikey` for the embeddings service (embedder gpustack).
+      optional: true
+      readOnly: true
   params:
     - name: tools
       description: Directory with build_corpus.py and build_index.py, relative to the workspace.
@@ -45,6 +55,17 @@ spec:
       description: Commit of the infrastructure checkout (git-clone result COMMIT).
     - name: console-commit
       description: Commit of the console checkout (git-clone result COMMIT).
+    - name: embedder
+      description: gpustack (remote, parity-gated, CPU fallback) or cpu.
+      default: gpustack
+    - name: embeddings-url
+      description: OpenAI-compatible base URL (ending in /v1) of the embeddings service.
+      default: ""
+    - name: embeddings-model
+      default: docs-embeddings
+    - name: cpu-budget-minutes
+      description: A CPU fallback estimated to take longer fails the run instead.
+      default: "100"
     - name: ols-image
       default: quay.io/openshift-lightspeed/lightspeed-service-api@sha256:63924c0ebfe6e8765a65d2f29257fbde6376f884c1994951e1a0dfa1807a43c0
     - name: git-image
@@ -155,11 +176,23 @@ spec:
       env:
         - name: FINGERPRINT
           value: $(params.fingerprint)
+        - name: EMBEDDER
+          value: $(params.embedder)
+        - name: EMBEDDINGS_URL
+          value: $(params.embeddings-url)
+        - name: EMBEDDINGS_MODEL
+          value: $(params.embeddings-model)
+        - name: CPU_BUDGET
+          value: $(params.cpu-budget-minutes)
+        - name: KEY_DIR
+          value: $(workspaces.embeddings-key.path)
       command: [sh, -ec]
       args:
         - |
           cd work
-          python "$TOOLS/build_index.py" --corpus corpus --out image --fingerprint "$FINGERPRINT"
+          python "$TOOLS/build_index.py" --corpus corpus --out image --fingerprint "$FINGERPRINT" \
+            --embedder "$EMBEDDER" --embeddings-url "$EMBEDDINGS_URL" --embeddings-model "$EMBEDDINGS_MODEL" \
+            --embeddings-key-file "$KEY_DIR/apikey" --cpu-budget-minutes "$CPU_BUDGET"
           du -sh image image/*
       computeResources:
         # Embedding is CPU-bound; build_index.py uses as many threads as the

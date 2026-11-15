@@ -20,6 +20,8 @@
 #                     push <image>; see examples/harbor-push-secret.example.yaml
 #   infra-basic-auth  optional: .gitconfig + .git-credentials for HTTPS clones
 #                     (Pipelines-as-Code binds its {{ git_auth_secret }} here)
+#   embeddings-key    optional: Secret with key `apikey` for the embeddings
+#                     service (embedder gpustack; without it the run uses CPU)
 #   infra-ssh         optional: .ssh directory with a read-only deploy key
 #                     (the daily schedule); see examples/infra-deploy-key.example.yaml
 #
@@ -52,6 +54,16 @@ spec:
       default: full
     - name: tls-verify
       default: "true"
+    - name: embedder
+      description: gpustack (remote /v1/embeddings, parity-gated, CPU fallback) or cpu.
+      default: gpustack
+    - name: embeddings-url
+      description: OpenAI-compatible base URL of the embeddings service, ending in /v1.
+      default: ""
+    - name: embeddings-model
+      default: docs-embeddings
+    - name: cpu-budget-minutes
+      default: "100"
     - name: rollout
       description: '"true": point OLS at the index. "false": only build and push.'
       default: "true"
@@ -66,6 +78,8 @@ spec:
     - name: infra-basic-auth
       optional: true
     - name: infra-ssh
+      optional: true
+    - name: embeddings-key
       optional: true
   results:
     - name: FINGERPRINT
@@ -129,8 +143,13 @@ spec:
         - {name: fingerprint, value: $(tasks.discover.results.FINGERPRINT)}
         - {name: infra-commit, value: $(tasks.clone-infra.results.COMMIT)}
         - {name: console-commit, value: $(tasks.clone-console.results.COMMIT)}
+        - {name: embedder, value: $(params.embedder)}
+        - {name: embeddings-url, value: $(params.embeddings-url)}
+        - {name: embeddings-model, value: $(params.embeddings-model)}
+        - {name: cpu-budget-minutes, value: $(params.cpu-budget-minutes)}
       workspaces:
         - {name: source, workspace: source}
+        - {name: embeddings-key, workspace: embeddings-key}
 
     - name: image
       runAfter: [index]
