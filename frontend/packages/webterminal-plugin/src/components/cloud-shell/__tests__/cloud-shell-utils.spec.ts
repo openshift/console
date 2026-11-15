@@ -16,5 +16,16 @@ describe('CloudShell Utils', () => {
     expect(newResource.metadata.namespace).toEqual(namespace);
     expect(newResource.metadata.labels[CLOUD_SHELL_LABEL]).toEqual('true');
     expect(newResource.metadata.annotations[CLOUD_SHELL_RESTRICTED_ANNOTATION]).toEqual('true');
+    expect(newResource.spec.routingClass).toEqual('web-terminal');
+  });
+
+  it('should use the routing class the bridge is configured with', () => {
+    window.SERVER_FLAGS.webTerminalRoutingClass = 'web-terminal-k8s';
+    try {
+      const newResource = newCloudShellWorkSpace('cloudshell', 'default', 'default', 'v1alpha2');
+      expect(newResource.spec.routingClass).toEqual('web-terminal-k8s');
+    } finally {
+      delete window.SERVER_FLAGS.webTerminalRoutingClass;
+    }
   });
 });
