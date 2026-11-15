@@ -24,6 +24,7 @@ import (
 	"github.com/openshift/console/cmd/bridge/config/session"
 	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/controllers"
+	tektonresults "github.com/openshift/console/pkg/devconsole/tekton-results"
 	"github.com/openshift/console/pkg/flags"
 	"github.com/openshift/console/pkg/knative"
 	"github.com/openshift/console/pkg/olm"
@@ -154,6 +155,8 @@ func main() {
 	fs.Var(&enabledPlugins, "plugins", "List of plugin entries that are enabled for the console. Each entry consist of plugin-name as a key and plugin-endpoint as a value.")
 	fPluginsOrder := fs.String("plugins-order", "", "List of plugin names which determines the order in which plugin extensions will be resolved.")
 	fPluginProxy := fs.String("plugin-proxy", "", "Defines various service types to which will console proxy plugins requests. (JSON as string)")
+	fTektonResultsAPIHost := fs.String("tekton-results-api-host", "", "host:port of the Tekton Results API that /api/dev-console/tekton-results/ proxies to. Default: derived from the TektonResult resource (in-cluster) or its Route (off-cluster).")
+	fTektonResultsCAFile := fs.String("tekton-results-ca-file", tektonresults.DefaultCAFile, "PEM file with the CA certificates that verify the Tekton Results API's serving certificate (in-cluster).")
 	fI18NamespacesFlags := fs.String("i18n-namespaces", "", "List of namespaces separated by comma. Example --i18n-namespaces=plugin__acm,plugin__kubevirt")
 
 	consoleCSPFlags := serverconfig.MultiKeyValue{}
@@ -194,6 +197,8 @@ func main() {
 	if *fTechPreview {
 		klog.Warning("Technology Preview features are enabled. These features are experimental and not supported for production use. If you encounter issues, send feedback through the usual support or bug-reporting channels.")
 	}
+
+	tektonresults.Configure(*fTektonResultsAPIHost, *fTektonResultsCAFile)
 
 	authOptions.ApplyConfig(&cfg.Auth)
 	sessionOptions.ApplyConfig(&cfg.Session)
