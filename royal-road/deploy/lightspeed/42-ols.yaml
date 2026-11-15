@@ -103,6 +103,9 @@ spec:
             - name: apikey
               mountPath: /etc/apikeys/gpustack
               readOnly: true
+            - name: sentry-mcp-key
+              mountPath: /etc/mcp-keys/sentry
+              readOnly: true
             - name: tls
               mountPath: /etc/certs/lightspeed-tls
               readOnly: true
@@ -136,6 +139,17 @@ spec:
         - name: apikey
           secret:
             secretName: lightspeed-gpustack
+        # Key for the Sentry MCP server (55-sentry-mcp.yaml). Only that key is
+        # mounted, not the Sentry token. Optional: without the Secret OLS
+        # starts, logs that it can't read the header file, and runs without
+        # the Sentry tools.
+        - name: sentry-mcp-key
+          secret:
+            secretName: lightspeed-sentry
+            optional: true
+            items:
+              - key: mcp-api-key
+                path: mcp-api-key
         - name: tls
           secret:
             secretName: lightspeed-app-server-tls
