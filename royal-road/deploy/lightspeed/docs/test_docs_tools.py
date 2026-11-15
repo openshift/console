@@ -213,6 +213,31 @@ class Mdx(unittest.TestCase):
         self.assertEqual(mdx.title_from({"title": "Short"}), "Short")
 
 
+class CorpusOutput(unittest.TestCase):
+    def test_mdx_pages_are_written_as_md(self):
+        """build_index.py loads corpus/<index>/**/*.md; an .mdx page must arrive there."""
+        import subprocess
+        import sys
+
+        with tempfile.TemporaryDirectory() as d:
+            docs = Path(d, "up", "cf", "src", "content", "docs", "ssl")
+            docs.mkdir(parents=True)
+            (docs / "page.mdx").write_text("---\ntitle: T\n---\n" + "Origin pulls explained. " * 5)
+            Path(d, "up", "cf", "src", "content", "partials").mkdir(parents=True)
+            src = {"name": "cf", "index": "upstream", "repo": "https://github.com/x/y", "ref": "c" * 40,
+                   "root": "src/content/docs", "title": "CF", "license": "CC-BY-4.0",
+                   "url": {"type": "site", "base": "https://example.org/"},
+                   "mdx": {"partials": "src/content/partials", "site": "https://example.org"}}
+            Path(d, "s.yaml").write_text(yaml.safe_dump({"version": 1, "sources": [src]}))
+            Path(d, "f.tsv").write_text("cf\t" + "c" * 40 + "\tmain\n")
+            r = subprocess.run([sys.executable, str(HERE / "build_corpus.py"), "corpus", "--sources", f"{d}/s.yaml",
+                                "--upstream-dir", f"{d}/up", "--fetched", f"{d}/f.tsv", "--checkout-root", d,
+                                "--out", f"{d}/out"], capture_output=True, text=True)
+            self.assertEqual(r.returncode, 0, r.stderr)
+            self.assertEqual([p.name for p in Path(d, "out", "upstream").rglob("*.md")], ["page.md"])
+            self.assertIn("url: https://example.org/ssl/page/", Path(d, "out/upstream/cf/ssl/page.md").read_text())
+
+
 class Sparse(unittest.TestCase):
     def test_include_prefixes(self):
         src = {"root": "src/content/docs", "include": ["dns/**", "analytics/*.mdx", "ssl/a/b.mdx"],

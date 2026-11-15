@@ -40,7 +40,7 @@
 #                For royal-road sources: the branch the links point at.
 #   fallback_ref fetched when ref doesn't exist (e.g. docs branch not cut yet)
 #   root         directory inside the repository the globs are relative to
-#   include      glob list (fnmatch, ** spans directories); default ["**/*.md"]
+#   include      glob list (fnmatch, ** spans directories); default ["**/*.md", "**/*.mdx"]
 #   exclude      glob list, applied after include
 #   smoke        include list used with --profile smoke (small kind test)
 #   url          how a file maps to a link:

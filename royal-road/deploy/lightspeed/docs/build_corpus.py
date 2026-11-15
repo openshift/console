@@ -82,7 +82,7 @@ def select_files(root: Path, include: list[str], exclude: list[str]) -> list[str
 def includes_for(source: dict, profile: str) -> list[str]:
     if profile == "smoke" and "smoke" in source:
         return source["smoke"]
-    return source.get("include") or ["**/*.md"]
+    return source.get("include") or ["**/*.md", "**/*.mdx"]
 
 
 # --- Markdown clean-up ------------------------------------------------------
@@ -316,7 +316,8 @@ def cmd_corpus(args: argparse.Namespace) -> None:
                 {"title": title, "url": url, "source": s["name"], "license": s["license"]},
                 sort_keys=False, allow_unicode=True, width=1000,
             )
-            dest = out / s["index"] / s["name"] / rel
+            # always .md: build_index.py and gitleaks read *.md (MDX is converted)
+            dest = (out / s["index"] / s["name"] / rel).with_suffix(".md")
             dest.parent.mkdir(parents=True, exist_ok=True)
             text = f"---\n{front}---\n\n{body}\n"
             dest.write_text(text, encoding="utf-8")
