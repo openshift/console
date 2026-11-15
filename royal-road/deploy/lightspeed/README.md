@@ -3,9 +3,10 @@
 [OpenShift Lightspeed](https://github.com/openshift/lightspeed-service) on
 this console, without the lightspeed-operator: a chat panel in every console
 page and an "Ask OpenShift Lightspeed" button in the YAML editor. Answers come
-from a GPUStack model. The assistant can read live cluster state through a
-read-only Kubernetes MCP server, always with the signed-in user's own
-permissions.
+from a GPUStack model, grounded in documentation (our own docs and the
+upstream docs for the versions the cluster runs, [`docs/`](docs/README.md)).
+The assistant can read live cluster state through a read-only Kubernetes MCP
+server, always with the signed-in user's own permissions.
 
 ```
 browser ── /api/proxy/plugin/lightspeed-console-plugin/ols/ ──> bridge (console namespace)
@@ -27,14 +28,15 @@ No console code changes are needed. The bridge loads the plugin with
 | `00-namespace.yaml` | Namespace `openshift-lightspeed`. |
 | `10-rbac.yaml` | OLS ServiceAccount (TokenReview/SubjectAccessReview create), MCP ServiceAccount (no RBAC), ClusterRole `lightspeed-query-access` (`/ols-access` get, plus get on the inert OLSConfig). |
 | `20-tls.yaml` | cert-manager: namespace-local CA and the OLS serving certificate. |
-| `40-ols-config.yaml` | OLS config (GPUStack provider, MCP server, TLS, no data collection, no audit spans) and the system prompt. |
+| `40-ols-config.yaml` | OLS config (GPUStack provider, MCP server, documentation indexes, TLS, no data collection, no audit spans) and the system prompt. |
 | `41-ols-shim-configmap.yaml` | Generated from `royal-road/plugins/lightspeed-service/rr_ols_shim.py`. Do not edit. |
-| `42-ols.yaml` | OLS Deployment and Service (HTTPS 8443). |
+| `42-ols.yaml` | OLS Deployment and Service (HTTPS 8443); the documentation index as image volume `docs-index` at `/rag`. |
 | `50-mcp-server.yaml` | kubernetes-mcp-server v0.1.3: read-only, token passthrough only. |
 | `60-console-plugin.yaml` | Plugin Deployment and Service (HTTP 8080). |
 | `70-networkpolicy.yaml` | Ingress: console → OLS, console → plugin, OLS → MCP. Nothing else. |
 | `80-consoleplugin.yaml` | ConsolePlugin for Administration › Dynamic Plugins (display only). |
 | `90-olsconfig.yaml` | Inert `OLSConfig/cluster`: turns on the YAML editor button. |
+| `docs/` | The documentation index: Tekton Pipeline that discovers versions, builds the index image and rolls OLS onto it. [README](docs/README.md). |
 | `plugin-proxy.sh` | Prints the `BRIDGE_PLUGIN_PROXY` value, with the CA from `20-tls.yaml`. |
 | `optional/query-access-binding.yaml` | Lets a group (or users) other than cluster-admins use the assistant. |
 | `optional/ols-egress-networkpolicy.yaml` | Restricts OLS egress to DNS, kube-apiserver, MCP and GPUStack. |
@@ -67,6 +69,7 @@ Images (all public):
 |---|---|---|
 | `<gpustack-service>`, `<gpustack-namespace>`, `<gpustack-port>` | `40-ols-config.yaml` | GPUStack's in-cluster Service, namespace and port. The model name is `lightspeed`; change it there if the GPUStack route is named differently. |
 | `<sha>` | `60-console-plugin.yaml` | Tag CI pushed for the plugin image. |
+| `<docs-index-image>` | `42-ols.yaml` | The first index image, `<repository>:fp-…@sha256:…`; the docs pipeline owns it afterwards ([docs/README.md](docs/README.md#apply)). Also add its registry's pull Secret to `imagePullSecrets` there. |
 | `<console-namespace>` | `70-networkpolicy.yaml` | Namespace of the console Deployment. |
 | `<lightspeed-users-group>` | `optional/query-access-binding.yaml` | Only if you apply it. |
 | `<apiserver-cidr>`, `<apiserver-port>`, `<gpustack-namespace>`, `<gpustack-port>` | `optional/ols-egress-networkpolicy.yaml` | Only if you apply it. See the file header. |
@@ -96,7 +99,8 @@ Run from the repository root, with the placeholders replaced.
    ```
 
    `kubectl apply -f <dir>` is not recursive, so `optional/` and `examples/`
-   are not applied. OLS can take a few minutes the first time (2.6 GB image).
+   are not applied (nor `docs/`, which has its own kustomization). OLS can
+   take a few minutes the first time (2.6 GB image).
    If `lightspeed-app-server` starts before its TLS Secret exists, it waits in
    `ContainerCreating` until cert-manager issues it. The OLS log should end
    with `LLM connection checked - LLM is ready`.
@@ -196,10 +200,13 @@ fails every request from users without a UID, which is every Dex user. See
 only within a pod's life; the plugin keeps none either. PostgreSQL is an
 option if history must survive restarts.
 
-**No product documentation (RAG).** Red Hat's documentation index is behind
-Red Hat authentication and is OpenShift-specific. Answers come from the model
-and the tools. The system prompt in `40-ols-config.yaml` tells the model this
-is upstream Kubernetes, not OpenShift.
+**Documentation: our own index, not Red Hat's.** Red Hat's documentation
+index is behind Red Hat authentication and is OpenShift-specific. Instead,
+OLS's "bring your own knowledge" indexes hold our docs and the upstream docs
+for the versions this cluster runs, rebuilt when those change
+([`docs/`](docs/README.md)). The system prompt in `40-ols-config.yaml` tells
+the model this is upstream Kubernetes, not OpenShift, to prefer our docs for
+questions about this cluster, and to cite.
 
 ## Verify
 
@@ -276,7 +283,7 @@ Results:
 | YAML editor | Cluster-admin sees "Ask OpenShift Lightspeed"; it opens the chat. |
 | `70-networkpolicy.yaml` | console → OLS 200; console → MCP, and a pod in `default` → OLS, MCP or plugin: blocked. Probes unaffected. |
 | `optional/ols-egress-networkpolicy.yaml` | With it, `/authorized` (TokenReview/SAR), the LLM and tool calls still work; OLS → plugin is blocked. |
-| Memory | OLS about 0.9 GiB, MCP server 27 MiB, plugin 56 MiB. |
+| Memory | OLS about 0.9 GiB (1.1 GB with the full documentation index, see docs/README.md), MCP server 27 MiB, plugin 56 MiB. |
 
 Not verified on kind: production's real Dex and groups, GPUStack through its
 in-cluster Service (`http://`, so no CA is involved), and certificate renewal.

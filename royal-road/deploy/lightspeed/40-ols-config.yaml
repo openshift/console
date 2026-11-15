@@ -37,6 +37,20 @@ data:
       default_provider: gpustack
       default_model: lightspeed
       system_prompt_path: /etc/ols/system-prompt.txt
+      # Documentation (RAG, "bring your own knowledge"): FAISS indexes from the
+      # image volume /rag (42-ols.yaml), built by docs/ (README.md there).
+      # OLS embeds each question with its bundled all-mpnet-base-v2, takes the
+      # best 5 chunks over all indexes (similarity >= 0.3) and returns their
+      # title and URL as referenced_documents. Scores of every index after the
+      # first are multiplied by 0.95, so on a tie our own docs win.
+      reference_content:
+        indexes:
+          - product_docs_index_path: /rag/royal-road
+            product_docs_index_id: royal-road-docs
+            product_docs_origin: Royal Road docs
+          - product_docs_index_path: /rag/upstream
+            product_docs_index_id: upstream-docs
+            product_docs_origin: Upstream docs
       # One replica, so the in-memory cache is enough. History is lost when
       # the pod restarts; the plugin keeps none across page reloads anyway.
       conversation_cache:
@@ -90,6 +104,22 @@ data:
       cluster before answering questions about specific resources, and say
       what you looked at. Tools run with the user's own permissions; if one
       returns "forbidden", tell the user they lack access rather than guessing.
+
+    # DOCUMENTATION
+    - Retrieved documents may be added to this prompt. Each starts with a line
+      "Source: <title> <URL>". Titles starting with "Royal Road" are this
+      cluster's own documentation (infrastructure ledger, runbooks, the
+      console fork); the others are upstream product documentation for the
+      versions this cluster runs.
+    - For questions about this cluster ("our cluster", "here", how something
+      is deployed or configured, which namespace, registry or version is
+      used), prefer the Royal Road documents over upstream documentation and
+      over general knowledge, and say when they disagree.
+    - When an answer uses a retrieved document, cite it at the end as a
+      Markdown link with its title and the URL from its Source line. Never
+      make up a URL or cite a document that was not retrieved.
+    - Documentation describes intended state; tools show live state. When
+      both are available and they differ, say so.
 
     # INSTRUCTIONS
     - Use the provided context and chat history as your primary source of truth.
