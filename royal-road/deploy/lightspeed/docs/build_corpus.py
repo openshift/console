@@ -4,18 +4,20 @@
 Two subcommands, both run inside the pinned OLS image (Python 3.12 with
 PyYAML), so the pipeline needs no extra Python image:
 
-  plan    writes fetch.tsv: one line per upstream source (name, repo, commit,
-          sparse path), for the git step that fetches them.
+  plan    writes fetch.tsv: one line per upstream source (name, repo, ref,
+          fallback ref, sparse path), for the git step that fetches them.
   corpus  reads the fetched upstream trees and the royal-road checkouts and
           writes corpus/<index>/<source>/<path>.md, each file with `title` and
           `url` front matter (the metadata OLS returns as referenced
           documents), plus manifest.json and SOURCES.md (licenses).
 
+--sources is the resolved file discover.py wrote (concrete refs).
+
 Usage:
-  build_corpus.py plan   --sources sources.yaml [--profile full|smoke] --out fetch.tsv
-  build_corpus.py corpus --sources sources.yaml [--profile full|smoke]
-                         --upstream-dir DIR --checkout-root DIR --out DIR
-                         [--commit NAME=SHA ...]
+  build_corpus.py plan   --sources resolved.yaml [--profile full|smoke] --out fetch.tsv
+  build_corpus.py corpus --sources resolved.yaml [--profile full|smoke]
+                         --upstream-dir DIR --fetched fetched.tsv
+                         --checkout-root DIR --out DIR [--commit NAME=SHA ...]
 """
 
 from __future__ import annotations
@@ -217,8 +219,8 @@ def load_sources(path: Path, profile: str) -> list[dict]:
     for s in sources:
         if s["index"] not in INDEX_ORDER:
             sys.exit(f"{s['name']}: index must be one of {INDEX_ORDER}")
-        if s["index"] == "upstream" and not re.fullmatch(r"[0-9a-f]{40}", s.get("commit", "")):
-            sys.exit(f"{s['name']}: upstream sources need a full commit SHA")
+        if s["index"] == "upstream" and ("{" in s.get("ref", "{") or "discover" in s):
+            sys.exit(f"{s['name']}: not resolved; run discover.py resolve first")
     if profile == "smoke":
         sources = [s for s in sources if includes_for(s, profile)]
     return sources
@@ -230,13 +232,19 @@ def cmd_plan(args: argparse.Namespace) -> None:
         if s["index"] != "upstream":
             continue
         root = s.get("root", "").strip("/")
-        lines.append("\t".join([s["name"], s["repo"], s["commit"], "/" + root + "/" if root else "/"]))
+        lines.append("\t".join([s["name"], s["repo"], s["ref"], s.get("fallback_ref", "-"),
+                                 "/" + root + "/" if root else "/"]))
     Path(args.out).write_text("\n".join(lines) + "\n")
     print(f"{len(lines)} upstream sources to fetch -> {args.out}")
 
 
 def cmd_corpus(args: argparse.Namespace) -> None:
     commits = dict(c.split("=", 1) for c in args.commit)
+    fetched = {}
+    if args.fetched and Path(args.fetched).exists():
+        for line in Path(args.fetched).read_text().splitlines():
+            name, commit, ref = line.split("\t")
+            fetched[name] = (commit, ref)
     out = Path(args.out)
     if out.exists():
         shutil.rmtree(out)
@@ -244,7 +252,9 @@ def cmd_corpus(args: argparse.Namespace) -> None:
     for s in load_sources(Path(args.sources), args.profile):
         if s["index"] == "upstream":
             tree = Path(args.upstream_dir) / s["name"]
-            commit = s["commit"]
+            if s["name"] not in fetched:
+                sys.exit(f"{s['name']}: missing from {args.fetched}")
+            commit, s["ref"] = fetched[s["name"]]
         else:
             tree = Path(args.checkout_root) / s["checkout"]
             commit = commits.get(s["name"], "")
@@ -282,6 +292,7 @@ def cmd_corpus(args: argparse.Namespace) -> None:
             total += len(text.encode())
         manifest["sources"].append({
             "name": s["name"], "index": s["index"], "repo": s["repo"], "ref": s.get("ref", ""),
+            "version": s.get("discovered_version", ""),
             "commit": commit, "license": s["license"], "files": written, "bytes": total,
         })
         print(f"{s['index']:>10} {s['name']:<26} {written:5d} files {total / 1e6:7.2f} MB  {commit[:12]}")
@@ -293,10 +304,12 @@ def sources_md(manifest: dict, sources: list[dict]) -> str:
     by_name = {s["name"]: s for s in sources}
     rows = ["# Sources of this index", "",
             "Each chunk carries the URL of the page it came from.", "",
-            "| Source | Repository | Ref | Commit | License | Files |", "|---|---|---|---|---|---|"]
+            "| Source | Version in cluster | Repository | Ref | Commit | License | Files |",
+            "|---|---|---|---|---|---|---|"]
     notes = []
     for e in manifest["sources"]:
-        rows.append(f"| {e['name']} | {e['repo']} | {e['ref']} | `{e['commit'][:12]}` | {e['license']} | {e['files']} |")
+        rows.append(f"| {e['name']} | {e['version'] or '-'} | {e['repo']} | {e['ref']} | `{e['commit'][:12]}` "
+                    f"| {e['license']} | {e['files']} |")
         if by_name[e["name"]].get("attribution"):
             notes.append(f"- {e['name']}: {by_name[e['name']]['attribution']}")
     return "\n".join(rows + ["", "Attribution:", ""] + notes) + "\n"
@@ -312,6 +325,7 @@ def main() -> None:
         sp.add_argument("--out", required=True)
     sub.choices["corpus"].add_argument("--upstream-dir", required=True)
     sub.choices["corpus"].add_argument("--checkout-root", required=True)
+    sub.choices["corpus"].add_argument("--fetched", default="", help="fetch step output: name, commit, ref")
     sub.choices["corpus"].add_argument("--commit", action="append", default=[])
     args = p.parse_args()
     {"plan": cmd_plan, "corpus": cmd_corpus}[args.cmd](args)

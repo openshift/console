@@ -1,21 +1,32 @@
-# Pipeline lightspeed-docs-index: clone -> index -> image -> push.
+# Pipeline lightspeed-docs-index: discover -> (build if new) -> roll OLS.
 #
-#   clone-console  royal-road/console (scripts, sources.yaml, Royal Road console docs)
-#   clone-infra    royal-road/infrastructure (private; credentials as a workspace)
-#   index          Task lightspeed-docs-index (20-task.yaml)
-#   image          buildah (tekton-catalog) FROM scratch + the index -> push
+#   clone-console     royal-road/console: the scripts (and the console docs)
+#   clone-infra       royal-road/infrastructure (private; credentials as a workspace)
+#   discover          versions running in the cluster -> fingerprint; is
+#                     <image>:<fingerprint> in the registry already?
+#   index             only if not: Task lightspeed-docs-index
+#   image             only if not: buildah (tekton-catalog) FROM scratch + index, push
+#   rollout-new       point OLS at the image just pushed
+#   rollout-existing  or at the existing image for this fingerprint (a no-op
+#                     when OLS already uses it)
 #
-# git-clone and buildah come from the shared library in namespace
-# tekton-catalog through the cluster resolver.
+# Nothing to release when the cluster changes: the next run sees the new
+# versions, builds the docs for them, and rolls OLS onto that index.
 #
 # Workspaces:
 #   source            scratch space, one PVC per run (volumeClaimTemplate, 4Gi)
-#   dockerconfig      Secret (kubernetes.io/dockerconfigjson) that can push
-#                     <image>; see examples/harbor-push-secret.example.yaml
+#   sources-config    ConfigMap lightspeed-docs-sources (kustomization.yaml)
+#   dockerconfig      Secret (kubernetes.io/dockerconfigjson) that can pull and
+#                     push <image>; see examples/harbor-push-secret.example.yaml
 #   infra-basic-auth  optional: .gitconfig + .git-credentials for HTTPS clones
 #                     (Pipelines-as-Code binds its {{ git_auth_secret }} here)
 #   infra-ssh         optional: .ssh directory with a read-only deploy key
-#                     (the weekly schedule); see examples/infra-deploy-key.example.yaml
+#                     (the daily schedule); see examples/infra-deploy-key.example.yaml
+#
+# ServiceAccounts, set per task in the PipelineRun (taskRunSpecs):
+#   lightspeed-docs-builder    everything by default; no API token
+#   lightspeed-docs-discovery  discover (15-discovery-rbac.yaml)
+#   lightspeed-docs-rollout    rollout-* (16-rollout-rbac.yaml)
 apiVersion: tekton.dev/v1
 kind: Pipeline
 metadata:
@@ -24,7 +35,7 @@ metadata:
   labels:
     app.kubernetes.io/part-of: lightspeed
 spec:
-  description: Builds the Lightspeed documentation index image and pushes it.
+  description: Builds the Lightspeed documentation index for what the cluster runs, and rolls OLS onto it.
   params:
     - name: infra-url
       default: https://github.com/royal-road/infrastructure
@@ -35,27 +46,35 @@ spec:
     - name: console-revision
       default: main
     - name: image
-      description: Repository to push to; the tag is <yyyymmdd>-<infrastructure sha>.
+      description: Repository to push to; the tag is the fingerprint (fp-<20 hex>).
       default: core.harbor.k8s.rr.zone/console/lightspeed-docs-index
     - name: profile
       description: full, or smoke (a few files per source).
       default: full
     - name: tls-verify
       default: "true"
+    - name: rollout
+      description: '"true": point OLS at the index. "false": only build and push.'
+      default: "true"
+    - name: ols-namespace
+      default: openshift-lightspeed
+    - name: ols-deployment
+      default: lightspeed-app-server
   workspaces:
     - name: source
+    - name: sources-config
     - name: dockerconfig
     - name: infra-basic-auth
       optional: true
     - name: infra-ssh
       optional: true
   results:
-    - name: IMAGE_URL
-      value: $(tasks.image.results.IMAGE_URL)
-    - name: IMAGE_DIGEST
-      value: $(tasks.image.results.IMAGE_DIGEST)
-    - name: TAG
-      value: $(tasks.index.results.TAG)
+    - name: FINGERPRINT
+      value: $(tasks.discover.results.FINGERPRINT)
+    - name: VERSIONS
+      value: $(tasks.discover.results.VERSIONS)
+    - name: REUSED
+      value: $(tasks.discover.results.EXISTS)
   tasks:
     - name: clone-console
       taskRef:
@@ -87,12 +106,28 @@ spec:
         - {name: basic-auth, workspace: infra-basic-auth}
         - {name: ssh-directory, workspace: infra-ssh}
 
-    - name: index
+    - name: discover
       runAfter: [clone-console, clone-infra]
+      taskRef:
+        name: lightspeed-docs-discover
+      params:
+        - {name: profile, value: $(params.profile)}
+        - {name: image, value: $(params.image)}
+        - {name: tls-verify, value: $(params.tls-verify)}
+      workspaces:
+        - {name: source, workspace: source}
+        - {name: sources-config, workspace: sources-config}
+        - {name: dockerconfig, workspace: dockerconfig}
+
+    - name: index
+      runAfter: [discover]
+      when:
+        - {input: $(tasks.discover.results.EXISTS), operator: in, values: ["false"]}
       taskRef:
         name: lightspeed-docs-index
       params:
         - {name: profile, value: $(params.profile)}
+        - {name: fingerprint, value: $(tasks.discover.results.FINGERPRINT)}
         - {name: infra-commit, value: $(tasks.clone-infra.results.COMMIT)}
         - {name: console-commit, value: $(tasks.clone-console.results.COMMIT)}
       workspaces:
@@ -100,6 +135,8 @@ spec:
 
     - name: image
       runAfter: [index]
+      when:
+        - {input: $(tasks.discover.results.EXISTS), operator: in, values: ["false"]}
       taskRef:
         resolver: cluster
         params:
@@ -107,7 +144,7 @@ spec:
           - {name: name, value: buildah}
           - {name: namespace, value: tekton-catalog}
       params:
-        - {name: IMAGE, value: "$(params.image):$(tasks.index.results.TAG)"}
+        - {name: IMAGE, value: "$(params.image):$(tasks.discover.results.FINGERPRINT)"}
         # relative to the workspace root, not to CONTEXT
         - {name: DOCKERFILE, value: console/royal-road/deploy/lightspeed/docs/Containerfile}
         - {name: CONTEXT, value: work/image}
@@ -115,3 +152,28 @@ spec:
       workspaces:
         - {name: source, workspace: source}
         - {name: dockerconfig, workspace: dockerconfig}
+
+    - name: rollout-new
+      runAfter: [image]
+      when:
+        - {input: $(params.rollout), operator: in, values: ["true"]}
+      taskRef:
+        name: lightspeed-docs-rollout
+      params:
+        - {name: reference, value: "$(params.image):$(tasks.discover.results.FINGERPRINT)@$(tasks.image.results.IMAGE_DIGEST)"}
+        - {name: fingerprint, value: $(tasks.discover.results.FINGERPRINT)}
+        - {name: namespace, value: $(params.ols-namespace)}
+        - {name: deployment, value: $(params.ols-deployment)}
+
+    - name: rollout-existing
+      runAfter: [discover]
+      when:
+        - {input: $(tasks.discover.results.EXISTS), operator: in, values: ["true"]}
+        - {input: $(params.rollout), operator: in, values: ["true"]}
+      taskRef:
+        name: lightspeed-docs-rollout
+      params:
+        - {name: reference, value: "$(params.image):$(tasks.discover.results.FINGERPRINT)@$(tasks.discover.results.DIGEST)"}
+        - {name: fingerprint, value: $(tasks.discover.results.FINGERPRINT)}
+        - {name: namespace, value: $(params.ols-namespace)}
+        - {name: deployment, value: $(params.ols-deployment)}

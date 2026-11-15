@@ -1,8 +1,9 @@
-# lightspeed-docs-builder: runs the PipelineRuns. It needs no Kubernetes API
+# lightspeed-docs-builder: runs every Task except discover and rollout-*
+# (15-, 16-*.yaml). It needs no Kubernetes API
 # access; credentials come in as workspaces (Harbor push Secret, git
 # credentials).
 #
-# lightspeed-docs-scheduler: the weekly CronJob (40-schedule.yaml). It may
+# lightspeed-docs-scheduler: the daily CronJob (40-schedule.yaml). It may
 # only create PipelineRuns in this namespace.
 apiVersion: v1
 kind: ServiceAccount

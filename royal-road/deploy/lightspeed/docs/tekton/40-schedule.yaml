@@ -1,18 +1,22 @@
-# Weekly rebuild: a CronJob that creates a PipelineRun.
+# Daily check: a CronJob that creates a PipelineRun. The run discovers the
+# versions the cluster runs; when the fingerprint is unchanged it skips the
+# build (and the rollout is a no-op), so most days it costs two shallow clones
+# and a registry lookup.
 #
 # Pipelines-as-Code starts runs on Git events only (no cron), and Tekton
 # Triggers would need an EventListener Service plus a CronJob to call it
 # anyway. Creating the PipelineRun directly needs one ServiceAccount allowed to
 # create pipelineruns here, and nothing listens on the network.
 #
-# What the schedule picks up: changes to royal-road/console docs (FORK.md,
-# READMEs, CHANGELOG) and to sources.yaml (version bumps of upstream docs).
-# Infrastructure docs are rebuilt on push by Pipelines-as-Code
-# (pac/.tekton/lightspeed-docs-index.yaml); this run uses its deploy key.
+# What the schedule picks up: component upgrades (new image tags, a new
+# Kubernetes version), changes to the console fork's docs, and changes to
+# the ConfigMap lightspeed-docs-sources. Infrastructure docs also trigger a
+# run on push through Pipelines-as-Code (pac/.tekton/lightspeed-docs-index.yaml);
+# this run clones that repository with the deploy key.
 #
 # Needs the Secrets lightspeed-docs-harbor-push and lightspeed-docs-infra-ssh
 # (examples/). Run it once by hand:
-#   kubectl -n lightspeed-docs create job --from=cronjob/lightspeed-docs-weekly lightspeed-docs-manual
+#   kubectl -n lightspeed-docs create job --from=cronjob/lightspeed-docs-daily lightspeed-docs-manual
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -23,7 +27,7 @@ data:
     apiVersion: tekton.dev/v1
     kind: PipelineRun
     metadata:
-      generateName: lightspeed-docs-weekly-
+      generateName: lightspeed-docs-daily-
       namespace: lightspeed-docs
       labels:
         app.kubernetes.io/part-of: lightspeed
@@ -35,6 +39,10 @@ data:
         - {name: infra-url, value: "git@github.com:royal-road/infrastructure.git"}
       taskRunTemplate:
         serviceAccountName: lightspeed-docs-builder
+      taskRunSpecs:
+        - {pipelineTaskName: discover, serviceAccountName: lightspeed-docs-discovery}
+        - {pipelineTaskName: rollout-new, serviceAccountName: lightspeed-docs-rollout}
+        - {pipelineTaskName: rollout-existing, serviceAccountName: lightspeed-docs-rollout}
       timeouts:
         pipeline: 2h
       workspaces:
@@ -48,6 +56,9 @@ data:
         - name: dockerconfig
           secret:
             secretName: lightspeed-docs-harbor-push
+        - name: sources-config
+          configMap:
+            name: lightspeed-docs-sources
         - name: infra-ssh
           secret:
             secretName: lightspeed-docs-infra-ssh
@@ -55,13 +66,13 @@ data:
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: lightspeed-docs-weekly
+  name: lightspeed-docs-daily
   namespace: lightspeed-docs
   labels:
     app.kubernetes.io/part-of: lightspeed
 spec:
-  # Sundays 03:17 UTC
-  schedule: "17 3 * * 0"
+  # daily, 03:17 UTC
+  schedule: "17 3 * * *"
   timeZone: Etc/UTC
   concurrencyPolicy: Forbid
   successfulJobsHistoryLimit: 2

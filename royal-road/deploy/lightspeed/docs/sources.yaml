@@ -1,6 +1,10 @@
-# Documentation indexed for Lightspeed (OLS "bring your own knowledge").
+# Documentation indexed for Lightspeed (OLS "bring your own knowledge"): the
+# mapping from what the cluster runs to the docs to index.
 #
-# build_corpus.py reads this file. Each source becomes Markdown files with
+# Installed as ConfigMap lightspeed-docs-sources (tekton/kustomization.yaml),
+# so a change here needs no image or release. On every run discover.py reads
+# the version of each upstream component from the live cluster and fills the
+# templates below; build_corpus.py turns each source into Markdown files with
 # `title` and `url` front matter under corpus/<index>/<source>/, and
 # build_index.py turns each index directory into one FAISS index.
 #
@@ -8,9 +12,9 @@
 #   royal-road  our own docs. Rebuilt from the branch head on every run; links
 #               point at the branch (blob/main/...), so they always open the
 #               current file. Secret gate: a match fails the build.
-#   upstream    public product docs, pinned to the commit of the version
-#               production runs. Secret gate: report only (example keys and
-#               tokens in public docs are not ours).
+#   upstream    public product docs at the versions the cluster runs.
+#               Secret gate: report only (example keys and tokens in public
+#               docs are not ours).
 # OLS multiplies the scores of every index after the first by 0.95, so on a
 # tie our docs win.
 #
@@ -20,9 +24,18 @@
 #                clones it with git-clone instead, see checkout
 #   checkout     royal-road sources: directory (relative to the pipeline
 #                workspace) the pipeline cloned the repository into
-#   commit       upstream sources: the commit fetched (ref says what it is)
-#   ref          tag or branch the commit belongs to (documentation only for
-#                upstream; the branch for royal-road links)
+#   discover     upstream sources: where the running version comes from, first
+#                hit wins: {kubernetes: version} (the API server's /version) or
+#                {kind: Deployment|StatefulSet|DaemonSet, namespace, name,
+#                container} (that container's image tag). Not found: the source
+#                is skipped. Names with <...> are unset placeholders (skipped).
+#                discover.py rbac turns these entries into the read-only Roles
+#                (tekton/15-discovery-rbac.yaml).
+#   version_regex  named groups major/minor/patch; default ^v?X.Y.Z
+#   ref          git tag or branch to fetch; templates {version} {major}
+#                {minor} {patch} (also in fallback_ref, root, title, url.base).
+#                For royal-road sources: the branch the links point at.
+#   fallback_ref fetched when ref doesn't exist (e.g. docs branch not cut yet)
 #   root         directory inside the repository the globs are relative to
 #   include      glob list (fnmatch, ** spans directories); default ["**/*.md"]
 #   exclude      glob list, applied after include
@@ -53,6 +66,11 @@ sources:
     license: LicenseRef-RoyalRoad-Proprietary
     url: {type: github, at: ref}
     include: ["**/*.md"]
+    smoke:
+      - README.md
+      - LEDGER.md
+      - platform/tekton/README.md
+      - platform/tekton/catalog/README.md
     exclude:
       # gitignored, never meant for Git; excluded again in case a file was
       # force-added
@@ -83,18 +101,22 @@ sources:
       - royal-road/deploy/lightspeed/docs/README.md
 
   # --- Upstream -------------------------------------------------------------
+  # Workload names are the upstream install defaults; change them (and
+  # regenerate 15-discovery-rbac.yaml) where your cluster differs.
   - name: kubernetes
     index: upstream
     repo: https://github.com/kubernetes/website
-    ref: release-1.36
-    commit: 1de955ebabe7e17da1ebb4f582635491227f4157
+    discover:
+      - {kubernetes: version}
+    ref: release-{major}.{minor}
+    fallback_ref: main
     root: content/en/docs
-    title: Kubernetes 1.36
+    title: Kubernetes {major}.{minor}
     license: CC-BY-4.0
     attribution: "Kubernetes Documentation, © The Kubernetes Authors, https://kubernetes.io/docs/, CC BY 4.0. Converted to plain Markdown (Hugo shortcodes removed) and split into chunks."
     url:
       type: site
-      base: "https://v1-36.docs.kubernetes.io/docs/"
+      base: "https://v{major}-{minor}.docs.kubernetes.io/docs/"
       patterns:
         # glossary terms are entries on one page
         "reference/glossary/*.md": "reference/glossary/?all=true#term-{id}"
@@ -126,10 +148,12 @@ sources:
   - name: tekton-pipelines
     index: upstream
     repo: https://github.com/tektoncd/pipeline
-    ref: v1.15.5
-    commit: 7c7d6de97aae26ba2de1bc0d2f6765c6ff6b49e0
+    discover:
+      - {kind: Deployment, namespace: tekton-pipelines, name: tekton-pipelines-controller, container: tekton-pipelines-controller}
+    ref: v{version}
+    fallback_ref: release-v{major}.{minor}.x
     root: docs
-    title: Tekton Pipelines v1.15
+    title: Tekton Pipelines v{major}.{minor}
     license: Apache-2.0
     url: {type: github, at: commit}
     exclude:
@@ -143,10 +167,11 @@ sources:
   - name: tekton-triggers
     index: upstream
     repo: https://github.com/tektoncd/triggers
-    ref: v0.37.2
-    commit: 799a5fbb9c5856ca758594efef572c1675af83c8
+    discover:
+      - {kind: Deployment, namespace: tekton-pipelines, name: tekton-triggers-controller, container: tekton-triggers-controller}
+    ref: v{version}
     root: docs
-    title: Tekton Triggers v0.37
+    title: Tekton Triggers v{major}.{minor}
     license: Apache-2.0
     url: {type: github, at: commit}
     exclude:
@@ -156,10 +181,11 @@ sources:
   - name: pipelines-as-code
     index: upstream
     repo: https://github.com/tektoncd/pipelines-as-code
-    ref: v0.54.0
-    commit: bb2df3052556e2c7516eb1146a02e3ece5c4f252
+    discover:
+      - {kind: Deployment, namespace: pipelines-as-code, name: pipelines-as-code-controller, container: pac-controller}
+    ref: v{version}
     root: docs/content/docs
-    title: Pipelines-as-Code v0.54
+    title: Pipelines-as-Code v{major}.{minor}
     license: Apache-2.0
     url: {type: github, at: commit}
     hugo: true
@@ -171,12 +197,14 @@ sources:
   - name: rook
     index: upstream
     repo: https://github.com/rook/rook
-    ref: v1.20.3
-    commit: 3b678364c85fcc6380419a467629244c194c5e5c
+    discover:
+      - {kind: Deployment, namespace: rook-ceph, name: rook-ceph-operator, container: rook-ceph-operator}
+    ref: v{version}
+    fallback_ref: release-{major}.{minor}
     root: Documentation
-    title: Rook v1.20
+    title: Rook v{major}.{minor}
     license: Apache-2.0
-    url: {type: site, base: "https://rook.io/docs/rook/v1.20/"}
+    url: {type: site, base: "https://rook.io/docs/rook/v{major}.{minor}/"}
     include:
       - Getting-Started/**
       - Storage-Configuration/**
@@ -186,14 +214,18 @@ sources:
       - Helm-Charts/**
     exclude:
       - "**/*.gotmpl.md"
-    smoke: []
+    smoke:
+      - Getting-Started/intro.md
+      - Upgrade/rook-upgrade.md
 
   - name: cert-manager
     index: upstream
     repo: https://github.com/cert-manager/website
-    # The site keeps one current docs tree; production runs v1.20.
+    discover:
+      - {kind: Deployment, namespace: cert-manager, name: cert-manager, container: cert-manager-controller}
+    # The site keeps one current docs tree (no per-version branches); the
+    # discovered version still goes into the fingerprint.
     ref: master
-    commit: f01388b8aaae8d6c390c1648fd29d4a30810eb40
     root: content/docs
     title: cert-manager
     license: Apache-2.0
@@ -213,10 +245,12 @@ sources:
   - name: victoriametrics
     index: upstream
     repo: https://github.com/VictoriaMetrics/VictoriaMetrics
-    ref: v1.156.0
-    commit: 0c1bf87a0c9843c30566df0c0aa6593466425ac5
+    discover:
+      - {kind: StatefulSet, namespace: <vmselect-namespace>, name: <vmselect-statefulset>, container: vmselect}
+      - {kind: Deployment, namespace: <vmsingle-namespace>, name: <vmsingle-deployment>, container: vmsingle}
+    ref: v{major}.{minor}.{patch}
     root: docs
-    title: VictoriaMetrics v1.156
+    title: VictoriaMetrics v{major}.{minor}
     license: Apache-2.0
     url: {type: site, base: "https://docs.victoriametrics.com/", lowercase: true}
     hugo: true
@@ -237,10 +271,11 @@ sources:
   - name: victoriametrics-operator
     index: upstream
     repo: https://github.com/VictoriaMetrics/operator
-    ref: v0.75.2
-    commit: 61d1fd3209bfe1819ad4f6e48dcd7f74f51e228c
+    discover:
+      - {kind: Deployment, namespace: <vm-operator-namespace>, name: <vm-operator-deployment>, container: operator}
+    ref: v{version}
     root: docs
-    title: VictoriaMetrics operator v0.75
+    title: VictoriaMetrics operator v{major}.{minor}
     license: Apache-2.0
     url: {type: site, base: "https://docs.victoriametrics.com/operator/", lowercase: true}
     hugo: true
@@ -254,10 +289,12 @@ sources:
   - name: victorialogs
     index: upstream
     repo: https://github.com/VictoriaMetrics/VictoriaLogs
-    ref: v1.53.0
-    commit: 915d91904bf7f5be66ab00f88947ae7fc1431acc
+    discover:
+      - {kind: StatefulSet, namespace: <victorialogs-namespace>, name: <victorialogs-statefulset>}
+      - {kind: Deployment, namespace: <victorialogs-namespace>, name: <victorialogs-deployment>}
+    ref: v{version}
     root: docs
-    title: VictoriaLogs v1.53
+    title: VictoriaLogs v{major}.{minor}
     license: Apache-2.0
     url: {type: site, base: "https://docs.victoriametrics.com/", lowercase: true}
     hugo: true
@@ -273,10 +310,11 @@ sources:
   - name: victoriatraces
     index: upstream
     repo: https://github.com/VictoriaMetrics/VictoriaTraces
-    ref: v0.9.4
-    commit: f96aa3dd58fc2ef7711806ff4371d829a4a00471
+    discover:
+      - {kind: StatefulSet, namespace: <victoriatraces-namespace>, name: <victoriatraces-statefulset>}
+    ref: v{version}
     root: docs
-    title: VictoriaTraces v0.9
+    title: VictoriaTraces v{major}.{minor}
     license: Apache-2.0
     url: {type: site, base: "https://docs.victoriametrics.com/", lowercase: true}
     hugo: true
@@ -289,13 +327,14 @@ sources:
   - name: velero
     index: upstream
     repo: https://github.com/vmware-tanzu/velero
-    # Versioned docs live in site/content/docs/<version> on main.
+    discover:
+      - {kind: Deployment, namespace: velero, name: velero, container: velero}
+    # Versioned docs live in site/content/docs/v<major>.<minor> on main.
     ref: main
-    commit: 48b876fe2db639b56a84643bd8fb312049bf9cd5
-    root: site/content/docs/v1.18
-    title: Velero v1.18
+    root: site/content/docs/v{major}.{minor}
+    title: Velero v{major}.{minor}
     license: Apache-2.0
-    url: {type: site, base: "https://velero.io/docs/v1.18/"}
+    url: {type: site, base: "https://velero.io/docs/v{major}.{minor}/"}
     hugo: true
     exclude:
       - img/**
@@ -310,12 +349,13 @@ sources:
   - name: istio
     index: upstream
     repo: https://github.com/istio/istio.io
-    ref: release-1.30
-    commit: 4607fcb53aa597ac72bd710c959c2c3bf94cf08c
+    discover:
+      - {kind: Deployment, namespace: istio-system, name: istiod, container: discovery}
+    ref: release-{major}.{minor}
     root: content/en/docs
-    title: Istio 1.30
+    title: Istio {major}.{minor}
     license: Apache-2.0
-    url: {type: site, base: "https://istio.io/v1.30/docs/"}
+    url: {type: site, base: "https://istio.io/v{major}.{minor}/docs/"}
     hugo: true
     include:
       - overview/**

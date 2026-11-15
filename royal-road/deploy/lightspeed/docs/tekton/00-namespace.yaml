@@ -1,5 +1,5 @@
 # Namespace for the documentation index build: the Pipeline, its Task, its
-# ServiceAccounts, the weekly schedule, and (for Pipelines-as-Code) the
+# ServiceAccounts, the daily schedule, and (for Pipelines-as-Code) the
 # Repository of the infrastructure repository.
 #
 # PSA baseline: the buildah Task from tekton-catalog runs as root with the

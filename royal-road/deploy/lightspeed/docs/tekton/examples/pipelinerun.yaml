@@ -1,6 +1,6 @@
 # A manual run (kubectl create -f; generateName needs create, not apply).
 # Uses the deploy-key Secret for the infrastructure repository, like the
-# weekly schedule.
+# daily schedule.
 apiVersion: tekton.dev/v1
 kind: PipelineRun
 metadata:
@@ -14,6 +14,10 @@ spec:
     # - {name: profile, value: smoke}   # a few files per source
   taskRunTemplate:
     serviceAccountName: lightspeed-docs-builder
+  taskRunSpecs:
+    - {pipelineTaskName: discover, serviceAccountName: lightspeed-docs-discovery}
+    - {pipelineTaskName: rollout-new, serviceAccountName: lightspeed-docs-rollout}
+    - {pipelineTaskName: rollout-existing, serviceAccountName: lightspeed-docs-rollout}
   timeouts:
     pipeline: 2h
   workspaces:
@@ -27,6 +31,9 @@ spec:
     - name: dockerconfig
       secret:
         secretName: lightspeed-docs-harbor-push
+    - name: sources-config
+      configMap:
+        name: lightspeed-docs-sources
     - name: infra-ssh
       secret:
         secretName: lightspeed-docs-infra-ssh

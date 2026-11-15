@@ -134,9 +134,7 @@ def main() -> None:
     p.add_argument("--batch-size", type=int, default=64)
     p.add_argument("--strict", action="append", default=["royal-road"],
                    help="index whose secret findings fail the build (repeatable)")
-    p.add_argument("--commit", default="",
-                   help="commit whose short SHA goes into the image tag: <yyyymmdd>-<sha10>")
-    p.add_argument("--tag-file", default="", help="write the tag here (a Tekton result path)")
+    p.add_argument("--fingerprint", default="", help="discover.py fingerprint, recorded in manifest.json")
     args = p.parse_args()
 
     started = time.time()
@@ -183,16 +181,14 @@ def main() -> None:
                                     "seconds": round(seconds, 1)})
         print(f"  [{name}] done in {seconds:.0f}s, {size / 1e6:.1f} MB")
 
+    manifest["fingerprint"] = args.fingerprint
     manifest["built"] = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     manifest["seconds"] = round(time.time() - started, 1)
     (out / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
     shutil.copy(corpus / "SOURCES.md", out / "SOURCES.md")
 
-    tag = datetime.now(timezone.utc).strftime("%Y%m%d") + (f"-{args.commit[:10]}" if args.commit else "")
-    if args.tag_file:
-        Path(args.tag_file).write_text(tag)
     print(f"index image root {out}: {json.dumps(manifest['indexes'])}")
-    print(f"tag {tag}, total {manifest['seconds']}s")
+    print(f"fingerprint {args.fingerprint or '-'}, total {manifest['seconds']}s")
 
 
 if __name__ == "__main__":

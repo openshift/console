@@ -30,6 +30,10 @@ spec:
       value: "{{ revision }}"
   taskRunTemplate:
     serviceAccountName: lightspeed-docs-builder
+  taskRunSpecs:
+    - {pipelineTaskName: discover, serviceAccountName: lightspeed-docs-discovery}
+    - {pipelineTaskName: rollout-new, serviceAccountName: lightspeed-docs-rollout}
+    - {pipelineTaskName: rollout-existing, serviceAccountName: lightspeed-docs-rollout}
   timeouts:
     pipeline: 2h
   workspaces:
@@ -43,6 +47,9 @@ spec:
     - name: dockerconfig
       secret:
         secretName: lightspeed-docs-harbor-push
+    - name: sources-config
+      configMap:
+        name: lightspeed-docs-sources
     # Repository-scoped token Secret PaC creates for each run
     # (secret-auto-create), with .gitconfig and .git-credentials.
     - name: infra-basic-auth

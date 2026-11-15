@@ -1,0 +1,28 @@
+# kubectl apply --server-side -k royal-road/deploy/lightspeed/docs
+#
+# The Tekton objects of the documentation index, and ConfigMap
+# lightspeed-docs-sources from sources.yaml (the version -> docs mapping the
+# discover Task reads on every run). Not included: test/ (kind only),
+# tekton/examples/ and tekton/pac/ (see README.md).
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - tekton/00-namespace.yaml
+  - tekton/10-rbac.yaml
+  - tekton/15-discovery-rbac.yaml
+  - tekton/16-rollout-rbac.yaml
+  - tekton/20-task-discover.yaml
+  - tekton/21-task-index.yaml
+  - tekton/22-task-rollout.yaml
+  - tekton/30-pipeline.yaml
+  - tekton/40-schedule.yaml
+configMapGenerator:
+  - name: lightspeed-docs-sources
+    namespace: lightspeed-docs
+    files:
+      - sources.yaml
+    options:
+      # PipelineRuns name it; a hash suffix would break them
+      disableNameSuffixHash: true
+      labels:
+        app.kubernetes.io/part-of: lightspeed

@@ -1,0 +1,91 @@
+# Task lightspeed-docs-rollout: point OLS at an index image and wait.
+#
+# Patches the image volume `docs-index` of Deployment lightspeed-app-server
+# (42-ols.yaml) to <image>@<digest>; the Deployment then replaces the pod,
+# and the new pod turns Ready only once OLS has loaded the indexes. If it
+# doesn't within the timeout, the Task patches the previous reference back,
+# waits again, and fails, so a broken index never stays deployed.
+#
+# Already pointing at that reference: nothing changes, nothing restarts.
+#
+# Runs as ServiceAccount lightspeed-docs-rollout (16-rollout-rbac.yaml): get,
+# patch and watch on that one Deployment only.
+#
+# The patch uses field manager lightspeed-docs. If you also apply 42-ols.yaml
+# with server-side apply, that reports a conflict on the reference instead of
+# silently rolling OLS back; leave the field to the pipeline (or pass
+# --force-conflicts deliberately).
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: lightspeed-docs-rollout
+  namespace: lightspeed-docs
+  labels:
+    app.kubernetes.io/part-of: lightspeed
+    app.kubernetes.io/version: "1"
+spec:
+  description: Rolls the OLS Deployment onto a documentation index image.
+  params:
+    - name: reference
+      description: Index image, <repository>:<tag>@sha256:<digest>.
+    - name: fingerprint
+    - name: namespace
+      default: openshift-lightspeed
+    - name: deployment
+      default: lightspeed-app-server
+    - name: volume
+      default: docs-index
+    - name: timeout
+      default: 15m
+    - name: kubectl-image
+      # same image as tekton-catalog's kubernetes-actions Task
+      default: docker.io/alpine/k8s:1.37.2@sha256:7a82aeefea3d554a43a8676b137f2b88bae6c1fe11c13862b191b3a086cc28c0
+  steps:
+    - name: rollout
+      image: $(params.kubectl-image)
+      env:
+        - {name: HOME, value: /tekton/home}
+        - {name: REF, value: $(params.reference)}
+        - {name: FP, value: $(params.fingerprint)}
+        - {name: NS, value: $(params.namespace)}
+        - {name: DEPLOY, value: $(params.deployment)}
+        - {name: VOLUME, value: $(params.volume)}
+        - {name: TIMEOUT, value: $(params.timeout)}
+      securityContext:
+        runAsUser: 65532
+        runAsNonRoot: true
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop: [ALL]
+        seccompProfile:
+          type: RuntimeDefault
+      computeResources:
+        requests: {cpu: 50m, memory: 64Mi}
+        limits: {memory: 256Mi}
+      script: |
+        #!/bin/bash
+        set -euo pipefail
+        case "$REF" in *@sha256:*) ;; *) echo "reference must be pinned by digest: $REF"; exit 1 ;; esac
+        k() { kubectl -n "$NS" "$@"; }
+        current=`k get deployment "$DEPLOY" -o jsonpath="{.spec.template.spec.volumes[?(@.name=='$VOLUME')].image.reference}"`
+        if [ "$current" = "$REF" ]; then
+          echo "$NS/$DEPLOY already uses $REF"
+          exit 0
+        fi
+        set_ref() {  # reference, fingerprint
+          k patch deployment "$DEPLOY" --type=strategic --field-manager=lightspeed-docs -p "{
+            \"metadata\": {\"annotations\": {\"lightspeed-docs/previous-index\": \"$current\"}},
+            \"spec\": {\"template\": {
+              \"metadata\": {\"annotations\": {\"lightspeed-docs/fingerprint\": \"$2\"}},
+              \"spec\": {\"volumes\": [{\"name\": \"$VOLUME\", \"image\": {\"reference\": \"$1\", \"pullPolicy\": \"IfNotPresent\"}}]}}}}"
+        }
+        echo "$NS/$DEPLOY: $current -> $REF"
+        set_ref "$REF" "$FP"
+        if k rollout status deployment "$DEPLOY" --timeout="$TIMEOUT"; then
+          echo "OLS is serving index $FP"
+          exit 0
+        fi
+        echo "rollout did not become ready within $TIMEOUT; restoring $current"
+        set_ref "$current" "rolled-back"
+        k rollout status deployment "$DEPLOY" --timeout="$TIMEOUT" || true
+        exit 1
