@@ -4,7 +4,7 @@
 # credentials).
 #
 # lightspeed-docs-scheduler: the daily CronJob (40-schedule.yaml). It may
-# only create PipelineRuns in this namespace.
+# only list and create PipelineRuns in this namespace.
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -26,7 +26,7 @@ metadata:
 rules:
   - apiGroups: [tekton.dev]
     resources: [pipelineruns]
-    verbs: [create]
+    verbs: [list, create]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding

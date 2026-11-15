@@ -93,7 +93,19 @@ spec:
           containers:
             - name: create-pipelinerun
               image: docker.io/alpine/k8s:1.37.2@sha256:7a82aeefea3d554a43a8676b137f2b88bae6c1fe11c13862b191b3a086cc28c0
-              command: [kubectl, create, -f, /run/pipelinerun/pipelinerun.yaml, -o, name]
+              # Skips the day if a run (scheduled, pushed or manual; all carry
+              # the part-of label) is still going: two runs for the same
+              # fingerprint would build it twice.
+              command: [sh, -ec]
+              args:
+                - |
+                  running=`kubectl get pipelineruns -l app.kubernetes.io/part-of=lightspeed -o json \
+                    | jq '[.items[] | select(.status.completionTime == null)] | length'`
+                  if [ "$running" != 0 ]; then
+                    echo "$running lightspeed-docs run(s) in progress; skipping"
+                    exit 0
+                  fi
+                  kubectl create -f /run/pipelinerun/pipelinerun.yaml -o name
               env:
                 - name: HOME
                   value: /tmp

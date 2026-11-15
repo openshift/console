@@ -6,6 +6,8 @@ kind: PipelineRun
 metadata:
   generateName: lightspeed-docs-manual-
   namespace: lightspeed-docs
+  labels:
+    app.kubernetes.io/part-of: lightspeed
 spec:
   pipelineRef:
     name: lightspeed-docs-index

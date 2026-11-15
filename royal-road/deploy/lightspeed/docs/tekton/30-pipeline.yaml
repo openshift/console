@@ -162,6 +162,7 @@ spec:
       params:
         - {name: reference, value: "$(params.image):$(tasks.discover.results.FINGERPRINT)@$(tasks.image.results.IMAGE_DIGEST)"}
         - {name: fingerprint, value: $(tasks.discover.results.FINGERPRINT)}
+        - {name: discovered-at, value: $(tasks.discover.results.DISCOVERED_AT)}
         - {name: namespace, value: $(params.ols-namespace)}
         - {name: deployment, value: $(params.ols-deployment)}
 
@@ -175,5 +176,6 @@ spec:
       params:
         - {name: reference, value: "$(params.image):$(tasks.discover.results.FINGERPRINT)@$(tasks.discover.results.DIGEST)"}
         - {name: fingerprint, value: $(tasks.discover.results.FINGERPRINT)}
+        - {name: discovered-at, value: $(tasks.discover.results.DISCOVERED_AT)}
         - {name: namespace, value: $(params.ols-namespace)}
         - {name: deployment, value: $(params.ols-deployment)}

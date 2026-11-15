@@ -32,6 +32,7 @@ import hashlib
 import json
 import re
 import sys
+import time
 from pathlib import Path
 
 import yaml
@@ -169,6 +170,8 @@ def cmd_resolve(args: argparse.Namespace) -> None:
     if args.results:
         Path(args.results, "FINGERPRINT").write_text(tag)
         Path(args.results, "VERSIONS").write_text(summary[:3500])
+        # orders runs: an older discovery never rolls OLS back over a newer one
+        Path(args.results, "DISCOVERED_AT").write_text(time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()))
 
 
 def cmd_rbac(args: argparse.Namespace) -> None:

@@ -48,6 +48,8 @@ spec:
       description: Image tag for this state, fp-<20 hex>.
     - name: VERSIONS
       description: Discovered versions, "name=version ..." (for humans).
+    - name: DISCOVERED_AT
+      description: UTC time of the discovery (orders rollouts of concurrent runs).
     - name: EXISTS
       description: '"true" if <image>:<FINGERPRINT> is in the registry already.'
     - name: DIGEST
