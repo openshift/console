@@ -2,6 +2,14 @@
 
 Newest first. One entry per work package from `FORK.md`.
 
+## Perses dashboards without the Cluster Observability Operator
+
+- Observe › Dashboards (Perses) (`/monitoring/v2/dashboards`): `royal-road/deploy/monitoring-console-plugin.yaml` runs the `monitoring-console-plugin` image COO 1.5.2 ships for consoles ≥ 4.22 (v1.0.0, digest-pinned, `-features=perses-dashboards`) next to our `monitoring-plugin`. No build change: the image already has the plugin name, i18n namespace and proxy path the Perses pages hard-code. COO 1.4's plugin (v0.5.3, react-router 5) fails on this console.
+- `royal-road/deploy/perses/` (kustomize, namespace `perses`): COO 1.5.2's Perses CRDs, perses-operator v0.4.0 and a `Perses` v0.54.0 instance configured as COO's UIPlugin reconciler does (Kubernetes TokenReview authentication and SubjectAccessReview authorization, file database), with cert-manager instead of OpenShift's service CA; aggregated roles (`view` reads, `edit` edits dashboards, `admin` edits datasources, global datasources cluster-admin only); a global datasource on thanos-querier 9091 and a per-namespace datasource on the 9092 tenancy port. Perses forwards the user's own token, so tenancy stays with kube-rbac-proxy and prom-label-proxy. `plugin-proxy.sh` adds the Perses route to an existing `BRIDGE_PLUGIN_PROXY`.
+- Security findings encoded in the manifests: an egress NetworkPolicy, because a dashboard editor could otherwise send viewers' tokens to any URL (reproduced on kind); `create pods.metrics.k8s.io` for namespace roles, because Perses queries with POST and kube-rbac-proxy maps that to `create`. The tenancy prom-label-proxy needs `--enable-label-apis` for dashboard variables.
+- Running COO itself was tried on kind and rejected: it needs `config.openshift.io` APIServer and ClusterVersion, the Console operator CR, service-CA certificates and OLM (README "Perses dashboards").
+- Verified on kind with the console image in-cluster as a cluster-admin and as a namespace user, 29 migrated dashboards and a kube-rbac-proxy/prom-label-proxy thanos-querier stand-in.
+
 ## Tekton Results for the pipelines plugin
 
 - Core patch: the bridge's `/api/dev-console/tekton-results/*` proxy took its CA from `/var/serving-cert/tls.crt` (OpenShift's service CA) and, off-cluster, its host from a `route.openshift.io` Route. New flags `--tekton-results-ca-file` / `BRIDGE_TEKTON_RESULTS_CA_FILE` (same default) and `--tekton-results-api-host` / `BRIDGE_TEKTON_RESULTS_API_HOST` (empty: unchanged lookup). Unit test for both. Candidate for upstream.
