@@ -1,0 +1,11 @@
+{
+  "name": "rr-sentry-mcp",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Sentry MCP server (stdio) served over streamable HTTP by supergateway, for Lightspeed",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@sentry/mcp-server": "0.49.0",
+    "supergateway": "4.2.2"
+  }
+}
