@@ -23,7 +23,7 @@ class Globs(unittest.TestCase):
         self.assertTrue(r.match("concepts/workloads/pods/_index.md"))
         self.assertFalse(r.match("tasks/concepts/x.md"))
         r = bc.glob_to_regex("**/research/**")
-        self.assertTrue(r.match("applications/anubis/research/x.md"))
+        self.assertTrue(r.match("apps/web/research/x.md"))
         self.assertTrue(r.match("research/x.md"))
 
     def test_single_star_stays_in_one_directory(self):
