@@ -2,6 +2,10 @@
 
 Newest first. One entry per work package from `FORK.md`.
 
+## Fix: Control Plane status on kubeadm
+
+- The Overview's Control Plane item queried OpenShift-only namespaces, so API Servers, Controller Managers and Schedulers showed "Unknown". The queries now match on the job (and kubeadm's `kube-system/kube-apiserver-<node>` pods for the API server count).
+
 ## Logs from VictoriaLogs: logging-view-plugin and vl-tenancy-proxy
 
 - `royal-road/plugins/logging-view-plugin/` builds openshift/logging-view-plugin from `release-coo-ocp-4.22` (pinned commit) with four patches that make it read VictoriaLogs: a `vlogs` label schema (`namespace`, `pod`, `container`, `level`) as default, LogsQL instead of LogQL, VictoriaLogs' `/select/logsql` endpoints (query, hits histogram, stats graphs, field values, live tail), and no audit tenant or Loki ruler alert sources. Observe › Logs (admin and developer) and the Pod "Aggregated Logs" tab work.
