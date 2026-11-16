@@ -74,7 +74,8 @@ cd frontend && yarn test [<path>] # Run frontend tests (can specify test path)
 cd frontend && yarn build # Production build
 cd frontend && yarn dev-once # Development build (no watch mode)
 cd frontend && yarn i18n # Update i18n keys
-cd frontend && yarn knip # Check dead code and unused dependencies
+cd frontend && yarn generate # update generated code (e.g., extension types and API docs)
+cd frontend && yarn knip # Check dead code and unused dependencies (requires `yarn generate` first)
 go mod vendor && go mod tidy # Update Go dependencies
 ./build-frontend.sh # Production build of frontend
 ./build-backend.sh # Build backend Go code
@@ -118,6 +119,20 @@ go mod vendor && go mod tidy # Update Go dependencies
 - **Absolute paths:** Never use absolute URLs or paths. The console runs behind a proxy under an arbitrary path.
 - **Custom CSS:** Exhaust PatternFly component options before writing custom SCSS. When necessary, use BEM with `co-` prefix.
 - **Bumping frontend dependencies:** If the target version already falls within the semver range declared by the dependent package(s) (i.e. `yarn.lock` is just pinned to an older resolution within that range), don't add/edit a `resolutions` field in `package.json`. Instead, regenerate just that portion of `yarn.lock` (e.g. `yarn up <package>`) so the existing range re-resolves. Only use `resolutions` when the desired version falls outside what any dependent's semver range allows.
+
+### Code comments
+
+Keep code comments short — a single line stating *what* or *why*, not both, and no essays. Lengthy explanations, design rationale, and verification details belong in the commit description, not in comments. Use TSDoc or Godoc when a function's behavior genuinely needs documenting.
+
+History belongs in the commit message, not in the code. A comment explaining why code was removed, why an old approach was wrong, or what a previous implementation did is history, and history lives in version control. Write it in the commit text and leave no comment in the source. For example, do not write:
+
+```js
+// Current user preference is `false` (falsy), but it's a valid preference
+// The old code using `!currentUserPreferenceValue` would incorrectly treat this as "not set"
+// and override it with the defaultValue
+```
+
+Comments that stay are the ones a reader needs to understand the code in front of them, with no reference to what it used to be.
 
 ## Reference files
 
