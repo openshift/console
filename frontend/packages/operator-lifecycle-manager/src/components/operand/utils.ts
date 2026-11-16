@@ -1,4 +1,4 @@
-import type { UiSchema } from '@rjsf/core';
+import type { UiSchema } from '@rjsf/utils';
 import * as Immutable from 'immutable';
 import type { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
