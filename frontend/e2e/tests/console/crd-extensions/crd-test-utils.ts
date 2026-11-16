@@ -21,7 +21,10 @@ export async function navigateToCRDInstances(page: Page, crd: string): Promise<v
   await kebabButton.click();
   await page.getByRole('menuitem', { name: 'View instances' }).click();
 
-  await expect(page.getByRole('heading', { name: crd })).toBeVisible();
+  await expect(page.getByRole('tab', { name: 'Instances', exact: true })).toHaveAttribute(
+    'aria-selected',
+    'true',
+  );
 }
 
 /**
