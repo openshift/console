@@ -4,7 +4,7 @@ import cx from 'classnames';
 import { useField, useFormikContext, FormikValues } from 'formik';
 import { AsyncComponent } from '@console/internal/components/utils';
 
-type DynamicFormFieldProps = FormProps<any> & {
+type DynamicFormFieldProps = Omit<FormProps<any>, 'validator'> & {
   name: string;
   errors?: string[];
   formDescription?: React.ReactNode;
