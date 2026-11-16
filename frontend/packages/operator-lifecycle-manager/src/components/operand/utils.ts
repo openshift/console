@@ -1,28 +1,29 @@
-import { UiSchema } from '@rjsf/core';
+import type { UiSchema } from '@rjsf/utils';
 import * as Immutable from 'immutable';
-import { JSONSchema7 } from 'json-schema';
+import type { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
 import i18n from '@console/internal/i18n';
 import { modelFor } from '@console/internal/module/k8s';
-import { getSchemaAtPath } from '@console/shared';
 import {
   getJSONSchemaOrder,
   stringPathToUISchemaPath,
 } from '@console/shared/src/components/dynamic-form/utils';
+import { getSchemaAtPath } from '@console/shared/src/utils/utils';
 import {
   REGEXP_K8S_RESOURCE_SUFFIX,
   REGEXP_FIELD_DEPENDENCY_PATH_VALUE,
   REGEXP_SELECT_OPTION,
 } from '../descriptors/const';
 import { capabilityFieldMap, capabilityWidgetMap } from '../descriptors/spec/spec-descriptor-input';
-import { SpecCapability, Descriptor } from '../descriptors/types';
+import type { Descriptor } from '../descriptors/types';
+import { SpecCapability } from '../descriptors/types';
 import { getValidCapabilitiesForSchema } from '../descriptors/utils';
 import { HIDDEN_UI_SCHEMA } from './const';
 
 // Applies a hidden widget and label configuration to every property of the given schema.
 // This is useful for whitelisting only a few schema properties when all properties are not known.
-export const hideAllExistingProperties = (schema: JSONSchema7) => {
-  return _.reduce(
+const hideAllExistingProperties = (schema: JSONSchema7) =>
+  _.reduce(
     schema?.properties,
     (acc, _unused, propertyName) => ({
       ...acc,
@@ -30,7 +31,6 @@ export const hideAllExistingProperties = (schema: JSONSchema7) => {
     }),
     {},
   );
-};
 
 const k8sResourceCapabilityToUISchema = (capability: SpecCapability): UiSchema => {
   const [, groupVersionKindToken, selector] = capability.match(REGEXP_K8S_RESOURCE_SUFFIX) ?? [];
@@ -102,17 +102,13 @@ export const capabilitiesToUISchema = (capabilities: SpecCapability[] = []) => {
 
   const field = _.reduce(
     capabilities,
-    (fieldAccumulator, capability) => {
-      return fieldAccumulator ?? capabilityFieldMap.get(capability);
-    },
+    (fieldAccumulator, capability) => fieldAccumulator ?? capabilityFieldMap.get(capability),
     undefined,
   );
 
   const widget = _.reduce(
     capabilities,
-    (widgetAccumulator, capability) => {
-      return widgetAccumulator ?? capabilityWidgetMap.get(capability);
-    },
+    (widgetAccumulator, capability) => widgetAccumulator ?? capabilityWidgetMap.get(capability),
     undefined,
   );
 
@@ -174,29 +170,27 @@ export const descriptorsToUISchema = (
 };
 
 // Use jsonSchema, descriptors, and some defaults to generate a uiSchema
-export const getUISchema = (jsonSchema, providedAPI) => {
-  return {
-    metadata: {
-      ...hideAllExistingProperties(jsonSchema?.properties?.metadata as JSONSchema7),
-      name: {
-        'ui:title': i18n.t('public~Name'),
-        'ui:widget': 'TextWidget',
-      },
-      labels: {
-        'ui:title': i18n.t('public~Labels'),
-        'ui:field': 'LabelsField',
-      },
-      'ui:options': {
-        label: false,
-      },
-      'ui:order': ['name', 'labels', '*'],
+export const getUISchema = (jsonSchema, providedAPI) => ({
+  metadata: {
+    ...hideAllExistingProperties(jsonSchema?.properties?.metadata as JSONSchema7),
+    name: {
+      'ui:title': i18n.t('public~Name'),
+      'ui:widget': 'TextWidget',
     },
-    spec: {
-      ...descriptorsToUISchema(providedAPI?.specDescriptors, jsonSchema?.properties?.spec),
-      'ui:options': {
-        label: false,
-      },
+    labels: {
+      'ui:title': i18n.t('public~Labels'),
+      'ui:field': 'LabelsField',
     },
-    'ui:order': ['metadata', 'spec', '*'],
-  };
-};
+    'ui:options': {
+      label: false,
+    },
+    'ui:order': ['name', 'labels', '*'],
+  },
+  spec: {
+    ...descriptorsToUISchema(providedAPI?.specDescriptors, jsonSchema?.properties?.spec),
+    'ui:options': {
+      label: false,
+    },
+  },
+  'ui:order': ['metadata', 'spec', '*'],
+});
