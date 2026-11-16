@@ -102,7 +102,6 @@ func TestOLMHandler_catalogItemRoutes(t *testing.T) {
 		{Name: "second-package", Catalog: "test-catalog", LifecycleData: json.RawMessage(`null`)},
 	}
 	otherItems := []ConsoleCatalogItem{{Name: "first-package", Catalog: "other-catalog", LifecycleData: json.RawMessage(`{"package":"first-package","versions":[{"name":"3.0"}]}`)}}
-	versionedItems := append([]ConsoleCatalogItem{{Name: "first-package", Catalog: "test-catalog", Version: "1.0.0", LifecycleData: json.RawMessage(`null`)}}, items...)
 	tests := []struct {
 		name       string
 		path       string
@@ -122,16 +121,16 @@ func TestOLMHandler_catalogItemRoutes(t *testing.T) {
 		{name: "malformed catalog", path: "/malformed-catalog/first-package", wantStatus: http.StatusInternalServerError, wantError: "cannot get the catalog item. Wait for the catalog to finish loading, then try again."},
 		{name: "missing package", path: "/test-catalog/missing-package", wantStatus: http.StatusNotFound, wantError: "cannot find the catalog item. Verify the catalog and package names, then try again."},
 		{name: "encoded slash in package", path: "/test-catalog/first-package%2F", wantStatus: http.StatusNotFound, wantError: "cannot find the catalog item. Verify the catalog and package names, then try again."},
-		{name: "specific version", path: "/test-catalog/first-package/1.0.0", wantStatus: http.StatusOK, wantItem: &versionedItems[0]},
-		{name: "unknown version", path: "/test-catalog/first-package/9.9.9", wantStatus: http.StatusNotFound, wantError: "cannot find the catalog item. Verify the catalog and package names, then try again."},
+		{name: "version endpoint is not registered", path: "/test-catalog/first-package/1.0.0", wantStatus: http.StatusNotFound},
+		{name: "unknown version endpoint is not registered", path: "/test-catalog/first-package/9.9.9", wantStatus: http.StatusNotFound},
 		{name: "unsupported method", path: "/test-catalog/first-package", method: http.MethodPost, wantStatus: http.StatusMethodNotAllowed},
-		{name: "unsupported method with version", path: "/test-catalog/first-package/1.0.0", method: http.MethodPost, wantStatus: http.StatusMethodNotAllowed},
+		{name: "version endpoint POST is not registered", path: "/test-catalog/first-package/1.0.0", method: http.MethodPost, wantStatus: http.StatusNotFound},
 	}
 	for _, tt := range tests {
 		for _, suffix := range []string{"", "/"} {
 			t.Run(fmt.Sprintf("%s (suffix %q)", tt.name, suffix), func(t *testing.T) {
 				c := cache.New(cache.NoExpiration, 0)
-				c.Set(getCatalogItemsKey("test-catalog"), newCachedCatalogWithVersions(items, versionedItems), cache.NoExpiration)
+				c.Set(getCatalogItemsKey("test-catalog"), newCachedCatalog(items), cache.NoExpiration)
 				c.Set(getCatalogItemsKey("other-catalog"), newCachedCatalog(otherItems), cache.NoExpiration)
 				c.Set(getCatalogItemsKey("empty-catalog"), newCachedCatalog([]ConsoleCatalogItem{}), cache.NoExpiration)
 				c.Set(getCatalogItemsKey("nil-items-catalog"), newCachedCatalog(nil), cache.NoExpiration)
@@ -221,6 +220,8 @@ func TestOLMHandler_catalogItemsHandler(t *testing.T) {
 	t.Run("should return catalog items", func(t *testing.T) {
 		items := []ConsoleCatalogItem{{
 			Name:          "test-item",
+			Channels:      []ConsoleCatalogChannel{{Name: "stable", Versions: []string{"2.0.0", "1.0.0"}}},
+			Versions:      []string{"2.0.0", "1.0.0"},
 			LifecycleData: json.RawMessage(`{"package":"test-item","versions":[{"name":"2.0"}]}`),
 		}}
 		lastModified := time.Now()
@@ -264,6 +265,8 @@ func TestOLMHandler_catalogItemsHandler(t *testing.T) {
 func TestOLMHandler_catalogItemHandler(t *testing.T) {
 	items := []ConsoleCatalogItem{{
 		Name:          "test-item",
+		Channels:      []ConsoleCatalogChannel{{Name: "stable", Versions: []string{"2.0.0", "1.0.0"}}},
+		Versions:      []string{"2.0.0", "1.0.0"},
 		Catalog:       "test-catalog",
 		LifecycleData: json.RawMessage(`{"package":"test-item","versions":[{"name":"2.0"}]}`),
 	}}
@@ -331,6 +334,8 @@ func TestOLMHandler_catalogItemHandler(t *testing.T) {
 					var body map[string]json.RawMessage
 					require.NoError(t, json.Unmarshal(rr.Body.Bytes(), &body))
 					assert.Contains(t, body, "lifecycleData")
+					assert.Contains(t, body, "channels")
+					assert.Contains(t, body, "versions")
 					assert.NotContains(t, body, "availableVersions")
 					assert.NotContains(t, body, "clusterCompatibility")
 					assert.NotContains(t, body, "metadata")

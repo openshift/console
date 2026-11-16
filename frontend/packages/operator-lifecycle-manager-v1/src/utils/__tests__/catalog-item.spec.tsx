@@ -60,7 +60,23 @@ describe('normalizeCatalogItem', () => {
     expect(item.data).toEqual({
       categories: ['Storage'],
       latestVersion: '2.0.0',
+      channels: [],
+      versions: [],
       lifecycleData: fields.lifecycleData ?? null,
+    });
+  });
+
+  it('preserves package versions and channel membership', () => {
+    const versions = ['2.0.0', '1.0.0'];
+    const channels = [
+      { name: 'fast', versions },
+      { name: 'stable', versions: ['1.0.0'] },
+    ];
+
+    expect(normalizeCatalogItem({ ...catalogItem, channels, versions }).data).toMatchObject({
+      latestVersion: '2.0.0',
+      channels,
+      versions,
     });
   });
 

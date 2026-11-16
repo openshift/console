@@ -54,8 +54,6 @@ func NewOLMHandler(apiServerURL string, client *http.Client, service *CatalogSer
 	mux.HandleFunc("/api/olm/catalog-items/{$}", o.catalogItemsHandler)
 	mux.HandleFunc("/api/olm/catalog-items/{catalogName}/{packageName}", middleware.AllowMethod(http.MethodGet, o.catalogItemHandler))
 	mux.HandleFunc("/api/olm/catalog-items/{catalogName}/{packageName}/{$}", middleware.AllowMethod(http.MethodGet, o.catalogItemHandler))
-	mux.HandleFunc("/api/olm/catalog-items/{catalogName}/{packageName}/{version}", middleware.AllowMethod(http.MethodGet, o.catalogItemHandler))
-	mux.HandleFunc("/api/olm/catalog-items/{catalogName}/{packageName}/{version}/{$}", middleware.AllowMethod(http.MethodGet, o.catalogItemHandler))
 	mux.HandleFunc("/api/olm/catalogd/metas/{catalogName}", middleware.AllowMethod(http.MethodGet, o.catalogdMetasHandler))
 	mux.HandleFunc("/api/olm/catalog-icons/{catalogName}/{packageName}", middleware.AllowMethod(http.MethodGet, o.catalogIconHandler))
 	mux.HandleFunc("/api/olm/lifecycle/{catalogNamespace}/{catalogName}/{packageName}", middleware.AllowMethod(http.MethodGet, o.lifecycleHandler))
@@ -133,19 +131,16 @@ func (o *OLMHandler) catalogItemsHandler(w http.ResponseWriter, r *http.Request)
 }
 
 // catalogItemHandler serves a single catalog item by catalog and package name.
-// An optional operator version path segment selects a specific version of the
-// package; without it, the latest version is served.
 func (o *OLMHandler) catalogItemHandler(w http.ResponseWriter, r *http.Request) {
 	catalogName := r.PathValue("catalogName")
 	packageName := r.PathValue("packageName")
-	version := r.PathValue("version")
 
 	if catalogName == "" || packageName == "" {
 		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: "specify the catalog name and the package name."})
 		return
 	}
 
-	item, err := o.catalogService.GetCatalogItem(catalogName, packageName, version)
+	item, err := o.catalogService.GetCatalogItem(catalogName, packageName)
 	if err != nil {
 		klog.Errorf("failed to get catalog item %s/%s: %v", catalogName, packageName, err)
 		serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: "cannot get the catalog item. Wait for the catalog to finish loading, then try again."})

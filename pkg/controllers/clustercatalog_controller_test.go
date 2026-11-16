@@ -45,7 +45,7 @@ func (m *mockCatalogService) GetCatalogItems() ([]olm.ConsoleCatalogItem, error)
 	return nil, nil
 }
 
-func (m *mockCatalogService) GetCatalogItem(catalogName, packageName, version string) (*olm.ConsoleCatalogItem, error) {
+func (m *mockCatalogService) GetCatalogItem(catalogName, packageName string) (*olm.ConsoleCatalogItem, error) {
 	return nil, nil
 }
 

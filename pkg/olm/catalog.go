@@ -20,28 +20,36 @@ type CachedIcon struct {
 	ETag         string
 }
 
+// ConsoleCatalogChannel lists the versions available in a package channel.
+type ConsoleCatalogChannel struct {
+	Name     string   `json:"name"`
+	Versions []string `json:"versions"`
+}
+
 // ConsoleCatalogItem represents a single item in the catalog.
 type ConsoleCatalogItem struct {
-	ID                     string          `json:"id"`
-	Capabilities           string          `json:"capabilities,omitempty"`
-	Catalog                string          `json:"catalog"`
-	Categories             []string        `json:"categories,omitempty"`
-	CreatedAt              string          `json:"createdAt,omitempty"`
-	Description            string          `json:"description,omitempty"`
-	DisplayName            string          `json:"displayName,omitempty"`
-	HasIcon                bool            `json:"hasIcon"`
-	Image                  string          `json:"image,omitempty"`
-	InfrastructureFeatures []string        `json:"infrastructureFeatures,omitempty"`
-	Keywords               []string        `json:"keywords,omitempty"`
-	MarkdownDescription    string          `json:"markdownDescription,omitempty"`
-	Name                   string          `json:"name"`
-	Provider               string          `json:"provider,omitempty"`
-	Repository             string          `json:"repository,omitempty"`
-	Source                 string          `json:"source,omitempty"`
-	Support                string          `json:"support,omitempty"`
-	ValidSubscription      []string        `json:"validSubscription,omitempty"`
-	Version                string          `json:"version,omitempty"`
-	LifecycleData          json.RawMessage `json:"lifecycleData"`
+	ID                     string                  `json:"id"`
+	Capabilities           string                  `json:"capabilities,omitempty"`
+	Catalog                string                  `json:"catalog"`
+	Categories             []string                `json:"categories,omitempty"`
+	CreatedAt              string                  `json:"createdAt,omitempty"`
+	Description            string                  `json:"description,omitempty"`
+	DisplayName            string                  `json:"displayName,omitempty"`
+	HasIcon                bool                    `json:"hasIcon"`
+	Image                  string                  `json:"image,omitempty"`
+	InfrastructureFeatures []string                `json:"infrastructureFeatures,omitempty"`
+	Keywords               []string                `json:"keywords,omitempty"`
+	MarkdownDescription    string                  `json:"markdownDescription,omitempty"`
+	Name                   string                  `json:"name"`
+	Provider               string                  `json:"provider,omitempty"`
+	Repository             string                  `json:"repository,omitempty"`
+	Source                 string                  `json:"source,omitempty"`
+	Support                string                  `json:"support,omitempty"`
+	ValidSubscription      []string                `json:"validSubscription,omitempty"`
+	Version                string                  `json:"version,omitempty"`
+	LifecycleData          json.RawMessage         `json:"lifecycleData"`
+	Channels               []ConsoleCatalogChannel `json:"channels"`
+	Versions               []string                `json:"versions"`
 }
 
 // TransformCatalog transforms the raw catalog data into a list of CatalogItems.
@@ -66,24 +74,6 @@ func CreateConsoleCatalog(catalogName string, packages []*declcfg.Package, bundl
 		}
 		item.Catalog = catalogName
 		catalogItems = append(catalogItems, *item)
-	}
-	return catalogItems
-}
-
-// CreateVersionedConsoleCatalog creates one catalog item for every bundle
-// (operator version) of each package, unlike CreateConsoleCatalog which only
-// creates an item for the latest bundle of a package.
-func CreateVersionedConsoleCatalog(catalogName string, packages []*declcfg.Package, bundlesByPackage map[string][]*declcfg.Bundle) []ConsoleCatalogItem {
-	catalogItems := []ConsoleCatalogItem{}
-
-	for _, pkg := range packages {
-		for _, bundle := range bundlesByPackage[pkg.Name] {
-			item := CreateCatalogItem(catalogName, pkg, bundle)
-			if item == nil {
-				continue
-			}
-			catalogItems = append(catalogItems, *item)
-		}
 	}
 	return catalogItems
 }
