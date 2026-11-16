@@ -125,8 +125,8 @@ test.describe('Deployment form view', { tag: ['@dev-console', '@smoke'] }, () =>
 
       await test.step('Fill deployment form', async () => {
         await deploymentPage.navigateToCreateForm(ns);
-        await deploymentPage.fillName(deploymentName);
         await deploymentPage.selectStrategy(strategyName);
+        await deploymentPage.fillName(deploymentName);
         await deploymentPage.fillImage(
           'image-registry.openshift-image-registry.svc:5000/openshift/httpd:latest',
         );
@@ -136,6 +136,13 @@ test.describe('Deployment form view', { tag: ['@dev-console', '@smoke'] }, () =>
         await deploymentPage.create();
         await detailsPage.waitForPageLoad();
         await expect(detailsPage.title).toContainText(deploymentName);
+
+        const deployment = await k8sClient.appsV1Api.readNamespacedDeployment({
+          name: deploymentName,
+          namespace: ns,
+        });
+        // Strategy labels are the API type names with spaces, e.g. "Rolling Update".
+        expect(deployment.spec?.strategy?.type).toBe(strategyName.replace(/\s+/g, ''));
       });
     });
   }
