@@ -1,7 +1,7 @@
-import { getSchemaType } from '@rjsf/core/dist/cjs/utils';
-import { JSONSchema7 } from 'json-schema';
+import { getSchemaType } from '@rjsf/utils';
+import type { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
-import { getSchemaAtPath } from '@console/shared';
+import { getSchemaAtPath } from '@console/shared/src/utils/utils';
 import {
   ARRAY_COMPATIBLE_CAPABILITIES,
   DEPRECATED_CAPABILITIES,
@@ -13,7 +13,8 @@ import {
   COMMON_COMPATIBLE_CAPABILITIES,
   CAPABILITY_SORT_ORDER,
 } from './const';
-import { Descriptor, SpecCapability, StatusCapability, CommonCapability } from './types';
+import type { Descriptor, SpecCapability, StatusCapability } from './types';
+import { CommonCapability } from './types';
 
 export const useCalculatedDescriptorProperties = (descriptorType, descriptor, schema, obj) => {
   const propertySchema = getSchemaAtPath(schema, `${descriptorType}.${descriptor.path}`);
@@ -133,7 +134,7 @@ const getCompatibleCapabilities = (type: string): (StatusCapability | SpecCapabi
 // Given type and descriptor, return a list of non-deprecated x-descriptors compatible with type.
 // Deprecated and incompatible x-descriptors are logged as warnings in console. If
 // 'allowDeprecated' is true, deprecated x-descriptors are logged but still returned as valid.
-export function getValidCapabilitiesForDataType<CapabilityType extends string = SpecCapability>(
+function getValidCapabilitiesForDataType<CapabilityType extends string = SpecCapability>(
   descriptor: Descriptor<CapabilityType>,
   type: string,
 ): CapabilityType[] {
@@ -202,7 +203,10 @@ export function getValidCapabilitiesForSchema<CapabilityType extends string = Sp
   schema: JSONSchema7,
 ): CapabilityType[] {
   const type = getSchemaType(schema);
-  return getValidCapabilitiesForDataType<CapabilityType>(descriptor, type);
+  return getValidCapabilitiesForDataType<CapabilityType>(
+    descriptor,
+    Array.isArray(type) ? type[0] : type,
+  );
 }
 
 export const isMainStatusDescriptor = (descriptor: Descriptor): boolean =>
