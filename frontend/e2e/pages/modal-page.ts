@@ -24,8 +24,8 @@ export class ModalPage extends BasePage {
     await expect(this.cancelButton).toBeVisible({ timeout: 20_000 });
   }
 
-  async waitForClosed(): Promise<void> {
-    await expect(this.cancelButton).not.toBeAttached({ timeout: 30_000 });
+  async waitForClosed(timeout = 30_000): Promise<void> {
+    await expect(this.cancelButton).not.toBeAttached({ timeout });
   }
 
   async submit(): Promise<void> {
