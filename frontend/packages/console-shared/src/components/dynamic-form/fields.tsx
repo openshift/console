@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, ReactNode } from 'react';
+import { useCallback, useState } from 'react';
 import {
   AccordionContent,
   AccordionItem,
@@ -8,15 +9,18 @@ import {
   DescriptionListGroup,
   DescriptionListTerm,
 } from '@patternfly/react-core';
-import { FieldProps, UiSchema } from '@rjsf/core';
-import SchemaField, { SchemaFieldProps } from '@rjsf/core/dist/cjs/components/fields/SchemaField';
-import { retrieveSchema, getUiOptions } from '@rjsf/core/dist/cjs/utils';
-import classNames from 'classnames';
-import { JSONSchema7 } from 'json-schema';
+import { css } from '@patternfly/react-styles';
+import { getDefaultRegistry } from '@rjsf/core';
+import type { FieldPathId, FieldProps, UiSchema } from '@rjsf/utils';
+import { getUiOptions } from '@rjsf/utils';
+import type { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { ConfigureUpdateStrategy } from '@console/internal/components/modals/configure-update-strategy-modal';
-import { LinkifyExternal, SelectorInput, Dropdown } from '@console/internal/components/utils';
+import type { ConsoleSelectProps } from '@console/internal/components/utils/console-select';
+import { ConsoleSelect } from '@console/internal/components/utils/console-select';
+import { LinkifyExternal } from '@console/internal/components/utils/link';
+import { SelectorInput } from '@console/internal/components/utils/selector-input';
 import {
   NodeAffinity,
   PodAffinity,
@@ -24,6 +28,11 @@ import {
 import { MatchExpressions } from '@console/operator-lifecycle-manager/src/components/descriptors/spec/match-expressions';
 import { ResourceRequirements } from '@console/operator-lifecycle-manager/src/components/descriptors/spec/resource-requirements';
 import { hasNoFields, useSchemaDescription, useSchemaLabel } from './utils';
+
+const { SchemaField } = getDefaultRegistry().fields;
+
+const updateField = (onChange: FieldProps['onChange'], fieldPathId: FieldPathId, value: unknown) =>
+  onChange(value, fieldPathId.path);
 
 const Description = ({ id, description }) =>
   description ? (
@@ -34,11 +43,11 @@ const Description = ({ id, description }) =>
     </span>
   ) : null;
 
-export const DescriptionField: React.FC<FieldProps> = ({ id, description }) => (
+const DescriptionField: FC<FieldProps> = ({ id, description }) => (
   <Description id={id} description={description} />
 );
 
-export const FormField: React.FC<FormFieldProps> = ({
+export const FormField: FC<FormFieldProps> = ({
   children,
   id,
   defaultLabel,
@@ -46,16 +55,12 @@ export const FormField: React.FC<FormFieldProps> = ({
   schema,
   uiSchema,
 }) => {
-  const { t } = useTranslation();
-  const [showLabel, label] = useSchemaLabel(
-    schema,
-    uiSchema,
-    defaultLabel || t('console-shared~Value'),
-  );
+  const { t } = useTranslation('console-shared');
+  const [showLabel, label] = useSchemaLabel(schema, uiSchema, defaultLabel || t('Value'));
   return (
     <div id={`${id}_field`} className="form-group">
       {showLabel && label && (
-        <label className={classNames('form-label', { 'co-required': required })} htmlFor={id}>
+        <label className={css('form-label', { 'co-required': required })} htmlFor={id}>
           {label}
         </label>
       )}
@@ -64,15 +69,15 @@ export const FormField: React.FC<FormFieldProps> = ({
   );
 };
 
-export const FieldSet: React.FC<FieldSetProps> = ({
+export const FieldSet: FC<FieldSetProps> = ({
   children,
   defaultLabel,
-  idSchema,
+  fieldPathId,
   required = false,
   schema,
   uiSchema,
 }) => {
-  const [expanded, setExpanded] = React.useState(false);
+  const [expanded, setExpanded] = useState(false);
   const [showLabel, label] = useSchemaLabel(schema, uiSchema, defaultLabel);
   const description = useSchemaDescription(schema, uiSchema);
   const onToggle = (e) => {
@@ -80,20 +85,24 @@ export const FieldSet: React.FC<FieldSetProps> = ({
     setExpanded((current) => !current);
   };
   return showLabel && label ? (
-    <div id={`${idSchema.$id}_field-group`} className="form-group co-dynamic-form__field-group">
+    <div
+      id={`${fieldPathId.$id}_field-group`}
+      className="form-group co-dynamic-form__field-group"
+      data-test="dynamic-form-field-group"
+    >
       <AccordionItem isExpanded={expanded}>
-        <AccordionToggle id={`${idSchema.$id}_accordion-toggle`} onClick={onToggle}>
+        <AccordionToggle id={`${fieldPathId.$id}_accordion-toggle`} onClick={onToggle}>
           <label
-            className={classNames({ 'co-required': required })}
-            htmlFor={`${idSchema.$id}_accordion-content`}
+            className={css({ 'co-required': required })}
+            htmlFor={`${fieldPathId.$id}_accordion-content`}
           >
             {label}
           </label>
         </AccordionToggle>
         {description && (
-          <Description id={`${idSchema.$id}_description`} description={description} />
+          <Description id={`${fieldPathId.$id}_description`} description={description} />
         )}
-        <AccordionContent id={`${idSchema.$id}_accordion-content`}>{children}</AccordionContent>
+        <AccordionContent id={`${fieldPathId.$id}_accordion-content`}>{children}</AccordionContent>
       </AccordionItem>
     </div>
   ) : (
@@ -101,56 +110,88 @@ export const FieldSet: React.FC<FieldSetProps> = ({
   );
 };
 
-export const ResourceRequirementsField: React.FC<FieldProps> = ({
+export const ResourceRequirementsField: FC<FieldProps> = ({
   formData,
-  idSchema,
+  fieldPathId,
   name,
   onChange,
   required,
   schema,
   uiSchema,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
+  const onChangeLimitsCPU = useCallback(
+    (cpu: string) =>
+      updateField(onChange, fieldPathId, _.set(_.cloneDeep(formData), 'limits.cpu', cpu)),
+    [onChange, fieldPathId, formData],
+  );
+  const onChangeLimitsMemory = useCallback(
+    (memory: string) =>
+      updateField(onChange, fieldPathId, _.set(_.cloneDeep(formData), 'limits.memory', memory)),
+    [onChange, fieldPathId, formData],
+  );
+  const onChangeLimitsStorage = useCallback(
+    (storage: string) =>
+      updateField(
+        onChange,
+        fieldPathId,
+        _.set(_.cloneDeep(formData), 'limits.ephemeral-storage', storage),
+      ),
+    [onChange, fieldPathId, formData],
+  );
+  const onChangeRequestsCPU = useCallback(
+    (cpu: string) =>
+      updateField(onChange, fieldPathId, _.set(_.cloneDeep(formData), 'requests.cpu', cpu)),
+    [onChange, fieldPathId, formData],
+  );
+  const onChangeRequestsMemory = useCallback(
+    (memory: string) =>
+      updateField(onChange, fieldPathId, _.set(_.cloneDeep(formData), 'requests.memory', memory)),
+    [onChange, fieldPathId, formData],
+  );
+  const onChangeRequestsStorage = useCallback(
+    (storage: string) =>
+      updateField(
+        onChange,
+        fieldPathId,
+        _.set(_.cloneDeep(formData), 'requests.ephemeral-storage', storage),
+      ),
+    [onChange, fieldPathId, formData],
+  );
   return (
     <FieldSet
-      defaultLabel={name || t('console-shared~Resource requirements')}
-      idSchema={idSchema}
+      defaultLabel={name || t('Resource requirements')}
+      fieldPathId={fieldPathId}
       required={required}
       schema={schema}
       uiSchema={uiSchema}
     >
-      <DescriptionList id={idSchema.$id}>
+      <DescriptionList id={fieldPathId.$id}>
         <DescriptionListGroup>
-          <DescriptionListTerm>{t('console-shared~Limits')}</DescriptionListTerm>
+          <DescriptionListTerm>{t('Limits')}</DescriptionListTerm>
           <DescriptionListDescription>
             <ResourceRequirements
               cpu={formData?.limits?.cpu || ''}
               memory={formData?.limits?.memory || ''}
               storage={formData?.limits?.['ephemeral-storage'] || ''}
-              onChangeCPU={(cpu) => onChange(_.set(_.cloneDeep(formData), 'limits.cpu', cpu))}
-              onChangeMemory={(mem) => onChange(_.set(_.cloneDeep(formData), 'limits.memory', mem))}
-              onChangeStorage={(sto) =>
-                onChange(_.set(_.cloneDeep(formData), 'limits.ephemeral-storage', sto))
-              }
-              path={`${idSchema.$id}.limits`}
+              onChangeCPU={onChangeLimitsCPU}
+              onChangeMemory={onChangeLimitsMemory}
+              onChangeStorage={onChangeLimitsStorage}
+              path={`${fieldPathId.$id}.limits`}
             />
           </DescriptionListDescription>
         </DescriptionListGroup>
         <DescriptionListGroup>
-          <DescriptionListTerm>{t('console-shared~Requests')}</DescriptionListTerm>
+          <DescriptionListTerm>{t('Requests')}</DescriptionListTerm>
           <DescriptionListDescription>
             <ResourceRequirements
               cpu={formData?.requests?.cpu || ''}
               memory={formData?.requests?.memory || ''}
               storage={formData?.requests?.['ephemeral-storage'] || ''}
-              onChangeCPU={(cpu) => onChange(_.set(_.cloneDeep(formData), 'requests.cpu', cpu))}
-              onChangeMemory={(mem) =>
-                onChange(_.set(_.cloneDeep(formData), 'requests.memory', mem))
-              }
-              onChangeStorage={(sto) =>
-                onChange(_.set(_.cloneDeep(formData), 'requests.ephemeral-storage', sto))
-              }
-              path={`${idSchema.$id}.requests`}
+              onChangeCPU={onChangeRequestsCPU}
+              onChangeMemory={onChangeRequestsMemory}
+              onChangeStorage={onChangeRequestsStorage}
+              path={`${fieldPathId.$id}.requests`}
             />
           </DescriptionListDescription>
         </DescriptionListGroup>
@@ -159,132 +200,142 @@ export const ResourceRequirementsField: React.FC<FieldProps> = ({
   );
 };
 
-export const UpdateStrategyField: React.FC<FieldProps> = ({
+export const UpdateStrategyField: FC<FieldProps> = ({
   formData,
-  idSchema,
+  fieldPathId,
   name,
   onChange,
   required,
   schema,
   uiSchema,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   const description = useSchemaDescription(
     schema,
     uiSchema,
-    t('public~How should the pods be replaced when a new revision is created?'),
+    t('How should the pods be replaced when a new revision is created?'),
   );
   return (
     <FormField
-      defaultLabel={name || t('console-shared~Update strategy')}
-      id={idSchema.$id}
+      defaultLabel={name || t('Update strategy')}
+      id={fieldPathId.$id}
       required={required}
       schema={schema}
       uiSchema={uiSchema}
     >
-      <Description description={description} id={idSchema.$id} />
+      <Description description={description} id={fieldPathId.$id} />
       <ConfigureUpdateStrategy
         showDescription={false}
         strategyType={formData?.type || 'RollingUpdate'}
         maxUnavailable={formData?.rollingUpdate?.maxUnavailable || ''}
         maxSurge={formData?.rollingUpdate?.maxSurge || ''}
-        onChangeStrategyType={(type) => onChange(_.set(_.cloneDeep(formData), 'type', type))}
+        onChangeStrategyType={(type) =>
+          updateField(onChange, fieldPathId, _.set(_.cloneDeep(formData), 'type', type))
+        }
         onChangeMaxUnavailable={(maxUnavailable) =>
-          onChange(_.set(_.cloneDeep(formData), 'rollingUpdate.maxUnavailable', maxUnavailable))
+          updateField(
+            onChange,
+            fieldPathId,
+            _.set(_.cloneDeep(formData), 'rollingUpdate.maxUnavailable', maxUnavailable),
+          )
         }
         onChangeMaxSurge={(maxSurge) =>
-          onChange(_.set(_.cloneDeep(formData), 'rollingUpdate.maxSurge', maxSurge))
+          updateField(
+            onChange,
+            fieldPathId,
+            _.set(_.cloneDeep(formData), 'rollingUpdate.maxSurge', maxSurge),
+          )
         }
         replicas={1}
-        uid={idSchema.$id}
+        uid={fieldPathId.$id}
       />
     </FormField>
   );
 };
 
-export const NodeAffinityField: React.FC<FieldProps> = ({
+export const NodeAffinityField: FC<FieldProps> = ({
   formData,
-  idSchema,
+  fieldPathId,
   name,
   onChange,
   required,
   schema,
   uiSchema,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   return (
     <FieldSet
-      defaultLabel={name || t('console-shared~Node affinity')}
-      idSchema={idSchema}
+      defaultLabel={name || t('Node affinity')}
+      fieldPathId={fieldPathId}
       required={required}
       schema={schema}
       uiSchema={uiSchema}
     >
       <NodeAffinity
         affinity={formData}
-        onChange={(affinity) => onChange(affinity)}
-        uid={idSchema.$id}
+        onChange={(affinity) => updateField(onChange, fieldPathId, affinity)}
+        uid={fieldPathId.$id}
       />
     </FieldSet>
   );
 };
-export const PodAffinityField: React.FC<FieldProps> = ({
+export const PodAffinityField: FC<FieldProps> = ({
   formData,
-  idSchema,
+  fieldPathId,
   name,
   onChange,
   required,
   schema,
   uiSchema,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   return (
     <FieldSet
-      defaultLabel={name || t('console-shared~Pod affinity')}
-      idSchema={idSchema}
+      defaultLabel={name || t('Pod affinity')}
+      fieldPathId={fieldPathId}
       required={required}
       schema={schema}
       uiSchema={uiSchema}
     >
       <PodAffinity
         affinity={formData}
-        onChange={(affinity) => onChange(affinity)}
-        uid={idSchema.$id}
+        onChange={(affinity) => updateField(onChange, fieldPathId, affinity)}
+        uid={fieldPathId.$id}
       />
     </FieldSet>
   );
 };
 
-export const MatchExpressionsField: React.FC<FieldProps> = ({
+const MatchExpressionsField: FC<FieldProps> = ({
   formData,
-  idSchema,
+  fieldPathId,
   name,
   onChange,
   required,
   schema,
   uiSchema,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   return (
     <FieldSet
-      defaultLabel={name || t('console-shared~Expressions')}
-      idSchema={idSchema}
+      defaultLabel={name || t('Expressions')}
+      fieldPathId={fieldPathId}
       required={required}
       schema={schema}
       uiSchema={uiSchema}
     >
       <MatchExpressions
         matchExpressions={formData}
-        onChange={(v) => onChange(v)}
-        uid={idSchema.$id}
+        onChange={(v) => updateField(onChange, fieldPathId, v)}
+        uid={fieldPathId.$id}
       />
     </FieldSet>
   );
 };
 
-export const LabelsField: React.FC<FieldProps> = ({
+const LabelsField: FC<FieldProps> = ({
   formData,
-  idSchema,
+  fieldPathId,
   name,
   onChange,
   required,
@@ -293,56 +344,59 @@ export const LabelsField: React.FC<FieldProps> = ({
 }) => (
   <FormField
     defaultLabel={name}
-    id={idSchema.$id}
+    id={fieldPathId.$id}
     required={required}
     schema={schema}
     uiSchema={uiSchema}
   >
     <SelectorInput
-      inputProps={{ id: idSchema.$id }}
-      onChange={(newValue) => onChange(SelectorInput.objectify(newValue))}
+      inputProps={{ id: fieldPathId.$id }}
+      onChange={(newValue) => updateField(onChange, fieldPathId, SelectorInput.objectify(newValue))}
       tags={SelectorInput.arrayify(formData)}
     />
   </FormField>
 );
 
-export const DropdownField: React.FC<FieldProps> = ({
+const DropdownField: FC<FieldProps> = ({
   formData,
-  idSchema,
+  fieldPathId,
   name,
   onChange,
   schema,
   uiSchema = {},
 }) => {
-  const { t } = useTranslation();
-  const { items, title } = getUiOptions(uiSchema) as { items?: object; title?: string };
+  const { t } = useTranslation('console-shared');
+  const { items, title } = getUiOptions(uiSchema) as {
+    items?: ConsoleSelectProps['items'];
+    title?: string;
+  };
   return (
-    <Dropdown
-      id={idSchema.$id}
-      key={idSchema.$id}
-      title={t('console-shared~Select {{title}}', { title: title || schema?.title || name })}
+    <ConsoleSelect
+      id={fieldPathId.$id}
+      key={fieldPathId.$id}
+      title={t('Select {{title}}', { title: title || schema?.title || name })}
       selectedKey={formData}
       items={items ?? {}}
-      onChange={(val) => onChange(val)}
+      onChange={(val) => updateField(onChange, fieldPathId, val)}
     />
   );
 };
 
-export const CustomSchemaField: React.FC<SchemaFieldProps> = (props) => {
+const CustomSchemaField: FC<FieldProps> = (props) => {
   // If the provided schema will not generate any form field elements, return null.
   // To check that, it's required to resolving definition references ($ref) in the
   // JSON schema as it is implemented in the origin SchemaField:
   // https://github.com/rjsf-team/react-jsonschema-form/blob/v2.5.1/packages/core/src/components/fields/SchemaField.js#L226-L244
   const {
     schema: fieldSchema,
-    registry: { rootSchema },
+    registry: { schemaUtils },
     formData,
     uiSchema,
   } = props;
 
   let resolvedSchema = fieldSchema;
   try {
-    resolvedSchema = retrieveSchema(fieldSchema, rootSchema, formData);
+    resolvedSchema = schemaUtils.retrieveSchema(fieldSchema, formData);
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('dynamic-form CustomSchemaField retrieveSchema error:', error);
@@ -355,7 +409,7 @@ export const CustomSchemaField: React.FC<SchemaFieldProps> = (props) => {
   return <SchemaField {...props} />;
 };
 
-export const NullField = () => null;
+const NullField = () => null;
 
 export default {
   DescriptionField,
@@ -376,8 +430,10 @@ type FormFieldProps = {
   required: boolean;
   schema: JSONSchema7;
   uiSchema: UiSchema;
+  children?: ReactNode;
 };
 
-type FieldSetProps = Pick<FieldProps, 'idSchema' | 'required' | 'schema' | 'uiSchema'> & {
+type FieldSetProps = Pick<FieldProps, 'fieldPathId' | 'required' | 'schema' | 'uiSchema'> & {
   defaultLabel?: string;
+  children?: ReactNode;
 };

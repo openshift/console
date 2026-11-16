@@ -1,18 +1,25 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { createContext, useContext } from 'react';
 import { Button, Alert, Divider, FormHelperText } from '@patternfly/react-core';
-import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
-import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
-import { ArrayFieldTemplateProps, FieldTemplateProps, ObjectFieldTemplateProps } from '@rjsf/core';
-import { getUiOptions, getSchemaType } from '@rjsf/core/dist/cjs/utils';
+import { RhUiMinusCircleIcon, RhUiAddCircleFillIcon } from '@patternfly/react-icons';
+import type {
+  ArrayFieldTemplateProps,
+  ArrayFieldItemTemplateProps,
+  FieldTemplateProps,
+  ObjectFieldTemplateProps,
+} from '@rjsf/utils';
+import { getUiOptions, getSchemaType } from '@rjsf/utils';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { ExpandCollapse } from '@console/internal/components/utils';
+import { ExpandCollapse } from '@console/internal/components/utils/expand-collapse';
 import { JSON_SCHEMA_GROUP_TYPES } from './const';
 import { FieldSet, FormField } from './fields';
-import { UiSchemaOptionsWithDependency } from './types';
+import type { UiSchemaOptionsWithDependency } from './types';
 import { useSchemaLabel } from './utils';
 
-export const AtomicFieldTemplate: React.FC<FieldTemplateProps> = ({
+const ArrayFieldLabelContext = createContext<string | undefined>(undefined);
+
+const AtomicFieldTemplate: FC<FieldTemplateProps> = ({
   children,
   id,
   label,
@@ -21,62 +28,54 @@ export const AtomicFieldTemplate: React.FC<FieldTemplateProps> = ({
   required,
   schema,
   uiSchema,
-}) => {
-  return (
-    <FormField id={id} defaultLabel={label} required={required} schema={schema} uiSchema={uiSchema}>
-      {children}
-      {description}
-      {!_.isEmpty(rawErrors) && (
-        <>
-          {_.map(rawErrors, (error) => (
-            <FormHelperText key={error}>{_.capitalize(error)}</FormHelperText>
-          ))}
-        </>
-      )}
-    </FormField>
-  );
-};
+}) => (
+  <FormField id={id} defaultLabel={label} required={required} schema={schema} uiSchema={uiSchema}>
+    {children}
+    {description}
+    {!_.isEmpty(rawErrors) && (
+      <>
+        {_.map(rawErrors, (error) => (
+          <FormHelperText key={error}>{_.capitalize(error)}</FormHelperText>
+        ))}
+      </>
+    )}
+  </FormField>
+);
 
-const AdvancedProperties: React.FC<Pick<ObjectFieldTemplateProps, 'properties'>> = ({
-  properties,
-}) => {
-  const { t } = useTranslation();
+const AdvancedProperties: FC<Pick<ObjectFieldTemplateProps, 'properties'>> = ({ properties }) => {
+  const { t } = useTranslation('console-shared');
   return (
     <ExpandCollapse
-      textCollapsed={t('console-shared~Advanced configuration')}
-      textExpanded={t('console-shared~Advanced configuration')}
+      textCollapsed={t('Advanced configuration')}
+      textExpanded={t('Advanced configuration')}
     >
       {_.map(properties, (property) => property.content)}
     </ExpandCollapse>
   );
 };
-export const FieldTemplate: React.FC<FieldTemplateProps> = (props) => {
-  const { hidden, schema = {}, children, uiSchema = {}, formContext = {} } = props;
+export const FieldTemplate: FC<FieldTemplateProps> = (props) => {
+  const { hidden, schema = {}, children, uiSchema = {}, registry } = props;
+  const { formContext = {} } = registry;
   const type = getSchemaType(schema);
-  const [dependencyMet, setDependencyMet] = React.useState(true);
-  React.useEffect(() => {
-    const { dependency } = getUiOptions(uiSchema ?? {}) as UiSchemaOptionsWithDependency; // Type defs for this function are awful
-    if (dependency) {
-      setDependencyMet(
-        dependency?.controlFieldValue ===
-          _.get(
-            formContext.formData ?? {},
-            ['spec', ...(dependency?.controlFieldPath ?? [])],
-            '',
-          ).toString(),
-      );
-    }
-  }, [uiSchema, formContext]);
+  const { dependency } = getUiOptions(uiSchema ?? {}) as UiSchemaOptionsWithDependency;
+  const dependencyMet =
+    !dependency ||
+    dependency.controlFieldValue ===
+      _.get(
+        formContext.formData ?? {},
+        ['spec', ...(dependency.controlFieldPath ?? [])],
+        '',
+      ).toString();
 
   if (hidden || !dependencyMet) {
     return null;
   }
-  const isGroup = JSON_SCHEMA_GROUP_TYPES.includes(type);
+  const isGroup = JSON_SCHEMA_GROUP_TYPES.includes(Array.isArray(type) ? type[0] : type);
   return isGroup ? children : <AtomicFieldTemplate {...props} />;
 };
 
-export const ObjectFieldTemplate: React.FC<ObjectFieldTemplateProps> = ({
-  idSchema,
+export const ObjectFieldTemplate: FC<ObjectFieldTemplateProps> = ({
+  fieldPathId,
   properties,
   required,
   schema,
@@ -90,7 +89,7 @@ export const ObjectFieldTemplate: React.FC<ObjectFieldTemplateProps> = ({
   return properties?.length ? (
     <FieldSet
       defaultLabel={title}
-      idSchema={idSchema}
+      fieldPathId={fieldPathId}
       required={required}
       schema={schema}
       uiSchema={uiSchema}
@@ -103,8 +102,8 @@ export const ObjectFieldTemplate: React.FC<ObjectFieldTemplateProps> = ({
   ) : null;
 };
 
-export const ArrayFieldTemplate: React.FC<ArrayFieldTemplateProps> = ({
-  idSchema,
+export const ArrayFieldTemplate: FC<ArrayFieldTemplateProps> = ({
+  fieldPathId,
   items,
   onAddClick,
   required,
@@ -112,62 +111,75 @@ export const ArrayFieldTemplate: React.FC<ArrayFieldTemplateProps> = ({
   title,
   uiSchema,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   const [, label] = useSchemaLabel(schema, uiSchema, title ?? 'Items');
   return (
     <FieldSet
       defaultLabel={label}
-      idSchema={idSchema}
+      fieldPathId={fieldPathId}
       required={required}
       schema={schema}
       uiSchema={uiSchema}
     >
-      {_.map(items ?? [], (item) => {
-        return (
-          <div className="co-dynamic-form__array-field-group-item" key={item.key}>
-            {item.index > 0 && <Divider className="co-divider" />}
-            {item.hasRemove && (
-              <div className="co-dynamic-form__array-field-group-remove">
-                <Button
-                  icon={<MinusCircleIcon className="co-icon-space-r" />}
-                  id={`${item.key}_remove-btn`}
-                  type="button"
-                  onClick={item.onDropIndexClick(item.index)}
-                  variant="link"
-                >
-                  {t('console-shared~Remove {{singularLabel}}', { singularLabel: label })}
-                </Button>
-              </div>
-            )}
-            {item.children}
-          </div>
-        );
-      })}
+      <ArrayFieldLabelContext.Provider value={label}>{items}</ArrayFieldLabelContext.Provider>
       <div>
         <Button
-          icon={<PlusCircleIcon className="co-icon-space-r" />}
-          id={`${idSchema.$id}_add-btn`}
+          icon={<RhUiAddCircleFillIcon className="co-icon-space-r" />}
+          id={`${fieldPathId.$id}_add-btn`}
           type="button"
           onClick={onAddClick}
           variant="link"
         >
-          {t('console-shared~Add {{singularLabel}}', { singularLabel: label })}
+          {t('Add {{singularLabel}}', { singularLabel: label })}
         </Button>
       </div>
     </FieldSet>
   );
 };
 
-export const ErrorTemplate: React.FC<{ errors: string[] }> = ({ errors }) => {
-  const { t } = useTranslation();
+export const ArrayFieldItemTemplate: FC<ArrayFieldItemTemplateProps> = ({
+  buttonsProps,
+  children,
+  index,
+  itemKey,
+  schema,
+  uiSchema,
+}) => {
+  const { t } = useTranslation('console-shared');
+  const arrayLabel = useContext(ArrayFieldLabelContext);
+  const [, itemLabel] = useSchemaLabel(schema, uiSchema, schema.title ?? 'Items');
+  const label = arrayLabel ?? itemLabel;
+  return (
+    <div className="co-dynamic-form__array-field-group-item">
+      {index > 0 && <Divider className="co-divider" />}
+      {buttonsProps.hasRemove && (
+        <div className="co-dynamic-form__array-field-group-remove">
+          <Button
+            icon={<RhUiMinusCircleIcon className="co-icon-space-r" />}
+            id={`${itemKey}_remove-btn`}
+            type="button"
+            onClick={buttonsProps.onRemoveItem}
+            variant="link"
+          >
+            {t('Remove {{singularLabel}}', { singularLabel: label })}
+          </Button>
+        </div>
+      )}
+      {children}
+    </div>
+  );
+};
+
+export const ErrorTemplate: FC<{ errors: string[] }> = ({ errors }) => {
+  const { t } = useTranslation('console-shared');
   return (
     <Alert
       isInline
       className="co-alert co-break-word co-alert--scrollable"
       variant="danger"
-      title={t('console-shared~Error')}
+      title={t('Error')}
     >
-      {t('console-shared~Fix the following errors:')}
+      {t('Fix the following errors:')}
       <ul>
         {_.map(errors, (error) => (
           <li key={error}>{error}</li>
