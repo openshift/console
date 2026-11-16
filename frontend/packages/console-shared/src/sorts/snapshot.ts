@@ -1,11 +1,18 @@
 import { convertToBaseValue } from '@console/internal/components/utils/units';
 import type {
+  VolumeGroupSnapshotStatus,
   VolumeSnapshotContentKind,
   VolumeSnapshotKind,
   VolumeSnapshotStatus,
 } from '@console/internal/module/k8s';
 
 export const snapshotStatus = ({ status }: { status?: VolumeSnapshotStatus }): string => {
+  const readyToUse = status?.readyToUse;
+  const isError = !!status?.error?.message;
+  return readyToUse ? 'Ready' : isError ? 'Error' : 'Pending';
+};
+
+export const groupSnapshotStatus = ({ status }: { status?: VolumeGroupSnapshotStatus }): string => {
   const readyToUse = status?.readyToUse;
   const isError = !!status?.error?.message;
   return readyToUse ? 'Ready' : isError ? 'Error' : 'Pending';
