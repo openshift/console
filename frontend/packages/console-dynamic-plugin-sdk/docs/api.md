@@ -342,6 +342,7 @@ const PDBList: React.FC<Props> = ({ data, loaded }) => (
 | `additionalResponsiveActions` | (optional) Additional ResponsiveAction props to render inside ResponsiveActions, alongside the built-in column management and reset-column-widths actions. |
 | `additionalToolbarContent` | (optional) Additional content to display in the actions toolbar outside ResponsiveActions. |
 | `selection` | (optional) Enables managed checkbox selection with `getItemId`. `isSelectable` can disable rows. `getBulkActions` receives `matchingSelectedItems`, the selected items matching the current filters, plus `clearSelection` and `deselect` callbacks, and returns table-specific bulk actions as `Action[]`. Console also loads matching resource bulk providers for a single-model Kubernetes resource selection. Selection persists across pages and built-in filters and is removed when items leave `data`. |
+| `NoDataEmptyMsg` | (optional) Component to render when there is no data at all (before filtering). When provided and the `data` array is empty, this component is rendered instead of the table. |
 
 
 
