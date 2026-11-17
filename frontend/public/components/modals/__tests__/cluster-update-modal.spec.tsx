@@ -131,4 +131,38 @@ describe('ClusterUpdateModal paused MachineConfigPools acknowledgement', () => {
     expect(screen.queryByTestId('update-cluster-modal-paused-pools-ack')).toBeNull();
     expect(screen.getByTestId('confirm-action')).toBeEnabled();
   });
+
+  it('disables Full update until MachineConfigPools have loaded', () => {
+    mockUseK8sWatchResource.mockReturnValue([[], false, null]);
+
+    render(<ClusterUpdateModal {...baseProps} />);
+
+    expect(screen.queryByTestId('update-cluster-modal-paused-nodes-warning')).toBeNull();
+    expect(screen.getByTestId('confirm-action')).toBeDisabled();
+  });
+
+  it('requires acknowledgement again when the paused pool set changes after acknowledgement', async () => {
+    const user = userEvent.setup();
+    mockUseK8sWatchResource.mockReturnValue([[masterMCP, pausedWorkerMCP], true, null]);
+
+    const { rerender } = render(<ClusterUpdateModal {...baseProps} />);
+
+    const ackCheckbox = screen.getByTestId('update-cluster-modal-paused-pools-ack');
+    await user.click(ackCheckbox);
+    expect(ackCheckbox).toBeChecked();
+    expect(screen.getByTestId('confirm-action')).toBeEnabled();
+
+    mockUseK8sWatchResource.mockReturnValue([
+      [masterMCP, pausedWorkerMCP, pausedCustomMCP],
+      true,
+      null,
+    ]);
+    rerender(<ClusterUpdateModal {...baseProps} />);
+
+    expect(screen.getByTestId('update-cluster-modal-paused-pools-ack')).not.toBeChecked();
+    expect(screen.getByTestId('confirm-action')).toBeDisabled();
+    expect(screen.getByTestId('update-cluster-modal-paused-nodes-warning')).toHaveTextContent(
+      'infra',
+    );
+  });
 });

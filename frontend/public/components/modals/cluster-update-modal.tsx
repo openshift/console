@@ -88,7 +88,9 @@ export const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
   );
   const [upgradeType, setUpgradeType] = useState<UpgradeTypes>(UpgradeTypes.Full);
   const [includeNotRecommended, setIncludeNotRecommended] = useState(false);
-  const [pausedPoolsAcknowledged, setPausedPoolsAcknowledged] = useState(false);
+  // Store the paused pool names that were acknowledged so a later watch change
+  // invalidates the acknowledgement if the paused set changes.
+  const [acknowledgedPausedPoolNames, setAcknowledgedPausedPoolNames] = useState('');
   const { t } = useTranslation('public');
   const isLightspeedAvailable = useFlag('LIGHTSPEED_PLUGIN');
 
@@ -100,7 +102,7 @@ export const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
     setUpgradeType(value);
     // Acknowledgement only applies to Full + paused pools; clear when leaving Full.
     if (value !== UpgradeTypes.Full) {
-      setPausedPoolsAcknowledged(false);
+      setAcknowledgedPausedPoolNames('');
     }
   };
   const handleMCPSelectionChange = (event: FormEvent<HTMLInputElement>, checked: boolean) => {
@@ -118,6 +120,8 @@ export const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
     () => pausedMCPs.map((mcp) => mcp.metadata.name).join(', '),
     [pausedMCPs],
   );
+  const pausedPoolsAcknowledged =
+    acknowledgedPausedPoolNames !== '' && acknowledgedPausedPoolNames === pausedPoolNames;
   const requiresPausedPoolsAcknowledgement =
     upgradeType === UpgradeTypes.Full && pausedMCPs.length > 0;
   const desiredRecommendedUpdate = useMemo(
@@ -134,7 +138,10 @@ export const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
   const submit: FormEventHandler<HTMLFormElement> = useCallback(
     (e) => {
       e.preventDefault();
-      if (upgradeType === UpgradeTypes.Full && pausedMCPs.length > 0 && !pausedPoolsAcknowledged) {
+      if (
+        upgradeType === UpgradeTypes.Full &&
+        (!machineConfigPoolsLoaded || (pausedMCPs.length > 0 && !pausedPoolsAcknowledged))
+      ) {
         return;
       }
       if (!desiredRecommendedUpdate && !desiredNotRecommendedUpdate) {
@@ -187,6 +194,7 @@ export const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
       t,
       desiredVersion,
       upgradeType,
+      machineConfigPoolsLoaded,
       pausedMCPs,
       pausedPoolsAcknowledged,
       pauseableMCPs,
@@ -341,7 +349,9 @@ export const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
                       id="update-cluster-modal-paused-pools-ack"
                       data-test="update-cluster-modal-paused-pools-ack"
                       isChecked={pausedPoolsAcknowledged}
-                      onChange={(_event, checked) => setPausedPoolsAcknowledged(checked)}
+                      onChange={(_event, checked) =>
+                        setAcknowledgedPausedPoolNames(checked ? pausedPoolNames : '')
+                      }
                       label={t(
                         'I understand that Full cluster update will resume these paused pools',
                       )}
@@ -431,6 +441,7 @@ export const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
           id="confirm-action"
           isDisabled={
             !desiredVersion ||
+            (upgradeType === UpgradeTypes.Full && !machineConfigPoolsLoaded) ||
             (upgradeType === UpgradeTypes.Partial && machineConfigPoolsToPause.length === 0) ||
             (requiresPausedPoolsAcknowledgement && !pausedPoolsAcknowledged)
           }
