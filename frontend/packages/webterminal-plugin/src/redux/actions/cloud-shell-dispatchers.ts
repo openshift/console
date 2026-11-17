@@ -54,6 +54,8 @@ export const useToggleCloudShellExpanded = (): (() => void) => {
     cancelButtonLabel: t('No'),
     onConfirm: doClose,
     ouiaId: 'WebTerminalCloseConfirmation',
+    // OCPBUGS-63239: collapse PatternFly modal body min-height above Yes/No
+    className: 'co-cloud-shell-close-modal',
   });
 
   return useCallback(() => {
