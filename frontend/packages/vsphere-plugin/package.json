@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@console/dynamic-plugin-sdk": "0.0.0-fixed",
+    "@console/shared": "0.0.0-fixed",
     "formik": "^2.4.5",
     "yup": "^1.7.1"
   },
