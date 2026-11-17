@@ -93,6 +93,35 @@ const registerLegacyPluginEntryCallback = () => {
   );
 };
 
+const settledDynamicPluginLoads = new Set<string>();
+const dynamicPluginLoadListeners = new Set<() => void>();
+
+/**
+ * Checks whether Console has finished its attempt to load the given dynamic plugin.
+ *
+ * This includes attempts that failed before the plugin was added to {@link PluginStore},
+ * e.g. when the plugin manifest could not be fetched.
+ */
+export const isDynamicPluginLoadSettled = (pluginName: string) =>
+  settledDynamicPluginLoads.has(pluginName);
+
+/**
+ * Subscribes to finished dynamic plugin load attempts.
+ *
+ * @returns function that removes the listener
+ */
+export const subscribeToDynamicPluginLoads = (listener: () => void) => {
+  dynamicPluginLoadListeners.add(listener);
+  return () => {
+    dynamicPluginLoadListeners.delete(listener);
+  };
+};
+
+const settleDynamicPluginLoad = (pluginName: string) => {
+  settledDynamicPluginLoads.add(pluginName);
+  dynamicPluginLoadListeners.forEach((listener) => listener());
+};
+
 /**
  * Loads and enables all Console dynamic plugins.
  *
@@ -117,12 +146,12 @@ export const initConsolePlugins = _.once((pluginStore: PluginStore) => {
     })
     .then(() => {
       // Load all dynamic (remote) plugins
-      dynamicPluginNames.forEach((pluginName) => {
+      dynamicPluginNames.forEach((pluginName) =>
         loadAndEnablePlugin(pluginName, pluginStore, (errorMessage, errorCause) => {
           console.error(..._.compact([errorMessage, errorCause]));
           addTestError(`${errorMessage}: ${String(errorCause)}`);
-        });
-      });
+        }).finally(() => settleDynamicPluginLoad(pluginName)),
+      );
     })
     .catch((err) => {
       console.error('Error while loading Console plugins', err);

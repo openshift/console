@@ -1,13 +1,13 @@
 import type { FC } from 'react';
-import { useState, useEffect, useMemo, Suspense } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { PageSection } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { Route, Routes, Navigate, useParams, useLocation, matchRoutes } from 'react-router';
+import { usePluginFlagsSettled } from '@console/app/src/hooks/usePluginFlagsSettled';
 import { usePluginRoutes } from '@console/app/src/hooks/usePluginRoutes';
 import type { Perspective } from '@console/dynamic-plugin-sdk';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { getReferenceForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s';
-import { usePluginInfo } from '@console/plugin-sdk/src/api/usePluginInfo';
 import { ErrorBoundaryPage } from '@console/shared/src/components/error/fallbacks/ErrorBoundaryPage';
 import { FLAGS } from '@console/shared/src/constants/common';
 import {
@@ -148,15 +148,21 @@ const HorizontalPodRedirect = () => {
   return <Navigate to={`/k8s/ns/${ns}/${HorizontalPodAutoscalerModel.plural}/${name}`} replace />;
 };
 
+const NotFoundRoute: FC = () => {
+  const pluginRoutesSettled = usePluginFlagsSettled();
+
+  return pluginRoutesSettled ? (
+    <AsyncComponent
+      loader={() => import('./error' /* webpackChunkName: "error" */).then((m) => m.ErrorPage404)}
+    />
+  ) : (
+    <LoadingBox blame="AppContents" />
+  );
+};
+
 const AppContents: FC = () => {
-  const pluginInfoEntries = usePluginInfo();
   const location = useLocation();
   const [pluginPageRoutes, inactivePluginPageRoutes] = usePluginRoutes();
-
-  const allPluginsProcessed = useMemo(
-    () => pluginInfoEntries.every((i) => i.status !== 'pending'),
-    [pluginInfoEntries],
-  );
 
   const contentRouter = (
     <Routes>
@@ -738,20 +744,7 @@ const AppContents: FC = () => {
       {inactivePluginPageRoutes}
       <Route path="/" element={<DefaultPage />} />
 
-      {allPluginsProcessed ? (
-        <Route
-          path="*"
-          element={
-            <AsyncComponent
-              loader={() =>
-                import('./error' /* webpackChunkName: "error" */).then((m) => m.ErrorPage404)
-              }
-            />
-          }
-        />
-      ) : (
-        <Route element={<LoadingBox blame="AppContents" />} />
-      )}
+      <Route path="*" element={<NotFoundRoute />} />
     </Routes>
   );
 
