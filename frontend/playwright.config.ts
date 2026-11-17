@@ -12,6 +12,9 @@ const baseURL = process.env.WEB_CONSOLE_URL || 'http://localhost:9000';
 
 const hasDeveloper = !!process.env.BRIDGE_HTPASSWD_USERNAME;
 
+// Write artifacts directly to the CI artifact root; local runs fall back to `frontend/test-results`
+const artifactDir = process.env.ARTIFACT_DIR ?? path.resolve(import.meta.dirname, 'test-results');
+
 const packages = [
   'smoke',
   'console',
@@ -46,6 +49,7 @@ const chromeArgs = [
 export default defineConfig({
   testDir: './e2e/tests',
   testMatch: '**/*.spec.ts',
+  outputDir: path.join(artifactDir, 'playwright-test-results'),
   forbidOnly: isCI,
   globalTimeout: Number(process.env.GLOBAL_TIMEOUT_MS) || 0,
   retries: isCI ? 2 : 0,
@@ -56,18 +60,15 @@ export default defineConfig({
         [
           'junit',
           {
-            outputFile: path.resolve(import.meta.dirname, 'test-results', 'junit-results.xml'),
+            outputFile: path.join(artifactDir, 'playwright-standard-junit.xml'),
             includeRetries: true,
           },
         ],
-        [
-          'html',
-          { outputFolder: path.resolve(import.meta.dirname, 'playwright-report'), open: 'never' },
-        ],
+        ['html', { outputFolder: path.join(artifactDir, 'playwright-report'), open: 'never' }],
         [
           './e2e/reporters/prow-junit-reporter.ts',
           {
-            outputFile: path.resolve(import.meta.dirname, 'test-results', 'prow-junit-results.xml'),
+            outputFile: path.join(artifactDir, 'junit-playwright.xml'),
           },
         ],
       ]
