@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { createContext, useContext } from 'react';
 import { Button, Alert, Divider, FormHelperText } from '@patternfly/react-core';
-import { RhUiMinusCircleIcon, RhUiAddCircleFillIcon } from '@patternfly/react-icons';
+import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import type {
   ArrayFieldTemplateProps,
   ArrayFieldItemTemplateProps,
@@ -124,7 +124,7 @@ export const ArrayFieldTemplate: FC<ArrayFieldTemplateProps> = ({
       <ArrayFieldLabelContext.Provider value={label}>{items}</ArrayFieldLabelContext.Provider>
       <div>
         <Button
-          icon={<RhUiAddCircleFillIcon className="co-icon-space-r" />}
+          icon={<PlusCircleIcon className="co-icon-space-r" />}
           id={`${fieldPathId.$id}_add-btn`}
           type="button"
           onClick={onAddClick}
@@ -155,7 +155,7 @@ export const ArrayFieldItemTemplate: FC<ArrayFieldItemTemplateProps> = ({
       {buttonsProps.hasRemove && (
         <div className="co-dynamic-form__array-field-group-remove">
           <Button
-            icon={<RhUiMinusCircleIcon className="co-icon-space-r" />}
+            icon={<MinusCircleIcon className="co-icon-space-r" />}
             id={`${itemKey}_remove-btn`}
             type="button"
             onClick={buttonsProps.onRemoveItem}
