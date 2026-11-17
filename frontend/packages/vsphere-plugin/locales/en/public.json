@@ -1,0 +1,11 @@
+{
+  "Failed to load kubecontrollermanager": "",
+  "Failed to parse cloud provider config {{cm}}": "",
+  "The following content was expected to be defined in the configMap: {{ expectedValues }}": "",
+  "Failed to persist {{secret}}": "",
+  "Failed to patch kubecontrollermanager": "",
+  "Failed to patch cloud provider config": "",
+  "Failed to add taint to nodes": "",
+  "Failed to patch infrastructure spec": "",
+  "Unexpected error": ""
+}
