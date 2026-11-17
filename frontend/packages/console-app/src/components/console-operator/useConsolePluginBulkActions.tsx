@@ -2,17 +2,20 @@ import { useCallback } from 'react';
 import { AlertVariant } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import type { Action } from '@console/dynamic-plugin-sdk/src/extensions/actions';
+import { k8sPatch } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { ConsoleOperatorConfigModel } from '@console/internal/models';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import { k8sPatch } from '@console/internal/module/k8s';
 import { useToast } from '@console/shared/src/components/toast/useToast';
+import { ConsolePluginUserTokenWarning } from '@console/shared/src/components/utils/ConsolePluginWarning';
 import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
+import { useWarningModal } from '@console/shared/src/hooks/useWarningModal';
 import type { ConsolePluginTableRow } from './ConsolePluginsTable';
 
 export const useConsolePluginBulkActions = (consoleOperatorConfig: K8sResourceKind | null) => {
   const { t } = useTranslation('console-app');
   const [handlePromise, inProgress] = usePromiseHandler();
   const toast = useToast();
+  const launchWarningModal = useWarningModal();
 
   return useCallback(
     (selectedPlugins: ConsolePluginTableRow[], onComplete: () => void): Action[] => {
@@ -68,6 +71,28 @@ export const useConsolePluginBulkActions = (consoleOperatorConfig: K8sResourceKi
           });
       };
 
+      const confirmBulkEnable = () => {
+        const userTokenPlugins = selectedPlugins.filter(
+          (plugin) =>
+            !plugin.enabled && plugin.proxies?.some((proxy) => proxy.authorization === 'UserToken'),
+        );
+        if (userTokenPlugins.length === 0) {
+          handleBulkEnable();
+          return;
+        }
+        launchWarningModal({
+          title: t('Enable plugins with user token access?'),
+          confirmButtonLabel: t('Enable'),
+          onConfirm: handleBulkEnable,
+          children: userTokenPlugins.map((plugin) => (
+            <div key={plugin.name}>
+              <p>{plugin.name}</p>
+              <ConsolePluginUserTokenWarning proxies={plugin.proxies} />
+            </div>
+          )),
+        });
+      };
+
       return [
         {
           id: 'enable-plugins',
@@ -76,7 +101,7 @@ export const useConsolePluginBulkActions = (consoleOperatorConfig: K8sResourceKi
             count: enableableCount,
           }),
           disabled: inProgress || !consoleOperatorConfig || enableableCount === 0,
-          cta: handleBulkEnable,
+          cta: confirmBulkEnable,
         },
         {
           id: 'disable-plugins',
@@ -89,6 +114,6 @@ export const useConsolePluginBulkActions = (consoleOperatorConfig: K8sResourceKi
         },
       ];
     },
-    [consoleOperatorConfig, handlePromise, inProgress, toast, t],
+    [consoleOperatorConfig, handlePromise, inProgress, launchWarningModal, toast, t],
   );
 };
