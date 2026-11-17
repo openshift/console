@@ -3,6 +3,7 @@ import { useState, useCallback, useMemo, Fragment } from 'react';
 import {
   Alert,
   Button,
+  Checkbox,
   Content,
   ContentVariants,
   Form,
@@ -54,7 +55,7 @@ enum UpgradeTypes {
   Partial = 'Partial',
 }
 
-const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
+export const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
   const { cancel, close, cv } = props;
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
   const clusterUpgradeableFalse = !!getConditionUpgradeableFalse(cv);
@@ -87,6 +88,7 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
   );
   const [upgradeType, setUpgradeType] = useState<UpgradeTypes>(UpgradeTypes.Full);
   const [includeNotRecommended, setIncludeNotRecommended] = useState(false);
+  const [pausedPoolsAcknowledged, setPausedPoolsAcknowledged] = useState(false);
   const { t } = useTranslation('public');
   const isLightspeedAvailable = useFlag('LIGHTSPEED_PLUGIN');
 
@@ -96,6 +98,10 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
   };
   const handleUpgradeTypeChange = (value: typeof upgradeType) => {
     setUpgradeType(value);
+    // Acknowledgement only applies to Full + paused pools; clear when leaving Full.
+    if (value !== UpgradeTypes.Full) {
+      setPausedPoolsAcknowledged(false);
+    }
   };
   const handleMCPSelectionChange = (event: FormEvent<HTMLInputElement>, checked: boolean) => {
     const checkedItems = [...machineConfigPoolsToPause];
@@ -108,6 +114,12 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
     .filter((mcp) => !isMCPMaster(mcp))
     .sort(sortMCPsByCreationTimestamp);
   const pausedMCPs = pauseableMCPs.filter((mcp) => isMCPPaused(mcp));
+  const pausedPoolNames = useMemo(
+    () => pausedMCPs.map((mcp) => mcp.metadata.name).join(', '),
+    [pausedMCPs],
+  );
+  const requiresPausedPoolsAcknowledgement =
+    upgradeType === UpgradeTypes.Full && pausedMCPs.length > 0;
   const desiredRecommendedUpdate = useMemo(
     () => availableSortedUpdates.find((update) => update.version === desiredVersion),
     [availableSortedUpdates, desiredVersion],
@@ -122,6 +134,9 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
   const submit: FormEventHandler<HTMLFormElement> = useCallback(
     (e) => {
       e.preventDefault();
+      if (upgradeType === UpgradeTypes.Full && pausedMCPs.length > 0 && !pausedPoolsAcknowledged) {
+        return;
+      }
       if (!desiredRecommendedUpdate && !desiredNotRecommendedUpdate) {
         setError(
           t(
@@ -173,6 +188,7 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
       desiredVersion,
       upgradeType,
       pausedMCPs,
+      pausedPoolsAcknowledged,
       pauseableMCPs,
       machineConfigPoolsToPause,
       handlePromise,
@@ -311,13 +327,26 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
                   <Alert
                     variant="warning"
                     isInline
-                    isPlain
-                    title={t(
-                      'The cluster will resume paused {{worker}} or custom pool {{resource}} updates. To update only the control plane, select "Control plane only update" below.',
-                      { worker: NodeTypeNames.Worker, resource: NodeModel.label },
-                    )}
+                    title={t('Paused MachineConfigPools will be resumed')}
                     data-test="update-cluster-modal-paused-nodes-warning"
-                  />
+                  >
+                    <Content component={ContentVariants.p}>
+                      {t(
+                        'The cluster will resume updates for the following paused pools: {{pausedPoolNames}}. To update only the control plane, select "Control plane only update" below.',
+                        { pausedPoolNames },
+                      )}
+                    </Content>
+                    <Checkbox
+                      className="pf-v6-u-mt-sm"
+                      id="update-cluster-modal-paused-pools-ack"
+                      data-test="update-cluster-modal-paused-pools-ack"
+                      isChecked={pausedPoolsAcknowledged}
+                      onChange={(_event, checked) => setPausedPoolsAcknowledged(checked)}
+                      label={t(
+                        'I understand that Full cluster update will resume these paused pools',
+                      )}
+                    />
+                  </Alert>
                 )
               }
               data-test="update-cluster-modal-full-update-radio"
@@ -402,7 +431,8 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
           id="confirm-action"
           isDisabled={
             !desiredVersion ||
-            (upgradeType === UpgradeTypes.Partial && machineConfigPoolsToPause.length === 0)
+            (upgradeType === UpgradeTypes.Partial && machineConfigPoolsToPause.length === 0) ||
+            (requiresPausedPoolsAcknowledgement && !pausedPoolsAcknowledged)
           }
         >
           {t('Update cluster')}
