@@ -323,7 +323,7 @@ Adds a new cluster overview utilization item.
 
 ### Summary 
 
-Adds new React context provider to Console application root.
+Adds a new React context provider to Console application root.<br/><br/>Warning: This extension wraps around the entire Console shell. Adding<br/>or removing context providers via feature flags causes the entire application<br/>to re-render, which can cause loss of state in components. Use with caution.
 
 ### Properties
 
