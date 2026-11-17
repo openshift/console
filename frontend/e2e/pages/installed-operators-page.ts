@@ -202,10 +202,17 @@ export class InstalledOperatorsPage extends BasePage {
       .getByTestId('namespace-bar-dropdown')
       .getByRole('button')
       .first();
-    await this.robustClick(namespaceDropdownButton);
-
+    const dropdownMenu = this.page.getByTestId('namespace-dropdown-menu');
     const textFilter = this.page.getByTestId('dropdown-text-filter');
-    await expect(textFilter).toBeVisible({ timeout: 30_000 });
+
+    // A toggle click that lands without error can still leave the menu closed;
+    // click again until the menu and its filter are shown.
+    await expect(async () => {
+      if (!(await dropdownMenu.isVisible().catch(() => false))) {
+        await namespaceDropdownButton.click({ timeout: 5_000 });
+      }
+      await expect(textFilter).toBeVisible({ timeout: 5_000 });
+    }).toPass({ timeout: 30_000 });
 
     // Check if showSystemSwitch is checked, if not, check it
     const showSystemSwitch = this.page.getByTestId('showSystemSwitch');
