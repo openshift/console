@@ -565,6 +565,15 @@
     }
   },
   {
+    "type": "console.flag/hookProvider",
+    "properties": {
+      "handler": { "$codeRef": "eventingModelPreloader.useKnativeEventingModelPreloader" }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
+    }
+  },
+  {
     "type": "dev-console.add/action",
     "flags": {
       "required": ["KNATIVE_EVENTING", "DEVELOPER_CATALOG", "FLAG_KNATIVE_EVENTING_ENABLED"]
@@ -1845,16 +1854,6 @@
       "label": "%knative-plugin~KafkaSink%",
       "labelPlural": "%knative-plugin~KafkaSinks%",
       "abbr": "KS"
-    }
-  },
-  {
-    "type": "console.context-provider",
-    "properties": {
-      "provider": { "$codeRef": "eventingContext.EventingContextProvider" },
-      "useValueHook": { "$codeRef": "eventingContext.useValuesEventingContext" }
-    },
-    "flags": {
-      "required": ["KNATIVE_EVENTING"]
     }
   },
   {
