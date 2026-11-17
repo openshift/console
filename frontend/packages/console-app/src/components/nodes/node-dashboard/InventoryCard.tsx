@@ -11,8 +11,9 @@ import {
   DescriptionListTerm,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router';
 import BareMetalInventoryItems from '@console/app/src/components/nodes/node-dashboard/BareMetalInventoryItems';
+import VirtualMachinesInventoryItems from '@console/app/src/components/nodes/node-dashboard/VirtualMachinesInventoryItems';
+import { FLAG_NODE_MGMT_V1 } from '@console/app/src/consts';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { resourcePathFromModel } from '@console/internal/components/utils/resource-link';
 import { PodModel, NodeModel } from '@console/internal/models';
@@ -24,9 +25,7 @@ import {
   ResourceInventoryItem,
 } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
 import { getPodStatusGroups } from '@console/shared/src/components/dashboard/inventory-card/utils';
-import { DescriptionListTermHelp } from '@console/shared/src/components/description-list/DescriptionListTermHelp';
-import { useIsKubevirtPluginActive } from '../../../utils/kubevirt';
-import { useWatchVirtualMachineInstances, VirtualMachineModel } from '../NodeVmUtils';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { NodeDashboardContext } from './NodeDashboardContext';
 
 export const NodeInventoryItem: FC<NodeInventoryItemProps> = ({ nodeName, model, mapper }) => {
@@ -56,9 +55,7 @@ export const NodeInventoryItem: FC<NodeInventoryItemProps> = ({ nodeName, model,
 const InventoryCard: FC = () => {
   const { obj } = useContext(NodeDashboardContext);
   const { t } = useTranslation();
-
-  const showVms = useIsKubevirtPluginActive();
-  const [vms, vmsLoaded, vmsLoadError] = useWatchVirtualMachineInstances(obj.metadata.name);
+  const nodeMgmtV1Enabled = useFlag(FLAG_NODE_MGMT_V1);
 
   return (
     <Card data-test-id="inventory-card">
@@ -89,32 +86,12 @@ const InventoryCard: FC = () => {
               />
             </DescriptionListDescription>
           </DescriptionListGroup>
-          <BareMetalInventoryItems />
-          {showVms ? (
-            <DescriptionListGroup>
-              <DescriptionListTermHelp
-                text={t('console-app~Virtual machines')}
-                textHelp={t(
-                  'console-app~This count reflects your access permissions and might not include all virtual machines.',
-                )}
-              />
-              <DescriptionListDescription>
-                <Link
-                  to={`${resourcePathFromModel(VirtualMachineModel)}/search?rowFilter-node=${
-                    obj.metadata.name
-                  }`}
-                >
-                  <InventoryItem
-                    isLoading={!vmsLoaded}
-                    title={t('console-app~Virtual machine')}
-                    titlePlural={t('console-app~Virtual machines')}
-                    count={vms.length}
-                    error={!!vmsLoadError}
-                  />
-                </Link>
-              </DescriptionListDescription>
-            </DescriptionListGroup>
-          ) : null}
+          {nodeMgmtV1Enabled && (
+            <>
+              <BareMetalInventoryItems />
+              <VirtualMachinesInventoryItems />
+            </>
+          )}
         </DescriptionList>
       </CardBody>
     </Card>
