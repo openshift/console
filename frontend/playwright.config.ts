@@ -51,7 +51,6 @@ export default defineConfig({
   testMatch: '**/*.spec.ts',
   outputDir: path.join(artifactDir, 'playwright-test-results'),
   forbidOnly: isCI,
-  globalTimeout: Number(process.env.GLOBAL_TIMEOUT_MS) || 0,
   retries: isCI ? 2 : 0,
   timeout: 120_000,
   reporter: isCI
