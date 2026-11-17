@@ -107,15 +107,17 @@ const useLoadServiceLevel = (): [boolean, boolean, (clusterID: string) => void] 
       .then((response) => {
         // @ts-expect-error Data is not recognized as part of response.
         const secret = JSON.parse(atob(response.data['.dockerconfigjson']));
-        const token = secret.auths['cloud.openshift.com'].auth;
+        const token = secret.auths?.['cloud.openshift.com']?.auth;
+        setLoadingSecret(false);
+        if (!token) {
+          hasSecretAccess = true;
+          dispatch(UIActions.setServiceLevel(null, null, clusterID, null, hasSecretAccess));
+          return undefined;
+        }
         const headers = {
           Authorization: `AccessToken ${clusterID}:${token}`,
         };
         const apiUrl = `/api/accounts_mgmt/v1/subscriptions?page=1&search=external_cluster_id%3D%27${clusterID}%27`;
-        setLoadingSecret(false);
-        if (!token) {
-          throw new Error('Pull secret token is empty');
-        }
         setLoadingServiceLevel(true);
         hasSecretAccess = true;
 
@@ -124,6 +126,9 @@ const useLoadServiceLevel = (): [boolean, boolean, (clusterID: string) => void] 
         });
       })
       .then((ocmResponse) => {
+        if (!ocmResponse) {
+          return;
+        }
         if (!ocmResponse.items || ocmResponse.items?.length === 0) {
           throw new Error('Cluster ID used to get support level was not recognized');
         }
