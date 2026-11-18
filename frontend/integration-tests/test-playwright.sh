@@ -15,17 +15,14 @@
 # Environment:
 #   BRIDGE_BASE_ADDRESS, BRIDGE_BASE_PATH, WEB_CONSOLE_URL
 #   INSTALLER_DIR, ARTIFACT_DIR, KUBEADMIN_PASSWORD_FILE
-#   ARTIFACT_DIR — Prow/OpenShift CI artifact root (default: /tmp/artifacts). Writes test
-#     attachments directly to $ARTIFACT_DIR/playwright-test-results so timeout artifacts survive.
-#     On EXIT, copies remaining reports:
-#     frontend/playwright-report → $ARTIFACT_DIR/playwright-report (CI HTML report)
-#     junit → $ARTIFACT_DIR/junit-playwright.xml
+#   ARTIFACT_DIR — Prow/OpenShift CI artifact root. When set, playwright.config.ts writes all
+#     artifacts (test output and reports) directly under $ARTIFACT_DIR; local runs keep them
+#     under frontend/test-results and frontend/playwright-report.
 #
 
 set -euo pipefail
 
-ARTIFACT_DIR=${ARTIFACT_DIR:-/tmp/artifacts}
-INSTALLER_DIR=${INSTALLER_DIR:-${ARTIFACT_DIR}/installer}
+INSTALLER_DIR=${INSTALLER_DIR:-${ARTIFACT_DIR:-/tmp/artifacts}/installer}
 export ARTIFACT_DIR
 
 if [ "$(basename "$(pwd)")" != "frontend" ]; then
@@ -82,90 +79,6 @@ if [ "$RUN_CREATE_USER" = true ]; then
   export BRIDGE_HTPASSWD_PASSWORD="${BRIDGE_HTPASSWD_PASSWORD:-test}"
 fi
 
-copy_playwright_artifacts_to_dir() {
-  # Validate ARTIFACT_DIR is set and is an absolute path
-  if [ -z "$ARTIFACT_DIR" ]; then
-    echo "Error: ARTIFACT_DIR is not set" >&2
-    return 1
-  fi
-  case "$ARTIFACT_DIR" in
-    /) echo "Error: ARTIFACT_DIR must not be '/'" >&2; return 1 ;;
-    /*) ;; # absolute path, OK
-    *) echo "Error: ARTIFACT_DIR must be an absolute path, got: $ARTIFACT_DIR" >&2; return 1 ;;
-  esac
-
-  mkdir -p "$ARTIFACT_DIR"
-  local copied=false
-
-  if [ -d "${ARTIFACT_DIR}/playwright-test-results" ]; then
-    copied=true
-  fi
-
-  if [ -d test-results ]; then
-    local dest="${ARTIFACT_DIR}/playwright-test-results"
-    mkdir -p "$dest"
-    # Preserve attachments already written there during the test, including
-    # partial results from an interrupted run.
-    if cp -an test-results/. "$dest/"; then
-      copied=true
-      # Remove JUnit XML files from the bulk copy so Prow Spyglass doesn't
-      # parse them as duplicates of the top-level junit-playwright.xml.
-      rm -f "$dest"/*.xml
-      echo "Copied Playwright test-results (traces, screenshots, videos) to ${dest}"
-    else
-      echo "Warning: failed to copy test-results to ${dest}" >&2
-    fi
-    if [ -f test-results/junit-results.xml ]; then
-      cp -a test-results/junit-results.xml "${ARTIFACT_DIR}/playwright-standard-junit.xml" && \
-        echo "Copied standard JUnit report to ${ARTIFACT_DIR}/playwright-standard-junit.xml"
-    fi
-    if [ -f test-results/prow-junit-results.xml ]; then
-      cp -a test-results/prow-junit-results.xml "${ARTIFACT_DIR}/junit-playwright.xml" && \
-        echo "Copied Prow JUnit report to ${ARTIFACT_DIR}/junit-playwright.xml"
-    elif [ -f test-results/junit-results.xml ]; then
-      cp -a test-results/junit-results.xml "${ARTIFACT_DIR}/junit-playwright.xml" && \
-        echo "Copied JUnit report to ${ARTIFACT_DIR}/junit-playwright.xml (Prow report not available)"
-    fi
-  fi
-
-  if [ -d playwright-report ]; then
-    local report_dest="${ARTIFACT_DIR}/playwright-report"
-    # Safety check before rm -rf to prevent accidental deletion
-    if [ -n "$report_dest" ] && [ "$report_dest" != "/" ]; then
-      rm -rf "$report_dest"
-    fi
-    if cp -a playwright-report "$report_dest"; then
-      copied=true
-      echo "Copied Playwright HTML report to ${report_dest} (open index.html)"
-    else
-      echo "Warning: failed to copy playwright-report to ${report_dest}" >&2
-    fi
-  fi
-
-  if [ "$copied" = false ]; then
-    echo "Warning: no test-results/ or playwright-report/ under $(pwd); nothing copied to ${ARTIFACT_DIR}" >&2
-  else
-    echo "Playwright artifacts root: ${ARTIFACT_DIR}"
-  fi
-}
-
-copyArtifacts() {
-  local test_exit_code=$?
-  local copy_exit_code=0
-  set +e
-  copy_playwright_artifacts_to_dir
-  copy_exit_code=$?
-  set -e
-  if [ "$test_exit_code" -ne 0 ]; then
-    exit "$test_exit_code"
-  fi
-  if [ "$copy_exit_code" -ne 0 ]; then
-    exit "$copy_exit_code"
-  fi
-  exit 0
-}
-trap copyArtifacts EXIT
-
 FRONTEND_ABS="$(pwd)"
 playwright_bin="${FRONTEND_ABS}/node_modules/.bin/playwright"
 if [ ! -f "$playwright_bin" ]; then
@@ -176,4 +89,4 @@ fi
 
 export CI=true
 
-"$playwright_bin" test --output="${ARTIFACT_DIR}/playwright-test-results" "$@"
+"$playwright_bin" test "$@"

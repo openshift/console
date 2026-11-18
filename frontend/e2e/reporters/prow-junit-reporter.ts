@@ -155,7 +155,7 @@ class ProwJUnitReporter implements Reporter {
   constructor(options: ProwJUnitReporterOptions = {}) {
     this.configDir = options.configDir || process.cwd();
     this.outputFile =
-      options.outputFile || path.resolve(this.configDir, 'test-results', 'prow-junit-results.xml');
+      options.outputFile || path.resolve(this.configDir, 'test-results', 'junit-playwright.xml');
   }
 
   printsToStdio(): boolean {
