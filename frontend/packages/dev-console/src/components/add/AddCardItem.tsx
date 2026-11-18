@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { isValidElement, memo } from 'react';
 import { SimpleListItem, Title, Content } from '@patternfly/react-core';
 import { useNavigate } from 'react-router';
@@ -27,7 +28,7 @@ const AddCardItem = memo<AddCardItemProps>(
     const toast = useToast();
     const launchModal = useOverlay();
 
-    const actionIcon = (): JSX.Element => {
+    const actionIcon = (): ReactNode => {
       if (typeof icon === 'string') {
         return (
           <img

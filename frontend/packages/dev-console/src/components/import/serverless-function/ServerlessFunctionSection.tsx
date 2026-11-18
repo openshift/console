@@ -52,7 +52,6 @@ const ServerlessFunctionSection = ({ builderImages }) => {
           setFieldValue('deployment.env', res?.values?.runtimeEnvs || []);
         })
         .catch((err) => {
-          // eslint-disable-next-line no-console
           console.warn('Error fetching Serverless Function YAML: ', err);
           setFieldError('ServerlessFunction', err.message);
         })

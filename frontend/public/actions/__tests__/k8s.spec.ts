@@ -51,7 +51,6 @@ describe('startAPIDiscovery', () => {
       k8sActions.API_DISCOVERY_POLL_INTERVAL,
     );
 
-    // eslint-disable-next-line no-console
     expect(console.log).toHaveBeenCalledWith('API discovery method: Polling');
   });
 
@@ -67,7 +66,6 @@ describe('startAPIDiscovery', () => {
       CustomResourceDefinitionModel,
       expect.any(Function),
     );
-    // eslint-disable-next-line no-console
     expect(console.log).toHaveBeenCalledWith('API discovery method: Watching');
   });
 });

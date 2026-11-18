@@ -150,7 +150,7 @@ const ThemeConfigItem: FC = () => {
       {
         value: 'default',
         description: t('Follow your user preference'),
-        content: t('Use theme setting'),
+        content: t('Default'),
         selected: theme === 'default',
       },
       {
@@ -172,8 +172,8 @@ const ThemeConfigItem: FC = () => {
   return (
     <ConfigModalItem
       key="color-theme"
-      title={t('Theme')}
-      description={t('Select the code editor color theme')}
+      title={t('Color scheme')}
+      description={t('Select the code editor color scheme')}
       id="ConfigModalItem-color-theme"
       icon={<RhUiAutoLightDarkModeIcon />}
       slot={

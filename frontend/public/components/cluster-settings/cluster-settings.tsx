@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-use-before-define */
 import type { FC, ReactNode } from 'react';
 import { useEffect, useRef, useMemo, useState } from 'react';
 import {

@@ -730,15 +730,13 @@ describe('OLS Cluster State Matrix - Complete Scenarios', () => {
       },
     ];
 
-    conditionStatusTests.forEach(({ name, cvOptions, operators, expectedButtons }) => {
-      it(name, () => {
-        const cv = createClusterVersion(cvOptions);
-        const ops = operators?.map((o) => createOperator(o.name, o.options));
+    it.each(conditionStatusTests)('$name', ({ cvOptions, operators, expectedButtons }) => {
+      const cv = createClusterVersion(cvOptions);
+      const ops = operators?.map((o) => createOperator(o.name, o.options));
 
-        const buttons = determineWorkflowButtons(cv, ops);
-        expect(buttons.showPreCheck).toBe(expectedButtons.showPreCheck);
-        expect(buttons.showStatus).toBe(expectedButtons.showStatus);
-      });
+      const buttons = determineWorkflowButtons(cv, ops);
+      expect(buttons.showPreCheck).toBe(expectedButtons.showPreCheck);
+      expect(buttons.showStatus).toBe(expectedButtons.showStatus);
     });
   });
 
@@ -870,6 +868,7 @@ describe('OLS Cluster State Matrix - Complete Scenarios', () => {
         ];
 
         // 3 operators at target version, 1 updating (progressing), 1 pending
+        // eslint-disable-next-line eslint-js/max-nested-callbacks -- intentional nesting depth in test scaffolding
         const operators = baseOperators.map((op, i) => ({
           ...op,
           status: {

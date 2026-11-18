@@ -76,8 +76,23 @@ const useTemplates: ExtensionHook<CatalogItem<PartialObjectMetadata>[]> = ({
   const [templatesError, setTemplatesError] = useState<APIError>();
 
   const [projectTemplates, setProjectTemplates] = useState<PartialObjectMetadata[]>([]);
-  const [projectTemplatesLoaded, setProjectTemplatesLoaded] = useState<boolean>(false);
+  // Don't load templates from the `openshift` namespace twice if it's the
+  // current namespace — there is nothing to fetch, so the project templates
+  // are immediately loaded.
+  const [projectTemplatesLoaded, setProjectTemplatesLoaded] = useState<boolean>(
+    !namespace || namespace === 'openshift',
+  );
   const [projectTemplatesError, setProjectTemplatesError] = useState<APIError>();
+
+  const [prevNamespace, setPrevNamespace] = useState(namespace);
+  if (namespace !== prevNamespace) {
+    setPrevNamespace(namespace);
+    if (!namespace || namespace === 'openshift') {
+      setProjectTemplates([]);
+      setProjectTemplatesLoaded(true);
+      setProjectTemplatesError(null);
+    }
+  }
 
   // Load templates from the shared `openshift` namespace.
   // Request only metadata to keep the request much smaller.
@@ -95,18 +110,15 @@ const useTemplates: ExtensionHook<CatalogItem<PartialObjectMetadata>[]> = ({
   useEffect(() => {
     // Don't load templates from the `openshift` namespace twice if it's the current namespace
     if (!namespace || namespace === 'openshift') {
-      setProjectTemplates([]);
-      setProjectTemplatesLoaded(true);
-      setProjectTemplatesError(null);
-    } else {
-      k8sListPartialMetadata(TemplateModel, { ns: namespace })
-        .then((metadata) => {
-          setProjectTemplates(metadata ?? []);
-          setProjectTemplatesLoaded(true);
-          setProjectTemplatesError(null);
-        })
-        .catch(setProjectTemplatesError);
+      return;
     }
+    k8sListPartialMetadata(TemplateModel, { ns: namespace })
+      .then((metadata) => {
+        setProjectTemplates(metadata ?? []);
+        setProjectTemplatesLoaded(true);
+        setProjectTemplatesError(null);
+      })
+      .catch(setProjectTemplatesError);
   }, [namespace]);
 
   const loaded = templatesLoaded && projectTemplatesLoaded;

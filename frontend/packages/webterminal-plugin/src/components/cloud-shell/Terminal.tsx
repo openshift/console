@@ -25,8 +25,8 @@ export type ImperativeTerminalType = {
 };
 
 const Terminal = forwardRef<ImperativeTerminalType, TerminalProps>(({ onData, onResize }, ref) => {
-  const terminal = useRef<XTerminal>();
-  const terminalRef = useRef<HTMLDivElement>();
+  const terminal = useRef<XTerminal>(undefined);
+  const terminalRef = useRef<HTMLDivElement>(undefined);
 
   useEffect(() => {
     const term: XTerminal = new XTerminal(terminalOptions);

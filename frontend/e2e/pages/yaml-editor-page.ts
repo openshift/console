@@ -12,8 +12,8 @@ export class YamlEditorPage extends BasePage {
   private readonly yamlError = this.page.getByTestId('yaml-error');
   private readonly resourceSidebar = this.page.getByTestId('resource-sidebar');
 
-  async navigateToImportYaml(): Promise<void> {
-    await this.goTo('/k8s/ns/default/import');
+  async navigateToImportYaml(namespace = 'default'): Promise<void> {
+    await this.goTo(`/k8s/ns/${namespace}/import`);
   }
 
   async waitForEditorReady(): Promise<void> {
@@ -34,6 +34,10 @@ export class YamlEditorPage extends BasePage {
 
   getYamlError(): Locator {
     return this.yamlError;
+  }
+
+  getDefaultNamespaceDeploymentWarning(): Locator {
+    return this.page.getByTestId('default-namespace-deployment-warning');
   }
 
   getMonacoEditor(): Locator {
@@ -84,27 +88,28 @@ export class YamlEditorPage extends BasePage {
 
   async openSettingsModal(): Promise<void> {
     await this.robustClick(this.page.locator('[aria-label="Editor settings"]'));
-    // eslint-disable-next-line no-restricted-syntax
+    // eslint-disable-next-line eslint-js/no-restricted-syntax
     await this.getSettingsModal().waitFor({ state: 'visible' });
   }
 
   async closeSettingsModal(): Promise<void> {
-    await this.robustClick(
-      this.getSettingsModal().locator('button[aria-label="Close"]'),
-    );
+    await this.robustClick(this.getSettingsModal().locator('button[aria-label="Close"]'));
   }
 
-  async selectTheme(themeName: 'Dark' | 'Light' | 'Use theme setting'): Promise<void> {
+  async selectTheme(themeName: 'Dark' | 'Light' | 'Default'): Promise<void> {
     const themeSection = this.page.locator('#ConfigModalItem-color-theme');
     await this.robustClick(
       themeSection.locator('button[aria-labelledby="ConfigModalItem-color-theme-title"]'),
     );
-    await this.page.getByText(themeName, { exact: true }).click();
+    await this.page.getByRole('option', { name: new RegExp(`^${themeName}\\b`) }).click();
   }
 
   async setFontSize(size: number): Promise<void> {
     const input = this.getFontSizeInput();
     await input.fill(String(size));
+    // PF6 NumberInput commits its value on blur.
+    await input.evaluate((el) => el.blur());
+    await expect(input).toHaveValue(String(size));
   }
 
   async showSidebar(): Promise<void> {
@@ -118,5 +123,21 @@ export class YamlEditorPage extends BasePage {
       hasText: 'View details',
     });
     await this.robustClick(viewDetailsButton);
+  }
+
+  async getEditorContent(): Promise<string> {
+    return this.page.evaluate(() => {
+      // Check if Monaco is initialized before accessing editor API
+      if (!(window as any).monaco?.editor?.getModels) {
+        return '';
+      }
+      const models = (window as any).monaco.editor.getModels();
+      return models[0]?.getValue() || '';
+    });
+  }
+
+  async navigateToYamlUrl(url: string): Promise<void> {
+    await this.goTo(url);
+    await this.waitForEditorReady();
   }
 }

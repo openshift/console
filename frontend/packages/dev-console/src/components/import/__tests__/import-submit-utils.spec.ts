@@ -311,7 +311,6 @@ describe('Import Submit Utils', () => {
       expect(errorLogger).toHaveBeenCalled();
 
       // re-enable logs for future tests
-      // eslint-disable-next-line no-console
       (console.warn as any).mockRestore();
     });
 
@@ -340,7 +339,6 @@ describe('Import Submit Utils', () => {
       expect(returnValue).toHaveLength(7);
 
       // re-enable logs for future tests
-      // eslint-disable-next-line no-console
       (console.log as any).mockRestore();
     });
 
@@ -424,7 +422,7 @@ describe('Import Submit Utils', () => {
       jest.clearAllMocks();
     });
 
-    it('return a Deployment with just one container which includes ports, env from Devfile container ', async () => {
+    it('return a Deployment with just one container which includes ports, env from Devfile container', async () => {
       const formData = sampleDevfileFormData;
       const returnValue = await createDevfileResources(formData, false, {}, '');
 
@@ -608,7 +606,7 @@ describe('Import Submit Utils', () => {
       expect(telGhScalingData).toEqual(true);
     });
 
-    it('getTelemetryImport should return appropriate data with useAdvancedOptionsRoute option as true if route advanced options are used', () => {
+    it('getTelemetryImport should return appropriate data with useAdvancedOptionsRoute option as true if route hostname is used', () => {
       const ghImportAdvData = {
         ...ghImportDefaultData,
         route: {

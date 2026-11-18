@@ -1,16 +1,13 @@
 import type { FC } from 'react';
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { connect } from 'react-redux';
 import { getUser } from '@console/dynamic-plugin-sdk';
 import { AsyncComponent } from '@console/internal/components/utils';
 import { useAccessReview2 } from '@console/internal/components/utils/rbac';
 import { StatusBox, LoadError } from '@console/internal/components/utils/status-box';
-import type { UserInfo } from '@console/internal/module/k8s';
-import type { RootState } from '@console/internal/redux';
-import type { WithUserPreferenceProps } from '@console/shared/src/hoc/withUserPreference';
-import { withUserPreference } from '@console/shared/src/hoc/withUserPreference';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import { v1alpha1WorkspaceModel, WorkspaceModel } from '../../../models';
 import { FLAG_V1ALPHA2DEVWORKSPACE } from '../../const';
 import type { TerminalInitData } from './cloud-shell-utils';
@@ -24,10 +21,6 @@ import useCloudShellWorkspace from './useCloudShellWorkspace';
 
 import './CloudShellTerminal.scss';
 
-type StateProps = {
-  user: UserInfo;
-};
-
 type CloudShellTerminalProps = {
   onCancel?: () => void;
   terminalNumber?: number;
@@ -35,17 +28,20 @@ type CloudShellTerminalProps = {
   setWorkspaceNamespace?: (namespace: string, terminalNumber: number) => void;
 };
 
-type CloudShellTerminalInternalProps = StateProps & CloudShellTerminalProps;
+type CloudShellTerminalContentProps = CloudShellTerminalProps & {
+  namespace: string;
+  setNamespace: (namespace: string) => void;
+};
 
-const CloudShellTerminal: FC<CloudShellTerminalInternalProps & WithUserPreferenceProps<string>> = ({
-  user,
+const CloudShellTerminalContent: FC<CloudShellTerminalContentProps> = ({
   onCancel,
-  userSettingState: namespace,
-  setUserSettingState: setNamespace,
   terminalNumber,
   setWorkspaceName,
   setWorkspaceNamespace,
+  namespace,
+  setNamespace,
 }) => {
+  const user = useConsoleSelector(getUser);
   const [operatorNamespace, namespaceLoadError] = useCloudShellNamespace();
   const [initData, setInitData] = useState<TerminalInitData>();
   const [initError, setInitError] = useState<string>();
@@ -82,15 +78,19 @@ const CloudShellTerminal: FC<CloudShellTerminalInternalProps & WithUserPreferenc
 
   const { t } = useTranslation('webterminal-plugin');
 
+  const defaultInitError = t('Failed to connect to your OpenShift command line terminal');
+
   const unrecoverableErrorFound = !operatorNamespace && namespaceLoadError;
 
   // wait until the web terminal is loaded.
-  // if the namespace has any problems loading then set the terminal into an unrecoverable state
-  useEffect(() => {
+  // if the namespace has any problems loading then set the terminal into an unrecoverable state.
+  const [prevNamespaceLoadError, setPrevNamespaceLoadError] = useState(namespaceLoadError);
+  if (prevNamespaceLoadError !== namespaceLoadError) {
+    setPrevNamespaceLoadError(namespaceLoadError);
     if (namespaceLoadError) {
       setInitError(namespaceLoadError);
     }
-  }, [namespaceLoadError]);
+  }
 
   // start the workspace if no unrecoverable errors were found
   useEffect(() => {
@@ -104,13 +104,11 @@ const CloudShellTerminal: FC<CloudShellTerminalInternalProps & WithUserPreferenc
     }
     // Run this effect if the workspace name or namespace changes.
     // This effect should only be run once per workspace.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [
     operatorNamespace,
     unrecoverableErrorFound,
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     workspace?.metadata?.name,
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     workspace?.metadata?.namespace,
   ]);
 
@@ -122,18 +120,29 @@ const CloudShellTerminal: FC<CloudShellTerminalInternalProps & WithUserPreferenc
     }
   }, [loaded, loadError, workspaceNamespace, setNamespace]);
 
-  // clear the init data and error if the workspace changes and if the loading process isn't in an unrecoverable state
-  useEffect(() => {
+  // clear the init data and error if the workspace changes and if the loading process isn't in an unrecoverable state.
+  const [prevWorkspaceState, setPrevWorkspaceState] = useState({
+    unrecoverableErrorFound,
+    username,
+    workspaceName,
+    workspaceNamespace,
+  });
+  if (
+    prevWorkspaceState.unrecoverableErrorFound !== unrecoverableErrorFound ||
+    prevWorkspaceState.username !== username ||
+    prevWorkspaceState.workspaceName !== workspaceName ||
+    prevWorkspaceState.workspaceNamespace !== workspaceNamespace
+  ) {
+    setPrevWorkspaceState({ unrecoverableErrorFound, username, workspaceName, workspaceNamespace });
     if (!unrecoverableErrorFound) {
       setInitData(undefined);
       setInitError(undefined);
     }
-  }, [unrecoverableErrorFound, username, workspaceName, workspaceNamespace]);
+  }
 
   // initialize the terminal once it is Running
   useEffect(() => {
     let unmounted = false;
-    const defaultError = t('Failed to connect to your OpenShift command line terminal');
 
     if (workspacePhase === CLOUD_SHELL_PHASE.RUNNING) {
       initTerminal(username, workspaceName, workspaceNamespace)
@@ -150,27 +159,63 @@ const CloudShellTerminal: FC<CloudShellTerminalInternalProps & WithUserPreferenc
                   setInitError(text);
                 })
                 .catch(() => {
-                  setInitError(defaultError);
+                  setInitError(defaultInitError);
                 });
               /* eslint-enable promise/no-nesting */
             } else {
-              setInitError(defaultError);
+              setInitError(defaultInitError);
             }
           }
         });
-    }
-    if (workspacePhase === CLOUD_SHELL_PHASE.FAILED) {
-      setInitError(defaultError);
-    }
-
-    if (workspacePhase === CLOUD_SHELL_PHASE.STARTING) {
-      setInitError(null);
     }
 
     return () => {
       unmounted = true;
     };
-  }, [username, workspaceName, workspaceNamespace, workspacePhase, t, terminalNumber]);
+  }, [
+    username,
+    workspaceName,
+    workspaceNamespace,
+    workspacePhase,
+    defaultInitError,
+    terminalNumber,
+  ]);
+
+  const [prevTerminalContext, setPrevTerminalContext] = useState({
+    username,
+    workspaceName,
+    workspaceNamespace,
+    // undefined sentinel: a workspace that is already FAILED when the terminal
+    // (re)mounts must surface its error on the first render, matching the old
+    // effect's mount run
+    workspacePhase: undefined as typeof workspacePhase,
+    t,
+    terminalNumber,
+  });
+  if (
+    prevTerminalContext.username !== username ||
+    prevTerminalContext.workspaceName !== workspaceName ||
+    prevTerminalContext.workspaceNamespace !== workspaceNamespace ||
+    prevTerminalContext.workspacePhase !== workspacePhase ||
+    prevTerminalContext.t !== t ||
+    prevTerminalContext.terminalNumber !== terminalNumber
+  ) {
+    setPrevTerminalContext({
+      username,
+      workspaceName,
+      workspaceNamespace,
+      workspacePhase,
+      t,
+      terminalNumber,
+    });
+    if (workspacePhase === CLOUD_SHELL_PHASE.FAILED) {
+      setInitError(defaultInitError);
+    }
+
+    if (workspacePhase === CLOUD_SHELL_PHASE.STARTING) {
+      setInitError(null);
+    }
+  }
 
   // failed to load the workspace
   if (loadError) {
@@ -247,15 +292,19 @@ const CloudShellTerminal: FC<CloudShellTerminalInternalProps & WithUserPreferenc
   );
 };
 
-// For testing
-export const InternalCloudShellTerminal = CloudShellTerminal;
-
-const stateToProps = (state: RootState): StateProps => ({
-  user: getUser(state),
-});
-
-export default connect<StateProps, null, CloudShellTerminalProps>(stateToProps)(
-  withUserPreference<CloudShellTerminalProps & WithUserPreferenceProps<string>, string>(
+const CloudShellTerminal: FC<CloudShellTerminalProps> = (props) => {
+  const [namespace, setNamespace, namespacePreferenceLoaded] = useUserPreference<string>(
     CLOUD_SHELL_NAMESPACE_CONFIG_USER_PREFERENCE_KEY,
-  )(CloudShellTerminal),
-);
+  );
+
+  // Wait for the namespace preference to load before mounting the workspace
+  // logic. Otherwise useCloudShellWorkspace would run with an undefined
+  // namespace and could kick off a premature cluster-wide workspace search.
+  if (!namespacePreferenceLoaded) {
+    return null;
+  }
+
+  return <CloudShellTerminalContent {...props} namespace={namespace} setNamespace={setNamespace} />;
+};
+
+export default CloudShellTerminal;

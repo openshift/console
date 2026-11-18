@@ -44,7 +44,7 @@ const testResourceInstance = {
   },
 };
 
-describe(sdkK8sActions.ActionType.StartWatchK8sList, () => {
+describe('startWatchK8sList', () => {
   let getState: jest.Mock;
   let resourceList: {
     items: any[];
@@ -66,108 +66,127 @@ describe(sdkK8sActions.ActionType.StartWatchK8sList, () => {
     };
   });
 
-  it('dispatches `loaded` action only once after first data is received', (done) => {
+  it('dispatches `loaded` action only once after first data is received', async () => {
     k8sListMock.mockResolvedValue({
       ...resourceList,
       items: new Array(10).fill(testResourceInstance),
     });
 
-    const dispatch = jest.fn().mockImplementation((action) => {
-      if (action.type === sdkK8sActions.ActionType.Loaded) {
-        expect(k8sListMock.mock.calls.length).toEqual(1);
-        done();
-      } else if (action.type !== sdkK8sActions.ActionType.StartWatchK8sList) {
-        fail(`Action other than 'loaded' was dispatched: ${JSON.stringify(action)}`);
-      }
-    });
+    const dispatch = jest.fn();
+    await sdkK8sActions.watchK8sList('some-redux-id', {}, model)(dispatch, getState);
 
-    sdkK8sActions.watchK8sList('some-redux-id', {}, model)(dispatch, getState);
+    expect(k8sListMock.mock.calls.length).toEqual(1);
+
+    const dispatchedTypes = dispatch.mock.calls.map((args) => args[0].type);
+    const unexpectedTypes = dispatchedTypes.filter(
+      (type) =>
+        type !== sdkK8sActions.ActionType.StartWatchK8sList &&
+        type !== sdkK8sActions.ActionType.Loaded,
+    );
+    expect(unexpectedTypes).toEqual([]);
+    expect(dispatchedTypes).toContain(sdkK8sActions.ActionType.Loaded);
   });
 
-  it('incrementally fetches list until `continue` token is no longer returned in response', (done) => {
-    k8sListMock.mockImplementation((k8sKind, params) => {
-      expect(params.limit).toEqual(250);
-
-      const callCount = k8sListMock.mock.calls.length;
-      if (callCount === 1 || callCount === 11) {
-        expect(params.continue).toBeUndefined();
-      } else {
-        expect(params.continue).toEqual('toNextPage');
-      }
+  it('incrementally fetches list until `continue` token is no longer returned in response', async () => {
+    k8sListMock.mockImplementation(() => {
       resourceList.metadata.resourceVersion = (
         parseInt(resourceList.metadata.resourceVersion, 10) + 1
       ).toString();
       resourceList.metadata.continue =
         parseInt(resourceList.metadata.resourceVersion, 10) < 10 ? 'toNextPage' : undefined;
-
       return resourceList;
     });
 
-    let returnedItems = 0;
-    const dispatch = jest.fn().mockImplementation((action) => {
-      if (action.type === sdkK8sActions.ActionType.BulkAddToList) {
-        const bulkAddToListCalls = dispatch.mock.calls.filter(
-          (args) => args[0].type === sdkK8sActions.ActionType.BulkAddToList,
-        );
+    const dispatch = jest.fn();
+    await sdkK8sActions.watchK8sList('another-redux-id', {}, model)(dispatch, getState);
 
-        expect(action.payload.k8sObjects).toEqual(resourceList.items);
-        expect(bulkAddToListCalls.length).toEqual(k8sListMock.mock.calls.length - 1);
+    // Verify all k8sList calls have limit=250
+    expect(k8sListMock).toHaveBeenCalledTimes(10);
+    for (const args of k8sListMock.mock.calls) {
+      expect(args[1].limit).toEqual(250);
+    }
 
-        returnedItems += action.payload.k8sObjects.length;
+    // First call should not have continue token
+    expect(k8sListMock.mock.calls[0][1].continue).toBeUndefined();
+    // Remaining calls should have continue token
+    for (let i = 1; i < k8sListMock.mock.calls.length; i++) {
+      expect(k8sListMock.mock.calls[i][1].continue).toEqual('toNextPage');
+    }
 
-        if (bulkAddToListCalls.length === 9) {
-          expect(returnedItems).toEqual(resourceList.items.length * bulkAddToListCalls.length);
-          done();
-        }
-      } else if (action.type === sdkK8sActions.ActionType.Errored) {
-        fail(action.payload.k8sObjects);
-      }
-    });
+    // Verify dispatch calls
+    const bulkAddCalls = dispatch.mock.calls.filter(
+      (args) => args[0].type === sdkK8sActions.ActionType.BulkAddToList,
+    );
+    const erroredCalls = dispatch.mock.calls.filter(
+      (args) => args[0].type === sdkK8sActions.ActionType.Errored,
+    );
 
-    sdkK8sActions.watchK8sList('another-redux-id', {}, model)(dispatch, getState);
+    expect(erroredCalls).toHaveLength(0);
+    expect(bulkAddCalls).toHaveLength(9);
+
+    for (const call of bulkAddCalls) {
+      expect(call[0].payload.k8sObjects).toEqual(resourceList.items);
+    }
+
+    const totalItems = bulkAddCalls.reduce(
+      (sum, call) => sum + call[0].payload.k8sObjects.length,
+      0,
+    );
+    expect(totalItems).toEqual(resourceList.items.length * 9);
   });
 
-  it('send partial metadata headers to k8sList when partialMetadata is true', (done) => {
-    k8sListMock.mockImplementation((k8sKind, params, raw, requestOptions) => {
-      expect(params.limit).toEqual(250);
-      expect(requestOptions.headers).toEqual(sdkK8sActions.partialObjectMetadataListHeader);
-
-      const callCount = k8sListMock.mock.calls.length;
-      if (callCount === 1 || callCount === 11) {
-        expect(params.continue).toBeUndefined();
-      } else {
-        expect(params.continue).toEqual('toNextPage');
-      }
+  it('send partial metadata headers to k8sList when partialMetadata is true', async () => {
+    k8sListMock.mockImplementation(() => {
       resourceList.metadata.resourceVersion = (
         parseInt(resourceList.metadata.resourceVersion, 10) + 1
       ).toString();
       resourceList.metadata.continue =
         parseInt(resourceList.metadata.resourceVersion, 10) < 10 ? 'toNextPage' : undefined;
-
       return resourceList;
     });
 
-    let returnedItems = 0;
-    const dispatch = jest.fn().mockImplementation((action) => {
-      if (action.type === sdkK8sActions.ActionType.BulkAddToList) {
-        const bulkAddToListCalls = dispatch.mock.calls.filter(
-          (args) => args[0].type === sdkK8sActions.ActionType.BulkAddToList,
-        );
+    const dispatch = jest.fn();
+    await sdkK8sActions.watchK8sList(
+      'one-more-redux-id',
+      {},
+      model,
+      null,
+      true,
+    )(dispatch, getState);
 
-        expect(action.payload.k8sObjects).toEqual(resourceList.items);
-        expect(bulkAddToListCalls.length).toEqual(k8sListMock.mock.calls.length - 1);
+    // Verify all k8sList calls have limit=250 and partial metadata headers
+    expect(k8sListMock).toHaveBeenCalledTimes(10);
+    for (const args of k8sListMock.mock.calls) {
+      expect(args[1].limit).toEqual(250);
+      expect(args[3].headers).toEqual(sdkK8sActions.partialObjectMetadataListHeader);
+    }
 
-        returnedItems += action.payload.k8sObjects.length;
+    // First call should not have continue token
+    expect(k8sListMock.mock.calls[0][1].continue).toBeUndefined();
+    // Remaining calls should have continue token
+    for (let i = 1; i < k8sListMock.mock.calls.length; i++) {
+      expect(k8sListMock.mock.calls[i][1].continue).toEqual('toNextPage');
+    }
 
-        if (bulkAddToListCalls.length === 9) {
-          expect(returnedItems).toEqual(resourceList.items.length * bulkAddToListCalls.length);
-          done();
-        }
-      } else if (action.type === sdkK8sActions.ActionType.Errored) {
-        fail(action.payload.k8sObjects);
-      }
-    });
+    // Verify dispatch calls
+    const bulkAddCalls = dispatch.mock.calls.filter(
+      (args) => args[0].type === sdkK8sActions.ActionType.BulkAddToList,
+    );
+    const erroredCalls = dispatch.mock.calls.filter(
+      (args) => args[0].type === sdkK8sActions.ActionType.Errored,
+    );
 
-    sdkK8sActions.watchK8sList('one-more-redux-id', {}, model, null, true)(dispatch, getState);
+    expect(erroredCalls).toHaveLength(0);
+    expect(bulkAddCalls).toHaveLength(9);
+
+    for (const call of bulkAddCalls) {
+      expect(call[0].payload.k8sObjects).toEqual(resourceList.items);
+    }
+
+    const totalItems = bulkAddCalls.reduce(
+      (sum, call) => sum + call[0].payload.k8sObjects.length,
+      0,
+    );
+    expect(totalItems).toEqual(resourceList.items.length * 9);
   });
 });

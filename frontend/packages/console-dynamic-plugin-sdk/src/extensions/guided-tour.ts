@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
-
 import type { TourDataType } from '@console/app/src/components/tour';
 import type { Extension, CodeRef } from '@console/dynamic-plugin-sdk/src/types';
 

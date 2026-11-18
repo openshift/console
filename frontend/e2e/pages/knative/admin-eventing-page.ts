@@ -73,9 +73,11 @@ export class AdminEventingPage extends BasePage {
 
   async createBroker(name: string): Promise<void> {
     await this.page.locator('#form-radiobutton-editorType-form-field').click();
-    const nameField = this.page.locator(
-      '[data-test="application-form-app-name"], [data-test-id="application-form-app-name"]',
-    ).first();
+    const nameField = this.page
+      .locator(
+        '[data-test="application-form-app-name"], [data-test-id="application-form-app-name"]',
+      )
+      .first();
     await nameField.clear();
     await nameField.fill(name);
     await this.robustClick(this.page.getByTestId('save-changes'));

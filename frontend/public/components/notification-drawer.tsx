@@ -24,7 +24,7 @@ import {
   NotificationDrawerListItemHeader,
 } from '@patternfly/react-core';
 import { RhUiEllipsisVerticalIcon } from '@patternfly/react-icons';
-import i18next from 'i18next';
+import * as i18next from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import type { NavigateFunction } from 'react-router';
@@ -62,6 +62,8 @@ import {
 } from '@console/shared/src/components/toast/toastNotificationUtils';
 import { DEFAULT_TOAST_DRAWER_GROUP } from '@console/shared/src/components/toast/types';
 import { useNotificationHistory } from '@console/shared/src/components/toast/useNotificationHistory';
+import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { useCanClusterUpgrade } from '@console/shared/src/hooks/useCanClusterUpgrade';
 import { useClusterVersion } from '@console/shared/src/hooks/useClusterVersion';
 import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
@@ -78,6 +80,8 @@ import {
 import { ToastNotificationDrawerItems } from './notification-drawer-items';
 import { LinkifyExternal } from './utils/link';
 import { NotificationTypes } from './utils/types';
+
+const MAX_ALERTS_PER_GROUP = 50;
 
 const AlertErrorState: FC<AlertErrorProps> = ({ errorText }) => {
   const { t } = useTranslation('public');
@@ -239,6 +243,7 @@ export const NotificationDrawer: FC<NotificationDrawerProps> = ({
   drawerRef,
 }) => {
   const { t } = useTranslation('public');
+  const [, setActiveNamespace] = useActiveNamespace();
   const clusterID = getClusterID(useClusterVersion());
   const showServiceLevelNotification = useShowServiceLevelNotifications(clusterID);
   const pluginInfoEntries = usePluginInfo();
@@ -281,6 +286,10 @@ export const NotificationDrawer: FC<NotificationDrawerProps> = ({
     toggleNotificationDrawer();
     navigate(location);
   };
+  const viewAllAlerts = () => {
+    setActiveNamespace(ALL_NAMESPACES_KEY);
+    itemOnClick('/monitoring/alerts');
+  };
 
   const alertActionExtensionsMap = useMemo(
     () => getAlertActions(alertActionExtensions, navigate),
@@ -313,14 +322,27 @@ export const NotificationDrawer: FC<NotificationDrawerProps> = ({
   const [isNonCriticalAlertExpanded, toggleNonCriticalAlertExpanded] = useState(true);
   const [isClusterUpdateExpanded, toggleClusterUpdateExpanded] = useState(true);
   const [expandedToastGroups, setExpandedToastGroups] = useState<Record<string, boolean>>({});
-  useEffect(() => {
+  // Auto-expand the alert sections when critical/non-critical alerts appear
+  // while the drawer is open (one-way: sections can still be collapsed
+  // manually).
+  const [prevAutoExpand, setPrevAutoExpand] = useState({
+    hasCriticalAlerts,
+    hasNonCriticalAlerts,
+    isDrawerExpanded,
+  });
+  if (
+    prevAutoExpand.hasCriticalAlerts !== hasCriticalAlerts ||
+    prevAutoExpand.hasNonCriticalAlerts !== hasNonCriticalAlerts ||
+    prevAutoExpand.isDrawerExpanded !== isDrawerExpanded
+  ) {
+    setPrevAutoExpand({ hasCriticalAlerts, hasNonCriticalAlerts, isDrawerExpanded });
     if (hasCriticalAlerts && isDrawerExpanded) {
       toggleAlertExpanded(true);
     }
     if (hasNonCriticalAlerts && isDrawerExpanded) {
       toggleNonCriticalAlertExpanded(true);
     }
-  }, [hasCriticalAlerts, hasNonCriticalAlerts, isDrawerExpanded]);
+  }
 
   useEffect(() => {
     onDrawerChange();
@@ -367,7 +389,7 @@ export const NotificationDrawer: FC<NotificationDrawerProps> = ({
         aria-label={t('Notifications in the critical alerts group')}
       >
         {criticalAlerts.length > 0
-          ? criticalAlerts.map((alert, i) => {
+          ? criticalAlerts.slice(0, MAX_ALERTS_PER_GROUP).map((alert, i) => {
               const alertVariant = NotificationTypes[getAlertSeverity(alert)];
               const alertTime = getAlertTime(alert);
               return (
@@ -396,6 +418,14 @@ export const NotificationDrawer: FC<NotificationDrawerProps> = ({
               );
             })
           : emptyState}
+        {criticalAlerts.length > MAX_ALERTS_PER_GROUP && (
+          <NotificationDrawerListItem variant={NotificationTypes.info} onClick={viewAllAlerts}>
+            <NotificationDrawerListItemHeader
+              variant={NotificationTypes.info}
+              title={t('View all {{count}} alerts', { count: criticalAlerts.length })}
+            />
+          </NotificationDrawerListItem>
+        )}
       </NotificationDrawerList>
     </NotificationDrawerGroup>
   );
@@ -420,7 +450,7 @@ export const NotificationDrawer: FC<NotificationDrawerProps> = ({
             onMarkRead={markNotificationRead}
             onMarkUnread={markNotificationUnread}
           />
-          {nonCriticalAlerts.map((alert, i) => {
+          {nonCriticalAlerts.slice(0, MAX_ALERTS_PER_GROUP).map((alert, i) => {
             const alertVariant = NotificationTypes[getAlertSeverity(alert)];
             const alertTime = getAlertTime(alert);
             return (
@@ -448,6 +478,14 @@ export const NotificationDrawer: FC<NotificationDrawerProps> = ({
               </NotificationDrawerListItem>
             );
           })}
+          {nonCriticalAlerts.length > MAX_ALERTS_PER_GROUP && (
+            <NotificationDrawerListItem variant={NotificationTypes.info} onClick={viewAllAlerts}>
+              <NotificationDrawerListItemHeader
+                variant={NotificationTypes.info}
+                title={t('View all {{count}} alerts', { count: nonCriticalAlerts.length })}
+              />
+            </NotificationDrawerListItem>
+          )}
         </NotificationDrawerList>
       </NotificationDrawerGroup>
     ) : null;

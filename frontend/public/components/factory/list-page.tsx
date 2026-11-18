@@ -9,7 +9,6 @@ import { useParams, useNavigate } from 'react-router';
 import type { Selector } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import { filterList } from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
 import type {
-  ColumnLayout,
   K8sResourceCommon,
   WatchK8sResource,
   WatchK8sResultsObject,
@@ -62,7 +61,6 @@ type ListPageWrapperProps<L = any, C = any> = {
   rowFilters?: RowFilter[];
   hideNameLabelFilters?: boolean;
   hideLabelFilter?: boolean;
-  columnLayout?: ColumnLayout;
   name?: string;
   watchedResources?: Record<string, WatchK8sResultsObject<K8sResourceCommon | K8sResourceCommon[]>>;
   loaded?: boolean;
@@ -73,7 +71,7 @@ type ListPageWrapperProps<L = any, C = any> = {
   namespace?: string;
   labelFilterPlaceholder?: string;
   label?: string;
-  staticFilters?: { key: string; value: string }[];
+  staticFilters?: { [key: string]: string } | { [key: string]: string }[];
   customData?: C;
   hideColumnManagement?: boolean;
   nameFilter?: string;
@@ -91,7 +89,6 @@ export const ListPageWrapper: FC<ListPageWrapperProps> = (props) => {
     labelFilterPlaceholder,
     hideNameLabelFilters,
     hideLabelFilter,
-    columnLayout,
     name,
     watchedResources,
     nameFilter,
@@ -111,9 +108,9 @@ export const ListPageWrapper: FC<ListPageWrapperProps> = (props) => {
       return undefined;
     }
     return memoizedIds.reduce((acc, id) => {
-      const idFilters = state.k8s.getIn([id, 'filters']);
+      const idFilters = state.k8s[id]?.filters;
       if (idFilters) {
-        idFilters.forEach((value, key) => {
+        Object.entries(idFilters).forEach(([key, value]) => {
           acc[key] = value;
         });
       }
@@ -133,7 +130,6 @@ export const ListPageWrapper: FC<ListPageWrapperProps> = (props) => {
       textFilter={textFilter}
       hideNameLabelFilters={hideNameLabelFilters}
       hideLabelFilter={hideLabelFilter}
-      columnLayout={columnLayout}
       uniqueFilterName={name}
       {...props}
     />
@@ -192,7 +188,6 @@ export const FireMan: FC<FireManProps & { filterList?: typeof filterList }> = (p
   } = props;
   const navigate = useNavigate();
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [expand] = useState();
 
   // Compute reduxIDs synchronously to ensure they're available immediately for filtering
@@ -286,7 +281,7 @@ export const FireMan: FC<FireManProps & { filterList?: typeof filterList }> = (p
           toggleProps={{
             variant: 'primary',
             id: 'item-create',
-            // @ts-expect-error non-prop attribute is used for cypress
+            // @ts-expect-error non-prop attribute is used for E2E tests
             'data-test': 'item-create',
           }}
           toggleContent={createButtonText}
@@ -385,7 +380,6 @@ export const ListPage = withFallback<ListPageProps>((props) => {
     hideLabelFilter,
     hideNameLabelFilters,
     hideColumnManagement,
-    columnLayout,
     omitFilterToolbar,
     flatten = (_resources) => (_resources[name || kind]?.data ?? []) as K8sResourceCommon[],
   } = props;
@@ -460,7 +454,6 @@ export const ListPage = withFallback<ListPageProps>((props) => {
       hideLabelFilter={hideLabelFilter}
       hideNameLabelFilters={hideNameLabelFilters}
       hideColumnManagement={hideColumnManagement}
-      columnLayout={columnLayout}
       nameFilter={nameFilter}
       omitFilterToolbar={omitFilterToolbar}
     />
@@ -485,7 +478,6 @@ type PageCommonProps<L = any, C = any> = {
   badge?: ReactNode;
   hideNameLabelFilters?: boolean;
   hideLabelFilter?: boolean;
-  columnLayout?: ColumnLayout;
   hideColumnManagement?: boolean;
   labelFilterPlaceholder?: string;
   nameFilterPlaceholder?: string;
@@ -506,7 +498,7 @@ export type MultiListPageProps<L = any, C = any> = PageCommonProps<L, C> & {
   resources: (Omit<WatchK8sResourceWithProp, 'prop'> & {
     prop?: WatchK8sResourceWithProp['prop'];
   })[];
-  staticFilters?: { key: string; value: string }[];
+  staticFilters?: { [key: string]: string } | { [key: string]: string }[];
   nameFilter?: string;
   omitFilterToolbar?: boolean;
 };
@@ -538,7 +530,6 @@ export const MultiListPage: FC<MultiListPageProps> = (props) => {
     hideLabelFilter,
     hideNameLabelFilters,
     hideColumnManagement,
-    columnLayout,
     nameFilter,
     omitFilterToolbar,
   } = props;
@@ -604,10 +595,11 @@ export const MultiListPage: FC<MultiListPageProps> = (props) => {
 
   const loadError = useMemo(
     () =>
-      Object.values(watchedResources).find(
-        (r) => r.loadError && !(r.loadError instanceof NoModelError),
-      )?.loadError,
-    [watchedResources],
+      Object.entries(watchedResources).find(
+        ([key, r]) =>
+          r.loadError && !(r.loadError instanceof NoModelError) && !watchResources[key]?.optional,
+      )?.[1]?.loadError,
+    [watchedResources, watchResources],
   );
 
   const reduxIDs = useMemo(
@@ -650,7 +642,6 @@ export const MultiListPage: FC<MultiListPageProps> = (props) => {
         hideLabelFilter={hideLabelFilter}
         hideNameLabelFilters={hideNameLabelFilters}
         hideColumnManagement={hideColumnManagement}
-        columnLayout={columnLayout}
         nameFilterPlaceholder={nameFilterPlaceholder}
         labelFilterPlaceholder={labelFilterPlaceholder}
         nameFilter={nameFilter}

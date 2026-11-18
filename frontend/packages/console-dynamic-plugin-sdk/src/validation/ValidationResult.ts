@@ -1,4 +1,3 @@
-import chalk from 'chalk';
 import * as semver from 'semver';
 
 class ValidationAssertions {
@@ -61,14 +60,13 @@ export class ValidationResult {
   }
 
   formatErrors() {
-    const prefix = `${chalk.bold(this.description)} (${this.errors.length} errors)\n`;
-    const errorLines = this.errors.map((e) => `    ${chalk.red(e)}`);
+    const prefix = `${this.description} (${this.errors.length} errors)\n`;
+    const errorLines = this.errors.map((e) => `    ${e}`);
     return prefix + errorLines.join('\n');
   }
 
   report(throwOnErrors: boolean = true) {
     if (this.hasErrors()) {
-      // eslint-disable-next-line no-console
       console.error(this.formatErrors());
 
       if (throwOnErrors) {

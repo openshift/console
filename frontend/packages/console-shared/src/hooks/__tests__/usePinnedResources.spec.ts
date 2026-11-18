@@ -1,6 +1,6 @@
 import { renderHook } from '@testing-library/react';
 import useActivePerspective from '@console/dynamic-plugin-sdk/src/perspective/useActivePerspective';
-import { DeploymentModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/__mocks__/k8s-data';
+import { DeploymentModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/__tests__/data/k8s-data';
 import { ConfigMapModel } from '@console/internal/models';
 import { useModelFinder } from '@console/internal/module/k8s/k8s-models';
 import { usePerspectives } from '@console/shared/src/hooks/usePerspectives';

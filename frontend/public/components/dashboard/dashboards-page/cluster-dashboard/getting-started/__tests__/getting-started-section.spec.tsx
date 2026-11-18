@@ -60,10 +60,10 @@ describe('GettingStartedSection', () => {
       <GettingStartedSection userPreferenceKey={CLUSTER_DASHBOARD_USER_PREFERENCE_KEY} />,
     );
 
-    const contentContainer = await screen.findByTestId('getting-started-content');
-    expect(contentContainer).toHaveTextContent('Set up your cluster');
-    expect(contentContainer).toHaveTextContent('Learn with guided tours');
-    expect(contentContainer).toHaveTextContent('Explore new features');
+    const gettingStarted = await screen.findByTestId('getting-started');
+    expect(gettingStarted).toHaveTextContent('Set up your cluster');
+    expect(gettingStarted).toHaveTextContent('Learn with guided tours');
+    expect(gettingStarted).toHaveTextContent('Explore new features');
   });
 
   it('should render nothing when useFlag(FLAGS.OPENSHIFT) returns false', async () => {

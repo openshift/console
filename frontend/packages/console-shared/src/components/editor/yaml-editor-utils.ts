@@ -109,6 +109,37 @@ export const getConsoleYamlSchemas = (): SchemasSettings[] => {
   ];
 };
 
+const findMappingValue = (node: yaml.YAMLNode, key: string): yaml.YAMLNode | undefined =>
+  (node?.mappings as yaml.YAMLMapping[])?.find((mapping) => mapping.key?.value === key)?.value;
+
+/**
+ * Gets the unique `metadata.namespace` of every document in a string representing
+ * one or more YAML documents, in order of apperaance.
+ *
+ * @returns an array of unique namespaces, or an empty array if the YAML is invalid or no namespaces are found.
+ */
+export const getNamespacesFromYAML = (yamlString: string): string[] => {
+  const namespaces: string[] = [];
+  const collectNamespace = (node: yaml.YAMLNode) => {
+    const namespace = findMappingValue(findMappingValue(node, 'metadata'), 'namespace')?.value;
+    if (typeof namespace === 'string' && namespace) {
+      namespaces.push(namespace);
+    }
+  };
+  try {
+    yaml.safeLoadAll(yamlString, (doc) => {
+      collectNamespace(doc);
+      const items = (findMappingValue(doc, 'items') as yaml.YAMLSequence)?.items ?? [];
+      for (const item of items) {
+        collectNamespace(item);
+      }
+    });
+  } catch (e) {
+    return [];
+  }
+  return [...new Set(namespaces)];
+};
+
 /**
  * This works because we enabled globalAPI in the webpack config. This means that the
  * monaco instance is shared across all consumers of the console application.

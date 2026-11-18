@@ -1,8 +1,10 @@
 import { test, expect } from '../../fixtures';
+import { OperatorMigrationFixture } from '../../fixtures/operator-migration-fixture';
 import { warmupSPA } from '../../pages/base-page';
 import { CatalogPage } from '../../pages/catalog-page';
 import { AddPage } from '../../pages/dev-console/add-page';
 import { TopologyPage } from '../../pages/topology-page';
+import { OLM_CLUSTER_STATE_LOCK } from '../../utils/locks';
 
 /**
  * Migrated from:
@@ -19,87 +21,77 @@ import { TopologyPage } from '../../pages/topology-page';
  *   - A-09-TC011 (@manual) - Devfiles on Software Catalog
  */
 
-test.describe(
-  'Create Application from Catalog',
-  { tag: ['@dev-console', '@smoke'] },
-  () => {
-    const ns = `aut-addflow-catalog-${Date.now()}`;
-    let addPage: AddPage;
-    let catalogPage: CatalogPage;
-    let topologyPage: TopologyPage;
+test.describe('Create Application from Catalog', { tag: ['@dev-console', '@smoke'] }, () => {
+  const ns = `aut-addflow-catalog-${Date.now()}`;
+  let catalogPage: CatalogPage;
+  let topologyPage: TopologyPage;
 
-    test.beforeEach(async ({ page, k8sClient, cleanup }) => {
-      addPage = new AddPage(page);
-      catalogPage = new CatalogPage(page);
-      topologyPage = new TopologyPage(page);
-      await k8sClient.createNamespace(ns);
-      cleanup.trackNamespace(ns);
-      await warmupSPA(page);
+  test.beforeEach(async ({ page, k8sClient, cleanup }) => {
+    catalogPage = new CatalogPage(page);
+    topologyPage = new TopologyPage(page);
+    await k8sClient.createNamespace(ns);
+    cleanup.trackNamespace(ns);
+    await warmupSPA(page);
+  });
+
+  test('deploy application using Catalog Template - MariaDB [A-01-TC02]', async () => {
+    test.slow();
+
+    await test.step('Navigate to Templates in Software Catalog', async () => {
+      await catalogPage.navigateToTemplates(ns);
     });
 
-    test('deploy application using Catalog Template - MariaDB [A-01-TC02]', async () => {
-      test.slow();
-
-      await test.step('Navigate to Templates in Software Catalog', async () => {
-        await catalogPage.navigateToTemplates(ns);
-      });
-
-      await test.step('Select Databases category and MariaDB template', async () => {
-        await catalogPage.selectTemplateCategory('Databases');
-        await catalogPage.searchAndSelectCard('MariaDB');
-      });
-
-      await test.step('Instantiate template', async () => {
-        await catalogPage.clickInstantiateTemplate();
-        await catalogPage.getFormSubmitButton().click();
-      });
-
-      await test.step('Verify workload in topology', async () => {
-        await topologyPage.waitForWorkload('mariadb');
-        await expect(topologyPage.getWorkload('mariadb')).toBeVisible();
-      });
-    });
-  },
-);
-
-test.describe(
-  'Create Database from Add page',
-  { tag: ['@dev-console', '@smoke'] },
-  () => {
-    const ns = `aut-addflow-database-${Date.now()}`;
-    let addPage: AddPage;
-    let catalogPage: CatalogPage;
-    let topologyPage: TopologyPage;
-
-    test.beforeEach(async ({ page, k8sClient, cleanup }) => {
-      addPage = new AddPage(page);
-      catalogPage = new CatalogPage(page);
-      topologyPage = new TopologyPage(page);
-      await k8sClient.createNamespace(ns);
-      cleanup.trackNamespace(ns);
-      await addPage.ensureDevPerspectiveAndNavigate(ns, k8sClient);
+    await test.step('Select Databases category and MariaDB template', async () => {
+      await catalogPage.selectTemplateCategory('Databases');
+      await catalogPage.searchAndSelectCard('MariaDB');
     });
 
-    test('create Database from Add page - MariaDB [A-03-TC01]', async () => {
-      test.slow();
-
-      await test.step('Click Database card', async () => {
-        await addPage.clickDatabaseCard();
-      });
-
-      await test.step('Select MariaDB and instantiate', async () => {
-        await catalogPage.searchAndSelectCard('MariaDB');
-        await catalogPage.clickInstantiateTemplate();
-        await catalogPage.getFormSubmitButton().click();
-      });
-
-      await test.step('Verify workload in topology', async () => {
-        await topologyPage.waitForWorkload('mariadb');
-        await expect(topologyPage.getWorkload('mariadb')).toBeVisible();
-      });
+    await test.step('Instantiate template', async () => {
+      await catalogPage.clickInstantiateTemplate();
+      await catalogPage.getFormSubmitButton().click();
     });
-  },
-);
+
+    await test.step('Verify workload in topology', async () => {
+      await topologyPage.waitForWorkload('mariadb');
+      await expect(topologyPage.getWorkload('mariadb')).toBeVisible();
+    });
+  });
+});
+
+test.describe('Create Database from Add page', { tag: ['@dev-console', '@smoke'] }, () => {
+  const ns = `aut-addflow-database-${Date.now()}`;
+  let addPage: AddPage;
+  let catalogPage: CatalogPage;
+  let topologyPage: TopologyPage;
+
+  test.beforeEach(async ({ page, k8sClient, cleanup }) => {
+    addPage = new AddPage(page);
+    catalogPage = new CatalogPage(page);
+    topologyPage = new TopologyPage(page);
+    await k8sClient.createNamespace(ns);
+    cleanup.trackNamespace(ns);
+    await addPage.ensureDevPerspectiveAndNavigate(ns, k8sClient);
+  });
+
+  test('create Database from Add page - MariaDB [A-03-TC01]', async () => {
+    test.slow();
+
+    await test.step('Click Database card', async () => {
+      await addPage.clickDatabaseCard();
+    });
+
+    await test.step('Select MariaDB and instantiate', async () => {
+      await catalogPage.searchAndSelectCard('MariaDB');
+      await catalogPage.clickInstantiateTemplate();
+      await catalogPage.getFormSubmitButton().click();
+    });
+
+    await test.step('Verify workload in topology', async () => {
+      await topologyPage.waitForWorkload('mariadb');
+      await expect(topologyPage.getWorkload('mariadb')).toBeVisible();
+    });
+  });
+});
 
 test.describe(
   'Software Catalog with All Namespaces',
@@ -112,7 +104,9 @@ test.describe(
       await warmupSPA(page);
     });
 
-    test('forces project selection when all namespaces URL is accessed [A-12-TC01]', async () => {
+    test('forces project selection when all namespaces URL is accessed [A-12-TC01]', async ({
+      page,
+    }) => {
       await test.step('Navigate to catalog all namespaces', async () => {
         await catalogPage.navigateToAllNamespacesCatalog();
       });
@@ -144,34 +138,98 @@ test.describe(
   },
 );
 
+test.describe('Software Catalog Page details', { tag: ['@dev-console', '@regression'] }, () => {
+  const ns = `aut-catalog-pagedetails-${Date.now()}`;
+  let catalogPage: CatalogPage;
+
+  test.beforeEach(async ({ page, k8sClient, cleanup }) => {
+    catalogPage = new CatalogPage(page);
+    await k8sClient.createNamespace(ns);
+    cleanup.trackNamespace(ns);
+    await warmupSPA(page);
+    await catalogPage.navigateToCatalog(ns);
+  });
+
+  test('Software Catalog page default view [A-09-TC01]', async () => {
+    await expect(catalogPage.getFilterInput()).toBeVisible();
+  });
+
+  test('Helm Charts on Software Catalog [A-09-TC06]', async () => {
+    await test.step('Click on Helm Charts type', async () => {
+      await catalogPage.selectTypeOption('Helm Charts');
+    });
+
+    await test.step('Verify Helm Charts are displayed', async () => {
+      const tiles = catalogPage.getCatalogTiles();
+      await expect(tiles.first()).toBeVisible({ timeout: 30_000 });
+      await expect(catalogPage.getFilterInput()).toBeVisible();
+    });
+  });
+});
+
 test.describe(
-  'Software Catalog Page details',
-  { tag: ['@dev-console', '@regression'] },
+  'Software Catalog operators',
+  { tag: ['@dev-console', '@regression', '@techpreview'], lock: OLM_CLUSTER_STATE_LOCK },
   () => {
-    const ns = `aut-catalog-pagedetails-${Date.now()}`;
     let catalogPage: CatalogPage;
 
     test.beforeEach(async ({ page, k8sClient, cleanup }) => {
       catalogPage = new CatalogPage(page);
-      await k8sClient.createNamespace(ns);
-      cleanup.trackNamespace(ns);
       await warmupSPA(page);
-      await catalogPage.navigateToCatalog(ns);
+      const flags = await page.evaluate(() => window.SERVER_FLAGS);
+      if (flags.techPreview) {
+        // The OLM v1 catalog needs a serving ClusterCatalog. Keep our own real
+        // catalogs until cleanup instead of relying on another spec's fixtures.
+        test.setTimeout(660_000);
+        const fixture = new OperatorMigrationFixture(k8sClient, cleanup, flags.authDisabled);
+        await fixture.createCatalogs(
+          process.env.OLM_MIGRATION_SOURCE_CATALOG_IMAGE ||
+            'ghcr.io/logonoff/ocp-olm-catalog-fixtures:source-main',
+          process.env.OLM_MIGRATION_TARGET_CATALOG_IMAGE ||
+            'ghcr.io/logonoff/ocp-olm-catalog-fixtures:main',
+        );
+      }
     });
 
-    test('Software Catalog page default view [A-09-TC01]', async () => {
-      await expect(catalogPage.getFilterInput()).toBeVisible();
-    });
-
-    test('Helm Charts on Software Catalog [A-09-TC06]', async () => {
-      await test.step('Click on Helm Charts type', async () => {
-        await catalogPage.selectTypeOption('Helm Charts');
+    test('displays operator tiles in catalog', async ({ page }) => {
+      await test.step('Navigate to operator catalog', async () => {
+        await page.goto(
+          '/catalog/ns/default?catalogType=operator&operatorCatalog=%5B%22Classic%20Operators%22%5D',
+        );
       });
 
-      await test.step('Verify Helm Charts are displayed', async () => {
-        const tiles = catalogPage.getCatalogTiles();
-        await expect(tiles.first()).toBeVisible({ timeout: 30_000 });
-        await expect(catalogPage.getFilterInput()).toBeVisible();
+      await test.step('Verify operator tiles are rendered', async () => {
+        await expect(page.locator('[data-test^="operator-"]').first()).toBeVisible({
+          timeout: 30_000,
+        });
+      });
+    });
+
+    test('filters operator tiles by keyword', async ({ page }) => {
+      await test.step('Navigate to operator catalog', async () => {
+        await page.goto(
+          '/catalog/ns/default?catalogType=operator&operatorCatalog=%5B%22Classic%20Operators%22%5D',
+        );
+      });
+
+      await test.step('Wait for tiles to render', async () => {
+        await expect(catalogPage.getCatalogTiles().first()).toBeVisible({
+          timeout: 30_000,
+        });
+      });
+
+      await test.step('Filter by non-matching keyword and verify no tiles shown', async () => {
+        // Catalog data can finish loading and remount the input after the first tiles appear.
+        await expect(async () => {
+          await catalogPage.filterByKeyword('zzz-no-match-xyzzy');
+          await expect(catalogPage.getCatalogTiles()).toHaveCount(0);
+        }).toPass({ timeout: 30_000 });
+        await expect(page.getByText('No results found')).toBeVisible();
+      });
+
+      await test.step('Clear filter and verify tiles return', async () => {
+        await catalogPage.filterByKeyword('');
+        await expect(catalogPage.getCatalogTiles().first()).toBeVisible();
       });
     });
   },

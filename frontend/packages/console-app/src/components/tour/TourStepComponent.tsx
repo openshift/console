@@ -11,7 +11,7 @@ import {
   Popover,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { useTheme } from '@console/internal/components/ThemeProvider';
+import { useTheme } from '@console/app/src/providers/theme/ThemeProvider';
 import { Spotlight } from '@console/shared/src/components/spotlight/Spotlight';
 import StepBadge from './steps/StepBadge';
 import StepContent from './steps/StepContent';

@@ -45,7 +45,7 @@ export const isAWSSTSCluster = (
 ): boolean =>
   cloudcreds?.spec?.credentialsMode === 'Manual' &&
   infra?.status?.platform === 'AWS' &&
-  auth?.spec?.serviceAccountIssuer !== '';
+  !!auth?.spec?.serviceAccountIssuer;
 
 export const isAzureWIFCluster = (
   cloudcreds: CloudCredentialKind,
@@ -54,7 +54,7 @@ export const isAzureWIFCluster = (
 ): boolean =>
   cloudcreds?.spec?.credentialsMode === 'Manual' &&
   infra?.status?.platform === 'Azure' &&
-  auth?.spec?.serviceAccountIssuer !== '';
+  !!auth?.spec?.serviceAccountIssuer;
 
 export const isGCPWIFCluster = (
   cloudcreds: CloudCredentialKind,
@@ -63,7 +63,7 @@ export const isGCPWIFCluster = (
 ): boolean =>
   cloudcreds?.spec?.credentialsMode === 'Manual' &&
   infra?.status?.platform === 'GCP' &&
-  auth?.spec?.serviceAccountIssuer !== '';
+  !!auth?.spec?.serviceAccountIssuer;
 
 export const infrastructureFeatureMap = {
   disconnected: InfrastructureFeature.Disconnected,
@@ -324,7 +324,6 @@ export const getSupportWorkflowUrl = (marketplaceSupportWorkflow: string): strin
       url.searchParams.set('utm_source', 'openshift_console');
       return url.toString();
     } catch (error) {
-      // eslint-disable-next-line no-console
       console.error('Error while parsing support workflow URL', error.message);
     }
   }

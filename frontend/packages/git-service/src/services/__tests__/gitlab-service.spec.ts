@@ -10,7 +10,12 @@ describe('Gitlab Service', () => {
   const nockBack = nock.back;
   nockBack.setMode('record');
 
-  nockBack.fixtures = `${__dirname}/__nock-fixtures__/gitlab`;
+  nockBack.fixtures = `${import.meta.dirname}/__nock-fixtures__/gitlab`;
+
+  afterAll(() => {
+    nock.cleanAll();
+    nock.restore();
+  });
 
   it('should return ok on existing public gitlab repo', () => {
     const gitSource: GitSource = { url: 'https://gitlab.com/jpratik999/devconsole-git.git' };
@@ -305,7 +310,6 @@ describe('Gitlab Service', () => {
 
     const scope = nock('https://example.com/api/v4')
       .get('/projects/test%2Frepo')
-      // eslint-disable-next-line @typescript-eslint/naming-convention
       .reply(200, { path_with_namespace: 'test/repo' });
 
     const status = await gitService.isRepoReachable();
@@ -319,7 +323,6 @@ describe('Gitlab Service', () => {
 
     const scope = nock('http://example.com:3000/api/v4')
       .get('/projects/test%2Frepo')
-      // eslint-disable-next-line @typescript-eslint/naming-convention
       .reply(200, { path_with_namespace: 'test/repo' });
 
     const status = await gitService.isRepoReachable();
@@ -360,12 +363,16 @@ describe('Gitlab Service', () => {
       expect(metadata.host).toBe('http://gitlab.example.com:8080');
     });
 
-    it('should default to HTTPS for SSH URLs and preserve port', () => {
+    it('should treat scp-style URLs without a port as owner paths', () => {
+      // scp-style syntax has no port component; git-url-parse 16 treats
+      // `git@host:2222/owner/repo.git` as owner "2222/owner". Use the
+      // ssh:// form to specify a port, see the test below.
       const gitSource: GitSource = { url: 'git@gitlab.example.com:2222/owner/repo.git' };
       const gitService = new GitlabService(gitSource);
       const metadata = gitService.getRepoMetadata();
 
-      expect(metadata.host).toBe('https://gitlab.example.com:2222');
+      expect(metadata.host).toBe('https://gitlab.example.com');
+      expect(metadata.owner).toBe('2222/owner');
     });
 
     it('should default to HTTPS for git:// protocol URLs', () => {

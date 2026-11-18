@@ -1,4 +1,3 @@
-import { Map as ImmutableMap } from 'immutable';
 import { PodDisruptionBudgetModel } from '@console/app/src/models';
 import type { ResourceListPage } from '@console/dynamic-plugin-sdk';
 import {
@@ -55,7 +54,7 @@ type ResourceMapKey = GroupVersionKind | string;
 type ResourceMapValue = () => Promise<React.ComponentType<any>>;
 
 const addDynamicResourcePage = (
-  map: ImmutableMap<ResourceMapKey, ResourceMapValue>,
+  map: Map<ResourceMapKey, ResourceMapValue>,
   page: ResourceListPage,
 ) => {
   const key = referenceForExtensionModel(page.properties.model);
@@ -64,7 +63,7 @@ const addDynamicResourcePage = (
   }
 };
 
-const baseListPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
+const baseListPages: Map<ResourceMapKey, ResourceMapValue> = new Map()
   .set(referenceForModel(ConfigMapModel), () =>
     import('./configmap' /* webpackChunkName: "configmap" */).then((m) => m.ConfigMapsPage),
   )
@@ -140,7 +139,7 @@ const baseListPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
     import('./pod-list' /* webpackChunkName: "pod" */).then((m) => m.PodsPage),
   )
   .set(referenceForModel(ReplicaSetModel), () =>
-    import('./replicaset' /* webpackChunkName: "replicaset" */).then((m) => m.ReplicaSetsPage),
+    import('./replica-set' /* webpackChunkName: "replica-set" */).then((m) => m.ReplicaSetsPage),
   ) // TODO should be replica-set
   .set(referenceForModel(ReplicationControllerModel), () =>
     import('./replication-controller' /* webpackChunkName: "replication-controller" */).then(
@@ -227,7 +226,6 @@ const baseListPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
     ),
   )
   .set(referenceForModel(CustomResourceDefinitionModel), () =>
-    // eslint-disable-next-line import/no-cycle
     import(
       './custom-resource-definition' /* webpackChunkName: "custom-resource-definition" */
     ).then((m) => m.CustomResourceDefinitionsPage),
@@ -253,11 +251,8 @@ const baseListPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
     ).then((m) => m.VolumeSnapshotClassPage),
   );
 
-export const getResourceListPages = (pluginPages: ResourceListPage[] = []) =>
-  ImmutableMap<ResourceMapKey, ResourceMapValue>()
-    .merge(baseListPages)
-    .withMutations((map) => {
-      pluginPages.forEach((page) => {
-        addDynamicResourcePage(map, page);
-      });
-    });
+export const getResourceListPages = (pluginPages: ResourceListPage[] = []) => {
+  const map = new Map(baseListPages);
+  pluginPages.forEach((page) => addDynamicResourcePage(map, page));
+  return map;
+};

@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "coverage": "yarn test --coverage --collectCoverageFrom='[\"packages/dev-console/src/**\",\"!**/__tests__/**\",\"!packages/dev-console/src/test/**\"]'",
-    "lint": "yarn --cwd ../.. eslint packages/dev-console",
+    "lint": "yarn --cwd ../.. oxlint packages/dev-console",
     "test": "yarn --cwd ../.. test packages/dev-console"
   },
   "dependencies": {

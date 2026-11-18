@@ -5,10 +5,18 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { settleAllPromises } from '@console/dynamic-plugin-sdk/src/utils/promise';
 import { URL_POLL_DEFAULT_DELAY } from '@console/internal/components/utils/url-poll-hook';
+import { OLMV0_CATALOG_PATH } from '@console/operator-lifecycle-manager/src/const';
 import { useToast } from '@console/shared/src/components/toast/useToast';
 import { usePoll } from '@console/shared/src/hooks/usePoll';
 import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
 import { useSafeFetch } from './utils';
+
+const fetchPluginManifest = (pluginName: string): Promise<RemotePluginManifest> =>
+  coFetchJSON(
+    `${window.SERVER_FLAGS.basePath}api/plugins/${pluginName}/plugin-manifest.json`,
+    'get',
+    { cache: 'no-cache' },
+  );
 
 interface CheckUpdatesApiResult {
   consoleCommit: string;
@@ -32,14 +40,8 @@ export const PollConsoleUpdates = memo(() => {
   const [updateError, setUpdateError] = useState<Error>();
   const [newPlugins, setNewPlugins] = useState<CheckUpdatesApiResult['plugins']>(null);
   const [pluginManifestsData, setPluginManifestsData] = useState<RemotePluginManifest[]>();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks-js/exhaustive-deps
   const safeFetch = useCallback(useSafeFetch(), []);
-  const fetchPluginManifest = (pluginName: string): Promise<RemotePluginManifest> =>
-    coFetchJSON(
-      `${window.SERVER_FLAGS.basePath}api/plugins/${pluginName}/plugin-manifest.json`,
-      'get',
-      { cache: 'no-cache' },
-    );
   const tick = useCallback(() => {
     safeFetch(`${window.SERVER_FLAGS.basePath}api/check-updates`)
       .then((response) => {
@@ -63,8 +65,8 @@ export const PollConsoleUpdates = memo(() => {
   }, [safeFetch]);
   usePoll(tick, URL_POLL_DEFAULT_DELAY);
 
-  const prevUpdateDataRef = useRef<CheckUpdatesApiResult>();
-  const prevPluginManifestsDataRef = useRef<RemotePluginManifest[]>();
+  const prevUpdateDataRef = useRef<CheckUpdatesApiResult>(undefined);
+  const prevPluginManifestsDataRef = useRef<RemotePluginManifest[]>(undefined);
   useEffect(() => {
     prevUpdateDataRef.current = updateData;
     prevPluginManifestsDataRef.current = pluginManifestsData;
@@ -88,10 +90,12 @@ export const PollConsoleUpdates = memo(() => {
     setConsoleChanged(true);
   }
 
-  if (pluginsChanged && !allPluginEndpointsReady && !isFetchingPluginEndpoints) {
+  useEffect(() => {
+    if (!pluginsChanged || allPluginEndpointsReady || isFetchingPluginEndpoints) return;
     const pluginEndpointsReady =
       newPlugins?.map((pluginName) => fetchPluginManifest(pluginName)) ?? [];
     if (!_.isEmpty(pluginEndpointsReady)) {
+      setIsFetchingPluginEndpoints(true);
       settleAllPromises(pluginEndpointsReady)
         .then(([, rejectedReasons]) => {
           if (!_.isEmpty(rejectedReasons)) {
@@ -104,12 +108,11 @@ export const PollConsoleUpdates = memo(() => {
           setNewPlugins(null);
         })
         .catch(() => {});
-      setIsFetchingPluginEndpoints(true);
     } else {
       setAllPluginEndpointsReady(true);
       setIsFetchingPluginEndpoints(false);
     }
-  }
+  }, [pluginsChanged, allPluginEndpointsReady, isFetchingPluginEndpoints, newPlugins]);
 
   const pluginManifestsVersionsChanged = pluginManifestsData?.some((manifest) =>
     prevPluginManifestsData?.some(
@@ -144,53 +147,49 @@ export const PollConsoleUpdates = memo(() => {
     setConsoleChanged(true);
   }
 
-  if (isToastOpen || !stateInitialized) {
-    return null;
-  }
+  const shouldShowToast =
+    !isToastOpen &&
+    stateInitialized &&
+    (pluginsChanged || pluginVersionsChanged || consoleChanged) &&
+    !(pluginsChanged && !allPluginEndpointsReady);
 
-  if (!pluginsChanged && !pluginVersionsChanged && !consoleChanged) {
-    return null;
-  }
-
-  if (pluginsChanged && !allPluginEndpointsReady) {
-    return null;
-  }
-
-  const toastCallback = () => {
-    setToastOpen(false);
-    setPluginsChanged(false);
-    setPluginVersionsChanged(false);
-    setConsoleChanged(false);
-    setAllPluginEndpointsReady(false);
-    setIsFetchingPluginEndpoints(false);
-  };
-
-  toastContext.addToast({
-    variant: AlertVariant.warning,
-    title: t('Web console update is available'),
-    content: t(
-      'There has been an update to the web console. Ensure any changes have been saved and refresh your browser to access the latest version.',
-    ),
-    timeout: false,
-    dismissible: true,
-    actions: [
-      {
-        dismiss: true,
-        label: t('Refresh web console'),
-        callback: () => {
-          if (window.location.pathname.includes('/operatorhub/subscribe')) {
-            window.location.href = '/catalog?catalogType=operator';
-          } else {
-            window.location.reload();
-          }
+  useEffect(() => {
+    if (!shouldShowToast) return;
+    const toastCallback = () => {
+      setToastOpen(false);
+      setPluginsChanged(false);
+      setPluginVersionsChanged(false);
+      setConsoleChanged(false);
+      setAllPluginEndpointsReady(false);
+      setIsFetchingPluginEndpoints(false);
+    };
+    toastContext.addToast({
+      variant: AlertVariant.warning,
+      title: t('Web console update is available'),
+      content: t(
+        'There has been an update to the web console. Ensure any changes have been saved and refresh your browser to access the latest version.',
+      ),
+      timeout: false,
+      dismissible: true,
+      actions: [
+        {
+          dismiss: true,
+          label: t('Refresh web console'),
+          callback: () => {
+            if (window.location.pathname.includes('/operatorhub/subscribe')) {
+              window.location.href = OLMV0_CATALOG_PATH;
+            } else {
+              window.location.reload();
+            }
+          },
+          dataTest: 'refresh-web-console',
         },
-        dataTest: 'refresh-web-console',
-      },
-    ],
-    onClose: toastCallback,
-    onRemove: toastCallback,
-  });
+      ],
+      onClose: toastCallback,
+      onRemove: toastCallback,
+    });
+    setToastOpen(true);
+  }, [shouldShowToast, t, toastContext]);
 
-  setToastOpen(true);
   return null;
 });

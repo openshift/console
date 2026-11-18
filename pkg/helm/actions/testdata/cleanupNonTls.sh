@@ -4,3 +4,4 @@ GOOS=${GOOS:-$(go env GOOS)}
 GOARCH=${GOARCH:-$(go env GOARCH)}
 rm -rf ./$GOOS-$GOARCH
 rm -rf ./chartmuseum.tar.gz
+rm -f ./chartmuseum-no-tls.pid

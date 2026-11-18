@@ -27,77 +27,77 @@ import {
   PodRingSetProps,
 } from '../extensions/topology-types';
 
-export const CpuCellComponent: FC<CpuCellComponentProps> = require('@console/topology/src/components/list-view/cells/CpuCell')
-  .CpuCellComponent;
+export const CpuCellComponent: FC<CpuCellComponentProps> =
+  require('@console/topology/src/components/list-view/cells/CpuCell').CpuCellComponent;
 
-export const MemoryCellComponent: FC<MemoryCellComponentProps> = require('@console/topology/src/components/list-view/cells/MemoryCell')
-  .MemoryCellComponent;
+export const MemoryCellComponent: FC<MemoryCellComponentProps> =
+  require('@console/topology/src/components/list-view/cells/MemoryCell').MemoryCellComponent;
 
-export const TopologyListViewNode: FC<TopologyListViewNodeProps> = require('@console/topology/src/components/list-view/TopologyListViewNode')
-  .TopologyListViewNode;
+export const TopologyListViewNode: FC<TopologyListViewNodeProps> =
+  require('@console/topology/src/components/list-view/TopologyListViewNode').TopologyListViewNode;
 
-export const useOverviewMetrics: UseOverviewMetrics = require('@console/topology/src/utils/useOverviewMetrics')
-  .useOverviewMetrics;
+export const useOverviewMetrics: UseOverviewMetrics =
+  require('@console/topology/src/utils/useOverviewMetrics').useOverviewMetrics;
 
-export const withEditReviewAccess: WithEditReviewAccess = require('@console/topology/src/utils/withEditReviewAccess')
-  .withEditReviewAccess;
+export const withEditReviewAccess: WithEditReviewAccess =
+  require('@console/topology/src/utils/withEditReviewAccess').withEditReviewAccess;
 
-export const getPodMetricStats: GetPodMetricStats = require('@console/topology/src/utils/metricStats')
-  .getPodMetricStats;
+export const getPodMetricStats: GetPodMetricStats =
+  require('@console/topology/src/utils/metricStats').getPodMetricStats;
 
-export const getTopologyResourceObject: GetTopologyResourceObject = require('@console/topology/src/utils/topology-utils')
-  .getTopologyResourceObject;
+export const getTopologyResourceObject: GetTopologyResourceObject =
+  require('@console/topology/src/utils/topology-utils').getTopologyResourceObject;
 
-export const getResource: GetResource = require('@console/topology/src/utils/topology-utils')
-  .getResource;
+export const getResource: GetResource =
+  require('@console/topology/src/utils/topology-utils').getResource;
 
-export const getTopologyEdgeItems: GetTopologyEdgeItems = require('@console/topology/src/data-transforms/transform-utils')
-  .getTopologyEdgeItems;
+export const getTopologyEdgeItems: GetTopologyEdgeItems =
+  require('@console/topology/src/data-transforms/transform-utils').getTopologyEdgeItems;
 
-export const getTopologyGroupItems: GetTopologyGroupItems = require('@console/topology/src/data-transforms/transform-utils')
-  .getTopologyGroupItems;
+export const getTopologyGroupItems: GetTopologyGroupItems =
+  require('@console/topology/src/data-transforms/transform-utils').getTopologyGroupItems;
 
-export const getTopologyNodeItem: GetTopologyNodeItem = require('@console/topology/src/data-transforms/transform-utils')
-  .getTopologyNodeItem;
+export const getTopologyNodeItem: GetTopologyNodeItem =
+  require('@console/topology/src/data-transforms/transform-utils').getTopologyNodeItem;
 
-export const mergeGroup: MergeGroup = require('@console/topology/src/data-transforms/transform-utils')
-  .mergeGroup;
+export const mergeGroup: MergeGroup =
+  require('@console/topology/src/data-transforms/transform-utils').mergeGroup;
 
-export const useGetModifyApplicationAction: GetModifyApplicationAction = require('@console/topology/src/actions/modify-application')
-  .useGetModifyApplicationAction;
+export const useGetModifyApplicationAction: GetModifyApplicationAction =
+  require('@console/topology/src/actions/modify-application').useGetModifyApplicationAction;
 
-export const baseDataModelGetter: BaseDataModelGetter = require('@console/topology/src/data-transforms/data-transformer')
-  .baseDataModelGetter;
+export const baseDataModelGetter: BaseDataModelGetter =
+  require('@console/topology/src/data-transforms/data-transformer').baseDataModelGetter;
 
-export const getWorkloadResources: GetWorkloadResources = require('@console/topology/src/data-transforms/transform-utils')
-  .getWorkloadResources;
+export const getWorkloadResources: GetWorkloadResources =
+  require('@console/topology/src/data-transforms/transform-utils').getWorkloadResources;
 
-export const contextMenuActions: ContextMenuActions = require('@console/topology/src/actions/contextMenuActions')
-  .contextMenuActions;
+export const contextMenuActions: ContextMenuActions =
+  require('@console/topology/src/actions/contextMenuActions').contextMenuActions;
 
-export const CreateConnector: CreateConnectorProps = require('@console/topology/src/components/graph-view/components/edges/CreateConnector')
-  .CreateConnector;
+export const CreateConnector: CreateConnectorProps =
+  require('@console/topology/src/components/graph-view/components/edges/CreateConnector').CreateConnector;
 
-export const createConnectorCallback = require('@console/topology/src/components/graph-view/components/componentUtils')
-  .createConnectorCallback;
+export const createConnectorCallback =
+  require('@console/topology/src/components/graph-view/components/componentUtils').createConnectorCallback;
 
-export const WorkloadNode: FC<WorkloadNodeProps> = require('@console/topology/src/components/graph-view/components/nodes/WorkloadNode')
-  .WorkloadNode;
+export const WorkloadNode: FC<WorkloadNodeProps> =
+  require('@console/topology/src/components/graph-view/components/nodes/WorkloadNode').WorkloadNode;
 
-export const PodSet: FC<PodSetProps> = require('@console/topology/src/components/graph-view/components/nodes/PodSet')
-  .PodSet;
+export const PodSet: FC<PodSetProps> =
+  require('@console/topology/src/components/graph-view/components/nodes/PodSet').PodSet;
 
-export const BaseNode: FC<BaseNodeProps> = require('@console/topology/src/components/graph-view/components/nodes/BaseNode')
-  .BaseNode;
+export const BaseNode: FC<BaseNodeProps> =
+  require('@console/topology/src/components/graph-view/components/nodes/BaseNode').BaseNode;
 
-export const withContextMenu: WithContextMenu = require('@console/topology/src/components/graph-view/components/componentUtils')
-  .withContextMenu;
+export const withContextMenu: WithContextMenu =
+  require('@console/topology/src/components/graph-view/components/componentUtils').withContextMenu;
 
-export const withCreateConnector: WithCreateConnector = require('@console/topology/src/behavior/withCreateConnector')
-  .withCreateConnector;
+export const withCreateConnector: WithCreateConnector =
+  require('@console/topology/src/behavior/withCreateConnector').withCreateConnector;
 
-export const OdcBaseNode: OdcBaseNodeConstructor = require('@console/topology/src/elements/OdcBaseNode')
-  .OdcBaseNode;
+export const OdcBaseNode: OdcBaseNodeConstructor =
+  require('@console/topology/src/elements/OdcBaseNode').OdcBaseNode;
 
-export const PodRingSet: FC<PodRingSetProps> = require('@console/shared/src/components/pod/PodRingSet')
-  .default;
+export const PodRingSet: FC<PodRingSetProps> =
+  require('@console/shared/src/components/pod/PodRingSet').default;

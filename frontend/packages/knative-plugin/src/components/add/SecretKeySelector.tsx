@@ -3,15 +3,13 @@ import { useState, useEffect } from 'react';
 import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternfly/react-core';
 import type { FormikValues } from 'formik';
 import { useFormikContext, useField } from 'formik';
-import { connect } from 'react-redux';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { ErrorModal } from '@console/internal/components/modals/error-modal';
 import { ValueFromPair } from '@console/internal/components/utils/value-from-pair';
 import { SecretModel } from '@console/internal/models';
 import { k8sGet } from '@console/internal/module/k8s';
-import { getActiveNamespace } from '@console/internal/reducers/ui';
-import type { RootState } from '@console/internal/redux';
 import { getFieldId } from '@console/shared/src/components/formik-fields/field-utils';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { useFormikValidationFix } from '@console/shared/src/hooks/useFormikValidationFix';
 
 interface SecretKeySelectorProps {
@@ -20,22 +18,14 @@ interface SecretKeySelectorProps {
   isRequired?: boolean;
 }
 
-interface StateProps {
-  namespace: string;
-}
-
-const SecretKeySelector: FC<SecretKeySelectorProps & StateProps> = ({
-  name,
-  label,
-  namespace,
-  isRequired = false,
-}) => {
+const SecretKeySelector: FC<SecretKeySelectorProps> = ({ name, label, isRequired = false }) => {
   const { setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
   const [field, { touched, error }] = useField(name);
   const [secrets, setSecrets] = useState({});
   const launchModal = useOverlay();
   const fieldId = getFieldId(name, 'secret-key-input');
   const isValid = !(touched && error);
+  const [namespace] = useActiveNamespace();
 
   const getErrorMessage = (err: string | { name?: string; key?: string }): string => {
     let errMsg = '';
@@ -85,10 +75,4 @@ const SecretKeySelector: FC<SecretKeySelectorProps & StateProps> = ({
   );
 };
 
-const mapStateToProps = (state: RootState): StateProps => ({
-  namespace: getActiveNamespace(state),
-});
-
-export default connect<StateProps, null, SecretKeySelectorProps>(mapStateToProps)(
-  SecretKeySelector,
-);
+export default SecretKeySelector;

@@ -99,12 +99,16 @@ export const StorageClassDropdown: FC<StorageClassDropdownProps> = ({
 
   const [selectedKey, setSelectedKey] = useState<string | undefined>(selectedKeyProp);
 
-  useEffect(() => {
+  const [lastSyncedKeyProp, setLastSyncedKeyProp] = useState(selectedKeyProp);
+  if (selectedKeyProp !== lastSyncedKeyProp) {
+    setLastSyncedKeyProp(selectedKeyProp);
     setSelectedKey(selectedKeyProp);
-  }, [selectedKeyProp]);
+  }
 
   const onChangeRef = useRef(onChangeProp);
-  onChangeRef.current = onChangeProp;
+  useEffect(() => {
+    onChangeRef.current = onChangeProp;
+  });
 
   // Process resources into sorted items and find default storage class
   const { items, defaultClass } = useMemo<{

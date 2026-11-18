@@ -1,13 +1,7 @@
 import { render } from '@testing-library/react';
-import * as flagsModule from '@console/dynamic-plugin-sdk/src/utils/flags';
 import type { NodeKind } from '@console/internal/module/k8s';
 import * as DashboardGridModule from '@console/shared/src/components/dashboard/DashboardGrid';
-import ActivityCard from '../ActivityCard';
 import NodeDashboard from '../NodeDashboard';
-
-jest.mock('@console/dynamic-plugin-sdk/src/utils/flags', () => ({
-  useFlag: jest.fn(),
-}));
 
 jest.mock('@console/shared/src/components/dashboard/Dashboard', () => ({
   __esModule: true,
@@ -37,7 +31,6 @@ const mockNode: NodeKind = {
 
 describe('NodeDashboard', () => {
   beforeEach(() => {
-    jest.spyOn(flagsModule, 'useFlag').mockReturnValue(false);
     jest.spyOn(DashboardGridModule, 'default').mockReturnValue(null);
   });
 
@@ -67,47 +60,19 @@ describe('NodeDashboard', () => {
         expect.any(Object),
       );
     });
-  });
 
-  describe('when FLAG_OPENSHIFT_5 flag is disabled', () => {
-    it('should pass rightCards, mainCards, and leftCards to DashboardGrid', () => {
-      jest.spyOn(flagsModule, 'useFlag').mockReturnValue(false);
-
-      render(<NodeDashboard obj={mockNode} />);
-
-      expect(DashboardGridModule.default).toHaveBeenCalledWith(
-        expect.objectContaining({
-          rightCards: [{ Card: ActivityCard }],
-          mainCards: expect.arrayContaining([
-            expect.objectContaining({ Card: expect.any(Function) }),
-          ]),
-          leftCards: expect.arrayContaining([
-            expect.objectContaining({ Card: expect.any(Function) }),
-          ]),
-        }),
-        expect.any(Object),
-      );
-    });
-  });
-
-  describe('when FLAG_OPENSHIFT_5 flag is enabled', () => {
     it('should not pass rightCards to DashboardGrid', () => {
-      jest.spyOn(flagsModule, 'useFlag').mockReturnValue(true);
-
       render(<NodeDashboard obj={mockNode} />);
 
       expect(DashboardGridModule.default).toHaveBeenCalledWith(
         expect.objectContaining({
-          rightCards: undefined,
-          mainCards: expect.arrayContaining([
-            expect.objectContaining({ Card: expect.any(Function) }),
-          ]),
-          leftCards: expect.arrayContaining([
-            expect.objectContaining({ Card: expect.any(Function) }),
-          ]),
+          mainCards: expect.any(Array),
+          leftCards: expect.any(Array),
         }),
         expect.any(Object),
       );
+      const props = jest.mocked(DashboardGridModule.default).mock.calls[0][0];
+      expect(props.rightCards).toBeUndefined();
     });
   });
 });

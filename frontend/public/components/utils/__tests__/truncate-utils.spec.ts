@@ -3,7 +3,7 @@ import { truncateMiddle, shouldTruncate } from '../truncate-middle';
 
 const testTruncateText = 'ThisTextShouldBeTruncatedByDefault';
 
-describe('truncateMiddle: ', () => {
+describe('truncateMiddle:', () => {
   it('should truncate to 20 characters, in the middle, with ellipse by default', () => {
     expect(shouldTruncate(testTruncateText)).toBe(true);
     const truncateResult = truncateMiddle(testTruncateText);

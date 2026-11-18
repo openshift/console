@@ -1,6 +1,4 @@
 import { useRef, useMemo, useEffect } from 'react';
-import type { Iterable as ImmutableIterable } from 'immutable';
-import { Map as ImmutableMap } from 'immutable';
 import { useDispatch, useSelector } from 'react-redux';
 import { createSelectorCreator, lruMemoize } from 'reselect';
 import type { K8sModel } from '../../../api/common-types';
@@ -18,6 +16,17 @@ import { useDeepCompareMemoize } from './useDeepCompareMemoize';
 import { getK8sModel } from './useK8sModel';
 import { useModelsLoaded } from './useModelsLoaded';
 import { usePrevious } from './usePrevious';
+
+/**
+ * Compares two filtered model maps for equal content. The maps are small
+ * (only the models relevant to the watched resources) and the values are
+ * stable store references, so comparing by key and reference suffices.
+ */
+const shallowEqualModels = (a: Record<string, K8sModel>, b: Record<string, K8sModel>): boolean => {
+  const aKeys = Object.keys(a);
+  const bKeys = Object.keys(b);
+  return aKeys.length === bKeys.length && aKeys.every((key) => Object.is(a[key], b[key]));
+};
 
 /**
  * Hook that retrieves the Kubernetes resources along with their respective status for loaded and error.
@@ -40,14 +49,15 @@ export const useK8sWatchResources: UseK8sWatchResources = (initResources) => {
   const resources = useDeepCompareMemoize(initResources, true);
   const modelsLoaded = useModelsLoaded();
 
-  const allK8sModels = useSelector<SDKStoreState>((state) =>
-    state.k8s.getIn(['RESOURCES', 'models']),
-  ) as ImmutableMap<string, K8sModel>;
+  const allK8sModels = useSelector<SDKStoreState>((state) => state.k8s.RESOURCES?.models) as Record<
+    string,
+    K8sModel
+  >;
 
   const prevK8sModels = usePrevious(allK8sModels);
   const prevResources = usePrevious(resources);
 
-  const k8sModelsRef = useRef<ImmutableIterable<string, K8sModel>>(ImmutableMap());
+  const k8sModelsRef = useRef<Record<string, K8sModel>>({});
 
   if (
     prevResources !== resources ||
@@ -55,17 +65,32 @@ export const useK8sWatchResources: UseK8sWatchResources = (initResources) => {
       Object.values(resources).some((r) => {
         const modelReference = transformGroupVersionKindToReference(r.groupVersionKind || r.kind);
         return (
-          getK8sModel(prevK8sModels, modelReference) !== getK8sModel(allK8sModels, modelReference)
+          getK8sModel({ RESOURCES: { models: prevK8sModels } }, modelReference) !==
+          getK8sModel({ RESOURCES: { models: allK8sModels } }, modelReference)
         );
       }))
   ) {
     const requiredModels = Object.values(resources).map((r) =>
       transformGroupVersionKindToReference(r.groupVersionKind || r.kind),
     );
-    k8sModelsRef.current = allK8sModels.filter(
-      (model) =>
-        requiredModels.includes(getReferenceForModel(model)) || requiredModels.includes(model.kind),
+    const newModels = Object.fromEntries(
+      Object.entries(allK8sModels ?? {}).filter(
+        ([, model]) =>
+          requiredModels.includes(getReferenceForModel(model)) ||
+          requiredModels.includes(model.kind),
+      ),
     );
+    // Keep the previous object identity when the content is unchanged: the
+    // condition above also fires on every render pass while prevResources/
+    // prevK8sModels (updated by effects) lag behind during render-phase
+    // updates, and a fresh object here would churn the downstream reduxIDs
+    // and results memos on each pass, preventing render-phase consumers
+    // from ever settling.
+    // eslint-disable-next-line react-hooks-js/refs -- custom memoization: compares the memoized models map without reassigning when the content is unchanged
+    if (!shallowEqualModels(k8sModelsRef.current, newModels)) {
+      // eslint-disable-next-line react-hooks-js/refs -- custom memoization: conditionally updates ref to avoid re-triggering watches
+      k8sModelsRef.current = newModels;
+    }
   }
 
   const k8sModels = k8sModelsRef.current;
@@ -75,15 +100,16 @@ export const useK8sWatchResources: UseK8sWatchResources = (initResources) => {
   }>(
     () =>
       modelsLoaded
-        ? Object.keys(resources).reduce((ids, key) => {
+        ? // eslint-disable-next-line react-hooks-js/refs -- reads the ref-backed memoized models map above; the useMemo factory runs synchronously during render by design
+          Object.keys(resources).reduce((ids, key) => {
             const modelReference = transformGroupVersionKindToReference(
               resources[key].groupVersionKind || resources[key].kind,
             );
 
             const resourceModel =
               modelReference &&
-              (k8sModels.get(modelReference) ||
-                k8sModels.get(getGroupVersionKindForReference(modelReference).kind));
+              (k8sModels[modelReference] ||
+                k8sModels[getGroupVersionKindForReference(modelReference).kind]);
             if (!resourceModel) {
               ids[key] = {
                 noModel: true,
@@ -122,13 +148,10 @@ export const useK8sWatchResources: UseK8sWatchResources = (initResources) => {
       createSelectorCreator({
         memoize: lruMemoize,
         memoizeOptions: {
-          equalityCheck: (
-            oldK8s: ImmutableMap<string, K8sModel>,
-            newK8s: ImmutableMap<string, K8sModel>,
-          ) =>
+          equalityCheck: (oldK8s: Record<string, any>, newK8s: Record<string, any>) =>
             Object.keys(reduxIDs || {})
               .filter((k) => !reduxIDs[k].noModel)
-              .every((k) => oldK8s.get(reduxIDs[k].id) === newK8s.get(reduxIDs[k].id)),
+              .every((k) => oldK8s[reduxIDs[k].id] === newK8s[reduxIDs[k].id]),
         },
       }),
     [reduxIDs],
@@ -154,10 +177,10 @@ export const useK8sWatchResources: UseK8sWatchResources = (initResources) => {
             loaded: true,
             loadError: new NoModelError(),
           };
-        } else if (resourceK8s.has(reduxIDs?.[key].id)) {
-          const data = getReduxData(resourceK8s.getIn([reduxIDs[key].id, 'data']), resources[key]);
-          const loaded = resourceK8s.getIn([reduxIDs[key].id, 'loaded']);
-          const loadError = resourceK8s.getIn([reduxIDs[key].id, 'loadError']);
+        } else if (reduxIDs?.[key].id in (resourceK8s ?? {})) {
+          const data = getReduxData(resourceK8s[reduxIDs[key].id]?.data, resources[key]);
+          const loaded = resourceK8s[reduxIDs[key].id]?.loaded;
+          const loadError = resourceK8s[reduxIDs[key].id]?.loadError;
           acc[key] = { data, loaded, loadError };
         } else {
           acc[key] = {

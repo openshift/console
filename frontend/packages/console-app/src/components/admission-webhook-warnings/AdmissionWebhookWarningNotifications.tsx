@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 import { AlertVariant } from '@patternfly/react-core';
-import type { Map as ImmutableMap } from 'immutable';
 import { useTranslation } from 'react-i18next';
 import {
   getAdmissionWebhookWarnings,
@@ -15,9 +14,9 @@ import { useToast } from '@console/shared/src/components/toast/useToast';
 import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
 import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 
-type UseAdmissionWebhookWarnings = () => ImmutableMap<string, AdmissionWebhookWarning>;
+type UseAdmissionWebhookWarnings = () => Record<string, AdmissionWebhookWarning>;
 const useAdmissionWebhookWarnings: UseAdmissionWebhookWarnings = () =>
-  useConsoleSelector<ImmutableMap<string, AdmissionWebhookWarning>>(getAdmissionWebhookWarnings);
+  useConsoleSelector<Record<string, AdmissionWebhookWarning>>(getAdmissionWebhookWarnings);
 
 export const AdmissionWebhookWarningNotifications = () => {
   const { t } = useTranslation('console-app');
@@ -26,7 +25,7 @@ export const AdmissionWebhookWarningNotifications = () => {
   const admissionWebhookWarnings = useAdmissionWebhookWarnings();
   useEffect(() => {
     const docURL = getDocumentationURL(documentationURLs.admissionWebhookWarning);
-    admissionWebhookWarnings.forEach((warning, id) => {
+    Object.entries(admissionWebhookWarnings).forEach(([id, warning]) => {
       toastContext.addToast({
         variant: AlertVariant.warning,
         title: t('Admission Webhook Warning'),

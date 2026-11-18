@@ -121,7 +121,6 @@ export const parseALMExamples = (
     }
     return JSON.parse(csv?.metadata?.annotations?.['alm-examples'] ?? '[]');
   } catch (e) {
-    // eslint-disable-next-line no-console
     console.warn('Unable to parse ALM expamples\n', e);
     return [];
   }
@@ -164,7 +163,7 @@ export const OperatorsWithManualApproval: FC<OperatorsWithManualApprovalProps> =
     .map((sub, i) => (i > 0 ? [', ', sub] : sub));
   return (
     <>
-      {t('operator', { count: subscriptions?.length })} {subs}
+      {t('Operator', { count: subscriptions?.length })} {subs}
     </>
   );
 };
@@ -175,10 +174,9 @@ export const NamespaceIncludesManualApproval: FC<NamespaceIncludesManualApproval
 }) => (
   <Trans ns="olm">
     Installation namespace <strong>{{ namespace }}</strong> contains{' '}
-    <OperatorsWithManualApproval subscriptions={subscriptions} /> installed with manual approval,
-    and all operators installed in the same namespace will function as manual approval strategy. To
-    allow automatic approval, all operators installed in the namespace must use automatic approval
-    strategy.
+    <OperatorsWithManualApproval subscriptions={subscriptions} /> installed with manual approval, so
+    you must manually approve updates for all Operators in this namespace. To allow automatic
+    approval, set every Subscription in the namespace to automatic approval.
   </Trans>
 );
 
@@ -193,7 +191,7 @@ const InstallPlanCSVNames: FC<InstallPlanReviewProps> = ({ installPlan }) =>
 export const InstallPlanReview: FC<InstallPlanReviewProps> = ({ installPlan }) => (
   <p>
     <Trans ns="olm">
-      Review the manual install plan for operators <InstallPlanCSVNames installPlan={installPlan} />
+      Review the manual install plan for Operators <InstallPlanCSVNames installPlan={installPlan} />
       . Once approved, the following resources will be created in order to satisfy the requirements
       for the components specified in the plan. Click the resource name to view the resource in
       detail.

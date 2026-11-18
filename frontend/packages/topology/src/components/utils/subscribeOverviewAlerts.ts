@@ -16,13 +16,13 @@ export const subscribeOverviewAlerts = (
         updateMonitoringAlerts(alerts);
       })
       .catch((e) => {
-        console.error('Failed to fetch monitoring alerts', e); // eslint-disable-line no-console
+        console.error('Failed to fetch monitoring alerts', e);
       })
       .then(() => {
         alertsInterval = setTimeout(fetchAlerts, interval);
       })
       .catch((e) => {
-        console.error('Failed to fetch monitoring alerts', e); // eslint-disable-line no-console
+        console.error('Failed to fetch monitoring alerts', e);
       });
   };
 

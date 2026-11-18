@@ -21,7 +21,7 @@ import {
   isGraph,
   withDndDrop,
 } from '@patternfly/react-topology';
-import i18next from 'i18next';
+import * as i18next from 'i18next';
 import { action } from 'mobx';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import type { ActionContext } from '@console/shared/src/components/actions/types';

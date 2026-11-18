@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-use-before-define, import/order */
+/* eslint-disable @typescript-eslint/no-use-before-define, import-js/order */
 import {
   useState,
   useRef,
@@ -21,7 +21,7 @@ import { BrowserRouter, useParams, useLocation, Routes, Route } from 'react-rout
 import {
   ContextProviderExtensionWrapper,
   DetectContext,
-} from '@console/app/src/components/detect-context/DetectContext';
+} from '@console/app/src/providers/detect-context/DetectContext';
 import { FeatureFlagExtensionLoader } from '@console/app/src/components/flags/FeatureFlagExtensionLoader';
 import Lightspeed from '@console/app/src/components/lightspeed/Lightspeed';
 import { Navigation } from '@console/app/src/components/nav';
@@ -58,8 +58,8 @@ import { ConsoleNotifier } from './console-notifier';
 import { AuthenticationErrorPage } from './error';
 import { Masthead } from './masthead/masthead';
 import { NotificationDrawer } from './notification-drawer';
-import { ThemeProvider } from './ThemeProvider';
-import { ConnectedToastProvider } from './toast/ConnectedToastProvider';
+import { ThemeProvider } from '@console/app/src/providers/theme/ThemeProvider';
+import { ToastProvider } from '@console/app/src/providers/toast/ToastProvider';
 import { AsyncComponent } from './utils/async';
 import { getBrandingDetails } from './utils/branding';
 // cloud shell imports must come later than features
@@ -70,7 +70,7 @@ import { PollConsoleUpdates } from './poll-console-updates';
 import { withoutSensitiveInformations, getTelemetryTitle } from './utils/telemetry';
 import { AdmissionWebhookWarningNotifications } from '@console/app/src/components/admission-webhook-warnings/AdmissionWebhookWarningNotifications';
 import { usePackageManifestCheck } from '@console/shared/src/hooks/usePackageManifestCheck';
-import { useCSPViolationDetector } from '@console/app/src/hooks/useCSPViolationDetector';
+import { UserPreferenceProvider } from '@console/app/src/providers/user-preferences/UserPreferenceContext';
 import { useNotificationPoller } from '@console/app/src/hooks/useNotificationPoller';
 import { useImpersonateRefreshFeatures } from './useImpersonateRefreshFeatures';
 
@@ -78,7 +78,7 @@ const PF_BREAKPOINT_MD = 768;
 const PF_BREAKPOINT_XL = 1200;
 const NOTIFICATION_DRAWER_BREAKPOINT = 1800;
 
-const root = createRoot(document.getElementById('app')!); // eslint-disable-line @typescript-eslint/no-non-null-assertion
+const root = createRoot(document.getElementById('app')!); // eslint-disable-line @typescript-eslint/no-non-null-assertion -- we know the dom
 root.render(<LoadingBox blame="Init" />);
 
 // Trigger an early authenticated fetch so unauthenticated users are redirected
@@ -89,9 +89,6 @@ coFetch(`${window.SERVER_FLAGS.basePath}api/kubernetes/api`, {
 })
   .then(() => document.documentElement.classList.remove('co-auth-pending'))
   .catch(() => {});
-
-// TODO: remove when upgrading to @xterm/xterm 7.0.0 - github.com/openshift/console/issues/16486
-delete process.title;
 
 initI18n();
 
@@ -106,8 +103,8 @@ const App: FC = () => {
 
   const isMobile = () => window.innerWidth < PF_BREAKPOINT_MD;
 
-  const [prevLocation, setPrevLocation] = useState(location);
-  const [prevParams, setPrevParams] = useState(params);
+  const prevLocation = useRef(location);
+  const prevParams = useRef(params);
 
   const [isMastheadStacked, setIsMastheadStacked] = useState(isMobile());
   const [isNavOpen, setIsNavOpen] = useState(isDesktop());
@@ -128,7 +125,6 @@ const App: FC = () => {
     }
   }, []);
 
-  useCSPViolationDetector();
   useNotificationPoller();
 
   useEffect(() => {
@@ -140,15 +136,15 @@ const App: FC = () => {
 
   useLayoutEffect(() => {
     // Prevent infinite loop in case React Router decides to destroy & recreate the component (changing key)
-    const oldLocation = _.omit(prevLocation, ['key']);
+    const oldLocation = _.omit(prevLocation.current, ['key']);
     const newLocation = _.omit(location, ['key']);
-    if (_.isEqual(newLocation, oldLocation) && _.isEqual(params, prevParams)) {
+    if (_.isEqual(newLocation, oldLocation) && _.isEqual(params, prevParams.current)) {
       return;
     }
     const { pathname } = location;
     store.dispatch(UIActions.setCurrentLocation(pathname));
-    setPrevLocation(location);
-    setPrevParams(params);
+    prevLocation.current = location;
+    prevParams.current = params;
   }, [location, params, prevLocation, prevParams]);
 
   const dispatch = useConsoleDispatch();
@@ -363,7 +359,7 @@ const CaptureTelemetry = memo(() => {
       fireTelemetryEvent('identify', { perspective, user });
     }
     // Only trigger identify event when the user identifier changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [user?.uid || user?.username, fireTelemetryEvent]);
 
   // notify url change events
@@ -394,14 +390,12 @@ let updateSwaggerInterval;
  */
 const updateSwaggerDefinitionContinual = () => {
   fetchSwagger().catch((e) => {
-    // eslint-disable-next-line no-console
     console.error('Could not fetch OpenAPI after application start:', e);
   });
   clearInterval(updateSwaggerInterval);
   updateSwaggerInterval = setInterval(
     () => {
       fetchSwagger().catch((e) => {
-        // eslint-disable-next-line no-console
         console.error('Could not fetch OpenAPI to stay up to date:', e);
       });
     },
@@ -438,14 +432,12 @@ window.onerror = (message, source, lineno, colno, error) => {
   const formattedStack = error?.stack?.replace(/\\n/g, '\n');
   const formattedMessage = `unhandled error: ${message} ${formattedStack || ''}`;
   addTestError(formattedMessage);
-  // eslint-disable-next-line no-console
   console.error(formattedMessage, error || message);
 };
 window.onunhandledrejection = (promiseRejectionEvent) => {
   const { reason } = promiseRejectionEvent;
   const formattedMessage = `unhandled promise rejection: ${reason}`;
   addTestError(formattedMessage);
-  // eslint-disable-next-line no-console
   console.error(formattedMessage, reason);
 };
 
@@ -470,14 +462,12 @@ if ('serviceWorker' in navigator) {
         }),
       )
       .catch((e) => {
-        // eslint-disable-next-line no-console
         console.warn('Error registering load test service worker', e);
       });
   } else {
     navigator.serviceWorker
       .getRegistrations()
       .then((registrations) => registrations.forEach((reg) => reg.unregister()))
-      // eslint-disable-next-line no-console
       .catch((e) => console.warn('Error unregistering service workers', e));
   }
 }
@@ -486,16 +476,18 @@ root.render(
   <Suspense fallback={<LoadingBox blame="Root suspense" />}>
     <Provider store={store}>
       <PluginStoreProvider store={pluginStore}>
-        <ThemeProvider>
-          <HelmetProvider>
-            <Helmet titleTemplate={`%s · ${productName}`} defaultTitle={productName} />
-            <ConnectedToastProvider>
-              <PollConsoleUpdates />
-              <AdmissionWebhookWarningNotifications />
-              <AppRouter />
-            </ConnectedToastProvider>
-          </HelmetProvider>
-        </ThemeProvider>
+        <UserPreferenceProvider>
+          <ThemeProvider>
+            <HelmetProvider>
+              <Helmet titleTemplate={`%s · ${productName}`} defaultTitle={productName} />
+              <ToastProvider>
+                <PollConsoleUpdates />
+                <AdmissionWebhookWarningNotifications />
+                <AppRouter />
+              </ToastProvider>
+            </HelmetProvider>
+          </ThemeProvider>
+        </UserPreferenceProvider>
       </PluginStoreProvider>
     </Provider>
   </Suspense>,

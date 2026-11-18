@@ -58,7 +58,6 @@ class ErrorBoundaryInner extends Component<ErrorBoundaryInnerProps, ErrorBoundar
       errorInfo,
     });
     // Log the error so something shows up in the JS console when `DefaultFallback` is used.
-    // eslint-disable-next-line no-console
     console.error('Caught error in a child component:', error, errorInfo);
   }
 

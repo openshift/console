@@ -7,6 +7,7 @@ import {
   monkeyPatchSharedScope,
 } from '@console/dynamic-plugin-sdk/src/runtime/plugin-shared-modules';
 import { dynamicPluginNames } from '@console/plugin-sdk/src/utils/allowed-plugins';
+import { IS_PRODUCTION } from '@console/shared/src/constants/common';
 import { addTestError } from '@console/shared/src/utils/test-errors';
 import { REMOTE_ENTRY_CALLBACK } from '../constants';
 import type { ErrorWithCause } from '../utils/error/custom-error';
@@ -80,7 +81,6 @@ const registerLegacyPluginEntryCallback = () => {
       ? pluginName.slice(0, pluginName.lastIndexOf('@'))
       : pluginName;
 
-    // eslint-disable-next-line no-console
     console.warn(
       `[WARNING] ${pluginName} was built for an older version of Console and may not work correctly in this version.`,
     );
@@ -110,7 +110,7 @@ export const initConsolePlugins = _.once((pluginStore: PluginStore) => {
       // Patch webpack share scope object for backwards compatibility
       monkeyPatchSharedScope(scope);
 
-      if (process.env.NODE_ENV !== 'production') {
+      if (!IS_PRODUCTION) {
         // Expose webpack share scope object for debugging
         window.pluginSharedScope = scope;
       }
@@ -119,14 +119,12 @@ export const initConsolePlugins = _.once((pluginStore: PluginStore) => {
       // Load all dynamic (remote) plugins
       dynamicPluginNames.forEach((pluginName) => {
         loadAndEnablePlugin(pluginName, pluginStore, (errorMessage, errorCause) => {
-          // eslint-disable-next-line no-console
           console.error(..._.compact([errorMessage, errorCause]));
           addTestError(`${errorMessage}: ${String(errorCause)}`);
         });
       });
     })
     .catch((err) => {
-      // eslint-disable-next-line no-console
       console.error('Error while loading Console plugins', err);
     });
 });

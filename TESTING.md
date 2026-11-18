@@ -9,15 +9,16 @@ Focuses on testing individual React components, hooks, and utilities in isolatio
 - Libraries: `@testing-library/react`, `@testing-library/jest-dom`
 
 ### Integration tests
-- Tool: Cypress
-- Specialized test suites for components:
+- Tool: Playwright
+- Specialized test suites (projects) for:
   - Core Console
   - OLM (Operator Lifecycle Manager)
   - Dev Console
-  - Shipwright
-  - Web Terminal
-  - Telemetry
+  - Helm
   - Knative
+  - Topology
+  - Web Terminal
+  - Smoke
   - Helm
   - Topology
 - Supports headless and interactive modes
@@ -154,23 +155,4 @@ Prerequisites: `oc login` to a cluster, set `BRIDGE_KUBEADMIN_PASSWORD` and `WEB
 - `yarn test-playwright-admin` — run only admin persona tests
 - `yarn test-playwright-developer` — run only developer persona tests
 
-## End-to-End Testing with Cypress (legacy)
-
-Integration/E2E tests validate full user workflows against a real/simulated OpenShift cluster using Cypress + Cucumber (Gherkin BDD).
-
-- **Focus Areas**: Core Console, OLM, Dev Console, Shipwright, Web Terminal, Telemetry, Knative, Helm, Topology.
-- **Key Characteristics**: Gherkin scenarios (.feature files) + step definitions; supports headless/interactive modes; integrates axe-core for a11y.
-
-- **Structure**: Use Gherkin for scenarios (Given/When/Then) in .feature files; implement steps in JS/TS.
-- **Selectors**: Prefer `data-test` attributes (e.g., `cy.get('[data-test="create-deployment"]')`) over brittle CSS/ARIA.
-- **Async Handling**: Use `cy.wait` sparingly; prefer `cy.intercept` for API mocks + assertions.
-- **Mocking**: MSW for API responses; mock external services (e.g., K8s API) to avoid cluster dependency.
-
-### Running E2E Tests (Setup & Commands)
-
-For full prerequisites (cluster login, Cypress install), see [README.md#integration-tests](README.md#integration-tests).
-
-See `package.json` scripts for a list of available commands to run E2E tests in different modes.
-- `yarn test-cypress-<suite>` to open an interactive window for a specific Cypress test suite (e.g., `yarn test-cypress-olm`, `yarn test-cypress-devconsole`). **AI agents may struggle with interactive mode**.
-- `yarn test-cypress-<suite>-headless` to run the same suite in headless mode (e.g., `yarn test-cypress-olm-headless`)
-- `yarn test-cypress-<suite>-nightly` runs an extended suite of tests in headless mode, intended for CI/nightly runs (e.g., `yarn test-cypress-olm-nightly`)
+See [README.md#integration-tests](README.md#integration-tests) for full prerequisites and running instructions.

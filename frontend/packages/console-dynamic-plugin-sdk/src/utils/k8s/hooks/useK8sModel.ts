@@ -14,8 +14,8 @@ export const getK8sModel = (
 ): K8sModel => {
   const kindReference = transformGroupVersionKindToReference(k8sGroupVersionKind);
   return kindReference
-    ? (k8s.getIn(['RESOURCES', 'models', kindReference]) ??
-        k8s.getIn(['RESOURCES', 'models', getGroupVersionKindForReference(kindReference).kind]))
+    ? (k8s.RESOURCES?.models?.[kindReference] ??
+        k8s.RESOURCES?.models?.[getGroupVersionKindForReference(kindReference).kind])
     : undefined;
 };
 
@@ -33,5 +33,5 @@ export const getK8sModel = (
  */
 export const useK8sModel: UseK8sModel = (k8sGroupVersionKind) => [
   useSelector<SDKStoreState, K8sModel>(({ k8s }) => getK8sModel(k8s, k8sGroupVersionKind)),
-  useSelector<SDKStoreState, boolean>(({ k8s }) => k8s.getIn(['RESOURCES', 'inFlight']) ?? false),
+  useSelector<SDKStoreState, boolean>(({ k8s }) => k8s.RESOURCES?.inFlight ?? false),
 ];

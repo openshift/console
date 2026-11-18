@@ -1,4 +1,4 @@
-import { useRef, useMemo } from 'react';
+import { useEffect, useRef, useMemo } from 'react';
 import type { DebounceSettings } from 'lodash';
 import { debounce } from 'lodash';
 import { useDeepCompareMemoize } from './useDeepCompareMemoize';
@@ -17,10 +17,13 @@ export const useDebounceCallback = <T extends (...args: any[]) => any>(
   },
 ): ((...args) => any) & Cancelable => {
   const memDebounceParams = useDeepCompareMemoize(debounceParams);
-  const callbackRef = useRef<T>();
-  callbackRef.current = callback;
+  const callbackRef = useRef<T>(callback);
+  useEffect(() => {
+    callbackRef.current = callback;
+  });
 
   return useMemo(
+    // eslint-disable-next-line react-hooks-js/refs -- latest-callback pattern: the debounced closure only runs post-render (when the consumer invokes it), so reading callbackRef.current at call time is safe; there is no compiler-safe equivalent that keeps the debounced instance stable across callback identity changes
     () => debounce((...args) => callbackRef.current(...args), timeout, memDebounceParams),
     [memDebounceParams, timeout],
   );

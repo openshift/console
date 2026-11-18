@@ -1,7 +1,6 @@
 import type { FC } from 'react';
 import { useEffect, useMemo, useContext, memo } from 'react';
 import { Card, CardFooter, CardHeader, CardTitle, Divider } from '@patternfly/react-core';
-import type { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
@@ -65,7 +64,7 @@ const RecentEvent: FC<{ projectName: string; viewEvents: string }> = ({
 };
 
 const mapStateToProps = (state: RootState): OngoingActivityReduxProps => ({
-  models: state.k8s.getIn(['RESOURCES', 'models']) as ImmutableMap<string, K8sKind>,
+  models: state.k8s.RESOURCES?.models as Record<string, K8sKind>,
 });
 
 const OngoingActivityComponent: FC<OngoingActivityProps> = ({ projectName, models }) => {
@@ -78,7 +77,7 @@ const OngoingActivityComponent: FC<OngoingActivityProps> = ({ projectName, model
   const resourceActivities = useMemo(
     () =>
       resourceActivityExtensions.filter((e) => {
-        const model = models.get(e.properties.k8sResource.kind);
+        const model = models?.[e.properties.k8sResource.kind];
         return model && model.namespaced;
       }),
     [resourceActivityExtensions, models],
@@ -134,7 +133,7 @@ const OngoingActivityComponent: FC<OngoingActivityProps> = ({ projectName, model
 
   return (
     <OngoingActivityBody
-      loaded={projectName && resourcesLoaded && models.size !== 0}
+      loaded={projectName && resourcesLoaded && Object.keys(models ?? {}).length !== 0}
       resourceActivities={allResourceActivities}
     />
   );
@@ -163,7 +162,7 @@ export const ActivityCard = memo(() => {
 });
 
 type OngoingActivityReduxProps = {
-  models: ImmutableMap<string, K8sKind>;
+  models: Record<string, K8sKind>;
 };
 
 type OngoingActivityProps = OngoingActivityReduxProps & {

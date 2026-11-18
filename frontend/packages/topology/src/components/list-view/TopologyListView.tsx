@@ -151,7 +151,7 @@ const ConnectedTopologyListView: FC<
       return newVisualization;
     };
 
-    const visualizationRef = useRef<Visualization>();
+    const visualizationRef = useRef<Visualization>(undefined);
     if (!visualizationRef.current) {
       visualizationRef.current = createVisualization();
     }
@@ -179,7 +179,7 @@ const ConnectedTopologyListView: FC<
         }
       }
       setVisualizationReady(true);
-      // eslint-disable-next-line react-hooks/exhaustive-deps
+      // eslint-disable-next-line react-hooks-js/exhaustive-deps
     }, [model, onSelect, visualization]);
 
     const nodes = visualization.getElements().filter((e) => isNode(e)) as Node[];
@@ -306,7 +306,7 @@ const ConnectedTopologyListView: FC<
         clearMetricsInterval();
         clearAlertsInterval();
       };
-      // eslint-disable-next-line react-hooks/exhaustive-deps
+      // eslint-disable-next-line react-hooks-js/exhaustive-deps
     }, [namespace, updateMetrics, updateMonitoringAlerts]);
 
     return (
@@ -323,7 +323,7 @@ const ConnectedTopologyListView: FC<
 );
 
 const stateToProps = ({ UI }): TopologyListViewPropsFromState => ({
-  metrics: UI.get('overview').toJS(),
+  metrics: UI.overview,
 });
 
 const dispatchToProps = (dispatch): TopologyListViewPropsFromDispatch => ({

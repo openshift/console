@@ -1,4 +1,4 @@
-import type { FC } from 'react';
+import type { FC, ReactNode } from 'react';
 import { useState, useRef, useMemo, useCallback } from 'react';
 import {
   Skeleton,
@@ -98,7 +98,7 @@ const NamespaceDropdown: FC = () => {
   const loadErrorDescription: string = isProject
     ? t('Projects failed to load. Check your connection and reload the page.')
     : t('Namespaces failed to load. Check your connection and reload the page.');
-  const loadErrorState: JSX.Element | null = optionsLoadError ? (
+  const loadErrorState: ReactNode | null = optionsLoadError ? (
     <EmptyState
       headingLevel="h4"
       icon={RhStandardAlertIcon}
@@ -109,7 +109,7 @@ const NamespaceDropdown: FC = () => {
     </EmptyState>
   ) : null;
 
-  const emptyState: JSX.Element | null =
+  const emptyState: ReactNode | null =
     !optionsLoadError && filteredOptions.length === 0 ? (
       <NoResults
         isProjects={isProject}
@@ -138,7 +138,7 @@ const NamespaceDropdown: FC = () => {
 
   const selected = getDropdownLabelForValue();
 
-  const lastNamespaceOption: JSX.Element = (
+  const lastNamespaceOption: ReactNode = (
     <MenuList className="co-user-preference__namespace-menu__last-viewed">
       <Divider component="li" key="divider" />
       <MenuItem
@@ -152,7 +152,7 @@ const NamespaceDropdown: FC = () => {
     </MenuList>
   );
 
-  const namespaceMenu: JSX.Element = (
+  const namespaceMenu: ReactNode = (
     <Menu
       className="co-namespace-dropdown__menu"
       ref={menuRef}

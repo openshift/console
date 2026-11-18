@@ -2,8 +2,7 @@ import type { FC } from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
-import { getNameCellProps } from '@console/app/src/components/data-view/ConsoleDataView';
-import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import type { GetDataViewRows } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { ResourceLink, resourcePath } from '@console/internal/components/utils';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { referenceFor } from '@console/internal/module/k8s';
@@ -43,7 +42,6 @@ export const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns)
             namespace={resource.metadata.namespace}
           />
         ),
-        props: getNameCellProps(resource.metadata.name),
       },
       [tableColumnInfo[1].id]: {
         cell: resource.kind,
@@ -58,10 +56,8 @@ export const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns)
 
     return columns.map(({ id }) => {
       const cell = rowCells[id]?.cell || DASH;
-      const props = rowCells[id]?.props || undefined;
       return {
         id,
-        props,
         cell,
       };
     });

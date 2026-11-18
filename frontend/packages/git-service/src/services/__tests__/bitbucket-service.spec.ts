@@ -1,6 +1,8 @@
+import { Base64 } from 'js-base64';
 import * as nock from 'nock';
 import type { BuildType } from '../../types/build-tools';
 import type { GitSource } from '../../types/git';
+import { SecretType } from '../../types/git';
 import type { RepoFileList, BranchList, RepoLanguageList } from '../../types/repo';
 import { RepoStatus } from '../../types/repo';
 import { DockerFileParser } from '../../utils/dockerfile-parser';
@@ -10,7 +12,12 @@ describe('Bitbucket Service', () => {
   const nockBack = nock.back;
   nockBack.setMode('record');
 
-  nockBack.fixtures = `${__dirname}/__nock-fixtures__/bitbucket`;
+  nockBack.fixtures = `${import.meta.dirname}/__nock-fixtures__/bitbucket`;
+
+  afterAll(() => {
+    nock.cleanAll();
+    nock.restore();
+  });
 
   it('should be able to detect existing public bitbucket repo', () => {
     const gitSource: GitSource = {
@@ -306,6 +313,176 @@ describe('Bitbucket Service', () => {
     scope.done();
   });
 
+  describe('Authentication', () => {
+    afterEach(() => {
+      nock.cleanAll();
+    });
+
+    it('should use Bearer token for PERSONAL_ACCESS_TOKEN secret type', async () => {
+      const token = 'my-pat-token';
+      const gitSource: GitSource = {
+        url: 'https://bitbucket.org/owner/repo',
+        secretType: SecretType.PERSONAL_ACCESS_TOKEN,
+        secretContent: { password: Base64.encode(token) },
+      };
+
+      const gitService = new BitbucketService(gitSource);
+
+      const scope = nock('https://api.bitbucket.org')
+        .get('/2.0/repositories/owner/repo')
+        .matchHeader('Authorization', `Bearer ${token}`)
+        .reply(200, { slug: 'repo' });
+
+      const status = await gitService.isRepoReachable();
+      expect(status).toEqual(RepoStatus.Reachable);
+      scope.done();
+    });
+
+    it('should use Bearer token for OAUTH secret type', async () => {
+      const token = 'my-oauth-token';
+      const gitSource: GitSource = {
+        url: 'https://bitbucket.org/owner/repo',
+        secretType: SecretType.OAUTH,
+        secretContent: { password: Base64.encode(token) },
+      };
+
+      const gitService = new BitbucketService(gitSource);
+
+      const scope = nock('https://api.bitbucket.org')
+        .get('/2.0/repositories/owner/repo')
+        .matchHeader('Authorization', `Bearer ${token}`)
+        .reply(200, { slug: 'repo' });
+
+      const status = await gitService.isRepoReachable();
+      expect(status).toEqual(RepoStatus.Reachable);
+      scope.done();
+    });
+
+    it('should use Basic Auth for BASIC_AUTH secret type', async () => {
+      const username = 'user';
+      const password = 'pass';
+      const encodedAuth = Base64.encode(`${username}:${password}`);
+      const gitSource: GitSource = {
+        url: 'https://bitbucket.org/owner/repo',
+        secretType: SecretType.BASIC_AUTH,
+        secretContent: {
+          username: Base64.encode(username),
+          password: Base64.encode(password),
+        },
+      };
+
+      const gitService = new BitbucketService(gitSource);
+
+      const scope = nock('https://api.bitbucket.org')
+        .get('/2.0/repositories/owner/repo')
+        .matchHeader('Authorization', `Basic ${encodedAuth}`)
+        .reply(200, { slug: 'repo' });
+
+      const status = await gitService.isRepoReachable();
+      expect(status).toEqual(RepoStatus.Reachable);
+      scope.done();
+    });
+
+    it('should retry with Bearer token when Basic Auth returns 401 on Bitbucket Cloud', async () => {
+      const username = 'user';
+      const password = 'my-app-password';
+      const encodedAuth = Base64.encode(`${username}:${password}`);
+      const gitSource: GitSource = {
+        url: 'https://bitbucket.org/owner/repo',
+        secretType: SecretType.BASIC_AUTH,
+        secretContent: {
+          username: Base64.encode(username),
+          password: Base64.encode(password),
+        },
+      };
+
+      const gitService = new BitbucketService(gitSource);
+
+      // First request with Basic Auth returns 401
+      const basicScope = nock('https://api.bitbucket.org')
+        .get('/2.0/repositories/owner/repo')
+        .matchHeader('Authorization', `Basic ${encodedAuth}`)
+        .reply(401);
+
+      // Retry with Bearer token succeeds
+      const bearerScope = nock('https://api.bitbucket.org')
+        .get('/2.0/repositories/owner/repo')
+        .matchHeader('Authorization', `Bearer ${password}`)
+        .reply(200, { slug: 'repo' });
+
+      const status = await gitService.isRepoReachable();
+      expect(status).toEqual(RepoStatus.Reachable);
+      basicScope.done();
+      bearerScope.done();
+    });
+
+    it('should NOT retry with Bearer on Bitbucket Server when Basic Auth returns 401', async () => {
+      const username = 'user';
+      const password = 'pass';
+      const gitSource: GitSource = {
+        url: 'http://bb.example.com:7990/scm/PROJ/repo.git',
+        secretType: SecretType.BASIC_AUTH,
+        secretContent: {
+          username: Base64.encode(username),
+          password: Base64.encode(password),
+        },
+      };
+
+      const gitService = new BitbucketService(gitSource);
+
+      const scope = nock('http://bb.example.com:7990')
+        .get('/rest/api/1.0/projects/PROJ/repos/repo')
+        .reply(401);
+
+      const status = await gitService.isRepoReachable();
+      expect(status).toEqual(RepoStatus.PrivateRepo);
+      scope.done();
+    });
+
+    it('should treat lookalike host as Bitbucket Server and NOT retry with Bearer', async () => {
+      const username = 'user';
+      const password = 'my-secret-token';
+      const encodedAuth = Base64.encode(`${username}:${password}`);
+      const gitSource: GitSource = {
+        url: 'https://bitbucket.org.example/owner/repo',
+        secretType: SecretType.BASIC_AUTH,
+        secretContent: {
+          username: Base64.encode(username),
+          password: Base64.encode(password),
+        },
+      };
+
+      const gitService = new BitbucketService(gitSource);
+
+      // Should use Server REST API endpoint, not Cloud API
+      const scope = nock('https://bitbucket.org.example')
+        .get('/rest/api/1.0/projects/owner/repos/repo')
+        .matchHeader('Authorization', `Basic ${encodedAuth}`)
+        .reply(401);
+
+      const status = await gitService.isRepoReachable();
+      // Should return PrivateRepo (Server 401), not retry against Cloud API
+      expect(status).toEqual(RepoStatus.PrivateRepo);
+      scope.done();
+    });
+
+    it('should return PrivateRepo for 401 response', async () => {
+      const gitSource: GitSource = {
+        url: 'https://bitbucket.org/owner/private-repo',
+      };
+
+      const gitService = new BitbucketService(gitSource);
+
+      const scope = nock('https://api.bitbucket.org')
+        .get('/2.0/repositories/owner/private-repo')
+        .reply(401);
+
+      const status = await gitService.isRepoReachable();
+      expect(status).toEqual(RepoStatus.PrivateRepo);
+      scope.done();
+    });
+  });
+
   describe('getRepoMetadata - Protocol and Port Handling', () => {
     it('should use HTTPS protocol for standard Bitbucket URL', () => {
       const gitSource: GitSource = { url: 'https://bitbucket.org/owner/repo' };
@@ -339,12 +516,16 @@ describe('Bitbucket Service', () => {
       expect(metadata.host).toBe('http://bitbucket.example.com:8080');
     });
 
-    it('should default to HTTPS for SSH URLs and preserve port', () => {
+    it('should treat scp-style URLs without a port as owner paths', () => {
+      // scp-style syntax has no port component; git-url-parse 16 treats
+      // `git@host:2222/owner/repo.git` as owner "2222/owner". Use the
+      // ssh:// form to specify a port, see the test below.
       const gitSource: GitSource = { url: 'git@bitbucket.example.com:2222/owner/repo.git' };
       const gitService = new BitbucketService(gitSource);
       const metadata = gitService.getRepoMetadata();
 
-      expect(metadata.host).toBe('https://bitbucket.example.com:2222');
+      expect(metadata.host).toBe('https://bitbucket.example.com');
+      expect(metadata.owner).toBe('2222/owner');
     });
 
     it('should default to HTTPS for git:// protocol URLs', () => {

@@ -59,8 +59,10 @@ const HelmChartVersionDropdown: FC<HelmChartVersionDropdownProps> = ({
   } = useFormikContext<FormikValues>();
   const [helmChartVersions, setHelmChartVersions] = useState({});
   const [helmChartEntries, setHelmChartEntries] = useState<HelmChartMetaData[]>([]);
-  const [initialYamlData, setInitialYamlData] = useState<string>('');
-  const [initialFormData, setInitialFormData] = useState<object>();
+  // Baseline values captured when the form mounts, used to detect whether
+  // the user modified the YAML or form data before changing the chart version.
+  const [initialYamlData, setInitialYamlData] = useState<string>(yamlData);
+  const [initialFormData, setInitialFormData] = useState<object>(formData);
   const [helmChartRepos, setHelmChartRepos] = useState<HelmChartEntries>({});
   const resourceSelector: WatchK8sResource = {
     isList: true,
@@ -88,7 +90,7 @@ const HelmChartVersionDropdown: FC<HelmChartVersionDropdownProps> = ({
         <p>
           <RhUiInformationFillIcon color="var(--pf-t--global--icon--color--status--info--default)" />{' '}
           <Trans t={t} ns="helm-plugin">
-            Values from your current release are merged with the new chart's defaults. Review the
+            The new chart&apos;s defaults merge with values from your current release. Review the
             YAML or form before upgrading.
           </Trans>
         </p>
@@ -110,12 +112,6 @@ const HelmChartVersionDropdown: FC<HelmChartVersionDropdownProps> = ({
       ouiaId: 'HelmChangeChartVersionConfirmation',
     });
   };
-
-  useEffect(() => {
-    setInitialYamlData(yamlData);
-    setInitialFormData(formData);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   useEffect(() => {
     let ignore = false;
@@ -200,7 +196,7 @@ const HelmChartVersionDropdown: FC<HelmChartVersionDropdownProps> = ({
           setInitialYamlData(mergedYaml);
           setInitialFormData(mergedValues);
         } catch (err) {
-          console.error('Failed to serialize merged values:', err); // eslint-disable-line no-console
+          console.error('Failed to serialize merged values:', err);
           // Fall back to using the merged values object without YAML serialization
           setFieldValue('editorType', nextEditorType);
           setFieldValue('formSchema', valuesSchema);
@@ -213,7 +209,7 @@ const HelmChartVersionDropdown: FC<HelmChartVersionDropdownProps> = ({
         }
       })
       .catch((err) => {
-        console.error(`Could not fetch helm chart with chart URL ${chartURL}:`, err); // eslint-disable-line no-console
+        console.error(`Could not fetch helm chart with chart URL ${chartURL}:`, err);
       });
   };
 

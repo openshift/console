@@ -3,7 +3,7 @@ import { createElement, useMemo, useEffect, useState } from 'react';
 import { ChartLabel } from '@patternfly/react-charts/victory';
 import { css } from '@patternfly/react-styles';
 import type { TFunction } from 'i18next';
-import i18next from 'i18next';
+import * as i18next from 'i18next';
 import * as _ from 'lodash';
 import type { ImpersonateKind } from '@console/dynamic-plugin-sdk';
 import { DaemonSetModel, PodModel, JobModel, CronJobModel } from '@console/internal/models';
@@ -252,7 +252,6 @@ export const usePodScalingAccessStatus = (
         .catch((error) => {
           // console.log is used here instead of throw error
           // throw error will break the thread and likely end-up in a white screen
-          // eslint-disable-next-line
           console.log('Checking pod edit acceess failed:', error);
           setEditable(false);
         });

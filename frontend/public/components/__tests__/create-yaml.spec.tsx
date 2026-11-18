@@ -1,15 +1,19 @@
 import { screen } from '@testing-library/react';
 import { safeDump } from 'js-yaml';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { PodModel, ConfigMapModel } from '../../models';
 import { CreateYAMLInner } from '../create-yaml';
+import { AsyncComponent } from '../utils/async';
 
 jest.mock('../utils/async', () => ({
-  AsyncComponent: ({ initialResource, header, create }) =>
-    `YAML Editor: ${header} (${create ? 'Create' : 'Edit'}) - Resource: ${JSON.stringify(
-      initialResource,
-    )}`,
+  AsyncComponent: jest.fn(
+    ({ initialResource, header, create }) =>
+      `YAML Editor: ${header} (${create ? 'Create' : 'Edit'}) - Resource: ${JSON.stringify(
+        initialResource,
+      )}`,
+  ),
 }));
 
 jest.mock('../utils/status-box', () => ({
@@ -24,14 +28,21 @@ jest.mock('@console/dynamic-plugin-sdk/src/api/useResolvedExtensions', () => ({
   useResolvedExtensions: jest.fn(),
 }));
 
+jest.mock('@console/shared/src/hooks/useActiveNamespace', () => ({
+  useActiveNamespace: jest.fn(() => ['default', jest.fn()]),
+}));
+
 describe('CreateYAMLInner', () => {
   const defaultParams = { ns: 'default', plural: 'pods' };
 
   const mockUseResolvedExtensions = useResolvedExtensions as jest.Mock;
+  const mockUseActiveNamespace = useActiveNamespace as jest.Mock;
+  const mockAsyncComponent = AsyncComponent as unknown as jest.Mock;
 
   beforeEach(() => {
     jest.clearAllMocks();
     mockUseResolvedExtensions.mockReturnValue([[], true]);
+    mockUseActiveNamespace.mockReturnValue(['default', jest.fn()]);
   });
 
   describe('Loading States', () => {
@@ -125,6 +136,51 @@ describe('CreateYAMLInner', () => {
       expect(editorText).toContain('"kind":"Pod"');
     });
 
+    it('uses active namespace for initial resource when project changes', async () => {
+      mockUseActiveNamespace.mockReturnValue(['project-b', jest.fn()]);
+
+      renderWithProviders(
+        <CreateYAMLInner
+          params={{ ns: 'project-a', plural: 'pods' }}
+          kindsInFlight={false}
+          kindObj={PodModel}
+        />,
+      );
+
+      const editorText = screen.getByText(/Resource:/).textContent;
+      expect(editorText).toContain('"namespace":"project-b"');
+      expect(editorText).not.toContain('"namespace":"project-a"');
+    });
+
+    it('reloads YAML editor when namespace changes', async () => {
+      mockUseActiveNamespace.mockReturnValue(['project-a', jest.fn()]);
+
+      const { rerender } = renderWithProviders(
+        <CreateYAMLInner
+          params={{ ns: 'project-a', plural: 'pods' }}
+          kindsInFlight={false}
+          kindObj={PodModel}
+        />,
+      );
+
+      expect(mockAsyncComponent.mock.calls[0][0].initialResource.metadata.namespace).toBe(
+        'project-a',
+      );
+
+      mockUseActiveNamespace.mockReturnValue(['project-b', jest.fn()]);
+      rerender(
+        <CreateYAMLInner
+          params={{ ns: 'project-b', plural: 'pods' }}
+          kindsInFlight={false}
+          kindObj={PodModel}
+        />,
+      );
+
+      expect(mockAsyncComponent.mock.calls[1][0].initialResource.metadata.namespace).toBe(
+        'project-b',
+      );
+    });
+
     it('verifies the creation of sample object using default YAML template for model when no template provided', async () => {
       renderWithProviders(
         <CreateYAMLInner params={defaultParams} kindsInFlight={false} kindObj={PodModel} />,
@@ -137,6 +193,35 @@ describe('CreateYAMLInner', () => {
       expect(editorText).toContain('"metadata"');
       expect(editorText).toContain('"namespace":"default"');
       expect(editorText).toContain('"spec"');
+    });
+  });
+
+  describe('onCancel forwarding (OCPBUGS-70361)', () => {
+    it('forwards onCancel to the editor when provided', async () => {
+      const onCancel = jest.fn();
+
+      renderWithProviders(
+        <CreateYAMLInner
+          params={defaultParams}
+          kindsInFlight={false}
+          kindObj={PodModel}
+          onCancel={onCancel}
+        />,
+      );
+
+      expect(mockAsyncComponent).toHaveBeenCalledTimes(1);
+      const [asyncProps] = mockAsyncComponent.mock.calls[0];
+      expect(asyncProps.onCancel).toBe(onCancel);
+    });
+
+    it('leaves onCancel undefined when none is provided, so EditYAML falls back to its default cancel behavior', async () => {
+      renderWithProviders(
+        <CreateYAMLInner params={defaultParams} kindsInFlight={false} kindObj={PodModel} />,
+      );
+
+      expect(mockAsyncComponent).toHaveBeenCalledTimes(1);
+      const [asyncProps] = mockAsyncComponent.mock.calls[0];
+      expect(asyncProps.onCancel).toBeUndefined();
     });
   });
 });

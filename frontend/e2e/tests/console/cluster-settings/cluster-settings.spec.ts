@@ -43,7 +43,6 @@ test.describe('Cluster Settings', { tag: ['@admin'] }, () => {
     });
   });
 
-  // eslint-disable-next-line playwright/expect-expect
   test('displays Configuration page and ClusterVersion configuration details page', async ({
     page,
   }) => {

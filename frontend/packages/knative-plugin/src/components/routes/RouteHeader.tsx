@@ -1,45 +1,44 @@
-import { sortable } from '@patternfly/react-table';
-import type { TFunction } from 'i18next';
-import { tableColumnClasses } from './route-table';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import type { ConsoleDataViewColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import type { RouteKind } from '../../types';
 
-const RouteHeader = (t: TFunction) => () => [
-  {
-    title: t('knative-plugin~Name'),
-    sortField: 'metadata.name',
-    transforms: [sortable],
-    props: { className: tableColumnClasses[0] },
-  },
-  {
-    id: 'namespace',
-    title: t('knative-plugin~Namespace'),
-    sortField: 'metadata.namespace',
-    transforms: [sortable],
-    props: { className: tableColumnClasses[1] },
-  },
-  {
-    title: t('knative-plugin~URL'),
-    sortField: 'status.url',
-    transforms: [sortable],
-    props: { className: tableColumnClasses[2] },
-  },
-  {
-    title: t('knative-plugin~Created'),
-    sortField: 'metadata.creationTimestamp',
-    transforms: [sortable],
-    props: { className: tableColumnClasses[3] },
-  },
-  {
-    title: t('knative-plugin~Conditions'),
-    props: { className: tableColumnClasses[4] },
-  },
-  {
-    title: t('knative-plugin~Traffic'),
-    props: { className: tableColumnClasses[5] },
-  },
-  {
-    title: '',
-    props: { className: tableColumnClasses[6] },
-  },
-];
-
-export default RouteHeader;
+export const useRouteColumns = (): {
+  columns: ConsoleDataViewColumn<RouteKind>[];
+} => {
+  const { t } = useTranslation('knative-plugin');
+  const columns = useMemo(
+    () => [
+      { type: 'name' as const, id: 'name' },
+      {
+        type: 'namespace' as const,
+        id: 'namespace',
+      },
+      {
+        id: 'url',
+        title: t('URL'),
+        sort: 'status.url',
+        props: { modifier: 'nowrap' as const },
+      },
+      {
+        id: 'created',
+        title: t('Created'),
+        sort: 'metadata.creationTimestamp',
+        props: { modifier: 'nowrap' as const },
+      },
+      {
+        id: 'conditions',
+        title: t('Conditions'),
+        props: { modifier: 'nowrap' as const },
+      },
+      {
+        id: 'traffic',
+        title: t('Traffic'),
+        props: { modifier: 'nowrap' as const },
+      },
+      { type: 'actions' as const, id: 'actions' },
+    ],
+    [t],
+  );
+  return { columns };
+};

@@ -16,7 +16,7 @@ import { PageHeading } from '@console/shared/src/components/heading/PageHeading'
 import { ServiceModel } from '../../models';
 import { ServiceTypeValue } from '../../types';
 import { CreateActionDropdown } from './CreateActionDropdown';
-import FunctionsList from './FunctionsList';
+import { FunctionsList } from './FunctionsList';
 import { GettingStartedSection } from './GettingStartedSection';
 import { KnativeServiceTypeContext } from './ServiceTypeContext';
 
@@ -37,6 +37,7 @@ const FunctionList: FC<{ namespace: string }> = (props) => {
         {...props}
         kind={referenceForModel(ServiceModel)}
         ListComponent={FunctionsList}
+        omitFilterToolbar
         selector={{ matchLabels: { 'function.knative.dev': 'true' } }}
       />
     </KnativeServiceTypeContext.Provider>

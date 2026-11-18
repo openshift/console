@@ -23,11 +23,7 @@ function getRow(modal: ModalPage, index: number) {
 }
 
 test.describe('Annotations', { tag: ['@admin'] }, () => {
-  test('creates, edits, updates, and deletes annotations', async ({
-    page,
-    k8sClient,
-    cleanup,
-  }) => {
+  test('creates, edits, updates, and deletes annotations', async ({ page, k8sClient, cleanup }) => {
     const namespace = `${generateTestName()}-ann`;
     await k8sClient.createNamespace(namespace);
     await k8sClient.waitForNamespaceReady(namespace);
@@ -151,7 +147,7 @@ test.describe('Annotations', { tag: ['@admin'] }, () => {
 
     await test.step('Delete all annotations', async () => {
       await page.getByTestId('delete-button').first().click();
-      await page.getByTestId('delete-button').click();
+      await page.getByTestId('delete-button').first().click();
       await modal.submit();
       await modal.waitForClosed();
       await expect(page.getByTestId('edit-annotations')).toContainText('0 annotations');
@@ -165,11 +161,7 @@ test.describe('Annotations', { tag: ['@admin'] }, () => {
     });
   });
 
-  test('disables Save when annotations change externally', async ({
-    page,
-    k8sClient,
-    cleanup,
-  }) => {
+  test('disables Save when annotations change externally', async ({ page, k8sClient, cleanup }) => {
     const namespace = `${generateTestName()}-ann`;
     await k8sClient.createNamespace(namespace);
     await k8sClient.waitForNamespaceReady(namespace);

@@ -21,7 +21,6 @@ import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { k8sGetResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { settleAllPromises } from '@console/dynamic-plugin-sdk/src/utils/promise';
-import { getActiveNamespace } from '@console/internal/actions/ui';
 import {
   LinkifyExternal,
   ResourceLink,
@@ -41,6 +40,7 @@ import {
 } from '@console/internal/module/k8s';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 import { CONSOLE_OPERATOR_CONFIG_NAME } from '@console/shared/src/constants/resource';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { useOperands } from '@console/shared/src/hooks/useOperands';
 import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 import type { ModalComponentProps } from '@console/shared/src/types/modal';
@@ -71,6 +71,7 @@ export const UninstallOperatorModal: FC<UninstallOperatorModalProps> = ({
 }) => {
   const { t } = useTranslation('olm');
   const navigate = useNavigate();
+  const [activeNamespace] = useActiveNamespace();
   const [
     handleOperatorUninstallPromise,
     operatorUninstallInProgress,
@@ -235,9 +236,9 @@ export const UninstallOperatorModal: FC<UninstallOperatorModalProps> = ({
       window.location.pathname.split('/').includes(subscription.metadata.name) ||
       window.location.pathname.split('/').includes(subscription?.status?.installedCSV)
     ) {
-      navigate(resourceListPathFromModel(ClusterServiceVersionModel, getActiveNamespace()));
+      navigate(resourceListPathFromModel(ClusterServiceVersionModel, activeNamespace));
     }
-  }, [close, navigate, subscription]);
+  }, [activeNamespace, close, navigate, subscription]);
 
   useEffect(() => {
     if (isSubmitFinished && !hasSubmitErrors) {
@@ -315,14 +316,12 @@ export const UninstallOperatorModal: FC<UninstallOperatorModalProps> = ({
           </>
         )}{' '}
         {t(
-          'If your Operator configured off-cluster resources, these will continue to run and require manual cleanup.',
+          'If your Operator configured off-cluster resources, those resources keep running. Follow the Operator provider’s cleanup instructions to remove them from the external service.',
         )}
       </p>
       {removePlugins && (
         <p>
-          {t('The console plugin provided by this operator will be disabled and removed.', {
-            count: enabledPlugins.length,
-          })}
+          {t('The console disables and removes the console plugins that this Operator provides.')}
         </p>
       )}
     </>
@@ -349,7 +348,7 @@ export const UninstallOperatorModal: FC<UninstallOperatorModalProps> = ({
           data-test="delete-all-operands"
           onChange={(_event, isChecked) => setDeleteOperands(isChecked)}
           name="delete-all-operands"
-          label={t('Delete all operand instances for this operator')}
+          label={t('Delete all operand instances for this Operator')}
           isChecked={deleteOperands}
         />
       </>
@@ -397,6 +396,7 @@ export const UninstallOperatorModal: FC<UninstallOperatorModalProps> = ({
       <ModalHeader
         title={t('Uninstall Operator?')}
         titleIconVariant="warning"
+        data-test="modal-title"
         data-test-id="modal-title"
         labelId="uninstall-operator-modal-title"
       />
@@ -447,7 +447,12 @@ export const UninstallOperatorModal: FC<UninstallOperatorModalProps> = ({
         >
           {isSubmitFinished ? t('OK') : t('Uninstall')}
         </Button>
-        <Button variant="link" onClick={cancel} data-test-id="modal-cancel-action">
+        <Button
+          variant="link"
+          onClick={cancel}
+          data-test="modal-cancel-action"
+          data-test-id="modal-cancel-action"
+        >
           {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>
@@ -493,7 +498,7 @@ const OperandsLoadedErrorAlert: FC<{ operandsLoadedErrorMessage: string }> = ({
     <Alert variant="warning" className="co-alert" title={t('Cannot load Operands')} isInline>
       <p>
         {t(
-          'There was an error loading operands for this operator. Operands will need to be deleted manually.',
+          'An error occurred while loading operands for this Operator. Review the error, then delete the operands manually from their resource pages.',
         )}
       </p>
       <p>{operandsLoadedErrorMessage}</p>
@@ -528,7 +533,9 @@ const OperatorUninstallErrorAlert: FC<{ errorMessage: string }> = ({ errorMessag
   return (
     <Alert variant="danger" className="co-alert" title={t('Error uninstalling Operator')} isInline>
       <p>
-        {t('There was an error uninstalling the operator.')}
+        {t(
+          'An error occurred while uninstalling the Operator. Review the error, resolve the issue, and try uninstalling again.',
+        )}
         <br />
         {errorMessage}
       </p>
@@ -546,7 +553,7 @@ const OperandDeletionErrorAlert: FC<{
     <Alert variant="danger" className="co-alert" title={t('Error deleting Operands')} isInline>
       <p>
         {t(
-          'There were errors deleting the following Operands, they will need to be deleted manually:',
+          'The console could not delete the following operands. Review each error, then delete the operands manually from their resource pages:',
         )}
       </p>
       <OperandErrorList

@@ -107,6 +107,6 @@ describe('HelmReleaseDetails', () => {
     loadedHelmReleaseDetailsProps.secrets.data = [];
     renderWithProviders(<LoadedHelmReleaseDetails {...loadedHelmReleaseDetailsProps} />);
     expect(screen.getByText('404: Page Not Found')).toBeTruthy();
-    expect(screen.getByText('Page Not Found (404)')).toBeTruthy();
+    expect(document.title).toMatch(/^Page Not Found \(404\)/);
   });
 });

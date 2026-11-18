@@ -100,7 +100,6 @@ const ResourceSidebarSnippet: FC<ResourceSidebarSnippetProps> = ({
       try {
         callback(lazyYaml());
       } catch (error) {
-        // eslint-disable-next-line no-console
         console.warn(`Error while running lazy yaml snippet ${id} (${title})`, error);
       }
     }

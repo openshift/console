@@ -1,59 +1,51 @@
-import { sortable } from '@patternfly/react-table';
-import type { TFunction } from 'i18next';
-import { tableColumnClasses } from './subscription-table';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import type { ConsoleDataViewColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import type { EventSubscriptionKind } from '../../../types';
 
-const getSubscriptionHeaders = (t: TFunction, showChannel: boolean) => {
-  const SubscriptionHeaders = () => [
-    {
-      id: 'name',
-      title: t('knative-plugin~Name'),
-      sortField: 'metadata.name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[0] },
-    },
-    {
-      id: 'namespace',
-      title: t('knative-plugin~Namespace'),
-      sortField: 'metadata.namespace',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[1] },
-    },
-    {
-      id: 'ready',
-      title: t('knative-plugin~Ready'),
-      props: { className: tableColumnClasses[2] },
-    },
-    {
-      id: 'condition',
-      title: t('knative-plugin~Conditions'),
-      props: { className: tableColumnClasses[3] },
-    },
-    ...(showChannel
-      ? [
-          {
-            id: 'channel',
-            title: t('knative-plugin~Channel'),
-            props: { className: tableColumnClasses[4] },
-          },
-        ]
-      : []),
-    {
-      id: 'subscriber',
-      title: t('knative-plugin~Subscriber'),
-      props: { className: tableColumnClasses[5] },
-    },
-    {
-      title: t('knative-plugin~Created'),
-      sortField: 'metadata.creationTimestamp',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[6] },
-    },
-    {
-      title: '',
-      props: { className: tableColumnClasses[7] },
-    },
-  ];
-  return SubscriptionHeaders;
+export const useSubscriptionColumns = (
+  showChannel: boolean,
+): {
+  columns: ConsoleDataViewColumn<EventSubscriptionKind>[];
+} => {
+  const { t } = useTranslation('knative-plugin');
+  const columns = useMemo(
+    () =>
+      [
+        { type: 'name' as const, id: 'name' },
+        {
+          type: 'namespace' as const,
+          id: 'namespace',
+        },
+        {
+          id: 'ready',
+          title: t('Ready'),
+          props: { modifier: 'nowrap' as const },
+        },
+        {
+          id: 'condition',
+          title: t('Conditions'),
+          props: { modifier: 'nowrap' as const },
+        },
+        {
+          id: 'channel',
+          title: t('Channel'),
+          props: { modifier: 'nowrap' as const },
+        },
+        {
+          id: 'subscriber',
+          title: t('Subscriber'),
+          props: { modifier: 'nowrap' as const },
+        },
+        {
+          id: 'created',
+          title: t('Created'),
+          sort: 'metadata.creationTimestamp',
+          props: { modifier: 'nowrap' as const },
+        },
+        { type: 'actions' as const, id: 'actions' },
+      ].filter(({ id }) => id !== 'channel' || showChannel),
+    [t, showChannel],
+  );
+  return { columns };
 };
-
-export default getSubscriptionHeaders;

@@ -1,10 +1,9 @@
 import type { FC, ReactElement } from 'react';
-import { useState, useMemo, memo, useEffect } from 'react';
+import { useState, useMemo, memo } from 'react';
 import { FormHelperText, FormSection, Icon, Tooltip } from '@patternfly/react-core';
 import { DualListSelector } from '@patternfly/react-core/deprecated';
 import * as fuzzy from 'fuzzysearch';
-import type { Map as ImmutableMap } from 'immutable';
-import { Set as ImmutableSet } from 'immutable';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import type {
@@ -38,12 +37,12 @@ import { PerspectiveVisibilityState } from '@console/shared/src/utils/override-p
 import './PinnedResourcesConfiguration.scss';
 
 // skip duplicate resources.
-const skipGroups = ImmutableSet([
+const skipGroups = new Set([
   // Prefer rbac.authorization.k8s.io/v1, which has the same resources.
   'authorization.openshift.io',
 ]);
 
-const skipResources = ImmutableSet([
+const skipResources = new Set([
   // Prefer core/v1
   'events.k8s.io/v1beta1.Event',
 ]);
@@ -63,7 +62,7 @@ type DefaultPins = {
 type PinnedResourcesConfigurationProps = {
   readonly: boolean;
   groupVersionMap: DiscoveryResources['groupVersionMap'];
-  allK8sModels: ImmutableMap<string, K8sModel>;
+  allK8sModels: Record<string, K8sModel>;
 };
 
 const PinnedResourcesConfiguration: FC<PinnedResourcesConfigurationProps> = ({
@@ -93,33 +92,37 @@ const PinnedResourcesConfiguration: FC<PinnedResourcesConfigurationProps> = ({
   const resources = useMemo(
     () =>
       allK8sModels
-        ?.filter(({ apiGroup, apiVersion, kind, verbs }) => {
-          if (skipGroups.has(apiGroup) || skipResources.has(`${apiGroup}/${apiVersion}.${kind}`)) {
-            return false;
-          }
+        ? Object.values(allK8sModels)
+            .filter(({ apiGroup, apiVersion, kind, verbs }) => {
+              if (
+                skipGroups.has(apiGroup) ||
+                skipResources.has(`${apiGroup}/${apiVersion}.${kind}`)
+              ) {
+                return false;
+              }
 
-          // Only show resources that can be listed.
-          if (!verbs?.some((v) => v === 'list')) {
-            return false;
-          }
+              // Only show resources that can be listed.
+              if (!verbs?.some((v) => v === 'list')) {
+                return false;
+              }
 
-          // Only show preferred version for resources in the same API group.
-          const preferred = (m: K8sKind) =>
-            groupVersionMap?.[m.apiGroup]?.preferredVersion === m.apiVersion;
+              // Only show preferred version for resources in the same API group.
+              const preferred = (m: K8sKind) =>
+                groupVersionMap?.[m.apiGroup]?.preferredVersion === m.apiVersion;
 
-          const sameGroupKind = (m: K8sKind) =>
-            m.kind === kind && m.apiGroup === apiGroup && m.apiVersion !== apiVersion;
+              const sameGroupKind = (m: K8sKind) =>
+                m.kind === kind && m.apiGroup === apiGroup && m.apiVersion !== apiVersion;
 
-          return !allK8sModels.find((m) => sameGroupKind(m) && preferred(m));
-        })
-        .toOrderedMap()
-        .sortBy(({ kind, apiGroup }) => `${kind} ${apiGroup}`),
+              return !Object.values(allK8sModels).find((m) => sameGroupKind(m) && preferred(m));
+            })
+            .sort((a, b) => `${a.kind} ${a.apiGroup}`.localeCompare(`${b.kind} ${b.apiGroup}`))
+        : [],
     [allK8sModels, groupVersionMap],
   );
 
   // Track duplicate names so we know when to show the group.
-  const kinds = resources.groupBy((m) => m.kind);
-  const isDup = (kind) => kinds.get(kind).size > 1;
+  const kinds = useMemo(() => _.groupBy(resources, (m) => m.kind), [resources]);
+  const isDup = (kind) => kinds[kind]?.length > 1;
 
   type ItemProps = { title?: string; model?: K8sKind };
 
@@ -133,7 +136,7 @@ const PinnedResourcesConfiguration: FC<PinnedResourcesConfigurationProps> = ({
           <span>
             {model.labelKey ? t(model.labelKey) : model.kind}
             {model.badge && model.badge === 'Tech Preview' && (
-              <span className="co-resource-item__tech-dev-preview">{t('Tech Preview')}</span>
+              <span className="co-resource-item__tech-dev-preview">{t('Technology Preview')}</span>
             )}
           </span>
           {isDup(model.kind) && (
@@ -165,44 +168,57 @@ const PinnedResourcesConfiguration: FC<PinnedResourcesConfigurationProps> = ({
     useConsoleOperatorConfig<PerspectivesConsoleConfig>();
 
   const [configuredPerspectives, setConfiguredPerspectives] = useState<Perspective[]>();
-  useEffect(() => {
-    if (consoleConfig && consoleConfigLoaded && !configuredPerspectives) {
-      const perspectiveDetails = consoleConfig?.spec?.customization?.perspectives;
-      const devPerspective = perspectiveDetails?.find((p) => p.id === 'dev');
-      let defaultPinnedResources = [];
-      if (!devPerspective || !devPerspective?.pinnedResources) {
-        if (defaultPins?.dev) {
-          const getModels = defaultPins?.dev.map((groupVersionKind) => {
-            const ref = groupVersionKind?.group
-              ? referenceForGroupVersionKind(groupVersionKind.group)(groupVersionKind.version)(
-                  groupVersionKind.kind,
-                )
-              : groupVersionKind.kind;
-            return modelFor(ref);
-          });
-          defaultPinnedResources = getModels?.map((resource) => ({
-            group: resource?.apiGroup ? resource?.apiGroup : '',
-            version: resource?.apiVersion,
-            resource: resource?.plural,
-          }));
-        }
-        setPinnedResources(defaultPinnedResources);
-        setPinnedResourcesConfigured(defaultPinnedResources);
-      } else {
-        setPinnedResources(devPerspective.pinnedResources);
-        setPinnedResourcesConfigured(devPerspective.pinnedResources);
-        setConfiguredPerspectives(consoleConfig?.spec?.customization?.perspectives);
+
+  // Initialize the pinned resources from the cluster configuration once it
+  // is loaded, and re-initialize when the configuration or the default pins
+  // change before any perspectives have been configured.
+  const [initializedFrom, setInitializedFrom] = useState<{
+    consoleConfig?: PerspectivesConsoleConfig;
+    consoleConfigLoaded?: boolean;
+    defaultPins?: DefaultPins;
+  }>({});
+  if (
+    consoleConfig &&
+    consoleConfigLoaded &&
+    !configuredPerspectives &&
+    (initializedFrom.consoleConfig !== consoleConfig ||
+      initializedFrom.consoleConfigLoaded !== consoleConfigLoaded ||
+      initializedFrom.defaultPins !== defaultPins)
+  ) {
+    setInitializedFrom({ consoleConfig, consoleConfigLoaded, defaultPins });
+    const perspectiveDetails = consoleConfig?.spec?.customization?.perspectives;
+    const devPerspective = perspectiveDetails?.find((p) => p.id === 'dev');
+    let defaultPinnedResources = [];
+    if (!devPerspective || !devPerspective?.pinnedResources) {
+      if (defaultPins?.dev) {
+        const getModels = defaultPins?.dev.map((groupVersionKind) => {
+          const ref = groupVersionKind?.group
+            ? referenceForGroupVersionKind(groupVersionKind.group)(groupVersionKind.version)(
+                groupVersionKind.kind,
+              )
+            : groupVersionKind.kind;
+          return modelFor(ref);
+        });
+        defaultPinnedResources = getModels?.map((resource) => ({
+          group: resource?.apiGroup ? resource?.apiGroup : '',
+          version: resource?.apiVersion,
+          resource: resource?.plural,
+        }));
       }
+      setPinnedResources(defaultPinnedResources);
+      setPinnedResourcesConfigured(defaultPinnedResources);
+    } else {
+      setPinnedResources(devPerspective.pinnedResources);
+      setPinnedResourcesConfigured(devPerspective.pinnedResources);
+      setConfiguredPerspectives(perspectiveDetails);
     }
-  }, [configuredPerspectives, consoleConfig, consoleConfigLoaded, defaultPins]);
+  }
 
   const items = useMemo(
     () =>
-      resources
-        .map((model: K8sKind) => (
-          <Item title={model.labelKey ? t(model.labelKey) : model.kind} model={model} />
-        ))
-        .toArray(),
+      resources.map((model: K8sKind) => (
+        <Item title={model.labelKey ? t(model.labelKey) : model.kind} model={model} />
+      )),
     [resources, t, Item],
   );
 
@@ -327,8 +343,8 @@ const PinnedResourcesConfiguration: FC<PinnedResourcesConfigurationProps> = ({
 };
 
 const mapStateToProps = (state: RootState) => ({
-  groupVersionMap: state.k8s.getIn(['RESOURCES', 'groupToVersionMap']),
-  allK8sModels: state.k8s.getIn(['RESOURCES', 'models']),
+  groupVersionMap: state.k8s.RESOURCES?.groupToVersionMap,
+  allK8sModels: state.k8s.RESOURCES?.models,
 });
 
 export default connect(mapStateToProps)(PinnedResourcesConfiguration);

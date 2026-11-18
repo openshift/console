@@ -65,19 +65,15 @@ const AttachStorageInner: FC<AttachStorageFormProps> = (props) => {
       <DocumentTitle>{t('Add Storage')}</DocumentTitle>
       <PageHeading
         title={
-          <>
-            {t('Add Storage')}
-            <Trans t={t} ns="public">
-              {' '}
-              to{' '}
-              <ResourceLink
-                inline
-                kind={props?.kindObj?.kind}
-                name={params.name}
-                namespace={params.ns}
-              />
-            </Trans>
-          </>
+          <Trans t={t} ns="public">
+            Add Storage to{' '}
+            <ResourceLink
+              inline
+              kind={props?.kindObj?.kind}
+              name={params.name}
+              namespace={params.ns}
+            />
+          </Trans>
         }
         helpText={
           <>

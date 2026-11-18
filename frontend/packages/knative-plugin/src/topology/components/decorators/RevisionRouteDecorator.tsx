@@ -16,7 +16,7 @@ interface RevisionRouteDecoratorProps {
 }
 
 const RevisionRouteDecorator: FC<RevisionRouteDecoratorProps> = ({ element, radius, x, y }) => {
-  const ref = useRef();
+  const ref = useRef(undefined);
   const { t } = useTranslation('knative-plugin');
   const resourceObj = getResource(element);
   const url = useRoutesURL(resourceObj);

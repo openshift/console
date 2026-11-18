@@ -1,26 +1,38 @@
 import type { FC } from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { TableProps } from '@console/internal/components/factory';
-import { Table } from '@console/internal/components/factory';
-import getTriggerHeaders from './TriggerHeaders';
-import TriggerRow from './TriggerRow';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
+import type { ConsoleDataViewProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { EventingTriggerModel } from '../../../models';
+import type { EventTriggerKind } from '../../../types';
+import { useTriggerColumns } from './TriggerHeaders';
+import { getTriggerDataViewRows } from './TriggerRow';
 
-const TriggerList: FC<TableProps> = (props) => {
+type TriggerListProps = Omit<
+  ConsoleDataViewProps<EventTriggerKind>,
+  'id' | 'columns' | 'getDataViewRows'
+> & { customData?: { broker?: string } };
+
+export const TriggerList: FC<TriggerListProps> = (props) => {
   const { t } = useTranslation('knative-plugin');
-  const triggerData = props.customData?.broker
-    ? props.data.filter((obj) => obj.spec.broker === props.customData.broker)
-    : props.data;
-
+  const broker = props.customData?.broker;
+  const data = useMemo(
+    () =>
+      broker
+        ? props.data?.filter((obj: EventTriggerKind) => obj.spec.broker === broker)
+        : props.data,
+    [props.data, broker],
+  );
+  const { columns } = useTriggerColumns(!broker);
   return (
-    <Table
+    <ConsoleDataView<EventTriggerKind>
       {...props}
-      aria-label={t('Triggers')}
-      data={triggerData}
-      Header={getTriggerHeaders(t, !props.customData?.broker)}
-      Row={TriggerRow}
-      virtualize
+      id={EventingTriggerModel}
+      label={t('Triggers')}
+      data={data}
+      loaded={props.loaded}
+      columns={columns}
+      getDataViewRows={getTriggerDataViewRows}
     />
   );
 };
-
-export default TriggerList;

@@ -194,7 +194,7 @@ const TaintsModalOverlay: OverlayComponent<TaintsModalProps> = (props) => (
   <Modal
     isOpen
     onClose={props.closeOverlay}
-    variant={ModalVariant.small}
+    variant={ModalVariant.medium}
     aria-labelledby="taints-modal-title"
   >
     <TaintsModal {...props} close={props.closeOverlay} cancel={props.closeOverlay} />

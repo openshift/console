@@ -92,7 +92,7 @@ export const useNonScalableImageCheck = (
 
   const istRef = useMemo(
     () => (resource ? getISTReference(resource) : null),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
     [resourceKind, resourceNamespace, triggerAnnotation, dcISTName],
   );
 

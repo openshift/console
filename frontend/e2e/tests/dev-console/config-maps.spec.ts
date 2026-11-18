@@ -1,7 +1,6 @@
 import { test, expect } from '../../fixtures';
 import { ConfigMapPage } from '../../pages/dev-console/config-map-page';
 import { DetailsPage } from '../../pages/details-page';
-import { ListPage } from '../../pages/list-page';
 
 test.describe('ConfigMap form view', { tag: ['@dev-console', '@smoke'] }, () => {
   test('creates a ConfigMap using form view', async ({ page, k8sClient, cleanup }) => {
@@ -33,7 +32,6 @@ test.describe('ConfigMap form view', { tag: ['@dev-console', '@smoke'] }, () => 
     const configMapName = 'test-config-map';
     const configMapPage = new ConfigMapPage(page);
     const detailsPage = new DetailsPage(page);
-    const listPage = new ListPage(page);
 
     await test.step('Set up namespace and create ConfigMap', async () => {
       await k8sClient.createNamespace(ns);

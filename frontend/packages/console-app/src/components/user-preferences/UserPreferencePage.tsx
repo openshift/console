@@ -114,6 +114,7 @@ const UserPreferencePage: FC = () => {
   useEffect(() => {
     if (spotlight) {
       const element = document.querySelector(spotlight);
+      // eslint-disable-next-line react-hooks-js/set-state-in-effect -- the spotlighted element is rendered by the plugin-contributed preference tabs, so it only exists in the DOM after commit and cannot be queried during render; this state gates rendering the Spotlight until the selector matches
       setSpotlightElement(element);
     }
   }, [spotlight, userPreferenceItemResolved, userPreferenceTabContents]);

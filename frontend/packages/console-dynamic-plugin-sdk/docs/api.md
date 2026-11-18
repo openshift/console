@@ -2,7 +2,7 @@
 
 | API kind | Exposed APIs |
 | -------- | ------------ |
-| Variable (83) | [ActionServiceProvider](#actionserviceprovider), [BlueInfoCircleIcon](#blueinfocircleicon), [CamelCaseWrap](#camelcasewrap), [checkAccess](#checkaccess), [CodeEditor](#codeeditor), [consoleFetch](#consolefetch), [consoleFetchJSON](#consolefetchjson), [consoleFetchText](#consolefetchtext), [DocumentTitle](#documenttitle), [ErrorBoundaryFallbackPage](#errorboundaryfallbackpage), [ErrorStatus](#errorstatus), [GenericStatus](#genericstatus), [getAPIVersionForModel](#getapiversionformodel), [getGroupVersionKindForModel](#getgroupversionkindformodel), [getGroupVersionKindForResource](#getgroupversionkindforresource), [GreenCheckCircleIcon](#greencheckcircleicon), [HorizontalNav](#horizontalnav), [InfoStatus](#infostatus), [InventoryItem](#inventoryitem), [InventoryItemBody](#inventoryitembody), [InventoryItemLoading](#inventoryitemloading), [InventoryItemStatus](#inventoryitemstatus), [InventoryItemTitle](#inventoryitemtitle), [isAllNamespacesKey](#isallnamespaceskey), [k8sCreate](#k8screate), [k8sDelete](#k8sdelete), [k8sGet](#k8sget), [k8sList](#k8slist), [k8sListItems](#k8slistitems), [k8sPatch](#k8spatch), [k8sUpdate](#k8supdate), [ListPageBody](#listpagebody), [ListPageCreate](#listpagecreate), [ListPageCreateButton](#listpagecreatebutton), [ListPageCreateDropdown](#listpagecreatedropdown), [ListPageCreateLink](#listpagecreatelink), [ListPageHeader](#listpageheader), [NamespaceBar](#namespacebar), [Overview](#overview), [OverviewGrid](#overviewgrid), [PopoverStatus](#popoverstatus), [ProgressStatus](#progressstatus), [QueryBrowser](#querybrowser), [RedExclamationCircleIcon](#redexclamationcircleicon), [ResourceEventStream](#resourceeventstream), [ResourceIcon](#resourceicon), [ResourceLink](#resourcelink), [ResourceStatus](#resourcestatus), [ResourceYAMLEditor](#resourceyamleditor), [StatusComponent](#statuscomponent), [StatusIconAndText](#statusiconandtext), [StatusPopupItem](#statuspopupitem), [StatusPopupSection](#statuspopupsection), [SuccessStatus](#successstatus), [TableData](#tabledata), [Timestamp](#timestamp), [useAccessReview](#useaccessreview), [useActiveColumns](#useactivecolumns), [useActiveNamespace](#useactivenamespace), [useActivePerspective](#useactiveperspective), [useAnnotationsModal](#useannotationsmodal), [useDeleteModal](#usedeletemodal), [useFlag](#useflag), [useK8sModel](#usek8smodel), [useK8sModels](#usek8smodels), [useK8sWatchResource](#usek8swatchresource), [useK8sWatchResources](#usek8swatchresources), [useLabelsModal](#uselabelsmodal), [useOverlay](#useoverlay), [usePrometheusPoll](#useprometheuspoll), [useQuickStartContext](#usequickstartcontext), [useResolvedExtensions](#useresolvedextensions), [useToast](#usetoast), [useUserPreference](#useuserpreference), [YellowExclamationTriangleIcon](#yellowexclamationtriangleicon), [ListPageFilter](#listpagefilter), [PerspectiveContext](#perspectivecontext), [useAccessReviewAllowed](#useaccessreviewallowed), [useListPageFilter](#uselistpagefilter), [useModal](#usemodal), [useUserSettings](#useusersettings), [VirtualizedTable](#virtualizedtable), [YAMLEditor](#yamleditor) |
+| Variable (85) | [ActionServiceProvider](#actionserviceprovider), [BlueInfoCircleIcon](#blueinfocircleicon), [CamelCaseWrap](#camelcasewrap), [checkAccess](#checkaccess), [CodeEditor](#codeeditor), [ConsoleDataView](#consoledataview), [consoleFetch](#consolefetch), [consoleFetchJSON](#consolefetchjson), [consoleFetchText](#consolefetchtext), [definitionFor](#definitionfor), [DocumentTitle](#documenttitle), [ErrorBoundaryFallbackPage](#errorboundaryfallbackpage), [ErrorStatus](#errorstatus), [GenericStatus](#genericstatus), [getAPIVersionForModel](#getapiversionformodel), [getGroupVersionKindForModel](#getgroupversionkindformodel), [getGroupVersionKindForResource](#getgroupversionkindforresource), [GreenCheckCircleIcon](#greencheckcircleicon), [HorizontalNav](#horizontalnav), [InfoStatus](#infostatus), [InventoryItem](#inventoryitem), [InventoryItemBody](#inventoryitembody), [InventoryItemLoading](#inventoryitemloading), [InventoryItemStatus](#inventoryitemstatus), [InventoryItemTitle](#inventoryitemtitle), [isAllNamespacesKey](#isallnamespaceskey), [k8sCreate](#k8screate), [k8sDelete](#k8sdelete), [k8sGet](#k8sget), [k8sList](#k8slist), [k8sListItems](#k8slistitems), [k8sPatch](#k8spatch), [k8sUpdate](#k8supdate), [ListPageBody](#listpagebody), [ListPageCreate](#listpagecreate), [ListPageCreateButton](#listpagecreatebutton), [ListPageCreateDropdown](#listpagecreatedropdown), [ListPageCreateLink](#listpagecreatelink), [ListPageHeader](#listpageheader), [NamespaceBar](#namespacebar), [Overview](#overview), [OverviewGrid](#overviewgrid), [PopoverStatus](#popoverstatus), [ProgressStatus](#progressstatus), [QueryBrowser](#querybrowser), [RedExclamationCircleIcon](#redexclamationcircleicon), [ResourceEventStream](#resourceeventstream), [ResourceIcon](#resourceicon), [ResourceLink](#resourcelink), [ResourceStatus](#resourcestatus), [ResourceYAMLEditor](#resourceyamleditor), [StatusComponent](#statuscomponent), [StatusIconAndText](#statusiconandtext), [StatusPopupItem](#statuspopupitem), [StatusPopupSection](#statuspopupsection), [SuccessStatus](#successstatus), [Timestamp](#timestamp), [useAccessReview](#useaccessreview), [useActiveNamespace](#useactivenamespace), [useActivePerspective](#useactiveperspective), [useAnnotationsModal](#useannotationsmodal), [useDeleteModal](#usedeletemodal), [useFlag](#useflag), [useK8sModel](#usek8smodel), [useK8sModels](#usek8smodels), [useK8sWatchResource](#usek8swatchresource), [useK8sWatchResources](#usek8swatchresources), [useLabelsModal](#uselabelsmodal), [useOverlay](#useoverlay), [usePrometheusPoll](#useprometheuspoll), [useQuickStartContext](#usequickstartcontext), [useResolvedExtensions](#useresolvedextensions), [useToast](#usetoast), [useUserPreference](#useuserpreference), [YellowExclamationTriangleIcon](#yellowexclamationtriangleicon), [ListPageFilter](#listpagefilter), [PerspectiveContext](#perspectivecontext), [TableData](#tabledata), [useAccessReviewAllowed](#useaccessreviewallowed), [useActiveColumns](#useactivecolumns), [useListPageFilter](#uselistpagefilter), [useModal](#usemodal), [useUserSettings](#useusersettings), [VirtualizedTable](#virtualizedtable), [YAMLEditor](#yamleditor) |
 | TypeAlias (27) | [Alert](#alert), [Alerts](#alerts), [ColoredIconProps](#colorediconprops), [DiscoveryResources](#discoveryresources), [ExtensionHook](#extensionhook), [ExtensionHookResult](#extensionhookresult), [ExtensionK8sGroupKindModel](#extensionk8sgroupkindmodel), [ExtensionK8sGroupModel](#extensionk8sgroupmodel), [ExtensionK8sKindVersionModel](#extensionk8skindversionmodel), [ExtensionK8sModel](#extensionk8smodel), [K8sModel](#k8smodel), [K8sVerb](#k8sverb), [MatchExpression](#matchexpression), [MatchLabels](#matchlabels), [ModalComponent](#modalcomponent), [OverlayComponent](#overlaycomponent), [PerspectiveContextType](#perspectivecontexttype), [PrometheusAlert](#prometheusalert), [PrometheusLabels](#prometheuslabels), [PrometheusRule](#prometheusrule), [PrometheusRulesResponse](#prometheusrulesresponse), [PrometheusValue](#prometheusvalue), [ResolvedExtension](#resolvedextension), [Rule](#rule), [Selector](#selector), [Silence](#silence), [K8sKind](#k8skind) |
 | Interface (0) |  |
 | Enum (6) | [AlertSeverity](#alertseverity), [AlertStates](#alertstates), [Operator](#operator), [PrometheusEndpoint](#prometheusendpoint), [RuleStates](#rulestates), [SilenceStates](#silencestates) |
@@ -262,6 +262,96 @@ Documentation is not available, please refer to the implementation.
 
 ---
 
+## `ConsoleDataView`
+
+### Summary 
+
+A table component for displaying, filtering, sorting, and paginating a list of resources,<br/>based on PatternFly's [Data view](https://www.patternfly.org/extensions/data-view/overview).<br/>Includes built-in name and label filters, column management, and optional row selection.
+
+
+### Example
+
+```tsx
+const columns: ConsoleDataViewColumn<PodDisruptionBudgetKind>[] = [
+  { id: 'name', type: 'name' },
+  { id: 'actions', type: 'actions' },
+];
+
+const getDataViewRows: GetDataViewRows<PodDisruptionBudgetKind> = (data, columns) =>
+  data.map(({ obj: pdb }) => {
+    const resourceKind = referenceForModel(PodDisruptionBudgetModel);
+    return columns.map(({ id }) =>
+      id === 'actions'
+        ? { id }
+        : {
+            id,
+            cell: <ResourceLink kind={resourceKind} name={pdb.metadata.name} namespace={pdb.metadata.namespace} />,
+          },
+    );
+  });
+
+const PDBList: React.FC<Props> = ({ data, loaded }) => (
+  <ConsoleDataView<PodDisruptionBudgetKind>
+    id={PodDisruptionBudgetModel}
+    label="PodDisruptionBudgets"
+    data={data}
+    loaded={loaded}
+    columns={columns}
+    getDataViewRows={getDataViewRows}
+    selection={{
+      getItemId: (pdb) => `${pdb.metadata.namespace}/${pdb.metadata.name}`,
+      getBulkActions: ({ matchingSelectedItems, clearSelection }) => [
+        {
+          id: 'clear-selection',
+          label: 'Clear selection',
+          disabled: matchingSelectedItems.length === 0,
+          cta: clearSelection,
+        },
+      ],
+    }}
+  />
+);
+```
+
+
+
+### Parameters
+
+| Parameter Name | Description |
+| -------------- | ----------- |
+| `id` | A model, group/version/kind, or string ID used for column management, matching `console.dataview/table-column` extensions, and persisting resizable column widths. |
+| `label` | (optional) A label describing the type of resource displayed. Used in empty state messages and the table's `aria-label`. |
+| `data` | The array of data items to display in the table. |
+| `loaded` | Flag indicating whether `data` has finished loading. |
+| `loadError` | (optional) An error encountered while loading `data`. |
+| `columns` | The column definitions for the table. Every column requires an ID. Name and namespace types default their translated title, metadata sort path, and nowrap header and row cell modifiers. Explicit values override the defaults; header and row cell props apply independently, and `sort: false` disables sorting. Actions and selection columns always remain visible; empty titles do not bypass visibility. |
+| `getDataViewRows` | Transforms the filtered, sorted, and paginated data into rows of typed cells matched to columns by ID, independent of cell order. Unknown IDs are ignored and omitted cells render empty. Console supplies selection and extension cells separately. An omitted `actions` cell uses the resource action providers for a Kubernetes resource row; `cell: null` leaves it empty. |
+| `initialFilters` | (optional) Initial values for custom string or string-array fields added via `TFilters`, and/or the built-in name and label filters. Declare every custom key here, using `''` or `[]` for inactive filters, so it participates in URL synchronization and clearing. Strings use one URL parameter and arrays use repeated parameters. The name and label filters otherwise default to empty. |
+| `additionalFilterNodes` | (optional) Additional filter elements to render alongside the built-in name and label filters. |
+| `getObjectMetadata` | (optional) Extracts the name and labels used by the built-in filters from a data item. |
+| `matchesAdditionalFilters` | (optional) Determines whether a data item matches any custom filters. |
+| `customRowData` | (optional) Additional data made available to each row. |
+| `defaultSortColumnId` | (optional) The `id` of the column to sort by before the user picks one. Defaults to the first column, or the first sortable column when a checkbox column is present, and is ignored if no column has this id. A `sortBy` URL parameter takes precedence; checkbox tables accept only sortable URL targets. Note that `sortBy` names its column by translated title, not by id. |
+| `defaultSortDirection` | (optional) The direction to sort by before the user picks one. Defaults to ascending. An `orderBy` URL parameter takes precedence. |
+| `showNamespaceOverride` | (optional) If true, columns with `type: 'namespace'` are kept active regardless of column management selections or the active namespace. |
+| `hideNameLabelFilters` | (optional) Hides both the name and label filters. |
+| `hideLabelFilter` | (optional) Hides only the label filter, keeping the name filter. |
+| `EmptyMsg` | (optional) Rendered in place of the table when `data` is empty, letting a consumer explain what is missing and how to create the first resource. Defaults to a generic "No {{label}} found" message. Note that this does not apply when the data is non-empty but the active filters match nothing; that case always renders the built-in in-table empty message. |
+| `mock` | (optional) Renders an empty placeholder instead of the table. |
+| `isResizable` | (optional) Enables resizing and saved widths for columns with a title, and shows a reset action. Defaults to `true`. |
+| `additionalResponsiveActions` | (optional) Additional ResponsiveAction props to render inside ResponsiveActions, alongside the built-in column management and reset-column-widths actions. |
+| `additionalToolbarContent` | (optional) Additional content to display in the actions toolbar outside ResponsiveActions. |
+| `selection` | (optional) Enables managed checkbox selection with `getItemId`. `isSelectable` can disable rows. `getBulkActions` receives `matchingSelectedItems`, the selected items matching the current filters, plus `clearSelection` and `deselect` callbacks, and returns table-specific bulk actions as `Action[]`. Console also loads matching resource bulk providers for a single-model Kubernetes resource selection. Selection persists across pages and built-in filters and is removed when items leave `data`. |
+
+
+
+
+### Source
+
+[`frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts)
+
+---
+
 ## `consoleFetch`
 
 ### Summary 
@@ -350,6 +440,41 @@ A promise that resolves to the response as text or JSON object.
 ### Source
 
 [`frontend/packages/console-dynamic-plugin-sdk/src/api/console-fetch.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/console-fetch.ts)
+
+---
+
+## `definitionFor`
+
+### Summary 
+
+Looks up the OpenAPI (Swagger) schema definition for a given Kubernetes model.<br/><br/>Results are memoized per model and never invalidated, so a call made before the OpenAPI<br/>schema has finished loading permanently caches a `null`/empty result for that model, even<br/>after the schema becomes available.
+
+
+### Example
+
+```ts
+const definition = definitionFor(PodModel);
+const specDescription = definition?.properties?.spec?.description;
+```
+
+
+
+### Parameters
+
+| Parameter Name | Description |
+| -------------- | ----------- |
+| `model` | The Kubernetes model to look up. |
+
+
+
+### Returns
+
+The `SwaggerDefinition` for the model, with its `definitions` property populated<br/>with every definition in the document so that `$ref` values can be resolved. Returns `null`<br/>if the OpenAPI schema has not been fetched yet, or an object with a populated `definitions`<br/>property but no other fields if the model's definition could not be found.
+
+
+### Source
+
+[`frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts)
 
 ---
 
@@ -2494,53 +2619,6 @@ Component for displaying a success status popover.
 
 ---
 
-## `TableData`
-
-### Summary 
-
-Component for displaying table data within a table row
-
-
-### Example
-
-```ts
-const PodRow: React.FC<RowProps<K8sResourceCommon>> = ({ obj, activeColumnIDs }) => {
-  return (
-    <>
-      <TableData id={columns[0].id} activeColumnIDs={activeColumnIDs}>
-        <ResourceLink kind="Pod" name={obj.metadata.name} namespace={obj.metadata.namespace} />
-      </TableData>
-      <TableData id={columns[1].id} activeColumnIDs={activeColumnIDs}>
-        <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
-      </TableData>
-      // Important:  the kebab menu cell should include the id and className prop values below
-      <TableData id='' className='pf-v6-c-table__action' activeColumnIDs={activeColumnIDs}>
-        <MockKebabMenu obj={obj} />
-     </TableData>
-    </>
-  );
-};
-```
-
-
-
-### Parameters
-
-| Parameter Name | Description |
-| -------------- | ----------- |
-| `id` | unique id for table |
-| `activeColumnIDs` | active columns |
-| `className` | (optional) option class name for styling |
-
-
-
-
-### Source
-
-[`frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts)
-
----
-
 ## `Timestamp`
 
 ### Summary 
@@ -2594,49 +2672,6 @@ Array with `isAllowed` and `loading` values.
 ### Source
 
 [`frontend/packages/console-dynamic-plugin-sdk/src/app/components/utils/rbac.tsx`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/app/components/utils/rbac.tsx)
-
----
-
-## `useActiveColumns`
-
-### Summary 
-
-A hook that provides a list of user-selected active TableColumns.
-
-
-### Example
-
-```tsx
-  // See implementation for more details on TableColumn type
-  const [activeColumns, columnPreferenceLoaded] = useActiveColumns({
-    columns,
-    showNamespaceOverride: false,
-    columnManagementID,
-  });
-  return columnPreferenceLoaded ? <VirtualizedTable columns={activeColumns} {...otherProps} /> : null
-```
-
-
-
-### Parameters
-
-| Parameter Name | Description |
-| -------------- | ----------- |
-| `options` | Which are passed as a key-value in the map |
-| `` | options.columns - An array of all available TableColumns |
-| `` | options.showNamespaceOverride - (optional) If true, a namespace column will be included, regardless of column management selections |
-| `` | options.columnManagementID - (optional) A unique id used to persist and retrieve column management selections to and from user settings. Usually a `group~version~kind` string for a resource. |
-
-
-
-### Returns
-
-A tuple containing the current user-selected active columns (a subset of options.columns), and a boolean flag indicating whether user settings have been loaded.
-
-
-### Source
-
-[`frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts)
 
 ---
 
@@ -3405,6 +3440,53 @@ React context
 
 ---
 
+## `TableData`
+
+### Summary [DEPRECATED]
+
+@deprecated Use PatternFly's [Data view](https://www.patternfly.org/extensions/data-view/overview) or ConsoleDataView instead.<br/>Component for displaying table data within a table row
+
+
+### Example
+
+```ts
+const PodRow: React.FC<RowProps<K8sResourceCommon>> = ({ obj, activeColumnIDs }) => {
+  return (
+    <>
+      <TableData id={columns[0].id} activeColumnIDs={activeColumnIDs}>
+        <ResourceLink kind="Pod" name={obj.metadata.name} namespace={obj.metadata.namespace} />
+      </TableData>
+      <TableData id={columns[1].id} activeColumnIDs={activeColumnIDs}>
+        <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
+      </TableData>
+      // Important:  the kebab menu cell should include the id and className prop values below
+      <TableData id='' className='pf-v6-c-table__action' activeColumnIDs={activeColumnIDs}>
+        <MockKebabMenu obj={obj} />
+     </TableData>
+    </>
+  );
+};
+```
+
+
+
+### Parameters
+
+| Parameter Name | Description |
+| -------------- | ----------- |
+| `id` | unique id for table |
+| `activeColumnIDs` | active columns |
+| `className` | (optional) option class name for styling |
+
+
+
+
+### Source
+
+[`frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts)
+
+---
+
 ## `useAccessReviewAllowed`
 
 ### Summary [DEPRECATED]
@@ -3431,6 +3513,49 @@ The isAllowed boolean value.
 ### Source
 
 [`frontend/packages/console-dynamic-plugin-sdk/src/app/components/utils/rbac.tsx`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/app/components/utils/rbac.tsx)
+
+---
+
+## `useActiveColumns`
+
+### Summary [DEPRECATED]
+
+@deprecated Use ConsoleDataView instead which handles this internally.<br/>A hook that provides a list of user-selected active TableColumns.
+
+
+### Example
+
+```tsx
+  // See implementation for more details on TableColumn type
+  const [activeColumns, columnPreferenceLoaded] = useActiveColumns({
+    columns,
+    showNamespaceOverride: false,
+    columnManagementID,
+  });
+  return columnPreferenceLoaded ? <VirtualizedTable columns={activeColumns} {...otherProps} /> : null
+```
+
+
+
+### Parameters
+
+| Parameter Name | Description |
+| -------------- | ----------- |
+| `options` | Which are passed as a key-value in the map |
+| `` | options.columns - An array of all available TableColumns |
+| `` | options.showNamespaceOverride - (optional) If true, a namespace column will be included, regardless of column management selections |
+| `` | options.columnManagementID - (optional) A unique id used to persist and retrieve column management selections to and from user settings. Usually a `group~version~kind` string for a resource. |
+
+
+
+### Returns
+
+A tuple containing the current user-selected active columns (a subset of options.columns), and a boolean flag indicating whether user settings have been loaded.
+
+
+### Source
+
+[`frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts)
 
 ---
 
@@ -3541,7 +3666,7 @@ const AppPage: React.FC = () => {
 
 ### Summary [DEPRECATED]
 
-@deprecated Use PatternFly's [Data view](https://www.patternfly.org/extensions/data-view/overview) instead.<br/>A component for making virtualized tables
+@deprecated Use PatternFly's [Data view](https://www.patternfly.org/extensions/data-view/overview) or ConsoleDataView instead.<br/>A component for making virtualized tables
 
 
 ### Example

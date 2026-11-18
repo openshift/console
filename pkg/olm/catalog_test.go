@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/operator-framework/api/pkg/operators/v1alpha1"
+	operatorsv1alpha1 "github.com/operator-framework/api/pkg/operators/v1alpha1"
 	"github.com/operator-framework/operator-registry/alpha/declcfg"
 	"github.com/operator-framework/operator-registry/alpha/property"
 	"github.com/stretchr/testify/assert"
@@ -21,6 +21,9 @@ func TestCreateCatalogItem(t *testing.T) {
 
 		csvMetadata := property.CSVMetadata{
 			DisplayName: "Test Package",
+			InstallModes: []operatorsv1alpha1.InstallMode{
+				{Type: operatorsv1alpha1.InstallModeTypeAllNamespaces, Supported: true},
+			},
 			Description: "This is a test package.",
 			Annotations: map[string]string{
 				CapabilitiesOLMAnnotationKey:           "Basic Install",
@@ -32,7 +35,7 @@ func TestCreateCatalogItem(t *testing.T) {
 				ValidSubscriptionOLMAnnotationKey:      `["sub1", "sub2"]`,
 			},
 			Keywords: []string{"test", "example"},
-			Provider: v1alpha1.AppLink{
+			Provider: operatorsv1alpha1.AppLink{
 				Name: "Test Provider",
 				URL:  "https://github.com/test/test-package",
 			},
@@ -87,7 +90,11 @@ func TestCreateCatalogItem(t *testing.T) {
 			},
 		}
 
-		csvMetadataBytes, err := json.Marshal(property.CSVMetadata{})
+		csvMetadataBytes, err := json.Marshal(property.CSVMetadata{
+			InstallModes: []operatorsv1alpha1.InstallMode{
+				{Type: operatorsv1alpha1.InstallModeTypeAllNamespaces, Supported: true},
+			},
+		})
 		require.NoError(t, err)
 
 		bundle := declcfg.Bundle{
@@ -106,9 +113,17 @@ func TestCreateCatalogItem(t *testing.T) {
 	})
 }
 func TestCreateConsoleCatalog(t *testing.T) {
+	csvMetadata := property.CSVMetadata{
+		InstallModes: []operatorsv1alpha1.InstallMode{
+			{Type: operatorsv1alpha1.InstallModeTypeAllNamespaces, Supported: true},
+		},
+	}
+	csvMetadataBytes, err := json.Marshal(csvMetadata)
+	require.NoError(t, err)
+
 	pkg1 := declcfg.Package{Name: "pkg1"}
 	bundle1 := declcfg.Bundle{Package: "pkg1", Name: "bundle1", Properties: []property.Property{
-		{Type: property.TypeCSVMetadata, Value: json.RawMessage(`{}`)},
+		{Type: property.TypeCSVMetadata, Value: csvMetadataBytes},
 	}}
 
 	pkg2 := declcfg.Package{Name: "pkg2"} // No bundle for this package
@@ -122,13 +137,88 @@ func TestCreateConsoleCatalog(t *testing.T) {
 
 	items := CreateConsoleCatalog(catalogName, packages, bundles)
 
-	require.Len(t, items, 2)
+	require.Len(t, items, 1)
 	assert.Equal(t, "pkg1", items[0].Name)
 	assert.Equal(t, "test-catalog/pkg1/bundle1", items[0].ID)
 	assert.Equal(t, "test-catalog", items[0].Catalog)
-	assert.Equal(t, "pkg3", items[1].Name)
-	assert.Equal(t, "test-catalog/pkg3/bundle3", items[1].ID)
-	assert.Equal(t, "test-catalog", items[1].Catalog)
+}
+
+func TestCreateCatalogItemFiltersIncompatibleBundles(t *testing.T) {
+	compatibleInstallModes := []operatorsv1alpha1.InstallMode{
+		{Type: operatorsv1alpha1.InstallModeTypeAllNamespaces, Supported: true},
+	}
+	unsupportedInstallModes := []operatorsv1alpha1.InstallMode{
+		{Type: operatorsv1alpha1.InstallModeTypeAllNamespaces, Supported: false},
+	}
+
+	testCases := []struct {
+		name         string
+		installModes []operatorsv1alpha1.InstallMode
+		properties   []property.Property
+		expectItem   bool
+	}{
+		{
+			name:         "supports AllNamespaces and has no required dependencies",
+			installModes: compatibleInstallModes,
+			expectItem:   true,
+		},
+		{
+			name:         "does not declare AllNamespaces",
+			installModes: nil,
+		},
+		{
+			name:         "declares AllNamespaces as unsupported",
+			installModes: unsupportedInstallModes,
+		},
+		{
+			name:         "declares a required package",
+			installModes: compatibleInstallModes,
+			properties: []property.Property{
+				{Type: property.TypePackageRequired, Value: json.RawMessage(`{"packageName":"other-package","version":"1.0.0"}`)},
+			},
+		},
+		{
+			name:         "declares a required GVK",
+			installModes: compatibleInstallModes,
+			properties: []property.Property{
+				{Type: property.TypeGVKRequired, Value: json.RawMessage(`{"group":"example.com","kind":"Example","version":"v1"}`)},
+			},
+		},
+		{
+			name:         "allows other bundle properties",
+			installModes: compatibleInstallModes,
+			properties: []property.Property{
+				{Type: "example.com/property", Value: json.RawMessage(`{}`)},
+			},
+			expectItem: true,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			csvMetadataBytes, err := json.Marshal(property.CSVMetadata{InstallModes: tc.installModes})
+			require.NoError(t, err)
+
+			properties := append([]property.Property{
+				{Type: property.TypeCSVMetadata, Value: csvMetadataBytes},
+			}, tc.properties...)
+
+			pkg := declcfg.Package{Name: "test-package"}
+			bundle := declcfg.Bundle{
+				Package:    "test-package",
+				Name:       "test-package.v1.0.0",
+				Properties: properties,
+			}
+
+			item := CreateCatalogItem("test-catalog", &pkg, &bundle)
+
+			if tc.expectItem {
+				require.NotNil(t, item)
+				return
+			}
+			assert.Nil(t, item)
+		})
+	}
 }
 
 func TestParseJSONArray(t *testing.T) {

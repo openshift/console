@@ -19,7 +19,7 @@ interface DefaultDecoratorProps {
 }
 
 export const EditDecorator: FC<DefaultDecoratorProps> = ({ element, radius, x, y }) => {
-  const ref = useRef();
+  const ref = useRef(undefined);
   const { t } = useTranslation('topology');
   const [consoleLinks] = useK8sWatchResource<K8sResourceKind[]>({
     isList: true,

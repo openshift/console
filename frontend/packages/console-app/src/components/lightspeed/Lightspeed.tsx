@@ -16,6 +16,7 @@ import { useNavigate } from 'react-router';
 import { useHideLightspeed } from '@console/app/src/components/user-preferences/lightspeed/useHideLightspeed';
 import { k8sGetResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { ConsolePluginModel } from '@console/internal/models';
+import { OPERATOR_TYPE } from '@console/operator-lifecycle-manager/src/const';
 import { FLAGS } from '@console/shared/src/constants/common';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
@@ -30,15 +31,13 @@ const getLightspeedInstallationStatus = async () => {
     return true;
   } catch (err) {
     if (err.response.status !== 404) {
-      // eslint-disable-next-line no-console
       console.log(err.message);
     }
     return false;
   }
 };
 
-export const lightspeedOperatorURL =
-  '/catalog?catalogType=operator&keyword=lightspeed&selectedId=lightspeed-operator-redhat-operators-openshift-marketplace';
+export const lightspeedOperatorURL = `/catalog/all-namespaces?catalogType=${OPERATOR_TYPE}&keyword=lightspeed&selectedId=lightspeed-operator-redhat-operators-openshift-marketplace`;
 
 const Lightspeed: FC = () => {
   const { t } = useTranslation('console-app');

@@ -15,8 +15,8 @@ The console is a more friendly `kubectl` in the form of a single page webapp. It
 
 ### Dependencies:
 
-1. [node.js](https://nodejs.org/) >= 22 with [corepack](https://npmjs.com/package/corepack) enabled for [yarn berry](https://yarnpkg.com/)
-2. [go](https://go.dev/) >= 1.25
+1. [node.js](https://nodejs.org/) >= 24.22.1 with [corepack](https://npmjs.com/package/corepack) enabled for [yarn berry](https://yarnpkg.com/)
+2. [go](https://go.dev/) >= 1.26
 3. [oc](https://mirror.openshift.com/pub/openshift-v4/clients/oc/latest/) or [kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl) and an OpenShift or Kubernetes cluster
 4. [jq](https://stedolan.github.io/jq/download/) (used by scripts and tests; see [code usage](https://github.com/search?q=repo%3Aopenshift%2Fconsole+%2F+jq+%2F+-path%3A**%2F*.md+-path%3A**%2FDockerfile*&type=code))
 
@@ -115,28 +115,6 @@ In order to enable the monitoring UI and see the "Observe" navigation item while
   export BRIDGE_PLUGINS="monitoring-plugin=http://localhost:9001"
   ```
 
-#### Updating `tectonic-console-builder` image
-The `tectonic-console-builder` image is used to run Cypress tests in CI. Updating it is
-needed when there is a change in the Node.js version. Note that the instance of `go` present
-in the container image is unused, because the backend tests use a different image.
-
-In order to update the `tectonic-console-builder` to a new version (e.g., v29), follow these steps:
-
-1. Update the `tectonic-console-builder` image tag in files listed below:
-   - .ci-operator.yaml
-   - Dockerfile.dev
-   - Dockerfile.plugins.demo
-   For example, `tectonic-console-builder:29`
-2. Update the dependencies in Dockerfile.builder file by setting the `NODE_VERSION`
-   and `YARN_VERSION` environment variables to the desired versions.
-3. Run `./push-builder.sh` script build and push the updated builder image to quay.io.
-   Note: You can test the image using `./builder-run.sh ./build-backend.sh`.
-   To update the image on quay.io, you need edit permission to the [`coreos/tectonic-console-builder` repo](https://quay.io/repository/coreos/tectonic-console-builder).
-4. Lastly, update the mapping of `tectonic-console-builder` image tag in
-   [openshift/release](https:// github.com/openshift/release/blob/master/core-services/image-mirroring/supplemental-ci-images/mapping_supplemental_ci_images_ci) repository.
-   Note: There could be scenario were you would have to add the new image reference in the "mapping_supplemental_ci_images_ci" file, i.e. to avoid CI downtime for upcoming release cycle.
-   Optional: Request for the [rhel-8-base-nodejs-openshift-4.15](https://github.com/openshift-eng/ocp-build-data/pull/3775/files) nodebuilder update if it doesn't match the node version in `tectonic-console-builder`.
-
 #### CodeReady Containers
 
 If you want to use CodeReady for local development, first make sure [it is set up](https://crc.dev/docs/networking/#setting-up-on-a-remote-server), and the [OpenShift cluster is started](https://crc.dev/docs/getting-started/#creating-openshift-preset).
@@ -197,7 +175,7 @@ See [STYLEGUIDE](STYLEGUIDE.md) for file format and coding style guide.
 
 ### Dev Dependencies
 
-go 1.25+, nodejs/yarn, kubectl
+go 1.26+, nodejs/yarn, kubectl
 
 ### Frontend Development
 
@@ -258,53 +236,65 @@ Run frontend tests:
 
 ### Integration Tests
 
-Cypress integration tests are implemented in [Cypress.io](https://www.cypress.io/).
+Integration tests are implemented in [Playwright](https://playwright.dev/).
 
-To install Cypress:
+To install Playwright:
 
 ```
 cd frontend
-yarn run cypress install
+yarn playwright install chromium
 ```
 
-Launch Cypress test runner:
+Launch the Playwright test runner:
 
 ```
 cd frontend
 oc login ...
-yarn run test-cypress-console
+yarn run test-playwright-ui
 ```
 
-This will launch the Cypress Test Runner UI in the `console` package, where you can run one or all Cypress tests.
+This will launch the Playwright Test Runner UI, where you can run one or all Playwright tests.
 
-**Important:**  when testing with authentication, set `BRIDGE_KUBEADMIN_PASSWORD` environment variable in your shell.
+**Important:**  when testing with authentication, populate `.env` in the `frontend/e2e` directory with
+`BRIDGE_KUBEADMIN_PASSWORD` or set the environment variable in your shell.
 
-#### Execute Cypress in different packages
+Tests target `WEB_CONSOLE_URL` (default `http://localhost:9000`), which is deliberately separate
+from `BRIDGE_BASE_ADDRESS` so you can be `oc login`'d to a cluster while testing a local bridge.
+Copy [frontend/e2e/.env.example](frontend/e2e/.env.example) to `frontend/e2e/.env` to set these
+persistently.
 
-An alternate way to execute cypress tests is via [frontend/integration-tests/test-cypress.sh](frontend/integration-tests/test-cypress.sh) which takes a `-p <package>` parameter to allow execution in different packages. It also can run Cypress tests in the Test Runner UI or in `-- headless` mode:
+See [TESTING.md](TESTING.md#end-to-end-testing-with-playwright) for conventions on writing these
+tests (fixtures, page objects, selectors, cluster access).
+
+#### Execute Playwright in different packages
+
+Each package is a Playwright _project_, selected with `--project`. The projects come from the
+`packages` array in [frontend/playwright.config.ts](frontend/playwright.config.ts): `smoke`,
+`console`, `dev-console`, `helm`, `knative`, `olm`, `topology` and `webterminal`. Packages with
+developer-persona tests also get a `<project>-developer` variant, which only exists when
+`BRIDGE_HTPASSWD_USERNAME` is set.
 
 ```
-console/frontend > ./integration-tests/test-cypress.sh
-
-Runs Cypress tests in Test Runner or headless mode
-Usage: test-cypress [-p] <package> [-s] <filemask> [-h true]
-  '-p <package>' may be 'console, 'olm' or 'devconsole'
-  '-s <specmask>' is a file mask for spec test files, such as 'tests/monitoring/*'. Used only in headless mode when '-p' is specified.
-  '-h true' runs Cypress in headless mode. When omitted, launches Cypress Test Runner
-Examples:
-  ./integration-tests/test-cypress.sh                                       // displays this help text
-  ./integration-tests/test-cypress.sh -p console                            // opens Cypress Test Runner for console tests
-  ./integration-tests/test-cypress.sh -p olm                                // opens Cypress Test Runner for OLM tests
-  ./integration-tests/test-cypress.sh -h true                               // runs all packages in headless mode
-  ./integration-tests/test-cypress.sh -p olm -h true                        // runs OLM tests in headless mode
-  ./integration-tests/test-cypress.sh -p console -s 'tests/crud/*' -h true  // runs console CRUD tests in headless mode
+cd frontend
+yarn test-playwright --project=olm                      # run the OLM project
+yarn test-playwright --project=console --project=olm    # run several projects
+yarn test-playwright e2e/tests/console/crud             # run tests matching a path
+yarn test-playwright --grep "secret"                    # run tests matching a title
+yarn test-playwright-admin                              # all admin-persona projects
+yarn test-playwright-developer                          # all developer-persona projects
 ```
 
-When running in headless mode, Cypress will test using its integrated Electron browser, but if you want to use Chrome or Firefox instead, set `BRIDGE_E2E_BROWSER_NAME` environment variable in your shell with the value `chrome` or `firefox`.
+[frontend/integration-tests/test-playwright.sh](frontend/integration-tests/test-playwright.sh) is
+the CI-oriented wrapper around the same command: it resolves `BRIDGE_BASE_ADDRESS` via `oc`,
+derives `WEB_CONSOLE_URL`, and copies reports and traces into `$ARTIFACT_DIR` afterwards. It
+forwards its arguments to `playwright test` and takes one flag of its own, `-c`, which runs
+`contrib/create-user.sh` first to create the htpasswd user the developer-persona tests need. Use
+`--` to separate its flags from Playwright's.
 
-[**_More information on Console's Cypress usage_**](frontend/packages/integration-tests/README.md)
-
-[**_More information on DevConsole's Cypress usage_**](frontend/packages/dev-console/integration-tests/README.md)
+```
+console/frontend > ./integration-tests/test-playwright.sh --project=smoke
+console/frontend > ./integration-tests/test-playwright.sh -c -- --project=dev-console-developer
+```
 
 #### How the Integration Tests Run in CI
 
@@ -312,13 +302,11 @@ The end-to-end tests run against pull requests using [ci-operator](https://githu
 The tests are defined in [this manifest](https://github.com/openshift/release/blob/main/ci-operator/jobs/openshift/console/openshift-console-main-presubmits.yaml)
 in the [openshift/release](https://github.com/openshift/release) repo and were generated with [ci-operator-prowgen](https://github.com/openshift/ci-operator-prowgen).
 
-CI runs the [test-prow-e2e.sh](test-prow-e2e.sh) script, which runs [frontend/integration-tests/test-cypress.sh](frontend/integration-tests/test-cypress.sh).
+CI runs the [test-prow-e2e.sh](test-prow-e2e.sh) script, which runs [frontend/integration-tests/test-playwright.sh](frontend/integration-tests/test-playwright.sh).
 
-`test-cypress.sh` runs all Cypress tests, in all 'packages' (console, olm, and devconsole), in `-- headless` mode via:
+`test-playwright.sh e2e` will then run all Playwright tests in the `frontend/e2e` directory.
 
-`test-cypress.sh -h true`
-
-For more information on `test-cypress.sh` usage please see [Execute Cypress in different packages](#execute-cypress-in-different-packages)
+For more information on `test-playwright.sh` usage please see [Execute Playwright in different packages](#execute-playwright-in-different-packages)
 
 ### Internationalization
 
@@ -468,31 +456,54 @@ To launch the server using the built image, you can run:
 docker run -p 8081:8081 downloadsserver:latest
 ```
 
-## ContentSecurityViolation Detection
+## Content Security Policy
+
+### Violation Detection
 
 The console application automatically reports CSP violations to telemetry. This detection and
 reporting logic attempts to parse a dynamic plugin name from the securitypolicyviolation event to
-include in the data reported to telemetry. If a plugin name is not determined in
-this way, then 'none' will be used. Additionally, violation reporting is throttled to prevent
-spamming the telemetry service with repetitive data. Identical violations will not be
-reported more than once a day.
+include in the data reported to telemetry. When the event does not expose a plugin asset URL and
+reports `browser-extension` as its source file, the document URL is matched against active dynamic
+plugin routes; a plugin name is included only when one plugin has matching routes. This is a route
+association and does not prove which page React Router selected or which script initiated the
+violation. If a plugin name is not determined in this way, an empty plugin name is used.
+Additionally, violation reporting is throttled to prevent spamming the telemetry service with
+repetitive data. Identical violations will not be reported more than once a day.
 
-In case of local developement of the dynamic plugin, just pass needed CSP directives address to the console server, using the `--content-security-policy` flag.
+### Configuring For Development
 
-Example:
+Bridge defaults to `--csp-mode=report-only`, which emits the
+`Content-Security-Policy-Report-Only` HTTP header. Use `--csp-mode=enforce` to emit
+`Content-Security-Policy` HTTP header and block resources that violate the policy. Both modes
+use the same CSP directives. Restart Bridge with `--csp-mode=report-only` to roll back
+enforcement. Invalid mode values prevent startup.
+
+#### Supported directives
+
+The configurable directives are defined in the [openshift/api repository](https://github.com/openshift/api/blob/master/console/v1/types_console_plugin.go). Values from enabled plugins are merged into a single console-wide policy and appended to the defaults for each configurable directive. Using an unsupported directive causes the server to exit with a fatal error.
+
+The `--content-security-policy` flag accepts comma-separated directive entries with space-separated source lists. Literal commas, semicolons, and line breaks within source values are rejected before a policy is emitted, because they could introduce additional policies, directives, or HTTP headers. URL paths that contain a comma or semicolon must encode it as `%2C` or `%3B`, respectively.
+
+Bridge always emits the following directives in both on-cluster and off-cluster modes:
+
+- `object-src 'none'`
+- `media-src 'none'`
+- `child-src 'none'`
+- `frame-src 'none'`
+- `frame-ancestors 'none'`
+- `worker-src 'self'`
+
+These directives are not configurable through `ConsolePlugin.spec.contentSecurityPolicy` or the `--content-security-policy` flag. The same-origin `worker-src` source permits Console's `load-test.sw.js` service worker.
+
+These restrictions remain fixed until a concrete plugin use case justifies additional configuration. CSP mode controls whether violations are reported or blocked; it does not change the allowed sources.
+
+#### Practical example
+
+**Plugin loading scripts and enabling hot-reload from its dev server** (e.g., `http://localhost:9001`):
 
 ```
-./bin/bridge --content-security-policy script-src='localhost:1234',font-src='localhost:2345 localhost:3456'
+./bin/bridge --content-security-policy script-src='localhost:9001',connect-src='ws://localhost:9001'
 ```
-
-List of configurable CSP directives is available in the [openshift/api repository](https://github.com/openshift/api/blob/master/console/v1/types_console_plugin.go#L102-L137).
-
-The list is extended automatically by the console server with following CSP directives:
-- `"frame-src 'none'"`
-- `"frame-ancestors 'none'"`
-- `"object-src 'none'"`
-
-Currently this feature is behind feature gate.
 
 ## Frontend Packages
 - [console-dynamic-plugin-sdk](./frontend/packages/console-dynamic-plugin-sdk/README.md)
@@ -501,7 +512,7 @@ Currently this feature is behind feature gate.
 
 - [dev-console](./frontend/packages/dev-console/README.md)
 
-- [eslint-plugin-console](./frontend/packages/eslint-plugin-console/README.md)
+- [oxlint-plugin-console](./frontend/packages/oxlint-plugin-console/README.md)
 
 - [integration-tests](./frontend/packages/integration-tests/README.md)
 

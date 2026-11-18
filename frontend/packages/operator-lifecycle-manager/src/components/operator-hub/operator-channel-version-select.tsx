@@ -111,14 +111,10 @@ export const OperatorVersionSelect: FC<OperatorVersionSelectProps> = ({
   const { setQueryArgument } = useQueryParamsMutator();
   const { setDeprecatedVersion } = useDeprecatedOperatorWarnings();
   const [isVersionSelectOpen, setIsVersionSelectOpen] = useState(false);
-  const [defaultVersionForChannel, setDefaultVersionForChannel] = useState('-');
   const { channels = [] } = packageManifest?.status ?? {};
 
-  useEffect(() => {
-    setDefaultVersionForChannel(
-      channels.find((ch) => ch.name === selectedUpdateChannel)?.currentCSVDesc?.version ?? '-',
-    );
-  }, [channels, selectedUpdateChannel]);
+  const defaultVersionForChannel =
+    channels.find((ch) => ch.name === selectedUpdateChannel)?.currentCSVDesc?.version ?? '-';
 
   const selectedUpdateVersion = updateVersion || defaultVersionForChannel;
 

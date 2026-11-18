@@ -1,4 +1,3 @@
-/* eslint-disable no-barrel-files/no-barrel-files */
 import type { ObjectMetadata, ObjectReference } from '@console/dynamic-plugin-sdk';
 import type {
   NameValueFromPair,
@@ -28,7 +27,9 @@ type DockerImageReference = {
 };
 
 export type ImageReference =
-  ImageStreamTagReference | ImageStreamImageReference | DockerImageReference;
+  | ImageStreamTagReference
+  | ImageStreamImageReference
+  | DockerImageReference;
 
 type BuildConfigGitSource = {
   type: 'Git';
@@ -50,7 +51,9 @@ type BuildConfigBinarySource = {
 };
 
 type BuildConfigSource = (
-  BuildConfigGitSource | BuildConfigDockerfileSource | BuildConfigBinarySource
+  | BuildConfigGitSource
+  | BuildConfigDockerfileSource
+  | BuildConfigBinarySource
 ) & {
   configMaps?: { configMap: LocalObjectReference; destinationDir: string }[];
   secrets?: { secret: LocalObjectReference; destinationDir: string }[];

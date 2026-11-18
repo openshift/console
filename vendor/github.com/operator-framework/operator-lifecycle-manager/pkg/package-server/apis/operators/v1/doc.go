@@ -3,5 +3,5 @@
 // +k8s:defaulter-gen=TypeMeta
 // +k8s:openapi-gen=true
 
-// +groupName=packages.operators.coreos.com
+// +groupName=operators.coreos.com
 package v1

@@ -6,11 +6,14 @@ import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useRe
 import type { YAMLTemplate } from '@console/dynamic-plugin-sdk/src/extensions/yaml-templates';
 import { isYAMLTemplate } from '@console/dynamic-plugin-sdk/src/extensions/yaml-templates';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { safeYAMLToJS } from '@console/shared/src/utils/yaml';
 import { connectToPlural } from '../kinds';
 import { getYAMLTemplates } from '../models/yaml-templates';
-import type { K8sKind, K8sResourceKindReference, K8sResourceKind } from '../module/k8s';
+import type { K8sKind, K8sResourceKind } from '../module/k8s';
 import { apiVersionForModel, referenceForModel } from '../module/k8s';
+import type { EditYAMLProps } from './edit-yaml';
 import { ErrorPage404 } from './error';
 import { AsyncComponent } from './utils/async';
 import { LoadingBox } from './utils/status-box';
@@ -21,12 +24,17 @@ export const CreateYAMLInner: FC<CreateYAMLProps> = ({
   kindObj,
   hideHeader = false,
   onChange = () => null,
+  onCancel,
   resourceObjPath,
   isCreate = true,
   template,
 }) => {
   const { t } = useTranslation('public');
-  const namespace = params.ns || 'default';
+  const [activeNamespace] = useActiveNamespace();
+  const namespace =
+    activeNamespace && activeNamespace !== ALL_NAMESPACES_KEY
+      ? activeNamespace
+      : params.ns || 'default';
   const [templateExtensions, resolvedTemplates] = useResolvedExtensions<YAMLTemplate>(
     useCallback(
       (e): e is YAMLTemplate => isYAMLTemplate(e) && e.properties.model.kind === kindObj?.kind,
@@ -42,8 +50,8 @@ export const CreateYAMLInner: FC<CreateYAMLProps> = ({
     }
     const resolvedTemplate =
       template ||
-      yamlTemplates.getIn([referenceForModel(kindObj), 'default']) ||
-      yamlTemplates.getIn(['DEFAULT', 'default']);
+      yamlTemplates?.[referenceForModel(kindObj)]?.default ||
+      yamlTemplates?.DEFAULT?.default;
     if (!resolvedTemplate) {
       return {};
     }
@@ -55,8 +63,7 @@ export const CreateYAMLInner: FC<CreateYAMLProps> = ({
 
     const { metadata, spec } = parsed;
     const { crd, kind, namespaced } = kindObj;
-    const isDefaultTemplate =
-      crd && resolvedTemplate === yamlTemplates.getIn(['DEFAULT', 'default']);
+    const isDefaultTemplate = crd && resolvedTemplate === yamlTemplates?.DEFAULT?.default;
     return {
       ...parsed,
       kind,
@@ -87,10 +94,9 @@ export const CreateYAMLInner: FC<CreateYAMLProps> = ({
         objLabel: kindObj.labelKey ? t(kindObj.labelKey) : kindObj.label,
       });
 
-  // TODO: if someone edits namespace, we'll redirect to old namespace
-
   return (
     <AsyncComponent
+      key={isCreate ? `${namespace}-${kindObj.kind}` : undefined}
       blame="CreateYaml"
       loader={() => import('./droppable-edit-yaml').then((c) => c.DroppableEditYAML)}
       initialResource={initialResource}
@@ -99,6 +105,7 @@ export const CreateYAMLInner: FC<CreateYAMLProps> = ({
       hideHeader={hideHeader}
       resourceObjPath={resourceObjPath}
       onChange={onChange}
+      onCancel={onCancel}
     />
   );
 };
@@ -136,18 +143,17 @@ export const EditYAMLPage: FC<EditYAMLPageProps> = (props) => {
   );
 };
 
-export type CreateYAMLProps = {
+export type CreateYAMLProps = Pick<
+  EditYAMLProps,
+  'onCancel' | 'onChange' | 'resourceObjPath' | 'hideHeader' | 'header'
+> & {
   match?: any;
   params?: any;
   kindsInFlight: boolean;
   kindObj: K8sKind;
   template?: string;
   download?: boolean;
-  header?: string;
-  hideHeader?: boolean;
   isCreate?: boolean;
-  resourceObjPath?: (obj: K8sResourceKind, kind: K8sResourceKindReference) => string;
-  onChange?: (yaml: string) => any;
 };
 
 export type EditYAMLPageProps = {

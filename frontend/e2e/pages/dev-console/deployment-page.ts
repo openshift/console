@@ -1,3 +1,5 @@
+import type { Locator } from '@playwright/test';
+
 import { expect } from '../../fixtures';
 import BasePage from '../base-page';
 
@@ -28,5 +30,38 @@ export class DeploymentPage extends BasePage {
   async create(): Promise<void> {
     await expect(this.createButton).toBeEnabled();
     await this.robustClick(this.createButton);
+  }
+
+  async navigateToEditForm(
+    namespace: string,
+    name: string,
+    resource: 'deployments' | 'deploymentconfigs' = 'deployments',
+  ): Promise<void> {
+    await this.goTo(`/k8s/ns/${namespace}/${resource}/${name}/form`);
+    await this.ensureFormView(this.nameInput);
+  }
+
+  getAutoDeployImage(): Locator {
+    return this.page.getByRole('checkbox', { name: 'Auto deploy when new Image is available' });
+  }
+
+  getAutoDeployConfig(): Locator {
+    return this.page.getByRole('checkbox', {
+      name: 'Auto deploy when deployment configuration changes',
+    });
+  }
+
+  async reloadIfStale(): Promise<void> {
+    const reloadButton = this.page.getByRole('button', { name: 'Reload', exact: true });
+    const staleAlert = this.page.getByText('This object has been updated.', { exact: true });
+    if (await staleAlert.isVisible().catch(() => false)) {
+      await this.robustClick(reloadButton);
+      await this.ensureFormView(this.nameInput);
+      await expect(staleAlert).not.toBeVisible({ timeout: 30_000 });
+    }
+  }
+
+  async save(): Promise<void> {
+    await this.robustClick(this.page.getByRole('button', { name: 'Save', exact: true }));
   }
 }

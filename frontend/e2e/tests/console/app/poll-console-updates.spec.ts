@@ -2,8 +2,9 @@ import type { Frame, Page, Response, Route } from '@playwright/test';
 import { test, expect } from '../../../fixtures';
 
 const CHECK_UPDATES_URL = '**/api/check-updates';
-const PLUGIN_NAME = 'console-demo-plugin';
-const PLUGIN_NAME2 = 'console-demo-plugin2';
+// Keep mocked manifests separate from plugins loaded by the console at startup.
+const PLUGIN_NAME = 'poll-console-updates-test-plugin';
+const PLUGIN_NAME2 = 'poll-console-updates-test-plugin2';
 const PLUGIN_MANIFEST_URL = `**/api/plugins/${PLUGIN_NAME}/plugin-manifest.json`;
 const PLUGIN_MANIFEST_URL2 = `**/api/plugins/${PLUGIN_NAME2}/plugin-manifest.json`;
 const HASH_DEFAULT = 'hash';
@@ -83,9 +84,7 @@ test.describe('PollConsoleUpdates', { tag: ['@admin'] }, () => {
   test.setTimeout(300_000);
 
   test('triggers the console update toast when consoleCommit changes', async ({ page }) => {
-    const updates = createMutableHandler((route) =>
-      route.fulfill({ json: UPDATES_DEFAULT }),
-    );
+    const updates = createMutableHandler((route) => route.fulfill({ json: UPDATES_DEFAULT }));
     await page.route(CHECK_UPDATES_URL, updates.handler);
 
     await navigateAndWaitForInit(page);
@@ -99,9 +98,7 @@ test.describe('PollConsoleUpdates', { tag: ['@admin'] }, () => {
   });
 
   test('triggers the console update toast when a plugin is added', async ({ page }) => {
-    const updates = createMutableHandler((route) =>
-      route.fulfill({ json: UPDATES_DEFAULT }),
-    );
+    const updates = createMutableHandler((route) => route.fulfill({ json: UPDATES_DEFAULT }));
     const manifest = createMutableHandler((route) => route.abort());
     await page.route(CHECK_UPDATES_URL, updates.handler);
     await page.route(PLUGIN_MANIFEST_URL, manifest.handler);
@@ -125,9 +122,7 @@ test.describe('PollConsoleUpdates', { tag: ['@admin'] }, () => {
   test('triggers the console update toast when a plugin is added and a different plugin endpoint is erroring', async ({
     page,
   }) => {
-    const updates = createMutableHandler((route) =>
-      route.fulfill({ json: UPDATES_NEW_PLUGIN }),
-    );
+    const updates = createMutableHandler((route) => route.fulfill({ json: UPDATES_NEW_PLUGIN }));
     const manifest1 = createMutableHandler((route) => route.abort());
     const manifest2 = createMutableHandler((route) => route.abort());
     await page.route(PLUGIN_MANIFEST_URL, manifest1.handler);
@@ -157,9 +152,7 @@ test.describe('PollConsoleUpdates', { tag: ['@admin'] }, () => {
   });
 
   test('triggers the console update toast when a plugin is removed', async ({ page }) => {
-    const updates = createMutableHandler((route) =>
-      route.fulfill({ json: UPDATES_NEW_PLUGIN }),
-    );
+    const updates = createMutableHandler((route) => route.fulfill({ json: UPDATES_NEW_PLUGIN }));
     await page.route(CHECK_UPDATES_URL, updates.handler);
     await page.route(PLUGIN_MANIFEST_URL, (route) =>
       route.fulfill({ json: PLUGIN_MANIFEST_DEFAULT }),
@@ -176,9 +169,7 @@ test.describe('PollConsoleUpdates', { tag: ['@admin'] }, () => {
     const manifest = createMutableHandler((route) =>
       route.fulfill({ json: PLUGIN_MANIFEST_DEFAULT }),
     );
-    await page.route(CHECK_UPDATES_URL, (route) =>
-      route.fulfill({ json: UPDATES_NEW_PLUGIN }),
-    );
+    await page.route(CHECK_UPDATES_URL, (route) => route.fulfill({ json: UPDATES_NEW_PLUGIN }));
     await page.route(PLUGIN_MANIFEST_URL, manifest.handler);
 
     await navigateAndWaitForInit(page);

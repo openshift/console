@@ -11,7 +11,7 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
-import i18n from 'i18next';
+import * as i18n from 'i18next';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { useParams, useLocation } from 'react-router';

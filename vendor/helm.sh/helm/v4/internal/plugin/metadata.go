@@ -71,23 +71,23 @@ func (m Metadata) Validate() error {
 	}
 
 	if m.APIVersion == "" {
-		errs = append(errs, fmt.Errorf("empty APIVersion"))
+		errs = append(errs, errors.New("empty APIVersion"))
 	}
 
 	if m.Type == "" {
-		errs = append(errs, fmt.Errorf("empty type field"))
+		errs = append(errs, errors.New("empty type field"))
 	}
 
 	if m.Runtime == "" {
-		errs = append(errs, fmt.Errorf("empty runtime field"))
+		errs = append(errs, errors.New("empty runtime field"))
 	}
 
 	if m.Config == nil {
-		errs = append(errs, fmt.Errorf("missing config field"))
+		errs = append(errs, errors.New("missing config field"))
 	}
 
 	if m.RuntimeConfig == nil {
-		errs = append(errs, fmt.Errorf("missing runtimeConfig field"))
+		errs = append(errs, errors.New("missing runtimeConfig field"))
 	}
 
 	// Validate the config itself
@@ -154,8 +154,7 @@ func buildLegacyConfig(m MetadataLegacy, pluginType string) Config {
 func buildLegacyRuntimeConfig(m MetadataLegacy) RuntimeConfig {
 	var protocolCommands []SubprocessProtocolCommand
 	if len(m.Downloaders) > 0 {
-		protocolCommands =
-			make([]SubprocessProtocolCommand, 0, len(m.Downloaders))
+		protocolCommands = make([]SubprocessProtocolCommand, 0, len(m.Downloaders))
 		for _, d := range m.Downloaders {
 			protocolCommands = append(protocolCommands, SubprocessProtocolCommand{
 				Protocols:       d.Protocols,
@@ -165,7 +164,7 @@ func buildLegacyRuntimeConfig(m MetadataLegacy) RuntimeConfig {
 	}
 
 	platformCommand := m.PlatformCommand
-	if len(platformCommand) == 0 && len(m.Command) > 0 {
+	if len(platformCommand) == 0 && m.Command != "" {
 		platformCommand = []PlatformCommand{{Command: m.Command}}
 	}
 

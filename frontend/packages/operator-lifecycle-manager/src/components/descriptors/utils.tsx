@@ -1,4 +1,4 @@
-import { getSchemaType } from '@rjsf/core/dist/cjs/utils';
+import { getSchemaType } from '@rjsf/utils';
 import type { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
 import { getSchemaAtPath } from '@console/shared/src/utils/utils';
@@ -151,7 +151,6 @@ function getValidCapabilitiesForDataType<CapabilityType extends string = SpecCap
       );
 
       if (isDeprecated) {
-        // eslint-disable-next-line no-console
         console.warn(
           `[Deprecated x-descriptor] "${capability}" is deprecated and support will be removed in a future release.`,
           descriptor,
@@ -159,7 +158,6 @@ function getValidCapabilitiesForDataType<CapabilityType extends string = SpecCap
       }
 
       if (!isCompatible) {
-        // eslint-disable-next-line no-console
         console.warn(
           `[Invalid x-descriptor] "${capability}" is incompatible with ${type} values and will have no effect`,
           descriptor,
@@ -203,7 +201,10 @@ export function getValidCapabilitiesForSchema<CapabilityType extends string = Sp
   schema: JSONSchema7,
 ): CapabilityType[] {
   const type = getSchemaType(schema);
-  return getValidCapabilitiesForDataType<CapabilityType>(descriptor, type);
+  return getValidCapabilitiesForDataType<CapabilityType>(
+    descriptor,
+    Array.isArray(type) ? type[0] : type,
+  );
 }
 
 export const isMainStatusDescriptor = (descriptor: Descriptor): boolean =>

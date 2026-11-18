@@ -1,58 +1,18 @@
-import type { FormEvent } from 'react';
-import type { TableColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import { selectionColumnProps } from './ConsoleDataView';
+import type { FormEvent, ReactNode } from 'react';
+import type { DataViewTd } from '@patternfly/react-data-view/dist/esm/DataViewTable/DataViewTable';
+import type { ConsoleDataViewColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 
 /**
- * Creates a selection column definition for DataView tables.
- * This column displays checkboxes for row selection.
- * The select-all checkbox in the header is automatically added by ConsoleDataView
- * when the selection prop is provided.
- *
- * @example
- * ```typescript
- * const columns = [
- *   createSelectionColumn(),
- *   { title: 'Name', id: 'name', ... },
- *   ...
- * ];
- * ```
+ * Creates the checkbox column managed by ConsoleDataView.
  */
-export const createSelectionColumn = <T>(): TableColumn<T> => ({
+export const createSelectionColumn = <TData>(): ConsoleDataViewColumn<TData> => ({
   title: '',
   id: 'select',
-  props: selectionColumnProps,
+  type: 'selection' as const,
 });
 
-type CreateSelectionCellOptions = {
-  /** Row index in the table */
-  rowIndex: number;
-  /** Unique ID for the item being selected */
-  itemId: string;
-  /** Whether the item is currently selected */
-  isSelected: boolean;
-  /** Callback when selection state changes */
-  onSelect: (itemId: string, isSelecting: boolean) => void;
-  /** Whether the checkbox should be disabled */
-  disabled?: boolean;
-};
-
 /**
- * Creates a selection cell object for a DataView row.
- * This cell contains the checkbox for row selection.
- *
- * @example
- * ```typescript
- * const rowCells = {
- *   select: createSelectionCell({
- *     rowIndex: 0,
- *     itemId: getUID(node),
- *     isSelected: selectedIds.has(getUID(node)),
- *     onSelect: onSelectItem,
- *   }),
- *   name: { cell: <NodeName node={node} /> },
- *   ...
- * };
- * ```
+ * Creates a checkbox cell for a row managed by ConsoleDataView.
  */
 export const createSelectionCell = ({
   rowIndex,
@@ -60,10 +20,15 @@ export const createSelectionCell = ({
   isSelected,
   onSelect,
   disabled = false,
-}: CreateSelectionCellOptions) => ({
+}: {
+  rowIndex: number;
+  itemId: string;
+  isSelected: boolean;
+  onSelect: (itemId: string, isSelecting: boolean) => void;
+  disabled?: boolean;
+}): Extract<DataViewTd, { cell: ReactNode }> => ({
   cell: '', // Checkbox is rendered via props, no content needed
   props: {
-    ...selectionColumnProps,
     select: {
       rowIndex,
       onSelect: (_event: FormEvent<HTMLInputElement>, isSelecting: boolean) => {

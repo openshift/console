@@ -12,7 +12,7 @@ type NodeLogsUnitFilterProps = {
 
 const NodeLogsUnitFilter: FC<NodeLogsUnitFilterProps> = ({ onChangeUnit }) => {
   const firstRender = useRef(true);
-  const inputRef = useRef<HTMLInputElement>();
+  const inputRef = useRef<HTMLInputElement>(undefined);
   const [values, setValues] = useState<string[]>(getQueryArgument('unit')?.split(',') || []);
   const { t } = useTranslation('console-app');
 

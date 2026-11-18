@@ -1,4 +1,3 @@
-import { DeploymentModel, PodModel } from '../__mocks__/k8s-data';
 import {
   getAPIVersionForModel,
   getGroupVersionKindForReference,
@@ -8,6 +7,7 @@ import {
   transformGroupVersionKindToReference,
   getGroupVersionKindForModel,
 } from '../k8s-ref';
+import { DeploymentModel, PodModel } from './data/k8s-data';
 
 describe('k8s-Resource', () => {
   it('should return reference for provided group, version, and kind', () => {
@@ -91,7 +91,7 @@ describe('k8s-Resource', () => {
     expect(kind).toEqual('Pod');
   });
 
-  it('should return reference for provided group, version, and kind', () => {
+  it('should transform group, version, and kind to reference', () => {
     const referenceData = transformGroupVersionKindToReference({
       group: 'apps',
       version: 'v1',

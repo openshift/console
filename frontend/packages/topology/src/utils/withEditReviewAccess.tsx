@@ -11,15 +11,15 @@ import { getResource } from './topology-utils';
 export const withEditReviewAccess: WithEditReviewAccess = (verb) => (WrappedComponent) => {
   const Component: FC<WithEditReviewAccessComponentProps> = (props) => {
     const resourceObj = getResource(props.element);
-    const resourceModel = modelFor(referenceFor(resourceObj));
+    const resourceModel = resourceObj ? modelFor(referenceFor(resourceObj)) : undefined;
     const editAccess = useAccessReview({
-      group: resourceModel.apiGroup,
+      group: resourceModel?.apiGroup,
       verb,
-      resource: resourceModel.plural,
-      name: resourceObj.metadata.name,
-      namespace: resourceObj.metadata.namespace,
+      resource: resourceModel?.plural,
+      name: resourceObj?.metadata?.name,
+      namespace: resourceObj?.metadata?.namespace,
     });
-    return <WrappedComponent {...(props as any)} canEdit={editAccess} />;
+    return <WrappedComponent {...(props as any)} canEdit={resourceObj ? editAccess : false} />;
   };
   Component.displayName = `withEditReviewAccess(${
     WrappedComponent.displayName || WrappedComponent.name

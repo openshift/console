@@ -119,7 +119,7 @@ const CreateConnectorWidget: FC<CreateConnectorWidgetProps> = observer((props) =
   } = props;
   const [prompt, setPrompt] = useState<PromptData | null>(null);
   const [active, setActive] = useState(false);
-  const hintsRef = useRef<string[] | undefined>();
+  const hintsRef = useRef<string[] | undefined>(undefined);
 
   const spec = useMemo(() => {
     const dragSourceSpec: DragSourceSpec<

@@ -127,7 +127,7 @@ export const useBindingActions = (
         accessReview: asAccessReview(model, obj, 'patch'),
       }),
     }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
     [model, navigate, obj, startImpersonate, subject?.kind, subject?.name, subjectIndex, t],
   );
 

@@ -1,6 +1,7 @@
 import type { FC } from 'react';
 import { Fragment, useContext, useState, useRef, useCallback, useEffect } from 'react';
 import {
+  AlertVariant,
   Dropdown,
   Divider,
   DropdownGroup,
@@ -28,12 +29,14 @@ import { shallowEqual } from 'react-redux';
 import { useNavigate } from 'react-router';
 import { action as reduxAction } from 'typesafe-actions';
 import { TourContext, TourActions } from '@console/app/src/components/tour';
+import { useTheme, THEME_DARK } from '@console/app/src/providers/theme/ThemeProvider';
 import { getImpersonate, useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { ExternalLinkButton } from '@console/shared/src/components/links/ExternalLinkButton';
 import { LinkTo } from '@console/shared/src/components/links/LinkTo';
 import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
 import { getNotificationsVariant } from '@console/shared/src/components/toast/toastNotificationUtils';
 import { useNotificationHistory } from '@console/shared/src/components/toast/useNotificationHistory';
+import { useToast } from '@console/shared/src/components/toast/useToast';
 import { ACM_LINK_ID, FLAGS } from '@console/shared/src/constants/common';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
@@ -57,8 +60,8 @@ import { flagPending, featureReducerName } from '../../reducers/features';
 import { AboutModal } from '../about-modal';
 import { ImpersonateUserModal } from '../modals/impersonate-user-modal';
 import QuickCreate, { QuickCreateImportFromGit, QuickCreateContainerImages } from '../QuickCreate';
-import { useTheme, THEME_DARK } from '../ThemeProvider';
 import { openshiftHelpBase } from '../utils/documentation';
+import { downloadKubeconfig } from '../utils/download-kubeconfig';
 import '@patternfly/react-user-feedback/dist/esm/Feedback/Feedback.css';
 import { useK8sWatchResource } from '../utils/k8s-watch-hook';
 import { useFeedbackLocal } from './feedback-local';
@@ -161,6 +164,7 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
 }) => {
   const { t } = useTranslation('public');
   const navigate = useNavigate();
+  const toast = useToast();
   const fireTelemetryEvent = useTelemetry();
   const { tourDispatch, tour } = useContext(TourContext);
   const authEnabledFlag = useFlag(FLAGS.AUTH_ENABLED);
@@ -177,9 +181,9 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
   );
   const { clusterID, alertCount, canAccessNS, impersonate } = useConsoleSelector(
     (state) => ({
-      clusterID: state.UI.get('clusterID'),
-      alertCount: state.observe.getIn(['alertCount']),
-      canAccessNS: !!state[featureReducerName].get(FLAGS.CAN_GET_NS),
+      clusterID: state.UI.clusterID,
+      alertCount: state.observe.alertCount,
+      canAccessNS: !!state[featureReducerName][FLAGS.CAN_GET_NS],
       impersonate: getImpersonate(state),
     }),
     shallowEqual,
@@ -187,7 +191,11 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
 
   // Use centralized user hook for user data
   const { displayName, username } = useUser();
-  const { unreadCount: toastUnreadCount, hasUnreadDangerNotifications } = useNotificationHistory();
+  const {
+    notifications: toastNotifications,
+    unreadCount: toastUnreadCount,
+    hasUnreadDangerNotifications,
+  } = useNotificationHistory();
   const notificationCount = (alertCount || 0) + toastUnreadCount;
   const notificationBadgeVariant = getNotificationsVariant(
     toastUnreadCount,
@@ -536,68 +544,126 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
     }
 
     const actions = [];
-    const userActions: MastheadAction[] = [
-      {
-        label: t('User preferences'),
-        component: LinkTo('/user-preferences'),
-      },
-    ];
 
-    // Add impersonate option if user is currently impersonating
-    if (impersonate) {
-      userActions.unshift({
-        label: t('Stop impersonating'),
-        callback: () => {
-          dispatch(UIActions.stopImpersonate());
-          // Use full page reload when stopping to ensure clean state
-          setTimeout(() => {
-            window.location.href = window.SERVER_FLAGS.basePath || '/';
-          }, 0);
-        },
-        dataTest: 'stop-impersonate',
-      });
-    }
-
-    // Add impersonate option if not currently impersonating
-    if (!impersonate) {
-      userActions.unshift({
-        label: t('Impersonate user'),
-        callback: () => setIsImpersonateModalOpen(true),
-        dataTest: 'impersonate-user',
-      });
-    }
-
+    // Section 1 (auth-gated): cluster access actions — Copy login command,
+    // Download kubeconfig. Only added when authentication is enabled so the
+    // section is never empty.
     if (authEnabledFlag) {
       const logout = (e) => {
         e.preventDefault();
         authSvc.logout('', isKubeAdmin);
       };
+
+      const clusterAccessActions: MastheadAction[] = [];
+
       if (requestTokenURL) {
-        userActions.unshift({
+        clusterAccessActions.push({
           label: t('Copy login command'),
           href: requestTokenURL,
           externalLink: true,
           dataTest: 'copy-login-command',
         });
       } else if (externalLoginCommand) {
-        userActions.unshift({
+        clusterAccessActions.push({
           callback: launchCopyLoginCommandModal,
           dataTest: 'copy-login-command',
           label: t('Copy login command'),
         });
       }
 
-      userActions.push({
-        label: t('Log out'),
-        callback: logout,
-        dataTest: 'log-out',
+      clusterAccessActions.push({
+        label: t('Download kubeconfig'),
+        callback: () => {
+          downloadKubeconfig('User').catch((e) => {
+            toast.addToast({
+              variant: AlertVariant.danger,
+              title: t('Failed to download kubeconfig'),
+              content: e.message,
+            });
+          });
+        },
+        dataTest: 'download-kubeconfig',
+      });
+
+      actions.push({
+        isSection: true,
+        actions: clusterAccessActions,
+      });
+
+      // Section 2: user management — Impersonate / Stop impersonating, User
+      // preferences, Log out. Log out is placed here (auth-gated) so it stays
+      // in the same group as preferences and impersonation.
+      const managementActions: MastheadAction[] = [];
+
+      if (impersonate) {
+        managementActions.push({
+          label: t('Stop impersonating'),
+          callback: () => {
+            dispatch(UIActions.stopImpersonate());
+            // Use full page reload when stopping to ensure clean state
+            setTimeout(() => {
+              window.location.href = window.SERVER_FLAGS.basePath || '/';
+            }, 0);
+          },
+          dataTest: 'stop-impersonate',
+        });
+      } else {
+        managementActions.push({
+          label: t('Impersonate user'),
+          callback: () => setIsImpersonateModalOpen(true),
+          dataTest: 'impersonate-user',
+        });
+      }
+
+      managementActions.push(
+        {
+          label: t('User preferences'),
+          component: LinkTo('/user-preferences'),
+        },
+        {
+          label: t('Log out'),
+          callback: logout,
+          dataTest: 'log-out',
+        },
+      );
+
+      actions.push({
+        isSection: true,
+        actions: managementActions,
+      });
+    } else {
+      // Auth disabled: single section with just impersonate and preferences.
+      const managementActions: MastheadAction[] = [];
+
+      if (impersonate) {
+        managementActions.push({
+          label: t('Stop impersonating'),
+          callback: () => {
+            dispatch(UIActions.stopImpersonate());
+            setTimeout(() => {
+              window.location.href = window.SERVER_FLAGS.basePath || '/';
+            }, 0);
+          },
+          dataTest: 'stop-impersonate',
+        });
+      } else {
+        managementActions.push({
+          label: t('Impersonate user'),
+          callback: () => setIsImpersonateModalOpen(true),
+          dataTest: 'impersonate-user',
+        });
+      }
+
+      managementActions.push({
+        label: t('User preferences'),
+        component: LinkTo('/user-preferences'),
+      });
+
+      actions.push({
+        isSection: true,
+        actions: managementActions,
       });
     }
-
-    actions.push({
-      isSection: true,
-      actions: userActions,
-    });
 
     if (!_.isEmpty(additionalUserActions.actions)) {
       actions.unshift(additionalUserActions);
@@ -708,7 +774,6 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
       })
         .then((response) => response.json())
         .then((newstatusPageData) => setstatusPageData(newstatusPageData))
-        // eslint-disable-next-line no-console
         .catch((e) => console.error('Error fetching status page data', e));
     }
   }, [setstatusPageData]);
@@ -750,7 +815,7 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
 
   const launchActions = getLaunchActions();
   const alertAccess = canAccessNS && !!window.SERVER_FLAGS.prometheusBaseURL;
-  const showNotificationBadge = alertAccess || toastUnreadCount > 0;
+  const showNotificationBadge = alertAccess || toastNotifications.length > 0;
   return (
     <>
       <Toolbar isFullHeight isStatic>
@@ -838,12 +903,12 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
             visibility={{ default: isMastheadStacked ? 'visible' : 'hidden' }}
           >
             <SystemStatusButton statusPageData={statusPageData} />
-            {showNotificationBadge && notificationCount > 0 && (
+            {showNotificationBadge && (
               <NotificationBadge
                 aria-label={t('Notification drawer')}
                 onClick={drawerToggle}
                 variant={notificationBadgeVariant}
-                count={notificationCount}
+                count={notificationCount || 0}
                 icon={<RhUiNotificationIcon />}
                 data-quickstart-id="qs-masthead-notifications"
               />
@@ -863,11 +928,13 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
       <ImpersonateUserModal
         isOpen={isImpersonateModalOpen}
         onClose={() => setIsImpersonateModalOpen(false)}
-        onImpersonate={(userName: string, groups: string[]) => {
-          if (groups && groups.length > 0) {
+        onImpersonate={(userName: string, groups: string[], kind: 'User' | 'ServiceAccount') => {
+          if (kind === 'ServiceAccount') {
+            dispatch(UIActions.startImpersonate(kind, userName, groups));
+          } else if (groups && groups.length > 0) {
             dispatch(UIActions.startImpersonate('UserWithGroups', userName, groups));
           } else {
-            dispatch(UIActions.startImpersonate('User', userName));
+            dispatch(UIActions.startImpersonate(kind, userName));
           }
           setIsImpersonateModalOpen(false);
           // Redirect to projects page to prevent RBAC issues for impersonated users

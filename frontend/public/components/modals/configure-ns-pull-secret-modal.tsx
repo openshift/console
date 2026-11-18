@@ -1,5 +1,6 @@
 import type { FC, ChangeEvent, FormEvent } from 'react';
 import { useState, useCallback } from 'react';
+import type { ServiceAccountKind } from '@openshift/api-types/dist/kubernetes/core/v1/ServiceAccount';
 import {
   Alert,
   Button,
@@ -28,7 +29,7 @@ import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 import type { ModalComponentProps } from '@console/shared/src/types/modal';
 import { SecretModel, ServiceAccountModel } from '../../models';
 import type { K8sResourceKind } from '../../module/k8s';
-import { k8sPatchByName, k8sCreate } from '../../module/k8s';
+import { k8sPatchByName, k8sCreate, k8sGet } from '../../module/k8s';
 import { ResourceIcon } from '../utils/resource-icon';
 
 interface FormData {
@@ -62,6 +63,22 @@ interface ConfigureNamespacePullSecretProps extends ModalComponentProps {
   namespace: K8sResourceKind;
   pullSecret?: K8sResourceKind;
 }
+
+const getDefaultServiceAccountPatch = (
+  pullSecretName: string,
+  defaultServiceAccount: ServiceAccountKind,
+) => {
+  const hasImagePullSecrets = Array.isArray(defaultServiceAccount.imagePullSecrets);
+  const secretReference = { name: pullSecretName };
+
+  return [
+    {
+      op: 'add' as const,
+      path: `/imagePullSecrets${hasImagePullSecrets ? '/-' : ''}`,
+      value: hasImagePullSecrets ? secretReference : [secretReference],
+    },
+  ];
+};
 
 const ConfigureNamespacePullSecret: FC<ConfigureNamespacePullSecretProps> = (props) => {
   const { namespace, cancel, close } = props;
@@ -132,25 +149,19 @@ const ConfigureNamespacePullSecret: FC<ConfigureNamespacePullSecretProps> = (pro
         data,
         type: CONST.PULL_SECRET_TYPE,
       };
-      const defaultServiceAccountPatch = [
-        {
-          op: 'add' as const,
-          path: '/imagePullSecrets/-',
-          value: { name: pullSecretName },
-        },
-      ];
-      const promise = k8sCreate(SecretModel, secret).then(() =>
-        k8sPatchByName(
-          ServiceAccountModel,
-          'default',
-          namespace.metadata.name,
-          defaultServiceAccountPatch,
-        ),
-      );
-
-      handlePromise(promise)
-        .then(close)
-        .catch(() => {});
+      const promise = k8sCreate(SecretModel, secret)
+        .then(() => k8sGet(ServiceAccountModel, 'default', namespace.metadata.name, {}))
+        .then((defaultServiceAccount: ServiceAccountKind) =>
+          k8sPatchByName(
+            ServiceAccountModel,
+            'default',
+            namespace.metadata.name,
+            getDefaultServiceAccountPatch(pullSecretName, defaultServiceAccount),
+          ),
+        );
+      return handlePromise(promise).then(() => {
+        close();
+      });
     },
     [method, fileData, namespace, handlePromise, close],
   );

@@ -4,16 +4,16 @@ import { Grid, GridItem } from '@patternfly/react-core';
 import type { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
 import { useParams, useNavigate } from 'react-router';
-import { resourcePathFromModel, useScrollToTopOnMount } from '@console/internal/components/utils';
+import { useScrollToTopOnMount } from '@console/internal/components/utils';
 import type { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { k8sCreate } from '@console/internal/module/k8s';
 import { DynamicForm } from '@console/shared/src/components/dynamic-form/DynamicForm';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { MarkdownView } from '@console/shared/src/components/markdown/MarkdownView';
 import { useResourceConnectionHandler } from '@console/shared/src/hooks/useResourceConnectionHandler';
-import { ClusterServiceVersionModel } from '../../models';
 import type { ClusterServiceVersionKind, CRDDescription, APIServiceDefinition } from '../../types';
 import { ClusterServiceVersionLogo } from '../cluster-service-version-logo';
+import { useOperandCancel } from './use-operand-cancel';
 import { getUISchema } from './utils';
 
 export const OperandForm: FC<OperandFormProps> = ({
@@ -48,20 +48,7 @@ export const OperandForm: FC<OperandFormProps> = ({
       .catch((e) => setErrors([e.message]));
   };
 
-  const handleCancel = () => {
-    if (new URLSearchParams(window.location.search).has('useInitializationResource')) {
-      navigate(
-        resourcePathFromModel(
-          ClusterServiceVersionModel,
-          csv.metadata.name,
-          csv.metadata.namespace,
-        ),
-        { replace: true },
-      );
-    } else {
-      navigate(-1);
-    }
-  };
+  const handleCancel = useOperandCancel(csv);
 
   const uiSchema = useMemo(() => getUISchema(schema, providedAPI), [schema, providedAPI]);
 

@@ -101,7 +101,7 @@ const getEdgesByType = (type: string, graphData: Model): EdgeModel[] =>
 
 const filterers = [applyKnativeDisplayOptions];
 
-describe('knative data transformer ', () => {
+describe('knative data transformer', () => {
   let mockResources: TopologyDataResources;
 
   beforeEach(() => {

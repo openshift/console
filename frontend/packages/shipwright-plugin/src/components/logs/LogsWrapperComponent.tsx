@@ -30,17 +30,12 @@ const LogsWrapperComponent: FC<LogsWrapperComponentProps> = ({
   ...props
 }) => {
   const { t } = useTranslation('shipwright-plugin');
-  const resourceRef = useRef(null);
   const [obj, loaded, error] = useK8sWatchResource<PodKind>(resource);
+  const trackedResource: PodKind | null =
+    resource && loaded && !error && resource.name === obj?.metadata?.name ? obj : null;
   const [fullscreenRef, fullscreenToggle, isFullscreen] = useFullscreen();
   const [downloadAllStatus, setDownloadAllStatus] = useState(false);
-  const currentLogGetterRef = useRef<() => string>();
-
-  if (loaded && !error && resource.name === obj.metadata.name) {
-    resourceRef.current = obj;
-  } else if (error) {
-    resourceRef.current = null;
-  }
+  const currentLogGetterRef = useRef<() => string>(undefined);
 
   const downloadLogs = () => {
     if (!currentLogGetterRef.current) {
@@ -62,7 +57,6 @@ const LogsWrapperComponent: FC<LogsWrapperComponentProps> = ({
       })
       .catch((err: Error) => {
         setDownloadAllStatus(false);
-        // eslint-disable-next-line no-console
         console.warn(err.message || 'Error downloading logs.');
       });
   };
@@ -120,7 +114,7 @@ const LogsWrapperComponent: FC<LogsWrapperComponentProps> = ({
         <MultiStreamLogs
           {...props}
           taskName={taskName}
-          resource={resourceRef.current}
+          resource={trackedResource}
           setCurrentLogsGetter={setLogGetter}
         />
       ) : (

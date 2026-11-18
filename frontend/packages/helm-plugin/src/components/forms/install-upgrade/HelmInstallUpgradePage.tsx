@@ -5,7 +5,7 @@ import { safeDump, safeLoad } from 'js-yaml';
 import type { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useParams, useLocation, useNavigate } from 'react-router';
+import { createPath, useParams, useLocation, useNavigate } from 'react-router';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
@@ -189,7 +189,7 @@ const HelmInstallUpgradePage: FC = () => {
     const payload = {
       namespace,
       name: releaseName,
-      ...(chartURL ? { chart_url: chartURL } : {}), // eslint-disable-line @typescript-eslint/naming-convention
+      ...(chartURL ? { chart_url: chartURL } : {}),
       ...(indexEntry ? { indexEntry } : { indexEntry: chartIndexEntry }),
       ...(valuesObj ? { values: valuesObj } : {}),
       ...(values.isURLInstall
@@ -199,7 +199,7 @@ const HelmInstallUpgradePage: FC = () => {
                 ? ''
                 : basicAuthSecretName,
           }
-        : {}), // eslint-disable-line @typescript-eslint/naming-convention
+        : {}),
     };
 
     return config
@@ -210,7 +210,7 @@ const HelmInstallUpgradePage: FC = () => {
         try {
           helmRelease = await fetchHelmRelease(namespace, releaseName);
         } catch (err) {
-          console.error('Could not fetch the helm release', err); // eslint-disable-line no-console
+          console.error('Could not fetch the helm release', err);
         }
         const resources = loadHelmManifestResources(helmRelease);
         if (isGoingToTopology(resources)) {
@@ -231,9 +231,9 @@ const HelmInstallUpgradePage: FC = () => {
 
   const handleNamespaceChange = (ns: string) => {
     if (ns === ALL_NAMESPACES_KEY) {
-      navigate(`/helm/all-namespaces`);
+      navigate(createPath({ pathname: '/helm/all-namespaces', search: location.search }));
     } else if (ns !== namespace) {
-      navigate(`/helm/ns/${ns}`);
+      navigate(createPath({ pathname: `/helm/ns/${ns}`, search: location.search }));
     }
   };
 

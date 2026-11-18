@@ -26,17 +26,16 @@ import {
 } from '@patternfly/react-topology';
 import * as _ from 'lodash';
 import { action } from 'mobx';
-import { connect } from 'react-redux';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
 import type { TopologyComponentFactory } from '@console/dynamic-plugin-sdk/src/extensions/topology';
 import { isTopologyComponentFactory } from '@console/dynamic-plugin-sdk/src/extensions/topology';
-import type { RootState } from '@console/internal/redux';
 import { SyncPubSubModalLauncher } from '@console/knative-plugin/src/components/pub-sub/PubSubController';
 import { ErrorBoundaryFallbackPage } from '@console/shared/src/components/error/fallbacks/ErrorBoundaryFallbackPage';
 import { withFallback } from '@console/shared/src/components/error/fallbacks/withFallback';
-import type { WithUserPreferenceProps } from '@console/shared/src/hoc/withUserPreference';
-import { withUserPreference } from '@console/shared/src/hoc/withUserPreference';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { useQueryParams } from '@console/shared/src/hooks/useQueryParams';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import { TOPOLOGY_LAYOUT_CONFIG_USER_PREFERENCE_KEY } from '../../const';
 import { odcElementFactory } from '../../elements/odcElementFactory';
 import { getTopologyGraphModel, setTopologyGraphModel } from '../../redux/action';
@@ -116,14 +115,6 @@ const graphModel: Model = {
   },
 };
 
-interface StateProps {
-  getStoredGraphModel: (namespace: string) => GraphModel;
-}
-
-interface DispatchProps {
-  onGraphModelChange: (namespace: string, model: GraphModel) => void;
-}
-
 interface TopologyProps {
   model: Model;
   application: string;
@@ -132,19 +123,23 @@ interface TopologyProps {
   setVisualization: (vis: Visualization) => void;
 }
 
-const TopologyComponent: FC<
-  TopologyProps & StateProps & DispatchProps & WithUserPreferenceProps<object>
-> = ({
+const TopologyComponent: FC<TopologyProps> = ({
   model,
   application,
   namespace,
   onSelect,
   setVisualization,
-  onGraphModelChange,
-  getStoredGraphModel,
-  userSettingState: topologyLayoutDataJson,
-  setUserSettingState: setTopologyLayoutData,
 }) => {
+  const [topologyLayoutDataJson, setTopologyLayoutData, topologyPreferenceLoaded] =
+    useUserPreference<object>(TOPOLOGY_LAYOUT_CONFIG_USER_PREFERENCE_KEY, {});
+  const dispatch = useConsoleDispatch();
+  const storedGraphModel = useConsoleSelector((state) => getTopologyGraphModel(state, namespace));
+  const onGraphModelChange = useCallback(
+    (ns: string, savedModel: GraphModel) => {
+      dispatch(setTopologyGraphModel(ns, savedModel));
+    },
+    [dispatch],
+  );
   const applicationRef = useRef<string>(null);
   const [visualizationReady, setVisualizationReady] = useState<boolean>(false);
   const [dragHint, setDragHint] = useState<string>('');
@@ -200,11 +195,13 @@ const TopologyComponent: FC<
     return newVisualization;
   }, [namespace, onGraphModelChange, onSelect, setTopologyLayoutData, topologyLayoutDataJson]);
 
-  const visualizationRef = useRef<Visualization>();
-  if (!visualizationRef.current) {
-    visualizationRef.current = createVisualization();
+  const visualizationRef = useRef<Visualization | null>(null);
+  if (topologyPreferenceLoaded) {
+    if (visualizationRef.current == null) {
+      visualizationRef.current = createVisualization();
+    }
   }
-  const visualization = visualizationRef.current;
+  const visualization = visualizationRef.current; // eslint-disable-line react-hooks-js/refs -- lazy init: reads synchronously created visualization
   useEffect(() => {
     if (visualization) {
       setVisualization(visualization);
@@ -213,10 +210,16 @@ const TopologyComponent: FC<
 
   useEffect(() => {
     if (model && visualizationReady) {
+      // Apply the stored layout and merge in existing node/edge data on a copy
+      // of the model; the `model` prop must not be mutated
+      const modelToApply: Model = {
+        ...model,
+        nodes: model.nodes.map((n) => ({ ...n })),
+        edges: model.edges.map((e) => ({ ...e })),
+      };
       if (!storedLayoutApplied.current) {
-        const storedGraphModel = getStoredGraphModel(namespace);
         if (storedGraphModel) {
-          model.graph = {
+          modelToApply.graph = {
             ...graphModel.graph,
             x: storedGraphModel.x,
             y: storedGraphModel.y,
@@ -227,7 +230,7 @@ const TopologyComponent: FC<
         }
         const storedLayout = topologyLayoutDataJson?.[namespace];
         if (storedLayout) {
-          model.nodes.forEach((n) => {
+          modelToApply.nodes.forEach((n) => {
             const storedNode = storedLayout.nodes.find((sn) => sn.id === n.id);
             if (storedNode) {
               STORED_NODE_LAYOUT_FIELDS.forEach((key) => {
@@ -238,20 +241,20 @@ const TopologyComponent: FC<
         }
       }
 
-      model.nodes.forEach((n) => {
+      modelToApply.nodes.forEach((n) => {
         const oldNode = visualization.getNodeById(n.id);
         if (oldNode && _.isEqual(oldNode.getData(), n.data)) {
           n.data = oldNode.getData();
         }
       });
-      model.edges.forEach((e) => {
+      modelToApply.edges.forEach((e) => {
         const oldEdge = visualization.getEdgeById(e.id);
         if (oldEdge && _.isEqual(oldEdge.getData(), e.data)) {
           e.data = oldEdge.getData();
         }
       });
 
-      visualization.fromModel(model);
+      visualization.fromModel(modelToApply);
 
       // Make sure something is visible in the case where stored locations are off the screen
       if (!storedLayoutApplied.current) {
@@ -287,11 +290,11 @@ const TopologyComponent: FC<
       }
     }
     // Do not update on selectedId change or stored layout change
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [model, visualization, visualizationReady]);
 
   useEffect(() => {
-    if (!extensionsResolved) {
+    if (!extensionsResolved || !visualization) {
       return;
     }
 
@@ -365,25 +368,4 @@ const TopologyComponent: FC<
   );
 };
 
-const TopologyStateToProps = (state: RootState): StateProps => ({
-  getStoredGraphModel: (namespace: string) => getTopologyGraphModel(state, namespace),
-});
-
-const TopologyDispatchToProps = (dispatch): DispatchProps => ({
-  onGraphModelChange: (namespace: string, model: GraphModel) => {
-    dispatch(setTopologyGraphModel(namespace, model));
-  },
-});
-
-export const Topology = withFallback(
-  connect<StateProps, DispatchProps, TopologyProps>(
-    TopologyStateToProps,
-    TopologyDispatchToProps,
-  )(
-    withUserPreference<TopologyProps & WithUserPreferenceProps<object>, object>(
-      TOPOLOGY_LAYOUT_CONFIG_USER_PREFERENCE_KEY,
-      {},
-    )(memo(TopologyComponent)),
-  ),
-  ErrorBoundaryFallbackPage,
-);
+export const Topology = withFallback(memo(TopologyComponent), ErrorBoundaryFallbackPage);

@@ -52,7 +52,7 @@ const AddGroupUsersModal: OverlayComponent<AddGroupUsersModalProps> = ({ group, 
 
   return (
     <Modal isOpen onClose={closeOverlay} variant="small">
-      <ModalHeader title={t('Add Users')} labelId="add-group-users-modal-title" />
+      <ModalHeader title={t('Add users')} labelId="add-group-users-modal-title" />
       <ModalBody>
         {!group?.metadata?.name ? (
           <Alert isInline variant={AlertVariant.danger} title={t('Error occurred')}>

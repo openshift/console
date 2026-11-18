@@ -1,6 +1,6 @@
 import type { ReactElement } from 'react';
-import type { ShortcutProps } from '@patternfly/react-component-groups/dist/dynamic/Shortcut';
-import ShortcutGrid from '@patternfly/react-component-groups/dist/dynamic/ShortcutGrid';
+import type { ShortcutProps } from '@patternfly/react-component-groups';
+import { ShortcutGrid } from '@patternfly/react-component-groups';
 import type { TFunction } from 'i18next';
 import { TopologyViewType } from '../../topology-types';
 

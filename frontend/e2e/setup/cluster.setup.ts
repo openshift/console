@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { test as setup } from '@playwright/test';
+import { expect, test as setup } from '@playwright/test';
 
 import KubernetesClient from '../clients/kubernetes-client';
 
@@ -26,7 +26,7 @@ setup('verify cluster authentication', async () => {
 
   try {
     k8sClient = new KubernetesClient({ clusterUrl, username, password });
-    await k8sClient.verifyAuthentication();
+    expect(await k8sClient.verifyAuthentication()).toBe(true);
     clusterAvailable = true;
   } catch (err) {
     if (clusterUrl) {
@@ -36,6 +36,7 @@ setup('verify cluster authentication', async () => {
   }
 });
 
+// eslint-disable-next-line playwright/expect-expect
 setup('create test namespace and configure cluster', async () => {
   setup.skip(process.env.SKIP_GLOBAL_SETUP === 'true', 'SKIP_GLOBAL_SETUP is set');
   setup.skip(!clusterAvailable, 'No cluster available');

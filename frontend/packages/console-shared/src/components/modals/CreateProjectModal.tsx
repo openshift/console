@@ -103,7 +103,6 @@ const DefaultCreateProjectModal: OverlayComponent<CreateProjectModalProps> = ({
         }
       })
       .catch((err) => {
-        // eslint-disable-next-line no-console
         console.error(`Failed to create Project:`, err);
       });
   };

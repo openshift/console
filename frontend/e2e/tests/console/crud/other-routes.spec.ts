@@ -6,12 +6,17 @@ import { testA11y } from '../../../utils/a11y';
 type RouteConfig = {
   path: string;
   assertLoaded?: (page: Page) => Promise<void>;
+  streaming?: boolean;
 };
 
 async function assertLoadedListPage(page: Page): Promise<void> {
   await expect(
     page.getByTestId('data-view-table').or(page.getByTestId('page-heading')).first(),
   ).toBeVisible();
+}
+
+async function assertLoadingComplete(page: Page): Promise<void> {
+  await expect(page.getByTestId('loading-indicator')).toHaveCount(0);
 }
 
 const routes: RouteConfig[] = [
@@ -36,6 +41,7 @@ const routes: RouteConfig[] = [
   },
   {
     path: '/k8s/all-namespaces/events',
+    streaming: true,
     assertLoaded: async (page) => {
       await expect(page.getByTestId('event-totals')).toBeVisible();
     },
@@ -73,9 +79,7 @@ const routes: RouteConfig[] = [
   {
     path: '/api-resource/ns/default/core~v1~Pod/access',
     assertLoaded: async (page) => {
-      await expect(
-        page.locator('[data-ouia-component-type$="TableRow"]').first(),
-      ).toBeVisible();
+      await expect(page.locator('[data-ouia-component-type$="TableRow"]').first()).toBeVisible();
     },
   },
   {
@@ -139,8 +143,11 @@ test.describe('Visiting other routes', { tag: ['@admin', '@smoke'] }, () => {
       page,
     }) => {
       await page.goto(route.path, { timeout: 90_000 });
-      await expect(page).toHaveURL(new RegExp(route.path.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
-      await expect(page.getByTestId('loading-indicator')).toHaveCount(0);
+      const expectedPath = route.path.split('?')[0];
+      await expect(page).toHaveURL((url) => url.pathname === expectedPath);
+      if (!route.streaming) {
+        await assertLoadingComplete(page);
+      }
       await expect(page.getByTestId('error-page')).not.toBeAttached();
 
       if (route.assertLoaded) {

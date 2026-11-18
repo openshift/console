@@ -85,7 +85,7 @@ describe('EventPubSubResources', () => {
     expect(screen.getAllByTestId('mock-PubSubSubscribers')).toHaveLength(1);
   });
 
-  it('should render broker section if the kind is Broker and  without subscribers ', () => {
+  it('should render broker section if the kind is Broker and  without subscribers', () => {
     const brokerItemData = {
       ...sampleItemData.item,
       obj: EventBrokerObj,
@@ -99,7 +99,7 @@ describe('EventPubSubResources', () => {
     expect(screen.getByRole('heading', { name: 'Deployments' })).toBeInTheDocument();
   });
 
-  it('should render broker section with Subscribers if the kind is Broker and subscribers available ', () => {
+  it('should render broker section with Subscribers if the kind is Broker and subscribers available', () => {
     const brokerItemData = {
       ...sampleItemData.item,
       obj: EventBrokerObj,

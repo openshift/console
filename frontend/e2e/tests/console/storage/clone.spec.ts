@@ -7,7 +7,10 @@ const cloneSize = '2';
 
 test.describe('Clone Tests', { tag: ['@admin', '@storage'] }, () => {
   test('creates and deletes a PVC clone', async ({ page, k8sClient, cleanup }) => {
-    test.skip(!(await isAwsPlatform(k8sClient)), 'No CSI based storage classes are available on this platform');
+    test.skip(
+      !(await isAwsPlatform(k8sClient)),
+      'No CSI based storage classes are available on this platform',
+    );
     const ns = `test-clone-${Date.now()}`;
     const pvcName = PVC.metadata.name;
     const cloneName = `${pvcName}-clone`;
@@ -17,7 +20,10 @@ test.describe('Clone Tests', { tag: ['@admin', '@storage'] }, () => {
     await test.step('Set up namespace and resources', async () => {
       await k8sClient.createNamespace(ns);
       cleanup.trackNamespace(ns);
-      await k8sClient.createPVC(ns, { ...PVC, metadata: { ...PVC.metadata, namespace: ns } } as any);
+      await k8sClient.createPVC(ns, {
+        ...PVC,
+        metadata: { ...PVC.metadata, namespace: ns },
+      } as any);
       await k8sClient.createPVC(ns, {
         ...PVCGP3,
         metadata: { ...PVCGP3.metadata, namespace: ns },
@@ -73,12 +79,11 @@ test.describe('Clone Tests', { tag: ['@admin', '@storage'] }, () => {
     });
   });
 
-  test('creates PVC clone with different storage class', async ({
-    page,
-    k8sClient,
-    cleanup,
-  }) => {
-    test.skip(!(await isAwsPlatform(k8sClient)), 'No CSI based storage classes are available on this platform');
+  test('creates PVC clone with different storage class', async ({ page, k8sClient, cleanup }) => {
+    test.skip(
+      !(await isAwsPlatform(k8sClient)),
+      'No CSI based storage classes are available on this platform',
+    );
     const ns = `test-clone-sc-${Date.now()}`;
     const pvcName = PVC.metadata.name;
     const cloneName = `${pvcName}-clone`;
@@ -88,7 +93,10 @@ test.describe('Clone Tests', { tag: ['@admin', '@storage'] }, () => {
     await test.step('Set up namespace and resources', async () => {
       await k8sClient.createNamespace(ns);
       cleanup.trackNamespace(ns);
-      await k8sClient.createPVC(ns, { ...PVC, metadata: { ...PVC.metadata, namespace: ns } } as any);
+      await k8sClient.createPVC(ns, {
+        ...PVC,
+        metadata: { ...PVC.metadata, namespace: ns },
+      } as any);
       await k8sClient.createPVC(ns, {
         ...PVCGP3,
         metadata: { ...PVCGP3.metadata, namespace: ns },

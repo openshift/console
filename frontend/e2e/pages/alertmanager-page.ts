@@ -29,7 +29,10 @@ export class AlertmanagerPage extends BasePage {
 
   async navigateToYAMLPage(): Promise<void> {
     await this.goTo('/settings/cluster/alertmanageryaml');
-    await expect(this.page.getByRole('button', { name: 'Copy code to clipboard' })).toBeVisible();
+    // Monaco can take longer than 5s to initialize under CI load.
+    await expect(this.page.getByRole('button', { name: 'Copy code to clipboard' })).toBeVisible({
+      timeout: 15_000,
+    });
   }
 
   async navigateToEditReceiver(receiverName: string): Promise<void> {
@@ -105,7 +108,9 @@ export function getGlobalsAndReceiverConfig(
 } {
   const parsed = yaml.load(yamlContent);
   const config: AlertmanagerConfig =
-    typeof parsed === 'object' && parsed !== null ? (parsed as AlertmanagerConfig) : ({} as AlertmanagerConfig);
+    typeof parsed === 'object' && parsed !== null
+      ? (parsed as AlertmanagerConfig)
+      : ({} as AlertmanagerConfig);
   const receiver: AlertmanagerReceiver | undefined = config.receivers?.find(
     (r) => r.name === receiverName,
   );

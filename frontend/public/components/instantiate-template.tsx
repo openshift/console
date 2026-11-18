@@ -25,7 +25,6 @@ import { isPerspective, useActivePerspective } from '@console/dynamic-plugin-sdk
 import { k8sCreateResource, k8sUpdateResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
-/* eslint-disable import/named */
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import SecondaryHeading from '@console/shared/src/components/heading/SecondaryHeading';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
@@ -217,7 +216,9 @@ const TemplateForm: FC<TemplateFormProps> = (props) => {
 
   useEffect(() => {
     if (isInitialLoad.current && obj.loaded) {
-      const object = (obj.data.parameters || []).reduce((acc, { name, value }) => {
+      // Optional chain: the React Compiler evaluates this read on every render,
+      // before the watch has loaded `obj.data`.
+      const object = (obj.data?.parameters || []).reduce((acc, { name, value }) => {
         acc[name] = value;
         return acc;
       }, {});
@@ -231,6 +232,24 @@ const TemplateForm: FC<TemplateFormProps> = (props) => {
     setParameters((prevParams) => ({ ...prevParams, [name]: value }));
   };
 
+  if (obj.loadError) {
+    return <LoadError label={t('Template')}>{obj.loadError.message}</LoadError>;
+  }
+
+  if (!obj.loaded) {
+    return <LoadingBox />;
+  }
+
+  if (!obj.data) {
+    return (
+      <LoadError label={t('Template')}>
+        {t('Template not found or invalid URL parameters.')}
+      </LoadError>
+    );
+  }
+
+  // Keep the callbacks below the `obj.data` guard: the React Compiler
+  // evaluates their `obj.data` chains on every render along the executed path.
   const createTemplateSecret = () => {
     const secret = {
       apiVersion: 'v1',
@@ -319,22 +338,6 @@ const TemplateForm: FC<TemplateFormProps> = (props) => {
         setError(err.message);
       });
   };
-
-  if (obj.loadError) {
-    return <LoadError label={t('Template')}>{obj.loadError.message}</LoadError>;
-  }
-
-  if (!obj.loaded) {
-    return <LoadingBox />;
-  }
-
-  if (!obj.data) {
-    return (
-      <LoadError label={t('Template')}>
-        {t('Template not found or invalid URL parameters.')}
-      </LoadError>
-    );
-  }
 
   const template: TemplateKind = obj.data;
   const params = template.parameters || [];

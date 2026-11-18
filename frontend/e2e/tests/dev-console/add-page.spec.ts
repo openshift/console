@@ -12,11 +12,9 @@ import { AddPage } from '../../pages/dev-console/add-page';
  */
 
 async function ensureGettingStartedVisible(k8sClient: KubernetesClient): Promise<void> {
-  await k8sClient.patchConfigMap(
-    'user-settings-kubeadmin',
-    'openshift-console-user-settings',
-    { 'devconsole.addPage.gettingStarted': 'show' },
-  );
+  await k8sClient.patchConfigMap('user-settings-kubeadmin', 'openshift-console-user-settings', {
+    'devconsole.addPage.gettingStarted': 'show',
+  });
 }
 
 test.describe('Add page on Developer Console', { tag: ['@dev-console', '@regression'] }, () => {

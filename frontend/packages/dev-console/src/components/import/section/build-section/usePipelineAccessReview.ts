@@ -1,9 +1,10 @@
-import { getActiveNamespace } from '@console/internal/actions/ui';
 import { useAccessReview } from '@console/internal/components/utils';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { CLUSTER_PIPELINE_NS } from '../../../../const';
 import { PipelineModel } from '../../../../models/pipelines';
 
 export const usePipelineAccessReview = (): boolean => {
+  const [activeNamespace] = useActiveNamespace();
   const canListPipelines = useAccessReview({
     group: PipelineModel.apiGroup,
     resource: PipelineModel.plural,
@@ -14,7 +15,7 @@ export const usePipelineAccessReview = (): boolean => {
   const canCreatePipelines = useAccessReview({
     group: PipelineModel.apiGroup,
     resource: PipelineModel.plural,
-    namespace: getActiveNamespace(),
+    namespace: activeNamespace,
     verb: 'create',
   });
 

@@ -80,19 +80,15 @@ export const VSphereConnectionForm = () => {
         labelHelp={
           <PopoverHelpButton
             content={
-              <>
-                <Trans t={t}>
-                  Enter the name of the vSphere data center that contains the virtual machines
-                  currently backing-up the cluster.
-                </Trans>
+              <Trans t={t} ns="vsphere-plugin">
+                Enter the name of the vSphere data center that contains the virtual machines
+                currently backing-up the cluster.
                 <br />
                 <strong>
-                  <Trans t={t}>
-                    Warning: Updating this value once the configuration has been saved will detach
-                    any existing PersistentVolumes.
-                  </Trans>
+                  Warning: Updating this value once the configuration has been saved will detach any
+                  existing PersistentVolumes.
                 </strong>
-              </>
+              </Trans>
             }
           />
         }
@@ -111,13 +107,13 @@ export const VSphereConnectionForm = () => {
           <PopoverHelpButton
             content={
               <>
-                <Trans t={t}>
+                <Trans t={t} ns="vsphere-plugin">
                   Select the data store in the vSphere data center that is to store the persistent
                   data volumes.
                 </Trans>
                 <br />
                 <strong>
-                  <Trans t={t}>
+                  <Trans t={t} ns="vsphere-plugin">
                     Warning: Updating this value will break any existing PersistentVolumes.
                   </Trans>
                 </strong>
@@ -135,7 +131,7 @@ export const VSphereConnectionForm = () => {
         labelHelp={
           <PopoverHelpButton
             content={
-              <Trans t={t}>
+              <Trans t={t} ns="vsphere-plugin">
                 Provide <b>datacenter</b> folder which contains VMs of the cluster.
               </Trans>
             }
@@ -150,7 +146,7 @@ export const VSphereConnectionForm = () => {
         labelHelp={
           <PopoverHelpButton
             content={
-              <Trans t={t}>
+              <Trans t={t} ns="vsphere-plugin">
                 Provide the <b>primary network</b> of the cluster.
               </Trans>
             }

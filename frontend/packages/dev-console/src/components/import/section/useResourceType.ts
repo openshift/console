@@ -54,7 +54,7 @@ export const useResourceType = (): [string, Dispatch<SetStateAction<string>>] =>
     if (preferredResourceTypeLoaded && preferredResourceType !== LAST_USED_RESOURCE_KEY) {
       setResourceType(preferredResourceType);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [preferredResourceType, preferredResourceTypeLoaded]);
 
   return [resourceType, setResourceType];

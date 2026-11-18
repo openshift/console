@@ -9,7 +9,7 @@ export const connectToModel = connect(
     const kind: string = props.kind || props.match?.params?.plural || props.params?.plural;
     return {
       kindObj: getK8sModel(k8s, kind),
-      kindsInFlight: k8s.getIn(['RESOURCES', 'inFlight']),
+      kindsInFlight: k8s.RESOURCES?.inFlight,
     } as any;
   },
 );
@@ -39,7 +39,7 @@ export const connectToPlural = connect(
     let kindObj: K8sKind = null;
     if (groupVersionKind) {
       const [group, version, kind] = groupVersionKind;
-      kindObj = allModels().find(
+      kindObj = Object.values(allModels()).find(
         (model) =>
           (model.apiGroup ?? 'core') === group &&
           model.apiVersion === version &&
@@ -50,13 +50,13 @@ export const connectToPlural = connect(
         kindObj = getK8sModel(k8s, plural);
       }
     } else {
-      kindObj = allModels().find(
+      kindObj = Object.values(allModels()).find(
         (model) => model.plural === plural && (!model.crd || model.legacyPluralURL),
       );
     }
 
     const modelRef = isGroupVersionKind(plural) ? plural : kindObj?.kind;
 
-    return { kindObj, modelRef, kindsInFlight: k8s.getIn(['RESOURCES', 'inFlight']) };
+    return { kindObj, modelRef, kindsInFlight: k8s.RESOURCES?.inFlight };
   },
 );

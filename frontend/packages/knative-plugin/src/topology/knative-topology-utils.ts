@@ -6,7 +6,7 @@ import type {
   NodeModel,
 } from '@patternfly/react-topology/dist/esm/types';
 import { EdgeStyle, NodeShape } from '@patternfly/react-topology/dist/esm/types';
-import i18next from 'i18next';
+import * as i18next from 'i18next';
 import * as _ from 'lodash';
 import type { WatchK8sResultsObject } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import type { OverviewItem } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
@@ -129,8 +129,7 @@ const getKnNodeModelProps = (type: string) => {
  * returns if event source is enabled or not
  * @param Flags
  */
-export const getEventSourceStatus = ({ FLAGS }: RootState): boolean =>
-  FLAGS.get(FLAG_KNATIVE_EVENTING);
+export const getEventSourceStatus = ({ FLAGS }: RootState): boolean => FLAGS[FLAG_KNATIVE_EVENTING];
 
 /**
  * fetch the parent resource from a resource

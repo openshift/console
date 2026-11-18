@@ -1,4 +1,3 @@
-import { Map as ImmutableMap } from 'immutable';
 import { PodDisruptionBudgetModel } from '@console/app/src/models';
 import * as appModels from '@console/app/src/models/';
 import type { ResolvedExtension } from '@console/dynamic-plugin-sdk';
@@ -11,18 +10,27 @@ import * as k8sModels from '.';
  * Sample YAML manifests for some of the statically-defined Kubernetes models.
  */
 
-export const baseTemplates = ImmutableMap<GroupVersionKind, ImmutableMap<string, string>>()
-  .setIn(
-    ['DEFAULT', 'default'],
+export const baseTemplates: Record<GroupVersionKind, Record<string, string>> = (() => {
+  const m: Record<string, Record<string, string>> = {};
+  const add = (gvk: string, name: string, yaml: string) => {
+    if (!m[gvk]) m[gvk] = {};
+    m[gvk][name] = yaml;
+  };
+
+  add(
+    'DEFAULT',
+    'default',
     `
 apiVersion: ''
 kind: ''
 metadata:
   name: example
 `,
-  )
-  .setIn(
-    [referenceForModel(k8sModels.BuildConfigModel), 'default'],
+  );
+
+  add(
+    referenceForModel(k8sModels.BuildConfigModel),
+    'default',
     `
 apiVersion: build.openshift.io/v1
 kind: BuildConfig
@@ -47,9 +55,11 @@ spec:
     imageChange: {}
   - type: ConfigChange
 `,
-  )
-  .setIn(
-    [referenceForModel(k8sModels.DeploymentModel), 'default'],
+  );
+
+  add(
+    referenceForModel(k8sModels.DeploymentModel),
+    'default',
     `
 apiVersion: apps/v1
 kind: Deployment
@@ -71,9 +81,11 @@ spec:
         ports:
         - containerPort: 8080
 `,
-  )
-  .setIn(
-    [referenceForModel(k8sModels.ConfigMapModel), 'default'],
+  );
+
+  add(
+    referenceForModel(k8sModels.ConfigMapModel),
+    'default',
     `
 apiVersion: v1
 kind: ConfigMap
@@ -88,9 +100,11 @@ data:
     property.2=value-2
     property.3=value-3
 `,
-  )
-  .setIn(
-    [referenceForModel(k8sModels.CronJobModel), 'default'],
+  );
+
+  add(
+    referenceForModel(k8sModels.CronJobModel),
+    'default',
     `
 apiVersion: batch/v1
 kind: CronJob
@@ -111,9 +125,11 @@ spec:
             - date; echo Hello from the Kubernetes cluster
           restartPolicy: OnFailure
 `,
-  )
-  .setIn(
-    [referenceForModel(k8sModels.CustomResourceDefinitionModel), 'default'],
+  );
+
+  add(
+    referenceForModel(k8sModels.CustomResourceDefinitionModel),
+    'default',
     `
     apiVersion: apiextensions.k8s.io/v1
     kind: CustomResourceDefinition
@@ -156,9 +172,11 @@ spec:
         shortNames:
         - ct
 `,
-  )
-  .setIn(
-    [referenceForModel(k8sModels.DeploymentConfigModel), 'default'],
+  );
+
+  add(
+    referenceForModel(k8sModels.DeploymentConfigModel),
+    'default',
     `
 apiVersion: apps.openshift.io/v1
 kind: DeploymentConfig
@@ -179,9 +197,11 @@ spec:
         ports:
         - containerPort: 8080
 `,
-  )
-  .setIn(
-    [referenceForModel(k8sModels.PersistentVolumeModel), 'default'],
+  );
+
+  add(
+    referenceForModel(k8sModels.PersistentVolumeModel),
+    'default',
     `
 apiVersion: v1
 kind: PersistentVolume
@@ -198,9 +218,11 @@ spec:
     path: /tmp
     server: 192.0.2.1
 `,
-  )
-  .setIn(
-    [referenceForModel(k8sModels.HorizontalPodAutoscalerModel), 'default'],
+  );
+
+  add(
+    referenceForModel(k8sModels.HorizontalPodAutoscalerModel),
+    'default',
     `
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
@@ -221,9 +243,11 @@ spec:
         averageUtilization: 80
         type: Utilization
 `,
-  )
-  .setIn(
-    [referenceForModel(k8sModels.PodModel), 'default'],
+  );
+
+  add(
+    referenceForModel(k8sModels.PodModel),
+    'default',
     `
 apiVersion: v1
 kind: Pod
@@ -247,9 +271,11 @@ spec:
           drop:
           - ALL
 `,
-  )
-  .setIn(
-    [referenceForModel(k8sModels.JobModel), 'default'],
+  );
+
+  add(
+    referenceForModel(k8sModels.JobModel),
+    'default',
     `
 apiVersion: batch/v1
 kind: Job
@@ -267,18 +293,22 @@ spec:
         command: ["perl",  "-Mbignum=bpi", "-wle", "print bpi(2000)"]
       restartPolicy: Never
 `,
-  )
-  .setIn(
-    [referenceForModel(k8sModels.ImageStreamModel), 'default'],
+  );
+
+  add(
+    referenceForModel(k8sModels.ImageStreamModel),
+    'default',
     `
 apiVersion: image.openshift.io/v1
 kind: ImageStream
 metadata:
   name: example
 `,
-  )
-  .setIn(
-    [referenceForModel(k8sModels.RoleBindingModel), 'default'],
+  );
+
+  add(
+    referenceForModel(k8sModels.RoleBindingModel),
+    'default',
     `
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -293,9 +323,11 @@ roleRef:
   name: view
   apiGroup: rbac.authorization.k8s.io
 `,
-  )
-  .setIn(
-    [referenceForModel(k8sModels.RoleModel), 'default'],
+  );
+
+  add(
+    referenceForModel(k8sModels.RoleModel),
+    'default',
     `apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
@@ -305,9 +337,11 @@ rules:
   resources: ["pods"]
   verbs: ["get", "watch", "list"]
 `,
-  )
-  .setIn(
-    [referenceForModel(k8sModels.RoleModel), 'read-pods-within-ns'],
+  );
+
+  add(
+    referenceForModel(k8sModels.RoleModel),
+    'read-pods-within-ns',
     `
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
@@ -319,9 +353,11 @@ rules:
   resources: ["pods"]
   verbs: ["get", "list", "watch"]
 `,
-  )
-  .setIn(
-    [referenceForModel(k8sModels.RoleModel), 'read-write-deployment-in-ext-and-apps-apis'],
+  );
+
+  add(
+    referenceForModel(k8sModels.RoleModel),
+    'read-write-deployment-in-ext-and-apps-apis',
     `
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
@@ -333,9 +369,11 @@ rules:
   resources: ["deployments"]
   verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
 `,
-  )
-  .setIn(
-    [referenceForModel(k8sModels.RoleModel), 'read-pods-and-read-write-jobs'],
+  );
+
+  add(
+    referenceForModel(k8sModels.RoleModel),
+    'read-pods-and-read-write-jobs',
     `apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
@@ -349,9 +387,11 @@ rules:
   resources: ["jobs"]
   verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
 `,
-  )
-  .setIn(
-    [referenceForModel(k8sModels.RoleModel), 'read-configmap-within-ns'],
+  );
+
+  add(
+    referenceForModel(k8sModels.RoleModel),
+    'read-configmap-within-ns',
     `
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
@@ -364,9 +404,11 @@ rules:
   resourceNames: ["my-config"]
   verbs: ["get"]
 `,
-  )
-  .setIn(
-    [referenceForModel(k8sModels.ClusterRoleModel), 'read-nodes'],
+  );
+
+  add(
+    referenceForModel(k8sModels.ClusterRoleModel),
+    'read-nodes',
     `
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -378,9 +420,11 @@ rules:
   resources: ["nodes"]
   verbs: ["get", "list", "watch"]
 `,
-  )
-  .setIn(
-    [referenceForModel(k8sModels.ClusterRoleModel), 'get-and-post-to-non-resource-endpoints'],
+  );
+
+  add(
+    referenceForModel(k8sModels.ClusterRoleModel),
+    'get-and-post-to-non-resource-endpoints',
     `
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -391,9 +435,11 @@ rules:
 - nonResourceURLs: ["/healthz", "/healthz/*"] # '*' in a nonResourceURL is a suffix glob match
   verbs: ["get", "post"]
 `,
-  )
-  .setIn(
-    [referenceForModel(k8sModels.DaemonSetModel), 'default'],
+  );
+
+  add(
+    referenceForModel(k8sModels.DaemonSetModel),
+    'default',
     `
 apiVersion: apps/v1
 kind: DaemonSet
@@ -414,9 +460,11 @@ spec:
         ports:
         - containerPort: 8080
 `,
-  )
-  .setIn(
-    [referenceForModel(k8sModels.PersistentVolumeClaimModel), 'default'],
+  );
+
+  add(
+    referenceForModel(k8sModels.PersistentVolumeClaimModel),
+    'default',
     `
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -430,9 +478,11 @@ spec:
     requests:
       storage: 1Gi
 `,
-  )
-  .setIn(
-    [referenceForModel(k8sModels.ResourceQuotaModel), 'default'],
+  );
+
+  add(
+    referenceForModel(k8sModels.ResourceQuotaModel),
+    'default',
     `
 apiVersion: v1
 kind: ResourceQuota
@@ -446,9 +496,11 @@ spec:
     limits.cpu: "2"
     limits.memory: 2Gi
 `,
-  )
-  .setIn(
-    [referenceForModel(k8sModels.LimitRangeModel), 'default'],
+  );
+
+  add(
+    referenceForModel(k8sModels.LimitRangeModel),
+    'default',
     `
 apiVersion: v1
 kind: LimitRange
@@ -462,9 +514,11 @@ spec:
       memory: 256Mi
     type: Container
 `,
-  )
-  .setIn(
-    [referenceForModel(k8sModels.StatefulSetModel), 'default'],
+  );
+
+  add(
+    referenceForModel(k8sModels.StatefulSetModel),
+    'default',
     `
 apiVersion: apps/v1
 kind: StatefulSet
@@ -501,9 +555,11 @@ spec:
         requests:
           storage: 1Gi
 `,
-  )
-  .setIn(
-    [referenceForModel(k8sModels.StorageClassModel), 'default'],
+  );
+
+  add(
+    referenceForModel(k8sModels.StorageClassModel),
+    'default',
     `
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
@@ -512,9 +568,11 @@ metadata:
 provisioner: my-provisioner
 reclaimPolicy: Delete
 `,
-  )
-  .setIn(
-    [referenceForModel(k8sModels.VolumeAttributesClassModel), 'default'],
+  );
+
+  add(
+    referenceForModel(k8sModels.VolumeAttributesClassModel),
+    'default',
     `
 apiVersion: storage.k8s.io/v1
 kind: VolumeAttributesClass
@@ -525,18 +583,22 @@ parameters:
   provisioned-iops: "3000"
   provisioned-throughput: "50"
 `,
-  )
-  .setIn(
-    [referenceForModel(k8sModels.ServiceAccountModel), 'default'],
+  );
+
+  add(
+    referenceForModel(k8sModels.ServiceAccountModel),
+    'default',
     `
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: example
 `,
-  )
-  .setIn(
-    [referenceForModel(k8sModels.SecretModel), 'default'],
+  );
+
+  add(
+    referenceForModel(k8sModels.SecretModel),
+    'default',
     `
 apiVersion: v1
 kind: Secret
@@ -547,9 +609,11 @@ stringData:
   username: admin
   password: opensesame
 `,
-  )
-  .setIn(
-    [referenceForModel(k8sModels.ReplicaSetModel), 'default'],
+  );
+
+  add(
+    referenceForModel(k8sModels.ReplicaSetModel),
+    'default',
     `
 apiVersion: apps/v1
 kind: ReplicaSet
@@ -572,9 +636,11 @@ spec:
         ports:
         - containerPort: 8080
 `,
-  )
-  .setIn(
-    [referenceForModel(k8sModels.ReplicationControllerModel), 'default'],
+  );
+
+  add(
+    referenceForModel(k8sModels.ReplicationControllerModel),
+    'default',
     `
 apiVersion: v1
 kind: ReplicationController
@@ -596,9 +662,11 @@ spec:
         ports:
         - containerPort: 8080
 `,
-  )
-  .setIn(
-    [referenceForModel(k8sModels.BuildConfigModel), 'docker-build'],
+  );
+
+  add(
+    referenceForModel(k8sModels.BuildConfigModel),
+    'docker-build',
     `
 apiVersion: build.openshift.io/v1
 kind: BuildConfig
@@ -640,9 +708,11 @@ spec:
     - rake
     - test
 `,
-  )
-  .setIn(
-    [referenceForModel(k8sModels.BuildConfigModel), 's2i-build'],
+  );
+
+  add(
+    referenceForModel(k8sModels.BuildConfigModel),
+    's2i-build',
     `apiVersion: build.openshift.io/v1
 kind: BuildConfig
 metadata:
@@ -671,9 +741,11 @@ spec:
     imageChange: {}
   - type: ConfigChange
 `,
-  )
-  .setIn(
-    [referenceForModel(k8sModels.GroupModel), 'default'],
+  );
+
+  add(
+    referenceForModel(k8sModels.GroupModel),
+    'default',
     `
 apiVersion: user.openshift.io/v1
 kind: Group
@@ -683,9 +755,11 @@ users:
 - user1
 - user2
 `,
-  )
-  .setIn(
-    [referenceForModel(k8sModels.ResourceQuotaModel), 'rq-compute'],
+  );
+
+  add(
+    referenceForModel(k8sModels.ResourceQuotaModel),
+    'rq-compute',
     `
 apiVersion: v1
 kind: ResourceQuota
@@ -699,9 +773,11 @@ spec:
     limits.cpu: '2'
     limits.memory: 2Gi
 `,
-  )
-  .setIn(
-    [referenceForModel(k8sModels.ResourceQuotaModel), 'rq-storageclass'],
+  );
+
+  add(
+    referenceForModel(k8sModels.ResourceQuotaModel),
+    'rq-storageclass',
     `
 apiVersion: v1
 kind: ResourceQuota
@@ -720,9 +796,11 @@ spec:
     bronze.storage-class.kubernetes.io/requests.storage: 1Gi
     bronze.storage-class.kubernetes.io/persistentvolumeclaims: '1'
 `,
-  )
-  .setIn(
-    [referenceForModel(k8sModels.ResourceQuotaModel), 'rq-counts'],
+  );
+
+  add(
+    referenceForModel(k8sModels.ResourceQuotaModel),
+    'rq-counts',
     `
 apiVersion: v1
 kind: ResourceQuota
@@ -738,9 +816,11 @@ spec:
     services: "10"
     services.loadbalancers: "2"
 `,
-  )
-  .setIn(
-    [referenceForModel(k8sModels.ClusterAutoscalerModel), 'default'],
+  );
+
+  add(
+    referenceForModel(k8sModels.ClusterAutoscalerModel),
+    'default',
     `
 apiVersion: "autoscaling.openshift.io/v1"
 kind: "ClusterAutoscaler"
@@ -748,9 +828,11 @@ metadata:
   name: "default"
 spec: {}
 `,
-  )
-  .setIn(
-    [referenceForModel(k8sModels.MachineDeploymentModel), 'default'],
+  );
+
+  add(
+    referenceForModel(k8sModels.MachineDeploymentModel),
+    'default',
     `
 apiVersion: "machine.openshift.io/v1beta1"
 kind: MachineDeployment
@@ -770,9 +852,11 @@ spec:
       versions:
         kubelet: ""
 `,
-  )
-  .setIn(
-    [referenceForModel(k8sModels.MachineSetModel), 'default'],
+  );
+
+  add(
+    referenceForModel(k8sModels.MachineSetModel),
+    'default',
     `
 apiVersion: "machine.openshift.io/v1beta1"
 kind: MachineSet
@@ -791,9 +875,11 @@ spec:
       providerSpec:
         value: {}
 `,
-  )
-  .setIn(
-    [referenceForModel(k8sModels.MachineModel), 'default'],
+  );
+
+  add(
+    referenceForModel(k8sModels.MachineModel),
+    'default',
     `
 apiVersion: "machine.openshift.io/v1beta1"
 kind: Machine
@@ -802,9 +888,11 @@ metadata:
 spec:
   providerSpec: {}
 `,
-  )
-  .setIn(
-    [referenceForModel(k8sModels.MachineConfigModel), 'default'],
+  );
+
+  add(
+    referenceForModel(k8sModels.MachineConfigModel),
+    'default',
     `
 apiVersion: machineconfiguration.openshift.io/v1
 kind: MachineConfig
@@ -824,9 +912,11 @@ spec:
         contents:
           source: data:,example%20content
 `,
-  )
-  .setIn(
-    [referenceForModel(k8sModels.MachineConfigPoolModel), 'default'],
+  );
+
+  add(
+    referenceForModel(k8sModels.MachineConfigPoolModel),
+    'default',
     `
 apiVersion: machineconfiguration.openshift.io/v1
 kind: MachineConfigPool
@@ -840,9 +930,11 @@ spec:
     matchLabels:
       node-role.kubernetes.io/master: ""
 `,
-  )
-  .setIn(
-    [referenceForModel(k8sModels.MachineAutoscalerModel), 'default'],
+  );
+
+  add(
+    referenceForModel(k8sModels.MachineAutoscalerModel),
+    'default',
     `
 apiVersion: "autoscaling.openshift.io/v1beta1"
 kind: "MachineAutoscaler"
@@ -857,9 +949,11 @@ spec:
     kind: MachineSet
     name: worker
 `,
-  )
-  .setIn(
-    [referenceForModel(k8sModels.MachineHealthCheckModel), 'default'],
+  );
+
+  add(
+    referenceForModel(k8sModels.MachineHealthCheckModel),
+    'default',
     `
 apiVersion: machine.openshift.io/v1beta1
 kind: MachineHealthCheck
@@ -882,9 +976,11 @@ spec:
     timeout: "300s"
   maxUnhealthy: "40%"
 `,
-  )
-  .setIn(
-    [referenceForModel(k8sModels.ConsolePluginModel), 'default'],
+  );
+
+  add(
+    referenceForModel(k8sModels.ConsolePluginModel),
+    'default',
     `
 apiVersion: console.openshift.io/v1
 kind: ConsolePlugin
@@ -899,9 +995,11 @@ spec:
     type: Service
   displayName: myConsolePlugin
 `,
-  )
-  .setIn(
-    [referenceForModel(k8sModels.ConsoleLinkModel), 'default'],
+  );
+
+  add(
+    referenceForModel(k8sModels.ConsoleLinkModel),
+    'default',
     `
 apiVersion: console.openshift.io/v1
 kind: ConsoleLink
@@ -912,9 +1010,11 @@ spec:
   location: HelpMenu
   text: Help Menu Link
 `,
-  )
-  .setIn(
-    [referenceForModel(k8sModels.ConsoleLinkModel), 'cl-user-menu'],
+  );
+
+  add(
+    referenceForModel(k8sModels.ConsoleLinkModel),
+    'cl-user-menu',
     `
 apiVersion: console.openshift.io/v1
 kind: ConsoleLink
@@ -925,9 +1025,11 @@ spec:
   location: UserMenu
   text: User Menu Link
 `,
-  )
-  .setIn(
-    [referenceForModel(k8sModels.ConsoleLinkModel), 'cl-application-menu'],
+  );
+
+  add(
+    referenceForModel(k8sModels.ConsoleLinkModel),
+    'cl-application-menu',
     `
 apiVersion: console.openshift.io/v1
 kind: ConsoleLink
@@ -941,9 +1043,11 @@ spec:
     section: Example Section
     imageURL: data:image/svg+xml;base64,PHN2ZyBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAyNCAyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiB3aWR0aD0iMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0ibTE4LjkgMi4xdjIuMWgtMS43di0yLjFjMC0uMSAwLS4yLS4xLS4zcy0uMi0uMS0uMy0uMWgtMTQuN2MtLjEgMC0uMiAwLS4zLjEgMCAuMS0uMS4yLS4xLjN2MTQuNmMwIC4xIDAgLjIuMS4zcy4yLjEuMy4xaDIuMXYxLjdoLTIuMWMtLjYgMC0xLjEtLjItMS41LS42LS40LS40LS42LS45LS42LTEuNXYtMTQuNmMwLS41LjItMS4xLjYtMS41czEtLjYgMS41LS42aDE0LjZjLjYgMCAxLjEuMiAxLjUuNnMuNyAxIC43IDEuNXptNS4xIDUuMnYxNC42YzAgLjYtLjIgMS4xLS42IDEuNXMtMSAuNi0xLjUuNmgtMTQuNmMtLjYgMC0xLjEtLjItMS41LS42cy0uNi0uOS0uNi0xLjV2LTE0LjZjMC0uNi4yLTEuMS42LTEuNXMuOS0uNiAxLjUtLjZoMTQuNmMuNiAwIDEuMS4yIDEuNS42cy42LjkuNiAxLjV6bS0xLjcgMTQuNnYtMTQuNmMwLS4xIDAtLjItLjEtLjNzLS4yLS4xLS4zLS4xaC0xNC42Yy0uMSAwLS4yIDAtLjMuMXMtLjEuMi0uMS4zdjE0LjZjMCAuMSAwIC4yLjEuM3MuMi4xLjMuMWgxNC42Yy4xIDAgLjIgMCAuMy0uMXMuMS0uMi4xLS4zeiIvPjwvc3ZnPg==
 `,
-  )
-  .setIn(
-    [referenceForModel(k8sModels.ConsoleLinkModel), 'cl-namespace-dashboard'],
+  );
+
+  add(
+    referenceForModel(k8sModels.ConsoleLinkModel),
+    'cl-namespace-dashboard',
     `
 apiVersion: console.openshift.io/v1
 kind: ConsoleLink
@@ -957,9 +1061,11 @@ spec:
     namespaces:
       - default
 `,
-  )
-  .setIn(
-    [referenceForModel(k8sModels.ConsoleLinkModel), 'cl-contact-mail'],
+  );
+
+  add(
+    referenceForModel(k8sModels.ConsoleLinkModel),
+    'cl-contact-mail',
     `
 apiVersion: console.openshift.io/v1
 kind: ConsoleLink
@@ -970,9 +1076,11 @@ spec:
   location: UserMenu
   text: Contact Mail Link
 `,
-  )
-  .setIn(
-    [referenceForModel(k8sModels.ConsoleCLIDownloadModel), 'default'],
+  );
+
+  add(
+    referenceForModel(k8sModels.ConsoleCLIDownloadModel),
+    'default',
     `
 apiVersion: console.openshift.io/v1
 kind: ConsoleCLIDownload
@@ -988,9 +1096,11 @@ spec:
     - href: 'https://www.example.com'
       text: Download Example CLI
 `,
-  )
-  .setIn(
-    [referenceForModel(k8sModels.ConsoleNotificationModel), 'default'],
+  );
+
+  add(
+    referenceForModel(k8sModels.ConsoleNotificationModel),
+    'default',
     `
 apiVersion: console.openshift.io/v1
 kind: ConsoleNotification
@@ -1005,9 +1115,11 @@ spec:
   color: '#fff'
   backgroundColor: '#0066cc'
 `,
-  )
-  .setIn(
-    [referenceForModel(k8sModels.ConsoleExternalLogLinkModel), 'default'],
+  );
+
+  add(
+    referenceForModel(k8sModels.ConsoleExternalLogLinkModel),
+    'default',
     `
 apiVersion: console.openshift.io/v1
 kind: ConsoleLogLink
@@ -1017,9 +1129,11 @@ spec:
   hrefTemplate: 'https://example.com/logs?resourceName=\${resourceName}&containerName=\${containerName}&resourceNamespace=\${resourceNamespace}&podLabels=\${podLabels}'
   text: Example Logs
 `,
-  )
-  .setIn(
-    [referenceForModel(appModels.QuickStartModel), 'default'],
+  );
+
+  add(
+    referenceForModel(appModels.QuickStartModel),
+    'default',
     `
 apiVersion: console.openshift.io/v1
 kind: ConsoleQuickStart
@@ -1050,7 +1164,7 @@ spec:
         instructions: |-
           #### Verify the image was successfully deployed:
           Do you see a **httpd-24-centos7** deployment?
-        failedTaskHelp: This task isn’t verified yet. Try the task again.
+        failedTaskHelp: This task isn't verified yet. Try the task again.
       summary:
         success: Great work! You deployed an example application using the **quay.io/centos7/httpd-24-centos7** image.
         failed: Try the steps again.
@@ -1063,15 +1177,17 @@ spec:
         instructions: |-
           #### Verify your application is running:
           In the new tab, do you see the Apache HTTP server test page?
-        failedTaskHelp: This task isn’t verified yet. Try the task again.
+        failedTaskHelp: This task isn't verified yet. Try the task again.
       summary:
         success: Great work! You deployed the **quay.io/centos7/httpd-24-centos7** image.
         failed: Try the steps again.
   conclusion: Your example **httpd-24-centos7-app** application, using the **quay.io/centos7/httpd-24-centos7** image, is deployed and ready.
 `,
-  )
-  .setIn(
-    [referenceForModel(k8sModels.ConsoleYAMLSampleModel), 'default'],
+  );
+
+  add(
+    referenceForModel(k8sModels.ConsoleYAMLSampleModel),
+    'default',
     `
 apiVersion: console.openshift.io/v1
 kind: ConsoleYAMLSample
@@ -1102,9 +1218,11 @@ spec:
             - "for i in 9 8 7 6 5 4 3 2 1 ; do echo $i ; done"
           restartPolicy: Never
 `,
-  )
-  .setIn(
-    [referenceForModel(k8sModels.VolumeSnapshotModel), 'default'],
+  );
+
+  add(
+    referenceForModel(k8sModels.VolumeSnapshotModel),
+    'default',
     `
 apiVersion: snapshot.storage.k8s.io/v1
 kind: VolumeSnapshot
@@ -1115,9 +1233,11 @@ spec:
   source:
     persistentVolumeClaimName: pvc-test
 `,
-  )
-  .setIn(
-    [referenceForModel(k8sModels.VolumeSnapshotClassModel), 'default'],
+  );
+
+  add(
+    referenceForModel(k8sModels.VolumeSnapshotClassModel),
+    'default',
     `
 apiVersion: snapshot.storage.k8s.io/v1
 kind: VolumeSnapshotClass
@@ -1126,9 +1246,11 @@ metadata:
 driver: hostpath.csi.k8s.io #csi-hostpath
 deletionPolicy: Delete
 `,
-  )
-  .setIn(
-    [referenceForModel(k8sModels.VolumeSnapshotContentModel), 'default'],
+  );
+
+  add(
+    referenceForModel(k8sModels.VolumeSnapshotContentModel),
+    'default',
     `
 apiVersion: snapshot.storage.k8s.io/v1
 kind: VolumeSnapshotContent
@@ -1144,9 +1266,11 @@ spec:
     name: example-snap
     namespace: default
 `,
-  )
-  .setIn(
-    [referenceForModel(PodDisruptionBudgetModel), 'default'],
+  );
+
+  add(
+    referenceForModel(PodDisruptionBudgetModel),
+    'default',
     `
 apiVersion: policy/v1
 kind: PodDisruptionBudget
@@ -1157,9 +1281,11 @@ spec:
     matchLabels:
       app: hello-openshift
 `,
-  )
-  .setIn(
-    [referenceForModel(PodDisruptionBudgetModel), 'pdb-max-unavailable'],
+  );
+
+  add(
+    referenceForModel(PodDisruptionBudgetModel),
+    'pdb-max-unavailable',
     `
 apiVersion: policy/v1
 kind: PodDisruptionBudget
@@ -1172,9 +1298,11 @@ spec:
     matchLabels:
       app: hello-openshift
 `,
-  )
-  .setIn(
-    [referenceForModel(PodDisruptionBudgetModel), 'pdb-min-available'],
+  );
+
+  add(
+    referenceForModel(PodDisruptionBudgetModel),
+    'pdb-min-available',
     `
 apiVersion: policy/v1
 kind: PodDisruptionBudget
@@ -1187,9 +1315,11 @@ spec:
     matchLabels:
       app: hello-openshift
 `,
-  )
-  .setIn(
-    [referenceForModel(k8sModels.ServiceMonitorModel), 'default'],
+  );
+
+  add(
+    referenceForModel(k8sModels.ServiceMonitorModel),
+    'default',
     `
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
@@ -1206,16 +1336,22 @@ spec:
 `,
   );
 
-export const getYAMLTemplates = (extensionTemplates: ResolvedExtension<YAMLTemplate>[] = []) =>
-  ImmutableMap<GroupVersionKind, ImmutableMap<string, string>>()
-    .merge(baseTemplates)
-    .withMutations((map) => {
-      extensionTemplates.forEach((yt) => {
-        const modelRef = referenceForExtensionModel(yt.properties.model);
-        const templateName = yt.properties.name || 'default';
+  return m;
+})();
 
-        if (!baseTemplates.hasIn([modelRef, templateName])) {
-          map.setIn([modelRef, templateName], yt.properties.template);
-        }
-      });
-    });
+export const getYAMLTemplates = (
+  extensionTemplates: ResolvedExtension<YAMLTemplate>[] = [],
+): Record<string, Record<string, string>> => {
+  const result: Record<string, Record<string, string>> = Object.fromEntries(
+    Object.entries(baseTemplates).map(([k, v]) => [k, { ...v }]),
+  );
+  extensionTemplates.forEach((yt) => {
+    const modelRef = referenceForExtensionModel(yt.properties.model);
+    const templateName = yt.properties.name || 'default';
+    if (!baseTemplates[modelRef]?.[templateName]) {
+      if (!result[modelRef]) result[modelRef] = {};
+      result[modelRef][templateName] = yt.properties.template;
+    }
+  });
+  return result;
+};

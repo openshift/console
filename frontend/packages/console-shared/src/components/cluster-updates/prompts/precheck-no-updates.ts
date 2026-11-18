@@ -1,14 +1,20 @@
+import type { VerifiedClusterVersionConditions } from '../cluster-version-helpers';
 import { getLanguageConstraint } from './shared/language-utils';
 import { securityConstraint, getConfidenceQualifiers } from './shared/security-utils';
+import { formatVerifiedConditions } from './shared/verified-conditions';
 
 /**
  * Pre-check prompt for clusters with no available updates
  * Verifies cluster health when already at latest version
  *
  * @param currentVersion - Current cluster version
+ * @param verified - ClusterVersion condition statuses read directly by the console
  * @returns Formatted prompt for OLS health verification
  */
-export const createPreCheckNoUpdatesPrompt = (currentVersion: string) => {
+export const createPreCheckNoUpdatesPrompt = (
+  currentVersion: string,
+  verified: VerifiedClusterVersionConditions,
+) => {
   const languageConstraint = getLanguageConstraint();
   const confidenceQualifiers = getConfidenceQualifiers({
     highConfidenceData: 'ClusterVersion + ClusterOperators',
@@ -43,7 +49,11 @@ Health assessment for OpenShift cluster running ${currentVersion} with no availa
 Focus on operational health and readiness for future updates.
 </context>
 
+${formatVerifiedConditions(verified)}
+
 <condition_checking_guide>
+NOTE: The {type, status} pairs below are a REFERENCE LEGEND showing how to interpret conditions in general — they are NOT this cluster's data. Never copy a status from this legend into your output. Read the ClusterVersion condition statuses from <verified_clusterversion_conditions> above, and read every other condition (ClusterOperators, nodes, etc.) from the tool call results.
+
 CRITICAL: Understanding Kubernetes/OpenShift Conditions
 
 Conditions have TWO important fields you MUST check:
@@ -107,7 +117,8 @@ Conditions have TWO important fields you MUST check:
 6. **Future Update Readiness Assessment** (Check BOTH type AND status):
  - Find condition where type="Upgradeable" (OPTIONAL - may not exist)
  * If found AND status="False": This IS an upgrade blocker - report reason
- * If status="True", missing, or status="Unknown": Future upgrades are allowed
+ * If status="True" or missing: Future upgrades are allowed
+ * If status="Unknown": Upgradeability is INDETERMINATE - do NOT report upgrades as allowed. Investigate the reason/message via tools and report with limited confidence that upgradeability could not be confirmed
  - Find condition where type="Failing"
  * If found AND status="True": Cluster issues that must be resolved
  * If status="False" or missing: No failing condition (healthy)

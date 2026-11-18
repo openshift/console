@@ -237,7 +237,7 @@ Based on the ClusterVersion data:
 **Failure events timeline** (Last hour):
 - **Event summary**: [Count of error vs warning events]
 - **Timeline of key events**: [Chronological sequence showing how failure developed]
- - Example: "60 min ago: Started upgrade to 4.21.7"
+ - Example: "60 min ago: Started upgrade to <target version>"
  - Example: "45 min ago: authentication operator pod started failing (CrashLoopBackOff)"
  - Example: "30 min ago: authentication operator marked Degraded"
  - Example: "Now: Upgrade stuck, authentication unavailable"

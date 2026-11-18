@@ -36,7 +36,6 @@ const RowMemo = memo<
     style: React.CSSProperties;
   }
 >(
-  // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
   ({ Row, isScrolling, style, ...props }) => <Row {...props} />,
   (_, nextProps) => {
     if (nextProps.isScrolling) {
@@ -62,9 +61,11 @@ const VirtualizedTableBody = <D extends any, R extends any = {}>({
   onSelect,
 }: VirtualizedTableBodyProps<D, R>) => {
   const dataRef = useRef(data);
+  // eslint-disable-next-line react-hooks-js/refs -- keyMapper reads dataRef synchronously during render for cache key resolution; must be current before measurement
   dataRef.current = data;
 
   const cellMeasurementCache = useRef(
+    // eslint-disable-next-line react-hooks-js/refs -- keyMapper is invoked synchronously by react-virtualized during render to resolve measurement cache keys and must read the latest row data via dataRef (see above)
     new CellMeasurerCache({
       fixedWidth: true,
       minHeight: 44,
@@ -114,7 +115,9 @@ const VirtualizedTableBody = <D extends any, R extends any = {}>({
     <VirtualTableBody
       autoHeight
       className="pf-v6-c-table pf-m-compact pf-m-border-rows pf-v6-c-virtualized pf-v6-c-window-scroller"
+      // eslint-disable-next-line react-hooks-js/refs -- stable per-instance measurement cache created once for the component's lifetime; reading it during render cannot cause stale renders
       deferredMeasurementCache={cellMeasurementCache}
+      // eslint-disable-next-line react-hooks-js/refs -- see above: stable cache handle
       rowHeight={cellMeasurementCache.rowHeight}
       height={height || 0}
       isScrolling={isScrolling}

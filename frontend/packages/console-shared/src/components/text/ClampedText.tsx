@@ -19,6 +19,7 @@ export const ClampedText: FC<ClampedTextProps> = ({ children, lineClamp = 1 }) =
 
   useEffect(() => {
     debouncedSetContentClamped();
+    return () => debouncedSetContentClamped.cancel();
   }, [children, lineClamp, debouncedSetContentClamped]);
 
   return (

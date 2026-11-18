@@ -1,9 +1,6 @@
 import { test, expect } from '../../../../fixtures';
 import jsYaml from 'js-yaml';
-import {
-  AlertmanagerPage,
-  getGlobalsAndReceiverConfig,
-} from '../../../../pages/alertmanager-page';
+import { AlertmanagerPage, getGlobalsAndReceiverConfig } from '../../../../pages/alertmanager-page';
 import KubernetesClient from '../../../../clients/kubernetes-client';
 import { resetAlertmanagerConfig } from './alertmanager-test-utils';
 
@@ -727,19 +724,16 @@ test.describe('Alertmanager Receiver Forms', { tag: ['@admin'] }, () => {
       await alertmanager.save();
     });
 
-    await test.step(
-      'Verify pagerduty_url saved with Receiver and global still exists',
-      async () => {
-        await expect(async () => {
-          await alertmanager.navigateToYAMLPage();
-          const yamlContent = await alertmanager.getYAMLContent();
-          const configs = getGlobalsAndReceiverConfig(receiverName, configName, yamlContent);
+    await test.step('Verify pagerduty_url saved with Receiver and global still exists', async () => {
+      await expect(async () => {
+        await alertmanager.navigateToYAMLPage();
+        const yamlContent = await alertmanager.getYAMLContent();
+        const configs = getGlobalsAndReceiverConfig(receiverName, configName, yamlContent);
 
-          expect(configs.globals.pagerduty_url).toBe(pagerDutyURL2);
-          expect(configs.receiverConfig.url).toBe(pagerDutyURL3);
-        }).toPass({ intervals: [2_000, 3_000, 5_000], timeout: 30_000 });
-      },
-    );
+        expect(configs.globals.pagerduty_url).toBe(pagerDutyURL2);
+        expect(configs.receiverConfig.url).toBe(pagerDutyURL3);
+      }).toPass({ intervals: [2_000, 3_000, 5_000], timeout: 30_000 });
+    });
 
     await test.step('Update advanced configuration fields', async () => {
       await alertmanager.navigateToEditReceiver(receiverName);
@@ -775,12 +769,18 @@ test.describe('Alertmanager Receiver Forms', { tag: ['@admin'] }, () => {
 
     await test.step('Restore defaults, change desc and severity', async () => {
       await alertmanager.navigateToEditReceiver(receiverName);
-      await alertmanager.showAdvancedConfiguration();
 
+      // A re-render can collapse the advanced section and detach the checkbox.
       const sendResolvedCheckbox = page.getByTestId('send-resolved-alerts');
-      await expect(sendResolvedCheckbox).not.toBeChecked();
-      await sendResolvedCheckbox.check();
-      await expect(sendResolvedCheckbox).toBeChecked();
+      await expect(async () => {
+        await alertmanager.showAdvancedConfiguration();
+        await expect(sendResolvedCheckbox).not.toBeChecked({ timeout: 5_000 });
+      }).toPass({ intervals: [2_000, 3_000, 5_000], timeout: 60_000 });
+      await expect(async () => {
+        await alertmanager.showAdvancedConfiguration();
+        await sendResolvedCheckbox.check({ timeout: 10_000 });
+        await expect(sendResolvedCheckbox).toBeChecked({ timeout: 5_000 });
+      }).toPass({ intervals: [2_000, 3_000, 5_000], timeout: 60_000 });
 
       await page.getByTestId('pagerduty-client').clear();
       await page.getByTestId('pagerduty-client').fill(pagerDutyClient);

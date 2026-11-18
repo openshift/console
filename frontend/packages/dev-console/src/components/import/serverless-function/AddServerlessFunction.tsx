@@ -32,7 +32,6 @@ import { validationSchema } from '../import-validation-utils';
 import { useUpdateKnScalingDefaultValues } from '../serverless/useUpdateKnScalingDefaultValues';
 import AddServerlessFunctionForm from './AddServerlessFunctionForm';
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
 type WatchResource = {
   [key: string]: K8sResourceKind[] | K8sResourceKind;
 };
@@ -173,7 +172,6 @@ const AddServerlessFunction: FC<AddServerlessFunctionProps> = ({ namespace, forA
         );
       })
       .catch((err) => {
-        // eslint-disable-next-line no-console
         console.warn('Error while submitting import form:', err);
         actions.setStatus({ submitError: err.message });
       });

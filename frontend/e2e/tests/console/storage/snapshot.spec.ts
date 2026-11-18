@@ -11,7 +11,10 @@ import {
 
 test.describe('Snapshot Tests', { tag: ['@admin', '@storage'] }, () => {
   test('creates, lists, and deletes a VolumeSnapshot', async ({ page, k8sClient, cleanup }) => {
-    test.skip(!(await isAwsPlatform(k8sClient)), 'No CSI based storage classes are available on this platform');
+    test.skip(
+      !(await isAwsPlatform(k8sClient)),
+      'No CSI based storage classes are available on this platform',
+    );
     const ns = `test-snap-${Date.now()}`;
     const pvcName = PVC.metadata.name;
     const snapshotName = `${pvcName}-snapshot`;
@@ -21,7 +24,10 @@ test.describe('Snapshot Tests', { tag: ['@admin', '@storage'] }, () => {
     await test.step('Set up namespace and resources', async () => {
       await k8sClient.createNamespace(ns);
       cleanup.trackNamespace(ns);
-      await k8sClient.createPVC(ns, { ...PVC, metadata: { ...PVC.metadata, namespace: ns } } as any);
+      await k8sClient.createPVC(ns, {
+        ...PVC,
+        metadata: { ...PVC.metadata, namespace: ns },
+      } as any);
       await k8sClient.createDeployment(ns, {
         ...testerDeployment,
         metadata: { ...testerDeployment.metadata, namespace: ns },
@@ -115,7 +121,10 @@ test.describe('Snapshot Tests', { tag: ['@admin', '@storage'] }, () => {
   });
 
   test('restores a snapshot to create a new PVC', async ({ page, k8sClient, cleanup }) => {
-    test.skip(!(await isAwsPlatform(k8sClient)), 'No CSI based storage classes are available on this platform');
+    test.skip(
+      !(await isAwsPlatform(k8sClient)),
+      'No CSI based storage classes are available on this platform',
+    );
     const ns = `test-snap-restore-${Date.now()}`;
     const pvcName = PVC.metadata.name;
     const snapshotName = `${pvcName}-snapshot`;
@@ -126,7 +135,10 @@ test.describe('Snapshot Tests', { tag: ['@admin', '@storage'] }, () => {
     await test.step('Set up namespace and resources', async () => {
       await k8sClient.createNamespace(ns);
       cleanup.trackNamespace(ns);
-      await k8sClient.createPVC(ns, { ...PVC, metadata: { ...PVC.metadata, namespace: ns } } as any);
+      await k8sClient.createPVC(ns, {
+        ...PVC,
+        metadata: { ...PVC.metadata, namespace: ns },
+      } as any);
       await k8sClient.createDeployment(ns, {
         ...testerDeployment,
         metadata: { ...testerDeployment.metadata, namespace: ns },

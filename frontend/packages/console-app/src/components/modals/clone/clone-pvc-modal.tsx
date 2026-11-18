@@ -64,11 +64,11 @@ const ClonePVCModal = (props: ClonePVCModalProps) => {
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler<PersistentVolumeClaimKind>();
   const { name: pvcName, namespace } = resource?.metadata ?? {};
   const baseValue = convertToBaseValue(getRequestedPVCSize(resource));
-  const defaultSize: string[] = validate.split(humanizeBinaryBytesWithoutB(baseValue).string);
+  const defaultSize = validate.split(humanizeBinaryBytesWithoutB(baseValue).string);
   const pvcRequestedSize = humanizeBinaryBytes(baseValue).string;
 
   const [clonePVCName, setClonePVCName] = useState(`${pvcName}-clone`);
-  const [requestedSize, setRequestedSize] = useState(defaultSize[0] || '');
+  const [requestedSize, setRequestedSize] = useState(String(defaultSize[0] || ''));
   const [cloneAccessMode, setCloneAccessMode] = useState(resource?.spec?.accessModes?.[0]);
   const [requestedUnit, setRequestedUnit] = useState(defaultSize[1] || 'Ti');
   const [validSize, setValidSize] = useState(true);

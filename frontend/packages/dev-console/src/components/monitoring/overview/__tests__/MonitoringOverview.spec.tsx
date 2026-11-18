@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { AlertStates } from '@console/dynamic-plugin-sdk';
-import { mockAlerts } from '@console/shared/src/utils/__mocks__/alerts-and-rules-data';
+import { mockAlerts } from '@console/shared/src/utils/__tests__/data/alerts-and-rules-data';
 import MonitoringOverview from '../MonitoringOverview';
 import { mockPodEvents, mockResourceEvents, mockPods } from './mockData';
 

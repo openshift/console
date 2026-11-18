@@ -39,7 +39,7 @@ const MonitoringAlertsDecoratorComponent: FC<MonitoringAlertsDecoratorType> = ({
   y,
   showMonitoringOverview,
 }) => {
-  const ref = useRef();
+  const ref = useRef(undefined);
   const { t } = useTranslation('topology');
   const workloadData = element.getData().data;
   const { monitoringAlerts } = workloadData;

@@ -3,8 +3,8 @@ import userEvent from '@testing-library/user-event';
 import i18n from 'i18next';
 import { setI18n } from 'react-i18next';
 import { Resources } from '../../import/import-types';
-import MockForm from '../__mocks__/MockForm';
 import AdvancedSection from '../AdvancedSection';
+import MockForm from './MockForm';
 
 window.HTMLElement.prototype.scrollIntoView = () => {}; // scrollIntoView is not implemented in jsdom
 

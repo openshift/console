@@ -2,17 +2,17 @@ import type { FC } from 'react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router';
+import { ClusterExtensionModel } from '@console/internal/models';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { SyncedEditor } from '@console/shared/src/components/synced-editor/SyncedEditor';
 import { CATALOG_LABEL_KEY } from '../../const';
-import { ClusterExtensionModel } from '../../models';
-import ClusterExtensionForm from './ClusterExtensionForm';
+import { ClusterExtensionForm } from './ClusterExtensionForm';
 import { ClusterExtensionYAMLEditor } from './ClusterExtensionYAMLEditor';
 
-const CreateClusterExtension: FC = () => {
+export const CreateClusterExtension: FC = () => {
   const { t } = useTranslation('olm-v1');
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
@@ -66,7 +66,7 @@ const CreateClusterExtension: FC = () => {
       <PageHeading
         title={t('Create ClusterExtension')}
         helpText={t(
-          'Create a ClusterExtension to add functionality to your cluster. Operator Lifecycle Manager v1 manages ClusterExtensions.',
+          'Create a ClusterExtension to add functionality to your cluster. Operator Lifecycle Manager version 1 manages ClusterExtensions.',
         )}
       />
       <SyncedEditor
@@ -79,7 +79,5 @@ const CreateClusterExtension: FC = () => {
     </>
   );
 };
-
-export default CreateClusterExtension;
 
 CreateClusterExtension.displayName = 'CreateClusterExtension';

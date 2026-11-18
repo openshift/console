@@ -102,8 +102,8 @@ const InnerDashboardsPage: FC<DashboardsPageProps> = ({ kindsInFlight, k8sModels
 };
 
 const mapStateToProps = (state: RootState) => ({
-  kindsInFlight: state.k8s.getIn(['RESOURCES', 'inFlight']),
-  k8sModelsLoaded: state.k8s.getIn(['RESOURCES', 'loaded']),
+  kindsInFlight: state.k8s.RESOURCES?.inFlight,
+  k8sModelsLoaded: state.k8s.RESOURCES?.loaded,
 });
 
 export const DashboardsPage = connect(mapStateToProps)(InnerDashboardsPage);

@@ -8,8 +8,8 @@ import { ActionMenuVariant } from '../types';
 type ActionMenuToggleProps = {
   isOpen: boolean;
   isDisabled: boolean;
-  menuRef: RefObject<HTMLElement>;
-  toggleRef: RefObject<HTMLButtonElement>;
+  menuRef: RefObject<HTMLElement | null>;
+  toggleRef: RefObject<HTMLButtonElement | null>;
   toggleVariant?: ActionMenuVariant;
   toggleTitle?: string;
   onToggleClick: (state: SetStateAction<boolean>) => void;
@@ -63,7 +63,7 @@ const ActionMenuToggle: FC<ActionMenuToggleProps> = ({
     return () => {
       window.removeEventListener('keydown', handleMenuKeys);
       window.removeEventListener('click', handleClickOutside);
-    }; // eslint-disable-next-line react-hooks/exhaustive-deps
+    }; // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [isOpen]); // This needs to be run only on component mount/unmount
 
   const handleToggleClick = () => {

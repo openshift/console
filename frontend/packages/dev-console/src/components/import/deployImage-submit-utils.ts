@@ -120,7 +120,8 @@ const getMetadata = (resource: Resources, formData: DeployImageFormData) => {
     selectedTag,
     namespace,
   });
-  const labels = { ...defaultLabels, ...userLabels };
+  const imageMetadataLabels = _.get(image, 'metadata.labels', {});
+  const labels = { ...defaultLabels, ...imageMetadataLabels, ...userLabels };
   const podLabels = getPodLabels(resource, name);
 
   const volumes = [];

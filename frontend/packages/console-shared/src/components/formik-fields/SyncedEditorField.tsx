@@ -57,6 +57,7 @@ export const SyncedEditorField: FC<SyncedEditorFieldProps> = ({
   const [yamlWarning, setYAMLWarning] = useState<boolean>(false);
   const [sanitizeToCallback, setSanitizeToCallback] = useState<FormErrorCallback>(undefined);
   const [disabledFormAlert, setDisabledFormAlert] = useState<boolean>(formContext.isDisabled);
+  const [prevIsDisabled, setPrevIsDisabled] = useState<boolean>(formContext.isDisabled);
 
   const isEditorTypeEnabled = (type: EditorType): boolean =>
     !(type === EditorType.Form ? formContext?.isDisabled : yamlContext?.isDisabled);
@@ -138,12 +139,17 @@ export const SyncedEditorField: FC<SyncedEditorFieldProps> = ({
     setStatus({ submitError: '' });
   };
 
-  useEffect(() => {
+  // Reset the dismissible alert whenever the form view is (re)disabled.
+  if (formContext.isDisabled !== prevIsDisabled) {
+    setPrevIsDisabled(formContext.isDisabled);
     setDisabledFormAlert(formContext.isDisabled);
+  }
+
+  useEffect(() => {
     if (resourceLoaded && field.value !== editorType) {
       setFieldValue(name, editorType);
     }
-  }, [editorType, field.value, formContext.isDisabled, name, resourceLoaded, setFieldValue]);
+  }, [editorType, field.value, name, resourceLoaded, setFieldValue]);
 
   return loaded ? (
     <>

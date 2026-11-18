@@ -11,12 +11,6 @@
     }
   },
   {
-    "type": "console.flag",
-    "properties": {
-      "handler": { "$codeRef": "isOpenShift5.handler" }
-    }
-  },
-  {
     "type": "INTERNAL_DO_NOT_USE.guided-tour",
     "properties": {
       "perspective": "admin",
@@ -728,7 +722,7 @@
     "type": "console.user-preference/item",
     "properties": {
       "id": "console.theme",
-      "label": "%console-app~Theme%",
+      "label": "%console-app~Color scheme%",
       "groupId": "general",
       "description": "%console-app~Console will appear as per the selected theme.%",
       "field": {
@@ -781,9 +775,6 @@
         ]
       },
       "insertAfter": "console.theme"
-    },
-    "flags": {
-      "required": ["FLAG_OPENSHIFT_5"]
     }
   },
   {
@@ -1099,7 +1090,22 @@
       "startsWith": ["operators.coreos.com", "clusterserviceversions"]
     },
     "flags": {
-      "disallowed": ["OLMV1_ENABLED"]
+      "disallowed": ["TECH_PREVIEW"]
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "operators",
+      "section": "ecosystem",
+      "name": "%console-app~Installed Operators%",
+      "insertAfter": "developer-catalog",
+      "href": "/installed-operators",
+      "namespaced": true,
+      "startsWith": ["installed-operators", "installed-software"]
+    },
+    "flags": {
+      "required": ["INSTALLED_OPERATORS"]
     }
   },
   {
@@ -1484,7 +1490,24 @@
         "version": "v1",
         "kind": "ImageStream"
       }
-    }
+    },
+    "flags": { "required": ["OPENSHIFT_BUILDCONFIG"] }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "perspective": "admin",
+      "section": "storage",
+      "id": "imagestreams-no-builds",
+      "name": "%console-app~ImageStreams%",
+      "startsWith": ["imagestreamtags"],
+      "model": {
+        "group": "image.openshift.io",
+        "version": "v1",
+        "kind": "ImageStream"
+      }
+    },
+    "flags": { "disallowed": ["OPENSHIFT_BUILDCONFIG"] }
   },
   {
     "type": "console.navigation/resource-cluster",
@@ -1804,28 +1827,147 @@
   {
     "type": "console.dashboards/overview/inventory/item",
     "properties": {
-      "model": { "$codeRef": "inventoryItems.NodeModel" },
-      "mapper": { "$codeRef": "inventoryItems.getNodeStatusGroups" }
+      "model": {
+        "$codeRef": "inventoryItems.NodeModel"
+      },
+      "mapper": {
+        "$codeRef": "inventoryItems.getNodeStatusGroups"
+      },
+      "prometheus": { "$codeRef": "inventoryItems.clusterNodePrometheus" }
     }
   },
   {
     "type": "console.dashboards/overview/inventory/item",
     "properties": {
-      "model": { "$codeRef": "inventoryItems.PodModel" },
-      "mapper": { "$codeRef": "inventoryItems.getPodStatusGroups" }
+      "model": {
+        "$codeRef": "inventoryItems.PodModel"
+      },
+      "mapper": {
+        "$codeRef": "inventoryItems.getPodStatusGroups"
+      },
+      "prometheus": { "$codeRef": "inventoryItems.clusterPodPrometheus" }
     }
   },
   {
     "type": "console.dashboards/overview/inventory/item",
     "properties": {
-      "model": { "$codeRef": "inventoryItems.StorageClassModel" }
+      "model": {
+        "$codeRef": "inventoryItems.StorageClassModel"
+      },
+      "prometheus": { "$codeRef": "inventoryItems.clusterStorageClassPrometheus" }
     }
   },
   {
     "type": "console.dashboards/overview/inventory/item",
     "properties": {
-      "model": { "$codeRef": "inventoryItems.PersistentVolumeClaimModel" },
-      "mapper": { "$codeRef": "inventoryItems.getPVCStatusGroups" }
+      "model": {
+        "$codeRef": "inventoryItems.PersistentVolumeClaimModel"
+      },
+      "mapper": {
+        "$codeRef": "inventoryItems.getPVCStatusGroups"
+      },
+      "prometheus": { "$codeRef": "inventoryItems.clusterPVCPrometheus" }
+    }
+  },
+  {
+    "type": "console.dashboards/project/overview/item",
+    "properties": {
+      "model": {
+        "$codeRef": "inventoryItems.DeploymentModel"
+      },
+      "prometheus": { "$codeRef": "inventoryItems.projectDeploymentPrometheus" }
+    }
+  },
+  {
+    "type": "console.dashboards/project/overview/item",
+    "properties": {
+      "model": {
+        "$codeRef": "inventoryItems.DeploymentConfigModel"
+      },
+      "prometheus": { "$codeRef": "inventoryItems.projectDeploymentConfigPrometheus" }
+    }
+  },
+  {
+    "type": "console.dashboards/project/overview/item",
+    "properties": {
+      "model": {
+        "$codeRef": "inventoryItems.StatefulSetModel"
+      },
+      "prometheus": { "$codeRef": "inventoryItems.projectStatefulSetPrometheus" }
+    }
+  },
+  {
+    "type": "console.dashboards/project/overview/item",
+    "properties": {
+      "model": {
+        "$codeRef": "inventoryItems.PodModel"
+      },
+      "mapper": {
+        "$codeRef": "inventoryItems.getPodStatusGroups"
+      },
+      "prometheus": { "$codeRef": "inventoryItems.projectPodPrometheus" }
+    }
+  },
+  {
+    "type": "console.dashboards/project/overview/item",
+    "properties": {
+      "model": {
+        "$codeRef": "inventoryItems.PersistentVolumeClaimModel"
+      },
+      "mapper": {
+        "$codeRef": "inventoryItems.getPVCStatusGroups"
+      },
+      "prometheus": { "$codeRef": "inventoryItems.projectPVCPrometheus" }
+    }
+  },
+  {
+    "type": "console.dashboards/project/overview/item",
+    "properties": {
+      "model": {
+        "$codeRef": "inventoryItems.ServiceModel"
+      },
+      "prometheus": { "$codeRef": "inventoryItems.projectServicePrometheus" }
+    }
+  },
+  {
+    "type": "console.dashboards/project/overview/item",
+    "properties": {
+      "model": {
+        "$codeRef": "inventoryItems.RouteModel"
+      },
+      "prometheus": { "$codeRef": "inventoryItems.projectRoutePrometheus" }
+    }
+  },
+  {
+    "type": "console.dashboards/project/overview/item",
+    "properties": {
+      "model": {
+        "$codeRef": "inventoryItems.ConfigMapModel"
+      },
+      "prometheus": { "$codeRef": "inventoryItems.projectConfigMapPrometheus" }
+    }
+  },
+  {
+    "type": "console.dashboards/project/overview/item",
+    "properties": {
+      "model": {
+        "$codeRef": "inventoryItems.SecretModel"
+      },
+      "prometheus": { "$codeRef": "inventoryItems.projectSecretPrometheus" }
+    },
+    "flags": {
+      "required": ["CAN_LIST_SECRETS"]
+    }
+  },
+  {
+    "type": "console.dashboards/project/overview/item",
+    "properties": {
+      "model": {
+        "$codeRef": "inventoryItems.VolumeSnapshotModel"
+      },
+      "mapper": {
+        "$codeRef": "inventoryItems.getVSStatusGroups"
+      }
     }
   },
   {
@@ -2389,6 +2531,9 @@
       },
       "provider": {
         "$codeRef": "nodeActions.useNodeActions"
+      },
+      "bulkProvider": {
+        "$codeRef": "nodeActions.useNodeBulkActionsProvider"
       }
     }
   },
@@ -2558,6 +2703,12 @@
     }
   },
   {
+    "type": "console.flag/hookProvider",
+    "properties": {
+      "handler": { "$codeRef": "canListSecrets.useCanListSecrets" }
+    }
+  },
+  {
     "type": "console.action/resource-provider",
     "properties": {
       "model": {
@@ -2565,7 +2716,7 @@
         "version": "v1",
         "kind": "ConfigMap"
       },
-      "provider": { "$codeRef": "defaultProvider.useDefaultActionsProvider" }
+      "provider": { "$codeRef": "configmapProvider.useConfigMapActionsProvider" }
     }
   },
   {
@@ -2686,7 +2837,7 @@
         "version": "v1",
         "kind": "ServiceAccount"
       },
-      "provider": { "$codeRef": "defaultProvider.useDefaultActionsProvider" }
+      "provider": { "$codeRef": "serviceAccountProvider.useServiceAccountActionsProvider" }
     }
   },
   {

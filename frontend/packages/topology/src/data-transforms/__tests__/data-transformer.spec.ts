@@ -33,7 +33,7 @@ function getTransformedTopologyData(
   return baseDataModelGetter(model, mockData, workloadResources, [], trafficData);
 }
 
-describe('data transformer ', () => {
+describe('data transformer', () => {
   let mockResources: TopologyDataResources;
 
   beforeEach(() => {

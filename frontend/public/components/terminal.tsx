@@ -34,8 +34,8 @@ export interface TerminalProps {
  */
 export const Terminal = forwardRef<ImperativeTerminalType, TerminalProps>(
   ({ onData, onResize, padding = 52, options = defaultOptions, className }, ref) => {
-    const terminal = useRef<XTerminal>();
-    const fitAddon = useRef<FitAddon>();
+    const terminal = useRef<XTerminal>(undefined);
+    const fitAddon = useRef<FitAddon>(undefined);
     const terminalRef = useRef<HTMLDivElement>(null);
     const isFullscreen = useIsFullscreen();
 
@@ -114,7 +114,7 @@ export const Terminal = forwardRef<ImperativeTerminalType, TerminalProps>(
         window.removeEventListener('resize', handleResize);
         window.removeEventListener('sidebar_toggle', handleResize);
       };
-      // eslint-disable-next-line react-hooks/exhaustive-deps
+      // eslint-disable-next-line react-hooks-js/exhaustive-deps
     }, []);
 
     useEffect(() => {
@@ -132,7 +132,7 @@ export const Terminal = forwardRef<ImperativeTerminalType, TerminalProps>(
 
     useEffect(() => {
       handleResize();
-      // eslint-disable-next-line react-hooks/exhaustive-deps
+      // eslint-disable-next-line react-hooks-js/exhaustive-deps
     }, [isFullscreen]);
 
     useImperativeHandle(ref, () => ({

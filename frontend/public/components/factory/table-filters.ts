@@ -38,7 +38,6 @@ export const tableFilters = (isExactSearch: boolean): FilterMap => {
   return {
     name: (filter, obj) => matchFn(filter.selected?.[0], obj.metadata.name),
 
-    'catalog-source-name': (filter, obj) => matchFn(filter.selected?.[0], obj.name),
     requester: requesterFilter,
 
     'resource-list-text': (filter, resource: Rule | Alert) => {
@@ -128,15 +127,6 @@ export const tableFilters = (isExactSearch: boolean): FilterMap => {
       }
       return filters.selected.includes(resource.kind);
     },
-
-    'packagemanifest-name': (filter, pkg) =>
-      matchFn(
-        filter.selected?.[0],
-        (pkg.status.defaultChannel
-          ? pkg.status.channels.find((ch) => ch.name === pkg.status.defaultChannel)
-          : pkg.status.channels[0]
-        ).currentCSVDesc.displayName,
-      ),
 
     'build-status': (phases, build) => {
       if (!phases || !phases.selected || !phases.selected.length) {

@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Button, AlertVariant } from '@patternfly/react-core';
 import { RhUiClipboardIcon } from '@patternfly/react-icons';
 import { Base64 } from 'js-base64';
@@ -64,28 +64,24 @@ export const WebhookTriggers: FC<WebhookTriggersProps> = (props) => {
   });
   const tableColumnClasses = getTableColumnClasses(canGetSecret);
   const [webhookSecrets, setWebhookSecrets] = useState<K8sResourceKind[]>([]);
-  const [webhookTriggers, setWebhookTriggers] = useState<WebhookTrigger[]>([]);
-  const [secretNames, setSecretNames] = useState<string[]>([]);
+  const webhookTriggers = useMemo(
+    () => _.filter(triggers, ({ type }) => webhookTriggerTypes.has(type)),
+    [triggers],
+  );
   const [secretErrors, setSecretErrors] = useState<string[]>([]);
   const [isLoaded, setLoaded] = useState(false);
 
-  useEffect(() => {
-    setWebhookTriggers((previousTriggers) => {
-      const newTriggers = _.filter(triggers, ({ type }) => webhookTriggerTypes.has(type));
-      return _.isEqual(previousTriggers, newTriggers) ? previousTriggers : newTriggers;
-    });
-  }, [triggers]);
-
-  useEffect(() => {
-    const newSecretNames: string[] = _.uniq(
-      webhookTriggers.reduce((acc: string[], webhook: WebhookTrigger): string[] => {
-        const triggerProperty = getTriggerProperty(webhook);
-        const secretName = _.get(webhook, [triggerProperty, 'secretReference', 'name']);
-        return secretName ? [...acc, secretName] : acc;
-      }, []),
-    );
-    setSecretNames(newSecretNames);
-  }, [webhookTriggers]);
+  const secretNames = useMemo<string[]>(
+    () =>
+      _.uniq(
+        webhookTriggers.reduce((acc: string[], webhook: WebhookTrigger): string[] => {
+          const triggerProperty = getTriggerProperty(webhook);
+          const secretName = _.get(webhook, [triggerProperty, 'secretReference', 'name']);
+          return secretName ? [...acc, secretName] : acc;
+        }, []),
+      ),
+    [webhookTriggers],
+  );
 
   useEffect(() => {
     if (!canGetSecret) {

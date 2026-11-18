@@ -1,5 +1,5 @@
 import type { Model, NodeModel } from '@patternfly/react-topology';
-import i18next from 'i18next';
+import * as i18next from 'i18next';
 import * as _ from 'lodash';
 import {
   CUSTOM_ICON_ANNOTATION,

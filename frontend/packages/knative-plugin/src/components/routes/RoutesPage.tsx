@@ -1,8 +1,8 @@
 import type { ComponentProps, FC } from 'react';
-import { ListPage } from '@console/internal/components/factory';
-import { referenceForModel } from '@console/internal/module/k8s';
+import { ListPage } from '@console/internal/components/factory/list-page';
+import { referenceForModel } from '@console/internal/module/k8s/k8s-ref';
 import { RouteModel } from '../../models';
-import RouteList from './RouteList';
+import { RouteList } from './RouteList';
 
 const RoutesPage: FC<ComponentProps<typeof ListPage>> = (props) => {
   const { customData } = props;
@@ -12,6 +12,7 @@ const RoutesPage: FC<ComponentProps<typeof ListPage>> = (props) => {
       canCreate={false}
       kind={referenceForModel(RouteModel)}
       ListComponent={RouteList}
+      omitFilterToolbar
       selector={
         customData?.selectResourcesForName
           ? { matchLabels: { 'serving.knative.dev/service': customData.selectResourcesForName } }

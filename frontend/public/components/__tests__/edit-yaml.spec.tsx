@@ -6,7 +6,7 @@ describe('EditYAML: getEditor function', () => {
   it('should handle undefined monacoRef.current without throwing TypeError', () => {
     // This test verifies the fix for OCPBUGS-77912
     // The bug occurred when monacoRef.current was undefined and the 'in' operator was used
-    const { result } = renderHook(() => useRef<CodeEditorRef>());
+    const { result } = renderHook(() => useRef<CodeEditorRef>(undefined));
     const monacoRef = result.current;
 
     // This simulates the getEditor function from edit-yaml.tsx
@@ -20,7 +20,7 @@ describe('EditYAML: getEditor function', () => {
   });
 
   it('should return undefined when monacoRef.current exists but has no editor property', () => {
-    const { result } = renderHook(() => useRef<CodeEditorRef>());
+    const { result } = renderHook(() => useRef<CodeEditorRef>(undefined));
     const monacoRef = result.current;
 
     // Set monacoRef.current to an object without an 'editor' property
@@ -33,7 +33,7 @@ describe('EditYAML: getEditor function', () => {
   });
 
   it('should return the editor when monacoRef.current has an editor property', () => {
-    const { result } = renderHook(() => useRef<CodeEditorRef>());
+    const { result } = renderHook(() => useRef<CodeEditorRef>(undefined));
     const monacoRef = result.current;
 
     const mockEditor = { getValue: jest.fn(), setValue: jest.fn() };

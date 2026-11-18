@@ -38,7 +38,7 @@ export const CodeEditorField: FC<CodeEditorFieldProps> = ({
 }) => {
   const [field] = useField(name);
   const { setFieldValue } = useFormikContext<FormikValues>();
-  const editorRef = useRef();
+  const editorRef = useRef(undefined);
 
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
 
@@ -64,7 +64,7 @@ export const CodeEditorField: FC<CodeEditorFieldProps> = ({
       }
       const yamlByExtension: string = getYAMLTemplates(
         templateExtensions?.filter((e) => e.properties.model.kind === kind),
-      ).getIn([kind, id]);
+      )?.[kind]?.[id];
       return yamlByExtension?.trim() || '';
     },
     [templateExtensions],

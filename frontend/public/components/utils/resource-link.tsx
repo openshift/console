@@ -55,7 +55,6 @@ export const resourcePath = (kind: K8sResourceKindReference, name?: string, name
   if (!model) {
     if (!unknownKinds.has(kind)) {
       unknownKinds.add(kind);
-      // eslint-disable-next-line no-console
       console.error(`resourcePath: no model for "${kind}"`);
     }
     return;

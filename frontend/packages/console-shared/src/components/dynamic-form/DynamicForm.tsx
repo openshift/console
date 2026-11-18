@@ -1,9 +1,13 @@
-/* eslint-disable no-barrel-files/no-barrel-files */
 import type { FC } from 'react';
 import { useCallback } from 'react';
 import { Accordion, ActionGroup, Button, Alert } from '@patternfly/react-core';
 import type { FormProps } from '@rjsf/core';
 import Form from '@rjsf/core';
+import type {
+  ArrayFieldTemplateProps,
+  FieldTemplateProps,
+  ObjectFieldTemplateProps,
+} from '@rjsf/utils';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
@@ -15,9 +19,11 @@ import {
   FieldTemplate as DefaultFieldTemplate,
   ObjectFieldTemplate as DefaultObjectFieldTemplate,
   ArrayFieldTemplate as DefaultArrayFieldTemplate,
+  ArrayFieldItemTemplate as DefaultArrayFieldItemTemplate,
   ErrorTemplate as DefaultErrorTemplate,
 } from './templates';
 import { getSchemaErrors } from './utils';
+import { dynamicFormValidator } from './validator';
 import defaultWidgets from './widgets';
 import './styles.scss';
 
@@ -49,7 +55,6 @@ export const DynamicForm: FC<DynamicFormProps> = ({
   const schemaErrors = getSchemaErrors(schema);
   // IF the top level schema is unsupported, don't render a form at all.
   if (schemaErrors.length) {
-    // eslint-disable-next-line no-console
     console.warn('A form could not be generated for this resource.', schemaErrors);
     return (
       <Alert
@@ -85,19 +90,23 @@ export const DynamicForm: FC<DynamicFormProps> = ({
         <ErrorBoundary FallbackComponent={FormErrorFallbackComponent}>
           <Form
             {...restProps}
+            validator={dynamicFormValidator}
             className="co-dynamic-form"
             noValidate={noValidate}
-            ArrayFieldTemplate={ArrayFieldTemplate}
             fields={{ ...defaultFields, ...fields }}
-            FieldTemplate={FieldTemplate}
             formContext={{ ...formContext, formData }}
             formData={formData}
             noHtml5Validate
-            ObjectFieldTemplate={ObjectFieldTemplate}
             onChange={(next) => onChange(next.formData)}
             onError={(newErrors) => onError(_.map(newErrors, (error) => error.stack))}
-            onSubmit={onSubmit}
+            onSubmit={(data) => onSubmit({ formData: data.formData })}
             schema={schema}
+            templates={{
+              ArrayFieldTemplate,
+              ArrayFieldItemTemplate: DefaultArrayFieldItemTemplate,
+              FieldTemplate,
+              ObjectFieldTemplate,
+            }}
             // Don't show the react-jsonschema-form error list at top
             showErrorList={false}
             uiSchema={customUISchema ? uiSchema : _.defaultsDeep({}, K8S_UI_SCHEMA, uiSchema)}
@@ -123,7 +132,16 @@ export const DynamicForm: FC<DynamicFormProps> = ({
   );
 };
 
-type DynamicFormProps = FormProps<any> & {
+type DynamicFormProps = Omit<
+  FormProps<unknown>,
+  'validator' | 'onChange' | 'onError' | 'onSubmit'
+> & {
+  ArrayFieldTemplate?: FC<ArrayFieldTemplateProps>;
+  FieldTemplate?: FC<FieldTemplateProps>;
+  ObjectFieldTemplate?: FC<ObjectFieldTemplateProps>;
+  onChange?: (formData: unknown) => void;
+  onError?: (errors: string[]) => void;
+  onSubmit?: (data: { formData: unknown }) => void;
   errors?: string[];
   ErrorTemplate?: FC<{ errors: string[] }>;
   noActions?: boolean;
@@ -131,6 +149,3 @@ type DynamicFormProps = FormProps<any> & {
   showAlert?: boolean;
   onCancel?: () => void;
 };
-
-export * from './types';
-export * from './const';

@@ -1,17 +1,21 @@
-import { defineConfig } from 'jest';
 import type { Options as SwcOptions } from '@swc/core';
+import { defineConfig } from 'jest';
 
 export default defineConfig({
-  moduleFileExtensions: ['js', 'jsx', 'ts', 'tsx', 'json'],
+  moduleFileExtensions: ['js', 'ts', 'tsx', 'json'],
   moduleNameMapper: {
     '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$':
-      '<rootDir>/__mocks__/fileMock.js',
-    '\\.(css|less|scss)$': '<rootDir>/__mocks__/styleMock.js',
+      '<rootDir>/__mocks__/fileMock.ts',
+    '\\.(css|less|scss)$': '<rootDir>/__mocks__/styleMock.ts',
+    '^\\.\\./get-local-plugins$': '<rootDir>/__mocks__/get-local-plugins.ts',
   },
   testEnvironment: 'jsdom',
+  workerIdleMemoryLimit: '1GB', // workaround nodejs/node#63186 nodejs/node#66490 jestjs/jest#14605
+  workerGracefulExitTimeout: 2000,
+  haste: { forceNodeFilesystemAPI: true },
   transform: {
-    'get-local-plugins\\.js$': './scripts/jest-transform-local-plugins.js',
-    '^.+\\.(ts|tsx|js|jsx|mjs)$': [
+    '__mocks__/get-local-plugins\\.ts$': '<rootDir>/scripts/jest-transform-local-plugins.js',
+    '^.+\\.(ts|tsx|js|mjs)$': [
       '@swc/jest',
       {
         jsc: {
@@ -32,43 +36,31 @@ export default defineConfig({
       } satisfies SwcOptions,
     ],
   },
-  transformIgnorePatterns: [
-    '<rootDir>/node_modules/(?!(@patternfly(-\\S+)?|d3(-\\S+)?|delaunator|robust-predicates|internmap|lodash-es|istextorbinary|@console|@novnc|@spice-project|@popperjs|i18next(-\\S+)?|@babel/runtime|jsonpath-plus|nanoid|@rjsf|git-url-parse|git-up|parse-url|protocols|sanitize-html|linkify-react|fuzzysearch)/.*)',
-  ],
-  testPathIgnorePatterns: [
-    '<rootDir>/node_modules/',
-    '<rootDir>/public/dist',
-    '<rootDir>/.*/integration-tests',
-    '<rootDir>/e2e',
-  ],
-  modulePathIgnorePatterns: [
-    '<rootDir>/public/dist',
-    '<rootDir>/.*/integration-tests',
-    '<rootDir>/e2e',
-  ],
-  testRegex: '.*\\.spec\\.(ts|tsx|js|jsx)$',
+  testPathIgnorePatterns: ['<rootDir>/node_modules/', '<rootDir>/public/dist', '<rootDir>/e2e'],
+  modulePathIgnorePatterns: ['<rootDir>/public/dist', '<rootDir>/e2e'],
+  testRegex: '.*\\.spec\\.(ts|tsx)$',
   testEnvironmentOptions: {
     url: 'http://localhost',
     globalsCleanup: 'on',
   },
   setupFiles: [
+    './__mocks__/textEncoderDecoder.ts',
+    './__mocks__/transformStream.ts',
     './__mocks__/fetch.ts',
     './__mocks__/helmet.ts',
-    './__mocks__/localStorage.ts',
-    './__mocks__/matchMedia.js',
-    './__mocks__/mutationObserver.js',
-    './__mocks__/resizeObserver.js',
-    './__mocks__/serverFlags.js',
-    './__mocks__/textEncoderDecoder.ts',
+    './__mocks__/matchMedia.ts',
+    './__mocks__/resizeObserver.ts',
+    './__mocks__/serverFlags.ts',
     './__mocks__/sharedScope.ts',
+    './__mocks__/structuredClone.ts',
   ],
-  setupFilesAfterEnv: ['<rootDir>/setup-tests.js'],
+  setupFilesAfterEnv: ['<rootDir>/setup-tests.ts'],
   coverageDirectory: '__coverage__',
   coverageReporters: ['json', 'lcov', 'text', 'text-summary'],
   collectCoverageFrom: [
-    'public/*.{js,jsx,ts,tsx}',
-    'public/{components,module,ui}/**/*.{js,jsx,ts,tsx}',
-    'packages/*/src/**/*.{js,jsx,ts,tsx}',
+    'public/*.{ts,tsx}',
+    'public/{components,module,ui}/**/*.{ts,tsx}',
+    'packages/*/src/**/*.{ts,tsx}',
     '!**/node_modules/**',
   ],
 });

@@ -7,9 +7,7 @@ import { ConsolePluginCSPStatus } from './ConsolePluginStatus';
 
 const ConsolePluginCSPStatusDetail: FC<DetailsItemComponentProps> = ({ obj }) => {
   const pluginName = useMemo(() => obj?.metadata?.name, [obj?.metadata?.name]);
-  const cspViolations = useConsoleSelector<PluginCSPViolations>(({ UI }) =>
-    UI.get('pluginCSPViolations'),
-  );
+  const cspViolations = useConsoleSelector<PluginCSPViolations>(({ UI }) => UI.pluginCSPViolations);
 
   return <ConsolePluginCSPStatus hasViolations={cspViolations[pluginName] ?? false} />;
 };

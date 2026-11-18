@@ -380,7 +380,7 @@ describe('devfile-utils', () => {
       });
     });
 
-    it('should replace kubernetes resource uri with resource inline yaml', async () => {
+    it('should replace openshift resource uri with resource inline yaml', async () => {
       const component = await getParsedComponent(
         { name: 'outerloop-deploy2', openshift: { uri: 'outerloop-deploy2.yaml' } },
         git.url,

@@ -34,7 +34,7 @@ const SubMenuContent: FC<GroupMenuContentProps> = ({ option, onClick }) => (
     data-test-action={option.id}
     flyoutMenu={
       <Menu containsFlyout>
-        <MenuContent data-test-id="action-items">
+        <MenuContent data-test-id="action-items" data-test="action-items">
           <MenuList>
             <ActionMenuContent
               options={option.children}

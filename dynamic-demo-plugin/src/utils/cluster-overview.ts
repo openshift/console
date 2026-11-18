@@ -17,8 +17,7 @@ export const getUtilizationQuery: GetQuery = (nodeTypes) =>
 
 export const getUtilizationQueries: GetMultilineQueries = (nodeTypes) => [
   {
-    query: 
-      `
+    query: `
         sum(
           instance:node_network_receive_bytes_excluding_lo:rate1m
           *
@@ -30,8 +29,7 @@ export const getUtilizationQueries: GetMultilineQueries = (nodeTypes) => [
     desc: 'desc1',
   },
   {
-    query:
-      `
+    query: `
         sum(
           instance:node_network_transmit_bytes_excluding_lo:rate1m
           *

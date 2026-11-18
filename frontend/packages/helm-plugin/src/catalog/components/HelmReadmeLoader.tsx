@@ -29,7 +29,6 @@ const HelmReadmeLoader: FC<HelmReadmeLoaderProps> = ({ chartURL, namespace, char
           )}&namespace=${namespace}&indexEntry=${encodeURIComponent(chartIndexEntry)}`,
         );
       } catch (e) {
-        // eslint-disable-next-line no-console
         console.warn('Error fetching helm chart details for readme', e);
       }
 

@@ -46,6 +46,8 @@ export type NavTab = Extension<
     href: string;
     /** Tab content component. */
     component: CodeRef<React.ComponentType<PageComponentProps>>;
+    /** Component rendered next to the tab label. */
+    badge?: CodeRef<React.ComponentType>;
   }
 >;
 

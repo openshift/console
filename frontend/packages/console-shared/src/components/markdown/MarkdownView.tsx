@@ -13,7 +13,7 @@ import {
   THEME_GLASS,
   THEME_GLASS_CLASS,
   useTheme,
-} from '@console/internal/components/ThemeProvider';
+} from '@console/app/src/providers/theme/ThemeProvider';
 import { useForceRender } from '../../hooks/useForceRender';
 import { useResizeObserver } from '../../hooks/useResizeObserver';
 
@@ -119,9 +119,10 @@ const RenderExtension: FC<RenderExtensionProps> = ({
    */
   useEffect(() => {
     renderExtension && forceRender();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [markup]);
   return (
+    // eslint-disable-next-line react-hooks-js/refs -- intentionally gates on the markup ref latch: delays extension rendering by one cycle so dangerouslySetInnerHTML has committed the new DOM before the extension reads the document
     <>{shouldRenderExtension() ? renderExtension?.(docContext ?? document, selector) : null}</>
   );
 };
@@ -148,7 +149,7 @@ const IFrameMarkdownView: FC<InnerSyncMarkdownProps> = ({
   isEmpty,
   renderExtension,
 }) => {
-  const frameRef = useRef<HTMLIFrameElement>(null);
+  const [frameEl, setFrameEl] = useState<HTMLIFrameElement>(null);
   const [frameHeight, setFrameHeight] = useState(0);
   const [loaded, setLoaded] = useState(false);
 
@@ -160,15 +161,16 @@ const IFrameMarkdownView: FC<InnerSyncMarkdownProps> = ({
     [THEME_GLASS_CLASS]: contrast === THEME_GLASS,
   });
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const updateDimensions = useCallback(
-    _.debounce(() => {
-      const el = frameRef.current?.contentWindow?.document?.body?.firstElementChild;
-      if (el) {
-        setFrameHeight(el.scrollHeight + (exactHeight ? 0 : 15));
-      }
-    }, 100),
-    [exactHeight],
+  // `frameEl` is tracked via a callback ref; the memo is recreated when it changes.
+  const updateDimensions = useMemo(
+    () =>
+      _.debounce(() => {
+        const el = frameEl?.contentWindow?.document?.body?.firstElementChild;
+        if (el) {
+          setFrameHeight(el.scrollHeight + (exactHeight ? 0 : 15));
+        }
+      }, 100),
+    [exactHeight, frameEl],
   );
 
   const onLoad = useCallback(() => {
@@ -176,7 +178,7 @@ const IFrameMarkdownView: FC<InnerSyncMarkdownProps> = ({
     setLoaded(true);
   }, [updateDimensions]);
 
-  useResizeObserver(updateDimensions, frameRef.current);
+  useResizeObserver(updateDimensions, frameEl);
 
   // Find the app's stylesheets and inject them into the frame to ensure consistent styling.
   const linkRefs = useMemo(
@@ -230,7 +232,7 @@ const IFrameMarkdownView: FC<InnerSyncMarkdownProps> = ({
         sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin"
         srcDoc={srcdoc}
         style={{ border: '0px', display: 'block', width: '100%', height: frameHeight }}
-        ref={frameRef}
+        ref={setFrameEl}
         onLoad={onLoad}
       />
       {loaded && (
@@ -238,7 +240,7 @@ const IFrameMarkdownView: FC<InnerSyncMarkdownProps> = ({
           markup={markup}
           selector=""
           renderExtension={renderExtension}
-          docContext={frameRef.current?.contentDocument}
+          docContext={frameEl?.contentDocument} // iframe is mounted when loaded=true
         />
       )}
     </>

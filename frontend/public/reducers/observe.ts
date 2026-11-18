@@ -1,4 +1,3 @@
-import { List as ImmutableList, Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash';
 import type { Alert } from '@console/dynamic-plugin-sdk';
 import { AlertStates, RuleStates, SilenceStates } from '@console/dynamic-plugin-sdk';
@@ -10,14 +9,15 @@ const MONITORING_DASHBOARDS_DEFAULT_TIMESPAN = 30 * 60 * 1000;
 
 const MONITORING_DASHBOARDS_VARIABLE_ALL_OPTION_KEY = 'ALL_OPTION_KEY';
 
-export type ObserveState = ImmutableMap<string, any>;
+export type ObserveState = Record<string, any>;
 
-const newQueryBrowserQuery = (): ImmutableMap<string, any> =>
-  ImmutableMap({
-    id: _.uniqueId('query-browser-query'),
-    isEnabled: true,
-    isExpanded: true,
-  });
+type QueryBrowserQuery = Record<string, any>;
+
+const newQueryBrowserQuery = (): QueryBrowserQuery => ({
+  id: _.uniqueId('query-browser-query'),
+  isEnabled: true,
+  isExpanded: true,
+});
 
 const silenceFiringAlerts = (firingAlerts, silences) => {
   // For each firing alert, store a list of the Silences that are silencing it
@@ -46,76 +46,146 @@ const silenceFiringAlerts = (firingAlerts, silences) => {
   });
 };
 
+const updateQuery = (
+  state: ObserveState,
+  index: number,
+  updater: (q: QueryBrowserQuery) => QueryBrowserQuery,
+): ObserveState => {
+  const queries = [...state.queryBrowser.queries];
+  queries[index] = updater(queries[index]);
+  return { ...state, queryBrowser: { ...state.queryBrowser, queries } };
+};
+
+const mapQueries = (
+  state: ObserveState,
+  mapper: (q: QueryBrowserQuery) => QueryBrowserQuery,
+): ObserveState => ({
+  ...state,
+  queryBrowser: {
+    ...state.queryBrowser,
+    queries: state.queryBrowser.queries.map(mapper),
+  },
+});
+
 export default (state: ObserveState, action: ObserveAction): ObserveState => {
   if (!state) {
-    return ImmutableMap({
-      dashboards: ImmutableMap({
-        dev: ImmutableMap({
+    return {
+      dashboards: {
+        dev: {
           endTime: null,
           pollInterval: 30 * 1000,
           timespan: MONITORING_DASHBOARDS_DEFAULT_TIMESPAN,
-          variables: ImmutableMap(),
-        }),
-        admin: ImmutableMap({
+          variables: {},
+        },
+        admin: {
           endTime: null,
           pollInterval: 30 * 1000,
           timespan: MONITORING_DASHBOARDS_DEFAULT_TIMESPAN,
-          variables: ImmutableMap(),
-        }),
-      }),
-      queryBrowser: ImmutableMap({
+          variables: {},
+        },
+      },
+      queryBrowser: {
         metrics: [],
         pollInterval: null,
-        queries: ImmutableList([newQueryBrowserQuery()]),
+        queries: [newQueryBrowserQuery()],
         timespan: MONITORING_DASHBOARDS_DEFAULT_TIMESPAN,
-      }),
-    });
+      },
+    };
   }
 
   const queryBrowserPatchQueryHelper = (index: number, patch: { [key: string]: unknown }) => {
-    const query = state.hasIn(['queryBrowser', 'queries', index])
-      ? ImmutableMap(patch)
-      : newQueryBrowserQuery().merge(patch);
-    return state.mergeIn(['queryBrowser', 'queries', index], query);
+    const existing = state.queryBrowser.queries[index];
+    const query = existing ? { ...existing, ...patch } : { ...newQueryBrowserQuery(), ...patch };
+    const queries = [...state.queryBrowser.queries];
+    queries[index] = query;
+    return { ...state, queryBrowser: { ...state.queryBrowser, queries } };
   };
 
   switch (action.type) {
-    case ActionType.DashboardsPatchVariable:
-      return state.mergeIn(
-        ['dashboards', action.payload.perspective, 'variables', action.payload.key],
-        ImmutableMap(action.payload.patch),
-      );
+    case ActionType.DashboardsPatchVariable: {
+      const { perspective, key, patch } = action.payload;
+      const dashPersp = state.dashboards[perspective];
+      return {
+        ...state,
+        dashboards: {
+          ...state.dashboards,
+          [perspective]: {
+            ...dashPersp,
+            variables: {
+              ...dashPersp.variables,
+              [key]: { ...dashPersp.variables[key], ...patch },
+            },
+          },
+        },
+      };
+    }
 
-    case ActionType.DashboardsPatchAllVariables:
-      return state.setIn(
-        ['dashboards', action.payload.perspective, 'variables'],
-        ImmutableMap(action.payload.variables),
-      );
+    case ActionType.DashboardsPatchAllVariables: {
+      const { perspective, variables } = action.payload;
+      return {
+        ...state,
+        dashboards: {
+          ...state.dashboards,
+          [perspective]: {
+            ...state.dashboards[perspective],
+            variables: { ...variables },
+          },
+        },
+      };
+    }
 
     case ActionType.DashboardsClearVariables:
-      return state.setIn(['dashboards', action.payload.perspective, 'variables'], ImmutableMap());
+      return {
+        ...state,
+        dashboards: {
+          ...state.dashboards,
+          [action.payload.perspective]: {
+            ...state.dashboards[action.payload.perspective],
+            variables: {},
+          },
+        },
+      };
 
     case ActionType.DashboardsSetEndTime:
-      return state.setIn(
-        ['dashboards', action.payload.perspective, 'endTime'],
-        action.payload.endTime,
-      );
+      return {
+        ...state,
+        dashboards: {
+          ...state.dashboards,
+          [action.payload.perspective]: {
+            ...state.dashboards[action.payload.perspective],
+            endTime: action.payload.endTime,
+          },
+        },
+      };
 
     case ActionType.DashboardsSetPollInterval:
-      return state.setIn(
-        ['dashboards', action.payload.perspective, 'pollInterval'],
-        action.payload.pollInterval,
-      );
+      return {
+        ...state,
+        dashboards: {
+          ...state.dashboards,
+          [action.payload.perspective]: {
+            ...state.dashboards[action.payload.perspective],
+            pollInterval: action.payload.pollInterval,
+          },
+        },
+      };
 
     case ActionType.DashboardsSetTimespan:
-      return state.setIn(
-        ['dashboards', action.payload.perspective, 'timespan'],
-        action.payload.timespan,
-      );
+      return {
+        ...state,
+        dashboards: {
+          ...state.dashboards,
+          [action.payload.perspective]: {
+            ...state.dashboards[action.payload.perspective],
+            timespan: action.payload.timespan,
+          },
+        },
+      };
 
     case ActionType.DashboardsVariableOptionsLoaded: {
       const { key, newOptions, perspective } = action.payload;
-      const { options, value } = state.getIn(['dashboards', perspective, 'variables', key]).toJS();
+      const variable = state.dashboards[perspective].variables[key];
+      const { options, value } = variable;
       const patch = _.isEqual(options, newOptions)
         ? { isLoading: false }
         : {
@@ -125,88 +195,114 @@ export default (state: ObserveState, action: ObserveAction): ObserveState => {
               value === MONITORING_DASHBOARDS_VARIABLE_ALL_OPTION_KEY || newOptions.includes(value)
                 ? value
                 : perspective === 'dev' && key === 'namespace'
-                  ? state.get('activeNamespace')
+                  ? state.activeNamespace
                   : newOptions[0],
           };
-      return state.mergeIn(['dashboards', perspective, 'variables', key], ImmutableMap(patch));
+      return {
+        ...state,
+        dashboards: {
+          ...state.dashboards,
+          [perspective]: {
+            ...state.dashboards[perspective],
+            variables: {
+              ...state.dashboards[perspective].variables,
+              [key]: { ...variable, ...patch },
+            },
+          },
+        },
+      };
     }
 
     case ActionType.AlertingSetRules:
-      return state.set(action.payload.key, action.payload.data);
+      return { ...state, [action.payload.key]: action.payload.data };
 
     case ActionType.AlertingSetData: {
       const alertsKey = action.payload.data.perspective === 'admin' ? 'alerts' : 'devAlerts';
-      const alerts = action.payload.key === alertsKey ? action.payload.data : state.get(alertsKey);
-      // notificationAlerts used by notification drawer and certain dashboards
+      const alerts = action.payload.key === alertsKey ? action.payload.data : state[alertsKey];
       const notificationAlerts: NotificationAlerts =
         action.payload.key === 'notificationAlerts'
           ? action.payload.data
-          : state.get('notificationAlerts');
+          : state.notificationAlerts;
 
       const silencesKey = action.payload.data.perspective === 'admin' ? 'silences' : 'devSilences';
       const silences =
-        action.payload.key === silencesKey ? action.payload.data : state.get(silencesKey);
+        action.payload.key === silencesKey ? action.payload.data : state[silencesKey];
 
       const isAlertFiring = (alert) =>
         alert?.state === AlertStates.Firing || alert?.state === AlertStates.Silenced;
       const firingAlerts = _.filter(alerts?.data, isAlertFiring);
       silenceFiringAlerts(firingAlerts, silences);
       silenceFiringAlerts(_.filter(notificationAlerts?.data, isAlertFiring), silences);
-      notificationAlerts.data = _.reject(notificationAlerts.data, { state: AlertStates.Silenced });
-      // eslint-disable-next-line no-param-reassign
-      state = state.set(alertsKey, alerts);
-      // eslint-disable-next-line no-param-reassign
-      state = state.set('notificationAlerts', notificationAlerts);
+      const updatedNotificationAlerts = notificationAlerts
+        ? {
+            ...notificationAlerts,
+            data: _.reject(notificationAlerts.data, { state: AlertStates.Silenced }),
+          }
+        : notificationAlerts;
 
-      // For each Silence, store a list of the Alerts it is silencing
+      const updated = {
+        ...state,
+        [alertsKey]: alerts,
+        notificationAlerts: updatedNotificationAlerts,
+      };
+
       _.each(_.get(silences, 'data'), (s) => {
         s.firingAlerts = _.filter(firingAlerts, (a) => isSilenced(a, s));
       });
-      return state.set(silencesKey, silences);
+      return { ...updated, [silencesKey]: silences };
     }
 
     case ActionType.ToggleGraphs:
-      return state.set('hideGraphs', !state.get('hideGraphs'));
+      return { ...state, hideGraphs: !state.hideGraphs };
 
     case ActionType.QueryBrowserAddQuery:
-      return state.setIn(
-        ['queryBrowser', 'queries'],
-        state.getIn(['queryBrowser', 'queries']).push(newQueryBrowserQuery()),
-      );
+      return {
+        ...state,
+        queryBrowser: {
+          ...state.queryBrowser,
+          queries: [...state.queryBrowser.queries, newQueryBrowserQuery()],
+        },
+      };
 
     case ActionType.QueryBrowserDuplicateQuery: {
       const { index } = action.payload;
-      const originQueryText = state.getIn(['queryBrowser', 'queries', index, 'text']);
-      const duplicate = newQueryBrowserQuery().merge({
+      const originQueryText = state.queryBrowser.queries[index]?.text;
+      const duplicate = {
+        ...newQueryBrowserQuery(),
         text: originQueryText,
         isEnabled: false,
-      });
-      return state.setIn(
-        ['queryBrowser', 'queries'],
-        state.getIn(['queryBrowser', 'queries']).push(duplicate),
-      );
+      };
+      return {
+        ...state,
+        queryBrowser: {
+          ...state.queryBrowser,
+          queries: [...state.queryBrowser.queries, duplicate],
+        },
+      };
     }
 
     case ActionType.QueryBrowserDeleteAllQueries:
-      return state.setIn(['queryBrowser', 'queries'], ImmutableList([newQueryBrowserQuery()]));
+      return {
+        ...state,
+        queryBrowser: { ...state.queryBrowser, queries: [newQueryBrowserQuery()] },
+      };
 
-    case ActionType.QueryBrowserDeleteAllSeries: {
-      return state.setIn(
-        ['queryBrowser', 'queries'],
-        state.getIn(['queryBrowser', 'queries']).map((q) => q.set('series', undefined)),
-      );
-    }
+    case ActionType.QueryBrowserDeleteAllSeries:
+      return mapQueries(state, (q) => ({ ...q, series: undefined }));
 
     case ActionType.QueryBrowserDeleteQuery: {
-      let queries = state.getIn(['queryBrowser', 'queries']).delete(action.payload.index);
-      if (queries.size === 0) {
-        queries = queries.push(newQueryBrowserQuery());
+      let queries = state.queryBrowser.queries.filter((_q, i) => i !== action.payload.index);
+      if (queries.length === 0) {
+        queries = [newQueryBrowserQuery()];
       }
-      return state.setIn(['queryBrowser', 'queries'], queries);
+      return { ...state, queryBrowser: { ...state.queryBrowser, queries } };
     }
 
     case ActionType.QueryBrowserDismissNamespaceAlert:
-      return state.setIn(['queryBrowser', 'dismissNamespaceAlert'], true);
+      return {
+        ...state,
+        queryBrowser: { ...state.queryBrowser, dismissNamespaceAlert: true },
+      };
 
     case ActionType.QueryBrowserPatchQuery: {
       const { index, patch } = action.payload;
@@ -214,65 +310,65 @@ export default (state: ObserveState, action: ObserveAction): ObserveState => {
     }
 
     case ActionType.QueryBrowserRunQueries: {
-      const queries = state.getIn(['queryBrowser', 'queries']).map((q) => {
-        const isEnabled = q.get('isEnabled');
-        const query = q.get('query');
-        const text = _.trim(q.get('text'));
-        return isEnabled && query !== text ? q.merge({ query: text, series: undefined }) : q;
+      const queries = state.queryBrowser.queries.map((q) => {
+        const { isEnabled, query, text: rawText } = q;
+        const text = _.trim(rawText);
+        return isEnabled && query !== text ? { ...q, query: text, series: undefined } : q;
       });
-
-      return state
-        .setIn(['queryBrowser', 'queries'], queries)
-        .setIn(['queryBrowser', 'lastRequestTime'], Date.now());
+      return {
+        ...state,
+        queryBrowser: { ...state.queryBrowser, queries, lastRequestTime: Date.now() },
+      };
     }
 
-    case ActionType.QueryBrowserSetAllExpanded: {
-      const queries = state
-        .getIn(['queryBrowser', 'queries'])
-        .map((q) => q.set('isExpanded', action.payload.isExpanded));
-      return state.setIn(['queryBrowser', 'queries'], queries);
-    }
+    case ActionType.QueryBrowserSetAllExpanded:
+      return mapQueries(state, (q) => ({ ...q, isExpanded: action.payload.isExpanded }));
 
     case ActionType.QueryBrowserSetMetrics:
-      return state.setIn(['queryBrowser', 'metrics'], action.payload.metrics);
+      return {
+        ...state,
+        queryBrowser: { ...state.queryBrowser, metrics: action.payload.metrics },
+      };
 
     case ActionType.QueryBrowserSetPollInterval:
-      return state.setIn(['queryBrowser', 'pollInterval'], action.payload.pollInterval);
+      return {
+        ...state,
+        queryBrowser: { ...state.queryBrowser, pollInterval: action.payload.pollInterval },
+      };
 
     case ActionType.QueryBrowserSetTimespan:
-      return state.setIn(['queryBrowser', 'timespan'], action.payload.timespan);
+      return {
+        ...state,
+        queryBrowser: { ...state.queryBrowser, timespan: action.payload.timespan },
+      };
 
     case ActionType.QueryBrowserToggleAllSeries: {
       const { index } = action.payload;
-      const isDisabledSeriesEmpty = _.isEmpty(
-        state.getIn(['queryBrowser', 'queries', index, 'disabledSeries']),
-      );
-      const series = state.getIn(['queryBrowser', 'queries', index, 'series']);
-      const patch = { disabledSeries: isDisabledSeriesEmpty ? series : [] };
+      const query = state.queryBrowser.queries[index];
+      const isDisabledSeriesEmpty = _.isEmpty(query?.disabledSeries);
+      const patch = { disabledSeries: isDisabledSeriesEmpty ? query?.series : [] };
       return queryBrowserPatchQueryHelper(index, patch);
     }
 
     case ActionType.QueryBrowserToggleIsEnabled: {
-      const query = state.getIn(['queryBrowser', 'queries', action.payload.index]);
-      const isEnabled = !query.get('isEnabled');
-      return state.setIn(
-        ['queryBrowser', 'queries', action.payload.index],
-        query.merge({
-          isEnabled,
-          isExpanded: isEnabled,
-          query: isEnabled ? query.get('text') : '',
-        }),
-      );
+      const query = state.queryBrowser.queries[action.payload.index];
+      const isEnabled = !query.isEnabled;
+      return updateQuery(state, action.payload.index, () => ({
+        ...query,
+        isEnabled,
+        isExpanded: isEnabled,
+        query: isEnabled ? query.text : '',
+      }));
     }
 
     case ActionType.QueryBrowserToggleSeries:
-      return state.updateIn(
-        ['queryBrowser', 'queries', action.payload.index, 'disabledSeries'],
-        (v) => _.xorWith(v, [action.payload.labels], _.isEqual),
-      );
+      return updateQuery(state, action.payload.index, (q) => ({
+        ...q,
+        disabledSeries: _.xorWith(q.disabledSeries, [action.payload.labels], _.isEqual),
+      }));
 
     case ActionType.SetAlertCount:
-      return state.set('alertCount', action.payload.alertCount);
+      return { ...state, alertCount: action.payload.alertCount };
 
     default:
       break;

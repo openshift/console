@@ -77,7 +77,7 @@ describe('Create knative Utils', () => {
     expect(knEventingResource.metadata?.namespace).toEqual('mock-project');
   });
 
-  it('expect getEventSourceModelsWithAccess to return proper builtinSources', (done) => {
+  it('expect getEventSourceModelsWithAccess to return proper builtinSources', async () => {
     const eventSourcesModel = [
       { apiGroup: KNATIVE_EVENT_SOURCE_APIGROUP_DEP, plural: 'cronjobsources' },
       { apiGroup: KNATIVE_EVENT_SOURCE_APIGROUP, plural: 'sinkbindings' },
@@ -86,13 +86,8 @@ describe('Create knative Utils', () => {
     ] as K8sKind[];
     checkAccessMock.mockResolvedValue({ status: { allowed: true } });
     const eventSourceData = getEventSourceModelsWithAccess('my-app', eventSourcesModel);
-    Promise.all(eventSourceData)
-      .then((results) => {
-        expect(results).toHaveLength(4);
-        done();
-      })
-      // eslint-disable-next-line no-console
-      .catch((err) => console.warn('Failed to get event source models', err.message));
+    const results = await Promise.all(eventSourceData);
+    expect(results).toHaveLength(4);
   });
 
   it('expect getEventSourceData should return data for builtin Sources', () => {

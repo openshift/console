@@ -1,4 +1,4 @@
-import i18next from 'i18next';
+import * as i18next from 'i18next';
 import { merge } from 'lodash';
 import { HorizontalPodAutoscalerModel } from '@console/internal/models';
 import { baseTemplates } from '@console/internal/models/yaml-templates';
@@ -46,9 +46,7 @@ export const getRequestsWarning = (resource: K8sResourceKind): string | null => 
   return null;
 };
 
-const defaultHPAYAML = baseTemplates
-  .get(referenceForModel(HorizontalPodAutoscalerModel))
-  .get('default');
+const defaultHPAYAML = baseTemplates[referenceForModel(HorizontalPodAutoscalerModel)]?.default;
 
 const createScaleTargetRef = (resource: K8sResourceKind) => ({
   apiVersion: resource.apiVersion,

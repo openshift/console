@@ -44,6 +44,7 @@ export interface ListDropdownProps {
   ) => void;
   id?: string;
   disabled?: boolean;
+  showDefaultWarning?: boolean;
 
   dataTest?: string;
   actionItems?: ActionItem[];
@@ -77,9 +78,9 @@ const InnerListDropdown: FC<ListDropdownInternalProps> = ({
   const [selectedKey, setSelectedKey] = useState<string | undefined>(
     props.selectedKey ? getKey(props.selectedKey, props.selectedKeyKind) : undefined,
   );
-  const [title, setTitle] = useState<React.ReactNode>(loaded ? placeholder : <LoadingInline />);
 
-  const autocompleteFilter = (text: string, item: ReactElement) => fuzzy(text, item.props.name);
+  const autocompleteFilter = (text: string, item: ReactElement<{ name: string }>) =>
+    fuzzy(text, item.props.name);
 
   const handleOnChange = useCallback(
     (key: string) => {
@@ -90,15 +91,15 @@ const InnerListDropdown: FC<ListDropdownInternalProps> = ({
 
       const { name, kindLabel, resource } = items[key];
       setSelectedKey(key);
-      setTitle(<ResourceName kind={kindLabel} name={name} />);
       onChange(name, kindLabel, resource);
     },
     [actionItems, items, onChange],
   );
 
   useEffect(() => {
+    // Keep the last-good items and selection when a load error occurs; the
+    // error title is derived during render from `loadError`.
     if (loadError) {
-      setTitle(<div className="cos-error-title">{t('Error loading {{desc}}', { desc })}</div>);
       return;
     }
 
@@ -121,6 +122,7 @@ const InnerListDropdown: FC<ListDropdownInternalProps> = ({
         .map((key) => [key, unsortedList[key]]),
     );
 
+    // eslint-disable-next-line react-hooks-js/set-state-in-effect -- items mirror externally-arriving k8s watch data (Redux-backed useK8sWatchResources); the early return above freezes the last-good list on load errors, which a pure render derivation cannot express
     setItems(sortedList);
 
     // Only update selectedKey if props.selectedKey is defined
@@ -130,37 +132,35 @@ const InnerListDropdown: FC<ListDropdownInternalProps> = ({
         : selectedKey;
 
     setSelectedKey(newSelectedKey);
+  }, [loadError, resources, dataFilter, props.selectedKey, props.selectedKeyKind, selectedKey]);
 
-    const selectedItem = sortedList[newSelectedKey];
-
-    setTitle(
-      selectedItem ? (
-        <ResourceName kind={selectedItem.kindLabel} name={selectedItem.name} />
-      ) : (
-        placeholder
-      ),
-    );
-  }, [
-    loaded,
-    loadError,
-    resources,
-    dataFilter,
-    props.selectedKey,
-    props.selectedKeyKind,
-    placeholder,
-    desc,
-    t,
-    selectedKey,
-  ]);
+  const selectedItem = loadError ? undefined : items[selectedKey];
+  const title = loadError ? (
+    <div className="cos-error-title">{t('Error loading {{desc}}', { desc })}</div>
+  ) : selectedItem ? (
+    <ResourceName
+      kind={selectedItem.kindLabel}
+      name={selectedItem.name}
+      showDefaultWarning={props.showDefaultWarning}
+    />
+  ) : (
+    placeholder
+  );
 
   const renderedItems = useMemo(() => {
     const result = {};
     _.keys(items).forEach((key) => {
       const item = items[key];
-      result[key] = <ResourceName kind={item.kindLabel} name={item.name} />;
+      result[key] = (
+        <ResourceName
+          kind={item.kindLabel}
+          name={item.name}
+          showDefaultWarning={props.showDefaultWarning}
+        />
+      );
     });
     return result;
-  }, [items]);
+  }, [items, props.showDefaultWarning]);
 
   return (
     <div>

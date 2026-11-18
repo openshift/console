@@ -7,7 +7,7 @@ import type { GitSource } from '../types/git';
 import { SecretType } from '../types/git';
 import type { RepoMetadata, BranchList, RepoLanguageList, RepoFileList } from '../types/repo';
 import { RepoStatus } from '../types/repo';
-import { BaseService } from './base-service';
+import { BaseService, headersToRecord } from './base-service';
 
 type GHWebhookBody = {
   name: string;
@@ -22,7 +22,7 @@ type GHWebhookBody = {
 };
 
 type GithubWebhookRequest = {
-  headers: Headers;
+  headers: Record<string, string[]>;
   hostName: string;
   owner: string;
   repoName: string;
@@ -182,7 +182,7 @@ export class GithubService extends BaseService {
       : `${this.metadata.host}/api/v3`;
 
     const webhookRequestBody: GithubWebhookRequest = {
-      headers,
+      headers: headersToRecord(headers),
       hostName: AddWebhookBaseURL,
       owner: this.metadata.owner,
       repoName: this.metadata.repoName,
@@ -223,8 +223,7 @@ export class GithubService extends BaseService {
         ...(this.metadata.defaultBranch ? { ref: this.metadata.defaultBranch } : {}),
       });
       if (resp.status === 200) {
-        // eslint-disable-next-line dot-notation
-        return Buffer.from(resp.data['content'], 'base64').toString();
+        return Base64.decode(resp.data['content']);
       }
       return null;
     } catch (e) {

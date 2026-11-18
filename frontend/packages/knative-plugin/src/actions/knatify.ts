@@ -1,4 +1,4 @@
-import i18next from 'i18next';
+import * as i18next from 'i18next';
 import type { Action } from '@console/dynamic-plugin-sdk/src';
 import type { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { ServiceModel } from '../models';

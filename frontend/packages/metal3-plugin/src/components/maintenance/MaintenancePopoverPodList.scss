@@ -1,4 +1,9 @@
 .maintenance-popover-pod-list {
+  // Keeps the popover a sensible size once a node has more than a handful of pods left to
+  // drain. Same cap the virtualized list used, which at this row height shows about seven.
+  max-height: 150px;
+  overflow-y: auto;
+
   &__list-item a {
     white-space: nowrap;
     overflow: hidden;

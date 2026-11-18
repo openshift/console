@@ -25,7 +25,6 @@ export const useDeveloperPerspectiveStateProvider = (setFeatureFlag: SetFeatureF
             setFeatureFlag(FLAG_DEVELOPER_PERSPECTIVE, res);
           })
           .catch((e) => {
-            // eslint-disable-next-line no-console
             console.warn('Could not check access', e);
           });
       }

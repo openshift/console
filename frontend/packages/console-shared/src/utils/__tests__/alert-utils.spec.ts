@@ -1,10 +1,10 @@
 import { AlertSeverity } from '@console/dynamic-plugin-sdk';
-import { mockAlerts, mockAlerts2, expectedFiringAlerts } from '../__mocks__/alerts-and-rules-data';
 import {
   getSeverityAlertType,
   getFiringAlerts,
   shouldHideMonitoringAlertDecorator,
 } from '../alert-utils';
+import { mockAlerts, mockAlerts2, expectedFiringAlerts } from './data/alerts-and-rules-data';
 
 describe('alert-utils', () => {
   it('should get firing alerts', () => {

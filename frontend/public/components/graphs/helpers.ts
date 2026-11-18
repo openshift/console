@@ -1,4 +1,3 @@
-/* eslint-disable no-barrel-files/no-barrel-files */
 import * as _ from 'lodash';
 import { PrometheusEndpoint } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import {

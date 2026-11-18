@@ -1,17 +1,13 @@
 import { useMemo } from 'react';
-import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import type { Action } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { useK8sModel } from '@console/dynamic-plugin-sdk/src/lib-core';
+import { resourcePathFromModel } from '@console/internal/components/utils/resource-link';
+import { CustomResourceDefinitionModel } from '@console/internal/models';
 import type { CustomResourceDefinitionKind } from '@console/internal/module/k8s';
-import { referenceFor, referenceForCRD } from '@console/internal/module/k8s';
+import { referenceFor } from '@console/internal/module/k8s';
 import { useCommonResourceActions } from '../hooks/useCommonResourceActions';
-
-const crdInstancesPath = (crd: CustomResourceDefinitionKind) =>
-  _.get(crd, 'spec.scope') === 'Namespaced'
-    ? `/k8s/all-namespaces/${referenceForCRD(crd)}`
-    : `/k8s/cluster/${referenceForCRD(crd)}`;
 
 const useViewInstancesCRDAction = (resource: CustomResourceDefinitionKind): Action[] => {
   const navigate = useNavigate();
@@ -21,7 +17,10 @@ const useViewInstancesCRDAction = (resource: CustomResourceDefinitionKind): Acti
       ViewInstances: (): Action => ({
         id: 'view-instances-crd',
         label: t('View instances'),
-        cta: () => navigate(crdInstancesPath(resource)),
+        cta: () =>
+          navigate(
+            `${resourcePathFromModel(CustomResourceDefinitionModel, resource.metadata.name)}/instances`,
+          ),
       }),
     }),
     [navigate, resource, t],

@@ -12,7 +12,7 @@ import {
 import { stubWebSocketWatches } from './cluster-settings-test-utils';
 
 const CLUSTER_VERSION_URL = '**/apis/config.openshift.io/v1/clusterversions/version';
-const MCP_LIST_URL = '**/apis/machineconfiguration.openshift.io/v1/machineconfigpools?*';
+const MCP_LIST_URL = /\/apis\/machineconfiguration\.openshift\.io\/v1\/machineconfigpools(\?|$)/;
 
 test.describe('Cluster Settings cluster update modal', { tag: ['@admin'] }, () => {
   test('changes based on the cluster', async ({ page }) => {
@@ -50,9 +50,7 @@ test.describe('Cluster Settings cluster update modal', { tag: ['@admin'] }, () =
       await clusterSettings.openUpdateModal();
 
       // Verify irreversibility notice is always shown
-      const irreversibilityNotice = page.getByTestId(
-        'update-cluster-modal-irreversibility-notice',
-      );
+      const irreversibilityNotice = page.getByTestId('update-cluster-modal-irreversibility-notice');
       await expect(irreversibilityNotice).toBeVisible();
 
       await clusterSettings.openUpdateDropdown();

@@ -7,17 +7,23 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 	"unicode"
 
-	"github.com/openshift/api/helm/v1beta1"
-	"github.com/openshift/console/pkg/helm/chartproxy"
 	kv1 "k8s.io/api/core/v1"
+	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/watch"
 	"k8s.io/client-go/dynamic"
 	corev1client "k8s.io/client-go/kubernetes/typed/core/v1"
 	"k8s.io/klog/v2"
+
+	"github.com/openshift/api/helm/v1beta1"
+
+	"github.com/openshift/console/pkg/helm/chartproxy"
 )
 
 // constants
@@ -177,28 +183,53 @@ func getRepositoryConnectionConfig(
 }
 
 func getSecret(ns string, name string, version int, coreclient corev1client.CoreV1Interface) (kv1.Secret, error) {
-	label := fmt.Sprintf("owner=helm,name=%v,version=%v", name, version)
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+	return getSecretWithContext(ctx, ns, name, version, coreclient)
+}
+
+func getSecretWithContext(ctx context.Context, ns string, name string, version int, coreclient corev1client.CoreV1Interface) (kv1.Secret, error) {
+	selector := labels.SelectorFromSet(labels.Set{
+		"owner":   "helm",
+		"name":    name,
+		"version": strconv.Itoa(version),
+	})
 	timeout := int64(60)
-	secretList, err := coreclient.Secrets(ns).Watch(context.TODO(), metav1.ListOptions{LabelSelector: label, Watch: true, TimeoutSeconds: &timeout})
+	secretList, err := coreclient.Secrets(ns).Watch(ctx, metav1.ListOptions{LabelSelector: selector.String(), Watch: true, TimeoutSeconds: &timeout})
 	if err != nil {
 		return kv1.Secret{}, err
 	}
-	event := <-secretList.ResultChan()
-	if event.Object != nil {
-		obj := event.Object.(*kv1.Secret)
-		//check if secret exist with a field called as error
-		actionError, found := obj.Data["error"]
-		if found {
-			secretList.Stop()
-			//Delete secret created to track errors on installation
-			coreclient.Secrets(ns).Delete(context.TODO(), name, v1.DeleteOptions{})
-			return kv1.Secret{}, fmt.Errorf("action error: %s", string(actionError))
-		} else {
-			secretList.Stop()
-			return *obj, nil
+	defer secretList.Stop()
+
+	for {
+		select {
+		case <-ctx.Done():
+			return kv1.Secret{}, fmt.Errorf("release secret \"%s/%s\" not found: %w", ns, name, ctx.Err())
+
+		case event, ok := <-secretList.ResultChan():
+			if !ok {
+				return kv1.Secret{}, fmt.Errorf("release secret \"%s/%s\"not found: watch closed", ns, name)
+			}
+
+			switch event.Type {
+			case watch.Error:
+				return kv1.Secret{}, apierrors.FromObject(event.Object)
+
+			case watch.Added, watch.Modified:
+				obj, ok := event.Object.(*kv1.Secret)
+				if !ok || obj == nil || obj.Namespace != ns || !selector.Matches(labels.Set(obj.Labels)) {
+					continue
+				}
+
+				if actionError, found := obj.Data["error"]; found {
+					// Delete the Secret created to track errors on installation.
+					_ = coreclient.Secrets(ns).Delete(ctx, name, v1.DeleteOptions{})
+					return kv1.Secret{}, fmt.Errorf("action error: %s", string(actionError))
+				}
+				return *obj, nil
+			}
 		}
 	}
-	return kv1.Secret{}, fmt.Errorf("release secret not found")
 }
 
 func createSecret(ns string, name string, version int, coreclient corev1client.CoreV1Interface, err error) error {

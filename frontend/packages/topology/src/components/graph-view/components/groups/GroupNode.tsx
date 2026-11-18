@@ -64,7 +64,7 @@ const GroupNodeComponent: FC<GroupNodeProps> = ({
   typeIconClass,
   ...rest
 }) => {
-  const ref = useRef();
+  const ref = useRef(undefined);
   const [filtered] = useSearchFilter(element.getLabel());
   const [textHover, textHoverRef] = useHover();
   const [iconSize, iconRef] = useSize([badge]);

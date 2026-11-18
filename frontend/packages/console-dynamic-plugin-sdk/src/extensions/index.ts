@@ -1,4 +1,4 @@
-/* eslint-disable no-barrel-files/no-barrel-files */
+/* eslint-disable oxc/no-barrel-file */
 export * from './actions';
 export * from './add-actions';
 export * from './alerts';
@@ -13,6 +13,7 @@ export * from './create-resource';
 export * from './dashboard-types';
 export * from './dashboards';
 export * from './details-item';
+export * from './dataview';
 export * from './feature-flags';
 export * from './file-upload';
 export * from './horizontal-nav-tabs';

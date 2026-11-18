@@ -1,52 +1,125 @@
 import { test, expect } from '../../fixtures';
 import { ensureDeveloperPerspective, warmupSPA } from '../../pages/base-page';
+import { CatalogPage } from '../../pages/catalog-page';
+import { AddPage } from '../../pages/dev-console/add-page';
 import { ClusterCustomizationPage } from '../../pages/dev-console/cluster-customization-page';
 
-test.describe('Cluster configuration customization', { tag: ['@dev-console', '@regression'] }, () => {
-  let customizationPage: ClusterCustomizationPage;
+test.describe(
+  'Cluster configuration customization',
+  { tag: ['@dev-console', '@regression'] },
+  () => {
+    // These tests mutate cluster-wide Console configuration; serialize them so tracked restores cannot race.
+    test.describe.configure({ mode: 'serial' });
+    let customizationPage: ClusterCustomizationPage;
+    let targetNamespace: string;
+    let originalCustomization: { addPage?: unknown; developerCatalog?: unknown } | undefined;
 
-  test.beforeEach(async ({ page, k8sClient }) => {
-    await warmupSPA(page);
-    await ensureDeveloperPerspective(page, k8sClient);
-    customizationPage = new ClusterCustomizationPage(page);
-    await customizationPage.navigateToCustomize();
-    await expect(customizationPage.getHeading()).toBeVisible({ timeout: 30_000 });
-  });
+    test.beforeEach(async ({ page, k8sClient, testConfig }) => {
+      await warmupSPA(page);
+      await ensureDeveloperPerspective(page, k8sClient);
+      targetNamespace = testConfig.testNamespace;
+      const consoleConfig = (await k8sClient.getClusterCustomResource(
+        'operator.openshift.io',
+        'v1',
+        'consoles',
+        'cluster',
+      )) as { spec?: { customization?: { addPage?: unknown; developerCatalog?: unknown } } };
+      originalCustomization = {
+        addPage: consoleConfig.spec?.customization?.addPage,
+        developerCatalog: consoleConfig.spec?.customization?.developerCatalog,
+      };
+      customizationPage = new ClusterCustomizationPage(page);
+      await customizationPage.navigateToCustomize();
+      await expect(customizationPage.getHeading()).toBeVisible({ timeout: 30_000 });
+    });
 
-  // eslint-disable-next-line playwright/expect-expect
-  test('DC-01-TC01: Disable Developer catalog', async () => {
-    test.skip(true, 'Deferred to a future batch');
-  });
+    test.afterEach(async ({ k8sClient }) => {
+      if (!originalCustomization) return;
+      await k8sClient.patchClusterCustomResource(
+        'operator.openshift.io',
+        'v1',
+        'consoles',
+        'cluster',
+        {
+          spec: {
+            customization: {
+              addPage: originalCustomization.addPage ?? null,
+              developerCatalog: originalCustomization.developerCatalog ?? null,
+            },
+          },
+        },
+      );
+      originalCustomization = undefined;
+    });
 
-  // eslint-disable-next-line playwright/expect-expect
-  test('DC-01-TC02: Disable specific sub-catalogs', async () => {
-    test.skip(true, 'Deferred to a future batch');
-  });
+    test('DC-01-TC01: Disable All services Add page action', async ({ page, k8sClient }) => {
+      await customizationPage.moveAvailableToChosen('add-page', 'All services');
+      await customizationPage.waitForItemInList('add-page', 'All services', 'chosen');
+      await expect(customizationPage.getFormSection('add-page')).toBeVisible();
 
-  // eslint-disable-next-line playwright/expect-expect
-  test('DC-01-TC03: Disable Add page items', async () => {
-    test.skip(true, 'Deferred to a future batch');
-  });
+      // The dual-list selector patches the Console CR asynchronously; wait for
+      // the addPage customization to appear in the CR before navigating away.
+      await expect(async () => {
+        const consoleConfig = (await k8sClient.getClusterCustomResource(
+          'operator.openshift.io',
+          'v1',
+          'consoles',
+          'cluster',
+        )) as { spec?: { customization?: { addPage?: unknown } } };
+        expect(consoleConfig.spec?.customization?.addPage).toBeTruthy();
+      }).toPass({ intervals: [2_000, 3_000, 5_000], timeout: 30_000 });
 
-  // eslint-disable-next-line playwright/expect-expect
-  test('DC-01-TC04: Re-enable catalogs after disabling', async () => {
-    test.skip(true, 'Deferred to a future batch');
-  });
+      const addPage = new AddPage(page);
+      // Config propagation to the Console frontend may take a few seconds
+      // after the CR is updated; reload until the Add page reflects the change.
+      await addPage.ensureDevPerspectiveAndNavigate(targetNamespace, k8sClient);
+      await expect(async () => {
+        await addPage.navigateToAdd(targetNamespace);
+        await expect(addPage.getCardItem('dev-catalog')).toBeHidden({ timeout: 5_000 });
+      }).toPass({ intervals: [3_000, 5_000, 10_000], timeout: 60_000 });
+    });
 
-  // eslint-disable-next-line playwright/expect-expect
-  test('DC-01-TC05: Verify console rollout after customization', async () => {
-    test.skip(true, 'Deferred to a future batch');
-  });
+    test('DC-01-TC02: Disable specific sub-catalogs', async ({ page }) => {
+      await customizationPage.moveAvailableToChosen('catalog-types', 'Builder Images');
+      await customizationPage.waitForItemInList('catalog-types', 'Builder Images', 'chosen');
+      await expect(customizationPage.getFormSection('catalog-types')).toBeVisible();
+      const catalogPage = new CatalogPage(page);
+      await catalogPage.navigateToSoftwareCatalog(targetNamespace);
+      await expect(page.getByText('Builder Images', { exact: true })).toBeHidden();
+    });
 
-  test('verifies perspectives section on General tab', async () => {
-    await expect(customizationPage.getPerspectivesSection()).toBeVisible();
-    await expect(customizationPage.getPerspectiveSectionItem('Developer')).toBeVisible();
-  });
+    test('DC-01-TC03: Disable Add page items', async ({ page, k8sClient }) => {
+      await customizationPage.moveAvailableToChosen('add-page', 'Import from Git');
+      await customizationPage.waitForItemInList('add-page', 'Import from Git', 'chosen');
+      await expect(customizationPage.getFormSection('add-page')).toBeVisible();
+      const addPage = new AddPage(page);
+      await addPage.ensureDevPerspectiveAndNavigate(targetNamespace, k8sClient);
+      // The console server may take time to serve the updated customization
+      // config after the operator CR is patched. Each retry reloads the page
+      // so the SPA fetches the latest server-side configuration.
+      await expect(async () => {
+        await addPage.navigateToAdd(targetNamespace);
+        await expect(addPage.getCardItem('import-from-git')).toBeHidden({ timeout: 5_000 });
+      }).toPass({ timeout: 60_000 });
+    });
 
-  test('verifies Developer tab shows pre-pinned navigation', async () => {
-    await customizationPage.getTab('Developer').click();
-    await expect(customizationPage.getPrePinnedSection()).toBeVisible({ timeout: 30_000 });
-    await expect(customizationPage.getAvailableResources()).toBeVisible();
-    await expect(customizationPage.getPinnedResources()).toBeVisible();
-  });
-});
+    test('DC-01-TC04: Re-enable catalogs after disabling', async () => {
+      await customizationPage.moveAvailableToChosen('catalog-types', 'Builder Images');
+      await customizationPage.moveChosenToAvailable('catalog-types', 'Builder Images');
+      await customizationPage.waitForItemInList('catalog-types', 'Builder Images', 'available');
+      await expect(customizationPage.getFormSection('catalog-types')).toBeVisible();
+    });
+
+    test('verifies perspectives section on General tab', async () => {
+      await expect(customizationPage.getPerspectivesSection()).toBeVisible();
+      await expect(customizationPage.getPerspectiveSectionItem('Developer')).toBeVisible();
+    });
+
+    test('verifies Developer tab shows pre-pinned navigation', async () => {
+      await customizationPage.getTab('Developer').click();
+      await expect(customizationPage.getPrePinnedSection()).toBeVisible({ timeout: 30_000 });
+      await expect(customizationPage.getAvailableResources()).toBeVisible();
+      await expect(customizationPage.getPinnedResources()).toBeVisible();
+    });
+  },
+);

@@ -7,9 +7,7 @@ class PerspectivePage extends BasePage {
   }
 
   getPerspectiveOption(name: string) {
-    return this.page
-      .getByTestId('perspective-switcher-menu-option')
-      .filter({ hasText: name });
+    return this.page.getByTestId('perspective-switcher-menu-option').filter({ hasText: name });
   }
 }
 

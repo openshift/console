@@ -54,7 +54,7 @@ export const useStopNodeMaintenanceModal = () => {
     // Missing launchWarningModal dependency - intentionally excluded to prevent infinite re-renders.
     // The modal launcher function reference changes when its props change, but we capture
     // nodeMaintenance at call time via closure, so the stale reference is safe here.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
     [t],
   );
 };

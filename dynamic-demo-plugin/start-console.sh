@@ -4,6 +4,12 @@ set -euo pipefail
 
 CONSOLE_IMAGE=${CONSOLE_IMAGE:="quay.io/openshift/origin-console:latest"}
 CONSOLE_PORT=${CONSOLE_PORT:=9000}
+CONSOLE_IMAGE_PLATFORM=${CONSOLE_IMAGE_PLATFORM:="linux/amd64"}
+CONSOLE_IMAGE_PULL_POLICY=${CONSOLE_IMAGE_PULL_POLICY:="always"}
+
+# Plugin metadata is declared in package.json
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+PLUGIN_NAME=${npm_package_consolePlugin_name:-$(jq -er '.consolePlugin.name' "$SCRIPT_DIR/package.json")}
 
 echo "Starting local OpenShift console..."
 
@@ -19,6 +25,10 @@ BRIDGE_K8S_MODE_OFF_CLUSTER_ALERTMANAGER=$(oc -n openshift-config-managed get co
 set -e
 BRIDGE_K8S_AUTH_BEARER_TOKEN=$(oc whoami --show-token 2>/dev/null)
 BRIDGE_USER_SETTINGS_LOCATION="localstorage"
+# Use BRIDGE_CSP_MODE=enforce to test enforcement with a console image that supports --csp-mode.
+BRIDGE_CSP_MODE="${BRIDGE_CSP_MODE:-report-only}"
+# Allow local plugin dev server reload connections when testing enforcement.
+BRIDGE_CONTENT_SECURITY_POLICY="${BRIDGE_CONTENT_SECURITY_POLICY:-connect-src=ws://localhost:9001}"
 
 # Don't fail if the cluster doesn't have gitops.
 set +e
@@ -31,18 +41,20 @@ fi
 echo "API Server: $BRIDGE_K8S_MODE_OFF_CLUSTER_ENDPOINT"
 echo "Console Image: $CONSOLE_IMAGE"
 echo "Console URL: http://localhost:${CONSOLE_PORT}"
+echo "Console Platform: $CONSOLE_IMAGE_PLATFORM"
+echo "CSP Mode: $BRIDGE_CSP_MODE"
 
 # Prefer podman if installed. Otherwise, fall back to docker.
 if [ -x "$(command -v podman)" ]; then
     if [ "$(uname -s)" = "Linux" ]; then
         # Use host networking on Linux since host.containers.internal is unreachable in some environments.
-        BRIDGE_PLUGINS="${npm_package_consolePlugin_name}=http://localhost:9001"
-        podman run --pull always --rm --network=host --env-file <(set | grep BRIDGE) $CONSOLE_IMAGE
+        BRIDGE_PLUGINS="${PLUGIN_NAME}=http://localhost:9001"
+        podman run --pull "$CONSOLE_IMAGE_PULL_POLICY" --platform "$CONSOLE_IMAGE_PLATFORM" --rm --network=host --env-file <(set | grep BRIDGE) "$CONSOLE_IMAGE"
     else
-        BRIDGE_PLUGINS="${npm_package_consolePlugin_name}=http://host.containers.internal:9001"
-        podman run --pull always --rm -p "$CONSOLE_PORT":9000 --env-file <(set | grep BRIDGE) $CONSOLE_IMAGE
+        BRIDGE_PLUGINS="${PLUGIN_NAME}=http://host.containers.internal:9001"
+        podman run --pull "$CONSOLE_IMAGE_PULL_POLICY" --platform "$CONSOLE_IMAGE_PLATFORM" --rm -p "$CONSOLE_PORT":9000 --env-file <(set | grep BRIDGE) "$CONSOLE_IMAGE"
     fi
 else
-    BRIDGE_PLUGINS="${npm_package_consolePlugin_name}=http://host.docker.internal:9001"
-    docker run --pull always --rm -p "$CONSOLE_PORT":9000 --env-file <(set | grep BRIDGE) $CONSOLE_IMAGE
+    BRIDGE_PLUGINS="${PLUGIN_NAME}=http://host.docker.internal:9001"
+    docker run --pull "$CONSOLE_IMAGE_PULL_POLICY" --platform "$CONSOLE_IMAGE_PLATFORM" --rm -p "$CONSOLE_PORT":9000 --env-file <(set | grep BRIDGE) "$CONSOLE_IMAGE"
 fi

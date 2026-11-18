@@ -21,17 +21,11 @@ import {
 } from '@patternfly/react-table';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import {
-  actionsCellProps,
-  getNameCellProps,
-  ConsoleDataView,
-  nameCellProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import type {
   ConsoleDataViewColumn,
   GetDataViewRows,
-} from '@console/app/src/components/data-view/types';
-import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import type { ResourceListPage } from '@console/dynamic-plugin-sdk/src/extensions/pages';
 import { isResourceListPage } from '@console/dynamic-plugin-sdk/src/extensions/pages';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
@@ -54,7 +48,6 @@ import { DefaultPage } from './default-resource';
 import { DetailsPage } from './factory/details';
 import { ListPage } from './factory/list-page';
 import { sortResourceByValue } from './factory/Table/sort';
-// eslint-disable-next-line import/no-cycle -- import to this module is dynamic
 import { getResourceListPages } from './list-pages';
 import { AsyncComponent } from './utils/async';
 import { DetailsItem } from './utils/details-item';
@@ -191,9 +184,9 @@ const Details: FC<{ obj: CustomResourceDefinitionKind }> = ({ obj: crd }) => {
 const Instances: FC<InstancesProps> = ({ obj, namespace }) => {
   const resourceListPageExtensions = useExtensions<ResourceListPage>(isResourceListPage);
   const crdKind = referenceForCRD(obj);
-  const componentLoader = getResourceListPages(resourceListPageExtensions).get(crdKind, () =>
-    Promise.resolve(DefaultPage),
-  );
+  const componentLoader =
+    getResourceListPages(resourceListPageExtensions).get(crdKind) ??
+    (() => Promise.resolve(DefaultPage));
   return (
     <AsyncComponent
       loader={componentLoader}
@@ -216,30 +209,20 @@ const tableColumnInfo = [
 
 const useCustomResourceDefinitionsColumns = (): {
   columns: ConsoleDataViewColumn<CustomResourceDefinitionKind>[];
-  resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation('public');
-  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(
-    CustomResourceDefinitionModel,
-  );
 
   const columns: ConsoleDataViewColumn<CustomResourceDefinitionKind>[] = useMemo(
     () => [
       {
-        title: t('Name'),
+        type: 'name' as const,
         id: tableColumnInfo[0].id,
         sort: 'spec.names.kind',
-        resizableProps: getResizableProps(tableColumnInfo[0].id),
-        props: {
-          ...nameCellProps,
-          modifier: 'nowrap' as const,
-        },
       },
       {
         title: t('Group'),
         id: tableColumnInfo[1].id,
         sort: 'spec.group',
-        resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
           modifier: 'nowrap' as const,
         },
@@ -251,7 +234,6 @@ const useCustomResourceDefinitionsColumns = (): {
           data.sort(
             sortResourceByValue<CustomResourceDefinitionKind>(direction, getLatestVersionForCRD),
           ),
-        resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
           modifier: 'nowrap' as const,
         },
@@ -260,7 +242,6 @@ const useCustomResourceDefinitionsColumns = (): {
         title: t('Namespaced'),
         id: tableColumnInfo[3].id,
         sort: 'spec.scope',
-        resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
           modifier: 'nowrap' as const,
         },
@@ -268,23 +249,16 @@ const useCustomResourceDefinitionsColumns = (): {
       {
         title: t('Established'),
         id: tableColumnInfo[4].id,
-        resizableProps: getResizableProps(tableColumnInfo[4].id),
         props: {
           modifier: 'nowrap' as const,
         },
       },
-      {
-        title: '',
-        id: tableColumnInfo[5].id,
-        props: {
-          ...actionsCellProps,
-        },
-      },
+      { type: 'actions' as const, id: tableColumnInfo[5].id },
     ],
-    [t, getResizableProps],
+    [t],
   );
 
-  return { columns, resetAllColumnWidths };
+  return { columns };
 };
 
 const IsNamespaced: FC<{ obj: CustomResourceDefinitionKind }> = ({ obj }) => {
@@ -309,7 +283,7 @@ const getDataViewRows: GetDataViewRows<CustomResourceDefinitionKind> = (data, co
             />
           </span>
         ),
-        props: getNameCellProps(displayName),
+        props: { 'data-test': `data-view-cell-${displayName}-name` },
       },
       [tableColumnInfo[1].id]: {
         cell: obj.spec.group,
@@ -327,7 +301,6 @@ const getDataViewRows: GetDataViewRows<CustomResourceDefinitionKind> = (data, co
         cell: (
           <LazyActionMenu context={{ [referenceForModel(CustomResourceDefinitionModel)]: obj }} />
         ),
-        props: actionsCellProps,
       },
     };
 
@@ -346,20 +319,18 @@ const CustomResourceDefinitionsList: FC<CustomResourceDefinitionsListProps> = ({
   loaded,
   ...props
 }) => {
-  const { columns, resetAllColumnWidths } = useCustomResourceDefinitionsColumns();
+  const { columns } = useCustomResourceDefinitionsColumns();
 
   return (
     <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<CustomResourceDefinitionKind>
         {...props}
+        id={CustomResourceDefinitionModel}
         label={CustomResourceDefinitionModel.labelPlural}
         data={data}
         loaded={loaded}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement
-        isResizable
-        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );

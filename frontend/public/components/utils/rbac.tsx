@@ -1,4 +1,3 @@
-/* eslint-disable no-barrel-files/no-barrel-files */
 import type { ReactNode, FC } from 'react';
 import { connect } from 'react-redux';
 import type { ImpersonateKind } from '@console/dynamic-plugin-sdk';
@@ -73,7 +72,7 @@ export const asAccessReview = (
   subresource?: string,
 ): AccessReviewResourceAttributes => {
   if (!obj) {
-    console.warn('review obj should not be null'); // eslint-disable-line no-console
+    console.warn('review obj should not be null');
     return null;
   }
   return {

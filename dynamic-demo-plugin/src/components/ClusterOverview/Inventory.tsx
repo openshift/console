@@ -58,8 +58,6 @@ export const getRouteStatusGroups: StatusGroupMapper = (resources) => ({
   },
 });
 
-export const DemoGroupIcon: React.FC = () => (
-  <AddressBookIcon />
-);
+export const DemoGroupIcon: React.FC = () => <AddressBookIcon />;
 
 export default WorkerNodeInventory;

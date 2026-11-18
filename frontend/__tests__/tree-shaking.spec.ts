@@ -4,7 +4,7 @@ import { basename, join, resolve } from 'path';
 // eslint-disable-next-line no-restricted-imports
 import { WizardsOfTheCoastIcon } from '@patternfly/react-icons';
 
-const DIST_DIR = resolve(__dirname, '../public/dist');
+const DIST_DIR = resolve(import.meta.dirname, '../public/dist');
 
 const findFilesContaining = (files: string[], needle: string): string[] =>
   files.filter((f) => readFileSync(f, 'utf-8').includes(needle)).map((f) => basename(f));
@@ -13,6 +13,7 @@ const findFilesContaining = (files: string[], needle: string): string[] =>
 // diagnose when this happens, and also serves as a regression test
 describe('tree shaking', () => {
   if (!existsSync(DIST_DIR)) {
+    // eslint-disable-next-line jest/prefer-todo, jest/no-disabled-tests -- the test is done but has to be skipped if it can be run
     it.skip('dist directory not found, skipping bundle checks', () => {});
     return;
   }
@@ -21,14 +22,21 @@ describe('tree shaking', () => {
     .filter((f) => f.endsWith('.js'))
     .map((f) => join(DIST_DIR, f));
 
+  // Minified bundle code does not contain package names, so bundled modules
+  // are detected via the source maps, which list them by path.
+  const sourceMapFiles = readdirSync(DIST_DIR)
+    .filter((f) => f.endsWith('.js.map'))
+    .map((f) => join(DIST_DIR, f));
+
   const indexHtml = new DOMParser().parseFromString(
     readFileSync(join(DIST_DIR, 'index.html'), 'utf-8'),
     'text/html',
   );
 
-  const initialJsFiles = Array.from(indexHtml.querySelectorAll('script[src]')).map((s) =>
-    resolve(DIST_DIR, basename(s.getAttribute('src')!)),
-  );
+  const initialJsFiles = Array.from(indexHtml.querySelectorAll('script[src]'))
+    .map((s) => s.getAttribute('src'))
+    .filter((src): src is string => src !== null)
+    .map((src) => resolve(DIST_DIR, basename(src)));
 
   // Only check vendor chunks: when this test is run in CI, the dev build embeds
   // package names in chunk filenames (e.g., vendors-[...]-monaco-editor-[...].js),
@@ -36,9 +44,12 @@ describe('tree shaking', () => {
   const initialVendorChunks = initialJsFiles.filter((f) => basename(f).startsWith('vendor'));
 
   // Preconditions
-  expect(WizardsOfTheCoastIcon).toBeDefined();
-  expect(initialJsFiles.length).toBeGreaterThan(0);
-  expect(initialVendorChunks.length).toBeGreaterThan(0);
+  it('has initial vendor chunks to check', () => {
+    expect(WizardsOfTheCoastIcon).toBeDefined();
+    expect(initialJsFiles.length).toBeGreaterThan(0);
+    expect(initialVendorChunks.length).toBeGreaterThan(0);
+    expect(sourceMapFiles.length).toBeGreaterThan(0);
+  });
 
   // PatternFly icons are tree-shakeable, but we've seen that sometimes a
   // CJS PatternFly icon import gets pulled in, which causes the entire icon set
@@ -46,6 +57,18 @@ describe('tree shaking', () => {
   it('should not bundle unused PatternFly icons (WizardsOfTheCoastIcon)', () => {
     expect(findFilesContaining(bundleFiles, 'WizardsOfTheCoastIcon')).toEqual([]);
   }, 10000); // possibly could take longer due to slow IO
+
+  // Terminal coloring libraries are build-time dependencies; they must never
+  // end up in the browser bundle. supports-color reads process.platform and
+  // process.env.TERM unguarded at module evaluation, which crashed the
+  // console at startup when NodePolyfillPlugin stopped masking it.
+  it.each(['chalk', 'supports-color'])(
+    'should not bundle build-time dependencies like %s',
+    (library) => {
+      expect(findFilesContaining(sourceMapFiles, `node_modules/${library}/`)).toEqual([]);
+    },
+    10000,
+  ); // possibly could take longer due to slow IO
 
   // These large libraries should only be loaded as-needed using AsyncComponent
   it.each(['@xterm/xterm', 'monaco-editor', '@octokit/rest'])(

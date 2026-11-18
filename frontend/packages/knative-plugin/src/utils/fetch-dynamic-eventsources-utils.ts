@@ -75,7 +75,6 @@ export const fetchEventSourcesCrd = async () => {
     eventSourceData.eventSourceModels = allModels;
   } catch (err) {
     // show warning if there is an error fetching the CRDs
-    // eslint-disable-next-line no-console
     console.warn('Error fetching CRDs for dynamic event sources', err);
     eventSourceData.eventSourceModels = [];
   }
@@ -85,6 +84,11 @@ export const fetchEventSourcesCrd = async () => {
 
 export const useEventSourceModels = (): EventSourcetData => {
   const [modelsData, setModelsData] = useState({ loaded: false, eventSourceModels: [] });
+  // When the module-level cache is already populated there is nothing to
+  // fetch — the hook is immediately loaded.
+  if (eventSourceData.eventSourceModels.length > 0 && !modelsData.loaded) {
+    setModelsData({ loaded: true, eventSourceModels: eventSourceData.eventSourceModels });
+  }
   useEffect(() => {
     if (eventSourceData.eventSourceModels.length === 0) {
       fetchEventSourcesCrd()
@@ -93,13 +97,9 @@ export const useEventSourceModels = (): EventSourcetData => {
         })
         .catch((err) => {
           setModelsData({ loaded: true, eventSourceModels: eventSourceData.eventSourceModels });
-          // eslint-disable-next-line no-console
           console.warn('Error fetching CRDs for dynamic event sources', err);
         });
-    } else {
-      setModelsData({ loaded: true, eventSourceModels: eventSourceData.eventSourceModels });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return modelsData;
 };
@@ -177,6 +177,11 @@ export const fetchChannelsCrd = async () => {
 
 export const useChannelModels = () => {
   const [modelsData, setModelsData] = useState({ loaded: false, eventSourceChannels: [] });
+  // When the module-level cache is already populated there is nothing to
+  // fetch — the hook is immediately loaded.
+  if (eventSourceData.eventSourceChannels.length > 0 && !modelsData.loaded) {
+    setModelsData({ loaded: true, eventSourceChannels: eventSourceData.eventSourceChannels });
+  }
   useEffect(() => {
     if (eventSourceData.eventSourceChannels.length === 0) {
       fetchChannelsCrd()
@@ -185,13 +190,9 @@ export const useChannelModels = () => {
         })
         .catch((err) => {
           setModelsData({ loaded: true, eventSourceChannels: eventSourceData.eventSourceChannels });
-          // eslint-disable-next-line no-console
           console.warn('Error fetching CRDs for dynamic event sources', err);
         });
-    } else {
-      setModelsData({ loaded: true, eventSourceChannels: eventSourceData.eventSourceChannels });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return modelsData;
 };
@@ -211,6 +212,16 @@ export const useChannelResourcesList = (): EventChannelData => {
     channels: [],
     loaded: false,
   });
+  // When the module-level cache is already populated there is nothing to
+  // fetch — the hook is immediately loaded.
+  if (eventSourceData.eventSourceChannels.length > 0 && !modelRefs.loaded) {
+    setModelRefs({
+      channels: eventSourceData.eventSourceChannels.map((model: K8sKind) =>
+        referenceForModel(model),
+      ),
+      loaded: true,
+    });
+  }
   useEffect(() => {
     if (eventSourceData.eventSourceChannels.length === 0) {
       fetchChannelsCrd()
@@ -222,16 +233,8 @@ export const useChannelResourcesList = (): EventChannelData => {
         })
         .catch((err) => {
           setModelRefs({ channels: [], loaded: true });
-          // eslint-disable-next-line no-console
           console.warn('Error fetching CRDs for dynamic channel model refs', err);
         });
-    } else {
-      setModelRefs({
-        channels: eventSourceData.eventSourceChannels.map((model: K8sKind) =>
-          referenceForModel(model),
-        ),
-        loaded: true,
-      });
     }
   }, [setModelRefs]);
   return modelRefs;

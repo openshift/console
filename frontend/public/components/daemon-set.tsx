@@ -3,8 +3,8 @@ import { Suspense } from 'react';
 import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
-import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
+import type { GetDataViewRows } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { ActionServiceProvider } from '@console/shared/src/components/actions/ActionServiceProvider';
 import { ActionMenu } from '@console/shared/src/components/actions/menu/ActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
@@ -21,7 +21,7 @@ import { ListPage } from './factory/list-page';
 import { AsyncComponent } from './utils/async';
 import { ContainerTable } from './utils/container-table';
 import { DetailsItem } from './utils/details-item';
-import { detailsPage, ResourceSummary } from './utils/details-page';
+import { ResourceSummary } from './utils/details-page';
 import { SectionHeading } from './utils/headings';
 import { navFactory, PodsComponent } from './utils/horizontal-nav';
 import { LoadingBox, LoadingInline } from './utils/status-box';
@@ -105,20 +105,18 @@ const EnvironmentTab: FC<EnvironmentTabProps> = (props) => (
 );
 
 const DaemonSetsList: FC<DaemonSetsListProps> = ({ data, loaded, ...props }) => {
-  const { columns, resetAllColumnWidths } = useWorkloadColumns<DaemonSetKind>(DaemonSetModel);
+  const { columns } = useWorkloadColumns<DaemonSetKind>();
 
   return (
     <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<DaemonSetKind>
         {...props}
+        id={DaemonSetModel}
         label={DaemonSetModel.labelPlural}
         data={data}
         loaded={loaded}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement
-        isResizable
-        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );
@@ -151,7 +149,7 @@ export const DaemonSetsDetailsPage: FC = (props) => {
       kind={kind}
       customActionMenu={customActionMenu}
       pages={[
-        navFactory.details(detailsPage(DaemonSetDetails)),
+        navFactory.details(DaemonSetDetails),
         ...(prometheusIsAvailable ? [navFactory.metrics()] : []),
         navFactory.editYaml(),
         navFactory.pods(DaemonSetPods),

@@ -1,5 +1,5 @@
-import type { FC, FormEvent, KeyboardEvent, Ref } from 'react';
-import { useState, useRef, useEffect, useMemo, Fragment } from 'react';
+import type { FC, FormEvent, KeyboardEvent, ReactNode, Ref } from 'react';
+import { useState, useRef, useMemo, Fragment } from 'react';
 import { CloseButton } from '@patternfly/react-component-groups';
 import type { MenuToggleElement, SelectOptionProps } from '@patternfly/react-core';
 import {
@@ -17,8 +17,6 @@ import {
 } from '@patternfly/react-core';
 import { RhUiCloseIcon } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
-import type { Map as ImmutableMap } from 'immutable';
-import { Set as ImmutableSet } from 'immutable';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
@@ -32,12 +30,12 @@ const RECENT_SEARCH_ITEMS = 5;
 const MAX_VISIBLE_ITEMS = 250;
 
 // Blocklist known duplicate resources.
-const blocklistGroups = ImmutableSet([
+const blocklistGroups = new Set([
   // Prefer rbac.authorization.k8s.io/v1, which has the same resources.
   'authorization.openshift.io',
 ]);
 
-const blocklistResources = ImmutableSet([
+const blocklistResources = new Set([
   // Prefer core/v1
   'events.k8s.io/v1beta1.Event',
 ]);
@@ -61,19 +59,29 @@ export const InnerResourceListDropdown: FC<ResourceListDropdownProps> = (props) 
   const [focusedItemIndex, setFocusedItemIndex] = useState<number | null>(null);
   const [activeItemId, setActiveItemId] = useState<string | null>(null);
   const placeholderTextDefault = t('Resources');
-  const [placeholder, setPlaceholder] = useState(placeholderTextDefault);
-  const textInputRef = useRef<HTMLInputElement>();
+  const textInputRef = useRef<HTMLInputElement>(undefined);
+
+  // Mirror the `selected` prop into state so the placeholder can update
+  // optimistically in onSelect before the prop round-trips.
+  const [prevSelected, setPrevSelected] = useState(selected);
+  if (prevSelected !== selected) {
+    setPrevSelected(selected);
+    setSelectedOptions(selected);
+  }
 
   const resources = useMemo(() => {
+    if (!allModels) {
+      return [];
+    }
     // Pre-compute which group+kind combinations have a visible preferred version (O(n))
     const preferredGroupKinds = new Set<string>();
-    allModels.forEach((m) => {
+    Object.values(allModels).forEach((m) => {
       if (groupToVersionMap?.[m.apiGroup]?.preferredVersion === m.apiVersion && isVisible(m)) {
         preferredGroupKinds.add(`${m.kind}~${m.apiGroup}`);
       }
     });
 
-    return allModels
+    return Object.values(allModels)
       .filter((m) => {
         if (!isVisible(m)) {
           return false;
@@ -91,13 +99,12 @@ export const InnerResourceListDropdown: FC<ResourceListDropdownProps> = (props) 
 
         return true;
       })
-      .toOrderedMap()
-      .sortBy(({ kind, apiGroup }) => `${kind} ${apiGroup}`);
+      .sort((a, b) => `${a.kind} ${a.apiGroup}`.localeCompare(`${b.kind} ${b.apiGroup}`));
   }, [allModels, groupToVersionMap]);
 
   const initialSelectOptions = useMemo<ExtendedSelectOptionProps[]>(
     () =>
-      resources.toArray().map((resource) => {
+      resources.map((resource) => {
         const reference = referenceForModel(resource);
         return {
           value: reference,
@@ -123,10 +130,6 @@ export const InnerResourceListDropdown: FC<ResourceListDropdownProps> = (props) 
       JSON.parse(_.isString(data) ? data : JSON.stringify(data))) ??
     [];
 
-  useEffect(() => {
-    setSelectedOptions(selected);
-  }, [selected]);
-
   const selectOptions = useMemo(() => {
     if (!inputValue) {
       return initialSelectOptions;
@@ -139,13 +142,13 @@ export const InnerResourceListDropdown: FC<ResourceListDropdownProps> = (props) 
     );
   }, [inputValue, initialSelectOptions]);
 
-  useEffect(() => {
-    setPlaceholder(
+  const placeholder = useMemo(
+    () =>
       selectedOptions.length > 0
         ? t('Resources ({{total}})', { total: selectedOptions.length })
         : placeholderTextDefault,
-    );
-  }, [placeholderTextDefault, selectedOptions, t]);
+    [placeholderTextDefault, selectedOptions, t],
+  );
 
   const createItemId = (value: any) => `resource-dropdown-${value.replace(' ', '-')}`;
 
@@ -157,8 +160,8 @@ export const InnerResourceListDropdown: FC<ResourceListDropdownProps> = (props) 
   }, [resources]);
 
   // Track duplicate names so we know when to show the group.
-  const kinds = useMemo(() => resources.groupBy((m) => m.kind), [resources]);
-  const isDup = (kind) => kinds.get(kind).size > 1;
+  const kinds = useMemo(() => _.groupBy(resources, (m) => m.kind), [resources]);
+  const isDup = (kind) => kinds[kind]?.length > 1;
 
   const visibleSelectOptions = selectOptions.slice(0, MAX_VISIBLE_ITEMS);
   const items = visibleSelectOptions.map((option: SelectOptionProps, index) => {
@@ -185,7 +188,9 @@ export const InnerResourceListDropdown: FC<ResourceListDropdownProps> = (props) 
             <span>
               {model.labelKey ? t(model.labelKey) : model.kind}
               {model.badge && model.badge === 'Tech Preview' && (
-                <span className="co-resource-item__tech-dev-preview">{t('Tech Preview')}</span>
+                <span className="co-resource-item__tech-dev-preview">
+                  {t('Technology Preview')}
+                </span>
               )}
             </span>
             {isDup(model.kind) && (
@@ -199,7 +204,7 @@ export const InnerResourceListDropdown: FC<ResourceListDropdownProps> = (props) 
     );
   });
 
-  const recentSearches: JSX.Element[] =
+  const recentSearches: ReactNode[] =
     !_.isEmpty(recentSelectedList(recentSelected)) &&
     recentSelectedList(recentSelected)
       .slice(0, RECENT_SEARCH_ITEMS)
@@ -222,7 +227,7 @@ export const InnerResourceListDropdown: FC<ResourceListDropdownProps> = (props) 
                     {model.labelKey ? t(model.labelKey) : model.kind}
                     {model.badge && model.badge === 'Tech Preview' && (
                       <span className="co-resource-item__tech-dev-preview">
-                        {t('Tech Preview')}
+                        {t('Technology Preview')}
                       </span>
                     )}
                   </span>
@@ -246,7 +251,7 @@ export const InnerResourceListDropdown: FC<ResourceListDropdownProps> = (props) 
   const NO_RESULTS = 'no results';
 
   const renderedOptions = () => {
-    const options: JSX.Element[] = [];
+    const options: ReactNode[] = [];
     if (!_.isEmpty(recentSelectedList(recentSelected)) && !!recentList) {
       options.push(
         <Tooltip position="right" content={t('Clear history')} key="clear-history">
@@ -455,6 +460,7 @@ export const InnerResourceListDropdown: FC<ResourceListDropdownProps> = (props) 
             isExpanded={isOpen}
           >
             <TextInputGroup isPlain>
+              {/* eslint-disable jsx-a11y/role-has-required-aria-props -- TextInputGroupMain maps isExpanded to aria-expanded on the rendered input */}
               <TextInputGroupMain
                 value={inputValue}
                 onClick={onInputClick}
@@ -469,6 +475,7 @@ export const InnerResourceListDropdown: FC<ResourceListDropdownProps> = (props) 
                 isExpanded={isOpen}
                 aria-controls="resource-dropdown-listbox"
               />
+              {/* eslint-enable jsx-a11y/role-has-required-aria-props */}
               <TextInputGroupUtilities {...(!inputValue ? { style: { display: 'none' } } : {})}>
                 <Button
                   icon={<RhUiCloseIcon aria-hidden />}
@@ -510,8 +517,8 @@ interface ExtendedSelectOptionProps extends SelectOptionProps {
 }
 
 const resourceListDropdownStateToProps = ({ k8s }) => ({
-  allModels: k8s.getIn(['RESOURCES', 'models']),
-  groupToVersionMap: k8s.getIn(['RESOURCES', 'groupToVersionMap']),
+  allModels: k8s.RESOURCES?.models,
+  groupToVersionMap: k8s.RESOURCES?.groupToVersionMap,
 });
 
 export const ResourceListDropdown = connect<ResourceListDropdownStateToProps>(
@@ -527,6 +534,6 @@ export type ResourceListDropdownProps = ResourceListDropdownStateToProps & {
 };
 
 type ResourceListDropdownStateToProps = {
-  allModels: ImmutableMap<K8sResourceKindReference, K8sKind>;
+  allModels: Record<K8sResourceKindReference, K8sKind>;
   groupToVersionMap: DiscoveryResources['groupVersionMap'];
 };

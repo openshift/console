@@ -34,16 +34,25 @@ export const getConsoleRequestHeaders: GetConsoleRequestHeaders = () => {
   if (impersonateData) {
     const { kind, name, groups } = impersonateData;
 
-    if (kind === 'User' && name) {
-      // Simple user impersonation
+    if (
+      (kind === 'User' || kind === 'ServiceAccount') &&
+      name &&
+      (!groups || groups.length === 0)
+    ) {
+      // Simple user or service account impersonation
       headers['Impersonate-User'] = name;
     } else if (kind === 'Group' && name) {
       // Single group impersonation (backward compatibility)
       // Even if we are impersonating a group, we still need to set Impersonate-User to something or k8s will complain
       headers['Impersonate-User'] = name;
       headers['Impersonate-Group'] = name;
-    } else if (kind === 'UserWithGroups' && name && groups && groups.length > 0) {
-      // User with multiple groups impersonation
+    } else if (
+      (kind === 'UserWithGroups' || kind === 'ServiceAccount') &&
+      name &&
+      groups &&
+      groups.length > 0
+    ) {
+      // User or service account with multiple groups impersonation
       headers['Impersonate-User'] = name;
       // Note: This creates an array of values for the same header key
       headers['Impersonate-Group'] = groups;

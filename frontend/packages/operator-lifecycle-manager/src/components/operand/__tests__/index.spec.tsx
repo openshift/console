@@ -2,24 +2,29 @@ import type { ReactNode } from 'react';
 import { screen } from '@testing-library/react';
 import * as _ from 'lodash';
 import * as ReactRouter from 'react-router';
+import type { ConsoleDataViewColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { DetailsPage } from '@console/internal/components/factory';
 import type {
   CustomResourceDefinitionKind,
   K8sKind,
   K8sResourceKind,
 } from '@console/internal/module/k8s';
-import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
+import {
+  renderHookWithProviders,
+  renderWithProviders,
+} from '@console/shared/src/test-utils/unit-test-utils';
 import { testClusterServiceVersion, testResourceInstance } from '../../../../mocks';
 import { ClusterServiceVersionModel } from '../../../models';
 import type { ClusterServiceVersionKind } from '../../../types';
 import {
+  getOperandDataViewRows,
   OperandDetails,
   OperandDetailsPage,
-  OperandStatus,
-  OperandTableRow,
   ProvidedAPIPage,
   ProvidedAPIsPage,
 } from '../index';
+import { OperandStatus } from '../operand-status';
+import { useOperandColumns } from '../useOperandColumns';
 
 jest.mock('@patternfly/react-topology', () => ({}));
 
@@ -177,34 +182,96 @@ const baseOperand = {
   status: {},
 } as K8sResourceKind;
 
-describe('OperandTableRow', () => {
+const renderOperandRow = (obj: K8sResourceKind, ids: string[]) => {
+  const columns: ConsoleDataViewColumn<K8sResourceKind>[] = ids.map((id) => ({ id, title: id }));
+  const [cells] = getOperandDataViewRows(
+    [{ obj, activeColumnIDs: new Set(ids), rowData: undefined, index: 0 }],
+    columns,
+  );
+  return renderWithProviders(
+    <table>
+      <tbody>
+        <tr>
+          {cells.map(({ id, cell, props }) => (
+            <td key={id} {...props}>
+              {cell}
+            </td>
+          ))}
+        </tr>
+      </tbody>
+    </table>,
+  );
+};
+
+describe('useOperandColumns', () => {
+  it('includes the Namespace column when the list spans namespaces', () => {
+    const { result } = renderHookWithProviders(() => useOperandColumns(true));
+    expect(result.current.columns.map(({ id }) => id)).toEqual([
+      'name',
+      'kind',
+      'namespace',
+      'status',
+      'labels',
+      'lastUpdated',
+      'actions',
+    ]);
+  });
+
+  it('omits the Namespace column when the list is scoped to one namespace', () => {
+    const { result } = renderHookWithProviders(() => useOperandColumns(false));
+    expect(result.current.columns.map(({ id }) => id)).toEqual([
+      'name',
+      'kind',
+      'status',
+      'labels',
+      'lastUpdated',
+      'actions',
+    ]);
+  });
+});
+
+describe('getOperandDataViewRows', () => {
   it('renders operand name and namespace when provided', () => {
-    renderWithProviders(
-      <table>
-        <tbody>
-          <tr>
-            <OperandTableRow obj={testResourceInstance} columns={[]} showNamespace />
-          </tr>
-        </tbody>
-      </table>,
-    );
+    renderOperandRow(testResourceInstance, ['name', 'namespace']);
 
     expect(screen.getByText(testResourceInstance.metadata.name)).toBeVisible();
     expect(screen.getByText(testResourceInstance.metadata.namespace)).toBeVisible();
   });
 
   it('renders operand kind', () => {
-    renderWithProviders(
-      <table>
-        <tbody>
-          <tr>
-            <OperandTableRow obj={testResourceInstance} columns={[]} showNamespace />
-          </tr>
-        </tbody>
-      </table>,
-    );
+    renderOperandRow(testResourceInstance, ['kind']);
 
     expect(screen.getByText(testResourceInstance.kind)).toBeVisible();
+  });
+
+  it('keeps the operand kind available as a test hook on the kind cell', () => {
+    renderOperandRow(testResourceInstance, ['kind']);
+
+    expect(screen.getByRole('cell', { name: testResourceInstance.kind })).toHaveAttribute(
+      'data-test-operand-kind',
+      testResourceInstance.kind,
+    );
+  });
+
+  it('renders a placeholder when the operand has no namespace', () => {
+    renderOperandRow(
+      {
+        ...testResourceInstance,
+        metadata: { ...testResourceInstance.metadata, namespace: undefined },
+      },
+      ['namespace'],
+    );
+
+    expect(screen.getByRole('cell', { name: '-' })).toBeVisible();
+  });
+
+  it('preserves the requested column order and omits inactive columns', () => {
+    renderOperandRow(testResourceInstance, ['kind', 'name']);
+
+    const cells = screen.getAllByRole('cell');
+    expect(cells).toHaveLength(2);
+    expect(cells[0]).toHaveTextContent(testResourceInstance.kind);
+    expect(cells[1]).toHaveTextContent(testResourceInstance.metadata.name);
   });
 });
 

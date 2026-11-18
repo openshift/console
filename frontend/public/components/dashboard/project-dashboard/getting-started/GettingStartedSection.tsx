@@ -1,5 +1,8 @@
 import type { FC } from 'react';
-import { GettingStartedExpandableGrid } from '@console/shared/src/components/getting-started/GettingStartedExpandableGrid';
+import { MultiContentCard } from '@patternfly/react-component-groups';
+import { Button, CardTitle, Popover } from '@patternfly/react-core';
+import { RhUiCloseIcon, RhUiQuestionMarkCircleIcon } from '@patternfly/react-icons';
+import { useTranslation } from 'react-i18next';
 import { QuickStartGettingStartedCard } from '@console/shared/src/components/getting-started/QuickStartGettingStartedCard';
 import {
   GettingStartedShowState,
@@ -18,6 +21,7 @@ type GettingStartedSectionProps = {
 };
 
 export const GettingStartedSection: FC<GettingStartedSectionProps> = ({ userPreferenceKey }) => {
+  const { t } = useTranslation('public');
   const openshiftFlag = useFlag(FLAGS.OPENSHIFT);
 
   const [showState, setShowState, showStateLoaded] = useGettingStartedShowState(userPreferenceKey);
@@ -33,31 +37,65 @@ export const GettingStartedSection: FC<GettingStartedSectionProps> = ({ userPref
 
   return (
     <div className="co-dashboard-getting-started-section">
-      <GettingStartedExpandableGrid
-        isOpen={isGettingStartedSectionOpen}
-        setIsOpen={setIsGettingStartedSectionOpen}
-        setShowState={setShowState}
-      >
-        <SampleGettingStartedCard featured={['code-with-quarkus', 'java-springboot-basic']} />
-        <QuickStartGettingStartedCard
-          featured={[
-            // Available when the Red Hat OpenShift Pipelines operator is installed:
-            // - Deploying an application with a pipeline
-            'install-app-and-associate-pipeline',
+      <MultiContentCard
+        isExpandable
+        withDividers
+        variant="secondary"
+        data-test="getting-started"
+        defaultExpanded={isGettingStartedSectionOpen}
+        onExpand={() => setIsGettingStartedSectionOpen(!isGettingStartedSectionOpen)}
+        toggleContent={
+          <CardTitle data-test="title">
+            {t('Getting started resources')}{' '}
+            <Popover
+              bodyContent={t(
+                'Use our collection of resources to help you get started with the Console.',
+              )}
+              triggerAction="hover"
+            >
+              <Button
+                variant="plain"
+                hasNoPadding
+                aria-label={t('More info')}
+                icon={<RhUiQuestionMarkCircleIcon />}
+              />
+            </Popover>
+          </CardTitle>
+        }
+        actions={
+          <Button
+            variant="plain"
+            aria-label={t('Close')}
+            icon={<RhUiCloseIcon />}
+            onClick={() => setShowState(GettingStartedShowState.HIDE)}
+          />
+        }
+        cards={[
+          <SampleGettingStartedCard
+            key="samples"
+            featured={['code-with-quarkus', 'java-springboot-basic']}
+          />,
+          <QuickStartGettingStartedCard
+            key="quick-start"
+            featured={[
+              // Available when the Red Hat OpenShift Pipelines operator is installed:
+              // - Deploying an application with a pipeline
+              'install-app-and-associate-pipeline',
 
-            // Available when the Red Hat OpenShift Serverless operator is installed:
-            // - Exploring Serverless applications
-            'serverless-application',
+              // Available when the Red Hat OpenShift Serverless operator is installed:
+              // - Exploring Serverless applications
+              'serverless-application',
 
-            // All part of the console-operator:
-            // - Get started with Quarkus using s2i
-            'quarkus-with-s2i',
-            // - Get started with Spring
-            'spring-with-s2i',
-          ]}
-        />
-        <DeveloperFeaturesGettingStartedCard />
-      </GettingStartedExpandableGrid>
+              // All part of the console-operator:
+              // - Get started with Quarkus using s2i
+              'quarkus-with-s2i',
+              // - Get started with Spring
+              'spring-with-s2i',
+            ]}
+          />,
+          <DeveloperFeaturesGettingStartedCard key="developer-features" />,
+        ]}
+      />
     </div>
   );
 };

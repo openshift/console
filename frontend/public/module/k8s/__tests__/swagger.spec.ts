@@ -1,4 +1,5 @@
-import type { SwaggerAPISpec, SwaggerDefinitions } from '../swagger';
+import type { SwaggerDefinitions } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import type { SwaggerAPISpec } from '../swagger';
 
 const mockCoFetch = jest.fn();
 jest.mock('@console/shared/src/utils/console-fetch', () => ({

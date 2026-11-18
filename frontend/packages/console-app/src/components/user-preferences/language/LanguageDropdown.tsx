@@ -1,5 +1,5 @@
-import type { FC, Ref } from 'react';
-import { useState, useMemo, useEffect } from 'react';
+import type { FC, Ref, ReactNode } from 'react';
+import { useState, useMemo } from 'react';
 import type { MenuToggleElement } from '@patternfly/react-core';
 import {
   Skeleton,
@@ -24,7 +24,7 @@ const LanguageDropdown: FC = () => {
   const fireTelemetryEvent = useTelemetry();
   const [preferredLanguage, setPreferredLanguage, preferredLanguageLoaded] = usePreferredLanguage();
   const [isOpen, setIsOpen] = useState(false);
-  const options: JSX.Element[] = useMemo(
+  const options: ReactNode[] = useMemo(
     () =>
       Object.keys(supportedLocales).map((language) => (
         <SelectOption key={language} value={language}>
@@ -59,14 +59,16 @@ const LanguageDropdown: FC = () => {
     }
   };
 
-  useEffect(() => {
+  // Sync the checkbox with the stored preference once it has loaded; after
+  // that the checkbox reflects user toggles.
+  const [lastPreferredLanguageLoaded, setLastPreferredLanguageLoaded] =
+    useState(preferredLanguageLoaded);
+  if (preferredLanguageLoaded !== lastPreferredLanguageLoaded) {
+    setLastPreferredLanguageLoaded(preferredLanguageLoaded);
     if (preferredLanguageLoaded) {
       setIsUsingDefault(!preferredLanguage);
     }
-    // run this hook only after resources have loaded
-    // to set the using default language checkbox when the form loads
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [preferredLanguageLoaded]);
+  }
 
   return preferredLanguageLoaded ? (
     <>

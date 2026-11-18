@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useMemo, useCallback } from 'react';
+import { useMemo, useCallback, useState } from 'react';
 import type { ChartAreaProps } from '@patternfly/react-charts/victory';
 import {
   Chart,
@@ -14,7 +14,7 @@ import {
   t_global_icon_color_status_warning_default as warningColor,
   t_global_icon_color_status_danger_default as dangerColor,
 } from '@patternfly/react-tokens';
-import i18n from 'i18next';
+import * as i18n from 'i18next';
 import * as _ from 'lodash';
 import type { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import { processFrame } from '@console/shared/src/graph-helper/data-utils';
@@ -196,7 +196,7 @@ export const AreaChart: FC<AreaChartProps> = ({
 };
 
 export const Area: FC<AreaProps> = ({
-  endTime = Date.now(),
+  endTime: endTimeProp,
   namespace,
   query,
   limitQuery,
@@ -206,6 +206,13 @@ export const Area: FC<AreaProps> = ({
   timespan = DEFAULT_PROMETHEUS_TIMESPAN,
   ...rest
 }) => {
+  const [endTime, setEndTime] = useState(() => endTimeProp ?? Date.now());
+  const [prevEndTimeProp, setPrevEndTimeProp] = useState(endTimeProp);
+  if (prevEndTimeProp !== endTimeProp) {
+    setPrevEndTimeProp(endTimeProp);
+    // Pass an updater so that Date.now() is not evaluated directly during render
+    setEndTime(() => endTimeProp ?? Date.now());
+  }
   const prometheusPollProps = {
     endpoint: PrometheusEndpoint.QUERY_RANGE,
     endTime,

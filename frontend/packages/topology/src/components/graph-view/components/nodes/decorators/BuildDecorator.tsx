@@ -18,7 +18,7 @@ interface BuildDecoratorProps {
 }
 
 export const BuildDecorator: FC<BuildDecoratorProps> = ({ element, radius, x, y }) => {
-  const ref = useRef();
+  const ref = useRef(undefined);
   const { t } = useTranslation('topology');
   const resource = getResource(element);
   const { buildConfigs } = useBuildConfigsWatcher(resource);

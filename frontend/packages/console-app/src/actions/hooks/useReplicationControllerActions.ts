@@ -95,7 +95,7 @@ export const useReplicationControllerActions = <
       }),
     }),
     // missing openCancelRolloutConfirm dependency, that causes max depth exceeded error
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
     [t, kind, obj, launchModal],
   );
 

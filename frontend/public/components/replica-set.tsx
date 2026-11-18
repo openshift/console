@@ -1,0 +1,319 @@
+import type { FC } from 'react';
+import { useMemo, Suspense } from 'react';
+import {
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+  Grid,
+  GridItem,
+} from '@patternfly/react-core';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import {
+  ConsoleDataView,
+  getLabelsColumnWidthStyleProp,
+} from '@console/app/src/components/data-view/ConsoleDataView';
+import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
+import type {
+  ConsoleDataViewCell,
+  ConsoleDataViewColumn,
+  GetDataViewRows,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
+import { ActionServiceProvider } from '@console/shared/src/components/actions/ActionServiceProvider';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
+import { ActionMenu } from '@console/shared/src/components/actions/menu/ActionMenu';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { DASH } from '@console/shared/src/constants/ui';
+import { ReplicaSetModel } from '../models';
+import type { K8sModel, K8sResourceKind, ReplicaSetKind } from '../module/k8s';
+import { referenceFor, referenceForModel } from '../module/k8s';
+import { ResourceEventStream } from './events';
+import { DetailsPage } from './factory/details';
+import { ListPage } from './factory/list-page';
+import { sorts } from './factory/table';
+import { sortResourceByValue } from './factory/Table/sort';
+import { AsyncComponent } from './utils/async';
+import { ContainerTable } from './utils/container-table';
+import { ResourceSummary, ResourcePodCount, RuntimeClass } from './utils/details-page';
+import { SectionHeading } from './utils/headings';
+import { navFactory, PodsComponent } from './utils/horizontal-nav';
+import { LabelList } from './utils/label-list';
+import { OwnerReferences } from './utils/owner-references';
+import { ResourceLink } from './utils/resource-link';
+import { LoadingBox } from './utils/status-box';
+import { VolumesTable } from './volumes-table';
+import { ReplicasCount } from './workload-table';
+
+const Details: FC<{ obj: ReplicaSetKind }> = ({ obj: replicaSet }) => {
+  const revision = _.get(replicaSet, [
+    'metadata',
+    'annotations',
+    'deployment.kubernetes.io/revision',
+  ]);
+  const { t } = useTranslation('public');
+  return (
+    <>
+      <PaneBody>
+        <SectionHeading text={t('ReplicaSet details')} />
+        <Grid hasGutter>
+          <GridItem md={6}>
+            <ResourceSummary resource={replicaSet} showPodSelector showNodeSelector showTolerations>
+              {revision && (
+                <DescriptionListGroup>
+                  <DescriptionListTerm>{t('Deployment revision')}</DescriptionListTerm>
+                  <DescriptionListDescription>{revision}</DescriptionListDescription>
+                </DescriptionListGroup>
+              )}
+            </ResourceSummary>
+          </GridItem>
+          <GridItem md={6}>
+            <DescriptionList>
+              <ResourcePodCount resource={replicaSet} />
+              <RuntimeClass obj={replicaSet} />
+              <PodDisruptionBudgetField obj={replicaSet} />
+            </DescriptionList>
+          </GridItem>
+        </Grid>
+      </PaneBody>
+      <PaneBody>
+        <SectionHeading text={t('Containers')} />
+        <ContainerTable containers={replicaSet.spec.template.spec.containers} />
+      </PaneBody>
+      <PaneBody>
+        <VolumesTable resource={replicaSet} heading={t('Volumes')} />
+      </PaneBody>
+    </>
+  );
+};
+
+const EnvironmentPage: FC<EnvironmentPageProps> = (props) => (
+  <AsyncComponent
+    loader={() => import('./environment').then((c) => c.EnvironmentPage)}
+    {...props}
+  />
+);
+
+const envPath = ['spec', 'template', 'spec', 'containers'];
+const EnvironmentTab: FC<{ obj: ReplicaSetKind }> = (props) => (
+  <EnvironmentPage
+    obj={props.obj}
+    rawEnvData={props.obj.spec.template.spec}
+    envPath={envPath}
+    readOnly={false}
+  />
+);
+
+const ReplicaSetPods: FC<{ obj: ReplicaSetKind }> = (props) => (
+  <PodsComponent {...props} showNodes />
+);
+
+const { details, editYaml, pods, envEditor, events } = navFactory;
+const ReplicaSetsDetailsPage: FC = (props) => {
+  const customActionMenu = (kindObj: K8sModel, obj: ReplicaSetKind) => {
+    const resourceKind = referenceForModel(kindObj);
+    const context = { [resourceKind]: obj };
+    return (
+      <ActionServiceProvider context={context}>
+        {({ actions, options, loaded }) =>
+          loaded && (
+            <ActionMenu actions={actions} options={options} variant={ActionMenuVariant.DROPDOWN} />
+          )
+        }
+      </ActionServiceProvider>
+    );
+  };
+
+  return (
+    <DetailsPage
+      {...props}
+      kind={referenceForModel(ReplicaSetModel)}
+      customActionMenu={customActionMenu}
+      pages={[
+        details(Details),
+        editYaml(),
+        pods(ReplicaSetPods),
+        envEditor(EnvironmentTab),
+        events(ResourceEventStream),
+      ]}
+    />
+  );
+};
+
+const tableColumnInfo = [
+  { id: 'name' },
+  { id: 'namespace' },
+  { id: 'status' },
+  { id: 'labels' },
+  { id: 'owner' },
+  { id: 'created' },
+  { id: '' },
+];
+
+const getDataViewRows: GetDataViewRows<ReplicaSetKind> = (data, columns) =>
+  data.map(({ obj }) => {
+    const { name, namespace } = obj.metadata;
+    const kind = referenceForModel(ReplicaSetModel);
+    const resourceKind = referenceFor(obj);
+    const context = { [resourceKind]: obj };
+
+    const rowCells: { [columnId: string]: Omit<ConsoleDataViewCell, 'id'> } = {
+      [tableColumnInfo[0].id]: {
+        cell: (
+          <ResourceLink
+            groupVersionKind={getGroupVersionKindForModel(ReplicaSetModel)}
+            name={name}
+            namespace={namespace}
+          />
+        ),
+      },
+      [tableColumnInfo[1].id]: {
+        cell: <ResourceLink kind="Namespace" name={namespace} />,
+      },
+      [tableColumnInfo[2].id]: {
+        cell: <ReplicasCount obj={obj} kind={kind} />,
+      },
+      [tableColumnInfo[3].id]: {
+        cell: <LabelList kind={kind} labels={obj.metadata.labels} />,
+      },
+      [tableColumnInfo[4].id]: {
+        cell: <OwnerReferences resource={obj} />,
+      },
+      [tableColumnInfo[5].id]: {
+        cell: <Timestamp timestamp={obj.metadata.creationTimestamp} />,
+      },
+      [tableColumnInfo[6].id]: {
+        cell: <LazyActionMenu context={context} />,
+      },
+    };
+
+    return columns.map(({ id }) => {
+      const cell = rowCells[id]?.cell || DASH;
+      return {
+        id,
+        props: rowCells[id]?.props,
+        cell,
+      };
+    });
+  });
+
+const useReplicaSetsColumns = (): {
+  columns: ConsoleDataViewColumn<ReplicaSetKind>[];
+} => {
+  const { t } = useTranslation('public');
+
+  const columns = useMemo<ConsoleDataViewColumn<ReplicaSetKind>[]>(
+    () => [
+      {
+        type: 'name',
+        title: t('Name'),
+        id: tableColumnInfo[0].id,
+        sort: 'metadata.name',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('Namespace'),
+        id: tableColumnInfo[1].id,
+        sort: 'metadata.namespace',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('Status'),
+        id: tableColumnInfo[2].id,
+        sort: (data, direction) => data.sort(sortResourceByValue(direction, sorts.numReplicas)),
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('Labels'),
+        id: tableColumnInfo[3].id,
+        sort: 'metadata.labels',
+        props: {
+          modifier: 'nowrap',
+          ...getLabelsColumnWidthStyleProp(),
+        },
+      },
+      {
+        title: t('Owner'),
+        id: tableColumnInfo[4].id,
+        sort: 'metadata.ownerReferences[0].name',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('Created'),
+        id: tableColumnInfo[5].id,
+        sort: 'metadata.creationTimestamp',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      { type: 'actions', id: tableColumnInfo[6].id },
+    ],
+    [t],
+  );
+
+  return { columns };
+};
+
+const ReplicaSetsList: FC<ReplicaSetsListProps> = ({ data, loaded, ...props }) => {
+  const { columns } = useReplicaSetsColumns();
+
+  return (
+    <Suspense fallback={<LoadingBox />}>
+      <ConsoleDataView
+        {...props}
+        id={ReplicaSetModel}
+        label={ReplicaSetModel.labelPlural}
+        data={data}
+        loaded={loaded}
+        columns={columns}
+        getDataViewRows={getDataViewRows}
+      />
+    </Suspense>
+  );
+};
+const ReplicaSetsPage: FC<ReplicaSetsPageProps> = (props) => {
+  const { canCreate = true } = props;
+  return (
+    <ListPage
+      {...props}
+      kind={referenceForModel(ReplicaSetModel)}
+      ListComponent={ReplicaSetsList}
+      canCreate={canCreate}
+      omitFilterToolbar
+    />
+  );
+};
+
+interface EnvironmentPageProps {
+  obj: K8sResourceKind;
+  rawEnvData: any;
+  envPath: string[];
+  readOnly: boolean;
+}
+
+interface ReplicaSetsListProps {
+  data: ReplicaSetKind[];
+  loaded: boolean;
+  loadError?: unknown;
+  mock?: boolean;
+}
+
+interface ReplicaSetsPageProps {
+  canCreate?: boolean;
+  showTitle?: boolean;
+  namespace?: string;
+  selector?: any;
+}
+
+export { ReplicaSetsPage, ReplicaSetsDetailsPage };

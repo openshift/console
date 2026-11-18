@@ -9,7 +9,7 @@ export interface ProgressiveListItemProps {
 }
 
 export const ProgressiveListItem: FC<ProgressiveListItemProps> = ({ children }) => {
-  const element = useRef<HTMLDivElement>();
+  const element = useRef<HTMLDivElement>(undefined);
   useEffect(() => {
     element.current.scrollIntoView({ behavior: 'smooth' });
   }, []);

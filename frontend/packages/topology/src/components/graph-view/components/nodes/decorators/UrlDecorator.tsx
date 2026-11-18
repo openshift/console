@@ -16,7 +16,7 @@ interface DefaultDecoratorProps {
 }
 
 export const UrlDecorator: FC<DefaultDecoratorProps> = ({ element, radius, x, y }) => {
-  const ref = useRef();
+  const ref = useRef(undefined);
   const { t } = useTranslation('topology');
   const resourceObj = getResource(element);
   const url = useRoutesURL(resourceObj);

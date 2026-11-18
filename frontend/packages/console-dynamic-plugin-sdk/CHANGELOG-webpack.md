@@ -1,21 +1,43 @@
 # Changelog for `@openshift-console/dynamic-plugin-sdk-webpack`
 
-Console plugin SDK packages follow a semver scheme where the major and minor version number indicates
-the earliest supported OCP Console version, and the patch version number indicates the release of that
-particular package.
+Console plugin SDK packages follow a semver scheme where the major and minor version number
+indicates the earliest supported OCP Console version, and the patch version number indicates the
+release of that particular package.
 
-For released (GA) versions of Console, use `4.x.z` packages.
-For current development version of Console, use `4.x.0-prerelease.n` packages.
+For released (GA) versions of Console, use `4.x.z` packages. For current development version of
+Console, use `4.x.0-prerelease.n` packages.
 
-For older 1.x plugin SDK packages, refer to "OpenShift Console Versions vs SDK Versions" compatibility
-table in [Console dynamic plugins README](./README.md).
+For older 1.x plugin SDK packages, refer to "OpenShift Console Versions vs SDK Versions"
+compatibility table in [Console dynamic plugins README](./README.md).
 
-## 4.23.0-prerelease.6 - TBD
+## 5.1.0-prerelease.2 - TBD
 
-- Add `ConsoleRemotePlugin` option `baseDir` to support multi-plugin builds ([OCPBUGS-111520], [#17002])
+- **Deprecated**: `ConsoleRemotePlugin` shared dynamic module option `modulePaths` is now
+  deprecated, prefer using `baseDir` ([CONSOLE-5065], [#17439])
+- Add `react-dom` and `react/jsx-runtime` to Console provided shared modules ([CONSOLE-5571],
+  [#17462])
+- `ConsoleRemotePlugin` uses `meta/shared-modules.json` to validate shared module dependencies
+  ([CONSOLE-5065], [#17439])
+- Add `ConsoleRemotePlugin` option `baseDir` to support multi-plugin builds ([OCPBUGS-111520],
+  [#17002])
 - Expand PatternFly CSS package list to include `@patternfly/patternfly` ([#17029])
 - Warn when the plugin has a direct dependency on PatternFly CSS packages ([#17029])
-- Minimum compatible version of `@rspack/core` peer dependency increased to `2.1.10` ([OCPBUGS-109592], [#16978])
+
+## 5.1.0-prerelease.1 - 2026-10-16
+
+- Add `ConsoleRemotePlugin` option `baseDir` to support multi-plugin builds ([OCPBUGS-111520],
+  [#17002])
+- Fix "Shared module is not available for eager consumption" runtime errors related to dynamic
+  modules ([OCPBUGS-127046], [#17318])
+- Update TSConfig for package build ([CONSOLE-5065], [#17140])
+- Dependency bumps for `read-pkg` ([CONSOLE-5065], [#17259])
+
+## 4.23.0 - 2026-10-16
+
+> Initial release for OCP Console 4.23.
+
+- Minimum compatible version of `@rspack/core` peer dependency increased to `2.1.10`
+  ([OCPBUGS-109592], [#16978])
 
 ## 4.23.0-prerelease.5 - 2026-08-04
 
@@ -24,11 +46,13 @@ table in [Console dynamic plugins README](./README.md).
 ## 4.23.0-prerelease.4 - 2026-07-14
 
 - Add support for building plugins with rspack ([CONSOLE-5423], [#16752])
-- `webpack` and `rspack` peer dependencies are now optional, but one of them must be installed ([CONSOLE-5423], [#16752])
+- `webpack` and `rspack` peer dependencies are now optional, but one of them must be installed
+  ([CONSOLE-5423], [#16752])
 
 ## 4.23.0-prerelease.3 - 2026-07-07
 
-- `ConsoleRemotePlugin` shared dynamic module option `skipImportPrefixes` allows extending the default PatternFly module skip list to suppress build warnings ([OCPBUGS-88319], [#16585])
+- `ConsoleRemotePlugin` shared dynamic module option `skipImportPrefixes` allows extending the
+  default PatternFly module skip list to suppress build warnings ([OCPBUGS-88319], [#16585])
 
 ## 4.23.0-prerelease.2 - N/A
 
@@ -37,33 +61,42 @@ table in [Console dynamic plugins README](./README.md).
 ## 4.23.0-prerelease.1 - 2026-05-19
 
 - Fix `resolveDynamicModuleMaps` to skip unavailable packages ([OCPBUGS-84338], [#16340])
-- `ConsoleRemotePlugin` warns when using either deprecated or aliased Console provided shared modules ([CONSOLE-5065], [#16376])
+- `ConsoleRemotePlugin` warns when using either deprecated or aliased Console provided shared
+  modules ([CONSOLE-5065], [#16376])
 
 ## 4.22.0 - 2026-06-09
 
 > Initial release for OCP Console 4.22.
 
 - Fix `resolveDynamicModuleMaps` to skip unavailable packages ([OCPBUGS-84338], [#16340])
-- `ConsoleRemotePlugin` warns when using either deprecated or aliased Console provided shared modules ([CONSOLE-5065], [#16376])
+- `ConsoleRemotePlugin` warns when using either deprecated or aliased Console provided shared
+  modules ([CONSOLE-5065], [#16376])
 
 ## 4.22.0-prerelease.3 - 2026-04-24
 
-- **Breaking**: `ConsoleRemotePlugin` shared dynamic module option `transformImports` renamed to `moduleFilter` ([CONSOLE-5065], [#16224])
+- **Breaking**: `ConsoleRemotePlugin` shared dynamic module option `transformImports` renamed to
+  `moduleFilter` ([CONSOLE-5065], [#16224])
 - Bump `@openshift/dynamic-plugin-sdk-webpack` version to `5.1.1` ([OCPBUGS-83823], [#15655])
-- Update the default list of PatternFly packages that support dynamic modules ([CONSOLE-5065], [#16182])
-- Add support for `dist/dynamic-modules.json` when resolving dynamic module maps ([CONSOLE-5065], [#16224])
+- Update the default list of PatternFly packages that support dynamic modules ([CONSOLE-5065],
+  [#16182])
+- Add support for `dist/dynamic-modules.json` when resolving dynamic module maps ([CONSOLE-5065],
+  [#16224])
 
 ## 4.22.0-prerelease.2 - 2026-03-26
 
-- **Deprecated**: `loadPluginEntry` callback is deprecated in favor of `__load_plugin_entry__`. Migrate by
-  building your plugin with `ConsoleRemotePlugin` version 4.22 or later. Runtime support for older plugins
-  built for 4.21 or older will be removed in a future version of OCP Console. ([CONSOLE-3769], [#15904])
-- `ConsoleRemotePlugin` warns when using deprecated Console provided shared modules ([CONSOLE-5135], [#16178])
+- **Deprecated**: `loadPluginEntry` callback is deprecated in favor of `__load_plugin_entry__`.
+  Migrate by building your plugin with `ConsoleRemotePlugin` version 4.22 or later. Runtime support
+  for older plugins built for 4.21 or older will be removed in a future version of OCP Console.
+  ([CONSOLE-3769], [#15904])
+- `ConsoleRemotePlugin` warns when using deprecated Console provided shared modules ([CONSOLE-5135],
+  [#16178])
 
 ## 4.22.0-prerelease.1 - 2025-01-21
 
-- **Breaking**: Minimum compatible version of `webpack` increased to `^5.100.0` ([CONSOLE-3769], [#15945])
-- **Breaking**: Minimum compatible version of `typescript` increased to `^5.9.3` ([CONSOLE-3769], [#15945])
+- **Breaking**: Minimum compatible version of `webpack` increased to `^5.100.0` ([CONSOLE-3769],
+  [#15945])
+- **Breaking**: Minimum compatible version of `typescript` increased to `^5.9.3` ([CONSOLE-3769],
+  [#15945])
 - `webpack` is now a required peer dependency ([CONSOLE-5050], [#15934])
 
 ## 4.21.0 - 2026-03-09
@@ -72,7 +105,8 @@ table in [Console dynamic plugins README](./README.md).
 
 ## 4.21.0-prerelease.1 - 2025-12-04
 
-- Remove usage of direct `webpack` imports in favor of `compiler.webpack` ([OCPBUGS-66345], [#15802])
+- Remove usage of direct `webpack` imports in favor of `compiler.webpack` ([OCPBUGS-66345],
+  [#15802])
 
 ## 4.20.0 - 2025-11-24
 
@@ -89,9 +123,10 @@ table in [Console dynamic plugins README](./README.md).
 ## 4.19.0-prerelease.2 - 2025-05-20
 
 > [!IMPORTANT]
-> This release includes a change in generated JS code to use new JSX transform `react-jsx` introduced
-> in React 17. Plugins should update their TSConfig files accordingly (i.e. set `jsx` to `react-jsx`)
-> and run the `update-react-imports` [codemod](https://github.com/reactjs/react-codemod) if needed.
+> This release includes a change in generated JS code to use new JSX transform `react-jsx`
+> introduced in React 17. Plugins should update their TSConfig files accordingly (i.e. set `jsx` to
+> `react-jsx`) and run the `update-react-imports`
+> [codemod](https://github.com/reactjs/react-codemod) if needed.
 
 - Add `@patternfly/react-topology` to Console provided shared modules ([OCPBUGS-55323], [#14993])
 - Skip processing type-only dynamic module imports ([OCPBUGS-53030], [#14861])
@@ -136,13 +171,16 @@ table in [Console dynamic plugins README](./README.md).
 
 ## 1.0.1 - 2024-03-19
 
-- Fix bugs in `ConsoleRemotePlugin` found in kubevirt-ui/kubevirt-plugin#1804 ([OCPBUGS-30762], [#13657])
+- Fix bugs in `ConsoleRemotePlugin` found in kubevirt-ui/kubevirt-plugin#1804 ([OCPBUGS-30762],
+  [#13657])
 
 ## 1.0.0 - 2024-02-09
 
-> Initial v1 release. Changes listed here refer to the latest 0.0.x version (0.0.11) of this package.
+> Initial v1 release. Changes listed here refer to the latest 0.0.x version (0.0.11) of this
+> package.
 
-- Update build-time infra to use webpack code from OpenShift Dynamic Plugin SDK ([CONSOLE-3705], [#13188])
+- Update build-time infra to use webpack code from OpenShift Dynamic Plugin SDK ([CONSOLE-3705],
+  [#13188])
 - Prevent PatternFly styles from being included in plugin builds ([CONSOLE-3853], [#13388])
 - Optimize module federation of PatternFly packages via dynamic modules ([CONSOLE-3853], [#13521])
 
@@ -156,6 +194,7 @@ table in [Console dynamic plugins README](./README.md).
 [CONSOLE-5065]: https://issues.redhat.com/browse/CONSOLE-5065
 [CONSOLE-5135]: https://issues.redhat.com/browse/CONSOLE-5135
 [CONSOLE-5423]: https://issues.redhat.com/browse/CONSOLE-5423
+[CONSOLE-5571]: https://issues.redhat.com/browse/CONSOLE-5571
 [OCPBUGS-30762]: https://issues.redhat.com/browse/OCPBUGS-30762
 [OCPBUGS-30824]: https://issues.redhat.com/browse/OCPBUGS-30824
 [OCPBUGS-31901]: https://issues.redhat.com/browse/OCPBUGS-31901
@@ -173,6 +212,7 @@ table in [Console dynamic plugins README](./README.md).
 [OCPBUGS-88319]: https://issues.redhat.com/browse/OCPBUGS-88319
 [OCPBUGS-109592]: https://issues.redhat.com/browse/OCPBUGS-109592
 [OCPBUGS-111520]: https://issues.redhat.com/browse/OCPBUGS-111520
+[OCPBUGS-127046]: https://issues.redhat.com/browse/OCPBUGS-127046
 [#13188]: https://github.com/openshift/console/pull/13188
 [#13388]: https://github.com/openshift/console/pull/13388
 [#13521]: https://github.com/openshift/console/pull/13521
@@ -195,6 +235,7 @@ table in [Console dynamic plugins README](./README.md).
 [#15904]: https://github.com/openshift/console/pull/15904
 [#15934]: https://github.com/openshift/console/pull/15934
 [#15945]: https://github.com/openshift/console/pull/15945
+[#16115]: https://github.com/openshift/console/pull/16115
 [#16178]: https://github.com/openshift/console/pull/16178
 [#16182]: https://github.com/openshift/console/pull/16182
 [#16224]: https://github.com/openshift/console/pull/16224
@@ -202,7 +243,11 @@ table in [Console dynamic plugins README](./README.md).
 [#16376]: https://github.com/openshift/console/pull/16376
 [#16585]: https://github.com/openshift/console/pull/16585
 [#16752]: https://github.com/openshift/console/pull/16752
-[#16115]: https://github.com/openshift/console/pull/16115
 [#16978]: https://github.com/openshift/console/pull/16978
 [#17002]: https://github.com/openshift/console/pull/17002
 [#17029]: https://github.com/openshift/console/pull/17029
+[#17140]: https://github.com/openshift/console/pull/17140
+[#17259]: https://github.com/openshift/console/pull/17259
+[#17318]: https://github.com/openshift/console/pull/17318
+[#17439]: https://github.com/openshift/console/pull/17439
+[#17462]: https://github.com/openshift/console/pull/17462

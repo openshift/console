@@ -19,13 +19,15 @@ export const MultiStreamLogs: FC<MultiStreamLogsProps> = ({
   taskName,
   setCurrentLogsGetter,
 }) => {
-  const scrollPane = useRef<HTMLDivElement>();
+  const scrollPane = useRef<HTMLDivElement>(undefined);
   const completedRef = useRef<boolean[]>([]);
   const [renderToCount, setRenderToCount] = useState(0);
   const [scrollDirection, handleScrollCallback] = useScrollDirection();
   const { containers, stillFetching } = getRenderContainers(resource);
-  const dataRef = useRef<ContainerSpec[]>(null);
-  dataRef.current = containers;
+  const dataRef = useRef<ContainerSpec[]>(containers);
+  useEffect(() => {
+    dataRef.current = containers;
+  });
 
   useEffect(() => {
     setCurrentLogsGetter(() => scrollPane.current?.innerText);

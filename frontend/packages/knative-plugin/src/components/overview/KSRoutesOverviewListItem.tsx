@@ -1,6 +1,5 @@
 import type { FC } from 'react';
-import { Grid, GridItem, ListItem } from '@patternfly/react-core';
-import { ClipboardCopy } from '@patternfly/react-core/dist/dynamic/components/ClipboardCopy';
+import { ClipboardCopy, Grid, GridItem, ListItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { ResourceLink, ExternalLinkWithCopy } from '@console/internal/components/utils';
 import type { K8sResourceKind } from '@console/internal/module/k8s';

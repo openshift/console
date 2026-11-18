@@ -16,8 +16,11 @@ jest.mock('@console/dynamic-plugin-sdk/src/utils/jsonc', () => ({
 }));
 
 jest.mock('@console/dynamic-plugin-sdk/src/webpack/ConsoleRemotePlugin', () => ({
-  ...jest.requireActual('@console/dynamic-plugin-sdk/src/webpack/ConsoleRemotePlugin'),
   validateConsoleExtensionsFileSchema: jest.fn(),
+}));
+
+jest.mock('read-pkg', () => ({
+  readPackageSync: jest.fn(),
 }));
 
 jest.mock('fs', () => ({

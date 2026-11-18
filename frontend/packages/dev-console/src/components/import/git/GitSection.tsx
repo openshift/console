@@ -12,12 +12,12 @@ import { GitProvider, ImportStrategy } from '@console/git-service/src/types/git'
 import { RepoStatus } from '@console/git-service/src/types/repo';
 import type { DetectedBuildType } from '@console/git-service/src/utils/build-tool-type-detector';
 import { detectImportStrategies } from '@console/git-service/src/utils/import-strategy-detector';
-import { getActiveNamespace } from '@console/internal/actions/ui';
 import { BuildStrategyType } from '@console/internal/components/utils/build-utils';
 import { FLAG_KNATIVE_SERVING_SERVICE } from '@console/knative-plugin/src/const';
 import { ServiceModel as ksvcModel } from '@console/knative-plugin/src/models';
 import { ServerlessBuildStrategyType } from '@console/knative-plugin/src/types';
 import { InputField } from '@console/shared/src/components/formik-fields/InputField';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { useDebounceCallback } from '@console/shared/src/hooks/useDebounceCallback';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { useFormikValidationFix } from '@console/shared/src/hooks/useFormikValidationFix';
@@ -96,7 +96,7 @@ const GitSection: FC<GitSectionProps> = ({
   flowType,
 }) => {
   const { t } = useTranslation('devconsole');
-  const inputRef = useRef<HTMLInputElement>();
+  const inputRef = useRef<HTMLInputElement>(undefined);
 
   const {
     dirty,
@@ -109,11 +109,12 @@ const GitSection: FC<GitSectionProps> = ({
     setFieldTouched: formikSetFieldTouched,
   } = useFormikContext<GitSectionFormData>();
 
+  const [activeNamespace] = useActiveNamespace();
   const isKnativeServingAvailable = useFlag(FLAG_KNATIVE_SERVING_SERVICE);
   const [canCreateKnativeService, canCreateKnativeServiceLoading] = useAccessReview({
     group: ksvcModel.apiGroup,
     resource: ksvcModel.plural,
-    namespace: getActiveNamespace(),
+    namespace: activeNamespace,
     verb: 'create',
   });
 
@@ -615,14 +616,12 @@ const GitSection: FC<GitSectionProps> = ({
             }
             // handleSearch(containerImport.image);
           } else {
-            // eslint-disable-next-line no-console
             console.error(
               `Unsupported ConsoleSample "${sampleName}" source type ${sample.spec?.source?.type}`,
             );
           }
         })
         .catch((error) => {
-          // eslint-disable-next-line no-console
           console.error(`Error while loading ConsoleSample "${sampleName}":`, error);
         });
     } else if (formType === 'sample' && imageStreamTagSampleRepo) {
@@ -630,7 +629,7 @@ const GitSection: FC<GitSectionProps> = ({
     }
 
     // Disable deps to load the samples only once when the component is loaded.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [canCreateKnativeServiceLoading]);
 
   return (

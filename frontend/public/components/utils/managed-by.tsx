@@ -54,7 +54,6 @@ export const ManagedByOperatorLink: FC<ManagedByLinkProps> = ({ obj, className }
     k8sList(ClusterServiceVersionModel, { ns: namespace })
       .then(setData)
       .catch((e) => {
-        // eslint-disable-next-line no-console
         console.error('Could not fetch CSVs', e);
       });
   }, [namespace, setData]);

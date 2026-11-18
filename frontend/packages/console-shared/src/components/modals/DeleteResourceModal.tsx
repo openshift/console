@@ -54,6 +54,7 @@ const DeleteResourceForm: FC<FormikProps<FormikValues> & DeleteResourceModalProp
         titleIconVariant="warning"
         labelId="delete-resource-modal-title"
         data-test-id="modal-title"
+        data-test="modal-title"
       />
       <ModalBody>
         <Content component={ContentVariants.p}>

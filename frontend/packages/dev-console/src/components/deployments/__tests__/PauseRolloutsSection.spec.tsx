@@ -1,8 +1,8 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Resources } from '../../import/import-types';
-import MockForm from '../__mocks__/MockForm';
 import PauseRolloutsSection from '../PauseRolloutsSection';
+import MockForm from './MockForm';
 
 describe('PauseRolloutsSection', () => {
   it('checkbox should work correctly', async () => {

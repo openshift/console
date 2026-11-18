@@ -3,10 +3,8 @@ import { Component } from 'react';
 import { Label as PfLabel, LabelGroup as PfLabelGroup } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
 import * as _ from 'lodash';
-/* eslint-disable import/named */
 import type { WithTranslation } from 'react-i18next';
 import { withTranslation } from 'react-i18next';
-/* eslint-enable import/named */
 import type { K8sResourceKindReference } from '../../module/k8s';
 import { kindForReference } from '../../module/k8s';
 

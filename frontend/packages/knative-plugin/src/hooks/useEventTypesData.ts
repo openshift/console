@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { referenceForModel } from '@console/internal/module/k8s';
@@ -25,7 +25,12 @@ export const useEventTypesData = (namespace: string): [K8sResourceKind[], boolea
     [key: string]: K8sResourceKind[];
   }>(watchedResources);
 
-  useEffect(() => {
+  // The event types keep their last value while the watched resources are
+  // reloading. useK8sWatchResources returns an identity-stable object, so
+  // the comparison converges and does not loop.
+  const [prevResources, setPrevResources] = useState<typeof extraResources | null>(null);
+  if (prevResources !== extraResources) {
+    setPrevResources(extraResources);
     const resDataLoaded = Object.keys(extraResources).some((key) => extraResources[key].loaded);
     const resDataloadError = Object.keys(extraResources).every(
       (key) => extraResources[key].loadError,
@@ -39,7 +44,7 @@ export const useEventTypesData = (namespace: string): [K8sResourceKind[], boolea
     } else if (resDataloadError) {
       setEventTypesLoadError(eventTypesData.loadError);
     }
-  }, [extraResources]);
+  }
 
   return [eventTypes, eventTypesLoaded, eventTypesLoadError];
 };

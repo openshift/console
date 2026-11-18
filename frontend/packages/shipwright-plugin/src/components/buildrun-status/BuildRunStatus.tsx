@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import i18next from 'i18next';
+import * as i18next from 'i18next';
 import type { StatusProps } from '@console/dynamic-plugin-sdk/src/app/components/status/Status';
 import Status from '@console/dynamic-plugin-sdk/src/app/components/status/Status';
 import type { BuildRun } from '../../types';

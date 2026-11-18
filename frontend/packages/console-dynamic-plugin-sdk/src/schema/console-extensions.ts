@@ -26,6 +26,7 @@ import type {
   DashboardsOverviewResourceActivity,
   DashboardsOverviewPrometheusActivity,
 } from '../extensions/dashboards';
+import type { ConsoleDataViewTableColumn } from '../extensions/dataview';
 import type { DetailsItem } from '../extensions/details-item';
 import type {
   FeatureFlag,
@@ -123,6 +124,7 @@ export type SupportedExtension =
   | TopologyDisplayFilters
   | TopologyDecoratorProvider
   | TopologyRelationshipProvider
+  | ConsoleDataViewTableColumn
   | CreateResource
   | CreateResource
   | UserPreferenceGroup

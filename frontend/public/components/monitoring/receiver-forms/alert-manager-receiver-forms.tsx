@@ -1,4 +1,3 @@
-/* eslint-disable camelcase, tsdoc/syntax */
 import type { FC, Ref } from 'react';
 import { memo, useEffect, useReducer, useState } from 'react';
 import type { MenuToggleElement, SelectProps } from '@patternfly/react-core';
@@ -133,7 +132,6 @@ const formReducer = (formValues: FormState, action: FormAction): FormState => {
       ...action.payload,
     };
   }
-  // eslint-disable-next-line no-console
   console.error('Unrecognized Alertmanager form reducer action', action);
   return formValues;
 };
@@ -524,11 +522,14 @@ const ReceiverWrapper = memo<ReceiverFormsWrapperProps>(({ obj, ...props }) => {
   const { alertManagerBaseURL } = window.SERVER_FLAGS;
   const [alertmanagerGlobals, setAlertmanagerGlobals] = useState();
   const [loaded, setLoaded] = useState(false);
-  const [loadError, setLoadError] = useState<APIError>();
+  // The Alertmanager base URL is static for the lifetime of the app, so the
+  // missing-URL error can be computed once up front.
+  const [loadError, setLoadError] = useState<APIError>(() =>
+    alertManagerBaseURL ? undefined : { message: `Error alertManagerBaseURL not set` },
+  );
 
   useEffect(() => {
     if (!alertManagerBaseURL) {
-      setLoadError({ message: `Error alertManagerBaseURL not set` });
       return;
     }
     coFetchJSON(`${alertManagerBaseURL}/api/v2/status/`)

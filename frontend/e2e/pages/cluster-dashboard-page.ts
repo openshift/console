@@ -16,12 +16,8 @@ export class ClusterDashboardPage extends BasePage {
   private readonly utilizationItem = this.page.getByTestId('utilization-item');
   private readonly utilizationItemTitle = this.page.getByTestId('utilization-item-title');
   private readonly durationSelect = this.page.getByTestId('duration-select');
-  private readonly insightsHealthItem = this.page.locator(
-    '[data-item-id="Insights-health-item"]',
-  );
-  private readonly insightsButton = this.page
-    .getByTestId('Insights')
-    .locator('button');
+  private readonly insightsHealthItem = this.page.locator('[data-item-id="Insights-health-item"]');
+  private readonly insightsButton = this.page.getByTestId('Insights').locator('button');
   private readonly popover = this.page.locator('.pf-v6-c-popover');
 
   async navigateToDashboard(): Promise<void> {
@@ -31,10 +27,8 @@ export class ClusterDashboardPage extends BasePage {
 
   async waitForStatusCardLoaded(): Promise<void> {
     await expect(this.statusCard).toBeVisible({ timeout: 30_000 });
-    // eslint-disable-next-line no-restricted-syntax
-    await this.statusCard.locator('.skeleton-health').waitFor({ state: 'hidden', timeout: 30_000 }).catch(() => {
-      // Skeletons may have already disappeared
-    });
+    // Several skeletons can show at once, which breaks waitFor() strict mode.
+    await expect(this.statusCard.locator('.skeleton-health')).toHaveCount(0, { timeout: 30_000 });
   }
 
   getDetailsCard(): Locator {
@@ -105,14 +99,27 @@ export class ClusterDashboardPage extends BasePage {
   async isInsightsDataAvailable(): Promise<boolean> {
     const popover = this.popover;
     const timeout = 30_000;
-    /* eslint-disable no-restricted-syntax */
+    /* eslint-disable eslint-js/no-restricted-syntax */
     const result = await Promise.race([
-      popover.getByText('Temporarily unavailable.').waitFor({ state: 'visible', timeout }).then(() => 'no-data' as const),
-      popover.getByText('Waiting for results.').waitFor({ state: 'visible', timeout }).then(() => 'no-data' as const),
-      popover.getByText('Disabled.').waitFor({ state: 'visible', timeout }).then(() => 'no-data' as const),
-      popover.locator('a[href*="console.redhat.com/openshift/insights/advisor"]').first().waitFor({ state: 'visible', timeout }).then(() => 'data' as const),
+      popover
+        .getByText('Temporarily unavailable.')
+        .waitFor({ state: 'visible', timeout })
+        .then(() => 'no-data' as const),
+      popover
+        .getByText('Waiting for results.')
+        .waitFor({ state: 'visible', timeout })
+        .then(() => 'no-data' as const),
+      popover
+        .getByText('Disabled.')
+        .waitFor({ state: 'visible', timeout })
+        .then(() => 'no-data' as const),
+      popover
+        .locator('a[href*="console.redhat.com/openshift/insights/advisor"]')
+        .first()
+        .waitFor({ state: 'visible', timeout })
+        .then(() => 'data' as const),
     ]).catch(() => 'no-data' as const);
-    /* eslint-enable no-restricted-syntax */
+    /* eslint-enable eslint-js/no-restricted-syntax */
     return result === 'data';
   }
 }

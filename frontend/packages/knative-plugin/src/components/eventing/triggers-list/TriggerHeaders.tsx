@@ -1,64 +1,54 @@
-import { sortable } from '@patternfly/react-table';
-import type { TFunction } from 'i18next';
-import { tableColumnClasses } from './trigger-table';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import type { ConsoleDataViewColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import type { EventTriggerKind } from '../../../types';
 
-const getTriggerHeaders = (t: TFunction, showBroker: boolean) => {
-  const TriggerHeaders = () => [
-    {
-      id: 'name',
-      title: t('knative-plugin~Name'),
-      sortField: 'metadata.name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[0] },
-    },
-    {
-      id: 'namespace',
-      title: t('knative-plugin~Namespace'),
-      sortField: 'metadata.namespace',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[1] },
-    },
-    {
-      id: 'ready',
-      title: t('knative-plugin~Ready'),
-      props: { className: tableColumnClasses[2] },
-    },
-    {
-      id: 'condition',
-      title: t('knative-plugin~Conditions'),
-      props: { className: tableColumnClasses[3] },
-    },
-    {
-      id: 'filters',
-      title: t('knative-plugin~Filters'),
-      props: { className: tableColumnClasses[4] },
-    },
-    ...(showBroker
-      ? [
-          {
-            id: 'broker',
-            title: t('knative-plugin~Broker'),
-            props: { className: tableColumnClasses[5] },
-          },
-        ]
-      : []),
-    {
-      id: 'subscriber',
-      title: t('knative-plugin~Subscriber'),
-      props: { className: tableColumnClasses[6] },
-    },
-    {
-      title: t('knative-plugin~Created'),
-      sortField: 'metadata.creationTimestamp',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[7] },
-    },
-    {
-      title: '',
-      props: { className: tableColumnClasses[8] },
-    },
-  ];
-  return TriggerHeaders;
+export const useTriggerColumns = (
+  showBroker: boolean,
+): { columns: ConsoleDataViewColumn<EventTriggerKind>[] } => {
+  const { t } = useTranslation('knative-plugin');
+  const columns = useMemo(
+    () =>
+      [
+        { type: 'name' as const, id: 'name' },
+        {
+          type: 'namespace' as const,
+          id: 'namespace',
+        },
+        {
+          id: 'ready',
+          title: t('Ready'),
+          props: { modifier: 'nowrap' as const },
+        },
+        {
+          id: 'condition',
+          title: t('Conditions'),
+          props: { modifier: 'nowrap' as const },
+        },
+        {
+          id: 'filters',
+          title: t('Filters'),
+          props: { modifier: 'nowrap' as const },
+        },
+        {
+          id: 'broker',
+          title: t('Broker'),
+          props: { modifier: 'nowrap' as const },
+        },
+        {
+          id: 'subscriber',
+          title: t('Subscriber'),
+          props: { modifier: 'nowrap' as const },
+        },
+        {
+          id: 'created',
+          title: t('Created'),
+          sort: 'metadata.creationTimestamp',
+          props: { modifier: 'nowrap' as const },
+        },
+        { type: 'actions' as const, id: 'actions' },
+      ].filter(({ id }) => id !== 'broker' || showBroker),
+    [t, showBroker],
+  );
+  return { columns };
 };
-
-export default getTriggerHeaders;

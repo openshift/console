@@ -1,4 +1,3 @@
-/* eslint-disable no-barrel-files/no-barrel-files */
 import type { K8sModel as K8sKind } from '@console/dynamic-plugin-sdk/src/api/common-types';
 
 export const PrometheusModel: K8sKind = {
@@ -1252,6 +1251,24 @@ export const AuthenticationModel: K8sKind = {
   apiVersion: 'v1',
   plural: 'authentications',
   abbr: 'AU',
+};
+
+export const ClusterExtensionModel: K8sKind = {
+  kind: 'ClusterExtension',
+  label: 'ClusterExtension',
+  // t('olm-v1~ClusterExtension')
+  labelKey: 'olm-v1~ClusterExtension',
+  labelPlural: 'ClusterExtensions',
+  // t('olm-v1~ClusterExtensions')
+  labelPluralKey: 'olm-v1~ClusterExtensions',
+  apiGroup: 'olm.operatorframework.io',
+  apiVersion: 'v1',
+  abbr: 'CE',
+  namespaced: false,
+  crd: true,
+  plural: 'clusterextensions',
+  id: 'clusterextension',
+  propagationPolicy: 'Background',
 };
 
 // Export models which have legacy plural URLs that need to be maintained.

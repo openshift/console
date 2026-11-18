@@ -79,7 +79,6 @@ const DeleteModal = (props: DeleteModalProps) => {
         resourceOwner && setOwner(resourceOwner);
       })
       .catch((e) => {
-        // eslint-disable-next-line no-console
         console.error('Could not fetch CSVs', e);
       });
   });
@@ -208,7 +207,7 @@ export type DeleteModalProps = {
   kind: K8sModel;
   resource: K8sResourceKind;
   redirectTo?: To;
-  message?: JSX.Element;
+  message?: ReactNode;
   btnText?: ReactNode;
   deleteAllResources?: () => Promise<K8sResourceKind[]>;
 } & ModalComponentProps;

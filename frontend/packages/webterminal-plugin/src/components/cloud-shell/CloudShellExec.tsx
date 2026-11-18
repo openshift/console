@@ -6,10 +6,10 @@ import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import type { Dispatch } from 'redux';
 import { impersonateStateToProps } from '@console/dynamic-plugin-sdk';
+import { WSFactory } from '@console/dynamic-plugin-sdk/src/utils/k8s/ws-factory';
 import { PodModel } from '@console/internal/models';
 import type { K8sKind } from '@console/internal/module/k8s';
 import { resourceURL } from '@console/internal/module/k8s';
-import { WSFactory } from '@console/internal/module/ws-factory';
 import type { WithFlagsProps } from '@console/internal/reducers/connectToFlags';
 import { connectToFlags } from '@console/internal/reducers/connectToFlags';
 import { FLAGS } from '@console/shared/src/constants/common';
@@ -73,10 +73,12 @@ const CloudShellExec: FC<CloudShellExecProps> = ({
   const fireTelemetryEvent = useTelemetry();
   const [wsOpen, setWsOpen] = useState<boolean>(false);
   const [wsError, setWsError] = useState<string>();
-  const [wsReopening, setWsReopening] = useState<boolean>(false);
+  // Incremented when the user reconnects after an error, forcing the
+  // websocket effect below to re-run.
+  const [reconnectCount, setReconnectCount] = useState<number>(0);
   const [customResource, setCustomResource] = useState<CloudShellResource>();
-  const ws = useRef<WSFactory>();
-  const terminal = useRef<ImperativeTerminalType>();
+  const ws = useRef<WSFactory>(undefined);
+  const terminal = useRef<ImperativeTerminalType>(undefined);
   const { t } = useTranslation('webterminal-plugin');
 
   const onData = (data: string): void => {
@@ -188,10 +190,9 @@ const CloudShellExec: FC<CloudShellExecProps> = ({
             if (!unmounted) setWsError(error);
           })
           .catch((e) => {
-            // eslint-disable-next-line no-console
             console.error('Cloud shell error', e);
           });
-      }) // eslint-disable-next-line no-console
+      })
       .onerror((evt) => console.error(`WS error?! ${evt}`));
 
     if (ws.current !== websocket) {
@@ -202,24 +203,22 @@ const CloudShellExec: FC<CloudShellExecProps> = ({
         currentTerminal.onConnectionClosed(t('connecting to {{container}}', { container }));
     }
 
-    setWsReopening(false);
-
     return () => {
       unmounted = true;
       websocket.destroy();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [
     container,
     flags,
     impersonate,
     namespace,
     podname,
+    reconnectCount,
     shcommand,
     t,
     workspaceName,
     workspaceModel,
-    wsReopening,
   ]);
 
   if (wsError) {
@@ -236,8 +235,8 @@ const CloudShellExec: FC<CloudShellExecProps> = ({
                 });
                 if (customResource && customResource.status.phase !== 'Running') {
                   startWorkspace(customResource);
-                } else if (!wsReopening) {
-                  setWsReopening(true);
+                } else {
+                  setReconnectCount((count) => count + 1);
                 }
                 setWsError(undefined);
               }}

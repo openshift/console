@@ -11,7 +11,6 @@ export const downloadYaml = (data: BlobPart) => {
       filename = `${obj.kind.toLowerCase()}-${obj.metadata.name}.yaml`;
     }
   } catch (e) {
-    // eslint-disable-next-line no-console
     console.error('Could not parse YAML file:', e);
   }
   saveAs(blob, filename);

@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import type { CatalogItem, ExtensionHook } from '@console/dynamic-plugin-sdk';
 import { useAccessReview } from '@console/dynamic-plugin-sdk';
 import type { K8sResourceKind, K8sResourceCommon } from '@console/internal/module/k8s';
-import EventType from '../components/eventing/EventType';
+import { EventType } from '../components/eventing/EventType';
 import {
   EVENT_TYPE_NAME_PARAM,
   EVENT_TYPE_NAMESPACE_PARAM,

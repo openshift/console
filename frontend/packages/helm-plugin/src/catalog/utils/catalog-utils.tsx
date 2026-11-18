@@ -37,6 +37,10 @@ export const normalizeHelmCharts = (
       const chartRepositoryTitle = getChartRepositoryTitle(chartRepositories, chartRepoName);
 
       charts.forEach((chart: HelmChartMetaData) => {
+        if (!chart.urls?.length) {
+          return;
+        }
+
         const { name, created, version, appVersion, description, keywords, annotations } = chart;
 
         const annotatedName = annotations?.[CHART_NAME_ANNOTATION] ?? '';
@@ -62,7 +66,7 @@ export const normalizeHelmCharts = (
               <span style={{ verticalAlign: 'middle' }}>{displayName}</span>{' '}
               <Tooltip
                 content={t(
-                  'helm-plugin~This Helm Chart is provided by a trusted partner and has been verified for ease of integration.',
+                  'helm-plugin~A trusted partner provides this Helm Chart and has verified it for ease of integration.',
                 )}
               >
                 <img src={certifiedIcon} alt={t('helm-plugin~Certified')} />
@@ -90,7 +94,7 @@ export const normalizeHelmCharts = (
 
         const detailsProperties: CatalogItemDetailsProperty[] = [
           {
-            label: t('helm-plugin~Latest Chart version'),
+            label: t('helm-plugin~Latest chart version'),
             value: version,
           },
           {

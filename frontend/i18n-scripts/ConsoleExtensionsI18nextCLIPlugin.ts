@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { readFile } from 'node:fs/promises';
 import chalk from 'chalk';
 import { parse } from 'comment-json';

@@ -27,29 +27,24 @@ const useMirroredLocalState = <S>({
     [externalChangeHandler],
   );
 
+  if (localState === null) {
+    // Fresh mount: adopt the url params, or the defaults when there are none
+    setLocalState(_.isEmpty(externalState) ? defaultState : externalState);
+  } else if (!_.isEqual(externalState, localState) && !_.isEmpty(externalState)) {
+    // We have local data and the params are not empty, so this is a conflict
+    // of source of truth (e.g. a local code re-route) -- accept the url as
+    // the source of truth
+    setLocalState(externalState);
+  }
+
+  // The external system (the url) is only ever written from an effect.
   useEffect(() => {
-    if (localState === null) {
-      // We don't have local data, fresh mount
-      if (_.isEmpty(externalState)) {
-        // No url params, use defaults
-        onExternalChange(defaultState);
-      } else {
-        // We have url params, routed here with params
-        setLocalState(externalState);
-      }
-    } else if (!_.isEqual(externalState, localState)) {
-      // We have local data so we have been initialized
-      // They are not equal, so we need to figure out who is right
-      if (_.isEmpty(externalState)) {
-        // Params are empty, so this means the component was not re-mounted but we lost params
-        onExternalChange(localState);
-      } else {
-        // Params are not empty -- this is a conflict of source of truth
-        // Possible reason would be a local code re-route on this page, accept URL as source of truth
-        setLocalState(externalState);
-      }
+    if (localState !== null && !_.isEqual(externalState, localState) && _.isEmpty(externalState)) {
+      // The params are empty, so the component was not re-mounted but we lost
+      // the params -- push the local state back out
+      externalChangeHandler(localState);
     }
-  }, [localState, externalState, onExternalChange, defaultState]);
+  }, [localState, externalState, externalChangeHandler]);
 
   return [localState ?? defaultState, onExternalChange, localState !== null];
 };

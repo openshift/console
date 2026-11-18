@@ -34,7 +34,7 @@ export type PageHeadingProps = {
    */
   hideFavoriteButton?: boolean;
   /** A title for the page. */
-  title?: string | JSX.Element;
+  title?: string | ReactNode;
   /** A primary action that is always rendered. */
   primaryAction?: ReactNode;
   /** Optional link below subtitle */

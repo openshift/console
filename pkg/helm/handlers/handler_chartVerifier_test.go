@@ -82,6 +82,15 @@ func TestHelmHandlers_HandleChartVerifier_RejectsInvalidURLs(t *testing.T) {
 		{"rejects empty chart_url", `{"chart_url":""}`},
 		{"rejects ftp scheme", `{"chart_url":"ftp://example.com/chart.tgz"}`},
 		{"rejects file scheme", `{"chart_url":"file:///etc/passwd"}`},
+		// SSRF: well-formed .tgz/OCI URLs whose host is private or
+		// cluster-internal must still be blocked before the verifier fetches
+		// them. These are caught by the SSRF guard, not the format check.
+		{"rejects loopback IP tgz", `{"chart_url":"http://127.0.0.1/chart.tgz"}`},
+		{"rejects private IP tgz", `{"chart_url":"https://10.0.0.5/chart.tgz"}`},
+		{"rejects link-local metadata IP tgz", `{"chart_url":"http://169.254.169.254/latest/chart.tgz"}`},
+		{"rejects cluster-internal svc tgz", `{"chart_url":"https://myrepo.default.svc/chart.tgz"}`},
+		{"rejects kubernetes.default OCI", `{"chart_url":"oci://kubernetes.default/charts/chart"}`},
+		{"rejects localhost OCI", `{"chart_url":"oci://localhost:5000/charts/chart"}`},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

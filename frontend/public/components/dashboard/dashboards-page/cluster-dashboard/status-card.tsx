@@ -1,7 +1,14 @@
 import type { FC, ReactNode } from 'react';
 import { useMemo } from 'react';
-import { Gallery, GalleryItem, Card, CardHeader, CardTitle } from '@patternfly/react-core';
-import type { Map as ImmutableMap } from 'immutable';
+import {
+  Gallery,
+  GalleryItem,
+  Card,
+  CardHeader,
+  CardTitle,
+  CardFooter,
+  Divider,
+} from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
@@ -53,9 +60,10 @@ import {
 
 const filterSubsystems = (
   subsystems: (
-    DashboardsOverviewHealthSubsystem | ResolvedExtension<DashboardsOverviewHealthSubsystem>
+    | DashboardsOverviewHealthSubsystem
+    | ResolvedExtension<DashboardsOverviewHealthSubsystem>
   )[],
-  k8sModels: ImmutableMap<string, K8sKind>,
+  k8sModels: Record<string, K8sKind>,
 ) =>
   subsystems.filter((s) => {
     if (
@@ -67,7 +75,7 @@ const filterSubsystems = (
         | ResolvedExtension<DashboardsOverviewHealthURLSubsystem>;
       return subsystem.properties.additionalResource &&
         !subsystem.properties.additionalResource.optional
-        ? !!k8sModels.get(subsystem.properties.additionalResource.kind)
+        ? !!k8sModels?.[subsystem.properties.additionalResource.kind]
         : true;
     }
     return true;
@@ -80,8 +88,11 @@ const cvResource: WatchK8sResource = {
   isList: false,
 };
 
+const MAX_ALERTS = 50;
+
 export const DashboardAlerts: FC<DashboardAlertsProps> = ({ labelSelector }) => {
   const { t } = useTranslation('public');
+  const [, setActiveNamespace] = useActiveNamespace();
   const hasCVResource = useFlag(FLAGS.CLUSTER_VERSION);
   const [alerts, , loadError] = useNotificationAlerts(labelSelector);
   const [cv, cvLoaded] = useK8sWatchResource<ClusterVersionKind>(
@@ -102,27 +113,48 @@ export const DashboardAlerts: FC<DashboardAlertsProps> = ({ labelSelector }) => 
           <Link to="/settings/cluster?showVersions">{t('Update cluster')}</Link>
         </StatusItem>
       )}
-      {alerts.map((alert) => (
+      {alerts.slice(0, MAX_ALERTS).map((alert) => (
         <AlertItem key={alertURL(alert, alert.rule.id)} alert={alert} />
       ))}
+      {alerts.length > MAX_ALERTS && (
+        <>
+          <Divider />
+          <CardFooter>
+            <Link to="/monitoring/alerts" onClick={() => setActiveNamespace(ALL_NAMESPACES_KEY)}>
+              {t('View all {{count}} alerts', { count: alerts.length })}
+            </Link>
+          </CardFooter>
+        </>
+      )}
     </AlertsBody>
   );
 };
 
 export const DashboardNamespacedAlerts: FC<DashboardNamespacedAlertsProps> = ({ namespace }) => {
+  const { t } = useTranslation('public');
   const [namespacedAlerts, , loadError] = useNamespacedNotificationAlerts(namespace);
 
   return (
     <AlertsBody error={!_.isEmpty(loadError)}>
-      {namespacedAlerts.map((alert) => (
+      {namespacedAlerts.slice(0, MAX_ALERTS).map((alert) => (
         <AlertItem key={alertURL(alert, alert.rule.id)} alert={alert} />
       ))}
+      {namespacedAlerts.length > MAX_ALERTS && (
+        <>
+          <Divider />
+          <CardFooter>
+            <Link to="/monitoring/alerts">
+              {t('View all {{count}} alerts', { count: namespacedAlerts.length })}
+            </Link>
+          </CardFooter>
+        </>
+      )}
     </AlertsBody>
   );
 };
 
 const mapStateToProps = (state: RootState) => ({
-  k8sModels: state.k8s.getIn(['RESOURCES', 'models']),
+  k8sModels: state.k8s.RESOURCES?.models,
 });
 export const StatusCard = connect<StatusCardProps>(mapStateToProps)(({ k8sModels }) => {
   const [subsystemExtensions] = useResolvedExtensions<DashboardsOverviewHealthSubsystem>(
@@ -220,7 +252,7 @@ export const StatusCard = connect<StatusCardProps>(mapStateToProps)(({ k8sModels
 });
 
 type StatusCardProps = {
-  k8sModels: ImmutableMap<string, K8sKind>;
+  k8sModels: Record<string, K8sKind>;
 };
 
 type DashboardAlertsProps = {

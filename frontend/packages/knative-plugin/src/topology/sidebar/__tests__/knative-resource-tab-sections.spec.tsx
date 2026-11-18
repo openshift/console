@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import * as _ from 'lodash';
 import { EventSinkSourceSection } from '../knative-resource-tab-sections';
-import { eventSinkKamelet } from './__mocks__/event-sink-data';
+import { eventSinkKamelet } from './data/event-sink-data';
 
 describe('EventSinkSourceSection', () => {
   it('should show message no output resources foung if none exists', () => {

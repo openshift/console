@@ -10,7 +10,6 @@ export const ExtensionDetailsItem: ExtensionDetailsItemComponent = ({ extension,
   const sortWeight = extension.properties.sortWeight ?? 'none';
   const value = _.get(obj, path);
   if (!Component && typeof value === 'object') {
-    // eslint-disable-next-line no-console
     console.warn(
       `Invalid 'console.resource/details-item' extension: '${id}'. The value referenced at path '${path}' must be primitive if not accompanied by a custom component.`,
     );

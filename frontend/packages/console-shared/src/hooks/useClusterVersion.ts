@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ClusterVersionModel } from '@console/internal/models';
 import { referenceForModel } from '@console/internal/module/k8s/k8s-ref';
@@ -16,11 +15,6 @@ export const useClusterVersion = (): ClusterVersionKind => {
 };
 
 export const useOpenShiftVersion = (): string => {
-  const [openshiftVersion, setOpenShiftVersion] = useState<string>();
   const clusterVersion = useClusterVersion();
-  const version = clusterVersion?.status?.history?.[0]?.version;
-  useEffect(() => {
-    setOpenShiftVersion(version);
-  }, [version]);
-  return openshiftVersion;
+  return clusterVersion?.status?.history?.[0]?.version;
 };

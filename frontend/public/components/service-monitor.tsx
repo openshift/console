@@ -1,0 +1,179 @@
+import type { FC } from 'react';
+import { useMemo, Suspense } from 'react';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
+import type {
+  ConsoleDataViewCell,
+  ConsoleDataViewColumn,
+  GetDataViewRows,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
+import { DASH } from '@console/shared/src/constants/ui';
+import { ServiceMonitorModel } from '../models';
+import type { K8sResourceKind } from '../module/k8s';
+import { referenceForModel } from '../module/k8s';
+import { ListPage } from './factory';
+import { ResourceLink } from './utils/resource-link';
+import { Selector } from './utils/selector';
+import { LoadingBox } from './utils/status-box';
+
+const serviceMonitorTableColumnInfo = [
+  { id: 'name' },
+  { id: 'namespace' },
+  { id: 'serviceSelector' },
+  { id: 'monitoringNamespace' },
+  { id: 'actions' },
+];
+
+const namespaceSelectorLinks = ({ spec }: K8sResourceKind) => {
+  const namespaces = _.get(spec, 'namespaceSelector.matchNames', []);
+  if (namespaces.length) {
+    return _.map(namespaces, (n) => (
+      <span key={n}>
+        <ResourceLink kind="Namespace" name={n} title={n} />
+        &nbsp;&nbsp;
+      </span>
+    ));
+  }
+  return <span className="pf-v6-u-text-color-subtle">{DASH}</span>;
+};
+
+const serviceSelectorLinks = ({ spec }: K8sResourceKind) => {
+  const namespaces = _.get(spec, 'namespaceSelector.matchNames', []);
+  if (namespaces.length) {
+    return _.map(namespaces, (n) => (
+      <span key={n}>
+        <Selector selector={spec.selector} kind="Service" namespace={n} />
+        &nbsp;&nbsp;
+      </span>
+    ));
+  }
+  return <Selector selector={spec.selector} kind="Service" />;
+};
+
+const getServiceMonitorDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) =>
+  data.map(({ obj }) => {
+    const { metadata } = obj;
+    const resourceKind = referenceForModel(ServiceMonitorModel);
+
+    const rowCells: { [columnId: string]: Omit<ConsoleDataViewCell, 'id'> } = {
+      [serviceMonitorTableColumnInfo[0].id]: {
+        cell: (
+          <ResourceLink
+            kind={resourceKind}
+            name={metadata.name}
+            namespace={metadata.namespace}
+            title={metadata.uid}
+          />
+        ),
+      },
+      [serviceMonitorTableColumnInfo[1].id]: {
+        cell: (
+          <ResourceLink kind="Namespace" name={metadata.namespace} title={metadata.namespace} />
+        ),
+      },
+      [serviceMonitorTableColumnInfo[2].id]: {
+        cell: serviceSelectorLinks(obj),
+      },
+      [serviceMonitorTableColumnInfo[3].id]: {
+        cell: namespaceSelectorLinks(obj),
+      },
+      [serviceMonitorTableColumnInfo[4].id]: {
+        cell: <LazyActionMenu context={{ [referenceForModel(ServiceMonitorModel)]: obj }} />,
+      },
+    };
+
+    return columns.map(({ id }) => {
+      const cell = rowCells[id]?.cell || DASH;
+      const props = rowCells[id]?.props || undefined;
+      return {
+        id,
+        props,
+        cell,
+      };
+    });
+  });
+
+const useServiceMonitorColumns = (): ConsoleDataViewColumn<K8sResourceKind>[] => {
+  const { t } = useTranslation('public');
+  return useMemo<ConsoleDataViewColumn<K8sResourceKind>[]>(
+    () => [
+      {
+        type: 'name',
+        title: t('Name'),
+        id: serviceMonitorTableColumnInfo[0].id,
+        sort: 'metadata.name',
+        props: { hasRightBorder: false, modifier: 'nowrap' },
+      },
+      {
+        title: t('Namespace'),
+        id: serviceMonitorTableColumnInfo[1].id,
+        sort: 'metadata.namespace',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('Service Selector'),
+        id: serviceMonitorTableColumnInfo[2].id,
+        sort: 'spec.selector',
+        props: {
+          modifier: 'nowrap',
+          width: 25,
+        },
+      },
+      {
+        title: t('Monitoring Namespace'),
+        id: serviceMonitorTableColumnInfo[3].id,
+        sort: 'spec.namespaceSelector',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        type: 'actions',
+        id: serviceMonitorTableColumnInfo[4].id,
+        props: { hasLeftBorder: false },
+      },
+    ],
+    [t],
+  );
+};
+
+interface ServiceMonitorsListProps {
+  data: K8sResourceKind[];
+  loaded: boolean;
+  loadError?: unknown;
+  mock?: boolean;
+}
+
+const ServiceMonitorsList: FC<ServiceMonitorsListProps> = (props) => {
+  const { data, loaded } = props;
+  const columns = useServiceMonitorColumns();
+
+  return (
+    <Suspense fallback={<LoadingBox />}>
+      <ConsoleDataView
+        {...props}
+        isResizable={false}
+        id={ServiceMonitorModel}
+        data={data}
+        loaded={loaded}
+        label={ServiceMonitorModel.labelPlural}
+        columns={columns}
+        getDataViewRows={getServiceMonitorDataViewRows}
+      />
+    </Suspense>
+  );
+};
+
+export const ServiceMonitorsPage: FC = (props) => (
+  <ListPage
+    {...props}
+    canCreate
+    kind={referenceForModel(ServiceMonitorModel)}
+    ListComponent={ServiceMonitorsList}
+    omitFilterToolbar
+  />
+);

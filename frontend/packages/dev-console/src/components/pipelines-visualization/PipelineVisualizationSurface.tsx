@@ -96,11 +96,10 @@ const PipelineVisualizationSurface: FC<PipelineVisualizationSurfaceProps> = ({
       });
       setVis(visualization);
     } else {
+      // Restore the stored pan/zoom state (node positions) without mutating
+      // the `model` prop
       const graph = storedGraphModel.current;
-      if (graph) {
-        model.graph = graph;
-      }
-      vis.fromModel(model);
+      vis.fromModel(graph ? { ...model, graph } : model);
       vis.getGraph().layout();
     }
   }, [vis, model, onLayoutUpdate, componentFactory]);
@@ -108,12 +107,8 @@ const PipelineVisualizationSurface: FC<PipelineVisualizationSurfaceProps> = ({
   useEffect(() => {
     if (model && vis) {
       const graph = storedGraphModel.current;
-      if (graph) {
-        model.graph = graph;
-      }
-      vis.fromModel(model);
+      vis.fromModel(graph ? { ...model, graph } : model);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [model, vis]);
 
   if (!vis) return null;

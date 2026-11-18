@@ -26,7 +26,6 @@ const discouragedXMLCharacters = new RegExp(
   '[\u0000-\u0008\u000b-\u000c\u000e-\u001f\u007f-\u0084\u0086-\u009f]',
   'g',
 );
-// eslint-disable-next-line no-control-regex
 const ansiRegex = /\[[0-9;]*m/g;
 
 function stripAnsi(text: string): string {
@@ -123,7 +122,7 @@ function buildHTMLReportURL(): string | null {
 
   if (!buildId || !jobName) return null;
 
-  const baseURL = 'https://gcsweb-ci.apps.ci.l2s4.p1.openshiftapps.com/gcs/test-platform-results';
+  const baseURL = 'https://gcs.ci.openshift.org/gcs/test-platform-results-public';
   let jobPath: string;
 
   if (pullNumber && repoOwner && repoName) {
@@ -180,8 +179,10 @@ class ProwJUnitReporter implements Reporter {
 
     for (const projectSuite of this.suite.suites) {
       for (const fileSuite of projectSuite.suites) {
-        const { entry, tests, failures, errors, skipped, flaky, failed } =
-          this._buildTestSuite(projectSuite.title, fileSuite);
+        const { entry, tests, failures, errors, skipped, flaky, failed } = this._buildTestSuite(
+          projectSuite.title,
+          fileSuite,
+        );
         suiteEntries.push(entry);
         totalTests += tests;
         totalFailures += failures;
@@ -230,7 +231,14 @@ class ProwJUnitReporter implements Reporter {
       await fs.promises.writeFile(linkFile, html);
     }
 
-    this._printSummary(totalTests, failedTests.length, totalSkipped, flakyTests, failedTests, result);
+    this._printSummary(
+      totalTests,
+      failedTests.length,
+      totalSkipped,
+      flakyTests,
+      failedTests,
+      result,
+    );
   }
 
   private _buildTestSuite(

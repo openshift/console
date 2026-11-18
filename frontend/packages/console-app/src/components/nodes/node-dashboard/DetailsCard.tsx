@@ -15,12 +15,10 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import NodeGroupEditButton from '@console/app/src/components/nodes/NodeGroupEditButton';
 import { getNodeGroups } from '@console/app/src/components/nodes/utils/NodeGroupUtils';
-import { FLAG_OPENSHIFT_5 } from '@console/app/src/consts';
 import { OverviewDetailItem } from '@console/internal/components/overview/OverviewDetailItem';
 import { resourcePathFromModel } from '@console/internal/components/utils/resource-link';
 import { NodeModel } from '@console/internal/models';
 import { DASH } from '@console/shared/src/constants/ui';
-import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { getNodeAddresses } from '@console/shared/src/selectors/node';
 import NodeIPList from '../NodeIPList';
 import NodeRoles from '../NodeRoles';
@@ -33,7 +31,6 @@ const DetailsCard: FC = () => {
   const instanceType = obj.metadata.labels?.['beta.kubernetes.io/instance-type'];
   const zone = obj.metadata.labels?.['topology.kubernetes.io/zone'];
   const { t } = useTranslation('console-app');
-  const isOpenShift5 = useFlag(FLAG_OPENSHIFT_5);
 
   const nodeGroups = useMemo(() => getNodeGroups(obj).sort().join(', ') || DASH, [obj]);
 
@@ -80,21 +77,17 @@ const DetailsCard: FC = () => {
           <OverviewDetailItem isLoading={!obj} title={t('Uptime')}>
             <NodeUptime obj={obj} />
           </OverviewDetailItem>
-          {isOpenShift5 ? (
-            <>
-              <Divider component={DividerVariant.div} className="pf-v6-u-w-75" />
-              <Flex justifyContent={{ default: 'justifyContentSpaceBetween' }}>
-                <FlexItem>
-                  <OverviewDetailItem isLoading={!obj} title={t('Groups')}>
-                    {nodeGroups}
-                  </OverviewDetailItem>
-                </FlexItem>
-                <FlexItem>
-                  <NodeGroupEditButton node={obj} />
-                </FlexItem>
-              </Flex>
-            </>
-          ) : null}
+          <Divider component={DividerVariant.div} className="pf-v6-u-w-75" />
+          <Flex justifyContent={{ default: 'justifyContentSpaceBetween' }}>
+            <FlexItem>
+              <OverviewDetailItem isLoading={!obj} title={t('Groups')}>
+                {nodeGroups}
+              </OverviewDetailItem>
+            </FlexItem>
+            <FlexItem>
+              <NodeGroupEditButton node={obj} />
+            </FlexItem>
+          </Flex>
         </DescriptionList>
       </CardBody>
     </Card>

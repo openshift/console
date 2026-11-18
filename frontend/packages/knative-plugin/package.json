@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "coverage": "yarn test --coverage --collectCoverageFrom='[\"packages/knative-plugin/src/**\",\"!**/__tests__/**\"]'",
-    "lint": "yarn --cwd ../.. eslint packages/knative-plugin",
+    "lint": "yarn --cwd ../.. oxlint packages/knative-plugin",
     "test": "yarn --cwd ../.. test packages/knative-plugin"
   },
   "dependencies": {
@@ -59,7 +59,7 @@
       "getRevisionRouteDecorator": "src/topology/components/decorators/getRevisionRouteDecorator.tsx",
       "dataTransformer": "src/topology/data-transformer.ts",
       "knativeComponentFactory": "src/topology/components/knativeComponentFactory.ts",
-      "eventingContext": "src/topology/eventing-context.ts",
+      "eventingModelPreloader": "src/hooks/useKnativeEventingModelPreloader.ts",
       "fetchDynamicEventSourcesUtils": "src/utils/fetch-dynamic-eventsources-utils.ts",
       "EventSourceBreadcrumbs": "src/providers/useEventSourceDetailPageBreadcrumbs.ts",
       "ChannelBreadcrumbs": "src/providers/useChannelDetailPageBreadcrumbs.ts",

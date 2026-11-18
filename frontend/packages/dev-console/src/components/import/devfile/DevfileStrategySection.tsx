@@ -104,6 +104,7 @@ const DevfileStrategySection: FC = () => {
         setFieldValue('import.selectedStrategy.detectedFiles', devfileStrategy.detectedFiles);
         setFieldValue('devfile.devfilePath', devfileStrategy.detectedFiles?.[0]);
         setFieldValue('docker.dockerfilePath', 'Dockerfile');
+        // eslint-disable-next-line react-hooks-js/set-state-in-effect -- handleDevfileChange is async: setValidated runs in a promise continuation after the git service lookup resolves, not synchronously during this effect
         handleDevfileChange();
         validated === ValidatedOptions.success
           ? setFieldValue('import.strategyChanged', true)
@@ -111,14 +112,18 @@ const DevfileStrategySection: FC = () => {
       }
       setFieldTouched('devfile.devfilePath', true);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [recommendedStrategy, setFieldValue, strategies]);
 
   useEffect(() => {
-    (importType === ImportTypes.devfile || selectedStrategy.type === ImportStrategy.DEVFILE) &&
-      devfile.devfilePath &&
+    if (
+      (importType === ImportTypes.devfile || selectedStrategy.type === ImportStrategy.DEVFILE) &&
+      devfile.devfilePath
+    ) {
+      // eslint-disable-next-line react-hooks-js/set-state-in-effect -- handleDevfileChange is async: setValidated runs in a promise continuation after the git service lookup resolves, not synchronously during this effect
       handleDevfileChange();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [importType, devfile.devfilePath, selectedStrategy.type]);
 
   return (

@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import type { FormikValues } from 'formik';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
@@ -20,22 +20,21 @@ enum PacConfigurationTypes {
 const PacSection: FC = () => {
   const { t } = useTranslation('devconsole');
   const formContextField = 'pac.repository';
-  const [githubAppAvailable, setGithubAppAvailable] = useState(false);
   const { values, setFieldValue } = useFormikContext<FormikValues>();
   const {
     git: { url, type },
   } = values;
   const [pac, loaded] = usePacInfo();
+  const githubAppAvailable = !!(loaded && pac?.data?.['app-link']);
 
   useEffect(() => {
-    if (loaded && !!pac && pac.data?.['app-link']) {
-      setGithubAppAvailable(true);
+    if (githubAppAvailable) {
       setFieldValue('pac.repository.githubAppAvailable', true);
       setFieldValue('pac.repository.method', PacConfigurationTypes.GITHUB);
     } else {
       setFieldValue('pac.repository.method', PacConfigurationTypes.WEBHOOK);
     }
-  }, [pac, loaded, setFieldValue]);
+  }, [githubAppAvailable, setFieldValue]);
 
   useEffect(() => {
     setFieldValue('pac.repository.gitUrl', url);

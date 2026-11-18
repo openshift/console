@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import {
   Button,
   AlertVariant,
@@ -44,7 +44,6 @@ export const ExportApplicationModal: FC<ExportApplicationModalProps> = (props) =
   const { t } = useTranslation('topology');
   const fireTelemetryEvent = useTelemetry();
   const { cancel, name, namespace, exportResource, toast } = props;
-  const [startTime, setStartTime] = useState<string>(null);
   const [errMessage, setErrMessage] = useState<string>('');
   const [exportAppToast, setExportAppToast] = useUserPreference<ExportAppUserSettings>(
     `${USER_PREFERENCE_PREFIX}.exportApp`,
@@ -52,11 +51,11 @@ export const ExportApplicationModal: FC<ExportApplicationModalProps> = (props) =
     true,
   );
 
-  useEffect(() => {
-    if (exportResource && exportResource.status?.completed !== true) {
-      setStartTime(dateTimeFormatter().format(new Date(exportResource.metadata.creationTimestamp)));
-    }
-  }, [exportResource]);
+  const exportInProgress = exportResource && exportResource.status?.completed !== true;
+  const startTime =
+    exportInProgress && exportResource.metadata.creationTimestamp
+      ? dateTimeFormatter().format(new Date(exportResource.metadata.creationTimestamp))
+      : null;
 
   const createExportCR = async () => {
     try {
@@ -88,13 +87,14 @@ export const ExportApplicationModal: FC<ExportApplicationModalProps> = (props) =
       });
       setExportAppToast(exportAppToastConfig);
     } catch (error) {
+      const errorMessage = error?.message || t('An error occurred while starting the export.');
       toast?.addToast({
         variant: AlertVariant.danger,
         title: t('Export application'),
         content: (
           <Trans t={t} ns="topology">
             Export of resources in <strong>{{ namespace }}</strong> has failed with error:{' '}
-            {error.message}
+            {{ errorMessage }}
           </Trans>
         ),
         dismissible: true,
@@ -123,7 +123,6 @@ export const ExportApplicationModal: FC<ExportApplicationModalProps> = (props) =
       }
     } catch (err) {
       createExportCR().catch((createError) =>
-        // eslint-disable-next-line no-console
         console.warn('Could not createExportCR:', createError),
       );
     }
@@ -142,7 +141,6 @@ export const ExportApplicationModal: FC<ExportApplicationModalProps> = (props) =
       }
     } catch (error) {
       createExportCR().catch((createError) =>
-        // eslint-disable-next-line no-console
         console.warn('Could not createExportCR:', createError),
       );
     }
@@ -166,7 +164,6 @@ export const ExportApplicationModal: FC<ExportApplicationModalProps> = (props) =
       setErrMessage(err.message);
     }
   };
-  const exportInProgress = exportResource && exportResource.status?.completed !== true;
 
   return (
     <>
@@ -262,7 +259,6 @@ export const handleExportApplication = async (
       toast,
     });
   } catch (err) {
-    // eslint-disable-next-line no-console
     console.warn('Error while getting export resource:', err);
     launchModal(ExportApplicationModalOverlay, { name, namespace, toast });
   }

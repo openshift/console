@@ -6,7 +6,7 @@ import { css } from '@patternfly/react-styles';
 const NamespaceMenuToggle = (props: {
   disabled: boolean;
   menu: ReactElement;
-  menuRef: RefObject<HTMLElement>;
+  menuRef: RefObject<HTMLElement | null>;
   isOpen: boolean;
   shortCut?: string;
   title: string;
@@ -64,7 +64,7 @@ const NamespaceMenuToggle = (props: {
       window.removeEventListener('keyup', handleMenuKeys);
       window.removeEventListener('click', handleMenuClick);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, []); // This needs to be run only on component mount/unmount
 
   const toggle = (
@@ -86,7 +86,7 @@ const NamespaceMenuToggle = (props: {
         popper={menu}
         direction="down"
         position="left"
-        appendTo={containerRef.current}
+        appendTo={() => containerRef.current}
         isVisible={isOpen}
         enableFlip={false}
       />

@@ -5,10 +5,10 @@ import i18n from 'i18next';
 import * as _ from 'lodash';
 import { setI18n } from 'react-i18next';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
-import { mockDeploymentConfig, mockEditDeploymentData } from '../__mocks__/deployment-data';
-import MockForm from '../__mocks__/MockForm';
 import ContainerField from '../ContainerField';
 import DeploymentForm from '../DeploymentForm';
+import { mockDeploymentConfig, mockEditDeploymentData } from './deployment-data';
+import MockForm from './MockForm';
 
 const mockContainerField: FC = () => <div>Container: xyz</div>;
 
@@ -158,7 +158,7 @@ describe('EditDeploymentForm', () => {
     });
   });
 
-  it('should call handleCancel on Cancel button click ', async () => {
+  it('should call handleCancel on Cancel button click', async () => {
     renderDeploymentForm();
     const user = userEvent.setup();
     const cancelButton = screen.getByRole('button', {

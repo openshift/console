@@ -13,6 +13,8 @@ export const CLUSTER_VERSION_CONDITION_RETRIEVED_UPDATES = 'RetrievedUpdates';
 export const CLUSTER_VERSION_CONDITION_RELEASE_ACCEPTED = 'ReleaseAccepted';
 export const CLUSTER_VERSION_CONDITION_INVALID = 'Invalid';
 export const CLUSTER_VERSION_CONDITION_UPGRADEABLE = 'Upgradeable';
+export const CLUSTER_VERSION_CONDITION_IMPLICITLY_ENABLED_CAPABILITIES =
+  'ImplicitlyEnabledCapabilities';
 
 /**
  * ClusterOperator condition types

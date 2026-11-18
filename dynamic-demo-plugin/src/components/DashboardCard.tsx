@@ -28,5 +28,4 @@ const DashboardCard: React.FC = () => {
   );
 };
 
-
 export default DashboardCard;

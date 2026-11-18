@@ -40,18 +40,38 @@ type RoutePageProperties = {
  * as `exact: true` by default. Console retains the original behavior for backwards compatibility.
  * Use `exact: true` unless you want to match more of the URL.
  *
- * Do not use this extension for resource list and details pages. To add a list or details page
- * for a resource, use the `console.navigation/resource-ns` extension instead.
+ * Do not use this extension to replace the Console resource list and details pages. To add a list
+ * or details page for a resource, use the `console.navigation/resource-ns` extension instead.
+ *
+ * Use this extension for pages that are not resource list or details pages, such as a curated
+ * view that displays only some instances of a resource related to the plugin and its operator.
  */
 export type RoutePage = Extension<'console.page/route', RoutePageProperties>;
 
 /**
  * Adds a new resource list page to Console router.
+ *
+ * The page component replaces the Console default resource list view for instances of the given
+ * model.
+ *
+ * The page component must therefore provide a way to display _all_ instances of the resource.
+ *
+ * If your plugin needs a curated view that displays only some instances of the given resource,
+ * add it as a separate page via the `console.page/route` extension.
+ *
+ * The page component should use the `namespace` prop passed by Console instead of parsing the
+ * namespace from the URL, since Console renders the page on several different routes.
  */
 export type ResourceListPage = Extension<'console.page/resource/list', ResourcePageProperties & {}>;
 
 /**
  * Adds a new resource details page to Console router.
+ *
+ * The page component replaces the Console default resource details view for instances of the given
+ * model.
+ *
+ * The page component should use the `namespace` prop passed by Console instead of parsing the
+ * namespace from the URL, since Console renders the page on several different routes.
  */
 export type ResourceDetailsPage = Extension<
   'console.page/resource/details',

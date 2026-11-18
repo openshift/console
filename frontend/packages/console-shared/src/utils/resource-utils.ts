@@ -214,7 +214,6 @@ const getAnnotatedTriggers = (obj: K8sResourceKind) => {
   try {
     return JSON.parse(triggersJSON);
   } catch (e) {
-    /* eslint-disable-next-line no-console */
     console.error('Error parsing triggers annotation', e);
     return [];
   }
@@ -248,7 +247,6 @@ const getPodAlerts = (pod: K8sResourceKind): OverviewItemAlerts => {
   _.get(pod, 'status.conditions', []).forEach((condition) => {
     const { type, status, reason, message } = condition;
     if (type === 'PodScheduled' && status === 'False' && reason === 'Unschedulable') {
-      // eslint-disable-next-line
       const key = podAlertKey(reason, pod);
       alerts[key] = {
         severity: 'error',

@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { css } from '@patternfly/react-styles';
 import {
   DEFAULT_LAYER,
@@ -50,18 +50,27 @@ const BaseNodeComponent: FC<BaseNodeProps> = ({
   const cx = width / 2;
   const cy = height / 2;
   const resourceObj = getTopologyResourceObject(element.getData());
-  const resourceModel = modelFor(referenceFor(resourceObj));
+  const resourceModel = resourceObj ? modelFor(referenceFor(resourceObj)) : undefined;
   const iconRadius = innerRadius * 0.9;
   const editAccess = useAccessReview({
     group: resourceModel?.apiGroup,
     verb: createConnectorAccessVerb,
     resource: resourceModel?.plural,
-    name: resourceObj.metadata.name,
-    namespace: resourceObj.metadata.namespace,
+    name: resourceObj?.metadata?.name,
+    namespace: resourceObj?.metadata?.namespace,
   });
   const [filtered] = useSearchFilter(element.getLabel(), resourceObj?.metadata?.labels);
   const showLabel = useShowLabel(isHovering);
   const kindData = kind && getKindStringAndAbbreviation(kind);
+
+  // Reset the hover state (via the useHover dependencies) when a connector drag ends.
+  const [prevCreateConnectorDrag, setPrevCreateConnectorDrag] = useState(createConnectorDrag);
+  if (prevCreateConnectorDrag !== createConnectorDrag) {
+    setPrevCreateConnectorDrag(createConnectorDrag);
+    if (!createConnectorDrag) {
+      setHoverChange((prev) => !prev);
+    }
+  }
 
   const detailsLevel = element.getController().getGraph().getDetailsLevel();
   const showDetails = isHovering || detailsLevel !== ScaleDetailsLevel.low;
@@ -70,11 +79,6 @@ const BaseNodeComponent: FC<BaseNodeProps> = ({
         [`odc-resource-icon-${kindData.kindStr.toLowerCase()}`]: !kindData.kindColor,
       })
     : '';
-  useEffect(() => {
-    if (!createConnectorDrag) {
-      setHoverChange((prev) => !prev);
-    }
-  }, [createConnectorDrag]);
   return (
     <Layer id={isHovering ? TOP_LAYER : DEFAULT_LAYER}>
       <g

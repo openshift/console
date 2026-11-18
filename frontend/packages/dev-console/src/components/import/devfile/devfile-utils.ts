@@ -1,4 +1,4 @@
-import i18n from 'i18next';
+import * as i18n from 'i18next';
 import * as _ from 'lodash';
 import { getGitService } from '@console/git-service/src/services/git-service';
 import type { GitProvider } from '@console/git-service/src/types/git';

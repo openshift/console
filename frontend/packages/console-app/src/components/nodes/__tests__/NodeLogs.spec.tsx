@@ -8,14 +8,6 @@ jest.mock('@patternfly/react-log-viewer', () => ({
   LogViewerSearch: () => <div data-test="log-viewer-search">Search</div>,
 }));
 
-jest.mock('@console/dynamic-plugin-sdk/src/utils/flags', () => ({
-  useFlag: jest.fn(() => false),
-}));
-
-jest.mock('@console/internal/components/ThemeProvider', () => ({
-  useTheme: jest.fn(() => ({ isDark: false })),
-}));
-
 jest.mock('@console/internal/components/utils', () => ({
   SectionHeading: ({ text }) => <h2 data-test="section-heading">{text}</h2>,
 }));
@@ -70,20 +62,11 @@ const mockNode: NodeKind = {
 };
 
 describe('NodeLogs', () => {
-  let useFlag: jest.Mock;
-
-  beforeEach(async () => {
-    const flagModule = await import('@console/dynamic-plugin-sdk/src/utils/flags');
-    useFlag = flagModule.useFlag as jest.Mock;
-  });
-
   afterEach(() => {
     jest.clearAllMocks();
   });
 
-  it('should render SectionHeading when FLAG_OPENSHIFT_5 is enabled', async () => {
-    useFlag.mockReturnValue(true);
-
+  it('should render SectionHeading', async () => {
     render(<NodeLogs obj={mockNode} />);
 
     await waitFor(() => {
@@ -94,20 +77,7 @@ describe('NodeLogs', () => {
     expect(heading).toHaveTextContent('Logs');
   });
 
-  it('should not render SectionHeading when FLAG_OPENSHIFT_5 is disabled', async () => {
-    useFlag.mockReturnValue(false);
-
-    render(<NodeLogs obj={mockNode} />);
-
-    await waitFor(() => {
-      const heading = screen.queryByTestId('section-heading');
-      expect(heading).not.toBeInTheDocument();
-    });
-  });
-
   it('should render PaneBody component', async () => {
-    useFlag.mockReturnValue(false);
-
     render(<NodeLogs obj={mockNode} />);
 
     await waitFor(() => {
@@ -116,8 +86,6 @@ describe('NodeLogs', () => {
   });
 
   it('should render log path selector', async () => {
-    useFlag.mockReturnValue(false);
-
     render(<NodeLogs obj={mockNode} />);
 
     await waitFor(() => {
@@ -127,8 +95,6 @@ describe('NodeLogs', () => {
   });
 
   it('should render log viewer component', async () => {
-    useFlag.mockReturnValue(false);
-
     render(<NodeLogs obj={mockNode} />);
 
     await waitFor(() => {

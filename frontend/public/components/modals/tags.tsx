@@ -1,6 +1,6 @@
 import type { FC } from 'react';
-import { useState, useEffect } from 'react';
-import { Button, Form, Modal, ModalBody, ModalHeader } from '@patternfly/react-core';
+import { useState } from 'react';
+import { Button, Form, Modal, ModalBody, ModalHeader, ModalVariant } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import type { K8sModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
@@ -36,14 +36,18 @@ const TagsModal = (props: TagsModalProps) => {
     name: props.resource?.metadata?.name,
     namespace: props.resource?.metadata?.namespace,
   });
-  const [stale, setStale] = useState(false);
   const { t } = useTranslation('public');
 
-  useEffect(() => {
-    if (watchedResourceLoaded && !_.isEmpty(watchedResource)) {
-      setStale(!_.isEqual(props.tags, watchedResource?.metadata?.annotations));
+  // `stale` holds the last comparison made while the watch had data. When the
+  // watched resource is deleted mid-edit the watch empties and the flag keeps
+  // its previous value, matching the previous effect-based implementation.
+  const [stale, setStale] = useState(false);
+  if (watchedResourceLoaded && !_.isEmpty(watchedResource)) {
+    const nextStale = !_.isEqual(props.tags, watchedResource?.metadata?.annotations);
+    if (nextStale !== stale) {
+      setStale(nextStale);
     }
-  }, [props.tags, watchedResource, watchedResourceLoaded]);
+  }
 
   const submit = (e): void => {
     e.preventDefault();
@@ -123,7 +127,7 @@ const AnnotationsModal: FC<AnnotationsModalProps> = (props) => (
 
 export const AnnotationsModalOverlay: OverlayComponent<AnnotationsModalProps> = (props) => (
   <Modal
-    variant="small"
+    variant={ModalVariant.large}
     isOpen
     onClose={props.closeOverlay}
     aria-labelledby="annotations-modal-title"

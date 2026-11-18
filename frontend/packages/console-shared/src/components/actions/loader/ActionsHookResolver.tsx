@@ -21,13 +21,13 @@ const ActionsHookResolver: FC<ActionsHookResolverProps> = ({
   useEffect(() => {
     if (loaded) onValueResolved(value);
     // We do not want to run the effect every time onValueResolved changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [loaded, value]);
 
   useEffect(() => {
     if (loadError) onValueError(loadError);
     // We do not want to run the effect every time onValueError changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [loadError]);
 
   return null;

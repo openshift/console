@@ -1,5 +1,5 @@
 import type { FC, ReactElement } from 'react';
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState } from 'react';
 import { FormHelperText, FormSection } from '@patternfly/react-core';
 import { DualListSelector } from '@patternfly/react-core/deprecated';
 import * as fuzzy from 'fuzzysearch';
@@ -65,11 +65,13 @@ const CatalogTypesConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
   const [consoleConfig, consoleConfigLoaded, consoleConfigError] =
     useConsoleOperatorConfig<SoftwareCatalogTypesConsoleConfig>();
   const [types, setTypes] = useState<Types>();
-  useEffect(() => {
-    if (consoleConfig && consoleConfigLoaded && !types) {
-      setTypes(consoleConfig?.spec?.customization?.developerCatalog?.types);
-    }
-  }, [consoleConfig, consoleConfigLoaded, types]);
+  // Config object the local types were last seeded from; an unset local value
+  // re-seeds when the config changes, user edits are never overwritten.
+  const [seededConfig, setSeededConfig] = useState<typeof consoleConfig>();
+  if (consoleConfig && consoleConfigLoaded && !types && seededConfig !== consoleConfig) {
+    setSeededConfig(consoleConfig);
+    setTypes(consoleConfig?.spec?.customization?.developerCatalog?.types);
+  }
 
   // Calculate options
   const [enabledOptions, disabledOptions] = useMemo<
@@ -245,18 +247,24 @@ const CatalogTypesConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
           'Another option to customize and standardize your development process. As an admin, you can disable the complete Software Catalog, or individual sub-catalogs (available as Types in the Software Catalog). Also here the "Search" and "Topology" will still show such resources.',
         )}
       </FormHelperText>
-      <DualListSelector
-        availableOptionsTitle={t('Enabled types')}
-        chosenOptionsTitle={t('Disabled types')}
-        isSearchable
-        availableOptions={enabledOptions}
-        chosenOptions={disabledOptions}
-        onListChange={onListChange}
-        filterOption={filterOption}
-        isDisabled={
-          readonly || !catalogTypesExtensionsLoaded || !consoleConfigLoaded || !!consoleConfigError
-        }
-      />
+      <div data-test="catalog-types-selector">
+        <DualListSelector
+          id="catalog-types-selector-list"
+          availableOptionsTitle={t('Enabled types')}
+          chosenOptionsTitle={t('Disabled types')}
+          isSearchable
+          availableOptions={enabledOptions}
+          chosenOptions={disabledOptions}
+          onListChange={onListChange}
+          filterOption={filterOption}
+          isDisabled={
+            readonly ||
+            !catalogTypesExtensionsLoaded ||
+            !consoleConfigLoaded ||
+            !!consoleConfigError
+          }
+        />
+      </div>
 
       <LoadError error={consoleConfigError} />
       <SaveStatus {...saveStatus} />

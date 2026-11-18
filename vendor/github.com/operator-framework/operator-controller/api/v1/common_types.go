@@ -19,19 +19,23 @@ package v1
 const (
 	TypeInstalled   = "Installed"
 	TypeProgressing = "Progressing"
-	TypeServing     = "Serving"
+
+	// Installed reasons
+	ReasonAbsent = "Absent"
 
 	// Progressing reasons
-	ReasonSucceeded = "Succeeded"
-	ReasonRetrying  = "Retrying"
-	ReasonBlocked   = "Blocked"
+	ReasonRollingOut           = "RollingOut"
+	ReasonRetrying             = "Retrying"
+	ReasonBlocked              = "Blocked"
+	ReasonInvalidConfiguration = "InvalidConfiguration"
 
-	// Terminal reasons
-	ReasonDeprecated = "Deprecated"
-	ReasonFailed     = "Failed"
+	// Deprecation reasons
+	ReasonDeprecated               = "Deprecated"
+	ReasonNotDeprecated            = "NotDeprecated"
+	ReasonDeprecationStatusUnknown = "DeprecationStatusUnknown"
 
-	// Serving reasons
-	ReasonAvailable                = "Available"
-	ReasonUnavailable              = "Unavailable"
-	ReasonUserSpecifiedUnavailable = "UserSpecifiedUnavailable"
+	// Common reasons
+	ReasonSucceeded                = "Succeeded"
+	ReasonFailed                   = "Failed"
+	ReasonProgressDeadlineExceeded = "ProgressDeadlineExceeded"
 )

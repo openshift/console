@@ -1,4 +1,5 @@
 import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
+import type { ExtensionHook } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import type { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions/catalog';
 import { ONE_SECOND } from '@console/shared/src/constants/time';
 import { usePoll } from '@console/shared/src/hooks/usePoll';
@@ -7,21 +8,15 @@ import {
   getConsoleRequestHeaders,
   normalizeConsoleHeaders,
 } from '@console/shared/src/utils/console-fetch-utils';
-import type { OLMCatalogItem } from '../types';
+import type { OLMCatalogItem, OLMCatalogItemData } from '../types';
 import { normalizeCatalogItem } from '../utils/catalog-item';
 
-type OLMCatalogItemData = {
-  categories: string[];
-  latestVersion: string;
-};
-
-type UseCatalogItems = () => [CatalogItem<OLMCatalogItemData>[], boolean, string];
-const useCatalogItems: UseCatalogItems = () => {
+export const useCatalogItems: ExtensionHook<CatalogItem<OLMCatalogItemData>[], void> = () => {
   const [olmCatalogItems, setOLMCatalogItems] = useState<OLMCatalogItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState('');
   const [lastModified, setLastModified] = useState('');
-  const abortControllerRef = useRef<AbortController>();
+  const abortControllerRef = useRef<AbortController>(undefined);
 
   const headers = useMemo(() => {
     const consoleHeaders = getConsoleRequestHeaders();
@@ -54,12 +49,12 @@ const useCatalogItems: UseCatalogItems = () => {
         if (olmItems !== null) {
           setOLMCatalogItems(olmItems);
         }
-        setLoading(false);
+        setLoaded(true);
       })
       .catch((err) => {
         if (err.name === 'AbortError') return;
         setError(err.toString());
-        setLoading(false);
+        setLoaded(true);
       });
   }, [headers]);
 
@@ -74,7 +69,5 @@ const useCatalogItems: UseCatalogItems = () => {
 
   const items = useMemo(() => olmCatalogItems.map(normalizeCatalogItem), [olmCatalogItems]);
 
-  return [items, loading, error];
+  return [items, loaded, error];
 };
-
-export default useCatalogItems;

@@ -1,4 +1,3 @@
-/* eslint-disable camelcase */
 import type { FC } from 'react';
 import {
   Checkbox,

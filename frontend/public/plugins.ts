@@ -7,9 +7,10 @@ import { initConsolePlugins } from '@console/dynamic-plugin-sdk/src/runtime/plug
 import { getSharedScope } from '@console/dynamic-plugin-sdk/src/runtime/plugin-shared-modules';
 import { ValidationResult } from '@console/dynamic-plugin-sdk/src/validation/ValidationResult';
 import { dynamicPluginNames } from '@console/plugin-sdk/src/utils/allowed-plugins';
+import { IS_PRODUCTION } from '@console/shared/src/constants/common';
 import { coFetch } from '@console/shared/src/utils/console-fetch';
 import type { RootState } from './redux';
-// eslint-disable-next-line @typescript-eslint/no-require-imports -- This module has its source generated during val-loader
+// eslint-disable-next-line -- This virtual module has its source generated
 const localPlugins: LocalPluginManifest[] = require('../get-local-plugins').default;
 
 /**
@@ -25,10 +26,8 @@ const isAllowedPluginName = (name: string) =>
   localPluginNames.includes(name) || dynamicPluginNames.includes(name);
 
 if (process.env.NODE_ENV !== 'test') {
-  /* eslint-disable no-console */
   console.info(`Static plugins: [${localPluginNames.join(', ') || '(empty)'}]`);
   console.info(`Dynamic plugins: [${dynamicPluginNames.join(', ') || '(empty)'}]`);
-  /* eslint-enable no-console */
 }
 
 /**
@@ -104,7 +103,7 @@ export const pluginStore = new PluginStore({
   },
 });
 
-if (process.env.NODE_ENV !== 'production') {
+if (!IS_PRODUCTION) {
   // Expose Console plugin store for debugging
   window.pluginStore = pluginStore;
 }
@@ -119,7 +118,7 @@ export const featureFlagMiddleware: Middleware<{}, RootState> = (s) => {
 
     if (nextFlags !== prevFlags) {
       prevFlags = nextFlags;
-      pluginStore.setFeatureFlags(nextFlags.toObject());
+      pluginStore.setFeatureFlags({ ...nextFlags });
     }
 
     return result;
@@ -132,6 +131,5 @@ Promise.allSettled(localPlugins.map((plugin) => pluginStore.loadPlugin(plugin)))
     initConsolePlugins(pluginStore);
   })
   .catch((err) => {
-    // eslint-disable-next-line no-console
     console.error('Failed to load Console plugins', err);
   });

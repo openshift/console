@@ -74,22 +74,38 @@ export const FetchProgressModal: FC<FetchProgressModalProps> = ({
 
   const [bytesDownloaded, setBytesDownloaded] = useState(0);
 
+  // Reset the download progress whenever a new download starts
+  const [wasDownloading, setWasDownloading] = useState(isDownloading);
+  if (wasDownloading !== isDownloading) {
+    setWasDownloading(isDownloading);
+    if (isDownloading) {
+      setBytesDownloaded(0);
+    }
+  }
+
   const abortControllerRef = useRef<AbortController | null>(null);
 
   const addToastRef = useRef(toaster.addToast);
-  addToastRef.current = toaster.addToast;
+  useEffect(() => {
+    addToastRef.current = toaster.addToast;
+  });
 
   const urlRef = useRef(url);
-  urlRef.current = url;
+  useEffect(() => {
+    urlRef.current = url;
+  });
 
   const callbackRef = useRef(callback);
-  callbackRef.current = callback;
+  useEffect(() => {
+    callbackRef.current = callback;
+  });
 
   const maxBytesRef = useRef(maxBytes);
-  maxBytesRef.current = maxBytes;
+  useEffect(() => {
+    maxBytesRef.current = maxBytes;
+  });
 
   const fetchData = useCallback(async () => {
-    setBytesDownloaded(0);
     abortControllerRef.current = new AbortController();
 
     try {
@@ -103,7 +119,6 @@ export const FetchProgressModal: FC<FetchProgressModalProps> = ({
 
       try {
         // Stream reading requires an indefinite loop that exits when done is true
-        // eslint-disable-next-line no-constant-condition
         while (true) {
           // Sequential reads are required; each chunk depends on the previous read completing
           // eslint-disable-next-line no-await-in-loop
@@ -146,7 +161,6 @@ export const FetchProgressModal: FC<FetchProgressModalProps> = ({
         setEndState(undefined);
         return;
       }
-      // eslint-disable-next-line no-console
       console.error('Failed to fetch:', error);
       setErrorMessage(error?.message || t('Could not fetch data'));
       setEndState('failed');
@@ -158,6 +172,7 @@ export const FetchProgressModal: FC<FetchProgressModalProps> = ({
 
   useEffect(() => {
     if (isDownloading) {
+      // eslint-disable-next-line react-hooks-js/set-state-in-effect -- the download must start when the isDownloading prop turns on; fetchData only calls setState from async continuations (fetch/reader callbacks), never synchronously
       fetchData();
     }
   }, [isDownloading, fetchData]);

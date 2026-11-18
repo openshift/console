@@ -9,10 +9,10 @@ import {
   BuildConfigModel,
   SecretModel,
 } from '@console/internal/models';
-import { uploadJarMockFormData } from '../__mocks__/upload-jar-mock';
 import * as importSubmitUtils from '../import-submit-utils';
 import { Resources } from '../import-types';
 import * as submitUtils from '../upload-jar-submit-utils';
+import { uploadJarMockFormData } from './data/upload-jar-mock';
 import { nodeJsBuilderImage as buildImage } from './import-submit-utils-data';
 
 jest.mock('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource', () => ({

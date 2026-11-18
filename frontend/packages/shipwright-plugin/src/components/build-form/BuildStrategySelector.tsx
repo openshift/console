@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useState, useMemo, useEffect } from 'react';
+import { useMemo } from 'react';
 import { Alert } from '@patternfly/react-core';
 import type { FormikValues } from 'formik';
 import { useFormikContext } from 'formik';
@@ -21,7 +21,6 @@ type BuildStrategySelectorProps = {
 const BuildStrategySelector: FC<BuildStrategySelectorProps> = ({ namespace, formType }) => {
   const { t } = useTranslation('shipwright-plugin');
   const { setFieldValue } = useFormikContext<FormikValues>();
-  const [error, setError] = useState('');
   const watchedResources = {
     bs: {
       isList: true,
@@ -44,20 +43,15 @@ const BuildStrategySelector: FC<BuildStrategySelectorProps> = ({ namespace, form
     [watchedBuildStrategies.bs.data, watchedBuildStrategies.cbs.data],
   );
 
-  useEffect(() => {
-    const errorKey = Object.keys(watchedBuildStrategies).find(
-      (key) => watchedBuildStrategies[key].loadError,
-    );
-    if (
-      buildStrategies.length === 0 &&
-      !watchedBuildStrategies[errorKey]?.loaded &&
-      watchedBuildStrategies[errorKey]?.loadError
-    ) {
-      setError(`${watchedBuildStrategies[errorKey]?.loadError?.message}`);
-    } else {
-      setError('');
-    }
-  }, [buildStrategies, watchedBuildStrategies]);
+  const errorKey = Object.keys(watchedBuildStrategies).find(
+    (key) => watchedBuildStrategies[key].loadError,
+  );
+  const error =
+    buildStrategies.length === 0 &&
+    !watchedBuildStrategies[errorKey]?.loaded &&
+    watchedBuildStrategies[errorKey]?.loadError
+      ? `${watchedBuildStrategies[errorKey]?.loadError?.message}`
+      : '';
 
   const clusterBuildStrategyOptions = useMemo(() => {
     const options: SelectInputOption[] = buildStrategies.reduce((acc, currentValue) => {

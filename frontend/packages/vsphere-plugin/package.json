@@ -4,7 +4,7 @@
   "description": "OpenShift vSphere Plugin",
   "private": true,
   "scripts": {
-    "lint": "yarn --cwd ../.. eslint packages/vsphere-plugin --fix"
+    "lint": "yarn --cwd ../.. oxlint packages/vsphere-plugin --fix"
   },
   "dependencies": {
     "@console/dynamic-plugin-sdk": "0.0.0-fixed",

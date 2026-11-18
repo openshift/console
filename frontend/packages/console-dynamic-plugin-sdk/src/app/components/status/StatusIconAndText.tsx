@@ -6,7 +6,7 @@ import { DASH } from '../../constants';
 import CamelCaseWrap from '../utils/camel-case-wrap';
 
 type StatusIconAndTextProps = StatusComponentProps & {
-  icon?: ReactElement;
+  icon?: ReactElement<{ className?: string }>;
   spin?: boolean;
 };
 

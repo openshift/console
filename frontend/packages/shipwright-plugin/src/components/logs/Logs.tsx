@@ -4,10 +4,10 @@ import { Alert } from '@patternfly/react-core';
 import { Base64 } from 'js-base64';
 import { throttle } from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { WSFactory } from '@console/dynamic-plugin-sdk/src/utils/k8s/ws-factory';
 import { LOG_SOURCE_TERMINATED } from '@console/internal/components/utils';
 import type { PodKind, ContainerSpec } from '@console/internal/module/k8s';
 import { resourceURL, modelFor } from '@console/internal/module/k8s';
-import { WSFactory } from '@console/internal/module/ws-factory';
 import { coFetchText } from '@console/shared/src/utils/console-fetch';
 import './Logs.scss';
 
@@ -36,13 +36,19 @@ const Logs: FC<LogsProps> = ({
   const contentRef = useRef<HTMLDivElement>(null);
   const [error, setError] = useState<boolean>(false);
   const resourceStatusRef = useRef<string>(resourceStatus);
-  const onCompleteRef = useRef<(name) => void>();
+  const onCompleteRef = useRef<(name) => void>(onComplete);
   const blockContentRef = useRef<string>('');
-  onCompleteRef.current = onComplete;
+  useEffect(() => {
+    onCompleteRef.current = onComplete;
+  });
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const addContentAndScroll = useCallback(
-    throttle(() => {
+  const addContentAndScrollRef = useRef<(() => void) | undefined>(undefined);
+
+  // The throttled helper reads and mutates DOM refs, so it must be created
+  // inside an effect: the React Compiler forbids passing a ref-reading
+  // closure to throttle() during render.
+  useEffect(() => {
+    addContentAndScrollRef.current = throttle(() => {
       if (contentRef.current) {
         contentRef.current.innerText += blockContentRef.current;
       }
@@ -50,25 +56,27 @@ const Logs: FC<LogsProps> = ({
         scrollToRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
       }
       blockContentRef.current = '';
-    }, 1000),
-    [],
-  );
+    }, 1000);
+  }, []);
 
-  const appendMessage = useRef<(blockContent) => void>();
-
-  appendMessage.current = useCallback(
+  const appendMessageCallback = useCallback(
     (blockContent: string) => {
       blockContentRef.current += blockContent;
       if (scrollToRef.current && blockContent && render && autoScroll) {
-        addContentAndScroll();
+        addContentAndScrollRef.current?.();
       }
     },
-    [autoScroll, render, addContentAndScroll],
+    [autoScroll, render],
   );
 
-  if (resourceStatusRef.current !== resourceStatus) {
+  const appendMessage = useRef<(blockContent) => void>(appendMessageCallback);
+  useEffect(() => {
+    appendMessage.current = appendMessageCallback;
+  });
+
+  useEffect(() => {
     resourceStatusRef.current = resourceStatus;
-  }
+  });
 
   useEffect(() => {
     let loaded: boolean = false;
@@ -124,9 +132,9 @@ const Logs: FC<LogsProps> = ({
 
   useEffect(() => {
     if (scrollToRef.current && render && autoScroll) {
-      addContentAndScroll();
+      addContentAndScrollRef.current?.();
     }
-  }, [autoScroll, render, addContentAndScroll]);
+  }, [autoScroll, render]);
 
   return (
     <div className="odc-logs" data-test="odc-logs" style={{ display: render ? '' : 'none' }}>

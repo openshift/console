@@ -23,13 +23,13 @@ export const SelectorInputField: FC<SelectorInputFieldProps> = ({
   helpText,
   required,
   dataTest,
-  ...otherProps
+  placeholder,
 }) => {
   const { setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
-  const [{ value }] = useField<string>(name);
+  const [{ value }] = useField<{ [key: string]: string }>(name);
 
   const fieldId = getFieldId(name, 'selector');
-  const tags = SelectorInput.arrayify(value || '');
+  const tags = SelectorInput.arrayify(value);
   const onChange = (newValue: string[]) => {
     setFieldValue(name, SelectorInput.objectify(newValue), false);
     setFieldTouched(name, true, true);
@@ -40,8 +40,8 @@ export const SelectorInputField: FC<SelectorInputFieldProps> = ({
       <SelectorInput
         onChange={onChange}
         tags={tags}
+        placeholder={placeholder}
         inputProps={{ id: fieldId, 'data-test': dataTest }}
-        {...otherProps}
       />
 
       <FormHelperText>

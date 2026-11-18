@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import type { FC, ReactNode, ReactText } from 'react';
+import type { FC, ReactNode } from 'react';
 import { memo, useState, useCallback, useMemo } from 'react';
 import { Button, Popover, PopoverPosition } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
@@ -277,7 +277,7 @@ const ListItem: FC<ListItemProps> = ({ children, value }) => (
 );
 
 type ListItemProps = {
-  value: ReactText;
+  value: number | string;
   children?: ReactNode;
 };
 

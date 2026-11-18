@@ -18,6 +18,7 @@ import { Base64 } from 'js-base64';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { getImpersonate } from '@console/dynamic-plugin-sdk';
+import { WSFactory } from '@console/dynamic-plugin-sdk/src/utils/k8s/ws-factory';
 import { FLAGS } from '@console/shared/src/constants/common';
 import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
@@ -33,7 +34,6 @@ import { storeDetachedWebSocket } from '../module/detached-ws-registry';
 import type { PodKind } from '../module/k8s';
 import { resourceURL } from '../module/k8s';
 import { isWindowsPod } from '../module/k8s/pods';
-import { WSFactory } from '../module/ws-factory';
 import store from '../redux';
 import type { ImperativeTerminalType } from './terminal';
 import { Terminal } from './terminal';
@@ -90,10 +90,10 @@ export const PodConnect: FC<PodConnectProps> = ({
 
   const containers = useMemo(() => _.keyBy(_.get(obj, 'spec.containers', []), 'name'), [obj]);
 
-  const podName = useMemo(() => obj.metadata?.name || '', [obj?.metadata?.name]);
+  const podName = useMemo(() => obj.metadata?.name || '', [obj.metadata?.name]);
   const namespace = useMemo(() => obj.metadata?.namespace || 'default', [obj?.metadata?.namespace]);
   // We are being more specific with the dependency array here to avoid additional rerenders when other fields in obj changes
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks-js/exhaustive-deps
   const isWindows = useMemo(() => isWindowsPod(obj), [obj?.spec?.tolerations]);
 
   const connect = useCallback(() => {
@@ -164,7 +164,6 @@ export const PodConnect: FC<PodConnectProps> = ({
         terminalRef.current?.onConnectionClosed(errorMsg);
         wsRef.current.destroy();
       })
-      // eslint-disable-next-line no-console
       .onerror((evt: any) => console.error(`WS error?! ${evt}`));
   }, [podName, namespace, isWindows, attach, activeContainer, t, isOpenShift]);
 
@@ -202,7 +201,6 @@ export const PodConnect: FC<PodConnectProps> = ({
         wsRef.current.destroy();
       }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [connect]);
 
   // Container change handler
@@ -210,7 +208,6 @@ export const PodConnect: FC<PodConnectProps> = ({
     (container: string) => {
       const name = containers?.[container]?.name;
       if (!name) {
-        // eslint-disable-next-line no-console
         console.warn(`no name, how did that happen? ${container}`);
         return;
       }
@@ -226,7 +223,7 @@ export const PodConnect: FC<PodConnectProps> = ({
   useEffect(() => {
     connect();
     terminalRef.current?.focus();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [activeContainer]);
 
   // Terminal event handlers

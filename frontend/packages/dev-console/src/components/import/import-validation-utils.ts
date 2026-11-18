@@ -29,15 +29,7 @@ const pipelinesAccessTokenValidationSchema = (t: TFunction) =>
       .when('gitProvider', ([gitProvider], schema) =>
         gitProvider === GitProvider.BITBUCKET
           ? schema.shape({
-              user: yup
-                .string()
-                .matches(nameRegex, {
-                  message: t(
-                    'devconsole~Name must consist of lower-case letters, numbers and hyphens. It must start with a letter and end with a letter or number.',
-                  ),
-                  excludeEmptyString: true,
-                })
-                .required(t('devconsole~Required')),
+              user: yup.string().required(t('devconsole~Required')),
             })
           : schema,
       )

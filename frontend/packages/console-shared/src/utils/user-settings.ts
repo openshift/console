@@ -1,4 +1,4 @@
-import { createHash } from 'crypto';
+import * as hash from 'hash.js';
 import { resourceURL } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { ConfigMapModel } from '@console/internal/models';
 import type { ConfigMapKind } from '@console/internal/module/k8s/types';
@@ -13,9 +13,7 @@ export const hashUsernameForSettings = (name: string, uid?: string): string | nu
   if (name === 'kube:admin' && !uid) {
     return 'kubeadmin';
   }
-  const hash = createHash('sha256');
-  hash.update(name);
-  return hash.digest('hex');
+  return hash.sha256().update(name).digest('hex');
 };
 
 export const createConfigMap = async (): Promise<ConfigMapKind> => {
@@ -25,7 +23,6 @@ export const createConfigMap = async (): Promise<ConfigMapKind> => {
     });
     return response.json();
   } catch (err) {
-    // eslint-disable-next-line no-console
     console.error('Could not create user settings ConfigMap', err);
     throw err;
   }
@@ -58,7 +55,6 @@ export const updateConfigMap = async (
     });
     return response.json();
   } catch (err) {
-    // eslint-disable-next-line no-console
     console.error('Could not update (patch) user settings ConfigMap', err);
     throw err;
   }
@@ -71,13 +67,10 @@ export const deserializeData = (data: string | null) => {
   try {
     return JSON.parse(data);
   } catch {
+    // Fallback for legacy values that were persisted as bare (non-JSON) strings
+    // before user setting values were always serialized to JSON.
     return data;
   }
 };
 
-export const seralizeData = <T>(data: T) => {
-  if (typeof data === 'string') {
-    return data;
-  }
-  return JSON.stringify(data);
-};
+export const serializeData = <T>(data: T) => JSON.stringify(data);

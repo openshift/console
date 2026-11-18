@@ -116,6 +116,7 @@ const EditDeploymentForm: FC<
         }
         handleCancel={handleCancel}
         handleDownload={editorType === EditorType.YAML && (() => downloadYaml(yamlData))}
+        namespace={resource.metadata.namespace}
         sticky
       />
     </FlexForm>

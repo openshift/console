@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { ClipboardCopy } from '@patternfly/react-core/dist/dynamic/components/ClipboardCopy';
+import { ClipboardCopy } from '@patternfly/react-core';
 import { ExternalLinkWithCopy } from '@console/internal/components/utils';
 
 type RoutesUrlLinkProps = {

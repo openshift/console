@@ -1,4 +1,3 @@
-/* eslint-disable no-barrel-files/no-barrel-files */
 export type { ResolvedExtension } from '../types';
 
 // Type for extension hook

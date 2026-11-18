@@ -1,5 +1,7 @@
 import type { Locator } from '@playwright/test';
 
+import { expect } from '../fixtures';
+
 import BasePage from './base-page';
 
 export class ConsolePluginPage extends BasePage {
@@ -7,15 +9,11 @@ export class ConsolePluginPage extends BasePage {
   private readonly pfCodeEditor = this.page.locator('.pf-v6-c-code-editor');
 
   async navigateToConsolePlugins(): Promise<void> {
-    await this.goTo(
-      '/k8s/cluster/operator.openshift.io~v1~Console/cluster/console-plugins',
-    );
+    await this.goTo('/k8s/cluster/operator.openshift.io~v1~Console/cluster/console-plugins');
   }
 
   async navigateToPluginDetails(pluginName: string): Promise<void> {
-    await this.goTo(
-      `/k8s/cluster/console.openshift.io~v1~ConsolePlugin/${pluginName}`,
-    );
+    await this.goTo(`/k8s/cluster/console.openshift.io~v1~ConsolePlugin/${pluginName}`);
   }
 
   async navigateToPluginManifest(pluginName: string): Promise<void> {
@@ -54,16 +52,29 @@ export class ConsolePluginPage extends BasePage {
     await this.goTo('/');
   }
 
-  async navigateToDynamicRoute(id: string): Promise<void> {
-    await this.goTo(`/dynamic-route-${id}`);
+  async openAboutModal(): Promise<void> {
+    const helpToggle = this.page.getByTestId('help-dropdown-toggle');
+    const aboutItem = this.page.getByRole('menuitem', { name: 'About', exact: true });
+    // A re-render can close the help dropdown before its item is clicked.
+    await expect(async () => {
+      if (!(await aboutItem.isVisible().catch(() => false))) {
+        await helpToggle.click({ timeout: 5_000 });
+      }
+      await expect(aboutItem).toBeVisible({ timeout: 5_000 });
+      await aboutItem.click({ timeout: 5_000 });
+    }).toPass({ timeout: 30_000 });
+  }
+
+  async navigateToDynamicRoute(id: string, timeout?: number): Promise<void> {
+    await this.goTo(`/dynamic-route-${id}`, timeout);
   }
 
   async navigateToTestUtilities(): Promise<void> {
     await this.goTo('/test-utility-consumer');
   }
 
-  async navigateToDemoListPage(): Promise<void> {
-    await this.goTo('/demo-list-page');
+  async navigateToDemoListPage(timeout?: number): Promise<void> {
+    await this.goTo('/demo-list-page', timeout);
   }
 
   async navigateToK8sApi(): Promise<void> {

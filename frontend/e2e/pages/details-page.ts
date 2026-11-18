@@ -19,7 +19,7 @@ export class DetailsPage extends BasePage {
 
   async waitForPageLoad(): Promise<void> {
     try {
-      // eslint-disable-next-line no-restricted-syntax
+      // eslint-disable-next-line eslint-js/no-restricted-syntax
       await this.skeletonLoader.waitFor({ state: 'detached', timeout: 30_000 });
     } catch {
       // Skeleton may have already disappeared
@@ -48,6 +48,33 @@ export class DetailsPage extends BasePage {
 
   async selectTab(name: string): Promise<void> {
     await this.navigateToTab(this.tab(name));
+  }
+
+  async clickDebugContainerFromLogs(): Promise<void> {
+    await this.robustClick(this.page.getByTestId('debug-container-link'));
+  }
+
+  async clickStatusButton(timeout = 30_000): Promise<void> {
+    await this.robustClick(this.page.getByTestId('popover-status-button'), {
+      timeout,
+      force: true,
+    });
+  }
+
+  async clickDebugContainerLink(containerName: string): Promise<void> {
+    const debugLink = this.page.getByTestId(`popup-debug-container-link-${containerName}`);
+    // A re-render can close the status popover before the debug link is clicked.
+    await expect(async () => {
+      if (!(await debugLink.isVisible())) {
+        await this.clickStatusButton(10_000);
+      }
+      await expect(debugLink).toBeVisible({ timeout: 5_000 });
+      await debugLink.click({ timeout: 5_000 });
+    }).toPass({ timeout: 30_000 });
+  }
+
+  async waitForTerminalReady(timeout = 120_000): Promise<void> {
+    await expect(this.xtermViewport).toBeVisible({ timeout });
   }
 
   async clickKebabAction(actionId: string): Promise<void> {
@@ -87,8 +114,18 @@ export class DetailsPage extends BasePage {
   }
 
   async confirmDelete(): Promise<void> {
-    await this.robustClick(
-      this.page.getByRole('button', { name: 'Delete', exact: true }),
-    );
+    await this.robustClick(this.page.getByRole('button', { name: 'Delete', exact: true }));
+  }
+  getSectionHeader(text: string): Locator {
+    return this.page.getByTestId(`section-heading-${text}`);
+  }
+
+  getEmptyState(): Locator {
+    return this.page.getByTestId('console-empty-state');
+  }
+
+  async navigateToDetailsUrl(url: string): Promise<void> {
+    await this.goTo(url);
+    await this.waitForPageLoad();
   }
 }

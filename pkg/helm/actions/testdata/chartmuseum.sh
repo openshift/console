@@ -15,7 +15,10 @@ if [ ! -x "$BINARY" ]; then
 fi
 echo "Starting chartmuseum TLS on port 9443..." >&2
 # PID stays the same across exec; stop scripts / diagnostics can read it.
-echo $$ > ./chartmuseum-tls.pid
+if ! echo $$ > ./chartmuseum-tls.pid; then
+  echo "ERROR: failed to write PID file ./chartmuseum-tls.pid" >&2
+  exit 1
+fi
 exec "$BINARY" --debug --port=9443 \
   --storage="local" \
   --storage-local-rootdir="./chartstore-9443" \

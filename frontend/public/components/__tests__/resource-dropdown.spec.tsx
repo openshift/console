@@ -1,6 +1,5 @@
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Map as ImmutableMap } from 'immutable';
 import type { K8sModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import { getReferenceForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
@@ -54,12 +53,13 @@ const makeModel = (
   ...overrides,
 });
 
-const buildModelsMap = (models: K8sKind[]): ImmutableMap<string, K8sKind> =>
-  ImmutableMap<string, K8sKind>().withMutations((map) => {
-    models.forEach((m) => {
-      map.set(getReferenceForModel(m), m);
-    });
+const buildModelsMap = (models: K8sKind[]): Record<string, K8sKind> => {
+  const map: Record<string, K8sKind> = {};
+  models.forEach((m) => {
+    map[getReferenceForModel(m)] = m;
   });
+  return map;
+};
 
 const defaultProps = {
   selected: [] as string[],

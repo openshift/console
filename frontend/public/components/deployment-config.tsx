@@ -12,8 +12,8 @@ import {
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
-import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
+import type { GetDataViewRows } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { ActionServiceProvider } from '@console/shared/src/components/actions/ActionServiceProvider';
 import { ActionMenu } from '@console/shared/src/components/actions/menu/ActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
@@ -290,21 +290,18 @@ const getDataViewRows: GetDataViewRows<DeploymentConfigKind> = (data, columns) =
   getWorkloadDataViewRows(data, columns, DeploymentConfigModel);
 
 const DeploymentConfigsList: FC<DeploymentConfigsListProps> = ({ data, loaded, ...props }) => {
-  const { columns, resetAllColumnWidths } =
-    useWorkloadColumns<DeploymentConfigKind>(DeploymentConfigModel);
+  const { columns } = useWorkloadColumns<DeploymentConfigKind>();
 
   return (
     <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView
         {...props}
+        id={DeploymentConfigModel}
         label={DeploymentConfigModel.labelPlural}
         data={data}
         loaded={loaded}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement
-        isResizable
-        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );

@@ -1,3 +1,4 @@
+import type { VerifiedClusterVersionConditions } from '../cluster-version-helpers';
 import {
   PROMPT_TIMEOUT_TOTAL_LIMIT,
   PROMPT_TIMEOUT_WARNING_THRESHOLD,
@@ -5,6 +6,7 @@ import {
 } from './shared/constants';
 import { getLanguageConstraint } from './shared/language-utils';
 import { securityConstraint, getConfidenceQualifiers } from './shared/security-utils';
+import { formatVerifiedConditions } from './shared/verified-conditions';
 
 /**
  * Pre-check prompt for a specific target version
@@ -12,11 +14,13 @@ import { securityConstraint, getConfidenceQualifiers } from './shared/security-u
  *
  * @param currentVersion - Current cluster version
  * @param targetVersion - Specific target version selected by user
+ * @param verified - ClusterVersion condition statuses read directly by the console
  * @returns Formatted prompt for OLS version-specific assessment
  */
 export const createPreCheckSpecificVersionPrompt = (
   currentVersion: string,
   targetVersion: string,
+  verified: VerifiedClusterVersionConditions,
 ) => {
   const languageConstraint = getLanguageConstraint();
   const confidenceQualifiers = getConfidenceQualifiers({
@@ -66,7 +70,7 @@ ${languageConstraint}
 **PHASE 3 - OPTIONAL (Only if under ${PROMPT_TIMEOUT_WARNING_THRESHOLD} seconds total):**
 5. resources_list: MachineConfigPool (apiVersion: "machineconfiguration.openshift.io/v1", kind: "MachineConfigPool")
 6. nodes_top: Check node CPU/memory usage
-7. resources_list: PodDisruptionBudget (apiVersion: "policy/v1", kind: "PodDisruptionBudget") - Filter out openshift-*, kube-*
+7. resources_list: PodDisruptionBudget (apiVersion: "policy/v1", kind: "PodDisruptionBudget") - Filter out openshift-*, kube-*, default, openshift
 8. get_alerts: Check for critical/warning alerts
 **CRITICAL EFFICIENCY RULES:**
 - If approaching ${PROMPT_TIMEOUT_WARNING_THRESHOLD} seconds of execution time, STOP making new tool calls and provide analysis with data collected
@@ -93,7 +97,11 @@ This is a pre-upgrade analysis for OpenShift cluster upgrade from ${currentVersi
 **CRITICAL UPGRADE PATH ANALYSIS**: You must analyze ALL conditional update risks for every version between ${currentVersion} and ${targetVersion} (inclusive). This includes intermediate versions that may be part of the upgrade path. For example, if upgrading from 4.21.16 to 4.21.22, you must check for risks at 4.21.17, 4.21.18, 4.21.19, 4.21.20, 4.21.21, and 4.21.22. Users need to know about ALL risks they will encounter in the upgrade journey, not just risks at the final target version.
 </context>
 
+${formatVerifiedConditions(verified)}
+
 <condition_checking_guide>
+NOTE: The {type, status} pairs below are a REFERENCE LEGEND showing how to interpret conditions in general — they are NOT this cluster's data. Never copy a status from this legend into your output. Read the ClusterVersion condition statuses from <verified_clusterversion_conditions> above, and read every other condition (ClusterOperators, nodes, PDBs, etc.) from the tool call results.
+
 CRITICAL: Understanding Kubernetes/OpenShift Conditions
 
 Conditions have TWO important fields you MUST check:

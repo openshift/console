@@ -1,0 +1,18 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "arrowParens": "always",
+  "printWidth": 100,
+  "singleQuote": true,
+  "trailingComma": "all",
+  "sortPackageJson": false,
+  "proseWrap": "always",
+  "ignorePatterns": [
+    "**/dist",
+    "**/generated",
+    "**/locales",
+    ".yarn",
+    "__nock-fixtures__",
+    "node_modules",
+    "packages/console-dynamic-plugin-sdk/docs"
+  ]
+}

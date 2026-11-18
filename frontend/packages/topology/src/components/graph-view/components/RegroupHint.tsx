@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import ShortcutGrid from '@patternfly/react-component-groups/dist/dynamic/ShortcutGrid';
+import { ShortcutGrid } from '@patternfly/react-component-groups';
 import { useTranslation } from 'react-i18next';
 
 const RegroupHint: FC = () => {

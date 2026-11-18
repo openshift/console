@@ -31,7 +31,7 @@ const OperatorBackedServiceNode: FC<OperatorBackedServiceNodeProps> = ({
   dropTarget,
   ...rest
 }) => {
-  const ref = useRef();
+  const ref = useRef(undefined);
   const { t } = useTranslation('topology');
   return (
     <Tooltip
