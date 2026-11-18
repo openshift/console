@@ -12,6 +12,7 @@ import (
 	operatorsv1 "github.com/operator-framework/api/pkg/operators/v1"
 	operatorsv1alpha1 "github.com/operator-framework/api/pkg/operators/v1alpha1"
 	"github.com/operator-framework/library-olm/migration/pkg/migration"
+	ocv1 "github.com/operator-framework/operator-controller/api/v1"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	corev1 "k8s.io/api/core/v1"
@@ -117,6 +118,7 @@ func TestDelegatedCollectionFailsBeforeSourceMutation(t *testing.T) {
 	mapper.Add(apiextensionsv1.SchemeGroupVersion.WithKind("CustomResourceDefinition"), meta.RESTScopeRoot)
 	denied := apierrors.NewForbidden(corev1.Resource("secrets"), "", errors.New("delegated grant removed"))
 	writes := 0
+	dryRuns := 0
 	scoped := interceptor.NewClient(base.(client.WithWatch), interceptor.Funcs{
 		List: func(ctx context.Context, c client.WithWatch, list client.ObjectList, options ...client.ListOption) error {
 			if objects, ok := list.(*unstructured.UnstructuredList); ok && objects.GroupVersionKind().Kind == "SecretList" {
@@ -124,7 +126,14 @@ func TestDelegatedCollectionFailsBeforeSourceMutation(t *testing.T) {
 			}
 			return c.List(ctx, list, options...)
 		},
-		Create: func(context.Context, client.WithWatch, client.Object, ...client.CreateOption) error {
+		Create: func(ctx context.Context, cl client.WithWatch, object client.Object, options ...client.CreateOption) error {
+			createOptions := (&client.CreateOptions{}).ApplyOptions(options)
+			if len(createOptions.DryRun) == 1 && createOptions.DryRun[0] == metav1.DryRunAll {
+				require.IsType(t, &ocv1.ClusterObjectSet{}, object)
+				require.Equal(t, metav1.FieldValidationStrict, createOptions.FieldValidation)
+				dryRuns++
+				return cl.Create(ctx, object, options...)
+			}
 			writes++
 			return errors.New("unexpected mutation")
 		},
@@ -149,6 +158,7 @@ func TestDelegatedCollectionFailsBeforeSourceMutation(t *testing.T) {
 	_, err = coordinator.prepareJournal(ctx, migrator, "execution", options)
 	require.ErrorIs(t, err, denied)
 	assert.Zero(t, writes)
+	assert.Positive(t, dryRuns)
 	assert.NoError(t, base.Get(ctx, client.ObjectKeyFromObject(subscription), &operatorsv1alpha1.Subscription{}))
 	assert.NoError(t, base.Get(ctx, client.ObjectKeyFromObject(csv), &operatorsv1alpha1.ClusterServiceVersion{}))
 	assert.NoError(t, base.Get(ctx, client.ObjectKeyFromObject(secret), &corev1.Secret{}))

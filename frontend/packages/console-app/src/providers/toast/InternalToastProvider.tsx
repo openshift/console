@@ -243,6 +243,7 @@ export const InternalToastProvider: FC<InternalToastProviderProps> = ({
         {children}
         {!isNotificationDrawerExpanded && toasts.length > 0 ? (
           <AlertGroup
+            data-test="toast-notifications"
             appendTo={appendTo}
             isToast
             isLiveRegion

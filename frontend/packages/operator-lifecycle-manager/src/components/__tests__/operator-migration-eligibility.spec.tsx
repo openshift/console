@@ -1,10 +1,10 @@
-import { isDataViewTdObject } from '@patternfly/react-data-view/dist/esm/DataViewTable/DataViewTable';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { SubscriptionKind } from '../../types';
 import { getOperatorMigrationScans } from '../../utils/operator-migration-api';
 import type { OperatorMigrationScan } from '../../utils/operator-migration-api';
 import { getOperatorMigrationEligibilityCell } from '../operator-migration-eligibility';
+import { useMigrationNotifications } from '../operator-migration-notifications';
 
 jest.mock('react-i18next', () => {
   const t = (key: string, values?: Record<string, string>) =>
@@ -13,6 +13,7 @@ jest.mock('react-i18next', () => {
 });
 
 jest.mock('../../status/csv-status', () => ({ subscriptionForCSV: jest.fn() }));
+jest.mock('../operator-migration-notifications', () => ({ useMigrationNotifications: jest.fn() }));
 jest.mock('../../utils/operator-migration-api', () => ({
   getOperatorMigrationScans: jest.fn(),
   OPERATOR_MIGRATION_SCAN_INVALIDATED_EVENT: 'test-migration-scans',
@@ -29,7 +30,7 @@ const renderCell = () => {
   const [cell] = getOperatorMigrationEligibilityCell([
     { obj: subscription, rowData: { subscriptions: [] }, activeColumnIDs: new Set(), index: 0 },
   ]);
-  render(<>{isDataViewTdObject(cell) ? cell.cell : cell}</>);
+  render(<>{cell && typeof cell === 'object' && 'cell' in cell ? cell.cell : cell}</>);
 };
 
 const mockScan = (scan: Partial<OperatorMigrationScan>) => {
@@ -45,7 +46,33 @@ const mockScan = (scan: Partial<OperatorMigrationScan>) => {
 };
 
 describe('OperatorMigrationEligibilityCell', () => {
-  beforeEach(() => jest.clearAllMocks());
+  beforeEach(() => {
+    jest.clearAllMocks();
+    (useMigrationNotifications as jest.Mock).mockReturnValue({ migratingOperators: new Set() });
+  });
+
+  it('shows an active migration instead of stale eligibility', async () => {
+    mockScan({ status: 'Eligible', eligible: true });
+    (useMigrationNotifications as jest.Mock).mockReturnValue({
+      migratingOperators: new Set(['netobserv-operator/netobserv-operator']),
+    });
+    renderCell();
+
+    expect(await screen.findByText('Migration in progress')).toBeVisible();
+    expect(screen.queryByRole('button')).not.toBeInTheDocument();
+    expect(screen.queryByText('Eligible')).not.toBeInTheDocument();
+  });
+
+  it('does not use a migration for the same subscription name in another namespace', async () => {
+    mockScan({ status: 'Eligible', eligible: true });
+    (useMigrationNotifications as jest.Mock).mockReturnValue({
+      migratingOperators: new Set(['another-namespace/netobserv-operator']),
+    });
+    renderCell();
+
+    expect(await screen.findByRole('button', { name: 'Migration status: Eligible' })).toBeVisible();
+    expect(screen.queryByText('Migration in progress')).not.toBeInTheDocument();
+  });
 
   it.each([
     {

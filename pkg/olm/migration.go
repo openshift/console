@@ -168,15 +168,16 @@ type migrationResourceCount struct {
 }
 
 type operatorMigrationPlan struct {
-	ClusterExtensionName string                   `json:"clusterExtensionName"`
-	InstallNamespace     string                   `json:"installNamespace"`
-	PackageName          string                   `json:"packageName"`
-	Version              string                   `json:"version"`
-	Channel              string                   `json:"channel,omitempty"`
-	ClusterCatalog       string                   `json:"clusterCatalog"`
-	ClusterObjectSetName string                   `json:"clusterObjectSetName"`
-	Resources            []migrationResourceCount `json:"resources"`
-	Actions              []string                 `json:"actions"`
+	ClusterExtensionName        string                   `json:"clusterExtensionName"`
+	InstallNamespace            string                   `json:"installNamespace"`
+	PackageName                 string                   `json:"packageName"`
+	Version                     string                   `json:"version"`
+	Channel                     string                   `json:"channel,omitempty"`
+	ClusterCatalog              string                   `json:"clusterCatalog"`
+	ClusterObjectSetName        string                   `json:"clusterObjectSetName,omitempty"`
+	ClusterObjectDeploymentName string                   `json:"clusterObjectDeploymentName,omitempty"`
+	Resources                   []migrationResourceCount `json:"resources"`
+	Actions                     []string                 `json:"actions"`
 }
 
 type operatorMigrationDryRunResponse struct {
@@ -479,8 +480,12 @@ func newOperatorMigrationPlan(opts migration.Options, info *migration.MigrationI
 	if opts.InstallNamespace != opts.SubscriptionNamespace {
 		actions = append(actions, fmt.Sprintf("Scale source Deployments in %s to zero and wait for their Pods to terminate.", opts.SubscriptionNamespace))
 	}
+	revisionAction := fmt.Sprintf("Create ClusterObjectSet %s-1 and wait for its resources to become ready.", opts.ClusterExtensionName)
+	if info.UseClusterObjectDeployment {
+		revisionAction = fmt.Sprintf("Create ClusterObjectDeployment %s and wait until its current rollout completes and the deployment is available.", opts.ClusterExtensionName)
+	}
 	actions = append(actions,
-		fmt.Sprintf("Create ClusterObjectSet %s-1 and wait for its resources to become ready.", opts.ClusterExtensionName),
+		revisionAction,
 		fmt.Sprintf("Create ClusterExtension %s in namespace %s and wait until it is installed.", opts.ClusterExtensionName, opts.InstallNamespace),
 		fmt.Sprintf("Delete the source copies of migrated resources. Clean up OLM (Classic) resources, including the Operator resource %s.%s and OperatorCondition %s/%s, if they exist.", info.PackageName, opts.SubscriptionNamespace, opts.SubscriptionNamespace, info.BundleName),
 	)
@@ -493,7 +498,7 @@ func newOperatorMigrationPlan(opts migration.Options, info *migration.MigrationI
 		actions = append(actions, fmt.Sprintf("Retain source namespace %s.", opts.SubscriptionNamespace))
 	}
 
-	return &operatorMigrationPlan{
+	plan := &operatorMigrationPlan{
 		ClusterExtensionName: opts.ClusterExtensionName,
 		InstallNamespace:     opts.InstallNamespace,
 		PackageName:          info.PackageName,
@@ -504,6 +509,11 @@ func newOperatorMigrationPlan(opts migration.Options, info *migration.MigrationI
 		Resources:            resources,
 		Actions:              actions,
 	}
+	if info.UseClusterObjectDeployment {
+		plan.ClusterObjectSetName = ""
+		plan.ClusterObjectDeploymentName = opts.ClusterExtensionName
+	}
+	return plan
 }
 
 type operatorMigrationRollbackRequest struct {

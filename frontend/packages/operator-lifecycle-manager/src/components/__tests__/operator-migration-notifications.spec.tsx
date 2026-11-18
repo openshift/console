@@ -1,15 +1,19 @@
-import { act, render, screen } from '@testing-library/react';
+import type { PropsWithChildren, ReactNode } from 'react';
+import { act, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useTranslation } from 'react-i18next';
 import { InternalToastProvider } from '@console/app/src/providers/toast/InternalToastProvider';
 import { OverlayProvider } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { HttpError } from '@console/dynamic-plugin-sdk/src/utils/error/http-error';
+import type { SubscriptionKind } from '../../types';
 import type { OperatorMigrationJob } from '../../utils/operator-migration-api';
 import {
   getOperatorMigrationJob,
   getOperatorMigrationJobs,
+  getOperatorMigrationScans,
   startOperatorMigrationRollback,
 } from '../../utils/operator-migration-api';
+import { getOperatorMigrationEligibilityCell } from '../operator-migration-eligibility';
 import {
   OperatorMigrationNotificationsProvider,
   useOperatorMigrationNotifications,
@@ -17,9 +21,12 @@ import {
 } from '../operator-migration-notifications';
 
 jest.mock('react-i18next', () => ({ useTranslation: jest.fn() }));
+jest.mock('../../status/csv-status', () => ({ subscriptionForCSV: jest.fn() }));
 jest.mock('../../utils/operator-migration-api', () => ({
   getOperatorMigrationJob: jest.fn(),
   getOperatorMigrationJobs: jest.fn(),
+  getOperatorMigrationScans: jest.fn(),
+  OPERATOR_MIGRATION_SCAN_INVALIDATED_EVENT: 'test-migration-scans',
   invalidateOperatorMigrationScans: jest.fn(),
   startOperatorMigrationRollback: jest.fn(),
 }));
@@ -47,23 +54,61 @@ const StartMigration = () => {
   );
 };
 
-const Notifications = () => {
+const Notifications = ({ children }: PropsWithChildren) => {
   const value = useOperatorMigrationNotifications();
   return (
     <OperatorMigrationNotificationsProvider value={value}>
       <span>Console content</span>
       <StartMigration />
+      {children}
     </OperatorMigrationNotificationsProvider>
   );
 };
-const renderNotifications = () =>
+const renderNotifications = (children?: ReactNode) =>
   render(
     <InternalToastProvider>
       <OverlayProvider>
-        <Notifications />
+        <Notifications>{children}</Notifications>
       </OverlayProvider>
     </InternalToastProvider>,
   );
+
+const subscriptions: SubscriptionKind[] = [
+  { name: 'demo', namespace: 'operators' },
+  { name: 'second', namespace: 'operators' },
+  { name: 'demo', namespace: 'another-namespace' },
+].map((metadata) => ({
+  apiVersion: 'operators.coreos.com/v1alpha1',
+  kind: 'Subscription',
+  metadata,
+  spec: { name: metadata.name, source: 'fixture-catalog' },
+}));
+
+const MigrationStatusTable = () => {
+  const cells = getOperatorMigrationEligibilityCell(
+    subscriptions.map((obj, index) => ({
+      obj,
+      rowData: { subscriptions },
+      activeColumnIDs: new Set<string>(),
+      index,
+    })),
+  );
+  return (
+    <table aria-label="Operator migration statuses">
+      <tbody>
+        {cells.map((cell, index) => {
+          const { name, namespace } = subscriptions[index].metadata;
+          return (
+            <tr key={`${namespace}/${name}`}>
+              <th scope="row">{`${namespace}/${name}`}</th>
+              <td>{cell && typeof cell === 'object' && 'cell' in cell ? cell.cell : cell}</td>
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
+  );
+};
 
 const translate = (key: string, values?: Record<string, string | number>): string =>
   key.replace(/{{(\w+)}}/g, (_, name: string) => String(values?.[name] ?? ''));
@@ -75,8 +120,96 @@ describe('OperatorMigrationNotifications', () => {
     (useTranslation as jest.Mock).mockReturnValue({ t: translate });
     (getOperatorMigrationJobs as jest.Mock).mockResolvedValue([running]);
     (getOperatorMigrationJob as jest.Mock).mockResolvedValue(running);
+    (getOperatorMigrationScans as jest.Mock).mockResolvedValue(
+      subscriptions.map(({ metadata }) => ({
+        subscriptionName: metadata.name,
+        subscriptionNamespace: metadata.namespace,
+        status: 'Eligible',
+        eligible: true,
+        reason: '',
+      })),
+    );
   });
   afterEach(() => jest.useRealTimers());
+
+  it('restores in-progress migration cells only for the matching subscription and namespace', async () => {
+    renderNotifications(<MigrationStatusTable />);
+
+    expect(
+      await within(screen.getByRole('row', { name: /^operators\/demo / })).findByText(
+        'Migration in progress',
+      ),
+    ).toBeVisible();
+    expect(
+      await within(screen.getByRole('row', { name: /^another-namespace\/demo / })).findByRole(
+        'button',
+        { name: 'Migration status: Eligible' },
+      ),
+    ).toBeVisible();
+    expect(
+      within(screen.getByRole('row', { name: /^operators\/second / })).getByRole('button', {
+        name: 'Migration status: Eligible',
+      }),
+    ).toBeVisible();
+  });
+
+  it('updates the migration cell as soon as a newly submitted job is monitored', async () => {
+    (getOperatorMigrationJobs as jest.Mock).mockResolvedValue([]);
+    renderNotifications(<MigrationStatusTable />);
+    const row = within(screen.getByRole('row', { name: /^operators\/demo / }));
+    expect(await row.findByRole('button', { name: 'Migration status: Eligible' })).toBeVisible();
+    const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
+
+    await user.click(screen.getByRole('button', { name: 'Start migration' }));
+
+    expect(await row.findByText('Migration in progress')).toBeVisible();
+    expect(row.queryByRole('button')).not.toBeInTheDocument();
+  });
+
+  it.each(['Succeeded', 'Failed', 'Skipped'])(
+    'clears a %s operator while keeping the remaining batch operator in progress',
+    async (status) => {
+      const batch: OperatorMigrationJob = {
+        ...running,
+        items: [
+          running.items[0],
+          { ...running.items[0], subscriptionName: 'second', status: 'Queued' },
+        ],
+      };
+      (getOperatorMigrationJobs as jest.Mock).mockResolvedValue([batch]);
+      (getOperatorMigrationJob as jest.Mock).mockResolvedValue(batch);
+      renderNotifications(<MigrationStatusTable />);
+      expect(await screen.findAllByText('Migration in progress')).toHaveLength(2);
+      (getOperatorMigrationJob as jest.Mock).mockResolvedValue({
+        ...batch,
+        items: [
+          { ...batch.items[0], status },
+          { ...batch.items[1], status: 'Migrating' },
+        ],
+      });
+
+      await act(async () => jest.advanceTimersByTimeAsync(2000));
+
+      expect(
+        within(screen.getByRole('row', { name: /^operators\/demo / })).getByRole('button', {
+          name: 'Migration status: Eligible',
+        }),
+      ).toBeVisible();
+      expect(
+        within(screen.getByRole('row', { name: /^operators\/second / })).getByText(
+          'Migration in progress',
+        ),
+      ).toBeVisible();
+      (getOperatorMigrationJob as jest.Mock).mockResolvedValue({
+        ...batch,
+        status: 'Failed',
+      });
+
+      await act(async () => jest.advanceTimersByTimeAsync(2000));
+
+      expect(screen.queryByText('Migration in progress')).not.toBeInTheDocument();
+    },
+  );
 
   it('restores an active migration when Console mounts with no browser state', async () => {
     const { unmount } = renderNotifications();

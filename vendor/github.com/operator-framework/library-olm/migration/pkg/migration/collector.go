@@ -276,6 +276,13 @@ func (m *Migrator) CollectResources(ctx context.Context, opts Options, csv *oper
 		}
 	}
 
+	retained, err := m.collectRollbackResources(ctx, opts, seen)
+	if err != nil {
+		return nil, err
+	}
+	for _, obj := range retained {
+		addIfNew(obj)
+	}
 	return collected, nil
 }
 

@@ -104,6 +104,79 @@ func TestRollbackResumesControllerRevisionCleanupUsingRetainedTargetUID(t *testi
 	require.NoError(t, kubeClient.Get(ctx, client.ObjectKey{Name: "demo", Namespace: "operators"}, &operatorsv1alpha1.Subscription{}))
 }
 
+// TestRollbackResumesExtensionReferenceCleanup retains identity for packed Secrets that have no revision label and are orphaned with their extension.
+func TestRollbackResumesExtensionReferenceCleanup(t *testing.T) {
+	ctx := context.Background()
+	kubeClient, job, checkpoint, snapshot := seedFailedRollback(t)
+	snapshot.InstalledCSV, snapshot.InstalledCSVUID = "demo.v1", "csv-uid"
+	extension := &ocv1.ClusterExtension{ObjectMeta: metav1.ObjectMeta{Name: "demo", UID: "extension-uid", Annotations: map[string]string{
+		migrationExecutionAnnotation: job.ID, migration.MigratedFromSubscriptionAnnotation: snapshot.SubscriptionRef,
+	}}}
+	// Deployment-based packing uses content-addressed, extension-owned Secrets
+	// without a revision label or a Console execution annotation.
+	reference := &corev1.Secret{ObjectMeta: metav1.ObjectMeta{Name: "demo-content-hash", Namespace: checkpoint.Namespace, UID: "reference-uid", Labels: map[string]string{migration.LabelOwnerName: "demo"}, OwnerReferences: []metav1.OwnerReference{*metav1.NewControllerRef(extension, ocv1.GroupVersion.WithKind(ocv1.ClusterExtensionKind))}}, Type: corev1.SecretType(migration.SecretTypeObjectData)}
+	require.NoError(t, kubeClient.Create(ctx, extension))
+	require.NoError(t, kubeClient.Create(ctx, reference))
+	unrelated := reference.DeepCopy()
+	unrelated.Name, unrelated.UID, unrelated.Type = "operand-secret", "operand-secret-uid", corev1.SecretTypeOpaque
+	unrelated.ResourceVersion = ""
+	require.NoError(t, kubeClient.Create(ctx, unrelated))
+	require.NoError(t, kubeClient.Create(ctx, &operatorsv1alpha1.ClusterServiceVersion{ObjectMeta: metav1.ObjectMeta{Name: "demo.v1", Namespace: "operators", UID: "csv-uid"}, Status: operatorsv1alpha1.ClusterServiceVersionStatus{Phase: operatorsv1alpha1.CSVPhaseSucceeded}}))
+	rollback := &operatorMigrationRollbackJob{SourceJobID: job.ID, CheckpointName: checkpoint.Name, CheckpointNamespace: checkpoint.Namespace, CheckpointUID: checkpoint.UID, Snapshot: *snapshot}
+	guard := rollbackTestGuard(t, kubeClient, job.ID)
+	guard.Client = interceptor.NewClient(kubeClient.(client.WithWatch), interceptor.Funcs{Delete: func(ctx context.Context, cl client.WithWatch, object client.Object, options ...client.DeleteOption) error {
+		if object.GetName() == reference.Name {
+			return errors.New("reference cleanup interrupted")
+		}
+		if err := cl.Delete(ctx, object, options...); err != nil {
+			return err
+		}
+		if _, ok := object.(*ocv1.ClusterExtension); ok {
+			var orphan corev1.Secret
+			if err := cl.Get(ctx, client.ObjectKeyFromObject(reference), &orphan); err != nil {
+				return err
+			}
+			orphan.OwnerReferences = nil // Simulate Kubernetes orphan propagation.
+			return cl.Update(ctx, &orphan)
+		}
+		return nil
+	}})
+	require.ErrorContains(t, executeRollback(ctx, guard, rollback, func() error { t.Fatal("reference cleanup unfinished"); return nil }), "reference cleanup interrupted")
+	require.NoError(t, kubeClient.Get(ctx, client.ObjectKeyFromObject(checkpoint), checkpoint))
+	assert.JSONEq(t, `{"operator-controller/demo-content-hash":"reference-uid"}`, checkpoint.Annotations[rollbackReferenceUIDsAnnotation])
+	assert.True(t, apierrors.IsNotFound(kubeClient.Get(ctx, client.ObjectKey{Name: "demo", Namespace: "operators"}, &operatorsv1alpha1.Subscription{})))
+	rollback.TargetUID = "" // A replacement backend reloads identity from the checkpoint.
+	require.NoError(t, executeRollback(ctx, rollbackTestGuard(t, kubeClient, job.ID), rollback, func() error { rollback.Restored = true; return nil }))
+	assert.True(t, apierrors.IsNotFound(kubeClient.Get(ctx, client.ObjectKeyFromObject(reference), &corev1.Secret{})))
+	assert.True(t, apierrors.IsNotFound(kubeClient.Get(ctx, client.ObjectKeyFromObject(checkpoint), &corev1.Secret{})))
+	require.NoError(t, kubeClient.Get(ctx, client.ObjectKey{Name: "demo", Namespace: "operators"}, &operatorsv1alpha1.Subscription{}))
+	require.NoError(t, kubeClient.Get(ctx, client.ObjectKeyFromObject(unrelated), &corev1.Secret{}))
+}
+
+// TestRollbackRejectsForeignExtensionReferenceBeforeDeletion preserves controllers when an unlabelled packed Secret belongs to another extension UID.
+func TestRollbackRejectsForeignExtensionReferenceBeforeDeletion(t *testing.T) {
+	ctx := context.Background()
+	kubeClient, job, checkpoint, snapshot := seedFailedRollback(t)
+	extension := &ocv1.ClusterExtension{ObjectMeta: metav1.ObjectMeta{Name: "demo", UID: "extension-uid", Annotations: map[string]string{
+		migrationExecutionAnnotation: job.ID, migration.MigratedFromSubscriptionAnnotation: snapshot.SubscriptionRef,
+	}}}
+	require.NoError(t, kubeClient.Create(ctx, extension))
+	foreign := extension.DeepCopy()
+	foreign.UID = "foreign-extension-uid"
+	reference := &corev1.Secret{ObjectMeta: metav1.ObjectMeta{Name: "packed", Namespace: checkpoint.Namespace, UID: "reference-uid", Labels: map[string]string{migration.LabelOwnerName: "demo"}, OwnerReferences: []metav1.OwnerReference{*metav1.NewControllerRef(foreign, ocv1.GroupVersion.WithKind(ocv1.ClusterExtensionKind))}}, Type: corev1.SecretType(migration.SecretTypeObjectData)}
+	require.NoError(t, kubeClient.Create(ctx, reference))
+	guard := rollbackTestGuard(t, kubeClient, job.ID)
+	guard.Client = interceptor.NewClient(kubeClient.(client.WithWatch), interceptor.Funcs{Delete: func(context.Context, client.WithWatch, client.Object, ...client.DeleteOption) error {
+		t.Fatal("foreign reference ownership must be rejected before deleting resources")
+		return nil
+	}})
+	rollback := &operatorMigrationRollbackJob{SourceJobID: job.ID, CheckpointName: checkpoint.Name, CheckpointNamespace: checkpoint.Namespace, CheckpointUID: checkpoint.UID, Snapshot: *snapshot}
+	err := executeRollback(ctx, guard, rollback, func() error { t.Fatal("must not restore"); return nil })
+	require.True(t, apierrors.IsConflict(err), "%v", err)
+	require.NoError(t, kubeClient.Get(ctx, client.ObjectKeyFromObject(extension), &ocv1.ClusterExtension{}))
+	require.NoError(t, kubeClient.Get(ctx, client.ObjectKeyFromObject(reference), &corev1.Secret{}))
+}
+
 func TestRollbackRejectsUnrelatedControllerRevisions(t *testing.T) {
 	for _, tt := range []struct {
 		name, ownerName, label, execution string
@@ -136,6 +209,7 @@ func TestRollbackRejectsUnrelatedControllerRevisions(t *testing.T) {
 	}
 }
 
+// TestRollbackRejectsUnrelatedReferenceSecrets verifies owner metadata and saved identity boundaries before reference deletion.
 func TestRollbackRejectsUnrelatedReferenceSecrets(t *testing.T) {
 	for _, tt := range []struct {
 		name   string
@@ -150,6 +224,14 @@ func TestRollbackRejectsUnrelatedReferenceSecrets(t *testing.T) {
 		{name: "not a controller reference", change: func(s *corev1.Secret) { controller := false; s.OwnerReferences[0].Controller = &controller }},
 		{name: "different owner kind", change: func(s *corev1.Secret) { s.OwnerReferences[0].Kind = "ClusterExtension" }},
 		{name: "different owner API", change: func(s *corev1.Secret) { s.OwnerReferences[0].APIVersion = "other/v1" }},
+		{name: "different extension UID", change: func(s *corev1.Secret) {
+			delete(s.Labels, migration.LabelRevisionName)
+			s.OwnerReferences[0].Kind, s.OwnerReferences[0].Name, s.OwnerReferences[0].UID = ocv1.ClusterExtensionKind, "demo", "other-extension"
+		}},
+		{name: "different extension name", change: func(s *corev1.Secret) {
+			delete(s.Labels, migration.LabelRevisionName)
+			s.OwnerReferences[0].Kind, s.OwnerReferences[0].Name, s.OwnerReferences[0].UID = ocv1.ClusterExtensionKind, "other-target", "target-uid"
+		}},
 		{name: "unverified orphan", change: func(s *corev1.Secret) { s.OwnerReferences = nil; s.Name = "unknown-ref" }},
 		{name: "replaced orphan", change: func(s *corev1.Secret) { s.OwnerReferences = nil; s.UID = "replacement-uid" }},
 		{name: "different orphan namespace", change: func(s *corev1.Secret) { s.OwnerReferences = nil; s.Namespace = "other-namespace" }},

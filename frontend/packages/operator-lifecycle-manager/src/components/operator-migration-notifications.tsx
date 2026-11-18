@@ -1,4 +1,12 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useRef } from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import type { ContextProvider } from '@console/dynamic-plugin-sdk/src/extensions/context-providers';
 import { HttpError } from '@console/dynamic-plugin-sdk/src/utils/error/http-error';
@@ -19,6 +27,7 @@ interface MigrationNotificationsValue extends ReturnType<
   typeof useOperatorMigrationToastCallbacks
 > {
   monitorMigration: (job: OperatorMigrationJob) => Promise<void>;
+  migratingOperators: ReadonlySet<string>;
 }
 const MigrationNotificationsContext = createContext<MigrationNotificationsValue | undefined>(
   undefined,
@@ -43,6 +52,9 @@ export const useOperatorMigrationNotifications: Awaited<
 > = () => {
   const launchOverlay = useOverlay();
   const { removeToast } = useToast();
+  const [migratingOperators, setMigratingOperators] = useState<ReadonlySet<string>>(
+    () => new Set(),
+  );
   const toasts = useRef<ReturnType<typeof useOperatorMigrationToastCallbacks>>(undefined);
   const execution = useRef<{
     controller: AbortController;
@@ -50,32 +62,59 @@ export const useOperatorMigrationNotifications: Awaited<
     reported: Set<string>;
   }>(undefined);
 
-  /** Deduplicates job polling under the provider lifetime and forwards updates through current localized callbacks. */
-  const monitorMigration = useCallback((job: OperatorMigrationJob): Promise<void> => {
-    const state = execution.current;
-    if (!state || state.controller.signal.aborted) return Promise.resolve();
-    const existing = state.monitors.get(job.id);
-    if (existing) return existing;
-    toasts.current?.updateProgressToast(job);
-    const promise = monitorOperatorMigrationJob(
-      job.id,
-      {
-        updateProgressToast: (progress) => {
-          if (!isOperatorMigrationJobActive(progress)) state.reported.add(progress.id);
-          toasts.current?.updateProgressToast(progress);
-        },
-        addOperatorResultToasts: (result) => toasts.current?.addOperatorResultToasts(result),
-        showRetryToast: (jobID) => toasts.current?.showRetryToast(jobID, job.operation),
-      },
-      state.controller.signal,
-    )
-      .catch((error: Error) => {
-        if (!state.controller.signal.aborted) toasts.current?.showMonitorErrorToast(error);
-      })
-      .finally(() => state.monitors.delete(job.id));
-    state.monitors.set(job.id, promise);
-    return promise;
+  /** Tracks nonterminal operators without re-rendering consumers for unchanged progress snapshots. */
+  const updateMigratingOperators = useCallback((job: OperatorMigrationJob) => {
+    if (job.operation === 'Rollback') return;
+    setMigratingOperators((current) => {
+      const next = new Set(current);
+      job.items.forEach((item) => {
+        const key = `${item.subscriptionNamespace}/${item.subscriptionName}`;
+        if (
+          isOperatorMigrationJobActive(job) &&
+          ['Queued', 'Checking', 'Migrating'].includes(item.status)
+        ) {
+          next.add(key);
+        } else {
+          next.delete(key);
+        }
+      });
+      return next.size === current.size && [...next].every((key) => current.has(key))
+        ? current
+        : next;
+    });
   }, []);
+
+  /** Deduplicates job polling under the provider lifetime and forwards updates through current localized callbacks. */
+  const monitorMigration = useCallback(
+    (job: OperatorMigrationJob): Promise<void> => {
+      const state = execution.current;
+      if (!state || state.controller.signal.aborted) return Promise.resolve();
+      const existing = state.monitors.get(job.id);
+      if (existing) return existing;
+      updateMigratingOperators(job);
+      toasts.current?.updateProgressToast(job);
+      const promise = monitorOperatorMigrationJob(
+        job.id,
+        {
+          updateProgressToast: (progress) => {
+            updateMigratingOperators(progress);
+            if (!isOperatorMigrationJobActive(progress)) state.reported.add(progress.id);
+            toasts.current?.updateProgressToast(progress);
+          },
+          addOperatorResultToasts: (result) => toasts.current?.addOperatorResultToasts(result),
+          showRetryToast: (jobID) => toasts.current?.showRetryToast(jobID, job.operation),
+        },
+        state.controller.signal,
+      )
+        .catch((error: Error) => {
+          if (!state.controller.signal.aborted) toasts.current?.showMonitorErrorToast(error);
+        })
+        .finally(() => state.monitors.delete(job.id));
+      state.monitors.set(job.id, promise);
+      return promise;
+    },
+    [updateMigratingOperators],
+  );
 
   /** Opens confirmed recovery with the original job identity and removes the obsolete failure alert after acceptance. */
   const requestRollback = useCallback(
@@ -146,5 +185,8 @@ export const useOperatorMigrationNotifications: Awaited<
       window.clearTimeout(timer);
     };
   }, [monitorMigration]);
-  return useMemo(() => ({ ...callbacks, monitorMigration }), [callbacks, monitorMigration]);
+  return useMemo(
+    () => ({ ...callbacks, monitorMigration, migratingOperators }),
+    [callbacks, monitorMigration, migratingOperators],
+  );
 };
