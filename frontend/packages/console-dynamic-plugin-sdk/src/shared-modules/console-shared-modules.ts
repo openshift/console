@@ -81,6 +81,15 @@ export const sharedPluginModules = [
 
 type SharedModuleNames = (typeof sharedPluginModules)[number];
 
+const moduleDeprecations = {
+  'react-redux':
+    'This shared module is marked for removal to prevent plugins from accessing Console root state which is internal (not an API).',
+  'react-router':
+    'This shared module is marked for removal, use react-router instead of aliased react-router-dom(-v5-compat) modules.',
+  'redux-thunk':
+    'This shared module is marked for removal, plugins can continue using redux-thunk as a regular dependency.',
+};
+
 const sharedPluginModuleMetadata: Record<SharedModuleNames, SharedModuleMetadata> = {
   '@openshift/dynamic-plugin-sdk': {},
   '@openshift-console/dynamic-plugin-sdk': {},
@@ -90,12 +99,12 @@ const sharedPluginModuleMetadata: Record<SharedModuleNames, SharedModuleMetadata
   'react-dom': { requiredVersionFrom: 'react' },
   'react/jsx-runtime': { partOfModule: 'react' },
   'react-i18next': {},
-  'react-redux': {},
+  'react-redux': { deprecated: moduleDeprecations['react-redux'] },
   'react-router': {},
-  'react-router-dom': { aliased: true, deprecated: 'Use react-router instead.' },
-  'react-router-dom-v5-compat': { aliased: true, deprecated: 'Use react-router instead.' },
-  redux: {},
-  'redux-thunk': {},
+  'react-router-dom': { aliased: true, deprecated: moduleDeprecations['react-router'] },
+  'react-router-dom-v5-compat': { aliased: true, deprecated: moduleDeprecations['react-router'] },
+  redux: { deprecated: moduleDeprecations['react-redux'] },
+  'redux-thunk': { deprecated: moduleDeprecations['redux-thunk'] },
 };
 
 /**
