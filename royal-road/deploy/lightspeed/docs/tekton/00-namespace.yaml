@@ -1,0 +1,17 @@
+# Namespace for the documentation index build: the Pipeline, its Task, its
+# ServiceAccounts, the daily schedule, and (for Pipelines-as-Code) the
+# Repository of the infrastructure repository.
+#
+# PSA baseline. The Tasks here run as UID 65532 with no privileges; baseline
+# rather than restricted because tekton-catalog's git-clone sets no
+# securityContext of its own.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: lightspeed-docs
+  annotations:
+    rrl.infrastructure/agent-created: "true"
+  labels:
+    app.kubernetes.io/part-of: lightspeed
+    pod-security.kubernetes.io/enforce: baseline
+    pod-security.kubernetes.io/warn: baseline

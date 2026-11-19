@@ -1,0 +1,46 @@
+# A manual run (kubectl create -f; generateName needs create, not apply).
+# Uses the deploy-key Secret for the infrastructure repository, like the
+# daily schedule.
+apiVersion: tekton.dev/v1
+kind: PipelineRun
+metadata:
+  generateName: lightspeed-docs-manual-
+  namespace: lightspeed-docs
+  labels:
+    app.kubernetes.io/part-of: lightspeed
+spec:
+  pipelineRef:
+    name: lightspeed-docs-index
+  params:
+    - {name: infra-url, value: "git@github.com:royal-road/infrastructure.git"}
+    - {name: image, value: "<registry>/<project>/lightspeed-docs-index"}
+    - {name: embeddings-url, value: "<embeddings-base-url>"}
+    # - {name: profile, value: smoke}   # a few files per source
+  taskRunTemplate:
+    serviceAccountName: lightspeed-docs-builder
+  taskRunSpecs:
+    - {pipelineTaskName: discover, serviceAccountName: lightspeed-docs-discovery}
+    - {pipelineTaskName: rollout-new, serviceAccountName: lightspeed-docs-rollout}
+    - {pipelineTaskName: rollout-existing, serviceAccountName: lightspeed-docs-rollout}
+  timeouts:
+    pipeline: 2h
+  workspaces:
+    - name: source
+      volumeClaimTemplate:
+        spec:
+          accessModes: [ReadWriteOnce]
+          resources:
+            requests:
+              storage: 4Gi
+    - name: dockerconfig
+      secret:
+        secretName: lightspeed-docs-harbor-push
+    - name: sources-config
+      configMap:
+        name: lightspeed-docs-sources
+    - name: embeddings-key
+      secret:
+        secretName: lightspeed-docs-embeddings
+    - name: infra-ssh
+      secret:
+        secretName: lightspeed-docs-infra-ssh

@@ -1,0 +1,23 @@
+# Shape only. DO NOT APPLY IN PRODUCTION: create the Secret through the
+# infrastructure secret flow.
+#
+# Read-only deploy key of royal-road/infrastructure (GitHub: Settings ›
+# Deploy keys, "Allow write access" unchecked), for runs not started by
+# Pipelines-as-Code (daily schedule, manual runs). The git-clone Task copies
+# this directory to ~/.ssh.
+#
+#   ssh-keygen -t ed25519 -N '' -C lightspeed-docs -f id_ed25519
+#   ssh-keyscan github.com > known_hosts     # check against GitHub's published fingerprints
+#   kubectl -n lightspeed-docs create secret generic lightspeed-docs-infra-ssh \
+#     --from-file=id_ed25519 --from-file=known_hosts
+apiVersion: v1
+kind: Secret
+metadata:
+  name: lightspeed-docs-infra-ssh
+  namespace: lightspeed-docs
+type: Opaque
+stringData:
+  id_ed25519: |
+    <private key>
+  known_hosts: |
+    <github.com host keys>

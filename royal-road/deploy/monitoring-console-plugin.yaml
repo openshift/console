@@ -1,0 +1,97 @@
+# monitoring-console-plugin: Observe > Dashboards (Perses), the
+# `perses-dashboards` feature of openshift/monitoring-plugin.
+# See "Perses dashboards" in README.md.
+#
+# This is the image Cluster Observability Operator 1.5.2 runs for a
+# Monitoring UIPlugin with perses.enabled on consoles 4.22 and newer (COO
+# 1.5.2 defaultImages "ui-monitoring", compatibility matrix minimum
+# v4.22: react-router 7, like console 5.0), unmodified: openshift/monitoring-plugin built with
+# CONSOLE_PLUGIN_NAME=monitoring-console-plugin, so its plugin name, i18n
+# namespace and the proxy path its Perses pages call
+# (/api/proxy/plugin/monitoring-console-plugin/perses/) all match. It runs
+# next to our monitoring-plugin (alerting, metrics, legacy dashboards,
+# targets) exactly as COO's plugin runs next to OpenShift's on a cluster.
+# COO passes the same arguments: -features=perses-dashboards and the
+# config/static paths.
+#
+# Placeholders:
+#   <console-namespace>   namespace of the console (bridge) Deployment
+#
+# The bridge needs (comma-separate from existing entries):
+#   BRIDGE_PLUGINS        monitoring-console-plugin=http://monitoring-console-plugin.<console-namespace>.svc.cluster.local:9443/
+#   BRIDGE_PLUGIN_PROXY   a "services" entry for the Perses server (perses/plugin-proxy.sh)
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: monitoring-console-plugin
+  namespace: <console-namespace>
+  labels:
+    app.kubernetes.io/name: monitoring-console-plugin
+    app.kubernetes.io/part-of: console
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: monitoring-console-plugin
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: monitoring-console-plugin
+        app.kubernetes.io/part-of: console
+    spec:
+      # Static files only; the Perses API is reached through the bridge.
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: monitoring-console-plugin
+          image: quay.io/openshift-observability-ui/monitoring-console-plugin:v1.0.0@sha256:db3ccc6ba98ae415e6c6721b161a673bd22501ab2f5a05c62149af3b621f49d0
+          args:
+            - -config-path=/opt/app-root/config
+            - -static-path=/opt/app-root/web/dist
+            - -features=perses-dashboards
+          # Plain HTTP inside the cluster (no -cert/-key), like our
+          # monitoring-plugin: only the bridge fetches these assets.
+          ports:
+            - name: http
+              containerPort: 9443
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              memory: 128Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: monitoring-console-plugin
+  namespace: <console-namespace>
+  labels:
+    app.kubernetes.io/name: monitoring-console-plugin
+    app.kubernetes.io/part-of: console
+spec:
+  selector:
+    app.kubernetes.io/name: monitoring-console-plugin
+  ports:
+    - name: http
+      port: 9443
+      targetPort: http
+      protocol: TCP

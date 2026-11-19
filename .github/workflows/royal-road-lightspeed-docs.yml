@@ -1,0 +1,43 @@
+name: royal-road-lightspeed-docs
+
+# Checks the Lightspeed documentation index tooling
+# (royal-road/deploy/lightspeed/docs/): unit tests and the generated discovery
+# RBAC, inside the OLS image pinned in 42-ols.yaml (the image the Pipeline runs
+# them in), and that the kustomization renders.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - royal-road/deploy/lightspeed/docs/**
+      - royal-road/deploy/lightspeed/42-ols.yaml
+      - .github/workflows/royal-road-lightspeed-docs.yml
+  pull_request:
+    paths:
+      - royal-road/deploy/lightspeed/docs/**
+      - royal-road/deploy/lightspeed/42-ols.yaml
+      - .github/workflows/royal-road-lightspeed-docs.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Unit tests in the pinned OLS image
+        run: |
+          image=$(grep -oE 'quay.io/openshift-lightspeed/lightspeed-service-api@sha256:[0-9a-f]{64}' royal-road/deploy/lightspeed/42-ols.yaml)
+          grep -q "$image" royal-road/deploy/lightspeed/docs/tekton/20-task-discover.yaml \
+            || { echo "20-task-discover.yaml ols-image differs from 42-ols.yaml"; exit 1; }
+          grep -q "$image" royal-road/deploy/lightspeed/docs/tekton/21-task-index.yaml \
+            || { echo "21-task-index.yaml ols-image differs from 42-ols.yaml"; exit 1; }
+          docker run --rm --entrypoint python -v "$PWD/royal-road/deploy/lightspeed/docs:/docs:ro" -w /docs \
+            "$image" -m unittest discover -v -s /docs
+
+      - name: Kustomization renders
+        run: kubectl kustomize royal-road/deploy/lightspeed/docs > /dev/null

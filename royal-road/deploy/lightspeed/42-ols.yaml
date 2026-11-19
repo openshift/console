@@ -1,8 +1,9 @@
 # OpenShift Lightspeed Service (OLS), the chat backend, without the operator.
 #
 # Needs: 10-rbac.yaml, 20-tls.yaml (the Secret lightspeed-app-server-tls),
-# 40-ols-config.yaml, 41-ols-shim-configmap.yaml, and the Secret
-# lightspeed-gpustack (key apikey; see README.md).
+# 40-ols-config.yaml, 41-ols-shim-configmap.yaml, the Secret
+# lightspeed-gpustack (key apikey; see README.md), and a documentation index
+# image (docs/README.md; its pipeline then updates the reference).
 #
 # The image is upstream's public build of openshift/lightspeed-service `main`
 # (no release tags), pinned by digest: rr_ols_shim.py patches private names,
@@ -80,12 +81,13 @@ spec:
             periodSeconds: 5
             failureThreshold: 60
           resources:
-            # About 0.9 GiB resident after a few chats with tools on kind.
+            # About 0.9 GiB resident after a few chats with tools on kind;
+            # 1.1 GB with the full documentation index loaded (docs/).
             requests:
               cpu: 200m
-              memory: 1Gi
+              memory: 1536Mi
             limits:
-              memory: 2Gi
+              memory: 3Gi
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
@@ -101,6 +103,9 @@ spec:
             - name: apikey
               mountPath: /etc/apikeys/gpustack
               readOnly: true
+            - name: sentry-mcp-key
+              mountPath: /etc/mcp-keys/sentry
+              readOnly: true
             - name: tls
               mountPath: /etc/certs/lightspeed-tls
               readOnly: true
@@ -108,7 +113,23 @@ spec:
               mountPath: /etc/certs/bundle
             - name: tmp
               mountPath: /tmp
+            # Documentation indexes (40-ols-config.yaml, reference_content).
+            - name: docs-index
+              mountPath: /rag
+              readOnly: true
+      # The index image is private if it holds your own docs: name the pull
+      # Secret of its registry here.
+      # imagePullSecrets:
+      #   - name: <docs-index-pull-secret>
       volumes:
+        # Image volume (GA in Kubernetes 1.36; needs containerd >= 2.1 or
+        # CRI-O >= 1.31): the kubelet pulls the image and mounts its files
+        # read-only, no copy and no init container. A new index needs a new
+        # pod: change the reference (tag@digest) and the Deployment rolls.
+        - name: docs-index
+          image:
+            reference: <docs-index-image>
+            pullPolicy: IfNotPresent
         - name: config
           configMap:
             name: olsconfig
@@ -118,6 +139,17 @@ spec:
         - name: apikey
           secret:
             secretName: lightspeed-gpustack
+        # Key for the Sentry MCP server (55-sentry-mcp.yaml). Only that key is
+        # mounted, not the Sentry token. Optional: without the Secret OLS
+        # starts, logs that it can't read the header file, and runs without
+        # the Sentry tools.
+        - name: sentry-mcp-key
+          secret:
+            secretName: lightspeed-sentry
+            optional: true
+            items:
+              - key: mcp-api-key
+                path: mcp-api-key
         - name: tls
           secret:
             secretName: lightspeed-app-server-tls

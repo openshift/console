@@ -32,8 +32,24 @@ var (
 		Resource: "routes",
 	}
 	cachedTektonResultsHost string = ""
-	tlsCertPath             string = "/var/serving-cert/tls.crt"
+	apiHostOverride         string = ""
+	tlsCertPath             string = DefaultCAFile
 )
+
+// DefaultCAFile is the OpenShift service CA bundle the console mounts with its
+// serving certificate; the service CA also signs the Results API certificate there.
+const DefaultCAFile = "/var/serving-cert/tls.crt"
+
+// Configure sets the Results API host:port (empty: derive it from the
+// TektonResult resource or, off-cluster, its Route) and the CA file used to
+// verify the API's certificate in-cluster (empty: DefaultCAFile).
+// Call it before serving requests.
+func Configure(apiHost, caFile string) {
+	apiHostOverride = apiHost
+	if caFile != "" {
+		tlsCertPath = caFile
+	}
+}
 
 var client *http.Client
 
@@ -71,6 +87,9 @@ func Client(k8sMode string) (*http.Client, error) {
 }
 
 func getTRHost(ctx context.Context, dynamicClient *dynamic.DynamicClient, k8sMode string) (string, error) {
+	if apiHostOverride != "" {
+		return apiHostOverride, nil
+	}
 	if k8sMode == "off-cluster" {
 		route, err := dynamicClient.Resource(*TektonResultsAPIRoute).Namespace("openshift-pipelines").Get(ctx, "tekton-results-api-service", metav1.GetOptions{})
 		if err != nil {

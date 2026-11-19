@@ -1,0 +1,16 @@
+# Pipelines-as-Code Repository for royal-road/infrastructure. Runs land in
+# namespace lightspeed-docs, next to the Pipeline. The GitHub App that PaC
+# already uses must be installed on the repository.
+#
+# The only PipelineRun (.tekton/lightspeed-docs-index.yaml) matches pushes to
+# main, so pull requests and /test comments start nothing.
+#
+# cancel-in-progress (on the PipelineRun) and concurrency_limit cannot be
+# combined in PaC v0.54; this repository uses cancel-in-progress.
+apiVersion: pipelinesascode.tekton.dev/v1alpha1
+kind: Repository
+metadata:
+  name: royal-road-infrastructure
+  namespace: lightspeed-docs
+spec:
+  url: https://github.com/royal-road/infrastructure

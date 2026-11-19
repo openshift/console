@@ -1,0 +1,40 @@
+# Per-namespace datasource: create one in every namespace that has
+# PersesDashboards (observability/perses/ in the infrastructure repository
+# carries one next to each namespace's dashboards). It becomes that
+# namespace's default, so the namespace's dashboards query the tenancy port
+# instead of the cluster-wide global datasource.
+#
+# Port 9092 of thanos-querier is kube-rbac-proxy (SubjectAccessReview: may
+# the caller `get pods.metrics.k8s.io` in ?namespace=) in front of
+# prom-label-proxy (adds namespace="<ns>" to every query). Perses forwards the
+# viewer's own token and the ?namespace= of this URL, so a namespace user
+# sees exactly the series of the namespaces they can read, however the
+# dashboard's queries are written.
+#
+# Placeholder: <namespace> (both occurrences must match).
+apiVersion: perses.dev/v1alpha2
+kind: PersesDatasource
+metadata:
+  name: thanos-querier-tenancy
+  namespace: <namespace>
+spec:
+  config:
+    display:
+      name: Namespace metrics (<namespace>)
+    default: true
+    plugin:
+      kind: PrometheusDatasource
+      spec:
+        proxy:
+          kind: HTTPProxy
+          spec:
+            url: https://thanos-querier.openshift-monitoring.svc:9092/?namespace=<namespace>
+            # Perses-side secret the operator creates from `client` below
+            # (name: <datasource>-secret). It holds only the CA path.
+            secret: thanos-querier-tenancy-secret
+  client:
+    tls:
+      enable: true
+      caCert:
+        type: file
+        certPath: /ca/ca.crt

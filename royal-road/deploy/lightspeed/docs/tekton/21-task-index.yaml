@@ -1,0 +1,266 @@
+# Task lightspeed-docs-index: Markdown sources -> OLS BYOK FAISS indexes.
+#
+# Expects in the `source` workspace: console/ (royal-road/console, for the
+# scripts), infrastructure/ (royal-road/infrastructure), and the resolved
+# sources file the discover Task wrote (concrete refs for the versions the
+# cluster runs). Fetches the upstream docs itself (public, anonymous, sparse,
+# shallow), builds the index, and pushes it as <image>:<fingerprint>.
+#
+# Steps run in one pod as UID 65532 (gid 0; the workspace gets fsGroup 65532
+# from the cluster's default pod template):
+#   plan      resolved sources -> work/fetch.tsv                    (OLS image)
+#   fetch     sparse, shallow fetch of each upstream ref            (git image)
+#   corpus    Markdown with title/url front matter -> work/corpus   (OLS image)
+#   gitleaks  over the Royal Road corpus; any finding fails the run (gitleaks)
+#   index     chunk, secret gate, embed, persist -> work/image      (OLS image)
+#   oci       work/image as a one-layer OCI layout, reproducible   (OLS image)
+#   push      skopeo copy to <image>:<fingerprint>, digest result   (skopeo)
+#
+# No container engine: the image is files on scratch, so make_oci.py writes the
+# layout and skopeo pushes it, unprivileged (buildah's layer apply needs mounts
+# that PSA-restricted nodes refuse).
+#
+# Embedding: `embedder: gpustack` (default) sends the chunks to an
+# OpenAI-compatible /v1/embeddings serving the same all-mpnet-base-v2 weights
+# (GPUStack model docs-embeddings), after a parity gate against the local
+# model; if the gate or the service fails it falls back to CPU, unless that
+# would exceed cpu-budget-minutes. `embedder: cpu` embeds locally only.
+#
+# The Python steps run in the OLS image that serves the index, so llama-index,
+# FAISS and the embedding model match what OLS loads. Pin `ols-image` to the
+# digest in royal-road/deploy/lightspeed/42-ols.yaml.
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: lightspeed-docs-index
+  namespace: lightspeed-docs
+  labels:
+    app.kubernetes.io/part-of: lightspeed
+    app.kubernetes.io/version: "1"
+spec:
+  description: Builds the OLS BYOK documentation indexes (Royal Road + upstream docs).
+  workspaces:
+    - name: source
+    - name: embeddings-key
+      description: Secret with key `apikey` for the embeddings service (embedder gpustack).
+      optional: true
+      readOnly: true
+    - name: dockerconfig
+      description: Registry credentials that can push <image> (config.json or .dockerconfigjson).
+      readOnly: true
+  params:
+    - name: tools
+      description: Directory with build_corpus.py and build_index.py, relative to the workspace.
+      default: console/royal-road/deploy/lightspeed/docs
+    - name: sources
+      description: Resolved sources file (discover.py), relative to the workspace.
+      default: resolved/sources.yaml
+    - name: profile
+      description: full, or smoke (a few files per source, for tests).
+      default: full
+    - name: fingerprint
+      description: Index fingerprint (discover result), the image tag; recorded in manifest.json.
+    - name: image
+      description: Repository to push to (no tag).
+    - name: tls-verify
+      default: "true"
+    - name: infra-commit
+      description: Commit of the infrastructure checkout (git-clone result COMMIT).
+    - name: console-commit
+      description: Commit of the console checkout (git-clone result COMMIT).
+    - name: embedder
+      description: gpustack (remote, parity-gated, CPU fallback) or cpu.
+      default: gpustack
+    - name: embeddings-url
+      description: OpenAI-compatible base URL (ending in /v1) of the embeddings service.
+      default: ""
+    - name: embeddings-model
+      default: docs-embeddings
+    - name: cpu-budget-minutes
+      description: A CPU fallback estimated to take longer fails the run instead.
+      default: "100"
+    - name: ols-image
+      default: quay.io/openshift-lightspeed/lightspeed-service-api@sha256:63924c0ebfe6e8765a65d2f29257fbde6376f884c1994951e1a0dfa1807a43c0
+    - name: git-image
+      # same image as tekton-catalog's git-clone Task
+      default: ghcr.io/tektoncd-catalog/git-clone:v1.7.1@sha256:452e6f06cb0fa708fb145adbe4472e3db63c02ebacf5ecd149897859567d7460
+    - name: skopeo-image
+      # same image as tekton-catalog's skopeo-copy Task
+      default: registry.access.redhat.com/ubi8/skopeo:8.10-1794442726@sha256:b26830ac181ca4b130c4a8e272ee710b924a27a9b53f54b4f9278ad7bb88ef48
+    - name: gitleaks-image
+      default: ghcr.io/gitleaks/gitleaks:v8.30.1@sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f
+  results:
+    - name: IMAGE_URL
+      description: <image>:<fingerprint>
+    - name: IMAGE_DIGEST
+      description: Digest of the pushed manifest.
+  stepTemplate:
+    env:
+      - name: HOME
+        value: /tekton/home
+      - name: WS
+        value: $(workspaces.source.path)
+      - name: TOOLS
+        value: $(workspaces.source.path)/$(params.tools)
+      - name: SOURCES
+        value: $(workspaces.source.path)/$(params.sources)
+      - name: PROFILE
+        value: $(params.profile)
+    securityContext:
+      runAsUser: 65532
+      runAsNonRoot: true
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop: [ALL]
+      seccompProfile:
+        type: RuntimeDefault
+  steps:
+    - name: plan
+      image: $(params.ols-image)
+      workingDir: $(workspaces.source.path)
+      command: [sh, -ec]
+      args:
+        - |
+          # Every step's workingDir is the workspace root: Tekton would
+          # create any other workingDir as root before the steps run.
+          rm -rf work && mkdir work
+          python "$TOOLS/build_corpus.py" plan --sources "$SOURCES" --profile "$PROFILE" --out work/fetch.tsv
+      computeResources:
+        requests: {cpu: 100m, memory: 256Mi}
+        limits: {memory: 512Mi}
+
+    - name: fetch
+      image: $(params.git-image)
+      workingDir: $(workspaces.source.path)
+      command: [sh, -ec]
+      args:
+        - |
+          cd work
+          tab=`printf '\t'`
+          mkdir -p upstream
+          : > fetched.tsv
+          while IFS="$tab" read -r name repo ref fallback path; do
+            echo "fetch $name $ref: $path"
+            [ -n "$name" ] || continue
+            d="upstream/$name"
+            git init -q "$d"
+            git -C "$d" remote add origin "$repo"
+            # one or more directories, space-separated (build_corpus.py sparse_paths)
+            # shellcheck disable=SC2086
+            git -C "$d" sparse-checkout set --no-cone $path
+            if git -C "$d" fetch -q --depth 1 --filter=blob:none origin "$ref"; then
+              used=$ref
+            elif [ "$fallback" != "-" ] && git -C "$d" fetch -q --depth 1 --filter=blob:none origin "$fallback"; then
+              echo "warning: $name: $ref not found upstream, using $fallback"
+              used=$fallback
+            else
+              echo "$name: cannot fetch $ref (fallback $fallback) from $repo"; exit 1
+            fi
+            git -C "$d" checkout -q FETCH_HEAD
+            commit=`git -C "$d" rev-parse HEAD`
+            echo "fetched $name $used $commit"
+            printf '%s\t%s\t%s\n' "$name" "$commit" "$used" >> fetched.tsv
+          done < fetch.tsv
+      computeResources:
+        requests: {cpu: 200m, memory: 256Mi}
+        limits: {memory: 1Gi}
+
+    - name: corpus
+      image: $(params.ols-image)
+      workingDir: $(workspaces.source.path)
+      env:
+        - name: INFRA_COMMIT
+          value: $(params.infra-commit)
+        - name: CONSOLE_COMMIT
+          value: $(params.console-commit)
+      command: [sh, -ec]
+      args:
+        - |
+          cd work
+          python "$TOOLS/build_corpus.py" corpus --sources "$SOURCES" --profile "$PROFILE" \
+            --upstream-dir upstream --fetched fetched.tsv --checkout-root "$WS" --out corpus \
+            --commit "infrastructure=$INFRA_COMMIT" --commit "console=$CONSOLE_COMMIT"
+          rm -rf upstream
+      computeResources:
+        requests: {cpu: 200m, memory: 256Mi}
+        limits: {memory: 1Gi}
+
+    - name: gitleaks
+      image: $(params.gitleaks-image)
+      workingDir: $(workspaces.source.path)
+      command: [gitleaks]
+      args: [dir, work/corpus/royal-road, --no-banner, --redact, --exit-code, "1"]
+      computeResources:
+        requests: {cpu: 100m, memory: 128Mi}
+        limits: {memory: 512Mi}
+
+    - name: index
+      image: $(params.ols-image)
+      workingDir: $(workspaces.source.path)
+      env:
+        - name: FINGERPRINT
+          value: $(params.fingerprint)
+        - name: EMBEDDER
+          value: $(params.embedder)
+        - name: EMBEDDINGS_URL
+          value: $(params.embeddings-url)
+        - name: EMBEDDINGS_MODEL
+          value: $(params.embeddings-model)
+        - name: CPU_BUDGET
+          value: $(params.cpu-budget-minutes)
+        - name: KEY_DIR
+          value: $(workspaces.embeddings-key.path)
+      command: [sh, -ec]
+      args:
+        - |
+          cd work
+          python "$TOOLS/build_index.py" --corpus corpus --out image --fingerprint "$FINGERPRINT" \
+            --embedder "$EMBEDDER" --embeddings-url "$EMBEDDINGS_URL" --embeddings-model "$EMBEDDINGS_MODEL" \
+            --embeddings-key-file "$KEY_DIR/apikey" --cpu-budget-minutes "$CPU_BUDGET"
+          du -sh image image/*
+      computeResources:
+        # Embedding is CPU-bound; build_index.py uses as many threads as the
+        # CPU limit allows.
+        requests: {cpu: "2", memory: 2Gi}
+        limits: {cpu: "4", memory: 4Gi}
+
+    - name: oci
+      image: $(params.ols-image)
+      workingDir: $(workspaces.source.path)
+      command: [sh, -ec]
+      args:
+        - |
+          python "$TOOLS/make_oci.py" work/image work/oci \
+            --label org.opencontainers.image.title=lightspeed-docs-index \
+            --label "org.opencontainers.image.version=$(params.fingerprint)" \
+            --label org.opencontainers.image.source=https://github.com/royal-road/console/tree/main/royal-road/deploy/lightspeed/docs
+      computeResources:
+        requests: {cpu: 500m, memory: 1Gi}
+        limits: {memory: 2Gi}
+
+    - name: push
+      image: $(params.skopeo-image)
+      workingDir: $(workspaces.source.path)
+      env:
+        - name: IMAGE
+          value: $(params.image):$(params.fingerprint)
+        - name: TLS_VERIFY
+          value: $(params.tls-verify)
+        - name: AUTH_DIR
+          value: $(workspaces.dockerconfig.path)
+        - name: TMPDIR
+          value: $(workspaces.source.path)/work
+      command: [bash, -ec]
+      args:
+        - |
+          auth=""
+          for f in config.json .dockerconfigjson; do
+            [ -f "$AUTH_DIR/$f" ] && auth="--authfile=$AUTH_DIR/$f"
+          done
+          skopeo copy --retry-times 3 $auth --dest-tls-verify="$TLS_VERIFY" \
+            --digestfile /tekton/results/IMAGE_DIGEST oci:work/oci "docker://$IMAGE"
+          printf '%s' "$IMAGE" > /tekton/results/IMAGE_URL
+          echo "pushed $IMAGE@`cat /tekton/results/IMAGE_DIGEST`"
+      computeResources:
+        requests: {cpu: 100m, memory: 128Mi}
+        limits: {memory: 512Mi}

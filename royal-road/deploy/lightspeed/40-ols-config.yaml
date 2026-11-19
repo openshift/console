@@ -37,6 +37,20 @@ data:
       default_provider: gpustack
       default_model: lightspeed
       system_prompt_path: /etc/ols/system-prompt.txt
+      # Documentation (RAG, "bring your own knowledge"): FAISS indexes from the
+      # image volume /rag (42-ols.yaml), built by docs/ (README.md there).
+      # OLS embeds each question with its bundled all-mpnet-base-v2, takes the
+      # best 5 chunks over all indexes (similarity >= 0.3) and returns their
+      # title and URL as referenced_documents. Scores of every index after the
+      # first are multiplied by 0.95, so on a tie our own docs win.
+      reference_content:
+        indexes:
+          - product_docs_index_path: /rag/royal-road
+            product_docs_index_id: royal-road-docs
+            product_docs_origin: Royal Road docs
+          - product_docs_index_path: /rag/upstream
+            product_docs_index_id: upstream-docs
+            product_docs_origin: Upstream docs
       # One replica, so the in-memory cache is enough. History is lost when
       # the pod restarts; the plugin keeps none across page reloads anyway.
       conversation_cache:
@@ -70,6 +84,14 @@ data:
           # Special value: forward the caller's own token, so tools run with
           # the console user's RBAC.
           Authorization: kubernetes
+      # Sentry issues and events (55-sentry-mcp.yaml), read-only, with one
+      # service token. A header value that isn't a special value is a file
+      # path; OLS sends the file's content.
+      - name: sentry
+        url: http://sentry-mcp.openshift-lightspeed.svc:8080/mcp
+        timeout: 60
+        headers:
+          X-API-Key: /etc/mcp-keys/sentry/mcp-api-key
   # Replaces OLS's built-in prompt, which presents the assistant as an
   # OpenShift expert and steers answers to `oc` and OpenShift-only APIs.
   system-prompt.txt: |
@@ -90,6 +112,34 @@ data:
       cluster before answering questions about specific resources, and say
       what you looked at. Tools run with the user's own permissions; if one
       returns "forbidden", tell the user they lack access rather than guessing.
+    - Applications report their errors to Sentry. If Sentry tools are
+      available and the user asks why an application is failing or erroring,
+      check both the workload (pods, restarts, events, logs) and Sentry: call
+      find_projects to find the project whose name matches the application
+      (names can differ slightly, e.g. "shop-api" and "shopapi"),
+      then search_issues for its unresolved issues, newest first, and
+      get_issue_details for the top one. Name the issues you found, with their
+      event counts and when they were last seen.
+    - Link every Sentry issue you name to this console's issue page, using its
+      organization slug and short ID, for example
+      [SHOP-API-1A](/sentry/my-org/issues/SHOP-API-1A). These links are the
+      exception to the rule about URLs below.
+
+    # DOCUMENTATION
+    - Retrieved documents may be added to this prompt. Each starts with a line
+      "Source: <title> <URL>". Titles starting with "Royal Road" are this
+      cluster's own documentation (infrastructure ledger, runbooks, the
+      console fork); the others are upstream product documentation for the
+      versions this cluster runs.
+    - For questions about this cluster ("our cluster", "here", how something
+      is deployed or configured, which namespace, registry or version is
+      used), prefer the Royal Road documents over upstream documentation and
+      over general knowledge, and say when they disagree.
+    - When an answer uses a retrieved document, cite it at the end as a
+      Markdown link with its title and the URL from its Source line. Never
+      make up a URL or cite a document that was not retrieved.
+    - Documentation describes intended state; tools show live state. When
+      both are available and they differ, say so.
 
     # INSTRUCTIONS
     - Use the provided context and chat history as your primary source of truth.

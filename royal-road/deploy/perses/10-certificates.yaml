@@ -1,0 +1,74 @@
+# TLS inside the Perses namespace. On OpenShift, COO uses the service CA
+# (service.beta.openshift.io/serving-cert-secret-name annotations and the
+# openshift-service-ca.crt ConfigMap). This cluster has no service CA, so a
+# namespace-local cert-manager CA issues the same certificates:
+#   perses-tls                    Perses server (the console's plugin proxy and
+#                                 the perses-operator call it over HTTPS)
+#   perses-operator-webhook-tls   perses-operator conversion webhook (the API
+#                                 server calls it; the CRDs get caBundle injected)
+# The CA certificate is in every issued Secret as ca.crt. The console needs it
+# in BRIDGE_PLUGIN_PROXY (plugin-proxy.sh; ../README.md, "Perses dashboards").
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: perses-selfsigned
+spec:
+  selfSigned: {}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: perses-ca
+spec:
+  isCA: true
+  commonName: perses-ca
+  secretName: perses-ca
+  duration: 87600h # 10 years: the CA is pasted into BRIDGE_PLUGIN_PROXY
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+  issuerRef:
+    kind: Issuer
+    name: perses-selfsigned
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: perses-ca
+spec:
+  ca:
+    secretName: perses-ca
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: perses
+spec:
+  secretName: perses-tls
+  dnsNames:
+    - perses
+    - perses.perses.svc
+    - perses.perses.svc.cluster.local
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+  issuerRef:
+    kind: Issuer
+    name: perses-ca
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: perses-operator-webhook
+spec:
+  secretName: perses-operator-webhook-tls
+  dnsNames:
+    - perses-operator-conversion-webhook.perses.svc
+    - perses-operator-conversion-webhook.perses.svc.cluster.local
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+  issuerRef:
+    kind: Issuer
+    name: perses-ca

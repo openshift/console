@@ -1,0 +1,430 @@
+# Documentation indexed for Lightspeed (OLS "bring your own knowledge"): the
+# mapping from what the cluster runs to the docs to index.
+#
+# Installed as ConfigMap lightspeed-docs-sources (tekton/kustomization.yaml),
+# so a change here needs no image or release. On every run discover.py reads
+# the version of each upstream component from the live cluster and fills the
+# templates below; build_corpus.py turns each source into Markdown files with
+# `title` and `url` front matter under corpus/<index>/<source>/, and
+# build_index.py turns each index directory into one FAISS index.
+#
+# Indexes, in the order OLS loads them (ols_config.reference_content.indexes):
+#   royal-road  our own docs. Rebuilt from the branch head on every run; links
+#               point at the branch (blob/main/...), so they always open the
+#               current file. Secret gate: a match fails the build.
+#   upstream    public product docs at the versions the cluster runs.
+#               Secret gate: report only (example keys and tokens in public
+#               docs are not ours).
+# OLS multiplies the scores of every index after the first by 0.95, so on a
+# tie our docs win.
+#
+# Source fields:
+#   index        royal-road | upstream
+#   repo         clone URL (fetch.tsv); for royal-road sources the pipeline
+#                clones it with git-clone instead, see checkout
+#   checkout     royal-road sources: directory (relative to the pipeline
+#                workspace) the pipeline cloned the repository into
+#   discover     upstream sources: where the running version comes from, first
+#                hit wins: {kubernetes: version} (the API server's /version) or
+#                {kind: Deployment|StatefulSet|DaemonSet, namespace, name,
+#                container} (that container's image tag). Not found: the source
+#                is skipped. Names with <...> are unset placeholders (skipped).
+#                {weekly_commit: <branch>} for unversioned docs: the last commit
+#                on the branch before this ISO week's Monday 00:00 UTC (GitHub
+#                API); version YYYY.WW.0, template field {commit}.
+#                discover.py rbac turns these entries into the read-only Roles
+#                (tekton/15-discovery-rbac.yaml).
+#   version_regex  named groups major/minor/patch; default ^v?X.Y.Z
+#   ref          git tag or branch to fetch; templates {version} {major}
+#                {minor} {patch} (also in fallback_ref, root, title, url.base).
+#                For royal-road sources: the branch the links point at.
+#   fallback_ref fetched when ref doesn't exist (e.g. docs branch not cut yet)
+#   root         directory inside the repository the globs are relative to
+#   include      glob list (fnmatch, ** spans directories); default ["**/*.md", "**/*.mdx"]
+#   exclude      glob list, applied after include
+#   smoke        include list used with --profile smoke (small kind test)
+#   url          how a file maps to a link:
+#                  github: https://github.com/<repo>/blob/<commit|ref>/<path>
+#                  site:   base + path without .md; _index.md, index.md and
+#                          README.md map to their directory; lowercase: true
+#                          lowercases the path; a `url:` or `slug:` front
+#                          matter key wins; patterns: {glob: template} for
+#                          pages that are anchors of another page (template
+#                          fields: stem and front matter strings)
+#   mdx          Starlight MDX (mdx.py): {partials: <dir of <Render> partials>,
+#                site: <base for site-relative links>}
+#   extra_sparse directories fetched besides the include subtrees
+#   hugo         true: expand {{% content "x.md" %}} includes, drop pages
+#                that are never rendered on their own (headless, render:
+#                never, draft), and replace other shortcodes with their text
+#   title        prefix for every document title, so the model and the
+#                citation say which product and version a page is about
+#   license      SPDX id, recorded in SOURCES.md inside the image
+version: 1
+sources:
+  # --- Royal Road -----------------------------------------------------------
+  - name: infrastructure
+    index: royal-road
+    repo: https://github.com/royal-road/infrastructure
+    checkout: infrastructure
+    ref: main
+    title: Royal Road infrastructure
+    license: LicenseRef-RoyalRoad-Proprietary
+    url: {type: github, at: ref}
+    include: ["**/*.md"]
+    smoke:
+      - README.md
+      - LEDGER.md
+      - platform/tekton/README.md
+      - platform/tekton/catalog/README.md
+    exclude:
+      # gitignored, never meant for Git; excluded again in case a file was
+      # force-added
+      - agent-backups/**
+      - local/**
+      - local-secrets/**
+      - .audit/**
+      # research notes (benchmarks, attack experiments): not operating docs
+      - "**/research/**"
+      - research/**
+
+  - name: console
+    index: royal-road
+    repo: https://github.com/royal-road/console
+    checkout: console
+    ref: main
+    title: Royal Road console
+    license: Apache-2.0
+    url: {type: github, at: ref}
+    include:
+      - FORK.md
+      - royal-road/CHANGELOG.md
+      - royal-road/WP6-TRIAGE.md
+      - royal-road/**/README.md
+    smoke:
+      - FORK.md
+      - royal-road/deploy/lightspeed/README.md
+      - royal-road/deploy/lightspeed/docs/README.md
+
+  # --- Upstream -------------------------------------------------------------
+  # Workload names are the upstream install defaults; change them (and
+  # regenerate 15-discovery-rbac.yaml) where your cluster differs.
+  - name: kubernetes
+    index: upstream
+    repo: https://github.com/kubernetes/website
+    discover:
+      - {kubernetes: version}
+    ref: release-{major}.{minor}
+    fallback_ref: main
+    root: content/en/docs
+    title: Kubernetes {major}.{minor}
+    license: CC-BY-4.0
+    attribution: "Kubernetes Documentation, © The Kubernetes Authors, https://kubernetes.io/docs/, CC BY 4.0. Converted to plain Markdown (Hugo shortcodes removed) and split into chunks."
+    url:
+      type: site
+      base: "https://v{major}-{minor}.docs.kubernetes.io/docs/"
+      patterns:
+        # glossary terms are entries on one page
+        "reference/glossary/*.md": "reference/glossary/?all=true#term-{id}"
+    hugo: true
+    include:
+      - concepts/**
+      - tasks/**
+      - tutorials/**
+      - setup/**
+      - reference/access-authn-authz/**
+      - reference/labels-annotations-taints/**
+      - reference/networking/**
+      - reference/node/**
+      - reference/scheduling/**
+      - reference/using-api/**
+      - reference/debug-cluster/**
+      - reference/glossary/**
+      - reference/kubectl/*.md
+      - reference/kubectl/generated/kubectl_*/_index.md
+    exclude:
+      # generated per-flag pages; the _index of each command is enough
+      - reference/kubectl/generated/kubectl_*/kubectl_*_*.md
+    smoke:
+      - concepts/workloads/pods/_index.md
+      - concepts/services-networking/service.md
+      - concepts/configuration/configmap.md
+      - tasks/debug/debug-application/debug-pods.md
+
+  - name: tekton-pipelines
+    index: upstream
+    repo: https://github.com/tektoncd/pipeline
+    discover:
+      - {kind: Deployment, namespace: tekton-pipelines, name: tekton-pipelines-controller, container: tekton-pipelines-controller}
+    ref: v{version}
+    fallback_ref: release-v{major}.{minor}.x
+    root: docs
+    title: Tekton Pipelines v{major}.{minor}
+    license: Apache-2.0
+    url: {type: github, at: commit}
+    exclude:
+      - developers/**
+      - pipeline-api.md
+      - deprecations.md
+    smoke:
+      - tasks.md
+      - pipelineruns.md
+
+  - name: tekton-triggers
+    index: upstream
+    repo: https://github.com/tektoncd/triggers
+    discover:
+      - {kind: Deployment, namespace: tekton-pipelines, name: tekton-triggers-controller, container: tekton-triggers-controller}
+    ref: v{version}
+    root: docs
+    title: Tekton Triggers v{major}.{minor}
+    license: Apache-2.0
+    url: {type: github, at: commit}
+    exclude:
+      - triggers-api.md
+    smoke: []
+
+  - name: pipelines-as-code
+    index: upstream
+    repo: https://github.com/tektoncd/pipelines-as-code
+    discover:
+      - {kind: Deployment, namespace: pipelines-as-code, name: pipelines-as-code-controller, container: pac-controller}
+    ref: v{version}
+    root: docs/content/docs
+    title: Pipelines-as-Code v{major}.{minor}
+    license: Apache-2.0
+    url: {type: github, at: commit}
+    hugo: true
+    exclude:
+      - dev/**
+    smoke:
+      - guides/event-matching/cel-expressions.md
+
+  - name: rook
+    index: upstream
+    repo: https://github.com/rook/rook
+    discover:
+      - {kind: Deployment, namespace: rook-ceph, name: rook-ceph-operator, container: rook-ceph-operator}
+    ref: v{version}
+    fallback_ref: release-{major}.{minor}
+    root: Documentation
+    title: Rook v{major}.{minor}
+    license: Apache-2.0
+    url: {type: site, base: "https://rook.io/docs/rook/v{major}.{minor}/"}
+    include:
+      - Getting-Started/**
+      - Storage-Configuration/**
+      - CRDs/**
+      - Troubleshooting/**
+      - Upgrade/**
+      - Helm-Charts/**
+    exclude:
+      - "**/*.gotmpl.md"
+    smoke:
+      - Getting-Started/intro.md
+      - Upgrade/rook-upgrade.md
+
+  - name: cert-manager
+    index: upstream
+    repo: https://github.com/cert-manager/website
+    discover:
+      - {kind: Deployment, namespace: cert-manager, name: cert-manager, container: cert-manager-controller}
+    # The site keeps one current docs tree (no per-version branches); the
+    # discovered version still goes into the fingerprint.
+    ref: master
+    root: content/docs
+    title: cert-manager
+    license: Apache-2.0
+    url: {type: site, base: "https://cert-manager.io/docs/"}
+    include:
+      - README.md
+      - concepts/**
+      - configuration/**
+      - usage/**
+      - troubleshooting/**
+      - faq/**
+      - devops-tips/**
+      - installation/**
+      - trust/**
+    smoke: []
+
+  - name: victoriametrics
+    index: upstream
+    repo: https://github.com/VictoriaMetrics/VictoriaMetrics
+    discover:
+      - {kind: StatefulSet, namespace: <vmselect-namespace>, name: <vmselect-statefulset>, container: vmselect}
+      - {kind: Deployment, namespace: <vmsingle-namespace>, name: <vmsingle-deployment>, container: vmsingle}
+    ref: v{major}.{minor}.{patch}
+    root: docs
+    title: VictoriaMetrics v{major}.{minor}
+    license: Apache-2.0
+    url: {type: site, base: "https://docs.victoriametrics.com/", lowercase: true}
+    hugo: true
+    include:
+      - victoriametrics/**
+      - guides/**
+    exclude:
+      - victoriametrics/changelog/**
+      - "**/CHANGELOG*.md"
+      - victoriametrics/Articles.md
+      - victoriametrics/CaseStudies.md
+      - victoriametrics/CONTRIBUTING.md
+      - victoriametrics/Release-Guide.md
+      - victoriametrics/LTS-releases.md
+      - "**/*_flags.md"
+    smoke: []
+
+  - name: victoriametrics-operator
+    index: upstream
+    repo: https://github.com/VictoriaMetrics/operator
+    discover:
+      - {kind: Deployment, namespace: <vm-operator-namespace>, name: <vm-operator-deployment>, container: operator}
+    ref: v{version}
+    root: docs
+    title: VictoriaMetrics operator v{major}.{minor}
+    license: Apache-2.0
+    url: {type: site, base: "https://docs.victoriametrics.com/operator/", lowercase: true}
+    hugo: true
+    exclude:
+      - CHANGELOG.md
+      - api.md
+      - release-guide.md
+      - templates/**
+    smoke: []
+
+  - name: victorialogs
+    index: upstream
+    repo: https://github.com/VictoriaMetrics/VictoriaLogs
+    discover:
+      - {kind: StatefulSet, namespace: <victorialogs-namespace>, name: <victorialogs-statefulset>}
+      - {kind: Deployment, namespace: <victorialogs-namespace>, name: <victorialogs-deployment>}
+    ref: v{version}
+    root: docs
+    title: VictoriaLogs v{major}.{minor}
+    license: Apache-2.0
+    url: {type: site, base: "https://docs.victoriametrics.com/", lowercase: true}
+    hugo: true
+    exclude:
+      - "**/CHANGELOG.md"
+      - "**/changelog/**"
+      - victorialogs/Articles.md
+      - victorialogs/Release-Guide.md
+      - victorialogs/Roadmap.md
+      - "**/*_flags.md"
+    smoke: []
+
+  - name: victoriatraces
+    index: upstream
+    repo: https://github.com/VictoriaMetrics/VictoriaTraces
+    discover:
+      - {kind: StatefulSet, namespace: <victoriatraces-namespace>, name: <victoriatraces-statefulset>}
+    ref: v{version}
+    root: docs
+    title: VictoriaTraces v{major}.{minor}
+    license: Apache-2.0
+    url: {type: site, base: "https://docs.victoriametrics.com/", lowercase: true}
+    hugo: true
+    exclude:
+      - "**/changelog/**"
+      - "**/roadmap.md"
+      - "**/*_flags.md"
+    smoke: []
+
+  - name: velero
+    index: upstream
+    repo: https://github.com/vmware-tanzu/velero
+    discover:
+      - {kind: Deployment, namespace: velero, name: velero, container: velero}
+    # Versioned docs live in site/content/docs/v<major>.<minor> on main.
+    ref: main
+    root: site/content/docs/v{major}.{minor}
+    title: Velero v{major}.{minor}
+    license: Apache-2.0
+    url: {type: site, base: "https://velero.io/docs/v{major}.{minor}/"}
+    hugo: true
+    exclude:
+      - img/**
+      - contributions/**
+      - code-standards.md
+      - build-from-source.md
+      - development.md
+      - release-instructions.md
+      - website-guidelines.md
+    smoke: []
+
+  - name: istio
+    index: upstream
+    repo: https://github.com/istio/istio.io
+    discover:
+      - {kind: Deployment, namespace: istio-system, name: istiod, container: discovery}
+    ref: release-{major}.{minor}
+    root: content/en/docs
+    title: Istio {major}.{minor}
+    license: Apache-2.0
+    url: {type: site, base: "https://istio.io/v{major}.{minor}/docs/"}
+    hugo: true
+    include:
+      - overview/**
+      - concepts/**
+      - ambient/**
+      - ops/**
+      - setup/**
+      - tasks/traffic-management/**
+      - tasks/security/**
+      - tasks/observability/**
+    smoke: []
+
+  # Unversioned: the docs site always shows `production`. Discovery pins the
+  # last commit before this ISO week's Monday 00:00 UTC (weekly_commit), so
+  # the fingerprint changes at most weekly and all builds of a week index the
+  # same commit. Scope: products the zones use or are being evaluated (DNS,
+  # SSL/TLS incl. Authenticated Origin Pulls and Origin CA, Cache, Rules incl.
+  # Origin Rules, WAF, DDoS, Bots, Turnstile, Load Balancing, Tunnel, Access,
+  # GraphQL analytics, fundamentals). Left out: Workers, R2, Pages, KV and the
+  # other developer platform products (no Workers scripts or routes on any
+  # zone, no R2 in this repo), Keyless SSL and Snippets/Cloud Connector (not
+  # on our plans), Cloudflare WAN, Gateway, devices and email security.
+  - name: cloudflare
+    index: upstream
+    repo: https://github.com/cloudflare/cloudflare-docs
+    discover:
+      - {weekly_commit: production}
+    ref: "{commit}"
+    root: src/content/docs
+    title: Cloudflare
+    license: CC-BY-4.0
+    attribution: "Cloudflare Developer Documentation, © Cloudflare, Inc., https://developers.cloudflare.com/ (github.com/cloudflare/cloudflare-docs), CC BY 4.0. Converted from MDX to Markdown (components rendered as text, partials inlined) and split into chunks."
+    url: {type: site, base: "https://developers.cloudflare.com/"}
+    mdx: {partials: src/content/partials, site: "https://developers.cloudflare.com"}
+    extra_sparse: [src/content/partials]
+    include:
+      - dns/**
+      - ssl/**
+      - cache/**
+      - rules/**
+      - ruleset-engine/**
+      - waf/**
+      - ddos-protection/**
+      - bots/**
+      - turnstile/**
+      - cloudflare-challenges/**
+      - load-balancing/**
+      - tunnel/**
+      - cloudflare-one/networks/connectors/cloudflare-tunnel/**
+      - cloudflare-one/access-controls/**
+      - cloudflare-one/integrations/identity-providers/**
+      - analytics/graphql-api/**
+      - analytics/account-and-zone-analytics/**
+      - analytics/*.mdx
+      - fundamentals/concepts/**
+      - fundamentals/reference/**
+      - fundamentals/api/**
+      - fundamentals/security/**
+    exclude:
+      - "**/changelog*"
+      - ssl/keyless-ssl/**
+      - rules/snippets/**
+      - rules/cloud-connector/**
+    smoke:
+      - ssl/origin-configuration/authenticated-origin-pull/**
+      - rules/origin-rules/**

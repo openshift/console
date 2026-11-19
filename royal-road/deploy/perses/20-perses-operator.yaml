@@ -1,0 +1,289 @@
+# perses-operator as Cluster Observability Operator 1.5.2 deploys it
+# (rhobs/observability-operator tag v1.5.2, deploy/perses/): same image,
+# ClusterRole and probes. Differences, because this cluster is not OpenShift:
+#   - the conversion webhook certificate comes from cert-manager
+#     (10-certificates.yaml) instead of the service CA, mounted where
+#     controller-runtime looks for it;
+#   - no openshift-service-ca.crt ConfigMap mount (only used for datasource CA
+#     files on OpenShift; our Perses instance mounts its own CA bundle).
+# Image: quay.io/openshift-observability-ui/perses-operator:v0.4.0 (COO 1.5.2's
+# pin; image revision label rhobs/perses-operator cbebc1c), multi-arch index
+# digest.
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: perses-operator
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: perses-operator
+  labels:
+    app.kubernetes.io/name: perses-operator
+# Verbatim from COO 1.5.2. Secrets/ConfigMaps cluster-wide: the operator reads
+# datasource credentials and CA data from the datasource's namespace.
+# config.openshift.io/apiservers: it reads OpenShift's TLS profile when that
+# API exists; it does not exist here and the operator carries on (checked
+# on kind). The rule grants nothing on this cluster.
+rules:
+  - apiGroups:
+     - ""
+    resources:
+     - namespaces
+    verbs:
+     - create
+     - delete
+     - get
+     - list
+     - patch
+     - update
+     - watch
+  - apiGroups:
+      - apps
+    resources:
+      - deployments
+      - statefulsets
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - events
+    verbs:
+      - create
+      - patch
+  - apiGroups:
+      - ""
+    resources:
+      - services
+      - configmaps
+      - secrets
+    verbs:
+      - get
+      - patch
+      - update
+      - create
+      - delete
+      - list
+      - watch
+  - apiGroups:
+      - perses.dev
+    resources:
+      - perses
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - perses.dev
+    resources:
+      - perses/finalizers
+    verbs:
+      - update
+  - apiGroups:
+      - perses.dev
+    resources:
+      - perses/status
+    verbs:
+      - get
+      - patch
+      - update
+  - apiGroups:
+      - perses.dev
+    resources:
+      - persesdashboards
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - perses.dev
+    resources:
+      - persesdashboards/finalizers
+    verbs:
+      - update
+  - apiGroups:
+      - perses.dev
+    resources:
+      - persesdashboards/status
+    verbs:
+      - get
+      - patch
+      - update
+  - apiGroups:
+      - perses.dev
+    resources:
+      - persesglobaldatasources
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - perses.dev
+    resources:
+      - persesglobaldatasources/finalizers
+    verbs:
+      - update
+  - apiGroups:
+      - perses.dev
+    resources:
+      - persesglobaldatasources/status
+    verbs:
+      - get
+      - patch
+      - update
+  - apiGroups:
+      - perses.dev
+    resources:
+      - persesdatasources
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - perses.dev
+    resources:
+      - persesdatasources/finalizers
+    verbs:
+      - update
+  - apiGroups:
+      - perses.dev
+    resources:
+      - persesdatasources/status
+    verbs:
+      - get
+      - patch
+      - update
+  - apiGroups:
+      - config.openshift.io
+    resources:
+      - apiservers
+    verbs:
+      - get
+      - list
+      - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: perses-operator
+  labels:
+    app.kubernetes.io/name: perses-operator
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: perses-operator
+subjects:
+  - kind: ServiceAccount
+    name: perses-operator
+    namespace: perses
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: perses-operator
+  labels:
+    app.kubernetes.io/component: controller
+    app.kubernetes.io/name: perses-operator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: controller
+      app.kubernetes.io/name: perses-operator
+  template:
+    metadata:
+      annotations:
+        kubectl.kubernetes.io/default-container: perses-operator
+      labels:
+        app.kubernetes.io/component: controller
+        app.kubernetes.io/name: perses-operator
+    spec:
+      serviceAccountName: perses-operator
+      securityContext:
+        runAsNonRoot: true
+        # The image's USER is "nobody" by name; the kubelet needs a number to
+        # enforce runAsNonRoot (OpenShift's SCC assigns one, so COO omits it).
+        runAsUser: 65534
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: perses-operator
+          image: quay.io/openshift-observability-ui/perses-operator:v0.4.0@sha256:455c22b97766334627943f0cc75182306badc6933b425510dc9b88c063d7f3af
+          ports:
+            - name: webhook
+              containerPort: 9443
+            - name: metrics
+              containerPort: 8082
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          volumeMounts:
+            - name: webhook-cert
+              mountPath: /tmp/k8s-webhook-server/serving-certs
+              readOnly: true
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8081
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 8081
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+      volumes:
+        - name: webhook-cert
+          secret:
+            secretName: perses-operator-webhook-tls
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: perses-operator-conversion-webhook
+  labels:
+    app.kubernetes.io/component: conversion-webhook
+    app.kubernetes.io/name: perses-operator
+spec:
+  selector:
+    app.kubernetes.io/component: controller
+    app.kubernetes.io/name: perses-operator
+  ports:
+    - name: webhook
+      port: 443
+      protocol: TCP
+      targetPort: webhook

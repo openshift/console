@@ -4,6 +4,7 @@
 #   DNS             kube-system pods labelled k8s-app=kube-dns, 53/UDP+TCP
 #   kube-apiserver  TokenReview and SubjectAccessReview on every request
 #   MCP server      tool calls, 8080
+#   Sentry MCP      Sentry tool calls, 8080
 #   GPUStack        the LLM, <gpustack-port>
 #
 # Placeholders:
@@ -48,6 +49,13 @@ spec:
         - podSelector:
             matchLabels:
               app.kubernetes.io/name: kubernetes-mcp-server
+      ports:
+        - port: 8080
+          protocol: TCP
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: sentry-mcp
       ports:
         - port: 8080
           protocol: TCP

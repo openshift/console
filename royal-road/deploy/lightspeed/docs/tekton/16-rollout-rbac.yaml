@@ -1,0 +1,41 @@
+# ServiceAccount of the rollout Task (22-task-rollout.yaml): may read, watch
+# and patch the OLS Deployment and nothing else. The Role lives in OLS's
+# namespace; the ServiceAccount here.
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: lightspeed-docs-rollout
+  namespace: lightspeed-docs
+  labels:
+    app.kubernetes.io/part-of: lightspeed
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: lightspeed-docs-rollout
+  namespace: openshift-lightspeed
+  labels:
+    app.kubernetes.io/part-of: lightspeed
+rules:
+  # kubectl rollout status lists and watches with a metadata.name field
+  # selector, which resourceNames allows.
+  - apiGroups: [apps]
+    resources: [deployments]
+    resourceNames: [lightspeed-app-server]
+    verbs: [get, list, watch, patch]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: lightspeed-docs-rollout
+  namespace: openshift-lightspeed
+  labels:
+    app.kubernetes.io/part-of: lightspeed
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: lightspeed-docs-rollout
+subjects:
+  - kind: ServiceAccount
+    name: lightspeed-docs-rollout
+    namespace: lightspeed-docs

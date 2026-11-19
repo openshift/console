@@ -1,0 +1,133 @@
+# Daily check: a CronJob that creates a PipelineRun. The run discovers the
+# versions the cluster runs; when the fingerprint is unchanged it skips the
+# build (and the rollout is a no-op), so most days it costs two shallow clones
+# and a registry lookup.
+#
+# Pipelines-as-Code starts runs on Git events only (no cron), and Tekton
+# Triggers would need an EventListener Service plus a CronJob to call it
+# anyway. Creating the PipelineRun directly needs one ServiceAccount allowed to
+# create pipelineruns here, and nothing listens on the network.
+#
+# What the schedule picks up: component upgrades (new image tags, a new
+# Kubernetes version), changes to the console fork's docs, and changes to
+# the ConfigMap lightspeed-docs-sources. Infrastructure docs also trigger a
+# run on push through Pipelines-as-Code (pac/.tekton/lightspeed-docs-index.yaml);
+# this run clones that repository with the deploy key.
+#
+# Needs the Secrets lightspeed-docs-harbor-push and lightspeed-docs-infra-ssh
+# (examples/). Run it once by hand:
+#   kubectl -n lightspeed-docs create job --from=cronjob/lightspeed-docs-daily lightspeed-docs-manual
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: lightspeed-docs-pipelinerun
+  namespace: lightspeed-docs
+data:
+  pipelinerun.yaml: |
+    apiVersion: tekton.dev/v1
+    kind: PipelineRun
+    metadata:
+      generateName: lightspeed-docs-daily-
+      namespace: lightspeed-docs
+      labels:
+        app.kubernetes.io/part-of: lightspeed
+        lightspeed-docs/trigger: schedule
+    spec:
+      pipelineRef:
+        name: lightspeed-docs-index
+      params:
+        - {name: infra-url, value: "git@github.com:royal-road/infrastructure.git"}
+        - {name: image, value: "<registry>/<project>/lightspeed-docs-index"}
+        - {name: embeddings-url, value: "<embeddings-base-url>"}
+      taskRunTemplate:
+        serviceAccountName: lightspeed-docs-builder
+      taskRunSpecs:
+        - {pipelineTaskName: discover, serviceAccountName: lightspeed-docs-discovery}
+        - {pipelineTaskName: rollout-new, serviceAccountName: lightspeed-docs-rollout}
+        - {pipelineTaskName: rollout-existing, serviceAccountName: lightspeed-docs-rollout}
+      timeouts:
+        pipeline: 2h
+      workspaces:
+        - name: source
+          volumeClaimTemplate:
+            spec:
+              accessModes: [ReadWriteOnce]
+              resources:
+                requests:
+                  storage: 4Gi
+        - name: dockerconfig
+          secret:
+            secretName: lightspeed-docs-harbor-push
+        - name: sources-config
+          configMap:
+            name: lightspeed-docs-sources
+        - name: embeddings-key
+          secret:
+            secretName: lightspeed-docs-embeddings
+        - name: infra-ssh
+          secret:
+            secretName: lightspeed-docs-infra-ssh
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: lightspeed-docs-daily
+  namespace: lightspeed-docs
+  labels:
+    app.kubernetes.io/part-of: lightspeed
+spec:
+  # daily, 03:17 UTC
+  schedule: "17 3 * * *"
+  timeZone: Etc/UTC
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      ttlSecondsAfterFinished: 604800
+      template:
+        spec:
+          serviceAccountName: lightspeed-docs-scheduler
+          restartPolicy: Never
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 65532
+            seccompProfile:
+              type: RuntimeDefault
+          containers:
+            - name: create-pipelinerun
+              image: docker.io/alpine/k8s:1.37.2@sha256:7a82aeefea3d554a43a8676b137f2b88bae6c1fe11c13862b191b3a086cc28c0
+              # Skips the day if a run (scheduled, pushed or manual; all carry
+              # the part-of label) is still going: two runs for the same
+              # fingerprint would build it twice.
+              command: [sh, -ec]
+              args:
+                - |
+                  running=`kubectl get pipelineruns -l app.kubernetes.io/part-of=lightspeed -o json \
+                    | jq '[.items[] | select(.status.completionTime == null)] | length'`
+                  if [ "$running" != 0 ]; then
+                    echo "$running lightspeed-docs run(s) in progress; skipping"
+                    exit 0
+                  fi
+                  kubectl create -f /run/pipelinerun/pipelinerun.yaml -o name
+              env:
+                - name: HOME
+                  value: /tmp
+              securityContext:
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+                capabilities:
+                  drop: [ALL]
+              resources:
+                requests: {cpu: 10m, memory: 32Mi}
+                limits: {memory: 128Mi}
+              volumeMounts:
+                - {name: pipelinerun, mountPath: /run/pipelinerun, readOnly: true}
+                - {name: tmp, mountPath: /tmp}
+          volumes:
+            - name: pipelinerun
+              configMap:
+                name: lightspeed-docs-pipelinerun
+            - name: tmp
+              emptyDir: {}

@@ -1,0 +1,121 @@
+# Task lightspeed-docs-discover: what does the cluster run, and is there
+# already an index for it?
+#
+#   resolve  discover.py: reads the Kubernetes version and the image tags of
+#            the workloads named in sources.yaml (ConfigMap
+#            lightspeed-docs-sources), writes resolved/sources.yaml (concrete
+#            docs refs) into the workspace, and returns the fingerprint of
+#            versions + Royal Road Markdown + tooling.          (OLS image)
+#   exists   skopeo: does <image>:<fingerprint> exist already?   (skopeo)
+#
+# Runs as ServiceAccount lightspeed-docs-discovery (15-discovery-rbac.yaml):
+# get on exactly the named workloads, nothing else.
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: lightspeed-docs-discover
+  namespace: lightspeed-docs
+  labels:
+    app.kubernetes.io/part-of: lightspeed
+    app.kubernetes.io/version: "1"
+spec:
+  description: Discovers component versions, fingerprints them, and checks the registry for that index.
+  workspaces:
+    - name: source
+      description: Holds console/ (scripts) and infrastructure/ (docs); resolved/ is written here.
+    - name: sources-config
+      description: ConfigMap lightspeed-docs-sources (key sources.yaml).
+      readOnly: true
+    - name: dockerconfig
+      description: Registry credentials (config.json or .dockerconfigjson).
+      readOnly: true
+  params:
+    - name: tools
+      default: console/royal-road/deploy/lightspeed/docs
+    - name: profile
+      default: full
+    - name: image
+      description: Repository of the index image (no tag).
+    - name: tls-verify
+      default: "true"
+    - name: ols-image
+      default: quay.io/openshift-lightspeed/lightspeed-service-api@sha256:63924c0ebfe6e8765a65d2f29257fbde6376f884c1994951e1a0dfa1807a43c0
+    - name: skopeo-image
+      # same image as tekton-catalog's skopeo-copy Task
+      default: registry.access.redhat.com/ubi8/skopeo:8.10-1794442726@sha256:b26830ac181ca4b130c4a8e272ee710b924a27a9b53f54b4f9278ad7bb88ef48
+  results:
+    - name: FINGERPRINT
+      description: Image tag for this state, fp-<20 hex>.
+    - name: VERSIONS
+      description: Discovered versions, "name=version ..." (for humans).
+    - name: DISCOVERED_AT
+      description: UTC time of the discovery (orders rollouts of concurrent runs).
+    - name: EXISTS
+      description: '"true" if <image>:<FINGERPRINT> is in the registry already.'
+    - name: DIGEST
+      description: Its digest when EXISTS is "true", else empty.
+  stepTemplate:
+    env:
+      - name: HOME
+        value: /tekton/home
+    securityContext:
+      runAsUser: 65532
+      runAsNonRoot: true
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop: [ALL]
+      seccompProfile:
+        type: RuntimeDefault
+  steps:
+    - name: resolve
+      image: $(params.ols-image)
+      workingDir: $(workspaces.source.path)
+      env:
+        - name: TOOLS
+          value: $(workspaces.source.path)/$(params.tools)
+        - name: PROFILE
+          value: $(params.profile)
+      command: [sh, -ec]
+      args:
+        - |
+          rm -rf resolved && mkdir resolved
+          python "$TOOLS/discover.py" resolve --sources "$(workspaces.sources-config.path)/sources.yaml" \
+            --checkout-root . --tools "$TOOLS" --profile "$PROFILE" \
+            --out resolved/sources.yaml --results /tekton/results
+      computeResources:
+        requests: {cpu: 100m, memory: 256Mi}
+        limits: {memory: 512Mi}
+
+    - name: exists
+      image: $(params.skopeo-image)
+      env:
+        - name: IMAGE
+          value: $(params.image)
+        - name: TLS_VERIFY
+          value: $(params.tls-verify)
+        - name: AUTH_DIR
+          value: $(workspaces.dockerconfig.path)
+      command: [bash, -ec]
+      args:
+        - |
+          tag=`cat /tekton/results/FINGERPRINT`
+          auth=""
+          for f in config.json .dockerconfigjson; do
+            [ -f "$AUTH_DIR/$f" ] && auth="--authfile=$AUTH_DIR/$f"
+          done
+          if out=`skopeo inspect --no-tags $auth --tls-verify="$TLS_VERIFY" --format '{{.Digest}}' "docker://$IMAGE:$tag" 2>/tmp/err`; then
+            echo "$IMAGE:$tag exists ($out): no build"
+            printf true > /tekton/results/EXISTS
+            printf '%s' "$out" > /tekton/results/DIGEST
+          elif grep -qiE 'manifest unknown|not found|404' /tmp/err; then
+            echo "$IMAGE:$tag not in the registry: build"
+            printf false > /tekton/results/EXISTS
+            printf '' > /tekton/results/DIGEST
+          else
+            # registry unreachable or credentials wrong: fail rather than
+            # rebuild (the push would fail the same way)
+            cat /tmp/err; exit 1
+          fi
+      computeResources:
+        requests: {cpu: 50m, memory: 64Mi}
+        limits: {memory: 256Mi}

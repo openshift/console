@@ -1,0 +1,187 @@
+# Pipeline lightspeed-docs-index: discover -> (build if new) -> roll OLS.
+#
+#   clone-console     royal-road/console: the scripts (and the console docs)
+#   clone-infra       royal-road/infrastructure (private; credentials as a workspace)
+#   discover          versions running in the cluster -> fingerprint; is
+#                     <image>:<fingerprint> in the registry already?
+#   index             only if not: Task lightspeed-docs-index (builds and pushes)
+#   rollout-new       point OLS at the image just pushed
+#   rollout-existing  or at the existing image for this fingerprint (a no-op
+#                     when OLS already uses it)
+#
+# Nothing to release when the cluster changes: the next run sees the new
+# versions, builds the docs for them, and rolls OLS onto that index.
+#
+# Workspaces:
+#   source            scratch space, one PVC per run (volumeClaimTemplate, 4Gi)
+#   sources-config    ConfigMap lightspeed-docs-sources (kustomization.yaml)
+#   dockerconfig      Secret (kubernetes.io/dockerconfigjson) that can pull and
+#                     push <image>; see examples/harbor-push-secret.example.yaml
+#   infra-basic-auth  optional: .gitconfig + .git-credentials for HTTPS clones
+#                     (Pipelines-as-Code binds its {{ git_auth_secret }} here)
+#   embeddings-key    optional: Secret with key `apikey` for the embeddings
+#                     service (embedder gpustack; without it the run uses CPU)
+#   infra-ssh         optional: .ssh directory with a read-only deploy key
+#                     (the daily schedule); see examples/infra-deploy-key.example.yaml
+#
+# ServiceAccounts, set per task in the PipelineRun (taskRunSpecs):
+#   lightspeed-docs-builder    everything by default; no API token
+#   lightspeed-docs-discovery  discover (15-discovery-rbac.yaml)
+#   lightspeed-docs-rollout    rollout-* (16-rollout-rbac.yaml)
+apiVersion: tekton.dev/v1
+kind: Pipeline
+metadata:
+  name: lightspeed-docs-index
+  namespace: lightspeed-docs
+  labels:
+    app.kubernetes.io/part-of: lightspeed
+spec:
+  description: Builds the Lightspeed documentation index for what the cluster runs, and rolls OLS onto it.
+  params:
+    - name: infra-url
+      default: https://github.com/royal-road/infrastructure
+    - name: infra-revision
+      default: main
+    - name: console-url
+      default: https://github.com/royal-road/console
+    - name: console-revision
+      default: main
+    - name: image
+      description: Repository to push to, e.g. <registry>/<project>/lightspeed-docs-index; the tag is the fingerprint (fp-<20 hex>).
+    - name: profile
+      description: full, or smoke (a few files per source).
+      default: full
+    - name: tls-verify
+      default: "true"
+    - name: embedder
+      description: gpustack (remote /v1/embeddings, parity-gated, CPU fallback) or cpu.
+      default: gpustack
+    - name: embeddings-url
+      description: OpenAI-compatible base URL of the embeddings service, ending in /v1.
+      default: ""
+    - name: embeddings-model
+      default: docs-embeddings
+    - name: cpu-budget-minutes
+      default: "100"
+    - name: rollout
+      description: '"true": point OLS at the index. "false": only build and push.'
+      default: "true"
+    - name: ols-namespace
+      default: openshift-lightspeed
+    - name: ols-deployment
+      default: lightspeed-app-server
+  workspaces:
+    - name: source
+    - name: sources-config
+    - name: dockerconfig
+    - name: infra-basic-auth
+      optional: true
+    - name: infra-ssh
+      optional: true
+    - name: embeddings-key
+      optional: true
+  results:
+    - name: FINGERPRINT
+      value: $(tasks.discover.results.FINGERPRINT)
+    - name: VERSIONS
+      value: $(tasks.discover.results.VERSIONS)
+    - name: REUSED
+      value: $(tasks.discover.results.EXISTS)
+  tasks:
+    - name: clone-console
+      taskRef:
+        resolver: cluster
+        params:
+          - {name: kind, value: task}
+          - {name: name, value: git-clone}
+          - {name: namespace, value: tekton-catalog}
+      params:
+        - {name: URL, value: $(params.console-url)}
+        - {name: REVISION, value: $(params.console-revision)}
+        - {name: SUBDIRECTORY, value: console}
+        # The task's default (/home/git) isn't the image user's home
+        # (/home/tekton), so ssh would not find the deploy key.
+        - {name: USER_HOME, value: /home/tekton}
+      workspaces:
+        - {name: output, workspace: source}
+
+    - name: clone-infra
+      taskRef:
+        resolver: cluster
+        params:
+          - {name: kind, value: task}
+          - {name: name, value: git-clone}
+          - {name: namespace, value: tekton-catalog}
+      params:
+        - {name: URL, value: $(params.infra-url)}
+        - {name: REVISION, value: $(params.infra-revision)}
+        - {name: SUBDIRECTORY, value: infrastructure}
+        # The task's default (/home/git) isn't the image user's home
+        # (/home/tekton), so ssh would not find the deploy key.
+        - {name: USER_HOME, value: /home/tekton}
+      workspaces:
+        - {name: output, workspace: source}
+        - {name: basic-auth, workspace: infra-basic-auth}
+        - {name: ssh-directory, workspace: infra-ssh}
+
+    - name: discover
+      runAfter: [clone-console, clone-infra]
+      taskRef:
+        name: lightspeed-docs-discover
+      params:
+        - {name: profile, value: $(params.profile)}
+        - {name: image, value: $(params.image)}
+        - {name: tls-verify, value: $(params.tls-verify)}
+      workspaces:
+        - {name: source, workspace: source}
+        - {name: sources-config, workspace: sources-config}
+        - {name: dockerconfig, workspace: dockerconfig}
+
+    - name: index
+      runAfter: [discover]
+      when:
+        - {input: $(tasks.discover.results.EXISTS), operator: in, values: ["false"]}
+      taskRef:
+        name: lightspeed-docs-index
+      params:
+        - {name: profile, value: $(params.profile)}
+        - {name: fingerprint, value: $(tasks.discover.results.FINGERPRINT)}
+        - {name: image, value: $(params.image)}
+        - {name: tls-verify, value: $(params.tls-verify)}
+        - {name: infra-commit, value: $(tasks.clone-infra.results.COMMIT)}
+        - {name: console-commit, value: $(tasks.clone-console.results.COMMIT)}
+        - {name: embedder, value: $(params.embedder)}
+        - {name: embeddings-url, value: $(params.embeddings-url)}
+        - {name: embeddings-model, value: $(params.embeddings-model)}
+        - {name: cpu-budget-minutes, value: $(params.cpu-budget-minutes)}
+      workspaces:
+        - {name: source, workspace: source}
+        - {name: embeddings-key, workspace: embeddings-key}
+        - {name: dockerconfig, workspace: dockerconfig}
+
+    - name: rollout-new
+      runAfter: [index]
+      when:
+        - {input: $(params.rollout), operator: in, values: ["true"]}
+      taskRef:
+        name: lightspeed-docs-rollout
+      params:
+        - {name: reference, value: "$(params.image):$(tasks.discover.results.FINGERPRINT)@$(tasks.index.results.IMAGE_DIGEST)"}
+        - {name: fingerprint, value: $(tasks.discover.results.FINGERPRINT)}
+        - {name: discovered-at, value: $(tasks.discover.results.DISCOVERED_AT)}
+        - {name: namespace, value: $(params.ols-namespace)}
+        - {name: deployment, value: $(params.ols-deployment)}
+
+    - name: rollout-existing
+      runAfter: [discover]
+      when:
+        - {input: $(tasks.discover.results.EXISTS), operator: in, values: ["true"]}
+        - {input: $(params.rollout), operator: in, values: ["true"]}
+      taskRef:
+        name: lightspeed-docs-rollout
+      params:
+        - {name: reference, value: "$(params.image):$(tasks.discover.results.FINGERPRINT)@$(tasks.discover.results.DIGEST)"}
+        - {name: fingerprint, value: $(tasks.discover.results.FINGERPRINT)}
+        - {name: discovered-at, value: $(tasks.discover.results.DISCOVERED_AT)}
+        - {name: namespace, value: $(params.ols-namespace)}
+        - {name: deployment, value: $(params.ols-deployment)}

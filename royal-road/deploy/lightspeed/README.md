@@ -3,9 +3,10 @@
 [OpenShift Lightspeed](https://github.com/openshift/lightspeed-service) on
 this console, without the lightspeed-operator: a chat panel in every console
 page and an "Ask OpenShift Lightspeed" button in the YAML editor. Answers come
-from a GPUStack model. The assistant can read live cluster state through a
-read-only Kubernetes MCP server, always with the signed-in user's own
-permissions.
+from a GPUStack model, grounded in documentation (our own docs and the
+upstream docs for the versions the cluster runs, [`docs/`](docs/README.md)).
+The assistant can read live cluster state through a read-only Kubernetes MCP
+server, always with the signed-in user's own permissions.
 
 ```
 browser ── /api/proxy/plugin/lightspeed-console-plugin/ols/ ──> bridge (console namespace)
@@ -13,7 +14,8 @@ browser ── /api/proxy/plugin/lightspeed-console-plugin/ols/ ──> bridge (
                                                                     v
                          OLS (openshift-lightspeed) ── TokenReview + SubjectAccessReview ──> kube-apiserver
                            │                      └── chat completions + tools ──> GPUStack
-                           └── user's token ──> kubernetes-mcp-server (read-only) ──> kube-apiserver
+                           ├── user's token ──> kubernetes-mcp-server (read-only) ──> kube-apiserver
+                           └── X-API-Key ──> sentry-mcp (read-only token) ──> sentry-web (Sentry API)
 bridge ── plugin assets (HTTP 8080) ──> lightspeed-console-plugin
 ```
 
@@ -27,14 +29,16 @@ No console code changes are needed. The bridge loads the plugin with
 | `00-namespace.yaml` | Namespace `openshift-lightspeed`. |
 | `10-rbac.yaml` | OLS ServiceAccount (TokenReview/SubjectAccessReview create), MCP ServiceAccount (no RBAC), ClusterRole `lightspeed-query-access` (`/ols-access` get, plus get on the inert OLSConfig). |
 | `20-tls.yaml` | cert-manager: namespace-local CA and the OLS serving certificate. |
-| `40-ols-config.yaml` | OLS config (GPUStack provider, MCP server, TLS, no data collection, no audit spans) and the system prompt. |
+| `40-ols-config.yaml` | OLS config (GPUStack provider, MCP server, documentation indexes, TLS, no data collection, no audit spans) and the system prompt. |
 | `41-ols-shim-configmap.yaml` | Generated from `royal-road/plugins/lightspeed-service/rr_ols_shim.py`. Do not edit. |
-| `42-ols.yaml` | OLS Deployment and Service (HTTPS 8443). |
+| `42-ols.yaml` | OLS Deployment and Service (HTTPS 8443); the documentation index as image volume `docs-index` at `/rag`. |
 | `50-mcp-server.yaml` | kubernetes-mcp-server v0.1.3: read-only, token passthrough only. |
+| `55-sentry-mcp.yaml` | Sentry MCP server (getsentry's, behind supergateway): eight read-only Sentry tools with one read-only service token. Needs the Secret `lightspeed-sentry`; see [Sentry tools](#sentry-tools). |
 | `60-console-plugin.yaml` | Plugin Deployment and Service (HTTP 8080). |
-| `70-networkpolicy.yaml` | Ingress: console → OLS, console → plugin, OLS → MCP. Nothing else. |
+| `70-networkpolicy.yaml` | Ingress: console → OLS, console → plugin, OLS → MCP, OLS → Sentry MCP. Nothing else. Egress of the Sentry MCP server: sentry-web and DNS only. |
 | `80-consoleplugin.yaml` | ConsolePlugin for Administration › Dynamic Plugins (display only). |
 | `90-olsconfig.yaml` | Inert `OLSConfig/cluster`: turns on the YAML editor button. |
+| `docs/` | The documentation index: Tekton Pipeline that discovers versions, builds the index image and rolls OLS onto it. [README](docs/README.md). |
 | `plugin-proxy.sh` | Prints the `BRIDGE_PLUGIN_PROXY` value, with the CA from `20-tls.yaml`. |
 | `optional/query-access-binding.yaml` | Lets a group (or users) other than cluster-admins use the assistant. |
 | `optional/ols-egress-networkpolicy.yaml` | Restricts OLS egress to DNS, kube-apiserver, MCP and GPUStack. |
@@ -46,6 +50,7 @@ Images (all public):
 |---|---|
 | OLS | `quay.io/openshift-lightspeed/lightspeed-service-api@sha256:63924c0e…` (lightspeed-service `main` @ `77e4fcb4`, 2026-11-14; no release tags exist) |
 | MCP server | `quay.io/containers/kubernetes_mcp_server@sha256:63471556…` (v0.1.3) |
+| Sentry MCP | `ghcr.io/royal-road/sentry-mcp:<sha>`, built by `.github/workflows/royal-road-sentry-mcp.yml` from [`royal-road/plugins/sentry-mcp/`](../../plugins/sentry-mcp/README.md) (`@sentry/mcp-server` 0.49.0, `supergateway` 4.2.2) |
 | Plugin | `ghcr.io/royal-road/lightspeed-console-plugin:<sha>`, built by `.github/workflows/royal-road-lightspeed-plugin.yml` from [`royal-road/plugins/lightspeed-console-plugin/`](../../plugins/lightspeed-console-plugin/README.md) |
 
 ## Prerequisites
@@ -67,6 +72,7 @@ Images (all public):
 |---|---|---|
 | `<gpustack-service>`, `<gpustack-namespace>`, `<gpustack-port>` | `40-ols-config.yaml` | GPUStack's in-cluster Service, namespace and port. The model name is `lightspeed`; change it there if the GPUStack route is named differently. |
 | `<sha>` | `60-console-plugin.yaml` | Tag CI pushed for the plugin image. |
+| `<docs-index-image>` | `42-ols.yaml` | The first index image, `<repository>:fp-…@sha256:…`; the docs pipeline owns it afterwards ([docs/README.md](docs/README.md#apply)). Also add its registry's pull Secret to `imagePullSecrets` there. |
 | `<console-namespace>` | `70-networkpolicy.yaml` | Namespace of the console Deployment. |
 | `<lightspeed-users-group>` | `optional/query-access-binding.yaml` | Only if you apply it. |
 | `<apiserver-cidr>`, `<apiserver-port>`, `<gpustack-namespace>`, `<gpustack-port>` | `optional/ols-egress-networkpolicy.yaml` | Only if you apply it. See the file header. |
@@ -96,7 +102,8 @@ Run from the repository root, with the placeholders replaced.
    ```
 
    `kubectl apply -f <dir>` is not recursive, so `optional/` and `examples/`
-   are not applied. OLS can take a few minutes the first time (2.6 GB image).
+   are not applied (nor `docs/`, which has its own kustomization). OLS can
+   take a few minutes the first time (2.6 GB image).
    If `lightspeed-app-server` starts before its TLS Secret exists, it waits in
    `ContainerCreating` until cert-manager issues it. The OLS log should end
    with `LLM connection checked - LLM is ready`.
@@ -196,10 +203,76 @@ fails every request from users without a UID, which is every Dex user. See
 only within a pod's life; the plugin keeps none either. PostgreSQL is an
 option if history must survive restarts.
 
-**No product documentation (RAG).** Red Hat's documentation index is behind
-Red Hat authentication and is OpenShift-specific. Answers come from the model
-and the tools. The system prompt in `40-ols-config.yaml` tells the model this
-is upstream Kubernetes, not OpenShift.
+**Documentation: our own index, not Red Hat's.** Red Hat's documentation
+index is behind Red Hat authentication and is OpenShift-specific. Instead,
+OLS's "bring your own knowledge" indexes hold our docs and the upstream docs
+for the versions this cluster runs, rebuilt when those change
+([`docs/`](docs/README.md)). The system prompt in `40-ols-config.yaml` tells
+the model this is upstream Kubernetes, not OpenShift, to prefer our docs for
+questions about this cluster, and to cite.
+
+## Sentry tools
+
+`55-sentry-mcp.yaml` gives the assistant read access to the self-hosted
+Sentry, so "why is my-app erroring?" combines the workload's state
+(pods, restarts, events, logs) with its unresolved Sentry issues. The system
+prompt in `40-ols-config.yaml` tells the model to look in both places and to
+match the application to a Sentry project by name with `find_projects`.
+
+How it is kept read-only and contained:
+
+| Layer | Setting |
+|---|---|
+| Sentry token | Internal integration with `org:read`, `project:read`, `event:read` only. |
+| MCP server | Only the read-only `inspect` skill; limited to one organization. |
+| Gateway | Exposes 8 tools (`find_projects`, `search_issues`, `get_issue_details`, `get_event_stacktrace`, `search_issue_events`, `get_issue_tag_values`, `find_releases`, `get_release_details`) and refuses the rest. Not exposed: tools that write or send data to sentry.io, fetch docs from the internet, or return end-user data (replays, attachments, user feedback). |
+| API key | OLS sends `X-API-Key` from a file; the gateway answers 401 without it. OLS mounts only that key, not the Sentry token. |
+| NetworkPolicy | Only OLS may connect; the server may connect only to sentry-web:9000 and DNS. |
+
+**Access model.** The Sentry MCP server uses one service token, not the
+console user's identity: every Lightspeed user can read every project in the
+organization, including event details such as tags and stack traces. That is
+acceptable because Lightspeed is limited to users with `get` on `/ols-access`,
+by default cluster-admins only (`10-rbac.yaml`). Before granting access to
+others with `optional/query-access-binding.yaml`, make sure they may read all
+of Sentry too, or leave the Sentry server out. Calls are not attributed to the
+user in Sentry's logs; they appear as the integration.
+
+### Set up
+
+1. In Sentry (organization settings › Custom Integrations), create an
+   **internal integration** named "Lightspeed MCP (read-only)" with
+   Project: Read, Issue & Event: Read, Organization: Read, and no other
+   permissions, and no webhooks.
+2. Create the Secret without printing the token: paste it on stdin (the
+   terminal does not echo it), and generate the gateway key in the same step:
+
+   ```sh
+   read -rs SENTRY_TOKEN
+   kubectl -n openshift-lightspeed create secret generic lightspeed-sentry \
+     --from-file=token=<(printf %s "$SENTRY_TOKEN") \
+     --from-file=mcp-api-key=<(openssl rand -hex 32 | tr -d '\n')
+   unset SENTRY_TOKEN
+   ```
+
+   Or create the same two keys through the infrastructure secret flow.
+3. Replace the placeholders in `55-sentry-mcp.yaml` (`<sha>`,
+   `<sentry-namespace>`, `<sentry-org>`) and `70-networkpolicy.yaml`
+   (`<sentry-namespace>`), then apply both and `40-ols-config.yaml`,
+   `42-ols.yaml`; restart OLS so it reads the new config and key:
+
+   ```sh
+   kubectl -n openshift-lightspeed rollout status deploy/sentry-mcp
+   kubectl -n openshift-lightspeed rollout restart deploy/lightspeed-app-server
+   ```
+
+Without the Secret, OLS still starts (the key volume is optional) and logs
+that it cannot read the header file; the chat works without the Sentry tools.
+
+To rotate the gateway key, replace `mcp-api-key` in the Secret and restart
+both `sentry-mcp` and `lightspeed-app-server`. Both read it only at start-up,
+and OLS sends the whole file as one header value, so a two-key file doesn't
+help here.
 
 ## Verify
 
@@ -212,6 +285,13 @@ is upstream Kubernetes, not OpenShift.
 4. Open any YAML editor as a cluster-admin: the toolbar has the Lightspeed
    icon, and it opens the chat.
 5. Administration › Dynamic Plugins lists `lightspeed-console-plugin`.
+6. With the Sentry tools: ask "Why is <app> erroring?" for an app that
+   reports to Sentry. The answer names Sentry issues (for example
+   `<PROJECT>-123`) with event counts, and shows `find_projects` and
+   `search_issues` tool chips next to the pod tools. With sentry-plugin
+   (royal-road/console-plugins) installed, the issue IDs link to its issue
+   page, `/sentry/<org>/issues/<short-id>`, which cluster-admins can open
+   without a workload.
 
 ## Rollback
 
@@ -276,7 +356,24 @@ Results:
 | YAML editor | Cluster-admin sees "Ask OpenShift Lightspeed"; it opens the chat. |
 | `70-networkpolicy.yaml` | console → OLS 200; console → MCP, and a pod in `default` → OLS, MCP or plugin: blocked. Probes unaffected. |
 | `optional/ols-egress-networkpolicy.yaml` | With it, `/authorized` (TokenReview/SAR), the LLM and tool calls still work; OLS → plugin is blocked. |
-| Memory | OLS about 0.9 GiB, MCP server 27 MiB, plugin 56 MiB. |
+| Memory | OLS about 0.9 GiB (1.1 GB with the full documentation index, see docs/README.md), MCP server 27 MiB, plugin 56 MiB. |
 
 Not verified on kind: production's real Dex and groups, GPUStack through its
 in-cluster Service (`http://`, so no CA is involved), and certificate renewal.
+
+### Sentry tools, verified on kind
+
+2026-11-15, same kind setup as above (OLS image, shim and manifests applied
+unchanged except for placeholders; TLS Secrets made with openssl instead of
+cert-manager). A stand-in `sentry-web` Service in namespace `sentry`, with the
+production chart's pod labels, proxied to the real self-hosted Sentry, so
+`SENTRY_URL` and the egress policy were as in production. The model was the
+real GPUStack `lightspeed` route. The token was a real read-only token.
+
+| Check | Result |
+|---|---|
+| Tools | The gateway listed the 8 allowed tools; the full `inspect` skill has 49. |
+| "Why is <app> erroring?" for a test Deployment named like a real application (cluster-admin) | 25 s. Calls: `pods_list`, `find_projects` (matched the Deployment to its project, whose slug is spelt differently), `search_issues`, `pods_log`, `get_issue_details`, `events_list`. The answer said the pods were healthy and listed the project's real unresolved issues with event counts and last-seen times. Same in the console chat panel. |
+| API key | Without `X-API-Key`: 401. With it: 200. OLS's key mount holds only `mcp-api-key`. |
+| NetworkPolicy | OLS → sentry-mcp allowed; a pod in `default` → sentry-mcp blocked. sentry-mcp → sentry-web:9000 allowed; → the public Sentry host and the npm registry blocked. |
+| Issue links (with sentry-plugin) | The answer linked `/sentry/royal-road/issues/<short-id>`; clicking it opened sentry-plugin's issue page in the console. |
