@@ -69,19 +69,35 @@ test.describe('Cluster Settings cluster update modal', { tag: ['@admin'] }, () =
       await expect(version4171).toBeVisible();
       await version4171.click();
 
-      // Verify paused nodes warning appears
+      // Verify paused nodes warning lists the paused pool and requires acknowledgement
       const pausedWarning = page.getByTestId('update-cluster-modal-paused-nodes-warning');
       await expect(pausedWarning).toBeVisible();
+      await expect(pausedWarning).toContainText('worker');
 
-      // Verify partial update option appears
+      const pausedPoolsAck = page.getByTestId('update-cluster-modal-paused-pools-ack');
+      await expect(pausedPoolsAck).toBeVisible();
+      await expect(pausedPoolsAck).not.toBeChecked();
+
+      const updateButton = page.getByTestId('confirm-action');
+      await expect(updateButton).toBeDisabled();
+
+      await pausedPoolsAck.click();
+      await expect(pausedPoolsAck).toBeChecked();
+      await expect(updateButton).toBeEnabled();
+
+      // Verify partial update option appears and clears the Full acknowledgement gate
       const partialUpdateRadio = page.getByTestId('update-cluster-modal-partial-update-radio');
       await expect(partialUpdateRadio).toBeVisible();
       await partialUpdateRadio.click();
+
+      await expect(pausedWarning).toBeHidden();
+      await expect(pausedPoolsAck).toBeHidden();
 
       // Verify worker checkbox is checked
       const workerCheckbox = page.getByTestId('pause-mcp-checkbox-worker');
       await expect(workerCheckbox).toBeVisible();
       await expect(workerCheckbox).toBeChecked();
+      await expect(updateButton).toBeEnabled();
 
       // Cancel the modal
       const cancelButton = page.getByTestId('modal-cancel-action');
