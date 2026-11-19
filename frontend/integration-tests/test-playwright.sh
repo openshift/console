@@ -83,7 +83,7 @@ if [ "$RUN_CREATE_USER" = true ]; then
     #   -G /pattern/gi         -> --grep-invert '/(?:@standalone|pattern)/gi'
     #   --grep-invert ''       -> dropped (Playwright ignores it)
     #   (no invert flag)       -> --grep-invert @standalone prepended
-    pw_regex_literal='^/(.*)/([gi]*)$'
+    pw_regex_literal='^/(.*)/([gimsuy]*)$'
     for arg in "$@"; do
       if [ "$expect_value" == "true" ]; then
         value="$arg"
