@@ -41,12 +41,16 @@ test.describe('Alertmanager', { tag: ['@admin'] }, () => {
     await resetAlertmanagerConfig(k8sClient);
   });
 
-  test('displays the Alertmanager Configuration Details page', async ({ page }) => {
-    await page.goto('/settings/cluster');
-    await page.getByRole('tab', { name: 'Configuration' }).click();
-    await page.getByTestId('Alertmanager').click();
-    await expect(page.getByRole('heading', { name: 'Alert routing' })).toBeVisible();
-  });
+  test(
+    'displays the Alertmanager Configuration Details page',
+    { tag: ['@standalone'] },
+    async ({ page }) => {
+      await page.goto('/settings/cluster');
+      await page.getByRole('tab', { name: 'Configuration' }).click();
+      await page.getByTestId('Alertmanager').click();
+      await expect(page.getByRole('heading', { name: 'Alert routing' })).toBeVisible();
+    },
+  );
 
   test('launches Alert Routing modal, edits and saves correctly', async ({ page }) => {
     await alertmanager.navigateToAlertmanager();

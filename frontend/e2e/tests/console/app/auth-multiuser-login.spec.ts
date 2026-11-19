@@ -69,7 +69,7 @@ test.describe(
       });
     });
 
-    test('logs in as kubeadmin user', async ({ page }) => {
+    test('logs in as kubeadmin user', { tag: ['@standalone'] }, async ({ page }) => {
       const kubeadminPassword = process.env.BRIDGE_KUBEADMIN_PASSWORD;
       const baseURL = process.env.WEB_CONSOLE_URL || 'http://localhost:9000';
 

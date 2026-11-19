@@ -12,6 +12,8 @@
 #   olmFull       — OLM project (excluding @techpreview tests)
 #
 # Tests tagged @techpreview only run in test-prow-e2e-techpreview.sh.
+# Tests tagged @standalone require a standalone control plane and are also
+# excluded when running against a hosted (HyperShift) cluster.
 #
 # Environment (typical Prow / installer):
 #   ARTIFACT_DIR, INSTALLER_DIR, KUBEADMIN_PASSWORD_FILE
@@ -51,6 +53,14 @@ export BRIDGE_HTPASSWD_PASSWORD="${BRIDGE_HTPASSWD_PASSWORD:-test}"
 
 export WORKERS="${WORKERS:-2}"
 
+# Tests tagged @standalone require a standalone control plane (OAuth identity
+# providers, cluster update UI, MachineConfig, kubeadmin login) and are
+# excluded when running against a hosted cluster.
+grep_invert="@techpreview"
+if [ "$(oc get infrastructures.config.openshift.io cluster -o 'jsonpath={.status.controlPlaneTopology}')" == "External" ]; then
+  grep_invert="@techpreview|@standalone"
+fi
+
 pushd frontend
 
 if [ ! -d node_modules ]; then
@@ -65,17 +75,17 @@ fi
 # `--` ends this script's flags before Playwright's own (test-playwright.sh only parses -c).
 case "$SCENARIO" in
   e2e | release)
-    ./integration-tests/test-playwright.sh -- --grep-invert @techpreview "$@"
+    ./integration-tests/test-playwright.sh -- --grep-invert "$grep_invert" "$@"
     ;;
   smoke)
-    ./integration-tests/test-playwright.sh -- --project=smoke "$@"
+    ./integration-tests/test-playwright.sh -- --project=smoke --grep-invert "$grep_invert" "$@"
     ;;
   login)
     ./integration-tests/test-playwright.sh -- \
-      --project=console e2e/tests/console/app/auth-multiuser-login.spec.ts "$@"
+      --project=console --grep-invert "$grep_invert" e2e/tests/console/app/auth-multiuser-login.spec.ts "$@"
     ;;
   olmFull)
-    ./integration-tests/test-playwright.sh -- --project=olm --grep-invert @techpreview "$@"
+    ./integration-tests/test-playwright.sh -- --project=olm --grep-invert "$grep_invert" "$@"
     ;;
   *)
     echo "error: unknown scenario '$SCENARIO' (use: e2e, release, smoke, login, or olmFull)" >&2

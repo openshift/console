@@ -14,7 +14,7 @@ import { stubWebSocketWatches } from './cluster-settings-test-utils';
 const CLUSTER_VERSION_URL = '**/apis/config.openshift.io/v1/clusterversions/version';
 const MCP_LIST_URL = /\/apis\/machineconfiguration\.openshift\.io\/v1\/machineconfigpools(\?|$)/;
 
-test.describe('Cluster Settings cluster update modal', { tag: ['@admin'] }, () => {
+test.describe('Cluster Settings cluster update modal', { tag: ['@admin', '@standalone'] }, () => {
   test('changes based on the cluster', async ({ page }) => {
     const clusterSettings = new ClusterSettingsPage(page);
 
