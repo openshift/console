@@ -39,13 +39,11 @@ esac
 export ARTIFACT_DIR INSTALLER_DIR
 mkdir -p "${ARTIFACT_DIR}"
 
-# don't log kubeadmin-password
-set +x
-export BRIDGE_KUBEADMIN_PASSWORD="$(cat "${KUBEADMIN_PASSWORD_FILE:-${INSTALLER_DIR}/auth/kubeadmin-password}")"
-set -x
+# Set up the e2e users and the admin persona credentials
+# (OPENSHIFT_USERNAME, BRIDGE_KUBEADMIN_PASSWORD). Sourced so that the setup
+# runs and the exported variables reach this shell.
+source ./contrib/create-user.sh
 export BRIDGE_BASE_ADDRESS="$(oc get consoles.config.openshift.io cluster -o jsonpath='{.status.consoleURL}')"
-
-./contrib/create-user.sh
 
 export BRIDGE_HTPASSWD_IDP="${BRIDGE_HTPASSWD_IDP:-test}"
 export BRIDGE_HTPASSWD_USERNAME="${BRIDGE_HTPASSWD_USERNAME:-test}"
