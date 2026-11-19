@@ -39,12 +39,20 @@ mkdir -p "${ARTIFACT_DIR}"
 source ./contrib/create-user.sh
 export BRIDGE_BASE_ADDRESS="$(oc get consoles.config.openshift.io cluster -o jsonpath='{.status.consoleURL}')"
 
+# Tests tagged @standalone require a standalone control plane and are excluded
+# when running against a hosted cluster. CONTROL_PLANE_TOPOLOGY is exported by
+# create-user.sh, which fails fast if it cannot be read.
+grep_invert="@techpreview"
+if [ "${CONTROL_PLANE_TOPOLOGY:-}" == "External" ]; then
+  grep_invert="@techpreview|@standalone"
+fi
+
 pushd frontend
 
 if [ ! -d node_modules ]; then
   yarn install
 fi
 
-./integration-tests/test-playwright.sh -- --grep @techpreview "$@"
+./integration-tests/test-playwright.sh -- --grep @techpreview --grep-invert "$grep_invert" "$@"
 
 popd

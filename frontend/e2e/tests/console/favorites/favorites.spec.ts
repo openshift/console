@@ -1,4 +1,4 @@
-import { isNotFound } from '../../../clients/kubernetes-client';
+import KubernetesClient, { isNotFound } from '../../../clients/kubernetes-client';
 import { test, expect } from '../../../fixtures';
 
 test.describe('Favorites', { tag: ['@admin'] }, () => {
@@ -8,7 +8,7 @@ test.describe('Favorites', { tag: ['@admin'] }, () => {
     await test.step('Clear any stale favorites and lastNamespace from prior runs', async () => {
       try {
         await k8sClient.patchConfigMap(
-          'user-settings-kubeadmin',
+          KubernetesClient.userSettingsConfigMapName(process.env.OPENSHIFT_USERNAME || 'kubeadmin'),
           'openshift-console-user-settings',
           { 'console.favorites': '[]', 'console.lastNamespace': '' },
         );
@@ -124,7 +124,7 @@ test.describe('Favorites', { tag: ['@admin'] }, () => {
     await test.step('Remove all favorites to clean up for future runs', async () => {
       try {
         await k8sClient.patchConfigMap(
-          'user-settings-kubeadmin',
+          KubernetesClient.userSettingsConfigMapName(process.env.OPENSHIFT_USERNAME || 'kubeadmin'),
           'openshift-console-user-settings',
           { 'console.favorites': '[]' },
         );

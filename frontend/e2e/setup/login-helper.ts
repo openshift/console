@@ -86,7 +86,12 @@ export async function loginFromEnv(
 
   const username = process.env.OPENSHIFT_USERNAME || 'kubeadmin';
   const password = process.env.BRIDGE_KUBEADMIN_PASSWORD || '';
-  await performLogin(page, baseURL, username, password, 'kube:admin');
+  // kubeadmin logs in through the 'kube:admin' provider; any other admin user
+  // (e.g. the e2e-admin user the hosted-cluster setup provisions) lives in
+  // the htpasswd provider.
+  const idpName =
+    username === 'kubeadmin' ? 'kube:admin' : process.env.BRIDGE_HTPASSWD_IDP || 'test';
+  await performLogin(page, baseURL, username, password, idpName);
 }
 
 export async function saveStorageState(page: Page, storagePath: string): Promise<void> {

@@ -21,7 +21,12 @@ test.describe(
       await test.step('Log in to the console', async () => {
         // These are @admin tests, so always authenticate as the admin persona
         // regardless of whether developer (htpasswd) credentials are configured.
-        test.skip(!process.env.BRIDGE_KUBEADMIN_PASSWORD, 'No kubeadmin credentials configured');
+        // The password is always exported on hosted clusters (for the
+        // e2e-admin user), so gate on the persona as well.
+        test.skip(
+          !process.env.BRIDGE_KUBEADMIN_PASSWORD || process.env.OPENSHIFT_USERNAME === 'e2e-admin',
+          'Requires standalone kubeadmin credentials',
+        );
         await loginFromEnv(page, 'admin');
 
         await expect(page.getByTestId('user-dropdown-toggle')).toBeVisible({ timeout: 60_000 });
@@ -64,7 +69,12 @@ test.describe(
       await test.step('Log in to the console', async () => {
         // These are @admin tests, so always authenticate as the admin persona
         // regardless of whether developer (htpasswd) credentials are configured.
-        test.skip(!process.env.BRIDGE_KUBEADMIN_PASSWORD, 'No kubeadmin credentials configured');
+        // The password is always exported on hosted clusters (for the
+        // e2e-admin user), so gate on the persona as well.
+        test.skip(
+          !process.env.BRIDGE_KUBEADMIN_PASSWORD || process.env.OPENSHIFT_USERNAME === 'e2e-admin',
+          'Requires standalone kubeadmin credentials',
+        );
         await loginFromEnv(page, 'admin');
 
         await expect(page.getByTestId('user-dropdown-toggle')).toBeVisible({ timeout: 60_000 });

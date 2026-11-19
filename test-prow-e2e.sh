@@ -55,9 +55,10 @@ export WORKERS="${WORKERS:-2}"
 
 # Tests tagged @standalone require a standalone control plane (OAuth identity
 # providers, cluster update UI, MachineConfig, kubeadmin login) and are
-# excluded when running against a hosted cluster.
+# excluded when running against a hosted cluster. CONTROL_PLANE_TOPOLOGY is
+# exported by create-user.sh, which fails fast if it cannot be read.
 grep_invert="@techpreview"
-if [ "$(oc get infrastructures.config.openshift.io cluster -o 'jsonpath={.status.controlPlaneTopology}')" == "External" ]; then
+if [ "${CONTROL_PLANE_TOPOLOGY:-}" == "External" ]; then
   grep_invert="@techpreview|@standalone"
 fi
 

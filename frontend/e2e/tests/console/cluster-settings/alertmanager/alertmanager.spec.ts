@@ -27,7 +27,7 @@ type AlertmanagerRoute = {
 
 test.describe.configure({ mode: 'serial' });
 
-test.describe('Alertmanager', { tag: ['@admin'] }, () => {
+test.describe('Alertmanager', { tag: ['@admin', '@standalone'] }, () => {
   let alertmanager: AlertmanagerPage;
   let k8sClient: KubernetesClient;
 
@@ -260,7 +260,7 @@ route:
   });
 });
 
-test.describe('Alertmanager Receiver Forms', { tag: ['@admin'] }, () => {
+test.describe('Alertmanager Receiver Forms', { tag: ['@admin', '@standalone'] }, () => {
   let alertmanager: AlertmanagerPage;
   let k8sClient: KubernetesClient;
 

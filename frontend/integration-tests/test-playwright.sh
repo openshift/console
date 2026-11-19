@@ -50,11 +50,11 @@ shift $((OPTIND - 1))
 if [ "$RUN_CREATE_USER" = true ]; then
   # Sourced so the setup runs here and the exported admin persona
   # credentials (OPENSHIFT_USERNAME, BRIDGE_KUBEADMIN_PASSWORD) reach
-  # Playwright. Restore the tracing state afterwards: the sourced script
-  # enables it for its own logging.
-  if [[ $- == *x* ]]; then WAS_TRACING=true; else WAS_TRACING=false; fi
+  # Playwright. Restore the full shell option state afterwards: the sourced
+  # script applies its own.
+  oldopts="$(set +o)"
   source "${REPO_ROOT}/contrib/create-user.sh"
-  if $WAS_TRACING; then set -x; else set +x; fi
+  eval "$oldopts"
   export BRIDGE_HTPASSWD_IDP="${BRIDGE_HTPASSWD_IDP:-test}"
   export BRIDGE_HTPASSWD_USERNAME="${BRIDGE_HTPASSWD_USERNAME:-test}"
   export BRIDGE_HTPASSWD_PASSWORD="${BRIDGE_HTPASSWD_PASSWORD:-test}"

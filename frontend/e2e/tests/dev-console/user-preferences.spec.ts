@@ -1,3 +1,4 @@
+import KubernetesClient from '../../clients/kubernetes-client';
 import { test, expect } from '../../fixtures';
 import { warmupSPA } from '../../pages/base-page';
 import { BuildConfigPage } from '../../pages/dev-console/build-config-page';
@@ -14,12 +15,16 @@ test.describe('User Preferences', { tag: ['@dev-console'] }, () => {
 
   test.afterEach(async ({ k8sClient }) => {
     try {
-      await k8sClient.patchConfigMap('user-settings-kubeadmin', 'openshift-console-user-settings', {
-        'console.preferredPerspective': '',
-        'console.preferredCreateEditMethod': '',
-        'topology.preferredView': '',
-        'devconsole.preferredResource': '',
-      });
+      await k8sClient.patchConfigMap(
+        KubernetesClient.userSettingsConfigMapName(process.env.OPENSHIFT_USERNAME || 'kubeadmin'),
+        'openshift-console-user-settings',
+        {
+          'console.preferredPerspective': '',
+          'console.preferredCreateEditMethod': '',
+          'topology.preferredView': '',
+          'devconsole.preferredResource': '',
+        },
+      );
     } catch {
       // ConfigMap may not exist on fresh clusters where kubeadmin has no user-settings yet
     }

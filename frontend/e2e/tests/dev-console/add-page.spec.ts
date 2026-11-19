@@ -1,4 +1,4 @@
-import type KubernetesClient from '../../clients/kubernetes-client';
+import KubernetesClient from '../../clients/kubernetes-client';
 import { test, expect } from '../../fixtures';
 import { AddPage } from '../../pages/dev-console/add-page';
 
@@ -12,9 +12,13 @@ import { AddPage } from '../../pages/dev-console/add-page';
  */
 
 async function ensureGettingStartedVisible(k8sClient: KubernetesClient): Promise<void> {
-  await k8sClient.patchConfigMap('user-settings-kubeadmin', 'openshift-console-user-settings', {
-    'devconsole.addPage.gettingStarted': 'show',
-  });
+  await k8sClient.patchConfigMap(
+    KubernetesClient.userSettingsConfigMapName(process.env.OPENSHIFT_USERNAME || 'kubeadmin'),
+    'openshift-console-user-settings',
+    {
+      'devconsole.addPage.gettingStarted': 'show',
+    },
+  );
 }
 
 test.describe('Add page on Developer Console', { tag: ['@dev-console', '@regression'] }, () => {
