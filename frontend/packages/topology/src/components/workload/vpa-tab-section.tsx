@@ -52,6 +52,9 @@ export const useVpaSideBarTabSection: DetailsTabSectionExtensionHook = (element:
   }
 
   const resource = getResource(element);
+  if (!resource) {
+    return [undefined, true, undefined];
+  }
   const verticalPodAutoscalers = getVerticalPodAutoscalersForResource(vpas, resource);
 
   const section =

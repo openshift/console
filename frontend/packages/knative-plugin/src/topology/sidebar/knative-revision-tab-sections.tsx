@@ -13,6 +13,7 @@ export const useKnativeSidepanelDeploymentSection: DetailsTabSectionExtensionHoo
     return [undefined, true, undefined];
   }
   const resource = getResource(element);
+  if (!resource) return [undefined, true, undefined];
   const section = (
     <TopologySideBarTabSection>
       <DeploymentOverviewList resource={resource} />
