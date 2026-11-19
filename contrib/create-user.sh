@@ -98,19 +98,26 @@ if [ "$control_plane_topology" == "External" ]; then
     rm -f "$htpasswd_file"
 
     oc --kubeconfig="$MGMT_KUBECONFIG" patch hostedcluster -n "$HC_NAMESPACE" "$CLUSTER_NAME" --type=merge -p '{"spec":{"configuration":{"oauth":{"identityProviders":[{"name":"test","mappingMethod":"claim","type":"HTPasswd","htpasswd":{"fileData":{"name":"htpass-secret"}}}]}}}}'
-
-    oc create clusterrolebinding e2e-admin --clusterrole=cluster-admin --user=e2e-admin --dry-run=client -o yaml | oc apply -f -
-
-    set +x
-    echo "waiting for the 'test' idp to accept logins..."
-    waitForHtpasswdLogin "test" "test"
-    echo "waiting for the 'e2e-admin' user to accept logins..."
-    waitForHtpasswdLogin "e2e-admin" "test"
-    set -x
   fi
 
-  export OPENSHIFT_USERNAME="${OPENSHIFT_USERNAME:-e2e-admin}"
+  # Reconcile the admin access and validate the logins on every run, also when
+  # the 'test' idp is already configured, so a rerun completes an interrupted
+  # setup instead of exporting credentials that were never established.
+  oc create clusterrolebinding e2e-admin --clusterrole=cluster-admin --user=e2e-admin --dry-run=client -o yaml | oc apply -f -
+
+  set +x
+  echo "waiting for the 'test' idp to accept logins..."
+  waitForHtpasswdLogin "test" "test"
+  echo "waiting for the 'e2e-admin' user to accept logins..."
+  waitForHtpasswdLogin "e2e-admin" "test"
+  set -x
+
+  # don't log a supplied password
+  set +x
   export BRIDGE_KUBEADMIN_PASSWORD="${BRIDGE_KUBEADMIN_PASSWORD:-test}"
+  set -x
+
+  export OPENSHIFT_USERNAME="${OPENSHIFT_USERNAME:-e2e-admin}"
 else
   if [ "$htpasswd_idp_name" != "test" ]; then
     oc create -f "$BASEDIR/frontend/packages/console-shared/src/test-data/htpasswd-secret.yaml"
