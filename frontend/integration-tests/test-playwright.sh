@@ -103,10 +103,15 @@ if [ "$RUN_CREATE_USER" = true ]; then
         continue
       fi
       if [[ $value =~ $pw_regex_literal ]]; then
-        value="${BASH_REMATCH[1]}"
+        # Keep the literal syntax and flags so Playwright compiles the
+        # composed value with the caller's case sensitivity: compose as
+        # /(?:@standalone|pattern)/flags.
+        value="/(?:@standalone|${BASH_REMATCH[1]})/${BASH_REMATCH[2]}"
+      else
+        value="(?:@standalone|$value)"
       fi
       saw_invert=true
-      composed+=("--grep-invert" "(@standalone|$value)")
+      composed+=("--grep-invert" "$value")
     done
     # A trailing invert flag without a value is malformed; keep it so
     # Playwright reports it as it would without this composition.

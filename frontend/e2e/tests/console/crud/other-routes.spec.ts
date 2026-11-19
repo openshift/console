@@ -108,10 +108,6 @@ const routes: RouteConfig[] = [
     assertLoaded: assertLoadedListPage,
   },
   {
-    path: '/k8s/all-namespaces/monitoring.coreos.com~v1~Alertmanager',
-    assertLoaded: assertLoadedListPage,
-  },
-  {
     path: '/settings/cluster',
     assertLoaded: async (page) => {
       await expect(page.getByTestId('cluster-version')).toBeVisible();
@@ -132,6 +128,10 @@ const standaloneRoutes: RouteConfig[] = [
   },
   {
     path: '/k8s/cluster/machineconfiguration.openshift.io~v1~MachineConfigPool',
+    assertLoaded: assertLoadedListPage,
+  },
+  {
+    path: '/k8s/all-namespaces/monitoring.coreos.com~v1~Alertmanager',
     assertLoaded: assertLoadedListPage,
   },
   {
