@@ -333,6 +333,11 @@ OpenShift cluster to pull the new image.
 docker build -t quay.io/myaccount/console:latest .
 ```
 
+> [!TIP]
+> If you are building on an Apple Silicon (`arm64`) Mac for a cluster with `amd64`
+> nodes, see [Building an amd64 Image on Apple Silicon](#building-an-amd64-image-on-apple-silicon)
+> instead of this step.
+
 3. Push image to image registry `docker push <your-image-name>`. Make sure
    docker is logged into your image registry! For example:
 
@@ -365,6 +370,33 @@ When done, you can put the console operator back in a managed state to remove th
 ```
 oc patch consoles.operator.openshift.io cluster --patch '{ "spec": { "managementState": "Managed" } }' --type=merge
 ```
+
+#### Building an amd64 Image on Apple Silicon
+
+If you develop on an Apple Silicon (`arm64`) Mac and your cluster runs on `amd64`
+nodes, you can use Docker Desktop with `Dockerfile.dev` to build an `amd64` image.
+`Dockerfile.dev` builds the backend inside the container and copies the frontend
+you have already built locally from `./frontend/public/dist`, so the frontend is
+not built as part of the image build.
+
+1. Build the frontend from the same checkout, using the node.js and corepack setup
+   from [Dependencies](#dependencies). This writes the production frontend assets
+   to `./frontend/public/dist`, which `Dockerfile.dev` copies into the image as-is.
+   Rerun this step after changing frontend code, or after running `yarn run dev` or
+   `yarn run dev-once`, which replace that directory with a development build:
+
+```
+./build-frontend.sh
+```
+
+2. Build the `amd64` image with Docker Desktop:
+
+```
+docker build --platform=linux/amd64 -f Dockerfile.dev -t quay.io/myaccount/console:latest .
+```
+
+3. Push the image and deploy it to your cluster by following steps 3 through 6 in
+   [Steps](#steps).
 
 ### Dependency Management
 
