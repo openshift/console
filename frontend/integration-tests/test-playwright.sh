@@ -74,7 +74,10 @@ if [ "$RUN_CREATE_USER" = true ]; then
     # Values are composed textually: a pattern with unbalanced regex
     # metacharacters can produce an invalid expression. A literally empty
     # value is dropped (Playwright ignores it); '//' is not, because it
-    # compiles to a match-everything regex.
+    # compiles to a match-everything regex. The scanner also assumes an
+    # invert token is never the value of another value-taking flag (e.g.
+    # '--grep -G' would make '-G' a grep value in Playwright's own
+    # parsing).
     pw_regex_literal='^/(.*)/([gi]*)$'
     for arg in "$@"; do
       if [ "$expect_value" == "true" ]; then
