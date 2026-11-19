@@ -6,7 +6,9 @@ import { OverviewPage } from '../../../pages/overview-page';
  * Tests UI behavior for managed clusters (ROSA, ARO, etc.) where control plane is external.
  * The hosted state is mocked by overriding SERVER_FLAGS.controlPlaneTopology, so this
  * test runs against standalone clusters; it is excluded from hosted-cluster runs where
- * the real behavior differs from the mock.
+ * the real behavior differs from the mock: the full-suite rehearsal on a hosted cluster
+ * failed these assertions (the real hosted cluster-settings surface differs from the
+ * mocked one), so a hosted variant would be needed to run there.
  */
 test.describe(
   'Cluster Settings when control plane is managed',

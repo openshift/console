@@ -10,10 +10,14 @@
 # ephemeral CI clusters the prow jobs use. For local runs against a
 # long-lived cluster, clean up afterwards:
 #   oc delete clusterrolebinding e2e-admin
-#   oc delete user e2e-admin; oc delete identity test:e2e-admin
-#   oc --kubeconfig=<mgmt> -n <ns> patch hostedcluster <name> --type=json \
-#     -p '[{"op":"remove","path":"/spec/configuration/oauth/identityProviders"}]'
+#   oc delete user test e2e-admin; oc delete identity test:test test:e2e-admin
+#   oc --kubeconfig=<mgmt> -n <ns> patch hostedcluster <name> --type=merge \
+#     -p "$(oc --kubeconfig=<mgmt> -n <ns> get hostedcluster <name> -o json \
+#       | jq -c '{spec:{configuration:{oauth:{identityProviders:[.spec.configuration.oauth.identityProviders // [] | .[] | select(.name != "test")]}}}}')"
 #   oc --kubeconfig=<mgmt> -n <ns> delete secret console-e2e-htpasswd
+# The patch removes only the suite's 'test' provider so providers owned by
+# other configurations keep working; if it leaves the list empty, also
+# remove /spec/configuration/oauth so kubeadmin access returns.
 #
 # Run directly or source it; sourcing keeps the exported variables in the
 # calling shell, which is how the prow e2e entrypoints use it. Aborts the
@@ -121,6 +125,16 @@ managed_label="$(oc get infrastructures.config.openshift.io cluster -o 'jsonpath
 if [ "$CONTROL_PLANE_TOPOLOGY" == "External" ] && [ "$managed_label" == "true" ]; then
   is_hosted=true
 fi
+# The suite's fixture entry, extracted once for both branches. Untraced
+# because the decoded hash must not reach the logs.
+set +x
+fixture_hash="$(sed -n 's/^[[:space:]]*htpasswd: //p' "$BASEDIR/frontend/packages/console-shared/src/test-data/htpasswd-secret.yaml" | base64 -d | tr -d '\n')"
+if [ -z "$fixture_hash" ]; then
+  echo "could not extract the htpasswd fixture from htpasswd-secret.yaml" >&2
+  exit 1
+fi
+set -x
+
 if [ "$is_hosted" == "true" ]; then
   # The management cluster kubeconfig: the hypershift-aws chains save it as
   # SHARED_DIR/kubeconfig, the hostedcluster workflow family as
@@ -145,7 +159,11 @@ if [ "$is_hosted" == "true" ]; then
   if [ -z "${HC_NAMESPACE:-}" ] && [ -n "${MGMT_KUBECONFIG:-}" ] && [ -n "${CLUSTER_NAME:-}" ] && [ -f "$MGMT_KUBECONFIG" ]; then
     # Neither the env nor SHARED_DIR names the namespace; look the cluster
     # up by name, as the idp-htpasswd and hypershift-conformance steps do.
-    HC_NAMESPACE="$(oc --kubeconfig="$MGMT_KUBECONFIG" get hostedclusters -A -o "jsonpath={range .items[?(@.metadata.name==\"$CLUSTER_NAME\")]}{.metadata.namespace}{end}" 2>/dev/null || true)"
+    HC_NAMESPACE="$(oc --kubeconfig="$MGMT_KUBECONFIG" get hostedclusters -A -o "jsonpath={range .items[?(@.metadata.name==\"$CLUSTER_NAME\")]}{.metadata.namespace}{\"\\n\"}{end}" 2>/dev/null || true)"
+    if [ "$(printf '%s' "$HC_NAMESPACE" | grep -c .)" -gt 1 ]; then
+      echo "multiple HostedClusters named '$CLUSTER_NAME': set HC_NAMESPACE to disambiguate" >&2
+      exit 1
+    fi
   fi
   HC_NAMESPACE="${HC_NAMESPACE:-clusters}"
   if [ ! -f "$MGMT_KUBECONFIG" ] || [ ! -s "$MGMT_KUBECONFIG" ] || [ -z "${CLUSTER_NAME:-}" ]; then
@@ -164,11 +182,6 @@ if [ "$is_hosted" == "true" ]; then
   # stale ones while other users of the secret are preserved. Disable tracing so the hashes and the
   # credential line stay out of the logs.
   set +x
-  fixture_hash="$(sed -n 's/^[[:space:]]*htpasswd: //p' "$BASEDIR/frontend/packages/console-shared/src/test-data/htpasswd-secret.yaml" | base64 -d | tr -d '\n')"
-  if [ -z "$fixture_hash" ]; then
-    echo "could not extract the htpasswd fixture from htpasswd-secret.yaml" >&2
-    exit 1
-  fi
   # The command substitution strips the trailing newline and keeps internal
   # ones; --ignore-not-found yields empty output for an absent secret, and
   # any other read failure aborts. The secret name is fixed per namespace
@@ -243,7 +256,18 @@ if [ "$is_hosted" == "true" ]; then
   oc --kubeconfig="$MGMT_KUBECONFIG" -n "${HC_NAMESPACE}-${CLUSTER_NAME//./-}" rollout status deploy/oauth-openshift --timeout=10m
 
   # don't log a supplied password; check the override pair untraced so a
-  # supplied value cannot leak into the trace
+  # supplied value cannot leak into the trace. The two variables are a pair:
+  # the admin persona on hosted clusters is the e2e-admin user, so a preset
+  # password without the username (e.g. left over from a standalone run)
+  # would pair kubeadmin's password with e2e-admin and fail every login.
+  if [ -n "${BRIDGE_KUBEADMIN_PASSWORD:-}" ] && [ -z "${OPENSHIFT_USERNAME:-}" ]; then
+    echo "BRIDGE_KUBEADMIN_PASSWORD is preset without OPENSHIFT_USERNAME; on hosted clusters the admin persona is the e2e-admin user, so set both or neither" >&2
+    exit 1
+  fi
+  if [ -z "${BRIDGE_KUBEADMIN_PASSWORD:-}" ] && [ -n "${OPENSHIFT_USERNAME:-}" ]; then
+    echo "OPENSHIFT_USERNAME is preset without BRIDGE_KUBEADMIN_PASSWORD; set both or neither" >&2
+    exit 1
+  fi
   export BRIDGE_KUBEADMIN_PASSWORD="${BRIDGE_KUBEADMIN_PASSWORD:-test}"
   export OPENSHIFT_USERNAME="${OPENSHIFT_USERNAME:-e2e-admin}"
   if [ "${OPENSHIFT_USERNAME}" != "e2e-admin" ] || [ "${BRIDGE_KUBEADMIN_PASSWORD}" != "test" ]; then
@@ -263,7 +287,7 @@ else
   set +x
   if [ "$(oc get oauths cluster -o 'jsonpath={.spec.identityProviders[?(@.name=="test")].type}' 2>/dev/null || true)" == "HTPasswd" ] &&
     [ "$(oc get oauths cluster -o 'jsonpath={.spec.identityProviders[?(@.name=="test")].htpasswd.fileData.name}' 2>/dev/null || true)" == "console-e2e-htpasswd" ] &&
-    [ "$(oc get secret -n openshift-config console-e2e-htpasswd --ignore-not-found -o 'jsonpath={.data.htpasswd}' | base64 -d | grep -cF "$(sed -n 's/^[[:space:]]*htpasswd: //p' "$BASEDIR/frontend/packages/console-shared/src/test-data/htpasswd-secret.yaml" | base64 -d | tr -d '\n')")" -gt 0 ]; then
+    [ "$(oc get secret -n openshift-config console-e2e-htpasswd --ignore-not-found -o 'jsonpath={.data.htpasswd}' | base64 -d | grep -cF "$fixture_hash")" -gt 0 ]; then
     fixture_configured=true
   fi
   set -x
@@ -277,11 +301,6 @@ else
     # carries the resourceVersion so a conflicting concurrent modification
     # fails instead of overwriting it.
     set +x
-    fixture_hash="$(sed -n 's/^[[:space:]]*htpasswd: //p' "$BASEDIR/frontend/packages/console-shared/src/test-data/htpasswd-secret.yaml" | base64 -d | tr -d '\n')"
-    if [ -z "$fixture_hash" ]; then
-      echo "could not extract the htpasswd fixture from htpasswd-secret.yaml" >&2
-      exit 1
-    fi
     # Seed the merge from the secret the live 'test' provider references,
     # falling back to this suite's own name, so users an earlier setup or an
     # administrator kept under a previous secret name survive the rename to
@@ -345,11 +364,11 @@ else
   # still proceed (the admin auth setup warns and the login fails clearly
   # without credentials)
   set +x
-  if [ -z "${BRIDGE_KUBEADMIN_PASSWORD:-}" ] &&
-    [ -f "${KUBEADMIN_PASSWORD_FILE:-${INSTALLER_DIR:-${ARTIFACT_DIR:-/tmp/artifacts}/installer}/auth/kubeadmin-password}" ]; then
+  kubeadmin_password_file="${KUBEADMIN_PASSWORD_FILE:-${INSTALLER_DIR:-${ARTIFACT_DIR:-/tmp/artifacts}/installer}/auth/kubeadmin-password}"
+  if [ -z "${BRIDGE_KUBEADMIN_PASSWORD:-}" ] && [ -f "$kubeadmin_password_file" ]; then
     # Plain assignment first so a read failure aborts instead of being
     # masked by the export builtin's exit status.
-    BRIDGE_KUBEADMIN_PASSWORD="$(cat "${KUBEADMIN_PASSWORD_FILE:-${INSTALLER_DIR:-${ARTIFACT_DIR:-/tmp/artifacts}/installer}/auth/kubeadmin-password}")"
+    BRIDGE_KUBEADMIN_PASSWORD="$(cat "$kubeadmin_password_file")"
     export BRIDGE_KUBEADMIN_PASSWORD
   fi
   set -x

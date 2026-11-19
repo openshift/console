@@ -55,8 +55,9 @@ if [ "$RUN_CREATE_USER" = true ]; then
   oldopts="$(set +o)"
   source "${REPO_ROOT}/contrib/create-user.sh"
   eval "$oldopts"
-  # bash 3.2 does not inherit errexit into the command substitution above,
-  # so the captured state may lack it; restore the script's initial state.
+  # Command substitution does not inherit errexit (without
+  # inherit_errexit), so the captured state always records it as off;
+  # restore the script's initial state.
   set -e
   export BRIDGE_HTPASSWD_IDP="${BRIDGE_HTPASSWD_IDP:-test}"
   export BRIDGE_HTPASSWD_USERNAME="${BRIDGE_HTPASSWD_USERNAME:-test}"
