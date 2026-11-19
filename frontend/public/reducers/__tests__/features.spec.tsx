@@ -7,6 +7,8 @@ import type { RootState } from '../../redux';
 import { connectToFlags, stateToFlagsObject } from '../connectToFlags';
 import type { FeatureState } from '../features';
 import { featureReducer, featureReducerName, defaults, getFlagsObject } from '../features';
+import { referenceForExtensionModel } from '../../module/k8s/k8s';
+import { referenceForModel } from '../../module/k8s/k8s-ref';
 
 describe('featureReducer', () => {
   it('returns default values if state is uninitialized', () => {
@@ -158,5 +160,18 @@ describe('getFlagsObject', () => {
         QUX: undefined,
       }),
     ).toBe(true);
+  });
+});
+
+describe('model feature flag references', () => {
+  it('uses extension GVK fields, not K8sModel apiGroup/apiVersion', () => {
+    const extensionModel = {
+      group: 'example.io',
+      version: 'v1',
+      kind: 'Example',
+    };
+    expect(referenceForModel(extensionModel as any)).not.toEqual(
+      referenceForExtensionModel(extensionModel),
+    );
   });
 });
