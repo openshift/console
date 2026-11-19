@@ -120,10 +120,12 @@ if [ "$RUN_CREATE_USER" = true ]; then
       saw_invert=true
       composed+=("--grep-invert" "$value")
     done
-    # A trailing invert flag without a value is malformed; keep it so
-    # Playwright reports it as it would without this composition.
+    # A trailing invert flag without a value is malformed; keep it — without
+    # also prepending the exclusion — so Playwright reports it as it would
+    # without this composition.
     if [ "$expect_value" == "true" ]; then
       composed+=("--grep-invert")
+      saw_invert=true
     fi
     set -- ${composed[@]+"${composed[@]}"}
     if [ "$saw_invert" == "false" ]; then

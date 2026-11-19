@@ -86,6 +86,23 @@ const routes: RouteConfig[] = [
     path: '/k8s/cluster/user.openshift.io~v1~User',
   },
   {
+    path: '/settings/cluster',
+    assertLoaded: async (page) => {
+      await expect(page.getByTestId('cluster-version')).toBeVisible();
+    },
+  },
+  {
+    path: '/search/all-namespaces?kind=config.openshift.io~v1~Console',
+    assertLoaded: assertLoadedListPage,
+  },
+];
+
+// Routes that require a standalone control plane: the MCO, the platform
+// monitoring stack, and the machine API (HyperShift removes the MachineAPI
+// capability from guests and manages their compute through NodePools) do
+// not run on hosted clusters, so these APIs are absent.
+const standaloneRoutes: RouteConfig[] = [
+  {
     path: '/k8s/ns/openshift-machine-api/machine.openshift.io~v1beta1~Machine',
     assertLoaded: assertLoadedListPage,
   },
@@ -107,21 +124,6 @@ const routes: RouteConfig[] = [
     path: '/k8s/ns/openshift-machine-api/machine.openshift.io~v1beta1~MachineHealthCheck',
     assertLoaded: assertLoadedListPage,
   },
-  {
-    path: '/settings/cluster',
-    assertLoaded: async (page) => {
-      await expect(page.getByTestId('cluster-version')).toBeVisible();
-    },
-  },
-  {
-    path: '/search/all-namespaces?kind=config.openshift.io~v1~Console',
-    assertLoaded: assertLoadedListPage,
-  },
-];
-
-// Routes that require a standalone control plane: the MCO and the platform
-// monitoring stack do not run on hosted clusters, so these APIs are absent.
-const standaloneRoutes: RouteConfig[] = [
   {
     path: '/k8s/cluster/machineconfiguration.openshift.io~v1~MachineConfig',
     assertLoaded: assertLoadedListPage,

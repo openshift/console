@@ -124,11 +124,14 @@ export CLUSTER_IS_HOSTED="$is_hosted"
 if [ "$is_hosted" == "true" ]; then
   # The management cluster kubeconfig: the hypershift-aws chains save it as
   # SHARED_DIR/kubeconfig, the hostedcluster workflow family as
-  # SHARED_DIR/mgmt_kubeconfig.
+  # SHARED_DIR/mgmt_kubeconfig, and chains derived from hypershift-conformance
+  # as SHARED_DIR/hs-mc.kubeconfig.
   MGMT_KUBECONFIG="${MGMT_KUBECONFIG:-}"
   if [ -z "$MGMT_KUBECONFIG" ]; then
     if [ -s "${SHARED_DIR:-}/mgmt_kubeconfig" ]; then
       MGMT_KUBECONFIG="${SHARED_DIR}/mgmt_kubeconfig"
+    elif [ -s "${SHARED_DIR:-}/hs-mc.kubeconfig" ]; then
+      MGMT_KUBECONFIG="${SHARED_DIR}/hs-mc.kubeconfig"
     elif [ -s "${SHARED_DIR:-}/kubeconfig" ]; then
       MGMT_KUBECONFIG="${SHARED_DIR}/kubeconfig"
     fi
