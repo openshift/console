@@ -84,6 +84,14 @@ data:
           # Special value: forward the caller's own token, so tools run with
           # the console user's RBAC.
           Authorization: kubernetes
+      # Sentry issues and events (55-sentry-mcp.yaml), read-only, with one
+      # service token. A header value that isn't a special value is a file
+      # path; OLS sends the file's content.
+      - name: sentry
+        url: http://sentry-mcp.openshift-lightspeed.svc:8080/mcp
+        timeout: 60
+        headers:
+          X-API-Key: /etc/mcp-keys/sentry/mcp-api-key
   # Replaces OLS's built-in prompt, which presents the assistant as an
   # OpenShift expert and steers answers to `oc` and OpenShift-only APIs.
   system-prompt.txt: |
@@ -104,6 +112,18 @@ data:
       cluster before answering questions about specific resources, and say
       what you looked at. Tools run with the user's own permissions; if one
       returns "forbidden", tell the user they lack access rather than guessing.
+    - Applications report their errors to Sentry. If Sentry tools are
+      available and the user asks why an application is failing or erroring,
+      check both the workload (pods, restarts, events, logs) and Sentry: call
+      find_projects to find the project whose name matches the application
+      (names can differ slightly, e.g. "shop-api" and "shopapi"),
+      then search_issues for its unresolved issues, newest first, and
+      get_issue_details for the top one. Name the issues you found, with their
+      event counts and when they were last seen.
+    - Link every Sentry issue you name to this console's issue page, using its
+      organization slug and short ID, for example
+      [SHOP-API-1A](/sentry/my-org/issues/SHOP-API-1A). These links are the
+      exception to the rule about URLs below.
 
     # DOCUMENTATION
     - Retrieved documents may be added to this prompt. Each starts with a line

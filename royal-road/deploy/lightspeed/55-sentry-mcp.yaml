@@ -1,0 +1,122 @@
+# Sentry MCP server: lets the assistant read Sentry issues and events next to
+# the cluster state ("why is <app> erroring?").
+#
+# getsentry's @sentry/mcp-server speaks MCP over stdio only; the image
+# (royal-road/plugins/sentry-mcp/) runs it behind supergateway, which serves
+# streamable HTTP on :8080/mcp. Read-only on three levels:
+#   - the Sentry token has org:read, project:read and event:read only;
+#   - the server runs with only its read-only `inspect` skill;
+#   - the gateway exposes eight read tools (list in the image's entrypoint.sh)
+#     and refuses calls to any other.
+#
+# Access model: one service token, not the console user's identity. Every
+# Lightspeed user sees the same Sentry data, all projects of <sentry-org>.
+# Lightspeed is limited to users with `get` on /ols-access (cluster-admins by
+# default, 10-rbac.yaml), so that is the audience; widen access only to people
+# who may read all of Sentry.
+#
+# Needs the Secret lightspeed-sentry (see README.md, "Sentry tools"):
+#   token        the read-only Sentry token
+#   mcp-api-key  random key OLS sends as X-API-Key; the gateway rejects
+#                requests without it (401)
+# The NetworkPolicies in 70-networkpolicy.yaml admit only OLS and allow
+# egress only to Sentry's web Service and DNS.
+#
+# Placeholders:
+#   <sha>               image tag from .github/workflows/royal-road-sentry-mcp.yml
+#   <sentry-namespace>  namespace of the self-hosted Sentry (Service sentry-web:9000)
+#   <sentry-org>        Sentry organization slug
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sentry-mcp
+  namespace: openshift-lightspeed
+  labels:
+    app.kubernetes.io/name: sentry-mcp
+    app.kubernetes.io/part-of: lightspeed
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: sentry-mcp
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: sentry-mcp
+        app.kubernetes.io/part-of: lightspeed
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: mcp
+          image: ghcr.io/royal-road/sentry-mcp:<sha>
+          env:
+            - name: SENTRY_URL
+              value: http://sentry-web.<sentry-namespace>.svc:9000
+            - name: SENTRY_ORG
+              value: <sentry-org>
+            - name: SENTRY_AUTH_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: lightspeed-sentry
+                  key: token
+            - name: MCP_API_KEY_FILE
+              value: /etc/sentry-mcp/mcp-api-key
+          ports:
+            - name: http
+              containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            periodSeconds: 30
+          resources:
+            requests:
+              cpu: 20m
+              memory: 96Mi
+            limits:
+              memory: 512Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: [ALL]
+          volumeMounts:
+            - name: api-key
+              mountPath: /etc/sentry-mcp
+              readOnly: true
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: api-key
+          secret:
+            secretName: lightspeed-sentry
+            items:
+              - key: mcp-api-key
+                path: mcp-api-key
+        - name: tmp
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sentry-mcp
+  namespace: openshift-lightspeed
+  labels:
+    app.kubernetes.io/name: sentry-mcp
+    app.kubernetes.io/part-of: lightspeed
+spec:
+  selector:
+    app.kubernetes.io/name: sentry-mcp
+  ports:
+    - name: http
+      port: 8080
+      targetPort: http

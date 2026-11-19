@@ -1,13 +1,17 @@
 # Ingress policies for the Lightspeed namespace. Replace <console-namespace>
-# with the namespace of the console Deployment (the bridge).
+# with the namespace of the console Deployment (the bridge), and
+# <sentry-namespace> with Sentry's.
 #
 #   bridge (console namespace) -> OLS :8443        (chat, through BRIDGE_PLUGIN_PROXY)
 #   bridge (console namespace) -> plugin :8080     (static plugin assets)
 #   OLS                        -> MCP server :8080 (tool calls)
+#   OLS                        -> Sentry MCP :8080 (Sentry tool calls)
+#   Sentry MCP                 -> sentry-web :9000 (egress; the only one it has)
 #
 # Everything else into these pods is dropped. Kubelet probes are not affected:
 # Calico (and kindnet) always admit traffic from the pod's own node.
-# Egress is left open here; optional/ols-egress-networkpolicy.yaml restricts
+# Egress is left open here except for the Sentry MCP server;
+# optional/ols-egress-networkpolicy.yaml restricts
 # OLS egress too, but needs the API server's addresses.
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
@@ -66,4 +70,51 @@ spec:
               app.kubernetes.io/name: lightspeed-app-server
       ports:
         - port: 8080
+          protocol: TCP
+---
+# The Sentry MCP server holds a Sentry token and answers anyone with the API
+# key, so only OLS may reach it, and it may reach only Sentry's web Service
+# (and DNS). Replace <sentry-namespace> with Sentry's namespace; the pod
+# labels app=sentry, role=web are the Sentry Helm chart's for sentry-web.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: sentry-mcp
+  namespace: openshift-lightspeed
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: sentry-mcp
+  policyTypes: [Ingress, Egress]
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: lightspeed-app-server
+      ports:
+        - port: 8080
+          protocol: TCP
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: <sentry-namespace>
+          podSelector:
+            matchLabels:
+              app: sentry
+              role: web
+      ports:
+        - port: 9000
+          protocol: TCP
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+          podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+      ports:
+        - port: 53
+          protocol: UDP
+        - port: 53
           protocol: TCP
