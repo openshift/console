@@ -44,13 +44,12 @@ export BRIDGE_BASE_ADDRESS
 # excluded when the cluster reports an external control plane topology. This job selects
 # @techpreview tests, so the invert must never contain @techpreview.
 # CONTROL_PLANE_TOPOLOGY is exported by create-user.sh, which fails fast if
-# it cannot be read. Left unquoted so it expands to zero or two arguments.
-# Note that Playwright does not combine repeated --grep-invert flags (the
-# last one wins): a caller-supplied invert replaces this exclusion.
-# shellcheck disable=SC2086
-grep_invert_args=""
+# it cannot be read. Note that Playwright does not combine repeated
+# --grep-invert flags (the last one wins): a caller-supplied invert
+# replaces this exclusion.
+grep_invert_args=()
 if [ "${CONTROL_PLANE_TOPOLOGY:-}" == "External" ]; then
-  grep_invert_args="--grep-invert @standalone"
+  grep_invert_args=(--grep-invert @standalone)
 fi
 
 pushd frontend
@@ -59,6 +58,6 @@ if [ ! -d node_modules ]; then
   yarn install
 fi
 
-./integration-tests/test-playwright.sh -- --grep @techpreview $grep_invert_args "$@"
+./integration-tests/test-playwright.sh -- --grep @techpreview ${grep_invert_args[@]+"${grep_invert_args[@]}"} "$@"
 
 popd

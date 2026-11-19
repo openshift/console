@@ -78,6 +78,11 @@ if [ "$RUN_CREATE_USER" = true ]; then
     # invert token is never the value of another value-taking flag (e.g.
     # '--grep -G' would make '-G' a grep value in Playwright's own
     # parsing).
+    # Examples:
+    #   --grep-invert foo      -> --grep-invert '(?:@standalone|foo)'
+    #   -G /pattern/gi         -> --grep-invert '/(?:@standalone|pattern)/gi'
+    #   --grep-invert ''       -> dropped (Playwright ignores it)
+    #   (no invert flag)       -> --grep-invert @standalone prepended
     pw_regex_literal='^/(.*)/([gi]*)$'
     for arg in "$@"; do
       if [ "$expect_value" == "true" ]; then

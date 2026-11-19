@@ -113,25 +113,25 @@ test.describe('Filtering and Searching', { tag: ['@admin'] }, () => {
     await expect(listPage.cells).toHaveCount(3, { timeout: 30_000 });
   });
 
+  // The alertmanager configuration page is only served on standalone
+  // clusters; the pod-search page renders everywhere.
   test(
-    'hides filter category select when only one filter exists',
+    'hides filter category select on a text-only filter page',
     { tag: ['@standalone'] },
     async ({ page }) => {
       const listPage = new ListPage(page);
-
-      await test.step('Text-only filter page', async () => {
-        await page.goto('/settings/cluster/alertmanagerconfig?page=1&perPage=50');
-        await expect(listPage.table).toBeVisible({ timeout: 60_000 });
-        await expect(listPage.filterGroupToggles).toHaveCount(1);
-        await expect(listPage.filterGroupToggles).toBeHidden();
-      });
-
-      await test.step('Select-only filter page', async () => {
-        await page.goto('/search/all-namespaces?page=1&perPage=50&kind=core~v1~Pod');
-        await listPage.waitForRows();
-        await expect(listPage.filterGroupToggles).toHaveCount(2);
-        await expect(listPage.filterGroupToggles.first()).toBeHidden();
-      });
+      await page.goto('/settings/cluster/alertmanagerconfig?page=1&perPage=50');
+      await expect(listPage.table).toBeVisible({ timeout: 60_000 });
+      await expect(listPage.filterGroupToggles).toHaveCount(1);
+      await expect(listPage.filterGroupToggles).toBeHidden();
     },
   );
+
+  test('hides filter category select on a select-only filter page', async ({ page }) => {
+    const listPage = new ListPage(page);
+    await page.goto('/search/all-namespaces?page=1&perPage=50&kind=core~v1~Pod');
+    await listPage.waitForRows();
+    await expect(listPage.filterGroupToggles).toHaveCount(2);
+    await expect(listPage.filterGroupToggles.first()).toBeHidden();
+  });
 });

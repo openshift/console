@@ -143,7 +143,7 @@ if [ "$is_hosted" == "true" ]; then
   # hash. The suite's own entries replace any stale ones while other users
   # of the secret are preserved. Disable tracing so the hashes and the
   # credential line stay out of the logs.
-  fixture_hash="$(sed -n 's/^  htpasswd: //p' "$BASEDIR/frontend/packages/console-shared/src/test-data/htpasswd-secret.yaml" | base64 -d | tr -d '\n')"
+  fixture_hash="$(sed -n 's/^[[:space:]]*htpasswd: //p' "$BASEDIR/frontend/packages/console-shared/src/test-data/htpasswd-secret.yaml" | base64 -d | tr -d '\n')"
   if [ -z "$fixture_hash" ]; then
     echo "could not extract the htpasswd fixture from htpass-secret.yaml" >&2
     exit 1
@@ -161,6 +161,7 @@ if [ "$is_hosted" == "true" ]; then
     fi
     printf '%s\n' "$fixture_hash"
     # shellcheck disable=SC2016
+    # bcrypt (cost 5) of the public test password
     printf 'e2e-admin:%s\n' '$2y$05$zUpdrRXiI5KjSQrV9cBi4uWxb85/ki7Wmnfc9NI8y1HAj0H6mkH1.'
   } > "$htpasswd_file"
   set -x
@@ -243,7 +244,7 @@ else
     # into the existing identity providers (see the hosted branch) and
     # carries the resourceVersion so a conflicting concurrent modification
     # fails instead of overwriting it.
-    fixture_hash="$(sed -n 's/^  htpasswd: //p' "$BASEDIR/frontend/packages/console-shared/src/test-data/htpasswd-secret.yaml" | base64 -d | tr -d '\n')"
+    fixture_hash="$(sed -n 's/^[[:space:]]*htpasswd: //p' "$BASEDIR/frontend/packages/console-shared/src/test-data/htpasswd-secret.yaml" | base64 -d | tr -d '\n')"
     if [ -z "$fixture_hash" ]; then
       echo "could not extract the htpasswd fixture from htpass-secret.yaml" >&2
       exit 1

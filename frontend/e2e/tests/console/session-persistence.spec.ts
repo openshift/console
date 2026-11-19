@@ -30,7 +30,7 @@ test.describe(
           test.skip(
             !process.env.BRIDGE_KUBEADMIN_PASSWORD ||
               process.env.CONTROL_PLANE_TOPOLOGY === 'External',
-            'Requires standalone kubeadmin credentials',
+            'Requires a standalone control plane (direct console-pod access)',
           );
           await loginFromEnv(page, 'admin');
 
@@ -84,7 +84,7 @@ test.describe(
           test.skip(
             !process.env.BRIDGE_KUBEADMIN_PASSWORD ||
               process.env.CONTROL_PLANE_TOPOLOGY === 'External',
-            'Requires standalone kubeadmin credentials',
+            'Requires a standalone control plane (direct console-pod access)',
           );
           await loginFromEnv(page, 'admin');
 

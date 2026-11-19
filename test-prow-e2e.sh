@@ -83,6 +83,8 @@ case "$SCENARIO" in
     ./integration-tests/test-playwright.sh -- --grep-invert "$grep_invert" "$@"
     ;;
   smoke)
+    # The smoke project currently has no tagged tests; the invert keeps it
+    # consistent with the other scenarios if that ever changes.
     ./integration-tests/test-playwright.sh -- --project=smoke --grep-invert "$grep_invert" "$@"
     ;;
   login)
