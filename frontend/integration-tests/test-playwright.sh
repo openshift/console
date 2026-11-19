@@ -137,8 +137,11 @@ fi
 if [ -z "${BRIDGE_KUBEADMIN_PASSWORD:-}" ]; then
   pass_file="${KUBEADMIN_PASSWORD_FILE:-${INSTALLER_DIR}/auth/kubeadmin-password}"
   if [ -f "$pass_file" ]; then
+    # Disable tracing so the password does not appear in local debug logs.
+    set +x
     BRIDGE_KUBEADMIN_PASSWORD="$(cat "$pass_file")"
     export BRIDGE_KUBEADMIN_PASSWORD
+    set -x
   fi
 fi
 

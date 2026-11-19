@@ -8,8 +8,11 @@
 # SECURITY: on hosted clusters the script also provisions an 'e2e-admin' user
 # with cluster-admin and the public password 'test'. This is safe on the
 # ephemeral CI clusters the prow jobs use. For local runs against a
-# long-lived cluster, remove the clusterrolebinding and secret afterwards:
+# long-lived cluster, clean up afterwards:
 #   oc delete clusterrolebinding e2e-admin
+#   oc delete user e2e-admin; oc delete identity test:e2e-admin
+#   oc --kubeconfig=<mgmt> -n <ns> patch hostedcluster <name> --type=json \
+#     -p '[{"op":"remove","path":"/spec/configuration/oauth/identityProviders"}]'
 #   oc --kubeconfig=<mgmt> -n <ns> delete secret console-e2e-htpasswd
 #
 # Run directly or source it; sourcing keeps the exported variables in the
@@ -130,6 +133,9 @@ if [ "$is_hosted" == "true" ]; then
       MGMT_KUBECONFIG="${SHARED_DIR}/kubeconfig"
     fi
   fi
+  if [ -z "${HC_NAMESPACE:-}" ] && [ -s "${SHARED_DIR:-}/hypershift-clusters-namespace" ]; then
+    HC_NAMESPACE="$(cat "${SHARED_DIR}/hypershift-clusters-namespace")"
+  fi
   HC_NAMESPACE="${HC_NAMESPACE:-clusters}"
   if [ -z "${CLUSTER_NAME:-}" ] && [ -s "${SHARED_DIR:-}/cluster-name" ]; then
     CLUSTER_NAME="$(cat "${SHARED_DIR}/cluster-name")"
@@ -178,7 +184,7 @@ if [ "$is_hosted" == "true" ]; then
   if ! oc --kubeconfig="$MGMT_KUBECONFIG" -n "$HC_NAMESPACE" create secret generic console-e2e-htpasswd --from-file=htpasswd="$htpasswd_file" --dry-run=client -o yaml |
     oc --kubeconfig="$MGMT_KUBECONFIG" apply -f -; then
     rm -f "$htpasswd_file"
-    echo "could not apply the console-e2e-htpasswd to the management cluster" >&2
+    echo "could not apply the console-e2e-htpasswd secret to the management cluster" >&2
     exit 1
   fi
   rm -f "$htpasswd_file"
@@ -244,7 +250,7 @@ else
   set +x
   if [ "$(oc get oauths cluster -o 'jsonpath={.spec.identityProviders[?(@.name=="test")].type}' 2>/dev/null || true)" == "HTPasswd" ] &&
     [ "$(oc get oauths cluster -o 'jsonpath={.spec.identityProviders[?(@.name=="test")].htpasswd.fileData.name}' 2>/dev/null || true)" == "console-e2e-htpasswd" ] &&
-    [ "$(oc get secret -n openshift-config console-e2e-htpasswd --ignore-not-found -o 'jsonpath={.data.htpasswd}' | base64 -d | grep -c "^test:$(sed -n 's/^[[:space:]]*htpasswd: //p' "$BASEDIR/frontend/packages/console-shared/src/test-data/htpasswd-secret.yaml" | base64 -d | tr -d '\n')\$")" -gt 0 ]; then
+    [ "$(oc get secret -n openshift-config console-e2e-htpasswd --ignore-not-found -o 'jsonpath={.data.htpasswd}' | base64 -d | grep -cF "$(sed -n 's/^[[:space:]]*htpasswd: //p' "$BASEDIR/frontend/packages/console-shared/src/test-data/htpasswd-secret.yaml" | base64 -d | tr -d '\n')")" -gt 0 ]; then
     fixture_configured=true
   fi
   set -x
@@ -278,7 +284,7 @@ else
     if ! oc -n openshift-config create secret generic console-e2e-htpasswd --from-file=htpasswd="$htpasswd_file" --dry-run=client -o yaml |
       oc apply -f -; then
       rm -f "$htpasswd_file"
-      echo "could not apply the console-e2e-htpasswd" >&2
+      echo "could not apply the console-e2e-htpasswd secret" >&2
       exit 1
     fi
     rm -f "$htpasswd_file"
