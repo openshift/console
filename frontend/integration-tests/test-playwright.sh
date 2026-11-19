@@ -5,9 +5,9 @@
 # Playwright's --project flag (project names match the `packages` array in playwright.config.ts).
 #
 # Usage (from repo frontend/):
-#   ./integration-tests/test-playwright.sh [playwright test args...]
-#   ./integration-tests/test-playwright.sh --project=helm
-#   ./integration-tests/test-playwright.sh --project=smoke
+#   ./integration-tests/test-playwright.sh [--] [playwright test args...]
+#   ./integration-tests/test-playwright.sh -- --project=helm
+#   ./integration-tests/test-playwright.sh -- --project=smoke
 #   ./integration-tests/test-playwright.sh -c [--] [playwright test args...]
 #
 # -c  Run contrib/create-user.sh before tests.
@@ -40,7 +40,7 @@ while getopts "c" flag; do
     c) RUN_CREATE_USER=true ;;
     *)
       echo "Usage: $0 [-c] [--] [playwright test args...]" >&2
-      echo "Example: $0 --project=helm" >&2
+      echo "Example: $0 -- --project=helm" >&2
       exit 1
       ;;
   esac
@@ -70,7 +70,18 @@ if [ "$RUN_CREATE_USER" = true ]; then
     expect_value=false
     for arg in "$@"; do
       if [ "$expect_value" == "true" ]; then
-        composed+=("(@standalone|$arg)")
+        # Playwright treats /pattern/ values as regex literals; strip the
+        # delimiters so they compose. Empty values are passed through
+        # unchanged (Playwright ignores them).
+        value="$arg"
+        case "$value" in
+          /*/) value="${value#/}"; value="${value%/}" ;;
+        esac
+        if [ -n "$value" ]; then
+          composed+=("(@standalone|$value)")
+        else
+          composed+=("$arg")
+        fi
         expect_value=false
       elif [ "$arg" == "--grep-invert" ]; then
         saw_invert=true
@@ -78,7 +89,15 @@ if [ "$RUN_CREATE_USER" = true ]; then
         composed+=("$arg")
       elif [ "${arg#--grep-invert=}" != "$arg" ]; then
         saw_invert=true
-        composed+=("--grep-invert=(@standalone|${arg#--grep-invert=})")
+        value="${arg#--grep-invert=}"
+        case "$value" in
+          /*/) value="${value#/}"; value="${value%/}" ;;
+        esac
+        if [ -n "$value" ]; then
+          composed+=("--grep-invert=(@standalone|$value)")
+        else
+          composed+=("$arg")
+        fi
       else
         composed+=("$arg")
       fi

@@ -292,7 +292,7 @@ forwards its arguments to `playwright test` and takes one flag of its own, `-c`,
 `--` to separate its flags from Playwright's.
 
 ```
-console/frontend > ./integration-tests/test-playwright.sh --project=smoke
+console/frontend > ./integration-tests/test-playwright.sh -- --project=smoke
 console/frontend > ./integration-tests/test-playwright.sh -c -- --project=dev-console-developer
 ```
 

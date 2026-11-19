@@ -59,6 +59,8 @@ export WORKERS="${WORKERS:-2}"
 # excluded when the cluster reports an external control plane topology.
 # CONTROL_PLANE_TOPOLOGY is exported by create-user.sh, which fails fast if
 # it cannot be read.
+# Note that Playwright does not combine repeated --grep-invert flags (the
+# last one wins): a caller-supplied invert replaces this exclusion.
 grep_invert="@techpreview"
 if [ "${CONTROL_PLANE_TOPOLOGY:-}" == "External" ]; then
   grep_invert="@techpreview|@standalone"

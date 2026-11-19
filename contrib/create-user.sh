@@ -194,7 +194,7 @@ if [ "$is_hosted" == "true" ]; then
       break
     fi
     if [ "$attempt" -lt 3 ]; then
-      echo "hostedcluster update failed (attempt $attempt/3), retrying in 5s"
+      echo "hostedcluster update failed (attempt $attempt/3), retrying in 5s" >&2
       sleep 5
     fi
   done
@@ -275,7 +275,7 @@ else
         break
       fi
       if [ "$attempt" -lt 3 ]; then
-        echo "oauths update failed (attempt $attempt/3), retrying in 5s"
+        echo "oauths update failed (attempt $attempt/3), retrying in 5s" >&2
         sleep 5
       fi
     done
