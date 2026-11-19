@@ -70,12 +70,15 @@ if [ "$RUN_CREATE_USER" = true ]; then
     expect_value=false
     for arg in "$@"; do
       if [ "$expect_value" == "true" ]; then
-        # Playwright treats /pattern/ values as regex literals; strip the
-        # delimiters so they compose. Empty values are passed through
-        # unchanged (Playwright ignores them).
+        # Playwright treats /pattern/ and /pattern/flags values as regex
+        # literals; strip the delimiters (and flags) so they compose. The
+        # flags cannot be expressed in the composed value, which Playwright
+        # always compiles case-insensitively. Empty values are passed
+        # through unchanged (Playwright ignores them).
         value="$arg"
         case "$value" in
           /*/) value="${value#/}"; value="${value%/}" ;;
+          /*/*) value="${value#/}"; value="${value%/*}" ;;
         esac
         if [ -n "$value" ]; then
           composed+=("(@standalone|$value)")
@@ -83,7 +86,7 @@ if [ "$RUN_CREATE_USER" = true ]; then
           composed+=("$arg")
         fi
         expect_value=false
-      elif [ "$arg" == "--grep-invert" ]; then
+      elif [ "$arg" == "--grep-invert" ] || [ "$arg" == "-G" ]; then
         saw_invert=true
         expect_value=true
         composed+=("$arg")
@@ -92,6 +95,32 @@ if [ "$RUN_CREATE_USER" = true ]; then
         value="${arg#--grep-invert=}"
         case "$value" in
           /*/) value="${value#/}"; value="${value%/}" ;;
+          /*/*) value="${value#/}"; value="${value%/*}" ;;
+        esac
+        if [ -n "$value" ]; then
+          composed+=("--grep-invert=(@standalone|$value)")
+        else
+          composed+=("$arg")
+        fi
+      elif [ "${arg#-G=}" != "$arg" ]; then
+        saw_invert=true
+        value="${arg#-G=}"
+        case "$value" in
+          /*/) value="${value#/}"; value="${value%/}" ;;
+          /*/*) value="${value#/}"; value="${value%/*}" ;;
+        esac
+        if [ -n "$value" ]; then
+          composed+=("--grep-invert=(@standalone|$value)")
+        else
+          composed+=("$arg")
+        fi
+      elif [ "${arg#-G}" != "$arg" ]; then
+        # -Gvalue: attached short-flag form.
+        saw_invert=true
+        value="${arg#-G}"
+        case "$value" in
+          /*/) value="${value#/}"; value="${value%/}" ;;
+          /*/*) value="${value#/}"; value="${value%/*}" ;;
         esac
         if [ -n "$value" ]; then
           composed+=("--grep-invert=(@standalone|$value)")
