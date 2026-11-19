@@ -68,69 +68,44 @@ if [ "$RUN_CREATE_USER" = true ]; then
     composed=()
     saw_invert=false
     expect_value=false
+    # Playwright treats /pattern/flags values as regex literals and plain
+    # values as case-insensitive regexes; only a value that starts and ends
+    # with / (optional g/i flags) is a literal, so strip exactly those.
+    # Values are composed textually: a pattern with unbalanced regex
+    # metacharacters can produce an invalid expression. Empty values are
+    # dropped, since Playwright ignores them.
+    pw_regex_literal='^/(.*)/([gi]*)$'
     for arg in "$@"; do
       if [ "$expect_value" == "true" ]; then
-        # Playwright treats /pattern/ and /pattern/flags values as regex
-        # literals; strip the delimiters (and flags) so they compose. The
-        # flags cannot be expressed in the composed value, which Playwright
-        # always compiles case-insensitively. Empty values are passed
-        # through unchanged (Playwright ignores them).
         value="$arg"
-        case "$value" in
-          /*/) value="${value#/}"; value="${value%/}" ;;
-          /*/*) value="${value#/}"; value="${value%/*}" ;;
-        esac
-        if [ -n "$value" ]; then
-          composed+=("(@standalone|$value)")
-        else
-          composed+=("$arg")
-        fi
         expect_value=false
       elif [ "$arg" == "--grep-invert" ] || [ "$arg" == "-G" ]; then
-        saw_invert=true
         expect_value=true
-        composed+=("$arg")
+        continue
       elif [ "${arg#--grep-invert=}" != "$arg" ]; then
-        saw_invert=true
         value="${arg#--grep-invert=}"
-        case "$value" in
-          /*/) value="${value#/}"; value="${value%/}" ;;
-          /*/*) value="${value#/}"; value="${value%/*}" ;;
-        esac
-        if [ -n "$value" ]; then
-          composed+=("--grep-invert=(@standalone|$value)")
-        else
-          composed+=("$arg")
-        fi
       elif [ "${arg#-G=}" != "$arg" ]; then
-        saw_invert=true
         value="${arg#-G=}"
-        case "$value" in
-          /*/) value="${value#/}"; value="${value%/}" ;;
-          /*/*) value="${value#/}"; value="${value%/*}" ;;
-        esac
-        if [ -n "$value" ]; then
-          composed+=("--grep-invert=(@standalone|$value)")
-        else
-          composed+=("$arg")
-        fi
-      elif [ "${arg#-G}" != "$arg" ]; then
+      elif [ "${#arg}" -gt 2 ] && [ "${arg#-G}" != "$arg" ]; then
         # -Gvalue: attached short-flag form.
-        saw_invert=true
         value="${arg#-G}"
-        case "$value" in
-          /*/) value="${value#/}"; value="${value%/}" ;;
-          /*/*) value="${value#/}"; value="${value%/*}" ;;
-        esac
-        if [ -n "$value" ]; then
-          composed+=("--grep-invert=(@standalone|$value)")
-        else
-          composed+=("$arg")
-        fi
       else
         composed+=("$arg")
+        continue
+      fi
+      if [[ $value =~ $pw_regex_literal ]]; then
+        value="${BASH_REMATCH[1]}"
+      fi
+      if [ -n "$value" ]; then
+        saw_invert=true
+        composed+=("--grep-invert" "(@standalone|$value)")
       fi
     done
+    # A trailing invert flag without a value is malformed; keep it so
+    # Playwright reports it as it would without this composition.
+    if [ "$expect_value" == "true" ]; then
+      composed+=("--grep-invert")
+    fi
     set -- ${composed[@]+"${composed[@]}"}
     if [ "$saw_invert" == "false" ]; then
       set -- --grep-invert @standalone "$@"
