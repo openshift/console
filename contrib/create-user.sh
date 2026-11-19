@@ -140,18 +140,27 @@ if [ "$is_hosted" == "true" ]; then
   # Add an 'e2e-admin' user with cluster-admin to the same htpasswd file for
   # tests that need an admin session. The entry uses a precomputed bcrypt
   # hash of the public test password; the fixture's own entry uses an apr1
-  # hash. Disable tracing so the hashes and the credential line stay out of
-  # the logs.
+  # hash. The suite's own entries replace any stale ones while other users
+  # of the secret are preserved. Disable tracing so the hashes and the
+  # credential line stay out of the logs.
   fixture_hash="$(sed -n 's/^  htpasswd: //p' "$BASEDIR/frontend/packages/console-shared/src/test-data/htpasswd-secret.yaml" | base64 -d | tr -d '\n')"
   if [ -z "$fixture_hash" ]; then
     echo "could not extract the htpasswd fixture from htpass-secret.yaml" >&2
     exit 1
   fi
+  # The command substitution strips the trailing newline and keeps internal
+  # ones; --ignore-not-found yields empty output for an absent secret, and
+  # any other read failure aborts.
+  existing_htpasswd="$(oc --kubeconfig="$MGMT_KUBECONFIG" -n "$HC_NAMESPACE" get secret htpass-secret --ignore-not-found -o 'jsonpath={.data.htpasswd}' | base64 -d)"
+  existing_htpasswd="$(printf '%s\n' "$existing_htpasswd" | grep -v -E '^(test|e2e-admin):' || true)"
   htpasswd_file="$(mktemp)"
   set +x
   {
-    printf '%s' "$fixture_hash"
-    printf '\ne2e-admin:%s\n' '$2y$05$zUpdrRXiI5KjSQrV9cBi4uWxb85/ki7Wmnfc9NI8y1HAj0H6mkH1.'
+    if [ -n "$existing_htpasswd" ]; then
+      printf '%s\n' "$existing_htpasswd"
+    fi
+    printf '%s\n' "$fixture_hash"
+    printf 'e2e-admin:%s\n' '$2y$05$zUpdrRXiI5KjSQrV9cBi4uWxb85/ki7Wmnfc9NI8y1HAj0H6mkH1.'
   } > "$htpasswd_file"
   set -x
 
@@ -172,20 +181,24 @@ if [ "$is_hosted" == "true" ]; then
   # merge is done client-side. The resourceVersion makes the patch fail on a
   # conflicting concurrent modification instead of silently overwriting it;
   # the HyperShift operator bumps the resourceVersion with routine status
-  # writes, so a conflict is retried a couple of times before giving up.
+  # writes, so the whole read-merge-patch sequence is retried with a short
+  # backoff before giving up.
   hc_patch_succeeded=false
   for attempt in 1 2 3; do
-    hc_json="$(oc --kubeconfig="$MGMT_KUBECONFIG" get hostedcluster -n "$HC_NAMESPACE" "$CLUSTER_NAME" -o json)"
-    idps="$(printf '%s' "$hc_json" | jq -c '[.spec.configuration.oauth.identityProviders // [] | .[] | select(.name != "test")] + [{name: "test", mappingMethod: "claim", type: "HTPasswd", htpasswd: {fileData: {name: "htpass-secret"}}}]')"
-    hc_rv="$(printf '%s' "$hc_json" | jq -r '.metadata.resourceVersion')"
-    if oc --kubeconfig="$MGMT_KUBECONFIG" patch hostedcluster -n "$HC_NAMESPACE" "$CLUSTER_NAME" --type=merge -p "{\"metadata\":{\"resourceVersion\":\"$hc_rv\"},\"spec\":{\"configuration\":{\"oauth\":{\"identityProviders\":${idps}}}}}"; then
+    if hc_json="$(oc --kubeconfig="$MGMT_KUBECONFIG" get hostedcluster -n "$HC_NAMESPACE" "$CLUSTER_NAME" -o json)" &&
+      idps="$(printf '%s' "$hc_json" | jq -c '[.spec.configuration.oauth.identityProviders // [] | .[] | select(.name != "test")] + [{name: "test", mappingMethod: "claim", type: "HTPasswd", htpasswd: {fileData: {name: "htpass-secret"}}}]')" &&
+      hc_rv="$(printf '%s' "$hc_json" | jq -r '.metadata.resourceVersion')" &&
+      oc --kubeconfig="$MGMT_KUBECONFIG" patch hostedcluster -n "$HC_NAMESPACE" "$CLUSTER_NAME" --type=merge -p "{\"metadata\":{\"resourceVersion\":\"$hc_rv\"},\"spec\":{\"configuration\":{\"oauth\":{\"identityProviders\":${idps}}}}}"; then
       hc_patch_succeeded=true
       break
     fi
-    echo "hostedcluster patch conflicged (attempt $attempt/3), retrying"
+    if [ "$attempt" -lt 3 ]; then
+      echo "hostedcluster update failed (attempt $attempt/3), retrying in 5s"
+      sleep 5
+    fi
   done
   if [ "$hc_patch_succeeded" != "true" ]; then
-    echo "could not patch the hostedcluster identity providers" >&2
+    echo "could not update the hostedcluster identity providers" >&2
     exit 1
   fi
 
@@ -219,21 +232,27 @@ else
   if [ "$fixture_configured" != "true" ]; then
     # Merge the fixture's 'test' entry into any existing htpass-secret data
     # instead of replacing it, so users a custom configuration may have
-    # added to the same secret keep working. The oauths patch merges the
-    # suite's 'test' provider into the existing identity providers (see the
-    # hosted branch) and carries the resourceVersion so a conflicting
-    # concurrent modification fails instead of overwriting it.
+    # added to the same secret keep working; the suite's own entry replaces
+    # any stale one. The oauths patch merges the suite's 'test' provider
+    # into the existing identity providers (see the hosted branch) and
+    # carries the resourceVersion so a conflicting concurrent modification
+    # fails instead of overwriting it.
     fixture_hash="$(sed -n 's/^  htpasswd: //p' "$BASEDIR/frontend/packages/console-shared/src/test-data/htpasswd-secret.yaml" | base64 -d | tr -d '\n')"
     if [ -z "$fixture_hash" ]; then
       echo "could not extract the htpasswd fixture from htpass-secret.yaml" >&2
       exit 1
     fi
-    existing_htpasswd="$(oc get secret -n openshift-config htpass-secret -o 'jsonpath={.data.htpasswd}' 2>/dev/null | base64 -d | tr -d '\n' || true)"
+    # --ignore-not-found yields empty output for an absent secret; any other
+    # read failure aborts instead of silently dropping existing users.
+    existing_htpasswd="$(oc get secret -n openshift-config htpass-secret --ignore-not-found -o 'jsonpath={.data.htpasswd}' | base64 -d)"
+    existing_htpasswd="$(printf '%s\n' "$existing_htpasswd" | grep -v -E '^(test|e2e-admin):' || true)"
     htpasswd_file="$(mktemp)"
     set +x
     {
-      printf '%s' "$existing_htpasswd"
-      printf '\n%s\n' "$fixture_hash"
+      if [ -n "$existing_htpasswd" ]; then
+        printf '%s\n' "$existing_htpasswd"
+      fi
+      printf '%s\n' "$fixture_hash"
     } > "$htpasswd_file"
     set -x
     if ! oc -n openshift-config create secret generic htpass-secret --from-file=htpasswd="$htpasswd_file" --dry-run=client -o yaml |
@@ -243,10 +262,25 @@ else
       exit 1
     fi
     rm -f "$htpasswd_file"
-    oauths_json="$(oc get oauths cluster -o json)"
-    idps="$(printf '%s' "$oauths_json" | jq -c '[.spec.identityProviders // [] | .[] | select(.name != "test")] + [{name: "test", mappingMethod: "claim", type: "HTPasswd", htpasswd: {fileData: {name: "htpass-secret"}}}]')"
-    oauths_rv="$(printf '%s' "$oauths_json" | jq -r '.metadata.resourceVersion')"
-    oc patch oauths cluster --type=merge -p "{\"metadata\":{\"resourceVersion\":\"$oauths_rv\"},\"spec\":{\"identityProviders\":${idps}}}"
+    # Same read-merge-patch retry as the hosted branch, for symmetry.
+    oauths_patch_succeeded=false
+    for attempt in 1 2 3; do
+      if oauths_json="$(oc get oauths cluster -o json)" &&
+        idps="$(printf '%s' "$oauths_json" | jq -c '[.spec.identityProviders // [] | .[] | select(.name != "test")] + [{name: "test", mappingMethod: "claim", type: "HTPasswd", htpasswd: {fileData: {name: "htpass-secret"}}}]')" &&
+        oauths_rv="$(printf '%s' "$oauths_json" | jq -r '.metadata.resourceVersion')" &&
+        oc patch oauths cluster --type=merge -p "{\"metadata\":{\"resourceVersion\":\"$oauths_rv\"},\"spec\":{\"identityProviders\":${idps}}}"; then
+        oauths_patch_succeeded=true
+        break
+      fi
+      if [ "$attempt" -lt 3 ]; then
+        echo "oauths update failed (attempt $attempt/3), retrying in 5s"
+        sleep 5
+      fi
+    done
+    if [ "$oauths_patch_succeeded" != "true" ]; then
+      echo "could not update the cluster identity providers" >&2
+      exit 1
+    fi
     set +x
     echo "waiting for authentication operator to start Progressing 'test' idp..."
     waitForAuthOperatorProgressing "True"
@@ -258,7 +292,8 @@ else
   export OPENSHIFT_USERNAME="${OPENSHIFT_USERNAME:-kubeadmin}"
   # don't log kubeadmin-password; keep a supplied password and tolerate an
   # absent password file so local runs without an installer directory can
-  # still proceed (the tests skip themselves without credentials)
+  # still proceed (the admin auth setup warns and the login fails clearly
+  # without credentials)
   set +x
   if [ -z "${BRIDGE_KUBEADMIN_PASSWORD:-}" ] &&
     [ -f "${KUBEADMIN_PASSWORD_FILE:-${INSTALLER_DIR:-${ARTIFACT_DIR:-/tmp/artifacts}/installer}/auth/kubeadmin-password}" ]; then

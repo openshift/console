@@ -45,7 +45,8 @@ mkdir -p "${ARTIFACT_DIR}"
 # (OPENSHIFT_USERNAME, BRIDGE_KUBEADMIN_PASSWORD). Sourced so that the setup
 # runs and the exported variables reach this shell.
 source ./contrib/create-user.sh
-export BRIDGE_BASE_ADDRESS="$(oc get consoles.config.openshift.io cluster -o jsonpath='{.status.consoleURL}')"
+BRIDGE_BASE_ADDRESS="$(oc get consoles.config.openshift.io cluster -o jsonpath='{.status.consoleURL}')"
+export BRIDGE_BASE_ADDRESS
 
 export BRIDGE_HTPASSWD_IDP="${BRIDGE_HTPASSWD_IDP:-test}"
 export BRIDGE_HTPASSWD_USERNAME="${BRIDGE_HTPASSWD_USERNAME:-test}"
@@ -55,8 +56,9 @@ export WORKERS="${WORKERS:-2}"
 
 # Tests tagged @standalone require a standalone control plane (OAuth identity
 # providers, cluster update UI, MachineConfig, kubeadmin login) and are
-# excluded when running against a hosted cluster. CONTROL_PLANE_TOPOLOGY is
-# exported by create-user.sh, which fails fast if it cannot be read.
+# excluded when the cluster reports an external control plane topology.
+# CONTROL_PLANE_TOPOLOGY is exported by create-user.sh, which fails fast if
+# it cannot be read.
 grep_invert="@techpreview"
 if [ "${CONTROL_PLANE_TOPOLOGY:-}" == "External" ]; then
   grep_invert="@techpreview|@standalone"
