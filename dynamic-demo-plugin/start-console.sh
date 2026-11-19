@@ -4,8 +4,14 @@ set -euo pipefail
 
 CONSOLE_IMAGE=${CONSOLE_IMAGE:="quay.io/openshift/origin-console:latest"}
 CONSOLE_PORT=${CONSOLE_PORT:=9000}
-CONSOLE_IMAGE_PLATFORM=${CONSOLE_IMAGE_PLATFORM:="linux/amd64"}
+CONSOLE_IMAGE_PLATFORM=${CONSOLE_IMAGE_PLATFORM:=""}
 CONSOLE_IMAGE_PULL_POLICY=${CONSOLE_IMAGE_PULL_POLICY:="always"}
+
+# Only pass --platform when explicitly set; otherwise let the runtime pull the native arch.
+PLATFORM_FLAG=""
+if [ -n "$CONSOLE_IMAGE_PLATFORM" ]; then
+    PLATFORM_FLAG="--platform $CONSOLE_IMAGE_PLATFORM"
+fi
 
 # Plugin metadata is declared in package.json
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
@@ -41,7 +47,7 @@ fi
 echo "API Server: $BRIDGE_K8S_MODE_OFF_CLUSTER_ENDPOINT"
 echo "Console Image: $CONSOLE_IMAGE"
 echo "Console URL: http://localhost:${CONSOLE_PORT}"
-echo "Console Platform: $CONSOLE_IMAGE_PLATFORM"
+echo "Console Platform: ${CONSOLE_IMAGE_PLATFORM:-"(native)"}"
 echo "CSP Mode: $BRIDGE_CSP_MODE"
 
 # Prefer podman if installed. Otherwise, fall back to docker.
@@ -49,12 +55,12 @@ if [ -x "$(command -v podman)" ]; then
     if [ "$(uname -s)" = "Linux" ]; then
         # Use host networking on Linux since host.containers.internal is unreachable in some environments.
         BRIDGE_PLUGINS="${PLUGIN_NAME}=http://localhost:9001"
-        podman run --pull "$CONSOLE_IMAGE_PULL_POLICY" --platform "$CONSOLE_IMAGE_PLATFORM" --rm --network=host --env-file <(set | grep BRIDGE) "$CONSOLE_IMAGE"
+        podman run --pull "$CONSOLE_IMAGE_PULL_POLICY" $PLATFORM_FLAG --rm --network=host --env-file <(set | grep BRIDGE) "$CONSOLE_IMAGE"
     else
         BRIDGE_PLUGINS="${PLUGIN_NAME}=http://host.containers.internal:9001"
-        podman run --pull "$CONSOLE_IMAGE_PULL_POLICY" --platform "$CONSOLE_IMAGE_PLATFORM" --rm -p "$CONSOLE_PORT":9000 --env-file <(set | grep BRIDGE) "$CONSOLE_IMAGE"
+        podman run --pull "$CONSOLE_IMAGE_PULL_POLICY" $PLATFORM_FLAG --rm -p "$CONSOLE_PORT":9000 --env-file <(set | grep BRIDGE) "$CONSOLE_IMAGE"
     fi
 else
     BRIDGE_PLUGINS="${PLUGIN_NAME}=http://host.docker.internal:9001"
-    docker run --pull "$CONSOLE_IMAGE_PULL_POLICY" --platform "$CONSOLE_IMAGE_PLATFORM" --rm -p "$CONSOLE_PORT":9000 --env-file <(set | grep BRIDGE) "$CONSOLE_IMAGE"
+    docker run --pull "$CONSOLE_IMAGE_PULL_POLICY" $PLATFORM_FLAG --rm -p "$CONSOLE_PORT":9000 --env-file <(set | grep BRIDGE) "$CONSOLE_IMAGE"
 fi
