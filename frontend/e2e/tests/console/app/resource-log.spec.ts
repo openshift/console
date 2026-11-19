@@ -56,7 +56,9 @@ const wrapPodSpec = {
 };
 
 test.describe('Pod log viewer', { tag: ['@admin'] }, () => {
-  test('verifies default log buffer and full log', async ({ page }) => {
+  // The kube-apiserver pods run in the management cluster on hosted
+  // topologies, so this test has no cluster to read logs from there.
+  test('verifies default log buffer and full log', { tag: ['@standalone'] }, async ({ page }) => {
     const listPage = new ListPage(page);
     const detailsPage = new DetailsPage(page);
     const logsPage = new LogsPage(page);

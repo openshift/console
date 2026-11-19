@@ -1,9 +1,6 @@
 import { test, expect } from '../../../fixtures';
 import { ListPage } from '../../../pages/list-page';
 
-const SEARCH_NAMESPACE = 'openshift-authentication-operator';
-const SEARCH_DEPLOYMENT_NAME = 'authentication-operator';
-
 test.describe('Filtering and Searching', { tag: ['@admin'] }, () => {
   let ns: string;
   let workloadName: string;
@@ -75,26 +72,29 @@ test.describe('Filtering and Searching', { tag: ['@admin'] }, () => {
     await expect(listPage.cells).toHaveCount(3, { timeout: 30_000 });
   });
 
+  // Searches the suite-owned deployment rather than a cluster-operator one
+  // so the tests work on hosted topologies, where operator deployments like
+  // authentication-operator run in the management cluster.
   test('displays namespace column in Search for All Namespaces', async ({ page }) => {
     const listPage = new ListPage(page);
 
     await page.goto(
-      `/search/all-namespaces?kind=apps~v1~Deployment&page=1&perPage=50&name=${SEARCH_DEPLOYMENT_NAME}`,
+      `/search/all-namespaces?kind=apps~v1~Deployment&page=1&perPage=50&name=${workloadName}`,
     );
     await listPage.waitForRows();
     await expect(listPage.cells).toHaveCount(1);
-    await expect(listPage.resourceLink(SEARCH_NAMESPACE)).toBeAttached();
+    await expect(listPage.resourceLink(ns)).toBeAttached();
   });
 
   test('hides namespace column in Search for scoped namespace', async ({ page }) => {
     const listPage = new ListPage(page);
 
     await page.goto(
-      `/search/ns/${SEARCH_NAMESPACE}?kind=apps~v1~Deployment&page=1&perPage=50&name=${SEARCH_DEPLOYMENT_NAME}`,
+      `/search/ns/${ns}?kind=apps~v1~Deployment&page=1&perPage=50&name=${workloadName}`,
     );
     await listPage.waitForRows();
     await expect(listPage.cells).toHaveCount(1);
-    await expect(listPage.resourceLink(SEARCH_NAMESPACE)).not.toBeAttached();
+    await expect(listPage.resourceLink(ns)).not.toBeAttached();
   });
 
   test('searches for object by kind and label', async ({ page }) => {
