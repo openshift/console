@@ -60,7 +60,9 @@ function waitForAuthOperatorProgressing {
 # Wait until the htpasswd IDP accepts a login for the given user. Logs in on a
 # copy of the effective kubeconfig so the caller's credentials are not
 # replaced. Tracing stays disabled for the whole function: the login command
-# carries the password as an argument.
+# carries the password as an argument. No trap-based cleanup: this script is
+# sourced, and a trap here would clobber the caller's; both files are removed
+# on the normal paths and only ever live in the run's temporary directory.
 function waitForHtpasswdLogin {
   local username="$1"
   local password="$2"
@@ -119,8 +121,6 @@ managed_label="$(oc get infrastructures.config.openshift.io cluster -o 'jsonpath
 if [ "$CONTROL_PLANE_TOPOLOGY" == "External" ] && [ "$managed_label" == "true" ]; then
   is_hosted=true
 fi
-export CLUSTER_IS_HOSTED="$is_hosted"
-
 if [ "$is_hosted" == "true" ]; then
   # The management cluster kubeconfig: the hypershift-aws chains save it as
   # SHARED_DIR/kubeconfig, the hostedcluster workflow family as
@@ -136,13 +136,18 @@ if [ "$is_hosted" == "true" ]; then
       MGMT_KUBECONFIG="${SHARED_DIR}/kubeconfig"
     fi
   fi
-  if [ -z "${HC_NAMESPACE:-}" ] && [ -s "${SHARED_DIR:-}/hypershift-clusters-namespace" ]; then
-    HC_NAMESPACE="$(cat "${SHARED_DIR}/hypershift-clusters-namespace")"
-  fi
-  HC_NAMESPACE="${HC_NAMESPACE:-clusters}"
   if [ -z "${CLUSTER_NAME:-}" ] && [ -s "${SHARED_DIR:-}/cluster-name" ]; then
     CLUSTER_NAME="$(cat "${SHARED_DIR}/cluster-name")"
   fi
+  if [ -z "${HC_NAMESPACE:-}" ] && [ -s "${SHARED_DIR:-}/hypershift-clusters-namespace" ]; then
+    HC_NAMESPACE="$(cat "${SHARED_DIR}/hypershift-clusters-namespace")"
+  fi
+  if [ -z "${HC_NAMESPACE:-}" ] && [ -n "${MGMT_KUBECONFIG:-}" ] && [ -n "${CLUSTER_NAME:-}" ] && [ -f "$MGMT_KUBECONFIG" ]; then
+    # Neither the env nor SHARED_DIR names the namespace; look the cluster
+    # up by name, as the idp-htpasswd and hypershift-conformance steps do.
+    HC_NAMESPACE="$(oc --kubeconfig="$MGMT_KUBECONFIG" get hostedclusters -A -o "jsonpath={range .items[?(@.metadata.name==\"$CLUSTER_NAME\")]}{.metadata.namespace}{end}" 2>/dev/null || true)"
+  fi
+  HC_NAMESPACE="${HC_NAMESPACE:-clusters}"
   if [ ! -f "$MGMT_KUBECONFIG" ] || [ ! -s "$MGMT_KUBECONFIG" ] || [ -z "${CLUSTER_NAME:-}" ]; then
     echo "hosted cluster detected: set MGMT_KUBECONFIG (management cluster kubeconfig) and CLUSTER_NAME (HostedCluster name in namespace '$HC_NAMESPACE'), either directly or via SHARED_DIR" >&2
     exit 1
@@ -166,7 +171,10 @@ if [ "$is_hosted" == "true" ]; then
   fi
   # The command substitution strips the trailing newline and keeps internal
   # ones; --ignore-not-found yields empty output for an absent secret, and
-  # any other read failure aborts.
+  # any other read failure aborts. The secret name is fixed per namespace
+  # rather than per cluster: suites running against HostedClusters that
+  # share a namespace write identical suite-owned entries, and this merge
+  # preserves any foreign ones.
   existing_htpasswd="$(oc --kubeconfig="$MGMT_KUBECONFIG" -n "$HC_NAMESPACE" get secret console-e2e-htpasswd --ignore-not-found -o 'jsonpath={.data.htpasswd}' | base64 -d)"
   existing_htpasswd="$(printf '%s\n' "$existing_htpasswd" | grep -v -E '^(test|e2e-admin):' || true)"
   htpasswd_file="$(mktemp)"
@@ -203,7 +211,7 @@ if [ "$is_hosted" == "true" ]; then
   # does not flood the CI log.
   set +x
   hc_patch_succeeded=false
-  for attempt in 1 2 3; do
+  for attempt in 1 2 3 4 5; do
     if hc_json="$(oc --kubeconfig="$MGMT_KUBECONFIG" get hostedcluster -n "$HC_NAMESPACE" "$CLUSTER_NAME" -o json)" &&
       idps="$(printf '%s' "$hc_json" | jq -c '[.spec.configuration.oauth.identityProviders // [] | .[] | select(.name != "test")] + [{name: "test", mappingMethod: "claim", type: "HTPasswd", htpasswd: {fileData: {name: "console-e2e-htpasswd"}}}]')" &&
       hc_rv="$(printf '%s' "$hc_json" | jq -r '.metadata.resourceVersion')" &&
@@ -211,9 +219,9 @@ if [ "$is_hosted" == "true" ]; then
       hc_patch_succeeded=true
       break
     fi
-    if [ "$attempt" -lt 3 ]; then
-      echo "hostedcluster update failed (attempt $attempt/3), retrying in 5s" >&2
-      sleep 5
+    if [ "$attempt" -lt 5 ]; then
+      echo "hostedcluster update failed (attempt $attempt/5), retrying in $((attempt * 5))s" >&2
+      sleep $((attempt * 5))
     fi
   done
   set -x
@@ -230,7 +238,9 @@ if [ "$is_hosted" == "true" ]; then
   echo "waiting for the 'e2e-admin' user to accept logins..."
   waitForHtpasswdLogin "e2e-admin" "test"
   echo "waiting for the oauth rollout to complete..."
-  oc --kubeconfig="$MGMT_KUBECONFIG" -n "${HC_NAMESPACE}-${CLUSTER_NAME}" rollout status deploy/oauth-openshift --timeout=10m
+  # hypershift derives the control-plane namespace with the dots of the
+  # HostedCluster name replaced by dashes.
+  oc --kubeconfig="$MGMT_KUBECONFIG" -n "${HC_NAMESPACE}-${CLUSTER_NAME//./-}" rollout status deploy/oauth-openshift --timeout=10m
 
   # don't log a supplied password; check the override pair untraced so a
   # supplied value cannot leak into the trace
@@ -272,9 +282,17 @@ else
       echo "could not extract the htpasswd fixture from htpasswd-secret.yaml" >&2
       exit 1
     fi
-    # --ignore-not-found yields empty output for an absent secret; any other
-    # read failure aborts instead of silently dropping existing users.
-    existing_htpasswd="$(oc get secret -n openshift-config console-e2e-htpasswd --ignore-not-found -o 'jsonpath={.data.htpasswd}' | base64 -d)"
+    # Seed the merge from the secret the live 'test' provider references,
+    # falling back to this suite's own name, so users an earlier setup or an
+    # administrator kept under a previous secret name survive the rename to
+    # console-e2e-htpasswd. --ignore-not-found yields empty output for an
+    # absent secret; any other read failure aborts instead of silently
+    # dropping existing users.
+    referenced_secret="$(oc get oauths cluster -o 'jsonpath={.spec.identityProviders[?(@.name=="test")].htpasswd.fileData.name}' 2>/dev/null || true)"
+    if [ -z "$referenced_secret" ]; then
+      referenced_secret=console-e2e-htpasswd
+    fi
+    existing_htpasswd="$(oc get secret -n openshift-config "$referenced_secret" --ignore-not-found -o 'jsonpath={.data.htpasswd}' | base64 -d)"
     existing_htpasswd="$(printf '%s\n' "$existing_htpasswd" | grep -v -E '^(test|e2e-admin):' || true)"
     htpasswd_file="$(mktemp)"
     {
@@ -295,7 +313,7 @@ else
     # Tracing stays off so the full resource JSON does not flood the log.
     set +x
     oauths_patch_succeeded=false
-    for attempt in 1 2 3; do
+    for attempt in 1 2 3 4 5; do
       if oauths_json="$(oc get oauths cluster -o json)" &&
         idps="$(printf '%s' "$oauths_json" | jq -c '[.spec.identityProviders // [] | .[] | select(.name != "test")] + [{name: "test", mappingMethod: "claim", type: "HTPasswd", htpasswd: {fileData: {name: "console-e2e-htpasswd"}}}]')" &&
         oauths_rv="$(printf '%s' "$oauths_json" | jq -r '.metadata.resourceVersion')" &&
@@ -303,9 +321,9 @@ else
         oauths_patch_succeeded=true
         break
       fi
-      if [ "$attempt" -lt 3 ]; then
-        echo "oauths update failed (attempt $attempt/3), retrying in 5s" >&2
-        sleep 5
+      if [ "$attempt" -lt 5 ]; then
+        echo "oauths update failed (attempt $attempt/5), retrying in $((attempt * 5))s" >&2
+        sleep $((attempt * 5))
       fi
     done
     set -x

@@ -55,6 +55,9 @@ if [ "$RUN_CREATE_USER" = true ]; then
   oldopts="$(set +o)"
   source "${REPO_ROOT}/contrib/create-user.sh"
   eval "$oldopts"
+  # bash 3.2 does not inherit errexit into the command substitution above,
+  # so the captured state may lack it; restore the script's initial state.
+  set -e
   export BRIDGE_HTPASSWD_IDP="${BRIDGE_HTPASSWD_IDP:-test}"
   export BRIDGE_HTPASSWD_USERNAME="${BRIDGE_HTPASSWD_USERNAME:-test}"
   export BRIDGE_HTPASSWD_PASSWORD="${BRIDGE_HTPASSWD_PASSWORD:-test}"
@@ -97,8 +100,11 @@ if [ "$RUN_CREATE_USER" = true ]; then
         value="${arg#--grep-invert=}"
       elif [ "${#arg}" -gt 2 ] && [ "${arg#-G}" != "$arg" ]; then
         # -Gvalue and -G=value: commander keeps the '=' in short-flag
-        # values, so both are passed through with the prefix stripped.
+        # values (native Playwright would treat it as part of the pattern
+        # and match nothing), so strip the prefix and one '=' to compose
+        # the caller's evident intent.
         value="${arg#-G}"
+        value="${value#=}"
       else
         composed+=("$arg")
         continue
@@ -139,11 +145,14 @@ fi
 if [ -z "${BRIDGE_KUBEADMIN_PASSWORD:-}" ]; then
   pass_file="${KUBEADMIN_PASSWORD_FILE:-${INSTALLER_DIR}/auth/kubeadmin-password}"
   if [ -f "$pass_file" ]; then
-    # Disable tracing so the password does not appear in local debug logs.
+    # Disable tracing so the password does not appear in local debug logs,
+    # and restore only the state that was active before.
+    was_tracing=false
+    [[ $- == *x* ]] && was_tracing=true
     set +x
     BRIDGE_KUBEADMIN_PASSWORD="$(cat "$pass_file")"
     export BRIDGE_KUBEADMIN_PASSWORD
-    set -x
+    if $was_tracing; then set -x; fi
   fi
 fi
 
