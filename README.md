@@ -333,9 +333,10 @@ OpenShift cluster to pull the new image.
 docker build -t quay.io/myaccount/console:latest .
 ```
 
-If you are building on an Apple Silicon (`arm64`) Mac for a cluster with `amd64`
-nodes, see [Building an amd64 Image on Apple Silicon](#building-an-amd64-image-on-apple-silicon)
-instead of this step.
+> [!TIP]
+> If you are building on an Apple Silicon (`arm64`) Mac for a cluster with `amd64`
+> nodes, see [Building an amd64 Image on Apple Silicon](#building-an-amd64-image-on-apple-silicon)
+> instead of this step.
 
 3. Push image to image registry `docker push <your-image-name>`. Make sure
    docker is logged into your image registry! For example:
