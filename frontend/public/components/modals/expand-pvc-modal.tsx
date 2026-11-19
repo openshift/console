@@ -1,11 +1,14 @@
-import type { FC } from 'react';
-import { useState, useCallback } from 'react';
+import type { FC, FormEvent } from 'react';
+import { useState } from 'react';
 import {
   Button,
   Content,
   ContentVariants,
   Form,
   FormGroup,
+  FormHelperText,
+  HelperText,
+  HelperTextItem,
   Modal,
   ModalBody,
   ModalHeader,
@@ -20,51 +23,107 @@ import { getRequestedPVCSize } from '@console/shared/src/selectors/storage';
 import type { ModalComponentProps } from '@console/shared/src/types/modal';
 import { k8sPatch, referenceFor } from '../../module/k8s';
 import type { K8sKind, K8sResourceKind } from '../../module/k8s';
+import { dropdownUnits } from '../storage/shared';
 import { RequestSizeInput } from '../utils/request-size-input';
 import { resourceObjPath } from '../utils/resource-link';
-import { validate, convertToBaseValue, humanizeBinaryBytesWithoutB } from '../utils/units';
+import {
+  convertToBaseValue,
+  humanizeBinaryBytes,
+  humanizeBinaryBytesWithoutB,
+} from '../utils/units';
+
+/**
+ * Build the initial size/unit pair for Expand.
+ * Always humanize from bytes (same approach as Clone / PVC details) so API-canonical
+ * forms like `1536Mi` open as `1.5Gi` instead of switching units on the user.
+ * When display rounding would fall below the current request (e.g. `2G` → `1.86Gi`),
+ * use the exact byte-derived value in the chosen unit instead.
+ */
+export const getInitialExpandSize = (requestedStorage: string): { value: string; unit: string } => {
+  const bytes = convertToBaseValue(requestedStorage);
+  if (bytes == null || bytes <= 0) {
+    return { value: '1', unit: 'Gi' };
+  }
+
+  const humanized = humanizeBinaryBytesWithoutB(bytes);
+  const unit = humanized.unit && humanized.unit in dropdownUnits ? humanized.unit : 'Gi';
+  const unitBytes = convertToBaseValue(`1${unit}`);
+  if (!unitBytes || unitBytes <= 0) {
+    return { value: '1', unit: 'Gi' };
+  }
+
+  const roundedBytes = convertToBaseValue(`${humanized.value}${unit}`);
+  if (roundedBytes !== null && roundedBytes >= bytes) {
+    return { value: String(humanized.value), unit };
+  }
+
+  // Preserve the current request exactly when humanize rounding undershoots.
+  return { value: String(bytes / unitBytes), unit };
+};
+
+/** Spinner min expressed in the currently selected unit (e.g. 1591Mi → ~1.55 when unit is Gi). */
+export const getMinValueInSelectedUnit = (minBytes: number, unit: string, fallback = 0): number => {
+  const unitBytes = convertToBaseValue(`1${unit}`);
+  if (!unitBytes || unitBytes <= 0) {
+    return fallback;
+  }
+  return minBytes / unitBytes;
+};
+
+export const isExpandSizeValid = (
+  value: string | number,
+  unit: string,
+  minBytes: number,
+): boolean => {
+  const nextBytes = convertToBaseValue(`${value}${unit}`);
+  // Expand requires a strictly larger request; equal size is a no-op.
+  return nextBytes !== null && nextBytes > minBytes;
+};
 
 // Modal for expanding persistent volume claims
 const ExpandPVCModal: FC<ExpandPVCModalProps> = ({ resource, kind, close, cancel }) => {
-  const baseValue = convertToBaseValue(getRequestedPVCSize(resource));
-  const defaultSize = validate.split(humanizeBinaryBytesWithoutB(baseValue).string);
-  const [requestSizeValue, setRequestSizeValue] = useState(String(defaultSize[0] || ''));
-  const [requestSizeUnit, setRequestSizeUnit] = useState(defaultSize[1] || 'Gi');
+  const requestedStorage = getRequestedPVCSize(resource) || '';
+  const initialSize = getInitialExpandSize(requestedStorage);
+  const minBytes = convertToBaseValue(requestedStorage) || 0;
+  const [requestSizeValue, setRequestSizeValue] = useState(initialSize.value);
+  const [requestSizeUnit, setRequestSizeUnit] = useState<string>(initialSize.unit);
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
 
   const { t } = useTranslation('public');
   const navigate = useNavigate();
 
-  const handleRequestSizeInputChange = (obj) => {
-    setRequestSizeValue(obj.value);
+  const handleRequestSizeInputChange = (obj: { value: string | number; unit: string }) => {
+    setRequestSizeValue(String(obj.value));
     setRequestSizeUnit(obj.unit);
   };
 
-  const submit = useCallback(
-    (e) => {
-      e.preventDefault();
-      const patch = [
-        {
-          op: 'replace',
-          path: '/spec/resources/requests',
-          value: { storage: `${requestSizeValue}${requestSizeUnit}` },
-        },
-      ];
-
-      handlePromise(k8sPatch(kind, resource, patch))
-        .then((res) => {
-          close();
-          navigate(resourceObjPath(res, referenceFor(res)));
-        })
-        .catch(() => {});
-    },
-    [requestSizeValue, requestSizeUnit, kind, resource, close, handlePromise, navigate],
+  const isValidExpand = isExpandSizeValid(requestSizeValue, requestSizeUnit, minBytes);
+  const minValueInSelectedUnit = getMinValueInSelectedUnit(
+    minBytes,
+    requestSizeUnit,
+    Number(initialSize.value) || 0,
   );
+  const currentSizeLabel = humanizeBinaryBytes(minBytes).string;
 
-  const dropdownUnits = {
-    Mi: 'MiB',
-    Gi: 'GiB',
-    Ti: 'TiB',
+  const submit = (e: FormEvent) => {
+    e.preventDefault();
+    if (!isValidExpand) {
+      return;
+    }
+    const patch = [
+      {
+        op: 'replace',
+        path: '/spec/resources/requests',
+        value: { storage: `${requestSizeValue}${requestSizeUnit}` },
+      },
+    ];
+
+    handlePromise(k8sPatch(kind, resource, patch))
+      .then((res) => {
+        close();
+        navigate(resourceObjPath(res, referenceFor(res)));
+      })
+      .catch(() => {});
   };
 
   return (
@@ -75,8 +134,8 @@ const ExpandPVCModal: FC<ExpandPVCModalProps> = ({ resource, kind, close, cancel
           <Trans t={t} ns="public">
             Increase the capacity of PVC{' '}
             <strong className="co-break-word">{{ resourceName: resource.metadata.name }}.</strong>{' '}
-            Note that capacity must be at least the current PVC size. This expansion might take some
-            time to complete.
+            Enter a size that is larger than the current PVC size. Expansion might take some time to
+            complete. You can check status on the PVC details page.
           </Trans>
         </Content>
         <Form id="expand-pvc-form" onSubmit={submit}>
@@ -89,8 +148,19 @@ const ExpandPVCModal: FC<ExpandPVCModalProps> = ({ resource, kind, close, cancel
               defaultRequestSizeValue={requestSizeValue}
               dropdownUnits={dropdownUnits}
               testID="pvc-expand-size-input"
-              minValue={defaultSize[0]}
+              minValue={minValueInSelectedUnit}
             />
+            {!isValidExpand && (
+              <FormHelperText>
+                <HelperText>
+                  <HelperTextItem variant="error">
+                    {t('Enter a size larger than the current size of {{currentSize}}.', {
+                      currentSize: currentSizeLabel,
+                    })}
+                  </HelperTextItem>
+                </HelperText>
+              </FormHelperText>
+            )}
           </FormGroup>
         </Form>
       </ModalBody>
@@ -99,7 +169,7 @@ const ExpandPVCModal: FC<ExpandPVCModalProps> = ({ resource, kind, close, cancel
           type="submit"
           variant="primary"
           isLoading={inProgress}
-          isDisabled={inProgress}
+          isDisabled={inProgress || !isValidExpand}
           data-test="confirm-action"
           form="expand-pvc-form"
         >
