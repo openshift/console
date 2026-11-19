@@ -70,7 +70,7 @@ if [ "$RUN_CREATE_USER" = true ]; then
     expect_value=false
     # Playwright treats /pattern/flags values as regex literals and plain
     # values as case-insensitive regexes; only a value that starts and ends
-    # with / (optional gimsuy flags) is a literal, so strip exactly those.
+    # with / (optional g/i flags) is a literal, so strip exactly those.
     # Values are composed textually: a pattern with unbalanced regex
     # metacharacters can produce an invalid expression. A literally empty
     # value is dropped (Playwright ignores it); '//' is not, because it
@@ -83,7 +83,9 @@ if [ "$RUN_CREATE_USER" = true ]; then
     #   -G /pattern/gi         -> --grep-invert '/(?:@standalone|pattern)/gi'
     #   --grep-invert ''       -> dropped (Playwright ignores it)
     #   (no invert flag)       -> --grep-invert @standalone prepended
-    pw_regex_literal='^/(.*)/([gimsuy]*)$'
+    # Playwright 1.63's forceRegExp only recognizes g and i as literal
+    # flags; other suffixes are plain regexes.
+    pw_regex_literal='^/(.*)/([gi]*)$'
     for arg in "$@"; do
       if [ "$expect_value" == "true" ]; then
         value="$arg"

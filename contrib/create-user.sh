@@ -143,6 +143,7 @@ if [ "$is_hosted" == "true" ]; then
   # hash. The suite's own entries replace any stale ones while other users
   # of the secret are preserved. Disable tracing so the hashes and the
   # credential line stay out of the logs.
+  set +x
   fixture_hash="$(sed -n 's/^[[:space:]]*htpasswd: //p' "$BASEDIR/frontend/packages/console-shared/src/test-data/htpasswd-secret.yaml" | base64 -d | tr -d '\n')"
   if [ -z "$fixture_hash" ]; then
     echo "could not extract the htpasswd fixture from htpass-secret.yaml" >&2
@@ -151,7 +152,6 @@ if [ "$is_hosted" == "true" ]; then
   # The command substitution strips the trailing newline and keeps internal
   # ones; --ignore-not-found yields empty output for an absent secret, and
   # any other read failure aborts.
-  set +x
   existing_htpasswd="$(oc --kubeconfig="$MGMT_KUBECONFIG" -n "$HC_NAMESPACE" get secret htpass-secret --ignore-not-found -o 'jsonpath={.data.htpasswd}' | base64 -d)"
   existing_htpasswd="$(printf '%s\n' "$existing_htpasswd" | grep -v -E '^(test|e2e-admin):' || true)"
   htpasswd_file="$(mktemp)"
@@ -244,6 +244,7 @@ else
     # into the existing identity providers (see the hosted branch) and
     # carries the resourceVersion so a conflicting concurrent modification
     # fails instead of overwriting it.
+    set +x
     fixture_hash="$(sed -n 's/^[[:space:]]*htpasswd: //p' "$BASEDIR/frontend/packages/console-shared/src/test-data/htpasswd-secret.yaml" | base64 -d | tr -d '\n')"
     if [ -z "$fixture_hash" ]; then
       echo "could not extract the htpasswd fixture from htpass-secret.yaml" >&2
@@ -251,7 +252,6 @@ else
     fi
     # --ignore-not-found yields empty output for an absent secret; any other
     # read failure aborts instead of silently dropping existing users.
-    set +x
     existing_htpasswd="$(oc get secret -n openshift-config htpass-secret --ignore-not-found -o 'jsonpath={.data.htpasswd}' | base64 -d)"
     existing_htpasswd="$(printf '%s\n' "$existing_htpasswd" | grep -v -E '^(test|e2e-admin):' || true)"
     htpasswd_file="$(mktemp)"
