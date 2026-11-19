@@ -112,7 +112,12 @@ if [ "$control_plane_topology" == "External" ]; then
       oc --kubeconfig="$MGMT_KUBECONFIG" apply -f -
     rm -f "$htpasswd_file"
 
-    oc --kubeconfig="$MGMT_KUBECONFIG" patch hostedcluster -n "$HC_NAMESPACE" "$CLUSTER_NAME" --type=merge -p '{"spec":{"configuration":{"oauth":{"identityProviders":[{"name":"test","mappingMethod":"claim","type":"HTPasswd","htpasswd":{"fileData":{"name":"htpass-secret"}}}]}}}}'
+    # Merge the suite's 'test' provider into the existing identity providers
+    # instead of replacing the list, so providers referenced by other
+    # configurations keep working.
+    idps="$(oc --kubeconfig="$MGMT_KUBECONFIG" get hostedcluster -n "$HC_NAMESPACE" "$CLUSTER_NAME" -o json |
+      jq -c '[.spec.configuration.oauth.identityProviders // [] | .[] | select(.name != "test")] + [{name: "test", mappingMethod: "claim", type: "HTPasswd", htpasswd: {fileData: {name: "htpass-secret"}}}]')"
+    oc --kubeconfig="$MGMT_KUBECONFIG" patch hostedcluster -n "$HC_NAMESPACE" "$CLUSTER_NAME" --type=merge -p "{\"spec\":{\"configuration\":{\"oauth\":{\"identityProviders\":${idps}}}}}"
   fi
 
   # Reconcile the admin access and validate the logins on every run, also when
@@ -127,22 +132,26 @@ if [ "$control_plane_topology" == "External" ]; then
   waitForHtpasswdLogin "e2e-admin" "test"
   set -x
 
-  # don't log a supplied password
+  # don't log a supplied password; check the override pair untraced so a
+  # supplied value cannot leak into the trace
   set +x
   export BRIDGE_KUBEADMIN_PASSWORD="${BRIDGE_KUBEADMIN_PASSWORD:-test}"
-  set -x
-
   export OPENSHIFT_USERNAME="${OPENSHIFT_USERNAME:-e2e-admin}"
-
   if [ "${OPENSHIFT_USERNAME}" != "e2e-admin" ] || [ "${BRIDGE_KUBEADMIN_PASSWORD}" != "test" ]; then
     echo "warning: overridden admin credentials were not verified by this setup; only the e2e-admin user was" >&2
   fi
+  set -x
 else
   if [ "$fixture_configured" != "true" ]; then
     # Apply instead of create so a pre-existing htpass-secret is reconciled
-    # with the fixture content instead of failing with AlreadyExists.
+    # with the fixture content instead of failing with AlreadyExists. The
+    # patch merges the suite's 'test' provider into the existing identity
+    # providers instead of replacing the list, so providers referenced by
+    # other configurations keep working.
     oc apply -f "$BASEDIR/frontend/packages/console-shared/src/test-data/htpasswd-secret.yaml"
-    oc patch oauths cluster --patch "$(cat "$BASEDIR/frontend/packages/console-shared/src/test-data/patch-htpasswd.yaml")" --type=merge
+    idps="$(oc get oauths cluster -o json |
+      jq -c '[.spec.identityProviders // [] | .[] | select(.name != "test")] + [{name: "test", mappingMethod: "claim", type: "HTPasswd", htpasswd: {fileData: {name: "htpass-secret"}}}]')"
+    oc patch oauths cluster --type=merge -p "{\"spec\":{\"identityProviders\":${idps}}}"
     set +x
     echo "waiting for authentication operator to start Progressing 'test' idp..."
     waitForAuthOperatorProgressing "True"
