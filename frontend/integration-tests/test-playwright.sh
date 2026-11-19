@@ -70,7 +70,7 @@ if [ "$RUN_CREATE_USER" = true ]; then
     expect_value=false
     # Playwright treats /pattern/flags values as regex literals and plain
     # values as case-insensitive regexes; only a value that starts and ends
-    # with / (optional g/i flags) is a literal, so strip exactly those.
+    # with / (optional gimsuy flags) is a literal, so strip exactly those.
     # Values are composed textually: a pattern with unbalanced regex
     # metacharacters can produce an invalid expression. A literally empty
     # value is dropped (Playwright ignores it); '//' is not, because it
