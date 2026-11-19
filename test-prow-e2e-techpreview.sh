@@ -45,6 +45,9 @@ export BRIDGE_BASE_ADDRESS
 # @techpreview tests, so the invert must never contain @techpreview.
 # CONTROL_PLANE_TOPOLOGY is exported by create-user.sh, which fails fast if
 # it cannot be read. Left unquoted so it expands to zero or two arguments.
+# Note that Playwright does not combine repeated --grep-invert flags (the
+# last one wins): a caller-supplied invert replaces this exclusion.
+# shellcheck disable=SC2086
 grep_invert_args=""
 if [ "${CONTROL_PLANE_TOPOLOGY:-}" == "External" ]; then
   grep_invert_args="--grep-invert @standalone"

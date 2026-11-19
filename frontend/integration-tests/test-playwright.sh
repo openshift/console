@@ -60,11 +60,33 @@ if [ "$RUN_CREATE_USER" = true ]; then
   export BRIDGE_HTPASSWD_PASSWORD="${BRIDGE_HTPASSWD_PASSWORD:-test}"
 
   # Exclude standalone-only tests when the cluster reports an external
-  # control plane topology, matching the prow entrypoints. Playwright
-  # OR-composes repeated --grep-invert flags, so this composes safely with
-  # any filter the caller passed.
+  # control plane topology, matching the prow entrypoints. Playwright does
+  # not combine repeated --grep-invert flags (the last one wins), so the
+  # exclusion is composed into any invert the caller passed instead of
+  # adding a second flag.
   if [ "${CONTROL_PLANE_TOPOLOGY:-}" == "External" ]; then
-    set -- --grep-invert @standalone "$@"
+    composed=()
+    saw_invert=false
+    expect_value=false
+    for arg in "$@"; do
+      if [ "$expect_value" == "true" ]; then
+        composed+=("(@standalone|$arg)")
+        expect_value=false
+      elif [ "$arg" == "--grep-invert" ]; then
+        saw_invert=true
+        expect_value=true
+        composed+=("$arg")
+      elif [ "${arg#--grep-invert=}" != "$arg" ]; then
+        saw_invert=true
+        composed+=("--grep-invert=(@standalone|${arg#--grep-invert=})")
+      else
+        composed+=("$arg")
+      fi
+    done
+    set -- ${composed[@]+"${composed[@]}"}
+    if [ "$saw_invert" == "false" ]; then
+      set -- --grep-invert @standalone "$@"
+    fi
   fi
 fi
 

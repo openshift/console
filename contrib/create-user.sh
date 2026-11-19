@@ -160,6 +160,7 @@ if [ "$is_hosted" == "true" ]; then
       printf '%s\n' "$existing_htpasswd"
     fi
     printf '%s\n' "$fixture_hash"
+    # shellcheck disable=SC2016
     printf 'e2e-admin:%s\n' '$2y$05$zUpdrRXiI5KjSQrV9cBi4uWxb85/ki7Wmnfc9NI8y1HAj0H6mkH1.'
   } > "$htpasswd_file"
   set -x
@@ -225,7 +226,8 @@ else
   # rather than trusted.
   fixture_configured=false
   if [ "$(oc get oauths cluster -o 'jsonpath={.spec.identityProviders[?(@.name=="test")].type}' 2>/dev/null || true)" == "HTPasswd" ] &&
-    [ "$(oc get oauths cluster -o 'jsonpath={.spec.identityProviders[?(@.name=="test")].htpasswd.fileData.name}' 2>/dev/null || true)" == "htpass-secret" ]; then
+    [ "$(oc get oauths cluster -o 'jsonpath={.spec.identityProviders[?(@.name=="test")].htpasswd.fileData.name}' 2>/dev/null || true)" == "htpass-secret" ] &&
+    [ -n "$(oc get secret -n openshift-config htpass-secret --ignore-not-found -o 'jsonpath={.data.htpasswd}')" ]; then
     fixture_configured=true
   fi
 
