@@ -48,7 +48,9 @@ function waitForHtpasswdLogin {
   maxRetries=40 # 10 minutes
   kubeconfig_copy="$(mktemp)"
 
-  until cp "${KUBECONFIG:-$HOME/.kube/config}" "$kubeconfig_copy" &&
+  # Write the effective configuration to the copy: KUBECONFIG may list
+  # several files, and flattening also embeds referenced certificate files.
+  until oc config view --raw --flatten > "$kubeconfig_copy" 2>/dev/null &&
     oc --kubeconfig="$kubeconfig_copy" login --username="$username" --password="$password" >/dev/null 2>&1; do
     count=$((count+1))
     if [ $count -gt $maxRetries ]; then

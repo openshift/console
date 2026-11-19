@@ -47,6 +47,21 @@ while getopts "c" flag; do
 done
 shift $((OPTIND - 1))
 
+if [ "$RUN_CREATE_USER" = true ]; then
+  # Sourced so the setup runs here and the exported admin persona
+  # credentials (OPENSHIFT_USERNAME, BRIDGE_KUBEADMIN_PASSWORD) reach
+  # Playwright. Restore the tracing state afterwards: the sourced script
+  # enables it for its own logging.
+  if [[ $- == *x* ]]; then WAS_TRACING=true; else WAS_TRACING=false; fi
+  source "${REPO_ROOT}/contrib/create-user.sh"
+  if $WAS_TRACING; then set -x; else set +x; fi
+  export BRIDGE_HTPASSWD_IDP="${BRIDGE_HTPASSWD_IDP:-test}"
+  export BRIDGE_HTPASSWD_USERNAME="${BRIDGE_HTPASSWD_USERNAME:-test}"
+  export BRIDGE_HTPASSWD_PASSWORD="${BRIDGE_HTPASSWD_PASSWORD:-test}"
+fi
+
+# Runs after the sourced setup above so that the hosted admin password it
+# exports is not overridden by the kubeadmin password file fallback.
 if [ -z "${BRIDGE_KUBEADMIN_PASSWORD:-}" ]; then
   pass_file="${KUBEADMIN_PASSWORD_FILE:-${INSTALLER_DIR}/auth/kubeadmin-password}"
   if [ -f "$pass_file" ]; then
@@ -71,13 +86,6 @@ fi
 BRIDGE_BASE_PATH=${BRIDGE_BASE_PATH:-/}
 export BRIDGE_BASE_PATH
 export WEB_CONSOLE_URL="${WEB_CONSOLE_URL:-${BRIDGE_BASE_ADDRESS}${BRIDGE_BASE_PATH}}"
-
-if [ "$RUN_CREATE_USER" = true ]; then
-  "${REPO_ROOT}/contrib/create-user.sh"
-  export BRIDGE_HTPASSWD_IDP="${BRIDGE_HTPASSWD_IDP:-test}"
-  export BRIDGE_HTPASSWD_USERNAME="${BRIDGE_HTPASSWD_USERNAME:-test}"
-  export BRIDGE_HTPASSWD_PASSWORD="${BRIDGE_HTPASSWD_PASSWORD:-test}"
-fi
 
 FRONTEND_ABS="$(pwd)"
 playwright_bin="${FRONTEND_ABS}/node_modules/.bin/playwright"
