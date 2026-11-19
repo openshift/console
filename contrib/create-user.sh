@@ -225,11 +225,15 @@ else
   # htpass-secret. A provider that merely shares the name is reconfigured
   # rather than trusted.
   fixture_configured=false
+  # Disable tracing: the secret-data test expands the base64 htpasswd blob
+  # (which can contain non-fixture hashes) into the traced command.
+  set +x
   if [ "$(oc get oauths cluster -o 'jsonpath={.spec.identityProviders[?(@.name=="test")].type}' 2>/dev/null || true)" == "HTPasswd" ] &&
     [ "$(oc get oauths cluster -o 'jsonpath={.spec.identityProviders[?(@.name=="test")].htpasswd.fileData.name}' 2>/dev/null || true)" == "htpass-secret" ] &&
     [ -n "$(oc get secret -n openshift-config htpass-secret --ignore-not-found -o 'jsonpath={.data.htpasswd}')" ]; then
     fixture_configured=true
   fi
+  set -x
 
   if [ "$fixture_configured" != "true" ]; then
     # Merge the fixture's 'test' entry into any existing htpass-secret data

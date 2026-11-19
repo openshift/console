@@ -92,7 +92,11 @@ export async function loginFromEnv(
   // (e.g. the e2e-admin user the hosted-cluster setup provisions) lives in
   // the htpasswd provider.
   const idpName =
-    username === 'kubeadmin' ? 'kube:admin' : process.env.BRIDGE_HTPASSWD_IDP || 'test';
+    username === 'kubeadmin'
+      ? 'kube:admin'
+      : // The hosted admin persona always lives in the suite's own htpasswd
+        // provider, independently of any developer-provider override.
+        process.env.BRIDGE_ADMIN_IDP || 'test';
   await performLogin(page, baseURL, username, password, idpName);
 }
 
