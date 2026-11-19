@@ -6,7 +6,7 @@ import { useFormikContext, useField } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
-import { ProjectModel } from '@console/internal/models';
+import { NamespaceModel, ProjectModel } from '@console/internal/models';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { referenceForModel } from '@console/internal/module/k8s';
 import type { WithFlagsProps } from '@console/internal/reducers/connectToFlags';
@@ -24,6 +24,8 @@ const NamespaceSection: FC<NamespaceSectionProps> = ({ flags }) => {
   const canCreateNs = flags[FLAGS.CAN_CREATE_NS];
   const canCreateProject = flags[FLAGS.CAN_CREATE_PROJECT];
   const canCreate = canCreateNs || canCreateProject;
+  // Without the OpenShift project API, list namespaces instead.
+  const model = flags[FLAGS.OPENSHIFT] ? ProjectModel : NamespaceModel;
   const [namespace] = useField('namespace');
   const { setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
   const { t } = useTranslation('webterminal-plugin');
@@ -41,7 +43,7 @@ const NamespaceSection: FC<NamespaceSectionProps> = ({ flags }) => {
   const watchedResources = useK8sWatchResources<{ projects: K8sResourceKind[] }>({
     projects: {
       isList: true,
-      kind: referenceForModel(ProjectModel),
+      kind: referenceForModel(model),
     },
   });
 
@@ -51,10 +53,11 @@ const NamespaceSection: FC<NamespaceSectionProps> = ({ flags }) => {
         data: watchedResources.projects.data,
         loaded: watchedResources.projects.loaded,
         loadError: watchedResources.projects.loadError,
-        kind: ProjectModel.kind,
+        kind: model.kind,
       },
     ],
     [
+      model,
       watchedResources.projects.data,
       watchedResources.projects.loaded,
       watchedResources.projects.loadError,
@@ -116,4 +119,4 @@ const NamespaceSection: FC<NamespaceSectionProps> = ({ flags }) => {
 // exposed for testing
 export const InternalNamespaceSection = NamespaceSection;
 
-export default connectToFlags(FLAGS.CAN_CREATE_PROJECT)(NamespaceSection);
+export default connectToFlags(FLAGS.CAN_CREATE_PROJECT, FLAGS.OPENSHIFT)(NamespaceSection);

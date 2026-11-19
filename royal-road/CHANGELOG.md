@@ -2,6 +2,14 @@
 
 Newest first. One entry per work package from `FORK.md`.
 
+## Web Terminal on Kubernetes
+
+- `royal-road/deploy/web-terminal/` installs the DevWorkspace Operator (v1.1.0) and the Web Terminal Operator (1.18.0, the only public build) through OLM from their own index images, pinned by digest, with `installPlanApproval: Manual`. Neither is in the operatorhub.io catalog. cert-manager stands in for the OpenShift service CA. The README covers apply order, RBAC, resources and idle timeout, known issues and rollback.
+- DWO serves the console's `routingClass: web-terminal` only on OpenShift. `royal-road/web-terminal-routing/` is an external DevWorkspaceRouting solver for `web-terminal-k8s`: a Service, a cert-manager serving certificate mounted at `/var/serving-cert/`, and an https URL, as DWO's cluster-TLS solver does on OpenShift. CI: `.github/workflows/royal-road-web-terminal-routing.yml` pushes `ghcr.io/royal-road/web-terminal-routing`.
+- Core patch: bridge flag `--web-terminal-routing-class` (`BRIDGE_WEB_TERMINAL_ROUTING_CLASS`, default `web-terminal`) sets the class the frontend puts on new terminals.
+- Core patch: the terminal setup form lists Namespaces, creates Namespaces and searches Namespaces for an existing terminal when the OpenShift project API is absent. Before, the namespace dropdown showed "Error loading".
+- Needs an API server change: with the legacy `--oidc-*` flags OIDC users have no UID, which DWO and the exec container require. The README gives the equivalent `AuthenticationConfiguration` with `uid` mapped to `sub`.
+- Verified on kind (Kubernetes 1.36.1, OLM v0.46.0, cert-manager v1.21.3, Dex with the structured authentication config, bridge in-cluster with OIDC): a cluster-admin and a namespace-scoped user each opened a terminal and ran `kubectl` as themselves; other users and cluster-admins are refused another user's terminal; idle stop, restart, deletion and the rollback steps work.
 ## Lightspeed: Sentry tools
 
 - `royal-road/deploy/lightspeed/55-sentry-mcp.yaml`: getsentry's Sentry MCP server, so the assistant can read Sentry issues and events next to the cluster state ("why is my-app erroring?"). It runs with one read-only service token (internal integration: `org:read`, `project:read`, `event:read`) from the Secret `lightspeed-sentry`, only the server's read-only `inspect` skill, and only 8 of its tools. OLS authenticates with an API key file; NetworkPolicies admit only OLS and allow egress only to sentry-web. Lightspeed users (cluster-admins by default) all see the same Sentry data; the README records that access model.

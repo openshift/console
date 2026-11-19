@@ -148,7 +148,7 @@ export const newCloudShellWorkSpace = (
   },
   spec: {
     started: true,
-    routingClass: 'web-terminal',
+    routingClass: window.SERVER_FLAGS.webTerminalRoutingClass || 'web-terminal',
     template: {
       components:
         version === v1alpha1WorkspaceModel.apiVersion

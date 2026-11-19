@@ -169,6 +169,7 @@ func main() {
 
 	fDevCatalogCategories := fs.String("developer-catalog-categories", "", "Allow catalog categories customization. (JSON as string)")
 	fDevCatalogTypes := fs.String("developer-catalog-types", "", "Allow enabling/disabling of sub-catalog types from the developer catalog. (JSON as string)")
+	fWebTerminalRoutingClass := fs.String("web-terminal-routing-class", "web-terminal", "DevWorkspace routingClass of the web terminals the console creates. The DevWorkspace Operator handles the default only on OpenShift; elsewhere, set a class that an external routing controller handles.")
 	fUserSettingsLocation := fs.String("user-settings-location", "configmap", "DEV ONLY. Define where the user settings should be stored. (configmap | localstorage).")
 	fQuickStarts := fs.String("quick-starts", "", "Allow customization of available ConsoleQuickStart resources in console. (JSON as string)")
 	fAddPage := fs.String("add-page", "", "DEV ONLY. Allow add page customization. (JSON as string)")
@@ -367,6 +368,7 @@ func main() {
 		DevCatalogCategories:         *fDevCatalogCategories,
 		DevCatalogTypes:              *fDevCatalogTypes,
 		UserSettingsLocation:         *fUserSettingsLocation,
+		WebTerminalRoutingClass:      *fWebTerminalRoutingClass,
 		EnabledPlugins:               enabledPlugins,
 		EnabledPluginsOrder:          enabledPluginsOrder,
 		I18nNamespaces:               i18nNamespaces,

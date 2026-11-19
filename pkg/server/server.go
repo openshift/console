@@ -137,6 +137,7 @@ type jsGlobals struct {
 	TechPreview                     bool                       `json:"techPreview"`
 	OLMLifecycleMetadata            bool                       `json:"olmLifecycleMetadata"`
 	UserSettingsLocation            string                     `json:"userSettingsLocation"`
+	WebTerminalRoutingClass         string                     `json:"webTerminalRoutingClass"`
 	DevConsoleProxyAvailable        bool                       `json:"devConsoleProxyAvailable"`
 }
 
@@ -211,6 +212,7 @@ type Server struct {
 	ThanosTenancyProxyForRulesConfig    *proxy.Config
 	TokenReviewer                       *auth.TokenReviewer
 	UserSettingsLocation                string
+	WebTerminalRoutingClass             string
 	EnabledPlugins                      serverconfig.MultiKeyValue
 	EnabledPluginsOrder                 []string
 	DevConsoleProxyAvailable            bool
@@ -775,6 +777,7 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		TechPreview:               s.TechPreview,
 		OLMLifecycleMetadata:      s.OLMLifecycleMetadata,
 		UserSettingsLocation:      s.UserSettingsLocation,
+		WebTerminalRoutingClass:   s.WebTerminalRoutingClass,
 		DevConsoleProxyAvailable:  true,
 	}
 

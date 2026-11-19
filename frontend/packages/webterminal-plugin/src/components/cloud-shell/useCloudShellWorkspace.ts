@@ -2,9 +2,11 @@ import { useEffect, useMemo, useState } from 'react';
 import type { WatchK8sResource, WatchK8sResult } from '@console/dynamic-plugin-sdk';
 import { useAccessReview2 } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { ProjectModel } from '@console/internal/models';
+import { NamespaceModel, ProjectModel } from '@console/internal/models';
 import type { UserInfo, K8sKind } from '@console/internal/module/k8s';
 import { referenceForModel, k8sList } from '@console/internal/module/k8s';
+import { FLAGS } from '@console/shared/src/constants/common';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import type { CloudShellResource } from './cloud-shell-utils';
 import {
   CLOUD_SHELL_LABEL,
@@ -33,6 +35,7 @@ const useCloudShellWorkspace = (
   const [namespace, setNamespace] = useState(defaultNamespace);
   const [searching, setSearching] = useState<boolean>(false);
   const [noNamespaceFound, setNoNamespaceFound] = useState<boolean>(false);
+  const isOpenShift = useFlag(FLAGS.OPENSHIFT);
 
   // sync defaultNamespace to namespace
   useEffect(() => {
@@ -108,7 +111,7 @@ const useCloudShellWorkspace = (
         setNoNamespaceFound(false);
         setSearching(true);
         try {
-          const projects = await k8sList(ProjectModel);
+          const projects = await k8sList(isOpenShift ? ProjectModel : NamespaceModel);
           if (unmounted) return;
           if (Array.isArray(projects)) {
             for (const project of projects) {
@@ -149,6 +152,7 @@ const useCloudShellWorkspace = (
     };
   }, [
     isKubeAdmin,
+    isOpenShift,
     searchNamespaces,
     setNamespace,
     uid,

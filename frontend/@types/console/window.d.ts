@@ -34,6 +34,7 @@ declare interface Window {
     perspectives: string;
     developerCatalogTypes: string;
     userSettingsLocation: string;
+    webTerminalRoutingClass: string;
     /** JSON encoded configuration for the console's feature flags */
     addPage: string;
     /** Console dynamic plugins enabled on the cluster */

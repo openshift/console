@@ -1,0 +1,88 @@
+# External DevWorkspaceRouting solver for routingClass web-terminal-k8s
+# (source: royal-road/web-terminal-routing/). The DevWorkspace Operator only
+# serves routingClass web-terminal on OpenShift; this controller does the
+# same job with cert-manager: a Service per terminal, a serving certificate
+# mounted at /var/serving-cert/, and an https URL in the routing status.
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: web-terminal-routing
+  namespace: web-terminal
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: web-terminal-routing
+rules:
+  - apiGroups: [controller.devfile.io]
+    resources: [devworkspaceroutings]
+    verbs: [get, list, watch]
+  - apiGroups: [controller.devfile.io]
+    resources: [devworkspaceroutings/status]
+    verbs: [update, patch]
+  - apiGroups: [""]
+    resources: [services]
+    verbs: [get, list, watch, create, patch, update]
+  - apiGroups: [cert-manager.io]
+    resources: [certificates]
+    verbs: [get, list, watch, create, patch, update]
+  # Only to add an ownerReference to the Secret cert-manager writes, so it is
+  # deleted with the terminal. No get/list: the controller never reads
+  # Secret contents.
+  - apiGroups: [""]
+    resources: [secrets]
+    verbs: [patch]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: web-terminal-routing
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: web-terminal-routing
+subjects:
+  - kind: ServiceAccount
+    name: web-terminal-routing
+    namespace: web-terminal
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-terminal-routing
+  namespace: web-terminal
+  labels:
+    app.kubernetes.io/name: web-terminal-routing
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: web-terminal-routing
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: web-terminal-routing
+    spec:
+      serviceAccountName: web-terminal-routing
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: controller
+          image: ghcr.io/royal-road/web-terminal-routing:<sha>
+          args:
+            - --routing-class=web-terminal-k8s
+            - --issuer-kind=ClusterIssuer
+            - --issuer-name=web-terminal-ca
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              memory: 128Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: [ALL]

@@ -585,6 +585,14 @@ kind cluster with VictoriaLogs v1.53.0 (production's version), `logging-view-plu
 | Tenancy | A ServiceAccount with `view` in team-a (bridge run with its token, and directly at the proxy): only team-a, nothing in `infrastructure`, including with `{namespace="team-b"}` in the query, a client-sent `extra_stream_filters`, a `union` subquery, `stream_field_values` and an `AccountID` header. No token or an invalid token: 401. `query_time_range`: 404. Cluster-admin: all namespaces. |
 | NetworkPolicies | A pod in another namespace can't reach the proxy or VictoriaLogs; a pod with the console label reaches the proxy; the proxy reaches VictoriaLogs. |
 
+## Web Terminal
+
+Optional, applied separately from the cutover. [`web-terminal/`](web-terminal/README.md)
+installs the DevWorkspace and Web Terminal operators through OLM (Manual
+approval), a cert-manager CA, and a small routing controller, and sets
+`BRIDGE_WEB_TERMINAL_ROUTING_CLASS=web-terminal-k8s` on the console. It needs
+an API server change first: OIDC users must have a UID (see
+[Prerequisite](web-terminal/README.md#prerequisite-oidc-user-uids)).
 ## Perses dashboards
 
 Observe › **Dashboards (Perses)** (`/monitoring/v2/dashboards`) is the
