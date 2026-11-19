@@ -8,6 +8,8 @@
 # Run directly or source it; sourcing keeps the exported variables in the
 # calling shell, which is how the prow e2e entrypoints use it. Aborts the
 # calling shell on failure. Requires oc and jq (see contrib/environment.sh).
+# Note that sourcing also leaves this script's shell options, its helper
+# functions, and its internal variables in the caller's shell.
 
 set -exuo pipefail
 
@@ -65,13 +67,22 @@ function waitForHtpasswdLogin {
 
   # Write the effective configuration to the copy: KUBECONFIG may list
   # several files, and flattening also embeds referenced certificate files.
-  until oc config view --raw --flatten > "$kubeconfig_copy" 2>"$login_error" &&
-    oc --kubeconfig="$kubeconfig_copy" login --username="$username" --password="$password" >"$login_error" 2>&1; do
+  # A flatten failure (broken KUBECONFIG) is permanent, so fail fast
+  # instead of retrying it for the full timeout.
+  if ! oc config view --raw --flatten > "$kubeconfig_copy" 2>"$login_error"; then
+    echo "could not read the effective kubeconfig:" >&2
+    cat "$login_error" >&2
+    rm -f "$kubeconfig_copy" "$login_error"
+    if $was_tracing; then set -x; fi
+    return 1
+  fi
+  until oc --kubeconfig="$kubeconfig_copy" login --username="$username" --password="$password" >"$login_error" 2>&1; do
     count=$((count+1))
     if [ $count -gt $maxRetries ]; then
       echo "htpasswd login for '$username' did not succeed after $((count*sleepDuration/60)) minutes; last error:" >&2
       cat "$login_error" >&2
       rm -f "$kubeconfig_copy" "$login_error"
+      if $was_tracing; then set -x; fi
       return 1
     fi
     sleep $sleepDuration
@@ -84,14 +95,21 @@ function waitForHtpasswdLogin {
 # Hosted clusters (HyperShift) report an external control plane topology, but
 # so do other offerings (e.g. IBM ROKS); the label the hosted cluster config
 # operator sets on the guest Infrastructure resource identifies a HyperShift
-# guest precisely. The topology is exported for callers that only need the
-# coarser signal.
-export CONTROL_PLANE_TOPOLOGY="$(oc get infrastructures.config.openshift.io cluster -o 'jsonpath={.status.controlPlaneTopology}')"
+# guest precisely. (HyperShift 4.10/4.11 used an unversioned
+# 'hypershift.io/managed' label key; those releases are EOL.) The topology is
+# exported for callers that only need the coarser signal.
+CONTROL_PLANE_TOPOLOGY="$(oc get infrastructures.config.openshift.io cluster -o 'jsonpath={.status.controlPlaneTopology}')"
+if [ -z "$CONTROL_PLANE_TOPOLOGY" ]; then
+  echo "could not read the control plane topology of the cluster under test" >&2
+  exit 1
+fi
+export CONTROL_PLANE_TOPOLOGY
 is_hosted=false
-if [ "$CONTROL_PLANE_TOPOLOGY" == "External" ] &&
-  [ "$(oc get infrastructures.config.openshift.io cluster -o 'jsonpath={.metadata.labels.hypershift\.openshift\.io/managed}')" == "true" ]; then
+managed_label="$(oc get infrastructures.config.openshift.io cluster -o 'jsonpath={.metadata.labels.hypershift\.openshift\.io/managed}')"
+if [ "$CONTROL_PLANE_TOPOLOGY" == "External" ] && [ "$managed_label" == "true" ]; then
   is_hosted=true
 fi
+export CLUSTER_IS_HOSTED="$is_hosted"
 
 if [ "$is_hosted" == "true" ]; then
   # The management cluster kubeconfig: the hypershift-aws chains save it as
@@ -109,7 +127,7 @@ if [ "$is_hosted" == "true" ]; then
   if [ -z "${CLUSTER_NAME:-}" ] && [ -s "${SHARED_DIR:-}/cluster-name" ]; then
     CLUSTER_NAME="$(cat "${SHARED_DIR}/cluster-name")"
   fi
-  if [ ! -s "$MGMT_KUBECONFIG" ] || [ -z "${CLUSTER_NAME:-}" ]; then
+  if [ ! -f "$MGMT_KUBECONFIG" ] || [ ! -s "$MGMT_KUBECONFIG" ] || [ -z "${CLUSTER_NAME:-}" ]; then
     echo "hosted cluster detected: set MGMT_KUBECONFIG (management cluster kubeconfig) and CLUSTER_NAME (HostedCluster name in namespace '$HC_NAMESPACE'), either directly or via SHARED_DIR" >&2
     exit 1
   fi
@@ -139,19 +157,37 @@ if [ "$is_hosted" == "true" ]; then
 
   # The secret referenced by the HostedCluster oauth configuration is read
   # from the management cluster, not from the guest's openshift-config.
-  oc --kubeconfig="$MGMT_KUBECONFIG" -n "$HC_NAMESPACE" create secret generic htpass-secret --from-file=htpasswd="$htpasswd_file" --dry-run=client -o yaml |
-    oc --kubeconfig="$MGMT_KUBECONFIG" apply -f -
+  # Guarded so the file is removed on failure too.
+  if ! oc --kubeconfig="$MGMT_KUBECONFIG" -n "$HC_NAMESPACE" create secret generic htpass-secret --from-file=htpasswd="$htpasswd_file" --dry-run=client -o yaml |
+    oc --kubeconfig="$MGMT_KUBECONFIG" apply -f -; then
+    rm -f "$htpasswd_file"
+    echo "could not apply the htpass-secret to the management cluster" >&2
+    exit 1
+  fi
   rm -f "$htpasswd_file"
 
   # Merge the suite's 'test' provider into the existing identity providers
   # instead of replacing the list, so providers referenced by other
   # configurations keep working; identityProviders is an atomic list, so the
   # merge is done client-side. The resourceVersion makes the patch fail on a
-  # conflicting concurrent modification instead of silently overwriting it.
-  hc_json="$(oc --kubeconfig="$MGMT_KUBECONFIG" get hostedcluster -n "$HC_NAMESPACE" "$CLUSTER_NAME" -o json)"
-  idps="$(printf '%s' "$hc_json" | jq -c '[.spec.configuration.oauth.identityProviders // [] | .[] | select(.name != "test")] + [{name: "test", mappingMethod: "claim", type: "HTPasswd", htpasswd: {fileData: {name: "htpass-secret"}}}]')"
-  hc_rv="$(printf '%s' "$hc_json" | jq -r '.metadata.resourceVersion')"
-  oc --kubeconfig="$MGMT_KUBECONFIG" patch hostedcluster -n "$HC_NAMESPACE" "$CLUSTER_NAME" --type=merge -p "{\"metadata\":{\"resourceVersion\":\"$hc_rv\"},\"spec\":{\"configuration\":{\"oauth\":{\"identityProviders\":${idps}}}}}"
+  # conflicting concurrent modification instead of silently overwriting it;
+  # the HyperShift operator bumps the resourceVersion with routine status
+  # writes, so a conflict is retried a couple of times before giving up.
+  hc_patch_succeeded=false
+  for attempt in 1 2 3; do
+    hc_json="$(oc --kubeconfig="$MGMT_KUBECONFIG" get hostedcluster -n "$HC_NAMESPACE" "$CLUSTER_NAME" -o json)"
+    idps="$(printf '%s' "$hc_json" | jq -c '[.spec.configuration.oauth.identityProviders // [] | .[] | select(.name != "test")] + [{name: "test", mappingMethod: "claim", type: "HTPasswd", htpasswd: {fileData: {name: "htpass-secret"}}}]')"
+    hc_rv="$(printf '%s' "$hc_json" | jq -r '.metadata.resourceVersion')"
+    if oc --kubeconfig="$MGMT_KUBECONFIG" patch hostedcluster -n "$HC_NAMESPACE" "$CLUSTER_NAME" --type=merge -p "{\"metadata\":{\"resourceVersion\":\"$hc_rv\"},\"spec\":{\"configuration\":{\"oauth\":{\"identityProviders\":${idps}}}}}"; then
+      hc_patch_succeeded=true
+      break
+    fi
+    echo "hostedcluster patch conflicged (attempt $attempt/3), retrying"
+  done
+  if [ "$hc_patch_succeeded" != "true" ]; then
+    echo "could not patch the hostedcluster identity providers" >&2
+    exit 1
+  fi
 
   oc create clusterrolebinding e2e-admin --clusterrole=cluster-admin --user=e2e-admin --dry-run=client -o yaml | oc apply -f -
 
@@ -181,12 +217,32 @@ else
   fi
 
   if [ "$fixture_configured" != "true" ]; then
-    # Apply instead of create so a pre-existing htpass-secret is reconciled
-    # with the fixture content instead of failing with AlreadyExists. The
-    # patch merges the suite's 'test' provider into the existing identity
-    # providers (see the hosted branch) and carries the resourceVersion so a
-    # conflicting concurrent modification fails instead of overwriting it.
-    oc apply -f "$BASEDIR/frontend/packages/console-shared/src/test-data/htpasswd-secret.yaml"
+    # Merge the fixture's 'test' entry into any existing htpass-secret data
+    # instead of replacing it, so users a custom configuration may have
+    # added to the same secret keep working. The oauths patch merges the
+    # suite's 'test' provider into the existing identity providers (see the
+    # hosted branch) and carries the resourceVersion so a conflicting
+    # concurrent modification fails instead of overwriting it.
+    fixture_hash="$(sed -n 's/^  htpasswd: //p' "$BASEDIR/frontend/packages/console-shared/src/test-data/htpasswd-secret.yaml" | base64 -d | tr -d '\n')"
+    if [ -z "$fixture_hash" ]; then
+      echo "could not extract the htpasswd fixture from htpass-secret.yaml" >&2
+      exit 1
+    fi
+    existing_htpasswd="$(oc get secret -n openshift-config htpass-secret -o 'jsonpath={.data.htpasswd}' 2>/dev/null | base64 -d | tr -d '\n' || true)"
+    htpasswd_file="$(mktemp)"
+    set +x
+    {
+      printf '%s' "$existing_htpasswd"
+      printf '\n%s\n' "$fixture_hash"
+    } > "$htpasswd_file"
+    set -x
+    if ! oc -n openshift-config create secret generic htpass-secret --from-file=htpasswd="$htpasswd_file" --dry-run=client -o yaml |
+      oc apply -f -; then
+      rm -f "$htpasswd_file"
+      echo "could not apply the htpass-secret" >&2
+      exit 1
+    fi
+    rm -f "$htpasswd_file"
     oauths_json="$(oc get oauths cluster -o json)"
     idps="$(printf '%s' "$oauths_json" | jq -c '[.spec.identityProviders // [] | .[] | select(.name != "test")] + [{name: "test", mappingMethod: "claim", type: "HTPasswd", htpasswd: {fileData: {name: "htpass-secret"}}}]')"
     oauths_rv="$(printf '%s' "$oauths_json" | jq -r '.metadata.resourceVersion')"
@@ -206,7 +262,10 @@ else
   set +x
   if [ -z "${BRIDGE_KUBEADMIN_PASSWORD:-}" ] &&
     [ -f "${KUBEADMIN_PASSWORD_FILE:-${INSTALLER_DIR:-${ARTIFACT_DIR:-/tmp/artifacts}/installer}/auth/kubeadmin-password}" ]; then
-    export BRIDGE_KUBEADMIN_PASSWORD="$(cat "${KUBEADMIN_PASSWORD_FILE:-${INSTALLER_DIR:-${ARTIFACT_DIR:-/tmp/artifacts}/installer}/auth/kubeadmin-password}")"
+    # Plain assignment first so a read failure aborts instead of being
+    # masked by the export builtin's exit status.
+    BRIDGE_KUBEADMIN_PASSWORD="$(cat "${KUBEADMIN_PASSWORD_FILE:-${INSTALLER_DIR:-${ARTIFACT_DIR:-/tmp/artifacts}/installer}/auth/kubeadmin-password}")"
+    export BRIDGE_KUBEADMIN_PASSWORD
   fi
   set -x
 fi

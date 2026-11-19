@@ -108,22 +108,8 @@ const routes: RouteConfig[] = [
     assertLoaded: assertLoadedListPage,
   },
   {
-    path: '/k8s/cluster/machineconfiguration.openshift.io~v1~MachineConfig',
-    assertLoaded: assertLoadedListPage,
-  },
-  {
-    path: '/k8s/cluster/machineconfiguration.openshift.io~v1~MachineConfigPool',
-    assertLoaded: assertLoadedListPage,
-  },
-  {
     path: '/k8s/all-namespaces/monitoring.coreos.com~v1~Alertmanager',
     assertLoaded: assertLoadedListPage,
-  },
-  {
-    path: '/k8s/ns/openshift-monitoring/monitoring.coreos.com~v1~Alertmanager/main',
-    assertLoaded: async (page) => {
-      await expect(page.getByTestId('resource-title')).toBeVisible();
-    },
   },
   {
     path: '/settings/cluster',
@@ -137,8 +123,27 @@ const routes: RouteConfig[] = [
   },
 ];
 
-test.describe('Visiting other routes', { tag: ['@admin', '@smoke'] }, () => {
-  for (const route of routes) {
+// Routes that require a standalone control plane: the MCO and the platform
+// monitoring stack do not run on hosted clusters, so these APIs are absent.
+const standaloneRoutes: RouteConfig[] = [
+  {
+    path: '/k8s/cluster/machineconfiguration.openshift.io~v1~MachineConfig',
+    assertLoaded: assertLoadedListPage,
+  },
+  {
+    path: '/k8s/cluster/machineconfiguration.openshift.io~v1~MachineConfigPool',
+    assertLoaded: assertLoadedListPage,
+  },
+  {
+    path: '/k8s/ns/openshift-monitoring/monitoring.coreos.com~v1~Alertmanager/main',
+    assertLoaded: async (page) => {
+      await expect(page.getByTestId('resource-title')).toBeVisible();
+    },
+  },
+];
+
+function routeTests(routeList: RouteConfig[]): void {
+  for (const route of routeList) {
     test(`successfully displays view for route: ${route.path.replace(/\//g, ' ')}`, async ({
       page,
     }) => {
@@ -157,7 +162,19 @@ test.describe('Visiting other routes', { tag: ['@admin', '@smoke'] }, () => {
       await testA11y(page, `route ${route.path.replace(/\//g, ' ')}`);
     });
   }
+}
+
+test.describe('Visiting other routes', { tag: ['@admin', '@smoke'] }, () => {
+  routeTests(routes);
 });
+
+test.describe(
+  'Visiting standalone-only routes',
+  { tag: ['@admin', '@smoke', '@standalone'] },
+  () => {
+    routeTests(standaloneRoutes);
+  },
+);
 
 test.describe('Perspective query parameters', { tag: ['@admin'] }, () => {
   let patchedPerspectives = false;

@@ -39,12 +39,14 @@ mkdir -p "${ARTIFACT_DIR}"
 source ./contrib/create-user.sh
 export BRIDGE_BASE_ADDRESS="$(oc get consoles.config.openshift.io cluster -o jsonpath='{.status.consoleURL}')"
 
-# Tests tagged @standalone require a standalone control plane and are excluded
-# when running against a hosted cluster. CONTROL_PLANE_TOPOLOGY is exported by
-# create-user.sh, which fails fast if it cannot be read.
-grep_invert="@techpreview"
+# Tests tagged @standalone require a standalone control plane and are
+# excluded when running against a hosted cluster. This job selects
+# @techpreview tests, so the invert must never contain @techpreview.
+# CONTROL_PLANE_TOPOLOGY is exported by create-user.sh, which fails fast if
+# it cannot be read. Left unquoted so it expands to zero or two arguments.
+grep_invert_args=""
 if [ "${CONTROL_PLANE_TOPOLOGY:-}" == "External" ]; then
-  grep_invert="@techpreview|@standalone"
+  grep_invert_args="--grep-invert @standalone"
 fi
 
 pushd frontend
@@ -53,6 +55,6 @@ if [ ! -d node_modules ]; then
   yarn install
 fi
 
-./integration-tests/test-playwright.sh -- --grep @techpreview --grep-invert "$grep_invert" "$@"
+./integration-tests/test-playwright.sh -- --grep @techpreview $grep_invert_args "$@"
 
 popd

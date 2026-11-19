@@ -61,10 +61,12 @@ export async function performLogin(
 
 /**
  * Log in using the credentials configured via environment variables for the
- * given persona. Admin uses the kubeadmin / kube:admin identity provider;
- * developer uses the htpasswd identity provider. Used both by the auth setup
- * projects and as a re-authentication fallback for specs whose shared
- * storageState session has expired or been invalidated mid-run.
+ * given persona. Admin uses the 'kube:admin' provider when the persona is
+ * kubeadmin and the htpasswd provider otherwise (e.g. the e2e-admin user the
+ * hosted-cluster setup provisions); developer uses the htpasswd identity
+ * provider. Used both by the auth setup projects and as a re-authentication
+ * fallback for specs whose shared storageState session has expired or been
+ * invalidated mid-run.
  */
 export async function loginFromEnv(
   page: Page,

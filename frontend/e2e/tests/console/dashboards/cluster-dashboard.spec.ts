@@ -59,7 +59,7 @@ test.describe('Cluster Dashboard', { tag: ['@admin', '@smoke'] }, () => {
       await expect(dashboard.getViewAlertsLink()).toHaveAttribute('href', '/monitoring/alerts');
     });
 
-    test('has health indicators', async () => {
+    test('has health indicators', { tag: ['@standalone'] }, async () => {
       await dashboard.waitForStatusCardLoaded();
       await expect(dashboard.getStatusCard()).toBeVisible();
 

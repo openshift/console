@@ -22,9 +22,11 @@ test.describe(
         // These are @admin tests, so always authenticate as the admin persona
         // regardless of whether developer (htpasswd) credentials are configured.
         // The password is always exported on hosted clusters (for the
-        // e2e-admin user), so gate on the persona as well.
+        // e2e-admin user), and these tests assert standalone-only console
+        // pod behavior, so gate on the topology as well.
         test.skip(
-          !process.env.BRIDGE_KUBEADMIN_PASSWORD || process.env.OPENSHIFT_USERNAME === 'e2e-admin',
+          !process.env.BRIDGE_KUBEADMIN_PASSWORD ||
+            process.env.CONTROL_PLANE_TOPOLOGY === 'External',
           'Requires standalone kubeadmin credentials',
         );
         await loginFromEnv(page, 'admin');
@@ -70,9 +72,11 @@ test.describe(
         // These are @admin tests, so always authenticate as the admin persona
         // regardless of whether developer (htpasswd) credentials are configured.
         // The password is always exported on hosted clusters (for the
-        // e2e-admin user), so gate on the persona as well.
+        // e2e-admin user), and these tests assert standalone-only console
+        // pod behavior, so gate on the topology as well.
         test.skip(
-          !process.env.BRIDGE_KUBEADMIN_PASSWORD || process.env.OPENSHIFT_USERNAME === 'e2e-admin',
+          !process.env.BRIDGE_KUBEADMIN_PASSWORD ||
+            process.env.CONTROL_PLANE_TOPOLOGY === 'External',
           'Requires standalone kubeadmin credentials',
         );
         await loginFromEnv(page, 'admin');

@@ -58,6 +58,20 @@ if [ "$RUN_CREATE_USER" = true ]; then
   export BRIDGE_HTPASSWD_IDP="${BRIDGE_HTPASSWD_IDP:-test}"
   export BRIDGE_HTPASSWD_USERNAME="${BRIDGE_HTPASSWD_USERNAME:-test}"
   export BRIDGE_HTPASSWD_PASSWORD="${BRIDGE_HTPASSWD_PASSWORD:-test}"
+
+  # Exclude standalone-only tests on hosted clusters unless the caller chose
+  # their own filter. Left unquoted so it expands to zero or two arguments.
+  if [ "${CLUSTER_IS_HOSTED:-false}" == "true" ]; then
+    has_invert=false
+    for arg in "$@"; do
+      case "$arg" in
+        --grep-invert*) has_invert=true ;;
+      esac
+    done
+    if [ "$has_invert" == "false" ]; then
+      set -- --grep-invert @standalone "$@"
+    fi
+  fi
 fi
 
 # Runs after the sourced setup above so that the hosted admin password it
