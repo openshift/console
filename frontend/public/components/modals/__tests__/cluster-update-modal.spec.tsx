@@ -1,5 +1,5 @@
 // Unit tests: store/router hooks are mocked; plain render is enough.
-import { screen, configure, render } from '@testing-library/react';
+import { screen, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
@@ -81,10 +81,6 @@ const baseProps = {
 };
 
 describe('ClusterUpdateModal paused MachineConfigPools acknowledgement', () => {
-  beforeAll(() => {
-    configure({ testIdAttribute: 'data-test' });
-  });
-
   beforeEach(() => {
     jest.clearAllMocks();
     mockUseFlag.mockReturnValue(false);

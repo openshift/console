@@ -112,14 +112,15 @@ export const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
       : _.pull(checkedItems, event.currentTarget.id);
     setMachineConfigPoolsToPause(checkedItems);
   };
-  const pauseableMCPs = machineConfigPools
-    .filter((mcp) => !isMCPMaster(mcp))
-    .sort(sortMCPsByCreationTimestamp);
-  const pausedMCPs = pauseableMCPs.filter((mcp) => isMCPPaused(mcp));
-  const pausedPoolNames = useMemo(
-    () => pausedMCPs.map((mcp) => mcp.metadata.name).join(', '),
-    [pausedMCPs],
+  const pauseableMCPs = useMemo(
+    () => machineConfigPools.filter((mcp) => !isMCPMaster(mcp)).sort(sortMCPsByCreationTimestamp),
+    [machineConfigPools],
   );
+  const pausedMCPs = useMemo(
+    () => pauseableMCPs.filter((mcp) => isMCPPaused(mcp)),
+    [pauseableMCPs],
+  );
+  const pausedPoolNames = pausedMCPs.map((mcp) => mcp.metadata.name).join(', ');
   const pausedPoolsAcknowledged =
     acknowledgedPausedPoolNames !== '' && acknowledgedPausedPoolNames === pausedPoolNames;
   const requiresPausedPoolsAcknowledgement =
@@ -140,7 +141,8 @@ export const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
       e.preventDefault();
       if (
         upgradeType === UpgradeTypes.Full &&
-        (!machineConfigPoolsLoaded || (pausedMCPs.length > 0 && !pausedPoolsAcknowledged))
+        (!machineConfigPoolsLoaded ||
+          (requiresPausedPoolsAcknowledgement && !pausedPoolsAcknowledged))
       ) {
         return;
       }
@@ -195,6 +197,7 @@ export const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
       desiredVersion,
       upgradeType,
       machineConfigPoolsLoaded,
+      requiresPausedPoolsAcknowledgement,
       pausedMCPs,
       pausedPoolsAcknowledged,
       pauseableMCPs,
