@@ -5,6 +5,13 @@
 # OPENSHIFT_USERNAME and BRIDGE_KUBEADMIN_PASSWORD, plus the cluster's
 # CONTROL_PLANE_TOPOLOGY for callers that adapt to it.
 #
+# SECURITY: on hosted clusters the script also provisions an 'e2e-admin' user
+# with cluster-admin and the public password 'test'. This is safe on the
+# ephemeral CI clusters the prow jobs use. For local runs against a
+# long-lived cluster, remove the clusterrolebinding and secret afterwards:
+#   oc delete clusterrolebinding e2e-admin
+#   oc --kubeconfig=<mgmt> -n <ns> delete secret console-e2e-htpasswd
+#
 # Run directly or source it; sourcing keeps the exported variables in the
 # calling shell, which is how the prow e2e entrypoints use it. Aborts the
 # calling shell on failure. Requires oc and jq (see contrib/environment.sh).
@@ -139,20 +146,19 @@ if [ "$is_hosted" == "true" ]; then
   # the HostedCluster, so the e2e admin persona cannot log in as kubeadmin.
   # Add an 'e2e-admin' user with cluster-admin to the same htpasswd file for
   # tests that need an admin session. The entry uses a precomputed bcrypt
-  # hash of the public test password; the fixture's own entry uses an apr1
-  # hash. The suite's own entries replace any stale ones while other users
-  # of the secret are preserved. Disable tracing so the hashes and the
+  # hash of the public test password. The suite's own entries replace any
+  # stale ones while other users of the secret are preserved. Disable tracing so the hashes and the
   # credential line stay out of the logs.
   set +x
   fixture_hash="$(sed -n 's/^[[:space:]]*htpasswd: //p' "$BASEDIR/frontend/packages/console-shared/src/test-data/htpasswd-secret.yaml" | base64 -d | tr -d '\n')"
   if [ -z "$fixture_hash" ]; then
-    echo "could not extract the htpasswd fixture from htpass-secret.yaml" >&2
+    echo "could not extract the htpasswd fixture from htpasswd-secret.yaml" >&2
     exit 1
   fi
   # The command substitution strips the trailing newline and keeps internal
   # ones; --ignore-not-found yields empty output for an absent secret, and
   # any other read failure aborts.
-  existing_htpasswd="$(oc --kubeconfig="$MGMT_KUBECONFIG" -n "$HC_NAMESPACE" get secret htpass-secret --ignore-not-found -o 'jsonpath={.data.htpasswd}' | base64 -d)"
+  existing_htpasswd="$(oc --kubeconfig="$MGMT_KUBECONFIG" -n "$HC_NAMESPACE" get secret console-e2e-htpasswd --ignore-not-found -o 'jsonpath={.data.htpasswd}' | base64 -d)"
   existing_htpasswd="$(printf '%s\n' "$existing_htpasswd" | grep -v -E '^(test|e2e-admin):' || true)"
   htpasswd_file="$(mktemp)"
   {
@@ -169,10 +175,10 @@ if [ "$is_hosted" == "true" ]; then
   # The secret referenced by the HostedCluster oauth configuration is read
   # from the management cluster, not from the guest's openshift-config.
   # Guarded so the file is removed on failure too.
-  if ! oc --kubeconfig="$MGMT_KUBECONFIG" -n "$HC_NAMESPACE" create secret generic htpass-secret --from-file=htpasswd="$htpasswd_file" --dry-run=client -o yaml |
+  if ! oc --kubeconfig="$MGMT_KUBECONFIG" -n "$HC_NAMESPACE" create secret generic console-e2e-htpasswd --from-file=htpasswd="$htpasswd_file" --dry-run=client -o yaml |
     oc --kubeconfig="$MGMT_KUBECONFIG" apply -f -; then
     rm -f "$htpasswd_file"
-    echo "could not apply the htpass-secret to the management cluster" >&2
+    echo "could not apply the console-e2e-htpasswd to the management cluster" >&2
     exit 1
   fi
   rm -f "$htpasswd_file"
@@ -184,11 +190,13 @@ if [ "$is_hosted" == "true" ]; then
   # conflicting concurrent modification instead of silently overwriting it;
   # the HyperShift operator bumps the resourceVersion with routine status
   # writes, so the whole read-merge-patch sequence is retried with a short
-  # backoff before giving up.
+  # backoff before giving up. Tracing stays off so the full resource JSON
+  # does not flood the CI log.
+  set +x
   hc_patch_succeeded=false
   for attempt in 1 2 3; do
     if hc_json="$(oc --kubeconfig="$MGMT_KUBECONFIG" get hostedcluster -n "$HC_NAMESPACE" "$CLUSTER_NAME" -o json)" &&
-      idps="$(printf '%s' "$hc_json" | jq -c '[.spec.configuration.oauth.identityProviders // [] | .[] | select(.name != "test")] + [{name: "test", mappingMethod: "claim", type: "HTPasswd", htpasswd: {fileData: {name: "htpass-secret"}}}]')" &&
+      idps="$(printf '%s' "$hc_json" | jq -c '[.spec.configuration.oauth.identityProviders // [] | .[] | select(.name != "test")] + [{name: "test", mappingMethod: "claim", type: "HTPasswd", htpasswd: {fileData: {name: "console-e2e-htpasswd"}}}]')" &&
       hc_rv="$(printf '%s' "$hc_json" | jq -r '.metadata.resourceVersion')" &&
       oc --kubeconfig="$MGMT_KUBECONFIG" patch hostedcluster -n "$HC_NAMESPACE" "$CLUSTER_NAME" --type=merge -p "{\"metadata\":{\"resourceVersion\":\"$hc_rv\"},\"spec\":{\"configuration\":{\"oauth\":{\"identityProviders\":${idps}}}}}"; then
       hc_patch_succeeded=true
@@ -199,6 +207,7 @@ if [ "$is_hosted" == "true" ]; then
       sleep 5
     fi
   done
+  set -x
   if [ "$hc_patch_succeeded" != "true" ]; then
     echo "could not update the hostedcluster identity providers" >&2
     exit 1
@@ -211,6 +220,8 @@ if [ "$is_hosted" == "true" ]; then
   waitForHtpasswdLogin "test" "test"
   echo "waiting for the 'e2e-admin' user to accept logins..."
   waitForHtpasswdLogin "e2e-admin" "test"
+  echo "waiting for the oauth rollout to complete..."
+  oc --kubeconfig="$MGMT_KUBECONFIG" -n "${HC_NAMESPACE}-${CLUSTER_NAME}" rollout status deploy/oauth-openshift --timeout=10m
 
   # don't log a supplied password; check the override pair untraced so a
   # supplied value cannot leak into the trace
@@ -223,21 +234,23 @@ if [ "$is_hosted" == "true" ]; then
 else
   # Skip the fixture setup when it is already configured on the cluster: an
   # identity provider named 'test' of type HTPasswd backed by the suite's
-  # htpass-secret. A provider that merely shares the name is reconfigured
+  # console-e2e-htpasswd. A provider that merely shares the name is reconfigured
   # rather than trusted.
   fixture_configured=false
   # Disable tracing: the secret-data test expands the base64 htpasswd blob
-  # (which can contain non-fixture hashes) into the traced command.
+  # (which can contain non-fixture hashes) into the traced command. The
+  # test entry must match the fixture hash so a foreign provider of the
+  # same name is reconfigured rather than trusted.
   set +x
   if [ "$(oc get oauths cluster -o 'jsonpath={.spec.identityProviders[?(@.name=="test")].type}' 2>/dev/null || true)" == "HTPasswd" ] &&
-    [ "$(oc get oauths cluster -o 'jsonpath={.spec.identityProviders[?(@.name=="test")].htpasswd.fileData.name}' 2>/dev/null || true)" == "htpass-secret" ] &&
-    [ -n "$(oc get secret -n openshift-config htpass-secret --ignore-not-found -o 'jsonpath={.data.htpasswd}')" ]; then
+    [ "$(oc get oauths cluster -o 'jsonpath={.spec.identityProviders[?(@.name=="test")].htpasswd.fileData.name}' 2>/dev/null || true)" == "console-e2e-htpasswd" ] &&
+    [ "$(oc get secret -n openshift-config console-e2e-htpasswd --ignore-not-found -o 'jsonpath={.data.htpasswd}' | base64 -d | grep -c "^test:$(sed -n 's/^[[:space:]]*htpasswd: //p' "$BASEDIR/frontend/packages/console-shared/src/test-data/htpasswd-secret.yaml" | base64 -d | tr -d '\n')\$")" -gt 0 ]; then
     fixture_configured=true
   fi
   set -x
 
   if [ "$fixture_configured" != "true" ]; then
-    # Merge the fixture's 'test' entry into any existing htpass-secret data
+    # Merge the fixture's 'test' entry into any existing console-e2e-htpasswd data
     # instead of replacing it, so users a custom configuration may have
     # added to the same secret keep working; the suite's own entry replaces
     # any stale one. The oauths patch merges the suite's 'test' provider
@@ -247,12 +260,12 @@ else
     set +x
     fixture_hash="$(sed -n 's/^[[:space:]]*htpasswd: //p' "$BASEDIR/frontend/packages/console-shared/src/test-data/htpasswd-secret.yaml" | base64 -d | tr -d '\n')"
     if [ -z "$fixture_hash" ]; then
-      echo "could not extract the htpasswd fixture from htpass-secret.yaml" >&2
+      echo "could not extract the htpasswd fixture from htpasswd-secret.yaml" >&2
       exit 1
     fi
     # --ignore-not-found yields empty output for an absent secret; any other
     # read failure aborts instead of silently dropping existing users.
-    existing_htpasswd="$(oc get secret -n openshift-config htpass-secret --ignore-not-found -o 'jsonpath={.data.htpasswd}' | base64 -d)"
+    existing_htpasswd="$(oc get secret -n openshift-config console-e2e-htpasswd --ignore-not-found -o 'jsonpath={.data.htpasswd}' | base64 -d)"
     existing_htpasswd="$(printf '%s\n' "$existing_htpasswd" | grep -v -E '^(test|e2e-admin):' || true)"
     htpasswd_file="$(mktemp)"
     {
@@ -262,18 +275,20 @@ else
       printf '%s\n' "$fixture_hash"
     } > "$htpasswd_file"
     set -x
-    if ! oc -n openshift-config create secret generic htpass-secret --from-file=htpasswd="$htpasswd_file" --dry-run=client -o yaml |
+    if ! oc -n openshift-config create secret generic console-e2e-htpasswd --from-file=htpasswd="$htpasswd_file" --dry-run=client -o yaml |
       oc apply -f -; then
       rm -f "$htpasswd_file"
-      echo "could not apply the htpass-secret" >&2
+      echo "could not apply the console-e2e-htpasswd" >&2
       exit 1
     fi
     rm -f "$htpasswd_file"
     # Same read-merge-patch retry as the hosted branch, for symmetry.
+    # Tracing stays off so the full resource JSON does not flood the log.
+    set +x
     oauths_patch_succeeded=false
     for attempt in 1 2 3; do
       if oauths_json="$(oc get oauths cluster -o json)" &&
-        idps="$(printf '%s' "$oauths_json" | jq -c '[.spec.identityProviders // [] | .[] | select(.name != "test")] + [{name: "test", mappingMethod: "claim", type: "HTPasswd", htpasswd: {fileData: {name: "htpass-secret"}}}]')" &&
+        idps="$(printf '%s' "$oauths_json" | jq -c '[.spec.identityProviders // [] | .[] | select(.name != "test")] + [{name: "test", mappingMethod: "claim", type: "HTPasswd", htpasswd: {fileData: {name: "console-e2e-htpasswd"}}}]')" &&
         oauths_rv="$(printf '%s' "$oauths_json" | jq -r '.metadata.resourceVersion')" &&
         oc patch oauths cluster --type=merge -p "{\"metadata\":{\"resourceVersion\":\"$oauths_rv\"},\"spec\":{\"identityProviders\":${idps}}}"; then
         oauths_patch_succeeded=true
@@ -284,6 +299,7 @@ else
         sleep 5
       fi
     done
+    set -x
     if [ "$oauths_patch_succeeded" != "true" ]; then
       echo "could not update the cluster identity providers" >&2
       exit 1
