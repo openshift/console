@@ -63,10 +63,16 @@ function waitForHtpasswdLogin {
   rm -f "$kubeconfig_copy"
 }
 
-# Skip the IDP setup when the 'test' idp is already configured. The oauths
+# Skip the fixture setup when it is already configured: an identity provider
+# named 'test' of type HTPasswd backed by the suite's htpass-secret. The oauths
 # resource is readable on hosted clusters even though it is immutable there,
-# so this also makes reruns against a hosted cluster idempotent.
-htpasswd_idp_name="$(oc get oauths cluster -o 'jsonpath={.spec.identityProviders[?(@.name=="test")].name}' 2>/dev/null || true)"
+# so this also makes reruns against a hosted cluster idempotent. A provider
+# that merely shares the name is reconfigured rather than trusted.
+fixture_configured=false
+if [ "$(oc get oauths cluster -o 'jsonpath={.spec.identityProviders[?(@.name=="test")].type}' 2>/dev/null || true)" == "HTPasswd" ] &&
+  [ "$(oc get oauths cluster -o 'jsonpath={.spec.identityProviders[?(@.name=="test")].htpasswd.fileData.name}' 2>/dev/null || true)" == "htpass-secret" ]; then
+  fixture_configured=true
+fi
 
 # Hosted clusters (HyperShift) report an external control plane topology.
 # Their OAuth identity providers are managed through the HostedCluster object
@@ -74,7 +80,7 @@ htpasswd_idp_name="$(oc get oauths cluster -o 'jsonpath={.spec.identityProviders
 control_plane_topology="$(oc get infrastructures.config.openshift.io cluster -o 'jsonpath={.status.controlPlaneTopology}')"
 
 if [ "$control_plane_topology" == "External" ]; then
-  if [ "$htpasswd_idp_name" != "test" ]; then
+  if [ "$fixture_configured" != "true" ]; then
     MGMT_KUBECONFIG="${MGMT_KUBECONFIG:-${SHARED_DIR:-}/kubeconfig}"
     HC_NAMESPACE="${HC_NAMESPACE:-clusters}"
     if [ -z "${CLUSTER_NAME:-}" ] && [ -s "${SHARED_DIR:-}/cluster-name" ]; then
@@ -88,10 +94,17 @@ if [ "$control_plane_topology" == "External" ]; then
     # kubeadmin is disabled on hosted clusters as soon as an identity provider
     # is configured, so the e2e admin persona cannot log in as kubeadmin. Add
     # an 'e2e-admin' user with cluster-admin to the same htpasswd file for
-    # tests that need an admin session.
+    # tests that need an admin session. The entry uses a precomputed bcrypt
+    # hash of the public test password, like the test-user entry in the
+    # fixture. Disable tracing so the hash and the credential line stay out
+    # of the logs.
     htpasswd_file="$(mktemp)"
-    grep 'htpasswd:' "$BASEDIR/frontend/packages/console-shared/src/test-data/htpasswd-secret.yaml" | awk '{print $2}' | base64 -d | tr -d '\n' > "$htpasswd_file"
-    printf '\ne2e-admin:%s\n' "$(openssl passwd -apr1 test)" >> "$htpasswd_file"
+    set +x
+    {
+      grep 'htpasswd:' "$BASEDIR/frontend/packages/console-shared/src/test-data/htpasswd-secret.yaml" | awk '{print $2}' | base64 -d | tr -d '\n'
+      printf '\ne2e-admin:%s\n' '$2y$05$zUpdrRXiI5KjSQrV9cBi4uWxb85/ki7Wmnfc9NI8y1HAj0H6mkH1.'
+    } > "$htpasswd_file"
+    set -x
 
     # The secret referenced by the HostedCluster oauth configuration is read
     # from the management cluster, not from the guest's openshift-config.
@@ -120,9 +133,15 @@ if [ "$control_plane_topology" == "External" ]; then
   set -x
 
   export OPENSHIFT_USERNAME="${OPENSHIFT_USERNAME:-e2e-admin}"
+
+  if [ "${OPENSHIFT_USERNAME}" != "e2e-admin" ] || [ "${BRIDGE_KUBEADMIN_PASSWORD}" != "test" ]; then
+    echo "warning: overridden admin credentials were not verified by this setup; only the e2e-admin user was" >&2
+  fi
 else
-  if [ "$htpasswd_idp_name" != "test" ]; then
-    oc create -f "$BASEDIR/frontend/packages/console-shared/src/test-data/htpasswd-secret.yaml"
+  if [ "$fixture_configured" != "true" ]; then
+    # Apply instead of create so a pre-existing htpass-secret is reconciled
+    # with the fixture content instead of failing with AlreadyExists.
+    oc apply -f "$BASEDIR/frontend/packages/console-shared/src/test-data/htpasswd-secret.yaml"
     oc patch oauths cluster --patch "$(cat "$BASEDIR/frontend/packages/console-shared/src/test-data/patch-htpasswd.yaml")" --type=merge
     set +x
     echo "waiting for authentication operator to start Progressing 'test' idp..."
@@ -133,8 +152,11 @@ else
   fi
 
   export OPENSHIFT_USERNAME="${OPENSHIFT_USERNAME:-kubeadmin}"
-  # don't log kubeadmin-password
+  # don't log kubeadmin-password; keep a supplied password when the file is
+  # absent or unreadable
   set +x
-  export BRIDGE_KUBEADMIN_PASSWORD="$(cat "${KUBEADMIN_PASSWORD_FILE:-${INSTALLER_DIR:-${ARTIFACT_DIR:-/tmp/artifacts}/installer}/auth/kubeadmin-password}")"
+  if [ -z "${BRIDGE_KUBEADMIN_PASSWORD:-}" ]; then
+    export BRIDGE_KUBEADMIN_PASSWORD="$(cat "${KUBEADMIN_PASSWORD_FILE:-${INSTALLER_DIR:-${ARTIFACT_DIR:-/tmp/artifacts}/installer}/auth/kubeadmin-password}")"
+  fi
   set -x
 fi
