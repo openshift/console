@@ -72,8 +72,9 @@ if [ "$RUN_CREATE_USER" = true ]; then
     # values as case-insensitive regexes; only a value that starts and ends
     # with / (optional g/i flags) is a literal, so strip exactly those.
     # Values are composed textually: a pattern with unbalanced regex
-    # metacharacters can produce an invalid expression. Empty values are
-    # dropped, since Playwright ignores them.
+    # metacharacters can produce an invalid expression. A literally empty
+    # value is dropped (Playwright ignores it); '//' is not, because it
+    # compiles to a match-everything regex.
     pw_regex_literal='^/(.*)/([gi]*)$'
     for arg in "$@"; do
       if [ "$expect_value" == "true" ]; then
@@ -84,22 +85,25 @@ if [ "$RUN_CREATE_USER" = true ]; then
         continue
       elif [ "${arg#--grep-invert=}" != "$arg" ]; then
         value="${arg#--grep-invert=}"
-      elif [ "${arg#-G=}" != "$arg" ]; then
-        value="${arg#-G=}"
       elif [ "${#arg}" -gt 2 ] && [ "${arg#-G}" != "$arg" ]; then
-        # -Gvalue: attached short-flag form.
+        # -Gvalue and -G=value: commander keeps the '=' in short-flag
+        # values, so both are passed through with the prefix stripped.
         value="${arg#-G}"
       else
         composed+=("$arg")
         continue
       fi
+      if [ -z "$value" ]; then
+        # Only a literally empty value is dropped; '//' survives the
+        # stripping below as empty but compiles to a match-everything
+        # regex in Playwright, so it must be kept.
+        continue
+      fi
       if [[ $value =~ $pw_regex_literal ]]; then
         value="${BASH_REMATCH[1]}"
       fi
-      if [ -n "$value" ]; then
-        saw_invert=true
-        composed+=("--grep-invert" "(@standalone|$value)")
-      fi
+      saw_invert=true
+      composed+=("--grep-invert" "(@standalone|$value)")
     done
     # A trailing invert flag without a value is malformed; keep it so
     # Playwright reports it as it would without this composition.
