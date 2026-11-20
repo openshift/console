@@ -66,19 +66,22 @@ const ImageStreamTagDropdown: FC<{
           const imgStreamLabels = _.pick(labels, imageStreamLabels);
           const name = imageStream.image;
 
-          // Check for error conditions in the ImageStreamTag
+          // Check for import failure conditions. A failed import still resolves
+          // to the last successfully imported image, so the tag remains
+          // deployable: keep the form valid and surface the failure as a
+          // warning instead of blocking Create.
           const failureCondition = _.find(imageStreamImport.conditions, {
             type: 'ImportSuccess',
             status: 'False',
           }) as K8sResourceCondition | undefined;
 
-          if (failureCondition) {
-            // Handle import failure - set error state similar to catch block
+          if (failureCondition && _.isEmpty(image)) {
+            // No usable image: same handling as the catch block
             setFieldValue(`${fieldPrefix}isi`, {});
             setFieldValue(`${fieldPrefix}isi.status`, {
               metadata: {},
               status: '',
-              message: failureCondition.message || t('devconsole~Failed to import image'),
+              message: failureCondition.message || t('Failed to import image'),
             });
             setFieldValue(`${fieldPrefix}isSearchingForImage`, false);
             setValidated(ValidatedOptions.error);
@@ -93,6 +96,9 @@ const ImageStreamTagDropdown: FC<{
                 ...(status || {}),
                 status: 'Success',
                 metadata: status?.metadata || {},
+                ...(failureCondition && {
+                  message: failureCondition.message || t('Failed to import image'),
+                }),
               };
           const isi = { name, image, tag, status: normalizedStatus };
           const ports = getPorts(isi);
@@ -121,7 +127,7 @@ const ImageStreamTagDropdown: FC<{
             !getIn(_.get(touched, `${fieldPrefix}route`), 'targetPort') &&
             _.head(ports);
           targetPort && setFieldValue(`${fieldPrefix}route.targetPort`, makePortName(targetPort));
-          setValidated(ValidatedOptions.success);
+          setValidated(failureCondition ? ValidatedOptions.warning : ValidatedOptions.success);
         })
         .catch((error) => {
           if (unmounted.current) return;

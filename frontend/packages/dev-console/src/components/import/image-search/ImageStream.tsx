@@ -89,9 +89,9 @@ const ImageStream: FC<ImageStreamProps> = ({
     (registry === RegistryType.Internal || fromImageStreamTag) &&
     isStreamsAvailable &&
     isTagsAvailable;
-  const helperTextInvalid = validated === ValidatedOptions.error && isi.status?.message && (
-    <>{isi.status?.message}</>
-  );
+  const helperText = (validated === ValidatedOptions.error ||
+    validated === ValidatedOptions.warning) &&
+    isi.status?.message && <>{isi.status?.message}</>;
 
   return (
     <>
@@ -129,10 +129,14 @@ const ImageStream: FC<ImageStreamProps> = ({
             </GridItem>
           </Grid>
 
-          {validated === ValidatedOptions.error && (
+          {(validated === ValidatedOptions.error || validated === ValidatedOptions.warning) && (
             <FormHelperText>
               <HelperText>
-                <HelperTextItem variant="error">{helperTextInvalid}</HelperTextItem>
+                <HelperTextItem
+                  variant={validated === ValidatedOptions.error ? 'error' : 'warning'}
+                >
+                  {helperText}
+                </HelperTextItem>
               </HelperText>
             </FormHelperText>
           )}

@@ -55,9 +55,7 @@ const mockImageStreamTag = {
     },
   },
   tag: 'latest',
-  status: {
-    conditions: [],
-  },
+  conditions: [],
 };
 
 const mockImageStreamTagWithError = {
@@ -70,7 +68,6 @@ const mockImageStreamTagWithError = {
     dockerImageMetadata: {},
   },
   tag: 'latest',
-  status: {},
   conditions: [
     {
       type: 'ImportSuccess',
@@ -81,6 +78,11 @@ const mockImageStreamTagWithError = {
       generation: 1,
     },
   ],
+};
+
+const mockImageStreamTagNoImage = {
+  ...mockImageStreamTagWithError,
+  image: {},
 };
 
 const mockImageStreamContext = {
@@ -135,7 +137,7 @@ describe('ImageStreamTagDropdown', () => {
     });
   });
 
-  it('should detect and handle ImportSuccess failure conditions', async () => {
+  it('should show a warning when ImportSuccess fails but the tag still resolves to an image', async () => {
     const k8sGetMock = k8s.k8sGet as jest.Mock;
     k8sGetMock.mockResolvedValue(mockImageStreamTagWithError);
 
@@ -171,10 +173,38 @@ describe('ImageStreamTagDropdown', () => {
 
     await waitFor(
       () => {
-        expect(mockImageStreamContext.setValidated).toHaveBeenCalledWith(ValidatedOptions.error);
+        expect(mockImageStreamContext.setValidated).toHaveBeenCalledWith(ValidatedOptions.warning);
       },
       { timeout: 3000 },
     );
+  });
+
+  it('should set error state when ImportSuccess failure has no usable image', async () => {
+    const k8sGetMock = k8s.k8sGet as jest.Mock;
+    k8sGetMock.mockResolvedValue(mockImageStreamTagNoImage);
+
+    const initialValues = {
+      imageStream: {
+        namespace: 'test-namespace',
+        image: 'test-image',
+        tag: 'latest',
+      },
+      isi: {},
+      name: '',
+      application: { selectedKey: '' },
+    };
+
+    render(
+      <ImageStreamContext.Provider value={mockImageStreamContext}>
+        <Formik initialValues={initialValues} onSubmit={jest.fn()}>
+          {() => <ImageStreamTagDropdown />}
+        </Formik>
+      </ImageStreamContext.Provider>,
+    );
+
+    await waitFor(() => {
+      expect(mockImageStreamContext.setValidated).toHaveBeenCalledWith(ValidatedOptions.error);
+    });
   });
 
   it('should normalize status to Success when no failure conditions exist', async () => {
