@@ -13,7 +13,7 @@
 #
 # Tests tagged @techpreview only run in test-prow-e2e-techpreview.sh.
 # Tests tagged @standalone require a standalone control plane and are also
-# excluded when running against a hosted (HyperShift) cluster.
+# excluded when the cluster reports an external control plane topology.
 #
 # Environment (typical Prow / installer):
 #   ARTIFACT_DIR, INSTALLER_DIR, KUBEADMIN_PASSWORD_FILE
