@@ -1,3 +1,5 @@
+import { isNotFound } from '../clients/kubernetes-client';
+
 export const testerDeployment = {
   apiVersion: 'apps/v1',
   kind: 'Deployment',
@@ -257,6 +259,105 @@ export const getVACFixtures = (suffix: string) => {
   };
 };
 
+// --- VolumeGroupSnapshot fixtures ---
+
+export const getVGSFixtures = (suffix: string, groupSnapshotStorageClassName: string) => {
+  const names = {
+    TEST_PVC_A: `vgs-testpvc-a-${suffix}`,
+    TEST_PVC_B: `vgs-testpvc-b-${suffix}`,
+    TEST_PVC_MIXED_A: `vgs-mixed-pvc-a-${suffix}`,
+    TEST_PVC_MIXED_B: `vgs-mixed-pvc-b-${suffix}`,
+    TEST_FAKE_STORAGECLASS_A: `vgs-fake-sc-a-${suffix}`,
+    TEST_FAKE_STORAGECLASS_B: `vgs-fake-sc-b-${suffix}`,
+    TEST_DEPLOYMENT: `vgs-tester-deployment-${suffix}`,
+  };
+
+  const makePVC = (name: string, storageClassName: string, labels: Record<string, string>) => ({
+    apiVersion: 'v1',
+    kind: 'PersistentVolumeClaim',
+    metadata: { name, labels },
+    spec: {
+      storageClassName,
+      accessModes: ['ReadWriteOnce'],
+      resources: { requests: { storage: '1Gi' } },
+    },
+  });
+
+  return {
+    ...names,
+    // Two PVCs on the same StorageClass/provisioner, for the happy-path group snapshot.
+    // The caller discovers groupSnapshotStorageClassName from an existing
+    // VolumeGroupSnapshotClass on the cluster (see findGroupSnapshotCapableStorageClass),
+    // since not every StorageClass's CSI driver actually implements group snapshots.
+    PVC_SAME_PROVISIONER_A: makePVC(names.TEST_PVC_A, groupSnapshotStorageClassName, {
+      'vgs-test': 'true',
+    }),
+    PVC_SAME_PROVISIONER_B: makePVC(names.TEST_PVC_B, groupSnapshotStorageClassName, {
+      'vgs-test': 'true',
+    }),
+    // Two PVCs on two throwaway StorageClasses with distinct fake provisioners, so the
+    // create form's mixed-provisioner validation is exercised without depending on any
+    // real StorageClass existing on the cluster. Neither needs to be Bound: the
+    // validation only inspects the matched PVCs' declared StorageClass/provisioner.
+    PVC_MIXED_FAKE_PROVISIONER_A: makePVC(names.TEST_PVC_MIXED_A, names.TEST_FAKE_STORAGECLASS_A, {
+      'vgs-mixed-test': 'true',
+    }),
+    PVC_MIXED_FAKE_PROVISIONER_B: makePVC(names.TEST_PVC_MIXED_B, names.TEST_FAKE_STORAGECLASS_B, {
+      'vgs-mixed-test': 'true',
+    }),
+    FAKE_STORAGE_CLASS_A: {
+      apiVersion: 'storage.k8s.io/v1',
+      kind: 'StorageClass',
+      metadata: { name: names.TEST_FAKE_STORAGECLASS_A },
+      provisioner: 'csi.fake-a.example.com',
+    },
+    FAKE_STORAGE_CLASS_B: {
+      apiVersion: 'storage.k8s.io/v1',
+      kind: 'StorageClass',
+      metadata: { name: names.TEST_FAKE_STORAGECLASS_B },
+      provisioner: 'csi.fake-b.example.com',
+    },
+    getDeployment: (namespace: string, pvcNames: string[]) => ({
+      apiVersion: 'apps/v1',
+      kind: 'Deployment',
+      metadata: { name: names.TEST_DEPLOYMENT, namespace },
+      spec: {
+        replicas: 1,
+        selector: { matchLabels: { app: names.TEST_DEPLOYMENT } },
+        template: {
+          metadata: { labels: { app: names.TEST_DEPLOYMENT } },
+          spec: {
+            securityContext: {
+              runAsNonRoot: true,
+              seccompProfile: { type: 'RuntimeDefault' },
+            },
+            containers: [
+              {
+                name: 'busybox',
+                image: 'busybox',
+                imagePullPolicy: 'IfNotPresent',
+                securityContext: {
+                  allowPrivilegeEscalation: false,
+                  capabilities: { drop: ['ALL'] },
+                },
+                command: ['sh', '-c', 'echo Container is Running ; sleep 3600'],
+                volumeMounts: pvcNames.map((pvcName, i) => ({
+                  name: `vol-${i}`,
+                  mountPath: `/data-${i}`,
+                })),
+              },
+            ],
+            volumes: pvcNames.map((pvcName, i) => ({
+              name: `vol-${i}`,
+              persistentVolumeClaim: { claimName: pvcName },
+            })),
+          },
+        },
+      },
+    }),
+  };
+};
+
 export async function isAwsPlatform(
   k8sClient: import('../clients/kubernetes-client').default,
 ): Promise<boolean> {
@@ -267,4 +368,99 @@ export async function isAwsPlatform(
     'cluster',
   )) as any;
   return infra?.status?.platformStatus?.type === 'AWS';
+}
+
+/**
+ * Whether the groupsnapshot.storage.k8s.io v1 CRDs are installed. Unlike
+ * findGroupSnapshotCapableStorageClass, this doesn't require a working CSI
+ * driver/snapshot-controller - just that the API itself is served, which is
+ * all UI-only tests (e.g. form validation) that never create a real
+ * VolumeGroupSnapshot need.
+ */
+export async function isGroupSnapshotApiAvailable(
+  k8sClient: import('../clients/kubernetes-client').default,
+): Promise<boolean> {
+  let crd: { spec?: { versions?: { name: string; served: boolean }[] } } | null;
+  try {
+    crd = (await k8sClient.getClusterCustomResource(
+      'apiextensions.k8s.io',
+      'v1',
+      'customresourcedefinitions',
+      'volumegroupsnapshotclasses.groupsnapshot.storage.k8s.io',
+    )) as { spec?: { versions?: { name: string; served: boolean }[] } };
+  } catch (err) {
+    // Only a genuine 404 means the CRD isn't installed. Any other failure (permissions,
+    // 503, etc.) shouldn't be silently treated as "unsupported cluster" - that masks a
+    // real problem behind a skipped test instead of a failure.
+    if (isNotFound(err)) {
+      return false;
+    }
+    throw err;
+  }
+  return !!crd?.spec?.versions?.some((version) => version.name === 'v1' && version.served);
+}
+
+/**
+ * Like k8sClient.listClusterCustomResources, but propagates failures instead of treating
+ * every error (permissions, 503, etc.) as "no items". A genuine 404 (the resource type
+ * itself doesn't exist) still returns an empty list, since that's a real "not installed"
+ * signal.
+ */
+async function listClusterCustomResourcesStrict(
+  k8sClient: import('../clients/kubernetes-client').default,
+  group: string,
+  version: string,
+  plural: string,
+): Promise<unknown[]> {
+  try {
+    const response = await k8sClient.customObjectsApi.listClusterCustomObject({
+      group,
+      plural,
+      version,
+    });
+    return (response as any)?.items || [];
+  } catch (err) {
+    if (isNotFound(err)) {
+      return [];
+    }
+    throw err;
+  }
+}
+
+/**
+ * Finds a StorageClass whose provisioner matches the driver of an existing
+ * VolumeGroupSnapshotClass. Group-snapshot support depends on the CSI driver/
+ * snapshot-controller sidecar having the CSIVolumeGroupSnapshot feature gate
+ * enabled, which isn't implied by the CRDs being installed or by any particular
+ * platform, so this discovers a combination the cluster has actually been
+ * configured with rather than assuming one.
+ */
+export async function findGroupSnapshotCapableStorageClass(
+  k8sClient: import('../clients/kubernetes-client').default,
+): Promise<{ storageClassName: string; vgsClassName: string } | null> {
+  const vgsClasses = (await listClusterCustomResourcesStrict(
+    k8sClient,
+    'groupsnapshot.storage.k8s.io',
+    'v1',
+    'volumegroupsnapshotclasses',
+  )) as { metadata: { name: string }; driver: string; deletionPolicy: string }[];
+  if (vgsClasses.length === 0) {
+    return null;
+  }
+  const storageClasses = (await listClusterCustomResourcesStrict(
+    k8sClient,
+    'storage.k8s.io',
+    'v1',
+    'storageclasses',
+  )) as { metadata: { name: string }; provisioner: string }[];
+  // Require Delete so the member VolumeSnapshots/content this test creates don't outlive
+  // namespace deletion (Retain would leak cluster-scoped VolumeGroupSnapshotContent and
+  // backend snapshot storage across test runs).
+  for (const vgsClass of vgsClasses.filter((c) => c.deletionPolicy === 'Delete')) {
+    const storageClass = storageClasses.find((sc) => sc.provisioner === vgsClass.driver);
+    if (storageClass) {
+      return { storageClassName: storageClass.metadata.name, vgsClassName: vgsClass.metadata.name };
+    }
+  }
+  return null;
 }

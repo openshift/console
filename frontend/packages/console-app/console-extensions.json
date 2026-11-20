@@ -209,6 +209,34 @@
     }
   },
   {
+    "type": "console.page/resource/list",
+    "properties": {
+      "model": {
+        "group": "groupsnapshot.storage.k8s.io",
+        "version": "v1",
+        "kind": "VolumeGroupSnapshotContent"
+      },
+      "component": { "$codeRef": "volumeGroupSnapshotContent.default" }
+    },
+    "flags": {
+      "required": ["CAN_LIST_VGSC"]
+    }
+  },
+  {
+    "type": "console.page/resource/details",
+    "properties": {
+      "model": {
+        "group": "groupsnapshot.storage.k8s.io",
+        "version": "v1",
+        "kind": "VolumeGroupSnapshotContent"
+      },
+      "component": { "$codeRef": "volumeGroupSnapshotContentDetails.default" }
+    },
+    "flags": {
+      "required": ["CAN_LIST_VGSC"]
+    }
+  },
+  {
     "type": "console.tab/horizontalNav",
     "properties": {
       "model": {
@@ -434,6 +462,19 @@
     "properties": {
       "model": {
         "version": "v1",
+        "kind": "VolumeGroupSnapshot",
+        "group": "groupsnapshot.storage.k8s.io"
+      },
+      "provider": {
+        "$codeRef": "volumeGroupSnapshotProvider.useVolumeGroupSnapshotActionsProvider"
+      }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "version": "v1",
         "kind": "VolumeAttributesClass",
         "group": "storage.k8s.io"
       },
@@ -463,6 +504,17 @@
         "version": "v1",
         "kind": "VolumeSnapshotClass",
         "group": "snapshot.storage.k8s.io"
+      },
+      "provider": { "$codeRef": "defaultProvider.useDefaultActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "version": "v1",
+        "kind": "VolumeGroupSnapshotClass",
+        "group": "groupsnapshot.storage.k8s.io"
       },
       "provider": { "$codeRef": "defaultProvider.useDefaultActionsProvider" }
     }
@@ -1405,6 +1457,54 @@
     "type": "console.navigation/resource-ns",
     "properties": {
       "perspective": "admin",
+      "section": "storage",
+      "id": "volumegroupsnapshots",
+      "insertAfter": "volumesnapshotcontents",
+      "name": "%console-app~VolumeGroupSnapshots%",
+      "model": {
+        "group": "groupsnapshot.storage.k8s.io",
+        "version": "v1",
+        "kind": "VolumeGroupSnapshot"
+      }
+    }
+  },
+  {
+    "type": "console.navigation/resource-cluster",
+    "properties": {
+      "perspective": "admin",
+      "section": "storage",
+      "id": "volumegroupsnapshotclasses",
+      "insertAfter": "volumegroupsnapshots",
+      "name": "%console-app~VolumeGroupSnapshotClasses%",
+      "model": {
+        "group": "groupsnapshot.storage.k8s.io",
+        "version": "v1",
+        "kind": "VolumeGroupSnapshotClass"
+      }
+    }
+  },
+  {
+    "type": "console.navigation/resource-cluster",
+    "properties": {
+      "perspective": "admin",
+      "id": "volumegroupsnapshotcontents",
+      "section": "storage",
+      "name": "%console-app~VolumeGroupSnapshotContents%",
+      "insertAfter": "volumegroupsnapshotclasses",
+      "model": {
+        "group": "groupsnapshot.storage.k8s.io",
+        "kind": "VolumeGroupSnapshotContent",
+        "version": "v1"
+      }
+    },
+    "flags": {
+      "required": ["CAN_LIST_VGSC"]
+    }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "perspective": "admin",
       "section": "builds",
       "id": "buildconfigs",
       "name": "%console-app~BuildConfigs%",
@@ -1450,6 +1550,17 @@
         "group": "snapshot.storage.k8s.io",
         "version": "v1",
         "kind": "VolumeSnapshotContent"
+      },
+      "provider": { "$codeRef": "defaultProvider.useDefaultActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "groupsnapshot.storage.k8s.io",
+        "version": "v1",
+        "kind": "VolumeGroupSnapshotContent"
       },
       "provider": { "$codeRef": "defaultProvider.useDefaultActionsProvider" }
     }

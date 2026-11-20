@@ -43,6 +43,8 @@ import {
   VolumeAttributesClassModel,
   TemplateInstanceModel,
   UserModel,
+  VolumeGroupSnapshotModel,
+  VolumeGroupSnapshotClassModel,
   VolumeSnapshotModel,
   VolumeSnapshotClassModel,
   CustomResourceDefinitionModel,
@@ -249,6 +251,16 @@ const baseListPages: Map<ResourceMapKey, ResourceMapValue> = new Map()
     import(
       '@console/app/src/components/volume-snapshot/volume-snapshot-class' /* webpackChunkName: "volume-snapshot-class" */
     ).then((m) => m.VolumeSnapshotClassPage),
+  )
+  .set(referenceForModel(VolumeGroupSnapshotModel), () =>
+    import(
+      '@console/app/src/components/volume-group-snapshot/volume-group-snapshot' /* webpackChunkName: "volume-group-snapshot" */
+    ).then((m) => m.VolumeGroupSnapshotPage),
+  )
+  .set(referenceForModel(VolumeGroupSnapshotClassModel), () =>
+    import(
+      '@console/app/src/components/volume-group-snapshot/volume-group-snapshot-class' /* webpackChunkName: "volume-group-snapshot-class" */
+    ).then((m) => m.VolumeGroupSnapshotClassPage),
   );
 
 export const getResourceListPages = (pluginPages: ResourceListPage[] = []) => {

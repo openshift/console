@@ -77,9 +77,10 @@ export const AccessModeSelector: FC<AccessModeSelectorProps> = (props) => {
   }, [accessMode, onChange]);
 
   const [isOpen, setIsOpen] = useState(false);
-  const [selected, setSelected] = useState<string>(
-    getAccessModeOptions().find((mode) => mode.value === pvcInitialAccessMode[0])?.title ?? '',
-  );
+  // Derived from accessMode (rather than tracked separately) so the toggle label
+  // always reflects the real selection, including when accessMode is auto-picked
+  // above from data that only becomes available after this component first mounts.
+  const selected = getAccessModeOptions().find((mode) => mode.value === accessMode)?.title ?? '';
 
   const onToggleClick = () => {
     setIsOpen(!isOpen);
@@ -87,7 +88,6 @@ export const AccessModeSelector: FC<AccessModeSelectorProps> = (props) => {
 
   const onSelect = (_event: undefined, value: { val: string; label: string }) => {
     setIsOpen(!isOpen);
-    setSelected(value.label);
     setAccessMode(value.val);
   };
   const selectOptions = getAccessModeOptions().map((option) => {
