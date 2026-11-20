@@ -189,10 +189,12 @@ if [ "$is_hosted" == "true" ]; then
     hc_lookup_err="$(mktemp)"
     if HC_NAMESPACE="$(oc --kubeconfig="$MGMT_KUBECONFIG" get hostedclusters -A -o "jsonpath={range .items[?(@.metadata.name==\"$CLUSTER_NAME\")]}{.metadata.namespace}{\"\\n\"}{end}" 2>"$hc_lookup_err")"; then
       if [ "$(printf '%s' "$HC_NAMESPACE" | grep -c .)" -gt 1 ]; then
+        rm -f "$hc_lookup_err"
         echo "multiple HostedClusters named '$CLUSTER_NAME': set HC_NAMESPACE to disambiguate" >&2
         exit 1
       fi
       if [ -z "$HC_NAMESPACE" ]; then
+        rm -f "$hc_lookup_err"
         echo "no HostedCluster named '$CLUSTER_NAME' in the management cluster: check CLUSTER_NAME or set HC_NAMESPACE" >&2
         exit 1
       fi
@@ -209,6 +211,15 @@ if [ "$is_hosted" == "true" ]; then
   HC_NAMESPACE="${HC_NAMESPACE:-clusters}"
   if [ ! -f "$MGMT_KUBECONFIG" ] || [ ! -s "$MGMT_KUBECONFIG" ] || [ -z "${CLUSTER_NAME:-}" ]; then
     echo "hosted cluster detected: set MGMT_KUBECONFIG (management cluster kubeconfig) and CLUSTER_NAME (HostedCluster name in namespace '$HC_NAMESPACE'), either directly or via SHARED_DIR" >&2
+    exit 1
+  fi
+  # HyperShift disables integrated OAuth when the HostedCluster authenticates
+  # through OIDC: no oauth-openshift deployment runs and the oauth
+  # configuration below is ignored, so fail fast instead of burning the
+  # login timeout. The precheck is advisory; a read failure falls through
+  # to the setup's own failure modes.
+  if [ "$(oc --kubeconfig="$MGMT_KUBECONFIG" get hostedcluster -n "$HC_NAMESPACE" "$CLUSTER_NAME" -o 'jsonpath={.spec.configuration.authentication.type}' 2>/dev/null || true)" == "OIDC" ]; then
+    echo "the HostedCluster authenticates through OIDC, so its integrated OAuth - and the htpasswd identity provider this setup configures - is disabled" >&2
     exit 1
   fi
 

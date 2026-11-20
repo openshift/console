@@ -44,7 +44,9 @@ export BRIDGE_BASE_ADDRESS
 # excluded when the cluster reports an external control plane topology. This job selects
 # @techpreview tests, so the invert must never contain @techpreview.
 # CONTROL_PLANE_TOPOLOGY is exported by create-user.sh, which fails fast if
-# it cannot be read. Note that Playwright does not combine repeated
+# it cannot be read. The exclusion covers any external-topology cluster
+# (HyperShift guests and ROKS/ARO-style managed offerings alike).
+# Note that Playwright does not combine repeated
 # --grep-invert flags (the last one wins): a caller-supplied invert
 # replaces this exclusion.
 grep_invert_args=()

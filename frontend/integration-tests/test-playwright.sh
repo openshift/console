@@ -64,7 +64,9 @@ if [ "$RUN_CREATE_USER" = true ]; then
   export BRIDGE_HTPASSWD_PASSWORD="${BRIDGE_HTPASSWD_PASSWORD:-test}"
 
   # Exclude standalone-only tests when the cluster reports an external
-  # control plane topology, matching the prow entrypoints. Playwright does
+  # control plane topology - HyperShift guests and ROKS/ARO-style managed
+  # offerings alike, since the standalone-only surfaces are absent from
+  # both - matching the prow entrypoints. Playwright does
   # not combine repeated --grep-invert flags (the last one wins), so the
   # exclusion is composed into any invert the caller passed instead of
   # adding a second flag.
@@ -87,7 +89,8 @@ if [ "$RUN_CREATE_USER" = true ]; then
     #   -G /pattern/gi         -> --grep-invert '/(?:@standalone|pattern)/gi'
     #   --grep-invert ''       -> dropped (Playwright ignores it)
     #   -G=                    -> dropped (native Playwright would receive
-    #                             the literal '=' and exclude nothing)
+    #                             the literal '=', which matches no test
+    #                             title)
     #   (no invert flag)       -> --grep-invert @standalone prepended
     # Playwright 1.63's forceRegExp only recognizes g and i as literal
     # flags; other suffixes are plain regexes.
