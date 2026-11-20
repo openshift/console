@@ -143,6 +143,26 @@ fi
 set -x
 
 if [ "$is_hosted" == "true" ]; then
+  # Reject leftover credentials from the other topology before doing any
+  # work (the setup below is idempotent but slow): kubeadmin is disabled on
+  # hosted clusters once OAuth is configured, and a lone preset password
+  # would pair with the wrong persona. Untraced so preset values do not
+  # leak into the trace; the persona defaults are applied only after the
+  # setup succeeds, at the end of this branch.
+  set +x
+  if [ "${OPENSHIFT_USERNAME:-}" == "kubeadmin" ]; then
+    echo "OPENSHIFT_USERNAME is 'kubeadmin', which is disabled on hosted clusters once OAuth is configured; unset OPENSHIFT_USERNAME and BRIDGE_KUBEADMIN_PASSWORD (likely leftovers from a standalone run in this shell)" >&2
+    exit 1
+  fi
+  if [ -n "${BRIDGE_KUBEADMIN_PASSWORD:-}" ] && [ -z "${OPENSHIFT_USERNAME:-}" ]; then
+    echo "BRIDGE_KUBEADMIN_PASSWORD is preset without OPENSHIFT_USERNAME; on hosted clusters the admin persona is the e2e-admin user, so set both or neither" >&2
+    exit 1
+  fi
+  if [ -z "${BRIDGE_KUBEADMIN_PASSWORD:-}" ] && [ -n "${OPENSHIFT_USERNAME:-}" ]; then
+    echo "OPENSHIFT_USERNAME is preset without BRIDGE_KUBEADMIN_PASSWORD; set both or neither" >&2
+    exit 1
+  fi
+  set -x
   # The management cluster kubeconfig: the hypershift-aws chains save it as
   # SHARED_DIR/kubeconfig, the hostedcluster workflow family as
   # SHARED_DIR/mgmt_kubeconfig, and chains derived from hypershift-conformance
@@ -276,25 +296,9 @@ if [ "$is_hosted" == "true" ]; then
   # HostedCluster name replaced by dashes.
   oc --kubeconfig="$MGMT_KUBECONFIG" -n "${HC_NAMESPACE}-${CLUSTER_NAME//./-}" rollout status deploy/oauth-openshift --timeout=10m
 
-  # don't log a supplied password; check the override pair untraced so a
-  # supplied value cannot leak into the trace. The two variables are a pair:
-  # the admin persona on hosted clusters is the e2e-admin user, so a preset
-  # password without the username (e.g. left over from a standalone run)
-  # would pair kubeadmin's password with e2e-admin and fail every login. A
-  # preset kubeadmin persona is its mirror image: kubeadmin is disabled on
-  # hosted clusters as soon as OAuth is configured.
-  if [ "${OPENSHIFT_USERNAME:-}" == "kubeadmin" ]; then
-    echo "OPENSHIFT_USERNAME is 'kubeadmin', which is disabled on hosted clusters once OAuth is configured; unset OPENSHIFT_USERNAME and BRIDGE_KUBEADMIN_PASSWORD (likely leftovers from a standalone run in this shell)" >&2
-    exit 1
-  fi
-  if [ -n "${BRIDGE_KUBEADMIN_PASSWORD:-}" ] && [ -z "${OPENSHIFT_USERNAME:-}" ]; then
-    echo "BRIDGE_KUBEADMIN_PASSWORD is preset without OPENSHIFT_USERNAME; on hosted clusters the admin persona is the e2e-admin user, so set both or neither" >&2
-    exit 1
-  fi
-  if [ -z "${BRIDGE_KUBEADMIN_PASSWORD:-}" ] && [ -n "${OPENSHIFT_USERNAME:-}" ]; then
-    echo "OPENSHIFT_USERNAME is preset without BRIDGE_KUBEADMIN_PASSWORD; set both or neither" >&2
-    exit 1
-  fi
+  # don't log a supplied password; apply the persona defaults untraced so a
+  # supplied value cannot leak into the trace. The pair-consistency checks
+  # already ran at the top of this branch.
   export BRIDGE_KUBEADMIN_PASSWORD="${BRIDGE_KUBEADMIN_PASSWORD:-test}"
   export OPENSHIFT_USERNAME="${OPENSHIFT_USERNAME:-e2e-admin}"
   if [ "${OPENSHIFT_USERNAME}" != "e2e-admin" ] || [ "${BRIDGE_KUBEADMIN_PASSWORD}" != "test" ]; then
@@ -302,6 +306,16 @@ if [ "$is_hosted" == "true" ]; then
   fi
   set -x
 else
+  # The mirror of the hosted branch's guards, and like them checked before
+  # any work: 'e2e-admin' is the hosted-only admin persona (this branch does
+  # not provision it), so a preset username is a leftover from a hosted run
+  # in this shell. Untraced so preset values do not leak into the trace.
+  set +x
+  if [ "${OPENSHIFT_USERNAME:-}" == "e2e-admin" ]; then
+    echo "OPENSHIFT_USERNAME is 'e2e-admin', the hosted-cluster admin persona, which this setup does not provision on a standalone cluster; unset it (likely a leftover from a hosted run in this shell)" >&2
+    exit 1
+  fi
+  set -x
   # Skip the fixture setup when it is already configured on the cluster: an
   # identity provider named 'test' of type HTPasswd backed by the suite's
   # console-e2e-htpasswd. A provider that merely shares the name is reconfigured
@@ -385,14 +399,6 @@ else
     set -x
   fi
 
-  # The mirror of the hosted branch's pair guard: 'e2e-admin' is the
-  # hosted-only admin persona (this branch does not provision it), so a
-  # preset username is a leftover from a hosted run in this shell and would
-  # pair it with credentials that cannot log in on a standalone cluster.
-  if [ "${OPENSHIFT_USERNAME:-}" == "e2e-admin" ]; then
-    echo "OPENSHIFT_USERNAME is 'e2e-admin', the hosted-cluster admin persona, which this setup does not provision on a standalone cluster; unset it (likely a leftover from a hosted run in this shell)" >&2
-    exit 1
-  fi
   export OPENSHIFT_USERNAME="${OPENSHIFT_USERNAME:-kubeadmin}"
   # don't log kubeadmin-password; keep a supplied password and tolerate an
   # absent password file so local runs without an installer directory can
