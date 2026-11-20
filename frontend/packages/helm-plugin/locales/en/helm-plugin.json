@@ -82,6 +82,7 @@
   "HelmChartRepository": "HelmChartRepository",
   "Hide advanced options": "Hide advanced options",
   "Home page": "Home page",
+  "HTTP is unencrypted, so your credentials and any downloaded content might be exposed or tampered with in transit. Use HTTPS whenever possible.": "HTTP is unencrypted, so your credentials and any downloaded content might be exposed or tampered with in transit. Use HTTPS whenever possible.",
   "Install": "Install",
   "Install Helm Chart from Helm registry.": "Install Helm Chart from Helm registry.",
   "Install Helm Chart from URL": "Install Helm Chart from URL",
