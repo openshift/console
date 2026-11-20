@@ -5,6 +5,7 @@ import (
 	"net/http/httptest"
 	"reflect"
 	"strconv"
+	"strings"
 	"testing"
 	"time"
 
@@ -166,11 +167,21 @@ func TestCombinedSessionStore_AddSession(t *testing.T) {
 					refreshFound = true
 					gotRefresh := make(map[interface{}]interface{})
 					require.NoError(t, securecookie.DecodeMulti(openshiftRefreshTokenCookieName, c.Value, &gotRefresh, cookieCodecs...))
-					// The cookie now contains an ID, not the actual refresh token
-					refreshTokenID := gotRefresh["refresh-token-id"].(string)
-					actualRefreshToken := cs.serverStore.byRefreshTokenID[refreshTokenID]
-					if actualRefreshToken != tt.wantRefreshToken {
-						t.Errorf("wanted refresh token to be %q, got %q (via ID %q)", tt.wantRefreshToken, actualRefreshToken, refreshTokenID)
+					if actualRefreshToken, ok := gotRefresh["refresh-token"].(string); ok {
+						if actualRefreshToken != tt.wantRefreshToken {
+							t.Errorf("wanted refresh token to be %q, got %q", tt.wantRefreshToken, actualRefreshToken)
+						}
+					} else if refID, ok := gotRefresh["refresh-token-id"].(string); ok {
+						// Large token fallback — verify the reference ID maps to the expected token
+						if actualToken, exists := cs.serverStore.byRefreshTokenID[refID]; exists {
+							if actualToken != tt.wantRefreshToken {
+								t.Errorf("wanted refresh token (via ref ID) to be %q, got %q", tt.wantRefreshToken, actualToken)
+							}
+						} else {
+							t.Errorf("refresh-token-id %q not found in server store", refID)
+						}
+					} else if tt.wantRefreshToken != "" {
+						t.Errorf("refresh cookie contained neither refresh-token nor refresh-token-id")
 					}
 				}
 			}
@@ -266,6 +277,127 @@ func TestCombinedSessionStore_GetSession(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestCombinedSessionStore_GetSession_LegacyCookie(t *testing.T) {
+	encryptionKey := []byte(randomString(32))
+	authnKey := []byte(randomString(64))
+	cookieCodecs := securecookie.CodecsFromPairs(authnKey, encryptionKey)
+
+	testServerSessions := NewServerSessionStore(10)
+	testServerSessions.byToken["1"] = &LoginState{sessionToken: "1"}
+
+	cs := NewSessionStore(authnKey, encryptionKey, true, "/")
+	cs.serverStore = testServerSessions
+
+	testCookies := &testCookieFactory{
+		cookieCodecs: cookieCodecs,
+		serverStore:  cs.serverStore,
+	}
+
+	req, err := http.NewRequest(http.MethodGet, "/", nil)
+	require.NoError(t, err)
+
+	testCookies.WithRefreshToken("refresh-old").WithLegacyFormat()
+	req = testCookies.Complete(t, req)
+
+	testWriter := httptest.NewRecorder()
+	got, err := cs.GetSession(testWriter, req)
+	require.NoError(t, err)
+
+	// Legacy format should resolve through byRefreshTokenID map
+	require.Nil(t, got, "should not find session by refresh token alone without byRefreshToken mapping")
+
+	// Positive case: legacy cookie resolves when byRefreshToken is populated
+	expectedSession := &LoginState{sessionToken: "legacy-session", refreshToken: "refresh-old"}
+	testServerSessions.byRefreshToken["refresh-old"] = expectedSession
+
+	req2, err := http.NewRequest(http.MethodGet, "/", nil)
+	require.NoError(t, err)
+
+	testCookies2 := &testCookieFactory{
+		cookieCodecs: cookieCodecs,
+		serverStore:  cs.serverStore,
+	}
+	testCookies2.WithRefreshToken("refresh-old").WithLegacyFormat()
+	req2 = testCookies2.Complete(t, req2)
+
+	testWriter2 := httptest.NewRecorder()
+	got2, err := cs.GetSession(testWriter2, req2)
+	require.NoError(t, err)
+	require.Equal(t, expectedSession, got2, "legacy cookie should resolve to session via byRefreshToken")
+}
+
+func TestCombinedSessionStore_RecoveryCookie(t *testing.T) {
+	encryptionKey := []byte(randomString(32))
+	authnKey := []byte(randomString(64))
+
+	cs := NewSessionStore(authnKey, encryptionKey, false, "/")
+
+	accessToken := "sha256~test-access-token-12345"
+	expiry := time.Now().Add(24 * time.Hour)
+
+	t.Run("set and get recovery cookie", func(t *testing.T) {
+		req, err := http.NewRequest(http.MethodGet, "/", nil)
+		require.NoError(t, err)
+		w := httptest.NewRecorder()
+
+		err = cs.SetRecoveryCookie(w, req, accessToken, expiry)
+		require.NoError(t, err)
+
+		// Build a new request with the cookie from the response
+		req2, err := http.NewRequest(http.MethodGet, "/", nil)
+		require.NoError(t, err)
+		for _, c := range w.Result().Cookies() {
+			req2.AddCookie(c)
+		}
+
+		gotToken, gotExpiry, ok := cs.GetRecoveryCookie(req2)
+		require.True(t, ok)
+		require.Equal(t, accessToken, gotToken)
+		require.Equal(t, expiry.Unix(), gotExpiry.Unix())
+	})
+
+	t.Run("get recovery cookie from empty request", func(t *testing.T) {
+		req, err := http.NewRequest(http.MethodGet, "/", nil)
+		require.NoError(t, err)
+		_, _, ok := cs.GetRecoveryCookie(req)
+		require.False(t, ok)
+	})
+
+	t.Run("clear recovery cookie", func(t *testing.T) {
+		req, err := http.NewRequest(http.MethodGet, "/", nil)
+		require.NoError(t, err)
+		w := httptest.NewRecorder()
+
+		cs.ClearRecoveryCookie(w, req)
+
+		cookies := w.Result().Cookies()
+		require.Len(t, cookies, 1)
+		require.Equal(t, openshiftRecoveryTokenCookieName, cookies[0].Name)
+		require.Equal(t, -1, cookies[0].MaxAge)
+	})
+
+	t.Run("recovery cookie with expired token", func(t *testing.T) {
+		req, err := http.NewRequest(http.MethodGet, "/", nil)
+		require.NoError(t, err)
+		w := httptest.NewRecorder()
+
+		pastExpiry := time.Now().Add(-1 * time.Hour)
+		err = cs.SetRecoveryCookie(w, req, accessToken, pastExpiry)
+		require.NoError(t, err)
+
+		req2, err := http.NewRequest(http.MethodGet, "/", nil)
+		require.NoError(t, err)
+		for _, c := range w.Result().Cookies() {
+			req2.AddCookie(c)
+		}
+
+		gotToken, gotExpiry, ok := cs.GetRecoveryCookie(req2)
+		require.True(t, ok, "cookie should be readable even if token is expired")
+		require.Equal(t, accessToken, gotToken)
+		require.True(t, time.Now().After(gotExpiry), "expiry should be in the past")
+	})
 }
 
 func addIDToken(t *oauth2.Token, idtoken string) *oauth2.Token {
@@ -570,8 +702,14 @@ func TestCombinedSessionStore_DeleteSession(t *testing.T) {
 			}
 
 			setCookies := testWriter.Result().Header.Values("Set-Cookie")
-			if len(tt.wantCookieTimeouts) == 0 && len(setCookies) > 0 {
-				t.Errorf("CombinedSessionStore.DeleteSession() unexpected cookies set: %v", setCookies)
+			nonRecoveryCookies := make([]string, 0, len(setCookies))
+			for _, c := range setCookies {
+				if !strings.HasPrefix(c, openshiftRecoveryTokenCookieName+"=") {
+					nonRecoveryCookies = append(nonRecoveryCookies, c)
+				}
+			}
+			if len(tt.wantCookieTimeouts) == 0 && len(nonRecoveryCookies) > 0 {
+				t.Errorf("CombinedSessionStore.DeleteSession() unexpected cookies set: %v", nonRecoveryCookies)
 			}
 
 			gotCookies := map[string]*http.Cookie{}
@@ -580,6 +718,8 @@ func TestCombinedSessionStore_DeleteSession(t *testing.T) {
 					gotCookies[c.Name] = c
 				}
 			}
+			// Recovery cookie is always cleared on delete — not part of per-test assertions
+			delete(gotCookies, openshiftRecoveryTokenCookieName)
 
 			for _, cookieName := range tt.wantCookieTimeouts {
 				cookie, ok := gotCookies[cookieName]
@@ -623,12 +763,12 @@ func TestCombinedSessionStore_DeleteSession(t *testing.T) {
 }
 
 type testCookieFactory struct {
-	cookieCodecs   []securecookie.Codec
-	sessionToken   *string
-	refreshToken   *string
-	refreshTokenID *string
-	customCookies  map[string]map[interface{}]interface{}
-	serverStore    *SessionStore // needed to set up refresh token ID mapping
+	cookieCodecs    []securecookie.Codec
+	sessionToken    *string
+	refreshToken    *string
+	useLegacyFormat bool // use old refresh-token-id format for backward compat testing
+	customCookies   map[string]map[interface{}]interface{}
+	serverStore     *SessionStore
 }
 
 func (f *testCookieFactory) WithSessionToken(sessionToken string) *testCookieFactory {
@@ -649,6 +789,11 @@ func (f *testCookieFactory) WithCustomCookie(cookieName string, cookieValue map[
 	return f
 }
 
+func (f *testCookieFactory) WithLegacyFormat() *testCookieFactory {
+	f.useLegacyFormat = true
+	return f
+}
+
 func (f *testCookieFactory) Complete(t *testing.T, req *http.Request) *http.Request {
 	if f.sessionToken != nil {
 		attachCookieOrDie(t, req, SessionCookieName(),
@@ -658,19 +803,23 @@ func (f *testCookieFactory) Complete(t *testing.T, req *http.Request) *http.Requ
 			f.cookieCodecs)
 	}
 	if f.refreshToken != nil {
-		// Generate an ID for the refresh token and store the mapping
-		id := randomString(32)
-		if f.serverStore != nil {
-			f.serverStore.byRefreshTokenID[id] = *f.refreshToken
+		if f.useLegacyFormat {
+			id := randomString(32)
+			if f.serverStore != nil {
+				f.serverStore.byRefreshTokenID[id] = *f.refreshToken
+			}
+			attachCookieOrDie(t, req, openshiftRefreshTokenCookieName,
+				map[interface{}]interface{}{
+					"refresh-token-id": id,
+				},
+				f.cookieCodecs)
+		} else {
+			attachCookieOrDie(t, req, openshiftRefreshTokenCookieName,
+				map[interface{}]interface{}{
+					"refresh-token": *f.refreshToken,
+				},
+				f.cookieCodecs)
 		}
-		f.refreshTokenID = &id
-
-		// Store only the ID in the cookie
-		attachCookieOrDie(t, req, openshiftRefreshTokenCookieName,
-			map[interface{}]interface{}{
-				"refresh-token-id": id,
-			},
-			f.cookieCodecs)
 	}
 
 	for cookieName, cookieValue := range f.customCookies {
