@@ -51,12 +51,15 @@ export const Terminal = forwardRef<ImperativeTerminalType, TerminalProps>(
       }
 
       const nodeRect = node.getBoundingClientRect();
-      // Use the visible viewport. pf-v6-c-page / document.body can be shorter
-      // or taller than the window, which desyncs xterm rows from the black box.
+      // Viewport can be taller or shorter than .pf-v6-c-page (Cloud Shell drawer).
       const viewportHeight = document.documentElement.clientHeight;
       const viewportWidth = document.documentElement.clientWidth;
+      const pageRect = document.querySelector('.pf-v6-c-page')?.getBoundingClientRect();
+      const availableBottom = isFullscreen
+        ? viewportHeight
+        : Math.min(viewportHeight, pageRect?.bottom ?? viewportHeight);
 
-      const height = Math.floor(viewportHeight - (isFullscreen ? 0 : nodeRect.top) - padding);
+      const height = Math.floor(availableBottom - (isFullscreen ? 0 : nodeRect.top) - padding);
       const width = Math.floor(
         viewportWidth - (isFullscreen ? 0 : nodeRect.left) - (isFullscreen ? 10 : padding),
       );
