@@ -17,6 +17,8 @@
 #                then {spec:{configuration:{oauth:{identityProviders:[.spec.configuration.oauth.identityProviders // [] | .[] | select(.name != "test")]}}}}
 #                else {spec:{configuration:{oauth:null}}} end')"
 #   oc --kubeconfig=<mgmt> -n <ns> delete secret console-e2e-htpasswd
+#     (only when no other HostedCluster in the namespace still references it:
+#     the secret name is shared)
 # The patch removes only the suite's 'test' provider so providers owned by
 # other configurations keep working. When no other provider remains it
 # removes the whole oauth configuration instead: unrelated oauth settings
@@ -216,7 +218,9 @@ if [ "$is_hosted" == "true" ]; then
   # the resolved name and namespace - the namespace may have defaulted
   # after a restricted-credential lookup, and the reads below would
   # otherwise surface a raw NotFound error.
-  if ! oc --kubeconfig="$MGMT_KUBECONFIG" -n "$HC_NAMESPACE" get hostedcluster "$CLUSTER_NAME" -o name >/dev/null 2>&1; then
+  # stderr is not discarded so the underlying error (NotFound, Forbidden,
+  # ...) surfaces ahead of the actionable message below.
+  if ! oc --kubeconfig="$MGMT_KUBECONFIG" -n "$HC_NAMESPACE" get hostedcluster "$CLUSTER_NAME" -o name >/dev/null; then
     echo "no HostedCluster named '$CLUSTER_NAME' in namespace '$HC_NAMESPACE' of the management cluster: check CLUSTER_NAME, HC_NAMESPACE, and MGMT_KUBECONFIG" >&2
     exit 1
   fi
@@ -322,8 +326,13 @@ if [ "$is_hosted" == "true" ]; then
   waitForHtpasswdLogin "e2e-admin" "test"
   echo "waiting for the oauth rollout to complete..."
   # hypershift derives the control-plane namespace with the dots of the
-  # HostedCluster name replaced by dashes.
-  oc --kubeconfig="$MGMT_KUBECONFIG" -n "${HC_NAMESPACE}-${CLUSTER_NAME//./-}" rollout status deploy/oauth-openshift --timeout=10m
+  # HostedCluster name replaced by dashes. Advisory: both logins above
+  # already succeeded, and a restricted credential may not be able to read
+  # the control-plane namespace (the idp-htpasswd step documents the same
+  # limitation).
+  if ! oc --kubeconfig="$MGMT_KUBECONFIG" -n "${HC_NAMESPACE}-${CLUSTER_NAME//./-}" rollout status deploy/oauth-openshift --timeout=10m; then
+    echo "warning: could not watch the oauth rollout to completion; continuing" >&2
+  fi
 
   # don't log a supplied password; apply the persona defaults untraced so a
   # supplied value cannot leak into the trace. The pair-consistency checks
