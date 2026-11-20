@@ -59,7 +59,7 @@ describe('CatalogController', () => {
           pluginName: '@console/helm-plugin',
           properties: {
             catalogDescription: 'Helm Catalog description',
-            title: 'Helm Charts',
+            title: 'Helm charts',
             type: 'HelmChart',
           },
           type: 'console.catalog/item-type',
@@ -76,7 +76,7 @@ describe('CatalogController', () => {
     renderWithProviders(<CatalogController {...catalogControllerProps} />);
 
     await waitFor(() => {
-      expect(screen.getByRole('heading', { name: 'Helm Charts' })).toBeVisible();
+      expect(screen.getByRole('heading', { name: 'Helm charts' })).toBeVisible();
     });
     expect(screen.getByText('Helm Catalog description')).toBeVisible();
   });
@@ -116,7 +116,7 @@ describe('CatalogController', () => {
         },
         {
           pluginName: '@console/test-plugin',
-          properties: { type: 'HelmChart', title: 'Helm Charts' },
+          properties: { type: 'HelmChart', title: 'Helm charts' },
           type: 'console.catalog/item-type',
           uid: 'helm',
         },
@@ -135,7 +135,7 @@ describe('CatalogController', () => {
     renderWithProviders(<CatalogController {...props} />);
 
     const typeLinks = await screen.findAllByRole('link');
-    expect(typeLinks.map((link) => link.textContent)).toEqual(['Helm Charts (1)', 'Operators (2)']);
+    expect(typeLinks.map((link) => link.textContent)).toEqual(['Helm charts (1)', 'Operators (2)']);
   });
 
   it('should filter the shared operator catalog by lifecycle version', async () => {

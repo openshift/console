@@ -112,7 +112,7 @@ describe('HelmReleaseList', () => {
     jest.restoreAllMocks();
   });
 
-  it('should render the document title and data view label as Helm Releases', () => {
+  it('should render the document title and data view label as Helm releases', () => {
     mockUseK8sWatchResource.mockReturnValue([[], false, null]);
 
     renderWithProviders(<HelmReleaseList />);
@@ -146,7 +146,7 @@ describe('HelmReleaseList', () => {
 
     await waitFor(() => {
       expect(
-        screen.getByText('Browse the catalog to discover available Helm Charts'),
+        screen.getByText('Browse the catalog to discover available Helm charts'),
       ).toBeVisible();
     });
   });

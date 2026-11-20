@@ -135,7 +135,7 @@ describe('HelmTabbedPage', () => {
     expect(screen.queryByTestId('multi-tab-list-page')).not.toBeInTheDocument();
   });
 
-  it('should pass "Helm Releases" and "Repositories" pages to MultiTabListPage', () => {
+  it('should pass "Helm releases" and "Repositories" pages to MultiTabListPage', () => {
     setAllAccessReviews(true, false);
 
     renderWithProviders(<HelmTabbedPage />);

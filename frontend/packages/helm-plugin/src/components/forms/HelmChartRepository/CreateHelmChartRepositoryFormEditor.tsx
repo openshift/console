@@ -136,7 +136,7 @@ const CreateHelmChartRepositoryFormEditor: FC<CreateHelmChartRepositoryFormEdito
       />
       <CheckboxField
         name="formData.disabled"
-        label={t('Disable usage of the repo in the Software Catalog.')}
+        label={t('Disable usage of the repo in the software catalog.')}
         data-test="repo-disabled"
       />
       <InputField
