@@ -242,7 +242,9 @@ if [ "$is_hosted" == "true" ]; then
   # other read failure aborts. The fallback secret name is fixed per
   # namespace rather than per cluster: suites running against
   # HostedClusters that share a namespace write identical suite-owned
-  # entries, and this merge preserves any foreign ones.
+  # entries. Foreign entries are preserved within whichever secret the
+  # merge seeds from; a run whose provider references a different secret
+  # repoints the merge accordingly.
   referenced_secret="$(oc --kubeconfig="$MGMT_KUBECONFIG" -n "$HC_NAMESPACE" get hostedcluster "$CLUSTER_NAME" -o 'jsonpath={.spec.configuration.oauth.identityProviders[?(@.name=="test")].htpasswd.fileData.name}')"
   if [ -z "$referenced_secret" ]; then
     referenced_secret=console-e2e-htpasswd
