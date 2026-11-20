@@ -360,9 +360,7 @@ export const getPrimaryUDNPodIPs = (pod: PodKind): string[] | null => {
     return null;
   }
 
-  const primaryEntry = Object.entries(networks || {}).find(
-    ([, info]) => info?.role === 'primary',
-  );
+  const primaryEntry = Object.entries(networks || {}).find(([, info]) => info?.role === 'primary');
   // No entry has role "primary" (older annotation schema with no role field),
   // or the "default" network is itself still primary (no UDN active) --
   // either way, there is nothing extra to show beyond status.podIP(s).
@@ -371,7 +369,9 @@ export const getPrimaryUDNPodIPs = (pod: PodKind): string[] | null => {
   }
 
   const info = primaryEntry[1];
-  const ips = (info.ip_addresses?.length ? info.ip_addresses : info.ip_address ? [info.ip_address] : [])
+  const ips = (
+    info.ip_addresses?.length ? info.ip_addresses : info.ip_address ? [info.ip_address] : []
+  )
     .map(stripPrefixLength)
     .filter(Boolean);
 

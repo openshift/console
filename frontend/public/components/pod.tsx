@@ -336,8 +336,8 @@ export const PodDetailsList: FC<PodDetailsListProps> = ({ pod }) => {
               ? t('Pod IPs (infrastructure)')
               : t('Pod IP (infrastructure)')
             : moreThanOnePodIPs
-            ? t('Pod IPs')
-            : t('Pod IP')
+              ? t('Pod IPs')
+              : t('Pod IP')
         }
         description={
           primaryUDNPodIPs
