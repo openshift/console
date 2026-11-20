@@ -288,10 +288,16 @@ yarn test-playwright-developer                          # all developer-persona 
 the CI-oriented wrapper around the same command: it resolves `BRIDGE_BASE_ADDRESS` via `oc`,
 derives `WEB_CONSOLE_URL`, and copies reports and traces into `$ARTIFACT_DIR` afterwards. It
 forwards its arguments to `playwright test` and takes one flag of its own, `-c`, which runs
-`contrib/create-user.sh` first: it creates the htpasswd user the developer-persona tests need,
-provisions the `e2e-admin` admin persona (and exports its credentials) on hosted clusters, and
-excludes `@standalone`-tagged tests when the cluster reports an external control plane topology.
-Use `--` to separate its flags from Playwright's.
+`contrib/create-user.sh` first to create the htpasswd user the developer-persona tests need. Use
+`--` to separate its flags from Playwright's.
+
+On disposable HyperShift clusters, `-c` also configures the `test` identity provider on the
+HostedCluster and creates an `e2e-admin` user with cluster-admin and the test password `test`.
+Use the guest kubeconfig for `oc` and set `MGMT_KUBECONFIG` and `CLUSTER_NAME` for the management
+cluster, or use the files in `SHARED_DIR` in CI. `HC_NAMESPACE` defaults to `clusters`.
+Playwright excludes tests tagged `@standalone` in this mode. For direct Playwright runs against
+a HyperShift cluster with the test users already configured, set `PLAYWRIGHT_HYPERSHIFT=true`
+along with `OPENSHIFT_USERNAME` and `BRIDGE_KUBEADMIN_PASSWORD` for the admin user.
 
 ```
 console/frontend > ./integration-tests/test-playwright.sh -- --project=smoke

@@ -33,26 +33,14 @@ esac
 export ARTIFACT_DIR INSTALLER_DIR
 mkdir -p "${ARTIFACT_DIR}"
 
-# Set up the e2e users and the admin persona credentials
-# (OPENSHIFT_USERNAME, BRIDGE_KUBEADMIN_PASSWORD). Sourced so that the setup
-# runs and the exported variables reach this shell.
 source ./contrib/create-user.sh
-BRIDGE_BASE_ADDRESS="$(oc get consoles.config.openshift.io cluster -o jsonpath='{.status.consoleURL}')"
-export BRIDGE_BASE_ADDRESS
-
-# Tests tagged @standalone require a standalone control plane and are
-# excluded when the cluster reports an external control plane topology. This job selects
-# @techpreview tests, so the invert must never contain @techpreview.
-# CONTROL_PLANE_TOPOLOGY is exported by create-user.sh, which fails fast if
-# it cannot be read. The exclusion covers any external-topology cluster
-# (HyperShift guests and ROKS/ARO-style managed offerings alike).
-# Note that Playwright does not combine repeated
-# --grep-invert flags (the last one wins): a caller-supplied invert
-# replaces this exclusion.
-grep_invert_args=()
-if [ "${CONTROL_PLANE_TOPOLOGY:-}" == "External" ]; then
-  grep_invert_args=(--grep-invert @standalone)
+if [ "${PLAYWRIGHT_HYPERSHIFT:-}" != "true" ]; then
+  # don't log kubeadmin-password
+  set +x
+  export BRIDGE_KUBEADMIN_PASSWORD="$(cat "${KUBEADMIN_PASSWORD_FILE:-${INSTALLER_DIR}/auth/kubeadmin-password}")"
+  set -x
 fi
+export BRIDGE_BASE_ADDRESS="$(oc get consoles.config.openshift.io cluster -o jsonpath='{.status.consoleURL}')"
 
 pushd frontend
 
@@ -60,6 +48,6 @@ if [ ! -d node_modules ]; then
   yarn install
 fi
 
-./integration-tests/test-playwright.sh -- --grep @techpreview ${grep_invert_args[@]+"${grep_invert_args[@]}"} "$@"
+./integration-tests/test-playwright.sh -- --grep @techpreview "$@"
 
 popd

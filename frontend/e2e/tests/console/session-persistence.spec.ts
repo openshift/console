@@ -21,9 +21,7 @@ test.describe(
       await test.step('Log in to the console', async () => {
         // These are @admin tests, so always authenticate as the admin persona
         // regardless of whether developer (htpasswd) credentials are configured.
-        // The console pods run in the guest's openshift-console namespace on
-        // hosted clusters too, so no topology gating is needed.
-        test.skip(!process.env.BRIDGE_KUBEADMIN_PASSWORD, 'Requires admin credentials');
+        test.skip(!process.env.BRIDGE_KUBEADMIN_PASSWORD, 'No kubeadmin credentials configured');
         await loginFromEnv(page, 'admin');
 
         await expect(page.getByTestId('user-dropdown-toggle')).toBeVisible({ timeout: 60_000 });
@@ -66,9 +64,7 @@ test.describe(
       await test.step('Log in to the console', async () => {
         // These are @admin tests, so always authenticate as the admin persona
         // regardless of whether developer (htpasswd) credentials are configured.
-        // The console pods run in the guest's openshift-console namespace on
-        // hosted clusters too, so no topology gating is needed.
-        test.skip(!process.env.BRIDGE_KUBEADMIN_PASSWORD, 'Requires admin credentials');
+        test.skip(!process.env.BRIDGE_KUBEADMIN_PASSWORD, 'No kubeadmin credentials configured');
         await loginFromEnv(page, 'admin');
 
         await expect(page.getByTestId('user-dropdown-toggle')).toBeVisible({ timeout: 60_000 });

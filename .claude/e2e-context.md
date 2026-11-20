@@ -318,14 +318,9 @@ test.describe("Independent CRUD tests", () => {
 
 ### Tags
 
-Tags are optional. CI filters by Playwright **project** (`--project=smoke`, `--project=console`) and by tags via Playwright's `--grep`/`--grep-invert`:
+Tags are optional. CI currently filters by Playwright **project** (`--project=smoke`, `--project=console`), not by `--grep @tag`. Many existing specs carry tags from Cypress/Gherkin migration (`@smoke`, `@regression`, `@admin`) but nothing in the pipeline consumes them.
 
-- `@techpreview` — only runs in `test-prow-e2e-techpreview.sh` (selected with `--grep`); the standard e2e job excludes it.
-- `@standalone` — requires a standalone control plane (OAuth identity providers, cluster update UI, MachineConfig, kubeadmin login). All entrypoints (`test-prow-e2e.sh`, `test-prow-e2e-techpreview.sh`, and `test-playwright.sh -c`) exclude it when the cluster reports an external control plane topology.
-
-Other existing tags (`@smoke`, `@regression`, `@admin`) are informational.
-
-**Don't add tags by default.** Only add them if they enable filtering that the project/directory structure doesn't already provide, e.g., `@smoke` to mark a subset of tests within a large project for fast feedback, or a feature-specific tag like `@yaml-editor` when a directory has many specs and you want to run a subset. Tags consumed by `--grep`/`--grep-invert` must be **static string literals** in the `test()`/`test.describe()` options — the `playwright/valid-test-tags` lint rule rejects computed values (see the `routeTests` helper in `crud/other-routes.spec.ts` for the pattern when a subset of generated tests needs a tag).
+**Don't add tags by default.** Only add them if they enable filtering that the project/directory structure doesn't already provide, e.g., `@smoke` to mark a subset of tests within a large project for fast feedback, or a feature-specific tag like `@yaml-editor` when a directory has many specs and you want to run a subset.
 
 ### Test Naming
 

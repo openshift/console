@@ -12,8 +12,6 @@
 #   olmFull       — OLM project (excluding @techpreview tests)
 #
 # Tests tagged @techpreview only run in test-prow-e2e-techpreview.sh.
-# Tests tagged @standalone require a standalone control plane and are also
-# excluded when the cluster reports an external control plane topology.
 #
 # Environment (typical Prow / installer):
 #   ARTIFACT_DIR, INSTALLER_DIR, KUBEADMIN_PASSWORD_FILE
@@ -41,32 +39,20 @@ esac
 export ARTIFACT_DIR INSTALLER_DIR
 mkdir -p "${ARTIFACT_DIR}"
 
-# Set up the e2e users and the admin persona credentials
-# (OPENSHIFT_USERNAME, BRIDGE_KUBEADMIN_PASSWORD). Sourced so that the setup
-# runs and the exported variables reach this shell.
 source ./contrib/create-user.sh
-BRIDGE_BASE_ADDRESS="$(oc get consoles.config.openshift.io cluster -o jsonpath='{.status.consoleURL}')"
-export BRIDGE_BASE_ADDRESS
+if [ "${PLAYWRIGHT_HYPERSHIFT:-}" != "true" ]; then
+  # don't log kubeadmin-password
+  set +x
+  export BRIDGE_KUBEADMIN_PASSWORD="$(cat "${KUBEADMIN_PASSWORD_FILE:-${INSTALLER_DIR}/auth/kubeadmin-password}")"
+  set -x
+fi
+export BRIDGE_BASE_ADDRESS="$(oc get consoles.config.openshift.io cluster -o jsonpath='{.status.consoleURL}')"
 
 export BRIDGE_HTPASSWD_IDP="${BRIDGE_HTPASSWD_IDP:-test}"
 export BRIDGE_HTPASSWD_USERNAME="${BRIDGE_HTPASSWD_USERNAME:-test}"
 export BRIDGE_HTPASSWD_PASSWORD="${BRIDGE_HTPASSWD_PASSWORD:-test}"
 
 export WORKERS="${WORKERS:-2}"
-
-# Tests tagged @standalone require a standalone control plane (OAuth identity
-# providers, cluster update UI, MachineConfig, kubeadmin login) and are
-# excluded when the cluster reports an external control plane topology.
-# CONTROL_PLANE_TOPOLOGY is exported by create-user.sh, which fails fast if
-# it cannot be read.
-# The exclusion covers any external-topology cluster (HyperShift guests
-# and ROKS/ARO-style managed offerings alike).
-# Note that Playwright does not combine repeated --grep-invert flags (the
-# last one wins): a caller-supplied invert replaces this exclusion.
-grep_invert="@techpreview"
-if [ "${CONTROL_PLANE_TOPOLOGY:-}" == "External" ]; then
-  grep_invert="@techpreview|@standalone"
-fi
 
 pushd frontend
 
@@ -82,19 +68,17 @@ fi
 # `--` ends this script's flags before Playwright's own (test-playwright.sh only parses -c).
 case "$SCENARIO" in
   e2e | release)
-    ./integration-tests/test-playwright.sh -- --grep-invert "$grep_invert" "$@"
+    ./integration-tests/test-playwright.sh -- --grep-invert @techpreview "$@"
     ;;
   smoke)
-    # The smoke project currently has no tagged tests; the invert keeps it
-    # consistent with the other scenarios if that ever changes.
-    ./integration-tests/test-playwright.sh -- --project=smoke --grep-invert "$grep_invert" "$@"
+    ./integration-tests/test-playwright.sh -- --project=smoke "$@"
     ;;
   login)
     ./integration-tests/test-playwright.sh -- \
-      --project=console --grep-invert "$grep_invert" e2e/tests/console/app/auth-multiuser-login.spec.ts "$@"
+      --project=console e2e/tests/console/app/auth-multiuser-login.spec.ts "$@"
     ;;
   olmFull)
-    ./integration-tests/test-playwright.sh -- --project=olm --grep-invert "$grep_invert" "$@"
+    ./integration-tests/test-playwright.sh -- --project=olm --grep-invert @techpreview "$@"
     ;;
   *)
     echo "error: unknown scenario '$SCENARIO' (use: e2e, release, smoke, login, or olmFull)" >&2

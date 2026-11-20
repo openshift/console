@@ -5,7 +5,7 @@
 # Playwright's --project flag (project names match the `packages` array in playwright.config.ts).
 #
 # Usage (from repo frontend/):
-#   ./integration-tests/test-playwright.sh [--] [playwright test args...]
+#   ./integration-tests/test-playwright.sh -- [playwright test args...]
 #   ./integration-tests/test-playwright.sh -- --project=helm
 #   ./integration-tests/test-playwright.sh -- --project=smoke
 #   ./integration-tests/test-playwright.sh -c [--] [playwright test args...]
@@ -15,8 +15,6 @@
 # Environment:
 #   BRIDGE_BASE_ADDRESS, BRIDGE_BASE_PATH, WEB_CONSOLE_URL
 #   INSTALLER_DIR, ARTIFACT_DIR, KUBEADMIN_PASSWORD_FILE
-#   BRIDGE_ADMIN_IDP — IDP the admin persona authenticates against when it
-#     is not kubeadmin (default 'test'); decoupled from BRIDGE_HTPASSWD_IDP
 #   ARTIFACT_DIR — Prow/OpenShift CI artifact root. When set, playwright.config.ts writes all
 #     artifacts (test output and reports) directly under $ARTIFACT_DIR; local runs keep them
 #     under frontend/test-results and frontend/playwright-report.
@@ -42,7 +40,7 @@ while getopts "c" flag; do
     c) RUN_CREATE_USER=true ;;
     *)
       echo "Usage: $0 [-c] [--] [playwright test args...]" >&2
-      echo "Example: $0 -- --project=helm" >&2
+      echo "Example: $0 --project=helm" >&2
       exit 1
       ;;
   esac
@@ -50,119 +48,16 @@ done
 shift $((OPTIND - 1))
 
 if [ "$RUN_CREATE_USER" = true ]; then
-  # Sourced so the setup runs here and the exported admin persona
-  # credentials (OPENSHIFT_USERNAME, BRIDGE_KUBEADMIN_PASSWORD) reach
-  # Playwright. Restore the full shell option state afterwards: the sourced
-  # script applies its own.
-  oldopts="$(set +o)"
   source "${REPO_ROOT}/contrib/create-user.sh"
-  eval "$oldopts"
-  # Command substitution does not inherit errexit (without
-  # inherit_errexit), so the captured state always records it as off;
-  # restore the script's initial state.
-  set -e
   export BRIDGE_HTPASSWD_IDP="${BRIDGE_HTPASSWD_IDP:-test}"
   export BRIDGE_HTPASSWD_USERNAME="${BRIDGE_HTPASSWD_USERNAME:-test}"
   export BRIDGE_HTPASSWD_PASSWORD="${BRIDGE_HTPASSWD_PASSWORD:-test}"
-
-  # Exclude standalone-only tests when the cluster reports an external
-  # control plane topology - HyperShift guests and ROKS/ARO-style managed
-  # offerings alike, since the standalone-only surfaces are absent from
-  # both - matching the prow entrypoints. Playwright does
-  # not combine repeated --grep-invert flags (the last one wins), so the
-  # exclusion is composed into any invert the caller passed instead of
-  # adding a second flag.
-  if [ "${CONTROL_PLANE_TOPOLOGY:-}" == "External" ]; then
-    composed=()
-    saw_invert=false
-    expect_value=false
-    # Playwright treats /pattern/flags values as regex literals and plain
-    # values as case-insensitive regexes; only a value that starts and ends
-    # with / (optional g/i flags) is a literal, so strip exactly those.
-    # Values are composed textually: a pattern with unbalanced regex
-    # metacharacters can produce an invalid expression. A literally empty
-    # value is dropped (Playwright ignores it); '//' is not, because it
-    # compiles to a match-everything regex. The scanner also assumes an
-    # invert token is never the value of another value-taking flag (e.g.
-    # '--grep -G' would make '-G' a grep value in Playwright's own
-    # parsing), and that an invert value never starts with '-' (native
-    # Playwright would treat such a token as another flag cluster and
-    # silently drop the invert; this scanner consumes it as the value).
-    # Examples:
-    #   --grep-invert foo      -> --grep-invert '(?:@standalone|foo)'
-    #   -G /pattern/gi         -> --grep-invert '/(?:@standalone|pattern)/gi'
-    #   --grep-invert ''       -> dropped (Playwright ignores it)
-    #   -G=                    -> dropped (native Playwright would compile
-    #                             the literal '=' as a regex, which is
-    #                             almost certainly not the caller's intent)
-    #   (no invert flag)       -> --grep-invert @standalone prepended
-    # Playwright 1.63's forceRegExp only recognizes g and i as literal
-    # flags; other suffixes are plain regexes.
-    pw_regex_literal='^/(.*)/([gi]*)$'
-    for arg in "$@"; do
-      if [ "$expect_value" == "true" ]; then
-        value="$arg"
-        expect_value=false
-      elif [ "$arg" == "--grep-invert" ] || [ "$arg" == "-G" ]; then
-        expect_value=true
-        continue
-      elif [ "${arg#--grep-invert=}" != "$arg" ]; then
-        value="${arg#--grep-invert=}"
-      elif [ "${#arg}" -gt 2 ] && [ "${arg#-G}" != "$arg" ]; then
-        # -Gvalue and -G=value: commander keeps the '=' in short-flag
-        # values (native Playwright would treat it as part of the pattern
-        # and match nothing), so strip the prefix and one '=' to compose
-        # the caller's evident intent.
-        value="${arg#-G}"
-        value="${value#=}"
-      else
-        composed+=("$arg")
-        continue
-      fi
-      if [ -z "$value" ]; then
-        # Only a literally empty value is dropped; '//' survives the
-        # stripping below as empty but compiles to a match-everything
-        # regex in Playwright, so it must be kept.
-        continue
-      fi
-      if [[ $value =~ $pw_regex_literal ]]; then
-        # Keep the literal syntax and flags so Playwright compiles the
-        # composed value with the caller's case sensitivity: compose as
-        # /(?:@standalone|pattern)/flags.
-        value="/(?:@standalone|${BASH_REMATCH[1]})/${BASH_REMATCH[2]}"
-      else
-        value="(?:@standalone|$value)"
-      fi
-      saw_invert=true
-      composed+=("--grep-invert" "$value")
-    done
-    # A trailing invert flag without a value is malformed; keep it — without
-    # also prepending the exclusion — so Playwright reports it as it would
-    # without this composition.
-    if [ "$expect_value" == "true" ]; then
-      composed+=("--grep-invert")
-      saw_invert=true
-    fi
-    set -- ${composed[@]+"${composed[@]}"}
-    if [ "$saw_invert" == "false" ]; then
-      set -- --grep-invert @standalone "$@"
-    fi
-  fi
 fi
 
-# Runs after the sourced setup above so that the hosted admin password it
-# exports is not overridden by the kubeadmin password file fallback.
 if [ -z "${BRIDGE_KUBEADMIN_PASSWORD:-}" ]; then
   pass_file="${KUBEADMIN_PASSWORD_FILE:-${INSTALLER_DIR}/auth/kubeadmin-password}"
   if [ -f "$pass_file" ]; then
-    # Disable tracing so the password does not appear in local debug logs,
-    # and restore only the state that was active before.
-    was_tracing=false
-    [[ $- == *x* ]] && was_tracing=true
-    set +x
-    BRIDGE_KUBEADMIN_PASSWORD="$(cat "$pass_file")"
-    export BRIDGE_KUBEADMIN_PASSWORD
-    if $was_tracing; then set -x; fi
+    export BRIDGE_KUBEADMIN_PASSWORD="$(cat "$pass_file")"
   fi
 fi
 

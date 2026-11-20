@@ -72,9 +72,6 @@ test.describe('Filtering and Searching', { tag: ['@admin'] }, () => {
     await expect(listPage.cells).toHaveCount(3, { timeout: 30_000 });
   });
 
-  // Searches the suite-owned deployment rather than a cluster-operator one
-  // so the tests work on hosted topologies, where operator deployments like
-  // authentication-operator run in the management cluster.
   test('displays namespace column in Search for All Namespaces', async ({ page }) => {
     const listPage = new ListPage(page);
 
@@ -113,19 +110,21 @@ test.describe('Filtering and Searching', { tag: ['@admin'] }, () => {
     await expect(listPage.cells).toHaveCount(3, { timeout: 30_000 });
   });
 
-  test('hides filter category select on a text-only filter page', async ({ page }) => {
+  test('hides filter category select when only one filter exists', async ({ page }) => {
     const listPage = new ListPage(page);
-    await page.goto('/settings/cluster/alertmanagerconfig?page=1&perPage=50');
-    await expect(listPage.table).toBeVisible({ timeout: 60_000 });
-    await expect(listPage.filterGroupToggles).toHaveCount(1);
-    await expect(listPage.filterGroupToggles).toBeHidden();
-  });
 
-  test('hides filter category select on a select-only filter page', async ({ page }) => {
-    const listPage = new ListPage(page);
-    await page.goto('/search/all-namespaces?page=1&perPage=50&kind=core~v1~Pod');
-    await listPage.waitForRows();
-    await expect(listPage.filterGroupToggles).toHaveCount(2);
-    await expect(listPage.filterGroupToggles.first()).toBeHidden();
+    await test.step('Text-only filter page', async () => {
+      await page.goto('/settings/cluster/alertmanagerconfig?page=1&perPage=50');
+      await expect(listPage.table).toBeVisible({ timeout: 60_000 });
+      await expect(listPage.filterGroupToggles).toHaveCount(1);
+      await expect(listPage.filterGroupToggles).toBeHidden();
+    });
+
+    await test.step('Select-only filter page', async () => {
+      await page.goto('/search/all-namespaces?page=1&perPage=50&kind=core~v1~Pod');
+      await listPage.waitForRows();
+      await expect(listPage.filterGroupToggles).toHaveCount(2);
+      await expect(listPage.filterGroupToggles.first()).toBeHidden();
+    });
   });
 });

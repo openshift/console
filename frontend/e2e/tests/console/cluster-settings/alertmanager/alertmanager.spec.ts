@@ -27,11 +27,6 @@ type AlertmanagerRoute = {
 
 test.describe.configure({ mode: 'serial' });
 
-// Only the first test navigates through the cluster-settings Configuration
-// tab, whose cluster-level entries are filtered on external topologies;
-// that navigation is only verified on standalone control planes. The rest
-// go directly to the alertmanager URLs, which are served on both
-// topologies.
 test.describe('Alertmanager', { tag: ['@admin'] }, () => {
   let alertmanager: AlertmanagerPage;
   let k8sClient: KubernetesClient;
@@ -46,6 +41,8 @@ test.describe('Alertmanager', { tag: ['@admin'] }, () => {
     await resetAlertmanagerConfig(k8sClient);
   });
 
+  // The Configuration tab navigation is only verified on standalone control
+  // planes; the remaining tests reach the alertmanager pages directly.
   test(
     'displays the Alertmanager Configuration Details page',
     { tag: ['@standalone'] },

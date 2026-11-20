@@ -61,12 +61,10 @@ export async function performLogin(
 
 /**
  * Log in using the credentials configured via environment variables for the
- * given persona. Admin uses the 'kube:admin' provider when the persona is
- * kubeadmin and the htpasswd provider otherwise (e.g. the e2e-admin user the
- * hosted-cluster setup provisions); developer uses the htpasswd identity
- * provider. Used both by the auth setup projects and as a re-authentication
- * fallback for specs whose shared storageState session has expired or been
- * invalidated mid-run.
+ * given persona. The HyperShift admin and developer personas use htpasswd;
+ * the standalone admin uses kube:admin. Used both by the auth setup
+ * projects and as a re-authentication fallback for specs whose shared
+ * storageState session has expired or been invalidated mid-run.
  */
 export async function loginFromEnv(
   page: Page,
@@ -88,15 +86,7 @@ export async function loginFromEnv(
 
   const username = process.env.OPENSHIFT_USERNAME || 'kubeadmin';
   const password = process.env.BRIDGE_KUBEADMIN_PASSWORD || '';
-  // kubeadmin logs in through the 'kube:admin' provider; any other admin user
-  // (e.g. the e2e-admin user the hosted-cluster setup provisions) lives in
-  // the htpasswd provider.
-  const idpName =
-    username === 'kubeadmin'
-      ? 'kube:admin'
-      : // The hosted admin persona always lives in the suite's own htpasswd
-        // provider, independently of any developer-provider override.
-        process.env.BRIDGE_ADMIN_IDP || 'test';
+  const idpName = process.env.PLAYWRIGHT_HYPERSHIFT === 'true' ? 'test' : 'kube:admin';
   await performLogin(page, baseURL, username, password, idpName);
 }
 
