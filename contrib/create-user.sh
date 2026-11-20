@@ -23,23 +23,31 @@ createHostedUsers() (
   fi
 
   local -a management_oc=(oc --kubeconfig="$management_kubeconfig" -n "$namespace")
-  local hosted_cluster secret_name patch attempt temp_dir username
+  local hosted_cluster secret_name cluster_uid patch attempt temp_dir username password admin_password
   hosted_cluster=$("${management_oc[@]}" get hostedcluster "$cluster_name" -o json)
   if ! jq -e '(.spec.configuration.authentication.type // "IntegratedOAuth") == "IntegratedOAuth"' <<< "$hosted_cluster" >/dev/null; then
     echo 'HyperShift htpasswd setup requires integrated OAuth.' >&2
     exit 1
   fi
-  secret_name="console-e2e-htpasswd-$(jq -er '.metadata.uid' <<< "$hosted_cluster")"
+  cluster_uid=$(jq -er '.metadata.uid' <<< "$hosted_cluster")
+  secret_name="console-e2e-htpasswd-${cluster_uid}"
   temp_dir=$(mktemp -d)
   trap 'rm -rf "$temp_dir"' EXIT
+
+  # A per-run password for the e2e-admin user, so the cluster-admin
+  # credentials are never a fixed public value.
+  admin_password=$(openssl rand -base64 24)
 
   # The HostedCluster reads the htpasswd file from its management namespace.
   {
     sed -n 's/^[[:space:]]*htpasswd: //p' "$BASEDIR/frontend/packages/console-shared/src/test-data/htpasswd-secret.yaml" | base64 -d
-    printf '\ne2e-admin:%s\n' '$2y$05$zUpdrRXiI5KjSQrV9cBi4uWxb85/ki7Wmnfc9NI8y1HAj0H6mkH1.'
+    printf '\ne2e-admin:%s\n' "$(openssl passwd -apr1 "$admin_password")"
   } > "$temp_dir/htpasswd"
-  "${management_oc[@]}" create secret generic "$secret_name" --from-file=htpasswd="$temp_dir/htpasswd" --dry-run=client -o yaml |
-    "${management_oc[@]}" apply -f -
+  # Owned by the HostedCluster so the secret is garbage-collected with it.
+  "${management_oc[@]}" create secret generic "$secret_name" --from-file=htpasswd="$temp_dir/htpasswd" --dry-run=client -o json |
+    jq --arg cluster "$cluster_name" --arg uid "$cluster_uid" \
+      '.metadata.ownerReferences = [{apiVersion: "hypershift.openshift.io/v1beta1", kind: "HostedCluster", name: $cluster, uid: $uid}]' |
+    "${management_oc[@]}" apply -f - >/dev/null
 
   # Preserve other providers and retry if the operator updates the HostedCluster concurrently.
   for attempt in 1 2 3 4 5; do
@@ -50,7 +58,7 @@ createHostedUsers() (
         [{name: "test", mappingMethod: "claim", type: "HTPasswd", htpasswd: {fileData: {name: $secret}}}]
       )}}}
     }' <<< "$hosted_cluster")
-    if "${management_oc[@]}" patch hostedcluster "$cluster_name" --type=merge -p "$patch"; then
+    if "${management_oc[@]}" patch hostedcluster "$cluster_name" --type=merge -p "$patch" >/dev/null; then
       break
     fi
     if [ "$attempt" -eq 5 ]; then
@@ -61,14 +69,18 @@ createHostedUsers() (
   done
 
   # Configuring a hosted identity provider disables kubeadmin.
-  oc create clusterrolebinding e2e-admin --clusterrole=cluster-admin --user=e2e-admin --dry-run=client -o yaml | oc apply -f -
+  oc create clusterrolebinding e2e-admin --clusterrole=cluster-admin --user=e2e-admin --dry-run=client -o yaml | oc apply -f - >/dev/null
 
   oc config view --raw --flatten --minify > "$temp_dir/guest-kubeconfig"
   for username in test e2e-admin; do
-    echo "Waiting for the HyperShift test login for $username..."
+    password=test
+    if [ "$username" = 'e2e-admin' ]; then
+      password=$admin_password
+    fi
+    echo "Waiting for the HyperShift test login for $username..." >&2
     for ((attempt = 1; attempt <= 40; attempt++)); do
       cp "$temp_dir/guest-kubeconfig" "$temp_dir/login-kubeconfig"
-      if oc --kubeconfig="$temp_dir/login-kubeconfig" login --username="$username" --password=test > "$temp_dir/login.log" 2>&1; then
+      if oc --kubeconfig="$temp_dir/login-kubeconfig" login --username="$username" --password="$password" > "$temp_dir/login.log" 2>&1; then
         break
       fi
       if [ "$attempt" -eq 40 ]; then
@@ -79,6 +91,9 @@ createHostedUsers() (
       sleep 15
     done
   done
+  # The generated admin password is this function's only stdout line; every
+  # other output goes to stderr so the caller can capture it.
+  printf '%s\n' "$admin_password"
 )
 
 createStandaloneUser() (
@@ -131,10 +146,18 @@ control_plane_topology=$(oc get infrastructures.config.openshift.io cluster -o '
 managed_label=$(oc get infrastructures.config.openshift.io cluster -o 'jsonpath={.metadata.labels.hypershift\.openshift\.io/managed}')
 export PLAYWRIGHT_HYPERSHIFT=false
 if [ "$control_plane_topology" = 'External' ] && [ "$managed_label" = 'true' ]; then
-  createHostedUsers
+  # Capture and export the generated admin password untraced: bash prints
+  # assignment results under xtrace, and the entrypoints source this script
+  # with tracing enabled.
+  was_tracing=false
+  [[ $- == *x* ]] && was_tracing=true
+  set +x
+  admin_password=$(createHostedUsers)
   export PLAYWRIGHT_HYPERSHIFT=true
   export OPENSHIFT_USERNAME=e2e-admin
-  export BRIDGE_KUBEADMIN_PASSWORD=test
+  export BRIDGE_KUBEADMIN_PASSWORD="$admin_password"
+  unset admin_password
+  if $was_tracing; then set -x; fi
 else
   createStandaloneUser
 fi

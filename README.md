@@ -292,9 +292,13 @@ forwards its arguments to `playwright test` and takes one flag of its own, `-c`,
 `--` to separate its flags from Playwright's.
 
 On disposable HyperShift clusters, `-c` also configures the `test` identity provider on the
-HostedCluster and creates an `e2e-admin` user with cluster-admin and the test password `test`.
-Use the guest kubeconfig for `oc` and set `MGMT_KUBECONFIG` and `CLUSTER_NAME` for the management
-cluster, or use the files in `SHARED_DIR` in CI. `HC_NAMESPACE` defaults to `clusters`.
+HostedCluster and creates an `e2e-admin` user with cluster-admin and a per-run generated password
+that is exported as `BRIDGE_KUBEADMIN_PASSWORD`. Use the guest kubeconfig for `oc` and set
+`MGMT_KUBECONFIG` and `CLUSTER_NAME` for the management cluster, or use the files in `SHARED_DIR`
+in CI. `HC_NAMESPACE` defaults to `clusters`. These defaults match the `hypershift-aws` CI
+workflow, where `SHARED_DIR/kubeconfig` is the management cluster's kubeconfig; other HyperShift
+workflows should set the variables explicitly. The management-side secret is owned by the
+HostedCluster and is garbage-collected with it.
 Playwright excludes tests tagged `@standalone` in this mode. For direct Playwright runs against
 a HyperShift cluster with the test users already configured, set `PLAYWRIGHT_HYPERSHIFT=true`
 along with `OPENSHIFT_USERNAME` and `BRIDGE_KUBEADMIN_PASSWORD` for the admin user.
