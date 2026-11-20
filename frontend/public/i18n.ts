@@ -50,7 +50,6 @@ export const init = () => {
           return parsed;
         },
       },
-      showSupportNotice: false,
       lng: getLastLanguage(),
       fallbackLng: 'en',
       load: 'languageOnly',

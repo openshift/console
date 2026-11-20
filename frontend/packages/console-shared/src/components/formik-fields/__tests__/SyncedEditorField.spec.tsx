@@ -82,7 +82,7 @@ describe('SyncedEditorField', () => {
       expect.objectContaining({
         name: 'editorType',
       }),
-      {},
+      undefined,
     );
   });
 

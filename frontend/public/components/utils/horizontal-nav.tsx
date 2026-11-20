@@ -1,4 +1,4 @@
-import type { ComponentType, FC, ReactNode } from 'react';
+import type { ComponentType, FC, ReactElement, ReactNode } from 'react';
 import { PureComponent, useContext, memo, useMemo, Suspense } from 'react';
 import { Tabs, Tab, TabTitleText } from '@patternfly/react-core';
 import type { TFunction } from 'i18next';
@@ -190,6 +190,22 @@ export const NavBar: FC<NavBarProps> = ({ pages, activeTab, basePath }) => {
   const defaultPage = pages.filter((p) => p.href === selectedTab).length === 0;
   const baseURL = basePath ?? (defaultPage ? location.pathname : pathSegments.join('/'));
 
+  // Reuse title elements across renders when their text is unchanged: PatternFly Tab's
+  // accent-measuring effect re-runs on new title/actions identities and disables the
+  // underline transition when it fires in the same commit as a tab switch (React 19).
+  const titleSpecs = pages.map(({ name, nameKey, href }) => ({
+    href,
+    text: nameKey ? t(nameKey) : name,
+  }));
+  const stableTitleSpecs = useDeepCompareMemoize(titleSpecs);
+  const tabTitles = useMemo(() => {
+    const titles: Record<string, ReactElement> = {};
+    stableTitleSpecs.forEach(({ href, text }) => {
+      titles[href] = <TabTitleText>{text}</TabTitleText>;
+    });
+    return titles;
+  }, [stableTitleSpecs]);
+
   // the div wrapper prevents the tabs from collapsing in a flexbox
   const tabs = (
     <div>
@@ -208,7 +224,7 @@ export const NavBar: FC<NavBarProps> = ({ pages, activeTab, basePath }) => {
               }}
               data-test-id={`horizontal-link-${nameKey ? nameKey.split('~')[1] : name}`}
               data-test={`horizontal-link-${nameKey ? nameKey.split('~')[1] : name}`}
-              title={<TabTitleText>{nameKey ? t(nameKey) : name}</TabTitleText>}
+              title={tabTitles[href]}
               aria-controls={undefined} // there is no corresponding tab content to control, so this ID is invalid
               {...(badge ? { actions: badge } : {})}
             />
