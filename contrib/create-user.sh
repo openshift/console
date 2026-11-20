@@ -116,8 +116,8 @@ function waitForHtpasswdLogin {
 # Hosted clusters (HyperShift) report an external control plane topology, but
 # so do other offerings (e.g. IBM ROKS); the label the hosted cluster config
 # operator sets on the guest Infrastructure resource identifies a HyperShift
-# guest precisely. (HyperShift 4.10 guests predate the label entirely;
-# those releases are EOL and fall back to the standalone branch.) The
+# guest precisely. (Older HyperShift releases that do not set the label
+# fall back to the standalone branch; those releases are EOL.) The
 # topology is exported for callers that only need the coarser signal.
 CONTROL_PLANE_TOPOLOGY="$(oc get infrastructures.config.openshift.io cluster -o 'jsonpath={.status.controlPlaneTopology}')"
 if [ -z "$CONTROL_PLANE_TOPOLOGY" ]; then
@@ -164,13 +164,14 @@ if [ "$is_hosted" == "true" ]; then
   # The management cluster kubeconfig: the hypershift-aws chains save it as
   # SHARED_DIR/kubeconfig, the hostedcluster workflow family as
   # SHARED_DIR/mgmt_kubeconfig, and chains derived from hypershift-conformance
-  # as SHARED_DIR/hs-mc.kubeconfig.
+  # as SHARED_DIR/hs-mc.kubeconfig (checked first, matching the idp-htpasswd
+  # step's order).
   MGMT_KUBECONFIG="${MGMT_KUBECONFIG:-}"
   if [ -z "$MGMT_KUBECONFIG" ]; then
-    if [ -s "${SHARED_DIR:-}/mgmt_kubeconfig" ]; then
-      MGMT_KUBECONFIG="${SHARED_DIR}/mgmt_kubeconfig"
-    elif [ -s "${SHARED_DIR:-}/hs-mc.kubeconfig" ]; then
+    if [ -s "${SHARED_DIR:-}/hs-mc.kubeconfig" ]; then
       MGMT_KUBECONFIG="${SHARED_DIR}/hs-mc.kubeconfig"
+    elif [ -s "${SHARED_DIR:-}/mgmt_kubeconfig" ]; then
+      MGMT_KUBECONFIG="${SHARED_DIR}/mgmt_kubeconfig"
     elif [ -s "${SHARED_DIR:-}/kubeconfig" ]; then
       MGMT_KUBECONFIG="${SHARED_DIR}/kubeconfig"
     fi
@@ -211,15 +212,23 @@ if [ "$is_hosted" == "true" ]; then
     echo "hosted cluster detected: set MGMT_KUBECONFIG (management cluster kubeconfig) and CLUSTER_NAME (HostedCluster name in namespace '$HC_NAMESPACE'), either directly or via SHARED_DIR" >&2
     exit 1
   fi
-  # HyperShift only honors spec.configuration.oauth when the HostedCluster
-  # authenticates through integrated OAuth: with any other authentication
-  # type no oauth-openshift deployment runs and the oauth configuration
-  # below is ignored, so fail fast instead of burning the login timeout.
-  # The precheck is advisory; a read failure falls through to the setup's
-  # own failure modes.
+  # Fail with an actionable message when the cluster does not exist under
+  # the resolved name and namespace - the namespace may have defaulted
+  # after a restricted-credential lookup, and the reads below would
+  # otherwise surface a raw NotFound error.
+  if ! oc --kubeconfig="$MGMT_KUBECONFIG" -n "$HC_NAMESPACE" get hostedcluster "$CLUSTER_NAME" -o name >/dev/null 2>&1; then
+    echo "no HostedCluster named '$CLUSTER_NAME' in namespace '$HC_NAMESPACE' of the management cluster: check CLUSTER_NAME, HC_NAMESPACE, and MGMT_KUBECONFIG" >&2
+    exit 1
+  fi
+  # This setup configures an htpasswd identity provider through the
+  # HostedCluster's integrated OAuth, so it requires integrated OAuth:
+  # OIDC disables the oauth server outright, and any other explicitly
+  # configured authentication type is an unsupported configuration. Fail
+  # fast instead of burning the login timeout. The precheck is advisory;
+  # a read failure falls through to the setup's own failure modes.
   hc_auth_type="$(oc --kubeconfig="$MGMT_KUBECONFIG" get hostedcluster -n "$HC_NAMESPACE" "$CLUSTER_NAME" -o 'jsonpath={.spec.configuration.authentication.type}' 2>/dev/null || true)"
   if [ -n "$hc_auth_type" ] && [ "$hc_auth_type" != "IntegratedOAuth" ]; then
-    echo "the HostedCluster authenticates through '$hc_auth_type' rather than integrated OAuth, so the htpasswd identity provider this setup configures is ignored" >&2
+    echo "the HostedCluster authenticates through '$hc_auth_type' rather than integrated OAuth, which this setup requires for its htpasswd identity provider" >&2
     exit 1
   fi
 
