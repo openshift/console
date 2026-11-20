@@ -85,7 +85,9 @@ if [ "$RUN_CREATE_USER" = true ]; then
     # compiles to a match-everything regex. The scanner also assumes an
     # invert token is never the value of another value-taking flag (e.g.
     # '--grep -G' would make '-G' a grep value in Playwright's own
-    # parsing).
+    # parsing), and that an invert value never starts with '-' (native
+    # Playwright would treat such a token as another flag cluster and
+    # silently drop the invert; this scanner consumes it as the value).
     # Examples:
     #   --grep-invert foo      -> --grep-invert '(?:@standalone|foo)'
     #   -G /pattern/gi         -> --grep-invert '/(?:@standalone|pattern)/gi'

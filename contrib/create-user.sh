@@ -121,8 +121,10 @@ function waitForHtpasswdLogin {
 # guest precisely. (Older HyperShift releases that do not set the label
 # fall back to the standalone branch; those releases are EOL.) The
 # topology is exported for callers that only need the coarser signal.
-CONTROL_PLANE_TOPOLOGY="$(oc get infrastructures.config.openshift.io cluster -o 'jsonpath={.status.controlPlaneTopology}')"
-if [ -z "$CONTROL_PLANE_TOPOLOGY" ]; then
+# The read's stderr is not discarded so a failing oc (unreachable API,
+# expired credentials) surfaces its cause ahead of the message below.
+if ! CONTROL_PLANE_TOPOLOGY="$(oc get infrastructures.config.openshift.io cluster -o 'jsonpath={.status.controlPlaneTopology}')" ||
+  [ -z "$CONTROL_PLANE_TOPOLOGY" ]; then
   echo "could not read the control plane topology of the cluster under test" >&2
   exit 1
 fi
@@ -247,23 +249,27 @@ if [ "$is_hosted" == "true" ]; then
   # stale ones while other users of the secret are preserved. Disable
   # tracing so the hashes and the credential line stay out of the logs.
   set +x
-  # Seed the merge from the secret the live 'test' provider references,
-  # falling back to this suite's own name, so users kept under a previous
-  # secret name survive (the standalone branch does the same). The command
-  # substitution strips the trailing newline and keeps internal ones;
-  # --ignore-not-found yields empty output for an absent secret, and any
-  # other read failure aborts. The fallback secret name is fixed per
-  # namespace rather than per cluster: suites running against
-  # HostedClusters that share a namespace write identical suite-owned
-  # entries. Foreign entries are preserved within whichever secret the
-  # merge seeds from; a run whose provider references a different secret
-  # repoints the merge accordingly.
+  # Seed the merge from the union of the secret the live 'test' provider
+  # references (falling back to this suite's own name) and the current
+  # shared secret, so users kept under a previous secret name survive and
+  # foreign users other HostedClusters sharing the namespace left in the
+  # shared secret keep working (the standalone branch does the same).
+  # --ignore-not-found yields empty output for an absent secret; any other
+  # read failure aborts. The shared secret name is fixed per namespace
+  # rather than per cluster: suites running against HostedClusters that
+  # share a namespace write identical suite-owned entries, and the union
+  # preserves every foreign entry. sort -u deduplicates the overlap.
   referenced_secret="$(oc --kubeconfig="$MGMT_KUBECONFIG" -n "$HC_NAMESPACE" get hostedcluster "$CLUSTER_NAME" -o 'jsonpath={.spec.configuration.oauth.identityProviders[?(@.name=="test")].htpasswd.fileData.name}')"
   if [ -z "$referenced_secret" ]; then
     referenced_secret=console-e2e-htpasswd
   fi
-  existing_htpasswd="$(oc --kubeconfig="$MGMT_KUBECONFIG" -n "$HC_NAMESPACE" get secret "$referenced_secret" --ignore-not-found -o 'jsonpath={.data.htpasswd}' | base64 -d)"
-  existing_htpasswd="$(printf '%s\n' "$existing_htpasswd" | grep -v -E '^(test|e2e-admin):' || true)"
+  existing_htpasswd="$(
+    {
+      oc --kubeconfig="$MGMT_KUBECONFIG" -n "$HC_NAMESPACE" get secret "$referenced_secret" --ignore-not-found -o 'jsonpath={.data.htpasswd}' | base64 -d
+      printf '\n'
+      oc --kubeconfig="$MGMT_KUBECONFIG" -n "$HC_NAMESPACE" get secret console-e2e-htpasswd --ignore-not-found -o 'jsonpath={.data.htpasswd}' | base64 -d
+    } | grep -v -E '^(test|e2e-admin):|^$' | sort -u || true
+  )"
   htpasswd_file="$(mktemp)"
   {
     if [ -n "$existing_htpasswd" ]; then
@@ -380,18 +386,24 @@ else
     # carries the resourceVersion so a conflicting concurrent modification
     # fails instead of overwriting it.
     set +x
-    # Seed the merge from the secret the live 'test' provider references,
-    # falling back to this suite's own name, so users an earlier setup or an
-    # administrator kept under a previous secret name survive the rename to
-    # console-e2e-htpasswd. --ignore-not-found yields empty output for an
-    # absent secret; any other read failure aborts instead of silently
-    # dropping existing users.
+    # Seed the merge from the union of the secret the live 'test' provider
+    # references (falling back to this suite's own name) and the current
+    # console-e2e-htpasswd, so users kept under a previous secret name
+    # survive the rename; sort -u deduplicates the overlap.
+    # --ignore-not-found yields empty output for an absent secret; any
+    # other read failure aborts instead of silently dropping existing
+    # users.
     referenced_secret="$(oc get oauths cluster -o 'jsonpath={.spec.identityProviders[?(@.name=="test")].htpasswd.fileData.name}')"
     if [ -z "$referenced_secret" ]; then
       referenced_secret=console-e2e-htpasswd
     fi
-    existing_htpasswd="$(oc get secret -n openshift-config "$referenced_secret" --ignore-not-found -o 'jsonpath={.data.htpasswd}' | base64 -d)"
-    existing_htpasswd="$(printf '%s\n' "$existing_htpasswd" | grep -v -E '^(test|e2e-admin):' || true)"
+    existing_htpasswd="$(
+      {
+        oc get secret -n openshift-config "$referenced_secret" --ignore-not-found -o 'jsonpath={.data.htpasswd}' | base64 -d
+        printf '\n'
+        oc get secret -n openshift-config console-e2e-htpasswd --ignore-not-found -o 'jsonpath={.data.htpasswd}' | base64 -d
+      } | grep -v -E '^(test|e2e-admin):|^$' | sort -u || true
+    )"
     htpasswd_file="$(mktemp)"
     {
       if [ -n "$existing_htpasswd" ]; then
@@ -449,6 +461,16 @@ else
     # masked by the export builtin's exit status.
     BRIDGE_KUBEADMIN_PASSWORD="$(cat "$kubeadmin_password_file")"
     export BRIDGE_KUBEADMIN_PASSWORD
+  fi
+  # Local runs without an installer directory may legitimately have no
+  # kubeadmin credentials (auth-disabled clusters); CI jobs always do, so
+  # fail fast there instead of letting every admin test time out.
+  if [ -z "${BRIDGE_KUBEADMIN_PASSWORD:-}" ] && [ "${OPENSHIFT_CI:-}" == "true" ]; then
+    echo "no kubeadmin password could be resolved (KUBEADMIN_PASSWORD_FILE and the installer auth directory are absent)" >&2
+    exit 1
+  fi
+  if [ "${OPENSHIFT_USERNAME}" != "kubeadmin" ]; then
+    echo "warning: OPENSHIFT_USERNAME '${OPENSHIFT_USERNAME}' is paired with the kubeadmin password; only the kubeadmin user was verified by this setup" >&2
   fi
   set -x
 fi
