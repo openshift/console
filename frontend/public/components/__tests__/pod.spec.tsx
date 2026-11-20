@@ -76,6 +76,43 @@ describe('PodDetailsList', () => {
     expect(screen.getByText('10.131.0.48')).toBeVisible();
   });
 
+  it('shows only the default network IP when no primary UDN is active', async () => {
+    renderPodDetailsList();
+
+    expect(screen.getByText('Pod IP')).toBeVisible();
+    expect(screen.queryByText('Pod IP (infrastructure)')).not.toBeInTheDocument();
+  });
+
+  it('shows the primary UDN IP and labels the default network IP as infrastructure', async () => {
+    const podWithPrimaryUDN = {
+      ...testPodInstance,
+      metadata: {
+        ...testPodInstance.metadata,
+        annotations: {
+          ...testPodInstance.metadata.annotations,
+          'k8s.ovn.org/pod-networks': JSON.stringify({
+            default: {
+              ip_addresses: ['10.131.0.48/23'],
+              mac_address: '0a:58:0a:83:00:30',
+              role: 'infrastructure-locked',
+            },
+            'demo-pudn/primary-udn-l3': {
+              ip_addresses: ['10.3.4.11/24'],
+              mac_address: '0a:58:0a:03:04:0b',
+              role: 'primary',
+            },
+          }),
+        },
+      },
+    };
+    renderPodDetailsList(podWithPrimaryUDN);
+
+    expect(screen.getByText('Pod IP')).toBeVisible();
+    expect(screen.getByText('10.3.4.11')).toBeVisible();
+    expect(screen.getByText('Pod IP (infrastructure)')).toBeVisible();
+    expect(screen.getByText('10.131.0.48')).toBeVisible();
+  });
+
   it('verifies a link to the node', async () => {
     renderPodDetailsList();
 

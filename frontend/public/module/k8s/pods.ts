@@ -323,3 +323,57 @@ export const isContainerCrashLoopBackOff = (pod: PodKind, containerName: string)
   const waitingReason = containerStatus?.state?.waiting?.reason;
   return waitingReason === 'CrashLoopBackOff';
 };
+
+const OVN_POD_NETWORKS_ANNOTATION = 'k8s.ovn.org/pod-networks';
+
+type OVNPodNetworkInfo = {
+  ip_addresses?: string[];
+  ip_address?: string;
+  role?: string;
+};
+
+const stripPrefixLength = (cidr: string): string => cidr?.split('/')[0];
+
+// Returns this pod's primary user-defined network IP(s), or null if the
+// pod's primary network is the cluster default network (the common case).
+//
+// When a primary UDN is active for the pod's namespace, OVN-Kubernetes
+// demotes the cluster default network ("default") to role
+// "infrastructure-locked" -- used only for kubelet health checks -- and the
+// user-defined network becomes role "primary" instead. Kubernetes core API
+// fields (`status.podIP`/`status.podIPs`), however, are only ever populated
+// from the "default" network's CNI result, so they keep reporting the
+// infrastructure-locked IP even though it is no longer the pod's real
+// workload network. The actual primary-network IP is only available via the
+// `k8s.ovn.org/pod-networks` annotation.
+// See https://github.com/ovn-org/ovn-kubernetes/blob/master/go-controller/pkg/util/pod_annotation.go
+export const getPrimaryUDNPodIPs = (pod: PodKind): string[] | null => {
+  const annotation = pod?.metadata?.annotations?.[OVN_POD_NETWORKS_ANNOTATION];
+  if (!annotation) {
+    return null;
+  }
+
+  let networks: { [network: string]: OVNPodNetworkInfo };
+  try {
+    networks = JSON.parse(annotation);
+  } catch {
+    return null;
+  }
+
+  const primaryEntry = Object.entries(networks || {}).find(
+    ([, info]) => info?.role === 'primary',
+  );
+  // No entry has role "primary" (older annotation schema with no role field),
+  // or the "default" network is itself still primary (no UDN active) --
+  // either way, there is nothing extra to show beyond status.podIP(s).
+  if (!primaryEntry || primaryEntry[0] === 'default') {
+    return null;
+  }
+
+  const info = primaryEntry[1];
+  const ips = (info.ip_addresses?.length ? info.ip_addresses : info.ip_address ? [info.ip_address] : [])
+    .map(stripPrefixLength)
+    .filter(Boolean);
+
+  return ips.length ? ips : null;
+};
