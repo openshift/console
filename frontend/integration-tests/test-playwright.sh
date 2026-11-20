@@ -86,6 +86,8 @@ if [ "$RUN_CREATE_USER" = true ]; then
     #   --grep-invert foo      -> --grep-invert '(?:@standalone|foo)'
     #   -G /pattern/gi         -> --grep-invert '/(?:@standalone|pattern)/gi'
     #   --grep-invert ''       -> dropped (Playwright ignores it)
+    #   -G=                    -> dropped (native Playwright would receive
+    #                             the literal '=' and exclude nothing)
     #   (no invert flag)       -> --grep-invert @standalone prepended
     # Playwright 1.63's forceRegExp only recognizes g and i as literal
     # flags; other suffixes are plain regexes.

@@ -27,6 +27,9 @@ type AlertmanagerRoute = {
 
 test.describe.configure({ mode: 'serial' });
 
+// The Configuration tab these tests navigate through is hidden on hosted
+// clusters (the global config is managed by the HostedCluster there), so
+// they only run on standalone control planes.
 test.describe('Alertmanager', { tag: ['@admin', '@standalone'] }, () => {
   let alertmanager: AlertmanagerPage;
   let k8sClient: KubernetesClient;
@@ -256,6 +259,7 @@ route:
   });
 });
 
+// Standalone-only for the same reason as the describe above.
 test.describe('Alertmanager Receiver Forms', { tag: ['@admin', '@standalone'] }, () => {
   let alertmanager: AlertmanagerPage;
   let k8sClient: KubernetesClient;
