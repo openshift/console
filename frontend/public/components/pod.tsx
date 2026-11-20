@@ -37,7 +37,7 @@ import {
   getContainerState,
   getContainerStatus,
 } from '../module/k8s/container';
-import { getRestartPolicyLabel, podPhase } from '../module/k8s/pods';
+import { getPrimaryUDNPodIPs, getRestartPolicyLabel, podPhase } from '../module/k8s/pods';
 import { Conditions } from './conditions';
 import { ResourceEventStream } from './events';
 import { DetailsPage } from './factory/details';
@@ -307,6 +307,7 @@ export const PodDetailsList: FC<PodDetailsListProps> = ({ pod }) => {
   const { t } = useTranslation('public');
   const moreThanOnePodIPs = pod.status?.podIPs?.length > 1;
   const moreThanOneHostIPs = pod.status?.hostIPs?.length > 1;
+  const primaryUDNPodIPs = getPrimaryUDNPodIPs(pod);
   return (
     <DescriptionList>
       <DescriptionListGroup>
@@ -323,8 +324,28 @@ export const PodDetailsList: FC<PodDetailsListProps> = ({ pod }) => {
           ? t('{{count}} second', { count: pod.spec.activeDeadlineSeconds })
           : t('Not configured')}
       </DetailsItem>
+      {primaryUDNPodIPs && (
+        <DetailsItem label={primaryUDNPodIPs.length > 1 ? t('Pod IPs') : t('Pod IP')}>
+          {primaryUDNPodIPs.join(', ')}
+        </DetailsItem>
+      )}
       <DetailsItem
-        label={moreThanOnePodIPs ? t('Pod IPs') : t('Pod IP')}
+        label={
+          primaryUDNPodIPs
+            ? moreThanOnePodIPs
+              ? t('Pod IPs (infrastructure)')
+              : t('Pod IP (infrastructure)')
+            : moreThanOnePodIPs
+              ? t('Pod IPs')
+              : t('Pod IP')
+        }
+        description={
+          primaryUDNPodIPs
+            ? t(
+                "Used only for kubelet health checks. This is not the pod's primary network IP because the namespace has a primary user-defined network.",
+              )
+            : undefined
+        }
         obj={pod}
         path={moreThanOnePodIPs ? 'status.podIPs' : 'status.podIP'}
       >
