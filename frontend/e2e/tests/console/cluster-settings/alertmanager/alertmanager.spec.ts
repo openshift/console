@@ -27,10 +27,10 @@ type AlertmanagerRoute = {
 
 test.describe.configure({ mode: 'serial' });
 
-// The Configuration tab these tests navigate through is hidden on hosted
-// clusters (the global config is managed by the HostedCluster there), so
-// they only run on standalone control planes.
-test.describe('Alertmanager', { tag: ['@admin', '@standalone'] }, () => {
+// Only the first test navigates through the cluster-settings Configuration
+// tab, which does not render on hosted clusters; the rest go directly to
+// the alertmanager URLs, which are served on both topologies.
+test.describe('Alertmanager', { tag: ['@admin'] }, () => {
   let alertmanager: AlertmanagerPage;
   let k8sClient: KubernetesClient;
 
@@ -44,12 +44,16 @@ test.describe('Alertmanager', { tag: ['@admin', '@standalone'] }, () => {
     await resetAlertmanagerConfig(k8sClient);
   });
 
-  test('displays the Alertmanager Configuration Details page', async ({ page }) => {
-    await page.goto('/settings/cluster');
-    await page.getByRole('tab', { name: 'Configuration' }).click();
-    await page.getByTestId('Alertmanager').click();
-    await expect(page.getByRole('heading', { name: 'Alert routing' })).toBeVisible();
-  });
+  test(
+    'displays the Alertmanager Configuration Details page',
+    { tag: ['@standalone'] },
+    async ({ page }) => {
+      await page.goto('/settings/cluster');
+      await page.getByRole('tab', { name: 'Configuration' }).click();
+      await page.getByTestId('Alertmanager').click();
+      await expect(page.getByRole('heading', { name: 'Alert routing' })).toBeVisible();
+    },
+  );
 
   test('launches Alert Routing modal, edits and saves correctly', async ({ page }) => {
     await alertmanager.navigateToAlertmanager();
@@ -259,8 +263,7 @@ route:
   });
 });
 
-// Standalone-only for the same reason as the describe above.
-test.describe('Alertmanager Receiver Forms', { tag: ['@admin', '@standalone'] }, () => {
+test.describe('Alertmanager Receiver Forms', { tag: ['@admin'] }, () => {
   let alertmanager: AlertmanagerPage;
   let k8sClient: KubernetesClient;
 

@@ -13,15 +13,18 @@
 #   oc delete user test e2e-admin; oc delete identity test:test test:e2e-admin
 #   oc --kubeconfig=<mgmt> -n <ns> patch hostedcluster <name> --type=merge \
 #     -p "$(oc --kubeconfig=<mgmt> -n <ns> get hostedcluster <name> -o json \
-#       | jq -c 'if ([.spec.configuration.oauth.identityProviders // [] | .[] | select(.name != "test")] | length) > 0
-#                then {spec:{configuration:{oauth:{identityProviders:[.spec.configuration.oauth.identityProviders // [] | .[] | select(.name != "test")]}}}}
-#                else {spec:{configuration:{oauth:null}}} end')"
+#       | jq -c '(.spec.configuration.oauth // {}) as $o
+#                | [$o.identityProviders // [] | .[] | select(.name != "test")] as $rest
+#                | if ($rest | length) > 0 then {spec:{configuration:{oauth:{identityProviders:$rest}}}}
+#                  elif ($o | del(.identityProviders) | length) > 0 then {spec:{configuration:{oauth:{identityProviders:null}}}}
+#                  else {spec:{configuration:{oauth:null}}} end')"
 #   oc --kubeconfig=<mgmt> -n <ns> delete secret console-e2e-htpasswd
 # The patch removes only the suite's 'test' provider so providers owned by
 # other configurations keep working. When that would leave the list empty it
-# removes the oauth configuration entirely instead: kubeadmin is only
-# restored once the configuration is gone, and an empty provider list would
-# otherwise leave the cluster with no way to log in.
+# drops the provider list (or, if nothing else remains, the whole oauth
+# configuration) instead: kubeadmin is only restored once the configuration
+# is gone, and an empty provider list would otherwise leave the cluster
+# with no way to log in.
 #
 # Run directly or source it; sourcing keeps the exported variables in the
 # calling shell, which is how the prow e2e entrypoints use it. Aborts the
@@ -163,7 +166,8 @@ if [ "$is_hosted" == "true" ]; then
   if [ -z "${HC_NAMESPACE:-}" ] && [ -n "${MGMT_KUBECONFIG:-}" ] && [ -n "${CLUSTER_NAME:-}" ] && [ -f "$MGMT_KUBECONFIG" ]; then
     # Neither the env nor SHARED_DIR names the namespace; look the cluster
     # up by name, as the idp-htpasswd and hypershift-conformance steps do.
-    if HC_NAMESPACE="$(oc --kubeconfig="$MGMT_KUBECONFIG" get hostedclusters -A -o "jsonpath={range .items[?(@.metadata.name==\"$CLUSTER_NAME\")]}{.metadata.namespace}{\"\\n\"}{end}" 2>/dev/null)"; then
+    hc_lookup_err="$(mktemp)"
+    if HC_NAMESPACE="$(oc --kubeconfig="$MGMT_KUBECONFIG" get hostedclusters -A -o "jsonpath={range .items[?(@.metadata.name==\"$CLUSTER_NAME\")]}{.metadata.namespace}{\"\\n\"}{end}" 2>"$hc_lookup_err")"; then
       if [ "$(printf '%s' "$HC_NAMESPACE" | grep -c .)" -gt 1 ]; then
         echo "multiple HostedClusters named '$CLUSTER_NAME': set HC_NAMESPACE to disambiguate" >&2
         exit 1
@@ -175,10 +179,12 @@ if [ "$is_hosted" == "true" ]; then
     else
       # A restricted credential cannot list hostedclusters across namespaces
       # (the idp-htpasswd step documents the same limitation); fall back to
-      # the conventional namespace rather than failing.
-      echo "warning: could not list HostedClusters with the management kubeconfig, defaulting the namespace to 'clusters'" >&2
+      # the conventional namespace rather than failing, but surface why.
+      echo "warning: could not list HostedClusters with the management kubeconfig, defaulting the namespace to 'clusters':" >&2
+      cat "$hc_lookup_err" >&2
       HC_NAMESPACE=
     fi
+    rm -f "$hc_lookup_err"
   fi
   HC_NAMESPACE="${HC_NAMESPACE:-clusters}"
   if [ ! -f "$MGMT_KUBECONFIG" ] || [ ! -s "$MGMT_KUBECONFIG" ] || [ -z "${CLUSTER_NAME:-}" ]; then
@@ -274,7 +280,13 @@ if [ "$is_hosted" == "true" ]; then
   # supplied value cannot leak into the trace. The two variables are a pair:
   # the admin persona on hosted clusters is the e2e-admin user, so a preset
   # password without the username (e.g. left over from a standalone run)
-  # would pair kubeadmin's password with e2e-admin and fail every login.
+  # would pair kubeadmin's password with e2e-admin and fail every login. A
+  # preset kubeadmin persona is its mirror image: kubeadmin is disabled on
+  # hosted clusters as soon as OAuth is configured.
+  if [ "${OPENSHIFT_USERNAME:-}" == "kubeadmin" ]; then
+    echo "OPENSHIFT_USERNAME is 'kubeadmin', which is disabled on hosted clusters once OAuth is configured; unset OPENSHIFT_USERNAME and BRIDGE_KUBEADMIN_PASSWORD (likely leftovers from a standalone run in this shell)" >&2
+    exit 1
+  fi
   if [ -n "${BRIDGE_KUBEADMIN_PASSWORD:-}" ] && [ -z "${OPENSHIFT_USERNAME:-}" ]; then
     echo "BRIDGE_KUBEADMIN_PASSWORD is preset without OPENSHIFT_USERNAME; on hosted clusters the admin persona is the e2e-admin user, so set both or neither" >&2
     exit 1
