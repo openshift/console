@@ -1,3 +1,5 @@
+'use no memo';
+
 import { useMemo, useRef } from 'react';
 import type { Extension, LoadedExtension } from '@openshift/dynamic-plugin-sdk';
 import { dynamicPluginNames } from './allowed-plugins';
@@ -28,6 +30,10 @@ const sortExtensionsByPluginOrder = <TExtension extends Extension>(
  * The hook assumes that `extensions` array is referentially stable across re-renders.
  *
  * This hook does not modify provided extension objects, it just changes their order within the array.
+ *
+ * Excluded from the React Compiler via the "use no memo" directive: the
+ * result cache is backed by refs written during render, a pattern the
+ * compiler's purity assumptions do not allow.
  *
  * @returns List of sorted extensions.
  */
