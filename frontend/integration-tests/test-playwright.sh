@@ -15,6 +15,8 @@
 # Environment:
 #   BRIDGE_BASE_ADDRESS, BRIDGE_BASE_PATH, WEB_CONSOLE_URL
 #   INSTALLER_DIR, ARTIFACT_DIR, KUBEADMIN_PASSWORD_FILE
+#   BRIDGE_ADMIN_IDP — IDP the admin persona authenticates against when it
+#     is not kubeadmin (default 'test'); decoupled from BRIDGE_HTPASSWD_IDP
 #   ARTIFACT_DIR — Prow/OpenShift CI artifact root. When set, playwright.config.ts writes all
 #     artifacts (test output and reports) directly under $ARTIFACT_DIR; local runs keep them
 #     under frontend/test-results and frontend/playwright-report.

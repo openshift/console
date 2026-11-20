@@ -13,18 +13,16 @@
 #   oc delete user test e2e-admin; oc delete identity test:test test:e2e-admin
 #   oc --kubeconfig=<mgmt> -n <ns> patch hostedcluster <name> --type=merge \
 #     -p "$(oc --kubeconfig=<mgmt> -n <ns> get hostedcluster <name> -o json \
-#       | jq -c '(.spec.configuration.oauth // {}) as $o
-#                | [$o.identityProviders // [] | .[] | select(.name != "test")] as $rest
-#                | if ($rest | length) > 0 then {spec:{configuration:{oauth:{identityProviders:$rest}}}}
-#                  elif ($o | del(.identityProviders) | length) > 0 then {spec:{configuration:{oauth:{identityProviders:null}}}}
-#                  else {spec:{configuration:{oauth:null}}} end')"
+#       | jq -c 'if ([.spec.configuration.oauth.identityProviders // [] | .[] | select(.name != "test")] | length) > 0
+#                then {spec:{configuration:{oauth:{identityProviders:[.spec.configuration.oauth.identityProviders // [] | .[] | select(.name != "test")]}}}}
+#                else {spec:{configuration:{oauth:null}}} end')"
 #   oc --kubeconfig=<mgmt> -n <ns> delete secret console-e2e-htpasswd
 # The patch removes only the suite's 'test' provider so providers owned by
-# other configurations keep working. When that would leave the list empty it
-# drops the provider list (or, if nothing else remains, the whole oauth
-# configuration) instead: kubeadmin is only restored once the configuration
-# is gone, and an empty provider list would otherwise leave the cluster
-# with no way to log in.
+# other configurations keep working. When no other provider remains it
+# removes the whole oauth configuration instead: unrelated oauth settings
+# such as tokenConfig are lost, which is recoverable, unlike the lockout an
+# empty provider list would cause - kubeadmin is only restored once the
+# configuration is gone.
 #
 # Run directly or source it; sourcing keeps the exported variables in the
 # calling shell, which is how the prow e2e entrypoints use it. Aborts the
@@ -213,13 +211,15 @@ if [ "$is_hosted" == "true" ]; then
     echo "hosted cluster detected: set MGMT_KUBECONFIG (management cluster kubeconfig) and CLUSTER_NAME (HostedCluster name in namespace '$HC_NAMESPACE'), either directly or via SHARED_DIR" >&2
     exit 1
   fi
-  # HyperShift disables integrated OAuth when the HostedCluster authenticates
-  # through OIDC: no oauth-openshift deployment runs and the oauth
-  # configuration below is ignored, so fail fast instead of burning the
-  # login timeout. The precheck is advisory; a read failure falls through
-  # to the setup's own failure modes.
-  if [ "$(oc --kubeconfig="$MGMT_KUBECONFIG" get hostedcluster -n "$HC_NAMESPACE" "$CLUSTER_NAME" -o 'jsonpath={.spec.configuration.authentication.type}' 2>/dev/null || true)" == "OIDC" ]; then
-    echo "the HostedCluster authenticates through OIDC, so its integrated OAuth - and the htpasswd identity provider this setup configures - is disabled" >&2
+  # HyperShift only honors spec.configuration.oauth when the HostedCluster
+  # authenticates through integrated OAuth: with any other authentication
+  # type no oauth-openshift deployment runs and the oauth configuration
+  # below is ignored, so fail fast instead of burning the login timeout.
+  # The precheck is advisory; a read failure falls through to the setup's
+  # own failure modes.
+  hc_auth_type="$(oc --kubeconfig="$MGMT_KUBECONFIG" get hostedcluster -n "$HC_NAMESPACE" "$CLUSTER_NAME" -o 'jsonpath={.spec.configuration.authentication.type}' 2>/dev/null || true)"
+  if [ -n "$hc_auth_type" ] && [ "$hc_auth_type" != "IntegratedOAuth" ]; then
+    echo "the HostedCluster authenticates through '$hc_auth_type' rather than integrated OAuth, so the htpasswd identity provider this setup configures is ignored" >&2
     exit 1
   fi
 
@@ -231,16 +231,23 @@ if [ "$is_hosted" == "true" ]; then
   # Add an 'e2e-admin' user with cluster-admin to the same htpasswd file for
   # tests that need an admin session. The entry uses a precomputed bcrypt
   # hash of the public test password. The suite's own entries replace any
-  # stale ones while other users of the secret are preserved. Disable tracing so the hashes and the
-  # credential line stay out of the logs.
+  # stale ones while other users of the secret are preserved. Disable
+  # tracing so the hashes and the credential line stay out of the logs.
   set +x
-  # The command substitution strips the trailing newline and keeps internal
-  # ones; --ignore-not-found yields empty output for an absent secret, and
-  # any other read failure aborts. The secret name is fixed per namespace
-  # rather than per cluster: suites running against HostedClusters that
-  # share a namespace write identical suite-owned entries, and this merge
-  # preserves any foreign ones.
-  existing_htpasswd="$(oc --kubeconfig="$MGMT_KUBECONFIG" -n "$HC_NAMESPACE" get secret console-e2e-htpasswd --ignore-not-found -o 'jsonpath={.data.htpasswd}' | base64 -d)"
+  # Seed the merge from the secret the live 'test' provider references,
+  # falling back to this suite's own name, so users kept under a previous
+  # secret name survive (the standalone branch does the same). The command
+  # substitution strips the trailing newline and keeps internal ones;
+  # --ignore-not-found yields empty output for an absent secret, and any
+  # other read failure aborts. The fallback secret name is fixed per
+  # namespace rather than per cluster: suites running against
+  # HostedClusters that share a namespace write identical suite-owned
+  # entries, and this merge preserves any foreign ones.
+  referenced_secret="$(oc --kubeconfig="$MGMT_KUBECONFIG" -n "$HC_NAMESPACE" get hostedcluster "$CLUSTER_NAME" -o 'jsonpath={.spec.configuration.oauth.identityProviders[?(@.name=="test")].htpasswd.fileData.name}')"
+  if [ -z "$referenced_secret" ]; then
+    referenced_secret=console-e2e-htpasswd
+  fi
+  existing_htpasswd="$(oc --kubeconfig="$MGMT_KUBECONFIG" -n "$HC_NAMESPACE" get secret "$referenced_secret" --ignore-not-found -o 'jsonpath={.data.htpasswd}' | base64 -d)"
   existing_htpasswd="$(printf '%s\n' "$existing_htpasswd" | grep -v -E '^(test|e2e-admin):' || true)"
   htpasswd_file="$(mktemp)"
   {
