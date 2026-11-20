@@ -61,8 +61,8 @@ export async function performLogin(
 
 /**
  * Log in using the credentials configured via environment variables for the
- * given persona. Admin uses the kubeadmin / kube:admin identity provider;
- * developer uses the htpasswd identity provider. Used both by the auth setup
+ * given persona. The HyperShift admin and developer personas use htpasswd;
+ * the standalone admin uses kube:admin. Used both by the auth setup
  * projects and as a re-authentication fallback for specs whose shared
  * storageState session has expired or been invalidated mid-run.
  */
@@ -86,7 +86,8 @@ export async function loginFromEnv(
 
   const username = process.env.OPENSHIFT_USERNAME || 'kubeadmin';
   const password = process.env.BRIDGE_KUBEADMIN_PASSWORD || '';
-  await performLogin(page, baseURL, username, password, 'kube:admin');
+  const idpName = process.env.PLAYWRIGHT_HYPERSHIFT === 'true' ? 'test' : 'kube:admin';
+  await performLogin(page, baseURL, username, password, idpName);
 }
 
 export async function saveStorageState(page: Page, storagePath: string): Promise<void> {

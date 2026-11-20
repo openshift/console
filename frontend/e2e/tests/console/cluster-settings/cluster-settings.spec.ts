@@ -2,7 +2,7 @@ import { test, expect } from '../../../fixtures';
 import { ClusterSettingsPage } from '../../../pages/cluster-settings-page';
 import { DetailsPage } from '../../../pages/details-page';
 
-test.describe('Cluster Settings', { tag: ['@admin'] }, () => {
+test.describe('Cluster Settings', { tag: ['@admin', '@standalone'] }, () => {
   test('displays page title, horizontal navigation tab headings and pages', async ({ page }) => {
     const clusterSettings = new ClusterSettingsPage(page);
 

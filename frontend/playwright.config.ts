@@ -49,6 +49,7 @@ const chromeArgs = [
 export default defineConfig({
   testDir: './e2e/tests',
   testMatch: '**/*.spec.ts',
+  grepInvert: process.env.PLAYWRIGHT_HYPERSHIFT === 'true' ? /\s@standalone(?:\s|$)/ : undefined,
   outputDir: path.join(artifactDir, 'playwright-test-results'),
   forbidOnly: isCI,
   retries: isCI ? 2 : 0,

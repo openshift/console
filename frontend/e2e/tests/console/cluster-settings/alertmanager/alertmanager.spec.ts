@@ -41,12 +41,18 @@ test.describe('Alertmanager', { tag: ['@admin'] }, () => {
     await resetAlertmanagerConfig(k8sClient);
   });
 
-  test('displays the Alertmanager Configuration Details page', async ({ page }) => {
-    await page.goto('/settings/cluster');
-    await page.getByRole('tab', { name: 'Configuration' }).click();
-    await page.getByTestId('Alertmanager').click();
-    await expect(page.getByRole('heading', { name: 'Alert routing' })).toBeVisible();
-  });
+  // The Configuration tab navigation is only verified on standalone control
+  // planes; the remaining tests reach the alertmanager pages directly.
+  test(
+    'displays the Alertmanager Configuration Details page',
+    { tag: ['@standalone'] },
+    async ({ page }) => {
+      await page.goto('/settings/cluster');
+      await page.getByRole('tab', { name: 'Configuration' }).click();
+      await page.getByTestId('Alertmanager').click();
+      await expect(page.getByRole('heading', { name: 'Alert routing' })).toBeVisible();
+    },
+  );
 
   test('launches Alert Routing modal, edits and saves correctly', async ({ page }) => {
     await alertmanager.navigateToAlertmanager();

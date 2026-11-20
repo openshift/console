@@ -7,7 +7,7 @@ const CLUSTER_VERSION_URL = '**/apis/config.openshift.io/v1/clusterversions/vers
 
 test.describe(
   'Cluster Settings when worker MachineConfigPool is paused',
-  { tag: ['@admin'] },
+  { tag: ['@admin', '@standalone'] },
   () => {
     test('displays an alert', async ({ page, k8sClient }) => {
       const clusterSettings = new ClusterSettingsPage(page);
