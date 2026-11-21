@@ -722,8 +722,11 @@ export type MachineKind = {
     nodeRef: {
       kind: string;
       name: string;
-      uid: string;
+      // Present on Machine API; Cluster API v1beta2 often only sets name.
+      uid?: string;
     };
+    // Cluster API stores conditions here; Machine API uses providerStatus.conditions.
+    conditions?: K8sResourceCondition[];
     providerStatus: {
       kind: string;
       conditions?: K8sResourceCondition[];

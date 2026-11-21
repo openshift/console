@@ -1,16 +1,43 @@
 import i18next from 'i18next';
 import type {
   K8sResourceCommon,
+  K8sResourceCondition,
   MachineAWSPlacement,
   MachineKind,
   MachineSetKind,
   MachineDeploymentKind,
   NodeKind,
 } from '@console/internal/module/k8s';
+import { LabelSelector } from '@console/internal/module/k8s';
 import { getName } from './common';
 
 export const isClusterAPIResource = (obj: K8sResourceCommon): boolean =>
   obj?.apiVersion?.startsWith('cluster.x-k8s.io/') ?? false;
+
+/** Machine API uses providerStatus.conditions; Cluster API uses status.conditions. */
+export const getMachineConditions = (obj: MachineKind): K8sResourceCondition[] | undefined => {
+  if (isClusterAPIResource(obj)) {
+    return obj?.status?.conditions;
+  }
+  return obj?.status?.providerStatus?.conditions;
+};
+
+/** Pick a Machine owned by a MachineSet: same API group, namespace, and label selector. */
+export const findMachineForMachineSet = (
+  machineSet: MachineSetKind,
+  machines: MachineKind[] = [],
+): MachineKind | undefined => {
+  if (!machineSet?.metadata?.namespace || !machineSet?.spec?.selector) {
+    return undefined;
+  }
+  return machines.find(
+    (m) =>
+      !!m?.metadata?.namespace &&
+      isClusterAPIResource(m) === isClusterAPIResource(machineSet) &&
+      m.metadata.namespace === machineSet.metadata.namespace &&
+      new LabelSelector(machineSet.spec.selector).matches(m),
+  );
+};
 
 export const getMachineRole = (
   obj: MachineKind | MachineSetKind | MachineDeploymentKind,
@@ -47,8 +74,21 @@ export const getMachineAWSPlacement = (
 
 export const getMachineNodeName = (obj: MachineKind) => obj?.status?.nodeRef?.name;
 
-export const getMachineNode = (machine: MachineKind, nodes: NodeKind[] = []): NodeKind =>
-  nodes.find((node) => getMachineNodeName(machine) === getName(node));
+export const getMachineNode = (machine: MachineKind, nodes: NodeKind[] = []): NodeKind => {
+  const nodeRef = machine?.status?.nodeRef;
+  if (!nodeRef) {
+    return undefined;
+  }
+  // Machine API includes uid; Cluster API v1beta2 typically only sets name.
+  if (nodeRef.uid) {
+    return nodes.find((node) => !!node.metadata?.uid && node.metadata.uid === nodeRef.uid);
+  }
+  // Avoid matching two missing/empty names.
+  if (!nodeRef.name) {
+    return undefined;
+  }
+  return nodes.find((node) => getName(node) === nodeRef.name);
+};
 
 export const getMachineAddresses = (machine: MachineKind) => machine?.status?.addresses;
 

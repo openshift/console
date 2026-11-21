@@ -27,7 +27,9 @@ import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import PaneBodyGroup from '@console/shared/src/components/layout/PaneBodyGroup';
 import { DASH } from '@console/shared/src/constants/ui';
 import {
+  findMachineForMachineSet,
   getMachineAWSPlacement,
+  getMachineNode,
   getMachineRole,
   isClusterAPIResource,
 } from '@console/shared/src/selectors/machine';
@@ -48,14 +50,14 @@ import type {
   NodeKind,
   Selector as SelectorType,
 } from '../module/k8s';
-import { referenceFor, referenceForModel, LabelSelector } from '../module/k8s';
+import { referenceFor, referenceForModel } from '../module/k8s';
 import { MachinesCell } from './control-plane-machine-set';
 import { ResourceEventStream } from './events';
 import { DetailsPage } from './factory/details';
 import ListPageCreate from './factory/ListPage/ListPageCreate';
 import ListPageHeader from './factory/ListPage/ListPageHeader';
 import { sortResourceByValue } from './factory/Table/sort';
-import { getClusterAPIWatchError, MachinePage } from './machine';
+import { ClusterAPIWatchAlert, getCombinedListLoadError, MachinePage } from './machine';
 import { ResourceSummary } from './utils/details-page';
 import { SectionHeading } from './utils/headings';
 import { navFactory } from './utils/horizontal-nav';
@@ -445,14 +447,9 @@ const MachineSetList: FC<MachineSetListProps> = ({ data, loaded, loadError, ...p
 
   const capacityResolver = useCallback(
     (obj: MachineSetKind) => {
-      const machine = (machines ?? []).find(
-        (m) =>
-          isClusterAPIResource(m) === isClusterAPIResource(obj) &&
-          new LabelSelector(obj.spec.selector).matches(m),
-      );
-      const node = (nodes ?? []).find(
-        (n) => machine && machine.status?.nodeRef?.uid === n.metadata.uid,
-      );
+      const machine = findMachineForMachineSet(obj, machines ?? []);
+      // Machine API matches nodeRef.uid; Cluster API v1beta2 typically only has name.
+      const node = machine ? getMachineNode(machine, nodes ?? []) : undefined;
       const { cpu, memory } = node?.status?.capacity ?? {};
       return {
         cpu: convertToBaseValue(cpu) ?? 0,
@@ -508,7 +505,11 @@ export const MachineSetPage: FC<MachineSetPageProps> = ({
     [mapMachineSets.data, capiMachineSets.data],
   );
   const loaded = mapMachineSets.loaded && (capiMachineSets.loaded || !!capiMachineSets.loadError);
-  const loadError = mapMachineSets.loadError || getClusterAPIWatchError(capiMachineSets.loadError);
+  const loadError = getCombinedListLoadError(
+    mapMachineSets.loadError,
+    capiMachineSets.loadError,
+    mapMachineSets.loaded,
+  );
 
   const createAccessReview = {
     groupVersionKind: referenceForModel(MachineSetModel),
@@ -527,6 +528,7 @@ export const MachineSetPage: FC<MachineSetPageProps> = ({
         </ListPageCreate>
       </ListPageHeader>
       <ListPageBody>
+        <ClusterAPIWatchAlert error={capiMachineSets.loadError} />
         <MachineSetList
           data={machineSets}
           loaded={loaded}

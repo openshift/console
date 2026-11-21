@@ -886,8 +886,8 @@ export const ClusterAPIMachineSetModel: K8sKind = {
   // t('public~MachineSet')
   labelKey: 'public~MachineSet',
   labelPlural: 'MachineSets',
-  // t('public~MachineSet')
-  labelPluralKey: 'public~MachineSet',
+  // t('public~MachineSets')
+  labelPluralKey: 'public~MachineSets',
   apiVersion: 'v1beta2',
   apiGroup: 'cluster.x-k8s.io',
   plural: 'machinesets',

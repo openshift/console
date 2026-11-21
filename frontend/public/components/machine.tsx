@@ -1,6 +1,7 @@
 import type { FC } from 'react';
 import { useMemo, Suspense } from 'react';
 import {
+  Alert,
   DescriptionList,
   DescriptionListDescription,
   DescriptionListGroup,
@@ -20,13 +21,13 @@ import { Status } from '@console/shared/src/components/status/Status';
 import { DASH } from '@console/shared/src/constants/ui';
 import {
   getMachineAddresses,
+  getMachineConditions,
   getMachineInstanceType,
   getMachineNodeName,
   getMachineRegion,
   getMachineRole,
   getMachineZone,
   getMachinePhase,
-  isClusterAPIResource,
 } from '@console/shared/src/selectors/machine';
 import { ClusterAPIMachineModel, MachineModel } from '../models';
 import type { MachineKind, Selector } from '../module/k8s';
@@ -47,13 +48,136 @@ import { LoadingBox } from './utils/status-box';
 
 export const machineReference = referenceForModel(MachineModel);
 
-// Ignore missing Cluster API CRDs / models; surface permission and other API errors.
+const getWatchErrorStatus = (err: unknown): number | undefined =>
+  (err as { response?: { status?: number } })?.response?.status;
+
+/** Missing Cluster API CRD/model — treat as "not installed", not a user-visible failure. */
+export const isClusterAPINotInstalledError = (err: unknown): boolean =>
+  !!err && (err instanceof NoModelError || getWatchErrorStatus(err) === 404);
+
+/** User can list Machine API but not Cluster API resources. */
+export const isClusterAPIForbiddenError = (err: unknown): boolean =>
+  !!err && getWatchErrorStatus(err) === 403;
+
+/**
+ * Errors that must not become page `loadError` on the combined Machines/MachineSets list.
+ * A 403 would otherwise make StatusBox render AccessDenied and hide Machine API rows.
+ */
 export const getClusterAPIWatchError = (err: unknown): unknown => {
-  const status = (err as { response?: { status?: number } })?.response?.status;
-  if (!err || err instanceof NoModelError || status === 404) {
+  if (!err || isClusterAPINotInstalledError(err) || isClusterAPIForbiddenError(err)) {
     return undefined;
   }
   return err;
+};
+
+/**
+ * Combined list page loadError: prefer Machine API failures. When Machine API loaded
+ * successfully, never pass Cluster API errors through (inline alert covers partial failure).
+ */
+export const getCombinedListLoadError = (
+  mapLoadError: unknown,
+  capiLoadError: unknown,
+  mapLoaded: boolean,
+): unknown => {
+  if (mapLoadError) {
+    return mapLoadError;
+  }
+  if (mapLoaded) {
+    return undefined;
+  }
+  return getClusterAPIWatchError(capiLoadError);
+};
+
+export type ClusterAPIWatchAlertKind = 'forbidden' | 'error';
+
+/** Inline alert kind for partial Cluster API watch failure on the combined list. */
+export const getClusterAPIWatchAlertKind = (
+  capiLoadError: unknown,
+): ClusterAPIWatchAlertKind | undefined => {
+  if (!capiLoadError || isClusterAPINotInstalledError(capiLoadError)) {
+    return undefined;
+  }
+  if (isClusterAPIForbiddenError(capiLoadError)) {
+    return 'forbidden';
+  }
+  return 'error';
+};
+
+/** Page-level warning/error when Cluster API watch fails but Machine API data can still show. */
+export const ClusterAPIWatchAlert: FC<{ error: unknown }> = ({ error }) => {
+  const { t } = useTranslation('public');
+  const kind = getClusterAPIWatchAlertKind(error);
+  if (!kind) {
+    return null;
+  }
+
+  if (kind === 'forbidden') {
+    return (
+      <Alert
+        isInline
+        className="co-alert"
+        variant="warning"
+        title={t('Cluster API resources could not be listed')}
+      >
+        {t(
+          'You do not have permission to list Cluster API resources. Machine API resources are still shown.',
+        )}
+      </Alert>
+    );
+  }
+
+  const message =
+    (error as { message?: string })?.message ||
+    t('Cluster API resources could not be loaded. Machine API resources are still shown.');
+
+  return (
+    <Alert
+      isInline
+      className="co-alert"
+      variant="danger"
+      title={t('Cluster API resources could not be loaded')}
+    >
+      {message}
+    </Alert>
+  );
+};
+
+type WatchResourceState = {
+  loaded: boolean;
+  loadError?: unknown;
+};
+
+/**
+ * Machines list loaded/error for the combined page vs MachineSet Machines tab.
+ * When `matchClusterAPI` is set, only the selected API's watch may affect the tab —
+ * the other API pending or failing must not block or replace the selected list.
+ * CAPI-only tabs pass errors through (including 403); combined lists use Step 4 rules.
+ */
+export const getMachinePageWatchState = (
+  matchClusterAPI: boolean | undefined,
+  mapMachines: WatchResourceState,
+  capiMachines: WatchResourceState,
+): { loaded: boolean; loadError: unknown } => {
+  if (matchClusterAPI === true) {
+    return {
+      loaded: capiMachines.loaded || !!capiMachines.loadError,
+      loadError: capiMachines.loadError,
+    };
+  }
+  if (matchClusterAPI === false) {
+    return {
+      loaded: mapMachines.loaded,
+      loadError: mapMachines.loadError,
+    };
+  }
+  return {
+    loaded: mapMachines.loaded && (capiMachines.loaded || !!capiMachines.loadError),
+    loadError: getCombinedListLoadError(
+      mapMachines.loadError,
+      capiMachines.loadError,
+      mapMachines.loaded,
+    ),
+  };
 };
 
 const tableColumnInfo = [
@@ -190,7 +314,7 @@ const MachineDetails: FC<MachineDetailsProps> = ({ obj }: { obj: MachineKind }) 
       </PaneBody>
       <PaneBody>
         <SectionHeading text={t('Conditions')} />
-        <Conditions conditions={obj.status?.providerStatus?.conditions} />
+        <Conditions conditions={getMachineConditions(obj)} />
       </PaneBody>
     </>
   );
@@ -321,14 +445,19 @@ export const MachinePage: FC<MachinePageProps> = ({
   }>(watchedResources);
 
   const machines = useMemo(() => {
-    const merged = [...(mapMachines.data || []), ...(capiMachines.data || [])];
-    if (matchClusterAPI === undefined) {
-      return merged;
+    if (matchClusterAPI === true) {
+      return capiMachines.data || [];
     }
-    return merged.filter((m) => isClusterAPIResource(m) === matchClusterAPI);
+    if (matchClusterAPI === false) {
+      return mapMachines.data || [];
+    }
+    return [...(mapMachines.data || []), ...(capiMachines.data || [])];
   }, [mapMachines.data, capiMachines.data, matchClusterAPI]);
-  const loaded = mapMachines.loaded && (capiMachines.loaded || !!capiMachines.loadError);
-  const loadError = mapMachines.loadError || getClusterAPIWatchError(capiMachines.loadError);
+  const { loaded, loadError } = getMachinePageWatchState(
+    matchClusterAPI,
+    mapMachines,
+    capiMachines,
+  );
 
   const createAccessReview = {
     groupVersionKind: referenceForModel(MachineModel),
@@ -347,6 +476,7 @@ export const MachinePage: FC<MachinePageProps> = ({
         </ListPageCreate>
       </ListPageHeader>
       <ListPageBody>
+        {matchClusterAPI === undefined && <ClusterAPIWatchAlert error={capiMachines.loadError} />}
         <MachineList
           data={machines}
           loaded={loaded}
