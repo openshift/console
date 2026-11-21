@@ -24,6 +24,12 @@ func (v MockKubeVersion) GetKubeVersion() string {
 }
 
 func TestProxy_IndexFile(t *testing.T) {
+	// Fixture indexes are served by httptest on 127.0.0.1. Production rejects
+	// that address; these cases need the fixture allowance.
+	prev := allowLoopbackTargets
+	SetAllowLoopbackTargetsForTest(true)
+	t.Cleanup(func() { SetAllowLoopbackTargetsForTest(prev) })
+
 	tests := []struct {
 		name             string
 		indexFiles       []string
