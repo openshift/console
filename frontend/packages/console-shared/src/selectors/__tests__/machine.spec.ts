@@ -42,7 +42,7 @@ describe('machine selectors', () => {
             conditions: [{ type: 'Ignored', status: 'False' }],
           },
         },
-      } as MachineKind;
+      } as unknown as MachineKind;
 
       expect(getMachineConditions(machine)).toEqual(conditions);
     });
@@ -56,7 +56,7 @@ describe('machine selectors', () => {
           conditions: [{ type: 'Ignored', status: 'False' }],
           providerStatus: { conditions },
         },
-      } as MachineKind;
+      } as unknown as MachineKind;
 
       expect(getMachineConditions(machine)).toEqual(conditions);
     });
@@ -66,7 +66,7 @@ describe('machine selectors', () => {
         getMachineConditions({
           apiVersion: 'cluster.x-k8s.io/v1beta2',
           kind: 'Machine',
-        } as MachineKind),
+        } as unknown as MachineKind),
       ).toBeUndefined();
     });
   });
@@ -75,13 +75,13 @@ describe('machine selectors', () => {
     const nodes = [
       { metadata: { name: 'node-a', uid: 'uid-a' } },
       { metadata: { name: 'node-b', uid: 'uid-b' } },
-    ] as NodeKind[];
+    ] as unknown as NodeKind[];
 
     it('matches Machine API nodeRef by uid', () => {
       const machine = {
         apiVersion: 'machine.openshift.io/v1beta1',
         status: { nodeRef: { kind: 'Node', name: 'node-a', uid: 'uid-b' } },
-      } as MachineKind;
+      } as unknown as MachineKind;
 
       expect(getMachineNode(machine, nodes)?.metadata.name).toBe('node-b');
     });
@@ -90,14 +90,14 @@ describe('machine selectors', () => {
       const machine = {
         apiVersion: 'cluster.x-k8s.io/v1beta2',
         status: { nodeRef: { kind: 'Node', name: 'node-a' } },
-      } as MachineKind;
+      } as unknown as MachineKind;
 
       expect(getMachineNode(machine, nodes)?.metadata.name).toBe('node-a');
     });
 
     it('returns undefined when nodeRef is missing', () => {
       expect(
-        getMachineNode({ apiVersion: 'cluster.x-k8s.io/v1beta2' } as MachineKind, nodes),
+        getMachineNode({ apiVersion: 'cluster.x-k8s.io/v1beta2' } as unknown as MachineKind, nodes),
       ).toBeUndefined();
     });
 
@@ -107,8 +107,8 @@ describe('machine selectors', () => {
           {
             apiVersion: 'cluster.x-k8s.io/v1beta2',
             status: { nodeRef: { kind: 'Node', name: '' } },
-          } as MachineKind,
-          [{ metadata: { name: '' } }] as NodeKind[],
+          } as unknown as MachineKind,
+          [{ metadata: { name: '' } }] as unknown as NodeKind[],
         ),
       ).toBeUndefined();
     });
@@ -122,7 +122,7 @@ describe('machine selectors', () => {
       kind: 'MachineSet',
       metadata: { name: 'workers', namespace: 'openshift-cluster-api' },
       spec: { selector, replicas: 1, template: { spec: {} } },
-    } as MachineSetKind;
+    } as unknown as MachineSetKind;
 
     it('selects a same-namespace CAPI Machine matching labels', () => {
       const machines = [
@@ -134,8 +134,9 @@ describe('machine selectors', () => {
             namespace: 'openshift-cluster-api',
             labels: { role: 'worker' },
           },
+          spec: {},
         },
-      ] as MachineKind[];
+      ] as unknown as MachineKind[];
 
       expect(findMachineForMachineSet(machineSet, machines)?.metadata.name).toBe('worker-a');
     });
@@ -150,8 +151,9 @@ describe('machine selectors', () => {
             namespace: 'other-namespace',
             labels: { role: 'worker' },
           },
+          spec: {},
         },
-      ] as MachineKind[];
+      ] as unknown as MachineKind[];
 
       expect(findMachineForMachineSet(machineSet, machines)).toBeUndefined();
     });
@@ -166,8 +168,9 @@ describe('machine selectors', () => {
             namespace: 'openshift-cluster-api',
             labels: { role: 'worker' },
           },
+          spec: {},
         },
-      ] as MachineKind[];
+      ] as unknown as MachineKind[];
 
       expect(findMachineForMachineSet(machineSet, machines)).toBeUndefined();
     });
@@ -179,7 +182,7 @@ describe('machine selectors', () => {
             apiVersion: 'cluster.x-k8s.io/v1beta2',
             metadata: { namespace: 'openshift-cluster-api' },
             spec: { replicas: 1, template: { spec: {} } },
-          } as MachineSetKind,
+          } as unknown as MachineSetKind,
           [],
         ),
       ).toBeUndefined();
