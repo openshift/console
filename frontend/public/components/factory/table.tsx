@@ -3,6 +3,7 @@ import { forwardRef } from 'react';
 import { css } from '@patternfly/react-styles';
 import { Tr } from '@patternfly/react-table';
 import * as _ from 'lodash';
+import { selectorToString } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { getName } from '@console/shared/src/selectors/common';
 import { getMachinePhase } from '@console/shared/src/selectors/machine';
 import { getMachineSetInstanceType } from '@console/shared/src/selectors/machineSet';
@@ -43,6 +44,7 @@ export const sorts = {
   jobCompletionsSucceeded: (job) => job?.status?.succeeded || 0,
   jobType: (job) => getJobTypeAndCompletions(job).type,
   numReplicas: (resource) => _.toInteger(_.get(resource, 'status.replicas')),
+  selectorSort: (resource) => selectorToString(resource?.spec?.selector ?? {}),
   namespaceCPU: (ns: K8sResourceKind): number => UIActions.getNamespaceMetric(ns, 'cpu'),
   namespaceMemory: (ns: K8sResourceKind): number => UIActions.getNamespaceMetric(ns, 'memory'),
   podCPU: (pod: PodKind): number => UIActions.getPodMetric(pod, 'cpu'),
