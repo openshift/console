@@ -17,12 +17,15 @@ export type CatalogItemType = Extension<
     typeDescription?: string;
     /** Determine if filter groups should be sorted alphabetically. Defaults to true. */
     sortFilterGroups?: boolean;
-    /** Ordering weight for this type in the catalog's type list. The console sorts types from
-        lowest to highest weight, and then alphabetically by title, so a higher weight places
-        the type lower in the list. Defaults to 0. */
+    /**
+     * Ordering weight for this type in the catalog's type list. The console sorts types from
+     * lowest to highest weight, and then alphabetically by title, so a higher weight places
+     * the type lower in the list. Defaults to 0.
+     *
+     * @internal - for Console use only - may change without notice
+     */
     sortWeight?: number;
-    /** Custom filters specific to the catalog item. Set a filter's `filterType` to `radio` for
-        single selection, or omit it for multiselect checkboxes. */
+    /** Custom filters specific to the catalog item. */
     filters?: CatalogItemAttribute[];
     /** Custom groupings specific to the catalog item. */
     groupings?: CatalogItemAttribute[];
@@ -36,8 +39,7 @@ export type CatalogItemTypeMetadata = Extension<
   {
     /** Type for the catalog item. */
     type: string;
-    /** Custom filters specific to the catalog item. Set a filter's `filterType` to `radio` for
-        single selection, or omit it for multiselect checkboxes. */
+    /** Custom filters specific to the catalog item. */
     filters?: CatalogItemAttribute[];
     /** Custom groupings specific to the catalog item. */
     groupings?: CatalogItemAttribute[];
@@ -213,9 +215,13 @@ export type CatalogItemDetailsDescription = {
 export type CatalogItemAttribute = {
   label: string;
   attribute: string;
-  /** Filter control type. Defaults to `checkbox`. For radio facets, the console selects the first
-      available value in display order when the URL has no available selection. The console orders
-      values by `comparator`, or alphanumerically if you omit `comparator`. */
+  /**
+   * Filter control type. Defaults to `checkbox`. For radio facets, the console selects the first
+   * available value in display order when the URL has no available selection. The console orders
+   * values by `comparator`, or alphanumerically if you omit `comparator`.
+   *
+   * @internal - for Console use only - may change without notice
+   */
   filterType?: 'checkbox' | 'radio';
   description?: string;
   comparator?: CodeRef<(a: string, b: string) => number>;

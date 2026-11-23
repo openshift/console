@@ -10,7 +10,9 @@ Console, use `4.x.0-prerelease.n` packages.
 For older 1.x plugin SDK packages, refer to "OpenShift Console Versions vs SDK Versions"
 compatibility table in [Console dynamic plugins README](./README.md).
 
-## 5.1.0-prerelease.2 - TBD
+## 5.1.0 - 2026-12-14
+
+> Initial release for OCP Console 5.1.
 
 - **Deprecated**: `ConsoleRemotePlugin` shared dynamic module option `modulePaths` is now
   deprecated, prefer using `baseDir` ([CONSOLE-5065], [#17439])

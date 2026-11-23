@@ -10,7 +10,9 @@ Console, use `4.x.0-prerelease.n` packages.
 For older 1.x plugin SDK packages, refer to "OpenShift Console Versions vs SDK Versions"
 compatibility table in [Console dynamic plugins README](./README.md).
 
-## 5.1.0-prerelease.2 - TBD
+## 5.1.0 - 2026-12-14
+
+> Initial release for OCP Console 5.1.
 
 - Add `react-dom` and `react/jsx-runtime` as Console provided shared modules ([CONSOLE-5571],
   [#17462])
@@ -18,15 +20,10 @@ compatibility table in [Console dynamic plugins README](./README.md).
   ([CONSOLE-5065], [#17439])
 - Added an optional `prometheus` code reference to the `console.dashboards/overview/inventory/item`
   and `console.dashboards/project/overview/item` extensions ([CONSOLE-5146], [#17456])
-- Added optional `sortWeight` property to extension `console.catalog/item-type`, so a plugin can
-  control where a type displays in the catalog's type list ([CONSOLE-5527], [#17355])
 - Added optional `badge` property to extension `console.tab`, so a plugin can display a component
   next to a contributed tab label ([CONSOLE-5527], [#17355])
 - Changed `HorizontalNav` to order contributed default tabs before other tabs. `HorizontalNav` still
   orders the remaining tabs alphabetically ([CONSOLE-5527], [#17355])
-- Added optional `filterType` property to `CatalogItemAttribute`, so catalog filters can render
-  single-select radio controls. Filters without `filterType` default to multiselect checkboxes
-  ([CONSOLE-5527], [#17389])
 
 ## 5.1.0-prerelease.1 - 2026-10-16
 
