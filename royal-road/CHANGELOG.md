@@ -2,6 +2,12 @@
 
 Newest first. One entry per work package from `FORK.md`.
 
+## Kubernetes update hints on the Overview
+
+- Core patch: bridge flag `--kubernetes-release-info-url` (`BRIDGE_KUBERNETES_RELEASE_INFO_URL`, default empty: off, unchanged upstream behaviour). The bridge fetches an endoflife.date-style release list at start and every 12 hours (`pkg/kubernetesreleases`), keeps the last good copy on failure, and serves it normalised at `/api/console/kubernetes-releases` (404 when off, 503 before the first fetch). Go unit tests.
+- Core patch: the Overview Details card shows an "Update available" item under **Kubernetes version** with the latest patch of the cluster's minor, the latest release when its minor is newer, and the minor's end-of-life date, with a warning icon within 30 days of it and a danger icon after it. Hidden when the feature is off or the version can't be parsed. Jest tests.
+- `royal-road/deploy/console-deployment-patch.yaml` sets the URL to `https://endoflife.date/api/kubernetes.json`; `royal-road/deploy/README.md` ("Kubernetes update hints") covers egress and turning it off.
+
 ## Sessions survive console rollouts
 
 - Core patch: bridge flag `--session-secret-namespace` (`BRIDGE_SESSION_SECRET_NAMESPACE`, `session.sessionSecretNamespace` in the config file; OIDC only). Each login session is written to its own Secret in that namespace and loaded from it on a memory miss, so a restart, rollout or another replica no longer signs users out. The Secret is authoritative: a login or token refresh reaches memory and cookies only after its Secret write succeeds, and a session without a Secret is logged out; replicas re-read it before refreshing a token, so a logout reaches them by their next refresh, and a refresh token cookie without its session cookie never refreshes. The Secret client has its own 50 QPS limit (client-go's default is 5). Within a Pod, loads, token updates and logouts of one session are serialised by a per-session lock, and API calls never hold the global session lock. The session cookie loses its Pod-name suffix when this is on. Unset, behaviour is unchanged.
