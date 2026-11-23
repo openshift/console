@@ -27,6 +27,7 @@ import {
   NONE_SECRET_KEY,
 } from '../url-chart/useBasicAuthSecretDropdown';
 import { useSecretResources } from '../url-chart/useSecretResources';
+import HelmChartResourcesPreview from './HelmChartResourcesPreview';
 import HelmChartVersionDropdown from './HelmChartVersionDropdown';
 import { useHelmReadmeModalLauncher } from './HelmReadmeModal';
 
@@ -238,6 +239,21 @@ const HelmInstallUpgradeForm: FC<
             )}
           </Grid>
         </FormSection>
+        {!chartError && (
+          <FormSection fullWidth>
+            <HelmChartResourcesPreview
+              chartURL={values.chartURL}
+              indexEntry={values.chartIndexEntry}
+              releaseName={values.releaseName}
+              namespace={namespace}
+              editorType={editorType}
+              yamlData={values.yamlData}
+              formData={formData}
+              basicAuthSecretName={values.basicAuthSecretName}
+              noRepo={values.isURLInstall}
+            />
+          </FormSection>
+        )}
         {!chartError &&
           (!formSchema && !chartHasValues ? (
             <Alert

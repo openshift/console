@@ -17,6 +17,121 @@ import (
 	corev1client "k8s.io/client-go/kubernetes/typed/core/v1"
 )
 
+func RenderManifestsFromRelease(releaseName string, vals map[string]interface{}, conf *action.Configuration, ns string) (string, error) {
+	rel, err := GetRelease(releaseName, conf)
+	if err != nil {
+		return "", fmt.Errorf("failed to get release %q: %w", releaseName, err)
+	}
+	if rel.Chart == nil {
+		return "", fmt.Errorf("release %q has no chart data", releaseName)
+	}
+
+	client := action.NewInstall(conf)
+	client.DryRunStrategy = action.DryRunClient
+	client.SkipCRDs = false
+	client.ReleaseName = releaseName
+	client.Replace = true
+	client.SkipSchemaValidation = true
+	client.Namespace = ns
+
+	result, err := client.Run(rel.Chart, vals)
+	if err != nil {
+		return "", err
+	}
+	rendered, ok := result.(*releasev1.Release)
+	if !ok {
+		return "", fmt.Errorf("unexpected release type %T", result)
+	}
+
+	var manifests bytes.Buffer
+	if !client.SkipCRDs {
+		for _, f := range rendered.Chart.CRDs() {
+			fmt.Fprintf(&manifests, "---\n# Source: %s\n%s\n", f.Name, f.Data)
+		}
+	}
+	fmt.Fprintln(&manifests, strings.TrimSpace(rendered.Manifest))
+	if !client.DisableHooks {
+		for _, m := range rendered.Hooks {
+			fmt.Fprintf(&manifests, "---\n# Source: %s\n%s\n", m.Path, m.Manifest)
+		}
+	}
+
+	return manifests.String(), nil
+}
+
+func RenderManifestsFromURL(name string, url string, vals map[string]interface{}, conf *action.Configuration, ns string, coreClient corev1client.CoreV1Interface, chartVersion string, basicAuthSecretName string) (string, error) {
+	if !IsChartURLWellFormed(url) {
+		return "", fmt.Errorf("invalid chart URL: %s, must be oci:// URL or http(s)://*.tgz", url)
+	}
+	if err := validateChartURL(url); err != nil {
+		return "", err
+	}
+
+	client := action.NewInstall(conf)
+	client.DryRunStrategy = action.DryRunClient
+	client.SkipCRDs = false
+	client.ReleaseName = name
+	client.Replace = true
+	client.DependencyUpdate = true
+	client.SkipSchemaValidation = true
+	client.Namespace = ns
+
+	if chartVersion == "" {
+		chartVersion = chartVersionFromURL(url)
+	}
+	if strings.HasPrefix(url, "oci://") {
+		url = strings.TrimSuffix(url, ":"+chartVersion)
+	}
+	client.ChartPathOptions.Version = chartVersion
+
+	if basicAuthSecretName != "" {
+		userCredentials, err := GetUserCredentials(coreClient, ns, basicAuthSecretName)
+		if err != nil {
+			return "", err
+		}
+		if err := applyBasicAuthFromUserCredentials(&client.ChartPathOptions, client, userCredentials); err != nil {
+			return "", err
+		}
+	}
+
+	cp, err := client.ChartPathOptions.LocateChart(url, settings)
+	if err != nil {
+		if basicAuthSecretName == "" && (strings.Contains(err.Error(), "401") || strings.Contains(strings.ToLower(err.Error()), "unauthorized")) {
+			return "", fmt.Errorf("error rendering chart template: %w; registry requires authentication - select a Secret with \"username\" and \"password\" keys for basic authentication", err)
+		}
+		return "", fmt.Errorf("error rendering chart template: %v", err)
+	}
+
+	ch, err := loader.Load(cp)
+	if err != nil {
+		return "", err
+	}
+
+	result, err := client.Run(ch, vals)
+	if err != nil {
+		return "", err
+	}
+	rel, ok := result.(*releasev1.Release)
+	if !ok {
+		return "", fmt.Errorf("unexpected release type %T", result)
+	}
+
+	var manifests bytes.Buffer
+	if !client.SkipCRDs {
+		for _, f := range rel.Chart.CRDs() {
+			fmt.Fprintf(&manifests, "---\n# Source: %s\n%s\n", f.Name, f.Data)
+		}
+	}
+	fmt.Fprintln(&manifests, strings.TrimSpace(rel.Manifest))
+	if !client.DisableHooks {
+		for _, m := range rel.Hooks {
+			fmt.Fprintf(&manifests, "---\n# Source: %s\n%s\n", m.Path, m.Manifest)
+		}
+	}
+
+	return manifests.String(), nil
+}
+
 func RenderManifests(name string, url string, vals map[string]interface{}, conf *action.Configuration, dynamicClient dynamic.Interface, coreClient corev1client.CoreV1Interface, ns, indexEntry string, fileCleanUp bool) (string, error) {
 	var showFiles []string
 	var chartInfo *ChartInfo

@@ -31,7 +31,9 @@ func New(apiUrl string, transport http.RoundTripper, kubeversionGetter version.K
 		ApiServerHost:           apiUrl,
 		Transport:               transport,
 		getActionConfigurations: actions.GetActionConfigurations,
-		renderManifests:         actions.RenderManifests,
+		renderManifests:            actions.RenderManifests,
+		renderManifestsFromURL:     actions.RenderManifestsFromURL,
+		renderManifestsFromRelease: actions.RenderManifestsFromRelease,
 		installChartAsync:       actions.InstallChartAsync,
 		installChart:            actions.InstallChart,
 		installChartFromURL:     actions.InstallChartFromURL,
@@ -65,8 +67,10 @@ type helmHandlers struct {
 	getActionConfigurations func(string, string, string, *http.RoundTripper) *action.Configuration
 
 	// helm actions
-	renderManifests       func(string, string, map[string]interface{}, *action.Configuration, dynamic.Interface, corev1client.CoreV1Interface, string, string, bool) (string, error)
-	installChartAsync     func(string, string, string, map[string]interface{}, *action.Configuration, dynamic.Interface, corev1client.CoreV1Interface, bool, string) (*kv1.Secret, error)
+	renderManifests            func(string, string, map[string]interface{}, *action.Configuration, dynamic.Interface, corev1client.CoreV1Interface, string, string, bool) (string, error)
+	renderManifestsFromURL     func(string, string, map[string]interface{}, *action.Configuration, string, corev1client.CoreV1Interface, string, string) (string, error)
+	renderManifestsFromRelease func(string, map[string]interface{}, *action.Configuration, string) (string, error)
+	installChartAsync      func(string, string, string, map[string]interface{}, *action.Configuration, dynamic.Interface, corev1client.CoreV1Interface, bool, string) (*kv1.Secret, error)
 	installChart          func(string, string, string, map[string]interface{}, *action.Configuration, dynamic.Interface, corev1client.CoreV1Interface, bool, string) (*releasev1.Release, error)
 	installChartFromURL   func(string, string, string, map[string]interface{}, *action.Configuration, corev1client.CoreV1Interface, string, string) (*kv1.Secret, error)
 	listReleases          func(*action.Configuration, bool) ([]*releasev1.Release, error)
@@ -118,12 +122,25 @@ func (h *helmHandlers) HandleHelmRenderManifests(user *auth.User, w http.Respons
 	}
 
 	conf := h.getActionConfigurations(h.ApiServerHost, req.Namespace, user.Token, &h.Transport)
-	handlerClients, err := NewHandlerClients(conf)
-	if err != nil {
-		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: err.Error()})
-		return
+
+	var resp string
+	if req.ChartUrl == "" && req.IndexEntry == "" && req.Name != "" {
+		resp, err = h.renderManifestsFromRelease(req.Name, req.Values, conf, req.Namespace)
+	} else if req.NoRepo {
+		handlerClients, clientErr := NewHandlerClients(conf)
+		if clientErr != nil {
+			serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: clientErr.Error()})
+			return
+		}
+		resp, err = h.renderManifestsFromURL(req.Name, req.ChartUrl, req.Values, conf, req.Namespace, handlerClients.CoreClient, req.ChartVersion, req.BasicAuthSecretName)
+	} else {
+		handlerClients, clientErr := NewHandlerClients(conf)
+		if clientErr != nil {
+			serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: clientErr.Error()})
+			return
+		}
+		resp, err = h.renderManifests(req.Name, req.ChartUrl, req.Values, conf, handlerClients.DynamicClient, handlerClients.CoreClient, req.Namespace, req.IndexEntry, false)
 	}
-	resp, err := h.renderManifests(req.Name, req.ChartUrl, req.Values, conf, handlerClients.DynamicClient, handlerClients.CoreClient, req.Namespace, req.IndexEntry, false)
 	if err != nil {
 		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: fmt.Sprintf("Failed to render manifests: %v", err)})
 		return
