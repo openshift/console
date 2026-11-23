@@ -137,3 +137,11 @@ export const targetSource = (target: Target): AlertSource =>
   target.labels?.prometheus === 'openshift-monitoring/k8s'
     ? AlertSource.Platform
     : AlertSource.User;
+
+export const naturalSort = (
+  a: string | undefined | null,
+  b: string | undefined | null,
+  direction: 'asc' | 'desc',
+): number =>
+  (a ?? '').localeCompare(b ?? '', undefined, { sensitivity: 'base', numeric: true }) *
+    (direction === 'asc' ? 1 : -1) || 0;

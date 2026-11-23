@@ -70,6 +70,7 @@ import KebabDropdown from './kebab-dropdown';
 import IntervalDropdown from './poll-interval-dropdown';
 import TablePagination from './table-pagination';
 import { PrometheusAPIError } from './types';
+import { naturalSort } from './utils';
 
 // Stores information about the currently focused query input
 let focusedQuery;
@@ -432,16 +433,21 @@ export const QueryTable: React.FC<QueryTableProps> = ({ index, namespace }) => {
 
     rows = _.map(result, rowMapper);
     if (sortBy) {
-      // Sort Values column numerically and sort all the other columns alphabetically
+      // Sort all columns naturally (alphanumeric)
       const valuesColIndex = allLabelKeys.length + 1;
-      const sort =
-        sortBy.index === valuesColIndex
-          ? (cells) => {
-              const v = Number(cells[valuesColIndex]);
-              return Number.isNaN(v) ? 0 : v;
-            }
-          : `${sortBy.index}`;
-      rows = _.orderBy(rows, [sort], [sortBy.direction]);
+      if (sortBy.index === valuesColIndex) {
+        rows = rows.sort((a, b) => {
+          const aVal = Number(a[valuesColIndex]);
+          const bVal = Number(b[valuesColIndex]);
+          const aNum = Number.isNaN(aVal) ? 0 : aVal;
+          const bNum = Number.isNaN(bVal) ? 0 : bVal;
+          return (aNum - bNum) * (sortBy.direction === 'asc' ? 1 : -1);
+        });
+      } else {
+        rows = rows.sort((a, b) =>
+          naturalSort(String(a[sortBy.index] ?? ''), String(b[sortBy.index] ?? ''), sortBy.direction),
+        );
+      }
     }
   }
 
