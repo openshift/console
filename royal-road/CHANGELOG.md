@@ -2,6 +2,12 @@
 
 Newest first. One entry per work package from `FORK.md`.
 
+## Sessions survive console rollouts
+
+- Core patch: bridge flag `--session-secret-namespace` (`BRIDGE_SESSION_SECRET_NAMESPACE`, `session.sessionSecretNamespace` in the config file; OIDC only). Each login session is written to its own Secret in that namespace and loaded from it on a memory miss, so a restart, rollout or another replica no longer signs users out. The Secret is authoritative: a login or token refresh reaches memory and cookies only after its Secret write succeeds, and a session without a Secret is logged out; replicas re-read it before refreshing a token, so a logout reaches them by their next refresh, and a refresh token cookie without its session cookie never refreshes. The Secret client has its own 50 QPS limit (client-go's default is 5). Within a Pod, loads, token updates and logouts of one session are serialised by a per-session lock, and API calls never hold the global session lock. The session cookie loses its Pod-name suffix when this is on. Unset, behaviour is unchanged.
+- `royal-road/deploy/session-store.yaml`: the `console-sessions` namespace and a Role for the console ServiceAccount; `console-deployment-patch.yaml` sets the env var. README "Session store" covers token storage, pruning, the one-time sign-out on the first rollout, and rollback.
+- Go tests with the fake clientset: restart, refresh-token lookup after restart, token rotation, logout (on another replica, replayed with only the refresh cookie, and racing a refresh or a cold load on the same Pod), failed Secret create, update and delete, concurrent refreshes on two replicas, a hung Secret update not blocking other users, pruning, cookie names, flag validation.
+
 ## Fix: empty graphs on platform alert details
 
 - Observe › Alerting › alert details showed "No datapoints found" for most platform alerts although the query returned data. The graph drops series whose labels differ from the alert's. Platform rules set `prometheus: openshift-monitoring/k8s` (the plugin reads it for Source: Platform), while vmagent writes its own `prometheus` external label on every series. vmalert keeps the series' value on the alert as `exported_prometheus`. monitoring-plugin patch `0002-match-exported-labels-in-alert-graph.patch` also accepts a series whose label matches the alert's `exported_<label>`. With Prometheus, alerts carry no `exported_*` labels, so nothing changes there.

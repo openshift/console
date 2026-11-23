@@ -29,6 +29,10 @@ spec:
               value: Light=/var/logo/console-branding/kubernetes-horizontal-color.svg,Dark=/var/logo/console-branding/kubernetes-horizontal-white-text.svg
             - name: BRIDGE_CUSTOM_FAVICON_FILES
               value: Light=/var/logo/console-branding/kubernetes-icon-color.svg,Dark=/var/logo/console-branding/kubernetes-icon-color.svg
+            # Persistent sessions (README.md, "Session store"). Needs
+            # session-store.yaml applied first. Remove to roll back.
+            - name: BRIDGE_SESSION_SECRET_NAMESPACE
+              value: console-sessions
           volumeMounts:
             - name: console-branding
               mountPath: /var/logo/console-branding
