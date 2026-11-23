@@ -27,7 +27,7 @@ import { MachineSetActionCreator } from './types';
  * // Getting all actions for MachineSet resource
  * const MyMachineSetComponent = ({ obj }) => {
  *   const actions = useMachineSetActions(obj);
- *   return <Kebab actions={actions} />;
+ *   return <ActionMenu actions={actions} />;
  * };
  */
 export const useMachineSetActions = (

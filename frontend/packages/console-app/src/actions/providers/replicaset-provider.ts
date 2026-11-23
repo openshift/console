@@ -19,7 +19,7 @@ export const useReplicaSetActionsProvider = (resource: ReplicaSetKind) => {
     CommonActionCreator.AddStorage,
   ] as const);
   const commonResourceActions = useCommonResourceActions(kindObj, resource);
-  const replicaSetActions = useReplicaSetActions(kindObj, resource);
+  const replicaSetActions = useReplicaSetActions(resource);
 
   const actions = useMemo(
     () =>

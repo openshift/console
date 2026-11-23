@@ -11,9 +11,8 @@ import { useCommonActions } from './useCommonActions';
  *
  * @param kind - The K8s model for the resource.
  * @param resource - The specific resource instance for which to generate the action.
- * @param actionCreator - The single action creator to use.
  * @param [message] - Optional message to display in the delete modal.
- * @param editPath - Optional URL path used for editing the resource.
+ * @param [editPath] - Optional URL path used for editing the resource.
  *
  * This hook is robust to inline arguments, thanks to internal deep compare memoization.
  *
@@ -22,8 +21,8 @@ import { useCommonActions } from './useCommonActions';
  * @example
  * // Getting common resource actions
  * const MyResourceComponent = ({ kind, resource }) => {
- *   const modifyCountAction = useCommonResourceActions(kind, resource);
- *   return <Kebab actions={ actions } />;
+ *   const actions = useCommonResourceActions(kind, resource);
+ *   return <ActionMenu actions={actions} />;
  * };
  */
 export const useCommonResourceActions = (

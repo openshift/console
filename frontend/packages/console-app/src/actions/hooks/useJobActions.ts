@@ -28,7 +28,7 @@ import { JobActionCreator } from './types';
  * // Getting all actions for Job resource
  * const MyJobComponent = ({ obj }) => {
  *   const actions = useJobActions(obj);
- *   return <Kebab actions={actions} />;
+ *   return <ActionMenu actions={actions} />;
  * };
  */
 export const useJobActions = (obj: JobKind, filterActions?: JobActionCreator[]): Action[] => {

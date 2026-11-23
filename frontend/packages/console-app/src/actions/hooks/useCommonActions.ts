@@ -24,11 +24,10 @@ import { CommonActionCreator } from './types';
  *
  * @param kind - The K8s model for the resource.
  * @param resource - The specific resource instance for which to generate actions.
- * @param [filterActions] - Optional. If provided, the returned object will contain only the specified actions.
- * Specify which actions to include using CommonActionCreator enum values.
- * If omitted, it will contain all common actions.
- * @param  editPath - Optional URL path used for editing the resource.
+ * @param filterActions - The actions to include, specified using CommonActionCreator enum values.
+ * The returned object contains only these actions.
  * @param [message] - Optional message to display in the delete modal.
+ * @param [editPath] - Optional URL path used for editing the resource.
  *
  * This hook is robust to inline arrays/objects for the `filterActions` argument, so you do not need to memoize or define
  * the array outside your component. The actions will only update if the actual contents of `filterActions` change, not just the reference.
@@ -41,7 +40,7 @@ import { CommonActionCreator } from './types';
 export const useCommonActions = <T extends readonly CommonActionCreator[]>(
   kind: K8sModel | undefined,
   resource: K8sResourceKind | undefined,
-  filterActions?: T,
+  filterActions: T,
   message?: ReactNode,
   editPath?: string,
 ): [ActionObject<T>, boolean] => {
@@ -169,13 +168,8 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
       return [actions, false];
     }
 
-    // filter and initialize requested actions or construct list of all CommonActions
-    const actionsToInclude = memoizedFilterActions || Object.values(CommonActionCreator);
-
-    actionsToInclude.forEach((actionType) => {
-      if (factory[actionType]) {
-        actions[actionType] = factory[actionType]();
-      }
+    memoizedFilterActions.forEach((actionType) => {
+      actions[actionType] = factory[actionType]();
     });
 
     return [actions, true];

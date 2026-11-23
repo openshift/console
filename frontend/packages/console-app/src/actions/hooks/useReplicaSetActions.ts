@@ -5,20 +5,18 @@ import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/us
 import { useDeepCompareMemoize } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useDeepCompareMemoize';
 import { LazyRollbackModalOverlay } from '@console/internal/components/modals';
 import { DeploymentModel } from '@console/internal/models';
-import type { ReplicaSetKind, K8sModel } from '@console/internal/module/k8s';
+import type { ReplicaSetKind } from '@console/internal/module/k8s';
 import { getOwnerNameByKind } from '@console/shared/src/utils/resource-utils';
 import { ReplicaSetActionCreator } from './types';
 
 /**
  * A React hook for retrieving actions related to ReplicaSet resources.
  *
- * @param {K8sModel} kind - The K8s model for the resource.
  * @param {ReplicaSetKind} resource - The specific ReplicaSet resource instance.
  * @param {ReplicaSetActionCreator[]} [filterActions] - Optional. If provided, returns only specified actions.
  * @returns {Action[]} An array containing the generated actions.
  */
 export const useReplicaSetActions = (
-  kind: K8sModel,
   resource: ReplicaSetKind,
   filterActions?: ReplicaSetActionCreator[],
 ): Action[] => {

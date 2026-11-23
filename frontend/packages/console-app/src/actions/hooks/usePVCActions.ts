@@ -31,7 +31,7 @@ import { PVCActionCreator } from './types';
  * // Getting ExpandPVC and PVCSnapshot actions for PVC resource
  * const MyPVCComponent = ({ obj }) => {
  *   const actions = usePVCActions(obj, [PVCActionCreator.ExpandPVC, PVCActionCreator.PVCSnapshot]);
- *   return <Kebab actions={actions} />;
+ *   return <ActionMenu actions={actions} />;
  * };
  */
 export const usePVCActions = (

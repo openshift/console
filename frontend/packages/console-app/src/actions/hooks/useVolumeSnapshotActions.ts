@@ -25,7 +25,7 @@ import { VolumeSnapshotActionCreator } from './types';
  * // Getting all actions for VS resources
  * const MyVolumeSnapshotComponent = ({ resource }) => {
  *   const actions = useVolumeSnapshotActions(resource);
- *   return <Kebab actions={actions} />;
+ *   return <ActionMenu actions={actions} />;
  * };
  */
 export const useVolumeSnapshotActions = (
