@@ -95,7 +95,7 @@ ActionFilter can be used to filter an action
 
 | Name | Value Type | Optional | Description |
 | ---- | ---------- | -------- | ----------- |
-| `contextId` | `string` | no | The context ID helps to narrow the scope of contributed actions to a particular area of the application. Ex - topology, helm |
+| `contextId` | `string` | no | The context ID of the menu whose actions should be filtered, using the same values as<br/>`console.action/provider`. A filter registered against a resource context ID such as<br/>`apps~v1~Deployment` sees every action in that menu, including the ones Console itself<br/>contributes, so a plugin can hide a built-in action by returning false for its `id`.<br/><br/>When more than one filter is registered for a context ID, an action is kept if any of<br/>them returns true. |
 | `filter` | `CodeRef<(scope: any, action: Action) => boolean>` | no | A function which will filter actions based on some conditions.<br/>scope: The scope in which actions should be provided for.<br/>In a `ConsoleDataView` bulk menu, filters matching the resource model are evaluated<br/>for each matching selected resource. Every resource must pass at least one matching<br/>filter for the action to remain visible. Scope is one resource, not the bulk context.<br/>Note: hook may be required if we want to remove the ModifyCount action from a deployment with HPA |
 
 ---
@@ -128,8 +128,8 @@ ActionProvider contributes a hook that returns list of actions for specific cont
 
 | Name | Value Type | Optional | Description |
 | ---- | ---------- | -------- | ----------- |
-| `contextId` | `string` | no | The context ID helps to narrow the scope of contributed actions to a particular area of the application. Ex - topology, helm |
-| `provider` | `CodeRef<ExtensionHook<Action[]>>` | no | A react hook which returns actions for the given scope.<br/>If contextId = `resource` then the scope will always be a K8s resource object |
+| `contextId` | `string` | no | The context ID helps to narrow the scope of contributed actions to a particular area of<br/>the application.<br/><br/>A resource detail page or list row menu uses the resource's group, version and kind<br/>reference as its context ID, formatted `group~version~Kind`, with `core` standing in for<br/>the core group. For example `apps~v1~Deployment` or `core~v1~Pod`. Registering against<br/>one of these adds actions to that resource's menu alongside the actions Console itself<br/>contributes.<br/><br/>Prefer `console.action/resource-provider` for a resource, which takes the model instead of<br/>a reference string. Console's default list and details pages, which serve any resource<br/>without a dedicated page, build their menu from extensions only once a<br/>`console.action/resource-provider` is registered for the model; until then they render a<br/>built-in menu that no `console.action/provider` or `console.action/filter` can reach.<br/><br/>The remaining context IDs name an area of the UI. Those currently in use are:<br/>- `topology-actions`<br/>- `topology-context-actions`<br/>- `helm-actions`<br/>- `operator-actions`<br/>- `operand-actions`<br/>- `event-source-actions` |
+| `provider` | `CodeRef<ExtensionHook<Action[]>>` | no | A react hook which returns actions for the given scope.<br/>The scope is whatever the menu passed for this context ID, which for a resource menu is<br/>the K8s resource object. |
 
 ---
 
