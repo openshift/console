@@ -2,6 +2,10 @@
 
 Newest first. One entry per work package from `FORK.md`.
 
+## Fix: empty graphs on platform alert details
+
+- Observe › Alerting › alert details showed "No datapoints found" for most platform alerts although the query returned data. The graph drops series whose labels differ from the alert's. Platform rules set `prometheus: openshift-monitoring/k8s` (the plugin reads it for Source: Platform), while vmagent writes its own `prometheus` external label on every series. vmalert keeps the series' value on the alert as `exported_prometheus`. monitoring-plugin patch `0002-match-exported-labels-in-alert-graph.patch` also accepts a series whose label matches the alert's `exported_<label>`. With Prometheus, alerts carry no `exported_*` labels, so nothing changes there.
+
 ## Web Terminal on Kubernetes
 
 - `royal-road/deploy/web-terminal/` installs the DevWorkspace Operator (v1.1.0) and the Web Terminal Operator (1.18.0, the only public build) through OLM from their own index images, pinned by digest, with `installPlanApproval: Manual`. Neither is in the operatorhub.io catalog. cert-manager stands in for the OpenShift service CA. The README covers apply order, RBAC, resources and idle timeout, known issues and rollback.
