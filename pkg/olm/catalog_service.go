@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 	"time"
 
 	"golang.org/x/mod/semver"
@@ -333,6 +334,9 @@ func (s *CatalogService) processCatalog(resp *http.Response) ([]*declcfg.Package
 						break
 					}
 
+					// x/mod/semver requires a leading v, but catalog versions may omit it.
+					newVersion = "v" + strings.TrimPrefix(newVersion, "v")
+					existingVersion = "v" + strings.TrimPrefix(existingVersion, "v")
 					if semver.Compare(newVersion, existingVersion) > 0 {
 						latestBundles[bundle.Package] = bundle
 					}
