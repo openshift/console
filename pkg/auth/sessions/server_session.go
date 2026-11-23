@@ -169,6 +169,28 @@ func (ss *SessionStore) deleteIDsForRefreshToken(refreshToken string) {
 	}
 }
 
+// replaceSession caches ls, read from or written to a SessionPersister, in
+// place of the cached session with the same token. Requests may still read
+// the replaced LoginState without a lock, so it is swapped, never modified.
+func (ss *SessionStore) replaceSession(ls *LoginState) {
+	ss.mux.Lock()
+	defer ss.mux.Unlock()
+
+	if old, ok := ss.byToken[ls.sessionToken]; ok {
+		ss.byAge = spliceOut(ss.byAge, old)
+		for refreshToken, s := range ss.byRefreshToken {
+			if s == old {
+				ss.byRefreshToken[refreshToken] = ls
+			}
+		}
+	}
+	ss.byToken[ls.sessionToken] = ls
+	ss.byAge = append(ss.byAge, ls)
+	if ls.refreshToken != "" {
+		ss.byRefreshTokenID[ls.refreshTokenID] = ls.refreshToken
+	}
+}
+
 func (ss *SessionStore) pruneSessions() {
 	ss.mux.Lock()
 	defer ss.mux.Unlock()

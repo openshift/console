@@ -10,6 +10,7 @@ import (
 	"github.com/coreos/pkg/flagutil"
 
 	utilerrors "k8s.io/apimachinery/pkg/util/errors"
+	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"k8s.io/klog/v2"
 
@@ -18,6 +19,7 @@ import (
 	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/auth/csrfverifier"
 	"github.com/openshift/console/pkg/auth/oauth2"
+	"github.com/openshift/console/pkg/auth/sessions"
 	"github.com/openshift/console/pkg/auth/static"
 	"github.com/openshift/console/pkg/flags"
 	"github.com/openshift/console/pkg/proxy"
@@ -334,6 +336,19 @@ func (c *completedOptions) getAuthenticator(
 
 	if c.LogoutRedirectURL != nil {
 		oidcClientConfig.LogoutRedirectOverride = c.LogoutRedirectURL.String()
+	}
+
+	if ns := sessionConfig.SessionSecretNamespace; ns != "" {
+		// The bridge's own service account reads and writes the session Secrets.
+		// Every login, refresh and cache miss of every user shares this client,
+		// so client-go's default limit of 5 QPS would fail requests in bursts.
+		secretsConfig := rest.CopyConfig(k8sClientConfig)
+		secretsConfig.QPS, secretsConfig.Burst = 50, 100
+		clientset, err := kubernetes.NewForConfig(secretsConfig)
+		if err != nil {
+			return nil, fmt.Errorf("failed to create session secret client: %w", err)
+		}
+		oidcClientConfig.SessionPersister = sessions.NewSecretPersister(clientset.CoreV1().Secrets(ns))
 	}
 
 	authenticator, err := oauth2.NewOAuth2Authenticator(context.Background(), oidcClientConfig)

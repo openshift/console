@@ -278,6 +278,57 @@ works, but every page load sends about 30 failing `POST /api/console/user-settin
 calls, and preferences stay in the browser's localStorage. No console restart is
 needed.
 
+## Session store
+
+By default the bridge keeps login sessions in memory and names the session
+cookie after its Pod, so every rollout or restart signs every user out.
+With `BRIDGE_SESSION_SECRET_NAMESPACE` (flag `--session-secret-namespace`,
+OIDC only) it also writes each session to a Secret in that namespace and uses
+a session cookie name without the Pod name. A new Pod, or another replica,
+loads the session from its Secret on the first request and keeps it in memory
+after that.
+
+- Apply [`session-store.yaml`](session-store.yaml) after replacing
+  `<console-namespace>` and `<console-serviceaccount>`. It creates the
+  `console-sessions` namespace and a Role that lets only the console's
+  ServiceAccount manage Secrets there. Then set the env var (already in
+  [`console-deployment-patch.yaml`](console-deployment-patch.yaml)).
+- The cookie keys must stay fixed (`--cookie-encryption-key-file`,
+  `--cookie-authentication-key-file`), as they already are for OIDC.
+- Each Secret holds the user's ID token and refresh token. Anyone who can read
+  Secrets in this namespace can act as those users, so grant no other access
+  to it, and make sure etcd encryption at rest covers Secrets.
+- Secret names hold only a SHA-256 hash of the session token. The bridge
+  deletes a Secret on logout, and every 5 minutes deletes Secrets whose token
+  expired without a refresh token or that were not updated for 30 days (the
+  cookie lifetime).
+- The Secret is the source of truth: a Pod changes a session in memory and in
+  the cookies only after the Secret holds the change, and a session without a
+  Secret is logged out. API calls never hold up requests that the Pod's memory
+  can answer. A session keeps one refresh token ID for its lifetime, so the
+  refresh token cookie stays valid whichever replica refreshed last.
+- Session Secret calls use their own client limit of 50 QPS (burst 100),
+  shared by all users of a Pod, and the API server's priority and fairness.
+- If the API server rejects a write, the request fails. A failed login shows
+  an error and the user tries again. A failed token refresh signs the user
+  out: the identity provider already replaced the refresh token, and the new
+  one could not be stored.
+- The first rollout with the env var still signs everyone out once: the old
+  Pods never wrote their sessions, and the cookie name changes. Later rollouts
+  keep users signed in.
+- A logout removes the session from the Pod that served it and deletes the
+  Secret; on that Pod it waits for any load or token refresh of the same
+  session to finish first. Before refreshing a token, a Pod re-reads the session's Secret, and
+  token updates never recreate a deleted Secret. So another replica that
+  cached the session accepts it only until its access token is due for
+  refresh; the browser's cookies are deleted either way. A refresh needs the
+  session cookie and its Secret: the refresh token cookie alone never
+  refreshes or starts a session. If deleting the
+  Secret fails, the bridge logs it and still clears the cookies; a copy of the
+  old cookie then keeps working until pruning deletes the Secret.
+- Rollback: remove `BRIDGE_SESSION_SECRET_NAMESPACE`. Users sign in once more.
+  Then delete the `console-sessions` namespace.
+
 ## Recording rules
 
 Apply `monitoring/console-recording-rules.yaml`, a VMRule. Replace

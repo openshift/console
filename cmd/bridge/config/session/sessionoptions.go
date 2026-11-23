@@ -14,6 +14,7 @@ import (
 type SessionOptions struct {
 	CookieEncryptionKeyPath     string
 	CookieAuthenticationKeyPath string
+	SessionSecretNamespace      string
 }
 
 type CompletedOptions struct {
@@ -23,6 +24,7 @@ type CompletedOptions struct {
 type completedOptions struct {
 	CookieEncryptionKey     []byte
 	CookieAuthenticationKey []byte
+	SessionSecretNamespace  string
 }
 
 func NewSessionOptions() *SessionOptions {
@@ -35,11 +37,13 @@ func NewSessionOptions() *SessionOptions {
 func (opts *SessionOptions) AddFlags(fs *flag.FlagSet) {
 	fs.StringVar(&opts.CookieEncryptionKeyPath, "cookie-encryption-key-file", "", "Encryption key used to encrypt cookies. Must be set when --user-auth is 'oidc'.")
 	fs.StringVar(&opts.CookieAuthenticationKeyPath, "cookie-authentication-key-file", "", "Authentication key used to sign cookies. Must be set when --user-auth is 'oidc'.")
+	fs.StringVar(&opts.SessionSecretNamespace, "session-secret-namespace", "", "Namespace in which to store login sessions as Secrets, so they survive restarts and are shared between replicas. Requires --user-auth=oidc. Empty keeps sessions in memory.")
 }
 
 func (opts *SessionOptions) ApplyConfig(config *serverconfig.Session) {
 	serverconfig.SetIfUnset(&opts.CookieEncryptionKeyPath, config.CookieEncryptionKeyFile)
 	serverconfig.SetIfUnset(&opts.CookieAuthenticationKeyPath, config.CookieAuthenticationKeyFile)
+	serverconfig.SetIfUnset(&opts.SessionSecretNamespace, config.SessionSecretNamespace)
 }
 
 func (opts *SessionOptions) Validate(userAuthType flagvalues.AuthType) []error {
@@ -54,6 +58,11 @@ func (opts *SessionOptions) Validate(userAuthType flagvalues.AuthType) []error {
 		if opts.CookieEncryptionKeyPath != "" || opts.CookieAuthenticationKeyPath != "" {
 			errs = append(errs, fmt.Errorf("cookie-encryption-key-file and cookie-authentication-key-file must not be set when --user-auth is not 'oidc'"))
 		}
+		// Other auth types use random per-process cookie keys, so a restarted
+		// bridge could not read the cookies that point at persisted sessions.
+		if opts.SessionSecretNamespace != "" {
+			errs = append(errs, fmt.Errorf("session-secret-namespace must not be set when --user-auth is not 'oidc'"))
+		}
 	}
 
 	return errs
@@ -64,7 +73,9 @@ func (opts *SessionOptions) Complete(userAuthType flagvalues.AuthType) (*Complet
 		return nil, utilerrors.NewAggregate(errs)
 	}
 
-	completed := &completedOptions{}
+	completed := &completedOptions{
+		SessionSecretNamespace: opts.SessionSecretNamespace,
+	}
 
 	if len(opts.CookieEncryptionKeyPath) > 0 {
 		encKey, err := os.ReadFile(opts.CookieEncryptionKeyPath)

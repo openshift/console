@@ -102,6 +102,7 @@ type Auth struct {
 type Session struct {
 	CookieEncryptionKeyFile     string `yaml:"cookieEncryptionKeyFile,omitempty"`
 	CookieAuthenticationKeyFile string `yaml:"cookieAuthenticationKeyFile,omitempty"`
+	SessionSecretNamespace      string `yaml:"sessionSecretNamespace,omitempty"`
 	// TODO: move InactivityTimeoutSeconds here
 }
 

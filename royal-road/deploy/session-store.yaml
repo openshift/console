@@ -1,0 +1,34 @@
+# Namespace and RBAC for the bridge's persistent session store
+# (BRIDGE_SESSION_SECRET_NAMESPACE, README.md "Session store").
+#
+# The bridge keeps one Secret per login session here, using its own
+# ServiceAccount, so sessions survive restarts and rollouts. The Secrets hold
+# users' ID and refresh tokens: grant nobody else access to this namespace.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: console-sessions
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: console-session-store
+  namespace: console-sessions
+rules:
+- apiGroups: [""]
+  resources: [secrets]
+  verbs: [get, list, create, update, patch, delete]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: console-session-store
+  namespace: console-sessions
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: console-session-store
+subjects:
+- kind: ServiceAccount
+  name: <console-serviceaccount>
+  namespace: <console-namespace>

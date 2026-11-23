@@ -128,6 +128,8 @@ type Config struct {
 	SecureCookies           bool
 	CookieEncryptionKey     []byte
 	CookieAuthenticationKey []byte
+	// SessionPersister, if set, stores OIDC sessions outside the process.
+	SessionPersister sessions.SessionPersister
 
 	K8sConfig *rest.Config
 	Metrics   *auth.Metrics
@@ -234,11 +236,12 @@ func NewOAuth2Authenticator(ctx context.Context, config *Config) (*OAuth2Authent
 			return nil, err
 		}
 	case AuthSourceOIDC:
-		sessionStore := sessions.NewSessionStore(
+		sessionStore := sessions.NewPersistentSessionStore(
 			c.CookieAuthenticationKey,
 			c.CookieEncryptionKey,
 			c.SecureCookies,
 			c.CookiePath,
+			c.SessionPersister,
 		)
 		tokenHandler, err = newOIDCAuth(ctx, sessionStore, authConfig, a.metrics)
 		if err != nil {
