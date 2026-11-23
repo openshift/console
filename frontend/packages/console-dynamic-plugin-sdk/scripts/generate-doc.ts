@@ -47,12 +47,12 @@ renderTemplate('scripts/templates/console-extensions.md.ejs', {
       }
       return a.type.localeCompare(b.type);
     })
-    // Sort extension properties by their optional modifier
+    // Sort extension properties by their optional modifier, ignoring internal properties
     .map<ExtensionTypeInfo>((e) => ({
       ...e,
-      properties: e.properties.sort((a, b) =>
-        a.optional === b.optional ? 0 : a.optional ? 1 : -1,
-      ),
+      properties: e.properties
+        .filter((p) => !p.isInternal)
+        .sort((a, b) => (a.optional === b.optional ? 0 : a.optional ? 1 : -1)),
     })),
   printComments,
   escapeTableCell: (value: string) => value.replace(/\|/g, '\\|'),
