@@ -186,7 +186,7 @@ test.describe('Debug pod', () => {
         await detailsPage.navigateToDetailsPage(`/k8s/ns/${ns}/pods/${POD_NAME}`);
         await detailsPage.waitForPageLoad();
         await retryOnModelNotFound(page);
-        await detailsPage.clickStatusButton();
+        await detailsPage.clickStatusButton(10_000);
         await expect(detailsDebugLink).toBeVisible({ timeout: 5_000 });
       }).toPass({ timeout: 60_000 });
 
