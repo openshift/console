@@ -22,7 +22,6 @@ import { DetailsPage } from './factory/details';
 import { ListPage } from './factory/list-page';
 import { sorts } from './factory/table';
 import { sortResourceByValue } from './factory/Table/sort';
-import { useAddSecretToWorkloadModalLauncher } from './modals/add-secret-to-workload';
 import { secretTypeFilterReducer } from './secrets/create-secret';
 import { SecretFilterValues } from './secrets/create-secret/types';
 import { DetailsItem } from './utils/details-item';
@@ -240,37 +239,16 @@ const SecretsPage: FC<SecretsPageProps> = (props) => {
   );
 };
 
-const SecretsDetailsPage: FC<SecretDetailsPageProps> = (props) => {
-  const { t } = useTranslation('public');
-  const { name: secretName, namespace, kindObj } = props;
-
-  const addSecretToWorkloadLauncher = useAddSecretToWorkloadModalLauncher({
-    secretName,
-    namespace,
-  });
-
-  const actionButtons = useMemo(
-    () => [
-      () => ({
-        callback: () => addSecretToWorkloadLauncher(),
-        label: t('Add Secret to workload'),
-      }),
-    ],
-    [t, addSecretToWorkloadLauncher],
-  );
-
-  return (
-    <DetailsPage
-      {...props}
-      kind={kindObj.kind}
-      buttonActions={actionButtons}
-      customActionMenu={(_kindModel: K8sModel, obj: K8sResourceKind) => (
-        <LazyActionMenu context={{ [kindRef]: obj }} variant={ActionMenuVariant.DROPDOWN} />
-      )}
-      pages={[navFactory.details(SecretDetails), navFactory.editYaml()]}
-    />
-  );
-};
+const SecretsDetailsPage: FC<SecretDetailsPageProps> = (props) => (
+  <DetailsPage
+    {...props}
+    kind={kindRef}
+    customActionMenu={(_kindModel: K8sModel, obj: K8sResourceKind) => (
+      <LazyActionMenu context={{ [kindRef]: obj }} variant={ActionMenuVariant.DROPDOWN} />
+    )}
+    pages={[navFactory.details(SecretDetails), navFactory.editYaml()]}
+  />
+);
 
 SecretsDetailsPage.displayName = 'SecretsDetailsPage';
 

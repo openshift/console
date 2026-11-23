@@ -2844,6 +2844,19 @@
     "type": "console.action/resource-provider",
     "properties": {
       "model": {
+        "group": "operator.openshift.io",
+        "version": "v1",
+        "kind": "Console"
+      },
+      "provider": {
+        "$codeRef": "consoleOperatorConfigProvider.useConsoleOperatorConfigActionsProvider"
+      }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
         "group": "template.openshift.io",
         "version": "v1",
         "kind": "TemplateInstance"

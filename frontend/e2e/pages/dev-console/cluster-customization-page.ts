@@ -6,6 +6,8 @@ import BasePage from '../base-page';
 export class ClusterCustomizationPage extends BasePage {
   async navigateToCustomize(): Promise<void> {
     await this.goTo('/k8s/cluster/operator.openshift.io~v1~Console/cluster');
+    await this.waitForLoadingComplete(10_000);
+    await this.robustClick(this.page.getByTestId('actions-menu-button'));
     await this.robustClick(this.page.getByTestId('Customize'));
   }
 

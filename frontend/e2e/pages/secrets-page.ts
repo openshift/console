@@ -219,6 +219,7 @@ export class SecretsPage extends BasePage {
     asType: 'environment' | 'volume',
     options?: { prefix?: string; mountPath?: string },
   ): Promise<void> {
+    await this.robustClick(this.page.getByTestId('actions-menu-button'));
     await this.robustClick(this.page.getByTestId('Add Secret to workload'));
     await this.modal.waitForOpen();
 

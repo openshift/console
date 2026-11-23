@@ -25,10 +25,9 @@ import { getTitleForNodeKind } from '@console/shared/src/utils/utils';
 import type { K8sKind } from '../../module/k8s/types';
 import { breadcrumbsForDetailsPage } from '../utils/breadcrumbs';
 import { ConnectedPageHeading } from '../utils/headings';
-import type { ConnectedPageHeadingProps, KebabOptionsCreator } from '../utils/headings';
+import type { ConnectedPageHeadingProps } from '../utils/headings';
 import { HorizontalNav } from '../utils/horizontal-nav';
 import type { Page } from '../utils/horizontal-nav';
-import type { KebabAction } from '../utils/kebab';
 import DetailsBreadcrumbResolver from './details-breadcrumb-resolver';
 
 const useBreadCrumbsForDetailPage = (
@@ -126,8 +125,6 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
         obj={objData}
         title={props.title || props.name}
         titleFunc={props.titleFunc}
-        menuActions={props.menuActions}
-        buttonActions={props.buttonActions}
         customActionMenu={props.customActionMenu}
         kind={props.customKind || props.kind}
         icon={props.icon}
@@ -138,7 +135,6 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
         }
         resourceKeys={resourceKeys}
         getResourceStatus={props.getResourceStatus}
-        customData={props.customData}
         badge={props.badge || getBadgeFromType(kindObj?.badge)}
         OverrideTitle={props.OverrideTitle}
         helpText={props.helpText}
@@ -164,8 +160,6 @@ export type DetailsPageProps = {
   obj?: WatchK8sResultsObject<K8sResourceKind>;
   title?: string | ReactNode;
   titleFunc?: (obj: K8sResourceKind) => string | ReactNode;
-  menuActions?: KebabAction[] | KebabOptionsCreator;
-  buttonActions?: any[];
   createRedirect?: boolean;
   customActionMenu?: ConnectedPageHeadingProps['customActionMenu'];
   icon?: ConnectedPageHeadingProps['icon'];

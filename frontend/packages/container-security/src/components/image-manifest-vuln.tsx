@@ -121,7 +121,6 @@ export const ImageManifestVulnDetailsPage: FC = () => {
       name={params.name}
       namespace={params.ns}
       kind={referenceForModel(ImageManifestVulnModel)}
-      menuActions={[]}
       pages={[
         navFactory.details(ImageManifestVulnDetails),
         navFactory.editYaml(),
