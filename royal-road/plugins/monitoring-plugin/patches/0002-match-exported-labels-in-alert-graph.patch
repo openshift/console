@@ -1,0 +1,25 @@
+diff --git a/web/src/shared/components/query-browser/QueryBrowser.tsx b/web/src/shared/components/query-browser/QueryBrowser.tsx
+index 49f436f..c95c062 100644
+--- a/web/src/shared/components/query-browser/QueryBrowser.tsx
++++ b/web/src/shared/components/query-browser/QueryBrowser.tsx
+@@ -786,8 +786,18 @@ const QueryBrowser_: FC<QueryBrowserProps> = ({
+             newResults,
+             (result: PrometheusResult[], queryIndex: number) => {
+               return _.map(result, ({ metric, values }): Series => {
+-                // If filterLabels is specified, ignore all series that don't match
+-                if (_.some(filterLabels, (v, k) => _.has(metric, k) && metric[k] !== v)) {
++                // If filterLabels is specified, ignore all series that don't match.
++                // When a rule label overwrites a series label, VictoriaMetrics' vmalert
++                // keeps the series' value on the alert as `exported_<label>`.
++                if (
++                  _.some(
++                    filterLabels,
++                    (v, k) =>
++                      _.has(metric, k) &&
++                      metric[k] !== v &&
++                      metric[k] !== filterLabels[`exported_${k}`],
++                  )
++                ) {
+                   return [];
+                 } else {
+                   let defaultEmptyValue = null;
