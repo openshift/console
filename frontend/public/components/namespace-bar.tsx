@@ -2,6 +2,7 @@ import type { ReactNode, FC } from 'react';
 import { useState, useEffect } from 'react';
 import { css } from '@patternfly/react-styles';
 import * as _ from 'lodash';
+import { useRegisterNamespaceBar } from '@console/app/src/components/command-palette/mounted-namespace-bar';
 import type { NamespaceBarProps } from '@console/dynamic-plugin-sdk';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { ALL_NAMESPACES_KEY } from '@console/dynamic-plugin-sdk/src/constants';
@@ -52,6 +53,7 @@ const NamespaceBarDropdowns: FC<NamespaceBarDropdownsProps> = ({
   const activePerspective = useActivePerspective()[0];
   const [activeNamespaceError, setActiveNamespaceError] = useState(false);
   const canListNS = useFlag(FLAGS.CAN_LIST_NS);
+  useRegisterNamespaceBar(onNamespaceChange, isDisabled);
   useEffect(() => {
     if (namespace?.loaded) {
       dispatch(setFlag(FLAGS.SHOW_OPENSHIFT_START_GUIDE, _.isEmpty(namespace.data)));

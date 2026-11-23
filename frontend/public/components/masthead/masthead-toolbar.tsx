@@ -27,6 +27,7 @@ import { useTranslation } from 'react-i18next';
 import { shallowEqual } from 'react-redux';
 import { useNavigate } from 'react-router';
 import { action as reduxAction } from 'typesafe-actions';
+import { CommandPalette } from '@console/app/src/components/command-palette/CommandPalette';
 import { TourContext, TourActions } from '@console/app/src/components/tour';
 import { getImpersonate, useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { ExternalLinkButton } from '@console/shared/src/components/links/ExternalLinkButton';
@@ -854,6 +855,9 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
             )}
             <ToolbarItem>{renderMenu(true)}</ToolbarItem>
           </ToolbarGroup>
+          <ToolbarItem>
+            <CommandPalette />
+          </ToolbarItem>
         </ToolbarContent>
       </Toolbar>
       <AboutModal isOpen={showAboutModal} closeAboutModal={closeAboutModal} />
