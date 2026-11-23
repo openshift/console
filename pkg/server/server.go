@@ -29,6 +29,7 @@ import (
 	"github.com/openshift/console/pkg/devfile"
 	helmhandlerspkg "github.com/openshift/console/pkg/helm/handlers"
 	"github.com/openshift/console/pkg/knative"
+	"github.com/openshift/console/pkg/kubernetesreleases"
 	"github.com/openshift/console/pkg/middleware"
 	"github.com/openshift/console/pkg/olm"
 	"github.com/openshift/console/pkg/plugins"
@@ -189,6 +190,7 @@ type Server struct {
 	KnativeEventSourceCRDLister         ResourceLister
 	KubeAPIServerURL                    string // JS global only. Not used for proxying.
 	KubeVersion                         string
+	KubernetesReleases                  *kubernetesreleases.Store // nil when --kubernetes-release-info-url is unset
 	LoadTestFactor                      int
 	MonitoringDashboardConfigMapLister  ResourceLister
 	NodeArchitectures                   []string
@@ -683,6 +685,7 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 	}
 
 	handle("/api/console/version", authHandler(s.versionHandler))
+	handle("/api/console/kubernetes-releases", authHandler(s.KubernetesReleases.ServeHTTP))
 
 	// CRD Schema
 	// NOTE: We are using the InternalProxiedK8SClientConfig service account to make the Kubernetes API request

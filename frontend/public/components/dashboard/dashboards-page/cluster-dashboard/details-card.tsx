@@ -42,6 +42,7 @@ import {
 } from '../../../utils/service-level';
 import { LoadingInline } from '../../../utils/status-box';
 import { ClusterDashboardContext } from './context';
+import { KubernetesUpdatesItem } from './KubernetesUpdatesItem';
 
 const ClusterVersion: FC<ClusterVersionProps> = ({ cv }) => {
   const { t } = useTranslation('public');
@@ -262,19 +263,22 @@ export const DetailsCard = memo(() => {
                 })}
               </>
             ) : (
-              <OverviewDetailItem
-                key="kubernetes"
-                title={t('Kubernetes version')}
-                error={
-                  !!k8sVersionError || (k8sVersion && !k8sGitVersion)
-                    ? t('Not available')
-                    : undefined
-                }
-                isLoading={!k8sVersion}
-                valueClassName="co-select-to-copy"
-              >
-                {k8sGitVersion}
-              </OverviewDetailItem>
+              <>
+                <OverviewDetailItem
+                  key="kubernetes"
+                  title={t('Kubernetes version')}
+                  error={
+                    !!k8sVersionError || (k8sVersion && !k8sGitVersion)
+                      ? t('Not available')
+                      : undefined
+                  }
+                  isLoading={!k8sVersion}
+                  valueClassName="co-select-to-copy"
+                >
+                  {k8sGitVersion}
+                </OverviewDetailItem>
+                <KubernetesUpdatesItem gitVersion={k8sGitVersion} />
+              </>
             )}
           </DescriptionList>
         )}

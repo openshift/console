@@ -27,6 +27,7 @@ import (
 	tektonresults "github.com/openshift/console/pkg/devconsole/tekton-results"
 	"github.com/openshift/console/pkg/flags"
 	"github.com/openshift/console/pkg/knative"
+	"github.com/openshift/console/pkg/kubernetesreleases"
 	"github.com/openshift/console/pkg/olm"
 	"github.com/openshift/console/pkg/proxy"
 	"github.com/openshift/console/pkg/server"
@@ -178,6 +179,7 @@ func main() {
 	fCapabilities := fs.String("capabilities", "", "Allow enabling/disabling of capabilities in the console. (JSON as string)")
 	fControlPlaneTopology := fs.String("control-plane-topology-mode", "", "Defines the topology mode of the control-plane nodes (External | HighlyAvailable | HighlyAvailableArbiter | DualReplica | SingleReplica)")
 	fReleaseVersion := fs.String("release-version", "", "Defines the release version of the cluster")
+	fKubernetesReleaseInfoURL := fs.String("kubernetes-release-info-url", "", "URL of an endoflife.date-compatible Kubernetes release list (e.g. https://endoflife.date/api/kubernetes.json), fetched every 12 hours for the Overview update hints. Empty disables the feature.")
 	fNodeArchitectures := fs.String("node-architectures", "", "List of node architectures. Example --node-architecture=amd64,arm64")
 	fNodeOperatingSystems := fs.String("node-operating-systems", "", "List of node operating systems. Example --node-operating-system=linux,windows")
 	fCopiedCSVsDisabled := fs.Bool("copied-csvs-disabled", false, "Flag to indicate if OLM copied CSVs are disabled.")
@@ -600,6 +602,13 @@ func main() {
 		klog.Infof("Received shutdown signal: %v. Gracefully shutting down...", sig)
 		cancel()
 	}()
+
+	if *fKubernetesReleaseInfoURL != "" {
+		_, err := flags.ValidateFlagIsURL("kubernetes-release-info-url", *fKubernetesReleaseInfoURL, false)
+		flags.FatalIfFailed(err)
+		srv.KubernetesReleases = kubernetesreleases.NewStore(*fKubernetesReleaseInfoURL)
+		srv.KubernetesReleases.Run(ctx)
+	}
 
 	// Controllers are behind Tech Preview flag
 	if *fTechPreview {
