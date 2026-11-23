@@ -201,6 +201,30 @@ listed as Disabled with no status.
 **Create ConsolePlugin** stays on the page. A new ConsolePlugin is listed, but
 the plugin only loads once it is in `BRIDGE_PLUGINS`.
 
+## Kubernetes update hints
+
+The Overview's Details card lists, under **Kubernetes version**, the latest
+patch of the cluster's minor line, the latest Kubernetes release when its minor
+is newer, and the end-of-life date of the cluster's minor line. The date gets a
+warning icon in the 30 days before end of life and a danger icon after it.
+
+`BRIDGE_KUBERNETES_RELEASE_INFO_URL` (`--kubernetes-release-info-url`) turns it
+on; [`console-deployment-patch.yaml`](console-deployment-patch.yaml) sets it to
+`https://endoflife.date/api/kubernetes.json`. The bridge fetches that URL at
+start and then every 12 hours, keeps the last good copy when a fetch fails,
+and serves a normalised copy to logged-in users at
+`/api/console/kubernetes-releases`. The browser never calls endoflife.date.
+
+- **Egress:** the console pod needs HTTPS to `endoflife.date`. If a
+  NetworkPolicy restricts the console's egress, allow it; if egress goes
+  through a proxy, set `HTTPS_PROXY` (and `NO_PROXY` for the API server and
+  in-cluster services) on the console container. Failures are logged as
+  `failed to fetch Kubernetes release info`; until a fetch succeeds the item
+  shows "Not available". After fixing egress, restart the console pod to
+  fetch straight away instead of waiting for the next 12-hour check.
+- **Off:** remove the variable. The endpoint then returns 404 and the item is
+  hidden, as in the stock console.
+
 ## Monitoring endpoints
 
 In `in-cluster` mode the bridge proxies metrics and alert requests to Thanos and

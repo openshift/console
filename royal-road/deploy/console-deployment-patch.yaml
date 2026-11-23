@@ -33,6 +33,11 @@ spec:
             # session-store.yaml applied first. Remove to roll back.
             - name: BRIDGE_SESSION_SECRET_NAMESPACE
               value: console-sessions
+            # Overview "Update available" hints (README.md, "Kubernetes update
+            # hints"). Fetched every 12 hours; needs egress to endoflife.date.
+            # Remove to turn the hints off.
+            - name: BRIDGE_KUBERNETES_RELEASE_INFO_URL
+              value: https://endoflife.date/api/kubernetes.json
           volumeMounts:
             - name: console-branding
               mountPath: /var/logo/console-branding
