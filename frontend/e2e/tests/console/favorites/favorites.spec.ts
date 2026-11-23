@@ -5,6 +5,21 @@ test.describe('Favorites', { tag: ['@admin'] }, () => {
   test('adds, displays, removes, and limits favorites', async ({ page, k8sClient }) => {
     const sidebar = page.locator('#page-sidebar');
 
+    // A favorites change is saved by an async user-settings PATCH that a page load can abort.
+    const saveFavorites = async (action: () => Promise<void>) => {
+      const [response] = await Promise.all([
+        page.waitForResponse(
+          (resp) =>
+            resp.request().method() === 'PATCH' &&
+            resp.url().includes('/configmaps/user-settings-') &&
+            (resp.request().postData() ?? '').includes('console.favorites'),
+          { timeout: 30_000 },
+        ),
+        action(),
+      ]);
+      expect(response.ok()).toBe(true);
+    };
+
     await test.step('Clear any stale favorites and lastNamespace from prior runs', async () => {
       try {
         await k8sClient.patchConfigMap(
@@ -52,8 +67,10 @@ test.describe('Favorites', { tag: ['@admin'] }, () => {
     });
 
     await test.step('Remove a favorite by clicking the favorite button again', async () => {
-      await page.getByTestId('favorite-button').click();
-      await expect(page.getByTestId('no-favorites-message')).toBeVisible();
+      await saveFavorites(async () => {
+        await page.getByTestId('favorite-button').click();
+        await expect(page.getByTestId('no-favorites-message')).toBeVisible();
+      });
     });
 
     await test.step('Remove a favorite from the left navigation menu', async () => {
@@ -113,7 +130,7 @@ test.describe('Favorites', { tag: ['@admin'] }, () => {
         const nameInput = page.getByTestId('input-name');
         await nameInput.clear();
         await nameInput.fill(`test-favorite-${i}`);
-        await nameInput.press('Enter');
+        await saveFavorites(() => nameInput.press('Enter'));
         await expect(page.getByRole('dialog')).toBeHidden();
       }
 
