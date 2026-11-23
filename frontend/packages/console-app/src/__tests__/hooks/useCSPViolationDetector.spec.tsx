@@ -1,11 +1,11 @@
 import { act } from '@testing-library/react';
 import type { RoutePage } from '@console/dynamic-plugin-sdk/src/extensions/pages';
-import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import {
   addLoadedPluginFromManifest,
   createLocalPluginManifest,
   createTestPluginStore,
-} from '../../components/console-operator/__tests__/pluginTestUtils';
+} from '@console/shared/src/test-utils/plugin-test-utils';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import {
   newPluginCSPViolationEvent,
   sameHostname,

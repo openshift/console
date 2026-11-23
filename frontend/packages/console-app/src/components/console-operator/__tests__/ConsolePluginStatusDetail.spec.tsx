@@ -1,12 +1,12 @@
 import { screen } from '@testing-library/react';
-import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
-import ConsolePluginStatusDetail from '../ConsolePluginStatusDetail';
 import {
   addFailedPlugin,
   addLoadedPlugin,
   addPendingPlugin,
   createTestPluginStore,
-} from './pluginTestUtils';
+} from '@console/shared/src/test-utils/plugin-test-utils';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
+import ConsolePluginStatusDetail from '../ConsolePluginStatusDetail';
 
 jest.mock('../ConsolePluginStatus', () => ({
   ConsolePluginStatus: ({ status, errorMessage }: { status: string; errorMessage?: string }) => (

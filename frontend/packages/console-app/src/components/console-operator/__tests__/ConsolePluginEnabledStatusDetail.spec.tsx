@@ -1,8 +1,11 @@
 import { screen } from '@testing-library/react';
+import {
+  addLoadedPlugin,
+  createTestPluginStore,
+} from '@console/shared/src/test-utils/plugin-test-utils';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import ConsolePluginEnabledStatusDetail from '../ConsolePluginEnabledStatusDetail';
 import * as consolePluginStatusModule from '../ConsolePluginStatus';
-import { addLoadedPlugin, createTestPluginStore } from './pluginTestUtils';
 
 jest.mock('../ConsolePluginStatus', () => ({
   ConsolePluginEnabledStatus: ({

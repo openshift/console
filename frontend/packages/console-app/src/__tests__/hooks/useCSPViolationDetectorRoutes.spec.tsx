@@ -5,12 +5,12 @@ import { createRoutesFromElements, matchRoutes } from 'react-router';
 import type { RoutePage } from '@console/dynamic-plugin-sdk/src/extensions/pages';
 import { isRoutePage } from '@console/dynamic-plugin-sdk/src/extensions/pages';
 import type { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
-import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import {
   addLoadedPluginFromManifest,
   createLocalPluginManifest,
   createTestPluginStore,
-} from '../../components/console-operator/__tests__/pluginTestUtils';
+} from '@console/shared/src/test-utils/plugin-test-utils';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { useCSPViolationDetector } from '../../hooks/useCSPViolationDetector';
 import { mapExtensionToRoutes } from '../../hooks/usePluginRoutes';
 import { ToastContext } from '../../providers/toast/ToastContext';
