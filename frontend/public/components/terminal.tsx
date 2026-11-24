@@ -82,29 +82,48 @@ export const Terminal = forwardRef<ImperativeTerminalType, TerminalProps>(
 
       let resizeObserver: ResizeObserver | undefined;
       let fitFrame = 0;
+      let disposed = false;
 
-      // PatternFly getResizeObserver(..., true) builds a debounced function and never
-      // calls it, so fit() and the PTY winsize update never ran. Observe directly.
+      // PatternFly 6.4.2 getResizeObserver(..., true) does debounce(handleResize, 100)
+      // and never calls it, so fit() and the PTY winsize update never ran.
       const fitToContainer = (attempt = 0) => {
+        if (disposed) {
+          return;
+        }
         const node = terminalRef.current;
         const current = terminal.current;
         if (!node || !current || node.clientWidth < 1 || node.clientHeight < 1) {
           return;
         }
-        try {
-          fit.fit();
-          if (current.rows > 0 && current.cols > 0) {
-            onResizeRef.current(current.rows, current.cols);
+        const retry = () => {
+          if (!disposed && attempt < 5) {
+            fitFrame = window.requestAnimationFrame(() => fitToContainer(attempt + 1));
           }
+        };
+        try {
+          // fit() no-ops when the renderer has not measured a cell yet, and the
+          // terminal is still the placeholder 80x25 from term.resize(). Publishing
+          // that size would leave the PTY wrong until the next container resize.
+          const fitted = fit.proposeDimensions();
+          if (
+            !fitted ||
+            !Number.isFinite(fitted.rows) ||
+            !Number.isFinite(fitted.cols) ||
+            fitted.rows < 1 ||
+            fitted.cols < 1
+          ) {
+            retry();
+            return;
+          }
+          fit.fit();
+          onResizeRef.current(fitted.rows, fitted.cols);
           // @ts-expect-error The internal xterm textarea was not repositioned when the window was resized.
           // See https://bugzilla.redhat.com/show_bug.cgi?id=1983220
           // and https://github.com/xtermjs/xterm.js/issues/3390
           current._core?._syncTextArea?.();
         } catch {
           // xterm's dimensions getter throws until its renderer is ready.
-          if (attempt < 5) {
-            fitFrame = window.requestAnimationFrame(() => fitToContainer(attempt + 1));
-          }
+          retry();
         }
       };
 
@@ -123,6 +142,7 @@ export const Terminal = forwardRef<ImperativeTerminalType, TerminalProps>(
       window.addEventListener('sidebar_toggle', handleResize);
 
       return () => {
+        disposed = true;
         cancelAnimationFrame(fitFrame);
         resizeObserver?.disconnect();
         term.dispose();
