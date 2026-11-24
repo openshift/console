@@ -583,7 +583,7 @@
   "DownwardAPI": "DownwardAPI",
   "Drag and drop file with your private SSH key here or browse to upload it.": "Drag and drop file with your private SSH key here or browse to upload it.",
   "Drag and drop file with your value here or browse to upload it.": "Drag and drop file with your value here or browse to upload it.",
-  "Drag and drop YAML or JSON files into the editor, or manually enter files and use <1>---</1> to separate each definition.": "Drag and drop YAML or JSON files into the editor, or manually enter files and use <1>---</1> to separate each definition.",
+  "Drag and drop YAML or JSON files into the editor, or manually enter files and use <2>---</2> to separate each definition.": "Drag and drop YAML or JSON files into the editor, or manually enter files and use <2>---</2> to separate each definition.",
   "Drag to reorder": "Drag to reorder",
   "Driver name": "Driver name",
   "Drop file here": "Drop file here",
