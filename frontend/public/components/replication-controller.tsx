@@ -17,6 +17,7 @@ import type {
   ConsoleDataViewColumn,
   GetDataViewRows,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { selectorToString } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { ActionServiceProvider } from '@console/shared/src/components/actions/ActionServiceProvider';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
@@ -39,6 +40,7 @@ import { SectionHeading } from './utils/headings';
 import { navFactory, PodsComponent } from './utils/horizontal-nav';
 import { OwnerReferences } from './utils/owner-references';
 import { ResourceLink } from './utils/resource-link';
+import { Selector } from './utils/selector';
 import { LoadingBox } from './utils/status-box';
 import { VolumesTable } from './volumes-table';
 import { ReplicasCount } from './workload-table';
@@ -165,6 +167,7 @@ const tableColumnInfo = [
   { id: 'namespace' },
   { id: 'status' },
   { id: 'phase' },
+  { id: 'selector' },
   { id: 'owner' },
   { id: 'created' },
   { id: '' },
@@ -196,12 +199,15 @@ const getDataViewRows: GetDataViewRows<ReplicationControllerKind> = (data, colum
         cell: <Status status={phase} />,
       },
       [tableColumnInfo[4].id]: {
-        cell: <OwnerReferences resource={obj} />,
+        cell: <Selector selector={obj.spec.selector} namespace={namespace} />,
       },
       [tableColumnInfo[5].id]: {
-        cell: <Timestamp timestamp={obj.metadata.creationTimestamp} />,
+        cell: <OwnerReferences resource={obj} />,
       },
       [tableColumnInfo[6].id]: {
+        cell: <Timestamp timestamp={obj.metadata.creationTimestamp} />,
+      },
+      [tableColumnInfo[7].id]: {
         cell: <LazyActionMenu context={context} />,
       },
     };
@@ -257,8 +263,19 @@ const useReplicationControllersColumns = (): {
         },
       },
       {
-        title: t('Owner'),
+        title: t('Pod selector'),
         id: tableColumnInfo[4].id,
+        sort: (data, direction) =>
+          data.sort(
+            sortResourceByValue(direction, (obj) => selectorToString(obj.spec?.selector ?? {})),
+          ),
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('Owner'),
+        id: tableColumnInfo[5].id,
         sort: 'metadata.ownerReferences[0].name',
         props: {
           modifier: 'nowrap',
@@ -266,13 +283,13 @@ const useReplicationControllersColumns = (): {
       },
       {
         title: t('Created'),
-        id: tableColumnInfo[5].id,
+        id: tableColumnInfo[6].id,
         sort: 'metadata.creationTimestamp',
         props: {
           modifier: 'nowrap',
         },
       },
-      { type: 'actions', id: tableColumnInfo[6].id },
+      { type: 'actions', id: tableColumnInfo[7].id },
     ],
     [t],
   );
