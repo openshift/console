@@ -10,6 +10,11 @@ Console, use `4.x.0-prerelease.n` packages.
 For older 1.x plugin SDK packages, refer to "OpenShift Console Versions vs SDK Versions"
 compatibility table in [Console dynamic plugins README](./README.md).
 
+## 5.2.0-prerelease.1 - TBD
+
+- Add `console.app/drawer` extension and `useAppDrawer` hook for contributing a side panel that
+  opens beside the Console page ([CONSOLE-5586], [#17567])
+
 ## 5.1.0 - 2026-12-14
 
 > Initial release for OCP Console 5.1.
@@ -368,6 +373,7 @@ compatibility table in [Console dynamic plugins README](./README.md).
 [CONSOLE-5560]: https://issues.redhat.com/browse/CONSOLE-5560
 [CONSOLE-5527]: https://issues.redhat.com/browse/CONSOLE-5527
 [CONSOLE-5571]: https://issues.redhat.com/browse/CONSOLE-5571
+[CONSOLE-5586]: https://issues.redhat.com/browse/CONSOLE-5586
 [OCPBUGS-19048]: https://issues.redhat.com/browse/OCPBUGS-19048
 [OCPBUGS-30077]: https://issues.redhat.com/browse/OCPBUGS-30077
 [OCPBUGS-31355]: https://issues.redhat.com/browse/OCPBUGS-31355
@@ -477,3 +483,4 @@ compatibility table in [Console dynamic plugins README](./README.md).
 [#17439]: https://github.com/openshift/console/pull/17439
 [#17456]: https://github.com/openshift/console/pull/17456
 [#17462]: https://github.com/openshift/console/pull/17462
+[#17567]: https://github.com/openshift/console/pull/17567

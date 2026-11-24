@@ -18,6 +18,7 @@ import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { Provider } from 'react-redux';
 import { BrowserRouter, useParams, useLocation, Routes, Route } from 'react-router';
+import { AppDrawerHost } from '@console/app/src/components/app-drawer/AppDrawerHost';
 import {
   ContextProviderExtensionWrapper,
   DetectContext,
@@ -297,7 +298,9 @@ const App: FC = () => {
       <ModalProvider>
         <OverlayProvider>
           <SyncModalLaunchers />
-          <ContextProviderExtensionWrapper>{content}</ContextProviderExtensionWrapper>
+          <ContextProviderExtensionWrapper>
+            <AppDrawerHost>{content}</AppDrawerHost>
+          </ContextProviderExtensionWrapper>
         </OverlayProvider>
       </ModalProvider>
     </DetectContext>

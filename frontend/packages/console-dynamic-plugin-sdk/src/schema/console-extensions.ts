@@ -1,5 +1,6 @@
 import type { SupportedActionExtensions } from '../extensions/actions';
 import type { AddAction, AddActionGroup } from '../extensions/add-actions';
+import type { AppDrawer } from '../extensions/app-drawer';
 import type { SupportedCatalogExtensions } from '../extensions/catalog';
 import type {
   ClusterOverviewInventoryItem,
@@ -80,6 +81,7 @@ export type SupportedExtension =
   | FeatureFlagHookProvider
   | ReduxReducer
   | ContextProvider
+  | AppDrawer
   | StandaloneRoutePage
   | PVCCreateProp
   | PVCStatus

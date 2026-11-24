@@ -50,6 +50,7 @@
     "description": "Plasma reactors online. Initiating hyper drive.",
     "exposedModules": {
       "K8sAPIConsumer": "./components/k8sConsumer/K8sAPIConsumer.tsx",
+      "appDrawerPanel": "./components/AppDrawerPanel.tsx",
       "barUtils": "./utils/bar.ts",
       "clusterActivityOverview": "./components/ClusterOverview/Activity.tsx",
       "clusterInventoryOverview": "./components/ClusterOverview/Inventory.tsx",

@@ -258,6 +258,13 @@
     }
   },
   {
+    "type": "console.app/drawer",
+    "properties": {
+      "id": "console-demo-plugin-drawer",
+      "panel": { "$codeRef": "appDrawerPanel.DemoAppDrawerPanel" }
+    }
+  },
+  {
     "type": "console.navigation/href",
     "properties": {
       "id": "admin-test-utility-consumer",

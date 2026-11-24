@@ -3,6 +3,7 @@ import {
   consoleFetchJSON,
   DocumentTitle,
   ListPageHeader,
+  useAppDrawer,
   useToast,
 } from '@openshift-console/dynamic-plugin-sdk';
 import { useTranslation } from 'react-i18next';
@@ -15,11 +16,13 @@ import {
   Gallery,
   PageSection,
 } from '@patternfly/react-core';
+import { DEMO_APP_DRAWER_ID } from './AppDrawerPanel';
 
 const UtilityConsumer: React.FC = () => {
   const { t } = useTranslation('plugin__console-demo-plugin');
   const toast = useToast();
   const toastRefs = React.useRef<string[]>([]);
+  const { isOpen: isDrawerOpen, toggle: toggleDrawer } = useAppDrawer(DEMO_APP_DRAWER_ID);
 
   const showToast = () => {
     const id = toast.addToast({
@@ -56,6 +59,14 @@ const UtilityConsumer: React.FC = () => {
               <Button onClick={showToast}>{t('Show Toast')}</Button>
               <Button onClick={dismissToasts} variant="link">
                 {t('Dismiss Toasts')}
+              </Button>
+            </CardBody>
+          </Card>
+          <Card>
+            <CardTitle data-test="test-utility-card">{t('Utility: useAppDrawer')}</CardTitle>
+            <CardBody data-test="test-utility-app-drawer">
+              <Button onClick={toggleDrawer}>
+                {isDrawerOpen ? t('Close app drawer') : t('Open app drawer')}
               </Button>
             </CardBody>
           </Card>
