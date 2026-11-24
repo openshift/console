@@ -57,7 +57,9 @@ describe('isRetryablePluginManifestError', () => {
     ['503', new HttpError('Service Unavailable', 503)],
     ['504', new HttpError('Gateway Timeout', 504)],
     ['TimeoutError', new TimeoutError('/api/plugins/test/plugin-manifest.json', 60000)],
-    ['TypeError', new TypeError('Failed to fetch')],
+    ['Chrome fetch TypeError', new TypeError('Failed to fetch')],
+    ['Firefox fetch TypeError', new TypeError('NetworkError when attempting to fetch resource.')],
+    ['Safari fetch TypeError', new TypeError('Load failed')],
   ])('returns true for %s', (_label, err) => {
     expect(isRetryablePluginManifestError(err)).toBe(true);
   });
@@ -73,6 +75,7 @@ describe('isRetryablePluginManifestError', () => {
     ['403', new HttpError('Forbidden', 403)],
     ['404', new HttpError('Not Found', 404)],
     ['generic Error', new Error('invalid plugin manifest')],
+    ['code TypeError', new TypeError('Cannot read properties of undefined')],
   ])('returns false for %s', (_label, err) => {
     expect(isRetryablePluginManifestError(err)).toBe(false);
   });
@@ -120,9 +123,52 @@ describe('loadAndEnablePlugin', () => {
     expect(store.loadPlugin).toHaveBeenCalledTimes(2);
     expect(onError).not.toHaveBeenCalled();
     expect(warnSpy).toHaveBeenCalledTimes(1);
-    expect(warnSpy.mock.calls[0][0]).toContain(
-      '[loadAndEnablePlugin] monitoring-plugin manifest fetch failed (attempt 1/3), retrying',
+    expect(warnSpy.mock.calls[0]).toEqual([
+      '[loadAndEnablePlugin] monitoring-plugin manifest fetch failed (attempt 1/3, status 401), retrying',
+    ]);
+  });
+
+  it('does not log the response, body, or URL when a manifest fetch is retried', async () => {
+    const secret = 'super-secret-session-token';
+    const httpError = new HttpError(
+      `Unauthorized ${secret}`,
+      401,
+      {
+        url: `https://console.example/api/plugins/monitoring-plugin/plugin-manifest.json?token=${secret}`,
+      } as Response,
+      { token: secret },
     );
+    store.loadPlugin
+      .mockRejectedValueOnce(wrapManifestError(httpError))
+      .mockResolvedValueOnce(undefined);
+    store.getPluginInfo.mockReturnValue([loadedPluginInfo('monitoring-plugin')]);
+
+    await loadAndEnablePlugin('monitoring-plugin', asPluginStore(store), onError);
+
+    expect(warnSpy.mock.calls).toEqual([
+      [
+        '[loadAndEnablePlugin] monitoring-plugin manifest fetch failed (attempt 1/3, status 401), retrying',
+      ],
+    ]);
+    expect(JSON.stringify(warnSpy.mock.calls)).not.toContain(secret);
+    expect(JSON.stringify(warnSpy.mock.calls)).not.toContain('https://');
+
+    warnSpy.mockClear();
+    const timeout = wrapManifestError(
+      new TimeoutError(`https://console.example/${secret}/plugin-manifest.json`, 60000),
+    );
+    store.loadPlugin.mockReset();
+    store.loadPlugin.mockRejectedValueOnce(timeout).mockResolvedValueOnce(undefined);
+
+    await loadAndEnablePlugin('monitoring-plugin', asPluginStore(store), onError);
+
+    expect(warnSpy.mock.calls).toEqual([
+      [
+        '[loadAndEnablePlugin] monitoring-plugin manifest fetch failed (attempt 1/3, timeout), retrying',
+      ],
+    ]);
+    expect(JSON.stringify(warnSpy.mock.calls)).not.toContain(secret);
+    expect(JSON.stringify(warnSpy.mock.calls)).not.toContain('https://');
   });
 
   it('retries a blocked/network fetch (TypeError) and succeeds on a later attempt', async () => {

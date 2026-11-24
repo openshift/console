@@ -19,15 +19,33 @@ export const PLUGIN_MANIFEST_MAX_ATTEMPTS = 3;
 const RETRYABLE_HTTP_STATUS_CODES = new Set([401, 408, 429, 500, 502, 503, 504]);
 
 /**
- * True when a plugin manifest fetch failed for a transient reason.
+ * Messages thrown by `fetch` for a failed connection. Other `TypeError`s are
+ * code bugs and must not be retried or copied into logs.
+ */
+const FETCH_TYPE_ERROR_MESSAGES = new Set([
+  'Failed to fetch',
+  'Load failed',
+  'Network request failed',
+]);
+
+const isFetchTypeError = (err: TypeError): boolean =>
+  FETCH_TYPE_ERROR_MESSAGES.has(err.message) ||
+  err.message.startsWith('NetworkError when attempting to fetch resource');
+
+type PluginManifestRetryReason = 'timeout' | 'network' | `status ${number}`;
+
+/**
+ * Allowlisted retry reason for a transient manifest fetch failure.
  *
  * A 401 is retryable because Console sessions are stored per pod. The first
  * request after login can land on a replica that does not have the session
  * and return Unauthorized; a later attempt may hit the replica that does.
  *
  * Walks `cause` so SDK `ErrorWithCause` wrappers around `HttpError` still match.
+ * The reason is a status code or a static label. It never includes the error
+ * message, response, parsed body, or request URL.
  */
-export const isRetryablePluginManifestError = (err: unknown): boolean => {
+const getPluginManifestRetryReason = (err: unknown): PluginManifestRetryReason | undefined => {
   const visited = new Set<unknown>();
   let current: unknown = err;
 
@@ -35,11 +53,15 @@ export const isRetryablePluginManifestError = (err: unknown): boolean => {
     visited.add(current);
 
     if (current instanceof HttpError && RETRYABLE_HTTP_STATUS_CODES.has(current.code ?? 0)) {
-      return true;
+      return `status ${current.code}`;
     }
 
-    if (current instanceof TimeoutError || current instanceof TypeError) {
-      return true;
+    if (current instanceof TimeoutError) {
+      return 'timeout';
+    }
+
+    if (current instanceof TypeError && isFetchTypeError(current)) {
+      return 'network';
     }
 
     current =
@@ -48,8 +70,11 @@ export const isRetryablePluginManifestError = (err: unknown): boolean => {
         : undefined;
   }
 
-  return false;
+  return undefined;
 };
+
+export const isRetryablePluginManifestError = (err: unknown): boolean =>
+  getPluginManifestRetryReason(err) !== undefined;
 
 /**
  * Calls {@link PluginStore.loadPlugin} for the given plugin name, and
@@ -85,14 +110,17 @@ export const loadAndEnablePlugin = async (
       const error = err as ErrorWithCause;
       lastError = { message: error.message, cause: error.cause };
 
-      if (!isRetryablePluginManifestError(error) || attempt === PLUGIN_MANIFEST_MAX_ATTEMPTS) {
+      const retryReason = getPluginManifestRetryReason(error);
+      if (!retryReason || attempt === PLUGIN_MANIFEST_MAX_ATTEMPTS) {
         break;
       }
 
+      // `retryReason` is an allowlisted status or static label. Do not log
+      // `error`: an HttpError carries the response and JSON body, and a
+      // TimeoutError carries the request URL.
       // eslint-disable-next-line no-console
       console.warn(
-        `[loadAndEnablePlugin] ${pluginName} manifest fetch failed (attempt ${attempt}/${PLUGIN_MANIFEST_MAX_ATTEMPTS}), retrying`,
-        error.cause ?? error,
+        `[loadAndEnablePlugin] ${pluginName} manifest fetch failed (attempt ${attempt}/${PLUGIN_MANIFEST_MAX_ATTEMPTS}, ${retryReason}), retrying`,
       );
     }
   }
