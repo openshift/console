@@ -346,7 +346,7 @@
     "brace-expansion@^1.1.7": "1.1.18",
     "brace-expansion@^2.0.2": "2.1.4",
     "brace-expansion@^5.0.2": "5.0.9",
-    "nanoid": "^3.3.12"
+    "nanoid": "^3.3.16"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,json,gql,graphql}": "eslint --color --fix"
