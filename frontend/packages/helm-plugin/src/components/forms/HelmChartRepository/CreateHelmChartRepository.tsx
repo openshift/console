@@ -26,6 +26,7 @@ import {
   getDefaultResource,
   convertToForm,
   convertToHelmChartRepository,
+  tryHttpsUpgrade,
 } from './helmchartrepository-create-utils';
 import { validationSchema } from './helmchartrepository-validation-utils';
 
@@ -108,6 +109,12 @@ const CreateHelmChartRepository: FC<CreateHelmChartRepositoryProps> = ({
       }
     } else {
       HelmChartRepositoryRes = convertToHelmChartRepository(values.formData, namespace);
+    }
+
+    const currentUrl = HelmChartRepositoryRes.spec?.connectionConfig?.url;
+    const upgradedUrl = await tryHttpsUpgrade(currentUrl);
+    if (upgradedUrl) {
+      HelmChartRepositoryRes.spec.connectionConfig.url = upgradedUrl;
     }
 
     const resourceCall = isEditForm
