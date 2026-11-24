@@ -12,7 +12,6 @@ import (
 	"helm.sh/helm/v4/pkg/action"
 	helmchart "helm.sh/helm/v4/pkg/chart"
 	chart "helm.sh/helm/v4/pkg/chart/v2"
-	"helm.sh/helm/v4/pkg/chart/v2/loader"
 	"helm.sh/helm/v4/pkg/kube"
 	releasev1 "helm.sh/helm/v4/pkg/release/v1"
 	kv1 "k8s.io/api/core/v1"
@@ -98,11 +97,11 @@ func UpgradeRelease(
 		}
 		chartLocation = chartUrl
 		client.ChartPathOptions.Version = chartInfo.Version
-		cp, err = client.ChartPathOptions.LocateChart(chartLocation, settings)
+		cp, err = locateChart(&client.ChartPathOptions, conf.RegistryClient, chartLocation)
 		if err != nil {
 			return nil, err
 		}
-		ch, err = loader.Load(cp)
+		ch, err = loadLocatedChart(cp)
 		if err != nil {
 			return nil, err
 		}
@@ -236,26 +235,24 @@ func UpgradeReleaseAsync(
 				}
 			}
 		}
+		registryClient := conf.RegistryClient
 		if auth_secret != "" {
 			userCredentials, err := GetUserCredentials(coreClient, releaseNamespace, auth_secret)
 			if err != nil {
 				return nil, fmt.Errorf("failed to get user credentials Secret %s for release upgrade %s/%s: %v", auth_secret, releaseNamespace, releaseName, err)
-			} else {
-				if err := applyBasicAuthFromUserCredentials(&client.ChartPathOptions, client, userCredentials); err != nil {
-					return nil, fmt.Errorf("failed to apply auth from Secret %s for release upgrade %s/%s: %v", auth_secret, releaseNamespace, releaseName, err)
-				}
+			}
+			registryClient, err = applyBasicAuthFromUserCredentials(&client.ChartPathOptions, client, userCredentials)
+			if err != nil {
+				return nil, fmt.Errorf("failed to apply auth from Secret %s for release upgrade %s/%s: %v", auth_secret, releaseNamespace, releaseName, err)
 			}
 		}
 		chartLocation = chartUrl
 		client.ChartPathOptions.Version = chartInfo.Version
-		cp, err = client.ChartPathOptions.LocateChart(chartLocation, settings)
+		cp, err = locateChart(&client.ChartPathOptions, registryClient, chartLocation)
 		if err != nil {
-			if auth_secret == "" && (strings.Contains(err.Error(), "401") || strings.Contains(strings.ToLower(err.Error()), "unauthorized")) {
-				return nil, fmt.Errorf("failed to upgrade helm release: %w; registry requires authentication - select a Secret with \"username\" and \"password\" keys for basic authentication", err)
-			}
 			return nil, err
 		}
-		ch, err = loader.Load(cp)
+		ch, err = loadLocatedChart(cp)
 		if err != nil {
 			return nil, err
 		}

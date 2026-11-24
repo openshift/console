@@ -1,6 +1,7 @@
 #!/bin/bash
 
-kill -TERM $(< zot.pid) || echo "Zot (TLS) is not currently running."
-kill -TERM $(< zot-no-tls.pid) || echo "Zot (no TLS) is not currently running."
-kill -TERM $(< zot-basicauth.pid) || echo "Zot (basic auth) is not currently running."
-rm -f zot.pid zot-no-tls.pid zot-basicauth.pid
+source "$(dirname "${BASH_SOURCE[0]}")/../../testdata/stop_fixture.sh"
+
+stop_fixture zot.pid zot "Zot (TLS)"
+stop_fixture zot-no-tls.pid zot "Zot (no TLS)"
+stop_fixture zot-basicauth.pid zot "Zot (basic auth)"
