@@ -553,8 +553,16 @@ func (s *Server) HTTPHandler(contexts ...context.Context) (http.Handler, error) 
 		&http.Client{
 			// 120 seconds matches the webpack require timeout.
 			// Plugins are loaded asynchronously, so this doesn't block page load.
-			Timeout:   120 * time.Second,
-			Transport: &http.Transport{TLSClientConfig: s.PluginsProxyTLSConfig},
+			Timeout: 120 * time.Second,
+			Transport: &http.Transport{
+				TLSClientConfig: s.PluginsProxyTLSConfig,
+				// Honor HTTP(S)_PROXY/NO_PROXY so plugin asset (and i18n) requests
+				// can be tunneled to guest cluster services. Off-cluster
+				// (HyperShift control-plane-side bridge) this routes plugin
+				// backends through the konnectivity socks5 proxy; in-cluster it is
+				// inert (no proxy env) or bypassed for *.svc via NO_PROXY.
+				Proxy: http.ProxyFromEnvironment,
+			},
 		},
 		s.EnabledPlugins,
 		s.PublicDir,
@@ -735,6 +743,7 @@ func (s *Server) handleKnativeChannelCRDs(w http.ResponseWriter, r *http.Request
 	s.KnativeChannelCRDLister.HandleResources(w, r)
 }
 
+// indexHandler renders Console with a per-request CSP nonce or rejects invalid policy configuration with HTTP 500.
 func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 	if serverutils.IsUnsupportedBrowser(r) {
 		serverutils.SendUnsupportedBrowserResponse(w, s.Branding)
@@ -753,13 +762,17 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		r.Header.Get("Test-CSP-Reporting-Endpoint"),
 	)
 	if err != nil {
-		klog.Fatalf("Error building Content Security Policy directives: %s", err)
+		klog.Errorf("Error building Content Security Policy directives: %s", err)
+		http.Error(w, "Unable to build Content Security Policy", http.StatusInternalServerError)
+		return
 	}
 	headerName := "Content-Security-Policy-Report-Only"
 	if s.CSPMode == serverconfig.CSPModeEnforce {
 		headerName = "Content-Security-Policy"
 	}
-	w.Header().Set(headerName, strings.Join(cspDirectives, "; "))
+	cspHeaderValue := strings.Join(cspDirectives, "; ")
+	w.Header().Set(headerName, cspHeaderValue)
+	klog.V(4).Infof("%s: %s", headerName, cspHeaderValue)
 
 	jsg := &jsGlobals{
 		AddPage:                   s.AddPage,

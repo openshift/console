@@ -230,3 +230,59 @@ describe('useCatalogExtensions', () => {
     expect(extensions).toEqual([mockExtensions[1]]);
   });
 });
+
+// Shared operator filters and generation filters are contributed through item-type metadata.
+describe('useCatalogExtensions item type metadata merging', () => {
+  it('should merge filters from a matching item-type-metadata into a filterless type', () => {
+    mockExtensions = [
+      {
+        type: 'console.catalog/item-type',
+        properties: { type: 'operator', title: 'Operators' },
+      },
+      {
+        type: 'console.catalog/item-type-metadata',
+        properties: {
+          type: 'operator',
+          filters: [{ label: 'Source', attribute: 'source' }],
+        },
+      },
+      {
+        type: 'console.catalog/item-type-metadata',
+        properties: {
+          type: 'operator',
+          filters: [{ label: 'Catalog', attribute: 'operatorCatalog', filterType: 'radio' }],
+        },
+      },
+    ];
+    const { result } = renderHookWithProviders(() =>
+      useCatalogExtensions('dev-catalog', 'operator'),
+    );
+
+    expect(result.current[0]).toHaveLength(1);
+    expect(result.current[0][0].properties.filters).toEqual([
+      { label: 'Source', attribute: 'source' },
+      { label: 'Catalog', attribute: 'operatorCatalog', filterType: 'radio' },
+    ]);
+  });
+
+  it('should not merge metadata filters into a different type', () => {
+    mockExtensions = [
+      {
+        type: 'console.catalog/item-type',
+        properties: { type: 'HelmChart', title: 'Helm Charts' },
+      },
+      {
+        type: 'console.catalog/item-type-metadata',
+        properties: {
+          type: 'operator',
+          filters: [{ label: 'Source', attribute: 'source' }],
+        },
+      },
+    ];
+    const { result } = renderHookWithProviders(() =>
+      useCatalogExtensions('dev-catalog', 'HelmChart'),
+    );
+
+    expect(result.current[0][0].properties.filters).toBeUndefined();
+  });
+});

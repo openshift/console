@@ -83,6 +83,7 @@ const QuickSearchList: FC<QuickSearchListProps> = ({
         Math.floor(listHeight / rowHeight) < limitItemCount
           ? limitItemCount
           : Math.floor(listHeight / rowHeight);
+      // eslint-disable-next-line react-hooks-js/set-state-in-effect -- the count depends on DOM measurements (list and row heights) that are only available after render; setState triggers the re-render that applies the measured count
       setItemsCount(count);
       onListChange?.(count);
     }

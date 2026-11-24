@@ -12,9 +12,14 @@ export const useCRDAdditionalPrinterColumns = (
   const [CRDAPC, setCRDAPC] = useState<CRDAdditionalPrinterColumns>({});
   const [loaded, setLoaded] = useState(false);
 
+  // Without a model there is nothing to fetch — the hook is immediately
+  // loaded.
+  if (!model && !loaded) {
+    setLoaded(true);
+  }
+
   useEffect(() => {
     if (!model) {
-      setLoaded(true);
       return;
     }
     coFetchJSON(`/api/console/crd-columns/${model.plural}.${model.apiGroup}`)

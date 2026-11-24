@@ -12,6 +12,7 @@
       "CatalogRedirect": "src/components/catalog-redirect.tsx",
       "catalogSource": "src/components/catalog-source.tsx",
       "clusterServiceVersions": "src/components/clusterserviceversion.tsx",
+      "classicInstalledOperatorsPage": "src/components/classic-operators/ClassicInstalledOperatorsPage.tsx",
       "createCatalogSource": "src/components/create-catalog-source.tsx",
       "createOperand": "src/components/operand/create-operand.tsx",
       "csvStatus": "src/components/dashboard/csv-status.tsx",

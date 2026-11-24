@@ -74,14 +74,14 @@ run \
 
 run \
   'oxfmt' \
-  'the code should be formatted correctly per yarn prettier-all' \
+  'the code should be formatted correctly per yarn format-all' \
   "Code is not pretty!" \
-  'yarn run prettier-all --check'
+  'yarn run format-all --check'
 
 run \
-  'eslint' \
+  'oxlint' \
   'the linter should pass without any errors as reported by yarn lint' \
-  "ESLint errors detected!" \
+  "Oxlint errors detected!" \
   'yarn run lint'
 
 if [ "$OPENSHIFT_CI" = true ]; then

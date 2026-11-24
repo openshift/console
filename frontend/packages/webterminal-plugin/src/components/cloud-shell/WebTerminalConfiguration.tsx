@@ -1,5 +1,5 @@
 import type { FC, ReactEventHandler } from 'react';
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import {
   Button,
   Checkbox,
@@ -78,7 +78,25 @@ const WebTerminalConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
     iswebTerminalToolingLoaded &&
     !webTerminalToolingloadError &&
     webTerminalTooling?.spec?.components?.find((e) => e.name === 'web-terminal-tooling');
-  useEffect(() => {
+
+  // Seed the timeout fields from the web-terminal-exec template once it has
+  // loaded. User edits are preserved: the seeding only re-runs when the
+  // watched resource actually changes.
+  const [prevExecResource, setPrevExecResource] = useState({
+    webTerminalExec,
+    // false sentinel: a template that is already loaded on the first render is
+    // still eligible for seeding (there is no later transition to trigger it)
+    isLoaded: false,
+    loadError,
+    terminalExecResource,
+  });
+  if (
+    prevExecResource.webTerminalExec !== webTerminalExec ||
+    prevExecResource.isLoaded !== isLoaded ||
+    prevExecResource.loadError !== loadError ||
+    prevExecResource.terminalExecResource !== terminalExecResource
+  ) {
+    setPrevExecResource({ webTerminalExec, isLoaded, loadError, terminalExecResource });
     if (isLoaded && !loadError && terminalExecResource) {
       const terminalExecComponent = terminalExecResource?.container?.env?.find(
         (e) => e.name === 'WEB_TERMINAL_IDLE_TIMEOUT',
@@ -96,9 +114,28 @@ const WebTerminalConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
         );
       }
     }
-  }, [webTerminalExec, isLoaded, loadError, terminalExecResource]);
+  }
 
-  useEffect(() => {
+  // Seed the image field from the web-terminal-tooling template once it has
+  // loaded, with the same seeding semantics as the timeout fields above.
+  const [prevToolingResource, setPrevToolingResource] = useState({
+    webTerminalTooling,
+    iswebTerminalToolingLoaded: false,
+    webTerminalToolingloadError,
+    terminalToolingResource,
+  });
+  if (
+    prevToolingResource.webTerminalTooling !== webTerminalTooling ||
+    prevToolingResource.iswebTerminalToolingLoaded !== iswebTerminalToolingLoaded ||
+    prevToolingResource.webTerminalToolingloadError !== webTerminalToolingloadError ||
+    prevToolingResource.terminalToolingResource !== terminalToolingResource
+  ) {
+    setPrevToolingResource({
+      webTerminalTooling,
+      iswebTerminalToolingLoaded,
+      webTerminalToolingloadError,
+      terminalToolingResource,
+    });
     if (iswebTerminalToolingLoaded && !webTerminalToolingloadError && terminalToolingResource) {
       if (terminalToolingResource?.container?.image) {
         setImage(terminalToolingResource.container.image);
@@ -110,12 +147,7 @@ const WebTerminalConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
         );
       }
     }
-  }, [
-    webTerminalTooling,
-    iswebTerminalToolingLoaded,
-    webTerminalToolingloadError,
-    terminalToolingResource,
-  ]);
+  }
 
   const TimeoutUnits = {
     s: t('Seconds'),

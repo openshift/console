@@ -24,7 +24,7 @@ import {
   NotificationDrawerListItemHeader,
 } from '@patternfly/react-core';
 import { RhUiEllipsisVerticalIcon } from '@patternfly/react-icons';
-import i18next from 'i18next';
+import * as i18next from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import type { NavigateFunction } from 'react-router';
@@ -322,14 +322,27 @@ export const NotificationDrawer: FC<NotificationDrawerProps> = ({
   const [isNonCriticalAlertExpanded, toggleNonCriticalAlertExpanded] = useState(true);
   const [isClusterUpdateExpanded, toggleClusterUpdateExpanded] = useState(true);
   const [expandedToastGroups, setExpandedToastGroups] = useState<Record<string, boolean>>({});
-  useEffect(() => {
+  // Auto-expand the alert sections when critical/non-critical alerts appear
+  // while the drawer is open (one-way: sections can still be collapsed
+  // manually).
+  const [prevAutoExpand, setPrevAutoExpand] = useState({
+    hasCriticalAlerts,
+    hasNonCriticalAlerts,
+    isDrawerExpanded,
+  });
+  if (
+    prevAutoExpand.hasCriticalAlerts !== hasCriticalAlerts ||
+    prevAutoExpand.hasNonCriticalAlerts !== hasNonCriticalAlerts ||
+    prevAutoExpand.isDrawerExpanded !== isDrawerExpanded
+  ) {
+    setPrevAutoExpand({ hasCriticalAlerts, hasNonCriticalAlerts, isDrawerExpanded });
     if (hasCriticalAlerts && isDrawerExpanded) {
       toggleAlertExpanded(true);
     }
     if (hasNonCriticalAlerts && isDrawerExpanded) {
       toggleNonCriticalAlertExpanded(true);
     }
-  }, [hasCriticalAlerts, hasNonCriticalAlerts, isDrawerExpanded]);
+  }
 
   useEffect(() => {
     onDrawerChange();

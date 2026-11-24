@@ -131,12 +131,12 @@ const ImageStreamTagDropdown: FC<{
 
   useEffect(() => {
     imageStream.tag && searchImageTag(imageStream.tag);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [imageStream.tag]);
 
   useEffect(() => {
     reloadCount && imageStream.tag && searchImageTag(imageStream.tag);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [reloadCount]);
 
   useEffect(() => {

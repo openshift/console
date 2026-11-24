@@ -14,7 +14,7 @@ import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
 import { RhUiEditIcon } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
 import type { TFunction } from 'i18next';
-import i18next from 'i18next';
+import * as i18next from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
@@ -1101,7 +1101,6 @@ const RolesPage: FC<{ obj: K8sResourceKind }> = ({ obj: { metadata } }) => (
 const WorkloadsListPage: FC = (props) => (
   <AsyncComponent
     loader={() =>
-      // eslint-disable-next-line import/no-cycle -- import to this module is dynamic
       import('./overview' /* webpackChunkName: "overview" */).then((c) => c.OverviewListPage)
     }
     {...props}

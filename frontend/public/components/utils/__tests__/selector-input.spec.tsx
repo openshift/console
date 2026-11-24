@@ -1,4 +1,4 @@
-import { screen, waitFor } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { SelectorInput } from '../selector-input';
@@ -65,6 +65,32 @@ describe('SelectorInput', () => {
   });
 
   describe('validation', () => {
+    it('keeps input while Enter confirms an IME candidate', async () => {
+      const user = userEvent.setup();
+      renderWithProviders(<SelectorInput {...defaultProps} />);
+      const input = screen.getByRole('textbox');
+      await user.type(input, 'stable');
+
+      // userEvent does not support IME composition keyboard events.
+      const event = new KeyboardEvent('keydown', {
+        key: 'Enter',
+        keyCode: 13,
+        isComposing: true,
+        bubbles: true,
+        cancelable: true,
+      });
+      act(() => {
+        input.dispatchEvent(event);
+      });
+
+      expect(input).toHaveValue('stable');
+      expect(event.defaultPrevented).toBe(false);
+      expect(defaultProps.onChange).not.toHaveBeenCalled();
+      await user.keyboard('{Enter}');
+      expect(defaultProps.onChange).toHaveBeenCalledWith(['stable']);
+      expect(input).toHaveValue('');
+    });
+
     it('shows invalid state for malformed input and clears when corrected', async () => {
       const user = userEvent.setup();
       renderWithProviders(<SelectorInput {...defaultProps} />);
@@ -91,6 +117,38 @@ describe('SelectorInput', () => {
   });
 
   describe('tag removal', () => {
+    it('keeps existing tags when Backspace is used during IME composition', async () => {
+      const user = userEvent.setup();
+      renderWithProviders(<SelectorInput {...defaultProps} tags={['app=frontend']} />);
+      const input = screen.getByRole('textbox');
+      await user.click(input);
+
+      // userEvent does not support IME composition keyboard events.
+      const event = new KeyboardEvent('keydown', {
+        key: 'Backspace',
+        keyCode: 8,
+        isComposing: true,
+        bubbles: true,
+        cancelable: true,
+      });
+      act(() => {
+        input.dispatchEvent(event);
+      });
+
+      expect(screen.getByText('app=frontend')).toBeVisible();
+      expect(defaultProps.onChange).not.toHaveBeenCalled();
+      expect(event.defaultPrevented).toBe(false);
+
+      // TagsInput matches Backspace by keyCode, which userEvent does not populate.
+      act(() => {
+        input.dispatchEvent(
+          new KeyboardEvent('keydown', { key: 'Backspace', keyCode: 8, bubbles: true }),
+        );
+      });
+      expect(defaultProps.onChange).toHaveBeenCalledWith([]);
+      expect(screen.queryByText('app=frontend')).not.toBeInTheDocument();
+    });
+
     it('calls onChange when close button is clicked', async () => {
       const onChange = jest.fn();
       renderWithProviders(

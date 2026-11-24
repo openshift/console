@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
     "target": "es2021",
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
+    "customConditions": ["browser"],
     "jsx": "react-jsx",
     "noUnusedLocals": true,
     "skipLibCheck": true,
@@ -14,7 +14,9 @@
     "files": true,
     "transpileOnly": true,
     "compilerOptions": {
-      "module": "commonjs"
+      "module": "commonjs",
+      "moduleResolution": "node",
+      "customConditions": null
     }
   }
 }

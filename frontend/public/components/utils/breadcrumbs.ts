@@ -1,4 +1,4 @@
-import i18next from 'i18next';
+import * as i18next from 'i18next';
 import {
   LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY,
   ALL_NAMESPACES_KEY,

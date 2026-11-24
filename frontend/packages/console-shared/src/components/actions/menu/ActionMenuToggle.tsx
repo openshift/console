@@ -63,7 +63,7 @@ const ActionMenuToggle: FC<ActionMenuToggleProps> = ({
     return () => {
       window.removeEventListener('keydown', handleMenuKeys);
       window.removeEventListener('click', handleClickOutside);
-    }; // eslint-disable-next-line react-hooks/exhaustive-deps
+    }; // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [isOpen]); // This needs to be run only on component mount/unmount
 
   const handleToggleClick = () => {

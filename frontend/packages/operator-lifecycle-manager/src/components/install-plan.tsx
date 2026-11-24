@@ -1,5 +1,5 @@
 import type { FC, ReactNode } from 'react';
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import {
   Alert,
   Button,
@@ -62,6 +62,7 @@ import {
 } from '../models';
 import type { InstallPlanKind, OperatorGroupKind, Step } from '../types';
 import { InstallPlanApproval } from '../types';
+import { ClassicOperatorMigrationAlert } from './classic-operators/ClassicOperatorMigrationAlert';
 import { sortByOptionalPath } from './dataViewSortHelpers';
 import { LazyInstallPlanPreviewModalOverlay } from './modals';
 import { requireOperatorGroup } from './operator-group';
@@ -235,6 +236,7 @@ export const InstallPlansPage: FC<InstallPlansPageProps> = (props) => {
   return (
     <MultiListPage
       {...props}
+      helpAlert={<ClassicOperatorMigrationAlert />}
       namespace={namespace}
       resources={[
         {
@@ -272,11 +274,7 @@ export const NeedInstallPlanPermissions: FC<NeedInstallPlanPermissionsProps> = (
   const isOpenShift = useFlag(FLAGS.OPENSHIFT);
   const user = useConsoleSelector<UserInfo>(getUser);
 
-  const [username, setUsername] = useState(updateUser(isOpenShift, user));
-
-  useEffect(() => {
-    setUsername(updateUser(isOpenShift, user));
-  }, [isOpenShift, user]);
+  const username = updateUser(isOpenShift, user);
 
   const { t } = useTranslation('olm');
 
@@ -537,6 +535,7 @@ export const InstallPlanDetailsPage: FC = (props) => {
   return (
     <DetailsPage
       {...props}
+      helpAlert={<ClassicOperatorMigrationAlert />}
       namespace={params.ns}
       kind={referenceForModel(InstallPlanModel)}
       name={params.name}

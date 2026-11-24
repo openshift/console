@@ -1,13 +1,13 @@
 import type { FC } from 'react';
-import { useRef, useState, useCallback, useEffect, useMemo } from 'react';
+import { useRef, useState, useCallback, useEffect } from 'react';
 import { Alert } from '@patternfly/react-core';
 import { Base64 } from 'js-base64';
 import { throttle } from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { WSFactory } from '@console/dynamic-plugin-sdk/src/utils/k8s/ws-factory';
 import { LOG_SOURCE_TERMINATED } from '@console/internal/components/utils';
 import type { PodKind, ContainerSpec } from '@console/internal/module/k8s';
 import { resourceURL, modelFor } from '@console/internal/module/k8s';
-import { WSFactory } from '@console/internal/module/ws-factory';
 import { coFetchText } from '@console/shared/src/utils/console-fetch';
 import './Logs.scss';
 
@@ -42,28 +42,31 @@ const Logs: FC<LogsProps> = ({
     onCompleteRef.current = onComplete;
   });
 
-  const addContentAndScroll = useMemo(
-    () =>
-      throttle(() => {
-        if (contentRef.current) {
-          contentRef.current.innerText += blockContentRef.current;
-        }
-        if (scrollToRef.current) {
-          scrollToRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
-        }
-        blockContentRef.current = '';
-      }, 1000),
-    [],
-  );
+  const addContentAndScrollRef = useRef<(() => void) | undefined>(undefined);
+
+  // The throttled helper reads and mutates DOM refs, so it must be created
+  // inside an effect: the React Compiler forbids passing a ref-reading
+  // closure to throttle() during render.
+  useEffect(() => {
+    addContentAndScrollRef.current = throttle(() => {
+      if (contentRef.current) {
+        contentRef.current.innerText += blockContentRef.current;
+      }
+      if (scrollToRef.current) {
+        scrollToRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      }
+      blockContentRef.current = '';
+    }, 1000);
+  }, []);
 
   const appendMessageCallback = useCallback(
     (blockContent: string) => {
       blockContentRef.current += blockContent;
       if (scrollToRef.current && blockContent && render && autoScroll) {
-        addContentAndScroll();
+        addContentAndScrollRef.current?.();
       }
     },
-    [autoScroll, render, addContentAndScroll],
+    [autoScroll, render],
   );
 
   const appendMessage = useRef<(blockContent) => void>(appendMessageCallback);
@@ -129,9 +132,9 @@ const Logs: FC<LogsProps> = ({
 
   useEffect(() => {
     if (scrollToRef.current && render && autoScroll) {
-      addContentAndScroll();
+      addContentAndScrollRef.current?.();
     }
-  }, [autoScroll, render, addContentAndScroll]);
+  }, [autoScroll, render]);
 
   return (
     <div className="odc-logs" data-test="odc-logs" style={{ display: render ? '' : 'none' }}>

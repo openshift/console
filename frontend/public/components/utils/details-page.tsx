@@ -1,4 +1,4 @@
-import type { ComponentType, FC, ReactNode } from 'react';
+import type { FC, ReactNode } from 'react';
 import { Button, DescriptionList } from '@patternfly/react-core';
 import { RhUiEditIcon } from '@patternfly/react-icons';
 import * as _ from 'lodash';
@@ -34,10 +34,6 @@ export const pluralize = (
   const pluralized = `${i === 1 ? singular : plural}`;
   return includeCount ? `${i || 0} ${pluralized}` : pluralized;
 };
-
-export const detailsPage =
-  <T extends {}>(Component: ComponentType<T>) =>
-  (props: T) => <Component {...props} />;
 
 const getTolerationsPath = (obj: K8sResourceKind): string =>
   // FIXME: Is this correct for all types (jobs, cron jobs)? It would be better for the embedding page to pass in the path.

@@ -3,6 +3,8 @@ import { Trans, useTranslation } from 'react-i18next';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk/src';
 import { ErrorPage404 } from '@console/internal/components/error';
 import { withStartGuide } from '@console/internal/components/start-guide';
+import { ClassicOperatorMigrationAlert } from '@console/operator-lifecycle-manager/src/components/classic-operators/ClassicOperatorMigrationAlert';
+import { OLMCatalogVersion, OPERATOR_TYPE } from '@console/operator-lifecycle-manager/src/const';
 import { CatalogController } from '@console/shared/src/components/catalog/CatalogController';
 import { CatalogServiceProvider } from '@console/shared/src/components/catalog/service/CatalogServiceProvider';
 import { isCatalogTypeEnabled } from '@console/shared/src/components/catalog/utils/catalog-utils';
@@ -48,6 +50,12 @@ const PageContents: FC = () => {
         <CatalogController
           {...service}
           enableDetailsPanel
+          helpAlert={
+            catalogType === OPERATOR_TYPE &&
+            queryParams.get('operatorCatalog') === JSON.stringify([OLMCatalogVersion.OLMv0]) && (
+              <ClassicOperatorMigrationAlert />
+            )
+          }
           title={t('Software Catalog')}
           description={t(
             'Add shared applications, services, event sources, or source-to-image builders to your Project from the software catalog. Cluster administrators can customize the content made available in the catalog.',

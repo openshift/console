@@ -10,6 +10,7 @@ import (
 	"testing"
 	"time"
 
+	operatorsv1alpha1 "github.com/operator-framework/api/pkg/operators/v1alpha1"
 	"github.com/operator-framework/operator-registry/alpha/declcfg"
 	"github.com/operator-framework/operator-registry/alpha/property"
 	"github.com/patrickmn/go-cache"
@@ -193,6 +194,9 @@ func TestUpdateCatalog(t *testing.T) {
 		csvMetadata, err := json.Marshal(property.CSVMetadata{
 			DisplayName: "Test Bundle",
 			Description: "This is a test bundle.",
+			InstallModes: []operatorsv1alpha1.InstallMode{
+				{Type: operatorsv1alpha1.InstallModeTypeAllNamespaces, Supported: true},
+			},
 		})
 		require.NoError(t, err)
 		packages := []declcfg.Package{{Name: "test-package"}}

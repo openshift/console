@@ -28,12 +28,16 @@ export const ActionMenu: FC<ActionMenuProps> = ({
   appendTo,
 }) => {
   const isKebabVariant = variant === ActionMenuVariant.KEBAB;
-  const [isVisible, setVisible] = useState(isKebabVariant);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const menuOptions = options?.length > 0 ? options : actions;
+
+  const allRequireAccessReview =
+    actions.length > 0 && actions.every((action) => action.accessReview);
+
+  const [accessReviewAllowed, setAccessReviewAllowed] = useState<boolean>();
 
   const hideMenu = () => {
     setIsOpen(false);
@@ -51,31 +55,23 @@ export const ActionMenu: FC<ActionMenuProps> = ({
     });
   }, [actions]);
 
-  // Check if any actions are visible when actions have access reviews.
+  // Check if any actions are visible when all actions have access reviews.
+  // Kebab menus are always visible (access review happens on hover), and menus
+  // with actions that lack an access review are visible without a check.
   useEffect(() => {
-    if (!actions.length) {
-      setVisible(false);
+    if (isKebabVariant || !allRequireAccessReview) {
       return;
     }
-    // Do nothing if variant is kebab. The action menu should be visible and acces review happens on hover.
-    if (isKebabVariant) return;
 
-    const promises = actions.reduce((acc, action) => {
-      if (action.accessReview) {
-        acc.push(checkAccess(action.accessReview));
-      }
-      return acc;
-    }, []);
-
-    // Only need to resolve if all actions require access review
-    if (promises.length !== actions.length) {
-      setVisible(true);
-      return;
-    }
+    const promises = actions.map((action) => checkAccess(action.accessReview));
     Promise.all(promises)
-      .then((results) => setVisible(_.some(results, 'status.allowed')))
-      .catch(() => setVisible(true));
-  }, [actions, isKebabVariant, setVisible]);
+      .then((results) => setAccessReviewAllowed(_.some(results, 'status.allowed')))
+      .catch(() => setAccessReviewAllowed(true));
+  }, [actions, isKebabVariant, allRequireAccessReview]);
+
+  const isVisible =
+    actions.length > 0 &&
+    (isKebabVariant || !allRequireAccessReview || accessReviewAllowed === true);
 
   const menu = (
     <Menu ref={menuRef} containsFlyout onSelect={hideMenu}>

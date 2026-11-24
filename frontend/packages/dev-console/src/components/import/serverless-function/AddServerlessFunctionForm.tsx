@@ -80,7 +80,6 @@ const AddServerlessFunctionForm: FC<FormikProps<FormikValues> & AddServerlessFun
       if (gitService) {
         gitService
           .isFuncYamlPresent()
-          // eslint-disable-next-line consistent-return
           .then((isFuncYamlPresent) => {
             if (!isFuncYamlPresent) {
               setHelpText(t('Unable to find func.yaml in the repository.'));

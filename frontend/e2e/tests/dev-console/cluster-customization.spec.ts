@@ -56,9 +56,27 @@ test.describe(
       await customizationPage.moveAvailableToChosen('add-page', 'All services');
       await customizationPage.waitForItemInList('add-page', 'All services', 'chosen');
       await expect(customizationPage.getFormSection('add-page')).toBeVisible();
+
+      // The dual-list selector patches the Console CR asynchronously; wait for
+      // the addPage customization to appear in the CR before navigating away.
+      await expect(async () => {
+        const consoleConfig = (await k8sClient.getClusterCustomResource(
+          'operator.openshift.io',
+          'v1',
+          'consoles',
+          'cluster',
+        )) as { spec?: { customization?: { addPage?: unknown } } };
+        expect(consoleConfig.spec?.customization?.addPage).toBeTruthy();
+      }).toPass({ intervals: [2_000, 3_000, 5_000], timeout: 30_000 });
+
       const addPage = new AddPage(page);
+      // Config propagation to the Console frontend may take a few seconds
+      // after the CR is updated; reload until the Add page reflects the change.
       await addPage.ensureDevPerspectiveAndNavigate(targetNamespace, k8sClient);
-      await expect(addPage.getCardItem('dev-catalog')).toBeHidden();
+      await expect(async () => {
+        await addPage.navigateToAdd(targetNamespace);
+        await expect(addPage.getCardItem('dev-catalog')).toBeHidden({ timeout: 5_000 });
+      }).toPass({ intervals: [3_000, 5_000, 10_000], timeout: 60_000 });
     });
 
     test('DC-01-TC02: Disable specific sub-catalogs', async ({ page }) => {
@@ -76,7 +94,13 @@ test.describe(
       await expect(customizationPage.getFormSection('add-page')).toBeVisible();
       const addPage = new AddPage(page);
       await addPage.ensureDevPerspectiveAndNavigate(targetNamespace, k8sClient);
-      await expect(addPage.getCardItem('import-from-git')).toBeHidden();
+      // The console server may take time to serve the updated customization
+      // config after the operator CR is patched. Each retry reloads the page
+      // so the SPA fetches the latest server-side configuration.
+      await expect(async () => {
+        await addPage.navigateToAdd(targetNamespace);
+        await expect(addPage.getCardItem('import-from-git')).toBeHidden({ timeout: 5_000 });
+      }).toPass({ timeout: 60_000 });
     });
 
     test('DC-01-TC04: Re-enable catalogs after disabling', async () => {

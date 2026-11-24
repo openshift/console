@@ -16,7 +16,11 @@ import {
   Title,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { DocumentTitle, usePrometheusPoll, PrometheusEndpoint } from '@openshift-console/dynamic-plugin-sdk';
+import {
+  DocumentTitle,
+  usePrometheusPoll,
+  PrometheusEndpoint,
+} from '@openshift-console/dynamic-plugin-sdk';
 
 export const ExamplePage: React.FC<{ title: string }> = ({ title }) => {
   const { t } = useTranslation('plugin__console-demo-plugin');
@@ -30,13 +34,20 @@ export const ExamplePage: React.FC<{ title: string }> = ({ title }) => {
     <>
       <DocumentTitle>{title}</DocumentTitle>
       <PageSection>
-        <Title headingLevel="h1" data-test="title">{title}</Title>
+        <Title headingLevel="h1" data-test="title">
+          {title}
+        </Title>
       </PageSection>
       <PageSection>
         <Stack hasGutter>
           <AlertGroup>
             <Alert title={t('Example info alert')} variant="info" isInline data-test="alert-info" />
-            <Alert title={t('Example warning alert')} variant="warning" isInline data-test="alert-warning" />
+            <Alert
+              title={t('Example warning alert')}
+              variant="warning"
+              isInline
+              data-test="alert-warning"
+            />
           </AlertGroup>
           <Hint data-test="hint">
             <HintTitle>{t('Example hint')}</HintTitle>
@@ -54,7 +65,11 @@ export const ExamplePage: React.FC<{ title: string }> = ({ title }) => {
           </Gallery>
           <StackItem>
             {error && (
-              <Alert variant="warning" data-test="demo-plugin_prometheus-error" title={t('Prometheus error')}>
+              <Alert
+                variant="warning"
+                data-test="demo-plugin_prometheus-error"
+                title={t('Prometheus error')}
+              >
                 {error instanceof Error ? error.message : String(error)}
               </Alert>
             )}

@@ -1,5 +1,7 @@
 import type { Locator } from '@playwright/test';
 
+import { expect } from '../fixtures';
+
 import BasePage from './base-page';
 
 export class ConsolePluginPage extends BasePage {
@@ -51,20 +53,28 @@ export class ConsolePluginPage extends BasePage {
   }
 
   async openAboutModal(): Promise<void> {
-    await this.robustClick(this.page.getByTestId('help-dropdown-toggle'));
-    await this.robustClick(this.page.getByRole('menuitem', { name: 'About', exact: true }));
+    const helpToggle = this.page.getByTestId('help-dropdown-toggle');
+    const aboutItem = this.page.getByRole('menuitem', { name: 'About', exact: true });
+    // A re-render can close the help dropdown before its item is clicked.
+    await expect(async () => {
+      if (!(await aboutItem.isVisible().catch(() => false))) {
+        await helpToggle.click({ timeout: 5_000 });
+      }
+      await expect(aboutItem).toBeVisible({ timeout: 5_000 });
+      await aboutItem.click({ timeout: 5_000 });
+    }).toPass({ timeout: 30_000 });
   }
 
-  async navigateToDynamicRoute(id: string): Promise<void> {
-    await this.goTo(`/dynamic-route-${id}`);
+  async navigateToDynamicRoute(id: string, timeout?: number): Promise<void> {
+    await this.goTo(`/dynamic-route-${id}`, timeout);
   }
 
   async navigateToTestUtilities(): Promise<void> {
     await this.goTo('/test-utility-consumer');
   }
 
-  async navigateToDemoListPage(): Promise<void> {
-    await this.goTo('/demo-list-page');
+  async navigateToDemoListPage(timeout?: number): Promise<void> {
+    await this.goTo('/demo-list-page', timeout);
   }
 
   async navigateToK8sApi(): Promise<void> {

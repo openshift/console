@@ -8,6 +8,7 @@ Before generating or modifying code, always consult the relevant file(s) to ensu
 
 - **Monorepo:** `frontend/` (React + TypeScript, yarn workspaces), `pkg/` - Go backend code, `cmd/` - Go CLI commands
 - **Key packages:** `@console/dynamic-plugin-sdk` (public API), `@console/shared` (utils), `@console/internal` (`public` folder - core UI/k8s)
+- **Linting:** oxlint and oxfmt. Always use the scripts in `frontend/package.json` instead of `npx <tool>` to ensure correct versions and configurations.
 - **Testing:** Jest (unit), Playwright (E2E), Go tests (backend). Read [TESTING.md](TESTING.md) for patterns and best practices. Use the `gen-rtl-test` skill for React Testing Library test generation.
 
 ## Static plugins
@@ -67,12 +68,14 @@ For detailed plugin API review guidelines and workflow, use the `plugin-api-revi
 
 ```bash
 cd frontend && yarn install # Install frontend dependencies
-cd frontend && yarn eslint <path> # ESLint / prettier linting (must specify file path)
-cd frontend && yarn lint # ESLint / prettier linting (lints entire codebase)
+cd frontend && yarn oxlint <path> # oxlint linting (must specify file path)
+cd frontend && yarn lint # oxlint linting (lints entire codebase)
 cd frontend && yarn test [<path>] # Run frontend tests (can specify test path)
 cd frontend && yarn build # Production build
 cd frontend && yarn dev-once # Development build (no watch mode)
 cd frontend && yarn i18n # Update i18n keys
+cd frontend && yarn generate # update generated code (e.g., extension types and API docs)
+cd frontend && yarn knip # Check dead code and unused dependencies (requires `yarn generate` first)
 go mod vendor && go mod tidy # Update Go dependencies
 ./build-frontend.sh # Production build of frontend
 ./build-backend.sh # Build backend Go code
@@ -105,6 +108,9 @@ go mod vendor && go mod tidy # Update Go dependencies
 
 ## Common pitfalls
 
+- **Named exports:** Use named exports instead of default exports in new code. Do not introduce `export default` or `export { ... as default }`. Preserve existing default exports when changing them would break public APIs or require unrelated refactoring.
+- **Legacy React patterns:** Do not add `displayName` properties to new React component modules. Use clearly named components and avoid similar legacy boilerplate, such as `propTypes` for TypeScript components or manual event-handler binding. Follow existing functional component and hooks patterns instead.
+- **TypeScript interfaces:** Prefer `interface` over `type` when defining new object shapes, including React component props. Use type aliases for unions, tuples, mapped types, and other types that interfaces cannot express.
 - **Barrel files:** Barrel files (package index files that re-export other modules) create circular dependencies and slow builds. NEVER import from a barrel file or create a new one in new code — import from specific file paths instead.
 - **Public API breakage:** Always check `console-dynamic-plugin-sdk/src/api/internal-*.ts` before modifying anything in the SDK. External plugins depend on this API.
 - **Missing i18n keys:** Forgetting `yarn i18n` after adding translatable strings causes missing key warnings and E2E failures.
@@ -113,6 +119,20 @@ go mod vendor && go mod tidy # Update Go dependencies
 - **Absolute paths:** Never use absolute URLs or paths. The console runs behind a proxy under an arbitrary path.
 - **Custom CSS:** Exhaust PatternFly component options before writing custom SCSS. When necessary, use BEM with `co-` prefix.
 - **Bumping frontend dependencies:** If the target version already falls within the semver range declared by the dependent package(s) (i.e. `yarn.lock` is just pinned to an older resolution within that range), don't add/edit a `resolutions` field in `package.json`. Instead, regenerate just that portion of `yarn.lock` (e.g. `yarn up <package>`) so the existing range re-resolves. Only use `resolutions` when the desired version falls outside what any dependent's semver range allows.
+
+### Code comments
+
+Keep code comments short — a single line stating *what* or *why*, not both, and no essays. Lengthy explanations, design rationale, and verification details belong in the commit description, not in comments. Use TSDoc or Godoc when a function's behavior genuinely needs documenting.
+
+History belongs in the commit message, not in the code. A comment explaining why code was removed, why an old approach was wrong, or what a previous implementation did is history, and history lives in version control. Write it in the commit text and leave no comment in the source. For example, do not write:
+
+```js
+// Current user preference is `false` (falsy), but it's a valid preference
+// The old code using `!currentUserPreferenceValue` would incorrectly treat this as "not set"
+// and override it with the defaultValue
+```
+
+Comments that stay are the ones a reader needs to understand the code in front of them, with no reference to what it used to be.
 
 ## Reference files
 

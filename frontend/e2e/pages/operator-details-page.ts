@@ -236,7 +236,11 @@ export class OperatorDetailsPage extends BasePage {
     }
 
     await this.modalPage.submit();
-    await this.modalPage.waitForClosed();
+    // When operands are deleted, the modal stays open until polling reports no
+    // remaining operands and the Subscription and CSV delete requests complete.
+    // Operands are deleted with Foreground propagation, so this can take longer
+    // than the default 30s.
+    await this.modalPage.waitForClosed(deleteOperands ? 120_000 : undefined);
   }
 
   /**

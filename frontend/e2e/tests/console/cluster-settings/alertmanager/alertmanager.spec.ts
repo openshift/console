@@ -769,12 +769,18 @@ test.describe('Alertmanager Receiver Forms', { tag: ['@admin'] }, () => {
 
     await test.step('Restore defaults, change desc and severity', async () => {
       await alertmanager.navigateToEditReceiver(receiverName);
-      await alertmanager.showAdvancedConfiguration();
 
+      // A re-render can collapse the advanced section and detach the checkbox.
       const sendResolvedCheckbox = page.getByTestId('send-resolved-alerts');
-      await expect(sendResolvedCheckbox).not.toBeChecked();
-      await sendResolvedCheckbox.check();
-      await expect(sendResolvedCheckbox).toBeChecked();
+      await expect(async () => {
+        await alertmanager.showAdvancedConfiguration();
+        await expect(sendResolvedCheckbox).not.toBeChecked({ timeout: 5_000 });
+      }).toPass({ intervals: [2_000, 3_000, 5_000], timeout: 60_000 });
+      await expect(async () => {
+        await alertmanager.showAdvancedConfiguration();
+        await sendResolvedCheckbox.check({ timeout: 10_000 });
+        await expect(sendResolvedCheckbox).toBeChecked({ timeout: 5_000 });
+      }).toPass({ intervals: [2_000, 3_000, 5_000], timeout: 60_000 });
 
       await page.getByTestId('pagerduty-client').clear();
       await page.getByTestId('pagerduty-client').fill(pagerDutyClient);

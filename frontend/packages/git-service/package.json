@@ -5,18 +5,18 @@
   "private": true,
   "scripts": {
     "coverage": "yarn test --coverage --collectCoverageFrom='[\"packages/git-service/src/**\",\"!**/__tests__/**\"]'",
-    "lint": "yarn --cwd ../.. eslint packages/git-service",
+    "lint": "yarn --cwd ../.. oxlint packages/git-service",
     "test": "yarn --cwd ../.. test packages/git-service",
     "generate-types": "openapi-typescript openapi/gitea.yaml --output src/types/generated/gitea.d.ts"
   },
   "dependencies": {
+    "@gitbeaker/rest": "^43.8.0",
     "@octokit/rest": "^16.30.1",
     "docker-file-parser": "^1.0.4",
-    "git-url-parse": "^11.1.2",
-    "gitlab": "10.0.1"
+    "git-url-parse": "^16.1.0"
   },
   "devDependencies": {
-    "nock": "^11.4.0",
+    "nock": "^14.0.17",
     "openapi-typescript": "5.4.2"
   }
 }

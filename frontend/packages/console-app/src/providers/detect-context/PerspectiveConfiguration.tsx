@@ -1,5 +1,5 @@
 import type { FC, Ref } from 'react';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import type { MenuToggleElement } from '@patternfly/react-core';
 import {
   FormGroup,
@@ -187,11 +187,19 @@ const PerspectiveConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
   const [consoleConfig, consoleConfigLoaded, consoleConfigError] =
     useConsoleOperatorConfig<PerspectivesConsoleConfig>();
   const [configuredPerspectives, setConfiguredPerspectives] = useState<Perspective[]>();
-  useEffect(() => {
-    if (consoleConfig && consoleConfigLoaded && !configuredPerspectives) {
-      setConfiguredPerspectives(consoleConfig?.spec?.customization?.perspectives);
-    }
-  }, [configuredPerspectives, consoleConfig, consoleConfigLoaded]);
+  // Initialize the configured perspectives from the console config once it is
+  // loaded. The state is only seeded while unset, so user changes are never
+  // overwritten, and only when the config provides perspectives, so a config
+  // that gains them later is still adopted.
+  const configuredPerspectivesFromConfig = consoleConfig?.spec?.customization?.perspectives;
+  if (
+    consoleConfig &&
+    consoleConfigLoaded &&
+    !configuredPerspectives &&
+    configuredPerspectivesFromConfig
+  ) {
+    setConfiguredPerspectives(configuredPerspectivesFromConfig);
+  }
 
   // Save the latest changes
   const [saveStatus, setSaveStatus] = useState<SaveStatusProps>();

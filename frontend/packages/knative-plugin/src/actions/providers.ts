@@ -346,7 +346,7 @@ export const useEventSourcesActionsProvider = (resource: K8sResourceKind) => {
     if (!resource || resource.kind === 'URI') return [[], true, undefined];
 
     return [[moveSinkSourceAction, ...commonActions], true, undefined];
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [resource, commonActions]);
 };
 
@@ -380,7 +380,7 @@ export const useModifyApplicationActionProvider = (element: GraphElement) => {
     )
       return undefined;
     return [getModifyApplicationAction];
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [element]);
 
   return useMemo(() => {
@@ -428,7 +428,7 @@ export const useKnativeConnectorActionProvider = (element: Edge) => {
       }
     }
     return null;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [element, moveConnectorAction, resource, sourceModel]);
   return useMemo(() => {
     if (!actions) {

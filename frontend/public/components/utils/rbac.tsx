@@ -1,4 +1,3 @@
-/* eslint-disable no-barrel-files/no-barrel-files */
 import type { ReactNode, FC } from 'react';
 import { connect } from 'react-redux';
 import type { ImpersonateKind } from '@console/dynamic-plugin-sdk';

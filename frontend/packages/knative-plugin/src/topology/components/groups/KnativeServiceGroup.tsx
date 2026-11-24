@@ -1,5 +1,5 @@
 import type { ReactNode, FC } from 'react';
-import { useRef, useState, useMemo, useCallback, useLayoutEffect, useEffect } from 'react';
+import { useRef, useState, useMemo, useCallback, useLayoutEffect } from 'react';
 import { Tooltip } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
 import type {
@@ -125,11 +125,15 @@ const KnativeServiceGroup: FC<KnativeServiceGroupProps> = ({
     }
   }, [editAccess, innerHover, onShowCreateConnector, onHideCreateConnector]);
 
-  useEffect(() => {
+  // Reset the hover state (via the useHover dependencies) when a connector
+  // drag ends.
+  const [prevCreateConnectorDrag, setPrevCreateConnectorDrag] = useState(createConnectorDrag);
+  if (prevCreateConnectorDrag !== createConnectorDrag) {
+    setPrevCreateConnectorDrag(createConnectorDrag);
     if (!createConnectorDrag) {
       setHoverChange((prev) => !prev);
     }
-  }, [createConnectorDrag]);
+  }
 
   const decorators = getNodeDecorators(
     element,

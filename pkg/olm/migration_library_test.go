@@ -282,9 +282,9 @@ func newMigrationRevisionAPIClient(t *testing.T, kubeClient client.Client) clien
 			revision.SetResourceVersion("2")
 		}
 		_ = unstructured.SetNestedSlice(revision.Object, []interface{}{
-			map[string]interface{}{"type": "Succeeded", "status": "True"},
-			map[string]interface{}{"type": "Available", "status": "True"},
+			map[string]interface{}{"type": "Ready", "status": "True", "observedGeneration": revision.GetGeneration()},
 		}, "status", "conditions")
+		_ = unstructured.SetNestedField(revision.Object, metav1.Now().Format("2006-01-02T15:04:05Z07:00"), "status", "completedAt")
 		stored = revision.DeepCopy()
 		if r.Method == http.MethodPost {
 			w.WriteHeader(http.StatusCreated)

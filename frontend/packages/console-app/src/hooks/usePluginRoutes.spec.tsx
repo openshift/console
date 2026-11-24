@@ -149,10 +149,9 @@ describe('usePluginRoutes', () => {
         await screen.findByText(expectedText, undefined, { timeout: 3000 }),
       ).toBeInTheDocument();
 
-      const pluginErrors = consoleErrorSpy.mock.calls.filter((call) => {
-        const error = call[0];
-        return error?.message?.includes(pluginName) && error?.message?.includes(uid);
-      });
+      const pluginErrors = consoleErrorSpy.mock.calls.filter((call) =>
+        call.some((arg) => arg?.message?.includes(pluginName) && arg?.message?.includes(uid)),
+      );
       expect(pluginErrors.length > 0).toBe(shouldFail);
     },
   );

@@ -28,10 +28,20 @@ interface Resource {
     deletionTimestamp?: string;
     finalizers?: string[];
     annotations?: Record<string, string>;
+    labels?: Record<string, string>;
+    ownerReferences?: {
+      apiVersion: string;
+      kind: string;
+      name: string;
+      uid: string;
+      controller?: boolean;
+    }[];
   };
   spec?: {
     namespace?: string;
     lifecycleState?: string;
+    group?: string;
+    revision?: number;
     source?: { catalog?: { packageName?: string } };
   };
   status?: {
@@ -58,6 +68,22 @@ export class OperatorMigrationFixture {
   private readonly operators: MigrationOperator[] = [];
   private readonly jobs = new Set<string>();
   private readonly rollbackHolds = new Set<() => Promise<void>>();
+
+  /** Detects the revision manager API used by this cluster. */
+  private async hasDeploymentAPI(): Promise<boolean> {
+    try {
+      await this.client.getClusterCustomResource(
+        'apiextensions.k8s.io',
+        'v1',
+        'customresourcedefinitions',
+        'clusterobjectdeployments.olm.operatorframework.io',
+      );
+      return true;
+    } catch (error) {
+      if (isNotFound(error)) return false;
+      throw error;
+    }
+  }
 
   /** Creates isolated catalog identifiers and shares cleanup and authentication configuration. */
   constructor(
@@ -154,6 +180,14 @@ export class OperatorMigrationFixture {
       'v1',
       'clusterextensions',
     );
+    if (await this.hasDeploymentAPI()) {
+      this.cleanup.trackClusterCustomResource(
+        subscriptionName,
+        TARGET_GROUP,
+        'v1',
+        'clusterobjectdeployments',
+      );
+    }
     this.cleanup.trackClusterCustomResource(
       `${subscriptionName}-1`,
       TARGET_GROUP,
@@ -565,7 +599,7 @@ export class OperatorMigrationFixture {
       .toBe(true);
   }
 
-  /** Waits for healthy Classic management and confirms target revisions and reference Secrets are removed. */
+  /** Waits for healthy OLMv0 management and confirms target revisions and reference Secrets are removed. */
   async expectRecovered(operator: MigrationOperator): Promise<void> {
     await expect
       .poll(
@@ -600,33 +634,98 @@ export class OperatorMigrationFixture {
           const references = await this.client.coreV1Api.listSecretForAllNamespaces({
             labelSelector,
           });
-          return { revisions: revisions.items.length, references: references.items.length };
+          let deployments = 0;
+          if (await this.hasDeploymentAPI()) {
+            const result = (await this.client.customObjectsApi.listClusterCustomObject({
+              group: TARGET_GROUP,
+              version: 'v1',
+              plural: 'clusterobjectdeployments',
+              labelSelector,
+            })) as { items: Resource[] };
+            deployments = result.items.length;
+          }
+          return {
+            revisions: revisions.items.length,
+            references: references.items.length,
+            deployments,
+          };
         },
         {
           timeout: 60_000,
           message: 'Recovery must remove all migration revisions and reference Secrets',
         },
       )
-      .toEqual({ revisions: 0, references: 0 });
+      .toEqual({ revisions: 0, references: 0, deployments: 0 });
   }
 
-  /** Verifies retained migration resources and reconciliation, including an archived handover revision. */
+  /** Verifies retained migration resources and reconciliation after revision handover. */
   async expectPreservedMigration(operator: MigrationOperator): Promise<void> {
     await expect(async () => {
-      const objectSet = (await this.client.getClusterCustomResource(
-        TARGET_GROUP,
-        'v1',
-        'clusterobjectsets',
-        `${operator.subscriptionName}-1`,
-      )) as Resource;
+      let objectSet: Resource;
+      if (await this.hasDeploymentAPI()) {
+        const deployment = (await this.client.getClusterCustomResource(
+          TARGET_GROUP,
+          'v1',
+          'clusterobjectdeployments',
+          operator.subscriptionName,
+        )) as Resource;
+        expect(deployment.metadata.labels?.['apps.kubernetes.io/managed-by']).toBe(
+          'operator-controller',
+        );
+        const revisions = (await this.client.customObjectsApi.listClusterCustomObject({
+          group: TARGET_GROUP,
+          version: 'v1',
+          plural: 'clusterobjectsets',
+        })) as { items: Resource[] };
+        // Archived handover revisions can be pruned by revisionHistoryLimit.
+        // Validate the current active revision controlled by this deployment.
+        const active = revisions.items
+          .filter(
+            (revision) =>
+              !revision.metadata.deletionTimestamp &&
+              revision.spec?.group === deployment.metadata.name &&
+              revision.spec?.lifecycleState === 'Active' &&
+              revision.metadata.ownerReferences?.some(
+                (owner) =>
+                  owner.apiVersion === `${TARGET_GROUP}/v1` &&
+                  owner.kind === 'ClusterObjectDeployment' &&
+                  owner.name === deployment.metadata.name &&
+                  owner.uid === deployment.metadata.uid &&
+                  owner.controller,
+              ),
+          )
+          .sort((first, second) => (second.spec.revision ?? 0) - (first.spec.revision ?? 0));
+        expect(active.length).toBeGreaterThan(0);
+        [objectSet] = active;
+        expect(objectSet.metadata.labels?.['apps.kubernetes.io/managed-by']).toBe(
+          'object-controller',
+        );
+        expect(objectSet.metadata.ownerReferences).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({
+              kind: 'ClusterObjectDeployment',
+              name: deployment.metadata.name,
+              uid: deployment.metadata.uid,
+              controller: true,
+            }),
+          ]),
+        );
+      } else {
+        objectSet = (await this.client.getClusterCustomResource(
+          TARGET_GROUP,
+          'v1',
+          'clusterobjectsets',
+          `${operator.subscriptionName}-1`,
+        )) as Resource;
+      }
       const ready = objectSet.status?.conditions?.find(({ type }) => type === 'Ready');
       const succeeded = objectSet.status?.conditions?.find(({ type }) => type === 'Succeeded');
       const available = objectSet.status?.conditions?.find(({ type }) => type === 'Available');
-      if (objectSet.spec?.lifecycleState === 'Archived') {
-        // An archived revision no longer reports readiness. Require recorded
-        // rollout completion and an installed extension before accepting it.
+      if (objectSet.spec?.lifecycleState === 'Archived' || ready?.reason === 'Superseded') {
+        // The installed target can adopt the handover revision's objects before
+        // archiving it. completedAt records rollout success after readiness is lost.
         if (ready) {
-          expect(ready.reason).toBe('Archived');
+          expect(['Archived', 'Superseded']).toContain(ready.reason);
           expect(['False', 'Unknown']).toContain(ready.status);
           expect(objectSet.status.completedAt).toBeTruthy();
         } else {
@@ -1015,12 +1114,12 @@ export class OperatorMigrationFixture {
     return release;
   }
 
-  /** Confirms target deletion is pending and Classic management has not restarted. */
+  /** Confirms target deletion is pending and OLMv0 management has not restarted. */
   async expectHeldRollback(operator: MigrationOperator): Promise<void> {
     await expect
       .poll(async () => Boolean((await this.getExtension(operator)).metadata.deletionTimestamp), {
         timeout: 120_000,
-        message: 'Recovery must wait for target deletion before restoring Classic management',
+        message: 'Recovery must wait for target deletion before restoring OLMv0 management',
       })
       .toBe(true);
     await this.expectAbsent(
@@ -1530,7 +1629,6 @@ export const test = base.extend<{
         { timeout: 60_000, message: 'Console must load its server flags after login' },
       )
       .toBeDefined();
-    base.skip(!flags.techPreview, 'Operator migration requires a Tech Preview console');
     const fixture = new OperatorMigrationFixture(k8sClient, cleanup, flags.authDisabled);
     try {
       await fixture.createCatalogs(source, target);

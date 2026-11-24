@@ -608,7 +608,7 @@ The MCP's tracked page stays on `about:blank`. Use the `p` reference from the ne
 npx tsc --noEmit -p e2e/tsconfig.json
 
 # Linting (from frontend/)
-cd frontend && yarn eslint <file-paths>
+cd frontend && yarn oxlint <file-paths>
 
 # Run tests (from frontend/)
 npx playwright test --project=<package> <spec-file> --retries=0

@@ -39,7 +39,7 @@ export const usePinnedResources = (): [string[], (pinnedResources: string[]) => 
       }
       return customizedPins ?? defaultPins ?? [];
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
     [],
   );
 

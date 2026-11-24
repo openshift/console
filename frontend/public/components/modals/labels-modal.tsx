@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import {
   Button,
   Content,
@@ -54,16 +54,20 @@ const BaseLabelsModal: FC<BaseLabelsModalProps> = ({
     name: resource?.metadata?.name,
     namespace: resource?.metadata?.namespace,
   });
-  const [stale, setStale] = useState(false);
   const [isInputValid, setIsInputValid] = useState(true);
   const createPath = !labels.length;
   const { t } = useTranslation('public');
 
-  useEffect(() => {
-    if (watchedResourceLoaded && !_.isEmpty(watchedResource)) {
-      setStale(!_.isEqual(resource?.metadata?.labels, watchedResource?.metadata?.labels));
+  // `stale` holds the last comparison made while the watch had data. When the
+  // watched resource is deleted mid-edit the watch empties and the flag keeps
+  // its previous value, matching the previous effect-based implementation.
+  const [stale, setStale] = useState(false);
+  if (watchedResourceLoaded && !_.isEmpty(watchedResource)) {
+    const nextStale = !_.isEqual(resource?.metadata?.labels, watchedResource?.metadata?.labels);
+    if (nextStale !== stale) {
+      setStale(nextStale);
     }
-  }, [path, resource, watchedResource, watchedResourceLoaded]);
+  }
 
   const submit = useCallback(
     (e): void => {

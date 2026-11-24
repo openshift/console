@@ -195,15 +195,13 @@ const TopologyComponent: FC<TopologyProps> = ({
     return newVisualization;
   }, [namespace, onGraphModelChange, onSelect, setTopologyLayoutData, topologyLayoutDataJson]);
 
-  // eslint-disable-next-line react-hooks/refs -- Lazy initialization: visualization is created synchronously once preferences load and must be available in the same render
   const visualizationRef = useRef<Visualization | null>(null);
   if (topologyPreferenceLoaded) {
-    if (!visualizationRef.current) {
-      // eslint-disable-line react-hooks/refs -- lazy init: checks if visualization exists before creating
-      visualizationRef.current = createVisualization(); // eslint-disable-line react-hooks/refs -- lazy init: creates visualization synchronously on first render
+    if (visualizationRef.current == null) {
+      visualizationRef.current = createVisualization();
     }
   }
-  const visualization = visualizationRef.current; // eslint-disable-line react-hooks/refs -- lazy init: reads synchronously created visualization
+  const visualization = visualizationRef.current; // eslint-disable-line react-hooks-js/refs -- lazy init: reads synchronously created visualization
   useEffect(() => {
     if (visualization) {
       setVisualization(visualization);
@@ -212,9 +210,16 @@ const TopologyComponent: FC<TopologyProps> = ({
 
   useEffect(() => {
     if (model && visualizationReady) {
+      // Apply the stored layout and merge in existing node/edge data on a copy
+      // of the model; the `model` prop must not be mutated
+      const modelToApply: Model = {
+        ...model,
+        nodes: model.nodes.map((n) => ({ ...n })),
+        edges: model.edges.map((e) => ({ ...e })),
+      };
       if (!storedLayoutApplied.current) {
         if (storedGraphModel) {
-          model.graph = {
+          modelToApply.graph = {
             ...graphModel.graph,
             x: storedGraphModel.x,
             y: storedGraphModel.y,
@@ -225,7 +230,7 @@ const TopologyComponent: FC<TopologyProps> = ({
         }
         const storedLayout = topologyLayoutDataJson?.[namespace];
         if (storedLayout) {
-          model.nodes.forEach((n) => {
+          modelToApply.nodes.forEach((n) => {
             const storedNode = storedLayout.nodes.find((sn) => sn.id === n.id);
             if (storedNode) {
               STORED_NODE_LAYOUT_FIELDS.forEach((key) => {
@@ -236,20 +241,20 @@ const TopologyComponent: FC<TopologyProps> = ({
         }
       }
 
-      model.nodes.forEach((n) => {
+      modelToApply.nodes.forEach((n) => {
         const oldNode = visualization.getNodeById(n.id);
         if (oldNode && _.isEqual(oldNode.getData(), n.data)) {
           n.data = oldNode.getData();
         }
       });
-      model.edges.forEach((e) => {
+      modelToApply.edges.forEach((e) => {
         const oldEdge = visualization.getEdgeById(e.id);
         if (oldEdge && _.isEqual(oldEdge.getData(), e.data)) {
           e.data = oldEdge.getData();
         }
       });
 
-      visualization.fromModel(model);
+      visualization.fromModel(modelToApply);
 
       // Make sure something is visible in the case where stored locations are off the screen
       if (!storedLayoutApplied.current) {
@@ -285,7 +290,7 @@ const TopologyComponent: FC<TopologyProps> = ({
       }
     }
     // Do not update on selectedId change or stored layout change
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [model, visualization, visualizationReady]);
 
   useEffect(() => {

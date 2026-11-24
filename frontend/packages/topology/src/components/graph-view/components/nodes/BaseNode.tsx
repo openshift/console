@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { css } from '@patternfly/react-styles';
 import {
   DEFAULT_LAYER,
@@ -63,6 +63,15 @@ const BaseNodeComponent: FC<BaseNodeProps> = ({
   const showLabel = useShowLabel(isHovering);
   const kindData = kind && getKindStringAndAbbreviation(kind);
 
+  // Reset the hover state (via the useHover dependencies) when a connector drag ends.
+  const [prevCreateConnectorDrag, setPrevCreateConnectorDrag] = useState(createConnectorDrag);
+  if (prevCreateConnectorDrag !== createConnectorDrag) {
+    setPrevCreateConnectorDrag(createConnectorDrag);
+    if (!createConnectorDrag) {
+      setHoverChange((prev) => !prev);
+    }
+  }
+
   const detailsLevel = element.getController().getGraph().getDetailsLevel();
   const showDetails = isHovering || detailsLevel !== ScaleDetailsLevel.low;
   const badgeClassName = kindData
@@ -70,11 +79,6 @@ const BaseNodeComponent: FC<BaseNodeProps> = ({
         [`odc-resource-icon-${kindData.kindStr.toLowerCase()}`]: !kindData.kindColor,
       })
     : '';
-  useEffect(() => {
-    if (!createConnectorDrag) {
-      setHoverChange((prev) => !prev);
-    }
-  }, [createConnectorDrag]);
   return (
     <Layer id={isHovering ? TOP_LAYER : DEFAULT_LAYER}>
       <g

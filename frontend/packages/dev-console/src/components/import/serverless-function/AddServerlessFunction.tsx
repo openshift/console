@@ -32,7 +32,6 @@ import { validationSchema } from '../import-validation-utils';
 import { useUpdateKnScalingDefaultValues } from '../serverless/useUpdateKnScalingDefaultValues';
 import AddServerlessFunctionForm from './AddServerlessFunctionForm';
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
 type WatchResource = {
   [key: string]: K8sResourceKind[] | K8sResourceKind;
 };

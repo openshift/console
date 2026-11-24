@@ -77,7 +77,7 @@ export const usePodsForVm = (
       }
     },
     // Don't update on a resource change, we want the debounce callback to be consistent
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
     [vmName],
   );
 

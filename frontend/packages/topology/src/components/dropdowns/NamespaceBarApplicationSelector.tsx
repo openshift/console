@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import type { Dispatch } from 'redux';
@@ -40,12 +40,13 @@ const NamespaceBarApplicationSelector: FC<Props> = ({ application, onChange, dis
       : application === UNASSIGNED_APPLICATIONS_KEY
         ? noApplicationsTitle
         : application;
-  const [title, setTitle] = useState<string>(dropdownTitle);
-  useEffect(() => {
-    if (!disabled) {
-      setTitle(dropdownTitle);
-    }
-  }, [disabled, dropdownTitle]);
+  // While enabled the dropdown tracks `dropdownTitle` directly; while
+  // disabled it keeps showing the last enabled title.
+  const [enabledTitle, setEnabledTitle] = useState<string>(dropdownTitle);
+  if (!disabled && enabledTitle !== dropdownTitle) {
+    setEnabledTitle(dropdownTitle);
+  }
+  const title = disabled ? enabledTitle : dropdownTitle;
   if (namespace === ALL_NAMESPACES_KEY) return null;
 
   const onApplicationChange = (newApplication: string, key: string) => {

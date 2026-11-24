@@ -101,7 +101,9 @@ const InnerSearchPage: FC<SearchProps> = (props) => {
   const location = useLocation();
   const confirmNavUnpinModal = useConfirmNavUnpinModal(pinnedResources, setPinnedResources);
   // Set state variables from the URL
-  useEffect(() => {
+  const [prevSearch, setPrevSearch] = useState<string>(null);
+  if (prevSearch !== location.search) {
+    setPrevSearch(location.search);
     let kind: string;
     let q: string;
     let name: string;
@@ -124,7 +126,7 @@ const InnerSearchPage: FC<SearchProps> = (props) => {
     setLabelFilter(validTags);
     setTypeaheadNameFilter(name || '');
     setDebouncedNameFilter(name || '');
-  }, [location.search]);
+  }
 
   const debouncedNameFilterCallback = useDebounceCallback((nameFilter: string) => {
     setDebouncedNameFilter(nameFilter);

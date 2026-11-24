@@ -27,7 +27,6 @@ import type { K8sKind, K8sResourceKind } from '../../module/k8s';
 import { k8sList, k8sPatch } from '../../module/k8s';
 import { ResourceIcon, ResourceName } from '../utils/resource-icon';
 import { resourcePathFromModel } from '../utils/resource-link';
-/* eslint-disable import/named */
 import type { ModalCallback } from './types';
 
 const workloadResourceModels = [DeploymentModel, DeploymentConfigModel, StatefulSetModel];

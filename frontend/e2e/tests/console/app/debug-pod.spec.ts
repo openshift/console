@@ -178,12 +178,18 @@ test.describe('Debug pod', () => {
     });
 
     await test.step('Open debug terminal from Pod Details status popover', async () => {
-      await detailsPage.navigateToDetailsPage(`/k8s/ns/${ns}/pods/${POD_NAME}`);
-      await detailsPage.waitForPageLoad();
-      await retryOnModelNotFound(page);
       await waitForPodCrashLoopBackOff(k8sClient, ns, POD_NAME);
 
-      await detailsPage.clickStatusButton();
+      // The watch may not have delivered CrashLoopBackOff yet after navigation.
+      const detailsDebugLink = page.getByTestId(`popup-debug-container-link-${CONTAINER_NAME}`);
+      await expect(async () => {
+        await detailsPage.navigateToDetailsPage(`/k8s/ns/${ns}/pods/${POD_NAME}`);
+        await detailsPage.waitForPageLoad();
+        await retryOnModelNotFound(page);
+        await detailsPage.clickStatusButton();
+        await expect(detailsDebugLink).toBeVisible({ timeout: 5_000 });
+      }).toPass({ timeout: 60_000 });
+
       await detailsPage.clickDebugContainerLink(CONTAINER_NAME);
 
       await expect(listPage.heading).toContainText(`Debug ${CONTAINER_NAME}`, {
@@ -198,11 +204,17 @@ test.describe('Debug pod', () => {
     });
 
     await test.step('Open debug terminal from Pods list status popover', async () => {
-      await listPage.navigateToListPage(`/k8s/ns/${ns}/pods`);
-      await expect(listPage.cell(POD_NAME)).toBeVisible({ timeout: 30_000 });
       await waitForPodCrashLoopBackOff(k8sClient, ns, POD_NAME);
 
-      await listPage.clickStatusButton(POD_NAME);
+      // Same watch race as the pod details step above.
+      const listDebugLink = page.getByTestId(`popup-debug-container-link-${CONTAINER_NAME}`);
+      await expect(async () => {
+        await listPage.navigateToListPage(`/k8s/ns/${ns}/pods`);
+        await expect(listPage.cell(POD_NAME)).toBeVisible({ timeout: 10_000 });
+        await listPage.clickStatusButton(POD_NAME);
+        await expect(listDebugLink).toBeVisible({ timeout: 5_000 });
+      }).toPass({ timeout: 60_000 });
+
       await listPage.clickDebugContainerLink(CONTAINER_NAME);
 
       await expect(listPage.heading).toContainText(`Debug ${CONTAINER_NAME}`, {

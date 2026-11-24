@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"sync"
 	"time"
 
 	v1 "k8s.io/api/authentication/v1"
@@ -45,6 +46,11 @@ type Proxy struct {
 	workspaceHttpClient *http.Client
 	TLSClientConfig     *tls.Config
 	ClusterEndpoint     *url.URL
+
+	// transportOnce guards transport, the shared http.Transport for the
+	// terminal's k8s clients (see Proxy.clusterTransport).
+	transportOnce sync.Once
+	transport     *http.Transport
 }
 
 func NewProxy(serviceTLS *tls.Config, TLSClientConfig *tls.Config, clusterEndpoint *url.URL) *Proxy {

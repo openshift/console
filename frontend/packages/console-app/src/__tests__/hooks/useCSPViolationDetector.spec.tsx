@@ -8,6 +8,7 @@ import {
 } from '../../components/console-operator/__tests__/pluginTestUtils';
 import {
   newPluginCSPViolationEvent,
+  sameHostname,
   useCSPViolationDetector,
 } from '../../hooks/useCSPViolationDetector';
 
@@ -17,9 +18,17 @@ jest.mock('@console/shared/src/constants/common', () => ({
 }));
 
 const mockCacheEvent = jest.fn();
+const mockUseLocalStorageCache: jest.Mock = jest.fn(
+  () => [undefined, mockCacheEvent] as [undefined, jest.Mock],
+);
+
 jest.mock('@console/shared/src/hooks/useLocalStorageCache', () => ({
-  useLocalStorageCache: () => [undefined, mockCacheEvent],
+  useLocalStorageCache: (...args: unknown[]) => mockUseLocalStorageCache(...args),
 }));
+
+const { useLocalStorageCache: realUseLocalStorageCache } = jest.requireActual(
+  '@console/shared/src/hooks/useLocalStorageCache',
+);
 
 const mockFireTelemetry = jest.fn();
 jest.mock('@console/shared/src/hooks/useTelemetry', () => ({
@@ -107,6 +116,7 @@ describe('useCSPViolationDetector', () => {
   afterEach(() => {
     mockFireTelemetry.mockClear();
     mockCacheEvent.mockClear();
+    mockUseLocalStorageCache.mockClear();
     routePages.length = 0;
     mockActivePerspective = 'admin';
     window.SERVER_FLAGS.basePath = originalBasePath;
@@ -393,5 +403,107 @@ describe('useCSPViolationDetector', () => {
     });
 
     expect(mockCacheEvent).toHaveBeenCalledWith(newPluginCSPViolationEvent('foo', event));
+  });
+});
+
+// Regression tests for OCPBUGS-134567: sameHostname returned false for identical
+// non-URL tokens like "eval" or "inline", causing duplicate CSP violation entries.
+describe('sameHostname', () => {
+  it('returns true for identical non-URL tokens', () => {
+    expect(sameHostname('eval', 'eval')).toBe(true);
+    expect(sameHostname('inline', 'inline')).toBe(true);
+  });
+
+  it('returns false for different non-URL tokens', () => {
+    expect(sameHostname('eval', 'inline')).toBe(false);
+  });
+
+  it('returns true for URLs with the same hostname', () => {
+    expect(sameHostname('http://a.com/x', 'http://a.com/y')).toBe(true);
+  });
+
+  it('returns false for URLs with different hostnames', () => {
+    expect(sameHostname('http://a.com', 'http://b.com')).toBe(false);
+  });
+
+  it('returns false for mixed token and URL', () => {
+    expect(sameHostname('eval', 'http://a.com')).toBe(false);
+  });
+
+  it('returns true for identical malformed URIs', () => {
+    expect(sameHostname('://broken', '://broken')).toBe(true);
+  });
+
+  it('returns false for different malformed URIs', () => {
+    expect(sameHostname('://broken', '://other')).toBe(false);
+  });
+});
+
+// Integration tests for OCPBUGS-134567: verify that the real useLocalStorageCache
+// with pluginCSPViolationsAreEqual as comparator deduplicates token-based violations.
+describe('useCSPViolationDetector cache integration', () => {
+  const LOCAL_STORAGE_KEY = 'console/csp_violations';
+
+  beforeEach(() => {
+    window.localStorage.removeItem(LOCAL_STORAGE_KEY);
+    // Swap the file-level mock with the real useLocalStorageCache so that
+    // pluginCSPViolationsAreEqual is exercised as the comparator.
+    mockUseLocalStorageCache.mockImplementation(realUseLocalStorageCache);
+    mockFireTelemetry.mockClear();
+    routePages.length = 0;
+    mockActivePerspective = 'admin';
+    window.SERVER_FLAGS.basePath = originalBasePath;
+    window.history.replaceState({}, '', originalPageURL);
+  });
+
+  afterEach(() => {
+    // Restore the file-level mock for other tests.
+    mockUseLocalStorageCache.mockImplementation(() => [undefined, mockCacheEvent]);
+    window.localStorage.removeItem(LOCAL_STORAGE_KEY);
+  });
+
+  it('stores only one record and fires telemetry once for repeated eval violations', () => {
+    renderDetector();
+
+    const evalEvent = new MockSecurityPolicyViolationEvent('eval', 'http://example.com/test.js');
+
+    act(() => {
+      document.dispatchEvent(evalEvent);
+    });
+
+    act(() => {
+      document.dispatchEvent(evalEvent);
+    });
+
+    const stored = JSON.parse(window.localStorage.getItem(LOCAL_STORAGE_KEY) || '[]');
+    expect(stored).toHaveLength(1);
+    expect(stored[0]).toEqual(expect.objectContaining({ blockedURI: 'eval', pluginName: '' }));
+    expect(mockFireTelemetry).toHaveBeenCalledTimes(1);
+    expect(mockFireTelemetry).toHaveBeenCalledWith(
+      'CSPViolation',
+      expect.objectContaining({ blockedURI: 'eval', pluginName: '' }),
+    );
+  });
+
+  it('stores separate records for different token-based violations', () => {
+    renderDetector();
+
+    const evalEvent = new MockSecurityPolicyViolationEvent('eval', 'http://example.com/test.js');
+    const inlineEvent = new MockSecurityPolicyViolationEvent(
+      'inline',
+      'http://example.com/test.js',
+    );
+
+    act(() => {
+      document.dispatchEvent(evalEvent);
+    });
+
+    act(() => {
+      document.dispatchEvent(inlineEvent);
+    });
+
+    const stored = JSON.parse(window.localStorage.getItem(LOCAL_STORAGE_KEY) || '[]');
+    expect(stored).toHaveLength(2);
+    expect(mockFireTelemetry).toHaveBeenCalledTimes(2);
   });
 });

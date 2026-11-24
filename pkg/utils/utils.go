@@ -18,7 +18,6 @@ const (
 	fontSrc       = "font-src"
 	scriptSrc     = "script-src"
 	styleSrc      = "style-src"
-	objectSrc     = "object-src"
 	connectSrc    = "connect-src"
 	consoleDot    = "console.redhat.com"
 	httpLocalHost = "http://localhost:8080"
@@ -28,6 +27,7 @@ const (
 	unsafeInline  = "'unsafe-inline'"
 	none          = "'none'"
 	https         = "https:"
+	blob          = "blob:"
 )
 
 // Generate a cryptographically secure random array of bytes.
@@ -53,24 +53,28 @@ func RandomString(length int) (string, error) {
 	return encoding.EncodeToString(randomBytes)[:length], nil
 }
 
-// buildCSPDirectives takes the content security policy configuration from the server and constructs
-// a complete set of directives for the Content-Security-Policy-Report-Only header.
+// BuildCSPDirectives takes the content security policy configuration from the server and constructs
+// a complete set of directives for the configured Content-Security-Policy header mode.
 // The constructed directives will include the default sources and the supplied configuration.
+// Sources containing policy, directive, or header separators return an error without a partial policy.
+//
+// NOTE: When changing the directives emitted here, also update the example CSP header
+// in the openshift/api repo at console/v1/types_console_plugin.go so that the
+// documentation stays in sync with the actual server behaviour.
 func BuildCSPDirectives(k8sMode string, pluginsCSP serverconfig.MultiKeyValue, indexPageScriptNonce string, cspReportingEndpoint string) ([]string, error) {
 	nonce := fmt.Sprintf("'nonce-%s'", indexPageScriptNonce)
 
 	// The default sources are the sources that are allowed for all directives.
 	// When running on-cluster, the default sources are just 'self' and 'console.redhat.com'.
 	// When running off-cluster, 'http://localhost:8080' and 'ws://localhost:8080' are appended to the
-	// default sources. Image source uses 'self' and 'https:'. Font source and style source only
+	// default sources. Image source uses 'self', 'https:', and 'blob:'. Font source and style source only
 	// use 'self'.
 	baseUriDirective := []string{baseURI, self}
 	defaultSrcDirective := []string{defaultSrc, self, consoleDot}
-	imgSrcDirective := []string{imgSrc, self, https}
+	imgSrcDirective := []string{imgSrc, self, https, blob}
 	fontSrcDirective := []string{fontSrc, self}
 	scriptSrcDirective := []string{scriptSrc, self, consoleDot}
 	styleSrcDirective := []string{styleSrc, self}
-	objectSrcDirective := []string{objectSrc, self}
 	connectSrcDirective := []string{connectSrc, self, consoleDot}
 
 	// If running off-cluster, append the localhost sources to the default sources
@@ -81,7 +85,6 @@ func BuildCSPDirectives(k8sMode string, pluginsCSP serverconfig.MultiKeyValue, i
 		fontSrcDirective = append(fontSrcDirective, httpLocalHost)
 		scriptSrcDirective = append(scriptSrcDirective, []string{httpLocalHost, wsLocalHost}...)
 		styleSrcDirective = append(styleSrcDirective, httpLocalHost)
-		objectSrcDirective = append(objectSrcDirective, httpLocalHost)
 		connectSrcDirective = append(connectSrcDirective, httpLocalHost)
 	}
 
@@ -89,6 +92,9 @@ func BuildCSPDirectives(k8sMode string, pluginsCSP serverconfig.MultiKeyValue, i
 	// the appropriate directive. The configuration is a string that is parsed into a map of directive types to sources.
 	// The sources are added to the existing sources for each type.
 	for directive, sources := range pluginsCSP {
+		if strings.ContainsAny(sources, ",;\r\n") {
+			return nil, fmt.Errorf("invalid CSP sources for %q: commas, semicolons, and line breaks are not allowed", directive)
+		}
 		switch directive {
 		case defaultSrc:
 			defaultSrcDirective = append(defaultSrcDirective, sources)
@@ -128,7 +134,12 @@ func BuildCSPDirectives(k8sMode string, pluginsCSP serverconfig.MultiKeyValue, i
 		strings.Join(scriptSrcDirective, " "),
 		strings.Join(styleSrcDirective, " "),
 		strings.Join(connectSrcDirective, " "),
-		strings.Join(objectSrcDirective, " "),
+		// Keep these directives fixed rather than exposing them to plugins.
+		"object-src 'none'",
+		"media-src 'none'",
+		"child-src 'none'",
+		// The load-test service worker is served from the console's own origin.
+		"worker-src 'self'",
 		"frame-src 'none'",
 		"frame-ancestors 'none'",
 	}

@@ -197,7 +197,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
   const [templateExtensions, resolvedTemplates] = useResolvedExtensions<YAMLTemplate>(
     useCallback(
       (e): e is YAMLTemplate => isYAMLTemplate(e) && e.properties.model.kind === props?.obj?.kind,
-      [props?.obj?.kind],
+      [props.obj?.kind],
     ),
   );
 
@@ -399,11 +399,12 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
         resourceType: getResourceKindfromYAML(olsCodeBlock?.value),
       });
     } else {
+      // eslint-disable-next-line react-hooks-js/set-state-in-effect -- deciding whether to prompt requires comparing the incoming code block with the editor's current DOM contents; the modal state mirrors that external-system comparison and cannot be derived during render
       setShowReplaceCodeModal(true);
     }
 
     setOLSCode(olsCodeBlock?.value);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [olsCodeBlock, initialized, isCodeImportRedirect, editorMounted]);
 
   const handleError = (err, value = null) => {
@@ -442,6 +443,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
   }, [create, props.obj]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks-js/set-state-in-effect -- loadYaml initializes the Monaco editor instance (external system) as soon as it mounts; its setState calls only record that the initial load happened so later changes don't clobber the editor contents
     editorMounted && loadYaml();
     loadCSVs();
   }, [loadCSVs, loadYaml, editorMounted]);
@@ -735,13 +737,14 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
 
   useEffect(() => {
     if (callbackCommand === 'save') {
+      // eslint-disable-next-line react-hooks-js/set-state-in-effect -- deliberate command dispatcher: save/saveAll signal via state so the intentionally deps-trimmed callbacks run after commit; saveCallback performs async k8s I/O and updates state from its results
       saveCallback();
     }
     if (callbackCommand === 'saveall') {
       saveAllCallback();
     }
     // removed callback functions from deps array to prevent stream of errors after save
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [saving, callbackCommand]);
 
   const download = () => {
@@ -794,7 +797,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
   if (displayResults) {
     return (
       <ImportYAMLResults
-        // eslint-disable-next-line react/jsx-no-bind
+        // eslint-disable-next-line react-js/jsx-no-bind
         createResources={createResources}
         displayResults={setDisplayResults}
         importResources={resourceObjects}

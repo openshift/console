@@ -14,6 +14,13 @@ type LifecycleCacheEntry = {
   promise?: Promise<LifecycleData>;
 };
 
+type LifecycleFetchRequest = {
+  cacheKey: string;
+  packageName: string;
+  catalogName: string;
+  catalogNamespace: string;
+};
+
 const lifecycleCache = new Map<string, LifecycleCacheEntry>();
 
 const buildCacheKey = (catalogNamespace: string, catalogName: string, packageName: string) =>
@@ -94,19 +101,43 @@ export const useOperatorLifecycle = (
   const [error, setError] = useState<Error | null>(null);
   const abortRef = useRef<AbortController>(undefined);
 
-  useEffect(() => {
-    if (!packageName || !catalogName || !catalogNamespace) {
+  const cacheKey =
+    packageName && catalogName && catalogNamespace
+      ? buildCacheKey(catalogNamespace, catalogName, packageName)
+      : null;
+
+  const [pendingFetch, setPendingFetch] = useState<LifecycleFetchRequest | null>(null);
+  // Tracks the previous cache key so the synchronous branches (reset when the
+  // identifiers disappear, cache seeding, loading) run when it changes,
+  // including on mount.
+  const [prevCacheKey, setPrevCacheKey] = useState<string | null>(null);
+  if (prevCacheKey !== cacheKey) {
+    setPrevCacheKey(cacheKey);
+    if (!cacheKey || !packageName || !catalogName || !catalogNamespace) {
+      setPendingFetch(null);
       setData(null);
       setLoading(false);
-      return undefined;
+    } else {
+      const cached = lifecycleCache.get(cacheKey);
+      if (cached && isCacheValid(cached) && !cached.promise) {
+        setPendingFetch(null);
+        setData(cached.data);
+        setError(cached.error);
+        setLoading(false);
+      } else {
+        setPendingFetch({
+          cacheKey,
+          packageName,
+          catalogName,
+          catalogNamespace,
+        });
+        setLoading(true);
+      }
     }
+  }
 
-    const cacheKey = buildCacheKey(catalogNamespace, catalogName, packageName);
-    const cached = lifecycleCache.get(cacheKey);
-    if (cached && isCacheValid(cached) && !cached.promise) {
-      setData(cached.data);
-      setError(cached.error);
-      setLoading(false);
+  useEffect(() => {
+    if (!pendingFetch) {
       return undefined;
     }
 
@@ -114,13 +145,11 @@ export const useOperatorLifecycle = (
     const controller = new AbortController();
     abortRef.current = controller;
 
-    setLoading(true);
+    const url = `/api/olm/lifecycle/${encodeURIComponent(pendingFetch.catalogNamespace)}/${encodeURIComponent(
+      pendingFetch.catalogName,
+    )}/${encodeURIComponent(pendingFetch.packageName)}`;
 
-    const url = `/api/olm/lifecycle/${encodeURIComponent(catalogNamespace)}/${encodeURIComponent(
-      catalogName,
-    )}/${encodeURIComponent(packageName)}`;
-
-    fetchLifecycleData(cacheKey, url, controller.signal)
+    fetchLifecycleData(pendingFetch.cacheKey, url, controller.signal)
       .then((result) => {
         if (!controller.signal.aborted) {
           setData(result);
@@ -139,7 +168,7 @@ export const useOperatorLifecycle = (
     return () => {
       controller.abort();
     };
-  }, [packageName, catalogName, catalogNamespace]);
+  }, [pendingFetch]);
 
   return [data, loading, error];
 };

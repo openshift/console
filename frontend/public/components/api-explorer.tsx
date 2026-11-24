@@ -19,7 +19,7 @@ import { DataView, DataViewTable, useDataViewPagination } from '@patternfly/reac
 import { RhUiFilterIcon } from '@patternfly/react-icons';
 import { InnerScrollContainer, Tbody, Tr, Td } from '@patternfly/react-table';
 import * as fuzzy from 'fuzzysearch';
-import i18next from 'i18next';
+import * as i18next from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
@@ -689,8 +689,13 @@ const APIResourceAccessReview: FC<APIResourceTabProps> = ({
   }, [verb, filter, showUsers, showGroups, showServiceAccounts, pagination.page, setSearchParams]);
 
   // perform the access review
-  useEffect(() => {
+  const reviewKey = `${apiGroup}/${apiVersion}/${plural}/${namespace}/${verb}`;
+  const [prevReviewKey, setPrevReviewKey] = useState(reviewKey);
+  if (prevReviewKey !== reviewKey) {
+    setPrevReviewKey(reviewKey);
     setError(null);
+  }
+  useEffect(() => {
     const accessReviewModel = namespace
       ? LocalResourceAccessReviewsModel
       : ResourceAccessReviewsModel;

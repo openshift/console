@@ -67,7 +67,7 @@ const ServerlessRouteSection: FC = () => {
         domainMapping: removeDuplicateDomainMappings(newDomainMap, mappedDomain),
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [data, domainMappingLoaded, domainMappingLoadErr, name, setFieldValue]);
 
   const domainsInUse = getAllOtherDomainMappingInUse(serverless.domainMapping, data, name) ?? [];

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { FC } from 'react';
 import { Button, Form, Modal, ModalBody, ModalHeader, ModalVariant } from '@patternfly/react-core';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { LoadingInline } from '@console/internal/components/utils/status-box';
 import { HorizontalPodAutoscalerModel } from '@console/internal/models';
@@ -37,10 +37,11 @@ const DeleteHPAModal: FC<DeleteHPAModalProps> = ({ close, cancel, hpa, workload 
           {hpaName ? (
             <>
               <p>
-                {t('Are you sure you want to remove the {{hpaLabel}}', {
-                  hpaLabel: HorizontalPodAutoscalerModel.label,
-                })}{' '}
-                <b>{hpaName}</b> {t('from')} <b>{workloadName}</b>?
+                <Trans t={t} ns="console-shared">
+                  Are you sure you want to remove the{' '}
+                  {{ hpaLabel: HorizontalPodAutoscalerModel.label }} <b>{{ hpaName }}</b> from{' '}
+                  <b>{{ workloadName }}</b>?
+                </Trans>
               </p>
               <p>
                 {t('The resources that are attached to the {{hpaLabel}} will be deleted.', {

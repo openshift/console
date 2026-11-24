@@ -120,8 +120,14 @@ export const MigrationPlanDetails: FC<{ plan: OperatorMigrationPlan; displayName
               <DescriptionListDescription>{plan.clusterExtensionName}</DescriptionListDescription>
             </DescriptionListGroup>
             <DescriptionListGroup>
-              <DescriptionListTerm>{t('ClusterObjectSet')}</DescriptionListTerm>
-              <DescriptionListDescription>{plan.clusterObjectSetName}</DescriptionListDescription>
+              <DescriptionListTerm>
+                {plan.clusterObjectDeploymentName
+                  ? t('ClusterObjectDeployment')
+                  : t('ClusterObjectSet')}
+              </DescriptionListTerm>
+              <DescriptionListDescription>
+                {plan.clusterObjectDeploymentName || plan.clusterObjectSetName || DASH}
+              </DescriptionListDescription>
             </DescriptionListGroup>
           </DescriptionList>
         </StackItem>

@@ -15,7 +15,7 @@ The console is a more friendly `kubectl` in the form of a single page webapp. It
 
 ### Dependencies:
 
-1. [node.js](https://nodejs.org/) >= 22 with [corepack](https://npmjs.com/package/corepack) enabled for [yarn berry](https://yarnpkg.com/)
+1. [node.js](https://nodejs.org/) >= 24.22.1 with [corepack](https://npmjs.com/package/corepack) enabled for [yarn berry](https://yarnpkg.com/)
 2. [go](https://go.dev/) >= 1.26
 3. [oc](https://mirror.openshift.com/pub/openshift-v4/clients/oc/latest/) or [kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl) and an OpenShift or Kubernetes cluster
 4. [jq](https://stedolan.github.io/jq/download/) (used by scripts and tests; see [code usage](https://github.com/search?q=repo%3Aopenshift%2Fconsole+%2F+jq+%2F+-path%3A**%2F*.md+-path%3A**%2FDockerfile*&type=code))
@@ -333,6 +333,11 @@ OpenShift cluster to pull the new image.
 docker build -t quay.io/myaccount/console:latest .
 ```
 
+> [!TIP]
+> If you are building on an Apple Silicon (`arm64`) Mac for a cluster with `amd64`
+> nodes, see [Building an amd64 Image on Apple Silicon](#building-an-amd64-image-on-apple-silicon)
+> instead of this step.
+
 3. Push image to image registry `docker push <your-image-name>`. Make sure
    docker is logged into your image registry! For example:
 
@@ -365,6 +370,33 @@ When done, you can put the console operator back in a managed state to remove th
 ```
 oc patch consoles.operator.openshift.io cluster --patch '{ "spec": { "managementState": "Managed" } }' --type=merge
 ```
+
+#### Building an amd64 Image on Apple Silicon
+
+If you develop on an Apple Silicon (`arm64`) Mac and your cluster runs on `amd64`
+nodes, you can use Docker Desktop with `Dockerfile.dev` to build an `amd64` image.
+`Dockerfile.dev` builds the backend inside the container and copies the frontend
+you have already built locally from `./frontend/public/dist`, so the frontend is
+not built as part of the image build.
+
+1. Build the frontend from the same checkout, using the node.js and corepack setup
+   from [Dependencies](#dependencies). This writes the production frontend assets
+   to `./frontend/public/dist`, which `Dockerfile.dev` copies into the image as-is.
+   Rerun this step after changing frontend code, or after running `yarn run dev` or
+   `yarn run dev-once`, which replace that directory with a development build:
+
+```
+./build-frontend.sh
+```
+
+2. Build the `amd64` image with Docker Desktop:
+
+```
+docker build --platform=linux/amd64 -f Dockerfile.dev -t quay.io/myaccount/console:latest .
+```
+
+3. Push the image and deploy it to your cluster by following steps 3 through 6 in
+   [Steps](#steps).
 
 ### Dependency Management
 
@@ -456,7 +488,9 @@ To launch the server using the built image, you can run:
 docker run -p 8081:8081 downloadsserver:latest
 ```
 
-## ContentSecurityViolation Detection
+## Content Security Policy
+
+### Violation Detection
 
 The console application automatically reports CSP violations to telemetry. This detection and
 reporting logic attempts to parse a dynamic plugin name from the securitypolicyviolation event to
@@ -468,28 +502,40 @@ violation. If a plugin name is not determined in this way, an empty plugin name 
 Additionally, violation reporting is throttled to prevent spamming the telemetry service with
 repetitive data. Identical violations will not be reported more than once a day.
 
+### Configuring For Development
+
 Bridge defaults to `--csp-mode=report-only`, which emits the
 `Content-Security-Policy-Report-Only` HTTP header. Use `--csp-mode=enforce` to emit
 `Content-Security-Policy` HTTP header and block resources that violate the policy. Both modes
 use the same CSP directives. Restart Bridge with `--csp-mode=report-only` to roll back
 enforcement. Invalid mode values prevent startup.
 
-In case of local developement of the dynamic plugin, just pass needed CSP directives address to the console server, using the `--content-security-policy` flag.
+#### Supported directives
 
-Example:
+The configurable directives are defined in the [openshift/api repository](https://github.com/openshift/api/blob/master/console/v1/types_console_plugin.go). Values from enabled plugins are merged into a single console-wide policy and appended to the defaults for each configurable directive. Using an unsupported directive causes the server to exit with a fatal error.
+
+The `--content-security-policy` flag accepts comma-separated directive entries with space-separated source lists. Literal commas, semicolons, and line breaks within source values are rejected before a policy is emitted, because they could introduce additional policies, directives, or HTTP headers. URL paths that contain a comma or semicolon must encode it as `%2C` or `%3B`, respectively.
+
+Bridge always emits the following directives in both on-cluster and off-cluster modes:
+
+- `object-src 'none'`
+- `media-src 'none'`
+- `child-src 'none'`
+- `frame-src 'none'`
+- `frame-ancestors 'none'`
+- `worker-src 'self'`
+
+These directives are not configurable through `ConsolePlugin.spec.contentSecurityPolicy` or the `--content-security-policy` flag. The same-origin `worker-src` source permits Console's `load-test.sw.js` service worker.
+
+These restrictions remain fixed until a concrete plugin use case justifies additional configuration. CSP mode controls whether violations are reported or blocked; it does not change the allowed sources.
+
+#### Practical example
+
+**Plugin loading scripts and enabling hot-reload from its dev server** (e.g., `http://localhost:9001`):
 
 ```
-./bin/bridge --content-security-policy script-src='localhost:1234',font-src='localhost:2345 localhost:3456'
+./bin/bridge --content-security-policy script-src='localhost:9001',connect-src='ws://localhost:9001'
 ```
-
-List of configurable CSP directives is available in the [openshift/api repository](https://github.com/openshift/api/blob/master/console/v1/types_console_plugin.go#L102-L137).
-
-The list is extended automatically by the console server with following CSP directives:
-- `"frame-src 'none'"`
-- `"frame-ancestors 'none'"`
-- `"object-src 'none'"`
-
-Currently this feature is behind feature gate.
 
 ## Frontend Packages
 - [console-dynamic-plugin-sdk](./frontend/packages/console-dynamic-plugin-sdk/README.md)
@@ -498,7 +544,7 @@ Currently this feature is behind feature gate.
 
 - [dev-console](./frontend/packages/dev-console/README.md)
 
-- [eslint-plugin-console](./frontend/packages/eslint-plugin-console/README.md)
+- [oxlint-plugin-console](./frontend/packages/oxlint-plugin-console/README.md)
 
 - [integration-tests](./frontend/packages/integration-tests/README.md)
 

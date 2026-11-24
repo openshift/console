@@ -76,9 +76,9 @@ export const useCustomLogoURL = (type: CustomLogo): { logoUrl: string; loading: 
     ) {
       return;
     }
-    setLoading(true);
     let reqTheme;
     const fetchData = async () => {
+      setLoading(true);
       if (type === FAVICON_TYPE) {
         if (!darkThemeMq.matches) {
           // Fetch Light theme favicon if the Dark preference is not set via the system preference

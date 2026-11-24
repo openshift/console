@@ -1,5 +1,5 @@
 import type { FC, ReactElement } from 'react';
-import { useState, useMemo, memo, useEffect } from 'react';
+import { useState, useMemo, memo } from 'react';
 import { FormHelperText, FormSection, Icon, Tooltip } from '@patternfly/react-core';
 import { DualListSelector } from '@patternfly/react-core/deprecated';
 import * as fuzzy from 'fuzzysearch';
@@ -168,36 +168,51 @@ const PinnedResourcesConfiguration: FC<PinnedResourcesConfigurationProps> = ({
     useConsoleOperatorConfig<PerspectivesConsoleConfig>();
 
   const [configuredPerspectives, setConfiguredPerspectives] = useState<Perspective[]>();
-  useEffect(() => {
-    if (consoleConfig && consoleConfigLoaded && !configuredPerspectives) {
-      const perspectiveDetails = consoleConfig?.spec?.customization?.perspectives;
-      const devPerspective = perspectiveDetails?.find((p) => p.id === 'dev');
-      let defaultPinnedResources = [];
-      if (!devPerspective || !devPerspective?.pinnedResources) {
-        if (defaultPins?.dev) {
-          const getModels = defaultPins?.dev.map((groupVersionKind) => {
-            const ref = groupVersionKind?.group
-              ? referenceForGroupVersionKind(groupVersionKind.group)(groupVersionKind.version)(
-                  groupVersionKind.kind,
-                )
-              : groupVersionKind.kind;
-            return modelFor(ref);
-          });
-          defaultPinnedResources = getModels?.map((resource) => ({
-            group: resource?.apiGroup ? resource?.apiGroup : '',
-            version: resource?.apiVersion,
-            resource: resource?.plural,
-          }));
-        }
-        setPinnedResources(defaultPinnedResources);
-        setPinnedResourcesConfigured(defaultPinnedResources);
-      } else {
-        setPinnedResources(devPerspective.pinnedResources);
-        setPinnedResourcesConfigured(devPerspective.pinnedResources);
-        setConfiguredPerspectives(consoleConfig?.spec?.customization?.perspectives);
+
+  // Initialize the pinned resources from the cluster configuration once it
+  // is loaded, and re-initialize when the configuration or the default pins
+  // change before any perspectives have been configured.
+  const [initializedFrom, setInitializedFrom] = useState<{
+    consoleConfig?: PerspectivesConsoleConfig;
+    consoleConfigLoaded?: boolean;
+    defaultPins?: DefaultPins;
+  }>({});
+  if (
+    consoleConfig &&
+    consoleConfigLoaded &&
+    !configuredPerspectives &&
+    (initializedFrom.consoleConfig !== consoleConfig ||
+      initializedFrom.consoleConfigLoaded !== consoleConfigLoaded ||
+      initializedFrom.defaultPins !== defaultPins)
+  ) {
+    setInitializedFrom({ consoleConfig, consoleConfigLoaded, defaultPins });
+    const perspectiveDetails = consoleConfig?.spec?.customization?.perspectives;
+    const devPerspective = perspectiveDetails?.find((p) => p.id === 'dev');
+    let defaultPinnedResources = [];
+    if (!devPerspective || !devPerspective?.pinnedResources) {
+      if (defaultPins?.dev) {
+        const getModels = defaultPins?.dev.map((groupVersionKind) => {
+          const ref = groupVersionKind?.group
+            ? referenceForGroupVersionKind(groupVersionKind.group)(groupVersionKind.version)(
+                groupVersionKind.kind,
+              )
+            : groupVersionKind.kind;
+          return modelFor(ref);
+        });
+        defaultPinnedResources = getModels?.map((resource) => ({
+          group: resource?.apiGroup ? resource?.apiGroup : '',
+          version: resource?.apiVersion,
+          resource: resource?.plural,
+        }));
       }
+      setPinnedResources(defaultPinnedResources);
+      setPinnedResourcesConfigured(defaultPinnedResources);
+    } else {
+      setPinnedResources(devPerspective.pinnedResources);
+      setPinnedResourcesConfigured(devPerspective.pinnedResources);
+      setConfiguredPerspectives(perspectiveDetails);
     }
-  }, [configuredPerspectives, consoleConfig, consoleConfigLoaded, defaultPins]);
+  }
 
   const items = useMemo(
     () =>

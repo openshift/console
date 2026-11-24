@@ -1,4 +1,4 @@
-/* eslint-disable no-barrel-files/no-barrel-files */
+/* eslint-disable oxc/no-barrel-file */
 export * from './line-buffer';
 export * from './kebab';
 export * from './selector';

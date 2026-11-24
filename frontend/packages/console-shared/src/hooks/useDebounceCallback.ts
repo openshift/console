@@ -23,6 +23,7 @@ export const useDebounceCallback = <T extends (...args: any[]) => any>(
   });
 
   return useMemo(
+    // eslint-disable-next-line react-hooks-js/refs -- latest-callback pattern: the debounced closure only runs post-render (when the consumer invokes it), so reading callbackRef.current at call time is safe; there is no compiler-safe equivalent that keeps the debounced instance stable across callback identity changes
     () => debounce((...args) => callbackRef.current(...args), timeout, memDebounceParams),
     [memDebounceParams, timeout],
   );

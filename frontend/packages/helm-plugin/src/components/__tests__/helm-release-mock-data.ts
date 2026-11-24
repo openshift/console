@@ -2,7 +2,6 @@ import type { K8sResourceCommon, WatchK8sResults } from '@console/dynamic-plugin
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import type { HelmRelease, HelmChartMetaData, HelmChartEntries } from '../../types/helm-types';
 
-/* eslint-disable @typescript-eslint/naming-convention */
 export const mockHelmReleases: HelmRelease[] = [
   {
     name: 'ghost-test',

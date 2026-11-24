@@ -22,6 +22,6 @@ export const usePoll = (callback, delay, ...dependencies) => {
       return () => clearInterval(id);
     }
     return () => {};
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [delay, ...dependencies]);
 };

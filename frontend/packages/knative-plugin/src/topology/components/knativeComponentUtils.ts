@@ -14,7 +14,7 @@ import {
   CREATE_CONNECTOR_OPERATION,
   isGraph,
 } from '@patternfly/react-topology';
-import i18next from 'i18next';
+import * as i18next from 'i18next';
 import { launchErrorModal } from '@console/shared/src/utils/error-modal-handler';
 import type {
   NodeComponentProps,

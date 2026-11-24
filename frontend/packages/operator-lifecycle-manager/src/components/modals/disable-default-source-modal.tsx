@@ -57,7 +57,7 @@ const DisableDefaultSourceModal: FC<DisableDefaultSourceModalProps> = ({
       <ModalBody>
         <Form id="disable-default-source-form" onSubmit={submit}>
           {t(
-            'By disabling a default source, the operators it provides will no longer appear in Software Catalog and any operator that has been installed from this source will no longer receive updates until the source is re-enabled. Disabling the source will also remove the corresponding OperatorSource and CatalogSource resources from the cluster.',
+            'If you disable a default source, its Operators no longer display in the software catalog, and Operators that you installed from that source stop receiving updates until you enable the source again. Disabling the source also removes the corresponding OperatorSource and CatalogSource resources from the cluster.',
           )}
         </Form>
       </ModalBody>

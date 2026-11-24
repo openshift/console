@@ -107,7 +107,7 @@ export const test = base.extend<TestFixtures, WorkerFixtures>({
         // against the OAuth redirect so we neither miss the redirect nor stall the
         // happy path.
         if (!recovering) {
-          // eslint-disable-next-line no-restricted-syntax -- waiting for state, no action follows
+          // eslint-disable-next-line eslint-js/no-restricted-syntax -- waiting for state, no action follows
           const authSettled = page
             .locator('html:not(.co-auth-pending)')
             .waitFor({ state: 'attached', timeout: 30_000 });

@@ -8,7 +8,6 @@ export class CatalogPage extends BasePage {
   private readonly pageHeading: Locator = this.page.getByTestId('page-heading');
   private readonly filterInput: Locator = this.page.getByPlaceholder('Filter by keyword');
   private readonly searchCatalogInput = this.page.getByTestId('search-catalog').locator('input');
-  private readonly operatorTab = this.page.getByTestId('tab operator');
   private readonly clearFiltersButton = this.page.getByTestId('catalog-clear-filters');
 
   async navigateToCatalog(namespace?: string): Promise<void> {
@@ -31,8 +30,11 @@ export class CatalogPage extends BasePage {
     await expect(this.pageHeading).toBeVisible({ timeout: 60_000 });
   }
 
+  /** Browse OLMv0 operators within the shared Operators catalog. */
   async navigateToOperatorCatalog(namespace: string): Promise<void> {
-    await this.goTo(`/catalog/ns/${namespace}?catalogType=operator`);
+    await this.goTo(
+      `/catalog/ns/${namespace}?catalogType=operator&operatorCatalog=%5B%22Classic%20Operators%22%5D`,
+    );
     await expect(this.pageHeading).toBeVisible({ timeout: 60_000 });
   }
 
@@ -50,10 +52,6 @@ export class CatalogPage extends BasePage {
 
   async clearSearchFilter(): Promise<void> {
     await this.searchCatalogInput.fill('');
-  }
-
-  async clickOperatorTab(): Promise<void> {
-    await this.robustClick(this.operatorTab);
   }
 
   async clickClearAllFilters(): Promise<void> {
@@ -129,6 +127,14 @@ export class CatalogPage extends BasePage {
 
   getPageHeading(): Locator {
     return this.pageHeading;
+  }
+
+  getCatalogHeading(): Locator {
+    return this.pageHeading.getByRole('heading', { level: 1 });
+  }
+
+  getCatalogType(type: string): Locator {
+    return this.page.getByTestId('catalog-types').getByTestId(`tab ${type}`);
   }
 
   getSearchInput(): Locator {

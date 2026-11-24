@@ -1,10 +1,10 @@
 import { useMemo } from 'react';
 import * as _ from 'lodash';
+import type { ExtensionHook } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import type { CatalogCategory } from '@console/dynamic-plugin-sdk/src/extensions/catalog';
-import useCatalogItems from './useCatalogItems';
+import { useCatalogItems } from './useCatalogItems';
 
-type UseCatalogCategories = () => [CatalogCategory[], boolean, string];
-const useCatalogCategories: UseCatalogCategories = () => {
+export const useCatalogCategories: ExtensionHook<CatalogCategory[]> = () => {
   const [items, loaded, error] = useCatalogItems();
   const categories = useMemo(() => {
     if (!loaded || error) {
@@ -27,5 +27,3 @@ const useCatalogCategories: UseCatalogCategories = () => {
 
   return [categories, loaded, error];
 };
-
-export default useCatalogCategories;

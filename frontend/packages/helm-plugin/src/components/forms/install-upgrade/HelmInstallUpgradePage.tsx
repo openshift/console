@@ -189,7 +189,7 @@ const HelmInstallUpgradePage: FC = () => {
     const payload = {
       namespace,
       name: releaseName,
-      ...(chartURL ? { chart_url: chartURL } : {}), // eslint-disable-line @typescript-eslint/naming-convention
+      ...(chartURL ? { chart_url: chartURL } : {}),
       ...(indexEntry ? { indexEntry } : { indexEntry: chartIndexEntry }),
       ...(valuesObj ? { values: valuesObj } : {}),
       ...(values.isURLInstall
@@ -199,7 +199,7 @@ const HelmInstallUpgradePage: FC = () => {
                 ? ''
                 : basicAuthSecretName,
           }
-        : {}), // eslint-disable-line @typescript-eslint/naming-convention
+        : {}),
     };
 
     return config

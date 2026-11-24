@@ -76,18 +76,18 @@ export const OperatorMigrationRollbackModalOverlay: OverlayComponent<RollbackMod
       data-test="operator-migration-rollback-modal"
     >
       <ModalHeader
-        title={t('Roll back to OLM (Classic) Operators')}
+        title={t('Roll back to Classic Operators')}
         titleIconVariant="warning"
         titleScreenReaderText={t('Warning')}
         labelId="operator-migration-rollback-title"
       />
       <ModalBody>
         <Content component="p" id="operator-migration-rollback-description">
-          {t('Roll back {{operator}} to OLM (Classic) Operator management?', { operator })}
+          {t('Roll back {{operator}} to Operator Lifecycle Manager version 0?', { operator })}
         </Content>
         <Content component="p">
           {t(
-            'Rollback removes the ClusterExtension and ClusterObjectSets that migration created and restores the backed-up Subscription. Your workloads remain, but the Operator might not reconcile resource changes or receive updates until OLM (Classic) restores management. Recovery time depends on the Operator and cluster conditions. Review your recovery plan before you continue.',
+            'Rollback removes the ClusterExtension and ClusterObjectSets that migration created and restores the backed-up Subscription. Your workloads remain, but the Operator might not reconcile resource changes or receive updates until Operator Lifecycle Manager version 0 restores management. Recovery time depends on the Operator and cluster conditions. Review your recovery plan before you continue.',
           )}
         </Content>
         <Form>
@@ -95,7 +95,7 @@ export const OperatorMigrationRollbackModalOverlay: OverlayComponent<RollbackMod
             id="olm-migration-rollback-acknowledged"
             data-test="olm-migration-rollback-acknowledged"
             label={t(
-              'I understand that rollback removes the migration resources and restores OLM (Classic) Operator management.',
+              'I understand that rollback removes the migration resources and moves the Operator back to Operator Lifecycle Manager version 0.',
             )}
             isChecked={acknowledged}
             onChange={(_, checked) => setAcknowledged(checked)}

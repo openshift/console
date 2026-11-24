@@ -41,6 +41,11 @@ type Options struct {
 	// opt-in: an unset InstallNamespace otherwise means SubscriptionNamespace.
 	SystemManagedInstallNamespace bool
 
+	// UseClusterObjectDeployment is populated by PrepareClusterObjectSet from
+	// COD CRD presence, not a caller-selected override. A present COD CRD
+	// requires a controller with COD-backed ClusterExtension reconciliation.
+	UseClusterObjectDeployment bool
+
 	// BackupDirectory, when non-empty, writes OLM objects to disk before deletions (R2.6).
 	BackupDirectory string
 
@@ -82,17 +87,19 @@ func (o *Options) ApplyDefaults() {
 
 // MigrationInfo holds the profiled operator information gathered during the migration.
 type MigrationInfo struct {
-	PackageName         string
-	Version             string
-	BundleName          string
-	BundleImage         string
-	Channel             string
-	ManualApproval      bool // true if the Subscription had Manual install plan approval
-	CatalogSourceRef    types.NamespacedName
-	CatalogSourceImage  string // tag-based image from CatalogSource.Spec.Image
-	ResolvedCatalogName string
-	SystemNamespace     string // operator-controller namespace for COS reference Secrets
-	CollectedObjects    []unstructured.Unstructured
+	// UseClusterObjectDeployment reports the CRD-selected revision manager from Gather.
+	UseClusterObjectDeployment bool
+	PackageName                string
+	Version                    string
+	BundleName                 string
+	BundleImage                string
+	Channel                    string
+	ManualApproval             bool // true if the Subscription had Manual install plan approval
+	CatalogSourceRef           types.NamespacedName
+	CatalogSourceImage         string // tag-based image from CatalogSource.Spec.Image
+	ResolvedCatalogName        string
+	SystemNamespace            string // operator-controller namespace for COS reference Secrets
+	CollectedObjects           []unstructured.Unstructured
 
 	// SubscriptionConfig holds spec.config from the Subscription for mapping to CE (R4).
 	// spec.config.selector is dropped (never honored in OLMv0; no CE equivalent).

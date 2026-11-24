@@ -320,7 +320,6 @@ export enum BuildOptions {
 
 /** @public Members used as runtime key-value map via SampleRuntime[dynamicKey] */
 export enum SampleRuntime {
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   'Node.js' = 'nodejs',
   Quarkus = 'quarkus',
   dotnet = 'dotnet',

@@ -9,7 +9,7 @@ const require = createRequire(import.meta.url);
 
 // Purposely escaping e2e tsconfig scope into actual console code, to avoid duplicating this list
 const sharedPluginModules: string[] =
-  require('../../../../packages/console-dynamic-plugin-sdk/src/shared-modules/shared-modules-meta').sharedPluginModules;
+  require('../../../../packages/console-dynamic-plugin-sdk/src/shared-modules/console-shared-modules').sharedPluginModules;
 
 test.describe('Cluster Dashboard', { tag: ['@admin', '@smoke'] }, () => {
   let dashboard: ClusterDashboardPage;

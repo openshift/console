@@ -55,6 +55,9 @@ test.describe('Project Dashboard', { tag: ['@admin'] }, () => {
 
   test.describe('Inventory Card', () => {
     test('has all items', async () => {
+      // Counts come from Prometheus polls. For a namespace created moments ago, the
+      // first count appears only after the metrics exporters scrape the namespace.
+      test.setTimeout(180_000);
       await expect(dashboard.getInventoryCard()).toBeVisible();
 
       const inventoryItems = [
@@ -79,6 +82,7 @@ test.describe('Project Dashboard', { tag: ['@admin'] }, () => {
       for (let i = 0; i < inventoryItems.length; i++) {
         await expect(dashboard.getResourceInventoryItem().nth(i)).toHaveText(
           new RegExp(`^\\d+ ${inventoryItems[i].kind}s?$`),
+          { timeout: 90_000 },
         );
         await expect(dashboard.getResourceInventoryItem().nth(i)).toHaveAttribute(
           'href',

@@ -9,9 +9,12 @@ import {
 import { RhUiInProgressIcon, RhUiQuestionMarkCircleFillIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
-import { useResolvedExtensions, isDashboardsInventoryItemGroup } from '@console/dynamic-plugin-sdk';
-import type { DashboardsInventoryItemGroup, ResolvedExtension } from '@console/dynamic-plugin-sdk';
 import type { ResourceInventoryItemProps } from '@console/dynamic-plugin-sdk/src/api/internal-types';
+import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
+import type { StatusGroup } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { isDashboardsInventoryItemGroup } from '@console/dynamic-plugin-sdk/src/extensions/dashboards';
+import type { DashboardsInventoryItemGroup } from '@console/dynamic-plugin-sdk/src/extensions/dashboards';
+import type { ResolvedExtension } from '@console/dynamic-plugin-sdk/src/types';
 import { pluralize } from '@console/internal/components/utils/details-page';
 import { resourcePathFromModel } from '@console/internal/components/utils/resource-link';
 import type { K8sKind, K8sResourceCommon } from '@console/internal/module/k8s';
@@ -197,15 +200,20 @@ const ResourceTitleComponent: FC<ResourceTitleComponentComponent> = ({
   </Link>
 );
 
-export const ResourceInventoryItem: FC<ResourceInventoryItemProps> = ({
+interface StatusGroupInventoryItemProps extends Omit<
+  ResourceInventoryItemProps,
+  'resources' | 'additionalResources' | 'mapper'
+> {
+  groups: StatusGroup;
+}
+
+export const StatusGroupInventoryItem: FC<StatusGroupInventoryItemProps> = ({
   kind,
   TitleComponent,
   title,
   titlePlural,
-  resources = [],
-  additionalResources,
+  groups,
   isLoading,
-  mapper,
   namespace,
   error,
   showLink = true,
@@ -235,11 +243,6 @@ export const ResourceInventoryItem: FC<ResourceInventoryItemProps> = ({
     isDashboardsInventoryItemGroup,
   );
 
-  const groups = useMemo(
-    () => (mapper ? mapper(resources, additionalResources) : {}),
-    [mapper, resources, additionalResources],
-  );
-
   const top3Groups = useMemo(() => {
     const extensions = groupExtensions.map((e) => e.properties);
     return getTop3Groups(
@@ -248,13 +251,9 @@ export const ResourceInventoryItem: FC<ResourceInventoryItemProps> = ({
     );
   }, [groupExtensions, groups]);
 
-  // The count can depend on additionalResources (like mixing of VM and VMI for kubevirt-plugin)
   const totalCount = useMemo(
-    () =>
-      mapper
-        ? Object.keys(groups).reduce((acc, cur) => groups[cur].count + acc, 0)
-        : resources.length,
-    [mapper, groups, resources],
+    () => Object.values(groups).reduce((total, group) => total + group.count, 0),
+    [groups],
   );
 
   const titleLabel = title || (kind.labelKey ? t(kind.labelKey) : kind.label);
@@ -292,12 +291,21 @@ export const ResourceInventoryItem: FC<ResourceInventoryItemProps> = ({
   );
 };
 
-type StatusGroup = {
-  [key in InventoryStatusGroup | string]: {
-    filterType?: string;
-    statusIDs: string[];
-    count: number;
-  };
+export const ResourceInventoryItem: FC<ResourceInventoryItemProps> = ({
+  resources = [],
+  additionalResources,
+  mapper,
+  ...props
+}) => {
+  const groups = useMemo(
+    () =>
+      mapper
+        ? mapper(resources, additionalResources)
+        : { [InventoryStatusGroup.NOT_MAPPED]: { count: resources.length, statusIDs: [] } },
+    [mapper, resources, additionalResources],
+  );
+
+  return <StatusGroupInventoryItem {...props} groups={groups} />;
 };
 
 export type StatusGroupMapper<

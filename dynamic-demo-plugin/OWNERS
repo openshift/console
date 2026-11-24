@@ -1,6 +1,4 @@
 approvers:
-  - jhadvig
-  - logonoff
-  - vojtechszocs
+  - plugin-api-approvers
 labels:
   - kind/demo-plugin

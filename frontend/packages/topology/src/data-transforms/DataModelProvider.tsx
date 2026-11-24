@@ -18,9 +18,11 @@ interface DataModelProviderProps {
 const DataModelProvider: FC<DataModelProviderProps> = ({ namespace, children }) => {
   const [model, setModel] = useState<ExtensibleModel>(new ExtensibleModel(namespace));
 
-  useEffect(() => {
+  const [prevNamespace, setPrevNamespace] = useState(namespace);
+  if (prevNamespace !== namespace) {
+    setPrevNamespace(namespace);
     setModel(new ExtensibleModel(namespace));
-  }, [namespace]);
+  }
 
   // Use useResolvedExtensions to automatically resolve all CodeRefs in the extensions
   const [modelFactories, factoriesResolved] = useResolvedExtensions<TopologyDataModelFactory>(
@@ -38,10 +40,19 @@ const DataModelProvider: FC<DataModelProviderProps> = ({ namespace, children }) 
     | null
   >(null);
 
+  const [prevModelFactories, setPrevModelFactories] = useState(modelFactories);
+  const [prevFactoriesResolved, setPrevFactoriesResolved] = useState(factoriesResolved);
+  if (prevModelFactories !== modelFactories || prevFactoriesResolved !== factoriesResolved) {
+    setPrevModelFactories(modelFactories);
+    setPrevFactoriesResolved(factoriesResolved);
+    if (!modelFactories || !factoriesResolved) {
+      setResolvedFactories(null);
+    }
+  }
+
   // Resolve any async resources from factories
   useEffect(() => {
     if (!modelFactories || !factoriesResolved) {
-      setResolvedFactories(null);
       return;
     }
 

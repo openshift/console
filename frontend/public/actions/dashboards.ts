@@ -41,7 +41,6 @@ export const updateWatchInFlight = (type: RESULTS_TYPE, key: string, inFlight: b
 const setError = (type: RESULTS_TYPE, key: string, error) =>
   action(ActionType.SetError, { type, key, error });
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars -- used in typeof for type export
 const dashboardsActions = {
   stopWatch,
   setData,

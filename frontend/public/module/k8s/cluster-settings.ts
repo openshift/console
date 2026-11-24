@@ -1,4 +1,4 @@
-import i18next from 'i18next';
+import * as i18next from 'i18next';
 import * as _ from 'lodash';
 import * as semver from 'semver';
 import type { K8sResourceCondition } from '@console/dynamic-plugin-sdk/src/extensions/console-types';

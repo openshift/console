@@ -1,4 +1,4 @@
-/* eslint-disable no-barrel-files/no-barrel-files */
+/* eslint-disable oxc/no-barrel-file */
 export { default as CamelCaseWrap } from './utils/camel-case-wrap';
 export { default as GenericStatus } from './status/GenericStatus';
 export { default as ListPageBody } from './factory/ListPage/ListPageBody';

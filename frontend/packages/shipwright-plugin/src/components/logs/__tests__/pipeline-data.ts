@@ -3730,7 +3730,6 @@ export const mockRepositories: RepositoryKind[] = [
     },
     spec: {
       branch: 'main',
-      // eslint-disable-next-line @typescript-eslint/naming-convention
       event_type: 'pull_request',
       namespace: 'karthik',
       url: 'https://github.com/karthikjeeyar/demo-app',
@@ -3766,14 +3765,12 @@ export const mockRepositories: RepositoryKind[] = [
     spec: {
       namespace: 'karthik',
       url: 'https://github.com/karthikjeeyar/demo-app',
-      // eslint-disable-next-line @typescript-eslint/naming-convention
       git_provider: {
         user: 'lokanandap',
         secret: {
           key: 'provider.token',
           name: 'git-hello-func-token-s79pk',
         },
-        // eslint-disable-next-line @typescript-eslint/naming-convention
         webhook_secret: {
           key: 'webhook.secret',
           name: 'git-hello-func-token-s79pk',

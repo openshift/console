@@ -1,4 +1,3 @@
-/* eslint-disable camelcase */
 import type { FC } from 'react';
 import { useMemo, memo, Suspense } from 'react';
 import {
@@ -660,7 +659,6 @@ export type AlertmanagerReceiver = {
   pagerdutyConfigs?: PagerDutyConfig[];
 };
 
-// eslint-disable-next-line no-redeclare
 export type AlertmanagerConfig = {
   global: { [key: string]: string };
   route: AlertmanagerRoute;

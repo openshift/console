@@ -1,4 +1,3 @@
-/* eslint-disable no-barrel-files/no-barrel-files */
 import type { ReactElement } from 'react';
 import type { IconSize } from '@patternfly/react-core';
 import { RhUiInProgressIcon } from '@patternfly/react-icons';

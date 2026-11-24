@@ -18,7 +18,7 @@ export const useAddTriggerAction = (source?: K8sResourceKind): Action => {
       cta: pubSubModalLauncher,
       accessReview: asAccessReview(EventingTriggerModel, source, 'create'),
     }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
     [source],
   );
 };

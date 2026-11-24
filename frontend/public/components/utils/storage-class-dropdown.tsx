@@ -99,9 +99,11 @@ export const StorageClassDropdown: FC<StorageClassDropdownProps> = ({
 
   const [selectedKey, setSelectedKey] = useState<string | undefined>(selectedKeyProp);
 
-  useEffect(() => {
+  const [lastSyncedKeyProp, setLastSyncedKeyProp] = useState(selectedKeyProp);
+  if (selectedKeyProp !== lastSyncedKeyProp) {
+    setLastSyncedKeyProp(selectedKeyProp);
     setSelectedKey(selectedKeyProp);
-  }, [selectedKeyProp]);
+  }
 
   const onChangeRef = useRef(onChangeProp);
   useEffect(() => {

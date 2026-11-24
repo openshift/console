@@ -1,13 +1,10 @@
 import type { FC } from 'react';
 import { useMemo, useReducer, useCallback, useEffect } from 'react';
 import * as _ from 'lodash';
-import { FLAG_OPENSHIFT_5 } from '@console/app/src/consts';
-import { useFlag } from '@console/dynamic-plugin-sdk/src/utils/flags';
 import type { NodeKind } from '@console/internal/module/k8s';
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
 import DashboardGrid from '@console/shared/src/components/dashboard/DashboardGrid';
 import type { LimitRequested } from '@console/shared/src/components/dashboard/utilization-card/UtilizationItem';
-import ActivityCard from './ActivityCard';
 import DetailsCard from './DetailsCard';
 import InventoryCard from './InventoryCard';
 import type { HealthCheck } from './NodeDashboardContext';
@@ -17,7 +14,6 @@ import UtilizationCard from './UtilizationCard';
 
 const leftCards = [{ Card: DetailsCard }, { Card: InventoryCard }];
 const mainCards = [{ Card: StatusCard }, { Card: UtilizationCard }];
-const rightCards = [{ Card: ActivityCard }];
 
 enum ActionType {
   CPU_LIMIT = 'CPU_LIMIT',
@@ -77,7 +73,6 @@ const reducer = (state: NodeDashboardState, action: NodeDashboardAction) => {
 };
 
 const NodeDashboard: FC<NodeDashboardProps> = ({ obj }) => {
-  const isOpenShift5 = useFlag(FLAG_OPENSHIFT_5);
   const [state, dispatch] = useReducer(reducer, initialState(obj));
 
   useEffect(() => {
@@ -121,11 +116,7 @@ const NodeDashboard: FC<NodeDashboardProps> = ({ obj }) => {
   return (
     <NodeDashboardContext.Provider value={context}>
       <Dashboard>
-        <DashboardGrid
-          mainCards={mainCards}
-          leftCards={leftCards}
-          rightCards={isOpenShift5 ? undefined : rightCards}
-        />
+        <DashboardGrid mainCards={mainCards} leftCards={leftCards} />
       </Dashboard>
     </NodeDashboardContext.Provider>
   );

@@ -7,22 +7,30 @@ type Hero = {
   customData: {
     planet: string;
   };
-}
-
-const Thor: React.FC<Hero> = ( {customData} ) => {
-  const { t } = useTranslation("plugin__console-demo-plugin");
-
-  return <PageSection>
-    <Title headingLevel='h1'>{t('Hello {{planet}}! I am Thor!',  { planet: customData.planet })}</Title>
-  </PageSection>
 };
 
-const Loki: React.FC<Hero> = ( {customData} ) => {
-  const { t } = useTranslation("plugin__console-demo-plugin");
+const Thor: React.FC<Hero> = ({ customData }) => {
+  const { t } = useTranslation('plugin__console-demo-plugin');
 
-  return <PageSection>
-    <Title headingLevel='h1'>{t('Hello {{planet}}! I am Loki!', { planet: customData.planet })}</Title>
+  return (
+    <PageSection>
+      <Title headingLevel="h1">
+        {t('Hello {{planet}}! I am Thor!', { planet: customData.planet })}
+      </Title>
     </PageSection>
+  );
+};
+
+const Loki: React.FC<Hero> = ({ customData }) => {
+  const { t } = useTranslation('plugin__console-demo-plugin');
+
+  return (
+    <PageSection>
+      <Title headingLevel="h1">
+        {t('Hello {{planet}}! I am Loki!', { planet: customData.planet })}
+      </Title>
+    </PageSection>
+  );
 };
 
 const Asgard: React.FC = () => {
@@ -38,7 +46,7 @@ const Asgard: React.FC = () => {
       component: Loki,
     },
   ];
-  return <HorizontalNav pages={pages} customData={{planet: 'Earth'}}/>;
+  return <HorizontalNav pages={pages} customData={{ planet: 'Earth' }} />;
 };
 
 export default Asgard;

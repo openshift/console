@@ -1,4 +1,4 @@
-import type { ChangeEvent, DetailedHTMLProps, HTMLAttributes } from 'react';
+import type { ChangeEvent, KeyboardEvent } from 'react';
 import { Component } from 'react';
 import { Label as PfLabel } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
@@ -9,15 +9,6 @@ import { selectorToString } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { split, selectorFromString } from '../../module/k8s/selector';
 import * as k8sSelectorRequirement from '../../module/k8s/selector-requirement';
 
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      // Custom element used as a styling hook for the tags input (see `_label.scss`)
-      'tags-input': DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>;
-    }
-  }
-}
-
 // Helpers for cleaning up tags by running them through the selector parser
 const cleanSelectorStr = (tag: string) => selectorToString(selectorFromString(tag));
 const cleanTags = (tags: string[]) => split(cleanSelectorStr(tags.join(',')));
@@ -26,6 +17,8 @@ export interface SelectorInputProps {
   autoFocus?: boolean;
   /** Additional props spread onto the underlying input element. */
   inputProps?: { [key: string]: unknown };
+  /** Keep tags and the input on one horizontally scrollable line. Defaults to false. */
+  isSingleLine?: boolean;
   labelClassName?: string;
   onChange: (tags: string[]) => void;
   onValidationChange?: (isValid: boolean) => void;
@@ -38,6 +31,8 @@ interface SelectorInputState {
   inputValue: string;
   isInputValid: boolean;
   tags: string[];
+  // Last value of the tags prop mirrored into state, used to detect prop changes
+  prevTags: string[];
 }
 
 interface RenderTagProps {
@@ -98,7 +93,19 @@ export class SelectorInput extends Component<SelectorInputProps, SelectorInputSt
       inputValue: '',
       isInputValid: true,
       tags: this.props.tags,
+      prevTags: this.props.tags,
     };
+  }
+
+  static getDerivedStateFromProps(
+    props: SelectorInputProps,
+    state: SelectorInputState,
+  ): Partial<SelectorInputState> | null {
+    // Sync state.tags when the tags prop changes; local edits in between are kept.
+    if (!_.isEqual(state.prevTags, props.tags)) {
+      return { tags: props.tags, prevTags: props.tags };
+    }
+    return null;
   }
 
   notifyValidationChange = (isValid: boolean) => {
@@ -107,18 +114,14 @@ export class SelectorInput extends Component<SelectorInputProps, SelectorInputSt
     }
   };
 
-  componentDidUpdate(prevProps: SelectorInputProps, prevState: SelectorInputState) {
-    if (!_.isEqual(prevProps.tags, this.props.tags)) {
-      this.setState({ tags: this.props.tags });
-    }
-
+  componentDidUpdate(_prevProps: SelectorInputProps, prevState: SelectorInputState) {
     // Call onValidationChange callback when isInputValid changes
     if (prevState.isInputValid !== this.state.isInputValid && this.props.onValidationChange) {
       this.notifyValidationChange(this.state.isInputValid);
     }
   }
 
-  // eslint-disable-next-line react/no-unused-class-component-methods
+  // eslint-disable-next-line react-js/no-unused-class-component-methods
   focus() {
     if (this.inputRef) {
       this.inputRef.focus();
@@ -143,6 +146,13 @@ export class SelectorInput extends Component<SelectorInputProps, SelectorInputSt
 
     const isValid = this.isTagValid(inputValue);
     this.setState({ inputValue, isInputValid: isValid });
+  };
+
+  handleKeyDownCapture = (e: KeyboardEvent<HTMLDivElement>) => {
+    if (e.nativeEvent.isComposing) {
+      // Leave IME keys to the browser instead of adding or removing tags.
+      e.stopPropagation();
+    }
   };
 
   handleChange = (tags: string[], changed: string[]) => {
@@ -174,7 +184,7 @@ export class SelectorInput extends Component<SelectorInputProps, SelectorInputSt
     const { inputValue, isInputValid, tags } = this.state;
 
     // Keys that add tags: Enter
-    const addKeys = [13];
+    const addKeys = ['Enter'];
 
     // Backspace deletes tags, but not if there is text being edited in the input field
     const removeKeys = inputValue.length ? [] : [8];
@@ -191,7 +201,7 @@ export class SelectorInput extends Component<SelectorInputProps, SelectorInputSt
       ...(this.props.inputProps || {}),
     };
 
-    const renderTag = ({ tag, key, onRemove, getTagDisplayValue }: RenderTagProps): JSX.Element => (
+    const renderTag = ({ tag, key, onRemove, getTagDisplayValue }: RenderTagProps) => (
       <PfLabel
         className={css('co-label tag-item-content', this.props.labelClassName)}
         key={key}
@@ -203,8 +213,12 @@ export class SelectorInput extends Component<SelectorInputProps, SelectorInputSt
     );
 
     return (
-      <div className="pf-v6-c-form-control">
-        <tags-input>
+      <div className="pf-v6-c-form-control" onKeyDownCapture={this.handleKeyDownCapture}>
+        <div
+          className={css('co-tags-input', {
+            'co-tags-input--single-line': this.props.isSingleLine,
+          })}
+        >
           <TagsInput
             ref={this.setRef}
             className="tags"
@@ -216,7 +230,7 @@ export class SelectorInput extends Component<SelectorInputProps, SelectorInputSt
             onChange={this.handleChange}
             addOnBlur
           />
-        </tags-input>
+        </div>
       </div>
     );
   }

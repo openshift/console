@@ -114,7 +114,7 @@ export const Terminal = forwardRef<ImperativeTerminalType, TerminalProps>(
         window.removeEventListener('resize', handleResize);
         window.removeEventListener('sidebar_toggle', handleResize);
       };
-      // eslint-disable-next-line react-hooks/exhaustive-deps
+      // eslint-disable-next-line react-hooks-js/exhaustive-deps
     }, []);
 
     useEffect(() => {
@@ -132,7 +132,7 @@ export const Terminal = forwardRef<ImperativeTerminalType, TerminalProps>(
 
     useEffect(() => {
       handleResize();
-      // eslint-disable-next-line react-hooks/exhaustive-deps
+      // eslint-disable-next-line react-hooks-js/exhaustive-deps
     }, [isFullscreen]);
 
     useImperativeHandle(ref, () => ({

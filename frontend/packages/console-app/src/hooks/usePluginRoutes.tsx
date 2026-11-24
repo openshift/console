@@ -44,6 +44,7 @@ const LazyRoutePage: FC<LazyRoutePageProps> = ({ extension }) => {
 
   return (
     <Suspense fallback={<LoadingBox blame={`${pluginName}: ${extension.uid}`} />}>
+      {/* eslint-disable-next-line react-hooks-js/static-components -- getOrCreateLazyComponent returns the module-level cached LazyExoticComponent for the extension UID, so the component is created once and reused across renders rather than recreated */}
       <LazyComponent />
     </Suspense>
   );

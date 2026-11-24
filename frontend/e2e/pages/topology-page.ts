@@ -228,7 +228,7 @@ export class TopologyPage extends BasePage {
   }
 
   async fillApplicationName(appName: string): Promise<void> {
-    // eslint-disable-next-line no-restricted-syntax
+    // eslint-disable-next-line eslint-js/no-restricted-syntax
     const hasDropdown = await this.applicationDropdown
       .waitFor({ state: 'visible', timeout: 2_000 })
       .then(() => true)
@@ -294,7 +294,7 @@ export class TopologyPage extends BasePage {
   async waitForWorkload(name: string, timeoutMs = 120_000): Promise<void> {
     await this.page.waitForURL(/\/topology\//, { timeout: timeoutMs });
     const workload = this.getWorkload(name);
-    // eslint-disable-next-line no-restricted-syntax
+    // eslint-disable-next-line eslint-js/no-restricted-syntax
     await workload.waitFor({ state: 'visible', timeout: timeoutMs });
   }
 

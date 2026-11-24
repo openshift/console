@@ -107,14 +107,6 @@ test.describe(
     test('forces project selection when all namespaces URL is accessed [A-12-TC01]', async ({
       page,
     }) => {
-      // TechPreview clusters run only a limited set of tests via test-prow-e2e-techpreview.sh
-      // and do not enable the Developer perspective. CatalogPage.tsx only shows the project selection
-      // message when isDevPerspective is true (see: `showCreateProjectListPage = isDevPerspective &&
-      // isAllNamespaces`), so this test would always fail on TechPreview. Skip it there; it is
-      // covered by the standard e2e suite where the Developer perspective is available.
-      const isTechPreview = await page.evaluate(() => window.SERVER_FLAGS.techPreview);
-      test.skip(isTechPreview, 'Developer perspective is not enabled on TechPreview clusters');
-
       await test.step('Navigate to catalog all namespaces', async () => {
         await catalogPage.navigateToAllNamespacesCatalog();
       });
@@ -177,7 +169,7 @@ test.describe('Software Catalog Page details', { tag: ['@dev-console', '@regress
 
 test.describe(
   'Software Catalog operators',
-  { tag: ['@dev-console', '@regression'], lock: OLM_CLUSTER_STATE_LOCK },
+  { tag: ['@dev-console', '@regression', '@techpreview'], lock: OLM_CLUSTER_STATE_LOCK },
   () => {
     let catalogPage: CatalogPage;
 
@@ -199,13 +191,15 @@ test.describe(
       }
     });
 
-    test('displays operator tiles in catalog', async () => {
+    test('displays operator tiles in catalog', async ({ page }) => {
       await test.step('Navigate to operator catalog', async () => {
-        await catalogPage.navigateToOperatorCatalog('default');
+        await page.goto(
+          '/catalog/ns/default?catalogType=operator&operatorCatalog=%5B%22Classic%20Operators%22%5D',
+        );
       });
 
       await test.step('Verify operator tiles are rendered', async () => {
-        await expect(catalogPage.getOperatorCards().first()).toBeVisible({
+        await expect(page.locator('[data-test^="operator-"]').first()).toBeVisible({
           timeout: 30_000,
         });
       });
@@ -213,16 +207,23 @@ test.describe(
 
     test('filters operator tiles by keyword', async ({ page }) => {
       await test.step('Navigate to operator catalog', async () => {
-        await catalogPage.navigateToOperatorCatalog('default');
+        await page.goto(
+          '/catalog/ns/default?catalogType=operator&operatorCatalog=%5B%22Classic%20Operators%22%5D',
+        );
       });
 
       await test.step('Wait for tiles to render', async () => {
-        await expect(catalogPage.getCatalogTiles().first()).toBeVisible({ timeout: 30_000 });
+        await expect(catalogPage.getCatalogTiles().first()).toBeVisible({
+          timeout: 30_000,
+        });
       });
 
       await test.step('Filter by non-matching keyword and verify no tiles shown', async () => {
-        await catalogPage.filterByKeyword('zzz-no-match-xyzzy');
-        await expect(catalogPage.getCatalogTiles()).toHaveCount(0);
+        // Catalog data can finish loading and remount the input after the first tiles appear.
+        await expect(async () => {
+          await catalogPage.filterByKeyword('zzz-no-match-xyzzy');
+          await expect(catalogPage.getCatalogTiles()).toHaveCount(0);
+        }).toPass({ timeout: 30_000 });
         await expect(page.getByText('No results found')).toBeVisible();
       });
 

@@ -1,15 +1,15 @@
-/* eslint-env node */
-
 import type { Configuration } from 'webpack';
-import * as path from 'path';
+import { resolve } from 'path';
 import { ConsoleRemotePlugin } from '@openshift-console/dynamic-plugin-sdk-webpack';
 import { CopyRspackPlugin } from '@rspack/core';
+import CopyWebpackPlugin from 'copy-webpack-plugin';
 
 const bundler = process.env.BUNDLER ?? 'webpack';
 const isRunningWebpack = bundler === 'webpack';
 const isRunningRspack = bundler === 'rspack';
 
-const CopyWebpackPlugin = isRunningWebpack ? require('copy-webpack-plugin') : CopyRspackPlugin;
+// we are using webpack configuration type, so use the webpack CopyPlugin types
+const CopyPlugin: typeof CopyWebpackPlugin = isRunningWebpack ? CopyWebpackPlugin : CopyRspackPlugin as any;
 
 if (!isRunningWebpack && !isRunningRspack) {
   throw new Error('Unknown bundler');
@@ -17,11 +17,11 @@ if (!isRunningWebpack && !isRunningRspack) {
 
 const config: Configuration = {
   mode: 'development',
-  context: path.resolve(__dirname, 'src'),
+  context: resolve(import.meta.dirname, 'src'),
   entry: {},
   ...(isRunningWebpack && { experiments: { css: true } }),
   output: {
-    path: path.resolve(__dirname, 'dist', isRunningWebpack ? 'webpack' : 'rspack'),
+    path: resolve(import.meta.dirname, 'dist', isRunningWebpack ? 'webpack' : 'rspack'),
     filename: '[name]-bundle.js',
     chunkFilename: '[name]-chunk.js',
   },
@@ -34,29 +34,31 @@ const config: Configuration = {
         test: /\.(js|tsx?)$/,
         exclude: /node_modules/,
         use: [
-          isRunningWebpack ? {
-            loader: 'ts-loader',
-            options: {
-              configFile: path.resolve(__dirname, 'tsconfig.json'),
-            },
-          } : {
-            loader: 'builtin:swc-loader',
-            options: {
-              detectSyntax: 'auto',
-              jsc: {
-                transform: {
-                  react: {
-                    runtime: "automatic"
-                  }
+          isRunningWebpack
+            ? {
+                loader: 'ts-loader',
+                options: {
+                  configFile: resolve(import.meta.dirname, 'tsconfig.json'),
                 },
-                target: "es2021",
+              }
+            : {
+                loader: 'builtin:swc-loader',
+                options: {
+                  detectSyntax: 'auto',
+                  jsc: {
+                    transform: {
+                      react: {
+                        runtime: 'automatic',
+                      },
+                    },
+                    target: 'es2021',
+                  },
+                  sourceMaps: true,
+                  minify: true,
+                },
               },
-              sourceMaps: true,
-              minify: true
-            },
-          },
         ],
-        type: 'javascript/auto'
+        type: 'javascript/auto',
       },
       {
         test: /\.css$/,
@@ -74,8 +76,8 @@ const config: Configuration = {
   },
   plugins: [
     new ConsoleRemotePlugin(),
-    new CopyWebpackPlugin({
-      patterns: [{ from: path.resolve(__dirname, 'locales'), to: 'locales' }],
+    new CopyPlugin({
+      patterns: [{ from: resolve(import.meta.dirname, 'locales'), to: 'locales' }],
     }),
   ],
   devtool: 'source-map',

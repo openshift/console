@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { Banner, Flex, Button, Tooltip } from '@patternfly/react-core';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import type { ImpersonateKind } from '@console/dynamic-plugin-sdk';
 import { getImpersonate } from '@console/dynamic-plugin-sdk';
@@ -58,22 +58,20 @@ export const ImpersonateNotifier = connect(
       : t(' with groups: {{groups}}', { groups: visibleGroups.join(', ') })
     : '';
 
-  const groupsTooltip =
-    hasGroups && remainingCount > 0 ? (
-      <Tooltip
-        content={
-          <div>
-            {groups.map((group) => (
-              <div key={group}>{group}</div>
-            ))}
-          </div>
-        }
-      >
-        <span className="pf-v6-u-text-decoration-underline-dotted pf-v6-u-color-brand">
-          {t('{{remaining}} more', { remaining: remainingCount })}
-        </span>
-      </Tooltip>
-    ) : null;
+  // The remaining-groups text is interpolated inside the tooltip span below so
+  // the <Trans> key stays stable whether or not the tooltip has content.
+  const remainingGroupsText =
+    hasGroups && remainingCount > 0
+      ? ` ${t('{{remaining}} more', { remaining: remainingCount })}`
+      : '';
+
+  const groupsTooltipContent = (
+    <div>
+      {groups.map((group) => (
+        <div key={group}>{group}</div>
+      ))}
+    </div>
+  );
 
   return (
     <Banner color="blue">
@@ -83,13 +81,18 @@ export const ImpersonateNotifier = connect(
         gap={{ default: 'gapSm' }}
       >
         <div>
-          {t('You are impersonating {{kind}} ', { kind: displayKind })}
-          <strong>{impersonateName}</strong>
-          {groupsText}
-          {groupsTooltip && <> {groupsTooltip}</>}
-          {t('. You are viewing all resources and roles this {{kind}} can access. ', {
-            kind: displayKindForAccess,
-          })}
+          <Trans t={t} ns="public">
+            You are impersonating {{ kind: displayKind }}{' '}
+            <strong>{{ name: impersonateName }}</strong>
+            {{ groups: groupsText }}
+            <Tooltip content={groupsTooltipContent}>
+              <span className="pf-v6-u-text-decoration-underline-dotted pf-v6-u-color-brand">
+                {{ remainingGroupsText }}
+              </span>
+            </Tooltip>
+            . You are viewing all resources and roles this {{ accessKind: displayKindForAccess }}{' '}
+            can access.
+          </Trans>
           <Button isInline type="button" variant="link" onClick={handleStopImpersonate}>
             {t('Stop impersonating')}
           </Button>

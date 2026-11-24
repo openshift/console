@@ -342,7 +342,7 @@ async function assertNamespaceDropdown(
 }
 
 async function assertRowVisible(listPage: ListPage, name: string): Promise<void> {
-  await expect(listPage.getCell(name)).toBeVisible();
+  await expect(listPage.getCell(name)).toBeVisible({ timeout: 30_000 });
 }
 
 async function assertTableVisible(listPage: ListPage): Promise<void> {

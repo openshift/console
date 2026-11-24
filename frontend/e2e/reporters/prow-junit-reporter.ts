@@ -26,7 +26,6 @@ const discouragedXMLCharacters = new RegExp(
   '[\u0000-\u0008\u000b-\u000c\u000e-\u001f\u007f-\u0084\u0086-\u009f]',
   'g',
 );
-// eslint-disable-next-line no-control-regex
 const ansiRegex = /\[[0-9;]*m/g;
 
 function stripAnsi(text: string): string {
@@ -156,7 +155,7 @@ class ProwJUnitReporter implements Reporter {
   constructor(options: ProwJUnitReporterOptions = {}) {
     this.configDir = options.configDir || process.cwd();
     this.outputFile =
-      options.outputFile || path.resolve(this.configDir, 'test-results', 'prow-junit-results.xml');
+      options.outputFile || path.resolve(this.configDir, 'test-results', 'junit-playwright.xml');
   }
 
   printsToStdio(): boolean {

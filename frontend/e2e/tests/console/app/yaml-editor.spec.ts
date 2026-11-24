@@ -123,6 +123,8 @@ test.describe('YAML Editor Settings', { tag: ['@admin', '@yaml-editor'] }, () =>
       await yamlEditorPage.openSettingsModal();
       await yamlEditorPage.selectTheme('Light');
       await yamlEditorPage.setFontSize(20);
+      // Confirm Monaco applied the font size before closing the modal.
+      await expect(yamlEditorPage.getMonacoViewLines()).toHaveCSS('font-size', '20px');
       await yamlEditorPage.closeSettingsModal();
 
       await expect(yamlEditorPage.getMonacoEditor()).toHaveClass(/\bvs(?!-)\b/);

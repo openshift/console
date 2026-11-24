@@ -9,7 +9,7 @@ import {
   ToolbarItem,
 } from '@patternfly/react-core';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
-import i18next from 'i18next';
+import * as i18next from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
@@ -186,7 +186,7 @@ export const GlobalConfigPage: FC = () => {
       isSubscribed = false;
     };
     // oauthMenuItems, editYAMLMenuItem, viewAPIExplorerMenuItem would cause infinite renders
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [clusterOperatorConfigResources, configResources, globalConfigs, t]);
   const visibleItems = items.filter(
     ({ label, description = '' }) =>

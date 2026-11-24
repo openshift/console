@@ -6,5 +6,7 @@ OpenShift Console plugin for configuring vSphere connection.
 
 ### Prerequisites
 
-- [Red Hat OpenShift](https://www.redhat.com/en/technologies/cloud-computing/openshift) **4.12+** on the vSphere platform, i.e. deployed via SaaS [cloud.redhat.com](https://cloud.redhat.com/)
+- [Red Hat OpenShift] **4.12+** on the vSphere platform, i.e. deployed via SaaS [cloud.redhat.com]
 
+[Red Hat OpenShift]: https://www.redhat.com/en/technologies/cloud-computing/openshift
+[cloud.redhat.com]: https://cloud.redhat.com/

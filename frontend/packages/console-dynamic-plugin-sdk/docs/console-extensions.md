@@ -246,7 +246,8 @@ This extension allows plugins to contribute a new type of catalog item. For exam
 | `catalogDescription` | `string \| CodeRef<ComponentType>` | yes | Description for the type specific catalog. |
 | `typeDescription` | `string` | yes | Description for the catalog item type. |
 | `sortFilterGroups` | `boolean` | yes | Determine if filter groups should be sorted alphabetically. Defaults to true. |
-| `filters` | `CatalogItemAttribute[]` | yes | Custom filters specific to the catalog item. |
+| `sortWeight` | `number` | yes | Ordering weight for this type in the catalog's type list. The console sorts types from<br/>lowest to highest weight, and then alphabetically by title, so a higher weight places<br/>the type lower in the list. Defaults to 0. |
+| `filters` | `CatalogItemAttribute[]` | yes | Custom filters specific to the catalog item. Set a filter's `filterType` to `radio` for<br/>single selection, or omit it for multiselect checkboxes. |
 | `groupings` | `CatalogItemAttribute[]` | yes | Custom groupings specific to the catalog item. |
 
 ---
@@ -262,7 +263,7 @@ This extension allows plugins to contribute extra metadata like custom filters o
 | Name | Value Type | Optional | Description |
 | ---- | ---------- | -------- | ----------- |
 | `type` | `string` | no | Type for the catalog item. |
-| `filters` | `CatalogItemAttribute[]` | yes | Custom filters specific to the catalog item. |
+| `filters` | `CatalogItemAttribute[]` | yes | Custom filters specific to the catalog item. Set a filter's `filterType` to `radio` for<br/>single selection, or omit it for multiselect checkboxes. |
 | `groupings` | `CatalogItemAttribute[]` | yes | Custom groupings specific to the catalog item. |
 
 ---
@@ -322,7 +323,7 @@ Adds a new cluster overview utilization item.
 
 ### Summary 
 
-Adds new React context provider to Console application root.
+Adds a new React context provider to Console application root.<br/><br/>Warning: This extension wraps around the entire Console shell. Adding<br/>or removing context providers via feature flags causes the entire application<br/>to re-render, which can cause loss of state in components. Use with caution.
 
 ### Properties
 
@@ -487,9 +488,10 @@ Adds a resource tile to the overview inventory card.
 
 | Name | Value Type | Optional | Description |
 | ---- | ---------- | -------- | ----------- |
-| `model` | `CodeRef<T>` | no | The model for `resource` which will be fetched. Used to get the model's `label` or `abbr`. |
+| `model` | `CodeRef<T>` | no | Resource model used for labels, list links, and the Kubernetes resource watch. |
 | `mapper` | `CodeRef<StatusGroupMapper<T, R>>` | yes | Function which maps various statuses to groups. |
 | `additionalResources` | `CodeRef<WatchK8sResources<R>>` | yes | Additional resources which will be fetched and passed to the `mapper` function. |
+| `prometheus` | `CodeRef<{ getQuery: () => string; mapper: PrometheusStatusGroupMapper; }>` | yes | Code reference to a Prometheus configuration for aggregate inventory counts and statuses.<br/>When configured, clusters with monitoring enabled use Prometheus instead of the Kubernetes<br/>watch, which uses the `mapper` and `additionalResources` properties. |
 
 ---
 
@@ -518,9 +520,10 @@ Replaces an overview inventory card.
 
 | Name | Value Type | Optional | Description |
 | ---- | ---------- | -------- | ----------- |
-| `model` | `CodeRef<T>` | no | The model for `resource` which will be fetched. Used to get the model's `label` or `abbr`. |
+| `model` | `CodeRef<T>` | no | Resource model used for labels, list links, and the Kubernetes resource watch. |
 | `mapper` | `CodeRef<StatusGroupMapper<T, R>>` | yes | Function which maps various statuses to groups. |
 | `additionalResources` | `CodeRef<WatchK8sResources<R>>` | yes | Additional resources which will be fetched and passed to the `mapper` function. |
+| `prometheus` | `CodeRef<{ getQuery: () => string; mapper: PrometheusStatusGroupMapper; }>` | yes | Code reference to a Prometheus configuration for aggregate inventory counts and statuses.<br/>When configured, clusters with monitoring enabled use Prometheus instead of the Kubernetes<br/>watch, which uses the `mapper` and `additionalResources` properties. |
 
 ---
 
@@ -550,9 +553,10 @@ Adds a resource tile to the project overview inventory card.
 
 | Name | Value Type | Optional | Description |
 | ---- | ---------- | -------- | ----------- |
-| `model` | `CodeRef<T>` | no | The model for `resource` which will be fetched. Used to get the model's `label` or `abbr`. |
+| `model` | `CodeRef<T>` | no | Resource model used for labels, list links, and the Kubernetes resource watch. |
 | `mapper` | `CodeRef<StatusGroupMapper<T, R>>` | yes | Function which maps various statuses to groups. |
 | `additionalResources` | `CodeRef<WatchK8sResources<R>>` | yes | Additional resources which will be fetched and passed to the `mapper` function. |
+| `prometheus` | `CodeRef<{ getQuery: GetProjectQuery; mapper: PrometheusStatusGroupMapper; }>` | yes | Code reference to a Prometheus configuration for aggregate inventory counts and statuses.<br/>When configured, clusters with monitoring enabled use Prometheus instead of the Kubernetes<br/>watch, which uses the `mapper` and `additionalResources` properties. |
 
 ---
 
@@ -1112,6 +1116,7 @@ Adds a tab to a horizontal nav matching the `contextId`.
 | `name` | `string` | no | The display label of the tab |
 | `href` | `string` | no | The href appended to the existing URL |
 | `component` | `CodeRef<React.ComponentType<PageComponentProps<K8sResourceCommon>>>` | no | Tab content component. |
+| `badge` | `CodeRef<React.ComponentType<{}>>` | yes | Component rendered next to the tab label. |
 
 ---
 

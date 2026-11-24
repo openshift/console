@@ -499,7 +499,6 @@ const OperandFormInputGroup: FC<OperandFormInputGroupProps> = ({ field, input })
   ) : null;
 };
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
 export const DEPRECATED_CreateOperandForm: FC<OperandFormProps> = ({
   formData,
   csv,
@@ -1106,7 +1105,7 @@ export const DEPRECATED_CreateOperandForm: FC<OperandFormProps> = ({
             className="co-alert co-break-word"
             variant="info"
             title={t(
-              'Some fields might not be displayed in this form. Select "YAML view" to edit all fields.',
+              'Some fields might not display in this form. To edit all fields, select "YAML view".',
             )}
           />
           <form className="co-dynamic-form" onSubmit={submit}>

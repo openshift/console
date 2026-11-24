@@ -32,6 +32,22 @@ export const GLOBAL_COPIED_CSV_NAMESPACE = 'openshift';
 export const NON_STANDALONE_ANNOTATION_VALUE = 'non-standalone';
 export const OPERATOR_NAMESPACE_ANNOTATION = 'olm.operatorNamespace';
 
+/** Shared Software Catalog type for Classic and OLMv1 operators. */
+export const OPERATOR_TYPE = 'operator';
+
+export enum OLMCatalogVersion {
+  OLMv0 = 'Classic Operators',
+  OLMv1 = 'Cluster extensions',
+}
+
+/** Software Catalog, pre-filtered to OLMv0 operators. */
+export const OLMV0_CATALOG_PATH = `/catalog/all-namespaces?catalogType=${OPERATOR_TYPE}&operatorCatalog=${encodeURIComponent(JSON.stringify([OLMCatalogVersion.OLMv0]))}`;
+/** Software Catalog, pre-filtered to OLMv1 operators. */
+export const OLMV1_CATALOG_PATH = `/catalog/all-namespaces?catalogType=${OPERATOR_TYPE}&operatorCatalog=${encodeURIComponent(JSON.stringify([OLMCatalogVersion.OLMv1]))}`;
+export const INSTALLED_OPERATORS_PATH = '/installed-operators';
+/** Tab href of the OLMv0 list on the Installed Operators page. */
+export const OLMV0_INSTALLED_TAB = 'classic';
+
 export const GLOBAL_OPERATOR_NAMESPACES = [
   DEFAULT_GLOBAL_OPERATOR_INSTALLATION_NAMESPACE,
   GLOBAL_COPIED_CSV_NAMESPACE,

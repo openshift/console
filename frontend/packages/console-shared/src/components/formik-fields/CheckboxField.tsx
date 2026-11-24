@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars, no-undef */
 import type { FC } from 'react';
 import { Checkbox } from '@patternfly/react-core';
 import type { CheckboxFieldProps } from './field-types';

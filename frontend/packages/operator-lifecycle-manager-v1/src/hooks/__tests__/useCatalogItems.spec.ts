@@ -4,7 +4,7 @@ import {
   getConsoleRequestHeaders,
   normalizeConsoleHeaders,
 } from '@console/shared/src/utils/console-fetch-utils';
-import useCatalogItems from '../useCatalogItems';
+import { useCatalogItems } from '../useCatalogItems';
 
 jest.mock('@console/shared/src/hooks/usePoll', () => {
   const { useEffect } = jest.requireActual('react');

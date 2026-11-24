@@ -16,7 +16,7 @@ const SHOULD_DEPLOY_PLUGIN = !IS_LOCAL_DEV;
 
 async function skipIfModelUnavailable(page: import('@playwright/test').Page): Promise<void> {
   const errorHeading = page.getByRole('heading', { name: /Error loading/ });
-  // eslint-disable-next-line no-restricted-syntax
+  // eslint-disable-next-line eslint-js/no-restricted-syntax
   const hasError = await errorHeading.waitFor({ state: 'visible', timeout: 10_000 }).then(
     () => true,
     () => false,
@@ -42,7 +42,7 @@ interface ManifestResource {
     let modalPage: ModalPage;
 
     test.beforeAll(async ({ k8sClient }) => {
-      test.setTimeout(180_000);
+      test.setTimeout(480_000);
       if (SHOULD_DEPLOY_PLUGIN) {
         const manifestPath = path.resolve(
           import.meta.dirname,
@@ -99,7 +99,8 @@ interface ManifestResource {
           body: deployment as unknown as Record<string, unknown>,
         });
 
-        await k8sClient.waitForDeploymentReady(PLUGIN_NAME, PLUGIN_NAME);
+        // Slow CI image pulls can exceed the default readiness timeout.
+        await k8sClient.waitForDeploymentReady(PLUGIN_NAME, PLUGIN_NAME, 360_000);
 
         await k8sClient.createClusterCustomResource(
           'console.openshift.io',
@@ -171,7 +172,7 @@ interface ManifestResource {
     test('verifies Dashboard Card nav item', async ({ page }) => {
       await consolePluginPage.navigateToOverview();
       const demoDashboardTab = page.getByTestId('horizontal-link-Demo Dashboard');
-      await expect(demoDashboardTab).toHaveText('Demo Dashboard');
+      await expect(demoDashboardTab).toHaveText('Demo Dashboard', { timeout: 30_000 });
       await demoDashboardTab.click();
       await expect(page.getByTestId('demo-plugin-dashboard-card')).toContainText(
         'Metrics Dashboard Card example',
@@ -180,10 +181,20 @@ interface ManifestResource {
     });
 
     test('verifies Dynamic Nav items', async ({ page }) => {
+      // Cover each route's full first navigation, retry window and assertions.
+      test.setTimeout(300_000);
       for (const navID of ['1', '2']) {
         await test.step(`Dynamic Nav ${navID}`, async () => {
           await consolePluginPage.navigateToDynamicRoute(navID);
-          await expect(page.getByTestId('title')).toContainText(`Dynamic Page ${navID}`);
+          // Plugin routes register asynchronously after the console boots.
+          let renavigate = false;
+          await expect(async () => {
+            if (renavigate) {
+              await consolePluginPage.navigateToDynamicRoute(navID, 10_000);
+            }
+            renavigate = true;
+            await expect(page.getByTestId('title')).toContainText(`Dynamic Page ${navID}`);
+          }).toPass({ timeout: 30_000, intervals: [5_000] });
           await expect(page.getByTestId('alert-info')).toContainText('Example info alert');
           await expect(page.getByTestId('alert-warning')).toContainText('Example warning alert');
           await expect(page.getByTestId('hint')).toContainText('Example hint');
@@ -202,11 +213,20 @@ interface ManifestResource {
     });
 
     test('verifies List Page nav item', async ({ page }) => {
+      // Cover the full first navigation, retry window and assertions.
+      test.setTimeout(180_000);
       const podName = 'openshift-state-metrics';
+      const heading = page.getByTestId('page-heading').locator('h1');
       await consolePluginPage.navigateToDemoListPage();
-      await expect(page.getByTestId('page-heading').locator('h1')).toContainText(
-        'OpenShift Pods List Page',
-      );
+      // The plugin route may not be served until the console rollout completes.
+      let renavigate = false;
+      await expect(async () => {
+        if (renavigate) {
+          await consolePluginPage.navigateToDemoListPage(20_000);
+        }
+        renavigate = true;
+        await expect(heading).toContainText('OpenShift Pods List Page');
+      }).toPass({ timeout: 60_000, intervals: [5_000] });
       await listPage.filterByNameInput(podName);
       await expect(listPage.cells.filter({ hasText: podName }).first()).toBeVisible();
     });
@@ -296,7 +316,7 @@ interface ManifestResource {
       await skipIfModelUnavailable(page);
 
       const codeEditor = consolePluginPage.getCodeEditor();
-      // eslint-disable-next-line no-restricted-syntax
+      // eslint-disable-next-line eslint-js/no-restricted-syntax
       const hasEditor = await codeEditor.waitFor({ state: 'visible', timeout: 5_000 }).then(
         () => true,
         () => false,

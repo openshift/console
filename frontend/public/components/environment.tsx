@@ -380,8 +380,8 @@ export const EnvironmentPage: FC<EnvironmentPageProps> = (props) => {
       ? 'containers'
       : 'buildObject',
   );
-  const [configMaps, setConfigMaps] = useState(null);
-  const [secrets, setSecrets] = useState(null);
+  const [configMaps, setConfigMaps] = useState(!addConfigMapSecret || readOnly ? {} : null);
+  const [secrets, setSecrets] = useState(!addConfigMapSecret || readOnly ? {} : null);
   const [allowed, setAllowed] = useState(!obj || _.isEmpty(obj) || !model);
   const [localErrorMessage, setLocalErrorMessage] = useState(null);
 
@@ -393,7 +393,6 @@ export const EnvironmentPage: FC<EnvironmentPageProps> = (props) => {
     // Only check RBAC if editing an existing resource. The form will always
     // be enabled when creating a new application (git import / deploy image).
     if (_.isEmpty(obj) || !model) {
-      setAllowed(true);
       return;
     }
 
@@ -415,8 +414,6 @@ export const EnvironmentPage: FC<EnvironmentPageProps> = (props) => {
   useEffect(() => {
     checkEditAccess();
     if (!addConfigMapSecret || readOnly) {
-      setConfigMaps({});
-      setSecrets({});
       return;
     }
     const envNamespace = obj?.metadata?.namespace;
@@ -446,7 +443,7 @@ export const EnvironmentPage: FC<EnvironmentPageProps> = (props) => {
         setSecrets(secs);
       })
       .catch(() => {});
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []); // eslint-disable-line react-hooks-js/exhaustive-deps
 
   /**
    * Callback for NVEditor update our state with new values
@@ -604,16 +601,14 @@ export const EnvironmentPage: FC<EnvironmentPageProps> = (props) => {
             {t('All values from existing ConfigMaps or Secrets (envFrom)')}
             {!isReadOnly && (
               <FieldLevelHelp>
-                <>
-                  {t(
-                    'Add new values by referencing an existing ConfigMap or Secret. Drag and drop environment variables within this section to change the order in which they are run.',
-                  )}
+                <Trans t={t} ns="public">
+                  Add new values by referencing an existing ConfigMap or Secret. Drag and drop
+                  environment variables within this section to change the order in which they are
+                  run.
                   <br />
-                  <strong>{t('Note:')}</strong>{' '}
-                  {t(
-                    'If identical values exist in both lists, the single value in the list above will take precedence.',
-                  )}
-                </>
+                  <strong>Note:</strong> If identical values exist in both lists, the single value
+                  in the list above will take precedence.
+                </Trans>
               </FieldLevelHelp>
             )}
           </TertiaryHeading>

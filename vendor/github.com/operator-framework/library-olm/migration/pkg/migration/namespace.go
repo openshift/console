@@ -296,7 +296,7 @@ func clearServiceAllocations(obj *unstructured.Unstructured) {
 
 // DeleteSourceNamespaceResources removes the old copies of objects that were
 // applied in a different install namespace. It runs only after the target CE
-// has reached Installed=True and the migration COS reported Available=True, so
+// has reached Installed=True and the migration COS reported Ready=True, so
 // a failed handoff retains the OLMv0 workload.
 // It intentionally does not delete the Namespace itself; that requires the
 // separate AcknowledgeNamespaceDelete opt-in.

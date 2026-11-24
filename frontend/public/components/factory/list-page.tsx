@@ -188,7 +188,6 @@ export const FireMan: FC<FireManProps & { filterList?: typeof filterList }> = (p
   } = props;
   const navigate = useNavigate();
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [expand] = useState();
 
   // Compute reduxIDs synchronously to ensure they're available immediately for filtering

@@ -77,6 +77,7 @@ const EventSink: FC<EventSinkProps> = ({
   const { revisions, associatedDeployment } = resources;
   const revisionIds = useMemo(
     () => revisions?.map((revision) => revision.metadata.uid),
+    // eslint-disable-next-line react-hooks-js/preserve-manual-memoization -- revisions comes from element.getData() (MobX-observable topology model) which the compiler cannot prove stable; the manual memo is intentional to keep a stable revisionIds identity for usePodsForRevisions
     [revisions],
   );
 
@@ -121,6 +122,7 @@ const EventSink: FC<EventSinkProps> = ({
     loadError,
     podsDeployment,
     pods,
+    // eslint-disable-next-line react-hooks-js/preserve-manual-memoization -- resource comes from element.getData() (MobX-observable topology model) which the compiler cannot prove stable; the manual memo is intentional to keep a stable donutStatus identity for the memo() PodSet child
     resource,
   ]);
 

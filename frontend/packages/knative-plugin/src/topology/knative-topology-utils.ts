@@ -6,7 +6,7 @@ import type {
   NodeModel,
 } from '@patternfly/react-topology/dist/esm/types';
 import { EdgeStyle, NodeShape } from '@patternfly/react-topology/dist/esm/types';
-import i18next from 'i18next';
+import * as i18next from 'i18next';
 import * as _ from 'lodash';
 import type { WatchK8sResultsObject } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import type { OverviewItem } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';

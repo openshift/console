@@ -7,7 +7,13 @@ type CatalogBadgesProps = {
   badges: CatalogItemBadge[];
 };
 
-const Badge = ({ color, icon, variant, text, tooltip }: CatalogItemBadge) => {
+const Badge = ({
+  color,
+  icon,
+  variant,
+  text,
+  tooltip,
+}: CatalogItemBadge & { className?: string }) => {
   const badge = (
     <Label
       className="odc-catalog-badges__label"
@@ -23,7 +29,7 @@ const Badge = ({ color, icon, variant, text, tooltip }: CatalogItemBadge) => {
 };
 
 export const CatalogBadges: FC<CatalogBadgesProps> = ({ badges }) => (
-  <div className="odc-catalog-badges">
+  <div className="odc-catalog-badges" data-test="catalog-badges">
     {badges?.map((badge) => (
       <Badge key={badge.text} {...badge} />
     ))}

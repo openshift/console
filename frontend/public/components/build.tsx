@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useMemo, Suspense } from 'react';
+import { useMemo, useState, Suspense } from 'react';
 import {
   Alert,
   Grid,
@@ -86,13 +86,18 @@ export const BuildNumberLink = ({ build }) => {
 const BuildMetrics = ({ obj }) => {
   const { t } = useTranslation('public');
   const podName = obj.metadata.annotations?.['openshift.io/build.pod-name'];
-  const endTime = useMemo(
-    () =>
-      obj.status.completionTimestamp
-        ? new Date(obj.status.completionTimestamp).getTime()
-        : Date.now(),
-    [obj.status.completionTimestamp],
+  // Sample "now" once while the build is still running (no completion
+  // timestamp yet) and re-derive when it completes.
+  const { completionTimestamp } = obj.status;
+  const [endTime, setEndTime] = useState(() =>
+    completionTimestamp ? new Date(completionTimestamp).getTime() : Date.now(),
   );
+  const [prevCompletionTimestamp, setPrevCompletionTimestamp] = useState(completionTimestamp);
+  if (prevCompletionTimestamp !== completionTimestamp) {
+    setPrevCompletionTimestamp(completionTimestamp);
+    // Pass an updater so that Date.now() is not evaluated directly during render
+    setEndTime(() => (completionTimestamp ? new Date(completionTimestamp).getTime() : Date.now()));
+  }
   const runTime = obj.status.startTimestamp
     ? endTime - new Date(obj.status.startTimestamp).getTime()
     : ONE_HOUR;

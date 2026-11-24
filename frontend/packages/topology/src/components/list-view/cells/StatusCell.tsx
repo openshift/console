@@ -62,8 +62,8 @@ const StatusCellResourceStatus: FC<StatusCellResourceStatus> = ({ obj, podData }
     <span className="pf-v6-u-text-color-subtle">{t('Rollout in progress...')}</span>
   ) : (
     <StatusCellResourceLink
-      desired={obj.spec.replicas}
-      ready={obj.status.replicas}
+      desired={obj.spec?.replicas}
+      ready={obj.status?.replicas}
       resource={podData.current ? podData.current.obj : obj}
     />
   );

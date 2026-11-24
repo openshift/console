@@ -4,10 +4,10 @@ import { Button, EmptyState, EmptyStateBody, EmptyStateFooter } from '@patternfl
 import { Base64 } from 'js-base64';
 import { useTranslation } from 'react-i18next';
 import { getImpersonate } from '@console/dynamic-plugin-sdk';
+import { WSFactory } from '@console/dynamic-plugin-sdk/src/utils/k8s/ws-factory';
 import { PodModel } from '@console/internal/models';
 import { takeDetachedWebSocket } from '@console/internal/module/detached-ws-registry';
 import { resourceURL } from '@console/internal/module/k8s';
-import { WSFactory } from '@console/internal/module/ws-factory';
 import { FLAGS } from '@console/shared/src/constants/common';
 import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
@@ -36,7 +36,9 @@ const DetachedPodExec: FC<DetachedPodExecProps> = ({
 }) => {
   const [wsOpen, setWsOpen] = useState(false);
   const [wsError, setWsError] = useState<string>();
-  const [reconnecting, setReconnecting] = useState(false);
+  // Incremented when the user reconnects after an error, forcing the
+  // websocket effect below to re-run.
+  const [reconnectCount, setReconnectCount] = useState<number>(0);
   const ws = useRef<WSFactory>(undefined);
   const terminal = useRef<ImperativeTerminalType>(undefined);
   const { t } = useTranslation('webterminal-plugin');
@@ -88,6 +90,7 @@ const DetachedPodExec: FC<DetachedPodExecProps> = ({
       ws.current?.destroy();
       ws.current = websocket;
       if (!unmounted) {
+        // eslint-disable-next-line react-hooks-js/set-state-in-effect -- wsOpen marks the transferred WebSocket session as active; taking ownership of the detached session (takeDetachedWebSocket) is a one-time side effect that can only run in this effect, so the state cannot be derived during render
         setWsOpen(true);
         setTimeout(() => {
           websocket.send(`0${Base64.encode('\n')}`);
@@ -168,14 +171,12 @@ const DetachedPodExec: FC<DetachedPodExecProps> = ({
       }
     }
 
-    setReconnecting(false);
-
     return () => {
       unmounted = true;
       websocket.destroy();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [podName, namespace, containerName, command, isOpenShift, t, reconnecting]);
+    // eslint-disable-next-line react-hooks-js/exhaustive-deps
+  }, [podName, namespace, containerName, command, isOpenShift, t, reconnectCount]);
 
   if (wsError) {
     return (
@@ -187,7 +188,7 @@ const DetachedPodExec: FC<DetachedPodExecProps> = ({
               variant="primary"
               onClick={() => {
                 setWsError(undefined);
-                setReconnecting(true);
+                setReconnectCount((count) => count + 1);
               }}
             >
               {t('webterminal-plugin~Reconnect to terminal')}

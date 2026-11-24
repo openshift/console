@@ -60,6 +60,10 @@ test.describe('Pod log viewer', { tag: ['@admin'] }, () => {
     const listPage = new ListPage(page);
     const detailsPage = new DetailsPage(page);
     const logsPage = new LogsPage(page);
+    const readLineCount = async (): Promise<number> => {
+      const text = await logsPage.lineCount.textContent();
+      return parseInt(text?.match(/(\d+)\s*lines/)?.[1] ?? '0', 10);
+    };
 
     await test.step('Navigate to kube-apiserver pods', async () => {
       await page.goto('/k8s/ns/openshift-kube-apiserver/core~v1~Pod');
@@ -73,12 +77,15 @@ test.describe('Pod log viewer', { tag: ['@admin'] }, () => {
 
     await test.step('Verify default log buffer size', async () => {
       await detailsPage.selectTab('Logs');
-      await expect(logsPage.lineCount).toContainText('1000 lines');
+      // The count covers up to 1000 buffered lines plus one in-progress line.
+      await expect.poll(readLineCount, { timeout: 30_000 }).toBeGreaterThanOrEqual(1000);
+      expect(await readLineCount()).toBeLessThanOrEqual(1001);
     });
 
     await test.step('Verify full log exceeds default buffer', async () => {
       await logsPage.clickShowFullLog();
-      await expect(logsPage.lineCount).not.toContainText('1000 lines', { timeout: 30_000 });
+      // The full log has no tail limit.
+      await expect.poll(readLineCount, { timeout: 30_000 }).toBeGreaterThan(1001);
     });
   });
 

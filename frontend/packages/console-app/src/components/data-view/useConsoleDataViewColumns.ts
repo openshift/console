@@ -283,7 +283,6 @@ export const useConsoleDataViewColumns = <TData, TCustomRowData>(
             }
           } catch (error) {
             // One plugin's cell renderer must not prevent the other columns from rendering.
-            // eslint-disable-next-line no-console
             console.error(
               `Unable to render table column ${id} from ${extension.pluginName}`,
               error,
