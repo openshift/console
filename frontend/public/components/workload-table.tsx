@@ -12,6 +12,7 @@ import type {
   ConsoleDataViewRow,
   RowProps,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { selectorToString } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import {
   LazyActionMenu,
@@ -20,6 +21,7 @@ import {
 import { DASH } from '@console/shared/src/constants/ui';
 import type { K8sResourceKind } from '../module/k8s';
 import { referenceForModel } from '../module/k8s';
+import { sortResourceByValue } from './factory/Table/sort';
 import { LabelList } from './utils/label-list';
 import { ResourceLink, resourcePath } from './utils/resource-link';
 import { Selector } from './utils/selector';
@@ -61,7 +63,7 @@ export const WorkloadTableHeader = () => [
   },
   {
     title: i18next.t('public~Pod selector'),
-    sortField: 'spec.selector',
+    sortFunc: 'selectorSort',
     transforms: [sortable],
     props: { className: tableColumnClasses[4] },
   },
@@ -186,7 +188,10 @@ export const useWorkloadColumns = <T extends K8sResourceKind>(): {
       {
         title: t('Pod selector'),
         id: tableColumnInfo[4].id,
-        sort: 'spec.selector',
+        sort: (data, direction) =>
+          data.sort(
+            sortResourceByValue(direction, (obj) => selectorToString(obj.spec?.selector ?? {})),
+          ),
         props: {
           modifier: 'nowrap' as const,
         },
