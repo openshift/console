@@ -128,6 +128,7 @@ test.describe('Classic Operators', { tag: ['@admin'], lock: OLM_CLUSTER_STATE_LO
           .getByTestId('page-heading')
           .getByRole('heading', { name: 'Installed Operators', exact: true }),
       ).toBeVisible({ timeout: CATALOG_READY_TIMEOUT });
+      await expect(page.getByTestId('namespace-bar-dropdown')).toHaveCount(1);
       const tabs = page.getByRole('tab');
       await expect(tabs.first()).toContainText('Cluster extensions');
       await expect(tabs.first()).toHaveAttribute('aria-selected', 'true');
@@ -162,6 +163,7 @@ test.describe('Classic Operators', { tag: ['@admin'], lock: OLM_CLUSTER_STATE_LO
         'true',
         { timeout: CATALOG_READY_TIMEOUT },
       );
+      await expect(page.getByTestId('namespace-bar-dropdown')).toHaveCount(1);
       await expect(page.getByTestId('classic-operator-migration-alert')).toBeVisible({
         timeout: CATALOG_READY_TIMEOUT,
       });
@@ -182,6 +184,7 @@ test.describe('Classic Operators', { tag: ['@admin'], lock: OLM_CLUSTER_STATE_LO
         'true',
         { timeout: CATALOG_READY_TIMEOUT },
       );
+      await expect(page.getByTestId('namespace-bar-dropdown')).toHaveCount(1);
     },
   );
 

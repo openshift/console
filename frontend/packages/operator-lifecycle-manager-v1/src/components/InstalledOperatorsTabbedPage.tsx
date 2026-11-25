@@ -5,9 +5,10 @@ import { NamespaceBar } from '@console/internal/components/namespace-bar';
 import { INSTALLED_OPERATORS_PATH } from '@console/operator-lifecycle-manager/src/const';
 import { MultiTabListPage } from '@console/shared/src/components/multi-tab-list/MultiTabListPage';
 
-type InstalledOperatorsTabbedPageProps = {
+interface InstalledOperatorsTabbedPageProps {
   activeTab?: string;
-};
+  showNamespaceBar?: boolean;
+}
 
 /**
  * Installed operators split across an OLMv1 and a OLMv0 tab. Each plugin
@@ -15,6 +16,7 @@ type InstalledOperatorsTabbedPageProps = {
  */
 export const InstalledOperatorsTabbedPage: FC<InstalledOperatorsTabbedPageProps> = ({
   activeTab,
+  showNamespaceBar = true,
 }) => {
   const { t } = useTranslation('olm-v1');
   const { ns } = useParams<{ ns?: string }>();
@@ -23,7 +25,7 @@ export const InstalledOperatorsTabbedPage: FC<InstalledOperatorsTabbedPageProps>
 
   return (
     <>
-      <NamespaceBar />
+      {showNamespaceBar && <NamespaceBar />}
       <MultiTabListPage
         activeTab={activeTab}
         basePath={basePath}
