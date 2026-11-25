@@ -118,7 +118,6 @@ export const loadAndEnablePlugin = async (
       // `retryReason` is an allowlisted status or static label. Do not log
       // `error`: an HttpError carries the response and JSON body, and a
       // TimeoutError carries the request URL.
-      // eslint-disable-next-line no-console
       console.warn(
         `[loadAndEnablePlugin] ${pluginName} manifest fetch failed (attempt ${attempt}/${PLUGIN_MANIFEST_MAX_ATTEMPTS}, ${retryReason}), retrying`,
       );
