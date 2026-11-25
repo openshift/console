@@ -56,11 +56,11 @@ export const CronJobActionFactory: ResourceActionFactory = {
           console.error('Failed to start a Job.', error);
         });
     },
-    // The created object is a Job. Review create on jobs, as 5.0 does.
+    // The created object is a Job named <cronjob>-<timestamp>. POST /jobs is
+    // authorized as create with an empty name, so do not send the CronJob name.
     accessReview: {
-      group: kind.apiGroup,
+      group: JobModel.apiGroup,
       resource: JobModel.plural,
-      name: obj.metadata?.name,
       namespace: obj.metadata?.namespace,
       verb: 'create',
     },

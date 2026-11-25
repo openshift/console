@@ -19,7 +19,6 @@ describe('CronJob Start Job action', () => {
     expect(action.accessReview).toEqual({
       group: JobModel.apiGroup,
       resource: JobModel.plural,
-      name: 'test-cj',
       namespace: 'openshift-cluster-validation',
       verb: 'create',
     });
