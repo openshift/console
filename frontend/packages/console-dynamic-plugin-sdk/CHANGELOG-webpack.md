@@ -10,14 +10,20 @@ Console, use `4.x.0-prerelease.n` packages.
 For older 1.x plugin SDK packages, refer to "OpenShift Console Versions vs SDK Versions"
 compatibility table in [Console dynamic plugins README](./README.md).
 
-## 5.1.0-prerelease.2 - TBD
+## 5.1.0 - 2026-12-14
 
+> Initial release for OCP Console 5.1.
+
+- **Deprecated**: `ConsoleRemotePlugin` shared dynamic module option `modulePaths` is now
+  deprecated, prefer using `baseDir` ([CONSOLE-5065], [#17439])
 - Add `react-dom` and `react/jsx-runtime` to Console provided shared modules ([CONSOLE-5571],
   [#17462])
 - `ConsoleRemotePlugin` uses `meta/shared-modules.json` to validate shared module dependencies
   ([CONSOLE-5065], [#17439])
-- **Deprecated**: `ConsoleRemotePlugin` shared dynamic module option `modulePaths` is now
-  deprecated, prefer using `baseDir` ([CONSOLE-5065], [#17439])
+- Add `ConsoleRemotePlugin` option `baseDir` to support multi-plugin builds ([OCPBUGS-111520],
+  [#17002])
+- Expand PatternFly CSS package list to include `@patternfly/patternfly` ([#17029])
+- Warn when the plugin has a direct dependency on PatternFly CSS packages ([#17029])
 
 ## 5.1.0-prerelease.1 - 2026-10-16
 
@@ -241,6 +247,7 @@ compatibility table in [Console dynamic plugins README](./README.md).
 [#16752]: https://github.com/openshift/console/pull/16752
 [#16978]: https://github.com/openshift/console/pull/16978
 [#17002]: https://github.com/openshift/console/pull/17002
+[#17029]: https://github.com/openshift/console/pull/17029
 [#17140]: https://github.com/openshift/console/pull/17140
 [#17259]: https://github.com/openshift/console/pull/17259
 [#17318]: https://github.com/openshift/console/pull/17318

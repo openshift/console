@@ -70,6 +70,9 @@ export const getJSDoc = (node: ts.Node): ts.JSDoc[] =>
 export const hasDeprecationJSDoc = (node: ts.Declaration): boolean =>
   getJSDoc(node).some((d) => d.tags && d.tags.find((t) => t.tagName.text === 'deprecated'));
 
+export const hasInternalJSDoc = (node: ts.Declaration): boolean =>
+  getJSDoc(node).some((d) => d.tags && d.tags.find((t) => t.tagName.text === 'internal'));
+
 const getCommentText = (comment: string | ts.NodeArray<ts.JSDocComment>): string =>
   typeof comment === 'string'
     ? comment

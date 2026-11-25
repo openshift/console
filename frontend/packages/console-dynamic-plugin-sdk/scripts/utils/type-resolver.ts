@@ -8,6 +8,7 @@ import {
   getJSDocComments,
   printJSDocComments,
   hasDeprecationJSDoc,
+  hasInternalJSDoc,
 } from './typescript';
 
 export type ConsoleTypeDeclarations = Record<'CodeRef' | 'EncodedCodeRef', ts.Declaration>;
@@ -26,6 +27,8 @@ type ExtensionPropertyInfo = {
   valueType: string;
   /** If `true`, this property has the optional modifier. */
   optional: boolean;
+  /** True if `@internal` JSDoc tag is present on the AST node. */
+  isInternal: boolean;
 } & ContainsJSDoc;
 
 export type ExtensionTypeInfo = {
@@ -96,6 +99,7 @@ const parseExtensionTypeInfo = (
         optional: !!(p.flags & ts.SymbolFlags.Optional),
         docComments: getJSDocComments(declaration),
         isDeprecated: hasDeprecationJSDoc(declaration),
+        isInternal: hasInternalJSDoc(declaration),
       };
     });
 
