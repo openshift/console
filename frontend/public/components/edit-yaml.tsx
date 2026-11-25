@@ -787,7 +787,10 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
 
   useEffect(() => {
     editorMounted && getEditor()?.updateOptions({ hover: { enabled: showTooltips } });
-    editorMounted && getEditor()?.updateOptions({ stickyScroll: { enabled: stickyScrollEnabled } });
+    editorMounted &&
+      getEditor()?.updateOptions({
+        stickyScroll: { enabled: stickyScrollEnabled },
+      });
   }, [showTooltips, stickyScrollEnabled, editorMounted]);
 
   if ((!create && !props.obj) || !resolvedTemplates) {
@@ -807,7 +810,11 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
   }
 
   const readOnly = props.readOnly || notAllowed;
-  const options: CodeEditorProps['options'] = { fontSize, readOnly, scrollBeyondLastLine: false };
+  const options: CodeEditorProps['options'] = {
+    fontSize,
+    readOnly,
+    scrollBeyondLastLine: false,
+  };
   const definition = model ? definitionFor(model) : { properties: [] };
   const showSchema = definition && !_.isEmpty(definition.properties);
   const hasSidebarContent = showSchema || (create && !_.isEmpty(samples)) || !_.isEmpty(snippets);
@@ -824,7 +831,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
   const settingsModal = (
     <EditYamlSettingsModal
       key="edit-yaml-settings-modal"
-      appendTo={() => (isFullscreen ? fullscreenRef.current : document.body)}
+      appendTo={() => (isFullscreen ? fullscreenRef.current || document.body : document.body)}
     />
   );
 
@@ -885,7 +892,9 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
                     : [settingsModal, fullscreenButton]
                 }
                 onChange={onChange}
-                onSave={() => (allowMultiple ? saveAll() : save())}
+                onSave={() => {
+                  allowMultiple ? saveAll() : save();
+                }}
                 onEditorDidMount={() => setEditorMounted(true)}
                 onCodeChange={onCodeChange}
               />
@@ -936,7 +945,9 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
                       variant="primary"
                       id="save-changes"
                       data-test="save-changes"
-                      onClick={() => save()}
+                      onClick={() => {
+                        save();
+                      }}
                     >
                       {t('Save')}
                     </Button>
@@ -957,6 +968,9 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
                     id="cancel"
                     data-test="cancel"
                     onClick={() => {
+                      if (isFullscreen) {
+                        toggleFullscreen();
+                      }
                       onCancel();
                       dispatch(closeOLS());
                     }}
