@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useEffect } from 'react';
+import { memo, useEffect } from 'react';
 import type { ExtensionHook, Action } from '@console/dynamic-plugin-sdk';
 
 type ActionsHookResolverProps = {
@@ -10,6 +10,14 @@ type ActionsHookResolverProps = {
   onValueError: (error: any) => void;
 };
 
+/**
+ * Resolves a single action provider hook and reports its value.
+ *
+ * Memoized so it only re-renders (re-running the provider hook) when its scope
+ * or the provider itself changes. Provider hooks may return new value
+ * identities on every run, so re-running them in response to unrelated state
+ * updates creates a self-sustaining setState loop.
+ */
 const ActionsHookResolver: FC<ActionsHookResolverProps> = ({
   useValue,
   scope,
@@ -33,4 +41,4 @@ const ActionsHookResolver: FC<ActionsHookResolverProps> = ({
   return null;
 };
 
-export default ActionsHookResolver;
+export default memo(ActionsHookResolver);

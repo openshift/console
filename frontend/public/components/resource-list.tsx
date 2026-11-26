@@ -52,9 +52,22 @@ const InnerResourceListPage = connectToPlural(
       );
     }
     const ref = referenceForModel(kindObj);
-    const componentLoader =
-      getResourceListPages(resourceListPageExtensions).get(ref) ??
-      (() => Promise.resolve(DefaultPage));
+    const pluginLoader = getResourceListPages(resourceListPageExtensions).get(ref);
+    // A plugin-provided list page that fails to load must not leave the page
+    // stuck on its loading spinner; fall back to the default list page.
+    const componentLoader = pluginLoader
+      ? async () => {
+          try {
+            return await pluginLoader();
+          } catch (e) {
+            console.warn(
+              `Failed to load list page for ${ref}, falling back to the default page`,
+              e,
+            );
+            return DefaultPage;
+          }
+        }
+      : () => Promise.resolve(DefaultPage);
 
     return (
       <div className="co-m-list">
@@ -106,6 +119,22 @@ const InnerResourceDetailsPage = connectToPlural((props: ResourceDetailsPageProp
     );
   const defaultPage = () => Promise.resolve(DefaultDetailsPage);
 
+  // A plugin-provided details page that fails to load must not leave the page
+  // stuck on its loading spinner; fall back to the default details page.
+  const loader = componentLoader
+    ? async () => {
+        try {
+          return await componentLoader();
+        } catch (e) {
+          console.warn(
+            `Failed to load details page for ${ref}, falling back to the default page`,
+            e,
+          );
+          return DefaultDetailsPage;
+        }
+      }
+    : defaultPage;
+
   const titleProviderValues = {
     telemetryPrefix: props.kindObj?.kind,
     titlePrefix: `${props.params.name} · ${getTitleForNodeKind(props.kindObj?.kind)}`,
@@ -114,7 +143,7 @@ const InnerResourceDetailsPage = connectToPlural((props: ResourceDetailsPageProp
   return (
     <PageTitleContext.Provider value={titleProviderValues}>
       <AsyncComponent
-        loader={componentLoader || defaultPage}
+        loader={loader}
         namespace={ns}
         kind={props.modelRef}
         kindObj={kindObj}

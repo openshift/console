@@ -43,25 +43,25 @@ const DropdownWithSwitchToggle: FC<DropdownWithSwitchToggleProps> = ({
 
   return (
     <div ref={containerRef}>
+      <MenuToggle
+        isDisabled={isDisabled}
+        isFullWidth={isFullWidth}
+        isExpanded={isOpen}
+        onClick={() => onToggle(!isOpen)}
+        ref={toggleRef}
+        data-test="dropdown-with-switch-toggle"
+      >
+        {label}
+      </MenuToggle>
       <Popper
         appendTo={() => containerRef.current}
         direction="down"
         enableFlip={false}
         isVisible={isOpen}
-        popper={<>{menu}</>} // fragment is necessary to avoid a bug in PatternFly v5 Popper
+        popper={menu}
+        popperRef={menuRef}
         position="left"
-        trigger={
-          <MenuToggle
-            isDisabled={isDisabled}
-            isFullWidth={isFullWidth}
-            isExpanded={isOpen}
-            onClick={() => onToggle(!isOpen)}
-            ref={toggleRef}
-            data-test="dropdown-with-switch-toggle"
-          >
-            {label}
-          </MenuToggle>
-        }
+        triggerRef={toggleRef}
       />
     </div>
   );

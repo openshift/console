@@ -66,7 +66,7 @@ export const ActionServiceProvider: FC<ActionServiceProviderProps> = ({ context,
           key={contextId}
           contextId={contextId}
           scope={contextMap[contextId]}
-          onActionsLoaded={(value) => onActionsLoaded(value, contextId)}
+          onActionsLoaded={onActionsLoaded}
           onContextChange={onContextChange}
           onLoadError={setLoadError}
         />

@@ -99,6 +99,7 @@ export const ActionMenu: FC<ActionMenuProps> = ({
         <Popper
           triggerRef={toggleRef}
           popper={menu}
+          popperRef={menuRef}
           placement="bottom-end"
           isVisible={isOpen}
           appendTo={appendTo || (() => containerRef.current)}
