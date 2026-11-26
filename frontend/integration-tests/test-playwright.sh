@@ -5,9 +5,9 @@
 # Playwright's --project flag (project names match the `packages` array in playwright.config.ts).
 #
 # Usage (from repo frontend/):
-#   ./integration-tests/test-playwright.sh [playwright test args...]
-#   ./integration-tests/test-playwright.sh --project=helm
-#   ./integration-tests/test-playwright.sh --project=smoke
+#   ./integration-tests/test-playwright.sh -- [playwright test args...]
+#   ./integration-tests/test-playwright.sh -- --project=helm
+#   ./integration-tests/test-playwright.sh -- --project=smoke
 #   ./integration-tests/test-playwright.sh -c [--] [playwright test args...]
 #
 # -c  Run contrib/create-user.sh before tests.
@@ -47,6 +47,13 @@ while getopts "c" flag; do
 done
 shift $((OPTIND - 1))
 
+if [ "$RUN_CREATE_USER" = true ]; then
+  source "${REPO_ROOT}/contrib/create-user.sh"
+  export BRIDGE_HTPASSWD_IDP="${BRIDGE_HTPASSWD_IDP:-test}"
+  export BRIDGE_HTPASSWD_USERNAME="${BRIDGE_HTPASSWD_USERNAME:-test}"
+  export BRIDGE_HTPASSWD_PASSWORD="${BRIDGE_HTPASSWD_PASSWORD:-test}"
+fi
+
 if [ -z "${BRIDGE_KUBEADMIN_PASSWORD:-}" ]; then
   pass_file="${KUBEADMIN_PASSWORD_FILE:-${INSTALLER_DIR}/auth/kubeadmin-password}"
   if [ -f "$pass_file" ]; then
@@ -71,13 +78,6 @@ fi
 BRIDGE_BASE_PATH=${BRIDGE_BASE_PATH:-/}
 export BRIDGE_BASE_PATH
 export WEB_CONSOLE_URL="${WEB_CONSOLE_URL:-${BRIDGE_BASE_ADDRESS}${BRIDGE_BASE_PATH}}"
-
-if [ "$RUN_CREATE_USER" = true ]; then
-  "${REPO_ROOT}/contrib/create-user.sh"
-  export BRIDGE_HTPASSWD_IDP="${BRIDGE_HTPASSWD_IDP:-test}"
-  export BRIDGE_HTPASSWD_USERNAME="${BRIDGE_HTPASSWD_USERNAME:-test}"
-  export BRIDGE_HTPASSWD_PASSWORD="${BRIDGE_HTPASSWD_PASSWORD:-test}"
-fi
 
 FRONTEND_ABS="$(pwd)"
 playwright_bin="${FRONTEND_ABS}/node_modules/.bin/playwright"

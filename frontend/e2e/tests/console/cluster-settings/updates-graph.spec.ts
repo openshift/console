@@ -91,7 +91,7 @@ const clusterVersionWithGraphData = {
   },
 };
 
-test.describe('Cluster Settings updates graph', { tag: ['@admin'] }, () => {
+test.describe('Cluster Settings updates graph', { tag: ['@admin', '@standalone'] }, () => {
   test('displays updates graph with available updates across channels', async ({ page }) => {
     const clusterSettings = new ClusterSettingsPage(page);
 

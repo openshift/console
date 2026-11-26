@@ -3,7 +3,7 @@ import { test } from '../../../fixtures';
 import { OAuthPage } from '../../../pages/oauth-page';
 import type KubernetesClient from '../../../clients/kubernetes-client';
 
-test.describe('OAuth', { tag: ['@admin'] }, () => {
+test.describe('OAuth', { tag: ['@admin', '@standalone'] }, () => {
   let client: KubernetesClient;
   let originalOAuthConfig: any;
   const testPrefix = `e2e-${Date.now()}`;

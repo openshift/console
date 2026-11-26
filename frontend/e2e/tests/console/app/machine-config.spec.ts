@@ -7,7 +7,7 @@ const MC_WITHOUT_CONFIG_FILES = '99-master-ssh';
 const MC_DETAILS_PAGE_URL = '/k8s/cluster/machineconfiguration.openshift.io~v1~MachineConfig/';
 const MC_SECTION_HEADING = 'section-heading-Configuration files';
 
-test.describe('MachineConfig resource details page', () => {
+test.describe('MachineConfig resource details page', { tag: ['@standalone'] }, () => {
   test(`${MC_WITH_CONFIG_FILES} displays configuration files`, async ({ page, k8sClient }) => {
     const detailsPage = new DetailsPage(page);
 

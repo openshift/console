@@ -86,6 +86,33 @@ const routes: RouteConfig[] = [
     path: '/k8s/cluster/user.openshift.io~v1~User',
   },
   {
+    path: '/k8s/all-namespaces/monitoring.coreos.com~v1~Alertmanager',
+    assertLoaded: assertLoadedListPage,
+  },
+  {
+    path: '/k8s/ns/openshift-monitoring/monitoring.coreos.com~v1~Alertmanager/main',
+    assertLoaded: async (page) => {
+      await expect(page.getByTestId('resource-title')).toBeVisible();
+    },
+  },
+  {
+    path: '/settings/cluster',
+    assertLoaded: async (page) => {
+      await expect(page.getByTestId('cluster-version')).toBeVisible();
+    },
+  },
+  {
+    path: '/search/all-namespaces?kind=config.openshift.io~v1~Console',
+    assertLoaded: assertLoadedListPage,
+  },
+];
+
+// Routes that require a standalone control plane: the MCO and the machine
+// API (HyperShift removes the MachineAPI capability from guests and manages
+// their compute through NodePools) do not run on hosted clusters, so these
+// APIs are absent. The platform monitoring stack does run on guests.
+const standaloneRoutes: RouteConfig[] = [
+  {
     path: '/k8s/ns/openshift-machine-api/machine.openshift.io~v1beta1~Machine',
     assertLoaded: assertLoadedListPage,
   },
@@ -115,30 +142,10 @@ const routes: RouteConfig[] = [
     path: '/k8s/cluster/machineconfiguration.openshift.io~v1~MachineConfigPool',
     assertLoaded: assertLoadedListPage,
   },
-  {
-    path: '/k8s/all-namespaces/monitoring.coreos.com~v1~Alertmanager',
-    assertLoaded: assertLoadedListPage,
-  },
-  {
-    path: '/k8s/ns/openshift-monitoring/monitoring.coreos.com~v1~Alertmanager/main',
-    assertLoaded: async (page) => {
-      await expect(page.getByTestId('resource-title')).toBeVisible();
-    },
-  },
-  {
-    path: '/settings/cluster',
-    assertLoaded: async (page) => {
-      await expect(page.getByTestId('cluster-version')).toBeVisible();
-    },
-  },
-  {
-    path: '/search/all-namespaces?kind=config.openshift.io~v1~Console',
-    assertLoaded: assertLoadedListPage,
-  },
 ];
 
-test.describe('Visiting other routes', { tag: ['@admin', '@smoke'] }, () => {
-  for (const route of routes) {
+function routeTests(routeList: RouteConfig[]): void {
+  for (const route of routeList) {
     test(`successfully displays view for route: ${route.path.replace(/\//g, ' ')}`, async ({
       page,
     }) => {
@@ -157,7 +164,19 @@ test.describe('Visiting other routes', { tag: ['@admin', '@smoke'] }, () => {
       await testA11y(page, `route ${route.path.replace(/\//g, ' ')}`);
     });
   }
+}
+
+test.describe('Visiting other routes', { tag: ['@admin', '@smoke'] }, () => {
+  routeTests(routes);
 });
+
+test.describe(
+  'Visiting standalone-only routes',
+  { tag: ['@admin', '@smoke', '@standalone'] },
+  () => {
+    routeTests(standaloneRoutes);
+  },
+);
 
 test.describe('Perspective query parameters', { tag: ['@admin'] }, () => {
   let patchedPerspectives = false;

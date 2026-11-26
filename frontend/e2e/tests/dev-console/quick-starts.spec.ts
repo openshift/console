@@ -1,3 +1,4 @@
+import KubernetesClient from '../../clients/kubernetes-client';
 import { test, expect } from '../../fixtures';
 import { warmupSPA } from '../../pages/base-page';
 import { QuickStartsPage } from '../../pages/dev-console/quick-starts-page';
@@ -40,11 +41,15 @@ test.describe('Quick Starts - Developer Perspective', { tag: ['@dev-console'] },
     page,
     k8sClient,
   }) => {
-    await k8sClient.patchConfigMap('user-settings-kubeadmin', 'openshift-console-user-settings', {
-      'console.quickstart.allStates': JSON.stringify({
-        'sample-application': { status: 'Complete', taskNumber: 0 },
-      }),
-    });
+    await k8sClient.patchConfigMap(
+      KubernetesClient.userSettingsConfigMapName(process.env.OPENSHIFT_USERNAME || 'kubeadmin'),
+      'openshift-console-user-settings',
+      {
+        'console.quickstart.allStates': JSON.stringify({
+          'sample-application': { status: 'Complete', taskNumber: 0 },
+        }),
+      },
+    );
     await warmupSPA(page);
     const quickStarts = new QuickStartsPage(page);
     await quickStarts.navigateToCatalog();
