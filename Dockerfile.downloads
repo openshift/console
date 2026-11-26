@@ -18,14 +18,13 @@ FROM registry.access.redhat.com/ubi9/ubi-minimal:latest
 RUN mkdir -p /opt/downloads
 
 COPY --from=gobuilder /go/src/github.com/openshift/console/bin/downloads /opt/downloads
-COPY --from=gobuilder /go/src/github.com/openshift/console/cmd/downloads/config/defaultArtifactsConfig.yaml /opt/downloads
 COPY --from=origincli /usr/share/openshift /usr/share/openshift
 
 WORKDIR /
 
 # doesn't require a root user.
 USER 1001
-CMD ["/opt/downloads/downloads",  "--config-path=/opt/downloads/defaultArtifactsConfig.yaml"]
+CMD ["/opt/downloads/downloads"]
 
 LABEL \
         io.k8s.display-name="CLI Artifacts Downloads Server" \
