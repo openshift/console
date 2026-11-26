@@ -17,6 +17,7 @@ import (
 	"github.com/openshift/console/cmd/bridge/config/session"
 	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/auth/csrfverifier"
+	"github.com/openshift/console/pkg/auth/httpclient"
 	"github.com/openshift/console/pkg/auth/oauth2"
 	"github.com/openshift/console/pkg/auth/static"
 	"github.com/openshift/console/pkg/flags"
@@ -42,6 +43,18 @@ type AuthOptions struct {
 
 	InactivityTimeoutSeconds int
 	LogoutRedirect           string
+
+	// Proxy is the resolved auth.proxy configuration. It is nil when neither the
+	// config file nor any CLI flag provides it, which allows environment fallback.
+	// A non-nil empty value explicitly disables proxying. Populated by ApplyConfig.
+	Proxy *serverconfig.AuthProxy
+
+	// CLI flags for Proxy. They track whether they were explicitly set, even to
+	// an empty value, so that "absent" and "explicitly empty" stay distinct.
+	httpProxy   optionalString
+	httpsProxy  optionalString
+	noProxy     optionalStringSlice
+	proxyCAFile optionalString
 }
 
 type CompletedOptions struct {
@@ -62,6 +75,8 @@ type completedOptions struct {
 
 	InactivityTimeoutSeconds int
 	LogoutRedirectURL        *url.URL
+
+	Proxy *httpclient.ProxyConfig
 }
 
 func NewAuthOptions() *AuthOptions {
@@ -77,6 +92,11 @@ func (c *AuthOptions) AddFlags(fs *flag.FlagSet) {
 	fs.StringVar(&c.CAFilePath, "user-auth-oidc-ca-file", "", "Path to a PEM file for the OIDC/OAuth2 issuer CA.")
 	fs.StringVar(&c.OCLoginCommand, "user-auth-oidc-oc-login-command", "", "External OIDC OC login command which will be displayed in the console 'Copy Login Command' dialog.")
 	fs.StringVar(&c.StaticUserBearerToken, "k8s-auth-bearer-token", "", "DEV ONLY. Static user token to be used when authentication is disabled. Can only be used with --user-auth=\"disabled\".")
+
+	fs.Var(&c.httpProxy, "user-auth-oidc-http-proxy", "Proxy URL for plain HTTP OIDC traffic. Setting any --user-auth-oidc-*-proxy flag, even to an empty value, disables the environment proxy fallback for OIDC traffic. Only used with --user-auth=oidc.")
+	fs.Var(&c.httpsProxy, "user-auth-oidc-https-proxy", "Proxy URL for HTTPS OIDC traffic. Setting an empty value explicitly disables proxying for HTTPS. Only used with --user-auth=oidc.")
+	fs.Var(&c.noProxy, "user-auth-oidc-no-proxy", "Comma-separated list of hosts, domains or CIDRs for which OIDC traffic bypasses the proxy. Only used with --user-auth=oidc.")
+	fs.Var(&c.proxyCAFile, "user-auth-oidc-proxy-ca-file", "Path to a PEM file with the CA bundle used to trust the OIDC proxy. Only used with --user-auth=oidc.")
 
 	fs.Var(&c.ExtraScopes, "user-auth-oidc-token-scopes", "Comma-separated list of extra scopes to request ID tokens with")
 
@@ -100,6 +120,37 @@ func (c *AuthOptions) ApplyConfig(config *serverconfig.Auth) {
 	if len(c.ExtraScopes) == 0 {
 		c.ExtraScopes = config.OIDCExtraScopes
 	}
+
+	c.Proxy = c.resolveProxy(config.Proxy)
+	if c.Proxy != nil && c.AuthType != flagvalues.AuthTypeOIDC {
+		klog.Warning("Ignoring auth.proxy because authType is not OIDC")
+		c.Proxy = nil
+	}
+}
+
+// resolveProxy merges the CLI flags over the config file, field by field.
+// It returns nil only if neither source specifies a proxy configuration.
+func (c *AuthOptions) resolveProxy(fromConfig *serverconfig.AuthProxy) *serverconfig.AuthProxy {
+	authProxy := fromConfig.DeepCopy()
+	ensure := func() *serverconfig.AuthProxy {
+		if authProxy == nil {
+			authProxy = &serverconfig.AuthProxy{}
+		}
+		return authProxy
+	}
+	if c.httpProxy.IsSet {
+		ensure().HTTPProxy = c.httpProxy.Value
+	}
+	if c.httpsProxy.IsSet {
+		ensure().HTTPSProxy = c.httpsProxy.Value
+	}
+	if c.noProxy.IsSet {
+		ensure().NoProxy = append([]string(nil), c.noProxy.Values...)
+	}
+	if c.proxyCAFile.IsSet {
+		ensure().TrustedCAFilePath = c.proxyCAFile.Value
+	}
+	return authProxy
 }
 
 func (c *AuthOptions) Complete() (*CompletedOptions, error) {
@@ -126,6 +177,7 @@ func (c *AuthOptions) Complete() (*CompletedOptions, error) {
 		InactivityTimeoutSeconds: c.InactivityTimeoutSeconds,
 		OCLoginCommand:           c.OCLoginCommand,
 		StaticUserBearerToken:    c.StaticUserBearerToken,
+		Proxy:                    effectiveProxy(c.AuthType, c.Proxy),
 	}
 
 	if len(c.IssuerURL) > 0 {
@@ -159,6 +211,11 @@ func (c *AuthOptions) Complete() (*CompletedOptions, error) {
 
 func (c *AuthOptions) Validate() []error {
 	var errs []error
+	if proxy := effectiveProxy(c.AuthType, c.Proxy); proxy != nil {
+		if err := proxy.Validate(); err != nil {
+			errs = append(errs, err)
+		}
+	}
 
 	switch c.AuthType {
 	case flagvalues.AuthTypeOpenShift, flagvalues.AuthTypeOIDC:
@@ -214,9 +271,10 @@ func (c *AuthOptions) Validate() []error {
 }
 
 func (c *completedOptions) ApplyTo(
+	ctx context.Context,
 	srv *server.Server,
 	k8sEndpoint *url.URL,
-	caCertFilePath string,
+	authClients *httpclient.Clients,
 	sessionConfig *session.CompletedOptions,
 ) error {
 	srv.InactivityTimeout = c.InactivityTimeoutSeconds
@@ -229,10 +287,11 @@ func (c *completedOptions) ApplyTo(
 
 	var err error
 	srv.Authenticator, err = c.getAuthenticator(
+		ctx,
 		srv.BaseURL,
 		srv.AdditionalBaseURLs,
 		k8sEndpoint,
-		caCertFilePath,
+		authClients,
 		srv.InternalProxiedK8SClientConfig,
 		useSecureCookies,
 		sessionConfig,
@@ -249,10 +308,11 @@ func (c *completedOptions) ApplyTo(
 }
 
 func (c *completedOptions) getAuthenticator(
+	ctx context.Context,
 	baseURL *url.URL,
 	additionalBaseURLs []*url.URL,
 	k8sEndpoint *url.URL,
-	caCertFilePath string,
+	authClients *httpclient.Clients,
 	k8sClientConfig *rest.Config,
 	useSecureCookies bool,
 	sessionConfig *session.CompletedOptions,
@@ -274,7 +334,6 @@ func (c *completedOptions) getAuthenticator(
 	flags.FatalIfFailed(flags.ValidateFlagNotEmpty("base-address", baseURL.String()))
 
 	var (
-		err                      error
 		userAuthOIDCIssuerURL    *url.URL
 		authLoginErrorEndpoint   = proxy.SingleJoiningSlash(baseURL.Path, server.AuthLoginErrorEndpoint)
 		authLoginSuccessEndpoint = proxy.SingleJoiningSlash(baseURL.Path, server.AuthLoginSuccessEndpoint)
@@ -307,7 +366,7 @@ func (c *completedOptions) getAuthenticator(
 	oidcClientConfig := &oauth2.Config{
 		AuthSource:         authSource,
 		IssuerURL:          userAuthOIDCIssuerURL.String(),
-		IssuerCA:           c.CAFilePath,
+		IssuerClient:       authClients.Issuer,
 		ClientID:           c.ClientID,
 		ClientSecret:       oidcClientSecret,
 		RedirectURL:        proxy.SingleJoiningSlash(baseURL.String(), server.AuthLoginCallbackEndpoint),
@@ -315,9 +374,8 @@ func (c *completedOptions) getAuthenticator(
 		Scope:              scopes,
 		OCLoginCommand:     c.OCLoginCommand,
 
-		// Use the k8s CA file for OpenShift OAuth metadata discovery.
-		// This might be different than IssuerCA.
-		K8sCA: caCertFilePath,
+		// Use a separate client for OpenShift OAuth metadata discovery.
+		K8sClient: authClients.K8s,
 
 		ErrorURL:   authLoginErrorEndpoint,
 		SuccessURL: authLoginSuccessEndpoint,
@@ -338,10 +396,23 @@ func (c *completedOptions) getAuthenticator(
 		oidcClientConfig.LogoutRedirectOverride = c.LogoutRedirectURL.String()
 	}
 
-	authenticator, err := oauth2.NewOAuth2Authenticator(context.Background(), oidcClientConfig)
+	authenticator, err := oauth2.NewOAuth2Authenticator(ctx, oidcClientConfig)
 	if err != nil {
 		klog.Fatalf("Error initializing authenticator: %v", err)
 	}
 
 	return authenticator, nil
+}
+
+// effectiveProxy keeps component proxy routing and trust exclusive to external OIDC.
+func effectiveProxy(authType flagvalues.AuthType, proxy *serverconfig.AuthProxy) *httpclient.ProxyConfig {
+	if authType != flagvalues.AuthTypeOIDC || proxy == nil {
+		return nil
+	}
+	return &httpclient.ProxyConfig{
+		HTTPProxy:         proxy.HTTPProxy,
+		HTTPSProxy:        proxy.HTTPSProxy,
+		NoProxy:           append([]string(nil), proxy.NoProxy...),
+		TrustedCAFilePath: proxy.TrustedCAFilePath,
+	}
 }

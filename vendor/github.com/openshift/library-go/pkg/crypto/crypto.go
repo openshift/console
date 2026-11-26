@@ -224,6 +224,28 @@ var tlsGroupToCurveID = map[configv1.TLSGroup]tls.CurveID{
 	configv1.TLSGroupSecP384r1MLKEM1024: tls.SecP384r1MLKEM1024,
 }
 
+// curveIDToTLSGroup is the reverse mapping of tlsGroupToCurveID.
+// Built automatically from tlsGroupToCurveID at package initialization.
+var curveIDToTLSGroup = buildCurveIDToTLSGroupMapOrDie()
+
+func buildCurveIDToTLSGroupMapOrDie() map[tls.CurveID]configv1.TLSGroup {
+	reverseMap := make(map[tls.CurveID]configv1.TLSGroup, len(tlsGroupToCurveID))
+	for group, curveID := range tlsGroupToCurveID {
+		if existing, exists := reverseMap[curveID]; exists {
+			panic(fmt.Sprintf("duplicate curve ID %d: both %q and %q map to it", curveID, existing, group))
+		}
+		reverseMap[curveID] = group
+	}
+	return reverseMap
+}
+
+// CurveIDToTLSGroup converts a curve ID to its corresponding TLS group name.
+// Returns the group name and true if found, empty string and false otherwise.
+func CurveIDToTLSGroup(curveID tls.CurveID) (configv1.TLSGroup, bool) {
+	groupName, ok := curveIDToTLSGroup[curveID]
+	return groupName, ok
+}
+
 // CipherSuitesToNamesOrDie given a list of cipher suites as ints, return their readable names
 func CipherSuitesToNamesOrDie(intVals []uint16) []string {
 	ret := []string{}
