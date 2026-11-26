@@ -72,12 +72,11 @@ export const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
       ? currentMinorVersionPatchUpdate?.version
       : availableSortedUpdates[0]?.version) || '',
   );
-  const [machineConfigPools, machineConfigPoolsLoaded] = useK8sWatchResource<
-    MachineConfigPoolKind[]
-  >({
-    isList: true,
-    kind: referenceForModel(MachineConfigPoolModel),
-  });
+  const [machineConfigPools, machineConfigPoolsLoaded, machineConfigPoolsLoadError] =
+    useK8sWatchResource<MachineConfigPoolKind[]>({
+      isList: true,
+      kind: referenceForModel(MachineConfigPoolModel),
+    });
   const [error, setError] = useState('');
   // Computed once from the first watch result so later watch changes don't
   // affect user input.
@@ -121,10 +120,25 @@ export const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
     [pauseableMCPs],
   );
   const pausedPoolNames = pausedMCPs.map((mcp) => mcp.metadata.name).join(', ');
+  // Clear acknowledgement whenever the paused set changes, including when it
+  // returns to a previously acknowledged set. Adjust during render instead of
+  // an effect to avoid cascading renders (React "adjusting state when a prop
+  // changes" pattern).
+  const [prevPausedPoolNames, setPrevPausedPoolNames] = useState(pausedPoolNames);
+  if (pausedPoolNames !== prevPausedPoolNames) {
+    setPrevPausedPoolNames(pausedPoolNames);
+    setAcknowledgedPausedPoolNames('');
+  }
   const pausedPoolsAcknowledged =
     acknowledgedPausedPoolNames !== '' && acknowledgedPausedPoolNames === pausedPoolNames;
   const requiresPausedPoolsAcknowledgement =
     upgradeType === UpgradeTypes.Full && pausedMCPs.length > 0;
+  const machineConfigPoolsLoadErrorMessage =
+    upgradeType === UpgradeTypes.Full && machineConfigPoolsLoadError
+      ? t(
+          'Unable to load MachineConfigPools. Paused pools cannot be checked, so Full cluster update cannot proceed.',
+        )
+      : '';
   const desiredRecommendedUpdate = useMemo(
     () => availableSortedUpdates.find((update) => update.version === desiredVersion),
     [availableSortedUpdates, desiredVersion],
@@ -142,6 +156,7 @@ export const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
       if (
         upgradeType === UpgradeTypes.Full &&
         (!machineConfigPoolsLoaded ||
+          !!machineConfigPoolsLoadError ||
           (requiresPausedPoolsAcknowledgement && !pausedPoolsAcknowledged))
       ) {
         return;
@@ -197,6 +212,7 @@ export const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
       desiredVersion,
       upgradeType,
       machineConfigPoolsLoaded,
+      machineConfigPoolsLoadError,
       requiresPausedPoolsAcknowledgement,
       pausedMCPs,
       pausedPoolsAcknowledged,
@@ -434,7 +450,9 @@ export const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
           </Alert>
         </Form>
       </ModalBody>
-      <ModalFooterWithAlerts errorMessage={errorMessage || error}>
+      <ModalFooterWithAlerts
+        errorMessage={errorMessage || error || machineConfigPoolsLoadErrorMessage}
+      >
         <Button
           type="submit"
           variant="primary"
@@ -444,7 +462,8 @@ export const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
           id="confirm-action"
           isDisabled={
             !desiredVersion ||
-            (upgradeType === UpgradeTypes.Full && !machineConfigPoolsLoaded) ||
+            (upgradeType === UpgradeTypes.Full &&
+              (!machineConfigPoolsLoaded || !!machineConfigPoolsLoadError)) ||
             (upgradeType === UpgradeTypes.Partial && machineConfigPoolsToPause.length === 0) ||
             (requiresPausedPoolsAcknowledgement && !pausedPoolsAcknowledged)
           }

@@ -1647,6 +1647,7 @@
   "Type": "Type",
   "Type a group name and press Enter": "Type a group name and press Enter",
   "Type group names manually. Press Enter to add each group.": "Type group names manually. Press Enter to add each group.",
+  "Unable to load MachineConfigPools. Paused pools cannot be checked, so Full cluster update cannot proceed.": "Unable to load MachineConfigPools. Paused pools cannot be checked, so Full cluster update cannot proceed.",
   "Unable to load VolumeAttributesClass resources": "Unable to load VolumeAttributesClass resources",
   "Unable to resolve": "Unable to resolve",
   "Unable to Rollback": "Unable to Rollback",

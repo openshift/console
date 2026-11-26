@@ -122,6 +122,19 @@ describe('ClusterUpdateModal paused MachineConfigPools acknowledgement', () => {
     expect(screen.getByTestId('confirm-action')).toBeDisabled();
   });
 
+  it('shows an error and disables Full update when MachineConfigPools fail to load', () => {
+    mockUseK8sWatchResource.mockReturnValue([[], false, new Error('Forbidden')]);
+
+    render(<ClusterUpdateModal {...baseProps} />);
+
+    expect(screen.getByTestId('confirm-action')).toBeDisabled();
+    expect(
+      screen.getByText(
+        'Unable to load MachineConfigPools. Paused pools cannot be checked, so Full cluster update cannot proceed.',
+      ),
+    ).toBeVisible();
+  });
+
   it('requires acknowledgement again when the paused pool set changes after acknowledgement', async () => {
     const user = userEvent.setup();
     mockUseK8sWatchResource.mockReturnValue([[masterMCP, pausedWorkerMCP], true, null]);
@@ -145,5 +158,29 @@ describe('ClusterUpdateModal paused MachineConfigPools acknowledgement', () => {
     expect(screen.getByTestId('update-cluster-modal-paused-nodes-warning')).toHaveTextContent(
       'infra',
     );
+  });
+
+  it('requires acknowledgement again when the paused pool set returns to a previously acknowledged set', async () => {
+    const user = userEvent.setup();
+    mockUseK8sWatchResource.mockReturnValue([[masterMCP, pausedWorkerMCP], true, null]);
+
+    const { rerender } = render(<ClusterUpdateModal {...baseProps} />);
+
+    await user.click(screen.getByTestId('update-cluster-modal-paused-pools-ack'));
+    expect(screen.getByTestId('update-cluster-modal-paused-pools-ack')).toBeChecked();
+
+    mockUseK8sWatchResource.mockReturnValue([
+      [masterMCP, pausedWorkerMCP, pausedCustomMCP],
+      true,
+      null,
+    ]);
+    rerender(<ClusterUpdateModal {...baseProps} />);
+    expect(screen.getByTestId('update-cluster-modal-paused-pools-ack')).not.toBeChecked();
+
+    mockUseK8sWatchResource.mockReturnValue([[masterMCP, pausedWorkerMCP], true, null]);
+    rerender(<ClusterUpdateModal {...baseProps} />);
+
+    expect(screen.getByTestId('update-cluster-modal-paused-pools-ack')).not.toBeChecked();
+    expect(screen.getByTestId('confirm-action')).toBeDisabled();
   });
 });
