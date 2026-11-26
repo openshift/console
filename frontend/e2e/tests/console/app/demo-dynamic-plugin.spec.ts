@@ -7,6 +7,7 @@ import { ConsolePluginPage } from '../../../pages/console-plugin-page';
 import { DetailsPage } from '../../../pages/details-page';
 import { ListPage } from '../../../pages/list-page';
 import { ModalPage } from '../../../pages/modal-page';
+import { Navigation } from '../../../pages/navigation';
 import { getEditorContent } from '../../../pages/base-page';
 
 const PLUGIN_NAME = 'console-demo-plugin';
@@ -210,6 +211,53 @@ interface ManifestResource {
       ).toBeVisible();
       await expect(page.getByText('Utility: consoleFetchJSON')).toBeVisible();
       await expect(page.getByText('Utility: useToast')).toBeVisible();
+    });
+
+    test('verifies app drawer extension and useAppDrawer hook', async ({ page }) => {
+      const heading = page.getByRole('heading', { name: 'Utilities from Dynamic Plugin SDK' });
+      const panel = page.getByTestId('demo-app-drawer-panel');
+      const openButton = page.getByRole('button', { name: 'Open app drawer' });
+      const closeButton = page.getByRole('button', { name: 'Close app drawer' });
+
+      await consolePluginPage.navigateToTestUtilities();
+      await expect(heading).toBeVisible();
+      await expect(panel).toBeHidden();
+
+      await test.step('opens the drawer inline beside the page content', async () => {
+        await openButton.click();
+        await expect(panel).toContainText('Demo app drawer');
+        await expect(closeButton).toBeVisible();
+        await expect
+          .poll(async () => {
+            const headingBox = await heading.boundingBox();
+            const panelBox = await panel.boundingBox();
+            return headingBox && panelBox ? headingBox.x + headingBox.width <= panelBox.x : false;
+          })
+          .toBe(true);
+      });
+
+      await test.step('closes the drawer from the panel onClose callback', async () => {
+        await panel.getByRole('button', { name: 'Close demo app drawer' }).click();
+        await expect(panel).toBeHidden();
+        await expect(openButton).toBeVisible();
+      });
+
+      await test.step('toggles the drawer with useAppDrawer', async () => {
+        await openButton.click();
+        await expect(panel).toBeVisible();
+        await closeButton.click();
+        await expect(panel).toBeHidden();
+      });
+
+      await test.step('keeps the drawer open across in-app navigation', async () => {
+        await openButton.click();
+        await expect(panel).toBeVisible();
+        await new Navigation(page).clickNavLink('Demo Plugin', 'Test Consumer');
+        await expect(page).toHaveURL(/\/test-consumer/);
+        await expect(panel).toBeVisible();
+        await panel.getByRole('button', { name: 'Close demo app drawer' }).click();
+        await expect(panel).toBeHidden();
+      });
     });
 
     test('verifies List Page nav item', async ({ page }) => {

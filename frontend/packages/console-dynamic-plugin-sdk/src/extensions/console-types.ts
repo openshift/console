@@ -1302,6 +1302,13 @@ export type UseUserPreference = <T>(
 
 export type UseQuickStartContext = () => QuickStartContextValues;
 
+export type UseAppDrawer = (id: string) => {
+  isOpen: boolean;
+  open: () => void;
+  close: () => void;
+  toggle: () => void;
+};
+
 export type TaintEffect = '' | 'NoSchedule' | 'PreferNoSchedule' | 'NoExecute';
 
 export type Taint = {

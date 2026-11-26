@@ -630,6 +630,7 @@
   "Requested capacity": "Requested capacity",
   "Requirement": "Requirement",
   "Reset column widths": "Reset column widths",
+  "Resize": "Resize",
   "Resource is already covered by another PodDisruptionBudget": "Resource is already covered by another PodDisruptionBudget",
   "ResourceQuotas": "ResourceQuotas",
   "Response rate": "Response rate",

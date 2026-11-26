@@ -34,6 +34,7 @@ import {
   UseDeleteModal,
   UseLabelsModal,
   UseListPageFilter,
+  UseAppDrawer,
   UsePrometheusPoll,
   UseQuickStartContext,
   UseResolvedExtensions,
@@ -1085,6 +1086,22 @@ export const useUserSettings: UseUserPreference =
  */
 export const useQuickStartContext: UseQuickStartContext =
   require('@console/shared/src/hooks/useQuickStartContext').useQuickStartContext;
+
+/**
+ * Hook that controls an app-level Drawer contributed via the `console.app/drawer` extension.
+ * Lets a plugin open, close, or toggle its side panel.
+ * @param id The `id` of the `console.app/drawer` extension to control.
+ * @returns An object with the current `isOpen` state and `open`, `close`, and `toggle` callbacks.
+ * @example
+ * ```tsx
+ * const LightspeedToggle = () => {
+ *    const { isOpen, toggle } = useAppDrawer('lightspeed');
+ *    return <button onClick={toggle}>{isOpen ? 'Close' : 'Open'}</button>;
+ * };
+ * ```
+ */
+export const useAppDrawer: UseAppDrawer =
+  require('@console/shared/src/hooks/useAppDrawer').useAppDrawer;
 
 /**
  * Hook that provides the currently active perspective and a callback for setting the active perspective

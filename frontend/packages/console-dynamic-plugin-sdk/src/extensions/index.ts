@@ -2,6 +2,7 @@
 export * from './actions';
 export * from './add-actions';
 export * from './alerts';
+export * from './app-drawer';
 export * from './breadcrumbs';
 export * from './catalog';
 export * from './cluster-configuration';
