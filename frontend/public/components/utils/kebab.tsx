@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 import { useNavigate } from 'react-router';
 import type { ImpersonateKind } from '@console/dynamic-plugin-sdk';
 import { impersonateStateToProps } from '@console/dynamic-plugin-sdk';
-import type { AccessReviewResourceAttributes, K8sKind, K8sResourceKind } from '../../module/k8s';
+import type { AccessReviewResourceAttributes } from '../../module/k8s';
 import { useAccessReview, checkAccess } from './rbac';
 
 const kebabOptionsToMenu = (options: KebabOption[]): KebabMenuOption[] => {
@@ -244,13 +244,6 @@ export type KebabOption = {
   pathKey?: string;
   icon?: ReactNode;
 };
-
-export type KebabAction = (
-  kind: K8sKind,
-  obj: K8sResourceKind,
-  resources?: any,
-  customData?: any,
-) => KebabOption;
 
 type KebabSubMenuOption = {
   label?: string;

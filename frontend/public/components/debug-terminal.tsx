@@ -225,6 +225,7 @@ export const DebugTerminalPage: FC<DebugTerminalPageProps> = () => {
       <ConnectedPageHeading
         title={t('Debug {{name}}', { name })}
         kind="Pod"
+        hideActions
         obj={{ data: podData }}
         breadcrumbs={[
           { name: t('Pods'), path: getBreadcrumbPath(params, 'pods') },

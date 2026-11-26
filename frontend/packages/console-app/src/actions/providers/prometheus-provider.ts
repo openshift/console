@@ -7,13 +7,13 @@ import { useCommonActions } from '../hooks/useCommonActions';
 
 export const usePrometheusActionsProvider = (resource: K8sResourceKind) => {
   const [kindObj, inFlight] = useK8sModel(referenceFor(resource));
-  const [commonActions] = useCommonActions<CommonActionCreator[]>(kindObj, resource, [
+  const [commonActions] = useCommonActions(kindObj, resource, [
     CommonActionCreator.ModifyLabels,
     CommonActionCreator.ModifyCount,
     CommonActionCreator.ModifyAnnotations,
     CommonActionCreator.Edit,
     CommonActionCreator.Delete,
-  ]);
+  ] as const);
 
   const actions = useMemo(() => Object.values(commonActions), [commonActions]);
 

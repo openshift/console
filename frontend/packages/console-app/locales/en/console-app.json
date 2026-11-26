@@ -40,6 +40,7 @@
   "Add new users to group {{name}}": "Add new users to group {{name}}",
   "Add PodDisruptionBudget": "Add PodDisruptionBudget",
   "Add RoleBinding": "Add RoleBinding",
+  "Add Secret to workload": "Add Secret to workload",
   "Add shared applications, services, event sources, or source-to-image builders to your project. Cluster administrators can customize the content made available in the catalog.": "Add shared applications, services, event sources, or source-to-image builders to your project. Cluster administrators can customize the content made available in the catalog.",
   "Add storage": "Add storage",
   "Add to favorites": "Add to favorites",

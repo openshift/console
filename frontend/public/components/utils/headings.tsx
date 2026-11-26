@@ -1,6 +1,6 @@
 import type { FC, ReactNode, ComponentType } from 'react';
 import { useCallback } from 'react';
-import { ActionListItem, Button, Title } from '@patternfly/react-core';
+import { Title } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -11,8 +11,6 @@ import {
   useResolvedExtensions,
 } from '@console/dynamic-plugin-sdk';
 import type { WatchK8sResultsObject } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import type { Action } from '@console/dynamic-plugin-sdk/src/lib-core';
-import { ActionsMenu } from '@console/internal/components/utils/actions-menu';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
 import type { PageHeadingProps } from '@console/shared/src/components/heading/PageHeading';
@@ -26,30 +24,9 @@ import type {
   K8sResourceKind,
   K8sResourceKindReference,
 } from '../../module/k8s';
-import { referenceForExtensionModel } from '../../module/k8s';
+import { referenceForExtensionModel, referenceForModel } from '../../module/k8s';
 import { ManagedByOperatorLink } from './managed-by';
 import { ResourceIcon } from './resource-icon';
-
-const ActionButtons: FC<ActionButtonsProps> = ({ actionButtons }) => (
-  <>
-    {_.map(actionButtons, (actionButton, i) => {
-      if (!_.isEmpty(actionButton)) {
-        return (
-          <ActionListItem>
-            <Button
-              variant="primary"
-              onClick={actionButton.callback}
-              key={i}
-              data-test={actionButton.label}
-            >
-              {actionButton.label}
-            </Button>
-          </ActionListItem>
-        );
-      }
-    })}
-  </>
-);
 
 /**
  * A `PageHeading` which connects to a model and displays the resource name, status, and actions.
@@ -60,20 +37,18 @@ export const ConnectedPageHeading = connectToModel(
     badge,
     breadcrumbs,
     breadcrumbsFor,
-    buttonActions,
     className,
     customActionMenu,
-    customData,
     getResourceStatus = (resource: K8sResourceKind): string =>
       _.get(resource, ['status', 'phase'], null),
     helpAlert,
     helpText,
+    hideActions,
     hideFavoriteButton,
     icon,
     kind,
     kindObj,
     linkProps,
-    menuActions,
     obj,
     OverrideTitle,
     title,
@@ -85,11 +60,16 @@ export const ConnectedPageHeading = connectToModel(
     const data = _.get(obj, 'data');
     const hasData = !_.isEmpty(data);
 
+    // Callers may pass either a bare kind or a group~version~Kind reference, while extension
+    // models always resolve to a reference, so match on the connected model and fall back to the
+    // raw value only while API discovery is in flight.
+    const modelReference = kindObj ? referenceForModel(kindObj) : kind;
+
     const resourceProviderGuard = useCallback(
       (e): e is ResourceActionProvider =>
         isResourceActionProvider(e) &&
-        referenceForExtensionModel(e.properties.model as ExtensionK8sGroupModel) === kind,
-      [kind],
+        referenceForExtensionModel(e.properties.model as ExtensionK8sGroupModel) === modelReference,
+      [modelReference],
     );
 
     const [resourceProviderExtensions, resourceProviderExtensionsResolved] =
@@ -98,10 +78,9 @@ export const ConnectedPageHeading = connectToModel(
     const hasExtensionActions =
       resourceProviderExtensionsResolved && resourceProviderExtensions?.length > 0;
 
-    const hasButtonActions = !_.isEmpty(buttonActions);
-    const hasMenuActions = _.isFunction(menuActions) || !_.isEmpty(menuActions);
     const showActions =
-      (hasButtonActions || hasMenuActions || customActionMenu || hasExtensionActions) &&
+      !hideActions &&
+      (customActionMenu || hasExtensionActions) &&
       hasData &&
       !_.get(data, 'metadata.deletionTimestamp');
 
@@ -114,30 +93,14 @@ export const ConnectedPageHeading = connectToModel(
     );
 
     const actions =
-      hasExtensionActions && !_.isFunction(customActionMenu) ? (
+      hasExtensionActions && !customActionMenu ? (
         <LazyActionMenu
-          context={{ [kind]: data }}
+          context={{ [modelReference]: data }}
           variant={ActionMenuVariant.DROPDOWN}
           label={t('Actions')}
         />
       ) : (
         <>
-          {hasButtonActions && hasData && (
-            <ActionButtons actionButtons={buttonActions.map((a) => a(kindObj, data))} />
-          )}
-
-          {hasMenuActions && hasData && (
-            <ActionListItem>
-              <ActionsMenu
-                actions={
-                  _.isFunction(menuActions)
-                    ? menuActions(kindObj, data, extraResources, customData)
-                    : menuActions.map((a) => a(kindObj, data, extraResources, customData))
-                }
-              />
-            </ActionListItem>
-          )}
-
           {hasData &&
             (_.isFunction(customActionMenu)
               ? customActionMenu(kindObj, data, extraResources)
@@ -224,20 +187,8 @@ export const SidebarSectionHeading: FC<SidebarSectionHeadingProps> = ({
   </Title>
 );
 
-type ActionButtonsProps = {
-  actionButtons: any[];
-};
-
-export type KebabOptionsCreator = (
-  kindObj: K8sKind,
-  data: K8sResourceKind,
-  extraResources?: { [prop: string]: K8sResourceKind | K8sResourceKind[] },
-  customData?: any,
-) => Action[];
-
 export type ConnectedPageHeadingProps = Omit<PageHeadingProps, 'primaryAction'> & {
   breadcrumbsFor?: (obj: K8sResourceKind) => { name: string; path: string }[];
-  buttonActions?: any[];
   /** Renders a custom action menu if the `obj` prop is passed with `data` */
   customActionMenu?:
     | ReactNode
@@ -246,11 +197,12 @@ export type ConnectedPageHeadingProps = Omit<PageHeadingProps, 'primaryAction'> 
         obj: K8sResourceKind,
         extraResources?: { [prop: string]: K8sResourceKind | K8sResourceKind[] },
       ) => ReactNode);
-  customData?: any;
   getResourceStatus?: (resource: K8sResourceKind) => string;
+  /** Suppresses the resource action menu, for headings that name a resource but are not its
+   * details page. */
+  hideActions?: boolean;
   kind?: K8sResourceKindReference;
   kindObj?: K8sKind;
-  menuActions?: Function[] | KebabOptionsCreator; // FIXME should be "KebabAction[] |" refactor pipeline-actions.tsx, etc.
   obj?: WatchK8sResultsObject<K8sResourceKind>;
   /** A component to override the title of the page */
   OverrideTitle?: ComponentType<{ obj?: K8sResourceKind }>;

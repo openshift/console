@@ -1,11 +1,11 @@
 import { screen } from '@testing-library/react';
-import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
-import ConsolePluginVersionDetail from '../ConsolePluginVersionDetail';
 import {
   addLoadedPlugin,
   addLoadedPluginWithoutVersion,
   createTestPluginStore,
-} from './pluginTestUtils';
+} from '@console/shared/src/test-utils/plugin-test-utils';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
+import ConsolePluginVersionDetail from '../ConsolePluginVersionDetail';
 
 describe('ConsolePluginVersionDetail', () => {
   const createMockObj = (name: string) => ({

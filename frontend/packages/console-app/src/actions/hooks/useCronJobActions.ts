@@ -63,7 +63,7 @@ const startJobAccessReview = (obj: CronJobKind): AccessReviewResourceAttributes 
  * // Getting all actions for CronJob resource
  * const MyCronJobComponent = ({ obj }) => {
  *   const actions = useCronJobActions(obj);
- *   return <Kebab actions={actions} />;
+ *   return <ActionMenu actions={actions} />;
  * };
  */
 export const useCronJobActions = (

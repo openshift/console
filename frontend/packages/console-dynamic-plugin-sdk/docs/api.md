@@ -20,15 +20,15 @@ Component that allows to receive contributions from other plugins for the `conso
 ### Example
 
 ```tsx
-   const context: ActionContext = { 'a-context-id': { dataFromDynamicPlugin } };
+   const context: ActionServiceProviderProps['context'] = {
+     'a-context-id': { dataFromDynamicPlugin },
+   };
 
    ...
 
    <ActionServiceProvider context={context}>
-       {({ actions, options, loaded }) =>
-         loaded && (
-           <ActionMenu actions={actions} options={options} variant={ActionMenuVariant.DROPDOWN} />
-         )
+       {({ actions, loaded }) =>
+         loaded && actions.map((action) => <MyMenuItem key={action.id} action={action} />)
        }
    </ActionServiceProvider>
 ```

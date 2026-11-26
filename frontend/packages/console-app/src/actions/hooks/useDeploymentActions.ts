@@ -74,7 +74,7 @@ const deploymentConfigRollout = (dc: K8sResourceKind): Promise<K8sResourceKind> 
  * // Getting EditDeployment and RestartRollout actions
  * const MyDeploymentComponent = ({ kind, obj }) => {
  *   const [actions, isReady] = useDeploymentActions(kind, obj, [DeploymentActionCreator.EditDeployment, DeploymentActionCreator.RestartRollout] as const);
- *   return <Kebab actions={ isReady ? actions : []} />;
+ *   return <ActionMenu actions={isReady ? [actions.EditDeployment, actions.RestartRollout] : []} />;
  * };
  */
 export const useDeploymentActions = <T extends readonly DeploymentActionCreator[]>(

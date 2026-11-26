@@ -34,7 +34,7 @@ import { useCommonActions } from './useCommonActions';
  * // Getting Build actions for Build resource
  * const MyBuildComponent = ({ obj }) => {
  *   const actions = useBuildsActions(obj);
- *   return <Kebab actions={actions} />;
+ *   return <ActionMenu actions={actions} />;
  * };
  */
 export const useBuildsActions = (

@@ -32,7 +32,7 @@ import type {
   CRDAdditionalPrinterColumn,
   ExtensionK8sGroupModel,
 } from '../module/k8s';
-import { referenceFor, referenceForExtensionModel } from '../module/k8s';
+import { referenceFor, referenceForExtensionModel, referenceForModel } from '../module/k8s';
 import { Conditions } from './conditions';
 import { DetailsPage } from './factory/details';
 import { ListPage } from './factory/list-page';
@@ -301,11 +301,15 @@ export const DefaultList: FC<
   const columns = useDefaultResourceColumns(
     additionalPrinterColumnsLoaded ? additionalPrinterColumns : [],
   );
+  // `kinds[0]` is whatever the caller passed, which is a bare kind such as "Pod" for any
+  // non-CRD plural. Extension models always resolve to a group~version~Kind reference, so
+  // compare against the resolved model and fall back only while discovery is in flight.
+  const modelReference = model ? referenceForModel(model) : kinds[0];
   const resourceProviderGuard = useCallback(
     (e): e is ResourceActionProvider =>
       isResourceActionProvider(e) &&
-      referenceForExtensionModel(e.properties.model as ExtensionK8sGroupModel) === kinds[0],
-    [kinds],
+      referenceForExtensionModel(e.properties.model as ExtensionK8sGroupModel) === modelReference,
+    [modelReference],
   );
   const [resourceProviderExtensions, resourceProviderExtensionsResolved] =
     useResolvedExtensions<ResourceActionProvider>(resourceProviderGuard);
@@ -360,11 +364,15 @@ DefaultPage.displayName = 'DefaultPage';
 
 export const DefaultDetailsPage: FC<ComponentProps<typeof DetailsPage>> = (props) => {
   const pages = [navFactory.details(DetailsForKind), navFactory.editYaml()];
+  const [model] = useK8sModel(props.kind);
+  // See the note in DefaultList: `props.kind` is a bare kind for any non-CRD plural, which
+  // never equals the group~version~Kind reference an extension model resolves to.
+  const modelReference = model ? referenceForModel(model) : props.kind;
   const resourceProviderGuard = useCallback(
     (e): e is ResourceActionProvider =>
       isResourceActionProvider(e) &&
-      referenceForExtensionModel(e.properties.model as ExtensionK8sGroupModel) === props.kind,
-    [props.kind],
+      referenceForExtensionModel(e.properties.model as ExtensionK8sGroupModel) === modelReference,
+    [modelReference],
   );
   const [resourceProviderExtensions, resourceProviderExtensionsResolved] =
     useResolvedExtensions<ResourceActionProvider>(resourceProviderGuard);

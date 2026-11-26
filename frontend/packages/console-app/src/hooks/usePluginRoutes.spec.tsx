@@ -4,12 +4,12 @@ import { screen } from '@testing-library/react';
 import { Routes } from 'react-router';
 import type { RoutePage } from '@console/dynamic-plugin-sdk/src/extensions/pages';
 import { ErrorBoundary } from '@console/shared/src/components/error/error-boundary';
-import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import {
   createTestPluginStore,
   createLocalPluginManifest,
   addLoadedPluginFromManifest,
-} from '../components/console-operator/__tests__/pluginTestUtils';
+} from '@console/shared/src/test-utils/plugin-test-utils';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { usePluginRoutes } from './usePluginRoutes';
 
 jest.mock('@console/dynamic-plugin-sdk/src/perspective/useActivePerspective', () => ({

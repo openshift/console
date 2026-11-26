@@ -101,7 +101,8 @@
       "machineConfigPoolProvider": "src/actions/providers/machine-config-pool-provider.ts",
       "serviceMonitorProvider": "src/actions/providers/service-monitor-provider.ts",
       "userProvider": "src/actions/providers/user-provider.ts",
-      "serviceAccountProvider": "src/actions/providers/service-account-provider.ts"
+      "serviceAccountProvider": "src/actions/providers/service-account-provider.ts",
+      "consoleOperatorConfigProvider": "src/actions/providers/console-operator-config-provider.ts"
     }
   }
 }

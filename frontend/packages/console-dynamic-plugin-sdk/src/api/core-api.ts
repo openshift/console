@@ -850,15 +850,15 @@ export type { OverlayComponent } from '../app/modal-support/OverlayProvider';
  * @param {ActionServiceProviderProps["context"]} context - Object with contextId and optional plugin data
  * @example
  * ```tsx
- *    const context: ActionContext = { 'a-context-id': { dataFromDynamicPlugin } };
+ *    const context: ActionServiceProviderProps['context'] = {
+ *      'a-context-id': { dataFromDynamicPlugin },
+ *    };
  *
  *    ...
  *
  *    <ActionServiceProvider context={context}>
- *        {({ actions, options, loaded }) =>
- *          loaded && (
- *            <ActionMenu actions={actions} options={options} variant={ActionMenuVariant.DROPDOWN} />
- *          )
+ *        {({ actions, loaded }) =>
+ *          loaded && actions.map((action) => <MyMenuItem key={action.id} action={action} />)
  *        }
  *    </ActionServiceProvider>
  * ```

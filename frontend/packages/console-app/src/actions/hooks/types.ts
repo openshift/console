@@ -10,7 +10,6 @@ export enum CommonActionCreator {
   ModifyLabels = 'ModifyLabels',
   ModifyAnnotations = 'ModifyAnnotations',
   ModifyCount = 'ModifyCount',
-  ModifyPodSelector = 'ModifyPodSelector',
   ModifyTolerations = 'ModifyTolerations',
   ModifyTaints = 'ModifyTaints',
   AddStorage = 'AddStorage',

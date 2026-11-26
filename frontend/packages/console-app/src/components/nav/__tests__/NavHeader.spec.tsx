@@ -1,14 +1,14 @@
 import { TestPluginStore } from '@openshift/dynamic-plugin-sdk';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
-import type { Perspective } from '@console/shared/src/utils/override-perspectives';
-import { PerspectiveVisibilityState } from '@console/shared/src/utils/override-perspectives';
 import {
   createLocalPluginManifest,
   createRemotePluginManifest,
   addLoadedPluginFromManifest,
-} from '../../console-operator/__tests__/pluginTestUtils';
+} from '@console/shared/src/test-utils/plugin-test-utils';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
+import type { Perspective } from '@console/shared/src/utils/override-perspectives';
+import { PerspectiveVisibilityState } from '@console/shared/src/utils/override-perspectives';
 import NavHeader from '../NavHeader';
 import { renderWithPerspective } from './navTestUtils';
 
