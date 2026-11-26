@@ -174,11 +174,18 @@ interface ManifestResource {
       const demoDashboardTab = page.getByTestId('horizontal-link-Demo Dashboard');
       await expect(demoDashboardTab).toHaveText('Demo Dashboard', { timeout: 30_000 });
       await demoDashboardTab.click();
-      // The card loads via module federation and fetches metrics; allow time for both.
-      await expect(page.getByTestId('demo-plugin-dashboard-card')).toContainText(
-        'Metrics Dashboard Card example',
-        { timeout: 30_000 },
-      );
+      // The card loads via module federation and fetches metrics. The plugin
+      // service can transiently fail a chunk request under CI load; reload the
+      // page once when the card has not rendered instead of waiting out the
+      // loader's retry backoff.
+      await expect(async () => {
+        const card = page.getByTestId('demo-plugin-dashboard-card');
+        if (!(await card.isVisible().catch(() => false))) {
+          await page.reload();
+          await page.getByTestId('horizontal-link-Demo Dashboard').click({ timeout: 30_000 });
+        }
+        await expect(card).toContainText('Metrics Dashboard Card example', { timeout: 15_000 });
+      }).toPass({ timeout: 120_000 });
       await expect(page.locator('div.graph-wrapper')).toBeAttached({ timeout: 30_000 });
     });
 

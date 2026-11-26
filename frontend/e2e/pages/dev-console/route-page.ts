@@ -89,7 +89,11 @@ export class RoutePage extends BasePage {
     if (!/^spec:\n/m.test(content)) {
       throw new Error('Route YAML does not contain a top-level spec field');
     }
-    const updated = content.replace(/^(spec:\n)/m, `$1  host: ${host}\n`);
+    // The cluster assigns spec.host automatically when unset; replace an
+    // existing host instead of inserting a duplicate key.
+    const updated = /^ {2}host: .+$/m.test(content)
+      ? content.replace(/^ {2}host: .+$/m, `  host: ${host}`)
+      : content.replace(/^(spec:\n)/m, `$1  host: ${host}\n`);
     await this.setEditorContent(updated);
   }
 }

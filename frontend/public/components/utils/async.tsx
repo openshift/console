@@ -16,11 +16,24 @@ export type AsyncComponentProps<C extends ComponentType> = Pick<
   LoadingComponent?: ComponentType<Partial<Pick<ComponentProps<typeof LoadingBox>, 'blame'>>>;
 } & ComponentProps<C>;
 
-/** Comparing two functions is not the *best* solution, but we can handle false negatives. */
+/** Fallback wrappers around other loaders share their source code, so two
+ * wrappers can only be distinguished by identity. */
+const isFallbackWrapperLoader = (loader?: LazyLoader<ComponentType<unknown>>): boolean =>
+  !!loader && Object.prototype.hasOwnProperty.call(loader, '__wrappedLoader');
+
+/** Comparing two loader functions by identity or (as a fallback for inline
+ * closures recreated each render) by name and source code. */
 const sameLoader = (
   a?: LazyLoader<ComponentType<unknown>>,
   b?: LazyLoader<ComponentType<unknown>>,
-) => a?.name === b?.name && (a || 'a').toString() === (b || 'b').toString();
+) =>
+  a === b ||
+  (a?.name === b?.name &&
+    (a || 'a').toString() === (b || 'b').toString() &&
+    // A closure's source does not capture its bound values, so identical source
+    // is only conclusive when neither loader wraps another loader.
+    !isFallbackWrapperLoader(a) &&
+    !isFallbackWrapperLoader(b));
 
 /** Maximum number of retries for loading a component. */
 const MAX_RETRIES = 25;
