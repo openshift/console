@@ -280,6 +280,94 @@ func TestUpdateCatalog(t *testing.T) {
 	})
 }
 
+func TestUpdateCatalogLatestVersion(t *testing.T) {
+	csvMetadata, err := json.Marshal(property.CSVMetadata{
+		InstallModes: []operatorsv1alpha1.InstallMode{
+			{Type: operatorsv1alpha1.InstallModeTypeAllNamespaces, Supported: true},
+		},
+	})
+	require.NoError(t, err)
+
+	tests := []struct {
+		name     string
+		versions []string
+		want     string
+	}{
+		{
+			name:     "newer version follows older version",
+			versions: []string{"3.62.0", "4.8.0"},
+			want:     "4.8.0",
+		},
+		{
+			name:     "older version follows newer version",
+			versions: []string{"4.8.0", "3.62.0"},
+			want:     "4.8.0",
+		},
+		{
+			name:     "numeric version ordering",
+			versions: []string{"4.9.0", "4.10.0", "4.8.0"},
+			want:     "4.10.0",
+		},
+		{
+			name:     "release follows prerelease",
+			versions: []string{"4.8.0-rc.1", "4.8.0"},
+			want:     "4.8.0",
+		},
+		{
+			name:     "prerelease follows release",
+			versions: []string{"4.8.0", "4.8.0-rc.1"},
+			want:     "4.8.0",
+		},
+		{
+			name:     "prefixed versions",
+			versions: []string{"v3.62.0", "v4.8.0"},
+			want:     "v4.8.0",
+		},
+		{
+			name:     "mixed version prefixes",
+			versions: []string{"v3.62.0", "4.8.0"},
+			want:     "4.8.0",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			bundles := make([]declcfg.Bundle, 0, len(tt.versions))
+			for _, version := range tt.versions {
+				packageProperty, err := json.Marshal(property.Package{
+					PackageName: "rhacs-operator",
+					Version:     version,
+				})
+				require.NoError(t, err)
+				bundles = append(bundles, declcfg.Bundle{
+					Name:    "rhacs-operator." + version,
+					Package: "rhacs-operator",
+					Properties: []property.Property{
+						{Type: property.TypeCSVMetadata, Value: csvMetadata},
+						{Type: property.TypePackage, Value: packageProperty},
+					},
+				})
+			}
+
+			service := &CatalogService{
+				cache: cache.New(cache.NoExpiration, 0),
+				client: &mockCatalogdClient{
+					packages: []declcfg.Package{{Name: "rhacs-operator"}},
+					bundles:  bundles,
+				},
+				index: make(map[string]struct{}),
+			}
+
+			require.NoError(t, service.UpdateCatalog("test-catalog", ""))
+			items, err := service.GetCatalogItems()
+			require.NoError(t, err)
+			require.Len(t, items, 1)
+			assert.Equal(t, tt.want, items[0].Version)
+			assert.Equal(t, "test-catalog/rhacs-operator/rhacs-operator."+tt.want, items[0].ID)
+		})
+	}
+}
+
 func TestGetCatalogItems(t *testing.T) {
 	c := cache.New(5*time.Minute, 10*time.Minute)
 	items := []ConsoleCatalogItem{{Name: "test-item"}}
