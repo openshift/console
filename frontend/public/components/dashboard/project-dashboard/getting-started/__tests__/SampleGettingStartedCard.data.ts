@@ -76,11 +76,11 @@ export const loadingCatalogService: CatalogService = {
       type: 'console.catalog/item-type',
       properties: {
         type: 'HelmChart',
-        title: 'Helm Charts',
+        title: 'Helm charts',
         catalogDescription:
           'Browse for charts that help manage complex installations and upgrades. Cluster administrators can customize the content made available in the catalog.',
         typeDescription:
-          '**Helm Charts** are packages for deploying an Application or components of a larger Application.',
+          '**Helm charts** are packages for deploying an application or components of a larger application.',
         filters: [
           {
             label: 'Chart Repositories',
@@ -679,11 +679,11 @@ export const loadedCatalogService: CatalogService = {
       type: 'console.catalog/item-type',
       properties: {
         type: 'HelmChart',
-        title: 'Helm Charts',
+        title: 'Helm charts',
         catalogDescription:
           'Browse for charts that help manage complex installations and upgrades. Cluster administrators can customize the content made available in the catalog.',
         typeDescription:
-          '**Helm Charts** are packages for deploying an Application or components of a larger Application.',
+          '**Helm charts** are packages for deploying an application or components of a larger application.',
         filters: [
           {
             label: 'Chart Repositories',

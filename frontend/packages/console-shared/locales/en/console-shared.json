@@ -140,7 +140,7 @@
   "Group by": "Group by",
   "Health checks": "Health checks",
   "Healthy": "Healthy",
-  "Helm Release": "Helm Release",
+  "Helm release": "Helm release",
   "Hide sidebar": "Hide sidebar",
   "Hide waiting pods with errors": "Hide waiting pods with errors",
   "How should the pods be replaced when a new revision is created?": "How should the pods be replaced when a new revision is created?",
