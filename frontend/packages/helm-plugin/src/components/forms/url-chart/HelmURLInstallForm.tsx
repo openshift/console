@@ -16,6 +16,7 @@ import { DynamicFormField } from '@console/shared/src/components/formik-fields/D
 import { InputField } from '@console/shared/src/components/formik-fields/InputField';
 import { ResourceDropdownField } from '@console/shared/src/components/formik-fields/ResourceDropdownField';
 import { SyncedEditorField } from '@console/shared/src/components/formik-fields/SyncedEditorField';
+import HelmChartResourcesPreview from '../install-upgrade/HelmChartResourcesPreview';
 import { useHelmReadmeModalLauncher } from '../install-upgrade/HelmReadmeModal';
 import type { HelmURLInstallFormData } from './types';
 import { useSecretResources } from './useSecretResources';
@@ -166,6 +167,20 @@ const HelmURLInstallForm: FC<FormikProps<HelmURLInstallFormData> & HelmURLInstal
             </GridItem>
           </Grid>
         </FormSection>
+        {!chartError && (
+          <FormSection fullWidth>
+            <HelmChartResourcesPreview
+              chartURL={values.chartURL}
+              releaseName={values.releaseName}
+              namespace={namespace}
+              editorType={values.editorType}
+              yamlData={values.yamlData}
+              formData={formData}
+              basicAuthSecretName={values.basicAuthSecretName}
+              noRepo
+            />
+          </FormSection>
+        )}
         {!chartError &&
           (!formSchema && !chartHasValues ? (
             <Alert

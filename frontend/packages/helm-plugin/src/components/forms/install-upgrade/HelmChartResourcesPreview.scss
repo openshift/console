@@ -1,0 +1,36 @@
+.co-helm-resources-preview {
+  &__loading {
+    display: flex;
+    align-items: center;
+    gap: var(--pf-t--global--spacer--md);
+    padding: var(--pf-t--global--spacer--lg) 0;
+  }
+
+  &__toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--pf-t--global--spacer--sm);
+    margin-bottom: var(--pf-t--global--spacer--md);
+  }
+
+  &__summary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--pf-t--global--spacer--xs);
+  }
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--pf-t--global--spacer--sm);
+  }
+
+  &__resource {
+    border: var(--pf-t--global--border--width--regular) solid
+      var(--pf-t--global--border--color--default);
+    border-radius: var(--pf-t--global--border--radius--small);
+    padding: var(--pf-t--global--spacer--sm) var(--pf-t--global--spacer--md);
+  }
+}
