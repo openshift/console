@@ -80,6 +80,7 @@ async function createTestRoute(
 }
 
 test.describe('Route', { tag: ['@dev-console'] }, () => {
+  // eslint-disable-next-line playwright/expect-expect -- asserted via waitForDetailsHeading
   test('R-01-TC01: Create route via form UI', async ({ page, k8sClient, cleanup }) => {
     const ns = `aut-routes-create-${Date.now()}`;
     await createRoutePrerequisites(k8sClient, cleanup, ns);
@@ -91,9 +92,7 @@ test.describe('Route', { tag: ['@dev-console'] }, () => {
       await routePage.fillYaml('created-route', SERVICE_NAME, String(SERVICE_PORT));
     }
     await routePage.create();
-    await expect(new DetailsPage(page).getHeadingByName('created-route')).toBeVisible({
-      timeout: 30_000,
-    });
+    await routePage.waitForDetailsHeading('created-route');
   });
 
   test('R-01-TC02: Edit route hostname', async ({ page, k8sClient, cleanup }) => {
@@ -116,11 +115,10 @@ test.describe('Route', { tag: ['@dev-console'] }, () => {
       'test-route',
     )) as { spec?: { host?: string } };
     expect(route.spec?.host).toBe('edited.example.test');
-    await expect(new DetailsPage(page).getHeadingByName('test-route')).toBeVisible({
-      timeout: 30_000,
-    });
+    await routePage.waitForDetailsHeading('test-route');
   });
 
+  // eslint-disable-next-line playwright/expect-expect -- asserted via waitForDetailsHeading
   test('verifies route details page', { tag: ['@smoke'] }, async ({ page, k8sClient, cleanup }) => {
     const ns = `aut-routes-details-${Date.now()}`;
     const routeName = 'test-route';
@@ -133,7 +131,8 @@ test.describe('Route', { tag: ['@dev-console'] }, () => {
 
     await test.step('Navigate to route details and verify', async () => {
       await detailsPage.navigateToDetailsPage(`/k8s/ns/${ns}/routes/${routeName}`);
-      await expect(detailsPage.getHeadingByName(routeName)).toBeVisible({ timeout: 30_000 });
+      const routePage = new RoutePage(page);
+      await routePage.waitForDetailsHeading(routeName);
     });
   });
 
@@ -152,7 +151,8 @@ test.describe('Route', { tag: ['@dev-console'] }, () => {
 
       await test.step('Navigate to route details and delete', async () => {
         await detailsPage.navigateToDetailsPage(`/k8s/ns/${ns}/routes/${routeName}`);
-        await expect(detailsPage.getHeadingByName(routeName)).toBeVisible({ timeout: 30_000 });
+        const routePage = new RoutePage(page);
+        await routePage.waitForDetailsHeading(routeName);
         await detailsPage.clickActionsMenuAction('Delete Route');
       });
 

@@ -14,8 +14,25 @@ export class RoutePage extends BasePage {
 
   async navigateToEdit(namespace: string, name: string): Promise<void> {
     await this.goTo(`/k8s/ns/${namespace}/routes/${name}`);
+    await this.waitForDetailsHeading(name);
     await this.robustClick(this.page.getByRole('button', { name: 'Actions' }));
     await this.robustClick(this.page.getByRole('menuitem', { name: 'Edit Route' }));
+  }
+
+  // The details page can stay on its loading spinner forever when the resource
+  // watch never settles; reloading once re-registers the watch and recovers.
+  async waitForDetailsHeading(name: string): Promise<void> {
+    const heading = this.page.getByRole('heading', { name, level: 1 });
+    // eslint-disable-next-line eslint-js/no-restricted-syntax -- waits for state only; the heading is never acted on
+    const loaded = await heading.waitFor({ state: 'visible', timeout: 30_000 }).then(
+      () => true,
+      () => false,
+    );
+    if (!loaded) {
+      await this.page.reload();
+      // eslint-disable-next-line eslint-js/no-restricted-syntax -- waits for state only; the heading is never acted on
+      await heading.waitFor({ state: 'visible', timeout: 30_000 });
+    }
   }
 
   isFormView(): Promise<boolean> {

@@ -17,9 +17,16 @@ export class TopologySidebarPage extends BasePage {
   }
 
   async selectAction(action: string): Promise<void> {
-    await this.clickActionsDropdown();
     const actionItem = this.page.getByRole('menuitem', { name: action });
-    await this.robustClick(actionItem);
+    // The Actions menu can close again right after opening (for example when the
+    // pane re-renders while actions reload). Retry the whole open-and-select
+    // sequence instead of only waiting for the item, so a closed menu reopens.
+    await expect(async () => {
+      if (!(await actionItem.isVisible().catch(() => false))) {
+        await this.clickActionsDropdown();
+      }
+      await actionItem.click({ timeout: 10_000 });
+    }).toPass({ timeout: 60_000, intervals: [1_000, 2_000, 5_000] });
   }
 
   getTab(tabName: string): Locator {

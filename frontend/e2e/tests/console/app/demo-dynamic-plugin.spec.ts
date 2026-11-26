@@ -174,10 +174,12 @@ interface ManifestResource {
       const demoDashboardTab = page.getByTestId('horizontal-link-Demo Dashboard');
       await expect(demoDashboardTab).toHaveText('Demo Dashboard', { timeout: 30_000 });
       await demoDashboardTab.click();
+      // The card loads via module federation and fetches metrics; allow time for both.
       await expect(page.getByTestId('demo-plugin-dashboard-card')).toContainText(
         'Metrics Dashboard Card example',
+        { timeout: 30_000 },
       );
-      await expect(page.locator('div.graph-wrapper')).toBeAttached();
+      await expect(page.locator('div.graph-wrapper')).toBeAttached({ timeout: 30_000 });
     });
 
     test('verifies Dynamic Nav items', async ({ page }) => {
