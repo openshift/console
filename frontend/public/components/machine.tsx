@@ -1,6 +1,7 @@
 import type { FC } from 'react';
 import { useMemo, Suspense } from 'react';
 import {
+  Alert,
   DescriptionList,
   DescriptionListDescription,
   DescriptionListGroup,
@@ -13,12 +14,14 @@ import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDa
 import NodeIPList from '@console/app/src/components/nodes/NodeIPList';
 import { ListPageBody } from '@console/dynamic-plugin-sdk';
 import type { ConsoleDataViewColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { NoModelError } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/k8s-watcher';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { Status } from '@console/shared/src/components/status/Status';
 import { DASH } from '@console/shared/src/constants/ui';
 import {
   getMachineAddresses,
+  getMachineConditions,
   getMachineInstanceType,
   getMachineNodeName,
   getMachineRegion,
@@ -26,9 +29,9 @@ import {
   getMachineZone,
   getMachinePhase,
 } from '@console/shared/src/selectors/machine';
-import { MachineModel } from '../models';
+import { ClusterAPIMachineModel, MachineModel } from '../models';
 import type { MachineKind, Selector } from '../module/k8s';
-import { referenceForModel } from '../module/k8s';
+import { referenceFor, referenceForModel } from '../module/k8s';
 import { Conditions } from './conditions';
 import { ResourceEventStream } from './events';
 import { DetailsPage } from './factory/details';
@@ -39,11 +42,143 @@ import { DetailsItem } from './utils/details-item';
 import { ResourceSummary } from './utils/details-page';
 import { SectionHeading } from './utils/headings';
 import { navFactory } from './utils/horizontal-nav';
-import { useK8sWatchResource } from './utils/k8s-watch-hook';
+import { useK8sWatchResources } from './utils/k8s-watch-hook';
 import { NodeLink, ResourceLink } from './utils/resource-link';
 import { LoadingBox } from './utils/status-box';
 
 export const machineReference = referenceForModel(MachineModel);
+
+const getWatchErrorStatus = (err: unknown): number | undefined =>
+  (err as { response?: { status?: number } })?.response?.status;
+
+/** Missing Cluster API CRD/model — treat as "not installed", not a user-visible failure. */
+export const isClusterAPINotInstalledError = (err: unknown): boolean =>
+  !!err && (err instanceof NoModelError || getWatchErrorStatus(err) === 404);
+
+/** User can list Machine API but not Cluster API resources. */
+export const isClusterAPIForbiddenError = (err: unknown): boolean =>
+  !!err && getWatchErrorStatus(err) === 403;
+
+/**
+ * Errors that must not become page `loadError` on the combined Machines/MachineSets list.
+ * A 403 would otherwise make StatusBox render AccessDenied and hide Machine API rows.
+ */
+export const getClusterAPIWatchError = (err: unknown): unknown => {
+  if (!err || isClusterAPINotInstalledError(err) || isClusterAPIForbiddenError(err)) {
+    return undefined;
+  }
+  return err;
+};
+
+/**
+ * Combined list page loadError: prefer Machine API failures. When Machine API loaded
+ * successfully, never pass Cluster API errors through (inline alert covers partial failure).
+ */
+export const getCombinedListLoadError = (
+  mapLoadError: unknown,
+  capiLoadError: unknown,
+  mapLoaded: boolean,
+): unknown => {
+  if (mapLoadError) {
+    return mapLoadError;
+  }
+  if (mapLoaded) {
+    return undefined;
+  }
+  return getClusterAPIWatchError(capiLoadError);
+};
+
+export type ClusterAPIWatchAlertKind = 'forbidden' | 'error';
+
+/** Inline alert kind for partial Cluster API watch failure on the combined list. */
+export const getClusterAPIWatchAlertKind = (
+  capiLoadError: unknown,
+): ClusterAPIWatchAlertKind | undefined => {
+  if (!capiLoadError || isClusterAPINotInstalledError(capiLoadError)) {
+    return undefined;
+  }
+  if (isClusterAPIForbiddenError(capiLoadError)) {
+    return 'forbidden';
+  }
+  return 'error';
+};
+
+/** Page-level warning/error when Cluster API watch fails but Machine API data can still show. */
+export const ClusterAPIWatchAlert: FC<{ error: unknown }> = ({ error }) => {
+  const { t } = useTranslation('public');
+  const kind = getClusterAPIWatchAlertKind(error);
+  if (!kind) {
+    return null;
+  }
+
+  if (kind === 'forbidden') {
+    return (
+      <Alert
+        isInline
+        className="co-alert"
+        variant="warning"
+        title={t('Cluster API resources could not be listed')}
+      >
+        {t(
+          'You do not have permission to list Cluster API resources. Machine API resources are still shown.',
+        )}
+      </Alert>
+    );
+  }
+
+  const message =
+    (error as { message?: string })?.message ||
+    t('Cluster API resources could not be loaded. Machine API resources are still shown.');
+
+  return (
+    <Alert
+      isInline
+      className="co-alert"
+      variant="danger"
+      title={t('Cluster API resources could not be loaded')}
+    >
+      {message}
+    </Alert>
+  );
+};
+
+type WatchResourceState = {
+  loaded: boolean;
+  loadError?: unknown;
+};
+
+/**
+ * Machines list loaded/error for the combined page vs MachineSet Machines tab.
+ * When `matchClusterAPI` is set, only the selected API's watch may affect the tab —
+ * the other API pending or failing must not block or replace the selected list.
+ * CAPI-only tabs pass errors through (including 403); combined lists use Step 4 rules.
+ */
+export const getMachinePageWatchState = (
+  matchClusterAPI: boolean | undefined,
+  mapMachines: WatchResourceState,
+  capiMachines: WatchResourceState,
+): { loaded: boolean; loadError: unknown } => {
+  if (matchClusterAPI === true) {
+    return {
+      loaded: capiMachines.loaded || !!capiMachines.loadError,
+      loadError: capiMachines.loadError,
+    };
+  }
+  if (matchClusterAPI === false) {
+    return {
+      loaded: mapMachines.loaded,
+      loadError: mapMachines.loadError,
+    };
+  }
+  return {
+    loaded: mapMachines.loaded && (capiMachines.loaded || !!capiMachines.loadError),
+    loadError: getCombinedListLoadError(
+      mapMachines.loadError,
+      capiMachines.loadError,
+      mapMachines.loaded,
+    ),
+  };
+};
 
 const tableColumnInfo = [
   { id: 'name' },
@@ -65,6 +200,7 @@ const getDataViewRows = (
 ) =>
   data.map(({ obj }: { obj: MachineKind }) => {
     const { name, namespace } = obj.metadata;
+    const kindRef = referenceFor(obj) || machineReference;
     const nodeName = getMachineNodeName(obj);
     const region = getMachineRegion(obj);
     const zone = getMachineZone(obj);
@@ -72,7 +208,7 @@ const getDataViewRows = (
 
     const rowCells = {
       [tableColumnInfo[0].id]: {
-        cell: <ResourceLink kind={machineReference} name={name} namespace={namespace} />,
+        cell: <ResourceLink kind={kindRef} name={name} namespace={namespace} />,
       },
       [tableColumnInfo[1].id]: {
         cell: <ResourceLink kind="Namespace" name={namespace} />,
@@ -93,7 +229,7 @@ const getDataViewRows = (
         cell: zone || DASH,
       },
       [tableColumnInfo[7].id]: {
-        cell: <LazyActionMenu context={{ [machineReference]: obj }} />,
+        cell: <LazyActionMenu context={{ [kindRef]: obj }} />,
       },
     };
 
@@ -178,7 +314,7 @@ const MachineDetails: FC<MachineDetailsProps> = ({ obj }: { obj: MachineKind }) 
       </PaneBody>
       <PaneBody>
         <SectionHeading text={t('Conditions')} />
-        <Conditions conditions={obj.status?.providerStatus?.conditions} />
+        <Conditions conditions={getMachineConditions(obj)} />
       </PaneBody>
     </>
   );
@@ -235,7 +371,7 @@ const useMachineColumns = (): {
       {
         title: t('Region'),
         id: tableColumnInfo[5].id,
-        sort: "metadata.labels['machine.openshift.io/region']",
+        sort: (data, direction) => data.sort(sortResourceByValue(direction, getMachineRegion)),
         props: {
           modifier: 'nowrap' as const,
         },
@@ -243,7 +379,7 @@ const useMachineColumns = (): {
       {
         title: t('Availability zone'),
         id: tableColumnInfo[6].id,
-        sort: "metadata.labels['machine.openshift.io/zone']",
+        sort: (data, direction) => data.sort(sortResourceByValue(direction, getMachineZone)),
         props: {
           modifier: 'nowrap' as const,
         },
@@ -282,13 +418,47 @@ export const MachinePage: FC<MachinePageProps> = ({
   hideLabelFilter,
   hideNameLabelFilters,
   hideColumnManagement,
+  matchClusterAPI,
 }) => {
-  const [machines, loaded, loadError] = useK8sWatchResource<MachineKind[]>({
-    kind: referenceForModel(MachineModel),
-    isList: true,
-    selector,
-    namespace,
-  });
+  const watchedResources = useMemo(
+    () => ({
+      mapMachines: {
+        kind: referenceForModel(MachineModel),
+        isList: true,
+        selector,
+        namespace,
+      },
+      capiMachines: {
+        kind: referenceForModel(ClusterAPIMachineModel),
+        isList: true,
+        selector,
+        namespace,
+        optional: true,
+      },
+    }),
+    [namespace, selector],
+  );
+
+  const { mapMachines, capiMachines } = useK8sWatchResources<{
+    mapMachines: MachineKind[];
+    capiMachines: MachineKind[];
+  }>(watchedResources);
+
+  const machines = useMemo(() => {
+    if (matchClusterAPI === true) {
+      return capiMachines.data || [];
+    }
+    if (matchClusterAPI === false) {
+      return mapMachines.data || [];
+    }
+    return [...(mapMachines.data || []), ...(capiMachines.data || [])];
+  }, [mapMachines.data, capiMachines.data, matchClusterAPI]);
+  const { loaded, loadError } = getMachinePageWatchState(
+    matchClusterAPI,
+    mapMachines,
+    capiMachines,
+  );
+
   const createAccessReview = {
     groupVersionKind: referenceForModel(MachineModel),
     namespace: namespace || 'default',
@@ -306,6 +476,7 @@ export const MachinePage: FC<MachinePageProps> = ({
         </ListPageCreate>
       </ListPageHeader>
       <ListPageBody>
+        {matchClusterAPI === undefined && <ClusterAPIWatchAlert error={capiMachines.loadError} />}
         <MachineList
           data={machines}
           loaded={loaded}
@@ -319,10 +490,10 @@ export const MachinePage: FC<MachinePageProps> = ({
   );
 };
 
-export const MachineDetailsPage: FC = (props) => (
+export const MachineDetailsPage: FC<MachineDetailsPageProps> = (props) => (
   <DetailsPage
     {...props}
-    kind={machineReference}
+    kind={props.kind || machineReference}
     pages={[
       navFactory.details(MachineDetails),
       navFactory.editYaml(),
@@ -336,6 +507,11 @@ type MachineDetailsProps = {
   obj: MachineKind;
 };
 
+type MachineDetailsPageProps = {
+  kind?: string;
+  [key: string]: any;
+};
+
 export type MachinePageProps = {
   showTitle?: boolean;
   namespace?: string;
@@ -343,4 +519,6 @@ export type MachinePageProps = {
   hideLabelFilter?: boolean;
   hideNameLabelFilters?: boolean;
   hideColumnManagement?: boolean;
+  /** When set (MachineSet Machines tab), only show Machines from that API group. */
+  matchClusterAPI?: boolean;
 };

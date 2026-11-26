@@ -168,7 +168,12 @@ const ControlPlaneMachineSetDetails: FC<ControlPlaneMachineSetDetailsProps> = ({
 };
 
 const MachineTabPage: FC<MachineTabPageProps> = ({ obj }) => (
-  <MachinePage namespace={obj.metadata.namespace} showTitle={false} selector={obj.spec.selector} />
+  <MachinePage
+    namespace={obj.metadata.namespace}
+    showTitle={false}
+    selector={obj.spec.selector}
+    matchClusterAPI={false}
+  />
 );
 
 const pages = [
