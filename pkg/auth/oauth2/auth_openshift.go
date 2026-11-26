@@ -189,27 +189,36 @@ func (o *openShiftAuth) DeleteSession(w http.ResponseWriter, r *http.Request) {
 func (o *openShiftAuth) logout(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	// Clear local state (session + recovery cookie) before any WriteHeader call.
-	// Set-Cookie headers must be added before WriteHeader, otherwise Go's
-	// ResponseWriter silently drops them.
+	// Read credentials without refreshing or recovering a session.
+	ls, err := o.sessions.GetSession(w, r)
+	var token, refreshToken string
+	if err == nil {
+		if ls != nil {
+			token = ls.AccessToken()
+			refreshToken = ls.RefreshToken()
+		} else if accessToken, expiry, ok := o.sessions.GetRecoveryCookie(r); ok && time.Now().Before(expiry) {
+			token = accessToken
+		} else {
+			err = fmt.Errorf("a session was not found on server or is expired")
+		}
+	}
+
+	// Clear local state before writing response headers, including error responses.
 	o.sessions.DeleteSession(w, r)
 	o.sessions.ClearRecoveryCookie(w, r)
+
+	if err != nil {
+		klog.Errorf("error logging out: %v", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 
 	k8sURL, err := url.Parse(o.issuerURL)
 	if err != nil {
 		klog.Errorf("failed to parse the URL to kube-apiserver: %v", err)
-		w.WriteHeader(http.StatusNoContent)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-
-	ls, err := o.getLoginState(w, r)
-	if err != nil {
-		klog.Errorf("error logging out: %v", err)
-		w.WriteHeader(http.StatusNoContent)
-		return
-	}
-
-	token := ls.AccessToken()
 
 	configWithBearerToken := &rest.Config{
 		Host:        "https://" + k8sURL.Host,
@@ -221,15 +230,17 @@ func (o *openShiftAuth) logout(w http.ResponseWriter, r *http.Request) {
 	oauthClient, err := oauthv1client.NewForConfig(configWithBearerToken)
 	if err != nil {
 		klog.Errorf("failed setting up the oauthaccesstokens client: %v", err)
-		w.WriteHeader(http.StatusNoContent)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
 	if err := oauthClient.OAuthAccessTokens().Delete(ctx, tokenToObjectName(token), metav1.DeleteOptions{}); err != nil {
 		klog.Errorf("failed to revoke access token on logout: %v", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
 	}
 
-	if refreshToken := ls.RefreshToken(); refreshToken != "" {
+	if refreshToken != "" {
 		if delErr := oauthClient.OAuthAuthorizeTokens().Delete(ctx, tokenToObjectName(refreshToken), metav1.DeleteOptions{}); delErr != nil {
 			klog.V(4).Infof("failed to revoke refresh token on logout: %v", delErr)
 		}
