@@ -45,6 +45,10 @@ func (m *mockCatalogService) GetCatalogItems() ([]olm.ConsoleCatalogItem, error)
 	return nil, nil
 }
 
+func (m *mockCatalogService) GetCatalogItem(catalogName, packageName string) (*olm.ConsoleCatalogItem, error) {
+	return nil, nil
+}
+
 func createTestReconciler(objects ...client.Object) (*ClusterCatalogReconciler, *mockCatalogService) {
 	scheme := runtime.NewScheme()
 	_ = ocv1.AddToScheme(scheme)

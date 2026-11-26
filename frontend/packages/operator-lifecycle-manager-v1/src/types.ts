@@ -32,6 +32,12 @@ export type ClusterExtensionKind = K8sResourceCommon & {
   };
 };
 
+/** Package channel and its available versions, sorted newest first. */
+interface OLMCatalogChannel {
+  name: string;
+  versions: string[];
+}
+
 export type OLMCatalogItem = {
   id: string;
   capabilities: string;
@@ -52,9 +58,15 @@ export type OLMCatalogItem = {
   support: string;
   validSubscription: string[];
   version: string;
+  channels?: OLMCatalogChannel[];
+  versions?: string[];
+  lifecycleData?: Record<string, unknown> | null;
 };
 
 export type OLMCatalogItemData = {
   categories: string[];
   latestVersion: string;
+  channels: OLMCatalogChannel[];
+  versions: string[];
+  lifecycleData: Record<string, unknown> | null;
 };

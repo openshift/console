@@ -68,7 +68,10 @@ export const normalizeCatalogItem: NormalizeExtensionCatalogItem = (item) => {
     description: description || markdownDescription,
     data: {
       latestVersion: version,
+      channels: item.channels ?? [],
+      versions: item.versions ?? [],
       categories,
+      lifecycleData: item.lifecycleData ?? null,
     },
     details: {
       properties: [
