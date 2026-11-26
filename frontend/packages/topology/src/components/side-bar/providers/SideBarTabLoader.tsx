@@ -18,8 +18,14 @@ const SideBarTabLoader: FC<SideBarTabLoaderProps> = ({ element, children }) => {
     return children([], false);
   }
 
+  // The resolver calls each tab-section provider hook in a loop, so its hook
+  // count depends on the extension set. Remount it when the set changes so
+  // the hook list is never reconciled across different provider sets.
+  const extensionsKey = tabSectionExtensions.map(({ id }) => id).join(',');
+
   return (
     <SideBarTabHookResolver
+      key={extensionsKey}
       element={element}
       tabExtensions={tabExtensions}
       tabSectionExtensions={tabSectionExtensions}
