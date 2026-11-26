@@ -76,6 +76,46 @@ describe('PodDetailsList', () => {
     expect(screen.getByText('10.131.0.48')).toBeVisible();
   });
 
+  it('shows only Pod IP when no primary UDN is active', async () => {
+    renderPodDetailsList();
+
+    expect(screen.getByText('Pod IP')).toBeVisible();
+    expect(screen.getByText('10.131.0.48')).toBeVisible();
+    expect(screen.queryByText('Primary UDN IP')).not.toBeInTheDocument();
+  });
+
+  it('shows Pod IP and Primary UDN IP as separate fields when a primary UDN is active', async () => {
+    const podWithPrimaryUDN = {
+      ...testPodInstance,
+      metadata: {
+        ...testPodInstance.metadata,
+        annotations: {
+          ...testPodInstance.metadata.annotations,
+          'k8s.ovn.org/pod-networks': JSON.stringify({
+            default: {
+              ip_addresses: ['10.131.0.48/23'],
+              mac_address: '0a:58:0a:83:00:30',
+              role: 'infrastructure-locked',
+            },
+            'demo-pudn/primary-udn-l3': {
+              ip_addresses: ['10.3.4.11/24'],
+              mac_address: '0a:58:0a:03:04:0b',
+              role: 'primary',
+            },
+          }),
+        },
+      },
+    };
+    renderPodDetailsList(podWithPrimaryUDN);
+
+    // Pod IP keeps showing status.podIP unchanged.
+    expect(screen.getByText('Pod IP')).toBeVisible();
+    expect(screen.getByText('10.131.0.48')).toBeVisible();
+    // Primary UDN IP is the new, separate field.
+    expect(screen.getByText('Primary UDN IP')).toBeVisible();
+    expect(screen.getByText('10.3.4.11')).toBeVisible();
+  });
+
   it('verifies a link to the node', async () => {
     renderPodDetailsList();
 

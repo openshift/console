@@ -1,5 +1,103 @@
-import { podPhase, podPhaseFilterReducer, podReadiness, podRestarts } from '../pods';
+import {
+  getPrimaryUDNPodIPs,
+  podPhase,
+  podPhaseFilterReducer,
+  podReadiness,
+  podRestarts,
+} from '../pods';
 import type { PodKind } from '../types';
+
+describe('getPrimaryUDNPodIPs', () => {
+  const podWithAnnotation = (podNetworksValue: string): PodKind =>
+    ({
+      metadata: { annotations: { 'k8s.ovn.org/pod-networks': podNetworksValue } },
+    }) as unknown as PodKind;
+
+  let warnSpy: jest.SpyInstance;
+
+  beforeEach(() => {
+    warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    warnSpy.mockRestore();
+  });
+
+  it('returns null when the pod has no pod-networks annotation', () => {
+    expect(getPrimaryUDNPodIPs({ metadata: {} } as unknown as PodKind)).toBeNull();
+    expect(warnSpy).not.toHaveBeenCalled();
+  });
+
+  it('logs a warning and returns null when the annotation is not valid JSON', () => {
+    expect(getPrimaryUDNPodIPs(podWithAnnotation('{not valid json'))).toBeNull();
+    expect(warnSpy).toHaveBeenCalledWith(
+      expect.stringContaining('k8s.ovn.org/pod-networks'),
+      expect.anything(),
+    );
+  });
+
+  it('returns null when the default network is itself primary (no UDN active)', () => {
+    const pod = podWithAnnotation(
+      JSON.stringify({ default: { ip_addresses: ['10.128.2.20/23'], role: 'primary' } }),
+    );
+    expect(getPrimaryUDNPodIPs(pod)).toBeNull();
+  });
+
+  it('returns the primary network IP with the CIDR prefix stripped', () => {
+    const pod = podWithAnnotation(
+      JSON.stringify({
+        default: { ip_addresses: ['10.128.2.20/23'], role: 'infrastructure-locked' },
+        'demo-pudn/primary-udn-l3': { ip_addresses: ['10.3.4.11/24'], role: 'primary' },
+      }),
+    );
+    expect(getPrimaryUDNPodIPs(pod)).toEqual(['10.3.4.11']);
+  });
+
+  it('returns multiple IPs for a dual-stack primary network', () => {
+    const pod = podWithAnnotation(
+      JSON.stringify({
+        default: { ip_addresses: ['10.128.2.20/23'], role: 'infrastructure-locked' },
+        'ns/udn': {
+          ip_addresses: ['10.200.200.12/24', 'fd00:200:200::c/64'],
+          role: 'primary',
+        },
+      }),
+    );
+    expect(getPrimaryUDNPodIPs(pod)).toEqual(['10.200.200.12', 'fd00:200:200::c']);
+  });
+
+  it('falls back to the deprecated singular ip_address field', () => {
+    const pod = podWithAnnotation(
+      JSON.stringify({
+        default: { ip_address: '10.128.2.20/23', role: 'infrastructure-locked' },
+        'ns/udn': { ip_address: '10.200.200.12/24', role: 'primary' },
+      }),
+    );
+    expect(getPrimaryUDNPodIPs(pod)).toEqual(['10.200.200.12']);
+  });
+
+  it('logs a warning and returns null, not a throw, when ip_addresses is a string instead of an array', () => {
+    const pod = podWithAnnotation(
+      JSON.stringify({
+        default: { ip_addresses: ['10.128.2.20/23'], role: 'infrastructure-locked' },
+        'ns/udn': { ip_addresses: '10.200.200.12/24', role: 'primary' },
+      }),
+    );
+    expect(getPrimaryUDNPodIPs(pod)).toBeNull();
+    expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('ns/udn'), expect.anything());
+  });
+
+  it('logs a warning and returns null, not a throw, when ip_addresses contains a non-string element', () => {
+    const pod = podWithAnnotation(
+      JSON.stringify({
+        default: { ip_addresses: ['10.128.2.20/23'], role: 'infrastructure-locked' },
+        'ns/udn': { ip_addresses: [10200200012], role: 'primary' },
+      }),
+    );
+    expect(getPrimaryUDNPodIPs(pod)).toBeNull();
+    expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('ns/udn'), expect.anything());
+  });
+});
 
 describe('podPhase', () => {
   let pod;
