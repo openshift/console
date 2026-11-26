@@ -6,6 +6,7 @@ import { useFormikContext, getIn } from 'formik';
 import * as fuzzy from 'fuzzysearch';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import type { K8sResourceCondition } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { ImageStreamTagModel } from '@console/internal/models';
 import type { K8sResourceKind, ContainerPort } from '@console/internal/module/k8s';
 import { k8sGet } from '@console/internal/module/k8s';
@@ -64,6 +65,29 @@ const ImageStreamTagDropdown: FC<{
           formContextField && setFieldValue(`${fieldPrefix}imageStreamTag`, imageStreamImport);
           const imgStreamLabels = _.pick(labels, imageStreamLabels);
           const name = imageStream.image;
+
+          // Check for import failure conditions. A failed import still resolves
+          // to the last successfully imported image, so the tag remains
+          // deployable: keep the form valid and surface the failure as a
+          // warning instead of blocking Create.
+          const failureCondition = _.find(imageStreamImport.conditions, {
+            type: 'ImportSuccess',
+            status: 'False',
+          }) as K8sResourceCondition | undefined;
+
+          if (failureCondition && _.isEmpty(image)) {
+            // No usable image: same handling as the catch block
+            setFieldValue(`${fieldPrefix}isi`, {});
+            setFieldValue(`${fieldPrefix}isi.status`, {
+              metadata: {},
+              status: '',
+              message: failureCondition.message || t('Failed to import image'),
+            });
+            setFieldValue(`${fieldPrefix}isSearchingForImage`, false);
+            setValidated(ValidatedOptions.error);
+            return;
+          }
+
           // Ensure status has the required structure for validation (isi.status.status must be a string)
           // ImageStreamTag status may not have the nested status.status property, so we normalize it
           const normalizedStatus = status?.status
@@ -72,6 +96,9 @@ const ImageStreamTagDropdown: FC<{
                 ...(status || {}),
                 status: 'Success',
                 metadata: status?.metadata || {},
+                ...(failureCondition && {
+                  message: failureCondition.message || t('Failed to import image'),
+                }),
               };
           const isi = { name, image, tag, status: normalizedStatus };
           const ports = getPorts(isi);
@@ -100,7 +127,7 @@ const ImageStreamTagDropdown: FC<{
             !getIn(_.get(touched, `${fieldPrefix}route`), 'targetPort') &&
             _.head(ports);
           targetPort && setFieldValue(`${fieldPrefix}route.targetPort`, makePortName(targetPort));
-          setValidated(ValidatedOptions.success);
+          setValidated(failureCondition ? ValidatedOptions.warning : ValidatedOptions.success);
         })
         .catch((error) => {
           if (unmounted.current) return;
@@ -126,6 +153,7 @@ const ImageStreamTagDropdown: FC<{
       initialRoute,
       touched,
       setValidated,
+      t,
     ],
   );
 
