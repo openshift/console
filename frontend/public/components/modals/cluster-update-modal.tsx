@@ -3,6 +3,7 @@ import { useState, useCallback, useMemo, Fragment } from 'react';
 import {
   Alert,
   Button,
+  Checkbox,
   Content,
   ContentVariants,
   Form,
@@ -54,7 +55,7 @@ enum UpgradeTypes {
   Partial = 'Partial',
 }
 
-const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
+export const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
   const { cancel, close, cv } = props;
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
   const clusterUpgradeableFalse = !!getConditionUpgradeableFalse(cv);
@@ -71,12 +72,11 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
       ? currentMinorVersionPatchUpdate?.version
       : availableSortedUpdates[0]?.version) || '',
   );
-  const [machineConfigPools, machineConfigPoolsLoaded] = useK8sWatchResource<
-    MachineConfigPoolKind[]
-  >({
-    isList: true,
-    kind: referenceForModel(MachineConfigPoolModel),
-  });
+  const [machineConfigPools, machineConfigPoolsLoaded, machineConfigPoolsLoadError] =
+    useK8sWatchResource<MachineConfigPoolKind[]>({
+      isList: true,
+      kind: referenceForModel(MachineConfigPoolModel),
+    });
   const [error, setError] = useState('');
   // Computed once from the first watch result so later watch changes don't
   // affect user input.
@@ -87,6 +87,9 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
   );
   const [upgradeType, setUpgradeType] = useState<UpgradeTypes>(UpgradeTypes.Full);
   const [includeNotRecommended, setIncludeNotRecommended] = useState(false);
+  // Store the paused pool names that were acknowledged so a later watch change
+  // invalidates the acknowledgement if the paused set changes.
+  const [acknowledgedPausedPoolNames, setAcknowledgedPausedPoolNames] = useState('');
   const { t } = useTranslation('public');
   const isLightspeedAvailable = useFlag('LIGHTSPEED_PLUGIN');
 
@@ -96,6 +99,10 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
   };
   const handleUpgradeTypeChange = (value: typeof upgradeType) => {
     setUpgradeType(value);
+    // Acknowledgement only applies to Full + paused pools; clear when leaving Full.
+    if (value !== UpgradeTypes.Full) {
+      setAcknowledgedPausedPoolNames('');
+    }
   };
   const handleMCPSelectionChange = (event: FormEvent<HTMLInputElement>, checked: boolean) => {
     const checkedItems = [...machineConfigPoolsToPause];
@@ -104,10 +111,34 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
       : _.pull(checkedItems, event.currentTarget.id);
     setMachineConfigPoolsToPause(checkedItems);
   };
-  const pauseableMCPs = machineConfigPools
-    .filter((mcp) => !isMCPMaster(mcp))
-    .sort(sortMCPsByCreationTimestamp);
-  const pausedMCPs = pauseableMCPs.filter((mcp) => isMCPPaused(mcp));
+  const pauseableMCPs = useMemo(
+    () => machineConfigPools.filter((mcp) => !isMCPMaster(mcp)).sort(sortMCPsByCreationTimestamp),
+    [machineConfigPools],
+  );
+  const pausedMCPs = useMemo(
+    () => pauseableMCPs.filter((mcp) => isMCPPaused(mcp)),
+    [pauseableMCPs],
+  );
+  const pausedPoolNames = pausedMCPs.map((mcp) => mcp.metadata.name).join(', ');
+  // Clear acknowledgement whenever the paused set changes, including when it
+  // returns to a previously acknowledged set. Adjust during render instead of
+  // an effect to avoid cascading renders (React "adjusting state when a prop
+  // changes" pattern).
+  const [prevPausedPoolNames, setPrevPausedPoolNames] = useState(pausedPoolNames);
+  if (pausedPoolNames !== prevPausedPoolNames) {
+    setPrevPausedPoolNames(pausedPoolNames);
+    setAcknowledgedPausedPoolNames('');
+  }
+  const pausedPoolsAcknowledged =
+    acknowledgedPausedPoolNames !== '' && acknowledgedPausedPoolNames === pausedPoolNames;
+  const requiresPausedPoolsAcknowledgement =
+    upgradeType === UpgradeTypes.Full && pausedMCPs.length > 0;
+  const machineConfigPoolsLoadErrorMessage =
+    upgradeType === UpgradeTypes.Full && machineConfigPoolsLoadError
+      ? t(
+          'Unable to load MachineConfigPools. Paused pools cannot be checked, so Full cluster update cannot proceed.',
+        )
+      : '';
   const desiredRecommendedUpdate = useMemo(
     () => availableSortedUpdates.find((update) => update.version === desiredVersion),
     [availableSortedUpdates, desiredVersion],
@@ -122,6 +153,14 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
   const submit: FormEventHandler<HTMLFormElement> = useCallback(
     (e) => {
       e.preventDefault();
+      if (
+        upgradeType === UpgradeTypes.Full &&
+        (!machineConfigPoolsLoaded ||
+          !!machineConfigPoolsLoadError ||
+          (requiresPausedPoolsAcknowledgement && !pausedPoolsAcknowledged))
+      ) {
+        return;
+      }
       if (!desiredRecommendedUpdate && !desiredNotRecommendedUpdate) {
         setError(
           t(
@@ -172,7 +211,11 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
       t,
       desiredVersion,
       upgradeType,
+      machineConfigPoolsLoaded,
+      machineConfigPoolsLoadError,
+      requiresPausedPoolsAcknowledgement,
       pausedMCPs,
+      pausedPoolsAcknowledged,
       pauseableMCPs,
       machineConfigPoolsToPause,
       handlePromise,
@@ -311,13 +354,28 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
                   <Alert
                     variant="warning"
                     isInline
-                    isPlain
-                    title={t(
-                      'The cluster will resume paused {{worker}} or custom pool {{resource}} updates. To update only the control plane, select "Control plane only update" below.',
-                      { worker: NodeTypeNames.Worker, resource: NodeModel.label },
-                    )}
+                    title={t('Paused MachineConfigPools will be resumed')}
                     data-test="update-cluster-modal-paused-nodes-warning"
-                  />
+                  >
+                    <Content component={ContentVariants.p}>
+                      {t(
+                        'The cluster will resume updates for the following paused pools: {{pausedPoolNames}}. To update only the control plane, select "Control plane only update" below.',
+                        { pausedPoolNames },
+                      )}
+                    </Content>
+                    <Checkbox
+                      className="pf-v6-u-mt-sm"
+                      id="update-cluster-modal-paused-pools-ack"
+                      data-test="update-cluster-modal-paused-pools-ack"
+                      isChecked={pausedPoolsAcknowledged}
+                      onChange={(_event, checked) =>
+                        setAcknowledgedPausedPoolNames(checked ? pausedPoolNames : '')
+                      }
+                      label={t(
+                        'I understand that Full cluster update will resume these paused pools',
+                      )}
+                    />
+                  </Alert>
                 )
               }
               data-test="update-cluster-modal-full-update-radio"
@@ -392,7 +450,9 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
           </Alert>
         </Form>
       </ModalBody>
-      <ModalFooterWithAlerts errorMessage={errorMessage || error}>
+      <ModalFooterWithAlerts
+        errorMessage={errorMessage || error || machineConfigPoolsLoadErrorMessage}
+      >
         <Button
           type="submit"
           variant="primary"
@@ -402,7 +462,10 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
           id="confirm-action"
           isDisabled={
             !desiredVersion ||
-            (upgradeType === UpgradeTypes.Partial && machineConfigPoolsToPause.length === 0)
+            (upgradeType === UpgradeTypes.Full &&
+              (!machineConfigPoolsLoaded || !!machineConfigPoolsLoadError)) ||
+            (upgradeType === UpgradeTypes.Partial && machineConfigPoolsToPause.length === 0) ||
+            (requiresPausedPoolsAcknowledgement && !pausedPoolsAcknowledged)
           }
         >
           {t('Update cluster')}
