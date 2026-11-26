@@ -66,10 +66,15 @@ test.describe('Create Application from git form', { tag: ['@dev-console', '@regr
 
     await test.step('Verify workload in topology', async () => {
       await topologyPage.waitForWorkload('name-no-route');
-      await topologyPage.clickWorkload('name-no-route');
-      await expect(topologyPage.getSidebarTitle()).toContainText('name-no-route', {
-        timeout: 15_000,
-      });
+      // The topology graph re-renders during build/deployment updates, which can
+      // close the sidebar between the click and the title assertion. Retry the
+      // click so the workload is re-selected if the sidebar closes.
+      await expect(async () => {
+        await topologyPage.clickWorkload('name-no-route');
+        await expect(topologyPage.getSidebarTitle()).toContainText('name-no-route', {
+          timeout: 5_000,
+        });
+      }).toPass({ timeout: 60_000 });
     });
 
     await test.step('Verify no Route was created', async () => {
