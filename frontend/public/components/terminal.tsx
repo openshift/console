@@ -50,18 +50,23 @@ export const Terminal = forwardRef<ImperativeTerminalType, TerminalProps>(
         return;
       }
 
-      const pageRect = document.getElementsByClassName('pf-v6-c-page')[0]?.getBoundingClientRect();
-      const bodyRect = document.body.getBoundingClientRect();
       const nodeRect = node.getBoundingClientRect();
+      // Viewport can be taller or shorter than .pf-v6-c-page (Cloud Shell drawer).
+      const viewportHeight = document.documentElement.clientHeight;
+      const viewportWidth = document.documentElement.clientWidth;
+      const pageRect = document.querySelector('.pf-v6-c-page')?.getBoundingClientRect();
+      const availableBottom = isFullscreen
+        ? viewportHeight
+        : Math.min(viewportHeight, pageRect?.bottom ?? viewportHeight);
 
-      if (!pageRect) {
+      const height = Math.floor(availableBottom - (isFullscreen ? 0 : nodeRect.top) - padding);
+      const width = Math.floor(
+        viewportWidth - (isFullscreen ? 0 : nodeRect.left) - (isFullscreen ? 10 : padding),
+      );
+
+      if (width <= 0 || height <= 0) {
         return;
       }
-
-      const height = Math.floor(pageRect.bottom - (isFullscreen ? 0 : nodeRect.top) - padding);
-      const width = Math.floor(
-        bodyRect.width - (isFullscreen ? 0 : nodeRect.left) - (isFullscreen ? 10 : padding),
-      );
 
       setDimensions({ width: `${width}px`, height: `${height}px` });
     }, [isFullscreen, padding]);
