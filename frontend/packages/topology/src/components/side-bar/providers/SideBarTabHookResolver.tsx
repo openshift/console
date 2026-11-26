@@ -1,3 +1,8 @@
+'use no memo';
+
+// The provider calls below are extension hooks resolved in a loop; compiling
+// this file would memoize the reduce and make those hook calls conditional.
+
 import type { ReactNode, ReactElement, FC } from 'react';
 import { useMemo, Fragment, useEffect } from 'react';
 import type { GraphElement } from '@patternfly/react-topology';
