@@ -43,16 +43,18 @@ func TestNewAuthenticator(t *testing.T) {
 	p.issuer = s.URL
 
 	ccfg := &Config{
-		ClientID:      "fake-client-id",
-		ClientSecret:  "fake-secret",
-		Scope:         []string{"foo", "bar"},
-		RedirectURL:   "http://example.com/callback",
-		IssuerURL:     p.issuer,
-		ErrorURL:      errURL,
-		SuccessURL:    sucURL,
-		CookiePath:    "/",
-		SecureCookies: true,
-		K8sConfig:     &rest.Config{},
+		CookieAuthenticationKey: []byte("01234567890123456789012345678901"),
+		CookieEncryptionKey:     []byte("01234567890123456789012345678901"),
+		ClientID:                "fake-client-id",
+		ClientSecret:            "fake-secret",
+		Scope:                   []string{"foo", "bar"},
+		RedirectURL:             "http://example.com/callback",
+		IssuerURL:               p.issuer,
+		ErrorURL:                errURL,
+		SuccessURL:              sucURL,
+		CookiePath:              "/",
+		SecureCookies:           true,
+		K8sConfig:               &rest.Config{},
 	}
 
 	ctx, cancel := context.WithCancel(context.Background())
@@ -175,15 +177,17 @@ func TestOAuth2ConfigForHost(t *testing.T) {
 	p.issuer = s.URL
 
 	ccfg := &Config{
-		ClientID:     "fake-client-id",
-		ClientSecret: "fake-secret",
-		Scope:        []string{"openid"},
-		RedirectURL:  "https://console.example.com/auth/callback",
-		IssuerURL:    p.issuer,
-		ErrorURL:     "/auth/error",
-		SuccessURL:   "/",
-		CookiePath:   "/api",
-		K8sConfig:    &rest.Config{},
+		ClientID:                "fake-client-id",
+		ClientSecret:            "fake-secret",
+		Scope:                   []string{"openid"},
+		RedirectURL:             "https://console.example.com/auth/callback",
+		CookieAuthenticationKey: []byte("01234567890123456789012345678901"),
+		CookieEncryptionKey:     []byte("01234567890123456789012345678901"),
+		IssuerURL:               p.issuer,
+		ErrorURL:                "/auth/error",
+		SuccessURL:              "/",
+		CookiePath:              "/api",
+		K8sConfig:               &rest.Config{},
 		AllowedRedirectHosts: map[string]bool{
 			"console.example.com":               true,
 			"console-alt.example.com":           true,
@@ -249,15 +253,17 @@ func TestOAuth2ConfigForHostNilAllowedHosts(t *testing.T) {
 	p.issuer = s.URL
 
 	ccfg := &Config{
-		ClientID:     "fake-client-id",
-		ClientSecret: "fake-secret",
-		Scope:        []string{"openid"},
-		RedirectURL:  "https://console.example.com/auth/callback",
-		IssuerURL:    p.issuer,
-		ErrorURL:     "/auth/error",
-		SuccessURL:   "/",
-		CookiePath:   "/api",
-		K8sConfig:    &rest.Config{},
+		ClientID:                "fake-client-id",
+		ClientSecret:            "fake-secret",
+		Scope:                   []string{"openid"},
+		RedirectURL:             "https://console.example.com/auth/callback",
+		CookieAuthenticationKey: []byte("01234567890123456789012345678901"),
+		CookieEncryptionKey:     []byte("01234567890123456789012345678901"),
+		IssuerURL:               p.issuer,
+		ErrorURL:                "/auth/error",
+		SuccessURL:              "/",
+		CookiePath:              "/api",
+		K8sConfig:               &rest.Config{},
 	}
 
 	ctx, cancel := context.WithCancel(context.Background())
@@ -281,15 +287,17 @@ func TestLoginFuncUsesRequestHost(t *testing.T) {
 	p.issuer = s.URL
 
 	ccfg := &Config{
-		ClientID:     "fake-client-id",
-		ClientSecret: "fake-secret",
-		Scope:        []string{"openid"},
-		RedirectURL:  "https://console.example.com/auth/callback",
-		IssuerURL:    p.issuer,
-		ErrorURL:     "/auth/error",
-		SuccessURL:   "/",
-		CookiePath:   "/api",
-		K8sConfig:    &rest.Config{},
+		ClientID:                "fake-client-id",
+		ClientSecret:            "fake-secret",
+		Scope:                   []string{"openid"},
+		RedirectURL:             "https://console.example.com/auth/callback",
+		CookieAuthenticationKey: []byte("01234567890123456789012345678901"),
+		CookieEncryptionKey:     []byte("01234567890123456789012345678901"),
+		IssuerURL:               p.issuer,
+		ErrorURL:                "/auth/error",
+		SuccessURL:              "/",
+		CookiePath:              "/api",
+		K8sConfig:               &rest.Config{},
 		AllowedRedirectHosts: map[string]bool{
 			"console.example.com":     true,
 			"console-alt.example.com": true,
