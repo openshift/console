@@ -59,6 +59,24 @@ describe('podPhase', () => {
     expect(phase).toEqual('Unschedulable');
   });
 
+  it.each([
+    ['Failed', 2, 0, 'Error'],
+    ['Failed', 0, 2, 'Error'],
+    ['Failed', 0, 0, 'Failed'],
+    ['Succeeded', 0, 0, 'Completed'],
+  ])(
+    'displays a %s pod with container exit codes %i and %i as %s',
+    (phase, first, second, status) => {
+      pod.status.phase = phase;
+      pod.status.containerStatuses = [first, second].map((exitCode) => ({
+        state: { terminated: { exitCode, reason: exitCode === 0 ? 'Completed' : 'Error' } },
+      }));
+
+      expect(podPhase(pod)).toEqual(status);
+      expect(podPhaseFilterReducer(pod)).toEqual(phase);
+    },
+  );
+
   it('does not report initializing for a started native sidecar', () => {
     pod.spec = {
       initContainers: [{ name: 'istio-proxy', restartPolicy: 'Always' }],

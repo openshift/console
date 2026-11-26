@@ -276,7 +276,9 @@ export const podPhase = (pod: PodKind): PodPhase => {
         ready,
       } = containerStatuses[i];
       if (terminated && terminated.reason) {
-        phase = terminated.reason;
+        if (terminated.reason !== 'Completed' || pod.status.phase !== 'Failed') {
+          phase = terminated.reason;
+        }
       } else if (waiting && waiting.reason) {
         phase = waiting.reason;
       } else if (waiting && !waiting.reason) {
