@@ -28,3 +28,13 @@
     }
   }
 }
+
+// OCPBUGS-63239: WarningModal body min-height leaves a large gap above Yes/No.
+.co-cloud-shell-close-modal {
+  --pf-v6-c-modal-box__body--MinHeight: 0;
+
+  .pf-v6-c-modal-box__body {
+    min-height: 0;
+    flex-grow: 0;
+  }
+}
