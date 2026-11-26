@@ -1,24 +1,9 @@
-// Unit tests: store/router hooks are mocked; plain render is enough.
 import { screen, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
 import type { ClusterVersionKind, MachineConfigPoolKind } from '../../../module/k8s';
 import { ClusterUpdateModal } from '../cluster-update-modal';
-
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string, options?: Record<string, string>) => {
-      if (!options) {
-        return key;
-      }
-      return Object.keys(options).reduce(
-        (result, optionKey) => result.replace(`{{${optionKey}}}`, String(options[optionKey])),
-        key,
-      );
-    },
-  }),
-}));
 
 jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
   useK8sWatchResource: jest.fn(),
