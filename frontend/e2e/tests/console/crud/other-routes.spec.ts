@@ -188,10 +188,15 @@ test.describe('Perspective query parameters', { tag: ['@admin'] }, () => {
     });
 
     await test.step('Navigate with perspective=dev and verify', async () => {
-      await page.goto('/topology/all-namespaces?view=graph&perspective=dev');
-      await expect(page.getByTestId('perspective-switcher-toggle')).toContainText('Developer', {
-        timeout: 30_000,
-      });
+      // ensureDeveloperPerspective triggers a Console pod rollout; a navigation
+      // may still hit a pod that does not know the dev perspective yet and
+      // ignores the query parameter. Retry so a later attempt hits a restarted pod.
+      await expect(async () => {
+        await page.goto('/topology/all-namespaces?view=graph&perspective=dev');
+        await expect(page.getByTestId('perspective-switcher-toggle')).toContainText('Developer', {
+          timeout: 10_000,
+        });
+      }).toPass({ timeout: 120_000 });
     });
   });
 
@@ -205,17 +210,27 @@ test.describe('Perspective query parameters', { tag: ['@admin'] }, () => {
         patchedPerspectives = true;
       }
 
-      await page.goto('/topology/all-namespaces?view=graph&perspective=dev');
-      await expect(page.getByTestId('perspective-switcher-toggle')).toContainText('Developer', {
-        timeout: 30_000,
-      });
+      // ensureDeveloperPerspective triggers a Console pod rollout; a navigation
+      // may still hit a pod that does not know the dev perspective yet and
+      // ignores the query parameter. Retry so a later attempt hits a restarted pod.
+      await expect(async () => {
+        await page.goto('/topology/all-namespaces?view=graph&perspective=dev');
+        await expect(page.getByTestId('perspective-switcher-toggle')).toContainText('Developer', {
+          timeout: 10_000,
+        });
+      }).toPass({ timeout: 120_000 });
     });
 
     await test.step('Navigate with perspective=admin and verify', async () => {
-      await page.goto('/dashboards?perspective=admin');
-      await expect(page.getByTestId('perspective-switcher-toggle')).toContainText('Core platform', {
-        timeout: 30_000,
-      });
+      await expect(async () => {
+        await page.goto('/dashboards?perspective=admin');
+        await expect(page.getByTestId('perspective-switcher-toggle')).toContainText(
+          'Core platform',
+          {
+            timeout: 10_000,
+          },
+        );
+      }).toPass({ timeout: 120_000 });
     });
   });
 });

@@ -339,6 +339,12 @@ interface ManifestResource {
     });
 
     test('allows disabling dynamic plugins through a query parameter', async ({ page }) => {
+      // Each navigation with a disable-plugins query parameter triggers a full
+      // Console reload, and the Console pods are still settling after the demo
+      // plugin was enabled in the preceding serial tests. Three reloads can
+      // exceed 300 s, so allow the same budget as the heaviest tests in the suite.
+      test.setTimeout(600_000);
+
       await test.step('Disable non-existing plugin makes no changes', async () => {
         await consolePluginPage.navigateWithQueryParam('disable-plugins=foo,bar');
         await expect(page.locator('#page-sidebar')).toContainText('Dynamic Nav');

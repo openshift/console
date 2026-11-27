@@ -1,6 +1,12 @@
+'use no memo';
+
 import { useRef } from 'react';
 import * as _ from 'lodash';
 
+// Excluded from the React Compiler via the "use no memo" directive: this hook
+// intentionally reads and writes a ref during render to keep the returned
+// reference stable across deep-equal inputs, which the compiler's purity
+// assumptions do not allow.
 export const useDeepCompareMemoize = <T = any>(value: T, stringify?: boolean): T => {
   const ref = useRef<T>(undefined);
 

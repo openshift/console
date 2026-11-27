@@ -68,6 +68,28 @@ const sharedPluginModulesTest = getVendorModuleRegExp(
   sharedPluginModules.map(getSharedModuleImport),
 );
 
+/** swc-loader options shared by all JS/TS rules; React Compiler is opt-in */
+const swcLoaderOptions = ({ reactCompiler = false } = {}) => ({
+  detectSyntax: 'auto',
+  jsc: {
+    parser: {
+      syntax: 'typescript',
+      tsx: true,
+    },
+    transform: {
+      react: {
+        runtime: 'automatic',
+        development: REACT_REFRESH,
+        refresh: REACT_REFRESH,
+      },
+      ...(reactCompiler ? { reactCompiler: { target: '18' } } : {}),
+    },
+    target: 'es2021',
+  },
+  sourceMaps: true,
+  minify: false,
+});
+
 const dynamicModuleMaps = resolveDynamicModuleMaps(dynamicModulePackageSpecs, [
   path.resolve(import.meta.dirname, 'node_modules'),
 ]);
@@ -138,7 +160,7 @@ const config: Configuration = {
   },
   performance: {
     // The maximum size in MiB of the entrypoint and generated files permitted by analyze.sh
-    maxEntrypointSize: 8.3 * 1048576,
+    maxEntrypointSize: 8.6 * 1048576,
     maxAssetSize: 3.71 * 1048576, // the size of the monaco-editor chunk
   },
   devServer: {
@@ -172,30 +194,24 @@ const config: Configuration = {
         sideEffects: true,
       },
       {
+        // Vendored packages that ship untranspiled source. Transpiled only —
+        // third-party code is not written to be React Compiler-safe.
         test: /(\.js)|(\.tsx?)$/,
-        exclude: /node_modules\/(?!(bitbucket|ky|ini|@patternfly(-\S+)?)\/)/,
+        include: /node_modules\/(bitbucket|ky|ini|@patternfly(-\S+)?)\//,
         type: 'javascript/auto',
         use: {
           loader: 'builtin:swc-loader',
-          options: {
-            detectSyntax: 'auto',
-            jsc: {
-              parser: {
-                syntax: 'typescript',
-                tsx: true,
-              },
-              transform: {
-                react: {
-                  runtime: 'automatic',
-                  development: REACT_REFRESH,
-                  refresh: REACT_REFRESH,
-                },
-              },
-              target: 'es2021',
-            },
-            sourceMaps: true,
-            minify: false,
-          },
+          options: swcLoaderOptions(),
+        },
+      },
+      {
+        // First-party code only; runs through the React Compiler.
+        test: /(\.js)|(\.tsx?)$/,
+        exclude: /node_modules\//,
+        type: 'javascript/auto',
+        use: {
+          loader: 'builtin:swc-loader',
+          options: swcLoaderOptions({ reactCompiler: true }),
         },
       },
       {
