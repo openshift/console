@@ -37,12 +37,18 @@ const (
 	AvailabilityModeUnavailable AvailabilityMode = "Unavailable"
 
 	// Condition types
-	TypeServing = "Serving"
+	ClusterCatalogTypeServing     = "Serving"
+	ClusterCatalogTypeProgressing = "Progressing"
 
 	// Serving Reasons
-	ReasonAvailable                = "Available"
-	ReasonUnavailable              = "Unavailable"
-	ReasonUserSpecifiedUnavailable = "UserSpecifiedUnavailable"
+	ClusterCatalogReasonAvailable                = "Available"
+	ClusterCatalogReasonUnavailable              = "Unavailable"
+	ClusterCatalogReasonUserSpecifiedUnavailable = "UserSpecifiedUnavailable"
+
+	// Progressing Reasons
+	ClusterCatalogReasonSucceeded = "Succeeded"
+	ClusterCatalogReasonRetrying  = "Retrying"
+	ClusterCatalogReasonBlocked   = "Blocked"
 )
 
 // +genclient
