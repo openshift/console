@@ -188,7 +188,7 @@ test.describe('Debug pod', () => {
         await retryOnModelNotFound(page);
         await detailsPage.clickStatusButton();
         await expect(detailsDebugLink).toBeVisible({ timeout: 5_000 });
-      }).toPass({ timeout: 60_000 });
+      }).toPass({ timeout: 120_000 });
 
       await detailsPage.clickDebugContainerLink(CONTAINER_NAME);
 

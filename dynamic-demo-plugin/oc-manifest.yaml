@@ -30,7 +30,15 @@ spec:
           ports:
             - containerPort: 9001
               protocol: TCP
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
+          # Requests keep the pod out of best-effort QoS so it is not the first
+          # to be evicted when the cluster is under load.
+          resources:
+            requests:
+              cpu: 10m
+              memory: 64Mi
+            limits:
+              memory: 256Mi
           securityContext:
             allowPrivilegeEscalation: false
             runAsNonRoot: true
@@ -69,7 +77,7 @@ apiVersion: v1
 kind: Service
 metadata:
   annotations:
-    service.alpha.openshift.io/serving-cert-secret-name: console-serving-cert
+    service.beta.openshift.io/serving-cert-secret-name: console-serving-cert
   name: console-demo-plugin
   namespace: console-demo-plugin
   labels:
