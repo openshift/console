@@ -347,6 +347,7 @@ func TestCaptureOperatorMigrationSnapshotBacksUpRollbackState(t *testing.T) {
 	snapshot, err := captureOperatorMigrationSnapshot(context.Background(), migrator, opts, backup)
 	require.NoError(t, err)
 	assert.Equal(t, "demo-1", snapshot.ClusterObjectSetName)
+	assert.True(t, snapshot.UseClusterObjectDeployment)
 	assert.Equal(t, "operators/demo", snapshot.SubscriptionRef)
 	assert.Equal(t, migrationTestSubscriptionSpec(), snapshot.SubscriptionSpec)
 	assert.Equal(t, "restricted", snapshot.Namespace.Labels["pod-security.kubernetes.io/enforce"])
@@ -391,7 +392,8 @@ func TestFailedOperatorMigrationRollsBackFromRecoveryCheckpoint(t *testing.T) {
 	stopped.Spec.Replicas = new(int32)
 	require.NoError(t, kubeClient.Update(ctx, stopped))
 	c := &migrationCoordinator{client: kubeClient, identity: "replacement"}
-	namespace, _ := migrationJobNamespace(id)
+	namespace, namespaceErr := migrationJobNamespace(id)
+	require.NoError(t, namespaceErr)
 	_, err = c.claim(ctx, namespace)
 	require.NoError(t, err)
 	require.NoError(t, c.saveJournal(ctx, namespace, &migrationJournal{JobID: id, Phase: "recovery", Failure: "injected migration failure", Options: opts, Backup: *backup, Recovery: *snapshot}))
@@ -429,13 +431,21 @@ func checkNames(checks []migration.CheckResult) []string {
 }
 
 func TestPrepareClusterObjectSetDoesNotMutateCluster(t *testing.T) {
-	crd := &apiextensionsv1.CustomResourceDefinition{
-		ObjectMeta: metav1.ObjectMeta{Name: "clusterobjectsets.olm.operatorframework.io"},
-		Status: apiextensionsv1.CustomResourceDefinitionStatus{Conditions: []apiextensionsv1.CustomResourceDefinitionCondition{{
-			Type: apiextensionsv1.Established, Status: apiextensionsv1.ConditionTrue,
-		}}},
+	crds := []client.Object{
+		&apiextensionsv1.CustomResourceDefinition{
+			ObjectMeta: metav1.ObjectMeta{Name: "clusterobjectsets.olm.operatorframework.io"},
+			Status: apiextensionsv1.CustomResourceDefinitionStatus{Conditions: []apiextensionsv1.CustomResourceDefinitionCondition{{
+				Type: apiextensionsv1.Established, Status: apiextensionsv1.ConditionTrue,
+			}}},
+		},
+		&apiextensionsv1.CustomResourceDefinition{
+			ObjectMeta: metav1.ObjectMeta{Name: "clusterobjectdeployments.olm.operatorframework.io"},
+			Status: apiextensionsv1.CustomResourceDefinitionStatus{Conditions: []apiextensionsv1.CustomResourceDefinitionCondition{{
+				Type: apiextensionsv1.Established, Status: apiextensionsv1.ConditionTrue,
+			}}},
+		},
 	}
-	kubeClient := newMigrationTestClient(t, crd)
+	kubeClient := newMigrationTestClient(t, crds...)
 	migrator := migration.NewMigrator(kubeClient, nil)
 
 	_, err := migrator.PrepareClusterObjectSet(context.Background(), migration.Options{
@@ -858,7 +868,7 @@ func TestRollbackRequiresAcknowledgementForInstalledExtension(t *testing.T) {
 	extension := &ocv1.ClusterExtension{
 		ObjectMeta: metav1.ObjectMeta{Name: "demo"},
 		Status: ocv1.ClusterExtensionStatus{Conditions: []metav1.Condition{{
-			Type: ocv1.TypeInstalled, Status: metav1.ConditionTrue,
+			Type: ocv1.ClusterExtensionTypeInstalled, Status: metav1.ConditionTrue,
 		}}},
 	}
 	kubeClient := newMigrationTestClient(t, extension)

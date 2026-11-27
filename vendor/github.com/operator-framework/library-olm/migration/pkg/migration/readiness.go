@@ -10,24 +10,25 @@ import (
 )
 
 // CheckReadiness checks Subscription state, CSV health, package uniqueness,
-// dependency ownership, and the ClusterObjectSet API without modifying the
+// dependency ownership, and the ClusterObjectDeployment/ClusterObjectSet APIs without modifying the
 // cluster. Failed prerequisites appear in the returned report; a returned
 // error means the check itself could not be completed. Compatibility and
 // catalog availability are checked separately.
 func (m *Migrator) CheckReadiness(ctx context.Context, opts Options) (*PreMigrationReport, error) {
 	report := &PreMigrationReport{}
-	if err := m.ensureClusterObjectSetCRD(ctx); err != nil {
-		report.Checks = append(report.Checks, CheckResult{
-			Name:    "ClusterObjectSet API",
-			Passed:  false,
-			Message: err.Error(),
-		})
-	} else {
-		report.Checks = append(report.Checks, CheckResult{
-			Name:    "ClusterObjectSet API",
-			Passed:  true,
-			Message: "ClusterObjectSet CRD is established",
-		})
+	for _, prerequisite := range []struct {
+		name  string
+		check func(context.Context) error
+	}{
+		{"ClusterObjectSet API", m.ensureClusterObjectSetCRD},
+		{"ClusterObjectDeployment API", m.ensureClusterObjectDeploymentCRD},
+	} {
+		check := CheckResult{Name: prerequisite.name, Passed: true, Message: "CRD is established"}
+		if err := prerequisite.check(ctx); err != nil {
+			check.Passed = false
+			check.Message = err.Error()
+		}
+		report.Checks = append(report.Checks, check)
 	}
 
 	var sub operatorsv1alpha1.Subscription

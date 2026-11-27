@@ -43,6 +43,7 @@ interface Resource {
     group?: string;
     revision?: number;
     source?: { catalog?: { packageName?: string } };
+    template?: { spec?: { collisionProtection?: string } };
   };
   status?: {
     completedAt?: string;
@@ -669,9 +670,11 @@ export class OperatorMigrationFixture {
           'clusterobjectdeployments',
           operator.subscriptionName,
         )) as Resource;
-        expect(deployment.metadata.labels?.['apps.kubernetes.io/managed-by']).toBe(
+        expect(deployment.metadata.labels?.['app.kubernetes.io/managed-by']).toBe(
           'operator-controller',
         );
+        // Adoption is enabled only after the protected rollout completes.
+        expect(deployment.spec?.template?.spec?.collisionProtection).toBe('Prevent');
         const revisions = (await this.client.customObjectsApi.listClusterCustomObject({
           group: TARGET_GROUP,
           version: 'v1',
@@ -697,7 +700,7 @@ export class OperatorMigrationFixture {
           .sort((first, second) => (second.spec.revision ?? 0) - (first.spec.revision ?? 0));
         expect(active.length).toBeGreaterThan(0);
         [objectSet] = active;
-        expect(objectSet.metadata.labels?.['apps.kubernetes.io/managed-by']).toBe(
+        expect(objectSet.metadata.labels?.['app.kubernetes.io/managed-by']).toBe(
           'object-controller',
         );
         expect(objectSet.metadata.ownerReferences).toEqual(

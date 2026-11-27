@@ -31,7 +31,7 @@ const (
 	// Progressing condition reasons.
 	ClusterObjectDeploymentReasonNewClusterObjectSetProgressed  = "NewClusterObjectSetProgressed"
 	ClusterObjectDeploymentReasonNewClusterObjectSetProgressing = "NewClusterObjectSetProgressing"
-	ClusterObjectDeploymentReasonProgressDeadlineExceeded       = ReasonProgressDeadlineExceeded
+	ClusterObjectDeploymentReasonProgressDeadlineExceeded       = "ProgressDeadlineExceeded"
 	ClusterObjectDeploymentReasonInvalidSpecification           = "InvalidSpecification"
 	ClusterObjectDeploymentReasonRevisionPreconditionsNotMet    = "RevisionPreconditionsNotMet"
 	ClusterObjectDeploymentReasonRevisionObjectCollision        = "RevisionObjectCollision"
@@ -88,10 +88,10 @@ type ClusterObjectDeploymentSpec struct {
 // ClusterObjectDeploymentTemplate describes the caller-controlled part of a revision.
 type ClusterObjectDeploymentTemplate struct {
 	// metadata contains labels and annotations propagated to each ClusterObjectSet
-	// created from this template, except the reserved
-	// olm.operatorframework.io/template-hash label, whose value is always set by the
-	// controller. Changes to metadata change template identity and therefore create
-	// a new revision.
+	// created from this template. The labels olm.operatorframework.io/template-hash
+	// and app.kubernetes.io/managed-by are reserved: the controller always sets their
+	// values on each revision, overriding any value set here. Changes to metadata
+	// change template identity and therefore create a new revision.
 	// +optional
 	Metadata ClusterObjectDeploymentTemplateMetadata `json:"metadata,omitzero"`
 
@@ -148,7 +148,7 @@ type ClusterObjectDeploymentStatus struct {
 	// an owned revision has completed or exceeded its progress deadline.
 	// Progressing is False with reason UnmanagedRevision when the highest active,
 	// non-deleting revision in the deployment's group has no controller owner and is
-	// not labeled apps.kubernetes.io/managed-by=object-controller, the proof that the
+	// not labeled app.kubernetes.io/managed-by=object-controller, the proof that the
 	// object-controller created it; such a revision is not adopted and no higher
 	// revision is created while it persists. Recover by removing the revision or by
 	// restoring the managed-by label on it. A revision that instead still references an
@@ -173,7 +173,7 @@ type ClusterObjectDeploymentStatus struct {
 	// Unavailable when owned active revisions exist but none are Ready yet, or with reason
 	// NoActiveRevision when no owned active revision exists. Only an ownerless revision
 	// is adopted before status is calculated, and only when it carries the
-	// apps.kubernetes.io/managed-by=object-controller label that proves the
+	// app.kubernetes.io/managed-by=object-controller label that proves the
 	// object-controller created it; an ownerless revision missing that label is left
 	// untouched and, when it leads the group, blocks the rollout and is reported on the
 	// Progressing condition with reason UnmanagedRevision. A revision that still carries a

@@ -461,12 +461,41 @@ type CRDUpgradeSafetyPreflightConfig struct {
 }
 
 const (
-	// TypeDeprecated is a rollup condition that is present when
+	// Condition types
+	ClusterExtensionTypeInstalled   = "Installed"
+	ClusterExtensionTypeProgressing = "Progressing"
+	// ClusterExtensionTypeAvailable is the ClusterExtension condition that surfaces the health of the
+	// full set of managed objects across all active revisions. This condition may flap
+	// during upgrades and configuration changes.
+	ClusterExtensionTypeAvailable = "Available"
+	// ClusterExtensionTypeDeprecated is a rollup condition that is present when
 	// any of the deprecated conditions are present.
-	TypeDeprecated        = "Deprecated"
-	TypePackageDeprecated = "PackageDeprecated"
-	TypeChannelDeprecated = "ChannelDeprecated"
-	TypeBundleDeprecated  = "BundleDeprecated"
+	ClusterExtensionTypeDeprecated        = "Deprecated"
+	ClusterExtensionTypePackageDeprecated = "PackageDeprecated"
+	ClusterExtensionTypeChannelDeprecated = "ChannelDeprecated"
+	ClusterExtensionTypeBundleDeprecated  = "BundleDeprecated"
+
+	// Installed reasons
+	ClusterExtensionReasonAbsent = "Absent"
+
+	// Available reasons
+	ClusterExtensionReasonProbesSucceeded = "ProbesSucceeded"
+
+	// Progressing reasons
+	ClusterExtensionReasonRollingOut           = "RollingOut"
+	ClusterExtensionReasonRetrying             = "Retrying"
+	ClusterExtensionReasonBlocked              = "Blocked"
+	ClusterExtensionReasonInvalidConfiguration = "InvalidConfiguration"
+
+	// Deprecation reasons
+	ClusterExtensionReasonDeprecated               = "Deprecated"
+	ClusterExtensionReasonNotDeprecated            = "NotDeprecated"
+	ClusterExtensionReasonDeprecationStatusUnknown = "DeprecationStatusUnknown"
+
+	// Reasons shared across condition types
+	ClusterExtensionReasonSucceeded                = "Succeeded"
+	ClusterExtensionReasonFailed                   = "Failed"
+	ClusterExtensionReasonProgressDeadlineExceeded = "ProgressDeadlineExceeded"
 
 	// None will not perform CRD upgrade safety checks.
 	CRDUpgradeSafetyEnforcementNone CRDUpgradeSafetyEnforcement = "None"

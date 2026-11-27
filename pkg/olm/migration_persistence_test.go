@@ -32,8 +32,8 @@ import (
 
 func seedDurableMigrationJob(t *testing.T, kubeClient client.Client, owner string, job *operatorMigrationJob) string {
 	t.Helper()
-	namespace, err := migrationJobNamespace(job.ID)
-	require.NoError(t, err)
+	namespace, namespaceErr := migrationJobNamespace(job.ID)
+	require.NoError(t, namespaceErr)
 	record := durableMigrationJob{Owner: owner, Request: operatorMigrationBulkRequest{Operators: job.candidates}, Snapshot: job.operatorMigrationJobSnapshot}
 	encoded, err := encodeMigrationState(record)
 	require.NoError(t, err)
@@ -108,11 +108,19 @@ func TestResumingHandoffUsesExistingClusterObjectSetAndExtension(t *testing.T) {
 			opts := migration.Options{SubscriptionName: "demo", SubscriptionNamespace: "operators", ClusterExtensionName: "demo", InstallNamespace: "operators", SystemNamespace: "operator-controller"}
 			annotations := map[string]string{migrationExecutionAnnotation: id, migration.MigratedFromSubscriptionAnnotation: "operators/demo"}
 			cos := &ocv1.ClusterObjectSet{ObjectMeta: metav1.ObjectMeta{Name: "demo-1", Annotations: annotations}, Status: ocv1.ClusterObjectSetStatus{CompletedAt: metav1.Now(), Conditions: []metav1.Condition{{Type: ocv1.ClusterObjectSetTypeReady, Status: metav1.ConditionTrue}}}}
-			extension := &ocv1.ClusterExtension{ObjectMeta: metav1.ObjectMeta{Name: "demo", Annotations: annotations}, Status: ocv1.ClusterExtensionStatus{Conditions: []metav1.Condition{{Type: "Installed", Status: metav1.ConditionTrue}}}}
+			extension := &ocv1.ClusterExtension{ObjectMeta: metav1.ObjectMeta{Name: "demo", Annotations: annotations}, Status: ocv1.ClusterExtensionStatus{Conditions: []metav1.Condition{{Type: ocv1.ClusterExtensionTypeInstalled, Status: metav1.ConditionTrue}}}}
 			checkpoint := &corev1.Secret{ObjectMeta: metav1.ObjectMeta{Name: operatorMigrationCheckpointSecretName("demo"), Namespace: "operator-controller", Annotations: annotations}, Data: map[string][]byte{operatorMigrationCheckpointStateKey: []byte(operatorMigrationCheckpointInProgress)}}
-			kubeClient := newMigrationTestClient(t, cos, extension, checkpoint)
+			base := newMigrationTestClient(t, cos, extension, checkpoint)
+			// The journal predates the deployment API; the cluster never served it.
+			kubeClient := interceptor.NewClient(base.(client.WithWatch), interceptor.Funcs{Get: func(ctx context.Context, cl client.WithWatch, key client.ObjectKey, object client.Object, options ...client.GetOption) error {
+				if _, ok := object.(*ocv1.ClusterObjectDeployment); ok {
+					return &meta.NoKindMatchError{GroupKind: schema.GroupKind{Group: ocv1.GroupVersion.Group, Kind: ocv1.ClusterObjectDeploymentKind}}
+				}
+				return cl.Get(ctx, key, object, options...)
+			}})
 			c := &migrationCoordinator{client: kubeClient, identity: "replacement"}
-			namespace, _ := migrationJobNamespace(id)
+			namespace, namespaceErr := migrationJobNamespace(id)
+			require.NoError(t, namespaceErr)
 			claimed, err := c.claim(ctx, namespace)
 			require.NoError(t, err)
 			require.True(t, claimed)
@@ -130,6 +138,512 @@ func TestResumingHandoffUsesExistingClusterObjectSetAndExtension(t *testing.T) {
 			assert.Len(t, extensions.Items, 1)
 		})
 	}
+}
+
+// TestResumingExtensionPhaseCompletesDeploymentHandoff verifies a deployment staged by an earlier
+// library version is protected and adopted before the ClusterExtension phase resumes, including
+// journals whose snapshot still records the direct-revision manager.
+func TestResumingExtensionPhaseCompletesDeploymentHandoff(t *testing.T) {
+	for _, legacyFlag := range []bool{false, true} {
+		name := "deployment-manager journal"
+		if legacyFlag {
+			name = "direct-revision journal"
+		}
+		t.Run(name, func(t *testing.T) {
+			ctx := context.Background()
+			id := "0123456789abcdef0123456789abcdef"
+			opts := migration.Options{SubscriptionName: "demo", SubscriptionNamespace: "operators", ClusterExtensionName: "demo", InstallNamespace: "operators", SystemNamespace: "operator-controller"}
+			annotations := map[string]string{migrationExecutionAnnotation: id, migration.MigratedFromSubscriptionAnnotation: "operators/demo"}
+			deployment := &ocv1.ClusterObjectDeployment{ObjectMeta: metav1.ObjectMeta{Name: "demo", UID: "deployment-uid", Generation: 2, Annotations: annotations, Labels: map[string]string{"apps.kubernetes.io/managed-by": "operator-controller"}}, Spec: ocv1.ClusterObjectDeploymentSpec{Template: ocv1.ClusterObjectDeploymentTemplate{Spec: ocv1.ClusterObjectDeploymentTemplateSpec{ClusterObjectSetContent: ocv1.ClusterObjectSetContent{CollisionProtection: ocv1.CollisionProtectionNone}}}}, Status: migrationDeploymentStatus(2)}
+			checkpoint := &corev1.Secret{ObjectMeta: metav1.ObjectMeta{Name: operatorMigrationCheckpointSecretName("demo"), Namespace: "operator-controller", Annotations: annotations}, Data: map[string][]byte{operatorMigrationCheckpointStateKey: []byte(operatorMigrationCheckpointInProgress)}}
+			kubeClient := newMigrationTestClient(t, deployment, checkpoint)
+			runner := interceptor.NewClient(kubeClient.(client.WithWatch), interceptor.Funcs{Create: func(ctx context.Context, cl client.WithWatch, object client.Object, options ...client.CreateOption) error {
+				extension, ok := object.(*ocv1.ClusterExtension)
+				if !ok {
+					return cl.Create(ctx, object, options...)
+				}
+				// The extension is created only after the deployment is protected and adopted.
+				var staged ocv1.ClusterObjectDeployment
+				require.NoError(t, cl.Get(ctx, client.ObjectKey{Name: "demo"}, &staged))
+				assert.Equal(t, ocv1.CollisionProtectionPrevent, staged.Spec.Template.Spec.CollisionProtection)
+				assert.Equal(t, migrationDeploymentManagedByValue, staged.Labels[migrationDeploymentManagedByLabel])
+				if err := cl.Create(ctx, object, options...); err != nil {
+					return err
+				}
+				extension.Status = ocv1.ClusterExtensionStatus{Conditions: []metav1.Condition{{Type: ocv1.ClusterExtensionTypeInstalled, Status: metav1.ConditionTrue}}}
+				return cl.Update(ctx, object)
+			}})
+			c := &migrationCoordinator{client: kubeClient, identity: "replacement"}
+			namespace, namespaceErr := migrationJobNamespace(id)
+			require.NoError(t, namespaceErr)
+			claimed, err := c.claim(ctx, namespace)
+			require.NoError(t, err)
+			require.True(t, claimed)
+			journal := &migrationJournal{JobID: id, Phase: "ce", Options: opts, Info: migration.MigrationInfo{PackageName: "demo"}, Recovery: operatorMigrationRecoverySnapshot{UseClusterObjectDeployment: !legacyFlag, ClusterExtensionName: "demo", ClusterObjectSetName: "demo-1", SubscriptionRef: "operators/demo"}}
+			journal.Backup.ClusterServiceVersion = &operatorsv1alpha1.ClusterServiceVersion{ObjectMeta: metav1.ObjectMeta{Name: "demo.v1.0.0", Namespace: "operators"}}
+			guard := &migrationExecutionClient{Client: runner, coordinator: c, namespace: namespace, id: id}
+			require.NoError(t, c.advanceJournal(ctx, migration.NewMigrator(guard, nil), namespace, journal))
+			assert.Equal(t, "done", journal.Phase)
+			assert.True(t, journal.Recovery.UseClusterObjectDeployment)
+			require.NoError(t, kubeClient.Get(ctx, client.ObjectKey{Name: "demo"}, deployment))
+			assert.Equal(t, ocv1.CollisionProtectionPrevent, deployment.Spec.Template.Spec.CollisionProtection)
+			assert.Equal(t, migrationDeploymentManagedByValue, deployment.Labels[migrationDeploymentManagedByLabel])
+		})
+	}
+}
+
+// TestResumeMigrationDeploymentCompletesAdoptedUnavailableTarget verifies the cos phase completes
+// a fully staged deployment whose availability has flapped, at both journal phases.
+func TestResumeMigrationDeploymentCompletesAdoptedUnavailableTarget(t *testing.T) {
+	for _, phase := range []string{"cos", "ce"} {
+		t.Run(phase, func(t *testing.T) {
+			// Protected and adopted, but the migrated operator's pods are currently unready.
+			deployment := &ocv1.ClusterObjectDeployment{ObjectMeta: metav1.ObjectMeta{Name: "demo", UID: "deployment-uid", Generation: 2, Annotations: map[string]string{
+				migrationExecutionAnnotation: "job", migration.MigratedFromSubscriptionAnnotation: "operators/demo",
+			}, Labels: map[string]string{migration.LabelOwnerName: "demo", migrationDeploymentManagedByLabel: migrationDeploymentManagedByValue}}, Spec: ocv1.ClusterObjectDeploymentSpec{Template: ocv1.ClusterObjectDeploymentTemplate{Spec: ocv1.ClusterObjectDeploymentTemplateSpec{ClusterObjectSetContent: ocv1.ClusterObjectSetContent{CollisionProtection: ocv1.CollisionProtectionPrevent}}}}, Status: ocv1.ClusterObjectDeploymentStatus{Conditions: []metav1.Condition{
+				{Type: ocv1.ClusterObjectDeploymentTypeProgressing, Status: metav1.ConditionFalse, Reason: ocv1.ClusterObjectDeploymentReasonNewClusterObjectSetProgressed, ObservedGeneration: 2},
+				{Type: ocv1.ClusterObjectDeploymentTypeAvailable, Status: metav1.ConditionFalse, ObservedGeneration: 2},
+			}}}
+			kubeClient := newMigrationTestClient(t, deployment)
+			journal := &migrationJournal{JobID: "job", Phase: phase, Options: migration.Options{SubscriptionName: "demo", SubscriptionNamespace: "operators", ClusterExtensionName: "demo"}, Recovery: operatorMigrationRecoverySnapshot{UseClusterObjectDeployment: true}}
+			ctx, cancel := context.WithTimeout(context.Background(), 500*time.Millisecond)
+			defer cancel()
+			if phase == "ce" {
+				require.NoError(t, ensureMigrationDeploymentAdopted(ctx, migration.NewMigrator(kubeClient, nil), journal))
+			} else {
+				require.NoError(t, resumeMigrationRevision(ctx, migration.NewMigrator(kubeClient, nil), journal))
+			}
+			assert.True(t, journal.Recovery.UseClusterObjectDeployment)
+		})
+	}
+}
+
+// TestResumeMigrationDeploymentWaitsThroughCompletedHandoffFlap verifies the rollout wait
+// accepts a completed handoff whose availability flapped, even when the first read missed it.
+func TestResumeMigrationDeploymentWaitsThroughCompletedHandoffFlap(t *testing.T) {
+	// Protected and adopted with a completed rollout, but unavailable; the
+	// first read misses the label, so the completed-handoff shortcut does not fire.
+	deployment := &ocv1.ClusterObjectDeployment{ObjectMeta: metav1.ObjectMeta{Name: "demo", UID: "deployment-uid", Generation: 2, Annotations: map[string]string{
+		migrationExecutionAnnotation: "job", migration.MigratedFromSubscriptionAnnotation: "operators/demo",
+	}, Labels: map[string]string{migration.LabelOwnerName: "demo", migrationDeploymentManagedByLabel: migrationDeploymentManagedByValue}}, Spec: ocv1.ClusterObjectDeploymentSpec{Template: ocv1.ClusterObjectDeploymentTemplate{Spec: ocv1.ClusterObjectDeploymentTemplateSpec{ClusterObjectSetContent: ocv1.ClusterObjectSetContent{CollisionProtection: ocv1.CollisionProtectionPrevent}}}}, Status: ocv1.ClusterObjectDeploymentStatus{Conditions: []metav1.Condition{
+		{Type: ocv1.ClusterObjectDeploymentTypeProgressing, Status: metav1.ConditionFalse, Reason: ocv1.ClusterObjectDeploymentReasonNewClusterObjectSetProgressed, ObservedGeneration: 2},
+		{Type: ocv1.ClusterObjectDeploymentTypeAvailable, Status: metav1.ConditionFalse, ObservedGeneration: 2},
+	}}}
+	base := newMigrationTestClient(t, deployment)
+	reads := 0
+	kubeClient := interceptor.NewClient(base.(client.WithWatch), interceptor.Funcs{Get: func(ctx context.Context, cl client.WithWatch, key client.ObjectKey, object client.Object, options ...client.GetOption) error {
+		if err := cl.Get(ctx, key, object, options...); err != nil {
+			return err
+		}
+		if cod, ok := object.(*ocv1.ClusterObjectDeployment); ok && cod.Name == "demo" {
+			reads++
+			if reads == 1 {
+				delete(cod.Labels, migrationDeploymentManagedByLabel)
+			}
+		}
+		return nil
+	}})
+	journal := &migrationJournal{JobID: "job", Phase: "cos", Options: migration.Options{SubscriptionName: "demo", SubscriptionNamespace: "operators", ClusterExtensionName: "demo"}, Recovery: operatorMigrationRecoverySnapshot{UseClusterObjectDeployment: true}}
+	ctx, cancel := context.WithTimeout(context.Background(), 500*time.Millisecond)
+	defer cancel()
+	require.NoError(t, resumeMigrationRevision(ctx, migration.NewMigrator(kubeClient, nil), journal))
+	assert.True(t, journal.Recovery.UseClusterObjectDeployment)
+	assert.Greater(t, reads, 1)
+}
+
+// TestExtensionPhaseCreatesLegacyExtensionOnUnservedCluster verifies a legacy journal at ce
+// creates its extension when the cluster never served the deployment API and no target exists.
+func TestExtensionPhaseCreatesLegacyExtensionOnUnservedCluster(t *testing.T) {
+	ctx := context.Background()
+	id := "0123456789abcdef0123456789abcdef"
+	opts := migration.Options{SubscriptionName: "demo", SubscriptionNamespace: "operators", ClusterExtensionName: "demo", InstallNamespace: "operators", SystemNamespace: "operator-controller"}
+	annotations := map[string]string{migrationExecutionAnnotation: id, migration.MigratedFromSubscriptionAnnotation: "operators/demo"}
+	cos := &ocv1.ClusterObjectSet{ObjectMeta: metav1.ObjectMeta{Name: "demo-1", Annotations: annotations}, Status: ocv1.ClusterObjectSetStatus{CompletedAt: metav1.Now(), Conditions: []metav1.Condition{{Type: ocv1.ClusterObjectSetTypeReady, Status: metav1.ConditionTrue}}}}
+	checkpoint := &corev1.Secret{ObjectMeta: metav1.ObjectMeta{Name: operatorMigrationCheckpointSecretName("demo"), Namespace: "operator-controller", Annotations: annotations}, Data: map[string][]byte{operatorMigrationCheckpointStateKey: []byte(operatorMigrationCheckpointInProgress)}}
+	base := newMigrationTestClient(t, cos, checkpoint)
+	// The cluster never served the deployment API, so the ce probe and the
+	// create guard both keep the legacy path.
+	kubeClient := interceptor.NewClient(base.(client.WithWatch), interceptor.Funcs{Get: func(ctx context.Context, cl client.WithWatch, key client.ObjectKey, object client.Object, options ...client.GetOption) error {
+		if _, ok := object.(*ocv1.ClusterObjectDeployment); ok {
+			return &meta.NoKindMatchError{GroupKind: schema.GroupKind{Group: ocv1.GroupVersion.Group, Kind: ocv1.ClusterObjectDeploymentKind}}
+		}
+		if err := cl.Get(ctx, key, object, options...); err != nil {
+			return err
+		}
+		if ce, ok := object.(*ocv1.ClusterExtension); ok && ce.Name == "demo" {
+			// The created extension finishes installing while the phase waits.
+			ce.Status = ocv1.ClusterExtensionStatus{Conditions: []metav1.Condition{{Type: ocv1.ClusterExtensionTypeInstalled, Status: metav1.ConditionTrue}}}
+		}
+		return nil
+	}})
+	c := &migrationCoordinator{client: kubeClient, identity: "replacement"}
+	namespace, namespaceErr := migrationJobNamespace(id)
+	require.NoError(t, namespaceErr)
+	claimed, err := c.claim(ctx, namespace)
+	require.NoError(t, err)
+	require.True(t, claimed)
+	journal := &migrationJournal{JobID: id, Phase: "ce", Options: opts, Info: migration.MigrationInfo{PackageName: "demo"}, Recovery: operatorMigrationRecoverySnapshot{ClusterExtensionName: "demo", ClusterObjectSetName: "demo-1", SubscriptionRef: "operators/demo"}}
+	journal.Backup.ClusterServiceVersion = &operatorsv1alpha1.ClusterServiceVersion{ObjectMeta: metav1.ObjectMeta{Name: "demo.v1.0.0", Namespace: "operators"}}
+	guard := &migrationExecutionClient{Client: kubeClient, coordinator: c, namespace: namespace, id: id}
+	require.NoError(t, c.advanceJournal(ctx, migration.NewMigrator(guard, nil), namespace, journal))
+	assert.Equal(t, "done", journal.Phase)
+	var extension ocv1.ClusterExtension
+	require.NoError(t, kubeClient.Get(ctx, client.ObjectKey{Name: "demo"}, &extension))
+}
+
+// TestExtensionPhaseWaitsForAppearedTarget verifies the ce phase waits for a same-job
+// extension that appears between the create read and the guard recheck instead of
+// failing the duplicate create, for both legacy and managed journals.
+func TestExtensionPhaseWaitsForAppearedTarget(t *testing.T) {
+	for _, managed := range []bool{false, true} {
+		name := "legacy journal"
+		if managed {
+			name = "managed journal"
+		}
+		t.Run(name, func(t *testing.T) {
+			ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+			defer cancel()
+			id := "0123456789abcdef0123456789abcdef"
+			opts := migration.Options{SubscriptionName: "demo", SubscriptionNamespace: "operators", ClusterExtensionName: "demo", InstallNamespace: "operators", SystemNamespace: "operator-controller"}
+			annotations := map[string]string{migrationExecutionAnnotation: id, migration.MigratedFromSubscriptionAnnotation: "operators/demo"}
+			// The extension is already committed by this job's lost create; creating it
+			// again would fail with AlreadyExists.
+			extension := &ocv1.ClusterExtension{ObjectMeta: metav1.ObjectMeta{Name: "demo", Annotations: annotations}}
+			checkpoint := &corev1.Secret{ObjectMeta: metav1.ObjectMeta{Name: operatorMigrationCheckpointSecretName("demo"), Namespace: "operator-controller", Annotations: annotations}, Data: map[string][]byte{operatorMigrationCheckpointStateKey: []byte(operatorMigrationCheckpointInProgress)}}
+			objects := []client.Object{extension, checkpoint}
+			if managed {
+				// A completed handoff: ensureMigrationDeploymentAdopted returns on its shortcut.
+				objects = append(objects, &ocv1.ClusterObjectDeployment{ObjectMeta: metav1.ObjectMeta{Name: "demo", UID: "deployment-uid", Generation: 2, Annotations: annotations, Labels: map[string]string{migration.LabelOwnerName: "demo", migrationDeploymentManagedByLabel: migrationDeploymentManagedByValue}}, Spec: ocv1.ClusterObjectDeploymentSpec{Template: ocv1.ClusterObjectDeploymentTemplate{Spec: ocv1.ClusterObjectDeploymentTemplateSpec{ClusterObjectSetContent: ocv1.ClusterObjectSetContent{CollisionProtection: ocv1.CollisionProtectionPrevent}}}}, Status: ocv1.ClusterObjectDeploymentStatus{Conditions: []metav1.Condition{
+					{Type: ocv1.ClusterObjectDeploymentTypeProgressing, Status: metav1.ConditionFalse, Reason: ocv1.ClusterObjectDeploymentReasonNewClusterObjectSetProgressed, ObservedGeneration: 2},
+					{Type: ocv1.ClusterObjectDeploymentTypeAvailable, Status: metav1.ConditionFalse, ObservedGeneration: 2},
+				}}})
+			}
+			base := newMigrationTestClient(t, objects...)
+			// The create read misses the extension; the guard recheck and the waiter find it.
+			reads := 0
+			kubeClient := interceptor.NewClient(base.(client.WithWatch), interceptor.Funcs{Get: func(ctx context.Context, cl client.WithWatch, key client.ObjectKey, object client.Object, options ...client.GetOption) error {
+				if ce, ok := object.(*ocv1.ClusterExtension); ok {
+					reads++
+					if reads == 1 {
+						return apierrors.NewNotFound(schema.GroupResource{Group: ocv1.GroupVersion.Group, Resource: "clusterextensions"}, key.Name)
+					}
+					if err := cl.Get(ctx, key, object, options...); err != nil {
+						return err
+					}
+					if reads >= 3 {
+						ce.Status = ocv1.ClusterExtensionStatus{Conditions: []metav1.Condition{{Type: ocv1.ClusterExtensionTypeInstalled, Status: metav1.ConditionTrue}}}
+					}
+					return nil
+				}
+				return cl.Get(ctx, key, object, options...)
+			}})
+			c := &migrationCoordinator{client: kubeClient, identity: "replacement"}
+			namespace, namespaceErr := migrationJobNamespace(id)
+			require.NoError(t, namespaceErr)
+			claimed, err := c.claim(ctx, namespace)
+			require.NoError(t, err)
+			require.True(t, claimed)
+			journal := &migrationJournal{JobID: id, Phase: "ce", Options: opts, Info: migration.MigrationInfo{PackageName: "demo"}, Recovery: operatorMigrationRecoverySnapshot{UseClusterObjectDeployment: managed, ClusterExtensionName: "demo", ClusterObjectSetName: "demo-1", SubscriptionRef: "operators/demo"}}
+			journal.Backup.ClusterServiceVersion = &operatorsv1alpha1.ClusterServiceVersion{ObjectMeta: metav1.ObjectMeta{Name: "demo.v1.0.0", Namespace: "operators"}}
+			guard := &migrationExecutionClient{Client: kubeClient, coordinator: c, namespace: namespace, id: id}
+			require.NoError(t, c.advanceJournal(ctx, migration.NewMigrator(guard, nil), namespace, journal))
+			assert.Equal(t, "done", journal.Phase)
+		})
+	}
+}
+
+// TestExtensionPhaseRejectsDisappearingTargetWithTerminatingRevision verifies the ce
+// create guard rechecks the revision when a verified extension disappears between
+// the probe and the create read on a cluster that never served the deployment API.
+// It also pins that the appeared-target wait (TestExtensionPhaseWaitsForAppearedTarget)
+// does not fire when the deployment API is unserved: the guard rejects instead of waiting.
+func TestExtensionPhaseRejectsDisappearingTargetWithTerminatingRevision(t *testing.T) {
+	ctx := context.Background()
+	id := "0123456789abcdef0123456789abcdef"
+	opts := migration.Options{SubscriptionName: "demo", SubscriptionNamespace: "operators", ClusterExtensionName: "demo", InstallNamespace: "operators", SystemNamespace: "operator-controller"}
+	annotations := map[string]string{migrationExecutionAnnotation: id, migration.MigratedFromSubscriptionAnnotation: "operators/demo"}
+	now := metav1.Now()
+	cos := &ocv1.ClusterObjectSet{ObjectMeta: metav1.ObjectMeta{Name: "demo-1", Annotations: annotations, DeletionTimestamp: &now, Finalizers: []string{"operators.demo/hold"}}, Status: ocv1.ClusterObjectSetStatus{CompletedAt: metav1.Now(), Conditions: []metav1.Condition{{Type: ocv1.ClusterObjectSetTypeReady, Status: metav1.ConditionTrue}}}}
+	extension := &ocv1.ClusterExtension{ObjectMeta: metav1.ObjectMeta{Name: "demo", Annotations: annotations}}
+	checkpoint := &corev1.Secret{ObjectMeta: metav1.ObjectMeta{Name: operatorMigrationCheckpointSecretName("demo"), Namespace: "operator-controller", Annotations: annotations}, Data: map[string][]byte{operatorMigrationCheckpointStateKey: []byte(operatorMigrationCheckpointInProgress)}}
+	base := newMigrationTestClient(t, cos, extension, checkpoint)
+	// The cluster never served the deployment API; the extension is visible to
+	// the probe but vanishes before the create read.
+	reads := 0
+	kubeClient := interceptor.NewClient(base.(client.WithWatch), interceptor.Funcs{Get: func(ctx context.Context, cl client.WithWatch, key client.ObjectKey, object client.Object, options ...client.GetOption) error {
+		if _, ok := object.(*ocv1.ClusterObjectDeployment); ok {
+			return &meta.NoKindMatchError{GroupKind: schema.GroupKind{Group: ocv1.GroupVersion.Group, Kind: ocv1.ClusterObjectDeploymentKind}}
+		}
+		if _, ok := object.(*ocv1.ClusterExtension); ok {
+			reads++
+			if reads > 1 {
+				return apierrors.NewNotFound(schema.GroupResource{Group: ocv1.GroupVersion.Group, Resource: "clusterextensions"}, key.Name)
+			}
+		}
+		return cl.Get(ctx, key, object, options...)
+	}})
+	c := &migrationCoordinator{client: kubeClient, identity: "replacement"}
+	namespace, namespaceErr := migrationJobNamespace(id)
+	require.NoError(t, namespaceErr)
+	claimed, err := c.claim(ctx, namespace)
+	require.NoError(t, err)
+	require.True(t, claimed)
+	journal := &migrationJournal{JobID: id, Phase: "ce", Options: opts, Info: migration.MigrationInfo{PackageName: "demo"}, Recovery: operatorMigrationRecoverySnapshot{ClusterExtensionName: "demo", ClusterObjectSetName: "demo-1", SubscriptionRef: "operators/demo"}}
+	journal.Backup.ClusterServiceVersion = &operatorsv1alpha1.ClusterServiceVersion{ObjectMeta: metav1.ObjectMeta{Name: "demo.v1.0.0", Namespace: "operators"}}
+	guard := &migrationExecutionClient{Client: kubeClient, coordinator: c, namespace: namespace, id: id}
+	err = c.advanceJournal(ctx, migration.NewMigrator(guard, nil), namespace, journal)
+	require.ErrorContains(t, err, "ClusterObjectSet demo-1 is being deleted")
+}
+
+// TestExtensionAdoptionDuringHandoffWait verifies a deployment adopted by the live extension
+// while the rollout wait runs counts as a completed handoff, at both resume phases.
+func TestExtensionAdoptionDuringHandoffWait(t *testing.T) {
+	for _, phase := range []string{"cos", "ce"} {
+		t.Run(phase, func(t *testing.T) {
+			// Protected but not yet labeled, and the protected rollout is not
+			// observed; the adoption race fires while the wait polls.
+			deployment := &ocv1.ClusterObjectDeployment{ObjectMeta: metav1.ObjectMeta{Name: "demo", UID: "deployment-uid", Generation: 2, Annotations: map[string]string{
+				migrationExecutionAnnotation: "job", migration.MigratedFromSubscriptionAnnotation: "operators/demo",
+			}}, Spec: ocv1.ClusterObjectDeploymentSpec{Template: ocv1.ClusterObjectDeploymentTemplate{Spec: ocv1.ClusterObjectDeploymentTemplateSpec{ClusterObjectSetContent: ocv1.ClusterObjectSetContent{CollisionProtection: ocv1.CollisionProtectionPrevent}}}}, Status: migrationDeploymentStatus(1)}
+			extension := &ocv1.ClusterExtension{ObjectMeta: metav1.ObjectMeta{Name: "demo", UID: "extension-uid"}}
+			kubeClient := newMigrationTestClient(t, deployment, extension)
+			gets := 0
+			runner := interceptor.NewClient(kubeClient.(client.WithWatch), interceptor.Funcs{Get: func(ctx context.Context, cl client.WithWatch, key client.ObjectKey, object client.Object, options ...client.GetOption) error {
+				if err := cl.Get(ctx, key, object, options...); err != nil {
+					return err
+				}
+				cod, ok := object.(*ocv1.ClusterObjectDeployment)
+				if !ok {
+					return nil
+				}
+				gets++
+				if gets == 2 {
+					// The extension adopts while the rollout wait polls; a real
+					// controller only adopts a deployment it manages.
+					controller := true
+					cod.OwnerReferences = []metav1.OwnerReference{{APIVersion: ocv1.GroupVersion.String(), Kind: ocv1.ClusterExtensionKind, Name: "demo", UID: "extension-uid", Controller: &controller}}
+					if cod.Labels == nil {
+						cod.Labels = map[string]string{}
+					}
+					cod.Labels[migrationDeploymentManagedByLabel] = migrationDeploymentManagedByValue
+					return cl.Update(ctx, cod)
+				}
+				return nil
+			}})
+			journal := &migrationJournal{JobID: "job", Phase: phase, Options: migration.Options{SubscriptionName: "demo", SubscriptionNamespace: "operators", ClusterExtensionName: "demo"}, Recovery: operatorMigrationRecoverySnapshot{UseClusterObjectDeployment: true}}
+			if phase == "cos" {
+				require.NoError(t, resumeMigrationRevision(context.Background(), migration.NewMigrator(runner, nil), journal))
+			} else {
+				require.NoError(t, ensureMigrationDeploymentAdopted(context.Background(), migration.NewMigrator(runner, nil), journal))
+			}
+			assert.Equal(t, 3, gets)
+		})
+	}
+}
+
+// TestExtensionPhaseProbeRejectsForeignDeployment verifies the legacy-flag probe does not flip
+// the recorded manager for a deployment belonging to another execution.
+func TestExtensionPhaseProbeRejectsForeignDeployment(t *testing.T) {
+	ctx := context.Background()
+	id := "0123456789abcdef0123456789abcdef"
+	opts := migration.Options{SubscriptionName: "demo", SubscriptionNamespace: "operators", ClusterExtensionName: "demo", InstallNamespace: "operators", SystemNamespace: "operator-controller"}
+	foreign := &ocv1.ClusterObjectDeployment{ObjectMeta: metav1.ObjectMeta{Name: "demo", UID: "deployment-uid", Generation: 2, Annotations: map[string]string{
+		migrationExecutionAnnotation: "foreign", migration.MigratedFromSubscriptionAnnotation: "operators/demo",
+	}}, Spec: ocv1.ClusterObjectDeploymentSpec{Template: ocv1.ClusterObjectDeploymentTemplate{Spec: ocv1.ClusterObjectDeploymentTemplateSpec{ClusterObjectSetContent: ocv1.ClusterObjectSetContent{CollisionProtection: ocv1.CollisionProtectionNone}}}}, Status: migrationDeploymentStatus(2)}
+	kubeClient := newMigrationTestClient(t, foreign)
+	c := &migrationCoordinator{client: kubeClient, identity: "replacement"}
+	namespace, namespaceErr := migrationJobNamespace(id)
+	require.NoError(t, namespaceErr)
+	claimed, err := c.claim(ctx, namespace)
+	require.NoError(t, err)
+	require.True(t, claimed)
+	journal := &migrationJournal{JobID: id, Phase: "ce", Options: opts, Info: migration.MigrationInfo{PackageName: "demo"}, Recovery: operatorMigrationRecoverySnapshot{ClusterExtensionName: "demo", ClusterObjectSetName: "demo-1", SubscriptionRef: "operators/demo"}}
+	guard := &migrationExecutionClient{Client: kubeClient, coordinator: c, namespace: namespace, id: id}
+	err = c.advanceJournal(ctx, migration.NewMigrator(guard, nil), namespace, journal)
+	require.ErrorContains(t, err, "belongs to a different execution")
+	assert.False(t, journal.Recovery.UseClusterObjectDeployment)
+}
+
+// TestExtensionPhaseRejectsLegacyRevisionOnServedCluster verifies the ce phase fails fast for a
+// bare pre-deployment revision on a cluster that now serves the deployment API.
+func TestExtensionPhaseRejectsLegacyRevisionOnServedCluster(t *testing.T) {
+	ctx := context.Background()
+	id := "0123456789abcdef0123456789abcdef"
+	opts := migration.Options{SubscriptionName: "demo", SubscriptionNamespace: "operators", ClusterExtensionName: "demo", InstallNamespace: "operators", SystemNamespace: "operator-controller"}
+	cos := &ocv1.ClusterObjectSet{ObjectMeta: metav1.ObjectMeta{Name: "demo-1", Annotations: map[string]string{
+		migrationExecutionAnnotation: id, migration.MigratedFromSubscriptionAnnotation: "operators/demo",
+	}}, Status: ocv1.ClusterObjectSetStatus{CompletedAt: metav1.Now(), Conditions: []metav1.Condition{{Type: ocv1.ClusterObjectSetTypeReady, Status: metav1.ConditionTrue}}}}
+	kubeClient := newMigrationTestClient(t, cos)
+	c := &migrationCoordinator{client: kubeClient, identity: "replacement"}
+	namespace, namespaceErr := migrationJobNamespace(id)
+	require.NoError(t, namespaceErr)
+	claimed, err := c.claim(ctx, namespace)
+	require.NoError(t, err)
+	require.True(t, claimed)
+	journal := &migrationJournal{JobID: id, Phase: "ce", Options: opts, Info: migration.MigrationInfo{PackageName: "demo"}, Recovery: operatorMigrationRecoverySnapshot{ClusterExtensionName: "demo", ClusterObjectSetName: "demo-1", SubscriptionRef: "operators/demo"}}
+	guard := &migrationExecutionClient{Client: kubeClient, coordinator: c, namespace: namespace, id: id}
+	err = c.advanceJournal(ctx, migration.NewMigrator(guard, nil), namespace, journal)
+	require.ErrorContains(t, err, "staged before ClusterObjectDeployment support")
+	assert.False(t, journal.Recovery.UseClusterObjectDeployment)
+}
+
+// TestExtensionPhaseCompletesInstalledLegacyTarget verifies an existing, verified target
+// extension completes the ce phase even when a bare pre-deployment revision remains,
+// whether the extension is already installed or still installing.
+func TestExtensionPhaseCompletesInstalledLegacyTarget(t *testing.T) {
+	for _, installed := range []bool{true, false} {
+		name := "installing target"
+		if installed {
+			name = "installed target"
+		}
+		t.Run(name, func(t *testing.T) {
+			ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+			defer cancel()
+			id := "0123456789abcdef0123456789abcdef"
+			opts := migration.Options{SubscriptionName: "demo", SubscriptionNamespace: "operators", ClusterExtensionName: "demo", InstallNamespace: "operators", SystemNamespace: "operator-controller"}
+			annotations := map[string]string{migrationExecutionAnnotation: id, migration.MigratedFromSubscriptionAnnotation: "operators/demo"}
+			cos := &ocv1.ClusterObjectSet{ObjectMeta: metav1.ObjectMeta{Name: "demo-1", Annotations: annotations}, Status: ocv1.ClusterObjectSetStatus{CompletedAt: metav1.Now(), Conditions: []metav1.Condition{{Type: ocv1.ClusterObjectSetTypeReady, Status: metav1.ConditionTrue}}}}
+			extension := &ocv1.ClusterExtension{ObjectMeta: metav1.ObjectMeta{Name: "demo", Annotations: annotations}}
+			if installed {
+				extension.Status = ocv1.ClusterExtensionStatus{Conditions: []metav1.Condition{{Type: ocv1.ClusterExtensionTypeInstalled, Status: metav1.ConditionTrue}}}
+			}
+			checkpoint := &corev1.Secret{ObjectMeta: metav1.ObjectMeta{Name: operatorMigrationCheckpointSecretName("demo"), Namespace: "operator-controller", Annotations: annotations}, Data: map[string][]byte{operatorMigrationCheckpointStateKey: []byte(operatorMigrationCheckpointInProgress)}}
+			base := newMigrationTestClient(t, cos, extension, checkpoint)
+			migrationClient := client.Client(base)
+			// Observed by the installation waiter, after the probe and create-branch reads.
+			waiterSawInstalling, waiterSawInstalled := false, false
+			if !installed {
+				// The extension finishes installing only after the waiter's first
+				// poll observes it as still installing.
+				reads := 0
+				migrationClient = interceptor.NewClient(base.(client.WithWatch), interceptor.Funcs{Get: func(ctx context.Context, cl client.WithWatch, key client.ObjectKey, object client.Object, options ...client.GetOption) error {
+					if err := cl.Get(ctx, key, object, options...); err != nil {
+						return err
+					}
+					if ce, ok := object.(*ocv1.ClusterExtension); ok && ce.Name == "demo" {
+						reads++
+						if reads >= 4 {
+							ce.Status = ocv1.ClusterExtensionStatus{Conditions: []metav1.Condition{{Type: ocv1.ClusterExtensionTypeInstalled, Status: metav1.ConditionTrue}}}
+						}
+						if reads >= 3 {
+							installedCondition := false
+							for _, condition := range ce.Status.Conditions {
+								if condition.Type == ocv1.ClusterExtensionTypeInstalled && condition.Status == metav1.ConditionTrue {
+									installedCondition = true
+								}
+							}
+							if installedCondition {
+								waiterSawInstalled = true
+							} else {
+								waiterSawInstalling = true
+							}
+						}
+					}
+					return nil
+				}})
+			}
+			kubeClient := migrationClient
+			c := &migrationCoordinator{client: kubeClient, identity: "replacement"}
+			namespace, namespaceErr := migrationJobNamespace(id)
+			require.NoError(t, namespaceErr)
+			claimed, err := c.claim(ctx, namespace)
+			require.NoError(t, err)
+			require.True(t, claimed)
+			journal := &migrationJournal{JobID: id, Phase: "ce", Options: opts, Info: migration.MigrationInfo{PackageName: "demo"}, Recovery: operatorMigrationRecoverySnapshot{ClusterExtensionName: "demo", ClusterObjectSetName: "demo-1", SubscriptionRef: "operators/demo"}}
+			journal.Backup.ClusterServiceVersion = &operatorsv1alpha1.ClusterServiceVersion{ObjectMeta: metav1.ObjectMeta{Name: "demo.v1.0.0", Namespace: "operators"}}
+			guard := &migrationExecutionClient{Client: kubeClient, coordinator: c, namespace: namespace, id: id}
+			require.NoError(t, c.advanceJournal(ctx, migration.NewMigrator(guard, nil), namespace, journal))
+			assert.Equal(t, "done", journal.Phase)
+			if !installed {
+				// The waiter must observe the extension still installing before it completes.
+				assert.True(t, waiterSawInstalling)
+				assert.True(t, waiterSawInstalled)
+			}
+		})
+	}
+}
+
+// TestExtensionPhaseCompletesAdoptedUnavailableTarget verifies a completed handoff does not
+// re-require deployment availability when the target flaps after adoption.
+func TestExtensionPhaseCompletesAdoptedUnavailableTarget(t *testing.T) {
+	ctx := context.Background()
+	id := "0123456789abcdef0123456789abcdef"
+	opts := migration.Options{SubscriptionName: "demo", SubscriptionNamespace: "operators", ClusterExtensionName: "demo", InstallNamespace: "operators", SystemNamespace: "operator-controller"}
+	annotations := map[string]string{migrationExecutionAnnotation: id, migration.MigratedFromSubscriptionAnnotation: "operators/demo"}
+	// Protected and adopted, but the migrated operator's pods are currently unready.
+	deployment := &ocv1.ClusterObjectDeployment{ObjectMeta: metav1.ObjectMeta{Name: "demo", UID: "deployment-uid", Generation: 2, Annotations: annotations, Labels: map[string]string{migration.LabelOwnerName: "demo", migrationDeploymentManagedByLabel: migrationDeploymentManagedByValue}}, Spec: ocv1.ClusterObjectDeploymentSpec{Template: ocv1.ClusterObjectDeploymentTemplate{Spec: ocv1.ClusterObjectDeploymentTemplateSpec{ClusterObjectSetContent: ocv1.ClusterObjectSetContent{CollisionProtection: ocv1.CollisionProtectionPrevent}}}}, Status: ocv1.ClusterObjectDeploymentStatus{Conditions: []metav1.Condition{
+		{Type: ocv1.ClusterObjectDeploymentTypeProgressing, Status: metav1.ConditionFalse, Reason: ocv1.ClusterObjectDeploymentReasonNewClusterObjectSetProgressed, ObservedGeneration: 2},
+		{Type: ocv1.ClusterObjectDeploymentTypeAvailable, Status: metav1.ConditionFalse, ObservedGeneration: 2},
+	}}}
+	extension := &ocv1.ClusterExtension{ObjectMeta: metav1.ObjectMeta{Name: "demo", Annotations: annotations}, Status: ocv1.ClusterExtensionStatus{Conditions: []metav1.Condition{{Type: ocv1.ClusterExtensionTypeInstalled, Status: metav1.ConditionTrue}}}}
+	checkpoint := &corev1.Secret{ObjectMeta: metav1.ObjectMeta{Name: operatorMigrationCheckpointSecretName("demo"), Namespace: "operator-controller", Annotations: annotations}, Data: map[string][]byte{operatorMigrationCheckpointStateKey: []byte(operatorMigrationCheckpointInProgress)}}
+	kubeClient := newMigrationTestClient(t, deployment, extension, checkpoint)
+	c := &migrationCoordinator{client: kubeClient, identity: "replacement"}
+	namespace, namespaceErr := migrationJobNamespace(id)
+	require.NoError(t, namespaceErr)
+	claimed, err := c.claim(ctx, namespace)
+	require.NoError(t, err)
+	require.True(t, claimed)
+	journal := &migrationJournal{JobID: id, Phase: "ce", Options: opts, Info: migration.MigrationInfo{PackageName: "demo"}, Recovery: operatorMigrationRecoverySnapshot{UseClusterObjectDeployment: true, ClusterExtensionName: "demo", ClusterObjectSetName: "demo-1", SubscriptionRef: "operators/demo"}}
+	journal.Backup.ClusterServiceVersion = &operatorsv1alpha1.ClusterServiceVersion{ObjectMeta: metav1.ObjectMeta{Name: "demo.v1.0.0", Namespace: "operators"}}
+	guard := &migrationExecutionClient{Client: kubeClient, coordinator: c, namespace: namespace, id: id}
+	require.NoError(t, c.advanceJournal(ctx, migration.NewMigrator(guard, nil), namespace, journal))
+	assert.Equal(t, "done", journal.Phase)
+}
+
+// TestExtensionPhaseProbeSurfacesReadFailure verifies the legacy-flag probe wraps read errors.
+func TestExtensionPhaseProbeSurfacesReadFailure(t *testing.T) {
+	ctx := context.Background()
+	id := "0123456789abcdef0123456789abcdef"
+	opts := migration.Options{SubscriptionName: "demo", SubscriptionNamespace: "operators", ClusterExtensionName: "demo", InstallNamespace: "operators", SystemNamespace: "operator-controller"}
+	kubeClient := newMigrationTestClient(t)
+	denied := interceptor.NewClient(kubeClient.(client.WithWatch), interceptor.Funcs{Get: func(ctx context.Context, cl client.WithWatch, key client.ObjectKey, object client.Object, options ...client.GetOption) error {
+		if _, ok := object.(*ocv1.ClusterObjectDeployment); ok {
+			return apierrors.NewForbidden(schema.GroupResource{Group: ocv1.GroupVersion.Group, Resource: "clusterobjectdeployments"}, key.Name, errors.New("delegated grant removed"))
+		}
+		return cl.Get(ctx, key, object, options...)
+	}})
+	c := &migrationCoordinator{client: kubeClient, identity: "backend"}
+	namespace, namespaceErr := migrationJobNamespace(id)
+	require.NoError(t, namespaceErr)
+	claimed, err := c.claim(ctx, namespace)
+	require.NoError(t, err)
+	require.True(t, claimed)
+	journal := &migrationJournal{JobID: id, Phase: "ce", Options: opts, Info: migration.MigrationInfo{PackageName: "demo"}}
+	guard := &migrationExecutionClient{Client: denied, coordinator: c, namespace: namespace, id: id}
+	err = c.advanceJournal(ctx, migration.NewMigrator(guard, nil), namespace, journal)
+	require.ErrorContains(t, err, "Cannot read ClusterObjectDeployment demo")
+}
+
+// TestExtensionPhaseCreateGuardSurfacesRevisionReadFailure verifies the create guard
+// wraps revision read errors that appear after the probe passed.
+func TestExtensionPhaseCreateGuardSurfacesRevisionReadFailure(t *testing.T) {
+	ctx := context.Background()
+	id := "0123456789abcdef0123456789abcdef"
+	opts := migration.Options{SubscriptionName: "demo", SubscriptionNamespace: "operators", ClusterExtensionName: "demo", InstallNamespace: "operators", SystemNamespace: "operator-controller"}
+	kubeClient := newMigrationTestClient(t)
+	// The revision is absent at the probe and unreadable at the create guard.
+	reads := 0
+	denied := interceptor.NewClient(kubeClient.(client.WithWatch), interceptor.Funcs{Get: func(ctx context.Context, cl client.WithWatch, key client.ObjectKey, object client.Object, options ...client.GetOption) error {
+		if _, ok := object.(*ocv1.ClusterObjectSet); ok {
+			reads++
+			if reads > 1 {
+				return apierrors.NewForbidden(schema.GroupResource{Group: ocv1.GroupVersion.Group, Resource: "clusterobjectsets"}, key.Name, errors.New("delegated grant removed"))
+			}
+			return apierrors.NewNotFound(schema.GroupResource{Group: ocv1.GroupVersion.Group, Resource: "clusterobjectsets"}, key.Name)
+		}
+		return cl.Get(ctx, key, object, options...)
+	}})
+	c := &migrationCoordinator{client: kubeClient, identity: "backend"}
+	namespace, namespaceErr := migrationJobNamespace(id)
+	require.NoError(t, namespaceErr)
+	claimed, err := c.claim(ctx, namespace)
+	require.NoError(t, err)
+	require.True(t, claimed)
+	journal := &migrationJournal{JobID: id, Phase: "ce", Options: opts, Info: migration.MigrationInfo{PackageName: "demo"}}
+	guard := &migrationExecutionClient{Client: denied, coordinator: c, namespace: namespace, id: id}
+	err = c.advanceJournal(ctx, migration.NewMigrator(guard, nil), namespace, journal)
+	require.ErrorContains(t, err, "Cannot read ClusterObjectSet demo-1")
 }
 
 // TestMigrationLibraryWaitsForCurrentClusterObjectSetReadinessWithoutChangingStatus verifies completion history never bypasses current handoff readiness.
@@ -201,12 +715,20 @@ func TestResumingHandoffUsesCompletedAtAndReadyCondition(t *testing.T) {
 	opts := migration.Options{SubscriptionName: "demo", SubscriptionNamespace: "operators", ClusterExtensionName: "demo", InstallNamespace: "operators", SystemNamespace: "operator-controller"}
 	annotations := map[string]string{migrationExecutionAnnotation: id, migration.MigratedFromSubscriptionAnnotation: "operators/demo"}
 	cos := &ocv1.ClusterObjectSet{ObjectMeta: metav1.ObjectMeta{Name: "demo-1", Generation: 1, Annotations: annotations}, Status: ocv1.ClusterObjectSetStatus{Conditions: []metav1.Condition{{Type: "Ready", Status: metav1.ConditionTrue, ObservedGeneration: 1, Reason: "AllObjectsReady"}}}}
-	extension := &ocv1.ClusterExtension{ObjectMeta: metav1.ObjectMeta{Name: "demo", Annotations: annotations}, Status: ocv1.ClusterExtensionStatus{Conditions: []metav1.Condition{{Type: "Installed", Status: metav1.ConditionTrue}}}}
+	extension := &ocv1.ClusterExtension{ObjectMeta: metav1.ObjectMeta{Name: "demo", Annotations: annotations}, Status: ocv1.ClusterExtensionStatus{Conditions: []metav1.Condition{{Type: ocv1.ClusterExtensionTypeInstalled, Status: metav1.ConditionTrue}}}}
 	checkpoint := &corev1.Secret{ObjectMeta: metav1.ObjectMeta{Name: operatorMigrationCheckpointSecretName("demo"), Namespace: "operator-controller", Annotations: annotations}, Data: map[string][]byte{operatorMigrationCheckpointStateKey: []byte(operatorMigrationCheckpointInProgress)}}
 	cos.Status.CompletedAt = metav1.Now()
-	kubeClient := newMigrationTestClient(t, cos, extension, checkpoint)
+	base := newMigrationTestClient(t, cos, extension, checkpoint)
+	// The journal predates the deployment API; the cluster never served it.
+	kubeClient := interceptor.NewClient(base.(client.WithWatch), interceptor.Funcs{Get: func(ctx context.Context, cl client.WithWatch, key client.ObjectKey, object client.Object, options ...client.GetOption) error {
+		if _, ok := object.(*ocv1.ClusterObjectDeployment); ok {
+			return &meta.NoKindMatchError{GroupKind: schema.GroupKind{Group: ocv1.GroupVersion.Group, Kind: ocv1.ClusterObjectDeploymentKind}}
+		}
+		return cl.Get(ctx, key, object, options...)
+	}})
 	c := &migrationCoordinator{client: kubeClient, identity: "replacement"}
-	namespace, _ := migrationJobNamespace(id)
+	namespace, namespaceErr := migrationJobNamespace(id)
+	require.NoError(t, namespaceErr)
 	claimed, err := c.claim(ctx, namespace)
 	require.NoError(t, err)
 	require.True(t, claimed)
@@ -363,7 +885,8 @@ func TestRemigrationReleasesRevisionBeforeCreatingNewHandoff(t *testing.T) {
 	}}
 	kubeClient := newMigrationTestClient(t, &source)
 	c := &migrationCoordinator{client: kubeClient, identity: "backend"}
-	namespace, _ := migrationJobNamespace(id)
+	namespace, namespaceErr := migrationJobNamespace(id)
+	require.NoError(t, namespaceErr)
 	claimed, err := c.claim(ctx, namespace)
 	require.NoError(t, err)
 	require.True(t, claimed)
@@ -443,6 +966,23 @@ func TestResumeCannotAdoptResourcesFromAnotherExecution(t *testing.T) {
 	assert.Equal(t, "other", secret.Annotations[migrationExecutionAnnotation])
 }
 
+// TestExecutionCreateReconcilesDefaultedClusterExtension verifies a lost extension create
+// reconciles when the API server defaulted the upgrade constraint policy.
+func TestExecutionCreateReconcilesDefaultedClusterExtension(t *testing.T) {
+	ctx := context.Background()
+	// The committed extension carries the API server's defaulted policy.
+	committed := &ocv1.ClusterExtension{ObjectMeta: metav1.ObjectMeta{Name: "demo", Annotations: map[string]string{migrationExecutionAnnotation: "current"}}, Spec: ocv1.ClusterExtensionSpec{Source: ocv1.SourceConfig{SourceType: ocv1.SourceTypeCatalog, Catalog: &ocv1.CatalogFilter{PackageName: "demo", UpgradeConstraintPolicy: ocv1.UpgradeConstraintPolicyCatalogProvided}}}}
+	kubeClient := newMigrationTestClient(t, committed)
+	c := &migrationCoordinator{client: kubeClient, identity: "backend"}
+	claimed, err := c.claim(ctx, "checkpoint")
+	require.NoError(t, err)
+	require.True(t, claimed)
+	guard := &migrationExecutionClient{Client: kubeClient, coordinator: c, namespace: "checkpoint", id: "current"}
+	// The library's desired spec leaves the policy unset.
+	desired := &ocv1.ClusterExtension{ObjectMeta: metav1.ObjectMeta{Name: "demo"}, Spec: ocv1.ClusterExtensionSpec{Source: ocv1.SourceConfig{SourceType: ocv1.SourceTypeCatalog, Catalog: &ocv1.CatalogFilter{PackageName: "demo"}}}}
+	require.NoError(t, guard.Create(ctx, desired))
+}
+
 func TestReinstalledOperatorMigrationReplacesOnlyItsCompletedCheckpoint(t *testing.T) {
 	for _, tt := range []struct {
 		name       string
@@ -473,7 +1013,8 @@ func TestReinstalledOperatorMigrationReplacesOnlyItsCompletedCheckpoint(t *testi
 			csv := &operatorsv1alpha1.ClusterServiceVersion{ObjectMeta: metav1.ObjectMeta{Name: "demo.v1.0.0", Namespace: "operators", UID: "reinstalled-csv"}, Status: operatorsv1alpha1.ClusterServiceVersionStatus{Phase: operatorsv1alpha1.CSVPhaseSucceeded}}
 			kubeClient := newMigrationTestClient(t, checkpoint, subscription, csv, &corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: "operators"}})
 			c := &migrationCoordinator{client: kubeClient, identity: "backend"}
-			namespace, _ := migrationJobNamespace(id)
+			namespace, namespaceErr := migrationJobNamespace(id)
+			require.NoError(t, namespaceErr)
 			claimed, err := c.claim(ctx, namespace)
 			require.NoError(t, err)
 			require.True(t, claimed)
@@ -487,23 +1028,31 @@ func TestReinstalledOperatorMigrationReplacesOnlyItsCompletedCheckpoint(t *testi
 					return cl.Update(ctx, obj, options...)
 				}})
 			}
-			runner := interceptor.NewClient(kubeClient.(client.WithWatch), interceptor.Funcs{Delete: func(ctx context.Context, cl client.WithWatch, obj client.Object, options ...client.DeleteOption) error {
-				if _, ok := obj.(*operatorsv1alpha1.ClusterServiceVersion); !ok {
-					return cl.Delete(ctx, obj, options...)
-				}
-				if tt.failDelete {
-					return errors.New("CSV deletion denied")
-				}
-				if err := cl.Delete(ctx, obj, options...); err != nil {
-					return err
-				}
-				// Simulate ready handover targets after the source managers are removed.
-				annotations := map[string]string{migrationExecutionAnnotation: id, migration.MigratedFromSubscriptionAnnotation: "operators/demo"}
-				if err := cl.Create(ctx, &ocv1.ClusterObjectSet{ObjectMeta: metav1.ObjectMeta{Name: "demo-1", Annotations: annotations}, Status: ocv1.ClusterObjectSetStatus{CompletedAt: metav1.Now(), Conditions: []metav1.Condition{{Type: ocv1.ClusterObjectSetTypeReady, Status: metav1.ConditionTrue}}}}); err != nil {
-					return err
-				}
-				return cl.Create(ctx, &ocv1.ClusterExtension{ObjectMeta: metav1.ObjectMeta{Name: "demo", Annotations: annotations}, Status: ocv1.ClusterExtensionStatus{Conditions: []metav1.Condition{{Type: "Installed", Status: metav1.ConditionTrue}}}})
-			}})
+			runner := interceptor.NewClient(kubeClient.(client.WithWatch), interceptor.Funcs{
+				Get: func(ctx context.Context, cl client.WithWatch, key client.ObjectKey, object client.Object, options ...client.GetOption) error {
+					if _, ok := object.(*ocv1.ClusterObjectDeployment); ok {
+						// The cluster never served the deployment API.
+						return &meta.NoKindMatchError{GroupKind: schema.GroupKind{Group: ocv1.GroupVersion.Group, Kind: ocv1.ClusterObjectDeploymentKind}}
+					}
+					return cl.Get(ctx, key, object, options...)
+				},
+				Delete: func(ctx context.Context, cl client.WithWatch, obj client.Object, options ...client.DeleteOption) error {
+					if _, ok := obj.(*operatorsv1alpha1.ClusterServiceVersion); !ok {
+						return cl.Delete(ctx, obj, options...)
+					}
+					if tt.failDelete {
+						return errors.New("CSV deletion denied")
+					}
+					if err := cl.Delete(ctx, obj, options...); err != nil {
+						return err
+					}
+					// Simulate ready handover targets after the source managers are removed.
+					annotations := map[string]string{migrationExecutionAnnotation: id, migration.MigratedFromSubscriptionAnnotation: "operators/demo"}
+					if err := cl.Create(ctx, &ocv1.ClusterObjectSet{ObjectMeta: metav1.ObjectMeta{Name: "demo-1", Annotations: annotations}, Status: ocv1.ClusterObjectSetStatus{CompletedAt: metav1.Now(), Conditions: []metav1.Condition{{Type: ocv1.ClusterObjectSetTypeReady, Status: metav1.ConditionTrue}}}}); err != nil {
+						return err
+					}
+					return cl.Create(ctx, &ocv1.ClusterExtension{ObjectMeta: metav1.ObjectMeta{Name: "demo", Annotations: annotations}, Status: ocv1.ClusterExtensionStatus{Conditions: []metav1.Condition{{Type: ocv1.ClusterExtensionTypeInstalled, Status: metav1.ConditionTrue}}}})
+				}})
 			if tt.interrupt {
 				require.ErrorIs(t, c.executeCandidate(ctx, migration.NewMigrator(runner, nil), namespace, id, opts), errMigrationSuspended)
 				var claimedCheckpoint corev1.Secret
@@ -651,17 +1200,25 @@ func TestResumeAfterSourceSubscriptionWasDeleted(t *testing.T) {
 	annotations := map[string]string{migrationExecutionAnnotation: id, migration.MigratedFromSubscriptionAnnotation: "operators/demo"}
 	csv := &operatorsv1alpha1.ClusterServiceVersion{ObjectMeta: metav1.ObjectMeta{Name: "demo.v1.0.0", Namespace: "operators", UID: "csv-original"}}
 	cos := &ocv1.ClusterObjectSet{ObjectMeta: metav1.ObjectMeta{Name: "demo-1", Annotations: annotations}, Status: ocv1.ClusterObjectSetStatus{CompletedAt: metav1.Now(), Conditions: []metav1.Condition{{Type: ocv1.ClusterObjectSetTypeReady, Status: metav1.ConditionTrue}}}}
-	extension := &ocv1.ClusterExtension{ObjectMeta: metav1.ObjectMeta{Name: "demo", Annotations: annotations}, Status: ocv1.ClusterExtensionStatus{Conditions: []metav1.Condition{{Type: "Installed", Status: metav1.ConditionTrue}}}}
+	extension := &ocv1.ClusterExtension{ObjectMeta: metav1.ObjectMeta{Name: "demo", Annotations: annotations}, Status: ocv1.ClusterExtensionStatus{Conditions: []metav1.Condition{{Type: ocv1.ClusterExtensionTypeInstalled, Status: metav1.ConditionTrue}}}}
 	checkpoint := &corev1.Secret{ObjectMeta: metav1.ObjectMeta{Name: operatorMigrationCheckpointSecretName("demo"), Namespace: "system", Annotations: annotations}, Data: map[string][]byte{operatorMigrationCheckpointStateKey: []byte(operatorMigrationCheckpointInProgress)}}
 	kubeClient := newMigrationTestClient(t, csv, cos, extension, checkpoint)
+	// The journal predates the deployment API; the cluster never served it.
+	legacyCluster := interceptor.NewClient(kubeClient.(client.WithWatch), interceptor.Funcs{Get: func(ctx context.Context, cl client.WithWatch, key client.ObjectKey, object client.Object, options ...client.GetOption) error {
+		if _, ok := object.(*ocv1.ClusterObjectDeployment); ok {
+			return &meta.NoKindMatchError{GroupKind: schema.GroupKind{Group: ocv1.GroupVersion.Group, Kind: ocv1.ClusterObjectDeploymentKind}}
+		}
+		return cl.Get(ctx, key, object, options...)
+	}})
 	c := &migrationCoordinator{client: kubeClient, identity: "replacement"}
-	namespace, _ := migrationJobNamespace(id)
+	namespace, namespaceErr := migrationJobNamespace(id)
+	require.NoError(t, namespaceErr)
 	claimed, err := c.claim(ctx, namespace)
 	require.NoError(t, err)
 	require.True(t, claimed)
 	journal := &migrationJournal{JobID: id, Phase: "prepare", Options: opts, Info: migration.MigrationInfo{PackageName: "demo"}, Backup: migration.Backup{Subscription: &operatorsv1alpha1.Subscription{ObjectMeta: metav1.ObjectMeta{Name: "demo", Namespace: "operators", UID: "subscription-original"}}, ClusterServiceVersion: csv}}
 	require.NoError(t, c.saveJournal(ctx, namespace, journal))
-	migrator := migration.NewMigrator(kubeClient, nil)
+	migrator := migration.NewMigrator(legacyCluster, nil)
 	var progress []migration.ProgressEvent
 	migrator.Progress = func(event migration.ProgressEvent) { progress = append(progress, event) }
 	require.NoError(t, c.executeCandidate(ctx, migrator, namespace, id, opts))
@@ -684,17 +1241,27 @@ func TestFailedHandoffPreservesActiveTargetAndDoesNotRestoreSource(t *testing.T)
 	checkpoint := &corev1.Secret{ObjectMeta: metav1.ObjectMeta{Name: operatorMigrationCheckpointSecretName("demo"), Namespace: "system", Annotations: annotations}, Data: map[string][]byte{operatorMigrationCheckpointStateKey: []byte(operatorMigrationCheckpointInProgress)}}
 	kubeClient := newMigrationTestClient(t, cos, checkpoint)
 	c := &migrationCoordinator{client: kubeClient, identity: "replacement"}
-	namespace, _ := migrationJobNamespace(id)
+	namespace, namespaceErr := migrationJobNamespace(id)
+	require.NoError(t, namespaceErr)
 	_, err := c.claim(ctx, namespace)
 	require.NoError(t, err)
 	journal := &migrationJournal{JobID: id, Phase: "ce", Options: opts, Info: migration.MigrationInfo{PackageName: "demo", Channel: "stable"}}
 	require.NoError(t, c.saveJournal(ctx, namespace, journal))
-	denied := interceptor.NewClient(kubeClient.(client.WithWatch), interceptor.Funcs{Create: func(ctx context.Context, cl client.WithWatch, obj client.Object, options ...client.CreateOption) error {
-		if _, ok := obj.(*ocv1.ClusterExtension); ok {
-			return apierrors.NewForbidden(schema.GroupResource{Group: "olm.operatorframework.io", Resource: "clusterextensions"}, obj.GetName(), errors.New("fixture denies creation"))
-		}
-		return cl.Create(ctx, obj, options...)
-	}})
+	denied := interceptor.NewClient(kubeClient.(client.WithWatch), interceptor.Funcs{
+		// The journal predates the deployment API; the cluster never served it,
+		// so the ce probe is skipped and the extension denial is reached.
+		Get: func(ctx context.Context, cl client.WithWatch, key client.ObjectKey, object client.Object, options ...client.GetOption) error {
+			if _, ok := object.(*ocv1.ClusterObjectDeployment); ok {
+				return &meta.NoKindMatchError{GroupKind: schema.GroupKind{Group: ocv1.GroupVersion.Group, Kind: ocv1.ClusterObjectDeploymentKind}}
+			}
+			return cl.Get(ctx, key, object, options...)
+		},
+		Create: func(ctx context.Context, cl client.WithWatch, obj client.Object, options ...client.CreateOption) error {
+			if _, ok := obj.(*ocv1.ClusterExtension); ok {
+				return apierrors.NewForbidden(schema.GroupResource{Group: "olm.operatorframework.io", Resource: "clusterextensions"}, obj.GetName(), errors.New("fixture denies creation"))
+			}
+			return cl.Create(ctx, obj, options...)
+		}})
 	err = c.executeCandidate(ctx, migration.NewMigrator(denied, nil), namespace, id, opts)
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "migration halted")
@@ -765,7 +1332,8 @@ func TestRecoveryCheckpointSurvivesAWriteFailureAfterSourceRestoration(t *testin
 	checkpoint := &corev1.Secret{ObjectMeta: metav1.ObjectMeta{Name: operatorMigrationCheckpointSecretName("demo"), Namespace: "system", Annotations: map[string]string{migrationExecutionAnnotation: id}}, Type: operatorMigrationCheckpointSecretType, Data: map[string][]byte{operatorMigrationCheckpointStateKey: []byte(operatorMigrationCheckpointRequired)}}
 	kubeClient := newMigrationTestClient(t, checkpoint, &corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: "operators"}})
 	c := &migrationCoordinator{client: kubeClient, identity: "replacement"}
-	namespace, _ := migrationJobNamespace(id)
+	namespace, namespaceErr := migrationJobNamespace(id)
+	require.NoError(t, namespaceErr)
 	_, err := c.claim(ctx, namespace)
 	require.NoError(t, err)
 	journal := &migrationJournal{JobID: id, Phase: "recovery", Failure: "fixture failure", Options: opts, Recovery: operatorMigrationRecoverySnapshot{ClusterExtensionName: "demo", ClusterObjectSetName: "demo-1", SubscriptionRef: "operators/demo", Namespace: operatorMigrationNamespaceBackup{Name: "operators"}, SubscriptionSpec: operatorsv1alpha1.SubscriptionSpec{Package: "demo", CatalogSource: "fixture", CatalogSourceNamespace: "catalog"}}}

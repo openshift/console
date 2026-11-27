@@ -6,6 +6,8 @@ import (
 	"errors"
 	"net/http"
 	"net/http/httptest"
+	"reflect"
+	"strconv"
 	"sync"
 	"testing"
 
@@ -46,7 +48,8 @@ func TestLibraryPreparationKeepsSourceUIDPreconditions(t *testing.T) {
 			backup.Subscription.UID, backup.ClusterServiceVersion.UID = "original-subscription", "original-csv"
 			kubeClient := newMigrationTestClient(t, sub, csv)
 			id := "0123456789abcdef0123456789abcdef"
-			namespace, _ := migrationJobNamespace(id)
+			namespace, namespaceErr := migrationJobNamespace(id)
+			require.NoError(t, namespaceErr)
 			c := &migrationCoordinator{client: kubeClient, identity: "backend"}
 			_, err := c.claim(ctx, namespace)
 			require.NoError(t, err)
@@ -115,9 +118,12 @@ func TestLibraryRendersPersistedManifestsWithoutOldOwnership(t *testing.T) {
 	info := &migration.MigrationInfo{CollectedObjects: []unstructured.Unstructured{object}}
 	interrupted := errors.New("stop before handoff")
 	var manifests []unstructured.Unstructured
-	crd := &apiextensionsv1.CustomResourceDefinition{ObjectMeta: metav1.ObjectMeta{Name: "clusterobjectsets.olm.operatorframework.io"}, Status: apiextensionsv1.CustomResourceDefinitionStatus{Conditions: []apiextensionsv1.CustomResourceDefinitionCondition{{Type: apiextensionsv1.Established, Status: apiextensionsv1.ConditionTrue}}}}
-	runner := interceptor.NewClient(newMigrationTestClient(t, crd).(client.WithWatch), interceptor.Funcs{Create: func(ctx context.Context, cl client.WithWatch, object client.Object, options ...client.CreateOption) error {
-		if _, target := object.(*ocv1.ClusterObjectSet); target {
+	crds := []client.Object{
+		&apiextensionsv1.CustomResourceDefinition{ObjectMeta: metav1.ObjectMeta{Name: "clusterobjectsets.olm.operatorframework.io"}, Status: apiextensionsv1.CustomResourceDefinitionStatus{Conditions: []apiextensionsv1.CustomResourceDefinitionCondition{{Type: apiextensionsv1.Established, Status: apiextensionsv1.ConditionTrue}}}},
+		&apiextensionsv1.CustomResourceDefinition{ObjectMeta: metav1.ObjectMeta{Name: "clusterobjectdeployments.olm.operatorframework.io"}, Status: apiextensionsv1.CustomResourceDefinitionStatus{Conditions: []apiextensionsv1.CustomResourceDefinitionCondition{{Type: apiextensionsv1.Established, Status: apiextensionsv1.ConditionTrue}}}},
+	}
+	runner := interceptor.NewClient(newMigrationTestClient(t, crds...).(client.WithWatch), interceptor.Funcs{Create: func(ctx context.Context, cl client.WithWatch, object client.Object, options ...client.CreateOption) error {
+		if _, target := object.(*ocv1.ClusterObjectDeployment); target {
 			return interrupted
 		}
 		if secret, ok := object.(*corev1.Secret); ok && secret.Type == corev1.SecretType(migration.SecretTypeObjectData) {
@@ -154,8 +160,51 @@ func TestMigrationRequiresDurableExecutor(t *testing.T) {
 	assert.Equal(t, "durable migration executor is not configured", result.Items[0].Error)
 }
 
-// TestLibraryClusterObjectSetUsesExtensionGroup verifies library-created revisions join the target extension's group, including after a lost create response.
-func TestLibraryClusterObjectSetUsesExtensionGroup(t *testing.T) {
+// TestDeploymentAPIPUTAdoptionGate verifies the fixture gates adoption-label PUTs on
+// spec generation changes, so a spec-plus-label PUT cannot adopt an unobserved spec.
+func TestDeploymentAPIPUTAdoptionGate(t *testing.T) {
+	crds := []client.Object{
+		&apiextensionsv1.CustomResourceDefinition{ObjectMeta: metav1.ObjectMeta{Name: "clusterobjectsets.olm.operatorframework.io"}, Status: apiextensionsv1.CustomResourceDefinitionStatus{Conditions: []apiextensionsv1.CustomResourceDefinitionCondition{{Type: apiextensionsv1.Established, Status: apiextensionsv1.ConditionTrue}}}},
+		&apiextensionsv1.CustomResourceDefinition{ObjectMeta: metav1.ObjectMeta{Name: "clusterobjectdeployments.olm.operatorframework.io"}, Status: apiextensionsv1.CustomResourceDefinitionStatus{Conditions: []apiextensionsv1.CustomResourceDefinitionCondition{{Type: apiextensionsv1.Established, Status: apiextensionsv1.ConditionTrue}}}},
+	}
+	kubeClient := newMigrationTestClient(t, crds...)
+	deploymentClient := newMigrationDeploymentAPIClient(t, kubeClient)
+	ctx := context.Background()
+
+	// Stage the deployment and observe its initial generation.
+	created := &ocv1.ClusterObjectDeployment{ObjectMeta: metav1.ObjectMeta{Name: "target-extension", Labels: map[string]string{migration.LabelOwnerName: "target-extension"}}, Spec: ocv1.ClusterObjectDeploymentSpec{Template: ocv1.ClusterObjectDeploymentTemplate{Spec: ocv1.ClusterObjectDeploymentTemplateSpec{ClusterObjectSetContent: ocv1.ClusterObjectSetContent{CollisionProtection: ocv1.CollisionProtectionNone}}}}}
+	require.NoError(t, deploymentClient.Create(ctx, created))
+	var observed ocv1.ClusterObjectDeployment
+	require.NoError(t, deploymentClient.Get(ctx, client.ObjectKey{Name: "target-extension"}, &observed))
+
+	// A spec change plus the adoption label bumps the generation; the unobserved
+	// generation must be rejected even though protection is set.
+	specAndLabel := observed.DeepCopy()
+	specAndLabel.Spec.Template.Spec.CollisionProtection = ocv1.CollisionProtectionPrevent
+	specAndLabel.Labels = map[string]string{migration.LabelOwnerName: "target-extension", migrationDeploymentManagedByLabel: migrationDeploymentManagedByValue}
+	require.True(t, apierrors.IsInvalid(deploymentClient.Update(ctx, specAndLabel)))
+
+	// A different spec field plus the adoption label must also be rejected:
+	// the full-spec comparison, not just the protection transition, gates the bump.
+	otherSpecAndLabel := observed.DeepCopy()
+	otherSpecAndLabel.Spec.ProgressDeadlineMinutes = 42
+	otherSpecAndLabel.Labels = map[string]string{migration.LabelOwnerName: "target-extension", migrationDeploymentManagedByLabel: migrationDeploymentManagedByValue}
+	require.True(t, apierrors.IsInvalid(deploymentClient.Update(ctx, otherSpecAndLabel)))
+
+	// A spec-only PUT protecting the template bumps the generation again.
+	specOnly := observed.DeepCopy()
+	specOnly.Spec.Template.Spec.CollisionProtection = ocv1.CollisionProtectionPrevent
+	require.NoError(t, deploymentClient.Update(ctx, specOnly))
+	require.NoError(t, deploymentClient.Get(ctx, client.ObjectKey{Name: "target-extension"}, &observed))
+
+	// A metadata-only label PUT at the observed, protected generation is accepted.
+	labelOnly := observed.DeepCopy()
+	labelOnly.Labels = map[string]string{migration.LabelOwnerName: "target-extension", migrationDeploymentManagedByLabel: migrationDeploymentManagedByValue}
+	require.NoError(t, deploymentClient.Update(ctx, labelOnly))
+}
+
+// TestLibraryStagesThroughTargetDeployment verifies library staging joins the target extension's deployment, including after a lost create response.
+func TestLibraryStagesThroughTargetDeployment(t *testing.T) {
 	for _, lostResponse := range []bool{false, true} {
 		name := "created"
 		if lostResponse {
@@ -163,48 +212,62 @@ func TestLibraryClusterObjectSetUsesExtensionGroup(t *testing.T) {
 		}
 		t.Run(name, func(t *testing.T) {
 			ctx := context.Background()
-			crd := &apiextensionsv1.CustomResourceDefinition{
-				ObjectMeta: metav1.ObjectMeta{Name: "clusterobjectsets.olm.operatorframework.io"},
-				Status: apiextensionsv1.CustomResourceDefinitionStatus{Conditions: []apiextensionsv1.CustomResourceDefinitionCondition{{
-					Type: apiextensionsv1.Established, Status: apiextensionsv1.ConditionTrue,
-				}}},
+			crds := []client.Object{
+				&apiextensionsv1.CustomResourceDefinition{ObjectMeta: metav1.ObjectMeta{Name: "clusterobjectsets.olm.operatorframework.io"}, Status: apiextensionsv1.CustomResourceDefinitionStatus{Conditions: []apiextensionsv1.CustomResourceDefinitionCondition{{Type: apiextensionsv1.Established, Status: apiextensionsv1.ConditionTrue}}}},
+				&apiextensionsv1.CustomResourceDefinition{ObjectMeta: metav1.ObjectMeta{Name: "clusterobjectdeployments.olm.operatorframework.io"}, Status: apiextensionsv1.CustomResourceDefinitionStatus{Conditions: []apiextensionsv1.CustomResourceDefinitionCondition{{Type: apiextensionsv1.Established, Status: apiextensionsv1.ConditionTrue}}}},
 			}
-			kubeClient := newMigrationTestClient(t, crd)
+			kubeClient := newMigrationTestClient(t, crds...)
 			id := "0123456789abcdef0123456789abcdef"
-			namespace, _ := migrationJobNamespace(id)
+			namespace, namespaceErr := migrationJobNamespace(id)
+			require.NoError(t, namespaceErr)
 			coordinator := &migrationCoordinator{client: kubeClient, identity: "backend"}
 			claimed, err := coordinator.claim(ctx, namespace)
 			require.NoError(t, err)
 			require.True(t, claimed)
-			revisionClient := newMigrationRevisionAPIClient(t, kubeClient)
+			deploymentClient := newMigrationDeploymentAPIClient(t, kubeClient)
 			created := false
 			runner := interceptor.NewClient(kubeClient.(client.WithWatch), interceptor.Funcs{
 				Create: func(ctx context.Context, cl client.WithWatch, object client.Object, options ...client.CreateOption) error {
-					if object.GetObjectKind().GroupVersionKind().Kind != ocv1.ClusterObjectSetKind {
-						if _, ok := object.(*ocv1.ClusterObjectSet); !ok {
+					if object.GetObjectKind().GroupVersionKind().Kind != ocv1.ClusterObjectDeploymentKind {
+						if _, ok := object.(*ocv1.ClusterObjectDeployment); !ok {
 							return cl.Create(ctx, object, options...)
 						}
 					}
 					created = true
-					if err := revisionClient.Create(ctx, object, options...); err != nil {
-						return err
-					}
 					if lostResponse {
+						// A lost response never decodes the created object back into the request,
+						// so the recovery comparison sees the request's unset defaults.
+						request := object.DeepCopyObject().(client.Object)
+						if err := deploymentClient.Create(ctx, request, options...); err != nil {
+							return err
+						}
 						return errors.New("create response lost")
+					}
+					if err := deploymentClient.Create(ctx, object, options...); err != nil {
+						return err
 					}
 					return nil
 				},
 				Get: func(ctx context.Context, cl client.WithWatch, key client.ObjectKey, object client.Object, options ...client.GetOption) error {
-					if object.GetObjectKind().GroupVersionKind().Kind == ocv1.ClusterObjectSetKind {
-						return revisionClient.Get(ctx, key, object, options...)
+					if object.GetObjectKind().GroupVersionKind().Kind == ocv1.ClusterObjectDeploymentKind {
+						return deploymentClient.Get(ctx, key, object, options...)
 					}
-					if _, ok := object.(*ocv1.ClusterObjectSet); ok {
-						return revisionClient.Get(ctx, key, object, options...)
+					if _, ok := object.(*ocv1.ClusterObjectDeployment); ok {
+						return deploymentClient.Get(ctx, key, object, options...)
 					}
 					return cl.Get(ctx, key, object, options...)
 				},
 				Update: func(ctx context.Context, cl client.WithWatch, object client.Object, options ...client.UpdateOption) error {
-					return revisionClient.Update(ctx, object, options...)
+					if _, ok := object.(*ocv1.ClusterObjectDeployment); ok {
+						return deploymentClient.Update(ctx, object, options...)
+					}
+					return cl.Update(ctx, object, options...)
+				},
+				Patch: func(ctx context.Context, cl client.WithWatch, object client.Object, patch client.Patch, options ...client.PatchOption) error {
+					if _, ok := object.(*ocv1.ClusterObjectDeployment); ok {
+						return deploymentClient.Patch(ctx, object, patch, options...)
+					}
+					return cl.Patch(ctx, object, patch, options...)
 				},
 			})
 			guard := &migrationExecutionClient{Client: runner, coordinator: coordinator, namespace: namespace, id: id}
@@ -214,86 +277,194 @@ func TestLibraryClusterObjectSetUsesExtensionGroup(t *testing.T) {
 			}, &migration.MigrationInfo{})
 			require.NoError(t, err)
 			require.True(t, created)
-			var revision ocv1.ClusterObjectSet
-			require.NoError(t, guard.Get(ctx, client.ObjectKey{Name: "target-extension-1"}, &revision))
-			raw := &unstructured.Unstructured{}
-			raw.SetGroupVersionKind(ocv1.GroupVersion.WithKind(ocv1.ClusterObjectSetKind))
-			require.NoError(t, revisionClient.Get(ctx, client.ObjectKeyFromObject(&revision), raw))
-			assert.Equal(t, "target-extension", raw.Object["spec"].(map[string]interface{})["group"])
-			assert.Equal(t, id, revision.Annotations[migrationExecutionAnnotation])
-			// Metadata updates during recovery must retain the required immutable group.
-			stale := revision.DeepCopy()
-			revision.Annotations["test/recovery"] = "retained"
-			require.NoError(t, guard.Update(ctx, &revision))
-			require.NoError(t, guard.Get(ctx, client.ObjectKeyFromObject(&revision), &revision))
-			require.NoError(t, revisionClient.Get(ctx, client.ObjectKeyFromObject(&revision), raw))
-			assert.Equal(t, "target-extension", raw.Object["spec"].(map[string]interface{})["group"])
-			assert.Equal(t, id, revision.Annotations[migrationExecutionAnnotation])
-			// Fetching the live group must not replace the caller's resource version.
+			var deployment ocv1.ClusterObjectDeployment
+			require.NoError(t, guard.Get(ctx, client.ObjectKey{Name: "target-extension"}, &deployment))
+			assert.Equal(t, "target-extension", deployment.Labels[migration.LabelOwnerName])
+			assert.Equal(t, id, deployment.Annotations[migrationExecutionAnnotation])
+			// Adoption is enabled only after the protected rollout completes.
+			assert.Equal(t, "operator-controller", deployment.Labels["app.kubernetes.io/managed-by"])
+			assert.Equal(t, ocv1.CollisionProtectionPrevent, deployment.Spec.Template.Spec.CollisionProtection)
+			// Metadata updates during recovery must retain the deployment identity.
+			stale := deployment.DeepCopy()
+			deployment.Annotations["test/recovery"] = "retained"
+			require.NoError(t, guard.Update(ctx, &deployment))
+			require.NoError(t, guard.Get(ctx, client.ObjectKeyFromObject(&deployment), &deployment))
+			assert.Equal(t, "target-extension", deployment.Labels[migration.LabelOwnerName])
+			assert.Equal(t, id, deployment.Annotations[migrationExecutionAnnotation])
+			// Fetching the live object must not replace the caller's resource version.
 			stale.Annotations["test/recovery"] = "stale"
 			require.True(t, apierrors.IsConflict(guard.Update(ctx, stale)))
 		})
 	}
 }
 
-// newMigrationRevisionAPIClient enforces the newer CRD's group requirement over HTTP while retaining fields unknown to the pinned Go API.
-func newMigrationRevisionAPIClient(t *testing.T, kubeClient client.Client) client.Client {
+// mergeJSONPatch applies JSON merge-patch semantics to the stored object; it
+// covers the object shapes this fixture exchanges and is not a general implementation.
+func mergeJSONPatch(dst, patch map[string]interface{}) {
+	for key, value := range patch {
+		if value == nil {
+			delete(dst, key)
+			continue
+		}
+		if nested, ok := value.(map[string]interface{}); ok {
+			if existing, ok := dst[key].(map[string]interface{}); ok {
+				mergeJSONPatch(existing, nested)
+				continue
+			}
+		}
+		dst[key] = value
+	}
+}
+
+// newMigrationDeploymentAPIClient enforces the deployment ownership label over HTTP, completes rollouts, and retains fields unknown to the pinned Go API.
+func newMigrationDeploymentAPIClient(t *testing.T, kubeClient client.Client) client.Client {
 	t.Helper()
 	var lock sync.Mutex
 	var stored *unstructured.Unstructured
+	resourceVersion := 0
+	staleGets := 0
+	observedGeneration := int64(0)
+	completeRollout := func(deployment *unstructured.Unstructured) error {
+		return unstructured.SetNestedSlice(deployment.Object, []interface{}{
+			map[string]interface{}{"type": "Progressing", "status": "False", "reason": ocv1.ClusterObjectDeploymentReasonNewClusterObjectSetProgressed, "observedGeneration": deployment.GetGeneration(), "message": "rollout complete"},
+			map[string]interface{}{"type": "Available", "status": "True", "observedGeneration": deployment.GetGeneration(), "message": "available"},
+		}, "status", "conditions")
+	}
+	respond := func(w http.ResponseWriter, code int, object interface{}) {
+		w.WriteHeader(code)
+		if err := json.NewEncoder(w).Encode(object); err != nil {
+			t.Errorf("encode ClusterObjectDeployment API response: %v", err)
+		}
+	}
+	status := func(code int, reason metav1.StatusReason, message string) metav1.Status {
+		return metav1.Status{TypeMeta: metav1.TypeMeta{APIVersion: "v1", Kind: "Status"}, Status: metav1.StatusFailure, Code: int32(code), Reason: reason, Message: message}
+	}
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		lock.Lock()
 		defer lock.Unlock()
 		w.Header().Set("Content-Type", "application/json")
 		if r.Method == http.MethodGet {
 			if stored == nil {
-				w.WriteHeader(http.StatusNotFound)
-				_ = json.NewEncoder(w).Encode(metav1.Status{TypeMeta: metav1.TypeMeta{APIVersion: "v1", Kind: "Status"}, Status: metav1.StatusFailure, Code: http.StatusNotFound, Reason: metav1.StatusReasonNotFound})
+				respond(w, http.StatusNotFound, status(http.StatusNotFound, metav1.StatusReasonNotFound, ""))
 				return
 			}
-			_ = json.NewEncoder(w).Encode(stored)
+			if staleGets > 0 {
+				// The controller has not observed the latest generation yet.
+				staleGets--
+			} else {
+				if err := completeRollout(stored); err != nil {
+					t.Errorf("complete ClusterObjectDeployment rollout: %v", err)
+					return
+				}
+				observedGeneration = stored.GetGeneration()
+			}
+			respond(w, http.StatusOK, stored)
 			return
 		}
-		var revision unstructured.Unstructured
-		if err := json.NewDecoder(r.Body).Decode(&revision); err != nil {
+		if r.Method == http.MethodPatch {
+			var patch map[string]interface{}
+			if err := json.NewDecoder(r.Body).Decode(&patch); err != nil || stored == nil {
+				http.Error(w, "invalid patch request", http.StatusBadRequest)
+				return
+			}
+			if metadata, ok := patch["metadata"].(map[string]interface{}); ok {
+				if version, _ := metadata["resourceVersion"].(string); version != "" && version != stored.GetResourceVersion() {
+					respond(w, http.StatusConflict, status(http.StatusConflict, metav1.StatusReasonConflict, ""))
+					return
+				}
+			}
+			// Apply the patch to a copy and commit only when it is accepted.
+			candidate := stored.DeepCopy()
+			mergeJSONPatch(candidate.Object, patch)
+			if _, spec := patch["spec"]; spec {
+				// The API server bumps the generation for spec changes.
+				candidate.SetGeneration(candidate.GetGeneration() + 1)
+			}
+			if metadata, ok := patch["metadata"].(map[string]interface{}); ok {
+				if labels, ok := metadata["labels"].(map[string]interface{}); ok && labels[migrationDeploymentManagedByLabel] == migrationDeploymentManagedByValue {
+					// Adoption is enabled only after the protected rollout was observed.
+					protection, _, err := unstructured.NestedString(candidate.Object, "spec", "template", "spec", "collisionProtection")
+					if err != nil || observedGeneration != candidate.GetGeneration() || protection != string(ocv1.CollisionProtectionPrevent) {
+						respond(w, http.StatusUnprocessableEntity, status(http.StatusUnprocessableEntity, metav1.StatusReasonInvalid, "adoption before the protected rollout was observed"))
+						return
+					}
+				}
+			}
+			resourceVersion++
+			candidate.SetResourceVersion(strconv.Itoa(resourceVersion))
+			if _, spec := patch["spec"]; spec {
+				staleGets = 1
+			}
+			stored = candidate
+			respond(w, http.StatusOK, stored)
+			return
+		}
+		var deployment unstructured.Unstructured
+		if err := json.NewDecoder(r.Body).Decode(&deployment); err != nil {
 			http.Error(w, "invalid request body", http.StatusBadRequest)
 			return
 		}
-		group, _, err := unstructured.NestedString(revision.Object, "spec", "group")
-		if err != nil || group != "target-extension" {
-			w.WriteHeader(http.StatusUnprocessableEntity)
-			_ = json.NewEncoder(w).Encode(metav1.Status{TypeMeta: metav1.TypeMeta{APIVersion: "v1", Kind: "Status"}, Status: metav1.StatusFailure, Code: http.StatusUnprocessableEntity, Reason: metav1.StatusReasonInvalid, Message: "spec.group must match the target ClusterExtension"})
+		if owner := deployment.GetLabels()[migration.LabelOwnerName]; owner != "target-extension" {
+			respond(w, http.StatusUnprocessableEntity, status(http.StatusUnprocessableEntity, metav1.StatusReasonInvalid, "metadata.labels owner-name must match the target ClusterExtension"))
 			return
 		}
-		if r.Method == http.MethodPut && (stored == nil || revision.GetResourceVersion() != stored.GetResourceVersion()) {
-			w.WriteHeader(http.StatusConflict)
-			_ = json.NewEncoder(w).Encode(metav1.Status{TypeMeta: metav1.TypeMeta{APIVersion: "v1", Kind: "Status"}, Status: metav1.StatusFailure, Code: http.StatusConflict, Reason: metav1.StatusReasonConflict})
+		if r.Method == http.MethodPut && (stored == nil || deployment.GetResourceVersion() != stored.GetResourceVersion()) {
+			respond(w, http.StatusConflict, status(http.StatusConflict, metav1.StatusReasonConflict, ""))
 			return
 		}
 		if r.Method == http.MethodPost && stored != nil {
-			w.WriteHeader(http.StatusConflict)
-			_ = json.NewEncoder(w).Encode(metav1.Status{TypeMeta: metav1.TypeMeta{APIVersion: "v1", Kind: "Status"}, Status: metav1.StatusFailure, Code: http.StatusConflict, Reason: metav1.StatusReasonAlreadyExists})
+			respond(w, http.StatusConflict, status(http.StatusConflict, metav1.StatusReasonAlreadyExists, ""))
 			return
 		}
-		revision.SetUID("revision-uid")
-		if r.Method == http.MethodPost {
-			revision.SetResourceVersion("1")
-		} else {
-			revision.SetResourceVersion("2")
+		// The API server bumps the generation for any spec change on either write method.
+		if stored != nil {
+			if !reflect.DeepEqual(deployment.Object["spec"], stored.Object["spec"]) {
+				deployment.SetGeneration(stored.GetGeneration() + 1)
+			}
+		} else if r.Method == http.MethodPost {
+			deployment.SetGeneration(1)
 		}
-		_ = unstructured.SetNestedSlice(revision.Object, []interface{}{
-			map[string]interface{}{"type": "Ready", "status": "True", "observedGeneration": revision.GetGeneration()},
-		}, "status", "conditions")
-		_ = unstructured.SetNestedField(revision.Object, metav1.Now().Format("2006-01-02T15:04:05Z07:00"), "status", "completedAt")
-		stored = revision.DeepCopy()
 		if r.Method == http.MethodPost {
-			w.WriteHeader(http.StatusCreated)
+			deployment.SetUID("deployment-uid")
+			// The API server defaults an unset revision history limit and rejects a malformed one.
+			_, found, err := unstructured.NestedInt64(deployment.Object, "spec", "revisionHistoryLimit")
+			if err != nil {
+				respond(w, http.StatusUnprocessableEntity, status(http.StatusUnprocessableEntity, metav1.StatusReasonInvalid, "invalid revisionHistoryLimit"))
+				return
+			}
+			if !found {
+				// Mirrors the vendored CRD's +kubebuilder:default independently of
+				// migrationDeploymentRevisionHistoryDefault so drift fails loudly.
+				if err := unstructured.SetNestedField(deployment.Object, int64(5), "spec", "revisionHistoryLimit"); err != nil {
+					t.Errorf("default revision history limit: %v", err)
+					return
+				}
+			}
 		}
-		_ = json.NewEncoder(w).Encode(&revision)
+		resourceVersion++
+		deployment.SetResourceVersion(strconv.Itoa(resourceVersion))
+		if err := completeRollout(&deployment); err != nil {
+			t.Errorf("complete ClusterObjectDeployment rollout: %v", err)
+			return
+		}
+		if deployment.GetLabels()[migrationDeploymentManagedByLabel] == migrationDeploymentManagedByValue {
+			// Adoption is enabled only after the protected rollout was observed.
+			protection, _, err := unstructured.NestedString(deployment.Object, "spec", "template", "spec", "collisionProtection")
+			if err != nil || observedGeneration != deployment.GetGeneration() || protection != string(ocv1.CollisionProtectionPrevent) {
+				respond(w, http.StatusUnprocessableEntity, status(http.StatusUnprocessableEntity, metav1.StatusReasonInvalid, "adoption before the protected rollout was observed"))
+				return
+			}
+		}
+		stored = deployment.DeepCopy()
+		code := http.StatusOK
+		if r.Method == http.MethodPost {
+			code = http.StatusCreated
+		}
+		respond(w, code, stored)
 	}))
 	t.Cleanup(server.Close)
 	mapper := meta.NewDefaultRESTMapper([]schema.GroupVersion{ocv1.GroupVersion})
-	mapper.Add(ocv1.GroupVersion.WithKind(ocv1.ClusterObjectSetKind), meta.RESTScopeRoot)
+	mapper.Add(ocv1.GroupVersion.WithKind(ocv1.ClusterObjectDeploymentKind), meta.RESTScopeRoot)
 	result, err := client.New(&rest.Config{Host: server.URL}, client.Options{Scheme: kubeClient.Scheme(), Mapper: mapper})
 	require.NoError(t, err)
 	return result

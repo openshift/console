@@ -103,17 +103,39 @@ type ClusterObjectSetSpec struct {
 // ClusterObjectSetContent holds the revision content shared between
 // ClusterObjectSet.spec and a ClusterObjectDeployment's template spec.
 type ClusterObjectSetContent struct {
-	// phases is a required list of phases that group objects to be applied together.
+	// phases is a required, ordered list of phases that group objects to be applied together.
 	//
 	// All objects in a phase are applied in no particular order.
 	// The revision progresses to the next phase only after all objects in the current phase pass their readiness probes.
+	// Phases are torn down in reverse order. Phase order is immutable in a ClusterObjectSet;
+	// changing the order in a ClusterObjectDeployment template creates a new revision.
 	//
 	// Each phase in the list must have a unique name. The maximum number of phases is 20.
 	//
+	// Server-side apply treats the entire list, including all phase contents, as one field.
+	// Apply clients must supply the complete desired list; phases are not merged by name.
+	// Different field managers cannot independently manage phases or nested object fields.
+	// A differing apply from another manager conflicts unless ownership is forced;
+	// forcing ownership replaces the list and can overwrite another manager's changes.
+	//
+	// For standalone ClusterObjectDeployments, keep the complete template in one
+	// authoritative configuration and combine contributions before applying it.
+	// For ClusterExtension-managed deployments, operator-controller generates and applies
+	// the complete template with forced ownership. For example, an administrator's added
+	// platform-policy phase is removed by a subsequent operator-controller apply.
+	// Manage such policy separately from the generated deployment template.
+	// The CE, COD, and COS controllers write different resources or fields in the normal
+	// install flow, so atomic phases do not create ownership conflicts between them.
+	//
+	// Changing an existing CRD from map-list to atomic-list semantics changes ownership
+	// granularity. Clients that previously managed separate phases can encounter conflicts
+	// and must coordinate ownership of the complete list. These semantics concern the
+	// phase declaration, not the field ownership rules of objects deployed by a revision.
+	//
 	// +kubebuilder:validation:MinItems=1
 	// +kubebuilder:validation:MaxItems=20
-	// +listType=map
-	// +listMapKey=name
+	// +kubebuilder:validation:XValidation:rule="self.all(phase, self.filter(other, other.name == phase.name).size() == 1)",message="phase names must be unique"
+	// +listType=atomic
 	// +required
 	Phases []ClusterObjectSetPhase `json:"phases,omitempty"`
 

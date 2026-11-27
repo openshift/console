@@ -316,9 +316,7 @@ var schemaYAML = typed.YAMLObject(`types:
         list:
           elementType:
             namedType: com.github.operator-framework.operator-controller.api.v1.ClusterObjectSetPhase
-          elementRelationship: associative
-          keys:
-          - name
+          elementRelationship: atomic
     - name: progressionProbes
       type:
         list:
@@ -392,9 +390,7 @@ var schemaYAML = typed.YAMLObject(`types:
         list:
           elementType:
             namedType: com.github.operator-framework.operator-controller.api.v1.ClusterObjectSetPhase
-          elementRelationship: associative
-          keys:
-          - name
+          elementRelationship: atomic
     - name: progressionProbes
       type:
         list:
