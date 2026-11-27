@@ -296,14 +296,103 @@ func (c *migrationCoordinator) advanceJournal(ctx context.Context, m *migration.
 			}
 			next = "ce"
 		case "ce":
+			if !j.Recovery.UseClusterObjectDeployment {
+				// A journal persisted before the flag flip may already hold a staged
+				// deployment. The probe is fail-open on a missing API (no deployment)
+				// and fail-closed on read errors.
+				staged, err := migrationDeployment(ctx, m.Client, opts.ClusterExtensionName)
+				if err != nil {
+					return fmt.Errorf("Cannot read ClusterObjectDeployment %s. Check ClusterObjectDeployment read permissions, then retry recovery: %w", opts.ClusterExtensionName, err)
+				}
+				if staged != nil {
+					if staged.DeletionTimestamp != nil {
+						return fmt.Errorf("ClusterObjectDeployment %s is being deleted. Ask a cluster administrator to verify the migration target, then retry recovery.", staged.Name)
+					}
+					if err := verifyMigrationTarget(staged, j); err == nil {
+						// Verify before persisting so a foreign same-name deployment
+						// cannot flip the recorded manager.
+						j.Recovery.UseClusterObjectDeployment = true
+					} else if owned, ownerErr := ownedByLiveMigrationExtension(ctx, m, j, staged); ownerErr != nil {
+						return ownerErr
+					} else if owned {
+						// The extension created its own deployment; it is not the migration's staged target.
+					} else {
+						return err
+					}
+				} else {
+					// A revision staged before the deployment API cannot be adopted by
+					// the current operator-controller once that API is served, unless
+					// the target extension already exists and verifies. Accepted
+					// states: no revision, or a verified target extension.
+					var revision ocv1.ClusterObjectSet
+					if err := m.Client.Get(ctx, client.ObjectKey{Name: opts.ClusterExtensionName + "-1"}, &revision); err != nil {
+						if !apierrors.IsNotFound(err) {
+							return fmt.Errorf("Cannot read ClusterObjectSet %s. Check ClusterObjectSet read permissions, then retry recovery: %w", opts.ClusterExtensionName+"-1", err)
+						}
+					} else if served, serr := migrationDeploymentServed(ctx, m.Client, opts.ClusterExtensionName); serr != nil {
+						return fmt.Errorf("Cannot read ClusterObjectDeployment %s. Check ClusterObjectDeployment read permissions, then retry recovery: %w", opts.ClusterExtensionName, serr)
+					} else if verified, verr := verifiedMigrationTarget(ctx, m, j); verr != nil {
+						return verr
+					} else if !verified && revision.DeletionTimestamp != nil {
+						// Only creating an extension from a terminating revision is rejected.
+						return fmt.Errorf("ClusterObjectSet %s is being deleted. Ask a cluster administrator to verify the migration target, then retry recovery.", revision.Name)
+					} else if !verified && served {
+						return fmt.Errorf("ClusterObjectSet %s was staged before ClusterObjectDeployment support. Roll back this migration and run it again so it can stage through a ClusterObjectDeployment.", revision.Name)
+					}
+				}
+			}
+			if j.Recovery.UseClusterObjectDeployment {
+				if err := ensureMigrationDeploymentAdopted(ctx, m, j); err != nil {
+					return err
+				}
+			}
 			var extension ocv1.ClusterExtension
 			err := m.Client.Get(ctx, client.ObjectKey{Name: opts.ClusterExtensionName}, &extension)
 			if apierrors.IsNotFound(err) {
-				err = m.CreateClusterExtension(ctx, opts, &j.Info)
+				// A legacy journal must not create an extension from a bare or
+				// terminating revision when its verified target vanished between
+				// the probe and this read. Clusters that never served the
+				// deployment API keep the legacy path for a healthy revision.
+				targetAppeared := false
+				if !j.Recovery.UseClusterObjectDeployment {
+					if served, serr := migrationDeploymentServed(ctx, m.Client, opts.ClusterExtensionName); serr != nil {
+						return fmt.Errorf("Cannot read ClusterObjectDeployment %s. Check ClusterObjectDeployment read permissions, then retry recovery: %w", opts.ClusterExtensionName, serr)
+					} else if served {
+						if verified, verr := verifiedMigrationTarget(ctx, m, j); verr != nil {
+							return verr
+						} else if !verified {
+							return legacyRevisionCreateError(ctx, m.Client, opts.ClusterExtensionName)
+						}
+						targetAppeared = true
+					} else {
+						var revision ocv1.ClusterObjectSet
+						if rerr := m.Client.Get(ctx, client.ObjectKey{Name: opts.ClusterExtensionName + "-1"}, &revision); rerr == nil {
+							if revision.DeletionTimestamp != nil {
+								return fmt.Errorf("ClusterObjectSet %s is being deleted. Ask a cluster administrator to verify the migration target, then retry recovery.", revision.Name)
+							}
+						} else if !apierrors.IsNotFound(rerr) {
+							return fmt.Errorf("Cannot read ClusterObjectSet %s. Check ClusterObjectSet read permissions, then retry recovery: %w", opts.ClusterExtensionName+"-1", rerr)
+						}
+					}
+				} else if verified, verr := verifiedMigrationTarget(ctx, m, j); verr != nil {
+					return verr
+				} else if verified {
+					// The target appeared between the reads: this job's lost create.
+					targetAppeared = true
+				}
+				if targetAppeared {
+					// Mirror the existing-target branch: the extension verifies, so wait for it
+					// instead of failing the duplicate create.
+					err = m.WaitForClusterExtensionInstalled(ctx, opts.ClusterExtensionName)
+				} else {
+					err = m.CreateClusterExtension(ctx, opts, &j.Info)
+				}
 			} else if err == nil {
 				if err = verifyMigrationTarget(&extension, j); err == nil {
 					err = m.WaitForClusterExtensionInstalled(ctx, extension.Name)
 				}
+			} else {
+				err = fmt.Errorf("Cannot read ClusterExtension %s. Check ClusterExtension read permissions, then retry recovery: %w", opts.ClusterExtensionName, err)
 			}
 			if err != nil {
 				return err
@@ -361,7 +450,7 @@ func (c *migrationCoordinator) advanceJournal(ctx context.Context, m *migration.
 				}
 				deployment, deploymentErr := migrationDeployment(ctx, m.Client, opts.ClusterExtensionName)
 				if deploymentErr != nil {
-					return deploymentErr
+					return fmt.Errorf("Cannot read ClusterObjectDeployment %s. Check ClusterObjectDeployment read permissions, then retry recovery: %w", opts.ClusterExtensionName, deploymentErr)
 				}
 				if targetErr == nil || extensionErr == nil || deployment != nil {
 					j.RollbackError = "target migration resources may be active; migration halted and requires explicit recovery"
@@ -501,7 +590,7 @@ func isMigrationRevisionSource(object *unstructured.Unstructured, journal *migra
 func verifyMigrationTarget(object client.Object, journal *migrationJournal) error {
 	a := object.GetAnnotations()
 	if a[migrationExecutionAnnotation] != journal.JobID || a[migration.MigratedFromSubscriptionAnnotation] != journal.Options.SubscriptionNamespace+"/"+journal.Options.SubscriptionName {
-		return fmt.Errorf("migration target %s belongs to a different execution", object.GetName())
+		return fmt.Errorf("migration target %s belongs to a different execution. Ask a cluster administrator to verify the migration target, then retry recovery.", object.GetName())
 	}
 	return nil
 }
@@ -635,10 +724,28 @@ func (c *migrationExecutionClient) Create(ctx context.Context, object client.Obj
 		compatible = ok && reflect.DeepEqual(desired.Spec, actual.Spec)
 	case *ocv1.ClusterObjectDeployment:
 		actual, ok := existing.(*ocv1.ClusterObjectDeployment)
-		compatible = ok && reflect.DeepEqual(desired.Spec, actual.Spec)
+		if ok {
+			// The API server defaults an unset revision history limit on create;
+			// this normalization must track server-side defaults in the pinned API.
+			normalized := *actual.Spec.DeepCopy()
+			if desired.Spec.RevisionHistoryLimit == nil && normalized.RevisionHistoryLimit != nil && *normalized.RevisionHistoryLimit == migrationDeploymentRevisionHistoryDefault {
+				normalized.RevisionHistoryLimit = nil
+			}
+			compatible = reflect.DeepEqual(desired.Spec, normalized)
+		}
 	case *ocv1.ClusterExtension:
 		actual, ok := existing.(*ocv1.ClusterExtension)
-		compatible = ok && reflect.DeepEqual(desired.Spec, actual.Spec)
+		if ok {
+			// The API server defaults an unset upgrade constraint policy on create;
+			// this normalization must track server-side defaults in the pinned API.
+			normalized := *actual.Spec.DeepCopy()
+			if desired.Spec.Source.Catalog != nil && normalized.Source.Catalog != nil &&
+				desired.Spec.Source.Catalog.UpgradeConstraintPolicy == "" &&
+				normalized.Source.Catalog.UpgradeConstraintPolicy == ocv1.UpgradeConstraintPolicyCatalogProvided {
+				normalized.Source.Catalog.UpgradeConstraintPolicy = ""
+			}
+			compatible = reflect.DeepEqual(desired.Spec, normalized)
+		}
 	}
 	if !compatible {
 		return err

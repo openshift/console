@@ -14,6 +14,21 @@ import { loginFromEnv } from '../../setup/login-helper';
 // TP-OCPSTRAT-2692-OLMv0-OLMv1-MIGRATION-TP-v1.2:
 // https://github.com/miyadav/test-plans/pull/1
 // Real catalogs and cluster outcomes; no migration API response interception.
+
+/** Logs out, then clears the Console auth cookies so the next login establishes a real
+ * OAuth session; the bridge logout can leave a session backed by the revoked token. */
+const logOutForFreshLogin = async (page: Page) => {
+  const masthead = new MastheadPage(page);
+  await masthead.openUserDropdown();
+  await masthead.logOut();
+  await page.context().clearCookies({ name: /^openshift-(session|refresh|recovery)-token($|-)/ });
+  // Fail loudly if the auth cookie contract changes instead of re-introducing the flake.
+  const authCookies = (await page.context().cookies()).filter((c) =>
+    /^openshift-(session|refresh|recovery)-token/.test(c.name),
+  );
+  expect(authCookies).toHaveLength(0);
+};
+
 /** Drives a real late failure through the UI while leaving an installed target for explicit recovery. */
 const prepareInstalledTargetFailure = async (
   migration: OperatorMigrationFixture,
@@ -719,9 +734,7 @@ test.describe(
             await loginFromEnv(freshPage, 'admin', baseURL);
             returnedPage = new OperatorMigrationPage(freshPage);
           } else if (interruption === 'logout and login') {
-            const masthead = new MastheadPage(page);
-            await masthead.openUserDropdown();
-            await masthead.logOut();
+            await logOutForFreshLogin(page);
             await loginFromEnv(page, 'admin', baseURL);
           } else if (interruption === 'backend replacement') {
             await migration.restartConsolePods();
@@ -872,9 +885,7 @@ test.describe(
             await loginFromEnv(freshPage, 'admin', baseURL);
             returnedPage = new OperatorMigrationPage(freshPage);
           } else if (interruption === 'logout and login') {
-            const masthead = new MastheadPage(page);
-            await masthead.openUserDropdown();
-            await masthead.logOut();
+            await logOutForFreshLogin(page);
             await loginFromEnv(page, 'admin', baseURL);
           } else if (interruption === 'backend replacement') {
             await migration.restartConsolePods();

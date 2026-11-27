@@ -20,8 +20,8 @@ require (
 	github.com/openshift/library-go v0.0.0-20261001144932-192662696fc7
 	github.com/operator-framework/api v0.46.0
 	github.com/operator-framework/kubectl-operator v0.4.0
-	github.com/operator-framework/library-olm v0.0.0-20261113171603-483f71a4c19d
-	github.com/operator-framework/operator-controller v1.12.1-0.20261113164318-dae9b613163a
+	github.com/operator-framework/library-olm v0.0.0-20261124220959-41c2ede7c61d
+	github.com/operator-framework/operator-controller v1.12.1-0.20261124145859-a2b85064875b
 	github.com/operator-framework/operator-lifecycle-manager v0.22.0
 	github.com/operator-framework/operator-registry v1.74.0
 	github.com/patrickmn/go-cache v2.1.0+incompatible
@@ -142,7 +142,7 @@ require (
 	github.com/joelanford/ignore v0.1.2 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/kevinburke/ssh_config v1.2.0 // indirect
-	github.com/klauspost/compress v1.20.3 // indirect
+	github.com/klauspost/compress v1.20.4 // indirect
 	github.com/klauspost/cpuid/v2 v2.3.0 // indirect
 	github.com/lann/builder v0.0.0-20180802200727-47ae307949d0 // indirect
 	github.com/lann/ps v0.0.0-20150810152359-62de8c46ede0 // indirect
@@ -202,12 +202,13 @@ require (
 	github.com/xlab/treeprint v1.2.0 // indirect
 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.71.0 // indirect
-	go.opentelemetry.io/otel v1.46.0 // indirect
-	go.opentelemetry.io/otel/metric v1.46.0 // indirect
-	go.opentelemetry.io/otel/trace v1.46.0 // indirect
+	go.opentelemetry.io/otel v1.47.0 // indirect
+	go.opentelemetry.io/otel/log v1.47.0 // indirect
+	go.opentelemetry.io/otel/metric v1.47.0 // indirect
+	go.opentelemetry.io/otel/trace v1.47.0 // indirect
 	go.opentelemetry.io/proto/otlp v1.11.0 // indirect
-	go.podman.io/image/v5 v5.42.0 // indirect
-	go.podman.io/storage v1.65.0 // indirect
+	go.podman.io/image/v5 v5.42.1 // indirect
+	go.podman.io/storage v1.65.1 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	go.uber.org/zap v1.28.0 // indirect
 	go.yaml.in/yaml/v2 v2.4.4 // indirect

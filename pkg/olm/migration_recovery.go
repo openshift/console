@@ -84,6 +84,7 @@ type operatorMigrationDeploymentBackup struct {
 }
 
 type operatorMigrationRecoverySnapshot struct {
+	// UseClusterObjectDeployment records deployment staging; legacy direct-revision checkpoints set false.
 	UseClusterObjectDeployment bool                                  `json:"useClusterObjectDeployment,omitempty"`
 	ClusterExtensionName       string                                `json:"clusterExtensionName"`
 	ClusterObjectSetName       string                                `json:"clusterObjectSetName"`
@@ -134,6 +135,12 @@ func discoverOperatorMigrationSystemNamespace(ctx context.Context, kubeClient cl
 	return namespaces[0], nil
 }
 
+// deploymentIdentityKnown reports whether rollback already saved a verified deployment UID.
+func deploymentIdentityKnown(kubeClient client.Client) bool {
+	guard, ok := kubeClient.(*migrationExecutionClient)
+	return ok && guard.rollbackDeploymentUID != ""
+}
+
 // captureOperatorMigrationSnapshot extends the library backup with namespace metadata and deployment replicas needed for durable recovery.
 func captureOperatorMigrationSnapshot(ctx context.Context, migrator *migration.Migrator, opts migration.Options, backup *migration.Backup) (*operatorMigrationRecoverySnapshot, error) {
 	opts.ApplyDefaults()
@@ -145,7 +152,8 @@ func captureOperatorMigrationSnapshot(ctx context.Context, migrator *migration.M
 		return nil, fmt.Errorf("Cannot read the source namespace for the recovery backup. Check namespace read permissions, then retry migration: %w", err)
 	}
 	snapshot := &operatorMigrationRecoverySnapshot{
-		UseClusterObjectDeployment: opts.UseClusterObjectDeployment,
+		// Staging always goes through a ClusterObjectDeployment; legacy checkpoints keep their recorded value.
+		UseClusterObjectDeployment: true,
 		ClusterExtensionName:       opts.ClusterExtensionName,
 		ClusterObjectSetName:       opts.ClusterExtensionName + "-1",
 		SubscriptionRef:            opts.SubscriptionNamespace + "/" + opts.SubscriptionName,
@@ -340,7 +348,7 @@ func (o *OLMHandler) rollbackFromOperatorMigrationCheckpoint(ctx context.Context
 	if extensionExists {
 		if !acknowledgeInstalled {
 			for _, condition := range extension.Status.Conditions {
-				if condition.Type == ocv1.TypeInstalled && condition.Status == metav1.ConditionTrue {
+				if condition.Type == ocv1.ClusterExtensionTypeInstalled && condition.Status == metav1.ConditionTrue {
 					return fmt.Errorf("ClusterExtension %s is already installed. Review the rollback warning and confirm the acknowledgment before starting rollback.", extension.Name)
 				}
 			}
@@ -601,12 +609,15 @@ func deleteOperatorMigrationRevisions(ctx context.Context, kubeClient client.Cli
 			return err
 		}
 	}
-	if snapshot.UseClusterObjectDeployment || deploymentIdentityKnown(kubeClient) {
+	// Run the drain whenever the COD API is served, even for a stale snapshot flag;
+	// a converted journal may have staged a deployment after the checkpoint. A read
+	// failure here intentionally blocks rollback rather than skipping the drain.
+	if snapshot.UseClusterObjectDeployment || deploymentIdentityKnown(kubeClient) || deploymentServedFailClosed(ctx, kubeClient, snapshot.ClusterExtensionName) {
 		emptyObservations := 0
 		if err := wait.PollUntilContextTimeout(ctx, time.Second, 2*time.Minute, true, func(ctx context.Context) (bool, error) {
 			deployment, err := migrationDeployment(ctx, kubeClient, snapshot.ClusterExtensionName)
 			if err != nil {
-				return false, err
+				return false, fmt.Errorf("Cannot read ClusterObjectDeployment %s. Check ClusterObjectDeployment read permissions, then retry rollback: %w", snapshot.ClusterExtensionName, err)
 			}
 			if deployment != nil {
 				return false, rollbackConflict("Cannot restore OLM (Classic) management because a target deployment still exists. Ask a cluster administrator to review the deployment before retrying rollback.")
@@ -623,7 +634,7 @@ func deleteOperatorMigrationRevisions(ctx context.Context, kubeClient client.Cli
 			for i := range remaining {
 				revisionNames[remaining[i].Name] = struct{}{}
 				if err := kubeClient.Delete(ctx, &remaining[i], client.PropagationPolicy(metav1.DeletePropagationOrphan)); client.IgnoreNotFound(err) != nil {
-					return false, err
+					return false, fmt.Errorf("Cannot delete ClusterObjectSet %s. Check its status and your delete permissions, then retry rollback: %w", remaining[i].Name, err)
 				}
 			}
 			return false, nil

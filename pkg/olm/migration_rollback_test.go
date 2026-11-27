@@ -373,6 +373,54 @@ func rollbackTestGuard(t *testing.T, kubeClient client.Client, sourceID string) 
 	return &migrationExecutionClient{Client: kubeClient, coordinator: coordinator, namespace: "rollback-job", id: "recovery-job", rollbackSourceID: sourceID, retainCheckpoint: true}
 }
 
+// TestRollbackDrainsDeploymentAPIForLegacySnapshots verifies the drain gate engages for a
+// legacy snapshot on a cluster that serves the deployment API.
+func TestRollbackDrainsDeploymentAPIForLegacySnapshots(t *testing.T) {
+	ctx := context.Background()
+	kubeClient, job, checkpoint, snapshot := seedFailedRollback(t)
+	// The snapshot records the direct-revision manager and no deployment UID was saved.
+	var events []string
+	tracing := interceptor.NewClient(kubeClient.(client.WithWatch), interceptor.Funcs{
+		Get: func(ctx context.Context, cl client.WithWatch, key client.ObjectKey, object client.Object, options ...client.GetOption) error {
+			if _, ok := object.(*ocv1.ClusterObjectDeployment); ok {
+				events = append(events, "deployment-read")
+			}
+			return cl.Get(ctx, key, object, options...)
+		},
+		Create: func(ctx context.Context, cl client.WithWatch, object client.Object, options ...client.CreateOption) error {
+			if _, ok := object.(*operatorsv1alpha1.Subscription); ok {
+				events = append(events, "subscription-created")
+			}
+			return cl.Create(ctx, object, options...)
+		},
+	})
+	guard := rollbackTestGuard(t, kubeClient, job.ID)
+	guard.Client = tracing
+	require.NoError(t, (&OLMHandler{}).rollbackFromOperatorMigrationCheckpoint(ctx, guard, checkpoint, snapshot, true))
+	// The drain's two empty observations read the deployment before the source is restored.
+	restored := false
+	reads := 0
+	for _, event := range events {
+		switch event {
+		case "deployment-read":
+			reads++
+		case "subscription-created":
+			restored = true
+		}
+	}
+	assert.True(t, restored)
+	assert.GreaterOrEqual(t, reads, 3) // served-gate read plus the drain's two observations
+	restored = false
+	for _, event := range events {
+		if event == "subscription-created" {
+			restored = true
+		}
+		if restored {
+			assert.NotEqual(t, "deployment-read", event, "no deployment read may follow the restore")
+		}
+	}
+}
+
 func TestExplicitRollbackPreservesCheckpointUntilDurablyRestored(t *testing.T) {
 	kubeClient, job, checkpoint, snapshot := seedFailedRollback(t)
 	objectSet := &ocv1.ClusterObjectSet{ObjectMeta: metav1.ObjectMeta{Name: "demo-1", UID: "target-uid", Labels: map[string]string{migration.LabelOwnerName: "demo"}, Annotations: map[string]string{migrationExecutionAnnotation: job.ID}}}
@@ -454,7 +502,7 @@ func TestRollbackRunnerPersistsRecoveryAndRetainsFailedBackups(t *testing.T) {
 			require.NoError(t, kubeClient.Create(context.Background(), &ocv1.ClusterObjectSet{ObjectMeta: metav1.ObjectMeta{Name: "demo-1", Labels: map[string]string{migration.LabelOwnerName: "demo"}, Annotations: map[string]string{migrationExecutionAnnotation: source.ID}}}))
 			require.NoError(t, kubeClient.Create(context.Background(), &ocv1.ClusterExtension{
 				ObjectMeta: metav1.ObjectMeta{Name: "demo", UID: "extension-uid", Annotations: map[string]string{migrationExecutionAnnotation: source.ID, migration.MigratedFromSubscriptionAnnotation: snapshot.SubscriptionRef}},
-				Status:     ocv1.ClusterExtensionStatus{Conditions: []metav1.Condition{{Type: ocv1.TypeInstalled, Status: metav1.ConditionTrue}}},
+				Status:     ocv1.ClusterExtensionStatus{Conditions: []metav1.Condition{{Type: ocv1.ClusterExtensionTypeInstalled, Status: metav1.ConditionTrue}}},
 			}))
 			executionClient := interceptor.NewClient(kubeClient.(client.WithWatch), interceptor.Funcs{Delete: func(ctx context.Context, c client.WithWatch, obj client.Object, opts ...client.DeleteOption) error {
 				if _, ok := obj.(*ocv1.ClusterObjectSet); ok {
@@ -482,7 +530,8 @@ func TestRollbackRunnerPersistsRecoveryAndRetainsFailedBackups(t *testing.T) {
 			ctx, stop := context.WithCancel(context.Background())
 			defer stop()
 			coordinator := &migrationCoordinator{client: kubeClient, identity: "backend"}
-			namespace, _ := migrationJobNamespace(job.ID)
+			namespace, namespaceErr := migrationJobNamespace(job.ID)
+			require.NoError(t, namespaceErr)
 			claimed, err := coordinator.claim(ctx, namespace)
 			require.NoError(t, err)
 			require.True(t, claimed)

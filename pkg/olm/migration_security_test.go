@@ -112,6 +112,7 @@ func TestDelegatedCollectionFailsBeforeSourceMutation(t *testing.T) {
 		&corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: "source"}},
 		&operatorsv1alpha1.CatalogSource{ObjectMeta: metav1.ObjectMeta{Name: "source", Namespace: "catalog"}, Spec: operatorsv1alpha1.CatalogSourceSpec{SourceType: operatorsv1alpha1.SourceTypeGrpc, Image: "example.test/catalog:fixture"}},
 		&apiextensionsv1.CustomResourceDefinition{ObjectMeta: metav1.ObjectMeta{Name: "clusterobjectsets.olm.operatorframework.io"}, Status: apiextensionsv1.CustomResourceDefinitionStatus{Conditions: []apiextensionsv1.CustomResourceDefinitionCondition{{Type: apiextensionsv1.Established, Status: apiextensionsv1.ConditionTrue}}}},
+		&apiextensionsv1.CustomResourceDefinition{ObjectMeta: metav1.ObjectMeta{Name: "clusterobjectdeployments.olm.operatorframework.io"}, Status: apiextensionsv1.CustomResourceDefinitionStatus{Conditions: []apiextensionsv1.CustomResourceDefinitionCondition{{Type: apiextensionsv1.Established, Status: apiextensionsv1.ConditionTrue}}}},
 	)
 	mapper := base.RESTMapper().(*meta.DefaultRESTMapper)
 	mapper.Add(corev1.SchemeGroupVersion.WithKind("Secret"), meta.RESTScopeNamespace)
@@ -129,7 +130,7 @@ func TestDelegatedCollectionFailsBeforeSourceMutation(t *testing.T) {
 		Create: func(ctx context.Context, cl client.WithWatch, object client.Object, options ...client.CreateOption) error {
 			createOptions := (&client.CreateOptions{}).ApplyOptions(options)
 			if len(createOptions.DryRun) == 1 && createOptions.DryRun[0] == metav1.DryRunAll {
-				require.IsType(t, &ocv1.ClusterObjectSet{}, object)
+				require.IsType(t, &ocv1.ClusterObjectDeployment{}, object)
 				require.Equal(t, metav1.FieldValidationStrict, createOptions.FieldValidation)
 				dryRuns++
 				return cl.Create(ctx, object, options...)
