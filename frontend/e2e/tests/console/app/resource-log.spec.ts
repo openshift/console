@@ -79,7 +79,9 @@ test.describe('Pod log viewer', { tag: ['@admin'] }, () => {
       await detailsPage.selectTab('Logs');
       // The count covers up to 1000 buffered lines plus one in-progress line.
       await expect.poll(readLineCount, { timeout: 30_000 }).toBeGreaterThanOrEqual(1000);
-      expect(await readLineCount()).toBeLessThanOrEqual(1001);
+      // Fast-streaming pods can briefly batch many lines into the in-progress
+      // line; poll for the capped value instead of reading the count once.
+      await expect.poll(readLineCount, { timeout: 30_000 }).toBeLessThanOrEqual(1001);
     });
 
     await test.step('Verify full log exceeds default buffer', async () => {

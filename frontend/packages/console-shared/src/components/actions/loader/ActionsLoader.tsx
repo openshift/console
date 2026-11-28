@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useState, useCallback, useMemo, useEffect } from 'react';
+import { useState, useCallback, useMemo, useEffect, useRef, memo } from 'react';
 import * as _ from 'lodash';
 import type {
   Action,
@@ -20,11 +20,20 @@ import ActionsHookResolver from './ActionsHookResolver';
 type ActionsLoaderProps = {
   contextId: string;
   scope: any;
-  onActionsLoaded: (actions: Action[]) => void;
+  onActionsLoaded: (actions: Action[], contextId: string) => void;
   onContextChange: (contextId: string, scope: any) => void;
   onLoadError: (error: any) => void;
 };
 
+/**
+ * Loads actions for a single action context.
+ *
+ * Memoized with stable props so state updates in the parent
+ * `ActionServiceProvider` do not re-run the provider hooks. Provider hooks are
+ * not required to return referentially stable values, so re-running them on
+ * every parent render would feed new value identities back into state forever
+ * (an infinite update loop under React 19's synchronous effect flushing).
+ */
 const ActionsLoader: FC<ActionsLoaderProps> = ({
   contextId,
   scope,
@@ -84,7 +93,7 @@ const ActionsLoader: FC<ActionsLoaderProps> = ({
   }, [actionsMap, filterExtensions, scope]);
 
   useEffect(() => {
-    if (actionsLoaded) onActionsLoaded?.(actions);
+    if (actionsLoaded) onActionsLoaded?.(actions, contextId);
     // We do not want to run the effect every time onActionsLoaded changes
     // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [actions, actionsLoaded]);
@@ -95,6 +104,22 @@ const ActionsLoader: FC<ActionsLoaderProps> = ({
     // eslint-disable-next-line react-hooks-js/exhaustive-deps
   }, [loadError]);
 
+  // Cache per-extension resolved callbacks so the resolvers receive stable
+  // props and are not re-rendered (re-running their provider hooks) when this
+  // loader re-renders due to its own state updates.
+  const resolverCallbacksRef = useRef(new Map<string, (value: Action[]) => void>());
+  const getOnValueResolved = useCallback(
+    (uid: string) => {
+      let cb = resolverCallbacksRef.current.get(uid);
+      if (!cb) {
+        cb = (value: Action[]) => onProviderValueResolved(value, uid);
+        resolverCallbacksRef.current.set(uid, cb);
+      }
+      return cb;
+    },
+    [onProviderValueResolved],
+  );
+
   return (
     <>
       {allProviderExtensionsResolved &&
@@ -103,7 +128,8 @@ const ActionsLoader: FC<ActionsLoaderProps> = ({
             key={extension.uid}
             useValue={extension.properties.provider}
             scope={scope}
-            onValueResolved={(value) => onProviderValueResolved(value, extension.uid)}
+            // eslint-disable-next-line react-hooks-js/refs -- reads the cached stable callback for this uid; the cache is append-only and does not affect rendering
+            onValueResolved={getOnValueResolved(extension.uid)}
             onContextChange={onContextChange}
             onValueError={setLoadError}
           />
@@ -112,4 +138,4 @@ const ActionsLoader: FC<ActionsLoaderProps> = ({
   );
 };
 
-export default ActionsLoader;
+export default memo(ActionsLoader);

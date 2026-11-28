@@ -1,4 +1,4 @@
-import * as React from 'react';
+
 import { Card, CardHeader, CardTitle, CardBody } from '@patternfly/react-core';
 import { QueryBrowser } from '@openshift-console/dynamic-plugin-sdk';
 import * as _ from 'lodash';
@@ -9,7 +9,9 @@ const DEFAULT_TIMESPAN = 30 * 60 * 1000;
 const DEFAULT_POLL_INTERVAL = 30 * 1000;
 
 /* The value of an added item to the Details dashboard-card on the Overview dashboard page */
-const DashboardCard: React.FC = () => {
+// Function declaration so the module factory can initialize the export before
+// the shared module requires complete, regardless of evaluation order.
+export default function DashboardCard() {
   const { t } = useTranslation('plugin__console-demo-plugin');
   return (
     <Card data-test={'demo-plugin-dashboard-card'}>
@@ -26,6 +28,4 @@ const DashboardCard: React.FC = () => {
       </CardBody>
     </Card>
   );
-};
-
-export default DashboardCard;
+}

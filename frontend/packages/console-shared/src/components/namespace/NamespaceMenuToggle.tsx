@@ -81,9 +81,11 @@ const NamespaceMenuToggle = (props: {
 
   return (
     <div ref={containerRef}>
+      {toggle}
       <Popper
-        trigger={toggle}
+        triggerRef={toggleRef}
         popper={menu}
+        popperRef={menuRef}
         direction="down"
         position="left"
         appendTo={() => containerRef.current}

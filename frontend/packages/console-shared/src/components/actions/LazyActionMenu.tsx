@@ -48,7 +48,15 @@ const LazyMenuRenderer: FC<LazyMenuRendererProps> = ({
     </Menu>
   );
 
-  return <Popper triggerRef={toggleRef} popper={menu} placement="bottom-end" isVisible={isOpen} />;
+  return (
+    <Popper
+      triggerRef={toggleRef}
+      popper={menu}
+      popperRef={menuRef}
+      placement="bottom-end"
+      isVisible={isOpen}
+    />
+  );
 };
 
 export const LazyActionMenu: FC<LazyActionMenuProps> = ({

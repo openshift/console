@@ -1,4 +1,4 @@
-import * as React from 'react';
+
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import { AddressBookIcon, MonitoringIcon } from '@patternfly/react-icons';
@@ -15,7 +15,9 @@ import {
 
 const workerNodesLink = '/k8s/cluster/nodes?rowFilter-node-role=worker';
 
-const WorkerNodeInventory: React.FC = () => {
+// Function declarations so the module factory can initialize the exports
+// before the shared module requires complete, regardless of evaluation order.
+export default function WorkerNodeInventory() {
   const { t } = useTranslation('plugin__console-demo-plugin');
   const [nodes, loaded, loadError] = useK8sWatchResource<K8sResourceCommon[]>({
     kind: 'Node',
@@ -48,16 +50,19 @@ const WorkerNodeInventory: React.FC = () => {
       </InventoryItemBody>
     </InventoryItem>
   );
-};
+}
 
-export const getRouteStatusGroups: StatusGroupMapper = (resources) => ({
-  'demo-inventory-group': {
-    statusIDs: ['Accepted'],
-    count: resources.length,
-    filterType: 'route-status',
-  },
-});
+export function getRouteStatusGroups(resources: Parameters<StatusGroupMapper>[0]) {
+  return {
+    'demo-inventory-group': {
+      statusIDs: ['Accepted'],
+      count: resources.length,
+      filterType: 'route-status',
+    },
+  };
+}
 
-export const DemoGroupIcon: React.FC = () => <AddressBookIcon />;
+export function DemoGroupIcon() {
+  return <AddressBookIcon />;
+}
 
-export default WorkerNodeInventory;

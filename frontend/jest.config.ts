@@ -47,7 +47,6 @@ export default defineConfig({
     './__mocks__/textEncoderDecoder.ts',
     './__mocks__/transformStream.ts',
     './__mocks__/fetch.ts',
-    './__mocks__/helmet.ts',
     './__mocks__/matchMedia.ts',
     './__mocks__/resizeObserver.ts',
     './__mocks__/serverFlags.ts',

@@ -97,7 +97,7 @@ describe('EventingListPage', () => {
         }),
         telemetryPrefix: 'Eventing',
       }),
-      expect.anything(),
+      undefined,
     );
   });
 

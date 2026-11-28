@@ -76,7 +76,12 @@ test.describe(
       await expect(async () => {
         await addPage.navigateToAdd(targetNamespace);
         await expect(addPage.getCardItem('dev-catalog')).toBeHidden({ timeout: 5_000 });
-      }).toPass({ intervals: [3_000, 5_000, 10_000], timeout: 60_000 });
+      }).toPass({
+        intervals: [3_000, 5_000, 10_000],
+        // The console-operator rolls console pods to apply the customization,
+        // which can take a few minutes on a busy cluster.
+        timeout: 180_000,
+      });
     });
 
     test('DC-01-TC02: Disable specific sub-catalogs', async ({ page }) => {

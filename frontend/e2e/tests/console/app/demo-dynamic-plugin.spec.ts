@@ -170,14 +170,25 @@ interface ManifestResource {
     });
 
     test('verifies Dashboard Card nav item', async ({ page }) => {
-      await consolePluginPage.navigateToOverview();
-      const demoDashboardTab = page.getByTestId('horizontal-link-Demo Dashboard');
-      await expect(demoDashboardTab).toHaveText('Demo Dashboard', { timeout: 30_000 });
-      await demoDashboardTab.click();
-      await expect(page.getByTestId('demo-plugin-dashboard-card')).toContainText(
-        'Metrics Dashboard Card example',
-      );
-      await expect(page.locator('div.graph-wrapper')).toBeAttached();
+      // Keep the timeout budget above the toPass loop below: the default 120s
+      // test timeout would cut the 180s retry loop short.
+      test.setTimeout(240_000);
+      // The plugin's JavaScript loads asynchronously per page load and is not
+      // retried within a loaded page; a load that races the plugin needs a
+      // fresh navigation to pick up the extensions, like the other plugin
+      // tests' retry loops do.
+      await expect(async () => {
+        await consolePluginPage.navigateToOverview();
+        const demoDashboardTab = page.getByTestId('horizontal-link-Demo Dashboard');
+        await expect(demoDashboardTab).toHaveText('Demo Dashboard', { timeout: 15_000 });
+        await demoDashboardTab.click();
+        // The card loads via module federation and fetches metrics; allow time for both.
+        await expect(page.getByTestId('demo-plugin-dashboard-card')).toContainText(
+          'Metrics Dashboard Card example',
+          { timeout: 15_000 },
+        );
+      }).toPass({ timeout: 180_000 });
+      await expect(page.locator('div.graph-wrapper')).toBeAttached({ timeout: 30_000 });
     });
 
     test('verifies Dynamic Nav items', async ({ page }) => {

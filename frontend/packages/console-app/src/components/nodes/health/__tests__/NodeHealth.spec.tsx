@@ -49,7 +49,7 @@ describe('NodeHealth', () => {
       expect.objectContaining({
         obj: mockNode,
       }),
-      expect.any(Object),
+      undefined,
     );
   });
 
@@ -60,7 +60,7 @@ describe('NodeHealth', () => {
       expect.objectContaining({
         pageId: HEALTH_PAGE_ID,
       }),
-      expect.any(Object),
+      undefined,
     );
   });
 

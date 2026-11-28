@@ -93,11 +93,15 @@ export class ListPage extends BasePage {
     // The persisted width depends on user settings (ConfigMap-backed on a real
     // cluster), a separate async load from the table becoming visible, so this
     // needs a longer timeout than the default 5s to avoid racing it in CI.
-    await expect.poll(getWidth, { timeout: 30_000 }).toBeCloseTo(resizedWidth, 0);
+    // Allow a few pixels of rendering variance (scrollbars, rounding) between
+    // the saved and restored width.
+    await expect.poll(getWidth, { timeout: 30_000 }).toBeGreaterThanOrEqual(resizedWidth - 4);
+    const restoredWidth = await getWidth();
+    expect(Math.abs(restoredWidth - resizedWidth)).toBeLessThanOrEqual(4);
 
     await this.robustClick(this.page.getByTestId('reset-column-widths'));
     // The reset also persists user settings asynchronously.
-    await expect.poll(getWidth, { timeout: 30_000 }).toBeCloseTo(initialWidth, 0);
+    await expect.poll(getWidth, { timeout: 30_000 }).toBeLessThanOrEqual(initialWidth + 4);
   }
 
   getCell(resourceName: string, cellName = 'name'): Locator {

@@ -10,35 +10,42 @@ import { Progress, ProgressSize } from '@patternfly/react-core';
 import { InProgressIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 
-export const DemoActivity: React.FC<K8sActivityProps> = ({ resource }) => (
-  <>
-    <Progress
-      size={ProgressSize.sm}
-      value={30}
-      title={`Demo activity for node ${resource.metadata?.name}`}
-    />
-    <ResourceLink
-      kind="Node"
-      name={resource.metadata?.name}
-      namespace={resource.metadata?.namespace}
-    />
-  </>
-);
+// Function declarations so the module factory can initialize the exports
+// before the shared module requires complete, regardless of evaluation order.
+export function DemoActivity({ resource }: K8sActivityProps) {
+  return (
+    <React.Fragment>
+      <Progress
+        size={ProgressSize.sm}
+        value={30}
+        title={`Demo activity for node ${resource.metadata?.name}`}
+      />
+      <ResourceLink
+        kind="Node"
+        name={resource.metadata?.name}
+        namespace={resource.metadata?.namespace}
+      />
+    </React.Fragment>
+  );
+}
 
-export const DemoPrometheusActivity: React.FC<PrometheusActivityProps> = () => {
+export function DemoPrometheusActivity(_props: PrometheusActivityProps) {
   const { t } = useTranslation('plugin__console-demo-plugin');
   return (
     <div>
-      <InProgressIcon />
-      {t('Demo prometheus activity')}
+      <InProgressIcon /> {t('Demo prometheus activity')}
     </div>
   );
-};
+}
 
-export const isActivity = (resource: K8sResourceCommon) =>
-  get(resource, ['metadata', 'labels', 'node-role.kubernetes.io/master']) === '';
+export function isActivity(resource: K8sResourceCommon) {
+  return get(resource, ['metadata', 'labels', 'node-role.kubernetes.io/master']) === '';
+}
 
-export const isAlwaysActivity = () => true;
+export function isAlwaysActivity() {
+  return true;
+}
 
-export const getTimestamp = (resource: K8sResourceCommon) =>
-  new Date(resource.metadata?.creationTimestamp || '');
+export function getTimestamp(resource: K8sResourceCommon) {
+  return new Date(resource.metadata?.creationTimestamp || '');
+}
