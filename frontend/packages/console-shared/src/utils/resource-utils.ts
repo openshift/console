@@ -715,7 +715,7 @@ export const getResourceLimitsData = (limitsData: LimitsData) => ({
 });
 
 /** Resource names managed by Edit resource limits / ResourceLimitSection forms. */
-export const MANAGED_CONTAINER_RESOURCE_NAMES: string[] = ['cpu', 'memory'];
+const MANAGED_CONTAINER_RESOURCE_NAMES: string[] = ['cpu', 'memory'];
 
 type ResourceList = { [name: string]: string };
 
