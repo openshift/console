@@ -13,7 +13,10 @@ RUN mkdir -p /src/console
 COPY . /src/console
 
 WORKDIR /src/console/frontend
-RUN yarn install && yarn generate
+# Retry the install once: yarn 4 occasionally fails with an internal
+# "onCancel handler was attached after the promise settled" error when its
+# concurrent registry fetches race on a loaded build node.
+RUN (yarn install && yarn generate) || (yarn install && yarn generate)
 
 WORKDIR /src/console/dynamic-demo-plugin
 RUN yarn install && yarn build
